@@ -1,0 +1,12 @@
+User-agent: *
+Disallow /board/agenda/
+Disallow /board/draft-minutes/
+Disallow /board/subscriptions/
+Disallow /fundraising/
+Disallow /incubator/moderators/
+Disallow /incubator/private-lists/
+Disallow /mattmann/
+Disallow /members/
+Disallow /roster/
+Disallow /treasurer/
+Disallow /voter/
