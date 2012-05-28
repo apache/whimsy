@@ -1,0 +1,9 @@
+This directory has two subdirectories...
+
+1) "asf" contains the "model", i.e., a set of classes which encapsulate access
+   to a number of data sources such as LDAP, ICLAs, auth lists, etc.
+
+2) "www" contains the "view", largely a set of cgi scripts that produce HTML.
+   Generally a cgi script is self contained, including all of the CSS,
+   scripts, AJAX logic (client and server), SVG images, etc.  A single script
+   may also produce a set (subtree) of web pages. 
