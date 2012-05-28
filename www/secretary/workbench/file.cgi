@@ -344,7 +344,7 @@ _json do
       message, file = @message, @file
       _! html_fragment {
         _.system [
-          'svn', 'commit', '-m', message,
+          'svn', 'commit', '-m', message, '--no-auth-cache',
           (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
           file
         ]
@@ -404,9 +404,11 @@ _html do
         find {|name| name and not name.empty?}
       filename.untaint if filename and filename =~ /^[-.\w]+/
       doctype = (@doctype == 'mem' ? 'member_apps' : @doctype.to_s+'s')
+      doctype.untaint if doctype =~ /^\w+$/
       dest = File.join(DOCUMENTS, doctype, filename.to_s)
       stem = ";#{filename.sub(/\.\w+$/,'').split('/').first}" if filename
       alax = false
+      @source.untaint if Dir.chdir(RECEIVED) {Dir['*']}.include? @source
 
       unless %w(clr rubys).include? $USER
         @action = 'welcome' unless @action == 'view'
@@ -459,10 +461,10 @@ _html do
             @source = Unicode.normalize_KC(@source)
           end
           _.move @source, dest
-          _.system "svn diff iclas.txt", [@pubname]
+          _.system "svn diff iclas.txt", hilite: @pubname
         end
 
-        update_pending cgi.params, dest
+        update_pending params, dest
 
       when 'grant'
         insert = "#{@from.strip}" +
@@ -479,10 +481,10 @@ _html do
 
           _h1 "Grant"
           _.move @source, dest
-          _.system "svn diff grants.txt", insert.split("\n")
+          _.system "svn diff grants.txt", hilite: insert.split("\n")
         end
 
-        update_pending cgi.params, dest
+        update_pending params, dest
 
       when 'ccla'
         insert = "notinavail:" + @company.strip
@@ -506,10 +508,10 @@ _html do
 
           _h1 @pubname
           _.move @source, dest
-          _.system "svn diff cclas.txt", [insert]
+          _.system "svn diff cclas.txt", hilite: insert
         end
 
-        update_pending cgi.params, dest
+        update_pending params, dest
 
       when 'nda'
         @realname ||= @nname
@@ -528,14 +530,13 @@ _html do
             line += `id -un`.chomp.ljust(10) + ' No TCK access yet'
             fh.write("#{line}\n")
           end
-          _.system "svn diff #{ndalist}", [@nid]
+          _.system "svn diff #{ndalist}", hilite: @nid
         end
 
-        update_pending cgi.params, dest
+        update_pending params, dest
 
       when 'mem'
         @realname ||= @mfname
-        @source.untaint if Dir.chdir(RECEIVED) {Dir['*']}.include? @source
         dest.untaint if dest =~ /^[-.\w]+$/
 
         _h1 "Membership Application for #{@realname}"

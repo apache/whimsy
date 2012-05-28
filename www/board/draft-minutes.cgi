@@ -296,6 +296,7 @@ _html do
           _.system [
             'svn', 'commit', 
             '-m',  @message || "draft minutes for #{date}",
+            ['--no-auth-cache'],
             (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
             File.basename(minutes_txt)
           ]
