@@ -211,7 +211,7 @@ def svn_info(source)
   }
 
   if info['from'].empty? and info['email'].empty?
-    log=`svn log #{source}`
+    log=`svn log -l 9 #{source}`
     from=log.scan(/\nFrom: (.*)/).flatten.first
 
     if from and from !~ /"eFax"/
