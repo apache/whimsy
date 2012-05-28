@@ -372,8 +372,6 @@ _html do
 
           _div_.buttons!.buttons do
             _input type: 'submit', value: 'File'
-            # _input type: 'submit', id: 'archive', value: 'Archive',
-            # onclick: 'return namesFromArchive()'
             _input type: 'submit', name: 'action', value: 'Cancel'
           end
 

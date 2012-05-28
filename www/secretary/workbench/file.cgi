@@ -201,6 +201,38 @@ def check
   end
 end
 
+def svn_info(source)
+  source.untaint if Dir.chdir(RECEIVED) {Dir['*']}.include? source
+  source = File.join(RECEIVED, source)
+  source += svn_at(source)
+  info = {
+    'from' =>  `svn propget email:name #{source}`.chomp,
+    'email' => `svn propget email:addr #{source}`.chomp
+  }
+
+  if info['from'].empty? and info['email'].empty?
+    log=`svn log #{source}`
+    from=log.scan(/\nFrom: (.*)/).flatten.first
+
+    if from and from !~ /"eFax"/
+      email = from.gsub(/.*<(.*)>$/, '\1')
+      info['email'] = email if email.include?('@')
+    
+      from.gsub! /\s<.*>$/, ''
+      from.gsub! /^"(.*)"$/, '\1'
+      info['from'] = from unless from.include?('@')
+    end
+  end
+
+  info.each do |name, value| 
+    value.gsub!(/\\x[0-9a-fA-F][0-9a-fA-F]/) {|c| [c[2..3].to_i(16)].pack('C')}
+    value.force_encoding('utf-8')
+    value.force_encoding('iso-8859-1') unless value.valid_encoding?
+  end
+
+  info
+end
+
 def email(target, message)
   pending = YAML.load(open(PENDING_YML))
 
@@ -335,31 +367,31 @@ _json do
     "svn update #{DOCUMENTS}",
   ]
 
-  _html do
-    if @cmd == 'icla.txt issues'
-      _! check
-    elsif @cmd =~ /email (.*)/
-      _! email $1, @message
-    elsif @cmd =~ /svn commit/ and committable.include? @file
-      message, file = @message, @file
-      _! html_fragment {
-        _.system [
-          'svn', 'commit', '-m', message, '--no-auth-cache',
-          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
-          file
-        ]
-      }
-    else
-      cmd = @cmd.untaint
-      _! html_fragment { 
-        if safe.include? cmd
-          _.system cmd.untaint
-        else
-          _pre._stdin cmd
-          _pre._stderr 'Unauthorized command'
-        end
-      }
-    end
+  if @cmd == 'svninfo'
+    _! svn_info(@source)
+  elsif @cmd == 'icla.txt issues'
+    _html check
+  elsif @cmd =~ /email (.*)/
+    _html! email $1, @message
+  elsif @cmd =~ /svn commit/ and committable.include? @file
+    message, file = @message, @file
+    _html html_fragment {
+      _.system [
+        'svn', 'commit', '-m', message, '--no-auth-cache',
+        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
+        file
+      ]
+    }
+  else
+    cmd = @cmd
+    _html html_fragment { 
+      if safe.include? cmd
+        _.system cmd.untaint
+      else
+        _pre._stdin cmd
+        _pre._stderr 'Unauthorized command'
+      end
+    }
   end
 end
 

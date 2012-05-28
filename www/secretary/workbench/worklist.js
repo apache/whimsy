@@ -66,33 +66,6 @@ function generateFileName(selection) {
   return value.replace(/-+/g, '-').toLowerCase();
 }
 
-// replace realname input field with a selection list
-function namesFromArchive() {
-  $.getJSON('unscanned.cgi', {}, function(unscanned) {
-    var select = $('<select name="realname" id="realname"/>')[0];
-    for (var i=0; i<unscanned.length; i++) {
-      select.options[i] = new Option(unscanned[i][1], i);
-    }
-    $('#realname').before(select).remove();
-
-    $("#archive").attr("disabled","disabled");
-
-    // process selection
-    $('#realname').focus().change(function() {
-      var icla = unscanned[$("#realname option:selected").val()];
-      $("#realname").before('<input type="text" ' +
-        'id="realname" name="realname"/>').remove();
-      $("#realname").val(icla[1]);
-      $("#pubname").val(icla[2]);
-      $("#email").val(icla[3]);
-      $("#replaces").val(icla[0] + ':' + icla[3]);
-      $("#filename").val('').focus();
-      $("#archive").removeAttr("disabled");
-    });
-  });
-  return false;
-}
-
 $(document).ready(function() {
   // member autofill
   $('#mavailid').change(function() {
@@ -134,7 +107,7 @@ $(document).ready(function() {
       $("#icla-form input").addClass("loading");
       $("#ccla-form input").addClass("loading");
       $("#grant-form input").addClass("loading");
-      $.getJSON('svninfo.cgi', {source: link}, function(info) {
+      $.post('file.cgi', {cmd: 'svninfo', source: link}, function(info) {
         if (!$('#realname').val()) $('#realname').val(info.from);
         if (!$('#nname').val())    $('#nname').val(info.from);
         if (!$('#contact').val())  $('#contact').val(info.from);
@@ -153,7 +126,7 @@ $(document).ready(function() {
         $("#icla-form input").removeClass("loading");
         $("#ccla-form input").removeClass("loading");
         $("#grant-form input").removeClass("loading");
-      });
+      }, 'json');
     }
   });
 
