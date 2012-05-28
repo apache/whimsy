@@ -7,3 +7,34 @@ This directory has two subdirectories...
    Generally a cgi script is self contained, including all of the CSS,
    scripts, AJAX logic (client and server), SVG images, etc.  A single script
    may also produce a set (subtree) of web pages. 
+
+If you want to run this remotely, the model code makes a few assumptions at the
+moment:
+
+1) current svn checkouts of various repositories are made (or linked to from)
+   /home/whimsysvn/svn.
+
+2) Access to LDAP requires a tunnel, configuration, and a cert.
+
+   a) A tunnel can be created using the following (substitute your id):
+      ssh -N -L 6636:minotaur.apache.org:636 rubys@minotaur.apache.org
+
+   b) The model code determines what host and port to connect to by parsing
+      /etc/ldap/ldap.conf for a line that looks like the following:
+      uri     ldaps://localhost:6636
+
+   c) A TLS_CACERT can be obtained via the following:
+
+        ssh minotaur.apache.org openssl s_client -connect \
+          minotaur.apache.org:636 -showcerts
+
+      Copy from BEGIN to END inclusive into a file.  Point to the file in
+      /etc/ldap/ldap.conf with a line like the following:
+
+        TLS_CACERT      /etc/ldap/asf-ldap-client.pem
+
+If you would like to understand how the view code works, you can get started
+by looking at a few of the Wunderbar demos and README:
+
+  https://github.com/rubys/wunderbar/tree/master/demo
+  https://github.com/rubys/wunderbar/blob/master/README.md
