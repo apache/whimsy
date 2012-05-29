@@ -13,7 +13,8 @@ end
 # set constants based on the configuration file
 require 'yaml'
 YAML.load(open(config).read).each do |key, value|
-  Object.const_set key.upcase, File.expand_path(value).untaint
+  Object.const_set key.upcase,
+    File.realpath(File.expand_path(value).untaint).untaint
 end
 
 # pending file
