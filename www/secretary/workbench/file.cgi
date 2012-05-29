@@ -374,7 +374,7 @@ _json do
   elsif @cmd == 'icla.txt issues'
     _html check
   elsif @cmd =~ /email (.*)/
-    _html! email $1, @message
+    _html email $1, @message
   elsif @cmd =~ /svn commit/ and committable.include? @file
     message, file = @message, @file
     _html html_fragment {
@@ -748,7 +748,7 @@ _html do
         _pre "svn update #{DOCUMENTS}", class: 'todo'
         _h3 'icla.txt issues', class: 'todo'
         ajax = true
-        cleanup = Dir["#{DOCUMENTS}/received/*"].map(&:untaint).
+        cleanup = Dir["#{DOCUMENTS}/members/received/*"].map(&:untaint).
           select {|name| File.directory?(name) and Dir["#{name}/*"].empty?}.
           reject {|name| name =~ /\/to_\w+$/}
         unless cleanup.empty?
@@ -781,9 +781,9 @@ _html do
               _li do
                 _input type: :checkbox, name: "include#{i}", value: file
                 if %w(jpg).include?(file.split('.').last)
-                  _img src: "/received/#{@dir}/#{file}"
+                  _img src: "/members/received/#{@dir}/#{file}"
                 else
-                  _a file, href: "/received/#{@dir}/#{file}"
+                  _a file, href: "/members/received/#{@dir}/#{file}"
                 end
               end
             end

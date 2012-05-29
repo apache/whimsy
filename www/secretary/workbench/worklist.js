@@ -100,7 +100,7 @@ $(document).ready(function() {
       parent.frames[1].location.href = 'file.cgi?action=view&dir=' +
         encodeURIComponent(link);
     } else {
-      parent.frames[1].location.href = '/received/' + link;
+      parent.frames[1].location.href = '/members/received/' + link;
     }
 
     if (!link.match(/^eFax-\d+\.pdf$/)) {

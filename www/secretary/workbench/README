@@ -22,3 +22,6 @@ General design of the tool:
 
 *) ccla.erb, grant.erb, icla.erb, mem.erb, and nda.erb are mail templates
    of confirmation replies sent back when the document is processed.
+
+*) The tool assumes that the url /members/received is a symlink to a checkout
+   of https://svn.apache.org/repos/private/documents/received
