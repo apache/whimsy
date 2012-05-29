@@ -162,9 +162,11 @@ def check
       output << [ 'email', "#{$1}: #{$3}" ]
     elsif ! $4 or  ! $4.index('CLA')
       output << [ 'nocla', $2 ]
+    elsif email[$3.downcase]
+      output << [ 'dupemail', "#{$3}: #{name} and #{email[$3.downcase]}" ]
     end
  
-    email[$3] = name
+    email[$3.downcase] = name
 
     name.split.each do |word|
       next if word.length == 1 and word !~ /\w/
