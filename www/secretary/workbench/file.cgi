@@ -100,7 +100,8 @@ def update_pending fields, dest
   at = svn_at(dest)
   at += '/*' if File.directory?(dest) and `svn proplist #{dest}{at}`.empty?
   `svn proplist #{dest}#{at}`.scan(/  \w+:[-\w]+/).each do |prop|
-    value = `svn propget #{prop.untaint} #{dest}#{at}`.chomp
+    prop.untaint if prop.strip =~ /^\w+(:\w+)/
+    value = `svn propget #{prop} #{dest}#{at}`.chomp
     value.gsub!(/\\x[0-9a-fA-F][0-9a-fA-F]/) {|c| [c[2..3].to_i(16)].pack('C')}
     value.gsub!(/\\[0-7][0-7][0-7]/) {|c| [c[1..3].to_i(8)].pack('C')}
     fields[prop.strip] = value
@@ -136,6 +137,7 @@ class Wunderbar::XmlMarkup
           self.system "cp #{source.inspect} #{dest}"
           self.system "svn add #{dest}"
           `svn proplist #{source.inspect}`.scan(/  \w+:[-\w]+/).each do |prop|
+            prop.untaint if prop.strip =~ /^\w+(:\w+)/
             value = `svn propget #{prop.strip} #{source.inspect}`.chomp
             self.system "svn propset #{prop.strip} #{value.inspect} #{dest}"
           end
@@ -350,7 +352,7 @@ def email(target, message)
   html_fragment do
     mails.each do |dest, mail|
       _h2 "email #{dest}"
-      _pre mail, class: 'email'
+      _pre.email mail
     end
   end
 end
@@ -364,17 +366,17 @@ def committable
 end
 
 _json do
-  safe = [
-    "svn update #{OFFICERS}",
-    "svn update #{DOCUMENTS}",
-  ]
-
   if @cmd == 'svninfo'
     _! svn_info(@source)
   elsif @cmd == 'icla.txt issues'
     _html check
   elsif @cmd =~ /email (.*)/
     _html email $1, @message
+  elsif @cmd =~ /svn (update|revert -R|cleanup)/ and committable.include? @file
+    op, file = $1.split(' '), @file
+    _html html_fragment {
+      _.system [ 'svn', *op, file ]
+    }
   elsif @cmd =~ /svn commit/ and committable.include? @file
     message, file = @message, @file
     _html html_fragment {
@@ -387,12 +389,8 @@ _json do
   else
     cmd = @cmd
     _html html_fragment { 
-      if safe.include? cmd
-        _.system cmd.untaint
-      else
-        _pre._stdin cmd
-        _pre._stderr 'Unauthorized command'
-      end
+      _pre._stdin cmd
+      _pre._stderr 'Unauthorized command'
     }
   end
 end
@@ -582,7 +580,7 @@ _html do
           begin
             received[/(no )\s+\w+\s+\w+\s+#{@mavailid}/,1] = 'yes'
           rescue
-            _pre $!, class: 'stderr'
+            _pre.stderr $!
           end
           open("#{MEETING}/memapp-received.txt", 'w') do |fh| 
             fh.write(received)
@@ -682,6 +680,31 @@ _html do
           end
         end
 
+      when 'cleanup'
+        _h1 'Revert all and cleanup'
+
+        committable.each do |file|
+          status = `svn status #{file}`
+          unless status.empty?
+            status.scan(/^[?A]\s*\+?\s*(.*)/).flatten.each do |uncommitted|
+              _.system ['rm', '-rf', uncommitted]
+            end
+            if status =~ /^\w/
+              _pre.todo "svn revert -R #{file}", 'data-file' => file
+            end
+          end
+
+          if File.directory? file
+             _pre.todo "svn cleanup #{file}", 'data-file' => file
+          end
+        end
+
+        if File.exist?(PENDING_YML)
+          _.system "rm #{PENDING_YML}"
+        end
+
+        ajax=true
+
       when 'commit'
         _h1 'Commit'
         log = Escape.shell_single_word(@message)
@@ -696,8 +719,7 @@ _html do
           pending = YAML.load(open(PENDING_YML))
 
           pending.each do |vars|
-            _h2 "email #{vars['email']}", class: 'todo',
-              'data-message' => @message
+            _h2.todo "email #{vars['email']}", 'data-message' => @message
           end
         end
 
@@ -715,13 +737,12 @@ _html do
             _.system "svn add #{dest}#{at}"
             # copy properties
             `svn proplist #{@source}#{at}`.scan(/ \w+:[-\w]+/).each do |prop|
+               prop.untaint if prop.strip =~ /^\w+(:\w+)/
                next if prop.strip == 'svn:mime-type'
                value = `svn propget #{prop} #{@source}#{at}`.chomp
-               _.system "svn propset #{prop.strip} #{value.inspect} " +
-                 "#{dest}#{at}"
+               _.system ['svn', 'propset', prop.strip, value, dest+at]
             end
-            _.system "svn rm '#{@source}#{at}'"
-            _.system "rm doc_data.txt"
+            _.system "rm doc_data.txt" if File.exist? 'doc_data.txt'
             _.system "svn rm #{@source}#{at}"
           elsif @dest == 'flip'
             _h1 'Flip'
@@ -744,9 +765,9 @@ _html do
 
       when 'update'
         _h1 'Update'
-        _pre "svn update #{OFFICERS}", class: 'todo'
-        _pre "svn update #{DOCUMENTS}", class: 'todo'
-        _h3 'icla.txt issues', class: 'todo'
+        _pre.todo "svn update #{OFFICERS}", 'data-file' => OFFICERS
+        _pre.todo "svn update #{DOCUMENTS}", 'data-file' => DOCUMENTS
+        _h3.todo 'icla.txt issues'
         ajax = true
         cleanup = Dir["#{DOCUMENTS}/members/received/*"].map(&:untaint).
           select {|name| File.directory?(name) and Dir["#{name}/*"].empty?}.
@@ -831,7 +852,7 @@ _html do
                 vars.delete('email:bcc') if vars['email:bcc'].empty?
 
                 open(PENDING_YML, 'w') {|file| file.write pending.to_yaml}
-                _p "cc list for #{@email} updated", id: 'notice'
+                _p.notice! "cc list for #{@email} updated"
               end
             end
           end

@@ -87,6 +87,7 @@ _html do
           _input name: 'message', id: 'message', type: 'hidden',
             'data-value' => message
           _input type: 'submit', name: 'action', value: 'Edit CC'
+          _input type: 'submit', name: 'action', value: 'Cleanup'
           _input type: 'submit', name: 'action', value: 'Commit'
         end
       end

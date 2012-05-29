@@ -201,4 +201,9 @@ $(document).ready(function() {
       return false;
     }
   });
+
+  // Commit prompt
+  $("input[value=Cleanup]").click(function() {
+    return confirm("Revert all changes and cleanup subversion?");
+  });
 });
