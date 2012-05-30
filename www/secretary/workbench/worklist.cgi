@@ -380,8 +380,8 @@ _html do
             _fieldset do
               _legend 'To:'
               _input type: 'submit', name: 'dest', value: 'Jim'
-              _input type: 'submit', name: 'dest', value: 'Justin'
-              _input type: 'submit', name: 'dest', value: 'Geir'
+              _input type: 'submit', name: 'dest', value: 'Sam'
+              _input type: 'submit', name: 'dest', value: 'Upayavira'
             end
             _fieldset do
               _legend 'Do:'
@@ -456,11 +456,15 @@ _html do
             target: 'viewport'
         end
         _li do
+          _a 'Documents', target: 'viewport',
+            href: 'https://svn.apache.org/repos/private/documents/'
+        end
+        _li do
           _a 'Board subscriptions', href: 'https://whimsy.apache.org/board/subscriptions/',
             target: 'viewport'
         end
         _li do
-          _a 'Mail aliases', href: 'https://svn.apache.org/repos/private/committers/MailAlias.txt',
+          _a 'Mail aliases', href: 'https://id.apache.org/info/MailAlias.txt',
             target: 'viewport'
         end
         _li do

@@ -398,9 +398,10 @@ end
 DESTINATION = {
   "Jim"       => "to_jim",
   "Sam"       => "to_sam",
-  "upayavira" => "to_upayavira",
+  "Upayavira" => "to_upayavira",
   "dup"       => "deadletter/dup",
-  "incomplete"=> "deadletter/incomplete" }
+  "incomplete"=> "deadletter/incomplete"
+}
 
 exception = nil
 line = nil
@@ -771,8 +772,10 @@ _html do
             _.system "mv #{@source}.tmp #{@source}"
           elsif @dest == 'junk'
             _.system(['svn', 'rm', '--force', "#{@source}#{at}"])
-          else
+          elsif DESTINATION.include? @dest
             _.move @source, DESTINATION[@dest]
+          else
+            pre.stderr "Unknown destination: #{@dest}"
           end
         end
 
