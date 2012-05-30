@@ -77,7 +77,7 @@ _html do
         end
       end
 
-      files.reject! {|f| f=~ /\/(pending|completed)\.yml\s*$/}
+      files.reject! {|f| f=~ /\/(activity|pending|completed)\.yml\s*$/}
       unless files.empty? and !File.exist?(PENDING_YML)
         _h2_ 'Pending'
         files.each {|line| _pre line.strip.sub(/\s+/,' ')}
@@ -96,7 +96,7 @@ _html do
       Dir.chdir("#{RECEIVED}") do
         Dir["*"].sort_by {|name| File.stat(name.untaint).mtime}.each do |file|
           next if %w{README deadletter archives}.include? file
-          next if %w{pending.yml completed.yml}.include? file
+          next if %w{pending.yml completed.yml activity.yml}.include? file
           next if file =~ /^to_\w+$/
           if File.directory? file
             next if Dir.entries(file).reject {|name| name=~/^\./}.empty?

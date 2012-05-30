@@ -426,10 +426,23 @@ _html do
       .traceback {background-color:#ff0; margin: 1em 0; padding: 1em;
         border: 2px solid}
       #notice {color: green}
+      .collision {background-color: #ee82ee}
     }
   end
 
   _body? do
+
+    activity_log = nil
+    File.open "#{RECEIVED}/activity.yml", File::RDWR|File::CREAT, 0644 do |file|
+      file.flock File::LOCK_EX
+      activity_log = YAML.load(file.read) || []
+      activity_log.unshift({'user' => $USER, 'time' => Time.now.utc}.
+        merge(Hash[params.map {|key,value| [key,value.first]}]))
+      file.rewind
+      file.write YAML.dump(activity_log[0...5])
+      file.flush
+      file.truncate file.pos
+    end
 
     begin
       filename = [@filename, @cfilename, @gfilename, @mfilename, @nfilename].
@@ -776,6 +789,37 @@ _html do
           _h2 'Empty directories'
           _ul do
             cleanup.each { |name| _li name }
+          end
+        end
+
+        _h2 'Recent Activity'
+        _table border: 1, cellpadding: 5, cellspacing: 0 do
+          _thead do
+            _tr do
+              _th 'Time'
+              _th 'User'
+              _th 'Action'
+              _th 'Parameters'
+            end
+          end
+          _tbody do
+            activity_log[1..-1].each do |entry|
+              collision = (entry['user'] != $USER and not entry['user'].empty?)
+              collision &&= (Time.now-entry['time'] < 600)
+              _tr_ class: ('collision' if collision) do
+                _td entry.delete('time')
+                _td entry.delete('user')
+                if entry['action']
+                  _td entry.delete('action')
+                elsif entry['doctype'] == 'other'
+                  _td entry['dest']
+                else
+                  _td entry['doctype']
+                end
+                entry.delete_if {|name, value| value.empty?}
+                _td entry.inspect
+              end
+            end
           end
         end
 
