@@ -98,7 +98,7 @@ def update_pending fields, dest
 
   # add properties from svn
   at = svn_at(dest)
-  at += '/*' if File.directory?(dest) and `svn proplist #{dest}{at}`.empty?
+  at += '/*' if File.directory?(dest) and `svn proplist #{dest}#{at}`.empty?
   `svn proplist #{dest}#{at}`.scan(/  \w+:[-\w]+/).each do |prop|
     prop.untaint if prop.strip =~ /^\w+(:\w+)/
     value = `svn propget #{prop} #{dest}#{at}`.chomp
@@ -206,7 +206,7 @@ def check
 end
 
 def svn_info(source)
-  source.untaint if Dir.chdir(RECEIVED) {Dir['*']}.include? source
+  source.untaint if Dir.chdir(RECEIVED) {Dir['*']}.include? source.chomp('/')
   source = File.join(RECEIVED, source)
   source += svn_at(source)
   info = {
@@ -296,7 +296,7 @@ def email(target, message)
       end
 
       # get the list of cc's as an array
-      cc = mail.cc.dup
+      cc = mail.cc.to_a
 
       # eliminate the legal-archive from the cc list
       cc.reject! {|addr| addr =~ /\blegal-archive@apache\.org\b/}
@@ -410,7 +410,7 @@ _html do
   _head_ do
     _title 'File Document'
 
-    if ! %w{check update commit}.include?(@action.to_s.downcase)
+    if ! %w{check update commit view}.include?(@action.to_s.downcase)
       _script 'parent.frames[0].location.reload()'
     end
 
@@ -453,7 +453,9 @@ _html do
     dest = File.join(DOCUMENTS, doctype, filename.to_s)
     stem = ";#{filename.sub(/\.\w+$/,'').split('/').first}" if filename
     alax = false
-    @source.untaint if Dir.chdir(RECEIVED) {Dir['*']}.include? @source
+    if @source and Dir.chdir(RECEIVED) {Dir['*']}.include? @source.chomp('/')
+      @source.untaint
+    end
 
     unless %w(clr rubys).include? $USER
       @action = 'welcome' unless @action == 'view'
@@ -869,12 +871,12 @@ _html do
         _script src: "jquery-1.7.2.min.js"
         _script %{
           // first, check all of the checkboxes
-          $('input[@type=checkbox]').attr('checked', 'checked');
+          $('input[type=checkbox]').attr('checked', 'checked');
 
           // on click, unclick all if all are checked.
-          $('input[@type=checkbox]').mousedown(function() {
+          $('input[type=checkbox]').mousedown(function() {
             if (!$('input[type=checkbox]:not(:checked)').length) {
-              $('input[@type=checkbox]').removeAttr('checked');
+              $('input[type=checkbox]').removeAttr('checked');
             }
           });
         }
