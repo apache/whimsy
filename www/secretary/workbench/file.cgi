@@ -120,7 +120,13 @@ end
 
 class Wunderbar::XmlMarkup
   def move source, dest
-    source = File.expand_path(source, RECEIVED)
+    if Dir.chdir(RECEIVED) {Dir['*']}.include? source.chomp('/')
+      @_builder.tag! :pre, "svn mv #{source.inspect} #{dest}", class: 'stdin'
+      @_builder.tag! "File #{source} doesn't exist.", class: 'stderr'
+      return
+    end
+
+    source = File.expand_path(source, RECEIVED).untaint
     source += svn_at(source)
 
     if File.exist?(dest) and !File.directory?(dest)
@@ -437,7 +443,7 @@ _html do
     File.open "#{RECEIVED}/activity.yml", File::RDWR|File::CREAT, 0644 do |file|
       file.flock File::LOCK_EX
       activity_log = YAML.load(file.read) || []
-      activity_log.unshift({'user' => $USER, 'time' => Time.now.utc}.
+      activity_log.unshift({'USER' => $USER, 'time' => Time.now.utc}.
         merge(Hash[params.map {|key,value| [key,value.first]}]))
       file.rewind
       file.write YAML.dump(activity_log[0...5])
@@ -808,11 +814,11 @@ _html do
         end
         _tbody do
           activity_log[1..-1].each do |entry|
-            collision = (entry['user'] != $USER and not entry['user'].empty?)
+            collision = (entry['USER'] != $USER)
             collision &&= (Time.now-entry['time'] < 600)
             _tr_ class: ('collision' if collision) do
               _td entry.delete('time')
-              _td entry.delete('user')
+              _td entry.delete('USER')
               if entry['action']
                 _td entry.delete('action')
               elsif entry['doctype'] == 'other'
