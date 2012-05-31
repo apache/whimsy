@@ -115,8 +115,10 @@ _html do
                 _td.issue cols[2]
               end
 
-	      if cols[1] == 'no' or cols[3] == 'yes'
-                _td cols[3]
+	      if cols[3] == 'yes'
+                _td cols[3], class: ('issue' unless person.asf_member?)
+	      elsif cols[1] == 'no'
+                _td cols[3], class: ('issue' if person.asf_member?)
               else
                 _td.issue cols[3]
               end
@@ -219,7 +221,7 @@ _html do
     _ul do
       unless request =~ /appstatus/
         _li do
-          _a 'Application Status', href: '/members/watch/nominees'
+          _a 'Application Status', href: '/members/watch/appstatus'
         end
       end
       unless list == watch_list
