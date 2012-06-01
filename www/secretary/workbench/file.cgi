@@ -120,9 +120,9 @@ end
 
 class Wunderbar::XmlMarkup
   def move source, dest
-    if Dir.chdir(RECEIVED) {Dir['*']}.include? source.chomp('/')
-      @_builder.tag! :pre, "svn mv #{source.inspect} #{dest}", class: 'stdin'
-      @_builder.tag! "File #{source} doesn't exist.", class: 'stderr'
+    if not Dir.chdir(RECEIVED) {Dir['*']}.include? source.chomp('/')
+      @_builder.tag! :pre, "svn mv #{source.inspect} #{dest}", class: '_stdin'
+      @_builder.tag! :pre, "File #{source} doesn't exist.", class: '_stderr'
       return
     end
 
@@ -133,8 +133,8 @@ class Wunderbar::XmlMarkup
       # Since svn error messages aren't as helpful as they could be here,
       # let's improve on it... by pretending to run the command and then
       # producing a better error message.
-      @_builder.tag! :pre, "svn mv #{source.inspect} #{dest}", class: 'stdin'
-      @_builder.tag! "File #{dest} already exists.", class: 'stderr'
+      @_builder.tag! :pre, "svn mv #{source.inspect} #{dest}", class: '_stdin'
+      @_builder.tag! :pre, "File #{dest} already exists.", class: '_stderr'
     else
       if (`svn --version --quiet`.chomp.split('.') <=> %w(1 5)) >= 1
         self.system "svn mv #{source.inspect} #{dest}"
