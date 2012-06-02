@@ -445,6 +445,9 @@ _html do
       activity_log = YAML.load(file.read) || []
       activity_log.unshift({'USER' => $USER, 'time' => Time.now.utc}.
         merge(Hash[params.map {|key,value| [key,value.first]}]))
+      activity_log.delete_at(1) if activity_log.length > 1 and
+        activity_log[1]['USER'] == $USER and 
+        activity_log[1]['action'] == 'update'
       file.rewind
       file.write YAML.dump(activity_log[0...5])
       file.flush
@@ -804,30 +807,43 @@ _html do
 
       _h2 'Recent Activity'
       _table border: 1, cellpadding: 5, cellspacing: 0 do
-        _thead do
+        _thead_ do
           _tr do
             _th 'Time'
             _th 'User'
             _th 'Action'
-            _th 'Parameters'
           end
         end
+
+        cleanup = {
+          icla: %w( realname email ),
+          ccla: %w( cemail contact ),
+          nda: %w( nname nemail nid ),
+          mem: %w( memail ),
+          grant: %w( gname gemail ),
+        } 
+
         _tbody do
           activity_log[1..-1].each do |entry|
             collision = (entry['USER'] != $USER)
             collision &&= (Time.now-entry['time'] < 600)
+
+            keep = cleanup[entry['doctype']] || []
+            (cleanup.values.flatten - keep).each { |var| entry.delete(var) }
+
             _tr_ class: ('collision' if collision) do
-              _td entry.delete('time')
-              _td entry.delete('USER')
-              if entry['action']
-                _td entry.delete('action')
-              elsif entry['doctype'] == 'other'
-                _td entry['dest']
-              else
-                _td entry['doctype']
+              _td! do
+                 time = entry.delete('time')
+                 _time time, datetime: time.utc.iso8601
               end
+              _td entry.delete('USER')
+
               entry.delete_if {|name, value| value.empty?}
-              _td entry.inspect
+              title = entry.map {|n, v| "#{n}: #{v.inspect}"}.join(', ')
+
+              name = entry['action'] || entry['doctype']
+              name = entry['dest'] if name == 'other'
+              _td name, title: title
             end
           end
         end
@@ -952,6 +968,12 @@ _html do
 
     if ajax
       _script src: 'jquery-1.7.2.min.js'
+
+      if @action = 'Update'
+        _script src: 'jquery.timeago.js'
+        _script "$('time').timeago()"
+      end
+
       _script %{
         function execute_todos() {
           var todo = $('.todo:first');
