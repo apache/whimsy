@@ -391,6 +391,10 @@ _html do
       });
 
       $('svg').attr('stroke-linejoin', 'round');
+      $(window).resize(function() {
+        $('svg').height($(window).width()/3);
+        $('svg').width($(window).width()/3);
+      }).trigger('resize');
     }
   end
 end
