@@ -5,6 +5,11 @@
     <title>Whimsy</title>
     <style type="text/css">
       h2 {text-decoration: underline}
+      header h2 span {display: none}
+      header:hover h2 span {display: inline}
+      aside {display: none}
+      header:hover aside {margin-left: 4em; display: block; border: 3px solid #B7B; padding: 1em; border-radius: 1em}
+      aside ol {margin-bottom: 0}
     </style>
   </head>
 
@@ -14,14 +19,28 @@
       <img src="whimsy.svg" width="80" title="whimsy"/>
     </a>
 
-    <h2>Whimsy</h2>
-    <p>
-      Whimsy is a site where a set of absolutely unnecessary yet often quite
-      handy applications are deployed. 
-    </p>
-    <p>
+    <header>
+      <h2><a href="http://dictionary.reference.com/browse/whimsy">Whim<span>·</span>sy</a></h2>
+      <aside>
+        [hwim-zee, wim-] noun, plural whim·sies.
+        <ol>
+          <li>capricious humor or disposition; extravagant, fanciful, or
+          excessively playful expression: a play with lots of whimsy.</li>
+          <li>an odd or fanciful notion.</li>
+          <li>anything odd or fanciful; a product of playful or capricious
+          fancy: a whimsy from an otherwise thoughtful writer.</li>
+        </ol>
+      </aside>
+
+      <blockquote>
+        Whimsy is a site where a set of absolutely unnecessary yet often quite
+        handy applications are deployed. 
+      </blockquote>
+    </header>
+
+    <blockquote>
      Feel free to <a href="technology.html">look under the hood</a>.
-    </p>
+    </blockquote>
 
     <h2>Open to the Public</h2>
     <ul>
