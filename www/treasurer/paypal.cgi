@@ -60,7 +60,7 @@ _html do
         end
       end
 
-      month = '5'
+      month = nil
       entries = []
       count = 0
       old_balance = nil
