@@ -374,7 +374,7 @@ _json do
 
     validated["confirmed_#{param}"] = email
     if not ASF::Person.find_by_email(email)
-      _confirm "Unknown E-mail #{email}.  Treat as new?"
+      _confirm "Unknown E-mail #{email}.  Proceed with a non-committer moderator?"
       _focus "input[name=#{param}]"
       break
     end
