@@ -48,6 +48,7 @@ _html do
             _input.name.podling disabled: true, value: '<podling>', 
               placeholder: 'podling'
             _ '-'
+            # ### duplicate 'name' attr?
             _input.name.list name: 'suffix1', required: true, 
               placeholder: 'list', pattern: '^\w+(-\w+)?$'
             _ '@'
@@ -119,7 +120,8 @@ _html do
           moderators: mods,
           muopts: @muopts,
           replytolist: @replyto || "false",
-          notifyee: "#{$USER}@apache.org"
+          # ### Note: assumes private@ list is created first!
+          notifyee: "private@#{@localpart}.apache.org"
         }
       else
         params.keys.grep(/^suffix\d+/).each do |suffix|
@@ -132,7 +134,7 @@ _html do
             moderators: mods,
             muopts: @muopts,
             replytolist: @replyto || "false",
-            notifyee: "#{$USER}@apache.org"
+            notifyee: "private@incubator.apache.org"
           }
         end
       end
@@ -146,7 +148,7 @@ _html do
         domain: /^apache[.]org$/,
         muopts: /^(mu|Mu|mU)$/,
         replytolist: /^(true|false)$/,
-        notifyee: /^\w+[@]apache[.]org$/
+        notifyee: /^\w+[@]\w+[.]apache[.]org$/
       }
 
       queue.each do |vars|
@@ -170,6 +172,8 @@ _html do
         if File.exist? "#{mlreq.untaint}.txt"
           errors << "Already submitted: " +
             "#{vars[:subdomain]}@#{vars[:localpart]}.#{vars[:domain]}"
+            # wrong naming; "localpart" is the part to the left of the @ sign.
+            # see RFC 2821
         end
       end
 
