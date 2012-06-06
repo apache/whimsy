@@ -186,12 +186,13 @@ _html do
           request = vars.map {|name,value| "#{name}=#{value}\n"}.join("")
           _pre request
           File.open("#{mlreq.untaint}.txt",'w') { |file| file.write request }
-          _.system(['svn', 'add', "#{mlreq.untaint}.txt"])
+          _.system(['svn', 'add', '--', "#{mlreq.untaint}.txt"])
         end
 
         @message='Mailing list request form' if not @message or @message.empty?
         _.system [
 	  'svn', 'commit', '-m', @message, '--no-auth-cache',
+	  '--non-interactive',
 	  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
         ]
       else
