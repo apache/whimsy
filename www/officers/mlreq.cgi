@@ -121,6 +121,7 @@ _html do
           muopts: @muopts,
           replytolist: @replyto || "false",
           # ### Note: assumes private@ list is created first!
+          # ### Some logic (CGI or apmail script) should check or enforce that.
           notifyee: "private@#{@localpart}.apache.org"
         }
       else
