@@ -183,7 +183,7 @@ _html do
         queue.each do |vars|
           mlreq = "#{vars[:localpart]}-#{vars[:subdomain]}".gsub(/[^-\w]/,'_')
           vars.each {|name,value| vars[name] = Shellwords.shellescape(value)}
-          request = vars.map {|name,value| "#{name}=#{value}"}.join("\n")
+          request = vars.map {|name,value| "#{name}=#{value}\n"}.join("")
           _pre request
           File.open("#{mlreq.untaint}.txt",'w') { |file| file.write request }
           _.system(['svn', 'add', "#{mlreq.untaint}.txt"])
