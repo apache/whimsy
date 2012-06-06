@@ -101,7 +101,7 @@ _html do
 
     if _.post?
       Dir.chdir '/var/tools/infra/mlreq'
-      _.system 'svn update'
+      _.system 'svn update --non-interactive'
 
       # extract moderators from input fields or text area
       mods = params.select {|name,value| name =~ /^mod\d+$/ and value != ['']}.
@@ -146,7 +146,7 @@ _html do
         domain: /^apache[.]org$/,
         muopts: /^(mu|Mu|mU)$/,
         replytolist: /^(true|false)$/,
-        notifyee: /^\w+@apache[.]org$/
+        notifyee: /^\w+[@]apache[.]org$/
       }
 
       queue.each do |vars|
