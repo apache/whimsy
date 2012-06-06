@@ -1,7 +1,15 @@
 #!/usr/bin/ruby1.9.1
 require 'wunderbar'
 require 'shellwords'
+require 'mail'
 require '/var/tools/asf'
+
+user = ASF::Person.new($USER)
+unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
+  print "Status: 401 Unauthorized\r\n"
+  print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
+  exit
+end
 
 _html do
 
@@ -19,6 +27,9 @@ _html do
       input[type=submit] {display: block; margin-top: 1em}
       legend {background: #141; color: #DFD; padding: 0.4em}
       .name {width: 6em}
+      ._stdin {color: #C000C0; margin-top: 1em}
+      ._stdout {color: #000}
+      ._stderr {color: #F00}
     }
   end
 
@@ -79,18 +90,25 @@ _html do
         end
         
         _h3_ 'Moderators'
-        _textarea name: 'mods'
+        _textarea.mods! name: 'mods'
+
+        _h3_ 'Commit message'
+        _textarea name: 'message', cols: 70
 
         _input type: 'submit', value: 'Submit Request'
       end
     end
 
     if _.post?
+      Dir.chdir '/var/tools/infra/mlreq'
+      _.system 'svn update'
+
       # extract moderators from input fields or text area
       mods = params.select {|name,value| name =~ /^mod\d+$/ and value != ['']}.
         values.flatten.join(',')
       mods = @mods.gsub(/\s+/,',') if @mods
 
+      # build a queue of requests
       queue = []
 
       if @subdomain
@@ -119,11 +137,64 @@ _html do
         end
       end
 
-      _h2 'What would be submitted'
+      # build a list of validation errors
+      errors = []
+
+      checks = {
+        subdomain: /^\w+(-\w+)*$/,
+        localpart: /^\w+$/,
+        domain: /^apache[.]org$/,
+        muopts: /^(mu|Mu|mU)$/,
+        replytolist: /^(true|false)$/,
+        notifyee: /^\w+@apache[.]org$/
+      }
+
       queue.each do |vars|
-        _h2 "#{vars[:localpart]}-#{vars[:subdomain]}".gsub(/[^-\w]/,'_')
-        vars.each {|name,value| vars[name] = Shellwords.shellescape(value)}
-        _pre vars.map {|name,value| "#{name}=#{value}"}.join("\n")
+        checks.each do |name, pattern|
+          if vars[name] !~ pattern
+            errors << "Invalid #{name}: #{vars[name].inspect}"
+          end
+
+          vars[:moderators].split(',').each do |email|
+            begin
+              if email != Mail::Address.new(email).address
+                errors << "Invalid email: #{email.inspect}"
+              end
+            rescue
+              errors << "Invalid email: #{email.inspect}"
+            end
+          end
+        end
+
+        mlreq = "#{vars[:localpart]}-#{vars[:subdomain]}".gsub(/[^-\w]/,'_')
+        if File.exist? "#{mlreq.untaint}.txt"
+          errors << "Already submitted: " +
+            "#{vars[:subdomain]}@#{vars[:localpart]}.#{vars[:domain]}"
+        end
+      end
+
+      # output requests or errors
+      if errors.empty?
+        _h2_ "Submitted request(s)"
+        queue.each do |vars|
+          mlreq = "#{vars[:localpart]}-#{vars[:subdomain]}".gsub(/[^-\w]/,'_')
+          vars.each {|name,value| vars[name] = Shellwords.shellescape(value)}
+          request = vars.map {|name,value| "#{name}=#{value}"}.join("\n")
+          _pre request
+          File.open("#{mlreq.untaint}.txt",'w') { |file| file.write request }
+          _.system(['svn', 'add', "#{mlreq.untaint}.txt"])
+        end
+
+        @message='Mailing list request form' if not @message or @message.empty?
+        _.system [
+	  'svn', 'commit', '-m', @message, '--no-auth-cache',
+	  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+        ]
+      else
+        _h2_ 'Form not submitted due to errors'
+        _ul do
+          errors.each { |error| _li error }
+        end
       end
     else
       _p do
@@ -140,8 +211,8 @@ _html do
     end
     
     _script_ %{
-      // replace email textarea with two input fields
-      $('textarea').replaceWith('<input type="email" required="required" ' +
+      // replace moderator textarea with two input fields
+      $('#mods').replaceWith('<input type="email" required="required" ' +
         'class="mod" name="mod0" placeholder="email"/>')
       $('.mod:last').after('<input type="email" required="required" ' +
         'class="mod" name="mod1" placeholder="email"/>')
