@@ -5,6 +5,8 @@ require './local_paths'
 require 'fileutils'
 require 'ostruct'
 require 'escape'
+require 'action_view'
+include ActionView::Helpers::DateHelper
 
 ENV['LANG'] = 'en_US.UTF-8'
 
@@ -280,7 +282,7 @@ def email(target, message)
       mail = Mail.new do
         # apply headers
         headers.scan(/(\w+):[ \t]*(.*)/).each do |name, value|
-          send name, value unless value.empty?
+          send name, value.untaint unless value.empty?
         end
 
         body message
@@ -843,7 +845,7 @@ _html do
 
               name = entry['action'] || entry['doctype']
               name = entry['dest'] if name == 'other'
-              _td name, title: title
+              _td name.downcase, title: title
             end
           end
         end
@@ -969,7 +971,7 @@ _html do
     if ajax
       _script src: 'jquery-1.7.2.min.js'
 
-      if @action = 'Update'
+      if @action == 'Update'
         _script src: 'jquery.timeago.js'
         _script "$('time').timeago()"
       end
