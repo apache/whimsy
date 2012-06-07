@@ -5,8 +5,6 @@ require './local_paths'
 require 'fileutils'
 require 'ostruct'
 require 'escape'
-require 'action_view'
-include ActionView::Helpers::DateHelper
 
 ENV['LANG'] = 'en_US.UTF-8'
 
