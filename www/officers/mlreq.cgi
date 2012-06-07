@@ -51,7 +51,7 @@ _html do
             _input.name.list name: 'suffix1', required: true, 
               placeholder: 'list', pattern: '^\w+(-\w+)?$'
             _ '@'
-            _input.name.localpart disabled: true, value: 'incubator'
+            _input.name.subdomain disabled: true, value: 'incubator'
             _ '.'
             _input.name name: 'domain', value: 'apache.org', disabled: true
           end
@@ -59,10 +59,10 @@ _html do
           _legend 'ASF Mailing List Request'
 
           _h3_ 'List name'
-          _input.name name: 'subdomain', required: true, pattern: '^\w+$',
+          _input.name name: 'localpart', required: true, pattern: '^\w+$',
             placeholder: 'name'
           _ '@'
-          _input.name name: 'localpart', required: true, pattern: '^\w+$',
+          _input.name name: 'subdomain', required: true, pattern: '^\w+$',
             placeholder: 'pmc'
           _ '.'
           _input.name name: 'domain', value: 'apache.org', disabled: true
@@ -111,20 +111,20 @@ _html do
       # build a queue of requests
       queue = []
 
-      if @subdomain
+      if @localpart
         apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
         lists = File.read(File.join(apmail_bin, '.archives')).
           scan(/^\s+"(\w[-\w]+)", "\/home\/apmail\//).flatten
 
-        if lists.include? "#{@localpart}-private"
-          notifyee = "private@#{@localpart}.apache.org"
+        if lists.include? "#{@subdomain}-private"
+          notifyee = "private@#{@subdomain}.apache.org"
         else
           notifyee = "#{$USER}@.apache.org"
         end
 
         queue << {
-          subdomain: @subdomain,
           localpart: @localpart,
+          subdomain: @subdomain,
           domain: @domain || 'apache.org',
           moderators: mods,
           muopts: @muopts,
@@ -136,8 +136,8 @@ _html do
           suffix = params[suffix].first
           next if suffix.empty?
           queue << {
-            subdomain: "#{@podling}-#{suffix}",
-            localpart: 'incubator',
+            localpart: "#{@podling}-#{suffix}",
+            subdomain: 'incubator',
             domain: @domain || 'apache.org',
             moderators: mods,
             muopts: @muopts,
@@ -151,8 +151,8 @@ _html do
       errors = []
 
       checks = {
-        subdomain: /^\w+(-\w+)*$/,
-        localpart: /^\w+$/,
+        localpart: /^\w+(-\w+)*$/,
+        subdomain: /^\w+$/,
         domain: /^apache[.]org$/,
         muopts: /^(mu|Mu|mU)$/,
         replytolist: /^(true|false)$/,
@@ -176,11 +176,11 @@ _html do
           end
         end
 
-        mlreq = "#{vars[:localpart]}-#{vars[:subdomain]}".gsub(/[^-\w]/,'_')
+        mlreq = "#{vars[:subdomain]}-#{vars[:localpart]}".gsub(/[^-\w]/,'_')
         if File.exist? "#{mlreq.untaint}.txt"
           errors << "Already submitted: " +
-            "#{vars[:subdomain]}@#{vars[:localpart]}.#{vars[:domain]}"
-            # wrong naming; "localpart" is the part to the left of the @ sign.
+            "#{vars[:localpart]}@#{vars[:subdomain]}.#{vars[:domain]}"
+            # wrong naming; "subdomain" is the part to the left of the @ sign.
             # see RFC 2821
         end
       end
@@ -189,7 +189,7 @@ _html do
       if errors.empty?
         _h2_ "Submitted request(s)"
         queue.each do |vars|
-          mlreq = "#{vars[:localpart]}-#{vars[:subdomain]}".gsub(/[^-\w]/,'_')
+          mlreq = "#{vars[:subdomain]}-#{vars[:localpart]}".gsub(/[^-\w]/,'_')
           vars.each {|name,value| vars[name] = Shellwords.shellescape(value)}
           request = vars.map {|name,value| "#{name}=#{value}\n"}.join
           _pre request
@@ -343,30 +343,30 @@ _json do
   end
 
   # confirm if pmc is unknown
-  if @localpart != @confirmed_localpart
-    validated['confirmed_localpart'] = @localpart
-    if not ASF::Committee.list.map(&:name).include? @localpart
-      _confirm "PMC #{@localpart} not found.  Treat as new?"
-      next _focus 'input[name=localpart]'
+  if @subdomain != @confirmed_localpart
+    validated['confirmed_localpart'] = @subdomain
+    if not ASF::Committee.list.map(&:name).include? @subdomain
+      _confirm "PMC #{@subdomain} not found.  Treat as new?"
+      next _focus 'input[name=subdomain]'
     end
   end
 
   # alert if incubator list requested already exists
   params.keys.grep(/^suffix\d+$/).each do |param|
     next if params[param].first.empty?
-    subdomain = "#{@podling}-#{params[param].first}"
-    if lists.any? {|list| list == "incubator-#{subdomain}"}
-      _alert "List #{subdomain}@incubator.apache.org already exists."
+    localpart = "#{@podling}-#{params[param].first}"
+    if lists.any? {|list| list == "incubator-#{localpart}"}
+      _alert "List #{localpart}@incubator.apache.org already exists."
       _focus "input[name=#{param}]"
       break
     end
   end
 
   # alert if non-incubator list requested already exists
-  if @subdomain
-    if lists.any? {|list| list == "#{@localpart}-#{@subdomain}"}
-      _alert "List #{@subdomain}@#{@localpart}.apache.org already exists."
-      _focus "input[name=subdomain]"
+  if @localpart
+    if lists.any? {|list| list == "#{@subdomain}-#{@localpart}"}
+      _alert "List #{@localpart}@#{@subdomain}.apache.org already exists."
+      _focus "input[name=localpart]"
     end
   end
 
