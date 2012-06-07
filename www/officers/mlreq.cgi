@@ -180,8 +180,6 @@ _html do
         if File.exist? "#{mlreq.untaint}.txt"
           errors << "Already submitted: " +
             "#{vars[:localpart]}@#{vars[:subdomain]}.#{vars[:domain]}"
-            # wrong naming; "subdomain" is the part to the left of the @ sign.
-            # see RFC 2821
         end
       end
 
