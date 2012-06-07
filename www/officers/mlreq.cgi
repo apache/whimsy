@@ -48,7 +48,6 @@ _html do
             _input.name.podling disabled: true, value: '<podling>', 
               placeholder: 'podling'
             _ '-'
-            # ### duplicate 'name' attr?
             _input.name.list name: 'suffix1', required: true, 
               placeholder: 'list', pattern: '^\w+(-\w+)?$'
             _ '@'
@@ -113,6 +112,16 @@ _html do
       queue = []
 
       if @subdomain
+        apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
+        lists = File.read(File.join(apmail_bin, '.archives')).
+          scan(/^\s+"(\w[-\w]+)", "\/home\/apmail\//).flatten
+
+        if lists.include? "#{@localpart}-private"
+          notifyee = "private@#{@localpart}.apache.org"
+        else
+          notifyee = "#{$USER}@.apache.org"
+        end
+
         queue << {
           subdomain: @subdomain,
           localpart: @localpart,
@@ -120,9 +129,7 @@ _html do
           moderators: mods,
           muopts: @muopts,
           replytolist: @replyto || "false",
-          # ### Note: assumes private@ list is created first!
-          # ### Some logic (CGI or apmail script) should check or enforce that.
-          notifyee: "private@#{@localpart}.apache.org"
+          notifyee: notifyee
         }
       else
         params.keys.grep(/^suffix\d+/).each do |suffix|
@@ -184,7 +191,7 @@ _html do
         queue.each do |vars|
           mlreq = "#{vars[:localpart]}-#{vars[:subdomain]}".gsub(/[^-\w]/,'_')
           vars.each {|name,value| vars[name] = Shellwords.shellescape(value)}
-          request = vars.map {|name,value| "#{name}=#{value}\n"}.join("")
+          request = vars.map {|name,value| "#{name}=#{value}\n"}.join
           _pre request
           File.open("#{mlreq.untaint}.txt",'w') { |file| file.write request }
           _.system(['svn', 'add', '--', "#{mlreq.untaint}.txt"])
