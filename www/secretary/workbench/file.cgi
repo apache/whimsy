@@ -466,7 +466,7 @@ _html do
       @source.untaint
     end
 
-    unless %w(clr rubys).include? $USER
+    unless %w(clr rubys jcarman sanders mnour).include? $USER
       @action = 'welcome' unless @action == 'view'
     end
 
@@ -850,19 +850,37 @@ _html do
       end
 
     when 'view'
-      @dir.untaint if Dir.chdir(RECEIVED) {Dir['*'].include? @dir.chomp('/')}
-      files = Dir["#{RECEIVED}/#{@dir}/*"].sort
+      files = nil
+      Dir.chdir(RECEIVED) do
+	@dir.untaint if Dir['*'].include? @dir.chomp('/')
+	files = Dir["#{@dir.chomp('/')}/*"].map(&:untaint).sort
 
-      if files.length == 2
-        if files.last == files.first + '.sig'
-          _pre `gpg --verify #{files.last} #{files.first} 2>&1`
-        elsif files.last == files.first + '.asc'
-          _pre `gpg --verify #{files.last} #{files.first} 2>&1`
-        elsif files.last =~ /\/signature.asc$/
-          _pre `gpg --verify #{files.last} #{files.first} 2>&1`
-        elsif files.first =~ /\/signature.asc$/
-          _pre `gpg --verify #{files.first} #{files.last} 2>&1`
-        end
+	if files.length == 2
+	  verify = nil
+
+	  if files.last == files.first + '.sig'
+	    verify = files.reverse
+	  elsif files.last == files.first + '.asc'
+	    verify = files.reverse
+	  elsif files.last =~ /\/signature.asc$/
+	    verify = files.reverse
+	  elsif files.first =~ /\/signature.asc$/
+	    verify = files
+	  end
+
+	  if verify
+	    stderr2out = { class: {stderr: '_stdout'} }
+	    rc = _.system ['gpg', '--verify', *verify], stderr2out
+            if _.target!.include? "gpg: Can't check signature: public key not found"
+              keyid = _.target!.join[/DSA key ID (\w+)/,1]
+              if keyid
+	        _.system ['gpg', '--keyserver', 'pgpkeys.mit.edu',
+		  '--recv-keys', keyid], stderr2out
+	        _.system ['gpg', '--verify', *verify], stderr2out
+              end
+            end
+	  end
+	end
       end
 
       _form.buttons target: 'viewport', action: 'file.cgi', method: 'post' do
@@ -969,7 +987,7 @@ _html do
     if ajax
       _script src: 'jquery-1.7.2.min.js'
 
-      if @action == 'Update'
+      if @action == 'update'
         _script src: 'jquery.timeago.js'
         _script "$('time').timeago()"
       end
