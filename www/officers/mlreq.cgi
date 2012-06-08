@@ -67,8 +67,10 @@ _html do
             placeholder: 'name'
           _ '@'
           _select name: 'subdomain' do
+            pmcs = ASF::Committee.list.map(&:name) - %w(incubator)
             lists.grep(/^\w+-private$/).sort.each do |list|
-              _option list.chomp('-private') unless list == 'incubator-private'
+              list = list.chomp('-private')
+              _option list if pmcs.include? list
             end
           end
           _ '.'
@@ -172,7 +174,8 @@ _html do
             end
           end
 
-          unless lists.include? "#{@subdomain}-private"
+          unless lists.include? "#{@subdomain}-private" and 
+            ASF::Committee.list.map(&:name).include? @subdomain
             errors << "Invalid pmc: #{subdomain}"
           end
         end
