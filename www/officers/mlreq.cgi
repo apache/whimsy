@@ -11,6 +11,10 @@ unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
   exit
 end
 
+apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
+lists = File.read(File.join(apmail_bin, '.archives')).
+  scan(/^\s+"(\w[-\w]+)", "\/home\/apmail\//).flatten
+
 _html do
 
   incubator = (env['PATH_INFO'].to_s.include? 'incubator')
@@ -62,8 +66,11 @@ _html do
           _input.name name: 'localpart', required: true, pattern: '^\w+$',
             placeholder: 'name'
           _ '@'
-          _input.name name: 'subdomain', required: true, pattern: '^\w+$',
-            placeholder: 'pmc'
+          _select name: 'subdomain' do
+            lists.grep(/^\w+-private$/).sort.each do |list|
+              _option list.chomp('-private') unless list == 'incubator-private'
+            end
+          end
           _ '.'
           _input.name name: 'domain', value: 'apache.org', disabled: true
         end
@@ -112,16 +119,6 @@ _html do
       queue = []
 
       if @localpart
-        apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
-        lists = File.read(File.join(apmail_bin, '.archives')).
-          scan(/^\s+"(\w[-\w]+)", "\/home\/apmail\//).flatten
-
-        if lists.include? "#{@subdomain}-private"
-          notifyee = "private@#{@subdomain}.apache.org"
-        else
-          notifyee = "#{$USER}@.apache.org"
-        end
-
         queue << {
           localpart: @localpart,
           subdomain: @subdomain,
@@ -129,7 +126,7 @@ _html do
           moderators: mods,
           muopts: @muopts,
           replytolist: @replyto || "false",
-          notifyee: notifyee
+          notifyee: "private@#{@subdomain}.apache.org"
         }
       else
         params.keys.grep(/^suffix\d+/).each do |suffix|
@@ -173,6 +170,10 @@ _html do
             rescue
               errors << "Invalid email: #{email.inspect}"
             end
+          end
+
+          unless lists.include? "#{@subdomain}-private"
+            errors << "Invalid pmc: #{subdomain}"
           end
         end
 
@@ -324,10 +325,6 @@ _html do
 end
 
 _json do
-  apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
-  lists = File.read(File.join(apmail_bin, '.archives')).
-    scan(/^\s+"(\w[-\w]+)", "\/home\/apmail\//).flatten
-
   validated = {}
   _validated validated
 
