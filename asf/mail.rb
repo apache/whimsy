@@ -29,6 +29,12 @@ module ASF
 
       @list = list
     end
+
+    def self.lists
+      apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
+      @lists ||= File.read(File.join(apmail_bin, '.archives')).
+        scan(/^\s+"(\w[-\w]+)", "\/home\/apmail\//).flatten
+    end
   end
 
   class Person < Base
@@ -56,6 +62,13 @@ module ASF
 
     def all_mail
       active_emails + obsolete_emails
+    end
+  end
+
+  class Committee
+    def mail_list
+      return 'hc' if name == 'httpcomponents'
+      name
     end
   end
 end

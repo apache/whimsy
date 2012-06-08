@@ -11,11 +11,8 @@ unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
   exit
 end
 
-apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
-lists = File.read(File.join(apmail_bin, '.archives')).
-  scan(/^\s+"(\w[-\w]+)", "\/home\/apmail\//).flatten
-
-pmcs = ASF::Committee.list.map(&:name) - %w(httpcomponents) + %w(hc)
+lists = ASF::Mail.lists
+pmcs = ASF::Committee.list.map(&:mail_list)
 pmcs.delete_if {|pmc| not lists.include? "#{pmc}-private"}
 
 _html do
