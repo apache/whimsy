@@ -65,12 +65,14 @@ _html do
       error ||= 'Invalid build type' unless BUILD_TYPES.include? @build_type
 
       unless ASF::Mail.lists.include? "#{@pmc}-#{@list}"
-        error ||= "Mail list doesn't exist"
+        error ||= "Mail list #{@list}@#{@pmc}.apache.org doesn't exist"
       end
 
       begin
         @source += '/' unless @source.end_with? '/'
-        if http_get(URI.parse(@source.untaint) + 'trunk/content/').code != '200'
+        if not @source.start_with? 'https://svn.apache.org/'
+          error ||= "source URL must be from ASF SVN"
+        elsif http_get(URI.parse(@source) + 'trunk/content/').code != '200'
           error ||= "content directory not found in source URL"
         end
       rescue Exception => exception
@@ -90,6 +92,7 @@ end
 require 'net/http'
 def http_get(uri)
   uri = URI.parse(uri) if String === uri
+  uri.host.untaint if uri.host =~ /^\w+[.]apache[.]org$/
   Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme=='https') do |http|
     http.request Net::HTTP::Get.new uri.request_uri
   end
