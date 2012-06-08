@@ -15,6 +15,9 @@ apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
 lists = File.read(File.join(apmail_bin, '.archives')).
   scan(/^\s+"(\w[-\w]+)", "\/home\/apmail\//).flatten
 
+pmcs = ASF::Committee.list.map(&:name) - %w(httpcomponents) + %w(hc)
+pmcs.delete_if {|pmc| not lists.include? "#{pmc}-private"}
+
 _html do
 
   incubator = (env['PATH_INFO'].to_s.include? 'incubator')
@@ -67,10 +70,8 @@ _html do
             placeholder: 'name'
           _ '@'
           _select name: 'subdomain' do
-            pmcs = ASF::Committee.list.map(&:name) - %w(incubator)
-            lists.grep(/^\w+-private$/).sort.each do |list|
-              list = list.chomp('-private')
-              _option list if pmcs.include? list
+            pmcs.sort.each do |pmc|
+              _option pmc unless pmc == 'incubator'
             end
           end
           _ '.'
@@ -174,8 +175,7 @@ _html do
             end
           end
 
-          unless lists.include? "#{@subdomain}-private" and 
-            ASF::Committee.list.map(&:name).include? @subdomain
+          unless pmcs.include? @subdomain
             errors << "Invalid pmc: #{subdomain}"
           end
         end
