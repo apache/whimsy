@@ -858,21 +858,19 @@ _html do
 	if files.length == 2
 	  verify = nil
 
-	  if files.last == files.first + '.sig'
+	  if files.first.end_with? '.sig' or files.first.end_with? '.asc'
+	    unless files.last.end_with? '.sig' or files.last.end_with? '.asc'
+	      verify = files
+            end
+	  elsif files.last.end_with? '.sig' or files.last.end_with? '.asc'
 	    verify = files.reverse
-	  elsif files.last == files.first + '.asc'
-	    verify = files.reverse
-	  elsif files.last =~ /\/signature.asc$/
-	    verify = files.reverse
-	  elsif files.first =~ /\/signature.asc$/
-	    verify = files
 	  end
 
 	  if verify
 	    stderr2out = { class: {stderr: '_stdout'} }
 	    rc = _.system ['gpg', '--verify', *verify], stderr2out
             if _.target!.include? "gpg: Can't check signature: public key not found"
-              keyid = _.target!.join[/DSA key ID (\w+)/,1]
+              keyid = _.target!.join[/[RD]SA key ID (\w+)/,1]
               if keyid
 	        _.system ['gpg', '--keyserver', 'pgpkeys.mit.edu',
 		  '--recv-keys', keyid], stderr2out
