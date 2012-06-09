@@ -12,6 +12,9 @@ end
 
 BUILD_TYPES = %w(standard maven ant forrest shell)
 pmcs = ASF::Committee.list.map(&:mail_list)
+export = 
+  'https://svn.apache.org/repos/infra/websites/cms/webgui/content/export.json'
+PROJ_PAT = '[a-z0-9_.-]+'
 
 _html do
 
@@ -39,7 +42,7 @@ _html do
 
         _h3_ 'Project Name'
         _input type: 'text', name: 'project', required: true, value: @project,
-          pattern: '^\w[-\w]+$'
+          pattern: "^#{PROJ_PAT}$"
 
         _h3_ 'Commits list'
         _input type: 'text', name: 'list', value: @list || 'commits'
@@ -64,11 +67,20 @@ _html do
 
     if _.post?
       error = nil
-      error ||= 'Invalid project name'  unless @project =~ /^\w[-\w]+$/
+      error ||= 'Invalid project name'  unless @project =~ /^#{PROJ_PAT}$/
       error ||= 'Invalid build type' unless BUILD_TYPES.include? @build_type
 
       unless ASF::Mail.lists.include? "#{@pmc}-#{@list}"
         error ||= "Mail list #{@list}@#{@pmc}.apache.org doesn't exist"
+      end
+
+      websites = JSON.load(http_get(export).body)
+      if websites.values.include? @source
+        error = "#{@source} is already using the CMS"
+      elsif websites.keys.include? @project
+        if @source.include? 'incubator' or not websites[@project].include? 'incubator' 
+          error = "Project name #{@project} is already in use by #{websites[@project]}"
+        end
       end
 
       begin
@@ -112,16 +124,24 @@ _html do
 
     _script_ "commits = #{JSON.pretty_generate(commits)}"
 
-    pattern = %r{https://svn.apache.org/repos/asf/(\w+)/?(\w+)?(/|$)}
+    SRC_PAT = 
+      %r{https://svn.apache.org/repos/asf/(#{PROJ_PAT})/?(#{PROJ_PAT})?/.}
+
     _script %{
       // when source changes, set project and list
       $('input[name=source]').change(function() {
-        var match = #{pattern.inspect}.exec($(this).val());
+        var match = #{SRC_PAT.inspect}.exec($(this).val());
         if (match) {
           $('select[name=pmc]').val(match[1]);
           if (commits[match[1]]) $('input[name=list]').val(commits[match[1]]);
           if (match[2]) {
-            $('input[name=project]').val(match[1]+'-'+match[2]);
+            if (match[1] == 'incubator') {
+              $('input[name=project]').val(match[2]);
+            } else if (match[2] == 'site') {
+              $('input[name=project]').val(match[1]);
+            } else {
+              $('input[name=project]').val(match[1]+'-'+match[2]);
+            }
             var list = commits[match[1]+'-'+match[2]];
             if (list) $('input[name=list]').val(match[2]+'-'+list);
           } else {
