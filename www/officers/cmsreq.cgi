@@ -16,11 +16,13 @@ _html do
 
   _head_ do
     _title 'ASF CMS Request'
+    _script src: '/jquery-min.js'
     _style %{
       textarea, .mod, label {display: block}
-      input[type=submit] {display: block; margin-top: 1em}
+      input, select[name=build_type] {margin-left: 2em}
+      input[type=submit] {display: block; margin: 1em 0 0 0}
       legend {background: #141; color: #DFD; padding: 0.4em}
-      input[type=text] {width: 6em}
+      input[type=text] {width: 9em}
       input[type=url] {width: 30em}
     }
   end
@@ -30,13 +32,13 @@ _html do
       _fieldset do
         _legend 'ASF CMS Request'
 
-        _h3_ 'Project Name'
-        _input type: 'text', name: 'cms', required: true, pattern: '^\w+$',
-          value: @cms
-
         _h3_ 'Source URL'
         _input type: 'url', name: 'source', required: true,
           value: @source || 'https://svn.apache.org/repos/asf/'
+
+        _h3_ 'Project Name'
+        _input type: 'text', name: 'project', required: true, value: @project,
+          pattern: '^\w[-\w]+$'
 
         _h3_ 'Commits list'
         _input type: 'text', name: 'list', value: @list || 'commits'
@@ -61,7 +63,7 @@ _html do
 
     if _.post?
       error = nil
-      error ||= 'Invalid CMS name'  unless @cms =~ /^\w+$/
+      error ||= 'Invalid project name'  unless @project =~ /^\w[-\w]+$/
       error ||= 'Invalid build type' unless BUILD_TYPES.include? @build_type
 
       unless ASF::Mail.lists.include? "#{@pmc}-#{@list}"
@@ -75,6 +77,8 @@ _html do
           error ||= "source URL must be from ASF SVN"
         elsif http_get(URI.parse(@source) + 'trunk/content/').code != '200'
           error ||= "trunk/content directory not found in source URL"
+        elsif @pmc=='incubator' and not @source.include? @project.gsub('-','/')
+          error ||= "#{@project.gsub('-','/')} not found in source URL"
         end
       rescue Exception => exception
         error = "Exception processing URL: #{exception}"
@@ -84,9 +88,53 @@ _html do
         _h2_ 'Error'
         _p error
       else
-        _h2_ 'Request would be accepted if this application were complete'
+        _h2_ 'Request that would be submitted if this application were complete'
+        vars = {
+          source: @source,
+          project: @project,
+          list: "#{@list}@#{@pmc}.apache.org",
+          build: @build_type
+        }
+        vars.each {|name,value| vars[name] = Shellwords.shellescape(value)}
+        request = vars.map {|name,value| "#{name}=#{value}\n"}.join
+        _pre request
       end
     end
+
+    # guess where commit emails should go
+    commits = {}
+    %w(dev commits).each do |suffix|
+      ASF::Mail.lists.grep(/-#{suffix}$/).sort.each do |list|
+        commits[list.chomp("-#{suffix}")] = suffix
+      end
+    end
+
+    _script_ "commits = #{JSON.pretty_generate(commits)}"
+
+    pattern = %r{https://svn.apache.org/repos/asf/(\w+)/?(\w+)?(/|$)}
+    _script %{
+      // when source changes, set project and list
+      $('input[name=source]').change(function() {
+        var match = #{pattern.inspect}.exec($(this).val());
+        if (match) {
+          $('select[name=pmc]').val(match[1]);
+          if (commits[match[1]]) $('input[name=list]').val(commits[match[1]]);
+          if (match[2]) {
+            $('input[name=project]').val(match[1]+'-'+match[2]);
+            var list = commits[match[1]+'-'+match[2]];
+            if (list) $('input[name=list]').val(match[2]+'-'+list);
+          } else {
+            $('input[name=project]').val(match[1]);
+          }
+        }
+      });
+
+      // place cursor at end of source url
+      $('input[name=source]').focus(function() {
+        var value = $(this).val();
+        this.setSelectionRange(value.length, value.length);
+      }).focus();
+    }
   end
 end
 
