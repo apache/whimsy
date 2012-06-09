@@ -30,7 +30,7 @@ _html do
       _fieldset do
         _legend 'ASF CMS Request'
 
-        _h3_ 'CMS Name'
+        _h3_ 'Project Name'
         _input type: 'text', name: 'cms', required: true, pattern: '^\w+$',
           value: @cms
 
@@ -70,10 +70,11 @@ _html do
 
       begin
         @source += '/' unless @source.end_with? '/'
+        @source.chomp! 'trunk/'
         if not @source.start_with? 'https://svn.apache.org/'
           error ||= "source URL must be from ASF SVN"
         elsif http_get(URI.parse(@source) + 'trunk/content/').code != '200'
-          error ||= "content directory not found in source URL"
+          error ||= "trunk/content directory not found in source URL"
         end
       rescue Exception => exception
         error = "Exception processing URL: #{exception}"
