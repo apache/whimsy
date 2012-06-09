@@ -51,18 +51,21 @@ _html do
     _table_ do
       _thead_ do
         _tr do
-          _th 'Date'
+          _th 'Sponsorship Date'
+          _th 'Renewal Date'
           _th 'Sponsor'
           _th 'Level'
+          _th 'Status'
         end
       end
 
       _tbody do
         sponsors.compact.each do |file, data|
           _tr_ do
-            date = data['date'].to_s.sub(/(\d\d\d\d)(\d\d)(\d\d)/, '\1-\2-\3')
+            _td data['sponsorship-start']
+            date = data['sponsorship-renewal']
             parsed = Date.parse(date) rescue Date.new
-            if parsed >= Date.today-366 and parsed <= Date.today-305
+            if parsed < Date.today + 62
               _td.remind date
              else
               _td date
@@ -74,6 +77,7 @@ _html do
             end
 
             _td data['level']
+            _td data['status']
           end
         end
       end
