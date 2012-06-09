@@ -1,6 +1,7 @@
 #!/usr/bin/ruby1.9.1
 require 'wunderbar'
 require '/var/tools/asf'
+require 'shellwords'
 
 user = ASF::Person.new($USER)
 unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
