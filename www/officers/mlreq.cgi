@@ -196,7 +196,9 @@ _html do
           _.system(['svn', 'add', '--', "#{mlreq.untaint}.txt"])
         end
 
-        @message='Mailing list request form' if not @message or @message.empty?
+        @message =
+          "#{vars[:localpart]}@#{vars[:subdomain]} request by #{$USER}:\n" .
+	  @message
         _.system [
 	  'svn', 'commit', '-m', @message, '--no-auth-cache',
 	  '--non-interactive',
