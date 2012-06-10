@@ -29,11 +29,13 @@ _html do
     _style %{
       textarea, .mod, label {display: block}
       input[type=submit] {display: block; margin-top: 1em}
+      .subdomain, .domain {color: #000}
       legend {background: #141; color: #DFD; padding: 0.4em}
       .name {width: 6em}
       ._stdin {color: #C000C0; margin-top: 1em}
       ._stdout {color: #000}
-      ._stderr {color: #F00}
+      .error, ._stderr {color: #F00}
+      .request {background-color: #BDF}
     }
   end
 
@@ -49,15 +51,14 @@ _html do
 
           _h3_ 'List name'
           _div.list do
-            _input.name.podling disabled: true, value: '<podling>', 
-              placeholder: 'podling'
+            _input.name.podling disabled: true, placeholder: '<podling>'
             _ '-'
             _input.name.list name: 'suffix1', required: true, 
               placeholder: 'list', pattern: '^\w+(-\w+)?$'
             _ '@'
-            _input.name.subdomain disabled: true, value: 'incubator'
+            _input.name.subdomain value: 'incubator', disabled: true
             _ '.'
-            _input.name name: 'domain', value: 'apache.org', disabled: true
+            _input.name.domain value: 'apache.org', disabled: true
           end
         else
           _legend 'ASF Mailing List Request'
@@ -72,7 +73,7 @@ _html do
             end
           end
           _ '.'
-          _input.name name: 'domain', value: 'apache.org', disabled: true
+          _input.name.domain value: 'apache.org', disabled: true
         end
 
         _h3_ 'Replies'
@@ -99,7 +100,7 @@ _html do
         _h3_ 'Moderators'
         _textarea.mods! name: 'mods'
 
-        _h3_ 'Commit message'
+        _h3_ 'Notes'
         _textarea name: 'message', cols: 70
 
         _input type: 'submit', value: 'Submit Request'
@@ -161,24 +162,24 @@ _html do
           if vars[name] !~ pattern
             errors << "Invalid #{name}: #{vars[name].inspect}"
           end
+        end
 
-          vars[:moderators].split(',').each do |email|
-            begin
-              if email != Mail::Address.new(email).address
-                errors << "Invalid email: #{email.inspect}"
-              end
-            rescue
+        vars[:moderators].split(',').each do |email|
+          begin
+            if email != Mail::Address.new(email).address
               errors << "Invalid email: #{email.inspect}"
             end
-          end
-
-          unless pmcs.include? @subdomain
-            errors << "Invalid pmc: #{@subdomain}"
+          rescue
+            errors << "Invalid email: #{email.inspect}"
           end
         end
 
+        unless pmcs.include? vars[:subdomain]
+          errors << "Invalid pmc: #{vars[:subdomain]}"
+        end
+
         mlreq = "#{vars[:subdomain]}-#{vars[:localpart]}".gsub(/[^-\w]/,'_')
-        if File.exist? "#{mlreq.untaint}.txt"
+        if File.exist? "#{mlreq.untaint}.json"
           errors << "Already submitted: " +
             "#{vars[:localpart]}@#{vars[:subdomain]}.#{vars[:domain]}"
         end
@@ -189,24 +190,30 @@ _html do
         _h2_ "Submitted request(s)"
         queue.each do |vars|
           mlreq = "#{vars[:subdomain]}-#{vars[:localpart]}".gsub(/[^-\w]/,'_')
-          vars.each {|name,value| vars[name] = Shellwords.shellescape(value)}
-          request = vars.map {|name,value| "#{name}=#{value}\n"}.join
-          _pre request
-          File.open("#{mlreq.untaint}.txt",'w') { |file| file.write request }
-          _.system(['svn', 'add', '--', "#{mlreq.untaint}.txt"])
+          vars[:message] = @message unless @message.empty?
+          request = JSON.pretty_generate(vars)
+          _pre.request request
+          vars[:mlreq] = "#{mlreq.untaint}.json"
+          File.open(vars[:mlreq],'w') { |file| file.write request }
+          _.system(['svn', 'add', '--', vars[:mlreq]])
         end
 
-        @message =
-          "#{vars[:localpart]}@#{vars[:subdomain]} request by #{$USER}:\n" .
-	  @message
+        if queue.length == 1
+          vars = queue.first
+          request = "#{vars[:subdomain]}-#{vars[:localpart]}@apache.org"
+        else
+          request = "#{@podling}-*@apache.org"
+        end
+
         _.system [
-	  'svn', 'commit', '-m', @message, '--no-auth-cache',
-	  '--non-interactive',
+	  'svn', 'commit', '--no-auth-cache', '--non-interactive',
+          '-m', "#{request} mailing list request by #{$USER} via " + 
+            env['SERVER_ADDR'],
 	  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
-	  '--', "#{mlreq.untaint}.txt",
+          '--', *queue.map {|vars| vars[:mlreq]}
         ]
       else
-        _h2_ 'Form not submitted due to errors'
+        _h2_.error 'Form not submitted due to errors'
         _ul do
           errors.each { |error| _li error }
         end
