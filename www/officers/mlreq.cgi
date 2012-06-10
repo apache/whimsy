@@ -173,7 +173,7 @@ _html do
           end
 
           unless pmcs.include? @subdomain
-            errors << "Invalid pmc: #{subdomain}"
+            errors << "Invalid pmc: #{@subdomain}"
           end
         end
 
