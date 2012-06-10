@@ -200,7 +200,8 @@ _html do
         _.system [
 	  'svn', 'commit', '-m', @message, '--no-auth-cache',
 	  '--non-interactive',
-	  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+	  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
+	  '--', "#{mlreq.untaint}.txt",
         ]
       else
         _h2_ 'Form not submitted due to errors'
