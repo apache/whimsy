@@ -11,19 +11,24 @@ unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
   exit
 end
 
-path = ENV['PATH_INFO']
-if path == '/'
+level= nil
+case ENV['PATH_INFO']
+when '/'
   show = "ALL"
   title = "All Sponsors"
-elsif path == "/overdue"
+when "/overdue"
   show = "OVERDUE"
   title = "Overdue Sponsors"
-elsif path == "/active"
+when "/active"
   show = "ACTIVE"
   title = "Active Sponsors"
+when "/unclear"
+  show = "UNCLEAR"
+  title = "Sponsors of Unknown Status"
 else
   show = "ALL"
-  title = "All Sponsors"
+  level = ENV['PATH_INFO'][1,100]
+  title = "All Sponsors: #{level}"
 end
 
 _html do
@@ -63,12 +68,26 @@ _html do
 
     _p do
       _a "all", href: "all"
-      _span "|"
+      _ "|"
       _a "overdue", href: "overdue"
-      _span "|"
+      _ "|"
       _a "active", href: "active"
+      _ "|"
+      _a "unclear", href: "unclear"
     end
 
+    _p do
+      _a "platinum", href: "platinum"
+      _ "|"
+      _a "gold", href: "gold"
+      _ "|"
+      _a "silver", href: "silver"
+      _ "|"
+      _a "bronze", href: "bronze"
+      _ "|"
+      _a "service", href: "service"
+    end
+ 
     _table_ do
       _thead_ do
         _tr do
@@ -80,20 +99,32 @@ _html do
         end
       end
 
+      count = 0
       _tbody do
         sponsors.compact.each do |file, data|
           next if show == "ACTIVE" and data['status'] != 'active'
 
-          date = data['sponsorship-renewal']
-          isoverdue = date and Date.parse(date) < Date.today + 62
+          startdate = data['sponsorship-start']
+          if startdate
+            startdate = Date.parse(startdate)
+            enddate = startdate.next_year
+            isoverdue = enddate < (Date.today + 62)
+          else
+            enddate = nil
+            isoverdue = false
+          end
+
           next if show == "OVERDUE" and not isoverdue
- 
+
+          next if show == "UNCLEAR" and (data['sponsorship-start']!=nil and data['status']!=nil)
+
+          next if not level.nil? and level != data['level']
           _tr_ do
-            _td data['sponsorship-start']
+            _td startdate
             if isoverdue
-              _td.remind date
+              _td.remind enddate
              else
-              _td date
+              _td enddate
              end
 
             _td! do
@@ -103,7 +134,11 @@ _html do
 
             _td data['level']
             _td data['status']
+            count=count+1
           end
+        end
+        if count == 0
+          _td "No sponsors found"
         end
       end
     end
