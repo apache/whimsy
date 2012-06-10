@@ -86,6 +86,8 @@ _html do
       _a "bronze", href: "bronze"
       _ "|"
       _a "service", href: "service"
+      _ "|"
+      _a "event", href: "event"
     end
  
     _table_ do
