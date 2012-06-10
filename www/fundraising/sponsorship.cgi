@@ -11,9 +11,24 @@ unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
   exit
 end
 
+path = ENV['PATH_INFO']
+if path == '/'
+  show = "ALL"
+  title = "All Sponsors"
+elsif path == "/overdue"
+  show = "OVERDUE"
+  title = "Overdue Sponsors"
+elsif path == "/active"
+  show = "ACTIVE"
+  title = "Active Sponsors"
+else
+  show = "ALL"
+  title = "All Sponsors"
+end
+
 _html do
   _head_ do
-    _title 'Fundraising Sponsors'
+    _title title
     _style %{
       th {border-bottom: solid black}
       table {border-spacing: 1em 0.2em }
@@ -27,15 +42,13 @@ _html do
     _script src: '/jquery.min.js'
     _script src: '/jquery.tablesorter.js'
   end
-
   _body? do
     # common banner
     _a href: 'https://id.apache.org/' do
       _img alt: "Logo", src: "https://id.apache.org/img/asf_logo_wide.png"
     end
 
-    _h1_ 'Fundraising Sponsors'
-
+    _h1_ title
     # parse sponsorship records
     sponsorship = 'private/foundation/Fundraising/sponsorship'
     sponsors = Dir["#{ASF::SVN[sponsorship]}/*.txt"].map do |name| 
@@ -46,6 +59,14 @@ _html do
       next if String === data
       data['date'] ||= data['invoice date']  # make uniform
       [File.basename(name), data]
+    end
+
+    _p do
+      _a "all", href: "all"
+      _span "|"
+      _a "overdue", href: "overdue"
+      _span "|"
+      _a "active", href: "active"
     end
 
     _table_ do
@@ -61,11 +82,15 @@ _html do
 
       _tbody do
         sponsors.compact.each do |file, data|
+          next if show == "ACTIVE" and data['status'] != 'active'
+
+          date = data['sponsorship-renewal']
+          isoverdue = date and Date.parse(date) < Date.today + 62
+          next if show == "OVERDUE" and not isoverdue
+ 
           _tr_ do
             _td data['sponsorship-start']
-            date = data['sponsorship-renewal']
-            parsed = Date.parse(date) rescue Date.new
-            if parsed < Date.today + 62
+            if isoverdue
               _td.remind date
              else
               _td date
