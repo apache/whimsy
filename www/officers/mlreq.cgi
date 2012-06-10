@@ -191,7 +191,7 @@ _html do
         queue.each do |vars|
           mlreq = "#{vars[:subdomain]}-#{vars[:localpart]}".gsub(/[^-\w]/,'_')
           vars[:message] = @message unless @message.empty?
-          request = JSON.pretty_generate(vars)
+          request = JSON.pretty_generate(vars) + "\n"
           _pre.request request
           vars[:mlreq] = "#{mlreq.untaint}.json"
           File.open(vars[:mlreq],'w') { |file| file.write request }
