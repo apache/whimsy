@@ -56,8 +56,7 @@ _html do
     _h1_ title
     # parse sponsorship records
     sponsorship = 'private/foundation/Fundraising/sponsorship'
-    sponsors = Dir["#{ASF::SVN[sponsorship]}/*.txt"].map do |name| 
-      next if name =~ /payments.*\.txt/
+    sponsors = Dir["#{ASF::SVN[sponsorship]}/*.yml"].map do |name| 
       file = File.read(name.untaint)
       file.gsub! /:\s*\?\s*\n/, ": '?'\n"    # make parseable
       data = YAML.load(file)
