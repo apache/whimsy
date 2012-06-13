@@ -169,6 +169,9 @@ _html do
             if email != Mail::Address.new(email).address
               errors << "Invalid email: #{email.inspect}"
             end
+            if email =~ /@apache\.org$/ and not ASF::Person.find_by_email(email)
+              errors << "Account does not exist: #{email.inspect}"
+            end
           rescue
             errors << "Invalid email: #{email.inspect}"
           end
