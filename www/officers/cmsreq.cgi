@@ -66,6 +66,7 @@ _html do
     end
 
     if _.post?
+      # https://svn.apache.org/repos/infra/infrastructure/trunk/docs/services/cms.txt
       error = nil
       error ||= 'Invalid project name'  unless @project =~ /^#{PROJ_PAT}$/
       error ||= 'Invalid build type' unless BUILD_TYPES.include? @build_type
@@ -90,8 +91,23 @@ _html do
           error ||= "source URL must be from ASF SVN"
         elsif http_get(URI.parse(@source) + 'trunk/content/').code != '200'
           error ||= "trunk/content directory not found in source URL"
-        elsif @pmc=='incubator' and not @source.include? @project.gsub('-','/')
-          error ||= "#{@project.gsub('-','/')} not found in source URL"
+        elsif @pmc=='incubator' 
+          if not @source.include? @project.gsub('-','/')
+            error ||= "#{@project.gsub('-','/')} not found in source URL"
+          elsif @build_type != 'standard'
+            error ||= "Incubator podlings must use the standard build system"
+          end
+        end
+
+        required = []
+        required << 'trunk/lib/view.pm' if @build_type == 'standard'
+        required << 'trunk/build.xml' if @build_type == 'ant'
+        required << 'trunk/build_cms.sh' if @build_type == 'shell'
+        required << 'trunk/pom.xml' if @build_type == 'maven'
+        required << 'pom.xml' if @build_type == 'maven'
+
+        if not required.any? {|file| http_get("#{@source}#{file}").code=='200'}
+          error = "Missing #{@source}#{required.first}"
         end
       rescue Exception => exception
         error = "Exception processing URL: #{exception}"
