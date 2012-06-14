@@ -156,17 +156,16 @@ _html do
       checks = {
         basename: RegExp.new(MLID_PAT),
         subdomain: RegExp.new(MLID_PAT),
+        stem: (RegExp.new(MLID_PAT) if queue.first.include? :stem)
         domain: /^apache[.]org$/,
         muopts: /^(mu|Mu|mU)$/,
         replytolist: /^(true|false)$/,
         notifyee: /^\w+[@]\w+[.]apache[.]org$/
       }
 
-      checks[:stem] = RegExp.new(MLID_PAT) if queue.first.include? :stem
-
       queue.each do |vars|
         checks.each do |name, pattern|
-          if vars[name] !~ pattern
+          if pattern and vars[name] !~ pattern
             errors << "Invalid #{name}: #{vars[name].inspect}"
           end
         end
