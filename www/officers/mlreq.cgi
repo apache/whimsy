@@ -15,6 +15,8 @@ lists = ASF::Mail.lists
 pmcs = ASF::Committee.list.map(&:mail_list)
 pmcs.delete_if {|pmc| not lists.include? "#{pmc}-private"}
 
+MLID_PAT = '^[a-z0-9]+(-[a-z0-9]+)?$'
+
 _html do
 
   incubator = (env['PATH_INFO'].to_s.include? 'incubator')
@@ -46,7 +48,7 @@ _html do
           _legend 'ASF Incubator Mailing List Request'
 
           _h3_ 'Podling name'
-          _input.name name: 'podling', required: true, pattern: '^\w+$',
+          _input.name name: 'podling', required: true, pattern: MLID_PAT,
             placeholder: 'name'
 
           _h3_ 'List name'
@@ -54,7 +56,7 @@ _html do
             _input.name.podling disabled: true, placeholder: '<podling>'
             _ '-'
             _input.name.list name: 'suffix1', required: true, 
-              placeholder: 'list', pattern: '^\w+(-\w+)?$'
+              placeholder: 'list', pattern: MLID_PAT
             _ '@'
             _input.name.subdomain value: 'incubator', disabled: true
             _ '.'
@@ -64,7 +66,7 @@ _html do
           _legend 'ASF Mailing List Request'
 
           _h3_ 'List name'
-          _input.name name: 'localpart', required: true, pattern: '^\w+$',
+          _input.name name: 'localpart', required: true, pattern: MLID_PAT,
             placeholder: 'name'
           _ '@'
           _select name: 'subdomain' do
@@ -121,7 +123,8 @@ _html do
 
       if @localpart
         queue << {
-          localpart: @localpart,
+          type: 'toplevel',
+          basename: @localpart,
           subdomain: @subdomain,
           domain: @domain || 'apache.org',
           moderators: mods,
@@ -134,7 +137,9 @@ _html do
           suffix = params[suffix].first
           next if suffix.empty?
           queue << {
-            localpart: "#{@podling}-#{suffix}",
+            type: 'subproject',
+            stem: @podling,
+            basename: suffix,
             subdomain: 'incubator',
             domain: @domain || 'apache.org',
             moderators: mods,
@@ -149,13 +154,15 @@ _html do
       errors = []
 
       checks = {
-        localpart: /^\w+(-\w+)*$/,
-        subdomain: /^\w+$/,
+        basename: RegExp.new(MLID_PAT),
+        subdomain: RegExp.new(MLID_PAT),
         domain: /^apache[.]org$/,
         muopts: /^(mu|Mu|mU)$/,
         replytolist: /^(true|false)$/,
         notifyee: /^\w+[@]\w+[.]apache[.]org$/
       }
+
+      checks[:stem] = RegExp.new(MLID_PAT) if queue.first.include? :stem
 
       queue.each do |vars|
         checks.each do |name, pattern|
