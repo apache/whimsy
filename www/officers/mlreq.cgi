@@ -351,8 +351,20 @@ _json do
   if @podling != @confirmed_podling
     validated['confirmed_podling'] = @podling
     if not lists.any? {|list| list.start_with? "incubator-#{@podling}-"}
-      _confirm "Podling #{@podling} not found.  Treat as new?"
-      next _focus 'input[name=podling]'
+
+      # extract the names of podlings (and aliases) from podlings.xml
+      require 'nokogiri'
+      incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
+      current = Nokogiri::XML(File.read("#{incubator_content}/podlings.xml")).
+        search('podling[status=current]')
+      podlings = current.map {|podling| podling['resource']}
+      podlings += current.map {|podling| podling['resourceAliases']}.compact.
+        map {|names| names.split(/[, ]+/)}.flatten
+
+      if not podlings.include? @podling
+        _confirm "Podling #{@podling} not found.  Treat as new?"
+        next _focus 'input[name=podling]'
+      end
     end
   end
 
