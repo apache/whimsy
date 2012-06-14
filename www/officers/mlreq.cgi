@@ -129,7 +129,7 @@ _html do
           domain: @domain || 'apache.org',
           moderators: mods,
           muopts: @muopts,
-          replytolist: @replyto || "false",
+          replytolist: (@replyto == "true"),
           notifyee: "private@#{@subdomain}.apache.org"
         }
       else
@@ -144,7 +144,7 @@ _html do
             domain: @domain || 'apache.org',
             moderators: mods,
             muopts: @muopts,
-            replytolist: @replyto || "false",
+            replytolist: (@replyto == "true"),
             notifyee: "private@incubator.apache.org"
           }
         end
@@ -159,7 +159,6 @@ _html do
         stem: (RegExp.new(MLID_PAT) if queue.first.include? :stem)
         domain: /^apache[.]org$/,
         muopts: /^(mu|Mu|mU)$/,
-        replytolist: /^(true|false)$/,
         notifyee: /^\w+[@]\w+[.]apache[.]org$/
       }
 
