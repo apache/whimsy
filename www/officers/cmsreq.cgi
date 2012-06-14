@@ -61,11 +61,16 @@ _html do
           end
         end
 
+        _h3_ 'Notes'
+        _textarea name: 'message', cols: 70
+
         _input_ type: 'submit', value: 'Submit Request'
       end
     end
 
     if _.post?
+      Dir.chdir '/var/tools/infra/cmsreq'
+
       # https://svn.apache.org/repos/infra/infrastructure/trunk/docs/services/cms.txt
       error = nil
       error ||= 'Invalid project name'  unless @project =~ /^#{PROJ_PAT}$/
@@ -113,20 +118,38 @@ _html do
         error = "Exception processing URL: #{exception}"
       end
 
+      cmsreq = "#{@project.untaint}.json"
+      if File.exist? cmsreq
+        errors << "Already submitted: #{@project}"
+      end
+
       if error
         _h2_ 'Error'
         _p error
       else
-        _h2_ 'Request that would be submitted if this application were complete'
+        _h2_ "Submitted request"
+
+        # format request
         vars = {
           source: @source,
           project: @project,
           list: "#{@list}@#{@pmc}.apache.org",
           build: @build_type
         }
-        vars.each {|name,value| vars[name] = Shellwords.shellescape(value)}
-        request = vars.map {|name,value| "#{name}=#{value}\n"}.join
+        vars[:message] = @message unless @message.empty?
+        request = json.pretty_generate(vars) + "\n"
         _pre request
+
+        # commit it
+        File.open(cmsreq, 'w') { |file| file.write request }
+        _.system(['svn', 'add', '--', cmsreq])
+        _.system [
+	  'svn', 'commit', ['--no-auth-cache', '--non-interactive'],
+          '-m', "#{@project} CMS list request by #{$USER} via " + 
+            env['SERVER_ADDR'],
+	  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
+          '--', cmsreq}
+        ]
       end
     end
 
