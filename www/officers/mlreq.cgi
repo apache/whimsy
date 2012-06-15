@@ -82,6 +82,12 @@ _html do
           _input.name.domain value: 'apache.org', disabled: true
           _p "Check box if list archives are to be private."
         end
+        _p do
+          _ "Lists named "
+          _code 'private'
+          _ "will always have private archives,"
+          _ "whether or not the box is checked."
+        end
 
         _h3_ 'Replies'
         _label do
@@ -91,7 +97,7 @@ _html do
         _p! do
           _ "If checked, replies will go to the same list.  "
           _ "Except for lists named "
-          _code 'commit'
+          _code 'commits'
           _ ", which will direct replies to the corresponding "
           _code 'dev'
           _ " list."
