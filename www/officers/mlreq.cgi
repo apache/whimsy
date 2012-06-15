@@ -31,6 +31,7 @@ _html do
     _style %{
       textarea, .mod, label {display: block}
       input[type=submit] {display: block; margin-top: 1em}
+      input[name=podling], input[type=checkbox], input[type=radio], p, .mod, textarea {margin-left: 2em}
       .subdomain, .domain {color: #000}
       legend {background: #141; color: #DFD; padding: 0.4em}
       .name {width: 6em}
@@ -53,6 +54,7 @@ _html do
 
           _h3_ 'List name'
           _div.list do
+            _input type: 'checkbox', name: 'private1', value: 'true'
             _input.name.podling disabled: true, placeholder: '<podling>'
             _ '-'
             _input.name.list name: 'suffix1', required: true, 
@@ -62,10 +64,12 @@ _html do
             _ '.'
             _input.name.domain value: 'apache.org', disabled: true
           end
+          _p "Check box next to lists which are to have private archives."
         else
           _legend 'ASF Mailing List Request'
 
           _h3_ 'List name'
+          _input type: 'checkbox', name: 'private', value: 'true'
           _input.name name: 'localpart', required: true, pattern: MLID_PAT,
             placeholder: 'name'
           _ '@'
@@ -76,18 +80,27 @@ _html do
           end
           _ '.'
           _input.name.domain value: 'apache.org', disabled: true
+          _p "Check box if list archives are to be private."
         end
 
         _h3_ 'Replies'
-        _label title: 'if set, will replies will go to the same list. ' +
-          'Except for commits, which will direct replies to the dev list.' do
-          _input type: 'checkbox', name: 'replyto', value: 'true'
+        _label do
+          _input type: 'checkbox', name: 'replyto', value: 'true', checked: true
           _ 'Set Reply-To list header?'
+        end
+        _p! do
+          _ "If checked, replies will go to the same list.  "
+          _ "Except for lists named "
+          _code 'commit'
+          _ ", which will direct replies to the corresponding "
+          _code 'dev'
+          _ " list."
         end
 
         _h3_ 'Moderation'
         _label do
-          _input type: "radio", name: "muopts", value: "mu", required: true
+          _input type: "radio", name: "muopts", value: "mu", required: true,
+            checked: true
           _ 'allow subscribers to post, moderate all others'
         end
         _label do
@@ -124,6 +137,7 @@ _html do
       if @localpart
         queue << {
           type: 'toplevel',
+          private: (@private == 'true'),
           basename: @localpart,
           subdomain: @subdomain,
           domain: @domain || 'apache.org',
@@ -133,11 +147,12 @@ _html do
           notifyee: "private@#{@subdomain}.apache.org"
         }
       else
-        params.keys.grep(/^suffix\d+/).each do |suffix|
-          suffix = params[suffix].first
+        params.keys.grep(/^suffix\d+/).each do |name|
+          suffix = params[name].first
           next if suffix.empty?
           queue << {
             type: 'subproject',
+            private: (params[name.sub('suffix','private')].first == 'true'),
             stem: @podling,
             basename: suffix,
             subdomain: 'incubator',
@@ -156,7 +171,7 @@ _html do
       checks = {
         basename: RegExp.new(MLID_PAT),
         subdomain: RegExp.new(MLID_PAT),
-        stem: (RegExp.new(MLID_PAT) if queue.first.include? :stem)
+        stem: (RegExp.new(MLID_PAT) if queue.first.include? :stem),
         domain: /^apache[.]org$/,
         muopts: /^(mu|Mu|mU)$/,
         notifyee: /^\w+[@]\w+[.]apache[.]org$/
@@ -247,8 +262,9 @@ _html do
       $('.mod:last').after('<input type="email" required="required" ' +
         'class="mod" name="mod1" placeholder="email"/>')
 
-      // initially disable suffix (until podling is entered)
+      // initially disable suffix and private (until podling is entered)
       $('input[name=suffix1]').attr('disabled', true);
+      $('input[name=private1]').attr('disabled', true);
 
       // process keystrokes for moderator input fields
       var mkeyup = function() {
@@ -274,11 +290,20 @@ _html do
       // process keystrokes for podling input fields
       var pkeyup = function() {
         if ($(this).val() != '') {
+          $('input[type=checkbox]', $(this).parent()).removeAttr('disabled');
           var div = $(this).parent().clone();
           var input = $('input:not(:disabled)', div);
           input.attr('name', 'suffix' + ($('div.list').length+1)).val('').
             attr('required', false).bind('input', pkeyup);
-          lastpod.unbind().parent().after(div);
+          $('input[type=checkbox]', div).attr('disabled', true).
+            prop('checked', false).
+            attr('name', 'private' + ($('div.list').length+1));
+          lastpod.unbind().bind('input', function() {
+            if ($(this).val() == 'private') {
+              $('input[type=checkbox]', $(this).parent()).prop('checked', true);
+            }
+          });
+          lastpod.parent().after(div);
           lastpod = input;
         }
       }
