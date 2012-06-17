@@ -118,7 +118,7 @@ _html do
           _ 'moderate all posts'
         end
         
-        _h3_ 'Moderators'
+        _h3_ 'Moderators\' addresses'
         _textarea.mods! name: 'mods'
 
         _h3_ 'Notes'
