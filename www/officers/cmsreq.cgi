@@ -148,7 +148,7 @@ _html do
           '-m', "#{@project} CMS list request by #{$USER} via " + 
             env['SERVER_ADDR'],
 	  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
-          '--', cmsreq}
+          '--', cmsreq
         ]
       end
     end
