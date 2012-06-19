@@ -574,8 +574,9 @@ _html do
           text.gsub! /(\s)(s\.apache\.org\/\w+)/, '\1<a href="http://\2">\2</a>'
 
           # validate name/email addresses in resolutions
-          if report.attach =~ /7\w/ and text =~/^\s+[-*].*@/
-            text.gsub! /^\s*[-*].*?&lt;(\w+)@(\.\.\.|apache\.org)&gt;/ do |line|
+          s = '[-*\u2022]'
+          if report.attach =~ /7\w/ and text =~/^\s+#{s}.*@/
+            text.gsub! /^\s*#{s}.*?&lt;(\w+)@(\.\.\.|apache\.org)&gt;/ do |line|
               person = ASF::Person.new($1)
               if person.icla
                 # link to the roster information for this committer
@@ -584,7 +585,7 @@ _html do
 
                 # match is defined as having a subset of tokens in any order
                 icla = person.icla.name.split(' ').map(&:asciize)
-                resolution = line[/[-*]\s+(.*?)\s&/,1].split(' ').map(&:asciize)
+                resolution = line[/#{s}\s+(.*?)\s&/,1].split(' ').map(&:asciize)
                 unless (icla-resolution).empty? or (resolution-icla).empty?
 		  ldap = person.public_name.split(' ').map(&:asciize)
 
@@ -601,7 +602,7 @@ _html do
 
               if person.asf_member?
                 # have members show up in bold
-                line.sub! /([-*]\s+)(.*?)(\s+&)/, 
+                line.sub! /(#{s}\s+)(.*?)(\s+&)/, 
                   '\1<strong title="ASF member">\2</strong>\3'
               end
               line
