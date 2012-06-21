@@ -169,6 +169,10 @@ _html do
     _script %{
       // when source changes, set project and list
       $('input[name=source]').change(function() {
+        if ($(this).val().indexOf('http:') == 0) {
+          $(this).val($(this).val().replace('http:', 'https:'));
+        }
+
         var match = #{SRC_PAT.inspect}.exec($(this).val());
         if (match) {
           $('select[name=pmc]').val(match[1]);
