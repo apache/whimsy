@@ -4,7 +4,13 @@ require 'date'
 require '/var/tools/asf/svn'
 require 'shellwords'
 
-$SAFE = 1
+secretary = %w(clr rubys).include? $USER
+
+unless secretary 
+  print "Status: 401 Unauthorized\r\n"
+  print "WWW-Authenticate: Basic realm=\"ASF Secretarial team\"\r\n\r\n"
+  exit
+end
 
 CONTENT = 'asf/infrastructure/site/trunk/content'
 BOARD_SITE = ASF::SVN["#{CONTENT}/foundation/board"]
@@ -12,7 +18,7 @@ MINUTES = ASF::SVN["#{CONTENT}/foundation/records/minutes"]
 BOARD_PRIVATE = ASF::SVN['private/foundation/board']
 CALENDAR = "#{BOARD_SITE}/calendar.mdtext"
 
-Wunderbar.html do
+_html do
   _head do
     _title 'Commit Minutes'
     _style %{
@@ -69,7 +75,11 @@ Wunderbar.html do
         _.system "cp #{BOARD_PRIVATE}/board_minutes_#{date}.txt #{year}"
         _.system "svn add #{year}/board_minutes_#{date}.txt"
         _p
-        _.system "svn commit -m #{message} #{year}"
+        _.system [
+          'svn', 'commit', '-m', message, year,
+          ['--no-auth-cache', '--non-interactive'],
+          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+        ]
       end
     end
 
@@ -81,7 +91,11 @@ Wunderbar.html do
         File.open(CALENDAR, 'w') {|fh| fh.write calendar}
         _.system "svn diff #{File.basename CALENDAR}"
         _p
-        _.system "svn commit -m #{message} #{File.basename CALENDAR}"
+        _.system [
+          'svn', 'commit', '-m', message, File.basename(CALENDAR),
+          ['--no-auth-cache', '--non-interactive'],
+          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+        ]
       end
     end
 
@@ -101,7 +115,11 @@ Wunderbar.html do
 
       if updated
         _p
-        _.system "svn commit -m #{message}"
+        _.system [
+          'svn', 'commit', '-m', message,
+          ['--no-auth-cache', '--non-interactive'],
+          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+        ]
       else
         _p "Nothing to clean up", class: '_stderr'
       end
