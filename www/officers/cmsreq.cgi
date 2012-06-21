@@ -92,6 +92,7 @@ _html do
       begin
         @source += '/' unless @source.end_with? '/'
         @source.chomp! 'trunk/'
+        @source.sub! /^http:/, 'https:'
         if not @source.start_with? 'https://svn.apache.org/'
           error ||= "source URL must be from ASF SVN"
         elsif http_get(URI.parse(@source) + 'trunk/content/').code != '200'
