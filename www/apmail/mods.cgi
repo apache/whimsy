@@ -14,6 +14,8 @@ unless apmail.include? $USER or wheel.include? $USER
   exit
 end
 
+mods = JSON.load(File.read('/home/apmail/subscriptions/mods'))
+
 _html do
   _head_ do
     _title 'ASF Mailing List Moderator administration'
@@ -23,87 +25,68 @@ _html do
       thead th {border-bottom: solid black}
       tbody tr:hover {background-color: #FF8}
       label {display: block}
-      .message {padding: 0.5em; border: 1px solid #0F0; background-color: #CFC}
-      .warn {padding: 0.5em; border: 1px solid #F00; background-color: #FCC}
+      .message {border: 1px solid #0F0; background-color: #CFC}
+      .warn {border: 1px solid #F00; background-color: #FCC}
+      .demo {border: 1px solid #F80; background-color: #FC0}
+      .message, .warn, .demo {padding: 0.5em; border-radius: 1em}
     }
   end
 
-  _body do
+  _body? do
     # common banner
     _a href: 'https://id.apache.org/' do
       _img title: "Logo", alt: "Logo", 
         src: "https://id.apache.org/img/asf_logo_wide.png"
     end
 
-    _h1_ 'ASF Mailing List Moderator administration'
+    _h2.demo "*** Demo mode - Changes aren't saved ***"
+    _h1_ 'ASF Moderator administration'
 
     if ENV['PATH_INFO'] == '/'
 
-      _h2_ 'PMCs'
-      lists = ASF::Mail.lists
-      stems = lists.map {|name| name.split('-').first}.uniq
+      _h2_ 'Domains'
       _ul do
-        stems.sort.each do |stem|
-          _li! { _a stem, href: "#{stem}/" }
+        _li! { _a 'apache.org', href: "apache.org/" }
+        _li! { _a 'apachecon.com', href: "apachecon.com/" }
+      end
+      _ul do
+        mods.keys.sort.each do |domain|
+          next if %w(apache.org apachecon.com).include? domain
+          _li! { _a domain.split('.').first, href: "#{domain}/" }
         end
       end
 
-    elsif ENV['PATH_INFO'] == '/incubator/'
-
-      _h2_ 'Podlings'
-      lists = ASF::Mail.lists.select {|list| list.start_with? 'incubator-'}
-      stems = lists.map {|name| name.split('-')[1]}.uniq
-      _ul do
-        stems.sort.each do |stem|
-          if lists.include? "incubator-#{stem}"
-            _li! { _a stem, href: "#{stem}/" }
-          else
-            _li! { _a stem, href: "../incubator-#{stem}/" }
-          end
-        end
-      end
-
-    elsif ENV['PATH_INFO'] =~ %r{^/((incubator-)?\w+)/$}
+    elsif ENV['PATH_INFO'] =~ %r{^/([-.\w]*apache\w*\.\w+)/$}
 
       _h2_ "Mailing Lists - #{$1}"
       stem = "#{$1}-"
       _ul do
-        ASF::Mail.lists.sort.each do |list|
-          next unless list.start_with? stem
-          list = list.sub(stem,'')
+        mods[$1].keys.each do |list|
           _li! { _a list, href: "#{list}/" }
         end
       end
 
-    elsif ENV['PATH_INFO'] =~ %r{^/(incubator-)?(\w+)/(\w+)/$}
+    elsif ENV['PATH_INFO'] =~ %r{^/([-.\w]*apache\w*\.\w+)/([-\w]+)/$}
 
-      if $1
-        pmc = 'incubator'
-        list = "#{$2}-#{$3}"
-      else
-        pmc, list = $2, $3
-      end
-      dir = "/home/apmail/lists/#{pmc}.apache.org/#{list}"
+      domain, list = $1, $2
+
+      dir = "/home/apmail/lists/#{domain}/#{list}"
 
       if _.post? and @email.to_s.include? '@'
         if %w(sub unsub).include? @op
           person = ASF::Person.find_by_email(@email)
-          output = apmailcmd("ezmlm-#{@op}", dir, 'mod', @email)
-          if output.chomp != ''
-            _pre.warn output
+          op = (@op == 'sub' ? 'added' : 'removed')
+          mods[domain][list] << @email if @op == 'sub'
+          mods[domain][list].delete @email if @op == 'unsub'
+          if person
+            _p.message "#{person.public_name} was #{op} as a moderator."
           else
-            op = (@op == 'sub' ? 'added' : 'removed')
-            if person
-              _p.message "#{person.public_name} was #{op} as a moderator."
-            else
-              _p.message "#{@email} was #{op} as a moderator."
-            end
+            _p.message "#{@email} was #{op} as a moderator."
           end
         end
       end
 
-      _h2_ "Moderators - #{pmc}-#{list}"
-      mods = apmailcmd('ezmlm-list', dir, 'mod')
+      _h2_ "#{list}@#{domain}"
       _table_ do
         _thead_ do
           _tr do
@@ -112,7 +95,7 @@ _html do
           end
         end
         _tbody do
-          mods.lines.sort.each do |email|
+          mods[domain][list].sort.each do |email|
             person = ASF::Person.find_by_email(email.chomp)
             _tr_ do
               _td email.chomp
@@ -149,7 +132,7 @@ _html do
           end
           _label do
             _input type: 'radio', name: 'op', value: 'unsub', 
-              disabled: (mods.lines.count <= 2)
+              disabled: (mods[domain][list].length <= 2)
             _ 'Remove'
           end
         end
@@ -168,11 +151,14 @@ _html do
         var confirmed = false;
         $('form').submit(function() {
           if (confirmed) return true;
+          var spinner = $('<img src="/spinner.gif"/>');
+          $('input[name=email]').after(spinner);
           $.post('', $('form').serialize(), function(_) {
             if (confirm(_.prompt)) {
               confirmed = true;
               $('form').submit();
             }
+            spinner.remove();
           }, 'json');
           return false;
         });
@@ -196,10 +182,4 @@ _json do
       _prompt "Unknown email.  Add #{@email} as a moderator anyway?"
     end
   end
-end
-
-def apmailcmd *cmd
-  cmd = Shellwords.escape(Shellwords.join(cmd)).untaint
-  cmd = Shellwords.join(['bash','-c', cmd])
-  `ssh -t hermes.apache.org sudo -u apmail #{cmd}`
 end
