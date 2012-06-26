@@ -55,7 +55,6 @@ _html do
     sponsorship_repo = 'private/foundation/Fundraising/sponsorship'
     prospects = Dir["#{ASF::SVN[prospect_repo]}/*.yml"].map do |name| 
       file = File.read(name.untaint)
-      _h2_ name
       file.gsub! /:\s*\?\s*\n/, ": '?'\n"    # make parseable
       data = YAML.load(file)
       next if String === data
