@@ -55,6 +55,7 @@ _html do
     sponsorship_repo = 'private/foundation/Fundraising/sponsorship'
     prospects = Dir["#{ASF::SVN[prospect_repo]}/*.yml"].map do |name| 
       file = File.read(name.untaint)
+      _h2_ name
       file.gsub! /:\s*\?\s*\n/, ": '?'\n"    # make parseable
       data = YAML.load(file)
       next if String === data
@@ -89,26 +90,28 @@ _html do
         count=0
         prospects.compact.each do |file, data, sponsor|
           actions = data['action']
-          actions.each do |action|
-            date = Date.parse(action['by-date'])
-            today = Date.today()
-            endofweek = (today + (5- today.cwday) %7)
-            next if show == "TODAY" and date > today
-            next if show == "THISWEEK" and date > endofweek
-            _tr_ do
-              _td action['by']
-              if date < today
-                _td.remind action['by-date']
-              else
-                _td action['by-date']
+          if actions
+            actions.each do |action|
+              date = Date.parse(action['by-date'])
+              today = Date.today()
+              endofweek = (today + (5- today.cwday) %7)
+              next if show == "TODAY" and date > today
+              next if show == "THISWEEK" and date > endofweek
+              _tr_ do
+                _td action['by']
+                if date < today
+                  _td.remind action['by-date']
+                else
+                  _td action['by-date']
+                end
+                _td! do
+                  _div sponsor
+                  _a "#{sponsor['name']}", href: "https://svn.apache.org/repos/#{prospect_repo}/#{file}"
+                end
+                _td action['comment']
               end
-              _td! do
-                _div sponsor
-                _a "#{sponsor['name']}", href: "https://svn.apache.org/repos/#{prospect_repo}/#{file}"
-              end
-              _td action['comment']
+              count=count+1
             end
-            count=count+1
           end
         end
       end
