@@ -44,8 +44,18 @@ _html do
         _input type: 'text', name: 'project', required: true, value: @project,
           pattern: "^#{PROJ_PAT}$"
 
-        _h3_ 'Commits list'
-        _input type: 'text', name: 'list', value: @list || 'commits'
+        _h3_ 'Where to send commit notifications'
+        _input type: 'text', name: 'clist', value: @clist || 'commits'
+        _ '@'
+        _select name: 'pmc' do
+          pmcs.sort.each do |pmc| 
+            _option pmc, selected: (pmc == @pmc)
+          end
+        end
+        _ '.apache.org'
+
+        _h3_ 'Where to send patches received'
+        _input type: 'text', name: 'plist', value: @plist || 'dev'
         _ '@'
         _select name: 'pmc' do
           pmcs.sort.each do |pmc| 
@@ -76,8 +86,12 @@ _html do
       error ||= 'Invalid project name'  unless @project =~ /^#{PROJ_PAT}$/
       error ||= 'Invalid build type' unless BUILD_TYPES.include? @build_type
 
-      unless ASF::Mail.lists.include? "#{@pmc}-#{@list}"
-        error ||= "Mail list #{@list}@#{@pmc}.apache.org doesn't exist"
+      unless ASF::Mail.lists.include? "#{@pmc}-#{@clist}"
+        error ||= "Mail list #{@clist}@#{@pmc}.apache.org doesn't exist"
+      end
+
+      unless ASF::Mail.lists.include? "#{@pmc}-#{@plist}"
+        error ||= "Mail list #{@plist}@#{@pmc}.apache.org doesn't exist"
       end
 
       websites = JSON.load(http_get(export).body)
@@ -92,7 +106,6 @@ _html do
       begin
         @source += '/' unless @source.end_with? '/'
         @source.chomp! 'trunk/'
-        @source.sub! /^http:/, 'https:'
         if not @source.start_with? 'https://svn.apache.org/'
           error ||= "source URL must be from ASF SVN"
         elsif http_get(URI.parse(@source) + 'trunk/content/').code != '200'
@@ -134,11 +147,12 @@ _html do
         vars = {
           source: @source,
           project: @project,
-          list: "#{@list}@#{@pmc}.apache.org",
+          commit_list: "#{@clist}@#{@pmc}.apache.org",
+          patch_list: "#{@plist}@#{@pmc}.apache.org",
           build: @build_type
         }
         vars[:message] = @message unless @message.empty?
-        request = json.pretty_generate(vars) + "\n"
+        request = JSON.pretty_generate(vars) + "\n"
         _pre request
 
         # commit it
@@ -146,7 +160,7 @@ _html do
         _.system(['svn', 'add', '--', cmsreq])
         _.system [
 	  'svn', 'commit', ['--no-auth-cache', '--non-interactive'],
-          '-m', "#{@project} CMS list request by #{$USER} via " + 
+          '-m', "#{@project} CMS request by #{$USER} via " + 
             env['SERVER_ADDR'],
 	  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
           '--', cmsreq
@@ -156,13 +170,16 @@ _html do
 
     # guess where commit emails should go
     commits = {}
+    patches = {}
     %w(dev commits).each do |suffix|
       ASF::Mail.lists.grep(/-#{suffix}$/).sort.each do |list|
         commits[list.chomp("-#{suffix}")] = suffix
+        patches[list.chomp("-#{suffix}")] ||= suffix
       end
     end
 
     _script_ "commits = #{JSON.pretty_generate(commits)}"
+    _script_ "patches = #{JSON.pretty_generate(patches)}"
 
     SRC_PAT = 
       %r{https://svn.apache.org/repos/asf/(#{PROJ_PAT})/?(#{PROJ_PAT})?/.}
@@ -177,7 +194,8 @@ _html do
         var match = #{SRC_PAT.inspect}.exec($(this).val());
         if (match) {
           $('select[name=pmc]').val(match[1]);
-          if (commits[match[1]]) $('input[name=list]').val(commits[match[1]]);
+          if (commits[match[1]]) $('input[name=clist]').val(commits[match[1]]);
+          if (patches[match[1]]) $('input[name=plist]').val(patches[match[1]]);
           if (match[2]) {
             if (match[1] == 'incubator') {
               $('input[name=project]').val(match[2]);
@@ -186,8 +204,10 @@ _html do
             } else {
               $('input[name=project]').val(match[1]+'-'+match[2]);
             }
-            var list = commits[match[1]+'-'+match[2]];
-            if (list) $('input[name=list]').val(match[2]+'-'+list);
+            var clist = commits[match[1]+'-'+match[2]];
+            if (clist) $('input[name=clist]').val(match[2]+'-'+clist);
+            var plist = patches[match[1]+'-'+match[2]];
+            if (plist) $('input[name=plist]').val(match[2]+'-'+plist);
           } else {
             $('input[name=project]').val(match[1]);
           }
