@@ -80,6 +80,7 @@ _html do
 
     if _.post?
       Dir.chdir '/var/tools/infra/cmsreq'
+      `svn update --non-interactive`
 
       # https://svn.apache.org/repos/infra/infrastructure/trunk/docs/services/cms.txt
       error = nil
@@ -134,7 +135,7 @@ _html do
 
       cmsreq = "#{@project.untaint}.json"
       if File.exist? cmsreq
-        errors << "Already submitted: #{@project}"
+        error << "Already submitted: #{@project}"
       end
 
       if error
