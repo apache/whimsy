@@ -11,7 +11,7 @@ SVN_FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
 MINUTES_WORK = '/var/tools/data'
 
 DIRECTORS = {
-  'rbowen'      => 'rb',
+  'rbowen'      => 'rcb',
   'cutting'     => 'dc',
   'bdelacretaz' => 'bd',
   'fielding'    => 'rf',
@@ -159,7 +159,7 @@ load_agenda = Proc.new do
   # Additional Officer Reports and Committee Reports (part II)
   file.scan(/
     \[([^\n]+)\]\n\n                  # owners
-    \s{7}See\sAttachment\s\s?(\w+)\s+ # attach
+    \s{7}See\sAttachment\s\s?(\w+)[^\n]*?\s+ # attach (title)
     \[\sapproved:\s*?(.*?)            # approved
     \s*comments:(.*?)\n\s{9}\]        # comments
   /mx).each do |owners,attach,approved,comments|
