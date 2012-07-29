@@ -202,8 +202,15 @@ $(document).ready(function() {
     }
   });
 
-  // Commit prompt
+  // Cleanup prompt
   $("input[value=Cleanup]").click(function() {
     return confirm("Revert all changes and cleanup subversion?");
   });
+
+  // Don't validate when junking
+  $("input[value=junk]").click(function() {
+    $('input').attr('formnovalidate', 'formnovalidate');
+    return true;
+  });
+
 });
