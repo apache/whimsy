@@ -64,7 +64,7 @@ _html do
 
     # pie chart
     theta = 0
-    colors = ['0F0', 'FF0', 'F80', 'F50', 'F00']
+    colors = ['0F0', 'FF0', 'F80', 'F50', 'F00', '000']
 
     _svg_ viewBox: '-500 -500 1000 1000' do
       _circle r: 480, stroke: "#000", fill: "#000"
