@@ -80,9 +80,9 @@ _html do
 
     # statistics
     if duration.length % 2 == 0
-      mean = (duration[duration.length/2-1] + duration[duration.length/2])/2
+      median = (duration[duration.length/2-1] + duration[duration.length/2])/2
     else
-      mean = duration[duration.length/2]
+      median = duration[duration.length/2]
     end
 
     _h2 'Statistics'
@@ -91,8 +91,8 @@ _html do
       _a 'history', href: 'http://incubator.apache.org/history/'
       _ ")"
     end
-    _p "Mean age:   #{(mean+0.5).to_i} days"
-    _p "Median age: #{(duration.reduce(:+)/duration.length + 0.5).to_i} days"
+    _p "Median age: #{(median+0.5).to_i} days"
+    _p "Mean age:   #{(duration.reduce(:+)/duration.length + 0.5).to_i} days"
 
     # Sorted list of podlings
     _h2_! do
