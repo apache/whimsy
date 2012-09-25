@@ -403,6 +403,8 @@ end
 
 DESTINATION = {
   "Jim"       => "to_jim",
+  "Shane"     => "to_shane",
+  "Chris"     => "to_chris",
   "Sam"       => "to_sam",
   "Upayavira" => "to_upayavira",
   "dup"       => "deadletter/dup",
