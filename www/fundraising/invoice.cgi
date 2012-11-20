@@ -444,7 +444,7 @@ _html do
         _p "Wire and ACH payments information:"
         _p "Beneficiary: “Apache Software Foundation”"
         _p "Routing #: 121 000 248 (for domestic wire or ACH)"
-        _p "SWIFT: WFBIU6S (for international wire)"
+        _p "SWIFT: WFBIUS6S (for international wire)"
         _p "Account #: 3189163755"
         _p "Wells Fargo Bank"
       end
