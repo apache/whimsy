@@ -107,7 +107,7 @@ _html do
       begin
         @source += '/' unless @source.end_with? '/'
         @source.chomp! 'trunk/'
-        if not @source.start_with? 'https://svn.apache.org/'
+        if not @source.start_with? 'https://svn.apache.org/repos/asf/'
           error ||= "source URL must be from ASF SVN"
         elsif http_get(URI.parse(@source) + 'trunk/content/').code != '200'
           error ||= "trunk/content directory not found in source URL"
@@ -158,10 +158,10 @@ _html do
         File.open(cmsreq, 'w') { |file| file.write request }
         _.system(['svn', 'add', '--', cmsreq])
         _.system [
-	  'svn', 'commit', ['--no-auth-cache', '--non-interactive'],
+          'svn', 'commit', ['--no-auth-cache', '--non-interactive'],
           '-m', "#{@project} CMS request by #{$USER} via " + 
             env['SERVER_ADDR'],
-	  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
+          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
           '--', cmsreq
         ]
       end
