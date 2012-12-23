@@ -14,7 +14,7 @@ BUILD_TYPES = %w(standard maven ant forrest shell)
 pmcs = ASF::Committee.list.map(&:mail_list)
 export = 
   'https://svn.apache.org/repos/infra/websites/cms/webgui/content/export.json'
-PROJ_PAT = '[a-z0-9_.-]+'
+PROJ_PAT = '[a-z][a-z0-9_]+'
 
 _html do
 
