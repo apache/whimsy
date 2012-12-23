@@ -114,8 +114,6 @@ _html do
         elsif @pmc=='incubator' 
           if not @source.include? @project.gsub('-','/')
             error ||= "#{@project.gsub('-','/')} not found in source URL"
-          elsif @build_type != 'standard'
-            error ||= "Incubator podlings must use the standard build system"
           end
         end
 
