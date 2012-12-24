@@ -131,12 +131,11 @@ _html do
         @source = "#{URL_PREFIX}/#{@project}/#{@source}"
         @source += '/' unless @source.end_with? '/'
         @source.chomp! 'trunk/'
-        if not @source.start_with? 'https://svn.apache.org/repos/asf/incubator/'
-          error ||= "source URL must be from ASF SVN"
-        elsif http_get(URI.parse(@source) + 'trunk/content/').code != '200'
+        if @backend == 'cms' and http_get(URI.parse(@source) + 'trunk/content/').code != '200'
           error ||= "trunk/content directory not found in source URL"
         end
 
+        # TODO: also catch existing svnwcsub.conf entries
         if WEBSITES.values.include? @source
           error = "#{@source} is already using the CMS"
         elsif WEBSITES.keys.include? @project
