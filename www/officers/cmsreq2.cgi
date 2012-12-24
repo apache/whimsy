@@ -62,7 +62,7 @@ _html do
         end
 
         _h3_ 'Notes'
-        _textarea name: 'message', cols: 70
+        _textarea name: 'message', cols: 70, value: @message || ''
 
         _input_ type: 'submit', value: 'Submit Request'
       end
@@ -77,7 +77,7 @@ _html do
       error ||= 'Invalid project name'  unless @project =~ /^#{PROJ_PAT}$/
       error ||= 'Invalid build type' unless BUILD_TYPES.include? @build_type
 
-      begin
+       begin
         @source += '/' unless @source.end_with? '/'
         @source.chomp! 'trunk/'
         if not @source.start_with? 'https://svn.apache.org/repos/asf/'
@@ -109,9 +109,9 @@ _html do
         if not required.any? {|file| http_get("#{@source}#{file}").code=='200'}
           error = "Missing #{@source}#{required.first}"
         end
-      rescue Exception => exception
+       rescue Exception => exception
         error = "Exception processing URL: #{exception}"
-      end
+       end
 
       cmsreq = "#{@project.untaint}.json"
       if File.exist? cmsreq
