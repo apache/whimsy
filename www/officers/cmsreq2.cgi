@@ -123,6 +123,7 @@ _html do
       error ||= 'Invalid backend' unless %w(cms svnpubsub).include? @backend
       error ||= 'Invalid project' unless Regexp.new("^#{PROJ_PAT}$").match @project
       error ||= 'Invalid project' unless podlings.include? @project
+      error ||= 'Dubious URL' unless @source =~ /^([\/A-Za-z0-9_-]|[.][^.])+$/;
 
       # TODO: untaint @project here?
 
