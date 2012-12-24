@@ -32,7 +32,8 @@ unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
   exit
 end
 
-BUILD_TYPES = %w(standard maven ant shell) # forrest
+FORMAT_NUMBER = 1 # json format number
+BUILD_TYPES = %w(default maven ant shell) # forrest
 PROJ_PAT = '[a-z][a-z0-9_]+'
 URL_PREFIX = 'https://svn.apache.org/repos/asf/incubator'
 podlings = list_podlings()
@@ -76,6 +77,14 @@ _html do
           _input type: 'url', name: 'source', required: true,
             pattern: "^#{PROJ_PAT}$", value: @source || ''
         end
+        _p do
+          _em! do
+            _ 'Is your podling not listed? See '
+            _a 'documenation',
+              href: 'http://www.apache.org/dev/infra-contact#requesting-podling'
+            _ '.'
+          end
+        end
 
         _h3_ 'Site deployment facility'
         _label do
@@ -89,7 +98,7 @@ _html do
         end
 
         _dev.cmsonly do
-          _h3_ 'Build Type'
+          _h3_ 'CMS Build Type'
           _select name: 'build_type' do
             BUILD_TYPES.each do |type| 
               _option type, selected: (type == @build_type)
@@ -137,7 +146,7 @@ _html do
 
         required = []
         # TODO: set @build_type=nil for svnpubsub builds
-        required << 'trunk/lib/view.pm' if @build_type == 'standard'
+        required << 'trunk/lib/view.pm' if @build_type == 'default'
         required << 'trunk/build.xml' if @build_type == 'ant'
         required << 'trunk/build_cms.sh' if @build_type == 'shell'
         required << 'trunk/pom.xml' if @build_type == 'maven'
@@ -165,6 +174,7 @@ _html do
 
         # format request
         vars = {
+          version: FORMAT_NUMBER,
           source: @source,
           project: @project,
           backend: @backend,
