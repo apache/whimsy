@@ -3,6 +3,18 @@ require 'wunderbar'
 require '/var/tools/asf'
 require 'shellwords'
 
+# TODO copy-pasted from mlreq.cgi; dedup!
+# extract the names of podlings (and aliases) from podlings.xml
+require 'nokogiri'
+def list_podlings()
+  incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
+  current = Nokogiri::XML(File.read("#{incubator_content}/podlings.xml")).
+    search('podling[status=current]')
+  podlings = current.map {|podling| podling['resource']}
+  podlings += current.map {|podling| podling['resourceAliases']}.compact.
+    map {|names| names.split(/[, ]+/)}.flatten
+  podlings.grep Regexp.new "^#{PROJ_PAT}$"
+end
 
 require 'net/http'
 def http_get(uri)
@@ -22,11 +34,13 @@ end
 
 BUILD_TYPES = %w(standard maven ant shell) # forrest
 PROJ_PAT = '[a-z][a-z0-9_]+'
-URL_PREFIX = 'https://svn.apache.org/repos/asf/'
-pmcs = ASF::Committee.list.map(&:mail_list)
+URL_PREFIX = 'https://svn.apache.org/repos/asf/incubator'
+podlings = list_podlings()
 export = # TODO: use https://anonymous:@cms.apache.org/export.json
   'https://svn.apache.org/repos/infra/websites/cms/webgui/content/export.json'
 WEBSITES = JSON.load(http_get(export).body)
+podlings.delete_if {|podling| WEBSITES.keys.include? podling}
+# TODO: also delete podlings that have svnpubsub set up
 
 _html do
 
@@ -49,12 +63,18 @@ _html do
         _legend 'ASF CMS Request'
 
         _h3_ 'Source URL'
-        _input type: 'url', name: 'source', required: true,
-          value: @source || URL_PREFIX
-
-        _h3_ 'Project Name'
-        _input type: 'text', name: 'project', required: true, value: @project,
-          pattern: "^#{PROJ_PAT}$"
+        _label do
+          _ URL_PREFIX
+          _ '/'
+          _select name: 'project' do
+            podlings.sort.each do |podling| 
+              _option podling, selected: (podling == @project)
+            end
+          end
+          _ '/'
+          _input type: 'url', name: 'source', required: true,
+            pattern: "^#{PROJ_PAT}$", value: @source || ''
+        end
 
         _h3_ 'Site deployment facility'
         _label do
@@ -89,29 +109,29 @@ _html do
 
       # https://svn.apache.org/repos/infra/infrastructure/trunk/docs/services/cms.txt
       error = nil
-      error ||= 'Invalid project name'  unless @project =~ /^#{PROJ_PAT}$/
       error ||= 'Invalid build type' unless BUILD_TYPES.include? @build_type
       error ||= 'Invalid backend' unless %w(cms svnpubsub).include? @backend
+      error ||= 'Invalid project' unless Regexp.new("^#{PROJ_PAT}$").match @project
+      error ||= 'Invalid project' unless podlings.include? @project
 
+      # TODO: untaint @project here?
+
+      unless error
        begin
+        @source = "#{URL_PREFIX}/#{@project}/#{@source}"
         @source += '/' unless @source.end_with? '/'
         @source.chomp! 'trunk/'
-        if not @source.start_with? URL_PREFIX
+        if not @source.start_with? 'https://svn.apache.org/repos/asf/incubator/'
           error ||= "source URL must be from ASF SVN"
         elsif http_get(URI.parse(@source) + 'trunk/content/').code != '200'
           error ||= "trunk/content directory not found in source URL"
-        elsif @pmc=='incubator' 
-          if not @source.include? @project.gsub('-','/')
-            error ||= "#{@project.gsub('-','/')} not found in source URL"
-          end
         end
 
         if WEBSITES.values.include? @source
           error = "#{@source} is already using the CMS"
         elsif WEBSITES.keys.include? @project
-          if @source.include? 'incubator' or not WEBSITES[@project].include? 'incubator' 
-            error = "Project name #{@project} is already in use by #{WEBSITES[@project]}"
-          end
+          error = "Project name #{@project} is already in use by " \
+                  "#{WEBSITES[@project]}"
         end
 
         required = []
@@ -129,6 +149,7 @@ _html do
        rescue Exception => exception
         error = "Exception processing URL: #{exception}"
        end
+      end
 
       cmsreq = "#{@project.untaint}.json"
       if File.exist? cmsreq
@@ -167,30 +188,11 @@ _html do
       end
     end
 
-    SRC_PAT = 
-      %r{#{URL_PREFIX}(#{PROJ_PAT})/?(#{PROJ_PAT})?/.}
-
     _script %{
-      // when source changes, set project and list
+      // force source url to https.
       $('input[name=source]').change(function() {
         if ($(this).val().indexOf('http:') == 0) {
           $(this).val($(this).val().replace('http:', 'https:'));
-        }
-
-        var match = #{SRC_PAT.inspect}.exec($(this).val());
-        if (match) {
-          $('select[name=pmc]').val(match[1]);
-          if (match[2]) {
-            if (match[1] == 'incubator') {
-              $('input[name=project]').val(match[2]);
-            } else if (match[2] == 'site') {
-              $('input[name=project]').val(match[1]);
-            } else {
-              $('input[name=project]').val(match[1]+'-'+match[2]);
-            }
-          } else {
-            $('input[name=project]').val(match[1]);
-          }
         }
       });
 
