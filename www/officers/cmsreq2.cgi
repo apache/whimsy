@@ -97,7 +97,7 @@ _html do
           _a 'Apache CMS', href: 'http://www.apache.org/dev/cmsref'
         end
 
-        _dev.cmsonly do
+        _div.cmsonly do
           _h3_ 'CMS Build Type'
           _select name: 'build_type' do
             BUILD_TYPES.each do |type| 
