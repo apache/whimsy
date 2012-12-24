@@ -22,9 +22,11 @@ end
 
 BUILD_TYPES = %w(standard maven ant shell) # forrest
 PROJ_PAT = '[a-z][a-z0-9_]+'
+URL_PREFIX = 'https://svn.apache.org/repos/asf/'
 pmcs = ASF::Committee.list.map(&:mail_list)
 export = # TODO: use https://anonymous:@cms.apache.org/export.json
   'https://svn.apache.org/repos/infra/websites/cms/webgui/content/export.json'
+WEBSITES = JSON.load(http_get(export).body)
 
 _html do
 
@@ -48,7 +50,7 @@ _html do
 
         _h3_ 'Source URL'
         _input type: 'url', name: 'source', required: true,
-          value: @source || 'https://svn.apache.org/repos/asf/'
+          value: @source || URL_PREFIX
 
         _h3_ 'Project Name'
         _input type: 'text', name: 'project', required: true, value: @project,
@@ -80,7 +82,7 @@ _html do
        begin
         @source += '/' unless @source.end_with? '/'
         @source.chomp! 'trunk/'
-        if not @source.start_with? 'https://svn.apache.org/repos/asf/'
+        if not @source.start_with? URL_PREFIX
           error ||= "source URL must be from ASF SVN"
         elsif http_get(URI.parse(@source) + 'trunk/content/').code != '200'
           error ||= "trunk/content directory not found in source URL"
@@ -90,12 +92,11 @@ _html do
           end
         end
 
-        websites = JSON.load(http_get(export).body)
-        if websites.values.include? @source
+        if WEBSITES.values.include? @source
           error = "#{@source} is already using the CMS"
-        elsif websites.keys.include? @project
-          if @source.include? 'incubator' or not websites[@project].include? 'incubator' 
-            error = "Project name #{@project} is already in use by #{websites[@project]}"
+        elsif WEBSITES.keys.include? @project
+          if @source.include? 'incubator' or not WEBSITES[@project].include? 'incubator' 
+            error = "Project name #{@project} is already in use by #{WEBSITES[@project]}"
           end
         end
 
@@ -148,7 +149,7 @@ _html do
     end
 
     SRC_PAT = 
-      %r{https://svn.apache.org/repos/asf/(#{PROJ_PAT})/?(#{PROJ_PAT})?/.}
+      %r{#{URL_PREFIX}(#{PROJ_PAT})/?(#{PROJ_PAT})?/.}
 
     _script %{
       // when source changes, set project and list
