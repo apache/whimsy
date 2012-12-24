@@ -50,6 +50,7 @@ _html do
     _style %{
       textarea, .mod, label {display: block}
       input, select[name=build_type] {margin-left: 2em}
+      input[name=source]{margin-left: inherit}
       input[type=submit] {display: block; margin: 1em 0 0 0}
       legend {background: #141; color: #DFD; padding: 0.4em}
       input[type=text] {width: 9em}
