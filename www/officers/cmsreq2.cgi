@@ -56,10 +56,23 @@ _html do
         _input type: 'text', name: 'project', required: true, value: @project,
           pattern: "^#{PROJ_PAT}$"
 
-        _h3_ 'Build Type'
-        _select name: 'build_type' do
-          BUILD_TYPES.each do |type| 
-            _option type, selected: (type == @build_type)
+        _h3_ 'Site deployment facility'
+        _label do
+          _input type: "radio", name: "backend", value: "svnpubsub",
+            required: true, checked: true
+          _a 'svnpubsub', href: 'http://www.apache.org/dev/project-site#intro'
+        end
+        _label do
+          _input type: "radio", name: "backend", value: "cms"
+          _a 'Apache CMS', href: 'http://www.apache.org/dev/cmsref'
+        end
+
+        _dev.cmsonly do
+          _h3_ 'Build Type'
+          _select name: 'build_type' do
+            BUILD_TYPES.each do |type| 
+              _option type, selected: (type == @build_type)
+            end
           end
         end
 
@@ -78,6 +91,7 @@ _html do
       error = nil
       error ||= 'Invalid project name'  unless @project =~ /^#{PROJ_PAT}$/
       error ||= 'Invalid build type' unless BUILD_TYPES.include? @build_type
+      error ||= 'Invalid backend' unless %w(cms svnpubsub).include? @backend
 
        begin
         @source += '/' unless @source.end_with? '/'
@@ -101,11 +115,13 @@ _html do
         end
 
         required = []
+        # TODO: set @build_type=nil for svnpubsub builds
         required << 'trunk/lib/view.pm' if @build_type == 'standard'
         required << 'trunk/build.xml' if @build_type == 'ant'
         required << 'trunk/build_cms.sh' if @build_type == 'shell'
         required << 'trunk/pom.xml' if @build_type == 'maven'
         required << 'pom.xml' if @build_type == 'maven'
+        required = ['index.html'] if @backend == 'svnpubsub'
 
         if not required.any? {|file| http_get("#{@source}#{file}").code=='200'}
           error = "Missing #{@source}#{required.first}"
@@ -129,9 +145,12 @@ _html do
         vars = {
           source: @source,
           project: @project,
-          build: @build_type
+          backend: @backend,
         }
         vars[:message] = @message unless @message.empty?
+        if @backend == 'cms'
+          vars[:build] = @build_type
+        end
         request = JSON.pretty_generate(vars) + "\n"
         _pre request
 
@@ -174,6 +193,17 @@ _html do
           }
         }
       });
+
+      // Hide the CMS-only fields.
+      $('input[name=backend]').change(function() {
+        if ($(this).val() != 'cms') {
+          $('.cmsonly').hide();
+        }
+        else {
+          $('.cmsonly').show();
+        }
+      });
+      $('.cmsonly').hide();
 
       // place cursor at end of source url
       $('input[name=source]').focus(function() {
