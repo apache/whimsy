@@ -80,7 +80,7 @@ _html do
         _p do
           _em! do
             _ 'Is your podling not listed? See '
-            _a 'documenation',
+            _a 'documentation',
               href: 'http://www.apache.org/dev/infra-contact#requesting-podling'
             _ '.'
           end
@@ -103,6 +103,11 @@ _html do
             BUILD_TYPES.each do |type| 
               _option type, selected: (type == @build_type)
             end
+          end
+          _span! do
+            _ '('
+            _a 'docs', href: 'http://www.apache.org/dev/cmsref#external-build'
+            _ ')'
           end
         end
 
