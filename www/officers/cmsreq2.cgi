@@ -54,26 +54,6 @@ _html do
         _input type: 'text', name: 'project', required: true, value: @project,
           pattern: "^#{PROJ_PAT}$"
 
-        _h3_ 'Where to send commit notifications'
-        _input type: 'text', name: 'clist', value: @clist || 'commits'
-        _ '@'
-        _select name: 'pmc' do
-          pmcs.sort.each do |pmc| 
-            _option pmc, selected: (pmc == @pmc)
-          end
-        end
-        _ '.apache.org'
-
-        _h3_ 'Where to send patches received'
-        _input type: 'text', name: 'plist', value: @plist || 'dev'
-        _ '@'
-        _select name: 'pmc' do
-          pmcs.sort.each do |pmc| 
-            _option pmc, selected: (pmc == @pmc)
-          end
-        end
-        _ '.apache.org'
-
         _h3_ 'Build Type'
         _select name: 'build_type' do
           BUILD_TYPES.each do |type| 
@@ -96,14 +76,6 @@ _html do
       error = nil
       error ||= 'Invalid project name'  unless @project =~ /^#{PROJ_PAT}$/
       error ||= 'Invalid build type' unless BUILD_TYPES.include? @build_type
-
-      unless ASF::Mail.lists.include? "#{@pmc}-#{@clist}"
-        error ||= "Mail list #{@clist}@#{@pmc}.apache.org doesn't exist"
-      end
-
-      unless ASF::Mail.lists.include? "#{@pmc}-#{@plist}"
-        error ||= "Mail list #{@plist}@#{@pmc}.apache.org doesn't exist"
-      end
 
       begin
         @source += '/' unless @source.end_with? '/'
@@ -156,8 +128,6 @@ _html do
         vars = {
           source: @source,
           project: @project,
-          commit_list: "#{@clist}@#{@pmc}.apache.org",
-          patch_list: "#{@plist}@#{@pmc}.apache.org",
           build: @build_type
         }
         vars[:message] = @message unless @message.empty?
@@ -177,19 +147,6 @@ _html do
       end
     end
 
-    # guess where commit emails should go
-    commits = {}
-    patches = {}
-    %w(dev commits).each do |suffix|
-      ASF::Mail.lists.grep(/-#{suffix}$/).sort.each do |list|
-        commits[list.chomp("-#{suffix}")] = suffix
-        patches[list.chomp("-#{suffix}")] ||= suffix
-      end
-    end
-
-    _script_ "commits = #{JSON.pretty_generate(commits)}"
-    _script_ "patches = #{JSON.pretty_generate(patches)}"
-
     SRC_PAT = 
       %r{https://svn.apache.org/repos/asf/(#{PROJ_PAT})/?(#{PROJ_PAT})?/.}
 
@@ -203,8 +160,6 @@ _html do
         var match = #{SRC_PAT.inspect}.exec($(this).val());
         if (match) {
           $('select[name=pmc]').val(match[1]);
-          if (commits[match[1]]) $('input[name=clist]').val(commits[match[1]]);
-          if (patches[match[1]]) $('input[name=plist]').val(patches[match[1]]);
           if (match[2]) {
             if (match[1] == 'incubator') {
               $('input[name=project]').val(match[2]);
@@ -213,10 +168,6 @@ _html do
             } else {
               $('input[name=project]').val(match[1]+'-'+match[2]);
             }
-            var clist = commits[match[1]+'-'+match[2]];
-            if (clist) $('input[name=clist]').val(match[2]+'-'+clist);
-            var plist = patches[match[1]+'-'+match[2]];
-            if (plist) $('input[name=plist]').val(match[2]+'-'+plist);
           } else {
             $('input[name=project]').val(match[1]);
           }
