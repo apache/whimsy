@@ -3,6 +3,16 @@ require 'wunderbar'
 require '/var/tools/asf'
 require 'shellwords'
 
+
+require 'net/http'
+def http_get(uri)
+  uri = URI.parse(uri) if String === uri
+  uri.host.untaint if uri.host =~ /^\w+[.]apache[.]org$/
+  Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme=='https') do |http|
+    http.request Net::HTTP::Get.new uri.request_uri
+  end
+end
+
 user = ASF::Person.new($USER)
 unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
   print "Status: 401 Unauthorized\r\n"
@@ -10,11 +20,11 @@ unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
   exit
 end
 
-BUILD_TYPES = %w(standard maven ant forrest shell)
-pmcs = ASF::Committee.list.map(&:mail_list)
-export = 
-  'https://svn.apache.org/repos/infra/websites/cms/webgui/content/export.json'
+BUILD_TYPES = %w(standard maven ant shell) # forrest
 PROJ_PAT = '[a-z][a-z0-9_]+'
+pmcs = ASF::Committee.list.map(&:mail_list)
+export = # TODO: use https://anonymous:@cms.apache.org/export.json
+  'https://svn.apache.org/repos/infra/websites/cms/webgui/content/export.json'
 
 _html do
 
@@ -95,15 +105,6 @@ _html do
         error ||= "Mail list #{@plist}@#{@pmc}.apache.org doesn't exist"
       end
 
-      websites = JSON.load(http_get(export).body)
-      if websites.values.include? @source
-        error = "#{@source} is already using the CMS"
-      elsif websites.keys.include? @project
-        if @source.include? 'incubator' or not websites[@project].include? 'incubator' 
-          error = "Project name #{@project} is already in use by #{websites[@project]}"
-        end
-      end
-
       begin
         @source += '/' unless @source.end_with? '/'
         @source.chomp! 'trunk/'
@@ -114,6 +115,15 @@ _html do
         elsif @pmc=='incubator' 
           if not @source.include? @project.gsub('-','/')
             error ||= "#{@project.gsub('-','/')} not found in source URL"
+          end
+        end
+
+        websites = JSON.load(http_get(export).body)
+        if websites.values.include? @source
+          error = "#{@source} is already using the CMS"
+        elsif websites.keys.include? @project
+          if @source.include? 'incubator' or not websites[@project].include? 'incubator' 
+            error = "Project name #{@project} is already in use by #{websites[@project]}"
           end
         end
 
@@ -221,13 +231,3 @@ _html do
     }
   end
 end
-
-require 'net/http'
-def http_get(uri)
-  uri = URI.parse(uri) if String === uri
-  uri.host.untaint if uri.host =~ /^\w+[.]apache[.]org$/
-  Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme=='https') do |http|
-    http.request Net::HTTP::Get.new uri.request_uri
-  end
-end
-
