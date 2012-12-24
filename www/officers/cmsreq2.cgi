@@ -121,7 +121,7 @@ _html do
       error = nil
       error ||= 'Invalid build type' unless BUILD_TYPES.include? @build_type
       error ||= 'Invalid backend' unless %w(cms svnpubsub).include? @backend
-      error ||= 'Invalid project' unless Regexp.new("^#{PROJ_PAT}$").match @project
+      error ||= 'Invalid project' unless /^#{PROJ_PAT}$/.match @project
       error ||= 'Invalid project' unless podlings.include? @project
       error ||= 'Dubious URL' unless @source =~ /^([\/A-Za-z0-9_-]|[.][^.])+$/;
 
@@ -138,6 +138,8 @@ _html do
 
         # TODO: also catch existing svnwcsub.conf entries
         if WEBSITES.values.include? @source
+          # TODO: condition will never match, since @source has trailing slash,
+          #       but WEBSITES.values don't.
           error = "#{@source} is already using the CMS"
         elsif WEBSITES.keys.include? @project
           error = "Project name #{@project} is already in use by " \
