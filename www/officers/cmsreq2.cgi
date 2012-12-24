@@ -104,11 +104,6 @@ _html do
               _option type, selected: (type == @build_type)
             end
           end
-          _span! do
-            _ '('
-            _a 'docs', href: 'http://www.apache.org/dev/cmsref#external-build'
-            _ ')'
-          end
         end
 
         _h3_ 'Notes'
