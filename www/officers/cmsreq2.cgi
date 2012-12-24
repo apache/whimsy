@@ -193,8 +193,8 @@ _html do
         _.system(['svn', 'add', '--', cmsreq])
         _.system [
           'svn', 'commit', ['--no-auth-cache', '--non-interactive'],
-          '-m', "#{@project} CMS request by #{$USER} via " + 
-            env['SERVER_ADDR'],
+          '-m', "#{@project} #{@backend == 'cms' ? "CMS" : @backend} " +
+                "request by #{$USER} via " + env['SERVER_ADDR'],
           (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
           '--', cmsreq
         ]
