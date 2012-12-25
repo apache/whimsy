@@ -34,7 +34,7 @@ end
 
 FORMAT_NUMBER = 1 # json format number
 BUILD_TYPES = %w(default maven ant shell) # forrest
-PROJ_PAT = '[a-z][a-z0-9_]+'
+PROJ_PAT = '[a-z][a-z0-9]+'
 URL_PREFIX = 'https://svn.apache.org/repos/asf/incubator'
 podlings = list_podlings()
 export = # TODO: use https://anonymous:@cms.apache.org/export.json
