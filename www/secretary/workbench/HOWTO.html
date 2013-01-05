@@ -3,11 +3,12 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.3  (Unix)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.4.1  (Unix)">
 	<META NAME="AUTHOR" CONTENT="Craig Russell">
 	<META NAME="CREATED" CONTENT="20110814;13503500">
 	<META NAME="CHANGEDBY" CONTENT="Craig Russell">
-	<META NAME="CHANGED" CONTENT="20120131;15114600">
+	<META NAME="CHANGED" CONTENT="20130105;11145500">
+	<META NAME="CHANGEDBY" CONTENT="Craig Russell">
 	<META NAME="CHANGEDBY" CONTENT="Craig Russell">
 	<STYLE TYPE="text/css">
 	<!--
@@ -162,6 +163,24 @@ tool helps file documents received via fax or email.</FONT></FONT></P>
 </OL>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
+<P STYLE="margin-bottom: 0in">Change requests:</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<OL>
+	<LI><P STYLE="margin-bottom: 0in">Frequently documents arrive signed
+	with keys that are not uploaded to a key server. We should have a
+	standard email to the sender, replying to all, with the message: We
+	are unable to process your ICLA because we are unable to download
+	your public key XXXXXXXX. Please upload your public key to a public
+	key server such as keyserver.pgp.com.</P>
+	<LI><P STYLE="margin-bottom: 0in">NDA processing omits the svn copy
+	from documents/received to documents/ndas.</P>
+	<LI><P STYLE="margin-bottom: 0in">When bursting and stapling an
+	incoming document containing multiple documents (e.g. a CCLA and
+	several ICLAs) there is often an empty directory left over that has
+	to be deleted manually. The burst/staple process should delete the
+	directory when the last document in the directory is stapled.</P>
+</OL>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 </BODY>
