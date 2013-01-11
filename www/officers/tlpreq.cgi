@@ -4,13 +4,16 @@ from __future__ import print_function
 
 from contextlib import contextmanager
 import cgi
-import datetime, time
+import time
+import functools
 import ldap
 import logging
+import operator
 import os
-import tempfile
+import re
 import subprocess
 import sys
+import tempfile
 from xml.sax.saxutils import quoteattr
 
 try:
@@ -42,11 +45,28 @@ def _assert_karma():
         print('tlpreq: Insufficient karma\n')
         sys.exit(1)
 
+def _get_DATE():
+    pattern = r'^board_agenda_(\d\d\d\d)_(\d\d)_(\d\d)[.]txt$'
+    coerce = tuple
+    sentinel = coerce(time.gmtime()[:3])
+    l = subprocess.check_output(['svn', 'ls', '--', AGENDAS_URL])
+    return \
+      max(
+        filter(lambda t: t <= sentinel,
+          map(coerce,
+            map(functools.partial(map, int),
+              map(operator.methodcaller('groups'),
+                filter(None,
+                  map(re.compile(pattern).search,
+                    l.splitlines())))))))
+
+# TODO: use functools.lru_cache if availble (py3)
 _DATE = None
 def _date():
-    # TODO: return the date of the most recent "in the past" agenda
-    #return time.time()[:3]
-    return _DATE or (2012, 12, 19)
+    global _DATE
+    if not _DATE:
+    	_DATE = _get_DATE()
+    return _DATE
 
 INDENT = 0
 def indent():
