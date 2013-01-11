@@ -65,7 +65,7 @@ _DATE = None
 def _date(as_str=False):
     global _DATE
     if not _DATE:
-    	_DATE = _get_DATE()
+        _DATE = _get_DATE()
     return as_str and ('%04d_%02d_%02d' % _DATE) or _DATE
 
 INDENT = 0
@@ -87,8 +87,8 @@ def tag(_name, **attrs):
 def text(*args, **kwds):
     print(indent(), end='')
     for k, v in kwds:
-    	if k not in ['file', 'flush']:
-    		kwds[k] = escape(v)
+        if k not in ['file', 'flush']:
+            kwds[k] = escape(v)
     print(*map(escape, args), **kwds)
 
 class Candidate(object):
