@@ -5,17 +5,21 @@ from __future__ import print_function
 from contextlib import contextmanager
 import cgi
 import datetime, time
-import errno
 import ldap
 import logging
-import operator
 import os
 import tempfile
 import subprocess
 import sys
+from xml.sax.saxutils import quoteattr
+
+try:
+    from html import escape
+except ImportError:
+    from cgi import escape
 
 import cgitb
-cgitb.enable()
+#cgitb.enable()
 logging.getLogger().name = 'tlpreq'
 logging.getLogger().setLevel(logging.INFO)
 
@@ -34,9 +38,9 @@ def _assert_karma():
     groups = set(attrs['cn'][0] for dn, attrs in
                  lh.search_s(BASE_DN, ldap.SCOPE_SUBTREE, filterstr, ['cn']))
     if not groups & set(['asf-secretary', 'board', 'infrastructure-root']):
-    	logging.warn('Insufficient karma: availid=%s groups=%r', user, groups)
-    	print('tlpreq: Insufficient karma\n')
-    	sys.exit(1)
+        logging.warn('Insufficient karma: availid=%s groups=%r', user, groups)
+        print('tlpreq: Insufficient karma\n')
+        sys.exit(1)
 
 _DATE = None
 def _date():
@@ -52,7 +56,7 @@ def indent():
 @contextmanager
 def tag(_name, **attrs):
     global INDENT
-    s = ''.join(' %s="%s"' % (k, attrs[k]) for k in attrs)
+    s = ''.join(' %s=%s' % (escape(k), quoteattr(attrs[k])) for k in attrs)
     print(indent() + "<%s%s>" % (_name, s))
     INDENT += 2
     yield
@@ -61,7 +65,7 @@ def tag(_name, **attrs):
 
 def text(*args, **kwds):
     print(indent(), end='')
-    print(*args, **kwds)
+    print(*map(escape, args), **kwds)
 
 class Candidate(object):
     def __init__(self, s):
@@ -93,7 +97,6 @@ def main():
         try:
             text(f())
         except subprocess.CalledProcessError as cpe:
-            import operator
             logging.error("svnmucc error (%d): %r", cpe.returncode, cpe.output)
             text("Commit error; logged; ask %s for help" % os.getenv('SERVER_ADMIN'))
     else:
