@@ -66,6 +66,9 @@ def tag(_name, **attrs):
 
 def text(*args, **kwds):
     print(indent(), end='')
+    for k, v in kwds:
+    	if k not in ['file', 'flush']:
+    		kwds[k] = escape(v)
     print(*map(escape, args), **kwds)
 
 class Candidate(object):
