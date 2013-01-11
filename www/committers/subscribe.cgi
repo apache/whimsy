@@ -41,13 +41,13 @@ _html do
   end
   _body? do
     if _.post?
-    	unless addrs.include? addr and lists.include? list
+    	unless addrs.include? @addr and lists.include? @list
         _h2_.error "Invalid input"
         break
       end
       Dir.chdir '/var/tools/infra/subreq'
       `svn update --non-interactive`
-      fn = "#{$USER}-#{Time.now.strftime '%Y%m%d-%H%M%S.%L'}.json"
+      fn = "#{$USER}-#{Time.now.strftime '%Y%m%d-%H%M%S.%L'}.json".untaint
       if File.exist? fn
       	_h2_.error "Too many concurrent reuqests"
       	break
@@ -63,12 +63,12 @@ _html do
       _pre request
 
       # commit it
-      File.open(cmsreq, 'w') { |file| file.write request }
+      File.open(fn, 'w') { |file| file.write request }
       _.system(['svn', 'add', '--', fn])
       _.system [
         'svn', 'commit', ['--no-auth-cache', '--non-interactive'],
         '--with-revprop', "whimsy:author=#{$USER}",
-        '-m', "#{@list} += #{$USER}",
+        '-m', "#{@list}@ += #{$USER}",
         (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
         '--', fn
       ]
