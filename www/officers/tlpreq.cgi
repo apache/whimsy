@@ -52,7 +52,7 @@ def _get_DATE():
     l = subprocess.check_output(['svn', 'ls', '--', AGENDAS_URL])
     return \
       max(
-        filter(lambda t: t <= sentinel,
+        filter(sentinel.__ge__,
           map(coerce,
             map(functools.partial(map, int),
               map(operator.methodcaller('groups'),
@@ -62,11 +62,11 @@ def _get_DATE():
 
 # TODO: use functools.lru_cache if availble (py3)
 _DATE = None
-def _date():
+def _date(as_str=False):
     global _DATE
     if not _DATE:
     	_DATE = _get_DATE()
-    return _DATE
+    return as_str and ('%04d_%02d_%02d' % _DATE) or _DATE
 
 INDENT = 0
 def indent():
@@ -101,7 +101,7 @@ class Candidate(object):
 def main():
     _assert_karma()
     form = cgi.FieldStorage()
-    url = AGENDAS_URL + 'board_agenda_%d_%d_%d.txt' % _date()
+    url = AGENDAS_URL + 'board_agenda_%s.txt' % _date(True)
     blurb = subprocess.check_output(['svn', 'cat', '--', url])
     candidates = filter(lambda l: 'Establish' in l, blurb.splitlines())
     candidates = map(Candidate, candidates)
@@ -114,9 +114,9 @@ def main():
         f = lambda: subprocess.check_output([
             'svnmucc',
             '--with-revprop=whimsy:author=%s' % os.getenv('REMOTE_USER'),
-            '-m', 'tlpreq: record %d-%d-%d approved TLP resolutions' % _date(),
+            '-m', 'tlpreq: record %s approved TLP resolutions' % _date(True),
             '-U', RESULT_URL,
-            'put', '/dev/stdin', 'victims-%d%d%d.0.txt' % _date(),
+            'put', '/dev/stdin', 'victims-%s.0.txt' % _date(True),
         ], stdin=t)
         try:
             text(f())
