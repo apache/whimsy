@@ -104,7 +104,7 @@ def main():
     url = AGENDAS_URL + 'board_agenda_%s.txt' % _date(True)
     blurb = subprocess.check_output(['svn', 'cat', '--', url])
     candidates = filter(lambda l: 'Establish' in l, blurb.splitlines())
-    candidates = filter(lambda l: 'Project' in l, l)
+    candidates = filter(lambda l: 'Project' in l, candidates)
     candidates = map(Candidate, candidates)
     if form:
         # POST
