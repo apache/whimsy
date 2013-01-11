@@ -56,6 +56,7 @@ def indent():
 @contextmanager
 def tag(_name, **attrs):
     global INDENT
+    _name = escape(_name)
     s = ''.join(' %s=%s' % (escape(k), quoteattr(attrs[k])) for k in attrs)
     print(indent() + "<%s%s>" % (_name, s))
     INDENT += 2
