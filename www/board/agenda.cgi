@@ -592,12 +592,14 @@ _html do
               if person.icla
                 # link to the roster information for this committer
                 line.sub! /(&lt;)(\w+)(@.*?)(&)/, 
-                  '\1<a href="/roster/committer/\2">' +
-                  '<span class="pmcmemberavailid">\2</span>\3</a>\4'
+                  '\1<a href="/roster/committer/\2">\2\3</a>' +
+                  '<span style="display:none" class="tlpreqpmcmemberavailid">' +
+                  '\2' + '</span>' +
+                  '\4'
 
                 if [personname, person.public_name.to_s].any? { |cn| cn.index (chairname or '') }
-                    line += '<span style="display:none" class="chairavailid">' \
-                          + $2 + '</span>' \
+                    line += '<span style="display:none" ' \
+                          + ' class="tlpreqchairavailid">' + $2 + '</span>'
                 end
 
                 # match is defined as having a subset of tokens in any order
