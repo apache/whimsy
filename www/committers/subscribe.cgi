@@ -47,7 +47,7 @@ _html do
       end
       Dir.chdir '/var/tools/infra/subreq'
       `svn update --non-interactive`
-      fn = "#{$USER}-#{@list}-#{Time.now.strftime '%Y%m%d-%H%M%S.%L'}.json".untaint
+      fn = "#{$USER}-#{@list}-#{Time.now.strftime '%Y%m%d-%H%M%S-%L'}.json".untaint
       if File.exist? fn
         _h2_.error "Too many concurrent reuqests"
         break
