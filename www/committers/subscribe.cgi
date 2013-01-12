@@ -72,6 +72,7 @@ _html do
         (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
         '--', fn
       ]
+      _ 'Request successful. You will be subscribed within the hour.'
     end
     unless _.post?
     end
@@ -113,5 +114,10 @@ _html do
         _input type: 'submit', value: 'Submit Request'
       end
     end
+    _ 'Only your forwarding address and registered alternates are listed.'
+    _ 'Visit'
+    _a 'https://id.apache.org/', href: "https://id.apache.org/details/#{$USER}"
+    _ 'to add or remove forwarding or alternate addresses.'
+    _br
   end
 end
