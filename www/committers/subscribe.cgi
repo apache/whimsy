@@ -41,7 +41,7 @@ _html do
   end
   _body? do
     if _.post?
-    	unless addrs.include? @addr and lists.include? @list
+      unless addrs.include? @addr and lists.include? @list
         _h2_.error "Invalid input"
         break
       end
@@ -49,15 +49,15 @@ _html do
       `svn update --non-interactive`
       fn = "#{$USER}-#{Time.now.strftime '%Y%m%d-%H%M%S.%L'}.json".untaint
       if File.exist? fn
-      	_h2_.error "Too many concurrent reuqests"
-      	break
+        _h2_.error "Too many concurrent reuqests"
+        break
       end
 
       vars = {
-      	version: FORMAT_NUMBER,
-      	availid: $USER,
-      	addr: @addr,
-      	listkey: @list,
+        version: FORMAT_NUMBER,
+        availid: $USER,
+        addr: @addr,
+        listkey: @list,
       }
       request = JSON.pretty_generate(vars) + "\n"
       _pre request
