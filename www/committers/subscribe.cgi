@@ -14,7 +14,10 @@ user = ASF::Person.new($USER)
 lists = ASF::Mail.lists
 lists.delete_if {|list| list =~ /^(ea|secretary|president|treasurer|chairman|committers)/ }
 # TODO: for non-members, offer all public lists too
-lists = ['infrastructure', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs'] unless user.asf_member?
+unless user.asf_member?
+  lists = ['infrastructure', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs']
+  lists += ['board'] if ASF.pmc_chairs.include? user
+end
 lists.sort!
 
 addrs = (["#{$USER}@apache.org"] + user.mail + user.alt_email)
