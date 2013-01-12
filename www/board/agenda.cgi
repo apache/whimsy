@@ -593,7 +593,7 @@ _html do
                 # link to the roster information for this committer
                 line.sub! /(&lt;)(\w+)(@.*?)(&)/, 
                   '\1<a href="/roster/committer/\2">' +
-                  '<span class="availid">\2</span>\3</a>\4'
+                  '<span class="pmcmemberavailid">\2</span>\3</a>\4'
 
                 if [personname, person.public_name.to_s].any? { |cn| cn.index chairname }
                     line += '<span style="display:none" class="chairavailid">' \
