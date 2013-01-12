@@ -578,27 +578,39 @@ _html do
           s = '[-*\u2022]'
           if report.attach =~ /7\w/
             text.gsub! /\((\w+)\)$/, '&lt;\1@apache.org&gt;'
+            if text =~ /RESOLVED, that (.*?(\n.*?)??),? be and hereby is appointed/
+              chairname = $1.gsub(/\s+/, ' ')
+            else
+              chairname = nil
+            end
           end
 
           if report.attach =~ /7\w/ and text =~/^\s+#{s}.*@/
-            text.gsub! /^\s*#{s}.*?&lt;(\w+)@(\.\.\.|apache\.org)&gt;/ do |line|
-              person = ASF::Person.new($1)
+            text.gsub! /^\s*#{s}(.*?)&lt;(\w+)@(\.\.\.|apache\.org)&gt;/ do |line|
+              personname = $1.strip
+              person = ASF::Person.new($2)
               if person.icla
                 # link to the roster information for this committer
                 line.sub! /(&lt;)(\w+)(@.*?)(&)/, 
-                  '\1<a href="/roster/committer/\2">\2\3</a>\4'
+                  '\1<a href="/roster/committer/\2">' +
+                  '<span class="availid">\2</span>\3</a>\4'
+
+                if [personname, person.public_name.to_s].any? { |cn| cn.index chairname }
+                    line += '<span style="display:none" class="chairavailid">' \
+                          + $2 + '</span>' \
+                end
 
                 # match is defined as having a subset of tokens in any order
                 icla = person.icla.name.split(' ').map(&:asciize)
                 resolution = line[/#{s}\s+(.*?)\s&/,1].split(' ').map(&:asciize)
                 unless (icla-resolution).empty? or (resolution-icla).empty?
-		  ldap = person.public_name.split(' ').map(&:asciize)
+                  ldap = person.public_name.split(' ').map(&:asciize)
 
                   unless (ldap-resolution).empty? or (resolution-ldap).empty?
-                    line.sub! /([-*]\s+)(.*)(\s+&lt;)/, 
+                    line.sub! /(#{s}\s+)(.*)(\s+&lt;)/, 
                      '\1<span title="name doesn\'t match ICLA" ' +
                      'class="commented">\2</span>\3'
-		  end
+                  end
                 end
               else
                 line.sub! /(&lt;)(\w+)(@)/, 
