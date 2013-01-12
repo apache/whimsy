@@ -170,7 +170,7 @@ minutes.mreplace(/\n\s5.\sAdditional\sOfficer\sReports\n
     \n\s\s\s\s\s?(\w+)\.\s([^\n]*?)   # section, title
     \[([^\n]+)\]\n\n                  # owners
     \s{7}See\s\s?Attachment\s\s?(\w+)[^\n]* # attach (title)
-    (\s+\[\sapproved:\s*?.*?          # approved
+    (\s+\[\s.*?approved:\s*?.*?       # approved
     \s*comments:.*?\n\s{9}\])         # comments
   /mx) do |section, title, owners, attach, comments|
     notes = notes(title.sub('VP of','').strip)

@@ -145,6 +145,7 @@ load_agenda = Proc.new do
     title.sub! /^Report from the /, ''
     title.sub! /^Status report for the /, ''
     title.sub! /^Apache /, ''
+    title.sub! /\s*\[.*\]$/, ''
     title.sub! /\sTeam$/, ''
     title.sub! /\sCommittee$/, ''
     title.sub! /\sProject$/, ''
@@ -160,7 +161,7 @@ load_agenda = Proc.new do
   file.scan(/
     \[([^\n]+)\]\n\n                  # owners
     \s{7}See\sAttachment\s\s?(\w+)[^\n]*?\s+ # attach (title)
-    \[\sapproved:\s*?(.*?)            # approved
+    \[\s[^\n]*\s*approved:\s*?(.*?)            # approved
     \s*comments:(.*?)\n\s{9}\]        # comments
   /mx).each do |owners,attach,approved,comments|
     report = agenda[attach] || OpenStruct.new
@@ -575,6 +576,10 @@ _html do
 
           # validate name/email addresses in resolutions
           s = '[-*\u2022]'
+          if report.attach =~ /7\w/
+            text.gsub! /\((\w+)\)$/, '&lt;\1@apache.org&gt;'
+          end
+
           if report.attach =~ /7\w/ and text =~/^\s+#{s}.*@/
             text.gsub! /^\s*#{s}.*?&lt;(\w+)@(\.\.\.|apache\.org)&gt;/ do |line|
               person = ASF::Person.new($1)
