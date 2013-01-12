@@ -595,7 +595,7 @@ _html do
                   '\1<a href="/roster/committer/\2">' +
                   '<span class="pmcmemberavailid">\2</span>\3</a>\4'
 
-                if [personname, person.public_name.to_s].any? { |cn| cn.index chairname }
+                if [personname, person.public_name.to_s].any? { |cn| cn.index (chairname or '') }
                     line += '<span style="display:none" class="chairavailid">' \
                           + $2 + '</span>' \
                 end
