@@ -112,10 +112,12 @@ def main():
         assert set(keys).issubset(c.name for c in candidates)
         t = tempfile.SpooledTemporaryFile()
         for key in sorted(keys): print(key, file=t)
+        REMOTE_USER = os.getenv('REMOTE_USER')
         f = lambda: subprocess.check_output([
             'svnmucc',
-            '--with-revprop=whimsy:author=%s' % os.getenv('REMOTE_USER'),
-            '-m', 'tlpreq: record %s approved TLP resolutions' % _date(True),
+            '--with-revprop=whimsy:author=%s' % REMOTE_USER,
+            '-m', 'tlpreq: record %s approved TLP resolutions by %s'
+                  % (_date(True), REMOTE_USER),
             '-U', RESULT_URL,
             'put', '/dev/stdin', 'victims-%s.0.txt' % _date(True),
         ], stdin=t)
