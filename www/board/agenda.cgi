@@ -578,8 +578,8 @@ _html do
           s = '[-*\u2022]'
           if report.attach =~ /7\w/
             text.gsub! /\((\w+)\)$/, '&lt;\1@apache.org&gt;'
-            if text =~ /RESOLVED, that (.*?(\n.*?)??),? be and hereby is appointed/
-              chairname = $1.gsub(/\s+/, ' ')
+            if text =~ /RESOLVED, that (.*?(\n.*?)??),? be (and hereby is )?appointed/
+              chairname = $1.gsub(/\s+/, ' ').strip
             else
               chairname = nil
             end
