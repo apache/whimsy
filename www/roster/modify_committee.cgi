@@ -9,7 +9,7 @@ exceptions = %w(hudson-jobadmin).map {|name| ASF::Committee.find name}
 
 # only allow apache host (and janIV local)
 cgi = CGI.new
-unless cgi.host.nil? or cgi.host =~ /^192[.]168/ or cgi.host =~ /apache[.]org$/
+unless cgi.host.nil? or cgi.host =~ /^192[.]168/
   print "Status: 401 Unauthorized\r\n"
   exit
 end
