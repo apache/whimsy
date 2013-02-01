@@ -33,7 +33,7 @@ module ASF
     def each(&block)
       officers = ASF::SVN['private/foundation/officers']
       iclas = File.read("#{officers}/iclas.txt")
-      iclas.scan(/^(\w+):.*?:(.*?):(.*?):/).each(&block)
+      iclas.scan(/^([-\w]+):.*?:(.*?):(.*?):/).each(&block)
     end
   end
 
