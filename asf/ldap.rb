@@ -8,7 +8,9 @@ module ASF
     begin
       conf = '/etc/ldap/ldap.conf'
       host = File.read(conf).scan(/^uri\s+ldaps:\/\/(\S+?):(\d+)/i).first
-      Wunderbar.info "Connecting to LDAP server: [ldaps://#{host[0]}:#{host[1]}]"
+      if host
+         Wunderbar.info "Connecting to LDAP server: [ldaps://#{host[0]}:#{host[1]}]"
+      end
     rescue Errno::ENOENT
       host = nil
     end
@@ -25,6 +27,8 @@ module ASF
       rescue LoadError=>e
           Wunderbar.info "ruby-ldap wasn't found; ldapsearch will be used instead: [" + e.message + "]"
       end
+    else
+      Wunderbar.error "No LDAP server defined, there must be a LDAP ldaps:// URI in /etc/ldap/ldap.conf"
     end
   end
 
