@@ -249,7 +249,7 @@ _html do
           // Turn it into a $ figure with commas
           // TODO Support other currencies
           total = total.toFixed(2);
-          total = total.replace(/(\\d)(?=(\\d\\d\\d)+$)/g, "$1,");
+          total = total.replace(/(\\d)(?=(\\d\\d\\d)+[$\\.])/g, "$1,");
 
           if ($('input[name=total]').val() != '$ ' + total) {
             $('input[name=total]').stop().css('backgroundColor', '#FF0').
@@ -373,13 +373,16 @@ _html do
           @item.lines.each do |line|
             line.gsub!(/^(\d+)\s-\s*/,'')
             quantity = $1
-            if line.match(/[-@]?\s?\$\s?([,\d]+)$/)
-              line.gsub!(/[-@]?\s?\$\s?([,\d]+)$/, '') unless quantity
+            if line.match(/[-@]?\s?\$\s?([,\d\.]+)$/)
+              amt = $1.gsub(',', '')
               quantity ||= '1'
-              price = quantity.to_i * $1.gsub(/\D/,'').to_i
+              price = quantity.to_i * amt.to_f
             end
 
-            price = price.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, '\1,')
+            # Format the float as a 2dp number
+            price = "%0.2f" % price
+            # Now make it look pretty with commas
+            price = price.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, '\1,')
             _tr do
               _td.c11 do
                 _p.c29 quantity
