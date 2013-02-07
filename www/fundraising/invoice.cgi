@@ -209,7 +209,7 @@ _html do
         $('#presets input[type=button]').click(function() {
           var amount = '$ ' + $(this).attr('data-amount');
           amount = amount.toString().replace(/(\\d)(?=(\\d\\d\\d)+$)/g, "$1,");
-          var item = "2012 " + $(this).val() + " Sponsorship @ " + 
+          var item = "2013 " + $(this).val() + " Sponsorship @ " + 
             amount + "\\n\\n";
           item += "Start Date: #{start.strftime("%B %d, %Y")}\\n\";
           item += "End Date: #{finish.strftime("%B %d, %Y")}\\n";
@@ -222,23 +222,34 @@ _html do
         $('textarea[name=item]').keyup(function() {
           var total = 0;
 
-          // text $price
-          var amounts = $(this).val().match(/\\$\\s?[,\\d]+(\\r|\\n|$)/g);
-          for (var i=0; amounts && i<amounts.length; i++) {
-            total += parseFloat(amounts[i].replace(/\\D/g, ''));
+          // Process each line in turn
+          var lines = $(this).val().match(/[^\\r\\n]+/g);
+          for (var i=0; lines && i<lines.length; i++) {
+             var line = lines[i];
+
+             // Look for a $price at the end
+             var price = line.match(/\\$\\s?([,\\d]+(\\.\\d\\d)?)$/);
+             if (price && price.length > 0) {
+                // Bingo, it's a price one
+                var amt = parseFloat(price[1]);
+
+                // Did they give a quantity at the start?
+                var qty = line.match(/(\\d+)[\\s\\@\\-]/);
+                if (qty && qty.length > 0) {
+                   // This is a "quantity - text @ $price"
+                   var quantity = parseInt( qty[1] );
+                   total += (quantity * amt);
+                } else {
+                   // This is a "text $price"
+                   total += amt;
+                }
+             }
           }
-
-          // quantity - text @ $ price
-          amounts = $(this).val().match(
-            /(^|\\r|\\n)\\d+\\s-[^\\n]*?[@-]\\s?\\$\\s?[,\\d]+(?=\\r|\\n|$)/g);
-
-          for (var i=0; amounts && i<amounts.length; i++) {
-            var quantity = parseInt(amounts[i].match(/\\d+/)[0]);
-            var price = amounts[i].match(/[.,\\d]+(\\r|\\n|$)/)[0];
-            total += (quantity-1) * parseFloat(price.replace(/\\D/g, ''));
-          }
-
-          total = total.toString().replace(/(\\d)(?=(\\d\\d\\d)+$)/g, "$1,");
+ 
+          // Turn it into a $ figure with commas
+          // TODO Support other currencies
+          total = total.toFixed(2);
+          total = total.replace(/(\\d)(?=(\\d\\d\\d)+$)/g, "$1,");
 
           if ($('input[name=total]').val() != '$ ' + total) {
             $('input[name=total]').stop().css('backgroundColor', '#FF0').
