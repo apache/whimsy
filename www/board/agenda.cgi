@@ -980,7 +980,7 @@ _html do
       _table_ do
         _tr do
           _th 'Attach'
-          _th 'Tittle'
+          _th 'Title'
           _th 'Author'
           _th 'Shepherd'
         end
