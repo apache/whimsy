@@ -578,7 +578,7 @@ _html do
           s = '[-*\u2022]'
           if report.attach =~ /7\w/
             text.gsub! /\((\w+)\)$/, '&lt;\1@apache.org&gt;'
-            if text =~ /RESOLVED, that (.*?(\n.*?)??),? be (and hereby is )?appointed/
+            if text =~ /FURTHER RESOLVED, that (.*?(\n.*?)??),? be/
               chairname = $1.gsub(/\s+/, ' ').strip
             else
               chairname = nil
@@ -597,7 +597,7 @@ _html do
                   '\2' + '</span>' +
                   '\4'
 
-                if [personname, person.public_name.to_s].any? { |cn| cn.index (chairname or '') }
+                if [personname, person.public_name.to_s].any? { |cn| cn.index (chairname) }
                     line += '<span style="display:none" ' \
                           + ' class="tlpreqchairavailid">' + $2 + '</span>'
                 end
