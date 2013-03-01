@@ -2,12 +2,7 @@
 require 'shellwords'
 require '/var/tools/asf'
 
-# from hermes
-wheel = %w(joes pgollucci pctony pquerna norman gmcdonald markt arreyder)
-apmail = %w(gmcdonald joes pgollucci pctony pquerna norman pctony gstein noel
-  coar dims geirm brett lars rubys craigmcc dirkx upayavira mbenson smtpd
-  arreyder clr)
-
+# TODO: determine apmail@hermes,wheel@hermes gorup membership
 unless apmail.include? $USER or wheel.include? $USER
   print "Status: 401 Unauthorized\r\n"
   print "WWW-Authenticate: Basic realm=\"APMail\"\r\n\r\n"
