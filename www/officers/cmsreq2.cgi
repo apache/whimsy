@@ -38,8 +38,8 @@ FORMAT_NUMBER = 1 # json format number
 BUILD_TYPES = %w(default maven ant shell) # forrest
 PROJ_PAT = '[a-z][a-z0-9]+'
 URL_PREFIX = 'https://svn.apache.org/repos/asf/incubator'
-export = 'https://anonymous:@cms.apache.org/export.json'
-WEBSITES = JSON.load(http_get(export).body)
+EXPORT_JSON = 'https://anonymous:@cms.apache.org/export.json'
+WEBSITES = JSON.load(http_get(EXPORT_JSON).body)
 PODLINGS = list_podlings().delete_if {|podling| WEBSITES.keys.include? podling}
 # TODO: also delete podlings that have svnpubsub set up
 
