@@ -21,7 +21,9 @@ def http_get(uri)
   uri = URI.parse(uri) if String === uri
   uri.host.untaint if uri.host =~ /^\w+[.]apache[.]org$/
   Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme=='https') do |http|
-    http.request Net::HTTP::Get.new uri.request_uri
+    req = Net::HTTP::Get.new uri.request_uri
+    req.basic_auth uri.user, uri.password
+    http.request req
   end
 end
 
@@ -37,8 +39,7 @@ BUILD_TYPES = %w(default maven ant shell) # forrest
 PROJ_PAT = '[a-z][a-z0-9]+'
 URL_PREFIX = 'https://svn.apache.org/repos/asf/incubator'
 podlings = list_podlings()
-export = # TODO: use https://anonymous:@cms.apache.org/export.json
-  'https://svn.apache.org/repos/infra/websites/cms/webgui/content/export.json'
+export = 'https://anonymous:@cms.apache.org/export.json'
 WEBSITES = JSON.load(http_get(export).body)
 podlings.delete_if {|podling| WEBSITES.keys.include? podling}
 # TODO: also delete podlings that have svnpubsub set up
