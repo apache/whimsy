@@ -38,10 +38,9 @@ FORMAT_NUMBER = 1 # json format number
 BUILD_TYPES = %w(default maven ant shell) # forrest
 PROJ_PAT = '[a-z][a-z0-9]+'
 URL_PREFIX = 'https://svn.apache.org/repos/asf/incubator'
-podlings = list_podlings()
 export = 'https://anonymous:@cms.apache.org/export.json'
 WEBSITES = JSON.load(http_get(export).body)
-podlings.delete_if {|podling| WEBSITES.keys.include? podling}
+PODLINGS = list_podlings().delete_if {|podling| WEBSITES.keys.include? podling}
 # TODO: also delete podlings that have svnpubsub set up
 
 _html do
@@ -70,7 +69,7 @@ _html do
           _ URL_PREFIX
           _ '/'
           _select name: 'project' do
-            podlings.sort.each do |podling| 
+            PODLINGS.sort.each do |podling| 
               _option podling, selected: (podling == @project)
             end
           end
@@ -123,7 +122,7 @@ _html do
       error ||= 'Invalid build type' unless BUILD_TYPES.include? @build_type
       error ||= 'Invalid backend' unless %w(cms svnpubsub).include? @backend
       error ||= 'Invalid project' unless /^#{PROJ_PAT}$/.match @project
-      error ||= 'Invalid project' unless podlings.include? @project
+      error ||= 'Invalid project' unless PODLINGS.include? @project
       error ||= 'Dubious URL' unless @source =~ /^([\/A-Za-z0-9_-]|[.][^.])+$/;
 
       # TODO: untaint @project here?
