@@ -202,13 +202,6 @@ _html do
     end
 
     _script %{
-      // force source url to https.
-      $('input[name=source]').change(function() {
-        if ($(this).val().indexOf('http:') == 0) {
-          $(this).val($(this).val().replace('http:', 'https:'));
-        }
-      });
-
       // Hide the CMS-only fields.
       $('input[name=backend]').change(function() {
         if ($(this).val() != 'cms') {
