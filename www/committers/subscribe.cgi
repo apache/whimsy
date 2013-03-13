@@ -6,7 +6,7 @@ require 'time'
 
 $SAFE = 1
 
-FORMAT_NUMBER = 2 # json format number
+FORMAT_NUMBER = 3 # json format number
 
 user = ASF::Person.new($USER)
 # authz handled by httpd
@@ -62,6 +62,9 @@ _html do
         availid: $USER,
         addr: @addr,
         listkey: @list,
+        # f3
+        member_p: user.asf_member?,
+        chair_p: ASF.pmc_chairs.include? user,
       }
       request = JSON.pretty_generate(vars) + "\n"
       _pre request
