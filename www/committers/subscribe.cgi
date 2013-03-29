@@ -64,7 +64,7 @@ _html do
         listkey: @list,
         # f3
         member_p: user.asf_member?,
-        chair_p: ASF.pmc_chairs.include? user,
+        chair_p: ASF.pmc_chairs.include?(user),
       }
       request = JSON.pretty_generate(vars) + "\n"
       _pre request
