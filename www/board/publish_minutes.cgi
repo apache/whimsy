@@ -40,7 +40,6 @@ _html do
     unless calendar.include? '#'+year
       calendar[/^()#.*Board meeting minutes #/,1] =
         "# #{year} Board meeting minutes # {##{year}}\n\n"
-      EOF
     end
 
     # add summary
