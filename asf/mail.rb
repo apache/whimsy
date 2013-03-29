@@ -33,7 +33,7 @@ module ASF
     def self.lists
       apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
       @lists ||= File.read(File.join(apmail_bin, '.archives')).
-        scan(/^\s+"(\w[-\w]+)", "\/home\/apmail\//).flatten
+        scan(/^\s+"(\w[-\w]+)", "\/home\/apmail\/(?:public-arch|private-arch)\//).flatten
     end
   end
 
