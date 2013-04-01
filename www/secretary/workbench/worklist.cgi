@@ -380,8 +380,6 @@ _html do
             _fieldset do
               _legend 'To:'
               _input type: 'submit', name: 'dest', value: 'Jim'
-              _input type: 'submit', name: 'dest', value: 'Shane'
-              _input type: 'submit', name: 'dest', value: 'Chris'
               _input type: 'submit', name: 'dest', value: 'Sam'
               _input type: 'submit', name: 'dest', value: 'Upayavira'
             end
