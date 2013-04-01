@@ -4,9 +4,18 @@ require '/var/tools/asf'
 
 # TODO: determine apmail@hermes,wheel@hermes gorup membership
 unless apmail.include? $USER or wheel.include? $USER
-  print "Status: 401 Unauthorized\r\n"
-  print "WWW-Authenticate: Basic realm=\"APMail\"\r\n\r\n"
-  exit
+  pmc = ENV['PATH_INFO'][/\/([-\w]+)\.apache\.org\//,1]
+  pmc &&= ASF::Committee.find(pmc)
+  user = ASF::Person.find($USER)
+  unless pmc and pmc.members.include? user
+    print "Status: 401 Unauthorized\r\n"
+    if pmc and not pmc.members.empty?
+      print "WWW-Authenticate: Basic realm=\"#{pmc.display_name} PMC\"\r\n\r\n"
+    else
+      print "WWW-Authenticate: Basic realm=\"APMail\"\r\n\r\n"
+    end
+    exit
+  end
 end
 
 mods = JSON.load(File.read('/home/apmail/subscriptions/mods'))
@@ -51,6 +60,38 @@ _html do
         end
       end
 
+    elsif ENV['PATH_INFO'] == '/list'
+
+      _h2 "ASF Mailing List moderators" 
+      emails = [] 
+      mods.each do |domain, lists| 
+        lists.each do |list, moderators| 
+          emails += moderators.map(&:downcase) 
+        end 
+      end 
+ 
+      _ul do 
+        emails.uniq.sort.each do |email| 
+          _li! { _a email, href: email } 
+        end 
+      end 
+
+    elsif ENV['PATH_INFO'] =~ %r{@}
+
+      email = env['PATH_INFO'][1..-1].downcase
+      _h2 "Lists moderated by #{email}" 
+      _ul do 
+        mods.each do |domain, lists| 
+          lists.each do |list, moderators| 
+            if moderators.map(&:downcase).include? email 
+              _li! do
+                _a "#{list}@#{domain}", href: "#{domain}/#{list}/"
+              end
+            end 
+          end 
+        end 
+      end 
+
     elsif ENV['PATH_INFO'] =~ %r{^/([-.\w]*apache\w*\.\w+)/$}
 
       _h2_ "Mailing Lists - #{$1}"
@@ -81,7 +122,32 @@ _html do
         end
       end
 
-      _h2_ "#{list}@#{domain}"
+      apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
+      archives = File.read(File.join(apmail_bin, '.archives'))
+      archives = Hash[*JSON.parse('['+archives.sub(/,?\s*\Z/,']'))]
+
+      pmc = domain.split('.').first
+      listname = "#{pmc}-#{list}"
+      href = 
+        if archives[listname]
+          if archives[listname].include? '/apmail/public-arch/'
+            "http://mail-archives.apache.org/mod_mbox/#{listname}"
+          else
+            user = ASF::Person.find($USER)
+            if user.asf_member?
+              "https://mail-search.apache.org/members/private-arch/#{listname}"
+            elsif ASF::Committee.find(pmc).members.include? user
+              "https://mail-search.apache.org/pmc/private-arch/#{listname}"
+            end
+          end
+        end
+  
+      if href
+        _h2_ {_a "#{list}@#{domain}", href: href}
+      else
+        _h2_ "#{list}@#{domain}"
+      end
+
       _table_ do
         _thead_ do
           _tr do
