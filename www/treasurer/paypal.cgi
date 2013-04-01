@@ -10,8 +10,13 @@ unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
   exit
 end
 
-csv = CSV.open('/var/tools/paypal/Download.csv','r')
-headers = csv.take(1).flatten
+csv = []
+Dir['/var/tools/paypal/2*.csv'].sort.reverse.each do |month|
+  csv += CSV.open(month,'r').to_a[1..-1]
+end
+download = CSV.open('/var/tools/paypal/Download.csv','r')
+headers = download.take(1).flatten
+csv += download.to_a
 
 skip = [2,6,10,11,12,13,14,16]
 

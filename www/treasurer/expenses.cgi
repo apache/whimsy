@@ -220,7 +220,8 @@ _html do
               _td transaction['category'] unless @category
               if transaction['link']
                 _td! do
-                  _a transaction['detail'], href: paid + transaction['link']
+                  _a transaction['detail'], href: paid + transaction['link'],
+                    title: transaction['notes']
                 end
               else
                 _td transaction['detail'], title: transaction['notes']
