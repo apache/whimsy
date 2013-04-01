@@ -168,7 +168,7 @@ _html do
 	      # chair since
 	      chair = person.committees.find {|committee| committee.chair == person}
 	      if chair
-		minutes = Dir['/var/www/board/minutes/*'].find do |name|
+		minutes = Dir['/var/www/whimsy/board/minutes/*'].find do |name|
 		  File.basename(name).split('.').first.downcase.gsub(/[_\W]/,'') ==
 		    "#{chair.name.gsub(/\W/,'')}"
 		end
@@ -177,20 +177,24 @@ _html do
 		search_string.force_encoding('utf-8')
 
 		# search published minutes
-		resolution = nil
-		minutes.untaint
-		Nokogiri::HTML(File.read(minutes)).search('pre').each do |pre|
-		  if pre.text.include? search_string
-		    resolution = pre
-		    while resolution and resolution.name != 'h2'
-		      resolution = resolution.previous
+                if minutes
+		  resolution = nil
+		  minutes.untaint
+		  Nokogiri::HTML(File.read(minutes)).search('pre').each do |pre|
+		    if pre.text.include? search_string
+		      resolution = pre
+		      while resolution and resolution.name != 'h2'
+		        resolution = resolution.previous
+		      end
+		      break if resolution
 		    end
-		    break if resolution
 		  end
 		end
     
 		date = 'unknown'
-		minutes = '/board/minutes/' + File.basename(minutes)
+                if minutes
+		  minutes = '/board/minutes/' + File.basename(minutes)
+                end
 		if resolution
 		  minutes += '#' + resolution.at('a')['id']
 		  date = Date.parse(resolution.text)
