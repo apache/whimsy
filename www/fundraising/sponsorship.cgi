@@ -122,11 +122,13 @@ _html do
           next if not level.nil? and level != data['level']
           _tr_ do
             _td startdate
-            if isoverdue
+            if data['level'] == "event"
+              _td "n/a"
+            elsif isoverdue and (data['status'] == "active" or data['status']=='')
               _td.remind enddate
-             else
+            else
               _td enddate
-             end
+            end
 
             _td! do
               _a data['name'], 
