@@ -34,9 +34,9 @@ _html do
     # start with the Watch List itself
     watch_list = ASF::Person.member_watch_list.keys
 
-    nominations = File.read("#{meetings}/20120522/nominated-members.txt").
+    nominations = File.read("#{meetings}/20130521/nominated-members.txt").
       scan(/^\s?\w+.*<(\S+)@apache.org>/).flatten
-    nominations += File.read("#{meetings}/20120522/nominated-members.txt").
+    nominations += File.read("#{meetings}/20130521/nominated-members.txt").
       scan(/^\s?\w+.*\(([a-z]+)\)/).flatten
 
     # determine which list to report on, based on the URI
@@ -56,7 +56,7 @@ _html do
       list = nominations.uniq.map {|id| ASF::Person.find(id)}
     elsif request =~ /appstatus/
       _h2_ 'Application Status'
-      status = File.read("#{meetings}/20120522/memapp-received.txt").
+      status = File.read("#{meetings}/20130521/memapp-received.txt").
         scan(/^(yes|no)\s+(yes|no)\s+(yes|no)\s+(yes|no)\s+(\w+)\s/)
       status = Hash[status.map {|tokens| [tokens.pop, tokens]}]
       list = status.keys.map {|id| ASF::Person.find(id)}
