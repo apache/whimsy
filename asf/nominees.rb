@@ -6,7 +6,7 @@ module ASF
       return @member_nominees if @member_nominees
 
       foundation = ASF::SVN['private/foundation/Meetings']
-      text = File.read "#{foundation}/20120522/nominated-members.txt"
+      text = File.read "#{foundation}/20130521/nominated-members.txt"
 
       nominations = text.split(/^\s*---+\s*/)
       nominations.shift(2)
