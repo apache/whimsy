@@ -60,7 +60,9 @@ _html do
     _h1 'Publish the Minutes'
 
     # update from svn
-    [MINUTES, BOARD_SITE, BOARD_PRIVATE].each {|dir| Dir.chdir(dir) {`svn up`}}
+    [MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir| 
+      Dir.chdir(dir) {`svn cleanup`; `svn up`}
+    end
 
     _h2 'Commit the Minutes'
     Dir.chdir MINUTES do
