@@ -34,10 +34,10 @@ _html do
     # start with the Watch List itself
     watch_list = ASF::Person.member_watch_list.keys
 
-    nominations = File.read("#{meetings}/20130521/nominated-members.txt").
-      scan(/^\s?\w+.*<(\S+)@apache.org>/).flatten
-    nominations += File.read("#{meetings}/20130521/nominated-members.txt").
-      scan(/^\s?\w+.*\(([a-z]+)\)/).flatten
+    txt = File.read("#{meetings}/20130521/nominated-members.txt")
+    nominations = txt.scan(/^\s?\w+.*<(\S+)@apache.org>/).flatten
+    nominations += txt.scan(/^\s?\w+.*\(([a-z]+)\)/).flatten
+    nominations += txt.scan(/^\s?\w+.*\(([a-z]+)@apache\.org\)/).flatten
 
     # determine which list to report on, based on the URI
     request = ENV['REQUEST_URI']
