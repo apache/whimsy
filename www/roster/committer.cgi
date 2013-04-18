@@ -279,7 +279,7 @@ _html do
               elsif person.member_nomination
                 _tr_ do
                   _td do
-                   _a 'nominated-members', href: 'https://svn.apache.org/repos/private/foundation/Meetings/20120522/nominated-members.txt'
+                   _a 'nominated-members', href: 'https://svn.apache.org/repos/private/foundation/Meetings/20130521/nominated-members.txt'
                   end
                   _td { _pre person.member_nomination.chomp }
                 end
