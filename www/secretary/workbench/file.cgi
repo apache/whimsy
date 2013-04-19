@@ -793,7 +793,9 @@ _html do
       _h1 'Update'
       _pre.todo "svn update #{OFFICERS}",  'data-file' => OFFICERS
       _pre.todo "svn update #{DOCUMENTS}", 'data-file' => DOCUMENTS
-      _pre.todo "svn update #{MEETINGS}",  'data-file' => MEETINGS if MEETINGS
+      if defined? MEETING
+        _pre.todo "svn update #{MEETING}", 'data-file' => MEETING
+      end
       _h3.todo 'icla.txt issues'
       ajax = true
       cleanup = Dir["#{DOCUMENTS}/members/received/*"].map(&:untaint).
