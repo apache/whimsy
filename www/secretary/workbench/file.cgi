@@ -367,7 +367,7 @@ def committable
   files = %W( #{FOUNDATION}/Correspondence/JCP/tck-nda-list.txt )
   if defined?(MEETING)
     files += %W(#{MEETING}/memapp-received.txt #{FOUNDATION}/members.txt)
-    files += MEETING
+    files << MEETING
   end
   files += [DOCUMENTS, OFFICERS]
 end
