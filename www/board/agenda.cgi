@@ -687,7 +687,8 @@ _html do
             notes = agenda.notes[report.title]
             if ['Roll Call', 'Discussion Items', 
                 'Review Outstanding Action Items'].include? report.title
-              notes ||= report.text.gsub(/ \(expected.*?\)/, '')
+              notes ||= report.text.gsub(/ \(expected.*?\)/, '').
+                sub /^ +ASF members are welcome to attend board meetings.*?\n\n/m, ''
             end
             _textarea.notes! notes.to_s.sub(/\A\s*\n/,'').gsub(/^\s+\n/, "\n"), 
               name: 'notes',

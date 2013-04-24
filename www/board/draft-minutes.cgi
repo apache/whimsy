@@ -117,6 +117,8 @@ minutes.mreplace(/\n\s1.\sCall\sto\sorder\n+(.*?:)\n\n
   [meeting.reflow(4,64), '', backup.reflow(4, 68)]
 end
 
+minutes.sub! /^ +ASF members are welcome to attend board meetings.*?\n\n/m, ''
+
 minutes.mreplace(/\n\s2.\sRoll\sCall\n\n
                  (.*?)\n\n+\s3.\sMinutes
                  /mx) do |rollcall|
