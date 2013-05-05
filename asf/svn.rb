@@ -14,7 +14,7 @@ module ASF
     end
 
     def self.[](name)
-      repos[(@base+name).to_s]
+      repos[(@base+name).to_s.sub(/\/*$/, '')] # lose trailing slash
     end
   end
 
