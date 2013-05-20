@@ -251,6 +251,9 @@ _html do
           total = total.toFixed(2);
           total = total.replace(/(\\d)(?=(\\d\\d\\d)+[$\\.])/g, "$1,");
 
+          // This line overrides the last two blocks!
+          total = $(this).val().match(/[$] *([0-9,]+)/)[1];
+
           if ($('input[name=total]').val() != '$ ' + total) {
             $('input[name=total]').stop().css('backgroundColor', '#FF0').
               val('$ ' + total).animate({'backgroundColor': '#8e8'}, 1000);
