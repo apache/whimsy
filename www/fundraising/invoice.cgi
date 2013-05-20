@@ -373,7 +373,8 @@ _html do
           end
         end
         _tbody do
-          @item.lines.each do |line|
+          if 1 == 1
+            line = @item.lines.first
             line.gsub!(/^(\d+)\s-\s*/,'')
             quantity = $1
             if line.match(/[-@]?\s?\$\s?([,\d\.]+)$/)
