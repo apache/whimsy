@@ -462,7 +462,7 @@ _html do
     end
   end
 
-  _body? do
+  _body do
     load_agenda.call if agenda.empty?
 
     if attach
