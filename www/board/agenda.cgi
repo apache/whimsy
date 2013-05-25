@@ -588,7 +588,7 @@ _html do
           if report.attach =~ /7\w/ and text =~/^\s+#{s}.*(@| at )/
             text.gsub! /^\s*#{s}(.*?)&lt;(\w+)(@| at )(\.\.\.|apache\.org)&gt;/ do |line|
               personname = $1.strip
-              person = ASF::Person.new($3)
+              person = ASF::Person.new($2)
               if person.icla
                 # link to the roster information for this committer
                 line.sub! /(&lt;)(\w+)(@.*?| at .*?)(&)/, 
@@ -950,7 +950,7 @@ _html do
         }
       }
 
-    elsif link
+    elsif not link.empty?
       # Report requested and not found.
       raise "Not found: #{link}"
     else
