@@ -773,8 +773,7 @@ _html do
       end
       _h2 do
         _ 'To be added to'
-        _a 'calendar.mdtext', href:
-'https://svn.apache.org/repos/asf/infrastructure/site/trunk/content/foundation/board/calendar.mdtext'
+        _a 'calendar.mdtext', href: 'https://svn.apache.org/repos/asf/infrastructure/site/trunk/content/foundation/board/calendar.mdtext'
         _ ':'
       end
       _form action: '../../publish_minutes', method: 'post' do
