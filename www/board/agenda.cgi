@@ -585,13 +585,13 @@ _html do
             end
           end
 
-          if report.attach =~ /7\w/ and text =~/^\s+#{s}.*@/
-            text.gsub! /^\s*#{s}(.*?)&lt;(\w+)@(\.\.\.|apache\.org)&gt;/ do |line|
+          if report.attach =~ /7\w/ and text =~/^\s+#{s}.*(@| at )/
+            text.gsub! /^\s*#{s}(.*?)&lt;(\w+)(@| at )(\.\.\.|apache\.org)&gt;/ do |line|
               personname = $1.strip
-              person = ASF::Person.new($2)
+              person = ASF::Person.new($3)
               if person.icla
                 # link to the roster information for this committer
-                line.sub! /(&lt;)(\w+)(@.*?)(&)/, 
+                line.sub! /(&lt;)(\w+)(@.*?| at .*?)(&)/, 
                   '\1<a href="/roster/committer/\2">\2\3</a>' +
                   '<span style="display:none" class="tlpreqpmcmemberavailid">' +
                   '\2' + '</span>' +
