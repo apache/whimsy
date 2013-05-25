@@ -951,6 +951,9 @@ _html do
         }
       }
 
+    elsif link
+      # Report requested and not found.
+      raise "Not found: #{link}"
     else
 
       ############################################################ 
