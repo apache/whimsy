@@ -873,7 +873,7 @@ _html do
 
 	  if verify
 	    stderr2out = { class: {stderr: '_stdout'} }
-	    rc = _.system ['gpg', '--verify', *verify], stderr2out
+	    _.system ['gpg', '--verify', *verify], stderr2out
             if _.target!.include? "gpg: Can't check signature: public key not found"
               keyid = _.target!.join[/[RD]SA key ID (\w+)/,1]
               if keyid
@@ -907,7 +907,16 @@ _html do
           _input type: 'submit', name: 'action', value: 'Staple'
         else
           file = "#{RECEIVED}/#{@dir}"
-          _pre `gpg --verify #{file} 2>&1`
+	  stderr2out = { class: {stderr: '_stdout'} }
+	  _.system ['gpg', '--verify', file], stderr2out
+          if _.target!.include? "gpg: Can't check signature: public key not found"
+            keyid = _.target!.join[/[RD]SA key ID (\w+)/,1]
+            if keyid
+	      _.system ['gpg', '--keyserver', 'pgpkeys.mit.edu',
+		'--recv-keys', keyid], stderr2out
+	      _.system ['gpg', '--verify', file], stderr2out
+            end
+          end
           open(file) {|fh| _pre fh.read} 
         end
 
