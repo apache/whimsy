@@ -5,6 +5,7 @@ require './local_paths'
 require 'fileutils'
 require 'ostruct'
 require 'escape'
+require 'time'
 
 ENV['LANG'] = 'en_US.UTF-8'
 
