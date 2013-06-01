@@ -157,14 +157,18 @@ _html do
 
           _tr do
             _td 'Bill to'
-            _td { _textarea @bill_to, name: 'bill_to', rows: 6, required: true }
+            _td { _textarea @bill_to, name: 'bill_to', rows: 6, required: true do 
+               _ << "</textarea>"
+             end}
           end
 
           _tr do
             _td 'Item Description'
             _td do
               _textarea @item, name: 'item', rows: 6, required: true,
-                placeholder: "quantity - description @ $ price"
+                placeholder: "quantity - description @ $ price" do
+                _ << "</textarea>"
+              end
             end
           end
 
