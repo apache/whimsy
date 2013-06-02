@@ -48,6 +48,6 @@ class EmailTest < Test::Unit::TestCase
 
     mail = Mail::TestMailer.deliveries.first
 
-    assert_send [mail.cc, :include?, 'private@jcloud.apache.org']
+    assert_send [mail.cc, :include?, 'private@jcloud.incubator.apache.org']
   end
 end
