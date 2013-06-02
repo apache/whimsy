@@ -67,6 +67,30 @@ end
 
 SUFFIXES = /^([Jj][Rr]\.?|I{2,3}|I?V|VI{1,3}|[A-Z]\.)$/
 
+OLDPODLINGS = [
+  'allura',
+  'ambari',
+  'blur',
+  'celix',
+  'chukwa',
+  'deltaspike',
+  'devicemap',
+  'drill',
+  'droids',
+  'hcatalog',
+  'jspwiki',
+  'kafka',
+  'kalumet',
+  'mesos',
+  'npanday',
+  'odf toolkit',
+  'onami',
+  's4',
+  'tashi',
+  'vzquery',
+  'wave'
+]
+
 # rearrange name in an order suitable for sorting
 def lname(name)
   name = name.split.reverse
@@ -320,9 +344,18 @@ def email(target, message)
       # add original cc list
       cc << vars.email_cc if vars.email_cc
 
+      # calculate podling list name
+      if vars.podling 
+        if OLDPODLINGS.include?(vars.podling) 
+          vars.podlinglist = "#{vars.podling}-private@incubator.apache.org"
+        else
+          vars.podlinglist = "private@#{vars.podling}@incubator.apache.org"
+        end
+      end
+
       # add pmc and podling lists, if supplied
       cc << "private@#{vars.pmc}.apache.org" if vars.pmc
-      cc << "#{vars.podling}-private@incubator.apache.org" if vars.podling
+      cc << "#{vars.podlinglist}" if vars.podling
       cc << "private@incubator.apache.org" if vars.podling and not vars.pmc
 
       # replace the list of cc's
