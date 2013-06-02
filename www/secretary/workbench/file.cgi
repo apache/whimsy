@@ -349,7 +349,7 @@ def email(target, message)
         if OLDPODLINGS.include?(vars.podling) 
           vars.podlinglist = "#{vars.podling}-private@incubator.apache.org"
         else
-          vars.podlinglist = "private@#{vars.podling}@incubator.apache.org"
+          vars.podlinglist = "private@#{vars.podling}.apache.org"
         end
       end
 
