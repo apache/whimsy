@@ -83,11 +83,11 @@ OLDPODLINGS = [
   'kalumet',
   'mesos',
   'npanday',
-  'odf toolkit',
+  'odf',
   'onami',
   's4',
   'tashi',
-  'vzquery',
+  'vxquery',
   'wave'
 ]
 
