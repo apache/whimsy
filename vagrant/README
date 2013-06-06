@@ -53,11 +53,25 @@ Step 5:
 Todo:
 
 1) Complete checkouts of foundation and documents are cumbersome, and will
-   be destroyed if you ever decide to destroy the virtual machine.  It
-   probably would be worth looking into allowing these directories to be 
-   checked out under this directory as it is shared with the VM as /vagrant.
-   Symbolic links could make this one copy appear wherever desired on both
-   machines.
+   be destroyed if you ever decide to destroy the virtual machine.  Should you
+   happen to have a checkout of documents and foundation on your machine, and
+   alternative version of step 4 is:
+
+      mkdir svn
+      *move* the documents and foundation trees into that directory
+      vagrant ssh
+      cd /var/tools/secretary
+      ln -s /vagrant/svn/foundation
+      ln -s /vagrant/svn/documents
+      cd foundation
+      svn update
+      exit
+
+   Note that it is important that you move the directories instead of merely
+   symbolically linking to them, otherwise all the virtual machine will see is
+   a symbolic link and not be able to get the data.  Of course you can add a
+   symbolic link on the host machine from the old location to the current
+   location.
 
 2) /var/tools/secretary/secmail.rb will need to be updated to use something
    other than sendmail as that isn't configured on this vagrant VM.  It will
