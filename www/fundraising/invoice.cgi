@@ -157,18 +157,14 @@ _html do
 
           _tr do
             _td 'Bill to'
-            _td { _textarea @bill_to, name: 'bill_to', rows: 6, required: true do 
-               _ << "</textarea>"
-             end}
+            _td { _textarea @bill_to, name: 'bill_to', rows: 6, required: true }
           end
 
           _tr do
             _td 'Item Description'
             _td do
               _textarea @item, name: 'item', rows: 6, required: true,
-                placeholder: "quantity - description @ $ price" do
-                _ << "</textarea>"
-              end
+                placeholder: "quantity - description @ $ price"
             end
           end
 
@@ -235,10 +231,10 @@ _html do
              var price = line.match(/\\$\\s?([,\\d]+(\\.\\d\\d)?)$/);
              if (price && price.length > 0) {
                 // Bingo, it's a price one
-                var amt = parseFloat(price[1]);
+                var amt = parseFloat(price[1].replace(/,/,''));
 
                 // Did they give a quantity at the start?
-                var qty = line.match(/(\\d+)[\\s\\@\\-]/);
+                var qty = line.match(/^(\\d+)\\s*[\\@\\-]/);
                 if (qty && qty.length > 0) {
                    // This is a "quantity - text @ $price"
                    var quantity = parseInt( qty[1] );
@@ -254,9 +250,6 @@ _html do
           // TODO Support other currencies
           total = total.toFixed(2);
           total = total.replace(/(\\d)(?=(\\d\\d\\d)+[$\\.])/g, "$1,");
-
-          // This line overrides the last two blocks!
-          total = $(this).val().match(/[$] *([0-9,]+)/)[1];
 
           if ($('input[name=total]').val() != '$ ' + total) {
             $('input[name=total]').stop().css('backgroundColor', '#FF0').
@@ -377,20 +370,21 @@ _html do
           end
         end
         _tbody do
-          if 1 == 1
-            line = @item.lines.first
+          @item.lines.each do |line|
             line.gsub!(/^(\d+)\s-\s*/,'')
             quantity = $1
-            if line.match(/[-@]?\s?\$\s?([,\d\.]+)$/)
-              amt = $1.gsub(',', '')
-              quantity ||= '1'
-              price = quantity.to_i * amt.to_f
-            end
+
+            next unless line.match(/[-@]?\s?\$\s?([,\d\.]+)$/)
+            amt = $1.gsub(',', '')
+            quantity ||= '1'
+            price = quantity.to_i * amt.to_f
 
             # Format the float as a 2dp number
             price = "%0.2f" % price
+
             # Now make it look pretty with commas
             price = price.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, '\1,')
+
             _tr do
               _td.c11 do
                 _p.c29 quantity
