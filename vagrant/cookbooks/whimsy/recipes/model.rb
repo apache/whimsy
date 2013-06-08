@@ -1,5 +1,5 @@
 #
-# installs subversion
+# installs subversion, ldap-utils, wkhtmltopdf
 # check outs whimsy tools (a.k.a. asf model)
 # install configuration scripts:
 #  checkout-svn
@@ -9,6 +9,7 @@
 
 package 'subversion'
 package 'ldap-utils'
+package 'wkhtmltopdf'
 
 directory "/var/tools" do
   user "vagrant"
