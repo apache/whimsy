@@ -16,7 +16,10 @@ Step 3: configure the virtual machine
 
   Making sure that you are in this directory as your working directory, enter:
 
-    vagrant up
+    USER=rubys vagrant up
+
+  Change user to your id.  You can leave this part out entirely if your ASF
+  id matches your current user id.
 
   Messages will scroll by.  Somewhere near the fourth from the last you will
   see a message like:
@@ -25,7 +28,7 @@ Step 3: configure the virtual machine
 
   Note the URL.
 
-Step 4: check out foundation and documents
+Step 4: (for use of the secretary workbench) check out foundation and documents
 
   In the same working directory, enter:
 
@@ -44,9 +47,18 @@ Step 4: check out foundation and documents
        that you will need to protect your machine from being accessed by
        others.
 
-Step 5:
+Step 5: (to use tools such as invoice):
 
-  Visit the URL, and click on "Secretary Workbench" (at the bottom)
+  vagrant ssh
+  bin/checkout-svn
+  bin/get-cert
+  bin/ldap-tunnel
+
+  These will prompt you for things like your ASF password.
+
+Step 6:
+
+  Visit the URL, and click on the service you wish to use 
 
 -----
 
@@ -72,12 +84,3 @@ Todo:
    a symbolic link and not be able to get the data.  Of course you can add a
    symbolic link on the host machine from the old location to the current
    location.
-
-2) /var/tools/secretary/secmail.rb will need to be updated to use something
-   other than sendmail as that isn't configured on this vagrant VM.  It will
-   also need to be configured to select *your* from address and signature
-   when run under vagrant ($USER == 'vagrant).
-
-3) The workbench software is currently in "read only" mode in that it doesn't
-   recognize the user 'vagrant' as being a secretary.
-    

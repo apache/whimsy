@@ -4,13 +4,7 @@
 #
 
 package 'ruby1.9.3'
-package 'subversion'
 package 'pdftk'
-
-directory "/var/tools" do
-  user "vagrant"
-  group "vagrant"
-end
 
 directory "/var/tools/secretary" do
   user "vagrant"

@@ -20,6 +20,11 @@ bash 'enable suexec' do
   not_if {File.exist? '/etc/apache2/mods-enabled/suexec.load'}
 end
 
+bash 'enable headers' do
+  code 'a2enmod headers'
+  not_if {File.exist? '/etc/apache2/mods-enabled/headers.load'}
+end
+
 ruby_block 'update site' do
   block do
     default = '/etc/apache2/sites-available/default'
@@ -32,6 +37,10 @@ ruby_block 'update site' do
 
     unless content.include? 'SuexecUserGroup'
       content.sub! "\n\n", "\n\tSuexecUserGroup vagrant vagrant\n\n"
+    end
+
+    unless content.include? 'RequestHeader'
+      content.sub! "\n\n", "\n\tRequestHeader set USER \"#{node.user}\"\n\n"
     end
 
     content.sub!(%r{<Directory /var/www/>.*?\n\s*</Directory>}m) do |var_www|
