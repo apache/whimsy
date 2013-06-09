@@ -49,4 +49,15 @@ Vagrant::Config.run do |config|
 
   # Adjust amount of memory
   # config.vm.customize ["modifyvm", :id, "--memory", 1024]
+
+  # share svn folder if we can find a checkout of the foundation repository
+  require 'pathname'
+  path = Pathname.new(ENV['SVN_ROOT'] || __FILE__).realpath
+  while not path.root?
+    path = path.parent
+    if (path+'foundation/.svn').exist?
+      config.vm.share_folder "svn", "/mnt/svn", path.to_s
+      break
+    end
+  end
 end
