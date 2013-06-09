@@ -86,10 +86,8 @@ subversion "whimsy site" do
   group "vagrant"
 end
 
-package "build-essential"
-
 gem_package "wunderbar" do
-  gem_binary "/usr/bin/gem"
+  gem_binary "/usr/bin/gem1.9.1"
 end
 
 bash '/var/www/jquery.min.js' do

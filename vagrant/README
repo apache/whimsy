@@ -1,7 +1,7 @@
 *** WORK IN PROGRESS ***
 
-This initial commit merely roughs-in the configuration of a virtual machine
-to run whimsy services.  The first service focused on is the secretarial
+This early prototype roughs-in the configuration of a virtual machine
+to run whimsy services.
 workbench.
 
 Step 1: download or install Oracle VirtualBox
@@ -28,7 +28,7 @@ Step 3: configure the virtual machine
 
   Note the URL.
 
-Step 4: (for use of the secretary workbench) check out foundation and documents
+Step 4a: (for use of the secretary workbench) check out foundation and documents
 
   In the same working directory, enter:
 
@@ -47,7 +47,7 @@ Step 4: (for use of the secretary workbench) check out foundation and documents
        that you will need to protect your machine from being accessed by
        others.
 
-Step 5: (to use tools such as invoice):
+Step 4b: (to use tools such as invoice or committee/committer roster):
 
   vagrant ssh
   bin/checkout-svn
@@ -56,7 +56,7 @@ Step 5: (to use tools such as invoice):
 
   These will prompt you for things like your ASF password.
 
-Step 6:
+Step 5:
 
   Visit the URL, and click on the service you wish to use 
 
@@ -66,21 +66,18 @@ Todo:
 
 1) Complete checkouts of foundation and documents are cumbersome, and will
    be destroyed if you ever decide to destroy the virtual machine.  Should you
-   happen to have a checkout of documents and foundation on your machine, and
-   alternative version of step 4 is:
+   happen to have a checkout of documents and foundation on your machine, 
+   this vagrant script will attempt to 'mount' the directory on /mnt/svn.
+   With this in place, an alternative version of step 4a is:
 
-      mkdir svn
-      *move* the documents and foundation trees into that directory
       vagrant ssh
       cd /var/tools/secretary
-      ln -s /vagrant/svn/foundation
-      ln -s /vagrant/svn/documents
+      ln -s /mnt/svn/foundation
+      ln -s /mnt/svn/documents
       cd foundation
       svn update
       exit
 
-   Note that it is important that you move the directories instead of merely
-   symbolically linking to them, otherwise all the virtual machine will see is
-   a symbolic link and not be able to get the data.  Of course you can add a
-   symbolic link on the host machine from the old location to the current
-   location.
+   Note: if the autodetection of the checkout for the foundation directory
+   on your host machine isn't working, you can control the directory being
+   mounted by setting the SVN_ROOT environment variable.

@@ -1,12 +1,14 @@
 #
-# installs subversion, ldap-utils, wkhtmltopdf
+# installs ruby, subversion, ldap-utils, wkhtmltopdf
 # check outs whimsy tools (a.k.a. asf model)
 # install configuration scripts:
 #  checkout-svn
 #  get-cert
 #  ldap-tunnel
+# installs nokogiri gem
 #
 
+package 'ruby1.9.3'
 package 'subversion'
 package 'ldap-utils'
 package 'wkhtmltopdf'
@@ -50,13 +52,23 @@ file '/home/vagrant/bin/checkout-svn' do
       if [[ -e $1 ]]; then
         (cd $1; svn update)
       else
-        svn checkout $1 --depth=${2:infinity} --username #{node.user}
+        svn checkout $2 --depth=${3:-infinity} --username #{node.user} $1
       fi
     }
 
     cd $HOME/svn
 
-    update https://svn.apache.org/repos/private/foundation files
+    update foundation \
+      https://svn.apache.org/repos/private/foundation files
+
+    update committers-board \
+      https://svn.apache.org/repos/private/committers/board files
+
+    update templates \
+      https://svn.apache.org/repos/asf/infrastructure/site/trunk/templates 
+
+    update officers \
+      https://svn.apache.org/repos/private/foundation/officers files
   EOF
 end
 
@@ -117,4 +129,10 @@ end
 directory "/var/tools/invoice" do
   user "vagrant"
   group "vagrant"
+end
+
+package "build-essential"
+
+gem_package "nokogiri" do
+  gem_binary "/usr/bin/gem1.9.3"
 end

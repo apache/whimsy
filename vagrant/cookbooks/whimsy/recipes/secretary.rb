@@ -1,18 +1,18 @@
 #
-# install Ruby 1.9.3, subversion and nokogiri
-# checkout whimsy to a svn directory
+# install pdftk
+# install escape gem
+# install secmail.rb
 #
 
-package 'ruby1.9.3'
 package 'pdftk'
+
+gem_package "escape" do
+  gem_binary "/usr/bin/gem"
+end
 
 directory "/var/tools/secretary" do
   user "vagrant"
   group "vagrant"
-end
-
-gem_package "escape" do
-  gem_binary "/usr/bin/gem"
 end
 
 bash '/var/tools/secretary/secmail.rb' do
@@ -23,4 +23,3 @@ bash '/var/tools/secretary/secmail.rb' do
   }
   not_if {File.exist? '/var/tools/secretary/secmail.rb'}
 end
-
