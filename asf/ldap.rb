@@ -170,6 +170,7 @@ module ASF
     end
 
     def attrs
+      name.untaint if name =~ /\A\w+\Z/
       @attrs ||= LazyHash.new {ASF.search_one(base, "uid=#{name}").first}
     end
 
