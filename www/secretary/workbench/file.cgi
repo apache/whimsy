@@ -1064,7 +1064,10 @@ _html do
               }
               execute_todos();
             }, 'json').error(function(jqXHR, textStatus, errorThrown) {
-              var replacement = $('<pre class="stderr">'+textStatus+'</pre>');
+              var replacement = $(
+                '<pre class="stdin">' + params + '</pre>' +
+                '<pre class="stderr">' + textStatus+':'+errorThrown + '</pre>'
+              );
               spinner.remove();
               todo.replaceWith(replacement);
               if (!confirm("Error detected.  Continue?")) return;
