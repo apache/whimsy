@@ -1065,8 +1065,8 @@ _html do
               execute_todos();
             }, 'json').error(function(jqXHR, textStatus, errorThrown) {
               var replacement = $(
-                '<pre class="stdin">' + params + '</pre>' +
-                '<pre class="stderr">' + textStatus+':'+errorThrown + '</pre>'
+                '<pre class="_stdin">' + params.cmd + '</pre>' +
+                '<pre class="_stderr">' + textStatus+': '+errorThrown + '</pre>'
               );
               spinner.remove();
               todo.replaceWith(replacement);
