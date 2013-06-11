@@ -1063,13 +1063,13 @@ _html do
                 if (!confirm("Error detected.  Continue?")) return;
               }
               execute_todos();
-            }, 'json').error(jqXHR, textStatus, errorThrown) {
+            }, 'json').error(function(jqXHR, textStatus, errorThrown) {
               var replacement = $('<pre class="stderr">'+textStatus+'</pre>');
               spinner.remove();
               todo.replaceWith(replacement);
               if (!confirm("Error detected.  Continue?")) return;
               execute_todos();
-            };
+            });
           } else {
             parent.frames[0].location.reload();
           }
