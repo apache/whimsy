@@ -112,7 +112,7 @@ ruby_block 'welcome' do
       open(profile, 'a') do |file|
         file.puts "\nip=$(#{ip})"
         file.write <<-'EOF'.gsub(/^ {10}/, '')
-          if [[ -z "$TERM" ]]; then
+          if [[ "${TERM:-dumb}" != "dumb" ]]; then
             echo
             echo "Whimsy is available at http://$ip/whimsy"
 
