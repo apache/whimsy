@@ -132,7 +132,4 @@ directory "/var/tools/invoice" do
 end
 
 package "build-essential"
-
-gem_package "nokogiri" do
-  gem_binary "/usr/bin/gem1.9.3"
-end
+package "ruby-nokogiri"
