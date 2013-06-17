@@ -56,7 +56,7 @@ Vagrant::Config.run do |config|
   while not path.root?
     path = path.parent
     if (path+'foundation/.svn').exist?
-      config.vm.share_folder "svn", "/mnt/svn", path.to_s
+      config.vm.share_folder "shared-svn", "/mnt/svn", path.to_s
       break
     end
   end
