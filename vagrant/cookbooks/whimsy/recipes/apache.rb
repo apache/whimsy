@@ -111,13 +111,17 @@ ruby_block 'welcome' do
     unless File.exist?(profile) and File.read(profile).include? ip
       open(profile, 'a') do |file|
         file.puts "\nip=$(#{ip})"
-        file.write <<-'EOF'.gsub(/^\s+/, '')
-          echo
-          echo "Whimsy is available at http://$ip/whimsy"
+        file.write <<-'EOF'.gsub(/^ {10}/, '')
+          if [[ -z "$TERM" ]]; then
+            echo
+            echo "Whimsy is available at http://$ip/whimsy"
 
-          PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+            PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+          fi
         EOF
       end
+
+      Chef::ShellOut.new("chown vagrant:vagrant #{profile}").run_command
     end
 
     Chef::Log.info "Whimsy is available at http://" + `#{ip}`.chomp + "/whimsy"
