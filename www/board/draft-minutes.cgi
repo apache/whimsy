@@ -258,7 +258,7 @@ minutes[/^() 7. Special Orders/,1] =
 minutes.sub! 'Meeting Agenda', 'Meeting Minutes'
 minutes.sub! /^End of agenda/, 'End of minutes'
 
-minutes.gsub! /^\s*<private>.*?<\/private>\s*?\n/m, ''
+minutes.gsub! /^\s*<private>.*?<\/private>\s*?\n/mi, ''
 minutes.gsub! /\n( *)\[ comments:.*?\n\1 ? ?\]/m, ''
 
 _html do

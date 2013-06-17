@@ -355,6 +355,7 @@ _html do
       footer ul {list-style-type: none; padding: 0}
       a {color: #000}
       .shell {border: 1px solid black;  border-radius: 1em; margin: 0 25%}
+      .private {background-color: #ccc}
 
       /* row colors */
       .missing    {background-color: #F55}
@@ -566,6 +567,10 @@ _html do
             gsub(/\n---\n/, "\n<hr />\n").
             gsub(/\n+\z/, "\n").
             gsub(/\A\n/, "")
+
+          # highlight private sections
+          text.gsub! /^(\s*)(&lt;private&gt;.*?&lt;\/private&gt;)(\s*)$/mi,
+            '\1<span class="private">\2</span>\3'
 
           # make links in text active
           text.gsub!(uri_in_text) do
