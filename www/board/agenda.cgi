@@ -11,12 +11,12 @@ SVN_FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
 MINUTES_WORK = '/var/tools/data'
 
 DIRECTORS = {
-  'rbowen'      => 'rcb',
+  'curcuru'     => 'sc',
   'cutting'     => 'dc',
   'bdelacretaz' => 'bd',
   'fielding'    => 'rf',
-  'rgardler'    => 'rg',
   'jim'         => 'jj',
+  'mattmann'    => 'cm',
   'brett'       => 'bp',
   'rubys'       => 'sr',
   'gstein'      => 'gs'
