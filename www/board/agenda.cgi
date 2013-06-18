@@ -258,7 +258,8 @@ load_agenda = Proc.new do
           'ready4meet'
         elsif director and
           !report.approved.to_s.split(/[ ,]+/).include? director and
-          report.attach !~ /4\w/
+          report.attach !~ /4\w/ and
+          (report.attach !~ /^\d+$/ or report.author)
           'ready4me'
         else
           'ready'
