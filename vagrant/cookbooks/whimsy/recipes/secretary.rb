@@ -23,3 +23,13 @@ bash '/var/tools/secretary/secmail.rb' do
   }
   not_if {File.exist? '/var/tools/secretary/secmail.rb'}
 end
+
+link "/var/tools/secretary/foundation" do
+  to "/mnt/svn/foundation"
+  only_if {File.exist? "/mnt/svn/foundation"}
+end
+
+link "/var/tools/secretary/documents" do
+  to "/mnt/svn/documents"
+  only_if {File.exist? "/mnt/svn/documents"}
+end
