@@ -127,3 +127,7 @@ ruby_block 'welcome' do
     Chef::Log.info "Whimsy is available at http://" + `#{ip}`.chomp + "/whimsy"
   end
 end
+
+link "/var/www/.subversion" do
+  to "/home/vagrant/.subversion"
+end
