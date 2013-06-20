@@ -1067,7 +1067,7 @@ _html do
         if @svnup or @svncommit
           Dir.chdir SVN_FOUNDATION_BOARD do
             _div.shell do
-              _.system "svn up --config-dir #{$HOME}/.subversion"
+              _.system "svn up"
             end
 
             if @svncommit
