@@ -660,11 +660,11 @@ _html do
               simple_name = person.public_name.sub(/ .* /,' ')
               if person.asf_member?
                 sub = Proc.new do |name|
-                  "<a href='/roster/committer/#{person.id}' title='ASF Member'><strong>#{name}</strong></a>"
+                  "<a href='/roster/committer/#{person.id}' title='ASF Member'><strong>#{name}</strong></a>&#65279;"
                  end
               else
                 sub = Proc.new do |name|
-                  "<a href='/roster/committer/#{person.id}'>#{name}</a>"
+                  "<a href='/roster/committer/#{person.id}'>#{name}</a>&#65279;"
                 end
               end
               begin
