@@ -1068,16 +1068,16 @@ _html do
           Dir.chdir SVN_FOUNDATION_BOARD do
             _div.shell do
               _.system "svn up"
-            end
 
-            if @svncommit
-              apply_comments agenda.filename, UPDATE_FILE, director
-              _.system [
-                'svn', 'commit', '-m', @message, agenda.filename,
-                ['--no-auth-cache', '--non-interactive'],
-                (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
-              ]
-              File.delete UPDATE_FILE
+              if @svncommit
+                apply_comments agenda.filename, UPDATE_FILE, director
+                _.system [
+                  'svn', 'commit', '-m', @message, agenda.filename,
+                  ['--no-auth-cache', '--non-interactive'],
+                  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+                ]
+                File.delete UPDATE_FILE
+              end
             end
           end
 
