@@ -5,6 +5,7 @@ require 'yaml'
 require 'fileutils'
 require 'time'
 require '/var/tools/asf'
+require_relative 'apply_comments'
 
 ENV['HOME'] = ENV['DOCUMENT_ROOT']
 SVN_FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
@@ -24,12 +25,21 @@ DIRECTORS = {
 
 user = ASF::Person.new($USER)
 director = DIRECTORS[$USER]
-secretary = %w(clr rubys).include? $USER
+secretary = %w(clr jcarman).include? $USER
 
 unless secretary or director or user.asf_member? or ASF.pmc_chairs.include? user
   print "Status: 401 Unauthorized\r\n"
   print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
   exit
+end
+
+UPDATE_FILE = "#{MINUTES_WORK}/#{$USER}.yml".untaint if $USER =~ /\A\w+\Z/
+if director and File.exist? UPDATE_FILE
+  updates = YAML.load_file(UPDATE_FILE)
+  approved = updates['approved']
+  comments = updates['comments']
+else
+  approved, comments = [], {}
 end
 
 agenda = {}
@@ -258,6 +268,7 @@ load_agenda = Proc.new do
           'ready4meet'
         elsif director and
           !report.approved.to_s.split(/[ ,]+/).include? director and
+          !approved.include? report.attach and
           report.attach !~ /4\w/ and
           (report.attach !~ /^\d+$/ or report.author)
           'ready4me'
@@ -348,6 +359,7 @@ _html do
        split('.').first.sub(/^[\D]+/,'').gsub('_','-')
     end
 
+    _link rel: "stylesheet", href: "/jquery-ui.css"
     _style %{
       #notice, ._stdout {color: green; text-align: center}
       ._stderr {color: red; text-align: center}
@@ -457,11 +469,16 @@ _html do
       .stale {
         background-color: #dc143c !important
       }
+
+      .comments button { 
+        color: #000; 
+        background-color: #F90; 
+        border-radius: 0.5em
+      }
     }
 
-    if ENV['REQUEST_URI'] =~ /\/notes$/
-      _script src: '/jquery.min.js'
-    end
+    _script src: '/jquery.min.js'
+    _script src: '/jquery-ui.min.js'
   end
 
   _body do
@@ -684,6 +701,86 @@ _html do
           _pre.comments! do
             _{text.untaint}
           end
+        end
+
+        # comment dialog for directors
+        if director and report.comments
+
+          # pop-up form
+          add_or_edit = comments[report.attach] ? 'Edit' : 'Add a'
+          _div.comment_form! title: "#{add_or_edit} comment" do
+            _form do
+              _textarea.comments! comments[report.attach], name: 'comments',
+                cols: 50, rows: 5
+            end
+          end
+
+          # comment and approval buttons
+          _p.comments do
+            _button.add_comment! "#{add_or_edit} comment"
+
+            if report.approved and not report.text.empty?
+              if !report.approved.to_s.split(/[ ,]+/).include? director
+                if approved.include? report.attach
+                  _button.approve! 'Unapprove'
+                else
+                  _button.approve! 'Approve'
+                end
+              end
+            end
+          end
+
+          # wire up the form and buttons
+          _script %{
+            $("#comment_form").dialog({
+              autoOpen: false,
+              height: 270,
+              width: 600,
+              modal: true,
+              buttons: {
+                "Commit": function() {
+                  var params = {
+                    attach: #{report.attach.inspect},
+                    comment: $('textarea', this).val()
+                  };
+
+                  var form = $(this);
+                  $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
+                    var text;
+                    if (params.comment == '') {
+                      text = 'Add a comment';
+                    } else {
+                      text = 'Edit comment';
+                    }
+                    $('#add_comment').text(text)
+                    $('#ui-dialog-title-comment_form').text(text)
+                    form.dialog("close");
+                  }, 'json');
+                }
+              }
+            });
+
+            $("#add_comment").click(function() {
+              $("#comment_form").dialog('open');
+            });
+
+            $("#approve").click(function() {
+              var button = $(this);
+              var params = { 
+                request: button.text(),
+                attach: #{report.attach.inspect}
+              };
+
+              $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
+                $('h1').attr('class', _.class);
+                if (button.text() == 'Approve') {
+                  button.text('Unapprove');
+                } else {
+                  button.text('Approve');
+                }
+              }, 'json');
+            });
+          }
         end
 
         # notes (editable by secretary only, for everybody else static)
@@ -966,11 +1063,21 @@ _html do
       ############################################################ 
 
       # If requested, reload agenda from svn
-      if secretary and _.post?
-        if @svnup
+      if (secretary or director) and _.post?
+        if @svnup or @svncommit
           Dir.chdir SVN_FOUNDATION_BOARD do
             _div.shell do
-              _.system 'svn up'
+              _.system "svn up --config-dir #{$HOME}/.subversion"
+            end
+
+            if @svncommit
+              apply_comments agenda.filename, UPDATE_FILE, director
+              _.system [
+                'svn', 'commit', '-m', @message, agenda.filename,
+                ['--no-auth-cache', '--non-interactive'],
+                (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+              ]
+              File.delete UPDATE_FILE
             end
           end
 
@@ -1026,10 +1133,39 @@ _html do
           end
         end
 
-        if secretary
+        if secretary or director
           _form.buttons method: 'post' do
             _button 'Update agenda', type: 'submit', name: 'svnup'
+
+            unless approved.empty? and comments.empty?
+              _button 'Commit changes', type: 'submit', name: 'svncommit'
+
+              message = []
+              unless approved.empty?
+                message << "#{approved.length} reports approved"
+              end
+              unless comments.empty?
+                message << "#{comments.length} comments"
+              end
+              message = message.join(' and ').gsub(/\b(1 \w+)s\b/, '\1')
+              _input name: 'message', id: 'message', type: 'hidden',
+                value: message, 'data-value' => message
+            end
           end
+
+          _script %{
+            // Commit prompt
+            $("button[name=svncommit]").click(function() {
+              var message = prompt("Commit Message?", $('#message').
+                attr('data-value'));
+              if (message) {
+                $('#message').attr('value', message);
+                return true;
+              } else {
+                return false;
+              }
+            });
+          }
         end
       end
 
@@ -1049,5 +1185,41 @@ _html do
         end
       end
     end
+  end
+end
+
+_json do
+  if @attach and @comment
+
+    if @comment.strip.empty?
+      comments.delete @attach
+    else
+      comments[@attach] = @comment
+    end
+
+    _status 'ok'
+
+  elsif @attach and @request
+
+    if @request.downcase == 'approve'
+      approved << @attach
+
+      load_agenda.call if agenda.empty?
+      report = agenda[@attach]
+      if report.approved.to_s.strip.split(/[, ]+/).length < 5
+        _class 'ready'
+      elsif report.comments.to_s.strip.size > 0
+        _class 'commented'
+      else
+        _class 'approved'
+      end
+    else
+      approved.delete @attach
+      _class 'ready4me'
+    end
+  end
+
+  File.open(UPDATE_FILE, 'w') do |file|
+    YAML.dump({'approved' => approved, 'comments' => comments}, file)
   end
 end
