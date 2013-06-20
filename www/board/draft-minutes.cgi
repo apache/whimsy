@@ -219,12 +219,12 @@ minutes.mreplace(/
     elsif title =~ /Discussion Items/
       comments = notes.gsub(/^/,'    ')+ "\n"
     elsif title == 'Adjournment'
-      if notes =~ /1[01]:\d\d/
+      if notes =~ /^1[01]:\d\d/
         comments = "\n    Adjourned at #{notes} a.m. (Pacific)\n"
-      elsif notes =~ /\d\d:\d\d/
+      elsif notes =~ /^\d\d:\d\d/
         comments = "\n    Adjourned at #{notes} p.m. (Pacific)\n"
       else
-        comments += "\n" + comments
+        comments += "\n" + notes.to_s.reflow(4,68) + "\n"
       end
     else
       comments += "\n" + notes.to_s.reflow(4,68) + "\n"
