@@ -34,7 +34,7 @@ bash "/var/tools/svnrep/foundation" do
   group 'vagrant'
   code %{
     cd /var/tools/svnrep
-    svnadmin create foundation
+    HOME=/home/vagrant svnadmin create foundation
   }
   not_if {File.exist? "/var/tools/svnrep/foundation"}
 end
@@ -44,7 +44,7 @@ bash "/var/tools/svnrep/documents" do
   group 'vagrant'
   code %{
     cd /var/tools/svnrep
-    svnadmin create documents
+    HOME=/home/vagrant svnadmin create documents
   }
   not_if {File.exist? "/var/tools/svnrep/documents"}
 end
@@ -100,9 +100,9 @@ bash "foundation meetings" do
     mkdir -p Meetings
     if [[ -e /mnt/svn/foundation/Meetings/ ]]; then
       cd /mnt/svn/foundation/Meetings/
-      cp -rp $(ls -d 2* | tail -1) /var/tools/secretary/foundation/Meetings
+      cp -r $(ls -d 2* | tail -1) /var/tools/secretary/foundation/Meetings
       cd -
-      rm -rf Meetings/*/.svn
+      find Meetings -name .svn | xargs --no-run-if-empty rm -rf
     fi
     svn add Meetings
     svn commit -m 'meeting files'
