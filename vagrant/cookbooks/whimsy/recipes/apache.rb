@@ -99,6 +99,19 @@ bash '/var/www/jquery.min.js' do
   not_if {File.exist? '/var/www/jquery.min.js'}
 end
 
+link "/var/www/.subversion" do
+  to "/home/vagrant/.subversion"
+end
+
+directory '/var/www/members' do
+  user 'vagrant'
+  group 'vagrant'
+end
+
+link "/var/www/members/received" do
+  to "/var/tools/secretary/documents/received"
+end
+
 service "apache2" do 
   action :restart
 end
@@ -126,8 +139,4 @@ ruby_block 'welcome' do
 
     Chef::Log.info "Whimsy is available at http://" + `#{ip}`.chomp + "/whimsy"
   end
-end
-
-link "/var/www/.subversion" do
-  to "/home/vagrant/.subversion"
 end
