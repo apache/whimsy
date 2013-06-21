@@ -10,6 +10,10 @@ gem_package "escape" do
   gem_binary "/usr/bin/gem"
 end
 
+gem_package "mail" do
+  gem_binary "/usr/bin/gem"
+end
+
 directory "/var/tools/secretary" do
   user "vagrant"
   group "vagrant"

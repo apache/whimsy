@@ -1,7 +1,7 @@
 require 'mail'
 
 Mail.defaults do
-  delivery_method :sendmail
+  delivery_method :test
 
   if $USER == 'clr'
 
@@ -11,19 +11,19 @@ Mail.defaults do
       Secretary, Apache Software Foundation
     }
 
-  elsif $USER == 'rubys'
-
-    @from = 'Sam Ruby <rubys@apache.org>'
-    @sig = %{
-      -- Sam Ruby
-      Assistant Secretary, Apache Software Foundation
-    }
-
   elsif $USER == 'jcarman'
 
     @from = 'James Carman <jcarman@apache.org>'
     @sig = %{
       -- James Carman
+      Assistant Secretary, Apache Software Foundation
+    }
+
+  elsif $USER == 'rubys'
+
+    @from = 'Sam Ruby <rubys@apache.org>'
+    @sig = %{
+      -- Sam Ruby
       Apache Software Foundation Secretarial Team
     }
 
