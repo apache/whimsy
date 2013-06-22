@@ -236,6 +236,7 @@ module ASF
     end
 
     def members
+      name.untaint if name =~ /\A\w+\Z/
       ASF.search_one(base, "cn=#{name}", 'member').flatten.
         map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
