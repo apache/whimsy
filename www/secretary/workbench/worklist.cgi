@@ -387,6 +387,7 @@ _html do
               _legend 'Do:'
               _input type: 'submit', name: 'dest', value: 'burst'
               _input type: 'submit', name: 'dest', value: 'flip'
+              _input type: 'submit', name: 'dest', value: 'restore'
               _input type: 'submit', name: 'dest', value: 'rotate right'
               _input type: 'submit', name: 'dest', value: 'rotate left'
             end

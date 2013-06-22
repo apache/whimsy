@@ -807,6 +807,10 @@ _html do
           _h1 'Flip'
           _.system "pdftk #{@source} cat 1-endS output #{@source}.tmp"
           _.system "mv #{@source}.tmp #{@source}"
+        elsif @dest == 'restore'
+          _h1 'Restore'
+          _.system "pdftk #{@source} cat 1-endN output #{@source}.tmp"
+          _.system "mv #{@source}.tmp #{@source}"
         elsif @dest == 'rotate right'
           _h1 'Rotate Right'
           _.system "pdftk #{@source} cat 1-endE output #{@source}.tmp"
