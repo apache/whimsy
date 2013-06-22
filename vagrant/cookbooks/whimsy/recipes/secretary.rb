@@ -113,3 +113,30 @@ bash "foundation meetings" do
   }
   not_if {File.exist? "/var/tools/secretary/foundation/Meetings"}
 end
+
+directory "/var/tools/secretary/secmail" do
+  user "vagrant"
+  group "vagrant"
+end
+
+file "/var/tools/secretary/secmail/latest" do
+  user "vagrant"
+  group "vagrant"
+end
+
+subversion "secmail received" do
+  repository 'file:///var/tools/svnrep/documents/received'
+  destination "/var/tools/secretary/secmail/received"
+  user "vagrant"
+  group "vagrant"
+end
+
+directory "/var/tools/secretary/secmail/tally" do
+  user "vagrant"
+  group "vagrant"
+end
+
+link '/var/tools/secretary/secmail/secmail.py' do
+  to '/var/tools/secmail.py'
+end
+
