@@ -166,8 +166,9 @@ def detach(msg):
     for subpayload in payload:
       if subpayload.get_content_type() in skip:
         if subpayload.get_filename() not in forms: continue
-        if 'License Agreement' not in subpayload.get_payload() and \
-          '-----BEGIN PGP SIGNATURE-----' not in subpayload.get_payload():
+        content = subpayload.get_payload(decode=True)
+        if 'License Agreement' not in content and \
+          '-----BEGIN PGP SIGNATURE-----' not in content:
           continue
       if subpayload.get_content_type() == 'image/gif':
         if len(subpayload.get_payload(decode=True))<10240: continue
