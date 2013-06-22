@@ -5,6 +5,7 @@
 #
 
 package 'pdftk'
+package 'imagemagick'
 
 gem_package "escape" do
   gem_binary "/usr/bin/gem"
