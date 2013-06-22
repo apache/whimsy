@@ -476,6 +476,11 @@ _html do
           _a 'How to use this tool', href: 'HOWTO.html',
             target: 'viewport'
         end
+
+        if File.exist? '/var/tools/secretary/secmail'
+          _li {_p {_hr}}
+          _li {_a 'Upload email', href: 'upload', target: 'viewport'}
+        end
       end
     end
   end
