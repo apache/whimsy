@@ -113,8 +113,9 @@ _html do
         _ul.worklist! do
           files.each do |file|
             _li do
-              dirflag = File.directory?(File.join(RECEIVED,file))
-              _a dirflag ? file+'/' : file
+              ondisk = File.join(RECEIVED,file)
+              file += '/' if File.directory? ondisk
+              _a file, 'data-mtime' => (File.stat(ondisk).mtime.to_i rescue nil)
             end
           end
         end

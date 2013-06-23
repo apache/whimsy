@@ -100,6 +100,7 @@ $(document).ready(function() {
       parent.frames[1].location.href = 'file.cgi?action=view&dir=' +
         encodeURIComponent(link);
     } else {
+      if ($(this).attr('data-mtime')) link += '?' + $(this).attr('data-mtime');
       parent.frames[1].location.href = '/members/received/' + link;
     }
 
