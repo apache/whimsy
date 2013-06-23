@@ -90,11 +90,11 @@ gem_package "wunderbar" do
   gem_binary "/usr/bin/gem1.9.1"
 end
 
-bash '/var/www/jquery.min.js' do
+bash '/var/www/jquery-ui.css' do
   user 'vagrant'
   group 'vagrant'
   code %{
-    cp /vagrant/www/* /var/www
+    cp /var/tools/www/jquery* /var/www
   }
   not_if {File.exist? '/var/www/jquery.min.js'}
 end

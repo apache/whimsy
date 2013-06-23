@@ -45,6 +45,8 @@ directory '/home/vagrant/bin' do
 end
 
 file '/home/vagrant/bin/checkout-svn' do
+  user "vagrant"
+  group "vagrant"
   mode 0755
   content <<-EOF.gsub(/^    /,'')
     #!/bin/bash
@@ -58,21 +60,26 @@ file '/home/vagrant/bin/checkout-svn' do
 
     cd $HOME/svn
 
-    update foundation \
+    update foundation \\
       https://svn.apache.org/repos/private/foundation files
 
-    update committers-board \
+    update board \\
+      https://svn.apache.org/repos/private/foundation/board files
+
+    update committers-board \\
       https://svn.apache.org/repos/private/committers/board files
 
-    update templates \
+    update templates \\
       https://svn.apache.org/repos/asf/infrastructure/site/trunk/templates 
 
-    update officers \
+    update officers \\
       https://svn.apache.org/repos/private/foundation/officers files
   EOF
 end
 
 file '/home/vagrant/bin/ldap-tunnel' do
+  user "vagrant"
+  group "vagrant"
   mode 0755
   content <<-EOF.gsub(/^    /,'')
     #!/bin/bash
@@ -124,6 +131,11 @@ ruby_block 'update hosts' do
       File.open('/etc/hosts', 'w') {|file| file.write content}
     end
   end
+end
+
+directory "/var/tools/data" do
+  user "vagrant"
+  group "vagrant"
 end
 
 directory "/var/tools/invoice" do
