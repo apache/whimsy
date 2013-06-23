@@ -248,7 +248,6 @@ load_agenda = Proc.new do
   agenda.order.each do |attach|
     report = agenda[attach]
     min = 5
-    min = 9 if attach =~ /3\w/
     min = 0 if attach =~ /(8|9|1\d)\./ and report.text.to_s.empty?
 
     report.title ||= "Missing #{attach}"
@@ -257,6 +256,9 @@ load_agenda = Proc.new do
     report.status = 
       if agenda.notes[report.title]
         'reviewed'
+      elsif report.attach == '4B' and
+        report.text.to_s.strip =~ /\AAdditionally, please see Attachments 1/
+        'missing'
       elsif report.text.to_s.strip.empty? and min>0
         if report.title =~ /THERE IS NO/
           'reviewed'
@@ -1076,7 +1078,8 @@ _html do
                   ['--no-auth-cache', '--non-interactive'],
                   (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
                 ]
-                File.delete UPDATE_FILE
+
+                File.rename UPDATE_FILE, UPDATE_FILE.sub('.yml', '.bak')
               end
             end
           end
