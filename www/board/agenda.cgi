@@ -363,9 +363,9 @@ _html do
 
     _link rel: "stylesheet", href: "/jquery-ui.css"
     _style %{
-      #notice, ._stdout {color: green; text-align: center}
-      ._stderr {color: red; text-align: center}
-      ._stdin {text-align: center}
+      #notice, ._stdout {color: green}
+      ._stderr {color: red}
+      ._stdin {font-weight: bold; margin-top: 1em}
       footer {text-align: center}
       footer ul {list-style-type: none; padding: 0}
       a {color: #000}
@@ -1074,7 +1074,8 @@ _html do
               if @svncommit
                 apply_comments agenda.filename, UPDATE_FILE, director
                 _.system [
-                  'svn', 'commit', '-m', @message, agenda.filename,
+                  'svn', 'commit', '-m', @message, 
+                  File.basename(agenda.filename),
                   ['--no-auth-cache', '--non-interactive'],
                   (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
                 ]
