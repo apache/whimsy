@@ -289,6 +289,7 @@ if __name__ == "__main__":
     archive = 'mailbox'
     previous = int(os.stat(archive).st_mtime) - 1
   else:
+    import sys
     sys.stderr.write("can't find mailbox.  Exiting.\n")
     sys.exit(1)
 
