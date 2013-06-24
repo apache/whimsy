@@ -281,8 +281,8 @@ def detach(msg):
       return
 
 if __name__ == "__main__":
-  if os.path.exists('../private-arch/officers-secretary'):
-    archive = '../private-arch/officers-secretary/20*'
+  if os.path.exists('/home/apmail/private-arch/officers-secretary'):
+    archive = '/home/apmail/private-arch/officers-secretary/20*'
     os.chdir('/home/apmail/secretary-mail')
     previous = os.stat('latest').st_mtime
   elif os.path.exists('mailbox'):
