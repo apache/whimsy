@@ -262,6 +262,8 @@ load_agenda = Proc.new do
       elsif report.text.to_s.strip.empty? and min>0
         if report.title =~ /THERE IS NO/
           'reviewed'
+        elsif report.comments.to_s.strip != '' and report.approved.to_s.empty?
+          'commented'
         else
           'missing'
         end
