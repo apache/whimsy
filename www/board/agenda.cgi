@@ -1067,8 +1067,10 @@ _html do
       ############################################################ 
 
       # If requested, reload agenda from svn
-      if (secretary or director) and _.post?
-        if @svnup or @svncommit
+      if (secretary or director) and _.post? and (@svnup or @svncommit)
+        File.open(agenda.filename, 'r') do |file|
+          file.flock(File::LOCK_EX)
+
           Dir.chdir SVN_FOUNDATION_BOARD do
             _div.shell do
               _.system "svn up"
