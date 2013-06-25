@@ -1310,8 +1310,11 @@ _json do
         file.seek(0)
         file.write(contents)
         file.close()
-        message = Shellwords.escape("#{agenda[@attach].title} Report")
-        _commit `svn commit -m #{message}`
+
+        cmd = ['svn', 'commit', '-m', "#{agenda[@attach].title} Report"]
+        cmd << ['--no-auth-cache', '--non-interactive']
+        cmd << ['--username', $USER, '--password', $PASSWORD] if $PASSWORD
+        _commit `#{Shellwords.join(cmd)}`
       end
     end
   end
