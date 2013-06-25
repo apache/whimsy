@@ -35,14 +35,14 @@ _html do
         Dir['tally/*'].each {|file| File.unlink file.untaint}
 
         _.system 'python secmail.py' 
-        _script 'parent.frames[0].location.reload()'
       end
 
       Dir.chdir('/var/tools/secretary/documents') do
         # update received
         _.system 'svn update received' 
-        _script 'parent.frames[0].location.reload()'
       end
+
+      _script 'parent.frames[0].location.reload()'
     end
   end
 end
