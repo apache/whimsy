@@ -1316,7 +1316,7 @@ _json do
         cmd = ['svn', 'commit', '-m', "#{agenda[@attach].title} Report"]
         cmd += ['--no-auth-cache', '--non-interactive']
         cmd += ['--username', $USER, '--password', $PASSWORD] if $PASSWORD
-        _commit `#{Shellwords.join(cmd)}`
+        _commit `#{Shellwords.join(cmd).untaint}`
       end
     end
   end
