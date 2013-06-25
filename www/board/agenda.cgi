@@ -474,10 +474,19 @@ _html do
         background-color: #dc143c !important
       }
 
-      .comments button { 
+      .comments button, #paste_report { 
         color: #000; 
         background-color: #F90; 
         border-radius: 0.5em
+      }
+
+      #paste_form, #comment_form {
+        display: none
+      }
+
+      #paste_form textarea {
+        font-family: monospace;
+        font-size: small
       }
     }
 
@@ -706,6 +715,69 @@ _html do
             _{text.untaint}
           end
         end
+
+        # paste report
+        if report.text.to_s.empty? and report.attach =~ /^(\d+|[A-Z]+)$/
+          _div.paste_form! title: "#{report.title} report" do
+            _form do
+              _textarea.report! comments[report.attach], name: 'report',
+                cols: 80, rows: 100 
+            end
+          end
+
+          _p { _button.paste_report! "Paste report" }
+
+	  _script %{
+	    $("#paste_form").dialog({
+              autoOpen: false,
+	      height: 400,
+	      width: 600,
+	      modal: true,
+	      buttons: {
+		Reflow: function() {
+		  text = $('textarea', this).val();
+                  text = text.replace(/([^\\s>])\\n(\\w)/g, '$1 $2');
+                  lines = text.split("\\n");
+                  for (var i=0; i<lines.length; i++) {
+                    var indent = lines[i].match(/( *)(.?.?)(.*)/m);
+                    if (indent[1] == '' || indent[3] == '') {
+                      lines[i] = lines[i].
+                        replace(/(.{1,78})( +|$\\n?)|(.{1,78})/g, "$1$3\\n").
+                        replace(new RegExp("[\\n\\r]+$"), '');
+                    } else {
+                      var n = 76 - indent[1].length;
+                      var regexp =
+                        new RegExp("(.{1,"+n+"})( +|$\\n?)|(.{1,"+n+"})", 'g');
+                      lines[i] = indent[3].
+                        replace(regexp, indent[1] + "  $1$3\\n").
+                        replace(indent[1] + '  ', indent[1] + indent[2]).
+                        replace(new RegExp("[\\n\\r]+$"), '');
+                    }
+                  }
+		  $('textarea', this).val(lines.join("\\n"));
+                },
+		Commit: function() {
+		  var params = {
+		    attach: #{report.attach.inspect},
+		    report: $('textarea', this).val()
+		  };
+
+		  var form = $(this);
+  		  $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
+  		    $('#paste_form').hide();
+  		    $('#paste_report').hide();
+                    $('#text').text(params.report);
+ 		    form.dialog("close");
+  		  }, 'json');
+		}
+	      }
+	    });
+
+	    $("#paste_report").click(function() {
+	      $("#paste_form").dialog('open');
+	    });
+	  }
+       end
 
         # comment dialog for directors
         if director and report.comments
@@ -1224,6 +1296,21 @@ _json do
     else
       approved.delete @attach
       _class 'ready4me'
+    end
+
+  elsif @attach and @report
+
+    Dir.chdir SVN_FOUNDATION_BOARD do
+      File.open(agenda.filename, 'r+') do |file|
+        file.flock(File::LOCK_EX)
+        _up `svn up`
+        agenda = file.read
+        agenda[/^Attachment #{@attach}:.*\n()/, 1] = "\n#{@report}"
+        file.seek(0)
+        file.write(agenda)
+        file.close()
+        _commit `svn commit`
+      end
     end
   end
 
