@@ -1314,8 +1314,8 @@ _json do
         load_agenda.call if agenda.empty?
 
         cmd = ['svn', 'commit', '-m', "#{agenda[@attach].title} Report"]
-        cmd << ['--no-auth-cache', '--non-interactive']
-        cmd << ['--username', $USER, '--password', $PASSWORD] if $PASSWORD
+        cmd += ['--no-auth-cache', '--non-interactive']
+        cmd += ['--username', $USER, '--password', $PASSWORD] if $PASSWORD
         _commit `#{Shellwords.join(cmd)}`
       end
     end
