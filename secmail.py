@@ -331,8 +331,7 @@ if __name__ == "__main__":
      
   # check for any incomplete removals
   if commands.getoutput('svn status received') != '':
-    os.system("svn st received | grep '!' | cut -c 8- | \
-      xargs --no-run-if-empty svn revert --")
+    os.system("svn st received | grep '!' | cut -c 8- | xargs -r svn revert --")
 
   # check for any incomplete commits
   if commands.getoutput('svn status received') != '':
