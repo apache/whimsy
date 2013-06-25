@@ -275,10 +275,9 @@ def detach(msg):
   fh.write(summary + "\n")
   fh.close()
 
-  if count>0: 
+  if count>0 and os.environ['USER'] != 'www-data':
     if svn('commit --file ' + tally, file) != 0:
-      os.unlink(file)
-      return
+      return # try again next cron cycle
 
 if __name__ == "__main__":
   if os.path.exists('/home/apmail/private-arch/officers-secretary'):
@@ -335,7 +334,8 @@ if __name__ == "__main__":
 
   # check for any incomplete commits
   if commands.getoutput('svn status received') != '':
-    os.system('svn commit -m "queued documents" received')
+    if os.environ['USER'] != 'www-data':
+      os.system('svn commit -m "queued documents" received')
 
   # update web page with last processed information
   if last_processed and os.path.exists('../public_html/secmail.txt'):
