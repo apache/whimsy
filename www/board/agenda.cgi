@@ -5,6 +5,7 @@ require 'yaml'
 require 'fileutils'
 require 'time'
 require '/var/tools/asf'
+require 'shellwords'
 require_relative 'apply_comments'
 
 ENV['HOME'] = ENV['DOCUMENT_ROOT']
@@ -1304,12 +1305,13 @@ _json do
       File.open(agenda.filename, 'r+') do |file|
         file.flock(File::LOCK_EX)
         _up `svn up`
-        agenda = file.read
-        agenda[/^Attachment #{@attach}:.*\n()/, 1] = "\n#{@report}"
+        contents = file.read
+        contents[/^Attachment #{@attach}:.*\n()/, 1] = "\n#{@report}"
         file.seek(0)
-        file.write(agenda)
+        file.write(contents)
         file.close()
-        _commit `svn commit`
+        message = Shellwords.escape("#{agenda[@attach].title} Report")
+        _commit `svn commit -m #{message}`
       end
     end
   end
