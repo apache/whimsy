@@ -1311,6 +1311,8 @@ _json do
         file.write(contents)
         file.close()
 
+        load_agenda.call if agenda.empty?
+
         cmd = ['svn', 'commit', '-m', "#{agenda[@attach].title} Report"]
         cmd << ['--no-auth-cache', '--non-interactive']
         cmd << ['--username', $USER, '--password', $PASSWORD] if $PASSWORD
