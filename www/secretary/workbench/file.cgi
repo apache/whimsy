@@ -885,7 +885,7 @@ _html do
 
               name = entry['action'] || entry['doctype']
               name = entry['dest'] if name == 'other'
-              _td name.downcase, title: title
+              _td name.to_s.downcase, title: title
             end
           end
         end
@@ -1061,21 +1061,30 @@ _html do
             // issue request
             $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(response) {
               var replacement = $(response.html);
-              spinner.remove();
-              todo.replaceWith(replacement);
+              if (replacement.length > 0) todo.replaceWith(replacement);
               if (replacement.filter('._stderr,._traceback').length > 0) {
                 if (!confirm("Error detected.  Continue?")) return;
               }
               execute_todos();
-            }, 'json').error(function(jqXHR, textStatus, errorThrown) {
+            }, 'json').done(function(data, textStatus, jqXHR) {
+              if (data.toString() == '') {
+                var replacement = $(
+                  '<pre class="_stdin">' + params.cmd + '</pre>' +
+                  '<pre class="_stderr"><em>no response</em></pre>'
+                );
+                todo.replaceWith(replacement);
+                alert("Error detected.  Processing terminated.");
+              }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
               var replacement = $(
                 '<pre class="_stdin">' + params.cmd + '</pre>' +
                 '<pre class="_stderr">' + textStatus+': '+errorThrown + '</pre>'
               );
-              spinner.remove();
               todo.replaceWith(replacement);
               if (!confirm("Error detected.  Continue?")) return;
               execute_todos();
+            }).always(function() {
+              spinner.remove();
             });
           } else {
             parent.frames[0].location.reload();
