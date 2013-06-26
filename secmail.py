@@ -33,6 +33,7 @@ import re
 from subprocess import Popen, PIPE
 from threading import Thread
 import commands
+import getpass
 
 try:
   from hashlib import md5
@@ -275,7 +276,7 @@ def detach(msg):
   fh.write(summary + "\n")
   fh.close()
 
-  if count>0 and os.environ['USER'] != 'www-data':
+  if count>0 and getpass.getuser() != 'www-data':
     if svn('commit --file ' + tally, file) != 0:
       return # try again next cron cycle
 
