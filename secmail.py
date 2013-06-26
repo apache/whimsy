@@ -335,7 +335,7 @@ if __name__ == "__main__":
 
   # check for any incomplete commits
   if commands.getoutput('svn status received') != '':
-    if os.environ['USER'] != 'www-data':
+    if getpass.getuser() != 'www-data':
       os.system('svn commit -m "queued documents" received')
 
   # update web page with last processed information
