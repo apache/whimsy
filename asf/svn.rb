@@ -4,6 +4,7 @@ module ASF
 
   class SVN
     @base = URI.parse('https://svn.apache.org/repos/')
+    @mock = 'file:///var/tools/svnrep/'
 
     def self.repos
       @repos ||= Hash[Dir['/home/whimsysvn/svn/*'].map { |name| 
@@ -14,7 +15,8 @@ module ASF
     end
 
     def self.[](name)
-      repos[(@base+name).to_s.sub(/\/*$/, '')] # lose trailing slash
+      repos[(@mock+name.sub('private/','')).to_s.sub(/\/*$/, '')] ||
+        repos[(@base+name).to_s.sub(/\/*$/, '')] # lose trailing slash
     end
   end
 
