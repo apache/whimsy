@@ -453,6 +453,14 @@ _html do
         display: block; margin-top: 0.5em
       }
 
+      #comment_popup label {
+        display: inline;
+      }
+
+      #comment_popup input {
+        margin-bottom: 0.5em;
+      }
+
       pre {
         padding-left: 2em;
         margin: 0;
@@ -481,11 +489,11 @@ _html do
         border-radius: 0.5em
       }
 
-      #paste_form, #comment_form {
+      #paste_popup, #comment_popup {
         display: none
       }
 
-      #paste_form textarea {
+      #paste_popup textarea {
         font-family: monospace;
         font-size: small
       }
@@ -719,7 +727,7 @@ _html do
 
         # paste report
         if report.text.to_s.empty? and report.attach =~ /^(\d+|[A-Z]+)$/
-          _div.paste_form! title: "#{report.title} report" do
+          _div.paste_popup! title: "#{report.title} report" do
             _form do
               _textarea.report! comments[report.attach], name: 'report',
                 cols: 80, rows: 100 
@@ -728,15 +736,15 @@ _html do
 
           _p { _button.paste_report! "Paste report" }
 
-	  _script %{
-	    $("#paste_form").dialog({
+          _script %{
+            $("#paste_popup").dialog({
               autoOpen: false,
-	      height: 400,
-	      width: 600,
-	      modal: true,
-	      buttons: {
-		Reflow: function() {
-		  text = $('textarea', this).val();
+              height: 400,
+              width: 600,
+              modal: true,
+              buttons: {
+                Reflow: function() {
+                  text = $('textarea', this).val();
                   text = text.replace(/([^\\s>])\\n(\\w)/g, '$1 $2');
                   lines = text.split("\\n");
                   for (var i=0; i<lines.length; i++) {
@@ -755,47 +763,52 @@ _html do
                         replace(new RegExp("[\\n\\r]+$"), '');
                     }
                   }
-		  $('textarea', this).val(lines.join("\\n"));
+                  $('textarea', this).val(lines.join("\\n"));
                 },
-		Commit: function() {
-		  var params = {
-		    attach: #{report.attach.inspect},
-		    report: $('textarea', this).val()
-		  };
+                Commit: function() {
+                  var form = $(this);
+                  var params = { 
+                    attach: #{report.attach.inspect},
+                    report: $('textarea', this).val(),
+                    message: prompt("Commit Message?", 
+                      "#{report.title} Report"),
+                  };
 
-		  var form = $(this);
-  		  $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
-  		    $('#paste_form').hide();
-  		    $('#paste_report').hide();
+                  if (!params.message) return false;
+
+                  $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
+                    $('#paste_popup').hide();
+                    $('#paste_report').hide();
                     $('#text').text(params.report);
- 		    form.dialog("close");
-  		  }, 'json');
-		}
-	      }
-	    });
+                    form.dialog("close");
+                  }, 'json');
+                }
+              }
+            });
 
-	    $("#paste_report").click(function() {
-	      $("#paste_form").dialog('open');
-	    });
-	  }
-       end
+            $("#paste_report").click(function() {
+              $("#paste_popup").dialog('open');
+            });
+          }
+        end
 
-        # comment dialog for directors
-        if director and report.comments
-
-          # pop-up form
-          add_or_edit = comments[report.attach] ? 'Edit' : 'Add a'
-          _div.comment_form! title: "#{add_or_edit} comment" do
-            _form do
-              _textarea.comments! comments[report.attach], name: 'comments',
-                cols: 50, rows: 5
-            end
+        # comment pop-up form
+        add_or_edit = comments[report.attach] ? 'Edit' : 'Add a'
+        _div.comment_popup! title: "#{add_or_edit} comment" do
+          _form do
+            _label 'Initials:', for: 'initials'
+            _input.initials! name: 'initials', value: director ||
+              user.public_name.split.map {|word| word[0]}.join.downcase
+            _textarea.comment! comments[report.attach], name: 'comment',
+              cols: 50, rows: 5, autofocus: true
           end
+        end
 
-          # comment and approval buttons
-          _p.comments do
-            _button.add_comment! "#{add_or_edit} comment"
+        # comment and approval buttons
+        _p.comments do
+          _button.add_comment! "#{add_or_edit} comment"
 
+          if director and report.comments
             if report.approved and not report.text.empty?
               if !report.approved.to_s.split(/[ ,]+/).include? director
                 if approved.include? report.attach
@@ -806,59 +819,67 @@ _html do
               end
             end
           end
-
-          # wire up the form and buttons
-          _script %{
-            $("#comment_form").dialog({
-              autoOpen: false,
-              height: 270,
-              width: 600,
-              modal: true,
-              buttons: {
-                "Commit": function() {
-                  var params = {
-                    attach: #{report.attach.inspect},
-                    comment: $('textarea', this).val()
-                  };
-
-                  var form = $(this);
-                  $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
-                    var text;
-                    if (params.comment == '') {
-                      text = 'Add a comment';
-                    } else {
-                      text = 'Edit comment';
-                    }
-                    $('#add_comment').text(text)
-                    $('#ui-dialog-title-comment_form').text(text)
-                    form.dialog("close");
-                  }, 'json');
-                }
-              }
-            });
-
-            $("#add_comment").click(function() {
-              $("#comment_form").dialog('open');
-            });
-
-            $("#approve").click(function() {
-              var button = $(this);
-              var params = { 
-                request: button.text(),
-                attach: #{report.attach.inspect}
-              };
-
-              $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
-                $('h1').attr('class', _.class);
-                if (button.text() == 'Approve') {
-                  button.text('Unapprove');
-                } else {
-                  button.text('Approve');
-                }
-              }, 'json');
-            });
-          }
         end
+
+        # wire up the form and buttons
+        _script %{
+          $("#comment_popup").dialog({
+            autoOpen: false,
+            height: 295,
+            width: 600,
+            modal: true,
+            open: function() { $('textarea', this).focus() },
+            buttons: {
+              "Commit": function() {
+                var form = $(this);
+                var params = { 
+                  attach: #{report.attach.inspect},
+                  comment: $('textarea', this).val(),
+                  initials: $('#initials').val()
+                };
+
+                if (#{!director}) {
+                  params.message = prompt("Commit Message?", 
+                    "Comment on #{report.title} report");
+                  if (!params.message) return false;
+                }
+
+                $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
+                  var text;
+                  if (params.comment == '' || #{!director}) {
+                    text = 'Add a comment';
+                  } else {
+                    text = 'Edit comment';
+                  }
+                  $('#add_comment').text(text)
+                  $('#ui-dialog-title-comment_popup').text(text)
+                  form.dialog("close");
+                }, 'json');
+              }
+            }
+          });
+
+          $("#add_comment").click(function() {
+            $("#comment_popup").dialog('open');
+          });
+
+          $("#approve").click(function() {
+            var button = $(this);
+            var params = { 
+              request: button.text(),
+              attach: #{report.attach.inspect}
+            };
+
+            $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
+              $('h1').attr('class', _.class);
+              if (button.text() == 'Approve') {
+                button.text('Unapprove');
+              } else {
+                button.text('Approve');
+              }
+            }, 'json');
+          });
+        }
 
         # notes (editable by secretary only, for everybody else static)
         if secretary
@@ -1270,6 +1291,8 @@ _html do
 end
 
 _json do
+  commit = false
+
   if @attach and @comment
 
     if @comment.strip.empty?
@@ -1278,7 +1301,11 @@ _json do
       comments[@attach] = @comment
     end
 
-    _status 'ok'
+    if director
+      _status 'ok'
+    else
+      commit = true
+    end
 
   elsif @attach and @request
 
@@ -1300,28 +1327,35 @@ _json do
     end
 
   elsif @attach and @report
+    commit = true
+  end
 
+  File.open(UPDATE_FILE, 'w') do |file|
+    YAML.dump({'approved' => approved, 'comments' => comments}, file)
+  end
+
+  if commit
     Dir.chdir SVN_FOUNDATION_BOARD do
       File.open(agenda.filename, 'r+') do |file|
         file.flock(File::LOCK_EX)
         _up `svn up`
-        contents = file.read
-        contents[/^Attachment #{@attach}:.*\n()/, 1] = "\n#{@report}"
-        file.seek(0)
-        file.write(contents)
-        file.close()
 
-        load_agenda.call if agenda.empty?
+        if @report
+          contents = file.read
+          contents[/^Attachment #{@attach}:.*\n()/, 1] = "\n#{@report}"
+          file.seek(0)
+          file.write(contents)
+          file.close()
+        else
+          apply_comments agenda.filename, UPDATE_FILE, @initials
+          File.rename UPDATE_FILE, UPDATE_FILE.sub('.yml', '.bak')
+        end
 
-        cmd = ['svn', 'commit', '-m', "#{agenda[@attach].title} Report"]
+        cmd = ['svn', 'commit', '-m', @title || 'board agenda tool']
         cmd += ['--no-auth-cache', '--non-interactive']
         cmd += ['--username', $USER, '--password', $PASSWORD] if $PASSWORD
         _commit `#{Shellwords.join(cmd).untaint}`
       end
     end
-  end
-
-  File.open(UPDATE_FILE, 'w') do |file|
-    YAML.dump({'approved' => approved, 'comments' => comments}, file)
   end
 end
