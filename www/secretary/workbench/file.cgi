@@ -1076,6 +1076,7 @@ _html do
                 alert("Error detected.  Processing terminated.");
               }
             }).fail(function(jqXHR, textStatus, errorThrown) {
+              if (errorThrown == '') errorThrown = 'no response';
               var replacement = $(
                 '<pre class="_stdin">' + params.cmd + '</pre>' +
                 '<pre class="_stderr">' + textStatus+': '+errorThrown + '</pre>'
