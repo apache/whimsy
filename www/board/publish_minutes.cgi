@@ -4,7 +4,7 @@ require 'date'
 require '/var/tools/asf/svn'
 require 'shellwords'
 
-secretary = %w(clr rubys jcarman).include? $USER
+secretary = %w(clr jcarman).include? $USER
 
 unless secretary 
   print "Status: 401 Unauthorized\r\n"

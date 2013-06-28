@@ -9,7 +9,7 @@ ENV['HOME'] = ENV['DOCUMENT_ROOT']
 SVN_FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
 MINUTES_WORK = '/var/tools/data'
 
-secretary = %w(clr rubys jcarman).include? $USER
+secretary = %w(clr jcarman).include? $USER
 
 user = ASF::Person.new($USER)
 unless secretary or user.asf_member? or ASF.pmc_chairs.include?  user
