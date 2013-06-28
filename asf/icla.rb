@@ -50,7 +50,7 @@ module ASF
   def self.search_archive_by_id(value)
     require 'net/http'
     require 'nokogiri'
-    committers = 'http://people.apache.org/~rubys/committers.html'
+    committers = 'http://people.apache.org/committer-index.html'
     doc = Nokogiri::HTML(Net::HTTP.get(URI.parse(committers)))
     doc.search('tr').each do |tr|
       tds = tr.search('td')
