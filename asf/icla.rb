@@ -47,11 +47,14 @@ module ASF
     end
   end
 
+  # Search archive for historical records of people who were committers
+  # but never submitted an ICLA (some of which are still ASF members or
+  # members of a PMC).
   def self.search_archive_by_id(value)
     require 'net/http'
     require 'nokogiri'
-    committers = 'http://people.apache.org/committer-index.html'
-    doc = Nokogiri::HTML(Net::HTTP.get(URI.parse(committers)))
+    historical_committers = 'http://people.apache.org/~rubys/committers.html'
+    doc = Nokogiri::HTML(Net::HTTP.get(URI.parse(historical_committers)))
     doc.search('tr').each do |tr|
       tds = tr.search('td')
       next unless tds.length == 3
