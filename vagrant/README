@@ -14,6 +14,12 @@ Step 2: download or install Vagrant
 
 Step 3: configure the virtual machine
 
+  Setup the network bridge your vagrant instance should use:
+
+    http://docs-v1.vagrantup.com/v1/docs/bridged_networking.html
+
+Step 4: configure the virtual machine
+
   Making sure that you are in this directory as your working directory, enter:
 
     USER=rubys vagrant up
@@ -28,7 +34,7 @@ Step 3: configure the virtual machine
 
   Note the URL.
 
-Step 4a: (for use of the secretary workbench) check out foundation and documents
+Step 5a: (for use of the secretary workbench) check out foundation and documents
 
   In the same working directory, enter:
 
@@ -47,7 +53,7 @@ Step 4a: (for use of the secretary workbench) check out foundation and documents
        that you will need to protect your machine from being accessed by
        others.
 
-Step 4b: (to use tools such as invoice or committee/committer roster):
+Step 5b: (to use tools such as invoice or committee/committer roster):
 
   vagrant ssh
   bin/checkout-svn
@@ -56,7 +62,7 @@ Step 4b: (to use tools such as invoice or committee/committer roster):
 
   These will prompt you for things like your ASF password.
 
-Step 5:
+Step 6:
 
   Visit the URL, and click on the service you wish to use 
 
