@@ -6,6 +6,7 @@
 #  get-cert
 #  ldap-tunnel
 # installs nokogiri gem
+# installs ruby-ldap gem
 #
 
 package 'ruby1.9.3'
@@ -149,3 +150,4 @@ end
 
 package "build-essential"
 package "ruby-nokogiri"
+package "ruby-ldap"
