@@ -1,4 +1,6 @@
 require 'wunderbar'
+require 'rubygems'
+require 'ldap'
 
 module ASF
 
@@ -13,38 +15,12 @@ module ASF
       end
     rescue Errno::ENOENT
       host = nil
-    end
-
-    if host
-      begin
-        require 'rubygems'
-        require 'ldap'
-        begin
-          @ldap = LDAP::SSLConn.new(host.first, host.last.to_i)
-        rescue LDAP::ResultError=>re
-          Wunderbar.error "Error binding to LDAP server: message: ["+ re.message + "]"
-        end
-      rescue LoadError=>e
-          Wunderbar.info "ruby-ldap wasn't found; ldapsearch will be used instead: [" + e.message + "]"
-      end
-    else
       Wunderbar.error "No LDAP server defined, there must be a LDAP ldaps:// URI in /etc/ldap/ldap.conf"
     end
-  end
-
-  # emulate the LDAP API by shelling out to ldapsearch and parsing LDIF
-  def self.ldapsearch(base, scope, filter, attrs)
-    attrs = attrs.join(' ')  if attrs.respond_to? :join
-    search = `ldapsearch -x -LLL -b #{base} -s #{scope} "#{filter}" #{attrs}`
-    search.sub!(/\Aversion: \d+\n/, '')
-    search.gsub!(/\n /, '')
-    search.gsub!(/^(\w+):: ([A-Za-z0-9+\/]+=?=?)/) do
-      "#{$1}: #{$2.unpack('m*').join}"
-    end
-    search.force_encoding('utf-8') if search.respond_to? :force_encoding
-    search.split("\n\n").map do |lines| 
-      Hash[lines.scan(/^(\w+): (.*)/).group_by(&:first).
-        map {|name, value| [name, value.map(&:last)]}]
+    begin
+      @ldap = LDAP::SSLConn.new(host.first, host.last.to_i)
+    rescue LDAP::ResultError=>re
+      Wunderbar.error "Error binding to LDAP server: message: ["+ re.message + "]"
     end
   end
 
@@ -55,11 +31,7 @@ module ASF
     Wunderbar.info "ldapsearch -x -LLL -b #{base} -s one #{filter} " +
       "#{[attrs].flatten.join(' ')}"
     
-    if @ldap
-      result = @ldap.search2(base, LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
-    else
-      result = ldapsearch(base, 'one', filter, attrs)
-    end
+    result = @ldap.search2(base, LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
 
     result.map! {|hash| hash[attrs]} if String === attrs
 
