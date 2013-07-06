@@ -35,7 +35,7 @@ module ASF
   # emulate the LDAP API by shelling out to ldapsearch and parsing LDIF
   def self.ldapsearch(base, scope, filter, attrs)
     attrs = attrs.join(' ')  if attrs.respond_to? :join
-    search = `ldapsearch -x -LLL -b #{base} -s #{scope} #{filter} #{attrs}`
+    search = `ldapsearch -x -LLL -b #{base} -s #{scope} "#{filter}" #{attrs}`
     search.sub!(/\Aversion: \d+\n/, '')
     search.gsub!(/\n /, '')
     search.gsub!(/^(\w+):: ([A-Za-z0-9+\/]+=?=?)/) do
