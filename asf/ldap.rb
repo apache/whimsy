@@ -142,7 +142,6 @@ module ASF
     end
 
     def attrs
-      name.untaint if name =~ /\A\w+\Z/
       @attrs ||= LazyHash.new {ASF.search_one(base, "uid=#{name}").first}
     end
 
@@ -208,7 +207,6 @@ module ASF
     end
 
     def members
-      name.untaint if name =~ /\A\w+\Z/
       ASF.search_one(base, "cn=#{name}", 'member').flatten.
         map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
