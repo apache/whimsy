@@ -28,7 +28,7 @@ user = ASF::Person.new($USER)
 director = DIRECTORS[$USER]
 secretary = %w(clr jcarman).include? $USER
 
-unless secretary or director or user.asf_member? or ASF.pmc_chairs.include? user
+unless secretary or director or user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
   print "Status: 401 Unauthorized\r\n"
   print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
   exit
