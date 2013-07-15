@@ -276,7 +276,13 @@ load_agenda = Proc.new do
           !approved.include? report.attach and
           report.attach !~ /4\w/ and
           (report.attach !~ /^\d+$/ or report.author)
-          'ready4me'
+          if report.approved.to_s.empty? and not report.comments.to_s.empty?
+            'commented'
+          elsif report.comments.to_s =~ /^  #{director}: /
+            'commented'
+          else
+            'ready4me'
+          end
         else
           'ready'
         end
