@@ -780,24 +780,24 @@ _html do
           }
         end
 
-        # comment pop-up form
-        add_or_edit = comments[report.attach] ? 'Edit' : 'Add a'
-        _div.comment_popup! title: "#{add_or_edit} comment" do
-          _form do
-            _label 'Initials:', for: 'initials'
-            _input.initials! name: 'initials', value: director ||
-              user.public_name.split.map {|word| word[0]}.join.downcase
-            _textarea.comment! comments[report.attach], name: 'comment',
-              cols: 50, rows: 5, autofocus: true
+        unless report.comments.nil?
+          # comment pop-up form
+          add_or_edit = comments[report.attach] ? 'Edit' : 'Add a'
+          _div.comment_popup! title: "#{add_or_edit} comment" do
+            _form do
+              _label 'Initials:', for: 'initials'
+              _input.initials! name: 'initials', value: director ||
+                user.public_name.split.map {|word| word[0]}.join.downcase
+              _textarea.comment! comments[report.attach], name: 'comment',
+                cols: 50, rows: 5, autofocus: true
+            end
           end
-        end
 
-        # comment and approval buttons
-        _p.comments do
-          _button.add_comment! "#{add_or_edit} comment"
+          # comment and approval buttons
+          _p.comments do
+            _button.add_comment! "#{add_or_edit} comment"
 
-          if director and report.comments
-            if report.approved and not report.text.empty?
+            if director and report.approved and not report.text.empty?
               if !report.approved.to_s.split(/[ ,]+/).include? director
                 if approved.include? report.attach
                   _button.approve! 'Unapprove'
@@ -807,67 +807,67 @@ _html do
               end
             end
           end
-        end
 
-        # wire up the form and buttons
-        _script %{
-          $("#comment_popup").dialog({
-            autoOpen: false,
-            height: 295,
-            width: 600,
-            modal: true,
-            open: function() { $('textarea', this).focus() },
-            buttons: {
-              "Commit": function() {
-                var form = $(this);
-                var params = { 
-                  attach: #{report.attach.inspect},
-                  comment: $('textarea', this).val(),
-                  initials: $('#initials').val()
-                };
+          # wire up the form and buttons
+          _script %{
+            $("#comment_popup").dialog({
+              autoOpen: false,
+              height: 295,
+              width: 600,
+              modal: true,
+              open: function() { $('textarea', this).focus() },
+              buttons: {
+                "Commit": function() {
+                  var form = $(this);
+                  var params = { 
+                    attach: #{report.attach.inspect},
+                    comment: $('textarea', this).val(),
+                    initials: $('#initials').val()
+                  };
 
-                if (#{!director}) {
-                  params.message = prompt("Commit Message?", 
-                    "Comment on #{report.title} report");
-                  if (!params.message) return false;
-                }
-
-                $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
-                  var text;
-                  if (params.comment == '' || #{!director}) {
-                    text = 'Add a comment';
-                  } else {
-                    text = 'Edit comment';
+                  if (#{!director}) {
+                    params.message = prompt("Commit Message?", 
+                      "Comment on #{report.title} report");
+                    if (!params.message) return false;
                   }
-                  $('#add_comment').text(text)
-                  $('#ui-dialog-title-comment_popup').text(text)
-                  form.dialog("close");
-                }, 'json');
+
+                  $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
+                    var text;
+                    if (params.comment == '' || #{!director}) {
+                      text = 'Add a comment';
+                    } else {
+                      text = 'Edit comment';
+                    }
+                    $('#add_comment').text(text)
+                    $('#ui-dialog-title-comment_popup').text(text)
+                    form.dialog("close");
+                  }, 'json');
+                }
               }
-            }
-          });
+            });
 
-          $("#add_comment").click(function() {
-            $("#comment_popup").dialog('open');
-          });
+            $("#add_comment").click(function() {
+              $("#comment_popup").dialog('open');
+            });
 
-          $("#approve").click(function() {
-            var button = $(this);
-            var params = { 
-              request: button.text(),
-              attach: #{report.attach.inspect}
-            };
+            $("#approve").click(function() {
+              var button = $(this);
+              var params = { 
+                request: button.text(),
+                attach: #{report.attach.inspect}
+              };
 
-            $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
-              $('h1').attr('class', _.class);
-              if (button.text() == 'Approve') {
-                button.text('Unapprove');
-              } else {
-                button.text('Approve');
-              }
-            }, 'json');
-          });
-        }
+              $.post(#{ENV['SCRIPT_NAME'].inspect}, params, function(_) {
+                $('h1').attr('class', _.class);
+                if (button.text() == 'Approve') {
+                  button.text('Unapprove');
+                } else {
+                  button.text('Approve');
+                }
+              }, 'json');
+            });
+          }
+        end
 
         # notes (editable by secretary only, for everybody else static)
         if secretary
