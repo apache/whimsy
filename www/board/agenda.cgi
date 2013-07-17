@@ -871,7 +871,8 @@ _html do
 
         # notes (editable by secretary only, for everybody else static)
         if secretary
-          _p do
+          _form method: 'post' do
+            _input name: 'title', value: report.title, type: 'hidden'
             _label 'Notes', for: 'notes'
             notes = agenda.notes[report.title]
             if ['Roll Call', 'Discussion Items', 
@@ -882,8 +883,8 @@ _html do
             _textarea.notes! notes.to_s.sub(/\A\s*\n/,'').gsub(/^\s+\n/, "\n"), 
               name: 'notes',
               cols: 80, rows: [20, notes.to_s.split("\n").length+2].max
+            _p { _input type: :submit, value: 'Update' }
           end
-          _input type: :submit, value: 'Update'
           
           # Buttons for common notes
           if agenda.notes[report.title].to_s.empty?
