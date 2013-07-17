@@ -222,9 +222,8 @@ load_agenda = Proc.new do
     title.sub! /\sthe\s/, ' '
     title.sub! /\sApache\s/, ' '
     title.sub! /\sCommittee\s/, ' '
-    title.sub! /\sProject\s/, ' '
-    title.sub! /\sProject$/, ''
-    title.sub! /\sPMC$/, ''
+    title.sub! /\sProject(\s|$)/, '\1'
+    title.sub! /\sPMC(\s|$)/, '\1'
 
     report.title = title
     agenda.save report
