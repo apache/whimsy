@@ -1067,7 +1067,7 @@ _html do
           end
           text.gsub! /(\s)(s\.apache\.org\/\w+)/, '\1<a href="http://\2">\2</a>'
 
-          _{text}
+          _ << text
         end
       end
 
