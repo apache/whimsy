@@ -287,6 +287,8 @@ load_agenda = Proc.new do
         end
       elsif report.comments.to_s.strip.size > 0
         'commented'
+      elsif director and !report.approved.to_s.split(/[ ,]+/).include? director
+        'ready-me'
       else
         'reviewed'
       end
@@ -384,6 +386,7 @@ _html do
       .missing    {background-color: #F55}
       .ready4meet {background-color: #F70}
       .ready4me   {background-color: #F20}
+      .ready-me   {background-color: #0FE}
       .ready      {background-color: #F90}
       .reviewed   {background-color: #9F9}
       .commented  {background-color: #FF0}
