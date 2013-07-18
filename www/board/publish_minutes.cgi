@@ -81,6 +81,13 @@ _html do
           ['--no-auth-cache', '--non-interactive'],
           (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
         ]
+
+        File.unlink 'svn-commit.tmp' if File.exist? 'svn-commit.tmp'
+
+        unless `svn st`.empty?
+          _.system ['svn', 'status']
+          raise "svn failure"
+        end
       end
     end
 
@@ -97,6 +104,11 @@ _html do
           ['--no-auth-cache', '--non-interactive'],
           (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
         ]
+
+        unless `svn st`.empty?
+          _.system ['svn', 'status']
+          raise "svn failure"
+        end
       end
     end
 
@@ -121,6 +133,11 @@ _html do
           ['--no-auth-cache', '--non-interactive'],
           (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
         ]
+
+        unless `svn st`.empty?
+          _.system ['svn', 'status']
+          raise "svn failure"
+        end
       else
         _p "Nothing to clean up", class: '_stderr'
       end
