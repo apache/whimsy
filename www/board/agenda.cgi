@@ -269,7 +269,7 @@ load_agenda = Proc.new do
         end
       elsif report.approved.to_s.strip.split(/(?:,\s*|\s+)/).size < min
         if report.attach =~ /7\w|\d\./ and report.approved.to_s.empty?
-          'ready4meet'
+          'ready'
         elsif director and
           !report.approved.to_s.split(/[ ,]+/).include? director and
           !approved.include? report.attach and
@@ -287,7 +287,9 @@ load_agenda = Proc.new do
         end
       elsif report.comments.to_s.strip.size > 0
         'commented'
-      elsif director and !report.approved.to_s.split(/[ ,]+/).include? director
+      elsif director and 
+          !report.approved.to_s.split(/[ ,]+/).include? director and
+          (report.attach =~ /^[A-Z]+$/ or report.author)
         'ready-me'
       else
         'reviewed'
@@ -384,7 +386,6 @@ _html do
 
       /* row colors */
       .missing    {background-color: #F55}
-      .ready4meet {background-color: #F70}
       .ready4me   {background-color: #F20}
       .ready-me   {background-color: #0FE}
       .ready      {background-color: #F90}
