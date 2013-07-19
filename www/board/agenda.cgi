@@ -285,12 +285,16 @@ load_agenda = Proc.new do
         else
           'ready'
         end
-      elsif report.comments.to_s.strip.size > 0
-        'commented'
       elsif director and 
           !report.approved.to_s.split(/[ ,]+/).include? director and
           (report.attach =~ /^[A-Z]+$/ or report.author)
-        'ready-me'
+        if report.comments.to_s.strip.size > 0
+          'comment-me'
+        else
+          'ready-me'
+        end
+      elsif report.comments.to_s.strip.size > 0
+        'commented'
       else
         'reviewed'
       end
@@ -390,6 +394,7 @@ _html do
       .ready-me   {background-color: #0FE}
       .ready      {background-color: #F90}
       .reviewed   {background-color: #9F9}
+      .comment-me {background-color: #c84}
       .commented  {background-color: #FF0}
 
       /* sidebar */

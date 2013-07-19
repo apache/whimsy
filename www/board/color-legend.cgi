@@ -10,6 +10,7 @@ _html do
       .ready-me   {background-color: #0FE}
       .ready      {background-color: #F90}
       .reviewed   {background-color: #9F9}
+      .comment-me {background-color: #c84}
       .commented  {background-color: #FF0}
     }
   end
@@ -30,6 +31,9 @@ _html do
         end
         _tr class: 'ready-me' do
           _td "Report approved with no comments, but the Director viewing this page hasn't reviewed it"
+        end
+        _tr class: 'comment-me' do
+          _td "Report approved with comments, but the Director viewing this page hasn't reviewed it"
         end
         _tr.commented do
           _td 'Report has comments not captured yet by secretary (*)'
