@@ -6,7 +6,6 @@ require 'fileutils'
 require 'ostruct'
 require 'escape'
 require 'time'
-require 'pathname'
 
 ENV['LANG'] = 'en_US.UTF-8'
 
@@ -152,8 +151,7 @@ class Wunderbar::XmlMarkup
       return
     end
 
-    source = Pathname.new(File.expand_path(source, RECEIVED)).
-      relative_path_from(Pathname.new RECEIVED).to_s.untaint
+    source = File.expand_path(source, RECEIVED).untaint
     source += svn_at(source)
 
     if File.exist?(dest) and !File.directory?(dest)
