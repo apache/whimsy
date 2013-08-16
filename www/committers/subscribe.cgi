@@ -13,6 +13,7 @@ user = ASF::Person.new($USER)
 
 lists = ASF::Mail.lists
 lists.delete_if {|list| list =~ /^(ea|secretary|president|treasurer|chairman|committers$)/ }
+lists.delete_if {|list| list =~ /(^|-)security$/ }
 # TODO: for non-members, offer all public lists too
 unless user.asf_member?
   lists = ['infrastructure', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs',
