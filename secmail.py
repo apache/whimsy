@@ -153,6 +153,10 @@ def detach(msg):
   id = md5(msg['message-id']).hexdigest()
   if os.path.exists(os.path.join('tally',id)): return
 
+  # known spammers
+  if '<r_ieftin@yahoo.ro>' in msg['from']:
+    return
+
   # collect eligible attachments
   attachments = []
   for payload in msg.get_payload():
