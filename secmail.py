@@ -345,6 +345,6 @@ if __name__ == "__main__":
   # update web page with last processed information
   if last_processed and os.path.exists('../public_html/secmail.txt'):
     fh = open('../public_html/secmail.txt', 'w')
-    fh.write("Latest email processed: %s" % last_processed)
+    fh.write("Latest email processed was sent: %s" % last_processed)
     fh.close()
 
