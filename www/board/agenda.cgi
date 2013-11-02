@@ -26,7 +26,7 @@ DIRECTORS = {
 
 user = ASF::Person.new($USER)
 director = DIRECTORS[$USER]
-secretary = %w(clr jcarman).include? $USER
+secretary = %w(clr jcarman rubys).include? $USER
 
 unless secretary or director or user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
   print "Status: 401 Unauthorized\r\n"
@@ -637,7 +637,7 @@ _html do
           s = '[-*\u2022]'
           if report.attach =~ /7\w/
             text.gsub! /\((\w+)\)$/, '&lt;\1@apache.org&gt;'
-            if text =~ /FURTHER RESOLVED, that (.*?(\n.*?)??),? be/
+            if text =~ /FURTHER RESOLVED, that ([^,]*?),?\s+be\b/
               chairname = $1.gsub(/\s+/, ' ').strip
             else
               chairname = nil
