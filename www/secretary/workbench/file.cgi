@@ -608,7 +608,7 @@ _html do
       @realname ||= @nname
 
       _h1 "NDA for #{@realname}"
-      _move @source, dest
+      _.move @source, dest
 
       Dir.chdir(FOUNDATION) do
         ndalist = "Correspondence/JCP/tck-nda-list.txt"
