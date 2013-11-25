@@ -634,9 +634,10 @@ _html do
           text.gsub! /(\s)(s\.apache\.org\/\w+)/, '\1<a href="http://\2">\2</a>'
 
           # validate name/email addresses in resolutions
+          asfid = '[a-z][-a-z0-9_]+'
           s = '[-*\u2022]'
           if report.attach =~ /7\w/
-            text.gsub! /\((\w+)\)$/, '&lt;\1@apache.org&gt;'
+            text.gsub! /\((#{asfid})\)$/, '&lt;\1@apache.org&gt;'
             if text =~ /FURTHER RESOLVED, that ([^,]*?),?\s+be\b/
               chairname = $1.gsub(/\s+/, ' ').strip
             else
@@ -645,12 +646,12 @@ _html do
           end
 
           if report.attach =~ /7\w/ and text =~/^\s+#{s}.*(@| at )/
-            text.gsub! /^\s*#{s}(.*?)&lt;(\w+)(@| at )(\.\.\.|apache\.org)&gt;/ do |line|
+            text.gsub! /^\s*#{s}(.*?)&lt;(#{asfid})(@| at )(\.\.\.|apache\.org)&gt;/ do |line|
               personname = $1.strip
               person = ASF::Person.new($2)
               if person.icla
                 # link to the roster information for this committer
-                line.sub! /(&lt;)(\w+)(@.*?| at .*?)(&)/, 
+                line.sub! /(&lt;)(#{asfid})(@.*?| at .*?)(&)/, 
                   '\1<a href="/roster/committer/\2">\2\3</a>' +
                   '<span style="display:none" class="tlpreqpmcmemberavailid">' +
                   '\2' + '</span>' +
@@ -674,7 +675,7 @@ _html do
                   end
                 end
               else
-                line.sub! /(&lt;)(\w+)(@)/, 
+                line.sub! /(&lt;)(#{asfid})(@)/, 
                   '\1<span class="missing">\2</span>\3'
               end
 
