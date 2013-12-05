@@ -376,16 +376,19 @@ _html do
             line.gsub!(/^(\d+)\s-\s*/,'')
             quantity = $1
 
-            next unless line.match(/[-@]?\s?\$\s?([,\d\.]+)$/)
-            amt = $1.gsub(',', '')
-            quantity ||= '1'
-            price = quantity.to_i * amt.to_f
+            if line.match(/[-@]?\s?\$\s?([,\d\.]+)$/)
+	      amt = $1.gsub(',', '')
+	      quantity ||= '1'
+	      price = quantity.to_i * amt.to_f
 
-            # Format the float as a 2dp number
-            price = "%0.2f" % price
+	      # Format the float as a 2dp number
+	      price = "%0.2f" % price
 
-            # Now make it look pretty with commas
-            price = price.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, '\1,')
+	      # Now make it look pretty with commas
+	      price = price.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, '\1,')
+            else
+              quantity = price = '' 
+            end
 
             _tr do
               _td.c11 do
@@ -397,7 +400,7 @@ _html do
               _td.c10 do
                 _p.c1 price
               end
-            end
+            end 
           end
           (10-@item.lines.count).times do
             _tr do
