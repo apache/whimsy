@@ -45,8 +45,8 @@ _html do
   end
   _body? do
     # common banner
-    _a href: 'https://id.apache.org/' do
-      _img alt: "Logo", src: "https://id.apache.org/img/asf_logo_wide.png"
+    _a href: 'https://whimsy.apache.org/' do
+      _img alt: "ASF Logo", src: "https://id.apache.org/img/asf_logo_wide.png"
     end
 
     _h1_ title
