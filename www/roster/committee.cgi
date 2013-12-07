@@ -96,8 +96,8 @@ _html do
 
   _body? do
     # common banner
-    _a href: 'https://id.apache.org/' do
-      _img title: "Logo", alt: "Logo", 
+    _a href: 'https://whimsy.apache.org/' do
+      _img title: "ASF Logo", alt: "ASF Logo", 
         src: "https://id.apache.org/img/asf_logo_wide.png"
     end
 
