@@ -5,7 +5,7 @@ class ASF::Board::Agenda
     pattern = /
       -{41}\n
       Attachment\s\s?(?<attach>\w+):\s(?<title>.*?)\n+
-      (?<report>.*?)\n
+      (?<report>.*?)
       (?=-{41,}\n(?:End|Attach))
     /mx
 

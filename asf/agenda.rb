@@ -34,7 +34,13 @@ class ASF::Board::Agenda
   def parse(file)
     @file = file
     @@parsers.each { |parser| instance_exec(&parser) }
-    @sections
+
+    result = @sections.map do |section, hash|
+      hash[:attach] = section
+      hash
+    end
+
+    result.to_a
   end
 end
 
@@ -44,3 +50,4 @@ require_relative 'agenda/exec-officer'
 require_relative 'agenda/attachments'
 require_relative 'agenda/committee'
 require_relative 'agenda/special'
+require_relative 'agenda/back'
