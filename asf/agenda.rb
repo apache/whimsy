@@ -4,6 +4,17 @@ module ASF
 end
 
 class ASF::Board::Agenda
+  CONTENTS = {
+    '2.' => 'Roll Call',
+    '3A' => 'Minutes',
+    '4A' => 'Executive Officer',
+    '1'  => 'Additional Officer',
+    'A'  => 'Committee Reports',
+    '7A' => 'Special Orders',
+    '8.' => 'Discussion Items',
+    '9.' => 'Action Items'
+  }
+
   @@parsers = []
   def self.parse(file=nil, &block)
     @@parsers << block if block
@@ -34,6 +45,10 @@ class ASF::Board::Agenda
   def parse(file)
     @file = file
     @@parsers.each { |parser| instance_exec(&parser) }
+
+    CONTENTS.each do |section, index|
+      @sections[section][:index] = index if @sections[section]
+    end
 
     result = @sections.map do |section, hash|
       hash[:attach] = section
