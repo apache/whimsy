@@ -12,7 +12,7 @@ ENV['LANG'] = 'en_US.UTF-8'
 def html_fragment(&block)
   x = Wunderbar::HtmlMarkup.new({})
   x.instance_eval(&block)
-  x._.target!.join
+  x._.target!
 end
 
 def asciize(name)
