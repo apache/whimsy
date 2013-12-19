@@ -6,6 +6,7 @@ require 'fileutils'
 require 'time'
 require '/var/tools/asf'
 require 'shellwords'
+require 'nokogiri'
 require_relative 'apply_comments'
 
 ENV['HOME'] = ENV['DOCUMENT_ROOT']
@@ -77,7 +78,8 @@ class << agenda
   end
 
   def notes
-    @notes ||= (File.exist?(yaml) ? YAML.load_file(yaml) : {})
+    @notes ||= File.exist?(yaml) ? YAML.load_file(yaml) : nil
+    @notes ||= {}
   end
 
   def at(index)
@@ -467,11 +469,11 @@ _html do
         display: block; margin-top: 0.5em
       }
 
-      #comment_popup label {
+      #comment-popup label {
         display: inline;
       }
 
-      #comment_popup input {
+      #comment-popup input {
         margin-bottom: 0.5em;
       }
 
@@ -497,17 +499,17 @@ _html do
         background-color: #dc143c !important
       }
 
-      .comments button, #paste_report { 
+      .comments button, #paste-report { 
         color: #000; 
         background-color: #F90; 
         border-radius: 0.5em
       }
 
-      #paste_popup, #comment_popup {
+      #paste-popup, #comment-popup {
         display: none
       }
 
-      #paste_popup textarea {
+      #paste-popup textarea {
         font-family: monospace;
         font-size: small
       }
@@ -558,7 +560,10 @@ _html do
             FileUtils.cp agenda.yaml, backup
           end
 
-          File.open(agenda.yaml, 'w') {|file| YAML.dump(agenda.notes, file)}
+          File.open(agenda.yaml, 'w') do |file| 
+            file.write YAML.dump(agenda.notes)
+          end
+
           _p.notice! 'Report was successfully updated'
         end
       end
@@ -819,7 +824,7 @@ _html do
 
           # wire up the form and buttons
           _script %{
-            $("#comment_popup").dialog({
+            $("#comment-popup").dialog({
               autoOpen: false,
               height: 295,
               width: 600,
@@ -847,16 +852,16 @@ _html do
                     } else {
                       text = 'Edit comment';
                     }
-                    $('#add_comment').text(text)
-                    $('#ui-dialog-title-comment_popup').text(text)
+                    $('#add-comment').text(text)
+                    $('#ui-dialog-title-comment-popup').text(text)
                     form.dialog("close");
                   }, 'json');
                 }
               }
             });
 
-            $("#add_comment").click(function() {
-              $("#comment_popup").dialog('open');
+            $("#add-comment").click(function() {
+              $("#comment-popup").dialog('open');
             });
 
             $("#approve").click(function() {
