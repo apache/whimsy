@@ -912,7 +912,7 @@ _html do
 	    stderr2out = { class: {stderr: '_stdout'} }
 	    _.system ['gpg', '--verify', *verify], stderr2out
             if _.target!.include? "gpg: Can't check signature: public key not found"
-              keyid = _.target!.join[/[RD]SA key ID (\w+)/,1]
+              keyid = _.target![/[RD]SA key ID (\w+)/,1]
               if keyid
 	        _.system ['gpg', '--keyserver', 'pgpkeys.mit.edu',
 		  '--recv-keys', keyid], stderr2out
@@ -947,7 +947,7 @@ _html do
 	  stderr2out = { class: {stderr: '_stdout'} }
 	  _.system ['gpg', '--verify', file], stderr2out
           if _.target!.include? "gpg: Can't check signature: public key not found"
-            keyid = _.target!.join[/[RD]SA key ID (\w+)/,1]
+            keyid = _.target![/[RD]SA key ID (\w+)/,1]
             if keyid
 	      _.system ['gpg', '--keyserver', 'pgpkeys.mit.edu',
 		'--recv-keys', keyid], stderr2out
