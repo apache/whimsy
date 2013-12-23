@@ -9,7 +9,7 @@ class ASF::Board::Agenda
       \s{4}(?<section>[A-Z])\.
       \s(?<title>[^\[]+?)
       \s\[(?<owner>[^\]]+?)\]
-      (?<text>.*?)
+      (?<report>.*?)
       (?=\n\s{4}[A-Z]\.\s|\z)
     /mx
 
@@ -18,10 +18,10 @@ class ASF::Board::Agenda
       attrs['shepherd'] = attrs['owner'].split('/').last
       attrs['owner'] = attrs['owner'].split('/').first
 
-      attrs['text'].sub! /\A\s*\n/, ''
+      attrs['report'].sub! /\A\s*\n/, ''
 
-      attrs['text'].gsub! /\n\n\s+\[ comments:(.*)\]\s*$/m do
-        attrs['comments'] = $1.strip
+      attrs['report'].gsub! /\n\n\s+\[ comments:(.*)\]\s*$/m do
+        attrs['comments'] = $1.sub(/\A\s*\n/, '').sub(/\s+\Z/, '')
         "\n"
       end
     end

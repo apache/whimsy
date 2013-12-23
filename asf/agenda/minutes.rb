@@ -7,7 +7,7 @@ class ASF::Board::Agenda
 
     pattern = /
       \s{4}(?<section>[A-Z])\.
-      \sThe.meeting.of(?<title>.*?)\n
+      \sThe.meeting.of\s+(?<title>.*?)\n
       (?<text>.*?)
       \[\s(?:.*?):\s*?(?<approved>.*?)
       \s*comments:(?<comments>.*?)\n

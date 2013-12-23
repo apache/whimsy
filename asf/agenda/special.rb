@@ -15,6 +15,15 @@ class ASF::Board::Agenda
     scan orders, pattern do |attrs|
       attrs['section'] = '7' + attrs['section'] 
 
+      title = attrs['title']
+      title.sub! /^Resolution to /, ''
+      title.sub! /\sthe\s/, ' '
+      title.sub! /\sApache\s/, ' '
+      title.sub! /\sCommittee\s/, ' '
+      title.sub! /\sProject(\s|$)/, '\1'
+      title.sub! /\sPMC(\s|$)/, '\1'
+      title.sub! /\s\(.*\)$/, ''
+
       text = attrs['text']
 
       asfid = '[a-z][-a-z0-9_]+'

@@ -46,16 +46,48 @@ class ASF::Board::Agenda
     @file = file
     @@parsers.each { |parser| instance_exec(&parser) }
 
+    # add index markers for major sections
     CONTENTS.each do |section, index|
       @sections[section][:index] = index if @sections[section]
     end
 
-    result = @sections.map do |section, hash|
-      hash[:attach] = section
-      hash
+    # cleanup text and comment whitespace
+    @sections.each do |section, hash|
+      text = hash['text'] || hash['report']
+      if text
+        text.sub!(/\A\s*\n/, '')
+        text.sub!(/\s+\Z/, '')
+        unindent = text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min || 1
+        text.gsub! /^ {#{unindent-1}}/, ''
+      end
+
+      text = hash['comments']
+      if text
+        text.sub!(/\A\s*\n/, '')
+        text.sub!(/\s+\Z/, '')
+        unindent = text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min || 1
+        text.gsub! /^ {#{unindent-1}}/, ''
+      end
     end
 
-    result.to_a
+    # add roster and prior report link
+    whimsy = 'https://whimsy.apache.org'
+    @sections.each do |section, hash|
+      next unless section =~ /^(4[A-Z]|\d+|[A-Z][A-Z]?)$/
+      title = hash['title']
+      title = 'stdcxx' if title == 'C++ Standard Library'
+      unless section =~ /^4[A-Z]$/
+        hash['roster'] = "#{whimsy}/roster/committee/#{CGI.escape title}"
+      end
+      hash['prior_reports'] = "#{whimsy}/board/minutes/#{title.gsub(/\W/,'_')}"
+    end
+
+    # add attach to section
+    @sections.each do |section, hash|
+      hash[:attach] = section
+    end
+
+    @sections.values
   end
 end
 
