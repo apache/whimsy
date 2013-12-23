@@ -1,0 +1,126 @@
+#notice, ._stdout {color: green}
+._stderr {color: red}
+._stdin {font-weight: bold; margin-top: 1em}
+footer {text-align: center}
+footer ul {list-style-type: none; padding: 0}
+a {color: #000}
+.shell {border: 1px solid black;  border-radius: 1em; margin: 0 25%}
+.private {background-color: #CCC; border: 1px solid #444; color: #000}
+
+/* row colors */
+.missing    {background-color: #F88}
+.ready4me   {background-color: #F20}
+.ready-me   {background-color: #0FE}
+.ready      {background-color: #BFB}
+.reviewed   {background-color: #8F8}
+.comment-me {background-color: #c84}
+.commented  {background-color: #FD6}
+
+/* sidebar */
+aside {float: right} 
+aside ul {margin: 0}
+aside li {list-style: none}
+
+/* next/back links */
+.backlink {float: left}
+.nextlink {float: right}
+.backlink:before {content: "<< "}
+.nextlink:after  {content: " >>"}
+
+/* action items */
+.ai {background-color: yellow}
+
+/* make the header an eye catcher */
+h1, h2.subtitle {
+  line-height: 2em;
+  text-align: center;
+  text-transform: capitalize;
+  clear: both
+}
+
+/* center the table */
+table {
+  margin-left: auto;
+  margin-right: auto
+}
+
+td:first-child {
+  text-align: center
+}
+
+.buttons {
+  margin-top: 1em;
+  text-align: center
+}
+
+.buttons div, .buttons form {
+  display: inline
+}
+
+form label {
+  display: block; margin-top: 0.5em
+}
+
+#comment_popup label {
+  display: inline;
+}
+
+#comment_popup input {
+  margin-bottom: 0.5em;
+}
+
+pre {
+  padding-left: 2em;
+  margin: 0;
+  color: #000;
+}
+
+pre a {
+  color: #008;
+}
+
+pre#approved {
+  padding: 10px;
+}
+
+input[type=submit] {
+  border-radius: 1em;
+  background-color: #FFC;
+}
+
+.uptodate {
+  background-color: #7cfc00 !important
+}
+
+.stale {
+  background-color: #dc143c !important
+}
+
+.comments button, #paste_report { 
+  color: #000; 
+  background-color: #F90; 
+  border-radius: 0.5em
+}
+
+#paste_popup, #comment_popup {
+  display: none
+}
+
+#paste_popup textarea {
+  font-family: monospace;
+  font-size: small
+}
+
+.dl-horizontal dt {
+  width: 7em
+}
+
+.dl-horizontal dd {
+  margin-left: 8em;
+  width: 14em
+}
+
+pre {
+  background-color: #FFF;
+  border: none
+}

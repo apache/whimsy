@@ -1,0 +1,36 @@
+_header do
+  _h1 'ASF Board Agenda'
+end
+
+_table_.table_bordered ng_controller: 'Index' do
+  _thead do
+    _tr do
+      _th 'Attach'
+      _th 'Title'
+      _th 'Owner'
+      _th 'Shepherd'
+    end
+  end
+
+  _tbody_ do
+    _tr ng_repeat: 'item in agenda', class: '{{ item | color }}' do
+      _td '{{ item.attach }}'
+      _td! do
+        _a '{{ item.title }}', ng_href: "#/{{item.title}}"
+      end
+      _td '{{ item.owner }}'
+      _td '{{ item.shepherd }}'
+    end
+  end
+end
+
+_footer do
+  _h2 'Other Board Meeting Agendas'
+  _ul data_agenda: '{{ agenda_file }}' do
+    @agendas.each do |agenda|
+      _li ng_if: "agenda_file != #{agenda.inspect}" do
+        _a agenda, href: agenda
+      end
+    end
+  end
+end

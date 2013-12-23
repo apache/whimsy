@@ -1,0 +1,65 @@
+# sibling navigation links and banner
+_header.navbar.navbar_fixed_top class: '{{ item | color }}' do
+  _div.navbar_brand '{{ title }}'
+  _ul.nav.nav_pills.navbar_right do
+    _li.dropdown do
+      _a.info!.dropdown_toggle data_toggle: "dropdown" do
+        _ 'info'
+        _b.caret
+      end
+      _dl.dropdown_menu.dl_horizontal do
+        _dt 'Attach'
+        _dd '{{ attach }}'
+        _dt 'Author'
+        _dd '{{ owner }}'
+        _dt 'Shepherd'
+        _dd '{{ shepherd }}'
+        _dt 'Approved', ng_if: 'approved'
+        _dd '{{ approved && approved.join(", ") }}', ng_if: 'approved'
+        _dt 'Links', ng_if: 'roster || prior_reports'
+        _dd ng_if: 'roster' do
+          _a 'Roster', ng_href: '{{ roster }}'
+        end
+        _dd ng_if: 'prior_reports' do
+          _a 'Prior Reports', ng_href: '{{ prior_reports }}'
+        end
+      end
+    end
+
+    _li_.dropdown do
+      _a.nav!.dropdown_toggle data_toggle: "dropdown" do
+        _ 'navigation'
+        _b.caret
+      end
+      _ul.dropdown_menu do
+        _li! {_a.agenda! 'Agenda', href: '#'}
+        _li! ng_repeat: 'item in toc' do
+          _a '{{ item.index }}', ng_href: '{{ "#" + item.title }}'
+        end
+      end
+    end
+  end
+end
+
+# main content: this section
+#form method: 'post' do
+# _input.title! name: 'title', value: '{{ title }}', type: 'hidden'
+
+  _pre ng_bind_html: 'item | html'
+
+  _span ng_if: 'comments' do
+    _h3.comments! 'Comments'
+    _pre.comments '{{ comments }}'
+  end
+# end
+
+# buttons
+# _button 'refresh', ng_click: 'refresh()'
+
+_footer.navbar.navbar_fixed_bottom class: '{{ item | color }}' do
+  _a.backlink.navbar_brand '{{ prev && prev.title }}', rel: 'prev',
+    ng_href: '{{ prev && "#" + prev.title }}', ng_if: 'prev'
+  _a.nextlink.navbar_brand '{{ next && next.title }}', rel: 'next',
+    ng_href: '{{ next && "#" + next.title }}', ng_if: 'next'
+
+end

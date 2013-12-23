@@ -1,0 +1,15 @@
+#!/usr/bin/ruby
+
+#
+# Main "layout" for the application, houses a single view
+#
+
+_html ng_app: 'AsfBoardAgenda' do
+  _script src: 'js/app.js'
+  _script src: 'js/services.js'
+  _script src: 'js/filters.js'
+
+  _link rel: 'stylesheet', href: 'stylesheets/app.css'
+
+  _div :ng_view, data_agenda: @agenda
+end
