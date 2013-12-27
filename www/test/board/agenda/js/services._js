@@ -19,6 +19,7 @@ module Angular::AsfBoardServices
         # add forward and back links to entries in the agenda
         prev = nil
         result.forEach do |item|
+          item.href = "##{item.title}"
           prev.next = item if prev
           item.prev = prev
           prev = item

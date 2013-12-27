@@ -8,6 +8,7 @@ a {color: #000}
 .private {background-color: #CCC; border: 1px solid #444; color: #000}
 
 /* row colors */
+.blank      {background-color: #DDD}
 .missing    {background-color: #F88}
 .ready4me   {background-color: #F20}
 .ready-me   {background-color: #0FE}
@@ -22,8 +23,8 @@ aside ul {margin: 0}
 aside li {list-style: none}
 
 /* next/back links */
-.backlink {float: left}
-.nextlink {float: right}
+.backlink {float: left; min-width: 7em}
+.nextlink {float: right; min-width: 7em}
 .backlink:before {content: "<< "}
 .nextlink:after  {content: " >>"}
 
@@ -123,4 +124,14 @@ input[type=submit] {
 pre {
   background-color: #FFF;
   border: none
+}
+
+footer .btn {
+  margin-top: 7px;
+  height: 100%;
+  vertical-align: middle
+}
+
+.modal-body {
+  background-color: white
 }

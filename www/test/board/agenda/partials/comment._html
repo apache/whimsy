@@ -1,0 +1,31 @@
+_div.modal.fade.comment! tabindex: -1 do
+  _div.modal_dialog do
+    _div.modal_content.commented do
+      _form do
+        _div.modal_header do
+          _button.close "\u00D7", type: 'button', data_dismiss: 'modal'
+          _h4.modal_title 'Enter a comment'
+        end
+
+        _div_.modal_body do
+          _div_.form_group do
+            _label 'Initials', for: 'comment_initials'
+            _input.form_control.comment_initials! placeholder: 'initials',
+              ng_model: 'initials'
+          end
+
+          _div_.form_group do
+            _label 'Comment', for: 'comment_text'
+            _textarea.form_control.comment_text! :focus, placeholder: 'comment',
+               rows: 5
+          end
+        end
+
+        _div.modal_footer do
+          _button.btn.btn_default 'Close', type: 'button', data_dismiss: 'modal'
+          _button.btn.btn_primary 'Submit', type: 'button'
+        end
+      end
+    end
+  end
+end

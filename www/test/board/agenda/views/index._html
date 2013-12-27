@@ -11,5 +11,73 @@ _html ng_app: 'AsfBoardAgenda' do
 
   _link rel: 'stylesheet', href: 'stylesheets/app.css'
 
-  _div :ng_view, data_agenda: @agenda
+  _body ng_controller: 'Layout' do
+    # sibling navigation links and banner
+    _header.navbar.navbar_fixed_top class: '{{ item | color }}' do
+      _div.navbar_brand '{{ title }}'
+      _ul.nav.nav_pills.navbar_right do
+        _li.dropdown ng_show: 'item.title' do
+          _a.info!.dropdown_toggle data_toggle: "dropdown" do
+            _ 'info'
+            _b.caret
+          end
+          _dl.dropdown_menu.dl_horizontal do
+            _dt 'Attach'
+            _dd '{{ item.attach }}'
+            _dt 'Author'
+            _dd '{{ item.owner }}'
+            _dt 'Shepherd'
+            _dd '{{ item.shepherd }}'
+            _dt 'Approved', ng_show: 'item.approved'
+            _dd '{{ item.approved && item.approved.join(", ") }}', 
+              ng_show: 'item.approved'
+            _dt 'Links', ng_show: 'item.roster || item.prior_reports'
+            _dd ng_show: 'item.roster' do
+              _a 'Roster', ng_href: '{{ item.roster }}'
+            end
+            _dd ng_show: 'item.prior_reports' do
+              _a 'Prior Reports', ng_href: '{{ item.prior_reports }}'
+            end
+          end
+        end
+
+        _li_.dropdown do
+          _a.nav!.dropdown_toggle data_toggle: "dropdown" do
+            _ 'navigation'
+            _b.caret
+          end
+          _ul.dropdown_menu do
+            _li! {_a.agenda! 'Agenda', href: '#'}
+            _li! ng_repeat: 'item in toc' do
+              _a '{{ item.index }}', ng_href: '{{ "#" + item.title }}'
+            end
+          end
+        end
+      end
+    end
+
+    _div.main! :ng_view, data_agenda: @agenda
+
+    _ng_include src: 'button.include', ng_repeat: 'button in buttons'
+
+    _aside.agendas! ng_show: 'false' do
+      _h2 'Other Board Meeting Agendas'
+      _ul do
+        @agendas.each do |agenda|
+          _li! { _a agenda, href: agenda }
+        end
+      end
+    end
+
+    _footer.navbar.navbar_fixed_bottom class: '{{ item | color }}' do
+      _a.backlink.navbar_brand '{{ prev && prev.title }}', rel: 'prev',
+        ng_href: '{{ prev && prev.href }}', ng_show: 'prev'
+      
+      _button.btn.btn_primary '{{button.label}}', data_toggle: 'modal', 
+        data_target: '{{button.target}}', ng_repeat: 'button in buttons'
+
+      _a.nextlink.navbar_brand '{{ next && next.title }}', rel: 'next',
+        ng_href: '{{ next && next.href }}', ng_show: 'next'
+    end
+  end
 end

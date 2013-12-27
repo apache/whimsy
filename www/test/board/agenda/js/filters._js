@@ -6,7 +6,9 @@ module Angular::AsfBoardFilters
 
   # determine the color of banners for a given agenda item
   filter :color do |item|
-    if item.text or item.report
+    if not item.title
+      return 'blank'
+    elsif item.text or item.report
       if item.approved and item.approved.length >= 5
         if item.comments
           return "commented"
@@ -52,7 +54,7 @@ module Angular::AsfBoardFilters
     end
 
     # highlight private sections
-    text = text.gsub(private_sections, '$1<div class="private">$2</div>$3')
+    text = text.gsub(private_sections, '$1<div class="private">$2</div>')
 
     # link to board minutes
     text = text.gsub(/(board_minutes_\d+_\d+_\d+)/, 

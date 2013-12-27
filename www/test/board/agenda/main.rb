@@ -21,11 +21,13 @@ svn = ASF::SVN['private/foundation/board']
 set :views, File.dirname(__FILE__)
 
 get '/' do
-  @agenda = Dir.chdir(svn) {Dir['board_agenda_*.txt'].sort.last}
+  Dir.chdir(svn) {@agendas = Dir['board_agenda_*.txt'].sort}
+  @agenda = @agendas.last
   _html :'views/index'
 end
 
 get '/board_agenda_:date.txt' do
+  Dir.chdir(svn) {@agendas = Dir['board_agenda_*.txt'].sort}
   @agenda = "board_agenda_#{params[:date]}.txt"
   _html :'views/index'
 end
@@ -35,7 +37,6 @@ get '/js/:file.js' do
 end
 
 get '/partials/:file.html' do
-  Dir.chdir(svn) {@agendas = Dir['board_agenda_*.txt'].sort.reverse}
   _html :"partials/#{params[:file]}"
 end
 

@@ -23,14 +23,3 @@ _table_.table_bordered ng_controller: 'Index' do
     end
   end
 end
-
-_footer do
-  _h2 'Other Board Meeting Agendas'
-  _ul data_agenda: '{{ agenda_file }}' do
-    @agendas.each do |agenda|
-      _li ng_if: "agenda_file != #{agenda.inspect}" do
-        _a agenda, href: agenda
-      end
-    end
-  end
-end
