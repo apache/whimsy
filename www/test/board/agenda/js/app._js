@@ -37,42 +37,42 @@ module Angular::AsfBoardAgenda
   end
 
   controller :Layout do
-    $scope.toc = Agenda.index()
-    $scope.item = {}
-    $scope.next = nil
-    $scope.prev = nil
-    def $scope.layout(vars)
-      $scope.buttons = []
+    @toc = Agenda.index()
+    @item = {}
+    @next = nil
+    @prev = nil
+
+    def layout(vars)
+      @buttons = []
       if vars.item != undefined
-        $scope.item = vars.item
-        $scope.next = vars.item.next
-        $scope.prev = vars.item.prev
-        $scope.title = vars.item.title
+        @item = vars.item
+        @next = vars.item.next
+        @prev = vars.item.prev
+        @title = vars.item.title
       else
-        $scope.item = {}
-        $scope.next = nil
-        $scope.prev = nil
-        $scope.title = ''
+        @item = {}
+        @next = nil
+        @prev = nil
+        @title = ''
       end
 
-      $scope.title = vars.title if vars.title != undefined
-      $scope.next = vars.next if vars.next != undefined
-      $scope.prev = vars.prev if vars.prev != undefined
+      @title = vars.title if vars.title != undefined
+      @next = vars.next if vars.next != undefined
+      @prev = vars.prev if vars.prev != undefined
     end
   end
 
   # controller for the index page
   controller :Index do
-    $scope.agenda = Agenda.get()
-    $scope.agenda_file = Agenda.filename()
+    @agenda = Agenda.get()
+    @agenda_file = Agenda.filename()
      
-    title = $scope.agenda_file.match(/\d+_\d+_\d+/)[0].gsub(/_/,'-')
+    title = @agenda_file[/\d+_\d+_\d+/].gsub(/_/,'-')
 
-    agendas = ~'#agendas li'.map {|i,li| return li.textContent.trim()}
-    index = agendas.toArray().indexOf($scope.agenda_file)
-    agendas = agendas.map do |i,text|
-      title = text.match(/\d+_\d+_\d+/)[0].gsub(/_/,'-')
-      return {title: title, href: text}
+    agendas = ~'#agendas li'.to_a.map {|li| return li.textContent.trim()}
+    index = agendas.indexOf(@agenda_file)
+    agendas = agendas.map do |text|
+      return {href: text, title: text[/\d+_\d+_\d+/].gsub(/_/,'-')}
     end
 
     $scope.layout title: title, next: agendas[index+1], prev: agendas[index-1]
@@ -82,13 +82,13 @@ module Angular::AsfBoardAgenda
 
   # controller for the shepherd pages
   controller :Shepherd do
-    $scope.agenda = Agenda.get()
-    $scope.name = $routeParams.name
+    @agenda = Agenda.get()
+    @name = $routeParams.name
 
     Agenda.forEach do |item|
       if item.title == 'Review Outstanding Action Items'
-        $scope.actions = item
-        $scope.assigned = item.text.split("\n\n").filter do |item|
+        @actions = item
+        @assigned = item.text.split("\n\n").filter do |item|
           return item =~ /^\* *#{$routeParams.name}/m
         end
       end
@@ -97,11 +97,25 @@ module Angular::AsfBoardAgenda
     resize_window()
   end
 
+  controller :Comment do
+    def save
+      data = {attach: @item.attach, initials: @initials, comment: @comment}
+
+      $http.post('json/comment', data).success { |response|
+        Pending.put response
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception 
+      }.finally {
+        ~'#comment'.modal(:hide)
+      }
+    end
+  end
+
   # controller for the section pages
   controller :Section do
-    $scope.agenda = Agenda.get()
-
-    $scope.initials = 'sr'
+    @agenda = Agenda.get()
+    @initials = 'sr'
 
     # fetch section from the route parameters
     section = $routeParams.section
@@ -112,14 +126,14 @@ module Angular::AsfBoardAgenda
       if item.title == section
         $scope.layout item: item
         if item.comments != undefined
-          $scope.buttons.push label: 'comment', target: '#comment',
+          @buttons.push label: 'comment', target: '#comment',
             include: 'partials/comment.html'
         end
       end
     end
 
     # refresh agenda
-    def $scope.refresh
+    def refresh
       Agenda.refresh()
     end
 
@@ -128,7 +142,7 @@ module Angular::AsfBoardAgenda
 
   # link traversal via left/right keys
   ~document.keydown do |event|
-     return if ~('.modal-open').length > 0
+     return unless ~('.modal-open').empty?
      if event.keyCode == 37 # '<-'
        ~"a[rel='prev']".click
        return false

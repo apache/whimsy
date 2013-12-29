@@ -21,6 +21,8 @@ Basic Roadmap:
     app_._js:     client controller and router
     filters._js:  client view helpers
     services._js: client model
+  json - server side of form (or button) processing
+  model - server side model
   partials - HTML fragments
   public - staticly served stylesheets
   views - common HTML layout

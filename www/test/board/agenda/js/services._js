@@ -85,4 +85,25 @@ module Angular::AsfBoardServices
         attributes['data-agenda'].value
     end
   end
+
+  class Pending
+    @@list = {comments: [], approved: []}
+
+    def self.get
+      return @@list
+    end
+
+    def self.comments
+      return @@list.comments
+    end
+
+    def self.approved
+      return @@list.approved
+    end
+
+    def self.put(value)
+      @@list.comments = value.comments
+      @@list.approved = value.approved
+    end
+  end
 end

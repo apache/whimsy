@@ -58,8 +58,6 @@ _html ng_app: 'AsfBoardAgenda' do
 
     _div.main! :ng_view, data_agenda: @agenda
 
-    _ng_include src: 'button.include', ng_repeat: 'button in buttons'
-
     _aside.agendas! ng_show: 'false' do
       _h2 'Other Board Meeting Agendas'
       _ul do

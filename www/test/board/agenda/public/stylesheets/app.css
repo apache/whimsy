@@ -23,8 +23,8 @@ aside ul {margin: 0}
 aside li {list-style: none}
 
 /* next/back links */
-.backlink {float: left; min-width: 7em}
-.nextlink {float: right; min-width: 7em}
+.backlink {float: left; min-width: 9em}
+.nextlink {float: right; min-width: 9em}
 .backlink:before {content: "<< "}
 .nextlink:after  {content: " >>"}
 
@@ -134,4 +134,8 @@ footer .btn {
 
 .modal-body {
   background-color: white
+}
+
+body {
+  overflow-y: scroll
 }

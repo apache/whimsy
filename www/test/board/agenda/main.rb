@@ -17,6 +17,9 @@ require 'wunderbar/angularjs/route'
 require 'ruby2js/filter/functions'
 
 svn = ASF::SVN['private/foundation/board']
+MINUTES_WORK = '/var/tools/data'
+
+require_relative 'model/pending'
 
 set :views, File.dirname(__FILE__)
 
@@ -48,4 +51,8 @@ get '/json/:file' do
       end
     end
   end
+end
+
+post '/json/:file' do
+  _json :"json/#{params[:file]}"
 end

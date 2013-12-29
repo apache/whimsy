@@ -5,6 +5,5 @@ _span ng_if: 'item.comments' do
   _pre.comments '{{ item.comments }}'
 end
 
-# _button.btn.btn_primary 'comment', data_toggle: 'modal', data_target: '#comment'
-
-# _ng_include src: "'partials/comment.html'"
+# Include forms
+_ng_include src: 'button.include', ng_repeat: 'button in buttons'
