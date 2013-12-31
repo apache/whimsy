@@ -1,0 +1,12 @@
+pending = Pending.get
+comments = pending['comments']
+
+if not @comment or @comment.strip.empty?
+  comments.delete @attach
+else
+  comments[@attach] = @comment
+end
+
+Pending.put(pending)
+
+_! pending

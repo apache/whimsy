@@ -26,7 +26,7 @@ set :views, File.dirname(__FILE__)
 get '/' do
   Dir.chdir(svn) {@agendas = Dir['board_agenda_*.txt'].sort}
   @agenda = @agendas.last
-  _html :'views/index'
+  _html :'views/main'
 end
 
 get '/board_agenda_:date.txt' do

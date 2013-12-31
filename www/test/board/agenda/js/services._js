@@ -13,7 +13,7 @@ module Angular::AsfBoardServices
     def self.refresh
       @@agenda ||= []
 
-      $http.get("json/#{self.filename()}").success do |result|
+      $http.get("json/#{Data.get('agenda')}").success do |result|
         @@index.length = 0
 
         # add forward and back links to entries in the agenda
@@ -78,12 +78,6 @@ module Angular::AsfBoardServices
     def self.index
       return @@index
     end
-
-    # retrieve file name associated with the agenda from the document itself
-    def self.filename
-      return document.querySelector('div[data-agenda]').
-        attributes['data-agenda'].value
-    end
   end
 
   class Pending
@@ -104,6 +98,13 @@ module Angular::AsfBoardServices
     def self.put(value)
       @@list.comments = value.comments
       @@list.approved = value.approved
+    end
+  end
+
+  class Data
+    def self.get(name)
+      return document.querySelector("main[data-#{name}]").
+        attributes["data-#{name}"].value
     end
   end
 end

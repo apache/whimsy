@@ -56,7 +56,11 @@ _html ng_app: 'AsfBoardAgenda' do
       end
     end
 
-    _div.main! :ng_view, data_agenda: @agenda
+    userid = ENV['REMOTE_USER']
+    userid = userid.dup.untaint if userid =~ /\A[-\w]+\Z/
+    _main :ng_view, data_agenda: @agenda, 
+      data_availid: userid, data_initials: ASF::Auth::DIRECTORS[userid],
+      data_firstname: Etc.getpwnam(userid)[4].split(',').first.split(' ').first
 
     _aside.agendas! ng_show: 'false' do
       _h2 'Other Board Meeting Agendas'
@@ -67,7 +71,7 @@ _html ng_app: 'AsfBoardAgenda' do
       end
     end
 
-    _footer.navbar.navbar_fixed_bottom class: '{{ item | color }}' do
+    _footer_.navbar.navbar_fixed_bottom class: '{{ item | color }}' do
       _a.backlink.navbar_brand '{{ prev && prev.title }}', rel: 'prev',
         ng_href: '{{ prev && prev.href }}', ng_show: 'prev'
       

@@ -26,7 +26,7 @@ module Angular::AsfBoardAgenda
   # resize body, optionally leave room for headers
   def resize_window
     ~window.resize do
-      ~'#main'.css(
+      ~'main'.css(
         marginTop:    ~('header.navbar').css(:height),
         marginBottom: ~('footer.navbar').css(:height)
       )
@@ -114,8 +114,8 @@ module Angular::AsfBoardAgenda
 
   # controller for the section pages
   controller :Section do
-    @agenda = Agenda.get()
-    @initials = 'sr'
+    @agenda = Data.get('agenda')
+    @initials = Data.get('initials')
 
     # fetch section from the route parameters
     section = $routeParams.section
