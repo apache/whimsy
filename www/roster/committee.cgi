@@ -240,7 +240,7 @@ _html do
       end
 
       unless (group - pmc).empty?
-        _h2_ 'Committers'
+        _h2_ 'Committers (excluding PMC members already listed above)'
         _table_ do
 	  group.sort_by {|person| person.id}.each do |person|
             next if pmc.include? person
