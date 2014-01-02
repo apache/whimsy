@@ -79,7 +79,9 @@ module Angular::AsfBoardAgenda
       return {href: text, title: text[/\d+_\d+_\d+/].gsub(/_/,'-')}
     end
 
+    Agenda.forEach {}
     $scope.layout title: title, next: agendas[index+1], prev: agendas[index-1]
+    @buttons.push 'refresh-button'
 
     resize_window()
   end
@@ -131,6 +133,23 @@ module Angular::AsfBoardAgenda
         alert data.exception 
       }.finally {
         ~'#comment'.modal(:hide)
+      }
+    end
+  end
+
+  controller :Refresh do
+    @disabled = false
+    def click
+      data = {agenda: Data.get('agenda')}
+
+      @disabled = true
+      $http.post('json/refresh', data).success { |response|
+        Agenda.put response
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception 
+      }.finally {
+        @disabled = false
       }
     end
   end

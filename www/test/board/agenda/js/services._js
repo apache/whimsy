@@ -14,48 +14,52 @@ module Angular::AsfBoardServices
       @@agenda ||= []
 
       $http.get("json/#{Data.get('agenda')}").success do |result|
-        @@index.clear!
-
-        # add forward and back links to entries in the agenda
-        prev = nil
-        result.forEach do |item|
-          item.href = "##{item.title}"
-          prev.next = item if prev
-          item.prev = prev
-          prev = item
-        end
-
-        # remove president attachments from the normal flow
-        result.forEach do |pres|
-          match = pres.report and pres.report.
-            match(/Additionally, please see Attachments (\d) through (\d)/)
-          next unless match
-
-          first = last = nil
-          result.forEach do |item|
-            first = item if item.attach == match[1]
-            last  = item if item.attach == match[2]
-          end
-
-          if first and last
-            first.prev.next = last.next
-            last.next.prev = first.prev
-            first.prev = pres
-            last.next.index = first.index
-            first.index = nil
-          end
-        end
-
-        # add index entries to @@index
-        result.forEach do |item|
-          @@index.push item if item.index
-        end
-
-        @@agenda.replace! result
-
-        # rerun callbacks on each agenda item
-        Agenda.forEach(@@callback) if @@callback
+        Agenda.put(result)
       end
+    end
+
+    # (re)-fetch agenda from server
+    def self.put(agenda)
+      # add forward and back links to entries in the agenda
+      prev = nil
+      agenda.forEach do |item|
+        item.href = "##{item.title}"
+        prev.next = item if prev
+        item.prev = prev
+        prev = item
+      end
+
+      # remove president attachments from the normal flow
+      agenda.forEach do |pres|
+        match = pres.report and pres.report.
+          match(/Additionally, please see Attachments (\d) through (\d)/)
+        next unless match
+
+        first = last = nil
+        agenda.forEach do |item|
+          first = item if item.attach == match[1]
+          last  = item if item.attach == match[2]
+        end
+
+        if first and last
+          first.prev.next = last.next
+          last.next.prev = first.prev
+          first.prev = pres
+          last.next.index = first.index
+          first.index = nil
+        end
+      end
+
+      # add index entries to @@index
+      @@index.clear!
+      agenda.forEach do |item|
+        @@index.push item if item.index
+      end
+
+      @@agenda.replace! agenda
+
+      # rerun callbacks on each agenda item
+      Agenda.forEach(@@callback) if @@callback
     end
 
     # retrieve agenda (fetching if necessary)

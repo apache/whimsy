@@ -15,6 +15,8 @@ module Angular::AsfBoardFilters
         else
           return "reviewed"
         end
+      elsif item.title == 'President' and item.report[0..12] == 'Additionally,'
+        return "missing"
       else
         return "ready"
       end
