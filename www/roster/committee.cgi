@@ -395,7 +395,7 @@ _html do
 
             # notices
             if chair and not reporting.include? name
-              _td 'not in reporting schedule' # TODO
+              _td 'not in reporting schedule'
             elsif not info[name] or info[name].empty?
               if not pmc_names.empty?
                 _td 'ldap only'
@@ -414,7 +414,7 @@ _html do
               if nonpmcs.include? name
                 _td
               else
-                _td 'committee-info.txt only' # TODO
+                _td 'committee-info.txt only'
               end
             elsif info[name].sort == pmc_names
               if pmc_names.any? {|id| not iclas.include? id}
