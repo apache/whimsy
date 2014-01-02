@@ -104,7 +104,7 @@ _html do
 
     if @pmc
       # individual pmc display page
-      @pmc.untaint if @pmc =~ /^[-\w\.]+$/
+      @pmc.untaint if @pmc =~ /^[-\w]+$/
       name = canonical[@pmc.downcase]
 
       # extract roster from committee-info.txt
