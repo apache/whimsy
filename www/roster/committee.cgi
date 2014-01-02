@@ -12,6 +12,7 @@ canonical.merge! \
   'http server'                 => 'httpd',
   'httpserver'                  => 'httpd',
   'java community process'      => 'jcp',
+  'lucene.net'                  => 'lucenenet',
   'quetzalcoatl'                => 'quetz',
   'security team'               => 'security',
   'c++ standard library'        => 'stdcxx',
@@ -394,7 +395,7 @@ _html do
 
             # notices
             if chair and not reporting.include? name
-              _td 'not in reporting schedule'
+              _td 'not in reporting schedule' # TODO
             elsif not info[name] or info[name].empty?
               if not pmc_names.empty?
                 _td 'ldap only'
@@ -413,7 +414,7 @@ _html do
               if nonpmcs.include? name
                 _td
               else
-                _td 'committee-info.txt only'
+                _td 'committee-info.txt only' # TODO
               end
             elsif info[name].sort == pmc_names
               if pmc_names.any? {|id| not iclas.include? id}
