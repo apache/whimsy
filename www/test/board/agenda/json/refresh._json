@@ -1,0 +1,10 @@
+svn = ASF::SVN['private/foundation/board']
+Dir.chdir(svn) do
+  `svn up`
+  if Dir['board_agenda_*.txt'].include? params[:agenda]
+    _! ASF::Board::Agenda.parse(File.read(params[:agenda].dup.untaint))
+  else
+    throw :agenda_not_found
+  end
+end
+
