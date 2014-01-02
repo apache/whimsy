@@ -41,7 +41,7 @@ nonpmcs = head.sub(/.*?also has/m,'').
 # parse roster information and display names from committee-info.txt
 info = {}
 committee.each do |roster|
-  roster.gsub! /^.*\[\s*emeritus\s*\].*/i, ''
+  roster.gsub! /^.*\(\s*emeritus\s*\).*/i, ''
   name =  roster[/(\w.*?)\s+\(/,1]
   info[namemap.call(name)] = roster.scan(/<(.*?)@apache\.org>/).flatten
 end
