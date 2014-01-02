@@ -1,0 +1,12 @@
+pending = Pending.get
+approved = pending['approved']
+
+if @request == 'approve'
+  approved << @attach
+else
+  approved.delete @attach
+end
+
+Pending.put(pending)
+
+_! pending

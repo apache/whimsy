@@ -1,4 +1,4 @@
-_div.modal.fade.comment! tabindex: -1 do
+_div.modal.fade.comment_form! tabindex: -1 do
   _div.modal_dialog ng_controller: 'Comment' do
     _div.modal_content.commented do
       _div.modal_header do

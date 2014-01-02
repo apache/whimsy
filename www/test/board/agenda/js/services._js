@@ -14,7 +14,7 @@ module Angular::AsfBoardServices
       @@agenda ||= []
 
       $http.get("json/#{Data.get('agenda')}").success do |result|
-        @@index.length = 0
+        @@index.clear!
 
         # add forward and back links to entries in the agenda
         prev = nil
@@ -51,8 +51,7 @@ module Angular::AsfBoardServices
           @@index.push item if item.index
         end
 
-        @@agenda.length == 0
-        @@agenda.push(*result)
+        @@agenda.replace! result
 
         # rerun callbacks on each agenda item
         Agenda.forEach(@@callback) if @@callback
@@ -81,23 +80,33 @@ module Angular::AsfBoardServices
   end
 
   class Pending
+    @@fetched = false
     @@list = {comments: [], approved: []}
 
     def self.get
+      $http.get("json/pending").success do |result|
+        @@list.comments.replace! result.comments
+        @@list.approved.replace! result.approved
+      end
+
       return @@list
     end
 
     def self.comments
+      self.get() unless @@fetched
+      @@fetched = true
       return @@list.comments
     end
 
     def self.approved
+      self.get() unless @@fetched
+      @@fetched = true
       return @@list.approved
     end
 
     def self.put(value)
-      @@list.comments = value.comments
-      @@list.approved = value.approved
+      @@list.comments.replace! value.comments
+      @@list.approved.replace! value.approved
     end
   end
 

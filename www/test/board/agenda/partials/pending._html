@@ -1,0 +1,13 @@
+_h2 'Pending approvals'
+
+_a '{{ item.title }} ', href: '{{ item.href }}', class: '{{ item | color }}',
+  ng_repeat: 'item in agenda | approved:pending'
+
+_h2 'Pending comments', ng_if: 'pending_comments().length > 0'
+
+_div ng_repeat: 'item in pending_comments()' do
+  _h4 do
+    _a '{{ item.title }}'
+  end
+  _pre '{{ item.comment }}'
+end

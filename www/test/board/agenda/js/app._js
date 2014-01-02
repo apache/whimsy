@@ -11,6 +11,10 @@ module Angular::AsfBoardAgenda
     templateUrl 'partials/index.html'
     controller :Index
 
+  when '/pending'
+    templateUrl 'partials/pending.html'
+    controller :PendingItems
+
   when '/shepherd/:name'
     templateUrl 'partials/shepherd.html'
     controller :Shepherd
@@ -65,7 +69,7 @@ module Angular::AsfBoardAgenda
   # controller for the index page
   controller :Index do
     @agenda = Agenda.get()
-    @agenda_file = Agenda.filename()
+    @agenda_file = Data.get('agenda')
      
     title = @agenda_file[/\d+_\d+_\d+/].gsub(/_/,'-')
 
@@ -78,6 +82,25 @@ module Angular::AsfBoardAgenda
     $scope.layout title: title, next: agendas[index+1], prev: agendas[index-1]
 
     resize_window()
+  end
+
+  # controller for the pending pages
+  controller :PendingItems do
+    @name = Data.get('initials')
+    @agenda = Agenda.get()
+    @pending = Pending.get()
+    resize_window()
+
+    def pending_comments
+      comments = []
+      @agenda.forEach do |item|
+        if @pending.comments[item.attach]
+          item.comment = @pending.comments[item.attach]
+          comments.push item
+        end
+      end
+      return comments
+    end
   end
 
   # controller for the shepherd pages
@@ -112,8 +135,32 @@ module Angular::AsfBoardAgenda
     end
   end
 
+  controller :Approve do
+    @pending = Pending.get()
+
+    def label
+      if @pending.approved.include? @item.attach
+        return 'unapprove'
+      else
+        return 'approve'
+      end
+    end
+
+    def click
+      data = {attach: @item.attach, request: self.label()}
+
+      $http.post('json/approve', data).success { |response|
+        Pending.put response
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception 
+      }
+    end
+  end
+
   # controller for the section pages
   controller :Section do
+    @forms = []
     @agenda = Data.get('agenda')
     @initials = Data.get('initials')
 
@@ -126,8 +173,14 @@ module Angular::AsfBoardAgenda
       if item.title == section
         $scope.layout item: item
         if item.comments != undefined
-          @buttons.push label: 'comment', target: '#comment',
-            include: 'partials/comment.html'
+          @buttons.push 'comment-button'
+          @forms.push 'partials/comment.html'
+        end
+
+        if item.approved and @initials and !item.approved.include? @initials
+          if item.report or item.text
+            @buttons.push 'approve-button'
+          end
         end
       end
     end

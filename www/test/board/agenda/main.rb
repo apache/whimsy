@@ -32,7 +32,7 @@ end
 get '/board_agenda_:date.txt' do
   Dir.chdir(svn) {@agendas = Dir['board_agenda_*.txt'].sort}
   @agenda = "board_agenda_#{params[:date]}.txt"
-  _html :'views/index'
+  _html :'views/main'
 end
 
 get '/js/:file.js' do
@@ -45,9 +45,13 @@ end
 
 get '/json/:file' do
   _json do
-    Dir.chdir(svn) do
-      if Dir['board_agenda_*.txt'].include? params[:file]
-        _! ASF::Board::Agenda.parse(File.read(params[:file].dup.untaint))
+    if params[:file] == 'pending'
+      _! Pending.get
+    else
+      Dir.chdir(svn) do
+        if Dir['board_agenda_*.txt'].include? params[:file]
+          _! ASF::Board::Agenda.parse(File.read(params[:file].dup.untaint))
+        end
       end
     end
   end

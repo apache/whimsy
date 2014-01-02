@@ -90,4 +90,23 @@ module Angular::AsfBoardFilters
     # return the resulting HTML
     return $sce.trustAsHtml(text)
   end
+
+  filter :approved do |agenda, pending|
+    approved = []
+    agenda.forEach do |item|
+      approved.push item if pending.approved.include? item.attach
+    end
+    return approved
+  end
+
+  filter :comments do |agenda, pending|
+    comments = []
+    agenda.forEach do |item|
+      if pending.comments[item.attach]
+        item.comment = pending.comments[item.attach]
+        comments.push(item)
+      end
+    end
+    return comments
+  end
 end

@@ -75,8 +75,9 @@ _html ng_app: 'AsfBoardAgenda' do
       _a.backlink.navbar_brand '{{ prev && prev.title }}', rel: 'prev',
         ng_href: '{{ prev && prev.href }}', ng_show: 'prev'
       
-      _button.btn.btn_primary '{{button.label}}', data_toggle: 'modal', 
-        data_target: '{{button.target}}', ng_repeat: 'button in buttons'
+      _span ng_repeat: 'button in buttons' do
+        _ng_include src: 'button'
+      end
 
       _a.nextlink.navbar_brand '{{ next && next.title }}', rel: 'next',
         ng_href: '{{ next && next.href }}', ng_show: 'next'

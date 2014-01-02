@@ -5,5 +5,15 @@ _span ng_if: 'item.comments' do
   _pre.comments '{{ item.comments }}'
 end
 
+_ng_template.comment_button! do
+  _button.btn.btn_primary 'comment', 
+    data_target: '#comment-form', data_toggle: 'modal'
+end
+
+_ng_template.approve_button! do
+  _button.btn.btn_primary '{{ label() }}', ng_controller: 'Approve',
+    ng_click: 'click()'
+end
+
 # Include forms
-_ng_include src: 'button.include', ng_repeat: 'button in buttons'
+_ng_include src: 'form', ng_repeat: 'form in forms'
