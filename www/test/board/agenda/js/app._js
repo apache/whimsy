@@ -11,7 +11,7 @@ module Angular::AsfBoardAgenda
     templateUrl 'partials/index.html'
     controller :Index
 
-  when '/pending'
+  when '/queue'
     templateUrl 'partials/pending.html'
     controller :PendingItems
 
@@ -63,6 +63,9 @@ module Angular::AsfBoardAgenda
       @title = vars.title if vars.title != undefined
       @next = vars.next if vars.next != undefined
       @prev = vars.prev if vars.prev != undefined
+
+      @director = true if Data.get('initials')
+      @firstname = Data.get('firstname')
     end
   end
 
@@ -88,27 +91,73 @@ module Angular::AsfBoardAgenda
 
   # controller for the pending pages
   controller :PendingItems do
-    @name = Data.get('initials')
     @agenda = Agenda.get()
     @pending = Pending.get()
+    $scope.layout title: 'Queued approvals and comments'
     resize_window()
+    initials = Data.get('initials')
 
-    def pending_comments
-      comments = []
+    @q_approvals = []
+    @q_ready = []
+    watch 'pending.approved.length + agenda.length' do
+      @q_approvals.clear!
+      @q_ready.clear!
+      @agenda.forEach do |item|
+        if @pending.approved.include? item.attach
+          @q_approvals.push item 
+        elsif initials
+          next unless item.approved
+          next if item.approved.include? initials
+          next unless item.report or item.text
+          @q_ready.push item
+        end
+      end
+    end
+
+    @q_comments = []
+    watch 'pending.comments.length + agenda.length' do
+      @q_comments.clear!
       @agenda.forEach do |item|
         if @pending.comments[item.attach]
           item.comment = @pending.comments[item.attach]
-          comments.push item
+          @q_comments.push item
         end
       end
-      return comments
     end
+
+    watch 'q_comments.length + q_approvals.length' do |after, before|
+      if after > 0 and !@buttons.include? 'commit-button'
+        @buttons.push 'commit-button' 
+      end
+
+      message = []
+
+      if @q_approvals.length > 0 and @q_approvals.length <= 6
+        message.push "Approve #{
+          @q_approvals.map {|item| return item.title}.join(', ')}"
+      elsif @q_approvals.length > 1
+        message.push "Approve #{ @q_approvals.length} reports"
+      end
+
+      if @q_comments.length > 0 and @q_comments.length <= 6
+        message.push "Comment on #{
+          @q_comments.map {|item| return item.title}.join(', ')}"
+      elsif @q_comments.length > 1
+        message.push "Comment on #{ @q_comments.length} reports"
+      end
+
+      @commit_message = message.join("\n")
+    end
+  end
+
+  controller :Commit do
   end
 
   # controller for the shepherd pages
   controller :Shepherd do
     @agenda = Agenda.get()
     @name = $routeParams.name
+    $scope.layout title: "Shepherded By #{@name}"
 
     Agenda.forEach do |item|
       if item.title == 'Review Outstanding Action Items'
@@ -132,7 +181,7 @@ module Angular::AsfBoardAgenda
         $log.error data.exception + "\n" + data.backtrace.join("\n")
         alert data.exception 
       }.finally {
-        ~'#comment'.modal(:hide)
+        ~'#comment-form'.modal(:hide)
       }
     end
   end
@@ -204,6 +253,11 @@ module Angular::AsfBoardAgenda
       end
     end
 
+    @pending = Pending.get()
+    watch 'pending.comments.length' do
+      @comment = @pending.comments[@item.attach]
+    end
+
     # refresh agenda
     def refresh
       Agenda.refresh()
@@ -232,6 +286,12 @@ module Angular::AsfBoardAgenda
        return false
      elsif event.keyCode == 'A'.ord and ~'#agenda'.length == 1
        ~"#agenda".click
+       return false
+     elsif event.keyCode == 'Q'.ord and ~'#queue'.length == 1
+       ~"#queue".click
+       return false
+     elsif event.keyCode == 'S'.ord and ~'#shepherd'.length == 1
+       ~"#shepherd".click
        return false
      end
   end

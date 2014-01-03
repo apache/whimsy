@@ -1,7 +1,7 @@
 _div.modal.fade.comment_form! tabindex: -1 do
   _div.modal_dialog ng_controller: 'Comment' do
-    _div.modal_content.commented do
-      _div.modal_header do
+    _div.modal_content do
+      _div.modal_header.commented do
         _button.close "\u00D7", type: 'button', data_dismiss: 'modal'
         _h4.modal_title 'Enter a comment'
       end

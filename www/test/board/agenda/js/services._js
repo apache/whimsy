@@ -89,8 +89,7 @@ module Angular::AsfBoardServices
 
     def self.get
       $http.get("json/pending").success do |result|
-        @@list.comments.replace! result.comments
-        @@list.approved.replace! result.approved
+        Pending.put result
       end
 
       return @@list
@@ -109,15 +108,22 @@ module Angular::AsfBoardServices
     end
 
     def self.put(value)
-      @@list.comments.replace! value.comments
       @@list.approved.replace! value.approved
+
+      for i in @@list.comments
+        delete @@list.comments[i] unless value.comments[i]
+      end
+
+      for i in value.comments
+        @@list.comments[i] = value.comments[i]
+      end
     end
   end
 
   class Data
     def self.get(name)
-      return document.querySelector("main[data-#{name}]").
-        attributes["data-#{name}"].value
+      main = document.querySelector("main[data-#{name}]")
+      return main && main.attributes["data-#{name}"].value
     end
   end
 end

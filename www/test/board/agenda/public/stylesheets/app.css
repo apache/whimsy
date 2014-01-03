@@ -112,11 +112,11 @@ input[type=submit] {
   font-size: small
 }
 
-.dl-horizontal dt {
+.nav .dl-horizontal dt {
   width: 7em
 }
 
-.dl-horizontal dd {
+.nav .dl-horizontal dd {
   margin-left: 8em;
   width: 14em
 }
@@ -130,6 +130,11 @@ footer .btn {
   margin-top: 7px;
   height: 100%;
   vertical-align: middle
+}
+
+.modal-header {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px
 }
 
 .modal-body {

@@ -51,6 +51,12 @@ _html ng_app: 'AsfBoardAgenda' do
             _li! ng_repeat: 'item in toc' do
               _a '{{ item.index }}', ng_href: '{{ "#" + item.title }}'
             end
+
+            _li.divider ng_if: 'director'
+            _li ng_if: 'director' do 
+              _a.shepherd! 'Shepherd', ng_href: '#/shepherd/{{ firstname }}'
+            end
+            _li(ng_if: 'director') {_a.queue! 'Queue', href: '#/queue'}
           end
         end
       end

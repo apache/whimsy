@@ -1,11 +1,12 @@
-_h1 'Shepherded by: {{ name }}'
-
 _div ng_repeat: 'item in agenda | filter: {shepherd: name}' do
   _h3 class: '{{ item | color }}' do
     _a '{{ item.title }}', ng_href: "#/{{item.title}}"
     _pre.comments '{{ item.comments }}', ng_if: 'item.comments'
   end
 end
+
+_em.col_xs_12 'No items assigned.', 
+  ng_show: '(agenda | filter: {shepherd: name}).length == 0'
 
 _h3 class: '{{ actions | color }}', ng_if: 'assigned.length > 0' do
   _a '{{ actions.title }}', ng_href: "#/{{actions.title}}"
