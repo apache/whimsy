@@ -173,7 +173,11 @@ _html do
         end
       end
 
-      unless (group - pmc).empty?
+      if (group - pmc).empty?
+        unless pmc.empty?
+          _h2_ 'PMC==Committers'
+        end
+      else
         _h2_ 'PMC'
       end
 
@@ -299,6 +303,7 @@ _html do
 
     else # PMC list
 
+      # TODO remove? appears to be overwritten before first use
       pmcs = ASF::Committee.list
 
       # get a list of chairs from LDAP
