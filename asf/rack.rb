@@ -34,6 +34,13 @@ module ASF
         authorized ||= ($USER == 'ea')
 
         if authorized
+          if env['HTTP_AUTHORIZATION']
+            require 'base64'
+            class << env; attr_accessor :user, :password; end
+            env.user, env.password = Base64.decode64(env['HTTP_AUTHORIZATION'][
+              /^Basic ([A-Za-z0-9+\/=]+)$/,1]).split(':',2)
+          end
+
           @app.call(env)
         else
           unauthorized
