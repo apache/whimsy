@@ -55,7 +55,7 @@ file '/home/vagrant/bin/checkout-svn' do
       if [[ -e $1 ]]; then
         (cd $1; svn update)
       else
-        svn checkout $2 --depth=${3:-infinity} --username #{node.user} $1
+        svn checkout $2 --depth=${3:-infinity} --username ${ASFUSER:-#{node.user}} $1
       fi
     }
 
@@ -95,7 +95,7 @@ file '/home/vagrant/bin/ldap-tunnel' do
     echo "*                                                                *"
     echo "******************************************************************"
     while [[ 1 ]]; do
-      ssh -N -L 6636:minotaur.apache.org:636 #{node.user}@minotaur.apache.org
+      ssh -N -L 6636:minotaur.apache.org:636 ${ASFUSER:-#{node.user}}@minotaur.apache.org
       sleep 5
     done
   EOF
@@ -107,7 +107,7 @@ file '/home/vagrant/bin/get-cert' do
   mode 0755
   content <<-EOF.gsub(/^    /,'')
     #!/usr/bin/ruby
-    output = `ssh #{node.user}@minotaur.apache.org openssl s_client -connect \\
+    output = `ssh ${ASFUSER:-#{node.user}}@minotaur.apache.org openssl s_client -connect \\
               minotaur.apache.org:636 -showcerts < /dev/null 2> /dev/null`
     File.open("asf-ldap-client.pem", 'w') do |file|
       file.write output[/^-+BEGIN.*\\n-+END[^\\n]+\\n/m]
