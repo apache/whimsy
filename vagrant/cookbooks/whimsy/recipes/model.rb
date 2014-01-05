@@ -102,6 +102,8 @@ file '/home/vagrant/bin/ldap-tunnel' do
 end
 
 file '/home/vagrant/bin/get-cert' do
+  user "vagrant"
+  group "vagrant"
   mode 0755
   content <<-EOF.gsub(/^    /,'')
     #!/usr/bin/ruby
