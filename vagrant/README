@@ -22,10 +22,12 @@ Step 4: configure the virtual machine
 
   Making sure that you are in this directory as your working directory, enter:
 
-    USER=rubys vagrant up
+    USER=<user> vagrant up
 
-  Change user to your id.  You can leave this part out entirely if your ASF
+  Change <user> to your ASF id.  You can leave this part out entirely if your ASF
   id matches your current user id.
+  On Windows, try the following:
+  set USER=<user> & vagrant up
 
   Messages will scroll by.  Somewhere near the fourth from the last you will
   see a message like:
@@ -61,6 +63,13 @@ Step 5b: (to use tools such as invoice or committee/committer roster):
   bin/ldap-tunnel
 
   These will prompt you for things like your ASF password.
+  
+  If you forgot to define USER= before creating the VM, or you need to change the username
+  to be used for logging in to the ASF systems, define the following variable:
+  
+  ASFUSER=<user>;export ASFUSER
+  
+  before running the above commands.
 
 Step 6:
 
