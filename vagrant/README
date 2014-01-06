@@ -67,7 +67,7 @@ Step 5b: (to use tools such as invoice or committee/committer roster):
   If you forgot to define USER= before creating the VM, or you need to change the username
   to be used for logging in to the ASF systems, define the following variable:
   
-  ASFUSER=<user>;export ASFUSER
+  AVAILID=<user>;export AVAILID
   
   before running the above commands.
 
