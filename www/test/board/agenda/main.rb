@@ -17,6 +17,7 @@ require 'wunderbar/angularjs/route'
 require 'ruby2js/filter/functions'
 
 require 'yaml'
+require 'net/http'
 
 svn = ASF::SVN['private/foundation/board']
 MINUTES_WORK = '/var/tools/data'
@@ -43,6 +44,10 @@ end
 
 get '/partials/:file.html' do
   _html :"partials/#{params[:file]}"
+end
+
+get '/json/jira' do
+  _json :'/json/jira'
 end
 
 get '/json/:file' do

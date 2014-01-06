@@ -89,6 +89,17 @@ module Angular::AsfBoardFilters
       end
     end
 
+    # link to JIRA issues
+    text = text.gsub(/\b([A-Z][A-Z0-9]+)-([0-9]+)\b/) do |m, jira,issue|
+      if JIRA.exist jira
+        return "<a target='_self' " +
+          "href='https://issues.apache.org/jira/browse/#{jira}-#{issue}'>" +
+          "#{jira}-#{issue}</a>"
+      else
+        return "#{jira}-#{issue}"
+      end
+    end
+
     # return the resulting HTML
     return $sce.trustAsHtml(text)
   end

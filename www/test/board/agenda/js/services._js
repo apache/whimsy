@@ -6,6 +6,19 @@
 # to be updated.
 
 module Angular::AsfBoardServices
+  class JIRA
+    @@fetched = false
+    @@projects = []
+    def self.exist(name)
+      if not @@fetched
+        @@fetched = true
+        $http.get('json/jira').success {|result| @@projects.replace! result}
+      end
+
+      return @@projects.include? name
+    end
+  end
+
   class Agenda
     @@index = []
 
