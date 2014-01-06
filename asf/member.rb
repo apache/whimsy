@@ -37,12 +37,19 @@ module ASF
     end
 
     def each
-      return unless ASF::Person.new($USER).asf_member?
+      full = ASF::Person.new($USER).asf_member?
       foundation = ASF::SVN['private/foundation']
       File.read("#{foundation}/members.txt").split(/^ \*\) /).each do |section|
         id = section[/Avail ID: (.*)/,1]
+        section = '' unless full
         yield id, section.sub(/\n.*\n===+\s*?\n(.*\n)+.*/,'').strip if id
       end
+      nil
+    end
+
+    def self.find(id)
+      each {|availid| return true if availid == id}
+      return false
     end
 
     def self.emails(text)

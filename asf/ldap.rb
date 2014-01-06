@@ -18,7 +18,7 @@ module ASF
       Wunderbar.error "No LDAP server defined, there must be a LDAP ldaps:// URI in /etc/ldap/ldap.conf"
     end
     begin
-      @ldap = LDAP::SSLConn.new(host.first, host.last.to_i)
+      @ldap = LDAP::SSLConn.new(host.first, host.last.to_i) if host
     rescue LDAP::ResultError=>re
       Wunderbar.error "Error binding to LDAP server: message: ["+ re.message + "]"
     end
@@ -27,11 +27,16 @@ module ASF
   # search with a scope of one
   def self.search_one(base, filter, attrs=nil)
     init_ldap unless defined? @ldap
+    return [] unless @ldap
 
     Wunderbar.info "ldapsearch -x -LLL -b #{base} -s one #{filter} " +
       "#{[attrs].flatten.join(' ')}"
     
-    result = @ldap.search2(base, LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
+    begin
+      result = @ldap.search2(base, LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
+    rescue
+      result = []
+    end
 
     result.map! {|hash| hash[attrs]} if String === attrs
 
