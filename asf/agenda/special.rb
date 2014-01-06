@@ -37,11 +37,14 @@ class ASF::Board::Agenda
         if text =~ /FURTHER RESOLVED, that ([^,]*?),?\s+be\b/
           chairname = $1.gsub(/\s+/, ' ').strip
           chair = people.find {|person| person.first == chairname}
-          attrs['chair'] = {(chair ? chair.last : '') => {name: chairname}}
+          attrs['chair'] = (chair ? chair.last : nil)
         end
 
-        people.map! do |person| 
-          [person.last, {name: person.first}]
+        people.map! do |name, id| 
+          person = ASF::Person.new(id)
+          icla = person.icla
+          [id, {name: name, icla: icla ? person.icla.name : false,
+            member: person.asf_member?}]
         end
 
         attrs['people'] = Hash[people]
