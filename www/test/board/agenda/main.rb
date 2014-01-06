@@ -16,6 +16,8 @@ require 'wunderbar/bootstrap/theme'
 require 'wunderbar/angularjs/route'
 require 'ruby2js/filter/functions'
 
+require 'yaml'
+
 svn = ASF::SVN['private/foundation/board']
 MINUTES_WORK = '/var/tools/data'
 

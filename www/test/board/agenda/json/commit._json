@@ -1,5 +1,3 @@
-require 'yaml'
-
 # reflow string support
 class String
   def word_wrap(text, line_width=80)
