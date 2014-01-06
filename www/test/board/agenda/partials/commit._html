@@ -17,7 +17,7 @@ _div.modal.fade.commit_form! tabindex: -1 do
       _div.modal_footer do
         _button.btn.btn_default 'Close', type: 'button', data_dismiss: 'modal'
         _button.btn.btn_primary 'Submit', type: 'button',
-          ng_click: "save()"
+          ng_click: "commit()"
       end
     end
   end

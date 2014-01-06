@@ -151,6 +151,19 @@ module Angular::AsfBoardAgenda
   end
 
   controller :Commit do
+    def commit
+      data = {message: @commit_message}
+
+      $http.post('json/commit', data).success { |response|
+        Agenda.put response.agenda
+        Pending.put response.pending
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception 
+      }.finally {
+        ~'#commit-form'.modal(:hide)
+      }
+    end
   end
 
   # controller for the shepherd pages
@@ -173,7 +186,8 @@ module Angular::AsfBoardAgenda
 
   controller :Comment do
     def save
-      data = {attach: @item.attach, initials: @initials, comment: @comment}
+      data = {attach: @item.attach, initials: @initials, comment: @comment,
+        agenda: Data.get('agenda')}
 
       $http.post('json/comment', data).success { |response|
         Pending.put response
@@ -215,7 +229,8 @@ module Angular::AsfBoardAgenda
     end
 
     def click
-      data = {attach: @item.attach, request: self.label()}
+      data = {attach: @item.attach, request: self.label(),
+        initials: Data.get('initials'), agenda: Data.get('agenda')}
 
       $http.post('json/approve', data).success { |response|
         Pending.put response

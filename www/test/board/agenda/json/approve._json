@@ -1,4 +1,7 @@
 pending = Pending.get
+pending['initials'] = @initials
+pending['agenda'] = @agenda
+
 approved = pending['approved']
 
 if @request == 'approve'
