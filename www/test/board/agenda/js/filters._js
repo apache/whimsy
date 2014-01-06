@@ -30,6 +30,11 @@ module Angular::AsfBoardFilters
   # define regular expressions and constants used in converting an item
   # to HTML
 
+  def escapeRegExp(string)
+    # https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions
+    return string.gsub(/([.*+?^=!:${}()|\[\]\/\\])/, "\\$1");
+  end 
+
   uri_in_text = Regexp.new(/(^|[\s.:;?\-\]<\(])
     (https?:\/\/[-\w;\/?:@&=+$.!~*'()%,#]+[\w\/])
     (?=$|[\s.:,?\-\[\]&\)])/x, "g")
@@ -41,6 +46,9 @@ module Angular::AsfBoardFilters
     Regexp.new('^(\s*)(&lt;private&gt;(?:\n|.)*?&lt;/private&gt;)(\s*)$', 'mig')
 
   committer = 'https://whimsy.apache.org/roster/committer'
+
+  jira_issue = Regexp.new(/(^|\s)([A-Z][A-Z0-9]+)-([1-9][0-9]*)([.,;]?($|\s))/,
+    'g')
 
   # convert an agenda item into HTML
   filter :html do |item|
@@ -70,8 +78,16 @@ module Angular::AsfBoardFilters
     # replace ids with committer links
     if item.people
       for id in item.people
+        person = item.people[id]
+
         text = text.gsub(/(\(|&lt;)(#{id})( at |@|\))/) do |m, pre, id, post|
           return "#{pre}<a href='#{committer}/#{id}'>#{id}</a>#{post}"
+        end
+
+        if person.member
+          text = text.gsub(/#{escapeRegExp(person.name)}/) do 
+            return "<b>#{person.name}</b>"
+          end
         end
       end
     end
@@ -90,13 +106,13 @@ module Angular::AsfBoardFilters
     end
 
     # link to JIRA issues
-    text = text.gsub(/\b([A-Z][A-Z0-9]+)-([0-9]+)\b/) do |m, jira,issue|
+    text = text.gsub(jira_issue) do |m, pre, jira, issue, post|
       if JIRA.exist jira
-        return "<a target='_self' " +
+        return "#{pre}<a target='_self' " +
           "href='https://issues.apache.org/jira/browse/#{jira}-#{issue}'>" +
-          "#{jira}-#{issue}</a>"
+          "#{jira}-#{issue}</a>#{post}"
       else
-        return "#{jira}-#{issue}"
+        return "#{pre}#{jira}-#{issue}#{post}"
       end
     end
 
