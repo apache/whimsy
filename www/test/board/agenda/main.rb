@@ -18,6 +18,7 @@ require 'ruby2js/filter/functions'
 
 require 'yaml'
 require 'net/http'
+require_relative 'helpers/string'
 
 svn = ASF::SVN['private/foundation/board']
 MINUTES_WORK = '/var/tools/data'
