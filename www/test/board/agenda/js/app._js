@@ -115,11 +115,12 @@ module Angular::AsfBoardAgenda
     end
 
     @q_comments = []
-    watch 'pending.comments.length + agenda.length' do
+    watch 'pending.comments.update + agenda.length' do
+      comments = @pending.comments
       @q_comments.clear!
       @agenda.forEach do |item|
-        if @pending.comments[item.attach]
-          item.comment = @pending.comments[item.attach]
+        if comments[item.attach]
+          item.comment = comments[item.attach]
           @q_comments.push item
         end
       end
@@ -268,9 +269,9 @@ module Angular::AsfBoardAgenda
       end
     end
 
-    @pending = Pending.get()
-    watch 'pending.comments.length' do
-      @comment = @pending.comments[@item.attach]
+    @comments = Pending.comments()
+    watch 'comments.update' do
+      @comment = @comments[@item.attach]
     end
 
     # refresh agenda

@@ -97,26 +97,24 @@ module Angular::AsfBoardServices
   end
 
   class Pending
-    @@fetched = false
-    @@list = {comments: [], approved: []}
+    @@list = {comments: {update: 0}, approved: []}
 
     def self.get
       $http.get("json/pending").success do |result|
         Pending.put result
       end
 
+      @@fetched = true
       return @@list
     end
 
     def self.comments
       self.get() unless @@fetched
-      @@fetched = true
       return @@list.comments
     end
 
     def self.approved
       self.get() unless @@fetched
-      @@fetched = true
       return @@list.approved
     end
 
@@ -124,12 +122,14 @@ module Angular::AsfBoardServices
       @@list.approved.replace! value.approved
 
       for i in @@list.comments
-        delete @@list.comments[i] unless value.comments[i]
+        delete @@list.comments[i] unless i == 'update'
       end
 
       for i in value.comments
         @@list.comments[i] = value.comments[i]
       end
+
+      @@list.comments.update += 1
     end
   end
 
