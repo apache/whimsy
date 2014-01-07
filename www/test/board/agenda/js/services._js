@@ -70,14 +70,6 @@ module Angular::AsfBoardServices
       return @@agenda
     end
 
-    # run block on each item in the agenda; save block to be rerun when
-    # agenda is refreshed
-    def self.forEach(&block)
-      self.get().forEach do |item|
-        block item
-      end
-    end
-
     # return back a list of index entries
     def self.index
       return @@index

@@ -158,7 +158,7 @@ module Angular::AsfBoardAgenda
     @q_approvals = []
     @q_ready = []
     @q_comments = []
-    watch 'pending.update + agenda.update' do |after, before|
+    watch 'pending.update + agenda.update' do
       @q_approvals.clear!
       @q_ready.clear!
       @agenda.forEach do |item|
@@ -182,7 +182,7 @@ module Angular::AsfBoardAgenda
       end
     end
 
-    watch 'q_comments.length + q_approvals.length' do |after, before|
+    watch 'q_comments.length + q_approvals.length' do
       if after > 0 and !@buttons.include? 'commit-button'
         @buttons.push 'commit-button' 
       end
@@ -230,7 +230,7 @@ module Angular::AsfBoardAgenda
     $scope.layout title: "Shepherded By #{@name}"
 
     watch 'agenda.update' do
-      Agenda.forEach do |item|
+      @agenda.forEach do |item|
         if item.title == 'Review Outstanding Action Items'
           @actions = item
           @assigned = item.text.split("\n\n").filter do |item|
@@ -307,10 +307,10 @@ module Angular::AsfBoardAgenda
     # fetch section from the route parameters
     section = $routeParams.section
 
-    # find agenda item, update scope properties to include item properties
+    # find agenda item, add relevant buttons
     watch 'agenda.update' do
       $scope.layout item: {title: 'not found'}
-      Agenda.forEach do |item|
+      @agenda.forEach do |item|
         if item.title == section
           $scope.layout item: item
           if item.comments != undefined
