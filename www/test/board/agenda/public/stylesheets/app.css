@@ -148,3 +148,9 @@ body {
 #clock {
   display: none
 }
+
+main hr {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #DDD;
+}
