@@ -144,3 +144,7 @@ footer .btn {
 body {
   overflow-y: scroll
 }
+
+#clock {
+  display: none
+}

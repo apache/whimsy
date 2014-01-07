@@ -5,6 +5,7 @@
 #
 
 _html ng_app: 'AsfBoardAgenda' do
+  _title 'ASF Board Agenda'
   _script src: 'js/app.js'
   _script src: 'js/services.js'
   _script src: 'js/filters.js'
@@ -15,6 +16,7 @@ _html ng_app: 'AsfBoardAgenda' do
     # sibling navigation links and banner
     _header.navbar.navbar_fixed_top class: '{{ item | color }}' do
       _div.navbar_brand '{{ title }}'
+      _span.clock! "\u231B"
       _ul.nav.nav_pills.navbar_right do
         _li.dropdown ng_show: 'item.title' do
           _a.info!.dropdown_toggle data_toggle: "dropdown" do
@@ -57,6 +59,7 @@ _html ng_app: 'AsfBoardAgenda' do
               _a.shepherd! 'Shepherd', ng_href: '#/shepherd/{{ firstname }}'
             end
             _li(ng_if: 'director') {_a.queue! 'Queue', href: '#/queue'}
+            _li(ng_show: 'false') {_a.help! 'Help', href: '#/help'}
           end
         end
       end

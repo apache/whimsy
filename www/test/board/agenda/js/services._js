@@ -1,23 +1,12 @@
 #!/usr/bin/ruby
 
-# The Agenda "service" maintains an agenda as an array of hash objects.
-# Care is taken to never replace arrays, but rather to empty and refill
-# existing arrays so that Angular.js's two way bindings will cause views
-# to be updated.
-
 module Angular::AsfBoardServices
-  class JIRA
-    @@fetched = false
-    @@projects = []
-    def self.exist(name)
-      if not @@fetched
-        @@fetched = true
-        $http.get('json/jira').success {|result| @@projects.replace! result}
-      end
 
-      return @@projects.include? name
-    end
-  end
+  # The Agenda "service" maintains an agenda as an array of hash objects.
+  # Care is taken to never replace arrays, but rather to empty and refill
+  # existing arrays so that Angular.js's two way bindings will cause views
+  # to be updated.  A separate 'update' property is maintained to facilitate
+  # watches for major updates.
 
   class Agenda
     @@index = []
@@ -25,13 +14,13 @@ module Angular::AsfBoardServices
     # (re)-fetch agenda from server
     def self.refresh
       @@agenda ||= []
-
+      @@agenda.update ||= 0
       $http.get("json/#{Data.get('agenda')}").success do |result|
         Agenda.put(result)
       end
     end
 
-    # (re)-fetch agenda from server
+    # Replace the agenda, relinking and reindexing as we go.
     def self.put(agenda)
       # add forward and back links to entries in the agenda
       prev = nil
@@ -57,6 +46,7 @@ module Angular::AsfBoardServices
         if first and last
           first.prev.next = last.next
           last.next.prev = first.prev
+          last.next.prev = first.prev
           first.prev = pres
           last.next.index = first.index
           first.index = nil
@@ -71,8 +61,7 @@ module Angular::AsfBoardServices
 
       @@agenda.replace! agenda
 
-      # rerun callbacks on each agenda item
-      Agenda.forEach(@@callback) if @@callback
+      @@agenda.update += 1
     end
 
     # retrieve agenda (fetching if necessary)
@@ -84,7 +73,6 @@ module Angular::AsfBoardServices
     # run block on each item in the agenda; save block to be rerun when
     # agenda is refreshed
     def self.forEach(&block)
-      @@callback = block
       self.get().forEach do |item|
         block item
       end
@@ -94,12 +82,16 @@ module Angular::AsfBoardServices
     def self.index
       return @@index
     end
+
+    def self.update
+      return @@update
+    end
   end
 
   class Pending
-    @@list = {comments: {update: 0}, approved: []}
+    @@list = {comments: {}, approved: [], update: 0}
 
-    def self.get
+    def self.refresh
       $http.get("json/pending").success do |result|
         Pending.put result
       end
@@ -108,13 +100,18 @@ module Angular::AsfBoardServices
       return @@list
     end
 
+    def self.get
+      self.refresh() unless @@fetched
+      return @@list
+    end
+
     def self.comments
-      self.get() unless @@fetched
+      self.refresh() unless @@fetched
       return @@list.comments
     end
 
     def self.approved
-      self.get() unless @@fetched
+      self.refresh() unless @@fetched
       return @@list.approved
     end
 
@@ -122,14 +119,31 @@ module Angular::AsfBoardServices
       @@list.approved.replace! value.approved
 
       for i in @@list.comments
-        delete @@list.comments[i] unless i == 'update'
+        delete @@list.comments[i]
       end
 
       for i in value.comments
         @@list.comments[i] = value.comments[i]
       end
 
-      @@list.comments.update += 1
+      @@list.update += 1
+    end
+  end
+
+  class JIRA
+    @@fetched = false
+    @@projects = []
+    def self.exist(name)
+      if not @@fetched
+        @@fetched = true
+        ~'#clock'.show
+        $http.get('json/jira').success do |result| 
+          @@projects.replace! result
+          ~'#clock'.hide
+        end
+      end
+
+      return @@projects.include? name
     end
   end
 

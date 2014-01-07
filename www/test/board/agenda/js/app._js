@@ -11,6 +11,10 @@ module Angular::AsfBoardAgenda
     templateUrl 'partials/index.html'
     controller :Index
 
+  when '/help'
+    templateUrl 'partials/help.html'
+    controller :Help
+
   when '/queue'
     templateUrl 'partials/pending.html'
     controller :PendingItems
@@ -27,7 +31,7 @@ module Angular::AsfBoardAgenda
     redirectTo '/'
   end
 
-  # resize body, optionally leave room for headers
+  # resize body, leaving room for headers
   def resize_window
     ~window.resize do
       ~'main'.css(
@@ -66,6 +70,57 @@ module Angular::AsfBoardAgenda
 
       @director = true if Data.get('initials')
       @firstname = Data.get('firstname')
+
+      resize_window()
+    end
+
+     # link traversal via left/right keys
+     ~document.keydown do |event|
+       return unless ~('.modal-open').empty?
+       if event.keyCode == 37 # '<-'
+         ~"a[rel='prev']".click
+         return false
+       elsif event.keyCode == 39 # '->'
+         ~"a[rel='next']".click
+         return false
+       elsif event.keyCode == 'C'.ord
+         ~"#comments"[0].scrollIntoView()
+         return false
+       elsif event.keyCode == 'I'.ord
+         ~"#info".click
+         return false
+       elsif event.keyCode == 'N'.ord
+         ~"#nav".click
+         return false
+       elsif event.keyCode == 'A'.ord
+         ~"#agenda".click
+         return false
+       elsif event.keyCode == 'Q'.ord
+         ~"#queue".click
+         return false
+       elsif event.keyCode == 'S'.ord
+         ~"#shepherd".click
+         return false
+       elsif event.shiftKey and event.keyCode == 191 # "?"
+         ~"#help".click
+         return false
+       elsif event.keyCode == 'R'.ord
+         ~'#clock'.show
+         Pending.get()
+         data = {agenda: Data.get('agenda')}
+         $http.post('json/refresh', data).success do |response|
+           attach = @item.attach
+           Agenda.put response
+           for i in 0...response.length
+             if response[i].attach == attach
+               $scope.layout item: response[i]
+               break
+             end
+           end
+           ~'#clock'.hide
+         end
+         return false
+        end
     end
   end
 
@@ -82,11 +137,15 @@ module Angular::AsfBoardAgenda
       return {href: text, title: text[/\d+_\d+_\d+/].gsub(/_/,'-')}
     end
 
-    Agenda.forEach {}
-    $scope.layout title: title, next: agendas[index+1], prev: agendas[index-1]
+    help = {href: '#/help', title: 'Help'}
+    $scope.layout title: title, next: agendas[index+1] || help, 
+      prev: agendas[index-1] || help
     @buttons.push 'refresh-button'
+  end
 
-    resize_window()
+  # controller for the help page
+  controller :Help do
+    $scope.layout title: 'Help'
   end
 
   # controller for the pending pages
@@ -94,12 +153,12 @@ module Angular::AsfBoardAgenda
     @agenda = Agenda.get()
     @pending = Pending.get()
     $scope.layout title: 'Queued approvals and comments'
-    resize_window()
     initials = Data.get('initials')
 
     @q_approvals = []
     @q_ready = []
-    watch 'pending.approved.length + agenda.length' do
+    @q_comments = []
+    watch 'pending.update + agenda.update' do |after, before|
       @q_approvals.clear!
       @q_ready.clear!
       @agenda.forEach do |item|
@@ -112,10 +171,7 @@ module Angular::AsfBoardAgenda
           @q_ready.push item
         end
       end
-    end
 
-    @q_comments = []
-    watch 'pending.comments.update + agenda.length' do
       comments = @pending.comments
       @q_comments.clear!
       @agenda.forEach do |item|
@@ -173,16 +229,16 @@ module Angular::AsfBoardAgenda
     @name = $routeParams.name
     $scope.layout title: "Shepherded By #{@name}"
 
-    Agenda.forEach do |item|
-      if item.title == 'Review Outstanding Action Items'
-        @actions = item
-        @assigned = item.text.split("\n\n").filter do |item|
-          return item =~ /^\* *#{$routeParams.name}/m
+    watch 'agenda.update' do
+      Agenda.forEach do |item|
+        if item.title == 'Review Outstanding Action Items'
+          @actions = item
+          @assigned = item.text.split("\n\n").filter do |item|
+            return item =~ /^\* *#{$routeParams.name}/m
+          end
         end
-      end
     end
-
-    resize_window()
+    end
   end
 
   controller :Comment do
@@ -245,70 +301,35 @@ module Angular::AsfBoardAgenda
   # controller for the section pages
   controller :Section do
     @forms = []
-    @agenda = Data.get('agenda')
+    @agenda = Agenda.get()
     @initials = Data.get('initials')
 
     # fetch section from the route parameters
     section = $routeParams.section
 
     # find agenda item, update scope properties to include item properties
-    $scope.layout item: {title: 'not found'}
-    Agenda.forEach do |item|
-      if item.title == section
-        $scope.layout item: item
-        if item.comments != undefined
-          @buttons.push 'comment-button'
-          @forms.push 'partials/comment.html'
-        end
+    watch 'agenda.update' do
+      $scope.layout item: {title: 'not found'}
+      Agenda.forEach do |item|
+        if item.title == section
+          $scope.layout item: item
+          if item.comments != undefined
+            @buttons.push 'comment-button'
+            @forms.push 'partials/comment.html'
+          end
 
-        if item.approved and @initials and !item.approved.include? @initials
-          if item.report or item.text
-            @buttons.push 'approve-button'
+          if item.approved and @initials and !item.approved.include? @initials
+            if item.report or item.text
+              @buttons.push 'approve-button'
+            end
           end
         end
       end
     end
 
-    @comments = Pending.comments()
-    watch 'comments.update' do
-      @comment = @comments[@item.attach]
+    @pending = Pending.get()
+    watch 'pending.update' do
+      @comment = @pending.comments[@item.attach]
     end
-
-    # refresh agenda
-    def refresh
-      Agenda.refresh()
-    end
-
-    resize_window()
-  end
-
-  # link traversal via left/right keys
-  ~document.keydown do |event|
-     return unless ~('.modal-open').empty?
-     if event.keyCode == 37 # '<-'
-       ~"a[rel='prev']".click
-       return false
-     elsif event.keyCode == 39 # '->'
-       ~"a[rel='next']".click
-       return false
-     elsif event.keyCode == 'C'.ord and ~'#comments'.length == 1
-       ~"#comments"[0].scrollIntoView()
-       return false
-     elsif event.keyCode == 'I'.ord and ~'#info'.length == 1
-       ~"#info".click
-       return false
-     elsif event.keyCode == 'N'.ord and ~'#nav'.length == 1
-       ~"#nav".click
-       return false
-     elsif event.keyCode == 'A'.ord and ~'#agenda'.length == 1
-       ~"#agenda".click
-       return false
-     elsif event.keyCode == 'Q'.ord and ~'#queue'.length == 1
-       ~"#queue".click
-       return false
-     elsif event.keyCode == 'S'.ord and ~'#shepherd'.length == 1
-       ~"#shepherd".click
-       return false
-     end
   end
 end
