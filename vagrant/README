@@ -70,6 +70,9 @@ Step 5b: (to use tools such as invoice or committee/committer roster):
   AVAILID=<user>;export AVAILID
   
   before running the above commands.
+  
+  You will also need to edit /etc/apache2/sites-available/default
+  and change the line RequestHeader set USER "<previous>"
 
 Step 6:
 
