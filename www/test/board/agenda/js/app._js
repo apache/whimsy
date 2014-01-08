@@ -189,7 +189,7 @@ module Angular::AsfBoardAgenda
       end
     end
 
-    watch 'q_comments.length + q_approvals.length' do |before, after|
+    watch 'q_comments.length + q_approvals.length' do |after, before|
       if after > 0 and !@buttons.include? 'commit-button'
         @buttons.push 'commit-button' 
       end
