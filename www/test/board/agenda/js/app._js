@@ -19,6 +19,10 @@ module Angular::AsfBoardAgenda
     templateUrl 'partials/pending.html'
     controller :PendingItems
 
+  when '/comments'
+    templateUrl 'partials/comments.html'
+    controller :Comments
+
   when '/queue/:qsection'
     templateUrl 'partials/section.html'
     controller :Section
@@ -162,8 +166,11 @@ module Angular::AsfBoardAgenda
   controller :PendingItems do
     @agenda = Agenda.get()
     @pending = Pending.get()
-    $scope.layout title: 'Queued approvals and comments'
-    initials = Data.get('initials')
+    firstname = Data.get('firstname')
+
+    $scope.layout title: 'Queued approvals and comments',
+      prev: ({title: 'Shepherd', href: "#/shepherd/#{firstname}"} if firstname),
+      next: {title: 'Comments', href: '#/comments'}
 
     @q_approvals = []
     @q_ready = []
@@ -231,10 +238,19 @@ module Angular::AsfBoardAgenda
   end
 
   # controller for the shepherd pages
+  controller :Comments do
+    initials = Data.get('initials')
+    $scope.layout title: "Comments",
+      prev: ({title: 'Queue', href: '#/queue'} if initials)
+    @agenda = Agenda.get()
+  end
+
+  # controller for the shepherd pages
   controller :Shepherd do
     @agenda = Agenda.get()
     @name = $routeParams.name
-    $scope.layout title: "Shepherded By #{@name}"
+    $scope.layout title: "Shepherded By #{@name}", 
+      next: {title: 'Queue', href: '#/queue'}
 
     watch 'agenda.update' do
       @agenda.forEach do |item|

@@ -1,0 +1,6 @@
+_div ng_repeat: 'item in agenda' do
+  _h3 ng_if: 'item.comments' do
+    _a '{{ item.title }}', ng_href: "#/{{item.title}}"
+  end
+  _pre.comments '{{ item.comments }}', ng_if: 'item.comments'
+end

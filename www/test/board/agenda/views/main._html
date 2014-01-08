@@ -54,12 +54,14 @@ _html ng_app: 'AsfBoardAgenda' do
               _a '{{ item.index }}', ng_href: '{{ "#" + item.title }}'
             end
 
-            _li.divider ng_if: 'director'
+            _li.divider
+
             _li ng_if: 'director' do 
               _a.shepherd! 'Shepherd', ng_href: '#/shepherd/{{ firstname }}'
             end
             _li(ng_if: 'director') {_a.queue! 'Queue', href: '#/queue'}
             _li(ng_show: 'false') {_a.help! 'Help', href: '#/help'}
+            _li {_a 'Comments', href: '#/comments'}
           end
         end
       end
