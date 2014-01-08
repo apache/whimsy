@@ -56,16 +56,16 @@ module Angular::AsfBoardAgenda
 
     def layout(vars)
       @buttons = []
-      if vars.item != undefined
-        @item = vars.item
-        @next = vars.item.next
-        @prev = vars.item.prev
-        @title = vars.item.title
-      else
+      if vars.item === undefined
         @item = {}
         @next = nil
         @prev = nil
         @title = ''
+      else
+        @item = vars.item
+        @next = vars.item.next
+        @prev = vars.item.prev
+        @title = vars.item.title
       end
 
       @title = vars.title unless vars.title === undefined
@@ -331,7 +331,7 @@ module Angular::AsfBoardAgenda
               next_href: (item.qnext ? item.qnext.qhref : nil)
           end
 
-          if item.comments != undefined
+          unless item.comments === undefined
             @buttons.push 'comment-button'
             @forms.push 'partials/comment.html'
           end
