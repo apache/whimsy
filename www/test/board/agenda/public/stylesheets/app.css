@@ -72,8 +72,10 @@ form label {
 
 pre {
   padding-left: 2em;
-  margin: 0;
   color: #000;
+  overflow: auto;
+  word-wrap: normal;
+  white-space: pre;
 }
 
 pre a {
