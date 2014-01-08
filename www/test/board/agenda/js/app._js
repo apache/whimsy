@@ -68,12 +68,12 @@ module Angular::AsfBoardAgenda
         @title = ''
       end
 
-      @next_href = @next.href if @next
-      @prev_href = @prev.href if @prev
-
       @title = vars.title unless vars.title === undefined
       @next = vars.next unless vars.next === undefined
       @prev = vars.prev unless vars.prev === undefined
+
+      @next_href = @next.href if @next
+      @prev_href = @prev.href if @prev
 
       @next_href = vars.next_href unless vars.next_href === undefined
       @prev_href = vars.prev_href unless vars.prev_href === undefined
