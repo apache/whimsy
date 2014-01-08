@@ -824,7 +824,7 @@ _html do
         elsif DESTINATION.include? @dest
           _.move @source, DESTINATION[@dest]
         else
-          pre.stderr "Unknown destination: #{@dest}"
+          _pre.stderr "Unknown destination: #{@dest}"
         end
       end
 
