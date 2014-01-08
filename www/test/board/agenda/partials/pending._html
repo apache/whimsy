@@ -25,7 +25,7 @@ _div.col_xs_12 do
   _h4 'Ready for review', ng_if: 'q_ready.length > 0'
   _p.col_xs_12 do
     _span! ng_repeat: 'item in q_ready' do
-      _a '{{ item.title }}', ng_href: '{{ item.href }}'
+      _a '{{ item.title }}', ng_href: '{{ item.qhref }}'
       _span ', ', ng_if: '!$last'
     end
   end

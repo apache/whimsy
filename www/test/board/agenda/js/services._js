@@ -25,7 +25,7 @@ module Angular::AsfBoardServices
       # add forward and back links to entries in the agenda
       prev = nil
       agenda.forEach do |item|
-        item.href = "##{item.title}"
+        item.href = "#/#{item.title}"
         prev.next = item if prev
         item.prev = prev
         prev = item
@@ -75,8 +75,26 @@ module Angular::AsfBoardServices
       return @@index
     end
 
-    def self.update
-      return @@update
+    def self.ready
+      result = []
+      pending = Pending.get()
+      initials = Data.get('initials')
+      qprev = nil
+      @@agenda.forEach do |item|
+        next unless item.approved
+        next if pending.approved.include? item.attach
+        next if item.approved.include? initials
+        next unless item.report or item.text
+
+        result.push item
+        item.qhref = "#/queue/#{item.title}"
+
+        item.qprev = qprev
+        qprev.qnext = item if qprev
+        qprev = item
+      end
+      qprev.qnext = nil if qprev
+      return result
     end
   end
 

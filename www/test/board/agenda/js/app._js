@@ -19,6 +19,10 @@ module Angular::AsfBoardAgenda
     templateUrl 'partials/pending.html'
     controller :PendingItems
 
+  when '/queue/:qsection'
+    templateUrl 'partials/section.html'
+    controller :Section
+
   when '/shepherd/:name'
     templateUrl 'partials/shepherd.html'
     controller :Shepherd
@@ -64,9 +68,15 @@ module Angular::AsfBoardAgenda
         @title = ''
       end
 
-      @title = vars.title if vars.title != undefined
-      @next = vars.next if vars.next != undefined
-      @prev = vars.prev if vars.prev != undefined
+      @next_href = @next.href if @next
+      @prev_href = @prev.href if @prev
+
+      @title = vars.title unless vars.title === undefined
+      @next = vars.next unless vars.next === undefined
+      @prev = vars.prev unless vars.prev === undefined
+
+      @next_href = vars.next_href unless vars.next_href === undefined
+      @prev_href = vars.prev_href unless vars.prev_href === undefined
 
       @director = true if Data.get('initials')
       @firstname = Data.get('firstname')
@@ -160,16 +170,8 @@ module Angular::AsfBoardAgenda
     @q_comments = []
     watch 'pending.update + agenda.update' do
       @q_approvals.clear!
-      @q_ready.clear!
       @agenda.forEach do |item|
-        if @pending.approved.include? item.attach
-          @q_approvals.push item 
-        elsif initials
-          next unless item.approved
-          next if item.approved.include? initials
-          next unless item.report or item.text
-          @q_ready.push item
-        end
+        @q_approvals.push item if @pending.approved.include? item.attach
       end
 
       comments = @pending.comments
@@ -180,9 +182,11 @@ module Angular::AsfBoardAgenda
           @q_comments.push item
         end
       end
+
+      @q_ready.replace! Agenda.ready()
     end
 
-    watch 'q_comments.length + q_approvals.length' do
+    watch 'q_comments.length + q_approvals.length' do |before, after|
       if after > 0 and !@buttons.include? 'commit-button'
         @buttons.push 'commit-button' 
       end
@@ -305,14 +309,25 @@ module Angular::AsfBoardAgenda
     @initials = Data.get('initials')
 
     # fetch section from the route parameters
-    section = $routeParams.section
+    section = $routeParams.section || $routeParams.qsection
 
     # find agenda item, add relevant buttons
     watch 'agenda.update' do
       $scope.layout item: {title: 'not found'}
       @agenda.forEach do |item|
         if item.title == section
-          $scope.layout item: item
+
+          if $routeParams.section
+            $scope.layout item: item
+          else
+            Agenda.ready()
+            $scope.layout item: item, 
+              prev: item.qprev, 
+              prev_href: (item.qprev ? item.qprev.qhref : nil),
+              next: item.qnext, 
+              next_href: (item.qnext ? item.qnext.qhref : nil)
+          end
+
           if item.comments != undefined
             @buttons.push 'comment-button'
             @forms.push 'partials/comment.html'

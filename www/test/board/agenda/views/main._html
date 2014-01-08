@@ -82,14 +82,14 @@ _html ng_app: 'AsfBoardAgenda' do
 
     _footer_.navbar.navbar_fixed_bottom class: '{{ item | color }}' do
       _a.backlink.navbar_brand '{{ prev && prev.title }}', rel: 'prev',
-        ng_href: '{{ prev && prev.href }}', ng_show: 'prev'
+        ng_href: '{{ prev_href }}', ng_show: 'prev'
       
       _span ng_repeat: 'button in buttons' do
         _ng_include src: 'button'
       end
 
       _a.nextlink.navbar_brand '{{ next && next.title }}', rel: 'next',
-        ng_href: '{{ next && next.href }}', ng_show: 'next'
+        ng_href: '{{ next_href }}', ng_show: 'next'
     end
   end
 end
