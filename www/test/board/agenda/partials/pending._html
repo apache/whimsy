@@ -2,7 +2,7 @@ _div.col_xs_12 do
   _h4 'Approvals'
   _p.col_xs_12 do
     _span! ng_repeat: 'item in q_approvals' do
-      _a '{{ item.title }}', ng_href: '{{ item.href }}'
+      _a '{{ item.title }}', ng_href: '{{ item.qhref }}'
       _span ', ', ng_if: '!$last'
     end
     _em 'None.' , ng_if: '!q_approvals || q_approvals.length == 0'

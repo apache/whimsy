@@ -75,14 +75,12 @@ module Angular::AsfBoardServices
       return @@index
     end
 
-    def self.ready
+    def self.ready()
       result = []
-      pending = Pending.get()
       initials = Data.get('initials')
       qprev = nil
       @@agenda.forEach do |item|
         next unless item.approved
-        next if pending.approved.include? item.attach
         next if item.approved.include? initials
         next unless item.report or item.text
 

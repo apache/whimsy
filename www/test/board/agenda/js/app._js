@@ -183,7 +183,10 @@ module Angular::AsfBoardAgenda
         end
       end
 
-      @q_ready.replace! Agenda.ready()
+      @q_ready.clear!
+      Agenda.ready().forEach do |item|
+        @q_ready.push item unless @q_approvals.include? item
+      end
     end
 
     watch 'q_comments.length + q_approvals.length' do |before, after|
