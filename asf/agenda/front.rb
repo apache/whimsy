@@ -5,8 +5,8 @@
 class ASF::Board::Agenda
   parse do
     scan @file, /
-      ^\n\s(?<section>[12]\.)
-      \s(?<title>.*?)\n+
+      ^\n\x20(?<section>[12]\.)
+      \s(?<title>.*?)\n\n+
       (?<text>.*?)
       (?=\n\s[23]\.)
     /mx
