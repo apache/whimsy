@@ -124,16 +124,8 @@ module Angular::AsfBoardServices
     end
 
     def self.put(value)
-      @@list.approved.replace! value.approved
-
-      for i in @@list.comments
-        delete @@list.comments[i]
-      end
-
-      for i in value.comments
-        @@list.comments[i] = value.comments[i]
-      end
-
+      angular.copy value.approved, @@list.approved
+      angular.copy value.comments, @@list.comments
       @@list.update += 1
     end
   end
