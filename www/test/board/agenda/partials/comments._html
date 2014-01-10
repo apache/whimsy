@@ -6,7 +6,6 @@ _div ng_repeat: 'item in agenda',
   end
 
   _pre.comments '{{ item.comments }}'
-
 end
 
 _p ng_if: '!unseen_comments' do

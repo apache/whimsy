@@ -246,12 +246,13 @@ module Angular::AsfBoardAgenda
         @agenda.any? { |item| return show(item, seen: @pending.seen) }
       $rootScope.seen_comments = !Object.keys(@pending.seen).empty?
     end
-    @buttons.push 'mark-seen-button'
 
-    @buttons.push 'toggle-seen-button'
     on :toggleComments do |event, state| 
       @toggle = state
     end
+
+    @buttons.push 'mark-seen-button'
+    @buttons.push 'toggle-seen-button'
   end
 
   controller :MarkSeen do
