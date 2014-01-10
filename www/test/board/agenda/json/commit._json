@@ -90,8 +90,12 @@ else
     end
 
     File.rename "#{MINUTES_WORK}/#{user}.yml", "#{MINUTES_WORK}/#{user}.bak"
+    pending = Pending.get
+    pending.approved.clear
+    pending.comments.clear
+    Pending.put pending
 
-    _pending Pending.get
+    _pending pending
     _agenda ASF::Board::Agenda.parse(File.read(agenda_file))
   end
 end

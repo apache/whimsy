@@ -1,6 +1,22 @@
-_div ng_repeat: 'item in agenda' do
-  _h3 ng_if: 'item.comments' do
+_div ng_repeat: 'item in agenda', 
+  ng_if: 'item | show : {seen: pending.seen, toggle: toggle}'  do
+
+  _h3 do
     _a '{{ item.title }}', ng_href: "#/{{item.title}}"
   end
-  _pre.comments '{{ item.comments }}', ng_if: 'item.comments'
+
+  _pre.comments '{{ item.comments }}'
+
 end
+
+_ng_template.mark_seen_button! do
+  _button.btn.btn_primary 'mark seen', ng_click: 'click()',
+    ng_controller: 'MarkSeen', ng_disabled: 'disabled',
+    ng_show: 'unseen_comments'
+end
+
+_ng_template.toggle_seen_button! do
+  _button.btn.btn_primary '{{ label }} seen', ng_click: 'click()',
+    ng_controller: 'ToggleComments', ng_show: 'seen_comments'
+end
+

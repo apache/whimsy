@@ -1,0 +1,8 @@
+pending = Pending.get
+
+pending['agenda'] = @agenda
+pending['seen'] = @seen
+
+Pending.put(pending)
+
+_! pending

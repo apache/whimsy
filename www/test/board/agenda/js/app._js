@@ -123,14 +123,8 @@ module Angular::AsfBoardAgenda
          Pending.get()
          data = {agenda: Data.get('agenda')}
          $http.post('json/refresh', data).success do |response|
-           attach = @item.attach
            Agenda.put response
-           for i in 0...response.length
-             if response[i].attach == attach
-               $scope.layout item: response[i]
-               break
-             end
-           end
+           $route.reload()
            ~'#clock'.hide
          end
          return false
@@ -237,12 +231,59 @@ module Angular::AsfBoardAgenda
     end
   end
 
-  # controller for the shepherd pages
+  # controller for the comments pages
   controller :Comments do
     initials = Data.get('initials')
     $scope.layout title: "Comments",
       prev: ({title: 'Queue', href: '#/queue'} if initials)
     @agenda = Agenda.get()
+    @pending = Pending.get()
+    @toggle = false
+    show = filter(:show)
+
+    watch 'agenda.update + pending.update' do
+      $rootScope.unseen_comments =
+        @agenda.any? { |item| return show(item, seen: @pending.seen) }
+      $rootScope.seen_comments = !Object.keys(@pending.seen).empty?
+    end
+    @buttons.push 'mark-seen-button'
+
+    @buttons.push 'toggle-seen-button'
+    on :toggleComments do |event, state| 
+      @toggle = state
+    end
+  end
+
+  controller :MarkSeen do
+    @disabled = false
+    def click
+      @disabled = true
+
+      # gather up the comments
+      seen = {}
+      Agenda.get().forEach do |item|
+        seen[item.attach] = item.comments if item.comments
+      end
+
+      data = { seen: seen, agenda: Data.get('agenda') }
+
+      $http.post('json/markseen', data).success { |response|
+        Pending.put response
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception 
+      }.finally {
+        @disabled = false
+      }
+    end
+  end
+
+  controller :ToggleComments do
+    @label = 'show'
+    def click
+      broadcast! :toggleComments, (@label == 'show')
+      @label = (@label == 'show' ? 'hide' : 'show')
+    end
   end
 
   # controller for the shepherd pages

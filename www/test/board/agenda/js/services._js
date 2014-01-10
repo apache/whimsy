@@ -97,7 +97,7 @@ module Angular::AsfBoardServices
   end
 
   class Pending
-    @@list = {comments: {}, approved: [], update: 0}
+    @@list = {comments: {}, approved: [], seen: {}, update: 0}
 
     def self.refresh
       $http.get("json/pending").success do |result|
@@ -113,19 +113,10 @@ module Angular::AsfBoardServices
       return @@list
     end
 
-    def self.comments
-      self.refresh() unless @@fetched
-      return @@list.comments
-    end
-
-    def self.approved
-      self.refresh() unless @@fetched
-      return @@list.approved
-    end
-
     def self.put(value)
-      angular.copy value.approved, @@list.approved
-      angular.copy value.comments, @@list.comments
+      angular.copy value.approved, @@list.approved if value.approved
+      angular.copy value.comments, @@list.comments if value.comments
+      angular.copy value.seen, @@list.seen         if value.seen
       @@list.update += 1
     end
   end

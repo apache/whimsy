@@ -138,4 +138,11 @@ module Angular::AsfBoardFilters
     end
     return comments
   end
+
+  filter :show do |item, args|
+    return false unless item.comments
+    return true if args.toggle
+    return args.seen[item.attach] != item.comments
+    return true
+  end
 end
