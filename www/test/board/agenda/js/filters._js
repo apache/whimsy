@@ -143,6 +143,5 @@ module Angular::AsfBoardFilters
     return false unless item.comments
     return true if args.toggle
     return args.seen[item.attach] != item.comments
-    return true
   end
 end
