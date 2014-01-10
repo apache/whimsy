@@ -9,6 +9,11 @@ _div ng_repeat: 'item in agenda',
 
 end
 
+_p ng_if: '!unseen_comments' do
+  _em 'No new comments', ng_if: 'seen_comments && !toggle'
+  _em 'No comments', ng_if: '!seen_comments'
+end
+
 _ng_template.mark_seen_button! do
   _button.btn.btn_primary 'mark seen', ng_click: 'click()',
     ng_controller: 'MarkSeen', ng_disabled: 'disabled',
