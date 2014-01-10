@@ -64,7 +64,7 @@ module Angular::AsfBoardFilters
     end
 
     # highlight private sections
-    text = text.gsub(private_sections, '$1<div class="private">$2</div>')
+    text = text.gsub(private_sections, '<div class="private">$1$2</div>')
 
     # link to board minutes
     text = text.gsub(/(board_minutes_\d+_\d+_\d+)/, 
@@ -100,7 +100,8 @@ module Angular::AsfBoardFilters
         next unless agenda[i].attach =~ /^\d$/
         if agenda[i].attach >= match[1] and agenda[i].attach <= match[2]
           text += "\n  #{agenda[i].attach}. " +
-            "<a href='#/#{agenda[i].title}'>#{agenda[i].title}</a>"
+            "<a #{ agenda[i].report.empty? ? 'class="pres-missing" ' : ''}" +
+            "href='#/#{agenda[i].title}'>#{agenda[i].title}</a>"
         end
       end
     end

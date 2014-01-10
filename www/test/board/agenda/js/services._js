@@ -46,10 +46,10 @@ module Angular::AsfBoardServices
         if first and last
           first.prev.next = last.next
           last.next.prev = first.prev
-          last.next.prev = first.prev
-          first.prev = pres
           last.next.index = first.index
           first.index = nil
+          last.next = pres
+          first.prev = pres
         end
       end
 

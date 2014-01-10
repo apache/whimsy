@@ -17,6 +17,8 @@ a {color: #000}
 .comment-me {background-color: #c84}
 .commented  {background-color: #FD6}
 
+.pres-missing {color: #F00}
+
 /* sidebar */
 aside {float: right} 
 aside ul {margin: 0}
