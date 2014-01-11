@@ -26,19 +26,21 @@ module ASF
       def call(env)
         authorized = false
 
-        $USER = ENV['REMOTE_USER'] ||= ENV['USER'] || Etc.getpwuid.name
+        user = env['REMOTE_USER'] ||= ENV['USER'] || Etc.getpwuid.name
 
-        authorized ||= DIRECTORS[$USER]
-        authorized ||= ASF::Person.new($USER).asf_member?
-        authorized ||= ASF.pmc_chairs.include? $USER
-        authorized ||= ($USER == 'ea')
+        authorized ||= DIRECTORS[user]
+        authorized ||= ASF::Person.new(user).asf_member?
+        authorized ||= ASF.pmc_chairs.include? user
+        authorized ||= (user == 'ea')
 
         if authorized
+          class << env; attr_accessor :user, :password; end
           if env['HTTP_AUTHORIZATION']
             require 'base64'
-            class << env; attr_accessor :user, :password; end
             env.user, env.password = Base64.decode64(env['HTTP_AUTHORIZATION'][
               /^Basic ([A-Za-z0-9+\/=]+)$/,1]).split(':',2)
+          else
+            env.user = user
           end
 
           @app.call(env)
