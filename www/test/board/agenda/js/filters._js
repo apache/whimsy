@@ -43,11 +43,13 @@ module Angular::AsfBoardFilters
   escape_replacement = {'&' => '&amp;', '<' => '&lt;', '>' => '&gt;'}
 
   private_sections =
-    Regexp.new('^(\s*)(&lt;private&gt;(?:\n|.)*?&lt;/private&gt;)(\s*)$', 'mig')
+    Regexp.new('^([ \t]*)(&lt;private&gt;(?:\n|.)*?&lt;/private&gt;)(\s*)$',
+    'mig')
 
   committer = 'https://whimsy.apache.org/roster/committer'
 
-  jira_issue = Regexp.new(/(^|\s)([A-Z][A-Z0-9]+)-([1-9][0-9]*)([.,;]?($|\s))/,
+  jira_issue =
+    Regexp.new(/(^|\s|\()([A-Z][A-Z0-9]+)-([1-9][0-9]*)([.,;]?($|\s|\)))/,
     'g')
 
   # convert an agenda item into HTML
