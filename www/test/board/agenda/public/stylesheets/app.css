@@ -101,6 +101,13 @@ input[type=submit] {
   background-color: #dc143c !important
 }
 
+.comment {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0.1
+}
+
 .comments button, #paste_report { 
   color: #000; 
   background-color: #F90; 

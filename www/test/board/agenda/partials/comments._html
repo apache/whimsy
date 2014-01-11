@@ -5,7 +5,8 @@ _div ng_repeat: 'item in agenda',
     _a '{{ item.title }}', ng_href: "#/{{item.title}}"
   end
 
-  _pre.comments '{{ item.comments }}'
+  _pre.comment '{{ comment }}', ng_repeat: 'comment in csplit(item.comments)',
+    ng_if: 'toggle || csplit(pending.seen[item.attach]).indexOf(comment) == -1'
 end
 
 _p ng_if: '!unseen_comments' do

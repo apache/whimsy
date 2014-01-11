@@ -251,6 +251,23 @@ module Angular::AsfBoardAgenda
       @toggle = state
     end
 
+    def csplit(text)
+      comments = []
+      return comments if text === undefined
+
+      comment = ''
+      text.split("\n").forEach do |line|
+        if line =~ /^\S/
+          comments.push comment unless comment.empty?
+          comment = line
+        else
+          comment += "\n" + line
+        end
+      end
+      comments.push comment unless comment.empty?
+      return comments
+    end
+
     @buttons.push 'mark-seen-button'
     @buttons.push 'toggle-seen-button'
   end
