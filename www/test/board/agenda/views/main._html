@@ -67,7 +67,7 @@ _html ng_app: 'AsfBoardAgenda' do
       end
     end
 
-    userid = ENV['REMOTE_USER']
+    userid = env['REMOTE_USER']
     userid = userid.dup.untaint if userid =~ /\A[-\w]+\Z/
     _main :ng_view, data_agenda: @agenda, 
       data_availid: userid, data_initials: ASF::Auth::DIRECTORS[userid],

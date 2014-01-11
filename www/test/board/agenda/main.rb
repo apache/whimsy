@@ -54,7 +54,7 @@ end
 get '/json/:file' do
   _json do
     if params[:file] == 'pending'
-      _! Pending.get
+      _! Pending.get(env.user)
     else
       Dir.chdir(svn) do
         if Dir['board_agenda_*.txt'].include? params[:file]

@@ -1,8 +1,8 @@
-pending = Pending.get
+pending = Pending.get(env.user)
 
 pending['agenda'] = @agenda
 pending['seen'] = @seen
 
-Pending.put(pending)
+Pending.put(env.user, pending)
 
 _! pending
