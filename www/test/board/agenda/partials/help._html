@@ -32,6 +32,7 @@ _div.col_xs_12 do
   _h3 'Color Legend'
   _ul do
     _li.missing 'Report missing'
+    _li.available 'Report present, not eligible for pre-reviews'
     _li.ready 'Report present, ready for (more) review(s)'
     _li.reviewed 'Report has sufficient pre-approvals'
     _li.commented 'Report has been approved, with comments'

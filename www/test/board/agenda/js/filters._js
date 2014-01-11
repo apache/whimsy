@@ -9,8 +9,10 @@ module Angular::AsfBoardFilters
     if not item.title
       return 'blank'
     elsif item.text or item.report
-      if item.approved and item.approved.length >= 5
-        if item.comments
+      if item.approved
+        if item.approved.length < 5
+          return "ready"
+        elsif item.comments
           return "commented"
         else
           return "reviewed"
@@ -18,7 +20,7 @@ module Angular::AsfBoardFilters
       elsif item.title == 'President' and item.report[0..12] == 'Additionally,'
         return "missing"
       else
-        return "ready"
+        return "available"
       end
     elsif item.text === undefined
       return "missing"

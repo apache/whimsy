@@ -10,11 +10,9 @@ a {color: #000}
 /* row colors */
 .blank      {background-color: #DDD}
 .missing    {background-color: #F88}
-.ready4me   {background-color: #F20}
-.ready-me   {background-color: #0FE}
-.ready      {background-color: #BFB}
+.ready      {background-color: #FC8}
+.available  {background-color: #BFB}
 .reviewed   {background-color: #8F8}
-.comment-me {background-color: #c84}
 .commented  {background-color: #FD6}
 
 .pres-missing {color: #F00}
