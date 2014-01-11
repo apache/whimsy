@@ -93,7 +93,7 @@ else
     pending = Pending.get(env.user)
     pending['approved'].clear
     pending['comments'].clear
-    Pending.put pending(env.user)
+    Pending.put(env.user, pending)
 
     _pending pending
     _agenda ASF::Board::Agenda.parse(File.read(agenda_file))
