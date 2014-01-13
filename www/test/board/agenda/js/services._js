@@ -15,7 +15,7 @@ module Angular::AsfBoardServices
     def self.refresh
       @@agenda ||= []
       @@agenda.update ||= 0
-      $http.get("json/#{Data.get('agenda')}").success do |result|
+      $http.get("../json/#{Data.get('agenda')}").success do |result|
         Agenda.put(result)
       end
     end
@@ -25,7 +25,7 @@ module Angular::AsfBoardServices
       # add forward and back links to entries in the agenda
       prev = nil
       agenda.forEach do |item|
-        item.href = "#/#{item.title}"
+        item.href = item.title.gsub(/[^a-zA-Z0-9]+/, '-')
         prev.next = item if prev
         item.prev = prev
         prev = item
@@ -85,7 +85,7 @@ module Angular::AsfBoardServices
         next unless item.report or item.text
 
         result.push item
-        item.qhref = "#/queue/#{item.title}"
+        item.qhref = "queue/#{item.href}"
 
         item.qprev = qprev
         qprev.qnext = item if qprev
@@ -100,7 +100,7 @@ module Angular::AsfBoardServices
     @@list = {comments: {}, approved: [], seen: {}, update: 0}
 
     def self.refresh
-      $http.get("json/pending").success do |result|
+      $http.get("../json/pending").success do |result|
         Pending.put result
       end
 
@@ -128,7 +128,7 @@ module Angular::AsfBoardServices
       if not @@fetched
         @@fetched = true
         ~'#clock'.show
-        $http.get('json/jira').success do |result| 
+        $http.get('../json/jira').success do |result| 
           @@projects.replace! result
           ~'#clock'.hide
         end

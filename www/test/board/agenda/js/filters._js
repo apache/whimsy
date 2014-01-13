@@ -105,7 +105,7 @@ module Angular::AsfBoardFilters
         if agenda[i].attach >= match[1] and agenda[i].attach <= match[2]
           text += "\n  #{agenda[i].attach}. " +
             "<a #{ agenda[i].report.empty? ? 'class="pres-missing" ' : ''}" +
-            "href='#/#{agenda[i].title}'>#{agenda[i].title}</a>"
+            "href='#{agenda[i].href}'>#{agenda[i].title}</a>"
         end
       end
     end

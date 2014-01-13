@@ -28,14 +28,15 @@ require_relative 'model/pending'
 set :views, File.dirname(__FILE__)
 
 get '/' do
-  Dir.chdir(svn) {@agendas = Dir['board_agenda_*.txt'].sort}
-  @agenda = @agendas.last
-  _html :'views/main'
+  agenda = Dir.chdir(svn) {Dir['board_agenda_*.txt'].sort.last}
+  puts("/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/")
+  redirect to("/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/")
 end
 
-get '/board_agenda_:date.txt' do
+get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   Dir.chdir(svn) {@agendas = Dir['board_agenda_*.txt'].sort}
-  @agenda = "board_agenda_#{params[:date]}.txt"
+  @base = env['REQUEST_URI'].chomp(path)
+  @agenda = "board_agenda_#{date.gsub('-','_')}.txt"
   _html :'views/main'
 end
 

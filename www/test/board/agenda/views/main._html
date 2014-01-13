@@ -5,12 +5,13 @@
 #
 
 _html ng_app: 'AsfBoardAgenda' do
+  _base href: @base
   _title 'ASF Board Agenda'
-  _script src: 'js/app.js'
-  _script src: 'js/services.js'
-  _script src: 'js/filters.js'
+  _script src: '../js/app.js'
+  _script src: '../js/services.js'
+  _script src: '../js/filters.js'
 
-  _link rel: 'stylesheet', href: 'stylesheets/app.css'
+  _link rel: 'stylesheet', href: '../stylesheets/app.css'
 
   _body ng_controller: 'Layout' do
     # sibling navigation links and banner
@@ -35,7 +36,7 @@ _html ng_app: 'AsfBoardAgenda' do
               ng_show: 'item.approved'
             _dt 'Links', ng_show: 'item.roster || item.prior_reports'
             _dd ng_show: 'item.roster' do
-              _a 'Roster', ng_href: '{{ item.roster }}'
+              _a 'Roster', href: '{{ item.roster }}'
             end
             _dd ng_show: 'item.prior_reports' do
               _a 'Prior Reports', ng_href: '{{ item.prior_reports }}'
@@ -49,19 +50,23 @@ _html ng_app: 'AsfBoardAgenda' do
             _b.caret
           end
           _ul.dropdown_menu do
-            _li! {_a.agenda! 'Agenda', href: '#'}
+            _li! {_a.agenda! 'Agenda', href: './'}
             _li! ng_repeat: 'item in toc' do
-              _a '{{ item.index }}', ng_href: '{{ "#" + item.title }}'
+              _a '{{ item.index }}', ng_href: '{{item.href}}'
             end
 
             _li.divider
 
             _li ng_if: 'director' do 
-              _a.shepherd! 'Shepherd', ng_href: '#/shepherd/{{ firstname }}'
+              _a.shepherd! 'Shepherd', ng_href: 'shepherd/{{firstname}}'
             end
-            _li(ng_if: 'director') {_a.queue! 'Queue', href: '#/queue'}
-            _li(ng_show: 'false') {_a.help! 'Help', href: '#/help'}
-            _li {_a 'Comments', href: '#/comments'}
+
+            _li(ng_if: 'director') do
+              _a.queue! 'Queue', href: 'queue'
+            end
+
+            _li(ng_show: 'false') {_a.help! 'Help', href: 'help'}
+            _li {_a 'Comments', href: 'comments'}
           end
         end
       end

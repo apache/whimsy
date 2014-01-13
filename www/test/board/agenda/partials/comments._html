@@ -2,7 +2,7 @@ _div ng_repeat: 'item in agenda',
   ng_if: 'item | show : {seen: pending.seen, toggle: toggle}'  do
 
   _h3 do
-    _a '{{ item.title }}', ng_href: "#/{{item.title}}"
+    _a '{{ item.title }}', ng_href: "{{item.href}}"
   end
 
   _pre.comment '{{ comment }}', ng_repeat: 'comment in csplit(item.comments)',

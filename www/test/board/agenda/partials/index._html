@@ -16,7 +16,7 @@ _table_.table_bordered ng_controller: 'Index' do
     _tr ng_repeat: 'item in agenda', class: '{{ item | color }}' do
       _td '{{ item.attach }}'
       _td! do
-        _a '{{ item.title }}', ng_href: "#/{{item.title}}"
+        _a '{{ item.title }}', ng_href: "{{item.href}}"
       end
       _td '{{ item.owner }}'
       _td '{{ item.shepherd }}'

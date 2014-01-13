@@ -5,34 +5,36 @@
 module Angular::AsfBoardAgenda
   use :AsfBoardServices, :AsfBoardFilters
 
+  $locationProvider.html5Mode(true).hashPrefix('!')
+
   # route request based on fragment identifier
   case $routeProvider
-  when '/'
-    templateUrl 'partials/index.html'
-    controller :Index
-
   when '/help'
-    templateUrl 'partials/help.html'
+    templateUrl '../partials/help.html'
     controller :Help
 
+  when '/'
+    templateUrl '../partials/index.html'
+    controller :Index
+
   when '/queue'
-    templateUrl 'partials/pending.html'
+    templateUrl '../partials/pending.html'
     controller :PendingItems
 
   when '/comments'
-    templateUrl 'partials/comments.html'
+    templateUrl '../partials/comments.html'
     controller :Comments
 
   when '/queue/:qsection'
-    templateUrl 'partials/section.html'
+    templateUrl '../partials/section.html'
     controller :Section
 
   when '/shepherd/:name'
-    templateUrl 'partials/shepherd.html'
+    templateUrl '../partials/shepherd.html'
     controller :Shepherd
 
   when '/:section'
-    templateUrl 'partials/section.html'
+    templateUrl '../partials/section.html'
     controller :Section
 
   else
@@ -122,7 +124,7 @@ module Angular::AsfBoardAgenda
          ~'#clock'.show
          Pending.get()
          data = {agenda: Data.get('agenda')}
-         $http.post('json/refresh', data).success do |response|
+         $http.post('../json/refresh', data).success do |response|
            Agenda.put response
            $route.reload()
            ~'#clock'.hide
@@ -142,10 +144,11 @@ module Angular::AsfBoardAgenda
     agendas = ~'#agendas li'.to_a.map {|li| return li.textContent.trim()}
     index = agendas.indexOf(@agenda_file)
     agendas = agendas.map do |text|
-      return {href: text, title: text[/\d+_\d+_\d+/].gsub(/_/,'-')}
+      text = text[/\d+_\d+_\d+/].gsub(/_/,'-')
+      return {href: "../#{text}/", title: text}
     end
 
-    help = {href: '#/help', title: 'Help'}
+    help = {href: 'help', title: 'Help'}
     $scope.layout title: title, next: agendas[index+1] || help, 
       prev: agendas[index-1] || help
     @buttons.push 'refresh-button'
@@ -163,8 +166,8 @@ module Angular::AsfBoardAgenda
     firstname = Data.get('firstname')
 
     $scope.layout title: 'Queued approvals and comments',
-      prev: ({title: 'Shepherd', href: "#/shepherd/#{firstname}"} if firstname),
-      next: {title: 'Comments', href: '#/comments'}
+      prev: ({title: 'Shepherd', href: "shepherd/#{firstname}"} if firstname),
+      next: {title: 'Comments', href: 'comments'}
 
     @q_approvals = []
     @q_ready = []
@@ -219,7 +222,7 @@ module Angular::AsfBoardAgenda
     def commit
       data = {message: @commit_message}
 
-      $http.post('json/commit', data).success { |response|
+      $http.post('../json/commit', data).success { |response|
         Agenda.put response.agenda
         Pending.put response.pending
       }.error { |data|
@@ -235,7 +238,7 @@ module Angular::AsfBoardAgenda
   controller :Comments do
     initials = Data.get('initials')
     $scope.layout title: "Comments",
-      prev: ({title: 'Queue', href: '#/queue'} if initials)
+      prev: ({title: 'Queue', href: 'queue'} if initials)
     @agenda = Agenda.get()
     @pending = Pending.get()
     @toggle = false
@@ -285,7 +288,7 @@ module Angular::AsfBoardAgenda
 
       data = { seen: seen, agenda: Data.get('agenda') }
 
-      $http.post('json/markseen', data).success { |response|
+      $http.post('../json/markseen', data).success { |response|
         Pending.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
@@ -309,7 +312,7 @@ module Angular::AsfBoardAgenda
     @agenda = Agenda.get()
     @name = $routeParams.name
     $scope.layout title: "Shepherded By #{@name}", 
-      next: {title: 'Queue', href: '#/queue'}
+      next: {title: 'Queue', href: 'queue'}
 
     watch 'agenda.update' do
       @agenda.forEach do |item|
@@ -328,7 +331,7 @@ module Angular::AsfBoardAgenda
       data = {attach: @item.attach, initials: @initials, comment: @comment,
         agenda: Data.get('agenda')}
 
-      $http.post('json/comment', data).success { |response|
+      $http.post('../json/comment', data).success { |response|
         Pending.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
@@ -345,7 +348,7 @@ module Angular::AsfBoardAgenda
       data = {agenda: Data.get('agenda')}
 
       @disabled = true
-      $http.post('json/refresh', data).success { |response|
+      $http.post('../json/refresh', data).success { |response|
         Agenda.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
@@ -371,7 +374,7 @@ module Angular::AsfBoardAgenda
       data = {attach: @item.attach, request: self.label(),
         initials: Data.get('initials'), agenda: Data.get('agenda')}
 
-      $http.post('json/approve', data).success { |response|
+      $http.post('../json/approve', data).success { |response|
         Pending.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
@@ -393,7 +396,7 @@ module Angular::AsfBoardAgenda
     watch 'agenda.update' do
       $scope.layout item: {title: 'not found'}
       @agenda.forEach do |item|
-        if item.title == section
+        if item.href == section
 
           if $routeParams.section
             $scope.layout item: item
@@ -408,7 +411,7 @@ module Angular::AsfBoardAgenda
 
           unless item.comments === undefined
             @buttons.push 'comment-button'
-            @forms.push 'partials/comment.html'
+            @forms.push '../partials/comment.html'
           end
 
           if item.approved and @initials and !item.approved.include? @initials
