@@ -379,7 +379,8 @@ module Angular::AsfBoardAgenda
     def save
       data = {attach: @item.attach, report: @report, agenda: Data.get('agenda'),
         message: "Post #{@item.title} Report"}
-
+ 
+      @disabled = true
       $http.post('../json/post', data).success { |response|
         Agenda.put response
         $route.reload()
@@ -388,6 +389,7 @@ module Angular::AsfBoardAgenda
         alert data.exception 
       }.finally {
         ~'#post-report-form'.modal(:hide)
+        @disabled = false
       }
     end
   end

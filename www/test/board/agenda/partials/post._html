@@ -9,17 +9,17 @@ _div.modal.fade.post_report_form! tabindex: -1 do
       _div_.modal_body do
         _div_.form_group do
           _label 'Report', for: 'report_text'
-          _textarea.form_control.report_text! :autofocus, rows: 25,
-             placeholder: 'report', ng_model: 'report'
+          _textarea.form_control.report_text! :autofocus, rows: 17,
+             placeholder: 'report', ng_model: 'report', ng_disabled: 'disabled'
         end
       end
 
       _div.modal_footer do
         _button.btn.btn_default 'Close', type: 'button', data_dismiss: 'modal'
         _button.btn.btn_default 'Reflow', type: 'button', 
-          ng_click: "reflow()"
+          ng_click: "reflow()", ng_disabled: 'disabled'
         _button.btn.btn_primary 'Submit', type: 'button',
-          ng_click: "save()"
+          ng_click: "save()", ng_disabled: 'disabled'
       end
     end
   end
