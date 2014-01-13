@@ -70,6 +70,7 @@ if __FILE__ == $0
 else
   File.open(agenda_file, 'r') do |file|
     file.flock(File::LOCK_EX)
+    `svn cleanup #{File.dirname(agenda_file)}`
     `svn up #{agenda_file}`
     `svn revert #{agenda_file}`
 
@@ -78,7 +79,7 @@ else
     commit = ['svn', 'commit', '-m', @message, agenda_file,
       '--no-auth-cache', '--non-interactive']
 
-    if env.respond_to? :password
+    if env.password
       commit += ['--username', env.user, '--password', env.password]
     end
 

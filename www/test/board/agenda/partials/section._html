@@ -5,6 +5,11 @@ _span ng_if: 'item.comments' do
   _pre.comments '{{ item.comments }}'
 end
 
+_ng_template.post_button! do
+  _button.btn.btn_primary 'post report', 
+    data_target: '#post-report-form', data_toggle: 'modal'
+end
+
 _ng_template.comment_button! do
   _button.btn.btn_primary 'comment', 
     data_target: '#comment-form', data_toggle: 'modal'

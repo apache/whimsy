@@ -1,0 +1,26 @@
+_div.modal.fade.post_report_form! tabindex: -1 do
+  _div.modal_dialog ng_controller: 'PostReport' do
+    _div.modal_content do
+      _div.modal_header.commented do
+        _button.close "\u00D7", type: 'button', data_dismiss: 'modal'
+        _h4.modal_title 'Post a report'
+      end
+
+      _div_.modal_body do
+        _div_.form_group do
+          _label 'Report', for: 'report_text'
+          _textarea.form_control.report_text! :autofocus, rows: 25,
+             placeholder: 'comment', ng_model: 'report'
+        end
+      end
+
+      _div.modal_footer do
+        _button.btn.btn_default 'Close', type: 'button', data_dismiss: 'modal'
+        _button.btn.btn_default 'Reflow', type: 'button', 
+          ng_click: "reflow()"
+        _button.btn.btn_primary 'Submit', type: 'button',
+          ng_click: "save()"
+      end
+    end
+  end
+end

@@ -1,0 +1,46 @@
+# apply comments to an agenda file
+
+user = env.user
+
+agenda_file = "#{ASF::SVN['private/foundation/board']}/#{@agenda}"
+
+File.open(agenda_file, 'r') do |file|
+  file.flock(File::LOCK_EX)
+  `svn cleanup #{File.dirname(agenda_file)}`
+  `svn up #{agenda_file}`
+  `svn revert #{agenda_file}`
+
+  agenda = File.read(agenda_file)
+
+  if @attach =~ /^4\w/
+    done = agenda.sub!(/(\n\n    #{@attach[-1]}\..*?\[.*?\])(\s*)/) do
+      "#{$1}\n\n#{@report}#{$2}"
+    end
+  else
+    done = agenda.sub!(/(---\nAttachment #{@attach[-1]}:.*?\[.*?\])(\s*)/) do
+      "#{$1}\n\n#{@report}#{$2}"
+    end
+  end
+
+  if not done
+    raise Exception.new('report merge failed')
+  end
+
+  File.open(agenda_file, 'w') {|file| file.write(agenda)}
+
+  commit = ['svn', 'commit', '-m', @message, agenda_file,
+    '--no-auth-cache', '--non-interactive']
+
+  if env.password
+    commit += ['--username', env.user, '--password', env.password]
+  end
+
+  require 'shellwords'
+  output = `#{Shellwords.join(commit).untaint} 2>&1`
+  if $?.exitstatus != 0
+    _.error (output.empty? ? 'svn commit failed' : output)
+    raise Exception.new('svn commit failed')
+  end
+
+  _! ASF::Board::Agenda.parse(File.read(agenda_file))
+end
