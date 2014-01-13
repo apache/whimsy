@@ -89,8 +89,8 @@ else
       raise Exception.new('svn commit failed')
     end
 
-    File.rename "#{MINUTES_WORK}/#{user}.yml", "#{MINUTES_WORK}/#{user}.bak"
     pending = Pending.get(env.user)
+    File.rename "#{MINUTES_WORK}/#{user}.yml", "#{MINUTES_WORK}/#{user}.bak"
     pending['approved'].clear
     pending['comments'].clear
     Pending.put(env.user, pending)

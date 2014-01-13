@@ -8,7 +8,7 @@ class Pending
     if File.exist? file
       YAML.load_file(file)
     else
-      {'approved' => [], 'comments' => {}}
+      {'approved' => [], 'comments' => {}, 'seen' => {}}
     end
   end
 
