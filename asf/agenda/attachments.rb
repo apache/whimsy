@@ -21,6 +21,10 @@ class ASF::Board::Agenda
 
       attrs['report'].sub! /\n+\Z/, "\n"
       attrs.delete('report') if attrs['report'] == "\n"
+
+      if attrs['report'].strip.empty?
+        attrs['postable'] = true
+      end
     end
   end
 end

@@ -24,6 +24,11 @@ class ASF::Board::Agenda
         attrs['comments'] = $1.sub(/\A\s*\n/, '').sub(/\s+\Z/, '')
         "\n"
       end
+
+      report = attrs['report'].strip
+      if report or report[0..12] == 'Additionally,'
+        attrs['postable'] = true
+      end
     end
   end
 end
