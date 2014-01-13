@@ -468,7 +468,9 @@ module Angular::AsfBoardAgenda
             if item.approved and @initials and !item.approved.include? @initials
               @buttons.push 'approve-button'
             end
-          else
+          end
+
+          if item.postable
             @buttons.push 'post-button'
             @forms.push '../partials/post.html'
           end
