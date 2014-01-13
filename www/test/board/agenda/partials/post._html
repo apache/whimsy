@@ -10,7 +10,7 @@ _div.modal.fade.post_report_form! tabindex: -1 do
         _div_.form_group do
           _label 'Report', for: 'report_text'
           _textarea.form_control.report_text! :autofocus, rows: 25,
-             placeholder: 'comment', ng_model: 'report'
+             placeholder: 'report', ng_model: 'report'
         end
       end
 
