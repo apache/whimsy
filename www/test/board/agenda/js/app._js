@@ -215,6 +215,7 @@ module Angular::AsfBoardAgenda
     def commit
       data = {message: @commit_message}
 
+      @disabled = true
       $http.post('../json/commit', data).success { |response|
         Agenda.put response.agenda
         Pending.put response.pending
@@ -223,6 +224,7 @@ module Angular::AsfBoardAgenda
         alert data.exception 
       }.finally {
         ~'#commit-form'.modal(:hide)
+        @disabled = false
       }
     end
   end
