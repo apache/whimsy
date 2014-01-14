@@ -41,48 +41,6 @@ module Angular::AsfBoardAgenda
     redirectTo '/'
   end
 
-  # resize body, leaving room for headers
-  def resize_window
-    ~window.resize do
-      ~'main'.css(
-        marginTop:    ~('header.navbar').css(:height),
-        marginBottom: ~('footer.navbar').css(:height)
-      )
-    end
-
-    ~window.trigger(:resize)
-    window.scrollTo(0,0)
-  end
-
-  # utility reflow function
-  def reflow_text(text)
-    # join consecutive lines (making exception for <markers> like <private>)
-    text = text.gsub(/([^\s>])\n(\w)/, '$1 $2')
-
-    # reflow each line
-    lines = text.split("\n")
-    for i in 0...lines.length
-      indent = lines[i].match(/( *)(.?.?)(.*)/m)
-
-      if indent[1] == '' or indent[3] == ''
-        # not indented (or short) -> split
-        lines[i] = lines[i].
-          gsub(/(.{1,78})( +|$\n?)|(.{1,78})/, "$1$3\n").
-          sub(/[\n\r]+$/, '')
-      else
-        # preserve indentation.  indent[2] is the 'bullet' (if any) and is
-        # only to be placed on the first line.
-        n = 76 - indent[1].length;
-        lines[i] = indent[3].
-          gsub(/(.{1,#{n}})( +|$\n?)|(.{1,#{n}})/, indent[1] + "  $1$3\n").
-          sub(indent[1] + '  ', indent[1] + indent[2]).
-          sub(/[\n\r]+$/, '')
-      end
-    end
-
-    return lines.join("\n")
-  end
-
   controller :Layout do
     @toc = Agenda.index()
     @item = {}
@@ -116,7 +74,13 @@ module Angular::AsfBoardAgenda
       @director = true if Data.get('initials')
       @firstname = Data.get('firstname')
 
-      resize_window()
+      watch ~'header.navbar'.css(:height) do |value|
+        ~'main'.css(marginTop: value)
+      end
+
+      watch ~'footer.navbar'.css(:height) do |value|
+        ~'main'.css(marginBottom: value)
+      end
     end
 
      # link traversal via left/right keys
@@ -372,8 +336,9 @@ module Angular::AsfBoardAgenda
   end
 
   controller :PostReport do
+    reflow_filter = filter(:reflow)
     def reflow
-      @report = reflow_text(@report)
+      @report = reflow_filter(@report)
     end
 
     def save
