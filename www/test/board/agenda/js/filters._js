@@ -54,7 +54,7 @@ module Angular::AsfBoardFilters
 
   # convert an agenda item into HTML
   filter :html do |item|
-    text = item.text || item.report
+    text = (typeof(item) === "string" ? item : item.text || item.report)
 
     # start by escaping everything
     if text and text != ''

@@ -5,7 +5,8 @@ _div ng_repeat: 'item in agenda',
     _a '{{ item.title }}', ng_href: "{{item.href}}"
   end
 
-  _pre.comment '{{ comment }}', ng_repeat: 'comment in csplit(item.comments)',
+  _pre.comment ng_bind_html: 'comment | html', 
+    ng_repeat: 'comment in csplit(item.comments)',
     ng_if: 'toggle || csplit(pending.seen[item.attach]).indexOf(comment) == -1'
 end
 
