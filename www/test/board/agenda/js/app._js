@@ -345,7 +345,7 @@ module Angular::AsfBoardAgenda
 
     watch 'agenda.update' do
       @agenda.forEach do |item|
-        if item.title == 'Review Outstanding Action Items'
+        if item.title == 'Action Items'
           @actions = item
           @assigned = item.text.split("\n\n").filter do |item|
             return item =~ /^\* *#{$routeParams.name}/m
