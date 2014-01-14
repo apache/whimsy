@@ -269,19 +269,33 @@ module Angular::AsfBoardAgenda
   end
 
   controller :MarkSeen do
+    @undo = nil
+    @label = 'Mark Seen'
     @disabled = false
     def click
       @disabled = true
 
       # gather up the comments
-      seen = {}
-      Agenda.get().forEach do |item|
-        seen[item.attach] = item.comments if item.comments
+      if @undo
+        seen = @undo
+      else
+        seen = {}
+        Agenda.get().forEach do |item|
+          seen[item.attach] = item.comments if item.comments
+        end
       end
 
       data = { seen: seen, agenda: Data.get('agenda') }
 
       $http.post('../json/markseen', data).success { |response|
+        if @undo
+          @undo = nil
+          @label = 'Mark Seen'
+        else
+          @undo = angular.copy(Pending.get().seen)
+          @label = 'Undo Mark'
+        end
+
         Pending.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")

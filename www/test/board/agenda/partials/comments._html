@@ -16,9 +16,9 @@ _p ng_if: '!unseen_comments' do
 end
 
 _ng_template.mark_seen_button! do
-  _button.btn.btn_primary 'mark seen', ng_click: 'click()',
+  _button.btn.btn_primary '{{ label }}', ng_click: 'click()',
     ng_controller: 'MarkSeen', ng_disabled: 'disabled',
-    ng_show: 'unseen_comments'
+    ng_show: 'unseen_comments || undo'
 end
 
 _ng_template.toggle_seen_button! do
