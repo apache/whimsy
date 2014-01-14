@@ -26,8 +26,8 @@ class ASF::Board::Agenda
       end
 
       report = attrs['report'].strip
-      if report or report[0..12] == 'Additionally,'
-        attrs['postable'] = true
+      if report.empty? or report[0..12] == 'Additionally,'
+        attrs['missing'] = true
       end
     end
   end
