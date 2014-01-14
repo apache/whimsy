@@ -8,24 +8,22 @@ module Angular::AsfBoardFilters
   filter :color do |item|
     if not item.title
       return 'blank'
-    elsif item.text or item.report
-      if item.approved
-        if item.approved.length < 5
-          return "ready"
-        elsif item.comments
-          return "commented"
-        else
-          return "reviewed"
-        end
-      elsif item.title == 'President' and item.report[0..12] == 'Additionally,'
-        return "missing"
+    elsif item.missing
+      return 'missing'
+    elsif item.approved
+      if item.approved.length < 5
+        return 'ready'
+      elsif item.comments
+        return 'commented'
       else
-        return "available"
+        return 'reviewed'
       end
+    elsif item.text or item.report
+      return 'available'
     elsif item.text === undefined
-      return "missing"
+      return 'missing'
     else
-      return "reviewed"
+      return 'reviewed'
     end
   end
 

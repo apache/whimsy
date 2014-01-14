@@ -472,7 +472,7 @@ module Angular::AsfBoardAgenda
             end
           end
 
-          if item.postable
+          if item.missing
             @buttons.push 'post-button'
             @forms.push '../partials/post.html'
           end
