@@ -86,6 +86,8 @@ module Angular::AsfBoardAgenda
     # link traversal via left/right keys
     ~document.keydown do |event|
       return unless ~('.modal-open').empty?
+      return if event.metaKey or event.ctrlKey
+
       if event.keyCode == 37 # '<-'
         ~"a[rel='prev']".click
         return false
