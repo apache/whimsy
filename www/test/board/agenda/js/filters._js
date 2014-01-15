@@ -108,6 +108,11 @@ module Angular::AsfBoardFilters
       end
     end
 
+    if item.title == 'Action Items'
+      text = text.gsub(/Status:\s*?(\n\n|$)/, 
+        "<span class='missing'>Status:</span>$1")
+    end
+
     # link to JIRA issues
     text = text.gsub(jira_issue) do |m, pre, jira, issue, post|
       if JIRA.exist jira
