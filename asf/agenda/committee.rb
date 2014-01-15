@@ -13,7 +13,8 @@ class ASF::Board::Agenda
       attrs['shepherd'] = attrs['owner'].split('/').last.strip
       attrs['owner'] = attrs['owner'].split('/').first.strip
 
-      attrs['comments'].gsub! /^ {9}/, ''
+      attrs['comments'].gsub! /^ {1,10}(\w+:)/, '\1'
+      attrs['comments'].gsub! /^ {11}/, ''
     end
   end
 end
