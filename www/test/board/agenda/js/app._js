@@ -3,7 +3,7 @@
 # main application, consisting of a router and a number of controllers
 
 module Angular::AsfBoardAgenda
-  use :AsfBoardServices, :AsfBoardFilters
+  use :AsfBoardServices, :AsfBoardFilters, :AsfBoardDirectives
 
   $locationProvider.html5Mode(true).hashPrefix('!')
 
@@ -272,7 +272,7 @@ module Angular::AsfBoardAgenda
 
   controller :MarkSeen do
     @undo = nil
-    @label = 'Mark Seen'
+    @label = 'mark seen'
     @disabled = false
     def click
       @disabled = true
@@ -292,10 +292,10 @@ module Angular::AsfBoardAgenda
       $http.post('../json/markseen', data).success { |response|
         if @undo
           @undo = nil
-          @label = 'Mark Seen'
+          @label = 'mark seen'
         else
           @undo = angular.copy(Pending.get().seen)
-          @label = 'Undo Mark'
+          @label = 'undo mark'
         end
 
         Pending.put response

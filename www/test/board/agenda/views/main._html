@@ -10,6 +10,7 @@ _html ng_app: 'AsfBoardAgenda' do
   _script src: '../js/app.js'
   _script src: '../js/services.js'
   _script src: '../js/filters.js'
+  _script src: '../js/directives.js'
 
   _link rel: 'stylesheet', href: '../stylesheets/app.css'
 

@@ -1,30 +1,12 @@
-_div.modal.fade.comment_form! tabindex: -1 do
-  _div.modal_dialog ng_controller: 'Comment' do
-    _div.modal_content do
-      _div.modal_header.commented do
-        _button.close "\u00D7", type: 'button', data_dismiss: 'modal'
-        _h4.modal_title 'Enter a comment'
-      end
+_modal_dialog.comment_form! ng_controller: 'Comment' do
+  _h4.commented 'Enter a comment'
 
-      _div_.modal_body do
-        _div_.form_group do
-          _label 'Initials', for: 'comment_initials'
-          _input.form_control.comment_initials! placeholder: 'initials',
-            ng_model: 'initials'
-        end
+  _input.comment_initials! placeholder: 'initials',
+    ng_model: 'initials', label: 'Initials'
 
-        _div_.form_group do
-          _label 'Comment', for: 'comment_text'
-          _textarea.form_control.comment_text! :autofocus, rows: 5,
-             placeholder: 'comment', ng_model: 'comment'
-        end
-      end
+  _textarea.comment_text! :autofocus, rows: 5,
+    placeholder: 'comment', ng_model: 'comment', label: 'Comment'
 
-      _div.modal_footer do
-        _button.btn.btn_default 'Close', type: 'button', data_dismiss: 'modal'
-        _button.btn.btn_primary 'Submit', type: 'button',
-          ng_click: "save()"
-      end
-    end
-  end
+  _button.btn_default 'Close', type: 'button', data_dismiss: 'modal'
+  _button.btn_primary 'Submit', type: 'button', ng_click: "save()"
 end

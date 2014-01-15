@@ -1,25 +1,11 @@
-_div.modal.fade.commit_form! tabindex: -1 do
-  _div.modal_dialog ng_controller: 'Commit' do
-    _div.modal_content do
-      _div.modal_header.blank do
-        _button.close "\u00D7", type: 'button', data_dismiss: 'modal'
-        _h4.modal_title 'Commit message'
-      end
+_modal_dialog.commit_form! ng_controller: 'Commit' do
+  _h4.blank 'Commit message'
 
-      _div_.modal_body do
-        _div_.form_group do
-          _label 'Commit message', for: 'commit_text'
-          _textarea.form_control.commit_text! :autofocus, rows: 5,
-             placeholder: 'commit', ng_model: 'commit_message',
-             ng_disabled: 'disabled'
-        end
-      end
+  _textarea.commit_text! :autofocus, rows: 5,
+    placeholder: 'commit', ng_model: 'commit_message',
+    ng_disabled: 'disabled', label: 'Commit message'
 
-      _div.modal_footer do
-        _button.btn.btn_default 'Close', type: 'button', data_dismiss: 'modal'
-        _button.btn.btn_primary 'Submit', type: 'button',
-          ng_click: "commit()", ng_disabled: 'disabled'
-      end
-    end
-  end
+  _button.btn_default 'Close', type: 'button', data_dismiss: 'modal'
+  _button.btn_primary 'Submit', type: 'button', ng_click: "commit()",
+     ng_disabled: 'disabled'
 end
