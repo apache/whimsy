@@ -17,7 +17,7 @@ File.open(agenda_file, 'r') do |file|
       "#{$1}\n\n#{@report}#{$2}"
     end
   else
-    done = agenda.sub!(/(---\nAttachment #{@attach[-1]}:.*?\[.*?\])(\s*)/) do
+    done = agenda.sub!(/(---\nAttachment #{@attach}:.*?\[.*?\])(\s*)/) do
       "#{$1}\n\n#{@report}#{$2}"
     end
   end
