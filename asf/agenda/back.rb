@@ -16,6 +16,7 @@ class ASF::Board::Agenda
     /mx
 
     scan @file, pattern do |attrs|
+      attrs['attach'].strip!
       attrs['title'].sub! /^Review Outstanding /, ''
     end
   end
