@@ -2,7 +2,7 @@ _pre ng_bind_html: 'item | html'
 
 _span ng_if: 'item.comments' do
   _h3.comments! 'Comments'
-  _pre.comments ng_bind_html: 'comment | html', 
+  _pre.comment ng_bind_html: 'comment | html', 
     ng_repeat: 'comment in item.comments | csplit'
 end
 
