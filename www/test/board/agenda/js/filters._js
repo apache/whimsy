@@ -148,6 +148,24 @@ module Angular::AsfBoardFilters
     return args.seen[item.attach] != item.comments
   end
 
+  filter :csplit do |text|
+    comments = []
+    return comments if text === undefined
+
+    comment = ''
+    text.split("\n").forEach do |line|
+      if line =~ /^\S/
+        comments.push comment unless comment.empty?
+        comment = line
+      else
+        comment += "\n" + line
+      end
+    end
+
+    comments.push comment unless comment.empty?
+    return comments
+  end
+
   # reflow text
   filter :reflow do |text|
     # join consecutive lines (making exception for <markers> like <private>)

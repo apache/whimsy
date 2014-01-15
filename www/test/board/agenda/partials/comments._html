@@ -6,7 +6,7 @@ _div ng_repeat: 'item in agenda',
   end
 
   _pre.comment ng_bind_html: 'comment | html', 
-    ng_repeat: 'comment in csplit(item.comments)',
+    ng_repeat: 'comment in item.comments | csplit',
     ng_if: 'toggle || csplit(pending.seen[item.attach]).indexOf(comment) == -1'
 end
 
