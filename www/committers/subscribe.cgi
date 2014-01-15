@@ -11,19 +11,6 @@ FORMAT_NUMBER = 3 # json format number
 user = ASF::Person.new($USER)
 # authz handled by httpd
 
-lists = ASF::Mail.lists
-lists.delete_if {|list| list =~ /^(ea|secretary|president|treasurer|chairman|committers$)/ }
-lists.delete_if {|list| list =~ /(^|-)security$|^security(-|$)/ }
-# TODO: for non-members, offer all public lists too
-unless user.asf_member?
-  lists = ['infrastructure', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs',
-           'concom']
-  lists += ['board'] if ASF.pmc_chairs.include? user
-end
-lists.sort!
-
-addrs = (["#{$USER}@apache.org"] + user.mail + user.alt_email)
-
 # TODO dedup, copied from mlreq
 class Podlings
   def self.list
@@ -39,6 +26,34 @@ class Podlings
     @list = podlings
   end
 end
+
+lists = ASF::Mail.lists
+lists.delete_if {|list| list =~ /^(ea|secretary|president|treasurer|chairman|committers$)/ }
+lists.delete_if {|list| list =~ /(^|-)security$|^security(-|$)/ }
+
+pmcs = ASF::Committee.list.map(&:name)
+seen = Hash.new
+lists.each do |list|
+  seen[list] = 0
+  seen[list] = 1 if pmcs.include? list.split('-').first
+  seen[list] = 2 if Podlings.list.include? list.split('-').first
+  seen[list] = 2 if (list.split('-').first == 'incubator') \
+                    && (Podlings.list.include? list.split('-')[1])
+end
+
+unless user.asf_member?
+  # non-members only see specifically whitelisted foundation lists as well
+  # as all non-private committee lists
+  whitelist = ['infrastructure', 'jobs', 'site-dev', 'committers-cvs',
+     'site-cvs', 'concom', 'party']
+  lists.delete_if {|list| seen[list] < 1 and not whitelist.include? list}
+  lists.delete_if {|list| list =~ /-private$/}
+  lists += ['board'] if ASF.pmc_chairs.include? user
+end
+
+lists.sort!
+
+addrs = (["#{$USER}@apache.org"] + user.mail + user.alt_email)
 
 _html do
   _head_ do
@@ -96,7 +111,6 @@ _html do
         end
 
         _ 'to'
-        pmcs = ASF::Committee.list.map(&:name)
         _select name: 'list' do
           seen = Hash.new
           lists.each do |list|
