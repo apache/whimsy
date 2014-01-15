@@ -83,47 +83,47 @@ module Angular::AsfBoardAgenda
       end
     end
 
-     # link traversal via left/right keys
-     ~document.keydown do |event|
-       return unless ~('.modal-open').empty?
-       if event.keyCode == 37 # '<-'
-         ~"a[rel='prev']".click
-         return false
-       elsif event.keyCode == 39 # '->'
-         ~"a[rel='next']".click
-         return false
-       elsif event.keyCode == 'C'.ord
-         ~"#comments"[0].scrollIntoView()
-         return false
-       elsif event.keyCode == 'I'.ord
-         ~"#info".click
-         return false
-       elsif event.keyCode == 'N'.ord
-         ~"#nav".click
-         return false
-       elsif event.keyCode == 'A'.ord
-         ~"#agenda".click
-         return false
-       elsif event.keyCode == 'Q'.ord
-         ~"#queue".click
-         return false
-       elsif event.keyCode == 'S'.ord
-         ~"#shepherd".click
-         return false
-       elsif event.shiftKey and event.keyCode == 191 # "?"
-         ~"#help".click
-         return false
-       elsif event.keyCode == 'R'.ord
-         ~'#clock'.show
-         Pending.get()
-         data = {agenda: Data.get('agenda')}
-         $http.post('../json/refresh', data).success do |response|
-           Agenda.put response
-           $route.reload()
-           ~'#clock'.hide
-         end
-         return false
+    # link traversal via left/right keys
+    ~document.keydown do |event|
+      return unless ~('.modal-open').empty?
+      if event.keyCode == 37 # '<-'
+        ~"a[rel='prev']".click
+        return false
+      elsif event.keyCode == 39 # '->'
+        ~"a[rel='next']".click
+        return false
+      elsif event.keyCode == 'C'.ord
+        ~"#comments"[0].scrollIntoView()
+        return false
+      elsif event.keyCode == 'I'.ord
+        ~"#info".click
+        return false
+      elsif event.keyCode == 'N'.ord
+        ~"#nav".click
+        return false
+      elsif event.keyCode == 'A'.ord
+        ~"#agenda".click
+        return false
+      elsif event.keyCode == 'Q'.ord
+        ~"#queue".click
+        return false
+      elsif event.keyCode == 'S'.ord
+        ~"#shepherd".click
+        return false
+      elsif event.shiftKey and event.keyCode == 191 # "?"
+        ~"#help".click
+        return false
+      elsif event.keyCode == 'R'.ord
+        ~'#clock'.show
+        Pending.get()
+        data = {agenda: Data.get('agenda')}
+        $http.post('../json/refresh', data).success do |response|
+          Agenda.put response
+          $route.reload()
+          ~'#clock'.hide
         end
+        return false
+      end
     end
   end
 
