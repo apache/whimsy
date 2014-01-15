@@ -139,7 +139,7 @@ _html do
 	end
 	extras.sort.each do |person|
 	  _tr do
-	    _td id
+	    _td person.id
 	    _td person.public_name
 	  end
 	end
