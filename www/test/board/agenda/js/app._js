@@ -83,6 +83,11 @@ module Angular::AsfBoardAgenda
       end
     end
 
+    # toggle info display
+    def infoToggle
+      @info = (@info ? nil : 'open')
+    end
+
     # link traversal via left/right keys
     ~document.keydown do |event|
       return unless ~('.modal-open').empty?

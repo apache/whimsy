@@ -4,9 +4,9 @@
 # Main "layout" for the application, houses a single view
 #
 
-_html ng_app: 'AsfBoardAgenda' do
+_html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
   _base href: @base
-  _title 'ASF Board Agenda'
+  _title 'ASF Board Agenda', ng_bind: 'title'
   _script src: '../js/app.js'
   _script src: '../js/services.js'
   _script src: '../js/filters.js'
@@ -14,14 +14,15 @@ _html ng_app: 'AsfBoardAgenda' do
 
   _link rel: 'stylesheet', href: '../stylesheets/app.css'
 
-  _body ng_controller: 'Layout' do
+  _body 'Layout' do
     # sibling navigation links and banner
     _header.navbar.navbar_fixed_top class: '{{ item | color }}' do
       _div.navbar_brand '{{ title }}'
       _span.clock! "\u231B"
       _ul.nav.nav_pills.navbar_right do
-        _li.dropdown ng_show: 'item.title' do
-          _a.info!.dropdown_toggle data_toggle: "dropdown" do
+        _li.dropdown class: '{{ info }}', ng_show: 'item.title' do
+          _a.info!.dropdown_toggle class: '{{ item | color}}', 
+            ng_click: 'infoToggle()' do
             _ 'info'
             _b.caret
           end
