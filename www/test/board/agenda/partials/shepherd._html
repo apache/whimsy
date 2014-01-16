@@ -2,7 +2,10 @@ _div ng_repeat: 'item in agenda | filter: {shepherd: name}' do
   _h3 class: '{{ item | color }}' do
     _a '{{ item.title }}', ng_href: "{{item.href}}"
   end
-  _pre.comments ng_bind_html: 'item.comments | html', ng_if: 'item.comments'
+
+  _pre.comment ng_bind_html: 'comment | html', 
+    ng_repeat: 'comment in item.comments | csplit',
+    ng_if: 'item.comments'
 end
 
 _em.col_xs_12 'No items assigned.', 
