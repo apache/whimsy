@@ -7,6 +7,10 @@ _modal_dialog.comment_form! ng_controller: 'Comment' do
   _textarea.comment_text! :autofocus, rows: 5,
     placeholder: 'comment', ng_model: 'comment', label: 'Comment'
 
-  _button.btn_default 'Close', type: 'button', data_dismiss: 'modal'
-  _button.btn_primary 'Submit', type: 'button', ng_click: "save()"
+  _button.btn_default 'Cancel', type: 'button', data_dismiss: 'modal',
+    ng_click: 'comment = $parent.comment'
+  _button.btn_warning 'Delete', type: 'button', ng_click: 'comment = ""',
+    ng_show: '$parent.comment'
+  _button.btn_primary 'Save', type: 'button', ng_click: "save()",
+    ng_disabled: '$parent.comment == comment'
 end

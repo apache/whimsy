@@ -455,8 +455,10 @@ module Angular::AsfBoardAgenda
     end
 
     @pending = Pending.get()
-    watch 'pending.update' do
+    watch 'pending.update + agenda.update' do
       @comment = @pending.comments[@item.attach]
+      $rootScope.comment_label =
+        (@comment && @comment.length > 0 ? 'edit comment' : 'add comment')
     end
   end
 end

@@ -171,6 +171,16 @@ module Angular::AsfBoardFilters
     return comments
   end
 
+  # reflow comment
+  filter :cflow do |comment, initials|
+    lines = comment.split("\n")
+    for i in 0...lines.length
+      lines[i] = (i == 0 ? initials + ': ' : '    ') +
+        lines[i].gsub(/(.{1,67})( +|$\n?)|(.{1,67})/, "$1$3\n    ").trim()
+    end
+    return lines.join("\n")
+  end
+
   # reflow text
   filter :reflow do |text|
     # join consecutive lines (making exception for <markers> like <private>)

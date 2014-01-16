@@ -6,13 +6,18 @@ _span ng_if: 'item.comments' do
     ng_repeat: 'comment in item.comments | csplit'
 end
 
+_span ng_if: 'comment' do
+  _h3 'Pending Comment'
+  _pre.comment '{{ comment | cflow : initials }}'
+end
+
 _ng_template.post_button! do
   _button.btn.btn_primary 'post report', 
     data_target: '#post-report-form', data_toggle: 'modal'
 end
 
 _ng_template.comment_button! do
-  _button.btn.btn_primary 'comment', 
+  _button.btn.btn_primary '{{comment_label}}', 
     data_target: '#comment-form', data_toggle: 'modal'
 end
 
