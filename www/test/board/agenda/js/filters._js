@@ -58,7 +58,7 @@ module Angular::AsfBoardFilters
 
     # start by escaping everything
     if text and text != ''
-      text = text.gsub(escape_html) {|c| return escape_replacement[c]}
+      text.gsub!(escape_html) {|c| escape_replacement[c]}
     elsif item.text === undefined
       text = '<em>Missing</em>'
     else
@@ -66,15 +66,15 @@ module Angular::AsfBoardFilters
     end
 
     # highlight private sections
-    text = text.gsub(private_sections, '<div class="private">$1$2</div>')
+    text.gsub! private_sections, '<div class="private">$1$2</div>'
 
     # link to board minutes
-    text = text.gsub(/(board_minutes_\d+_\d+_\d+)/, 
-      '<a href="https://svn.apache.org/repos/private/foundation/board/$1.txt">$1</a>')
+    text.gsub! /(board_minutes_\d+_\d+_\d+)/, 
+      '<a href="https://svn.apache.org/repos/private/foundation/board/$1.txt">$1</a>'
 
     # convert textual links into hyperlinks
-    text = text.gsub(uri_in_text) do |match, pre, link|
-      return "#{pre}<a href='#{link}'>#{link}</a>"
+    text.gsub! uri_in_text do |match, pre, link|
+      "#{pre}<a href='#{link}'>#{link}</a>"
     end
 
     # replace ids with committer links
@@ -82,14 +82,12 @@ module Angular::AsfBoardFilters
       for id in item.people
         person = item.people[id]
 
-        text = text.gsub(/(\(|&lt;)(#{id})( at |@|\))/) do |m, pre, id, post|
-          return "#{pre}<a href='#{committer}/#{id}'>#{id}</a>#{post}"
+        text.gsub! /(\(|&lt;)(#{id})( at |@|\))/ do |m, pre, id, post|
+          "#{pre}<a href='#{committer}/#{id}'>#{id}</a>#{post}"
         end
 
         if person.member
-          text = text.gsub(/#{escapeRegExp(person.name)}/) do 
-            return "<b>#{person.name}</b>"
-          end
+          text.gsub! /#{escapeRegExp(person.name)}/, "<b>#{person.name}</b>"
         end
       end
     end
@@ -109,12 +107,12 @@ module Angular::AsfBoardFilters
     end
 
     if item.title == 'Action Items'
-      text = text.gsub(/Status:\s*?(\n\n|$)/, 
-        "<span class='missing'>Status:</span>$1")
+      text.gsub! /Status:\s*?(\n\n|$)/, 
+        "<span class='missing'>Status:</span>$1"
     end
 
     # link to JIRA issues
-    text = text.gsub(jira_issue) do |m, pre, jira, issue, post|
+    text.gsub! jira_issue do |m, pre, jira, issue, post|
       if JIRA.exist jira
         return "#{pre}<a target='_self' " +
           "href='https://issues.apache.org/jira/browse/#{jira}-#{issue}'>" +
@@ -184,7 +182,7 @@ module Angular::AsfBoardFilters
   # reflow text
   filter :reflow do |text|
     # join consecutive lines (making exception for <markers> like <private>)
-    text = text.gsub(/([^\s>])\n(\w)/, '$1 $2')
+    text.gsub! /([^\s>])\n(\w)/, '$1 $2'
 
     # reflow each line
     lines = text.split("\n")

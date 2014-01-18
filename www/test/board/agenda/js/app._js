@@ -141,11 +141,11 @@ module Angular::AsfBoardAgenda
      
     title = @agenda_file[/\d+_\d+_\d+/].gsub(/_/,'-')
 
-    agendas = ~'#agendas li'.to_a.map {|li| return li.textContent.trim()}
+    agendas = ~'#agendas li'.to_a.map {|li| li.textContent.trim()}
     index = agendas.indexOf(@agenda_file)
     agendas = agendas.map do |text|
       text = text[/\d+_\d+_\d+/].gsub(/_/,'-')
-      return {href: "../#{text}/", title: text}
+      {href: "../#{text}/", title: text}
     end
 
     help = {href: 'help', title: 'Help'}
@@ -202,14 +202,14 @@ module Angular::AsfBoardAgenda
 
       if @q_approvals.length > 0 and @q_approvals.length <= 6
         message.push "Approve #{
-          @q_approvals.map {|item| return item.title}.join(', ')}"
+          @q_approvals.map {|item| item.title}.join(', ')}"
       elsif @q_approvals.length > 1
         message.push "Approve #{ @q_approvals.length} reports"
       end
 
       if @q_comments.length > 0 and @q_comments.length <= 6
         message.push "Comment on #{
-          @q_comments.map {|item| return item.title}.join(', ')}"
+          @q_comments.map {|item| item.title}.join(', ')}"
       elsif @q_comments.length > 1
         message.push "Comment on #{ @q_comments.length} reports"
       end
@@ -248,7 +248,7 @@ module Angular::AsfBoardAgenda
 
     watch 'agenda.update + pending.update' do
       $rootScope.unseen_comments =
-        @agenda.any? { |item| return show(item, seen: @pending.seen) }
+        @agenda.any? { |item| show(item, seen: @pending.seen) }
       $rootScope.seen_comments = !Object.keys(@pending.seen).empty?
     end
 
