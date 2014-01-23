@@ -151,7 +151,7 @@ module Angular::AsfBoardAgenda
     help = {href: 'help', title: 'Help'}
     $scope.layout title: title, next: agendas[index+1] || help, 
       prev: agendas[index-1] || help
-    @buttons.push 'refresh-button'
+    @buttons << 'refresh-button'
   end
 
   # controller for the help page
@@ -173,45 +173,45 @@ module Angular::AsfBoardAgenda
     @q_ready = []
     @q_comments = []
     watch 'pending.update + agenda.update' do
-      @q_approvals.clear!
-      @agenda.forEach do |item|
-        @q_approvals.push item if @pending.approved.include? item.attach
+      @q_approvals.clear()
+      @agenda.each do |item|
+        @q_approvals << item if @pending.approved.include? item.attach
       end
 
       comments = @pending.comments
-      @q_comments.clear!
-      @agenda.forEach do |item|
+      @q_comments.clear()
+      @agenda.each do |item|
         if comments[item.attach]
           item.comment = comments[item.attach]
-          @q_comments.push item
+          @q_comments << item
         end
       end
 
-      @q_ready.clear!
-      Agenda.ready().forEach do |item|
-        @q_ready.push item unless @q_approvals.include? item
+      @q_ready.clear()
+      Agenda.ready().each do |item|
+        @q_ready << item unless @q_approvals.include? item
       end
     end
 
     watch 'q_comments.length + q_approvals.length' do |after, before|
       if after > 0 and !@buttons.include? 'commit-button'
-        @buttons.push 'commit-button' 
+        @buttons << 'commit-button' 
       end
 
       message = []
 
       if @q_approvals.length > 0 and @q_approvals.length <= 6
-        message.push "Approve #{
+        message << "Approve #{
           @q_approvals.map {|item| item.title}.join(', ')}"
       elsif @q_approvals.length > 1
-        message.push "Approve #{ @q_approvals.length} reports"
+        message << "Approve #{ @q_approvals.length} reports"
       end
 
       if @q_comments.length > 0 and @q_comments.length <= 6
-        message.push "Comment on #{
+        message << "Comment on #{
           @q_comments.map {|item| item.title}.join(', ')}"
       elsif @q_comments.length > 1
-        message.push "Comment on #{ @q_comments.length} reports"
+        message << "Comment on #{ @q_comments.length} reports"
       end
 
       @commit_message = message.join("\n")
@@ -259,8 +259,8 @@ module Angular::AsfBoardAgenda
     # make comment split filter available as a function
     @csplit = filter(:csplit)
 
-    @buttons.push 'mark-seen-button'
-    @buttons.push 'toggle-seen-button'
+    @buttons << 'mark-seen-button'
+    @buttons << 'toggle-seen-button'
   end
 
   controller :MarkSeen do
@@ -275,7 +275,7 @@ module Angular::AsfBoardAgenda
         seen = @undo
       else
         seen = {}
-        Agenda.get().forEach do |item|
+        Agenda.get().each do |item|
           seen[item.attach] = item.comments if item.comments
         end
       end
@@ -317,11 +317,11 @@ module Angular::AsfBoardAgenda
       next: {title: 'Queue', href: 'queue'}
 
     watch 'agenda.update' do
-      @agenda.forEach do |item|
+      @agenda.each do |item|
         if item.title == 'Action Items'
           @actions = item
-          @assigned = item.text.split("\n\n").filter do |item|
-            return item =~ /^\* *#{$routeParams.name}/m
+          @assigned = item.text.split("\n\n").select do |item|
+            item =~ /^\* *#{$routeParams.name}/m
           end
         end
     end
@@ -421,7 +421,7 @@ module Angular::AsfBoardAgenda
     # find agenda item, add relevant buttons
     watch 'agenda.update' do
       $scope.layout item: {title: 'not found'}
-      @agenda.forEach do |item|
+      @agenda.each do |item|
         if item.href == section
 
           if $routeParams.section
@@ -436,19 +436,19 @@ module Angular::AsfBoardAgenda
           end
 
           unless item.comments === undefined
-            @buttons.push 'comment-button'
-            @forms.push '../partials/comment.html'
+            @buttons << 'comment-button'
+            @forms << '../partials/comment.html'
           end
 
           if item.report or item.text
             if item.approved and @initials and !item.approved.include? @initials
-              @buttons.push 'approve-button'
+              @buttons << 'approve-button'
             end
           end
 
           if item.missing
-            @buttons.push 'post-button'
-            @forms.push '../partials/post.html'
+            @buttons << 'post-button'
+            @forms << '../partials/post.html'
           end
         end
       end

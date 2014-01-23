@@ -24,7 +24,7 @@ module Angular::AsfBoardServices
     def self.put(agenda)
       # add forward and back links to entries in the agenda
       prev = nil
-      agenda.forEach do |item|
+      agenda.each do |item|
         item.href = item.title.gsub(/[^a-zA-Z0-9]+/, '-')
         prev.next = item if prev
         item.prev = prev
@@ -32,13 +32,13 @@ module Angular::AsfBoardServices
       end
 
       # remove president attachments from the normal flow
-      agenda.forEach do |pres|
+      agenda.each do |pres|
         match = pres.report and pres.report.
           match(/Additionally, please see Attachments (\d) through (\d)/)
         next unless match
 
         first = last = nil
-        agenda.forEach do |item|
+        agenda.each do |item|
           first = item if item.attach == match[1]
           last  = item if item.attach == match[2]
         end
@@ -54,12 +54,12 @@ module Angular::AsfBoardServices
       end
 
       # add index entries to @@index
-      @@index.clear!
-      agenda.forEach do |item|
-        @@index.push item if item.index
+      @@index.clear()
+      agenda.each do |item|
+        @@index << item if item.index
       end
 
-      @@agenda.replace! agenda
+      @@agenda.replace agenda
 
       @@agenda.update += 1
     end
@@ -79,12 +79,12 @@ module Angular::AsfBoardServices
       result = []
       initials = Data.get('initials')
       qprev = nil
-      @@agenda.forEach do |item|
+      @@agenda.each do |item|
         next unless item.approved
         next if item.approved.include? initials
         next unless item.report or item.text
 
-        result.push item
+        result << item
         item.qhref = "queue/#{item.href}"
 
         item.qprev = qprev
@@ -129,7 +129,7 @@ module Angular::AsfBoardServices
         @@fetched = true
         ~'#clock'.show
         $http.get('../json/jira').success do |result| 
-          @@projects.replace! result
+          @@projects.replace result
           ~'#clock'.hide
         end
       end

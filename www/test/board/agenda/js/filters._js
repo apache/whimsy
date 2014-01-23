@@ -128,15 +128,15 @@ module Angular::AsfBoardFilters
 
   filter :approved do |agenda, pending|
     approved = []
-    agenda.forEach do |item|
-      approved.push item if pending.approved.include? item.attach
+    agenda.each do |item|
+      approved << item if pending.approved.include? item.attach
     end
     return approved
   end
 
   filter :comments do |agenda, pending|
     comments = []
-    agenda.forEach do |item|
+    agenda.each do |item|
       if pending.comments[item.attach]
         item.comment = pending.comments[item.attach]
         comments.push(item)
@@ -156,16 +156,16 @@ module Angular::AsfBoardFilters
     return comments if text === undefined
 
     comment = ''
-    text.split("\n").forEach do |line|
+    text.split("\n").each do |line|
       if line =~ /^\S/
-        comments.push comment unless comment.empty?
+        comments << comment unless comment.empty?
         comment = line
       else
         comment += "\n" + line
       end
     end
 
-    comments.push comment unless comment.empty?
+    comments << comment unless comment.empty?
     return comments
   end
 
