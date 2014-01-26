@@ -10,48 +10,50 @@ module Angular::AsfBoardDirectives
     replace true
 
     def template(element, attrs)
-      # build header
-      h4 = ~['h4', element]
-      header = ~'<div></div>'.append(h4)
-      header.prepend("<button class='close' type='button' " +
-        "data-dismiss='modal'>\u00D7</button>")
-      for i in 0...h4[0].attributes.length
-        attr = h4[0].attributes[i]
-        header.attr(attr.name, attr.value)
-      end
-      h4.attr('class', 'modal-title')
-      header.addClass('modal-header')
-
-      # build footer
-      button = ~['button',element].addClass('btn')
-      footer = ~'<div class="modal-footer"></div>'.append(button)
+      # detach h4 elements and buttons
+      h4 = element.find('h4').detach()
+      buttons = element.find('button').addClass('btn').detach()
 
       # build label elements from label attributes, wrap in a form-group
-      ~['*[label]', element].each do |index, node|
-        label = ~'<label></label>'.attr('for', ~node.attr('id')).
-          text(~node.attr('label'))
-        wrapper = ~'<div class="form-group"></div>'
-        ~node.before(wrapper)
-        wrapper.append(~label).append(~node)
+      element.find('*[label]').each! do |index, node|
+        ~node.wrap(_div.form_group)
+        ~node.before(_label ~node.attr('label'), for: ~node.attr('id'))
       end
 
-      # add form-control attributes, and wrap in a modal-body
-      ~['input, textarea', element].addClass('form-control')
-      body = ~'<div class="modal-body"></div>'.append(element.children())
+      # build bootstrap dialog
+      dialog = _div.modal.fade tabindex: -1 do
+        _div.modal_dialog do
+          _div.modal_content do
+            _div.modal_header do
+              _button.close "\u00d7", type: 'button', data_dismiss: 'modal'
 
-      # build modal-dialog
-      content = ~'<div class="modal-content"></div>'
-      content.prepend(header).append(body).append(footer)
-      dialog = ~'<div class="modal-dialog"></div>'.append(content)
-      top = ~'<div tabindex="-1" class="modal fade"></div>'.append(dialog)
+              # move h4 class attribute to header; replace with 'modal-title'
+              ~self.addClass(h4.attr(:class)) if h4.attr(:class)
+              ~self.append(h4.attr(class: 'modal-title'))
+            end
 
-      return element.append(top).html()
+            _div.modal_body do
+              # add form-control attributes; move remaining nodes to the body
+              element.find('input, textarea').addClass('form-control')
+              ~self.append(element.children())
+            end
+
+            _div.modal_footer do
+              # move buttons to the footer
+              ~self.append(buttons)
+            end
+          end
+        end
+      end
+
+      # return dialog as html
+      return dialog[0].outerHTML
     end
 
     def link(scope, element, attr)
       # implement autofocus
       element.on('shown.bs.modal') do
-        ~['*[autofocus]', element].focus
+        element.find('*[autofocus]').focus()
       end
     end
   end
