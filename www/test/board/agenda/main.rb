@@ -14,6 +14,7 @@ require '/var/tools/asf/agenda'
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap/theme'
 require 'wunderbar/angularjs/route'
+require 'wunderbar/jquery/filter'
 require 'ruby2js/filter/functions'
 
 require 'yaml'
