@@ -1,0 +1,58 @@
+_h2 '{{ uid }}@apache.org'
+
+_table.wide do
+  _tr do
+    _td 'Name'
+    _td '{{ committer.cn }}'
+  end
+
+  _tr do
+    _td 'ASF Member'
+    _td '{{ member }}'
+  end
+
+  _tr ng_if: 'committer["asf-personalURL"]' do
+    _td 'Personal URL'
+    _td do
+      _a '{{ committer["asf-personalURL"] }}', 
+        href: '{{ committer["asf-personalURL"] }}'
+    end
+  end
+
+  _tr ng_if: 'my_pmcs.length > 0' do
+    _td 'Committees'
+    _td do
+      _ul do
+        _li '{{pmc}}', ng_repeat: 'pmc in my_pmcs'
+      end
+    end
+  end
+
+  _tr ng_if: 'my_groups.length > 0' do
+    _td 'Groups'
+    _td do
+      _ul do
+        _li '{{group}}', ng_repeat: 'group in my_groups'
+      end
+    end
+  end
+
+  _tr ng_if: 'committer["asf-pgpKeyFingerprint"].length > 0' do
+    _td 'PGP Key'
+    _td do
+      _ul do
+        _li '{{ pgp }}', ng_repeat: 'pgp in committer["asf-pgpKeyFingerprint"]'
+      end
+    end
+  end
+
+  _tr do
+    _td 'Email addresses'
+    _td do
+      _ul do
+        _li '{{ mail }}', ng_repeat: 'mail in committer.mail'
+        _li '{{ mail }}', ng_repeat: 'mail in committer["asf-altEmail"]'
+      end
+    end
+  end
+end

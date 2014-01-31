@@ -1,0 +1,22 @@
+_h1 'Committer - Search'
+
+_label 'Search:', for: 'search_text'
+_input.search_text! :autofocus, ng_model: 'search_text'
+
+_table ng_if: 'search_text.length > 2' do
+  _tr do
+    _th 'id'
+    _th 'name'
+    _th 'email'
+  end
+
+  _tr ng_repeat: 'committer in committers | committer_match:search_text' do
+    _td do
+      _a href: 'committer/{{ committer.uid }}' do
+        _span ng_bind: 'committer.uid'
+      end
+    end
+    _td ng_bind: 'committer.cn'
+    _td ng_bind: 'committer.mail[0]'
+  end
+end

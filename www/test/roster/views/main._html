@@ -1,0 +1,15 @@
+_html ng_app: 'AsfRoster', ng_controller: 'Layout' do
+  _base href: @base
+  _title 'ASF Roster', ng_bind: 'title'
+  _script src: 'js/app.js'
+  _script src: 'js/services.js'
+
+  _link rel: 'stylesheet', href: 'stylesheets/app.css'
+
+  _a href: 'https://whimsy.apache.org/' do
+    _img title: 'ASF Logo', alt: 'ASF Logo', 
+      src: 'https://id.apache.org/img/asf_logo_wide.png'
+  end
+
+  _main :ng_view
+end
