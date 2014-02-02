@@ -13,10 +13,23 @@ module Angular::AsfRosterServices
       members: []
     }
 
+    def self.fetch_twice(url, &update)
+      if_cached = {"Cache-Control" => "only-if-cached"}
+      $http.get(url, cache: false, headers: if_cached).success { |result|
+        update(result)
+      }.finally {
+        setTimeout 0 do
+          $http.get(url, cache: false).success do |result, status|
+            update(result) unless status == 304
+          end
+        end
+      }
+    end
+
     def self.get()
       unless @@fetching
         @@fetching = true
-        $http.get('json/ldap').success do |result|
+        self.fetch_twice 'json/ldap' do |result|
           angular.copy result.services, @@index.services
           angular.copy result.committers, @@index.committers
           angular.copy result.pmcs, @@index.pmcs

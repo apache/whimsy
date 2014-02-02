@@ -38,10 +38,24 @@ get '/partials/:file.html' do
   _html :"partials/#{params[:file]}"
 end
 
+configure do
+  @@ldap_cache = nil
+  @@ldap_etag = nil
+end
+
 get '/json/ldap' do
-  _json do
-    _! ASF::RosterLDAP.get
+  cache_control :private, :no_cache, :must_revalidate, max_age: 0
+
+  if env['HTTP_CACHE_CONTROL'].downcase.split(/,\s+/).include? 'only-if-cached'
+    etag @@ldap_etag if @@ldap_etag
+    throw :halt, 504 unless @ldap_cache
+  else
+    @@ldap_cache = JSON.dump(ASF::RosterLDAP.get)
+    @@ldap_etag = Digest::MD5.hexdigest(@@ldap_cache)
+    etag @@ldap_etag
   end
+
+  @@ldap_cache
 end
 
 post '/json/:file' do
