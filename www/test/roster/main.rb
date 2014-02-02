@@ -46,7 +46,8 @@ end
 get '/json/ldap' do
   cache_control :private, :no_cache, :must_revalidate, max_age: 0
 
-  if env['HTTP_CACHE_CONTROL'].downcase.split(/,\s+/).include? 'only-if-cached'
+  cache_control = env['HTTP_CACHE_CONTROL'].to_s.downcase.split(/,\s+/)
+  if cache_control.include? 'only-if-cached'
     etag @@ldap_etag if @@ldap_etag
     throw :halt, 504 unless @ldap_cache
   else
