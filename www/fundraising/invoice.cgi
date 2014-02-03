@@ -286,9 +286,9 @@ _html do
           _tr do
             _td style: "width: 270pt; color: #006" do
               _p "Dept. 9660"
-              _p "Los Angeles, CA 90084-9660"
-              _p "USA"
+              _p "Los Angeles, CA 90084-9660, USA"
               _p "E-mail: #{@email ||'fundraising@apache.org'}"
+              _p "US IRS Tax/EIN: 47-0825376"
             end
             _td style: "width: 270pt; text-align: right" do
               _p "Invoice", style: "font-size: 28pt; color: #636"
