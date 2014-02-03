@@ -23,7 +23,9 @@ _table.wide do
     _td 'Committees'
     _td do
       _ul do
-        _li '{{pmc}}', ng_repeat: 'pmc in my_pmcs'
+        _li ng_repeat: 'pmc in my_pmcs' do
+          _a '{{pmc}}', href: 'committee/{{pmc}}'
+        end
       end
     end
   end

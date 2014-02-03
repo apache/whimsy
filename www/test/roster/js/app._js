@@ -14,8 +14,12 @@ module Angular::AsfRoster
     templateUrl 'partials/committer.html'
     controller :Committer
 
-  when '/pmc/:name'
-    templateUrl 'partials/pmc.html'
+  when '/committee/'
+    templateUrl 'partials/committees.html'
+    controller :PMCs
+
+  when '/committee/:name'
+    templateUrl 'partials/committee.html'
     controller :PMC
 
   else
@@ -30,6 +34,25 @@ module Angular::AsfRoster
   end
 
   controller :Committers do
+  end
+
+  controller :PMCs do
+  end
+
+  controller :PMC do
+    @name = $routeParams.name
+    watch @pmcs[@name] do |value|
+      @pmc = value
+      if value
+        @pmc_members = @pmc.memberUid.map do |uid|
+          @committers[uid]
+        end
+        @pmc_committers = []
+        @groups[@name].memberUid.each do |uid|
+          @pmc_committers << @committers[uid] unless @pmc.memberUid.include? uid
+        end
+      end
+    end
   end
 
   controller :Committer do

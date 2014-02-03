@@ -1,0 +1,10 @@
+_h1 'PMCs'
+_table do
+  _tr ng_repeat: 'pmc in pmcs' do
+    _td do
+      _a '{{pmc.cn}}', href: 'committee/{{pmc.cn}}'
+    end
+    _td
+    _td
+  end
+end
