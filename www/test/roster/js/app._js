@@ -90,8 +90,16 @@ module Angular::AsfRoster
 
   directive :main do
     restrict :E
-    def link(scope, element, attribute)
+    def link(scope, element, attributes)
       element.find('*[autofocus]').focus()
+    end
+  end
+
+  directive :asfId do
+    def link(scope, element, attributes)
+      observe attributes.asfId do |value|
+        element.addClass 'member' if @members.include? value
+      end
     end
   end
 end

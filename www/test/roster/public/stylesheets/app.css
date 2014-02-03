@@ -4,6 +4,8 @@ table {border-spacing: 0 1em}
 .wide td:first-child {text-align: right; padding: 0}
 .wide td:first-child:after {content: ' —'}
 .wide td:last-child {border-left: solid 1px #000; padding: 0 0.5em}
-table {margin-left: 1.5em}
+table {margin-left: 1em}
+td, th {padding-left: 0.5em; padding-right: 0.5em}
 table.wide {color: #000; border-collapse: separate; font-size: 100%}
 .issue {color: red; font-weight:bold} 
+.member {font-weight: bold}
