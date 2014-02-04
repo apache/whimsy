@@ -83,11 +83,27 @@ module Angular::AsfBoardFilters
         person = item.people[id]
 
         text.gsub! /(\(|&lt;)(#{id})( at |@|\))/ do |m, pre, id, post|
-          "#{pre}<a href='#{committer}/#{id}'>#{id}</a>#{post}"
+          if person.icla
+            annotate = ''
+          else
+            annotate=' class="missing"'
+          end
+          "#{pre}<a#{annotate} href='#{committer}/#{id}'>#{id}</a>#{post}"
         end
 
         if person.member
           text.gsub! /#{escapeRegExp(person.name)}/, "<b>#{person.name}</b>"
+        elsif person.icla and not person.icla == person.name
+          names = person.name.split(/\s+/)
+          iclas = person.icla.split(/\s+/)
+          ok = false
+          ok ||= names.all? {|part| iclas.include? part}
+          ok ||= iclas.all? {|part| names.include? part}
+          if not ok
+            text.gsub! /#{escapeRegExp(person.name)}/,
+              "<span class='commented'>#{person.name}</span>"
+          end
+
         end
       end
     end
