@@ -4,6 +4,13 @@ module ASF
   end
 
   class Committee < Base
+    attr_accessor :info, :emeritus
+    def initialize(*args)
+      @info = []
+      @emeritus = []
+      super
+    end
+
     @@aliases = Hash.new {|hash, name| name}
     @@aliases.merge! \
       'community development'       => 'comdev',
@@ -20,17 +27,32 @@ module ASF
       'web services'                => 'ws',
       'xml graphics'                => 'xmlgraphics'
 
+    @@namemap = Proc.new do |name|
+      cname = @@aliases[name.downcase]
+      cname
+    end
+
     def self.load_committee_info
       return @committee_info if @committee_info
       board = ASF::SVN['private/committers/board']
-      committee = File.read("#{board}/committee-info.txt").split(/^\* /)
-      head = committee.shift.split(/^\d\./)[1]
+      info = File.read("#{board}/committee-info.txt").split(/^\* /)
+      head = info.shift.split(/^\d\./)[1]
       head.scan(/^\s+(\w.*?)\s\s+.*<(\w+)@apache\.org>/).each do |name, id|
         find(name).chair = ASF::Person.find(id) 
       end
       @nonpmcs = head.sub(/.*?also has/m,'').
         scan(/^\s+(\w.*?)\s\s+.*<\w+@apache\.org>/).flatten.uniq.
         map {|name| find(name)}
+
+      info.each do |roster|
+        committee = find(@@namemap.call(roster[/(\w.*?)\s+\(/,1]))
+        roster.gsub! /^.*\(\s*emeritus\s*\).*/i do |line|
+          committee.emeritus += line.scan(/<(.*?)@apache\.org>/).flatten
+          ''
+        end
+        committee.info = roster.scan(/<(.*?)@apache\.org>/).flatten
+      end
+
       @committee_info = ASF::Committee.collection.values
     end
 
@@ -60,6 +82,10 @@ module ASF
 
     def chair=(person)
       @chair = person
+    end
+
+    def info=(person)
+      @info = person
     end
 
     def nonpmc?
