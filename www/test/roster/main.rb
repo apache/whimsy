@@ -3,6 +3,7 @@
 # while under development, use tip versions of wunderbar and ruby2js
 $:.unshift '/home/rubys/git/wunderbar/lib'
 $:.unshift '/home/rubys/git/ruby2js/lib'
+$:.unshift '/var/tools/asf'
 
 #
 # Server side router/controllers
@@ -46,6 +47,18 @@ end
 configure do
   @@ldap_cache = nil
   @@ldap_etag = nil
+end
+
+get '/json/info' do
+  _json do
+    committees = ASF::Committee.load_committee_info
+    _! Hash[committees.map { |committee| 
+      hash = {chair: committee.chair.id}
+      hash[:members] = committee.info
+      hash[:emeritus] = committee.emeritus
+      [committee.name, hash]
+    }]
+  end
 end
 
 get '/json/ldap' do

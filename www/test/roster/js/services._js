@@ -1,7 +1,6 @@
 #!/usr/bin/ruby
 
 module Angular::AsfRosterServices
-
   class LDAP
     @@fetching = false
 
@@ -59,6 +58,25 @@ module Angular::AsfRosterServices
 
     def self.groups
       return self.get().groups
+    end
+  end
+
+  class INFO
+    @@info = []
+
+    def self.get(name)
+      unless @@fetching
+        @@fetching = true
+        $http.get('json/info').success do |result|
+          angular.copy result, @@info
+        end
+      end
+
+      if name
+        return @@info[name]
+      else
+        return @@info
+      end
     end
   end
 end

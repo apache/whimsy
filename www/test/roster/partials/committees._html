@@ -4,7 +4,7 @@ _table do
     _td do
       _a '{{pmc.cn}}', href: 'committee/{{pmc.cn}}'
     end
-    _td
-    _td
+    _td ng_bind: 'chairs[pmc.cn].cn', asf_id: '{{ chairs[pmc.cn].uid }}'
   end
 end
+
