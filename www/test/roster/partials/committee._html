@@ -5,26 +5,26 @@ end
 _h2 'PMC'
 
 _table do
-  _tr ng_repeat: 'member in pmc_members()' do
+  _tr ng_repeat: 'person in pmc.members' do
     _td do
-      _a href: 'committer/{{ member.uid }}' do
-        _span ng_bind: 'member.uid'
+      _a href: 'committer/{{ person.uid }}' do
+        _span ng_bind: 'person.uid'
       end
     end
-    _td ng_bind: 'member.cn', asf_id: '{{ member.uid }}'
-    _td ng_bind: 'status(member)'
+    _td ng_bind: 'person.cn', asf_id: '{{ person.uid }}'
+    _td ng_bind: 'status(person)'
   end
 end
 
 _h2 'Committers'
 
 _table do
-  _tr ng_repeat: 'committer in project_committers()' do
+  _tr ng_repeat: 'person in pmc.committers' do
     _td do
-      _a href: 'committer/{{ committer.uid }}' do
-        _span ng_bind: 'committer.uid'
+      _a href: 'committer/{{ person.uid }}' do
+        _span ng_bind: 'person.uid'
       end
     end
-    _td ng_bind: 'committer.cn', asf_id: '{{ committer.uid }}'
+    _td ng_bind: 'person.cn', asf_id: '{{ person.uid }}'
   end
 end
