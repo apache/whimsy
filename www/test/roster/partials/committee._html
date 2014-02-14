@@ -1,5 +1,5 @@
 _h1 do
-  _a '{{pmc.cn}}', href: 'http://{{pmc.cn}}.apache.org/'
+  _a '{{pmc.display_name}}', href: 'http://{{pmc.cn}}.apache.org/'
 end
 
 _h2 'PMC'

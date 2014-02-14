@@ -21,46 +21,55 @@ module Angular::AsfRosterServices
     end
 
     def self.merge()
-      return unless @@committers and @@info
-      committers = @@committers
+      return unless @@committers
+      if @@info
+        committers = @@committers
 
-      # add chair to each pmc
-      for pmc in @@info
-        next unless @@pmcs[pmc]
-        @@pmcs[pmc].chair = committers[@@info[pmc].chair]
-      end
+        # add chair to each pmc
+        for pmc in @@info
+          next unless @@pmcs[pmc]
+          @@pmcs[pmc].chair = committers[@@info[pmc].chair]
+        end
 
-      # build a list of PMC members and committers
-      for name in @@pmcs
-        pmc = @@pmcs[name]
-        pmc.members ||= []
-        pmc.members.clear()
+        # build a list of PMC members and committers
+        for name in @@pmcs
+          pmc = @@pmcs[name]
+          pmc.members ||= []
+          pmc.members.clear()
 
-        # extract PMC members from committee-info.txt
-        if @@info[name]
-          @@info[name].members.each do |uid|
-            person = committers[uid]
-            pmc.members << person if person
+          # extract PMC members from committee-info.txt
+          if @@info[name]
+            pmc.display_name = @@info[name].display_name
+            @@info[name].members.each do |uid|
+              person = committers[uid]
+              pmc.members << person if person
+            end
+          else
+            pmc.display_name = name
           end
-        end
 
-        # add unique PMC members from LDAP
-        pmc.memberUid.each do |uid|
-          person = committers[uid]
-          pmc.members << person if person and not pmc.members.include? person
-        end
-
-        # extract committers from LDAP groups of the same name
-        pmc.committers ||= []
-        pmc.committers.clear()
-
-        if @@groups[name]
-          @@groups[name].memberUid.each do |uid|
+          # add unique PMC members from LDAP
+          pmc.memberUid.each do |uid|
             person = committers[uid]
-            if person and not pmc.members.include? person
-              pmc.committers << person
+            pmc.members << person if person and not pmc.members.include? person
+          end
+
+          # extract committers from LDAP groups of the same name
+          pmc.committers ||= []
+          pmc.committers.clear()
+
+          if @@groups[name]
+            @@groups[name].memberUid.each do |uid|
+              person = committers[uid]
+              if person and not pmc.members.include? person
+                pmc.committers << person
+              end
             end
           end
+        end
+      else
+        for name in @@pmcs
+          @@pmcs[name].display_name = name
         end
       end
     end

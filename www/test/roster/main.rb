@@ -52,10 +52,12 @@ get '/json/info' do
   _json do
     committees = ASF::Committee.load_committee_info
     _! Hash[committees.map { |committee| 
-      hash = {chair: committee.chair.id}
-      hash[:members] = committee.info
-      hash[:emeritus] = committee.emeritus
-      [committee.name, hash]
+      [committee.name, {
+        display_name: committee.display_name,
+        chair: committee.chair.id,
+        members: committee.info,
+        emeritus: committee.emeritus
+      }]
     }]
   end
 end
