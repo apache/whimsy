@@ -38,61 +38,19 @@ module Angular::AsfRoster
   end
 
   controller :PMCs do
-    @chairs = {}
-    watch @info.keys().length + @committers.keys().length do
-      angular.copy({}, @chairs)
-      if @committers.keys().length > 0
-        @info.keys().each do |pmc|
-          @chairs[pmc] = @committers[@info[pmc].chair]
-        end
-      end
-    end
   end
 
   controller :PMC do
     @name = $routeParams.name
-    @pmc_list = []
-    @pmc = {memberUid: []}
-    @pmc_committers = []
 
     watch INFO.get(@name) do |value|
-      @info = value if value
+      @info = value || {members: []}
     end
 
     watch @pmcs[@name] do |value|
-      @pmc = value if value
+      @pmc = value || {memberUid: []}
     end
 
-    def project_committers
-      @pmc_committers.clear()
-      if @groups[@name]
-        @groups[@name].memberUid.each do |uid|
-          committer = @committers[uid]
-          @pmc_committers << committer unless @pmc_list.include? committer
-        end
-      end
-      @pmc_committers.sort! {|a,b| return a.uid < b.uid ? -1 : +1}
-      return @pmc_committers
-    end
-
-    def pmc_members
-      @pmc_list.clear()
-      unless @committers.empty?
-        @info.members.each do |uid|
-          committer = @committers[uid]
-          committer ||= {uid: uid}
-          @pmc_list << committer unless @pmc_list.include? committer
-        end
-        @pmc.memberUid.map do |uid|
-          committer = @committers[uid]
-          committer ||= {uid: uid}
-          @pmc_list << committer unless @pmc_list.include? committer
-        end
-      end
-      @pmc_list.sort! {|a,b| return a.uid < b.uid ? -1 : +1}
-      return @pmc_list
-    end
-    
     def status(committer)
       if not committer
         return 'not found'

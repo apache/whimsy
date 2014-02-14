@@ -1,6 +1,71 @@
 #!/usr/bin/ruby
 
 module Angular::AsfRosterServices
+  # merge data from multiple sources
+  class Merge
+    @@committers = nil
+    @@pmcs = nil
+    @@info = nil
+    @@groups = nil
+
+    def self.ldap(ldap)
+      @@committers = ldap.committers
+      @@pmcs = ldap.pmcs
+      @@groups = ldap.groups
+      self.merge()
+    end
+
+    def self.info(info)
+      @@info = info
+      self.merge()
+    end
+
+    def self.merge()
+      return unless @@committers and @@info
+      committers = @@committers
+
+      # add chair to each pmc
+      for pmc in @@info
+        next unless @@pmcs[pmc]
+        @@pmcs[pmc].chair = committers[@@info[pmc].chair]
+      end
+
+      # build a list of PMC members and committers
+      for name in @@pmcs
+        pmc = @@pmcs[name]
+        pmc.members ||= []
+        pmc.members.clear()
+
+        # extract PMC members from committee-info.txt
+        if @@info[name]
+          @@info[name].members.each do |uid|
+            person = committers[uid]
+            pmc.members << person if person
+          end
+        end
+
+        # add unique PMC members from LDAP
+        pmc.memberUid.each do |uid|
+          person = committers[uid]
+          pmc.members << person if person and not pmc.members.include? person
+        end
+
+        # extract committers from LDAP groups of the same name
+        pmc.committers ||= []
+        pmc.committers.clear()
+
+        if @@groups[name]
+          @@groups[name].memberUid.each do |uid|
+            person = committers[uid]
+            if person and not pmc.members.include? person
+              pmc.committers << person
+            end
+          end
+        end
+      end
+    end
+  end
+
   class LDAP
     @@fetching = false
 
@@ -34,6 +99,7 @@ module Angular::AsfRosterServices
           angular.copy result.pmcs, @@index.pmcs
           angular.copy result.groups, @@index.groups
           angular.copy result.groups.member.memberUid, @@index.members
+          Merge.ldap(@@index)
         end
       end
 
@@ -62,13 +128,14 @@ module Angular::AsfRosterServices
   end
 
   class INFO
-    @@info = []
+    @@info = {}
 
     def self.get(name)
       unless @@fetching
         @@fetching = true
         $http.get('json/info').success do |result|
           angular.copy result, @@info
+          Merge.info(@@info)
         end
       end
 
