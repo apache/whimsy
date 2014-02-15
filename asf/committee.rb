@@ -4,7 +4,7 @@ module ASF
   end
 
   class Committee < Base
-    attr_accessor :info, :emeritus
+    attr_accessor :info, :emeritus, :report
     def initialize(*args)
       @info = []
       @emeritus = []
@@ -36,7 +36,7 @@ module ASF
       return @committee_info if @committee_info
       board = ASF::SVN['private/committers/board']
       info = File.read("#{board}/committee-info.txt").split(/^\* /)
-      head = info.shift.split(/^\d\./)[1]
+      head, report = info.shift.split(/^\d\./)[1..2]
       head.scan(/^\s+(\w.*?)\s\s+.*<(\w+)@apache\.org>/).each do |name, id|
         find(name).chair = ASF::Person.find(id) 
       end
@@ -51,6 +51,20 @@ module ASF
           ''
         end
         committee.info = roster.scan(/<(.*?)@apache\.org>/).flatten
+      end
+
+      report.scan(/^([^\n]+)\n---+\n(.*?)\n\n/m).each do |period, committees|
+        committees.scan(/^   \s*(.*)/).each do |committee|
+          committee, comment = committee.first.split(/\s+#\s+/,2)
+          committee = find(committee)
+          if comment
+            committee.report = "#{period}: #{comment}"
+          elsif period == 'Next month'
+            committee.report = 'Every month'
+          else
+            committee.report = period
+          end
+        end
       end
 
       @committee_info = ASF::Committee.collection.values
