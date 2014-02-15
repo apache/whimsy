@@ -35,6 +35,11 @@ get %r{/(committee/.*)} do |path|
   _html :'views/main'
 end
 
+get %r{/(group/.*)} do |path|
+  @base = env['REQUEST_URI'].chomp(path)
+  _html :'views/main'
+end
+
 get '/js/:file.js' do
   _js :"js/#{params[:file]}"
 end

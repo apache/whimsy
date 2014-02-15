@@ -22,6 +22,14 @@ module Angular::AsfRoster
     templateUrl 'partials/committee.html'
     controller :PMC
 
+  when '/group/'
+    templateUrl 'partials/groups.html'
+    controller :Groups
+
+  when '/group/:name'
+    templateUrl 'partials/group.html'
+    controller :Group
+
   else
     redirectTo '/'
   end
@@ -32,12 +40,29 @@ module Angular::AsfRoster
     @pmcs = LDAP.pmcs()
     @members = LDAP.members()
     @info = INFO.get()
+    @services = LDAP.services()
   end
 
   controller :Committers do
   end
 
   controller :PMCs do
+  end
+
+  controller :Groups do
+    groups = @groups
+    watch groups.member do
+      @groups = []
+      for group in groups
+        next if %w(member committers).include? group
+        @groups << groups[group] unless @pmcs[group]
+      end
+
+      for group in @services
+        next if %w(apldap infrastructure-root).include? group
+        @groups << @services[group]
+      end
+    end
   end
 
   controller :PMC do
@@ -68,6 +93,21 @@ module Angular::AsfRoster
     end
   end
 
+  controller :Group do
+    @name = $routeParams.name
+    watch @groups[@name] || LDAP.services()[@name] do |group|
+      if group and group.memberUid
+        group.members ||= []
+        group.members.clear()
+        group.memberUid.each do |uid|
+          person = @committers[uid]
+          group.members << person if person
+        end
+        @group = group
+      end
+    end
+  end
+
   controller :Committer do
     @uid = $routeParams.name
     @my_groups = []
@@ -84,7 +124,16 @@ module Angular::AsfRoster
       for group in @groups
         next if @my_pmcs.include? group
         next if %w(member committers).include? group
-        @my_groups << group if @groups[group].memberUid.include? value.uid
+        if @groups[group].memberUid.include? value.uid
+          @my_groups << (@pmcs[group] || @groups[group])
+        end
+      end
+
+      for group in @services
+        next if %w(apldap infrastructure-root).include? group
+        if @services[group].memberUid.include? value.uid
+          @my_groups << @services[group]
+        end
       end
     end
   end

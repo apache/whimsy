@@ -1,0 +1,20 @@
+_h1 '{{group.cn}}'
+
+_table do
+  _tr ng_repeat: 'person in group.members | orderBy:"uid"' do
+    _td do
+      _a href: 'committer/{{ person.uid }}' do
+        _span ng_bind: 'person.uid'
+      end
+    end
+
+    _td ng_bind: 'person.cn', asf_id: '{{ person.uid }}'
+
+    _td ng_if: 'group.cn == "pmc-chairs"' do
+      _span ng_repeat: 'pmc in pmcs | orderBy:"cn"', 
+        ng_if: 'pmc.chair == person' do
+        _a '{{pmc.cn}}', href: 'committee/{{pmc.cn}}'
+      end
+    end
+  end
+end

@@ -34,7 +34,9 @@ _table.wide do
     _td 'Groups'
     _td do
       _ul do
-        _li '{{group}}', ng_repeat: 'group in my_groups'
+        _li ng_repeat: 'group in my_groups | orderBy:"cn"' do
+          _a '{{group.cn}}', href: '{{group.link}}'
+        end
       end
     end
   end
