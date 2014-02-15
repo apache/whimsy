@@ -105,19 +105,19 @@ module Angular::AsfRosterServices
         self.fetch_twice 'json/ldap' do |result|
           # add in links
           for group in result.groups
-            result.groups[group].link = "/group/#{group}"
+            result.groups[group].link = "group/#{group}"
           end
 
           for group in result.services
-            result.services[group].link = "/group/#{group}"
+            result.services[group].link = "group/#{group}"
           end
 
           for pmc in result.pmcs
-            result.pmcs[pmc].link = "/committee/#{pmc}"
+            result.pmcs[pmc].link = "committee/#{pmc}"
           end
 
           for person in result.committers
-            result.committers[person].link = "/committee/#{person}"
+            result.committers[person].link = "committee/#{person}"
           end
 
           # copy to class variables
