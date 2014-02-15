@@ -59,6 +59,7 @@ get '/json/info' do
     _! Hash[committees.map { |committee| 
       [committee.name, {
         display_name: committee.display_name,
+        report: committee.report,
         chair: committee.chair.id,
         members: committee.info,
         emeritus: committee.emeritus
