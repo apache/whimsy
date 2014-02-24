@@ -61,7 +61,7 @@ get '/json/info' do
         display_name: committee.display_name,
         report: committee.report,
         chair: committee.chair.id,
-        members: committee.info,
+        memberUid: committee.info,
         emeritus: committee.emeritus
       }]
     }]

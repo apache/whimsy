@@ -4,6 +4,7 @@ _table do
     _td do
       _a '{{group.cn}}', href: '{{group.link}}'
     end
+    _td '{{group.source}}'
   end
 end
 

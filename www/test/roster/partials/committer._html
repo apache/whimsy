@@ -3,12 +3,7 @@ _h2 '{{ uid }}@apache.org'
 _table.wide do
   _tr do
     _td 'Name'
-    _td '{{ committer.cn }}'
-  end
-
-  _tr do
-    _td 'ASF Member'
-    _td '{{ member }}'
+    _td ng_bind: 'committer.cn', asf_id: '{{ committer.uid }}'
   end
 
   _tr ng_if: 'committer["asf-personalURL"]' do

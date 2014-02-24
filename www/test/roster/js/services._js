@@ -6,12 +6,16 @@ module Angular::AsfRosterServices
     @@committers = nil
     @@pmcs = nil
     @@info = nil
-    @@groups = nil
+    @@ldap_groups = nil
+    @@groups = {}
+    @@services = nil
+    @@count = 0
 
     def self.ldap(ldap)
       @@committers = ldap.committers
       @@pmcs = ldap.pmcs
-      @@groups = ldap.groups
+      @@services = ldap.services
+      @@ldap_groups = ldap.groups
       self.merge()
     end
 
@@ -21,6 +25,7 @@ module Angular::AsfRosterServices
     end
 
     def self.merge()
+      @@count += 1
       return unless @@committers
       if @@info
         committers = @@committers
@@ -40,7 +45,7 @@ module Angular::AsfRosterServices
           # extract PMC members from committee-info.txt
           if @@info[name]
             pmc.display_name = @@info[name].display_name
-            @@info[name].members.each do |uid|
+            @@info[name].memberUid.each do |uid|
               person = committers[uid]
               pmc.members << person if person
             end
@@ -58,8 +63,8 @@ module Angular::AsfRosterServices
           pmc.committers ||= []
           pmc.committers.clear()
 
-          if @@groups[name]
-            @@groups[name].memberUid.each do |uid|
+          if @@ldap_groups[name]
+            @@ldap_groups[name].memberUid.each do |uid|
               person = committers[uid]
               if person and not pmc.members.include? person
                 pmc.committers << person
@@ -67,11 +72,52 @@ module Angular::AsfRosterServices
             end
           end
         end
+
+        for group in @@ldap_groups
+          next if %w(committers).include? group or @@pmcs[group]
+          @@ldap_groups[group].source = 'LDAP group'
+          @@groups[group] = @@ldap_groups[group]
+        end
+
+        for group in @@services
+          next if %w(apldap infrastructure-root).include? group
+          if group == 'infrastructure'
+            group  = @@services.infrastructure
+            group.members ||= []
+            group.members.clear()
+            group.memberUid.each do |uid|
+              person = committers[uid]
+              group.members << person if person
+            end
+          else
+            @@services[group].source = 'LDAP service'
+            @@groups[group] = @@services[group]
+          end
+        end
+
+        for group in @@info
+          next if @@pmcs[group] or @@info[group].memberUid.empty?
+          @@info[group].source = 'committee-info.txt'
+          @@groups[group] = @@info[group]
+        end
+
+        for name in @@groups
+          group = @@groups[name]
+          group.link = "group/#{name}"
+        end
       else
         for name in @@pmcs
           @@pmcs[name].display_name = name
         end
       end
+    end
+
+    def self.groups()
+      return @@groups 
+    end
+
+    def self.count
+      return @@count
     end
   end
 
@@ -163,6 +209,10 @@ module Angular::AsfRosterServices
       unless @@fetching
         @@fetching = true
         $http.get('json/info').success do |result|
+          for pmc in result
+            result[pmc].cn = pmc
+          end
+
           angular.copy result, @@info
           Merge.info(@@info)
         end

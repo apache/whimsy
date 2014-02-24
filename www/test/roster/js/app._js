@@ -6,6 +6,10 @@ module Angular::AsfRoster
   $locationProvider.html5Mode(true).hashPrefix('!')
 
   case $routeProvider
+  when '/'
+    templateUrl 'partials/index.html'
+    controller :Index
+
   when '/committer/'
     templateUrl 'partials/committers.html'
     controller :Committers
@@ -34,8 +38,19 @@ module Angular::AsfRoster
     redirectTo '/'
   end
 
+  controller :Index do
+    def size(hash)
+      length = hash.keys().length
+      if length > 0
+        return length
+      else
+        return ''
+      end
+    end
+  end
+
   controller :Layout do
-    @groups = LDAP.groups()
+    @groups = Merge.groups()
     @committers = LDAP.committers()
     @pmcs = LDAP.pmcs()
     @members = LDAP.members()
@@ -50,19 +65,6 @@ module Angular::AsfRoster
   end
 
   controller :Groups do
-    groups = @groups
-    watch groups.member do
-      @groups = []
-      for group in groups
-        next if %w(member committers).include? group
-        @groups << groups[group] unless @pmcs[group]
-      end
-
-      for group in @services
-        next if %w(apldap infrastructure-root).include? group
-        @groups << @services[group]
-      end
-    end
   end
 
   controller :PMC do
@@ -81,7 +83,7 @@ module Angular::AsfRoster
         return 'not found'
       elsif not (@pmc.memberUid.include? committer.uid or @pmc.memberUid.empty?)
         return 'not in LDAP'
-      elsif not (@info.members.include? committer.uid or @info.members.empty?)
+      elsif not (@info.memberUid.include? committer.uid or @info.memberUid.empty?)
         return 'not in committee_info.txt'
       elsif @committers and not @committers[committer.uid] == committer
         return 'not in committer list'
@@ -111,28 +113,23 @@ module Angular::AsfRoster
   controller :Committer do
     @uid = $routeParams.name
     @my_groups = []
-    watch(@committers[@uid]) do |value| 
-      @committer = value
-      @member = value and @members.include? value.uid
+    watch Merge.count() do
+      @committer = @committers[@uid]
 
       @my_pmcs = []
+      @my_committer = []
       for pmc in @pmcs
-        @my_pmcs << pmc if @pmcs[pmc].memberUid.include? value.uid
+        if @pmcs[pmc].members.include? @committer
+          @my_pmcs << pmc 
+        elsif @pmcs[pmc].committers.include? @committer
+          @my_committer << pmc
+        end
       end
 
       @my_groups = []
       for group in @groups
-        next if @my_pmcs.include? group
-        next if %w(member committers).include? group
-        if @groups[group].memberUid.include? value.uid
-          @my_groups << (@pmcs[group] || @groups[group])
-        end
-      end
-
-      for group in @services
-        next if %w(apldap infrastructure-root).include? group
-        if @services[group].memberUid.include? value.uid
-          @my_groups << @services[group]
+        if @groups[group].memberUid.include? @uid
+          @my_groups << @groups[group]
         end
       end
     end
