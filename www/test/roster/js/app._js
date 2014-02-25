@@ -71,7 +71,7 @@ module Angular::AsfRoster
     @name = $routeParams.name
 
     watch INFO.get(@name) do |value|
-      @info = value || {members: []}
+      @info = value || {memberUid: []}
     end
 
     watch @pmcs[@name] do |value|
@@ -85,8 +85,8 @@ module Angular::AsfRoster
         return 'not in LDAP'
       elsif not (@info.memberUid.include? committer.uid or @info.memberUid.empty?)
         return 'not in committee_info.txt'
-      elsif @committers and not @committers[committer.uid] == committer
-        return 'not in committer list'
+#     elsif @committers and not @committers[committer.uid] == committer
+#       return 'not in committer list'
       elsif committer.uid == @info.chair
         return 'chair'
       else
@@ -116,10 +116,11 @@ module Angular::AsfRoster
     watch Merge.count() do
       @committer = @committers[@uid]
 
-      @my_pmcs = []
       @my_committer = []
+      console.log @committer
       for pmc in @pmcs
         if @pmcs[pmc].members.include? @committer
+          console.log pmc
           @my_pmcs << pmc 
         elsif @pmcs[pmc].committers.include? @committer
           @my_committer << pmc

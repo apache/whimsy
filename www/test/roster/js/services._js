@@ -1,6 +1,79 @@
 #!/usr/bin/ruby
 
 module Angular::AsfRosterServices
+  class PMC
+    @@list = {}
+
+    def self.committers(committers)
+      @@committers = committers
+    end
+
+    def self.groups(groups)
+      @@groups = groups
+    end
+
+    def initialize(ldap)
+      angular.copy ldap, self
+      @members = []
+      @committers = []
+      @@list[self.cn] = self
+    end
+
+    def display_name
+      info = INFO.get(self.cn)
+      return info ? info.display_name : self.cn
+    end
+
+    def link
+      return "committee/#{self.cn}"
+    end
+
+    def chair
+      info = INFO.get(self.cn)
+      return @@committers[info.chair] if info
+    end
+
+    def members
+      work = @members
+      work.clear()
+      info = INFO.get(self.cn)
+
+      # add PMC members from comittee-info.txt
+      if info
+        info.memberUid.each do |uid|
+          person = @@committers[uid]
+          work << person if person
+        end
+      end
+
+      # add unique PMC members from LDAP
+      self.memberUid.each do |uid|
+        person = @@committers[uid]
+        work << person if person and not work.include? person
+      end
+
+      work
+    end
+
+    def committers
+      self.members if @members.empty?
+      members = @members
+      work = @committers
+      work.clear()
+      group = @@groups[self.cn]
+
+      # add members from LDAP group of the same name
+      if group
+        group.memberUid.each do |uid|
+          person = @@committers[uid]
+          work << person if person and not members.include? person
+        end
+      end
+
+      work
+    end
+  end
+
   # merge data from multiple sources
   class Merge
     @@committers = nil
@@ -29,49 +102,6 @@ module Angular::AsfRosterServices
       return unless @@committers
       if @@info
         committers = @@committers
-
-        # add chair to each pmc
-        for pmc in @@info
-          next unless @@pmcs[pmc]
-          @@pmcs[pmc].chair = committers[@@info[pmc].chair]
-        end
-
-        # build a list of PMC members and committers
-        for name in @@pmcs
-          pmc = @@pmcs[name]
-          pmc.members ||= []
-          pmc.members.clear()
-
-          # extract PMC members from committee-info.txt
-          if @@info[name]
-            pmc.display_name = @@info[name].display_name
-            @@info[name].memberUid.each do |uid|
-              person = committers[uid]
-              pmc.members << person if person
-            end
-          else
-            pmc.display_name = name
-          end
-
-          # add unique PMC members from LDAP
-          pmc.memberUid.each do |uid|
-            person = committers[uid]
-            pmc.members << person if person and not pmc.members.include? person
-          end
-
-          # extract committers from LDAP groups of the same name
-          pmc.committers ||= []
-          pmc.committers.clear()
-
-          if @@ldap_groups[name]
-            @@ldap_groups[name].memberUid.each do |uid|
-              person = committers[uid]
-              if person and not pmc.members.include? person
-                pmc.committers << person
-              end
-            end
-          end
-        end
 
         for group in @@ldap_groups
           next if %w(committers).include? group or @@pmcs[group]
@@ -158,12 +188,14 @@ module Angular::AsfRosterServices
             result.services[group].link = "group/#{group}"
           end
 
+          PMC.committers(@@index.committers)
+          PMC.groups(@@index.groups)
           for pmc in result.pmcs
-            result.pmcs[pmc].link = "committee/#{pmc}"
+            result.pmcs[pmc] = PMC.new(result.pmcs[pmc])
           end
 
           for person in result.committers
-            result.committers[person].link = "committee/#{person}"
+            result.committers[person].link = "committer/#{person}"
           end
 
           # copy to class variables
@@ -199,6 +231,10 @@ module Angular::AsfRosterServices
 
     def self.groups
       return self.get().groups
+    end
+
+    def self.group(name)
+      return self.get().groups[name]
     end
   end
 

@@ -5,7 +5,7 @@ end
 _h2 'PMC'
 
 _table do
-  _tr ng_repeat: 'person in pmc.members' do
+  _tr ng_repeat: 'person in pmc.members | orderBy:"person.uid"' do
     _td do
       _a href: 'committer/{{ person.uid }}' do
         _span ng_bind: 'person.uid'
@@ -19,7 +19,7 @@ end
 _h2 'Committers'
 
 _table do
-  _tr ng_repeat: 'person in pmc.committers' do
+  _tr ng_repeat: 'person in pmc.committers | orderBy:"person.uid"' do
     _td do
       _a href: 'committer/{{ person.uid }}' do
         _span ng_bind: 'person.uid'
