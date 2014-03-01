@@ -1,15 +1,58 @@
 #!/usr/bin/ruby
 
 module Angular::AsfRosterServices
-  class PMC
-    @@list = {}
 
-    def self.committers(committers)
-      @@committers = committers
+  # Since Angular.JS doesn't allow circular dependencies, keep the canonical
+  # rosters of each class in a separate place so that they can be referenced
+  # anywhere.
+  class Roster
+    COMMITTERS = {}
+    PMCS = {}
+  end
+
+  # Instances of this class represent a Committer from LDAP.
+  class Committer
+    @@list = Roster::COMMITTERS
+
+    def self.load(ldap)
+      angular.copy({}, @@list)
+      for uid in ldap.committers
+        @@list[uid] = Committer.new(ldap.committers[uid])
+      end
     end
 
-    def self.groups(groups)
-      @@groups = groups
+    def self.find(id)
+      return @@list[id]
+    end
+
+    def initialize(ldap)
+      angular.copy ldap, self
+    end
+
+    def link
+      return "committer/#{self.cn}"
+    end
+
+    def pmcs
+      result = []
+      for name in Roster::PMCS
+        pmc = Roster::PMCS[name]
+        result << pmc if pmc.memberUid.include? self.uid 
+      end
+      result
+    end
+  end
+
+  # Instances of this class represent a PMC from LDAP, augmented with
+  # information from committee-info.txt.
+  class PMC
+    @@list = Roster::PMCS
+
+    def self.load(ldap)
+      for pmc in ldap.pmcs
+        @@list[pmc] = PMC.new(ldap.pmcs[pmc])
+      end
+      @@groups = ldap.groups
     end
 
     def initialize(ldap)
@@ -30,47 +73,45 @@ module Angular::AsfRosterServices
 
     def chair
       info = INFO.get(self.cn)
-      return @@committers[info.chair] if info
+      return Committer.find(info.chair) if info
     end
 
     def members
-      work = @members
-      work.clear()
+      @members.clear()
       info = INFO.get(self.cn)
 
       # add PMC members from comittee-info.txt
       if info
         info.memberUid.each do |uid|
-          person = @@committers[uid]
-          work << person if person
+          person = Committer.find(uid)
+          @members << person if person
         end
       end
 
       # add unique PMC members from LDAP
       self.memberUid.each do |uid|
-        person = @@committers[uid]
-        work << person if person and not work.include? person
+        person = Committer.find(uid)
+        @members << person if person and not @members.include? person
       end
 
-      work
+      @members
     end
 
     def committers
       self.members if @members.empty?
       members = @members
-      work = @committers
-      work.clear()
+      @committers.clear()
       group = @@groups[self.cn]
 
       # add members from LDAP group of the same name
       if group
         group.memberUid.each do |uid|
-          person = @@committers[uid]
-          work << person if person and not members.include? person
+          person = Committer.find(uid)
+          @committers << person if person and not members.include? person
         end
       end
 
-      work
+      @committers
     end
   end
 
@@ -135,10 +176,6 @@ module Angular::AsfRosterServices
           group = @@groups[name]
           group.link = "group/#{name}"
         end
-      else
-        for name in @@pmcs
-          @@pmcs[name].display_name = name
-        end
       end
     end
 
@@ -188,15 +225,8 @@ module Angular::AsfRosterServices
             result.services[group].link = "group/#{group}"
           end
 
-          PMC.committers(@@index.committers)
-          PMC.groups(@@index.groups)
-          for pmc in result.pmcs
-            result.pmcs[pmc] = PMC.new(result.pmcs[pmc])
-          end
-
-          for person in result.committers
-            result.committers[person].link = "committer/#{person}"
-          end
+          Committer.load(@@index)
+          PMC.load(@@index)
 
           # copy to class variables
           angular.copy result.services, @@index.services

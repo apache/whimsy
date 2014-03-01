@@ -14,12 +14,12 @@ _table.wide do
     end
   end
 
-  _tr ng_if: 'my_pmcs.length > 0' do
+  _tr ng_if: 'committer.pmcs.length > 0' do
     _td 'Committees'
     _td do
       _ul do
-        _li ng_repeat: 'pmc in my_pmcs' do
-          _a '{{pmc}}', href: 'committee/{{pmc}}'
+        _li ng_repeat: 'pmc in committer.pmcs' do
+          _a '{{pmc.cn}}', href: '{{pmc.link}}'
         end
       end
     end

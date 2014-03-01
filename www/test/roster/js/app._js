@@ -40,22 +40,17 @@ module Angular::AsfRoster
 
   controller :Index do
     def size(hash)
-      length = hash.keys().length
-      if length > 0
-        return length
-      else
-        return ''
-      end
+      return hash.keys().length || ''
     end
   end
 
   controller :Layout do
     @groups = Merge.groups()
-    @committers = LDAP.committers()
-    @pmcs = LDAP.pmcs()
-    @members = LDAP.members()
+    @committers = Roster::COMMITTERS
+    @pmcs = Roster::PMCS
+    @members = LDAP.members
     @info = INFO.get()
-    @services = LDAP.services()
+    @services = LDAP.services
   end
 
   controller :Committers do
@@ -112,55 +107,38 @@ module Angular::AsfRoster
 
   controller :Committer do
     @uid = $routeParams.name
+    @my_committer = []
     @my_groups = []
-    watch Merge.count() do
-      @committer = @committers[@uid]
-
-      @my_committer = []
-      console.log @committer
-      for pmc in @pmcs
-        if @pmcs[pmc].members.include? @committer
-          console.log pmc
-          @my_pmcs << pmc 
-        elsif @pmcs[pmc].committers.include? @committer
-          @my_committer << pmc
-        end
-      end
-
-      @my_groups = []
-      for group in @groups
-        if @groups[group].memberUid.include? @uid
-          @my_groups << @groups[group]
-        end
-      end
+    watch Committer.find(@uid) do |value|
+      @committer = value
     end
   end
 
   filter :committer_match do |committers, text|
     results = []
-    text = text.toLowerCase()
+    text = text.downcase()
 
     if text.include? ' '
       words = text.split(/\s+/)
       for id in committers
         committer = committers[id]
-        cn = committer.cn.toLowerCase()
-        if words.all? {|word| cn.contains(word)}
+        cn = committer.cn.downcase()
+        if words.all? {|word| cn.include? word}
           results << committer
         end
       end
     else
       for id in committers
         committer = committers[id]
-        if committer.cn.toLowerCase().contains(text)
+        if committer.cn.downcase().include? text
           results << committer
-        elsif committer.uid.contains(text)
+        elsif committer.uid.include? text
           results << committer
         elsif committer.mail and 
-          committer.mail.any? {|email| email.contains(text)}
+          committer.mail.any? {|email| email.include? text}
           results << committer
         elsif committer["asf-altEmail"] and
-          committer["asf-altEmail"].any? {|email| email.contains(text)}
+          committer["asf-altEmail"].any? {|email| email.include? text}
           results << committer
         end
       end
