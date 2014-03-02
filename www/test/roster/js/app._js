@@ -51,6 +51,7 @@ module Angular::AsfRoster
     @pmcs = Roster::PMCS
     @members = Roster::MEMBERS
     @info = INFO.get()
+    @search = {committer: ''}
   end
 
   controller :Committers do
