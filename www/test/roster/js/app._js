@@ -45,12 +45,12 @@ module Angular::AsfRoster
   end
 
   controller :Layout do
-    @groups = Merge.groups()
+    LDAP.get()
+    @groups = Roster::GROUPS
     @committers = Roster::COMMITTERS
     @pmcs = Roster::PMCS
-    @members = LDAP.members
+    @members = Roster::MEMBERS
     @info = INFO.get()
-    @services = LDAP.services
   end
 
   controller :Committers do
@@ -92,16 +92,8 @@ module Angular::AsfRoster
 
   controller :Group do
     @name = $routeParams.name
-    watch @groups[@name] || LDAP.services()[@name] do |group|
-      if group and group.memberUid
-        group.members ||= []
-        group.members.clear()
-        group.memberUid.each do |uid|
-          person = @committers[uid]
-          group.members << person if person
-        end
-        @group = group
-      end
+    watch @groups[@name] do |value|
+      @group = value || {memberUid: []}
     end
   end
 

@@ -8,7 +8,13 @@ module Angular::AsfRosterServices
   class Roster
     COMMITTERS = {}
     PMCS = {}
+    GROUPS = {}
+    MEMBERS = []
   end
+
+  ####################################################################
+  #                          Model Objects                           #
+  ####################################################################
 
   # Instances of this class represent a Committer from LDAP.
   class Committer
@@ -38,6 +44,15 @@ module Angular::AsfRosterServices
       for name in Roster::PMCS
         pmc = Roster::PMCS[name]
         result << pmc if pmc.memberUid.include? self.uid 
+      end
+      result
+    end
+
+    def chairs
+      result = []
+      for name in Roster::PMCS
+        pmc = Roster::PMCS[name]
+        result << pmc if pmc.chair == self 
       end
       result
     end
@@ -80,7 +95,7 @@ module Angular::AsfRosterServices
       @members.clear()
       info = INFO.get(self.cn)
 
-      # add PMC members from comittee-info.txt
+      # add PMC members from committee-info.txt
       if info
         info.memberUid.each do |uid|
           person = Committer.find(uid)
@@ -115,89 +130,77 @@ module Angular::AsfRosterServices
     end
   end
 
-  # merge data from multiple sources
-  class Merge
-    @@committers = nil
-    @@pmcs = nil
-    @@info = nil
-    @@ldap_groups = nil
-    @@groups = {}
-    @@services = nil
-    @@count = 0
+  # Instances of this class represent non-PMC groups from various sources:
+  # groups in LDAP with no corresponding PMC; groups in committee-info.txt
+  # also with no corresponding LDAP PMC.
+  class Group
+    @@list = Roster::GROUPS
 
-    def self.ldap(ldap)
-      @@committers = ldap.committers
-      @@pmcs = ldap.pmcs
-      @@services = ldap.services
-      @@ldap_groups = ldap.groups
-      self.merge()
-    end
+    def self.load(sources)
+      if sources.ldap
+        ldap = sources.ldap
 
-    def self.info(info)
-      @@info = info
-      self.merge()
-    end
-
-    def self.merge()
-      @@count += 1
-      return unless @@committers
-      if @@info
-        committers = @@committers
-
-        for group in @@ldap_groups
-          next if %w(committers).include? group or @@pmcs[group]
-          @@ldap_groups[group].source = 'LDAP group'
-          @@groups[group] = @@ldap_groups[group]
+        # start with any LDAP groups which aren't associated with a PMC
+        for group in ldap.groups
+          next if %w(committers).include? group or ldap.pmcs[group]
+          @@list[group] = Group.new(ldap.groups[group], 'LDAP group')
         end
 
-        for group in @@services
+        # add in the LDAP services
+        for group in ldap.services
           next if %w(apldap infrastructure-root).include? group
           if group == 'infrastructure'
-            group  = @@services.infrastructure
-            group.members ||= []
-            group.members.clear()
-            group.memberUid.each do |uid|
-              person = committers[uid]
-              group.members << person if person
-            end
+            # TODO
           else
-            @@services[group].source = 'LDAP service'
-            @@groups[group] = @@services[group]
+            @@list[group] = Group.new(ldap.services[group], 'LDAP service')
           end
         end
 
-        for group in @@info
-          next if @@pmcs[group] or @@info[group].memberUid.empty?
-          @@info[group].source = 'committee-info.txt'
-          @@groups[group] = @@info[group]
+        # remove any groups previously loaded that are associated with PMCS
+        for group in ldap.pmcs
+          @@list.delete group
         end
+      end
 
-        for name in @@groups
-          group = @@groups[name]
-          group.link = "group/#{name}"
+      if sources.info
+        pmcs = Roster::PMCS
+        info = sources.info
+        for group in info
+          next if pmcs[group] or info[group].memberUid.empty?
+          @@list[group] = Group.new(info[group], 'committee-info.txt')
         end
       end
     end
 
-    def self.groups()
-      return @@groups 
+    def initialize(ldap, source)
+      angular.copy ldap, self
+      self.source = source if source
+      @members = []
+      @@list[self.cn] = self
     end
 
-    def self.count
-      return @@count
+    def members
+      @members.clear()
+
+      self.memberUid.each do |uid|
+        person = Committer.find(uid)
+        @members << person
+      end
+
+      @members
+    end
+
+    def link
+      return "group/#{self.cn}"
     end
   end
 
+  ####################################################################
+  #                           Data Sources                           #
+  ####################################################################
+
   class LDAP
     @@fetching = false
-
-    @@index = {
-      services: {},
-      committers: {},
-      pmcs: {},
-      groups: {},
-      members: []
-    }
 
     def self.fetch_twice(url, &update)
       if_cached = {"Cache-Control" => "only-if-cached"}
@@ -216,55 +219,16 @@ module Angular::AsfRosterServices
       unless @@fetching
         @@fetching = true
         self.fetch_twice 'json/ldap' do |result|
-          # add in links
-          for group in result.groups
-            result.groups[group].link = "group/#{group}"
-          end
+          Committer.load(result)
+          PMC.load(result)
+          Group.load(ldap: result)
 
-          for group in result.services
-            result.services[group].link = "group/#{group}"
-          end
-
-          Committer.load(@@index)
-          PMC.load(@@index)
-
-          # copy to class variables
-          angular.copy result.services, @@index.services
-          angular.copy result.committers, @@index.committers
-          angular.copy result.pmcs, @@index.pmcs
-          angular.copy result.groups, @@index.groups
-          angular.copy result.groups.member.memberUid, @@index.members
-
-          # merge with other sources
-          Merge.ldap(@@index)
+          # extract members
+          angular.copy result.groups.member.memberUid, Roster::MEMBERS
         end
       end
 
       return @@index
-    end
-
-    def self.committers
-      return self.get().committers
-    end
-
-    def self.members
-      return self.get().members
-    end
-
-    def self.services
-      return self.get().services
-    end
-
-    def self.pmcs
-      return self.get().pmcs
-    end
-
-    def self.groups
-      return self.get().groups
-    end
-
-    def self.group(name)
-      return self.get().groups[name]
     end
   end
 
@@ -280,7 +244,7 @@ module Angular::AsfRosterServices
           end
 
           angular.copy result, @@info
-          Merge.info(@@info)
+          Group.load(info: @@info)
         end
       end
 
