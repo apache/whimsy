@@ -48,6 +48,25 @@ module Angular::AsfRosterServices
       result
     end
 
+    def committer_on
+      result = []
+      for name in Roster::PMCS
+        pmc = Roster::PMCS[name]
+        next if not pmc.group or pmc.memberUid.include? self.uid 
+        result << pmc if pmc.group.memberUid.include? self.uid 
+      end
+      result
+    end
+
+    def groups
+      result = []
+      for name in Roster::GROUPS
+        group = Roster::GROUPS[name]
+        result << group if group.memberUid.include? self.uid 
+      end
+      result
+    end
+
     def chairs
       result = []
       for name in Roster::PMCS
@@ -66,8 +85,8 @@ module Angular::AsfRosterServices
     def self.load(ldap)
       for pmc in ldap.pmcs
         @@list[pmc] = PMC.new(ldap.pmcs[pmc])
+        @@list[pmc].group = ldap.groups[pmc]
       end
-      @@groups = ldap.groups
     end
 
     def initialize(ldap)
@@ -116,11 +135,10 @@ module Angular::AsfRosterServices
       self.members if @members.empty?
       members = @members
       @committers.clear()
-      group = @@groups[self.cn]
 
       # add members from LDAP group of the same name
-      if group
-        group.memberUid.each do |uid|
+      if self.group
+        self.group.memberUid.each do |uid|
           person = Committer.find(uid)
           @committers << person if person and not members.include? person
         end

@@ -25,6 +25,28 @@ _table.wide do
     end
   end
 
+  _tr ng_if: 'committer.committer_on.length > 0' do
+    _td 'Committer'
+    _td do
+      _ul do
+        _li ng_repeat: 'pmc in committer.committer_on' do
+          _a '{{pmc.cn}}', href: '{{pmc.link}}'
+        end
+      end
+    end
+  end
+
+  _tr ng_if: 'committer.groups.length > 0' do
+    _td 'Groups'
+    _td do
+      _ul do
+        _li ng_repeat: 'group in committer.groups' do
+          _a '{{group.cn}}', href: '{{group.link}}'
+        end
+      end
+    end
+  end
+
   _tr ng_if: 'my_groups.length > 0' do
     _td 'Groups'
     _td do
