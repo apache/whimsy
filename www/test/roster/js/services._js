@@ -36,7 +36,7 @@ module Angular::AsfRosterServices
     end
 
     def link
-      return "committer/#{self.cn}"
+      "committer/#{self.cn}"
     end
 
     def pmcs
@@ -98,16 +98,16 @@ module Angular::AsfRosterServices
 
     def display_name
       info = INFO.get(self.cn)
-      return info ? info.display_name : self.cn
+      info ? info.display_name : self.cn
     end
 
     def link
-      return "committee/#{self.cn}"
+      "committee/#{self.cn}"
     end
 
     def chair
       info = INFO.get(self.cn)
-      return Committer.find(info.chair) if info
+      Committer.find(info.chair) if info
     end
 
     def members
@@ -167,8 +167,9 @@ module Angular::AsfRosterServices
         # add in the LDAP services
         for group in ldap.services
           next if %w(apldap infrastructure-root).include? group
-          if group == 'infrastructure'
-            # TODO
+          if group == 'infrastructure' and @@list[group]
+            @@list[group].group =
+              Group.new(ldap.services[group], 'LDAP service')
           else
             @@list[group] = Group.new(ldap.services[group], 'LDAP service')
           end
@@ -193,8 +194,8 @@ module Angular::AsfRosterServices
     def initialize(ldap, source)
       angular.copy ldap, self
       self.source = source if source
+      self.display_name ||= self.cn
       @members = []
-      @@list[self.cn] = self
     end
 
     def members
@@ -209,7 +210,7 @@ module Angular::AsfRosterServices
     end
 
     def link
-      return "group/#{self.cn}"
+      "group/#{self.cn}"
     end
   end
 

@@ -20,6 +20,8 @@ _table.wide do
       _ul do
         _li ng_repeat: 'pmc in committer.pmcs' do
           _a '{{pmc.cn}}', href: '{{pmc.link}}'
+          _span 'chair', class: 'chair', 
+            ng_if: 'committer.chairs.indexOf(pmc) >= 0'
         end
       end
     end

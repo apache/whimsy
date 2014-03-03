@@ -5,21 +5,22 @@ end
 _h2 'PMC'
 
 _table do
-  _tr ng_repeat: 'person in pmc.members | orderBy:"person.uid"' do
+  _tr ng_repeat: 'person in pmc.members | orderBy:"uid"',
+    ng_controller: 'PMCMember' do
     _td do
       _a href: 'committer/{{ person.uid }}' do
         _span ng_bind: 'person.uid'
       end
     end
     _td ng_bind: 'person.cn', asf_id: '{{ person.uid }}'
-    _td ng_bind: 'status(person)'
+    _td ng_bind: 'status', class: '{{ class }}'
   end
 end
 
-_h2 'Committers'
+_h2 'Committers', ng_if: 'pmc.committers.length > 0'
 
 _table do
-  _tr ng_repeat: 'person in pmc.committers | orderBy:"person.uid"' do
+  _tr ng_repeat: 'person in pmc.committers | orderBy:"uid"' do
     _td do
       _a href: 'committer/{{ person.uid }}' do
         _span ng_bind: 'person.uid'
@@ -28,3 +29,6 @@ _table do
     _td ng_bind: 'person.cn', asf_id: '{{ person.uid }}'
   end
 end
+
+_p 'All Committers are members of the PMC.', style: 'margin-top: 1em',
+  ng_if: 'pmc.committers.length == 0'

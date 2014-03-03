@@ -1,10 +1,11 @@
 _h1 'PMCs'
 _table do
-  _tr ng_repeat: 'pmc in pmcs' do
+  _tr ng_repeat: 'pmc in pmcs', ng_controller: 'PMCLine' do
     _td do
       _a '{{pmc.cn}}', href: '{{pmc.link}}'
     end
     _td ng_bind: 'pmc.chair.cn', asf_id: '{{ pmc.chair.uid }}'
+    _td '{{ status }}', class: '{{ class }}'
   end
 end
 

@@ -2,9 +2,8 @@ _h1 'Groups'
 _table do
   _tr ng_repeat: 'group in groups | orderBy:"cn"' do
     _td do
-      _a '{{group.cn}}', href: '{{group.link}}'
+      _a '{{group.cn}}', href: '{{group.link}}', title: '{{group.source}}'
     end
-    _td '{{group.source}}'
   end
 end
 

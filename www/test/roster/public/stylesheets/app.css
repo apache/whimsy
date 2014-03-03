@@ -7,5 +7,7 @@ table {border-spacing: 0 1em}
 table {margin-left: 1em}
 td, th {padding-left: 0.5em; padding-right: 0.5em}
 table.wide {color: #000; border-collapse: separate; font-size: 100%}
+.issue:before, .chair:before {content: '\21d0  '}
 .issue {color: red; font-weight:bold} 
+.chair {color: green; font-weight:bold} 
 .member {font-weight: bold}

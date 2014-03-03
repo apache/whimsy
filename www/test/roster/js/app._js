@@ -58,6 +58,20 @@ module Angular::AsfRoster
   end
 
   controller :PMCs do
+    watch @groups['pmc-chairs'] do |value|
+      @pmc_chairs = value.memberUid if value
+    end
+  end
+
+  controller :PMCLine do
+    @class = 'issue'
+    if not @pmc.chair
+      @status = 'Not in committee-info.txt'
+    elsif not @pmc_chairs.include? @pmc.chair.uid
+      @status = 'Not in pmc-chairs LDAP group'
+    else
+      @class = ''
+    end
   end
 
   controller :Groups do
@@ -73,21 +87,25 @@ module Angular::AsfRoster
     watch @pmcs[@name] do |value|
       @pmc = value || {memberUid: []}
     end
+  end
 
-    def status(committer)
-      if not committer
-        return 'not found'
-      elsif not (@pmc.memberUid.include? committer.uid or @pmc.memberUid.empty?)
-        return 'not in LDAP'
-      elsif not (@info.memberUid.include? committer.uid or @info.memberUid.empty?)
-        return 'not in committee_info.txt'
-#     elsif @committers and not @committers[committer.uid] == committer
-#       return 'not in committer list'
-      elsif committer.uid == @info.chair
-        return 'chair'
-      else
-        return ''
-      end
+  controller :PMCMember do
+    @class = 'issue'
+
+    if not @person
+      @status = 'not found'
+    elsif not (@pmc.memberUid.include? @person.uid or @pmc.memberUid.empty?)
+      @status = 'not in LDAP'
+    elsif not (@info.memberUid.include? @person.uid or @info.memberUid.empty?)
+      @status = 'not in committee_info.txt'
+    elsif @pmc.group and not @pmc.group.memberUid.include? @person.uid
+      @status = 'not in committer list'
+    elsif @person.uid == @info.chair
+      @status = 'chair'
+      @class = 'chair'
+    else
+      @class = ''
+      @status = ''
     end
   end
 
