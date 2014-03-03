@@ -53,6 +53,14 @@ configure do
   @@ldap_etag = nil
 end
 
+get '/json/auth' do
+  _json do
+    auth = {}
+    ASF::Authorization.new.each { |group, list| auth[group] = list }
+    _! auth
+  end
+end
+
 get '/json/info' do
   _json do
     committees = ASF::Committee.load_committee_info

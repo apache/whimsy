@@ -46,6 +46,7 @@ module Angular::AsfRoster
 
   controller :Layout do
     LDAP.get()
+    AUTH.get()
     @groups = Roster::GROUPS
     @committers = Roster::COMMITTERS
     @pmcs = Roster::PMCS

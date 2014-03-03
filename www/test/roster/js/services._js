@@ -189,6 +189,14 @@ module Angular::AsfRosterServices
           @@list[group] = Group.new(info[group], 'committee-info.txt')
         end
       end
+
+      if sources.auth
+        info = sources.auth
+        for group in info
+          value = {cn: group, memberUid: info[group]}
+          @@list[group] ||= Group.new(value, 'auth')
+        end
+      end
     end
 
     def initialize(ldap, source)
@@ -273,5 +281,17 @@ module Angular::AsfRosterServices
         return @@info
       end
     end
+  end
+
+  class AUTH
+    def self.get()
+      unless @@fetching
+        @@fetching = true
+        $http.get('json/auth').success do |result|
+          Group.load auth: result
+        end
+      end
+    end
+    
   end
 end

@@ -1,4 +1,4 @@
-_h1 '{{group.display_name}}'
+_h1 '{{group.display_name}} ({{group.source}})'
 
 _table do
   _tr ng_repeat: 'person in group.members | orderBy:"uid"' do

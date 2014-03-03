@@ -18,7 +18,7 @@ _table.wide do
     _td 'Committees'
     _td do
       _ul do
-        _li ng_repeat: 'pmc in committer.pmcs' do
+        _li ng_repeat: 'pmc in committer.pmcs | orderBy:"cn"' do
           _a '{{pmc.cn}}', href: '{{pmc.link}}'
           _span 'chair', class: 'chair', 
             ng_if: 'committer.chairs.indexOf(pmc) >= 0'
@@ -31,7 +31,7 @@ _table.wide do
     _td 'Committer'
     _td do
       _ul do
-        _li ng_repeat: 'pmc in committer.committer_on' do
+        _li ng_repeat: 'pmc in committer.committer_on | orderBy:"cn"' do
           _a '{{pmc.cn}}', href: '{{pmc.link}}'
         end
       end
@@ -42,8 +42,8 @@ _table.wide do
     _td 'Groups'
     _td do
       _ul do
-        _li ng_repeat: 'group in committer.groups' do
-          _a '{{group.cn}}', href: '{{group.link}}'
+        _li ng_repeat: 'group in committer.groups | orderBy:"cn"' do
+          _a '{{group.cn}}', href: '{{group.link}}', title: '{{group.source}}'
         end
       end
     end
