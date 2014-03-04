@@ -53,6 +53,10 @@ module Angular::AsfRoster
     @members = Roster::MEMBERS
     @info = INFO.get()
     @search = {committer: ''}
+
+    watch document.querySelector('main') do |value|
+      @user = value.attributes['data-availid'].value if value
+    end
   end
 
   controller :Committers do

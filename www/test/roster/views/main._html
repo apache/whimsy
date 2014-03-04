@@ -11,5 +11,5 @@ _html ng_app: 'AsfRoster', ng_controller: 'Layout' do
       src: 'https://id.apache.org/img/asf_logo_wide.png'
   end
 
-  _main :ng_view
+  _main :ng_view, data_availid: env['REMOTE_USER'] || ENV['USER']
 end

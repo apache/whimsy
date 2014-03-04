@@ -79,3 +79,8 @@ _table.wide do
     end
   end
 end
+
+_p ng_if: 'user == committer.uid' do
+  _ 'You can update your information by visiting'
+  _a 'https://id.apache.org/', href: 'https://id.apache.org/'
+end
