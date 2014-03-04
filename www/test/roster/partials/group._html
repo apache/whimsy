@@ -1,4 +1,7 @@
-_h1 '{{group.display_name}} ({{group.source}})'
+_h1 do
+  _ '{{group.display_name}}'
+  _span.note '({{group.source}})', ng_if: 'group.source'
+end
 
 _table do
   _tr ng_repeat: 'person in group.members | orderBy:"uid"' do
