@@ -33,9 +33,14 @@ module ASF
     end
 
     def self.load_committee_info
-      return @committee_info if @committee_info
       board = ASF::SVN['private/committers/board']
-      info = File.read("#{board}/committee-info.txt").split(/^\* /)
+      file = "#{board}/committee-info.txt"
+      if @committee_info and File.mtime(file) == @committee_mtime
+        return @committee_info 
+      end
+      @committee_mtime = File.mtime(file)
+
+      info = File.read(file).split(/^\* /)
       head, report = info.shift.split(/^\d\./)[1..2]
       head.scan(/^\s+(\w.*?)\s\s+.*<(\w+)@apache\.org>/).each do |name, id|
         find(name).chair = ASF::Person.find(id) 

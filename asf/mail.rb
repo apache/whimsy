@@ -30,10 +30,17 @@ module ASF
       @list = list
     end
 
-    def self.lists
+    def self.lists(public_private= false)
       apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
-      @lists ||= File.read(File.join(apmail_bin, '.archives')).
-        scan(/^\s+"(\w[-\w]+)", "\/home\/apmail\/(?:public-arch|private-arch)\//).flatten
+      file = File.join(apmail_bin, '.archives')
+      if not @lists or File.mtime(file) != @list_mtime
+        @list_mtime = File.mtime(file)
+        @lists = Hash[File.read(file).scan(
+          /^\s+"(\w[-\w]+)", "\/home\/apmail\/(public|private)-arch\//
+        )]
+      end
+
+      public_private ? @lists : @lists.keys
     end
   end
 
