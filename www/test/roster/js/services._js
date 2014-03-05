@@ -94,6 +94,7 @@ module Angular::AsfRosterServices
       @members = []
       @committers = []
       @@list[self.cn] = self
+      @maillists = []
     end
 
     def display_name
@@ -145,6 +146,27 @@ module Angular::AsfRosterServices
       end
 
       @committers
+    end
+
+    def maillists(user)
+      if @maillists.empty?
+        prefix = "#{self.cn}-"
+        for list in Mail.lists
+          if list.start_with? prefix
+            if Mail.lists[list] == 'public'
+              @maillists << {name: list, link:
+                "http://mail-archives.apache.org/mod_mbox/#{list}/"}
+            elsif self.memberUid.include? user
+              @maillists << {name: list, link:
+                "https://mail-search.apache.org/pmc/private-arch/#{list}/"}
+            elsif Roster::MEMBERS.include? user
+              @maillists << {name: list, link:
+                "https://mail-search.apache.org/members/private-arch/#{list}/"}
+            end
+          end
+        end
+      end
+      return @maillists
     end
   end
 
@@ -292,6 +314,20 @@ module Angular::AsfRosterServices
         end
       end
     end
-    
+  end
+
+  class Mail
+    @@list = {}
+
+    def self.lists
+      unless @@fetching
+        @@fetching = true
+        $http.get('json/mail').success do |result|
+          angular.copy result, @@list
+        end
+      end
+
+      @@list
+    end
   end
 end

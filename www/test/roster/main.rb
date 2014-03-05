@@ -92,6 +92,12 @@ get '/json/ldap' do
   @@ldap_cache
 end
 
+get '/json/mail' do
+  _json do
+    _! ASF::Mail.lists(true)
+  end
+end
+
 post '/json/:file' do
   _json :"json/#{params[:file]}"
 end
