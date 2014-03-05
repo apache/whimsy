@@ -12,7 +12,7 @@ module Angular::AsfBoardServices
     @@index = []
 
     # (re)-fetch agenda from server
-    def self.refresh
+    def self.refresh()
       @@agenda ||= []
       @@agenda.update ||= 0
       $http.get("../json/#{Data.get('agenda')}").success do |result|
@@ -99,7 +99,7 @@ module Angular::AsfBoardServices
   class Pending
     @@list = {comments: {}, approved: [], seen: {}, update: 0}
 
-    def self.refresh
+    def self.refresh()
       $http.get("../json/pending").success do |result|
         Pending.put result
       end
@@ -108,7 +108,7 @@ module Angular::AsfBoardServices
       return @@list
     end
 
-    def self.get
+    def self.get()
       self.refresh() unless @@fetched
       return @@list
     end

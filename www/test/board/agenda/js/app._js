@@ -42,7 +42,7 @@ module Angular::AsfBoardAgenda
   end
 
   controller :Layout do
-    @toc = Agenda.index()
+    @toc = Agenda.index
     @item = {}
     @next = nil
     @prev = nil
