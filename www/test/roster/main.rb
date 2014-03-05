@@ -65,7 +65,7 @@ get '/json/info' do
   _json do
     committees = ASF::Committee.load_committee_info
     _! Hash[committees.map { |committee| 
-      [committee.name.gsub(/\W/,''), {
+      [committee.name.gsub(/[^-\w]/,''), {
         display_name: committee.display_name,
         report: committee.report,
         chair: committee.chair.id,
