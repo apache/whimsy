@@ -21,6 +21,7 @@ module ASF
       'java community process'      => 'jcp',
       'quetzalcoatl'                => 'quetz',
       'security team'               => 'security',
+      'open climate workbench'      => 'climate',
       'c++ standard library'        => 'stdcxx',
       'travel assistance'           => 'tac',
       'traffic server'              => 'trafficserver',
