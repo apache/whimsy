@@ -54,15 +54,19 @@ module Angular::AsfRoster
     @info = INFO.get()
     @search = {committer: ''}
 
+    $rootScope.title = 'ASF Roster'
+
     watch document.querySelector('main') do |value|
       @user = value.attributes['data-availid'].value if value
     end
   end
 
   controller :Committers do
+    $rootScope.title = 'ASF Committers'
   end
 
   controller :PMCs do
+    $rootScope.title = 'ASF PMCs'
     watch @groups['pmc-chairs'] do |value|
       @pmc_chairs = value.memberUid if value
     end
@@ -80,10 +84,11 @@ module Angular::AsfRoster
   end
 
   controller :Groups do
+    $rootScope.title = 'ASF Groups'
   end
 
   controller :PMC do
-    @name = $routeParams.name
+    @name = $rootScope.title = $routeParams.name
 
     watch INFO.get(@name) do |value|
       @info = value || {memberUid: []}
@@ -115,14 +120,14 @@ module Angular::AsfRoster
   end
 
   controller :Group do
-    @name = $routeParams.name
+    @name = $rootScope.title = $routeParams.name
     watch @groups[@name] do |value|
       @group = value || {memberUid: []}
     end
   end
 
   controller :Committer do
-    @uid = $routeParams.name
+    @uid = $rootScope.title = $routeParams.name
     @my_committer = []
     @my_groups = []
     watch Committer.find(@uid) do |value|
