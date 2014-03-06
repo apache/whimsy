@@ -77,7 +77,7 @@ module Angular::AsfRoster
     if not @pmc.chair
       @status = 'Not in committee-info.txt'
     elsif not @pmc_chairs.include? @pmc.chair.uid
-      @status = 'Not in pmc-chairs LDAP group'
+      @status = 'Not in pmc-chairs LDAP service'
     else
       @class = ''
     end
