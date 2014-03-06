@@ -13,7 +13,10 @@ _table do
       end
     end
     _td ng_bind: 'person.cn', asf_id: '{{ person.uid }}'
-    _td ng_bind: 'status', class: '{{ class }}'
+    _td ng_if: 'status' do
+      _span ng_bind: 'status', class: '{{ class }}'
+      _span.hint '{{hint}}', ng_if: 'hint'
+    end
   end
 end
 

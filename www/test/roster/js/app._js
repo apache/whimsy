@@ -106,10 +106,13 @@ module Angular::AsfRoster
       @status = 'not found'
     elsif not (@pmc.memberUid.include? @person.uid or @pmc.memberUid.empty?)
       @status = 'not in LDAP'
+      @hint = "modify_committee.pl #{@name} --add #{@person.uid}"
     elsif not (@info.memberUid.include? @person.uid or @info.memberUid.empty?)
       @status = 'not in committee_info.txt'
+      @hint = "modify_committee.pl mesos --rm #{@person.uid}"
     elsif @pmc.group and not @pmc.group.memberUid.include? @person.uid
       @status = 'not in committer list'
+      @hint = "modify_unix_group.pl #{@name} --add #{@person.uid}"
     elsif @person.uid == @info.chair
       @status = 'chair'
       @class = 'chair'
@@ -173,6 +176,7 @@ module Angular::AsfRoster
   directive :main do
     restrict :E
     def link(scope, element, attributes)
+      window.scrollTo(0,0)
       element.find('*[autofocus]').focus()
     end
   end

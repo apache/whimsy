@@ -12,3 +12,10 @@ table.wide {color: #000; border-collapse: separate; font-size: 100%}
 .issue {color: red; font-weight:bold} 
 .chair {color: green; font-weight:bold} 
 .member {font-weight: bold}
+
+td .hint {display: none}
+td:hover .hint {
+  position: absolute; display: block; background-color: #FFF;
+  padding: 1em; border: 2px solid #0F0; border-radius: 1em;
+  color: black; font-weight: normal}
+
