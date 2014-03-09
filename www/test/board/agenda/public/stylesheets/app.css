@@ -163,3 +163,12 @@ main hr {
   border-width: 1px;
   border-color: #DDD;
 }
+
+@media screen and (min-width: 768px) {
+  #post-report-form .modal-dialog {
+    width: 80%;
+  }
+  #post-report-form .modal-footer {
+    margin-top: 0  
+  }
+}

@@ -5,8 +5,8 @@ _modal_dialog.post_report_form! ng_controller: 'PostReport' do
     placeholder: 'report', ng_model: 'report', ng_disabled: 'disabled'
 
   _button.btn_default 'Close', type: 'button', data_dismiss: 'modal'
-  _button.btn_default 'Reflow', type: 'button', ng_click: "reflow()",
-    ng_disabled: 'disabled'
+  _button 'Reflow', type: 'button', ng_click: "reflow()",
+    ng_disabled: 'disabled', class: '{{reflow_class}}'
   _button.btn_primary 'Submit', type: 'button', ng_click: "save()",
     ng_disabled: 'disabled'
 end

@@ -305,7 +305,6 @@ module Angular::AsfBoardAgenda
       @disabled = true
       $http.post('../json/post', data).success { |response|
         Agenda.put response
-        $route.reload()
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
         alert data.exception 
@@ -313,6 +312,14 @@ module Angular::AsfBoardAgenda
         ~'#post-report-form'.modal(:hide)
         @disabled = false
       }
+    end
+
+    watch @report do |value|
+      if value and value.split("\n").any? {|line| line.length > 80}
+        @reflow_class = 'btn-danger'
+      else
+        @reflow_class = 'btn-default'
+      end
     end
   end
 
@@ -385,7 +392,9 @@ module Angular::AsfBoardAgenda
 
           unless item.comments === undefined
             @buttons << 'comment-button'
-            @forms << '../partials/comment.html'
+            unless @forms.include? '../partials/comment.html'
+              @forms << '../partials/comment.html'
+            end
           end
 
           if item.report or item.text
