@@ -293,6 +293,14 @@ module Angular::AsfBoardAgenda
   end
 
   controller :PostReport do
+    @report = @item.report
+
+    if @post_button_text == 'edit report'
+      @message = "Edit #{@item.title} Report"
+    else
+      @message = "Post #{@item.title} Report"
+    end
+
     reflow_filter = filter(:reflow)
     def reflow
       @report = reflow_filter(@report)
@@ -300,7 +308,7 @@ module Angular::AsfBoardAgenda
 
     def save
       data = {attach: @item.attach, report: @report, agenda: Data.get('agenda'),
-        message: "Post #{@item.title} Report"}
+        message: @message}
  
       @disabled = true
       $http.post('../json/post', data).success { |response|
@@ -378,6 +386,8 @@ module Angular::AsfBoardAgenda
       $scope.layout item: {title: 'not found'}
       @agenda.each do |item|
         if item.href == section
+          @buttons.clear()
+          @forms.clear()
 
           if $routeParams.section
             $scope.layout item: item
@@ -392,20 +402,25 @@ module Angular::AsfBoardAgenda
 
           unless item.comments === undefined
             @buttons << 'comment-button'
-            unless @forms.include? '../partials/comment.html'
-              @forms << '../partials/comment.html'
+            @forms << '../partials/comment.html'
+          end
+
+          if item.attach =~ /^(\d|[A-Z]+)$/
+            if item.missing
+              $rootScope.post_button_text = 'post report'
+              @post_form_title = 'Post report'
+            else
+              $rootScope.post_button_text = 'edit report'
+              @post_form_title = 'Edit report'
             end
+            @buttons << 'post-button'
+            @forms << '../partials/post.html'
           end
 
           if item.report or item.text
             if item.approved and @initials and !item.approved.include? @initials
               @buttons << 'approve-button'
             end
-          end
-
-          if item.missing
-            @buttons << 'post-button'
-            @forms << '../partials/post.html'
           end
         end
       end

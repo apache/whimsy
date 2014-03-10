@@ -1,8 +1,11 @@
 _modal_dialog.post_report_form! ng_controller: 'PostReport' do
-  _h4.commented 'Post a report'
+  _h4.commented '{{post_form_title}}'
 
   _textarea.report_text! :autofocus, rows: 17, label: 'Report', 
     placeholder: 'report', ng_model: 'report', ng_disabled: 'disabled'
+
+  _input.message label: 'Commit message', ng_model: 'message',
+    ng_disabled: 'disabled'
 
   _button.btn_default 'Close', type: 'button', data_dismiss: 'modal'
   _button 'Reflow', type: 'button', ng_click: "reflow()",

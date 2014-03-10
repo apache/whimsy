@@ -13,16 +13,12 @@ File.open(agenda_file, 'r') do |file|
   agenda = File.read(agenda_file)
 
   if @attach =~ /^4\w/
-    done = agenda.sub!(/(\n\n    #{@attach[-1]}\..*?\[.*?\])(\s*)/) do
-      "#{$1}\n\n#{@report}#{$2}"
-    end
+    pattern = /(\n\n    #{@attach[-1]}\..*?\[.*?\])(\s*).*?(\n-{40})/m
   else
-    done = agenda.sub!(/(---\nAttachment #{@attach}:.*?\[.*?\])(\s*)/) do
-      "#{$1}\n\n#{@report}#{$2}"
-    end
+    pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])(\s*).*?(\n-{40})/m
   end
 
-  if not done
+  if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}#{$2}#{$3}" }
     raise Exception.new('report merge failed')
   end
 
