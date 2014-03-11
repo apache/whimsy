@@ -11,5 +11,5 @@ _modal_dialog.post_report_form! ng_controller: 'PostReport' do
   _button 'Reflow', type: 'button', ng_click: "reflow()",
     ng_disabled: 'disabled', class: '{{reflow_class}}'
   _button.btn_primary 'Submit', type: 'button', ng_click: "save()",
-    ng_disabled: 'disabled'
+    ng_disabled: 'disabled || (report == baseline)'
 end

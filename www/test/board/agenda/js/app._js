@@ -293,7 +293,7 @@ module Angular::AsfBoardAgenda
   end
 
   controller :PostReport do
-    @report = @item.report
+    @baseline = @report = @item.report
 
     if @post_button_text == 'edit report'
       @message = "Edit #{@item.title} Report"
