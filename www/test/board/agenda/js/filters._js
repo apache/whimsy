@@ -93,10 +93,8 @@ module Angular::AsfBoardFilters
           "#{pre}<a#{annotate} href='#{committer}/#{id}'>#{id}</a>#{post}"
         end
 
-        if item.title == 'Roll Call'
-          text.gsub! /#{escapeRegExp(person.name)}/, 
-            "<a href='#{roster}#{id}'>#{person.name}</a>"
-        end
+        text.sub! /#{escapeRegExp(person.name)}/, 
+          "<a href='#{roster}#{id}'>#{person.name}</a>"
 
         if person.member
           text.gsub! /#{escapeRegExp(person.name)}/, "<b>#{person.name}</b>"
