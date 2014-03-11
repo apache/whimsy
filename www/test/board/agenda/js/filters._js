@@ -77,6 +77,8 @@ module Angular::AsfBoardFilters
       "#{pre}<a href='#{link}'>#{link}</a>"
     end
 
+    roster = 'https://whimsy.apache.org/test/roster/committer/'
+
     # replace ids with committer links
     if item.people
       for id in item.people
@@ -89,6 +91,11 @@ module Angular::AsfBoardFilters
             annotate=' class="missing"'
           end
           "#{pre}<a#{annotate} href='#{committer}/#{id}'>#{id}</a>#{post}"
+        end
+
+        if item.title == 'Roll Call'
+          text.gsub! /#{escapeRegExp(person.name)}/, 
+            "<a href='#{roster}#{id}'>#{person.name}</a>"
         end
 
         if person.member
@@ -104,6 +111,13 @@ module Angular::AsfBoardFilters
               "<span class='commented'>#{person.name}</span>"
           end
 
+        end
+      end
+
+      console.log item.title
+      if item.title == 'Roll Call'
+        text.gsub! /(\n\s{4})([A-Z].*)/ do |match, space, name|
+          "#{space}<a class='commented' href='#{roster}?q=#{name}'>#{name}</a>"
         end
       end
     end
