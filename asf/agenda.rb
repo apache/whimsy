@@ -74,12 +74,13 @@ class ASF::Board::Agenda
     whimsy = 'https://whimsy.apache.org'
     @sections.each do |section, hash|
       next unless section =~ /^(4[A-Z]|\d+|[A-Z][A-Z]?)$/
-      title = hash['title']
-      title = 'stdcxx' if title == 'C++ Standard Library'
+      committee = ASF::Committee.find(hash['title'])
       unless section =~ /^4[A-Z]$/
-        hash['roster'] = "#{whimsy}/roster/committee/#{CGI.escape title}"
+        hash['roster'] = 
+          "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
       end
-      hash['prior_reports'] = "#{whimsy}/board/minutes/#{title.gsub(/\W/,'_')}"
+      hash['prior_reports'] =
+        "#{whimsy}/board/minutes/#{committee.display_name.gsub(/\W/,'_')}"
     end
 
     # add attach to section
