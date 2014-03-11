@@ -26,7 +26,7 @@ get '/' do
 end
 
 get %r{/(committer/.*)} do |path|
-  @base = env['REQUEST_URI'].chomp(path)
+  @base = URI.parse(env['REQUEST_URI']).path.chomp(path)
   _html :'views/main'
 end
 

@@ -62,6 +62,7 @@ module Angular::AsfRoster
   end
 
   controller :Committers do
+    @search.committer = $location.search().q
     $rootScope.title = 'ASF Committers'
   end
 
