@@ -29,9 +29,9 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
           _dl.dropdown_menu.dl_horizontal do
             _dt 'Attach'
             _dd '{{ item.attach }}'
-            _dt 'Author'
+            _dt 'Author', ng_if: 'item.owner'
             _dd '{{ item.owner }}'
-            _dt 'Shepherd'
+            _dt 'Shepherd', ng_if: 'item.shepherd'
             _dd '{{ item.shepherd }}'
             _dt 'Approved', ng_show: 'item.approved'
             _dd '{{ item.approved && item.approved.join(", ") }}', 
