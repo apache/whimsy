@@ -12,7 +12,7 @@ File.open(agenda_file, 'r') do |file|
 
   agenda = File.read(agenda_file)
 
-  if @attach = '7?'
+  if @attach == '7?'
     # new special order
 
     # adjust indentation
@@ -24,20 +24,20 @@ File.open(agenda_file, 'r') do |file|
     order = 'A'
     ASF::Board::Agenda.parse(agenda).map {|section| section[:attach]}.
       select {|attach| attach =~ /^7\w/}.length.times {order.succ!}
-    @title = "    #{order}. #{@title}\n\n"
+    title = "    #{order}. #{@title}\n\n"
 
     # insert into agenda
-    agenda[/\n() 8\. Discussion Items/, 1] = "#{@title}#{@report.chomp}\n\n"
+    agenda[/\n() 8\. Discussion Items/, 1] = "#{title}#{@report.chomp}\n\n"
 
     @message = "Post Special Order 7#{order}: #{@title}"
   else
     if @attach =~ /^4\w/
-      pattern = /(\n\n    #{@attach[-1]}\..*?\[.*?\])(\s*).*?(\n-{40})/m
+      pattern = /(\n\n    #{@attach[-1]}\..*?\[.*?\])\n.*?(\s*\n-{40})/m
     else
-      pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])(\s*).*?(\n-{40})/m
+      pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])\n.*?(\s*\n-{40})/m
     end
 
-    if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}#{$2}#{$3}" }
+    if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}\n#{$2}" }
       raise Exception.new('report merge failed')
     end
   end
