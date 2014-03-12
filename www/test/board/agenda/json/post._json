@@ -12,14 +12,34 @@ File.open(agenda_file, 'r') do |file|
 
   agenda = File.read(agenda_file)
 
-  if @attach =~ /^4\w/
-    pattern = /(\n\n    #{@attach[-1]}\..*?\[.*?\])(\s*).*?(\n-{40})/m
-  else
-    pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])(\s*).*?(\n-{40})/m
-  end
+  if @attach = '7?'
+    # new special order
 
-  if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}#{$2}#{$3}" }
-    raise Exception.new('report merge failed')
+    # adjust indentation
+    indent = @report.scan(/^ +/).min
+    @report.gsub!(/^#{indent}/, '') if indent
+    @report.gsub!(/^(\S)/, '       \1')
+
+    # add order letter to title
+    order = 'A'
+    ASF::Board::Agenda.parse(agenda).map {|section| section[:attach]}.
+      select {|attach| attach =~ /^7\w/}.length.times {order.succ!}
+    @title = "    #{order}. #{@title}\n\n"
+
+    # insert into agenda
+    agenda[/\n() 8\. Discussion Items/, 1] = "#{@title}#{@report.chomp}\n\n"
+
+    @message = "Post Special Order 7#{order}: #{@title}"
+  else
+    if @attach =~ /^4\w/
+      pattern = /(\n\n    #{@attach[-1]}\..*?\[.*?\])(\s*).*?(\n-{40})/m
+    else
+      pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])(\s*).*?(\n-{40})/m
+    end
+
+    if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}#{$2}#{$3}" }
+      raise Exception.new('report merge failed')
+    end
   end
 
   File.open(agenda_file, 'w') {|file| file.write(agenda)}
@@ -31,12 +51,14 @@ File.open(agenda_file, 'r') do |file|
     commit += ['--username', env.user, '--password', env.password]
   end
 
+if false
   require 'shellwords'
   output = `#{Shellwords.join(commit).untaint} 2>&1`
   if $?.exitstatus != 0
     _.error (output.empty? ? 'svn commit failed' : output)
     raise Exception.new('svn commit failed')
   end
+end
 
   _! ASF::Board::Agenda.parse(File.read(agenda_file))
 end

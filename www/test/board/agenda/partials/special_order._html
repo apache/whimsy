@@ -1,0 +1,13 @@
+_modal_dialog.special_order_form! ng_controller: 'SpecialOrder' do
+  _h4.commented 'Add Special Order'
+
+  _input.message label: 'title', ng_model: 'title',
+    ng_disabled: 'disabled'
+
+  _textarea.report_text! :autofocus, rows: 17, label: 'resolution', 
+    placeholder: 'resolution', ng_model: 'report', ng_disabled: 'disabled'
+
+  _button.btn_default 'Close', type: 'button', data_dismiss: 'modal'
+  _button.btn_primary 'Submit', type: 'button', ng_click: "save()",
+    ng_disabled: 'disabled || (title == "") || (report == "")'
+end

@@ -29,3 +29,9 @@ _ng_template.refresh_button! do
     ng_click: 'click()', ng_disabled: 'disabled'
 end
 
+_ng_template.special_order_button! do
+  _button.btn.btn_primary 'post special order', ng_controller: 'SpecialOrder',
+    data_target: '#special-order-form', data_toggle: 'modal'
+end
+
+_ng_include src: '"../partials/special_order.html"'

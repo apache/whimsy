@@ -100,6 +100,8 @@ module Angular::AsfBoardAgenda
     $scope.layout title: title, next: agendas[index+1] || help, 
       prev: agendas[index-1] || help
     @buttons << 'refresh-button'
+
+    @buttons << 'special-order-button'
   end
 
   # controller for the help page
@@ -328,6 +330,27 @@ module Angular::AsfBoardAgenda
       else
         @reflow_class = 'btn-default'
       end
+    end
+  end
+
+  controller :SpecialOrder do
+    @title = ''
+
+    def save
+      data = {attach: '7?', title: @title, report: @report, 
+        agenda: Data.get('agenda')}
+ 
+      @disabled = true
+      $http.post('../json/post', data).success { |response|
+        Agenda.put response
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception 
+      }.finally {
+        ~'#special-order-form'.modal(:hide)
+        @disabled = false
+        @title = @report = ''
+      }
     end
   end
 
