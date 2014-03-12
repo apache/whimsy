@@ -51,14 +51,12 @@ File.open(agenda_file, 'r') do |file|
     commit += ['--username', env.user, '--password', env.password]
   end
 
-if false
   require 'shellwords'
   output = `#{Shellwords.join(commit).untaint} 2>&1`
   if $?.exitstatus != 0
     _.error (output.empty? ? 'svn commit failed' : output)
     raise Exception.new('svn commit failed')
   end
-end
 
   _! ASF::Board::Agenda.parse(File.read(agenda_file))
 end
