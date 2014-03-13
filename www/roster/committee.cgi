@@ -4,6 +4,7 @@ require 'wunderbar'
 require '/var/tools/asf'
 
 # mapping of committee names to canonical names (generally from ldap)
+# See also asf/committee.rb
 canonical = Hash.new {|hash, name| name}
 canonical.merge! \
   'community development'       => 'comdev',
@@ -15,6 +16,7 @@ canonical.merge! \
   'lucene.net'                  => 'lucenenet',
   'quetzalcoatl'                => 'quetz',
   'security team'               => 'security',
+  'open climate workbench'      => 'climate',
   'c++ standard library'        => 'stdcxx',
   'travel assistance'           => 'tac',
   'traffic server'              => 'trafficserver',

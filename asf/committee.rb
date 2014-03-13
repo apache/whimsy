@@ -11,6 +11,8 @@ module ASF
       super
     end
 
+    # mapping of committee names to canonical names (generally from ldap)
+    # See also www/roster/committee.cgi
     @@aliases = Hash.new {|hash, name| name}
     @@aliases.merge! \
       'community development'       => 'comdev',
@@ -19,6 +21,7 @@ module ASF
       'http server'                 => 'httpd',
       'httpserver'                  => 'httpd',
       'java community process'      => 'jcp',
+      'lucene.net'                  => 'lucenenet',
       'quetzalcoatl'                => 'quetz',
       'security team'               => 'security',
       'open climate workbench'      => 'climate',
