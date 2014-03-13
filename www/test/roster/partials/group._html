@@ -4,6 +4,11 @@ _h1 do
 end
 
 _table do
+  _tr ng_if: '!group.display_name' do
+    _th 'loading...', ng_if: 'members.length == 0'
+    _th.not_found 'Not Found', ng_if: 'members.length > 0'
+  end
+
   _tr ng_repeat: 'person in group.members | orderBy:"uid"' do
     _td do
       _a href: 'committer/{{ person.uid }}' do

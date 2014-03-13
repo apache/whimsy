@@ -1,6 +1,11 @@
 _h2 '{{ uid }}@apache.org'
 
-_table.wide do
+_h3 ng_if: '!committer' do
+  _span 'loading...', ng_if: 'members.length == 0'
+  _span.not_found 'Not Found', ng_if: 'members.length > 0'
+end
+
+_table.wide ng_if: 'committer' do
   _tr do
     _td 'Name'
     _td ng_bind: 'committer.cn', asf_id: '{{ committer.uid }}'

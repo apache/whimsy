@@ -59,6 +59,10 @@ module Angular::AsfRoster
     watch document.querySelector('main') do |value|
       @user = value.attributes['data-availid'].value if value
     end
+
+    def is_empty(hash)
+      return Object.keys(hash).length == 0
+    end
   end
 
   controller :Committers do

@@ -1,5 +1,9 @@
 _h1 'Groups'
 _table do
+  _tr ng_if: 'is_empty(groups)' do
+    _th 'loading...'
+  end
+
   _tr ng_repeat: 'group in groups | orderBy:"cn"' do
     _td do
       _a '{{group.cn}}', href: '{{group.link}}', title: '{{group.source}}'

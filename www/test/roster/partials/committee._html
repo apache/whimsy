@@ -5,7 +5,12 @@ end
 _h2 'PMC'
 
 _table do
-  _tr ng_repeat: 'person in pmc.members | orderBy:"uid"',
+  _tr ng_if: '!pmc.cn' do
+    _th 'loading...', ng_if: 'members.length == 0'
+    _th.not_found 'Not Found', ng_if: 'members.length > 0'
+  end
+
+  _tr ng_repeat: 'person in filtered = (pmc.members | orderBy:"uid")',
     ng_controller: 'PMCMember' do
     _td do
       _a href: 'committer/{{ person.uid }}' do
@@ -18,6 +23,7 @@ _table do
       _span.hint '{{hint}}', ng_if: 'hint'
     end
   end
+
 end
 
 _h2 'Committers', ng_if: 'pmc.committers.length > 0'
