@@ -60,7 +60,11 @@ module Angular::AsfBoardFilters
     if text and text != ''
       text.gsub!(escape_html) {|c| escape_replacement[c]}
     elsif item.text === undefined
-      text = '<em>Missing</em>'
+      if Agenda.get().length == 0
+        text = '<em>Loading...</em>'
+      else
+        text = '<em>Missing</em>'
+      end
     else
       text = '<em>Empty</em>'
     end

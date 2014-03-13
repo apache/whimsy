@@ -24,6 +24,8 @@ _table_.table_bordered ng_controller: 'Index' do
   end
 end
 
+_h4 'Loading...', ng_if: 'agenda.length == 0'
+
 _ng_template.refresh_button! do
   _button.btn.btn_primary 'refresh', ng_controller: 'Refresh',
     ng_click: 'click()', ng_disabled: 'disabled'
