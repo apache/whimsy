@@ -26,7 +26,10 @@ _table do
 
 end
 
-_h2 'Committers', ng_if: 'pmc.committers.length > 0'
+_h2 ng_if: 'pmc.committers.length > 0' do
+  _ 'Committers'
+  _span.note '(not on the PMC)'
+end
 
 _table do
   _tr ng_repeat: 'person in pmc.committers | orderBy:"uid"' do
@@ -44,7 +47,7 @@ _p 'All Committers are members of the PMC.', style: 'margin-top: 1em',
 
 _h2 'Mailing lists', ng_if: 'pmc.maillists(user).length'
 
-_ul style: 'list-style-type: none; padding: 1.5em' do
+_ul style: 'list-style-type: none; padding-left: 1.5em; margin-top: 0.5em' do
   _li ng_repeat: 'list in pmc.maillists(user) | orderBy:"name"' do
     _a '{{list.name}}', href: '{{list.link}}'
   end

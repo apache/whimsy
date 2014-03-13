@@ -1,11 +1,11 @@
-h1 .note {font-size: small}
+h1 .note, h2 .note {font-size: small}
 h2 {margin-bottom: 0}
 table ul {margin: 0; padding: 0; list-style: none}
 table {border-spacing: 0 1em}
 .wide td:first-child {text-align: right; padding: 0}
 .wide td:first-child:after {content: ' —'}
 .wide td:last-child {border-left: solid 1px #000; padding: 0 0.5em}
-table {margin-left: 1em}
+table {margin-left: 1em; margin-top: 0.5em}
 td, th {padding-left: 0.5em; padding-right: 0.5em}
 table.wide {color: #000; border-collapse: separate; font-size: 100%}
 .issue:before, .chair:before {content: '\21d0  '}
