@@ -39,6 +39,10 @@ module Angular::AsfRosterServices
       "committer/#{self.cn}"
     end
 
+    def emails
+      self['asf-altEmail'].concat(self.mail).uniq()
+    end
+
     def pmcs
       result = []
       for name in Roster::PMCS

@@ -78,8 +78,8 @@ _table.wide ng_if: 'committer' do
     _td 'Email addresses'
     _td do
       _ul do
-        _li '{{ mail }}', ng_repeat: 'mail in committer.mail'
-        _li '{{ mail }}', ng_repeat: 'mail in committer["asf-altEmail"]'
+        _li '{{ mail }}', 
+          ng_repeat: 'mail in committer.emails | orderBy:"toString()"'
       end
     end
   end
