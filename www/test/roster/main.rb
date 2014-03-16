@@ -99,6 +99,18 @@ get '/json/mail' do
   end
 end
 
+get '/json/members' do
+  user = env['REMOTE_USER'] ||= ENV['USER'] || Etc.getpwuid.name
+  if ASF::Person.find(user).asf_member?
+    _json do
+      _! ASF::Member.list
+    end
+  else
+    headers['WWW-Authenticate'] = 'Basic realm="ASF Member"'
+    halt 401, "Not authorized\n"
+  end
+end
+
 post '/json/:file' do
   _json :"json/#{params[:file]}"
 end

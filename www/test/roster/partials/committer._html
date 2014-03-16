@@ -83,6 +83,15 @@ _table.wide ng_if: 'committer' do
       end
     end
   end
+
+  _tr ng_if: 'members.indexOf(user) != -1 && committer.members_text' do
+    _td 'Members.txt'
+    _td do
+      _h4 '{{ committer.members_text.status }}',
+        ng_if: 'committer.members_text.status'
+      _pre '{{ committer.members_text.text }}'
+    end
+  end
 end
 
 _p ng_if: 'user == committer.uid' do

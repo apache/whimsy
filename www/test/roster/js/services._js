@@ -40,7 +40,7 @@ module Angular::AsfRosterServices
     end
 
     def emails
-      self['asf-altEmail'].concat(self.mail).uniq()
+      (self['asf-altEmail'] || []).concat(self.mail).uniq()
     end
 
     def pmcs
@@ -78,6 +78,10 @@ module Angular::AsfRosterServices
         result << pmc if pmc.chair == self 
       end
       result
+    end
+
+    def members_text
+      Member.find(self.uid)
     end
   end
 
@@ -289,8 +293,8 @@ module Angular::AsfRosterServices
     @@info = {}
 
     def self.get(name)
-      unless @@fetching
-        @@fetching = true
+      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+        @@fetched = Date.new().getTime()
         $http.get('json/info').success do |result|
           for pmc in result
             result[pmc].cn = pmc
@@ -311,8 +315,8 @@ module Angular::AsfRosterServices
 
   class AUTH
     def self.get()
-      unless @@fetching
-        @@fetching = true
+      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+        @@fetched = Date.new().getTime()
         $http.get('json/auth').success do |result|
           Group.load auth: result
         end
@@ -324,14 +328,33 @@ module Angular::AsfRosterServices
     @@list = {}
 
     def self.lists
-      unless @@fetching
-        @@fetching = true
+      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+        @@fetched = Date.new().getTime()
         $http.get('json/mail').success do |result|
           angular.copy result, @@list
         end
       end
 
       @@list
+    end
+  end
+
+  class Member
+    @@list = {}
+
+    def self.lists
+      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+        @@fetched = Date.new().getTime()
+        $http.get('json/members').success do |result|
+          angular.copy result, @@list
+        end
+      end
+
+      @@list
+    end
+
+    def self.find(uid)
+      return self.lists[uid]
     end
   end
 end
