@@ -40,7 +40,7 @@ module Angular::AsfRoster
 
   controller :Index do
     def size(hash)
-      return hash.keys().length || ''
+      return hash.keys().length || 'loading...'
     end
   end
 
