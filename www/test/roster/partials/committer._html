@@ -86,6 +86,6 @@ _table.wide ng_if: 'committer' do
 end
 
 _p ng_if: 'user == committer.uid' do
-  _ 'You can update your information by visiting'
+  _ 'You can update your keys and e-mail information by visiting'
   _a 'https://id.apache.org/', href: 'https://id.apache.org/'
 end
