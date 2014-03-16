@@ -79,7 +79,8 @@ module Angular::AsfRoster
 
   controller :PMCLine do
     @class = 'issue'
-    if not @pmc.chair
+    @status = ''
+    if not @pmc.chair and INFO.get().keys().length > 0
       @status = 'Not in committee-info.txt'
     elsif not @pmc_chairs.include? @pmc.chair.uid
       @status = 'Not in pmc-chairs LDAP service'
