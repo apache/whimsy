@@ -1,6 +1,7 @@
 module ASF
   class Member
     include Enumerable
+    attr_accessor :full
 
     def self.find_text_by_id(value)
       new.each do |id, text|
@@ -11,6 +12,14 @@ module ASF
 
     def self.each(&block)
       new.each(&block)
+    end
+
+    def self.list
+      result = Hash[self.new(true).map {|name, text| [name, {text: text}]}]
+      self.status.each do |name, value|
+        result[name]['status'] = value
+      end
+      result
     end
 
     def self.find_by_email(value)
@@ -36,12 +45,15 @@ module ASF
       @status = status
     end
 
+    def initialize(full = nil)
+      @full = (full.nil? ? ASF::Person.new($USER).asf_member? : full)
+    end
+
     def each
-      full = ASF::Person.new($USER).asf_member?
       foundation = ASF::SVN['private/foundation']
       File.read("#{foundation}/members.txt").split(/^ \*\) /).each do |section|
         id = section[/Avail ID: (.*)/,1]
-        section = '' unless full
+        section = '' unless @full
         yield id, section.sub(/\n.*\n===+\s*?\n(.*\n)+.*/,'').strip if id
       end
       nil
