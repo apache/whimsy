@@ -46,8 +46,6 @@ module Angular::AsfBoardFilters
     Regexp.new('^([ \t]*)(&lt;private&gt;(?:\n|.)*?&lt;/private&gt;)(\s*)$',
     'mig')
 
-  committer = 'https://whimsy.apache.org/roster/committer'
-
   jira_issue =
     Regexp.new(/(^|\s|\()([A-Z][A-Z0-9]+)-([1-9][0-9]*)([.,;]?($|\s|\)))/,
     'g')
@@ -94,7 +92,7 @@ module Angular::AsfBoardFilters
           else
             annotate=' class="missing"'
           end
-          "#{pre}<a#{annotate} href='#{committer}/#{id}'>#{id}</a>#{post}"
+          "#{pre}<a#{annotate} href='#{roster}#{id}'>#{id}</a>#{post}"
         end
 
         text.sub! /#{escapeRegExp(person.name)}/, 

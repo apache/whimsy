@@ -29,6 +29,9 @@ module Angular::AsfBoardServices
         prev.next = item if prev
         item.prev = prev
         prev = item
+
+        # link to test version of roster
+        item.roster.sub! 'org/roster', 'org/test/roster' if item.roster
       end
 
       # remove president attachments from the normal flow
