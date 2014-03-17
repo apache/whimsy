@@ -32,6 +32,11 @@ _div.col_xs_12 do
 
 end
 
+_ng_template.refresh_button! do
+  _button.btn.btn_primary 'refresh', ng_controller: 'Refresh',
+    ng_click: 'click()', ng_disabled: 'disabled'
+end
+
 _ng_template.commit_button! do
   _button.btn.btn_primary 'commit', 
     data_target: '#commit-form', data_toggle: 'modal'

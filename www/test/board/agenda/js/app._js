@@ -119,6 +119,8 @@ module Angular::AsfBoardAgenda
       prev: ({title: 'Shepherd', href: "shepherd/#{firstname}"} if firstname),
       next: {title: 'Comments', href: 'comments'}
 
+    @buttons << 'refresh-button'
+
     @q_approvals = []
     @q_ready = []
     @q_comments = []
