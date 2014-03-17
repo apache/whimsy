@@ -32,7 +32,7 @@ get %r{/(committer/.*)} do |path|
 end
 
 get %r{/(committee/.*)} do |path|
-  @base = env['REQUEST_URI'].chomp(path)
+  @base = URI.parse(env['REQUEST_URI']).path.chomp(path)
   _html :'views/main'
 end
 
@@ -82,14 +82,13 @@ get '/json/ldap' do
 
   cache_control = env['HTTP_CACHE_CONTROL'].to_s.downcase.split(/,\s+/)
   if cache_control.include? 'only-if-cached'
-    etag @@ldap_etag if @@ldap_etag
-    throw :halt, 504 unless @ldap_cache
+    throw :halt, 504 unless @@ldap_cache
   else
     @@ldap_cache = JSON.dump(ASF::RosterLDAP.get)
     @@ldap_etag = Digest::MD5.hexdigest(@@ldap_cache)
-    etag @@ldap_etag
   end
 
+  etag @@ldap_etag if @@ldap_etag
   @@ldap_cache
 end
 
@@ -106,8 +105,7 @@ get '/json/members' do
       _! ASF::Member.list
     end
   else
-    headers['WWW-Authenticate'] = 'Basic realm="ASF Member"'
-    halt 401, "Not authorized\n"
+    halt 403, "Not authorized\n"
   end
 end
 

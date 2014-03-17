@@ -56,8 +56,8 @@ module Angular::AsfRoster
 
     $rootScope.title = 'ASF Roster'
 
-    watch document.querySelector('main') do |value|
-      @user = value.attributes['data-availid'].value if value
+    watch Roster.user do |value|
+      @user = value 
     end
 
     def is_empty(hash)

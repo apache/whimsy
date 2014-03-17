@@ -10,6 +10,18 @@ module Angular::AsfRosterServices
     PMCS = {}
     GROUPS = {}
     MEMBERS = []
+
+    def self.user
+      main = document.querySelector('main')
+      if main
+        user = main.attributes['data-availid'].value
+        if $location.search().user and Roster::MEMBERS.include? user
+          $location.search().user
+        else
+          user
+        end
+      end
+    end
   end
 
   ####################################################################
