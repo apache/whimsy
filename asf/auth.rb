@@ -7,9 +7,13 @@ module ASF
       new.select {|auth, ids| ids.include? value}.map(&:first)
     end
 
+    def initialize(file='asf')
+      @file = file
+    end
+
     def each
       auth = ASF::SVN['infra/infrastructure/trunk/subversion/authorization']
-      File.read("#{auth}/asf-authorization-template").
+      File.read("#{auth}/#{@file}-authorization-template").
         scan(/^([-\w]+)=(\w.*)$/).each do |pmc, ids|
         yield pmc, ids.split(',')
       end
