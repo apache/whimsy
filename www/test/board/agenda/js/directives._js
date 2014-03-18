@@ -91,19 +91,19 @@ module Angular::AsfBoardDirectives
               _button.close "\u00d7", type: 'button', data_dismiss: 'modal'
 
               # move h4 class attribute to header; replace with 'modal-title'
-              ~self.addClass(h4.attr(:class)) if h4.attr(:class)
-              ~self.append(h4.attr(class: 'modal-title'))
+              ~this.addClass(h4.attr(:class)) if h4.attr(:class)
+              ~this.append(h4.attr(class: 'modal-title'))
             end
 
             _div.modal_body do
               # add form-control attributes; move remaining nodes to the body
               element.find('input, textarea').addClass('form-control')
-              ~self.append(element.children())
+              ~this.append(element.children())
             end
 
             _div.modal_footer do
               # move buttons to the footer
-              ~self.append(buttons)
+              ~this.append(buttons)
             end
           end
         end
