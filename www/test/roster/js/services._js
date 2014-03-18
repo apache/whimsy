@@ -10,6 +10,7 @@ module Angular::AsfRosterServices
     PMCS = {}
     GROUPS = {}
     MEMBERS = []
+    PODLINGS = []
 
     def self.user
       main = document.querySelector('main')
@@ -233,10 +234,12 @@ module Angular::AsfRosterServices
       end
 
       if sources.auth
-        info = sources.auth
-        for group in info
-          value = {cn: group, memberUid: info[group]}
-          @@list[group] ||= Group.new(value, 'auth')
+        %w(asf pit).each do |auth_type|
+          info = sources.auth[auth_type]
+          for group in info
+            value = {cn: group, memberUid: info[group]}
+            @@list[group] ||= Group.new(value, "#{auth_type}-auth")
+          end
         end
       end
     end
@@ -333,6 +336,18 @@ module Angular::AsfRosterServices
           Group.load auth: result
         end
       end
+    end
+  end
+
+  class Podlings
+    def self.get()
+      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+        @@fetched = Date.new().getTime()
+        $http.get('json/podlings').success do |result|
+          angular.copy result, Roster::PODLINGS
+        end
+      end
+      return Roster::PODLINGS
     end
   end
 

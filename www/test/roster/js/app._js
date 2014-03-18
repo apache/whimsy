@@ -91,6 +91,7 @@ module Angular::AsfRoster
 
   controller :Groups do
     $rootScope.title = 'ASF Groups'
+    @podlings = Podlings.get()
   end
 
   controller :PMC do

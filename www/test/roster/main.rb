@@ -9,6 +9,7 @@ $:.unshift '/home/rubys/git/ruby2js/lib'
 #
 
 require '/var/tools/asf'
+require '/var/tools/asf/podlings'
 
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap/theme'
@@ -56,9 +57,14 @@ end
 
 get '/json/auth' do
   _json do
-    auth = {}
-    ASF::Authorization.new.each { |group, list| auth[group] = list }
-    _! auth
+    _asf Hash[ASF::Authorization.new('asf').map {|group, list| [group, list]}]
+    _pit Hash[ASF::Authorization.new('pit').map {|group, list| [group, list]}]
+  end
+end
+
+get '/json/podlings' do
+  _json do
+    _! Hash[ASF::Podlings.new.map {|podling, definition| [podling, definition]}]
   end
 end
 

@@ -8,6 +8,8 @@ _table do
     _td do
       _a '{{group.cn}}', href: '{{group.link}}', title: '{{group.source}}'
     end
+    _td '{{podlings[group.cn].status}} podling', ng_if: 'podlings[group.cn]', 
+      ng_class: '{issue: podlings[group.cn].status == "retired"}'
   end
 end
 
