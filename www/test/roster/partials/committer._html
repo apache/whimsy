@@ -25,8 +25,9 @@ _table.wide ng_if: 'committer' do
       _ul do
         _li ng_repeat: 'pmc in committer.pmcs | orderBy:"cn"' do
           _a '{{pmc.cn}}', href: '{{pmc.link}}'
-          _span 'chair', class: 'chair', 
-            ng_if: 'committer.chairs.indexOf(pmc) >= 0'
+          _span.chair 'chair', ng_if: 'committer.chairs.indexOf(pmc) >= 0'
+          _span.issue 'not in committer list', 
+            ng_if: 'pmc.group.memberUid.indexOf(committer.uid) == -1'
         end
       end
     end
