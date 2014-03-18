@@ -53,7 +53,7 @@ module Angular::AsfRosterServices
     end
 
     def emails
-      angular.copy(self['asf-altEmail']).concat(self.mail).uniq()
+      angular.copy(self['asf-altEmail'] || []).concat(self.mail || []).uniq()
     end
 
     def pmcs
