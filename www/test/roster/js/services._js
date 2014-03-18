@@ -139,14 +139,13 @@ module Angular::AsfRosterServices
       # add PMC members from committee-info.txt
       if info
         info.memberUid.each do |uid|
-          person = Committer.find(uid)
-          @members << person if person
+          @members << (Committer.find(uid) || {uid: uid})
         end
       end
 
       # add unique PMC members from LDAP
       self.memberUid.each do |uid|
-        person = Committer.find(uid)
+        person = Committer.find(uid) || {uid: uid}
         @members << person if person and not @members.include? person
       end
 
@@ -161,7 +160,7 @@ module Angular::AsfRosterServices
       # add members from LDAP group of the same name
       if self.group
         self.group.memberUid.each do |uid|
-          person = Committer.find(uid)
+          person = Committer.find(uid) || {uid: uid}
           @committers << person if person and not members.include? person
         end
       end
@@ -255,8 +254,7 @@ module Angular::AsfRosterServices
       @members.clear()
 
       self.memberUid.each do |uid|
-        person = Committer.find(uid)
-        @members << person
+        @members << (Committer.find(uid) || {uid: uid})
       end
 
       @members
