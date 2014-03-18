@@ -88,15 +88,16 @@ module Angular::AsfBoardFilters
 
         text.gsub! /(\(|&lt;)(#{id})( at |@|\))/ do |m, pre, id, post|
           if person.icla
-            annotate = ''
+            "#{pre}<a href='#{roster}#{id}'>#{id}</a>#{post}"
           else
-            annotate=' class="missing"'
+            "#{pre}<a class='missing' href='#{roster}?q=#{person.name}'>#{id}</a>#{post}"
           end
-          "#{pre}<a#{annotate} href='#{roster}#{id}'>#{id}</a>#{post}"
         end
 
-        text.sub! /#{escapeRegExp(person.name)}/, 
-          "<a href='#{roster}#{id}'>#{person.name}</a>"
+        if person.icla
+          text.sub! /#{escapeRegExp(person.name)}/, 
+            "<a href='#{roster}#{id}'>#{person.name}</a>"
+        end
 
         if person.member
           text.gsub! /#{escapeRegExp(person.name)}/, "<b>#{person.name}</b>"
@@ -107,8 +108,8 @@ module Angular::AsfBoardFilters
           ok ||= names.all? {|part| iclas.include? part}
           ok ||= iclas.all? {|part| names.include? part}
           if not ok
-            text.gsub! /#{escapeRegExp(person.name)}/,
-              "<span class='commented'>#{person.name}</span>"
+            text.gsub! /#{escapeRegExp("#{id}'>#{person.name}")}/,
+              "?q=#{person.name}'><span class='commented'>#{person.name}</span>"
           end
 
         end
