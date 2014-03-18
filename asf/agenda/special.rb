@@ -26,7 +26,7 @@ class ASF::Board::Agenda
 
       text = attrs['text']
 
-      asfid = '[a-z][-a-z0-9_]+'
+      asfid = '[a-z][-.a-z0-9_]+' # dot added to help detect errors
       list_item = '^\s*(?:[-*\u2022]\s*)?(.*?)\s+'
 
       people = text.scan(/#{list_item}\((#{asfid})\)\s*$/)
