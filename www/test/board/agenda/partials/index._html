@@ -10,6 +10,10 @@ _table_.table_bordered ng_controller: 'Index' do
       _th 'Owner'
       _th 'Shepherd'
     end
+
+    _tr ng_if: 'agenda.length == 0' do
+      _td.missing 'Loading...', colspan: 4
+    end
   end
 
   _tbody_ do
@@ -23,8 +27,6 @@ _table_.table_bordered ng_controller: 'Index' do
     end
   end
 end
-
-_h4 'Loading...', ng_if: 'agenda.length == 0'
 
 _ng_template.refresh_button! do
   _button.btn.btn_primary 'refresh', ng_controller: 'Refresh',
