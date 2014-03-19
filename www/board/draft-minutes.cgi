@@ -190,7 +190,7 @@ minutes.mreplace(/\n\s7.\sSpecial\sOrders\n
                  \n\s8.\sDiscussion\sItems
                  /mx) do |reports|
   break if reports.empty?
-  reports.mreplace(/\n\s\s\s\s(\w)\.(.*?)\n(.*?)()(?:\n\s*\n\s\s\s\s\w\.|\n\z)
+  reports.mreplace(/\n\s\s\s\s(\w)\.(.*?)\n(.*?)()\s+(?:\s*\n\s\s\s\s\w\.|\z)
                  /mx) do |section, title, order, comments|
     order.sub! /\n       \[.*?\n         +\]\n/m, ''
     notes = notes(title.strip)
@@ -201,7 +201,7 @@ minutes.mreplace(/\n\s7.\sSpecial\sOrders\n
     end
     notes = "Special Order 7#{section}, #{title}, " + notes
     order += "\n" unless order =~ /\n\Z/
-    [section, title, order, "\n" + notes.reflow(7,62) + "\n"]
+    [section, title, order, "\n" + notes.reflow(7,62)]
   end
 end
 
