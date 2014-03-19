@@ -86,6 +86,7 @@ module Angular::AsfBoardFilters
       for id in item.people
         person = item.people[id]
 
+        # email addresses in 'Establish' resolutions
         text.gsub! /(\(|&lt;)(#{id})( at |@|\))/ do |m, pre, id, post|
           if person.icla
             "#{pre}<a href='#{roster}#{id}'>#{id}</a>#{post}"
@@ -94,14 +95,14 @@ module Angular::AsfBoardFilters
           end
         end
 
-        if person.icla
+        # names
+        if person.icla or item.title == 'Roll Call'
           text.sub! /#{escapeRegExp(person.name)}/, 
             "<a href='#{roster}#{id}'>#{person.name}</a>"
         end
 
-        if person.member
-          text.gsub! /#{escapeRegExp(person.name)}/, "<b>#{person.name}</b>"
-        elsif person.icla and not person.icla == person.name
+        # highlight potentially misspelled names
+        if person.icla and not person.icla == person.name
           names = person.name.split(/\s+/)
           iclas = person.icla.split(/\s+/)
           ok = false
@@ -111,11 +112,15 @@ module Angular::AsfBoardFilters
             text.gsub! /#{escapeRegExp("#{id}'>#{person.name}")}/,
               "?q=#{person.name}'><span class='commented'>#{person.name}</span>"
           end
+        end
 
+        # put members names in bold
+        if person.member
+          text.gsub! /#{escapeRegExp(person.name)}/, "<b>#{person.name}</b>"
         end
       end
 
-      console.log item.title
+      # treat any unmatched names in Roll Call as misspelled
       if item.title == 'Roll Call'
         text.gsub! /(\n\s{4})([A-Z].*)/ do |match, space, name|
           "#{space}<a class='commented' href='#{roster}?q=#{name}'>#{name}</a>"
