@@ -29,6 +29,11 @@ _html do
     }
   end
   _body? do
+    # update from svn
+    [MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir| 
+      Dir.chdir(dir) {`svn cleanup`; `svn up`}
+    end
+
     calendar = File.read(CALENDAR)
 
     # clean up summary; extract date and year from it
@@ -58,11 +63,6 @@ _html do
     message = Shellwords.escape(@message).untaint
 
     _h1 'Publish the Minutes'
-
-    # update from svn
-    [MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir| 
-      Dir.chdir(dir) {`svn cleanup`; `svn up`}
-    end
 
     _h2 'Commit the Minutes'
     Dir.chdir MINUTES do
