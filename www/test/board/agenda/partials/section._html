@@ -1,3 +1,7 @@
+_ul.missing ng_if: 'item.warnings' do
+  _li '{{ warning }}', ng_repeat: 'warning in item.warnings'
+end
+
 _pre ng_bind_html: 'item | html'
 
 _span ng_if: 'item.comments' do

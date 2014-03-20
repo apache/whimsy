@@ -8,6 +8,8 @@ module Angular::AsfBoardFilters
   filter :color do |item|
     if not item.title
       return 'blank'
+    elsif item.warnings
+      return 'missing'
     elsif item.missing
       return 'missing'
     elsif item.approved
@@ -91,7 +93,8 @@ module Angular::AsfBoardFilters
           if person.icla
             "#{pre}<a href='#{roster}#{id}'>#{id}</a>#{post}"
           else
-            "#{pre}<a class='missing' href='#{roster}?q=#{person.name}'>#{id}</a>#{post}"
+            "#{pre}<a class='missing' href='#{roster}?q=#{person.name}'>" +
+              "#{id}</a>#{post}"
           end
         end
 
@@ -108,7 +111,10 @@ module Angular::AsfBoardFilters
           ok = false
           ok ||= names.all? {|part| iclas.include? part}
           ok ||= iclas.all? {|part| names.include? part}
-          if not ok
+          if ok
+            text.sub! /#{escapeRegExp(person.icla)}/, 
+              "<a href='#{roster}#{id}'>#{person.icla}</a>"
+          else
             text.gsub! /#{escapeRegExp("#{id}'>#{person.name}")}/,
               "?q=#{person.name}'><span class='commented'>#{person.name}</span>"
           end
@@ -124,6 +130,17 @@ module Angular::AsfBoardFilters
       if item.title == 'Roll Call'
         text.gsub! /(\n\s{4})([A-Z].*)/ do |match, space, name|
           "#{space}<a class='commented' href='#{roster}?q=#{name}'>#{name}</a>"
+        end
+      end
+
+      if item.title =~ /^Change/
+        text.gsub! /heretofore\sappointed\s(\w.*)\sto/ do |match, name|
+          match.gsub name, 
+            "<a class='missing' href='#{roster}?q=#{name}'>#{name}</a>"
+        end
+        text.gsub! /recommend\s(\w.*)\sas/ do |match, name|
+          match.gsub name, 
+            "<a class='missing' href='#{roster}?q=#{name}'>#{name}</a>"
         end
       end
     end
