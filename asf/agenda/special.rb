@@ -6,12 +6,13 @@ class ASF::Board::Agenda
       split(/^ 8. Discussion Items/,2).first
 
     pattern = /
-      \s{4}(?<section>[A-Z])\.
+      \n+(?<indent>\s{3,5})(?<section>[A-Z])\.
       \s(?<title>.*?)\n
       (?<text>.*?)
       (?=\n\s{4}[A-Z]\.\s|\z)
     /mx
 
+    people = []
     scan orders, pattern do |attrs|
       attrs['section'] = '7' + attrs['section'] 
 
@@ -25,6 +26,18 @@ class ASF::Board::Agenda
       title.sub! /\s\(.*\)$/, ''
 
       text = attrs['text']
+
+      attrs['warnings'] = []
+      if attrs['indent'] != '    '
+        attrs['warnings'] << 'Heading is not indented 4 spaces'
+        attrs['warnings'] << attrs['indent'].inspect
+        attrs['warnings'] << attrs['indent'].length
+      end
+      if text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min != 8
+        attrs['warnings'] << 'Resolution is not indented 7 spaces'
+      end
+      attrs.delete 'indent'
+      attrs.delete 'warnings' if attrs['warnings'].empty?
 
       asfid = '[a-z][-.a-z0-9_]+' # dot added to help detect errors
       list_item = '^\s*(?:[-*\u2022]\s*)?(.*?)\s+'
@@ -41,16 +54,10 @@ class ASF::Board::Agenda
             "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
           attrs['prior_reports'] =
             "#{whimsy}/board/minutes/#{committee.display_name.gsub(/\W/,'_')}"
-          attrs['people'] = {}
           committee.members.each do |person|
             name = person.public_name
             name.sub!(/ .* /,' ') unless text.include? name
-            if text.include? name
-              attrs['people'][person.id] = {
-                name: name,
-                member: person.asf_member?
-              }
-            end
+            people << [name, person.id] if text.include? name
           end
         end
       else
@@ -65,15 +72,16 @@ class ASF::Board::Agenda
           end
         end
 
-        people.map! do |name, id| 
-          person = ASF::Person.new(id)
-          icla = person.icla
-          [id, {name: name, icla: icla ? person.icla.name : false,
-            member: person.asf_member?}]
-        end
-
-        attrs['people'] = Hash[people]
       end
+
+      people.map! do |name, id| 
+        person = ASF::Person.new(id)
+        icla = person.icla
+        [id, {name: name, icla: icla ? person.icla.name : false,
+          member: person.asf_member?}]
+      end
+
+      attrs['people'] = Hash[people] unless people.empty?
     end
   end
 end
