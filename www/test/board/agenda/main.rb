@@ -59,11 +59,18 @@ get '/json/pending' do
   end
 end
 
-get '/json/:file' do
+AGENDA_CACHE = Hash.new(mtime: 0)
+get '/json/:file' do |file|
   _json do
     Dir.chdir(svn) do
-      if Dir['board_agenda_*.txt'].include? params[:file]
-        _! ASF::Board::Agenda.parse(File.read(params[:file].dup.untaint))
+      if Dir['board_agenda_*.txt'].include? file
+        if AGENDA_CACHE[file][:mtime] != File.mtime(file)
+          AGENDA_CACHE[file] = {
+            mtime: File.mtime(file),
+            parsed: ASF::Board::Agenda.parse(File.read(file.dup.untaint))
+          }
+        end
+        _! AGENDA_CACHE[file][:parsed]
       end
     end
   end
