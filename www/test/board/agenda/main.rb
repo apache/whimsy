@@ -64,10 +64,11 @@ get '/json/:file' do |file|
   _json do
     Dir.chdir(svn) do
       if Dir['board_agenda_*.txt'].include? file
+        file = file.dup.untaint
         if AGENDA_CACHE[file][:mtime] != File.mtime(file)
           AGENDA_CACHE[file] = {
             mtime: File.mtime(file),
-            parsed: ASF::Board::Agenda.parse(File.read(file.dup.untaint))
+            parsed: ASF::Board::Agenda.parse(File.read(file))
           }
         end
         _! AGENDA_CACHE[file][:parsed]
