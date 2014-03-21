@@ -3,6 +3,8 @@
 # * Roll Call
 
 class ASF::Board::Agenda
+  @@people_cache = {}
+
   parse do
     pattern = /
       ^\n\x20(?<section>[12]\.)
@@ -13,22 +15,51 @@ class ASF::Board::Agenda
 
     scan @file, pattern do |attr|
       if attr['title'] == 'Roll Call'
-        # attempt to identify the people mentioned
-        ASF::Person.preload('cn')
-        list = ASF::Person.list
         attr['people'] = {}
+        list = nil
+
+        # attempt to identify the people mentioned in the Roll Call
         people = attr['text'].scan(/ {8}(\w.*)/).flatten.each do |sname|
           name = sname
-          sname = sname.strip.downcase.split(/\s+/)
-          list.select do |person|
-            next if person == 'none'
-            pname = person.public_name.downcase.split(/\s+/)
-            if sname.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
-              attr['people'][person.id] = {
-                name: name,
-                member: person.asf_member?
-              }
+
+          # first try the cache
+          person = @@people_cache[name]
+
+          # next try a simple name look up
+          if not person
+            search = ASF::Person.list("cn=#{name}")
+            person = search.first if search.length == 1
+          end
+
+          # finally try harder to match the name
+          if not person
+            sname = sname.strip.downcase.split(/\s+/)
+
+            if not list
+              ASF::Person.preload('cn')
+              list = ASF::Person.list
             end
+
+            search = []
+            list.select do |person|
+              next if person == 'none'
+              pname = person.public_name.downcase.split(/\s+/)
+              if sname.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
+                search << person
+              end
+            end
+
+            person = search.first if search.length == 1
+          end
+
+          # save results in both the cache and the attributes
+          if person
+            @@people_cache[name] = person
+
+            attr['people'][person.id] = {
+              name: name,
+              member: person.asf_member?
+            }
           end
         end
       end
