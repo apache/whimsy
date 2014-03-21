@@ -77,7 +77,8 @@ get '/json/info' do
         report: committee.report,
         chair: committee.chair.id,
         memberUid: committee.info,
-        emeritus: committee.emeritus
+        emeritus: committee.emeritus,
+        pmc: !ASF::Committee.nonpmcs.include?(committee)
       }]
     }]
   end

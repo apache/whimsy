@@ -11,6 +11,7 @@ module Angular::AsfRosterServices
     GROUPS = {}
     MEMBERS = []
     PODLINGS = []
+    INFO = {}
 
     def self.user
       main = document.querySelector('main')
@@ -103,10 +104,22 @@ module Angular::AsfRosterServices
   class PMC
     @@list = Roster::PMCS
 
-    def self.load(ldap)
-      for pmc in ldap.pmcs
-        @@list[pmc] = PMC.new(ldap.pmcs[pmc])
-        @@list[pmc].group = ldap.groups[pmc]
+    def self.load(sources)
+      if sources.ldap
+        ldap = sources.ldap
+        for pmc in ldap.pmcs
+          @@list[pmc] = PMC.new(ldap.pmcs[pmc])
+          @@list[pmc].group = ldap.groups[pmc]
+        end
+      end
+
+      if sources.info
+        info = sources.info
+        for pmc in info
+          if info[pmc].pmc and not @@list[pmc]
+            @@list[pmc] = PMC.new(cn: pmc, memberUid: [])
+          end
+        end
       end
     end
 
@@ -119,7 +132,7 @@ module Angular::AsfRosterServices
     end
 
     def display_name
-      info = INFO.get(self.cn)
+      info = Roster::INFO[self.cn]
       info ? info.display_name : self.cn
     end
 
@@ -128,13 +141,13 @@ module Angular::AsfRosterServices
     end
 
     def chair
-      info = INFO.get(self.cn)
+      info = Roster::INFO[self.cn]
       Committer.find(info.chair) if info
     end
 
     def members
       @members.clear()
-      info = INFO.get(self.cn)
+      info = Roster::INFO[self.cn]
 
       # add PMC members from committee-info.txt
       if info
@@ -270,7 +283,7 @@ module Angular::AsfRosterServices
   ####################################################################
 
   class LDAP
-    @@fetching = false
+    @@ready == false
 
     def self.fetch_twice(url, &update)
       if_cached = {"Cache-Control" => "only-if-cached"}
@@ -286,24 +299,30 @@ module Angular::AsfRosterServices
     end
 
     def self.get()
-      unless @@fetching
-        @@fetching = true
+      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+        @@fetched = Date.new().getTime()
         self.fetch_twice 'json/ldap' do |result|
           Committer.load(result)
-          PMC.load(result)
+          PMC.load(ldap: result)
           Group.load(ldap: result)
 
           # extract members
           angular.copy result.groups.member.memberUid, Roster::MEMBERS
+          @@ready = true
         end
       end
 
       return @@index
     end
+
+    def self.ready
+      @@ready
+    end
   end
 
   class INFO
-    @@info = {}
+    @@info = Roster::INFO
+    @@ready == false
 
     def self.get(name)
       unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
@@ -314,7 +333,9 @@ module Angular::AsfRosterServices
           end
 
           angular.copy result, @@info
+          PMC.load(info: @@info)
           Group.load(info: @@info)
+          @@ready = true
         end
       end
 
@@ -323,6 +344,10 @@ module Angular::AsfRosterServices
       else
         return @@info
       end
+    end
+
+    def self.ready
+      @@ready
     end
   end
 

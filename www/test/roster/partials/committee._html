@@ -1,5 +1,6 @@
 _h1 do
   _a '{{pmc.display_name}}', href: 'http://{{pmc.cn}}.apache.org/'
+  _span.note.not_found '(Not in LDAP)', ng_if: 'pmc.memberUid.length == 0'
 end
 
 _h2 'PMC'
@@ -43,7 +44,7 @@ _table do
 end
 
 _p 'All Committers are members of the PMC.', style: 'margin-top: 1em',
-  ng_if: 'pmc.committers.length == 0'
+  ng_if: 'pmc.memberUid.length > 0 && pmc.committers.length == 0'
 
 _h2 'Mailing lists', ng_if: 'pmc.maillists(user).length'
 

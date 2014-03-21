@@ -73,19 +73,23 @@ module Angular::AsfRoster
   controller :PMCs do
     $rootScope.title = 'ASF PMCs'
     watch @groups['pmc-chairs'] do |value|
-      @pmc_chairs = value.memberUid if value
+      @pmc_chairs = value ? value.memberUid : []
     end
   end
 
   controller :PMCLine do
-    @class = 'issue'
-    @status = ''
-    if not @pmc.chair and INFO.get().keys().length > 0
-      @status = 'Not in committee-info.txt'
-    elsif not @pmc_chairs.include? @pmc.chair.uid
-      @status = 'Not in pmc-chairs LDAP service'
-    else
-      @class = ''
+    watch INFO.ready && LDAP.ready do
+      @class = 'issue'
+      @status = ''
+      if not Roster::INFO[@pmc.cn] and INFO.ready
+        @status = 'Not in committee-info.txt'
+      elsif @pmc.memberUid.length == 0 and LDAP.ready
+        @status = 'Not in LDAP'
+      elsif @pmc.chair and not @pmc_chairs.include? @pmc.chair.uid
+        @status = 'Not in pmc-chairs LDAP service'
+      else
+        @class = ''
+      end
     end
   end
 
