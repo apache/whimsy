@@ -53,15 +53,17 @@ get '/json/jira' do
   _json :'/json/jira'
 end
 
+get '/json/pending' do
+  _json do
+    _! Pending.get(env.user)
+  end
+end
+
 get '/json/:file' do
   _json do
-    if params[:file] == 'pending'
-      _! Pending.get(env.user)
-    else
-      Dir.chdir(svn) do
-        if Dir['board_agenda_*.txt'].include? params[:file]
-          _! ASF::Board::Agenda.parse(File.read(params[:file].dup.untaint))
-        end
+    Dir.chdir(svn) do
+      if Dir['board_agenda_*.txt'].include? params[:file]
+        _! ASF::Board::Agenda.parse(File.read(params[:file].dup.untaint))
       end
     end
   end
