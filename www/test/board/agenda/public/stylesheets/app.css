@@ -70,7 +70,8 @@ form label {
   margin-bottom: 0.5em;
 }
 
-pre {
+pre.report {
+  font-family: "Courier New", monospace;
   padding-left: 2em;
   color: #000;
   overflow: auto;
