@@ -176,7 +176,7 @@ _html do
       end
 
       if (group - pmc).empty?
-        unless pmc.empty?
+        unless group.empty?
           _h2_ 'PMC==Committers'
         end
       else
