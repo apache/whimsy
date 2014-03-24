@@ -122,6 +122,10 @@ module Angular::AsfBoardServices
       angular.copy value.seen, @@list.seen         if value.seen
       @@list.update += 1
     end
+
+    def self.count
+      @@list.comments.keys().length + @@list.approved.keys().length
+    end
   end
 
   class JIRA

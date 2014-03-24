@@ -20,6 +20,9 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
       _div.navbar_brand '{{ title }}'
       _span.clock! "\u231B"
       _ul.nav.nav_pills.navbar_right do
+        _li.label.label_danger ng_if: 'queued' do
+          _a '{{queued}}', href: 'queue'
+        end
         _li.dropdown class: '{{ info }}', ng_show: 'item.title' do
           _a.info!.dropdown_toggle class: '{{ item | color}}', 
             ng_click: 'infoToggle()' do

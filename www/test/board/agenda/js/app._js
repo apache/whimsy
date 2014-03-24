@@ -80,6 +80,9 @@ module Angular::AsfBoardAgenda
       @info = (@info ? nil : 'open')
     end
 
+    watch Pending.count do |value|
+      @queued = value
+    end
   end
 
   # controller for the index page
