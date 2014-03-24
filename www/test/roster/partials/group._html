@@ -19,7 +19,7 @@ _table do
     _td ng_bind: 'person.cn', asf_id: '{{ person.uid }}'
 
     _td ng_if: 'group.cn == "pmc-chairs"' do
-      _span.issue 'not in committee-info.txt', 
+      _span.issue 'not listed as a chair in committee-info.txt', 
         ng_if: 'person.chairs.length == 0'
       _span ng_repeat: 'pmc in person.chairs | orderBy:"cn"' do
         _a '{{pmc.display_name}}', href: '{{pmc.link}}'
