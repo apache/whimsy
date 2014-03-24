@@ -181,9 +181,14 @@ module Angular::AsfRosterServices
       @committers
     end
 
+    def mail_prefix
+      return 'community' if self.cn == 'comdev'
+      self.cn
+    end
+
     def maillists(user)
       if @maillists.empty?
-        prefix = "#{self.cn}-"
+        prefix = "#{self.mail_prefix}-"
         for list in Mail.lists
           if list.start_with? prefix
             if Mail.lists[list] == 'public'
