@@ -62,11 +62,11 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
 
             _li.divider
 
-            _li ng_if: 'director' do 
+            _li ng_if: 'mode == "director"' do 
               _a.shepherd! 'Shepherd', ng_href: 'shepherd/{{firstname}}'
             end
 
-            _li(ng_if: 'director') do
+            _li(ng_if: 'mode == "director"') do
               _a.queue! 'Queue', href: 'queue'
             end
 

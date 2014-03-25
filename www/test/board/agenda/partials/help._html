@@ -37,4 +37,14 @@ _div.col_xs_12 do
     _li.reviewed 'Report has sufficient pre-approvals'
     _li.commented 'Report has been approved, with comments'
   end
+
+  _h3 'Mode', ng_if: 'user == "rubys"'
+  _form.mode! ng_if: 'user == "rubys"' do
+    %w(secretary director guest).each do |mode|
+      _div do
+        _input mode.capitalize, type: 'radio', name: 'mode', value: mode, 
+          ng_model: 'mode', ng_change: 'set_mode(mode)'
+      end
+    end
+  end
 end

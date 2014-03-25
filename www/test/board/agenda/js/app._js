@@ -71,7 +71,16 @@ module Angular::AsfBoardAgenda
       @next_href = vars.next_href unless vars.next_href === undefined
       @prev_href = vars.prev_href unless vars.prev_href === undefined
 
-      @director = true if Data.get('initials')
+      @user = Data.get('availid')
+
+      if Data.get('initials')
+        $rootScope.mode = :director
+      elsif %w(clr jcarman).include? @user
+        $rootScope.mode = :secretary
+      else
+        $rootScope.mode = :guest
+      end
+
       @firstname = Data.get('firstname')
     end
 
@@ -110,6 +119,10 @@ module Angular::AsfBoardAgenda
   # controller for the help page
   controller :Help do
     $scope.layout title: 'Help'
+
+    def set_mode(mode)
+      $rootScope.mode = mode
+    end
   end
 
   # controller for the pending pages
@@ -411,46 +424,47 @@ module Angular::AsfBoardAgenda
 
     # find agenda item, add relevant buttons
     watch 'agenda.update' do
-      $scope.layout item: {title: 'not found'}
-      @agenda.each do |item|
-        if item.href == section
-          @buttons.clear()
-          @forms.clear()
+      item = @agenda.find {|item| item.href == section}
+      if item
+        @buttons.clear()
+        @forms.clear()
 
-          if $routeParams.section
-            $scope.layout item: item
+        if $routeParams.section
+          $scope.layout item: item
+        else
+          Agenda.ready()
+          $scope.layout item: item, 
+            prev: item.qprev, 
+            prev_href: (item.qprev ? item.qprev.qhref : nil),
+            next: item.qnext, 
+            next_href: (item.qnext ? item.qnext.qhref : nil)
+        end
+
+        unless item.comments === undefined
+          @buttons << 'comment-button'
+          @forms << '../partials/comment.html'
+        end
+
+        if item.attach =~ /^(\d|[A-Z]+)$/
+          if item.missing
+            $rootScope.post_button_text = 'post report'
+            @post_form_title = 'Post report'
           else
-            Agenda.ready()
-            $scope.layout item: item, 
-              prev: item.qprev, 
-              prev_href: (item.qprev ? item.qprev.qhref : nil),
-              next: item.qnext, 
-              next_href: (item.qnext ? item.qnext.qhref : nil)
+            $rootScope.post_button_text = 'edit report'
+            @post_form_title = 'Edit report'
           end
+          @buttons << 'post-button'
+          @forms << '../partials/post.html'
+        end
 
-          unless item.comments === undefined
-            @buttons << 'comment-button'
-            @forms << '../partials/comment.html'
-          end
-
-          if item.attach =~ /^(\d|[A-Z]+)$/
-            if item.missing
-              $rootScope.post_button_text = 'post report'
-              @post_form_title = 'Post report'
-            else
-              $rootScope.post_button_text = 'edit report'
-              @post_form_title = 'Edit report'
-            end
-            @buttons << 'post-button'
-            @forms << '../partials/post.html'
-          end
-
-          if item.report or item.text
-            if item.approved and @initials and !item.approved.include? @initials
-              @buttons << 'approve-button'
-            end
+        if item.report or item.text
+          console.log @mode
+          if @mode==:director and not item.approved.include? @initials
+            @buttons << 'approve-button' if item.approved
           end
         end
+      else
+        $scope.layout item: {title: 'not found'}
       end
     end
 
