@@ -10,6 +10,7 @@ $:.unshift '/home/rubys/git/ruby2js/lib'
 
 require '/var/tools/asf'
 require '/var/tools/asf/podlings'
+require '/var/tools/asf/site'
 
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap/theme'
@@ -65,6 +66,12 @@ end
 get '/json/podlings' do
   _json do
     _! Hash[ASF::Podlings.new.map {|podling, definition| [podling, definition]}]
+  end
+end
+
+get '/json/site' do
+  _json do
+    _! ASF::Site.list
   end
 end
 

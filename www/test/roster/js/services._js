@@ -12,6 +12,7 @@ module Angular::AsfRosterServices
     MEMBERS = []
     PODLINGS = []
     INFO = {}
+    SITE = {}
 
     def self.user
       main = document.querySelector('main')
@@ -134,6 +135,20 @@ module Angular::AsfRosterServices
     def display_name
       info = Roster::INFO[self.cn]
       info ? info.display_name : self.cn
+    end
+
+    def site_description
+      site = Roster::SITE[self.cn]
+      site.text if site
+    end
+
+    def site_link
+      site = Roster::SITE[self.cn]
+      if site
+        site.link
+      else
+        "http://{{self.cn}}.apache.org/"
+      end
     end
 
     def report
@@ -421,6 +436,21 @@ module Angular::AsfRosterServices
 
     def self.find(uid)
       return self.lists[uid]
+    end
+  end
+
+  class Site
+    @@list = Roster::SITE
+
+    def self.list
+      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+        @@fetched = Date.new().getTime()
+        $http.get('json/site').success do |result|
+          angular.copy result, @@list
+        end
+      end
+
+      @@list
     end
   end
 end

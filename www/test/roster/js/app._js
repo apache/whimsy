@@ -99,6 +99,8 @@ module Angular::AsfRoster
   end
 
   controller :PMC do
+    Site.list
+
     @name = $rootScope.title = $routeParams.name
 
     watch INFO.get(@name) do |value|
