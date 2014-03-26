@@ -167,7 +167,7 @@ module Angular::AsfRoster
         committer = committers[id]
         if committer.cn.downcase().include? text
           results << committer
-        elsif committer.uid.include? text
+        elsif "#{id}@apache.org".include? text
           results << committer
         elsif committer.mail and 
           committer.mail.any? {|email| email.include? text}
