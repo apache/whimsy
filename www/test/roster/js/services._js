@@ -147,7 +147,7 @@ module Angular::AsfRosterServices
       if site
         site.link
       else
-        "http://{{self.cn}}.apache.org/"
+        "http://#{self.cn}.apache.org/"
       end
     end
 
