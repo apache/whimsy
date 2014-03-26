@@ -136,6 +136,19 @@ module Angular::AsfRosterServices
       info ? info.display_name : self.cn
     end
 
+    def report
+      info = Roster::INFO[self.cn]
+      info.report if info
+    end
+
+    def prior_reports
+      info = Roster::INFO[self.cn]
+      if info
+        name = info.display_name.gsub(/\s+/, '_')
+        "https://whimsy.apache.org/board/minutes/#{name}"
+      end
+    end
+
     def link
       "committee/#{self.cn}"
     end

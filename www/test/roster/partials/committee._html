@@ -48,8 +48,18 @@ _p 'All Committers are members of the PMC.', style: 'margin-top: 1em',
 
 _h2 'Mailing lists', ng_if: 'pmc.maillists(user).length'
 
-_ul style: 'list-style-type: none; padding-left: 1.5em; margin-top: 0.5em' do
+_ul.list_none do
   _li ng_repeat: 'list in pmc.maillists(user) | orderBy:"name"' do
     _a '{{list.name}}', href: '{{list.link}}'
+  end
+end
+
+_section ng_if: 'pmc.report' do
+  _h2 'Reporting Schedule'
+  _ul.list_none do
+    _li '{{ pmc.report }}'
+    _li ng_if: 'pmc.prior_reports' do
+      _a 'Prior reports', href: '{{ pmc.prior_reports }}'
+    end
   end
 end
