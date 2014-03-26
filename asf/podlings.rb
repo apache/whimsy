@@ -1,5 +1,5 @@
 require 'nokogiri'
-require '/var/tools/asf'
+require_relative '../asf'
 
 module ASF
   class Podlings
