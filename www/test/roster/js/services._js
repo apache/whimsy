@@ -187,7 +187,7 @@ module Angular::AsfRosterServices
       # add unique PMC members from LDAP
       self.memberUid.each do |uid|
         person = Committer.find(uid) || {uid: uid}
-        @members << person if person and not @members.include? person
+        @members << person unless @members.include? person
       end
 
       @members
@@ -195,14 +195,13 @@ module Angular::AsfRosterServices
 
     def committers
       self.members if @members.empty?
-      members = @members
       @committers.clear()
 
       # add members from LDAP group of the same name
       if self.group
         self.group.memberUid.each do |uid|
           person = Committer.find(uid) || {uid: uid}
-          @committers << person if person and not members.include? person
+          @committers << person unless @members.include? person
         end
       end
 
