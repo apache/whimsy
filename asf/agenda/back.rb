@@ -18,6 +18,10 @@ class ASF::Board::Agenda
     scan @file, pattern do |attrs|
       attrs['attach'].strip!
       attrs['title'].sub! /^Review Outstanding /, ''
+
+      if attrs['title'] =~ /Discussion|Action|Business|Announcements/
+        attrs['prior_reports'] = minutes(attrs['title'])
+      end
     end
   end
 end

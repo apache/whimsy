@@ -79,8 +79,7 @@ class ASF::Board::Agenda
         hash['roster'] = 
           "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
       end
-      hash['prior_reports'] =
-        "#{whimsy}/board/minutes/#{committee.display_name.gsub(/\W/,'_')}"
+      hash['prior_reports'] = minutes(committee.display_name)
     end
 
     # add attach to section
@@ -89,6 +88,10 @@ class ASF::Board::Agenda
     end
 
     @sections.values
+  end
+
+  def minutes(title)
+    "https://whimsy.apache.org/board/minutes/#{title.gsub(/\W/,'_')}"
   end
 end
 

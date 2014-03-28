@@ -52,8 +52,7 @@ class ASF::Board::Agenda
           committee = ASF::Committee.find($1)
           attrs['roster'] =
             "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
-          attrs['prior_reports'] =
-            "#{whimsy}/board/minutes/#{committee.display_name.gsub(/\W/,'_')}"
+          attrs['prior_reports'] = minutes(committee.display_name)
           committee.members.each do |person|
             name = person.public_name
             name.sub!(/ .* /,' ') unless text.include? name
