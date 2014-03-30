@@ -21,6 +21,8 @@ class ASF::Board::Agenda
 
       if attrs['title'] =~ /Discussion|Action|Business|Announcements/
         attrs['prior_reports'] = minutes(attrs['title'])
+      elsif attrs['title'] == 'Adjournment'
+        attrs['timestamp'] = timestamp(attrs['text'][/\d+:\d+([ap]m)?/])
       end
     end
   end

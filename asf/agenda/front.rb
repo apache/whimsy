@@ -62,6 +62,8 @@ class ASF::Board::Agenda
             }
           end
         end
+      elsif attr['title'] == 'Call to order'
+        attr['timestamp'] = timestamp(attr['text'][/\d+:\d+([ap]m)?/])
       end
     end
   end

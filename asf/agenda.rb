@@ -93,6 +93,12 @@ class ASF::Board::Agenda
   def minutes(title)
     "https://whimsy.apache.org/board/minutes/#{title.gsub(/\W/,'_')}"
   end
+
+  def timestamp(time)
+    date = @file[/(\w+ \d+, \d+)/]
+    zone = Time.parse("#{date} PST").dst? ? 'PDT' : 'PST'
+    Time.parse("#{date} #{time} #{zone}").to_i * 1000
+  end
 end
 
 require_relative 'agenda/front'
