@@ -1,4 +1,4 @@
-_modal_dialog.post_report_form! ng_controller: 'PostReport' do
+_modal_dialog.post_report_form!.wide_form ng_controller: 'PostReport' do
   _h4.commented '{{post_form_title}}'
 
   _textarea.report_text! :autofocus, rows: 17, label: 'Report', 

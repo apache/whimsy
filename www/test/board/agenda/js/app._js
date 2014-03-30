@@ -74,11 +74,11 @@ module Angular::AsfBoardAgenda
       @user = Data.get('availid')
 
       if Data.get('initials')
-        $rootScope.mode = :director
+        $rootScope.mode ||= :director
       elsif %w(clr jcarman).include? @user
-        $rootScope.mode = :secretary
+        $rootScope.mode ||= :secretary
       else
-        $rootScope.mode = :guest
+        $rootScope.mode ||= :guest
       end
 
       @firstname = Data.get('firstname')
@@ -413,6 +413,23 @@ module Angular::AsfBoardAgenda
     end
   end
 
+  # Secretary take minutes
+  controller :Minute do
+    if not @minutes
+      if @item.title == 'Roll Call'
+        @minutes = @item.text
+        @minutes.sub! /^ASF members[\s\S]*?\n\n/m, '' # remove leading paragraph
+        @minutes.gsub! /\s*\(expected.*?\)/, '' # remove (expected...)
+      elsif @item.title == 'Action Items'
+        @minutes = @item.text
+      end
+    end
+  end
+
+  # Secretary timestamp for Call to Order and Adjournment
+  controller :Timestamp do
+  end
+
   # controller for the section pages
   controller :Section do
     @forms = []
@@ -458,9 +475,17 @@ module Angular::AsfBoardAgenda
         end
 
         if item.report or item.text
-          console.log @mode
-          if @mode==:director and not item.approved.include? @initials
-            @buttons << 'approve-button' if item.approved
+          if @mode==:director and item.approved
+            @buttons << 'approve-button' unless item.approved.include? @initials
+          end
+        end
+
+        if @mode==:secretary
+          if ['Call to order', 'Adjournment'].include? item.title
+            @buttons << 'timestamp-button'
+          else
+            @buttons << 'minute-button'
+            @forms << '../partials/minute.html'
           end
         end
       else

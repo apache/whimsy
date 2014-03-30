@@ -174,10 +174,10 @@ main hr {
 }
 
 @media screen and (min-width: 768px) {
-  #post-report-form .modal-dialog {
+  .wide-form .modal-dialog {
     width: 80%;
   }
-  #post-report-form .modal-footer {
+  .wide-form .modal-footer {
     margin-top: 0  
   }
 }
