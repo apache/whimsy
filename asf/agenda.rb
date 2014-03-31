@@ -1,3 +1,5 @@
+require 'time'
+
 module ASF
   module Board
   end
