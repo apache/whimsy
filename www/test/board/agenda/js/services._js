@@ -15,7 +15,7 @@ module Angular::AsfBoardServices
     def self.refresh()
       @@agenda ||= []
       @@agenda.update ||= 0
-      $http.get("../json/#{Data.get('agenda')}").success do |result|
+      $http.get("../json/agenda/#{Data.date}").success do |result|
         Agenda.put(result)
       end
     end
@@ -149,6 +149,10 @@ module Angular::AsfBoardServices
     def self.get(name)
       main = document.querySelector("main[data-#{name}]")
       return main && main.attributes["data-#{name}"].value
+    end
+
+    def self.date
+      Data.get('agenda')[/(\d+_\d+_\d+)/,1].gsub('_', '-')
     end
   end
 end

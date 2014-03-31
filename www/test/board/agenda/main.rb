@@ -61,18 +61,36 @@ get '/json/pending' do
 end
 
 AGENDA_CACHE = Hash.new(mtime: 0)
-get '/json/:file' do |file|
+def AGENDA_CACHE.parse(file)
+  self[file] = {
+    mtime: File.mtime(file),
+    parsed: ASF::Board::Agenda.parse(File.read(file))
+  }
+end
+
+get '/json/agenda/:file' do |file|
+  file = "board_agenda_#{file.gsub('-','_')}.txt"
   _json do
     Dir.chdir(svn) do
       if Dir['board_agenda_*.txt'].include? file
         file = file.dup.untaint
         if AGENDA_CACHE[file][:mtime] != File.mtime(file)
-          AGENDA_CACHE[file] = {
-            mtime: File.mtime(file),
-            parsed: ASF::Board::Agenda.parse(File.read(file))
-          }
+          AGENDA_CACHE.parse file
         end
         _! AGENDA_CACHE[file][:parsed]
+      end
+    end
+  end
+end
+
+get '/json/minutes/:file' do |file|
+  file = "board_minutes_#{file.gsub('-','_')}.yml"
+  _json do
+    Dir.chdir(MINUTES_WORK) do
+      if Dir['board_minutes_*.yml'].include? file
+        file = file.dup.untaint
+        last_modified File.mtime(file)
+        _! YAML.load_file(file)
       end
     end
   end
