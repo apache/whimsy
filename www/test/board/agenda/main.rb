@@ -83,14 +83,21 @@ get '/json/agenda/:file' do |file|
   end
 end
 
+MINUTE_CACHE = Hash.new(mtime: 0)
+def MINUTE_CACHE.parse(file)
+  self[file] = {
+    mtime: File.mtime(file),
+    parsed: YAML.load_file(file)
+  }
+end
+
 get '/json/minutes/:file' do |file|
-  file = "board_minutes_#{file.gsub('-','_')}.yml"
+  file = "board_minutes_#{file.gsub('-','_')}.yml".untaint
   _json do
     Dir.chdir(MINUTES_WORK) do
       if Dir['board_minutes_*.yml'].include? file
-        file = file.dup.untaint
         last_modified File.mtime(file)
-        _! YAML.load_file(file)
+        _! MINUTE_CACHE.parse(file)[:parsed]
       end
     end
   end

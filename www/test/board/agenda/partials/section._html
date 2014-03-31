@@ -4,15 +4,20 @@ end
 
 _pre.report ng_bind_html: 'item | html'
 
-_span ng_if: 'item.comments' do
+_section ng_if: 'item.comments' do
   _h3.comments! 'Comments'
   _pre.comment ng_bind_html: 'comment | html', 
     ng_repeat: 'comment in item.comments | csplit'
 end
 
-_span ng_if: 'comment' do
+_section ng_if: 'comment' do
   _h3 'Pending Comment'
   _pre.comment '{{ comment | cflow : initials }}'
+end
+
+_section ng_if: 'minutes[item.title]' do
+  _h3 'Minutes'
+  _pre '{{ minutes[item.title] }}'
 end
 
 _ng_template.post_button! do

@@ -128,6 +128,24 @@ module Angular::AsfBoardServices
     end
   end
 
+  class Minutes
+    @@index = {}
+
+    def self.get()
+      @@fetched = false if @@date != Data.date
+      unless @@fetched and (Date.new().getTime()-@@fetched) < 10_000
+        @@fetched = Date.new().getTime()
+        @@date = Data.date
+
+        $http.get("../json/minutes/#{@@date}").success do |result|
+          angular.copy result, @@index
+        end
+      end
+
+      return @@index
+    end
+  end
+
   class JIRA
     @@fetched = false
     @@projects = []

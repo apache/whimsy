@@ -435,6 +435,7 @@ module Angular::AsfBoardAgenda
     @forms = []
     @agenda = Agenda.get()
     @initials = Data.get('initials')
+    @minutes = Minutes.get()
 
     # fetch section from the route parameters
     section = $routeParams.section || $routeParams.qsection
