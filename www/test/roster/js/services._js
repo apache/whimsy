@@ -329,7 +329,7 @@ module Angular::AsfRosterServices
     end
 
     def self.get()
-      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+      unless @@fetched and (Date.new().getTime()-@@fetched) < 300_000
         @@fetched = Date.new().getTime()
         self.fetch_twice 'json/ldap' do |result|
           Committer.load(result)
@@ -355,7 +355,7 @@ module Angular::AsfRosterServices
     @@ready == false
 
     def self.get(name)
-      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+      unless @@fetched and (Date.new().getTime()-@@fetched) < 300_000
         @@fetched = Date.new().getTime()
         $http.get('json/info').success do |result|
           for pmc in result
@@ -383,7 +383,7 @@ module Angular::AsfRosterServices
 
   class AUTH
     def self.get()
-      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+      unless @@fetched and (Date.new().getTime()-@@fetched) < 300_000
         @@fetched = Date.new().getTime()
         $http.get('json/auth').success do |result|
           Group.load auth: result
@@ -394,7 +394,7 @@ module Angular::AsfRosterServices
 
   class Podlings
     def self.get()
-      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+      unless @@fetched and (Date.new().getTime()-@@fetched) < 300_000
         @@fetched = Date.new().getTime()
         $http.get('json/podlings').success do |result|
           angular.copy result, Roster::PODLINGS
@@ -408,7 +408,7 @@ module Angular::AsfRosterServices
     @@list = {}
 
     def self.lists
-      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+      unless @@fetched and (Date.new().getTime()-@@fetched) < 300_000
         @@fetched = Date.new().getTime()
         $http.get('json/mail').success do |result|
           angular.copy result, @@list
@@ -423,7 +423,7 @@ module Angular::AsfRosterServices
     @@list = {}
 
     def self.lists
-      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+      unless @@fetched and (Date.new().getTime()-@@fetched) < 300_000
         @@fetched = Date.new().getTime()
         $http.get('json/members').success do |result|
           angular.copy result, @@list
@@ -442,7 +442,7 @@ module Angular::AsfRosterServices
     @@list = Roster::SITE
 
     def self.list
-      unless @@fetched and (@@fetched-Date.new().getTime()) < 300_000
+      unless @@fetched and (Date.new().getTime()-@@fetched) < 300_000
         @@fetched = Date.new().getTime()
         $http.get('json/site').success do |result|
           angular.copy result, @@list
