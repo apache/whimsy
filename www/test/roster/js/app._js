@@ -99,6 +99,7 @@ module Angular::AsfRoster
   end
 
   controller :PMC do
+    @ldap = LDAP
     Site.list
 
     @name = $rootScope.title = $routeParams.name

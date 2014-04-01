@@ -1,6 +1,7 @@
 _h1 do
   _a '{{pmc.display_name}}', href: '{{pmc.site_link}}'
-  _span.note.not_found '(Not in LDAP)', ng_if: 'pmc.memberUid.length == 0'
+  _span.note.not_found '(Not in LDAP)', 
+     ng_if: 'ldap.ready && pmc.cn && pmc.memberUid.length == 0'
 end
 
 _p '{{pmc.site_description}}'
