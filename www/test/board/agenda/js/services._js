@@ -15,8 +15,8 @@ module Angular::AsfBoardServices
     def self.refresh()
       @@agenda ||= []
       @@agenda.update ||= 0
-      $http.get("../json/agenda/#{Data.date}").success do |result|
-        Agenda.put(result)
+      $http.get("../json/agenda/#{Data.date}").success do |result, status|
+        Agenda.put(result) unless status==304 and @@index.length==0
       end
     end
 
@@ -56,10 +56,12 @@ module Angular::AsfBoardServices
         end
       end
 
-      # add index entries to @@index
+      # add index entries to @@index, extract start and stop times
       @@index.clear()
       agenda.each do |item|
         @@index << item if item.index
+        @@start = item.timestamp if item.title == 'Call to order'
+        @@stop  = item.timestamp if item.title == 'Adjournment'
       end
 
       @@agenda.replace agenda
@@ -70,6 +72,14 @@ module Angular::AsfBoardServices
     # retrieve agenda (fetching if necessary)
     def self.get()
       self.refresh() unless @@agenda
+
+      now = Date.new().getTime()
+      unless @@update or now<Agenda.start or now>Agenda.stop
+        @@update = interval 10_000 do
+          Agenda.refresh()
+        end
+      end
+
       return @@agenda
     end
 
@@ -96,6 +106,14 @@ module Angular::AsfBoardServices
       end
       qprev.qnext = nil if qprev
       return result
+    end
+
+    def self.start
+      @@start
+    end
+
+    def self.stop
+      @@stop
     end
   end
 
@@ -130,15 +148,28 @@ module Angular::AsfBoardServices
 
   class Minutes
     @@index = {}
+    @@update = nil
 
     def self.get()
-      @@fetched = false if @@date != Data.date
+      if @@date != Data.date
+        @@fetched = false 
+        $interval.cancel(@@update) if @@update
+      end
+
       unless @@fetched and (Date.new().getTime()-@@fetched) < 10_000
         @@fetched = Date.new().getTime()
         @@date = Data.date
 
-        $http.get("../json/minutes/#{@@date}").success do |result|
-          angular.copy result, @@index
+        $http.get("../json/minutes/#{@@date}").success do |result, status|
+          if status != 304 or @@index.keys().length == 0
+            angular.copy result, @@index
+          end
+        end
+
+        unless @@update or @@fetched<Agenda.start or @@fetched>Agenda.stop
+          @@update = interval 10_000 do
+            Minutes.get()
+          end
         end
       end
 

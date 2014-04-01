@@ -60,6 +60,11 @@ get '/json/pending' do
   end
 end
 
+post '/json/:file' do
+  _json :"json/#{params[:file]}"
+end
+
+# aggressively cache agenda
 AGENDA_CACHE = Hash.new(mtime: 0)
 def AGENDA_CACHE.parse(file)
   self[file] = {
@@ -77,12 +82,14 @@ get '/json/agenda/:file' do |file|
         if AGENDA_CACHE[file][:mtime] != File.mtime(file)
           AGENDA_CACHE.parse file
         end
+        last_modified AGENDA_CACHE[file][:mtime]
         _! AGENDA_CACHE[file][:parsed]
       end
     end
   end
 end
 
+# aggressively cache minutes
 MINUTE_CACHE = Hash.new(mtime: 0)
 def MINUTE_CACHE.parse(file)
   self[file] = {
@@ -101,8 +108,4 @@ get '/json/minutes/:file' do |file|
       end
     end
   end
-end
-
-post '/json/:file' do
-  _json :"json/#{params[:file]}"
 end
