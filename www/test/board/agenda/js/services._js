@@ -164,6 +164,7 @@ module Angular::AsfBoardServices
           if status != 304 or @@index.keys().length == 0
             angular.copy result, @@index
           end
+          @@ready = true
         end
 
         unless @@update or @@fetched<Agenda.start or @@fetched>Agenda.stop
@@ -174,6 +175,14 @@ module Angular::AsfBoardServices
       end
 
       return @@index
+    end
+
+    def self.put(minutes)
+      angular.copy minutes, @@index
+    end
+
+    def self.ready
+      @@ready
     end
   end
 

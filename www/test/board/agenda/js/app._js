@@ -74,12 +74,13 @@ module Angular::AsfBoardAgenda
       @user = Data.get('availid')
 
       if Data.get('initials')
-        $rootScope.mode ||= :director
+        $rootScope.mode = :director
       elsif %w(clr jcarman).include? @user
-        $rootScope.mode ||= :secretary
+        $rootScope.mode = :secretary
       else
-        $rootScope.mode ||= :guest
+        $rootScope.mode = :guest
       end
+        $rootScope.mode = :secretary
 
       @firstname = Data.get('firstname')
     end
@@ -415,19 +416,44 @@ module Angular::AsfBoardAgenda
 
   # Secretary take minutes
   controller :Minute do
-    if not @minutes
+    if not @text
       if @item.title == 'Roll Call'
-        @minutes = @item.text
-        @minutes.sub! /^ASF members[\s\S]*?\n\n/m, '' # remove leading paragraph
-        @minutes.gsub! /\s*\(expected.*?\)/, '' # remove (expected...)
+        @text = @item.text
+        @text.sub! /^ASF members[\s\S]*?\n\n/m, '' # remove leading paragraph
+        @text.gsub! /\s*\(expected.*?\)/, '' # remove (expected...)
       elsif @item.title == 'Action Items'
-        @minutes = @item.text
+        @text = @item.text
       end
+    end
+
+    def save
+      data = {title: @item.title, text: @text, agenda: Data.get('agenda')}
+
+      $http.post('../json/minute', data).success { |response|
+        Minutes.put response
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception 
+      }.finally {
+        ~'#minute-form'.modal(:hide)
+      }
     end
   end
 
   # Secretary timestamp for Call to Order and Adjournment
   controller :Timestamp do
+    def click
+      data = {title: @item.title, action: 'timestamp', agenda: Data.get('agenda')}
+
+      $http.post('../json/minute', data).success { |response|
+        Minutes.put response
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception 
+      }.finally {
+        ~'#minute-form'.modal(:hide)
+      }
+    end
   end
 
   # controller for the section pages
@@ -482,11 +508,20 @@ module Angular::AsfBoardAgenda
         end
 
         if @mode==:secretary
-          if ['Call to order', 'Adjournment'].include? item.title
-            @buttons << 'timestamp-button'
-          else
-            @buttons << 'minute-button'
-            @forms << '../partials/minute.html'
+          watch Minutes.ready do |value|
+            if value
+              if @minutes[item.title]
+                @buttons << 'minute-button'
+              elsif ['Call to order', 'Adjournment'].include? item.title
+                @buttons << 'timestamp-button'
+              else
+                @buttons << 'minute-button'
+              end
+    
+              if @buttons.include? 'minute-button'
+                @forms << '../partials/minute.html'
+              end
+            end
           end
         end
       else
@@ -499,6 +534,12 @@ module Angular::AsfBoardAgenda
       @comment = @pending.comments[@item.attach]
       $rootScope.comment_label =
         (@comment && @comment.length > 0 ? 'edit comment' : 'add comment')
+    end
+
+    watch @minutes[@item.title] do |value|
+      @text = value
+      $rootScope.minute_label =
+        (@text && @text.length > 0 ? 'edit minutes' : 'add minutes')
     end
   end
 end
