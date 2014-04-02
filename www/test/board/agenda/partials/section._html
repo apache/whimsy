@@ -26,7 +26,7 @@ _ng_template.post_button! do
 end
 
 _ng_template.comment_button! do
-  _button.btn.btn_primary '{{comment_label}}', 
+  _button.btn.btn_primary '{{ comment_label }}', 
     data_target: '#comment-form', data_toggle: 'modal'
 end
 
@@ -36,12 +36,12 @@ _ng_template.approve_button! do
 end
 
 _ng_template.minute_button! do
-  _button.btn.btn_primary 'minute', 
+  _button.btn.btn_primary '{{ minute_label }}', 
     data_target: '#minute-form', data_toggle: 'modal'
 end
 
 _ng_template.timestamp_button! do
-  _button.btn.btn_primary 'Timestamp', ng_controller: 'Timestamp',
+  _button.btn.btn_primary 'timestamp', ng_controller: 'Timestamp',
     ng_click: 'click()'
 end
 

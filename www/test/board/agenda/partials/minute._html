@@ -2,12 +2,12 @@ _modal_dialog.minute_form!.wide_form ng_controller: 'Minute' do
   _h4.commented 'Minutes'
 
   _textarea.minute_text! :autofocus, rows: 17,
-    placeholder: 'minutes', ng_model: 'minutes'
+    placeholder: 'minutes', ng_model: 'text'
 
   _button.btn_default 'Cancel', type: 'button', data_dismiss: 'modal',
-    ng_click: 'minutes = $parent.minutes'
-  _button.btn_warning 'Delete', type: 'button', ng_click: 'minutes = ""',
-    ng_show: '$parent.minutes'
+    ng_click: 'text = $parent.text'
+  _button.btn_warning 'Delete', type: 'button', ng_click: 'text = ""',
+    ng_show: '$parent.text'
   _button.btn_primary 'Save', type: 'button', ng_click: "save()",
-    ng_disabled: '$parent.minutes == minutes'
+    ng_disabled: '$parent.text == text'
 end

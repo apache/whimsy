@@ -80,7 +80,6 @@ module Angular::AsfBoardAgenda
       else
         $rootScope.mode = :guest
       end
-        $rootScope.mode = :secretary
 
       @firstname = Data.get('firstname')
     end
