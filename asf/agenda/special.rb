@@ -17,6 +17,7 @@ class ASF::Board::Agenda
       attrs['section'] = '7' + attrs['section'] 
 
       title = attrs['title']
+      fulltitle = title.dup
       title.sub! /^Resolution to /, ''
       title.sub! /\sthe\s/, ' '
       title.sub! /\sApache\s/, ' '
@@ -24,6 +25,8 @@ class ASF::Board::Agenda
       title.sub! /\sProject(\s|$)/, '\1'
       title.sub! /\sPMC(\s|$)/, '\1'
       title.sub! /\s\(.*\)$/, ''
+
+      attrs['fulltitle'] = fulltitle if title != fulltitle
 
       text = attrs['text']
 
