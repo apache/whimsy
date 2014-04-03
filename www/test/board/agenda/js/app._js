@@ -74,11 +74,11 @@ module Angular::AsfBoardAgenda
       @user = Data.get('availid')
 
       if Data.get('initials')
-        $rootScope.mode = :director
+        $rootScope.mode ||= :director
       elsif %w(clr jcarman).include? @user
-        $rootScope.mode = :secretary
+        $rootScope.mode ||= :secretary
       else
-        $rootScope.mode = :guest
+        $rootScope.mode ||= :guest
       end
 
       @firstname = Data.get('firstname')
