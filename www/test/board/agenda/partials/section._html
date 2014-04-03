@@ -40,6 +40,11 @@ _ng_template.minute_button! do
     data_target: '#minute-form', data_toggle: 'modal'
 end
 
+_ng_template.vote_button! do
+  _button.btn.btn_primary 'vote', 
+    data_target: '#vote-form', data_toggle: 'modal'
+end
+
 _ng_template.timestamp_button! do
   _button.btn.btn_primary 'timestamp', ng_controller: 'Timestamp',
     ng_click: 'click()'

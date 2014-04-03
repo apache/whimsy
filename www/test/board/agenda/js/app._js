@@ -439,6 +439,34 @@ module Angular::AsfBoardAgenda
     end
   end
 
+  # Secretary take vote
+  controller :Vote do
+    @directors = @minutes['Roll Call'][/Directors.*Present:\n\n((.*\n)*?)\n/,1].
+      sub(/\n$/, '')
+
+    if (Date.new().getMonth() + @item.attach.charCodeAt(1)) % 2
+      @votetype = "Roll call"
+    else
+      @votetype = "Reverse roll call"
+      @directors = @directors.split("\n").reverse().join("\n")
+    end
+
+    @fulltitle = @item.fulltitle || @item.title
+
+    def save
+      data = {title: @item.title, text: @text, agenda: Data.get('agenda')}
+
+      $http.post('../json/minute', data).success { |response|
+        Minutes.put response
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception 
+      }.finally {
+        ~'#vote-form'.modal(:hide)
+      }
+    end
+  end
+
   # Secretary timestamp for Call to Order and Adjournment
   controller :Timestamp do
     def click
@@ -449,8 +477,6 @@ module Angular::AsfBoardAgenda
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
         alert data.exception 
-      }.finally {
-        ~'#minute-form'.modal(:hide)
       }
     end
   end
@@ -509,7 +535,10 @@ module Angular::AsfBoardAgenda
         if @mode==:secretary
           watch Minutes.ready do |value|
             if value
-              if @minutes[item.title]
+              if item.attach =~ /^7\w$/ and @minutes['Roll Call']
+                @buttons << 'vote-button'
+                @forms << '../partials/vote.html'
+              elsif @minutes[item.title]
                 @buttons << 'minute-button'
               elsif ['Call to order', 'Adjournment'].include? item.title
                 @buttons << 'timestamp-button'

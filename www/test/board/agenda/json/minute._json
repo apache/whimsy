@@ -1,0 +1,23 @@
+@minutes = @agenda.sub('_agenda_', '_minutes_')
+minutes_file = "#{MINUTES_WORK}/#{@minutes.sub('.txt', '.yml')}"
+minutes_file.untaint if @minutes =~ /^board_minutes_\d+-\d+-\d+\.txt$/
+
+if File.exist? minutes_file
+  minutes = YAML.load_file(minutes_file)
+else
+  minutes = {}
+end
+
+if @action == 'timestamp'
+  date = @agenda[/\d+_\d+_\d+/].gsub('_', '-')
+  zone = Time.parse("#{date} PST").dst? ? '-06:00' : '-07:00'
+  @text = Time.now.getlocal('-06:00').strftime('%-l:%M')
+end
+
+minutes[@title] = @text
+
+File.open(minutes_file, 'w') do |file|
+  file.write YAML.dump(minutes)
+end
+
+_! minutes
