@@ -441,7 +441,8 @@ module Angular::AsfBoardAgenda
 
   # Secretary take vote
   controller :Vote do
-    @directors = @minutes['Roll Call'][/Directors.*Present:\n\n((.*\n)*?)\n/,1].
+    rollcall =  @minutes['Roll Call'] || @agenda[1].text
+    @directors = rollcall[/Directors.*Present:\n\n((.*\n)*?)\n/,1].
       sub(/\n$/, '')
 
     if (Date.new().getMonth() + @item.attach.charCodeAt(1)) % 2
@@ -535,7 +536,7 @@ module Angular::AsfBoardAgenda
         if @mode==:secretary
           watch Minutes.ready do |value|
             if value
-              if item.attach =~ /^7\w$/ and @minutes['Roll Call']
+              if item.attach =~ /^7\w$/
                 @buttons << 'vote-button'
                 @forms << '../partials/vote.html'
               elsif @minutes[item.title]
