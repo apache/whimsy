@@ -85,12 +85,20 @@ module Angular::AsfBoardAgenda
     end
 
     # toggle info display
-    def infoToggle
+    def infoToggle()
       @info = (@info ? nil : 'open')
     end
 
-    watch Pending.count do |value|
-      @queued = value
+    def queued
+      Pending.count
+    end
+
+    def nav_links
+      if $rootScope.mode == :secretary
+        Agenda.links
+      else
+        []
+      end
     end
   end
 
@@ -187,7 +195,7 @@ module Angular::AsfBoardAgenda
   end
 
   controller :Commit do
-    def commit
+    def commit()
       data = {message: @commit_message}
 
       @disabled = true
@@ -235,7 +243,7 @@ module Angular::AsfBoardAgenda
     @undo = nil
     @label = 'mark seen'
     @disabled = false
-    def click
+    def click()
       @disabled = true
 
       # gather up the comments
@@ -271,7 +279,7 @@ module Angular::AsfBoardAgenda
 
   controller :ToggleComments do
     @label = 'show'
-    def click
+    def click()
       broadcast! :toggleComments, (@label == 'show')
       @label = (@label == 'show' ? 'hide' : 'show')
     end
@@ -297,7 +305,7 @@ module Angular::AsfBoardAgenda
   end
 
   controller :Comment do
-    def save
+    def save()
       data = {attach: @item.attach, initials: @initials, comment: @comment,
         agenda: Data.get('agenda')}
 
@@ -322,11 +330,11 @@ module Angular::AsfBoardAgenda
     end
 
     reflow_filter = filter(:reflow)
-    def reflow
+    def reflow()
       @report = reflow_filter(@report)
     end
 
-    def save
+    def save()
       data = {attach: @item.attach, report: @report, agenda: Data.get('agenda'),
         message: @message}
  
@@ -354,7 +362,7 @@ module Angular::AsfBoardAgenda
   controller :SpecialOrder do
     @title = ''
 
-    def save
+    def save()
       data = {attach: '7?', title: @title, report: @report, 
         agenda: Data.get('agenda')}
  
@@ -374,7 +382,7 @@ module Angular::AsfBoardAgenda
 
   controller :Refresh do
     @disabled = false
-    def click
+    def click()
       data = {agenda: Data.get('agenda')}
 
       @disabled = true
@@ -390,18 +398,16 @@ module Angular::AsfBoardAgenda
   end
 
   controller :Approve do
-    @pending = Pending.get()
-
-    def label
-      if @pending.approved.include? @item.attach
-        return 'unapprove'
+    def approve_label
+      if Pending.approved.include? @item.attach
+        'unapprove'
       else
-        return 'approve'
+        'approve'
       end
     end
 
-    def click
-      data = {attach: @item.attach, request: self.label(),
+    def click()
+      data = {attach: @item.attach, request: self.approve_label,
         initials: Data.get('initials'), agenda: Data.get('agenda')}
 
       $http.post('../json/approve', data).success { |response|
@@ -425,7 +431,7 @@ module Angular::AsfBoardAgenda
       end
     end
 
-    def save
+    def save()
       data = {title: @item.title, text: @text, agenda: Data.get('agenda')}
 
       $http.post('../json/minute', data).success { |response|
@@ -454,7 +460,7 @@ module Angular::AsfBoardAgenda
 
     @fulltitle = @item.fulltitle || @item.title
 
-    def save
+    def save()
       data = {title: @item.title, text: @text, agenda: Data.get('agenda')}
 
       $http.post('../json/minute', data).success { |response|
@@ -470,7 +476,7 @@ module Angular::AsfBoardAgenda
 
   # Secretary timestamp for Call to Order and Adjournment
   controller :Timestamp do
-    def click
+    def click()
       data = {title: @item.title, action: 'timestamp', agenda: Data.get('agenda')}
 
       $http.post('../json/minute', data).success { |response|

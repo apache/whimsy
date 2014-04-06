@@ -31,7 +31,7 @@ _ng_template.comment_button! do
 end
 
 _ng_template.approve_button! do
-  _button.btn.btn_primary '{{ label() }}', ng_controller: 'Approve',
+  _button.btn.btn_primary '{{ approve_label }}', ng_controller: 'Approve',
     ng_click: 'click()'
 end
 

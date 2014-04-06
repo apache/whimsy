@@ -62,6 +62,8 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
 
             _li.divider
 
+            _li {_a 'Comments', href: 'comments'}
+
             _li ng_if: 'mode == "director"' do 
               _a.shepherd! 'Shepherd', ng_href: 'shepherd/{{firstname}}'
             end
@@ -70,8 +72,11 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
               _a.queue! 'Queue', href: 'queue'
             end
 
+            _li ng_repeat: 'entry in nav_links' do
+              _a '{{entry.text}}', href: '{{entry.link}}'
+            end
+
             _li(ng_show: 'false') {_a.help! 'Help', href: 'help'}
-            _li {_a 'Comments', href: 'comments'}
           end
         end
       end

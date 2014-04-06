@@ -115,6 +115,14 @@ module Angular::AsfBoardServices
     def self.stop
       @@stop
     end
+
+    def self.links
+      if @@agenda and @@agenda.length > 0
+        @@agenda[-1].secretary
+      else
+        []
+      end
+    end
   end
 
   class Pending
@@ -143,6 +151,11 @@ module Angular::AsfBoardServices
 
     def self.count
       @@list.comments.keys().length + @@list.approved.keys().length
+    end
+
+    def self.approved
+      self.refresh() unless @@fetched
+      @@list.approved
     end
   end
 
