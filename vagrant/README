@@ -4,11 +4,11 @@ This early prototype roughs-in the configuration of a virtual machine
 to run whimsy services.
 workbench.
 
-Step 1: download or install Oracle VirtualBox
+Step 1: download and install Oracle VirtualBox
 
   https://www.virtualbox.org/wiki/Downloads
 
-Step 2: download or install Vagrant
+Step 2: download and install Vagrant
 
   http://www.vagrantup.com/downloads.html
 
@@ -18,7 +18,7 @@ Step 3: configure the virtual machine
 
     http://docs-v1.vagrantup.com/v1/docs/bridged_networking.html
 
-Step 4: configure the virtual machine
+Step 4: start the virtual machine
 
   Making sure that you are in this directory as your working directory, enter:
 
