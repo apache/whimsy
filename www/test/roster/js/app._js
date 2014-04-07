@@ -59,10 +59,6 @@ module Angular::AsfRoster
     watch Roster.user do |value|
       @user = value 
     end
-
-    def is_empty(hash)
-      return Object.keys(hash).length == 0
-    end
   end
 
   controller :Committers do
@@ -74,6 +70,10 @@ module Angular::AsfRoster
     $rootScope.title = 'ASF PMCs'
     watch @groups['pmc-chairs'] do |value|
       @pmc_chairs = value ? value.memberUid : []
+    end
+
+    def loading
+      @pmcs.keys().empty?
     end
   end
 
@@ -96,6 +96,10 @@ module Angular::AsfRoster
   controller :Groups do
     $rootScope.title = 'ASF Groups'
     @podlings = Podlings.get()
+
+    def loading
+      @groups.keys().empty?
+    end
   end
 
   controller :PMC do

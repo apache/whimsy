@@ -1,6 +1,6 @@
 _h1 'Groups'
 _table do
-  _tr ng_if: 'is_empty(groups)' do
+  _tr ng_if: 'loading' do
     _th 'loading...'
   end
 

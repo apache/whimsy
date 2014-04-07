@@ -1,6 +1,6 @@
 _h1 'PMCs'
 _table do
-  _tr ng_if: 'is_empty(pmcs)' do
+  _tr ng_if: 'loading' do
     _th 'loading...'
   end
 
