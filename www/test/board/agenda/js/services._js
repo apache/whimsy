@@ -194,6 +194,22 @@ module Angular::AsfBoardServices
       angular.copy minutes, @@index
     end
 
+    def self.new_actions
+      actions = []
+      for title in @@index
+        minutes = @@index[title] + "\n\n"
+        pattern = RegExp.new('^(?:@|AI\s+)(\w+):?\s+([\s\S]*?)\n\n', 'g')
+        match = pattern.exec(minutes)
+        while match
+          text = match[2].gsub(/\n/, ' ')
+          indent = match[1].gsub(/./, ' ') + '    '
+          actions << Flow.comment(text, "* #{match[1]}", indent)
+          match = pattern.exec(minutes)
+        end
+      end
+      actions.join("\n\n")
+    end
+
     def self.ready
       @@ready
     end
@@ -224,6 +240,50 @@ module Angular::AsfBoardServices
 
     def self.date
       Data.get('agenda')[/(\d+_\d+_\d+)/,1].gsub('_', '-')
+    end
+  end
+
+
+  class Flow
+    # reflow comment
+    def self.comment(comment, initials, indent='    ')
+      lines = comment.split("\n")
+      len = 71 - indent.length
+      for i in 0...lines.length
+        lines[i] = (i == 0 ? initials + ': ' : "#{indent} ") + lines[i].
+          gsub(/(.{1,#{len}})( +|$\n?)|(.{1,#{len}})/, "$1$3\n#{indent}").
+          trim()
+      end
+      return lines.join("\n")
+    end
+
+    # reflow text
+    def self.text(text)
+      # join consecutive lines (making exception for <markers> like <private>)
+      text.gsub! /([^\s>])\n(\w)/, '$1 $2'
+
+      # reflow each line
+      lines = text.split("\n")
+      for i in 0...lines.length
+        indent = lines[i].match(/( *)(.?.?)(.*)/m)
+
+        if indent[1] == '' or indent[3] == ''
+          # not indented (or short) -> split
+          lines[i] = lines[i].
+            gsub(/(.{1,78})( +|$\n?)|(.{1,78})/, "$1$3\n").
+            sub(/[\n\r]+$/, '')
+        else
+          # preserve indentation.  indent[2] is the 'bullet' (if any) and is
+          # only to be placed on the first line.
+          n = 76 - indent[1].length;
+          lines[i] = indent[3].
+            gsub(/(.{1,#{n}})( +|$\n?)|(.{1,#{n}})/, indent[1] + "  $1$3\n").
+            sub(indent[1] + '  ', indent[1] + indent[2]).
+            sub(/[\n\r]+$/, '')
+        end
+      end
+
+      return lines.join("\n")
     end
   end
 end

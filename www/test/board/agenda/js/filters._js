@@ -221,43 +221,4 @@ module Angular::AsfBoardFilters
     comments << comment unless comment.empty?
     return comments
   end
-
-  # reflow comment
-  filter :cflow do |comment, initials|
-    lines = comment.split("\n")
-    for i in 0...lines.length
-      lines[i] = (i == 0 ? initials + ': ' : '    ') +
-        lines[i].gsub(/(.{1,67})( +|$\n?)|(.{1,67})/, "$1$3\n    ").trim()
-    end
-    return lines.join("\n")
-  end
-
-  # reflow text
-  filter :reflow do |text|
-    # join consecutive lines (making exception for <markers> like <private>)
-    text.gsub! /([^\s>])\n(\w)/, '$1 $2'
-
-    # reflow each line
-    lines = text.split("\n")
-    for i in 0...lines.length
-      indent = lines[i].match(/( *)(.?.?)(.*)/m)
-
-      if indent[1] == '' or indent[3] == ''
-        # not indented (or short) -> split
-        lines[i] = lines[i].
-          gsub(/(.{1,78})( +|$\n?)|(.{1,78})/, "$1$3\n").
-          sub(/[\n\r]+$/, '')
-      else
-        # preserve indentation.  indent[2] is the 'bullet' (if any) and is
-        # only to be placed on the first line.
-        n = 76 - indent[1].length;
-        lines[i] = indent[3].
-          gsub(/(.{1,#{n}})( +|$\n?)|(.{1,#{n}})/, indent[1] + "  $1$3\n").
-          sub(indent[1] + '  ', indent[1] + indent[2]).
-          sub(/[\n\r]+$/, '')
-      end
-    end
-
-    return lines.join("\n")
-  end
 end

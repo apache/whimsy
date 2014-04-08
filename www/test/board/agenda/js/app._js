@@ -329,9 +329,8 @@ module Angular::AsfBoardAgenda
       @message = "Post #{@item.title} Report"
     end
 
-    reflow_filter = filter(:reflow)
     def reflow()
-      @report = reflow_filter(@report)
+      @report = Flow.text(@report)
     end
 
     def save()
@@ -494,6 +493,7 @@ module Angular::AsfBoardAgenda
     @agenda = Agenda.get()
     @initials = Data.get('initials')
     @minutes = Minutes.get()
+    @cflow = Flow.comments
 
     # fetch section from the route parameters
     section = $routeParams.section || $routeParams.qsection
@@ -537,6 +537,10 @@ module Angular::AsfBoardAgenda
           if @mode==:director and item.approved
             @buttons << 'approve-button' unless item.approved.include? @initials
           end
+        end
+
+        if item.title == 'Action Items'
+          item.new_actions = Minutes.new_actions
         end
 
         if @mode==:secretary
