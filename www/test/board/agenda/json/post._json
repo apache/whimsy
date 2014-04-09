@@ -31,6 +31,14 @@ File.open(agenda_file, 'r') do |file|
 
     @message = "Post Special Order 7#{order}: #{@title}"
   else
+    item = ASF::Board::Agenda.parse(agenda).find {|item| item[:attach]==@attach}
+
+    if not item
+      raise Exception.new("Attachment #{@attach.inspect} not found")
+    elsif @digest != item['digest']
+      raise Exception.new("Merge conflict")
+    end
+
     if @attach =~ /^4\w/
       pattern = /(\n\n    #{@attach[-1]}\..*?\[.*?\])\n.*?(\s*\n-{40})/m
     else
