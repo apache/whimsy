@@ -540,7 +540,9 @@ module Angular::AsfBoardAgenda
         end
 
         if item.title == 'Action Items'
-          item.new_actions = Minutes.new_actions
+          def item.new_actions
+            Minutes.new_actions
+          end
         end
 
         if @mode==:secretary

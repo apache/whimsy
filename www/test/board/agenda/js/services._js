@@ -188,11 +188,11 @@ module Angular::AsfBoardServices
           end
           @@ready = true
         end
+      end
 
-        unless @@update or @@fetched<Agenda.start or @@fetched>Agenda.stop
-          @@update = interval 10_000 do
-            Minutes.get()
-          end
+      unless @@update or @@fetched<Agenda.start or @@fetched>Agenda.stop
+        @@update = interval 10_000 do
+          Minutes.get()
         end
       end
 
@@ -204,6 +204,8 @@ module Angular::AsfBoardServices
     end
 
     def self.new_actions
+      Minutes.get()
+      @@actions ||= []
       actions = []
       for title in @@index
         minutes = @@index[title] + "\n\n"
@@ -213,16 +215,20 @@ module Angular::AsfBoardServices
           text = match[2].gsub(/\n/, ' ')
           indent = match[1].gsub(/./, ' ') + '    '
           item = Agenda.find(title)
-          actions << {
-            title: title,
-            link: (item.href if item),
-            text: Flow.comment(text, "* #{match[1]}", indent)
-          }
+          actions << self.find_action(title, (item.href if item),
+            Flow.comment(text, "* #{match[1]}", indent));
           match = pattern.exec(minutes)
         end
       end
-      console.log actions
-      actions
+      @@actions.replace(actions)
+      @@actions
+    end
+
+    def self.find_action(title, link, text)
+      match = @@actions.find do |action|
+        action.title == title and action.link == link and action.text == text
+      end
+      return match || {title: title, link: link, text: text}
     end
 
     def self.ready

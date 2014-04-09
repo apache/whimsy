@@ -10,7 +10,7 @@ _section ng_if: 'item.comments' do
     ng_repeat: 'comment in item.comments | csplit'
 end
 
-_section.new_actions! ng_if: 'item.new_actions' do
+_section.new_actions! ng_if: 'item.new_actions.length >= 0' do
   _h3.comments! 'Action Items Captured During the Meeting'
   _span ng_repeat: 'action in item.new_actions' do
     _pre.report '{{ action.text }}'
