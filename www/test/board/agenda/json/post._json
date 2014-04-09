@@ -41,6 +41,9 @@ File.open(agenda_file, 'r') do |file|
 
     if @attach =~ /^4\w/
       pattern = /(\n\n    #{@attach[-1]}\..*?\[.*?\])\n.*?(\s*\n-{40})/m
+    elsif @attach =~ /^7\w/
+      pattern = /(^\s+#{@attach[-1]}\.\s+#{@fulltitle})\n.*?(\n {1,6}\w\.)/m
+      @report.gsub! /^(.)/, '       \1'
     else
       pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])\n.*?(\s*\n-{40})/m
     end

@@ -321,11 +321,13 @@ module Angular::AsfBoardAgenda
   end
 
   controller :PostReport do
-    @baseline = @report = @item.report
+    @baseline = @report = @item.report || @item.text
     @digest = @item.digest
 
     if @post_button_text == 'edit report'
       @message = "Edit #{@item.title} Report"
+    elsif @post_button_text == 'edit resolution'
+      @message = "Edit #{@item.title} Resolution"
     else
       @message = "Post #{@item.title} Report"
     end
@@ -337,6 +339,8 @@ module Angular::AsfBoardAgenda
     def save()
       data = {attach: @item.attach, report: @report, agenda: Data.get('agenda'),
         message: @message, digest: @digest}
+
+      data.fulltitle = @item.fulltitle if @item.fulltitle
  
       @disabled = true
       $http.post('../json/post', data).success { |response|
@@ -522,10 +526,13 @@ module Angular::AsfBoardAgenda
           @forms << '../partials/comment.html'
         end
 
-        if item.attach =~ /^(\d|[A-Z]+)$/
+        if item.attach =~ /^(\d|7?[A-Z]+)$/
           if item.missing
             $rootScope.post_button_text = 'post report'
             @post_form_title = 'Post report'
+          elsif item.attach =~ /^7/
+            $rootScope.post_button_text = 'edit resolution'
+            @post_form_title = 'Edit resolution'
           else
             $rootScope.post_button_text = 'edit report'
             @post_form_title = 'Edit report'
