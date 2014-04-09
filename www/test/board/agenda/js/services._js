@@ -116,6 +116,15 @@ module Angular::AsfBoardServices
       @@stop
     end
 
+    def self.find(title)
+      return unless @@agenda
+      match = nil
+      @@agenda.each do |item|
+        match = item if item.title == title
+      end
+      return match
+    end
+
     def self.links
       if @@agenda and @@agenda.length > 0
         @@agenda[-1].secretary
@@ -203,11 +212,17 @@ module Angular::AsfBoardServices
         while match
           text = match[2].gsub(/\n/, ' ')
           indent = match[1].gsub(/./, ' ') + '    '
-          actions << Flow.comment(text, "* #{match[1]}", indent)
+          item = Agenda.find(title)
+          actions << {
+            title: title,
+            link: (item.href if item),
+            text: Flow.comment(text, "* #{match[1]}", indent)
+          }
           match = pattern.exec(minutes)
         end
       end
-      actions.join("\n\n")
+      console.log actions
+      actions
     end
 
     def self.ready

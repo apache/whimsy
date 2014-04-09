@@ -10,9 +10,12 @@ _section ng_if: 'item.comments' do
     ng_repeat: 'comment in item.comments | csplit'
 end
 
-_section ng_if: 'item.new_actions' do
+_section.new_actions! ng_if: 'item.new_actions' do
   _h3.comments! 'Action Items Captured During the Meeting'
-  _pre.report '{{ item.new_actions }}'
+  _span ng_repeat: 'action in item.new_actions' do
+    _pre.report '{{ action.text }}'
+    _a '[ {{ action.title }} ]', ng_href: '{{ action.link }}#minutes'
+  end
 end
 
 _section ng_if: 'comment' do
@@ -20,7 +23,7 @@ _section ng_if: 'comment' do
   _pre.comment '{{ cflow(comment, initials) }}'
 end
 
-_section ng_if: 'minutes[item.title]' do
+_section.minutes! ng_if: 'minutes[item.title]' do
   _h3 'Minutes'
   _pre '{{ minutes[item.title] }}'
 end
