@@ -1,4 +1,5 @@
 require 'time'
+require 'digest/md5'
 
 module ASF
   module Board
