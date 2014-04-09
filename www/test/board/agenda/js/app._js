@@ -322,6 +322,7 @@ module Angular::AsfBoardAgenda
 
   controller :PostReport do
     @baseline = @report = @item.report
+    @digest = @item.digest
 
     if @post_button_text == 'edit report'
       @message = "Edit #{@item.title} Report"
@@ -335,7 +336,7 @@ module Angular::AsfBoardAgenda
 
     def save()
       data = {attach: @item.attach, report: @report, agenda: Data.get('agenda'),
-        message: @message}
+        message: @message, digest: @digest}
  
       @disabled = true
       $http.post('../json/post', data).success { |response|
