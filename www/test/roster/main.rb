@@ -91,15 +91,26 @@ get '/json/info' do
   end
 end
 
+LDAP_ETAGS=[]
 get '/json/ldap' do
   cache_control :private, :no_cache, :must_revalidate, max_age: 0
 
   cache_control = env['HTTP_CACHE_CONTROL'].to_s.downcase.split(/,\s+/)
   if cache_control.include? 'only-if-cached'
-    throw :halt, 504 unless @@ldap_cache
+    etag = request.env['HTTP_IF_NONE_MATCH']
+    if LDAP_ETAGS.include? etag
+      throw :halt, 304
+    else
+      throw :halt, 504 unless @@ldap_cache
+    end
   else
     @@ldap_cache = JSON.dump(ASF::RosterLDAP.get)
     @@ldap_etag = Digest::MD5.hexdigest(@@ldap_cache)
+
+    unless LDAP_ETAGS.include? @@ldap_etag
+      LDAP_ETAGS << @@ldap_etag 
+      LDAP_ETAGS.slice! 0, LDAP_ETAGS.length-20
+    end
   end
 
   etag @@ldap_etag if @@ldap_etag
