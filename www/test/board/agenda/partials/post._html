@@ -7,7 +7,7 @@ _modal_dialog.post_report_form!.wide_form ng_controller: 'PostReport' do
   _input.message label: 'Commit message', ng_model: 'message',
     ng_disabled: 'disabled'
 
-  _button.btn_default 'Close', type: 'button', data_dismiss: 'modal'
+  _button.btn_default 'Cancel', type: 'button', ng_click: "cancel()"
   _button 'Reflow', type: 'button', ng_click: "reflow()",
     ng_disabled: 'disabled', class: '{{reflow_class}}'
   _button.btn_primary 'Submit', type: 'button', ng_click: "save()",

@@ -16,7 +16,7 @@ module Angular::AsfBoardServices
       @@agenda ||= []
       @@agenda.update ||= 0
       $http.get("../json/agenda/#{Data.date}").success do |result, status|
-        Agenda.put(result) unless status==304 and @@index.length==0
+        Agenda.put(result) unless status==304 and @@index.length>0
       end
     end
 
@@ -73,8 +73,7 @@ module Angular::AsfBoardServices
     def self.get()
       self.refresh() unless @@agenda
 
-      now = Date.new().getTime()
-      unless @@update or now<Agenda.start or now>Agenda.stop
+      unless @@update or Date.new().getTime() > Agenda.stop
         @@update = interval 10_000 do
           Agenda.refresh()
         end

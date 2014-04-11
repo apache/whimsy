@@ -121,7 +121,13 @@ module Angular::AsfBoardAgenda
       prev: agendas[index-1] || help
     @buttons << 'refresh-button'
 
-    @buttons << 'special-order-button'
+    watch Agenda.stop do |value|
+      if value and Date.new().getTime() < value
+        unless @buttons.include? 'special-order-button'
+          @buttons << 'special-order-button'
+        end
+      end
+    end
   end
 
   # controller for the help page
@@ -321,8 +327,16 @@ module Angular::AsfBoardAgenda
   end
 
   controller :PostReport do
+    @disabled = false
     @baseline = @report = @item.report || @item.text
     @digest = @item.digest
+
+    watch @item.digest do |value|
+      if value != @digest and not @disabled
+        @disabled = true
+        alert 'Edit Conflict'
+      end 
+    end
 
     if @post_button_text == 'edit report'
       @message = "Edit #{@item.title} Report"
@@ -334,6 +348,12 @@ module Angular::AsfBoardAgenda
 
     def reflow()
       @report = Flow.text(@report)
+    end
+
+    def cancel()
+      ~'#post-report-form'.modal(:hide)
+      @baseline = @report = @item.report || @item.text
+      @disabled = false
     end
 
     def save()
@@ -521,29 +541,31 @@ module Angular::AsfBoardAgenda
             next_href: (item.qnext ? item.qnext.qhref : nil)
         end
 
-        unless item.comments === undefined
-          @buttons << 'comment-button'
-          @forms << '../partials/comment.html'
-        end
-
-        if item.attach =~ /^(\d|7?[A-Z]+)$/
-          if item.missing
-            $rootScope.post_button_text = 'post report'
-            @post_form_title = 'Post report'
-          elsif item.attach =~ /^7/
-            $rootScope.post_button_text = 'edit resolution'
-            @post_form_title = 'Edit resolution'
-          else
-            $rootScope.post_button_text = 'edit report'
-            @post_form_title = 'Edit report'
+        unless Date.new().getTime() > Agenda.stop
+          unless item.comments === undefined
+            @buttons << 'comment-button'
+            @forms << '../partials/comment.html'
           end
-          @buttons << 'post-button'
-          @forms << '../partials/post.html'
-        end
 
-        if item.report or item.text
-          if @mode==:director and item.approved
-            @buttons << 'approve-button' unless item.approved.include? @initials
+          if item.attach =~ /^(\d|7?[A-Z]+)$/
+            if item.missing
+              $rootScope.post_button_text = 'post report'
+              @post_form_title = 'Post report'
+            elsif item.attach =~ /^7/
+              $rootScope.post_button_text = 'edit resolution'
+              @post_form_title = 'Edit resolution'
+            else
+              $rootScope.post_button_text = 'edit report'
+              @post_form_title = 'Edit report'
+            end
+            @buttons << 'post-button'
+            @forms << '../partials/post.html'
+          end
+
+          if @mode==:director and (item.report or item.text)
+            if item.approved and not item.approved.include? @initials
+              @buttons << 'approve-button'
+            end
           end
         end
 
