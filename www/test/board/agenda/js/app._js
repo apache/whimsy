@@ -33,6 +33,10 @@ module Angular::AsfBoardAgenda
     templateUrl '../partials/shepherd.html'
     controller :Shepherd
 
+  when '/search'
+    templateUrl '../partials/search.html'
+    controller :Search
+
   when '/:section'
     templateUrl '../partials/section.html'
     controller :Section
@@ -46,6 +50,7 @@ module Angular::AsfBoardAgenda
     @item = {}
     @next = nil
     @prev = nil
+    @search = {text: ''}
 
     def layout(vars)
       @buttons = []
@@ -221,8 +226,8 @@ module Angular::AsfBoardAgenda
   # controller for the comments pages
   controller :Comments do
     initials = Data.get('initials')
-    $scope.layout title: "Comments",
-      prev: ({title: 'Queue', href: 'queue'} if initials)
+    $scope.layout title: "Comments", prev: 'Search',
+      next: ({title: 'Queue', href: 'queue'} if initials)
     @agenda = Agenda.get()
     @pending = Pending.get()
     @toggle = false
@@ -611,6 +616,42 @@ module Angular::AsfBoardAgenda
       @text = value
       $rootScope.minute_label =
         (@text && @text.length > 0 ? 'edit minutes' : 'add minutes')
+    end
+  end
+
+  controller :Search do
+    $scope.layout title: "Search", next: 'Comments'
+
+    @search.text = $location.search().q || ''
+
+    def results
+      @agenda = Agenda.get()
+
+      @matches ||= []
+      history = @matches
+      matches = []
+      if @search.text.length > 2
+        search = @search.text.downcase()
+        @agenda.each do |item|
+          text = item.text || item.report
+          if text and text.downcase().include? search
+            snippets = []
+            text.split(/\n\n/).each do |paragraph|
+              snippets << paragraph if paragraph.downcase().include? search
+            end
+
+            match = {item: item, snippets: snippets}
+            matches << 
+              (history.find {|prev| angular.equals(prev, match)} || match)
+          end
+        end
+      end
+
+      # For some reason `angular.copy matches, @matches` produces 
+      # "Maximum call stack size exceeded"
+      @matches.clear()
+      angular.extend @matches, matches
+      @matches
     end
   end
 end

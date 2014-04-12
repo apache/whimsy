@@ -22,7 +22,7 @@ module Angular::AsfBoardDirectives
     restrict :E
     def link(scope, element, attr)
       element.keydown do |event|
-        return unless ~('.modal-open').empty?
+        return unless ~('.modal-open').empty? and ~('input').empty?
         return if event.metaKey or event.ctrlKey
 
         if event.keyCode == 37 # '<-'

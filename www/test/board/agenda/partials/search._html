@@ -1,0 +1,14 @@
+_div.search do
+  _label 'Search:', for: 'search_text'
+  _input.search_text! :autofocus, ng_model: 'search.text'
+end
+
+_section ng_repeat: 'match in results' do
+  _h4! do
+    _a '{{ match.item.title }}', ng_href: "{{match.item.href}}"
+  end
+
+  _pre ng_bind_html: 'snippet | hilight:search', 
+    ng_repeat: 'snippet in match.snippets'
+end
+

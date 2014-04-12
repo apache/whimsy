@@ -189,3 +189,6 @@ main hr {
 #new-actions a {
   margin-left: 6em 
 }
+
+.search {padding-top: 1em}
+.hilite {background-color: yellow}

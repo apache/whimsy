@@ -179,6 +179,20 @@ module Angular::AsfBoardFilters
     return $sce.trustAsHtml(text)
   end
 
+  filter :hilight do |text, search|
+    if text and text != ''
+      text.gsub!(escape_html) {|c| escape_replacement[c]}
+      
+      search = search.text.gsub(escape_html) {|c| escape_replacement[c]}
+      pattern = Regexp.new(search, 'i')
+      text.gsub! pattern do |match|
+        "<span class='hilite'>#{match}</span>"
+      end
+    end
+
+    return $sce.trustAsHtml(text)
+  end
+
   filter :approved do |agenda, pending|
     approved = []
     agenda.each do |item|
