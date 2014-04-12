@@ -21,6 +21,8 @@ module Angular::AsfBoardDirectives
   directive :body do
     restrict :E
     def link(scope, element, attr)
+      element.find('*[autofocus]').focus()
+
       element.keydown do |event|
         return unless ~('.modal-open').empty? and ~('#search-text').empty?
         return if event.metaKey or event.ctrlKey

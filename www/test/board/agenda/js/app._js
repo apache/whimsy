@@ -151,8 +151,7 @@ module Angular::AsfBoardAgenda
     firstname = Data.get('firstname')
 
     $scope.layout title: 'Queued approvals and comments',
-      prev: ({title: 'Shepherd', href: "shepherd/#{firstname}"} if firstname),
-      next: {title: 'Comments', href: 'comments'}
+      prev: ({title: 'Shepherd', href: "shepherd/#{firstname}"} if firstname)
 
     @buttons << 'refresh-button'
 
@@ -225,9 +224,10 @@ module Angular::AsfBoardAgenda
 
   # controller for the comments pages
   controller :Comments do
-    initials = Data.get('initials')
-    $scope.layout title: "Comments", prev: 'Search',
-      next: ({title: 'Queue', href: 'queue'} if initials)
+    firstname = Data.get('firstname')
+    $scope.layout title: "Comments", 
+      prev: {title: 'Search', href: 'search'},
+      next: ({title: 'Shepherd', href: "shepherd/#{firstname}"} if firstname)
     @agenda = Agenda.get()
     @pending = Pending.get()
     @toggle = false
@@ -301,6 +301,7 @@ module Angular::AsfBoardAgenda
     @agenda = Agenda.get()
     @name = $routeParams.name
     $scope.layout title: "Shepherded By #{@name}", 
+      prev: {title: 'Comments', href: 'comments'},
       next: {title: 'Queue', href: 'queue'}
 
     watch 'agenda.update' do
@@ -620,15 +621,14 @@ module Angular::AsfBoardAgenda
   end
 
   controller :Search do
-    $scope.layout title: "Search", next: 'Comments'
+    @agenda = Agenda.get()
+    $scope.layout title: "Search", next: {title: 'Comments', href: 'comments'}
 
     @search.text = $location.search().q || ''
+    @results = []
 
-    def results
-      @agenda = Agenda.get()
-
-      @matches ||= []
-      history = @matches
+    def find_matches()
+      history = @results
       matches = []
       if @search.text.length > 2
         search = @search.text.downcase()
@@ -649,9 +649,12 @@ module Angular::AsfBoardAgenda
 
       # For some reason `angular.copy matches, @matches` produces 
       # "Maximum call stack size exceeded"
-      @matches.clear()
-      angular.extend @matches, matches
-      @matches
+      @results.clear()
+      angular.extend @results, matches
+    end
+
+    watch @search.text + @agenda.update do
+      $scope.find_matches()
     end
   end
 end
