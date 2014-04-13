@@ -636,7 +636,7 @@ module Angular::AsfBoardAgenda
           text = item.text || item.report
           if text and text.downcase().include? search
             snippets = []
-            text.split(/\n\n/).each do |paragraph|
+            text.split(/\n\s*\n/).each do |paragraph|
               snippets << paragraph if paragraph.downcase().include? search
             end
 
