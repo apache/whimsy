@@ -184,8 +184,7 @@ module Angular::AsfBoardFilters
       text.gsub!(escape_html) {|c| escape_replacement[c]}
       
       search = search.text.gsub(escape_html) {|c| escape_replacement[c]}
-      pattern = Regexp.new(search, 'i')
-      text.gsub! pattern do |match|
+      text.gsub! /#{search}/i do |match|
         "<span class='hilite'>#{match}</span>"
       end
     end
