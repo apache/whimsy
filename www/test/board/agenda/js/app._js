@@ -623,9 +623,20 @@ module Angular::AsfBoardAgenda
   controller :Search do
     @agenda = Agenda.get()
     $scope.layout title: "Search", next: {title: 'Comments', href: 'comments'}
+    @buttons << 'refresh-button'
 
     @search.text = $location.search().q || ''
     @results = []
+
+    def message
+      if @agenda.length == 0
+        'Loading...'
+      elsif @search.text.length < 3
+        'Please enter at least three characters'
+      elsif @results.length == 0
+        'No matches'
+      end
+    end
 
     def find_matches()
       history = @results
