@@ -33,7 +33,8 @@ _html do
 
     # start with the Watch List itself
     watch_list = ASF::Person.member_watch_list.keys
-    meeting = File.dirname(Dir["#{meetings}/*/nominated-members.txt"].sort.last)
+    meeting =
+      File.dirname(Dir["#{meetings}/*/nominated-members.txt"].sort.last).untaint
 
     txt = File.read("#{meeting}/nominated-members.txt")
     nominations = txt.scan(/^\s?\w+.*<(\S+)@apache.org>/).flatten
