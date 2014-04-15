@@ -6,9 +6,9 @@ module ASF
       return @member_nominees if @member_nominees
 
       foundation = ASF::SVN['private/foundation/Meetings']
-      text = File.read "#{foundation}/20130521/nominated-members.txt"
+      nominations = Dir["#{meetings}/*/nominated-members.txt"].sort.last.untaint
 
-      nominations = text.split(/^\s*---+\s*/)
+      nominations = File.read(nominations).split(/^\s*---+\s*/)
       nominations.shift(2)
 
       nominees = {}
