@@ -37,9 +37,9 @@ _html do
       File.dirname(Dir["#{meetings}/*/nominated-members.txt"].sort.last).untaint
 
     txt = File.read("#{meeting}/nominated-members.txt")
-    nominations = txt.scan(/^\s?\w+.*<(\S+)@apache.org>/).flatten
-    nominations += txt.scan(/^\s?\w+.*\(([a-z]+)\)/).flatten
-    nominations += txt.scan(/^\s?\w+.*\(([a-z]+)@apache\.org\)/).flatten
+    nominations = txt.scan(/^---+\n\s*\w+.*<(\S+)@apache.org>/).flatten
+    nominations += txt.scan(/^---+\n\s*\w+.*\(([a-z]+)\)/).flatten
+    nominations += txt.scan(/^---+\n\s*\w+.*\(([a-z]+)@apache\.org\)/).flatten
 
     # determine which list to report on, based on the URI
     request = ENV['REQUEST_URI']
