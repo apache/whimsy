@@ -5,7 +5,7 @@ module ASF
     def self.member_nominees
       return @member_nominees if @member_nominees
 
-      foundation = ASF::SVN['private/foundation/Meetings']
+      meetings = ASF::SVN['private/foundation/Meetings']
       nominations = Dir["#{meetings}/*/nominated-members.txt"].sort.last.untaint
 
       nominations = File.read(nominations).split(/^\s*---+\s*/)
