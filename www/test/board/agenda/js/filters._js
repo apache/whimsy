@@ -73,8 +73,14 @@ module Angular::AsfBoardFilters
     text.gsub! private_sections, '<div class="private">$1$2</div>'
 
     # link to board minutes
-    text.gsub! /(board_minutes_\d+_\d+_\d+)/, 
-      '<a href="https://svn.apache.org/repos/private/foundation/board/$1.txt">$1</a>'
+    text.gsub! /board_minutes_(\d+)_\d+_\d+\.txt/ do |match, year|
+      if Data.drafts.include? match
+        link = "https://svn.apache.org/repos/private/foundation/board/#{match}"
+      else
+        link = "http://apache.org/foundation/records/minutes/#{year}/#{match}"
+      end
+      "<a href='#{link}'>#{match}</a>"
+    end
 
     # convert textual links into hyperlinks
     text.gsub! uri_in_text do |match, pre, link|

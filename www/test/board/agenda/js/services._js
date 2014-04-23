@@ -261,6 +261,10 @@ module Angular::AsfBoardServices
     def self.date
       Data.get('agenda')[/(\d+_\d+_\d+)/,1].gsub('_', '-')
     end
+
+    def self.drafts
+      Data.get('drafts').split(' ')
+    end
   end
 
 

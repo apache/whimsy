@@ -37,6 +37,8 @@ end
 
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   Dir.chdir(svn) {@agendas = Dir['board_agenda_*.txt'].sort}
+  Dir.chdir(svn) {@drafts = Dir['board_minutes_*.txt'].sort}
+  STDERR.puts @drafts
   @base = env['REQUEST_URI'].chomp(path)
   @agenda = "board_agenda_#{date.gsub('-','_')}.txt"
   _html :'views/main'
