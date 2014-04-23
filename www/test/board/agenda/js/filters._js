@@ -78,7 +78,17 @@ module Angular::AsfBoardFilters
 
     # convert textual links into hyperlinks
     text.gsub! uri_in_text do |match, pre, link|
-      "#{pre}<a href='#{link}'>#{link}</a>"
+      text = link
+      text.sub!(%r{http://www.timeanddate.com/worldclock/fixedtime.html\?iso=(\d{4})(\d\d)(\d\d)T(\d\d)(\d\d).*}, '$1-$2-$3T$4:$5Z')
+      "#{pre}<a href='#{link}'>#{text}</a>"
+    end
+
+    # Show Call to Order time in local time
+    if item.timestamp
+      text.sub! /\n(\s+)(Other Time Zones:.*)/ do |match, spaces, text|
+        localtime = Date.new(item.timestamp).toLocaleString()
+        "\n#{spaces}<span class='hilite'>Local Time: #{localtime}</span>#{spaces}#{text}"
+      end
     end
 
     roster = 'https://whimsy.apache.org/test/roster/committer/'
