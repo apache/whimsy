@@ -579,6 +579,13 @@ module Angular::AsfBoardAgenda
           def item.new_actions
             Minutes.new_actions
           end
+        elsif item.attach =~ /^3[A-Z]$/
+          date = item.text[/board_minutes_(\d+_\d+_\d+)\.txt/, 1]
+          if date
+            $http.get("../text/minutes/#{date}").success { |response|
+              @minute_text = response
+            }
+          end
         end
 
         if @mode==:secretary

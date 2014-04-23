@@ -109,3 +109,17 @@ get '/json/minutes/:file' do |file|
     end
   end
 end
+
+get '/text/minutes/:file' do |file|
+  file = "board_minutes_#{file.gsub('-','_')}.txt".untaint
+  _text do
+    Dir.chdir(svn) do
+      if Dir['board_minutes_*.txt'].include? file
+        last_modified File.mtime(file)
+        _ File.read(file)
+      else
+        halt 404
+      end
+    end
+  end
+end

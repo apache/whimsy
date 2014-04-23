@@ -28,6 +28,10 @@ _section.minutes! ng_if: 'minutes[item.title]' do
   _pre '{{ minutes[item.title] }}'
 end
 
+_section.minutes! ng_if: 'minute_text' do
+  _pre '{{ minute_text }}'
+end
+
 _ng_template.post_button! do
   _button.btn.btn_primary '{{ post_button_text }}', 
     data_target: '#post-report-form', data_toggle: 'modal'
