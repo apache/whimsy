@@ -1,4 +1,5 @@
 require 'time'
+require 'tzinfo'
 require 'digest/md5'
 
 module ASF
@@ -99,8 +100,8 @@ class ASF::Board::Agenda
 
   def timestamp(time)
     date = @file[/(\w+ \d+, \d+)/]
-    zone = Time.parse("#{date} PST").dst? ? 'PDT' : 'PST'
-    Time.parse("#{date} #{time} #{zone}").to_i * 1000
+    tz = TZInfo::Timezone.get('America/Los_Angeles')
+    tz.local_to_utc(Time.parse("#{date} #{time}")).to_i * 1000
   end
 end
 
