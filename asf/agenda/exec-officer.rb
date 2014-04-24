@@ -20,7 +20,7 @@ class ASF::Board::Agenda
 
       attrs['report'].sub! /\A\s*\n/, ''
 
-      attrs['report'].gsub! /\n\n\s+\[ comments:(.*)\]\s*$/m do
+      attrs['report'].gsub! /\n\s*\n\s+\[ comments:(.*)\]\s*$/m do
         attrs['comments'] = $1.sub(/\A\s*\n/, '').sub(/\s+\Z/, '')
         "\n"
       end
