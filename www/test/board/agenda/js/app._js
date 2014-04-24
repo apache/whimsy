@@ -105,6 +105,11 @@ module Angular::AsfBoardAgenda
         []
       end
     end
+
+    # prefetch roster info
+    if $location.host() == 'whimsy.apache.org'
+      $http.get("/test/roster/json/ldap").success {}
+    end
   end
 
   # controller for the index page
