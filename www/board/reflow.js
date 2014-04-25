@@ -29,3 +29,6 @@ function reflow(element) {
 
   element.val(lines.join("\n"));
 }
+
+
+RegExp.new("(.{1,#{n}})( +|$\n?)|(.{1,#{n}})", 'g')

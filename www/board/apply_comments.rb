@@ -50,21 +50,21 @@ def apply_comments(agenda_file, update_file, initials)
       attachment, approvals = prefix + $1, $2
 
       if approved.include? attachment
-	approvals = approvals.strip.split(/(?:,\s*|\s+)/)
-	if approvals.include? initials
-	  # do nothing
-	elsif approvals.empty?
-	  match[/approved:(\s*)\n/, 1] = " #{initials}"
-	else
-	  match[/approved:.*?()\n/, 1] = ", #{initials}"
-	end
+        approvals = approvals.strip.split(/(?:,\s*|\s+)/)
+        if approvals.include? initials
+          # do nothing
+        elsif approvals.empty?
+          match[/approved:(\s*)\n/, 1] = " #{initials}"
+        else
+          match[/approved:.*?()\n/, 1] = ", #{initials}"
+        end
       end
 
       if comments.include? attachment
-	width = 79-13-initials.length
-	text = comments[attachment].reflow(13+initials.length, width)
-	text[/ *(#{' '*(initials.length+2)})/,1] = "#{initials}: "
-	match[/\n()\s{9}\]/,1] = "#{text}\n"
+        width = 79-13-initials.length
+        text = comments[attachment].reflow(13+initials.length, width)
+        text[/ *(#{' '*(initials.length+2)})/,1] = "#{initials}: "
+        match[/\n()\s{9}\]/,1] = "#{text}\n"
       end
 
       match
