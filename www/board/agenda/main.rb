@@ -75,7 +75,7 @@ def AGENDA_CACHE.parse(file)
   }
 end
 
-get '/json/agenda/:file' do |file|
+get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
   file = "board_agenda_#{file.gsub('-','_')}.txt"
   _json do
     Dir.chdir(svn) do

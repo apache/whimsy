@@ -15,7 +15,7 @@ module Angular::AsfBoardServices
     def self.refresh()
       @@agenda ||= []
       @@agenda.update ||= 0
-      $http.get("../json/agenda/#{Data.date}").success do |result, status|
+      $http.get("../#{Data.date}.json").success do |result, status|
         Agenda.put(result) unless status==304 and @@index.length>0
       end
     end
