@@ -29,7 +29,7 @@ get '/' do
 end
 
 get %r{/(committer/(.*))} do |path, name|
-  if request.xhr? or request.accept? 'application/json'
+  if request.xhr? or env['HTTP_ACCEPT'].include? 'application/json'
     _json do
       person = ASF::Person.find(name)
       if person and person.public_name
