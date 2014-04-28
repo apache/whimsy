@@ -28,9 +28,29 @@ get '/' do
   _html :'views/main'
 end
 
-get %r{/(committer/.*)} do |path|
-  @base = URI.parse(env['REQUEST_URI']).path.chomp(path)
-  _html :'views/main'
+get %r{/(committer/(.*))} do |path, name|
+  if request.xhr? or request.accept? 'application/json'
+    _json do
+      person = ASF::Person.find(name)
+      if person and person.public_name
+        _availid person.id
+        _name person.public_name 
+        _emails person.all_mail
+        _urls person.urls
+        _committees person.committees.map(&:name)
+        _member person.asf_member?
+        _banned person.banned? if person.banned?
+        _pgpkeys (person.pgp_key_fingerprints || [])
+        _groups person.groups.map(&:name)
+        _auth person.auth
+      else
+        throw :halt, 404
+      end
+    end
+  else
+    @base = URI.parse(env['REQUEST_URI']).path.chomp(path)
+    _html :'views/main'
+  end
 end
 
 get %r{/(committee/.*)} do |path|
