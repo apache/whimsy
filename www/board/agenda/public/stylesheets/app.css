@@ -72,7 +72,6 @@ form label {
 
 pre.report {
   padding-left: 2em;
-  color: #000;
   overflow: auto;
   word-wrap: normal;
   white-space: pre;
@@ -80,6 +79,7 @@ pre.report {
 
 main pre {
   font-family: monospace;
+  color: #000;
 }
 
 pre a {
