@@ -71,12 +71,15 @@ form label {
 }
 
 pre.report {
-  font-family: "Courier New", monospace;
   padding-left: 2em;
   color: #000;
   overflow: auto;
   word-wrap: normal;
   white-space: pre;
+}
+
+main pre {
+  font-family: monospace;
 }
 
 pre a {
