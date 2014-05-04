@@ -26,6 +26,7 @@ svn = ASF::SVN['private/foundation/board']
 MINUTES_WORK = '/var/tools/data'
 
 require_relative 'model/pending'
+require_relative 'model/draft'
 
 set :views, File.dirname(__FILE__)
 
@@ -119,6 +120,22 @@ get '/text/minutes/:file' do |file|
       if Dir['board_minutes_*.txt'].include? file
         last_modified File.mtime(file)
         _ File.read(file)
+      else
+        halt 404
+      end
+    end
+  end
+end
+
+get '/text/draft/:file' do |file|
+  agenda = "board_agenda_#{file.gsub('-','_')}.txt".untaint
+  minutes = MINUTES_WORK + '/' + 
+    agenda.sub('_agenda_','_minutes_').sub('.txt','.yml')
+
+  _text do
+    Dir.chdir(svn) do
+      if Dir['board_agenda_*.txt'].include?(agenda) and File.exist? minutes
+        _ Minutes.draft(agenda, minutes)
       else
         halt 404
       end
