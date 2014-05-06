@@ -22,8 +22,13 @@ require 'yaml'
 require 'net/http'
 require_relative 'helpers/string'
 
-svn = ASF::SVN['private/foundation/board']
-MINUTES_WORK = '/var/tools/data'
+if ENV['RACK_ENV'] == 'test'
+  FOUNDATION_BOARD = 'test/work/board'
+  MINUTES_WORK = 'test/work/data'
+else
+  FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
+  MINUTES_WORK = '/var/tools/data'
+end
 
 require_relative 'model/pending'
 require_relative 'model/draft'
@@ -31,15 +36,13 @@ require_relative 'model/draft'
 set :views, File.dirname(__FILE__)
 
 get '/' do
-  agenda = Dir.chdir(svn) {Dir['board_agenda_*.txt'].sort.last}
-  puts("/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/")
+  agenda = Dir.chdir(FOUNDATION_BOARD) {Dir['board_agenda_*.txt'].sort.last}
   redirect to("/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/")
 end
 
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
-  Dir.chdir(svn) {@agendas = Dir['board_agenda_*.txt'].sort}
-  Dir.chdir(svn) {@drafts = Dir['board_minutes_*.txt'].sort}
-  STDERR.puts @drafts
+  Dir.chdir(FOUNDATION_BOARD) {@agendas = Dir['board_agenda_*.txt'].sort}
+  Dir.chdir(FOUNDATION_BOARD) {@drafts = Dir['board_minutes_*.txt'].sort}
   @base = env['REQUEST_URI'].chomp(path)
   @agenda = "board_agenda_#{date.gsub('-','_')}.txt"
   _html :'views/main'
@@ -79,7 +82,7 @@ end
 get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
   file = "board_agenda_#{file.gsub('-','_')}.txt"
   _json do
-    Dir.chdir(svn) do
+    Dir.chdir(FOUNDATION_BOARD) do
       if Dir['board_agenda_*.txt'].include? file
         file = file.dup.untaint
         if AGENDA_CACHE[file][:mtime] != File.mtime(file)
@@ -116,7 +119,7 @@ end
 get '/text/minutes/:file' do |file|
   file = "board_minutes_#{file.gsub('-','_')}.txt".untaint
   _text do
-    Dir.chdir(svn) do
+    Dir.chdir(FOUNDATION_BOARD) do
       if Dir['board_minutes_*.txt'].include? file
         last_modified File.mtime(file)
         _ File.read(file)
@@ -133,7 +136,7 @@ get '/text/draft/:file' do |file|
     agenda.sub('_agenda_','_minutes_').sub('.txt','.yml')
 
   _text do
-    Dir.chdir(svn) do
+    Dir.chdir(FOUNDATION_BOARD) do
       if Dir['board_agenda_*.txt'].include?(agenda) and File.exist? minutes
         _ Minutes.draft(agenda, minutes)
       else

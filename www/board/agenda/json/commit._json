@@ -59,7 +59,7 @@ updates = YAML.load_file("#{MINUTES_WORK}/#{user}.yml")
 
 agenda = updates['agenda']
 agenda = agenda.dup.untaint if agenda =~ /\Aboard_agenda_[\d_]+\.txt\Z/
-agenda_file = "#{ASF::SVN['private/foundation/board']}/#{agenda}"
+agenda_file = "#{FOUNDATION_BOARD}/#{agenda}"
 
 if __FILE__ == $0
   # for testing purposes

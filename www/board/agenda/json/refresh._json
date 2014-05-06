@@ -1,4 +1,4 @@
-Dir.chdir( ASF::SVN['private/foundation/board'] ) do
+Dir.chdir( FOUNDATION_BOARD ) do
   `svn cleanup`
   `svn up`
 

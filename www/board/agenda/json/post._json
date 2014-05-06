@@ -2,7 +2,7 @@
 
 user = env.user
 
-agenda_file = "#{ASF::SVN['private/foundation/board']}/#{@agenda}"
+agenda_file = "#{FOUNDATION_BOARD}/#{@agenda}"
 
 File.open(agenda_file, 'r') do |file|
   file.flock(File::LOCK_EX)
