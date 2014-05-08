@@ -23,19 +23,7 @@ class ASF::Board::Agenda
         attrs['prior_reports'] = minutes(attrs['title'])
       elsif attrs['title'] == 'Adjournment'
         attrs['timestamp'] = timestamp(attrs['text'][/\d+:\d+([ap]m)?/])
-          attrs['secretary'] = []
-          date = Date.parse(@file[/\w+ \d+, \d+/]).strftime('%Y_%m_%d')
-          link = "/board/draft-minutes/#{date}"
-
-          svn = ASF::SVN['private/foundation/board']
-          if File.exist? "#{svn}/board_minutes_#{date}.txt"
-            attrs['secretary'] << {text: 'Show minutes', link: link}
-            attrs['secretary'] << {text: 'Publish minutes',
-              link: "/board/agenda/#{date}/calendar_summary"}
-          else
-            attrs['secretary'] << {text: 'Draft minutes', link: link}
-          end
-        end
+      end
     end
   end
 end
