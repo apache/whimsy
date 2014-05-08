@@ -310,4 +310,27 @@ module Angular::AsfBoardServices
       return lines.join("\n")
     end
   end
+
+  class Actions
+    @@buttons = []
+    @@forms = []
+
+    def self.reset()
+      @@buttons.clear()
+      @@forms.clear()
+    end
+
+    def self.buttons
+      @@buttons
+    end
+
+    def self.forms
+      @@forms
+    end
+
+    def self.add button, form
+      @@buttons << button unless @@buttons.include? button
+      @@forms << form if form and not @@forms.include? form
+    end
+  end
 end

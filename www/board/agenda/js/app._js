@@ -53,7 +53,9 @@ module Angular::AsfBoardAgenda
     @search = {text: ''}
 
     def layout(vars)
-      @buttons = []
+      Actions.reset() unless vars.item and @item.title == vars.item.title
+      @buttons = Actions.buttons
+
       if vars.item === undefined
         @item = {}
         @next = nil
@@ -129,13 +131,11 @@ module Angular::AsfBoardAgenda
     help = {href: 'help', title: 'Help'}
     $scope.layout title: title, next: agendas[index+1] || help, 
       prev: agendas[index-1] || help
-    @buttons << 'refresh-button'
+    Actions.add 'refresh-button'
 
     watch Agenda.stop do |value|
       if value and Date.new().getTime() < value
-        unless @buttons.include? 'special-order-button'
-          @buttons << 'special-order-button'
-        end
+        Actions.add 'special-order-button'
       end
     end
   end
@@ -158,7 +158,7 @@ module Angular::AsfBoardAgenda
     $scope.layout title: 'Queued approvals and comments',
       prev: ({title: 'Shepherd', href: "shepherd/#{firstname}"} if firstname)
 
-    @buttons << 'refresh-button'
+    Actions.add 'refresh-button'
 
     @q_approvals = []
     @q_ready = []
@@ -185,9 +185,7 @@ module Angular::AsfBoardAgenda
     end
 
     watch 'q_comments.length + q_approvals.length' do |after, before|
-      if after > 0 and !@buttons.include? 'commit-button'
-        @buttons << 'commit-button' 
-      end
+      Actions.add 'commit-button' if after > 0
 
       message = []
 
@@ -251,8 +249,8 @@ module Angular::AsfBoardAgenda
     # make comment split filter available as a function
     @csplit = filter(:csplit)
 
-    @buttons << 'mark-seen-button'
-    @buttons << 'toggle-seen-button'
+    Actions.add 'mark-seen-button'
+    Actions.add 'toggle-seen-button'
   end
 
   controller :MarkSeen do
@@ -525,7 +523,7 @@ module Angular::AsfBoardAgenda
 
   # controller for the section pages
   controller :Section do
-    @forms = []
+    @forms = Actions.forms
     @agenda = Agenda.get()
     @initials = Data.get('initials')
     @minutes = Minutes.get()
@@ -538,9 +536,6 @@ module Angular::AsfBoardAgenda
     watch 'agenda.update' do
       item = @agenda.find {|item| item.href == section}
       if item
-        @buttons.clear()
-        @forms.clear()
-
         if $routeParams.section
           $scope.layout item: item
         else
@@ -554,8 +549,7 @@ module Angular::AsfBoardAgenda
 
         unless Date.new().getTime() > Agenda.stop
           unless item.comments === undefined
-            @buttons << 'comment-button'
-            @forms << '../partials/comment.html'
+            Actions.add 'comment-button', '../partials/comment.html'
           end
 
           if item.attach =~ /^(\d|7?[A-Z]+)$/
@@ -569,13 +563,12 @@ module Angular::AsfBoardAgenda
               $rootScope.post_button_text = 'edit report'
               @post_form_title = 'Edit report'
             end
-            @buttons << 'post-button'
-            @forms << '../partials/post.html'
+            Actions.add 'post-button', '../partials/post.html'
           end
 
           if @mode==:director and (item.report or item.text)
             if item.approved and not item.approved.include? @initials
-              @buttons << 'approve-button'
+              Actions.add 'approve-button'
             end
           end
         end
@@ -593,28 +586,25 @@ module Angular::AsfBoardAgenda
           end
         end
 
-        if @mode==:secretary
-          watch Minutes.ready do |value|
-            if value
-              if item.attach =~ /^7\w$/
-                @buttons << 'vote-button'
-                @forms << '../partials/vote.html'
-              elsif @minutes[item.title]
-                @buttons << 'minute-button'
-              elsif ['Call to order', 'Adjournment'].include? item.title
-                @buttons << 'timestamp-button'
-              else
-                @buttons << 'minute-button'
-              end
-    
-              if @buttons.include? 'minute-button'
-                @forms << '../partials/minute.html'
-              end
-            end
-          end
-        end
       else
         $scope.layout item: {title: 'not found'}
+      end
+    end
+
+    if @mode == :secretary
+      watch Agenda.update + Minutes.ready do |value|
+        item = @agenda.find {|item| item.href == section}
+        if item and Minutes.ready
+          if item.attach =~ /^7\w$/
+            Actions.add 'vote-button', '../partials/vote.html'
+          elsif @minutes[item.title]
+            Actions.add 'minute-button', '../partials/minute.html'
+          elsif ['Call to order', 'Adjournment'].include? item.title
+            Actions.add 'timestamp-button'
+          else
+            Actions.add 'minute-button', '../partials/minute.html'
+          end
+        end
       end
     end
 
@@ -635,7 +625,7 @@ module Angular::AsfBoardAgenda
   controller :Search do
     @agenda = Agenda.get()
     $scope.layout title: "Search", next: {title: 'Comments', href: 'comments'}
-    @buttons << 'refresh-button'
+    Actions.add 'refresh-button'
 
     @search.text = $location.search().q || ''
     @results = []
