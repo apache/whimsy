@@ -341,7 +341,10 @@ module Angular::AsfBoardServices
 
     def self.add button, form
       @@buttons << button unless @@buttons.include? button
-      @@forms << form if form and not @@forms.include? form
+      if form
+         form = "../partials/#{form}" 
+        @@forms << form unless @@forms.include? form
+      end
     end
 
     def self.remove button

@@ -131,7 +131,7 @@ module Angular::AsfBoardAgenda
       if Minutes.complete
         if $rootScope.mode == :secretary and
           not Minutes.posted.include? @agenda_file.sub('_agenda_', '_minutes_')
-          Actions.add 'draft-minutes-button', '../partials/draft-minutes.html'
+          Actions.add 'draft-minutes-button', 'draft-minutes.html'
         end
       elsif Agenda.stop and Date.new().getTime() < Agenda.stop
         Actions.add 'special-order-button'
@@ -578,7 +578,7 @@ module Angular::AsfBoardAgenda
 
         unless Date.new().getTime() > Agenda.stop
           unless item.comments === undefined
-            Actions.add 'comment-button', '../partials/comment.html'
+            Actions.add 'comment-button', 'comment.html'
           end
 
           if item.attach =~ /^(\d|7?[A-Z]+)$/
@@ -592,7 +592,7 @@ module Angular::AsfBoardAgenda
               $rootScope.post_button_text = 'edit report'
               @post_form_title = 'Edit report'
             end
-            Actions.add 'post-button', '../partials/post.html'
+            Actions.add 'post-button', 'post.html'
           end
 
           if @mode==:director and (item.report or item.text)
@@ -625,22 +625,21 @@ module Angular::AsfBoardAgenda
         item = @agenda.find {|item| item.href == section}
         if item and Minutes.ready
           if item.attach =~ /^7\w$/
-            Actions.add 'vote-button', '../partials/vote.html'
+            Actions.add 'vote-button', 'vote.html'
           elsif ['Call to order', 'Adjournment'].include? item.title
             if @minutes[item.title]
               Actions.remove 'timestamp-button'
-              Actions.add 'minute-button', '../partials/minute.html'
+              Actions.add 'minute-button', 'minute.html'
 
               minute_file = Data.get('agenda').sub('_agenda_', '_minutes_')
               if Minutes.complete and not Minutes.posted.include? minute_file
-                Actions.add 'draft-minutes-button',
-                  '../partials/draft-minutes.html'
+                Actions.add 'draft-minutes-button', 'draft-minutes.html'
               end
             else
               Actions.add 'timestamp-button'
             end
           else
-            Actions.add 'minute-button', '../partials/minute.html'
+            Actions.add 'minute-button', 'minute.html'
           end
         end
       end
