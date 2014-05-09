@@ -17,6 +17,8 @@ _modal_dialog.vote_form!.wide_form ng_controller: 'Vote' do
     ng_show: '$parent.text'
   _button.btn_primary 'Save', type: 'button', ng_click: "save()",
     ng_disabled: '$parent.text == text'
+  _button.btn_warning 'Tabled', type: 'button', 
+    ng_click: "text = 'tabled'; save()", ng_disabled: 'text'
   _button.btn_success 'Unanimous', type: 'button', 
     ng_click: "text = 'unanimous'; save()", ng_disabled: 'text'
 end
