@@ -343,5 +343,10 @@ module Angular::AsfBoardServices
       @@buttons << button unless @@buttons.include? button
       @@forms << form if form and not @@forms.include? form
     end
+
+    def self.remove button
+      index = @@buttons.indexOf(button)
+      @@buttons.splice(index, 1) if index > -1
+    end
   end
 end

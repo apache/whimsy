@@ -621,13 +621,14 @@ module Angular::AsfBoardAgenda
     end
 
     if @mode == :secretary
-      watch Agenda.update + Minutes.status do |value|
+      watch @agenda.update + Minutes.status do |value|
         item = @agenda.find {|item| item.href == section}
         if item and Minutes.ready
           if item.attach =~ /^7\w$/
             Actions.add 'vote-button', '../partials/vote.html'
           elsif ['Call to order', 'Adjournment'].include? item.title
             if @minutes[item.title]
+              Actions.remove 'timestamp-button'
               Actions.add 'minute-button', '../partials/minute.html'
 
               minute_file = Data.get('agenda').sub('_agenda_', '_minutes_')
