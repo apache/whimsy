@@ -493,6 +493,8 @@ module Angular::AsfBoardAgenda
       end
     end
 
+    @previous_meeting = (@item.attach =~ /^3\w/)
+
     def save()
       data = {title: @item.title, text: @text, agenda: Data.get('agenda')}
 

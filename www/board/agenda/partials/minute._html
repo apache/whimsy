@@ -10,4 +10,10 @@ _modal_dialog.minute_form!.wide_form ng_controller: 'Minute' do
     ng_show: '$parent.text'
   _button.btn_primary 'Save', type: 'button', ng_click: "save()",
     ng_disabled: '$parent.text == text'
+  _button.btn_warning 'Tabled', type: 'button', 
+    ng_click: "text = 'tabled'; save()", ng_disabled: 'text',
+    ng_show: 'previous_meeting'
+  _button.btn_success 'Approved', type: 'button', 
+    ng_click: "text = 'approved'; save()", ng_disabled: 'text',
+    ng_show: 'previous_meeting'
 end

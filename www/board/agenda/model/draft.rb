@@ -46,6 +46,7 @@ class Minutes
         notes = notes(title)
         if notes and !notes.empty?
           notes = 'Approved by General Consent.' if notes == 'approved'
+          notes = 'Tabled.' if notes == 'tabled'
           [attach, title, notes.reflow(7,62)]
         else
           [attach, title, '       Tabled.']
