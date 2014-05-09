@@ -60,6 +60,8 @@ class ASF::RosterLDAP
     committers.values.each {|ldap| ldap['objectClass'] -= ["person", "top",
       "posixAccount", "organizationalPerson", "inetOrgPerson", "asf-committer"]}
 
+    services.delete('apldap')
+
     groups.values.each do |ldap| 
       ldap['objectClass'] -= ['posixGroup', 'top']
       ldap['memberUid'] ||= []
