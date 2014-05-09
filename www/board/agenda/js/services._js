@@ -123,14 +123,6 @@ module Angular::AsfBoardServices
       end
       return match
     end
-
-    def self.links
-      if @@agenda and @@agenda.length > 0
-        @@agenda[-1].secretary
-      else
-        []
-      end
-    end
   end
 
   class Pending
@@ -169,11 +161,14 @@ module Angular::AsfBoardServices
 
   class Minutes
     @@index = {}
+    @@draft = {}
     @@update = nil
+    @@ready = 0
+    @@posted = Data.get('drafts').split(' ')
 
     def self.get()
       if @@date != Data.date
-        @@fetched = false 
+        @@fetched = false
         $interval.cancel(@@update) if @@update
       end
 
@@ -233,6 +228,22 @@ module Angular::AsfBoardServices
     def self.ready
       @@ready
     end
+
+    def self.complete
+      @@index['Adjournment'] ? 1 : 0
+    end
+
+    def self.draft
+      @@draft
+    end
+
+    def self.posted
+      @@posted
+    end
+
+    def self.status
+      Minutes.ready + Minutes.complete + Minutes.posted.length
+    end
   end
 
   class JIRA
@@ -242,7 +253,7 @@ module Angular::AsfBoardServices
       if not @@fetched
         @@fetched = true
         ~'#clock'.show
-        $http.get('../json/jira').success do |result| 
+        $http.get('../json/jira').success do |result|
           @@projects.replace result
           ~'#clock'.hide
         end

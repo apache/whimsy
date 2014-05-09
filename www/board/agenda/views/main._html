@@ -24,7 +24,7 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
           _a '{{queued}}', href: 'queue'
         end
         _li.dropdown class: '{{ info }}', ng_show: 'item.title' do
-          _a.info!.dropdown_toggle class: '{{ item | color}}', 
+          _a.info!.dropdown_toggle class: '{{ item | color}}',
             ng_click: 'infoToggle()' do
             _ 'info'
             _b.caret
@@ -37,7 +37,7 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
             _dt 'Shepherd', ng_if: 'item.shepherd'
             _dd '{{ item.shepherd }}'
             _dt 'Approved', ng_show: 'item.approved'
-            _dd '{{ item.approved && item.approved.join(", ") }}', 
+            _dd '{{ item.approved && item.approved.join(", ") }}',
               ng_show: 'item.approved'
             _dt 'Links', ng_show: 'item.roster || item.prior_reports'
             _dd ng_show: 'item.roster' do
@@ -66,16 +66,12 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
 
             _li {_a 'Comments', href: 'comments'}
 
-            _li ng_if: 'mode == "director"' do 
+            _li ng_if: 'mode == "director"' do
               _a.shepherd! 'Shepherd', ng_href: 'shepherd/{{firstname}}'
             end
 
             _li(ng_if: 'mode == "director"') do
               _a.queue! 'Queue', href: 'queue'
-            end
-
-            _li ng_repeat: 'entry in nav_links' do
-              _a '{{entry.text}}', href: '{{entry.link}}'
             end
 
             _li(ng_show: 'false') {_a.help! 'Help', href: 'help'}
@@ -86,7 +82,7 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
 
     userid = env['REMOTE_USER']
     userid = userid.dup.untaint if userid =~ /\A[-\w]+\Z/
-    _main :ng_view, autoscroll: 'true', data_agenda: @agenda, 
+    _main :ng_view, autoscroll: 'true', data_agenda: @agenda,
       data_drafts: @drafts.join(' '),
       data_availid: userid, data_initials: ASF::Auth::DIRECTORS[userid],
       data_firstname: Etc.getpwnam(userid)[4].split(',').first.split(' ').first
@@ -103,7 +99,7 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
     _footer_.navbar.navbar_fixed_bottom class: '{{ item | color }}' do
       _a.backlink.navbar_brand '{{ prev && prev.title }}', rel: 'prev',
         ng_href: '{{ prev_href }}', ng_show: 'prev'
-      
+
       _span ng_repeat: 'button in buttons' do
         _ng_include src: 'button'
       end

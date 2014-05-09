@@ -62,5 +62,11 @@ _ng_template.timestamp_button! do
     ng_click: 'click()'
 end
 
+_ng_template.draft_minutes_button! do
+  _button.btn.btn_primary 'draft minutes', ng_controller: 'DraftMinutes',
+    data_target: '#draft-minutes-form', data_toggle: 'modal',
+    ng_click: 'draftMinutes()'
+end
+
 # Include forms
 _ng_include src: 'form', ng_repeat: 'form in forms'

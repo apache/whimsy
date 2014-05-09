@@ -100,14 +100,6 @@ module Angular::AsfBoardAgenda
       Pending.count
     end
 
-    def nav_links
-      if $rootScope.mode == :secretary
-        Agenda.links
-      else
-        []
-      end
-    end
-
     # prefetch roster info
     if $location.host() == 'whimsy.apache.org'
       $http.get("/test/roster/json/ldap").success {}
@@ -116,9 +108,10 @@ module Angular::AsfBoardAgenda
 
   # controller for the index page
   controller :Index do
+    Minutes.get()
     @agenda = Agenda.get()
     @agenda_file = Data.get('agenda')
-     
+
     title = @agenda_file[/\d+_\d+_\d+/].gsub(/_/,'-')
 
     agendas = ~'#agendas li'.to_a.map {|li| li.textContent.trim()}
@@ -129,12 +122,18 @@ module Angular::AsfBoardAgenda
     end
 
     help = {href: 'help', title: 'Help'}
-    $scope.layout title: title, next: agendas[index+1] || help, 
+    $scope.layout title: title, next: agendas[index+1] || help,
       prev: agendas[index-1] || help
     Actions.add 'refresh-button'
 
-    watch Agenda.stop do |value|
-      if value and Date.new().getTime() < value
+    @forms = Actions.forms
+    watch Minutes.complete + Agenda.stop do
+      if Minutes.complete
+        if $rootScope.mode == :secretary and
+          not Minutes.posted.include? @agenda_file.sub('_agenda_', '_minutes_')
+          Actions.add 'draft-minutes-button', '../partials/draft-minutes.html'
+        end
+      elsif Agenda.stop and Date.new().getTime() < Agenda.stop
         Actions.add 'special-order-button'
       end
     end
@@ -217,7 +216,7 @@ module Angular::AsfBoardAgenda
         Pending.put response.pending
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
-        alert data.exception 
+        alert data.exception
       }.finally {
         ~'#commit-form'.modal(:hide)
         @disabled = false
@@ -228,7 +227,7 @@ module Angular::AsfBoardAgenda
   # controller for the comments pages
   controller :Comments do
     firstname = Data.get('firstname')
-    $scope.layout title: "Comments", 
+    $scope.layout title: "Comments",
       prev: {title: 'Search', href: 'search'},
       next: ({title: 'Shepherd', href: "shepherd/#{firstname}"} if firstname)
     @agenda = Agenda.get()
@@ -242,7 +241,7 @@ module Angular::AsfBoardAgenda
       $rootScope.seen_comments = !Object.keys(@pending.seen).empty?
     end
 
-    on :toggleComments do |event, state| 
+    on :toggleComments do |event, state|
       @toggle = state
     end
 
@@ -284,7 +283,7 @@ module Angular::AsfBoardAgenda
         Pending.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
-        alert data.exception 
+        alert data.exception
       }.finally {
         @disabled = false
       }
@@ -303,7 +302,7 @@ module Angular::AsfBoardAgenda
   controller :Shepherd do
     @agenda = Agenda.get()
     @name = $routeParams.name
-    $scope.layout title: "Shepherded By #{@name}", 
+    $scope.layout title: "Shepherded By #{@name}",
       prev: {title: 'Comments', href: 'comments'},
       next: {title: 'Queue', href: 'queue'}
 
@@ -328,7 +327,7 @@ module Angular::AsfBoardAgenda
         Pending.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
-        alert data.exception 
+        alert data.exception
       }.finally {
         ~'#comment-form'.modal(:hide)
       }
@@ -344,7 +343,7 @@ module Angular::AsfBoardAgenda
       if value != @digest and not @disabled
         @disabled = true
         alert 'Edit Conflict'
-      end 
+      end
     end
 
     if @post_button_text == 'edit report'
@@ -370,13 +369,13 @@ module Angular::AsfBoardAgenda
         message: @message, digest: @digest}
 
       data.fulltitle = @item.fulltitle if @item.fulltitle
- 
+
       @disabled = true
       $http.post('../json/post', data).success { |response|
         Agenda.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
-        alert data.exception 
+        alert data.exception
       }.finally {
         ~'#post-report-form'.modal(:hide)
         @disabled = false
@@ -392,19 +391,49 @@ module Angular::AsfBoardAgenda
     end
   end
 
+  controller :DraftMinutes do
+    @date = Data.get('agenda')[/(\d+_\d+_\d+)/, 1]
+    @draft = Minutes.draft
+    @message ||= "Draft minutes for #{@date.gsub('_', '-')}"
+
+    # fetch a current draft
+    def draftMinutes()
+      $http.get("/text/draft/#{@date}").then do |response|
+        @draft[@date] = response.data
+      end
+    end
+
+    def save()
+      minutes = Data.get('agenda').sub('_agenda_', '_minutes_')
+      data = {minutes: minutes, message: @message, draft: @draft[@date]}
+
+      @disabled = true
+      $http.post('../json/draft', data).success { |response|
+        Minutes.posted << minutes
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception
+      }.finally {
+        ~'#draft-minutes-form'.modal(:hide)
+        @disabled = false
+      }
+    end
+  end
+
+
   controller :SpecialOrder do
     @title = ''
 
     def save()
-      data = {attach: '7?', title: @title, report: @report, 
+      data = {attach: '7?', title: @title, report: @report,
         agenda: Data.get('agenda')}
- 
+
       @disabled = true
       $http.post('../json/post', data).success { |response|
         Agenda.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
-        alert data.exception 
+        alert data.exception
       }.finally {
         ~'#special-order-form'.modal(:hide)
         @disabled = false
@@ -423,7 +452,7 @@ module Angular::AsfBoardAgenda
         Agenda.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
-        alert data.exception 
+        alert data.exception
       }.finally {
         @disabled = false
       }
@@ -447,7 +476,7 @@ module Angular::AsfBoardAgenda
         Pending.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
-        alert data.exception 
+        alert data.exception
       }
     end
   end
@@ -471,7 +500,7 @@ module Angular::AsfBoardAgenda
         Minutes.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
-        alert data.exception 
+        alert data.exception
       }.finally {
         ~'#minute-form'.modal(:hide)
       }
@@ -500,7 +529,7 @@ module Angular::AsfBoardAgenda
         Minutes.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
-        alert data.exception 
+        alert data.exception
       }.finally {
         ~'#vote-form'.modal(:hide)
       }
@@ -516,7 +545,7 @@ module Angular::AsfBoardAgenda
         Minutes.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
-        alert data.exception 
+        alert data.exception
       }
     end
   end
@@ -540,10 +569,10 @@ module Angular::AsfBoardAgenda
           $scope.layout item: item
         else
           Agenda.ready()
-          $scope.layout item: item, 
-            prev: item.qprev, 
+          $scope.layout item: item,
+            prev: item.qprev,
             prev_href: (item.qprev ? item.qprev.qhref : nil),
-            next: item.qnext, 
+            next: item.qnext,
             next_href: (item.qnext ? item.qnext.qhref : nil)
         end
 
@@ -592,15 +621,23 @@ module Angular::AsfBoardAgenda
     end
 
     if @mode == :secretary
-      watch Agenda.update + Minutes.ready do |value|
+      watch Agenda.update + Minutes.status do |value|
         item = @agenda.find {|item| item.href == section}
         if item and Minutes.ready
           if item.attach =~ /^7\w$/
             Actions.add 'vote-button', '../partials/vote.html'
-          elsif @minutes[item.title]
-            Actions.add 'minute-button', '../partials/minute.html'
           elsif ['Call to order', 'Adjournment'].include? item.title
-            Actions.add 'timestamp-button'
+            if @minutes[item.title]
+              Actions.add 'minute-button', '../partials/minute.html'
+
+              minute_file = Data.get('agenda').sub('_agenda_', '_minutes_')
+              if Minutes.complete and not Minutes.posted.include? minute_file
+                Actions.add 'draft-minutes-button',
+                  '../partials/draft-minutes.html'
+              end
+            else
+              Actions.add 'timestamp-button'
+            end
           else
             Actions.add 'minute-button', '../partials/minute.html'
           end
@@ -654,13 +691,13 @@ module Angular::AsfBoardAgenda
             end
 
             match = {item: item, snippets: snippets}
-            matches << 
+            matches <<
               (history.find {|prev| angular.equals(prev, match)} || match)
           end
         end
       end
 
-      # For some reason `angular.copy matches, @matches` produces 
+      # For some reason `angular.copy matches, @matches` produces
       # "Maximum call stack size exceeded"
       @results.clear()
       angular.extend @results, matches

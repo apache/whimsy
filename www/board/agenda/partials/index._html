@@ -38,4 +38,11 @@ _ng_template.special_order_button! do
     data_target: '#special-order-form', data_toggle: 'modal'
 end
 
-_ng_include src: '"../partials/special_order.html"'
+_ng_template.draft_minutes_button! do
+  _button.btn.btn_primary 'draft minutes', ng_controller: 'DraftMinutes',
+    data_target: '#draft-minutes-form', data_toggle: 'modal',
+    ng_click: 'draftMinutes()'
+end
+
+# Include forms
+_ng_include src: 'form', ng_repeat: 'form in forms'
