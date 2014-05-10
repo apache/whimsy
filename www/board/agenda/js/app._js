@@ -340,9 +340,12 @@ module Angular::AsfBoardAgenda
     @digest = @item.digest
 
     watch @item.digest do |value|
-      if value != @digest and not @disabled
-        @disabled = true
-        alert 'Edit Conflict'
+      if value != @digest 
+        @digest = value
+        unless ~'.modal-open'.empty? or @disabled
+          @disabled = true
+          alert 'Edit Conflict'
+        end
       end
     end
 
