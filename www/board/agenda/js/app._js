@@ -633,8 +633,7 @@ module Angular::AsfBoardAgenda
               Actions.remove 'timestamp-button'
               Actions.add 'minute-button', 'minute.html'
 
-              minute_file = Data.get('agenda').sub('_agenda_', '_minutes_')
-              if Minutes.complete and not Minutes.posted.include? minute_file
+              if Minutes.complete 
                 Actions.add 'draft-minutes-button', 'draft-minutes.html'
               end
             else
@@ -642,6 +641,12 @@ module Angular::AsfBoardAgenda
             end
           else
             Actions.add 'minute-button', 'minute.html'
+          end
+
+          minute_file = Data.get('agenda').sub('_agenda_', '_minutes_')
+          if Minutes.posted.include? minute_file
+            Actions.remove 'minute-button'
+            Actions.remove 'draft-minutes-button'
           end
         end
       end

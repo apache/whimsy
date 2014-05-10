@@ -9,7 +9,7 @@ unless File.exist? minutes_file
 
   File.open(minutes_file, 'w') { |file| file.write @draft }
 
-  `svn add #{File.dirname(minutes_file)}`
+  `svn add #{minutes_file}` unless File.exist? agenda_file
 
   commit = ['svn', 'commit', '-m', @message, minutes_file,
     '--no-auth-cache', '--non-interactive']
