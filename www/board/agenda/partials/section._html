@@ -29,6 +29,7 @@ _section.minutes! ng_if: 'minutes[item.title]' do
 end
 
 _section.minutes! ng_if: 'minute_text' do
+  _hr
   _pre '{{ minute_text }}'
 end
 
