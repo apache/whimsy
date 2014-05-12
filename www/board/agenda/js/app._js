@@ -345,10 +345,11 @@ module Angular::AsfBoardAgenda
     watch @item.digest do |value|
       if value != @digest 
         @digest = value
-        unless ~'.modal-open'.empty? or @disabled
+        unless ~'.modal-open'.empty? or @disabled or @updated
           @disabled = true
           alert 'Edit Conflict'
         end
+        @updated = false
       end
     end
 
@@ -379,6 +380,7 @@ module Angular::AsfBoardAgenda
       @disabled = true
       $http.post('../json/post', data).success { |response|
         Agenda.put response
+        @updated = true
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
         alert data.exception
