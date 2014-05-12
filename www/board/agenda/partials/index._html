@@ -44,5 +44,11 @@ _ng_template.draft_minutes_button! do
     ng_click: 'draftMinutes()'
 end
 
+_ng_template.publish_minutes_button! do
+  _button.btn.btn_primary 'publish minutes', ng_controller: 'PublishMinutes',
+    data_target: '#publish-minutes-form', data_toggle: 'modal',
+    ng_click: 'publishMinutes()'
+end
+
 # Include forms
 _ng_include src: 'form', ng_repeat: 'form in forms'

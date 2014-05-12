@@ -128,13 +128,16 @@ module Angular::AsfBoardAgenda
 
     @forms = Actions.forms
     watch Minutes.complete + Agenda.stop do
-      if Minutes.complete
-        if $rootScope.mode == :secretary and
-          not Minutes.posted.include? @agenda_file.sub('_agenda_', '_minutes_')
+      if Agenda.stop and Date.new().getTime() < Agenda.stop
+        Actions.add 'special-order-button' unless Minutes.complete
+      end
+
+      if $rootScope.mode == :secretary
+        if Minutes.posted.include? @agenda_file.sub('_agenda_', '_minutes_')
+          Actions.add 'publish-minutes-button', 'publish-minutes.html'
+        elsif Minutes.complete
           Actions.add 'draft-minutes-button', 'draft-minutes.html'
         end
-      elsif Agenda.stop and Date.new().getTime() < Agenda.stop
-        Actions.add 'special-order-button'
       end
     end
   end
@@ -395,7 +398,7 @@ module Angular::AsfBoardAgenda
   end
 
   controller :DraftMinutes do
-    @date = Data.get('agenda')[/(\d+_\d+_\d+)/, 1]
+    @date = Data.get('agenda')[/\d+_\d+_\d+/]
     @draft = Minutes.draft
     @message ||= "Draft minutes for #{@date.gsub('_', '-')}"
 
@@ -423,6 +426,66 @@ module Angular::AsfBoardAgenda
     end
   end
 
+  controller :PublishMinutes do
+    months = %w(January February March April May June July August September
+      October November December)
+
+    def formatDate(date)
+      date = Date.new(date.gsub('_', '/'))
+      return "#{date.getDate()} #{months[date.getMonth()]} #{date.getYear()+1900}"
+    end
+
+    def summarize(agenda, date)
+      result = "- [#{$scope.formatDate(date)}]" +
+              "(../records/minutes/#{date[0..3]}/board_minutes_#{date}.txt)\n"
+      agenda.each do |item|
+        if item.attach =~ /^7\w$/
+          result += "    * #{item.title.
+            gsub(/(.{1,76})(\s+|$)/, "$1\n      ").
+            gsub(/ +$/, '')}"
+        end
+      end
+      return result
+    end
+
+    def publishMinutes()
+      if @item.attach
+        date = @item.text[/board_minutes_(\d+_\d+_\d+)\.txt/, 1]
+        if date
+          $http.get("../#{date.gsub('_', '-')}.json").success { |response|
+            broadcast! :pubSummary, $scope.summarize(response, date), date
+          }
+        end
+      else
+        date = Data.get('agenda')[/\d+_\d+_\d+/]
+        broadcast! :pubSummary, $scope.summarize(Agenda.get(), date), date
+      end
+    end
+
+    on :pubSummary do |event, summary, date|
+      @summary = summary
+      @date = date
+      @message = "Publish #{$scope.formatDate(date)} minutes"
+    end
+
+    def save()
+      minutes = "board_minutes_#{@date}.txt"
+      data = {minutes: minutes, message: @message, summary: @summary}
+
+      @disabled = true
+      $http.post('../json/publish', data).success { |response|
+        index = Minutes.posted.indexOf(minutes)
+        Minutes.posted.slice(index, 1) if index > -1
+        window.open('https://cms.apache.org/www/publish', '_blank').fous()
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception
+      }.finally {
+        ~'#publish-minutes-form'.modal(:hide)
+        @disabled = false
+      }
+    end
+  end
 
   controller :SpecialOrder do
     @title = ''
@@ -631,6 +694,13 @@ module Angular::AsfBoardAgenda
         if item and Minutes.ready
           if item.attach =~ /^7\w$/
             Actions.add 'vote-button', 'vote.html'
+          elsif item.attach =~ /^3\w$/
+            if @minutes[@item.title] == 'approved' and 
+              Minutes.posted.include? @item.text[/board_minutes_\w+\.txt/]
+              Actions.add 'publish-minutes-button', 'publish-minutes.html'
+            else
+              Actions.remove 'publish-minutes-button'
+            end
           elsif ['Call to order', 'Adjournment'].include? item.title
             if @minutes[item.title]
               Actions.remove 'timestamp-button'
