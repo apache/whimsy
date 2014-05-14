@@ -203,7 +203,7 @@ module Angular::AsfBoardServices
       actions = []
       for title in @@index
         minutes = @@index[title] + "\n\n"
-        pattern = RegExp.new('^(?:@|AI\s+)(\w+):?\s+([\s\S]*?)\n\n', 'g')
+        pattern = RegExp.new('^(?:@|AI\s+)(\w+):?\s+([\s\S]*?)(\n\n|$)', 'gm')
         match = pattern.exec(minutes)
         while match
           text = match[2].gsub(/\n/, ' ')

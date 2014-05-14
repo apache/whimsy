@@ -551,6 +551,14 @@ module Angular::AsfBoardAgenda
 
   # Secretary take minutes
   controller :Minute do
+    rollcall =  @minutes['Roll Call'] || @agenda[1].text
+    pattern = Regexp.new('\n   ( [a-z]*[A-Z][a-zA-Z]*\.?)+', 'g')
+    @attendees = []
+    while (match=pattern.exec(rollcall)) do
+      @attendees << match[0].sub(/^\s+/, '').split(' ').first
+    end
+    @attendees.sort!()
+
     if not @text
       if @item.title == 'Roll Call'
         @text = @item.text
@@ -574,6 +582,16 @@ module Angular::AsfBoardAgenda
       }.finally {
         ~'#minute-form'.modal(:hide)
       }
+    end
+
+    @ai = {assignee: '', text: ''}
+    @ai.assignee = @item.shepherd.split(' ').first if @item.shepherd
+    @ai.text = "pursue a report for #{@item.title}" unless @item.report
+
+    def add_ai()
+      @text = @text.sub(/\s+$/, '') + "\n\n" if @text
+      @text = (@text || '') + Flow.comment(@ai.text, "@#{@ai.assignee}")
+      @ai.text = ''
     end
   end
 
@@ -690,8 +708,8 @@ module Angular::AsfBoardAgenda
       end
     end
 
-    if @mode == :secretary
-      watch @agenda.update + Minutes.status do |value|
+    watch @agenda.update + Minutes.status do
+      if @mode == :secretary
         item = @agenda.find {|item| item.href == section}
         if item and Minutes.ready
           if item.attach =~ /^7\w$/

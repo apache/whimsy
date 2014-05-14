@@ -77,7 +77,7 @@ module Angular::AsfBoardDirectives
     def template(element, attrs)
       # detach h4 elements and buttons
       h4 = element.find('h4').detach()
-      buttons = element.find('button').addClass('btn').detach()
+      buttons = element.children('button').addClass('btn').detach()
 
       # build label elements from label attributes, wrap in a form-group
       element.find('*[label]').each! do |index, node|
@@ -99,7 +99,7 @@ module Angular::AsfBoardDirectives
 
             _div.modal_body do
               # add form-control attributes; move remaining nodes to the body
-              element.find('input, textarea').addClass('form-control')
+              element.children('input, textarea').addClass('form-control')
               ~this.append(element.children())
             end
 
