@@ -47,6 +47,8 @@ class ASF::Board::Agenda
       list_item = '^\s*(?:[-*\u2022]\s*)?(.*?)\s+'
 
       people = text.scan(/#{list_item}\((#{asfid})\)\s*$/)
+      people += text.scan(/#{list_item}\((#{asfid})(?:@|\s*at\s*)
+        (?:\.\.\.|apache\.org)\)\s*$/x)
       people += text.scan(/#{list_item}<(#{asfid})(?:@|\s*at\s*)
         (?:\.\.\.|apache\.org)>\s*$/x)
 
