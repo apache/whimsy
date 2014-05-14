@@ -125,8 +125,8 @@ module Angular::AsfBoardFilters
           names = person.name.split(/\s+/)
           iclas = person.icla.split(/\s+/)
           ok = false
-          ok ||= names.all? {|part| iclas.include? part}
-          ok ||= iclas.all? {|part| names.include? part}
+          ok ||= names.all? {|part| iclas.any? {|icla| icla.include? part}}
+          ok ||= iclas.all? {|part| names.any? {|name| name.include? part}}
           if ok
             text.sub! /#{escapeRegExp(person.icla)}/, 
               "<a href='#{roster}#{id}'>#{person.icla}</a>"
