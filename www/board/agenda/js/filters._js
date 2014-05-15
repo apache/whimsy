@@ -97,7 +97,7 @@ module Angular::AsfBoardFilters
       end
     end
 
-    roster = 'https://whimsy.apache.org/test/roster/committer/'
+    roster = 'https://whimsy.apache.org/roster/committer/'
 
     # replace ids with committer links
     if item.people
