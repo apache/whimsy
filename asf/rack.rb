@@ -27,10 +27,11 @@ module ASF
         authorized = false
 
         user = env['REMOTE_USER'] ||= ENV['USER'] || Etc.getpwuid.name
+        person = ASF::Person.new(user)
 
         authorized ||= DIRECTORS[user]
-        authorized ||= ASF::Person.new(user).asf_member?
-        authorized ||= ASF.pmc_chairs.include? user
+        authorized ||= person.asf_member?
+        authorized ||= ASF.pmc_chairs.include? person
         authorized ||= (user == 'ea')
 
         if authorized
