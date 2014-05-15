@@ -46,6 +46,8 @@ class ASF::Board::Agenda
               pname = person.public_name.downcase.split(/\s+/)
               if sname.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
                 search << person
+              elsif pname.all? {|t1| sname.any? {|t2| t2.start_with? t1}}
+                search << person
               end
             end
 
