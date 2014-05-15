@@ -673,7 +673,7 @@ module Angular::AsfBoardAgenda
             if item.missing
               $rootScope.post_button_text = 'post report'
               @post_form_title = 'Post report'
-            elsif item.attach =~ /^7/
+            elsif item.attach =~ /^7\w/
               $rootScope.post_button_text = 'edit resolution'
               @post_form_title = 'Edit resolution'
             else
