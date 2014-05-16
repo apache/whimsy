@@ -164,10 +164,15 @@ module Angular::AsfRoster
       words = text.split(/\s+/)
       for id in committers
         committer = committers[id]
-        cn = committer.cn.downcase()
-        if words.all? {|word| cn.include? word}
-          results << committer
+
+        info = id + ' ' + committer.cn
+        info += ' ' + committer.mail.join(' ') if committer.mail
+        if committer["asf-altEmail"]
+          info += ' ' + committer["asf-altEmail"].join(' ') 
         end
+        info = info.downcase()
+
+        results << committer if words.all? {|word| info.include? word}
       end
     else
       for id in committers
