@@ -178,6 +178,7 @@ def detach(msg):
       if subpayload.get_content_type() == 'image/gif':
         if len(subpayload.get_payload(decode=True))<10240: continue
       # if not subpayload.get_payload(decode=True): continue
+      if subpayload.get_filename().endswith('.gpg'): continue
       attachments.append(subpayload)
 
   if len(attachments) == 0: return
