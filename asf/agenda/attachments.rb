@@ -10,11 +10,17 @@ class ASF::Board::Agenda
     /mx
 
     scan @file, pattern do |attrs|
+
       attrs['title'].sub! /^Report from the VP of /, ''
       attrs['title'].sub! /^Report from the /, ''
       attrs['title'].sub! /^Status report for the /, ''
       attrs['title'].sub! /^Apache /, ''
-      attrs['title'].sub! /\s*\[.*\]$/, ''
+
+      if attrs['title'] =~ /\s*\[.*\]$/
+        attrs['owner'] = attrs['title'][/\[(.*?)\]/, 1]
+        attrs['title'].sub! /\s*\[.*\]$/, ''
+      end
+
       attrs['title'].sub! /\sTeam$/, ''
       attrs['title'].sub! /\sCommittee$/, ''
       attrs['title'].sub! /\sProject$/, ''
