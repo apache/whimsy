@@ -40,6 +40,7 @@ module Angular::AsfBoardServices
         first = last = nil
         agenda.each do |item|
           first = item if item.attach == match[1]
+          item.shepherd ||= pres.shepherd if first and !last
           last  = item if item.attach == match[2]
         end
 
