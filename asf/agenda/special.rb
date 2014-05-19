@@ -54,7 +54,7 @@ class ASF::Board::Agenda
 
       whimsy = 'https://whimsy.apache.org'
       if people.empty?
-        if title =~ /Change (.*?) Chair/
+        if title =~ /Change (.*?) Chair/ or title =~ /Terminate (\w+)$/
           committee = ASF::Committee.find($1)
           attrs['roster'] =
             "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
