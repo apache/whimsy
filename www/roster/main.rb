@@ -102,7 +102,7 @@ get '/json/info' do
       [committee.name.gsub(/[^-\w]/,''), {
         display_name: committee.display_name,
         report: committee.report,
-        chair: committee.chair.id,
+        chair: committee.chair ? committee.chair.id : nil,
         memberUid: committee.info,
         emeritus: committee.emeritus,
         pmc: !ASF::Committee.nonpmcs.include?(committee)
