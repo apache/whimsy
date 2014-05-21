@@ -40,7 +40,7 @@ calendar.sub! /^(\s+-\s+#{fdate}\s*\n)/, ''
 
 #Commit the Minutes
 Dir.chdir MINUTES do
-  unless Dir.exist? year
+  unless Dir.exist? year.to_s
     system "mkdir #{year}"
     system "svn add #{year}"
   end
