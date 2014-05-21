@@ -52,7 +52,7 @@ Dir.chdir MINUTES do
     system "svn add #{year}/board_minutes_#{date}.txt"
 
     system *[
-      'svn', 'commit', '-m', @message, year,
+      'svn', 'commit', '-m', @message, year.to_s,
       ['--no-auth-cache', '--non-interactive'],
       (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
     ].flatten.compact
