@@ -23,7 +23,7 @@ year = date.year
 fdate = date.strftime("%d %B %Y")
 
 # add year header
-unless calendar.include? '#'+year
+unless calendar.include? "##{year}"
   calendar[/^()#.*Board meeting minutes #/,1] =
     "# #{year} Board meeting minutes # {##{year}}\n\n"
 end
