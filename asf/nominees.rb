@@ -14,6 +14,7 @@ module ASF
       nominees = {}
       nominations.each do |nomination|
         id = nomination[/^\s?\w+.*<(\S+)@apache.org>/,1]
+        id = nomination[/^\s?\w+.*\((\S+)@apache.org\)/,1]
         id ||= nomination[/^\s?\w+.*\(([a-z]+)\)/,1]
 
         next unless id
