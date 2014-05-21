@@ -472,7 +472,8 @@ module Angular::AsfBoardAgenda
 
     def save()
       minutes = "board_minutes_#{@date}.txt"
-      data = {minutes: minutes, message: @message, summary: @summary}
+      data = {date: @date, minutes: minutes, message: @message, 
+        summary: @summary}
 
       @disabled = true
       $http.post('../json/publish', data).success { |response|
