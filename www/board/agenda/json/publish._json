@@ -18,7 +18,8 @@ calendar = File.read(CALENDAR)
 @summary = @summary.gsub(/\r\n/,"\n").sub(/\s+\Z/,'') + "\n"
 
 # extract date and year from minutes
-date = Date.parse(@date.gsub('_', '-').untaint)
+@date.untaint if @date =~ /^\d+_\d+_\d+$/
+date = Date.parse(@date.gsub('_', '-'))
 year = date.year
 fdate = date.strftime("%d %B %Y")
 
@@ -45,11 +46,11 @@ Dir.chdir MINUTES do
     _.system "svn add #{year}"
   end
 
-  if File.exist? "#{year}/board_minutes_#{date}.txt"
-    raise "#{year}/board_minutes_#{date}.txt already exists"
+  if File.exist? "#{year}/board_minutes_#{@date}.txt"
+    raise "#{year}/board_minutes_#{@date}.txt already exists"
   else
-    _.system "cp #{BOARD_PRIVATE}/board_minutes_#{date}.txt #{year}"
-    _.system "svn add #{year}/board_minutes_#{date}.txt"
+    _.system "cp #{BOARD_PRIVATE}/board_minutes_#{@date}.txt #{year}"
+    _.system "svn add #{year}/board_minutes_#{@date}.txt"
 
     _.system [
       'svn', 'commit', '-m', @message, year.to_s,
@@ -67,9 +68,7 @@ end
 
 # Update the Calendar
 Dir.chdir BOARD_SITE do
-  if File.read(CALENDAR) == calendar
-    raise "#{File.basename CALENDAR} already up to date"
-  else
+  if File.read(CALENDAR) != calendar
     File.open(CALENDAR, 'w') {|fh| fh.write calendar}
 
     _.system [
@@ -88,13 +87,13 @@ end
 Dir.chdir BOARD_PRIVATE do
   updated = false
 
-  if File.exist? "board_minutes_#{date}.txt"
-    _.system "svn rm board_minutes_#{date}.txt"
+  if File.exist? "board_minutes_#{@date}.txt"
+    _.system "svn rm board_minutes_#{@date}.txt"
     updated = true
   end
   
-  if File.exist? "board_agenda_#{date}.txt"
-    _.system "svn mv board_agenda_#{date}.txt archived_agendas"
+  if File.exist? "board_agenda_#{@date}.txt"
+    _.system "svn mv board_agenda_#{@date}.txt archived_agendas"
     updated = true
   end
 
