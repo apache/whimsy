@@ -41,21 +41,21 @@ calendar.sub! /^(\s+-\s+#{fdate}\s*\n)/, ''
 #Commit the Minutes
 Dir.chdir MINUTES do
   unless Dir.exist? year.to_s
-    system "mkdir #{year}"
-    system "svn add #{year}"
+    _.system "mkdir #{year}"
+    _.system "svn add #{year}"
   end
 
   if File.exist? "#{year}/board_minutes_#{date}.txt"
     raise "#{year}/board_minutes_#{date}.txt already exists"
   else
-    system "cp #{BOARD_PRIVATE}/board_minutes_#{date}.txt #{year}"
-    system "svn add #{year}/board_minutes_#{date}.txt"
+    _.system "cp #{BOARD_PRIVATE}/board_minutes_#{date}.txt #{year}"
+    _.system "svn add #{year}/board_minutes_#{date}.txt"
 
-    system *[
+    _.system [
       'svn', 'commit', '-m', @message, year.to_s,
       ['--no-auth-cache', '--non-interactive'],
       (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
-    ].flatten.compact
+    ]
 
     File.unlink 'svn-commit.tmp' if File.exist? 'svn-commit.tmp'
 
@@ -72,11 +72,11 @@ Dir.chdir BOARD_SITE do
   else
     File.open(CALENDAR, 'w') {|fh| fh.write calendar}
 
-    system *[
+    _.system [
       'svn', 'commit', '-m', @message, File.basename(CALENDAR),
       ['--no-auth-cache', '--non-interactive'],
       (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
-    ].flatten.compact
+    ]
 
     unless `svn st`.empty?
       raise "svn failure #{BOARD_SITE}"
@@ -89,21 +89,21 @@ Dir.chdir BOARD_PRIVATE do
   updated = false
 
   if File.exist? "board_minutes_#{date}.txt"
-    system "svn rm board_minutes_#{date}.txt"
+    _.system "svn rm board_minutes_#{date}.txt"
     updated = true
   end
   
   if File.exist? "board_agenda_#{date}.txt"
-    system "svn mv board_agenda_#{date}.txt archived_agendas"
+    _.system "svn mv board_agenda_#{date}.txt archived_agendas"
     updated = true
   end
 
   if updated
-    system *[
+    _.system [
       'svn', 'commit', '-m', @message,
       ['--no-auth-cache', '--non-interactive'],
       (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
-    ].flatten.compact
+    ]
 
     unless `svn st`.empty?
       raise "svn failure: #{BOARD_PRIVATE}"
