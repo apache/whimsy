@@ -406,7 +406,7 @@ module Angular::AsfBoardAgenda
 
     # fetch a current draft
     def draftMinutes()
-      $http.get("/text/draft/#{@date}").then do |response|
+      $http.get("../text/draft/#{@date}").then do |response|
         @draft[@date] = response.data
       end
     end
