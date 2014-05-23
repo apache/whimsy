@@ -55,7 +55,7 @@ Dir.chdir MINUTES do
     _.system [
       'svn', 'commit', '-m', @message, year.to_s,
       ['--no-auth-cache', '--non-interactive'],
-      (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+      (['--username', env.user, '--password', env.password] if env.password)
     ]
 
     File.unlink 'svn-commit.tmp' if File.exist? 'svn-commit.tmp'
@@ -74,7 +74,7 @@ Dir.chdir BOARD_SITE do
     _.system [
       'svn', 'commit', '-m', @message, File.basename(CALENDAR),
       ['--no-auth-cache', '--non-interactive'],
-      (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+      (['--username', env.user, '--password', env.password] if env.password)
     ]
 
     unless `svn st`.empty?
@@ -101,7 +101,7 @@ Dir.chdir BOARD_PRIVATE do
     _.system [
       'svn', 'commit', '-m', @message,
       ['--no-auth-cache', '--non-interactive'],
-      (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+      (['--username', env.user, '--password', env.password] if env.password)
     ]
 
     unless `svn st`.empty?
