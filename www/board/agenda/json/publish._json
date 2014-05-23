@@ -46,9 +46,7 @@ Dir.chdir MINUTES do
     _.system "svn add #{year}"
   end
 
-  if File.exist? "#{year}/board_minutes_#{@date}.txt"
-    raise "#{year}/board_minutes_#{@date}.txt already exists"
-  else
+  if not File.exist? "#{year}/board_minutes_#{@date}.txt"
     _.system "cp #{BOARD_PRIVATE}/board_minutes_#{@date}.txt #{year}"
     _.system "svn add #{year}/board_minutes_#{@date}.txt"
 
