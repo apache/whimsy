@@ -93,6 +93,10 @@ OLDPODLINGS = [
 
 # rearrange name in an order suitable for sorting
 def lname(name)
+  # Drop trailing (comment string) or /* comment */
+  name.sub! /\(.+\)$/,''
+  name.sub! /\/\*.+\*\/$/,''
+
   name = name.split.reverse
   suffix = (name.shift if name.first =~ SUFFIXES)
   suffix += ' ' + name.shift if name.first =~ SUFFIXES
