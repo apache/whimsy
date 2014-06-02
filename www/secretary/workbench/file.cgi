@@ -794,12 +794,12 @@ _html do
         pending = YAML.load(open(PENDING_YML))
 
         pending.each do |vars|
-          if vars['memail']
+          if vars['memail'] and vars['mfilename']
             _pre.todo "ezmlm-sub lists/apache.org/members/ #{vars['memail']}",
               'data-list' => 'members', 'data-email' => vars['memail']
           end
 
-          if vars['mavailid']
+          if vars['mavailid'] and vars['mfilename']
             _pre.todo "modify_unix_group.pl member --add=#{vars['mavailid']}",
               'data-group' => 'member', 'data-availid' => vars['mavailid']
           end
