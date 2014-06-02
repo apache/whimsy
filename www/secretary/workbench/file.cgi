@@ -6,6 +6,7 @@ require 'fileutils'
 require 'ostruct'
 require 'escape'
 require 'time'
+require '/var/tools/asf'
 
 ENV['LANG'] = 'en_US.UTF-8'
 
@@ -406,6 +407,7 @@ def committable
   if defined?(MEETING)
     files += %W(#{MEETING}/memapp-received.txt #{FOUNDATION}/members.txt)
     files << MEETING
+    files << SUBREQ
   end
   files += [DOCUMENTS, OFFICERS]
 end
@@ -432,16 +434,46 @@ _json do
       ]
     }
   elsif @cmd =~ /ezmlm-sub/
-    cmd = @cmd
+    message, list, email, availid = @message, @list, @email, @availid
     _html html_fragment {
-      _pre cmd, class: '_stdin'
-      _pre 'Placeholder for the moment -- not yet implemented', class: '_stdout'
+      user = ASF::Person.find(availid)
+      vars = {
+        version: 3, # This must match http://s.apache.org/008
+        availid: availid,
+        addr: email,
+        listkey: list,
+        member_p: true,
+        chair_p: ASF.pmc_chairs.include?(user),
+      }
+
+      fn = "#{availid}-members-#{Time.now.strftime '%Y%m%d-%H%M%S-%L'}.json"
+      fn.untaint if availid =~ /^\w[-.\w]+$/
+
+      Dir.chdir SUBREQ do
+        File.open(fn, 'w') {|file| file.write JSON.pretty_generate(vars) + "\n"}
+        _.system [ 'svn', 'add', fn ]
+        _.system [
+          'svn', 'commit', '-m', message, '--no-auth-cache',
+          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
+          fn
+        ]
+      end
     }
   elsif @cmd =~ /modify_unix_group/
-    cmd = @cmd
+    cmd, group, availid = @cmd, @group, @availid
     _html html_fragment {
       _pre cmd, class: '_stdin'
-      _pre 'Placeholder for the moment -- not yet implemented', class: '_stdout'
+      ldap = ASF.init_ldap
+      ldap.bind("uid=#{$USER},ou=people,dc=apache,dc=org", $PASSWORD)
+
+      ldap.modify "cn=#{group},ou=groups,dc=apache,dc=org",
+        [LDAP.mod(LDAP::LDAP_MOD_ADD, 'memberUid', [availid])]
+
+      _pre "add member: #{ldap.err2string(ldap.err)} (#{ldap.err})",
+        class: (ldap.err == 0 ? '_stdout' : '_stderr')
+
+      ldap.unbind
+
     }
   else
     cmd = @cmd
@@ -654,6 +686,8 @@ _html do
         received = open("#{MEETING}/memapp-received.txt").read
         begin
           received[/(no )\s+\w+\s+\w+\s+#{@mavailid}/,1] = 'yes'
+          received[/(no )\s+\w+\s+#{@mavailid}/,1] = 'yes'
+          received[/(no )\s+#{@mavailid}/,1] = 'yes'
         rescue
           _pre.stderr $!
         end
@@ -796,7 +830,8 @@ _html do
         pending.each do |vars|
           if vars['memail'] and vars['mfilename']
             _pre.todo "ezmlm-sub lists/apache.org/members/ #{vars['memail']}",
-              'data-list' => 'members', 'data-email' => vars['memail']
+              'data-list' => 'members', 'data-email' => vars['memail'],
+              'data-availid' => vars['mavailid']
           end
 
           if vars['mavailid'] and vars['mfilename']
@@ -860,6 +895,7 @@ _html do
       _pre.todo "svn update #{DOCUMENTS}", 'data-file' => DOCUMENTS
       if defined? MEETING
         _pre.todo "svn update #{MEETING}", 'data-file' => MEETING
+        _pre.todo "svn update #{SUBREQ}", 'data-file' => SUBREQ
       end
       _h3.todo 'icla.txt issues'
       ajax = true

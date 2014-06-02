@@ -4,3 +4,4 @@ officers:   /var/tools/secretary/foundation/officers
 documents:  /var/tools/secretary/documents
 received:   /var/tools/secretary/documents/received
 mail:       /var/tools/secretary/secmail.rb
+subreq:     /var/tools/secretary/subreq
