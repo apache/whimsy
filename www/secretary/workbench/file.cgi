@@ -150,8 +150,8 @@ end
 class Wunderbar::XmlMarkup
   def move source, dest
     if not Dir.chdir(RECEIVED) {Dir['*']}.include? source.chomp('/')
-      @_builder.tag! :pre, "svn mv #{source.inspect} #{dest}", class: '_stdin'
-      @_builder.tag! :pre, "File #{source} doesn't exist.", class: '_stderr'
+      tag! :pre, "svn mv #{source.inspect} #{dest}", class: '_stdin'
+      tag! :pre, "File #{source} doesn't exist.", class: '_stderr'
       return
     end
 
@@ -162,8 +162,8 @@ class Wunderbar::XmlMarkup
       # Since svn error messages aren't as helpful as they could be here,
       # let's improve on it... by pretending to run the command and then
       # producing a better error message.
-      @_builder.tag! :pre, "svn mv #{source.inspect} #{dest}", class: '_stdin'
-      @_builder.tag! :pre, "File #{dest} already exists.", class: '_stderr'
+      tag! :pre, "svn mv #{source.inspect} #{dest}", class: '_stdin'
+      tag! :pre, "File #{dest} already exists.", class: '_stderr'
     else
       if (`svn --version --quiet`.chomp.split('.') <=> %w(1 5)) >= 1
         self.system "svn mv #{source.inspect} #{dest}"
@@ -431,11 +431,23 @@ _json do
         file
       ]
     }
+  elsif @cmd =~ /ezmlm-sub/
+    cmd = @cmd
+    _html html_fragment {
+      _pre cmd, class: '_stdin'
+      _pre 'Placeholder for the moment -- not yet implemented', class: '_stdout'
+    }
+  elsif @cmd =~ /modify_unix_group/
+    cmd = @cmd
+    _html html_fragment {
+      _pre cmd, class: '_stdin'
+      _pre 'Placeholder for the moment -- not yet implemented', class: '_stdout'
+    }
   else
     cmd = @cmd
     _html html_fragment { 
-      _pre._stdin cmd
-      _pre._stderr 'Unauthorized command'
+      _pre cmd, class: '_stdin'
+      _pre 'Unauthorized command', class: '_stderr'
     }
   end
 end
@@ -782,6 +794,16 @@ _html do
         pending = YAML.load(open(PENDING_YML))
 
         pending.each do |vars|
+          if vars['memail']
+            _pre.todo "ezmlm-sub lists/apache.org/members/ #{vars['memail']}",
+              'data-list' => 'members', 'data-email' => vars['memail']
+          end
+
+          if vars['mavailid']
+            _pre.todo "modify_unix_group.pl member --add=#{vars['mavailid']}",
+              'data-group' => 'member', 'data-availid' => vars['mavailid']
+          end
+
           _h2.todo "email #{vars['email']}", 'data-message' => @message
         end
       end
@@ -898,8 +920,11 @@ _html do
     when 'view'
       files = nil
       Dir.chdir(RECEIVED) do
-	@dir.untaint if Dir['*'].include? @dir.chomp('/')
-	files = Dir["#{@dir.chomp('/')}/*"].map(&:untaint).sort
+	if Dir['*'].include? @dir.chomp('/')
+	  files = Dir["#{@dir.untaint.chomp('/')}/*"].map(&:untaint).sort
+        else
+	  files = []
+        end
 
 	if files.length == 2
 	  verify = nil
