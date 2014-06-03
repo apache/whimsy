@@ -16,6 +16,7 @@ require 'wunderbar/bootstrap/theme'
 require 'wunderbar/angularjs/route'
 require 'wunderbar/jquery/filter'
 require 'wunderbar/underscore'
+require 'wunderbar/backtic'
 require 'ruby2js/filter/functions'
 
 require 'yaml'
