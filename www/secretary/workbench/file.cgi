@@ -831,7 +831,7 @@ _html do
           if vars['memail'] and vars['mfilename']
             _pre.todo "ezmlm-sub lists/apache.org/members/ #{vars['memail']}",
               'data-list' => 'members', 'data-email' => vars['memail'],
-              'data-availid' => vars['mavailid']
+              'data-availid' => vars['mavailid'], 'data-message' => @message
           end
 
           if vars['mavailid'] and vars['mfilename']
