@@ -24,13 +24,15 @@ class Minutes
       [meeting.reflow(4,64), '', backup.reflow(4, 68)]
     end
 
-    minutes.sub! /^ +ASF members are welcome to attend board meetings.*?\n\n/m, ''
+    minutes.sub! /^ +ASF members are welcome to attend board meetings.*?\n\n/m,
+      ''
 
     minutes.mreplace(/\n\s2.\sRoll\sCall\n\n
                      (.*?)\n\n+\s3.\sMinutes
                      /mx) do |rollcall|
       if notes('Roll Call')
-        notes('Roll Call').gsub(/\r\n/,"\n").gsub(/\n*\Z/,'')
+        notes('Roll Call').gsub(/\r\n/,"\n").gsub(/\n*\Z/,'').
+          gsub(/^([^\n])/, '    \1')
       else
         rollcall.gsub(/ \(expected.*?\)/, '')
       end
