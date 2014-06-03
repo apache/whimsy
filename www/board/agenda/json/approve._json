@@ -1,3 +1,7 @@
+#
+# Pre-app approval of an agenda item by a Director
+#
+
 pending = Pending.get(env.user)
 pending['initials'] = @initials
 pending['agenda'] = @agenda

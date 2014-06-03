@@ -1,4 +1,6 @@
+#
 # commit draft minutes to SVN
+#
 
 minutes_file = "#{FOUNDATION_BOARD}/#{@minutes}"
 minutes_file.untaint if @minutes =~ /^board_minutes_\d+_\d+_\d+.txt$/

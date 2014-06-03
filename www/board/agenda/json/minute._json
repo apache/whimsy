@@ -1,3 +1,7 @@
+#
+# Add secretarial minutes to a given agenda item
+#
+
 @minutes = @agenda.sub('_agenda_', '_minutes_')
 minutes_file = "#{MINUTES_WORK}/#{@minutes.sub('.txt', '.yml')}"
 minutes_file.untaint if @minutes =~ /^board_minutes_\d+-\d+-\d+\.txt$/

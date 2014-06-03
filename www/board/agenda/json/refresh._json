@@ -1,3 +1,7 @@
+#
+# Refresh agenda from svn server
+#
+
 Dir.chdir( FOUNDATION_BOARD ) do
   `svn cleanup`
   `svn up`

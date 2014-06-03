@@ -1,4 +1,6 @@
+#
 # apply comments to an agenda file
+#
 
 user = env.user
 

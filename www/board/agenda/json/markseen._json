@@ -1,3 +1,7 @@
+#
+# Mark a set of comments as seen
+#
+
 pending = Pending.get(env.user)
 
 pending['agenda'] = @agenda

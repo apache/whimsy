@@ -1,3 +1,7 @@
+#
+# Bulk apply comments and pre-approvals to agenda file
+#
+
 # apply comments to an agenda file
 def apply_comments(agenda_file, updates)
   agenda = File.read(agenda_file)

@@ -1,3 +1,7 @@
+#
+# Publish approved minutes on the public web site
+#
+
 require 'date'
 require '/var/tools/asf/svn'
 
