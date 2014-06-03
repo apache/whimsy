@@ -5,10 +5,10 @@ require 'etc'
 module ASF
   module Auth
     DIRECTORS = {
-      'curcuru'     => 'sc',
+      'rbowen'      => 'rb',
       'cutting'     => 'dc',
       'bdelacretaz' => 'bd',
-      'fielding'    => 'rf',
+      'rgardler'    => 'rg',
       'jim'         => 'jj',
       'mattmann'    => 'cm',
       'brett'       => 'bp',
