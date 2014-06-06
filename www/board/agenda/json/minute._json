@@ -14,8 +14,8 @@ end
 
 if @action == 'timestamp'
   date = @agenda[/\d+_\d+_\d+/].gsub('_', '-')
-  zone = Time.parse("#{date} PST").dst? ? '-06:00' : '-07:00'
-  @text = Time.now.getlocal('-06:00').strftime('%-l:%M')
+  zone = Time.parse("#{date} PST").dst? ? '-07:00' : '-08:00'
+  @text = Time.now.getlocal(zone).strftime('%-l:%M')
 end
 
 minutes[@title] = @text
