@@ -59,10 +59,25 @@ class ASF::Board::Agenda
           attrs['roster'] =
             "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
           attrs['prior_reports'] = minutes(committee.display_name)
+          name1 = text[/heretofore\sappointed\s(\w.*)\sto/,1].to_s.
+            gsub('.', ' ').split(/\s+/)
+          name2 = text[/recommend\s(\w.*)\sas/,1].to_s.
+            gsub('.', ' ').split(/\s+/)
           committee.members.each do |person|
             name = person.public_name
             name.sub!(/ .* /,' ') unless text.include? name
-            people << [name, person.id] if text.include? name
+            pname = name.downcase.split(/\s+/)
+            if text.include? name
+              people << [name, person.id]
+            elsif sname1.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
+              people << [name1, person.id]
+            elsif pname.all? {|t1| sname1.any? {|t2| t2.start_with? t1}}
+              people << [name1, person.id]
+            elsif sname2.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
+              people << [name2, person.id]
+            elsif pname.all? {|t1| sname2.any? {|t2| t2.start_with? t1}}
+              people << [name2, person.id]
+            end
           end
         end
       else
