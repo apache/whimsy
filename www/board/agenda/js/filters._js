@@ -127,12 +127,13 @@ module Angular::AsfBoardFilters
           ok = false
           ok ||= names.all? {|part| iclas.any? {|icla| icla.include? part}}
           ok ||= iclas.all? {|part| names.any? {|name| name.include? part}}
-          if ok
-            text.sub! /#{escapeRegExp(person.icla)}/, 
-              "<a href='#{roster}#{id}'>#{person.icla}</a>"
-          else
+          if item.title =~ /^Establish/ and not ok
             text.gsub! /#{escapeRegExp("#{id}'>#{person.name}")}/,
-              "?q=#{person.name}'><span class='commented'>#{person.name}</span>"
+              "?q=#{encodeURIComponent(person.name)}'>" +
+              "<span class='commented'>#{person.name}</span>"
+          else
+            text.gsub! /#{escapeRegExp(person.name)}/, 
+              "<a href='#{roster}#{id}'>#{person.name}</a>"
           end
         end
 
