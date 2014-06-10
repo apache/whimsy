@@ -1,5 +1,5 @@
 #
-# apply comments to an agenda file
+# edit exiting / post new report
 #
 
 user = env.user
@@ -51,7 +51,7 @@ File.open(agenda_file, 'r') do |file|
       pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])\n.*?(\s*\n-{40})/m
     end
 
-    if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}\n\n#{$2}" }
+    if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}\n#{$2}" }
       raise Exception.new('report merge failed')
     end
   end
