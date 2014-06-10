@@ -43,15 +43,15 @@ File.open(agenda_file, 'r') do |file|
     end
 
     if @attach =~ /^4\w/
-      pattern = /(\n\n    #{@attach[-1]}\..*?\[.*?\])\n.*?(\s*\n-{40})/m
+      pattern = /(\n\n    #{@attach[-1]}\..*?\[.*?\])\n.*?\n(-{40})/m
     elsif @attach =~ /^7\w/
-      pattern = /(^\s+#{@attach[-1]}\.\s+#{@fulltitle})\n.*?(\n {1,6}\w\.)/m
+      pattern = /(^\s+#{@attach[-1]}\.\s+#{@fulltitle})\n.*?\n( {1,6}\w\.)/m
       @report.gsub! /^(.)/, '       \1'
     else
-      pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])\n.*?(\s*\n-{40})/m
+      pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])\n.*?\n(-{40})/m
     end
 
-    if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}\n#{$2}" }
+    if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}\n\n\n#{$2}" }
       raise Exception.new('report merge failed')
     end
   end
