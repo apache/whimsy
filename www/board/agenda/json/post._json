@@ -13,6 +13,7 @@ File.open(agenda_file, 'r') do |file|
   `svn revert #{agenda_file}`
 
   agenda = File.read(agenda_file)
+  @report.sub! /\s*\Z/, ''
 
   if @attach == '7?'
     # new special order
@@ -29,7 +30,7 @@ File.open(agenda_file, 'r') do |file|
     title = "    #{order}. #{@title}\n\n"
 
     # insert into agenda
-    agenda[/\n() 8\. Discussion Items/, 1] = "#{title}#{@report.chomp}\n\n"
+    agenda[/\n() 8\. Discussion Items/, 1] = "#{title}#{@report}\n\n"
 
     @message = "Post Special Order 7#{order}: #{@title}"
   else
@@ -50,7 +51,7 @@ File.open(agenda_file, 'r') do |file|
       pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])\n.*?(\s*\n-{40})/m
     end
 
-    if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}\n#{$2}" }
+    if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}\n\n#{$2}" }
       raise Exception.new('report merge failed')
     end
   end
