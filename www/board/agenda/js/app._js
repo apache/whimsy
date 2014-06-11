@@ -587,7 +587,9 @@ module Angular::AsfBoardAgenda
 
     @ai = {assignee: '', text: ''}
     @ai.assignee = @item.shepherd.split(' ').first if @item.shepherd
-    @ai.text = "pursue a report for #{@item.title}" unless @item.report
+    unless @item.report or @item.text
+      @ai.text = "pursue a report for #{@item.title}" 
+    end
 
     def add_ai()
       @text = @text.sub(/\s+$/, '') + "\n\n" if @text
@@ -716,6 +718,7 @@ module Angular::AsfBoardAgenda
           if item.attach =~ /^7\w$/
             Actions.add 'vote-button', 'vote.html'
           elsif item.attach =~ /^3\w$/
+            Actions.add 'minute-button', 'minute.html'
             if @minutes[@item.title] == 'approved' and 
               Minutes.posted.include? @item.text[/board_minutes_\w+\.txt/]
               Actions.add 'publish-minutes-button', 'publish-minutes.html'
