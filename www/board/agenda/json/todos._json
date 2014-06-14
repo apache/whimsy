@@ -2,9 +2,16 @@
 # Secretary post-meeting todo list
 #
 
-cache = AGENDA_CACHE["board_agenda_#{params[:file].gsub('-', '_')}.txt"]
+agenda = "board_agenda_#{params[:file].gsub('-', '_')}.txt"
+agenda.untaint if params[:file] =~ /^\d+-\d+\d+/
+cache = AGENDA_CACHE[agenda]
 
 transitioning = []
+
+Dir.chdir(FOUNDATION_BOARD) do
+  cache = AGENDA_CACHE.parse(agenda) if cache[:mtime] != File.mtime(agenda)
+end
+
 if cache and cache[:parsed]
   cache[:parsed].each do |item|
     if item[:attach] =~ /^7\w$/ and item['title'] =~ /^Change .*? Chair$/
