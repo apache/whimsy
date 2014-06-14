@@ -4,7 +4,7 @@ module ASF
   end
 
   class Committee < Base
-    attr_accessor :info, :emeritus, :report
+    attr_accessor :info, :names, :emeritus, :report
     def initialize(*args)
       @info = []
       @emeritus = []
@@ -60,6 +60,8 @@ module ASF
           ''
         end
         committee.info = roster.scan(/<(.*?)@apache\.org>/).flatten
+        committee.names = Hash[roster.gsub(/\(\w+\)/, '').
+          scan(/^\s*(.*?)\s*<(.*?)@apache\.org>/).map {|list| list.reverse}]
       end
 
       report.scan(/^([^\n]+)\n---+\n(.*?)\n\n/m).each do |period, committees|
@@ -107,8 +109,12 @@ module ASF
       @chair = person
     end
 
-    def info=(person)
-      @info = person
+    def info=(list)
+      @info = list
+    end
+
+    def names=(hash)
+      @names = hash
     end
 
     def nonpmc?

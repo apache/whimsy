@@ -63,20 +63,19 @@ class ASF::Board::Agenda
           sname1 = name1.to_s.downcase.gsub('.', ' ').split(/\s+/)
           name2 = text[/recommend\s(\w.*)\sas/,1]
           sname2 = name2.to_s.downcase.gsub('.', ' ').split(/\s+/)
-          committee.members.each do |person|
-            name = person.public_name
+          committee.names.each do |id, name|
             name.sub!(/ .* /,' ') unless text.include? name
             pname = name.downcase.split(/\s+/)
             if text.include? name
-              people << [name, person.id]
+              people << [name, id]
             elsif name1 && sname1.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
-              people << [name1, person.id]
+              people << [name1, id]
             elsif name1 && pname.all? {|t1| sname1.any? {|t2| t2.start_with? t1}}
-              people << [name1, person.id]
+              people << [name1, id]
             elsif name2 && sname2.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
-              people << [name2, person.id]
+              people << [name2, id]
             elsif name2 && pname.all? {|t1| sname2.any? {|t2| t2.start_with? t1}}
-              people << [name2, person.id]
+              people << [name2, id]
             end
           end
         end
