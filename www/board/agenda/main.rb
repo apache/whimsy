@@ -67,6 +67,11 @@ get '/json/pending' do
   end
 end
 
+get '/json/secretary_todos/:file' do
+  _json :'/json/todos'
+end
+
+
 post '/json/:file' do
   _json :"json/#{params[:file]}"
 end
