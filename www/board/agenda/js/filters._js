@@ -228,12 +228,6 @@ module Angular::AsfBoardFilters
     return comments
   end
 
-  filter :show do |item, args|
-    return false unless item.comments
-    return true if args.toggle
-    return args.seen[item.attach] != item.comments
-  end
-
   filter :csplit do |text|
     comments = []
     return comments if text === undefined

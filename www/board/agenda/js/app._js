@@ -236,12 +236,9 @@ module Angular::AsfBoardAgenda
     @agenda = Agenda.get()
     @pending = Pending.get()
     @toggle = false
-    show = filter(:show)
 
     watch 'agenda.update + pending.update' do
-      $rootScope.unseen_comments =
-        @agenda.any? { |item| show(item, seen: @pending.seen) }
-      $rootScope.seen_comments = !Object.keys(@pending.seen).empty?
+      $rootScope.any_seen = !@pending.seen.keys().empty?
     end
 
     on :toggleComments do |event, state|
@@ -249,10 +246,39 @@ module Angular::AsfBoardAgenda
     end
 
     # make comment split filter available as a function
-    @csplit = filter(:csplit)
+    csplit = filter(:csplit)
 
     Actions.add 'mark-seen-button'
     Actions.add 'toggle-seen-button'
+
+    # produce a stable list of visible comments
+    $rootScope.any_visible = false
+    $rootScope.any_hidden = false
+    def visible_comments
+      $rootScope.any_hidden = false
+      @visible ||= []
+      result = []
+      @agenda.each do |item|
+        show = []
+        seen = csplit(@pending.seen[item.attach])
+
+        csplit(item.comments).each do |comment|
+          if seen.include?(comment) and not @toggle
+            $rootScope.any_hidden = true
+          elsif comment.trim()
+            show << comment 
+          end
+        end
+
+        unless show.empty?
+          result << {title: item.title, href: item.href, comments: show} 
+        end
+      end
+
+      angular.copy result, @visible unless angular.equals(result, @visible)
+      $rootScope.any_visible = (not @visible.empty?)
+      @visible
+    end
   end
 
   controller :MarkSeen do
