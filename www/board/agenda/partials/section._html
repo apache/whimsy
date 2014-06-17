@@ -33,6 +33,20 @@ _section.minutes! ng_if: 'minute_text' do
   _pre '{{ minute_text }}'
 end
 
+_section ng_if: 'item.title == "Adjournment" && todo' do
+  _h3 'Post Meeting actions (beta)'
+  _p 'Add to pmc_members', ng_if: 'todo.add.length > 0'
+  _ul do
+    _li '{{ person.id }} ({{ person.name }})',
+      ng_repeat: 'person in todo.add'
+  end
+  _p 'Remove from pmc_members', ng_if: 'todo.remove.length > 0'
+  _ul do
+    _li '{{ person.id }} ({{ person.name }})',
+      ng_repeat: 'person in todo.remove'
+  end
+end
+
 _ng_template.post_button! do
   _button.btn.btn_primary '{{ post_button_text }}', 
     data_target: '#post-report-form', data_toggle: 'modal'

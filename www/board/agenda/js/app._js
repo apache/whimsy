@@ -730,6 +730,8 @@ module Angular::AsfBoardAgenda
               @minute_text = response
             }
           end
+        elsif item.title == 'Adjournment' and @mode == :secretary
+          @todo = TODO.get()
         end
 
       else

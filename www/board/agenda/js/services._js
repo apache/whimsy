@@ -350,4 +350,21 @@ module Angular::AsfBoardServices
       @@buttons.splice(index, 1) if index > -1
     end
   end
+
+  class TODO
+    @@update = 0
+    @@agenda = Agenda.get()
+    @@list = {add: [], remove: []}
+
+    def self.get()
+      @@list.add << @@update
+      if @@agenda.update > @@update
+        $http.get("../json/secretary_todos/#{Data.date}").success do |result, status|
+          angular.copy result, @@list unless status==304 and !@@list.keys.empty?
+        end
+      end
+
+      return @@list
+    end
+  end
 end
