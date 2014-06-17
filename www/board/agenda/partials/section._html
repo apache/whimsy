@@ -35,12 +35,12 @@ end
 
 _section ng_if: 'item.title == "Adjournment" && todo' do
   _h3 'Post Meeting actions (beta)'
-  _p 'Add to pmc_members', ng_if: 'todo.add.length > 0'
+  _p 'Add to pmc-chairs:', ng_if: 'todo.add.length > 0'
   _ul do
     _li '{{ person.id }} ({{ person.name }})',
       ng_repeat: 'person in todo.add'
   end
-  _p 'Remove from pmc_members', ng_if: 'todo.remove.length > 0'
+  _p 'Remove from pmc-chairs:', ng_if: 'todo.remove.length > 0'
   _ul do
     _li '{{ person.id }} ({{ person.name }})',
       ng_repeat: 'person in todo.remove'
