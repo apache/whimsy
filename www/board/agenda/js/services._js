@@ -360,7 +360,9 @@ module Angular::AsfBoardServices
       @@list.add << @@update
       if @@agenda.update > @@update
         $http.get("../json/secretary_todos/#{Data.date}").success do |result, status|
-          angular.copy result, @@list unless status==304 and !@@list.keys.empty?
+          unless status==304 and !@@list.keys.empty?
+            angular.copy result, @@list unless angular.equals result, @@list
+          end
         end
       end
 
