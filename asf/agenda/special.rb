@@ -63,6 +63,7 @@ class ASF::Board::Agenda
           sname1 = name1.to_s.downcase.gsub('.', ' ').split(/\s+/)
           name2 = text[/recommend\s(\w.*)\sas/,1]
           sname2 = name2.to_s.downcase.gsub('.', ' ').split(/\s+/)
+          next unless committee.names
           committee.names.each do |id, name|
             name.sub!(/ .* /,' ') unless text.include? name
             pname = name.downcase.split(/\s+/)
