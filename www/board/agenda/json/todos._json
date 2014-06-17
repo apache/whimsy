@@ -6,7 +6,7 @@ agenda = "board_agenda_#{params[:file].gsub('-', '_')}.txt"
 agenda.untaint if params[:file] =~ /^\d+-\d+\d+/
 cache = AGENDA_CACHE[agenda]
 
-transitioning = []
+transitioning = {}
 
 Dir.chdir(FOUNDATION_BOARD) do
   cache = AGENDA_CACHE.parse(agenda) if cache[:mtime] != File.mtime(agenda)
@@ -15,15 +15,16 @@ end
 if cache and cache[:parsed]
   cache[:parsed].each do |item|
     if item[:attach] =~ /^7\w$/ and item['title'] =~ /^Change .*? Chair$/
-      transitioning += item['people'].keys
+      item['people'].keys.each do |person|
+        transitioning[ASF::Person.find(person)] = item[:attach]
+      end
     end
   end
 end
 
-transitioning.map! {|id| ASF::Person.find(id)}
+add = transitioning.keys - ASF.pmc_chairs
+remove = ASF.pmc_chairs - ASF::Committee.list.map(&:chair) - transitioning.keys
 
-add = transitioning - ASF.pmc_chairs
-remove = ASF.pmc_chairs - ASF::Committee.list.map(&:chair) - transitioning
-
-_add add.map {|person| {id: person.id, name: person.public_name}}
+_add add.map {|person| {id: person.id, name: person.public_name, 
+  resolution: transitioning[person]}}
 _remove remove.map {|person| {id: person.id, name: person.public_name}}
