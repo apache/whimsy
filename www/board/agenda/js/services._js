@@ -357,7 +357,6 @@ module Angular::AsfBoardServices
     @@list = {add: [], remove: []}
 
     def self.get()
-      @@list.add << @@update
       if @@agenda.update > @@update
         $http.get("../json/secretary_todos/#{Data.date}").success do |result, status|
           unless status==304 and !@@list.keys.empty?
