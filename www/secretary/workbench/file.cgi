@@ -485,9 +485,7 @@ _json do
 end
 
 DESTINATION = {
-  "Ross"      => "to_ross",
-  "Sam"       => "to_sam",
-  "Upayavira" => "to_upayavira",
+  "operations" => "to_operations",
   "dup"       => "deadletter/dup",
   "incomplete"=> "deadletter/incomplete"
 }

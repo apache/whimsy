@@ -379,12 +379,6 @@ _html do
 
           _div_.buckets!.buttons do
             _fieldset do
-              _legend 'To:'
-              _input type: 'submit', name: 'dest', value: 'Jim'
-              _input type: 'submit', name: 'dest', value: 'Sam'
-              _input type: 'submit', name: 'dest', value: 'Upayavira'
-            end
-            _fieldset do
               _legend 'Do:'
               _input type: 'submit', name: 'dest', value: 'burst'
               _input type: 'submit', name: 'dest', value: 'flip'
@@ -394,6 +388,7 @@ _html do
             end
             _fieldset do
               _legend 'File:'
+              _input type: 'submit', name: 'dest', value: 'operations'
               _input type: 'submit', name: 'dest', value: 'dup'
               _input type: 'submit', name: 'dest', value: 'junk'
               _input type: 'submit', name: 'dest', value: 'incomplete'
