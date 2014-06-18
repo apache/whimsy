@@ -37,8 +37,16 @@ _section ng_if: 'item.title == "Adjournment" && todo' do
   _h3 'Post Meeting actions (beta)'
   _p 'Add to pmc-chairs:', ng_if: 'todo.add.length > 0'
   _ul do
-    _li '{{ person.id }} ({{ person.name }})',
-      ng_repeat: 'person in todo.add'
+    _li ng_repeat: 'person in todo.add' do
+      _a '{{ person.id }}', 
+        href: 'https://whimsy.apache.org/roster/committer/{{ person.id }}'
+      _ '({{ person.name }})'
+      _span ng_if: 'minutes[person.resolution]' do
+        _ '-'
+        _a '{{minutes[person.resolution]}}', 
+          href: '{{link(person.resolution)}}'
+      end
+    end
   end
   _p 'Remove from pmc-chairs:', ng_if: 'todo.remove.length > 0'
   _ul do

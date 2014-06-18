@@ -7,6 +7,8 @@ agenda.untaint if params[:file] =~ /^\d+-\d+\d+/
 cache = AGENDA_CACHE[agenda]
 
 transitioning = {}
+establish = {}
+terminate = {}
 
 Dir.chdir(FOUNDATION_BOARD) do
   cache = AGENDA_CACHE.parse(agenda) if cache[:mtime] != File.mtime(agenda)
@@ -14,10 +16,15 @@ end
 
 if cache and cache[:parsed]
   cache[:parsed].each do |item|
-    if item[:attach] =~ /^7\w$/ and item['title'] =~ /^Change .*? Chair$/
+    next unless item[:attach] =~ /^7\w$/
+    if item['title'] =~ /^Change .*? Chair$/
       item['people'].keys.each do |person|
-        transitioning[ASF::Person.find(person)] = item[:attach]
+        transitioning[ASF::Person.find(person)] = item['title']
       end
+    elsif item['title'] =~ /^Establish\s*(.*?)\s*$/
+      establish[$1] = item['title']
+    elsif item['title'] =~ /^Terminate\s*(.*?)\s*$/
+      terminate[$1] = item['title']
     end
   end
 end
@@ -28,3 +35,7 @@ remove = ASF.pmc_chairs - ASF::Committee.list.map(&:chair) - transitioning.keys
 _add add.map {|person| {id: person.id, name: person.public_name, 
   resolution: transitioning[person]}}
 _remove remove.map {|person| {id: person.id, name: person.public_name}}
+_establish establish.map {|name, resolution| {name: name, 
+  resolution: resolution}}
+_terminate terminate.map {|name, resolution| {name: name, 
+  resolution: resolution}}

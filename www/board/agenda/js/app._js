@@ -789,6 +789,14 @@ module Angular::AsfBoardAgenda
       $rootScope.minute_label =
         (@text && @text.length > 0 ? 'edit minutes' : 'add minutes')
     end
+
+    def link(resolution)
+      link = nil
+      @agenda.each do |item|
+        link = item.href if item.title == resolution
+      end
+      return link
+    end
   end
 
   controller :Search do
