@@ -50,8 +50,11 @@ _section ng_if: 'item.title == "Adjournment" && todo' do
   end
   _p 'Remove from pmc-chairs:', ng_if: 'todo.remove.length > 0'
   _ul do
-    _li '{{ person.id }} ({{ person.name }})',
-      ng_repeat: 'person in todo.remove'
+    _li ng_repeat: 'person in todo.remove' do
+      _a '{{ person.id }}', 
+        href: 'https://whimsy.apache.org/roster/committer/{{ person.id }}'
+      _ '({{ person.name }})'
+    end
   end
 end
 
