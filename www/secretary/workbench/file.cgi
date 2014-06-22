@@ -290,7 +290,7 @@ def email(target, message)
 
     # send email, if template exists
     template = vars.doctype + '.erb'
-    template.untaint if template =~ /^[.\w]+/
+    template.taint unless template =~ /^\w[.\w]+$/
     if defined?(MAIL) and File.exist?(template)
 
       # extract fields from the Mail defaults
@@ -368,9 +368,8 @@ def email(target, message)
 
       # update bcc
       if vars.email_bcc and not vars.email_bcc.empty?
-        bcc = mail.bcc.to_s.split(/,\s*/)
-        bcc += vars.email_bcc.to_s.split(/,\s*/)
-        mail.bcc = bcc.uniq.join(', ')
+        bcc = mail.bcc.to_s.split(/,\s*/) + vars.email_bcc.to_s.split(/,\s*/)
+        mail.bcc = bcc.uniq.join(', ').untaint
       end
 
       # for debugging purposes
