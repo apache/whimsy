@@ -421,6 +421,36 @@ _html do
               end
             end
           end
+
+          _table id: 'grant2-form' do
+            _tr do
+              _td.label 'PMC'
+              _td.input do
+                _input name: 'ggmc', id: 'gpmc', type: 'text'
+              end
+            end
+            _tr do
+              _td.label 'Podling'
+              _td.input do
+                _input name: 'gpodling', id: 'gpodling', type: 'text'
+              end
+            end
+          end
+
+          _table id: 'ccla2-form' do
+            _tr do
+              _td.label 'PMC'
+              _td.input do
+                _input name: 'cpmc', id: 'cpmc', type: 'text'
+              end
+            end
+            _tr do
+              _td.label 'Podling'
+              _td.input do
+                _input name: 'cpodling', id: 'cpodling', type: 'text'
+              end
+            end
+          end
         end
       end
 

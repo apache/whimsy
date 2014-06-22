@@ -288,6 +288,10 @@ def email(target, message)
     })
     vars.commit_message = message
 
+    # collapse pmc and podling variable names
+    vars.pmc ||= vars.cpmc || vars.gpmc
+    vars.podling ||= vars.cpodling || vars.gpodling
+
     # send email, if template exists
     template = vars.doctype + '.erb'
     template.taint unless template =~ /^\w[.\w]+$/
