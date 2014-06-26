@@ -52,19 +52,45 @@ _html do
     name = @file.original_filename.gsub(/[^-.\w]/, '_').sub(/^\.+/, '_').untaint
     @dest.untaint if @dest =~ /^\w+$/
 
-    Dir.chdir File.join(ASF::SVN['private/financials/Bills'], @dest) do
-      _h2 'Commit log'
+    if @file.empty?
+      _pre 'File is required', class: '_stderr'
+    elsif not @message or @message.empty?
+      _pre 'Message is required', class: '_stderr'
+    elsif not @dest or @dest.empty?
+      _pre 'Destination is required', class: '_stderr'
+    else
+      Dir.chdir File.join(ASF::SVN['private/financials/Bills'], @dest) do
+        _h2 'Commit log'
 
-      _.system 'svn up'
+        # cleanup anything left over from previous runs
+        `svn cleanup`
+        status = `svn status #{file}`
+        unless status.empty?
+          status.scan(/^[?A]\s*\+?\s*(.*)/).flatten.each do |uncommitted|
+            _.system ['rm', '-rf', uncommitted]
+          end
+          if status =~ /^\w/
+            _.system ['svn', 'revert', '-R', file]
+          end
+        end
 
-      File.open(name, 'wb') {|file| file.write @file.read}
-      _.system ['svn', 'add', name]
+        _.system 'svn up'
 
-      _.system [
-        'svn', 'commit', '-m', @message, name,
-        ['--no-auth-cache', '--non-interactive'],
-        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
-      ]
+        if File.exist? name
+          _pre "File #{name} already exists", class: '_stderr'
+        else
+          # write file out to disk
+          File.open(name, 'wb') {|file| file.write @file.read}
+          _.system ['svn', 'add', name]
+
+          # commit
+          _.system [
+            'svn', 'commit', '-m', @message, name,
+            ['--no-auth-cache', '--non-interactive'],
+            (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+          ]
+        end
+      end
     end
   end
 end
