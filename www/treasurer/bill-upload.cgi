@@ -28,7 +28,7 @@ _html do
     _fieldset do
       _legend 'ASF Bill upload'
 
-      _label 'Select a file to upload'
+      _label 'Select a file to upload:'
       _input type: 'file', name: 'file', required: true
 
       _label 'Enter Commit Message:', for: 'message'
