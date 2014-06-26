@@ -61,7 +61,7 @@ _html do
       _.system ['svn', 'add', name]
 
       _.system [
-        'svn', 'commit', '-m', @message, name
+        'svn', 'commit', '-m', @message, name,
         ['--no-auth-cache', '--non-interactive'],
         (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
       ]
