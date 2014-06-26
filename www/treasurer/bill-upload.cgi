@@ -57,7 +57,7 @@ _html do
 
       _.system 'svn up'
 
-      File.open(name, 'w') {|file| file.write @file.read}
+      File.open(name, 'wb') {|file| file.write @file.read}
       _.system ['svn', 'add', name]
 
       _.system [
