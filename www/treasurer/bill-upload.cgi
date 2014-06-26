@@ -52,7 +52,7 @@ _html do
     name = @file.original_filename.gsub(/[^-.\w]/, '_').sub(/^\.+/, '_').untaint
     @dest.untaint if @dest =~ /^\w+$/
 
-    if @file.empty?
+    if @file.respond_to? :empty? and @file.empty?
       _pre 'File is required', class: '_stderr'
     elsif not @message or @message.empty?
       _pre 'Message is required', class: '_stderr'
