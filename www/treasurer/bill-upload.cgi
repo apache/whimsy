@@ -64,7 +64,7 @@ _html do
 
         # cleanup anything left over from previous runs
         `svn cleanup`
-        status = `svn status #{file}`
+        status = `svn status`
         unless status.empty?
           status.scan(/^[?A]\s*\+?\s*(.*)/).flatten.each do |uncommitted|
             _.system ['rm', '-rf', uncommitted]
