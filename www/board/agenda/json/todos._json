@@ -23,6 +23,7 @@ if cache and cache[:parsed]
       end
     elsif item['title'] =~ /^Establish\s*(.*?)\s*$/
       establish[$1] = item['title']
+      transitioning[ASF::Person.find(item['chair'])] = item['title']
     elsif item['title'] =~ /^Terminate\s*(.*?)\s*$/
       terminate[$1] = item['title']
     end

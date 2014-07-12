@@ -56,6 +56,18 @@ _section ng_if: 'item.title == "Adjournment" && todo' do
       _ '({{ person.name }})'
     end
   end
+  _a 'Establish pmcs:', ng_if: 'todo.establish.length > 0',
+    href: 'https://infra.apache.org/officers/tlpreq'
+  _ul do
+    _li ng_repeat: 'podling in todo.establish' do
+      _span '{{podling.name}}'
+      _span ng_if: 'minutes[podling.resolution]' do
+        _ '-'
+        _a '{{minutes[podling.resolution]}}', 
+          href: '{{link(podling.resolution)}}'
+      end
+    end
+  end
 end
 
 _ng_template.post_button! do
