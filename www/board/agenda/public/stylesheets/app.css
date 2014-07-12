@@ -195,3 +195,8 @@ main hr {
 
 .search {padding-top: 1em}
 .hilite {background-color: #FF6}
+
+#minute-comments {
+  max-height: 9em;
+  overflow: auto;
+}
