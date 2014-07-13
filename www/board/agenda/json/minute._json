@@ -13,8 +13,11 @@ else
 end
 
 if @action == 'timestamp'
-  date = @agenda[/\d+_\d+_\d+/].gsub('_', '-')
-  zone = Time.parse("#{date} PST").dst? ? '-07:00' : '-08:00'
+  # commented out as tzinfo is broken on ruby 1.9.3p0 on whimsy
+  # date = @agenda[/\d+_\d+_\d+/].gsub('_', '-')
+  # zone = Time.parse("#{date} PST").dst? ? '-07:00' : '-08:00'
+  month = @agenda[/\d+_(\d+)_\d+/, 1].to_i
+  zone = ((2..9).include? month) ? '-07:00' : '-08:00'
   @text = Time.now.getlocal(zone).strftime('%-l:%M')
 end
 
