@@ -78,7 +78,7 @@ class ASF::Board::Agenda
     whimsy = 'https://whimsy.apache.org'
     @sections.each do |section, hash|
       next unless section =~ /^(4[A-Z]|\d+|[A-Z][A-Z]?)$/
-      committee = ASF::Committee.find(hash['title'])
+      committee = ASF::Committee.find(hash['title'] ||= 'UNKNOWN')
       unless section =~ /^4[A-Z]$/
         hash['roster'] = 
           "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
