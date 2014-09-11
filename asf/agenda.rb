@@ -41,6 +41,7 @@ class ASF::Board::Agenda
         hash['approved'] &&= hash['approved'].strip.split(/[ ,]+/)
 
         @sections[section] ||= {}
+        next if hash['text'] and @sections[section]['text']
         @sections[section].merge!(hash)
       end
     end
