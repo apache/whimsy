@@ -3,12 +3,12 @@ _modal_dialog.minute_form!.wide_form ng_controller: 'Minute' do
 
   _section ng_if: '!item.comments' do
     _textarea.minute_text!.form_control :autofocus, rows: 17,
-      placeholder: 'minutes', ng_model: 'text'
+      placeholder: 'minutes', ng_model: 'text.draft'
   end
 
   _section ng_if: 'item.comments' do
     _textarea.minute_text!.form_control :autofocus, rows: 12,
-      placeholder: 'minutes', ng_model: 'text'
+      placeholder: 'minutes', ng_model: 'text.draft'
 
     _h3 'Comments'
     _div.minute_comments! do
@@ -28,15 +28,15 @@ _modal_dialog.minute_form!.wide_form ng_controller: 'Minute' do
   end
 
   _button.btn_default 'Cancel', type: 'button', data_dismiss: 'modal',
-    ng_click: 'text = $parent.text'
+    ng_click: 'text.draft = text.base'
   _button.btn_warning 'Delete', type: 'button', ng_click: 'text = ""',
-    ng_show: '$parent.text'
+    ng_show: 'text.base'
   _button.btn_primary 'Save', type: 'button', 
-    ng_click: "$parent.text=text; save()", ng_disabled: '$parent.text == text'
+    ng_click: "save(text.draft)", ng_disabled: 'text.base == text.draft'
   _button.btn_warning 'Tabled', type: 'button', 
-    ng_click: "text = 'tabled'; save()", ng_disabled: 'text',
+    ng_click: "save('tabled')", ng_disabled: 'text.draft',
     ng_show: 'previous_meeting'
   _button.btn_success 'Approved', type: 'button', 
-    ng_click: "text = 'approved'; save()", ng_disabled: 'text',
+    ng_click: "save('approved')", ng_disabled: 'text.draft',
     ng_show: 'previous_meeting'
 end

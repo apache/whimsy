@@ -348,12 +348,15 @@ module Angular::AsfBoardAgenda
   end
 
   controller :Comment do
-    def save()
-      data = {attach: @item.attach, initials: @initials, comment: @comment,
+    @text = {draft: @comment, base: @comment}
+
+    def save(comment)
+      data = {attach: @item.attach, initials: @initials, comment: comment,
         agenda: Data.get('agenda')}
 
       $http.post('../json/comment', data).success { |response|
         Pending.put response
+        @text = {draft: comment, base: comment}
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
         alert data.exception
@@ -586,22 +589,25 @@ module Angular::AsfBoardAgenda
     end
     @attendees.sort!()
 
-    if not @text
-      if @item.title == 'Roll Call'
-        @text = @item.text
-        @text.sub! /^ASF members[\s\S]*?\n\n/m, '' # remove leading paragraph
-        @text.gsub! /\s*\(expected.*?\)/, '' # remove (expected...)
-      elsif @item.title == 'Action Items'
-        @text = @item.text
-      end
+    if @minutes[@item.title]
+      @text = {base: @minutes[@item.title]}
+    elsif @item.title == 'Roll Call'
+      @text = {base: @item.text}
+      @text.base.sub! /^ASF members[\s\S]*?\n\n/m, '' # remove 1st paragraph
+      @text.base.gsub! /\s*\(expected.*?\)/, '' # remove (expected...)
+    elsif @item.title == 'Action Items'
+      @text = {base: @item.text}
     end
+
+    @text.draft ||= @text.base
 
     @previous_meeting = (@item.attach =~ /^3\w/)
 
-    def save()
-      data = {title: @item.title, text: @text, agenda: Data.get('agenda')}
+    def save(text = @text.draft)
+      data = {title: @item.title, text: text, agenda: Data.get('agenda')}
 
       $http.post('../json/minute', data).success { |response|
+        @text.base = @text.draft = text
         Minutes.put response
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
@@ -638,12 +644,15 @@ module Angular::AsfBoardAgenda
     end
 
     @fulltitle = @item.fulltitle || @item.title
+    text = $scope['$parent'].text
+    @text = {base: text, draft: text}
 
-    def save()
-      data = {title: @item.title, text: @text, agenda: Data.get('agenda')}
+    def save(text = @text.draft)
+      data = {title: @item.title, text: text, agenda: Data.get('agenda')}
 
       $http.post('../json/minute', data).success { |response|
         Minutes.put response
+        @text = {base: text, draft: text}
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
         alert data.exception
