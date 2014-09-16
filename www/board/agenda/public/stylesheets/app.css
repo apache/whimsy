@@ -107,7 +107,8 @@ input[type=submit] {
   margin-top: 0;
   margin-bottom: 0;
   padding-top: 0;
-  padding-bottom: 0.1
+  padding-bottom: 0.1;
+  padding-left: 2em;
 }
 
 .comments button, #paste_report { 
