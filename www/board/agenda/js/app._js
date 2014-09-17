@@ -626,8 +626,9 @@ module Angular::AsfBoardAgenda
     end
 
     def add_ai()
-      @text = @text.sub(/\s+$/, '') + "\n\n" if @text
-      @text = (@text || '') + Flow.comment(@ai.text, "@#{@ai.assignee}")
+      @text.draft = @text.draft.sub(/\s+$/, '') + "\n\n" if @text.draft
+      @text.draft = (@text.draft || '') +
+        Flow.comment(@ai.text, "@#{@ai.assignee}")
       @ai.text = ''
     end
   end
