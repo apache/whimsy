@@ -31,6 +31,11 @@ class ASF::Board::Agenda
       attrs.delete('report') if attrs['report'] == "\n"
 
       attrs['missing'] = true if attrs['report'].strip.empty?
+
+      begin
+        attrs['chair_email'] = ASF::Committee.find(attrs['title']).chair.email
+      rescue
+      end
     end
   end
 end
