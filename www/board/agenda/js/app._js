@@ -597,6 +597,8 @@ module Angular::AsfBoardAgenda
       @text.base.gsub! /\s*\(expected.*?\)/, '' # remove (expected...)
     elsif @item.title == 'Action Items'
       @text = {base: @item.text}
+    else
+      @text = {base: ''}
     end
 
     @text.draft ||= @text.base

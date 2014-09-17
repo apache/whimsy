@@ -1,10 +1,10 @@
 _modal_dialog.minute_form!.wide_form ng_controller: 'Minute' do
   _h4.commented 'Minutes'
 
-  # _section ng_if: '!item.comments' do
+  _section ng_if: '!item.comments' do
     _textarea.minute_text!.form_control :autofocus, rows: 17,
       placeholder: 'minutes', ng_model: 'text.draft'
-  # end
+  end
 
   _section ng_if: 'item.comments' do
     _textarea.minute_text!.form_control :autofocus, rows: 12,
