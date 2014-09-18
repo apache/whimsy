@@ -368,7 +368,11 @@ module Angular::AsfBoardAgenda
 
   controller :PostReport do
     @disabled = false
-    @baseline = @report = @item.report || @item.text
+    @report = @item.report || @item.text
+    if @item.title == 'President'
+      @report.sub! /\s*Additionally, please see Attachments \d through \d\./, ''
+    end
+    @baseline = @report
     @digest = @item.digest
 
     watch @item.digest do |value|
@@ -396,7 +400,7 @@ module Angular::AsfBoardAgenda
 
     def cancel()
       ~'#post-report-form'.modal(:hide)
-      @baseline = @report = @item.report || @item.text
+      @report = @baseline
       @disabled = false
     end
 
@@ -710,7 +714,7 @@ module Angular::AsfBoardAgenda
             Actions.add 'comment-button', 'comment.html'
           end
 
-          if item.attach =~ /^(\d|7?[A-Z]+)$/
+          if item.attach =~ /^(\d|7?[A-Z]+|4[A-Z])$/
             if item.missing
               $rootScope.post_button_text = 'post report'
               @post_form_title = 'Post report'

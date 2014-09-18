@@ -42,16 +42,28 @@ File.open(agenda_file, 'r') do |file|
       raise Exception.new("Merge conflict")
     end
 
+    spacing = "\n\n"
+
     if @attach =~ /^4\w/
-      pattern = /(\n\n    #{@attach[-1]}\..*?\[.*?\])\n.*?\n(-{40})/m
+      pattern = /(\n\n    #{@attach[-1]}\. #{item['title']} \[.*?\]).*?\n\n(    [B-Z]\.| 5\.)/m
+      @report.gsub! /^(.)/, '       \1'
     elsif @attach =~ /^7\w/
       pattern = /(^\s+#{@attach[-1]}\.\s+#{@fulltitle})\n.*?\n( {1,6}\w\.)/m
       @report.gsub! /^(.)/, '       \1'
     else
       pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])\n.*?\n(-{40})/m
+      spacing = "\n\n\n"
     end
 
-    if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}\n\n\n#{$2}" }
+    spacing = "" if @report.empty?
+
+    # President report has a custom footer - retain it
+    if item['title'] == 'President' and agenda[pattern]
+      footer = agenda[pattern][/\n\n(\s+Additionally.*?)\s+\w\.\Z/m, 1]
+      @report += "\n\n#{footer}" if footer
+    end
+
+    if not agenda.sub!(pattern) { "#{$1}\n\n#{@report}#{spacing}#{$2}" }
       raise Exception.new('report merge failed')
     end
   end
