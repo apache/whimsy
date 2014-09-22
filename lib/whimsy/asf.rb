@@ -1,3 +1,4 @@
+require File.expand_path('../asf/config', __FILE__)
 require File.expand_path('../asf/committee', __FILE__)
 require File.expand_path('../asf/ldap', __FILE__)
 require File.expand_path('../asf/mail', __FILE__)

@@ -10,7 +10,7 @@ module ASF
 
     def self.repos
       @semaphore.synchronize do
-        @repos ||= Hash[Dir['/home/whimsysvn/svn/*'].map { |name| 
+        @repos ||= Hash[Dir[*ASF::Config.get(:svn)].map { |name| 
           Dir.chdir name.untaint do
             [`svn info`[/URL: (.*)/,1].sub(/^http:/,'https:'), Dir.pwd.untaint]
           end
@@ -19,8 +19,19 @@ module ASF
     end
 
     def self.[](name)
-      repos[(@mock+name.sub('private/','')).to_s.sub(/\/*$/, '')] ||
+      result = repos[(@mock+name.sub('private/','')).to_s.sub(/\/*$/, '')] ||
         repos[(@base+name).to_s.sub(/\/*$/, '')] # lose trailing slash
+
+      return result if result
+
+      # recursively try parent directory
+      if name.include? '/'
+        base = File.basename(name)
+        result = self[File.dirname(name)]
+        if result and File.exist?(File.join(result, base))
+          File.join(result, base)
+        end
+      end
     end
   end
 
