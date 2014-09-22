@@ -67,7 +67,7 @@ agenda_file = "#{FOUNDATION_BOARD}/#{agenda}"
 
 if __FILE__ == $0
   # for testing purposes
-  require '/var/tools/asf'
+  require 'whimsy/asf'
   MINUTES_WORK = '/var/tools/data'
   apply_comments(agenda_file, updates)
   `svn diff #{agenda_file}`

@@ -1,15 +1,10 @@
 #!/usr/bin/ruby
 
-# while under development, use tip versions of wunderbar and ruby2js
-$:.unshift '/home/rubys/git/wunderbar/lib'
-$:.unshift '/home/rubys/git/ruby2js/lib'
-
 #
 # Server side router/controllers
 #
 
-require '/var/tools/asf'
-require '/var/tools/asf/agenda'
+require 'whimsy/asf/agenda'
 
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap/theme'

@@ -1,6 +1,6 @@
 #!/usr/bin/ruby1.9.1
 require 'yaml'
-require '/var/tools/asf'
+require 'whimsy/asf'
 
 class String
 end

@@ -1,3 +1,5 @@
+require_relative '../asf'
+
 require 'time'
 require 'tzinfo'
 require 'digest/md5'

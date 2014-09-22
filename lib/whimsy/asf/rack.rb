@@ -1,4 +1,4 @@
-require '/var/tools/asf'
+require_relative '../asf.rb'
 require 'rack'
 require 'etc'
 

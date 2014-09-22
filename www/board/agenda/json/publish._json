@@ -3,7 +3,7 @@
 #
 
 require 'date'
-require '/var/tools/asf/svn'
+require 'whimsy/asf/svn'
 
 CONTENT = 'asf/infrastructure/site/trunk/content'
 BOARD_SITE = ASF::SVN["#{CONTENT}/foundation/board"]
