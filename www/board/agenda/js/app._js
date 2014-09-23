@@ -563,7 +563,7 @@ module Angular::AsfBoardAgenda
 
   controller :Attend do
     def attend_label
-      if @item.people[@user]
+      if @item.people[@user] and @item.people[@user].attending
         'regrets'
       else
         'attend'
@@ -571,7 +571,7 @@ module Angular::AsfBoardAgenda
     end
 
     def click()
-      if @item.people[@user]
+      if @attend_label == 'regrets'
         data = {action: 'regrets', name: @item.people[@user].name}
       else
         data = {action: 'attend', userid: @user}
