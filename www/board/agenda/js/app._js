@@ -561,6 +561,36 @@ module Angular::AsfBoardAgenda
     end
   end
 
+  controller :Attend do
+    def attend_label
+      if @item.people[@user]
+        'regrets'
+      else
+        'attend'
+      end
+    end
+
+    def click()
+      if @item.people[@user]
+        data = {action: 'regrets', name: @item.people[@user].name}
+      else
+        data = {action: 'attend', userid: @user}
+      end
+
+      data.agenda = Data.get('agenda')
+
+      @disabled = true
+      $http.post('../json/attend', data).success { |response|
+        Agenda.put response
+      }.error { |data|
+        $log.error data.exception + "\n" + data.backtrace.join("\n")
+        alert data.exception
+      }.finally {
+        @disabled = false
+      }
+    end
+  end
+
   controller :Approve do
     def approve_label
       if Pending.approved.include? @item.attach
@@ -732,6 +762,10 @@ module Angular::AsfBoardAgenda
             if item.approved and not item.approved.include? @initials
               Actions.add 'approve-button'
             end
+          end
+
+          if item.title == 'Roll Call' and not @minutes['Roll Call']
+            Actions.add 'attend-button'
           end
         end
 

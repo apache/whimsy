@@ -85,6 +85,11 @@ _ng_template.approve_button! do
     ng_click: 'click()'
 end
 
+_ng_template.attend_button! do
+  _button.btn.btn_primary '{{ attend_label }}', ng_controller: 'Attend',
+    ng_click: 'click()', ng_disabled: 'disabled'
+end
+
 _ng_template.minute_button! do
   _button.btn.btn_primary '{{ minute_label }}', 
     data_target: '#minute-form', data_toggle: 'modal'
