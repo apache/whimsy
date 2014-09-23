@@ -18,6 +18,8 @@ class ASF::Board::Agenda
         attr['people'] = {}
         list = nil
 
+        absent = attr['text'].scan(/Absent:\n\n.*?\n\n/m).join
+
         # attempt to identify the people mentioned in the Roll Call
         people = attr['text'].scan(/ {8}(\w.*)/).flatten.each do |sname|
           name = sname
@@ -60,7 +62,8 @@ class ASF::Board::Agenda
 
             attr['people'][person.id] = {
               name: name,
-              member: person.asf_member?
+              member: person.asf_member?,
+              attending: !absent.include?(name)
             }
           end
         end
