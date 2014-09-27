@@ -2,6 +2,7 @@ require_relative '../asf'
 
 require 'time'
 require 'tzinfo'
+require 'tzinfo/data'
 require 'digest/md5'
 
 module ASF
