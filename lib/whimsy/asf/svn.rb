@@ -10,7 +10,8 @@ module ASF
 
     def self.repos
       @semaphore.synchronize do
-        @repos ||= Hash[Dir[*ASF::Config.get(:svn)].map { |name| 
+        svn = ASF::Config.get(:svn).map {|dir| dir.untaint}
+        @repos ||= Hash[Dir[*svn].map { |name| 
           Dir.chdir name.untaint do
             [`svn info`[/URL: (.*)/,1].sub(/^http:/,'https:'), Dir.pwd.untaint]
           end

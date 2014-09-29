@@ -8,25 +8,26 @@ module ASF
     @ldap = nil
     begin
       config = ASF::Config.get(:ldap)
-      if config
-        host = config.scan(/^ldap(s?):\/\/(\S+?):(\d+)\/?$/i).first
-      else
+      unless config
         conf = '/etc/ldap/ldap.conf'
-        host = File.read(conf).scan(/^uri\s+ldap(s?):\/\/(\S+?):(\d+)/i).first
+        config = File.read(conf)[/^uri\s+(ldaps?:\/\/\S+?:\d+)/i, 1]
       end
 
-      if host
-         Wunderbar.info "Connecting to LDAP server: [ldap#{host[0]}://#{host[1]}:#{host[2]}]"
+      if config
+         Wunderbar.info "Connecting to LDAP server: #{config}"
       end
     rescue Errno::ENOENT
       host = nil
-      Wunderbar.error "No LDAP server defined, there must be a LDAP ldaps:// URI in /etc/ldap/ldap.conf"
+      Wunderbar.error "No LDAP server defined, there must be a LDAP URI in /etc/ldap/ldap.conf"
     end
     begin
-      if host.first == 's'
-        @ldap = LDAP::SSLConn.new(host[1], host.last.to_i) if host
-      else
-        @ldap = LDAP::Conn.new(host[1], host.last.to_i) if host
+      if config
+        uri = URI.parse(config)
+        if uri.scheme == 'ldaps'
+          @ldap = LDAP::SSLConn.new(uri.host, uri.port)
+        else
+          @ldap = LDAP::Conn.new(uri.host, uri.port)
+        end
       end
     rescue LDAP::ResultError=>re
       Wunderbar.error "Error binding to LDAP server: message: ["+ re.message + "]"
