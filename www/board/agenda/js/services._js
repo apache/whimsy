@@ -24,8 +24,8 @@ module Angular::AsfBoardServices
     def self.put(agenda)
       # add forward and back links to entries in the agenda
       prev = nil
-      agenda.each do |item|
-        item.href = item.title.gsub(/[^a-zA-Z0-9]+/, '-')
+      agenda.each do |item, index|
+        agenda[index] = item = Agenda.new(item)
         prev.next = item if prev
         item.prev = prev
         prev = item
@@ -120,6 +120,14 @@ module Angular::AsfBoardServices
         match = item if item.title == title
       end
       return match
+    end
+
+    def initialize(item)
+      angular.copy item, self
+    end
+
+    def href
+      self.title.gsub(/[^a-zA-Z0-9]+/, '-')
     end
   end
 
