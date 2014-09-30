@@ -29,6 +29,10 @@ module Angular::AsfBoardAgenda
     templateUrl '../partials/section.html'
     controller :Section
 
+  when '/shepherd/queue/:sqsection'
+    templateUrl '../partials/section.html'
+    controller :Section
+
   when '/shepherd/:name'
     templateUrl '../partials/shepherd.html'
     controller :Shepherd
@@ -56,16 +60,17 @@ module Angular::AsfBoardAgenda
       Actions.reset() unless vars.item and @item.title == vars.item.title
       @buttons = Actions.buttons
 
+      @next = nil
+      @prev = nil
+
       if vars.item === undefined
         @item = {}
-        @next = nil
-        @prev = nil
         @title = ''
       else
         @item = vars.item
-        @next = vars.item.next
-        @prev = vars.item.prev
         @title = vars.item.title
+        @next = vars.item.next unless vars.hasOwnProperty(:next)
+        @prev = vars.item.prev unless vars.hasOwnProperty(:prev)
       end
 
       @title = vars.title unless vars.title === undefined
@@ -722,7 +727,8 @@ module Angular::AsfBoardAgenda
     @cflow = Flow.comment
 
     # fetch section from the route parameters
-    section = $routeParams.section || $routeParams.qsection
+    section = $routeParams.section || $routeParams.qsection ||
+      $routeParams.sqsection
 
     # find agenda item, add relevant buttons
     watch 'agenda.update' do
@@ -730,13 +736,20 @@ module Angular::AsfBoardAgenda
       if item
         if $routeParams.section
           $scope.layout item: item
-        else
+        elsif $routeParams.qsection
           Agenda.ready()
           $scope.layout item: item,
             prev: item.qprev,
             prev_href: (item.qprev ? item.qprev.qhref : nil),
             next: item.qnext,
             next_href: (item.qnext ? item.qnext.qhref : nil)
+        else
+          Agenda.ready()
+          $scope.layout item: item,
+            prev: item.sqprev,
+            prev_href: (item.sqprev ? item.sqprev.sqhref : nil),
+            next: item.sqnext,
+            next_href: (item.sqnext ? item.sqnext.sqhref : nil)
         end
 
         unless Date.new().getTime() > Agenda.stop

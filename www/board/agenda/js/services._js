@@ -129,6 +129,28 @@ module Angular::AsfBoardServices
     def href
       self.title.gsub(/[^a-zA-Z0-9]+/, '-')
     end
+
+    def sqhref
+      "shepherd/queue/#{self.href}"
+    end
+
+    def sqnext
+      shepherd = self.shepherd.split(' ')[0]
+      link = self.next
+      while link and link.shepherd
+        return link if link.shepherd.split(' ')[0] == shepherd
+        link = link.next
+      end
+    end
+
+    def sqprev
+      shepherd = self.shepherd.split(' ')[0]
+      link = self.prev
+      while link and link.shepherd
+        return link if link.shepherd.split(' ')[0] == shepherd
+        link = link.prev
+      end
+    end
   end
 
   class Pending
