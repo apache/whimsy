@@ -85,7 +85,8 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
     _main :ng_view, autoscroll: 'true', data_agenda: @agenda,
       data_drafts: @drafts.join(' '),
       data_availid: userid, data_initials: ASF::Auth::DIRECTORS[userid],
-      data_firstname: Etc.getpwnam(userid)[4].split(',').first.split(' ').first
+      data_firstname: Etc.getpwnam(userid)[4].split(',').first.split(' ').
+        first.force_encoding('utf-8')
 
     _aside.agendas! ng_show: 'false' do
       _h2 'Other Board Meeting Agendas'
