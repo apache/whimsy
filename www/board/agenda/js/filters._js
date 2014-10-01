@@ -12,6 +12,8 @@ module Angular::AsfBoardFilters
       return 'missing'
     elsif item.missing
       return 'missing'
+    elsif Pending.rejected.include? item.attach
+      return 'missing'
     elsif item.approved
       if item.approved.length < 5
         return 'ready'

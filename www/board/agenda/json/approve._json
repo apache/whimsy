@@ -4,12 +4,23 @@
 
 pending = Pending.get(env.user)
 pending['initials'] = @initials
-pending['agenda'] = @agenda
 
 approved = pending['approved']
+rejected = pending['rejected']
+
+if pending['agenda'] != @agenda
+  approved.clear
+  rejected.clear
+  pending['seen'].clear
+  pending['comments'].clear
+  pending['agenda'] = @agenda
+end
 
 if @request == 'approve'
-  approved << @attach
+  approved << @attach unless approved.include? @attach
+  rejected.delete @attach
+elsif @request == 'reject'
+  rejected << @attach unless rejected.include? @attach
 else
   approved.delete @attach
 end

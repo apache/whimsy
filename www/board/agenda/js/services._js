@@ -153,12 +153,14 @@ module Angular::AsfBoardServices
     end
   end
 
+  # This class represents "pending" Director actions, such as approvals
+  # and comments.  It also keeps track of rejected reports and seen comments.
   class Pending
-    @@list = {comments: {}, approved: [], seen: {}, update: 0}
+    @@list = {comments: {}, approved: [], rejected: [], seen: {}, update: 0}
 
     def self.refresh()
       $http.get("../json/pending").success do |result|
-        Pending.put result
+        Pending.put result if result.agenda == Data.get('agenda')
       end
 
       @@fetched = true
@@ -172,6 +174,7 @@ module Angular::AsfBoardServices
 
     def self.put(value)
       angular.copy value.approved, @@list.approved if value.approved
+      angular.copy value.rejected, @@list.rejected if value.rejected
       angular.copy value.comments, @@list.comments if value.comments
       angular.copy value.seen, @@list.seen         if value.seen
       @@list.update += 1
@@ -184,6 +187,11 @@ module Angular::AsfBoardServices
     def self.approved
       self.refresh() unless @@fetched
       @@list.approved
+    end
+
+    def self.rejected
+      self.refresh() unless @@fetched
+      @@list.rejected
     end
   end
 
@@ -353,6 +361,14 @@ module Angular::AsfBoardServices
   class Actions
     @@buttons = []
     @@forms = []
+
+    def self.control=(value)
+      @@control = value
+    end
+
+    def self.control
+      @@control
+    end
 
     def self.reset()
       @@buttons.clear()

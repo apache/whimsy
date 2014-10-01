@@ -23,7 +23,19 @@ module Angular::AsfBoardDirectives
     def link(scope, element, attr)
       element.find('*[autofocus]').focus()
 
+      element.keyup do |event|
+        if Actions.control != event.ctrlKey
+          Actions.control = event.ctrlKey
+          digest()
+        end
+      end
+
       element.keydown do |event|
+        if Actions.control != event.ctrlKey
+          Actions.control = event.ctrlKey
+          digest()
+        end
+
         return unless ~('.modal-open').empty? and ~('#search-text').empty?
         return if event.metaKey or event.ctrlKey
 

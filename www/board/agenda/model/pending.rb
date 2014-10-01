@@ -5,11 +5,15 @@ class Pending
 
   def self.get(user)
     file = update_file(user)
-    if File.exist? file
-      YAML.load_file(file)
-    else
-      {'approved' => [], 'comments' => {}, 'seen' => {}}
-    end
+    response = (File.exist?(file) ? YAML.load_file(file) : {})
+
+    # provide empty defaults
+    response['approved'] ||= []
+    response['rejected'] ||= []
+    response['comments'] ||= {} 
+    response['seen']     ||= {}
+
+    response
   end
 
   def self.put(user, update)

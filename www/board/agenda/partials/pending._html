@@ -8,6 +8,14 @@ _div.col_xs_12 do
     _em 'None.' , ng_if: '!q_approvals || q_approvals.length == 0'
   end
 
+  _h4 'Rejected', ng_if: 'q_rejected.length > 0'
+  _p.col_xs_12 do
+    _span! ng_repeat: 'item in q_rejected' do
+      _a '{{ item.title }}', ng_href: '{{ item.qhref }}'
+      _span ', ', ng_if: '!$last'
+    end
+  end
+
   _h4 'Comments'
   _dl.dl_horizontal ng_repeat: 'item in q_comments' do
     _dt do

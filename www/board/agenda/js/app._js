@@ -168,12 +168,15 @@ module Angular::AsfBoardAgenda
     Actions.add 'refresh-button'
 
     @q_approvals = []
+    @q_rejected = []
     @q_ready = []
     @q_comments = []
     watch 'pending.update + agenda.update' do
       @q_approvals.clear()
+      @q_rejected.clear()
       @agenda.each do |item|
         @q_approvals << item if @pending.approved.include? item.attach
+        @q_rejected  << item if @pending.rejected.include? item.attach
       end
 
       comments = @pending.comments
@@ -187,7 +190,9 @@ module Angular::AsfBoardAgenda
 
       @q_ready.clear()
       Agenda.ready().each do |item|
-        @q_ready << item unless @q_approvals.include? item
+        unless @q_approvals.include? item or @q_rejected.include? item
+          @q_ready << item 
+        end
       end
     end
 
@@ -600,6 +605,8 @@ module Angular::AsfBoardAgenda
     def approve_label
       if Pending.approved.include? @item.attach
         'unapprove'
+      elsif Actions.control
+        'reject'
       else
         'approve'
       end
