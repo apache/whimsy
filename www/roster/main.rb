@@ -150,6 +150,24 @@ get '/json/members' do
   end
 end
 
+get '/json/changes' do
+  scripts = ASF::SVN['private/foundation/board/scripts']
+  record = File.read("#{scripts}/pmc-changes-record.txt")
+
+  changes = {}
+
+  ASF::Committee.load_committee_info.each do |pmc| 
+    status = record[/^#{pmc.display_name} ((matches|differs).*?\n)(\w|\Z)/m, 1]
+    changes[pmc.display_name] = {
+      established: record[/^#{pmc.display_name} (established \d+-\d+-\d+)/, 1],
+      status: status && status[/^\w.*/],
+      detail: status && status.scan(/^\t.*/).map(&:strip)
+    }
+  end
+
+  _json { _! changes }
+end
+
 post '/json/:file' do
   _json :"json/#{params[:file]}"
 end

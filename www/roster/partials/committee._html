@@ -2,6 +2,7 @@ _h1 do
   _a '{{pmc.display_name}}', href: '{{pmc.site_link}}'
   _span.note.not_found '(Not in LDAP)', 
      ng_if: 'ldap.ready && pmc.cn && pmc.memberUid.length == 0'
+  _small '{{changes.established}}'
 end
 
 _p '{{pmc.site_description}}'
@@ -64,5 +65,13 @@ _section ng_if: 'pmc.report' do
     _li ng_if: 'pmc.prior_reports' do
       _a 'Prior reports', href: '{{ pmc.prior_reports }}'
     end
+  end
+end
+
+_section ng_if: 'changes.status' do
+  _h2 'Change Audit'
+  _h4 '{{ changes.status }}'
+  _ul ng_if: 'changes.detail.length > 0' do
+    _li '{{line}}', ng_repeat: 'line in changes.detail'
   end
 end

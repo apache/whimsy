@@ -114,6 +114,7 @@ module Angular::AsfRoster
 
     watch @pmcs[@name] do |value|
       @pmc = value || {memberUid: []}
+      @changes = Changes.find(@pmc.display_name)
     end
   end
 
