@@ -92,6 +92,7 @@ module Angular::AsfBoardServices
       @@agenda.each do |item|
         next unless item.approved
         next if item.approved.include? initials
+        next if Pending.rejected.include? item.attach
         next unless item.report or item.text
 
         result << item
