@@ -51,8 +51,7 @@ module Angular::AsfBoardFilters
     'mig')
 
   jira_issue =
-    Regexp.new(/(^|\s|\()([A-Z][A-Z0-9]+)-([1-9][0-9]*)([.,;:]?($|\s|\)))/,
-    'g')
+    Regexp.new(/(^|\s|\()([A-Z][A-Z0-9]+)-([1-9][0-9]*)([.,;:\s)]|$)/, 'g')
 
   # convert an agenda item into HTML
   filter :html do |item|
