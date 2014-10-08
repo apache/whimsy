@@ -37,6 +37,10 @@ class ASF::Board::Agenda
           ASF::Committee.find(attrs['title']).chair.mail.first
       rescue
       end
+
+      if attrs['report'].to_s.include? "\uFFFD"
+        attrs['warnings'] = ['UTF-8 encoding error']
+      end
     end
   end
 end

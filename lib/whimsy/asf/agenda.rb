@@ -52,6 +52,12 @@ class ASF::Board::Agenda
 
   def parse(file)
     @file = file
+    
+    if not @file.valid_encoding?
+      filter = Proc.new {|c| c.unpack('U').first rescue 0xFFFD}
+      @file = @file.chars.map(&filter).pack('U*').force_encoding('utf-8')
+    end
+
     @@parsers.each { |parser| instance_exec(&parser) }
 
     # add index markers for major sections
