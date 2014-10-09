@@ -7,6 +7,9 @@ _div.col_xs_12 do
     _dt 'right arrow'
     _dd 'next page'
 
+    _dt 'enter'
+    _dd 'On Shepherd and Queue pages, go to the first report listed'
+
     _dt 'C'
     _dd 'Scroll to comment section (if any)'
 
@@ -25,13 +28,18 @@ _div.col_xs_12 do
     _dt 'S'
     _dd 'Show shepherded items (and action items)'
 
+    _dt 'ctrl'
+    _dd do
+      _ << 'On report pages, changes <b>approve</b> buttons to <b>reject</b>'
+    end
+
     _dt '?'
     _dd 'Help (this page)'
   end
 
   _h3 'Color Legend'
   _ul do
-    _li.missing 'Report missing'
+    _li.missing 'Report missing or has formatting errors'
     _li.available 'Report present, not eligible for pre-reviews'
     _li.ready 'Report present, ready for (more) review(s)'
     _li.reviewed 'Report has sufficient pre-approvals'

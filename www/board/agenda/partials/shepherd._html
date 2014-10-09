@@ -1,6 +1,7 @@
 _div ng_repeat: 'item in agenda | filter: {shepherd: name}' do
   _h3 class: '{{ item | color }}' do
-    _a '{{ item.title }}', ng_href: "{{item.sqhref}}"
+    _a '{{ item.title }}', ng_href: "{{item.sqhref}}",
+      ng_class: '{default: $first}'
   end
 
   _pre.comment ng_bind_html: 'comment | html', 
