@@ -85,27 +85,6 @@ module Angular::AsfBoardServices
       return @@index
     end
 
-    def self.ready()
-      result = []
-      initials = Data.get('initials')
-      qprev = nil
-      @@agenda.each do |item|
-        next unless item.approved
-        next if item.approved.include? initials
-        next if Pending.rejected.include? item.attach
-        next unless item.report or item.text
-
-        result << item
-        item.qhref = "queue/#{item.href}"
-
-        item.qprev = qprev
-        qprev.qnext = item if qprev
-        qprev = item
-      end
-      qprev.qnext = nil if qprev
-      return result
-    end
-
     def self.start
       @@start
     end
@@ -129,6 +108,34 @@ module Angular::AsfBoardServices
 
     def href
       self.title.gsub(/[^a-zA-Z0-9]+/, '-')
+    end
+
+    def qhref
+      "queue/#{self.href}"
+    end
+
+    def ready
+      return false unless self.approved
+      return false unless self.report or self.text
+      return false if self.approved.include? Data.get('initials')
+      return false if Pending.rejected.include? self.attach
+      return true
+    end
+
+    def qnext
+      link = self.next
+      while link and not link.ready
+        link = link.next
+      end
+      return link
+    end
+
+    def qprev
+      link = self.prev
+      while link and not link.ready
+        link = link.prev
+      end
+      return link
     end
 
     def sqhref

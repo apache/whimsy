@@ -180,18 +180,17 @@ module Angular::AsfBoardAgenda
       end
 
       comments = @pending.comments
+      initials = Data.get('initials')
       @q_comments.clear()
+      @q_ready.clear()
       @agenda.each do |item|
         if comments[item.attach]
           item.comment = comments[item.attach]
           @q_comments << item
         end
-      end
 
-      @q_ready.clear()
-      Agenda.ready().each do |item|
         unless @q_approvals.include? item or @q_rejected.include? item
-          @q_ready << item 
+          @q_ready << item if item.ready and not item.approved.include? initials
         end
       end
     end
@@ -744,14 +743,12 @@ module Angular::AsfBoardAgenda
         if $routeParams.section
           $scope.layout item: item
         elsif $routeParams.qsection
-          Agenda.ready()
           $scope.layout item: item,
             prev: item.qprev,
             prev_href: (item.qprev ? item.qprev.qhref : nil),
             next: item.qnext,
             next_href: (item.qnext ? item.qnext.qhref : nil)
         else
-          Agenda.ready()
           $scope.layout item: item,
             prev: item.sqprev,
             prev_href: (item.sqprev ? item.sqprev.sqhref : nil),
