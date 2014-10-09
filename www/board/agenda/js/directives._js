@@ -45,6 +45,9 @@ module Angular::AsfBoardDirectives
         elsif event.keyCode == 39 # '->'
           ~"a[rel='next']".click
           return false
+        elsif event.keyCode == 13 # enter
+          ~"a.default".click
+          return false
         elsif event.keyCode == 'C'.ord
           ~"#comments"[0].scrollIntoView()
           return false
