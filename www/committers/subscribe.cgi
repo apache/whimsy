@@ -1,7 +1,9 @@
 #!/usr/bin/ruby1.9.1
 require 'wunderbar'
 require 'mail'
-require '/var/tools/asf'
+require 'whimsy/asf'
+require 'whimsy/asf/podlings'
+require 'whimsy/asf/site'
 require 'time'
 
 $SAFE = 1
