@@ -1,6 +1,8 @@
 #!/usr/bin/ruby1.9.1
 require 'wunderbar'
-require '/var/tools/asf'
+require 'whimsy/asf'
+require 'whimsy/asf/podlings'
+require 'whimsy/asf/site'
 
 SUBSCRIPTIONS = '/home/apmail/subscriptions/board'
 
