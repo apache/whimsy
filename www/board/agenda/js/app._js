@@ -521,7 +521,7 @@ module Angular::AsfBoardAgenda
       $http.post('../json/publish', data).success { |response|
         index = Minutes.posted.indexOf(minutes)
         Minutes.posted.slice(index, 1) if index > -1
-        window.open('https://cms.apache.org/www/publish', '_blank').fous()
+        window.open('https://cms.apache.org/www/publish', '_blank').focus()
       }.error { |data|
         $log.error data.exception + "\n" + data.backtrace.join("\n")
         alert data.exception
