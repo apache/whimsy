@@ -352,12 +352,13 @@ module Angular::AsfBoardAgenda
             item =~ /^\* *#{$routeParams.name}/m
           end
         end
-    end
+      end
     end
   end
 
   controller :Comment do
     @text = {draft: @comment, base: @comment}
+    $rootScope.comment_text = @text
 
     def save(comment)
       data = {attach: @item.attach, initials: @initials, comment: comment,
@@ -869,10 +870,22 @@ module Angular::AsfBoardAgenda
       @item.attach.match(/^[A-Z][A-Z]?$/)
     end
 
+    firstname = Data.get('firstname')
+    def mailto_class
+      @item.shepherd.split(' ').first == firstname ? 'btn-primary' : 'btn-link'
+    end
+
     def mailto()
       $window.location = "mailto:#{@item.chair_email}" +
-        "?cc=private@#{@item.mail_list}.apache.org" +
-        "&subject=missing%20board%20report"
+        "?cc=private@#{@item.mail_list}.apache.org,board@apache.org" +
+        "&subject=Missing%20#{@item.title}%20board%20report" +
+        "&body=Dear%20#{@item.owner},%0A%0AThe%20board%20report%20for%20" +
+        "#{@item.title}%20has%20not%20yet%20been%20submitted%20for%20this%20" +
+        "month's%20board%20meeting.%20If%20you're%20unable%20to%20get%20it%20" +
+        "in%20by%20twenty-four%20hours%20before%20meeting%20time,%20please%20" +
+        "plan%20to%20report%20next%20month.%0A%0AThanks."
+      $rootScope.comment_text.draft ||= 'Reminder email sent'
+      ~'#comment-form'.modal(:show)
     end
   end
 
