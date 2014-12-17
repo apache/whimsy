@@ -4,6 +4,10 @@ end
 
 _pre.report ng_bind_html: 'item | html'
 
+_section.reminder ng_if: 'item.missing' do
+  _button.btn.btn_primary 'send reminder email', ng_click: 'mailto()'
+end
+
 _section ng_if: 'item.comments' do
   _h3.comments! 'Comments'
   _pre.comment ng_bind_html: 'comment | html', 

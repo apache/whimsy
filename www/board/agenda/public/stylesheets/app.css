@@ -201,3 +201,7 @@ main hr {
   max-height: 9em;
   overflow: auto;
 }
+
+.reminder button {
+  margin-left: 3em;
+}

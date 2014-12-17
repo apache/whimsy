@@ -33,8 +33,10 @@ class ASF::Board::Agenda
       attrs['missing'] = true if attrs['report'].strip.empty?
 
       begin
-        attrs['chair_email'] = 
-          ASF::Committee.find(attrs['title']).chair.mail.first
+        committee = ASF::Committee.find(attrs['title'])
+        attrs['chair_email'] = committee.chair.mail.first
+        attrs['mail_list'] = committee.mail_list
+        attrs.delete('mail_list') if attrs['mail_list'].include? ' '
       rescue
       end
 

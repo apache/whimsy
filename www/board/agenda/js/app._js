@@ -864,6 +864,12 @@ module Angular::AsfBoardAgenda
       end
       return link
     end
+
+    def mailto()
+      $window.location = "mailto:#{@item.chair_email}" +
+        "?cc=private@#{@item.mail_list}.apache.org" +
+        "&subject=missing%20board%20report"
+    end
   end
 
   controller :Search do
