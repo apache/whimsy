@@ -865,6 +865,10 @@ module Angular::AsfBoardAgenda
       return link
     end
 
+    def pmc_report
+      @item.attach.match(/^[A-Z][A-Z]?$/)
+    end
+
     def mailto()
       $window.location = "mailto:#{@item.chair_email}" +
         "?cc=private@#{@item.mail_list}.apache.org" +

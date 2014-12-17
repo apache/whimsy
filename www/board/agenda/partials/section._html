@@ -4,7 +4,7 @@ end
 
 _pre.report ng_bind_html: 'item | html'
 
-_section.reminder ng_if: 'item.missing' do
+_section.reminder ng_if: 'item.missing && pmc_report' do
   _button.btn.btn_primary 'send reminder email', ng_click: 'mailto()'
 end
 
