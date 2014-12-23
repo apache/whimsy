@@ -1,7 +1,7 @@
 #!/usr/bin/ruby1.9.1
 
 require 'wunderbar'
-require '/var/tools/asf'
+require 'whimsy/asf'
 
 # mapping of committee names to canonical names (generally from ldap)
 # See also asf/committee.rb

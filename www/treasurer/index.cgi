@@ -1,5 +1,5 @@
 #!/usr/bin/ruby1.9.1
-require '/var/tools/asf'
+require 'whimsy/asf'
 $SAFE = 1
 
 user = ASF::Person.new($USER)

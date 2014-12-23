@@ -1,7 +1,7 @@
 #!/usr/bin/ruby1.9.1
 require 'wunderbar'
 require 'csv'
-require '/var/tools/asf'
+require 'whimsy/asf'
 
 user = ASF::Person.new($USER)
 unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'

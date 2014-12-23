@@ -3,7 +3,7 @@ require 'yaml'
 require 'wunderbar'
 require 'shellwords'
 require 'date'
-require '/var/tools/asf'
+require 'whimsy/asf'
 
 ENV['HOME'] = ENV['DOCUMENT_ROOT']
 SVN_FOUNDATION_BOARD = ASF::SVN['private/foundation/board']

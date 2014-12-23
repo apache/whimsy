@@ -6,7 +6,7 @@ require 'fileutils'
 require 'ostruct'
 require 'escape'
 require 'time'
-require '/var/tools/asf'
+require 'whimsy/asf'
 
 ENV['LANG'] = 'en_US.UTF-8'
 

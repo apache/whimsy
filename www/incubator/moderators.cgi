@@ -1,6 +1,6 @@
 #!/usr/bin/ruby1.9.1
 require 'wunderbar'
-require '/var/tools/asf'
+require 'whimsy/asf'
 require 'nokogiri'
 
 user = ASF::Person.new($USER)

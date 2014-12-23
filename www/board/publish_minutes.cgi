@@ -1,7 +1,7 @@
 #!/usr/bin/ruby1.9.1
 require 'wunderbar'
 require 'date'
-require '/var/tools/asf/svn'
+require 'whimsy/asf'
 require 'shellwords'
 
 secretary = %w(clr rubys jcarman).include? $USER

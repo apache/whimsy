@@ -2,7 +2,7 @@
 # above uses Ruby 2.0 as Ruby 1.9 segfaults when uploading a docx file
 
 require 'wunderbar'
-require '/var/tools/asf'
+require 'whimsy/asf'
 
 _html do
   _head do

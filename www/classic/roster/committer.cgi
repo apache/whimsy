@@ -1,7 +1,7 @@
 #!/usr/bin/ruby1.9.1
 
 require 'wunderbar'
-require '/var/tools/asf'
+require 'whimsy/asf'
 
 exceptions = %w(hudson-jobadmin).map {|name| ASF::Committee.find name}
 

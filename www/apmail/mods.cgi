@@ -1,6 +1,6 @@
 #!/usr/bin/ruby1.9.1
 require 'shellwords'
-require '/var/tools/asf'
+require 'whimsy/asf'
 
 # TODO: determine apmail@hermes,wheel@hermes gorup membership
 unless apmail.include? $USER or wheel.include? $USER
