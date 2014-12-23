@@ -18,7 +18,13 @@ end
 duration = []
 by_age = {}
 podlings.compact.sort.each do |date, tr|
-  duration << Date.today - Date.parse(date)
+  # NOTE this makes the stats inaccurate if you don't have valid inputs
+  begin
+    date_started = Date.parse(date)
+  rescue ArgumentError
+    next
+  end
+  duration << Date.today - date_started
   years = (duration.last / 365.25).to_i
   by_age[years] = 1 + (by_age[years] or 0)
 end
@@ -73,7 +79,7 @@ _html do
         theta += Math::PI*2 * by_age[age]/duration.length
         p2 = [Math.sin(theta)*475, -Math.cos(theta)*475].map(&:round).join(',')
         _path d: "M0,0 L#{p1} A475,475 0 0 1 #{p2} Z", 
-          fill: '#' + colors[age], title: "#{by_age[age]} PMCs aged " +
+          fill: "##{colors[age]}", title: "#{by_age[age]} PMCs aged " +
             "#{age} to #{age+1} year#{'s' if age>0}"
       end
     end
