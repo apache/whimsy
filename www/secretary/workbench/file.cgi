@@ -489,11 +489,11 @@ end
 
 DESTINATION = {
   "operations" => "to_operations",
-  "dup"       => "deadletter/dup",
-  "incomplete"=> "deadletter/incomplete"
+  "dup" => "deadletter/dup",
+  "incomplete" => "deadletter/incomplete",
+  "unsigned" => "deadletter/incomplete"
 }
 
-exception = nil
 line = nil
 
 _html do

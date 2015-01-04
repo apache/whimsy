@@ -392,6 +392,7 @@ _html do
               _input type: 'submit', name: 'dest', value: 'dup'
               _input type: 'submit', name: 'dest', value: 'junk'
               _input type: 'submit', name: 'dest', value: 'incomplete'
+              _input type: 'submit', name: 'dest', value: 'unsigned'
             end
           end
 
