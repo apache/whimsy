@@ -212,6 +212,7 @@ $(document).ready(function() {
   // Don't validate when junking
   $("input[value=junk]").click(function() {
     $('input').attr('formnovalidate', 'formnovalidate');
+    $('#message').attr('value', 'Spam')
     return true;
   });
 
