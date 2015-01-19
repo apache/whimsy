@@ -50,7 +50,7 @@ class ASF::Board::Agenda
       people += text.scan(/#{list_item}\((#{asfid})(?:@|\s*at\s*)
         (?:\.\.\.|apache\.org)\)\s*$/x)
       people += text.scan(/#{list_item}<(#{asfid})(?:@|\s*at\s*)
-        (?:\.\.\.|apache\.org)>\s*$/x)
+        (?:\.\.\.|apache\.org|apache\sdot\sorg)>\s*$/x)
 
       whimsy = 'https://whimsy.apache.org'
       if people.empty?
