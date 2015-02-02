@@ -1,0 +1,75 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  font-family: Helvetica Neue, sans-serif;
+  font-weight: 300;
+  font-size: 28px;
+}
+
+div#page, section {
+  height: 100%;
+}
+
+header {
+  display: flex;
+  min-height: 10%;
+  align-items: center;
+  justify-content: center;
+}
+
+#calendar {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#calendar > li {
+  display: block;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 0 0 20px;
+  min-width: 100%;
+  min-height: 69px;
+  border: 1px solid #c2c2c2;
+}
+
+#calendar > li.spacer {
+  display: none
+}
+
+ul {
+  margin: 6px 0;
+  font-size: medium;
+  padding-left: 0;
+}
+
+@media only screen and (min-width: 640px) {
+  #calendar {
+    min-height: 90%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  #calendar > li {
+    flex-basis: calc(100% / 7);
+    align-items: flex-start;
+    min-width: 0;
+  }
+
+  div.day {
+    float: right;
+    padding: 8px 8px 0 0;
+  }
+
+  #calendar > li.spacer {
+    display: flex
+  }
+}
