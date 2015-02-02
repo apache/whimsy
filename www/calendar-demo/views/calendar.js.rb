@@ -56,7 +56,7 @@ class Calendar < React
     @items = {}
 
     if push
-      url = "../#{@year}/#{@month < 9 ? "0#{@month+1}" : @month+1}"
+      url = "#{@year}/#{@month < 9 ? "0#{@month+1}" : @month+1}"
       history.pushState({year: @year, month: @month}, 'title', url)
     end
 
