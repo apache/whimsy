@@ -1,7 +1,7 @@
 require 'date'
 
 _html do
-  _base href: '../..'
+  _base href: '..'
   _link rel: 'stylesheet', href: 'css/calendar.css'
 
   _div_ id: 'page'
