@@ -62,12 +62,11 @@ class Calendar < React
 
     # request a list of calendar items for this month
     request = XMLHttpRequest.new()
-    request.open('POST', window.location, true)
-    request.setRequestHeader('Content-type', 'application/json')
+    request.open('GET', "#{window.location}.json", true)
     request.onreadystatechange = proc do
       return unless request.readyState == 4 and request.status == 200
       @items = JSON.parse(request.responseText)
     end
-    request.send(JSON.stringify({year: @year, month: @month+1}))
+    request.send()
   end
 end

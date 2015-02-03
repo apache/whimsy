@@ -12,16 +12,16 @@ get '/' do
   redirect to("/#{today.year}/#{today.strftime('%m')}")
 end
 
-get %r{/(\d\d\d\d)/(\d\d?)} do |year, month|
+get %r{/(\d\d\d\d)/(\d\d?)$} do |year, month|
   @year = year.to_i
   @month = month.to_i
   @items = Holiday.find(@year, @month)
   _html :calendar
 end
 
-post %r{/(\d\d\d\d)/(\d\d?)} do |year, month|
+get %r{/(\d\d\d\d)/(\d\d?)\.json} do |year, month|
   _json do 
-    Holiday.find(@year, @month)
+    Holiday.find(year.to_i, month.to_i)
   end
 end
 
