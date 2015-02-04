@@ -63,7 +63,7 @@ class Calendar < React
     # request a list of calendar items for this month
     request = XMLHttpRequest.new()
     request.open('GET', "#{window.location}.json", true)
-    request.onreadystatechange = proc do
+    def request.onreadystatechange()
       return unless request.readyState == 4 and request.status == 200
       @items = JSON.parse(request.responseText)
     end
