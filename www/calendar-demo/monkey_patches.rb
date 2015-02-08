@@ -19,13 +19,23 @@ module Rack
   end
 end
 
-# Need to submit pull requests for https://github.com/sstephenson/execjs
-Wunderbar.unsafe!
+# Monkeypatch to address https://github.com/sstephenson/execjs/pull/180
+require 'execjs'
+class ExecJS::ExternalRuntime::Context
+  alias_method :w_write_to_tempfile, :write_to_tempfile
+  def write_to_tempfile(*args)
+    tmpfile = w_write_to_tempfile(*args).path.untaint
+    tmpfile = Struct.new(:path, :to_str).new(tmpfile, tmpfile)
+    def tmpfile.unlink
+      File.unlink path
+    end
+    tmpfile
+  end
+end
 
 # Proof of concept implementation of React.render method; needs to be
 # cleaned up, generalized, and have tests written for it before it can
 # be added to Wunderbar proper.
-require 'execjs'
 require 'nokogumbo'
 class Wunderbar::XmlMarkup
   def render element, container, properties={}
