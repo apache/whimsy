@@ -38,13 +38,9 @@ end
 # be added to Wunderbar proper.
 require 'nokogumbo'
 class Wunderbar::XmlMarkup
-  def render element, container, properties={}
-    # find and delete the node from the tree
-    node = element.node?
-    node.parent.children.delete(node)
-
+  def render container, &block
     # find the root node
-    root = node.parent
+    root = @node.parent
     root = root.parent while root.parent
 
     # find the scripts and targets on the page
@@ -63,6 +59,16 @@ class Wunderbar::XmlMarkup
     end
     walker[root]
 
+    if container =~ /\A#\w[-\w+]*\Z/
+      element = "document.getElementByID(#{container[1..-1].inspect})}"
+    else
+      element = "document.querySelector(#{container.inspect})}"
+    end
+
+    common = Ruby2JS.convert(block, scope: @_scope)
+    server = "React.renderToString(#{common})"
+    client = "React.render(#{common}, #{element})"
+
     script = scripts.last
     public_folder = Sinatra::Application.public_folder
     react = File.read("#{public_folder}/#{scripts.first.attrs[:src]}")
@@ -71,18 +77,11 @@ class Wunderbar::XmlMarkup
     context = ExecJS.compile('global=this;' + react + Ruby2JS.convert(script))
 
     builder = Wunderbar::HtmlMarkup.new({})
-    render = builder._ do
-      context.eval("React.renderToString(React.createElement(#{node.name}," +
-       "#{JSON.generate(properties)}))")
-    end
+    render = builder._ { context.eval(server) }
     targets.each do |target|
       target.children += render
     end
 
-    script = tag! 'script', Wunderbar::ScriptNode
-    script.block = <<-EOF
-      React.render(_#{node.name}(#{properties.inspect}),
-        document.getElementById(#{container[1..-1].inspect}))
-    EOF
+    tag! 'script', Wunderbar::ScriptNode, client
   end
 end
