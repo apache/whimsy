@@ -68,7 +68,7 @@ class Wunderbar::XmlMarkup
     react = File.read("#{public_folder}/#{scripts.first.attrs[:src]}")
     view_folder = Sinatra::Application.views
     script = File.read("#{view_folder}/#{scripts.last.attrs[:src]}.rb")
-    context = ExecJS.compile(react + Ruby2JS.convert(script))
+    context = ExecJS.compile('global=this;' + react + Ruby2JS.convert(script))
 
     builder = Wunderbar::HtmlMarkup.new({})
     render = builder._ do
