@@ -39,6 +39,8 @@ end
 require 'nokogumbo'
 class Wunderbar::XmlMarkup
   def render container, &block
+    csspath = Wunderbar::Node.parse_css_selector(container)
+
     # find the root node
     root = @node.parent
     root = root.parent while root.parent
@@ -59,22 +61,44 @@ class Wunderbar::XmlMarkup
     end
     walker[root]
 
-    if container =~ /\A#\w[-\w+]*\Z/
-      element = "document.getElementByID(#{container[1..-1].inspect})}"
-    else
-      element = "document.querySelector(#{container.inspect})}"
+    element = "document.querySelector(#{container.inspect})"
+    if csspath.length == 1 and csspath[0].length == 1
+      value = csspath[0].values.first
+      case csspath[0].keys.first
+      when :id
+        element = "document.getElementById(#{value.inspect})"
+      when :class
+        value = value.join(' ')
+        element = "document.getElementsByClassName(#{value.inspect})[0]"
+      when :name
+        element = "document.getElementsByName(#{value.inspect})[0]"
+      end
     end
 
     common = Ruby2JS.convert(block, scope: @_scope)
     server = "React.renderToString(#{common})"
     client = "React.render(#{common}, #{element})"
 
-    script = scripts.last
-    public_folder = Sinatra::Application.public_folder
-    react = File.read("#{public_folder}/#{scripts.first.attrs[:src]}")
-    view_folder = Sinatra::Application.views
-    script = File.read("#{view_folder}/#{scripts.last.attrs[:src]}.rb")
-    context = ExecJS.compile('global=this;' + react + Ruby2JS.convert(script))
+    public_folder = @_scope.settings.public_folder
+    view_folder = @_scope.settings.views
+    scripts.map! do |script|
+      result = nil
+      if script.attrs[:src]
+        src = script.attrs[:src]
+        if File.exist? "#{public_folder}/#{src}"
+          result = File.read("#{public_folder}/#{src}")
+        else
+          name = File.join(view_folder, src+'.rb')
+          result = Ruby2JS.convert(File.read(name)) if File.exist? name
+        end
+      end
+
+      result
+    end
+
+    scripts.compact!
+    scripts.unshift 'global=this'
+    context = ExecJS.compile(scripts.join(";\n"))
 
     builder = Wunderbar::HtmlMarkup.new({})
     render = builder._ { context.eval(server) }
@@ -84,4 +108,8 @@ class Wunderbar::XmlMarkup
 
     tag! 'script', Wunderbar::ScriptNode, client
   end
+end
+
+get %r{^/([-\w]+)\.js$} do |script|
+  _js :"#{script}"
 end
