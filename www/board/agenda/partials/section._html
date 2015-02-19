@@ -43,7 +43,7 @@ _section.flexbox do
 
     _section.minutes! ng_if: 'minutes[item.title]' do
       _h3 'Minutes'
-      _pre '{{ minutes[item.title] }}'
+      _pre '{{ tflow(minutes[item.title]) }}'
     end
   end
 

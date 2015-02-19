@@ -733,6 +733,7 @@ module Angular::AsfBoardAgenda
     @initials = Data.get('initials')
     @minutes = Minutes.get()
     @cflow = Flow.comment
+    @tflow = Flow.text
     @actions = Agenda.actions
 
     # fetch section from the route parameters
