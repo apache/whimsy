@@ -24,6 +24,25 @@ class ASF::Board::Agenda
       elsif attrs['title'] == 'Adjournment'
         attrs['timestamp'] = timestamp(attrs['text'][/\d+:\d+([ap]m)?/])
       end
+
+      if attrs['title'] =~ /Action Items/
+        list = {}
+
+        # extract action items associated with projects
+        attrs['text'].to_s.split(/^\s+\* /).each do |action|
+          next unless action =~ /\[ (\S*) \]\s*Status:/
+          pmc = $1
+          indent = action.scan(/\n +/).min
+          action.gsub! indent, "\n" if indent
+          action[/(\[ #{pmc} \])\s*Status:/, 1] = ''
+          action.chomp!
+          action.sub! /\s+Status:\Z/, ''
+          list[pmc] ||= []
+          list[pmc] << action
+        end
+
+        attrs['actions'] = list
+      end
     end
   end
 end
