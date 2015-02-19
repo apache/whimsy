@@ -733,6 +733,7 @@ module Angular::AsfBoardAgenda
     @initials = Data.get('initials')
     @minutes = Minutes.get()
     @cflow = Flow.comment
+    @actions = Agenda.actions
 
     # fetch section from the route parameters
     section = $routeParams.section || $routeParams.qsection ||

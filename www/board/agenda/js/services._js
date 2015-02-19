@@ -10,6 +10,7 @@ module Angular::AsfBoardServices
 
   class Agenda
     @@index = []
+    @@actions = {}
 
     # (re)-fetch agenda from server
     def self.refresh()
@@ -64,6 +65,9 @@ module Angular::AsfBoardServices
 
       @@agenda.replace agenda
 
+      actions = self.find('Action Items')
+      angular.copy actions.actions, @@actions if actions and actions.actions
+
       @@agenda.update += 1
     end
 
@@ -100,6 +104,10 @@ module Angular::AsfBoardServices
         match = item if item.title == title
       end
       return match
+    end
+
+    def self.actions
+      @@actions
     end
 
     def initialize(item)
