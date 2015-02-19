@@ -405,7 +405,8 @@ module Angular::AsfBoardAgenda
     end
 
     def reflow()
-      @report = Flow.text(@report)
+      indent = (@item.attach =~ /^4/ ? '        ' : '')
+      @report = Flow.text(@report, indent)
     end
 
     def cancel()

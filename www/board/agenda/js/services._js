@@ -337,19 +337,20 @@ module Angular::AsfBoardServices
     end
 
     # reflow text
-    def self.text(text)
+    def self.text(text, indent='')
       # join consecutive lines (making exception for <markers> like <private>)
       text.gsub! /([^\s>])\n(\w)/, '$1 $2'
 
       # reflow each line
       lines = text.split("\n")
+      len = 78 - indent.length
       for i in 0...lines.length
         indent = lines[i].match(/( *)(.?.?)(.*)/m)
 
         if indent[1] == '' or indent[3] == ''
           # not indented (or short) -> split
           lines[i] = lines[i].
-            gsub(/(.{1,78})( +|$\n?)|(.{1,78})/, "$1$3\n").
+            gsub(/(.{1,#{len}})( +|$\n?)|(.{1,#{len}})/, "$1$3\n").
             sub(/[\n\r]+$/, '')
         else
           # preserve indentation.  indent[2] is the 'bullet' (if any) and is
