@@ -877,16 +877,27 @@ module Angular::AsfBoardAgenda
     end
 
     def mailto()
-      $window.location = "mailto:#{@item.chair_email}" +
-        "?cc=private@#{@item.mail_list}.apache.org,board@apache.org" +
-        "&subject=Missing%20#{@item.title}%20board%20report" +
-        "&body=Dear%20#{@item.owner},%0A%0AThe%20board%20report%20for%20" +
-        "#{@item.title}%20has%20not%20yet%20been%20submitted%20for%20this%20" +
-        "month's%20board%20meeting.%20If%20you're%20unable%20to%20get%20it%20" +
-        "in%20by%20twenty-four%20hours%20before%20meeting%20time,%20please%20" +
-        "plan%20to%20report%20next%20month.%0A%0AThanks."
-      $rootScope.comment_text.draft ||= 'Reminder email sent'
-      ~'#comment-form'.modal(:show)
+      destination = "mailto:#{@item.chair_email}" +
+        "?cc=private@#{@item.mail_list}.apache.org,board@apache.org"
+
+      if @item.missing
+	subject = "Missing #{@item.title} Board Report"
+	body = "Dear #{@item.owner},\n\nThe board report for " +
+	  "#{@item.title} has not yet been submitted for this " +
+	  "month's board meeting. If you're unable to get " +
+          "it in by twenty-four hours before meeting time, " +
+          "please plan to report next month.\n\nThanks."
+
+        $rootScope.comment_text.draft ||= 'Reminder email sent'
+        ~'#comment-form'.modal(:show)
+      else
+	subject = "#{@item.title} Board Report"
+	body = @item.comments
+      end
+
+      $window.location = destination +
+        "&subject=#{encodeURIComponent(subject)}" +
+        "&body=#{encodeURIComponent(body)}"
     end
   end
 
