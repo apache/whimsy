@@ -43,6 +43,8 @@ class ASF::Board::Agenda
       attrs.delete 'indent'
       attrs.delete 'warnings' if attrs['warnings'].empty?
 
+      next if @quick
+
       asfid = '[a-z][-.a-z0-9_]+' # dot added to help detect errors
       list_item = '^\s*(?:[-*\u2022]\s*)?(.*?)\s+'
 

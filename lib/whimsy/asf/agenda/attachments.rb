@@ -32,12 +32,14 @@ class ASF::Board::Agenda
 
       attrs['missing'] = true if attrs['report'].strip.empty?
 
-      begin
-        committee = ASF::Committee.find(attrs['title'])
-        attrs['chair_email'] = committee.chair.mail.first
-        attrs['mail_list'] = committee.mail_list
-        attrs.delete('mail_list') if attrs['mail_list'].include? ' '
-      rescue
+      unless @quick
+	begin
+	  committee = ASF::Committee.find(attrs['title'])
+	  attrs['chair_email'] = committee.chair.mail.first
+	  attrs['mail_list'] = committee.mail_list
+	  attrs.delete('mail_list') if attrs['mail_list'].include? ' '
+	rescue
+	end
       end
 
       if attrs['report'].to_s.include? "\uFFFD"

@@ -23,9 +23,9 @@ class ASF::Board::Agenda
   }
 
   @@parsers = []
-  def self.parse(file=nil, &block)
+  def self.parse(file=nil, quick=false, &block)
     @@parsers << block if block
-    new.parse(file)  if file
+    new.parse(file, quick)  if file
   end
 
   def initialize
@@ -50,8 +50,9 @@ class ASF::Board::Agenda
     end
   end
 
-  def parse(file)
+  def parse(file, quick=false)
     @file = file
+    @quick = quick
     
     if not @file.valid_encoding?
       filter = Proc.new {|c| c.unpack('U').first rescue 0xFFFD}
@@ -84,16 +85,18 @@ class ASF::Board::Agenda
       end
     end
 
-    # add roster and prior report link
-    whimsy = 'https://whimsy.apache.org'
-    @sections.each do |section, hash|
-      next unless section =~ /^(4[A-Z]|\d+|[A-Z][A-Z]?)$/
-      committee = ASF::Committee.find(hash['title'] ||= 'UNKNOWN')
-      unless section =~ /^4[A-Z]$/
-        hash['roster'] = 
-          "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
+    unless @quick
+      # add roster and prior report link
+      whimsy = 'https://whimsy.apache.org'
+      @sections.each do |section, hash|
+	next unless section =~ /^(4[A-Z]|\d+|[A-Z][A-Z]?)$/
+	committee = ASF::Committee.find(hash['title'] ||= 'UNKNOWN')
+	unless section =~ /^4[A-Z]$/
+	  hash['roster'] = 
+	    "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
+	end
+	hash['prior_reports'] = minutes(committee.display_name)
       end
-      hash['prior_reports'] = minutes(committee.display_name)
     end
 
     # add attach to section
