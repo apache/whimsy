@@ -13,8 +13,6 @@ require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 
 require 'yaml'
-require 'net/http'
-require_relative 'helpers/string'
 
 if ENV['RACK_ENV'] == 'test'
   FOUNDATION_BOARD = 'test/work/board'
@@ -23,9 +21,6 @@ else
   FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
   MINUTES_WORK = '/var/tools/data'
 end
-
-require_relative 'model/pending'
-require_relative 'model/draft'
 
 get '/' do
   agenda = Dir.chdir(FOUNDATION_BOARD) {Dir['board_agenda_*.txt'].sort.last}

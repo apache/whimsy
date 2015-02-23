@@ -1,6 +1,7 @@
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
+task :spec => :work
 
 file 'test/work' do
   mkdir_p 'test/work'
