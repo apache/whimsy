@@ -1,0 +1,4922 @@
+                    The Apache Software Foundation
+
+                  Board of Directors Meeting Agenda
+
+                            March 19, 2014
+
+
+ 1. Call to order
+
+    The meeting is scheduled for 10:30am (Pacific) and will begin as
+    soon thereafter that a sufficient attendance to constitute a
+    quorum is recognized by the chairman.  The meeting will be held
+    via teleconference, hosted by Doug Cutting and Cloudera:
+
+            International   : +1-650-479-3208
+            U.S. Toll-Free  : +1-877-668-4493
+            Other Toll-Free : http://s.apache.org/globalcallin
+            Access Code     : 2329 5771
+
+    IRC #asfboard on irc.freenode.net will be used for backup
+    purposes.
+
+ 2. Roll Call
+
+    ASF members are welcome to attend board meetings. Please
+    add your name under "guests" below, or just join the call and
+    announce your presence during the roll call at the beginning
+    of the meeting.
+
+    Directors (expected to be) Present:
+
+        Shane Curcuru
+        Doug Cutting
+        Bertrand Delacretaz
+        Roy T. Fielding
+        Jim Jagielski
+        Chris Mattmann
+        Brett Porter
+        Sam Ruby
+        Greg Stein
+
+    Directors (expected to be) Absent:
+
+        none
+
+    Executive Officers (expected to be) Present:
+
+        Ross Gardler
+        Rich Bowen
+        Craig L Russell
+
+    Executive Officers (expected to be) Absent:
+
+        none
+
+    Guests (expected):
+
+        Jake Farrell
+        Sean Kelly
+        Daniel Gruno
+        Marvin Humphrey
+        Cory Johns
+        David Nalley
+        Michael Joyce
+
+
+ 3. Minutes from previous meetings
+
+    Minutes (in Subversion) are found under the URL:
+
+        https://svn.apache.org/repos/private/foundation/board/
+
+    A. The meeting of February 19, 2014
+
+       See: board_minutes_2014_02_19.txt
+
+       [ approved: sc, cm, rf, jj, bd
+         comments:
+         ]
+
+ 4. Executive Officer Reports
+
+    A. Chairman [Brett]
+
+       At the last board meeting, we agreed on May 27 and 29 as the dates for
+       the Annual Members Meeting. I will send out the formal notice to
+       members and call for nominations of new members and the board in the
+       next couple of weeks, once we're inside the required 60 day period.
+
+       ApacheCon is coming up soon. Unfortunately, I'm not able to attend
+       this year, though I'm interested to hear which other directors will be
+       present. Given the timing, I don't expect there's a need for the board
+       to formally meet face to face.
+
+    B. President [Ross]
+       
+       ApacheCon is progressing well, see EVP report for details. Given
+       the extremely short timeline on this event
+       I think we can consider this a success. It looks to me like 
+       we will have an event that is at least as good as, if not better,
+       than most previous events. When we add to this the lack of drama
+       created by the producer I would like to think this is the start
+       of a healthy relationship that will, over time, develop a
+       valuable conference model that brings value to all parties.
+       
+       Our EA has been (mostly) consumed by ApacheCon items this month.
+       We did discuss a difficulty Melissa has with respect to visibility
+       into sponsor payments. It is difficult for Melissa to establish
+       whether a payment has been made or not and thus to establish
+       whether she ought to send a nag mail. On occasion this has been 
+       held up when our volunteers with access to this information are
+       otherwise engaged. With the excellent work VP Fundraising and 
+       Melissa have put into creating a process for managing sponsorships
+       this is now the most common bottleneck. I believe our treasurer is 
+       looking into options with respect to providing Melissa with timely 
+       access without adding additional overhead to the role of Treasurer. 
+       I look forward to a solution in the future.
+       
+       The Audit has not progressed significantly. As this was (once again)
+       a priority for this year I'm disappointed with the progress since
+       I personally undertook to see this through. I intend to explore 
+       the blocker over the next month since I have
+       finally landed in my own home now, so no more moves for many
+       years (I hope). 
+       
+       Trademarks continues to increase its demands on Shane whist
+       Shane continues to look for ways to streamline the process. 
+       Our EA has indicated that she is keen to help out with the 
+       process but still feels a little unclear as to where the
+       boundaries lie around what she can safely do to help. I 
+       hope to discuss this with Shane at ApacheCon in April. From
+       my perspective if we can free up even an hour a month of
+       Shane's time this will be productive as Shane is doing such
+       a superb job of refining out policies and practices in the
+       little time available.
+       
+       There is no report from VP Fundraising at the time of writing.
+       However Upayavira and I did touch base earlier this month and
+       discussed the state of Fundraising. Whilst Upayavira himself is
+       mostly engaged elsewhere it seems all sponsorship renewals are
+       under control thanks to the support of (mostly) Melissa and 
+       Sally. Upayavira's role seems to be one of oversight at present.
+       
+       Infra report no significant surprises this month but note that
+       the new Git features have been well received. 28 projects have 
+       adopted them in the first month, which has resulted in a tenfold
+       increase in git related traffic on various apache.org email 
+       lists. As we enter budget planning season I have specifically
+       asked infra to consider whether they ought to make a one-off
+       investment in some specialist support that will allow them to
+       better scale resources as the foundation continues to grow. This
+       suggestion was well received as some members of the infra team
+       feel there is an element of fire-fighting that can sometimes
+       slow longer term projects.
+       
+       TAC reports 26 applications, of which 15 were funded at an
+       estimated cost of $32k. This is both more applications and
+       approvals in the past. The process was quicker than in the past
+       though not without it's hiccups. Especially with respect to 
+       paying for flights. Thanks to Nick Burch who stepped in to
+       solve the problem by offering his personal card (which was the
+       reported fall-back position last month). I can confirm that
+       Nick was promptly reimbursed for this expense. Melissa reports
+       that she will seek to make recommendations for streamlining the
+       process for future events now that she has been a core part of
+       the TAC team.     
+       
+       
+       Additionally, please see Attachments 1 through 6.
+
+       [ comments:
+         ]
+
+    C. Treasurer [Chris]
+
+       The Treasurer's Office worked with Phil Steitz to get Amazon Payment
+       account data in the purview of the monthly data collection process.
+       This is the first month that will include a tag for Amazon payments.
+
+       Remittance to a TAC committee member for fronting the payments for
+       ACNA 2014 flights was completed.
+
+       Chris has been in touch with the contractor company for treasurer
+       services referred by Jim. Treasurer's Office has requested feedback
+       from the board and will arrive at a decision soon. Jim is awaiting
+       the decision from an audit perspective as this will affect the way
+       he proceeds with the audit.
+
+       The President's Office inquired to see the difficulty in providing
+       account access for WFS and other financials necessary for sponsorship
+       in-transit payment inquiries.  The Treasurer's Office is considering
+       how best to respond to the request.
+
+       Finally, the last request for transfer out of PayPal is in transit,
+       completing an activity desired years ago, to completely move the
+       bulk of ASF money out of PayPal and into WFS. Thanks to Upayavira
+       and Sam and others for their help in making this happen.
+
+       Income and Expenses
+
+       Current Balances:
+
+         Wells Fargo Business Checking:     958,880.79
+         Wells Fargo Savings:               287,886.47
+         PayPal:                             53,478.21
+         Amazon Prime:                        8,504.75
+         ----------------------------    ----------
+              Total                    $  1,300,245.47
+
+
+       Income Summary:
+
+         Lockbox                             50,271.00
+         Fundraising                         40,000.00
+         ----------------------------    ----------
+              Total                    $     90,271.00
+
+       Expense Summary:
+
+                 Category                  Amount
+         ----------------------------    ----------
+             EA                                8,670.22
+             Sysadmin                         31,800.00
+             misc expense		         493.74
+             ASF credit card - Sam Ruby           72.42
+             Press                             4,545.45
+             PayPal                           46,925.88
+         ----------------------------    ----------
+              Total                    $      92,507.71
+
+
+    D. Secretary [Craig]
+
+       February was a short and relatively light month for incoming 
+       documents. 42 iclas, two cclas, and four grants were received 
+       and filed.
+
+
+    E. Executive Vice President [Rich]
+
+        With ApacheCon now less than a month away, registrations are
+        progressing well, but rather behind my hopes. We were coming up
+        on 300 registrations when the Early Bird price expired. (I'll
+        hopefully update numbers prior to the meeting.) This is ahead
+        of where we were at this point last year, but still
+        disappointing given the expanded scope of the event. More
+        importantly, however, the producer is happy with the numbers,
+        and I view this event as an investment in the next event, so if
+        they're happy, I'm happy.
+
+        Everyone has been very helpful, with everyone I've asked for
+        assistance immediately stepping up and helping out. I'm looking
+        forward to doing this again, but with more lead time.
+
+        Meanwhile, we're still looking at venues in Europe, the
+        difficulty being that the OpenStack Summit in Paris hasn't
+        announced dates yet, and so we have to avoid both options that
+        they have announced, which greatly reduces our available venues.
+        Dates we are currently looking at are December 7 in Prague or
+        November 16 in Rome. Each of these have drawbacks, and we hope
+        to have something decided by the end of this month.
+
+    F. Vice Chairman [Greg]
+
+       Nothing to report for this month.
+
+ 5. Additional Officer Reports
+
+    A. VP of W3C Relations [Andy Seaborne / Doug]
+
+       See Attachment 7
+
+       [ approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    B. Apache Legal Affairs Committee [Jim Jagielski]
+
+       See Attachment 8
+
+       [ approved: jj, sr, dc, sc, bp, cm, rf, gs
+         comments:
+         ]
+
+    C. Apache Security Team Project [Mark Cox / Shane]
+
+       See Attachment 9
+
+       [ approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+ 6. Committee Reports
+
+    A. Apache Abdera Project [Ant Elder / Jim]
+
+       See Attachment A
+
+       [ Abdera.
+         approved: sr, dc, sc, bp, cm, rf, gs
+         comments:
+         ]
+
+    B. Apache Any23 Project [Michele Mostarda / Roy]
+
+       See Attachment B
+
+       [ Any23.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    C. Apache APR Project [Jeff Trawick / Brett]
+
+       See Attachment C
+
+       [ APR.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    D. Apache Archiva Project [Maria Odea Ching / Sam]
+
+       See Attachment D
+
+       [ Archiva.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    E. Apache Axis Project [Deepal Jayasinghe / Chris]
+
+       See Attachment E
+
+       [ Axis.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+           cm: Please list date of last PMC member and/or committer addition.
+               Thanks!
+         ]
+
+    F. Apache Bigtop Project [Roman Shaposhnik / Bertrand]
+
+       See Attachment F
+
+       [ Bigtop.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+           cm: Please list date of last PMC and/or committer addition. Thanks!
+         ]
+
+    G. Apache Bloodhound Project [Gary Martin / Greg]
+
+       See Attachment G
+
+       [ Bloodhound.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    H. Apache Buildr Project [Alex Boisvert / Sam]
+
+       See Attachment H
+
+       [ Buildr.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    I. Apache BVal Project [Matt Benson / Shane]
+
+       See Attachment I
+
+       [ BVal.
+         approved: sr, jj, dc, sc, bp, cm, rf, gs
+         comments:
+         ]
+
+    J. Apache Camel Project [Christian Mueller / Jim]
+
+       See Attachment J
+
+       [ Camel.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+           cm: Please list dates of last PMC and/or committer addition.
+         ]
+
+    K. Apache Cayenne Project [Andrus Adamchik / Bertrand]
+
+       See Attachment K
+
+       [ Cayenne.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    L. Apache Chemistry Project [Florian Müller / Chris]
+
+       See Attachment L
+
+       [ Chemistry.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+           cm: Please list date of last PMC and/or committer addition.
+         ]
+
+    M. Apache Click Project [Malcolm Edgar / Doug]
+
+       See Attachment M
+
+       [ Click.
+         approved:
+         comments:
+           dc: I just emailed the chair and pmc, reminding them to report.
+         ]
+
+    N. Apache CloudStack Project [Chip Childers / Roy]
+
+       See Attachment N
+
+       [ CloudStack.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    O. Apache Commons Project [Gary Gregory / Brett]
+
+       See Attachment O
+
+       [ Commons.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    P. Apache Community Development Project [Luciano Resende / Greg]
+
+       See Attachment P
+
+       [ Community Development.
+         approved: jj, sr, dc, sc, bp, cm, rf, gs
+         comments:
+         ]
+
+    Q. Apache Continuum Project [Brent Atkinson / Roy]
+
+       See Attachment Q
+
+       [ Continuum.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    R. Apache Cordova Project [Brian LeRoux / Bertrand]
+
+       See Attachment R
+
+       [ Cordova.
+         approved:
+         comments:
+         ]
+
+    S. Apache Creadur Project [Robert Burrell Donkin / Jim]
+
+       See Attachment S
+
+       [ Creadur.
+         approved:
+         comments:
+         ]
+
+    T. Apache cTAKES Project [Pei J Chen / Greg]
+
+       See Attachment T
+
+       [ cTAKES.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    U. Apache Curator Project [Jordan Zimmerman / Shane]
+
+       See Attachment U
+
+       [ Curator.
+         approved: sr, dc, sc, bp, cm, rf, jj, gs
+         comments:
+         ]
+
+    V. Apache DirectMemory Project [Raffaele P. Guidi / Chris]
+
+       See Attachment V
+
+       [ DirectMemory.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    W. Apache Felix Project [Felix Meschberger / Doug]
+
+       See Attachment W
+
+       [ Felix.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    X. Apache Flex Project [Alex Harui / Sam]
+
+       See Attachment X
+
+       [ Flex.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+           cm: Please list dates of last PMC and/or committer addition.
+         ]
+
+    Y. Apache Giraph Project [Avery Ching / Brett]
+
+       See Attachment Y
+
+       [ Giraph.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    Z. Apache Gump Project [Stefan Bodewig / Shane]
+
+       See Attachment Z
+
+       [ Gump.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    AA. Apache Helix Project [Kishore Gopalakrishna / Doug]
+
+       See Attachment AA
+
+       [ Helix.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+           gs: all project reports should include a short blurb about what they
+               are/do. "what is Apache Helix?"
+         ]
+
+    AB. Apache Hive Project [Carl Steinbach / Jim]
+
+       See Attachment AB
+
+       [ Hive.
+         approved: bp, cm, rf, jj, sr, gs
+         comments:
+         ]
+
+    AC. Apache Incubator Project [Roman Shaposhnik / Roy]
+
+       See Attachment AC
+
+       [ Incubator.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    AD. Apache Jackrabbit Project [Michael Dürig / Chris]
+
+       See Attachment AD
+
+       [ Jackrabbit.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    AE. Apache Karaf Project [Jean-Baptiste Onofré / Sam]
+
+       See Attachment AE
+
+       [ Karaf.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    AF. Apache Knox Project [Kevin Minder / Bertrand]
+
+       See Attachment AF
+
+       [ Knox.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+           cm: Please list date of last PMC and/or committer addition.
+         ]
+
+    AG. Apache Labs Project [Tim Williams / Brett]
+
+       See Attachment AG
+
+       [ Labs.
+         approved:
+         comments:
+           sr: Labs will report next month: http://s.apache.org/pb5
+         ]
+
+    AH. Apache Lucene Project [Uwe Schindler / Greg]
+
+       See Attachment AH
+
+       [ Lucene.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    AI. Apache Lucene.Net Project [Prescott Nasser / Shane]
+
+       See Attachment AI
+
+       [ Lucene.Net.
+         approved: sc, sr, bp, cm, rf, jj, gs
+         comments:
+           cm: Please list date of last PMC and/or committer addition. Thanks!
+         ]
+
+    AJ. Apache MRUnit Project [Brock Noland / Sam]
+
+       See Attachment AJ
+
+       [ MRUnit.
+         approved: sr, jj, dc, sc, bp, cm, rf, gs
+         comments:
+           cm: Please list date of last PMC and/or committer addition. Thanks!
+         ]
+
+    AK. Apache OFBiz Project [Jacopo Cappellato / Doug]
+
+       See Attachment AK
+
+       [ OFBiz.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    AL. Apache OODT Project [Sean Kelly / Brett]
+
+       See Attachment AL
+
+       [ OODT.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    AM. Apache Open Climate Workbench Project [Michael James Joyce / Chris]
+
+       See Attachment AM
+
+       [ Open Climate Workbench.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    AN. Apache OpenNLP Project [Joern Kottmann / Greg]
+
+       See Attachment AN
+
+       [ OpenNLP.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+           cm: Please list date of last PMC and/or committer addition.
+         ]
+
+    AO. Apache OpenWebBeans Project [Mark Struberg / Roy]
+
+       See Attachment AO
+
+       [ OpenWebBeans.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    AP. Apache Pig Project [Julien Le Dem / Jim]
+
+       See Attachment AP
+
+       [ Pig.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+           bp: When were the last committer, PMC additions, and release made?
+         ]
+
+    AQ. Apache Pivot Project [Roger Whitcomb / Bertrand]
+
+       See Attachment AQ
+
+       [ Pivot.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    AR. Apache Portals Project [David Sean Taylor / Roy]
+
+       See Attachment AR
+
+       [ Portals.
+         approved: bp, rf, jj, sr, gs
+         comments:
+           gs: please state the month/year of the last addition of a committer,
+               and last addition to the PMC.
+         ]
+
+    AS. Apache ServiceMix Project [Gert Vanthienen / Shane]
+
+       See Attachment AS
+
+       [ ServiceMix.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    AT. Apache Shiro Project [Les Hazlewood / Sam]
+
+       See Attachment AT
+
+       [ Shiro.
+         approved: bp, sr, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    AU. Apache Sling Project [Carsten Ziegeler / Greg]
+
+       See Attachment AU
+
+       [ Sling.
+         approved: sr, bp, jj, dc, sc, cm, rf, gs
+         comments:
+         ]
+
+    AV. Apache SpamAssassin Project [Kevin A. McGrail / Jim]
+
+       See Attachment AV
+
+       [ SpamAssassin.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    AW. Apache Spark Project [Matei Zaharia / Bertrand]
+
+       See Attachment AW
+
+       [ Spark.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    AX. Apache Stanbol Project [Fabian Christ / Brett]
+
+       See Attachment AX
+
+       [ Stanbol.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+           cm: Please list date of last PMC and/or committer additions.
+         ]
+
+    AY. Apache Synapse Project [Hiranya Jayathilaka / Chris]
+
+       See Attachment AY
+
+       [ Synapse.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    AZ. Apache Tiles Project [Greg Reddin / Doug]
+
+       See Attachment AZ
+
+       [ Tiles.
+         approved: bp, sr, jj, dc, sc, rf
+         comments:
+         ]
+
+    BA. Apache Tomcat Project [Mladen Turk / Chris]
+
+       See Attachment BA
+
+       [ Tomcat.
+         approved: sr, bp, dc, sc, cm, rf, jj
+         comments:
+           cm: Please list date of last PMC and/or committer addition. Thanks!
+         ]
+
+    BB. Apache UIMA Project [Marshall Schor / Brett]
+
+       See Attachment BB
+
+       [ UIMA.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    BC. Apache VCL Project [Andy Kurth / Jim]
+
+       See Attachment BC
+
+       [ VCL.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    BD. Apache Velocity Project [Nathan Bubna / Shane]
+
+       See Attachment BD
+
+       [ Velocity.
+         approved: sr, dc, sc, cm, rf, jj
+         comments:
+         ]
+
+    BE. Apache Whirr Project [Andrew Bayer / Sam]
+
+       See Attachment BE
+
+       [ Whirr.
+         approved: sr, bp, dc, sc, cm, rf, jj
+         comments:
+         ]
+
+    BF. Apache Wicket Project [Martijn Dashorst / Doug]
+
+       See Attachment BF
+
+       [ Wicket.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+         ]
+
+    BG. Apache Wink Project [Luciano Resende / Greg]
+
+       See Attachment BG
+
+       [ Wink.
+         approved: sr, dc, sc, bp, cm, rf, jj, gs
+         comments:
+         ]
+
+    BH. Apache ZooKeeper Project [Flavio Junqueira / Roy]
+
+       See Attachment BH
+
+       [ ZooKeeper.
+         approved: sr, bp, jj, dc, sc, cm, rf
+         comments:
+           bp: when were the last changes to the PMC/committer rosters?
+         ]
+
+    BI. Apache Lenya Project [Richard Frovarp / Brett]
+
+       See Attachment BI
+
+       [ Lenya.
+         approved: bp, rf, sr, gs, bd
+         comments:
+         ]
+
+
+ 7. Special Orders
+
+    A. Establish the Apache Tajo Project
+
+       WHEREAS, the Board of Directors deems it to be in the best
+       interests of the Foundation and consistent with the Foundation's
+       purpose to establish a Project Management Committee charged with
+       the creation and maintenance of open-source software, for
+       distribution at no charge to the public, related to low latency
+       queries and extract, transform and load
+       (ETL) operations for the Hadoop ecosystem.
+
+       NOW, THEREFORE, BE IT RESOLVED, that a Project Management Committee
+       (PMC), to be known as the "Apache Tajo Project" be and hereby is
+       established pursuant to Bylaws of the Foundation; and be it further
+
+       RESOLVED, that the Apache Tajo Project be and hereby is responsible
+       for the creation and maintenance of software
+       related to low latency queries and extract, transform and load
+       (ETL) operations for the Hadoop ecosystem; and be it further
+
+       RESOLVED, that the office of "Vice President, Apache Tajo", be
+       and hereby is created, the person holding such office to serve
+       at the direction of the Board of Directors as the chair of the
+       Apache Tajo Project, and to have primary responsibility for
+       management of the projects within the scope of responsibility
+       of the Apache Tajo Project; and be it further
+
+       RESOLVED, that the persons listed immediately below be and hereby
+       are appointed to serve as the initial members of the Apache Tajo
+       Project:
+
+       * Alex Karasulu <akarasulu@apache.org>
+       * Eli Reisman <ereisman@apache.org>
+       * Henry Saputra <hsaputra@apache.org>
+       * Hyunsik Choi <hyunsik@apache.org>
+       * Jakob Glen Homan <jghoman@apache.org>
+       * Chris Mattmann <mattmann@apache.org>
+       * Owen O'Malley <omalley@apache.org>
+       * JaeHwa Jung <blrunner@apache.org>
+       * Jinho Kim <jhkim@apache.org>
+       * Jihoon Son <jihoonson@apache.org>
+       * Keuntae Park <sirpkt@apache.org>
+       * Roshan Sumbaly <rsumbaly@apache.org>
+       * Sangwook Kim <swkim@apache.org>
+       * Yi Liu <yliu@apache.org>
+
+       NOW, THEREFORE, BE IT FURTHER RESOLVED, that Hyunsik Choi be appointed
+       to the office of Vice President, Apache Tajo, to serve in accordance
+       with and subject to the direction of the Board of Directors and the
+       Bylaws of the Foundation until death, resignation, retirement,
+       removal or disqualification, or until a successor is appointed; and
+       be it further
+
+       RESOLVED, that the Apache Tajo Project be and hereby is tasked with
+       the migration and rationalization of the Apache Incubator Tajo
+       podling; and be it further
+
+       RESOLVED, that all responsibilities pertaining to the Apache Incubator
+       Tajo podling encumbered upon the Apache Incubator Project are
+       hereafter discharged.
+
+    B. Change the Apache CloudStack Project Chair
+
+       WHEREAS, the Board of Directors heretofore appointed Chip Childers
+       to the office of Vice President, Apache CloudStack, and
+
+       WHEREAS, the Board of Directors is in receipt of the resignation of
+       Chip Childers from the office of Vice President, Apache CloudStack,
+       and
+
+       WHEREAS, the Project Management Committee of the Apache CloudStack
+       project has chosen by vote to recommend Hugo Trippaers as the
+       successor to the post;
+
+       NOW, THEREFORE, BE IT RESOLVED, that Chip Childers is relieved and
+       discharged from the duties and responsibilities of the office of Vice
+       President, Apache CloudStack, and
+
+       BE IT FURTHER RESOLVED, that Hugo Trippaers be and hereby is
+       appointed to the office of Vice President, Apache CloudStack, to serve
+       in accordance with and subject to the direction of the Board of
+       Directors and the Bylaws of the Foundation until death, resignation,
+       retirement, removal or disqualification, or until a successor is
+       appointed.
+
+    C. Change the Apache Pig Project Chair
+
+       WHEREAS, the Board of Directors heretofore appointed Julien Le Dem
+       to the office of Vice President, Apache Pig, and
+
+       WHEREAS, the Board of Directors is in receipt of the resignation
+       of Julien Le Dem from the office of Vice President, Apache
+       Pig, and
+
+       WHEREAS, the Project Management Committee of the Apache Pig
+       project has chosen by vote to recommend Cheolsoo Park as the
+       Successor to the post;
+
+       NOW, THEREFORE, BE IT RESOLVED, that Julien Le Dem is
+       relieved and discharged from the duties and responsibilities of
+       the office of Vice President, Apache Pig, and
+
+       BE IT FURTHER RESOLVED, that Cheolsoo Park be and hereby is
+       appointed to the office of Vice President, Apache Pig, to
+       serve in accordance with and subject to the direction of the
+       Board of Directors and the Bylaws of the Foundation until
+       death, resignation, retirement, removal or disqualification, or
+       until a successor is appointed.
+
+
+    D. Change the Apache Bigtop Project Chair
+
+       WHEREAS, the Board of Directors heretofore appointed
+       Roman Shaposhnik to the office of Vice President,
+       Apache Bigtop,  and
+       
+       WHEREAS, the Board of Directors is in receipt of the resignation
+       of Roman Shaposhnik from the office of Vice President,
+       Apache Bigtop, and
+       
+       WHEREAS, the Project Management Committee of the Apache Bigtop
+       project has chosen by vote to recommend Konstantin Boudnik as the
+       Successor to the post;
+       
+       NOW, THEREFORE, BE IT RESOLVED, that Roman Shaposhnik is
+       relieved and discharged from the duties and responsibilities of
+       the office of Vice President, Apache Bigtop, and
+       
+       BE IT FURTHER RESOLVED, that Konstantin Boudnik  be and
+       hereby is appointed to the office of Vice President, Apache Bigtop,
+       to serve in accordance with and subject to the direction of the
+       Board of Directors and the Bylaws of the Foundation until
+       death, resignation, retirement, removal or disqualification, or
+       until a successor is appointed.
+
+
+    E. Change the Apache Hama Project Chair
+
+       WHEREAS, the Board of Directors heretofore appointed Edward J. Yoon
+       to the office of Vice President, Apache Hama, and
+
+       WHEREAS, the Board of Directors is in receipt of the resignation
+       of Edward J. Yoon from the office of Vice President, Apache Hama,
+       and
+
+       WHEREAS, the Project Management Committee of the Apache Hama
+       project has chosen by vote to recommend Chia-Hung Lin as the successor
+       to the post;
+
+       NOW, THEREFORE, BE IT RESOLVED, that Edward J. Yoon is relieved and
+       discharged from the duties and responsibilities of the office
+       of Vice President, Apache Hama, and
+
+       BE IT FURTHER RESOLVED, that Chia-Hung Lin be and hereby is
+       appointed to the office of Vice President, Apache Hama, to
+       serve in accordance with and subject to the direction of the
+       Board of Directors and the Bylaws of the Foundation until
+       death, resignation, retirement, removal or disqualification, or
+       until a successor is appointed.
+
+
+    F. Change the Apache Lucy Project Chair
+
+       WHEREAS, the Board of Directors heretofore appointed Nikolas Wellnhofer
+       to the office of Vice President, Apache Lucy, and
+
+       WHEREAS, the Board of Directors is in receipt of the resignation
+       of Nikolas Wellnhofer from the office of Vice President, Apache Lucy,
+       and
+
+       WHEREAS, the Project Management Committee of the Apache Lucy
+       project has chosen by vote to recommend Logan Bell as the successor
+       to the post;
+
+       NOW, THEREFORE, BE IT RESOLVED, that Nikolas Wellnhofer is relieved and
+       discharged from the duties and responsibilities of the office
+       of Vice President, Apache Lucy, and
+
+       BE IT FURTHER RESOLVED, that Logan Bell be and hereby is
+       appointed to the office of Vice President, Apache Lucy, to
+       serve in accordance with and subject to the direction of the
+       Board of Directors and the Bylaws of the Foundation until
+       death, resignation, retirement, removal or disqualification, or
+       until a successor is appointed.
+
+
+    G. Establish the Apache Olingo Project
+
+       WHEREAS, the Board of Directors deems it to be in the best
+       interests of the Foundation and consistent with the
+       Foundation's purpose to establish a Project Management
+       Committee charged with the creation and maintenance of
+       open-source software, for distribution at no charge to
+       the public, related to providing an implementation of the
+       OASIS OData (Open Data Protocol) specifications, in
+       server and client form.
+
+       NOW, THEREFORE, BE IT RESOLVED, that a Project Management
+       Committee (PMC), to be known as the "Apache Olingo Project",
+       be and hereby is established pursuant to Bylaws of the
+       Foundation; and be it further
+
+       RESOLVED, that the Apache Olingo Project be and hereby is
+       responsible for the creation and maintenance of software
+       related to providing an implementation of the OASIS OData
+       (Open Data Protocol) specifications, in server and client
+       form; and be it further
+
+       RESOLVED, that the office of "Vice President, Olingo" be
+       and hereby is created, the person holding such office to
+       serve at the direction of the Board of Directors as the chair
+       of the Apache Olingo Project, and to have primary responsibility
+       for management of the projects within the scope of
+       responsibility of the Apache Olingo Project; and be it further
+
+       RESOLVED, that the persons listed immediately below be and
+       hereby are appointed to serve as the initial members of the
+       Apache Olingo Project:
+
+        * Florian Mueller             <fmui@apache.org>
+        * Dave Fisher                 <wave@apache.org>
+        * Christian Amend          <chrisam@apache.org>
+        * Francesco Chicchiriccò  <ilgrosso@apache.org>
+        * Jens Huesken            <jhuesken@apache.org>
+        * Michael Bolz                <mibo@apache.org>
+        * Stephan Klevenz         <sklevenz@apache.org>
+        * Tamara Boehm              <tboehm@apache.org>
+        * Challen He              <challenh@apache.org>
+        * Chandan V A            <chandanva@apache.org>
+        * Eduard Koller            <eduardk@apache.org>
+
+       NOW, THEREFORE, BE IT FURTHER RESOLVED, that Stephan Klevenz
+       be appointed to the office of Vice President, Olingo, to
+       serve in accordance with and subject to the direction of the
+       Board of Directors and the Bylaws of the Foundation until
+       death, resignation, retirement, removal or disqualification,
+       or until a successor is appointed; and be it further
+
+       RESOLVED, that the initial Apache Olingo PMC be and hereby is
+       tasked with the creation of a set of bylaws intended to
+       encourage open development and increased participation in the
+       Apache Olingo Project; and be it further
+
+       RESOLVED, that the Apache Olingo Project be and hereby
+       is tasked with the migration and rationalization of the Apache
+       Incubator Olingo podling; and be it further
+
+       RESOLVED, that all responsibilities pertaining to the Apache
+       Incubator Olingo podling encumbered upon the Apache Incubator
+       Project are hereafter discharged.
+
+
+    H. Establish the Apache Allura Project
+
+       WHEREAS, the Board of Directors deems it to be in the best
+       interests of the Foundation and consistent with the
+       Foundation's purpose to establish a Project Management
+       Committee charged with the creation and maintenance of
+       open-source software, for distribution at no charge to 
+       the public, related to a software development infrastructure
+       platform commonly known as a "forge".
+
+       NOW, THEREFORE, BE IT RESOLVED, that a Project Management
+       Committee (PMC), to be known as the "Apache Allura Project",
+       be and hereby is established pursuant to Bylaws of the
+       Foundation; and be it further
+
+       RESOLVED, that the Apache Allura Project be and hereby is
+       responsible for the creation and maintenance of software
+       related to a software development infrastructure platform
+       commonly known as a "forge"; and be it further
+
+       RESOLVED, that the office of "Vice President, Apache Allura" be
+       and hereby is created, the person holding such office to
+       serve at the direction of the Board of Directors as the chair
+       of the Apache Allura Project, and to have primary responsibility
+       for management of the projects within the scope of
+       responsibility of the Apache Allura Project; and be it further
+
+       RESOLVED, that the persons listed immediately below be and
+       hereby are appointed to serve as the initial members of the
+       Apache Allura Project:
+
+        * Tim Van Steenburgh     <tvansteenburgh@apache.org>
+        * Wayne Witzel III       <wwitzel3@apache.org>
+        * Cory Johns             <johnsca@apache.org>
+        * Dave Brondsema         <brondsem@apache.org>
+        * Roberto Galoppini      <galoppini@apache.org>
+        * Alvaro del Castillo    <acs@apache.org>
+        * Stefano Invernizzi     <stefanoinve@apache.org>
+        * Simone Gatti           <simonegatti@apache.org>
+        * Jim Jagielski          <jim@apache.org>
+
+       NOW, THEREFORE, BE IT FURTHER RESOLVED, that Dave Brondsema
+       be appointed to the office of Vice President, Apache Allura, to
+       serve in accordance with and subject to the direction of the
+       Board of Directors and the Bylaws of the Foundation until
+       death, resignation, retirement, removal or disqualification,
+       or until a successor is appointed; and be it further
+
+       RESOLVED, that the initial Apache Allura PMC be and hereby is
+       tasked with the creation of a set of bylaws intended to
+       encourage open development and increased participation in the
+       Apache Allura Project; and be it further
+
+       RESOLVED, that the Apache Allura Project be and hereby
+       is tasked with the migration and rationalization of the Apache
+       Incubator Allura podling; and be it further
+
+       RESOLVED, that all responsibilities pertaining to the Apache
+       Incubator Allura podling encumbered upon the Apache Incubator
+       Project are hereafter discharged.
+
+ 
+ 8. Discussion Items
+
+ 9. Review Outstanding Action Items
+
+    * Roy: Update the guidance for releases to forbid shipping binary
+           dependencies within a source package unless their source is also
+           included (see board_minutes_2012_04_18.txt) and communicate to
+           committers.
+          Status: still not done
+
+    * Greg: discuss "extras" issue with OpenOffice PMC and see if there is
+            anything to be done at the "ASF level"
+          Status:
+
+    * Chris: follow up on bringing on new committers and PMC members to DB
+          Status:
+
+    * Brett: follow up with Click regarding the Attic or rebooting
+          Status: not done
+
+    * Brett: Remind PMCs to check their committee records
+          Status: started but not complete yet
+
+    * Greg: ask about "pending discussion by the PMC" by JMeter
+          Status:
+
+    * Greg: ask for an out-of-band report for next month for Web Services
+          Status: no longer needed, they are due to report next month
+
+    * Chris: follow up with Empire-db about steps to bringing on new blood
+          Status:
+
+10. Unfinished Business
+
+11. New Business
+
+12. Announcements
+
+13. Adjournment
+
+    Scheduled to adjourn by 12:00pm (Pacific)
+
+
+============
+ATTACHMENTS:
+============
+
+-----------------------------------------
+Attachment 1: Report from the Executive Assistant  [Melissa Warnkin]
+
+Daily monitoring of all email activity (ea@, fundraising@, trademarks@,
+treasurer@, comdev@, and board@) and following-up with appropriate personnel
+
+    ApacheCon:  90% (includes TAC)
+        Very busy month; progressing well - Rich will provide more information
+        Researched items for this year's giveaways (to be used for ACNA,
+          OSCON, ACEU and community events throughout the year) and awaiting
+          shipment.
+        Assisted Rich with helping "spread the word".  Please forgive the
+          inundation of emails received on March 5th - I misunderstood Rich's
+          instructions and sent an email for each Project and Track to comdev@
+          rather than to dev@PROJECT.  Well, on the plus side, ya can't say we
+          haven't gotten the word out!! ;)
+        Currently working on the booth logistics
+
+    TAC:
+
+        Sent all rejection and acceptance letters out
+        All flights and hotel reservations have been made and sent to the
+          successful applicants
+        All documentation required for the applicants needing a visa have been
+          sent.  4 out of the 5 needing a visa have successfully received it;
+          the 5th has a visa appointment the week of March 10th.
+        I've submitted a direct bill application to the Westin for the TAC'ers
+          and staff lodging (rather than doing a wire transfer) - awaiting
+          approval on that from the Westin.
+        Fielded a very large amount of inquiries from the TAC'ers.  A handful
+          of folks were full of questions and uncertainty on what to do and
+          how to proceed; with a little TLC, I was able to guide them through
+          the entire process and ease their nerves.
+
+    Fundraising:  10%
+
+        Continuing to follow-up on renewals sent out
+            Working with the Treasurer's Office for a solution for me to gain
+              visibility into payments.  This will alleviate some of the
+              workload on their end, as well as enable me to gain the
+              information needed in a more timely manner for following up on
+              the past-due invoices.
+            Sam has fixed the info in svn so it is now readable.  Sam and
+              Chris will determine what is needed from WF in order for me to
+              gain read access into the account so that I can have "real-time"
+              info (the info in svn is only posted after Chris writes his
+              board report).
+        Sent out invoices for the sponsors due for renewal
+        A great big thank you to Sally, who has been in communications with
+          our Platinums.  As a result, we've obtained a PO# for Google's
+          Platinum renewal, and I've submitted the invoice through their
+          online portal (invoice is showing as approved; just awaiting
+          payment), and I've sent out the Yahoo! renewal.  She is awaiting
+          responses from Microsoft (they just came off of vacation, so she's
+          giving them adequate time to catch up) and Facebook.
+
+
+-----------------------------------------
+Attachment 2: Report from the VP of Brand Management  [Shane Curcuru]
+
+trademarks@ traffic continues to grow and bring up new issues.  It's 
+been very helpful to have a couple of members really step up to help 
+and thoughtfully answer various questions; David Nalley has been 
+especially helpful in this regard.
+
+Started a discussion on ways to improve services that trademarks@ 
+and the ASF offers to our projects, although there's limited feedback 
+so far there on some new ideas.
+
+I updated the Project Independence requirements in response to issues 
+raised recently with the focus of the page:
+
+  http://community.apache.org/projectIndependence.html
+
+Had a brief but productive call at DLAPiper request; they have a number 
+of specific documents almost ready to offer to help improve and simplify 
+our brand policing and education activities that I'm looking forward to.
+
+DLAPiper submitted a US registration for LUCENE.
+
+DLAPiper is submitting an international registration for HADOOP covering 
+EU and several key first-to-file countries.
+
+
+-----------------------------------------
+Attachment 3: Report from the VP of Fundraising  [Upayavira]
+
+As noted by Ross in his President report, I am glad to report that the 
+VP Fundraising role has become an oversight one. Melissa is handling most
+of the renewal work, and Sally is handling the higher value sponsors.
+Phil is handling thanking our PayPal/Amazon donors.
+
+The work required for the VP Fundraising appears to have dropped to a 
+much more manageable level for a volunteer, thanks to the work of the
+above named.
+
+-----------------------------------------
+Attachment 4: Report from the VP of Marketing and Publicity  [Sally Khudairi]
+
+I. Budget: we remain on schedule and under budget. All vendor payments have
+  been processed on time with ongoing thanks to the Treasurer and Operations
+  teams.
+
+II. Fundraising/Branding/Marketing liaison: no meetings are planned. Sally
+  Khudairi continues Sponsor renewal outreach activities, and has secured
+  confirmation from select Platinum-level Sponsors. The discussion regarding
+  project-specific marketing/promotional support that had begun in October has
+  resumed, this time with the Trademarks/Brand Management team as lead.
+
+III. Press Releases: the following formal announcement was issued via the
+  newswire service, ASF Foundation Blog, and announce@apache.org:
+
+- 27 February 2014: The Apache Software Foundation Announces Announces Apache™
+  Spark™ as a Top-Level Project
+- 03 March 2014: The Apache Software Foundation Announces Apache™ Open Climate
+  Workbench™ as a Top-Level Project
+
+IV. Informal Announcements: five newsworthy items were announced on @TheASF,
+  and nine new tweets on @ApacheCon feed. No new posts were made on
+  "TheApacheFoundation" account on YouTube.
+
+V. Future Announcements: we're awaiting clearance on a project milestone
+  announcement that we began work on in January. PMCs wishing to announce major
+  project news, as well as podlings ready to graduate from the Incubator, are
+  welcome to contact Sally at <press@apache.org> for more information. Kindly
+  provide at least 2-weeks' notice for proper planning and execution.
+
+VI. Media Relations: we responded to 8 media requests. The ASF received 3,030
+  press clips over this time period, vs. last month's clip count of 1,519.
+
+VII. Analyst Relations: we responded to 3 analyst queries, and secured Chris
+  Mattmann as co-host of the GreenMonk hangout/broadcast following our
+  announcement of Apache Climate (GreenMonk is RedMonk's sustainability-focused
+  arm). Apache was mentioned in 6 reports by Gartner (as well as an upcoming
+  Webinar on Apache Hadoop 2.0), 4 reports by Forrester, 7 write-ups by GigaOM,
+  8 reports by Yankee Group, and 4 reports by IDC.
+
+VIII. ApacheCon liaison: Sally continues to liaise with the ApacheCon
+  producer, with particular focus on communications and sponsor outreach. She is
+  also working with Melissa Warnkin on promotional items for the event.
+
+IX. (Non-ASF) Industry Events and Outreach liaison: Sally is liaising with a
+  small handful of events that are requesting the ASF's presence as
+  speakers/presenters/sponsors/*.
+
+X. Newswire accounts: we have renewed our pre-paid press release agreement
+  with NASDAQ GlobeNewswire, and have 17 in our account through the end of the
+  calendar year. We also have 7 remaining pre-paid press releases on the
+  PRNewswire account through May 2014, as well as ongoing distribution donated
+  by Pressat with no pre-established termination timeframe.
+
+
+-----------------------------------------
+Attachment 5: Report from the VP of Infrastructure  [Sam Ruby]
+
+New Karma:
+==========
+mdrob added to infra-interest.
+
+
+Finances:
+==========
+
+
+Operations Action Items:
+========================
+
+
+Short Term Priorities:
+======================
+
+* Look into mac build slaves.
+
+
+* Converge on git.apache.org migration to eris. (Step 1 is merge git -> git-wip on tyr)
+  (opinions?)
+
+* Investigate / negotiate external code-signing capability, currently in talks
+  under NDA. INFRA-3991 is tracking the status, and a Webex call has taken place.
+
+* Complete nagios-to-circonus migration for monitoring.
+
+* Continue to experiment with weekly team meetings via google hangout.
+
+* Explore the possibility of revamping the infra documents to have a more 
+  intuitive feel about them, improve readability.
+
+* Confluence Upgrade. Upgrade from 5.0.3 to latest. Hopefully will be less
+  painful this time around. 
+  (Support case closed, nothing useful came from it other than check the logs.)
+
+* Port tlp creation scripts over to new json-based design on whimsy.
+
+
+Long Range Priorities:
+======================
+
+* Choose a suitable technology for continued buildout of our virtual
+  hosting infra.  Right now we are on VMWare but it no longer is gratis
+  software for the ASF.
+
+* Continue gradually replacing gear we no longer have any hardware warranty
+  support for.
+
+* Formulate an effective process and surrounding policy documentation for
+  fulfilling the DMCA safe harbor provisions as they relate to Apache services.
+
+* Institute egress filtering on all mission-critical service hosts.
+  <private>
+    nuqjatlh?
+  </private>
+
+
+General Activity:
+=================
+
+* The new GitHub features have been well received, with 28 projects already
+  onboard with the new features in February alone. As a result, the number of
+  github related messages on the public ASF mailing lists have risen from 304
+  in January to 3,616 in February, with expectations to exceed 5,000 in
+  March. There has been a discussion on whether to transition from opt-in to
+  opt-out on these features, but for the time being, it remains opt-in. 
+
+* Instituted a weekly cron to inform private@cordova about the current list of
+  committers not on the PMC, which should be the empty set.  Currently about a
+  third of the pmc is impacted with no indication that this will ever be
+  addressed by the chair- the requisite notices have already been sent to
+  board@.
+
+* Discussed the current state of affairs with our build farms as they relate to
+  TrafficServer's needs.  We intend to address this with increased funding in
+  next year's budget.
+
+* Received a report about several compromised webpages hosted by VM's
+  associated with OfBiz.  In the process of working with the PMC to correct
+  this situation.
+
+
+-----------------------------------------
+Attachment 6: Report from the Apache Travel Assistance Committee  [Gavin McDonald]
+
+The Travel Assistance Committee exists to help those that would like to
+attend ApacheCon events, but are unable to do so for financial reasons.
+
+Overall Activity since last report
+
+With ApacheCon NA 2014 quickly approaching things have been in full swing.
+Announcements regarding TAC funding opportunities were disseminated around
+16th January 2014. Announcements were sent to pmcs@, committers@, the TAC
+website and the Linux Foundation in an attempt to reach a wider audience.
+Announcements were also made on social media channels.
+From the above, TAC received some 26 applications which is a noticeably
+larger figure than received in recent times. Based on judging by various
+TAC members and a subsequent judges call, an estimation was made that
+applicant reported flight costs, hotels, subsistence and conference fees
+we're likely to total ~$32k for 15 successful applicants.
+Further to the dissemination of acceptance and rejection letters, work has
+been focused around the booking of flights, accommodation and Visa
+referrals for successful TAC applicants.
+
+How has the community developed since the last report?
+
+No new members have joined TAC since last reporting.
+
+Other content:
+
+Based on feedback we received from ApacheCon 2013 in Portland, we have
+arranged a 'Welcome Dinner' (as oppose to Breakfast) for TAC'ers. This way
+we can ensure everyone is comfortable with the accommodation as well as the
+ApacheCon experience prior to the first day of the conference.
+
+N.B. We would also advise board@ to see the TAC section of the Post
+Executive Assistant's Report. This contains a substantial amount of
+information based on work undertaken by EA.
+
+
+-----------------------------------------
+Attachment 7: Report from the VP of W3C Relations  [Andy Seaborne]
+
+Nothing to report.
+
+
+-----------------------------------------
+Attachment 8: Report from the Apache Legal Affairs Committee  [Jim Jagielski]
+
+Somewhat slow but steady stream of posts with the one regarding "why is LGPL
+on the Not Allowed List" receiving the honor of most posts. There is nothing
+that requires board attention at this time
+
+
+-----------------------------------------
+Attachment 9: Report from the Apache Security Team Project  [Mark Cox]
+
+There continues to be a steady stream of reports of various kinds
+arriving at security@ in Feb. These continue to be dealt with by
+the security team.
+
+Feb 2014
+
+3 Support question
+1 Security vulnerability question, but not a vulnerability report
+11 Vulnerability reports to security@apache.org
+       1 [traffic server]
+       1 [logging]
+       1 [poi]
+       1 [archiva]
+       3 [httpd]
+       2 [cordova]
+       1 [cxf]
+       1 [tomcat]
+
+4 Vulnerability reports to projects own security lists
+       1 [sling]
+       1 [struts]
+       2 [tomcat]
+
+
+-----------------------------------------
+Attachment A: Report from the Apache Abdera Project  [Ant Elder]
+
+Apache Abdera provides Java implementations of the IETF Atom Syndication
+Format and Publishing Protocol specifications.
+
+Abdera is very quiet, almost dormant. There was one bug report recently, 
+no one has had a chance to investigate it yet, other than that there has 
+been little activity in the project. It might be worth thinking about 
+moving to the attic but while there are still a few PMC members watching
+the lists I think its probably ok to keep the project alive for now.
+
+The last release was one year ago, the last committer / PMC member 
+addition was Nov 2011.
+
+No board issues.
+
+
+-----------------------------------------
+Attachment B: Report from the Apache Any23 Project  [Michele Mostarda]
+
+Anything To Triples (Any23) is a library, a web service and a command
+line tool that extracts structured data in RDF format from a variety
+of Web documents.
+
+Project Releases
+
+The last release of Any23 (0.9.0) was on 3rd November 2013.
+
+Overall Project Activity since last report
+
+Project activity has been very quiet again. There has been one 
+proposed fix for a new RDFa compliant parser and some community
+members have been trying this out very recently.
+Some other issues have been fixed and the process of proposing parts
+of the codebase to the Apache Tika community is the main focus.
+One issue which is currently being worked on (and nearly complete)
+is to migrate the 'mime' module over to Apache Tika. Please see
+the below Jira ticket.
+https://issues.apache.org/jira/browse/TIKA-1208.
+Due to interest/committer resources from within Any23 progress
+on this issue is slower than preferred HOWEVER it is NOT dead
+in the water.
+
+When were the last committers or PMC members elected?
+
+Chris Mattmann was added back to the PMC on Wed, 15th May 2013.
+
+How has the community developed since the last report?
+
+There has been no community development since we last reported.
+
+Changes to PMC & Committers
+
+As of 17/03/2014 (dd/mm/yyyy) the community is currently VOTE'ing 
+on a PROPOSAL to change the Project Chair from Michele Mostarda 
+to Lewis John McGibbney.
+
+
+
+-----------------------------------------
+Attachment C: Report from the Apache APR Project  [Jeff Trawick]
+
+The Apache Portable Runtime (APR) project creates and maintains
+software libraries that provide a predictable and consistent interface
+to underlying platform-specific implementations.  The sub-projects
+which are released somewhat regularly are APR and APR-util.  In addition,
+the APR-iconv sub-project is commonly used but has not had a release
+since 2007.
+
+Releases:
+---------
+Nothing was released this quarter.  APR 1.5.0 and APR-util 1.5.3 were 
+released November 18, 2013.
+
+Community
+---------
+
+New PMC members: none
+The last new PMC member was added in November of 2013.
+
+New committers: none
+The last new committer was added in March of 2013.
+
+Ten bugs were opened during the reporting period, with some
+sort of developer followup (closure or discussion) on four bugs.
+(Additionally, a number of bugs that had been left open after 
+being fixed in older releases have been cleaned up.)
+
+Mailing list activity has been very quiet this quarter, with no
+release activity and limited discussion of bugs.
+
+Development
+-----------
+Development has been very light this quarter.
+
+Issues
+------
+There are no board-level issues at this time.
+
+
+-----------------------------------------
+Attachment D: Report from the Apache Archiva Project  [Maria Odea Ching]
+
+Apache Archiva is an extensible repository management software that helps
+taking care of your own personal or enterprise-wide build artifact 
+repository. It is the perfect companion for build tools such as Maven, 
+Continuum, and ANT.
+
+Releases
+--------
+
+* Last release was on 19 February 2014 (Archiva 2.0.0)
+
+<PRIVATE> 
+Team has yet to work through a security release based on 
+some vulnerabilities found in Struts that affect the current 1.3 GA 
+version (but not 1.4). To address the security issues, the Struts 
+libraries used in the 1.3 series were upgraded to 2.3.16. The fix is
+already in place, but the release still needs to be rolled out.
+</PRIVATE>
+
+Community
+---------
+
+We have not added any committers or PMC members recently, with the last
+addition for both groups on 14 Sep 2012.
+
+Development
+-----------
+
+Release of 2.0.1 is currently being planned to address issues in the 
+recently released 2.0.0.
+
+Issues
+------
+
+No board level issues at this time.
+
+
+-----------------------------------------
+Attachment E: Report from the Apache Axis Project  [Deepal Jayasinghe]
+
+The Apache Axis project is responsible for the creation and maintenance
+of software related to the Axis Web Services frameworks and subsidiary
+components.
+
+
+Community
+=========
+
+No new committers or PMC members were nominated this quarter. 
+The level of participation is consistent and healthy.
+
+Both user and developer mailing lists continue to be active with a 
+fair amount of traffic.
+
+
+Releases
+No releases for this quarter.
+
+Last releases:
+Axis2/Java: April 2012
+Rampart/Java: April 2012
+Sandesha2/Java: April 2012
+Axis2 Transports/Java: December 2009
+Axis/Java: April 2006
+Axis2/C: Apr 2009
+Rampart/C: May 2009
+Sandesha/C: Oct 2007
+Savan/C: May 2007
+Axis/C++ 1.x: March 2006
+
+
+Issues
+There are no issues requiring board attention at this time.
+
+
+-----------------------------------------
+Attachment F: Report from the Apache Bigtop Project  [Roman Shaposhnik]
+
+Apache Bigtop is a software related to a system for integration,
+packaging, deployment and validation of a big data management
+software distribution based on Apache Hadoop.
+
+RELEASES
+* The last release of Apache Bigtop was version 0.7.0, released on Nov 5, 2013
+* Bigtop 0.8.0 is the next release scheduled for Q2 of 2014, based on Hadoop 2.3
+  - release is delayed from originally planned Q1 of 2014 because of the scope
+    of the changes
+
+CURRENT ACTIVITY
+* Development activity continues as can be seen from the following report:
+     https://issues.apache.org/jira/issues/?filter=12326778
+  (since last board report, Dec 2013)
+* Bigtop 0.8.0 is the next release the community is working on
+* Groovy language runtime environment has been added to Bigtop
+* Latest version of Hadoop 2.3 is being added to Bigtop
+
+COMMUNITY
+
+No changes
+
+* Currently there are:
+- Total of 115 subscribers to the developer list
+- Total of 132 subscribers to the user list
+- Total of 24 subscribers to the announce list
+- Total of 25 committers
+- Total of 20 PMC members
+
+ISSUES
+
+* The Apache Bigtop PMC has voted to recommend 
+     Konstantin Boudnik <cos@apache.org> 
+  be appointed to the office of Vice President, Apache Bigtop
+* PMC has voted on and approved establishing term limits for
+  the position of PMC Chair. Adopted: a position of an Apache Bigtop Chair
+  gets elected for a year. After a year passes it is expected of the active
+  Chair to start a [DISCUSS] email thread on private@bigtop.apache.org asking
+  PMC members to nominate themselves for the next year. It is perfectly
+  acceptable for the active chair to nominate him or herself. There is no
+  limit on the number of terms that one person can server as an Apache Bigtop
+  Chair. Each term, however is limited to one year.
+
+
+-----------------------------------------
+Attachment G: Report from the Apache Bloodhound Project  [Gary Martin]
+
+Project Description
+===================
+Apache Bloodhound is a software development collaboration tool, including
+issue tracking, wiki and repository browsing.
+
+Issues
+======
+
+There are no issues that we believe currently require the board's attention.
+
+Releases
+========
+
+There have been no releases over the last three months. The last releases
+were:
+
+* apache-bloodhound-0.6 (16th July 2013)
+* apache-bloodhound-0.7 (23rd August 2013)
+
+Preparation of a new release is expected within around a week.
+
+Community & Development
+=======================
+
+Two new committee members have been added this quarter:
+
+* SaintGermain (1st January 2014)
+* Antony Semonella (9th January 2014)
+
+Bloodhound is once again looking to become involved with GSoC this year and
+the community has prepared a number of sample projects for students interest.
+This has already seen six students discussing projects on the dev mailing
+list who all seem to have been engaged with promptly in order to hold their
+interest. We have three PMC members who have put themselves forward for
+mentorship. This has also being used as an informal opportunity for those
+mentors to discuss GSoC with local students which may benefit projects beyond
+Bloodhound with potential students.
+
+Development effort has increased again after a slow January but the mailing
+list traffic has remained healthy with new contributors appearing fairly
+regularly. This activity has obviously been boosted significantly by the GSoC
+related discussions. 
+
+
+-----------------------------------------
+Attachment H: Report from the Apache Buildr Project  [Alex Boisvert]
+
+Apache Buildr is a Ruby-based build system for Java-based applications,
+including support for Scala, Groovy and a growing number of JVM languages and
+tools.
+
+Our last release (1.4.15) happened in November. Development and community
+activity (mailing lists, bug reports, etc.) has been low since then. Our last
+committer/PMC changes happened in October.
+
+In February, we discussed and agreed to move to git as our primary
+version-control system, as well as "turning on" the improved GitHub integration
+(https://blogs.apache.org/infra/entry/improved_integration_between_apache_and).
+
+We have no issues that require board attention.
+
+
+-----------------------------------------
+Attachment I: Report from the Apache BVal Project  [Matt Benson]
+
+The Apache BVal project implements the Java EE Bean Validation specification(s)
+and related extensions, and became a top-level project of the foundation on
+February 15, 2012.
+
+### Releases ###
+No new releases.
+
+### Activity ###
+Development has proceeded at what can charitably be termed a crawl for the past
+year while BVal's team have been expending their volunteer energies elsewhere.
+A large obstacle has just been removed, however, in the form of the Apache
+Commons Weaver component, which has just seen its 1.0 release. This project had
+been one of the aforementioned time/energy sinks and was developed for the
+express purpose of solving one of BVal's long-standing design problems; speaking
+on behalf of the PMC I am hopeful that we can now resume a respectable
+development velocity and finally make our 1.0 and 1.1 (implementing,
+respectively, the same versions of the Java Bean Validation specification)
+releases in the near future.
+
+### Community  ###
+No changes in community. Romain Manni-Bucau was added to the PMC during the
+previous quarter after having been elected a committer the quarter before that.
+
+### Branding ###
+Nothing to report.
+
+### Legal ###
+No concerns at present.
+
+### Infrastructure ###
+Nothing needed at the moment.
+
+
+-----------------------------------------
+Attachment J: Report from the Apache Camel Project  [Christian Mueller]
+
+Apache Camel is a powerful open source integration framework based on known
+Enterprise Integration Patterns.
+
+Project Status
+--------------
+* There are no issues that require the board attention.
+* The project is healthy, active and stays at a high level.
+
+Community
+---------
+* Packtpub published one new book about Apache Camel:
+  http://www.packtpub.com/apache-camel-developers-cookbook/book
+* The previous CamelOne conference is now part of RedHat's DevNation
+  conference which is planned for 04/13/2014 - 04/17/2014
+  (http://www.devnation.org/#agenda)
+* We will have two talks at ApacheCon 2014 in Denver:
+  * http://s.apache.org/8un
+  * http://s.apache.org/TPG
+* We got 3 new contributors who signed the ICLA.
+* The community stays at a high level (289 subscribers at dev@; 732
+  subscribers at users@)
+* The community is active and questions being answered in short term.
+ * Avg. 692 mails per month on the users mailing list in December 2013 -
+   February 2014
+ * Avg. 142 mails per month on the dev mailing list in December 2013 -
+   February 2014
+ * Avg. 275 commits per month in December 2013 - February 2014
+
+Community Objectives
+--------------------
+ * We handled the security issues CVE-2014-0002 and CVE-2014-0003. Thanks to
+   David Jorm for reporting it to us.
+ * We are finalizing Apache Camel 2.13.0 to get it out of the door soon.
+ * We are discussing new features for the next minor release Apache Camel
+   2.14.0.
+
+Project Composition
+-------------------
+* No new committer in this reporting period (last one joined 10/16/2013)
+* No new PMC member in this reporting period (last one joined 10/05/2013)
+
+Releases
+--------
+* 2.12.3 (02/21/14)
+* 2.11.4 (02/16/14)
+* 2.11.3 (01/13/14)
+
+
+-----------------------------------------
+Attachment K: Report from the Apache Cayenne Project  [Andrus Adamchik]
+
+Apache Cayenne is a Java persistence framework. It takes a distinct approach 
+to object persistence and provides an ORM runtime, remote persistence services, 
+and a GUI mapping/modeling tool.
+
+Project Status
+
+* Cayenne 3.1 Release Candidate 1 was released on Feb 18.  
+* New feature development continues for Cayenne 3.2.
+* Git migration got stalled (mainly lack of time among the champions to restart 
+  a conversation with infra). Looking for ways to get it back on track.
+
+Community
+
+* Mailing list activity is about average on developer and user lists.
+* The last PMC member was added in December 2012.
+* The last committer was added in May 2012.
+* We have a new, but steady contributor who submitted a number of patches for 
+  Cayenne 3.2 in the last quarter
+
+
+-----------------------------------------
+Attachment L: Report from the Apache Chemistry Project  [Florian Müller]
+
+Apache Chemistry is an effort to provide an implementation of the CMIS
+(Content Management Interoperability Services) specification in Java,
+Python, PHP, .NET, and Objective-C (and possibly other languages).
+The project has graduated in February 2011.
+
+== Project status ==
+
+There isn't much activity except for the OpenCMIS subproject, which
+receives bug fixes, improvements and new features. OpenCMIS is still
+preparing the next release.
+
+There are no board-level issues at this time.
+
+== Community ==
+
+No community changes this quarter.
+
+== Releases ==
+
+Last releases:
+
+OpenCMIS 0.10.0    2013-08-15
+ObjectiveCMIS 0.2  2013-07-30
+cmislib 0.5.1      2012-12-19
+DotCMIS 0.5        2013-01-19
+
+
+-----------------------------------------
+Attachment M: Report from the Apache Click Project  [Malcolm Edgar]
+
+
+-----------------------------------------
+Attachment N: Report from the Apache CloudStack Project  [Chip Childers]
+
+DESCRIPTION
+Apache CloudStack is open source software designed to deploy and manage 
+large networks of virtual machines, as a highly available, highly scalable 
+Infrastructure as a Service (IaaS) cloud computing platform.
+
+ISSUES
+
+The board has a resolution on it's agenda for this meeting to change
+the Apache CloudStack PMC chair (special order B).
+
+CURRENT ACTIVITY
+* The community is finalizing our Apache CloudStack 4.3.0 release. This 
+  release was delayed from the community's initial target for a release date, 
+  due to an issue with how we were treating a specific dependency during the 
+  default build of the software. This issue was identified by the PMC and has 
+  been resolved. We are actively testing our latest RC now.
+* The project was informed that the Citrix-hosted realhostip.com DNS resolver
+  service will be going offline this summer. It is currently used by 
+  CloudStack installations as a default installation configuration option. 
+  Best practice for production installations include changing this to a 
+  local solution, however we are aware that many installations do not make
+  this change. We will be informing our user community of this news during 
+  our 4.3.0 release announcement, and have already committed a patch that 
+  removes the need for this external service from 4.3.0 onward.
+* The project is about to go into feature freeze for Apache CloudStack 4.4.0.
+* The documentation has made the proposed transition from the publican 
+  docbook format to .rst format. It is too early to tell if this had the 
+  desired effect on lowering the barriers for user contributions.
+* The community is working with TLF to organize the upcoming CCC14NA 
+  conference in Denver, with the event obviously being co-located with 
+  ApacheCon NA.
+
+RELEASES
+Apache CloudStack 4.2.1 was released on January 10, 2014.
+
+COMMUNITY
+Including the following additions, CloudStack has 86 committers and 26 PMC 
+members.
+
+New Committers:
+Sanjay Tripathi (sanjaytripathi) - Jan 9
+Mark Hinkle (mrhinkle) - Jan 24
+Chris Suich (csuich2) - Feb 6
+
+New PMC Members:
+Giles Sirret (giles) - Jan 21
+Mike Tutkowski (mtutkowski) - Feb 4
+
+The Apache CloudStack project remains a high volume community:
+
+dev@ 761 729(+32) subs / msgs = Dec: 1298, Jan: 1977, Feb: 1691
+users@ 1042(-59) subs / msgs = Dec: 514, Jan: 516, Feb: 474
+issues@ 192(+15) subs / msgs = Dec: 3028, Jan: 2607, Feb: 943
+commits@ 202(+8) subs / msgs = Dec: 1023, Jan: 1311, Feb: 884
+marketing@ 178(+15) subs / msgs = Dec: 63, Jan: 91, Feb: 18
+users-cn@ 508(+40) subs / msgs = Dec: 83, Jan: 64, Feb: 38
+
+
+-----------------------------------------
+Attachment O: Report from the Apache Commons Project  [Gary Gregory]
+
+The Apache Commons project focuses on all aspects of reusable Java components.
+
+Apache Commons components are widely used in many projects, both within Apache
+and without.
+
+No issues require board attention at this time.
+
+Overall project health is good with twelve releases this period. The [csv]
+component is still inching towards 1.0 releases and [imaging] is very close to
+1.0 as well.
+
+Releases:
+
+   - 2013-12-12: Apache Commons BeanUtils 1.9.0
+   - 2013-12-20: Apache Commons Codec 1.9
+   - 2013-12-31: Apache Commons Pool 2.1
+   - 2014-01-01: Apache Commons Lang 3.2
+   - 2014-01-02: Apache Commons Exec 1.2
+   - 2014-01-09: Apache Commons Lang 3.2.1
+   - 2014-01-12: Apache Commons BeanUtils 1.9.1
+   - 2014-01-21: Apache Commons Compress 1.7
+   - 2014-02-07: Apache Commons FileUpload 1.3.1
+      - SECURITY - CVE-2014-0050. Specially crafted input can trigger a DoS
+      if the buffer used by the MultipartStream is not big enough. When
+      constructing MultipartStream enforce the requirements for buffer size by
+      throwing an IllegalArgumentException if the requested buffer size is too
+      small. This prevents the DoS.
+   - 2014-02-25: Apache Commons Pool 2.2
+   - 2014-03-04: Apache Commons Lang 3.3
+   - 2014-03-04: Apache Commons DBCP 2.0
+
+New committers
+
+   - 2014-01-24: Duncan Jones
+   - 2014:02-13: Bernd Eckenfels
+
+News
+
+   - We’ve moved Commons Attributes to dormant. Since no development has
+     happened for a long time, we’ve moved the Apache Commons Attributes
+     component to dormant. No further development is expected.
+   - The site has a new look and feel. Not all component sites have been
+     republished yet.
+
+
+-----------------------------------------
+Attachment P: Report from the Apache Community Development Project  [Luciano Resende]
+
+The Community Development PMC is responsible for helping people become
+involved with Apache projects
+
+
+Project Status
+--------------
+
+No issues require board attention at this time.
+
+PMC changes
+-----------
+
+No Changes. The latest addition has been Suresh Marru on 2013-04-26.
+
+
+Google Summer of Code
+---------------------
+
+It’s GSoC time again, we have been accepted as a Mentoring Organization and 
+we are currently accepting students proposals. 
+
+Ulrich Stark has volunteered as GSoC Admin and has been doing an excellent work 
+handling all the Organization registration and mentoring registration and 
+validation with the respective PMCs.
+
+
+ComDev & Events
+---------------
+
+The ComDev PMC is now a "home" for some of the ConCom responsibilities. 
+In the last few months, Rich Bowen has been leading the RFP for ApacheCon Denver 
+and the schedule is now up and live at the conference website : 
+http://events.linuxfoundation.org/events/apachecon-north-america/program/schedule.
+
+There has also been discussion about a community panel where people would discuss 
+some of the Apache “hot topics” such as the “Release Process”. The panel topic hasn’t 
+been finalized yet and is being discussed on the comdev AT apache DOT org.
+ 
+Other
+-----
+
+There has been a few threads recently about Apache Releases 
+and how to support a faster release process for Apache projects. 
+
+
+-----------------------------------------
+Attachment Q: Report from the Apache Continuum Project  [Brent Atkinson]
+
+Apache Continuum is an enterprise-ready continuous integration server with
+features such as automated builds, release management, role-based security,
+and integration with popular build tools and source control management
+systems.
+
+The heightened activity cited in the last report resulted in a temporarily
+build to address the remote execution vulnerabilities in Apache Struts 2 
+that lead to vmbuild being compromised and subsequently disabled by the
+infrastructure team. The build has been running on vmbuild without incident
+since January, 7 2014.
+
+The last release was Continuum 1.4.1, on January 7, 2013. A release including
+fixes for the previously mentioned vulnerabilities is still pending.
+
+As expected, there has been low volume on the mailing lists and in the issue
+tracker.
+
+There have been no new committers since last cycle. The last committer was
+added December 8, 2010 and the last PMC member was added on September 2, 2012.
+
+
+-----------------------------------------
+Attachment R: Report from the Apache Cordova Project  [Brian LeRoux]
+
+
+-----------------------------------------
+Attachment S: Report from the Apache Creadur Project  [Robert Burrell Donkin]
+
+
+-----------------------------------------
+Attachment T: Report from the Apache cTAKES Project  [Pei J Chen]
+
+Apache cTAKES (clinical Text Analysis and Knowledge Extraction System)
+is a natural language processing (NLP) tool for information extraction
+from electronic medical record clinical free-text.
+
+Issues:
+There are no issues requiring board attention at this time.
+
+Releases:
+- ctakes-3.0.0-incubating on 2013-02-22
+- ctakes-3.1.0 on 2013-08-30
+- ctakes-3.1.1 on 2013-12-05
+
+Development:
+The committee is actively working and planning for the future release.
+Some of the planned code changes for the upcoming release includes:
+- YTEX (Yale Extensions for Apache cTAKES) has been committed to sandbox.  
+Key features include storing annotations into an relational db, exporting
+annotation to data mining toolkits (WEKA, R, Matlab, etc.).
+- New faster dictionary lookup component has been committed to sandbox
+- New temporal relations component in progress
+- Various bug fixes and code enhancements tracked by Jira
+
+Community:
+Last Committers/PMC:
+Murali Nagendranath (2013-10-21)
+Vijay Garla (2013-11-16)
+dev mailing list subscribers count: 103 (+9 since last report) 
+user mailing list subscribers count: 91 (+10 since last report)
+
+
+-----------------------------------------
+Attachment U: Report from the Apache Curator Project  [Jordan Zimmerman]
+
+Project Status
+==============
+* 2.4.1 maintenance released currently being voted on
+
+Community
+=========
+* In the past 5 weeks 10 issues were resolved
+* Last release: 2.4.0 on Feb 8, 2014
+* Curator switched to a Github mirror and will now take Pull
+Requests instead of patches
+
+Issues for board consideration
+==============================
+* Curator continues to have only 1 active committer however
+patches/PRs are coming from a good number of unique active users
+
+
+-----------------------------------------
+Attachment V: Report from the Apache DirectMemory Project  [Raffaele P. Guidi]
+
+Apache DirectMemory is an off-heap cache implementation for the JVM
+
+* General Information
+Development and mailing lists traffic are mostly quiet, we are working on a
+minor (fix) 0.2.1 release
+
+* Issues
+No known issues at the time
+
+* Committers or PMC members change 
+Last added PMC member was Noctarius (Cristoph Engelbert) on 2013-09-25
+
+* Releases
+Release 0.2 - 2013-09-17
+Release 0.1 - 2012-07-09
+
+
+-----------------------------------------
+Attachment W: Report from the Apache Felix Project  [Felix Meschberger]
+
+Apache Felix is a project aimed at implementing specifications from the OSGi
+Alliance as well as implementing other supporting tools and technologies aligned
+with OSGi technology.
+
+Community
+- PMC: No new PMC members have been added in this report period. The last new
+  PMC member was added in Dec. 2013
+- Committers: David Bosschaert has been added as a committer on Dec. 20, 2013
+- Steady mailing list activity.
+- There are no issues requiring board attention at this time.
+
+Software
+- Apache Felix Utils 1.6.0 (March 5, 2014)
+- Apache Felix Declarative Services (SCR) 1.8.2 (January 21, 2014)
+- Apache Felix Inventory 1.0.4 (March 3, 2014)
+- Apache Felix Jaas 0.0.2 (Feburary 17, 2014)
+- Apache Felix Web Console 4.2.2 (Feburary 06, 2014)
+- Apache Felix Inventory 1.0.2 (Feburary 06, 2014)
+- Apache Felix iPOJO Runtime and Manipulator 1.11.1 (January 29, 2014)
+- Apache Felix Metatype 1.0.10 (January 19, 2014)
+- Apache Felix Coordinator 1.0.0 (January 19, 2014)
+- Apache Felix AutoConf Processor 0.1.5 (December 10, 2013)
+- Apache Felix DeploymentAdmin 0.9.5 (December 10, 2013)
+- Apache Felix HTTP Service 2.2.2 (December 10, 2013)
+
+Project Branding
+- TM missing from all Logos
+
+Licensing and other issues
+- None
+
+
+-----------------------------------------
+Attachment X: Report from the Apache Flex Project  [Alex Harui]
+
+Apache Flex is an application framework for easily building Flash-based
+applications for mobile devices, the browser and desktop.
+
+RELEASES
+-Apache Flex SDK 4.11.0 was released on 10/28/13.
+-Voting is in progress for SDK 4.12.0
+-Apache Flex Installer 2.7.0 was also released on 10/28/13.
+-Voting is also in progress for Installer 3.0.0 which has the new
+ capability to use Ant script syntax to drive the install process.
+
+ACTIVITY
+Activity in Apache Flex continues to be in two main areas:  improvements
+to the existing Adobe Flash Platform-dependent code base, including the
+releases listed above, and prototyping ways to create a version of Flex
+that is independent from the Adobe Flash Platform.  There is another group
+working on Maven-related tools for the existing code base.
+
+In the past three months we've seen:
+- Continued JIRA activity (more bugs raised than resolved however)
+- More committers becoming active again.
+- Fewer new folks contributing and eventually becoming committers.
+
+Other highlights:
+-Over 70 bugs have been fixed in 4.12.0.
+-Three committers will be giving presentations on Flex at ApacheCon 2014.
+
+Code Donation Update
+-FlexUnit was donated but has yet to be formulated into a release.
+-Swiz donation is still pending.  The donator has not filed the paperwork.
+-BlazeDS donation paperwork was submitted but the code is not yet in the
+ repo because it was discovered that some pieces were missing.  We hope to
+ get the missing pieces soon.  The missing pieces are stuck in IP review at
+ Adobe.
+
+COMMUNITY
+-One person who has been helpful on the mailing list and in JIRA was
+ invited as a committer and declined.
+-No other candidates for new committer or promotions of committers to PMC
+ in this reporting period.
+-A non-committer claims to be starting on a book about Apache Flex.
+-Latest analytics include over 3000 hits per day on the website during the
+ work week (less on weekends).
+-There were more than 14,000 installs of 4.11.0 since its release.
+-It feels like there is more interest from users based on activity on
+ users@.
+-Slight decrease in activity-level and number of committers working on SDK
+ repo but more activity and committers working on FlexJS.
+-Several Apache Flex committers will be presenting at the 360 Flex
+ conference in May
+
+TRADEMARKS
+-The new version of Flex is going to be called FlexJS.  We have begun
+ associating the TM symbol with FlexJS per advice from trademarks@
+-This site is hopefully in compliance with Apache trademark policy
+ http://www.madeinflex.com/terminos-legales/
+<private>
+nuqDaq 'oH puchpa''e'
+</private>
+
+INFRASTRUCTURE
+* I'm still hoping to find time to resolve INFRA-4380 (attachments in old
+Flex bugs).
+
+
+-----------------------------------------
+Attachment Y: Report from the Apache Giraph Project  [Avery Ching]
+
+Giraph is a Bulk Synchronous Parallel framework for writing programs
+that analyze large graphs on a Hadoop cluster. Giraph is similar to
+Google's Pregel system.
+
+Project Status
+--------------
+
+Upcoming releases:
+  1.1.0 - Getting close to done (coordinated by Roman Shaposhnik)
+
+Community
+---------
+
+* In the past 30 days we have resolved 25 issues.
+* Presented at Strata 2014 - 
+  http://strataconf.com/strata2014/public/schedule/detail/32137
+* Last committer voted in 11/2012 (Nitay Joeffe)
+* Last PMC member voted in 2/2014 (Eli Reisman)
+* Last release 5/2013 (1.0.0)
+
+Mailing lists:
+  231 subscribers on dev
+  379 subscribers on user
+
+
+-----------------------------------------
+Attachment Z: Report from the Apache Gump Project  [Stefan Bodewig]
+
+Apache Gump is a cross-project continuous integration server.  Gump's
+intention isn't so much to be a CI server but rather a vehicle that
+makes people look beyond their project's boundaries and helps the
+projects to collaborate.
+
+Gump is written in Python and supports several build tools and version
+control systems.  The Apache installation of Gump builds ASF as well
+as non-ASF projects and their dependencies.  It started in the Java
+part of the foundation but also builds projects like APR, HTTPd and
+XMLUnit.NET.
+
+== Summary ==
+
+Gump seems to create useful results for the few projects that use it.
+Activity spiked when JUnit dropped Ant build support, very little
+activity apart from that.
+
+== Releases ==
+
+Gump has never done any releases.  One reason for this is that the ASF
+installations of Gump work on the latest code base almost all of the
+time following its "integrate everything continuously" philosophy.
+
+== Activity ==
+
+The JUnit team decided to drop the Ant build and switch to "Maven
+only".  Gump used Ant to build JUnit and the migration caused a few
+hiccups along the way.  Three different people modified a few
+descriptors over a period of several days until things were back to
+normal.  No other activity.
+
+== Changes to the Roster ==
+
+All ASF committers have write access to the metadata that configure
+the ASF installations.
+
+No new committers to the code base, no changes to the PMC.  The most
+recent addition to the PMC was in December 2006 when we added Sander
+Temme.
+
+
+-----------------------------------------
+Attachment AA: Report from the Apache Helix Project  [Kishore Gopalakrishna]
+
+Development
+===========
+Fixed minor bugs and added new features on the main release branches
+- Significant performance improvements to the Helix controller
+- Improved CI health
+- 20 new JIRAS since last report.
+- 9 issues resolved.
+
+Progress on integrating with provisioners like YARN
+- Fully-functional example of Helix demonstrating the ability to integrate
+  with YARN and manage containers
+- Initial work on integrating existing task framework to run within
+  provisioned containers
+- Initial exploration of Mesos integration
+
+Progress on pluggable monitoring
+- Initial code for plugging in monitoring frameworks like Riemann to support
+  centralized actionable alerts
+
+Community
+=========
+- 100+ emails on the dev list
+- 70+ emails on the user list
+- Establishment of regular meetings on #apachehelix
+- Receiving significant community input related to improving Helix APIs
+  through IRC and the mailing lists
+- Last committer 05/18/13
+- Last PPMC 11/7/13
+
+Releases
+=========
+
+- Making progress on 0.7.x stability
+- Plan to release 0.6.3 with critical bug fixes/features.
+
+
+-----------------------------------------
+Attachment AB: Report from the Apache Hive Project  [Carl Steinbach]
+
+DESCRIPTION
+
+Apache Hive is a data warehouse written on top of Apache Hadoop. It
+provides SQL to query and manage data (in the form of tables and
+partitions stored in HDFS or external systems) and provides a
+metastore containing metadata information about the stored data.
+
+RELEASES
+
+* The last release of Apache Hive was version 0.12.0, released on
+  October 15, 2013.
+
+* Work on the upcoming 0.13.0 release has begun.
+
+COMMUNITY
+
+* Development activity continues as can be seen from the following
+  report: http://s.apache.org/Nx9
+
+* A Hive User Group meeting was held on March 17th at Hortonworks'
+  office in Palo Alto.
+
+* Xuefu Zhang (xuefu) and Gunther Hagleitner (gunther) were voted in
+  as PMC members. The last addition to the Hive PMC was made on
+  March 3rd.
+
+* Remus Rusanu, Sergey Shelukhin, Jason Dere, and Vikram Dixit were
+  voted in as committers. The last addition was made on February 26th.
+
+* Currently there are:
+- 655 subscribers to the developer list
+- 1658 subscribers to the user list
+- 12 committers
+- 17 PMC members
+- 6 Emeritus PMC members
+
+BRANDING CHECKLIST
+
+We have created HIVE-2432 to track this, with sub-tasks corresponding
+to each item.
+
+* Project Website Basics:  [DONE]
+* Project Naming And Descriptions: [DONE]
+* Website Navigation Links: [IN PROGRESS]
+* Trademark Attributions: [IN PROGRESS]
+* Logos and Graphics: [DONE]
+* Project Metadata:  [DONE]
+
+
+-----------------------------------------
+Attachment AC: Report from the Apache Incubator Project  [Roman Shaposhnik]
+
+The Apache Incubator is the entry path into the ASF for projects and
+codebases wishing to become part of the Foundation's efforts.
+
+There are 33 podlings currently under incubation.
+
+* Community
+
+  New IPMC members:
+
+    Justin Mclean
+
+  People who left the IPMC: 
+
+    (None)
+
+* New Podlings
+
+    (None)
+
+* Graduations
+
+  The board has motions for the following:
+
+    (None)
+
+  The following graduations have been approved by
+  the previous board meeting but haven't been recorded
+  in the incubator report:
+
+    Knox
+    Spark
+
+* Releases
+
+  The following releases were made since the last Incubator report:
+
+    Feb  2 Apache Spark 0.9.0-incubating
+    Feb  2 Apache Falcon 0.4-incubating
+    Feb  5 Apache Twill 0.1.0-incubating
+    Feb 10 Apache Olingo 1.1.0-incubating
+    Feb 21 Apache Storm 0.9.1-incubating
+    Feb 24 Apache Celix 1.0.0-incubating
+    Feb 28 Apache Tez 0.3.0-incubating
+
+  It took 2-10 days for the third IPMC vote to arrive.
+
+    Release                               VOTE start  Third IMPC +1  Days
+    ---------------------------------------------------------------------
+    Apache Spark 0.9.0-incubating         Jan 24      Jan 31          5
+    Apache Falcon 0.4-incubating          Jan 24      Feb  2         10
+    Apache Twill 0.1.0-incubating         Feb  1      Feb  4          3
+    Apache Olingo 1.1.0-incubating        Jan 31      Feb 10         10
+    Apache Storm 0.9.1-incubating         Feb 13      Feb 16          3
+    Apache Celix 1.0.0-incubating         Feb 16      Feb 22          6
+    Apache Tez 0.3.0-incubating           Feb 26      Feb 28          2
+
+* Miscellaneous
+
+  * NPanday missed two reports in a row and community activity is low.
+    This has been escalated to the project's mentors.
+
+  * A proposal for Hoya, an application to deploy and manage existing
+    distributed applications in a YARN cluster, is still pending a vote.
+
+  * The Apache Phoenix podling is concerned that an import of existing
+    issues database into ASF JIRA is taking too long
+
+<private>
+Hab SoSlI' Quch!
+</private>
+
+-------------------- Summary of podling reports --------------------
+
+* Not yet ready to graduate
+
+  No release(s):
+    
+    BatchEE
+    DataFu
+    log4cxx2
+    Phoenix
+    Wave
+    Streams
+    
+  Community growth:
+ 
+    DeviceMap
+    Drill
+    Falcon
+    MRQL
+    Kalumet
+    Streams
+
+  Considering retirement:
+  
+    S4
+
+* Ready to graduate 
+
+    Allura
+    Tajo
+
+* Did not report, expected next month
+
+    NPanday
+
+----------------------------------------------------------------------
+                       Table of Contents
+Allura
+BatchEE
+DataFu
+DeviceMap
+Drill
+Falcon
+Kalumet
+log4cxx2
+MRQL
+NPanday
+Phoenix
+S4
+Sentry
+Sirona
+Storm
+Streams
+Tajo
+Wave
+
+---------------------------------------------------------------------- 
+
+--------------------
+Allura
+
+Forge software for the development of software projects, including source
+control systems, issue tracking, discussion, wiki, and other software
+project management tools.
+
+Allura has been incubating since 2012-06-25.
+
+Graduation discussions are currently ongoing.
+Community Discussion: http://markmail.org/message/wdddve3kxceqvgj5
+Podling vote: http://markmail.org/message/4g54fcxwb4xxys5l
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+  None
+
+How has the community developed since the last report?
+
+  Two talks about Allura were accepted for ApacheCon.  A few small patches
+  from new contributors.  A guide for new contributors was written.  One
+  person has expressed interest in participating in the GSoC with Allura.
+
+How has the project developed since the last report?
+
+  A second release was made recently (Feb 25).  Many new features and fixes
+  continue to land, including a new user profile page design.
+
+Date of last release: 
+
+  2014-02-25
+
+When were the last committers or PMC members elected?
+
+  2013-04-11
+
+Signed-off-by: 
+
+  [ ](allura) Ross Gardler
+  [ ](allura) Greg Stein
+  [X](allura) Jim Jagielski
+
+Shepherd/Mentor notes:
+
+  Justin Mclean (jmclean):
+
+    IPMC has voted for graduation and just started a vote on
+    general@incubator.
+
+--------------------
+BatchEE
+
+BatchEE projects aims to provide a JBatch implementation (aka JSR352) and a
+set of useful extensions for this specification.
+
+BatchEE has been incubating since 2013-10-03.
+
+Three most important issues to address in the move towards graduation:
+
+  1. Build a Community
+     We really need to work on this. Mark Struberg will hold a talk 
+     about BatchEE on JAX in early May 2014 in Mainz
+
+  2. Ship stable releases
+     This looks good so far. We are pretty close on getting 
+     a first release out.
+
+  3. Establish an ASF culture. 
+     We also need to work on this front. The committer circle does fine
+     on the technical side but we really need to raise attention about 
+     the importance of structural things like not pulling in too many
+     foreign dependencies and shipping board reports in time.
+
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+  None yet. We still have to work on a few things but nothing critical.  I
+  will make sure we raise issues if we cannot solve them.
+
+
+How has the community developed since the last report?
+
+  The community does not yet grow much in terms of committers.  There are
+  quite a few interested users though and the project gets used in
+  production projects already.
+
+How has the project developed since the last report?
+
+  We have missed reporting for 2 consecutive months due to time constraints
+  of the involved leaders. We will report the next 3 month to show our
+  commitment
+
+Date of last release: 
+
+  none yet. We are preparing to release 0.1-incubating within 
+  the next 2 month.
+
+When were the last committers or PMC members elected?
+  
+  We still have the initial set of committers.
+
+Signed-off-by: 
+
+  [ ](batchee) Jean-Baptiste Onofré
+  [ ](batchee) Olivier Lamy
+  [X](batchee) Mark Struberg
+
+--------------------
+DataFu
+
+DataFu provides a collection of Hadoop MapReduce jobs and functions in
+higher level languages based on it to perform data analysis. It provides
+functions for common statistics tasks (e.g. quantiles, sampling), PageRank,
+stream sessionization, and set and bag operations. DataFu also provides
+Hadoop jobs for incremental data processing in MapReduce.
+
+DataFu has been incubating since 2014-01-05.
+
+Three most important issues to address in the move towards graduation:
+
+  1. Building ASF community
+  2. Release
+  3. Remaining incubator paperwork
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+  None.
+
+How has the community developed since the last report?
+
+  More contributions have been received from Jian Wang, who has also 
+  been voted in as the newest committer and PPMC member.  A talk
+  is planned at the Apache Pig meetup to be held on March 14th.
+
+How has the project developed since the last report?
+
+  Three JIRAs have been opened, four have been closed.  The project has 
+  migrated from Ant to the Gradle build system, which will make it easier 
+  to add libraries for Hive, Crunch, etc.
+
+Date of last release: 
+
+  None. Second month of incubation.
+
+When were the last committers or PMC members elected?
+
+  2014-02-22
+
+Signed-off-by: 
+
+  [ ](datafu) Ashutosh Chauhan
+  [X](datafu) Roman Shaposhnik
+  [x](datafu) Ted Dunning
+
+--------------------
+DeviceMap
+
+Apache DeviceMap is a data repository containing device information, images
+and other relevant information for all sorts of mobile devices, e.g.
+smartphones and tablets. While the focus is initially on that data, APIs
+will also be created to use and manage it.
+
+DeviceMap has been incubating since 2012-01-03.
+
+Three most important issues to address in the move towards graduation:
+
+  1. Make a release 
+  2. Get more contributors 
+  3. Grow the community
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be aware
+of?
+
+  DeviceMap's activity is very low and has actually gone down in the last
+  few months.
+
+  The next step is probably for the podling to consider whether it can
+  reasonably expect to grow a community and get more active, or whether it's
+  not active enough to graduate as an Apache project.
+
+How has the community developed since the last report?
+
+  No changes.
+
+How has the project developed since the last report?
+
+  Minimal changes only.
+
+Date of last release:
+
+  None yet.
+
+When were the last committers or PMC members elected?
+
+  May 2013
+
+Signed-off-by: 
+
+  [X](devicemap) Bertrand Delacretaz
+  [ ](devicemap) Kevan Miller
+  [ ](devicemap) Andrew Savory
+
+Shepherd/Mentor notes:
+
+  Roman Shaposhnik (rvs):
+
+    I will agree that the community activity is very low and the trend is
+    not positive. I would encourage mentors to probe around the question of
+    potential retirement.
+
+--------------------
+Apache: Project Drill
+
+Description:
+
+Apache Drill is a distributed system for interactive analysis of large-scale
+datasets that is based on Google's Dremel. Its goal is to efficiently
+process nested data, scale to 10,000 servers or more and to be able to
+process petabyes of data and trillions of records in seconds.
+
+Drill has been incubating since 2012-08-11.
+
+Three Issues to Address in Move to Graduation:
+
+  1. Continue to attract new developers and and early users with a variety
+     of skills and viewpoints
+  2. Continue to develop deeper community skills and knowledge by building
+     additional releases
+  3. Demonstrate community robustness by rotating project tasks among
+     multiple project members
+ 
+Issues to Call to Attention of PMC or ASF Board:
+
+  None
+ 
+How community has developed since last report:
+
+  Community awareness and participation were strengthened through a meeting
+  of the Bay Area Apache Drill User Group in San Jose sponsored by Yahoo!
+  This event expanded participation to include many new to Drill and
+  particularly those interested as potential users (analysts rather than
+  developers).  
+
+  Speakers included Drill project mentor Ted Dunning from MapR, Data
+  Scientist Will Ford from Alpine Data Labs, new Drill committer Julian Hyde
+  from HortonWorks and Aman Sinha, MapR Drill engineer.
+
+  Additional events include:
+
+  • Two new Drill committers accepted appointment: Julian Hyde (HortonWorks)
+    and Tim Chen (Microsoft).
+  • Drill has a new project mentor, Sebastian Schelter.
+ 
+  Mailing list discussions:
+
+  Subscriptions to the Drill mailing lists have risen to 399 on dev list and
+  308 on the user list and 508 uniques across both lists.  There has been
+  active and increasing participation in discussions on the developer
+  mailing list, including new participants and developers. Participation on
+  the user list is growing although still small; mainly activity takes place
+  on developer mailing list.
+ 
+  Activity summary for the user mailing list:
+
+  http://mail-archives.apache.org/mod_mbox/incubator-drill-user/
+ 
+    February to date 02/26/2014: 25
+    January 2014, 12
+    December 2013, 62
+
+  Topics in discussion on the user mailing list included but not limited to:
+
+  • Feb 2014: Connecting Drill to HBase, Support for Distinct/Count
+  • Jan 2014: Loading Data into Drill, Data Locality
+  • December 2013: Loading Data into Drill, Setting Drill with HDFS and
+    other Storage engines
+
+  Activity summary for the dev mailing list:
+
+    http://mail-archives.apache.org/mod_mbox/incubator-drill-dev/
+    February to date 02/26/2014: 250 (jira; discussion; review requests)
+    January 2014, 156 (jira; focused discussions)
+    December 2013, 51 (jira; focused discussions)
+
+  Topics in discussion on the dev mailing list included but not limited to:
+
+  • February to date 02/26/2014: How to contribute to Drill; review requests
+    for Drill 357, 346, 366, 364; status of Drill functions including Hash
+    functions; support operators +,- for date and interval arithmetic
+  • January: Sql Options discussions, Casting discussions, Multiplex Data
+    Channel feedbacks
+  • December: Guide for new comers contribution, Aggregate functions code
+    gen feedback Code
+
+  For details of code commits, see http://bit.ly/14YPXN9
+  There has been continued activity in code commits
+
+  19 contributors have participated in GitHUB code activity; there have been
+  116 forks.
+  
+  February code commits include but not limited to: Support for
+  Information_schema, Hive storage and metastore integration, Optiq JDBC
+  thinning and refactoring, Math functions rework to use codegen, Column
+  pruning for Parquet/Json, Moving Sql parsing into Drillbit server side,
+  TravisCI setup 
+
+  January code commits include but not limited to: Implicit and explicit
+  casting support, Broadcast Sender exchange, add TPC-H test queries,
+  Refactor memory allocation to use hierarchical memory allocation and
+  freeing.
+
+  Community Interactions
+
+  Weekly Drill hangout continues, conducted remotely through Google hangouts
+  Tuesday mornings 9am Pacific Time to keep core developers in contact in
+  realtime despite geographical separation.
+
+  Community stays in touch through @ApacheDrill Twitter ID, and by postings
+  on various blogs including Apache Drill User http://drill-user.org/ which
+  has had several updates and through international presentations at
+  conferences.
+
+  Viability of community is also apparent through active participation in
+  the Bay Area Apache Drill User group meeting in early November, which has
+  grown to 440 members.
+
+  Sample presentations:
+
+  • “How to Use Drill” by Ted Dunning and Will Ford, Bay Area Apache Drill
+    Meet-up 24 February
+  • “How Drill Addresses Dynamic Typing” by Julian Hyde, Bay Area Apache
+     Drill Meet-up 24 February
+  • “New Features and Infrastructure Improvements” by Aman Sinha, Bay Area
+     Apache Drill Meet-up 24 February
+
+  Articles
+
+  Examples of articles or reports on Apache Drill since last report include:
+
+  • Drill blog post by Ellen Friedman at Apache Drill User updating
+    community on how people will use Drill and inviting comments/ questions
+    from remote participants as part of the Drill User Group
+    http://bit.ly/1p1Qvgn
+  • Drill blog post by Ellen Friedman at Apache Drill User reports on
+    appointment of new Drill committers and new mentor http://bit.ly/JIcwQe
+
+  Social Networking
+
+  @ApacheDrill Twitter entity is active and has grown substantially by 19%,
+  to 744 followers.
+
+How project has developed since last report:
+
+  1. Significant progress is being made on execution engine and sql front
+     end to support more functionality, also more integrations with storage
+     engines.
+  2. Work on ODBC driver has begun with a new group led by George Chow in
+     Vancouver.
+  3. Significant code drops have been checked in from a number of
+     contributors and committers
+  4. Work toward 2nd milestone is progressing substantially.
+
+Signed-off-by:
+
+  [x](drill) Ted Dunning
+  [x](drill) Grant Ingersoll
+  [x](drill) Isabel Drost-Fromm
+  [x](drill) Sebastian Schelter
+
+Shepherd/Mentor notes:
+
+  Isabel Drost-Fromm (isabel):
+
+    For the next report, please include information on date of last
+    release and when last committer/PMC member was elected.
+
+--------------------
+Falcon
+
+Falcon is a data processing and management solution for Hadoop designed for
+data motion, coordination of data pipelines, lifecycle management, and data
+discovery. Falcon enables end consumers to quickly onboard their data and
+its associated processing and management tasks on Hadoop clusters.
+
+Falcon has been incubating since 2013-03-27.
+
+Three most important issues to address in the move towards graduation:
+
+  1. Continue to build community
+  2. Add more committers to the project
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be aware
+of?
+
+  - No
+
+How has the community developed since the last report?
+
+  * Two new committers have been invited to join the project
+  * More users & contributors have joined the falcon project and the
+    community continues to grow
+
+How has the project developed since the last report?
+
+  * We have had discussions on the mailing list relating to the Roadmap of
+    the project with wide participation from many members in the community.
+  * We are currently working on major features to further enhance the
+    project and have a release planned (0.5-incubating) early April
+  * There is plenty of activity happening on the project through JIRAs
+
+Date of last release:
+
+  2014-02-03 (0.4-incubating)
+
+When were the last committers or PMC members elected?
+
+  Two new committers have been invited to join the project.
+
+Signed-off-by:
+
+  [ ](falcon) Arun Murthy
+  [X](falcon) Chris Douglas
+  [ ](falcon) Owen O'Malley
+  [ ](falcon) Devaraj Das
+  [X](falcon) Alan Gates
+
+--------------------
+Kalumet
+
+Kalumet a complete environment manager and deployer including J2EE
+environments (application servers, applications, etc), softwares, and
+resources.
+
+Kalumet has been incubating since 2011-09-20.
+
+Community Development:
+
+  Apache Kalumet 0.6-incubating version has been released.
+
+  We are in the way of promoting the documentation on the website.
+
+Project Development:
+
+  We are preparing the 0.7-incubating release.
+
+  Local branches have been created containing:
+
+  - new model and REST API
+  - new webconsole (remove of Echo framework)
+
+Before Graduation (most important issues to address in the move towards
+graduation):
+
+  - The documentation has been updated and aligned with the 0.6-incubating
+    release. The documentation will be promoted on the website and "linked"
+    in announcement e-mails.
+  - The 0.7-incubating release will fix the graduation issue, especially in
+    term of license (removal of Echo2 framework for the UI).
+
+Post Graduation:
+
+  - Kalumet scripts. It's the extension of the "software" concept globally
+    to all Kalumet resources. It will allow users to create custom
+    deployment/update plan, with a set of fine-grained steps.
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of:
+
+  None so far. 
+
+Date of the last release: 2013-11-25
+
+  No new committer or PMC
+
+NB: Jim Jagielski asked to be retired from the mentors of the project.
+
+Signed-off-by: 
+
+  [X](kalumet) Jim Jagielski
+  [ ](kalumet) Henri Gomez
+  [ ](kalumet) Jean-Baptiste Onofre
+  [ ](kalumet) Olivier Lamy
+
+--------------------
+log4cxx2
+
+Logging for C++
+
+log4cxx2 has been incubating since 2013-12-09.
+
+Three most important issues to address in the move towards graduation:
+
+  1. We probably need to decide what's an acceptable platform/compiler list,
+     sort out any remaining hiccups, and then move towards a release.
+  2. We need to release 0.11.0 as maintenance release.
+  3. We need to make a broader use of the ASF infrastructure (notably the
+     CI, as well as improved management of the Jira site - notably with
+     triaging), and establish a roadmap for the next releases.
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+  N/A
+
+How has the community developed since the last report?
+
+  The committers are still getting acquainted with each other and the
+  foundation. There's only little need for support currently, but
+  from time to time it looks like "old users" notify about themselves.
+
+How has the project developed since the last report?
+
+  We have applied a lot of bug fixes which were collected in the last
+  years in JIRA and fit to a maintenance release, tested on different
+  platforms and started to discuss about changes in the used build
+  system because of different problems.
+
+Date of last release:
+
+  2008-04-03 was the official, pre-incubation 0.10.0
+
+  Many post-0.10.0 commits exist on trunk which we intend to get out as
+  0.11.x.
+
+When were the last committers or PMC members elected?
+
+  N/A
+
+Signed-off-by:
+
+  [X](log4cxx2) Christian Grobmeier
+  [ ](log4cxx2) Scott Deboy
+
+--------------------
+MRQL
+
+MRQL is a query processing and optimization system for large-scale,
+distributed data analysis, built on top of Apache Hadoop, Hama, and Spark.
+
+MRQL has been incubating since 2013-03-13.
+
+Three most important issues to address in the move towards graduation:
+
+  1. increase adoption, expand user community, and increase user list
+     activity
+  2. recruit more developers, committers, and PMCers
+  3. have at least one more incubator release
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+  none
+
+How has the community developed since the last report?
+
+  Nothing to report. No new developers. No new committers.
+
+How has the project developed since the last report?
+
+  Ported MRQL to Yarn. Added support for Spark 0.9.0.
+  Improved the MRQL build process in many ways.
+  Changed the run scripts to construct assembly jars at runtime.
+
+Date of last release: 
+
+  2013-10-31
+
+When were the last committers or PMC members elected?
+
+  2013-03-13
+
+Signed-off-by: 
+
+  [X](mrql) Alan Cabrera
+  [ ](mrql) Anthony Elder
+  [ ](mrql) Alex Karasulu
+  [ ](mrql) Mohammad Nour El-Din
+
+Shepherd/Mentor notes:
+
+  Roman Shaposhnik (rvs):
+
+    A reasonably sized community. Given that it has been incubating for
+    about a year now, I'd encourage graduation activity. A few more releases
+    would be a good first step.
+
+--------------------
+Phoenix
+
+Phoenix is an open source SQL query engine for Apache HBase, a NoSQL data
+store. It is accessed as a JDBC driver and enables querying and managing
+HBase tables using SQL.
+
+Phoenix has been incubating since 12/11/2013.
+
+Three most important issues to address in the move towards graduation:
+
+  1) Perform initial release out of apache incubator followed up quickly by
+     two new releases
+  2) Make our customers successful and prove value of Phoenix+HBase over
+     other alternatives
+  3) Attract new committers to the project
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+  We've been waiting more than two months for our Github issues to be
+  imported into our Apache JIRA.
+
+How has the community developed since the last report?
+
+  Lots of user/dev traffic on email list and general interest. Received a
+  nice patch from an external contributor to replace our CSV loader with the
+  Apache Commons CSV loader that's under development.
+
+  No new committers.
+
+How has the project developed since the last report?
+
+  * IP Clearance is complete.
+  * Vote is in progress on dev list for on our first release. Prior RC was
+    sunk due to the license and notice files not being correct.
+  * Working in parallel toward 3.0 and 4.0 releases as well.
+
+Date of last release:
+
+  No release yet.
+
+When were the last committers or PMC members elected?
+ 
+  No new committers or PMC members.
+
+Signed-off-by: 
+
+  [ ](phoenix) Lars Hofhansl
+  [X](phoenix) Andrew Purtell
+  [X](phoenix) Devaraj Das
+  [ ](phoenix) Enis Soztutar
+  [ ](phoenix) Steven Noels
+
+--------------------
+S4
+
+S4 (Simple Scalable Streaming System) is a general-purpose, distributed,
+scalable, partially fault-tolerant, pluggable platform that allows
+programmers to easily develop applications for processing continuous,
+unbounded streams of data.
+
+S4 has been incubating since 2011-09-26.
+
+Three most important issues to address in the move towards graduation:
+
+  1. No development since last release
+  2. Limited activity on mailing lists
+  3. Need new committers/contributors
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+  The project is considering retirement
+
+How has the community developed since the last report?
+
+  No development
+
+How has the project developed since the last report?
+
+  No development
+
+Date of last release: 
+
+  June 2013: S4 0.6.0 released
+
+When were the last committers or PMC members elected?
+
+  March 2013 (Daniel Gómez Ferro)
+
+Signed-off-by: 
+
+  [x](s4) Patrick Hunt
+  [ ](s4) Arun Murthy
+
+--------------------
+Sentry
+
+Sentry is a highly modular system for providing fine grained role
+based authorization to both data and metadata stored on an Apache Hadoop
+cluster.
+
+Sentry has been incubating since 2013-08-08.
+
+Three most important issues to address in the move towards graduation:
+
+  1. Grow the Sentry community 
+  2. Add new committers that diversify the project
+  3. Continue to release at regular intervals
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+  None
+
+How has the community developed since the last report?
+
+  We have added a new committer to the project. Updated and redesigned the
+  Sentry Web site. 
+
+How has the project developed since the last report?
+
+  Work continues on the db_policy_store branch (SENTRY-37) and to issue the
+  1.3 release. Additionally a new website and logo have been chosen:
+  http://sentry.incubator.apache.org
+
+Date of last release: 
+
+  2013-09-25
+
+When were the last committers or PMC members elected?
+
+  Vamsee Yarlagadda has been added as a committer as announced on Feb 28
+  2014. No new PPMC members have been added since the project has entered
+  the incubator.
+
+Signed-off-by: 
+
+  [X](sentry) Arvind Prabhakar
+  [X](sentry) Joe Brockmeier
+  [X](sentry) David Nalley
+  [ ](sentry) Olivier Lamy
+  [x](sentry) Patrick Hunt
+  [ ](sentry) Thomas White
+
+--------------------
+Sirona
+
+Monitoring Solution java oriented.
+
+Sirona has been incubating since 2013-10-15.
+
+Three most important issues to address in the move towards graduation:
+
+  1. Stabilize the javaagent API and features.
+  2. Stabilize test portability/stability (if possible).
+  3. Get more committers.
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+  No
+
+How has the community developed since the last report?
+
+  In interest yes, not really in contributor.
+
+How has the project developed since the last report?
+
+  The project API starts to be stable and now we start adding enhancements
+  in the javaagent.
+
+Date of last release:
+
+  2013-17-12
+
+When were the last committers or PMC members elected?
+
+  None since starting the incubation
+
+Signed-off-by: 
+
+  [X](sirona) Olivier Lamy
+  [ ](sirona) Henri Gomez
+  [X](sirona) Jean-Baptiste Onofre
+  [ ](sirona) Tammo van Lessen
+  [ ](sirona) Mark Struberg
+
+Shepherd/Mentor notes:
+
+  Roman Shaposhnik (rvs):
+
+    A great community.
+
+--------------------
+Storm
+
+Storm is a distributed, fault-tolerant, and high-performance realtime
+computation system that provides strong guarantees on the processing of
+data.
+
+Storm has been incubating since 2013-09-18.
+
+Three most important issues to address in the move towards graduation:
+
+  1. Growing the community and adding Committers/PPMC Members
+  2. Release on a regular basis
+  3. Lower the user/developer entry barrier by improving documentation,
+    examples, and integration options.
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+   
+  None.
+
+How has the community developed since the last report?
+
+  We have voted in 2 additional Committers/PPMC Members. Since our first
+  Apache release, community and committer involvement has increased and we
+  hope to continue that trend. 
+
+How has the project developed since the last report?
+
+  We successfully executed our first Apache release. We have migrated the
+  storm-project.net website and github wiki to the podling website. To
+  support our initial and subsequent releases, we also migrated the Storm
+  build system from Leiningen to Apache Maven.
+
+Date of last release: 
+
+  2014-02-22
+
+When were the last committers or PMC members elected?
+
+  2014-03-04
+
+Signed-off-by: 
+
+  [x](storm) Ted Dunning
+  [X](storm) Arvind Prabhakar
+  [ ](storm) Devaraj Das
+  [ ](storm) Matt Franklin
+  [ ](storm) Benjamin Hindman
+
+--------------------
+Streams
+
+Apache Streams is a lightweight server for ActivityStreams.
+
+Streams has been incubating since 2012-11-20.
+
+Three most important issues to address in the move towards graduation:
+
+  1. Growing the active developer community  
+  2. Making a secondary incubator release
+  3. Develop concrete use cases and providing tutorials for users
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+
+
+How has the community developed since the last report?
+
+  Since the last report we have admitted a new committer Carol Hansen, who
+  has provided an interface for streams. We have started discussions on
+  modules to possible incorporate into Streams, which Steve Blackmon has
+  spearheaded. We have also received pull requests from outside developers
+  and started a migration from svn to git. Discussions have also begun on
+  schema clarification which is a pressing issue as the project becomes
+  standardized.  
+
+How has the project developed since the last report?
+
+  A substantial commit was made by Steve Blackmon including a Twitter
+  Firehose attachment and a Apache Storm. It has laid the ground work for
+  additional attachments. A Lucene connector and Elastic Search connector
+  are being planned.
+
+Date of last release: 
+
+  2013-01-09
+
+When were the last committers or PMC members elected?
+
+  2014-01-14 (Carol Hansen)
+
+Signed-off-by: 
+
+  [x](streams) Matt Franklin
+  [x](streams) Ate Douma
+  [ ](streams) Craig McClanahan
+
+--------------------
+Tajo
+
+Tajo is a distributed data warehouse system for Hadoop.
+
+Tajo has been incubating since 2013-03-07.
+
+Three most important issues to address in the move towards graduation:
+
+  1. Apache Tajo graduation IPMC vote has been passed.
+     (http://markmail.org/message/qq4mxzgc4h5ripkr)
+  2. 
+  3. 
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+  No
+
+How has the community developed since the last report?
+
+  Some committers have presented Tajo project in some conferences and
+  meetups.  Especially, Keuntae Park, one of the committers, will present
+  Tajo in ApacheCon.
+
+How has the project developed since the last report?
+
+  We have resolved more than 200 issues since the last report.  There have
+  been real users of Tajo project.  They are giving many feedbacks obtained
+  from real use cases.  We are improving Tajo from their feedbacks.
+  Recently, we have started the works on multi-tenancy.
+
+Date of last release: 
+
+  2013-11-20
+
+When were the last committers or PMC members elected?
+
+  2014-01-02: Keuntae Park
+
+Signed-off-by: 
+
+  [ ](tajo) Chris Mattmann
+  [ ](tajo) Owen O'Malley
+
+--------------------
+Wave
+
+A wave is a hosted, live, concurrent data structure for rich communication.
+It can be used like email, chat, or a document.
+
+Wave has been incubating since 2010-12-04.
+
+Three most important issues to address in the move towards graduation:
+
+  1. Make a release
+  2. Expand the community
+  3. Decide on future path (application framework, or web application)
+
+Any issues that the Incubator PMC (IPMC) or ASF Board wish/need to be
+aware of?
+
+  None.
+
+How has the community developed since the last report?
+
+  Around the time of the last report, there was discussion on the list about
+  shutting down the project due to a lack of activity.  Since then, we have
+  had 3 new developers submit patches adding new features to Wave, pointing
+  out bugs, and picking up older features that stalled before completion.
+
+How has the project developed since the last report?
+
+  Several major patches adding support for MongoDB, full text search, and
+  date filtering to Wave have been submitted for review.
+  Some of the older ideas (e.g. the email bridge robot) have been picked up
+  by new developers.
+
+Date of last release: 
+
+  N/A
+
+When were the last committers or PMC members elected?
+
+  The last 2 committers were elected around 30th June 2013
+
+Signed-off-by: 
+
+  [X](wave) Christian Grobmeier
+  [X](wave) Upayavira
+
+
+-----------------------------------------
+Attachment AD: Report from the Apache Jackrabbit Project  [Michael Dürig]
+
+The Apache Jackrabbit™ content repository is a fully conforming
+implementation of the Content Repository for Java™ Technology API
+(JCR, specified in JSR 170 and 283).
+
+The Apache Jackrabbit project is in good shape. We have no board-level
+issues at this time.
+
+o Releases
+
+We made the following stable release from Jackrabbit trunk:
+
+  * Apache Jackrabbit 2.6.5 on December 13th
+
+  We made the following unstable release from Jackrabbit trunk:
+
+  * Apache Jackrabbit 2.7.4 on February 11th 
+    
+  We made the following releases from the Jackrabbit Oak sub project:
+  
+  * Apache Jackrabbit Oak 0.13 on December 13th
+  * Apache Jackrabbit Oak 0.14 on January 13th
+  * Apache Jackrabbit Oak 0.15 on January 27th
+  * Apache Jackrabbit Oak 0.16 on February 10th
+  * Apache Jackrabbit Oak 0.17.1 on February 26th
+  * Apache Jackrabbit Oak 0.18 on March 11th
+        
+o Community / Development
+  * No new committers or PMC members joined the Jackrabbit team since
+    February 2013.
+
+
+-----------------------------------------
+Attachment AE: Report from the Apache Karaf Project  [Jean-Baptiste Onofré]
+
+Apache Karaf provides higher level features and services
+specifically designed for creating OSGi-based servers.
+
+Community
+=========
+The new Karaf 3.0.0 has been a good message to the community.  The website has
+been a bit polished to give more visibility to the documentation of the two
+active Karaf branches.
+
+Last committers addition: October 21, 2013
+Last PMC addition: September 05, 2012
+
+Development
+===========
+The following new releases have been voted:
+- Apache Karaf 3.0.0 (major new version) (December 24, 2013)
+- Apache Karaf Cave 2.3.0 (first release of the Maven/OBR repository) (January
+  21, 2014)
+- Apache Karaf 2.3.4 (maintenance release) (February 17, 2014)
+
+Apache Karaf and all subprojects have moved to git (thanks INFRA for that).
+
+Issues for board consideration
+==============================
+None so far.
+
+
+-----------------------------------------
+Attachment AF: Report from the Apache Knox Project  [Kevin Minder]
+
+# Description
+The Knox Gateway is a REST API gateway for securing Hadoop REST APIs at the
+perimeter.
+
+# Issues
+None
+
+# Status
+* Graduation approved by board February 19, 2014
+* Working through tasks required of graduating projects
+* Discussing first TLP release
+
+# Releases
+* 0.3.0: 2013-10-13 (Incubating)
+
+# Development Activity
+* Community is discussing the creation of 0.4.0 as the first TLP release
+* Jira: 301 total, +50 -38 (last 30 days)
+* Git (Source): 43 commits over last 30 days
+* SVN (Site & Docs): 7 commits over last 30 days
+
+# Community Activity
+## Membership Changes
+* None since graduation.
+* Have not yet made adjustments to membership due to graduation.
+## Mailing List Activity
+* dev@knox: 99 messages over last 30 days
+* user@knox: 23 messages over last 30 days
+
+
+-----------------------------------------
+Attachment AG: Report from the Apache Labs Project  [Tim Williams]
+
+
+-----------------------------------------
+Attachment AH: Report from the Apache Lucene Project  [Uwe Schindler]
+
+The Apache Lucene project develops open-source search software.
+
+
+TLP
+---
+
+No new PMC members were added in the last quarter.  The most recent PMC
+member addition happened in April 2013.
+
+We added three new committers in the last quarter: Areek Zillur, Benson
+Margulies, Anshum Gupta.
+
+We ack'ed two mentor requests for Google Summer of Code 2014.  The following
+committers will be available to mentor GSoC students: Michael McCandless,
+David Smiley
+
+
+Lucene Core and Solr
+--------------------
+
+Lucene Core is a search-engine toolkit.
+
+Solr is a search server built on top of Lucene Core.
+
+In the last quarter we made three releases of both Lucene Core and Solr:
+
+ - 4.6.1 on 28 January 2014
+ - 4.7.0 on 26 February 2014
+
+The corresponding Apache Solr Reference Guides were released
+as PDF versions, generated from the Confluence Wiki:
+
+ - 4.7 on 4 March 2014
+
+The community is very active.
+
+
+Open Relevance Project
+----------------------
+
+The Open Relevance Project is a project aimed at providing Lucene and others
+tools for judging the quality of search and machine learning approaches.  The
+community is not very active, but we don't expect it to be very high volume
+either as it is a niche area.
+
+
+PyLucene
+--------
+
+PyLucene is a Python integration of Lucene Java.  Development is almost
+entirely an automated port, so this project will never require a lot of
+developers.  The user community is active.
+
+In the last quarter we made one release of PyLucene:
+
+ - 4.6.1-1 on 14 February 2014
+
+
+-----------------------------------------
+Attachment AI: Report from the Apache Lucene.Net Project  [Prescott Nasser]
+
+Apache Lucene.Net is a port of the Lucene search engine library, written
+in C# and targeted at .NET runtime users.
+
+== Summary ==
+
+Activity has picked up for the port of 4.3.0, the team is finishing up
+testing and some contrib packages for additional functionality. It looks
+like we should be approaching a release soon.
+
+== Releases ==
+
+Working toward 4.3.0, hopefully shortly
+
+== Statistics ==
+
+Nuget package downloads:
+
+Lucene.Net 3.0.3: 53626
+Lucene.Net Contrib 3.0.3: 16349
+Lucene.Net Contrib Spatial: 2205
+Lucene.Net Contrib Spatial.NTS: 611
+
+
+-----------------------------------------
+Attachment AJ: Report from the Apache MRUnit Project  [Brock Noland]
+
+MRUnit is a Java library that helps developers unit test Apache Hadoop
+MapReduce jobs. Unit testing is a technique for improving project quality
+and reducing overall costs by writing a small amount of code that can
+automatically verify the software you write performs as intended. This is
+considered a best practice in software development since it helps identify
+defects early, before they're deployed to a production system.
+
+RELEASES
+ * The last release of Apache MRUnit was version 1.0.0, released on
+ * May 21, 2013. This was MRUnit's first release since graduation in May 2012.
+
+CURRENT ACTIVITY
+ * Voting on release 1.1.0rc0 is now open
+ * Development activity continues as can be seen from the following
+report: http://s.apache.org/QMa
+ * 4 JIRA's was resolved since the last report.
+ * Mail traffic is largely on the DEV list. Messages since Jan 1st:
+dev 20, user 14
+
+COMMUNITY
+ The composition of the committers and PMC members has not changed since
+ the last report.
+
+
+Currently there are:
+ * Total of 38 subscribers to the developer list.
+ * Total of 80 subscribers to the user list.
+ * Total of 10 committers
+ * Total of 10 PMC members
+
+ISSUES
+ There are no issues requiring board attention at this time.
+
+
+
+-----------------------------------------
+Attachment AK: Report from the Apache OFBiz Project  [Jacopo Cappellato]
+
+Apache OFBiz (The Apache Open For Business Project) is an open source
+enterprise automation software project. By enterprise automation we mean:
+ERP, CRM, E-Business / E-Commerce, MRP, SCM, CMMS/EAM, and so on.
+
+We have no issues that require Board assistance at this time.
+
+*Releases*
+* "Apache OFBiz 11.04.04" has been released in February 18, 2014: this is
+ a bug fix release of the 11.04 branch
+* the stabilization of the latest release branch 13.07 is mostly complete
+ and we are preparing to issue the first release out of it (13.07.01)
+* we are also backporting bug fixes to the other active release
+ branch 12.04: soon we will probably issue one release for it
+
+*Community and Project*
+* no new committers or PMC members have been added in this quarter; the
+ last committer was Paul Foxworthy (paulfoxworthy), invited in
+ November 2012; the last PMC member was Erwan de Ferrieres (erwan),
+ invited in December 2009
+* mailing list traffic and commits are lower than in the past years but they
+  are still relevant
+* ApacheCon 2014: OFBiz will be represented by a presentation by me 
+  ("Development of a Groovy based DSL for Apache OFBiz") and by a tutorial by
+  another member of the PMC, Anil Patel ("Introduction to Developing
+  Application for Apache OFBiz Framework")
+* there is an ongoing discussion, within the PMC/committers group and in the
+  community, about the current status of the OFBiz project; over-simplifying
+  the two positions are the following:
+1) the ones that are worried by the fact that the project's progress is slower
+    than in the past (several historical committers are indeed less active) and
+    push to get more committers and PMC members onboard
+2) the ones that believe that slowing down is natural in a project that is
+    reaching a stability phase and, considering the great complexity of the
+    OFBiz codebase, it is important to only invite contributors that 
+    clearly demonstrate a deep knowledge of the framework in order to maintain
+    and improve its quality and stability over time
+** it is my personal belief that addressing the concerns of both groups is
+    important and I will try to encourage and facilitate a constructive
+    discussion about these topics; hopefully, the project will establish
+    the right rules and mechanisms to enlarge the committers base and 
+    maintain a high quality code
+
+*Infra/Legal*
+We have no issues.
+
+
+-----------------------------------------
+Attachment AL: Report from the Apache OODT Project  [Sean Kelly]
+
+DESCRIPTION
+
+Apache OODT is a software framework as well as an architectural style for the
+rapid construction of scientific data systems.  It provides components for
+data capture, curation, metadata extraction, workflow management, resource
+management, and data processing.
+
+RELEASES/DEVELOPMENT
+
+• OODT-0.6 on 2013-07-17
+• OODT-0.5 on 2012-12-25
+
+OODT-0.7 will focus on Apache Tika [1] integration and Apache CXF [2]
+integration.  OODT-0.7 is projected to be released in 2014-06.  We resolved 8
+issues in JIRA [3] since our last report.
+
+Our development mailing lists remain popular, while the user list shows less
+activity.  The table below lists the number of postings by list, by month,
+in 2014:
+
+List Jan Feb Mar
+---- --- --- ---
+dev   90  65  18
+user   4   2   0
+
+COMMUNITY
+
+We inducted no new committers or PMC members since our last report.  (The last
+committer and PMC member was brought in on 2013-10-21.)
+
+ISSUES
+
+There are no issues requiring board attention at this time.
+
+[1] http://tika.apache.org/
+[2] http://cxf.apache.org/
+[3] https://issues.apache.org/jira/browse/OODT
+
+
+-----------------------------------------
+Attachment AM: Report from the Apache Open Climate Workbench Project  [Michael James Joyce]
+
+Apache Open Climate Workbench is a tool for scalable comparison of remote 
+sensing observations to climate model outputs.  
+
+Project Activity:
+OCW just graduated from Incubator at the last Board Meeting. Recent
+development has been focused on improving the evaluation UI and expanding
+toolkit functionality through new metric additions. Most of the mailing list
+interaction has been focused around the recent graduation of the project
+along with other changes being made, such as the transition to using git.
+
+Other Activity:
+Michael Joyce and Maziyar Boustani will be giving a presentation on OCW 
+at ApacheCon 2014.
+
+Issues for the Board:
+None
+
+When was the last release:
+2013-10-11
+
+When was the last committer or PMC member elected:
+2013-06-21
+
+Any legal concerns?
+LEGAL-193 was opened because there is code that lacks proper licensing 
+that was integrated into the OCW codebase some time ago. The author of 
+the original work has been contacted with regards to attaching an 
+explicit license to their work so it can be integrated into the project.
+We're waiting for a response back.
+
+
+-----------------------------------------
+Attachment AN: Report from the Apache OpenNLP Project  [Joern Kottmann]
+
+The Apache OpenNLP library is a machine learning based toolkit for the
+processing of natural language text. It supports the most common NLP tasks,
+such as tokenization, sentence segmentation, part-of-speech tagging,
+named entity extraction, chunking, parsing, and coreference resolution.
+These tasks are usually required to build more advanced text processing
+services.
+
+Development
+------------------
+The team is currently working on the last issues for the 1.6.x release branch
+and will soon begin testing. The next release it probably out in a couple of
+weeks.
+
+Community
+---------------
+The community remained stable the last three months, a few patches
+were contributed and a new component to build language models was
+added to the sandbox.
+
+There are no new PMC members and there have been no PMC/PPMC additions
+since the project moved to Apache.
+
+Mark Giaconia was added as a committer in October 2013 and is active since then.
+
+Releases
+------------
+The last release OpenNLP 1.5.3 was released on 15.4.2013.
+
+Issues
+--------
+There are no board-level issues at this time. 
+
+
+-----------------------------------------
+Attachment AO: Report from the Apache OpenWebBeans Project  [Mark Struberg]
+
+Apache OpenWebBeans 1.x is an ALv2-licensed implementation of the
+"Contexts and Dependency Injection for the Java EE platform"
+specification which is defined as JSR-299 (CDI-1.0).
+OpenWebBeans 2.x will also implement the CDI-1.1 and
+CDI-1.2 (MR) specifications(JSR-346).
+
+Board Issues
+ There are no issues requiring board attention this time.
+
+Development
+ Development continues in trunk to implement CDI 1.1 as
+ we switched the trunk to version 2.0.0-SNAPSHOT.
+ We continue to actively maintain the owb-1.2.x branch.
+
+New Releases
+ OpenWebBeans 1.2.2, February 21st, 2014
+ This version is also used in the Apache TomEE-1.6.1 release.
+
+Discussions.
+ No discussions atm.
+
+Community
+ Community activity is pretty good. We are working towards CDI-1.2 now.
+ Last Committer: Karl Kilden on Oct 29th, 2013.
+ Karl helped us with improving our documentation.
+
+
+-----------------------------------------
+Attachment AP: Report from the Apache Pig Project  [Julien Le Dem]
+
+Pig is a platform for analyzing large data sets that consists of a
+high-level language for expressing data analysis programs, coupled
+with infrastructure for evaluating these programs. The salient
+property of Pig programs is that their structure is amenable to
+substantial parallelization, which in turns enables them to handle
+very large data sets.
+
+Releases: None this quarter
+
+Community:
+* 413 subscribers to the dev mailing list (400 in the last report)
+* 1142 subscribers to the user mailing list (1096 in the last report)
+* We have a new Committer: Mark Wagner
+* We have a new PMC member: Aniket Mokashi
+* The Pig PMC has voted for a new PMC chair candidate - Cheolsoo Park.
+* The PMC has now 15 members and the project counts 8 additional
+committers
+* a Pig meet up is coming Fri Mar 14 at linked-in: 
+http://www.meetup.com/PigUser/events/160604192/
+
+
+Status of branding checklist:
+Project Naming and Description: DONE
+Website Navigation Links: DONE
+Trademark Attributions: DONE
+Logos and Graphics: NOT STARTED
+Project Metadata: NOT STARTED
+
+
+-----------------------------------------
+Attachment AQ: Report from the Apache Pivot Project  [Roger Whitcomb]
+
+Apache Pivot is a platform for building installable Internet
+applications (IIAs). It combines the enhanced productivity and
+usability features of a modern user interface toolkit with the
+robustness of the Java platform.
+
+Status:
+Still slow but pretty steady traffic these last three months.  It appears
+there were several new people starting Pivot projects, so there were spikes
+in the User list traffic.  There have definitely been some things brought
+up that could use some development attention in the coming months, as well
+as some ideas for future development (integration with Piccolo2D among them).
+
+There is still development going on for the 2.1 version, although I think
+the 2.0.4 (maintenance) version is probably stable.  There have been only
+four new issues opened in JIRA since the last report, and three were
+resolved.  So, basically the product seems to be pretty stable and the
+PMC are busy with other things at the moment.
+
+Issues:
+None that I know of.
+
+Releases:
+Last release was 2.0.3, published 01 Aug 2013.
+
+Branding/Naming issues:
+None.
+
+Legal issues:
+None.
+
+Infrastructure Issues/Needs:
+We have been trying to figure out what's happening with the Apache Extras
+site (hosted on Google Code).  ComDev was looking into things as of October
+and Luciano said in early January that they were still waiting on Google
+contacts for an answer.  I can't follow the email discussion which is on
+a "members-only" mailing list.
+
+Community:
+Last Committer Piotr Kolaczkowski (pkolaczk) was created 09 May 2012.
+
+
+-----------------------------------------
+Attachment AR: Report from the Apache Portals Project  [David Sean Taylor]
+
+Apache Portals is a project for building freely available and interoperable
+portal software. With the Pluto project, we provide a reference implementation
+for the Java portlet standard. The Jetspeed project is a full feature
+enterprise open source portal. The Portals Applications project is dedicated
+to providing robust, full-featured, commercial-quality, and freely available
+portlet applications.
+
+Releases
+
+None this quarter.
+
+March 6, 2013 - Portals Apps Web Content 1.3
+October 10, 2011 - Portals Jetspeed 2.2.2
+26 September 2011 - Portals Pluto 2.0.3
+
+Committer/PMC
+
+None
+
+Security updates:
+
+None
+
+Community update
+
+The main activity this quarter has been the continued work on the Java Portlet
+Specification 3.0 reference implementation. We are working towards a Jetspeed
+2.3.0 release 2nd Quarter 2014
+
+
+
+-----------------------------------------
+Attachment AS: Report from the Apache ServiceMix Project  [Gert Vanthienen]
+
+Apache ServiceMix is a flexible, open-source integration container that
+unifies the features and functionality of Apache ActiveMQ, Camel, CXF and
+Karaf to provide a complete, enterprise-ready ESB powered by OSGi.
+
+Project Status
+
+We have lost a lot of our momentum now that major parts of the functionality
+are being maintained in related projects like Apache Karaf and Apache Camel.
+
+In the past month, we've had a discussion on the users@ mailing list about
+the status of the project and whether or not ServiceMix is offering any added
+value over directly using the related projects. We did get quite a bit of
+positive feedback and as a result, we now have more activity again in JIRA 
+as well as on the mailing lists.
+
+There are no outstanding issues requiring board attention.
+
+Community
+
+Since our last board report, we added 3 new people to the PMC: Dan Kulp,
+Jonathan Anstey and Willem Jiang. The last committer was added in November 
+2011.
+
+Community Objectives
+
+The main goal at the moment is getting the Apache ServiceMix 5.0.0 release
+out, in which we will drop support for a few features considered obsolete to
+ensure it's easier to keep a steady release schedule in the future.
+
+Releases
+
+- Apache ServiceMix Specs 2.4.0 in January
+- A set of 22 OSGi bundles in January
+- A set of 67 OSGi bundles in February
+- A set of 59 OSGi bundles in March
+
+
+-----------------------------------------
+Attachment AT: Report from the Apache Shiro Project  [Les Hazlewood]
+
+Apache Shiro is a powerful and flexible open-source application security
+framework that cleanly handles authentication, authorization, enterprise
+session management and cryptography.
+
+We have no issues that require Board assistance at this time.
+
+Releases:
+
+- We published a 1.2.3 bugfix release on 25 February 2014, 7 days ago.  A 1.3
+  release is still on the horizon as an interim before 2.0.
+
+Community & Project:
+
+- Brian Demers graciously fixed the user-reported CVE-2014-0074 and pushed out
+  the 1.2.3 hotfix.
+
+- A new Shiro plugin for Apache ActiveMQ has been contributed to (and accepted
+  by) the Apache ActiveMQ team.  This allows all aspects of ActiveMQ to be
+  secured by Shiro - a nice addition! The plugin is scheduled to be available
+  in the upcoming ActiveMQ 5.10 release.
+
+- Efforts towards a 2.0 distribution have picked up on a new dev branch.  We
+  will still likely need a 1.3 interim release, but that has been slow-going
+  as of late.  Hopefully we can release 1.3 next month.
+
+- User mailing list continues to be quite active.
+
+Last PMC Member voted in: Brian Demers on 20 May 2013
+Last committer voted in: Jared Bunting on 29 Jul 2012
+
+
+-----------------------------------------
+Attachment AU: Report from the Apache Sling Project  [Carsten Ziegeler]
+
+Apache Sling is an OSGI-based scriptable web framework that uses a Java Content 
+Repository, such as Apache Jackrabbit, to store and manage content.
+
+There are no issues which require board attention at the moment.
+
+Community
+
+Good activity level overall, contributions from different people continue.
+
+1 new committers:
+Tommaso Teofili
+
+Last PMC member addition was Mike Mueller, September 2010.
+
+Releases
+
+    Apache Sling Commons Log 4.0.0, 
+    Apache Sling Security 1.0.0, 
+    Apache Sling JCR Registration 1.0.0, 
+    Apache Sling Bundle Resource 2.2.20, 
+    Apache Sling JCR Base 2.2.2, 
+    Apache Sling Eventing 3.3.6, 
+    Apache Sling Scripting API 2.1.6, 
+    Apache Sling Scripting Core 2.0.26, 
+    Apache Sling Servlets Get 2.1.6, 
+    and Apache Sling Servlets Post 2.3.4 (March 7th, 2014)
+
+    Apache Sling Maven Launchpad Plugin 2.3.0 (March 6th, 2014)
+
+    Apache Sling API 2.6.0, 
+    and Apache Sling Engine 2.3.0 (March 3rd, 2014)
+
+    Apache Sling Servlets Resolver 2.3.0, 
+    and Apache Sling Resource Merger 1.0.0 (February 24th, 2014)
+
+    Apache Sling JCR API 2.2.0, 
+    Apache Sling JCR Base 2.2.0, 
+    and Apache Sling JCR Resource 2.3.0 (February 17th, 2014)
+    
+    Apache Sling Service User Mapper 1.0.0, 
+    and Apache Sling Resource Resolver Mock 0.2.0 (February 6th, 2014)
+
+    Apache Sling Health Check Core 1.1.0, 
+    Apache Sling Health Check Webconsole 1.1.0, 
+    and Apache Sling Auth Core 1.1.6 (January 31th, 2014)
+
+    Apache Sling Pax Exam Utilities 1.0.2 (January 28th, 2014)
+
+    Apache Sling API 2.5.0, 
+    and Apache Sling Eventing 3.3.4 (January 24th, 2014)
+
+    Apache Sling Installer Core 3.5.0, 
+    and Apache Sling Eventing 3.3.2 (January 19th, 2014)
+
+    Apache Sling Web Console Security Provider 1.1.2 (December 17th, 2013)
+
+    Apache Sling Maven JSPC Plugin 2.0.8 (December 14th, 2013)
+
+Documentation and infrastructure
+
+    Website has moved to Apache CMS
+    Dist folder has moved to svn
+
+Project Branding is tracked in SLING-2696.
+
+
+-----------------------------------------
+Attachment AV: Report from the Apache SpamAssassin Project  [Kevin A. McGrail]
+
+Description
+-----------
+SpamAssassin is a mail filter to identify spam. It is an intelligent email
+filter which uses a diverse range of tests to identify unsolicited bulk email,
+more commonly known as Spam. These tests are applied to email headers and
+content to classify email using advanced statistical methods. In addition,
+SpamAssassin has a modular architecture that allows other technologies to be
+quickly wielded against spam and is designed for easy integration into
+virtually any email system.
+
+Releases
+--------
+3.4.0-rc6 was released on 2/5/14.
+
+3.4.0 was a big release introducing 2+ years of fixes and features. It was
+released on 2/11/14.  Thanks to Sally Khudairi and the press team for their
+help in announcing this to the world (http://s.apache.org/G6b).
+
+Our rules releases have been fairly consistent with hiccups caused by both the
+new 3.4.0 release and a need for more masscheckers.
+
+The release of 3.4.1 is imminent.
+
+No other releases for this quarter.
+
+
+Community & Development
+-----------------------
+The most recent addition to our PMC is Adam Katz added on 2013-01-30.
+
+The most recent addition to the committers is Joe Quinn added on 2014-02-27.
+
+We also have 3 contributors invited to submit a CLA on the project and begin
+moving towards committer karma.
+
+We cleaned up
+https://people.apache.org/committers-by-project.html#spamassassin fixing two
+users with name problems (Henrik and Doc)
+
+We also cleaned up the PMC by removing the following PMC members who are now
+considered emeritus by the project and which the board approved unanimously:
+    - Theo Van Dinter
+    - Matt Kettler
+    - Daryl C. W. O'Shea
+    - Daniel Quinlan
+    - Dale 'Doc' Schneider
+    - Malte S. Stretz "
+
+Our RuleQA dev list has been active and community support is good allowing the
+project to publish rules more consistently.  
+
+The project users' list is active; questions get asked and answered.
+
+The project dev list has been active with both committers and community
+members contributing.
+
+We have migrated our website and dist to svnpubsub.
+
+We are waiting on CentOS VM to transfer our zones and zones2 server off of
+Solaris (Bug 6886) 
+
+We are working on getting our Jenkins build slave working under FreeBSD
+instead of Solaris1 (Bug 6887).
+
+
+Project Branding Requirements
+-----------------------------
+James Thompson at cPanel, Inc. drew and donated a new logo for the project.  
+
+The website was revised considerably with the new logo and the new release of
+3.4.0.  Therefore, here is a report on Project Branding Report Checklist:
+
+    DONE - Project Website Basics : homepage is project.apache.org
+
+    DONE - Project Naming And Descriptions : use proper Apache forms, describe
+product, etc.
+
+    DONE - Website Navigation Links : navbar links included, link to
+www.apache.org included
+
+    DONE - Trademark Attributions : attribution for all ASF marks included in
+footers, etc.
+
+    IN PROCESS - Logos and Graphics : include TM, use consistent product logo
+on your site - NOTE: Pending TM being added to one version of the logo to make
+the announcement for the new logo.
+
+    DONE - Project Metadata : DOAP file checked in and up to date
+
+    DONE - added Read PMC Branding Responsibilities
+
+
+Issues
+------
+
+As the project continues to battle spam, we find we are working quite often on
+rules and related anti-spam resources that are not code such as real-time
+blacklists (RBLs).  I believe there is considerable value to the project, the
+foundation and the anti-spam community if we were to spearhead these resources
+under the ASF umbrella.  I have begun the framework at
+https://raptor.pccc.com/raptor.cgim?template=RBL with the intention to run
+this under the project if permitted.  I would like feedback if this is
+possible or if it needs to be run outside of ASF.
+
+No other issues requiring board attention.
+
+
+-----------------------------------------
+Attachment AW: Report from the Apache Spark Project  [Matei Zaharia]
+
+Apache Spark is a fast and general engine for large-scale data processing. It
+offers high-level APIs in Java, Scala and Python as well as a rich set of
+libraries including stream processing, machine learning, and graph analytics.
+
+Project status:
+
+The project recently became a TLP and continues to grow in terms of community
+size. We switched all our infrastructure out of the incubator and to
+spark.apache.org domains / repos (though the old site still needs a redirect).
+We have a new minor release being finalized for later this month, and a Spark
+1.0 release targeting end of April. Recent activity includes new machine
+learning algorithms, updating the Spark Java API to work with Java 8 lambda
+syntax, Python API extensions, and improved support for Hadoop YARN.
+
+Releases:
+
+Our last few releases were:
+
+Feb 2, 2014: Spark 0.9.0-incubating
+Dec 19, 2013: Spark 0.8.1-incubating
+Sept 25, 2013: Spark 0.8.0-incubating
+
+Committers and PMC:
+
+The last committers and (podling) PMC members were added on Dec 22, 2013.
+
+
+-----------------------------------------
+Attachment AX: Report from the Apache Stanbol Project  [Fabian Christ]
+
+Apache Stanbol provides a set of reusable components for semantic content
+management.
+
+There are no issues which require board attention at the moment.
+
+The project is performing well and the 0.12 release was recently published.
+The trunk development is now heading towards a 1.0 release. The release-0.12
+branch will be further maintained for future bug fix releases.
+
+There is a good mail frequency on the dev list and questions from users are
+handled promptly. The community is currently discussing proposals for the
+upcoming GSoC.
+
+Subscribers on the dev list: 213
+
+We have elected two new committers who had worked on Stanbol during the
+2013 GSoC projects.
+
+Dileepa Jayakody was elected as a new committer on Jan 14th, 2014
+Antonio David Perez Morales was elected as a new committer on Jan 14th, 2014
+
+Apache Stanbol 0.12 was released on Mar 2nd, 2014
+Last release was: apache-stanbol-enhancement-engines-0.10.0 on Feb 2nd, 2013
+
+
+-----------------------------------------
+Attachment AY: Report from the Apache Synapse Project  [Hiranya Jayathilaka]
+
+Apache Synapse is a high performance, flexible, lightweight
+Enterprise Service Bus (ESB) and a mediation framework.
+
+Community
+=========
+
+No new committers or PMC members were nominated this quarter. Latest
+Synapse committer was elected on December, 2013. Latest Synapse PMC
+member was elected on December, 2013. These additions were reported
+on our last board report.
+
+The level of participation is consistent and healthy.
+
+Both user and developer mailing lists continue to be active with a 
+moderate amount of traffic.
+
+Releases
+========
+
+There have been no new releases during this period.
+The last release of Synapse is version 2.1, which was released on 
+January, 2012.
+
+Work is currently underway for a 3.0 release. 
+
+Board issues
+============
+
+None identified.
+
+
+-----------------------------------------
+Attachment AZ: Report from the Apache Tiles Project  [Greg Reddin]
+
+Apache Tiles is a templating framework for modern Java applications.
+
+General:
+
+This has been a very slow quarter for Apache Tiles. There have not been any
+software releases or PMC changes in this quarter. There have been a few threads
+on the user@ mailing list, but even that traffic seems to have slowed down for
+the time being. The ongoing slow pace of the project continues to be something
+to keep an eye on, but I don't believe it is a cause for concern at the moment.
+
+
+-----------------------------------------
+Attachment BA: Report from the Apache Tomcat Project  [Mladen Turk]
+
+General:
+  Continued healthy activity across multiple components and
+  responsiveness on both dev and user lists.
+
+Issues:
+  There are no issues requiring Board attention at this time.
+
+Releases:
+  * Apache Tomcat 8.0.0-RC10 - alpha, 2013-12-26
+  * Apache Tomcat 8.0.1 - beta, 2014-02-02
+  * Apache Tomcat 8.0.2 (not released)
+  * Apache Tomcat 8.0.3 - beta, 2014-02-11
+  * Apache Tomcat 7.0.48 (not released)
+  * Apache Tomcat 7.0.49 (not released)
+  * Apache Tomcat 7.0.50 - 2014-01-08
+  * Apache Tomcat 7.0.51 (not released)
+  * Apache Tomcat 7.0.52 - 2014-02-17
+  * Apache Tomcat 6.0.38 (not released)
+  * Apache Tomcat 6.0.39 - 2014-01-31
+  * Apache Tomcat Connectors 1.2.38 (not released)
+  * Apache Tomcat Connectors 1.2.39 - 2014-03-11
+  * Apache Standard Taglib 1.2.0 (not released)
+  * Apache Standard Taglib 1.2.1 - 2014-01-02
+
+Development:
+  There was lots of development activity on Apache Tomcat 7
+  and Apache Tomcat 8. Recently some work has been done on
+  new NIO2 connector.
+  There was the first release of Apache Standard Taglib 1.2, an
+  implementation of JSTL 1.2 (JSR 052). It is the first release
+  of a tag library, after migrating Apache Taglibs project from
+  Apache Jakarta to Apache Tomcat several years ago. It is the
+  first release that implements JSTL 1.2 specification.
+
+Community:
+  There were no changes in community since the last report.
+  We have organised a day long Tomcat Summit for ApacheCon.
+  Topics for discussion are currently based around future development
+  direction but any attendee is welcome to add their own topic(s).
+
+Security:
+ * CVE-2013-2067 - Important: Session fixation
+   FORM authentication associates the most recent request
+   requiring authentication with the current session.
+   By repeatedly sending a request for an authenticated
+   resource while the victim is completing the login form,
+   an attacker could inject a request that would be executed
+   using the victim's credentials.
+ * CVE-2013-2071 - Moderate: Information disclosure
+   Bug 54178 described a scenario where elements of a previous
+   request may be exposed to a current request. This was very
+   difficult to exploit deliberately but fairly likely to happen
+   unexpectedly if an application used AsyncListeners that
+   threw RuntimeExceptions.
+ * CVE-2013-4590 - Low: Information disclosure
+   Application provided XML files such as web.xml, context.xml,
+   .tld, .tagx and .jspx allowed XXE which could be used to
+   expose Tomcat internals to an attacker. This vulnerability
+   only occurs when Tomcat is running web applications from untrusted
+   sources such as in a shared hosting environment.
+ * CVE-2013-4322 - Important: Denial of service
+   The fix for CVE-2012-3544 was not complete.
+   It did not cover the following cases:
+   chunk extensions were not limited
+   whitespace after the : in a trailing header was not limited
+ * CVE-2014-0050 - Important: Denial of Service
+   It was possible to craft a malformed Content-Type header for
+   a multipart request that caused Apache Tomcat to enter an
+   infinite loop. A malicious user could, therefore, craft a
+   malformed request that triggered a denial of service.
+ <private>
+ tlhIngan maH!
+ </private>
+
+Trademark:
+  Detailed status:
+  https://svn.apache.org/repos/private/pmc/tomcat/trademark-status.txt
+  We have received a request from Canonical to use the Tomcat logo to
+  identify their Tomcat installation bundle for JuJu, their virtualised
+  platform. We intend to grant them permission to do so (with some
+  constraints).
+
+
+-----------------------------------------
+Attachment BB: Report from the Apache UIMA Project  [Marshall Schor]
+
+Apache UIMA's mission: the creation and maintenance of open-source
+software related to the analysis of unstructured data, guided by the
+UIMA Oasis Standard.
+
+Dates:
+30 Jan 2014    last release
+12 Mar 2013    last PMC addition
+24 Dec 2013    last Committer addition
+            
+2 Releases:
+  30 Jan 2014  UIMA-DUCC 1.0.0 released
+      http://uima.apache.org/news.html#30 January 2014
+      DUCC = Distributed UIMA Cluster Computing
+  14 Jan 2014  UIMA Java SDK 2.5.0 released 
+      http://uima.apache.org/news.html#14 January 2014
+
+Other Activity:
+
+Worked with Infra to set up a demo web-server for DUCC
+here:  http://uima-ducc-vm.apache.org:42133/jobs.jsp
+
+The main web page was augmented to reflect the growing
+number of significant components: Ruta, DUCC, and uimaFIT
+were added to the big picture.
+
+Major work continues on DUCC and Ruta. The core Java
+framework is being improved to better support large
+multi-core processors.
+
+The mailing lists are fairly active, and normal
+bug finding/fixing work continues.
+
+Community:
+1 committer added in December.
+ 
+Issues: 
+No Board level issues at this time.
+
+
+-----------------------------------------
+Attachment BC: Report from the Apache VCL Project  [Andy Kurth]
+
+DESCRIPTION
+
+VCL is a modular cloud computing platform which dynamically provisions and
+brokers remote access to compute resources including virtual machines,
+bare-metal computers, and resources in other cloud platforms. A self-service
+web portal is used to request resources and for administration. VCL became a
+TLP on June 20, 2012.
+
+CURRENT ACTIVITY
+
+* Development progress was a bit slow over the holidays and January but is
+  picking up.
+
+* Work has been completed to improve support for cluster reservations which
+  are distributed across different management nodes.
+
+* Work continues to fix some minor issues. We hope to create a release late
+  spring or early summer which will include support for new features
+  including provisioning on OpenStack, Windows 8.1 images, and nested
+  hypervisor provisioning.
+
+* The community continues to work to attract development contributions and
+  eventually additional committers. Contributions have recently been made
+  from people in the community who have not contributed code before.
+
+RELEASES
+
+* None
+
+COMMUNITY
+
+* Subscribers to the user list: 163
+* Posts to user list, 12/13-3/14: 156
+* Subscribers to the dev list: 134
+* Posts to dev list, 12/13-3/14: 68
+* Committers: 8 (last addition: Young Oh, 12/13)
+* PMC members: 7 (last addition: 6/12)
+
+ISSUES
+
+* There are no issues requiring board attention at this time.
+
+
+-----------------------------------------
+Attachment BD: Report from the Apache Velocity Project  [Nathan Bubna]
+
+Apache Velocity is a java template engine and related projects.
+
+RELEASES
+
+* Last release was master POM, May 2012
+* Last noteworthy release was Engine in 2010
+
+CURRENT ACTIVITY
+
+* There were no commits or contributions this quarter.
+
+COMMUNITY
+
+* Last committer added April 28, 2013
+* Activity is inconsistent on the user list but steady on Stack Overflow.
+
+
+-----------------------------------------
+Attachment BE: Report from the Apache Whirr Project  [Andrew Bayer]
+
+Whirr is a library for running services like Hadoop or ZooKeeper in the cloud.
+
+Releases:
+No new releases this quarter. Last release was 0.8.2, April 2013.
+
+Community: 
+The PMC composition did not change, and we had no new committers since the last
+report. The last PMC change was the addition of Andrew Bayer in November of
+2012, and the last new committer was Graham Gear, also in November of 2012.
+
+Issues:
+The project attempted a release vote last month on 0.9.0 and no one
+voted. We will be trying again shortly, but the project looks to be
+moribund, sadly.
+
+
+-----------------------------------------
+Attachment BF: Report from the Apache Wicket Project  [Martijn Dashorst]
+
+Apache Wicket is a Java framework for creating highly dynamic,
+component oriented web applications.
+
+Things worthy of note:
+
+- Wicket is 10 years old
+- Wicket 7 is moving along
+- Promoted experimental modules to non-experimental
+- Released Wicket 6.13.0, 6.14.0, 1.5.11, 1.4.23
+- Fixed CVE-2013-2055, CVE-2014-0043
+- No new committers or members were added in this period
+
+Date last committer added: 12 July 2013
+
+10 year anniversary
+
+From what we could gather from our archives, long time committers'
+memories and creator Jonathan Locke, Wicket was conceived somewhere in
+april 2004. It was not called that but when it was open sourced in
+august 2004 the project was named Wicket. The project tried a start at
+codehaus, but moved to sourceforge quickly when it took very long to
+get resources allocated. The next couple of years Wicket grew into a
+nice community and after a rather short courtship moved to Apache and
+is still a healthy, if mature community. 
+
+Most first timers are still listed on the PMC and still have their
+commit bits, even if their involvement has grown silent over the years.
+
+While Wicket was grown by an exceptional community of developers, I'd
+like to thank especially Jonathan Locke, for his creation of Wicket and
+his foresight to invite a community to take over the project and take
+Wicket further than we all could have imagined.
+
+Wicket 7
+
+Our development branch is still being worked on but reaches the point
+where we can release betas. One thing worthy of note is the addition of
+a new feature that loosens some of our strict rules of matching markup
+hierarchy with a Java component hierarchy. This solves one of the most
+hated 'features' since 1.0.
+
+Experimental modules
+
+We added some experimental modules in the beginning of the Wicket 6
+timeframe, promising to graduate them when reaching maturity. The time
+came for several modules to graduate from experimental to core module:
+
+ - Bean validation support
+ - CDI 1.1 support
+ - Native websocket support
+
+Other experimental modules will remain either experimental or will be
+'sunsetted'.
+
+Releases and CVEs
+
+Several maintenance and security releases have been performed, solving
+two CVE's across our full range of releasable code: 1.4, 1.5 and 6.x.
+
+CVE-2013-2055 allowed access to web templates stored with a Wicket
+application. This is fixed in 1.4.23, 1.5.11 and 6.8.
+
+CVE-2014-0043 allowed querying for the existence of particular classes
+in the classpath by issuing requests to special urls handled by Wicket.
+This only affects applications using 1.5 or 6.x and users are advised
+to upgrade to 1.5.11 or 6.14.0
+
+
+-----------------------------------------
+Attachment BG: Report from the Apache Wink Project  [Luciano Resende]
+
+Apache Wink is a project that enables development and consumption of
+REST style web services. The core server runtime is based on the
+JAX-RS (JSR 311) standard. The project also introduces a client
+runtime which can leverage certain components of the server-side
+runtime. Apache Wink delivers component technology that can be easily
+integrated into a variety of environments.
+
+There are no issues that require Board attention at the moment.
+
+Releases:
+* Last release was Apache Wink 1.4.0 which was released on September 15
+
+Activity:
+* Regular mailing list activity (on the low side).
+
+Committers or PMC changes:
+* Voted Gerhard Petracek was added as a Wink committer in August 2013.
+
+Trademark/Branding:
+* No known issues.
+
+Legal Issues:
+* None
+
+<private>
+qoSlIj DatIvjaj
+</private>
+
+
+-----------------------------------------
+Attachment BH: Report from the Apache ZooKeeper Project  [Flavio Junqueira]
+
+ZooKeeper is a reliable coordination service for distributed systems.
+ 
+Bug-fix release 3.4.6 has been voted this week and we are in the process
+of publishing it.
+
+Trunk is still under development for an eventual 3.5.0 release. A couple
+of important improvements on the way for 3.5.0:
+ 
+- One important new feature in 3.5.0 will be the ability to reconfigure
+a ZooKeeper ensemble. This feature was discussed a long time in
+ZOOKEEPER-107 and we have converged and committed it;
+- We are also focusing on a number of improvements over the code that
+performs recovery. In particular, we are targeting an implementation that
+avoids sending and taking unnecessary snapshots, which reduces time to
+recover in the presence of crashes.
+ 
+Also, the release is supposed to address scalability, jdk7 and openjdk support,
+maven build/rel, testing and audit logging. There are other various patches
+we are working on related code cleanup and refactoring.
+ 
+Note that the status of releases hasn't changed since the last board report.
+3.5.0 release date is not defined yet. 
+ 
+No infrastructure issues.
+ 
+Community:
+ 
+Mailing list activity is moderate and the number of patch reviews and
+commits has dropped significantly. 
+ 
+* 10 active committers representing 8 unique organizations. No change to
+the list of committers.
+*  9 active PMC members representing 7 unique organizations. No change to
+the list of PMC members.
+* 421 subscribers on dev (up from 408 since December 2013).
+* 927 subscribers on user (up from 891 last quarter).
+* 1891 jira issues have been created to date (58 more since December
+2013)
+
+========
+Apache BookKeeper (subproject)
+
+Bookkeeper is a distributed, reliable, and high performance logging
+service. The project also includes Hedwig which is a highly scalable
+Pub/Sub service built on top of ZooKeeper and Bookkeeper with strong
+durability guarantees.
+
+We are currently working towards the 4.3.0 release, which is in its
+final phase now. We project that it will be released early in April.
+This release includes a lot of improvements to the bookie on-disk
+performance, a new statistics framework, and protobuffer protocol
+support along with numerous bugfixes.
+
+We will also release a bugfix release on the 4.2 branch, 4.2.3, in the
+next fortnight.
+
+Infrastructure issues:
+
+No issues.
+
+Community:
+
+51 subscribers to bookkeeper-dev
+68 subscribers to bookkeeper-user
+
+730 issues opened to date, 27 since 2013-12-12
+496 issues resolved to date, 30 since 2013-12-12
+44 people have reported issues, 3 since 2013-12-12
+18 people have contributed patches, 5 since 2013-12-12
+
+
+-----------------------------------------
+Attachment BI: Report from the Apache Lenya Project  [Richard Frovarp]
+
+The Apache Lenya CMS is a Cocoon based XML/XHTML content management
+system.
+
+Development:
+
+Last release: 2.0.4 on 2011-03-14
+
+Community:
+
+Last change to community was PMC addition in October 2011.
+
+Activity:
+
+The main question from the board was project activity.
+
+The project has experienced a downturn in activity over the past 12-18
+months. Activity has dropped to near zero.
+
+Casual observation of participation indicates that there are enough active
+PMC members to act on the needs of the project. However, an inquiry as to
+those that were willing to participate actively in the project on votes if
+necessary only resulted in two PMC members showing interest. This means that
+there may not be enough PMC votes to take action on the project. The last
+vote required of the PMC was October 2011.
+
+If interest in PMC members does not pick up before the next reporting
+quarter, the Attic may be the best course of action. There currently are no
+committers or contributors that could be promoted to PMC status.
+
+
+------------------------------------------------------
+End of agenda for the March 19, 2014 board meeting.
