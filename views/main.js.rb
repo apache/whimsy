@@ -1,14 +1,33 @@
 class Main < React
   def initialize
     Agenda.load(@@parsed)
+    Agenda._date = @@agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
+    Agenda._agendas = @@agendas
+  end
 
-    if @@path
-      @item = Agenda.find(@@path)
-    else
-      Agenda._date = @@agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
-      Agenda._agendas = @@agendas
-      @item = Agenda
+  def componentWillMount()
+    Main.navigate = self.navigate
+    self.navigate(@@path, true)
+
+    window.addEventListener :popstate do |event|
+      self.navigate(event.state.path, true)
     end
+  end
+
+  def navigate(path, replace)
+    if path
+      item = Agenda.find(path)
+    else
+      item = Agenda
+    end
+
+    if replace
+      history.replaceState({path: path}, nil, path)
+    else
+      history.pushState({path: path}, nil, path)
+    end
+
+    @item = item
   end
 
   def render
@@ -48,6 +67,14 @@ class Main < React
 
     document.getElementsByTagName('title')[0].textContent = @item.title
     window.onresize()
+
+    def (document.getElementsByTagName('body')[0]).onkeyup(event)
+      if event.keyCode == 37
+        self.navigate document.querySelector("a[rel=prev]").getAttribute('href')
+      elsif event.keyCode == 39
+        self.navigate document.querySelector("a[rel=next]").getAttribute('href')
+      end
+    end
   end
 
   def componentDidUpdate()

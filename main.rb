@@ -33,6 +33,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   @base = env['PATH_INFO'].chomp(path).untaint
   @path = path
   @agenda = "board_agenda_#{date.gsub('-','_')}.txt"
+  pass unless File.exist? File.join(FOUNDATION_BOARD, @agenda)
 
   if AGENDA_CACHE[@agenda][:mtime] == 0
     Dir.chdir(FOUNDATION_BOARD) do
@@ -73,6 +74,7 @@ end
 
 get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
   file = "board_agenda_#{file.gsub('-','_')}.txt"
+  pass unless File.exist? File.join(FOUNDATION_BOARD, file)
   _json do
     Dir.chdir(FOUNDATION_BOARD) do
       if Dir['board_agenda_*.txt'].include? file

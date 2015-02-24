@@ -77,6 +77,10 @@ pre.report {
   white-space: pre;
 }
 
+main {
+  margin: 50px 0;
+}
+
 main pre {
   font-family: monospace;
   color: #000;
