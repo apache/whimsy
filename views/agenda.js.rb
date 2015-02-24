@@ -3,10 +3,23 @@ class Agenda
 
   def self.load(list)
     @@index.clear()
+    prev = nil
     list.each do |item|
-      @@index << Agenda.new(item)
+      item = Agenda.new(item)
+      item.prev = prev
+      prev.next = item if prev
+      prev = item
+      @@index << item
     end
     return @@index
+  end
+
+  def self.find(path)
+    result = nil
+    @@index.each do |item|
+      result = item if item.href == path
+    end
+    return result
   end
 
   def initialize(entry)
@@ -19,6 +32,10 @@ class Agenda
 
   def href
     @title.gsub(/[^a-zA-Z0-9]+/, '-')
+  end
+
+  def text
+    @text || @report
   end
 
   def color

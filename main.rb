@@ -31,6 +31,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   Dir.chdir(FOUNDATION_BOARD) {@agendas = Dir['board_agenda_*.txt'].sort}
   Dir.chdir(FOUNDATION_BOARD) {@drafts = Dir['board_minutes_*.txt'].sort}
   @base = env['PATH_INFO'].chomp(path).untaint
+  @path = path
   @agenda = "board_agenda_#{date.gsub('-','_')}.txt"
 
   if AGENDA_CACHE[@agenda][:mtime] == 0
