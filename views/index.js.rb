@@ -12,7 +12,7 @@ class Index < React
 	_th 'Shepherd'
       end
 
-      _tbody @@agenda do |row|
+      _tbody Agenda.index do |row|
 	_tr class: row.color do
 	  _td row.attach
 	  _td do

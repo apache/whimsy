@@ -14,6 +14,10 @@ class Agenda
     return @@index
   end
 
+  def self.index
+    @@index
+  end
+
   def self.find(path)
     result = nil
     @@index.each do |item|
@@ -36,6 +40,50 @@ class Agenda
 
   def text
     @text || @report
+  end
+
+  def self.view
+    Index
+  end
+
+  def self.color
+    'blank'
+  end
+
+  def self.title
+    @@date
+  end
+
+  def self.prev
+    result = {title: 'Help', href: 'help'}
+
+    @@agendas.each do |agenda|
+      date = agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
+
+      if date < @@date and (result.title == 'Help' or date > result.title)
+	result = {title: date, link: "../#{date}/"}
+      end
+    end
+
+    result
+  end
+
+  def self.next
+    result = {title: 'Help', href: 'help'}
+
+    @@agendas.each do |agenda|
+      date = agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
+
+      if date > @@date and (result.title == 'Help' or date < result.title)
+	result = {title: date, link: "../#{date}/"}
+      end
+    end
+
+    result
+  end
+
+  def view
+    Report
   end
 
   def color
