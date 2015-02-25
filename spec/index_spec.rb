@@ -12,6 +12,10 @@ feature 'index' do
     expect(page).to have_selector '.navbar-fixed-top.blank .navbar-brand', 
       text: '2015-02-18'
 
+    # navigation
+    expect(page).to have_selector 'a[href=Change-Geronimo-Chair]',
+      text: 'Special Orders'
+
     # rows with colors and titles
     expect(page).to have_selector 'tr.missing td', text: 'Abdera'
     expect(page).to have_selector 'tr.commented td', text: 'Axis'

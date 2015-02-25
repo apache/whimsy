@@ -8,14 +8,7 @@ class Main < React
   end
 
   def render
-    _header.navbar.navbar_fixed_top class: @item.color do
-      _div.navbar_brand @item.title
-      _ul.nav.nav_pills.navbar_right do
-        _li.dropdown do
-          _a.dropdown_toggle.nav! 'navigation'
-        end
-      end
-    end
+    _Header item: @item
 
     _main do
       React.createElement(@item.view, data: @item)
