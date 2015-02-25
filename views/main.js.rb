@@ -1,31 +1,10 @@
 class Main < React
-  def initialize
-    Agenda.load(@@parsed)
-    Agenda._date = @@agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
-    Agenda._agendas = @@agendas
-  end
-
-  def componentWillMount()
-    Main.navigate = self.navigate
-    self.navigate(@@path, true)
-  end
-
-  def navigate(path, replace)
+  def route(path)
     if path
-      item = Agenda.find(path)
+      @item = Agenda.find(path)
     else
-      item = Agenda
+      @item = Agenda
     end
-
-    if defined? history
-      if replace
-        history.replaceState({path: path}, nil, path)
-      else
-        history.pushState({path: path}, nil, path)
-      end
-    end
-
-    @item = item
   end
 
   def render
@@ -54,9 +33,35 @@ class Main < React
     end
   end
 
+  def componentWillMount()
+    Agenda.load(@@parsed)
+    Agenda._date = @@agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
+    Agenda._agendas = @@agendas
+    self.route(@@path)
+  end
+
+  def navigate(path)
+    self.route(path)
+    history.pushState({path: path}, nil, path)
+    document.getElementsByTagName('title')[0].textContent = @item.title
+  end
+
   def componentDidMount()
+    Main.navigate = self.navigate
+    history.replaceState({path: @@path}, nil, @@path)
+    document.getElementsByTagName('title')[0].textContent = @item.title
+
     window.addEventListener :popstate do |event|
-      self.navigate(event.state.path, true)
+      self.route(event.state.path)
+      document.getElementsByTagName('title')[0].textContent = @item.title
+    end
+
+    def (document.getElementsByTagName('body')[0]).onkeyup(event)
+      if event.keyCode == 37
+        self.navigate document.querySelector("a[rel=prev]").getAttribute('href')
+      elsif event.keyCode == 39
+        self.navigate document.querySelector("a[rel=next]").getAttribute('href')
+      end
     end
 
     def window.onresize()
@@ -67,16 +72,7 @@ class Main < React
       main.style.marginBottom = "#{footer.clientHeight}px"
     end
 
-    document.getElementsByTagName('title')[0].textContent = @item.title
     window.onresize()
-
-    def (document.getElementsByTagName('body')[0]).onkeyup(event)
-      if event.keyCode == 37
-        self.navigate document.querySelector("a[rel=prev]").getAttribute('href')
-      elsif event.keyCode == 39
-        self.navigate document.querySelector("a[rel=next]").getAttribute('href')
-      end
-    end
   end
 
   def componentDidUpdate()
