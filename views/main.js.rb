@@ -21,16 +21,7 @@ class Main < React
       React.createElement(@item.view, data: @item)
     end
 
-    _footer.navbar.navbar_fixed_bottom class: @item.color do
-      if @item.prev
-        _a.backlink.navbar_brand @item.prev.title, rel: 'prev', 
-         href: @item.prev.href
-      end
-      if @item.next
-        _a.nextlink.navbar_brand @item.next.title, rel: 'next', 
-         href: @item.next.href
-      end
-    end
+    _Footer item: @item
   end
 
   def componentWillMount()
@@ -47,7 +38,9 @@ class Main < React
   end
 
   def componentDidMount()
+    # export navigate method
     Main.navigate = self.navigate
+
     history.replaceState({path: @@path}, nil, @@path)
     document.getElementsByTagName('title')[0].textContent = @item.title
 

@@ -16,7 +16,7 @@ class Index < React
 	_tr class: row.color do
 	  _td row.attach
 	  _td do
-	    _a row.title, href: row.href
+	    _Link text: row.title, href: row.href
 	  end
 	  _td row.owner
 	  _td row.shepherd
