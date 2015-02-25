@@ -1,13 +1,33 @@
+#
+# Index page
+#
+
 require_relative 'spec_helper'
 
 feature 'index' do
   it "should show an index page" do
-    visit '/2014-03-19/'
+    visit '/2015-02-18/'
+
+    # header
+    expect(page).to have_selector '.navbar-fixed-top.blank .navbar-brand', 
+      text: '2015-02-18'
+
+    # rows with colors and titles
+    expect(page).to have_selector 'tr.missing td', text: 'Abdera'
     expect(page).to have_selector 'tr.commented td', text: 'Axis'
-    expect(page).to have_selector 'tr.reviewed td', text: 'Abdera'
-    expect(page).to have_selector 'tr.missing td', text: 'Click'
-    expect(page).to have_selector '.backlink[href="../2014-02-19/"]', 
-     text: '2014-02-19'
+    expect(page).to have_selector 'tr.reviewed td', text: 'Celix'
+
+    # attach, owner, sheperd columns
+    expect(page).to have_selector 'tr.reviewed td', text: 'CF'
+    expect(page).to have_selector 'tr.reviewed td', text: 'Mark Cox'
+    expect(page).to have_selector 'tr.missing td', text: 'Sam'
+
+    # links
+    expect(page).to have_selector 'a[href=ACE]', text: 'ACE'
+
+    # footer
+    expect(page).to have_selector '.backlink[href="../2015-01-21/"]', 
+     text: '2015-01-21'
     expect(page).to have_selector '.nextlink[href="help"]', text: 'Help'
   end
 end
