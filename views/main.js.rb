@@ -8,10 +8,6 @@ class Main < React
   def componentWillMount()
     Main.navigate = self.navigate
     self.navigate(@@path, true)
-
-    window.addEventListener :popstate do |event|
-      self.navigate(event.state.path, true)
-    end
   end
 
   def navigate(path, replace)
@@ -21,10 +17,12 @@ class Main < React
       item = Agenda
     end
 
-    if replace
-      history.replaceState({path: path}, nil, path)
-    else
-      history.pushState({path: path}, nil, path)
+    if defined? history
+      if replace
+        history.replaceState({path: path}, nil, path)
+      else
+        history.pushState({path: path}, nil, path)
+      end
     end
 
     @item = item
@@ -57,6 +55,10 @@ class Main < React
   end
 
   def componentDidMount()
+    window.addEventListener :popstate do |event|
+      self.navigate(event.state.path, true)
+    end
+
     def window.onresize()
       main = document.querySelector('main')
       header = document.querySelector('header.navbar')
