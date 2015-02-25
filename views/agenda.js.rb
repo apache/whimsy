@@ -61,7 +61,7 @@ class Agenda
       date = agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
 
       if date < @@date and (result.title == 'Help' or date > result.title)
-	result = {title: date, link: "../#{date}/"}
+	result = {title: date, href: "../#{date}/"}
       end
     end
 
@@ -75,7 +75,7 @@ class Agenda
       date = agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
 
       if date > @@date and (result.title == 'Help' or date < result.title)
-	result = {title: date, link: "../#{date}/"}
+	result = {title: date, href: "../#{date}/"}
       end
     end
 
