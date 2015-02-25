@@ -52,8 +52,10 @@ class Main < React
     document.getElementsByTagName('title')[0].textContent = @item.title
 
     window.addEventListener :popstate do |event|
-      self.route(event.state.path)
-      document.getElementsByTagName('title')[0].textContent = @item.title
+      if event.state and event.state.path
+        self.route(event.state.path)
+        document.getElementsByTagName('title')[0].textContent = @item.title
+      end
     end
 
     def (document.getElementsByTagName('body')[0]).onkeyup(event)
