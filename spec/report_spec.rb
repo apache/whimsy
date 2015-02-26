@@ -4,7 +4,7 @@
 
 require_relative 'spec_helper'
 
-feature 'item' do
+feature 'report' do
   it "should show the Secretary report" do
     visit '/2015-01-21/Secretary'
 
