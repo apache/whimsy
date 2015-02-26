@@ -33,6 +33,7 @@ class Agenda
   end
 
   attr_reader :attach, :title, :owner, :shepherd, :index
+  attr_reader :approved, :roster, :prior_reports
 
   def href
     @title.gsub(/[^a-zA-Z0-9]+/, '-')

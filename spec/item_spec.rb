@@ -12,6 +12,10 @@ feature 'item' do
     expect(page).to have_selector '.navbar-fixed-top.available .navbar-brand', 
       text: 'Secretary'
 
+    # info
+    expect(page).to have_selector 'dd', text: '4D'
+    expect(page).to have_selector 'dd', text: 'Craig'
+
     # content
     expect(page).to have_selector 'pre', text: /is running well/
 
