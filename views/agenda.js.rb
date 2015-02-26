@@ -43,6 +43,25 @@ class Agenda
     @text || @report
   end
 
+  # return comments as an array of individual comments
+  def comments
+    results = []
+    return results if @comments === undefined
+
+    comment = ''
+    @comments.split("\n").each do |line|
+      if line =~ /^\S/
+        results << comment unless comment.empty?
+        comment = line
+      else
+        comment += "\n" + line
+      end
+    end
+
+    results << comment unless comment.empty?
+    return results
+  end
+
   def self.view
     Index
   end

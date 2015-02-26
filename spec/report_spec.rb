@@ -33,5 +33,9 @@ feature 'report' do
     visit '/2015-02-18/Abdera'
     expect(page).to have_selector 'pre em', text: 'Missing'
     expect(page).not_to have_selector 'dt', text: 'Approved'
+
+    # comments
+    expect(page).to have_selector 'h3#comments', text: 'Comments'
+    expect(page).to have_selector 'pre.comment', text: 'rb: Reminder email sent'
   end
 end
