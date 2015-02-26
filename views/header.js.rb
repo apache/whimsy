@@ -31,7 +31,7 @@ class Header < React
                 _dd @@item.shepherd
               end
 
-              if @@item.approved # and not @@item.approved.empty?
+              if @@item.approved and not @@item.approved.empty?
                 _dt 'Approved'
                 _dd @@item.approved.join(', ')
               end
