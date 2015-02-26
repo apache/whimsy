@@ -71,4 +71,12 @@ class Header < React
       end
     end
   end
+
+  def componentDidMount()
+    self.componentDidUpdate()
+  end
+
+  def componentDidUpdate()
+    document.getElementsByTagName('title')[0].textContent = @@item.title
+  end
 end

@@ -27,7 +27,6 @@ class Main < React
   def navigate(path)
     self.route(path)
     history.pushState({path: path}, nil, path)
-    document.getElementsByTagName('title')[0].textContent = @item.title
   end
 
   def componentDidMount()
@@ -35,12 +34,10 @@ class Main < React
     Main.navigate = self.navigate
 
     history.replaceState({path: @@path}, nil, @@path)
-    document.getElementsByTagName('title')[0].textContent = @item.title
 
     window.addEventListener :popstate do |event|
       if event.state and event.state.path
         self.route(event.state.path)
-        document.getElementsByTagName('title')[0].textContent = @item.title
       end
     end
 
