@@ -22,6 +22,9 @@ feature 'report' do
     expect(page).to have_selector 'pre', 
       text: /no issues that require the board's attention/
 
+    # no comments
+    expect(page).not_to have_selector 'h3#comments', text: 'Comments'
+
     # footer
     expect(page).to have_selector '.backlink[href="Attic"]', 
      text: 'Attic'

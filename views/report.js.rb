@@ -8,7 +8,7 @@ class Report < React
         end
       end
 
-      if @@data.comments
+      unless @@data.comments.empty?
         _section do
           _h3.comments! 'Comments'
           @@data.comments.each do |comment|

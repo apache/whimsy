@@ -46,7 +46,7 @@ class Agenda
   # return comments as an array of individual comments
   def comments
     results = []
-    return results if @comments === undefined
+    return results unless @comments
 
     comment = ''
     @comments.split("\n").each do |line|
