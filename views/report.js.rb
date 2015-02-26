@@ -1,12 +1,11 @@
 class Report < React
   def render
     _section.flexbox do
-      if @@data.missing
+      _section do
         _pre.report do
-          _em 'Missing'
+          _em 'Missing' if @@data.missing
+          _ @@data.text
         end
-      else
-        _pre @@data.text
       end
     end
   end

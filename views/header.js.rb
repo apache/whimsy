@@ -43,7 +43,7 @@ class Header < React
                   _dd { _a 'Roster', href: @@item.roster }
                 end
 
-                if @item.prior_reports
+                if @@item.prior_reports
                   _dd { _a 'Prior Reports', href: @@item.prior_reports }
                 end
               end
