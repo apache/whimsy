@@ -26,7 +26,7 @@ class Link < React
 
   def click(event)
     href = event.target.getAttribute('href')
-    unless href.start_with? '.'
+    if href =~ /^(\.|[-\w]+)$/
       Main.navigate href
       return false
     end

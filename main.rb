@@ -32,6 +32,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   Dir.chdir(FOUNDATION_BOARD) {@drafts = Dir['board_minutes_*.txt'].sort}
   @base = env['PATH_INFO'].chomp(path).untaint
   @path = path
+  @query = params['q']
   @agenda = "board_agenda_#{date.gsub('-','_')}.txt"
   pass unless File.exist? File.join(FOUNDATION_BOARD, @agenda)
 

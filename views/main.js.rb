@@ -1,6 +1,8 @@
 class Main < React
-  def route(path)
-    if path
+  def route(path, query)
+    if path == 'search'
+      @item = {title: 'Search', view: Search, color: 'blank', query: query}
+    elsif path and path != '.'
       @item = Agenda.find(path)
     else
       @item = Agenda
@@ -21,27 +23,31 @@ class Main < React
     Agenda.load(@@parsed)
     Agenda._date = @@agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
     Agenda._agendas = @@agendas
-    self.route(@@path)
+    self.route(@@path, @@query)
   end
 
-  def navigate(path)
-    self.route(path)
-    history.pushState({path: path}, nil, path)
+  def navigate(path, query)
+    self.route(path, query)
+    history.pushState({path: path, query: query}, nil, path)
   end
 
   def componentDidMount()
     # export navigate method
     Main.navigate = self.navigate
 
-    history.replaceState({path: @@path}, nil, @@path)
+    if not history.state or not history.state.query
+      history.replaceState({path: @@path}, nil, @@path)
+    end
 
     window.addEventListener :popstate do |event|
-      if event.state and event.state.path
-        self.route(event.state.path)
+      if event.state and defined? event.state.path
+        self.route(event.state.path, event.state.query)
       end
     end
 
     def (document.getElementsByTagName('body')[0]).onkeyup(event)
+      return if document.getElementById('search-text')
+
       if event.keyCode == 37
         self.navigate document.querySelector("a[rel=prev]").getAttribute('href')
       elsif event.keyCode == 39

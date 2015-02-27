@@ -60,11 +60,15 @@ class Header < React
           end
 
           _ul.dropdown_menu do
-            _li { _Link text: 'Agenda', href: '' }
+            _li { _Link text: 'Agenda', href: '.' }
 
             Agenda.index.each do |item|
               _li { _Link text: item.index, href: item.href } if item.index
             end
+
+            _li.divider
+
+            _li { _Link text: 'Search', href: 'search' }
           end
         end
 

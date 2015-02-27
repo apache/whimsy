@@ -201,6 +201,11 @@ main hr {
 .search {padding-top: 1em}
 .hilite {background-color: #FF6}
 
+#search-text {
+  margin-left: 0.5em;
+  width: 95%;
+}
+
 #minute-comments {
   max-height: 9em;
   overflow: auto;
