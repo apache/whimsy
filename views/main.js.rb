@@ -2,6 +2,8 @@ class Main < React
   def route(path, query)
     if path == 'search'
       @item = {title: 'Search', view: Search, color: 'blank', query: query}
+    elsif path == 'comments'
+      @item = {title: 'Comments', view: Comments, color: 'blank'}
     elsif path and path != '.'
       @item = Agenda.find(path)
     else

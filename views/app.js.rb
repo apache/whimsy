@@ -7,6 +7,7 @@ require_relative 'footer'
 require_relative 'index'
 require_relative 'report'
 require_relative 'search'
+require_relative 'comments'
 
 # Common elements
 require_relative 'link'

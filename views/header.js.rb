@@ -69,6 +69,7 @@ class Header < React
             _li.divider
 
             _li { _Link text: 'Search', href: 'search' }
+            _li { _Link text: 'Comments', href: 'comments' }
           end
         end
 
