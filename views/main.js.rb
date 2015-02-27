@@ -1,4 +1,12 @@
 class Main < React
+  def initialize
+    @poll = {
+      link: "../#{@@agenda[/(\d+_\d+_\d+)/,1].gsub('_','-')}.json",
+      etag: @@etag,
+      interval: 10_000
+    }
+  end
+
   def route(path, query)
     if path == 'search'
       @item = {title: 'Search', view: Search, color: 'blank', query: query}
@@ -66,6 +74,24 @@ class Main < React
     end
 
     window.onresize()
+
+    self.pollAgenda() unless @poll.etag
+    setInterval self.pollAgenda, @poll.interval
+  end
+
+  def pollAgenda()
+    xhr = XMLHttpRequest.new()
+    xhr.open('GET', @poll.link, true)
+    xhr.setRequestHeader('If-None-Match', @poll.etag) if @poll.etag
+    xhr.responseType = 'text'
+    def xhr.onreadystatechange()
+      if xhr.readyState == 4 and xhr.status == 200 and xhr.responseText != ''
+        @poll.etag = xhr.getResponseHeader('ETag')
+        Agenda.load(JSON.parse(xhr.responseText))
+        self.route(history.state.path, history.state.query)
+      end
+    end
+    xhr.send()
   end
 
   def componentDidUpdate()

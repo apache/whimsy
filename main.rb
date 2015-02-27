@@ -43,6 +43,9 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   end
 
   @parsed = AGENDA_CACHE[@agenda][:parsed]
+  @etag = AGENDA_CACHE[@agenda][:etag]
+  @etag = nil unless AGENDA_CACHE[@agenda][:mtime].to_i > 0
+
   _html :'main'
 end
 
@@ -76,7 +79,8 @@ end
 get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
   file = "board_agenda_#{file.gsub('-','_')}.txt"
   pass unless File.exist? File.join(FOUNDATION_BOARD, file)
-  _json do
+
+  response = _json do
     Dir.chdir(FOUNDATION_BOARD) do
       if Dir['board_agenda_*.txt'].include? file
         file = file.dup.untaint
@@ -84,10 +88,13 @@ get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
           AGENDA_CACHE.parse file
         end
         last_modified AGENDA_CACHE[file][:mtime]
-        _! AGENDA_CACHE[file][:parsed]
+        AGENDA_CACHE[file][:parsed]
       end
     end
   end
+
+  AGENDA_CACHE[file][:etag] = headers['ETag']
+  response
 end
 
 # aggressively cache minutes
