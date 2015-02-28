@@ -22,14 +22,18 @@ else
   MINUTES_WORK = '/var/tools/data'
 end
 
+def dir(pattern, base=FOUNDATION_BOARD)
+  Dir[File.join(base, pattern)].map {|name| File.basename name}
+end
+
 get '/' do
-  agenda = Dir.chdir(FOUNDATION_BOARD) {Dir['board_agenda_*.txt'].sort.last}
+  agenda = dir('board_agenda_*.txt').sort.last
   redirect to("/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/")
 end
 
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
-  Dir.chdir(FOUNDATION_BOARD) {@agendas = Dir['board_agenda_*.txt'].sort}
-  Dir.chdir(FOUNDATION_BOARD) {@drafts = Dir['board_minutes_*.txt'].sort}
+  @agendas = dir('board_agenda_*.txt').sort
+  @drafts = dir('board_minutes_*.txt').sort
   @base = env['PATH_INFO'].chomp(path).untaint
   @path = path
   @query = params['q']
@@ -37,9 +41,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   pass unless File.exist? File.join(FOUNDATION_BOARD, @agenda)
 
   if AGENDA_CACHE[@agenda][:mtime] == 0
-    Dir.chdir(FOUNDATION_BOARD) do
-      AGENDA_CACHE.parse(@agenda, true)
-    end
+    AGENDA_CACHE.parse(@agenda, true)
   end
 
   @parsed = AGENDA_CACHE[@agenda][:parsed]
@@ -70,27 +72,27 @@ end
 # aggressively cache agenda
 AGENDA_CACHE = Hash.new(mtime: 0)
 def AGENDA_CACHE.parse(file, quick=false)
+  path = File.expand_path(file, FOUNDATION_BOARD).untaint
   self[file] = {
-    mtime: quick ? -1 : File.mtime(file),
-    parsed: ASF::Board::Agenda.parse(File.read(file), quick)
+    mtime: quick ? -1 : File.mtime(path),
+    parsed: ASF::Board::Agenda.parse(File.read(path), quick)
   }
 end
 
 get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
   file = "board_agenda_#{file.gsub('-','_')}.txt"
-  pass unless File.exist? File.join(FOUNDATION_BOARD, file)
+  path = File.expand_path(file, FOUNDATION_BOARD).untaint
+  pass unless File.exist? path
 
   response = _json do
-    Dir.chdir(FOUNDATION_BOARD) do
-      if Dir['board_agenda_*.txt'].include? file
-        file = file.dup.untaint
-        if AGENDA_CACHE[file][:mtime] != File.mtime(file)
-          AGENDA_CACHE.parse file
-        end
-        last_modified AGENDA_CACHE[file][:mtime]
-        AGENDA_CACHE[file][:parsed]
-      end
+    file = file.dup.untaint
+
+    if AGENDA_CACHE[file][:mtime] != File.mtime(path)
+      AGENDA_CACHE.parse file
     end
+
+    last_modified AGENDA_CACHE[file][:mtime]
+    AGENDA_CACHE[file][:parsed]
   end
 
   AGENDA_CACHE[file][:etag] = headers['ETag']
@@ -100,35 +102,32 @@ end
 # aggressively cache minutes
 MINUTE_CACHE = Hash.new(mtime: 0)
 def MINUTE_CACHE.parse(file)
+  path = File.expand_path(file, MINUTES_WORK).untaint
   self[file] = {
-    mtime: File.mtime(file),
-    parsed: YAML.load_file(file)
+    mtime: File.mtime(path),
+    parsed: YAML.load_file(path)
   }
 end
 
 get '/json/minutes/:file' do |file|
-  file = "board_minutes_#{file.gsub('-','_')}.yml".untaint
+  file = "board_minutes_#{file.gsub('-','_')}.yml"
+  path = File.expand_path(file, MINUTES_WORK).untaint
+  pass unless File.exits? path
+
   _json do
-    Dir.chdir(MINUTES_WORK) do
-      if Dir['board_minutes_*.yml'].include? file
-        last_modified File.mtime(file)
-        _! MINUTE_CACHE.parse(file)[:parsed]
-      end
-    end
+    last_modified File.mtime(path)
+    MINUTE_CACHE.parse(file)[:parsed]
   end
 end
 
 get '/text/minutes/:file' do |file|
   file = "board_minutes_#{file.gsub('-','_')}.txt".untaint
+  pass unless dir('board_minutes_*.txt').include? file
+  path = File.expand_path(file, FOUNDATION_BOARD).untaint
+
   _text do
-    Dir.chdir(FOUNDATION_BOARD) do
-      if Dir['board_minutes_*.txt'].include? file
-        last_modified File.mtime(file)
-        _ File.read(file)
-      else
-        halt 404
-      end
-    end
+    last_modified File.mtime(path)
+    File.read(path)
   end
 end
 
@@ -136,14 +135,9 @@ get '/text/draft/:file' do |file|
   agenda = "board_agenda_#{file.gsub('-','_')}.txt".untaint
   minutes = MINUTES_WORK + '/' + 
     agenda.sub('_agenda_','_minutes_').sub('.txt','.yml')
+  pass unless dir('board_agenda_*.txt').include?(agenda) and File.exist? minutes
 
   _text do
-    Dir.chdir(FOUNDATION_BOARD) do
-      if Dir['board_agenda_*.txt'].include?(agenda) and File.exist? minutes
-        _ Minutes.draft(agenda, minutes)
-      else
-        halt 404
-      end
-    end
+    Minutes.draft(agenda, minutes)
   end
 end
