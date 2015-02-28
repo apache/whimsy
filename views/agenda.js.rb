@@ -106,6 +106,12 @@ class Agenda
     Report
   end
 
+  def buttons
+    [
+      (AddComment unless @comments === undefined)
+    ]
+  end
+
   def color
     if not @title
       'blank'

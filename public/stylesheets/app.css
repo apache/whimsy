@@ -156,7 +156,11 @@ footer .btn {
 }
 
 .modal-body {
-  background-color: white
+  background-color: white;
+}
+
+.modal-content {
+  text-align: left;
 }
 
 body {
