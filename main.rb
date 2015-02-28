@@ -15,8 +15,8 @@ require 'ruby2js/filter/require'
 require 'yaml'
 
 if ENV['RACK_ENV'] == 'test'
-  FOUNDATION_BOARD = 'test/work/board'
-  MINUTES_WORK = 'test/work/data'
+  FOUNDATION_BOARD = File.expand_path('test/work/board').untaint
+  MINUTES_WORK = File.expand_path('test/work/data').untaint
 else
   FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
   MINUTES_WORK = '/var/tools/data'
