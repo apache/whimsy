@@ -21,7 +21,7 @@ class AddComment < React
       _div.form_group do
         _label 'Initials', for: 'comment-initials'
         _input.comment_initials!.form_control label: 'Initials',
-          placeholder: 'initials'
+          placeholder: 'initials', defaultValue: Server.initials
       end
 
       #input field: comment text

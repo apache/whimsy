@@ -121,7 +121,7 @@ class Main < React
 
     # keyboard navigation (unless on the search screen)
     def (document.body).onkeyup(event)
-      return if ~'#search-text'
+      return if ~'#search-text' or ~'.modal-open'
 
       if event.keyCode == 37
         self.navigate ~"a[rel=prev]".getAttribute('href')
