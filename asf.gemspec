@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency("rack")
   s.add_dependency("ruby-ldap")
   s.add_dependency("tzinfo")
+  s.add_dependency("tzinfo-data")
   s.add_dependency("wunderbar")
 
   # If your tests use any gems, include them here

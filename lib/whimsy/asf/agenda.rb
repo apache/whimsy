@@ -89,13 +89,17 @@ class ASF::Board::Agenda
       # add roster and prior report link
       whimsy = 'https://whimsy.apache.org'
       @sections.each do |section, hash|
-	next unless section =~ /^(4[A-Z]|\d+|[A-Z][A-Z]?)$/
-	committee = ASF::Committee.find(hash['title'] ||= 'UNKNOWN')
-	unless section =~ /^4[A-Z]$/
-	  hash['roster'] = 
-	    "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
-	end
-	hash['prior_reports'] = minutes(committee.display_name)
+        next unless section =~ /^(4[A-Z]|\d+|[A-Z][A-Z]?)$/
+        committee = ASF::Committee.find(hash['title'] ||= 'UNKNOWN')
+        unless section =~ /^4[A-Z]$/
+          hash['roster'] = 
+            "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
+        end
+        if section =~ /^[A-Z][A-Z]?$/
+          hash['stats'] = 
+            "https://reporter.apache.org/?#{CGI.escape committee.name}"
+        end
+        hash['prior_reports'] = minutes(committee.display_name)
       end
     end
 

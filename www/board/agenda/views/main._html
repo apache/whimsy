@@ -39,12 +39,15 @@ _html ng_app: 'AsfBoardAgenda', ng_controller: 'Layout' do
             _dt 'Approved', ng_show: 'item.approved'
             _dd '{{ item.approved && item.approved.join(", ") }}',
               ng_show: 'item.approved'
-            _dt 'Links', ng_show: 'item.roster || item.prior_reports'
+            _dt 'Links', ng_show: 'item.roster||item.prior_reports||item.stats'
             _dd ng_show: 'item.roster' do
               _a 'Roster', href: '{{ item.roster }}'
             end
             _dd ng_show: 'item.prior_reports' do
               _a 'Prior Reports', ng_href: '{{ item.prior_reports }}'
+            end
+            _dd ng_show: 'item.stats' do
+              _a 'Statistics', ng_href: '{{ item.stats }}'
             end
           end
         end
