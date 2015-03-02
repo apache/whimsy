@@ -1,9 +1,18 @@
+#
+# Search component: 
+#  * prompt for search 
+#  * display matching paragraphs from agenda, highlighting search strings
+#  * keep query string in window location URL in synch
+#
+
 class Search < React
+  # initialize query text based on data passed to the component
   def initialize
     @text = @@data.query || ''
   end
 
   def render
+    # search input field
     _div.search do
       _label 'Search:', for: 'search_text'
       _input.search_text! autofocus: 'autofocus', value: @text, 
@@ -21,13 +30,11 @@ class Search < React
         _section do
           _h4 {_Link text: item.title, href: item.href}
 
+          # highlight matching strings in paragraph
           item.text.split(/\n\s*\n/).each do |paragraph|
             if paragraph.downcase().include? text
-              paragraph = paragraph.gsub('&', '&amp;').gsub('>', '&gt;').
-                gsub('<', '&lt;')
-
               _pre.report dangerouslySetInnerHTML: {
-                __html: paragraph.gsub(/(#{text})/i,
+                __html: htmlEscape(paragraph).gsub(/(#{text})/i,
                  "<span class='hilite'>$1</span>")
               }
             end
@@ -35,20 +42,27 @@ class Search < React
         end
       end
 
+      # if no sections were output, indicate 'no matches'
       _p {_em 'No matches'} unless matches
     else
+
+      # start producing query results when input string has three characters
       _p 'Please enter at least three characters'
+
     end
   end
 
+  # update text whenever input changes
   def input(event)
     @text = event.target.value
   end
 
+  # set history on initial rendering
   def componentDidMount()
     self.componentDidUpdate()
   end
 
+  # replace history state on subsequent renderings
   def componentDidUpdate()
     state = {path: 'search', query: @text}
 

@@ -14,6 +14,10 @@ require_relative 'add-comment'
 
 # Common elements
 require_relative 'link'
+require_relative 'modal-dialog'
 
 # Model
 require_relative 'agenda'
+
+# Utility functions
+require_relative 'utils'

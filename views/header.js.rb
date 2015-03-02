@@ -1,5 +1,7 @@
 #
 # Header: title on the left, dropdowns on the right
+#
+# Also keeps the window/tab title in sync with the header title
 
 class Header < React
   def render
@@ -77,11 +79,16 @@ class Header < React
     end
   end
 
+  # set title on initial rendering
   def componentDidMount()
     self.componentDidUpdate()
   end
 
+  # update title to match the item title whenever page changes
   def componentDidUpdate()
-    document.getElementsByTagName('title')[0].textContent = @@item.title
+    title = ~'title'
+    if title.textContent != @@item.title
+      title.textContent = @@item.title
+    end
   end
 end

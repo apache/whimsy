@@ -1,4 +1,18 @@
+#
+# Main component, responsible for:
+#
+#  * Initial loading and polling of the agenda
+#
+#  * Routing based on path and query information in the URL
+#
+#  * Rendering a Header, a item view, and a Footer
+#
+#  * Resizing view to leave room for the Header and Footer
+#
+
 class Main < React
+
+  # initialize polling state
   def initialize
     @poll = {
       link: "../#{@@agenda[/(\d+_\d+_\d+)/,1].gsub('_','-')}.json",
@@ -7,6 +21,7 @@ class Main < React
     }
   end
 
+  # route request based on path and query from the window location (URL)
   def route(path, query)
     if path == 'search'
       @item = {title: 'Search', view: Search, color: 'blank', query: query}
@@ -19,6 +34,7 @@ class Main < React
     end
   end
 
+  # common render for all pages: header, main, and footer
   def render
     _Header item: @item
 
@@ -29,6 +45,7 @@ class Main < React
     _Footer item: @item
   end
 
+  # initial load of the agenda, and route first request
   def componentWillMount()
     Agenda.load(@@parsed)
     Agenda._date = @@agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
@@ -36,50 +53,64 @@ class Main < React
     self.route(@@path, @@query)
   end
 
+  # navigation method that updates history (back button) information
   def navigate(path, query)
     self.route(path, query)
     history.pushState({path: path, query: query}, nil, path)
   end
 
+  # additional client side initialization
   def componentDidMount()
     # export navigate method
     Main.navigate = self.navigate
 
+    # store initial state in history, taking care not to overwrite
+    # history set by the Search component.
     if not history.state or not history.state.query
       history.replaceState({path: @@path}, nil, @@path)
     end
 
+    # listen for back button, and re-route/re-render when it occcurs
     window.addEventListener :popstate do |event|
       if event.state and defined? event.state.path
         self.route(event.state.path, event.state.query)
       end
     end
 
-    def (document.getElementsByTagName('body')[0]).onkeyup(event)
-      return if document.getElementById('search-text')
+    # keyboard navigation (unless on the search screen)
+    def (document.body).onkeyup(event)
+      return if ~'#search-text'
 
       if event.keyCode == 37
-        self.navigate document.querySelector("a[rel=prev]").getAttribute('href')
+        self.navigate ~"a[rel=prev]".getAttribute('href')
       elsif event.keyCode == 39
-        self.navigate document.querySelector("a[rel=next]").getAttribute('href')
+        self.navigate ~"a[rel=next]".getAttribute('href')
       end
     end
 
+    # whenever the window is resized, adjust margins of the main area to
+    # avoid overlapping the header and footer areas
     def window.onresize()
-      main = document.querySelector('main')
-      header = document.querySelector('header.navbar')
-      footer = document.querySelector('header.navbar')
-      main.style.marginTop = "#{header.clientHeight}px"
-      main.style.marginBottom = "#{footer.clientHeight}px"
+      main = ~'main'
+      main.style.marginTop = "#{~'header.navbar'.clientHeight}px"
+      main.style.marginBottom = "#{~'footer.navbar'.clientHeight}px"
     end
 
+    # do an initial resize
     window.onresize()
 
-    self.pollAgenda() unless @poll.etag
-    setInterval self.pollAgenda, @poll.interval
+    # if agenda is stale, fetch immediately; start polling agenda
+    self.fetchAgenda() unless @poll.etag
+    setInterval self.fetchAgenda, @poll.interval
   end
 
-  def pollAgenda()
+  # after each subsequent re-rendering, resize main window
+  def componentDidUpdate()
+    window.onresize()
+  end
+
+  # fetch agenda
+  def fetchAgenda()
     xhr = XMLHttpRequest.new()
     xhr.open('GET', @poll.link, true)
     xhr.setRequestHeader('If-None-Match', @poll.etag) if @poll.etag
@@ -94,7 +125,4 @@ class Main < React
     xhr.send()
   end
 
-  def componentDidUpdate()
-    window.onresize()
-  end
 end

@@ -1,32 +1,51 @@
 class AddComment < React
+  def initialize
+    @save_disabled = true
+  end
+
   def render
+    # comment form button
     _button.btn.btn_primary 'add comment', type: 'button', 
       data_toggle: 'modal', data_target: '#comment-form'
 
-    _div.modal.fade.comment_form! do
-      _div.modal_dialog do
-        _div.modal_content do
-          _div.modal_header.commented do
-            _button.close 'x', type: 'button', data_dismiss: 'modal'
-            _h4.modal_title 'Enter a comment'
-          end
-          _div.modal_body do
-            _div.form_group do
-              _label 'Initials', for: 'comment-initials'
-              _input.comment_initials!.form_control label: 'Initials',
-                placeholder: 'initials'
-            end
-            _div.form_group do
-              _label 'Comment', for: 'comment-text'
-              _textarea.comment_text!.form_control label: 'Comment',
-                placeholder: 'comment', rows: 5
-            end
-          end
-          _div.modal_footer do
-            _button.btn.btn_default 'Cancel'
-          end
-        end
+    _ModalDialog.comment_form! color: 'commented' do
+      # header
+      _h4 'Enter a comment'
+
+      #input field: initials
+      _div.form_group do
+        _label 'Initials', for: 'comment-initials'
+        _input.comment_initials!.form_control label: 'Initials',
+          placeholder: 'initials'
       end
+
+      #input field: comment text
+      _div.form_group do
+        _label 'Comment', for: 'comment-text'
+        _textarea.comment_text!.form_control label: 'Comment',
+          placeholder: 'comment', rows: 5, onInput: self.input
+      end
+
+      # footer buttons
+      _button.btn_default 'Cancel', data_dismiss: 'modal'
+      _button.btn_primary 'Save', disabled: @save_disabled, onClick: self.save
+    end
+  end
+
+  # enable/disable save when input changes
+  def input(event)
+    @save_disabled = ( event.target.value.length == 0 )
+  end
+
+  def save(event)
+    data = {
+      initials: ~'#comment_initials'.value,
+      text: ~'#comment_text'.value
+    }
+
+    post 'add-comment', data do |pending|
+      Pending.load pending
+      ~'#comment-form'.modal(:hide)
     end
   end
 end
