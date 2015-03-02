@@ -15,7 +15,7 @@ class Main < React
   # initialize polling state
   def initialize
     @poll = {
-      link: "../#{@@agenda[/(\d+_\d+_\d+)/,1].gsub('_','-')}.json",
+      link: "../#{@@page.date}.json",
       etag: @@etag,
       interval: 10_000
     }
@@ -47,10 +47,13 @@ class Main < React
 
   # initial load of the agenda, and route first request
   def componentWillMount()
-    Agenda.load(@@parsed)
-    Agenda._date = @@agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
-    Agenda._agendas = @@agendas
-    self.route(@@path, @@query)
+    Agenda.load(@@page.parsed)
+    Agenda.date = @@page.date
+    Agenda._agendas = @@server.agendas
+    self.route(@@page.path, @@page.query)
+
+    # free memory
+    @@page.parsed = nil
   end
 
   # navigation method that updates history (back button) information
@@ -67,7 +70,7 @@ class Main < React
     # store initial state in history, taking care not to overwrite
     # history set by the Search component.
     if not history.state or not history.state.query
-      history.replaceState({path: @@path}, nil, @@path)
+      history.replaceState({path: @@page.path}, nil, @@page.path)
     end
 
     # listen for back button, and re-route/re-render when it occcurs

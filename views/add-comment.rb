@@ -39,11 +39,13 @@ class AddComment < React
 
   def save(event)
     data = {
+      agenda: Agenda.file,
+      attach: @item.attach,
       initials: ~'#comment_initials'.value,
       text: ~'#comment_text'.value
     }
 
-    post 'add-comment', data do |pending|
+    post 'comment', data do |pending|
       Pending.load pending
       ~'#comment-form'.modal(:hide)
     end

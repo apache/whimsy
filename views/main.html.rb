@@ -11,7 +11,6 @@ _html do
 
   _script src: '../app.js'
   _.render '#main' do
-    _Main parsed: @parsed, agenda: @agenda, agendas: @agendas, path: @path,
-      query: @query, etag: @etag
+    _Main server: @server, page: @page
   end
 end

@@ -70,8 +70,16 @@ class Agenda
     'blank'
   end
 
+  def self.date=(date)
+    @@date=date
+  end
+
   def self.title
     @@date
+  end
+
+  def self.file
+    "board_agenda_#{@@date.gsub('-', '_')}.txt"
   end
 
   def self.prev
@@ -81,7 +89,7 @@ class Agenda
       date = agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
 
       if date < @@date and (result.title == 'Help' or date > result.title)
-	result = {title: date, href: "../#{date}/"}
+        result = {title: date, href: "../#{date}/"}
       end
     end
 

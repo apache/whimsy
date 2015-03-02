@@ -8,21 +8,30 @@ get '/' do
 end
 
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
-  @agendas = dir('board_agenda_*.txt').sort
-  @drafts = dir('board_minutes_*.txt').sort
-  @base = env['PATH_INFO'].chomp(path).untaint
-  @path = path
-  @query = params['q']
-  @agenda = "board_agenda_#{date.gsub('-','_')}.txt"
-  pass unless File.exist? File.join(FOUNDATION_BOARD, @agenda)
+  agenda = "board_agenda_#{date.gsub('-','_')}.txt"
+  pass unless File.exist? File.join(FOUNDATION_BOARD, agenda)
 
-  if AGENDA_CACHE[@agenda][:mtime] == 0
-    AGENDA_CACHE.parse(@agenda, true)
+  if AGENDA_CACHE[agenda][:mtime] == 0
+    AGENDA_CACHE.parse(agenda, true)
   end
 
-  @parsed = AGENDA_CACHE[@agenda][:parsed]
-  @etag = AGENDA_CACHE[@agenda][:etag]
-  @etag = nil unless AGENDA_CACHE[@agenda][:mtime].to_i > 0
+  @base = env['PATH_INFO'].chomp(path).untaint
+
+  @server = {
+    agendas: dir('board_agenda_*.txt').sort,
+    drafts: dir('board_minutes_*.txt').sort
+  }
+
+  @page = {
+    date: date,
+    path: path,
+    query: params['q'],
+    agenda: agenda,
+    parsed: AGENDA_CACHE[agenda][:parsed],
+    etag: AGENDA_CACHE[agenda][:etag]
+  }
+
+  @page[:etag] = nil unless AGENDA_CACHE[agenda][:mtime].to_i > 0
 
   _html :'main'
 end
