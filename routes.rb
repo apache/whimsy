@@ -66,19 +66,20 @@ get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
   path = File.expand_path(file, FOUNDATION_BOARD).untaint
   pass unless File.exist? path
 
-  response = _json do
-    file = file.dup.untaint
+  begin
+    _json do
+      file = file.dup.untaint
 
-    if AGENDA_CACHE[file][:mtime] != File.mtime(path)
-      AGENDA_CACHE.parse file
+      if AGENDA_CACHE[file][:mtime] != File.mtime(path)
+        AGENDA_CACHE.parse file
+      end
+
+      last_modified AGENDA_CACHE[file][:mtime]
+      AGENDA_CACHE[file][:parsed]
     end
-
-    last_modified AGENDA_CACHE[file][:mtime]
-    AGENDA_CACHE[file][:parsed]
+  ensure
+    AGENDA_CACHE[file][:etag] = headers['ETag']
   end
-
-  AGENDA_CACHE[file][:etag] = headers['ETag']
-  response
 end
 
 get '/json/minutes/:file' do |file|

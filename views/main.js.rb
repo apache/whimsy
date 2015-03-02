@@ -16,7 +16,7 @@ class Main < React
   def initialize
     @poll = {
       link: "../#{@@page.date}.json",
-      etag: @@etag,
+      etag: @@page.etag,
       interval: 10_000
     }
   end
@@ -24,14 +24,43 @@ class Main < React
   # route request based on path and query from the window location (URL)
   def route(path, query)
     if path == 'search'
-      @item = {title: 'Search', view: Search, color: 'blank', query: query}
+      item = {view: Search, query: query}
     elsif path == 'comments'
-      @item = {title: 'Comments', view: Comments, color: 'blank'}
+      item = {view: Comments}
     elsif path and path != '.'
-      @item = Agenda.find(path)
+      item = Agenda.find(path)
     else
-      @item = Agenda
+      item = Agenda
     end
+
+    # provide defaults for required properties
+    item.color ||= 'blank'
+    item.title ||= item.view.displayName
+
+    # determine what buttons are required
+    if item.forms
+      @buttons = item.forms.map do |form|
+        if form and form.button
+          props = {text: 'button', attrs: {className: 'btn'}}
+          for name in form.button
+            if name == 'text'
+              props.text = form.button.text
+            elsif name == 'class' or name == 'classname'
+              props.attrs.className = "btn #{form.button[name].gsub('_', '-')}"
+            else
+              props.attrs[name.gsub('_', '-')] = form.button[name]
+            end
+          end
+          return props
+        else
+          return nil
+        end
+      end
+    else
+      @buttons = []
+    end
+
+    @item = Main.item = item
   end
 
   # common render for all pages: header, main, and footer
@@ -42,7 +71,13 @@ class Main < React
       React.createElement(@item.view, data: @item)
     end
 
-    _Footer item: @item
+    _Footer item: @item, buttons: @buttons
+
+    if @item.forms
+      @item.forms.each do |form|
+        React.createElement(form, item: @item) if form
+      end
+    end
   end
 
   # initial load of the agenda, and route first request
@@ -131,5 +166,4 @@ class Main < React
     end
     xhr.send()
   end
-
 end

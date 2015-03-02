@@ -114,7 +114,7 @@ class Agenda
     Report
   end
 
-  def buttons
+  def forms
     [
       (AddComment unless @comments === undefined)
     ]

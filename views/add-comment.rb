@@ -3,11 +3,16 @@ class AddComment < React
     @save_disabled = true
   end
 
-  def render
-    # comment form button
-    _button.btn.btn_primary 'add comment', type: 'button', 
-      data_toggle: 'modal', data_target: '#comment-form'
+  def self.button
+    {
+      text: 'add comment',
+      class: 'btn_primary',
+      data_toggle: 'modal',
+      data_target: '#comment-form'
+    }
+  end
 
+  def render
     _ModalDialog.comment_form! color: 'commented' do
       # header
       _h4 'Enter a comment'
