@@ -49,8 +49,12 @@ class Main < React
   def componentWillMount()
     Agenda.load(@@page.parsed)
     Agenda.date = @@page.date
-    Agenda._agendas = @@server.agendas
     self.route(@@page.path, @@page.query)
+
+    # copy server info for later use
+    for prop in @@server
+      Server[prop] = @@server[prop]
+    end
 
     # free memory
     @@page.parsed = nil

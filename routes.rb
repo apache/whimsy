@@ -17,10 +17,17 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
 
   @base = env['PATH_INFO'].chomp(path).untaint
 
+  require 'etc'
+  userid = env['REMOTE_USER'] || Etc.getlogin
+
   @server = {
+    userid: env['REMOTE_USER'] || Etc.getlogin,
     agendas: dir('board_agenda_*.txt').sort,
     drafts: dir('board_minutes_*.txt').sort
   }
+
+  @server[:username] = Etc.getpwnam(@server[:userid])[4].split(',').first
+  @server[:initials] = @server[:username].gsub(/[^A-Z]/, '').downcase
 
   @page = {
     date: date,

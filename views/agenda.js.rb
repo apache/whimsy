@@ -85,7 +85,7 @@ class Agenda
   def self.prev
     result = {title: 'Help', href: 'help'}
 
-    @@agendas.each do |agenda|
+    Server.agendas.each do |agenda|
       date = agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
 
       if date < @@date and (result.title == 'Help' or date > result.title)
@@ -99,7 +99,7 @@ class Agenda
   def self.next
     result = {title: 'Help', href: 'help'}
 
-    @@agendas.each do |agenda|
+    Server.agendas.each do |agenda|
       date = agenda[/(\d+_\d+_\d+)/, 1].gsub('_', '-')
 
       if date > @@date and (result.title == 'Help' or date < result.title)
