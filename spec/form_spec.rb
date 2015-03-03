@@ -18,19 +18,17 @@ describe "forms", type: :feature do
       text: 'Save'
   end
 
-  it "has an add-comment form with a disabled Save button" do
+  it "should enable Save button after input" do
     on_react_server do
       React.render _AddComment(server: {initials: 'sr'}), document.body do
+        node = ~'#comment_text'
+        node.textContent = 'Good job!'
+        Simulate.input node, target: {value: 'Good job!'}
         response.end document.body.innerHTML
       end
     end
 
-    expect(page).to have_selector '.modal#comment-form'
-    expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
-      text: 'Enter a comment'
-    expect(page).to have_selector '.modal-body input'
-#   expect(page).to have_selector '.modal-body input[value="sr"]'
-    expect(page).to have_selector '.modal-footer button[disabled]',
+    expect(page).to have_selector '.modal-footer button:not([disabled])',
       text: 'Save'
   end
 
