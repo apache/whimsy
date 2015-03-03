@@ -63,7 +63,7 @@ class Main < React
     @item = Main.item = item
   end
 
-  # common render for all pages: header, main, and footer
+  # common layout for all pages: header, main, footer, and forms
   def render
     _Header item: @item
 
@@ -75,7 +75,7 @@ class Main < React
 
     if @item.forms
       @item.forms.each do |form|
-        React.createElement(form, item: @item) if form
+        React.createElement(form, item: @item, server: @@server) if form
       end
     end
   end
