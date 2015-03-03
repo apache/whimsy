@@ -45,7 +45,7 @@ class AddComment < React
   def save(event)
     data = {
       agenda: Agenda.file,
-      attach: @item.attach,
+      attach: @@item.attach,
       initials: ~'#comment_initials'.value,
       text: ~'#comment_text'.value
     }
