@@ -38,7 +38,7 @@ class Header < React
                 _dd @@item.approved.join(', ')
               end
 
-              if @@item.roster or @@item.prior_reports
+              if @@item.roster or @@item.prior_reports or @@item.stats
                 _dt 'Links'
 
                 if @@item.roster
@@ -47,6 +47,10 @@ class Header < React
 
                 if @@item.prior_reports
                   _dd { _a 'Prior Reports', href: @@item.prior_reports }
+                end
+
+                if @@item.stats
+                  _dd { _a 'Statistics', href: @@item.stats }
                 end
               end
             end

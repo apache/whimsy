@@ -9,7 +9,7 @@ end
 # "AJAX" style post request to the server, with a callback
 def post(target, data, &block)
   xhr = XMLHttpRequest.new()
-  xhr.open('POST', target.link, true)
+  xhr.open('POST', target, true)
   xhr.setRequestHeader('Content-Type', 'application/json;charset=utf-8')
   xhr.responseType = 'text'
 
