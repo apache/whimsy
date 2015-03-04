@@ -5,7 +5,8 @@ require 'ruby2js/filter/react'
 describe "forms", type: :feature do
   it "has an add-comment form with a disabled Save button" do
     on_react_server do
-      React.render _AddComment(server: {initials: 'sr'}), document.body do
+      server = {pending: {}, initials: 'sr'}
+      React.render _AddComment(server: server), document.body do
         response.end document.body.innerHTML
       end
     end
@@ -20,7 +21,8 @@ describe "forms", type: :feature do
 
   it "should enable Save button after input" do
     on_react_server do
-      React.render _AddComment(server: {initials: 'sr'}), document.body do
+      server = {pending: {}, initials: 'sr'}
+      React.render _AddComment(server: server), document.body do
         node = ~'#comment_text'
         node.textContent = 'Good job!'
         Simulate.input node, target: {value: 'Good job!'}

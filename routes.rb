@@ -17,17 +17,23 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
 
   @base = env['PATH_INFO'].chomp(path).untaint
 
-  require 'etc'
-  userid = env['REMOTE_USER'] || Etc.getlogin
+  if ENV['RACK_ENV'] == 'test'
+    userid = 'test'
+    username = 'Joe Tester'
+  else
+    require 'etc'
+    userid = env['REMOTE_USER'] || Etc.getlogin
+    username = Etc.getpwnam(userid)[4].split(',').first
+  end
 
   @server = {
-    userid: env['REMOTE_USER'] || Etc.getlogin,
+    userid: userid,
     agendas: dir('board_agenda_*.txt').sort,
-    drafts: dir('board_minutes_*.txt').sort
+    drafts: dir('board_minutes_*.txt').sort,
+    pending: Pending.get(userid),
+    username: username,
+    initials: username.gsub(/[^A-Z]/, '').downcase
   }
-
-  @server[:username] = Etc.getpwnam(@server[:userid])[4].split(',').first
-  @server[:initials] = @server[:username].gsub(/[^A-Z]/, '').downcase
 
   @page = {
     date: date,
@@ -54,11 +60,11 @@ get '/json/pending' do
 end
 
 get '/json/secretary_todos/:file' do
-  _json :'json/todos'
+  _json :'actions/todos'
 end
 
 post '/json/:file' do
-  _json :"json/#{params[:file]}"
+  _json :"actions/#{params[:file]}"
 end
 
 get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|

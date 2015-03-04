@@ -21,7 +21,8 @@ class AddComment < React
       _div.form_group do
         _label 'Initials', for: 'comment-initials'
         _input.comment_initials!.form_control label: 'Initials',
-          placeholder: 'initials', defaultValue: @@server.initials
+          placeholder: 'initials', 
+          defaultValue: @@server.pending.initials || @@server.initials
       end
 
       #input field: comment text
@@ -47,12 +48,12 @@ class AddComment < React
       agenda: Agenda.file,
       attach: @@item.attach,
       initials: ~'#comment_initials'.value,
-      text: ~'#comment_text'.value
+      comment: ~'#comment_text'.value
     }
 
     post 'comment', data do |pending|
       Pending.load pending
-      ~'#comment-form'.modal(:hide)
+      jQuery('#comment-form').modal(:hide)
     end
   end
 end

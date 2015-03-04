@@ -15,6 +15,7 @@ require 'ruby2js/filter/require'
 require 'yaml'
 
 require_relative './routes'
+require_relative './models/pending'
 
 # determine where relevant data can be found
 if ENV['RACK_ENV'] == 'test'
@@ -25,6 +26,12 @@ else
   AGENDA_WORK = ASF::Config.get(:agenda_work) || '/var/tools/data'
   STDERR.puts "* SVN board  : #{FOUNDATION_BOARD}"
   STDERR.puts "* Agenda work: #{AGENDA_WORK}"
+end
+
+# if AGENDA_WORK doesn't exist yet, make it
+if not Dir.exist? AGENDA_WORK
+  require 'fileutils'
+  FileUtils.mkdir_p AGENDA_WORK
 end
 
 # get a directory listing given a pattern and a base directory

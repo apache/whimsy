@@ -101,10 +101,16 @@ class Main < React
     history.pushState({path: path, query: query}, nil, path)
   end
 
+  # refresh the current page
+  def refresh()
+    self.route(history.state.path, history.state.query)
+  end
+
   # additional client side initialization
   def componentDidMount()
-    # export navigate method
+    # export navigate and refresh methods
     Main.navigate = self.navigate
+    Main.refresh  = self.refresh
 
     # store initial state in history, taking care not to overwrite
     # history set by the Search component.

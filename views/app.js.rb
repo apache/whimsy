@@ -17,7 +17,8 @@ require_relative 'link'
 require_relative 'modal-dialog'
 
 # Model
-require_relative 'agenda'
+require_relative 'models/agenda'
+require_relative 'models/pending'
 
 # Utility functions
 require_relative 'utils'
