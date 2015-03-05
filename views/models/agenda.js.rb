@@ -62,6 +62,18 @@ class Agenda
     return results
   end
 
+  def pending
+    Pending.comments[@attach]
+  end
+
+  def actions
+    if @title == 'Action Items'
+      @actions
+    else
+      Agenda.find('Action-Items').actions[@title]
+    end
+  end
+
   def self.view
     Index
   end

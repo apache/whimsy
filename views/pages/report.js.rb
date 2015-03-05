@@ -8,11 +8,24 @@ class Report < React
         end
       end
 
-      unless @@data.comments.empty?
-        _section do
+      _section do
+        unless @@data.comments.empty? or @@data.pending
           _h3.comments! 'Comments'
           @@data.comments.each do |comment|
             _pre.comment comment
+          end
+        end
+
+        if @@data.pending
+          _h3.comments! 'Pending Comment'
+          _pre.comment (Pending.initials || Server.initials) + ': ' + 
+            @@data.pending
+        end
+
+        if @@data.actions
+          _h3.comments! 'Action Items'
+          @@data.actions.each do |action|
+            _pre.comment action
           end
         end
       end

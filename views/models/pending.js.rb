@@ -13,7 +13,7 @@ class Pending
     comments.keys().length + approved.keys().length
   end
 
-  def self.approved
+  def self.comments
     Server.pending.comments
   end
 
