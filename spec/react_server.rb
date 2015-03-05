@@ -61,14 +61,16 @@ class ReactServer
 
   # the server itself
   @@server = proc do
-    React = require 'react'
-    ReactAddons = require 'react/addons'
+    React = require('react')
+    ReactAddons = require('react/addons')
     TestUtils = React.addons.TestUtils
     Simulate = TestUtils.Simulate
 
     jsdom = require("jsdom").jsdom
     global.document = jsdom('<html><body></body></html>')
     global.window = document.defaultView
+
+    jQuery = require('jquery')
 
     http = require('http')
     server = http.createServer do |request, response|
