@@ -1,20 +1,20 @@
 # General layout
-require_relative 'main'
-require_relative 'header'
-require_relative 'footer'
+require_relative 'layout/main'
+require_relative 'layout/header'
+require_relative 'layout/footer'
 
 # Individual pages
-require_relative 'index'
-require_relative 'report'
-require_relative 'search'
-require_relative 'comments'
+require_relative 'pages/index'
+require_relative 'pages/report'
+require_relative 'pages/search'
+require_relative 'pages/comments'
 
 # Button + forms
-require_relative 'add-comment'
+require_relative 'forms/add-comment'
 
 # Common elements
-require_relative 'link'
-require_relative 'modal-dialog'
+require_relative 'elements/link'
+require_relative 'elements/modal-dialog'
 
 # Model
 require_relative 'models/agenda'
