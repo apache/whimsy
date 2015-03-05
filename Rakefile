@@ -5,6 +5,18 @@ RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 task :spec => :work
 
+task :server do
+  ENV['RACK_ENV']='development'
+  require 'wunderbar/listen'
+end
+
+namespace :server do
+  task :test do
+    ENV['RACK_ENV']='test'
+    require 'wunderbar/listen'
+  end
+end
+
 file 'test/work' do
   mkdir_p 'test/work'
 end
