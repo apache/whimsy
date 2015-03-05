@@ -38,6 +38,13 @@ class AddComment < React
     end
   end
 
+  # autofocus on comment form
+  def componentDidMount()
+    jQuery('#comment-form').on 'shown.bs.modal' do
+      ~'#comment-text'.focus()
+    end
+  end
+
   # enable/disable save when input changes
   def input(event)
     @save_disabled = ( event.target.value.length == 0 )
