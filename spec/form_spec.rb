@@ -6,7 +6,7 @@ describe "forms", type: :feature do
   it "has an add-comment form with a disabled Save button" do
     on_react_server do
       server = {pending: {}, initials: 'sr'}
-      React.render _AddComment(server: server), document.body do
+      React.render _AddComment(item: {}, server: server), document.body do
         response.end document.body.innerHTML
       end
     end
@@ -22,10 +22,10 @@ describe "forms", type: :feature do
   it "should enable Save button after input" do
     on_react_server do
       server = {pending: {}, initials: 'sr'}
-      React.render _AddComment(server: server), document.body do
+      React.render _AddComment(item: {}, server: server), document.body do
         node = ~'#comment_text'
         node.textContent = 'Good job!'
-        Simulate.input node, target: {value: 'Good job!'}
+        Simulate.change node, target: {value: 'Good job!'}
         response.end document.body.innerHTML
       end
     end

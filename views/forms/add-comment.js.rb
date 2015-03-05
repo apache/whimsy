@@ -1,6 +1,7 @@
 class AddComment < React
   def initialize
     @save_disabled = true
+    @base = @comment = @@item.pending
   end
 
   def self.button
@@ -28,8 +29,8 @@ class AddComment < React
       #input field: comment text
       _div.form_group do
         _label 'Comment', for: 'comment-text'
-        _textarea.comment_text!.form_control label: 'Comment',
-          placeholder: 'comment', rows: 5, onInput: self.input
+        _textarea.comment_text!.form_control value: @comment, label: 'Comment',
+          placeholder: 'comment', rows: 5, onChange: self.change
       end
 
       # footer buttons
@@ -45,17 +46,27 @@ class AddComment < React
     end
   end
 
-  # enable/disable save when input changes
-  def input(event)
-    @save_disabled = ( event.target.value.length == 0 )
+  # enable/disable save when comment changes
+  def change(event)
+    @save_disabled = ( event.target.value == @base )
+    @comment = event.target.value
   end
 
+  # when item changes, reset base and comment
+  def componentWillReceiveProps(props)
+    if props.item.href != @@item.href
+      @base = @comment = props.item.pending || ''
+      @save_disabled = true
+    end
+  end
+
+  # when save button is pushed, post comment and dismiss modal when complete
   def save(event)
     data = {
       agenda: Agenda.file,
       attach: @@item.attach,
       initials: ~'#comment_initials'.value,
-      comment: ~'#comment_text'.value
+      comment: @comment
     }
 
     post 'comment', data do |pending|
