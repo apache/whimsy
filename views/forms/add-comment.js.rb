@@ -35,6 +35,7 @@ class AddComment < React
 
       # footer buttons
       _button.btn_default 'Cancel', data_dismiss: 'modal'
+      _button.btn_warning 'Delete', onClick: self.delete if @comment
       _button.btn_primary 'Save', disabled: @save_disabled, onClick: self.save
     end
   end
@@ -58,6 +59,11 @@ class AddComment < React
       @base = @comment = props.item.pending || ''
       @save_disabled = true
     end
+  end
+
+  # when delete button is pushed, clear the comment
+  def delete(event)
+    @comment = ''
   end
 
   # when save button is pushed, post comment and dismiss modal when complete

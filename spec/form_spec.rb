@@ -15,7 +15,9 @@ describe "forms", type: :feature do
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Enter a comment'
     expect(page).to have_selector '.modal-body input[value="sr"]'
-    expect(page).to have_selector '.modal-footer button[disabled]',
+    expect(page).not_to have_selector '.modal-footer .btn-warning',
+      text: 'Delete'
+    expect(page).to have_selector '.modal-footer .btn-primary[disabled]',
       text: 'Save'
   end
 
@@ -30,7 +32,9 @@ describe "forms", type: :feature do
       end
     end
 
-    expect(page).to have_selector '.modal-footer button:not([disabled])',
+    expect(page).to have_selector '.modal-footer .btn-warning',
+      text: 'Delete'
+    expect(page).to have_selector '.modal-footer .btn-primary:not([disabled])',
       text: 'Save'
   end
 
