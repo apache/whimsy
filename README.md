@@ -4,6 +4,12 @@ Preface
  * I ask that you [give it five minutes](https://signalvnoise.com/posts/3124-give-it-five-minutes).
  * Be prepared to [rethink best practices](https://www.youtube.com/watch?v=x7cQ3mrcKaY).
 
+The ASF manages its board meetings via a text file that contains the agenda
+for the meeting.  PMC reports, comments on those reports, and action items
+associated with those PMCs are stored in separate places in that text file.
+The agenda tool brings this data together and makes it easier to both
+navigate and update that file.
+
 Preparation
 ---
 
@@ -40,6 +46,8 @@ Note:
 Kicking the tires
 ---
 
+Run the following commands in a Terminal window:
+
     sudo gem install bundler
     git clone ...
     cd agenda
@@ -47,7 +55,7 @@ Kicking the tires
     rake spec
     rake server:test
 
-Visit http://localhost:9292/ in your favorite browser.
+Visit [http://localhost:9292/](http://localhost:9292/) in your favorite browser.
 
 Notes:
 
@@ -87,12 +95,12 @@ At this point, you have something up and running.  Let's take a look around.
       Most importantly, this page contains a parsed agenda.   Mentally file
       that away for later consideration.
 
- * Next I want you to find and launch your JavaScript console.  In it, enter
-   the following expression: `Main.item`.  If you are currently on the agenda
-   page, the results will be underwhelming.  If so, go to another page, and
-   try again.  You will see the data associated with the specific page you
-   are looking at.  Instance variables will be preceded by an underscore.
-   Methods and computed properties will not be.
+ * Next I want you to find and launch your browser's JavaScript console.  In
+   it, enter the following expression: `Main.item`.  If you are currently on
+   the agenda page, the results will be underwhelming.  If so, go to another
+   page, and try again.  You will see the data associated with the specific
+   page you are looking at.  Instance variables will be preceded by an
+   underscore.  Methods and computed properties will not be.
 
  * If you are so inclined, you can actually make changes to the
    datastructures.  Those changes won't be visible until you re-render.
@@ -101,7 +109,8 @@ At this point, you have something up and running.  Let's take a look around.
  * One last thing before we leave this section, go to an agenda page, and
    replace the final `/` in the URL with `.json`.  The contents you see is
    what is fetched by the client when it needs to get an update of the data.
-   This data is heavily cached, so it takes negligible resources to check.
+   This data is heavily cached on both the client and server, so it takes
+   negligible resources to check for updates.
 
 Viewing Source (this time, Actual Code)
 ---
@@ -236,10 +245,17 @@ from mine:
     - /home/rubys/svn/foundation/board
     :agenda_work: /home/rubys/tmp/agenda
 
-Adapt as necessary.
+Adapt as necessary.  The `svn` entry is actually an array. Other whimsy apps
+may use other svn directories.  `agenda_work` is a string.  Another relavant
+entry that is not shown here is `lib`.  It is an array of libraries that
+are to be used instead of gems you may have installed.  This is useful if
+you are making changes to the agenda parsing logic, ruby2js or wunderbar.
 
 With this in place, start the server with `rake server` instead of
-`rake server:test`
+`rake server:test`.  It will tell you what directories are being watched
+for changes - this list includes libraries listed in the `.whimsy` file.
+It will also tell you what svn directory and agenda work directories are
+being used.
 
 
 Conclusion
