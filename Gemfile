@@ -6,7 +6,6 @@ gem 'ruby2js'
 gem 'sinatra'
 gem 'nokogumbo'
 gem 'execjs'
-gem 'github-markdown'
 gem 'whimsy-asf'
 
 group :test do

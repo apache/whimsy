@@ -7,7 +7,7 @@ _html do
   _title 'ASF Board Agenda'
   _link rel: 'stylesheet', href: '../stylesheets/app.css'
 
-  _div.main!
+  _div_.main!
 
   _script src: '../app.js'
   _.render '#main' do
