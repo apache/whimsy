@@ -191,6 +191,10 @@ Viewing Source (this time, Actual Code)
    both controversial and [doesn't support if
    statements](http://facebook.github.io/react/tips/if-else-in-JSX.html).
 
+ * Should you ever happen to look for the main routing functions, they
+   are `routing.rb` on the server and `views/layout/main.js.rb` on the
+   client.
+
 Testing
 ---
 

@@ -9,7 +9,7 @@ class Report < React
       end
 
       _section do
-        unless @@data.comments.empty? or @@data.pending
+        unless @@data.comments.empty?
           _h3.comments! 'Comments'
           @@data.comments.each do |comment|
             _pre.comment comment
@@ -22,7 +22,7 @@ class Report < React
             @@data.pending
         end
 
-        if @@data.actions
+        if @@data.title != 'Action Items' and @@data.actions
           _h3.comments! 'Action Items'
           @@data.actions.each do |action|
             _pre.comment action

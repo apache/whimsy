@@ -13,6 +13,7 @@ end
 namespace :server do
   task :test do
     ENV['RACK_ENV']='test'
+    ENV['USER']='test'
     require 'wunderbar/listen'
   end
 end
@@ -38,7 +39,12 @@ end
 file 'test/work/data' => 'test/work' do
   mkdir_p 'test/work/data'
 end
-task :work => ['test/work/board', 'test/work/data']
+
+file 'test/work/data/test.yml' => 'test/work/data' do
+  cp 'test/test.yml', 'test/work/data/test.yml'
+end
+
+task :work => ['test/work/board', 'test/work/data/test.yml']
 
 task :test => :work do
 end

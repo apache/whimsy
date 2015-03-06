@@ -30,15 +30,24 @@ feature 'report' do
      text: 'Attic'
     expect(page).to have_selector '.nextlink[href="Axis"]', 
      text: 'Axis'
+
+    # pending comments
+    expect(page).to have_selector 'h3#comments', text: 'Pending Comment'
+    expect(page).to have_selector 'pre.comment', text: 'jt: Nice report!'
   end
 
   it "should show missing reports" do
-    visit '/2015-02-18/Abdera'
+    visit '/2015-02-18/Tuscany'
     expect(page).to have_selector 'pre em', text: 'Missing'
     expect(page).not_to have_selector 'dt', text: 'Approved'
 
     # comments
     expect(page).to have_selector 'h3#comments', text: 'Comments'
-    expect(page).to have_selector 'pre.comment', text: 'rb: Reminder email sent'
+    expect(page).to have_selector 'pre.comment', text: 'cm: Reminder email sent'
+
+    # action items
+    expect(page).to have_selector 'h3', text: 'Action Items'
+    expect(page).to have_selector 'pre.comment', 
+      text: 'Greg: Is it time to retire the project?'
   end
 end

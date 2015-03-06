@@ -5,7 +5,7 @@
 
 class Pending
   def self.load(value)
-    Server.pending = value
+    Server.pending = value if value
     Main.refresh()
     return value
   end

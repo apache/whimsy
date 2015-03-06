@@ -18,7 +18,12 @@ def post(target, data, &block)
       data = nil
 
       begin
-        data = JSON.parse(xhr.responseText) if xhr.status == 200
+        if xhr.status == 200
+          data = JSON.parse(xhr.responseText) 
+        elsif xhr.status >= 400
+          console.log(xhr.responseText)
+          alert "Exception\n#{JSON.parse(xhr.responseText).exception}"
+        end
       rescue => e
         console.log(e)
       end
