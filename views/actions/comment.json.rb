@@ -2,7 +2,7 @@
 # Add comments to an agenda item
 #
 
-pending = Pending.get(env.user)
+pending = Pending.get(env.user, @agenda)
 pending['initials'] = @initials
 pending['agenda'] = @agenda
 
