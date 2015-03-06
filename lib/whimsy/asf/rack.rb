@@ -24,7 +24,7 @@ module ASF
       end
 
       def call(env)
-        authorized = false
+        authorized = ( ENV['RACK_ENV'] == 'test' )
 
         user = env['REMOTE_USER'] ||= ENV['USER'] || Etc.getpwuid.name
         person = ASF::Person.new(user)
