@@ -1,8 +1,8 @@
 Preface
 ---
 
- * I ask that you [give it five minutes](https://signalvnoise.com/posts/3124-give-it-five-minutes)
- * Be prepared to [rethink best practices](https://www.youtube.com/watch?v=x7cQ3mrcKaY)
+ * I ask that you [give it five minutes](https://signalvnoise.com/posts/3124-give-it-five-minutes).
+ * Be prepared to [rethink best practices](https://www.youtube.com/watch?v=x7cQ3mrcKaY).
 
 Preparation
 ---
@@ -23,8 +23,8 @@ For planning purposes, prereqs for a _full_ installation will require:
  * The following software installed:
      * Subversion
      * Ruby 1.9.3 or greater
-     * io.js plus npm install react, jsdom, and jquery
-     * PhantomJS 2.0
+     * io.js plus [npm](https://www.npmjs.com/) install react, jsdom, and jquery
+     * [PhantomJS](http://phantomjs.org/) 2.0
          * Mac OS/X Yosemite users may need to get the binary from comments
            on [12900](https://github.com/ariya/phantomjs/issues/12900).
 
@@ -189,7 +189,12 @@ If you've made it this far, you've undoubtedly spent more than the five
 minutes I've asked of you.  Hopefully, that's because I've piqued your
 interest.  Having a test suite is important as it will allow you to
 confidently make changes without breaking things.  If you haven't yet,
-I encourage you to install Poltergeist and io.js.  Now onto the tests:
+I encourage you to install Poltergeist and io.js.
+
+Before running the tests, run `rake clobber` to undo any changes you
+make have made by running the application.
+
+Now onto the tests:
 
   * `spec/parse_spec.rb` is a vanilla unit test that verifies that the
     output of a parse matches what you would expect.  This approach is
@@ -215,6 +220,27 @@ I encourage you to install Poltergeist and io.js.  Now onto the tests:
 Despite the diversity, the above tests have a lot of commonality and build
 on standard Ruby test functions.  Together they should be able to cover
 pretty much any type of testing requirements.
+
+Running for real
+---
+
+So far, you've run with test data.  If you want to run for real, you need
+to have a recent checkout of
+https://svn.apache.org/repos/private/foundation/board and a directory to
+store pending updates.  If you have both, create a file named `.whimsy`
+in your home directory.  The file format is YAML, and here is an excerpt
+from mine:
+
+    ---
+    :svn:
+    - /home/rubys/svn/foundation/board
+    :agenda_work: /home/rubys/tmp/agenda
+
+Adapt as necessary.
+
+With this in place, start the server with `rake server` instead of
+`rake server:test`
+
 
 Conclusion
 ---
@@ -253,6 +279,10 @@ Nothing is perfect.  Here are a few things to watch out for:
    and then reading it later in the same function you won't be seeing the
    updated value.
 
+ * While I've provided a Gemfile to help with installation, `bundle exec`
+   play nicely with `rake spec` or `rake server`.  I haven't spent the time
+   to figure out why this is.
+
 If you encounter any other gotchas, let me know and I'll update this README.
 
 Further reading:
@@ -260,7 +290,8 @@ Further reading:
 
  * [bootstrap](http://getbootstrap.com/)
  * [capybara](https://github.com/jnicklas/capybara#readme)
- * [react](http://facebook.github.io/react/).
- * [ruby2js](https://github.com/rubys/ruby2js/#readme).
+ * [react](http://facebook.github.io/react/)
+ * [ruby2js](https://github.com/rubys/ruby2js/#readme)
+ * [phantomjs](http://phantomjs.org/)
  * [sinatra](http://www.sinatrarb.com/)
- * [wunderbar](https://github.com/rubys/wunderbar/#readme).
+ * [wunderbar](https://github.com/rubys/wunderbar/#readme)
