@@ -121,7 +121,7 @@ Viewing Source (this time, Actual Code)
    subdirectory.
 
  * the `views/pages/index.js.rb` file contains the code for the agenda page.
-   It defines a class with a render method.  Names that start with an 
+   It defines a class with a `render` method.  Names that start with an 
    underscore become HTML elements.  Nesting is generally represented by
    `do`...`end` blocks, and occasionally (rarely) by curly braces.  Attributes
    are represented by `name: value` pairs.  Note the complete lack of
@@ -146,6 +146,13 @@ Viewing Source (this time, Actual Code)
    to the before and after values for properties.  Don't get hung up on the
    logic here, but do go to the navigation bar on the top right of the
    browser page, and select `Search` and play with search live.
+
+   Two items of special note.  `dangerouslySetInnerHTML` is React's
+   "don't blame me if things go wrong" way of allowing you to add text
+   that you have properly escaped into the content of an element.  Also,
+   we are directly making use of the browser APIs for updating the
+   [history](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history)
+   of the window.
  
  * At this point, I suggest that you make a change.  More specifically, I
    suggest you break something.  Insert the keyword `do` into a random spot
@@ -154,8 +161,8 @@ Viewing Source (this time, Actual Code)
    a stack traceback indicating where the problem is.  Undo this change,
    and then lets continue exploring.
 
- * The `views/forms/add-comment.js.rb` file is probably a better example of
-   a component.  The render function is more straightforward.  Not mentioned
+ * The `views/forms/add-comment.js.rb` file is probably a more typical example
+   of a component.  The render function is more straightforward.  Not mentioned
    before, but element names followed by a dot followed by a name is a
    shorthand for specifying HTML class attributes.  And an element name
    followed by a dot followed by an exclamation point is shorthand for
@@ -163,8 +170,17 @@ Viewing Source (this time, Actual Code)
    pioneered by [markaby](http://markaby.github.io/).
 
    Of special interest in this file is the `onChange` and `onClick`
-   attributes.  This is how you associate an event with a method.  The
-   `save` method will call post which will send data to the server.
+   attributes.  Both are examples of how you associate an event with a method.
+   The `save` method will call post which will send data to the server,
+   wait for the response, update pending based on that response, and then
+   close the modal window.
+
+   Finally, finding DOM elements is a common enough need that I've usurped
+   the `~` operator to expand to the various ways to find a dom element
+   based on a CSS selector (including `document.getElementById`,
+   `document.getElementByClassName`, ...).  I've got an alternate
+   implementation that maps such strings to jQuery calls.  I've gone back
+   and forth, but for now I and am leaning towards the native implementation.
 
  * `views/actions/comment.json.rb` is the code which is run on the server
    when you save a comment.  It gets a list of pending items for this user,
@@ -177,19 +193,21 @@ Viewing Source (this time, Actual Code)
  * I mentioned previously that element names that start with a capital
    letter are effectively macros.  You've seen `Index`, `Search`, and
    `AddComment` classes, each of which start with a capital letter.  These
-   actually are examples of what React calls components that act like
-   macros.  `views/main.html.rb' contains the 'top'.  `views/app.js.rb`
-   lists all of the files that make up the client side of the application.
+   actually are examples of what React calls components that I have described
+   as acting like macros.  `views/main.html.rb' contains the 'top'.
+   `views/app.js.rb` lists all of the files that make up the client side of
+   the application.
 
- * This brings us back to to the app.js script mentioned much earlier.
-   If you visit http://localhost:9292/app.js you will see the full script. 
-   Every bit of this JavaScript was generated from the js.rb files mentioned
-   above.  Undoubtedly you have seen small amounts of JavaScript before
-   but I suspect that much of this looks foreign.  Nicely indented,
-   vaguely familiar, but very foreign.  Most people these days generate
-   JavaScript.  Popular with React is something called JSX, but that's
-   both controversial and [doesn't support if
+ * This brings us back to to the `app.js` script mentioned much earlier.
+   If you visit [http://localhost:9292/app.js](http://localhost:9292/app.js)
+   you will see the full script.  Every bit of this JavaScript was generated
+   from the js.rb files mentioned above.  Undoubtedly you have seen small
+   amounts of JavaScript before but I suspect that much of this looks foreign.
+   Nicely indented, vaguely familiar, but very foreign.  Most people these
+   days generate JavaScript.  Popular with React is something called JSX, but
+   that's both controversial and [doesn't support if
    statements](http://facebook.github.io/react/tips/if-else-in-JSX.html).
+   I make plenty of use of if statements (and more!) in my render methods.
 
  * Should you ever happen to look for the main routing functions, they
    are `routing.rb` on the server and `views/layout/main.js.rb` on the
@@ -227,8 +245,13 @@ Now onto the tests:
      which runs arbitrary scripts and returns the results as HTML.  This
      approach excels at testing a React component.
 
-  * Finally, `spec/navigate_spec.rb` actually tests functions with a real
-    (albeit headless) browser.
+  * For complete end to end testing, `spec/navigate_spec.rb` actually tests
+    functions with a real (albeit headless) browser.  This test verifies
+    that the back button actually works (verifying the browser `history`
+    API calls were made correctly).
+
+  * Finally, `actions_spec.rb` verifies the server side logic executed in
+    response to posting a comment.
 
 Despite the diversity, the above tests have a lot of commonality and build
 on standard Ruby test functions.  Together they should be able to cover
@@ -291,17 +314,26 @@ Nothing is perfect.  Here are a few things to watch out for:
  * In Ruby there isn't a difference between accessing attributes and methods
    which have no arguments.  In JavaScript there is.  To make this work,
    parenthesis are required when calling or defining methods that have
-   no arguments.
+   no arguments.  Parenthesis are still optional when arguments are involved.
 
  * In React, assignments to component state (@variables) don't take effect
    immediately.  You will find that individual methods tend to be short in
    React components, but if you find yourself assigning to a state variable
    and then reading it later in the same function you won't be seeing the
-   updated value.
+   updated value.  This being said, this is beginning to annoy me enough that
+   I will likely add code that scans methods for instance variables that are
+   both read and written to in the same method, and add code that stores
+   intermediate results in instance variables.
+
+ * In Ruby, `$` is not a legal method name, so this common
+   alias for `jQuery` isn't directly available.  jQuery isn't needed for
+   react, but is needed for Bootstrap.  As such there will be few places where
+   this will be needed.  As previously mentioned, I've considered using
+   the `~` operator for this.
 
  * While I've provided a Gemfile to help with installation, `bundle exec`
-   play nicely with `rake spec` or `rake server`.  I haven't spent the time
-   to figure out why this is.
+   doesn't play nicely with `rake spec` or `rake server`.  I haven't spent the
+   time to figure out why this is.
 
 If you encounter any other gotchas, let me know and I'll update this README.
 
