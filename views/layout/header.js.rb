@@ -10,6 +10,13 @@ class Header < React
 
       _ul.nav.nav_pills.navbar_right do
 
+        # pending count
+        if Pending.count > 0
+          _li.label.label_danger do
+            _a Pending.count
+          end
+        end
+
         # 'info' dropdown
         #
         if @@item.attach

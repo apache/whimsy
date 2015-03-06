@@ -11,7 +11,7 @@ class Pending
   end
 
   def self.count
-    comments.keys().length + approved.keys().length
+    self.comments.keys().length + self.approved.keys().length
   end
 
   def self.comments
