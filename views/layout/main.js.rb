@@ -37,24 +37,39 @@ class Main < React
     item.color ||= 'blank'
     item.title ||= item.view.displayName
 
-    # determine what buttons are required
-    if item.forms
-      @buttons = item.forms.map do |form|
+    # determine what buttons are required, merging defaults, form provided
+    # overrides, and any overrides provided by the agenda item itself
+    buttons = item.buttons
+    if buttons
+      @buttons = buttons.map do |button|
+        props = {text: 'button', attrs: {className: 'btn'}}
+
+        # form overrides
+        form = button.form
         if form and form.button
-          props = {text: 'button', attrs: {className: 'btn'}}
           for name in form.button
             if name == 'text'
               props.text = form.button.text
             elsif name == 'class' or name == 'classname'
-              props.attrs.className = "btn #{form.button[name].gsub('_', '-')}"
+              props.attrs.className += " #{form.button[name].gsub('_', '-')}"
             else
               props.attrs[name.gsub('_', '-')] = form.button[name]
             end
           end
-          return props
-        else
-          return nil
         end
+
+        # item overrides
+        for name in button
+          if name == 'text'
+            props.text = button.text
+          elsif name == 'class' or name == 'classname'
+            props.attrs.className += " #{button[name].gsub('_', '-')}"
+          elsif name != 'form'
+            props.attrs[name.gsub('_', '-')] = button[name]
+          end
+        end
+
+        return props
       end
     else
       @buttons = []
@@ -73,23 +88,23 @@ class Main < React
 
     _Footer item: @item, buttons: @buttons
 
-    if @item.forms
-      @item.forms.each do |form|
-        React.createElement(form, item: @item, server: @@server) if form
+    if @item.buttons
+      @item.buttons.each do |button|
+        React.createElement(button.form, item: @item, server: @@server)
       end
     end
   end
 
   # initial load of the agenda, and route first request
   def componentWillMount()
-    Agenda.load(@@page.parsed)
-    Agenda.date = @@page.date
-    self.route(@@page.path, @@page.query)
-
     # copy server info for later use
     for prop in @@server
       Server[prop] = @@server[prop]
     end
+
+    Agenda.load(@@page.parsed)
+    Agenda.date = @@page.date
+    self.route(@@page.path, @@page.query)
 
     # free memory
     @@page.parsed = nil

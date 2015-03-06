@@ -16,7 +16,11 @@ class AddComment < React
   def render
     _ModalDialog.comment_form! color: 'commented' do
       # header
-      _h4 'Enter a comment'
+      if @base
+        _h4 'Edit comment'
+      else
+        _h4 'Enter a comment'
+      end
 
       #input field: initials
       _div.form_group do
@@ -63,6 +67,7 @@ class AddComment < React
 
   # when delete button is pushed, clear the comment
   def delete(event)
+    @save_disabled = ( @base == '' )
     @comment = ''
   end
 

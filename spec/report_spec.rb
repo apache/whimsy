@@ -28,12 +28,17 @@ feature 'report' do
     # footer
     expect(page).to have_selector '.backlink[href="Attic"]', 
      text: 'Attic'
+    expect(page).to have_selector 'button', text: 'edit comment'
     expect(page).to have_selector '.nextlink[href="Axis"]', 
      text: 'Axis'
 
     # pending comments
     expect(page).to have_selector 'h3#comments', text: 'Pending Comment'
     expect(page).to have_selector 'pre.comment', text: 'jt: Nice report!'
+
+    # hidden form
+    expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
+      text: 'Edit comment'
   end
 
   it "should show missing reports" do
@@ -43,11 +48,16 @@ feature 'report' do
 
     # comments
     expect(page).to have_selector 'h3#comments', text: 'Comments'
+    expect(page).to have_selector 'button', text: 'add comment'
     expect(page).to have_selector 'pre.comment', text: 'cm: Reminder email sent'
 
     # action items
     expect(page).to have_selector 'h3', text: 'Action Items'
     expect(page).to have_selector 'pre.comment', 
       text: 'Greg: Is it time to retire the project?'
+
+    # hidden form
+    expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
+      text: 'Enter a comment'
   end
 end

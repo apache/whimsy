@@ -1,9 +1,18 @@
+#
+# This is the client model for an entire Agenda.  Class methods refer to
+# the agenda as a whole.  Instance methods refer to an individual agenda
+# item.
+#
+
 class Agenda
   @@index = []
 
+  # (re)-load an agenda, creating instances for each item, and linking
+  # each instance to their next and previous items.
   def self.load(list)
     @@index.clear()
     prev = nil
+
     list.each do |item|
       item = Agenda.new(item)
       item.prev = prev
@@ -11,13 +20,16 @@ class Agenda
       prev = item
       @@index << item
     end
+
     return @@index
   end
 
+  # return the entire agenda
   def self.index
     @@index
   end
 
+  # find an agenda item by path name
   def self.find(path)
     result = nil
     @@index.each do |item|
@@ -26,19 +38,25 @@ class Agenda
     return result
   end
 
+  # initialize an entry by copying each JSON property to a class instance
+  # variable.
   def initialize(entry)
     for name in entry
       self["_#{name}"] = entry[name]
     end
   end
 
+  # provide read-only access to a number of properties 
   attr_reader :attach, :title, :owner, :shepherd, :index
   attr_reader :approved, :roster, :prior_reports, :stats, :missing
 
+  # compute href by taking the title and replacing all non alphanumeric
+  # characters with dashes
   def href
     @title.gsub(/[^a-zA-Z0-9]+/, '-')
   end
 
+  # return the text or report for the agenda item
   def text
     @text || @report
   end
@@ -62,10 +80,12 @@ class Agenda
     return results
   end
 
+  # retrieve the pending comment (if any) associated with this agenda item
   def pending
     Pending.comments[@attach]
   end
 
+  # retrieve the action items associated with this agenda item
   def actions
     if @title == 'Action Items'
       @actions
@@ -74,26 +94,32 @@ class Agenda
     end
   end
 
+  # the default view to use for the agenda as a whole
   def self.view
     Index
   end
 
+  # the default banner color to use for the agenda as a whole
   def self.color
     'blank'
   end
 
+  # allow the date property to be changed
   def self.date=(date)
     @@date=date
   end
 
+  # the default title for the agenda as a whole
   def self.title
     @@date
   end
 
+  # the file associated with this agenda
   def self.file
     "board_agenda_#{@@date.gsub('-', '_')}.txt"
   end
 
+  # previous link for the agenda index page
   def self.prev
     result = {title: 'Help', href: 'help'}
 
@@ -108,6 +134,7 @@ class Agenda
     result
   end
 
+  # next link for the agenda index page
   def self.next
     result = {title: 'Help', href: 'help'}
 
@@ -122,16 +149,26 @@ class Agenda
     result
   end
 
+  # default view for an individual agenda item
   def view
     Report
   end
 
-  def forms
-    [
-      (AddComment unless @comments === undefined)
-    ]
+  def buttons
+    list = []
+
+    unless @comments === undefined # certain reports don't have comments
+      if self.pending
+        list << {form: AddComment, text: 'edit comment'}
+      else
+        list << {form: AddComment, text: 'add comment'}
+      end
+    end
+
+    list
   end
 
+  # banner color for this agenda item
   def color
     if not @title
       'blank'
