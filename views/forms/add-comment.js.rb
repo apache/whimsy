@@ -1,6 +1,5 @@
 class AddComment < React
   def initialize
-    @save_disabled = true
     @base = @comment = @@item.pending
   end
 
@@ -40,7 +39,8 @@ class AddComment < React
       # footer buttons
       _button.btn_default 'Cancel', data_dismiss: 'modal'
       _button.btn_warning 'Delete', onClick: self.delete if @comment
-      _button.btn_primary 'Save', disabled: @save_disabled, onClick: self.save
+      _button.btn_primary 'Save', onClick: self.save,
+        disabled: (@comment == @base)
     end
   end
 
@@ -51,9 +51,9 @@ class AddComment < React
     end
   end
 
-  # enable/disable save when comment changes
+  # update comment when textarea changes, triggering hiding/showing the
+  # Delete button and enabling/disabling the Save button.
   def change(event)
-    @save_disabled = ( event.target.value == @base )
     @comment = event.target.value
   end
 
@@ -61,13 +61,11 @@ class AddComment < React
   def componentWillReceiveProps(props)
     if props.item.href != @@item.href
       @base = @comment = props.item.pending || ''
-      @save_disabled = true
     end
   end
 
   # when delete button is pushed, clear the comment
   def delete(event)
-    @save_disabled = ( @base == '' )
     @comment = ''
   end
 
