@@ -83,7 +83,7 @@ class Main < React
     _Header item: @item
 
     _main do
-      React.createElement(@item.view, data: @item)
+      React.createElement(@item.view, item: @item)
     end
 
     _Footer item: @item, buttons: @buttons

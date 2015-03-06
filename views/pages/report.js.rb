@@ -3,28 +3,28 @@ class Report < React
     _section.flexbox do
       _section do
         _pre.report do
-          _p {_em 'Missing'} if @@data.missing
-          _ @@data.text
+          _p {_em 'Missing'} if @@item.missing
+          _ @@item.text
         end
       end
 
       _section do
-        unless @@data.comments.empty?
+        unless @@item.comments.empty?
           _h3.comments! 'Comments'
-          @@data.comments.each do |comment|
+          @@item.comments.each do |comment|
             _pre.comment comment
           end
         end
 
-        if @@data.pending
+        if @@item.pending
           _h3.comments! 'Pending Comment'
           _pre.comment (Pending.initials || Server.initials) + ': ' + 
-            @@data.pending
+            @@item.pending
         end
 
-        if @@data.title != 'Action Items' and @@data.actions
+        if @@item.title != 'Action Items' and @@item.actions
           _h3.comments! 'Action Items'
-          @@data.actions.each do |action|
+          @@item.actions.each do |action|
             _pre.comment action
           end
         end

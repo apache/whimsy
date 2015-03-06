@@ -8,7 +8,7 @@
 class Search < React
   # initialize query text based on data passed to the component
   def initialize
-    @text = @@data.query || ''
+    @text = @@item.query || ''
   end
 
   def render
