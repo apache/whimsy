@@ -231,3 +231,9 @@ main hr {
     min-width: 48%;
   }
 }
+
+/* Make dropdowns have the right cursor */
+li.dropdown #nav.dropdown-toggle {
+  cursor: pointer;
+}
+
