@@ -203,8 +203,9 @@ Viewing Source (this time, Actual Code)
    you will see the full script.  Every bit of this JavaScript was generated
    from the js.rb files mentioned above.  Undoubtedly you have seen small
    amounts of JavaScript before but I suspect that much of this looks foreign.
-   Nicely indented, vaguely familiar, but very foreign.  Most people these
-   days generate JavaScript.  Popular with React is something called JSX, but
+   Nicely indented, vaguely familiar, but very foreign.  Many people these
+   days generate JavaScript.  Popular with React is something called 
+   [JSX](http://facebook.github.io/react/docs/jsx-in-depth.html), but
    that's both controversial and [doesn't support if
    statements](http://facebook.github.io/react/tips/if-else-in-JSX.html).
    I make plenty of use of if statements (and more!) in my render methods.
@@ -231,15 +232,15 @@ Now onto the tests:
     output of a parse matches what you would expect.  This approach is
     good testing out server side logic.
 
-  * `spec/index_spec.rb`, and `report_spec.rb`, and `spec/other_views_spec.rb`
-    uses [capybara](https://github.com/jnicklas/capybara) to verify that
+  * `spec/index_spec.rb`, `spec/reports_spec.rb`, and `spec/other_views_spec.rb`
+    use [capybara](https://github.com/jnicklas/capybara) to verify that
     the html produced matches what you would expect.  This makes use of the
     server side rendering of pages.  Generally this involves identifying
     things to look for in the HTML with CSS paths and either text or
     attribute values.  Clearly this approach is focused on verifying HTML
     output.
 
-  * `spec/form_spec.rb` shows how client side logic (expressed in Ruby,
+  * `spec/forms_spec.rb` shows how client side logic (expressed in Ruby,
      but compiled to JavaScript) can be tested.  It does so by setting
      up a http server (the code for which is in `spec/react_server.rb`)
      which runs arbitrary scripts and returns the results as HTML.  This
@@ -306,10 +307,41 @@ Congratulations for making it this far.  To recap:
 This code clearly isn't complete.  What I'm looking for is people who are
 wlling to experiment and contribute.  Are you in?
 
+Sketching out some ideas: adding a new page to the navigation dropdown
+would involve:
+
+  * Adding a `Link` to the navigation dropdown in `views/layout/header.js.rb`
+  * Adding the path to the `route` method in `viewslayout/main.js.rb`
+  * Adding a React component for the page to `views/pages`
+  * Adding a specification to `specs/other_views_specs.rb`
+
+Adding a new modal dialog would involve:
+
+  * Adding a entry to the buttons list in `views/models/agenda.rb`
+  * Adding a React component for the form to `views/forms`
+  * Adding a server side action to `views/actions`.  A number of [actions
+    from the current agenda
+    tool](https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/board/agenda/json)
+    should be usable as is.
+  * Adding specifications to `specs/forms_specs.rb` and
+    `specs/actions_specs.rb`.
+   
+
 Gotchas
 ---
 
 Nothing is perfect.  Here are a few things to watch out for:
+
+ * On the server, Ruby code only has access to the standard Ruby libraries,
+   which includes methods like `File.read` and `YAML.parse`.  On the client,
+   Ruby code is translated to JavaScript which only has access to JavaScript
+   libraries, which includes methods like `history.pushState` and
+   `JSON.stringify`.  
+
+   [Ruby2JS filters](https://github.com/rubys/ruby2js#filters) reduce this
+   gap by converting many common Ruby methods calls to JavaScript equivalents
+   (e.g., `a.include? b` becomes `a.indexOf(b) != -1`).  Currently the
+   agenda tool makes use of the `functions` and `require` filters.
 
  * In Ruby there isn't a difference between accessing attributes and methods
    which have no arguments.  In JavaScript there is.  To make this work,
