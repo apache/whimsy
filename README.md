@@ -371,10 +371,6 @@ Nothing is perfect.  Here are a few things to watch out for:
    this will be needed.  As previously mentioned, I've considered using
    the `~` operator for this.
 
- * While I've provided a Gemfile to help with installation, `bundle exec`
-   doesn't play nicely with `rake spec` or `rake server`.  I haven't spent the
-   time to figure out why this is.
-
 If you encounter any other gotchas, let me know and I'll update this README.
 
 Further reading:
