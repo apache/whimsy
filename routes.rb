@@ -17,7 +17,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     AGENDA_CACHE.parse(agenda, true)
   end
 
-  @base = env['PATH_INFO'].chomp(path).untaint
+  @base = (env['SCRIPT_URL']||env['PATH_INFO']).chomp(path).untaint
 
   if ENV['RACK_ENV'] == 'test'
     userid = 'test'
