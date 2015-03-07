@@ -372,10 +372,19 @@ If you encounter any other gotchas, let me know and I'll update this README.
 Further reading:
 ---
 
- * [bootstrap](http://getbootstrap.com/)
- * [capybara](https://github.com/jnicklas/capybara#readme)
- * [react](http://facebook.github.io/react/)
- * [ruby2js](https://github.com/rubys/ruby2js/#readme)
- * [phantomjs](http://phantomjs.org/)
- * [sinatra](http://www.sinatrarb.com/)
- * [wunderbar](https://github.com/rubys/wunderbar/#readme)
+ * [bootstrap](http://getbootstrap.com/) - the most popular HTML, CSS, and JS
+   framework for developing responsive, mobile first projects on the web
+ * [capybara](https://github.com/jnicklas/capybara#readme) - helps you test
+   web applications by simulating how a real user would interact with your app
+ * [react](http://facebook.github.io/react/) - a JavaScript library for
+   building user interfaces 
+ * [ruby2js](https://github.com/rubys/ruby2jw/#readme) - minimal yet
+   extensible Ruby to JavaScript conversion. 
+ * [phantomjs](http://phantomjs.org/) -  a headless WebKit scriptable with a
+   JavaScript API
+ * [sinatra](http://www.sinatrarb.com/) - a
+   [DSL](http://en.wikipedia.org/wiki/Domain-specific_language) for quickly
+   creating web
+   applications in Ruby with minimal effort
+ * [wunderbar](https://github.com/rubys/wunderbar/#readme) - easy HTML5
+   applications
