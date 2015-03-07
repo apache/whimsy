@@ -49,7 +49,7 @@ Kicking the tires
 Run the following commands in a Terminal window:
 
     sudo gem install bundler
-    git clone ...
+    svn checkout https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/test/board/agenda
     cd agenda
     bundle install
     rake spec
