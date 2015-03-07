@@ -120,21 +120,21 @@ Viewing Source (this time, Actual Code)
    plus the [agenda](https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/lib/whimsy/asf/agenda)
    subdirectory.
 
- * the `views/pages/index.js.rb` file contains the code for the agenda page.
-   It defines a class with a `render` method.  Names that start with an 
-   underscore become HTML elements.  Nesting is generally represented by
-   `do`...`end` blocks, and occasionally (rarely) by curly braces.  Attributes
-   are represented by `name: value` pairs.  Note the complete lack of
-   `<%=` ... `%>` syntax required by things like JSP or erb.  Iteration is
-   done by naming what you want to iterate over, and following the do with
-   a name in vertical bars that contains the instance.
+ * the [views/pages/index.js.rb](views/pages/index.js.rb) file contains the
+   code for the agenda page.  It defines a class with a `render` method.
+   Names that start with an underscore become HTML elements.  Nesting is
+   generally represented by `do`...`end` blocks, and occasionally (rarely) by
+   curly braces.  Attributes are represented by `name: value` pairs.  Note the
+   complete lack of `<%=` ... `%>` syntax required by things like JSP or erb.
+   Iteration is done by naming what you want to iterate over, and following
+   the do with a name in vertical bars that contains the instance.
 
    Element names that start with a capital letter are essentially macros.
    We'll come back to that.
 
- * the `views/pages/search.js.rb` file contains the code for the search page.
-   There are more methods defined here.  You will find definitions for
-   these methods in the React 
+ * the [views/pages/search.js.rb](views/pages/search.js.rb) file contains the
+   code for the search page.  There are more methods defined here.  You will
+   find definitions for these methods in the React 
    [Lifecycle Methods](http://facebook.github.io/react/docs/component-specs.html#lifecycle-methods).
    You will see logic mixed with presentation.  React is deadly serious when
    it adopted the slogan "rethink best practices".  What makes this work
@@ -161,13 +161,14 @@ Viewing Source (this time, Actual Code)
    a stack traceback indicating where the problem is.  Undo this change,
    and then lets continue exploring.
 
- * The `views/forms/add-comment.js.rb` file is probably a more typical example
-   of a component.  The render function is more straightforward.  Not mentioned
-   before, but element names followed by a dot followed by a name is a
-   shorthand for specifying HTML class attributes.  And an element name
-   followed by a dot followed by an exclamation point is shorthand for
-   specifying HTML id attributes.  Both of these innovations were first
-   pioneered by [markaby](http://markaby.github.io/).
+ * The [views/forms/add-comment.js.rb](views/forms/add-comment.js.rb) file is
+   probably a more typical example of a component.  The render function is
+   more straightforward.  Not mentioned before, but element names followed by
+   a dot followed by a name is a shorthand for specifying HTML class
+   attributes.  And an element name followed by a dot followed by an
+   exclamation point is shorthand for specifying HTML id attributes.  Both of
+   these innovations were first pioneered by
+   [markaby](http://markaby.github.io/).
 
    Of special interest in this file is the `onChange` and `onClick`
    attributes.  Both are examples of how you associate an event with a method.
@@ -182,21 +183,21 @@ Viewing Source (this time, Actual Code)
    implementation that maps such strings to jQuery calls.  I've gone back
    and forth, but for now I and am leaning towards the native implementation.
 
- * `views/actions/comment.json.rb` is the code which is run on the server
-   when you save a comment.  It gets a list of pending items for this user,
-   modifies it based on the parameters passed, puts this data back and then
-   returns the modified list to the client (this is the last line, in Ruby
-   the keyword `return` is optional, and generally not used unless returning
-   from the middle of a method).  Most server actions will be simple.  Some
-   will do things like commit changes to svn.
+ * [views/actions/comment.json.rb](views/actions/comment.json.rb) is the code
+   which is run on the server when you save a comment.  It gets a list of
+   pending items for this user, modifies it based on the parameters passed,
+   puts this data back and then returns the modified list to the client (this
+   is the last line, in Ruby the keyword `return` is optional, and generally
+   not used unless returning from the middle of a method).  Most server
+   actions will be simple.  Some will do things like commit changes to svn.
 
  * I mentioned previously that element names that start with a capital
    letter are effectively macros.  You've seen `Index`, `Search`, and
    `AddComment` classes, each of which start with a capital letter.  These
    actually are examples of what React calls components that I have described
    as acting like macros.  `views/main.html.rb' contains the 'top'.
-   `views/app.js.rb` lists all of the files that make up the client side of
-   the application.
+   [views/app.js.rb](views/app.js.rb) lists all of the files that make up the
+   client side of the application.
 
  * This brings us back to to the `app.js` script mentioned much earlier.
    If you visit [http://localhost:9292/app.js](http://localhost:9292/app.js)
@@ -211,8 +212,8 @@ Viewing Source (this time, Actual Code)
    I make plenty of use of if statements (and more!) in my render methods.
 
  * Should you ever happen to look for the main routing functions, they
-   are `routing.rb` on the server and `views/layout/main.js.rb` on the
-   client.
+   are [routing.rb](routing.rb) on the server and
+   [views/layout/main.js.rb](views/layout/main.js.rb) on the client.
 
 Testing
 ---
@@ -228,31 +229,34 @@ make have made by running the application.
 
 Now onto the tests:
 
-  * `spec/parse_spec.rb` is a vanilla unit test that verifies that the
-    output of a parse matches what you would expect.  This approach is
-    good testing out server side logic.
+  * [spec/parse_spec.rb](spec/parse_spec.rb) is a vanilla unit test that
+    verifies that the output of a parse matches what you would expect.  This
+    approach is good testing out server side logic.
 
-  * `spec/index_spec.rb`, `spec/reports_spec.rb`, and `spec/other_views_spec.rb`
-    use [capybara](https://github.com/jnicklas/capybara) to verify that
-    the html produced matches what you would expect.  This makes use of the
-    server side rendering of pages.  Generally this involves identifying
-    things to look for in the HTML with CSS paths and either text or
-    attribute values.  Clearly this approach is focused on verifying HTML
-    output.
+  * [spec/index_spec.rb](spec/index_spec.rb),
+    [spec/reports_spec.rb](spec/reports_spec.rb), and
+    [spec/other_views_spec.rb](spec/other_views_spec.rb) use
+    [capybara](https://github.com/jnicklas/capybara) to verify that the html
+    produced matches what you would expect.  This makes use of the server side
+    rendering of pages.  Generally this involves identifying things to look
+    for in the HTML with CSS paths and either text or attribute values.
+    Clearly this approach is focused on verifying HTML output.
 
-  * `spec/forms_spec.rb` shows how client side logic (expressed in Ruby,
-     but compiled to JavaScript) can be tested.  It does so by setting
-     up a http server (the code for which is in `spec/react_server.rb`)
-     which runs arbitrary scripts and returns the results as HTML.  This
-     approach excels at testing a React component.
+  * [spec/forms_spec.rb](spec/forms_spec.rb) shows how client side logic
+    (expressed in Ruby, but compiled to JavaScript) can be tested.  It does so
+    by setting up a http server (the code for which is in
+    [spec/react_server.rb](spec/react_server.rb)) which runs arbitrary scripts
+    and returns the results as HTML.  This approach excels at testing a React
+    component.
 
-  * For complete end to end testing, `spec/navigate_spec.rb` actually tests
+  * For complete end to end testing,
+    [spec/navigate_spec.rb](spec/navigate_spec.rb) actually tests
     functions with a real (albeit headless) browser.  This test verifies
     that the back button actually works (verifying the browser `history`
     API calls were made correctly).
 
-  * Finally, `actions_spec.rb` verifies the server side logic executed in
-    response to posting a comment.
+  * Finally, [actions_spec.rb](actions_spec.rb) verifies the server side logic
+    executed in response to posting a comment.
 
 Despite the diversity, the above tests have a lot of commonality and build
 on standard Ruby test functions.  Together they should be able to cover
@@ -310,21 +314,25 @@ wlling to experiment and contribute.  Are you in?
 Sketching out some ideas: adding a new page to the navigation dropdown
 would involve:
 
-  * Adding a `Link` to the navigation dropdown in `views/layout/header.js.rb`
-  * Adding the path to the `route` method in `viewslayout/main.js.rb`
+  * Adding a `Link` to the navigation dropdown in
+    [views/layout/header.js.rb](views/layout/header.js.rb)
+  * Adding the path to the `route` method in
+    [viewslayout/main.js.rb](viewslayout/main.js.rb)
   * Adding a React component for the page to `views/pages`
-  * Adding a specification to `specs/other_views_specs.rb`
+  * Adding a specification to
+    [specs/other_views_specs.rb](specs/other_views_specs.rb)
 
 Adding a new modal dialog would involve:
 
-  * Adding a entry to the buttons list in `views/models/agenda.rb`
+  * Adding a entry to the buttons list in
+    [views/models/agenda.rb](views/models/agenda.rb)
   * Adding a React component for the form to `views/forms`
   * Adding a server side action to `views/actions`.  A number of [actions
     from the current agenda
     tool](https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/board/agenda/json)
     should be usable as is.
-  * Adding specifications to `specs/forms_specs.rb` and
-    `specs/actions_specs.rb`.
+  * Adding specifications to [specs/forms_specs.rb](specs/forms_specs.rb) and
+    [specs/actions_specs.rb](specs/actions_specs.rb).
    
 
 Gotchas
