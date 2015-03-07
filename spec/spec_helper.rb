@@ -1,3 +1,7 @@
+#
+# common test setup
+#
+
 ENV['RACK_ENV'] = 'test'
 ENV['REMOTE_USER'] = 'test'
 require 'capybara/rspec'

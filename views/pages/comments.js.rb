@@ -1,3 +1,7 @@
+#
+# A page showing all comments present across all agenda items
+#
+
 class Comments < React
   def render
     found = false
@@ -7,7 +11,7 @@ class Comments < React
       found = true
 
       _section do
-	_h4 {_Link text: item.title, href: item.href}
+        _h4 {_Link text: item.title, href: item.href}
 
         item.comments.each do |comment|
           _pre.comment comment

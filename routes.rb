@@ -2,11 +2,13 @@
 # Server side Sinatra routes
 #
 
+# redirect root to latest agenda
 get '/' do
   agenda = dir('board_agenda_*.txt').sort.last
   redirect to("/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/")
 end
 
+# all agenda pages
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   agenda = "board_agenda_#{date.gsub('-','_')}.txt"
   pass unless File.exist? File.join(FOUNDATION_BOARD, agenda)
@@ -49,24 +51,12 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   _html :'main'
 end
 
-get '/json/jira' do
-  _json :'jira'
-end
-
-get '/json/pending' do
-  _json do
-    Pending.get(env.user)
-  end
-end
-
-get '/json/secretary_todos/:file' do
-  _json :'actions/todos'
-end
-
+# posted actions
 post '/json/:file' do
   _json :"actions/#{params[:file]}"
 end
 
+# updates to agenda data
 get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
   file = "board_agenda_#{file.gsub('-','_')}.txt"
   path = File.expand_path(file, FOUNDATION_BOARD).untaint
@@ -85,38 +75,5 @@ get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
     end
   ensure
     AGENDA_CACHE[file][:etag] = headers['ETag']
-  end
-end
-
-get '/json/minutes/:file' do |file|
-  file = "board_minutes_#{file.gsub('-','_')}.yml"
-  path = File.expand_path(file, AGENDA_WORK).untaint
-  pass unless File.exits? path
-
-  _json do
-    last_modified File.mtime(path)
-    MINUTE_CACHE.parse(file)[:parsed]
-  end
-end
-
-get '/text/minutes/:file' do |file|
-  file = "board_minutes_#{file.gsub('-','_')}.txt".untaint
-  pass unless dir('board_minutes_*.txt').include? file
-  path = File.expand_path(file, FOUNDATION_BOARD).untaint
-
-  _text do
-    last_modified File.mtime(path)
-    File.read(path)
-  end
-end
-
-get '/text/draft/:file' do |file|
-  agenda = "board_agenda_#{file.gsub('-','_')}.txt".untaint
-  minutes = AGENDA_WORK + '/' + 
-    agenda.sub('_agenda_','_minutes_').sub('.txt','.yml')
-  pass unless dir('board_agenda_*.txt').include?(agenda) and File.exist? minutes
-
-  _text do
-    Minutes.draft(agenda, minutes)
   end
 end

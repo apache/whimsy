@@ -1,10 +1,12 @@
 class Pending
-  def self.update_file(user)
+  # determine the name of the work file associated with a given user
+  def self.work_file(user)
     "#{AGENDA_WORK}/#{user}.yml".untaint if user =~ /\A\w+\Z/
   end
 
+  # fetch and parse a work file
   def self.get(user, agenda=nil)
-    file = update_file(user)
+    file = work_file(user)
     response = (File.exist?(file) ? YAML.load_file(file) : {})
 
     # reset pending when agenda changes
@@ -21,8 +23,9 @@ class Pending
     response
   end
 
+  # update a work file
   def self.put(user, update)
-    File.open(update_file(user), 'w') do |file|
+    File.open(work_file(user), 'w') do |file|
       file.write YAML.dump(update)
     end
   end

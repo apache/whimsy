@@ -1,6 +1,6 @@
 #
-# Replacement for 'a' element which handles clicks events by calling
-# Main.navigate.
+# Replacement for 'a' element which handles clicks events that can be
+# processed locally by calling Main.navigate.
 #
 
 class Link < React

@@ -1,3 +1,10 @@
+#
+# Bootstrap modal dialogs are great, but they require a lot of boilerplate.
+# This component provides the boiler plate so that other form components
+# don't have to.  The elements provided by the calling component are
+# distributed to header, body, and footer sections.
+#
+
 class ModalDialog < React
   def initialize
     @header = []
@@ -16,6 +23,9 @@ class ModalDialog < React
 
     props.children.each do |child|
       if child.type == 'h4'
+
+        # place h4 elements into the header, adding a modal-title class
+
         if not child.props.className
           child.props.className = 'modal-title'
         elsif not child.props.className.split(' ').include? 'modal-title'
@@ -26,6 +36,9 @@ class ModalDialog < React
         ModalDialog.h4 = child
 
       elsif child.type == 'button'
+
+        # place button elements into the footer, adding a btn class
+
         if not child.props.className
           child.props.className = 'btn'
         elsif not child.props.className.split(' ').include? 'btn'
@@ -35,6 +48,9 @@ class ModalDialog < React
         @footer << child
 
       else
+
+        # place all other elements into the body
+
         @body << child
       end
     end

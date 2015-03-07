@@ -1,5 +1,5 @@
 #
-# Individual report
+# Individual report pages (e.g., for PMCs)
 #
 
 require_relative 'spec_helper'

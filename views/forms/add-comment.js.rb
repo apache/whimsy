@@ -1,8 +1,20 @@
+#
+# This component handles both add and edit comment actions.  The save
+# button is disabled until the comment is changed.  A delete button is
+# provided to clear the comment if it isn't already empty.
+#
+# When the save button is pushed, a POST request is sent to the server.
+# When a response is received, the pending status is updated and the
+# form is dismissed.
+#
+
 class AddComment < React
   def initialize
     @base = @comment = @@item.pending
+    @disabled = false
   end
 
+  # default attributes for the button associated with this form
   def self.button
     {
       text: 'add comment',
@@ -25,7 +37,7 @@ class AddComment < React
       _div.form_group do
         _label 'Initials', for: 'comment-initials'
         _input.comment_initials!.form_control label: 'Initials',
-          placeholder: 'initials', 
+          placeholder: 'initials', disabled: @disabled,
           defaultValue: @@server.pending.initials || @@server.initials
       end
 
@@ -33,14 +45,20 @@ class AddComment < React
       _div.form_group do
         _label 'Comment', for: 'comment-text'
         _textarea.comment_text!.form_control value: @comment, label: 'Comment',
-          placeholder: 'comment', rows: 5, onChange: self.change
+          placeholder: 'comment', rows: 5, onChange: self.change,
+          disabled: @disabled
       end
 
       # footer buttons
-      _button.btn_default 'Cancel', data_dismiss: 'modal'
-      _button.btn_warning 'Delete', onClick: self.delete if @comment
+      _button.btn_default 'Cancel', data_dismiss: 'modal',
+        disabled: @disabled
+
+      if @comment
+        _button.btn_warning 'Delete', onClick: self.delete, disabled: @disabled
+      end
+
       _button.btn_primary 'Save', onClick: self.save,
-        disabled: (@comment == @base)
+        disabled: @disabled || @comment == @base
     end
   end
 
@@ -78,9 +96,11 @@ class AddComment < React
       comment: @comment
     }
 
+    @disabled = true
     post 'comment', data do |pending|
-      Pending.load pending
       jQuery('#comment-form').modal(:hide)
+      @disabled = false
+      Pending.load pending
     end
   end
 end

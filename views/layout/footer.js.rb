@@ -1,3 +1,8 @@
+#
+# Layout footer consisting of a previous link, any number of buttons,
+# followed by a next link.
+#
+
 class Footer < React
   def render
     _footer.navbar.navbar_fixed_bottom class: @@item.color do

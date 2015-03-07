@@ -1,3 +1,8 @@
+#
+# This specifies server actions which generally are performed in response
+# to a form action.
+#
+
 require_relative 'spec_helper'
 require_relative '../models/pending'
 

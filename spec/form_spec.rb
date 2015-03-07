@@ -1,3 +1,7 @@
+#
+# component tests for client side forms
+#
+
 require 'capybara/rspec'
 require_relative './react_server'
 require 'ruby2js/filter/react'

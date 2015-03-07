@@ -1,3 +1,14 @@
+#
+# A two section representation of an agenda item (typically a PMC report),
+# where the two sections will show up as two columns on wide enough windows.
+#
+# The first section contains the item text, with a missing indicator if
+# the report isn't present.
+#
+# The second section contains posted comments, pending comments, and
+# action items associated with this agenda item.
+#
+
 class Report < React
   def render
     _section.flexbox do
