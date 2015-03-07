@@ -6,28 +6,32 @@ module ASF
   # determine whether or not the LDAP API can be used
   def self.init_ldap
     @ldap = nil
-    begin
-      config = ASF::Config.get(:ldap)
-      unless config
-        conf = '/etc/ldap/ldap.conf'
+
+    config = ASF::Config.get(:ldap)
+
+    unless config
+      conf = '/etc/ldap/ldap.conf'
+      if File.exist? conf
         config = File.read(conf)[/^uri\s+(ldaps?:\/\/\S+?:\d+)/i, 1]
       end
-
-      if config
-         Wunderbar.info "Connecting to LDAP server: #{config}"
-      end
-    rescue Errno::ENOENT
-      host = nil
-      Wunderbar.error "No LDAP server defined, there must be a LDAP URI in /etc/ldap/ldap.conf"
     end
+
+    unless config
+      # https://www.pingmybox.com/dashboard?location=304
+      config = %w(ldaps://ldap1-us-west.apache.org:636
+        ldaps://ldap1-eu-central.apache.org:636
+        ldaps://ldap2-us-west.apache.org:636
+        ldaps://ldap1-us-east.apache.org:636).sample
+    end
+
+    Wunderbar.info "Connecting to LDAP server: #{config}"
+
     begin
-      if config
-        uri = URI.parse(config)
-        if uri.scheme == 'ldaps'
-          @ldap = LDAP::SSLConn.new(uri.host, uri.port)
-        else
-          @ldap = LDAP::Conn.new(uri.host, uri.port)
-        end
+      uri = URI.parse(config)
+      if uri.scheme == 'ldaps'
+        @ldap = LDAP::SSLConn.new(uri.host, uri.port)
+      else
+        @ldap = LDAP::Conn.new(uri.host, uri.port)
       end
     rescue LDAP::ResultError=>re
       Wunderbar.error "Error binding to LDAP server: message: ["+ re.message + "]"
