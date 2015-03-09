@@ -151,7 +151,11 @@ class Agenda
 
   # default view for an individual agenda item
   def view
-    Report
+    if @title == 'Action Items'
+      ActionItems
+    else
+      Report
+    end
   end
 
   def buttons
