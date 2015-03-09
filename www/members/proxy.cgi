@@ -23,6 +23,25 @@ _html do
         end
       end
 
+      _div.row do
+        _div do
+          _p <<END
+This form allows you to assign a proxy for the upcoming members meeting. By
+default it will assume you intend to assign the proxy for the meeting only,
+and you will still be sent voting ballots by email. If you do not have
+internet access during the meeting window and would like to assign the member
+to vote for you, please update the file
+https://svn.apache.org/repos/private/foundation/Meetings/#{meeting}/proxies
+END
+        end
+      end
+
+      _div.row do
+        _div do
+          _pre IO.read("#{MEETINGS}/#{meeting}/member_proxy.txt")
+        end
+      end
+
       _form method: 'POST' do
         _div_.row do
           _div.form_group do
