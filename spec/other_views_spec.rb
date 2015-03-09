@@ -18,4 +18,17 @@ feature 'other reports' do
     expect(page).to have_selector 'h4 a', text: 'Hama'
     expect(page).to have_selector 'pre', text: 'sr: Reminder email sent'
   end
+
+  it "should highlight and crosslink action items" do
+    visit '/2015-02-18/Action-Items'
+
+    expect(page).to have_selector 'span.commented', text: /^\s*Status:$/
+    expect(page).to have_selector 'a.missing[href=Deltacloud]',
+      text: '[ Deltacloud ]'
+    expect(page).to have_selector 'a.reviewed[href=ACE]', text: '[ ACE ]'
+    expect(page).to have_selector '.backlink[href="Discussion-Items"]',
+      text: 'Discussion Items'
+    expect(page).to have_selector '.nextlink[href="Unfinished-Business"]',
+      text: 'Unfinished Business'
+  end
 end

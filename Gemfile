@@ -1,12 +1,12 @@
 source 'https://rubygems.org'
 
 gem 'rake'
-gem 'wunderbar', '>= 0.22.3'
-gem 'ruby2js'
+gem 'wunderbar', '>= 0.24.3'
+gem 'ruby2js', '>= 0.15.0'
 gem 'sinatra'
 gem 'nokogumbo'
 gem 'execjs'
-gem 'whimsy-asf'
+gem 'whimsy-asf', '>= 0.0.14'
 
 group :test do
   gem 'rspec'

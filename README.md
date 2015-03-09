@@ -317,8 +317,9 @@ would involve:
   * Adding a `Link` to the navigation dropdown in
     [views/layout/header.js.rb](views/layout/header.js.rb)
   * Adding the path to the `route` method in
-    [viewslayout/main.js.rb](viewslayout/main.js.rb)
+    [views/layout/main.js.rb](views/layout/main.js.rb)
   * Adding a React component for the page to `views/pages`
+  * Adding any new files to [views/app.js.rb](views/app.js.rb)
   * Adding a specification to
     [specs/other_views_specs.rb](specs/other_views_specs.rb)
 
@@ -331,6 +332,7 @@ Adding a new modal dialog would involve:
     from the current agenda
     tool](https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/board/agenda/json)
     should be usable as is.
+  * Adding any new files to [views/app.js.rb](views/app.js.rb)
   * Adding specifications to [specs/forms_specs.rb](specs/forms_specs.rb) and
     [specs/actions_specs.rb](specs/actions_specs.rb).
    

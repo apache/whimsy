@@ -34,7 +34,7 @@ class Report < React
         end
 
         if @@item.title != 'Action Items' and @@item.actions
-          _h3.comments! 'Action Items'
+          _h3.comments! { _Link text: 'Action Items', href: 'Action-Items' }
           @@item.actions.each do |action|
             _pre.comment action
           end

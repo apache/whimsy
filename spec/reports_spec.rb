@@ -52,7 +52,8 @@ feature 'report' do
     expect(page).to have_selector 'pre.comment', text: 'cm: Reminder email sent'
 
     # action items
-    expect(page).to have_selector 'h3', text: 'Action Items'
+    expect(page).to have_selector 'h3 a[href="Action-Items"]',
+      text: 'Action Items'
     expect(page).to have_selector 'pre.comment', 
       text: 'Greg: Is it time to retire the project?'
 
