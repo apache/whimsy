@@ -29,7 +29,7 @@ For planning purposes, prereqs for a _full_ installation will require:
  * The following software installed:
      * Subversion
      * Ruby 1.9.3 or greater
-     * io.js plus [npm](https://www.npmjs.com/) install react, jsdom, and jquery
+     * io.js
      * [PhantomJS](http://phantomjs.org/) 2.0
          * Mac OS/X Yosemite users may need to get the binary from comments
            on [12900](https://github.com/ariya/phantomjs/issues/12900).
@@ -51,6 +51,7 @@ Run the following commands in a Terminal window:
     sudo gem install bundler
     svn checkout https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/test/board/agenda
     cd agenda
+    npm install
     bundle install
     rake spec
     rake server:test

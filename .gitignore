@@ -1,3 +1,4 @@
 public/assets
 test/work
 Gemfile.lock
+node_modules
