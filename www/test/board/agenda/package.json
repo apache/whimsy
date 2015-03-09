@@ -1,0 +1,15 @@
+{
+  "package": "whimsy-agenda",
+  "version": "0.1.0",
+
+  "repository": {
+    "type": "svn",
+    "url": "https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/test/board/agenda"
+  },
+
+  "devDependencies": {
+    "jsdom": "^4.0.1",
+    "jquery": "^2.1.3",
+    "react": "^0.12.2"
+  }
+}
