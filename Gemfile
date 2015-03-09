@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
 gem 'rake'
-gem 'wunderbar', '>= 0.24.3'
-gem 'ruby2js', '>= 0.15.0'
+gem 'wunderbar', '>= 0.24.4'
+gem 'ruby2js', '>= 0.15.1'
 gem 'sinatra'
 gem 'nokogumbo'
 gem 'execjs'

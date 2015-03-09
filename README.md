@@ -358,14 +358,15 @@ Nothing is perfect.  Here are a few things to watch out for:
    parenthesis are required when calling or defining methods that have
    no arguments.  Parenthesis are still optional when arguments are involved.
 
- * In React, assignments to component state (@variables) don't take effect
-   immediately.  You will find that individual methods tend to be short in
-   React components, but if you find yourself assigning to a state variable
-   and then reading it later in the same function you won't be seeing the
-   updated value.  This being said, this is beginning to annoy me enough that
-   I will likely add code that scans methods for instance variables that are
-   both read and written to in the same method, and add code that stores
-   intermediate results in instance variables.
+ * In Ruby, every method or block is expected to return something.  In
+   JavaScript, many methods are expected to return nothing.  Ruby2JS knows
+   enough to insert a `return` statement for property definitions (method
+   definitions that don't have parenthesis), and the filters that are in place
+   will insert `return` into blocks passes to `.map`, but in general if
+   you want to return something from a function, you will need a `return`
+   statement.  There is a `return` filter that will add more, but in general
+   it seems easier to remember to add a `return` when you need it than to
+   add return statements that return `null` or `unspecified`.
 
  * In Ruby, `$` is not a legal method name, so this common
    alias for `jQuery` isn't directly available.  jQuery isn't needed for

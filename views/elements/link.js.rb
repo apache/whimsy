@@ -9,7 +9,7 @@ class Link < React
   end
 
   def componentWillMount()
-    self.componentWillReceiveProps(self.props)
+    self.componentWillReceiveProps()
     @attrs.onClick = self.click
   end
 

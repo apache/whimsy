@@ -13,15 +13,15 @@ class ModalDialog < React
   end
 
   def componentWillMount()
-    self.componentWillReceiveProps(self.props)
+    self.componentWillReceiveProps()
   end
 
-  def componentWillReceiveProps(props)
+  def componentWillReceiveProps()
     @header.clear()
     @body.clear()
     @footer.clear()
 
-    props.children.each do |child|
+    @@children.each do |child|
       if child.type == 'h4'
 
         # place h4 elements into the header, adding a modal-title class

@@ -31,14 +31,14 @@ class ActionItems < React
 
   # parse actions on first load
   def componentWillMount()
-    self.componentWillReceiveProps(self.props)
+    self.componentWillReceiveProps()
   end
 
   # parse actions into text, pmc, status;
   # set missing flag if status is empty;
   # find item associated with PMC if reporting this month
-  def componentWillReceiveProps(props)
-    @actions = props.item.text.split(/^\n\* /m).map do |text|
+  def componentWillReceiveProps()
+    @actions = @@item.text.split(/^\n\* /m).map do |text|
       match1 = text.match(/((?:\n|.)*?)(\n\s*Status:(?:\n|.)*)/)
       match2 = match1[1].match(/((?:\n|.)*?)(\[ (\S*) \])?\s*$/)
 
