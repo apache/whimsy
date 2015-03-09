@@ -270,19 +270,34 @@ So far, you've run with test data.  If you want to run for real, you need
 to have a recent checkout of
 https://svn.apache.org/repos/private/foundation/board and a directory to
 store pending updates.  If you have both, create a file named `.whimsy`
-in your home directory.  The file format is YAML, and here is an excerpt
-from mine:
+in your home directory.  The file format is YAML, and here is mine:
 
     ---
+
     :svn:
-    - /home/rubys/svn/foundation/board
+    - /home/rubys/svn/foundation
+    - /home/rubys/svn/committers
+    - /home/rubys/svn/authorization
+    - /home/rubys/svn/site/templates
+    - /home/rubys/svn/apmail
+
+    :lib:
+    - /home/rubys/git/wunderbar/lib
+    - /home/rubys/git/ruby2js/lib
+    - /home/rubys/svn/whimsy/lib
+
+    :ldap: ldaps://ldap1-us-east.apache.org:636
+        
     :agenda_work: /home/rubys/tmp/agenda
 
-Adapt as necessary.  The `svn` entry is actually an array. Other whimsy apps
-may use other svn directories.  `agenda_work` is a string.  Another relavant
-entry that is not shown here is `lib`.  It is an array of libraries that
-are to be used instead of gems you may have installed.  This is useful if
-you are making changes to the agenda parsing logic, ruby2js or wunderbar.
+
+Adapt as necessary.  You don't need to have all those entries in the `svn`
+value to run the board agenda tool.  The `lib` value is is an array of
+libraries that are to be used instead of gems you may have installed.  This is
+useful if you are making changes to the agenda parsing logic, ruby2js or
+wunderbar.  You can remove this too.  If you drop the `ldap` entry, one will
+be picked randomly for you from the 
+[list of ASF LDAP servers](https://www.pingmybox.com/dashboard?location=304).
 
 With this in place, start the server with `rake server` instead of
 `rake server:test`.  It will tell you what directories are being watched
