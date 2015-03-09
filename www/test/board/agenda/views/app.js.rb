@@ -6,6 +6,7 @@ require_relative 'layout/footer'
 # Individual pages
 require_relative 'pages/index'
 require_relative 'pages/report'
+require_relative 'pages/action-items'
 require_relative 'pages/search'
 require_relative 'pages/comments'
 

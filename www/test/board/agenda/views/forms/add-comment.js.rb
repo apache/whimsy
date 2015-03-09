@@ -76,9 +76,9 @@ class AddComment < React
   end
 
   # when item changes, reset base and comment
-  def componentWillReceiveProps(props)
-    if props.item.href != @@item.href
-      @base = @comment = props.item.pending || ''
+  def componentWillReceiveProps(newprops)
+    if newprops.item.href != self.props.item.href
+      @base = @comment = newprops.item.pending || ''
     end
   end
 

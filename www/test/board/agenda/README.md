@@ -317,8 +317,9 @@ would involve:
   * Adding a `Link` to the navigation dropdown in
     [views/layout/header.js.rb](views/layout/header.js.rb)
   * Adding the path to the `route` method in
-    [viewslayout/main.js.rb](viewslayout/main.js.rb)
+    [views/layout/main.js.rb](views/layout/main.js.rb)
   * Adding a React component for the page to `views/pages`
+  * Adding any new files to [views/app.js.rb](views/app.js.rb)
   * Adding a specification to
     [specs/other_views_specs.rb](specs/other_views_specs.rb)
 
@@ -331,6 +332,7 @@ Adding a new modal dialog would involve:
     from the current agenda
     tool](https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/board/agenda/json)
     should be usable as is.
+  * Adding any new files to [views/app.js.rb](views/app.js.rb)
   * Adding specifications to [specs/forms_specs.rb](specs/forms_specs.rb) and
     [specs/actions_specs.rb](specs/actions_specs.rb).
    
@@ -356,24 +358,21 @@ Nothing is perfect.  Here are a few things to watch out for:
    parenthesis are required when calling or defining methods that have
    no arguments.  Parenthesis are still optional when arguments are involved.
 
- * In React, assignments to component state (@variables) don't take effect
-   immediately.  You will find that individual methods tend to be short in
-   React components, but if you find yourself assigning to a state variable
-   and then reading it later in the same function you won't be seeing the
-   updated value.  This being said, this is beginning to annoy me enough that
-   I will likely add code that scans methods for instance variables that are
-   both read and written to in the same method, and add code that stores
-   intermediate results in instance variables.
+ * In Ruby, every method or block is expected to return something.  In
+   JavaScript, many methods are expected to return nothing.  Ruby2JS knows
+   enough to insert a `return` statement for property definitions (method
+   definitions that don't have parenthesis), and the filters that are in place
+   will insert `return` into blocks passes to `.map`, but in general if
+   you want to return something from a function, you will need a `return`
+   statement.  There is a `return` filter that will add more, but in general
+   it seems easier to remember to add a `return` when you need it than to
+   add return statements that return `null` or `unspecified`.
 
  * In Ruby, `$` is not a legal method name, so this common
    alias for `jQuery` isn't directly available.  jQuery isn't needed for
    react, but is needed for Bootstrap.  As such there will be few places where
    this will be needed.  As previously mentioned, I've considered using
    the `~` operator for this.
-
- * While I've provided a Gemfile to help with installation, `bundle exec`
-   doesn't play nicely with `rake spec` or `rake server`.  I haven't spent the
-   time to figure out why this is.
 
 If you encounter any other gotchas, let me know and I'll update this README.
 
