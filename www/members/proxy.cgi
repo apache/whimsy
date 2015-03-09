@@ -95,7 +95,7 @@ _html do
 
       # commit
       _.system [
-        'svn', 'commit', '-m', "*TEST* assign #{@proxy} as my proxy", filename,
+        'svn', 'commit', '-m', "assign #{@proxy} as my proxy", filename,
         ['--no-auth-cache', '--non-interactive'],
         (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
       ]
