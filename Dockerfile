@@ -10,6 +10,10 @@ RUN apt-get install -y ruby-full
 RUN apt-get install -y wget
 RUN apt-get install -y subversion
 RUN apt-get install -y xz-utils
+RUN apt-get install -y build-essential
+RUN apt-get install -y libssl-dev
+RUN apt-get install -y libldap2-dev
+RUN apt-get install -y libsasl2-dev
 
 # io.js
 WORKDIR /home
@@ -37,4 +41,4 @@ WORKDIR /home/agenda
 RUN npm install
 RUN bundle install
 RUN rake spec
-RUN rake server:test
+# RUN rake server:test
