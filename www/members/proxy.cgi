@@ -127,21 +127,24 @@ _html do
       # get a list of proxies
       list = Dir['*.txt'].map do |file|
         form = File.read(file.untaint)
-        [ form[/authorize _([\S]+)/, 1].gsub('_', ' ').strip,
-          form[/name: _([\S]+)/, 1].gsub('_', ' ').strip ]
+
+        id = file[/([-A-Za-z0-9]+)\.\w+$/, 1]
+        proxy = form[/authorize _([\S]+)/, 1].gsub('_', ' ').strip
+        name = form[/name: _([\S]+)/, 1].gsub('_', ' ').strip
+
+        "   #{proxy.ljust(24)} #{name} (#{id})"
       end
       
-      # sort/format list
-      list = list.group_by(&:first).sort.map do |proxy, members|
-        members.map(&:last).sort.map do |name|
-          "#{proxy.ljust(27)} #{name}"
-        end
-      end
+      # gather a list of all non-text proxies
+      nontext = Dir['*'].reject {|file| file.end_with? '.txt'}.
+        map {|file| file[/([-A-Za-z0-9]+)\.\w+$/, 1]}
 
       Dir.chdir('..') do
         # update proxies file
         proxies = IO.read('proxies')
-        proxies[/.*-\n(.*)/m, 1] = list.flatten.join("\n") + "\n"
+        list += proxies.scan(/   \S.*\(\S+\)$/).
+          select {|line| nontext.include? line[/\((\S+)\)$/, 1]}
+        proxies[/.*-\n(.*)/m, 1] = list.flatten.sort.join("\n") + "\n"
         IO.write('proxies', proxies)
 
         # commit
