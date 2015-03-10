@@ -13,6 +13,10 @@ _html do
 
   meeting = File.basename(Dir["#{MEETINGS}/2*"].sort.last).untaint
 
+  # get a list of members who have submitted proxies
+  exclude = Dir["#{MEETINGS}/#{meeting}/proxies-received/*"].
+    map {|name| name[/(\w+)\.\w+$/, 1]}
+
   if _.get?
 
     _div_.container do
@@ -25,14 +29,14 @@ _html do
 
       _div.row do
         _div do
-          _p <<END
-This form allows you to assign a proxy for the upcoming members meeting. By
-default it will assume you intend to assign the proxy for the meeting only,
-and you will still be sent voting ballots by email. If you do not have
-internet access during the meeting window and would like to assign the member
-to vote for you, please update the file
-https://svn.apache.org/repos/private/foundation/Meetings/#{meeting}/proxies
-END
+          _p %{
+            This form allows you to assign a proxy for the upcoming members
+            meeting. By default it will assume you intend to assign the proxy
+            for the meeting only, and you will still be sent voting ballots by
+            email. If you do not have internet access during the meeting
+            window and would like to assign the member to vote for you, please
+            select a proxy below.
+          }
         end
       end
 
@@ -47,13 +51,20 @@ END
           _div.form_group do
             _label 'Select proxy'
 
-            members = ASF.members
-            ASF::Person.preload('cn', members)
+            # Fetch LDAP
+            ldap_members = ASF.members
+            ASF::Person.preload('cn', ldap_members)
+
+            # Fetch members.txt
+            members_txt = ASF::Member.list
 
             _select.combobox.input_large.form_control name: 'proxy' do
               _option 'Select an ASF Member', :selected, value: ''
-              members.sort_by(&:public_name).each do |member|
-                next if member.id == $USER
+              ldap_members.sort_by(&:public_name).each do |member|
+                next if member.id == $USER               # No self proxies
+                next if exclude.include? member.id       # Not attending
+                next unless members_txt[member.id]       # Non-members
+                next if members_txt[member.id]['status'] # Emeritus/Deceased
                 _option member.public_name
               end
             end
@@ -108,13 +119,35 @@ END
       _.system ['svn', 'cleanup']
       _.system ['svn', 'up']
 
+      # write proxy form
       filename = "#$USER.txt".untaint
       File.write(filename, proxy.untaint)
       _.system ['svn', 'add', filename]
 
+      # get a list of proxies
+      list = Dir['*.txt'].map do |file|
+        form = File.read(file.untaint)
+        [ form[/authorize _([\S]+)/, 1].gsub('_', ' ').strip,
+          form[/name: _([\S]+)/, 1].gsub('_', ' ').strip ]
+      end
+      
+      # sort/format list
+      list = list.group_by(&:first).sort.map do |proxy, members|
+        members.map(&:last).sort.map do |name|
+          "#{proxy.ljust(27)} #{name}"
+        end
+      end
+
+      # update proxies file
+      Dir.chdir('..')
+      proxies = IO.read('proxies')
+      proxies[/.*-\n(.*)/m, 1] = list.flatten.join("\n") + "\n"
+      IO.write('proxies', proxies)
+
       # commit
       _.system [
-        'svn', 'commit', '-m', "assign #{@proxy} as my proxy", filename,
+        'svn', 'commit', "proxies-received/#{filename}", 'proxies',
+        '-m', "assign #{@proxy} as my proxy",
         ['--no-auth-cache', '--non-interactive'],
         (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
       ]
