@@ -16,8 +16,8 @@ navigate and update that file.
 > switching to this tool. I imagine secretary gets even more benefit than
 > that. Multiply this across all directors and you have a tool of immense
 > value.
-
-- Ross Gardler, ASF President
+>
+> &mdash; Ross Gardler, ASF President
 
 Preparation
 ---
