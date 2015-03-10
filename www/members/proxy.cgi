@@ -138,19 +138,20 @@ _html do
         end
       end
 
-      # update proxies file
-      Dir.chdir('..')
-      proxies = IO.read('proxies')
-      proxies[/.*-\n(.*)/m, 1] = list.flatten.join("\n") + "\n"
-      IO.write('proxies', proxies)
+      Dir.chdir('..') do
+        # update proxies file
+        proxies = IO.read('proxies')
+        proxies[/.*-\n(.*)/m, 1] = list.flatten.join("\n") + "\n"
+        IO.write('proxies', proxies)
 
-      # commit
-      _.system [
-        'svn', 'commit', "proxies-received/#{filename}", 'proxies',
-        '-m', "assign #{@proxy} as my proxy",
-        ['--no-auth-cache', '--non-interactive'],
-        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
-      ]
+        # commit
+        _.system [
+          'svn', 'commit', "proxies-received/#{filename}", 'proxies',
+          '-m', "assign #{@proxy} as my proxy",
+          ['--no-auth-cache', '--non-interactive'],
+          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+        ]
+      end
     end
 
     # report on contents
