@@ -129,8 +129,8 @@ _html do
         form = File.read(file.untaint)
 
         id = file[/([-A-Za-z0-9]+)\.\w+$/, 1]
-        proxy = form[/authorize _([\S]+)/, 1].gsub('_', ' ').strip
-        name = form[/name: _([\S]+)/, 1].gsub('_', ' ').strip
+        proxy = form[/authorize _([\S].*) to act/, 1].gsub('_', ' ').strip
+        name = form[/signature: _([\S].*)/, 1].gsub(/[\/_]/, ' ').strip
 
         "   #{proxy.ljust(24)} #{name} (#{id})"
       end
