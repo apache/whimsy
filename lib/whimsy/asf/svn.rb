@@ -7,6 +7,7 @@ module ASF
     @base = URI.parse('https://svn.apache.org/repos/')
     @mock = 'file:///var/tools/svnrep/'
     @semaphore = Mutex.new
+    @testdata = {}
 
     def self.repos
       @semaphore.synchronize do
@@ -19,7 +20,13 @@ module ASF
       end
     end
 
+    def self.[]=(name, path)
+      @testdata[name] = File.expand_path(path).untaint
+    end
+
     def self.[](name)
+      return @testdata[name] if @testdata[name]
+
       result = repos[(@mock+name.sub('private/','')).to_s.sub(/\/*$/, '')] ||
         repos[(@base+name).to_s.sub(/\/*$/, '')] # lose trailing slash
 
