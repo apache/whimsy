@@ -10,6 +10,15 @@ associated with those PMCs are stored in separate places in that text file.
 The agenda tool brings this data together and makes it easier to both
 navigate and update that file.
 
+> I cannot stress enough how important this tool is. I was doing things the
+> "old" way until recently. I was unaware of how far this tool had advanced. I
+> now spend around 50% less time on board meeting prep than I used to before
+> switching to this tool. I imagine secretary gets even more benefit than
+> that. Multiply this across all directors and you have a tool of immense
+> value.
+
+- Ross Gardler, ASF President
+
 Preparation
 ---
 
