@@ -16,6 +16,7 @@ require_relative 'forms/add-comment'
 # Common elements
 require_relative 'elements/link'
 require_relative 'elements/modal-dialog'
+require_relative 'elements/text'
 
 # Model
 require_relative 'models/agenda'

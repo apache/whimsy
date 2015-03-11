@@ -3,8 +3,22 @@ Server = {}
 
 # Escape HTML characters so that raw text can be safely inserted as HTML
 def htmlEscape(string)
-  return string.gsub('&', '&amp;').gsub('>', '&gt;').gsub('<', '&lt;')
+  return string.gsub(htmlEscape.chars) {|c| htmlEscape.replacement[c]}
 end
+
+htmlEscape.chars = Regexp.new('[&<>]', 'g')
+htmlEscape.replacement = {'&' => '&amp;', '<' => '&lt;', '>' => '&gt;'}
+
+# Replace http[s] links in text with anchor tags
+def hotlink(string)
+  return string.gsub hotlink.regexp do |match, pre, link|
+    "#{pre}<a href='#{link}'>#{link}</a>"
+  end
+end
+
+hotlink.regexp = Regexp.new(/(^|[\s.:;?\-\]<\(])
+  (https?:\/\/[-\w;\/?:@&=+$.!~*'()%,#]+[\w\/])
+  (?=$|[\s.:,?\-\[\]&\)])/x, "g")
 
 # "AJAX" style post request to the server, with a callback
 def post(target, data, &block)

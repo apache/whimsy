@@ -23,7 +23,7 @@ class ActionItems < React
           _span.commented action.status
           _ "\n"
         else
-          _ "#{action.status}\n"
+          _Text raw: "#{action.status}\n", filters: [hotlink]
         end
       end
     end

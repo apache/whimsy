@@ -30,5 +30,6 @@ feature 'other reports' do
       text: 'Discussion Items'
     expect(page).to have_selector '.nextlink[href="Unfinished-Business"]',
       text: 'Unfinished Business'
+    expect(page).to have_selector 'a[href="http://s.apache.org/jDZ"]'
   end
 end

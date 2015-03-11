@@ -15,7 +15,7 @@ class Report < React
       _section do
         _pre.report do
           _p {_em 'Missing'} if @@item.missing
-          _ @@item.text
+          _Text raw: @@item.text, filters: [hotlink]
         end
       end
 
@@ -23,7 +23,9 @@ class Report < React
         unless @@item.comments.empty?
           _h3.comments! 'Comments'
           @@item.comments.each do |comment|
-            _pre.comment comment
+            _pre.comment do
+              _Text raw: comment, filters: [hotlink]
+            end
           end
         end
 
