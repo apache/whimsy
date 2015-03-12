@@ -2,7 +2,7 @@ FROM ubuntu:14.04.2
 
 RUN  mkdir -p /srv/var
 
-ENV PHANTOMJS_VERSION 1.9.8
+ENV PHANTOMJS_VERSION 2.0.0
 ENV IOJS_VERSION 1.5.0
 
 RUN apt-get update -y
@@ -25,13 +25,18 @@ RUN ln -s /srv/var/iojs/bin/iojs /usr/bin/iojs
 RUN ln -s /srv/var/iojs/bin/node /usr/bin/node
 RUN ln -s /srv/var/iojs/bin/npm /usr/bin/npm
 
-# phantom.js
+# phantom.js - 2.0.0
+# https://github.com/ariya/phantomjs/issues/12948#issuecomment-78181293
 RUN apt-get install -y git libfreetype6
-RUN wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2
-RUN tar -vxjf phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2
-RUN rm -f phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2
-RUN mv phantomjs-$PHANTOMJS_VERSION-linux-x86_64/ /srv/var/phantomjs
-RUN ln -s /srv/var/phantomjs/bin/phantomjs /usr/bin/phantomjs
+RUN apt-get install -y git libjpeg8
+RUN wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu48_4.8.1.1-3ubuntu0.5_amd64.deb
+RUN dpkg -i libicu48_4.8.1.1-3ubuntu0.5_amd64.deb
+RUN rm -f libicu48_4.8.1.1-3ubuntu0.5_amd64.deb
+RUN wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2
+RUN tar -vxjf phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 phantomjs
+RUN rm -f phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2
+RUN mv phantomjs /srv/var/phantomjs
+RUN ln -s /srv/var/phantomjs /usr/bin/phantomjs
 
 # Whimsy Agenda
 RUN apt-get install zlib1g-dev
