@@ -40,15 +40,16 @@ For planning purposes, prereqs for a _full_ installation will require:
      * Ruby 1.9.3 or greater
      * io.js
      * [PhantomJS](http://phantomjs.org/) 2.0
-         * Mac OS/X Yosemite users may need to get the binary from comments
-           on [12900](https://github.com/ariya/phantomjs/issues/12900).
+         * Mac OS/X Yosemite users should either use `brew install phantomjs``
+           or get the binary from comments on
+           [12900](https://github.com/ariya/phantomjs/issues/12900).
 
 Note:
 
  * The installation of PhantomJS on Linux current requires a 30+ minute
    compile.  The binary provided for OS/X Yosemite is not part of the
-   standard distribution.  Feel free to skip this step on your first
-   ("give it five minutes") pass through this.  If you see promise,
+   standard distribution for PhantomJS.  Feel free to skip this step on your
+   first ("give it five minutes") pass through this.  If you see promise,
    come back and complete this step.
 
 
