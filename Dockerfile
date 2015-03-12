@@ -41,9 +41,11 @@ RUN ln -s /srv/var/phantomjs /usr/bin/phantomjs
 # Whimsy Agenda
 RUN apt-get install zlib1g-dev
 RUN gem install bundler
-RUN svn checkout https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/test/board/agenda /home/agenda
+ADD Gemfile /home/agenda/
 WORKDIR /home/agenda
-RUN npm install
 RUN bundle install
+ADD package.json /home/agenda/
+RUN npm install
+ADD . /home/agenda
 RUN rake spec
-# RUN rake server:test
+CMD ['rake', 'server']
