@@ -27,8 +27,8 @@ RUN ln -s /srv/var/iojs/bin/npm /usr/bin/npm
 
 # phantom.js - 2.0.0
 # https://github.com/ariya/phantomjs/issues/12948#issuecomment-78181293
-RUN apt-get install -y git libfreetype6
-RUN apt-get install -y git libjpeg8
+RUN apt-get install -y libfreetype6
+RUN apt-get install -y libjpeg8
 RUN wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu48_4.8.1.1-3ubuntu0.5_amd64.deb
 RUN dpkg -i libicu48_4.8.1.1-3ubuntu0.5_amd64.deb
 RUN rm -f libicu48_4.8.1.1-3ubuntu0.5_amd64.deb
@@ -48,4 +48,4 @@ ADD package.json /home/agenda/
 RUN npm install
 ADD . /home/agenda
 RUN rake spec
-CMD ['rake', 'server']
+CMD ['rake', 'server:test']
