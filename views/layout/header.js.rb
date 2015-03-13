@@ -21,7 +21,7 @@ class Header < React
         #
         if @@item.attach
           _li.dropdown do
-            _a.dropdown_toggle.nav! data_toggle: "dropdown" do
+            _a.dropdown_toggle.info! data_toggle: "dropdown" do
               _ 'info'
               _b.caret
             end
