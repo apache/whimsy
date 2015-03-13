@@ -5,11 +5,12 @@ RUN  mkdir -p /srv/var
 ENV PHANTOMJS_VERSION 2.0.0
 ENV IOJS_VERSION 1.5.0
 
+RUN apt-get install -y software-properties-common
+RUN apt-add-repository ppa:brightbox/ruby-ng
 RUN apt-get update -y
-RUN apt-get install -y ruby-full
+RUN apt-get install -y ruby2.2
+RUN apt-get install -y ruby2.2-dev
 RUN apt-get install -y wget
-RUN apt-get install -y subversion
-RUN apt-get install -y xz-utils
 RUN apt-get install -y build-essential
 RUN apt-get install -y libssl-dev
 RUN apt-get install -y libldap2-dev
@@ -30,6 +31,7 @@ RUN ln -s /srv/var/iojs/bin/npm /usr/bin/npm
 # https://github.com/ariya/phantomjs/issues/12948#issuecomment-78181293
 RUN apt-get install -y libfreetype6
 RUN apt-get install -y libjpeg8
+RUN apt-get install -y libfontconfig
 RUN wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu48_4.8.1.1-3ubuntu0.5_amd64.deb
 RUN dpkg -i libicu48_4.8.1.1-3ubuntu0.5_amd64.deb
 RUN rm -f libicu48_4.8.1.1-3ubuntu0.5_amd64.deb
