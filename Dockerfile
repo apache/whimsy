@@ -48,7 +48,7 @@ RUN apt-get install -y libfreetype6 && \
     ln -s /srv/var/phantomjs /usr/bin/phantomjs
 
 # Clean Up
-Run apt-get automermove -y && \
+Run apt-get autoremove -y && \
    apt-get clean all && \
    rm -rf /var/cache/apt/* && \
    rm -rf /var/lib/apt/lists/* && \
