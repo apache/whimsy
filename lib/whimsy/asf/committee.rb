@@ -39,6 +39,7 @@ module ASF
     def self.load_committee_info
       board = ASF::SVN['private/committers/board']
       file = "#{board}/committee-info.txt"
+      return unless File.exist? file
       if @committee_info and File.mtime(file) == @committee_mtime
         return @committee_info 
       end
