@@ -2,20 +2,25 @@ FROM ubuntu:14.04.2
 
 RUN  mkdir -p /srv/var
 
+ENV RUBY_VERSION 2.2
 ENV PHANTOMJS_VERSION 2.0.0
 ENV IOJS_VERSION 1.5.0
 
+EXPOSE 9292
+
+# system packages
 RUN apt-get install -y software-properties-common
 RUN apt-add-repository ppa:brightbox/ruby-ng
 RUN apt-get update -y
-RUN apt-get install -y ruby2.2
-RUN apt-get install -y ruby2.2-dev
+RUN apt-get install -y ruby$RUBY_VERSION
+RUN apt-get install -y ruby$RUBY_VERSION-dev
 RUN apt-get install -y wget
 RUN apt-get install -y build-essential
 RUN apt-get install -y libssl-dev
 RUN apt-get install -y libldap2-dev
 RUN apt-get install -y libsasl2-dev
 RUN apt-get install -y libxml2-dev
+RUN apt-get install -y lsof
 
 # io.js
 WORKDIR /home
@@ -51,4 +56,4 @@ ADD package.json /home/agenda/
 RUN npm install
 ADD . /home/agenda
 RUN rake spec
-CMD ['rake', 'server:test']
+CMD ["/usr/bin/rake", "server:test"]
