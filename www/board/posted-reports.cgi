@@ -8,13 +8,13 @@ require 'whimsy/asf/agenda'
 MBOX = "https://mail-search.apache.org/members/private-arch/board/201503.mbox/"
 
 # get a list of current board messages
-board = IO.read('/home/apmail/board/current', mode: 'rb')
-board = board.split(/^From .*\n/)
-board.shift
+archive = Dir['/home/apmail/board/archive/*/*']
 
 # select messages that have a subject line starting with [REPORT]
 reports = []
-board.each do |message|
+archive.each do |email|
+  next if email.end_with? '/index'
+  message = IO.read(email, mode: 'rb')
   subject = message[/^Subject: .*/]
   next unless subject.include? "[REPORT]"
   mail = Mail.new(message)
