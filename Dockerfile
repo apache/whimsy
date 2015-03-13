@@ -47,6 +47,14 @@ RUN apt-get install -y libfreetype6 && \
     mv phantomjs /srv/var/phantomjs && \
     ln -s /srv/var/phantomjs /usr/bin/phantomjs
 
+# Clean Up
+Run apt-get automermove -y && \
+   apt-get clean all && \
+   rm -rf /var/cache/apt/* && \
+   rm -rf /var/lib/apt/lists/* && \
+   rm -Rf /tmp/* && \
+   rm -rf /var/tmp/*
+
 # Whimsy Agenda
 RUN apt-get install zlib1g-dev
 RUN gem install bundler
