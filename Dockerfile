@@ -20,6 +20,7 @@ RUN apt-get install -y libssl-dev
 RUN apt-get install -y libldap2-dev
 RUN apt-get install -y libsasl2-dev
 RUN apt-get install -y libxml2-dev
+RUN apt-get install -y subversion
 RUN apt-get install -y lsof
 
 # io.js

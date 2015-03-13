@@ -52,6 +52,12 @@ Note:
    first ("give it five minutes") pass through this.  If you see promise,
    come back and complete this step.
 
+ * Docker users can get up and running by cloning this
+   repository and running the following two commands in that directory:
+
+        docker build -t whimsy-agenda .
+        docker run -p 9292:9292 whimsy-agenda
+
 
 Kicking the tires
 ---
