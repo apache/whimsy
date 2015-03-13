@@ -25,6 +25,9 @@ Preparation
 This has been tested to work on Mac OSX and Linux.  It likely will not work
 yet on Windows.
 
+The easiest way to get started is with Docker (see below), but if you
+prefer a more hands on approach read on.
+
 For a partial installation, all you need is Ruby and Node.js.
 
 For planning purposes, prereqs for a _full_ installation will require:
@@ -52,17 +55,17 @@ Note:
    first ("give it five minutes") pass through this.  If you see promise,
    come back and complete this step.
 
- * Docker users can get up and running by cloning this
-   repository and running the following two commands in that directory:
-
-        docker build -t whimsy-agenda .
-        docker run -p 9292:9292 whimsy-agenda
-
-
 Kicking the tires
 ---
 
-Run the following commands in a Terminal window:
+Docker users can get up and running by cloning this repository and
+running the following two commands in that directory:
+
+        docker build -t whimsy-agenda .
+        docker run -p 9292:9292 -d whimsy-agenda
+
+Other users can (after installing the above prerequisites) run the
+following commands in a Terminal window:
 
     sudo gem install bundler
     svn checkout https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/test/board/agenda
