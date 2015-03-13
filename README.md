@@ -62,7 +62,7 @@ Docker users can get up and running by cloning this repository and
 running the following two commands in that directory:
 
         docker build -t whimsy-agenda .
-        docker run -p 9292:9292 whimsy-agenda
+        docker run -p 9292:9292 -d whimsy-agenda
 
 Other users can (after installing the above prerequisites) run the
 following commands in a Terminal window:
