@@ -14,6 +14,7 @@ RUN apt-get install -y build-essential
 RUN apt-get install -y libssl-dev
 RUN apt-get install -y libldap2-dev
 RUN apt-get install -y libsasl2-dev
+RUN apt-get install -y libxml2-dev
 
 # io.js
 WORKDIR /home
