@@ -1,6 +1,6 @@
 FROM ubuntu:14.04.2
 
-RUN  mkdir -p /srv/var
+RUN mkdir -p /srv/var
 
 ENV RUBY_VERSION 2.2
 ENV PHANTOMJS_VERSION 2.0.0
@@ -48,7 +48,7 @@ RUN apt-get install -y libfreetype6 && \
     ln -s /srv/var/phantomjs /usr/bin/phantomjs
 
 # Clean Up
-Run apt-get autoremove -y && \
+RUN apt-get autoremove -y && \
    apt-get clean all && \
    rm -rf /var/cache/apt/* && \
    rm -rf /var/lib/apt/lists/* && \

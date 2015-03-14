@@ -64,57 +64,27 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell", inline: <<-SHELL
-     mkdir -p /usr/local
-     
-     RUBY_VERSION 2.2
-     PHANTOMJS_VERSION=2.0.0
-     IOJS_VERSION=1.5.0
 
-     # system packages
-     apt-get install -y software-properties-common
-     apt-add-repository ppa:brightbox/ruby-ng
-     apt-get update -y
-     apt-get install -y ruby$RUBY_VERSION  
-     apt-get install -y ruby$RUBY_VERSION-dev 
-     apt-get install -y wget 
-     apt-get install -y build-essential 
-     apt-get install -y libssl-dev 
-     apt-get install -y libldap2-dev 
-     apt-get install -y libsasl2-dev 
-     apt-get install -y libxml2-dev 
-     apt-get install -y subversion 
-     apt-get install -y lsof
-     apt-get install zlib1g-dev
+  script = %{
+    echo "cd /vagrant" >> .profile        # automatic cd on login
+    export DEBIAN_FRONTEND=noninteractive # eliminate warnings about STDIN
+    set -e                                # Exit script on first error
+    set -x                                # Print commands as they are executed
+  }.gsub(/^\s*/, '')
 
-     # io.js
-     cd /usr/local
-     wget https://iojs.org/dist/v$IOJS_VERSION/iojs-v$IOJS_VERSION-linux-x64.tar.xz  
-     tar -vxf iojs-v$IOJS_VERSION-linux-x64.tar.xz 
-     rm -f iojs-v$IOJS_VERSION-linux-x64.tar.xz 
-     ln -s /usr/local/iojs/bin/iojs /usr/bin/iojs 
-     ln -s /usr/local/iojs/bin/node /usr/bin/node 
-     ln -s /usr/local/iojs/bin/npm /usr/bin/npm
+  script += File.read('Dockerfile')
+  script.gsub! /^RUN /, ''
+  script.gsub! /\s&& \\\n\s*/, "\n"
+  script.gsub! /^ADD .*\n/, ""
+  script.gsub! /^FROM .*\n/, ""
+  script.gsub! /^CMD .*\n/, ""
+  script.gsub! /^EXPOSE .*\s+/, ""
+  script.gsub! /^ENV (\w+) (.*)/, '\1=\2'
+  script.gsub! /^WORKDIR /, "cd "
+  script.gsub! /\/home\/agenda/, "/vagrant"
+  script.gsub! /\/home/, "/usr/local"
 
-     # phantom.js - 2.0.0
-     # https://github.com/ariya/phantomjs/issues/12948#issuecomment-78181293
-     apt-get install -y libfreetype6 
-     apt-get install -y libjpeg8 
-     apt-get install -y libfontconfig 
-     wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu48_4.8.1.1-3ubuntu0.5_amd64.deb 
-     dpkg -i libicu48_4.8.1.1-3ubuntu0.5_amd64.deb 
-     rm -f libicu48_4.8.1.1-3ubuntu0.5_amd64.deb 
-     wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 
-     tar -vxjf phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 phantomjs 
-     rm -f phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 
-     ln -s /usr/local/phantomjs /usr/bin/phantomjs
 
-     # Whimsy Agenda
-     cd /vagrant
-     gem install bundler
-     bundle install
-     package.json /home/agenda/
-     npm install
-     rake spec
-  SHELL
+  config.vm.define 'whimsy-agenda'
+  config.vm.provision "shell", inline: script
 end
