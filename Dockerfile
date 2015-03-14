@@ -24,14 +24,13 @@ RUN apt-get install -y software-properties-common && \
     apt-get install -y lsof
 
 # io.js
-WORKDIR /home
+WORKDIR /srv/var
 RUN wget https://iojs.org/dist/v$IOJS_VERSION/iojs-v$IOJS_VERSION-linux-x64.tar.xz  && \
     tar -vxf iojs-v$IOJS_VERSION-linux-x64.tar.xz && \
     rm -f iojs-v$IOJS_VERSION-linux-x64.tar.xz && \
-    mv iojs-v$IOJS_VERSION-linux-x64/ /srv/var/iojs && \
-    ln -s /srv/var/iojs/bin/iojs /usr/bin/iojs && \
-    ln -s /srv/var/iojs/bin/node /usr/bin/node && \
-    ln -s /srv/var/iojs/bin/npm /usr/bin/npm
+    ln -s /srv/var/iojs-v$IOJS_VERSION-linux-x64/bin/iojs /usr/bin/iojs && \
+    ln -s /srv/var/iojs-v$IOJS_VERSION-linux-x64/bin/node /usr/bin/node && \
+    ln -s /srv/var/iojs-v$IOJS_VERSION-linux-x64/bin/npm /usr/bin/npm
 
 # phantom.js - 2.0.0
 # https://github.com/ariya/phantomjs/issues/12948#issuecomment-78181293
@@ -44,7 +43,6 @@ RUN apt-get install -y libfreetype6 && \
     wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 && \
     tar -vxjf phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 phantomjs && \
     rm -f phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 && \
-    mv phantomjs /srv/var/phantomjs && \
     ln -s /srv/var/phantomjs /usr/bin/phantomjs
 
 # Clean Up

@@ -72,6 +72,7 @@ Vagrant.configure(2) do |config|
     set -x                                # Print commands as they are executed
   }.gsub(/^\s*/, '')
 
+  # convert Dockerfile into a Vagrant provisioning script
   script += File.read('Dockerfile')
   script.gsub! /^RUN /, ''
   script.gsub! /\s&& \\\n\s*/, "\n"
@@ -82,9 +83,8 @@ Vagrant.configure(2) do |config|
   script.gsub! /^ENV (\w+) (.*)/, '\1=\2'
   script.gsub! /^WORKDIR /, "cd "
   script.gsub! /\/home\/agenda/, "/vagrant"
-  script.gsub! /\/home/, "/usr/local"
 
-
+  # provision "whimsy-agenda" VM from shell script
   config.vm.define 'whimsy-agenda'
   config.vm.provision "shell", inline: script
 end
