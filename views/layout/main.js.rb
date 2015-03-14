@@ -27,6 +27,8 @@ class Main < React
       item = {view: Search, query: query}
     elsif path == 'comments'
       item = {view: Comments}
+    elsif path == 'pending'
+      item = {view: Queue, title: 'Queued approvals and comments'}
     elsif path and path != '.'
       item = Agenda.find(path)
     else
