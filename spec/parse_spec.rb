@@ -7,7 +7,7 @@ require_relative 'spec_helper'
 feature 'parse' do
   it "should parse an agenda file" do
     parsed = Dir.chdir FOUNDATION_BOARD do
-      AGENDA_CACHE.parse('board_agenda_2015_02_18.txt', true)[:parsed]
+      AGENDA_CACHE.parse('board_agenda_2015_02_18.txt', :quick)[:parsed]
     end
 
     abdera = parsed.find {|item| item['title'] == 'Abdera'}

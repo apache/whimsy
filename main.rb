@@ -41,11 +41,16 @@ end
 
 # aggressively cache agenda
 AGENDA_CACHE = Hash.new(mtime: 0)
-def AGENDA_CACHE.parse(file, quick=false)
+def AGENDA_CACHE.parse(file, mode)
+  return self[file] if mode == :quick and self[file][:mtime] != 0
+
   path = File.expand_path(file, FOUNDATION_BOARD).untaint
+  return unless File.exist? path
+  return self[file] if mode == :full and self[file][:mtime] == File.mtime(path)
+
   self[file] = {
-    mtime: quick ? -1 : File.mtime(path),
-    parsed: ASF::Board::Agenda.parse(File.read(path), quick)
+    mtime: mode == :quick ? -1 : File.mtime(path),
+    parsed: ASF::Board::Agenda.parse(File.read(path), mode == :quick)
   }
 end
 
