@@ -22,6 +22,8 @@ feature 'other reports' do
   it "should support queued/pending approvals and comments" do
     visit '/2015-02-18/pending'
 
+    expect(page).to have_selector 'a[href="W3C-Relations"]', 
+      text: 'W3C Relations'
     expect(page).to have_selector 'dt a[href="BookKeeper"]', text: 'BookKeeper'
     expect(page).to have_selector 'dd p', text: 'Nice report!'
   end

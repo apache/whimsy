@@ -58,6 +58,11 @@ class Main < React
               props.attrs[name.gsub('_', '-')] = form.button[name]
             end
           end
+        else
+          # no form or form has no separate button: so this is just a button
+          props.delete 'text'
+          props.type = button.button || form
+          props.attrs = {item: item, server: Server}
         end
 
         # item overrides
@@ -92,7 +97,9 @@ class Main < React
 
     if @item.buttons
       @item.buttons.each do |button|
-        React.createElement(button.form, item: @item, server: @@server)
+        if button.form
+          React.createElement(button.form, item: @item, server: @@server)
+        end
       end
     end
   end

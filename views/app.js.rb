@@ -13,6 +13,7 @@ require_relative 'pages/queue'
 
 # Button + forms
 require_relative 'forms/add-comment'
+require_relative 'forms/approve'
 
 # Common elements
 require_relative 'elements/link'

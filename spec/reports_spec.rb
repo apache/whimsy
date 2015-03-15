@@ -29,6 +29,7 @@ feature 'report' do
     expect(page).to have_selector '.backlink[href="Attic"]', 
      text: 'Attic'
     expect(page).to have_selector 'button', text: 'edit comment'
+    expect(page).to have_selector 'button', text: 'approve'
     expect(page).to have_selector '.nextlink[href="Axis"]', 
      text: 'Axis'
 
@@ -49,6 +50,7 @@ feature 'report' do
     # comments
     expect(page).to have_selector 'h3#comments', text: 'Comments'
     expect(page).to have_selector 'button', text: 'add comment'
+    expect(page).not_to have_selector 'button', text: 'approve'
     expect(page).to have_selector 'pre.comment', text: 'cm: Reminder email sent'
 
     # action items

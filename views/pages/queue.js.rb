@@ -4,6 +4,9 @@
 #
 
 class Queue < React
+  def initialize
+  end
+
   def render
     _div.col_xs_12 do
 
@@ -73,6 +76,10 @@ class Queue < React
     Agenda.index.each do |item|
       if Pending.comments[item.attach]
         @comments << item
+      end
+
+      if Pending.approved.include? item.attach
+        @approvals << item
       end
     end
   end

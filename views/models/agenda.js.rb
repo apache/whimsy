@@ -158,14 +158,19 @@ class Agenda
     end
   end
 
+  # buttons and forms to show with this report
   def buttons
     list = []
 
-    unless @comments === undefined # certain reports don't have comments
+    unless @comments === undefined # some reports don't have comments
       if self.pending
         list << {form: AddComment, text: 'edit comment'}
       else
         list << {form: AddComment, text: 'add comment'}
+      end
+
+      if self.approved and not self.approved.include? Server.initials
+        list << {button: Approve} unless self.missing
       end
     end
 
