@@ -3,7 +3,7 @@ require 'whimsy/asf/config'
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
-task :spec => :work
+task :spec => :test_setup
 
 task :server do
   ENV['RACK_ENV']='development'
@@ -11,7 +11,7 @@ task :server do
 end
 
 namespace :server do
-  task :test do
+  task :test => :work do
     ENV['RACK_ENV']='test'
     ENV['USER']='test'
     require 'wunderbar/listen'
@@ -44,10 +44,26 @@ file 'test/work/data/test.yml' => 'test/work/data' do
   cp 'test/test.yml', 'test/work/data/test.yml'
 end
 
+task :reset do
+  if File.exist? 'test/work/data/test.yml'
+    if IO.read('test/test.yml') != IO.read('test/work/data/test.yml')
+      rm 'test/work/data/test.yml'
+    end
+  end
+
+  if
+    Dir['test/work/board/*'].any? do |file|
+      IO.read("test/data/#{File.basename file}") != IO.read(file)
+    end
+  then
+    rm_rf 'test/work/board'
+    rm_rf 'test/work/repository'
+  end
+end
+
 task :work => ['test/work/board', 'test/work/data/test.yml']
 
-task :test => :work do
-end
+task :test_setup => [:reset, :work]
 
 task :clobber do
   rm_rf 'test/work'
