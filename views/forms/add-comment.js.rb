@@ -34,20 +34,14 @@ class AddComment < React
       end
 
       #input field: initials
-      _div.form_group do
-        _label 'Initials', for: 'comment-initials'
-        _input.comment_initials!.form_control label: 'Initials',
-          placeholder: 'initials', disabled: @disabled,
-          defaultValue: @@server.pending.initials || @@server.initials
-      end
+      _input.comment_initials!.form_control label: 'Initials',
+        placeholder: 'initials', disabled: @disabled,
+        defaultValue: @@server.pending.initials || @@server.initials
 
       #input field: comment text
-      _div.form_group do
-        _label 'Comment', for: 'comment-text'
-        _textarea.comment_text!.form_control value: @comment, label: 'Comment',
-          placeholder: 'comment', rows: 5, onChange: self.change,
-          disabled: @disabled
-      end
+      _textarea.comment_text!.form_control value: @comment, label: 'Comment',
+        placeholder: 'comment', rows: 5, onChange: self.change,
+        disabled: @disabled
 
       # footer buttons
       _button.btn_default 'Cancel', data_dismiss: 'modal',
@@ -62,7 +56,7 @@ class AddComment < React
     end
   end
 
-  # autofocus on comment form
+  # autofocus on comment text
   def componentDidMount()
     jQuery('#comment-form').on 'shown.bs.modal' do
       ~'#comment-text'.focus()

@@ -28,7 +28,10 @@ class Main < React
     elsif path == 'comments'
       item = {view: Comments}
     elsif path == 'pending'
-      item = {view: Queue, title: 'Queued approvals and comments'}
+      buttons = []
+      buttons << {form: Commit} if Pending.count > 0
+      item = {view: Queue, buttons: buttons,
+        title: 'Queued approvals and comments'}
     elsif path and path != '.'
       item = Agenda.find(path)
     else
