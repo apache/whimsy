@@ -19,7 +19,7 @@ File.open(agenda_file, 'r') do |file|
   agenda = File.read(agenda_file)
   approved = updates['approved']
   comments = updates['comments']
-  initials = updates['initials']
+  initials = @initials
 
   patterns = {
    '' => /

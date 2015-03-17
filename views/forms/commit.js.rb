@@ -85,7 +85,7 @@ class Commit < React
   # on click, disable the input fields and buttons and submit
   def click(event)
     @disabled = true
-    post 'commit', message: @message do |response|
+    post 'commit', message: @message, initials: Pending.initials do |response|
       jQuery('#commit-form').modal(:hide)
       @disabled = false
       Pending.load response.pending

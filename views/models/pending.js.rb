@@ -29,4 +29,8 @@ class Pending
   def self.seen
     Server.pending.seen
   end
+
+  def self.initials
+    Server.pending.initials || Server.initials
+  end
 end
