@@ -144,7 +144,6 @@ _html do
           nontext = Dir['proxies-received/*'].
             reject {|file| file.end_with? '.txt'}.
             map {|file| file[/([A-Za-z0-9]+)\.\w+$/, 1]}
-_p nontext.inspect
 
           # update proxies file
           proxies = IO.read('proxies')
@@ -155,11 +154,10 @@ _p nontext.inspect
 
           # commit
           _.system [
-          'svn', 'diff'
-#           'svn', 'commit', filename, 'proxies',
-#           '-m', "assign #{@proxy} as my proxy",
-#           ['--no-auth-cache', '--non-interactive'],
-#           (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+            'svn', 'commit', filename, 'proxies',
+            '-m', "assign #{@proxy} as my proxy",
+            ['--no-auth-cache', '--non-interactive'],
+            (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
           ]
         end
       end
