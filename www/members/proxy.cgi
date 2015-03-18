@@ -107,10 +107,10 @@ _html do
       proxy[/authorize _(#{'_' *@proxy.length})/, 1] = @proxy.gsub(' ', '_')
 
       proxy[/signature: _(_#{'_' *user.public_name.length}_)/, 1] = 
-	"/#{user.public_name.gsub(' ', '_')}/"
+        "/#{user.public_name.gsub(' ', '_')}/"
 
       proxy[/name: _(#{'_' *user.public_name.length})/, 1] = 
-	user.public_name.gsub(' ', '_')
+        user.public_name.gsub(' ', '_')
 
       proxy[/Date: _(#{'_' *date.length})/, 1] = date.gsub(' ', '_')
 
@@ -119,53 +119,56 @@ _html do
       # report on commit
       require 'tmpdir'
       Dir.mktmpdir do |tmpdir|
-	svn = `svn info #{MEETINGS}/#{meeting}`[/URL: (.*)/, 1]
-	`svn checkout #{svn.untaint} #{tmpdir.untaint}`
+        svn = `svn info #{MEETINGS}/#{meeting}`[/URL: (.*)/, 1]
+        `svn checkout #{svn.untaint} #{tmpdir.untaint}`
 
-	Dir.chdir(tmpdir) do
-	  _h3 'Commit Log'
-	  # write proxy form
-	  filename = "proxies-received/#$USER.txt".untaint
-	  File.write(filename, proxyform)
-	  _.system ['svn', 'add', filename]
+        Dir.chdir(tmpdir) do
+          _h3 'Commit Log'
+          # write proxy form
+          filename = "proxies-received/#$USER.txt".untaint
+          File.write(filename, proxyform)
+          _.system ['svn', 'add', filename]
 
-	  # get a list of proxies
-	  list = Dir['proxies-received/*.txt'].map do |file|
-	    form = File.read(file.untaint)
+          # get a list of proxies
+          list = Dir['proxies-received/*.txt'].map do |file|
+            form = File.read(file.untaint)
+      
+            id = file[/([-A-Za-z0-9]+)\.\w+$/, 1]
+            proxy = form[/authorize _([\S].*) to act/, 1].gsub('_', ' ').strip
+            name = form[/signature: _([\S].*)/, 1].gsub(/[\/_]/, ' ').strip
 
-	    id = file[/([-A-Za-z0-9]+)\.\w+$/, 1]
-	    proxy = form[/authorize _([\S].*) to act/, 1].gsub('_', ' ').strip
-	    name = form[/signature: _([\S].*)/, 1].gsub(/[\/_]/, ' ').strip
+            "   #{proxy.ljust(24)} #{name} (#{id})"
+          end
+  
+          # gather a list of all non-text proxies
+          nontext = Dir['proxies-received/*'].
+            reject {|file| file.end_with? '.txt'}.
+            map {|file| file[/([A-Za-z0-9]+)\.\w+$/, 1]}
+_p nontext.inspect
 
-	    "   #{proxy.ljust(24)} #{name} (#{id})"
-	  end
-	
-	  # gather a list of all non-text proxies
-	  nontext = Dir['*'].reject {|file| file.end_with? '.txt'}.
-	    map {|file| file[/([-A-Za-z0-9]+)\.\w+$/, 1]}
+          # update proxies file
+          proxies = IO.read('proxies')
+          list += proxies.scan(/   \S.*\(\S+\)$/).
+            select {|line| nontext.include? line[/\((\S+)\)$/, 1]}
+          proxies[/.*-\n(.*)/m, 1] = list.flatten.sort.join("\n") + "\n"
+          IO.write('proxies', proxies)
 
-	  # update proxies file
-	  proxies = IO.read('proxies')
-	  list += proxies.scan(/   \S.*\(\S+\)$/).
-	    select {|line| nontext.include? line[/\((\S+)\)$/, 1]}
-	  proxies[/.*-\n(.*)/m, 1] = list.flatten.sort.join("\n") + "\n"
-	  IO.write('proxies', proxies)
-
-	  # commit
-	  _.system [
-	    'svn', 'commit', filename, 'proxies',
-	    '-m', "assign #{@proxy} as my proxy",
-	    ['--no-auth-cache', '--non-interactive'],
-	    (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
-	  ]
-	end
+          # commit
+          _.system [
+          'svn', 'diff'
+#           'svn', 'commit', filename, 'proxies',
+#           '-m', "assign #{@proxy} as my proxy",
+#           ['--no-auth-cache', '--non-interactive'],
+#           (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+          ]
+        end
       end
 
       # report on contents
       _h3! do
-	_span "Contents of "
-	_code "foundation/meetings/#{meeting}/#{$USER}.txt"
-	_span ":"
+        _span "Contents of "
+        _code "foundation/meetings/#{meeting}/#{$USER}.txt"
+        _span ":"
       end
 
       _pre proxyform
