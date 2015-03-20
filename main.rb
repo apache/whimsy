@@ -13,6 +13,8 @@ require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 
 require 'yaml'
+require 'thread'
+require 'shellwords'
 
 require_relative './routes'
 require_relative './models/pending'
@@ -41,18 +43,84 @@ def dir(pattern, base=FOUNDATION_BOARD)
 end
 
 # aggressively cache agenda
-AGENDA_CACHE = Hash.new(mtime: 0)
-def AGENDA_CACHE.parse(file, mode)
-  return self[file] if mode == :quick and self[file][:mtime] != 0
+class AgendaCache
+  @@dir = FOUNDATION_BOARD
+  @@mutex = Mutex.new
+  @@cache = Hash.new(mtime: 0)
 
-  path = File.expand_path(file, FOUNDATION_BOARD).untaint
-  return unless File.exist? path
-  return self[file] if mode == :full and self[file][:mtime] == File.mtime(path)
+  def self.[](file)
+    @@cache[file]
+  end
 
-  self[file] = {
-    mtime: mode == :quick ? -1 : File.mtime(path),
-    parsed: ASF::Board::Agenda.parse(File.read(path), mode == :quick)
-  }
+  def self.parse(file, mode)
+    # for quick mode, anything will do
+    return self[file][:parsed] if mode == :quick and self[file][:mtime] != 0
+
+    file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
+    path = File.expand_path(file, @@dir).untaint
+    
+    return unless File.exist? path
+
+    if self[file][:mtime] != File.mtime(path)
+      @@mutex.synchronize do
+        if self[file][:mtime] != File.mtime(path)
+          @@cache[file] = {
+            mtime: mode == :quick ? -1 : File.mtime(path),
+            parsed: ASF::Board::Agenda.parse(File.read(path), mode == :quick)
+          }
+        end
+      end
+
+      # do a full parse in the background if a quick parse was done
+      if @@cache[file][:mtime] == -1
+        Thread.new do
+          self.update(file, nil)
+          parse(file, :full)
+        end
+      end
+    end
+
+    self[file][:parsed]
+  end
+
+  # update agenda file in SVN
+  def self.update(file, message, &block)
+    #extract context from block
+    _, env = eval('[_, env]', block.binding)
+
+    auth = [[]]
+    if env.password
+      auth = [['--username', env.user, '--password', env.password]]
+    end
+
+    @@mutex.synchronize do
+      # if not already created, make a working copy of the board directory
+      if @@dir == FOUNDATION_BOARD
+        @@dir = Dir.mktmpdir
+        at_exit {FileUtils.rm_rf @dir}
+        board = `svn info #{FOUNDATION_BOARD}`[/URL: (.*)/, 1]
+        _.system ['svn', 'checkout', auth, '--depth', 'files', board, @@dir]
+      end
+
+      path = File.join(@@dir, file)
+      path.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
+
+      # update the file in question
+      _.system ['svn', 'update', auth, path]
+
+      # invoke block, passing it the current contents of the file
+      if block
+        input = IO.read(path)
+        output = yield input.dup
+
+        # if the output differs, update and commit the file in question
+        if output != input
+          IO.write(path, output)
+          _.system ['svn', 'commit', auth, path, '-m', message]
+        end
+      end
+    end
+  end
 end
 
 # aggressively cache minutes
