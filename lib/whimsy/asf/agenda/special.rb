@@ -17,6 +17,7 @@ class ASF::Board::Agenda
       attrs['section'] = '7' + attrs['section'] 
 
       title = attrs['title']
+      title.strip!
       fulltitle = title.dup
       title.sub! /^Resolution to /, ''
       title.sub! /\sthe\s/, ' '
