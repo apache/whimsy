@@ -84,6 +84,12 @@ class ASF::RosterLDAP
       entry['cn'].force_encoding('utf-8') if entry['cn']
       entry['sn'].force_encoding('utf-8') if entry['sn']
 
+      if Array === entry['sshPublicKey']
+        entry['sshPublicKey'].each { |key| key.force_encoding('utf-8') }
+      elsif String === entry['sshPublicKey']
+        entry['sshPublicKey'].force_encoding('utf-8')
+      end
+
       entry
     end
 end
