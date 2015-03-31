@@ -12,9 +12,9 @@ require_relative 'pages/comments'
 require_relative 'pages/queue'
 
 # Button + forms
-require_relative 'forms/add-comment'
-require_relative 'forms/approve'
-require_relative 'forms/commit'
+require_relative 'buttons/add-comment'
+require_relative 'buttons/approve'
+require_relative 'buttons/commit'
 
 # Common elements
 require_relative 'elements/link'
