@@ -4,9 +4,6 @@
 #
 
 class Queue < React
-  def initialize
-  end
-
   def render
     _div.col_xs_12 do
 
