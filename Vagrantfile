@@ -67,7 +67,6 @@ Vagrant.configure(2) do |config|
 
   script = %{
     echo "cd /vagrant" >> .profile        # automatic cd on login
-    export DEBIAN_FRONTEND=noninteractive # eliminate warnings about STDIN
     set -e                                # Exit script on first error
     set -x                                # Print commands as they are executed
   }.gsub(/^\s*/, '')

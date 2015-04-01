@@ -1,4 +1,5 @@
 FROM ubuntu:14.04.2
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN mkdir -p /srv/var
 
