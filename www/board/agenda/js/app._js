@@ -883,18 +883,18 @@ module Angular::AsfBoardAgenda
         "?cc=private@#{@item.mail_list}.apache.org,board@apache.org"
 
       if @item.missing
-	subject = "Missing #{@item.title} Board Report"
-	body = "Dear #{@item.owner},\n\nThe board report for " +
-	  "#{@item.title} has not yet been submitted for this " +
-	  "month's board meeting. If you're unable to get " +
+        subject = "Missing #{@item.title} Board Report"
+        body = "Dear #{@item.owner},\n\nThe board report for " +
+          "#{@item.title} has not yet been submitted for this " +
+          "month's board meeting. If you're unable to get " +
           "it in by twenty-four hours before meeting time, " +
           "please plan to report next month.\n\nThanks."
 
         $rootScope.comment_text.draft ||= 'Reminder email sent'
         ~'#comment-form'.modal(:show)
       else
-	subject = "#{@item.title} Board Report"
-	body = @item.comments
+        subject = "#{@item.title} Board Report"
+        body = @item.comments
       end
 
       $window.location = destination +
