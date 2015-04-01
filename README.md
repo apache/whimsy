@@ -46,6 +46,8 @@ For planning purposes, prereqs for a _full_ installation will require:
          * Mac OS/X Yosemite users should either use `brew install phantomjs``
            or get the binary from comments on
            [12900](https://github.com/ariya/phantomjs/issues/12900).
+         * Ubuntu users can get a working binary from the comments on
+           [12948](https://github.com/ariya/phantomjs/issues/12948#issuecomment-78181293).
 
 Note:
 
@@ -240,12 +242,21 @@ Viewing Source (this time, Actual Code)
    you will see the full script.  Every bit of this JavaScript was generated
    from the js.rb files mentioned above.  Undoubtedly you have seen small
    amounts of JavaScript before but I suspect that much of this looks foreign.
-   Nicely indented, vaguely familiar, but very foreign.  Many people these
-   days generate JavaScript.  Popular with React is something called 
-   [JSX](http://facebook.github.io/react/docs/jsx-in-depth.html), but
+   Nicely indented, commented, vaguely familiar, but still somewhat foreign.
+   Many people these days generate JavaScript.  Popular with React is something
+   called [JSX](http://facebook.github.io/react/docs/jsx-in-depth.html), but
    that's both controversial and [doesn't support if
    statements](http://facebook.github.io/react/tips/if-else-in-JSX.html).
    I make plenty of use of if statements (and more!) in my render methods.
+
+   While you can bring the generated source up in your browser's Javascript
+   console, you don't have to.  Through the magic of
+   [Source Maps](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit), 
+   you can view source and set breakpoints using the Ruby code that was
+   used to generate this script.  The way this is done varies by browser.
+   On Google Chrome, for example, Ctrl+Shift+J will bring up the JavaScript
+   console.  Clicking on sources will show directores for buttons, elements,
+   etc.
 
  * Should you ever happen to look for the main routing functions, they
    are [routing.rb](routing.rb) on the server and
@@ -261,7 +272,7 @@ confidently make changes without breaking things.  If you haven't yet,
 I encourage you to install Poltergeist and io.js.
 
 Before running the tests, run `rake clobber` to undo any changes you
-make have made by running the application.
+make have made to the test data by running the application.
 
 Now onto the tests:
 
@@ -402,7 +413,7 @@ Nothing is perfect.  Here are a few things to watch out for:
    [Ruby2JS filters](https://github.com/rubys/ruby2js#filters) reduce this
    gap by converting many common Ruby methods calls to JavaScript equivalents
    (e.g., `a.include? b` becomes `a.indexOf(b) != -1`).  Currently the
-   agenda tool makes use of the `functions` and `require` filters.
+   agenda tool makes use of the `react`, `functions` and `require` filters.
 
  * In Ruby there isn't a difference between accessing attributes and methods
    which have no arguments.  In JavaScript there is.  To make this work,
