@@ -6,11 +6,11 @@ module ASF
   module Auth
     DIRECTORS = {
       'rbowen'      => 'rb',
-      'cutting'     => 'dc',
+      'curcuru'     => 'sc',
       'bdelacretaz' => 'bd',
-      'rgardler'    => 'rg',
       'jim'         => 'jj',
       'mattmann'    => 'cm',
+      'ke4qqq'      => 'dn',
       'brett'       => 'bp',
       'rubys'       => 'sr',
       'gstein'      => 'gs'
