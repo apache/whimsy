@@ -25,8 +25,8 @@ class Commit < React
       _h4 'Commit message'
 
       # single text area input field
-      _textarea.commit_text! @message, rows: 5, disabled: @disabled,
-        label: 'Commit message'
+      _textarea.commit_text! defaultValue: @message, rows: 5, 
+        disabled: @disabled, label: 'Commit message'
 
       # buttons
       _button.btn_default 'Close', data_dismiss: 'modal'
@@ -47,15 +47,16 @@ class Commit < React
   end
 
   # update message on re-display
-  def componentWillReceiveProps(props)
+  def componentWillReceiveProps()
+    pending = @@server.pending
     messages = []
 
     # list (or number) of reports approved with this commit
-    approved = Pending.approved.length
+    approved = pending.approved.length
     if approved > 0 and approved < 6
       titles = []
       Agenda.index.each do |item|
-        titles << item.title if Pending.approved.include? item.attach
+        titles << item.title if pending.approved.include? item.attach
       end
       messages << "Approve #{titles.join(', ')}"
     elsif approved > 1
@@ -63,11 +64,11 @@ class Commit < React
     end
 
     # list (or number) of comments made with this commit
-    comments = Pending.comments.keys().length
+    comments = pending.comments.keys().length
     if comments > 0 and comments < 6
       titles = []
       Agenda.index.each do |item|
-        titles << item.title if Pending.comments[item.attach]
+        titles << item.title if pending.comments[item.attach]
       end
       messages << "Comment on #{titles.join(', ')}"
     elsif comments > 1
