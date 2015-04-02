@@ -86,7 +86,7 @@ Now visit http://youdockerhost:9292
 After installing the above prerequisites run the following commands in a Terminal window:
 
     sudo gem install bundler
-    svn checkout https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/test/board/agenda
+    git clone https://github.com/rubys/whimsy-agenda.git
     cd agenda
     npm install
     bundle install
