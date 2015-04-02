@@ -30,6 +30,7 @@ end
 
 file 'test/work/board' => 'test/work/repository' do
   Dir.chdir('test/work') do
+    rm_rf 'board' if File.exist? 'board'
     system "svn co file:///#{Dir.pwd}/repository board"
     cp Dir['../data/*.txt'], 'board'
     Dir.chdir('board') {system 'svn add *.txt; svn commit -m "initial commit"'}
@@ -57,6 +58,11 @@ task :reset do
     end
   then
     rm_rf 'test/work/board'
+  end
+
+  if
+    Dir['test/work/repository/db/revs/0/*'].length > 2
+  then
     rm_rf 'test/work/repository'
   end
 end
