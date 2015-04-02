@@ -97,7 +97,7 @@ class AgendaCache
       # if not already created, make a working copy of the board directory
       if @@dir == FOUNDATION_BOARD
         @@dir = Dir.mktmpdir
-        at_exit {FileUtils.rm_rf @dir}
+        at_exit {FileUtils.rm_rf @@dir}
         board = `svn info #{FOUNDATION_BOARD}`[/URL: (.*)/, 1]
         _.system ['svn', 'checkout', auth, '--depth', 'files', board, @@dir]
       end
