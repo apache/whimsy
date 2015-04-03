@@ -15,6 +15,7 @@ require_relative 'pages/queue'
 require_relative 'buttons/add-comment'
 require_relative 'buttons/approve'
 require_relative 'buttons/commit'
+require_relative 'buttons/refresh'
 
 # Common elements
 require_relative 'elements/link'

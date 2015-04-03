@@ -109,7 +109,7 @@ class AgendaCache
       _.system ['svn', 'update', auth, path]
 
       # invoke block, passing it the current contents of the file
-      if block
+      if block and message
         input = IO.read(path)
         output = yield input.dup
 

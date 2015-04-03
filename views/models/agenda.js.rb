@@ -99,6 +99,11 @@ class Agenda
     Index
   end
 
+  # buttons to show on the index page
+  def self.buttons
+    [{button: Refresh}]
+  end
+
   # the default banner color to use for the agenda as a whole
   def self.color
     'blank'
