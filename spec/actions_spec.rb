@@ -77,7 +77,7 @@ feature 'server actions' do
     @message = "Approve W3C Relations\nComment on BookKeeper"
     @initials = 'jt'
 
-    eval(File.read('views/actions/commit.json.rb'), nil, 'commit.json.rb')
+    eval(File.read('views/actions/commit.json.rb'))
 
     expect(@pending['approved']).not_to include('7')
     expect(@pending['comments']).not_to include('I')
@@ -87,6 +87,20 @@ feature 'server actions' do
 
     avro = @agenda.find {|item| item[:attach] == 'I'}
     expect(avro['comments']).to include('jt: Nice report!')
+  end
+
+  it "should post new special orders" do
+    @agenda = 'board_agenda_2015_02_18.txt'
+    @attach = '7?'
+    @title = 'Establish Test Project'
+    @report = 'WHEREAS, RESOLVED, and other official words'
+
+    eval(File.read('views/actions/post.json.rb'))
+
+    resolution = @agenda.find {|item| item[:attach] == '7G'}
+    expect(resolution['title']).to eq('Establish Test')
+    expect(resolution['text']).
+      to eq('WHEREAS, RESOLVED, and other official words')
   end
 
   # cleanup

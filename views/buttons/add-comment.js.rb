@@ -34,12 +34,12 @@ class AddComment < React
       end
 
       #input field: initials
-      _input.comment_initials!.form_control label: 'Initials',
+      _input.comment_initials! label: 'Initials',
         placeholder: 'initials', disabled: @disabled,
         defaultValue: @@server.pending.initials || @@server.initials
 
       #input field: comment text
-      _textarea.comment_text!.form_control value: @comment, label: 'Comment',
+      _textarea.comment_text!  value: @comment, label: 'Comment',
         placeholder: 'comment', rows: 5, onChange: self.change,
         disabled: @disabled
 

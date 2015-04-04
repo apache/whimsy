@@ -101,7 +101,7 @@ class Agenda
 
   # buttons to show on the index page
   def self.buttons
-    [{button: Refresh}]
+    [{button: Refresh}, {form: SpecialOrder}]
   end
 
   # the default banner color to use for the agenda as a whole
