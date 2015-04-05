@@ -2,7 +2,8 @@
 # component tests for client side forms
 #
 
-require_relative './react_server'
+require_relative 'spec_helper'
+require_relative 'react_server'
 
 describe "forms", type: :feature, server: :react do
   #
