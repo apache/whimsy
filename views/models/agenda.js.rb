@@ -47,8 +47,8 @@ class Agenda
   end
 
   # provide read-only access to a number of properties 
-  attr_reader :attach, :title, :owner, :shepherd, :index
-  attr_reader :approved, :roster, :prior_reports, :stats, :missing
+  attr_reader :attach, :title, :owner, :shepherd, :index, :timestamp
+  attr_reader :approved, :roster, :prior_reports, :stats, :missing, :people
 
   # compute href by taking the title and replacing all non alphanumeric
   # characters with dashes

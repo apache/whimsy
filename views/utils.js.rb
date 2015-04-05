@@ -9,6 +9,12 @@ end
 htmlEscape.chars = Regexp.new('[&<>]', 'g')
 htmlEscape.replacement = {'&' => '&amp;', '<' => '&lt;', '>' => '&gt;'}
 
+# escape a string so that it can be used as a regular expression
+def escapeRegExp(string)
+  # https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions
+  return string.gsub(/([.*+?^=!:${}()|\[\]\/\\])/, "\\$1");
+end
+
 # Replace http[s] links in text with anchor tags
 def hotlink(string)
   return string.gsub hotlink.regexp do |match, pre, link|
