@@ -54,6 +54,7 @@ class AgendaCache
 
   def self.parse(file, mode)
     # for quick mode, anything will do
+    mode = :quick if ENV['RACK_ENV'] == 'test'
     return self[file][:parsed] if mode == :quick and self[file][:mtime] != 0
 
     file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/

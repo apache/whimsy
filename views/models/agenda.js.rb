@@ -90,7 +90,8 @@ class Agenda
     if @title == 'Action Items'
       @actions
     else
-      Agenda.find('Action-Items').actions[@title]
+      item = Agenda.find('Action-Items')
+      item ? item.actions[@title] : []
     end
   end
 

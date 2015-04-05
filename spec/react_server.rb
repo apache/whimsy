@@ -9,6 +9,9 @@ require 'ruby2js'
 require 'net/http'
 require 'stringio'
 
+require 'capybara/rspec'
+require 'ruby2js/filter/react'
+
 class ReactServer
   @@pid = nil
   @@port = nil
@@ -96,5 +99,40 @@ class ReactServer
     end
 
     server.listen(@port)
+  end
+end
+
+shared_context "react_server", server: :react do
+  #
+  # administrivia
+  #
+  before :all do
+    ReactServer.start
+    Dir.chdir File.expand_path('../../views', __FILE__) do
+      @_script = Ruby2JS.convert(File.read('app.js.rb'), file: 'app.js.rb')
+    end
+  end
+
+  before :each do
+    @_app, Capybara.app = Capybara.app, ReactServer.new
+  end
+
+  def on_react_server(&block)
+    locals = {}
+    instance_variables.each do |ivar|
+      next if ivar.to_s.start_with? '@_'
+      locals[ivar] = instance_variable_get(ivar)
+    end
+
+    page.driver.post('/', @_script + ';' +
+      Ruby2JS.convert(block, react: true, ivars: locals))
+  end
+
+  after :each do
+    Capybara.app = @_app
+  end
+
+  at_exit do
+    ReactServer.stop
   end
 end

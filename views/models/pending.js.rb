@@ -15,7 +15,7 @@ class Pending
   end
 
   def self.comments
-    Server.pending.comments
+    Server.pending ? Server.pending.comments : []
   end
 
   def self.approved
