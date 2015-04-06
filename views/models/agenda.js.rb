@@ -180,6 +180,8 @@ class Agenda
       end
     end
 
+    list << {button: Attend} if @title == 'Roll Call'
+
     list
   end
 

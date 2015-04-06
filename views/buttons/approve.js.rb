@@ -1,3 +1,6 @@
+#
+# Approve/Unapprove a report
+#
 class Approve < React
   def initialize
     @disabled = false
@@ -12,7 +15,7 @@ class Approve < React
     self.componentWillReceiveProps()
   end
 
-  def componentWillReceiveProps(props)
+  def componentWillReceiveProps()
     @approved = Pending.approved.include? @@item.attach
   end
 

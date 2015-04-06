@@ -14,6 +14,7 @@ require_relative 'pages/queue'
 # Button + forms
 require_relative 'buttons/add-comment'
 require_relative 'buttons/approve'
+require_relative 'buttons/attend'
 require_relative 'buttons/commit'
 require_relative 'buttons/refresh'
 require_relative 'buttons/special-order'
