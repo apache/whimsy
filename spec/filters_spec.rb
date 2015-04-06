@@ -46,7 +46,7 @@ describe "filters", type: :feature, server: :react do
   describe "roll call" do
     it "should link people to roster info" do
       @item = @parsed.find {|item| item['title'] == 'Roll Call'}
-      @item['people'].merge!({
+      @item['people'].replace({
         rubys: {name: "Sam Ruby", member: true, attending: true}
       })
 

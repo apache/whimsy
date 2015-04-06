@@ -44,7 +44,6 @@ end
 
 # aggressively cache agenda
 class AgendaCache
-  @@dir = FOUNDATION_BOARD
   @@mutex = Mutex.new
   @@cache = Hash.new(mtime: 0)
 
@@ -58,7 +57,7 @@ class AgendaCache
     return self[file][:parsed] if mode == :quick and self[file][:mtime] != 0
 
     file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
-    path = File.expand_path(file, @@dir).untaint
+    path = File.expand_path(file, FOUNDATION_BOARD).untaint
     
     return unless File.exist? path
 
@@ -86,6 +85,9 @@ class AgendaCache
 
   # update agenda file in SVN
   def self.update(file, message, &block)
+    # Create a temporary work directory
+    dir = Dir.mktmpdir
+
     #extract context from block
     _, env = eval('[_, env]', block.binding)
 
@@ -95,16 +97,13 @@ class AgendaCache
     end
 
     @@mutex.synchronize do
-      # if not already created, make a working copy of the board directory
-      if @@dir == FOUNDATION_BOARD
-        @@dir = Dir.mktmpdir
-        at_exit {FileUtils.rm_rf @@dir}
-        board = `svn info #{FOUNDATION_BOARD}`[/URL: (.*)/, 1]
-        _.system ['svn', 'checkout', auth, '--depth', 'files', board, @@dir]
-      end
+      # check out empty directory
+      board = `svn info #{FOUNDATION_BOARD}`[/URL: (.*)/, 1]
+      _.system ['svn', 'checkout', auth, '--depth', 'empty', board, dir]
 
-      path = File.join(@@dir, file)
-      path.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
+      # build and untaint path
+      file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
+      path = File.join(dir, file)
 
       # update the file in question
       _.system ['svn', 'update', auth, path]
@@ -120,7 +119,26 @@ class AgendaCache
           _.system ['svn', 'commit', auth, path, '-m', message]
         end
       end
+
+      # update the file in question; update output if mtime changed
+      # (it may not: during testing, commits are prevented)
+      path = File.join(FOUNDATION_BOARD, file)
+      mtime = File.mtime(path) if output
+      _.system ['svn', 'update', auth, path]
+      output = IO.read(path) if mtime != File.mtime(path)
+
+      # reparse the file
+      @@cache[file] = {
+        mtime: File.mtime(path),
+        parsed: ASF::Board::Agenda.parse(output, ENV['RACK_ENV'] == 'test')
+      }
+
+      # return the result
+      _.method_missing(:_agenda, @@cache[file][:parsed])
     end
+
+  ensure
+    FileUtils.rm_rf dir
   end
 end
 

@@ -72,5 +72,3 @@ AgendaCache.update(@agenda, @message) do |agenda|
   # return updated agenda
   agenda
 end
-
-_agenda AgendaCache.parse(@agenda, :full)

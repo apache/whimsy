@@ -171,7 +171,6 @@ feature 'server actions' do
     File.write('test/work/data/test.yml', @test_data)
 
     @cleanup.each do |file| 
-      system 'svn', 'revert', file
       AgendaCache[File.basename(file)].replace :mtime=>0
     end
   end

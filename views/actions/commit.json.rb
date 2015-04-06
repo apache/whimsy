@@ -74,7 +74,4 @@ File.rename "#{AGENDA_WORK}/#{user}.yml", "#{AGENDA_WORK}/#{user}.bak"
 pending['approved'].clear
 pending['comments'].clear
 Pending.put(env.user, pending)
-
-# add pending data and parsed agenda to the response
 _pending pending
-_agenda AgendaCache.parse(agenda_file, :full)

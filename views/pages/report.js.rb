@@ -80,8 +80,13 @@ class Report < React
 
       # names
       if person.icla or @@item.title == 'Roll Call'
-        text.sub! /#{escapeRegExp(person.name)}/, 
-          "<a href='#{roster}#{id}'>#{person.name}</a>"
+        if defined? person.member
+          text.sub! /#{escapeRegExp(person.name)}/, 
+            "<a href='#{roster}#{id}'>#{person.name}</a>"
+        else
+          text.sub! /#{escapeRegExp(person.name)}/, 
+            "<a href='#{roster}?q=#{person.name}'>#{person.name}</a>"
+        end
       end
 
       # highlight potentially misspelled names
