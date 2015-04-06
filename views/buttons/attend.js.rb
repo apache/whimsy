@@ -41,7 +41,6 @@ class Attend < React
     post 'attend', data do |response|
       @disabled = false
       Agenda.load response.agenda
-      Main.refresh()
     end
   end
 end

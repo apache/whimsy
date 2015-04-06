@@ -56,7 +56,6 @@ class SpecialOrder < React
       jQuery('#special-order-form').modal(:hide)
       @disabled = false
       Agenda.load response.agenda
-      Main.refresh()
     end
   end
 end

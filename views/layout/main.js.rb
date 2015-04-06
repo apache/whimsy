@@ -133,6 +133,10 @@ class Main < React
     self.route(history.state.path, history.state.query)
   end
 
+  # dummy exported refresh method (replaced on client side)
+  def self.refresh()
+  end
+
   # additional client side initialization
   def componentDidMount()
     # export navigate and refresh methods

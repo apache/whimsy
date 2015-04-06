@@ -21,6 +21,7 @@ class Agenda
       @@index << item
     end
 
+    Main.refresh()
     return @@index
   end
 
