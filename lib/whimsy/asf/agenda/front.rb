@@ -20,54 +20,61 @@ class ASF::Board::Agenda
 
         absent = attr['text'].scan(/Absent:\n\n.*?\n\n/m).join
 
-        unless @quick
-	  # attempt to identify the people mentioned in the Roll Call
-	  people = attr['text'].scan(/ {8}(\w.*)/).flatten.each do |sname|
-	    name = sname
+        # attempt to identify the people mentioned in the Roll Call
+        people = attr['text'].scan(/ {8}(\w.*)/).flatten.each do |sname|
+          next if sname == 'none'
 
-	    # first try the cache
-	    person = @@people_cache[name]
+          name = sname
+          if @quick
+            attr['people'][name.gsub(/\W/, '_')] = {
+              name: name,
+              attending: !absent.include?(name)
+            }
+          else
 
-	    # next try a simple name look up
-	    if not person
-	      search = ASF::Person.list("cn=#{name}")
-	      person = search.first if search.length == 1
-	    end
+            # first try the cache
+            person = @@people_cache[name]
 
-	    # finally try harder to match the name
-	    if not person
-	      sname = sname.strip.downcase.split(/\s+/)
+            # next try a simple name look up
+            if not person
+              search = ASF::Person.list("cn=#{name}")
+              person = search.first if search.length == 1
+            end
 
-	      if not list
-		ASF::Person.preload('cn')
-		list = ASF::Person.list
-	      end
+            # finally try harder to match the name
+            if not person
+              sname = sname.strip.downcase.split(/\s+/)
 
-	      search = []
-	      list.select do |person|
-		next if person == 'none'
-		pname = person.public_name.downcase.split(/\s+/)
-		if sname.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
-		  search << person
-		elsif pname.all? {|t1| sname.any? {|t2| t2.start_with? t1}}
-		  search << person
-		end
-	      end
+              if not list
+                ASF::Person.preload('cn')
+                list = ASF::Person.list
+              end
 
-	      person = search.first if search.length == 1
-	    end
+              search = []
+              list.select do |person|
+                next if person == 'none'
+                pname = person.public_name.downcase.split(/\s+/)
+                if sname.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
+                  search << person
+                elsif pname.all? {|t1| sname.any? {|t2| t2.start_with? t1}}
+                  search << person
+                end
+              end
 
-	    # save results in both the cache and the attributes
-	    if person
-	      @@people_cache[name] = person
+              person = search.first if search.length == 1
+            end
 
-	      attr['people'][person.id] = {
-		name: name,
-		member: person.asf_member?,
-		attending: !absent.include?(name)
-	      }
-	    end
-	  end
+            # save results in both the cache and the attributes
+            if person
+              @@people_cache[name] = person
+
+              attr['people'][person.id] = {
+                name: name,
+                member: person.asf_member?,
+                attending: !absent.include?(name)
+              }
+            end
+          end
         end
       elsif attr['title'] == 'Call to order'
         attr['timestamp'] = timestamp(attr['text'][/\d+:\d+([ap]m)?/])
