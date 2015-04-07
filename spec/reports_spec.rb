@@ -30,6 +30,7 @@ feature 'report' do
      text: 'Attic'
     expect(page).to have_selector 'button', text: 'edit comment'
     expect(page).to have_selector 'button', text: 'approve'
+    expect(page).to have_selector 'button', text: 'edit report'
     expect(page).to have_selector '.nextlink[href="Axis"]', 
      text: 'Axis'
 
@@ -37,9 +38,15 @@ feature 'report' do
     expect(page).to have_selector 'h3#comments', text: 'Pending Comment'
     expect(page).to have_selector 'pre.comment', text: 'jt: Nice report!'
 
-    # hidden form
+    # hidden forms
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Edit comment'
+    expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
+      text: 'Edit Report'
+    expect(page).to have_selector '#post-report-text',
+      text: 'Apache Avro is a cross-language data serialization system.'
+    expect(page).to have_selector \
+      "#post-report-message[value='Edit Avro Report']"
   end
 
   it "should show missing reports" do
@@ -56,11 +63,16 @@ feature 'report' do
     # action items
     expect(page).to have_selector 'h3 a[href="Action-Items"]',
       text: 'Action Items'
+    expect(page).to have_selector 'button', text: 'post report'
     expect(page).to have_selector 'pre.comment', 
       text: 'Greg: Is it time to retire the project?'
 
-    # hidden form
+    # hidden forms
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Enter a comment'
+    expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
+      text: 'Post Report'
+    expect(page).to have_selector \
+      "#post-report-message[value='Post Tuscany Report']"
   end
 end

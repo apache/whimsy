@@ -101,7 +101,8 @@ class Main < React
     if @item.buttons
       @item.buttons.each do |button|
         if button.form
-          React.createElement(button.form, item: @item, server: @@server)
+          React.createElement(button.form, item: @item, server: @@server,
+            button: button)
         end
       end
     end

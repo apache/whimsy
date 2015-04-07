@@ -136,6 +136,21 @@ feature 'server actions' do
       eval(File.read('views/actions/approve.json.rb'))
       expect(Pending.get('test')['approved']).not_to include('7')
     end
+
+    it "should post/edit a report" do
+      @agenda = 'board_agenda_2015_02_18.txt'
+      @parsed = AgendaCache.parse @agenda, :quick
+      poi = @parsed.find {|item| item['title'] == 'POI'}
+      @attach = poi[:attach]
+      @digest = poi['digest']
+      @message = 'Dummy report for POI'
+      @report = 'Nothing to see here.  Move along.'
+
+      eval(File.read('views/actions/post.json.rb'))
+
+      poi = @agenda.find {|item| item['title'] == 'POI'}
+      expect(poi['report']).to eq('Nothing to see here.  Move along.')
+    end
   end
 
   #

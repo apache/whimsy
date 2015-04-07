@@ -18,7 +18,7 @@ class SpecialOrder < React
   end
 
   def render
-    _ModalDialog.special_order_form! color: 'commented' do
+    _ModalDialog.wide_form.special_order_form! color: 'commented' do
       _h4 'Add Special Order'
 
       #input field: title

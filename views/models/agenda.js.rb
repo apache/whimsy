@@ -48,7 +48,7 @@ class Agenda
   end
 
   # provide read-only access to a number of properties 
-  attr_reader :attach, :title, :owner, :shepherd, :index, :timestamp
+  attr_reader :attach, :title, :owner, :shepherd, :index, :timestamp, :digest
   attr_reader :approved, :roster, :prior_reports, :stats, :missing, :people
 
   # compute href by taking the title and replacing all non alphanumeric
@@ -182,6 +182,16 @@ class Agenda
     end
 
     list << {button: Attend} if @title == 'Roll Call'
+
+    if @attach =~ /^(\d|7?[A-Z]+|4[A-Z])$/
+      if @missing
+        list << {form: Post, text: 'post report'} 
+      elsif @attach =~ /^7\w/
+        list << {form: Post, text: 'edit resolution'} 
+      else
+        list << {form: Post, text: 'edit report'} 
+      end
+    end
 
     list
   end
