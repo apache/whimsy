@@ -8,7 +8,7 @@ class Text < React
   end
 
   def componentWillReceiveProps()
-    @text = htmlEscape(@@raw)
+    @text = htmlEscape(@@raw || '')
 
     if @@filters
       @@filters.each { |filter| @text = filter(@text) }

@@ -3,7 +3,8 @@
 # where the two sections will show up as two columns on wide enough windows.
 #
 # The first section contains the item text, with a missing indicator if
-# the report isn't present.
+# the report isn't present.  It also contains an inline copy of draft
+# minutes for agenda items in section 3.
 #
 # The second section contains posted comments, pending comments, and
 # action items associated with this agenda item.
@@ -13,17 +14,17 @@
 
 class Report < React
   def render
-
-    # determine what text filters to run
-    filters = [hotlink]
-    filters << self.localtime if @@item.title == 'Call to order'
-    filters << self.names if @@item.people
-
     _section.flexbox do
       _section do
         _pre.report do
           _p {_em 'Missing'} if @@item.missing
-          _Text raw: @@item.text, filters: filters
+          _Text raw: @@item.text, filters: @filters
+        end
+
+        if @@item.minutes
+          _pre.comment do
+            _Text raw: @@item.minutes, filters: [hotlink]
+          end
         end
       end
 
@@ -51,6 +52,41 @@ class Report < React
       end
     end
   end
+
+  # check for additional actions on initial render
+  def componentWillMount()
+    self.componentWillReceiveProps()
+  end
+
+  def componentWillReceiveProps()
+    # determine what text filters to run
+    @filters = [hotlink]
+    @filters << self.localtime if @@item.title == 'Call to order'
+    @filters << self.names if @@item.people
+
+    # special processing for Minutes from previous meetings
+    if @@item.attach =~ /^3[A-Z]$/
+      @filters = [self.linkMinutes]
+
+      # if draft is available, fetch minutes for display
+      date = @@item.text[/board_minutes_(\d+_\d+_\d+)\.txt/, 1]
+
+      if 
+        date and not defined? @@item.minutes and defined? XMLHttpRequest and
+        Server.drafts.include? "board_minutes_#{date}.txt"
+      then
+        @@item.minutes = ''
+        fetch "minutes/#{date}", :text do |minutes|
+          @@item.minutes = minutes
+          Main.refresh()
+        end
+      end
+    end
+  end
+
+  #
+  ### filters
+  #
 
   # Convert start time to local time on Call to order page
   def localtime(text)
@@ -117,6 +153,20 @@ class Report < React
       text.gsub! /(\n\s{4})([A-Z].*)/ do |match, space, name|
         "#{space}<a class='commented' href='#{roster}?q=#{name}'>#{name}</a>"
       end
+    end
+
+    return text
+  end
+
+  # link to board minutes
+  def linkMinutes(text)
+    text.gsub! /board_minutes_(\d+)_\d+_\d+\.txt/ do |match, year|
+      if Server.drafts.include? match
+        link = "https://svn.apache.org/repos/private/foundation/board/#{match}"
+      else
+        link = "http://apache.org/foundation/records/minutes/#{year}/#{match}"
+      end
+      "<a href='#{link}'>#{match}</a>"
     end
 
     return text

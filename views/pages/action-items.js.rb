@@ -38,17 +38,21 @@ class ActionItems < React
   # set missing flag if status is empty;
   # find item associated with PMC if reporting this month
   def componentWillReceiveProps()
-    @actions = @@item.text.split(/^\n\* /m).map do |text|
-      match1 = text.match(/((?:\n|.)*?)(\n\s*Status:(?:\n|.)*)/)
-      match2 = match1[1].match(/((?:\n|.)*?)(\[ (\S*) \])?\s*$/)
+    if @@item.text
+      @actions = @@item.text.split(/^\n\* /m).map do |text|
+        match1 = text.match(/((?:\n|.)*?)(\n\s*Status:(?:\n|.)*)/)
+        match2 = match1[1].match(/((?:\n|.)*?)(\[ (\S*) \])?\s*$/)
 
-      {
-        text: "* " + match2[1],
-        status: match1[2],
-        missing: match1[2] =~ /Status:\s*$/,
-        pmc: match2[2],
-        item: match2[3] ? Agenda.find(match2[3]) : nil
-      }
+        {
+          text: "* " + match2[1],
+          status: match1[2],
+          missing: match1[2] =~ /Status:\s*$/,
+          pmc: match2[2],
+          item: match2[3] ? Agenda.find(match2[3]) : nil
+        }
+      end
+    else
+      @actions = []
     end
   end
 end

@@ -40,6 +40,8 @@ def post(target, data, &block)
       begin
         if xhr.status == 200
           data = JSON.parse(xhr.responseText) 
+        elsif xhr.status == 404
+          alert "Not Found: json/#{target}"
         elsif xhr.status >= 400
           console.log(xhr.responseText)
           alert "Exception\n#{JSON.parse(xhr.responseText).exception}"
@@ -53,4 +55,38 @@ def post(target, data, &block)
   end
 
   xhr.send(JSON.stringify(data))
+end
+
+# "AJAX" style get request to the server, with a callback
+def fetch(target, type, &block)
+  xhr = XMLHttpRequest.new()
+  xhr.open('GET', "../#{type}/#{target}", true)
+  xhr.responseType = type
+
+  def xhr.onreadystatechange()
+    if xhr.readyState == 4
+      data = nil
+
+      begin
+        if xhr.status == 200
+          if type == :json
+            data = JSON.parse(xhr.responseText) 
+          else
+            data = xhr.responseText
+          end
+        elsif xhr.status == 404
+          alert "Not Found: #{type}/#{target}"
+        elsif xhr.status >= 400
+          console.log(xhr.responseText)
+          alert "Exception\n#{JSON.parse(xhr.responseText).exception}"
+        end
+      rescue => e
+        console.log(e)
+      end
+
+      block(data)
+    end
+  end
+
+  xhr.send()
 end

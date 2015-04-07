@@ -64,3 +64,16 @@ get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
     AgendaCache[file][:etag] = headers['ETag']
   end
 end
+
+# draft minutes
+get '/text/minutes/:file' do |file|
+  file = "board_minutes_#{file.gsub('-','_')}.txt".untaint
+  pass unless dir('board_minutes_*.txt').include? file
+  path = File.join(FOUNDATION_BOARD, file)
+
+  _text do
+    last_modified File.mtime(path)
+    _ File.read(path)
+  end
+end
+
