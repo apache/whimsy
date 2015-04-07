@@ -33,6 +33,9 @@ class ASF::Board::Agenda
   end
 
   def scan(text, pattern, &block)
+    # convert tabs to spaces
+    text.gsub!(/^(\t+)/) {|tabs| ' ' * (8*tabs.length)}
+
     text.scan(pattern).each do |matches|
       hash = Hash[pattern.names.zip(matches)]
       yield hash if block
