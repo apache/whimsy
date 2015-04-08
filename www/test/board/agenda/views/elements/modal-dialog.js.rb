@@ -47,6 +47,27 @@ class ModalDialog < React
 
         @footer << child
 
+      elsif child.type == 'input' or child.type == 'textarea'
+
+        # wrap input and textarea elements in a form-control, 
+        # add label if present
+
+        if not child.props.className
+          child.props.className = 'form-control'
+        elsif not child.props.className.split(' ').include? 'form-control'
+          child.props.className += ' form-control'
+        end
+
+        label = nil
+        if child.props.label and child.props.id
+          label = React.createElement('label',
+            {htmlFor: child.props.id}, child.props.label)
+          child.props.delete 'label'
+        end
+
+        @body << React.createElement('div', {className: 'form-group'}, 
+          label, child)
+
       else
 
         # place all other elements into the body

@@ -27,6 +27,11 @@ class Main < React
       item = {view: Search, query: query}
     elsif path == 'comments'
       item = {view: Comments}
+    elsif path == 'pending'
+      buttons = []
+      buttons << {form: Commit} if Pending.count > 0
+      item = {view: Queue, buttons: buttons,
+        title: 'Queued approvals and comments'}
     elsif path and path != '.'
       item = Agenda.find(path)
     else
@@ -56,6 +61,11 @@ class Main < React
               props.attrs[name.gsub('_', '-')] = form.button[name]
             end
           end
+        else
+          # no form or form has no separate button: so this is just a button
+          props.delete 'text'
+          props.type = button.button || form
+          props.attrs = {item: item, server: Server}
         end
 
         # item overrides
@@ -90,7 +100,10 @@ class Main < React
 
     if @item.buttons
       @item.buttons.each do |button|
-        React.createElement(button.form, item: @item, server: @@server)
+        if button.form
+          React.createElement(button.form, item: @item, server: @@server,
+            button: button)
+        end
       end
     end
   end
@@ -119,6 +132,10 @@ class Main < React
   # refresh the current page
   def refresh()
     self.route(history.state.path, history.state.query)
+  end
+
+  # dummy exported refresh method (replaced on client side)
+  def self.refresh()
   end
 
   # additional client side initialization

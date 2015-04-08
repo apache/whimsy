@@ -14,7 +14,11 @@ class Footer < React
       if @@buttons
         _span do
           @@buttons.each do |button|
-            React.createElement('button', button.attrs, button.text) if button
+            if button.text
+              React.createElement('button', button.attrs, button.text)
+            elsif button.type
+              React.createElement(button.type, button.attrs)
+            end
           end
         end
       end

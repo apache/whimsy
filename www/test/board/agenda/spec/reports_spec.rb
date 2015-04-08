@@ -5,6 +5,30 @@
 require_relative 'spec_helper'
 
 feature 'report' do
+  it "should show the President report" do
+    visit '/2015-02-18/President'
+
+    # header
+    expect(page).to have_selector '.navbar-fixed-top.available .navbar-brand', 
+      text: 'President'
+
+    # body 
+    expect(page).to have_selector 'pre', 
+      text: 'Sally produced our first quarterly report'
+    expect(page).to have_selector 'a[href="Executive-Assistant"]', 
+     text: 'Executive Assistant'
+    expect(page).to have_selector '.pres-missing[href="Travel-Assistance"]', 
+     text: 'Travel Assistance'
+
+    # footer
+    expect(page).to have_selector '.backlink[href="Chairman"]',
+      text: 'Chairman'
+    expect(page).to have_selector 'button', text: 'add comment'
+    expect(page).to have_selector 'button', text: 'edit report'
+    expect(page).to have_selector '.nextlink[href="Treasurer"]', 
+     text: 'Treasurer'
+  end
+
   it "should show the Avro report" do
     visit '/2015-01-21/Avro'
 
@@ -29,6 +53,8 @@ feature 'report' do
     expect(page).to have_selector '.backlink[href="Attic"]', 
      text: 'Attic'
     expect(page).to have_selector 'button', text: 'edit comment'
+    expect(page).to have_selector 'button', text: 'approve'
+    expect(page).to have_selector 'button', text: 'edit report'
     expect(page).to have_selector '.nextlink[href="Axis"]', 
      text: 'Axis'
 
@@ -36,9 +62,15 @@ feature 'report' do
     expect(page).to have_selector 'h3#comments', text: 'Pending Comment'
     expect(page).to have_selector 'pre.comment', text: 'jt: Nice report!'
 
-    # hidden form
+    # hidden forms
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Edit comment'
+    expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
+      text: 'Edit Report'
+    expect(page).to have_selector '#post-report-text',
+      text: 'Apache Avro is a cross-language data serialization system.'
+    expect(page).to have_selector \
+      "#post-report-message[value='Edit Avro Report']"
   end
 
   it "should show missing reports" do
@@ -49,16 +81,22 @@ feature 'report' do
     # comments
     expect(page).to have_selector 'h3#comments', text: 'Comments'
     expect(page).to have_selector 'button', text: 'add comment'
+    expect(page).not_to have_selector 'button', text: 'approve'
     expect(page).to have_selector 'pre.comment', text: 'cm: Reminder email sent'
 
     # action items
     expect(page).to have_selector 'h3 a[href="Action-Items"]',
       text: 'Action Items'
+    expect(page).to have_selector 'button', text: 'post report'
     expect(page).to have_selector 'pre.comment', 
       text: 'Greg: Is it time to retire the project?'
 
-    # hidden form
+    # hidden forms
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Enter a comment'
+    expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
+      text: 'Post Report'
+    expect(page).to have_selector \
+      "#post-report-message[value='Post Tuscany Report']"
   end
 end

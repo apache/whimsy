@@ -21,6 +21,7 @@ class Agenda
       @@index << item
     end
 
+    Main.refresh()
     return @@index
   end
 
@@ -47,8 +48,8 @@ class Agenda
   end
 
   # provide read-only access to a number of properties 
-  attr_reader :attach, :title, :owner, :shepherd, :index
-  attr_reader :approved, :roster, :prior_reports, :stats, :missing
+  attr_reader :attach, :title, :owner, :shepherd, :index, :timestamp, :digest
+  attr_reader :approved, :roster, :prior_reports, :stats, :missing, :people
 
   # compute href by taking the title and replacing all non alphanumeric
   # characters with dashes
@@ -90,13 +91,19 @@ class Agenda
     if @title == 'Action Items'
       @actions
     else
-      Agenda.find('Action-Items').actions[@title]
+      item = Agenda.find('Action-Items')
+      item ? item.actions[@title] : []
     end
   end
 
   # the default view to use for the agenda as a whole
   def self.view
     Index
+  end
+
+  # buttons to show on the index page
+  def self.buttons
+    [{button: Refresh}, {form: Post, text: 'add resolution'}]
   end
 
   # the default banner color to use for the agenda as a whole
@@ -158,14 +165,31 @@ class Agenda
     end
   end
 
+  # buttons and forms to show with this report
   def buttons
     list = []
 
-    unless @comments === undefined # certain reports don't have comments
+    unless @comments === undefined # some reports don't have comments
       if self.pending
         list << {form: AddComment, text: 'edit comment'}
       else
         list << {form: AddComment, text: 'add comment'}
+      end
+
+      if self.approved and not self.approved.include? Server.initials
+        list << {button: Approve} unless self.missing
+      end
+    end
+
+    list << {button: Attend} if @title == 'Roll Call'
+
+    if @attach =~ /^(\d|7?[A-Z]+|4[A-Z])$/
+      if @missing
+        list << {form: Post, text: 'post report'} 
+      elsif @attach =~ /^7\w/
+        list << {form: Post, text: 'edit resolution'} 
+      else
+        list << {form: Post, text: 'edit report'} 
       end
     end
 

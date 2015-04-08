@@ -202,6 +202,10 @@ main hr {
   margin-left: 6em 
 }
 
+footer button {
+  margin: 0 2px;
+}
+
 .search {padding-top: 1em}
 .hilite {background-color: #FF6}
 

@@ -10,8 +10,8 @@ class Pending
     response = (File.exist?(file) ? YAML.load_file(file) : {})
 
     # reset pending when agenda changes
-    if agenda and agenda > response['agenda']
-      response = {agenda: agenda}
+    if agenda and agenda > response['agenda'].to_s
+      response = {'agenda' => agenda}
     end
 
     # provide empty defaults

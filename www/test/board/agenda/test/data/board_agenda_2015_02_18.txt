@@ -1315,6 +1315,7 @@
 
     * Sam: Is the project ready for retirement?  [ Rave ]
           Status: email sent today.  Keep item open until I get a response.
+                  http://s.apache.org/jDZ
 
 10. Unfinished Business
 

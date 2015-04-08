@@ -10,11 +10,23 @@ associated with those PMCs are stored in separate places in that text file.
 The agenda tool brings this data together and makes it easier to both
 navigate and update that file.
 
+> I cannot stress enough how important this tool is. I was doing things the
+> "old" way until recently. I was unaware of how far this tool had advanced. I
+> now spend around 50% less time on board meeting prep than I used to before
+> switching to this tool. I imagine secretary gets even more benefit than
+> that. Multiply this across all directors and you have a tool of immense
+> value.
+>
+> &mdash; Ross Gardler, ASF President
+
 Preparation
 ---
 
 This has been tested to work on Mac OSX and Linux.  It likely will not work
 yet on Windows.
+
+The easiest way to get started is with Docker (see below), but if you
+prefer a more hands on approach read on.
 
 For a partial installation, all you need is Ruby and Node.js.
 
@@ -31,25 +43,50 @@ For planning purposes, prereqs for a _full_ installation will require:
      * Ruby 1.9.3 or greater
      * io.js
      * [PhantomJS](http://phantomjs.org/) 2.0
-         * Mac OS/X Yosemite users may need to get the binary from comments
-           on [12900](https://github.com/ariya/phantomjs/issues/12900).
+         * Mac OS/X Yosemite users should either use `brew install phantomjs``
+           or get the binary from comments on
+           [12900](https://github.com/ariya/phantomjs/issues/12900).
+         * Ubuntu users can get a working binary from the comments on
+           [12948](https://github.com/ariya/phantomjs/issues/12948#issuecomment-78181293).
 
 Note:
 
  * The installation of PhantomJS on Linux current requires a 30+ minute
    compile.  The binary provided for OS/X Yosemite is not part of the
-   standard distribution.  Feel free to skip this step on your first
-   ("give it five minutes") pass through this.  If you see promise,
+   standard distribution for PhantomJS.  Feel free to skip this step on your
+   first ("give it five minutes") pass through this.  If you see promise,
    come back and complete this step.
-
 
 Kicking the tires
 ---
 
-Run the following commands in a Terminal window:
+You have three choices Vagrant, Docker, or directly on your machine.
+
+### Vagrant
+
+Vagrant users can clone this repository and then run:
+
+        vagrant up
+        vagrant ssh -c "cd /vagrant && rake server:test"
+
+Then visit [http://localhost:9292/](http://localhost:9292/)
+
+### Docker
+
+Docker users can get up and running by cloning this repository and
+running the following two commands in that directory:
+
+        docker build -t whimsy-agenda .
+        docker run -p 9292:9292 -d whimsy-agenda
+
+Now visit http://youdockerhost:9292
+
+### Direct
+
+After installing the above prerequisites run the following commands in a Terminal window:
 
     sudo gem install bundler
-    svn checkout https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/test/board/agenda
+    git clone https://github.com/rubys/whimsy-agenda.git
     cd agenda
     npm install
     bundle install
@@ -205,12 +242,21 @@ Viewing Source (this time, Actual Code)
    you will see the full script.  Every bit of this JavaScript was generated
    from the js.rb files mentioned above.  Undoubtedly you have seen small
    amounts of JavaScript before but I suspect that much of this looks foreign.
-   Nicely indented, vaguely familiar, but very foreign.  Many people these
-   days generate JavaScript.  Popular with React is something called 
-   [JSX](http://facebook.github.io/react/docs/jsx-in-depth.html), but
+   Nicely indented, commented, vaguely familiar, but still somewhat foreign.
+   Many people these days generate JavaScript.  Popular with React is something
+   called [JSX](http://facebook.github.io/react/docs/jsx-in-depth.html), but
    that's both controversial and [doesn't support if
    statements](http://facebook.github.io/react/tips/if-else-in-JSX.html).
    I make plenty of use of if statements (and more!) in my render methods.
+
+   While you can bring the generated source up in your browser's Javascript
+   console, you don't have to.  Through the magic of
+   [Source Maps](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit), 
+   you can view source and set breakpoints using the Ruby code that was
+   used to generate this script.  The way this is done varies by browser.
+   On Google Chrome, for example, Ctrl+Shift+J will bring up the JavaScript
+   console.  Clicking on sources will show directores for buttons, elements,
+   etc.
 
  * Should you ever happen to look for the main routing functions, they
    are [routing.rb](routing.rb) on the server and
@@ -226,7 +272,7 @@ confidently make changes without breaking things.  If you haven't yet,
 I encourage you to install Poltergeist and io.js.
 
 Before running the tests, run `rake clobber` to undo any changes you
-make have made by running the application.
+make have made to the test data by running the application.
 
 Now onto the tests:
 
@@ -367,7 +413,7 @@ Nothing is perfect.  Here are a few things to watch out for:
    [Ruby2JS filters](https://github.com/rubys/ruby2js#filters) reduce this
    gap by converting many common Ruby methods calls to JavaScript equivalents
    (e.g., `a.include? b` becomes `a.indexOf(b) != -1`).  Currently the
-   agenda tool makes use of the `functions` and `require` filters.
+   agenda tool makes use of the `react`, `functions` and `require` filters.
 
  * In Ruby there isn't a difference between accessing attributes and methods
    which have no arguments.  In JavaScript there is.  To make this work,

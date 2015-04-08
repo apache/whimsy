@@ -13,7 +13,7 @@ class Header < React
         # pending count
         if Pending.count > 0
           _li.label.label_danger do
-            _a Pending.count
+            _Link text: Pending.count, href: 'pending'
           end
         end
 
@@ -21,7 +21,7 @@ class Header < React
         #
         if @@item.attach
           _li.dropdown do
-            _a.dropdown_toggle.nav! data_toggle: "dropdown" do
+            _a.dropdown_toggle.info! data_toggle: "dropdown" do
               _ 'info'
               _b.caret
             end
@@ -83,6 +83,7 @@ class Header < React
 
             _li { _Link text: 'Search', href: 'search' }
             _li { _Link text: 'Comments', href: 'comments' }
+            _li { _Link text: 'Pending', href: 'pending' }
           end
         end
 

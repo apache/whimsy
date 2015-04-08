@@ -15,7 +15,7 @@ class Pending
   end
 
   def self.comments
-    Server.pending.comments
+    Server.pending ? Server.pending.comments : []
   end
 
   def self.approved
@@ -28,5 +28,9 @@ class Pending
 
   def self.seen
     Server.pending.seen
+  end
+
+  def self.initials
+    Server.pending.initials || Server.initials
   end
 end

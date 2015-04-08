@@ -27,8 +27,8 @@ class Link < React
   def click(event)
     href = event.target.getAttribute('href')
     if href =~ /^(\.|[-\w]+)$/
+      event.preventDefault()
       Main.navigate href
-      return false
     end
   end
 end
