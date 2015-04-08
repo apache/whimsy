@@ -68,6 +68,7 @@ class Report < React
     @filters = [hotlink]
     @filters << self.localtime if @@item.title == 'Call to order'
     @filters << self.names if @@item.people
+    @filters << self.president_attachments if @@item.title == 'President'
 
     # special processing for Minutes from previous meetings
     if @@item.attach =~ /^3[A-Z]$/
@@ -172,6 +173,25 @@ class Report < React
         link = "http://apache.org/foundation/records/minutes/#{year}/#{match}"
       end
       "<a href='#{link}'>#{match}</a>"
+    end
+
+    return text
+  end
+
+  
+  # expand president's attachments
+  def president_attachments(text)
+    match = text.match(/Additionally, please see Attachments (\d) through (\d)/)
+    if match
+      agenda = Agenda.index
+      for i in 0...agenda.length
+        next unless agenda[i].attach =~ /^\d$/
+        if agenda[i].attach >= match[1] and agenda[i].attach <= match[2]
+          text += "\n  #{agenda[i].attach}. " +
+            "<a #{ agenda[i].text.empty? ? 'class="pres-missing" ' : ''}" +
+            "href='#{agenda[i].href}'>#{agenda[i].title}</a>"
+        end
+      end
     end
 
     return text
