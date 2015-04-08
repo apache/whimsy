@@ -5,7 +5,7 @@ require 'wunderbar'
 require 'whimsy/asf/agenda'
 
 # link to board private-arch
-MBOX = "https://mail-search.apache.org/members/private-arch/board/201503.mbox/"
+MBOX = "https://mail-search.apache.org/members/private-arch/board"
 
 # get a list of current board messages
 archive = Dir['/home/apmail/board/archive/*/*']
@@ -24,8 +24,8 @@ end
 # Get a list of missing board reports
 Dir.chdir ASF::SVN['private/foundation/board']
 agenda = Dir['board_agenda_*.txt'].sort.last
-missing = ASF::Board::Agenda.parse(IO.read(agenda), true).
-  select {|item| item['missing']}.
+parsed = ASF::Board::Agenda.parse(IO.read(agenda), true)
+missing = parsed.select {|item| item['missing']}.
   map {|item| item['title'].downcase}
 
 # produce HTML output of reports, highlighting ones that have not (yet)
@@ -48,7 +48,8 @@ _html do
   # output an unordered list of subjects linked to the message archive
   _ul reports do |mail|
     _li do
-      href = MBOX + URI.escape('<' + mail.message_id + '>')
+      mbox = mail.date.strftime("#{MBOX}/%Y%m.mbox/")
+      href = mbox + URI.escape('<' + mail.message_id + '>')
 
       if missing.any? {|title| mail.subject.downcase =~ /\b#{title}\b/}
         _a.missing mail.subject, href: href
@@ -62,8 +63,15 @@ end
 # produce JSON output of reports
 _json do
   _ reports do |mail|
+    mbox = mail.date.strftime("#{MBOX}/%Y%m.mbox/")
+
     _subject mail.subject
-    _link MBOX + URI.escape('<' + mail.message_id + '>')
-    _missing missing.any? {|title| mail.subject.downcase =~ /\b#{title}\b/}
+    _link mbox + URI.escape('<' + mail.message_id + '>')
+
+    subject = mail.subject.downcase
+    _missing missing.any? {|title| subject =~ /\b#{title}\b/}
+
+    item = parsed.find {|item| subject =~ /\b#{item['title'].downcase}\b/}
+    _title item['title'] if item
   end
 end
