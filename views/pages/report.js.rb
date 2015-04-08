@@ -17,8 +17,13 @@ class Report < React
     _section.flexbox do
       _section do
         _pre.report do
-          _p {_em 'Missing'} if @@item.missing
-          _Text raw: @@item.text, filters: @filters
+          if @@item.missing
+            _p {_em 'Missing'} 
+          elsif @@item.text
+            _Text raw: @@item.text, filters: @filters
+          else
+            _p {_em 'Empty'} 
+          end
         end
 
         if @@item.minutes
