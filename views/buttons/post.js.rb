@@ -1,6 +1,8 @@
 #
 # Post or edit a report or resolution
 #
+# For new resolutions, allow entry of title, but not commit message
+# For everything else, allow modification of commit message, but not title
 
 class Post < React
   def initialize
@@ -29,14 +31,22 @@ class Post < React
     _ModalDialog.wide_form.post_report_form! color: 'commented' do
       _h4 @title
 
+      #input field: title
+      if @@button.text == 'add resolution'
+        _input.post_report_title! label: 'title', disabled: @disabled,
+          placeholder: 'title'
+      end
+
       #input field: report text
       _textarea.post_report_text! label: @label, value: @report,
         placeholder: @label, rows: 17, disabled: @disabled, 
         onChange: self.change
 
       #input field: commit_message
-      _input.post_report_message! label: 'commit message', disabled: @disabled,
-        defaultValue: @message
+      if @@button.text != 'add resolution'
+        _input.post_report_message! label: 'commit message', 
+          disabled: @disabled, defaultValue: @message
+      end
 
       # footer buttons
       _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
@@ -50,24 +60,34 @@ class Post < React
     self.componentWillReceiveProps()
   end
 
-  # autofocus on report/resolution text
+  # autofocus on report/resolution title/text
   def componentDidMount()
     jQuery('#post-report-form').on 'shown.bs.modal' do
-      ~'#post-report-text'.focus()
+      if @@button.text == 'add resolution'
+        ~'#post-report-title'.focus()
+      else
+        ~'#post-report-text'.focus()
+      end
     end
   end
 
   # match form title, input label, and commit message with button text
-  def componentWillReceiveProps()
+  def componentWillReceiveProps(newprops)
     case @@button.text
     when 'post report'
       @title = 'Post Report'
       @label = 'report'
       @message = "Post #{@@item.title} Report"
+
     when 'edit report'
       @title = 'Edit Report'
       @label = 'report'
       @message = "Edit #{@@item.title} Report"
+
+    when 'add resolution'
+      @title = 'Add Resolution'
+      @label = 'resolution'
+
     when 'edit resolution'
       @title = 'Edit Resolution'
       @label = 'resolution'
@@ -75,7 +95,10 @@ class Post < React
     end
 
     @indent = (@@item.attach =~ /^4/ ? '        ' : '')
-    @report = @@item.text
+
+    if !self.state.item or newprops.item.attach != self.state.item.attach
+      @report = @@item.text || '' 
+    end
   end
 
   # track changes to input value; change color of reflow button when
@@ -91,13 +114,22 @@ class Post < React
 
   # when save button is pushed, post comment and dismiss modal when complete
   def submit(event)
-    data = {
-      agenda: Agenda.file,
-      attach: @@item.attach,
-      digest: @@item.digest,
-      message: ~'#post-report-message'.value,
-      report: ~'#post-report-text'.value
-    }
+    if @@button.text == 'add resolution'
+      data = {
+        agenda: Agenda.file,
+        attach: '7?',
+        title: ~'#post-report_title'.value,
+        report: ~'#post-report-text'.value
+      }
+    else
+      data = {
+        agenda: Agenda.file,
+        attach: @@item.attach,
+        digest: @@item.digest,
+        message: ~'#post-report-message'.value,
+        report: ~'#post-report-text'.value
+      }
+    end
 
     @disabled = true
     post 'post', data do |response|
