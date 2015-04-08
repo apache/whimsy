@@ -18,12 +18,21 @@ class Post < React
   end
 
   def render
+    # determine if reflow button should be default or danger color
+    width = 80 - @indent.length
+    if @report.split("\n").all? {|line| line.length <= width}
+      reflow_class = 'btn-default'
+    else
+      reflow_class = 'btn-danger'
+    end
+
     _ModalDialog.wide_form.post_report_form! color: 'commented' do
       _h4 @title
 
       #input field: report text
-      _textarea.post_report_text! label: @label, defaultValue: @@item.text,
-        placeholder: @label, rows: 17, disabled: @disabled
+      _textarea.post_report_text! label: @label, value: @report,
+        placeholder: @label, rows: 17, disabled: @disabled, 
+        onChange: self.change
 
       #input field: commit_message
       _input.post_report_message! label: 'commit message', disabled: @disabled,
@@ -31,6 +40,7 @@ class Post < React
 
       # footer buttons
       _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+      _button 'Reflow', class: reflow_class, onClick: self.reflow
       _button.btn_primary 'Submit', onClick: self.submit, disabled: @disabled
     end
   end
@@ -63,6 +73,20 @@ class Post < React
       @label = 'resolution'
       @message = "Edit #{@@item.title} Resolution"
     end
+
+    @indent = (@@item.attach =~ /^4/ ? '        ' : '')
+    @report = @@item.text
+  end
+
+  # track changes to input value; change color of reflow button when
+  # there is a need for a reflow.
+  def change(event)
+    @report = event.target.value
+  end
+
+  # reflow
+  def reflow()
+    @report = Flow.text(@report, @indent)
   end
 
   # when save button is pushed, post comment and dismiss modal when complete

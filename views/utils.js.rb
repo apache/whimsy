@@ -1,6 +1,10 @@
 # A convenient place to stash server data
 Server = {}
 
+#
+# function to assist with production of HTML and regular expressions
+#
+
 # Escape HTML characters so that raw text can be safely inserted as HTML
 def htmlEscape(string)
   return string.gsub(htmlEscape.chars) {|c| htmlEscape.replacement[c]}
@@ -25,6 +29,10 @@ end
 hotlink.regexp = Regexp.new(/(^|[\s.:;?\-\]<\(])
   (https?:\/\/[-\w;\/?:@&=+$.!~*'()%,#]+[\w\/])
   (?=$|[\s.:,?\-\[\]&\)])/x, "g")
+
+#
+# Requests to the server
+#
 
 # "AJAX" style post request to the server, with a callback
 def post(target, data, &block)
@@ -89,4 +97,52 @@ def fetch(target, type, &block)
   end
 
   xhr.send()
+end
+
+#
+# Reflow comments and lines
+#
+
+class Flow
+  # reflow comment
+  def self.comment(comment, initials, indent='    ')
+    lines = comment.split("\n")
+    len = 71 - indent.length
+    for i in 0...lines.length
+      lines[i] = (i == 0 ? initials + ': ' : "#{indent} ") + lines[i].
+        gsub(/(.{1,#{len}})( +|$\n?)|(.{1,#{len}})/, "$1$3\n#{indent}").
+        trim()
+    end
+    return lines.join("\n")
+  end
+
+  # reflow text
+  def self.text(text, indent='')
+    # join consecutive lines (making exception for <markers> like <private>)
+    text.gsub! /([^\s>])\n(\w)/, '$1 $2'
+
+    # reflow each line
+    lines = text.split("\n")
+    len = 78 - indent.length
+    for i in 0...lines.length
+      indent = lines[i].match(/( *)(.?.?)(.*)/m)
+
+      if indent[1] == '' or indent[3] == ''
+        # not indented (or short) -> split
+        lines[i] = lines[i].
+          gsub(/(.{1,#{len}})( +|$\n?)|(.{1,#{len}})/, "$1$3\n").
+          sub(/[\n\r]+$/, '')
+      else
+        # preserve indentation.  indent[2] is the 'bullet' (if any) and is
+        # only to be placed on the first line.
+        n = 76 - indent[1].length;
+        lines[i] = indent[3].
+          gsub(/(.{1,#{n}})( +|$\n?)|(.{1,#{n}})/, indent[1] + "  $1$3\n").
+          sub(indent[1] + '  ', indent[1] + indent[2]).
+          sub(/[\n\r]+$/, '')
+      end
+    end
+
+    return lines.join("\n")
+  end
 end

@@ -39,10 +39,46 @@ describe "forms", type: :feature, server: :react do
         end
       end
 
-      expect(page).to have_selector '.modal-footer .btn-warning',
-        text: 'Delete'
+      expect(page).to have_selector '.modal-footer .btn-warning', text: 'Delete'
       expect(page).to have_selector \
         '.modal-footer .btn-primary:not([disabled])', text: 'Save'
+    end
+  end
+
+  #
+  # Post form
+  #
+  describe "post form" do
+    it "should indicate when a reflow is needed" do
+      parsed = AgendaCache.parse 'board_agenda_2015_02_18.txt', :quick
+      @item = parsed.find {|item| item['title'] == 'Executive Vice President'}
+      on_react_server do
+        item = Agenda.new(@item)
+        React.render _Post(item: item, button: 'edit report'), document.body do
+          response.end document.body.innerHTML
+        end
+      end
+
+      expect(find('#post-report-text').value).to match(/to answer\nquestions/)
+      expect(page).to have_selector '.modal-footer .btn-danger',
+        text: 'Reflow'
+    end
+
+    it "should perform a reflow" do
+      parsed = AgendaCache.parse 'board_agenda_2015_02_18.txt', :quick
+      @item = parsed.find {|item| item['title'] == 'Executive Vice President'}
+      on_react_server do
+        item = Agenda.new(@item)
+        React.render _Post(item: item, button: 'edit report'), document.body do
+          Simulate.click ~'.btn-danger'
+          ~'#post-report-text'.textContent = this.state.report
+          response.end document.body.innerHTML
+        end
+      end
+
+      expect(find('#post-report-text').value).to match(/to\nanswer questions/)
+      expect(page).to have_selector '.modal-footer .btn-default',
+        text: 'Reflow'
     end
   end
 
