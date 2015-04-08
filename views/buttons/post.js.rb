@@ -20,38 +20,31 @@ class Post < React
   end
 
   def render
-    # determine if reflow button should be default or danger color
-    width = 80 - @indent.length
-    if @report.split("\n").all? {|line| line.length <= width}
-      reflow_class = 'btn-default'
-    else
-      reflow_class = 'btn-danger'
-    end
-
     _ModalDialog.wide_form.post_report_form! color: 'commented' do
-      _h4 @title
+      _h4 @header
 
       #input field: title
       if @@button.text == 'add resolution'
         _input.post_report_title! label: 'title', disabled: @disabled,
-          placeholder: 'title'
+          placeholder: 'title', value: @title, onChange: self.change_title
       end
 
       #input field: report text
       _textarea.post_report_text! label: @label, value: @report,
         placeholder: @label, rows: 17, disabled: @disabled, 
-        onChange: self.change
+        onChange: self.change_text
 
       #input field: commit_message
       if @@button.text != 'add resolution'
         _input.post_report_message! label: 'commit message', 
-          disabled: @disabled, defaultValue: @message
+          disabled: @disabled, value: @message, onChange: self.change_message
       end
 
       # footer buttons
       _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
-      _button 'Reflow', class: reflow_class, onClick: self.reflow
-      _button.btn_primary 'Submit', onClick: self.submit, disabled: @disabled
+      _button 'Reflow', class: self.reflow_color(), onClick: self.reflow
+      _button.btn_primary 'Submit', onClick: self.submit, 
+        disabled: (not self.ready())
     end
   end
 
@@ -75,21 +68,22 @@ class Post < React
   def componentWillReceiveProps(newprops)
     case @@button.text
     when 'post report'
-      @title = 'Post Report'
+      @header = 'Post Report'
       @label = 'report'
       @message = "Post #{@@item.title} Report"
 
     when 'edit report'
-      @title = 'Edit Report'
+      @header = 'Edit Report'
       @label = 'report'
       @message = "Edit #{@@item.title} Report"
 
     when 'add resolution'
-      @title = 'Add Resolution'
+      @header = 'Add Resolution'
       @label = 'resolution'
+      @title = ''
 
     when 'edit resolution'
-      @title = 'Edit Resolution'
+      @header = 'Edit Resolution'
       @label = 'resolution'
       @message = "Edit #{@@item.title} Resolution"
     end
@@ -101,33 +95,63 @@ class Post < React
     end
   end
 
-  # track changes to input value; change color of reflow button when
-  # there is a need for a reflow.
-  def change(event)
+  # track changes to title value
+  def change_title(event)
+    @title = event.target.value
+  end
+
+  # track changes to text value
+  def change_text(event)
     @report = event.target.value
   end
 
-  # reflow
+  # track changes to message value
+  def change_message(event)
+    @message = event.target.value
+  end
+
+  # determine if reflow button should be default or danger color
+  def reflow_color()
+    width = 80 - @indent.length
+
+    if @report.split("\n").all? {|line| line.length <= width}
+      return 'btn-default'
+    else
+      return'btn-danger'
+    end
+  end
+
+  # perform a reflow of report text
   def reflow()
     @report = Flow.text(@report, @indent)
   end
 
+  # determine if the form is ready to be submitted
+  def ready()
+    if @@button.text == 'add resolution'
+      return @report != '' and @title != ''
+    else
+      return @report != @@item.text and @message != ''
+    end
+  end
+
   # when save button is pushed, post comment and dismiss modal when complete
+
   def submit(event)
     if @@button.text == 'add resolution'
       data = {
         agenda: Agenda.file,
         attach: '7?',
-        title: ~'#post-report_title'.value,
-        report: ~'#post-report-text'.value
+        title: @title,
+        report: @report
       }
     else
       data = {
         agenda: Agenda.file,
         attach: @@item.attach,
         digest: @@item.digest,
-        message: ~'#post-report-message'.value,
-        report: ~'#post-report-text'.value
+        message: @message,
+        report: @report
       }
     end
 
