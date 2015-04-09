@@ -72,7 +72,7 @@ class Report < React
 
   def componentWillReceiveProps()
     # determine what text filters to run
-    @filters = [hotlink]
+    @filters = [hotlink, self.privates]
     @filters << self.localtime if @@item.title == 'Call to order'
     @filters << self.names if @@item.people
     @filters << self.president_attachments if @@item.title == 'President'
@@ -224,6 +224,14 @@ class Report < React
     return text
   end
 
+  # private sections
+  def privates(text)
+    private_sections =
+      Regexp.new('^([ \t]*&lt;private&gt;(?:\n|.)*?&lt;/private&gt;)(\s*)$',
+      'mig')
+
+    return text.gsub(private_sections, '<div class="private">$1</div>')
+  end
   
   # expand president's attachments
   def president_attachments(text)

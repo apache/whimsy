@@ -162,6 +162,9 @@
        specific services  (Maven and Cassandra) are progressing nicely. 
 
        No report from Travel Assistance. Plans for ApacheCon NA are in progress. 
+       <private>
+       whisper, whisper, whisper
+       </private>
 
        Budget:; Budget planning is a little behind schedule but I do have
        complete numbers from Virtual now. We are progressing with one office
