@@ -18,10 +18,13 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   if ENV['RACK_ENV'] == 'test'
     userid = 'test'
     username = 'Joe Tester'
+  elsif env['REMOTE_USER']
+    userid = env['REMOTE_USER']
+    username = ASF::Person.new(userid).public_name
   else
     require 'etc'
-    userid = env['REMOTE_USER'] || Etc.getlogin
-    username = Etc.getpwnam(userid)[4].split(',').first
+    userid = Etc.getlogin
+    username = Etc.getpwnam(userid)[4].split(',').first.force_encoding('utf-8')
   end
 
   @server = {
@@ -30,6 +33,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     drafts: dir('board_minutes_*.txt').sort,
     pending: Pending.get(userid),
     username: username,
+    firstname: username.split(' ').first.downcase,
     initials: username.gsub(/[^A-Z]/, '').downcase
   }
 

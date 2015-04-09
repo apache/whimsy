@@ -21,6 +21,29 @@ class Agenda
       @@index << item
     end
 
+    # remove president attachments from the normal flow
+    @@index.each do |pres|
+      match = (pres.title == 'President') and pres.text and pres.text.
+        match(/Additionally, please see Attachments (\d) through (\d)/)
+      next unless match
+
+      first = last = nil
+      @@index.each do |item|
+        first = item if item.attach == match[1]
+        item.shepherd ||= pres.shepherd if first and !last
+        last  = item if item.attach == match[2]
+      end
+
+      if first and last
+        first.prev.next = last.next
+        last.next.prev = first.prev
+        last.next.index = first.index
+        first.index = nil
+        last.next = pres
+        first.prev = pres
+      end
+    end
+
     Main.refresh()
     return @@index
   end
@@ -50,6 +73,7 @@ class Agenda
   # provide read-only access to a number of properties 
   attr_reader :attach, :title, :owner, :shepherd, :index, :timestamp, :digest
   attr_reader :approved, :roster, :prior_reports, :stats, :missing, :people
+  attr_reader :chair_email, :mail_list
 
   # compute href by taking the title and replacing all non alphanumeric
   # characters with dashes
