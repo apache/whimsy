@@ -26,9 +26,11 @@ class Link < React
 
   def click(event)
     href = event.target.getAttribute('href')
-    if href =~ /^(\.|[-\w]+)$/
+    if href =~ %r{^(\.|(shepherd/)?(queue/)?[-\w]+)$}
+      event.stopPropagation()
       event.preventDefault()
       Main.navigate href
+      return false
     end
   end
 end

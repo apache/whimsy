@@ -6,11 +6,33 @@
 class Footer < React
   def render
     _footer.navbar.navbar_fixed_bottom class: @@item.color do
-      if @@item.prev
-        _a.backlink.navbar_brand @@item.prev.title, rel: 'prev', 
-         href: @@item.prev.href
+
+      #
+      # Previous link
+      #
+      link = @@item.prev
+      prefix = ''
+
+      if @@traversal == :queue
+        prefix = 'queue/'
+        while link and not link.ready_for_review(Server.initials)
+          link = link.prev
+        end
+      elsif @@traversal == :shepherd
+        prefix = 'shepherd/queue/'
+        while link and link.shepherd != @@item.shepherd
+          link = link.prev
+        end
       end
 
+      if link
+        _Link.backlink.navbar_brand text: link.title, rel: 'prev', 
+         href: "#{prefix}#{link.href}"
+      end
+
+      #
+      # Buttons
+      #
       if @@buttons
         _span do
           @@buttons.each do |button|
@@ -23,9 +45,24 @@ class Footer < React
         end
       end
 
-      if @@item.next
-        _Link.nextlink.navbar_brand text: @@item.next.title, rel: 'next', 
-         href: @@item.next.href
+      #
+      # Next link
+      #
+      link = @@item.next
+
+      if @@traversal == :queue
+        while link and not link.ready_for_review(Server.initials)
+          link = link.next
+        end
+      elsif @@traversal == :shepherd
+        while link and link.shepherd != @@item.shepherd
+          link = link.next
+        end
+      end
+
+      if link
+        _Link.nextlink.navbar_brand text: link.title, rel: 'next', 
+         href: "#{prefix}#{link.href}"
       end
     end
   end

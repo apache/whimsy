@@ -5,7 +5,11 @@ RUN mkdir -p /srv/var
 
 ENV RUBY_VERSION 2.2
 ENV PHANTOMJS_VERSION 2.0.0
-ENV IOJS_VERSION 1.5.0
+ENV IOJS_VERSION 1.6.4
+
+# generate locales
+ENV LANG en_US.UTF-8
+RUN locale-gen $LANG
 
 EXPOSE 9292
 
@@ -63,5 +67,6 @@ RUN bundle install
 ADD package.json /home/agenda/
 RUN npm install
 ADD . /home/agenda
+RUN rake clobber
 RUN rake spec
 CMD ["/usr/bin/rake", "server:test"]
