@@ -120,6 +120,11 @@ class Agenda
     end
   end
 
+  def ready_for_review(initials)
+    return defined? @approved and not @missing and
+      not @approved.include? initials
+  end
+
   # the default view to use for the agenda as a whole
   def self.view
     Index

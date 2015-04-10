@@ -27,7 +27,7 @@ class Main < React
       item = {view: Search, query: query}
     elsif path == 'comments'
       item = {view: Comments}
-    elsif path == 'pending'
+    elsif path == 'queue'
       buttons = []
       buttons << {form: Commit} if Pending.count > 0
       item = {view: Queue, buttons: buttons,

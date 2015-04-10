@@ -30,17 +30,20 @@ class Queue < React
 
       # Comments
       _h4 'Comments'
-      _dl.dl_horizontal @comments do |item|
-        _dt do
-          _Link text: item.title, href: item.href
-        end
-        _dd do
-          item.pending.split("\n\n").each do |paragraph|
-            _p paragraph
+      if @comments.empty?
+        _p.col_xs_12 {_em 'None.'} 
+      else
+        _dl.dl_horizontal @comments do |item|
+          _dt do
+            _Link text: item.title, href: item.href
+          end
+          _dd do
+            item.pending.split("\n\n").each do |paragraph|
+              _p paragraph
+            end
           end
         end
       end
-      _p.col_xs_12 {_em 'None.'} if @comments.empty?
 
       # Ready
       unless @ready.empty?
@@ -50,8 +53,7 @@ class Queue < React
         _p.col_xs_12 do
           @ready.each_with_index do |item, index|
             _span ', ' if index > 0
-            _Link text: item.title, href: item.qhref,
-              class: ('default' if index == 0)
+            _Link text: item.title, href: item.href
           end
         end
       end
@@ -77,6 +79,8 @@ class Queue < React
 
       if Pending.approved.include? item.attach
         @approvals << item
+      elsif item.ready_for_review(Server.initials)
+        @ready << item
       end
     end
   end

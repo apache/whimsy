@@ -13,7 +13,7 @@ class Header < React
         # pending count
         if Pending.count > 0
           _li.label.label_danger do
-            _Link text: Pending.count, href: 'pending'
+            _Link text: Pending.count, href: 'queue'
           end
         end
 
@@ -83,7 +83,7 @@ class Header < React
 
             _li { _Link text: 'Search', href: 'search' }
             _li { _Link text: 'Comments', href: 'comments' }
-            _li { _Link text: 'Pending', href: 'pending' }
+            _li { _Link text: 'Queue', href: 'queue' }
           end
         end
 
