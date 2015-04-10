@@ -39,9 +39,19 @@ class Main < React
     elsif path =~ %r{^queue/[-\w]+$}
       @traversal = :queue
       item = Agenda.find(path[6..-1])
+    elsif path =~ %r{^shepherd/queue/[-\w]+$}
+      @traversal = :shepherd
+      item = Agenda.find(path[15..-1])
+    elsif path =~ %r{^shepherd/\w+$}
+      shepherd = path[9..-1]
+      item = {view: Shepherd, shepherd: shepherd,
+        title: "Shepherded by #{shepherd}"}
     else
       item = Agenda.find(path)
     end
+
+    # bail unless an item was found
+    return unless item
 
     # provide defaults for required properties
     item.color ||= 'blank'
@@ -95,19 +105,25 @@ class Main < React
 
   # common layout for all pages: header, main, footer, and forms
   def render
-    _Header item: @item
+    if not @item
+      _p 'Not found'
+    else
 
-    _main do
-      React.createElement(@item.view, item: @item)
-    end
+      _Header item: @item
 
-    _Footer item: @item, buttons: @buttons, traversal: @traversal
+      _main do
+        React.createElement(@item.view, item: @item)
+      end
 
-    if @item.buttons
-      @item.buttons.each do |button|
-        if button.form
-          React.createElement(button.form, item: @item, server: @@server,
-            button: button)
+      _Footer item: @item, buttons: @buttons, traversal: @traversal
+
+      # emit hidden forms associated with the buttons displayed on this page
+      if @item.buttons
+        @item.buttons.each do |button|
+          if button.form
+            React.createElement(button.form, item: @item, server: @@server,
+              button: button)
+          end
         end
       end
     end

@@ -81,8 +81,24 @@ class Header < React
 
             _li.divider
 
+            # find the shortest match for shepherd name (example: Rich)
+            shepherd = nil
+            firstname = Server.firstname.downcase()
+            Agenda.index.each do |item|
+              if 
+                item.shepherd and 
+                firstname.start_with? item.shepherd.downcase() and
+                (not shepherd or item.shepherd.length < shepherd.lenth)
+              then
+                shepherd = item.shepherd
+              end
+            end
+
             _li { _Link text: 'Search', href: 'search' }
             _li { _Link text: 'Comments', href: 'comments' }
+            if shepherd
+              _li { _Link text: 'Shepherd', href: "shepherd/#{shepherd}" }
+            end
             _li { _Link text: 'Queue', href: 'queue' }
           end
         end

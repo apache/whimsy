@@ -33,10 +33,34 @@ feature 'other reports' do
   it "should follow the ready queue" do
     visit '/2015-01-21/queue/Onami'
 
+    expect(page).to have_selector '.navbar-fixed-top.commented .navbar-brand', 
+      text: 'Onami'
+
     expect(page).to have_selector '.backlink[href="queue/MyFaces"]',
       text: 'MyFaces'
     expect(page).to have_selector '.nextlink[href="queue/OpenOffice"]',
       text: 'OpenOffice'
+  end
+
+  it "should show shepherd reports" do
+    visit '/2015-02-18/shepherd/Sam'
+
+    expect(page).to have_selector 'h3.commented a[href="shepherd/queue/Axis"]', 
+      text: 'Axis'
+    expect(page).to have_selector 'pre.comment span', 
+      text: 'jj: Reminder email sent'
+  end
+
+  it "should follow the shepherd queue" do
+    visit '/2015-02-18/shepherd/queue/Hama'
+
+    expect(page).to have_selector '.navbar-fixed-top.missing .navbar-brand', 
+      text: 'Hama'
+
+    expect(page).to have_selector '.backlink[href="shepherd/queue/Forrest"]',
+      text: 'Forrest'
+    expect(page).to have_selector '.nextlink[href="shepherd/queue/Mesos"]',
+      text: 'Mesos'
   end
 
   it "should highlight and crosslink action items" do
