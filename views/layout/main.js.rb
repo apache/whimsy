@@ -23,6 +23,8 @@ class Main < React
 
   # route request based on path and query from the window location (URL)
   def route(path, query)
+    @traversal = :agenda
+
     if path == 'search'
       item = {view: Search, query: query}
     elsif path == 'comments'
@@ -32,10 +34,13 @@ class Main < React
       buttons << {form: Commit} if Pending.count > 0
       item = {view: Queue, buttons: buttons,
         title: 'Queued approvals and comments'}
-    elsif path and path != '.'
-      item = Agenda.find(path)
-    else
+    elsif not path or path == '.'
       item = Agenda
+    elsif path =~ %r{^queue/[-\w]+$}
+      @traversal = :queue
+      item = Agenda.find(path[6..-1])
+    else
+      item = Agenda.find(path)
     end
 
     # provide defaults for required properties
@@ -96,7 +101,7 @@ class Main < React
       React.createElement(@item.view, item: @item)
     end
 
-    _Footer item: @item, buttons: @buttons
+    _Footer item: @item, buttons: @buttons, traversal: @traversal
 
     if @item.buttons
       @item.buttons.each do |button|

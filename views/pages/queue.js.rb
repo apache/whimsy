@@ -12,7 +12,7 @@ class Queue < React
       _p.col_xs_12 do
         @approvals.each_with_index do |item, index|
           _span ', ' if index > 0
-          _Link text: item.title, href: item.href
+          _Link text: item.title, href: "queue/#{item.href}"
         end
         _em 'None.' if @approvals.empty?
       end
@@ -53,7 +53,7 @@ class Queue < React
         _p.col_xs_12 do
           @ready.each_with_index do |item, index|
             _span ', ' if index > 0
-            _Link text: item.title, href: item.href
+            _Link text: item.title, href: "queue/#{item.href}"
           end
         end
       end
