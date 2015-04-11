@@ -122,7 +122,8 @@ class Agenda
 
   def ready_for_review(initials)
     return defined? @approved and not @missing and
-      not @approved.include? initials
+      not @approved.include? initials and
+      not Pending.rejected.include? @attach
   end
 
   # the default view to use for the agenda as a whole
@@ -233,6 +234,8 @@ class Agenda
       'missing'
     elsif @missing
       'missing'
+    elsif Pending.rejected.include? @attach
+      'rejected'
     elsif @approved
       if @approved.length < 5
         'ready'

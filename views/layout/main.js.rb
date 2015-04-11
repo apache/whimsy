@@ -178,9 +178,23 @@ class Main < React
       end
     end
 
-    # keyboard navigation (unless on the search screen)
+    # track control key
     def (document.body).onkeyup(event)
+      if Keyboard.control != event.ctrlKey
+        Keyboard.control = event.ctrlKey
+        Main.refresh()
+      end
+    end
+
+    # track control key + keyboard navigation (unless on the search screen)
+    def (document.body).onkeydown(event)
+      if Keyboard.control != event.ctrlKey
+        Keyboard.control = event.ctrlKey
+        Main.refresh()
+      end
+
       return if ~'#search-text' or ~'.modal-open'
+      return if event.metaKey or event.ctrlKey
 
       if event.keyCode == 37
         self.navigate ~"a[rel=prev]".getAttribute('href')

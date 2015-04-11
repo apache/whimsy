@@ -1,6 +1,9 @@
 # A convenient place to stash server data
 Server = {}
 
+# A convenient place to stash keyboard data
+Keyboard = {control: false}
+
 #
 # function to assist with production of HTML and regular expressions
 #

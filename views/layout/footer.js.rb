@@ -28,6 +28,9 @@ class Footer < React
       if link
         _Link.backlink.navbar_brand text: link.title, rel: 'prev', 
          href: "#{prefix}#{link.href}"
+      else
+        # without this, Chrome will sometimes make the footer too tall
+        _a.navbar_brand
       end
 
       #
@@ -63,6 +66,9 @@ class Footer < React
       if link
         _Link.nextlink.navbar_brand text: link.title, rel: 'next', 
          href: "#{prefix}#{link.href}"
+      else
+        # keep Chrome happy
+        _a.navbar_brand
       end
     end
   end

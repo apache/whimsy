@@ -20,7 +20,8 @@ feature 'index' do
 
     # rows with colors and titles
     expect(page).to have_selector 'tr.missing td', text: 'Abdera'
-    expect(page).to have_selector 'tr.commented td', text: 'Axis'
+    expect(page).to have_selector 'tr.rejected td', text: 'Axis'
+    expect(page).to have_selector 'tr.commented td', text: 'Buildr'
     expect(page).to have_selector 'tr.reviewed td', text: 'Celix'
 
     # attach, owner, shepherd columns
