@@ -43,7 +43,7 @@ For planning purposes, prereqs for a _full_ installation will require:
      * Ruby 1.9.3 or greater
      * io.js
      * [PhantomJS](http://phantomjs.org/) 2.0
-         * Mac OS/X Yosemite users should either use `brew install phantomjs``
+         * Mac OS/X Yosemite users should either use `brew install phantomjs`
            or get the binary from comments on
            [12900](https://github.com/ariya/phantomjs/issues/12900).
          * Ubuntu users can get a working binary from the comments on
@@ -165,7 +165,7 @@ Viewing Source (this time, Actual Code)
    curly braces.  Attributes are represented by `name: value` pairs.  Note the
    complete lack of `<%=` ... `%>` syntax required by things like JSP or erb.
    Iteration is done by naming what you want to iterate over, and following
-   the do with a name in vertical bars that contains the instance.
+   the `do` with a name in vertical bars that contains the instance.
 
    Element names that start with a capital letter are essentially macros.
    We'll come back to that.
@@ -179,7 +179,7 @@ Viewing Source (this time, Actual Code)
    is the component lifecycle that React provides.  Components have mutable
    state (which are the variables which are preceded by an `@` sign), and are
    passed immutable properties (variables preceded by two `@` signs).  Some
-   methods are prohibited from mutating state (most notable: the render
+   methods are prohibited from mutating state (most notably: the `render`
    method).  And one method (`componentWillReceiveProps`) even has access
    to the before and after values for properties.  Don't get hung up on the
    logic here, but do go to the navigation bar on the top right of the
@@ -296,9 +296,15 @@ Now onto the tests:
     and returns the results as HTML.  This approach excels at testing a React
     component.
 
+  * [spec/client_spec.rb](spec/client_spec.rb) takes this a bit further to
+    do a client side unit test.  Instance variables set in tests are passed
+    to the React server, and arbitrary JavaScript code can be executed using
+    this data.  Output is in the form of XHTML-style tags which is then
+    matched against CSS (or xpath) expressions.
+
   * For complete end to end testing,
     [spec/navigate_spec.rb](spec/navigate_spec.rb) actually tests
-    functions with a real (albeit headless) browser.  This test verifies
+    functions with a real (albeit headless) webkit browser.  This test verifies
     that the back button actually works (verifying the browser `history`
     API calls were made correctly).
 
