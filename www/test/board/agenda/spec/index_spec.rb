@@ -23,10 +23,12 @@ feature 'index' do
     expect(page).to have_selector 'tr.commented td', text: 'Axis'
     expect(page).to have_selector 'tr.reviewed td', text: 'Celix'
 
-    # attach, owner, sheperd columns
+    # attach, owner, shepherd columns
     expect(page).to have_selector 'tr.reviewed td', text: 'CF'
     expect(page).to have_selector 'tr.reviewed td', text: 'Mark Cox'
     expect(page).to have_selector 'tr.missing td', text: 'Sam'
+    expect(page).to have_selector 'tr[10] td[2]', text: 'Executive Assistant'
+    expect(page).to have_selector 'tr[10] td[4]', text: 'Ross'
 
     # links
     expect(page).to have_selector 'a[href=ACE]', text: 'ACE'
