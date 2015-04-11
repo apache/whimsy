@@ -47,6 +47,7 @@ feature 'other reports' do
 
     expect(page).to have_selector 'h3.commented a[href="shepherd/queue/Flink"]',
       text: 'Flink'
+    expect(page).to have_selector 'h4', text: 'Comments'
     expect(page).to have_selector 'pre.comment span', 
       text: 'cm: great report!'
     expect(page).to have_selector 'h4', text: 'Action Items'

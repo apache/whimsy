@@ -14,6 +14,7 @@ class Shepherd < React
           _Link text: item.title, href: "shepherd/queue/#{item.href}"
         end
 
+        _h4 'Comments' unless item.comments.empty?
         item.comments.each do |comment|
           _pre.comment do
             _Text raw: comment, filters: [hotlink]
