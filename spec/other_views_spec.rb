@@ -43,12 +43,15 @@ feature 'other reports' do
   end
 
   it "should show shepherd reports" do
-    visit '/2015-02-18/shepherd/Sam'
+    visit '/2015-01-21/shepherd/Sam'
 
-    expect(page).to have_selector 'h3.commented a[href="shepherd/queue/Axis"]', 
-      text: 'Axis'
+    expect(page).to have_selector 'h3.commented a[href="shepherd/queue/Flink"]',
+      text: 'Flink'
     expect(page).to have_selector 'pre.comment span', 
-      text: 'jj: Reminder email sent'
+      text: 'cm: great report!'
+    expect(page).to have_selector 'h4', text: 'Action Items'
+    expect(page).to have_selector 'pre.comment', 
+      text: 'Chris: Please clarify what "voted on" means'
   end
 
   it "should follow the shepherd queue" do

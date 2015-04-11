@@ -19,6 +19,13 @@ class Shepherd < React
             _Text raw: comment, filters: [hotlink]
           end
         end
+
+        if item.actions and not item.actions.empty?
+          _h4 'Action Items'
+          item.actions.each do |action|
+            _pre.comment action
+          end
+        end
       end
     end
   end
