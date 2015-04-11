@@ -1,7 +1,8 @@
 ---
 approved:
 - '7'
-rejected: []
+rejected:
+- 'H'
 comments:
   I: Nice report!
 seen: {}

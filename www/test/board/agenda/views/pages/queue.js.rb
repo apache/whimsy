@@ -79,6 +79,8 @@ class Queue < React
 
       if Pending.approved.include? item.attach
         @approvals << item
+      elsif Pending.rejected.include? item.attach
+        @rejected << item
       elsif item.ready_for_review(Server.initials)
         @ready << item
       end

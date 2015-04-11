@@ -22,10 +22,12 @@ feature 'other reports' do
   it "should support queued/pending approvals and comments" do
     visit '/2015-02-18/queue'
 
-    expect(page).to have_selector 'a[href="queue/W3C-Relations"]', 
-      text: 'W3C Relations'
-    expect(page).to have_selector 'a[href="queue/Celix"]', 
-      text: 'Celix'
+    expect(page).to have_selector :xpath, 
+      '//p[1]/a[@href="queue/W3C-Relations"]', text: 'W3C Relations'
+    expect(page).to have_selector :xpath,
+      '//p[2]/a[@href="Axis"]', text: 'Axis'
+    expect(page).to have_selector :xpath,
+      '//p[3]/a[@href="queue/Celix"]', text: 'Celix'
     expect(page).to have_selector 'dt a[href="BookKeeper"]', text: 'BookKeeper'
     expect(page).to have_selector 'dd p', text: 'Nice report!'
   end
