@@ -46,6 +46,8 @@ class Main < React
       shepherd = path[9..-1]
       item = {view: Shepherd, shepherd: shepherd,
         title: "Shepherded by #{shepherd}"}
+    elsif path == 'help'
+      item = {view: Help}
     else
       item = Agenda.find(path)
     end
@@ -196,12 +198,55 @@ class Main < React
       return if ~'#search-text' or ~'.modal-open'
       return if event.metaKey or event.ctrlKey
 
-      if event.keyCode == 37
+      if event.keyCode == 37 # '<-'
         link = ~"a[rel=prev]"
         self.navigate link.getAttribute('href') if link
-      elsif event.keyCode == 39
+        return false
+      elsif event.keyCode == 39 # '->'
         link = ~"a[rel=next]"
         self.navigate link.getAttribute('href') if link
+        return false
+      elsif event.keyCode == 13 # 'enter'
+        link = ~".default"
+        self.navigate link.getAttribute('href') if link
+        return false
+      elsif event.keyCode == 'C'.ord
+        link = ~"#comments"
+        link.scrollIntoView() if link
+        return false
+      elsif event.keyCode == 'I'.ord
+        link = ~"#info"
+        link.click() if link
+        return false
+      elsif event.keyCode == 'N'.ord
+        link = ~"#nav"
+        link.click() if link
+        return false
+      elsif event.keyCode == 'A'.ord
+        link = ~"#agenda"
+        link.click() if link
+        return false
+      elsif event.keyCode == 'S'.ord
+        link = ~"#shepherd"
+        link.click() if link
+        return false
+      elsif event.keyCode == 'Q'.ord
+        link = ~"#queue"
+        link.click() if link
+        return false
+      elsif event.shiftKey and event.keyCode == 191 # "?"
+        link = ~"#help"
+        link.click() if link
+        return false
+      elsif event.keyCode == 'R'.ord
+        clock_counter += 1
+        Main.refresh()
+        post 'refresh', agenda: Agenda.file do |response|
+          clock_counter -= 1
+          Agenda.load response.agenda
+          Main.refresh()
+        end
+        return false
       end
     end
 

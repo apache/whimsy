@@ -9,6 +9,7 @@ require_relative 'pages/report'
 require_relative 'pages/action-items'
 require_relative 'pages/search'
 require_relative 'pages/comments'
+require_relative 'pages/help'
 require_relative 'pages/shepherd'
 require_relative 'pages/queue'
 
