@@ -52,7 +52,7 @@ class Report < React
 
         if @@item.pending
           _h3.comments! 'Pending Comment'
-          _pre.comment "#{Pending.initials}: #{@@item.pending}"
+          _pre.comment Flow.comment(@@item.pending, Pending.initials)
         end
 
         if @@item.title != 'Action Items' and @@item.actions

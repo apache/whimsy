@@ -201,10 +201,12 @@ class Main < React
       if event.keyCode == 37 # '<-'
         link = ~"a[rel=prev]"
         self.navigate link.getAttribute('href') if link
+        window.scrollTo(0, 0)
         return false
       elsif event.keyCode == 39 # '->'
         link = ~"a[rel=next]"
         self.navigate link.getAttribute('href') if link
+        window.scrollTo(0, 0)
         return false
       elsif event.keyCode == 13 # 'enter'
         link = ~".default"
