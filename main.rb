@@ -14,6 +14,7 @@ require 'ruby2js/filter/require'
 
 require 'yaml'
 require 'thread'
+require 'net/http'
 require 'shellwords'
 
 require_relative './routes'

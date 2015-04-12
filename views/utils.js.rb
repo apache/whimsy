@@ -81,7 +81,7 @@ def fetch(target, type, &block)
       begin
         if xhr.status == 200
           if type == :json
-            data = JSON.parse(xhr.responseText) 
+            data = xhr.response || JSON.parse(xhr.responseText) 
           else
             data = xhr.responseText
           end

@@ -81,3 +81,14 @@ get '/text/minutes/:file' do |file|
   end
 end
 
+# jira project info
+get '/json/jira' do
+  uri = URI.parse('https://issues.apache.org/jira/rest/api/2/project')
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  request = Net::HTTP::Get.new(uri.request_uri)
+
+  response = http.request(request)
+  _json { JSON.parse(response.body).map {|project| project['key']} }
+end

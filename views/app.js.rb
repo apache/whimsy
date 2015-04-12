@@ -27,6 +27,7 @@ require_relative 'elements/text'
 
 # Model
 require_relative 'models/agenda'
+require_relative 'models/jira'
 require_relative 'models/pending'
 
 # Utility functions
