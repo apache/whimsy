@@ -4,6 +4,9 @@ Server = {}
 # A convenient place to stash keyboard data
 Keyboard = {control: false}
 
+# controls display of clock in the header
+clock_counter = 0
+
 #
 # function to assist with production of HTML and regular expressions
 #
@@ -62,6 +65,7 @@ def post(target, data, &block)
       end
 
       block(data)
+      Main.refresh()
     end
   end
 
@@ -71,17 +75,18 @@ end
 # "AJAX" style get request to the server, with a callback
 def fetch(target, type, &block)
   xhr = XMLHttpRequest.new()
-  xhr.open('GET', "../#{type}/#{target}", true)
-  xhr.responseType = type
 
   def xhr.onreadystatechange()
-    if xhr.readyState == 4
+    if xhr.readyState == 1
+      clock_counter += 1
+      setTimeout(0) {Main.refresh()}
+    elsif xhr.readyState == 4
       data = nil
 
       begin
         if xhr.status == 200
           if type == :json
-            data = JSON.parse(xhr.responseText) 
+            data = xhr.response || JSON.parse(xhr.responseText) 
           else
             data = xhr.responseText
           end
@@ -96,9 +101,13 @@ def fetch(target, type, &block)
       end
 
       block(data)
+      clock_counter -= 1
+      Main.refresh()
     end
   end
 
+  xhr.open('GET', "../#{type}/#{target}", true)
+  xhr.responseType = type
   xhr.send()
 end
 

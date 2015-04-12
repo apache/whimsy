@@ -28,6 +28,7 @@ feature 'other reports' do
       '//p[2]/a[@href="Axis"]', text: 'Axis'
     expect(page).to have_selector :xpath,
       '//p[3]/a[@href="queue/Celix"]', text: 'Celix'
+    expect(page).to have_selector 'a.default', text: 'January 21, 2015'
     expect(page).to have_selector 'dt a[href="BookKeeper"]', text: 'BookKeeper'
     expect(page).to have_selector 'dd p', text: 'Nice report!'
   end
@@ -49,6 +50,7 @@ feature 'other reports' do
 
     expect(page).to have_selector 'h3.commented a[href="shepherd/queue/Flink"]',
       text: 'Flink'
+    expect(page).to have_selector 'a.default', text: 'Airavata'
     expect(page).to have_selector 'h4', text: 'Comments'
     expect(page).to have_selector 'pre.comment span', 
       text: 'cm: great report!'
@@ -89,5 +91,19 @@ feature 'other reports' do
     expect(page).to have_selector \
      'a[href="https://svn.apache.org/repos/private/foundation/board/board_minutes_2015_01_21.txt"]',
      text: 'board_minutes_2015_01_21.txt'
+  end
+
+  it "should show an help page" do
+    visit '/2015-02-18/help'
+
+    # navigation
+    expect(page).to have_selector '#agenda', text: 'Agenda'
+    expect(page).to have_selector '#queue', text: 'Queue'
+    expect(page).to have_selector '#help', text: 'Help'
+    expect(page).to have_selector '#nav', text: 'navigation'
+
+    # body
+    expect(page).to have_selector 'dt', text: 'right arrow'
+    expect(page).to have_selector 'dd', text: 'next page'
   end
 end

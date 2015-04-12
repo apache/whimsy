@@ -169,7 +169,7 @@ body {
 }
 
 #clock {
-  display: none
+  position: absolute;
 }
 
 .navbar-fixed-top .label-danger {

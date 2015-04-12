@@ -11,6 +11,7 @@ feature 'report' do
     # header
     expect(page).to have_selector '.navbar-fixed-top.available .navbar-brand', 
       text: 'President'
+    expect(page).to have_selector '#info'
 
     # body 
     expect(page).to have_selector 'pre', 

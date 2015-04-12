@@ -72,7 +72,7 @@ class Report < React
 
   def componentWillReceiveProps()
     # determine what text filters to run
-    @filters = [hotlink, self.privates]
+    @filters = [hotlink, self.privates, self.jira]
     @filters << self.localtime if @@item.title == 'Call to order'
     @filters << self.names if @@item.people
     @filters << self.president_attachments if @@item.title == 'President'
@@ -91,7 +91,6 @@ class Report < React
         @@item.minutes = ''
         fetch "minutes/#{date}", :text do |minutes|
           @@item.minutes = minutes
-          Main.refresh()
         end
       end
     end
@@ -245,6 +244,24 @@ class Report < React
             "<a #{ agenda[i].text.empty? ? 'class="pres-missing" ' : ''}" +
             "href='#{agenda[i].href}'>#{agenda[i].title}</a>"
         end
+      end
+    end
+
+    return text
+  end
+
+  # hotlink to JIRA issues
+  def jira(text)
+    jira_issue =
+      Regexp.new(/(^|\s|\()([A-Z][A-Z0-9]+)-([1-9][0-9]*)([.,;:\s)]|$)/, 'g')
+
+    text.gsub! jira_issue do |m, pre, name, issue, post|
+      if JIRA.find(name)
+        return "#{pre}<a target='_self' " +
+          "href='https://issues.apache.org/jira/browse/#{name}-#{issue}'>" +
+          "#{name}-#{issue}</a>#{post}"
+      else
+        return "#{pre}#{name}-#{issue}#{post}"
       end
     end
 

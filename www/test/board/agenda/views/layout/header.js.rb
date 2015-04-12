@@ -8,6 +8,8 @@ class Header < React
     _header.navbar.navbar_fixed_top class: @@item.color do
       _div.navbar_brand @@item.title
 
+      _span.clock! "\u231B" if clock_counter > 0
+
       _ul.nav.nav_pills.navbar_right do
 
         # pending count
@@ -73,7 +75,7 @@ class Header < React
           end
 
           _ul.dropdown_menu do
-            _li { _Link text: 'Agenda', href: '.' }
+            _li { _Link.agenda! text: 'Agenda', href: '.' }
 
             Agenda.index.each do |item|
               _li { _Link text: item.index, href: item.href } if item.index
@@ -97,9 +99,15 @@ class Header < React
             _li { _Link text: 'Search', href: 'search' }
             _li { _Link text: 'Comments', href: 'comments' }
             if shepherd
-              _li { _Link text: 'Shepherd', href: "shepherd/#{shepherd}" }
+              _li do 
+                _Link.shepherd! text: 'Shepherd', href: "shepherd/#{shepherd}"
+              end
             end
-            _li { _Link text: 'Queue', href: 'queue' }
+            _li { _Link.queue! text: 'Queue', href: 'queue' }
+
+            _li.divider
+
+            _li { _Link.help! text: 'Help', href: 'help' }
           end
         end
 
