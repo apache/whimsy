@@ -12,7 +12,6 @@ class JIRA
       @@list = []
       fetch('jira', :json) do |list|
         @@list = list
-        Main.refresh()
       end
     end
   end

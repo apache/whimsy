@@ -8,6 +8,8 @@ class Header < React
     _header.navbar.navbar_fixed_top class: @@item.color do
       _div.navbar_brand @@item.title
 
+      _span "\u231B" if clock_counter > 0
+
       _ul.nav.nav_pills.navbar_right do
 
         # pending count

@@ -91,7 +91,6 @@ class Report < React
         @@item.minutes = ''
         fetch "minutes/#{date}", :text do |minutes|
           @@item.minutes = minutes
-          Main.refresh()
         end
       end
     end
