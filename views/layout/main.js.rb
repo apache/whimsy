@@ -197,9 +197,11 @@ class Main < React
       return if event.metaKey or event.ctrlKey
 
       if event.keyCode == 37
-        self.navigate ~"a[rel=prev]".getAttribute('href')
+        link = ~"a[rel=prev]"
+        self.navigate link.getAttribute('href') if link
       elsif event.keyCode == 39
-        self.navigate ~"a[rel=next]".getAttribute('href')
+        link = ~"a[rel=next]"
+        self.navigate link.getAttribute('href') if link
       end
     end
 
