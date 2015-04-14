@@ -29,13 +29,10 @@ class Main < React
       item = {view: Search, query: query}
 
     elsif path == 'comments'
-      item = {view: Comments, buttons: [{button: MarkSeen}, {button: ShowSeen}]}
+      item = {view: Comments}
 
     elsif path == 'queue'
-      buttons = [{button: Refresh}]
-      buttons << {form: Commit} if Pending.count > 0
-      item = {view: Queue, buttons: buttons,
-        title: 'Queued approvals and comments'}
+      item = {view: Queue, title: 'Queued approvals and comments'}
 
     elsif not path or path == '.'
       item = Agenda
@@ -70,6 +67,7 @@ class Main < React
     # determine what buttons are required, merging defaults, form provided
     # overrides, and any overrides provided by the agenda item itself
     buttons = item.buttons
+    buttons = item.view.buttons().concat(buttons || []) if item.view.buttons
     if buttons
       @buttons = buttons.map do |button|
         props = {text: 'button', attrs: {className: 'btn'}}

@@ -4,6 +4,23 @@
 #
 
 class Comments < React
+  def self.buttons()
+    buttons = []
+
+    if 
+      (Main.view and !Main.view.showseen()) or
+      Agenda.index.any? {|item| not item.unseen_comments.empty?}
+    then
+      buttons << {button: MarkSeen}
+    end
+
+    if Pending.seen and not Pending.seen.keys().empty?
+      buttons << {button: ShowSeen}
+    end
+
+    return buttons
+  end
+
   def initialize
     @showseen = false
   end
@@ -22,16 +39,7 @@ class Comments < React
     Agenda.index.each do |item|
       next if item.comments.empty?
 
-      if @showseen
-        visible = item.comments
-      else
-        # exclude comments we have seen before
-	visible = []
-	seen = Pending.seen[item.attach] || []
-	item.comments.each do |comment|
-	  visible << comment unless seen.include? comment
-	end
-      end
+      visible = (@showseen ? item.comments : item.unseen_comments)
 
       unless visible.empty?
         found = true
