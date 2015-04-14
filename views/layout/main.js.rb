@@ -27,27 +27,35 @@ class Main < React
 
     if path == 'search'
       item = {view: Search, query: query}
+
     elsif path == 'comments'
-      item = {view: Comments}
+      item = {view: Comments, buttons: [{button: MarkSeen}, {button: ShowSeen}]}
+
     elsif path == 'queue'
-      buttons = []
+      buttons = [{button: Refresh}]
       buttons << {form: Commit} if Pending.count > 0
       item = {view: Queue, buttons: buttons,
         title: 'Queued approvals and comments'}
+
     elsif not path or path == '.'
       item = Agenda
+
     elsif path =~ %r{^queue/[-\w]+$}
       @traversal = :queue
       item = Agenda.find(path[6..-1])
+
     elsif path =~ %r{^shepherd/queue/[-\w]+$}
       @traversal = :shepherd
       item = Agenda.find(path[15..-1])
+
     elsif path =~ %r{^shepherd/\w+$}
       shepherd = path[9..-1]
       item = {view: Shepherd, shepherd: shepherd,
         title: "Shepherded by #{shepherd}"}
+
     elsif path == 'help'
       item = {view: Help}
+
     else
       item = Agenda.find(path)
     end
@@ -113,8 +121,10 @@ class Main < React
 
       _Header item: @item
 
+      view = nil
       _main do
-        React.createElement(@item.view, item: @item)
+        React.createElement(@item.view, item: @item, 
+         ref: proc {|component| Main.view=component})
       end
 
       _Footer item: @item, buttons: @buttons, traversal: @traversal
