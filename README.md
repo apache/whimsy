@@ -87,7 +87,7 @@ After installing the above prerequisites run the following commands in a Termina
 
     sudo gem install bundler
     git clone https://github.com/rubys/whimsy-agenda.git
-    cd agenda
+    cd whimsy-agenda
     npm install
     bundle install
     rake spec
