@@ -258,9 +258,14 @@ Viewing Source (this time, Actual Code)
    console.  Clicking on sources will show directores for buttons, elements,
    etc.
 
+ * Layout of the page is done by three files:
+   [views/layout/header.js.rb](views/layout/header.js.rb),
+   [views/layout/main.js.rb](views/layout/main.js.rb), and
+   [views/layout/footer.js.rb](views/layout/footer.js.rb).
+
  * Should you ever happen to look for the main routing functions, they
    are [routing.rb](routing.rb) on the server and
-   [views/layout/main.js.rb](views/layout/main.js.rb) on the client.
+   [views/router.js.rb](views/router.js.rb) on the client.
 
 Testing
 ---
@@ -385,7 +390,7 @@ would involve:
   * Adding a `Link` to the navigation dropdown in
     [views/layout/header.js.rb](views/layout/header.js.rb)
   * Adding the path to the `route` method in
-    [views/layout/main.js.rb](views/layout/main.js.rb)
+    [views/router.js.rb](views/router.js.rb)
   * Adding a React component for the page to `views/pages`
   * Adding any new files to [views/app.js.rb](views/app.js.rb)
   * Adding a specification to
