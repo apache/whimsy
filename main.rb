@@ -98,6 +98,10 @@ class AgendaCache
     end
 
     @@mutex.synchronize do
+      # capture current version of the file
+      path = File.join(FOUNDATION_BOARD, file)
+      baseline = File.read(path) if @@cache[file][:mtime] == File.mtime(path)
+
       # check out empty directory
       board = `svn info #{FOUNDATION_BOARD}`[/URL: (.*)/, 1]
       _.system ['svn', 'checkout', auth, '--depth', 'empty', board, dir]
@@ -128,11 +132,13 @@ class AgendaCache
       _.system ['svn', 'update', auth, path]
       output = IO.read(path) if mtime != File.mtime(path)
 
-      # reparse the file
-      @@cache[file] = {
-        mtime: File.mtime(path),
-        parsed: ASF::Board::Agenda.parse(output, ENV['RACK_ENV'] == 'test')
-      }
+      # reparse the file if the output changed
+      if output != baseline or mtime != File.mtime(path)
+        @@cache[file] = {
+          mtime: File.mtime(path),
+          parsed: ASF::Board::Agenda.parse(output, ENV['RACK_ENV'] == 'test')
+        }
+      end
 
       # return the result
       _.method_missing(:_agenda, @@cache[file][:parsed])
