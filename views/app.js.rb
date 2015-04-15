@@ -1,3 +1,6 @@
+# commo
+require_relative 'router'
+
 # General layout
 require_relative 'layout/main'
 require_relative 'layout/header'
