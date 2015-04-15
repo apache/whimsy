@@ -8,7 +8,7 @@ class Comments < React
     buttons = []
 
     if 
-      (Main.view and !Main.view.showseen()) or
+      MarkSeen.undo or
       Agenda.index.any? {|item| not item.unseen_comments.empty?}
     then
       buttons << {button: MarkSeen}

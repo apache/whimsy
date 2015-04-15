@@ -1,5 +1,7 @@
-# commo
+# common
 require_relative 'router'
+require_relative 'keyboard'
+require_relative 'utils'
 
 # General layout
 require_relative 'layout/main'
@@ -35,6 +37,3 @@ require_relative 'elements/text'
 require_relative 'models/agenda'
 require_relative 'models/jira'
 require_relative 'models/pending'
-
-# Utility functions
-require_relative 'utils'
