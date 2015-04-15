@@ -105,6 +105,16 @@ class Agenda
     return results
   end
 
+  # item's comments excluding comments that have been seen before
+  def unseen_comments
+    visible = []
+    seen = Pending.seen[@attach] || []
+    self.comments.each do |comment|
+      visible << comment unless seen.include? comment
+    end
+    return visible
+  end
+
   # retrieve the pending comment (if any) associated with this agenda item
   def pending
     Pending.comments[@attach]

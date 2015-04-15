@@ -4,6 +4,12 @@
 #
 
 class Queue < React
+  def self.buttons()
+    buttons = [{button: Refresh}]
+    buttons << {form: Commit} if Pending.count > 0
+    return buttons
+  end
+
   def render
     _div.col_xs_12 do
 
