@@ -61,6 +61,10 @@ class Router
     item.color ||= 'blank'
     item.title ||= item.view.displayName
 
+    # retain for later use
+    Main.view = nil
+    Main.item = item
+
     # determine what buttons are required, merging defaults, form provided
     # overrides, and any overrides provided by the agenda item itself
     buttons = item.buttons
@@ -102,8 +106,6 @@ class Router
         return props
       end
     end
-
-    Main.item = item
 
     return item
   end
