@@ -1,9 +1,6 @@
 # A convenient place to stash server data
 Server = {}
 
-# A convenient place to stash keyboard data
-Keyboard = {control: false}
-
 # controls display of clock in the header
 clock_counter = 0
 

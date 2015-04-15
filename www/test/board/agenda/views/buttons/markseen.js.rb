@@ -5,7 +5,7 @@ class MarkSeen < React
   def initialize
     @disabled = false
     @label = 'mark seen'
-    @undo = nil
+    MarkSeen.undo = nil
   end
 
   def render
@@ -15,8 +15,8 @@ class MarkSeen < React
   def click(event)
     @disabled = true
 
-    if @undo
-      seen = @undo
+    if MarkSeen.undo
+      seen = MarkSeen.undo
     else
       seen = {}
       Agenda.index.each do |item|
@@ -29,11 +29,11 @@ class MarkSeen < React
     post 'markseen', seen: seen, agenda: Agenda.file do |pending|
       @disabled = false
 
-      if @undo
-        @undo = nil
+      if MarkSeen.undo
+        MarkSeen.undo = nil
         @label = 'mark seen'
       else
-        @undo = Pending.seen
+        MarkSeen.undo = Pending.seen
         @label = 'undo mark'
       end
 

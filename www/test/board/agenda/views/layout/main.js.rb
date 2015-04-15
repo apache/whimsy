@@ -96,81 +96,8 @@ class Main < React
       end
     end
 
-    # track control key
-    def (document.body).onkeyup(event)
-      if Keyboard.control != event.ctrlKey
-        Keyboard.control = event.ctrlKey
-        Main.refresh()
-      end
-    end
-
-    # track control key + keyboard navigation (unless on the search screen)
-    def (document.body).onkeydown(event)
-      if Keyboard.control != event.ctrlKey
-        Keyboard.control = event.ctrlKey
-        Main.refresh()
-      end
-
-      return if ~'#search-text' or ~'.modal-open'
-      return if event.metaKey or event.ctrlKey
-
-      if event.keyCode == 37 # '<-'
-        link = ~"a[rel=prev]"
-        if link
-          self.navigate link.getAttribute('href')
-          window.scrollTo(0, 0)
-          return false
-        end
-      elsif event.keyCode == 39 # '->'
-        link = ~"a[rel=next]"
-        if link
-          self.navigate link.getAttribute('href')
-          window.scrollTo(0, 0)
-          return false
-        end
-      elsif event.keyCode == 13 # 'enter'
-        link = ~".default"
-        self.navigate link.getAttribute('href') if link
-        return false
-      elsif event.keyCode == 'C'.ord
-        link = ~"#comments"
-        link.scrollIntoView() if link
-        return false
-      elsif event.keyCode == 'I'.ord
-        link = ~"#info"
-        link.click() if link
-        return false
-      elsif event.keyCode == 'N'.ord
-        link = ~"#nav"
-        link.click() if link
-        return false
-      elsif event.keyCode == 'A'.ord
-        link = ~"#agenda"
-        link.click() if link
-        return false
-      elsif event.keyCode == 'S'.ord
-        link = ~"#shepherd"
-        link.click() if link
-        return false
-      elsif event.keyCode == 'Q'.ord
-        link = ~"#queue"
-        link.click() if link
-        return false
-      elsif event.shiftKey and event.keyCode == 191 # "?"
-        link = ~"#help"
-        link.click() if link
-        return false
-      elsif event.keyCode == 'R'.ord
-        clock_counter += 1
-        Main.refresh()
-        post 'refresh', agenda: Agenda.file do |response|
-          clock_counter -= 1
-          Agenda.load response.agenda
-          Main.refresh()
-        end
-        return false
-      end
-    end
+    # start watching keystrokes
+    Keyboard.initEventHandlers()
 
     # whenever the window is resized, adjust margins of the main area to
     # avoid overlapping the header and footer areas
