@@ -7,6 +7,8 @@
 class Post < React
   def initialize
     @disabled = false
+    @alerted = false
+    @edited = false
   end
 
   # default attributes for the button associated with this form
@@ -88,11 +90,17 @@ class Post < React
       @message = "Edit #{@@item.title} Resolution"
     end
 
-    @indent = (@@item.attach =~ /^4/ ? '        ' : '')
-
-    if !self.state.item or newprops.item.attach != self.state.item.attach
+    if not @edited or newprops.item.attach != self.props.item.attach
       @report = @@item.text || '' 
+      @digest = @@item.digest
+      @alerted = false
+      @edited = false
+    elsif not @alerted and @edited and @digest != @@item.digest
+      alert 'edit conflict'
+      @alerted = true
     end
+
+    @indent = (@@item.attach =~ /^4/ ? '        ' : '')
   end
 
   # track changes to title value
@@ -103,6 +111,7 @@ class Post < React
   # track changes to text value
   def change_text(event)
     @report = event.target.value
+    @edited = true
   end
 
   # track changes to message value
@@ -149,7 +158,7 @@ class Post < React
       data = {
         agenda: Agenda.file,
         attach: @@item.attach,
-        digest: @@item.digest,
+        digest: @digest,
         message: @message,
         report: @report
       }
