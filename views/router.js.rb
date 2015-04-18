@@ -4,23 +4,13 @@
 # Additionally provides defaults for color and title, and 
 # determines what buttons are required.
 #
+# Returns item, buttons, and options
 
 class Router
-  @@traversal = :agenda
-  @@buttons = []
-
-  def self.traversal
-    @@traversal
-  end
-
-  def self.buttons
-    @@buttons
-  end
-
   # route request based on path and query from the window location (URL)
   def self.route(path, query)
-    @@traversal = :agenda
-    @@buttons = []
+    options = {}
+    buttons = []
 
     if not path or path == '.'
       item = Agenda
@@ -35,12 +25,12 @@ class Router
       item = {view: Queue, title: 'Queued approvals and comments'}
 
     elsif path =~ %r{^queue/[-\w]+$}
-      @@traversal = :queue
       item = Agenda.find(path[6..-1])
+      options = {traversal: :queue}
 
     elsif path =~ %r{^shepherd/queue/[-\w]+$}
-      @@traversal = :shepherd
       item = Agenda.find(path[15..-1])
+      options = {traversal: :shepherd}
 
     elsif path =~ %r{^shepherd/\w+$}
       shepherd = path[9..-1]
@@ -55,22 +45,18 @@ class Router
     end
 
     # bail unless an item was found
-    return unless item
+    return {} unless item
 
     # provide defaults for required properties
     item.color ||= 'blank'
     item.title ||= item.view.displayName
-
-    # retain for later use
-    Main.view = nil
-    Main.item = item
 
     # determine what buttons are required, merging defaults, form provided
     # overrides, and any overrides provided by the agenda item itself
     buttons = item.buttons
     buttons = item.view.buttons().concat(buttons || []) if item.view.buttons
     if buttons
-      @@buttons = buttons.map do |button|
+      buttons = buttons.map do |button|
         props = {text: 'button', attrs: {className: 'btn'}, form: button.form}
 
         # form overrides
@@ -107,6 +93,6 @@ class Router
       end
     end
 
-    return item
+    return {item: item, buttons: buttons, options: options}
   end
 end

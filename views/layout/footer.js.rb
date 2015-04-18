@@ -13,12 +13,12 @@ class Footer < React
       link = @@item.prev
       prefix = ''
 
-      if Router.traversal == :queue
+      if @@options.traversal == :queue
         prefix = 'queue/'
         while link and not link.ready_for_review(Server.initials)
           link = link.prev
         end
-      elsif Router.traversal == :shepherd
+      elsif @@options.traversal == :shepherd
         prefix = 'shepherd/queue/'
         while link and link.shepherd != @@item.shepherd
           link = link.prev
@@ -53,11 +53,11 @@ class Footer < React
       #
       link = @@item.next
 
-      if Router.traversal == :queue
+      if @@options.traversal == :queue
         while link and not link.ready_for_review(Server.initials)
           link = link.next
         end
-      elsif Router.traversal == :shepherd
+      elsif @@options.traversal == :shepherd
         while link and link.shepherd != @@item.shepherd
           link = link.next
         end
