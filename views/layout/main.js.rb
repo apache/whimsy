@@ -36,8 +36,8 @@ class Main < React
       _Footer item: @item, buttons: Router.buttons
 
       # emit hidden forms associated with the buttons displayed on this page
-      if @item.buttons
-        @item.buttons.each do |button|
+      if Router.buttons
+        Router.buttons.each do |button|
           if button.form
             React.createElement(button.form, item: @item, server: Server,
               button: button)

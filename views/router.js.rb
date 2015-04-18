@@ -71,7 +71,7 @@ class Router
     buttons = item.view.buttons().concat(buttons || []) if item.view.buttons
     if buttons
       @@buttons = buttons.map do |button|
-        props = {text: 'button', attrs: {className: 'btn'}}
+        props = {text: 'button', attrs: {className: 'btn'}, form: button.form}
 
         # form overrides
         form = button.form
