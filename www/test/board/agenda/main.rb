@@ -98,6 +98,8 @@ class AgendaCache
     end
 
     @@mutex.synchronize do
+      file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
+
       # capture current version of the file
       path = File.join(FOUNDATION_BOARD, file)
       baseline = File.read(path) if @@cache[file][:mtime] == File.mtime(path)
@@ -106,11 +108,8 @@ class AgendaCache
       board = `svn info #{FOUNDATION_BOARD}`[/URL: (.*)/, 1]
       _.system ['svn', 'checkout', auth, '--depth', 'empty', board, dir]
 
-      # build and untaint path
-      file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
-      path = File.join(dir, file)
-
       # update the file in question
+      path = File.join(dir, file)
       _.system ['svn', 'update', auth, path]
 
       # invoke block, passing it the current contents of the file
