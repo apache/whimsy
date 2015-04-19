@@ -29,15 +29,15 @@ class Main < React
 
       view = nil
       _main do
-        React.createElement(@item.view, item: @item, 
+        React.createElement(@item.view, item: @item,
          ref: proc {|component| Main.view=component})
       end
 
-      _Footer item: @item, buttons: Router.buttons
+      _Footer item: @item, buttons: @buttons, options: @options
 
       # emit hidden forms associated with the buttons displayed on this page
-      if @item.buttons
-        @item.buttons.each do |button|
+      if @buttons
+        @buttons.each do |button|
           if button.form
             React.createElement(button.form, item: @item, server: Server,
               button: button)
@@ -56,21 +56,33 @@ class Main < React
 
     Agenda.load(@@page.parsed)
     Agenda.date = @@page.date
-    @item = Router.route(@@page.path, @@page.query)
+    self.route(@@page.path, @@page.query)
 
     # free memory
     @@page.parsed = nil
   end
 
+  # encapsulate calls to the router
+  def route(path, query)
+    route = Router.route(path,query)
+
+    @item = route.item
+    @buttons = route.buttons
+    @options = route.options
+
+    Main.item = route.item
+    Main.view = nil
+  end
+
   # navigation method that updates history (back button) information
   def navigate(path, query)
-    @item = Router.route(path, query)
+    self.route(path, query)
     history.pushState({path: path, query: query}, nil, path)
   end
 
   # refresh the current page
   def refresh()
-    @item = Router.route(history.state.path, history.state.query)
+    self.route(history.state.path, history.state.query)
   end
 
   # dummy exported refresh method (replaced on client side)
@@ -92,7 +104,7 @@ class Main < React
     # listen for back button, and re-route/re-render when it occcurs
     window.addEventListener :popstate do |event|
       if event.state and defined? event.state.path
-        @item = Router.route(event.state.path, event.state.query)
+        self.route(event.state.path, event.state.query)
       end
     end
 
@@ -130,7 +142,7 @@ class Main < React
       if xhr.readyState == 4 and xhr.status == 200 and xhr.responseText != ''
         @poll.etag = xhr.getResponseHeader('ETag')
         Agenda.load(JSON.parse(xhr.responseText))
-        @item = Router.route(history.state.path, history.state.query)
+        self.route(history.state.path, history.state.query)
       end
     end
     xhr.send()
