@@ -124,7 +124,9 @@ class Report < React
         "#{@@item.title} has not yet been submitted for this " +
         "month's board meeting. If you're unable to get " +
         "it in by twenty-four hours before meeting time, " +
-        "please plan to report next month.\n\nThanks."
+        "please plan to report next month.\n\nThanks,\n\n " +
+        "#{@@item.shepherd}\n\n" +
+        "(on behalf of the ASF Board)"
     else
       subject = "#{@@item.title} Board Report"
       body = @@item.comments
