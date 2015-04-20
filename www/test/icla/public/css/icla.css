@@ -1,0 +1,15 @@
+*:invalid {
+  border-color: red
+}
+
+footer.bg-primary {
+  background-color: #303284
+}
+
+.modal-backdrop.in {
+  opacity: 0.5
+}
+
+pre.draft {
+  color: #000
+}
