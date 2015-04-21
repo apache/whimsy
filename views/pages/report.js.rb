@@ -16,6 +16,12 @@ class Report < React
   def render
     _section.flexbox do
       _section do
+        if @@item.warnings
+          _ul.missing @@item.warnings do |warning|
+            _li warning
+          end
+        end
+
         _pre.report do
           if @@item.text
             _Text raw: @@item.text, filters: @filters

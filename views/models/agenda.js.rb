@@ -73,7 +73,7 @@ class Agenda
   # provide read-only access to a number of properties 
   attr_reader :attach, :title, :owner, :shepherd, :index, :timestamp, :digest
   attr_reader :approved, :roster, :prior_reports, :stats, :missing, :people
-  attr_reader :chair_email, :mail_list
+  attr_reader :chair_email, :mail_list, :warnings
 
   # compute href by taking the title and replacing all non alphanumeric
   # characters with dashes
