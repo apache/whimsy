@@ -3,26 +3,26 @@
 #
 
 class Keyboard
-  @@control = false
+  @@shift = false
 
-  def self.control
-    @@control
+  def self.shift
+    @@shift
   end
   
   def self.initEventHandlers()
 
-    # track control key
+    # track shift key
     def (document.body).onkeyup(event)
-      if @@control != event.ctrlKey
-        @@control = event.ctrlKey
+      if @@shift != event.shiftKey
+        @@shift = event.shiftKey
         Main.refresh()
       end
     end
 
-    # track control key + keyboard navigation (unless on the search screen)
+    # track shift key + keyboard navigation (unless on the search screen)
     def (document.body).onkeydown(event)
-      if @@control != event.ctrlKey
-        @@control = event.ctrlKey
+      if @@shift != event.shiftKey
+        @@shift = event.shiftKey
         Main.refresh()
       end
 
