@@ -18,9 +18,9 @@ class Approve < React
   end
 
   # set request (and button text) depending on whether or not the
-  # control key is down and whether or not this items was previously approved
+  # shift key is down and whether or not this items was previously approved
   def componentWillReceiveProps()
-    if Keyboard.control
+    if Keyboard.shift
       @request = 'reject'
     elsif Pending.approved.include? @@item.attach
       @request = 'unapprove'
