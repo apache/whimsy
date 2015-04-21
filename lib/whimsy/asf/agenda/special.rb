@@ -35,8 +35,6 @@ class ASF::Board::Agenda
       attrs['warnings'] = []
       if attrs['indent'] != '    '
         attrs['warnings'] << 'Heading is not indented 4 spaces'
-        attrs['warnings'] << attrs['indent'].inspect
-        attrs['warnings'] << attrs['indent'].length
       end
       if text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min != 8
         attrs['warnings'] << 'Resolution is not indented 7 spaces'
