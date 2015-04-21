@@ -13,10 +13,20 @@ feature 'other reports' do
   end
 
   it "should support comments" do
-    visit '/2015-02-18/comments'
+    visit '/2015-01-21/comments'
 
-    expect(page).to have_selector 'h4 a', text: 'Hama'
-    expect(page).to have_selector 'pre', text: 'sr: Reminder email sent'
+    # unseen items
+    expect(page).to have_selector 'h4 a', text: 'Curator'
+    expect(page).to have_selector 'pre', 
+      text: /last PMC member and committer additions/
+
+    # seen items
+    expect(page).not_to have_selector 'h4 a', text: 'ACE'
+    expect(page).not_to have_selector 'pre', text: /Reminder email sent/
+
+    # footer
+    expect(page).to have_selector 'button', text: 'mark seen'
+    expect(page).to have_selector 'button', text: 'show seen'
   end
 
   it "should support queued/pending approvals and comments" do

@@ -70,8 +70,8 @@ class Main < React
     @buttons = route.buttons
     @options = route.options
 
+    Main.view = nil unless Main.item and Main.item.view == route.item.view
     Main.item = route.item
-    Main.view = nil
   end
 
   # navigation method that updates history (back button) information

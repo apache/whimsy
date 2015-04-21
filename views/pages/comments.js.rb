@@ -44,13 +44,13 @@ class Comments < React
       unless visible.empty?
         found = true
 
-	_section do
-	  _h4 {_Link text: item.title, href: item.href}
+        _section do
+          _h4 {_Link text: item.title, href: item.href}
 
-	  item.comments.each do |comment|
-	    _pre.comment comment
-	  end
-	end
+          visible.each do |comment|
+            _pre.comment comment
+          end
+        end
       end
     end
 
