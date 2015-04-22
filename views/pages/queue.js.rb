@@ -51,6 +51,15 @@ class Queue < React
         end
       end
 
+      # Action Item Status updates
+      status = Pending.status.keys()
+      unless status.empty?
+        _h4 'Action Items'
+        _ul status do |item|
+          _li item.sub(/^\* /, '')
+        end
+      end
+
       # Ready
       unless @ready.empty?
         _div.row.col_xs_12 { _hr }

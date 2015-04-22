@@ -242,3 +242,7 @@ li.dropdown #nav.dropdown-toggle {
   cursor: pointer;
 }
 
+/* Identify clickable sections by changing the cursor */
+.clickable {
+  cursor: pointer;
+}

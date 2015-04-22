@@ -11,7 +11,9 @@ class Pending
   end
 
   def self.count
-    self.comments.keys().length + self.approved.keys().length
+    self.comments.keys().length + 
+      self.approved.keys().length +
+      self.status.keys().length
   end
 
   def self.comments
@@ -32,5 +34,9 @@ class Pending
 
   def self.initials
     Server.pending.initials || Server.initials
+  end
+
+  def self.status
+    Server.pending.status || {}
   end
 end
