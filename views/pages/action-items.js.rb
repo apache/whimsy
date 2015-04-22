@@ -108,7 +108,7 @@ class ActionItems < React
     @action = parent.getAttribute('data-action')
     @pmc = parent.getAttribute('data-pmc')
     @color = parent.getAttribute('data-color')
-    @status = parent.getAttribute('data-status').strip().
+    @status = parent.getAttribute('data-status').trim().
       sub('Status:', '').gsub(/^\s+/m, '').gsub(/\n(\S)/, ' $1')
     @baseline = @status
     jQuery('#update-action-form').modal(:show)
