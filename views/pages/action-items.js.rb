@@ -5,7 +5,6 @@
 
 class ActionItems < React
   def initialize
-    @editing = nil
     @action = ''
     @status = ''
     @baseline = ''
