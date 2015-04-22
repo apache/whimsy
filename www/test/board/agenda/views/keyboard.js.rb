@@ -32,14 +32,14 @@ class Keyboard
       if event.keyCode == 37 # '<-'
         link = ~"a[rel=prev]"[0]
         if link
-          Main.navigate link.getAttribute('href')
+          Main.navigate link.getAttribute('href').sub(%r{/\w+/\.\.}, '')
           window.scrollTo(0, 0)
           return false
         end
       elsif event.keyCode == 39 # '->'
         link = ~"a[rel=next]"[0]
         if link
-          Main.navigate link.getAttribute('href')
+          Main.navigate link.getAttribute('href').sub(%r{/\w+/\.\.}, '')
           window.scrollTo(0, 0)
           return false
         end

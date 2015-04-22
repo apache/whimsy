@@ -102,4 +102,13 @@ feature 'report' do
     expect(page).to have_selector \
       "#post-report-message[value='Post Tuscany Report']"
   end
+
+  it "should reports with warnings" do
+    visit '/2015-01-21/Change-Labs-Chair'
+
+    expect(page).to have_selector '.navbar-fixed-top.missing .navbar-brand', 
+      text: 'Change Labs Chair'
+    expect(page).to have_selector 'ul.missing li', 
+      text: 'Heading is not indented 4 spaces'
+  end
 end

@@ -1096,7 +1096,7 @@
        Samza podling encumbered upon the Apache Incubator Project are
        hereafter discharged.
 
-    B. Resolution to Change the Apache Labs Chair
+   B. Resolution to Change the Apache Labs Chair
 
        WHEREAS, the Board of Directors heretofore appointed Tim Williams
        to the office of Vice President, Apache Labs, and
