@@ -18,11 +18,13 @@ class Footer < React
         while link and not link.ready_for_review(Server.initials)
           link = link.prev
         end
+        link ||= {href: '../queue', title: 'Queue'}
       elsif @@options.traversal == :shepherd
         prefix = 'shepherd/queue/'
         while link and link.shepherd != @@item.shepherd
           link = link.prev
         end
+        link ||= {href: "../#{Agenda.shepherd}", title: 'Shepherd'}
       end
 
       if link
@@ -57,10 +59,12 @@ class Footer < React
         while link and not link.ready_for_review(Server.initials)
           link = link.next
         end
+        link ||= {href: '../queue', title: 'Queue'}
       elsif @@options.traversal == :shepherd
         while link and link.shepherd != @@item.shepherd
           link = link.next
         end
+        link ||= {href: "../#{Agenda.shepherd}", title: 'Shepherd'}
       end
 
       if link

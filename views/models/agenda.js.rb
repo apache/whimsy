@@ -196,6 +196,28 @@ class Agenda
     result
   end
 
+  # find the shortest match for shepherd name (example: Rich)
+  def self.shepherd
+    shepherd = nil
+
+    firstname = Server.firstname.downcase()
+    Agenda.index.each do |item|
+      if 
+        item.shepherd and 
+        firstname.start_with? item.shepherd.downcase() and
+        (not shepherd or item.shepherd.length < shepherd.lenth)
+      then
+        shepherd = item.shepherd
+      end
+    end
+
+    return shepherd
+  end
+
+  #
+  # Methods on individual agenda items
+  #
+
   # default view for an individual agenda item
   def view
     if @title == 'Action Items'
