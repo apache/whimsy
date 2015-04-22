@@ -43,7 +43,7 @@ class ActionItems < React
   # find item associated with PMC if reporting this month
   def componentWillReceiveProps()
     if @@item.text
-      @actions = @@item.text.split(/^\n\* /m).map do |text|
+      @actions = @@item.text.sub(/^\* /, '').split(/^\n\* /m).map do |text|
         match1 = text.match(/((?:\n|.)*?)(\n\s*Status:(?:\n|.)*)/)
         match2 = match1[1].match(/((?:\n|.)*?)(\[ (\S*) \])?\s*$/)
 
