@@ -4,9 +4,19 @@
 #
 
 class ActionItems < React
+  def initialize
+    @editing = nil
+    @action = ''
+    @status = ''
+    @baseline = ''
+    @disabled = false
+  end
+
   def render
-    _pre.report do
-      if @@item.text
+    if @@item.text
+      _p.alert_info 'Click on Status to update'
+
+      _pre.report do
         @actions.each do |action|
           _ action.text
 
@@ -19,17 +29,42 @@ class ActionItems < React
             _span.blank action.pmc
           end
 
-          # highlight missing action item status updates
-          if action.missing
-            _span.commented action.status
-            _ "\n"
-          else
-            _Text raw: "#{action.status}\n", filters: [hotlink]
+          # launch edit dialog when there is a click on the status
+          _span.clickable(
+            data_action: action.text,
+            data_status: action.status,
+            data_pmc: action.pmc,
+            data_color: action.item ? action.item.color : 'blank',
+            onClick: self.updateStatus
+          ) do
+            # highlight missing action item status updates
+            if action.missing
+              _span.commented action.status
+              _ "\n"
+            else
+              _Text raw: "#{action.status}\n", filters: [hotlink]
+            end
           end
         end
-      else
-        _p {_em 'Empty'} 
       end
+    else
+      _p {_em 'Empty'} 
+    end
+
+    # Update action item (hidden form)
+    _ModalDialog.update_action_form! color: 'commented' do
+      _h4 'Update Action Item'
+
+      _p do
+        _span @action.gsub(/^[* ] /m, '')
+        _span @pmc, class: @color if @pmc
+      end
+
+      _textarea.action_status! label: 'Status:', value: @status, rows: 5
+
+      _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+      _button.btn_primary 'Save', onClick: self.save,
+        disabled: @disabled || (@baseline == @status)
     end
   end
 
@@ -57,6 +92,42 @@ class ActionItems < React
       end
     else
       @actions = []
+    end
+  end
+
+  # autofocus on action status in update action form
+  def componentDidMount()
+    jQuery('#update-action-form').on 'shown.bs.modal' do
+      document.getElementById('action-status').focus()
+    end
+  end
+
+  # launch update status form when status text is clicked
+  def updateStatus(event)
+    parent = event.target.parentNode
+    @action = parent.getAttribute('data-action')
+    @pmc = parent.getAttribute('data-pmc')
+    @color = parent.getAttribute('data-color')
+    @status = parent.getAttribute('data-status').strip().
+      sub('Status:', '').gsub(/^\s+/m, '').gsub(/\n(\S)/, ' $1')
+    @baseline = @status
+    jQuery('#update-action-form').modal(:show)
+  end
+
+  # when save button is pushed, post update and dismiss modal when complete
+  def save(event)
+    data = {
+      agenda: Agenda.file,
+      action: @action,
+      pmc: @pmc,
+      status: @status
+    }
+
+    @disabled = true
+    post 'status', data do |pending|
+      jQuery('#update-action-form').modal(:hide)
+      @disabled = false
+      Pending.load pending
     end
   end
 end
