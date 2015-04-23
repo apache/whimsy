@@ -1,8 +1,8 @@
-input:invalid, textarea:invalid, select:invalid {
+main .form-control:invalid {
   border-color: red !important
 }
 
-input:valid, textarea:valid, select:valid {
+main .form-control:valid {
   border-color: green
 }
 
