@@ -4,8 +4,8 @@ if not @apacheid.empty? and ASF::Person.find(@apacheid).icla?
   return
 end
 
-# capture remote IP address
-_ipaddr env['REMOTE_ADDR']
+# capture (possibly forwarded) remote IP address
+_ipaddr env['HTTP_X_FORWARDED_FOR'] || env['REMOTE_ADDR']
 
 # get today's date
 require 'date'
