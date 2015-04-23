@@ -1,5 +1,9 @@
-*:invalid {
-  border-color: red
+input:invalid, textarea:invalid, select:invalid {
+  border-color: red !important
+}
+
+input:valid, textarea:valid, select:valid {
+  border-color: green
 }
 
 footer.bg-primary {

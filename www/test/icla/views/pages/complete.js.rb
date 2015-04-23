@@ -5,11 +5,17 @@ class Complete < React
     }
 
     _ul do
-      _li 'An file would have been committed to SVN.'
-      _li 'An email would have been sent to the PMC.'
+      _li {_p 'An file would have been committed to SVN.'}
+
+      _li do
+        _p 'Commit message would include the following IP address information:'
+        _pre FormData.ipaddr
+      end
+
+      _li {_p 'An email would have been sent to the PMC.'}
 
       if FormData.apacheid
-        _li 'An new account request would have been submitted.'
+        _li {_p 'An new account request would have been submitted.'}
       end
     end
   end

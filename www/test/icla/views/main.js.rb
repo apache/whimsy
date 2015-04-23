@@ -9,7 +9,7 @@ class Main < React
 
   def render
     _main do
-      _h1 'Demo Online ICLA Form'
+      _h1 'Demo: Invitation to Submit ICLA'
 
       React.createElement(@view)
     end

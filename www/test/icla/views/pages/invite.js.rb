@@ -54,8 +54,11 @@ class Invite < React
     end
 
     _p %{
-      Fill out the following only if the person was voted by the PMC to
-      become a committer.
+      Fill out the following only if the person was voted by the PMC to become
+      a committer or the person is an initial committer on a new project
+      accepted for incubation.  For new incubator projects use the
+      http://wiki.apache.org/incubator/XXXProposal link; for existing projects
+      link to the [RESULT][VOTE] message in the mail archives.
     }
 
     _div.form_group do

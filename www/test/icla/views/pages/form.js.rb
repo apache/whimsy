@@ -1,6 +1,6 @@
 class Form < React
   def initialize
-    @disabled = false
+    @disabled = true
     @alert = nil
 
     @fullName = ''
@@ -31,18 +31,18 @@ class Form < React
 
     _div.form_group do
       _p 'Full Name:'
-      _input.form_control value: @fullName, onChange: self.setName,
-        required: true
+      _input.form_control.fullname! value: @fullName, required: true,
+        onChange: self.setFullName
     end
 
     _div.form_group do
-      _p '(Optional) Public Name:'
+      _p 'Public Name:'
       _input.form_control value: @publicName
     end
 
     _div.form_group do
       _p 'Mailing Address:'
-      _textarea.form_control.address! value: @address, rows: 2
+      _textarea.form_control value: @address, rows: 2
     end
 
     _div.form_group do
@@ -57,7 +57,7 @@ class Form < React
 
     if FormData.votelink
       _div.form_group do
-        _p 'Preferred Apache Id:'
+        _p 'Preferred Apache Id (format: ^[a-z][-a-z0-9_]+$):'
         _input.form_control value: @apacheId, pattern: "^[a-z][-a-z0-9_]+$"
       end
     end
@@ -72,20 +72,20 @@ class Form < React
     end
   end
 
-  # initialize full name from invitation
+  # initialize public name from invitation
   def componentWillMount()
-    @fullName = FormData.fullname
+    @publicName = FormData.fullname
   end
 
   # when the form is initially loaded, set the focus on the address field
   def componentDidMount()
-    document.getElementById('address').focus()
+    document.getElementById('fullname').focus()
   end
 
-  # as a convenience, preset public name if the user changes the full name
-  def setName(event)
-    @publicName = @fullName unless @publicName
+  # enable submit button when name is present
+  def setFullName(event)
     @fullName = event.target.value
+    @disabled = (event.target.value == '')
   end
 
   # submit the form
@@ -107,6 +107,7 @@ class Form < React
         document.getElementById(response.focus).focus() if response.focus
       else
         FormData.draft = response.draft
+        FormData.ipaddr = response.ipaddr
         Main.navigate(Preview)
       end
     end

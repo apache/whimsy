@@ -62,7 +62,9 @@ link = "#{scheme}://#{env['HTTP_HOST']}#{path}"
 _token token
 _invitation %{Dear #{@iclaname},
 
-Please submit an ICLA, using the following form:
+Based on your contributions, you are invited to submit an ICLA to The Apache
+Software Foundation, using the following form. Please see
+http://apache.org/licenses for details.
 
 #{link}
 
