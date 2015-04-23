@@ -16,8 +16,43 @@ module ASF
       'gstein'      => 'gs'
     }
 
+    # decode HTTP authorization, when present
+    def self.decode(env, user)
+      class << env; attr_accessor :user, :password; end
+
+      if env['HTTP_AUTHORIZATION']
+        require 'base64'
+        env.user, env.password = Base64.decode64(env['HTTP_AUTHORIZATION'][
+          /^Basic ([A-Za-z0-9+\/=]+)$/,1]).split(':',2)
+      else
+        env.user = user
+      end
+    end
+
     # Simply 'use' the following class in config.ru to limit access
-    # to the application to ASF members and officers and the EA.
+    # to the application to ASF committers
+    class Committers < Rack::Auth::Basic
+      def initialize(app)
+        super(app, "ASF Members and Officers", &proc {})
+      end
+
+      def call(env)
+        authorized = ( ENV['RACK_ENV'] == 'test' )
+
+        user = env['REMOTE_USER'] ||= ENV['USER'] || Etc.getpwuid.name
+        authorized ||= ASF::Person.new(user)
+
+        if authorized
+          ASF::Auth.decode(env, user)
+          @app.call(env)
+        else
+          unauthorized
+        end
+      end
+    end
+
+    # Simply 'use' the following class in config.ru to limit access
+    # to the application to ASF members and officers and the accounting group.
     class MembersAndOfficers < Rack::Auth::Basic
       def initialize(app)
         super(app, "ASF Members and Officers", &proc {})
@@ -32,18 +67,15 @@ module ASF
         authorized ||= DIRECTORS[user]
         authorized ||= person.asf_member?
         authorized ||= ASF.pmc_chairs.include? person
-        authorized ||= (user == 'ea')
+
+        if not authorized
+          accounting = ASF::Authorization.new('pit').
+            find {|group, list| group=='accounting'}
+          authorized = (accounting and accounting.last.include? user)
+        end
 
         if authorized
-          class << env; attr_accessor :user, :password; end
-          if env['HTTP_AUTHORIZATION']
-            require 'base64'
-            env.user, env.password = Base64.decode64(env['HTTP_AUTHORIZATION'][
-              /^Basic ([A-Za-z0-9+\/=]+)$/,1]).split(':',2)
-          else
-            env.user = user
-          end
-
+          ASF::Auth.decode(env, user)
           @app.call(env)
         else
           unauthorized
