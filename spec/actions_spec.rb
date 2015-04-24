@@ -175,7 +175,7 @@ feature 'server actions' do
       expect(@pending['approved']).to include('7')
       expect(@pending['comments']['I']).to eq('Nice report!')
 
-      @message = "Approve W3C Relations\nComment on BookKeeper"
+      @message = "Approve W3C Relations\nComment on BookKeeper\nUpdate 1 AI"
       @initials = 'jt'
 
       eval(File.read('views/actions/commit.json.rb'))
@@ -188,6 +188,10 @@ feature 'server actions' do
 
       avro = @agenda.find {|item| item[:attach] == 'I'}
       expect(avro['comments']).to include('jt: Nice report!')
+
+      actions = @agenda.find {|item| item['title'] == 'Action Items'}
+      expect(actions['text']).to \
+        include("Clarification provided in this month's report.")
     end
   end
 
