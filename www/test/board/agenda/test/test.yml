@@ -6,7 +6,7 @@ rejected:
 comments:
   I: Nice report!
 seen:
-  A:
+  A: 
   C:
   - ! 'cm: Reminder email sent'
   D:
@@ -43,3 +43,7 @@ seen:
   - ! 'rb: Reminder email sent'
 initials: jt
 agenda: board_agenda_2015_01_21.txt
+status:
+  ? ! "Sam: follow up with PMC for clarification on the relationship\n       between
+    the addons and the project [ Isis ]"
+  : "Clarification provided in this month's report."

@@ -51,6 +51,7 @@ def post(target, data, &block)
       begin
         if xhr.status == 200
           data = JSON.parse(xhr.responseText) 
+          alert "Exception\n#{data.exception}" if data.exception
         elsif xhr.status == 404
           alert "Not Found: json/#{target}"
         elsif xhr.status >= 400

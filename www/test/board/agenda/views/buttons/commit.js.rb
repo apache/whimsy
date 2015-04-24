@@ -75,6 +75,16 @@ class Commit < React
       messages << "Comment on #{comments} reports"
     end
 
+    # identify (or number) action item(s) updated with this commit
+    if pending.status
+      updates = pending.status.keys()
+      if updates.length == 1
+        messages << "Update #{updates.first.sub(/^\w+:/, 'AI:')}"
+      elsif updates > 1
+        messages << "Update #{updates.length} action items"
+      end
+    end
+
     @message = messages.join("\n")
   end
 

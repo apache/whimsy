@@ -5,7 +5,6 @@
 
 class ActionItems < React
   def initialize
-    @editing = nil
     @action = ''
     @status = ''
     @baseline = ''
@@ -16,9 +15,11 @@ class ActionItems < React
     if @@item.text
       _p.alert_info 'Click on Status to update'
 
+      updates = Pending.status.keys()
+
       _pre.report do
         @actions.each do |action|
-          _ action.text
+          _ "* #{action.text}"
 
           # if there is an associated PMC and that PMC is on this month's
           # agenda, link to that report
@@ -38,7 +39,13 @@ class ActionItems < React
             onClick: self.updateStatus
           ) do
             # highlight missing action item status updates
-            if action.missing
+            text = action.text
+            text += action.pmc if action.pmc
+            if updates.include? text
+              _span "\n      Status: "
+              _em.span.commented Pending.status[text]
+              _span "\n\n"
+            elsif action.missing
               _span.commented action.status
               _ "\n"
             else
@@ -56,7 +63,7 @@ class ActionItems < React
       _h4 'Update Action Item'
 
       _p do
-        _span @action.gsub(/^[* ] /m, '')
+        _span @action
         _span @pmc, class: @color if @pmc
       end
 
@@ -83,7 +90,7 @@ class ActionItems < React
         match2 = match1[1].match(/((?:\n|.)*?)(\[ (\S*) \])?\s*$/)
 
         {
-          text: "* " + match2[1],
+          text: match2[1],
           status: match1[2],
           missing: match1[2] =~ /Status:\s*$/,
           pmc: match2[2],
@@ -108,8 +115,9 @@ class ActionItems < React
     @action = parent.getAttribute('data-action')
     @pmc = parent.getAttribute('data-pmc')
     @color = parent.getAttribute('data-color')
-    @status = parent.getAttribute('data-status').trim().
-      sub('Status:', '').gsub(/^\s+/m, '').gsub(/\n(\S)/, ' $1')
+    @status = Pending.status[@action + @pmc] ||
+      parent.getAttribute('data-status').trim().
+        sub('Status:', '').gsub(/^\s+/m, '').gsub(/\n(\S)/, ' $1')
     @baseline = @status
     jQuery('#update-action-form').modal(:show)
   end

@@ -43,7 +43,8 @@ feature 'other reports' do
     expect(page).to have_selector 'dd p', text: 'Nice report!'
 
     expect(page).to have_selector '#commit-text', text: 
-      ['Approve W3C Relations', 'Comment on BookKeeper'].join(' ')
+      ['Approve W3C Relations', 'Comment on BookKeeper',
+        'Update AI: follow up with PMC for clarification'].join(' ')
   end
 
   it "should follow the ready queue" do
@@ -85,17 +86,24 @@ feature 'other reports' do
   end
 
   it "should highlight and crosslink action items" do
-    visit '/2015-02-18/Action-Items'
+    visit '/2015-01-21/Action-Items'
 
     expect(page).to have_selector 'span.commented', text: /^\s*Status:$/
-    expect(page).to have_selector 'a.missing[href=Deltacloud]',
-      text: '[ Deltacloud ]'
-    expect(page).to have_selector 'a.reviewed[href=ACE]', text: '[ ACE ]'
+    expect(page).to have_selector 'a.missing[href=DirectMemory]',
+      text: '[ DirectMemory ]'
+    expect(page).to have_selector 'em',
+      text: "Clarification provided in this month's report."
+    expect(page).to have_selector 'a.reviewed[href=Isis]', text: '[ Isis ]'
     expect(page).to have_selector '.backlink[href="Discussion-Items"]',
       text: 'Discussion Items'
     expect(page).to have_selector '.nextlink[href="Unfinished-Business"]',
       text: 'Unfinished Business'
+
+    visit '/2015-02-18/Action-Items'
     expect(page).to have_selector 'a[href="http://s.apache.org/jDZ"]'
+    expect(page).to have_selector 'a.missing[href=Deltacloud]',
+      text: '[ Deltacloud ]'
+    expect(page).to have_selector 'a.reviewed[href=ACE]', text: '[ ACE ]'
   end
 
   it "should hypertext minutes" do

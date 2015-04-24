@@ -62,6 +62,24 @@ AgendaCache.update(agenda_file, @message) do |agenda|
 
       match
     end
+
+    # action item status updates
+    if updates['status']
+      pattern=/\n ?\d+\. Review Outstanding Action Items.*?\n\n.*?\n\n ?\d+\./m
+      agenda.sub! pattern do |actions|
+        updates['status'].each do |action, status|
+          pattern = Regexp.new(Regexp.escape(action).gsub(/\\n(\\ )+/,'\n\s+') +
+            "\\s*Status:(.*?\n)\n", Regexp::MULTILINE)
+          begin
+            actions[pattern, 1] = " #{status.gsub("\n", "\n".ljust(19))}\n"
+          rescue Exception => exception
+            _exception exception
+          end
+        end
+
+        actions
+      end
+    end
   end
 
   # return updated agenda
@@ -73,5 +91,6 @@ pending = Pending.get(env.user)
 File.rename "#{AGENDA_WORK}/#{user}.yml", "#{AGENDA_WORK}/#{user}.bak"
 pending['approved'].clear
 pending['comments'].clear
+pending['status'].clear
 Pending.put(env.user, pending)
 _pending pending

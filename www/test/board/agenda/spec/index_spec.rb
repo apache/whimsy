@@ -12,7 +12,7 @@ feature 'index' do
     expect(page).to have_selector '.navbar-fixed-top.blank .navbar-brand', 
       text: '2015-02-18'
     expect(page).to have_selector '.navbar-fixed-top .label-danger a', 
-      text: '2'
+      text: '3'
     expect(page).to have_selector '#agenda', text: 'Agenda'
 
     # navigation

@@ -1,14 +1,15 @@
 #
-# Add action item update to an agenda item
+# Add action item status updates to pending list
 #
 
 pending = Pending.get(env.user, @agenda)
 pending['status'] ||= {}
 
 action = @action
-action += " #{@pmc}" if @pmc
+action += @pmc if @pmc
 
-pending['status'][action] = @status
+pending['status'][action] = 
+  @status.strip.gsub(/\s+/, ' ').gsub(/(.{1,62})(\s+|\Z)/, "\\1\n").chomp
 
 Pending.put(env.user, pending)
 
