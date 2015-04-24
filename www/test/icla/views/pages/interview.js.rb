@@ -11,22 +11,22 @@ class Interview < React
 
   def render
     _p.alert.alert_info %{
-      For demo purposes, assume that you are now the invitee, you received
-      the email, and clicked on the link.  Below is what you would see.
+      For demo purposes, assume that you are now the invitee, you received the
+      email, and clicked on the link.  Below is what you would see.
     }
 
     _p %{
       Welcome to the Apache Software Foundation Individual Contributor License
-      Agreement online submission tool!  This tool will guide you through the
-      process of licensing of any copyright and patents that may apply to
-      your contributions
+      Agreement online submission tool! This tool will guide you through the
+      process of licensing to the ASF any copyright and patents that may apply
+      to your contributions
     }
       
     _p %{
       This process should only take a few minutes, and is entirely online.
-      First we will ask you three questions, then you will be asked to provide
-      some information about yourself, and finally you will get a chance to
-      review and submit the completed form.
+      First we will ask you three questions. Next, you will be asked to
+      provide some information about yourself. Finally, you will get a chance
+      to review and submit the completed form.
     }
 
     #
@@ -38,13 +38,18 @@ class Interview < React
 
       _p %{
         Are you are legally entitled to grant the necessary copyright and
-        patent licenses? If your employer(s) has rights to intellectual
-        property that you create that includes your Contributions, have you
-        received permission to make Contributions on behalf of that employer,
-        or has your employer has waived such rights for your Contributions to
-        the Foundation, or has your employer has executed a separate Corporate
-        CLA with the Foundation?
+        patent licenses?  If any employer has intellectual property rights to
+        any of your Contributions:
       }
+
+      _ul do
+        _li "have you received permission to make Contributions on behalf
+             of that employer, or"
+        _li "has your employer waived such rights for your Contributions to
+             the Foundation, or"
+        _li "has your employer executed a separate Corporate CLA with the 
+             Foundation?"
+      end
 
       _p do
         _button.btn.btn_primary 'Yes', disabled: @disableButton1,
@@ -59,7 +64,7 @@ class Interview < React
     if @showQuestion2
       _h2 'Question 2'
       _p %{
-        Are each of your contributions is your original creation?  Do each of
+        Are each of your contributions is your original creation? Do each of
         your contribution submissions include complete details of any
         third-party license or other restriction (including, but not limited
         to, related patents and trademarks) of which you are personally aware
@@ -70,7 +75,7 @@ class Interview < React
         _b 'Note: '
         _span %{
           Should you wish to submit work that is not your original creation,
-          you may submit it to the Foundation separately from any
+          you may submit it to the Foundation separately from any other
           contribution, identifying the complete details of its source and of
           any license or other restriction (including, but not limited to,
           related patents, trademarks, and license agreements) of which you
