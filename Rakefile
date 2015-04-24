@@ -3,7 +3,8 @@ require 'whimsy/asf/config'
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
-task :spec => :test_setup
+task :spec => 'test:setup'
+task :test => :spec
 
 task :server do
   ENV['RACK_ENV']='development'
@@ -69,7 +70,10 @@ end
 
 task :work => ['test/work/board', 'test/work/data/test.yml']
 
-task :test_setup => [:reset, :work]
+namespace :test do
+  task :setup => [:reset, :work]
+  task :server => 'server:test'
+end
 
 task :clobber do
   rm_rf 'test/work'
