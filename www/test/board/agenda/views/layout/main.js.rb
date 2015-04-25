@@ -76,7 +76,10 @@ class Main < React
 
   # navigation method that updates history (back button) information
   def navigate(path, query)
+    history.state.scrollY = window.scrollY
+    history.replaceState(history.state, nil, history.path)
     self.route(path, query)
+    window.scrollTo(0, 0)
     history.pushState({path: path, query: query}, nil, path)
   end
 
@@ -105,6 +108,7 @@ class Main < React
     window.addEventListener :popstate do |event|
       if event.state and defined? event.state.path
         self.route(event.state.path, event.state.query)
+        window.scrollTo(0, event.state.scrollY) if event.state.scrollY
       end
     end
 
