@@ -34,8 +34,27 @@ class Router
 
     elsif path =~ %r{^shepherd/\w+$}
       shepherd = path[9..-1]
-      item = {view: Shepherd, shepherd: shepherd,
+
+      item = {view: Shepherd, shepherd: shepherd, next: nil, prev: nil,
         title: "Shepherded by #{shepherd}"}
+
+      # determine next/previous links
+      Agenda.index.each do |i|
+        if i.shepherd and i.comments
+          next if i.shepherd.include? ' '
+
+          href = "shepherd/#{i.shepherd}"
+          if i.shepherd > shepherd
+            if not item.next or item.next.href > href
+              item.next = {title: i.shepherd, href: href}
+            end
+          elsif i.shepherd < shepherd
+            if not item.prev or item.prev.href < href
+              item.prev = {title: i.shepherd, href: href}
+            end
+          end
+        end
+      end
 
     elsif path == 'help'
       item = {view: Help}

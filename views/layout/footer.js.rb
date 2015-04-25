@@ -24,7 +24,7 @@ class Footer < React
         while link and link.shepherd != @@item.shepherd
           link = link.prev
         end
-        link ||= {href: "../#{Agenda.shepherd}", title: 'Shepherd'}
+        link ||= {href: "../#{@@item.shepherd}", title: 'Shepherd'}
       end
 
       if link
@@ -64,7 +64,7 @@ class Footer < React
         while link and link.shepherd != @@item.shepherd
           link = link.next
         end
-        link ||= {href: "../#{Agenda.shepherd}", title: 'Shepherd'}
+        link ||= {href: "../#{@@item.shepherd}", title: 'Shepherd'}
       end
 
       if link

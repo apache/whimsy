@@ -71,6 +71,10 @@ feature 'other reports' do
     expect(page).to have_selector 'h4', text: 'Action Items'
     expect(page).to have_selector 'pre.comment', 
       text: 'Chris: Please clarify what "voted on" means'
+
+    expect(page).to have_selector '.backlink[href="shepherd/Ross"]',
+      text: 'Ross'
+    expect(page).not_to have_selector '.nextlink'
   end
 
   it "should follow the shepherd queue" do
