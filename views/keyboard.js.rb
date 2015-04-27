@@ -27,6 +27,7 @@ class Keyboard
       end
 
       return if ~'#search-text'[0] or ~'.modal-open'[0]
+      return if document.activeElement.tagName.downcase() == 'input' 
       return if event.metaKey or event.ctrlKey
 
       if event.keyCode == 37 # '<-'
@@ -68,6 +69,9 @@ class Keyboard
         return false
       elsif event.keyCode == 'Q'.ord
         Main.navigate "queue"
+        return false
+      elsif event.keyCode == 'B'.ord
+        Main.navigate "backchannel"
         return false
       elsif event.shiftKey and event.keyCode == 191 # "?"
         Main.navigate "help"

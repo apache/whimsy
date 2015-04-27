@@ -53,6 +53,7 @@ class Main < React
     for prop in @@server
       Server[prop] = @@server[prop]
     end
+    Server.backchannel = []
 
     Agenda.load(@@page.parsed)
     Agenda.date = @@page.date
