@@ -23,19 +23,4 @@ class Backchannel < React
       _dd message.text
     end
   end
-
-  # on initial load, start listening for events
-  def componentDidMount()
-    @events = EventSource.new('/events')
-    @events.addEventListener :message do |event|
-      console.log event
-      Server.backchannel << JSON.parse(event.data)
-      Main.refresh()
-    end
-  end
-
-  # terminate HTTP connection
-  def componentWillUnmount()
-    @events.close() if @events
-  end
 end
