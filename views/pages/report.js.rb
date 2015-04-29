@@ -64,7 +64,10 @@ class Report < React
         if @@item.title != 'Action Items' and @@item.actions
           _h3.comments! { _Link text: 'Action Items', href: 'Action-Items' }
           @@item.actions.each do |action|
-            _pre.comment action
+            _pre.comment do
+              _"#{action.owner}: #{action.text}"
+              _ "\n    Status: #{action.status}" if action.status
+            end
           end
         end
       end

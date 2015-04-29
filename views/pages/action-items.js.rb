@@ -18,16 +18,23 @@ class ActionItems < React
       updates = Pending.status.keys()
 
       _pre.report do
-        @actions.each do |action|
-          _ "* #{action.text}"
+        @@item.actions.each_with_index do |action, index|
+          _ "#{index>0 ? "\n" : ''}* #{action.owner}: #{action.text}\n     "
 
-          # if there is an associated PMC and that PMC is on this month's
-          # agenda, link to that report
-          if action.item
-            _Link text: action.pmc, class: action.item.color, 
-              href: action.item.href
-          elsif action.pmc
-            _span.blank action.pmc
+          if action.pmc
+            _ '[ '
+
+            # if there is an associated PMC and that PMC is on this month's
+            # agenda, link to that report
+            item = Agenda.find(action.pmc)
+            if item
+              _Link text: action.pmc, class: item.color, href: item.href
+            elsif action.pmc
+              _span.blank action.pmc
+            end
+
+            _ " #{action.date}" if action.date
+            _ " ]\n     "
           end
 
           # launch edit dialog when there is a click on the status
@@ -39,17 +46,16 @@ class ActionItems < React
             onClick: self.updateStatus
           ) do
             # highlight missing action item status updates
-            text = action.text
-            text += action.pmc if action.pmc
+            text = "#{action.owner}: #{action.text}"
+            text += " [ #{action.pmc} ]" if action.pmc
             if updates.include? text
-              _span "\n      Status: "
-              _em.span.commented Pending.status[text]
-              _span "\n\n"
-            elsif action.missing
-              _span.commented action.status
+              _span "Status: "
+              _em.span.commented "#{Pending.status[text]}\n"
+            elsif action.status == ''
+              _span.missing 'Status:'
               _ "\n"
             else
-              _Text raw: "#{action.status}\n", filters: [hotlink]
+              _Text raw: "Status: #{action.status}\n", filters: [hotlink]
             end
           end
         end
@@ -64,7 +70,11 @@ class ActionItems < React
 
       _p do
         _span @action
-        _span @pmc, class: @color if @pmc
+        if @pmc
+          _' [ '
+          _span @pmc, class: @color
+          _ ' ]'
+        end
       end
 
       _textarea.action_status! label: 'Status:', value: @status, rows: 5

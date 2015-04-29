@@ -29,7 +29,10 @@ class Shepherd < React
         if item.actions and not item.actions.empty?
           _h4 'Action Items'
           item.actions.each do |action|
-            _pre.comment action
+            _pre.comment do
+              _"#{action.owner}: #{action.text}"
+              _ "\n    Status: #{action.status}" if action.status
+            end
           end
         end
       end

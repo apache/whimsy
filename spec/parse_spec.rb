@@ -25,6 +25,8 @@ feature 'parse' do
     expect(aries['approved']).to include('sr')
 
     actions = parsed.find {|item| item['title'] == 'Action Items'}
-    expect(actions['actions']['Rave']).to include(/Sam:/)
+    rave_action = actions['actions'].find {|action| action[:pmc]=='Rave'}
+    expect(rave_action[:owner]).to eq('Sam')
+    expect(rave_action[:text]).to eq('Is the project ready for retirement?')
   end
 end

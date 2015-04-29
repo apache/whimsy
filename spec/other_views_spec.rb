@@ -92,12 +92,12 @@ feature 'other reports' do
   it "should highlight and crosslink action items" do
     visit '/2015-01-21/Action-Items'
 
-    expect(page).to have_selector 'span.commented', text: /^\s*Status:$/
+    expect(page).to have_selector 'span.missing', text: /^\s*Status:$/
     expect(page).to have_selector 'a.missing[href=DirectMemory]',
-      text: '[ DirectMemory ]'
+      text: 'DirectMemory'
     expect(page).to have_selector 'em',
       text: "Clarification provided in this month's report."
-    expect(page).to have_selector 'a.reviewed[href=Isis]', text: '[ Isis ]'
+    expect(page).to have_selector 'a.reviewed[href=Isis]', text: 'Isis'
     expect(page).to have_selector '.backlink[href="Discussion-Items"]',
       text: 'Discussion Items'
     expect(page).to have_selector '.nextlink[href="Unfinished-Business"]',
@@ -106,8 +106,8 @@ feature 'other reports' do
     visit '/2015-02-18/Action-Items'
     expect(page).to have_selector 'a[href="http://s.apache.org/jDZ"]'
     expect(page).to have_selector 'a.missing[href=Deltacloud]',
-      text: '[ Deltacloud ]'
-    expect(page).to have_selector 'a.reviewed[href=ACE]', text: '[ ACE ]'
+      text: 'Deltacloud'
+    expect(page).to have_selector 'a.reviewed[href=ACE]', text: 'ACE'
   end
 
   it "should hypertext minutes" do
