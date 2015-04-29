@@ -26,22 +26,26 @@ class ASF::Board::Agenda
       end
 
       if attrs['title'] =~ /Action Items/
-        list = {}
 
         # extract action items associated with projects
-        attrs['text'].to_s.split(/^\s+\* /).each do |action|
-          next unless action =~ /\[ (\S*) \]\s*Status:/
-          pmc = $1
-          indent = action.scan(/\n +/).min
-          action.gsub! indent, "\n" if indent
-          action[/(\[ #{pmc} \])\s*Status:/, 1] = ''
-          action.chomp!
-          action.sub! /\s+Status:\Z/, ''
-          list[pmc] ||= []
-          list[pmc] << action
-        end
+        text = attrs['text'].sub(/\A\s*\n/, '').sub(/\s+\Z/, '')
+        unindent = text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min || 1
+        text.gsub! /^ {#{unindent-1}}/, ''
 
-        attrs['actions'] = list
+        attrs['actions'] = text.sub(/^\* /, '').split(/^\n\* /).map do |text|
+          match1 = /(.*?)(\n\s*Status:(.*))/m.match(text)
+          match2 = /(.*?)(\[ ([^\]]+) \])?\s*\Z/m.match(match1[1])
+          match3 = /(.*?): (.*)\Z/m.match(match2[1])
+          match4 = /(.*?)( (\d+-\d+-\d+))?$/.match(match2[3])
+
+          { 
+            owner: match3[1],
+            text: match3[2].strip,
+            status: match1[3].to_s.strip,
+            pmc: (match4[1] if match4), 
+            date: (match4[3] if match4)
+          }
+        end
       end
     end
   end
