@@ -167,6 +167,9 @@ class Wunderbar::XmlMarkup
       tag! :pre, "File #{dest} already exists.", class: '_stderr'
     else
       if (`svn --version --quiet`.chomp.split('.') <=> %w(1 5)) >= 1
+        if source.start_with? Dir.pwd + '/'
+          source = source[Dir.pwd.length+1..-1]
+        end
         self.system "svn mv #{source.inspect} #{dest}"
       else
         if `svn st #{source.inspect}` =~ /^A/
