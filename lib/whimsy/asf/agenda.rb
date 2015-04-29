@@ -69,7 +69,11 @@ class ASF::Board::Agenda
       @sections[section][:index] = index if @sections[section]
     end
 
-    # cleanup text and comment whitespace
+    # look for flags
+    flagged_reports = Hash[@file[/ \d\. Committee Reports.*?\n\s+A\./m].
+      scan(/# Apache (.*?) \[(.*)\]/)]
+
+    # cleanup text and comment whitespace, add flags
     @sections.each do |section, hash|
       text = hash['text'] || hash['report']
       if text
@@ -86,6 +90,10 @@ class ASF::Board::Agenda
         unindent = text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min || 1
         text.gsub! /^ {#{unindent-1}}/, ''
       end
+
+      # add flags
+      flags = flagged_reports[hash['title']]
+      hash['flags'] = flags.split(', ') if flags
     end
 
     unless @quick
