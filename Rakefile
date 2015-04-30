@@ -78,3 +78,41 @@ end
 task :clobber do
   rm_rf 'test/work'
 end
+
+task :update do
+  # update agenda application
+  Dir.chdir File.dirname(__FILE__) do
+    puts "#{File.dirname(File.realpath(__FILE__))}:"
+    system 'git pull'
+  end
+  
+  # update libs
+  if File.exist? "#{ENV['HOME']}/.whimsy"
+    libs = YAML.load_file("#{ENV['HOME']}/.whimsy")[:lib] || []
+    libs.each do |lib|
+      # determine repository type
+      repository = :none
+      parent = File.realpath(lib)
+      while repository == :none and parent != '/'
+        if File.exist? File.join(parent, '.svn')
+          repository = :svn
+        elsif File.exist? File.join(parent, '.git')
+          repository = :git
+        else
+          parent = File.dirname(parent)
+        end
+      end
+
+      # update repository
+      Dir.chdir lib do
+        puts "\n#{lib}:"
+        system 'svn up' if repository == :svn
+        system 'git pull' if repository == :git
+      end
+    end
+  end
+
+  # update gems
+  puts "\nbundle update:"
+  system 'bundle update'
+end
