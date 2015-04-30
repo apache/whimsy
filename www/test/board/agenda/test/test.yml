@@ -44,6 +44,9 @@ seen:
 initials: jt
 agenda: board_agenda_2015_01_21.txt
 status:
-  ? ! "Sam: follow up with PMC for clarification on the relationship\n       between
-    the addons and the project [ Isis ]"
-  : "Clarification provided in this month's report."
+- :owner: Sam
+  :text: ! "follow up with PMC for clarification on the relationship\n       between
+    the addons and the project"
+  :pmc: Isis
+  :date: 
+  :status: Clarification provided in this month's report.

@@ -53,6 +53,7 @@ class Main < React
     for prop in @@server
       Server[prop] = @@server[prop]
     end
+    Server.backchannel = []
 
     Agenda.load(@@page.parsed)
     Agenda.date = @@page.date
@@ -129,6 +130,9 @@ class Main < React
     # if agenda is stale, fetch immediately; start polling agenda
     self.fetchAgenda() unless @poll.etag
     setInterval self.fetchAgenda, @poll.interval
+
+    # start backchannel
+    Events.monitor()
   end
 
   # after each subsequent re-rendering, resize main window

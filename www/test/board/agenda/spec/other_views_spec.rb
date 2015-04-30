@@ -41,6 +41,8 @@ feature 'other reports' do
     expect(page).to have_selector 'a.default', text: 'January 21, 2015'
     expect(page).to have_selector 'dt a[href="BookKeeper"]', text: 'BookKeeper'
     expect(page).to have_selector 'dd p', text: 'Nice report!'
+    expect(page).to have_selector 'li', 
+      text: 'follow up with PMC for clarification'
 
     expect(page).to have_selector '#commit-text', text: 
       ['Approve W3C Relations', 'Comment on BookKeeper',
@@ -62,6 +64,13 @@ feature 'other reports' do
   it "should show shepherd reports" do
     visit '/2015-01-21/shepherd/Sam'
 
+    # action items
+    expect(page).to have_selector 'pre.report span', 
+      text: '* Sam: pursue a report for Abdera'
+    expect(page).to have_selector 'pre.report em', 
+      text: "Clarification provided in this month's report."
+
+    # committee reports
     expect(page).to have_selector 'h3.commented a[href="shepherd/queue/Flink"]',
       text: 'Flink'
     expect(page).to have_selector 'a.default', text: 'Airavata'
@@ -69,8 +78,8 @@ feature 'other reports' do
     expect(page).to have_selector 'pre.comment span', 
       text: 'cm: great report!'
     expect(page).to have_selector 'h4', text: 'Action Items'
-    expect(page).to have_selector 'pre.comment', 
-      text: 'Chris: Please clarify what "voted on" means'
+    expect(page).to have_selector 'pre.report span', 
+      text: '* Chris: Please clarify what "voted on" means'
 
     expect(page).to have_selector '.backlink[href="shepherd/Ross"]',
       text: 'Ross'
@@ -92,12 +101,12 @@ feature 'other reports' do
   it "should highlight and crosslink action items" do
     visit '/2015-01-21/Action-Items'
 
-    expect(page).to have_selector 'span.commented', text: /^\s*Status:$/
+    expect(page).to have_selector 'span.missing', text: /^\s*Status:$/
     expect(page).to have_selector 'a.missing[href=DirectMemory]',
-      text: '[ DirectMemory ]'
+      text: 'DirectMemory'
     expect(page).to have_selector 'em',
       text: "Clarification provided in this month's report."
-    expect(page).to have_selector 'a.reviewed[href=Isis]', text: '[ Isis ]'
+    expect(page).to have_selector 'a.reviewed[href=Isis]', text: 'Isis'
     expect(page).to have_selector '.backlink[href="Discussion-Items"]',
       text: 'Discussion Items'
     expect(page).to have_selector '.nextlink[href="Unfinished-Business"]',
@@ -106,8 +115,8 @@ feature 'other reports' do
     visit '/2015-02-18/Action-Items'
     expect(page).to have_selector 'a[href="http://s.apache.org/jDZ"]'
     expect(page).to have_selector 'a.missing[href=Deltacloud]',
-      text: '[ Deltacloud ]'
-    expect(page).to have_selector 'a.reviewed[href=ACE]', text: '[ ACE ]'
+      text: 'Deltacloud'
+    expect(page).to have_selector 'a.reviewed[href=ACE]', text: 'ACE'
   end
 
   it "should hypertext minutes" do

@@ -37,6 +37,21 @@ class Pending
   end
 
   def self.status
-    Server.pending.status || {}
+    Server.pending.status || []
+  end
+
+  # find a pending status update that matches a given action item
+  def self.find_status(action)
+    match = nil
+
+    Pending.status.each do |status|
+      found = true
+      for name in action
+        found = false if name != 'status' and action[name] != status[name]
+      end
+      match = status if found
+    end
+
+    return match
   end
 end

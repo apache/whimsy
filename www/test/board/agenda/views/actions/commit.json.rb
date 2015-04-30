@@ -65,20 +65,40 @@ AgendaCache.update(agenda_file, @message) do |agenda|
 
     # action item status updates
     if updates['status']
-      pattern=/\n ?\d+\. Review Outstanding Action Items.*?\n\n.*?\n\n ?\d+\./m
-      agenda.sub! pattern do |actions|
-        updates['status'].each do |action, status|
-          pattern = Regexp.new(Regexp.escape(action).gsub(/\\n(\\ )+/,'\n\s+') +
-            "\\s*Status:(.*?\n)\n", Regexp::MULTILINE)
-          begin
-            actions[pattern, 1] = " #{status.gsub("\n", "\n".ljust(19))}\n"
-          rescue Exception => exception
-            _exception exception
+      parsed = ASF::Board::Agenda.parse(agenda, true)
+      actions = parsed.find {|item| item['title'] == 'Action Items'}
+
+      require 'stringio'
+      replacement = StringIO.new
+      actions['actions'].each do |action|
+        # check for updates for this action item
+        updates['status'].each do |update|
+          match = true
+          action.each do |name, value|
+            match = false if name != :status and update[name] != action[name]
           end
+          action = update if match
+        end
+        
+        # format action item
+        replacement.puts "* #{action[:owner]}: #{action[:text]}"
+
+        if action[:date] or action[:pmc]
+          replacement.print '      ['
+          replacement.print " #{action[:pmc]}" if action[:pmc]
+          replacement.print " #{action[:date]}" if action[:date]
+          replacement.puts ' ]'
         end
 
-        actions
+        replacement.print "      Status:"
+        replacement.print " #{action[:status]}" unless action[:status].empty?
+        replacement.puts
+        replacement.puts
       end
+
+      # replace entire section
+      agenda[/^ ?\d+\. Review Outstanding Action Items\n\n(.*?\n\n)\s?\d/m, 1] =
+        replacement.string.gsub(/^(.)/, '    \1')
     end
   end
 

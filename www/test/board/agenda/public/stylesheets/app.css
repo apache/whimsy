@@ -26,6 +26,7 @@ aside li {list-style: none}
 /* next/back links */
 .backlink {float: left; min-width: 9em}
 .nextlink {float: right; min-width: 9em}
+.nextarea {float: right; min-width: 9em}
 .backlink:before {content: "<< "}
 .nextlink:after  {content: " >>"}
 
@@ -245,4 +246,45 @@ li.dropdown #nav.dropdown-toggle {
 /* Identify clickable sections by changing the cursor */
 .clickable {
   cursor: pointer;
+}
+
+footer {
+  display: flex;
+  align-items: center;
+}
+
+footer a {
+  min-width: 9em;
+}
+
+footer span {
+  flex-grow: 1;
+  margin: auto;
+  text-align: center;
+}
+
+footer span input {
+  width: 95%
+}
+
+/* compact definition list (backchannel) */
+dl.chatlog {
+  padding: 0.5em;
+}
+
+dl.chatlog dt {
+  float: left;
+  clear: left;
+  width: 8em;
+  text-align: right;
+  font-weight: bold;
+  color: green;
+}
+
+dl.chatlog dt:after {
+  content: ":";
+}
+
+dl.chatlog dd {
+  padding: 0 1em 0 8.5em;
 }

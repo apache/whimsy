@@ -21,6 +21,9 @@ class Router
     elsif path == 'comments'
       item = {view: Comments}
 
+    elsif path == 'backchannel'
+      item = {view: Backchannel, title: 'Agenda Backchannel'}
+
     elsif path == 'queue'
       item = {view: Queue, title: 'Queued approvals and comments'}
 

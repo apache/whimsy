@@ -19,6 +19,7 @@ require 'shellwords'
 
 require_relative './routes'
 require_relative './models/pending'
+require_relative './models/events'
 require_relative './helpers/string'
 
 # determine where relevant data can be found

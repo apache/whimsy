@@ -92,3 +92,26 @@ get '/json/jira' do
   response = http.request(request)
   _json { JSON.parse(response.body).map {|project| project['key']} }
 end
+
+get '/events', provides: 'text/event-stream' do
+  stream :keep_open do |out|
+    events = Events.subscribe
+    out.callback {events << :exit}
+
+    loop do
+      event = events.pop
+      if Hash === event or Array === event
+        out << "data: #{JSON.dump(event)}\n\n"
+      elsif event == :heartbeat
+        out << ":\n"
+      elsif event == :exit
+        events.unsubscribe
+        out.close
+        break
+      else
+        out << "data: #{event.inspect}\n\n"
+      end
+    end
+  end
+end
+

@@ -61,11 +61,9 @@ class Report < React
           _pre.comment Flow.comment(@@item.pending, Pending.initials)
         end
 
-        if @@item.title != 'Action Items' and @@item.actions
+        if @@item.title != 'Action Items' and not @@item.actions.empty?
           _h3.comments! { _Link text: 'Action Items', href: 'Action-Items' }
-          @@item.actions.each do |action|
-            _pre.comment action
-          end
+          _ActionItems item: @@item, filter: {pmc: @@item.title}
         end
       end
     end

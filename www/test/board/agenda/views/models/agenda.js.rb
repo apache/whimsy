@@ -126,7 +126,11 @@ class Agenda
       @actions
     else
       item = Agenda.find('Action-Items')
-      item ? item.actions[@title] : []
+      list = []
+      if item
+        item.actions.each {|action| list << action if action.pmc == @title}
+      end
+      list
     end
   end
 
