@@ -62,6 +62,13 @@ feature 'other reports' do
   it "should show shepherd reports" do
     visit '/2015-01-21/shepherd/Sam'
 
+    # action items
+    expect(page).to have_selector 'pre.report span', 
+      text: '* Sam: pursue a report for Abdera'
+    expect(page).to have_selector 'pre.report em', 
+      text: "Clarification provided in this month's report."
+
+    # committee reports
     expect(page).to have_selector 'h3.commented a[href="shepherd/queue/Flink"]',
       text: 'Flink'
     expect(page).to have_selector 'a.default', text: 'Airavata'
@@ -69,8 +76,8 @@ feature 'other reports' do
     expect(page).to have_selector 'pre.comment span', 
       text: 'cm: great report!'
     expect(page).to have_selector 'h4', text: 'Action Items'
-    expect(page).to have_selector 'pre.comment', 
-      text: 'Chris: Please clarify what "voted on" means'
+    expect(page).to have_selector 'pre.report span', 
+      text: '* Chris: Please clarify what "voted on" means'
 
     expect(page).to have_selector '.backlink[href="shepherd/Ross"]',
       text: 'Ross'

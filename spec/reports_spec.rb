@@ -91,8 +91,8 @@ feature 'report' do
     expect(page).to have_selector 'h3 a[href="Action-Items"]',
       text: 'Action Items'
     expect(page).to have_selector 'button', text: 'post report'
-    expect(page).to have_selector 'pre.comment', 
-      text: 'Greg: Is it time to retire the project?'
+    expect(page).to have_selector 'pre.report', 
+      text: '* Greg: Is it time to retire the project?'
 
     # hidden forms
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
