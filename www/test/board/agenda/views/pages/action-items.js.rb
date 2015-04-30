@@ -34,13 +34,13 @@ class ActionItems < React
         end
 
         # action owner and text
-        _ "* #{action.owner}: #{action.text}\n     "
+        _ "* #{action.owner}: #{action.text}\n      "
 
         if action.pmc and not (@@filter and @@filter.title)
           _ '[ '
 
           # if there is an associated PMC and that PMC is on this month's
-          # agenda, link to that report
+          # agenda, link to the current report, if reporting this month
           item = Agenda.find(action.pmc)
           if item
             _Link text: action.pmc, class: item.color, href: item.href
@@ -48,11 +48,21 @@ class ActionItems < React
             _span.blank action.pmc
           end
 
-          _ " #{action.date}" if action.date
-          _ " ]\n     "
+          # link to the original report
+          if action.date
+            _ ' '
+            agenda = "board_agenda_#{action.date.gsub('-', '_')}.txt"
+            if Server.agendas.include? agenda
+              _a action.date, href: "../#{action.date}/#{action.pmc}"
+            else
+              _a action.date, href: 'https://whimsy.apache.org/board/minutes/' +
+                "#{action.pmc}#minutes_#{action.date.gsub('-', '_')}"
+            end
+          end
+          _ " ]\n      "
 
         elsif action.date
-          _ "[ #{action.date} ]\n     "
+          _ "[ #{action.date} ]\n      "
         end
 
         # launch edit dialog when there is a click on the status
