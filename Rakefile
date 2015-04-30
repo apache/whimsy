@@ -90,6 +90,12 @@ task :update do
   if File.exist? "#{ENV['HOME']}/.whimsy"
     libs = YAML.load_file("#{ENV['HOME']}/.whimsy")[:lib] || []
     libs.each do |lib|
+      puts "\n#{lib}:"
+      if not File.exist? lib
+        puts 'not found'
+        next
+      end
+
       # determine repository type
       repository = :none
       parent = File.realpath(lib)
@@ -105,7 +111,6 @@ task :update do
 
       # update repository
       Dir.chdir lib do
-        puts "\n#{lib}:"
         system 'svn up' if repository == :svn
         system 'git pull' if repository == :git
       end
