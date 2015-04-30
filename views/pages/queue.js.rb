@@ -52,11 +52,18 @@ class Queue < React
       end
 
       # Action Item Status updates
-      status = Pending.status.keys()
-      unless status.empty?
+      unless Pending.status.empty?
         _h4 'Action Items'
-        _ul status do |item|
-          _li item.sub(/^\* /, '')
+        _ul Pending.status do |item|
+          text = item.text
+          if item.pmc or item.date
+            text += ' ['
+            text += " #{item.pmc}" if item.pmc
+            text += " #{item.date}" if item.date
+            text += ' ]'
+          end
+
+          _li text
         end
       end
 

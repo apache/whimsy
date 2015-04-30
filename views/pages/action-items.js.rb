@@ -5,9 +5,6 @@
 
 class ActionItems < React
   def initialize
-    @action = ''
-    @status = ''
-    @baseline = ''
     @disabled = false
   end
 
@@ -59,19 +56,19 @@ class ActionItems < React
         end
 
         # launch edit dialog when there is a click on the status
-        _span.clickable(
-          data_action: action.text,
-          data_status: action.status,
-          data_pmc: action.pmc,
-          data_color: action.item ? action.item.color : 'blank',
-          onClick: self.updateStatus
-        ) do
+        attrs = {onClick: self.updateStatus, className: 'clickable'}
+
+        # copy action properties to data attributes
+        for name in action
+          attrs["data-#{name}"] = action[name]
+        end
+
+        React.createElement('span', attrs) do
           # highlight missing action item status updates
-          text = "#{action.owner}: #{action.text}"
-          text += " [ #{action.pmc} ]" if action.pmc
-          if updates.include? text
+          pending = Pending.find_status(action)
+          if pending
             _span "Status: "
-            _em.span.commented "#{Pending.status[text]}\n"
+            _em.span.commented "#{pending.status}\n"
           elsif action.status == ''
             _span.missing 'Status:'
             _ "\n"
@@ -90,15 +87,16 @@ class ActionItems < React
         _h4 'Update Action Item'
 
         _p do
-          _span @action
+          _span "#@owner: #@text"
           if @pmc
             _ ' [ '
-            _span @pmc, class: @color
+            _span " #@pmc"  if @pmc
+            _span " #@date" if @date
             _ ' ]'
           end
         end
 
-        _textarea label: 'Status:', value: @status, rows: 5
+        _textarea ref: 'statusText', label: 'Status:', value: @status, rows: 5
 
         _button.bn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
         _button.btn_primary 'Save', onClick: self.save,
@@ -110,29 +108,43 @@ class ActionItems < React
   # autofocus on action status in update action form
   def componentDidMount()
     jQuery(~updateStatusForm).on 'shown.bs.modal' do
-      document.getElementById('action-status').focus()
+      ~statusText.focus()
     end
   end
 
   # launch update status form when status text is clicked
   def updateStatus(event)
     parent = event.target.parentNode
-    @action = parent.getAttribute('data-action')
-    @pmc = parent.getAttribute('data-pmc')
-    @color = parent.getAttribute('data-color')
-    @status = Pending.status[@action + @pmc] ||
-      parent.getAttribute('data-status').trim().
-        sub('Status:', '').gsub(/^\s+/m, '').gsub(/\n(\S)/, ' $1')
-    @baseline = @status
+
+    # construct action from data attributes
+    action = {}
+    for i in 0...parent.attributes.length
+      attr = parent.attributes[i]
+      action[attr.name[5..-1]] = attr.value if attr.name.start_with? 'data-'
+    end
+
+    # apply any pending updates to this action
+    pending = Pending.find_status(action)
+    action.text = pending.action if pending
+
+    # set baseline to current value
+    action.baseline = action.status
+
+    # show dialog
     jQuery(~updateStatusForm).modal(:show)
+
+    # update state
+    self.setState(action)
   end
 
   # when save button is pushed, post update and dismiss modal when complete
   def save(event)
     data = {
       agenda: Agenda.file,
-      action: @action,
+      owner: @owner,
+      text: @text,
       pmc: @pmc,
+      date: @date,
       status: @status
     }
 

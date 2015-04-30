@@ -41,6 +41,8 @@ feature 'other reports' do
     expect(page).to have_selector 'a.default', text: 'January 21, 2015'
     expect(page).to have_selector 'dt a[href="BookKeeper"]', text: 'BookKeeper'
     expect(page).to have_selector 'dd p', text: 'Nice report!'
+    expect(page).to have_selector 'li', 
+      text: 'follow up with PMC for clarification'
 
     expect(page).to have_selector '#commit-text', text: 
       ['Approve W3C Relations', 'Comment on BookKeeper',

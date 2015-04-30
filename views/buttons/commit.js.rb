@@ -77,11 +77,19 @@ class Commit < React
 
     # identify (or number) action item(s) updated with this commit
     if pending.status
-      updates = pending.status.keys()
-      if updates.length == 1
-        messages << "Update #{updates.first.sub(/^\w+:/, 'AI:')}"
-      elsif updates > 1
-        messages << "Update #{updates.length} action items"
+      if pending.status.length == 1
+        item = pending.status.first
+        text = item.text
+        if item.pmc or item.date
+          text += ' ['
+          text += " #{item.pmc}" if item.pmc
+          text += " #{item.date}" if item.date
+          text += ' ]'
+        end
+
+        messages << "Update AI: #{text}"
+      elsif pending.status.length > 1
+        messages << "Update #{pending.status.length} action items"
       end
     end
 
