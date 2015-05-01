@@ -72,8 +72,23 @@ class Agenda
 
   # provide read-only access to a number of properties 
   attr_reader :attach, :title, :owner, :shepherd, :index, :timestamp, :digest
-  attr_reader :approved, :roster, :prior_reports, :stats, :missing, :people
+  attr_reader :approved, :roster, :prior_reports, :stats, :people
   attr_reader :chair_email, :mail_list, :warnings
+
+  # override missing if minutes aren't present
+  def missing
+    if @missing
+      return true
+    elsif @attach =~ /^3\w$/
+      if Server.drafts.include? @text[/board_minutes_\w+.txt/]
+        return false
+      else
+        return true
+      end
+    else
+      return false
+    end
+  end
 
   # compute href by taking the title and replacing all non alphanumeric
   # characters with dashes
@@ -135,7 +150,7 @@ class Agenda
   end
 
   def ready_for_review(initials)
-    return defined? @approved and not @missing and
+    return defined? @approved and not self.missing and
       not @approved.include? initials and
       not Pending.rejected.include? @attach
   end
@@ -250,7 +265,7 @@ class Agenda
     list << {button: Attend} if @title == 'Roll Call'
 
     if @attach =~ /^(\d|7?[A-Z]+|4[A-Z])$/
-      if @missing
+      if self.missing
         list << {form: Post, text: 'post report'} 
       elsif @attach =~ /^7\w/
         list << {form: Post, text: 'edit resolution'} 
@@ -268,7 +283,7 @@ class Agenda
       'blank'
     elsif @warnings
       'missing'
-    elsif @missing
+    elsif self.missing
       'missing'
     elsif Pending.rejected.include? @attach
       'rejected'
