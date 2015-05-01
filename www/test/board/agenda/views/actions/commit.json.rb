@@ -91,9 +91,7 @@ AgendaCache.update(agenda_file, @message) do |agenda|
         end
 
         replacement.print "      Status:"
-        unless action[:status].empty?
-          replacement.print " #{action[:status].gsub(/\n/, "\n".ljust(15))}" 
-        end
+        replacement.print " #{action[:status]}" unless action[:status].empty?
         replacement.puts
         replacement.puts
       end

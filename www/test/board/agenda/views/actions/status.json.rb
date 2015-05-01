@@ -18,7 +18,7 @@ match = nil
 pending['status'].each do |status|
   found = true
   update.each do |key, value|
-    found=false if value != status[value]
+    found=false if value != status[key]
   end
   match = status if found
 end
@@ -28,7 +28,8 @@ pending['status'] << update if not match
 
 # change the status in the update
 update[:status] =
-  @status.strip.gsub(/\s+/, ' ').gsub(/(.{1,62})(\s+|\Z)/, "\\1\n").chomp
+  @status.strip.gsub(/\s+/, ' ').
+    gsub(/(.{1,62})(\s+|\Z)/, '\\1' + "\n".ljust(15)).strip
 
 Pending.put(env.user, pending)
 
