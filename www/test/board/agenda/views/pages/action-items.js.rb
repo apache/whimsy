@@ -81,7 +81,11 @@ class ActionItems < React
           # highlight missing action item status updates
           if pending
             _span "Status: "
-            _em.span.commented "#{pending.status}\n"
+            pending.status.split("\n").each do |line|
+              match = line.match(/^( *)(.*)/)
+              _span match[1]
+              _em.commented "#{match[2]}\n"
+            end
           elsif action.status == ''
             _span.missing 'Status:'
             _ "\n"
