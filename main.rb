@@ -28,7 +28,7 @@ if ENV['RACK_ENV'] == 'test'
   AGENDA_WORK = File.expand_path('test/work/data').untaint
 else
   FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
-  AGENDA_WORK = ASF::Config.get(:agenda_work) || '/var/tools/data'
+  AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/var/tools/data'
   STDERR.puts "* SVN board  : #{FOUNDATION_BOARD}"
   STDERR.puts "* Agenda work: #{AGENDA_WORK}"
 end

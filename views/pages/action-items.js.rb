@@ -73,9 +73,12 @@ class ActionItems < React
           attrs["data-#{name}"] = action[name]
         end
 
+        # include pending updates
+        pending = Pending.find_status(action)
+        attrs['data-status'] = pending.status if pending
+
         React.createElement('span', attrs) do
           # highlight missing action item status updates
-          pending = Pending.find_status(action)
           if pending
             _span "Status: "
             _em.span.commented "#{pending.status}\n"
@@ -133,9 +136,8 @@ class ActionItems < React
       action[attr.name[5..-1]] = attr.value if attr.name.start_with? 'data-'
     end
 
-    # apply any pending updates to this action
-    pending = Pending.find_status(action)
-    action.text = pending.action if pending
+    # unindent action
+    action.status.gsub!(/\n {14}/, "\n")
 
     # set baseline to current value
     action.baseline = action.status
