@@ -33,13 +33,13 @@ class Keyboard
       if event.keyCode == 37 # '<-'
         link = ~"a[rel=prev]"[0]
         if link
-          Main.navigate link.getAttribute('href').sub(%r{/\w+/\.\.}, '')
+          link.click()
           return false
         end
       elsif event.keyCode == 39 # '->'
         link = ~"a[rel=next]"[0]
         if link
-          Main.navigate link.getAttribute('href').sub(%r{/\w+/\.\.}, '')
+          link.click()
           return false
         end
       elsif event.keyCode == 13 # 'enter'
