@@ -13,10 +13,10 @@ module ASF
     @config[:svn] ||= ['/home/whimsysvn/svn/*']
 
     # add libraries to RUBYLIB, load path
-    (@config[:lib] || []).each do |lib|
+    (@config[:lib] || []).reverse.each do |lib|
       next unless File.exist? lib
-      ENV['RUBYLIB']=(ENV['RUBYLIB'].to_s.split(':')+[lib]).uniq.join(':')
-      $LOAD_PATH << lib unless $LOAD_PATH.include? lib
+      ENV['RUBYLIB']=([lib] + ENV['RUBYLIB'].to_s.split(':')).uniq.join(':')
+      $LOAD_PATH.unshift lib unless $LOAD_PATH.include? lib
     end
 
     def self.get(value)
