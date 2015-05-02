@@ -5,7 +5,8 @@
 # redirect root to latest agenda
 get '/' do
   agenda = dir('board_agenda_*.txt').sort.last
-  redirect to("/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/")
+  response.headers['Location'] = "#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/"
+  status 302
 end
 
 # all agenda pages
@@ -14,10 +15,16 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   pass unless AgendaCache.parse agenda, :quick
 
   @base = (env['SCRIPT_URL']||env['PATH_INFO']).chomp(path).untaint
+  if env['HTTP_X_WUNDERBAR_BASE']
+    @base = File.join(env['HTTP_X_WUNDERBAR_BASE'], @base)
+  end
 
   if ENV['RACK_ENV'] == 'test'
     userid = 'test'
     username = 'Joe Tester'
+  elsif env.respond_to? :user
+    userid = env.user
+    username = ASF::Person.new(userid).public_name
   elsif env['REMOTE_USER']
     userid = env['REMOTE_USER']
     username = ASF::Person.new(userid).public_name
