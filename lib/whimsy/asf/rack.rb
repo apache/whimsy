@@ -17,7 +17,7 @@ module ASF
     }
 
     # decode HTTP authorization, when present
-    def self.decode(env, user)
+    def self.decode(env)
       class << env; attr_accessor :user, :password; end
 
       if env['HTTP_AUTHORIZATION']
@@ -25,25 +25,25 @@ module ASF
         env.user, env.password = Base64.decode64(env['HTTP_AUTHORIZATION'][
           /^Basic ([A-Za-z0-9+\/=]+)$/,1]).split(':',2)
       else
-        env.user = user
+        env.user = env['REMOTE_USER'] ||= ENV['USER'] || Etc.getpwuid.name
       end
+
+      ASF::Person.new(env.user)
     end
 
     # Simply 'use' the following class in config.ru to limit access
     # to the application to ASF committers
     class Committers < Rack::Auth::Basic
       def initialize(app)
-        super(app, "ASF Members and Officers", &proc {})
+        super(app, "ASF Committers", &proc {})
       end
 
       def call(env)
         authorized = ( ENV['RACK_ENV'] == 'test' )
 
-        user = env['REMOTE_USER'] ||= ENV['USER'] || Etc.getpwuid.name
-        authorized ||= ASF::Person.new(user)
+        authorized ||= ASF::Auth.decode(env).asf_committer?
 
         if authorized
-          ASF::Auth.decode(env, user)
           @app.call(env)
         else
           unauthorized
@@ -61,21 +61,19 @@ module ASF
       def call(env)
         authorized = ( ENV['RACK_ENV'] == 'test' )
 
-        user = env['REMOTE_USER'] ||= ENV['USER'] || Etc.getpwuid.name
-        person = ASF::Person.new(user)
+        person = ASF::Auth.decode(env)
 
-        authorized ||= DIRECTORS[user]
+        authorized ||= DIRECTORS[env.user]
         authorized ||= person.asf_member?
         authorized ||= ASF.pmc_chairs.include? person
 
         if not authorized
           accounting = ASF::Authorization.new('pit').
             find {|group, list| group=='accounting'}
-          authorized = (accounting and accounting.last.include? user)
+          authorized = (accounting and accounting.last.include? env.user)
         end
 
         if authorized
-          ASF::Auth.decode(env, user)
           @app.call(env)
         else
           unauthorized

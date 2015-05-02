@@ -2,38 +2,22 @@ require 'wunderbar'
 require 'ldap'
 
 module ASF
-
   # determine whether or not the LDAP API can be used
   def self.init_ldap
     @ldap = nil
 
-    config = ASF::Config.get(:ldap)
+    host = ASF::LDAP.host
 
-    unless config
-      conf = '/etc/ldap/ldap.conf'
-      if File.exist? conf
-        config = File.read(conf)[/^uri\s+(ldaps?:\/\/\S+?:\d+)/i, 1]
-      end
-    end
-
-    unless config
-      # https://www.pingmybox.com/dashboard?location=304
-      config = %w(ldaps://ldap1-us-west.apache.org:636
-        ldaps://ldap1-eu-central.apache.org:636
-        ldaps://ldap2-us-west.apache.org:636
-        ldaps://ldap1-us-east.apache.org:636).sample
-    end
-
-    Wunderbar.info "Connecting to LDAP server: #{config}"
+    Wunderbar.info "Connecting to LDAP server: #{host}"
 
     begin
-      uri = URI.parse(config)
+      uri = URI.parse(host)
       if uri.scheme == 'ldaps'
-        @ldap = LDAP::SSLConn.new(uri.host, uri.port)
+        @ldap = ::LDAP::SSLConn.new(uri.host, uri.port)
       else
-        @ldap = LDAP::Conn.new(uri.host, uri.port)
+        @ldap = ::LDAP::Conn.new(uri.host, uri.port)
       end
-    rescue LDAP::ResultError=>re
+    rescue ::LDAP::ResultError=>re
       Wunderbar.error "Error binding to LDAP server: message: ["+ re.message + "]"
     end
   end
@@ -47,7 +31,7 @@ module ASF
       "#{[attrs].flatten.join(' ')}"
     
     begin
-      result = @ldap.search2(base, LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
+      result = @ldap.search2(base, ::LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
     rescue
       result = []
     end
@@ -176,6 +160,10 @@ module ASF
       ASF::Member.status[name] or ASF.members.include? self
     end
 
+    def asf_committer?
+       ASF::Group.new('committers').include? self
+    end
+
     def banned?
       not attrs['loginShell'] or attrs['loginShell'].include? "/usr/bin/false"
     end
@@ -212,6 +200,15 @@ module ASF
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| find(cn)}
     end
 
+    def include?(person)
+      filter = "(&(cn=#{name})(memberUid=#{person.name}))"
+      if ASF.search_one(base, filter, 'cn').empty?
+        return false
+      else
+        return true
+      end
+    end
+
     def members
       ASF.search_one(base, "cn=#{name}", 'memberUid').flatten.
         map {|uid| Person.find(uid)}
@@ -241,6 +238,59 @@ module ASF
     def members
       ASF.search_one(base, "cn=#{name}", 'member').flatten.
         map {|uid| Person.find uid[/uid=(.*?),/,1]}
+    end
+  end
+
+  module LDAP
+    # select LDAP host
+    def self.host
+      # try whimsy config
+      host = ASF::Config.get(:ldap)
+
+      # check system configuration
+      unless host
+        conf = '/etc/ldap/ldap.conf'
+        if File.exist? conf
+        host = File.read(conf)[/^uri\s+(ldaps?:\/\/\S+?:\d+)/i, 1]
+        end
+      end
+
+      # if all else fails, pick one at random
+      unless host
+        # https://www.pingmybox.com/dashboard?location=304
+        host = %w(ldaps://ldap1-us-west.apache.org:636
+          ldaps://ldap1-eu-central.apache.org:636
+          ldaps://ldap2-us-west.apache.org:636
+          ldaps://ldap1-us-east.apache.org:636).sample
+      end
+
+      host
+    end
+
+    # query and extract cert from openssl output
+    def self.cert
+      host = LDAP.host[%r{//(.*?)(/|$)}, 1]
+      query = "openssl s_client -connect #{host} -showcerts"
+      output = `#{query} < /dev/null 2> /dev/null`
+      output[/^-+BEGIN.*?\n-+END[^\n]+\n/m]
+    end
+
+    # update /etc/ldap.conf. Usage:
+    #   sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
+    def self.configure
+      if not File.exist? "/etc/ldap/asf-ldap-client.pem"
+        File.write "/etc/ldap/asf-ldap-client.pem", self.cert
+      end
+
+      ldap_conf = '/etc/ldap/ldap.conf'
+      content = File.read(ldap_conf)
+      unless content.include? 'asf-ldap-client.pem'
+        content.gsub!(/^TLS_CACERT/, '# TLS_CACERT')
+        content += "TLS_CACERT /etc/ldap/asf-ldap-client.pem\n"
+        content += "uri #{LDAP.host}\n"
+        content += "base dc=apache,dc=org\n"
+        File.write(ldap_conf, content)
+      end
     end
   end
 end
