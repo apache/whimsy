@@ -107,7 +107,7 @@ class Events
 
   # master logic
   def self.master()
-    events = EventSource.new('/events')
+    events = EventSource.new('../events')
 
     # dispatch events received to all windows
     events.addEventListener :message do |event|
