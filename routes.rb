@@ -100,6 +100,15 @@ get '/json/jira' do
   _json { JSON.parse(response.body).map {|project| project['key']} }
 end
 
+# chat log
+get %r{/json/chat/(\d\d\d\d_\d\d_\d\d)} do |date|
+  log = "#{AGENDA_WORK}/board_agenda_#{date}-chat.yml"
+  if File.exist? log
+    _json YAML.load(File.read(log))
+  end
+end
+
+
 get '/events', provides: 'text/event-stream' do
   stream :keep_open do |out|
     events = Events.subscribe

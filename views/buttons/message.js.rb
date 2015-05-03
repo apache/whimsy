@@ -24,7 +24,7 @@ class Message < React
     event.stopPropagation()
     event.preventDefault()
 
-    post 'message', text: @message do
+    post 'message', agenda: Agenda.file, text: @message do
       @message = ''
     end
 
