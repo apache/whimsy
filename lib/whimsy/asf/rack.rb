@@ -25,8 +25,10 @@ module ASF
         env.user, env.password = Base64.decode64(env['HTTP_AUTHORIZATION'][
           /^Basic ([A-Za-z0-9+\/=]+)$/,1]).split(':',2)
       else
-        env.user = env['REMOTE_USER'] ||= ENV['USER'] || Etc.getpwuid.name
+        env.user = env['REMOTE_USER'] || ENV['USER'] || Etc.getpwuid.name
       end
+
+      env['REMOTE_USER'] ||= env.user
 
       ASF::Person.new(env.user)
     end
