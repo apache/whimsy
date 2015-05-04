@@ -44,13 +44,3 @@ end
 def dir(pattern, base=FOUNDATION_BOARD)
   Dir[File.join(base, pattern)].map {|name| File.basename name}
 end
-
-# aggressively cache minutes
-MINUTE_CACHE = Hash.new(mtime: 0)
-def MINUTE_CACHE.parse(file)
-  path = File.expand_path(file, AGENDA_WORK).untaint
-  self[file] = {
-    mtime: File.mtime(path),
-    parsed: YAML.load_file(path)
-  }
-end
