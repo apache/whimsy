@@ -105,6 +105,8 @@ get %r{/json/chat/(\d\d\d\d_\d\d_\d\d)} do |date|
   log = "#{AGENDA_WORK}/board_agenda_#{date}-chat.yml"
   if File.exist? log
     _json YAML.load(File.read(log))
+  else
+    _json []
   end
 end
 

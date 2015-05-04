@@ -3,6 +3,10 @@
 #
 
 class Backchannel < React
+  def initialize
+    @welcome = 'Loading messages'
+  end
+
   # place a message input field in the buttons area
   def self.buttons()
     return [{button: Message}]
@@ -19,7 +23,9 @@ class Backchannel < React
         toLocaleDateString({}, month: 'short', day: 'numeric', year: 'numeric')
     end
 
-    unless Server.backchannel.empty?
+    if Server.backchannel.empty?
+      _em @welcome
+    else
       i = 0
 
       # group messages by date
@@ -48,6 +54,7 @@ class Backchannel < React
 
     fetch "chat/#{Agenda.file[/\d[\d_]+/]}", :json do |chat|
       Server.backchannel = Server.backchannel.concat(chat)
+      @welcome = 'No messages found.'
       Main.refresh()
     end
   end
