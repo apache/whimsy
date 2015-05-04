@@ -41,7 +41,8 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     pending: Pending.get(userid),
     username: username,
     firstname: username.split(' ').first.downcase,
-    initials: username.gsub(/[^A-Z]/, '').downcase
+    initials: username.gsub(/[^A-Z]/, '').downcase,
+    online: Events.present
   }
 
   @page = {
@@ -110,11 +111,11 @@ get %r{/json/chat/(\d\d\d\d_\d\d_\d\d)} do |date|
   end
 end
 
-
+# event stream for server sent events (a.k.a EventSource)
 get '/events', provides: 'text/event-stream' do
   stream :keep_open do |out|
-    events = Events.subscribe
-    out.callback {events << :exit}
+    events = Events.subscribe(env.user)
+    out.callback {events.unsubscribe}
 
     loop do
       event = events.pop
@@ -123,7 +124,6 @@ get '/events', provides: 'text/event-stream' do
       elsif event == :heartbeat
         out << ":\n"
       elsif event == :exit
-        events.unsubscribe
         out.close
         break
       else
@@ -132,4 +132,3 @@ get '/events', provides: 'text/event-stream' do
     end
   end
 end
-

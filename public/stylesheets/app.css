@@ -141,6 +141,10 @@ input[type=submit] {
   width: 14em
 }
 
+.nav .online li {
+  padding-left: 1em;
+}
+
 pre {
   background-color: #FFF;
   border: none
@@ -281,10 +285,21 @@ dl.chatlog dt {
   color: green;
 }
 
+dl.chatlog dt.info {
+  font-weight: normal;
+  font-style: italic;
+}
+
 dl.chatlog dt:after {
   content: ":";
+  font-style: normal;
+  font-weight: bold;
 }
 
 dl.chatlog dd {
   padding: 0 1em 0 8.5em;
+}
+
+dl.chatlog dd.info {
+  font-style: italic;
 }

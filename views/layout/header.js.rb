@@ -19,7 +19,7 @@ class Header < React
           end
         end
 
-        # 'info' dropdown
+        # 'info'/'online' dropdown
         #
         if @@item.attach
           _li.dropdown do
@@ -62,6 +62,18 @@ class Header < React
                   _dd { _a 'Statistics', href: @@item.stats }
                 end
               end
+            end
+          end
+
+        elsif @@item.online
+          _li.dropdown do
+            _a.dropdown_toggle.info! data_toggle: "dropdown" do
+              _ 'online'
+              _b.caret
+            end
+
+            _ul.online.dropdown_menu @@item.online do |id|
+              _li id
             end
           end
         end

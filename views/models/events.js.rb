@@ -133,6 +133,16 @@ class Events
 
     if message.type == :chat
       Server.backchannel << message
+    elsif message.type == :arrive
+      Server.backchannel << {type: :info, user: message.user, 
+        timestamp: message.timestamp, text: 'joined the chat'}
+      Server.online = message.present
+    elsif message.type == :depart
+      Server.backchannel << {type: :info, user: message.user, 
+        timestamp: message.timestamp, text: 'left the chat'}
+      Server.online = message.present
+    else
+      console.log message.inspect
     end
 
     Main.refresh()

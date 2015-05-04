@@ -39,8 +39,10 @@ class Backchannel < React
             message = Server.backchannel[i]
             break if date != datefmt(message.timestamp)
             _dt message.user, key: "t#{message.timestamp}",
-              title: Date.new(message.timestamp).toLocaleTimeString()
-            _dd message.text, key: "d#{message.timestamp}"
+              title: Date.new(message.timestamp).toLocaleTimeString(),
+              class: ('info' if message.type == :info)
+            _dd message.text, key: "d#{message.timestamp}",
+              class: ('info' if message.type == :info)
             i += 1
           end
         end

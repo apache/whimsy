@@ -5,15 +5,21 @@
 #
 
 class Events < Queue
-  @@subscriptions = []
+  attr_accessor :user
 
+  @@subscriptions = []
   @@restart = false
 
   # create a new subscription
-  def self.subscribe
+  def self.subscribe(user)
     self.hook_restart
-    events = Events.new
+    present = Events.present
+    events = Events.new(user)
     @@subscriptions << events
+    if not present.include? user
+      Events.post type: :arrive, user: user, present: Events.present,
+        timestamp: Time.now.to_f*1000
+    end
     events
   end
 
@@ -23,9 +29,25 @@ class Events < Queue
     event
   end
 
+  # list of users present
+  def self.present
+    @@subscriptions.map(&:user).uniq.sort
+  end
+
+  # capture user information associated with this queue
+  def initialize(user)
+    @user = user
+    super()
+  end
+
   # remove a subscription
   def unsubscribe
     @@subscriptions.delete self
+    present = Events.present
+    if not present.include? @user
+      Events.post type: :depart, user: @user, present: present,
+        timestamp: Time.now.to_f*1000
+    end
   end
 
   # When restart signal is detected, close all open connections
