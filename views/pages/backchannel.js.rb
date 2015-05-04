@@ -14,9 +14,31 @@ class Backchannel < React
       _h1 'Agenda Backchannel'
     end
 
-    _dl.chatlog Server.backchannel do |message|
-      _dt message.user
-      _dd message.text
+    datefmt = proc do |timestamp|
+      return Date.new(timestamp).
+        toLocaleDateString({}, month: 'short', day: 'numeric', year: 'numeric')
+    end
+
+    unless Server.backchannel.empty?
+      i = 0
+
+      # group messages by date
+      while i < Server.backchannel.length
+        date = datefmt(Server.backchannel[i].timestamp)
+        _h5 date unless i == 0 and date == datefmt(Date.new().valueOf())
+
+        # group of messages that share the same (local) date
+        _dl.chatlog do
+          while i < Server.backchannel.length
+            message = Server.backchannel[i]
+            break if date != datefmt(message.timestamp)
+            _dt message.user, key: "t#{message.timestamp}",
+              title: Date.new(message.timestamp).toLocaleTimeString()
+            _dd message.text, key: "d#{message.timestamp}"
+            i += 1
+          end
+        end
+      end
     end
   end
 

@@ -64,6 +64,7 @@ RUN gem install bundler
 ADD Gemfile /home/agenda/ 
 WORKDIR /home/agenda
 RUN bundle install
+RUN ruby -r whimsy/asf -e "ASF::LDAP.configure"
 ADD package.json /home/agenda/
 RUN npm install
 ADD . /home/agenda
