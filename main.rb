@@ -8,6 +8,7 @@ require 'whimsy/asf/agenda'
 
 require 'wunderbar/sinatra'
 require 'wunderbar/react'
+require 'wunderbar/eventsource'
 require 'wunderbar/bootstrap/theme'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
