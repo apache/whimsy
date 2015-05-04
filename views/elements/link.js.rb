@@ -18,6 +18,7 @@ class Link < React
     for attr in props
       @attrs[attr] = props[attr] unless attr == 'text'
     end
+    @attrs.href = props.href.gsub(%r{(^|/)\w+/\.\.(/|$)}, '$1')
   end
 
   def render
@@ -25,7 +26,7 @@ class Link < React
   end
 
   def click(event)
-    href = event.target.getAttribute('href').sub(%r{/\w+/\.\.}, '')
+    href = event.target.getAttribute('href')
 
     if href =~ %r{^(\.|(shepherd/)?(queue/)?[-\w]+)$}
       event.stopPropagation()
