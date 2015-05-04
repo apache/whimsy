@@ -24,9 +24,15 @@ class Pending
   end
 
   # update a work file
-  def self.put(user, update)
+  def self.update(user, agenda=nil)
+    pending = self.get(user, agenda)
+
+    yield pending
+
     File.open(work_file(user), 'w') do |file|
-      file.write YAML.dump(update)
+      file.write YAML.dump(pending)
     end
+
+    pending
   end
 end

@@ -2,18 +2,15 @@
 # Add comments to an agenda item
 #
 
-pending = Pending.get(env.user, @agenda)
-pending['initials'] = @initials
-pending['agenda'] = @agenda
+Pending.update(env.user, @agenda) do |pending|
+  pending['initials'] = @initials
+  pending['agenda'] = @agenda
 
-comments = pending['comments']
+  comments = pending['comments']
 
-if not @comment or @comment.strip.empty?
-  comments.delete @attach
-else
-  comments[@attach] = @comment
+  if not @comment or @comment.strip.empty?
+    comments.delete @attach
+  else
+    comments[@attach] = @comment
+  end
 end
-
-Pending.put(env.user, pending)
-
-pending

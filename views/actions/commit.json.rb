@@ -107,10 +107,9 @@ Agenda.update(agenda_file, @message) do |agenda|
 end
 
 # backup pending file, then clear approved and comments lists
-pending = Pending.get(env.user)
-File.rename "#{AGENDA_WORK}/#{user}.yml", "#{AGENDA_WORK}/#{user}.bak"
-pending['approved'].clear
-pending['comments'].clear
-pending['status'].clear
-Pending.put(env.user, pending)
-_pending pending
+_pending Pending.update(env.user) {|pending|
+  File.rename "#{AGENDA_WORK}/#{user}.yml", "#{AGENDA_WORK}/#{user}.bak"
+  pending['approved'].clear
+  pending['comments'].clear
+  pending['status'].clear
+}

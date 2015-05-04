@@ -2,10 +2,6 @@
 # Mark a set of comments as seen
 #
 
-pending = Pending.get(env.user, @agenda)
-
-pending['seen'] = @seen
-
-Pending.put(env.user, pending)
-
-pending
+Pending.update(env.user, @agenda) do |pending|
+  pending['seen'] = @seen
+end
