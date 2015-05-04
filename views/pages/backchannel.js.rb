@@ -31,7 +31,7 @@ class Backchannel < React
       # group messages by date
       while i < Server.backchannel.length
         date = datefmt(Server.backchannel[i].timestamp)
-        _h5 date unless i == 0 and date == datefmt(Date.new().valueOf())
+        _h5.chatlog date unless i == 0 and date == datefmt(Date.new().valueOf())
 
         # group of messages that share the same (local) date
         _dl.chatlog do
@@ -52,10 +52,10 @@ class Backchannel < React
 
   # on initial display, fetch backlog
   def componentDidMount()
-    return unless Server.backchannel.empty?
+    return if Server.backchannel.any? {|item| item.type == :chat}
 
     fetch "chat/#{Agenda.file[/\d[\d_]+/]}", :json do |chat|
-      Server.backchannel = Server.backchannel.concat(chat)
+      Server.backchannel = chat.concat(Server.backchannel)
       @welcome = 'No messages found.'
       Main.refresh()
     end

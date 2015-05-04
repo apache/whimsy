@@ -271,6 +271,10 @@ footer span input {
   width: 95%
 }
 
+h5.chatlog {
+  padding-left: 2em;
+}
+
 /* compact definition list (backchannel) */
 dl.chatlog {
   padding: 0.5em;
