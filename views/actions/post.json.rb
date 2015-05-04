@@ -7,7 +7,7 @@ if @attach == '7?'
   @message = "Post Special Order 7X: #{@title}"
 end
 
-AgendaCache.update(@agenda, @message) do |agenda|
+Agenda.update(@agenda, @message) do |agenda|
 
   # quick parse of agenda
   parsed = ASF::Board::Agenda.parse(agenda, true)

@@ -8,7 +8,7 @@ else
   message = "I plan to attend the meeting."
 end
 
-AgendaCache.update(@agenda, message) do |agenda|
+Agenda.update(@agenda, message) do |agenda|
 
   directors = agenda[/^ +Directors.*?:\n\n.*?\n\n +Directors.*?:\n\n.*?\n\n/m]
   officers = agenda[/^ +Executive.*?:\n\n.*?\n\n +Executive.*?:\n\n.*?\n\n/m]

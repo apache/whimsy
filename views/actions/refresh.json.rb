@@ -6,4 +6,4 @@
 _.system ['svn', 'update', FOUNDATION_BOARD]
 
 # return a parsed version of the agenda in question
-AgendaCache.update(@agenda, nil) {}
+Agenda.update(@agenda, nil) {}

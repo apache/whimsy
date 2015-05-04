@@ -152,7 +152,7 @@ feature 'server actions' do
 
     it "should post/edit a report" do
       @agenda = 'board_agenda_2015_02_18.txt'
-      @parsed = AgendaCache.parse @agenda, :quick
+      @parsed = Agenda.parse @agenda, :quick
       poi = @parsed.find {|item| item['title'] == 'POI'}
       @attach = poi[:attach]
       @digest = poi['digest']
@@ -203,7 +203,7 @@ feature 'server actions' do
     File.write('test/work/data/test.yml', @test_data)
 
     @cleanup.each do |file| 
-      AgendaCache[File.basename(file)].replace :mtime=>0
+      Agenda[File.basename(file)].replace :mtime=>0
     end
   end
 

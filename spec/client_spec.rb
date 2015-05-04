@@ -13,7 +13,7 @@ describe "client", type: :feature, server: :react do
   #
   describe "agenda model" do
     it "should link pages in agenda traversal order" do
-      @parsed = AgendaCache.parse 'board_agenda_2015_02_18.txt', :quick
+      @parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
 
       on_react_server do
         agenda = Agenda.load(@parsed)

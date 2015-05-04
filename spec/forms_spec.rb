@@ -50,7 +50,7 @@ describe "forms", type: :feature, server: :react do
   #
   describe "post form" do
     it "should indicate when a reflow is needed" do
-      parsed = AgendaCache.parse 'board_agenda_2015_02_18.txt', :quick
+      parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
       @item = parsed.find {|item| item['title'] == 'Executive Vice President'}
       on_react_server do
         item = Agenda.new(@item)
@@ -65,7 +65,7 @@ describe "forms", type: :feature, server: :react do
     end
 
     it "should perform a reflow" do
-      parsed = AgendaCache.parse 'board_agenda_2015_02_18.txt', :quick
+      parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
       @item = parsed.find {|item| item['title'] == 'Executive Vice President'}
       on_react_server do
         item = Agenda.new(@item)
@@ -87,7 +87,7 @@ describe "forms", type: :feature, server: :react do
   #
   describe "commit form" do
     it "should generate a default commit message" do
-      @parsed = AgendaCache.parse 'board_agenda_2015_02_18.txt', :quick
+      @parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
       on_react_server do
         Agenda.load(@parsed)
         server = {pending: {approved: ['7'], comments: {I: 'Nice report!'}}}

@@ -6,7 +6,7 @@ require_relative 'spec_helper'
 
 feature 'parse' do
   it "should parse an agenda file" do
-    parsed = AgendaCache.parse('board_agenda_2015_02_18.txt', :quick)
+    parsed = Agenda.parse('board_agenda_2015_02_18.txt', :quick)
 
     abdera = parsed.find {|item| item['title'] == 'Abdera'}
     expect(abdera[:attach]).to eq("A")

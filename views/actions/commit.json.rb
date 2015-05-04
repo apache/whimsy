@@ -8,7 +8,7 @@ updates = YAML.load_file("#{AGENDA_WORK}/#{user}.yml")
 
 agenda_file = updates['agenda']
 
-AgendaCache.update(agenda_file, @message) do |agenda|
+Agenda.update(agenda_file, @message) do |agenda|
   approved = updates['approved']
   comments = updates['comments']
   initials = @initials

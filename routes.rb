@@ -12,7 +12,7 @@ end
 # all agenda pages
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   agenda = "board_agenda_#{date.gsub('-','_')}.txt"
-  pass unless AgendaCache.parse agenda, :quick
+  pass unless Agenda.parse agenda, :quick
 
   @base = (env['SCRIPT_URL']||env['PATH_INFO']).chomp(path).untaint
   if env['HTTP_X_WUNDERBAR_BASE']
@@ -49,8 +49,8 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     path: path,
     query: params['q'],
     agenda: agenda,
-    parsed: AgendaCache[agenda][:parsed],
-    etag: AgendaCache[agenda][:etag]
+    parsed: Agenda[agenda][:parsed],
+    etag: Agenda[agenda][:etag]
   }
 
   _html :'main'
@@ -64,15 +64,15 @@ end
 # updates to agenda data
 get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
   file = "board_agenda_#{file.gsub('-','_')}.txt"
-  pass unless AgendaCache.parse file, :full
+  pass unless Agenda.parse file, :full
 
   begin
     _json do
-      last_modified AgendaCache[file][:mtime]
-      AgendaCache[file][:parsed]
+      last_modified Agenda[file][:mtime]
+      Agenda[file][:parsed]
     end
   ensure
-    AgendaCache[file][:etag] = headers['ETag']
+    Agenda[file][:etag] = headers['ETag']
   end
 end
 

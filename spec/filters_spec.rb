@@ -3,7 +3,7 @@ require_relative 'react_server'
 
 describe "filters", type: :feature, server: :react do
   before :all do
-    @parsed = AgendaCache.parse 'board_agenda_2015_02_18.txt', :quick
+    @parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
   end
 
   #
