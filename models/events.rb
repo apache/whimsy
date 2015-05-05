@@ -82,7 +82,7 @@ class Events < Queue
   # As some TCP/IP implementations will close idle sockets after as little
   # as 30 seconds, sent out a heartbeat every 25 seconds.  Due to limitations
   # of some versions of Ruby (2.0, 2.1), this is lowered to every 5 seconds
-  # in development mode.
+  # in development mode to allow for quicker restarting after a trap/signal.
   Thread.new do
     loop do
       sleep(ENV['RACK_ENV'] == 'development' ? 5 : 25)

@@ -11,6 +11,12 @@ class Agenda
     @@cache[file]
   end
 
+  def self.update_cache(file, path, contents, quick)
+    parsed = ASF::Board::Agenda.parse(contents, quick)
+    @@cache[file] = {mtime: (quick ? -1 : File.mtime(path)), parsed: parsed}
+    Events.post type: :agenda, file: file unless quick
+  end
+
   def self.parse(file, mode)
     # for quick mode, anything will do
     mode = :quick if ENV['RACK_ENV'] == 'test'
@@ -24,10 +30,7 @@ class Agenda
     if self[file][:mtime] != File.mtime(path)
       @@mutex.synchronize do
         if self[file][:mtime] != File.mtime(path)
-          @@cache[file] = {
-            mtime: mode == :quick ? -1 : File.mtime(path),
-            parsed: ASF::Board::Agenda.parse(File.read(path), mode == :quick)
-          }
+          self.update_cache(file, path, File.read(path), mode == :quick)
         end
       end
 
@@ -92,10 +95,7 @@ class Agenda
 
       # reparse the file if the output changed
       if output != baseline or mtime != File.mtime(path)
-        @@cache[file] = {
-          mtime: File.mtime(path),
-          parsed: ASF::Board::Agenda.parse(output, ENV['RACK_ENV'] == 'test')
-        }
+        self.update_cache(file, path, output, ENV['RACK_ENV'] == 'test')
       end
 
       # return the result

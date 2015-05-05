@@ -6,6 +6,7 @@
 
 class Agenda
   @@index = []
+  @@etag = nil
 
   # (re)-load an agenda, creating instances for each item, and linking
   # each instance to their next and previous items.
@@ -46,6 +47,26 @@ class Agenda
 
     Main.refresh()
     return @@index
+  end
+
+  # fetch agenda if etag is not supplied
+  def self.fetch(etag)
+    if etag
+      @@etag = etag
+    else
+      xhr = XMLHttpRequest.new()
+      xhr.open('GET', "../#{@@date}.json", true)
+      xhr.setRequestHeader('If-None-Match', @@etag) if @@etag
+      xhr.responseType = 'text'
+      def xhr.onreadystatechange()
+        if xhr.readyState == 4 and xhr.status == 200 and xhr.responseText != ''
+          @@etag = xhr.getResponseHeader('ETag')
+          Agenda.load(JSON.parse(xhr.responseText))
+          Main.refresh()
+        end
+      end
+      xhr.send()
+    end
   end
 
   # return the entire agenda
@@ -303,4 +324,8 @@ class Agenda
       'reviewed'
     end
   end
+end
+
+Events.subscribe :agenda do |message|
+  Agenda.fetch(nil) if message.file == Agenda.file
 end

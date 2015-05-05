@@ -9,16 +9,6 @@
 #
 
 class Main < React
-
-  # initialize polling state
-  def initialize
-    @poll = {
-      link: "../#{@@page.date}.json",
-      etag: @@page.etag,
-      interval: 10_000
-    }
-  end
-
   # common layout for all pages: header, main, footer, and forms
   def render
     if not @item
@@ -126,9 +116,8 @@ class Main < React
     # do an initial resize
     window.onresize()
 
-    # if agenda is stale, fetch immediately; start polling agenda
-    self.fetchAgenda() unless @poll.etag
-    setInterval self.fetchAgenda, @poll.interval
+    # if agenda is stale, fetch immediately; otherwise save etag
+    Agenda.fetch(@@page.etag)
 
     # start backchannel
     Events.monitor()
@@ -137,21 +126,5 @@ class Main < React
   # after each subsequent re-rendering, resize main window
   def componentDidUpdate()
     window.onresize()
-  end
-
-  # fetch agenda
-  def fetchAgenda()
-    xhr = XMLHttpRequest.new()
-    xhr.open('GET', @poll.link, true)
-    xhr.setRequestHeader('If-None-Match', @poll.etag) if @poll.etag
-    xhr.responseType = 'text'
-    def xhr.onreadystatechange()
-      if xhr.readyState == 4 and xhr.status == 200 and xhr.responseText != ''
-        @poll.etag = xhr.getResponseHeader('ETag')
-        Agenda.load(JSON.parse(xhr.responseText))
-        self.route(history.state.path, history.state.query)
-      end
-    end
-    xhr.send()
   end
 end
