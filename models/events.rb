@@ -25,7 +25,11 @@ class Events < Queue
 
   # post an event to all subscribers
   def self.post(event)
-    @@subscriptions.each {|subscriber| subscriber << event}
+    @@subscriptions.each do |subscriber| 
+      if not event[:private] or event[:private] == subscriber.user
+        subscriber << event
+      end
+    end
     event
   end
 

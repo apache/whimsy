@@ -33,6 +33,8 @@ class Pending
       file.write YAML.dump(pending)
     end
 
+    Events.post type: :pending, value: pending, private: user
+
     pending
   end
 end

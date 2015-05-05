@@ -55,3 +55,7 @@ class Pending
     return match
   end
 end
+
+Events.subscribe :pending do |message|
+  Pending.load(message.value)
+end
