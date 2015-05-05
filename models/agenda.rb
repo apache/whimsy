@@ -81,8 +81,14 @@ class Agenda
 
         # if the output differs, update and commit the file in question
         if output != input
-          IO.write(path, output)
-          _.system ['svn', 'commit', auth, path, '-m', message]
+          begin
+            @@listener.pause
+            IO.write(path, output)
+            _.system ['svn', 'commit', auth, path, '-m', message]
+            @@seen[path] = File.mtime(path)
+          ensure
+            @@listener.unpause
+          end
         end
       end
 
@@ -105,4 +111,18 @@ class Agenda
   ensure
     FileUtils.rm_rf dir
   end
+
+  # listen for changes to agenda files
+  @@listener = Listen.to(FOUNDATION_BOARD) do |modified, added, removed|
+    modified.each do |path|
+      next if File.exist?(path) and @@seen[path] == File.mtime(path)
+      file = File.basename(path)
+      if file =~ /^board_agenda_[\d_]+.txt$/
+        self.update_cache(file, path, File.read(path), false)
+      end
+    end
+  end
+
+  @@seen = {}
+  @@listener.start
 end

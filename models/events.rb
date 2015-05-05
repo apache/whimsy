@@ -26,7 +26,10 @@ class Events < Queue
   # post an event to all subscribers
   def self.post(event)
     @@subscriptions.each do |subscriber| 
-      if not event[:private] or event[:private] == subscriber.user
+      if
+        not Hash === event or not event[:private] or # broadcast
+        event[:private] == subscriber.user           # narrowcast
+      then
         subscriber << event
       end
     end

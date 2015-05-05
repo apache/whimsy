@@ -6,6 +6,7 @@ class Pending
 
   # fetch and parse a work file
   def self.get(user, agenda=nil)
+
     file = work_file(user)
     response = (File.exist?(file) ? YAML.load_file(file) : {})
 
@@ -29,12 +30,33 @@ class Pending
 
     yield pending
 
-    File.open(work_file(user), 'w') do |file|
-      file.write YAML.dump(pending)
+    begin
+      @@listener.pause
+      work = work_file(user)
+      File.open(work, 'w') do |file|
+        file.write YAML.dump(pending)
+      end
+      @@seen[work] = File.mtime(work)
+    ensure
+      @@listener.unpause
     end
 
     Events.post type: :pending, value: pending, private: user
 
     pending
   end
+
+  # listen for changes to pending files
+  @@listener = Listen.to(AGENDA_WORK) do |modified, added, removed|
+    modified.each do |path|
+      next if File.exist?(path) and @@seen[path] == File.mtime(path)
+      file = File.basename(path)
+      if file =~ /^(\w+)\.yml$/
+        Events.post type: :pending, private: $1, value: YAML.load_file(path)
+      end
+    end
+  end
+
+  @@seen = {}
+  @@listener.start
 end

@@ -13,16 +13,11 @@ require 'wunderbar/bootstrap/theme'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 
+require 'listen'
 require 'yaml'
 require 'thread'
 require 'net/http'
 require 'shellwords'
-
-require_relative './routes'
-require_relative './models/pending'
-require_relative './models/events'
-require_relative './models/agenda'
-require_relative './helpers/string'
 
 # determine where relevant data can be found
 if ENV['RACK_ENV'] == 'test'
@@ -34,6 +29,12 @@ else
   STDERR.puts "* SVN board  : #{FOUNDATION_BOARD}"
   STDERR.puts "* Agenda work: #{AGENDA_WORK}"
 end
+
+require_relative './routes'
+require_relative './models/pending'
+require_relative './models/events'
+require_relative './models/agenda'
+require_relative './helpers/string'
 
 # if AGENDA_WORK doesn't exist yet, make it
 if not Dir.exist? AGENDA_WORK

@@ -7,6 +7,7 @@ gem 'sinatra'
 gem 'nokogumbo'
 gem 'execjs', ('<2.5.1' if RUBY_VERSION =~ /^1/)
 gem 'whimsy-asf', '>= 0.0.14'
+gem 'listen'
 
 group :test do
   gem 'rspec'
@@ -16,5 +17,4 @@ end
 
 group :demo do
   gem 'puma'
-  gem 'listen'
 end
