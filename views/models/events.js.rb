@@ -32,6 +32,12 @@
 #
 
 class Events
+  @@subscriptions = {}
+
+  def self.subscribe event, &block
+    @@subscriptions[event] ||= []
+    @@subscriptions[event] << block
+  end
 
   def self.monitor()
     # determine localStorage variable prefix based on url up to the date
@@ -128,21 +134,11 @@ class Events
 
   # dispatch logic (common to all tabs)
   def self.dispatch(data)
-    # self.log data
     message = JSON.parse(data)
+    self.log message
 
-    if message.type == :chat
-      Server.backchannel << message
-    elsif message.type == :arrive
-      Server.backchannel << {type: :info, user: message.user, 
-        timestamp: message.timestamp, text: 'joined the chat'}
-      Server.online = message.present
-    elsif message.type == :depart
-      Server.backchannel << {type: :info, user: message.user, 
-        timestamp: message.timestamp, text: 'left the chat'}
-      Server.online = message.present
-    else
-      console.log message.inspect
+    if @@subscriptions[message.type]
+      @@subscriptions[message.type].each {|sub| sub(message)}
     end
 
     Main.refresh()
