@@ -300,6 +300,10 @@ dl.chatlog dt:after {
   font-weight: bold;
 }
 
+dl.chatlog dt.info:after {
+  content: "";
+}
+
 dl.chatlog dd {
   padding: 0 1em 0 8.5em;
 }

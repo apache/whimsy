@@ -25,7 +25,6 @@ class Message < React
     event.preventDefault()
 
     post 'message', agenda: Agenda.file, text: @message do |message|
-      message.type = :chat
       Chat.add message
       @message = ''
     end

@@ -28,6 +28,13 @@ Events.subscribe :chat do |message|
   end
 end
 
+Events.subscribe :info do |message|
+  if message.agenda == Agenda.file
+    message.delete agenda
+    Chat.add message
+  end
+end
+
 Events.subscribe :arrive do |message|
   Server.online = message.present
   Chat.add type: :info, user: message.user, timestamp: message.timestamp,
