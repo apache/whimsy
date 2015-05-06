@@ -137,6 +137,8 @@ class Post < React
 
   # determine if the form is ready to be submitted
   def ready()
+    return false if @disabled
+
     if @@button.text == 'add resolution'
       return @report != '' and @title != ''
     else
@@ -147,6 +149,8 @@ class Post < React
   # when save button is pushed, post comment and dismiss modal when complete
 
   def submit(event)
+    @edited = false
+
     if @@button.text == 'add resolution'
       data = {
         agenda: Agenda.file,
