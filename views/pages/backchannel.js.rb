@@ -38,16 +38,23 @@ class Backchannel < React
           while i < Chat.log.length
             message = Chat.log[i]
             break if date != datefmt(message.timestamp)
-            _dt message.user, key: "t#{message.timestamp}",
-              title: Date.new(message.timestamp).toLocaleTimeString(),
-              class: ('info' if message.type == :info)
-            _dd message.text, key: "d#{message.timestamp}",
-              class: ('info' if message.type == :info)
+            msgtype = ('info' if message.type == :info)
+            _dt message.user, key: "t#{message.timestamp}", class: msgtype,
+              title: Date.new(message.timestamp).toLocaleTimeString()
+            _dd key: "d#{message.timestamp}", class: msgtype do
+              _Text raw: message.text, filters: [hotlink, self.mention]
+            end
             i += 1
           end
         end
       end
     end
+  end
+
+  # highlight mentions of my id
+  def mention(text)
+    return text.gsub(/\b(#{Server.userid})\b/,
+      "<span class=mention>$1</span>")
   end
 
   # on initial display, fetch backlog

@@ -313,3 +313,8 @@ dl.chatlog dd {
 dl.chatlog dd.info {
   font-style: italic;
 }
+
+.chatlog .mention {
+  font-weight: bold;
+  color: #F00;
+}

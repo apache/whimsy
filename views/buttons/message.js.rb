@@ -24,9 +24,11 @@ class Message < React
     event.stopPropagation()
     event.preventDefault()
 
-    post 'message', agenda: Agenda.file, text: @message do |message|
-      Chat.add message
-      @message = ''
+    if @message
+      post 'message', agenda: Agenda.file, text: @message do |message|
+        Chat.add message
+        @message = ''
+      end
     end
 
     return false
