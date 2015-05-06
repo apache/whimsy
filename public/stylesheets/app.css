@@ -273,11 +273,13 @@ footer span input {
 
 h5.chatlog {
   padding-left: 2em;
+  color: #A4A;
 }
 
 /* compact definition list (backchannel) */
 dl.chatlog {
   padding: 0.5em;
+  margin-bottom: 0;
 }
 
 dl.chatlog dt {
