@@ -72,13 +72,13 @@ class Backchannel < React
 
   # determine if we are at the bottom of the page
   def componentWillUpdate()
-    self.shouldScrollBottom = (window.innerHeight >=
-      document.documentElement.scrollHeight-document.documentElement.scrollTop)
+    self.atBottom = (window.pageYOffset + window.innerHeight >=
+      document.documentElement.scrollHeight)
   end
 
   # if we were at the bottom of the page before the update, once again
   # scroll to the bottom of the page
   def componentDidUpdate()
-    window.scrollTo(0, document.body.scrollHeight) if self.shouldScrollBottom
+    window.scrollTo(0, document.documentElement.scrollHeight) if self.atBottom
   end
 end
