@@ -59,6 +59,8 @@ class Backchannel < React
 
   # on initial display, fetch backlog
   def componentDidMount()
+    self.shouldScrollBottom = true
+
     return if Chat.log.any? {|item| item.type == :chat}
 
     fetch "chat/#{Agenda.file[/\d[\d_]+/]}", :json do |messages|
@@ -68,8 +70,15 @@ class Backchannel < React
     end
   end
 
-  # after update, scroll to the bottom of the page
+  # determine if we are at the bottom of the page
+  def componentWillUpdate()
+    self.shouldScrollBottom = (window.innerHeight >=
+      document.documentElement.scrollHeight-document.documentElement.scrollTop)
+  end
+
+  # if we were at the bottom of the page before the update, once again
+  # scroll to the bottom of the page
   def componentDidUpdate()
-    window.scrollTo(0, document.body.scrollHeight)
+    window.scrollTo(0, document.body.scrollHeight) if self.shouldScrollBottom
   end
 end
