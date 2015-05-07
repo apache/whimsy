@@ -1,10 +1,25 @@
 class Chat
   @@log = []
+  Chat.backlog_fetched = false
 
+  # as it says: fetch backlog of chat messages from the server
+  def self.fetch_backlog()
+    console.log Chat.backlog_fetched
+    return if Chat.backlog_fetched
+
+    fetch "chat/#{Agenda.file[/\d[\d_]+/]}", :json do |messages|
+      messages.each {|message| Chat.add message}
+      Chat.backlog_fetched = true
+      Main.refresh()
+    end
+  end
+
+  # return the chat log
   def self.log
     @@log
   end
 
+  # add an entry to the chat log
   def self.add(entry)
     if @@log.empty? or @@log.last.timestamp < entry.timestamp
       @@log << entry
@@ -20,6 +35,8 @@ class Chat
     end
   end
 end
+
+# subscriptions
 
 Events.subscribe :chat do |message|
   if message.agenda == Agenda.file

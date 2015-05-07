@@ -3,10 +3,6 @@
 #
 
 class Backchannel < React
-  def initialize
-    @welcome = 'Loading messages'
-  end
-
   # place a message input field in the buttons area
   def self.buttons()
     return [{button: Message}]
@@ -18,13 +14,17 @@ class Backchannel < React
       _h1 'Agenda Backchannel'
     end
 
+    # convert date into a localized string
     datefmt = proc do |timestamp|
       return Date.new(timestamp).
         toLocaleDateString({}, month: 'short', day: 'numeric', year: 'numeric')
     end
-
     if Chat.log.empty?
-      _em @welcome
+      if Chat.backlog_fetched
+        _em 'No messages found.'
+      else
+        _em 'Loading messages'
+      end
     else
       i = 0
 
@@ -60,14 +60,7 @@ class Backchannel < React
   # on initial display, fetch backlog
   def componentDidMount()
     self.shouldScrollBottom = true
-
-    return if Chat.log.any? {|item| item.type == :chat}
-
-    fetch "chat/#{Agenda.file[/\d[\d_]+/]}", :json do |messages|
-      messages.each {|message| Chat.add message}
-      @welcome = 'No messages found.'
-      Main.refresh()
-    end
+    Chat.fetch_backlog()
   end
 
   # determine if we are at the bottom of the page
