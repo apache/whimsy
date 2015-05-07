@@ -4,7 +4,6 @@ class Chat
 
   # as it says: fetch backlog of chat messages from the server
   def self.fetch_backlog()
-    console.log Chat.backlog_fetched
     return if Chat.backlog_fetched
 
     fetch "chat/#{Agenda.file[/\d[\d_]+/]}", :json do |messages|
