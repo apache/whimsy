@@ -26,6 +26,8 @@ class Link < React
   end
 
   def click(event)
+    return if event.ctrlKey or event.shiftKey
+
     href = event.target.getAttribute('href')
 
     if href =~ %r{^(\.|(shepherd/)?(queue/)?[-\w]+)$}
