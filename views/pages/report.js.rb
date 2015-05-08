@@ -47,6 +47,18 @@ class Report < React
       end
 
       _section do
+        if @@item.missing
+          posted = Posted.get(@@item.title)
+          unless posted.empty?
+            _h3.comments! 'Posted reports'
+            _ul posted do |post|
+              _li do
+                _a post.subject, href: post.link
+              end
+            end
+          end
+        end
+
         unless @@item.comments.empty?
           _h3.comments! 'Comments'
           @@item.comments.each do |comment|

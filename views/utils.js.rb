@@ -104,7 +104,12 @@ def fetch(target, type, &block)
     end
   end
 
-  xhr.open('GET', "../#{type}/#{target}", true)
+  if target =~ /^https?:/
+    xhr.open('GET', target, true)
+    xhr.setRequestHeader("Accept", "application/json") if type == :json
+  else
+    xhr.open('GET', "../#{type}/#{target}", true)
+  end
   xhr.responseType = type
   xhr.send()
 end

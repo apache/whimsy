@@ -24,6 +24,18 @@ class Shepherd < React
           first = false
         end
 
+        if item.missing
+          posted = Posted.get(item.title)
+          unless posted.empty?
+            _h4 'Posted reports'
+            _ul posted do |post|
+              _li do
+                _a post.subject, href: post.link
+              end
+            end
+          end
+        end
+
         # show associated comments
         _h4 'Comments' unless item.comments.empty?
         item.comments.each do |comment|
