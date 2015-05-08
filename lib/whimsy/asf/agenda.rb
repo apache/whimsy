@@ -71,7 +71,7 @@ class ASF::Board::Agenda
 
     # look for flags
     flagged_reports = Hash[@file[/ \d\. Committee Reports.*?\n\s+A\./m].
-      scan(/# Apache (.*?) \[(.*)\]/)]
+      scan(/# (.*?) \[(.*)\]/)]
 
     # cleanup text and comment whitespace, add flags
     @sections.each do |section, hash|
@@ -93,7 +93,7 @@ class ASF::Board::Agenda
 
       # add flags
       flags = flagged_reports[hash['title']]
-      hash['flags'] = flags.split(', ') if flags
+      hash['flagged_by'] = flags.split(', ') if flags
     end
 
     unless @quick
