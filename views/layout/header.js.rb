@@ -42,8 +42,13 @@ class Header < React
                 _dd @@item.shepherd
               end
 
+              if @@item.flagged_by and not @@item.flagged_by.empty?
+                _dt 'Flagged By'
+                _dd @@item.flagged_by.join(', ')
+              end
+
               if @@item.approved and not @@item.approved.empty?
-                _dt 'Approved'
+                _dt 'Approved By'
                 _dd @@item.approved.join(', ')
               end
 
