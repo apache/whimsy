@@ -53,10 +53,12 @@ class ActionItems < React
             _ ' '
             agenda = "board_agenda_#{action.date.gsub('-', '_')}.txt"
             if Server.agendas.include? agenda
-              _a action.date, href: "../#{action.date}/#{action.pmc}"
+              _a action.date, 
+                href: "../#{action.date}/#{action.pmc.gsub(/\W/, '-')}"
             else
               _a action.date, href: 'https://whimsy.apache.org/board/minutes/' +
-                "#{action.pmc}#minutes_#{action.date.gsub('-', '_')}"
+                action.pmc.gsub(/\W/, '_') +
+                "#minutes_#{action.date.gsub('-', '_')}"
             end
           end
           _ " ]\n      "
