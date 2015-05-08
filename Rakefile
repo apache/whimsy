@@ -121,3 +121,14 @@ task :update do
   puts "\nbundle update:"
   system 'bundle update'
 end
+
+namespace :svn do
+  task :update do
+    ASF::Config.get(:svn).each do |svn|
+      if Dir.exist? svn
+        puts "\n#{svn}:"
+        Dir.chdir(svn) {system 'svn up'}
+      end
+    end
+  end
+end
