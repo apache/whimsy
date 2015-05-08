@@ -50,7 +50,7 @@ class Keyboard
       elsif event.keyCode == 'C'.ord
         link = ~"#comments"[0]
         if link
-          link.scrollIntoView()
+          jQuery('html, body').animate({scrollTop: link.offsetTop}, :slow);
         else
           Main.navigate 'comments'
         end

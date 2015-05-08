@@ -59,19 +59,19 @@ class Backchannel < React
 
   # on initial display, fetch backlog
   def componentDidMount()
-    self.shouldScrollBottom = true
+    Main.scrollTo = -1
     Chat.fetch_backlog()
   end
 
-  # determine if we are at the bottom of the page
+  # if we are at the bottom of the page, keep it that way
   def componentWillUpdate()
-    self.atBottom = (window.pageYOffset + window.innerHeight >=
-      document.documentElement.scrollHeight)
-  end
-
-  # if we were at the bottom of the page before the update, once again
-  # scroll to the bottom of the page
-  def componentDidUpdate()
-    window.scrollTo(0, document.documentElement.scrollHeight) if self.atBottom
+    if 
+      window.pageYOffset + window.innerHeight >=
+      document.documentElement.scrollHeight
+    then
+      Main.scrollTo = -1
+    else
+      Main.scrollTo = nil
+    end
   end
 end

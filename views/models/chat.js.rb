@@ -1,16 +1,18 @@
 class Chat
   @@log = []
+  Chat.fetch_requested = false
   Chat.backlog_fetched = false
 
   # as it says: fetch backlog of chat messages from the server
   def self.fetch_backlog()
-    return if Chat.backlog_fetched
+    return if Chat.fetch_requested
 
     fetch "chat/#{Agenda.file[/\d[\d_]+/]}", :json do |messages|
       messages.each {|message| Chat.add message}
       Chat.backlog_fetched = true
-      Main.refresh()
     end
+
+    Chat.fetch_requested = true
   end
 
   # return the chat log

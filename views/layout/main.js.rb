@@ -68,9 +68,10 @@ class Main < React
   def navigate(path, query)
     history.state.scrollY = window.scrollY
     history.replaceState(history.state, nil, history.path)
+    Main.scrollTo = 0
     self.route(path, query)
-    window.scrollTo(0, 0)
     history.pushState({path: path, query: query}, nil, path)
+    window.onresize()
   end
 
   # refresh the current page
@@ -97,8 +98,8 @@ class Main < React
     # listen for back button, and re-route/re-render when it occcurs
     window.addEventListener :popstate do |event|
       if event.state and defined? event.state.path
+        Main.scrollTo = event.state.scrollY if event.state.scrollY
         self.route(event.state.path, event.state.query)
-        window.scrollTo(0, event.state.scrollY) if event.state.scrollY
       end
     end
 
@@ -111,9 +112,20 @@ class Main < React
       main = ~'main'
       main.style.marginTop = "#{~'header.navbar'.clientHeight}px"
       main.style.marginBottom = "#{~'footer.navbar'.clientHeight}px"
+
+      if Main.scrollTo == 0 or Main.scrollTo
+        if Main.scrollTo == -1
+          jQuery('html, body').
+            animate({scrollTop: document.documentElement.scrollHeight}, :fast)
+        else
+          window.scrollTo(0, Main.scrollTo)
+          Main.scrollTo = nil
+        end
+      end
     end
 
     # do an initial resize
+    Main.scrollTo = 0
     window.onresize()
 
     # if agenda is stale, fetch immediately; otherwise save etag
