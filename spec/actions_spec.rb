@@ -137,17 +137,15 @@ feature 'server actions' do
       expect(Pending.get('test')['approved']).not_to include('7')
     end
 
-    it "should reject a report" do
+    it "should unapprove a report" do
       expect(Pending.get('test')['approved']).to include('7')
-      expect(Pending.get('test')['rejected']).not_to include('7')
 
       @agenda = 'board_agenda_2015_01_21.txt'
       @attach = '7'
-      @request = 'reject'
+      @request = 'unapprove'
 
       eval(File.read('views/actions/approve.json.rb'))
       expect(Pending.get('test')['approved']).not_to include('7')
-      expect(Pending.get('test')['rejected']).to include('7')
     end
 
     it "should post/edit a report" do

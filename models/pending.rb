@@ -17,7 +17,9 @@ class Pending
 
     # provide empty defaults
     response['approved'] ||= []
-    response['rejected'] ||= []
+    response['unapproved'] ||= []
+    response['flagged'] ||= []
+    response['unflagged'] ||= []
     response['comments'] ||= {} 
     response['seen']     ||= {}
 

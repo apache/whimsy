@@ -247,6 +247,18 @@ li.dropdown #nav.dropdown-toggle {
   cursor: pointer;
 }
 
+@media only screen and (max-height: 600px) {
+  .navbar-fixed-top {
+    z-index: 1050
+  }
+
+  .dropdown-menu {
+    height: auto;
+    max-height: 90vh;
+    overflow-x: hidden;
+  }
+}
+
 /* Identify clickable sections by changing the cursor */
 .clickable {
   cursor: pointer;

@@ -12,7 +12,7 @@ feature 'navigation', js: true do
 
     # Right button should advance to Cocoon report
     find('body').native.send_keys(:Right)
-    expect(page).to have_selector '.navbar-fixed-top.commented .navbar-brand', 
+    expect(page).to have_selector '.navbar-fixed-top.reviewed .navbar-brand', 
       text: 'Cocoon'
     expect(page).to have_selector 'pre', 
       text: /needing board attention:\s*nothing/

@@ -23,13 +23,16 @@ class Queue < React
         _em 'None.' if @approvals.empty?
       end
 
-      # Rejected
-      unless @rejected.empty?
-        _h4 'Rejected'
-        _p.col_xs_12 do
-          @rejected.each_with_index do |item, index|
-            _span ', ' if index > 0
-            _Link text: item.title, href: item.href
+      # Unapproved
+      %w(Unapprovals Flagged Unflagged).each do |section|
+        list = self.state[section.downcase()]
+        unless list.empty?
+          _h4 section
+          _p.col_xs_12 do
+            list.each_with_index do |item, index|
+              _span ', ' if index > 0
+              _Link text: item.title, href: item.href
+            end
           end
         end
       end
@@ -91,7 +94,9 @@ class Queue < React
   # determine approvals, rejected, comments, and ready
   def componentWillReceiveProps()
     @approvals = []
-    @rejected = []
+    @unapprovals = []
+    @flagged = []
+    @unflagged = []
     @comments = []
     @ready = []
 
@@ -100,12 +105,30 @@ class Queue < React
         @comments << item
       end
 
+      action = false
+
       if Pending.approved.include? item.attach
-        @approvals << item
-      elsif Pending.rejected.include? item.attach
-        @rejected << item
-      elsif item.ready_for_review(Server.initials)
-        @ready << item
+        @approvals << item   
+        action = true
+      end
+
+      if Pending.unapproved.include? item.attach
+        @unapprovals << item 
+        action = true
+      end
+
+      if Pending.flagged.include? item.attach
+        @flagged << item     
+        action = true
+      end
+
+      if Pending.unflagged.include? item.attach
+        @unflagged << item   
+        action = true
+      end
+
+      if not action and item.ready_for_review(Server.initials)
+        @ready << item       
       end
     end
   end

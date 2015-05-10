@@ -172,8 +172,8 @@ class Agenda
 
   def ready_for_review(initials)
     return defined? @approved and not self.missing and
-      not @approved.include? initials and
-      not Pending.rejected.include? @attach
+      not @approved.include? initials and 
+      not (@flagged_by and @flagged_by.include? initials)
   end
 
   # the default view to use for the agenda as a whole
@@ -277,10 +277,6 @@ class Agenda
       else
         list << {form: AddComment, text: 'add comment'}
       end
-
-      if self.approved and not self.approved.include? Server.initials
-        list << {button: Approve} unless self.missing
-      end
     end
 
     list << {button: Attend} if @title == 'Roll Call'
@@ -295,7 +291,18 @@ class Agenda
       end
     end
 
+    list << {button: Approve} unless self.missing or @comments === undefined
+
     list
+  end
+
+  # determine if this item is flagged, accounting for pending actions
+  def flagged
+    return true if Pending.flagged.include? @attach
+    return false unless @flagged_by
+    return false if @flagged_by == [Server.initials] and 
+      Pending.unflagged.include?(@attach)
+    return ! @flagged_by.empty?
   end
 
   # banner color for this agenda item
@@ -306,13 +313,11 @@ class Agenda
       'missing'
     elsif self.missing
       'missing'
-    elsif Pending.rejected.include? @attach
-      'rejected'
     elsif @approved
-      if @approved.length < 5
-        'ready'
-      elsif @comments
+      if self.flagged
         'commented'
+      elsif @approved.length < 5
+        'ready'
       else
         'reviewed'
       end

@@ -51,17 +51,24 @@ class Commit < React
     pending = @@server.pending
     messages = []
 
-    # list (or number) of reports approved with this commit
-    approved = pending.approved.length
-    if approved > 0 and approved < 6
-      titles = []
-      Agenda.index.each do |item|
-        titles << item.title if pending.approved.include? item.attach
+    # common format for message lines
+    append = proc do |title, list|
+      next unless list
+      if list.length > 0 and list.length < 6
+        titles = []
+        Agenda.index.each do |item|
+          titles << item.title if list.include? item.attach
+        end
+        messages << "#{title} #{titles.join(', ')}"
+      elsif list.length > 1
+        messages << "#{title} #{list.length} reports"
       end
-      messages << "Approve #{titles.join(', ')}"
-    elsif approved > 1
-      messages << "Approve #{approved} reports"
     end
+
+    append 'Approve', pending.approved
+    append 'Unapprove', pending.unapproved
+    append 'Flag', pending.flagged
+    append 'Unflag', pending.unflagged
 
     # list (or number) of comments made with this commit
     comments = pending.comments.keys().length

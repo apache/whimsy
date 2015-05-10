@@ -1,5 +1,5 @@
 #
-# Approve/Unapprove/Reject a report
+# Approve/Unapprove/Flag/Unflag a report
 #
 class Approve < React
   def initialize
@@ -18,14 +18,28 @@ class Approve < React
   end
 
   # set request (and button text) depending on whether or not the
-  # shift key is down and whether or not this items was previously approved
+  # not this items was previously approved
   def componentWillReceiveProps()
     if Keyboard.shift
-      @request = 'reject'
-    elsif Pending.approved.include? @@item.attach
-      @request = 'unapprove'
+      if Pending.flagged.include? @@item.attach
+        @request = 'unflag'
+      elsif Pending.unflagged.include? @@item.attach
+        @request = 'flag'
+      elsif @@item.flagged_by and @@item.flagged_by.include? Server.initials
+        @request = 'unflag'
+      else
+        @request = 'flag'
+      end
     else
-      @request = 'approve'
+      if Pending.approved.include? @@item.attach
+        @request = 'unapprove'
+      elsif Pending.unapproved.include? @@item.attach
+        @request = 'approve'
+      elsif @@item.approved and @@item.approved.include? Server.initials
+        @request = 'unapprove'
+      else
+        @request = 'approve'
+      end
     end
   end
 

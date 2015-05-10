@@ -21,15 +21,15 @@ class Keyboard
 
     # track shift key + keyboard navigation (unless on the search screen)
     def (document.body).onkeydown(event)
-      if @@shift != event.shiftKey
-        @@shift = event.shiftKey
-        Main.refresh()
-      end
-
       return if ~'#search-text'[0] or ~'.modal-open'[0]
       return if document.activeElement.tagName.downcase() == 'input' and
         not event.altKey
       return if event.metaKey or event.ctrlKey
+
+      if @@shift != event.shiftKey
+        @@shift = event.shiftKey
+        Main.refresh()
+      end
 
       if event.keyCode == 37 # '<-'
         link = ~"a[rel=prev]"[0]
@@ -70,6 +70,9 @@ class Keyboard
         return false
       elsif event.keyCode == 'Q'.ord
         Main.navigate "queue"
+        return false
+      elsif event.keyCode == 'F'.ord
+        Main.navigate "flagged"
         return false
       elsif event.keyCode == 'B'.ord
         Main.navigate "backchannel"

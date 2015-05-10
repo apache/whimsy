@@ -28,6 +28,9 @@ class Router
     elsif path == 'queue'
       item = {view: Queue, title: 'Queued approvals and comments'}
 
+    elsif path == 'flagged'
+      item = {view: Flagged, title: 'Flagged reports'}
+
     elsif path =~ %r{^queue/[-\w]+$}
       item = Agenda.find(path[6..-1])
       options = {traversal: :queue}

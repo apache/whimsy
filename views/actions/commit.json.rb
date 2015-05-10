@@ -10,8 +10,12 @@ agenda_file = updates['agenda']
 
 Agenda.update(agenda_file, @message) do |agenda|
   approved = updates['approved']
+  unapproved = updates['unapproved'] || []
+  flagged = updates['flagged'] || []
+  unflagged = updates['unflagged'] || []
   comments = updates['comments']
   initials = @initials
+  parsed = nil
 
   patterns = {
    # Committee Reports
@@ -50,6 +54,17 @@ Agenda.update(agenda_file, @message) do |agenda|
         else
           match[/approved:.*?()\n/, 1] = ", #{initials}"
         end
+
+      # remove initials from the report if unapproved
+      elsif unapproved.include? attachment
+        approvals = approvals.strip.split(/(?:,\s*|\s+)/)
+        if approvals.delete(initials)
+          if approvals.empty?
+            match[/approved:(.*?)\n/, 1] = ""
+          else
+            match[/approved: (.*?)\n/, 1] = approvals.join(', ')
+          end
+        end
       end
 
       # add comments to this report
@@ -63,9 +78,43 @@ Agenda.update(agenda_file, @message) do |agenda|
       match
     end
 
+    # flag/unflag reports
+    unless flagged.empty? and unflagged.empty?
+      parsed = ASF::Board::Agenda.parse(agenda, true)
+      flagged_reports = Hash[agenda[/ \d\. Committee Reports.*?\n\s+A\./m].
+        scan(/# (.*?) \[(.*)\]/).
+        map {|pmc, flags| [pmc, flags.split(/,\s+/)]}]
+
+      parsed.each do |item|
+        if flagged.include? item[:attach]
+          title = item['title']
+
+          flagged_reports[title] ||= []
+          unless flagged_reports[title].include? initials
+            flagged_reports[title].push initials
+          end
+
+        elsif unflagged.include? item[:attach]
+          title = item['title']
+          if flagged_reports[title]
+            flagged_reports[title].delete(initials)
+            flagged_reports.delete(title) if flagged_reports[title].empty?
+          end
+        end
+      end
+
+      # update agenda
+      agenda.sub!(/ \d\. Committee Reports.*?\n\s+A\./m) do |flags|
+        flags.gsub! /\n +# .*? \[.*\]/, ''
+        flags[/\n\n?()\n\s+A\./, 1] = flagged_reports.sort.
+          map {|pmc, who| "       # #{pmc} [#{who.join(', ')}]\n"}.join
+        flags
+      end
+    end
+
     # action item status updates
     if updates['status']
-      parsed = ASF::Board::Agenda.parse(agenda, true)
+      parsed ||= ASF::Board::Agenda.parse(agenda, true)
       actions = parsed.find {|item| item['title'] == 'Action Items'}
 
       require 'stringio'
@@ -110,6 +159,9 @@ end
 _pending Pending.update(env.user) {|pending|
   File.rename "#{AGENDA_WORK}/#{user}.yml", "#{AGENDA_WORK}/#{user}.bak"
   pending['approved'].clear
+  pending['unapproved'].clear
+  pending['flagged'].clear
+  pending['unflagged'].clear
   pending['comments'].clear
   pending['status'].clear
 }

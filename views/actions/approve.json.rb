@@ -1,21 +1,38 @@
 #
-# Pre-app approval of an agenda item by a Director
-#
+# Pre-app approval/unapproval/flagging/unflagging of an agenda item
 
 Pending.update(env.user, @agenda) do |pending|
+  agenda = Agenda.parse @agenda, :quick
+  initials = pending['initials']
 
   approved = pending['approved']
-  rejected = pending['rejected']
+  unapproved = pending['unapproved']
+  flagged = pending['flagged']
+  unflagged = pending['unflagged']
 
-  if @request == 'approve'
-    approved << @attach unless approved.include? @attach
-    rejected.delete @attach
-  else
+  case @request
+  when 'approve'
+    unapproved.delete @attach
+    approved << @attach unless approved.include? @attach or
+      agenda.find {|item| item[:attach] == @attach and
+        item['approved'].include? initials}
+
+  when 'unapprove'
     approved.delete @attach
+    unapproved << @attach unless unapproved.include? @attach or
+      not agenda.find {|item| item[:attach] == @attach and
+        item['approved'].include? initials}
 
-    if @request == 'reject'
-      rejected << @attach unless rejected.include? @attach
-    end
+  when 'flag'
+    unflagged.delete @attach
+    flagged << @attach unless flagged.include? @attach or
+      agenda.find {|item| item[:attach] == @attach and
+        Array(item['flagged_by']).include? initials}
+
+  when 'unflag'
+    flagged.delete @attach
+    unflagged << @attach unless unflagged.include? @attach or
+      not agenda.find {|item| item[:attach] == @attach and
+        Array(item['flagged_by']).include? initials}
   end
-
 end

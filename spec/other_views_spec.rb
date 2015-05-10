@@ -45,14 +45,14 @@ feature 'other reports' do
       text: 'follow up with PMC for clarification'
 
     expect(page).to have_selector '#commit-text', text: 
-      ['Approve W3C Relations', 'Comment on BookKeeper',
+      ['Approve W3C Relations', 'Flag Axis', 'Comment on BookKeeper',
         'Update AI: follow up with PMC for clarification'].join(' ')
   end
 
   it "should follow the ready queue" do
     visit '/2015-01-21/queue/Onami'
 
-    expect(page).to have_selector '.navbar-fixed-top.commented .navbar-brand', 
+    expect(page).to have_selector '.navbar-fixed-top.reviewed .navbar-brand', 
       text: 'Onami'
 
     expect(page).to have_selector '.backlink[href="queue/MyFaces"]',
@@ -71,7 +71,7 @@ feature 'other reports' do
       text: "Clarification provided in this month's report."
 
     # committee reports
-    expect(page).to have_selector 'h3.commented a[href="shepherd/queue/Flink"]',
+    expect(page).to have_selector 'h3.reviewed a[href="shepherd/queue/Flink"]',
       text: 'Flink'
     expect(page).to have_selector 'a.default', text: 'Airavata'
     expect(page).to have_selector 'h4', text: 'Comments'

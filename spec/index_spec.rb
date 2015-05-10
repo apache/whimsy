@@ -12,7 +12,7 @@ feature 'index' do
     expect(page).to have_selector '.navbar-fixed-top.blank .navbar-brand', 
       text: '2015-02-18'
     expect(page).to have_selector '.navbar-fixed-top .label-danger a', 
-      text: '3'
+      text: '4'
     expect(page).to have_selector '#agenda', text: 'Agenda'
 
     # navigation
@@ -21,8 +21,8 @@ feature 'index' do
 
     # rows with colors and titles
     expect(page).to have_selector 'tr.missing td', text: 'Abdera'
-    expect(page).to have_selector 'tr.rejected td', text: 'Axis'
-    expect(page).to have_selector 'tr.commented td', text: 'Buildr'
+    expect(page).to have_selector 'tr.commented td', text: 'Axis'
+    expect(page).to have_selector 'tr.reviewed td', text: 'Buildr'
     expect(page).to have_selector 'tr.reviewed td', text: 'Celix'
 
     # attach, owner, shepherd columns

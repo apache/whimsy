@@ -13,6 +13,9 @@ class Pending
   def self.count
     self.comments.keys().length + 
       self.approved.keys().length +
+      self.unapproved.keys().length +
+      self.flagged.keys().length +
+      self.unflagged.keys().length +
       self.status.keys().length
   end
 
@@ -24,8 +27,16 @@ class Pending
     Server.pending.approved
   end
 
-  def self.rejected
-    Server.pending.rejected
+  def self.unapproved
+    Server.pending.unapproved
+  end
+
+  def self.flagged
+    Server.pending.flagged
+  end
+
+  def self.unflagged
+    Server.pending.unflagged
   end
 
   def self.seen
