@@ -7,7 +7,7 @@ class Flagged < React
     first = true
 
     Agenda.index.each do |item|
-      if item.flagged_by
+      if item.flagged_by or Pending.flagged.include? item.attach
         _h3 class: item.color do
           _Link text: item.title, href: "flagged/#{item.href}",
             class: ('default' if first)
@@ -29,5 +29,7 @@ class Flagged < React
         end
       end
     end
+
+    _em.comment 'None' if first
   end
 end
