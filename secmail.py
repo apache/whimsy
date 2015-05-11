@@ -248,6 +248,7 @@ def detach(msg):
     content = attachment.get_payload(decode=True)
     if content:
       file=os.path.join('received',(prefix+name).strip('-'))
+      if os.path.isdir(file): file = os.path.join(file, 'unnamed')
       fh=open(file,'w')
       fh.write(content)
       fh.close()
