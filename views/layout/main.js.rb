@@ -98,7 +98,7 @@ class Main < React
     # listen for back button, and re-route/re-render when it occcurs
     window.addEventListener :popstate do |event|
       if event.state and defined? event.state.path
-        Main.scrollTo = event.state.scrollY if event.state.scrollY
+        Main.scrollTo = event.state.scrollY || 0
         self.route(event.state.path, event.state.query)
       end
     end
