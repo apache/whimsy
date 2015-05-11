@@ -4,6 +4,10 @@
 #
 
 class Shepherd < React
+  def initialize
+    @disabled = false
+  end
+
   def render
     shepherd = @@item.shepherd.downcase()
 
@@ -37,10 +41,20 @@ class Shepherd < React
         end
 
         # show associated comments
-        _h4 'Comments' unless item.comments.empty?
-        item.comments.each do |comment|
-          _pre.comment do
-            _Text raw: comment, filters: [hotlink]
+        unless item.comments.empty?
+          _h4 'Comments' 
+          item.comments.each do |comment|
+            _pre.comment do
+              _Text raw: comment, filters: [hotlink]
+            end
+          end
+
+          # flag action
+          unless item.missing
+            _button.shepherd.btn (item.flagged ? 'unflag' : 'flag'), 
+              data_attach: item.attach,
+              onClick: self.click, disabled: @disabled,
+              class: (shepherd == Server.firstname ? 'btn-primary' : 'btn-link')
           end
         end
 
@@ -50,6 +64,20 @@ class Shepherd < React
           _ActionItems item: item, filter: {pmc: item.title}, form: :omit
         end
       end
+    end
+  end
+
+  def click(event)
+    data = {
+      agenda: Agenda.file,
+      attach: event.target.getAttribute('data-attach'),
+      request: event.target.textContent
+    }
+
+    @disabled = true
+    post 'approve', data do |pending|
+      @disabled = false
+      Pending.load pending
     end
   end
 end

@@ -117,6 +117,10 @@ input[type=submit] {
   padding-left: 2em;
 }
 
+button.shepherd {
+  margin-left: 2em;
+}
+
 .comments button, #paste_report { 
   color: #000; 
   background-color: #F90; 

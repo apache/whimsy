@@ -300,7 +300,8 @@ class Agenda
   def flagged
     return true if Pending.flagged.include? @attach
     return false unless @flagged_by
-    return false if @flagged_by == [Server.initials] and 
+    return false if @flagged_by.length == 1 and 
+      @flagged_by.first == Server.initials and 
       Pending.unflagged.include?(@attach)
     return ! @flagged_by.empty?
   end
