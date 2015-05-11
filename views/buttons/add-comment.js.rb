@@ -44,8 +44,10 @@ class AddComment < React
         placeholder: 'comment', rows: 5, onChange: self.change,
         disabled: @disabled
 
-      _input.flag! type: 'checkbox', label: 'item requires discussion',
-        onChange: self.flag, checked: @checked
+      if @@item.attach =~ /^[A-Z]+$/
+        _input.flag! type: 'checkbox', label: 'item requires discussion',
+          onChange: self.flag, checked: @checked
+      end
 
       # footer buttons
       _button.btn_default 'Cancel', data_dismiss: 'modal',

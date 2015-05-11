@@ -50,7 +50,7 @@ class Shepherd < React
           end
 
           # flag action
-          unless item.missing
+          if @@item.attach =~ /^[A-Z]+$/ and not item.missing
             _button.shepherd.btn (item.flagged ? 'unflag' : 'flag'), 
               data_attach: item.attach,
               onClick: self.click, disabled: @disabled,
