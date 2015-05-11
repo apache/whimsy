@@ -13,6 +13,11 @@ class Keyboard
 
     # track shift key
     def (document.body).onkeyup(event)
+      return if ~'#search-text'[0] or ~'.modal-open'[0]
+      return if document.activeElement.tagName.downcase() == 'input' and
+        not event.altKey
+      return if event.metaKey or event.ctrlKey
+
       if @@shift != event.shiftKey
         @@shift = event.shiftKey
         Main.refresh()
