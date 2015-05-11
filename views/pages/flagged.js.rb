@@ -9,7 +9,7 @@ class Flagged < React
     Agenda.index.each do |item|
       if item.flagged_by
         _h3 class: item.color do
-          _Link text: item.title, href: "flagged/queue/#{item.href}",
+          _Link text: item.title, href: "flagged/#{item.href}",
             class: ('default' if first)
           first = false
         end
