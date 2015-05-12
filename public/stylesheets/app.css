@@ -101,6 +101,19 @@ input[type=submit] {
   background-color: #FFC;
 }
 
+.checkbox input[type=checkbox] {
+  position: static;
+  display: inline;
+  width: auto;
+  height: auto;
+  margin-left: 0;
+}
+
+label.checkbox span {
+  padding-left: 0.5em;
+  font-weight: normal;
+}
+
 .uptodate {
   background-color: #7cfc00 !important
 }
@@ -252,7 +265,7 @@ li.dropdown #nav.dropdown-toggle {
 }
 
 @media only screen and (max-height: 600px) {
-  .navbar-fixed-top {
+  .navbar-fixed-top ul.dropdown-menu {
     z-index: 1050
   }
 

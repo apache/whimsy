@@ -60,9 +60,17 @@ class ModalDialog < React
 
         label = nil
         if child.props.label and child.props.id
-          label = React.createElement('label',
-            {htmlFor: child.props.id}, child.props.label)
-          child.props.delete 'label'
+          props = {htmlFor: child.props.id}
+          if child.props.type == 'checkbox'
+            props.className = 'checkbox'
+            label = React.createElement('label', props, child,
+              child.props.label)
+            child.props.delete 'label'
+            child = nil
+          else
+            label = React.createElement('label', props, child.props.label)
+            child.props.delete 'label'
+          end
         end
 
         @body << React.createElement('div', {className: 'form-group'}, 

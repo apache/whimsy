@@ -20,26 +20,14 @@ class Approve < React
   # set request (and button text) depending on whether or not the
   # not this items was previously approved
   def componentWillReceiveProps()
-    if Keyboard.shift
-      if Pending.flagged.include? @@item.attach
-        @request = 'unflag'
-      elsif Pending.unflagged.include? @@item.attach
-        @request = 'flag'
-      elsif @@item.flagged_by and @@item.flagged_by.include? Server.initials
-        @request = 'unflag'
-      else
-        @request = 'flag'
-      end
+    if Pending.approved.include? @@item.attach
+      @request = 'unapprove'
+    elsif Pending.unapproved.include? @@item.attach
+      @request = 'approve'
+    elsif @@item.approved and @@item.approved.include? Server.initials
+      @request = 'unapprove'
     else
-      if Pending.approved.include? @@item.attach
-        @request = 'unapprove'
-      elsif Pending.unapproved.include? @@item.attach
-        @request = 'approve'
-      elsif @@item.approved and @@item.approved.include? Server.initials
-        @request = 'unapprove'
-      else
-        @request = 'approve'
-      end
+      @request = 'approve'
     end
   end
 

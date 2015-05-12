@@ -12,6 +12,7 @@ class AddComment < React
   def initialize
     @base = @comment = @@item.pending
     @disabled = false
+    @checked = @@item.flagged
   end
 
   # default attributes for the button associated with this form
@@ -43,6 +44,11 @@ class AddComment < React
         placeholder: 'comment', rows: 5, onChange: self.change,
         disabled: @disabled
 
+      if @@item.attach =~ /^[A-Z]+$/
+        _input.flag! type: 'checkbox', label: 'item requires discussion',
+          onChange: self.flag, checked: @checked
+      end
+
       # footer buttons
       _button.btn_default 'Cancel', data_dismiss: 'modal',
         disabled: @disabled
@@ -72,6 +78,7 @@ class AddComment < React
   # when item changes, reset base and comment
   def componentWillReceiveProps(newprops)
     if newprops.item.href != self.props.item.href
+      @checked = newprops.item.flagged
       @base = @comment = newprops.item.pending || ''
     end
   end
@@ -94,6 +101,20 @@ class AddComment < React
     post 'comment', data do |pending|
       jQuery('#comment-form').modal(:hide)
       @disabled = false
+      Pending.load pending
+    end
+  end
+
+  def flag(event)
+    @checked = ! @checked
+
+    data = {
+      agenda: Agenda.file,
+      attach: @@item.attach,
+      request: (event.target.checked ? 'flag' : 'unflag')
+    }
+
+    post 'approve', data do |pending|
       Pending.load pending
     end
   end
