@@ -38,18 +38,23 @@ file 'test/work/board' => 'test/work/repository' do
   end
 end
 
-file 'test/work/data' => 'test/work' do
-  mkdir_p 'test/work/data'
-end
-
-file 'test/work/data/test.yml' => 'test/work/data' do
-  cp 'test/test.yml', 'test/work/data/test.yml'
+testfiles = %w(board_minutes_2015_01_21 board_minutes_2015_02_18 test)
+testfiles.each do |testfile|
+  file "test/work/data/#{testfile}.yml" do
+    mkdir_p 'test/work/data' unless File.exist? 'test/work/data'
+    cp "test/#{testfile}.yml", "test/work/data/#{testfile}.yml"
+  end
 end
 
 task :reset do
-  if File.exist? 'test/work/data/test.yml'
-    if IO.read('test/test.yml') != IO.read('test/work/data/test.yml')
-      rm 'test/work/data/test.yml'
+  testfiles.each do |testfile|
+    if File.exist? "test/work/data/#{testfile}.yml"
+      if 
+        IO.read("test/#{testfile}.yml") != 
+        IO.read("test/work/data/#{testfile}.yml")
+      then
+        rm "test/work/data/#{testfile}.yml"
+      end
     end
   end
 
@@ -68,7 +73,8 @@ task :reset do
   end
 end
 
-task :work => ['test/work/board', 'test/work/data/test.yml']
+task :work => ['test/work/board', 
+  *testfiles.map {|testfile| "test/work/data/#{testfile}.yml"}]
 
 namespace :test do
   task :setup => [:reset, :work]

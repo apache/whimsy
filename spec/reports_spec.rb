@@ -103,7 +103,16 @@ feature 'report' do
       "#post-report-message[value='Post Tuscany Report']"
   end
 
-  it "should reports with warnings" do
+  it "should show draft minutes" do
+    visit '/2015-02-18/Drill'
+
+    expect(page).to have_selector 'h3', text: 'Minutes'
+    expect(page).to have_selector 'pre', 
+      text: '@Brett: Are hangouts documents so non-attendees can participate later'
+  end
+
+
+  it "should show reports with warnings" do
     visit '/2015-01-21/Change-Labs-Chair'
 
     expect(page).to have_selector '.navbar-fixed-top.missing .navbar-brand', 

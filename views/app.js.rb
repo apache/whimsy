@@ -39,6 +39,7 @@ require_relative 'elements/text'
 # Model
 require_relative 'models/events'
 require_relative 'models/agenda'
+require_relative 'models/minutes'
 require_relative 'models/chat'
 require_relative 'models/jira'
 require_relative 'models/pending'

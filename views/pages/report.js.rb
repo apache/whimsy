@@ -74,8 +74,14 @@ class Report < React
         end
 
         if @@item.title != 'Action Items' and not @@item.actions.empty?
-          _h3.comments! { _Link text: 'Action Items', href: 'Action-Items' }
+          _h3 { _Link text: 'Action Items', href: 'Action-Items' }
           _ActionItems item: @@item, filter: {pmc: @@item.title}
+        end
+
+        minutes = Minutes.get(@@item.title)
+        if minutes
+          _h3 'Minutes'
+          _pre.comment minutes
         end
       end
     end
