@@ -9,6 +9,8 @@ require_relative '../main'
 Capybara.app = Sinatra::Application
 Capybara.javascript_driver = :poltergeist
 
+require 'whimsy/asf/rack'
+
 # only load poltergeist driver for JavaScript if phantomjs is available
 if
   ENV['PATH'].split(File::PATH_SEPARATOR).any? do |path|

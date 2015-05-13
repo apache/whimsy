@@ -19,14 +19,14 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     @base = File.join(env['HTTP_X_WUNDERBAR_BASE'], @base)
   end
 
-  if ENV['RACK_ENV'] == 'test'
+  if env['REMOTE_USER']
+    userid = env['REMOTE_USER']
+    username = ASF::Person.new(userid).public_name
+  elsif ENV['RACK_ENV'] == 'test'
     userid = 'test'
     username = 'Joe Tester'
   elsif env.respond_to? :user
     userid = env.user
-    username = ASF::Person.new(userid).public_name
-  elsif env['REMOTE_USER']
-    userid = env['REMOTE_USER']
     username = ASF::Person.new(userid).public_name
   else
     require 'etc'
@@ -34,15 +34,27 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     username = Etc.getpwnam(userid)[4].split(',').first.force_encoding('utf-8')
   end
 
+  pending = Pending.get(userid)
+  initials = pending['initials'] || username.gsub(/[^A-Z]/, '').downcase
+
+  if ASF::Auth::DIRECTORS[userid] or userid == 'test'
+    role = :director
+  elsif %w(clr).include? userid
+    role = :secretary
+  else
+    role = :guest
+  end
+
   @server = {
     userid: userid,
     agendas: dir('board_agenda_*.txt').sort,
     drafts: dir('board_minutes_*.txt').sort,
-    pending: Pending.get(userid),
+    pending: pending,
     username: username,
     firstname: username.split(' ').first.downcase,
-    initials: username.gsub(/[^A-Z]/, '').downcase,
-    online: Events.present
+    initials: initials,
+    online: Events.present,
+    role: role
   }
 
   @page = {

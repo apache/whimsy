@@ -29,13 +29,8 @@ class Help < React
       _dt 'S'
       _dd 'Show shepherded items (and action items)'
 
-      _dt 'ctrl'
-      _dd do
-        _ 'On report pages, changes '
-        _b 'approve'
-        _ ' buttons to '
-        _b 'reject'
-      end
+      _dt 'F'
+      _dd 'Show flagged items'
 
       _dt '?'
       _dd 'Help (this page)'
@@ -47,18 +42,24 @@ class Help < React
       _li.available 'Report present, not eligible for pre-reviews'
       _li.ready 'Report present, ready for (more) review(s)'
       _li.reviewed 'Report has sufficient pre-approvals'
-      _li.commented 'Report has been approved, with comments'
+      _li.commented 'Report has been flagged for discussion'
     end
 
-    if Server.userid == 'rubys'
-      _h3 'Mode'
-      _form.mode! do
-        %w(Secretary Director Guest).each do |mode|
+    if %w(test rubys).include? Server.userid
+      _h3 'Role'
+      _form.role! do
+        %w(Secretary Director Guest).each do |role|
           _div do
-            _input mode, type: 'radio', name: 'mode', value: mode.downcase 
+            _input role, type: 'radio', name: 'role', value: role.downcase(),
+              checked: role.downcase() == Server.role, onChange: self.setRole
           end
         end
       end
     end
+  end
+
+  def setRole(event)
+    Server.role = event.target.value
+    Main.refresh()
   end
 end

@@ -114,6 +114,10 @@ label.checkbox span {
   font-weight: normal;
 }
 
+#role input[type=radio] {
+  margin-left: 1.6em;
+}
+
 .uptodate {
   background-color: #7cfc00 !important
 }
