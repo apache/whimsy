@@ -126,7 +126,7 @@ feature 'server actions' do
       expect(Pending.get('test')['approved']).to include('C')
     end
 
-    it "should unapprove a report" do
+    it "should unapprove a report which is pending approval" do
       expect(Pending.get('test')['approved']).to include('7')
 
       @agenda = 'board_agenda_2015_01_21.txt'
@@ -137,15 +137,15 @@ feature 'server actions' do
       expect(Pending.get('test')['approved']).not_to include('7')
     end
 
-    it "should unapprove a report" do
-      expect(Pending.get('test')['approved']).to include('7')
+    it "should unapprove a previously approved report" do
+      expect(Pending.get('test')['unapproved']).not_to include('BK')
 
       @agenda = 'board_agenda_2015_01_21.txt'
-      @attach = '7'
+      @attach = 'BM'
       @request = 'unapprove'
 
       eval(File.read('views/actions/approve.json.rb'))
-      expect(Pending.get('test')['approved']).not_to include('7')
+      expect(Pending.get('test')['unapproved']).to include('BM')
     end
 
     it "should post/edit a report" do

@@ -24,6 +24,7 @@ feature 'index' do
     expect(page).to have_selector 'tr.commented td', text: 'Axis'
     expect(page).to have_selector 'tr.reviewed td', text: 'Buildr'
     expect(page).to have_selector 'tr.reviewed td', text: 'Celix'
+    expect(page).to have_selector 'tr.commented td', text: 'Lenya'
 
     # attach, owner, shepherd columns
     expect(page).to have_selector 'tr.reviewed td', text: 'CF'

@@ -288,6 +288,12 @@
 
  6. Committee Reports
 
+    Summary of Reports
+
+     The following reports require further discussion:
+
+       # Lenya [jt]
+
     A. Apache Abdera Project [Ant Elder / Rich]
 
        See Attachment A

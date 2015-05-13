@@ -992,7 +992,7 @@
        See Attachment BM
 
        [ Tuscany.
-         approved: jj, cm, rg, bp, gs, rb, dc
+         approved: jj, cm, rg, jt, bp, gs, rb, dc
          comments:
          ]
 
