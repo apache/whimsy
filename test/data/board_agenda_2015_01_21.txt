@@ -354,7 +354,7 @@
 
        See Attachment 9
 
-       [ approved: sr, rg, cm, bp, gs, bd, rb, dc
+       [ approved: sr, rg, cm, jt, bp, gs, bd, rb, dc
          comments:
          ]
 
