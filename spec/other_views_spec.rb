@@ -121,6 +121,13 @@ feature 'other reports' do
     expect(page).to have_selector 'a.missing[href=Deltacloud]',
       text: 'Deltacloud'
     expect(page).to have_selector 'a.reviewed[href=ACE]', text: 'ACE'
+
+    expect(page).to have_selector 'h3', 
+      text: 'Action Items Captured During the Meeting'
+    expect(page).to have_selector 'span', 
+      text: 'Sam: Is anyone on the PMC looking at the reminders?'
+    expect(page).to have_selector 'a.missing[href=Perl]', text: 'Perl'
+    expect(page).to have_selector 'span', text: ' 2015-02-18 ]'
   end
 
   it "should hypertext minutes" do

@@ -16,6 +16,22 @@ class Minutes
     end
   end
 
+  def self.actions
+    actions = []
+
+    for title in @@list
+      minutes = @@list[title] + "\n\n"
+      pattern = RegExp.new('^(?:@|AI\s+)(\w+):?\s+([\s\S]*?)(\n\n|$)', 'gm')
+      match = pattern.exec(minutes)
+      while match
+        actions << {owner: match[1], text: match[2], item: Agenda.find(title)}
+        match = pattern.exec(minutes)
+      end
+    end
+
+    return actions
+  end
+
   # fetch minutes for a given agenda item, by title
   def self.get(title)
     return @@list[title]
