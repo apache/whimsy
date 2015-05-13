@@ -24,7 +24,8 @@ class Minutes
       pattern = RegExp.new('^(?:@|AI\s+)(\w+):?\s+([\s\S]*?)(\n\n|$)', 'gm')
       match = pattern.exec(minutes)
       while match
-        actions << {owner: match[1], text: match[2], item: Agenda.find(title)}
+        actions << {owner: match[1], text: match[2], 
+          item: Agenda.find(title.gsub(/\W/, '-'))}
         match = pattern.exec(minutes)
       end
     end

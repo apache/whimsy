@@ -133,8 +133,10 @@ class ActionItems < React
           _pre.comment actions do |action|
             _ "* #{action.owner}: #{action.text}\n"
             _ "      [ "
-            _Link text: action.item.title, href: action.item.href,
-              class: action.item.color
+            if action.item
+              _Link text: action.item.title, href: action.item.href,
+                class: action.item.color
+            end
             _ " #{Agenda.title} ]\n\n"
           end
         end
