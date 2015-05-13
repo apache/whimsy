@@ -119,6 +119,7 @@ feature 'server actions' do
 
     it "should approve a report" do
       @agenda = 'board_agenda_2015_01_21.txt'
+      @initials = 'jt'
       @attach = 'C'
       @request = 'approve'
 
@@ -130,6 +131,7 @@ feature 'server actions' do
       expect(Pending.get('test')['approved']).to include('7')
 
       @agenda = 'board_agenda_2015_01_21.txt'
+      @initials = 'jt'
       @attach = '7'
       @request = 'unapprove'
 
@@ -141,11 +143,48 @@ feature 'server actions' do
       expect(Pending.get('test')['unapproved']).not_to include('BK')
 
       @agenda = 'board_agenda_2015_01_21.txt'
+      @initials = 'jt'
       @attach = 'BM'
       @request = 'unapprove'
 
       eval(File.read('views/actions/approve.json.rb'))
       expect(Pending.get('test')['unapproved']).to include('BM')
+    end
+
+    it "should flag a report" do
+      expect(Pending.get('test')['flagged']).not_to include('J')
+
+      @agenda = 'board_agenda_2015_01_21.txt'
+      @initials = 'jt'
+      @attach = 'J'
+      @request = 'flag'
+
+      eval(File.read('views/actions/approve.json.rb'))
+      expect(Pending.get('test')['flagged']).to include('J')
+    end
+
+    it "should unflag a report" do
+      expect(Pending.get('test')['unflagged']).not_to include('AS')
+
+      @agenda = 'board_agenda_2015_02_18.txt'
+      @initials = 'jt'
+      @attach = 'AS'
+      @request = 'unflag'
+
+      eval(File.read('views/actions/approve.json.rb'))
+      expect(Pending.get('test')['unflagged']).to include('AS')
+    end
+
+    it "should unflag a report which is pending being flagged" do
+      expect(Pending.get('test')['flagged']).to include('H')
+
+      @agenda = 'board_agenda_2015_01_21.txt'
+      @initials = 'jt'
+      @attach = 'H'
+      @request = 'unflag'
+
+      eval(File.read('views/actions/approve.json.rb'))
+      expect(Pending.get('test')['flagged']).not_to include('H')
     end
 
     it "should post/edit a report" do

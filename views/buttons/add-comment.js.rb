@@ -90,10 +90,12 @@ class AddComment < React
 
   # when save button is pushed, post comment and dismiss modal when complete
   def save(event)
+    Server.initials = ~'#comment_initials'.value
+
     data = {
       agenda: Agenda.file,
       attach: @@item.attach,
-      initials: ~'#comment_initials'.value,
+      initials: Server.initials,
       comment: @comment
     }
 
@@ -110,6 +112,7 @@ class AddComment < React
 
     data = {
       agenda: Agenda.file,
+      initials: Server.initials,
       attach: @@item.attach,
       request: (event.target.checked ? 'flag' : 'unflag')
     }

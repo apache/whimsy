@@ -3,7 +3,7 @@
 
 Pending.update(env.user, @agenda) do |pending|
   agenda = Agenda.parse @agenda, :quick
-  initials = pending['initials']
+  @initials ||= pending['initials']
 
   approved = pending['approved']
   unapproved = pending['unapproved']
@@ -15,24 +15,24 @@ Pending.update(env.user, @agenda) do |pending|
     unapproved.delete @attach
     approved << @attach unless approved.include? @attach or
       agenda.find {|item| item[:attach] == @attach and
-        item['approved'].include? initials}
+        item['approved'].include? @initials}
 
   when 'unapprove'
     approved.delete @attach
     unapproved << @attach unless unapproved.include? @attach or
       not agenda.find {|item| item[:attach] == @attach and
-        item['approved'].include? initials}
+        item['approved'].include? @initials}
 
   when 'flag'
     unflagged.delete @attach
     flagged << @attach unless flagged.include? @attach or
       agenda.find {|item| item[:attach] == @attach and
-        Array(item['flagged_by']).include? initials}
+        Array(item['flagged_by']).include? @initials}
 
   when 'unflag'
     flagged.delete @attach
     unflagged << @attach unless unflagged.include? @attach or
       not agenda.find {|item| item[:attach] == @attach and
-        Array(item['flagged_by']).include? initials}
+        Array(item['flagged_by']).include? @initials}
   end
 end

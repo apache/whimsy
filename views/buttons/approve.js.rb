@@ -35,6 +35,7 @@ class Approve < React
   def click(event)
     data = {
       agenda: Agenda.file,
+      initials: Server.initials,
       attach: @@item.attach,
       request: @request
     }

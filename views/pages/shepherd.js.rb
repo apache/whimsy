@@ -50,7 +50,7 @@ class Shepherd < React
           end
 
           # flag action
-          if @@item.attach =~ /^[A-Z]+$/ and not item.missing
+          if item.attach =~ /^[A-Z]+$/ and not item.missing
             _button.shepherd.btn (item.flagged ? 'unflag' : 'flag'), 
               data_attach: item.attach,
               onClick: self.click, disabled: @disabled,
@@ -70,6 +70,7 @@ class Shepherd < React
   def click(event)
     data = {
       agenda: Agenda.file,
+      initials: Server.initials,
       attach: event.target.getAttribute('data-attach'),
       request: event.target.textContent
     }
