@@ -35,9 +35,11 @@ feature 'other reports' do
     expect(page).to have_selector :xpath, 
       '//p[1]/a[@href="queue/W3C-Relations"]', text: 'W3C Relations'
     expect(page).to have_selector :xpath,
-      '//p[2]/a[@href="Axis"]', text: 'Axis'
+      '//p[2]/a[@href="Security-Team"]', text: 'Security Team'
     expect(page).to have_selector :xpath,
-      '//p[3]/a[@href="queue/Celix"]', text: 'Celix'
+      '//p[3]/a[@href="Axis"]', text: 'Axis'
+    expect(page).to have_selector :xpath,
+      '//p[4]/a[@href="queue/Celix"]', text: 'Celix'
     expect(page).to have_selector 'a.default', text: 'January 21, 2015'
     expect(page).to have_selector 'dt a[href="BookKeeper"]', text: 'BookKeeper'
     expect(page).to have_selector 'dd p', text: 'Nice report!'
@@ -45,7 +47,8 @@ feature 'other reports' do
       text: 'follow up with PMC for clarification'
 
     expect(page).to have_selector '#commit-text', text: 
-      ['Approve W3C Relations', 'Flag Axis', 'Comment on BookKeeper',
+      ['Approve W3C Relations', 'Unapprove Security Team', 'Flag Axis',
+        'Comment on BookKeeper',
         'Update AI: follow up with PMC for clarification'].join(' ')
   end
 

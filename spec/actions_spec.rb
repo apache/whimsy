@@ -140,7 +140,7 @@ feature 'server actions' do
     end
 
     it "should unapprove a previously approved report" do
-      expect(Pending.get('test')['unapproved']).not_to include('BK')
+      expect(Pending.get('test')['unapproved']).not_to include('BM')
 
       @agenda = 'board_agenda_2015_01_21.txt'
       @initials = 'jt'
@@ -209,8 +209,22 @@ feature 'server actions' do
   describe 'pending queue' do
     it "should commit pending comments and approvals" do
       @pending = Pending.get('test')
+      @parsed = Agenda.parse 'board_agenda_2015_01_21.txt', :quick
       expect(@pending['approved']).to include('7')
       expect(@pending['comments']['I']).to eq('Nice report!')
+
+      security = @parsed.find {|item| item[:attach] == '9'}
+      expect(security['approved']).to include('jt')
+
+      w3c = @parsed.find {|item| item[:attach] == '7'}
+      expect(w3c['approved']).not_to include('jt')
+
+      avro = @parsed.find {|item| item[:attach] == 'I'}
+      expect(avro['comments']).not_to include('jt: Nice report!')
+
+      actions = @parsed.find {|item| item['title'] == 'Action Items'}
+      expect(actions['text']).not_to \
+        include("Clarification provided in this month's report.")
 
       @message = "Approve W3C Relations\nComment on BookKeeper\nUpdate 1 AI"
       @initials = 'jt'
@@ -219,6 +233,9 @@ feature 'server actions' do
 
       expect(@pending['approved']).not_to include('7')
       expect(@pending['comments']).not_to include('I')
+
+      security = @agenda.find {|item| item[:attach] == '9'}
+      expect(security['approved']).not_to include('jt')
 
       w3c = @agenda.find {|item| item[:attach] == '7'}
       expect(w3c['approved']).to include('jt')
