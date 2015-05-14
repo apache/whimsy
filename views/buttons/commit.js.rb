@@ -25,7 +25,7 @@ class Commit < React
       _h4 'Commit message'
 
       # single text area input field
-      _textarea.commit_text! defaultValue: @message, rows: 5, 
+      _textarea.commit_text! value: @message, rows: 5, 
         disabled: @disabled, label: 'Commit message'
 
       # buttons
