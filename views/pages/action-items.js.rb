@@ -125,7 +125,10 @@ class ActionItems < React
             disabled: @disabled || (@baseline == @status)
         end
       end
+    end
 
+    # Action Items Captured During the Meeting
+    if @@item.title == 'Action Items'
       actions = Minutes.actions
       unless actions.empty?
         _section do
