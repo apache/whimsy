@@ -291,7 +291,14 @@ class Agenda
       end
     end
 
-    list << {button: Approve} unless self.missing or @comments === undefined
+    if Server.role == :director
+      list << {button: Approve} unless self.missing or @comments === undefined
+
+    elsif Server.role == :secretary
+      if not ['Call to order', 'Adjournment'].include? @title
+        list << {form: AddMinutes}
+      end
+    end
 
     list
   end

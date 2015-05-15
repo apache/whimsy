@@ -45,14 +45,12 @@ class Help < React
       _li.commented 'Report has been flagged for discussion'
     end
 
-    if %w(test rubys).include? Server.userid
-      _h3 'Role'
-      _form.role! do
-        %w(Secretary Director Guest).each do |role|
-          _div do
-            _input role, type: 'radio', name: 'role', value: role.downcase(),
-              checked: role.downcase() == Server.role, onChange: self.setRole
-          end
+    _h3 'Change Role'
+    _form.role! do
+      %w(Secretary Director Guest).each do |role|
+        _div do
+          _input role, type: 'radio', name: 'role', value: role.downcase(),
+            checked: role.downcase() == Server.role, onChange: self.setRole
         end
       end
     end

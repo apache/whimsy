@@ -21,18 +21,18 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
 
   if env['REMOTE_USER']
     userid = env['REMOTE_USER']
-    username = ASF::Person.new(userid).public_name
   elsif ENV['RACK_ENV'] == 'test'
     userid = 'test'
-    username = 'Joe Tester'
   elsif env.respond_to? :user
     userid = env.user
-    username = ASF::Person.new(userid).public_name
   else
     require 'etc'
     userid = Etc.getlogin
-    username = Etc.getpwnam(userid)[4].split(',').first.force_encoding('utf-8')
   end
+
+  username = ASF::Person.new(userid).public_name
+  username ||= 'Joe Tester' if userid == 'test'
+  username ||= Etc.getpwnam(userid)[4].split(',')[0].force_encoding('utf-8')
 
   pending = Pending.get(userid)
   initials = pending['initials'] || username.gsub(/[^A-Z]/, '').downcase
