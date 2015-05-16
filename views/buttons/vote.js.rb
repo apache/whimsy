@@ -19,7 +19,7 @@ class Vote < React
 
       _p do
         _span "#{@votetype} vote on the matter of "
-        _em @@item.full_title
+        _em @@item.fulltitle.sub(/^Resolution to/, '')
       end
 
       _pre @directors

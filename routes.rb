@@ -22,7 +22,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   if env['REMOTE_USER']
     userid = env['REMOTE_USER']
   elsif ENV['RACK_ENV'] == 'test'
-    userid = 'test'
+    userid = env['HTTP_REMOTE_USER'] || 'test'
   elsif env.respond_to? :user
     userid = env.user
   else
