@@ -296,7 +296,11 @@ class Agenda
 
     elsif Server.role == :secretary
       if not ['Call to order', 'Adjournment'].include? @title
-        list << {form: AddMinutes}
+        if Minutes.get(@title)
+          list << {form: AddMinutes, text: 'edit minutes'}
+        else
+          list << {form: AddMinutes, text: 'add minutes'}
+        end
       end
     end
 
