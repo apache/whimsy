@@ -9,7 +9,8 @@ require 'shellwords'
 
 feature 'server actions' do
   before :each do
-    @test_data = File.read('test/work/data/test.yml')
+    @test_data = IO.read('test/work/data/test.yml')
+    @test_mins = IO.read('test/work/data/board_minutes_2015_02_18.yml')
     @transcript = ''
     @cleanup = []
   end
@@ -249,12 +250,47 @@ feature 'server actions' do
     end
   end
 
+  #
+  # Post minutes
+  #
+  describe 'minutes' do
+    it 'should post minutes' do
+      @agenda = 'board_agenda_2015_02_18.txt'
+      @title = 'Incubator'
+      @text = 'Another month without comments!'
+
+      eval(File.read('views/actions/minute.json.rb'))
+
+      minutes = YAML.load_file('test/work/data/board_minutes_2015_02_18.yml')
+
+      expect(minutes['Incubator']).to eq(@text)
+    end
+
+    it 'should post timestamp' do
+      @agenda = 'board_agenda_2015_02_18.txt'
+      @title = 'Adjournment'
+      @action = 'timestamp'
+
+      eval(File.read('views/actions/minute.json.rb'))
+
+      minutes = YAML.load_file('test/work/data/board_minutes_2015_02_18.yml')
+
+      expect(minutes['Adjournment']).to match(/^\d\d?:\d\d$/)
+    end
+  end
+
   ##########################################################################
   #
   # cleanup
   #
   after :each do
-    File.write('test/work/data/test.yml', @test_data)
+    if IO.read('test/work/data/test.yml') != @test_data
+      IO.write('test/work/data/test.yml', @test_data)
+    end
+
+    if IO.read('test/work/data/board_minutes_2015_02_18.yml') != @test_mins
+      IO.write('test/work/data/board_minutes_2015_02_18.yml', @test_mins)
+    end
 
     @cleanup.each do |file| 
       Agenda[File.basename(file)].replace :mtime=>0
