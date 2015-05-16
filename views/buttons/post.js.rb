@@ -100,7 +100,11 @@ class Post < React
       @alerted = true
     end
 
-    @indent = (@@item.attach =~ /^4/ ? '        ' : '')
+    if @@button.text == 'add resolution' or @@item.attach =~ /^[47]/
+      @indent = '        '
+    else
+      @indent = ''
+    end
   end
 
   # track changes to title value
