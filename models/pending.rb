@@ -48,13 +48,18 @@ class Pending
     pending
   end
 
-  # listen for changes to pending files
+  # listen for changes to pending and minutes files
   @@listener = Listen.to(AGENDA_WORK) do |modified, added, removed|
     modified.each do |path|
       next if File.exist?(path) and @@seen[path] == File.mtime(path)
       file = File.basename(path)
-      if file =~ /^(\w+)\.yml$/
+      if file =~ /^board_minutes_\d{4}_\d\d_\d\d\.yml$/
+        agenda = file.sub('minutes', 'agenda').sub('.yml', '.txt')
+        Events.post type: :minutes, agenda: agenda, value: YAML.load_file(path)
+      elsif file =~ /^(\w+)\.yml$/
         Events.post type: :pending, private: $1, value: YAML.load_file(path)
+      else
+        STDERR.puts file
       end
     end
   end

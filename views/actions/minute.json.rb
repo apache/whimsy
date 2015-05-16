@@ -25,6 +25,6 @@ minutes[@title] = @text
 
 File.write minutes_file, YAML.dump(minutes)
 
-Events.post type: :minutes, value: minutes, agenda: @agenda
+Events.post type: :minutes, agenda: @agenda, value: minutes
 
 minutes

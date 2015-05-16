@@ -27,10 +27,11 @@ require_relative 'buttons/approve'
 require_relative 'buttons/attend'
 require_relative 'buttons/commit'
 require_relative 'buttons/markseen'
+require_relative 'buttons/message'
 require_relative 'buttons/post'
 require_relative 'buttons/refresh'
 require_relative 'buttons/showseen'
-require_relative 'buttons/message'
+require_relative 'buttons/timestamp'
 
 # Common elements
 require_relative 'elements/link'

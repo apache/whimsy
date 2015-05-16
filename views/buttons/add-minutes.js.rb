@@ -1,8 +1,6 @@
 class AddMinutes < React
   def initialize
     @disabled = false
-    @base = @draft = Minutes.get(@@item.title) || ''
-    @ai_owner = @@item.shepherd
   end
 
   # default attributes for the button associated with this form
@@ -75,12 +73,21 @@ class AddMinutes < React
     end
   end
 
-  # when item changes, reset base, draft minutes, and shepherd
+  # when initially displayed, set various fields to match the item
+  def componentWillMount()
+    self.setup(@@item)
+  end
+
+  # when item changes, reset various fields to match
   def componentWillReceiveProps(newprops)
-    if newprops.item.href != self.props.item.href
-      @base = @draft = Minutes.get(newprops.item.title) || ''
-      @ai_owner = newprops.item.shepherd
-    end
+    self.setup(newprops.item) if newprops.item.href != self.props.item.href
+  end
+
+  # reset base, draft minutes, shepherd, and default ai_text
+  def setup(item)
+    @base = @draft = Minutes.get(item.title) || ''
+    @ai_owner = item.shepherd
+    @ai_text = "pursue a report for #{item.title}" unless item.text
   end
 
   # add an additional AI to the draft minutes for this item
@@ -110,6 +117,7 @@ class AddMinutes < React
     @disabled = true
     post 'minute', data do |minutes|
       Minutes.load minutes
+      self.setup(@@item)
       @disabled = false
       jQuery('#minute-form').modal(:hide)
     end
