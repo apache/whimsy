@@ -83,7 +83,7 @@ main {
   margin: 50px 0;
 }
 
-main pre {
+main pre, #vote-form pre {
   font-family: monospace;
   color: #000;
 }

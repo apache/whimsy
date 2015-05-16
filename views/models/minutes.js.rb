@@ -48,6 +48,12 @@ class Minutes
     end
     attendees.sort()
   end
+
+  # return a list of directors present
+  def self.directors_present
+    rollcall = Minutes.get('Roll Call') || Agenda.find('Roll-Call').text
+    rollcall[/Directors.*Present:\n\n((.*\n)*?)\n/,1].sub(/\n$/, '')
+  end
 end
 
 Events.subscribe :minutes do |message|

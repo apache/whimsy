@@ -94,7 +94,7 @@ class Agenda
   # provide read-only access to a number of properties 
   attr_reader :attach, :title, :owner, :shepherd, :index, :timestamp, :digest
   attr_reader :approved, :roster, :prior_reports, :stats, :people
-  attr_reader :chair_email, :mail_list, :warnings, :flagged_by
+  attr_reader :chair_email, :mail_list, :warnings, :flagged_by, :full_title
 
   # override missing if minutes aren't present
   def missing
@@ -297,6 +297,8 @@ class Agenda
     elsif Server.role == :secretary
       if ['Call to order', 'Adjournment'].include? @title
         list << {button: Timestamp}
+      elsif @attach =~ /^7\w/
+        list << {form: Vote}
       else
         if Minutes.get(@title)
           list << {form: AddMinutes, text: 'edit minutes'}
