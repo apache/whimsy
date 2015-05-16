@@ -132,7 +132,19 @@ class Post < React
 
   # perform a reflow of report text
   def reflow()
-    @report = Flow.text(@report, @indent)
+    report = @report
+
+    # remove indentation
+    regex = RegExp.new('^( +)\S', 'gm')
+    indents = []
+    while (result = regex.exec(report))
+      indents.push result[1].length
+    end
+    unless indents.empty?
+      report.gsub!(RegExp.new('^' + ' ' * Math.min(*indents), 'gm'), '')
+    end
+
+    @report = Flow.text(report, @indent)
   end
 
   # determine if the form is ready to be submitted
