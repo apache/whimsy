@@ -185,7 +185,7 @@ class Agenda
   def self.buttons
     list = [{button: Refresh}, {form: Post, text: 'add resolution'}]
 
-    if Server.role == :secretary and Minutes.complete
+    if Server.role == :secretary and Minutes.ready_to_post_draft
       list << {form: DraftMinutes}
     end
 
@@ -311,7 +311,7 @@ class Agenda
         list << {form: AddMinutes, text: 'add minutes'}
       end
 
-      if @title == 'Adjournment' and Minutes.complete
+      if @title == 'Adjournment' and Minutes.ready_to_post_draft
         list << {form: DraftMinutes}
       end
     end

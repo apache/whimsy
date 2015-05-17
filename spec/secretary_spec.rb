@@ -54,4 +54,36 @@ feature 'report' do
     visit '/2015-02-18/Adjournment'
     expect(page).to have_selector 'button', text: 'timestamp'
   end
+
+  it "should draft minutes" do
+    completed '2015-02-18' do
+      visit '/2015-02-18/Adjournment'
+      expect(page).not_to have_selector 'button', text: 'timestamp'
+      expect(page).to have_selector 'button', text: 'edit minutes'
+      expect(page).to have_selector 'button', text: 'draft minutes'
+
+      draft = page.driver.get('/text/draft/2015_02_18').body
+      expect(draft).to include('Board of Directors Meeting Minutes')
+      expect(draft).to include('was scheduled')
+      expect(draft).to include('was held')
+      expect(draft).to match(/began at \d+:\d\d/)
+      expect(draft).to include('was used for backup purposes')
+      expect(draft).to include('Directors Present')
+      expect(draft).to include('Published minutes can be found at')
+      expect(draft).to include('approved as submitted by General Consent.')
+      expect(draft).to include('@Sam: Is anyone on the PMC looking at the reminders?')
+      expect(draft).to include('No report was submitted.')
+      expect(draft).to include('was approved by Unanimous Vote of the directors present.')
+      expect(draft).to match(/Adjourned at \d+:\d\d [ap]\.m\. \(Pacific\)/)
+    end
+  end
+
+  def completed(meeting, &block)
+    file = "#{AGENDA_WORK}/board_minutes_#{meeting.gsub('-', '_')}.yml"
+    minutes = YAML.load(IO.read(file))
+    IO.write(file, YAML.dump(minutes.merge('Adjournment' => '11:55')))
+    yield 
+  ensure
+    IO.write(file, YAML.dump(minutes))
+  end
 end

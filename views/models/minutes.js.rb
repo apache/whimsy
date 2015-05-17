@@ -57,7 +57,13 @@ class Minutes
 
   # determine if the meeting is over
   def self.complete
-    return Minutes.get('Adjournment') ? true : false
+    Minutes.get('Adjournment')
+  end
+
+  # determine if the meeting is over
+  def self.ready_to_post_draft
+    self.complete and 
+      not Server.drafts.include?  Agenda.file.sub('_agenda_', '_minutes_')
   end
 end
 
