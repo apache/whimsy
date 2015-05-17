@@ -31,7 +31,7 @@ end
 
 hotlink.regexp = Regexp.new(/(^|[\s.:;?\-\]<\(])
   (https?:\/\/[-\w;\/?:@&=+$.!~*'()%,#]+[\w\/])
-  (?=$|[\s.:,?\-\[\]&\)])/x, "g")
+  (?=$|[\s.:;,?\-\[\]&\)])/x, "g")
 
 #
 # Requests to the server
