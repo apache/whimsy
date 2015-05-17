@@ -67,9 +67,7 @@ task :reset do
     rm_rf 'test/work/board'
   end
 
-  if
-    Dir['test/work/repository/db/revs/0/*'].length > 2
-  then
+  unless Dir.exist? 'test/work/board'
     rm_rf 'test/work/repository'
   end
 end
