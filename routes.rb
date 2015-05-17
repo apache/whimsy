@@ -148,3 +148,21 @@ get '/events', provides: 'text/event-stream' do
     end
   end
 end
+
+# draft minutes
+get '/text/draft/:file' do |file|
+  agenda = "board_agenda_#{file.gsub('-','_')}.txt".untaint
+  minutes = AGENDA_WORK + '/' +
+    agenda.sub('_agenda_','_minutes_').sub('.txt','.yml')
+
+  _text do
+    Dir.chdir(FOUNDATION_BOARD) do
+      if Dir['board_agenda_*.txt'].include?(agenda)
+        _ Minutes.draft(agenda, minutes)
+      else
+        halt 404
+      end
+    end
+  end
+end
+
