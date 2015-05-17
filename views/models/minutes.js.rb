@@ -54,6 +54,11 @@ class Minutes
     rollcall = Minutes.get('Roll Call') || Agenda.find('Roll-Call').text
     rollcall[/Directors.*Present:\n\n((.*\n)*?)\n/,1].sub(/\n$/, '')
   end
+
+  # determine if the meeting is over
+  def self.complete
+    return Minutes.get('Adjournment') ? true : false
+  end
 end
 
 Events.subscribe :minutes do |message|

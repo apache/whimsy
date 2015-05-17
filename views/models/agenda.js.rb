@@ -183,7 +183,13 @@ class Agenda
 
   # buttons to show on the index page
   def self.buttons
-    [{button: Refresh}, {form: Post, text: 'add resolution'}]
+    list = [{button: Refresh}, {form: Post, text: 'add resolution'}]
+
+    if Server.role == :secretary and Minutes.complete
+      list << {form: DraftMinutes}
+    end
+
+    list
   end
 
   # the default banner color to use for the agenda as a whole
@@ -295,16 +301,18 @@ class Agenda
       list << {button: Approve} unless self.missing or @comments === undefined
 
     elsif Server.role == :secretary
-      if ['Call to order', 'Adjournment'].include? @title
-        list << {button: Timestamp}
-      elsif @attach =~ /^7\w/
+      if @attach =~ /^7\w/
         list << {form: Vote}
+      elsif Minutes.get(@title)
+        list << {form: AddMinutes, text: 'edit minutes'}
+      elsif ['Call to order', 'Adjournment'].include? @title
+        list << {button: Timestamp}
       else
-        if Minutes.get(@title)
-          list << {form: AddMinutes, text: 'edit minutes'}
-        else
-          list << {form: AddMinutes, text: 'add minutes'}
-        end
+        list << {form: AddMinutes, text: 'add minutes'}
+      end
+
+      if @title == 'Adjournment' and Minutes.complete
+        list << {form: DraftMinutes}
       end
     end
 

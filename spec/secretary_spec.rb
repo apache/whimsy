@@ -9,9 +9,9 @@ feature 'report' do
     page.driver.header 'REMOTE_USER', 'clr'
   end
 
-  it "should timestamp call to order" do
+  it "should allow timestamps to be edited" do
     visit '/2015-01-21/Call-to-order'
-    expect(page).to have_selector 'button', text: 'timestamp'
+    expect(page).to have_selector 'button', text: 'edit minutes'
   end
 
   it "should show minute specific options" do
@@ -48,5 +48,10 @@ feature 'report' do
     expect(page).to have_selector 'em', text: 'Change the Apache MINA Chair'
     expect(page).to have_selector 'button', text: 'Tabled'
     expect(page).to have_selector 'button', text: 'Unanimous'
+  end
+
+  it "should timestamp adjournment" do
+    visit '/2015-02-18/Adjournment'
+    expect(page).to have_selector 'button', text: 'timestamp'
   end
 end
