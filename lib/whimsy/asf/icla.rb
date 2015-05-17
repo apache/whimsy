@@ -7,7 +7,7 @@ module ASF
       return if value == 'notinavail'
       new.each do |id, name, email|
         if id == value
-	  return Struct.new(:id, :name, :email).new(id, name, email)
+          return Struct.new(:id, :name, :email).new(id, name, email)
         end 
       end
       nil
@@ -17,7 +17,7 @@ module ASF
       value = value.downcase
       ICLA.new.each do |id, name, email|
         if email.downcase == value
-	  return Struct.new(:id, :name, :email).new(id, name, email)
+          return Struct.new(:id, :name, :email).new(id, name, email)
         end 
       end
       nil
@@ -32,8 +32,10 @@ module ASF
 
     def each(&block)
       officers = ASF::SVN['private/foundation/officers']
-      iclas = File.read("#{officers}/iclas.txt")
-      iclas.scan(/^([-\w]+):.*?:(.*?):(.*?):/).each(&block)
+      if officers and File.exist?("#{officers}/iclas.txt")
+        iclas = File.read("#{officers}/iclas.txt")
+        iclas.scan(/^([-\w]+):.*?:(.*?):(.*?):/).each(&block)
+      end
     end
   end
 
