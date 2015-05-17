@@ -44,13 +44,12 @@ class DraftMinutes < React
   def save(event)
     data = {
       agenda: Agenda.file,
-      title: @@item.title,
+      message: "Draft minutes for #{Agenda.title}",
       text: @draft
     }
 
     @disabled = true
-    post 'minute', data do |minutes|
-      Minutes.load minutes
+    post 'draft', data do
       @disabled = false
       jQuery('#draft-minute-form').modal(:hide)
     end

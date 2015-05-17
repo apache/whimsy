@@ -60,7 +60,8 @@ task :reset do
 
   if
     Dir['test/work/board/*'].any? do |file|
-      IO.read("test/data/#{File.basename file}") != IO.read(file)
+      base = "test/data/#{File.basename file}"
+      not File.exist?(base) or IO.read(base) != IO.read(file)
     end
   then
     rm_rf 'test/work/board'
