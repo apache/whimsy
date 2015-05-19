@@ -37,7 +37,8 @@ class Keyboard
         end
         return false
       elsif event.keyCode == 'I'.ord
-        ~"#info".click
+        info = document.getElementById("info")
+        info.click() if info
         return false
       elsif event.keyCode == 'N'.ord
         ~"#nav".click

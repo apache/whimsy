@@ -75,15 +75,38 @@ feature 'report' do
       expect(draft).to include('No report was submitted.')
       expect(draft).to include('was approved by Unanimous Vote of the directors present.')
       expect(draft).to match(/Adjourned at \d+:\d\d [ap]\.m\. \(Pacific\)/)
+
+      @agenda = 'board_agenda_2015_02_18.txt'
+      @message = 'Draft minutes for 2015-02-18'
+      @draft = draft
+
+      begin
+        eval(File.read('views/actions/draft.json.rb'))
+
+        file = "#{FOUNDATION_BOARD}/board_minutes_2015_02_18.txt"
+
+        expect(File.exist? file).to be true
+        expect(File.read file).to eq draft
+      ensure
+        if File.exist? file
+          `svn rm #{file}`
+          `svn commit #{file} -m cleanup`
+        end
+      end
     end
   end
 
   def completed(meeting, &block)
     file = "#{AGENDA_WORK}/board_minutes_#{meeting.gsub('-', '_')}.yml"
-    minutes = YAML.load(IO.read(file))
-    IO.write(file, YAML.dump(minutes.merge('Adjournment' => '11:55')))
+    minutes = IO.read(file)
+    IO.write file, YAML.dump(YAML.load(minutes).merge('Adjournment' => '11:55'))
     yield 
   ensure
-    IO.write(file, YAML.dump(minutes))
+    IO.write file, minutes
+  end
+
+  # sinatra environment
+  def env
+    Struct.new(:user, :password).new('test', nil)
   end
 end

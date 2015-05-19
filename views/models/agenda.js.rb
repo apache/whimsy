@@ -358,3 +358,8 @@ end
 Events.subscribe :agenda do |message|
   Agenda.fetch(nil) if message.file == Agenda.file
 end
+
+Events.subscribe :server do |message|
+  Server.drafts  = message.drafts  if message.drafts
+  Server.agendas = message.agendas if message.agendas
+end

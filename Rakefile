@@ -60,15 +60,14 @@ task :reset do
 
   if
     Dir['test/work/board/*'].any? do |file|
-      IO.read("test/data/#{File.basename file}") != IO.read(file)
+      base = "test/data/#{File.basename file}"
+      not File.exist?(base) or IO.read(base) != IO.read(file)
     end
   then
     rm_rf 'test/work/board'
   end
 
-  if
-    Dir['test/work/repository/db/revs/0/*'].length > 2
-  then
+  unless Dir.exist? 'test/work/board'
     rm_rf 'test/work/repository'
   end
 end
