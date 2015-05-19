@@ -53,8 +53,9 @@ class Backchannel < React
 
   # highlight mentions of my id
   def mention(text)
-    return text.gsub(/\b(#{Server.userid})\b/,
-      "<span class=mention>$1</span>")
+    return text.gsub(/<.*?>|\b(#{Server.userid})\b/) do |match|
+      match[0] == '<' ? match : "<span class=mention>#{match}</span>"
+    end
   end
 
   # on initial display, fetch backlog
