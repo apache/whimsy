@@ -91,7 +91,12 @@ class Post < React
     end
 
     if not @edited or newprops.item.attach != self.props.item.attach
-      @report = @@item.text || '' 
+      text = @@item.text || '' 
+      if @@item.title == 'President'
+        text.sub! /\s*Additionally, please see Attachments \d through \d\./, ''
+      end
+
+      @report = text
       @digest = @@item.digest
       @alerted = false
       @edited = false
