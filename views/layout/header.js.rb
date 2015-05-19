@@ -2,8 +2,14 @@
 # Header: title on the left, dropdowns on the right
 #
 # Also keeps the window/tab title in sync with the header title
+#
+# Finally: make info dropdown status 'sticky'
 
 class Header < React
+  def initialize
+    @infodropdown = nil
+  end
+
   def render
     _header.navbar.navbar_fixed_top class: @@item.color do
       _div.navbar_brand @@item.title
@@ -22,8 +28,8 @@ class Header < React
         # 'info'/'online' dropdown
         #
         if @@item.attach
-          _li.dropdown do
-            _a.dropdown_toggle.info! data_toggle: "dropdown" do
+          _li.dropdown class: @infodropdown do
+            _a.dropdown_toggle.info! onClick: self.toggleInfo do
               _ 'info'
               _b.caret
             end
@@ -139,5 +145,10 @@ class Header < React
     if title.textContent != @@item.title
       title.textContent = @@item.title
     end
+  end
+
+  # toggle info dropdown
+  def toggleInfo
+    @infodropdown = (@infodropdown ? nil : 'open')
   end
 end
