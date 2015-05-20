@@ -105,9 +105,12 @@ Agenda.update(agenda_file, @message) do |agenda|
 
       # update agenda
       agenda.sub!(/ \d\. Committee Reports.*?\n\s+A\./m) do |flags|
-        flags.gsub! /\n +# .*? \[.*\]/, ''
-        flags[/\n\n?()\n\s+A\./, 1] = flagged_reports.sort.
-          map {|pmc, who| "       # #{pmc} [#{who.join(', ')}]\n"}.join
+        if flags =~ /discussion:\n\n()/
+          flags.gsub! /\n +# .*? \[.*\]/, ''
+          flags[/discussion:\n\n()/, 1] = flagged_reports.sort.
+            map {|pmc, who| "        # #{pmc} [#{who.join(', ')}]\n"}.join
+        end
+
         flags
       end
     end
