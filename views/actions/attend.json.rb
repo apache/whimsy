@@ -10,9 +10,12 @@ end
 
 Agenda.update(@agenda, message) do |agenda|
 
-  directors = agenda[/^ +Directors.*?:\n\n.*?\n\n +Directors.*?:\n\n.*?\n\n/m]
-  officers = agenda[/^ +Executive.*?:\n\n.*?\n\n +Executive.*?:\n\n.*?\n\n/m]
-  guests = agenda[/^ +Guests.*?:\n\n.*?\n\n/m]
+  rollcall = agenda[/^ \d\. Roll Call.*?\n \d\./m]
+  rollcall.gsub!(/ +\n/, '')
+
+  directors = rollcall[/^ +Directors.*?:\n\n.*?\n\n +Directors.*?:\n\n.*?\n\n/m]
+  officers = rollcall[/^ +Executive.*?:\n\n.*?\n\n +Executive.*?:\n\n.*?\n\n/m]
+  guests = rollcall[/^ +Guests.*?:\n\n.*?\n\n/m]
 
   if directors.include? @name
 
@@ -34,7 +37,7 @@ Agenda.update(@agenda, message) do |agenda|
       end
     end
 
-    agenda.sub! directors, updated
+    rollcall.sub! directors, updated
 
   elsif officers.include? @name
 
@@ -49,23 +52,25 @@ Agenda.update(@agenda, message) do |agenda|
       updated.sub! /Absent:\n\n\n/, "Absent:\n\n        none\n\n"
     end
 
-    agenda.sub! officers, updated
+    rollcall.sub! officers, updated
 
   elsif @action == 'regrets'
 
     updated = guests.sub /^ .*#{@name}.*?\n/, ''
     updated.sub! /:\n\n\n/, ":\n\n        none\n"
 
-    agenda.sub! guests, updated
+    rollcall.sub! guests, updated
 
   elsif not guests.include? @name
 
     updated = guests.sub /\n\Z/, "\n        #{@name}\n"
     updated.sub! /:\n\n +none\n/, ":\n\n"
 
-    agenda.sub! guests, updated
+    rollcall.sub! guests, updated
 
   end
+
+  agenda[/^ \d\. Roll Call.*?\n \d\./m] = rollcall
 
   agenda
 end
