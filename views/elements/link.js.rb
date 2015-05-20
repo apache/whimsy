@@ -26,7 +26,7 @@ class Link < React
   end
 
   def click(event)
-    return if event.ctrlKey or event.shiftKey
+    return if event.ctrlKey or event.shiftKey or event.metaKey
 
     href = event.target.getAttribute('href')
 
