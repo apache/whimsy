@@ -37,7 +37,7 @@ class AddMinutes < React
         _button.btn.btn_sm.btn_info.col_md_offset_1.col_md_1 '+ AI', 
           onClick: self.addAI, disabled: !@ai_owner || !@ai_text
         _label.col_md_2 do
-          _select Minutes.attendees, value: @ai_owner do |name|
+          _select Minutes.attendee_names, value: @ai_owner do |name|
             _option name
           end
         end

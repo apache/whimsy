@@ -355,3 +355,37 @@ dl.chatlog dd.info {
   font-weight: bold;
   color: #F00;
 }
+
+#rollcall ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#rollcall li {
+  line-height: 180%;
+}
+
+#rollcall ul li input[type=checkbox] {
+  margin: 0 0.7em 0 1.4em;
+}
+
+#rollcall ul li input[type=text] {
+  display: none;
+}
+
+#rollcall ul li:hover label:after {
+  margin: 0 0.3em 0 0.2em;
+  font-weight: normal;
+  content: '-';
+}
+
+#rollcall ul li:hover input[type=text] {
+  display: inline;
+  height: 100%;
+  line-height: 100%;
+}
+
+#rollcall ul li:hover span {
+  display: none;
+}

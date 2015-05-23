@@ -268,6 +268,8 @@ class Agenda
   def view
     if @title == 'Action Items'
       ActionItems
+    elsif @title == 'Roll Call'
+      RollCall
     else
       Report
     end

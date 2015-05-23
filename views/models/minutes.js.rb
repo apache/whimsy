@@ -14,8 +14,11 @@ class Minutes
         @@list[title] = list[title]
       end
     end
+
+    @@list.attendees ||= {}
   end
 
+  # list of actions created during the meeting
   def self.actions
     actions = []
 
@@ -38,15 +41,15 @@ class Minutes
     return @@list[title]
   end
 
-  # return a list of actual or expected attendees
-  def self.attendees
+  # return a list of actual or expected attendee names
+  def self.attendee_names
     rollcall = Minutes.get('Roll Call') || Agenda.find('Roll-Call').text
     pattern = Regexp.new('\n   ( [a-z]*[A-Z][a-zA-Z]*\.?)+', 'g')
-    attendees = []
+    names = []
     while (match=pattern.exec(rollcall)) do
-      attendees << match[0].sub(/^\s+/, '').split(' ').first
+      names << match[0].sub(/^\s+/, '').split(' ').first
     end
-    attendees.sort()
+    names.sort()
   end
 
   # return a list of directors present

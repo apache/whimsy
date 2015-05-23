@@ -19,6 +19,7 @@ require_relative 'pages/shepherd'
 require_relative 'pages/queue'
 require_relative 'pages/flagged'
 require_relative 'pages/backchannel'
+require_relative 'pages/roll-call'
 
 # Button + forms
 require_relative 'buttons/add-comment'
