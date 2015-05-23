@@ -19,15 +19,28 @@ class ASF::Board::Agenda
         list = nil
 
         absent = attr['text'].scan(/Absent:\n\n.*?\n\n/m).join
+        directors = attr['text'].scan(/^ +Directors[ \S]*?:\n\n.*?\n\n/m).join
+        officers = attr['text'].scan(/^ +Executive[ \S]*?:\n\n.*?\n\n/m).join
 
         # attempt to identify the people mentioned in the Roll Call
         people = attr['text'].scan(/ {8}(\w.*)/).flatten.each do |sname|
           next if sname == 'none'
-
           name = sname
+
+          role = :guest
+          role = :director if directors.include? name
+          role = :officer if officers.include? name
+
+          sort_name = name.split(' ').rotate(-1).join(' ')
+          if sort_name.start_with? '('
+            sort_name = sort_name.split(' ').rotate(-1).join(' ') 
+          end
+
           if @quick
             attr['people'][name.gsub(/\W/, '_')] = {
               name: name,
+              sortName: sort_name,
+              role: role,
               attending: !absent.include?(name)
             }
           else
@@ -70,11 +83,18 @@ class ASF::Board::Agenda
 
               attr['people'][person.id] = {
                 name: name,
+                sortName: sort_name,
+                role: role,
                 member: person.asf_member?,
                 attending: !absent.include?(name)
               }
             end
           end
+        end
+
+        if attr['people']
+          attr['people'] = Hash[attr['people'].
+            sort_by {|id, person| person[:sortName]}]
         end
       elsif attr['title'] == 'Call to order'
         attr['timestamp'] = timestamp(attr['text'][/\d+:\d+([ap]m)?/])
