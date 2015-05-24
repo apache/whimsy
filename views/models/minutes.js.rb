@@ -15,7 +15,7 @@ class Minutes
       end
     end
 
-    @@list.attendees ||= {}
+    @@list.attendance ||= {}
   end
 
   # list of actions created during the meeting
