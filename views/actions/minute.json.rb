@@ -27,57 +27,64 @@ elsif @action == 'attendance'
   attendance = minutes['attendance'] ||= {}
   agenda = Agenda.parse @agenda, :quick
   people = agenda.find {|item| item['title'] == 'Roll Call'}['people']
-  people.each {|person| attendance[person[:name]] ||= {present: false}}
+  people.each {|id, person| attendance[person[:name]] ||= {present: false}}
 
   # update attendance records for attendee
-  @notes = "- #@notes" if @notes and not @notes.empty?
+  @notes = " - #@notes" if @notes and not @notes.empty?
   attendance[@name] = {present: @present, notes: @notes}
 
   # build minutes for roll call
   @text = "Directors Present:\n\n"
-  people.each do |person|
+  people.each do |id, person|
     next unless person[:role] == :director
     name = person[:name]
     next unless attendance[name][:present]
     @text += "  #{name}#{attendance[name][:notes]}\n"
   end
 
-  @text = "\nDirectors Absent:\n\n"
+  @text += "\nDirectors Absent:\n\n"
   first = true
-  people.each do |person|
+  people.each do |id, person|
     next unless person[:role] == :director
     name = person[:name]
     next if attendance[name][:present]
-    @text += "  #{name}#{attendance[name][:notes]}"
+    @text += "  #{name}#{attendance[name][:notes]}\n"
     first = false
   end
-  @text += "  none" if first
+  @text += "  none\n" if first
 
-  @text += "\n\nExecutive Officers Present:\n\n"
-  people.each do |person|
+  first = true
+  people.each do |id, person|
     next unless person[:role] == :officer
     name = person[:name]
     next unless attendance[name][:present]
+    @text += "\nExecutive Officers Present:\n\n" if first
     @text += "  #{name}#{attendance[name][:notes]}\n"
+    first = false
   end
 
   @text += "\nExecutive Officers Absent:\n\n"
   first = true
-  people.each do |person|
+  people.each do |id, person|
     next unless person[:role] == :officer
     name = person[:name]
     next if attendance[name][:present]
-    @text += "  #{name}#{attendance[name][:notes]}"
-  end
-  @text += "  none" if first
-
-  @text += "\Guests:\n\n"
-  attendance.sort.each do |name, records|
-    next unless records[:present]
-    person = people.find {|person| person[:name] == name}
-    next if person and not person[:role] == :guest
     @text += "  #{name}#{attendance[name][:notes]}\n"
+    first = false
   end
+  @text += "  none\n" if first
+
+  first = true
+  attendance.to_a.sort.each do |name, records|
+    next unless records[:present]
+    person = people.find {|id, person| person[:name] == name}
+    next if person and not person.last[:role] == :guest
+    @text += "\nGuests:\n\n" if first
+    @text += "  #{name}#{attendance[name][:notes]}\n"
+    first = false
+  end
+
+  @title = 'Roll Call'
 end
 
 minutes[@title] = @text

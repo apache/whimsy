@@ -41,6 +41,10 @@ class Minutes
     return @@list[title]
   end
 
+  def self.attendees
+    @@list.attendance
+  end
+
   # return a list of actual or expected attendee names
   def self.attendee_names
     rollcall = Minutes.get('Roll Call') || Agenda.find('Roll-Call').text
