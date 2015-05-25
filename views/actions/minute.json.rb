@@ -30,8 +30,13 @@ elsif @action == 'attendance'
   people.each {|id, person| attendance[person[:name]] ||= {present: false}}
 
   # update attendance records for attendee
-  @notes = " - #@notes" if @notes and not @notes.empty?
-  attendance[@name] = {present: @present, notes: @notes}
+  attendance[@name] = {
+    id: @id,
+    present: @present, 
+    notes: (@notes and not @notes.empty?) ? " - #@notes" : nil,
+    member: ASF::Person.find(@id).asf_member?,
+    sortName: @name.split(' ').rotate(-1).join(' ')
+  }
 
   # build minutes for roll call
   @text = "Directors Present:\n\n"

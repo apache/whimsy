@@ -117,6 +117,19 @@ get '/json/jira' do
   _json { JSON.parse(response.body).map {|project| project['key']} }
 end
 
+# get list of committers (for use in roll-call)
+get '/json/committers' do
+  _json do
+    members = ASF.search_one(ASF::Group.base, "cn=member", 'memberUid').first
+    members = Hash[members.map {|name| [name, true]}]
+    ASF.search_one(ASF::Person.base, 'uid=*', ['uid', 'cn']).
+      map {|person| {id: person['uid'].first, 
+        member: members[person['uid'].first] || false,
+        name: person['cn'].first.force_encoding('utf-8')}}.
+      sort_by {|person| person[:name].downcase.unicode_normalize(:nfd)}
+  end
+end
+
 # chat log
 get %r{/json/chat/(\d\d\d\d_\d\d_\d\d)} do |date|
   log = "#{AGENDA_WORK}/board_agenda_#{date}-chat.yml"

@@ -2,6 +2,11 @@
 # Secretary Roll Call update form
 
 class RollCall < React
+  def initialize
+    RollCall.lockFocus = false
+    @guest = ''
+  end
+
   def render
     _section.flexbox do
       _section.rollcall! do
@@ -16,11 +21,35 @@ class RollCall < React
         end
 
         _h3 'Guests'
-        _ul @people do |person|
-          _Attendee person: person if person.role == :guest
+        _ul do
+          @people.each do |person|
+            _Attendee person: person if person.role == :guest
+          end
+
+          # walk-on guest support
+          _input value: @guest, disabled: @disabled, 
+            onFocus:-> {RollCall.lockFocus = true}, 
+            onBlur:-> {RollCall.lockFocus = false}
+
+          if @guest.length >= 3
+            guest = @guest.downcase().split(' ')
+
+            Server.committers.each do |person|
+              if 
+                guest.all? {|part|
+                  person.id.include? part or 
+                  person.name.downcase().include? part
+                } and
+                not @people.any? {|registered| registered.id == person.id}
+              then
+                _Attendee person: person, clear: true
+              end
+            end
+          end
         end
       end
 
+      # draft minutes
       _section do
         minutes = Minutes.get(@@item.title)
         if minutes
@@ -40,17 +69,51 @@ class RollCall < React
   def componentWillReceiveProps()
     people = []
 
+    # start with those listed in the agenda
     for id in @@item.people
       person = @@item.people[id]
       person.id = id
       people << person
     end
 
-    people.sort do |person1, person2| 
-      return person1.sortName > person2.sortName ? 1 : -1
+    # add remaining attendees
+    attendees = Minutes.attendees
+    if attendees
+      for name in attendees
+        if not people.any? {|person| person.name == name}
+          person = attendees[name]
+          person.name = name
+          person.role = :guest
+          people << person
+        end
+      end
     end
 
-    @people = people
+    # sort list
+    @people = people.sort do |person1, person2| 
+      return person1.sortName > person2.sortName ? 1 : -1
+    end
+  end
+
+  # clear guest
+  def clear_guest()
+    @guest = ''
+  end
+
+  # client side initialization on first rendering
+  def componentDidMount()
+    if Server.committers
+      @disabled = false
+    else
+      @disabled = true
+      fetch 'committers', :json do |committers|
+        Server.committers = committers
+        @disabled = false
+      end
+    end
+
+    # export clear method
+    RollCall.clear_guest = self.clear_guest
   end
 end
 
@@ -85,8 +148,7 @@ class Attendee < React
   # forms.  CSS controls which version of the notes is actually displayed.
   def render
     _li onMouseOver: self.focus do
-      _input type: :checkbox, checked: @checked, onChange: self.click,
-        disabled: @disabled
+      _input type: :checkbox, checked: @checked, onChange: self.click
 
       _a @@person.name, 
         style: {fontWeight: (@@person.member ? 'bold' : 'normal')},
@@ -100,7 +162,9 @@ class Attendee < React
 
   # when moving cursor over a list item, focus on the input field
   def focus(event)
-    event.target.parentNode.querySelector('input[type=text]').focus()
+    unless RollCall.lockFocus
+      event.target.parentNode.querySelector('input[type=text]').focus()
+    end
   end
 
   # initialize pending update status
@@ -130,6 +194,7 @@ class Attendee < React
       agenda: Agenda.file,
       action: 'attendance',
       name: @@person.name,
+      id: @@person.id,
       present: @checked,
       notes: @notes
     }
@@ -137,6 +202,7 @@ class Attendee < React
     @disabled = true
     post 'minute', data do |minutes|
       Minutes.load minutes
+      RollCall.clear_guest() if @@clear
       @disabled = false
     end
 

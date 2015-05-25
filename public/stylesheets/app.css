@@ -389,3 +389,7 @@ dl.chatlog dd.info {
 #rollcall ul li:hover span {
   display: none;
 }
+
+#rollcall ul > input {
+  margin-left: 3em;
+}
