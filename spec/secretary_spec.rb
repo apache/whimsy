@@ -78,7 +78,7 @@ feature 'report' do
 
       @agenda = 'board_agenda_2015_02_18.txt'
       @message = 'Draft minutes for 2015-02-18'
-      @draft = draft
+      @text = draft
 
       begin
         eval(File.read('views/actions/draft.json.rb'))
