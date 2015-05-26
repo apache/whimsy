@@ -268,7 +268,7 @@ class Agenda
   def view
     if @title == 'Action Items'
       ActionItems
-    elsif @title == 'Roll Call'
+    elsif @title == 'Roll Call' and Server.role == :secretary
       RollCall
     else
       Report
