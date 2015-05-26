@@ -9,7 +9,7 @@ minutes_file = agenda_file.sub('_agenda', '_minutes')
 unless File.exist? minutes_file
   `svn cp #{agenda_file} #{minutes_file}` if File.exist? agenda_file
 
-  File.write(minutes_file, @draft)
+  File.write(minutes_file, @text)
 
   `svn add #{minutes_file}` unless File.exist? agenda_file
 
