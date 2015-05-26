@@ -333,6 +333,10 @@ dl.chatlog dt.info {
   font-style: italic;
 }
 
+dl.chatlog dd.topic {
+  background-color: yellow;
+}
+
 dl.chatlog dt:after {
   content: ":";
   font-style: normal;

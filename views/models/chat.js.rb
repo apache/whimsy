@@ -1,5 +1,6 @@
 class Chat
   @@log = []
+  @@topic = {}
   Chat.fetch_requested = false
   Chat.backlog_fetched = false
 
@@ -13,6 +14,25 @@ class Chat
     end
 
     Chat.fetch_requested = true
+
+    self.countdown()
+    setInterval self.countdown, 30_000
+  end
+
+  # set topic to meeting status
+  def self.countdown()
+    status = Chat.status
+    Chat.topic subtype: 'stuatus', user: 'whimsy', text: status if status
+  end
+
+  # replace topic
+  def self.topic(entry)
+    return if @@topic.text == entry.text
+    @@log = @@log.filter {|item| item.type != :topic}
+    entry.type = :topic
+    @@topic = entry
+    Chat.add entry
+    Main.refresh()
   end
 
   # return the chat log
@@ -22,6 +42,8 @@ class Chat
 
   # add an entry to the chat log
   def self.add(entry)
+    entry.timestamp ||= Date.new().getTime()
+
     if @@log.empty? or @@log.last.timestamp < entry.timestamp
       @@log << entry
     else
@@ -33,6 +55,27 @@ class Chat
           break
         end
       end
+    end
+  end
+
+  # meeting status for countdown
+  def self.status
+    diff = Agenda.find('Call-to-order').timestamp - Date.new().getTime()
+
+    if diff > 86_400_000 * 3/2
+      "meeting will start in about #{Math.floor(diff/86_400_000+0.5)} days"
+    elsif diff > 3_600_000 * 3/2
+      "meeting will start in about #{Math.floor(diff/3_600_000+0.5)} hours"
+    elsif diff > 300_000
+      "meeting will start in about #{Math.floor(diff/300_000+0.5)*5} minutes"
+    elsif diff > 90_000
+      "meeting will start in about #{Math.floor(diff/60_000+0.5)} minutes"
+    elsif Minutes.complete
+      "meeting has completed"
+    elsif not Minutes.started
+      "meeting will start shortly"
+    elsif @@topic.subtype == 'status'
+      "meeting has started"
     end
   end
 end

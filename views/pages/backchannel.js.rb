@@ -38,10 +38,9 @@ class Backchannel < React
           while i < Chat.log.length
             message = Chat.log[i]
             break if date != datefmt(message.timestamp)
-            msgtype = ('info' if message.type == :info)
-            _dt message.user, key: "t#{message.timestamp}", class: msgtype,
+            _dt message.user, key: "t#{message.timestamp}", class: message.type,
               title: Date.new(message.timestamp).toLocaleTimeString()
-            _dd key: "d#{message.timestamp}", class: msgtype do
+            _dd key: "d#{message.timestamp}", class: message.type do
               _Text raw: message.text, filters: [hotlink, self.mention]
             end
             i += 1
