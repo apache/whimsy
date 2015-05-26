@@ -390,6 +390,6 @@ dl.chatlog dd.info {
   display: none;
 }
 
-#rollcall ul > input {
+#rollcall ul input.walkon {
   margin-left: 3em;
 }

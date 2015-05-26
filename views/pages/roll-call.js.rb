@@ -27,9 +27,11 @@ class RollCall < React
           end
 
           # walk-on guest support
-          _input value: @guest, disabled: @disabled, 
-            onFocus:-> {RollCall.lockFocus = true}, 
-            onBlur:-> {RollCall.lockFocus = false}
+          _li do
+            _input.walkon value: @guest, disabled: @disabled, 
+              onFocus:-> {RollCall.lockFocus = true}, 
+              onBlur:-> {RollCall.lockFocus = false}
+          end
 
           if @guest.length >= 3
             guest = @guest.downcase().split(' ')
@@ -114,6 +116,15 @@ class RollCall < React
 
     # export clear method
     RollCall.clear_guest = self.clear_guest
+  end
+
+  # scroll walkon input field towards the center of the screen
+  def componentDidUpdate()
+    if RollCall.lockFocus and @guest.length >= 3
+      walkon = ~'.walkon'
+      offset = walkon.offsetTop + walkon.offsetHeight/2 - window.innerHeight/2
+      jQuery('html, body').animate({scrollTop: offset}, :slow);
+    end
   end
 end
 
