@@ -30,9 +30,12 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     userid = Etc.getlogin
   end
 
-  username = ASF::Person.new(userid).public_name
-  username ||= 'Joe Tester' if userid == 'test'
-  username ||= Etc.getpwnam(userid)[4].split(',')[0].force_encoding('utf-8')
+  if userid == 'test' and ENV['RACK_ENV'] == 'test'
+    username = 'Joe Tester'
+  else
+    username = ASF::Person.new(userid).public_name
+    username ||= Etc.getpwnam(userid)[4].split(',')[0].force_encoding('utf-8')
+  end
 
   pending = Pending.get(userid)
   initials = pending['initials'] || username.gsub(/[^A-Z]/, '').downcase
