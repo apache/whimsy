@@ -37,7 +37,7 @@ class ASF::Board::Agenda
           end
 
           if @quick
-            attr['people'][name.gsub(/\W/, '_')] = {
+            attr['people']['_' + name.gsub(/\W/, '_')] = {
               name: name,
               sortName: sort_name,
               role: role,
