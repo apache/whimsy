@@ -47,3 +47,8 @@ end
 def dir(pattern, base=FOUNDATION_BOARD)
   Dir[File.join(base, pattern)].map {|name| File.basename name}
 end
+
+# workaround for https://github.com/rubygems/rubygems/issues/1265
+Gem::Specification.stubs.each do |stub|
+  stub.full_require_paths.each {|path| path.untaint}
+end
