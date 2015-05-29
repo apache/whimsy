@@ -49,6 +49,8 @@ def dir(pattern, base=FOUNDATION_BOARD)
 end
 
 # workaround for https://github.com/rubygems/rubygems/issues/1265
-Gem::Specification.stubs.each do |stub|
-  stub.full_require_paths.each {|path| path.untaint}
+if Gem::Specification.respond_to? :stubs
+  Gem::Specification.stubs.each do |stub|
+    stub.full_require_paths.each {|path| path.untaint}
+  end
 end
