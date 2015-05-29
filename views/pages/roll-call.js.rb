@@ -36,6 +36,7 @@ class RollCall < React
           if @guest.length >= 3
             guest = @guest.downcase().split(' ')
 
+            found = false
             Server.committers.each do |person|
               if 
                 guest.all? {|part|
@@ -44,9 +45,13 @@ class RollCall < React
                 } and
                 not @people.any? {|registered| registered.id == person.id}
               then
-                _Attendee person: person, clear: true
+                _Attendee person: person, walkon: true
+                found = true
               end
             end
+
+            # non committer
+            _Attendee person: {name: @guest}, walkon: true if not found
           end
         end
       end
@@ -161,13 +166,20 @@ class Attendee < React
     _li onMouseOver: self.focus do
       _input type: :checkbox, checked: @checked, onChange: self.click
 
-      _a @@person.name, 
-        style: {fontWeight: (@@person.member ? 'bold' : 'normal')},
-        href: "https://whimsy.apache.org/roster/committer/#{@@person.id}"
+      roster = 'https://whimsy.apache.org/roster/committer/'
+      if @@person.id
+        _a @@person.name, href: "#{roster}/#{@@person.id}",
+          style: {fontWeight: (@@person.member ? 'bold' : 'normal')}
+      else
+        _a.hilite @@person.name, href: "#{roster}?q=#{@@person.name}"
+      end
 
-      _label
-      _input type: 'text', value: @notes, onBlur: self.blur, disabled: @disabled
-      _span " - #@notes" if @notes
+      unless @@walkon
+        _label
+        _input type: 'text', value: @notes, onBlur: self.blur,
+          disabled: @disabled
+        _span " - #@notes" if @notes
+      end
     end
   end
 
@@ -213,7 +225,7 @@ class Attendee < React
     @disabled = true
     post 'minute', data do |minutes|
       Minutes.load minutes
-      RollCall.clear_guest() if @@clear
+      RollCall.clear_guest() if @@walkon
       @disabled = false
     end
 

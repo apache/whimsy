@@ -1,23 +1,53 @@
 ---
 Call to order: '10:34'
-Roll Call: ! "Directors Present:\n\n    Rich Bowen joined at 11:02\n    Doug Cutting\n
-  \   Bertrand Delacretaz\n    Ross Gardler\n    Jim Jagielski\n    Brett Porter\n
-  \   Sam Ruby\n\nDirectors Absent:\n\n    Greg Stein\n    Chris Mattmann\n\nExecutive
-  Officers Present:\n\n    Craig L Russell\n\nExecutive Officers Absent:\n\n    none\n\nGuests:\n\n
-  \   Sean Kelly\n    Daniel Gruno\n    Kevin A. McGrail\n    Jake Farrell\n    Shane
-  Curcuru\n    Andrea Pescetti\n    Chip Childers\n    Marvin Humphrey\n    Hadrian
-  Zbarcea\n    Henri Yandell\n    David Nalley\n    Tom Pappas (Virtual)\n    Mark
-  Radcliffe joined at 10:55"
-January 21, 2015: tabled
-Treasurer: ! 'Jim: Will the audit be able to start soon?
+Roll Call: |
+  Directors Present:
 
-  Tom: Can''t start the audit until books are closed; looks like mid summer for the
-  audit.'
+    Rich Bowen
+    Doug Cutting
+    Bertrand Delacretaz
+    Ross Gardler
+    Jim Jagielski
+    Brett Porter
+    Sam Ruby
+
+  Directors Absent:
+
+    Chris Mattmann
+    Greg Stein
+
+  Executive Officers Present:
+
+    Craig L Russell
+
+  Executive Officers Absent:
+
+    none
+
+  Guests:
+
+    Andrea Pescetti
+    Chip Childers
+    Daniel Gruno
+    David Nalley
+    Hadrian Zbarcea
+    Henri Yandell
+    Jake Farrell
+    Kevin A. McGrail
+    Mark Radcliffe - joined at 10:55
+    Marvin Humphrey
+    Sean Kelly
+    Shane Curcuru
+    Tom Pappas
+January 21, 2015: tabled
+Treasurer: |-
+  Jim: Will the audit be able to start soon?
+  Tom: Can't start the audit until books are closed; looks like mid summer for the audit.
 Executive Vice President: Rich needs help with ApacheCon planning; Sam volunteered
   to help.
 Vice Chairman: The goal for resolution of the contractor issue is to have a recommendation
   for the incoming board.
-Discussion Items: ! "Mark: Trademarks are a valuable asset for ASF. Trademark rules
+Discussion Items: "Mark: Trademarks are a valuable asset for ASF. Trademark rules
   vary \nby country. Virtually all countries protect rights only through registration.
   \nMany unsavory people register other peoples' trademarks as a\nbusiness. Risks
   are most often on ASF users, not ASF per se. \nAs a practical matter, projects need
@@ -34,21 +64,154 @@ Discussion Items: ! "Mark: Trademarks are a valuable asset for ASF. Trademark ru
   users may well contribute to registration costs. \n\nRoss: Users are represented
   by PMCs. We need to make sure that \nPMCs step up, with foundation support."
 BookKeeper: ''
-Creadur: ! '@Jim: Clarify report'
-DeltaSpike: ! '@Bertrand: Ask if the git CMS work could be documented for others to
-  use'
-Drill: ! '@Brett: Are hangouts documents so non-attendees can participate later?'
-HttpComponents: ! '@Chris: pursue a report for HttpComponents'
-jUDDI: ! '@Brett: pursue a report for jUDDI'
-Logging: ! '@Brett: Any action on log4j?'
-ManifoldCF: ! '@Doug: Is there still an issue with infra?'
-Perl: ! '@Sam: Is anyone on the PMC looking at the reminders?'
-SIS: ! '@Brett: What is the issue with infra?'
+Creadur: "@Jim: Clarify report"
+DeltaSpike: "@Bertrand: Ask if the git CMS work could be documented for others to
+  use"
+Drill: "@Brett: Are hangouts documents so non-attendees can participate later?"
+HttpComponents: "@Chris: pursue a report for HttpComponents"
+jUDDI: "@Brett: pursue a report for jUDDI"
+Logging: "@Brett: Any action on log4j?"
+ManifoldCF: "@Doug: Is there still an issue with infra?"
+Perl: "@Sam: Is anyone on the PMC looking at the reminders?"
+SIS: "@Brett: What is the issue with infra?"
 Change Geronimo Chair: unanimous
 Change ServiceMix Chair: unanimous
 Change Directory Chair: unanimous
 Change OODT Chair: unanimous
 Change OpenOffice Chair: unanimous
 Change MINA Chair: unanimous
-Announcements: ! "Jim: The corporate sponsor of Groovy have dropped support, so \nthe
+Announcements: "Jim: The corporate sponsor of Groovy have dropped support, so \nthe
   Groovy project might be interested in moving to Apache."
+attendance:
+  Rich Bowen:
+    :id: _Rich_Bowen
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Bowen Rich
+  Chip Childers:
+    :id: _Chip_Childers
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Childers Chip
+  Shane Curcuru:
+    :id: _Shane_Curcuru
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Curcuru Shane
+  Doug Cutting:
+    :id: _Doug_Cutting
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Cutting Doug
+  Bertrand Delacretaz:
+    :id: _Bertrand_Delacretaz
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Delacretaz Bertrand
+  Jake Farrell:
+    :id: _Jake_Farrell
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Farrell Jake
+  Ross Gardler:
+    :id: _Ross_Gardler
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Gardler Ross
+  Daniel Gruno:
+    :id: _Daniel_Gruno
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Gruno Daniel
+  Niclas Hedhman:
+    :present: false
+  Marvin Humphrey:
+    :id: _Marvin_Humphrey
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Humphrey Marvin
+  Jim Jagielski:
+    :id: _Jim_Jagielski
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Jagielski Jim
+  Sean Kelly:
+    :id: _Sean_Kelly
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Kelly Sean
+  Chris Mattmann:
+    :present: false
+  Kevin A. McGrail:
+    :id: _Kevin_A__McGrail
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: McGrail Kevin A.
+  David Nalley:
+    :id: _David_Nalley
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Nalley David
+  Andrea Pescetti:
+    :id: _Andrea_Pescetti
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Pescetti Andrea
+  Brett Porter:
+    :id: _Brett_Porter
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Porter Brett
+  Sam Ruby:
+    :id: _Sam_Ruby
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Ruby Sam
+  Craig L Russell:
+    :id: _Craig_L_Russell
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Russell Craig L
+  Greg Stein:
+    :present: false
+  Henri Yandell:
+    :id: _Henri_Yandell
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Yandell Henri
+  Hadrian Zbarcea:
+    :id: _Hadrian_Zbarcea
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Zbarcea Hadrian
+  Tom Pappas:
+    :id: tpappas
+    :present: true
+    :notes: 
+    :member: false
+    :sortName: Pappas Tom
+  Mark Radcliffe:
+    :id: 
+    :present: true
+    :notes: " - joined at 10:55"
+    :member: false
+    :sortName: Radcliffe Mark
