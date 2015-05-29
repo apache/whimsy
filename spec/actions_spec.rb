@@ -254,6 +254,23 @@ feature 'server actions' do
   # Post minutes
   #
   describe 'minutes' do
+    it 'should update roll call' do
+      @agenda = 'board_agenda_2015_02_18.txt'
+      @action = 'attendance'
+      @id = 'gstein'
+      @name = 'Greg Stein'
+      @present = true
+
+      minutes = YAML.load_file('test/work/data/board_minutes_2015_02_18.yml')
+      expect(minutes['Roll Call']).to match(/Directors Absent:.*Greg Stein/m)
+
+      eval(File.read('views/actions/minute.json.rb'))
+
+      minutes = YAML.load_file('test/work/data/board_minutes_2015_02_18.yml')
+
+      expect(minutes['Roll Call']).to match(/Greg Stein\s+Directors Absent/)
+    end
+
     it 'should post minutes' do
       @agenda = 'board_agenda_2015_02_18.txt'
       @title = 'Incubator'

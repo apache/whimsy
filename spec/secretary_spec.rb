@@ -14,6 +14,15 @@ feature 'report' do
     expect(page).to have_selector 'button', text: 'edit minutes'
   end
 
+  it "should take roll" do
+    visit '/2015-02-18/Roll-Call'
+    expect(page).to have_selector('h3', text: 'Directors')
+    expect(page).to have_selector('a', text: 'Sean Kelly')
+    expect(page).to have_selector('a', text: 'Mark Radcliffe')
+    expect(page).to have_selector('input[value="joined at 10:55"]')
+    expect(page).to have_selector('h3', text: 'Minutes')
+  end
+
   it "should show minute specific options" do
     visit '/2015-02-18/January-21-2015'
     expect(page).to have_selector 'button', text: 'Cancel'

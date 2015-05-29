@@ -168,7 +168,7 @@ class Attendee < React
 
       roster = 'https://whimsy.apache.org/roster/committer/'
       if @@person.id
-        _a @@person.name, href: "#{roster}/#{@@person.id}",
+        _a @@person.name, href: "#{roster}#{@@person.id}",
           style: {fontWeight: (@@person.member ? 'bold' : 'normal')}
       else
         _a.hilite @@person.name, href: "#{roster}?q=#{@@person.name}"
