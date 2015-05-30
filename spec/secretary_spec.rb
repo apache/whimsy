@@ -105,6 +105,18 @@ feature 'report' do
     end
   end
 
+  it "should publish minutes" do
+    visit '/2015-01-21/'
+    expect(page).to have_selector 'textarea', text:
+      '[21 January 2015](../records/minutes/2015/board_minutes_2015_01_21.txt)'
+    expect(page).to have_selector 'textarea', text:
+      '* Establish Samza'
+    expect(page).to have_selector 'textarea', text:
+      '* Change ZooKeeper Chair'
+    expect(page).to have_selector \
+      'input#message[value="Publish 21 January 2015 minutes"]'
+  end
+
   def completed(meeting, &block)
     file = "#{AGENDA_WORK}/board_minutes_#{meeting.gsub('-', '_')}.yml"
     minutes = IO.read(file)
