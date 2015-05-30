@@ -2,12 +2,14 @@
 # chat message received from the client
 #
 
-log = {type: :chat, user: env.user, text: @text, timestamp: Time.now.to_f*1000}
+@type ||= :chat
+
+log = {type: @type, user: env.user, text: @text, timestamp: Time.now.to_f*1000}
 
 if @text.start_with? '/me '
   log[:text].sub! /^\/me\s+/, '*** '
   log[:type] = :info
-else
+elsif @type == :chat
   chat = "#{AGENDA_WORK}/#{@agenda.sub('.txt', '')}-chat.yml"
   File.write(chat, YAML.dump([])) if not File.exist? chat
 

@@ -22,17 +22,22 @@ class Chat
   # set topic to meeting status
   def self.countdown()
     status = Chat.status
-    Chat.topic subtype: 'stuatus', user: 'whimsy', text: status if status
+    Chat.topic subtype: 'status', user: 'whimsy', text: status if status
   end
 
   # replace topic
   def self.topic(entry)
     return if @@topic.text == entry.text
     @@log = @@log.filter {|item| item.type != :topic}
-    entry.type = :topic
     @@topic = entry
-    Chat.add entry
-    Main.refresh()
+
+    if not entry.agenda
+      entry.type = :topic
+      entry.agenda = Agenda.file
+      post 'message', entry do |message|
+        Chat.add entry
+      end
+    end
   end
 
   # return the chat log
@@ -93,6 +98,12 @@ Events.subscribe :info do |message|
   if message.agenda == Agenda.file
     message.delete agenda
     Chat.add message
+  end
+end
+
+Events.subscribe :topic do |message|
+  if message.agenda == Agenda.file
+    Chat.topic message
   end
 end
 

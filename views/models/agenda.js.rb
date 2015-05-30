@@ -183,7 +183,11 @@ class Agenda
 
   # buttons to show on the index page
   def self.buttons
-    list = [{button: Refresh}, {form: Post, text: 'add resolution'}]
+    list = [{button: Refresh}]
+
+    if not Minutes.complete
+      list << {form: Post, text: 'add resolution'}
+    end
 
     if Server.role == :secretary and Minutes.ready_to_post_draft
       list << {form: DraftMinutes}
@@ -279,7 +283,8 @@ class Agenda
   def buttons
     list = []
 
-    unless @comments === undefined # some reports don't have comments
+    unless @comments === undefined or Minutes.complete
+      # some reports don't have comments
       if self.pending
         list << {form: AddComment, text: 'edit comment'}
       else
@@ -289,7 +294,7 @@ class Agenda
 
     list << {button: Attend} if @title == 'Roll Call'
 
-    if @attach =~ /^(\d|7?[A-Z]+|4[A-Z])$/
+    if @attach =~ /^(\d|7?[A-Z]+|4[A-Z])$/ and not Minutes.complete
       if self.missing
         list << {form: Post, text: 'post report'} 
       elsif @attach =~ /^7\w/
@@ -300,7 +305,9 @@ class Agenda
     end
 
     if Server.role == :director
-      list << {button: Approve} unless self.missing or @comments === undefined
+      unless self.missing or @comments === undefined or Minutes.complete
+        list << {button: Approve} 
+      end
 
     elsif Server.role == :secretary
       if @attach =~ /^7\w/
