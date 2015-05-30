@@ -36,6 +36,7 @@ module ASF
       return @status if @status
       status = {}
       foundation = ASF::SVN['private/foundation']
+      return status unless foundation
       sections = File.read("#{foundation}/members.txt").split(/(.*\n===+)/)
       sections.shift(3)
       sections.each_slice(2) do |header, text|
