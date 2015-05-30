@@ -73,6 +73,7 @@ class PublishMinutes < React
       end
     end
 
+    @date = date
     @summary = summary
     @message = "Publish #{self.formatDate(date)} minutes"
   end
@@ -87,15 +88,17 @@ class PublishMinutes < React
 
   def publish(event)
     data = {
-      agenda: Agenda.file,
+      date: @date,
       summary: @summary,
       message: @message
     }
 
     @disabled = true
-    post 'publish', data do
+    post 'publish', data do |drafts|
       @disabled = false
+      Server.drafts = drafts
       jQuery('#publish-minutes-form').modal(:hide)
+      window.open('https://cms.apache.org/www/publish', '_blank').focus()
     end
   end
 end
