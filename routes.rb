@@ -99,6 +99,8 @@ end
 # draft minutes
 get '/text/minutes/:file' do |file|
   file = "board_minutes_#{file.gsub('-','_')}.txt".untaint
+  STDERR.puts dir('board_minutes_*.txt')
+  STDERR.puts file
   pass unless dir('board_minutes_*.txt').include? file
   path = File.join(FOUNDATION_BOARD, file)
 

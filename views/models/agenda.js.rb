@@ -189,8 +189,12 @@ class Agenda
       list << {form: Post, text: 'add resolution'}
     end
 
-    if Server.role == :secretary and Minutes.ready_to_post_draft
-      list << {form: DraftMinutes}
+    if Server.role == :secretary 
+      if Server.drafts.include? Agenda.file.sub('agenda', 'minutes')
+        list << {form: PublishMinutes}
+      elsif Minutes.ready_to_post_draft
+        list << {form: DraftMinutes}
+      end
     end
 
     list
@@ -320,7 +324,14 @@ class Agenda
         list << {form: AddMinutes, text: 'add minutes'}
       end
 
-      if @title == 'Adjournment' and Minutes.ready_to_post_draft
+      if @attach =~ /^3\w/
+        if 
+          Minutes.get(@title) == 'approved' and 
+          Server.drafts.include? @text[/board_minutes_\w+\.txt/]
+        then
+          list << {form: PublishMinutes}
+        end
+      elsif @title == 'Adjournment' and Minutes.ready_to_post_draft
         list << {form: DraftMinutes}
       end
     end
