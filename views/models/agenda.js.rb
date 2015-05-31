@@ -278,6 +278,8 @@ class Agenda
       ActionItems
     elsif @title == 'Roll Call' and Server.role == :secretary
       RollCall
+    elsif @title == 'Adjournment' and Server.role == :secretary
+      Adjournment
     else
       Report
     end

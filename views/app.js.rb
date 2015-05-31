@@ -9,6 +9,7 @@ require_relative 'layout/header'
 require_relative 'layout/footer'
 
 # Individual pages
+require_relative 'pages/adjournment'
 require_relative 'pages/index'
 require_relative 'pages/report'
 require_relative 'pages/action-items'

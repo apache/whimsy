@@ -28,8 +28,9 @@ add = transitioning.keys - ASF.pmc_chairs
 remove = ASF.pmc_chairs - ASF::Committee.list.map(&:chair) - transitioning.keys
 
 _add add.map {|person| {id: person.id, name: person.public_name, 
-  resolution: transitioning[person]}}
-_remove remove.map {|person| {id: person.id, name: person.public_name}}
+  resolution: transitioning[person]}}.sort_by {|person| person[:id]}
+_remove remove.map {|person| {id: person.id, name: person.public_name}}.
+  sort_by {|person| person[:id]}
 _establish establish.map {|name, resolution| {name: name, 
   resolution: resolution}}
 _terminate terminate.map {|name, resolution| {name: name, 
