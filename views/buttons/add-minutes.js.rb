@@ -85,7 +85,9 @@ class AddMinutes < React
 
   # reset base, draft minutes, shepherd, and default ai_text
   def setup(item)
-    @base = @draft = Minutes.get(item.title) || ''
+    @base = draft = Minutes.get(item.title) || ''
+    draft ||= @@item.text if @@item.attach =~ /^(8|9|1\d)\.$/
+    @draft = draft
     @ai_owner = item.shepherd
     @ai_text = "pursue a report for #{item.title}" unless item.text
   end
