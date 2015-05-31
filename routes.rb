@@ -135,6 +135,12 @@ get '/json/committers' do
   end
 end
 
+# Secretary post-meeting todos
+get '/json/secretary-todos/:date' do
+  _json :'actions/todos'
+end
+
+
 # chat log
 get %r{/json/chat/(\d\d\d\d_\d\d_\d\d)} do |date|
   log = "#{AGENDA_WORK}/board_agenda_#{date}-chat.yml"
