@@ -1,5 +1,5 @@
 #
-# Approve/Unapprove/Flag/Unflag a report
+# Approve/Unapprove a report
 #
 class Approve < React
   def initialize

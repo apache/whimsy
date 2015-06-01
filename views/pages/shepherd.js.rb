@@ -48,9 +48,11 @@ class Shepherd < React
               _Text raw: comment, filters: [hotlink]
             end
           end
+        end
 
-          # flag action
-          if item.attach =~ /^[A-Z]+$/ and not item.missing
+        # flag action
+        if item.missing or not item.comments.empty?
+          if item.attach =~ /^[A-Z]+$/
             _button.shepherd.btn (item.flagged ? 'unflag' : 'flag'), 
               data_attach: item.attach,
               onClick: self.click, disabled: @disabled,
