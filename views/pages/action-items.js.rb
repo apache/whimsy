@@ -129,11 +129,32 @@ class ActionItems < React
 
     # Action Items Captured During the Meeting
     if @@item.title == 'Action Items'
-      actions = Minutes.actions
-      unless actions.empty?
+      captured = []
+      Minutes.actions.each do |action|
+        if @@filter
+          match = true
+          for key in @@filter
+            match &&= (action[key] == @@filter[key])
+          end
+          next unless match
+        end
+
+        captured << action
+      end
+
+      unless captured.empty?
         _section do
           _h3 'Action Items Captured During the Meeting'
-          _pre.comment actions do |action|
+          _pre.comment captured do |action|
+            # skip actions that don't match the filter
+            if @@filter
+              match = true
+              for key in @@filter
+                match &&= (action[key] == @@filter[key])
+              end
+              next unless match
+            end
+
             _ "* #{action.owner}: #{action.text}\n"
             _ "      [ "
             if action.item
