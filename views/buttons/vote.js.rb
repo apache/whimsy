@@ -58,7 +58,10 @@ class Vote < React
   def setup(item)
     @directors = Minutes.directors_present
 
-    if (Date.new().getMonth() + item.attach.charCodeAt(1)) % 2
+    # alternate forward/reverse roll calls based on month and attachment
+    month = Date.new(Date.parse(Agenda.date)).getMonth()
+    attach = item.attach.charCodeAt(1)
+    if (month + attach) % 2 == 0
       @votetype = "Roll call"
     else
       @votetype = "Reverse roll call"

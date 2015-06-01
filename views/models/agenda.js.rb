@@ -205,6 +205,11 @@ class Agenda
     'blank'
   end
 
+  # fetch the start date
+  def self.date
+    Date.new(@@index[0].timestamp).toISOString()[/(.*)T/, 1]
+  end
+
   # allow the date property to be changed
   def self.date=(date)
     @@date=date
