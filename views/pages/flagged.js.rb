@@ -27,6 +27,13 @@ class Flagged < React
           _h4 'Action Items'
           _ActionItems item: item, filter: {pmc: item.title}, form: :omit
         end
+
+        # minutes
+        minutes = Minutes.get(item.title)
+        if minutes
+          _h4 'Minutes'
+          _pre.comment minutes
+        end
       end
     end
 

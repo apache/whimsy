@@ -130,6 +130,18 @@ feature 'other reports' do
     expect(page).to have_selector 'span', text: ' 2015-02-18 ]'
   end
 
+  it "should show flagged items" do
+    visit '/2015-02-18/flagged'
+    
+    expect(page).to have_selector 'h3 a', text: 'Axis'
+    expect(page).to have_selector 'h4', text: 'Comments'
+    expect(page).to have_selector 'pre span', text: 'jj: Reminder email sent'
+    expect(page).to have_selector 'h4', text: 'Minutes'
+    expect(page).to have_selector 'pre', text: '@Sam: follow up with Axis PMC.'
+
+    expect(page).to have_selector 'h3 a', text: 'Lenya'
+  end
+
   it "should hypertext minutes" do
     visit '/2015-02-18/January-21-2015'
 
