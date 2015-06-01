@@ -166,5 +166,5 @@ _pending Pending.update(env.user) {|pending|
   pending['flagged'].clear
   pending['unflagged'].clear
   pending['comments'].clear
-  pending['status'].clear
+  pending['status'].clear if pending['status']
 }
