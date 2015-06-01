@@ -45,7 +45,6 @@ class Main < React
     end
 
     Agenda.load(@@page.parsed)
-    Agenda.date = @@page.date
     Minutes.load(@@page.minutes)
     self.route(@@page.path, @@page.query)
 

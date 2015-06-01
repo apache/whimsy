@@ -45,6 +45,7 @@ class Agenda
       end
     end
 
+    @@date = Date.new(@@index[0].timestamp).toISOString()[/(.*?)T/, 1]
     Main.refresh()
     return @@index
   end
@@ -207,12 +208,7 @@ class Agenda
 
   # fetch the start date
   def self.date
-    Date.new(@@index[0].timestamp).toISOString()[/(.*)T/, 1]
-  end
-
-  # allow the date property to be changed
-  def self.date=(date)
-    @@date=date
+    @@date
   end
 
   # the default title for the agenda as a whole

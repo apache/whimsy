@@ -61,7 +61,6 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   }
 
   @page = {
-    date: date,
     path: path,
     query: params['q'],
     agenda: agenda,
