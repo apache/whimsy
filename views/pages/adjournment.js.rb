@@ -4,7 +4,7 @@
 
 class Adjournment < React
   def initialize
-    @todos = {add: [], remove: [], establish: [], loading: true}
+    @todos = {add: [], remove: [], establish: [], loading: true, fetched: false}
   end
 
   def render
@@ -12,15 +12,18 @@ class Adjournment < React
       _section do
         _pre.report @@item.text
 
-        _h3 'Post Meeting actions'
+        if not @todos.loading or @todos.fetched
+          _h3 'Post Meeting actions'
 
-        if 
-          @todos.add.empty? and @todos.remove.empty? and @todos.establish.empty?
-        then
-          if @todos.loading
-            _em 'Loading...'
-          else
-            _p 'none'
+          if 
+            @todos.add.empty? and @todos.remove.empty? and 
+            @todos.establish.empty?
+          then
+            if @todos.loading
+              _em 'Loading...'
+            else
+              _p 'none'
+            end
           end
         end
 
@@ -91,9 +94,18 @@ class Adjournment < React
     return link
   end
 
+  # check for minutes being completed on first load
   def componentDidMount()
-    fetch "secretary-todos/#{Agenda.title}", :json do |todos|
-      @todos = todos
+    self.componentDidUpdate()
+  end
+
+  # fetch secretary todos once the minutes are complete
+  def componentDidUpdate()
+    if Minutes.complete and @todos.loading and not @todos.fetched
+      @todos.fetched = true
+      fetch "secretary-todos/#{Agenda.title}", :json do |todos|
+        @todos = todos
+      end
     end
   end
 end
