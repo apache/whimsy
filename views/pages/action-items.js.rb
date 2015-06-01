@@ -28,7 +28,10 @@ class ActionItems < React
 
           # space between items and add help info on top
           if first
-            _p.alert_info 'Click on Status to update' unless @@filter
+            unless @@filter or Minutes.complete
+              _p.alert_info 'Click on Status to update'
+            end
+
             first = false
           else
             _ "\n"
@@ -71,6 +74,7 @@ class ActionItems < React
 
           # launch edit dialog when there is a click on the status
           attrs = {onClick: self.updateStatus, className: 'clickable'}
+          attrs = {} if Minutes.complete
 
           # copy action properties to data attributes
           for name in action
