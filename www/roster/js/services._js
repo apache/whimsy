@@ -211,6 +211,7 @@ module Angular::AsfRosterServices
 
     def mail_prefix
       return 'community' if self.cn == 'comdev'
+      return 'hc' if self.cn == 'httpcomponents'
       self.cn
     end
 
