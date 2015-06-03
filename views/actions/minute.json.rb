@@ -14,12 +14,20 @@ end
 
 if @action == 'timestamp'
 
+  timestamp = Time.now
+
   # date = @agenda[/\d+_\d+_\d+/].gsub('_', '-')
   # zone = Time.parse("#{date} PST").dst? ? '-07:00' : '-08:00'
   # workaround for broken tzinfo on whimsy
   month = @agenda[/\d+_(\d+)_\d+/, 1].to_i
   zone = ((2..9).include? month) ? '-07:00' : '-08:00'
-  @text = Time.now.getlocal(zone).strftime('%-l:%M')
+  @text = timestamp.getlocal(zone).strftime('%-l:%M')
+
+  if @title == 'Call to order'
+    minutes['started']  = timestamp.gmtime.to_f * 1000
+  elsif @title == 'Adjournment'
+    minutes['complete'] = timestamp.gmtime.to_f * 1000
+  end
 
 elsif @action == 'attendance'
 

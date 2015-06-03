@@ -62,14 +62,14 @@ class Minutes
     rollcall[/Directors.*Present:\n\n((.*\n)*?)\n/,1].sub(/\n$/, '')
   end
 
-  # determine if the meeting is over
-  def self.complete
-    Minutes.get('Adjournment')
+  # determine if the meeting has started
+  def self.started
+    @@list.started
   end
 
   # determine if the meeting is over
-  def self.started
-    Minutes.get('Call-to-order')
+  def self.complete
+    @@list.complete
   end
 
   # determine if the draft is ready
