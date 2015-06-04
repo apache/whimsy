@@ -309,6 +309,10 @@ feature 'server actions' do
       IO.write('test/work/data/board_minutes_2015_02_18.yml', @test_mins)
     end
 
+    if File.exist? 'test/work/data/test.bak'
+      File.unlink 'test/work/data/test.bak'
+    end
+
     @cleanup.each do |file| 
       Agenda[File.basename(file)].replace :mtime=>0
     end
