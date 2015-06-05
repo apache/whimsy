@@ -27,9 +27,10 @@ class ModalDialog < React
         # place h4 elements into the header, adding a modal-title class
 
         if not child.props.className
-          child.props.className = 'modal-title'
+          child = React.cloneElement(child, className: 'modal-title')
         elsif not child.props.className.split(' ').include? 'modal-title'
-          child.props.className += ' modal-title'
+          child = React.cloneElement(child, 
+            className: child.props.className + ' modal-title')
         end
 
         @header << child
@@ -40,9 +41,10 @@ class ModalDialog < React
         # place button elements into the footer, adding a btn class
 
         if not child.props.className
-          child.props.className = 'btn'
+          child = React.cloneElement(child, className: 'btn')
         elsif not child.props.className.split(' ').include? 'btn'
-          child.props.className += ' btn'
+          child = React.cloneElement(child, 
+            className: child.props.className + ' btn')
         end
 
         @footer << child
@@ -53,9 +55,10 @@ class ModalDialog < React
         # add label if present
 
         if not child.props.className
-          child.props.className = 'form-control'
+          child = React.cloneElement(child, className: 'form-control')
         elsif not child.props.className.split(' ').include? 'form-control'
-          child.props.className += ' form-control'
+          child = React.cloneElement(child, 
+            className: child.props.className + ' form-control')
         end
 
         label = nil
