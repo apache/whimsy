@@ -100,7 +100,13 @@ elsif @action == 'attendance'
   @title = 'Roll Call'
 end
 
-minutes[@title] = @text
+if @text and not @text.empty?
+  minutes[@title] = @text
+else
+  minutes.delete @title
+  minutes.delete 'started'  if @title == 'Call to order'
+  minutes.delete 'complete' if @title == 'Adjournment'
+end
 
 File.write minutes_file, YAML.dump(minutes)
 
