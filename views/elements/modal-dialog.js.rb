@@ -25,28 +25,14 @@ class ModalDialog < React
       if child.type == 'h4'
 
         # place h4 elements into the header, adding a modal-title class
-
-        if not child.props.className
-          child = React.cloneElement(child, className: 'modal-title')
-        elsif not child.props.className.split(' ').include? 'modal-title'
-          child = React.cloneElement(child, 
-            className: child.props.className + ' modal-title')
-        end
-
+        child = self.addClass(child, 'modal-title')
         @header << child
         ModalDialog.h4 = child
 
       elsif child.type == 'button'
 
         # place button elements into the footer, adding a btn class
-
-        if not child.props.className
-          child = React.cloneElement(child, className: 'btn')
-        elsif not child.props.className.split(' ').include? 'btn'
-          child = React.cloneElement(child, 
-            className: child.props.className + ' btn')
-        end
-
+        child = self.addClass(child, 'btn')
         @footer << child
 
       elsif child.type == 'input' or child.type == 'textarea'
@@ -54,12 +40,7 @@ class ModalDialog < React
         # wrap input and textarea elements in a form-control, 
         # add label if present
 
-        if not child.props.className
-          child = React.cloneElement(child, className: 'form-control')
-        elsif not child.props.className.split(' ').include? 'form-control'
-          child = React.cloneElement(child, 
-            className: child.props.className + ' form-control')
-        end
+        child = self.addClass(child, 'form-control')
 
         label = nil
         if child.props.label and child.props.id
@@ -72,7 +53,7 @@ class ModalDialog < React
             child = nil
           else
             label = React.createElement('label', props, child.props.label)
-            child.props.delete 'label'
+            child = React.cloneElement(child, label: nil)
           end
         end
 
@@ -107,5 +88,17 @@ class ModalDialog < React
         end
       end
     end
+  end
+
+  # helper method: add a class to an element, returning new element
+  def addClass(element, name)
+    if not element.props.className
+      element = React.cloneElement(element, className: name)
+    elsif not element.props.className.split(' ').include? name
+      element = React.cloneElement(element, 
+        className: element.props.className + ' #{name}')
+    end
+
+    return element
   end
 end
