@@ -73,6 +73,8 @@ class ASF::Board::Agenda
     flagged_reports = Hash[@file[/ \d\. Committee Reports.*?\n\s+A\./m].
       scan(/# (.*?) \[(.*)\]/)]
 
+    president = @sections.values.find {|item| item['title'] == 'President'}
+    preports = Range.new(*president['report'][/\d+ through \d+\.$/].scan(/\d+/)) 
     # cleanup text and comment whitespace, add flags
     @sections.each do |section, hash|
       text = hash['text'] || hash['report']
@@ -94,6 +96,9 @@ class ASF::Board::Agenda
       # add flags
       flags = flagged_reports[hash['title']]
       hash['flagged_by'] = flags.split(', ') if flags
+
+      # mark president reports
+      hash['to'] = 'president' if preports.include? section
     end
 
     unless @quick
