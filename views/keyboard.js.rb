@@ -51,7 +51,7 @@ class Keyboard
         Main.navigate link.getAttribute('href') if link
         return false
       elsif event.keyCode == 'X'.ord
-        if Main.item.attach
+        if Main.item.attach and Minutes.started and not Minutes.complete
           Chat.changeTopic user: Server.userid, link: Main.item.href,
             text: "current topic: #{Main.item.title}"
           return false

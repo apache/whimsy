@@ -28,7 +28,7 @@ class Chat
   # replace topic locally
   def self.setTopic(entry)
     return if @@topic.text == entry.text
-    @@log = @@log.filter {|item| item.type != :topic}
+    @@log = @@log.filter {|item| return item.type != :topic}
     entry.type = :topic
     @@topic = entry
     Chat.add entry
