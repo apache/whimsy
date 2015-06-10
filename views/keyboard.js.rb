@@ -50,9 +50,9 @@ class Keyboard
         link = ~"#shepherd"[0]
         Main.navigate link.getAttribute('href') if link
         return false
-      elsif event.keyCode == 'T'.ord
+      elsif event.keyCode == 'X'.ord
         if Main.item.attach
-          Chat.topic user: Server.userid, link: Main.item.href,
+          Chat.changeTopic user: Server.userid, link: Main.item.href,
             text: "current topic: #{Main.item.title}"
           return false
         end

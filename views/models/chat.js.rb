@@ -22,21 +22,26 @@ class Chat
   # set topic to meeting status
   def self.countdown()
     status = Chat.status
-    Chat.topic subtype: 'status', user: 'whimsy', text: status if status
+    Chat.setTopic subtype: 'status', user: 'whimsy', text: status if status
   end
 
-  # replace topic
-  def self.topic(entry)
+  # replace topic locally
+  def self.setTopic(entry)
     return if @@topic.text == entry.text
     @@log = @@log.filter {|item| item.type != :topic}
+    entry.type = :topic
     @@topic = entry
+    Chat.add entry
+  end
 
-    if not entry.agenda
-      entry.type = :topic
-      entry.agenda = Agenda.file
-      post 'message', entry do |message|
-        Chat.add entry
-      end
+  # change topic globally
+  def self.changeTopic(entry)
+    return if @@topic.text == entry.text
+
+    entry.type = :topic
+    entry.agenda = Agenda.file
+    post 'message', entry do |message|
+      Chat.setTopic entry
     end
   end
 
@@ -67,7 +72,13 @@ class Chat
   def self.status
     diff = Agenda.find('Call-to-order').timestamp - Date.new().getTime()
 
-    if diff > 86_400_000 * 3/2
+    if Minutes.complete
+      "meeting has completed"
+    elsif @@topic.subtype == 'status'
+      @@topic.text
+    elsif Minutes.started
+      "meeting has started"
+    elsif diff > 86_400_000 * 3/2
       "meeting will start in about #{Math.floor(diff/86_400_000+0.5)} days"
     elsif diff > 3_600_000 * 3/2
       "meeting will start in about #{Math.floor(diff/3_600_000+0.5)} hours"
@@ -75,12 +86,8 @@ class Chat
       "meeting will start in about #{Math.floor(diff/300_000+0.5)*5} minutes"
     elsif diff > 90_000
       "meeting will start in about #{Math.floor(diff/60_000+0.5)} minutes"
-    elsif Minutes.complete
-      "meeting has completed"
-    elsif not Minutes.started
+    else
       "meeting will start shortly"
-    elsif @@topic.subtype == 'status'
-      "meeting has started"
     end
   end
 end
@@ -103,7 +110,7 @@ end
 
 Events.subscribe :topic do |message|
   if message.agenda == Agenda.file
-    Chat.topic message
+    Chat.setTopic message
   end
 end
 

@@ -41,7 +41,11 @@ class Backchannel < React
             _dt message.user, key: "t#{message.timestamp}", class: message.type,
               title: Date.new(message.timestamp).toLocaleTimeString()
             _dd key: "d#{message.timestamp}", class: message.type do
-              _Text raw: message.text, filters: [hotlink, self.mention]
+              if message.link
+                _Link text: message.text, href: message.link
+              else
+                _Text raw: message.text, filters: [hotlink, self.mention]
+              end
             end
             i += 1
           end

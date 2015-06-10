@@ -32,6 +32,9 @@ class Help < React
       _dt 'F'
       _dd 'Show flagged items'
 
+      _dt 'X'
+      _dd 'Set the topic (a.k.a. mark the spot)'
+
       _dt '?'
       _dd 'Help (this page)'
     end

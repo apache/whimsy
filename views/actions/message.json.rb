@@ -6,6 +6,8 @@
 
 log = {type: @type, user: env.user, text: @text, timestamp: Time.now.to_f*1000}
 
+log[:link] = @link if @link
+
 if @text.start_with? '/me '
   log[:text].sub! /^\/me\s+/, '*** '
   log[:type] = :info
