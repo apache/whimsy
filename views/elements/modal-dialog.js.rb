@@ -96,7 +96,7 @@ class ModalDialog < React
       element = React.cloneElement(element, className: name)
     elsif not element.props.className.split(' ').include? name
       element = React.cloneElement(element, 
-        className: element.props.className + ' #{name}')
+        className: element.props.className + " #{name}")
     end
 
     return element
