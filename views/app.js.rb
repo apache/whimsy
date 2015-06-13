@@ -39,6 +39,7 @@ require_relative 'buttons/timestamp'
 require_relative 'buttons/vote'
 
 # Common elements
+require_relative 'elements/additional-info'
 require_relative 'elements/link'
 require_relative 'elements/modal-dialog'
 require_relative 'elements/text'

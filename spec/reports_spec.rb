@@ -50,7 +50,7 @@ feature 'report' do
       text: /no issues that require the board's attention/
 
     # no comments
-    expect(page).not_to have_selector 'h3#comments', text: 'Comments'
+    expect(page).not_to have_selector 'h4#comments', text: 'Comments'
 
     # footer
     expect(page).to have_selector '.backlink[href="Attic"]', 
@@ -62,7 +62,7 @@ feature 'report' do
      text: 'Axis'
 
     # pending comments
-    expect(page).to have_selector 'h3#comments', text: 'Pending Comment'
+    expect(page).to have_selector 'h4#comments', text: 'Pending Comment'
     expect(page).to have_selector 'pre.comment', text: 'jt: Nice report!'
 
     # hidden forms
@@ -84,13 +84,13 @@ feature 'report' do
     expect(page).not_to have_selector 'dt', text: 'Approved'
 
     # comments
-    expect(page).to have_selector 'h3#comments', text: 'Comments'
+    expect(page).to have_selector 'h4#comments', text: 'Comments'
     expect(page).to have_selector 'button', text: 'add comment'
     expect(page).not_to have_selector 'button', text: 'approve'
     expect(page).to have_selector 'pre.comment', text: 'cm: Reminder email sent'
 
     # action items
-    expect(page).to have_selector 'h3 a[href="Action-Items"]',
+    expect(page).to have_selector 'h4 a[href="Action-Items"]',
       text: 'Action Items'
     expect(page).to have_selector 'button', text: 'post report'
     expect(page).to have_selector 'pre.report', 
@@ -108,7 +108,7 @@ feature 'report' do
   it "should show draft minutes" do
     visit '/2015-02-18/Drill'
 
-    expect(page).to have_selector 'h3', text: 'Minutes'
+    expect(page).to have_selector 'h4', text: 'Minutes'
     expect(page).to have_selector 'pre', 
       text: '@Brett: Are hangouts documents so non-attendees can participate later'
   end

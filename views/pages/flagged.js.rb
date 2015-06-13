@@ -14,26 +14,7 @@ class Flagged < React
           first = false
         end
 
-        # show associated comments
-        _h4 'Comments' unless item.comments.empty?
-        item.comments.each do |comment|
-          _pre.comment do
-            _Text raw: comment, filters: [hotlink]
-          end
-        end
-
-        # show associated action items
-        if item.actions and not item.actions.empty?
-          _h4 'Action Items'
-          _ActionItems item: item, filter: {pmc: item.title}, form: :omit
-        end
-
-        # minutes
-        minutes = Minutes.get(item.title)
-        if minutes
-          _h4 'Minutes'
-          _pre.comment minutes
-        end
+        _AdditionalInfo item: item
       end
     end
 

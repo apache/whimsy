@@ -47,42 +47,7 @@ class Report < React
       end
 
       _section do
-        if @@item.missing
-          posted = Posted.get(@@item.title)
-          unless posted.empty?
-            _h3.comments! 'Posted reports'
-            _ul posted do |post|
-              _li do
-                _a post.subject, href: post.link
-              end
-            end
-          end
-        end
-
-        unless @@item.comments.empty?
-          _h3.comments! 'Comments'
-          @@item.comments.each do |comment|
-            _pre.comment do
-              _Text raw: comment, filters: [hotlink]
-            end
-          end
-        end
-
-        if @@item.pending
-          _h3.comments! 'Pending Comment'
-          _pre.comment Flow.comment(@@item.pending, Pending.initials)
-        end
-
-        if @@item.title != 'Action Items' and not @@item.actions.empty?
-          _h3 { _Link text: 'Action Items', href: 'Action-Items' }
-          _ActionItems item: @@item, filter: {pmc: @@item.title}
-        end
-
-        minutes = Minutes.get(@@item.title)
-        if minutes
-          _h3 'Minutes'
-          _pre.comment minutes
-        end
+        _AdditionalInfo item: @@item
       end
     end
   end
