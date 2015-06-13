@@ -74,8 +74,16 @@ module ASF
 
   class Committee
     def mail_list
-      return 'hc' if name.downcase == 'httpcomponents'
-      name
+      case name.downcase
+      when 'httpcomponents'
+        'hc'
+      when 'tac'
+        'travel-assistance'
+      when 'whimsy'
+        'whimsical'
+      else
+        name
+      end
     end
   end
 end
