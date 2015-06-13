@@ -1,5 +1,6 @@
 #
 # Display information associated with an an agenda item:
+#   - special notes
 #   - posted reports
 #   - posted comments
 #   - pending comments
@@ -9,6 +10,9 @@
 
 class AdditionalInfo < React
   def render
+    # special notes
+    _p.notes @@item.notes if @@item.notes
+
     # posted reports
     if @@item.missing
       posted = Posted.get(@@item.title)

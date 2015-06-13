@@ -33,6 +33,16 @@ aside li {list-style: none}
 /* action items */
 .ai {background-color: yellow}
 
+/* agenda item special notes */
+.notes {
+  background-color: #FF4; 
+  padding: 0.3em 1em; 
+  margin: 1em 1em 0 1em;
+  font-weight: bold;
+  border: 1px solid SkyBlue;
+  border-radius: 1em;
+}
+
 /* make the header an eye catcher */
 h1, h2.subtitle {
   line-height: 2em;
