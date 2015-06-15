@@ -31,10 +31,7 @@ class ASF::Board::Agenda
           role = :director if directors.include? name
           role = :officer if officers.include? name
 
-          sort_name = name.split(' ').rotate(-1).join(' ')
-          if sort_name.start_with? '('
-            sort_name = sort_name.split(' ').rotate(-1).join(' ') 
-          end
+          sort_name = name.sub(/\(.*\)\s*$/, '').split(' ').rotate(-1).join(' ')
 
           if @quick
             attr['people']['_' + name.gsub(/\W/, '_')] = {
