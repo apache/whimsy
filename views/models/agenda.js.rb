@@ -276,7 +276,11 @@ class Agenda
   # default view for an individual agenda item
   def view
     if @title == 'Action Items'
-      ActionItems
+      if @text or Minutes.started
+        ActionItems
+      else
+        SelectActions
+      end
     elsif @title == 'Roll Call' and Server.role == :secretary
       RollCall
     elsif @title == 'Adjournment' and Server.role == :secretary

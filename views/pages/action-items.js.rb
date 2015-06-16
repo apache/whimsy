@@ -102,11 +102,13 @@ class ActionItems < React
             end
           end
         end
+
+        if first
+          _p {_em 'Empty'} 
+        end
       end
 
-      if first
-        _p {_em 'Empty'} 
-      else
+      if not first
         # Update action item (hidden form)
         _ModalDialog ref: 'updateStatusForm', color: 'commented' do
           _h4 'Update Action Item'
@@ -174,8 +176,10 @@ class ActionItems < React
 
   # autofocus on action status in update action form
   def componentDidMount()
-    jQuery(~updateStatusForm).on 'shown.bs.modal' do
-      ~statusText.focus()
+    if this.refs.updateStatusForm
+      jQuery(~updateStatusForm).on 'shown.bs.modal' do
+        ~statusText.focus()
+      end
     end
   end
 
