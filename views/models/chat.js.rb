@@ -32,6 +32,7 @@ class Chat
     entry.type = :topic
     @@topic = entry
     Chat.add entry
+    Main.refresh() if entry.subtype == :status
   end
 
   # change topic globally
@@ -74,10 +75,12 @@ class Chat
 
     if Minutes.complete
       "meeting has completed"
-    elsif @@topic.subtype == 'status'
-      @@topic.text
     elsif Minutes.started
-      "meeting has started"
+      if @@topic.subtype == :status
+        @@topic.text
+      else
+        "meeting has started"
+      end
     elsif diff > 86_400_000 * 3/2
       "meeting will start in about #{Math.floor(diff/86_400_000+0.5)} days"
     elsif diff > 3_600_000 * 3/2
