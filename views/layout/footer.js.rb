@@ -26,7 +26,7 @@ class Footer < React
         end
         link ||= {href: "../#{@@item.shepherd}", title: 'Shepherd'}
       elsif @@options.traversal == :flagged
-        prefix = 'flagged'
+        prefix = 'flagged/'
         while link and not link.flagged
           link = link.prev
         end
@@ -72,7 +72,7 @@ class Footer < React
         end
         link ||= {href: "../#{@@item.shepherd}", title: 'Shepherd'}
       elsif @@options.traversal == :flagged
-        prefix = 'flagged'
+        prefix = 'flagged/'
         while link and not link.flagged
           link = link.next
         end
