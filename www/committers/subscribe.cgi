@@ -33,7 +33,7 @@ lists = ASF::Mail.lists
 lists.delete_if {|list| list =~ /^(ea|secretary|president|treasurer|chairman|committers$)/ }
 lists.delete_if {|list| list =~ /(^|-)security$|^security(-|$)/ }
 
-pmcs = ASF::Committee.list.map(&:name)
+pmcs = ASF::Committee.list.map(&:mail_list)
 seen = Hash.new
 lists.each do |list|
   seen[list] = 0
@@ -71,7 +71,7 @@ _html do
       `svn update --non-interactive`
       fn = "#{$USER}-#{@list}-#{Time.now.strftime '%Y%m%d-%H%M%S-%L'}.json".untaint
       if File.exist? fn
-        _h2_.error "Too many concurrent reuqests"
+        _h2_.error "Too many concurrent requests"
         break
       end
 
