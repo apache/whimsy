@@ -10,7 +10,7 @@ class Posted
     # fetch list of reports on first reference
     if not @@fetched and defined? XMLHttpRequest
       fetch 'https://whimsy.apache.org/board/posted-reports', :json do |list|
-        @@list = list
+        @@list = list if list
       end
 
       @@fetched = true
