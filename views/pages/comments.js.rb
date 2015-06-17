@@ -45,7 +45,9 @@ class Comments < React
         found = true
 
         _section do
-          _h4 {_Link text: item.title, href: item.href}
+          _h4 class: item.color do 
+            _Link text: item.title, href: item.href
+          end
 
           visible.each do |comment|
             _pre.comment comment
