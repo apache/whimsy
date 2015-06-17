@@ -14,9 +14,8 @@ class PostActions < React
   def click(event)
     data = {
       agenda: Agenda.file,
-      action: (@attending ? 'regrets' : 'attend'),
-      name: Server.username,
-      userid: Server.userid
+      message: 'Post Action Items',
+      actions: SelectActions.list
     }
 
     @disabled = true

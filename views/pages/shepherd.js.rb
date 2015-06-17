@@ -39,12 +39,6 @@ class Shepherd < React
               class: (shepherd == Server.firstname ? 'btn-primary' : 'btn-link')
           end
         end
-
-        # show associated action items
-        if item.actions and not item.actions.empty?
-          _h4 'Action Items'
-          _ActionItems item: item, filter: {pmc: item.title}, form: :omit
-        end
       end
     end
   end
