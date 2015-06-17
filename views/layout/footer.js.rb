@@ -30,7 +30,7 @@ class Footer < React
         while link and not link.flagged
           link = link.prev
         end
-        link ||= {href: "", title: 'Flagged'}
+        link ||= {href: "../flagged", title: 'Flagged'}
       end
 
       if link
@@ -76,7 +76,7 @@ class Footer < React
         while link and not link.flagged
           link = link.next
         end
-        link ||= {href: "", title: 'Flagged'}
+        link ||= {href: "../flagged", title: 'Flagged'}
       end
 
       if link
