@@ -20,7 +20,6 @@ class SelectActions < React
       'Unselect the ones below that have been completed. ' +
       'Click on the "post actions" button when done.'
 
-
     _pre.report do
       SelectActions.list.each do |action|
         _CandidateAction action: action, names: @names
