@@ -150,6 +150,7 @@ def analyze(msg):
 # main logic for this script: process attachments for a single message
 def detach(msg):
   # quick exit if we have seen this entry before
+  if not msg['message-id']: return
   id = md5(msg['message-id']).hexdigest()
   if os.path.exists(os.path.join('tally',id)): return
 
