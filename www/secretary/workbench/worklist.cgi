@@ -14,7 +14,9 @@ _html do
 
   _body? do
 
-    _pre `date`.chomp
+    _pre `date` + "\n" +
+      `curl http://minotaur.apache.org/~apmail/secmail.txt`.
+      sub(': ', ":\n")
 
     if `which svn`.empty?
       _h2_.warn 'Unable to locate svn'
