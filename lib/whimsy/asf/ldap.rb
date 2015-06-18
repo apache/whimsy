@@ -2,6 +2,13 @@ require 'wunderbar'
 require 'ldap'
 
 module ASF
+  # determine where ldap.conf resides
+  if Dir.exist? '/etc/openldap'
+    ETCLDAP = '/etc/openldap'
+  else
+    ETCLDAP = '/etc/ldap'
+  end
+
   # determine whether or not the LDAP API can be used
   def self.init_ldap
     @ldap = nil
@@ -249,9 +256,9 @@ module ASF
 
       # check system configuration
       unless host
-        conf = '/etc/ldap/ldap.conf'
+        conf = "#{ETCLDAP}/ldap.conf"
         if File.exist? conf
-        host = File.read(conf)[/^uri\s+(ldaps?:\/\/\S+?:\d+)/i, 1]
+          host = File.read(conf)[/^uri\s+(ldaps?:\/\/\S+?:\d+)/i, 1]
         end
       end
 
@@ -278,17 +285,19 @@ module ASF
     # update /etc/ldap.conf. Usage:
     #   sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
     def self.configure
-      if not File.exist? "/etc/ldap/asf-ldap-client.pem"
-        File.write "/etc/ldap/asf-ldap-client.pem", self.cert
+      if not File.exist? "#{ETCLDAP}/asf-ldap-client.pem"
+        File.write "#{ETCLDAP}/asf-ldap-client.pem", self.cert
       end
 
-      ldap_conf = '/etc/ldap/ldap.conf'
+      ldap_conf = "#{ETCLDAP}/ldap.conf"
       content = File.read(ldap_conf)
       unless content.include? 'asf-ldap-client.pem'
         content.gsub!(/^TLS_CACERT/, '# TLS_CACERT')
-        content += "TLS_CACERT /etc/ldap/asf-ldap-client.pem\n"
+        content.gsub!(/^TLS_REQCERT/, '# TLS_REQCERT')
+        content += "TLS_CACERT #{ETCLDAP}/asf-ldap-client.pem\n"
         content += "uri #{LDAP.host}\n"
         content += "base dc=apache,dc=org\n"
+        content += "TLS_REQCERT allow\n" if ETCLDAP.include? 'openldap'
         File.write(ldap_conf, content)
       end
     end
