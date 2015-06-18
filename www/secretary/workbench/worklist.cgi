@@ -14,9 +14,12 @@ _html do
 
   _body? do
 
-    _pre `date` + "\n" +
-      `curl http://minotaur.apache.org/~apmail/secmail.txt`.
-      sub(': ', ":\n")
+    _pre do
+      _ `date` + "\n"
+      secmail_status = 'http://minotaur.apache.org/~apmail/secmail.txt'
+      _a `curl #{secmail_status}`.sub(': ', ":\n"), href: secmail_status,
+        target: '_blank'
+    end
 
     if `which svn`.empty?
       _h2_.warn 'Unable to locate svn'
