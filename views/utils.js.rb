@@ -56,7 +56,9 @@ def post(target, data, &block)
           alert "Not Found: json/#{target}"
         elsif xhr.status >= 400
           console.log(xhr.response)
-          if xhr.response.exception
+          if not xhr.response
+            alert "Exception - #{xhr.statusText}"
+          elsif xhr.response.exception
             alert "Exception\n#{xhr.response.exception}"
           else
             alert "Exception\n#{JSON.parse(xhr.responseText).exception}"
@@ -96,7 +98,9 @@ def fetch(target, type, &block)
           alert "Not Found: #{type}/#{target}"
         elsif xhr.status >= 400
           console.log(xhr.response)
-          if xhr.response.exception
+          if not xhr.response
+            alert "Exception - #{xhr.statusText}"
+          elsif xhr.response.exception
             alert "Exception\n#{xhr.response.exception}"
           else
             alert "Exception\n#{JSON.parse(xhr.responseText).exception}"

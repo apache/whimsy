@@ -29,8 +29,10 @@ class SelectActions < React
 
   def componentDidMount()
     fetch 'potential-actions', :json do |response|
-      SelectActions.list = response.actions
-      @names = response.names
+      if response
+        SelectActions.list = response.actions
+        @names = response.names
+      end
     end
   end
 end

@@ -148,7 +148,7 @@ get '/json/potential-actions' do
   pattern = /^(?:@|AI\s+)(\w+):?\s+([\s\S]*?)(?:\n\n|$)/m
   minutes = File.basename(base).sub('agenda', 'minutes').sub('.txt', '.yml')
   date = minutes[/\d{4}_\d\d_\d\d/].gsub('_', '-')
-  minutes = YAML.load_file("#{AGENDA_WORK}/#{minutes}")
+  minutes = YAML.load_file("#{AGENDA_WORK}/#{minutes}") rescue {}
   minutes.each do |title, secnotes|
     next unless String === secnotes
     secnotes.scan(pattern).each do |owner, text|
