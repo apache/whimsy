@@ -32,6 +32,8 @@ class ASF::Board::Agenda
         unindent = text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min || 1
         text.gsub! /^ {#{unindent-1}}/, ''
 
+        attrs['missing'] = text.empty?
+
         attrs['actions'] = text.sub(/^\* /, '').split(/^\n\* /).map do |text|
           match1 = /(.*?)(\n\s*Status:(.*))/m.match(text)
           match2 = /(.*?)(\[ ([^\]]+) \])?\s*\Z/m.match(match1[1])
