@@ -41,7 +41,7 @@ class AddMinutes < React
             _option name
           end
         end
-        _textarea.col_md_7 value: @ai_text, rows: 1, tabIndex: 2
+        _textarea.col_md_7 value: @ai_text, rows: 1, cols: 40, tabIndex: 2
       end
 
       # variable number of buttons
@@ -61,6 +61,7 @@ class AddMinutes < React
           onClick: self.save, disabled: @disabled
       end
 
+      _button 'Reflow', class: self.reflow_color(), onClick: self.reflow
       _button.btn_primary 'Save', type: 'button', onClick: self.save,
         disabled: @disabled || @base == @draft
     end
@@ -83,13 +84,17 @@ class AddMinutes < React
     self.setup(newprops.item) if newprops.item.href != self.props.item.href
   end
 
-  # reset base, draft minutes, shepherd, and default ai_text
+  # reset base, draft minutes, shepherd, default ai_text, and indent
   def setup(item)
     @base = draft = Minutes.get(item.title) || ''
-    draft ||= @@item.text if @@item.attach =~ /^(8|9|1\d)\.$/
+    if item.attach =~ /^(8|9|1\d)\.$/
+      draft ||= item.text 
+    else
+      @ai_text = "pursue a report for #{item.title}" unless item.text
+    end
     @draft = draft
     @ai_owner = item.shepherd
-    @ai_text = "pursue a report for #{item.title}" unless item.text
+    @indent = (@@item.attach =~ /^\w+$/ ? 8 : 4)
   end
 
   # add an additional AI to the draft minutes for this item
@@ -98,6 +103,23 @@ class AddMinutes < React
     @draft += "@#{@ai_owner}: #{@ai_text}"
     @ai_owner = @@item.shepherd
     @ai_text = ''
+  end
+
+  # determine if reflow button should be default or danger color
+  def reflow_color()
+    width = 78 - @indent
+
+    if not @draft or @draft.split("\n").all? {|line| line.length <= width}
+      return 'btn-default'
+    else
+      return'btn-danger'
+    end
+  end
+
+  def reflow()
+    console.log 'reflowing'
+    console.log Flow.text(@draft || '', ' ' * @indent)
+    @draft = Flow.text(@draft || '', ' ' * @indent)
   end
 
   def save(event)

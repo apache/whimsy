@@ -119,8 +119,6 @@ class Minutes
       if notes and !notes.empty?
         if title =~ /Action Items/
           comments = notes.gsub(/\r\n/,"\n").gsub(/^/,'    ')
-        elsif title =~ /Discussion Items/
-          comments = notes.gsub(/^/,'    ')+ "\n"
         elsif title == 'Adjournment'
           if notes =~ /^1[01]:\d\d/
             comments = "\n    Adjourned at #{notes} a.m. (Pacific)\n"
