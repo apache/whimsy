@@ -139,32 +139,7 @@ end
 
 # potential actions
 get '/json/potential-actions' do
-  # get posted action items from previous report
-  base = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort[-2]
-  parsed = ASF::Board::Agenda.parse(IO.read(base), true)
-  actions = parsed.find {|item| item['title'] == 'Action Items'}['actions']
-
-  # scan draft minutes for new action items
-  pattern = /^(?:@|AI\s+)(\w+):?\s+([\s\S]*?)(?:\n\n|$)/m
-  minutes = File.basename(base).sub('agenda', 'minutes').sub('.txt', '.yml')
-  date = minutes[/\d{4}_\d\d_\d\d/].gsub('_', '-')
-  minutes = YAML.load_file("#{AGENDA_WORK}/#{minutes}") rescue {}
-  minutes.each do |title, secnotes|
-    next unless String === secnotes
-    secnotes.scan(pattern).each do |owner, text|
-      actions << {owner: owner, text: text, status: nil, pmc: title, date: date}
-    end
-  end
-
-  # get roll call info
-  roll = parsed.find {|item| item['title'] == 'Roll Call'}['people']
-
-  # return results
-  _json do
-    _date date
-    _actions actions
-    _names roll.map {|id, person| person[:name].split(' ').first}.sort.uniq
-  end
+  _json :'actions/potential-actions'
 end
 
 # chat log

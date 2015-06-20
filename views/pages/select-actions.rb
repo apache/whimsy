@@ -45,7 +45,7 @@ class CandidateAction < React
     _span @@action.owner
     _span ": "
     _span @@action.text
-    _span "\n     [#{@@action.pmc} #{@@action.date}]\n     "
+    _span "\n      [#{@@action.pmc} #{@@action.date}]\n      "
     if @@action.status
       _Text raw: "Status: #{@@action.status}\n", filters: [hotlink]
     end
