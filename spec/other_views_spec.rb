@@ -125,6 +125,13 @@ feature 'other reports' do
     expect(page).to have_selector 'span', text: '2015-01-21 ]'
   end
 
+  it "should draft action items" do
+    visit '/2015-02-18/Action-Items'
+    expect(page).to have_selector 'p.alert-info', 
+      text: 'Action Items have yet to be posted'
+    expect(page).to have_selector 'button.btn-primary', text: 'post actions'
+  end
+
   it "should show flagged items" do
     visit '/2015-02-18/flagged'
     

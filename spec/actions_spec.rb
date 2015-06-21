@@ -296,6 +296,24 @@ feature 'server actions' do
     end
   end
 
+  describe "determine potential actions" do
+    it "should combine existing and captured actions" do
+      result = eval(File.read('views/actions/potential-actions.json.rb'))
+
+      bval = @actions.find {|action| action[:pmc] == 'BVal'}
+      expect(bval[:owner]).to eq('Chris')
+      expect(bval[:text]).
+        to eq('does the project have enough committers to make releases?')
+      expect(bval[:status]).to eq('COMPLETE')
+
+      wink = @actions.find {|action| action[:pmc] == 'Wink'}
+      expect(wink[:owner]).to eq('Doug')
+      expect(wink[:text]).to eq('Is the project ready to retire?')
+      expect(wink[:date]).to eq('2015-01-21')
+    end
+  end
+
+
   ##########################################################################
   #
   # cleanup
