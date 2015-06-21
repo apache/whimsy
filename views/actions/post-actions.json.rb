@@ -8,7 +8,7 @@ Agenda.update(@agenda, @message) do |agenda|
   @actions.each do |action|
     next if action['complete']
     text += "* #{action['owner']}: #{action['text']}\n"
-    text += "      [#{action['date']} #{action['pmc']}]\n"
+    text += "      [ #{action['pmc']} #{action['date']} ]\n"
     text += "      Status:\n\n"
   end
 
