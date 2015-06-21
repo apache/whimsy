@@ -79,7 +79,7 @@ feature 'report' do
   end
 
   it "should show missing reports" do
-    visit '/2015-02-18/Tuscany'
+    visit '/2015-01-21/DirectMemory'
     expect(page).to have_selector 'pre em', text: 'Missing'
     expect(page).not_to have_selector 'dt', text: 'Approved'
 
@@ -87,14 +87,15 @@ feature 'report' do
     expect(page).to have_selector 'h4#comments', text: 'Comments'
     expect(page).to have_selector 'button', text: 'add comment'
     expect(page).not_to have_selector 'button', text: 'approve'
-    expect(page).to have_selector 'pre.comment', text: 'cm: Reminder email sent'
+    expect(page).to have_selector 'pre.comment', 
+      text: 'sr: I have the action from last month.'
 
     # action items
     expect(page).to have_selector 'h4 a[href="Action-Items"]',
       text: 'Action Items'
     expect(page).to have_selector 'button', text: 'post report'
     expect(page).to have_selector 'pre.report', 
-      text: '* Greg: Is it time to retire the project?'
+      text: '* Sam: Follow up with a more complete report next month'
 
     # hidden forms
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
@@ -102,7 +103,7 @@ feature 'report' do
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Post Report'
     expect(page).to have_selector \
-      "#post-report-message[value='Post Tuscany Report']"
+      "#post-report-message[value='Post DirectMemory Report']"
   end
 
   it "should show draft minutes" do

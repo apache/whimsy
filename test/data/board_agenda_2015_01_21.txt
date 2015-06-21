@@ -1225,7 +1225,7 @@
           Status: not done
 
     * Sam: Follow up with a more complete report next month [ DirectMemory ]
-          Status:
+          Status: http://example.com
 
     * Rich: Discuss concerns about mentor sign-off with the Incubator chair
           Status: Discussion has resulted in hundreds of messages, and

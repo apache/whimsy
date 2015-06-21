@@ -115,19 +115,14 @@ feature 'other reports' do
       text: 'Discussion Items'
     expect(page).to have_selector '.nextlink[href="Unfinished-Business"]',
       text: 'Unfinished Business'
-
-    visit '/2015-02-18/Action-Items'
-    expect(page).to have_selector 'a[href="http://s.apache.org/jDZ"]'
-    expect(page).to have_selector 'a.missing[href=Deltacloud]',
-      text: 'Deltacloud'
-    expect(page).to have_selector 'a.reviewed[href=ACE]', text: 'ACE'
-
     expect(page).to have_selector 'h3', 
       text: 'Action Items Captured During the Meeting'
+
+    expect(page).to have_selector 'a[href="http://example.com"]'
     expect(page).to have_selector 'span', 
-      text: 'Sam: Is anyone on the PMC looking at the reminders?'
-    expect(page).to have_selector 'a.missing[href=Perl]', text: 'Perl'
-    expect(page).to have_selector 'span', text: ' 2015-02-18 ]'
+      text: '* Sam: Is the project ready for retirement?'
+    expect(page).to have_selector 'a.missing[href=JMeter]', text: 'JMeter'
+    expect(page).to have_selector 'span', text: '2015-01-21 ]'
   end
 
   it "should show flagged items" do
