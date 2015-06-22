@@ -15,6 +15,7 @@ minutes = YAML.load_file("#{AGENDA_WORK}/#{minutes}") rescue {}
 minutes.each do |title, secnotes|
   next unless String === secnotes
   secnotes.scan(pattern).each do |owner, text|
+    text = text.reflow(6, 72).strip
     actions << {owner: owner, text: text, status: nil, pmc: title, date: date}
   end
 end

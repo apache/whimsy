@@ -13,7 +13,8 @@ Deltacloud: ! '@Brett: Request a better report for next month'
 Incubator: ! '@Greg: Please don''t include mentors who didn''t sign off'
 Isis: ! "@Bertrand: Follow up with PMC regarding commercial sponsoring \n    and external
   repository"
-Rave: ! '@Sam: Is the project ready for retirement?'
+Rave: ! '@Sam: Is the project ready for retirement?  Additional text that will
+require a reflow onto multiple lines'
 Tuscany: ! '@Greg: Is it time to retire the project?'
 Wink: ! '@Doug: Is the project ready to retire?'
 Establish Samza: unanimous

@@ -98,6 +98,8 @@ elsif @action == 'attendance'
   end
 
   @title = 'Roll Call'
+else
+  @text = @text.reflow(0, 78)
 end
 
 if @text and not @text.empty?
