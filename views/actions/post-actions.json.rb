@@ -30,7 +30,7 @@ Agenda.update(@agenda, @message) do |agenda|
 
   # insert into the agenda
   agenda[/^\s+\d+\.\sReview\sOutstanding\s Action\s Items\n(\s*\n)
-    \s*\d+\.\sUnfinished\sBusiness/x, 1] = "\n" + text.gsub(/^/, '    ')
+    \s*\d+\.\sUnfinished\sBusiness/x, 1] = "\n" + text.gsub(/^(.)/, '    \1')
 
   # return updated agenda
   agenda
