@@ -146,6 +146,7 @@ label.checkbox span {
 
 button.shepherd {
   margin-left: 2em;
+  margin-top: 10px;
 }
 
 .comments button, #paste_report { 
