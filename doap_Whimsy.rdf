@@ -25,7 +25,7 @@
     <created>2015-06-25</created>
     <license rdf:resource="http://spdx.org/licenses/Apache-2.0" />
     <name>Apache Whimsy</name>
-    <homepage rdf:resource="http://whimsy.apache.org" />
+    <homepage rdf:resource="http://whimsy.apache.org/" />
     <asfext:pmc rdf:resource="http://whimsy.apache.org" />
     <shortdesc>Whimsy is a site where a set of absolutely unnecessary yet often quite handy applications are deployed. </shortdesc>
     <programming-language>JavaScript</programming-language>
