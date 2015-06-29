@@ -82,12 +82,12 @@ class Agenda
         # if the output differs, update and commit the file in question
         if output != input
           begin
-            @@listener.pause
+            @@listener.stop
             IO.write(path, output)
             _.system ['svn', 'commit', auth, path, '-m', message]
             @@seen[path] = File.mtime(path)
           ensure
-            @@listener.unpause
+            @@listener.start
           end
         end
       end

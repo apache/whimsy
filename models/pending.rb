@@ -33,14 +33,14 @@ class Pending
     yield pending
 
     begin
-      @@listener.pause
+      @@listener.stop
       work = work_file(user)
       File.open(work, 'w') do |file|
         file.write YAML.dump(pending)
       end
       @@seen[work] = File.mtime(work)
     ensure
-      @@listener.unpause
+      @@listener.start
     end
 
     Events.post type: :pending, value: pending, private: user
