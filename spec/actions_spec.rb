@@ -296,9 +296,9 @@ feature 'server actions' do
     end
   end
 
-  describe "determine potential actions" do
+  describe "action items" do
     it "should combine existing and captured actions" do
-      result = eval(File.read('views/actions/potential-actions.json.rb'))
+      eval(File.read('views/actions/potential-actions.json.rb'))
 
       bval = @actions.find {|action| action[:pmc] == 'BVal'}
       expect(bval[:owner]).to eq('Chris')
@@ -310,6 +310,23 @@ feature 'server actions' do
       expect(wink[:owner]).to eq('Doug')
       expect(wink[:text]).to eq('Is the project ready to retire?')
       expect(wink[:date]).to eq('2015-01-21')
+    end
+
+    it "should post action items" do
+      eval(File.read('views/actions/potential-actions.json.rb'))
+      rave = @actions.find {|action| action[:pmc] == 'Rave'}
+      expect(rave[:text]).to match(/require a\n      reflow/)
+
+      @agenda = 'board_agenda_2015_02_18.txt'
+      @message = 'Post Action Items'
+      @actions.map! do |action|
+        Hash[action.map {|key, value| [key.to_s, value]}]
+      end
+      eval(File.read('views/actions/post-actions.json.rb'))
+
+      actions = @agenda.find {|item| item['title'] == 'Action Items'}['actions']
+      rave = actions.find {|action| action[:pmc] == 'Rave'}
+      expect(rave[:text]).to match(/require\n      a reflow/)
     end
   end
 
