@@ -28,7 +28,7 @@ class Post < React
       #input field: title
       if @@button.text == 'add resolution'
         _input.post_report_title! label: 'title', disabled: @disabled,
-          placeholder: 'title', value: @title, onChange: self.change_title
+          placeholder: 'title', value: @title, onFocus: self.default_title
       end
 
       #input field: report text
@@ -39,7 +39,7 @@ class Post < React
       #input field: commit_message
       if @@button.text != 'add resolution'
         _input.post_report_message! label: 'commit message', 
-          disabled: @disabled, value: @message, onChange: self.change_message
+          disabled: @disabled, value: @message
       end
 
       # footer buttons
@@ -112,20 +112,24 @@ class Post < React
     end
   end
 
-  # track changes to title value
-  def change_title(event)
-    @title = event.target.value
+  # default title based on common resolution patterns
+  def default_title(event)
+    return if @title
+    match = nil
+
+    if (match = @report.match(/appointed\s+to\s+the\s+office\s+of\s+Vice\s+President,\s+Apache\s+(.*?),/))
+      @title = "Change the Apache #{match[1]} Project Chair"
+    elsif (match = @report.match(/to\s+be\s+known\s+as\s+the\s+"Apache\s+(.*?)\s+Project",\s+be\s+and\s+hereby\s+is\s+established/))
+      @title = "Establish the Apache #{match[1]} Project"
+    elsif (match = @report.match(/the\s+Apache\s+(.*?)\s+project\s+is\s+hereby\s+terminated/))
+      @title = "Terminate the Apache #{match[1]} Project"
+    end
   end
 
   # track changes to text value
   def change_text(event)
     @report = event.target.value
     @edited = true
-  end
-
-  # track changes to message value
-  def change_message(event)
-    @message = event.target.value
   end
 
   # determine if reflow button should be default or danger color
