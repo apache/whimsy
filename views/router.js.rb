@@ -119,6 +119,9 @@ class Router
           end
         end
 
+        # clear modals
+        document.body.classList.remove('modal-open') if defined? document
+
         return props
       end
     end

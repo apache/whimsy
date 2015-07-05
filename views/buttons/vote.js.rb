@@ -96,6 +96,7 @@ class Vote < React
       self.setup(@@item)
       @disabled = false
       jQuery('#vote-form').modal(:hide)
+      document.body.classList.remove('modal-open')
     end
   end
 end

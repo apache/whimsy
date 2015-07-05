@@ -52,6 +52,7 @@ class DraftMinutes < React
     post 'draft', data do
       @disabled = false
       jQuery('#draft-minute-form').modal(:hide)
+      document.body.classList.remove('modal-open')
     end
   end
 end

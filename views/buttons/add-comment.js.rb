@@ -102,6 +102,7 @@ class AddComment < React
     @disabled = true
     post 'comment', data do |pending|
       jQuery('#comment-form').modal(:hide)
+      document.body.classList.remove('modal-open')
       @disabled = false
       Pending.load pending
     end

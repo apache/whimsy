@@ -144,6 +144,7 @@ class AddMinutes < React
       self.setup(@@item)
       @disabled = false
       jQuery('#minute-form').modal(:hide)
+      document.body.classList.remove('modal-open')
     end
   end
 end
