@@ -114,9 +114,9 @@ class Commit < React
     post 'commit', message: @message, initials: Pending.initials do |response|
       jQuery('#commit-form').modal(:hide)
       document.body.classList.remove('modal-open')
-      @disabled = false
-      Pending.load response.pending
       Agenda.load response.agenda
+      Pending.load response.pending
+      @disabled = false
     end
   end
 end
