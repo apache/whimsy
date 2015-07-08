@@ -112,11 +112,11 @@ class Commit < React
   def click(event)
     @disabled = true
     post 'commit', message: @message, initials: Pending.initials do |response|
-      jQuery('#commit-form').modal(:hide)
-      document.body.classList.remove('modal-open')
       Agenda.load response.agenda
       Pending.load response.pending
       @disabled = false
+      jQuery('#commit-form').modal(:hide)
+      document.body.classList.remove('modal-open')
     end
   end
 end
