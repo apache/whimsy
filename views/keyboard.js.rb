@@ -7,9 +7,9 @@ class Keyboard
 
     # keyboard navigation (unless on the search screen)
     def (document.body).onkeydown(event)
-      return if ~'#search-text'[0] or ~'.modal-open'[0]
-      return if document.activeElement.tagName.downcase() == 'input' and
-        not event.altKey
+      return if ~'#search-text'[0] or ~'.modal-open'[0] or ~'.modal.in'[0]
+      return if not event.altKey and
+        %w(input textarea).include? document.activeElement.tagName.downcase()
       return if event.metaKey or event.ctrlKey
 
       if event.keyCode == 37 # '<-'
