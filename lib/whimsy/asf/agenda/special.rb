@@ -82,19 +82,27 @@ class ASF::Board::Agenda
               people << [name2, id]
             end
           end
+
+          if people.length < 2
+            attrs['warnings'] ||= ['Unable to match expected number of names']
+          end
         end
       else
         if title =~ /Establish (.*)/
           name = $1
           attrs['prior_reports'] =
             "#{whimsy}/board/minutes/#{name.gsub(/\W/,'_')}"
-          if text =~ /FURTHER RESOLVED, that ([^,]*?),?\s+be\b/
+          if text =~ /FURTHER RESOLVED, that\s+([^,]*?),?\s+be\b/
             chairname = $1.gsub(/\s+/, ' ').strip
             chair = people.find {|person| person.first == chairname}
             attrs['chair'] = (chair ? chair.last : nil)
+            unless chair and chair.last
+              attrs['warnings'] ||= ['Chair not found in resolution'] 
+            end
+          else
+            attrs['warnings'] ||= ['Chair not found in resolution'] 
           end
         end
-
       end
 
       people.map! do |name, id| 
