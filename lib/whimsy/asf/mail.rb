@@ -75,6 +75,8 @@ module ASF
   class Committee
     def mail_list
       case name.downcase
+      when 'comdev'
+        'community'
       when 'httpcomponents'
         'hc'
       when 'tac'
