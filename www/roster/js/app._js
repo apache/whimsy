@@ -129,6 +129,9 @@ module Angular::AsfRoster
     elsif not (@info.memberUid.include? @person.uid or @info.memberUid.empty?)
       @status = 'not in committee_info.txt'
       @hint = "modify_committee.pl #{@name} --rm #{@person.uid}"
+    elsif @info.names[@person.uid] != @person.cn
+      @status = "name in committee_info.txt doesn't match public name"
+      @hint = "listed as #{@info.names[@person.uid]}"
     elsif @pmc.group and not @pmc.group.memberUid.include? @person.uid
       @status = 'not in committer list'
       @hint = "modify_unix_group.pl #{@name} --add #{@person.uid}"

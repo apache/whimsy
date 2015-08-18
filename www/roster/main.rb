@@ -100,6 +100,7 @@ get '/json/info' do
         report: committee.report,
         chair: committee.chair ? committee.chair.id : nil,
         memberUid: committee.info,
+        names: committee.names,
         emeritus: committee.emeritus,
         pmc: !ASF::Committee.nonpmcs.include?(committee)
       }]
