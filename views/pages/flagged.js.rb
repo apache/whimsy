@@ -12,7 +12,11 @@ class Flagged < React
           _Link text: item.title, href: "flagged/#{item.href}",
             class: ('default' if first)
           first = false
+
           _span.owner " [#{item.owner} / #{item.shepherd}]"
+
+          flagged_by = Server.directors[item.flagged_by] || item.flagged_by
+          _span.owner " flagged by: #{flagged_by}"
         end
 
         _AdditionalInfo item: item

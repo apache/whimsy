@@ -57,7 +57,10 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     firstname: username.split(' ').first.downcase,
     initials: initials,
     online: Events.present,
-    role: role
+    role: role,
+    directors: Hash[ASF::Auth::DIRECTORS.map {|id, initials| 
+      [initials, ASF::Person.find(id).public_name.split(' ').first]
+    }]
   }
 
   @page = {
