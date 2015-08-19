@@ -51,6 +51,11 @@ h1, h2.subtitle {
   clear: both
 }
 
+/* make flagged item owner info smaller */
+h3 span.owner {
+  font-size: medium;
+}
+
 /* center the table */
 table {
   margin-left: auto;

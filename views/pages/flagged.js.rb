@@ -12,6 +12,7 @@ class Flagged < React
           _Link text: item.title, href: "flagged/#{item.href}",
             class: ('default' if first)
           first = false
+          _span.owner " [#{item.owner} / #{item.shepherd}]"
         end
 
         _AdditionalInfo item: item
