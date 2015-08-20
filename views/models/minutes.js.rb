@@ -47,12 +47,25 @@ class Minutes
 
   # return a list of actual or expected attendee names
   def self.attendee_names
-    rollcall = Minutes.get('Roll Call') || Agenda.find('Roll-Call').text
-    pattern = Regexp.new('\n   ( [a-z]*[A-Z][a-zA-Z]*\.?)+', 'g')
     names = []
-    while (match=pattern.exec(rollcall)) do
-      names << match[0].sub(/^\s+/, '').split(' ').first
+
+    attendance = Object.keys(@@list.attendance)
+
+    if attendance.empty?
+      rollcall = Minutes.get('Roll Call') || Agenda.find('Roll-Call').text
+      pattern = Regexp.new('\n ( [a-z]*[A-Z][a-zA-Z]*\.?)+', 'g')
+      while (match=pattern.exec(rollcall)) do
+        name = match[0].sub(/^\s+/, '').split(' ').first
+        names << name unless names.include? name
+      end
+    else
+      attendance.each do |name|
+        next unless @@list.attendance[name].present
+        name = name.split(' ').first
+        names << name unless names.include? name
+      end
     end
+
     names.sort()
   end
 
