@@ -156,12 +156,15 @@ class Report < React
 
       # names
       if person.icla or @@item.title == 'Roll Call'
+        pattern = escapeRegExp(person.name).gsub(/ +/, '\s+')
         if defined? person.member
-          text.sub! /#{escapeRegExp(person.name)}/, 
-            "<a href='#{roster}#{id}'>#{person.name}</a>"
+          text.gsub! /#{pattern}/ do |match|
+            "<a href='#{roster}#{id}'>#{match}</a>"
+          end
         else
-          text.sub! /#{escapeRegExp(person.name)}/, 
-            "<a href='#{roster}?q=#{person.name}'>#{person.name}</a>"
+          text.gsub! /#{pattern}/ do |match| 
+            "<a href='#{roster}?q=#{person.name}'>#{match}</a>"
+          end
         end
       end
 
@@ -184,7 +187,8 @@ class Report < React
 
       # put members names in bold
       if person.member
-        text.gsub! /#{escapeRegExp(person.name)}/, "<b>#{person.name}</b>"
+        pattern = escapeRegExp(person.name).gsub(/ +/, '\s+')
+        text.gsub!(/#{pattern}/) {|match| "<b>#{match}</b>"}
       end
     end
 
