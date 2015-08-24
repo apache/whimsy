@@ -199,6 +199,17 @@ class Report < React
       end
     end
 
+    # highlight mis-spelling of previous and proposed chair names
+    if @@item.title.start_with? 'Change'
+      text.sub!(/heretofore\s+appointed\s+(\w(\s|.)*?)\s+\(/) do |text, name|
+        text.sub(name, "<span class='hilite'>#{name}</span>")
+      end
+
+      text.sub!(/chosen\sto\s+recommend\s+(\w(\s|.)*?)\s+\(/) do |text, name|
+        text.sub(name, "<span class='hilite'>#{name}</span>")
+      end
+    end
+
     return text
   end
 
