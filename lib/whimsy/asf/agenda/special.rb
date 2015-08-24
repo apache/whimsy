@@ -54,38 +54,48 @@ class ASF::Board::Agenda
         (?:\.\.\.|apache\.org|apache\sdot\sorg)>\s*$/x)
 
       whimsy = 'https://whimsy.apache.org'
-      if people.empty?
-        if title =~ /Change (.*?) Chair/ or title =~ /Terminate (\w+)$/
-          committee = ASF::Committee.find($1)
-          attrs['roster'] =
-            "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
-          attrs['stats'] = 
-            "https://reporter.apache.org/?#{CGI.escape committee.name}"
-          attrs['prior_reports'] = minutes(committee.display_name)
-          name1 = text[/heretofore\sappointed\s(\w.*)\sto/,1]
-          sname1 = name1.to_s.downcase.gsub('.', ' ').split(/\s+/)
-          name2 = text[/recommend\s(\w.*)\sas/,1]
-          sname2 = name2.to_s.downcase.gsub('.', ' ').split(/\s+/)
-          next unless committee.names
-          committee.names.each do |id, name|
-            name.sub!(/ .* /,' ') unless text.include? name
-            pname = name.downcase.split(/\s+/)
-            if text.include? name
-              people << [name, id]
-            elsif name1 && sname1.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
-              people << [name1, id]
-            elsif name1 && pname.all? {|t1| sname1.any? {|t2| t2.start_with? t1}}
-              people << [name1, id]
-            elsif name2 && sname2.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
-              people << [name2, id]
-            elsif name2 && pname.all? {|t1| sname2.any? {|t2| t2.start_with? t1}}
-              people << [name2, id]
-            end
-          end
+      if title =~ /Change (.*?) Chair/ or title =~ /Terminate (\w+)$/
+        people.clear
+        committee = ASF::Committee.find($1)
+        attrs['roster'] =
+          "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
+        attrs['stats'] = 
+          "https://reporter.apache.org/?#{CGI.escape committee.name}"
+        attrs['prior_reports'] = minutes(committee.display_name)
 
-          if people.length < 2
-            attrs['warnings'] ||= ['Unable to match expected number of names']
+        ids = text.scan(/\((\w[-.\w]+)\)/).flatten
+        unless ids.empty?
+          ids.each do |id|
+            person = ASF::Person.find(id)
+            people << [person.public_name, id] if person.icla
           end
+        end
+
+        name1 = text[/heretofore\sappointed\s(\w.*?)\s(\(|to)/,1]
+        sname1 = name1.to_s.downcase.gsub('.', ' ').split(/\s+/)
+        name2 = text[/recommend\s(\w.*?)\s(\(|as)/,1]
+        sname2 = name2.to_s.downcase.gsub('.', ' ').split(/\s+/)
+
+        next unless committee.names
+        committee.names.each do |id, name|
+          name.sub!(/ .* /,' ') unless text.include? name
+          pname = name.downcase.split(/\s+/)
+          if text.include? name
+            people << [name, id]
+          elsif name1 && sname1.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
+            people << [name1, id]
+          elsif name1 && pname.all? {|t1| sname1.any? {|t2| t2.start_with? t1}}
+            people << [name1, id]
+          elsif name2 && sname2.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
+            people << [name2, id]
+          elsif name2 && pname.all? {|t1| sname2.any? {|t2| t2.start_with? t1}}
+            people << [name2, id]
+          end
+        end
+
+        if people.length < 2
+          attrs['warnings'] ||= ['Unable to match expected number of names']
+          attrs['names'] = committee.names
         end
       else
         if title =~ /Establish (.*)/
