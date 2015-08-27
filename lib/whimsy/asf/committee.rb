@@ -1,13 +1,17 @@
+require 'time'
+
 module ASF
 
   class Base
   end
 
   class Committee < Base
-    attr_accessor :info, :names, :emeritus, :report
+    attr_accessor :info, :emeritus, :report, :roster, :established, :chairs
     def initialize(*args)
       @info = []
       @emeritus = []
+      @chairs = []
+      @roster = {}
       super
     end
 
@@ -44,25 +48,30 @@ module ASF
         return @committee_info 
       end
       @committee_mtime = File.mtime(file)
+      @@svn_change = Time.parse(
+        `svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
 
       info = File.read(file).split(/^\* /)
       head, report = info.shift.split(/^\d\./)[1..2]
-      head.scan(/^\s+(\w.*?)\s\s+.*<(\w+)@apache\.org>/).each do |name, id|
-        find(name).chair = ASF::Person.find(id) 
-      end
+      head.scan(/^\s+(\w.*?)\s\s+(.*)\s+<(\w+)@apache\.org>/).
+        each do |committee, name, id|
+          find(committee).chairs << {name: name, id: id}
+        end
       @nonpmcs = head.sub(/.*?also has/m,'').
         scan(/^\s+(\w.*?)\s\s+.*<\w+@apache\.org>/).flatten.uniq.
         map {|name| find(name)}
 
       info.each do |roster|
         committee = find(@@namemap.call(roster[/(\w.*?)\s+\(/,1]))
+        committee.established = roster[/\(est\. (.*?)\)/, 1]
         roster.gsub! /^.*\(\s*emeritus\s*\).*/i do |line|
           committee.emeritus += line.scan(/<(.*?)@apache\.org>/).flatten
           ''
         end
         committee.info = roster.scan(/<(.*?)@apache\.org>/).flatten
-        committee.names = Hash[roster.gsub(/\(\w+\)/, '').
-          scan(/^\s*(.*?)\s*<(.*?)@apache\.org>/).map {|list| list.reverse}]
+        committee.roster = Hash[roster.gsub(/\(\w+\)/, '').
+          scan(/^\s*(.*?)\s*<(.*?)@apache\.org>\s+(\[(.*?)\])?/).
+          map {|list| [list[1], {name: list[0], date: list[3]}]}]
       end
 
       report.scan(/^([^\n]+)\n---+\n(.*?)\n\n/m).each do |period, committees|
@@ -92,9 +101,17 @@ module ASF
       result
     end
 
+    def self.svn_change
+      @@svn_change
+    end
+
     def chair
       Committee.load_committee_info
-      @chair
+      if @chairs.length >= 1
+        ASF::Person.find(@chairs.first[:id])
+      else
+        nil
+      end
     end
 
     def display_name
@@ -106,16 +123,13 @@ module ASF
       @display_name ||= name
     end
 
-    def chair=(person)
-      @chair = person
-    end
-
     def info=(list)
       @info = list
     end
 
-    def names=(hash)
-      @names = hash
+    def names
+      Committee.load_committee_info
+      Hash[@roster.map {|id, info| [id, info[:name]]}]
     end
 
     def nonpmc?
