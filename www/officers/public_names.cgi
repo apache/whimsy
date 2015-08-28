@@ -18,16 +18,18 @@ _html do
   _table do
     _tr do
       _th "availid"
-      _th "icla.txt"
+      _th "icla.txt real name"
+      _th "icla.txt public name"
       _th "LDAP cn"
     end
 
-    ASF::ICLA.new.each do |id, name, email|
+    ASF::ICLA.new.each do |id, legal_name, name, email|
       next if id == 'notinavail'
       person = ASF::Person.find(id)
       if person.public_name != name
         _tr_ do
           _td id
+          _td legal_name
           _td name
           _td person.public_name
         end

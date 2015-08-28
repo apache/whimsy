@@ -2,12 +2,13 @@ module ASF
 
   class ICLA
     include Enumerable
+    ICLA_Struct = Struct.new(:id, :legal_name, :name, :email)
 
     def self.find_by_id(value)
       return if value == 'notinavail'
-      new.each do |id, name, email|
+      new.each do |id, legal_name, name, email|
         if id == value
-          return Struct.new(:id, :name, :email).new(id, name, email)
+          return ICLA_Struct.new(id, legal_name, name, email)
         end 
       end
       nil
@@ -15,9 +16,9 @@ module ASF
 
     def self.find_by_email(value)
       value = value.downcase
-      ICLA.new.each do |id, name, email|
+      new.each do |id, legal_name, name, email|
         if email.downcase == value
-          return Struct.new(:id, :name, :email).new(id, name, email)
+          return ICLA_Struct.new(id, legal_name, name, email)
         end 
       end
       nil
@@ -26,7 +27,9 @@ module ASF
     def self.availids
       return @availids if @availids
       availids = []
-      ICLA.new.each {|id, name, email| availids << id unless id == 'notinavail'}
+      new.each do |id, legal_name, name, email| 
+        availids << id unless id == 'notinavail'
+      end
       @availids = availids
     end
 
@@ -34,7 +37,7 @@ module ASF
       officers = ASF::SVN['private/foundation/officers']
       if officers and File.exist?("#{officers}/iclas.txt")
         iclas = File.read("#{officers}/iclas.txt")
-        iclas.scan(/^([-\w]+):.*?:(.*?):(.*?):/).each(&block)
+        iclas.scan(/^([-\w]+):(.*?):(.*?):(.*?):/).each(&block)
       end
     end
   end

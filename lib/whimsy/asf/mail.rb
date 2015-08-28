@@ -21,7 +21,7 @@ module ASF
       end
 
       # load all ICLA emails in one pass
-      ASF::ICLA.new.each do |id, name, email|
+      ASF::ICLA.new.each do |id, legal_name, name, email|
         list[email.downcase] ||= Person.find(id)
         next if id == 'notinavail'
         list["#{id.downcase}@apache.org"] ||= Person.find(id)
