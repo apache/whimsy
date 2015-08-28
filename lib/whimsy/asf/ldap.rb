@@ -156,10 +156,10 @@ module ASF
     end
 
     def public_name
+      return icla.name if icla
       cn = [attrs['cn']].flatten.first
       cn.force_encoding('utf-8') if cn.respond_to? :force_encoding
       return cn if cn
-      return icla.name if icla
       ASF.search_archive_by_id(name)
     end
 
