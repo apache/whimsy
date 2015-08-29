@@ -16,7 +16,14 @@ ASF::ICLA.preload
 _html do
   _h1 "public names: LDAP vs ICLA.txt"
 
-  _table do
+  _h2!.present! do
+    _ 'Present in '
+    _a 'icla.txt', 
+      href: 'https://svn.apache.org/repos/private/foundation/officers/iclas.txt'
+   _ ':'
+  end
+
+  _table_ do
     _tr do
       _th "availid"
       _th "icla.txt real name"
@@ -36,10 +43,40 @@ _html do
 
       if cn != name
         _tr_ do
-          _td id
+          _td do
+            _a id, href: "https://whimsy.apache.org/roster/committer/#{id}"
+          end
           _td legal_name
           _td name
           _td cn
+        end
+      end
+    end
+  end
+
+  icla = ASF::ICLA.availids
+  ldap = ASF::Person.list.sort_by(&:name)
+  ldap.delete ASF::Person.new('apldaptest')
+
+  unless ldap.all? {|person| icla.include? person.id}
+    _h2.missing! 'Only in LDAP'
+
+    _table do
+      ldap.each do |person|
+        next if icla.include? person.id
+        cn = person.attrs['cn'].first
+        cn.force_encoding 'utf-8' if cn
+
+        mail = person.attrs['mail'].first
+        mail.force_encoding 'utf-8' if mail
+
+        _tr do
+          _td do
+            _a person.id, href:
+              "https://whimsy.apache.org/roster/committer/#{person.id}"
+          end
+          _td cn
+          _td mail
         end
       end
     end
