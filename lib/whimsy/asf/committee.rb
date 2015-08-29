@@ -6,7 +6,8 @@ module ASF
   end
 
   class Committee < Base
-    attr_accessor :info, :emeritus, :report, :roster, :established, :chairs
+    attr_accessor :info, :emeritus, :report, :roster, :established, :chairs,
+      :schedule
     def initialize(*args)
       @info = []
       @emeritus = []
@@ -83,7 +84,7 @@ module ASF
           elsif period == 'Next month'
             committee.report = 'Every month'
           else
-            committee.report = period
+            committee.schedule = period
           end
         end
       end
@@ -121,6 +122,10 @@ module ASF
 
     def display_name=(name)
       @display_name ||= name
+    end
+
+    def report
+      @report || @schedule
     end
 
     def info=(list)

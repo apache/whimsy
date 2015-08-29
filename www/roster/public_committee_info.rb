@@ -19,10 +19,14 @@ end
 committees = ASF::Committee.load_committee_info
 info = {last_updated: ASF::Committee.svn_change}
 info[:committees] = Hash[committees.map {|committee|
+  schedule = committee.schedule.to_s.split(/,\s*/)
+  schedule.unshift committee.report if committee.report != committee.schedule
+
   [committee.name.gsub(/[^-\w]/,''), {
     display_name: committee.display_name,
+    mail_list: committee.mail_list,
     established: committee.established,
-    report: committee.report,
+    report: schedule,
     chair: Hash[committee.chairs.map {|chair|
       [chair.delete(:id), chair]}],
     roster: committee.roster,
