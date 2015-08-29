@@ -62,6 +62,12 @@ _html do
     _h2.missing! 'Only in LDAP'
 
     _table do
+      _tr do
+        _th 'id'
+        _th 'cn'
+        _th 'mail'
+      end
+
       ldap.each do |person|
         next if icla.include? person.id
         cn = person.attrs['cn'].first
