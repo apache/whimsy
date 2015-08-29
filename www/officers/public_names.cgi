@@ -11,6 +11,7 @@ unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
 end
 
 ASF::Person.preload('cn')
+ASF::ICLA.preload
 
 _html do
   _h1 "public names: LDAP vs ICLA.txt"
@@ -26,12 +27,19 @@ _html do
     ASF::ICLA.new.each do |id, legal_name, name, email|
       next if id == 'notinavail'
       person = ASF::Person.find(id)
-      if person.public_name != name
+
+      if person.attrs['cn'] 
+        cn = person.attrs['cn'].first.force_encoding('utf-8')
+      else
+        cn = nil
+      end
+
+      if cn != name
         _tr_ do
           _td id
           _td legal_name
           _td name
-          _td person.public_name
+          _td cn
         end
       end
     end

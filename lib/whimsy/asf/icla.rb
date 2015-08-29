@@ -4,6 +4,15 @@ module ASF
     include Enumerable
     ICLA_Struct = Struct.new(:id, :legal_name, :name, :email)
 
+    def self.preload
+      new.each do |id, legal_name, name, email|
+        if id != 'notinaval'
+          ASF::Person.find(id).icla = 
+            ICLA_Struct.new(id, legal_name, name, email)
+        end 
+      end
+    end
+
     def self.find_by_id(value)
       return if value == 'notinavail'
       new.each do |id, legal_name, name, email|
@@ -45,6 +54,10 @@ module ASF
   class Person
     def icla
       @icla ||= ASF::ICLA.find_by_id(name)
+    end
+
+    def icla=(icla)
+      @icla = icla
     end
 
     def icla?
