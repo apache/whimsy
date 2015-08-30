@@ -16,7 +16,7 @@ _table.wide ng_if: 'committer' do
           _span ng_bind: 'committer.public_name', asf_id: '{{ committer.uid }}'
           _span ' (public)'
         end
-        _li ng_if: 'committer.legal_name && committer.legal_name != committer.public_name' do
+        _li ng_if: 'members.indexOf(user) != -1 && committer.legal_name && committer.legal_name != committer.public_name' do
           _span ng_bind: 'committer.legal_name', asf_id: '{{ committer.uid }}'
           _span ' (legal)'
         end
