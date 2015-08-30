@@ -8,7 +8,24 @@ end
 _table.wide ng_if: 'committer' do
   _tr do
     _td 'Name'
-    _td ng_bind: 'committer.cn', asf_id: '{{ committer.uid }}'
+    _td ng_bind: 'committer.cn', asf_id: '{{ committer.uid }}',
+      ng_if: 'committer.cn == committer.public_name && committer.cn == committer.legal_name'
+    _td ng_if: 'committer.cn != committer.public_name || committer.cn != committer.legal_name' do
+      _ul do
+        _li ng_if: 'committer.public_name' do
+          _span ng_bind: 'committer.public_name', asf_id: '{{ committer.uid }}'
+          _span ' (public)'
+        end
+        _li ng_if: 'committer.legal_name && committer.legal_name != committer.public_name' do
+          _span ng_bind: 'committer.legal_name', asf_id: '{{ committer.uid }}'
+          _span ' (legal)'
+        end
+        _li ng_if: 'committer.cn && committer.cn != committer.public_name' do
+          _span ng_bind: 'committer.cn', asf_id: '{{ committer.uid }}'
+          _span ' (LDAP)'
+        end
+      end
+    end
   end
 
   _tr ng_if: 'committer["asf-personalURL"]' do

@@ -170,6 +170,15 @@ module Angular::AsfRoster
         committer = committers[id]
 
         info = id + ' ' + committer.cn
+
+        if committer.public_name != committer.cn
+          info = id + ' ' + committer.public_name 
+        end
+
+        if committer.legal_name != committer.public_name
+          info = id + ' ' + committer.legal_name 
+        end
+
         info += ' ' + committer.mail.join(' ') if committer.mail
         if committer["asf-altEmail"]
           info += ' ' + committer["asf-altEmail"].join(' ') 

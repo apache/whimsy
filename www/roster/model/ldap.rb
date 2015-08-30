@@ -1,3 +1,5 @@
+ASF::ICLA.preload
+
 class ASF::RosterLDAP
   def self.get
     dump = File.expand_path('../ldap.dump', __FILE__.untaint).untaint
@@ -83,6 +85,12 @@ class ASF::RosterLDAP
 
       entry['cn'].force_encoding('utf-8') if entry['cn']
       entry['sn'].force_encoding('utf-8') if entry['sn']
+
+      person = ASF::Person.new(entry['uid'])
+      if person.icla
+        entry['public_name'] = person.public_name
+        entry['legal_name'] = person.icla.legal_name
+      end
 
       if Array === entry['sshPublicKey']
         entry['sshPublicKey'].each { |key| key.force_encoding('utf-8') }

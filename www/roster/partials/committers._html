@@ -16,7 +16,8 @@ _table ng_if: 'search.committer.length > 2' do
         _span ng_bind: 'committer.uid'
       end
     end
-    _td ng_bind: 'committer.cn', asf_id: '{{ committer.uid }}'
+    _td ng_bind: 'committer.public_name || committer.cn', 
+      asf_id: '{{ committer.uid }}'
     _td ng_bind: 'committer.mail[0]'
   end
 
