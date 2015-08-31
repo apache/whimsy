@@ -202,8 +202,8 @@ def check
     if ! $3.index('@')
       output << [ 'email', "#{$1}: #{$3}" ]
     elsif ! $4 or ! $4.index('CLA')
-      if not %w(President Treasurer).include? $4.split(';').first
-        output << [ 'nocla', $2 ]
+      if not %w(:President :Treasurer).include? $4.split(';').first
+        output << [ 'nocla', "#$2: #$4" ]
       end
     elsif email[$3.downcase]
       output << [ 'dupemail', "#{$3}: #{name} and #{email[$3.downcase]}" ]
