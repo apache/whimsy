@@ -1,7 +1,7 @@
 #!/usr/bin/ruby1.9.1
 
 require 'whimsy/asf'
-require 'wunderbar'
+require 'wunderbar/script'
 
 user = ASF::Person.new($USER)
 unless user.asf_member? or ASF.pmc_chairs.include? user or $USER=='ea'
@@ -14,7 +14,29 @@ ASF::Person.preload('cn')
 ASF::ICLA.preload
 
 _html do
+  _style %{
+    td[draggable=true] {cursor: move}
+    td.over {border: dashed 1px green}
+    td.modified {background-color: #FF0}
+    button {margin-top: 1em}
+    pre {min-height: 3em}
+  }
+
   _h1 "public names: LDAP vs ICLA.txt"
+
+  _h2_ 'Instructions'
+
+  _p do
+    _b 'Note:'
+    _span 'At the moment, this is a demo only'
+  end
+
+  _ul do
+    _li 'Click to edit'
+    _li 'Drag/drop to copy'
+    _li 'Click "Show Updates" (at the bottom of the page) to see what ' +
+      'updates would be submitted.'
+  end
 
   _h2!.present! do
     _ 'Present in '
@@ -46,9 +68,9 @@ _html do
           _td do
             _a id, href: "https://whimsy.apache.org/roster/committer/#{id}"
           end
-          _td legal_name
-          _td name
-          _td cn
+          _td legal_name, draggable: 'true'
+          _td name, draggable: 'true'
+          _td cn, draggable: 'true'
         end
       end
     end
@@ -85,6 +107,99 @@ _html do
           _td mail
         end
       end
+    end
+  end
+
+  _button 'Show Updates', type: 'button'
+  _pre
+
+  _script do
+    row = nil
+
+    tds = document.getElementsByTagName('td')
+    for i in 0...tds.length
+      td = tds[i]
+      next unless td.getAttribute('draggable') == 'true'
+
+      td.addEventListener('dragstart') do |event|
+        row = event.target.parentNode
+        event.dataTransfer.setData('text/plain', this.textContent)
+      end
+
+      td.addEventListener('dragover') do |event|
+        return unless row == event.target.parentNode
+        data = event.dataTransfer.getData('text/plain')
+        if data != event.target.textContent
+          event.target.classList.add 'over'
+          event.preventDefault() 
+        end
+      end
+
+      td.addEventListener('dragleave') do |event|
+        event.currentTarget.classList.remove 'over'
+      end
+
+      td.addEventListener('drop') do |event|
+        data = event.dataTransfer.getData('text/plain')
+        event.target.classList.remove 'over'
+
+        if not event.target.getAttribute('data-original')
+          event.target.setAttribute('data-original', event.target.textContent)
+          event.target.classList.add 'modified'
+        elsif data == event.target.getAttribute('data-original')
+          event.target.removeAttribute('data-original')
+          event.target.classList.remove 'modified'
+        else
+          event.target.classList.add 'modified'
+        end
+
+        event.target.textContent = data
+        event.preventDefault()
+        row = nil
+      end
+
+      td.addEventListener('mouseup') do |event|
+        input = document.createElement('input')
+        input.value = event.target.textContent
+
+        if not event.target.getAttribute('data-original')
+          event.target.setAttribute('data-original', input.value)
+        end
+
+        event.target.firstChild.remove() while event.target.firstChild
+        event.target.appendChild(input)
+        event.target.setAttribute('draggable', 'false')
+        input.focus()
+        input.addEventListener('blur') do |event|
+          parent = input.parentNode
+          value = input.value
+          input.remove()
+          parent.textContent = value
+          parent.setAttribute('draggable', 'true')
+
+          if value == parent.getAttribute('data-original')
+            parent.removeAttribute('data-original')
+            parent.classList.remove 'modified'
+          else
+            parent.classList.add 'modified'
+          end
+        end
+      end
+    end
+
+    document.getElementsByTagName('button')[0].addEventListener('click') do
+      updates = {}
+      cols = %w(id legal_name public_name ldap)
+      tds = document.querySelectorAll('td.modified')
+      for i in 0...tds.length
+        td = tds[i]
+        id = td.parentNode.firstElementChild.textContent.trim()
+        updates[id] = {} unless updates[id]
+        updates[id][cols[td.cellIndex]] = td.textContent
+      end
+
+      pre = document.getElementsByTagName('pre')[0]
+      pre.textContent = JSON.stringify(updates, nil, 2)
     end
   end
 end
