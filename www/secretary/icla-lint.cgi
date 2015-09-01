@@ -32,6 +32,11 @@ _html do
     _label "doesn't match pattern", for: 'mismatch'
   end
 
+  _div do
+    _input id: 'notinavail', type: 'checkbox', checked: true
+    _label "notinavail entries", for: 'notinavail'
+  end
+
   _h2_ 'Issues'
 
   input = ASF::SVN['private/foundation/officers'] + '/iclas.txt'
@@ -81,6 +86,8 @@ _html do
       end
 
       if issue
+        issue = "#{issue} notinavail" if id =='notinavail'
+
         _tr_ class: issue do
           _td! do
             if id == 'notinavail'
