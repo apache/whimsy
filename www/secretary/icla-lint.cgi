@@ -34,6 +34,11 @@ _html do
 
   _h2_ 'Issues'
 
+  input = ASF::SVN['private/foundation/officers'] + '/iclas.txt'
+  iclas = Dir[ASF::SVN['private/documents/iclas'] + '/*'].map do |file|
+    file.split('/').last.sub(/\.\w+$/, '')
+  end
+
   _table_ do
     _tr do
       _th 'availid'
@@ -42,8 +47,6 @@ _html do
       _th 'field 5'
     end
 
-    input = ASF::SVN['private/foundation/officers'] + '/iclas.txt'
-    iclas = ASF::SVN['private/documents/iclas'] + '/'
     document = File.read(input).untaint
     document.scan(/^(\w.*?):.*?:(.*?):.*:(.*)/) do |(id, name, comment)|
       issue, note = nil, nil
@@ -58,7 +61,14 @@ _html do
       end
 
       if comment =~ /Signed CLA;(.*)/
-        missing = $1.split(',').select {|path| Dir[iclas + path + '*'].empty?}
+        missing = $1.split(',').select {|path| not iclas.include? path}
+
+        if not missing.empty?
+          missing = missing.select do |path|
+            not iclas.any? {|icla| icla.start_with? path}
+          end
+        end
+
         if not missing.empty?
           issue, note = 'error', "document not found: #{missing.first.inspect}"
         end
