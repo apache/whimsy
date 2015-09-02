@@ -29,6 +29,10 @@ module ASF
     end
   end
 
+  def self.ldap
+    @ldap || self.init_ldap
+  end
+
   # search with a scope of one
   def self.search_one(base, filter, attrs=nil)
     init_ldap unless defined? @ldap
@@ -198,6 +202,42 @@ module ASF
     def groups
       Group.list("memberUid=#{name}")
     end
+
+    def dn
+      attrs['dn']
+    end
+
+    def method_missing(name, *args)
+      if name.to_s.end_with? '=' and args.length == 1
+        return modify(name.to_s[0..-2], args)
+      end
+
+      return super unless args.empty?
+      result = self.attrs[name.to_s]
+      return super unless result
+
+      if result.empty?
+        return nil
+      else
+        result.map! do |value|
+          value = value.dup.force_encoding('utf-8') if String === value
+          value
+        end
+
+        if result.length == 1
+          result.first
+        else
+          result
+        end
+      end
+    end
+
+    def modify(attr, value)
+      value = Array(value) unless Hash === value
+      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_REPLACE, attr.to_s, value)
+      ASF.ldap.modify(self.dn, [mod])
+      attrs[attr.to_s] = value
+    end
   end
 
   class Group < Base
@@ -233,6 +273,10 @@ module ASF
       ASF.search_one(base, "cn=#{name}", 'member').flatten.
         map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
+
+    def dn
+      @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
+    end
   end
 
   class Service < Base
@@ -249,6 +293,15 @@ module ASF
   end
 
   module LDAP
+    def self.bind(user, password, &block)
+      dn = ASF::Person.new(user).dn
+      if block
+        ASF.ldap.bind(dn, password, &block)
+      else
+        ASF.ldap.bind(dn, password)
+      end
+    end
+
     # select LDAP host
     def self.host
       # try whimsy config
