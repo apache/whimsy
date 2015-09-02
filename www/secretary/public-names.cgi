@@ -12,6 +12,8 @@ unless user.asf_member? or ASF.pmc_chairs.include? user
 end
 
 _html do
+  _style :system if @updates
+
   _style %{
     table {border-collapse: collapse}
     table, th, td {border: 1px solid black}
@@ -27,28 +29,89 @@ _html do
 
   _h1 "public names: LDAP vs ICLA.txt"
 
+  # prefetch LDAP data
+  ASF::Person.preload('cn')
+
   if @updates
-    _pre JSON.pretty_generate(JSON.parse(@updates))
-  end
 
-  #################################################################### 
-  #                           Instructions                           #
-  #################################################################### 
+    ################################################################## 
+    #                         Apply Updates                          #
+    ################################################################## 
 
-  _h2_ 'Instructions:'
+    _h2_ 'Applying updates'
+    updates = JSON.parse(@updates)
 
-  _ul do
-    _li 'Click to edit.'
-    _li 'Drag/drop to copy.'
-    _li 'When done, click "Submit Updates" (at the bottom of the page).'
+    # scope out the work to be done
+    svn_updates = []
+    ldap_updates = []
+    updates.each do |id, names|
+      svn_updates << id if names['legal_name'] or names['public_name']
+      ldap_updates << id if names['ldap']
+    end
+
+    # update SVN
+    unless svn_updates.empty?
+      officers = '/var/tools/secretary/foundation/officers'
+      _.system ['svn', 'cleanup', officers]
+      _.system ['svn', 'up', officers]
+      iclas = File.read(officers + '/iclas.txt')
+
+      updates.each do |id, names|
+        pattern = Regexp.new("^#{Regexp.escape(id)}:(.*?):(.*?):")
+        iclas[pattern,1] = names['legal_name']  if names['legal_name']
+        iclas[pattern,2] = names['public_name'] if names['public_name']
+      end
+
+      File.write(officers + '/iclas.txt', iclas)
+      _.system ['svn', 'diff', officers + '/iclas.txt']
+
+      if svn_updates.length > 8
+        message = "Update #{svn_updates.length} names"
+      else
+        message = "Update names for #{svn_updates.sort.join(', ')}"
+      end
+
+      _.system ['svn', 'commit', '-m', message, 
+        ['--no-auth-cache', '--non-interactive'],
+        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
+        officers + '/iclas.txt']
+    end
+
+    # update LDAP
+    unless ldap_updates.empty?
+      ASF::LDAP.bind($USER, $PASSWORD) do
+        STDERR.puts 'ldapmodify'
+        _pre 'ldapmodify', class: '_stdin'
+        updates.each do |id, names|
+          next unless names['ldap']
+          person = ASF::Person.new(id)
+          _pre person.dn, class: '_stdout'
+          person.cn = names['ldap']
+        end
+      end
+    end
+
+  else
+
+    ################################################################## 
+    #                          Instructions                          #
+    ################################################################## 
+
+    _h2_ 'Instructions:'
+
+    _ul do
+      _li 'Click to edit.'
+      _li 'Drag/drop to copy.'
+      _li 'When done, click "Submit Updates" (at the bottom of the page).'
+    end
+
   end
 
   #################################################################### 
   #     Show LDAP differences where entry is present in icla.txt     #
   #################################################################### 
 
-  # prefetch data
-  ASF::Person.preload('cn')
+  # prefetch ICLA data
   ASF::ICLA.preload
 
   _h2!.present! do

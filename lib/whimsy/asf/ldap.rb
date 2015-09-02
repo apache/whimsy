@@ -204,7 +204,8 @@ module ASF
     end
 
     def dn
-      attrs['dn']
+      value = attrs['dn']
+      value.first if Array === value
     end
 
     def method_missing(name, *args)
