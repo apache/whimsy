@@ -19,6 +19,7 @@ _html do
     table, th, td {border: 1px solid black}
     td {padding: 3px 6px}
     th {background-color: #a0ddf0}
+    tr:hover .diff {background-color: #AAF}
 
     td[draggable=true] {cursor: move}
     td.modified {background-color: #FF0}
@@ -150,13 +151,31 @@ _html do
       next unless person.dn
 
       if person.cn != name
+        # locate point at which names differ
+        first, last = 0, -1
+        first += 1 while name[first] == person.cn[first]
+        last -= 1 while name[last] == person.cn[last]
+
         _tr_ do
           _td! do
             _a id, href: "https://whimsy.apache.org/roster/committer/#{id}"
           end
           _td legal_name, draggable: 'true'
-          _td name, draggable: 'true'
-          _td person.cn, draggable: 'true'
+          if name[first..last].length > 3 and person.cn[first..last].length > 3
+            _td name, draggable: 'true'
+            _td person.cn, draggable: 'true'
+          else
+            _td! draggable: 'true' do
+              _ name[0...first] unless first == 0
+              _span.diff name[first..last]
+              _ name[last+1..-1] unless last == -1
+            end
+            _td! draggable: 'true' do
+              _ person.cn[0...first] unless first == 0
+              _span.diff person.cn[first..last]
+              _ person.cn[last+1..-1] unless last == -1
+            end
+          end
         end
       end
     end
