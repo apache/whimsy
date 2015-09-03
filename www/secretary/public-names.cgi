@@ -14,7 +14,7 @@ end
 _html do
   _style :system if @updates
 
-  _style %{
+  _style_ %{
     table {border-collapse: collapse}
     table, th, td {border: 1px solid black}
     td {padding: 3px 6px}
@@ -69,6 +69,21 @@ _html do
         message = "Update #{svn_updates.length} names"
       else
         message = "Update names for #{svn_updates.sort.join(', ')}"
+
+        if svn_updates.length == 1
+          update = updates[svn_updates.first]
+          if not update['legal_name']
+            message = "Update public name for #{svn_updates.first}"
+          elsif not update['public_name']
+            message = "Update legal name for #{svn_updates.first}"
+          end
+        else
+          if svn_updates.all? {|update| not update['legal_name']}
+            message = "Update public names for #{svn_updates.sort.join(', ')}"
+          elsif svn_updates.all? {|update| not update['public_name']}
+            message = "Update legal names for #{svn_updates.sort.join(', ')}"
+          end
+        end
       end
 
       _.system ['svn', 'commit', '-m', message, 
@@ -114,14 +129,14 @@ _html do
   # prefetch ICLA data
   ASF::ICLA.preload
 
-  _h2!.present! do
+  _h2_!.present! do
     _ 'Present in '
     _a 'icla.txt', 
       href: 'https://svn.apache.org/repos/private/foundation/officers/iclas.txt'
    _ ':'
   end
 
-  _table_ do
+  _table do
     _tr do
       _th "availid"
       _th "icla.txt real name"
@@ -136,7 +151,7 @@ _html do
 
       if person.cn != name
         _tr_ do
-          _td do
+          _td! do
             _a id, href: "https://whimsy.apache.org/roster/committer/#{id}"
           end
           _td legal_name, draggable: 'true'
@@ -156,7 +171,7 @@ _html do
   ldap.delete ASF::Person.new('apldaptest')
 
   unless ldap.all? {|person| icla.include? person.id}
-    _h2.missing! 'Only in LDAP'
+    _h2_.missing! 'Only in LDAP'
 
     _table do
       _tr do
@@ -168,8 +183,8 @@ _html do
       ldap.each do |person|
         next if icla.include? person.id
 
-        _tr do
-          _td do
+        _tr_ do
+          _td! do
             _a person.id, href:
               "https://whimsy.apache.org/roster/committer/#{person.id}"
           end
@@ -184,7 +199,7 @@ _html do
   #                   Form used to submit changes                    #
   #################################################################### 
 
-  _form method: 'post' do
+  _form_ method: 'post' do
     _input type: 'hidden', name: 'updates'
     _input type: 'submit', value: 'Commit Changes', disabled: true
   end
@@ -291,18 +306,17 @@ _html do
     # capture modifications when button is pressed
     document.querySelector('input[type=submit]').addEventListener('click') do
       updates = {}
-      cols = %w(id legal_name public_name ldap)
+      columnNames = %w(id legal_name public_name ldap)
 
       tds = document.querySelectorAll('td.modified')
       for i in 0...tds.length
         td = tds[i]
         id = td.parentNode.firstElementChild.textContent.trim()
         updates[id] ||= {}
-        updates[id][cols[td.cellIndex]] = td.textContent
+        updates[id][columnNames[td.cellIndex]] = td.textContent
       end
 
-      input = document.querySelector('form input')
-      input.value = JSON.stringify(updates)
+      document.querySelector('form input').value = JSON.stringify(updates)
     end
   end
 end
