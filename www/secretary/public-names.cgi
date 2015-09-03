@@ -25,6 +25,7 @@ _html do
     td.modified {background-color: #FF0}
     td.over {background-color: #FFA}
 
+    input[type=text] {width: 100%; box-sizing: border-box}
     input[type=submit] {margin-top: 1em}
   }
 
@@ -116,7 +117,7 @@ _html do
     _h2_ 'Instructions:'
 
     _ul do
-      _li 'Click to edit.'
+      _li 'Double click to edit.'
       _li 'Drag/drop to copy.'
       _li 'When done, click "Submit Updates" (at the bottom of the page).'
     end
@@ -289,8 +290,9 @@ _html do
       end
 
       # mouseup: replace cell with an input field
-      td.addEventListener('mouseup') do |event|
+      td.addEventListener('dblclick') do |event|
         input = document.createElement('input')
+        input.setAttribute('type', 'text')
         input.value = event.target.textContent
 
         if not event.target.getAttribute('data-original')
