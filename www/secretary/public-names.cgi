@@ -64,7 +64,7 @@ _html do
         iclas[pattern,2] = names['public_name'] if names['public_name']
       end
 
-      File.write(officers + '/iclas.txt', iclas)
+      File.write(officers + '/iclas.txt', ASF::ICLA.sort(iclas))
       _.system ['svn', 'diff', officers + '/iclas.txt']
 
       if svn_updates.length > 8
@@ -339,5 +339,7 @@ _html do
 
       document.querySelector('form input').value = JSON.stringify(updates)
     end
+
+    enable_submit()
   end
 end
