@@ -2,6 +2,7 @@
 
 require 'whimsy/asf'
 require 'wunderbar/script'
+require 'ruby2js/filter/functions'
 
 # only available to ASF members and PMC chairs
 user = ASF::Person.new($USER)
@@ -218,7 +219,7 @@ _html do
               "https://whimsy.apache.org/roster/committer/#{person.id}"
           end
           _td person.cn
-          _td person.mail
+          _td person.mail.first
         end
       end
     end
@@ -251,20 +252,18 @@ _html do
     end
 
     # add drag/drop, mouse click event handlers to cells marked as draggable
-    tds = document.getElementsByTagName('td')
-    for i in 0...tds.length
-      td = tds[i]
+    Array(document.getElementsByTagName('td')).each do |td|
       next unless td.getAttribute('draggable') == 'true'
 
       # dragstart: capture row and textContent
-      td.addEventListener('dragstart') do |event|
+      td.addEventListener(:dragstart) do |event|
         row = event.target.parentNode
         dragText = this.textContent
         event.dataTransfer.setData('text/plain', dragText)
       end
 
       # dragover: add CSS class 'over' if same row and text is different
-      td.addEventListener('dragover') do |event|
+      td.addEventListener(:dragover) do |event|
         return unless row == event.target.parentNode
         if event.target.textContent != dragText
           event.target.classList.add 'over'
@@ -273,12 +272,12 @@ _html do
       end
 
       # dragleave: remove CSS class 'over'
-      td.addEventListener('dragleave') do |event|
+      td.addEventListener(:dragleave) do |event|
         event.currentTarget.classList.remove 'over'
       end
 
       # drop: update text after capturing original text
-      td.addEventListener('drop') do |event|
+      td.addEventListener(:drop) do |event|
         data = event.dataTransfer.getData('text/plain')
         event.target.classList.remove 'over'
 
@@ -299,7 +298,7 @@ _html do
       end
 
       # mouseup: replace cell with an input field
-      td.addEventListener('dblclick') do |event|
+      td.addEventListener(:dblclick) do |event|
         input = document.createElement('input')
         input.setAttribute('type', 'text')
         input.value = event.target.textContent
@@ -314,7 +313,7 @@ _html do
         input.focus()
 
         # when focus leaves input, replace cell with modified text
-        input.addEventListener('blur') do |event|
+        input.addEventListener(:blur) do |event|
           parent = input.parentNode
           value = input.value
           input.remove()
@@ -334,14 +333,12 @@ _html do
     end
 
     # capture modifications when button is pressed
-    document.querySelector('input[type=submit]').addEventListener('click') do
+    document.querySelector('input[type=submit]').addEventListener(:click) do
       updates = {}
       columnNames = %w(id legal_name public_name ldap)
 
-      tds = document.querySelectorAll('td.modified')
-      for i in 0...tds.length
-        td = tds[i]
-        id = td.parentNode.firstElementChild.textContent.trim()
+      Array(document.querySelectorAll('td.modified')).each do |td|
+        id = td.parentNode.firstElementChild.textContent.strip()
         updates[id] ||= {}
         updates[id][columnNames[td.cellIndex]] = td.textContent
       end
@@ -349,6 +346,7 @@ _html do
       document.querySelector('form input').value = JSON.stringify(updates)
     end
 
+    # force submit state on initial load (i.e., disable submit button)
     enable_submit()
   end
 end
