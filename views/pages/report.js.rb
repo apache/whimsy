@@ -144,10 +144,14 @@ class Report < React
     for id in @@item.people
       person = @@item.people[id]
 
-      # email addresses in 'Establish' resolutions
+      # email addresses in 'Establish' resolutions and (ids) everywhere
       text.gsub! /(\(|&lt;)(#{id})( at |@|\))/ do |m, pre, id, post|
         if person.icla
-          "#{pre}<a href='#{roster}#{id}'>#{id}</a>#{post}"
+          if post == ')' and defined? person.member
+            "#{pre}<b><a href='#{roster}#{id}'>#{id}</a></b>#{post}"
+          else
+            "#{pre}<a href='#{roster}#{id}'>#{id}</a>#{post}"
+          end
         else
           "#{pre}<a class='missing' href='#{roster}?q=#{person.name}'>" +
             "#{id}</a>#{post}"
