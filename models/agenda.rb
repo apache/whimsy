@@ -17,6 +17,12 @@ class Agenda
     Events.post type: :agenda, file: file unless quick
   end
 
+  def self.uptodate(file)
+    path = File.expand_path(file, FOUNDATION_BOARD).untaint
+    return false unless File.exist? path
+    return self[file][:mtime] == File.mtime(path)
+  end
+
   def self.parse(file, mode)
     # for quick mode, anything will do
     mode = :quick if ENV['RACK_ENV'] == 'test'

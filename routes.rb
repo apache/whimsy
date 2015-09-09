@@ -68,7 +68,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     query: params['q'],
     agenda: agenda,
     parsed: Agenda[agenda][:parsed],
-    etag: Agenda[agenda][:etag]
+    etag: Agenda.uptodate(agenda) ? Agenda[agenda][:etag] : nil
   }
 
   minutes = AGENDA_WORK + '/' + 
