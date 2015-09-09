@@ -147,7 +147,7 @@ class Report < React
       # email addresses in 'Establish' resolutions and (ids) everywhere
       text.gsub! /(\(|&lt;)(#{id})( at |@|\))/ do |m, pre, id, post|
         if person.icla
-          if post == ')' and defined? person.member
+          if post == ')' and person.member
             "#{pre}<b><a href='#{roster}#{id}'>#{id}</a></b>#{post}"
           else
             "#{pre}<a href='#{roster}#{id}'>#{id}</a>#{post}"
