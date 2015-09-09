@@ -23,9 +23,9 @@ class ASF::Board::Agenda
         officers = attr['text'].scan(/^ +Executive[ \S]*?:\n\n.*?\n\n/m).join
 
         # attempt to identify the people mentioned in the Roll Call
-        people = attr['text'].scan(/ {8}(\w.*)/).flatten.each do |sname|
-          next if sname == 'none'
-          name = sname
+        people = attr['text'].scan(/ {8}(\w.*)/).flatten.each do |name|
+          next if name == 'none'
+          name.gsub! /\s*\(.*?\)/, ''
 
           role = :guest
           role = :director if directors.include? name
@@ -42,41 +42,12 @@ class ASF::Board::Agenda
             }
           else
 
-            # first try the cache
-            person = @@people_cache[name]
+            # look up name
+            search = ASF::Person.list("cn=#{name}")
 
-            # next try a simple name look up
-            if not person
-              search = ASF::Person.list("cn=#{name}")
-              person = search.first if search.length == 1
-            end
-
-            # finally try harder to match the name
-            if not person
-              sname = sname.strip.downcase.split(/\s+/)
-
-              if not list
-                ASF::Person.preload('cn')
-                list = ASF::Person.list
-              end
-
-              search = []
-              list.select do |person|
-                next if person == 'none'
-                pname = person.public_name.downcase.split(/\s+/)
-                if sname.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
-                  search << person
-                elsif pname.all? {|t1| sname.any? {|t2| t2.start_with? t1}}
-                  search << person
-                end
-              end
-
-              person = search.first if search.length == 1
-            end
-
-            # save results in both the cache and the attributes
-            if person
-              @@people_cache[name] = person
+            # if found, save results in the attributes
+            if search.length == 1
+              person = search.first
 
               attr['people'][person.id] = {
                 name: name,
