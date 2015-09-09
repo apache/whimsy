@@ -3,8 +3,6 @@
 # * Roll Call
 
 class ASF::Board::Agenda
-  @@people_cache = {}
-
   parse do
     pattern = /
       ^\n\x20(?<section>[12]\.)
