@@ -40,6 +40,9 @@ class Keyboard
         info = document.getElementById("info")
         info.click() if info
         return false
+      elsif event.keyCode == 'M'.ord
+        Main.navigate 'missing'
+        return false
       elsif event.keyCode == 'N'.ord
         ~"#nav".click
         return false

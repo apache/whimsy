@@ -144,6 +144,17 @@ feature 'other reports' do
     expect(page).to have_selector 'h3 a', text: 'Lenya'
   end
 
+  it "should show missing items" do
+    visit '/2015-02-18/missing'
+    
+    expect(page).to have_selector 'h3 a', text: 'Cassandra'
+    expect(page).to have_selector 'h4', text: 'Comments'
+    expect(page).to have_selector 'pre span', text: 'cm: Reminder email sent'
+    expect(page).to have_selector 'h4', text: 'Minutes'
+    expect(page).to have_selector 'pre', 
+      text: '@Sam: Is anyone on the PMC looking at the reminders?'
+  end
+
   it "should hypertext minutes" do
     visit '/2015-02-18/January-21-2015'
 

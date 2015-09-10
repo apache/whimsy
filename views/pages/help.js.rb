@@ -23,14 +23,17 @@ class Help < React
       _dt 'A'
       _dd 'Navigate to the overall agenda page'
 
+      _dt 'F'
+      _dd 'Show flagged items'
+
+      _dt 'M'
+      _dd 'Show missing items'
+
       _dt 'Q'
       _dd 'Show queued approvals/comments'
 
       _dt 'S'
       _dd 'Show shepherded items (and action items)'
-
-      _dt 'F'
-      _dd 'Show flagged items'
 
       _dt 'X'
       _dd 'Set the topic (a.k.a. mark the spot)'
