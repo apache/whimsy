@@ -71,26 +71,9 @@ class ASF::Board::Agenda
           end
         end
 
-        name1 = text[/heretofore\sappointed\s(\w.*?)\s(\(|to)/,1]
-        sname1 = name1.to_s.downcase.gsub('.', ' ').split(/\s+/)
-        name2 = text[/recommend\s(\w.*?)\s(\(|as)/,1]
-        sname2 = name2.to_s.downcase.gsub('.', ' ').split(/\s+/)
-
         next unless committee.names
         committee.names.each do |id, name|
-          name.sub!(/ .* /,' ') unless text.include? name
-          pname = name.downcase.split(/\s+/)
-          if text.include? name
-            people << [name, id]
-          elsif name1 && sname1.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
-            people << [name1, id]
-          elsif name1 && pname.all? {|t1| sname1.any? {|t2| t2.start_with? t1}}
-            people << [name1, id]
-          elsif name2 && sname2.all? {|t1| pname.any? {|t2| t2.start_with? t1}}
-            people << [name2, id]
-          elsif name2 && pname.all? {|t1| sname2.any? {|t2| t2.start_with? t1}}
-            people << [name2, id]
-          end
+          people << [name, id] if text.include? name
         end
 
         if people.length < 2
