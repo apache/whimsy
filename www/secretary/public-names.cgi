@@ -120,7 +120,7 @@ _html do
     _ul do
       _li 'Double click to edit.'
       _li 'Drag/drop to copy.'
-      _li 'When done, click "Submit Updates" (at the bottom of the page).'
+      _li 'When done, click "Commit Changes" (at the bottom of the page).'
     end
 
   end
@@ -147,39 +147,46 @@ _html do
       _th "LDAP cn"
     end
 
-    ASF::ICLA.new.each do |id, legal_name, name, email|
-      next if id == 'notinavail'
-      person = ASF::Person.find(id)
+    ASF::ICLA.each do |icla|
+      next if icla.id == 'notinavail'
+      person = ASF::Person.find(icla.id)
       next unless person.dn
 
-      if person.cn != name
+      if person.cn != icla.name
         # locate point at which names differ
         first, last = 0, -1
-        length = [name.length, person.cn.length].min
-        first += 1 while name[first] == person.cn[first]
-        last -= 1 while name[last] == person.cn[last] and length >= first-last
+        length = [icla.name.length, person.cn.length].min
 
-        if name[last] == ' ' and name[last] == person.cn[last]
-          last -= 1 if (name.length - person.cn.length).abs > 1
+        while icla.name[first] == person.cn[first]
+          first += 1 
+        end
+
+        while icla.name[last] == person.cn[last] and length >= first-last
+          last -= 1 
+        end
+
+        if icla.name[last] == ' ' and icla.name[last] == person.cn[last]
+          last -= 1 if (icla.name.length - person.cn.length).abs > 1
         end
 
         _tr_ do
           _td! do
-            _a id, href: "https://whimsy.apache.org/roster/committer/#{id}"
+            _a icla.id, 
+              href: "https://whimsy.apache.org/roster/committer/#{icla.id}"
           end
-          _td legal_name.gsub(' ', "\u00A0"), draggable: 'true'
+          _td icla.legal_name.gsub(' ', "\u00A0"), draggable: 'true'
 
           if 
-            name[first..last].length > length/2 and 
+            icla.name[first..last].length > length/2 and 
             person.cn[first..last].length > length/2
           then
-            _td name, draggable: 'true'
+            _td icla.name, draggable: 'true'
             _td person.cn, draggable: 'true'
           else
             _td! draggable: 'true' do
-              _ name[0...first] unless first == 0
-              _span.diff name[first..last].gsub(' ', "\u00A0")
-              _ name[last+1..-1] unless last == -1
+              _ icla.name[0...first] unless first == 0
+              _span.diff icla.name[first..last].gsub(' ', "\u00A0")
+              _ icla.name[last+1..-1] unless last == -1
             end
             _td! draggable: 'true' do
               _ person.cn[0...first] unless first == 0
