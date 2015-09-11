@@ -68,8 +68,8 @@ get '/partials/:file.html' do
 end
 
 configure do
-  @@ldap_cache = nil
-  @@ldap_etag = nil
+  @ldap_cache = nil
+  @ldap_etag = nil
 end
 
 get '/json/auth' do
@@ -118,20 +118,20 @@ get '/json/ldap' do
     if LDAP_ETAGS.include? etag
       throw :halt, 304
     else
-      throw :halt, 504 unless @@ldap_cache
+      throw :halt, 504 unless @ldap_cache
     end
   else
-    @@ldap_cache = JSON.dump(ASF::RosterLDAP.get)
-    @@ldap_etag = Digest::MD5.hexdigest(@@ldap_cache)
+    @ldap_cache = JSON.dump(ASF::RosterLDAP.get)
+    @ldap_etag = Digest::MD5.hexdigest(@ldap_cache)
 
-    unless LDAP_ETAGS.include? @@ldap_etag
-      LDAP_ETAGS << @@ldap_etag 
+    unless LDAP_ETAGS.include? @ldap_etag
+      LDAP_ETAGS << @ldap_etag 
       LDAP_ETAGS.slice! 0, LDAP_ETAGS.length-20
     end
   end
 
-  etag @@ldap_etag if @@ldap_etag
-  @@ldap_cache
+  etag @ldap_etag if @ldap_etag
+  @ldap_cache
 end
 
 get '/json/mail' do
