@@ -106,8 +106,8 @@ module ASF
 
     # rearrange line in an order suitable for sorting
     def self.lname(line)
-      return '' unless line =~ /^\w.*?:(.*?)(:(.*?):(.*?)(:(.*))?)\n?/
-      name, rest = $1, $2
+      id, name, rest = line.split(':',3)
+      return '' unless name
 
       # Drop trailing (comment string) or /* comment */
       name.sub! /\(.+\)$/,''
@@ -126,7 +126,7 @@ module ASF
       name.map! {|word| asciize(word)}
       name = name.reverse.join(' ')
 
-      name + rest
+      "#{name}:#{rest}"
     end
 
     # sort an entire iclas.txt file
