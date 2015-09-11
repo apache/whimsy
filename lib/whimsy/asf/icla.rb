@@ -1,52 +1,94 @@
 module ASF
 
   class ICLA
-    include Enumerable
-    ICLA_Struct = Struct.new(:id, :legal_name, :name, :email)
+    attr_accessor :id, :legal_name, :name, :email
 
-    def self.preload
-      new.each do |id, legal_name, name, email|
-        if id != 'notinaval'
-          ASF::Person.find(id).icla = 
-            ICLA_Struct.new(id, legal_name, name, email)
-        end 
+    @@mtime = nil
+
+    OFFICERS = ASF::SVN['private/foundation/officers']
+    SOURCE = "#{OFFICERS}/iclas.txt" if OFFICERS
+
+    # flush caches if source file changed
+    def self.refresh
+      if SOURCE and File.mtime(SOURCE) != @@mtime
+        @@mtime = File.mtime(SOURCE)
+        @@id_index = nil
+        @@email_index = nil
+        @@name_index = nil
+
+        @@availids = nil
       end
     end
 
+    # load ICLA information for every committer
+    def self.preload
+      refresh
+      each do |icla|
+        ASF::Person.find(icla.id).icla =  icla unless icla.id == 'notinaval'
+      end
+    end
+
+    # find ICLA by ID
     def self.find_by_id(value)
       return if value == 'notinavail'
-      new.each do |id, legal_name, name, email|
-        if id == value
-          return ICLA_Struct.new(id, legal_name, name, email)
-        end 
+
+      refresh
+      unless @@id_index
+        @@id_index = {}
+        each {|icla| @@id_index[icla.id] = icla}
       end
-      nil
+
+      @@id_index[value]
     end
 
+    # find ICLA by email
     def self.find_by_email(value)
-      value = value.downcase
-      new.each do |id, legal_name, name, email|
-        if email.downcase == value
-          return ICLA_Struct.new(id, legal_name, name, email)
-        end 
+      refresh
+      unless @@email_index
+        @@email_index = {}
+        each {|icla| @@email_index[icla.email.downcase] = icla}
       end
-      nil
+
+      @@email_index[value.downcase]
     end
 
-    def self.availids
-      return @availids if @availids
-      availids = []
-      new.each do |id, legal_name, name, email| 
-        availids << id unless id == 'notinavail'
+    # find ICLA by name
+    def self.find_by_name(value)
+      refresh
+      unless @@name_index
+        @@name_index = {}
+        each {|icla| @@name_index[icla.name] = icla}
       end
+
+      @@email_index[value]
+    end
+
+    # list of all ids
+    def self.availids
+      refresh
+      return @@availids if @@availids
+      availids = []
+      each {|icla| availids << icla.id unless icla.id == 'notinavail'}
       @availids = availids
     end
 
-    def each(&block)
-      officers = ASF::SVN['private/foundation/officers']
-      if officers and File.exist?("#{officers}/iclas.txt")
-        iclas = File.read("#{officers}/iclas.txt")
-        iclas.scan(/^([-\w]+):(.*?):(.*?):(.*?):/).each(&block)
+    # iterate over all of the ICLAs
+    def self.each(&block)
+      if @@id_index and not @@id_index.empty?
+        @@id_index.values.each(&block)
+      elsif @@email_index and not @@email_index.empty?
+        @@email_index.values.each(&block)
+      elsif @@name_index and not @@name_index.empty?
+        @@name_index.values.each(&block)
+      elsif File.exist?(SOURCE)
+        File.read(SOURCE).scan(/^([-\w]+):(.*?):(.*?):(.*?):/).each do |list|
+          icla = ICLA.new()
+          icla.id = list[0]
+          icla.legal_name = list[1]
+          icla.name = list[2]
+          icla.email = list[3]
+          block.call(icla)
+        end
       end
     end
 
@@ -149,7 +191,7 @@ module ASF
     end
 
     def icla?
-      ICLA.availids.include? name
+      @icla || ICLA.availids.include?(name)
     end
   end
 
