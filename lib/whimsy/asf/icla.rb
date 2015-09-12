@@ -154,6 +154,7 @@ module ASF
       # Drop trailing (comment string) or /* comment */
       name.sub! /\(.+\)$/,''
       name.sub! /\/\*.+\*\/$/,''
+      return '' if name.empty?
 
       name = name.split.reverse
       suffix = (name.shift if name.first =~ SUFFIXES)
