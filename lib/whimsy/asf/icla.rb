@@ -22,7 +22,6 @@ module ASF
 
     # load ICLA information for every committer
     def self.preload
-      refresh
       each do |icla|
         ASF::Person.find(icla.id).icla =  icla unless icla.id == 'notinaval'
       end
@@ -74,6 +73,7 @@ module ASF
 
     # iterate over all of the ICLAs
     def self.each(&block)
+      refresh
       if @@id_index and not @@id_index.empty?
         @@id_index.values.each(&block)
       elsif @@email_index and not @@email_index.empty?
