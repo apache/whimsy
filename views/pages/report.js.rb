@@ -261,7 +261,8 @@ class Report < React
   # hotlink to JIRA issues
   def jira(text)
     jira_issue =
-      Regexp.new(/(^|\s|\()([A-Z][A-Z0-9]+)-([1-9][0-9]*)([.,;:\s)]|$)/, 'g')
+      Regexp.new(/(^|\s|\()([A-Z][A-Z0-9]+)-([1-9][0-9]*)
+        (\.(\D|$)|[,;:\s)]|$)/x, 'g')
 
     text.gsub! jira_issue do |m, pre, name, issue, post|
       if JIRA.find(name)
