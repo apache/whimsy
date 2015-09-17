@@ -26,7 +26,7 @@ class ReactServer
     server.close
 
     # spawn a server process
-    @@pid = spawn('iojs', '-e', 
+    @@pid = spawn('node', '-e', 
       Ruby2JS.convert(@@server, {ivars: {:@port => @@port}}))
 
     # wait for server to start

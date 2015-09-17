@@ -5,7 +5,7 @@ RUN mkdir -p /srv/var
 
 ENV RUBY_VERSION 2.2
 ENV PHANTOMJS_VERSION 2.0.0
-ENV IOJS_VERSION 2.3.1
+ENV NODE_VERSION 4.1.0
 
 # generate locales
 ENV LANG en_US.UTF-8
@@ -30,12 +30,11 @@ RUN apt-get install -y software-properties-common && \
 
 # io.js
 WORKDIR /srv/var
-RUN wget https://iojs.org/dist/v$IOJS_VERSION/iojs-v$IOJS_VERSION-linux-x64.tar.xz  && \
-    tar -vxf iojs-v$IOJS_VERSION-linux-x64.tar.xz && \
-    rm -f iojs-v$IOJS_VERSION-linux-x64.tar.xz && \
-    ln -s /srv/var/iojs-v$IOJS_VERSION-linux-x64/bin/iojs /usr/bin/iojs && \
-    ln -s /srv/var/iojs-v$IOJS_VERSION-linux-x64/bin/node /usr/bin/node && \
-    ln -s /srv/var/iojs-v$IOJS_VERSION-linux-x64/bin/npm /usr/bin/npm
+RUN wget https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz  && \
+    tar -vxf node-v$NODE_VERSION-linux-x64.tar.xz && \
+    rm -f node-v$NODE_VERSION-linux-x64.tar.xz && \
+    ln -s /srv/var/node-v$NODE_VERSION-linux-x64/bin/node /usr/bin/node && \
+    ln -s /srv/var/node-v$NODE_VERSION-linux-x64/bin/npm /usr/bin/npm
 
 # phantom.js - 2.0.0
 # https://github.com/ariya/phantomjs/issues/12948#issuecomment-78181293
