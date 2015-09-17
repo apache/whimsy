@@ -6,12 +6,12 @@ module ASF
     @@mtime = nil
 
     OFFICERS = ASF::SVN['private/foundation/officers']
-    SOURCE = "#{OFFICERS}/iclas.txt" if OFFICERS
+    SOURCE = OFFICERS ? "#{OFFICERS}/iclas.txt" : nil
 
     # flush caches if source file changed
     def self.refresh
-      if SOURCE and File.mtime(SOURCE) != @@mtime
-        @@mtime = File.mtime(SOURCE)
+      if not SOURCE or File.mtime(SOURCE) != @@mtime
+        @@mtime = SOURCE ? File.mtime(SOURCE) : Time.now
         @@id_index = nil
         @@email_index = nil
         @@name_index = nil
@@ -29,7 +29,7 @@ module ASF
 
     # find ICLA by ID
     def self.find_by_id(value)
-      return if value == 'notinavail'
+      return if value == 'notinavail' or not SOURCE
 
       refresh
       unless @@id_index
@@ -42,6 +42,8 @@ module ASF
 
     # find ICLA by email
     def self.find_by_email(value)
+      return unless SOURCE
+
       refresh
       unless @@email_index
         @@email_index = {}
@@ -53,6 +55,7 @@ module ASF
 
     # find ICLA by name
     def self.find_by_name(value)
+      return unless SOURCE
       refresh
       unless @@name_index
         @@name_index = {}
@@ -64,6 +67,7 @@ module ASF
 
     # list of all ids
     def self.availids
+      return unless SOURCE
       refresh
       return @@availids if @@availids
       availids = []
@@ -80,7 +84,7 @@ module ASF
         @@email_index.values.each(&block)
       elsif @@name_index and not @@name_index.empty?
         @@name_index.values.each(&block)
-      elsif File.exist?(SOURCE)
+      elsif SOURCE and File.exist?(SOURCE)
         File.read(SOURCE).scan(/^([-\w]+):(.*?):(.*?):(.*?):/).each do |list|
           icla = ICLA.new()
           icla.id = list[0]
