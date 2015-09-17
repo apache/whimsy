@@ -41,9 +41,9 @@ RUN wget https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.ta
 RUN apt-get install -y libfreetype6 && \
     apt-get install -y libjpeg8 && \
     apt-get install -y libfontconfig && \
-    wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu48_4.8.1.1-3ubuntu0.5_amd64.deb && \
-    dpkg -i libicu48_4.8.1.1-3ubuntu0.5_amd64.deb && \
-    rm -f libicu48_4.8.1.1-3ubuntu0.5_amd64.deb && \
+    wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu48_4.8.1.1-3ubuntu0.6_amd64.deb && \
+    dpkg -i libicu48_4.8.1.1-3ubuntu0.6_amd64.deb && \
+    rm -f libicu48_4.8.1.1-3ubuntu0.6_amd64.deb && \
     wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 && \
     tar -vxjf phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 phantomjs && \
     rm -f phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 && \
