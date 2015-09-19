@@ -6,6 +6,28 @@ agenda = "board_agenda_#{params[:date].gsub('-', '_')}.txt"
 agenda.untaint if params[:date] =~ /^\d+-\d+\d+/
 parsed = Agenda.parse(agenda, :full)
 
+if @remove and env.password
+  chairs = ASF::Service.find('pmc-chairs')
+
+  people = @remove.select {|id, checked| checked}.
+    map {|id, checked| ASF::Person.find(id)}
+
+  ASF::LDAP.bind(env.user, env.password) do
+    chairs.remove people
+  end
+end
+
+if @add and env.password
+  chairs = ASF::Service.find('pmc-chairs')
+
+  people = @add.select {|id, checked| checked}.
+    map {|id, checked| ASF::Person.find(id)}
+
+  ASF::LDAP.bind(env.user, env.password) do
+    chairs.add people
+  end
+end
+
 transitioning = {}
 establish = {}
 terminate = {}
@@ -28,7 +50,8 @@ add = transitioning.keys - ASF.pmc_chairs
 remove = ASF.pmc_chairs - ASF::Committee.list.map(&:chair) - transitioning.keys
 
 _add add.map {|person| {id: person.id, name: person.public_name, 
-  resolution: transitioning[person]}}.sort_by {|person| person[:id]}
+  email: person.mail.first, resolution: transitioning[person]}}.
+  sort_by {|person| person[:id]}
 _remove remove.map {|person| {id: person.id, name: person.public_name}}.
   sort_by {|person| person[:id]}
 _establish establish.map {|name, resolution| {name: name, 

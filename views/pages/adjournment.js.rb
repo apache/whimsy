@@ -28,31 +28,11 @@ class Adjournment < React
         end
 
         unless @todos.add.empty?
-          _p 'Add to pmc-chairs:'
-          _ul @todos.add do |person|
-            _li do
-              _a person.id,
-                href: "https://whimsy.apache.org/roster/committer/#{person.id}"
-              _ " (#{person.name})"
-
-              resolution = Minutes.get(person.resolution)
-              if resolution
-                _ ' - '
-                _Link text: resolution, href: self.link(person.resolution)
-              end
-            end
-          end
+          _TodoActions people: @todos.add, action: 'add'
         end
 
         unless @todos.remove.empty?
-          _p 'Remove from pmc-chairs:'
-          _ul @todos.remove do |person|
-            _li do
-              _a person.id,
-                href: "https://whimsy.apache.org/roster/committer/#{person.id}"
-              _ " (#{person.name})"
-            end
-          end
+          _TodoActions people: @todos.remove, action: 'remove'
         end
 
         unless @todos.establish.empty?
@@ -107,5 +87,115 @@ class Adjournment < React
         @todos = todos
       end
     end
+  end
+end
+
+class TodoActions < React
+  def initialize
+    @checked = {}
+    @disabled = true
+  end
+
+  # check for minutes being completed on first load
+  def componentDidMount()
+    self.componentWillReceiveProps()
+  end
+
+  # fetch secretary todos once the minutes are complete
+  def componentWillReceiveProps()
+    # uncheck people who were removed
+    for id in @checked
+      unless @@people.any? {|person| person.id == id}
+        @checked[id] = false
+      end
+    end
+
+    # check people who were added
+    @@people.each do |person|
+      @checked[person.id] = true if @checked[person.id] == undefined
+    end
+
+    self.refresh()
+  end
+
+  def refresh()
+    # disable button if nobody is checked
+    disabled = true
+    for id in @checked
+      disabled = false if @checked[id]
+    end
+    @disabled = disabled
+
+    self.forceUpdate()
+  end
+
+  def render
+    if @@action == 'add'
+      _p 'Add to pmc-chairs:'
+    else
+      _p 'Remove from pmc-chairs:'
+    end
+
+    _ul.checklist @@people do |person|
+      _li do
+        _input type: 'checkbox', checked: @checked[person.id],
+          onChange:-> {
+            @checked[person.id] = !@checked[person.id]
+            self.refresh()
+          }
+
+        _a person.id,
+          href: "https://whimsy.apache.org/roster/committer/#{person.id}"
+        _ " (#{person.name})"
+
+        if @action == 'add' and person.resolution
+          resolution = Minutes.get(person.resolution)
+          if resolution
+            _ ' - '
+            _Link text: resolution, href: self.link(person.resolution)
+          end
+        end
+      end
+    end
+
+    if @@action == 'add'
+      _button.checklist.btn.btn_default 'Email', disabled: @disabled,
+        onClick: self.launch_email_client
+    end
+
+    _button.checklist.btn.btn_default 'Submit', disabled: @disabled,
+      onClick: self.submit
+  end
+
+  def submit()
+    @disabled = true
+
+    data = {}
+    data[@action] = @checked
+
+    post "secretary-todos/#{Agenda.title}", data do |todos|
+      @disabled = false
+      @todos = todos
+    end
+  end
+
+  # launch email client, pre-filling the destination, subject, and body
+  def launch_email_client()
+    people = []
+    @@people.each do |person|
+      people << "#{person.name} <#{person.email}>" if @checked[person.id]
+    end
+    destination = "mailto:#{people.join(',')}?cc=board@apache.org"
+
+    subject = "Congratulations on your new role at Apache"
+    body = "Dear new PMC chairs,\n\nCongratulations on your new role at " +
+    "Apache. I've changed your LDAP privileges to reflect your new " +
+    "status.\n\nPlease read this and update the foundation records:\n" +
+    "https://svn.apache.org/repos/private/foundation/officers/advice-for-new-pmc-chairs.txt" +
+    "\n\nWarm regards,\n\n#{Server.username}"
+
+    window.location = destination +
+      "&subject=#{encodeURIComponent(subject)}" +
+      "&body=#{encodeURIComponent(body)}"
   end
 end

@@ -125,7 +125,7 @@ class ActionItems < React
 
           _textarea ref: 'statusText', label: 'Status:', value: @status, rows: 5
 
-          _button.bn_default 'Cancel', data_dismiss: 'modal',
+          _button.btn_default 'Cancel', data_dismiss: 'modal',
             disabled: @disabled
           _button.btn_primary 'Save', onClick: self.save,
             disabled: @disabled || (@baseline == @status)

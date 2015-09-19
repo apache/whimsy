@@ -140,6 +140,10 @@ get '/json/secretary-todos/:date' do
   _json :'actions/todos'
 end
 
+post '/json/secretary-todos/:date' do
+  _json :'actions/todos'
+end
+
 # potential actions
 get '/json/potential-actions' do
   _json :'actions/potential-actions'
