@@ -287,9 +287,25 @@ module ASF
       ASF.search_one(base, filter, 'cn').flatten
     end
 
+    def dn
+      "cn=#{id},#{self.class.base}"
+    end
+
     def members
       ASF.search_one(base, "cn=#{name}", 'member').flatten.
         map {|uid| Person.find uid[/uid=(.*?),/,1]}
+    end
+
+    def remove(people)
+      people = Array(people).map(&:dn)
+      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'member', people)
+      ASF.ldap.modify(self.dn, [mod])
+    end
+
+    def add(people)
+      people = Array(people).map(&:dn)
+      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'member', people)
+      ASF.ldap.modify(self.dn, [mod])
     end
   end
 
@@ -301,6 +317,7 @@ module ASF
       else
         ASF.ldap.bind(dn, password)
       end
+      ASF.init_ldap
     end
 
     # select LDAP host
