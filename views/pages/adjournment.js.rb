@@ -4,7 +4,13 @@
 
 class Adjournment < React
   def initialize
-    @todos = {add: [], remove: [], establish: [], loading: true, fetched: false}
+    Todos.set({
+      add: [],
+      remove: [],
+      establish: [],
+      loading: true,
+      etched: false
+    })
   end
 
   def render
@@ -12,14 +18,14 @@ class Adjournment < React
       _section do
         _pre.report @@item.text
 
-        if not @todos.loading or @todos.fetched
+        if not Todos.loading or Todos.fetched
           _h3 'Post Meeting actions'
 
           if 
-            @todos.add.empty? and @todos.remove.empty? and 
-            @todos.establish.empty?
+            Todos.add.empty? and Todos.remove.empty? and 
+            Todos.establish.empty?
           then
-            if @todos.loading
+            if Todos.loading
               _em 'Loading...'
             else
               _p 'none'
@@ -27,21 +33,21 @@ class Adjournment < React
           end
         end
 
-        unless @todos.add.empty?
-          _TodoActions people: @todos.add, action: 'add'
+        unless Todos.add.empty?
+          _TodoActions action: 'add'
         end
 
-        unless @todos.remove.empty?
-          _TodoActions people: @todos.remove, action: 'remove'
+        unless Todos.remove.empty?
+          _TodoActions action: 'remove'
         end
 
-        unless @todos.establish.empty?
+        unless Todos.establish.empty?
           _p do
             _a 'Establish pmcs:', 
               href: 'https://infra.apache.org/officers/tlpreq'
           end
 
-          _ul @todos.establish do |podling|
+          _ul Todos.establish do |podling|
             _li do
               _span podling.name
 
@@ -81,10 +87,10 @@ class Adjournment < React
 
   # fetch secretary todos once the minutes are complete
   def componentDidUpdate()
-    if Minutes.complete and @todos.loading and not @todos.fetched
-      @todos.fetched = true
+    if Minutes.complete and Todos.loading and not Todos.fetched
+      Todos.fetched = true
       fetch "secretary-todos/#{Agenda.title}", :json do |todos|
-        @todos = todos
+        Todos.set todos
       end
     end
   end
@@ -94,6 +100,7 @@ class TodoActions < React
   def initialize
     @checked = {}
     @disabled = true
+    @people = []
   end
 
   # check for minutes being completed on first load
@@ -103,15 +110,17 @@ class TodoActions < React
 
   # fetch secretary todos once the minutes are complete
   def componentWillReceiveProps()
+    @people = Todos[@@action]
+
     # uncheck people who were removed
     for id in @checked
-      unless @@people.any? {|person| person.id == id}
+      unless @people.any? {|person| person.id == id}
         @checked[id] = false
       end
     end
 
     # check people who were added
-    @@people.each do |person|
+    @people.each do |person|
       @checked[person.id] = true if @checked[person.id] == undefined
     end
 
@@ -136,7 +145,7 @@ class TodoActions < React
       _p 'Remove from pmc-chairs:'
     end
 
-    _ul.checklist @@people do |person|
+    _ul.checklist @people do |person|
       _li do
         _input type: 'checkbox', checked: @checked[person.id],
           onChange:-> {
@@ -175,14 +184,14 @@ class TodoActions < React
 
     post "secretary-todos/#{Agenda.title}", data do |todos|
       @disabled = false
-      @todos = todos
+      Todos.set todos
     end
   end
 
   # launch email client, pre-filling the destination, subject, and body
   def launch_email_client()
     people = []
-    @@people.each do |person|
+    @people.each do |person|
       people << "#{person.name} <#{person.email}>" if @checked[person.id]
     end
     destination = "mailto:#{people.join(',')}?cc=board@apache.org"
@@ -197,5 +206,14 @@ class TodoActions < React
     window.location = destination +
       "&subject=#{encodeURIComponent(subject)}" +
       "&body=#{encodeURIComponent(body)}"
+  end
+end
+
+# shared state
+class Todos
+  def self.set(value)
+    for attr in value
+      Todos[attr] = value[attr]
+    end
   end
 end
