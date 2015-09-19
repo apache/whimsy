@@ -12,6 +12,7 @@ module ASF
   # determine whether or not the LDAP API can be used
   def self.init_ldap
     @ldap = nil
+    @mtime = Time.now
 
     host = ASF::LDAP.host
 
@@ -52,15 +53,30 @@ module ASF
     result
   end
 
+  def self.refresh(symbol)
+    p @mtime
+    if Time.now - @mtime > 300.0
+      @mtime = Time.now
+    end
+
+    if instance_variable_get("#{symbol}_mtime") != @mtime
+      instance_variable_set("#{symbol}_mtime", @mtime)
+      instance_variable_set(symbol, nil)
+    end
+  end
+
   def self.pmc_chairs
+    refresh(:@pmc_chairs)
     @pmc_chairs ||= Service.find('pmc-chairs').members
   end
 
   def self.committers
+    refresh(:@committers)
     @committers ||= Group.find('committers').members
   end
 
   def self.members
+    refresh(:@members)
     @members ||= Group.find('member').members
   end
 
