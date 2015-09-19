@@ -27,6 +27,7 @@ module ASF
       'httpserver'                  => 'httpd',
       'java community process'      => 'jcp',
       'lucene.net'                  => 'lucenenet',
+      'portable runtime'            => 'apr',
       'quetzalcoatl'                => 'quetz',
       'security team'               => 'security',
       'open climate workbench'      => 'climate',
@@ -37,7 +38,7 @@ module ASF
       'xml graphics'                => 'xmlgraphics'
 
     @@namemap = Proc.new do |name|
-      cname = @@aliases[name.downcase]
+      cname = @@aliases[name.sub(/\s+\(.*?\)/, '').downcase]
       cname
     end
 
@@ -97,7 +98,7 @@ module ASF
     end
 
     def self.find(name)
-      result = super(@@aliases[name.downcase])
+      result = super(@@namemap.call(name))
       result.display_name = name if name =~ /[A-Z]/
       result
     end
