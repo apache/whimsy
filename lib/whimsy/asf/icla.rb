@@ -15,8 +15,17 @@ module ASF
         @@id_index = nil
         @@email_index = nil
         @@name_index = nil
+        @@svn_change = nil
 
         @@availids = nil
+      end
+    end
+
+    def self.svn_change
+      self.refresh
+      if SOURCE
+        @@svn_change ||= Time.parse(
+          `svn info #{SOURCE}`[/Last Changed Date: (.*) \(/, 1]).gmtime
       end
     end
 
