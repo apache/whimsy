@@ -171,7 +171,7 @@ class TodoActions < React
     @disabled = true
 
     data = {}
-    data[@action] = @checked
+    data[@@action] = @checked
 
     post "secretary-todos/#{Agenda.title}", data do |todos|
       @disabled = false
