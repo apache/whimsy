@@ -61,8 +61,14 @@ _html do
 
       updates.each do |id, names|
         pattern = Regexp.new("^#{Regexp.escape(id)}:(.*?):(.*?):")
-        iclas[pattern,1] = names['legal_name']  if names['legal_name']
-        iclas[pattern,2] = names['public_name'] if names['public_name']
+
+        if names['legal_name']
+          iclas[pattern,1] = names['legal_name'].gsub("\u00A0", ' ')  
+        end
+
+        if names['public_name']
+          iclas[pattern,2] = names['public_name'].gsub("\u00A0", ' ') 
+        end
       end
 
       File.write(officers + '/iclas.txt', ASF::ICLA.sort(iclas))
@@ -104,7 +110,7 @@ _html do
           next unless names['ldap']
           person = ASF::Person.new(id)
           _pre person.dn, class: '_stdout'
-          person.cn = names['ldap']
+          person.cn = names['ldap'].gsub("\u00A0", ' ')
         end
       end
     end
