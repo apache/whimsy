@@ -54,7 +54,7 @@ module ASF
   end
 
   def self.refresh(symbol)
-    if Time.now - @mtime > 300.0
+    if not @mtime or Time.now - @mtime > 300.0
       @mtime = Time.now
     end
 
