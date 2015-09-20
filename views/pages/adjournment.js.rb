@@ -42,22 +42,7 @@ class Adjournment < React
         end
 
         unless Todos.establish.empty?
-          _p do
-            _a 'Establish pmcs:', 
-              href: 'https://infra.apache.org/officers/tlpreq'
-          end
-
-          _ul Todos.establish do |podling|
-            _li do
-              _span podling.name
-
-              resolution = Minutes.get(podling.resolution)
-              if resolution
-                _ ' - '
-                _Link text: resolution, href: self.link(podling.resolution)
-              end
-            end
-          end
+          _EstablishActions action: 'remove'
         end
       end
 
@@ -69,15 +54,6 @@ class Adjournment < React
         end
       end
     end
-  end
-
-  # find corresponding agenda item
-  def link(title)
-    link = nil
-    Agenda.index.each do |item|
-      link = item.href if item.title == title
-    end
-    return link
   end
 
   # check for minutes being completed on first load
@@ -96,6 +72,10 @@ class Adjournment < React
   end
 end
 
+########################################################################
+#                          Add, Remove chairs                          #
+########################################################################
+
 class TodoActions < React
   def initialize
     @checked = {}
@@ -108,7 +88,7 @@ class TodoActions < React
     self.componentWillReceiveProps()
   end
 
-  # fetch secretary todos once the minutes are complete
+  # update check marks based on current Todo list
   def componentWillReceiveProps()
     @people = Todos[@@action]
 
@@ -161,15 +141,10 @@ class TodoActions < React
           resolution = Minutes.get(person.resolution)
           if resolution
             _ ' - '
-            _Link text: resolution, href: self.link(person.resolution)
+            _Link text: resolution, href: Todo.link(person.resolution)
           end
         end
       end
-    end
-
-    if @@action == 'add'
-      _button.checklist.btn.btn_default 'Email', disabled: @disabled,
-        onClick: self.launch_email_client
     end
 
     _button.checklist.btn.btn_default 'Submit', disabled: @disabled,
@@ -209,11 +184,109 @@ class TodoActions < React
   end
 end
 
-# shared state
+########################################################################
+#                          Establish actions                           #
+########################################################################
+
+class EstablishActions < React
+  def initialize
+    @checked = {}
+    @disabled = true
+    @podlings = []
+  end
+
+  # check for minutes being completed on first load
+  def componentDidMount()
+    self.componentWillReceiveProps()
+  end
+
+  # update check marks based on current Todo list
+  def componentWillReceiveProps()
+    @podlings = Todos.establish
+
+    # uncheck podlings that were removed
+    for name in @checked
+      unless @podlings.any? {|podling| podling.name == name}
+        @checked[name] = false
+      end
+    end
+
+    # check podlings that were added
+    @podlings.each do |podling|
+      @checked[podling.name] = true if @checked[podling.name] == undefined
+    end
+
+    self.refresh()
+  end
+
+  def refresh()
+    # disable button if nobody is checked
+    disabled = true
+    for id in @checked
+      disabled = false if @checked[id]
+    end
+    @disabled = disabled
+
+    self.forceUpdate()
+  end
+
+  def render
+    _p do
+      _a 'Establish pmcs:', 
+        href: 'https://infra.apache.org/officers/tlpreq'
+    end
+
+    _ul.checklist @podlings do |podling|
+      _li do
+        _input type: 'checkbox', checked: @checked[podling.name],
+          onChange:-> {
+            @checked[podling.name] = !@checked[podling.name]
+            self.refresh()
+          }
+
+        _span podling.name
+
+        resolution = Minutes.get(podling.resolution)
+        if resolution
+          _ ' - '
+          _Link text: resolution, href: Todo.link(podling.resolution)
+        end
+      end
+    end
+
+    _button.checklist.btn.btn_default 'Submit', disabled: @disabled,
+      onClick: self.submit
+  end
+
+  def submit()
+    @disabled = true
+    data = {establish: @checked}
+
+    post "secretary-todos/#{Agenda.title}", data do |todos|
+      @disabled = false
+      Todos.set todos
+    end
+  end
+end
+
+
+########################################################################
+#                             shared state                             #
+########################################################################
+
 class Todos
   def self.set(value)
     for attr in value
       Todos[attr] = value[attr]
     end
+  end
+
+  # find corresponding agenda item
+  def self.link(title)
+    link = nil
+    Agenda.index.each do |item|
+      link = item.href if item.title == title
+    end
+    return link
   end
 end
