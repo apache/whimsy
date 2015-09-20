@@ -174,6 +174,10 @@ class Attendee < React
         _a.hilite @@person.name, href: "#{roster}?q=#{@@person.name}"
       end
 
+      unless @checked or @@person.attending or @notes
+        _span ' (expected to be absent)'
+      end
+
       unless @@walkon
         _label
         _input type: 'text', value: @notes, onBlur: self.blur,
