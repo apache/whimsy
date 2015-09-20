@@ -67,6 +67,7 @@ class Adjournment < React
       Todos.fetched = true
       fetch "secretary-todos/#{Agenda.title}", :json do |todos|
         Todos.set todos
+        Todos.loading = false
       end
     end
   end
