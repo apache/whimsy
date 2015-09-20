@@ -26,6 +26,7 @@ module ASF
       'http server'                 => 'httpd',
       'httpserver'                  => 'httpd',
       'java community process'      => 'jcp',
+      'logging services'            => 'logging',
       'lucene.net'                  => 'lucenenet',
       'portable runtime'            => 'apr',
       'quetzalcoatl'                => 'quetz',
