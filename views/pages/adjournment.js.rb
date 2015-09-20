@@ -28,7 +28,7 @@ class Adjournment < React
             if Todos.loading
               _em 'Loading...'
             else
-              _p 'none'
+              _p.comment 'complete'
             end
           end
         end
