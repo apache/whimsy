@@ -9,7 +9,7 @@ class Adjournment < React
       remove: [],
       establish: [],
       loading: true,
-      etched: false
+      fetched: false
     })
   end
 
