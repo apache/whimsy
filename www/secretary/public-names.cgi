@@ -104,7 +104,6 @@ _html do
     # update LDAP
     unless ldap_updates.empty?
       ASF::LDAP.bind($USER, $PASSWORD) do
-        STDERR.puts 'ldapmodify'
         _pre 'ldapmodify', class: '_stdin'
         updates.each do |id, names|
           next unless names['ldap']
