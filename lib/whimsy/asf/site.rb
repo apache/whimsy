@@ -1,4 +1,5 @@
 require_relative '../asf'
+require 'nokogiri'
 
 module ASF
 
@@ -6,19 +7,40 @@ module ASF
     @@list = {}
 
     def self.list
-      Committee.load_committee_info
       templates = ASF::SVN['asf/infrastructure/site/trunk/templates']
-      file = "#{templates}/blocks/projects.mdtext"
+      file = "#{templates}/index.html"
       return @@list if not @@list.empty? and File.mtime(file) == @@mtime
       @@mtime = File.mtime(file)
 
-      projects = File.read(file)
-      projects.scan(/\[(.*?)\]\((http.*?) "(.*)"\)/).each do |name, link, text|
-        @@list[Committee.find(name).name] = {link: link, text: text}
+      Committee.load_committee_info
+      doc = Nokogiri::HTML.parse(File.read(file))
+      list = doc.at("#projects-list .row .row")
+      if list
+        list.search('a').each do |a|
+          @@list[Committee.find(a.text).name] = 
+            {link: a['href'], text: a['title']}
+        end
       end
 
       @@list
     end
+
+    def self.find(committee)
+      committee = committee.name if ASF::Committee == committee
+      list[committee]
+    end
   end
 
+
+  class Committee
+    def site
+      site = ASF::Site.find(name)
+      site[:link] if site
+    end
+
+    def description
+      site = ASF::Site.find(name)
+      site[:text] if site
+    end
+  end
 end

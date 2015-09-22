@@ -24,6 +24,8 @@ info[:committees] = Hash[committees.map {|committee|
 
   [committee.name.gsub(/[^-\w]/,''), {
     display_name: committee.display_name,
+    site: committee.site,
+    description: committee.description,
     mail_list: committee.mail_list,
     established: committee.established,
     report: schedule,
