@@ -7,7 +7,7 @@ module ASF
     @@list = {}
 
     def self.list
-      templates = ASF::SVN['asf/infrastructure/site/trunk/templates']
+      templates = ASF::SVN['asf/infrastructure/site/trunk/content']
       file = "#{templates}/index.html"
       return @@list if not @@list.empty? and File.mtime(file) == @@mtime
       @@mtime = File.mtime(file)
