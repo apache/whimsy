@@ -17,7 +17,8 @@ _html do
     _pre do
       _ `date` + "\n"
       secmail_status = 'http://minotaur.apache.org/~apmail/secmail.txt'
-      _a `curl #{secmail_status}`.sub(': ', ":\n"), href: secmail_status,
+      secmail_status = 'http://140.211.11.9/~apmail/secmail.txt' # DNS issues
+      _a `curl -s #{secmail_status}`.sub(': ', ":\n"), href: secmail_status,
         target: '_blank'
     end
 
@@ -485,24 +486,32 @@ _html do
             href: 'https://id.apache.org/acreq/members/' + query
         end
         _li do
-          _a 'Committers by id', href: 'http://people.apache.org/committer-index.html',
-            target: 'viewport'
+          _a 'Committers by id', target: 'viewport',
+            href: 'http://people.apache.org/committer-index.html'
         end
         _li do
           _a 'Documents', target: 'viewport',
             href: 'https://svn.apache.org/repos/private/documents/'
         end
         _li do
-          _a 'Board subscriptions', href: 'https://whimsy.apache.org/board/subscriptions/',
-            target: 'viewport'
+          _a 'ICLA lint', target: 'viewport',
+            href: 'https://whimsy.apache.org/secretary/icla-lint'
         end
         _li do
-          _a 'Mail aliases', href: 'https://id.apache.org/info/MailAlias.txt',
-            target: 'viewport'
+          _a 'Public names', target: 'viewport',
+            href: 'https://whimsy.apache.org/secretary/public-names'
         end
         _li do
-          _a 'Member list', href: 'https://svn.apache.org/repos/private/foundation/members.txt',
-            target: 'viewport'
+          _a 'Board subscriptions', target: 'viewport',
+            href: 'https://whimsy.apache.org/board/subscriptions/'
+        end
+        _li do
+          _a 'Mail aliases', target: 'viewport',
+            href: 'https://id.apache.org/info/MailAlias.txt'
+        end
+        _li do
+          _a 'Member list', target: 'viewport',
+            href: 'https://svn.apache.org/repos/private/foundation/members.txt'
         end
         _li do
           _a 'How to use this tool', href: 'HOWTO.html',
