@@ -1,4 +1,4 @@
-This directory has two subdirectories...
+This directory has two main subdirectories...
 
 1) "asf" contains the "model", i.e., a set of classes which encapsulate access
    to a number of data sources such as LDAP, ICLAs, auth lists, etc.
@@ -8,24 +8,43 @@ This directory has two subdirectories...
    scripts, AJAX logic (client and server), SVG images, etc.  A single script
    may also produce a set (subtree) of web pages. 
 
+   Some of the scripts (like the roster tool) are long running servers.  The
+   board agenda tool is hosted on github and has its own readme:
+
+  https://github.com/rubys/whimsy-agenda#readme
+
 If you want to run this remotely, the model code makes a few assumptions at the
 moment:
 
-1) current svn checkouts of various repositories are made (or linked to from)
+1) The ruby code needs to run under ruby 1.9.3 or higher.
+
+2) Make sure that the whimsy/asf gem installed.  If it is not, run
+
+  gem install whimsy/asf
+
+3) current svn checkouts of various repositories are made (or linked to from)
    /home/whimsysvn/svn:
 
    svn co --depth=files https://svn.apache.org/repos/private/foundation
 
-2) Access to LDAP requires a tunnel, configuration, and a cert.
+   You can specify an alternate location for these directories by placing
+   a configuration file named `.whimsy` in your home directory.  The format
+   for this file is YAML, and an example (be sure to include the dashed
+   lines):
 
-   a) A tunnel can be created using the following (substitute your id):
-      ssh -N -L 6636:minotaur.apache.org:636 rubys@minotaur.apache.org
+     ---
+     :svn:
+     - /home/rubys/svn/foundation
+     - /home/rubys/svn/committers
 
-   b) The model code determines what host and port to connect to by parsing
-      /etc/ldap/ldap.conf for a line that looks like the following:
-      uri     ldaps://ldap-tunnel.apache.org:6636
+4) Access to LDAP requires configuration, and a cert.
 
-   c) A TLS_CACERT can be obtained via the following (substitute your id):
+   a) The model code determines what host and port to connect to by parsing
+      either /etc/ldap/ldap.conf or /etc/ldap/ldap.conf for a line that looks
+      like the following:
+        uri     ldaps://ldap1-us-east.apache.org:636
+
+   b) A TLS_CACERT can be obtained via the following (substitute your id):
 
         ssh rubys@minotaur.apache.org openssl s_client -connect \
           minotaur.apache.org:636 -showcerts
@@ -39,16 +58,8 @@ moment:
       N.B. OpenLDAP uses /etc/openldap/ instead of /etc/ldap/ 
       Adjust the paths above as necessary
  
-    d) Update the /etc/hosts file so that the entry for 127.0.0.1 contains
-       ldap-tunnel.apache.org:
-
-       127.0.0.1       localhost ldap-tunnel.apache.org
-
-5) The ruby code needs to run under ruby 1.9.3 or higher.
-
-4) Make sure that the wunderbar gem installed.  If it is not, run
-
-  gem install wunderbar
+    These above updates can be done for you with the following command:
+      sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
 
 If you would like to understand how the view code works, you can get started
 by looking at a few of the Wunderbar demos and README:
