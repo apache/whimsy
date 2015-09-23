@@ -36,6 +36,9 @@ moment:
 
         TLS_CACERT      /etc/ldap/asf-ldap-client.pem
 
+      N.B. OpenLDAP uses /etc/openldap/ instead of /etc/ldap/ 
+      Adjust the paths above as necessary
+ 
     d) Update the /etc/hosts file so that the entry for 127.0.0.1 contains
        ldap-tunnel.apache.org:
 
