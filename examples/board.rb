@@ -6,10 +6,15 @@
 #
 #   ruby examples/board.rb --port=8080
 #
+# To install on a server that supports CGI:
+#
+#   ruby examples/board.rb --install=/Users/rubys/Sites/
 
 require 'whimsy/asf'
 
 _html do
+  _h1_ 'List of ASF board members'
+
   _table do
     _tr do
       _th 'id'
