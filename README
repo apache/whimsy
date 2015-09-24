@@ -61,6 +61,12 @@ moment:
     These above updates can be done for you with the following command:
       sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
 
+5) Verify that the configuration is correct by running:
+
+   ruby examples/board.rb
+
+   See comments in that file for running the script as a standalone server.
+
 If you would like to understand how the view code works, you can get started
 by looking at a few of the Wunderbar demos and README:
 
