@@ -18,9 +18,9 @@ moment:
 
 1) The ruby code needs to run under ruby 1.9.3 or higher.
 
-2) Make sure that the whimsy/asf gem installed.  If it is not, run
+2) Make sure that the whimsy-asf gem installed.  If it is not, run
 
-  gem install whimsy/asf
+  gem install whimsy-asf
 
 3) current svn checkouts of various repositories are made (or linked to from)
    /home/whimsysvn/svn:
