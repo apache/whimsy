@@ -51,7 +51,7 @@ function asciize(name) {
     name=name.replace(/[\u0300-\u036f]/g,'');
   }
 
-  return name.replace(/[^\w]+/g,'-');
+  return name.trim().replace(/[^\w]+/g,'-');
 }
 
 // Generate file name from real name (icla)
