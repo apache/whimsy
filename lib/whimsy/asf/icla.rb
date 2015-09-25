@@ -154,7 +154,7 @@ module ASF
         name.gsub! /[\u0300-\u036f]/, ''
       end
 
-      name.gsub /[^\w]+/, '-'
+      name.strip.gsub /[^\w]+/, '-'
     end
 
     SUFFIXES = /^([Jj][Rr]\.?|I{2,3}|I?V|VI{1,3}|[A-Z]\.)$/
