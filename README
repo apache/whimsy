@@ -62,6 +62,8 @@ moment:
 
         sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
 
+      Note: the certificate is needed because the LDAP hosts use a self-signed certificate
+
 5) Verify that the configuration is correct by running:
 
    ruby examples/board.rb
