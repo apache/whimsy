@@ -52,11 +52,12 @@ _html do
 
   _h2_ 'Issues'
 
-  ldap = ASF::Person.list.map(&:id)
   input = ASF::SVN['private/foundation/officers'] + '/iclas.txt'
   iclas = Dir[ASF::SVN['private/documents/iclas'] + '/*'].map do |file|
     file.split('/').last.sub(/\.\w+$/, '')
   end
+
+  ldap = ASF::Person.list.map(&:id)
 
   _table_ do
     _tr do
