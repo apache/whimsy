@@ -14,15 +14,21 @@ require 'ruby2js/filter/require'
 
 require_relative 'models'
 
-get '/committers.json' do
+get '/committer/' do
+  _html :committers
+end
+
+get '/committer/index.json' do
   # bulk loading the mail information makes things go faster
   mail = Hash[ASF::Mail.list.group_by(&:last).
     map {|person, list| [person, list.map(&:first)]}]
 
   # return a list of people, their public-names, and email addresses
-  _json Hash[ASF::Person.list.map {|person|
-    [person.id, {name: person.public_name, mail: mail[person]}]
-  }]
+  ASF::Person.list.sort_by(&:id).map {|person|
+    result = {id: person.id, name: person.public_name, mail: mail[person]}
+    result[:member] = true if person.asf_member?
+    result
+  }.to_json
 end
 
 get '/committee/:name.json' do |name|
