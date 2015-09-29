@@ -42,7 +42,7 @@ class Committer < React
         _td 'Committees'
         _td do
           _ul @@committer.committees do |pmc|
-            _li pmc
+            _li {_a pmc, href: "../committee/#{pmc}"}
           end
         end
       end

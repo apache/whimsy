@@ -1,10 +1,10 @@
 #
-# A single committer
+# A single committee
 #
 
 _html do
   _base href: '..'
-  _title @committer[:name][:public_name]
+  _title @committee[:display_name]
   _link rel: 'stylesheet', href: '../stylesheets/app.css'
 
   _a href: 'http://whimsy.apache.org/' do
@@ -16,6 +16,6 @@ _html do
 
   _script src: '../app.js'
   _.render '#main' do
-    _Committer committer: @committer
+    _Committee committee: @committee
   end
 end

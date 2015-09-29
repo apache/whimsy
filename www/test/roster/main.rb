@@ -25,6 +25,15 @@ get '/committers.json' do
   }]
 end
 
+get '/committee/:name.json' do |name|
+  _json Committee.serialize(name)
+end
+
+get '/committee/:name' do |name|
+  @committee = Committee.serialize(name)
+  _html :committee
+end
+
 get '/committer/:name.json' do |name|
   _json Committer.serialize(name)
 end
