@@ -3,8 +3,8 @@
   "version": "0.1.0",
 
   "repository": {
-    "type": "svn",
-    "url": "https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/test/board/agenda"
+    "type": "git",
+    "url": "https://github.com/rubys/whimsy-agenda.git"
   },
 
   "devDependencies": {
