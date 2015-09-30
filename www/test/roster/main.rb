@@ -14,6 +14,11 @@ require 'ruby2js/filter/require'
 
 require_relative 'models'
 
+get '/' do
+  @committers = ASF::Person.list
+  _html :index
+end
+
 get '/committer/' do
   _html :committers
 end
