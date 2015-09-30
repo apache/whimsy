@@ -16,7 +16,11 @@ _html do
 
   _div_.main!
 
-  _script src: '../app.js'
+  # polyfills
+  _script src: 'javascript/es6-promise.js'
+  _script src: 'javascript/fetch.js'
+
+  _script src: 'app.js'
   _.render '#main' do
     _CommitterSearch
   end
