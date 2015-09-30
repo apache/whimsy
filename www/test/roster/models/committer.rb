@@ -23,7 +23,7 @@ class Committer
 
     response[:mail] = person.all_mail
 
-    unless person.pgp_key_fingerprints.empty?
+    if person.pgp_key_fingerprints and not person.pgp_key_fingerprints.empty?
       response[:pgp] = person.pgp_key_fingerprints 
     end
 
