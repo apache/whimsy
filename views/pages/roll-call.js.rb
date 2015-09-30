@@ -174,8 +174,8 @@ class Attendee < React
         _a.hilite @@person.name, href: "#{roster}?q=#{@@person.name}"
       end
 
-      unless @checked or @@person.attending or @notes
-        _span ' (expected to be absent)'
+      unless @@walkon or @checked or @@person.role==:guest or @@person.attending
+        _span ' (expected to be absent)' unless @notes
       end
 
       unless @@walkon
