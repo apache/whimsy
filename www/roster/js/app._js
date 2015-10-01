@@ -195,10 +195,10 @@ module Angular::AsfRoster
         elsif "#{id}@apache.org".include? text
           results << committer
         elsif committer.mail and 
-          committer.mail.any? {|email| email.include? text}
+          committer.mail.any? {|email| email.downcase().include? text}
           results << committer
         elsif committer["asf-altEmail"] and
-          committer["asf-altEmail"].any? {|email| email.include? text}
+          committer["asf-altEmail"].any? {|email| email.downcase().include? text}
           results << committer
         end
       end
