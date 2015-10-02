@@ -12,6 +12,7 @@ require 'wunderbar/react'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 
+require_relative 'banner'
 require_relative 'models'
 
 get '/' do

@@ -7,18 +7,14 @@ _html do
   _title 'ASF Committer Search'
   _link rel: 'stylesheet', href: '../stylesheets/app.css'
 
-  _banner breadcrumbs: {
+  _banner trail: {
     roster: 'https://whimsy.apache.org/roster',
-    committer: 'https://whimsy.apache.org/roster/committers'
+    committers: 'https://whimsy.apache.org/roster/committers'
   }
 
   _h1 'Committer - Search'
 
   _div_.main!
-
-  # polyfills
-  _script src: 'javascript/es6-promise.js'
-  _script src: 'javascript/fetch.js'
 
   _script src: 'app.js'
   _.render '#main' do

@@ -7,12 +7,14 @@ class CommitterSearch < React
   end
 
   def componentDidMount()
-    fetch('committer/index.json').then do |response|
-      response.json().then do |committers|
-        @ready = true
-        @committers = committers
-        search = @search
-        self.change(target: {value: search}) unless search.empty?
+    Polyfill.require(%w(Promise fetch)) do
+      fetch('committer/index.json').then do |response|
+        response.json().then do |committers|
+          @ready = true
+          @committers = committers
+          search = @search
+          self.change(target: {value: search}) unless search.empty?
+        end
       end
     end
   end
