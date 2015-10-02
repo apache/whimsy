@@ -1,7 +1,29 @@
+************************************************************************
+*                               Preface                                *
+************************************************************************
+
+Whimsy is a set of independent tools and a common library which typically will
+need to access various ASF SVN directories and/or LDAP.  To do development and
+testing, you will need access to a machine on which you are willing to install
+libraries which do things like access LDAP, XML parsing, composing mail and
+the like.  While some tools may work on Microsoft Windows, many don't
+currently.  Alternatives include a Docker image or a Vagrant VM.
+
+The primary advantage of using an image or a VM is isolation.  The primary
+disadvantage is that you will need to install your SVN credentials there and
+arrange to either duplicate or mount your SVN directories.
+
+************************************************************************
+*                               Overview                               *
+************************************************************************
+
 This directory has two main subdirectories...
 
 1) "asf" contains the "model", i.e., a set of classes which encapsulate access
-   to a number of data sources such as LDAP, ICLAs, auth lists, etc.
+   to a number of data sources such as LDAP, ICLAs, auth lists, etc.  This
+   code originally was developed as a part of separate tools and was later
+   refactored out into a common library.  Some of the older tools don't fully
+   make use of this refactoring.
 
 2) "www" contains the "view", largely a set of cgi scripts that produce HTML.
    Generally a cgi script is self contained, including all of the CSS,
@@ -9,12 +31,18 @@ This directory has two main subdirectories...
    may also produce a set (subtree) of web pages. 
 
    Some of the scripts (like the roster tool) are long running servers.  The
-   board agenda tool is hosted on github and has its own readme:
+   board agenda tool is currently hosted on github, but this will be
+   consolidated to the consolidated svn repository once the following
+   request is complete:
 
-  https://github.com/rubys/whimsy-agenda#readme
+     https://issues.apache.org/jira/browse/INFRA-10399
 
-If you want to run this remotely, the model code makes a few assumptions at the
-moment:
+************************************************************************
+*                                Setup                                 *
+************************************************************************
+
+This section is for those desiring to run a whimsy tool on their own machine.
+Skip this section if you are running a Docker container or a Vagrant VM.
 
 1) The ruby code needs to run under ruby 1.9.3 or higher.
 
@@ -22,7 +50,7 @@ moment:
 
   gem install whimsy-asf
 
-3) current svn checkouts of various repositories are made (or linked to from)
+3) current SVN checkouts of various repositories are made (or linked to from)
    /home/whimsysvn/svn:
 
    svn co --depth=files https://svn.apache.org/repos/private/foundation
@@ -69,6 +97,16 @@ moment:
    ruby examples/board.rb
 
    See comments in that file for running the script as a standalone server.
+
+************************************************************************
+*                           Further reading                            *
+************************************************************************
+
+An example of a complete tool that makes full use of the library factoring,
+has a suite of test cases, and client componentization (using ReactJS), and
+provides instructions for setting up both a Docker component and a Vagrant VM:
+
+  https://github.com/rubys/whimsy-agenda#readme
 
 If you would like to understand how the view code works, you can get started
 by looking at a few of the Wunderbar demos and README:
