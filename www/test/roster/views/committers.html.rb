@@ -7,9 +7,9 @@ _html do
   _title 'ASF Committer Search'
   _link rel: 'stylesheet', href: '../stylesheets/app.css'
 
-  _banner trail: {
+  _banner breadcrumbs: {
     roster: 'https://whimsy.apache.org/roster',
-    committers: 'https://whimsy.apache.org/roster/committers'
+    committer: 'https://whimsy.apache.org/roster/committers'
   }
 
   _h1 'Committer - Search'

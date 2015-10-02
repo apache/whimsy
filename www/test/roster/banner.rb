@@ -11,15 +11,17 @@ class Wunderbar::HtmlMarkup
     end
 
     # breadcrumbs
-    _div.breadcrumbs do
-      _a href: 'http://www.apache.org' do
-        _span.glyphicon.glyphicon_home
-      end
+    if args[:breadcrumbs]
+      _div.breadcrumbs do
+        _a href: 'http://www.apache.org' do
+          _span.glyphicon.glyphicon_home
+        end
 
-      _a 'whimsy', href: 'https://www.whimsy.org/'
-      args[:breadcrumbs].each do |name, link|
-        _span "\u00BB"
-        _a name.to_s, href: link
+        _a 'whimsy', href: 'https://www.whimsy.org/'
+        args[:breadcrumbs].each do |name, link|
+          _span "\u00BB"
+          _a name.to_s, href: link
+        end
       end
     end
   end

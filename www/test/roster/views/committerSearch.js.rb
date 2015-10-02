@@ -20,7 +20,6 @@ class CommitterSearch < React
   end
 
   def change(event)
-    console.log('change')
     @search = event.target.value
 
     search = @search.downcase().split(' ')
