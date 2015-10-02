@@ -21,3 +21,5 @@ td:hover .hint {
   color: black; font-weight: normal}
 
 .list-none {list-style-type: none; padding-left: 1.5em; margin-top: 0.5em}
+
+.breadcrumbs {padding: 10px 20px}

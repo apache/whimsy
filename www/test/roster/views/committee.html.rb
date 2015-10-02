@@ -7,10 +7,12 @@ _html do
   _title @committee[:display_name]
   _link rel: 'stylesheet', href: '../stylesheets/app.css'
 
-  _a href: 'http://whimsy.apache.org/' do
-    _img src: 'https://id.apache.org/img/asf_logo_wide.png',
-      alt: 'ASF Logo', title: 'ASF Logo'
-  end
+  _banner breadcrumbs: {
+    roster: 'https://whimsy.apache.org/roster',
+    committee: 'https://whimsy.apache.org/roster/committee/',
+    @committee[:id] => 
+      "https://whimsy.apache.org/roster/committers/#{@committee[:id]}"
+  }
 
   _div_.main!
 

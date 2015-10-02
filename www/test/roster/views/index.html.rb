@@ -6,10 +6,9 @@ _html do
   _title 'ASF Roster'
   _link rel: 'stylesheet', href: '../stylesheets/app.css'
 
-  _a href: 'http://whimsy.apache.org/' do
-    _img src: 'https://id.apache.org/img/asf_logo_wide.png',
-      alt: 'ASF Logo', title: 'ASF Logo'
-  end
+  _banner breadcrumbs: {
+    roster: 'https://www.whimsy.org/roster'
+  }
 
   _h1_ 'Roster'
 

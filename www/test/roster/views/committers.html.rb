@@ -7,10 +7,10 @@ _html do
   _title 'ASF Committer Search'
   _link rel: 'stylesheet', href: '../stylesheets/app.css'
 
-  _a href: 'http://whimsy.apache.org/' do
-    _img src: 'https://id.apache.org/img/asf_logo_wide.png',
-      alt: 'ASF Logo', title: 'ASF Logo'
-  end
+  _banner breadcrumbs: {
+    roster: 'https://whimsy.apache.org/roster',
+    committer: 'https://whimsy.apache.org/roster/committers'
+  }
 
   _h1 'Committer - Search'
 
