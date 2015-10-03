@@ -44,7 +44,21 @@ This directory has two main subdirectories...
 This section is for those desiring to run a whimsy tool on their own machine.
 Skip this section if you are running a Docker container or a Vagrant VM.
 
-1) The ruby code needs to run under ruby 1.9.3 or higher.
+1) The ruby version needs be ruby 1.9.3 or higher.  Verify with 'ruby -v'.
+   If you use a system provided version of Ruby, you may need to prefix
+   certain commands (like gem install) with 'sudo'.  Alternatives to using
+   the system provided version include using a Ruby version manager like
+   rbenv or rvm.  Rbenv generally requires you to be more aware of what you
+   are doing (e.g., the need for shims).  While rvm tends to be more of a set
+   and forget operation, it tends to be more system intrusive (e.g. aliasing
+   'cd' in bash).
+
+   Links:
+
+   https://github.com/sstephenson/rbenv#understanding-shims
+   https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs
+
+   https://rvm.io/
 
 2) Make sure that the whimsy-asf gem installed.  If it is not, run
 
@@ -90,7 +104,8 @@ Skip this section if you are running a Docker container or a Vagrant VM.
 
         sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
 
-      Note: the certificate is needed because the LDAP hosts use a self-signed certificate
+      Note: the certificate is needed because the LDAP hosts use a self-signed
+      certificate
 
 5) Verify that the configuration is correct by running:
 
