@@ -120,8 +120,6 @@ class Header < React
 
             _li { _Link.queue! text: 'Queue', href: 'queue' }
 
-            _li { _Link.queue! text: 'Flagged', href: 'flagged' }
-
             _li.divider
 
             _li { _Link.help! text: 'Backchannel', href: 'backchannel' }

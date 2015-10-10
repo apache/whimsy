@@ -25,5 +25,9 @@ class Index < React
 	      end
       end
     end
+
+    _h1 'Summary'
+
+    _Summary
   end
 end

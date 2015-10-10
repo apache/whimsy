@@ -15,14 +15,22 @@ class Link < React
 
   def componentWillReceiveProps(props)
     @text = props.text
+
     for attr in props
+      next unless props[attr]
       @attrs[attr] = props[attr] unless attr == 'text'
     end
-    @attrs.href = props.href.gsub(%r{(^|/)\w+/\.\.(/|$)}, '$1')
+
+    if props.href
+      @element = 'a'
+      @attrs.href = props.href.gsub(%r{(^|/)\w+/\.\.(/|$)}, '$1')
+    else
+      @element = 'span'
+    end
   end
 
   def render
-    React.createElement('a', @attrs, @text)
+    React.createElement(@element, @attrs, @text)
   end
 
   def click(event)
