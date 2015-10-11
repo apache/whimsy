@@ -47,4 +47,14 @@ feature 'index' do
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Add Resolution'
   end
+
+  it "should show a summary" do
+    visit '/2015-02-18/'
+
+    expect(page).to have_selector 'tr.available td', text: '84' # committee
+    expect(page).to have_selector 'tr.available td', text: '6'  # special
+    expect(page).to have_selector 'tr.ready td', text: '2'
+    expect(page).to have_selector 'tr.commented td', text: '1'
+    expect(page).to have_selector 'tr.missing td', text: '19'
+  end
 end

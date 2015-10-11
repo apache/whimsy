@@ -1,0 +1,58 @@
+Subject: ASF Board Report for [month] [year] is now due
+
+This email was sent by an automated system on behalf of the
+ASF Board.
+
+According to board records, you are listed as the chair of at least one
+committee that is due to submit a report this month. These reports are
+now due and should be submitted to the board as soon as possible
+but no later that [dueDate].
+
+The meeting is scheduled for [meetingDate].
+
+Full details about the process and schedule are in [1].
+
+The report should be committed to the meeting agenda in the board directory
+in the foundation repository, trying to keep a similar format to the others.
+This can be found at:
+
+  https://svn.apache.org/repos/private/foundation/board
+
+Reports can also be posted using the online agenda tool:
+
+  [agenda][link]
+
+Your report should also be sent in plain-text format to [whoTo]
+with a Subject line that follows the below format:
+
+            Subject: [REPORT] Project Name
+
+Cutting and pasting directly from a Wiki is not acceptable due to formatting
+issues. Line lengths should be limited to 77 characters.
+
+Chairs may use the Apache Reporter Service [3] to help them compile and
+submit a board report.
+
+As always, PMC chairs are welcome to attend the board meeting.
+
+Thanks,
+The ASF Board
+
+[1] - https://svn.apache.org/repos/private/committers/board/committee-info.txt
+[2] - https://svn.apache.org/repos/private/committers/board/templates
+[3] - https://reporter.apache.org/
+
+
+Resolutions
+-----------
+
+There are several templates for use for various Board resolutions.
+They can be found in [2] and you are encouraged to use them. It is
+strongly recommended that if you have a resolution before the board,
+you are encouraged to attend that board meeting.
+
+
+ASF Board Reports
+-----------------
+
+Reports are due from you for the following committees:

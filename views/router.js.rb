@@ -32,7 +32,8 @@ class Router
       item = {view: Flagged, title: 'Flagged reports'}
 
     elsif path == 'missing'
-      item = {view: Missing, title: 'Missing reports'}
+      item = {view: Missing, title: 'Missing reports',
+        buttons: [{form: InitialReminder}, {button: FinalReminder}]}
 
     elsif path =~ %r{^flagged/[-\w]+$}
       item = Agenda.find(path[8..-1])

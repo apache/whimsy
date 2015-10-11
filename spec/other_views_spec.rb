@@ -153,6 +153,14 @@ feature 'other reports' do
     expect(page).to have_selector 'h4', text: 'Minutes'
     expect(page).to have_selector 'pre', 
       text: '@Sam: Is anyone on the PMC looking at the reminders?'
+
+    # reminders
+    expect(page).to have_selector 'input[type=checkbox][name=selected]' + 
+      '[value=Airavata]'
+    expect(page).to have_selector 'button.btn-primary',
+      text: 'send initial reminders'
+    expect(page).to have_selector 'button.btn-primary',
+      text: 'send final reminders'
   end
 
   it "should hypertext minutes" do

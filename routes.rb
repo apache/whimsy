@@ -9,6 +9,14 @@ get '/' do
   status 302
 end
 
+# redirect missing to missing page for the latest agenda
+get '/missing' do
+  agenda = dir('board_agenda_*.txt').sort.last
+  response.headers['Location'] = 
+    "#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/missing"
+  status 302
+end
+
 # all agenda pages
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   agenda = "board_agenda_#{date.gsub('-','_')}.txt"
@@ -147,6 +155,11 @@ end
 # potential actions
 get '/json/potential-actions' do
   _json :'actions/potential-actions'
+end
+
+get %r{/json/(reminder[12])} do |reminder|
+  @reminder = reminder
+  _json :'actions/reminder-text'
 end
 
 # chat log

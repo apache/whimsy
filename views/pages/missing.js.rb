@@ -9,6 +9,11 @@ class Missing < React
     Agenda.index.each do |item|
       if item.missing
         _h3 class: item.color do
+          if item.attach =~ /^[A-Z]+/
+            _input type: 'checkbox', name: 'selected', value: item.title,
+              checked: 'checked'
+          end
+
           _Link text: item.title, href: "flagged/#{item.href}",
             class: ('default' if first)
           first = false

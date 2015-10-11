@@ -330,6 +330,28 @@ feature 'server actions' do
     end
   end
 
+  describe "reminders" do
+    it "should draft initial reminders" do
+      @reminder = 'reminder1'
+      response = eval(File.read('views/actions/reminder-text.json.rb'))
+      expect(response[:subject]).to \
+        eq('ASF Board Report - Initial Reminder for February 2015')
+      expect(response[:body]).to match(/It is an initial reminder/)
+      expect(response[:body]).to \
+        match(/the deadline for\ssubmitting your report is 1 full week/)
+      expect(response[:body]).to match(/Wed Feb 11th/)
+    end
+
+    it "should draft final reminders" do
+      @reminder = 'reminder2'
+      response = eval(File.read('views/actions/reminder-text.json.rb'))
+      expect(response[:subject]).to \
+        eq('ASF Board Report for February 2015 is now due')
+      expect(response[:body]).to match(/These reports are\snow due/)
+      expect(response[:body]).to \
+        match(/The meeting is scheduled for Wed, 18 Feb 2015 at 10:30 PST\./)
+    end
+  end
 
   ##########################################################################
   #

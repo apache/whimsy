@@ -1,11 +1,11 @@
-FROM ubuntu:14.04.2
+FROM ubuntu:14.04.3
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN mkdir -p /srv/var
 
 ENV RUBY_VERSION 2.2
 ENV PHANTOMJS_VERSION 2.0.0
-ENV NODE_VERSION 4.1.0
+ENV NODE_VERSION 4.1.1
 
 # generate locales
 ENV LANG en_US.UTF-8
