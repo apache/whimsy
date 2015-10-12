@@ -3,6 +3,22 @@
 #
 
 class Missing < React
+  def initialize
+    @checked = {}
+  end
+
+  # update checkmarks on first load
+  def componentDidMount()
+    self.componentWillReceiveProps()
+  end
+
+  # update check marks based on current Index
+  def componentWillReceiveProps()
+    Agenda.index.each do |item|
+      @checked[item.title] = true unless defined? @checked[item.title]
+    end
+  end
+
   def render
     first = true
 
@@ -11,7 +27,10 @@ class Missing < React
         _h3 class: item.color do
           if item.attach =~ /^[A-Z]+/
             _input type: 'checkbox', name: 'selected', value: item.title,
-              checked: 'checked'
+              checked: @checked[item.title], onChange:-> {
+                @checked[item.title] = !@checked[item.title]
+                self.forceUpdate()
+              }
           end
 
           _Link text: item.title, href: "flagged/#{item.href}",
