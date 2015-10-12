@@ -82,7 +82,9 @@ class InitialReminder < React
     end
 
     post 'send-reminders', data do |response|
-      if response.count == data.pmcs.length
+      if not response
+        alert("Server error - check console log")
+      elsif response.count == data.pmcs.length
         alert("Reminders have been sent to: #{data.pmcs.join(', ')}.")
       elsif response.count and response.unsent
         alert("Error: no emails were sent to #{response.unsent.join(', ')}")
