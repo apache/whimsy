@@ -4,6 +4,11 @@
 
 sent = []
 
+# utilize sendmail as the Mail Transport Agent
+Mail.defaults do
+  delivery_method :sendmail
+end
+
 # extract values for common fields
 sender = ASF::Person.find(env.user)
 from = "#{sender.public_name} <#{sender.id}@apache.org>"
