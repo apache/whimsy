@@ -6,7 +6,7 @@ sent = []
 
 # utilize sendmail as the Mail Transport Agent
 Mail.defaults do
-  delivery_method :sendmail
+  delivery_method :sendmail, openssl_verify_mode: 'none'
 end
 
 # extract values for common fields
