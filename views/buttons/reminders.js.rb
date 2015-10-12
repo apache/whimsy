@@ -46,7 +46,7 @@ class InitialReminder < React
 
   # commit form: allow the user to confirm or edit the commit message
   def render
-    _ModalDialog.reminder_form! color: 'blank' do
+    _ModalDialog.reminder_form!.wide_form color: 'blank' do
       # header
       _h4 'Email message'
 
@@ -55,7 +55,7 @@ class InitialReminder < React
         label: 'subject', placeholder: 'loading...'
 
       # text area input field for the body
-      _textarea.email_text! value: @message, rows: 15, 
+      _textarea.email_text! value: @message, rows: 12, 
         disabled: @disabled, label: 'body', placeholder: 'loading...'
 
       # buttons
@@ -67,15 +67,32 @@ class InitialReminder < React
   # on click, disable the input fields and buttons and submit
   def click(event)
     @disabled = true
-    data = {subject: @subject, message: @message, pmcs: []}
 
+    # data to be sent to the server
+    data = {
+      agenda: Agenda.file,
+      subject: @subject,
+      message: @message,
+      pmcs: []
+    }
+
+    # collect up a list of PMCs that are checked
     Array(document.querySelectorAll('input[type=checkbox]')).each do |input|
       data.pmcs << input.value if input.checked
     end
 
     post 'send-reminders', data do |response|
-      alert("Reminders would have been sent to: #{data.pmcs.join(', ')}.")
+      if response.count == data.pmcs.length
+        alert("Reminders have been sent to: #{data.pmcs.join(', ')}.")
+      elsif response.count and response.unsent
+        alert("Error: no emails were sent to #{response.unsent.join(', ')}")
+      else
+        alert("No reminders were sent")
+      end
+
       @disabled = false
+      jQuery('#reminder-form').modal(:hide)
+      document.body.classList.remove('modal-open')
     end
   end
 end

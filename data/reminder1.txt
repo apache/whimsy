@@ -1,7 +1,7 @@
 Subject: ASF Board Report - Initial Reminder for [month] [year]
 
-This email was sent by an automated system on behalf of the ASF Board.
-It is an initial reminder to give you plenty of time to prepare the report.
+This email was sent on behalf of the ASF Board.  It is an initial reminder to
+give you plenty of time to prepare the report.
 
 The meeting is scheduled for [meetingDate] and the deadline for
 submitting your report is 1 full week prior to that ([dueDate])!
@@ -48,7 +48,7 @@ Reports can also be posted using the online agenda tool:
 Your report should also be sent in plain-text format to [whoTo]
 with a Subject line that follows the below format:
 
-            Subject: [REPORT] Project Name
+  Subject: [REPORT] [project] - [month] [year]
 
 Cutting and pasting directly from a Wiki is not acceptable due to formatting
 issues. Line lengths should be limited to 77 characters.
@@ -64,10 +64,3 @@ There are several templates for use for various Board resolutions.
 They can be found in [3] and you are encouraged to use them. It is
 strongly recommended that if you have a resolution before the board,
 you are encouraged to attend that board meeting.
-
-
-ASF Board Reports
------------------
-
-Reports are due from you for the following committees:
-

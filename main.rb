@@ -18,6 +18,7 @@ require 'yaml'
 require 'thread'
 require 'net/http'
 require 'shellwords'
+require 'mail'
 
 # determine where relevant data can be found
 if ENV['RACK_ENV'] == 'test'

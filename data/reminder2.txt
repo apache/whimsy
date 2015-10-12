@@ -1,7 +1,6 @@
 Subject: ASF Board Report for [month] [year] is now due
 
-This email was sent by an automated system on behalf of the
-ASF Board.
+This email was sent on behalf of the ASF Board.
 
 According to board records, you are listed as the chair of at least one
 committee that is due to submit a report this month. These reports are
@@ -25,7 +24,7 @@ Reports can also be posted using the online agenda tool:
 Your report should also be sent in plain-text format to [whoTo]
 with a Subject line that follows the below format:
 
-            Subject: [REPORT] Project Name
+  Subject: [REPORT] [project] - [month] [year]
 
 Cutting and pasting directly from a Wiki is not acceptable due to formatting
 issues. Line lengths should be limited to 77 characters.
@@ -50,9 +49,3 @@ There are several templates for use for various Board resolutions.
 They can be found in [2] and you are encouraged to use them. It is
 strongly recommended that if you have a resolution before the board,
 you are encouraged to attend that board meeting.
-
-
-ASF Board Reports
------------------
-
-Reports are due from you for the following committees:

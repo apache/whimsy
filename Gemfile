@@ -9,6 +9,7 @@ gem 'execjs', ('<2.5.1' if RUBY_VERSION =~ /^1/)
 gem 'whimsy-asf', '>= 0.0.14'
 gem 'listen', ('~> 2.10' if RUBY_VERSION =~ /^1/)
 gem 'activesupport'
+gem 'mail'
 
 group :test do
   gem 'rspec'
