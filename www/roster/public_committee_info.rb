@@ -1,6 +1,8 @@
 require 'json'
 require 'whimsy/asf'
 
+GEMVERSION = Gem.loaded_specs['whimsy-asf'].version.to_s
+
 # parse arguments for output file name
 if ARGV.length == 0 or ARGV.first == '-'
   output = STDOUT
@@ -9,7 +11,10 @@ else
   if File.exist? ARGV.first
     source = "#{ASF::SVN['private/committers/board']}/committee-info.txt"
     mtime = [File.mtime(source), File.mtime(__FILE__)].max
-    exit 0 if File.mtime(ARGV.first) >= mtime
+    if File.mtime(ARGV.first) >= mtime
+      previous_results = JSON.parse(File.read ARGV.first) rescue {}
+      exit 0 if previous_results['gem_version'] == GEMVERSION
+    end
   end
 
   output = File.open(ARGV.first, 'w')
@@ -17,7 +22,7 @@ end
 
 # gather committee info
 committees = ASF::Committee.load_committee_info
-info = {last_updated: ASF::Committee.svn_change}
+info = {last_updated: ASF::Committee.svn_change, gem_version: GEMVERSION}
 info[:committees] = Hash[committees.map {|committee|
   schedule = committee.schedule.to_s.split(/,\s*/)
   schedule.unshift committee.report if committee.report != committee.schedule
