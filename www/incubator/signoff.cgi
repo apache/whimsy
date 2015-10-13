@@ -51,17 +51,18 @@ end
 roster = 'https://whimsy.apache.org/roster/committer/'
 
 _html do
+  # http://bconnelly.net/2013/10/creating-colorblind-friendly-figures/
   _style %{
-    .check {color: green}
-    .blank {color: red}
+    .check {color: rgb(0,114,178)}
+    .blank {color: rgb(230,159,0); font-style: italic; font-weight: bold}
   }
 
   _h1 'Mentor signoffs over the last twelve months'
 
   _p! do
-    _span.check 'Green'
+    _span.check 'Blue'
     _ ' means signoff is present, '
-    _span.blank 'red'
+    _span.blank 'orange'
     _ ' means signoff is absent.'
   end
 
