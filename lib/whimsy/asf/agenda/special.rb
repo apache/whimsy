@@ -76,7 +76,7 @@ class ASF::Board::Agenda
           people << [name, id] if text.include? name
         end
 
-        if people.length < 2
+        if people.length < 2 and not title.start_with? 'Terminate'
           attrs['warnings'] ||= ['Unable to match expected number of names']
           attrs['names'] = committee.names
         end
