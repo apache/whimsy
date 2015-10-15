@@ -14,11 +14,21 @@ module ASF
 
       Committee.load_committee_info
       doc = Nokogiri::HTML.parse(File.read(file))
-      list = doc.at("#projects-list .row .row")
+      list = doc.at("#by_name")
       if list
         list.search('a').each do |a|
           @@list[Committee.find(a.text).name] = 
             {link: a['href'], text: a['title']}
+        end
+      end
+
+      list = doc.at("#by_category")
+      if list
+        list.search('a').each do |a|
+          if a['title']
+            @@list[Committee.find(a.text).name] = 
+              {link: a['href'], text: a['title']}
+          end
         end
       end
 

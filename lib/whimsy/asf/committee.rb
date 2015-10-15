@@ -36,7 +36,8 @@ module ASF
       'travel assistance'           => 'tac',
       'traffic server'              => 'trafficserver',
       'web services'                => 'ws',
-      'xml graphics'                => 'xmlgraphics'
+      'xml graphics'                => 'xmlgraphics',
+      'incubating'                  => 'incubator' # special for index.html
 
     @@namemap = Proc.new do |name|
       cname = @@aliases[name.sub(/\s+\(.*?\)/, '').downcase]
