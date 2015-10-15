@@ -80,10 +80,21 @@ module ASF
         'community'
       when 'httpcomponents'
         'hc'
-      when 'tac'
-        'travel-assistance'
       when 'whimsy'
         'whimsical'
+
+      when 'brand management'
+        'trademarks@apache.org'
+      when 'executive assistant'
+        'ea@apache.org'
+      when 'legal affairs'
+        'legal-discuss@apache.org'
+      when 'marketing and publicity'
+        'press@apache.org'
+      when 'tac'
+        'travel-assistance@apache.org'
+      when 'w3c relations'
+        'w3c@apache.org'
       else
         name
       end
