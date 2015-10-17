@@ -41,6 +41,7 @@ require_relative 'buttons/refresh'
 require_relative 'buttons/showseen'
 require_relative 'buttons/timestamp'
 require_relative 'buttons/vote'
+require_relative 'buttons/email'
 
 # Common elements
 require_relative 'elements/additional-info'

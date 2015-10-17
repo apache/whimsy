@@ -33,10 +33,20 @@ class Shepherd < React
         # flag action
         if item.missing or not item.comments.empty?
           if item.attach =~ /^[A-Z]+$/
-            _button.shepherd.btn (item.flagged ? 'unflag' : 'flag'), 
-              data_attach: item.attach,
-              onClick: self.click, disabled: @disabled,
-              class: (shepherd == Server.firstname ? 'btn-primary' : 'btn-link')
+            mine = (shepherd == Server.firstname ? 'btn-primary' : 'btn-link')
+
+            _div.shepherd do
+              _button.btn (item.flagged ? 'unflag' : 'flag'), class: mine,
+                data_attach: item.attach,
+                onClick: self.click, disabled: @disabled
+
+              if 
+                Server.firstname and 
+                Server.firstname.start_with? @@item.shepherd.downcase()
+              then
+                _Email item: item
+              end
+            end
           end
         end
       end
