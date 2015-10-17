@@ -40,12 +40,7 @@ class Shepherd < React
                 data_attach: item.attach,
                 onClick: self.click, disabled: @disabled
 
-              if 
-                Server.firstname and 
-                Server.firstname.start_with? @@item.shepherd.downcase()
-              then
-                _Email item: item
-              end
+              _Email item: item
             end
           end
         end

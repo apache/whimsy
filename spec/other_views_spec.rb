@@ -84,6 +84,7 @@ feature 'other reports' do
     expect(page).to have_selector 'pre.report span', 
       text: '* Chris: Please clarify what "voted on" means'
     expect(page).to have_selector 'button[data-attach=AY]', text: 'flag'
+    expect(page).to have_selector '.shepherd button', text: 'send email'
 
     expect(page).to have_selector '.backlink[href="shepherd/Ross"]',
       text: 'Ross'
