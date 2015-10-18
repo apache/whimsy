@@ -11,7 +11,7 @@ module ASF
         text: "define how Apache projects should refer to trademarks and display their brand"
       },
       "comdev" => {
-        link: "https://community.apache.org/",
+        link: "http://community.apache.org/",
         text: "Resources to help people become involved with Apache projects"
       },
       "executive assistant" => {
