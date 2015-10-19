@@ -2,12 +2,15 @@ Subject: ASF Board Report for [month] [year] is now due
 
 This email was sent on behalf of the ASF Board.
 
-According to board records, you are listed as the chair of at least one
-committee that is due to submit a report this month. These reports are
-now due and should be submitted to the board as soon as possible
-but no later that [dueDate].
+According to board records, you are listed as the chair of a committee that
+is due to submit a report this month. These reports are now due and should
+be submitted to the board as soon as possible but no later than
+[dueDate].
 
 The meeting is scheduled for [meetingDate].
+Times in other time zones:
+
+  [timeZoneInfo]
 
 Full details about the process and schedule are in [1].
 

@@ -5,7 +5,7 @@ require 'active_support/core_ext/integer/inflections.rb'
 template = File.read("data/#@reminder.txt")
 
 # find the latest agenda
-agenda = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort.last
+agenda = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort.last.untaint
 
 # determine meeting time
 us_pacific = TZInfo::Timezone.get('US/Pacific')
@@ -18,6 +18,7 @@ vars = {
   meetingDate:  meeting.strftime("%a, %d %b %Y at %H:%M %Z"),
   month: meeting.strftime("%B"),
   year: meeting.year.to_s,
+  timeZoneInfo: File.read(agenda)[/Other Time Zones: (.*)/, 1],
   dueDate:  dueDate.strftime("%a %b #{dueDate.day.ordinalize}"),
   agenda: meeting.strftime("https://whimsy.apache.org/board/agenda/%Y-%m-%d/")
 }

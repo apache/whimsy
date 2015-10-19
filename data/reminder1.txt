@@ -3,14 +3,15 @@ Subject: ASF Board Report - Initial Reminder for [month] [year]
 This email was sent on behalf of the ASF Board.  It is an initial reminder to
 give you plenty of time to prepare the report.
 
+According to board records, you are listed as the chair of a committee that is
+due to submit a report this month. [1] [2]
+
 The meeting is scheduled for [meetingDate] and the deadline for
 submitting your report is 1 full week prior to that ([dueDate])!
 
-According to board records, you are listed as the chair of at least one
-committee that is due to submit a report this month. [1] [2]
+Meeting times in other time zones:
 
-Details on which project reports are due and how to submit a report 
-are enclosed below.
+  [timeZoneInfo]
 
 Please submit your report with sufficient time to allow the board members
 to review and digest. Again, the very latest you should submit your report
