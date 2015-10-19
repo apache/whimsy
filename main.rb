@@ -29,6 +29,7 @@ else
   AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/var/tools/data'
   STDERR.puts "* SVN board  : #{FOUNDATION_BOARD}"
   STDERR.puts "* Agenda work: #{AGENDA_WORK}"
+  FileUtils.mkdir_p AGENDA_WORK if not Dir.exist? AGENDA_WORK
 end
 
 require_relative './routes'
