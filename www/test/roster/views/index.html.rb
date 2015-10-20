@@ -27,5 +27,20 @@ _html do
 
       _td 'Search for committers by name, user id, or email address'
     end
+
+    ### PMCs
+
+    _tr do
+      _td do
+        _a @committees.length, href: 'committee/'
+      end
+
+      _td do
+        _a 'PMCs', href: 'committee/'
+      end
+
+      _td 'Active projects at the ASF'
+    end
+
   end
 end

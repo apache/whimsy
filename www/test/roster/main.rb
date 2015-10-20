@@ -17,11 +17,18 @@ require_relative 'models'
 
 get '/' do
   @committers = ASF::Person.list
+  @committees = ASF::Committee.list
   _html :index
 end
 
 get '/committer/' do
   _html :committers
+end
+
+get '/committee/' do
+  @members = ASF::Member.list.keys
+  @committees = ASF::Committee.list
+  _html :committees
 end
 
 get '/committer/index.json' do
