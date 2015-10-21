@@ -1,7 +1,8 @@
 require 'json'
 require 'whimsy/asf'
 
-GEMVERSION = Gem.loaded_specs['whimsy-asf'].version.to_s rescue nil # rescue is to allow for running with local library rather than a Gem
+GEMVERSION = Gem.loaded_specs['whimsy-asf'].version.to_s rescue nil
+  # rescue is to allow for running with local library rather than a Gem
 
 # parse arguments for output file name
 if ARGV.length == 0 or ARGV.first == '-'
