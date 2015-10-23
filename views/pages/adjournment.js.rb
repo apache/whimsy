@@ -102,7 +102,11 @@ class TodoActions < React
 
     # check people who were added
     @people.each do |person|
-      @checked[person.id] = true if @checked[person.id] == undefined
+      if @checked[person.id] == undefined
+        if not person.resolution or Minutes.get(person.resolution) != 'tabled'
+          @checked[person.id] = true 
+        end
+      end
     end
 
     self.refresh()
@@ -138,11 +142,12 @@ class TodoActions < React
           href: "https://whimsy.apache.org/roster/committer/#{person.id}"
         _ " (#{person.name})"
 
-        if @action == 'add' and person.resolution
+        if @@action == 'add' and person.resolution
+        console.log person
           resolution = Minutes.get(person.resolution)
           if resolution
             _ ' - '
-            _Link text: resolution, href: Todo.link(person.resolution)
+            _Link text: resolution, href: Todos.link(person.resolution)
           end
         end
       end
@@ -214,7 +219,11 @@ class EstablishActions < React
 
     # check podlings that were added
     @podlings.each do |podling|
-      @checked[podling.name] = true if @checked[podling.name] == undefined
+      if @checked[podling.name] == undefined
+        if not podling.resolution or Minutes.get(podling.resolution) != 'tabled'
+          @checked[podling.name] = true 
+        end
+      end
     end
 
     self.refresh()
@@ -250,7 +259,7 @@ class EstablishActions < React
         resolution = Minutes.get(podling.resolution)
         if resolution
           _ ' - '
-          _Link text: resolution, href: Todo.link(podling.resolution)
+          _Link text: resolution, href: Todos.link(podling.resolution)
         end
       end
     end
