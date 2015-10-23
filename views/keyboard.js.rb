@@ -50,8 +50,13 @@ class Keyboard
         Main.navigate '.'
         return false
       elsif event.keyCode == 'S'.ord
-        link = ~"#shepherd"[0]
-        Main.navigate link.getAttribute('href') if link
+        if event.shiftKey
+          Server.role = :secretary
+          Main.refresh()
+        else
+          link = ~"#shepherd"[0]
+          Main.navigate link.getAttribute('href') if link
+        end
         return false
       elsif event.keyCode == 'X'.ord
         if Main.item.attach and Minutes.started and not Minutes.complete
