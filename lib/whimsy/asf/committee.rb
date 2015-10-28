@@ -57,12 +57,16 @@ module ASF
 
       info = File.read(file).split(/^\* /)
       head, report = info.shift.split(/^\d\./)[1..2]
-      head.scan(/^\s+(\w.*?)\s\s+(.*)\s+<(\w+)@apache\.org>/).
+      head.gsub! /^\s+NAME\s+CHAIR\s*$/,'' # otherwise could match an entry with no e-mail
+
+      # extract the committee chairs (e-mail address is required here)
+      head.scan(/^[ \t]+(\w.*?)[ \t][ \t]+(.*)[ \t]+<(.*?)@apache\.org>/).
         each do |committee, name, id|
           find(committee).chairs << {name: name, id: id}
         end
+      # Extract the non-PMC committees (e-mail address may be absent)
       @nonpmcs = head.sub(/.*?also has/m,'').
-        scan(/^\s+(\w.*?)\s\s+.*<\w+@apache\.org>/).flatten.uniq.
+        scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| find(name)}
 
       info.each do |roster|
