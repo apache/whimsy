@@ -464,6 +464,10 @@ _html do
       _h2_ 'Links'
       _ul do
         _li do
+          _a 'Response time', target: 'viewport',
+            href: 'https://whimsy.apache.org/secretary/response-time'
+        end
+        _li do
           _a 'Mail Search', href: 'https://mail-search.apache.org/',
             target: 'viewport'
         end
