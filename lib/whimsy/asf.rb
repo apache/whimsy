@@ -9,3 +9,12 @@ require File.expand_path('../asf/icla', __FILE__)
 require File.expand_path('../asf/auth', __FILE__)
 require File.expand_path('../asf/member', __FILE__)
 require File.expand_path('../asf/site', __FILE__)
+
+module ASF
+  def self.library_mtime
+    parent_dir = File.dirname(File.expand_path(__FILE__))
+    sources = Dir.glob("#{parent_dir}/**/*")
+    times = sources.map {|source| File.mtime(source)}
+    times.max.gmtime
+  end
+end
