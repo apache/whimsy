@@ -69,6 +69,12 @@ module ASF
       emails = text.to_s.scan(/Email: (.*(?:\n\s+\S+@.*)*)/).flatten.
         join(' ').split(/\s+/).grep(/@/)
     end
+
+    def self.svn_change
+      foundation = ASF::SVN['private/foundation']
+      file = "#{foundation}/members.txt"
+      return Time.parse(`svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
+    end
   end
 
   class Person
