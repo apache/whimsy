@@ -32,7 +32,7 @@ _html do
 
   _div do
     _input id: 'error', type: 'checkbox', checked: true
-    _label 'document not found', for: 'error'
+    _label 'icla not found', for: 'error'
   end
 
   _div do
@@ -64,11 +64,12 @@ _html do
       _th 'availid'
       _th 'public name'
       _th 'issue'
-      _th 'field 5'
+      _th 'email'
+      _th 'ICLA stub'
     end
 
     document = File.read(input).untaint
-    document.scan(/^(\w.*?):.*?:(.*?):.*:(.*)/) do |(id, name, comment)|
+    document.scan(/^(\w.*?):.*?:(.*?):(.*?):(.*)/) do |(id, name, email, comment)|
       issue, note = nil, nil
       comment2 = comment.dup
 
@@ -92,7 +93,7 @@ _html do
         end
 
         if not missing.empty?
-          issue, note = 'error', "document not found: #{missing.first.inspect}"
+          issue, note = 'error', "missing icla/#{missing.first.inspect}"
         end
       elsif comment =~ /^Treasurer;/ or comment =~ /^President;/
 
@@ -121,6 +122,7 @@ _html do
           end
 
           _td note
+          _td email
           _td comment2
         end
       end
