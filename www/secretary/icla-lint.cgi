@@ -93,7 +93,7 @@ _html do
         end
 
         if not missing.empty?
-          issue, note = 'error', "missing icla/#{missing.first.inspect}"
+          issue, note = 'error', "missing icla: #{missing.first.inspect}"
         end
       elsif comment =~ /^Treasurer;/ or comment =~ /^President;/
 
@@ -121,7 +121,11 @@ _html do
             _td name
           end
 
-          _td note
+          _td do
+            _button 'email', data_id: id
+            _span note
+          end
+
           _td email
           _td comment2
         end
@@ -144,5 +148,13 @@ _html do
         end
       end
     end
+    buttons = document.querySelectorAll('button')
+    for i in 0...buttons.length
+      buttons[i].addEventListener('click') do |event|
+        id = event.target.getAttribute('data-id')
+        alert(id)
+      end
+    end
+
   end
 end
