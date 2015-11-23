@@ -81,7 +81,11 @@ _html do
         issue, note = 'extra', "extra text: #{$1.inspect}"
       end
 
-      if id != 'notinavail' and not ldap.include? id
+      if id != 'notinavail'
+        apachemail = "," + id + "@apache.org"
+      end
+
+      if id != 'notinavail' and ldap.length > 0 and not ldap.include? id
         issue, note = 'notinldap', 'not in LDAP'
       elsif comment =~ /Signed CLA;(.*)/
         missing = $1.split(',').select {|path| not iclas.include? path}
@@ -122,7 +126,8 @@ _html do
           end
 
           _td do
-            _button 'email', data_id: id
+            _button 'email', data_email: "#{name} <#{email}>#{apachemail}",
+              data_issue: note, data_name: name
             _span note
           end
 
@@ -151,8 +156,24 @@ _html do
     buttons = document.querySelectorAll('button')
     for i in 0...buttons.length
       buttons[i].addEventListener('click') do |event|
-        id = event.target.getAttribute('data-id')
-        alert(id)
+        email = event.target.getAttribute('data-email')
+        issue = event.target.getAttribute('data-issue')
+        name  = event.target.getAttribute('data-name')
+
+        destination = "mailto:#{email}?cc=secretary@apache.org"
+        subject = 'Your Apache ICLA has gone missing'
+        body = "Dear " + name + ",\n\n" +
+            "We are reviewing our records to be sure that all submitted ICLAs are on file.\n" +
+            "Unfortunately, we are unable to locate the ICLA that you submitted earlier.\n\n" +
+            "Can you please resubmit to secretary@apache.org? http://apache.org/licenses/#submitting\n" +
+            "Please do *not* use an apache email as your E-Mail address.\n" +
+            "You can send the original ICLA (if the email address is still valid) or a new one.\n\n" +
+            "Best regards,\n"
+
+        window.location = destination +
+          "&subject=#{encodeURIComponent(subject)}" +
+          "&body=#{encodeURIComponent(body)}"
+
       end
     end
 
