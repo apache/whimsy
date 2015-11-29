@@ -3,6 +3,9 @@ require 'wunderbar/script'
 require 'ruby2js/filter/functions'
 require 'whimsy/asf'
 
+ldaplist = ASF::Person.list
+ldap = ldaplist.map(&:id)
+
 _html do
   _style %{
     table {border-collapse: collapse}
@@ -13,6 +16,11 @@ _html do
   }
 
   _h1 'iclas.txt lint check'
+
+  _h2_ 'LDAP Status'
+  _div do 
+    _label "#{ldaplist.length} entries found."
+   end
 
   _h2_ 'Show'
   _div do
@@ -56,8 +64,6 @@ _html do
   iclas = Dir[ASF::SVN['private/documents/iclas'] + '/*'].map do |file|
     file.split('/').last.sub(/\.\w+$/, '')
   end
-
-  ldap = ASF::Person.list.map(&:id)
 
   _table_ do
     _tr do
