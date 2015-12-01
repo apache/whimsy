@@ -46,7 +46,7 @@ skip = ['multipart/alternative', 'multipart/related', 'multipart/mixed',
 
 # attachment file names which always are saved, even if they come in
 # with one of the 'skip' mime types.
-forms = ['pgp.txt', 'icla.txt', 'icla.txt.asc', 'membership-application.txt']
+forms = ['pgp.txt', 'icla.txt', 'icla.txt.asc', 'icla.pdf', 'icla.pdf.asc', 'membership-application.txt']
 
 # mime types for pgp signatures
 sigs  = ['application/pkcs7-signature', 'application/pgp-signature']
