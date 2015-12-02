@@ -1,13 +1,23 @@
 verbose false
 
+task :default do
+  puts 'Usage:'
+  sh 'rake', '-T'
+end
+
 file 'Gemfile.lock' => 'Gemfile' do
   sh 'bundle update'
 end
 
-task :parse => 'Gemfile.lock' do
+desc 'install dependencies'
+task :bundle => 'Gemfile.lock'
+
+desc 'Parse emails'
+task :parse => :bundle do
   ruby 'parsemail.rb'
 end
 
-task :fetch => 'Gemfile.lock' do
+desc 'Fetch and parse emails'
+task :fetch => :bundle do
   ruby 'parsemail.rb', '--fetch'
 end

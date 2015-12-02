@@ -1,0 +1,15 @@
+This directory contains a script that fetches and parsed secretary emails
+and a server that will enable exploration of those emails.
+
+Usage:
+
+  rake fetch
+  rake server
+
+Notes:
+
+  First fetch and parse will take approximately an hour, even with a relatively
+  fast machine and internet connection.  Subsequent fetches will take as
+  little as ten seconds or less.
+
+  Secretary email archive currently requires about approximately 11 Gigabytes.
