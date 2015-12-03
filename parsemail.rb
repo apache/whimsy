@@ -4,8 +4,11 @@
 # Parse (and optionally fetch) officer-secretary emails for later
 # processing.
 #
-
-SOURCE = 'minotaur.apache.org:/home/apmail/private-arch/officers-secretary'
+# Care is taken to recover from improperly formed emails, including:
+#   * Malformed message ids
+#   * Improper encoding
+#   * Invalid from addresses
+#
 
 require 'mail'
 require 'zlib'
@@ -14,18 +17,25 @@ require 'yaml'
 require 'stringio'
 require 'time'
 
+require_relative 'config'
+
 database = File.basename(SOURCE)
 
 Dir.chdir File.dirname(File.expand_path(__FILE__))
 
 if ARGV.include? '--fetch' or not Dir.exist? database
-  system "rsync -av --no-motd --delete --exclude='*.yml' #{SOURCE} ."
+  system "rsync -av --no-motd --delete --exclude='*.yml' #{SOURCE}/ #{ARCHIVE}/"
 end
 
 # common header logic for messages and attachments
 def headers(part)
   # extract all fields from the mail (recovering from bad encoding issues)
   fields = part.header_fields.map do |field|
+    begin
+      next [field.name, field.to_s] if field.to_s.valid_encoding?
+    rescue
+    end
+
     if field.value and field.value.valid_encoding?
       [field.name, field.value]
     else
@@ -82,12 +92,10 @@ Dir[File.join(database, '2*')].sort.each do |name|
 
     # process each
     mails.each do |mail|
-      # extract id, skip if already processed
-      id = mail[/^Message-ID: <(.*?)>\s*$/i, 1]
-      next if id and mbox[id]
-      mail = Mail.read_from_string(mail)
-      id ||= mail.message_id
+      # compute id, skip if already processed
+      id = hashmail(mail)
       next if mbox[id]
+      mail = Mail.read_from_string(mail)
 
       # parse from address
       begin
