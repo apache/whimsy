@@ -5,6 +5,7 @@ require 'whimsy/asf'
 
 ldaplist = ASF::Person.list
 ldap = ldaplist.map(&:id)
+errors = 0
 
 _html do
   _style %{
@@ -20,6 +21,11 @@ _html do
   _h2_ 'LDAP Status'
   _div do 
     _label "#{ldaplist.length} entries found."
+   end
+
+  _h2_ 'Error Status'
+  _div do
+    _label "#{errors} errors found."
    end
 
   _h2_ 'Show'
@@ -150,6 +156,7 @@ _html do
       inputs[i].checked = true
       inputs[i].addEventListener('click') do |event|
         rows = document.getElementsByClassName(event.target.id)
+        errors = rows.length
         for j in 0...rows.length
           if event.target.checked
             rows[j].style.display = ''
