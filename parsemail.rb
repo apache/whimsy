@@ -10,14 +10,10 @@
 #   * Invalid from addresses
 #
 
-require 'mail'
-require 'zlib'
-require 'zip'
 require 'yaml'
-require 'stringio'
 require 'time'
 
-require_relative 'config'
+require_relative 'mailbox'
 
 database = File.basename(SOURCE)
 
@@ -76,26 +72,14 @@ Dir[File.join(database, '2*')].sort.each do |name|
     mbox[:mtime] = File.mtime(name)
 
     # read (and unzip) the mailbox
-    mails = File.read(name)
-    if name.end_with? '.gz'
-      stream = StringIO.new(mails)
-      reader = Zlib::GzipReader.new(stream)
-      mails = reader.read
-      reader.close
-      stream.close rescue nil
-    end
-    mails.force_encoding Encoding::ASCII_8BIT
-
-    # split into individual messages
-    mails = mails.split(/^From .*/)
-    mails.shift
+    messages = Mailbox.new(name)
 
     # process each
-    mails.each do |mail|
+    messages.each do |message|
       # compute id, skip if already processed
-      id = hashmail(mail)
+      id = Mailbox.hash(message)
       next if mbox[id]
-      mail = Mail.read_from_string(mail)
+      mail = Mail.read_from_string(message)
 
       # parse from address
       begin
