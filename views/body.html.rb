@@ -1,4 +1,11 @@
+#
+# View the email content, without attachments
+#
+
 _html do
+  #
+  # Selected headers
+  #
   _table do
     _tr do
       _td 'From:'
@@ -27,11 +34,19 @@ _html do
   _hr
   _p
 
-  if @message.html_part
+  #
+  # Try various ways to display the body
+  #
+  if @message.html_part and @message.html_part.body.to_s.valid_encoding?
     _div do
       _{@message.html_part.body.to_s.untaint}
     end
-  else
-    _pre @message.text_part.body.to_s
+  elsif @message.text_part.body
+    begin
+      _pre @message.text_part.body.to_s.encode('utf-8')
+    rescue
+      body = @message.text_part.body.to_s.force_encoding('windows-1252')
+      _pre body.encode('utf-8', invalid: :replace, undef: :replace)
+    end
   end
 end

@@ -50,3 +50,17 @@ get %r{^/(\d+)/(\w+)/_body_$} do |month, hash|
   _html :body
 end
 
+get %r{^/(\d+)/(\w+)/_headers_$} do |month, hash|
+  @headers = load_mbox("#{ARCHIVE}/#{month}.yml")[hash] rescue pass
+  pass unless @headers
+  _html :headers
+end
+
+get %r{^/(\d+)/(\w+)/(.*?)$} do |month, hash, name|
+  message = load_message(month, hash)
+  pass unless message
+  part = message.attachments.find {|attach| attach.filename == name}
+  pass unless part
+
+  [200, {'Content-Type' => part.content_type}, part.body.to_s]
+end
