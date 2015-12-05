@@ -23,35 +23,6 @@ if ARGV.include? '--fetch' or not Dir.exist? database
   system "rsync -av --no-motd --delete --exclude='*.yml' #{SOURCE}/ #{ARCHIVE}/"
 end
 
-# common header logic for messages and attachments
-def headers(part)
-  # extract all fields from the mail (recovering from bad encoding issues)
-  fields = part.header_fields.map do |field|
-    begin
-      next [field.name, field.to_s] if field.to_s.valid_encoding?
-    rescue
-    end
-
-    if field.value and field.value.valid_encoding?
-      [field.name, field.value]
-    else
-      [field.name, field.value.inspect]
-    end
-  end
-
-  # group fields by name
-  fields = fields.group_by(&:first).map do |name, values|
-    if values.length == 1
-      [name, values.first.last]
-    else
-      [name, values.map(&:last)]
-    end
-  end
-
-  # return fields as a Hash
-  Hash[fields]
-end
-
 # scan each mailbox for updates
 width = 0
 Dir[File.join(database, '2*')].sort.each do |name|
@@ -113,7 +84,7 @@ Dir[File.join(database, '2*')].sort.each do |name|
       }
 
       # add in header fields
-      mbox[id].merge! headers(mail)
+      mbox[id].merge! Mailbox.headers(mail)
 
       # add in attachments
       if mail.attachments.length > 0
@@ -124,7 +95,7 @@ Dir[File.join(database, '2*')].sort.each do |name|
 	    mime: attach.mime_type
           }
 
-          description.merge(headers(attach))
+          description.merge(Mailbox.headers(attach))
 	end
 
 	mbox[id][:attachments] = attachments
