@@ -37,11 +37,18 @@ _html do
   #
   # Try various ways to display the body
   #
+  success = false
   if @message.html_part and @message.html_part.body.to_s.valid_encoding?
     _div do
-      _{@message.html_part.body.to_s.untaint}
+      begin
+        _{@message.html_part.body.to_s.untaint}
+        success = true
+      rescue
+      end
     end
-  elsif @message.text_part.body
+  end
+
+  if not success and @message.text_part.body
     begin
       _pre @message.text_part.body.to_s.encode('utf-8')
     rescue
