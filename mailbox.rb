@@ -1,3 +1,7 @@
+#
+# Encapsulate access to mailboxes
+#
+
 require 'digest'
 require 'zlib'
 require 'zip'
@@ -8,33 +12,56 @@ require_relative 'config.rb'
 
 class Mailbox
   #
+  # Initialize a mailbox
+  #
+  def initialize(name)
+    name = File.basename(name, '.yml') if name.end_with? '.yml'
+
+    if name =~ /^\d+$/
+      @filename = Dir["#{ARCHIVE}/#{name}", "#{ARCHIVE}/#{name}.gz"].first
+    else
+      @filename = name
+    end
+  end
+
+  #
+  # Determine whether or not the mailbox exists
+  #
+  def exist?
+    @filename and File.exist?(@filename)
+  end
+
+  #
   # Read a mailbox and split it into messages
   #
-  def initialize(filename)
-    mails = File.read(filename)
+  def messages
+    return @messages if @messages
+    return [] unless exist?
 
-    if filename.end_with? '.gz'
-      stream = StringIO.new(mails)
+    mbox = File.read(@filename)
+
+    if @filename.end_with? '.gz'
+      stream = StringIO.new(mbox)
       reader = Zlib::GzipReader.new(stream)
-      mails = reader.read
+      mbox = reader.read
       reader.close
       stream.close rescue nil
     end
 
-    mails.force_encoding Encoding::ASCII_8BIT
+    mbox.force_encoding Encoding::ASCII_8BIT
 
     # split into individual messages
-    mails = mails.split(/^From .*/)
-    mails.shift
+    @messages = mbox.split(/^From .*/)
+    @messages.shift
 
-    @mails = mails
+    @messages
   end
 
   #
   # Find a message
   #
   def find(hash)
-    message = @mails.find {|mail| Mailbox.hash(mail) == hash}
+    message = messages.find {|message| Mailbox.hash(message) == hash}
     Mail.new(message) if message
   end
 
@@ -42,7 +69,19 @@ class Mailbox
   # iterate through messages
   #
   def each(&block)
-    @mails.each(&block)
+    messages.each(&block)
+  end
+
+  #
+  # return headers
+  #
+  def headers
+    source = File.basename(@filename, '.gz')
+    messages = YAML.load_file("#{ARCHIVE}/#{source}.yml") rescue {}
+    messages.delete :mtime
+    messages.each do |key, value|
+      value[:source]=source
+    end
   end
 
   #

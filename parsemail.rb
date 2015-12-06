@@ -95,6 +95,10 @@ Dir[File.join(database, '2*')].sort.each do |name|
 	    mime: attach.mime_type
           }
 
+          if description[:name].empty? and attach['Content-ID']
+            description[:name] = attach['Content-ID'].to_s
+          end
+
           description.merge(Mailbox.headers(attach))
 	end
 

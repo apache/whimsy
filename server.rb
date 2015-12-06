@@ -1,65 +1,58 @@
-require 'whimsy/asf'
+#
+# Simple web server that routes requests to views based on URLs.
+#
+
 require 'wunderbar/sinatra'
-require 'mail'
 
 require_relative 'mailbox'
 
-def load_mbox(file)
-  messages = YAML.load_file(file)
-  messages.delete :mtime
-  source = File.basename(file, '.yml')
-  messages.each do |key, value|
-    value[:source]=source
-  end
-end
-
-def load_message(month, hash)
-  mbox = Dir["#{ARCHIVE}/#{month}", "#{ARCHIVE}/#{month}.gz"].first
-  return unless mbox
-
-  mbox = Mailbox.new(mbox)
-  mbox.each do |message|
-    if Mailbox.hash(message) == hash
-      return Mail.read_from_string(message) 
-    end
-  end
-end
-
+# list of messages
 get '/' do
-  @messages = load_mbox(Dir["#{ARCHIVE}/*.yml"].sort.last)
-  @messages.merge! load_mbox(Dir["#{ARCHIVE}/*.yml"].sort[-2])
+  @messages = Mailbox.new(Dir["#{ARCHIVE}/*.yml"].sort.last).headers
+  @messages.merge! Mailbox.new(Dir["#{ARCHIVE}/*.yml"].sort[-2]).headers
 
   @messages = @messages.sort_by {|id, message| message[:time]}.reverse
 
   _html :index
 end
 
+# a single message
 get %r{^/(\d+)/(\w+)/$} do |month, hash|
-  @message = load_mbox("#{ARCHIVE}/#{month}.yml")[hash] rescue pass
+  @message = Mailbox.new(month).headers[hash]
+  pass unless @message
   _html :message
 end
 
+# list of parts for a single message
 get %r{^/(\d+)/(\w+)/_index_$} do |month, hash|
-  @message = load_mbox("#{ARCHIVE}/#{month}.yml")[hash] rescue pass
+  @message = Mailbox.new(month).headers[hash]
+  pass unless @message
   _html :parts
 end
 
+# message body for a single message
 get %r{^/(\d+)/(\w+)/_body_$} do |month, hash|
-  @message = load_message(month, hash)
+  @message = Mailbox.new(month).find(hash)
   pass unless @message
   _html :body
 end
 
+# header data for a single message
 get %r{^/(\d+)/(\w+)/_headers_$} do |month, hash|
-  @headers = load_mbox("#{ARCHIVE}/#{month}.yml")[hash] rescue pass
+  @headers = Mailbox.new(month).headers[hash]
   pass unless @headers
   _html :headers
 end
 
+# a specific attachment for a message
 get %r{^/(\d+)/(\w+)/(.*?)$} do |month, hash, name|
-  message = load_message(month, hash)
+  message = Mailbox.new(month).find(hash)
   pass unless message
-  part = message.attachments.find {|attach| attach.filename == name}
+
+  part = message.attachments.find do |attach| 
+    attach.filename == name or attach['Content-ID'].to_s == name
+  end
+
   pass unless part
 
   [200, {'Content-Type' => part.content_type}, part.body.to_s]
