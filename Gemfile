@@ -5,7 +5,7 @@ gem 'rake'
 gem 'zip'
 gem 'whimsy-asf'
 gem 'sinatra'
-gem 'wunderbar'
+gem 'wunderbar', '~> 1.0.9'
 
 group :demo do
   gem 'listen'
