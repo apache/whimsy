@@ -13,3 +13,15 @@ Notes:
   little as ten seconds or less.
 
   Secretary email archive currently requires about approximately 11 Gigabytes.
+
+Overview of files:
+
+  Gemfile:            Ruby configuration (installation of gems)
+  Rakefile:           Command line configuration (like 'make')
+  config.rb:          Customizations
+  config.ru:          Rack (webserver) configuration
+  mailbox.rb:         Encapsulate interface to wb server
+  officers-secretary: local copy of mailboxes and indexes (in YAML format)
+  parsemail.rb:       Fetch and parse emails
+  server.rb:          Web interface to emails
+  views:              HTML templates (in Wunderbar format)
