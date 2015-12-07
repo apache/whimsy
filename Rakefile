@@ -9,6 +9,7 @@ end
 
 file 'Gemfile.lock' => 'Gemfile' do
   sh 'bundle update'
+  touch 'Gemfile.lock'
 end
 
 desc 'install dependencies'
