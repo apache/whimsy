@@ -4,17 +4,31 @@
 
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap'
+require 'ruby2js/filter/functions'
 
 require_relative 'mailbox'
 
 # list of messages
 get '/' do
-  @messages = Mailbox.new(Dir["#{ARCHIVE}/*.yml"].sort.last).headers
-  @messages.merge! Mailbox.new(Dir["#{ARCHIVE}/*.yml"].sort[-2]).headers
+  # grab current (latest) month
+  mbox = Dir["#{ARCHIVE}/*.yml"].sort.last
+  @messages = Mailbox.new(mbox).headers
+
+  # for the first week of every month, add previous month
+  if File.mtime(mbox).day < 7
+    mbox = Dir["#{ARCHIVE}/*.yml"].sort[-2]
+    @messages.merge! Mailbox.new(@mbox).headers
+  end
 
   @messages = @messages.sort_by {|id, message| message[:time]}.reverse
+  @mbox = File.basename(mbox, '.yml')
 
   _html :index
+end
+
+# support for fetching previous month's worth of messages
+post '/' do
+  _json :index
 end
 
 # a single message

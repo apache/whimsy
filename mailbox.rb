@@ -76,7 +76,7 @@ class Mailbox
   # return headers
   #
   def headers
-    source = File.basename(@filename, '.gz')
+    source = File.basename(@filename, '.gz').untaint
     messages = YAML.load_file("#{ARCHIVE}/#{source}.yml") rescue {}
     messages.delete :mtime
     messages.each do |key, value|
