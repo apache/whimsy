@@ -3,6 +3,7 @@
 #
 
 require 'wunderbar/sinatra'
+require 'wunderbar/bootstrap'
 
 require_relative 'mailbox'
 
