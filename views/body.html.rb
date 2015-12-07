@@ -41,7 +41,7 @@ _html do
   if @message.html_part and @message.html_part.body.to_s.valid_encoding?
     _div do
       begin
-        _{@message.html_part.body.to_s.untaint}
+        _{@message.html_part.body.to_s.encode('utf-8').untaint}
         success = true
       rescue
       end
