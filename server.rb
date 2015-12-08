@@ -5,6 +5,7 @@
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap'
 require 'ruby2js/filter/functions'
+require 'sanitize'
 
 require_relative 'mailbox'
 

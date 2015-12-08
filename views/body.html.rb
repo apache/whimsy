@@ -26,34 +26,32 @@ _html do
 
     _tr do
       _td 'Subject:'
-      _td @message.subject
+      _td @message.subject || '(empty)'
     end
   end
 
-  _p
-  _hr
   _p
 
   #
   # Try various ways to display the body
   #
-  success = false
-  if @message.html_part and @message.html_part.body.to_s.valid_encoding?
+  if @message.html_part
     _div do
-      begin
-        _{@message.html_part.body.to_s.encode('utf-8').untaint}
-        success = true
-      rescue
-      end
-    end
-  end
+      body = @message.html_part.body.to_s
 
-  if not success and @message.text_part.body
-    begin
-      _pre @message.text_part.body.to_s.encode('utf-8')
-    rescue
-      body = @message.text_part.body.to_s.force_encoding('windows-1252')
-      _pre body.encode('utf-8', invalid: :replace, undef: :replace)
+      if body.to_s.encoding == Encoding::BINARY and @message.html_part.charset
+        body.force_encoding(@message.html_part.charset)
+      end
+
+      _{body.encode('utf-8', invalid: :replace, undef: :replace)}
     end
+  elsif @message.text_part.body
+    body = @message.text_part.body.to_s
+
+    if body.to_s.encoding == Encoding::BINARY and @message.text_part.charset
+      body.force_encoding(@message.text_part.charset)
+    end
+
+    _pre body.encode('utf-8', invalid: :replace, undef: :replace)
   end
 end
