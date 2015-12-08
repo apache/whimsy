@@ -45,7 +45,7 @@ _html do
 
       _{body.encode('utf-8', invalid: :replace, undef: :replace)}
     end
-  elsif @message.text_part.body
+  elsif @message.text_part
     body = @message.text_part.body.to_s
 
     if body.to_s.encoding == Encoding::BINARY and @message.text_part.charset
