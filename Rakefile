@@ -27,8 +27,7 @@ end
 
 desc 'WebServer that provides an interface to explore emails'
 task :server => :bundle do
-  require 'whimsy/asf/config'
-  ENV['RACK_ENV']='development'
+  ENV['RACK_ENV']='production'
   require 'wunderbar/listen'
 end
 

@@ -4,7 +4,9 @@
 
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap'
+require 'wunderbar/react'
 require 'ruby2js/filter/functions'
+require 'ruby2js/filter/require'
 require 'sanitize'
 
 require_relative 'mailbox'
@@ -43,6 +45,7 @@ end
 get %r{^/(\d+)/(\w+)/_index_$} do |month, hash|
   @message = Mailbox.new(month).headers[hash]
   pass unless @message
+  @attachments = @message[:attachments]
   _html :parts
 end
 

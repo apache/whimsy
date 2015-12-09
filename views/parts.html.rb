@@ -8,11 +8,10 @@ _html do
     _li! {_a 'headers', href: '_headers_', target: 'content'}
   end
 
-  _ul_ do
-    @message[:attachments].each do |attachment|
-      _li do
-        _a attachment[:name], href: attachment[:name], target: 'content'
-      end
-    end
+  _div.attachments!
+
+  _script src: '../../app.js'
+  _.render '#attachments' do
+    _Parts attachments: @attachments
   end
 end
