@@ -6,30 +6,11 @@ _html do
     }
   }
 
-  _table do
-    _thead do
-      _tr do
-        _th 'Timestamp'
-        _th 'From'
-        _th 'Subject'
-      end
-    end
+  _div.index!
 
-    _tbody do
-      @messages.each do |id, description|
-
-	# skip if there are no attachments at all
-	next unless description[:attachments]
-
-	_tr_ do
-	  _td! do
-	    _a description[:time], href: "#{description[:source]}/#{id}/"
-	  end 
-	  _td description[:name]
-	  _td description['Subject']
-	end
-      end
-    end
+  _script src: 'app.js'
+  _.render '#index' do
+    _Index messages: @messages
   end
 
   _input_.btn.btn_primary type: 'submit', value: 'fetch previous month'

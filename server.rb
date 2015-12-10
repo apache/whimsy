@@ -18,11 +18,12 @@ get '/' do
   @messages = Mailbox.new(mbox).headers
 
   # for the first week of every month, add previous month
-  if File.mtime(mbox).day < 7
+  if File.mtime(mbox).day <= 7
     mbox = Dir["#{ARCHIVE}/*.yml"].sort[-2]
     @messages.merge! Mailbox.new(@mbox).headers
   end
 
+  @messages = @messages.select {|id, message| message[:attachments]}
   @messages = @messages.sort_by {|id, message| message[:time]}.reverse
   @mbox = File.basename(mbox, '.yml')
 
