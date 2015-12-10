@@ -13,20 +13,8 @@ require_relative 'mailbox'
 
 # list of messages
 get '/' do
-  # grab current (latest) month
-  mbox = Dir["#{ARCHIVE}/*.yml"].sort.last
-  @messages = Mailbox.new(mbox).headers
-
-  # for the first week of every month, add previous month
-  if File.mtime(mbox).day <= 7
-    mbox = Dir["#{ARCHIVE}/*.yml"].sort[-2]
-    @messages.merge! Mailbox.new(@mbox).headers
-  end
-
-  @messages = @messages.select {|id, message| message[:attachments]}
-  @messages = @messages.sort_by {|id, message| message[:time]}.reverse
-  @mbox = File.basename(mbox, '.yml')
-
+  # determine latest month for which there are messages
+  @mbox = File.basename(Dir["#{ARCHIVE}/*.yml"].sort.last, '.yml')
   _html :index
 end
 

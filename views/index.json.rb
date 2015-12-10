@@ -5,13 +5,9 @@ _json do
     index = available.find_index "#{ARCHIVE}/#{@mbox}.yml"
 
     # if found and not first, process it
-    if index and index > 0
-
-      # select previous mailbox
-      mbox = available[index-1].untaint
-
+    if index
       # fetch a list of headers for all messages in the maibox with attachments
-      headers = Mailbox.new(mbox).headers.to_a.select do |id, message|
+      headers = Mailbox.new(@mbox).headers.to_a.select do |id, message|
 	message[:attachments]
       end
 
@@ -24,6 +20,9 @@ _json do
 	  subject: message['Subject']
 	}
       end
+
+      # select previous mailbox
+      mbox = available[index-1].untaint
 
       # return mailbox name and messages
       {
