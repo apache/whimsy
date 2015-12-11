@@ -11,6 +11,8 @@ gem 'listen', ('~> 2.10' if RUBY_VERSION =~ /^1/)
 gem 'activesupport'
 gem 'mail'
 
+gem 'mime-types', '~> 2.6'
+
 group :test do
   gem 'rspec'
   gem 'capybara'
