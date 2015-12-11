@@ -4,6 +4,10 @@ _html do
       padding-right: 7px;
       padding-left: 7px;
     }
+
+   .selected {
+     background-color: yellow
+   }
   }
 
   _div.index!
