@@ -1,0 +1,12 @@
+#index td:nth-child(2), #index th:nth-child(2) {
+  padding-right: 7px;
+  padding-left: 7px;
+}
+
+.selected {
+  background-color: yellow;
+}
+
+.deleted {
+  opacity: 0.5;
+}
