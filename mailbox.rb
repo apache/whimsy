@@ -18,9 +18,25 @@ class Mailbox
     name = File.basename(name, '.yml') if name.end_with? '.yml'
 
     if name =~ /^\d+$/
-      @filename = Dir["#{ARCHIVE}/#{name}", "#{ARCHIVE}/#{name}.gz"].first
+      @filename = Dir["#{ARCHIVE}/#{name}", "#{ARCHIVE}/#{name}.gz"].first.
+        untaint
     else
       @filename = name
+    end
+  end
+
+  #
+  # encapsulate updates to a mailbox
+  #
+  def self.update(name)
+    yaml = Mailbox.new(name).yaml_file
+    File.open(yaml, File::RDWR|File::CREAT, 0644) do |file| 
+      file.flock(File::LOCK_EX)
+      mbox = YAML.load(file.read) || {} rescue {}
+      yield mbox
+      file.rewind
+      file.write YAML.dump(mbox)
+      file.truncate(file.pos)
     end
   end
 
@@ -73,11 +89,19 @@ class Mailbox
   end
 
   #
+  # name of associated yaml file
+  #
+  def yaml_file
+    source = File.basename(@filename, '.gz').untaint
+    "#{ARCHIVE}/#{source}.yml"
+  end
+
+  #
   # return headers
   #
   def headers
     source = File.basename(@filename, '.gz').untaint
-    messages = YAML.load_file("#{ARCHIVE}/#{source}.yml") rescue {}
+    messages = YAML.load_file(yaml_file) rescue {}
     messages.delete :mtime
     messages.each do |key, value|
       value[:source]=source
@@ -98,23 +122,23 @@ class Mailbox
     # extract all fields from the mail (recovering from bad encoding issues)
     fields = part.header_fields.map do |field|
       begin
-	next [field.name, field.to_s] if field.to_s.valid_encoding?
+        next [field.name, field.to_s] if field.to_s.valid_encoding?
       rescue
       end
 
       if field.value and field.value.valid_encoding?
-	[field.name, field.value]
+        [field.name, field.value]
       else
-	[field.name, field.value.inspect]
+        [field.name, field.value.inspect]
       end
     end
 
     # group fields by name
     fields = fields.group_by(&:first).map do |name, values|
       if values.length == 1
-	[name, values.first.last]
+        [name, values.first.last]
       else
-	[name, values.map(&:last)]
+        [name, values.map(&:last)]
       end
     end
 

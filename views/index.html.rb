@@ -1,14 +1,5 @@
 _html do
-  _style %{
-    td:nth-child(2), th:nth-child(2) {
-      padding-right: 7px;
-      padding-left: 7px;
-    }
-
-   .selected {
-     background-color: yellow
-   }
-  }
+  _link rel: 'stylesheet', type: 'text/css', href: 'secmail.css'
 
   _div.index!
 

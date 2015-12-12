@@ -3,11 +3,11 @@ if @mbox =~ /^\d+$/
   available = Dir["#{ARCHIVE}/*.yml"].sort
   index = available.find_index "#{ARCHIVE}/#{@mbox}.yml"
 
-  # if found and not first, process it
+  # if found, process it
   if index
     # fetch a list of headers for all messages in the maibox with attachments
     headers = Mailbox.new(@mbox).headers.to_a.select do |id, message|
-      message[:attachments]
+      message[:attachments] and not message[:status] == :deleted
     end
 
     # extract relevant fields from the headers

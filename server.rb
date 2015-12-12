@@ -30,6 +30,21 @@ get %r{^/(\d+)/(\w+)/$} do |month, hash|
   _html :message
 end
 
+# a single message
+delete %r{^/(\d+)/(\w+)/$} do |month, hash|
+  success = false
+
+  Mailbox.update(month) do |headers|
+    if headers[hash]
+      headers[hash][:status] = :deleted
+      success = true
+    end
+  end
+
+  pass unless success
+  _json success: true
+end
+
 # list of parts for a single message
 get %r{^/(\d+)/(\w+)/_index_$} do |month, hash|
   @message = Mailbox.new(month).headers[hash]
