@@ -32,7 +32,7 @@ class Index < React
     end
 
     _input.btn.btn_primary type: 'submit', value: 'fetch previous month',
-      onClick: self.fetch
+      onClick: self.fetch_month
   end
 
   # initialize latest mailbox (year+month)
@@ -42,7 +42,7 @@ class Index < React
 
   # on initial load, fetch latest mailbox and subscribe to keyboard events
   def componentDidMount()
-    self.fetch()
+    self.fetch_month()
     window.onkeydown = self.keydown
   end
 
@@ -55,30 +55,17 @@ class Index < React
   end
 
   # fetch a month's worth of messages
-  def fetch()
-    # build JSON post XMLHttpRequest
-    xhr = XMLHttpRequest.new()
-    xhr.open 'POST', "", true
-    xhr.setRequestHeader 'Content-Type', 'application/json;charset=utf-8'
-    xhr.responseType = 'json'
+  def fetch_month()
+    post('', mbox: @latest) do |response|
+      # update latest mbox
+      @latest = response.mbox if response.mbox
 
-    # process response
-    def xhr.onreadystatechange()
-      if xhr.readyState == 4
-        response = xhr.response.json
+      # add messages to list
+      @messages = @messages.concat(*response.messages)
 
-        # update latest mbox
-        @latest = response.mbox if response.mbox
-
-        # add messages to list
-        @messages = @messages.concat(*response.messages)
-
-        # select oldest message
-        @selected = @messages.last.href
-      end
+      # select oldest message
+      @selected = @messages.last.href
     end
-
-    xhr.send(JSON.stringify mbox: @latest)
   end
 
   # handle keyboard events
