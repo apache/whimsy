@@ -21,6 +21,9 @@ Dir.chdir File.dirname(File.expand_path(__FILE__))
 
 if ARGV.include? '--fetch' or not Dir.exist? database
   system "rsync -av --no-motd --delete --exclude='*.yml' #{SOURCE}/ #{ARCHIVE}/"
+elsif ARGV.include? '--fetch1'
+  month = Time.now.strftime('%Y%m')
+  system "rsync -av --no-motd #{SOURCE}/#{month} #{ARCHIVE}/"
 end
 
 # scan each mailbox for updates
@@ -28,6 +31,7 @@ width = 0
 Dir[File.join(database, '2*')].sort.each do |name|
   # skip YAML files, update output showing latest file being processed
   next if name.end_with? '.yml'
+  next if ARGV.include? '--fetch1'  and not name.include? "/#{month}"
   print "#{name.ljust(width)}\r"
   width = name.length
   

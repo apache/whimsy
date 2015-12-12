@@ -25,6 +25,11 @@ task :fetch => :bundle do
   ruby 'parsemail.rb', '--fetch'
 end
 
+desc 'Fetch parse latest month only'
+task :fetch1 => :bundle do
+  ruby 'parsemail.rb', '--fetch1'
+end
+
 desc 'WebServer that provides an interface to explore emails'
 task :server => :bundle do
   ENV['RACK_ENV']='production'
