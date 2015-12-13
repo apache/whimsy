@@ -21,17 +21,37 @@ class HTTP
           if xhr.status == 200
             data = JSON.parse(xhr.responseText) 
             alert "Exception\n#{data.exception}" if data.exception
-          elsif xhr.status == 404
-            alert "Not Found: #{target}"
-          elsif xhr.status >= 400
-            console.log(xhr.response)
-            if not xhr.response
-              alert "Exception - #{xhr.statusText}"
-            elsif xhr.response.exception
-              alert "Exception\n#{xhr.response.exception}"
-            else
-              alert "Exception\n#{JSON.parse(xhr.responseText).exception}"
-            end
+          else
+            HTTP._log(xhr)
+          end
+        rescue => e
+          console.log(e)
+        end
+
+        block(data)
+      end
+    end
+
+    xhr.send(JSON.stringify(data))
+  end
+
+  # "AJAX" style patch request to the server, with a callback
+  def self.patch(target, data, &block)
+    xhr = XMLHttpRequest.new()
+    xhr.open('PATCH', target, true)
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=utf-8')
+    xhr.responseType = 'text'
+
+    def xhr.onreadystatechange()
+      if xhr.readyState == 4
+        data = nil
+
+        begin
+          if xhr.status == 200
+            data = JSON.parse(xhr.responseText) 
+            alert "Exception\n#{data.exception}" if data.exception
+          else
+            HTTP._log(xhr)
           end
         rescue => e
           console.log(e)
@@ -55,15 +75,8 @@ class HTTP
         begin
           if xhr.status == 404
             alert "Not Found: #{target}"
-          elsif xhr.status >= 400
-            console.log(xhr.response)
-            if not xhr.response
-              alert "Exception - #{xhr.statusText}"
-            elsif xhr.response.exception
-              alert "Exception\n#{xhr.response.exception}"
-            else
-              alert "Exception\n#{JSON.parse(xhr.responseText).exception}"
-            end
+          else
+            HTTP._log(xhr)
           end
         rescue => e
           console.log(e)
@@ -77,14 +90,11 @@ class HTTP
   end
 
   # "AJAX" style get request to the server, with a callback
-  def self.ge(target, type, &block)
+  def self.get(target, type, &block)
     xhr = XMLHttpRequest.new()
 
     def xhr.onreadystatechange()
-      if xhr.readyState == 1
-        clock_counter += 1
-        setTimeout(0) {Main.refresh()}
-      elsif xhr.readyState == 4
+      if xhr.readyState == 4
         data = nil
 
         begin
@@ -94,24 +104,14 @@ class HTTP
             else
               data = xhr.responseText
             end
-          elsif xhr.status == 404
-            alert "Not Found: #{type}/#{target}"
-          elsif xhr.status >= 400
-            console.log(xhr.response)
-            if not xhr.response
-              alert "Exception - #{xhr.statusText}"
-            elsif xhr.response.exception
-              alert "Exception\n#{xhr.response.exception}"
-            else
-              alert "Exception\n#{JSON.parse(xhr.responseText).exception}"
-            end
+          else
+            HTTP._log(xhr)
           end
         rescue => e
           console.log(e)
         end
 
         block(data)
-        clock_counter -= 1
       end
     end
 
@@ -123,5 +123,21 @@ class HTTP
     end
     xhr.responseType = type
     xhr.send()
+  end
+
+  # common logging
+  def self._log(xhr)
+    if xhr.status == 404
+      alert "Not Found: #{target}"
+    elsif xhr.status >= 400
+      console.log(xhr.response)
+      if not xhr.response
+        alert "Exception - #{xhr.statusText}"
+      elsif xhr.response.exception
+        alert "Exception\n#{xhr.response.exception}"
+      else
+        alert "Exception\n#{JSON.parse(xhr.responseText).exception}"
+      end
+    end
   end
 end
