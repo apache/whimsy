@@ -19,8 +19,10 @@ class Parts < React
 
   def componentDidMount()
     $menu.style.display = :none
+    window.onmousedown = self.click
   end
 
+  # position and show context menu
   def menu(event)
     @selected = event.currentTarget.textContent
     $menu.style.left = event.clientX + 'px'
@@ -28,5 +30,15 @@ class Parts < React
     $menu.style.position = :absolute
     $menu.style.display = :block
     event.preventDefault()
+  end
+
+  # hide context menu whenever a click is received outside the menu
+  def click(event)
+    target = event.target
+    while target
+      return if target.class == 'contextMenu'
+      target = target.parentNode
+    end
+    $menu.style.display = :none
   end
 end
