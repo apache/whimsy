@@ -1,0 +1,12 @@
+#
+# Mark a set of comments as seen
+#
+
+pending = Pending.get(env.user)
+
+pending['agenda'] = @agenda
+pending['seen'] = @seen
+
+Pending.put(env.user, pending)
+
+_! pending

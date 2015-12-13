@@ -1,0 +1,136 @@
+_ul.missing ng_if: 'item.warnings' do
+  _li '{{ warning }}', ng_repeat: 'warning in item.warnings'
+end
+
+_section.flexbox do
+  _section do
+    _pre.report ng_bind_html: 'item | html'
+
+    _section.minutes! ng_if: 'minute_text' do
+      _pre '{{ minute_text }}'
+    end
+  end
+
+  _section do
+    _section ng_if: 'actions[item.title]' do
+      _h3 'Action Items'
+      _pre.comment '{{action}}', ng_repeat: 'action in actions[item.title]'
+    end
+
+    _section ng_if: 'item.comments' do
+      _h3.comments! 'Comments'
+      _pre.comment ng_bind_html: 'comment | html', 
+	ng_repeat: 'comment in item.comments | csplit'
+    end
+
+    _section ng_if: 'comment' do
+      _h3 'Pending Comment'
+      _pre.comment '{{ cflow(comment, initials) }}'
+    end
+
+    _section.reminder ng_if: '(item.missing || item.comments || comment) && pmc_report' do
+      _button.btn 'send email', ng_click: 'mailto()',
+	ng_class: 'mailto_class'
+    end
+
+    _section.new_actions! ng_if: 'item.new_actions.length > 0' do
+      _h3.comments! 'Action Items Captured During the Meeting'
+      _span ng_repeat: 'action in item.new_actions' do
+	_pre.report '{{ action.text }}'
+	_a '[ {{ action.title }} ]', ng_href: '{{ action.link }}#minutes'
+      end
+    end
+
+    _section.minutes! ng_if: 'minutes[item.title]' do
+      _h3 'Minutes'
+      _pre '{{ tflow(minutes[item.title]) }}'
+    end
+  end
+
+  _section ng_if: 'item.title == "Adjournment" && todo' do
+    _h3 'Post Meeting actions (beta)'
+    _p 'Add to pmc-chairs:', ng_if: 'todo.add.length > 0'
+    _ul do
+      _li ng_repeat: 'person in todo.add' do
+	_a '{{ person.id }}', 
+	  href: 'https://whimsy.apache.org/roster/committer/{{ person.id }}'
+	_ '({{ person.name }})'
+	_span ng_if: 'minutes[person.resolution]' do
+	  _ '-'
+	  _a '{{minutes[person.resolution]}}', 
+	    href: '{{link(person.resolution)}}'
+	end
+      end
+    end
+    _p 'Remove from pmc-chairs:', ng_if: 'todo.remove.length > 0'
+    _ul do
+      _li ng_repeat: 'person in todo.remove' do
+	_a '{{ person.id }}', 
+	  href: 'https://whimsy.apache.org/roster/committer/{{ person.id }}'
+	_ '({{ person.name }})'
+      end
+    end
+    _a 'Establish pmcs:', ng_if: 'todo.establish.length > 0',
+      href: 'https://infra.apache.org/officers/tlpreq'
+    _ul do
+      _li ng_repeat: 'podling in todo.establish' do
+	_span '{{podling.name}}'
+	_span ng_if: 'minutes[podling.resolution]' do
+	  _ '-'
+	  _a '{{minutes[podling.resolution]}}', 
+	    href: '{{link(podling.resolution)}}'
+	end
+      end
+    end
+  end
+end
+
+_ng_template.post_button! do
+  _button.btn.btn_primary '{{ post_button_text }}', 
+    data_target: '#post-report-form', data_toggle: 'modal'
+end
+
+_ng_template.comment_button! do
+  _button.btn.btn_primary '{{ comment_label }}', 
+    data_target: '#comment-form', data_toggle: 'modal'
+end
+
+_ng_template.approve_button! do
+  _button.btn.btn_primary '{{ approve_label }}', ng_controller: 'Approve',
+    ng_click: 'click()'
+end
+
+_ng_template.attend_button! do
+  _button.btn.btn_primary '{{ attend_label }}', ng_controller: 'Attend',
+    ng_click: 'click()', ng_disabled: 'disabled'
+end
+
+_ng_template.minute_button! do
+  _button.btn.btn_primary '{{ minute_label }}', 
+    data_target: '#minute-form', data_toggle: 'modal'
+end
+
+_ng_template.vote_button! do
+  _button.btn.btn_primary 'vote', 
+    data_target: '#vote-form', data_toggle: 'modal'
+end
+
+_ng_template.timestamp_button! do
+  _button.btn.btn_primary 'timestamp', ng_controller: 'Timestamp',
+    ng_click: 'click()'
+end
+
+_ng_template.draft_minutes_button! do
+  _button.btn.btn_primary 'draft minutes', ng_controller: 'DraftMinutes',
+    data_target: '#draft-minutes-form', data_toggle: 'modal',
+    ng_click: 'draftMinutes()'
+end
+
+_ng_template.publish_minutes_button! do
+  _button.btn.btn_primary 'publish minutes', ng_controller: 'PublishMinutes',
+    data_target: '#publish-minutes-form', data_toggle: 'modal',
+    ng_click: 'publishMinutes()'
+end
+
+# Include forms
+_ng_include src: 'form', ng_repeat: 'form in forms'

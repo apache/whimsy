@@ -1,0 +1,24 @@
+_p ng_if: '!any_visible' do
+  _em 'No new comments', ng_if: '!toggle'
+  _em 'No comments', ng_if: 'toggle'
+end
+ 
+_div ng_repeat: 'section in visible_comments' do
+  _h3 do
+    _a '{{ section.title }}', ng_href: "{{ section.href }}"
+  end
+
+  _pre.comment ng_bind_html: 'comment | html', 
+    ng_repeat: 'comment in section.comments'
+end
+
+_ng_template.mark_seen_button! do
+  _button.btn.btn_primary '{{ label }}', ng_click: 'click()',
+    ng_controller: 'MarkSeen', ng_disabled: 'disabled',
+    ng_show: 'any_visible || undo'
+end
+
+_ng_template.toggle_seen_button! do
+  _button.btn.btn_primary '{{ label }} seen', ng_click: 'click()',
+    ng_controller: 'ToggleComments', ng_show: 'any_hidden || !toggle'
+end

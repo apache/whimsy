@@ -1,0 +1,19 @@
+main .form-control:invalid {
+  border-color: red !important
+}
+
+main .form-control:valid {
+  border-color: green
+}
+
+footer.bg-primary {
+  background-color: #303284
+}
+
+.modal-backdrop.in {
+  opacity: 0.5
+}
+
+pre.draft {
+  color: #000
+}

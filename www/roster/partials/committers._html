@@ -1,0 +1,30 @@
+_h1 'Committer - Search'
+
+_label 'Search:', for: 'search_text'
+_input.search_text! :autofocus, ng_model: 'search.committer'
+
+_table ng_if: 'search.committer.length > 2' do
+  _tr do
+    _th 'id'
+    _th 'name'
+    _th 'email'
+  end
+
+  _tr ng_repeat: 'committer in filtered = (committers | committer_match:search.committer)' do
+    _td do
+      _a href: 'committer/{{ committer.uid }}' do
+        _span ng_bind: 'committer.uid'
+      end
+    end
+    _td ng_bind: 'committer.public_name || committer.cn', 
+      asf_id: '{{ committer.uid }}'
+    _td ng_bind: 'committer.mail[0]'
+  end
+
+  _tr ng_if: 'filtered.length == 0' do
+    _th 'loading...', colspan: 3, style: 'text-align: center',
+      ng_if: 'members.length == 0'
+    _th.not_found 'Not Found', ng_if: 'members.length > 0', colspan: 3
+  end
+
+end

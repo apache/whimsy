@@ -1,0 +1,23 @@
+html {background-color: #EEE}
+input[type="email"],input[type="text"],select {width: 100%}
+textarea {width: 100%}
+p#worklist {margin-left: 2em}
+#classify {display: none}
+#doctype > table:first-child {margin-bottom: 1em}
+table {width: 100%}
+td.label {width:10em;height:2.5em}
+td.input {width:100em}
+h2 {background: #303284; color:#FFF; border-radius: 1em; padding: .25em 1em}
+h2.warn {background:yellow; color:black}
+input[type="submit"].button {width: 5em} 
+input[type="submit"].bucket {width: 3.5em} 
+input[type="submit"] {border-radius: 2em}
+input.loading {background-color: #EF8}
+ul {list-style:none; padding-left:0}
+li {margin: 0.5em 2em 0 1em; padding-left: 1em; border-radius: 1em}
+li:hover {background-color: #F2EEB2}
+li.selected {background-color: #FE0}
+.buttons, .buckets {text-align:center; margin-bottom:0.5em}
+pre {margin:0 0 0 2em}
+.traceback {background-color:#ff0; border: 2px solid}
+.traceback {margin: 1em 0; padding: 1em}

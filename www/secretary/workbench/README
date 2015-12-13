@@ -1,0 +1,27 @@
+This tool help file documents received via fax or email.
+
+See HOWTO.html for usage.
+
+General design of the tool:
+
+*) configuration is done using local_paths.yml.  Format is a series of
+   names followed by locations.  Most are directories where svn checkouts
+   reside.  'mail' is a path to a ruby script that sets Mail.defaults as
+   well as @from and @sig.
+
+*) index.html splits the window into two panes using old-school frames.
+
+*) worklist.cgi, worklist.css, and worklist.js are primarily responsible
+   for the left pane.  This is mostly an HTML forms processing, with a lot
+   of JavaScript to assist.
+
+*) file.cgi is responsible for the right pane.  This is where most of the
+   server logic resides, and mostly involves invoking underlying system
+   commands (e.g., svn, pdftk, convert, gpg) and returning the results as
+   HTML.
+
+*) ccla.erb, grant.erb, icla.erb, mem.erb, and nda.erb are mail templates
+   of confirmation replies sent back when the document is processed.
+
+*) The tool assumes that the url /members/received is a symlink to a checkout
+   of https://svn.apache.org/repos/private/documents/received

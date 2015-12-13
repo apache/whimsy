@@ -1,0 +1,101 @@
+*** WORK IN PROGRESS ***
+
+This early prototype roughs-in the configuration of a virtual machine
+to run whimsy services.
+workbench.
+
+Step 1: download and install Oracle VirtualBox
+
+  https://www.virtualbox.org/wiki/Downloads
+
+Step 2: download and install Vagrant
+
+  http://www.vagrantup.com/downloads.html
+
+Step 3: configure the virtual machine
+
+  Setup the network bridge your vagrant instance should use:
+
+    http://docs-v1.vagrantup.com/v1/docs/bridged_networking.html
+
+Step 4: start the virtual machine
+
+  Making sure that you are in this directory as your working directory, enter:
+
+    USER=<user> vagrant up
+
+  Change <user> to your ASF id.  You can leave this part out entirely if your ASF
+  id matches your current user id.
+  On Windows, try the following:
+  set USER=<user> & vagrant up
+
+  Messages will scroll by.  Somewhere near the fourth from the last you will
+  see a message like:
+
+    Whimsy is available at http://192.168.1.165/whimsy
+
+  Note the URL.
+
+Step 5a: (for use of the secretary workbench) check out foundation and documents
+
+  In the same working directory, enter:
+
+    vagrant ssh
+    cd /var/tools/secretary
+    svn co https://svn.apache.org/repos/private/foundation --username=<yourid>
+    svn co https://svn.apache.org/repos/private/documents --username=<yourid>
+    exit
+
+  Notes:
+
+    a) vagrant ssh will also provide the whimsy URL for you.  This can be
+       handy if you forgot it
+    b) svn co will prompt you for your password, and ask you if you want to
+       save it as plain text.  Doing so is likely necessary, but does mean
+       that you will need to protect your machine from being accessed by
+       others.
+
+Step 5b: (to use tools such as invoice or committee/committer roster):
+
+  vagrant ssh
+  bin/checkout-svn
+  bin/get-cert
+  bin/ldap-tunnel
+
+  These will prompt you for things like your ASF password.
+  
+  If you forgot to define USER= before creating the VM, or you need to change the username
+  to be used for logging in to the ASF systems, define the following variable:
+  
+  AVAILID=<user>;export AVAILID
+  
+  before running the above commands.
+  
+  You will also need to edit /etc/apache2/sites-available/default
+  and change the line RequestHeader set USER "<previous>"
+
+Step 6:
+
+  Visit the URL, and click on the service you wish to use 
+
+-----
+
+Todo:
+
+1) Complete checkouts of foundation and documents are cumbersome, and will
+   be destroyed if you ever decide to destroy the virtual machine.  Should you
+   happen to have a checkout of documents and foundation on your machine, 
+   this vagrant script will attempt to 'mount' the directory on /mnt/svn.
+   With this in place, an alternative version of step 4a is:
+
+      vagrant ssh
+      cd /var/tools/secretary
+      ln -s /mnt/svn/foundation
+      ln -s /mnt/svn/documents
+      cd foundation
+      svn update
+      exit
+
+   Note: if the autodetection of the checkout for the foundation directory
+   on your host machine isn't working, you can control the directory being
+   mounted by setting the SVN_ROOT environment variable.

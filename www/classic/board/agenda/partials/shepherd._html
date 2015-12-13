@@ -1,0 +1,21 @@
+_div ng_repeat: 'item in agenda | filter: {shepherd: name}' do
+  _h3 class: '{{ item | color }}' do
+    _a '{{ item.title }}', ng_href: "{{item.sqhref}}",
+      ng_class: '{default: $first}'
+  end
+
+  _pre.comment ng_bind_html: 'comment | html', 
+    ng_repeat: 'comment in item.comments | csplit',
+    ng_if: 'item.comments'
+end
+
+_em.col_xs_12 'No items assigned.', 
+  ng_show: '(agenda | filter: {shepherd: name}).length == 0'
+
+_div ng_if: 'assigned.length > 0' do
+  _h3 class: '{{ actions | color }}' do
+    _a '{{ actions.title }}', ng_href: "{{actions.href}}"
+  end
+
+  _pre '{{ assigned.join("\n\n") }}'
+end

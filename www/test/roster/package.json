@@ -1,0 +1,15 @@
+{
+  "package": "whimsy-roster",
+  "version": "0.1.0",
+
+  "repository": {
+    "type": "svn", 
+    "url": "https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/test/roster"
+  },
+
+  "devDependencies": {
+    "jsdom": "^5.4.3",
+    "jquery": "^2.1.4",
+    "react": "^0.13.3"
+  }
+}

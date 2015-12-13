@@ -1,0 +1,22 @@
+_h1 'Roster'
+
+_table do
+
+_tr do
+_td(align: 'right') {_a '{{size(committers)}}', href: 'committer/'}
+_td {_a 'Committers', href: 'committer/'}
+_td "Search for committers by name, user id, or email address"
+end
+
+_tr do
+_td(align: 'right') { _a '{{size(pmcs)}}', href: 'committee/' }
+_td { _a 'PMCs', href: 'committee/' }
+_td "Active projects at the ASF"
+end
+
+_tr do
+_td(align: 'right') { _a '{{size(groups)}}', href: 'group/' }
+_td { _a 'Groups', href: 'group/' }
+_td "Assorted other groups from various sources"
+end
+end

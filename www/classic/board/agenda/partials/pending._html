@@ -1,0 +1,54 @@
+_div.col_xs_12 do
+  _h4 'Approvals'
+  _p.col_xs_12 do
+    _span! ng_repeat: 'item in q_approvals' do
+      _a '{{ item.title }}', ng_href: '{{ item.qhref }}'
+      _span ', ', ng_if: '!$last'
+    end
+    _em 'None.' , ng_if: '!q_approvals || q_approvals.length == 0'
+  end
+
+  _h4 'Rejected', ng_if: 'q_rejected.length > 0'
+  _p.col_xs_12 do
+    _span! ng_repeat: 'item in q_rejected' do
+      _a '{{ item.title }}', ng_href: '{{ item.qhref }}'
+      _span ', ', ng_if: '!$last'
+    end
+  end
+
+  _h4 'Comments'
+  _dl.dl_horizontal ng_repeat: 'item in q_comments' do
+    _dt do
+      _a '{{ item.title }}', ng_href: '{{ item.href }}'
+    end
+    _dd do
+      _p '{{ p }}', ng_repeat: 'p in item.comment.split("\n\n")'
+    end
+  end
+  _p.col_xs_12 ng_if: 'q_comments.length == 0' do
+    _em 'None.'
+  end
+
+  _div.row.col_xs_12(ng_if: 'q_ready.length > 0') { _hr }
+  _h4 'Ready for review', ng_if: 'q_ready.length > 0'
+  _p.col_xs_12 do
+    _span! ng_repeat: 'item in q_ready' do
+      _a '{{ item.title }}', ng_href: '{{ item.qhref }}',
+        ng_class: '{default: $first}'
+      _span ', ', ng_if: '!$last'
+    end
+  end
+
+end
+
+_ng_template.refresh_button! do
+  _button.btn.btn_primary 'refresh', ng_controller: 'Refresh',
+    ng_click: 'click()', ng_disabled: 'disabled'
+end
+
+_ng_template.commit_button! do
+  _button.btn.btn_primary 'commit', 
+    data_target: '#commit-form', data_toggle: 'modal'
+end
+
+_ng_include src: "'../partials/commit.html'"

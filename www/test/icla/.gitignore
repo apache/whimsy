@@ -1,0 +1,4 @@
+public/assets
+Gemfile.lock
+node_modules
+.vagrant

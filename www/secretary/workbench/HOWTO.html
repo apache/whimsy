@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.4.1  (Unix)">
+	<META NAME="AUTHOR" CONTENT="Craig Russell">
+	<META NAME="CREATED" CONTENT="20110814;13503500">
+	<META NAME="CHANGEDBY" CONTENT="Craig Russell">
+	<META NAME="CHANGED" CONTENT="20130406;14553000">
+	<META NAME="CHANGEDBY" CONTENT="Craig Russell">
+	<META NAME="CHANGEDBY" CONTENT="Craig Russell">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { margin: 0.79in }
+		P { margin-bottom: 0.08in }
+		A:link { so-language: zxx }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P STYLE="margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>This
+tool helps file documents received via fax or email.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<OL>
+	<LI><P STYLE="margin-bottom: 0in"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>Documents
+	to be filed appear in the Work List area. </FONT></FONT>
+	</P>
+	<OL TYPE=A>
+		<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>Documents
+		that are received via fax appear as .pdf files with an eFax prefix.
+		These documents can be processed directly. There is no metadata
+		associated with these documents, so all information must be entered
+		manually.</FONT></FONT></FONT></P>
+		<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>Documents
+		that are received via email are in one of two forms. Metadata
+		associated with the documents includes the sender's email address
+		and name. This metadata will populate certain forms for specific
+		document types.</FONT></FONT></FONT></P>
+		<OL TYPE=i>
+			<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+			an email is received with a single document to be processed that
+			document will appear by itself. </FONT></FONT></FONT>
+			</P>
+			<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+			an email is received with multiple documents, all of the documents
+			will be put into a single directory and the directory appears in
+			the work list.</FONT></FONT></FONT></P>
+		</OL>
+	</OL>
+	<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>To
+	convert documents to a form that can be processed, select the
+	directory from the Work List. The contents of the directory will be
+	displayed on the view port. </FONT></FONT></FONT>
+	</P>
+	<OL TYPE=A>
+		<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+		the documents are a file and a signature (e.g. icla.txt and
+		icla.txt.asc) the tool will attempt to verify the document via the
+		command &quot;gpg --verify icla.txt.asc&quot;. The results of the
+		verification are displayed in the view port along with the list of
+		documents. If the document verifies correctly, it can be processed
+		as if it were a document. </FONT></FONT></FONT>
+		</P>
+		<OL TYPE=i>
+			<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+			the document does not verify because the public key is not
+			available, try to download the key from a public key server via
+			the command &quot;gpg --recv-keys &lt;pub-key&gt;&quot;. After the
+			key is downloaded, you can try again.</FONT></FONT></FONT></P>
+			<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+			the document does not verify because the signature is BAD, contact
+			the sender and attempt to get the document in a different mode.</FONT></FONT></FONT></P>
+		</OL>
+		<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+		the documents are a collection of documents, they can be turned
+		into individual documents via the Staple command in the view port. </FONT></FONT></FONT>
+		</P>
+		<OL TYPE=i>
+			<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+			the documents comprise a single document, e.g. icla1.pdf,
+			icla2.pdf, select both documents and press the Staple key. Both
+			documents will be combined into a single .pdf document and
+			displayed in the Work List. This technique currently works for
+			.pdf and .jpg files.</FONT></FONT></FONT></P>
+			<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+			the documents comprise multiple independent documents, select a
+			single document and press Staple. The single document will be
+			copied into a new document with the same metadata and placed into
+			the Work List. This technique currently works for .pdf and .jpg
+			files.</FONT></FONT></FONT></P>
+			<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>For
+			each document in the collection, after stapling the document is
+			ready for processing.</FONT></FONT></FONT></P>
+			<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>After
+			all documents have been processed, check to make sure the
+			directory has been deleted by using the &quot;svn status&quot;
+			command. [The directory will not appear in the Work List if it is
+			empty.] If not, remove it manually using the &quot;svn rm&quot;
+			command.</FONT></FONT></FONT></P>
+		</OL>
+	</OL>
+	<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>To
+	process a document, select it from the Work List. If it is
+	displayable, the document will appear in the view port. All
+	documents must be complete and legible. Multipage documents must
+	have all pages included (specifically, not just the first and last
+	page) in the same transmission. </FONT></FONT></FONT>
+	</P>
+	<OL TYPE=A>
+		<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>ICLAs:
+		Required fields are full name, email address, signature, and date.
+		If there is already an existing ICLA for the same name, you must
+		establish whether the existing document is for the same person. </FONT></FONT></FONT>
+		</P>
+		<OL TYPE=i>
+			<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+			the existing document is for the same person, process the new ICLA
+			with a different file name (e.g. existing-name2.pdf) and before
+			completing the process, create a directory (e.g. existing-name/)
+			and move both existing-name.pdf and existing-name2.pdf into the
+			new directory.</FONT></FONT></FONT></P>
+			<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+			the existing document is for a different person, contact the
+			submitter and see if there is an additional (middle) name that can
+			be used in the &quot;Full Name&quot; section. If not, see if there
+			is a title that can be used to distinguish the entries.</FONT></FONT></FONT></P>
+			<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>Try
+			to determine if the ICLA is from a person who should be given
+			commit access. Read the original email containing the document,
+			look at the &quot;notify PMC&quot; field on the form, and search
+			the email records to determine if the ICLA is in response to an
+			invitation from a PMC or PPMC. If there is a valid invitation from
+			a PMC, select the url of the invitation so it can be pasted into
+			the ICLA form below the &quot;file&quot; button.</FONT></FONT></FONT></P>
+		</OL>
+		<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+		the acknowledgement email to the ICLA submitter bounces, try to
+		resolve the issue. Common reasons for bounced emails are typos due
+		to illegible ICLAs or ambiguous special symbols, such as &quot;-&quot;
+		for &quot;_&quot;, &quot;0&quot; for &quot;o&quot;. Note that email
+		addresses are case-insensitive. If the proper email address cannot
+		be obtained, manually edit the foundation/officers/iclas.txt file
+		and change the incorrect email address. The address can be changed,
+		for example, from &quot;<A HREF="mailto:wrong.email@company.com">wrong.email@company.com</A>&quot;
+		to &quot;Bounced Email&lt; <A HREF="mailto:wrong.email@company.com">wrong.email@company.com</A>&gt;&quot;.</FONT></FONT></FONT></P>
+		<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>CCLAs
+		must be signed by an officer of the corporation authorized to enter
+		into binding contracts. Required fields are corporation name,
+		contact, and email address. </FONT></FONT></FONT>
+		</P>
+		<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>NDAs
+		require the apache id.</FONT></FONT></FONT></P>
+	</OL>
+	<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>If
+	there are duplicate documents to be processed, after processing the
+	best document, remove the duplicates before committing. Choose
+	&quot;other&quot; &quot;junk&quot; from the menu. After removing all
+	duplicates, commit the batch.</FONT></FONT></FONT></P>
+	<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>After
+	processing an ICLA, if the sender should have an account created,
+	select &quot;New Account&quot; from the menu. The last ICLA should
+	appear in the &quot;ASF New Account Request&quot; form. In
+	&quot;Comments&quot; indicate &quot;original committer&quot; if the
+	ICLA is from a new podling. Otherwise, leave it blank.</FONT></FONT></FONT></P>
+	<LI><P STYLE="margin-bottom: 0in"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>Forms
+	received by other than the above process should be added to the
+	documents/received directory and added via &quot;svn add&quot;. The
+	document will then appear in the work list to be processed as above.
+	Documents that are not in the proper format should be converted to
+	.pdf before adding them.</FONT></FONT></FONT></P>
+</OL>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+</BODY>
+</HTML>

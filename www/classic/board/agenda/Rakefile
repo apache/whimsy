@@ -1,0 +1,107 @@
+#
+# Runs end-to-end tests of the agenda tool using test data
+#
+# Prerequisites:
+#   npm install -g protractor
+#   web-manager update
+#   JDK
+#   phantomjs
+
+# while under development, use tip version of ruby2js
+$:.unshift '/home/rubys/git/ruby2js/lib'
+
+file 'test/work' do
+  mkdir_p 'test/work'
+end
+
+file 'test/work/repository' => 'test/work' do
+  unless File.exist? 'test/work/repository/format'
+    system 'svnadmin create test/work/repository'
+  end
+end
+
+file 'test/work/board' => 'test/work/repository' do
+  Dir.chdir('test/work') do
+    system "svn co file:///#{Dir.pwd}/repository board"
+    cp Dir['../data/*.txt'], 'board'
+    Dir.chdir('board') {system 'svn add *.txt; svn commit -m "initial commit"'}
+  end
+end
+
+file 'test/work/data' => 'test/work' do
+  mkdir_p 'test/work/data'
+end
+
+task 'test/work/specs' do
+  mkdir_p 'test/work/specs' unless Dir.exist? 'test/work/specs'
+
+  Dir['test/specs/*.rb'].each do |source|
+    dest = source.sub('test/specs/', 'test/work/specs/').sub(/\.rb$/, '.js')
+    unless File.exist?(dest) and File.mtime(dest) >= File.mtime(source)
+      require 'ruby2js/filter/minitest-jasmine'
+      begin
+        js = Ruby2JS.convert(File.read(source))
+        File.open(dest, 'w') { |file| file.write js }
+      rescue Parser::SyntaxError => error
+        location = error.diagnostic.location.to_s.sub('__SOURCE__', source)
+        STDERR.puts "#{location} #{error}"
+        fail 'Syntax Error'
+      end
+    end
+  end
+
+  Dir['test/work/specs/*.js'].each do |target|
+    source = target.sub('test/work/specs/', 'test/specs/').sub(/\.js$/, '.rb')
+    rm_rf target unless File.exist?(source)
+  end
+end
+
+task :work => ['test/work/board', 'test/work/data', 'test/work/specs']
+
+task :test => :work do
+  require 'net/http'
+  require 'socket'
+  port = TCPServer.open('127.0.0.1', 0) { |server| server.addr[1] }
+
+  begin
+    # start the test server (puma)
+    pid = fork do
+      STDOUT.reopen('/dev/null')
+      require 'rack/handler/puma'
+      ENV['RACK_ENV'] = 'test'
+      server = Rack::Builder.new {eval(File.read('config.ru'))}
+      Rack::Handler::Puma.run(server, Port: port)
+    end
+
+    # wait for server
+    100.times do
+      sleep 0.2
+      begin
+        status = Net::HTTP.get_response('localhost','/',port).code
+        break if %(200 302 404 500).include? status
+      rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT
+      end
+    end
+
+    # run the tests
+    ENV['REMOTE_USER'] = 'rubys'
+    Dir.chdir 'test' do
+      system "protractor --browser=phantomjs --specs=work/specs/*.js " +
+        "--baseUrl=http://localhost:#{port}"
+    end
+
+  ensure
+    # stop the test server
+    begin
+      Process.kill "INT", pid
+      Timeout::timeout(5) { Process.wait pid }
+    rescue Timeout::Error
+      Process.kill "KILL", pid
+      Process.wait pid
+    end
+  end
+end
+
+task :clobber do
+  rm_rf 'test/work'
+end

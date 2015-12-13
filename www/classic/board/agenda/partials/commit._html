@@ -1,0 +1,11 @@
+_modal_dialog.commit_form! ng_controller: 'Commit' do
+  _h4.blank 'Commit message'
+
+  _textarea.commit_text! :autofocus, rows: 5,
+    placeholder: 'commit', ng_model: 'commit_message',
+    ng_disabled: 'disabled', label: 'Commit message'
+
+  _button.btn_default 'Close', type: 'button', data_dismiss: 'modal'
+  _button.btn_primary 'Submit', type: 'button', ng_click: "commit()",
+     ng_disabled: 'disabled'
+end
