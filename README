@@ -10,7 +10,10 @@ Notes:
 
   First fetch and parse will take approximately an hour, even with a relatively
   fast machine and internet connection.  Subsequent fetches will take as
-  little as ten seconds or less.
+  little as ten seconds or less.  (For the impatient: replace 'fetch' with
+  'fetch1' and you will only get the latest month.  At some later point,
+  running 'rake fetch' will fetch the remaining months as well as any new
+  emails that have arrived in the current month).
 
   Secretary email archive currently requires about approximately 11 Gigabytes.
 
@@ -25,3 +28,38 @@ Overview of files:
   parsemail.rb:       Fetch and parse emails
   server.rb:          Web interface to emails
   views:              HTML templates (in Wunderbar format)
+
+Overview of control flow:
+
+  server.rb:          Matches HTTP requests to methods and paths, and runs
+                      the associated code.  This code will either return a
+                      result directly (rare) or invoke a view using a method
+                      name starting with an underscore.  For more
+                      information, see:
+
+                      http://www.sinatrarb.com/documentation.html
+                      https://github.com/rubys/wunderbar/#readme
+
+  views:              Files in the views directory have two extensions, the
+                      first identifies the target type (html, json, js), the
+                      second indicates the language of the view (rb).
+
+    html views:       Method names that start with an underscore generate HTML.
+                      This HTML may pull in scripts, stylesheets, and have
+                      inline code that renders other views.  
+
+    js views:         This code is converted from Ruby to JavaScript.
+                      This conversion is aware of React.js and will perform
+                      additional React.js mappings when it encounters classes
+                      that derive from "React".  See
+
+                      https://facebook.github.io/react/docs/component-specs.html
+                      https://github.com/rubys/ruby2js#readme
+
+                      Note: in this application app.js.rb pulls in all of the
+                      other javascript files and returns the result as a
+                      single file.
+
+    json views:       The last statement identifies an object (typically a
+                      hash or array) that will be converted to JSON and sent
+                      back as a response.
