@@ -19,11 +19,12 @@ database = File.basename(SOURCE)
 
 Dir.chdir File.dirname(File.expand_path(__FILE__))
 
-if ARGV.include? '--fetch' or not Dir.exist? database
-  system "rsync -av --no-motd --delete --exclude='*.yml' #{SOURCE}/ #{ARCHIVE}/"
-elsif ARGV.include? '--fetch1'
+if ARGV.include? '--fetch1'
   month = Time.now.strftime('%Y%m')
+  Dir.mkdir ARCHIVE unless Dir.exist? ARCHIVE
   system "rsync -av --no-motd #{SOURCE}/#{month} #{ARCHIVE}/"
+elsif ARGV.include? '--fetch' or not Dir.exist? database
+  system "rsync -av --no-motd --delete --exclude='*.yml' #{SOURCE}/ #{ARCHIVE}/"
 end
 
 # scan each mailbox for updates
