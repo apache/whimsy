@@ -41,6 +41,11 @@ class Index < React
 
     _input.btn.btn_primary type: 'submit', value: 'fetch previous month',
       onClick: self.fetch_month
+
+    unless @undoStack.empty?
+      _input.btn.btn_info type: 'submit', value: 'undo delete',
+        onClick: self.undo
+    end
   end
 
   # initialize latest mailbox (year+month)
@@ -97,6 +102,20 @@ class Index < React
     event.preventDefault()
   end
 
+  def undo(event)
+    @selected = @undoStack.pop()
+    selected = @messages.find {|m| return m.href == @selected}
+    if selected
+      selected.status = :deletePending
+
+      # send request to server to remove delete status
+      HTTP.patch(@selected, status: nil) do
+        delete selected.status
+        self.forceUpdate()
+      end
+    end
+  end
+
   # handle keyboard events
   def keydown(event)
     if event.keyCode == 38 # up
@@ -132,12 +151,15 @@ class Index < React
       # send request to server to perform delete
       HTTP.delete(selected) do
         index = @messages.findIndex {|m| return m.href == selected}
-        console.log index
         @messages[index].status = :deleted if index >= 0
         @undoStack << selected
         self.forceUpdate()
       end
 
+    elsif event.keyCode == 'Z'.ord
+      if event.ctrlKey or event.metaKey
+        self.undo() unless @undoStack.empty?
+      end
     else
       console.log "keydown: #{event.keyCode}"
     end

@@ -23,14 +23,14 @@ post '/' do
   _json :index
 end
 
-# a single message
+# retrieve a single message
 get %r{^/(\d+)/(\w+)/$} do |month, hash|
   @message = Mailbox.new(month).headers[hash]
   pass unless @message
   _html :message
 end
 
-# a single message
+# mark a single message as deleted
 delete %r{^/(\d+)/(\w+)/$} do |month, hash|
   success = false
 
@@ -43,6 +43,30 @@ delete %r{^/(\d+)/(\w+)/$} do |month, hash|
 
   pass unless success
   _json success: true
+end
+
+# update a single message
+patch %r{^/(\d+)/(\w+)/$} do |month, hash|
+  success = false
+
+  Mailbox.update(month) do |headers|
+    if headers[hash]
+      updates = JSON.parse(request.env['rack.input'].read)
+
+      # special processing for entries with symbols as keys
+      headers[hash].each do |key, value|
+        if Symbol === key and updates.has_key? key.to_s
+          headers[hash][key] = updates.delete(key.to_s)
+        end
+      end
+
+      headers[hash].merge! updates
+      success = true
+    end
+  end
+
+  pass unless success
+  [204, {}, '']
 end
 
 # list of parts for a single message
