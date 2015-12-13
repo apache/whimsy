@@ -3,6 +3,8 @@
 #
 
 _html do
+  _link rel: 'stylesheet', type: 'text/css', href: '../../secmail.css'
+
   _ul_ do
     _li! {_a 'text', href: '_body_', target: 'content'}
     _li! {_a 'headers', href: '_headers_', target: 'content'}
