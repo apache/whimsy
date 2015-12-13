@@ -18,16 +18,15 @@ class Parts < React
   end
 
   def componentDidMount()
-    this.refs.menu.style.display = :none
+    $menu.style.display = :none
   end
 
   def menu(event)
     @selected = event.currentTarget.textContent
-    menu = this.refs.menu
-    menu.style.left = event.clientX + 'px'
-    menu.style.top = event.clientY + 'px'
-    menu.style.position = :absolute
-    menu.style.display = :block
+    $menu.style.left = event.clientX + 'px'
+    $menu.style.top = event.clientY + 'px'
+    $menu.style.position = :absolute
+    $menu.style.display = :block
     event.preventDefault()
   end
 end
