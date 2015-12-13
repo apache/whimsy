@@ -113,7 +113,7 @@ class Index < React
       selected = @messages.find {|m| return m.href == @selected}
       window.location.href = selected.href if selected
 
-    elsif event.keyCode == 8 # delete
+    elsif event.keyCode == 8 or event.keyCode == 46 # backspace or delete
       event.preventDefault()
       # mark item as delete pending
       selected = @selected
