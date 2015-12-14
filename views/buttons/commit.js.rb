@@ -117,7 +117,7 @@ class Commit < React
       @disabled = false
       jQuery('#commit-form').modal(:hide)
       document.body.classList.remove('modal-open')
-      document.querySelector('.modal-backdrop').classList.remove('in')
+      jQuery('.modal-backdrop').remove();
     end
   end
 end
