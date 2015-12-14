@@ -25,7 +25,7 @@ if @mbox =~ /^\d+$/
 
     # return mailbox name and messages
     {
-      mbox: File.basename(mbox, '.yml'),
+      mbox: (File.basename(mbox, '.yml') if index > 0),
       messages: headers.sort_by {|message| message[:time]}.reverse
     }
   end

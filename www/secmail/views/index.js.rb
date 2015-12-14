@@ -39,8 +39,10 @@ class Index < React
       end
     end
 
-    _input.btn.btn_primary type: 'submit', value: 'fetch previous month',
-      onClick: self.fetch_month
+    if @nextmbox
+      _input.btn.btn_primary type: 'submit', value: 'fetch previous month',
+        onClick: self.fetch_month
+    end
 
     unless @undoStack.empty?
       _input.btn.btn_info type: 'submit', value: 'undo delete',
@@ -48,9 +50,9 @@ class Index < React
     end
   end
 
-  # initialize latest mailbox (year+month)
+  # initialize next mailbox (year+month)
   def componentWillMount()
-    @latest = @@mbox
+    @nextmbox = @@mbox
   end
 
   # on initial load, fetch latest mailbox and subscribe to keyboard events
@@ -77,9 +79,9 @@ class Index < React
 
   # fetch a month's worth of messages
   def fetch_month()
-    HTTP.post('', mbox: @latest) do |response|
+    HTTP.post('', mbox: @nextmbox) do |response|
       # update latest mbox
-      @latest = response.mbox if response.mbox
+      @nextmbox = response.mbox
 
       # add messages to list
       @messages = @messages.concat(*response.messages)
