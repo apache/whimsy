@@ -160,7 +160,10 @@ class Index < React
 
     elsif event.keyCode == 'Z'.ord
       if event.ctrlKey or event.metaKey
-        self.undo() unless @undoStack.empty?
+        unless @undoStack.empty?
+          self.undo()
+          event.preventDefault()
+        end
       end
     else
       console.log "keydown: #{event.keyCode}"
