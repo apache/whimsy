@@ -7,7 +7,7 @@ gem 'whimsy-asf'
 gem 'sinatra'
 gem 'sanitize'
 gem 'wunderbar', '~> 1.0.10'
-gem 'ruby2js', '~> 2.0.10'
+gem 'ruby2js', '~> 2.0.11'
 gem 'execjs'
 
 group :demo do

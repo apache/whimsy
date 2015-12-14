@@ -7,6 +7,12 @@
   background-color: yellow;
 }
 
+.drop-target {
+  border: 2px solid green;
+  border-radius: 1em;
+  padding: 0.5em;
+}
+
 .deleted {
   opacity: 0.5;
 }
