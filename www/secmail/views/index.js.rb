@@ -79,7 +79,8 @@ class Index < React
 
   # fetch a month's worth of messages
   def fetch_month()
-    HTTP.post('', mbox: @nextmbox) do |response|
+    console.log @nextmbox
+    HTTP.get("/#{@nextmbox}", :json) do |response|
       # update latest mbox
       @nextmbox = response.mbox
 

@@ -119,7 +119,7 @@ class HTTP
       xhr.open('GET', target, true)
       xhr.setRequestHeader("Accept", "application/json") if type == :json
     else
-      xhr.open('GET', "../#{type}/#{target}", true)
+      xhr.open('GET', target, true)
     end
     xhr.responseType = type
     xhr.send()

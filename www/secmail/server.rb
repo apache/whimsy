@@ -19,12 +19,13 @@ get '/' do
 end
 
 # support for fetching previous month's worth of messages
-post '/' do
+get %r{^/(\d{6})$} do |mbox|
+  @mbox = mbox
   _json :index
 end
 
 # retrieve a single message
-get %r{^/(\d+)/(\w+)/$} do |month, hash|
+get %r{^/(\d{6})/(\w+)/$} do |month, hash|
   @message = Mailbox.new(month).headers[hash]
   pass unless @message
   _html :message
@@ -46,7 +47,7 @@ delete %r{^/(\d+)/(\w+)/$} do |month, hash|
 end
 
 # update a single message
-patch %r{^/(\d+)/(\w+)/$} do |month, hash|
+patch %r{^/(\d{6})/(\w+)/$} do |month, hash|
   success = false
 
   Mailbox.update(month) do |headers|
@@ -70,7 +71,7 @@ patch %r{^/(\d+)/(\w+)/$} do |month, hash|
 end
 
 # list of parts for a single message
-get %r{^/(\d+)/(\w+)/_index_$} do |month, hash|
+get %r{^/(\d{6})/(\w+)/_index_$} do |month, hash|
   @message = Mailbox.new(month).headers[hash]
   pass unless @message
   @attachments = @message[:attachments]
@@ -78,21 +79,21 @@ get %r{^/(\d+)/(\w+)/_index_$} do |month, hash|
 end
 
 # message body for a single message
-get %r{^/(\d+)/(\w+)/_body_$} do |month, hash|
+get %r{^/(\d{6})/(\w+)/_body_$} do |month, hash|
   @message = Mailbox.new(month).find(hash)
   pass unless @message
   _html :body
 end
 
 # header data for a single message
-get %r{^/(\d+)/(\w+)/_headers_$} do |month, hash|
+get %r{^/(\d{6})/(\w+)/_headers_$} do |month, hash|
   @headers = Mailbox.new(month).headers[hash]
   pass unless @headers
   _html :headers
 end
 
 # a specific attachment for a message
-get %r{^/(\d+)/(\w+)/(.*?)$} do |month, hash, name|
+get %r{^/(\d{6})/(\w+)/(.*?)$} do |month, hash, name|
   message = Mailbox.new(month).find(hash)
   pass unless message
 
