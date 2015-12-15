@@ -29,13 +29,19 @@
 }
 
 ul.contextMenu {
-  padding: 8px;
+  padding: 8px 0;
 }
 
 .contextMenu li {
   list-style: none;
-  padding: 0px;
+  padding: 0px 8px;
   margin: 0px;
+}
+
+.contextMenu li:hover {
+  background-color: #1E90FF;
+  color: white;
+  cursor: pointer;
 }
 
 .contextMenu a {
