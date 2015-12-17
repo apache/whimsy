@@ -7,6 +7,7 @@ require 'zlib'
 require 'zip'
 require 'stringio'
 require 'mail'
+require 'yaml'
 
 require_relative 'config.rb'
 
@@ -18,7 +19,7 @@ class Mailbox
     options = %w(-av --no-motd)
 
     if mailboxes == nil
-      options += %w(--delete --exclude='*.yml')
+      options += %w(--delete --exclude=*.yml)
       source = "#{SOURCE}/"
     elsif Array === mailboxes
       host, path = SOURCE.split(':', 2)
@@ -47,11 +48,17 @@ class Mailbox
   end
 
   #
+  # convenience interface to update
+  #
+  def self.update(name, &block)
+    Mailbox.new(name).update(&block)
+  end
+
+  #
   # encapsulate updates to a mailbox
   #
-  def self.update(name)
-    yaml = Mailbox.new(name).yaml_file
-    File.open(yaml, File::RDWR|File::CREAT, 0644) do |file| 
+  def update
+    File.open(yaml_file, File::RDWR|File::CREAT, 0644) do |file| 
       file.flock(File::LOCK_EX)
       mbox = YAML.load(file.read) || {} rescue {}
       yield mbox
@@ -165,5 +172,79 @@ class Mailbox
 
     # return fields as a Hash
     Hash[fields]
+  end
+
+  #
+  # parse a mailbox, updating YAML
+  #
+  def parse
+    mbox = YAML.load_file(yaml_file) || {} rescue {}
+    return if mbox[:mtime] == File.mtime(@filename)
+
+    # open the YAML file for real (locking it this time)
+    self.update do |mbox|
+      mbox[:mtime] = File.mtime(@filename)
+
+      # process each message in the mailbox
+      self.each do |message|
+        # compute id, skip if already processed
+        id = Mailbox.hash(message)
+        next if mbox[id]
+        mail = Mail.read_from_string(message)
+
+        # parse from address
+        begin
+          from = Mail::Address.new(mail[:from].value).display_name
+        rescue Exception
+          from = mail[:from].value
+        end
+
+        # determine who should be copied on any responses
+        cc = []
+        cc = mail[:to].value.split(/,\s*/)  if mail[:to]
+        cc += mail[:cc].value.split(/,\s*/) if mail[:cc]
+
+        # remove secretary and anybody on the to field from the cc list
+        cc.reject! do |email|
+          begin
+            address = Mail::Address.new(email).address
+            next true if address == 'secretary@apache.org'
+            next true if mail.from_addrs.include? address
+          rescue Exception
+            true
+          end
+        end
+
+        # start an entry for this mail
+        mbox[id] = {
+          from: mail.from_addrs.first,
+          name: from,
+          time: (mail.date.to_time.gmtime.iso8601 rescue nil),
+          cc: cc
+        }
+
+        # add in header fields
+        mbox[id].merge! Mailbox.headers(mail)
+
+        # add in attachments
+        if mail.attachments.length > 0
+          attachments = mail.attachments.map do |attach|
+            description = {
+              name: attach.filename,
+              length: attach.body.to_s.length,
+              mime: attach.mime_type
+            }
+
+            if description[:name].empty? and attach['Content-ID']
+              description[:name] = attach['Content-ID'].to_s
+            end
+
+            description.merge(Mailbox.headers(attach))
+          end
+
+          mbox[id][:attachments] = attachments
+        end
+      end
+    end
   end
 end
