@@ -1,6 +1,14 @@
+#index table {
+  margin-left: 8px;
+}
+
 #index td:nth-child(2), #index th:nth-child(2) {
   padding-right: 7px;
   padding-left: 7px;
+}
+
+#index button {
+  margin: 5px;
 }
 
 .selected {

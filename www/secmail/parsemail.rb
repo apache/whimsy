@@ -23,15 +23,14 @@ if ARGV.include? '--fetch1'
   ARGV.unshift Time.now.strftime('%Y%m')
 end
 
-if ARGV.any? {|arg| arg =~ /^\d{6}$/}
-  Dir.mkdir ARCHIVE unless Dir.exist? ARCHIVE
-  ARGV.each do |arg|
-    if arg =~ /^\d{6}$/
-      system "rsync -av --no-motd #{SOURCE}/#{arg}* #{ARCHIVE}/"
-    end
-  end
+# fetch (selected|all) mailboxes
+months = ARGV.select {|arg| arg =~ /^\d{6}$/}
+if not months.empty?
+  Mailbox.fetch months
+elsif ARGV.include? '--fetch1'
+  Mailbox.fetch Time.now.strftime('%Y%m')
 elsif ARGV.include? '--fetch' or not Dir.exist? database
-  system "rsync -av --no-motd --delete --exclude='*.yml' #{SOURCE}/ #{ARCHIVE}/"
+  Mailbox.fetch
 end
 
 # scan each mailbox for updates

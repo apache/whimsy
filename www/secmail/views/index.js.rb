@@ -40,13 +40,15 @@ class Index < React
     end
 
     if @nextmbox
-      _input.btn.btn_primary type: 'submit', value: 'fetch previous month',
+      _button.btn.btn_primary 'download previous month',
         onClick: self.fetch_month
     end
 
+    _button.btn.btn_success 'check for new mail', onClick: self.refresh,
+      disabled: true
+
     unless @undoStack.empty?
-      _input.btn.btn_info type: 'submit', value: 'undo delete',
-        onClick: self.undo
+      _button.btn.btn_info 'undo delete', onClick: self.undo
     end
   end
 

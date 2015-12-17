@@ -12,6 +12,27 @@ require_relative 'config.rb'
 
 class Mailbox
   #
+  # fetch a/some/all mailboxes
+  #
+  def self.fetch(mailboxes=nil)
+    options = %w(-av --no-motd)
+
+    if mailboxes == nil
+      options += %w(--delete --exclude='*.yml')
+      source = "#{SOURCE}/"
+    elsif Array === mailboxes
+      host, path = SOURCE.split(':', 2)
+      files = mailboxes.map {|name| "#{path}/#{name}*"}
+      source = "#{host}:#{files.join(' ')}"
+    else
+      source = "#{SOURCE}/#{mailboxes}*"
+    end
+
+    Dir.mkdir ARCHIVE unless Dir.exist? ARCHIVE
+    system 'rsync', *options, source, "#{ARCHIVE}/"
+  end
+
+  #
   # Initialize a mailbox
   #
   def initialize(name)
