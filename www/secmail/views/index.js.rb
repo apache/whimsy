@@ -7,6 +7,7 @@ class Index < React
     @selected = nil
     @messages = []
     @undoStack = []
+    @checking = false
   end
 
   def render
@@ -45,7 +46,7 @@ class Index < React
     end
 
     _button.btn.btn_success 'check for new mail', onClick: self.refresh,
-      disabled: true
+      disabled: @checking
 
     unless @undoStack.empty?
       _button.btn.btn_info 'undo delete', onClick: self.undo
@@ -81,7 +82,6 @@ class Index < React
 
   # fetch a month's worth of messages
   def fetch_month()
-    console.log @nextmbox
     HTTP.get("/#{@nextmbox}", :json) do |response|
       # update latest mbox
       @nextmbox = response.mbox
@@ -118,6 +118,13 @@ class Index < React
         delete selected.status
         self.forceUpdate()
       end
+    end
+  end
+
+  def refresh(event)
+    @checking = true
+    HTTP.post "actions/check-mail", mbox: @@mbox do |response|
+      location.reload()
     end
   end
 

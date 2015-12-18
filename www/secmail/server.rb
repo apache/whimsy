@@ -31,6 +31,11 @@ get %r{^/(\d{6})/(\w+)/$} do |month, hash|
   _html :message
 end
 
+# posted actions
+post '/actions/:file' do
+  _json :"actions/#{params[:file]}"
+end
+
 # mark a single message as deleted
 delete %r{^/(\d+)/(\w+)/$} do |month, hash|
   success = false
