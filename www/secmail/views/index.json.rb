@@ -6,7 +6,7 @@ index = available.find_index "#{ARCHIVE}/#{@mbox}.yml"
 if index
   # fetch a list of headers for all messages in the maibox with attachments
   headers = Mailbox.new(@mbox).headers.to_a.select do |id, message|
-    message[:attachments] and not message[:status] == :deleted
+    message[:attachments]
   end
 
   # extract relevant fields from the headers
@@ -15,7 +15,8 @@ if index
       time: message[:time],
       href: "#{message[:source]}/#{id}/",
       from: message[:from],
-      subject: message['Subject']
+      subject: message['Subject'],
+      status: message[:status]
     }
   end
 

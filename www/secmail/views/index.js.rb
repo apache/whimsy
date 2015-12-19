@@ -6,7 +6,6 @@ class Index < React
   def initialize
     @selected = nil
     @messages = []
-    @undoStack = []
     @checking = false
   end
 
@@ -48,7 +47,7 @@ class Index < React
     _button.btn.btn_success 'check for new mail', onClick: self.refresh,
       disabled: @checking
 
-    unless @undoStack.empty?
+    unless Status.undoStack.empty?
       _button.btn.btn_info 'undo delete', onClick: self.undo
     end
   end
@@ -58,10 +57,12 @@ class Index < React
     @nextmbox = @@mbox
   end
 
-  # on initial load, fetch latest mailbox and subscribe to keyboard events
+  # on initial load, fetch latest mailbox and subscribe to keyboard events,
+  # initialize selected item.
   def componentDidMount()
     self.fetch_month()
     window.onkeydown = self.keydown
+    @selected = Status.selected
   end
 
   # when content changes, ensure selected message is visible
@@ -90,31 +91,43 @@ class Index < React
       @messages = @messages.concat(*response.messages)
 
       # select oldest message
-      @selected = @messages.last.href
+      self.selectRow @messages.last unless @selected
     end
   end
 
-  # select
-  def selectRow(event)
-    @selected = event.currentTarget.querySelector('a').getAttribute('href')
+  # update @selected, given either a DOM event or a message
+  def selectRow(object)
+    if not object
+      href = nil
+    elsif object.respond_to? :currentTarget
+      href = object.currentTarget.querySelector('a').getAttribute('href')
+    elsif object.respond_to? :href
+      href = object.href
+    else
+      href = object
+    end
+
+    Status.selected = href
+    @selected = href
   end
 
   # navigate
   def nav(event)
-    @selected = event.currentTarget.querySelector('a').getAttribute('href')
+    self.selectRow(event)
     window.location.href = @selected
     window.getSelection().removeAllRanges()
     event.preventDefault()
   end
 
   def undo(event)
-    @selected = @undoStack.pop()
-    selected = @messages.find {|m| return m.href == @selected}
+    message = Status.popStack()
+    selected = @messages.find {|m| return m.href == message}
     if selected
+      self.selectRow selected
       selected.status = :deletePending
 
       # send request to server to remove delete status
-      HTTP.patch(@selected, status: nil) do
+      HTTP.patch(selected.href, status: nil) do
         delete selected.status
         self.forceUpdate()
       end
@@ -132,12 +145,12 @@ class Index < React
   def keydown(event)
     if event.keyCode == 38 # up
       index = @messages.findIndex {|m| return m.href == @selected}
-      @selected = @messages[index-1].href if index > 0
+      self.selectRow @messages[index-1] if index > 0
       event.preventDefault()
 
     elsif event.keyCode == 40 # down
       index = @messages.findIndex {|m| return m.href == @selected}
-      @selected = @messages[index+1].href if index < @messages.length-1
+      self.selectRow @messages[index+1] if index < @messages.length-1
       event.preventDefault()
 
     elsif event.keyCode == 13 or event.keyCode == 39 # enter/return or right
@@ -153,24 +166,24 @@ class Index < React
 
       # move selected pointer
       if index > 0
-        @selected = @messages[index-1].href
+        self.selectRow @messages[index-1]
       elsif index < @messages.length - 1
-        @selected = @messages[index+1].href
+        self.selectRow @messages[index+1]
       else
-        @selected = nil
+        self.selectRow nil
       end
 
       # send request to server to perform delete
       HTTP.delete(selected) do
         index = @messages.findIndex {|m| return m.href == selected}
         @messages[index].status = :deleted if index >= 0
-        @undoStack << selected
+        Status.pushDeleted selected
         self.forceUpdate()
       end
 
     elsif event.keyCode == 'Z'.ord
       if event.ctrlKey or event.metaKey
-        unless @undoStack.empty?
+        unless Status.undoStack.empty?
           self.undo()
           event.preventDefault()
         end
