@@ -111,7 +111,7 @@ class Index < React
 
     # ensure selected message is not deleted
     index = @messages.findIndex {|m| return m.href == href}
-    index -= 1 while index > 0 and @messages[index].status == :deleted
+    index -= 1 while index >= 0 and @messages[index].status == :deleted
     index = @messages.findIndex {|m| return m.status != :deleted} if index == -1
 
     @selected = Status.selected = @messages[index].href
@@ -136,6 +136,7 @@ class Index < React
       HTTP.patch(selected.href, status: nil) do
         delete selected.status
         self.forceUpdate()
+        self.selectRow message
       end
     end
   end
@@ -189,6 +190,7 @@ class Index < React
           index = @messages.findIndex {|m| return m.href == selected}
           @messages[index].status = :deleted if index >= 0
           Status.pushDeleted selected
+          self.selectRow selected if @selected == selected
           self.forceUpdate()
         end
       end
