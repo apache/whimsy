@@ -64,3 +64,10 @@ ul.contextMenu {
   padding: 1px 5px;
   padding-left: 28px;
 }
+
+.spinner {
+  position: absolute;
+  z-index: -1;
+  right: 0;
+  top: 0;
+}

@@ -62,7 +62,7 @@ class Index < React
   def componentDidMount()
     self.fetch_month()
     window.onkeydown = self.keydown
-    @selected = Status.selected
+     self.selectRow Status.selected if @messages.length > 0
   end
 
   # when content changes, ensure selected message is visible
@@ -91,7 +91,7 @@ class Index < React
       @messages = @messages.concat(*response.messages)
 
       # select oldest message
-      self.selectRow @messages.last unless @selected
+      self.selectRow Status.selected || @messages.last unless @selected
     end
   end
 
@@ -99,6 +99,8 @@ class Index < React
   def selectRow(object)
     if not object
       href = nil
+    elsif typeof(object) == 'string'
+      href = object
     elsif object.respond_to? :currentTarget
       href = object.currentTarget.querySelector('a').getAttribute('href')
     elsif object.respond_to? :href
@@ -107,8 +109,12 @@ class Index < React
       href = object
     end
 
-    Status.selected = href
-    @selected = href
+    # ensure selected message is not deleted
+    index = @messages.findIndex {|m| return m.href == href}
+    index -= 1 while index > 0 and @messages[index].status == :deleted
+    index = @messages.findIndex {|m| return m.status != :deleted} if index == -1
+
+    @selected = Status.selected = @messages[index].href
   end
 
   # navigate
@@ -149,8 +155,11 @@ class Index < React
       event.preventDefault()
 
     elsif event.keyCode == 40 # down
-      index = @messages.findIndex {|m| return m.href == @selected}
-      self.selectRow @messages[index+1] if index < @messages.length-1
+      index = @messages.findIndex {|m| return m.href == @selected} + 1
+      while index < @messages.length and @messages[index].status == :deleted
+        index += 1
+      end
+      self.selectRow @messages[index] if index < @messages.length
       event.preventDefault()
 
     elsif event.keyCode == 13 or event.keyCode == 39 # enter/return or right
@@ -158,27 +167,30 @@ class Index < React
       window.location.href = selected.href if selected
 
     elsif event.keyCode == 8 or event.keyCode == 46 # backspace or delete
-      event.preventDefault()
-      # mark item as delete pending
-      selected = @selected
-      index = @messages.findIndex {|m| return m.href == selected}
-      @messages[index].status = :deletePending if index >= 0
+      if event.metaKey
+        event.preventDefault()
 
-      # move selected pointer
-      if index > 0
-        self.selectRow @messages[index-1]
-      elsif index < @messages.length - 1
-        self.selectRow @messages[index+1]
-      else
-        self.selectRow nil
-      end
-
-      # send request to server to perform delete
-      HTTP.delete(selected) do
+        # mark item as delete pending
+        selected = @selected
         index = @messages.findIndex {|m| return m.href == selected}
-        @messages[index].status = :deleted if index >= 0
-        Status.pushDeleted selected
-        self.forceUpdate()
+        @messages[index].status = :deletePending if index >= 0
+
+        # move selected pointer
+        if index > 0
+          self.selectRow @messages[index-1]
+        elsif index < @messages.length - 1
+          self.selectRow @messages[index+1]
+        else
+          self.selectRow nil
+        end
+
+        # send request to server to perform delete
+        HTTP.delete(selected) do
+          index = @messages.findIndex {|m| return m.href == selected}
+          @messages[index].status = :deleted if index >= 0
+          Status.pushDeleted selected
+          self.forceUpdate()
+        end
       end
 
     elsif event.keyCode == 'Z'.ord

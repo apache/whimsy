@@ -1,6 +1,7 @@
 class Parts < React
   def initialize
     @selected = nil
+    @busy = false
   end
 
   def render
@@ -16,7 +17,7 @@ class Parts < React
       onContextMenu: self.menu,
     }
 
-    _ul @@attachments do |attachment|
+    _ul @@attachments, ref: 'attachments' do |attachment|
       _li options do
         _a attachment.name, href: attachment.name, target: 'content',
           draggable: 'false'
@@ -28,11 +29,21 @@ class Parts < React
       _li 'file'
       _li 'delete'
     end
+
+    _img.spinner src: '../../rotatingclock-slow2.gif' if @busy
   end
 
+  # disable context menu and register mouse and keyboard handlers
   def componentDidMount()
     $menu.style.display = :none
     window.onmousedown = self.click
+
+    # register keyboard handler on parent window and all frames
+    window.parent.onkeydown = self.keydown
+    frames = window.parent.frames
+    for i in 0...frames.length
+      frames[i].onkeydown=self.keydown
+    end
   end
 
   # position and show context menu
@@ -44,6 +55,7 @@ class Parts < React
     $menu.style.display = :block
     event.preventDefault()
   end
+
   # hide context menu whenever a click is received outside the menu
   def click(event)
     target = event.target
@@ -51,7 +63,23 @@ class Parts < React
       return if target.class == 'contextMenu'
       target = target.parentNode
     end
+    console.log 'click'
     $menu.style.display = :none
+  end
+
+  def keydown(event)
+    if event.keyCode == 8 or event.keyCode == 46 # backspace or delete
+      if event.metaKey
+        @busy = true
+        event.stopPropagation()
+
+        pathname = window.parent.location.pathname
+        HTTP.delete(pathname) do
+          Status.pushDeleted pathname
+          window.parent.location.href = '../..'
+        end
+      end
+    end
   end
 
   #
