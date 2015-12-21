@@ -9,18 +9,18 @@ _html do
   _table do
     _tr do
       _td 'From:'
-      _td @message[:from]
+      _td @message.from
     end
 
     _tr do
       _td 'To:'
-      _td @message[:to]
+      _td @message.to
     end
 
-    if @message[:cc]
+    if @message.cc
       _tr do
         _td 'Cc:'
-        _td @message[:cc]
+        _td @message.cc
       end
     end
 

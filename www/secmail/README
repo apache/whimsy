@@ -63,3 +63,15 @@ Overview of control flow:
     json views:       The last statement identifies an object (typically a
                       hash or array) that will be converted to JSON and sent
                       back as a response.
+
+Model:
+
+  mailbox.rb:         read-only interface to a mailbox files found in
+                      officers-secretary as well as read/write interface
+                      to accompanying YAML file.
+
+  message.rb:         representation of an individual message, backed by
+                      both the mbox file and the YAML file.
+
+  attachment.rb:      representation of an individual attachment, backed by
+                      both the mbox file and the YAML file.

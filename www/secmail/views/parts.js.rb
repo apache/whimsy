@@ -122,11 +122,22 @@ class Parts < React
 
   # complete drop operation
   def drop(event)
-    href = event.currentTarget.querySelector('a').getAttribute('href')
-    alert("drop #{@drag} onto #{href}")
-    @drag = nil
-    event.currentTarget.classList.remove 'drop-target'
+    target = event.currentTarget
+    href = target.querySelector('a').getAttribute('href')
     event.preventDefault()
+
+    data = {
+      source: @drag,
+      target: href,
+      message: window.parent.location.pathname
+    }
+
+    @busy = true
+    @drag = nil
+    HTTP.post '../../actions/drop', data do |response| 
+      @busy = false
+      target.classList.remove 'drop-target'
+    end
   end
 
   # cancel drag operation

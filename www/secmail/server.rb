@@ -9,7 +9,7 @@ require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 require 'sanitize'
 
-require_relative 'mailbox'
+require_relative 'models/mailbox'
 
 # list of messages
 get '/' do
@@ -103,10 +103,7 @@ get %r{^/(\d{6})/(\w+)/(.*?)$} do |month, hash, name|
   message = Mailbox.new(month).find(hash)
   pass unless message
 
-  part = message.attachments.find do |attach| 
-    attach.filename == name or attach['Content-ID'].to_s == name
-  end
-
+  part = message.find(name)
   pass unless part
 
   [200, {'Content-Type' => part.content_type}, part.body.to_s]

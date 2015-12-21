@@ -9,7 +9,10 @@ require 'stringio'
 require 'mail'
 require 'yaml'
 
-require_relative 'config.rb'
+require_relative '../config.rb'
+
+require_relative 'message.rb'
+require_relative 'attachment.rb'
 
 class Mailbox
   #
@@ -105,8 +108,9 @@ class Mailbox
   # Find a message
   #
   def find(hash)
-    message = messages.find {|message| Mailbox.hash(message) == hash}
-    Mail.new(message) if message
+    headers = YAML.load_file(yaml_file) rescue {}
+    email = messages.find {|message| Mailbox.hash(message) == hash}
+    Message.new(headers[hash], email) if email
   end
 
   #

@@ -12,7 +12,7 @@
 
 require 'time'
 
-require_relative 'mailbox'
+require_relative 'models/mailbox'
 
 database = File.basename(SOURCE)
 
