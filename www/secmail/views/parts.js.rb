@@ -3,6 +3,7 @@ class Parts < React
     @selected = nil
     @busy = false
     @attachments = []
+    @drag = nil
   end
 
   def render
@@ -20,7 +21,14 @@ class Parts < React
     }
 
     _ul @attachments, ref: 'attachments' do |attachment|
-      options[:className] = ('selected' if attachment == @selected)
+      if attachment == @drag
+        options[:className] = 'dragging'
+      elsif attachment == @selected
+        options[:className] = 'selected'
+      else
+        options[:className] = nil
+      end
+
       _li options do
         _a attachment, href: attachment, target: 'content', draggable: 'false'
       end
@@ -146,7 +154,7 @@ class Parts < React
     @drag = nil
     HTTP.post '../../actions/drop', data do |response| 
       @attachments = response.attachments
-      @selected = href
+      @selected = response.selected
       @busy = false
       target.classList.remove 'drop-target'
       window.parent.frames.content.location.href=response.selected

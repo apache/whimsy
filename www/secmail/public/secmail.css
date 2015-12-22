@@ -15,6 +15,10 @@
   background-color: yellow;
 }
 
+.dragging {
+  opacity: 0.5;
+}
+
 .drop-target {
   border: 2px solid green;
   border-radius: 1em;

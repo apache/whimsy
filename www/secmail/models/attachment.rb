@@ -9,7 +9,7 @@ class Attachment
   end
 
   def content_type
-    headers[:mine] || @part.content_type
+    headers[:mime] || @part.content_type
   end
 
   def body

@@ -16,7 +16,9 @@ begin
   Kernel.system 'pdftk', target.path, source.path, 'cat', 'output',
     output.path
 
-  message.update_attachment @target, content: output.read,
+  name = @target.sub(/\.\w+$/, '') + '.pdf'
+
+  message.update_attachment @target, content: output.read, name: name,
     mime: 'application/pdf'
 
   message.delete_attachment @source
@@ -27,4 +29,4 @@ ensure
   output.unlink if output
 end
 
-{attachments: message.attachments, selected: @target}
+{attachments: message.attachments, selected: name}
