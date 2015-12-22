@@ -1,6 +1,7 @@
 This directory contains a script that fetches and parsed secretary emails
 and a server that will enable exploration of those emails.
 
+
 Usage:
 
   rake fetch
@@ -16,6 +17,11 @@ Notes:
   emails that have arrived in the current month).
 
   Secretary email archive currently requires about approximately 11 Gigabytes.
+
+  Some functions will require installations of imageMagick and pdftk.
+
+  OS X El Capitan users may want to look at:
+    http://stackoverflow.com/a/33248310
 
 Overview of files:
 
@@ -46,7 +52,9 @@ Overview of control flow:
 
     html views:       Method names that start with an underscore generate HTML.
                       This HTML may pull in scripts, stylesheets, and have
-                      inline code that renders other views.  
+                      inline code that renders other views.  Views in the
+                      actions subdirectory produce responses to HTTP post
+                      requests.
 
     js views:         This code is converted from Ruby to JavaScript.
                       This conversion is aware of React.js and will perform

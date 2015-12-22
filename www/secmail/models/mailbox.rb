@@ -110,7 +110,7 @@ class Mailbox
   def find(hash)
     headers = YAML.load_file(yaml_file) rescue {}
     email = messages.find {|message| Mailbox.hash(message) == hash}
-    Message.new(headers[hash], email) if email
+    Message.new(self, hash, headers[hash], email) if email
   end
 
   #

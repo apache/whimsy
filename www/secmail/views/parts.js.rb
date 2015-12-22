@@ -2,6 +2,7 @@ class Parts < React
   def initialize
     @selected = nil
     @busy = false
+    @attachments = []
   end
 
   def render
@@ -15,12 +16,13 @@ class Parts < React
       onDragEnd: self.dragEnd,
       onDrop: self.drop,
       onContextMenu: self.menu,
+      onClick: self.select
     }
 
-    _ul @@attachments, ref: 'attachments' do |attachment|
+    _ul @attachments, ref: 'attachments' do |attachment|
+      options[:className] = ('selected' if attachment == @selected)
       _li options do
-        _a attachment.name, href: attachment.name, target: 'content',
-          draggable: 'false'
+        _a attachment, href: attachment, target: 'content', draggable: 'false'
       end
     end
 
@@ -33,10 +35,15 @@ class Parts < React
     _img.spinner src: '../../rotatingclock-slow2.gif' if @busy
   end
 
+  # initialize attachments list with the data from the server
+  def componentWillMount()
+    @attachments = @@attachments
+  end
+
   # disable context menu and register mouse and keyboard handlers
   def componentDidMount()
     $menu.style.display = :none
-    window.onmousedown = self.click
+    window.onmousedown = self.window_click
 
     # register keyboard handler on parent window and all frames
     window.parent.onkeydown = self.keydown
@@ -57,14 +64,17 @@ class Parts < React
   end
 
   # hide context menu whenever a click is received outside the menu
-  def click(event)
+  def window_click(event)
     target = event.target
     while target
       return if target.class == 'contextMenu'
       target = target.parentNode
     end
-    console.log 'click'
     $menu.style.display = :none
+  end
+
+  def select(event)
+    @selected = event.currentTarget.querySelector('a').getAttribute('href')
   end
 
   def keydown(event)
@@ -135,8 +145,11 @@ class Parts < React
     @busy = true
     @drag = nil
     HTTP.post '../../actions/drop', data do |response| 
+      @attachments = response.attachments
+      @selected = href
       @busy = false
       target.classList.remove 'drop-target'
+      window.parent.frames.content.location.href=response.selected
     end
   end
 

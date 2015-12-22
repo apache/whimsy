@@ -78,9 +78,9 @@ end
 
 # list of parts for a single message
 get %r{^/(\d{6})/(\w+)/_index_$} do |month, hash|
-  @message = Mailbox.new(month).headers[hash]
-  pass unless @message
-  @attachments = @message[:attachments]
+  message = Mailbox.new(month).find(hash)
+  pass unless message
+  @attachments = message.attachments
   _html :parts
 end
 

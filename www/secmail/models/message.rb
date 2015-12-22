@@ -1,5 +1,7 @@
 class Message
-  def initialize(headers, email)
+  def initialize(mailbox, hash, headers, email)
+    @hash = hash
+    @mailbox = mailbox
     @headers = headers
     @email = email
   end
@@ -14,8 +16,8 @@ class Message
       attach.filename == name or attach['Content-ID'].to_s == name
     end
 
-    if part
-      Attachment.new(headers, part)
+    if headers
+      Attachment.new(self, headers, part)
     end
   end
 
@@ -45,5 +47,31 @@ class Message
 
   def text_part
     mail.html_part
+  end
+
+  def attachments
+    @headers[:attachments].map {|attachment| attachment[:name]}
+  end
+
+  def update_attachment name, values
+    attachment = find(name)
+    if attachment
+      attachment.headers.merge! values
+      write
+    end
+  end
+
+  def delete_attachment name
+    attachment = find(name)
+    if attachment
+      @headers[:attachments].delete attachment.headers
+      write
+    end
+  end
+
+  def write
+    @mailbox.update do |yaml|
+      yaml[@hash] = @headers
+    end
   end
 end
