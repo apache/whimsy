@@ -34,7 +34,10 @@ class Parts < React
       end
     end
 
-    _ContextMenu
+    _ul.contextMenu do
+      _li 'burst', onMouseDown: self.burst
+      _li 'delete'
+    end
 
     _img.spinner src: '../../rotatingclock-slow2.gif' if @busy
   end
@@ -94,6 +97,22 @@ class Parts < React
           window.parent.location.href = '../..'
         end
       end
+    end
+  end
+
+  # burst a PDF into individual pages
+  def burst(event)
+    data = {
+      selected: @selected,
+      message: window.parent.location.pathname
+    }
+
+    @busy = true
+    HTTP.post '../../actions/burst', data do |response|
+      @attachments = response.attachments
+      @selected = response.selected
+      @busy = false
+      window.parent.frames.content.location.href=response.selected
     end
   end
 

@@ -61,6 +61,15 @@ class Message
     end
   end
 
+  def replace_attachment name, values
+    attachment = find(name)
+    if attachment
+      index = @headers[:attachments].find_index(attachment.headers)
+      @headers[:attachments][index, 1] = Array(values)
+      write
+    end
+  end
+
   def delete_attachment name
     attachment = find(name)
     if attachment

@@ -8,6 +8,10 @@ class Attachment
     @part = part
   end
 
+  def name
+    headers[:name] || @part.filename
+  end
+
   def content_type
     headers[:mime] || @part.content_type
   end
@@ -17,7 +21,7 @@ class Attachment
   end
 
   def safe_name
-    name = @part.filename
+    name = self.name.dup
     name.gsub! /^\W/, ''
     name.gsub! /[^\w.]/, '_'
     name.untaint
@@ -29,9 +33,9 @@ class Attachment
     file.rewind
 
     return file if content_type.end_with? '/pdf'
-    return file if @part.filename.end_with? '.pdf'
+    return file if name.end_with? '.pdf'
 
-    ext = File.extname(@part.filename).downcase
+    ext = File.extname(name).downcase
 
     if IMAGE_TYPES.include? ext or content_type.start_with? 'image/'
       pdf = Tempfile.new([safe_name, '.pdf'], encoding: Encoding::BINARY)
