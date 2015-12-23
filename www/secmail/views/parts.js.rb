@@ -36,7 +36,7 @@ class Parts < React
 
     _ul.contextMenu do
       _li 'burst', onMouseDown: self.burst
-      _li 'delete'
+      _li 'delete', onMouseDown: self.delete_attachment
     end
 
     _img.spinner src: '../../rotatingclock-slow2.gif' if @busy
@@ -87,7 +87,7 @@ class Parts < React
 
   def keydown(event)
     if event.keyCode == 8 or event.keyCode == 46 # backspace or delete
-      if event.metaKey
+      if event.metaKey or event.ctrlKey
         @busy = true
         event.stopPropagation()
 
@@ -113,6 +113,25 @@ class Parts < React
       @selected = response.selected
       @busy = false
       window.parent.frames.content.location.href=response.selected
+    end
+  end
+
+  # burst a PDF into individual pages
+  def delete_attachment(event)
+    data = {
+      selected: @selected,
+      message: window.parent.location.pathname
+    }
+
+    @busy = true
+    HTTP.post '../../actions/delete-attachment', data do |response|
+      if response.attachments and not response.attachments.empty?
+        @attachments = response.attachments
+        @busy = false
+        window.parent.frames.content.location.href='_body_'
+      else
+        window.parent.location.href = '../..'
+      end
     end
   end
 

@@ -74,6 +74,7 @@ class Message
     attachment = find(name)
     if attachment
       @headers[:attachments].delete attachment.headers
+      @headers[:status] = :deleted if @headers[:attachments].empty?
       write
     end
   end
