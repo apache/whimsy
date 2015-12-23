@@ -204,9 +204,15 @@ class Mailbox
         end
 
         # determine who should be copied on any responses
-        cc = []
-        cc = mail[:to].value.split(/,\s*/)  if mail[:to]
-        cc += mail[:cc].value.split(/,\s*/) if mail[:cc]
+        begin
+          cc = []
+          cc = mail[:to].to_s.split(/,\s*/)  if mail[:to]
+          cc += mail[:cc].to_s.split(/,\s*/) if mail[:cc]
+        rescue
+          cc = []
+          cc = mail[:to].value.split(/,\s*/)  if mail[:to]
+          cc += mail[:cc].value.split(/,\s*/) if mail[:cc]
+        end
 
         # remove secretary and anybody on the to field from the cc list
         cc.reject! do |email|
@@ -232,11 +238,23 @@ class Mailbox
 
         # add in attachments
         if mail.attachments.length > 0
+
           attachments = mail.attachments.map do |attach|
+            # replace generic octet-stream with a more specific one
+            mime = attach.mime_type
+            if mime == 'application/octet-stream'
+              filename = attach.filename.downcase
+              mime = 'application/pdf' if filename.end_with? '.pdf'
+              mime = 'application/png' if filename.end_with? '.png'
+              mime = 'application/gif' if filename.end_with? '.gif'
+              mime = 'application/jpeg' if filename.end_with? '.jpg'
+              mime = 'application/jpeg' if filename.end_with? '.jpeg'
+            end
+
             description = {
               name: attach.filename,
               length: attach.body.to_s.length,
-              mime: attach.mime_type
+              mime: mime
             }
 
             if description[:name].empty? and attach['Content-ID']
