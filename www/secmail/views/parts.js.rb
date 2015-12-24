@@ -4,6 +4,7 @@ class Parts < React
     @busy = false
     @attachments = []
     @drag = nil
+    @form = nil
   end
 
   def render
@@ -20,6 +21,7 @@ class Parts < React
       onClick: self.select
     }
 
+    # list of attachments
     _ul @attachments, ref: 'attachments' do |attachment|
       if attachment == @drag
         options[:className] = 'dragging'
@@ -34,6 +36,7 @@ class Parts < React
       end
     end
 
+    # context menu that displays when you 'right click' an attachment
     _ul.contextMenu do
       _li "\u2704 burst", onMouseDown: self.burst
       _li.divider
@@ -42,6 +45,50 @@ class Parts < React
       _li "\u21B6 left", onMouseDown: self.rotate_attachment
       _li.divider
       _li "\u2716 delete", onMouseDown: self.delete_attachment
+    end
+
+    # filing options
+    if @selected
+      _table.doctype do
+        _tr do
+          _td do
+            _input type: 'radio', name: 'doctype', value: 'icla',
+              onClick: -> {@form = ICLA}
+          end
+
+          _td do
+            _input type: 'radio', name: 'doctype', value: 'grant',
+              onClick: -> {@form = Grant}
+          end
+
+          _td do
+            _input type: 'radio', name: 'doctype', value: 'ccla',
+              onClick: -> {@form = CCLA}
+          end
+
+          _td do
+            _input type: 'radio', name: 'doctype', value: 'nda',
+              onClick: -> {@form = NDA}
+          end
+
+          _td do
+            _input type: 'radio', name: 'doctype', value: 'mem',
+              onClick: -> {@form = MemApp}
+          end
+        end
+
+        _tr do
+          _td 'icla'
+          _td 'grant'
+          _td 'ccla'
+          _td 'nda'
+          _td 'mem'
+        end
+      end
+
+      if @form
+        React.createElement @form, submit: self.submit
+      end
     end
 
     _img.spinner src: '../../rotatingclock-slow2.gif' if @busy
@@ -87,6 +134,23 @@ class Parts < React
     menu.style.left = position.x + 'px'
     menu.style.top = position.y + 'px'
     event.preventDefault()
+  end
+
+  # form submission - handles all forms
+  def submit(event)
+    event.preventDefault()
+    form = event.currentTarget
+
+    data = {}
+    Array(form.querySelectorAll('input')).each do |field|
+      data[field.name] = field.value if field.name
+    end
+
+    @busy = true
+    HTTP.post form.action, data do |response|
+      @busy = false
+      alert response.result
+    end
   end
 
   # hide context menu whenever a click is received outside the menu

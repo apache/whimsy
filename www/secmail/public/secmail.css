@@ -29,6 +29,40 @@
   opacity: 0.5;
 }
 
+table.doctype {
+  width: 100%;
+}
+
+table.doctype td {
+  text-align: center;
+}
+
+table.form {
+  width: 100%;
+  margin-left: 1em;
+  margin-top: 2em;
+}
+
+.form input {
+  width: 100%;
+}
+
+.form input:invalid {
+  border: 1px solid red;
+}
+
+.form th {
+  max-width: 4em;
+  height: 2.5em;
+  font-weight: normal;
+}
+
+form .btn {
+  display: block;
+  margin: auto;
+  margin-top: 0.5em;
+}
+
 .contextMenu {
   position: absolute;
   z-index: 9999999;
