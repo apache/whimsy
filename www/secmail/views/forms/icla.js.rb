@@ -41,7 +41,7 @@ class ICLA < React
         _tr do
           _th 'User ID'
           _td do
-            _input name: 'userid', value: @userid
+            _input name: 'user', value: @user
           end
         end
 
@@ -67,26 +67,53 @@ class ICLA < React
         end
       end
 
-      _button.btn.btn_primary 'Request Account', disabled: true
+      _button.btn.btn_primary 'Request Account', ref: 'acreq',
+        onClick: self.acreq
     end
   end
 
-  # on initial display, update state
+  # on initial display, default various fields based on headers, and update
+  # state 
   def componentDidMount()
-    # self.componentDidUpdate()
+    @realname = @@headers.name
+    @email = @@headers.from
+    self.componentDidUpdate()
   end
 
-  # as fields change, enable/disable the file button
+  # as fields change, enable/disable the associated buttons and adjust
+  # input requirements.
   def componentDidUpdate()
+    # ICLA file form
     valid = %w(realname pubname email filename).all? do |name|
-      return document.querySelector("input[name=#{name}]").validity.valid
+      document.querySelector("input[name=#{name}]").validity.valid
     end
 
     $file.disabled = !valid
+
+    # new account request form
+    valid = true
+    %w(user pmc podling votelink).each do |name|
+      input = document.querySelector("input[name=#{name}]")
+      input.required = @user && !@user.empty?
+      input.required = false if name == 'podling' and @pmc != 'incubator'
+      valid &= input.validity.valid
+    end
+
+    $acreq.disabled = !valid or !@user
   end
 
   # generate file name from the public name
   def genfilename()
     @filename ||= @pubname.downcase().gsub(/\W/, '-') + '.pdf'
+  end
+
+  # show new account request window with fields filled in
+  def acreq()
+    params = %w{email user pmc podling votelink}.map do |name|
+      "#{name}=#{encodeURIComponent(self.state[name])}"
+    end
+
+    window.parent.frames.content.location.href = 
+      "https://id.apache.org/acreq/members/?" + params.join('&')
   end
 end

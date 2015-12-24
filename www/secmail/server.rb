@@ -81,6 +81,8 @@ get %r{^/(\d{6})/(\w+)/_index_$} do |month, hash|
   message = Mailbox.new(month).find(hash)
   pass unless message
   @attachments = message.attachments
+  @headers = message.headers.dup
+  @headers.delete :attachments
   _html :parts
 end
 

@@ -14,6 +14,6 @@ _html do
 
   _script src: '../../app.js'
   _.render '#attachments' do
-    _Parts attachments: @attachments
+    _Parts attachments: @attachments, headers: @headers
   end
 end

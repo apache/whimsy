@@ -87,7 +87,7 @@ class Parts < React
       end
 
       if @form
-        React.createElement @form, submit: self.submit
+        React.createElement @form, headers: @@headers, submit: self.submit
       end
     end
 

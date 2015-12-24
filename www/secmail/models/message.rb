@@ -1,4 +1,6 @@
 class Message
+  attr_reader :headers
+
   def initialize(mailbox, hash, headers, email)
     @hash = hash
     @mailbox = mailbox
