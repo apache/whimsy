@@ -168,7 +168,7 @@ class Index < React
       window.location.href = selected.href if selected
 
     elsif event.keyCode == 8 or event.keyCode == 46 # backspace or delete
-      if event.metaKey
+      if event.metaKey or event.ctrlKey
         event.preventDefault()
 
         # mark item as delete pending

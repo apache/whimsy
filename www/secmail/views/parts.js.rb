@@ -35,8 +35,13 @@ class Parts < React
     end
 
     _ul.contextMenu do
-      _li 'burst', onMouseDown: self.burst
-      _li 'delete', onMouseDown: self.delete_attachment
+      _li "\u2704 burst", onMouseDown: self.burst
+      _li.divider
+      _li "\u21B7 right", onMouseDown: self.rotate_attachment
+      _li "\u21c5 flip", onMouseDown: self.rotate_attachment
+      _li "\u21B6 left", onMouseDown: self.rotate_attachment
+      _li.divider
+      _li "\u2716 delete", onMouseDown: self.delete_attachment
     end
 
     _img.spinner src: '../../rotatingclock-slow2.gif' if @busy
@@ -64,10 +69,23 @@ class Parts < React
   def menu(event)
     @selected = event.currentTarget.textContent
     menu = document.querySelector('.contextMenu')
-    menu.style.left = event.clientX + 'px'
-    menu.style.top = event.clientY + 'px'
     menu.style.position = :absolute
     menu.style.display = :block
+
+    bodyRect = document.body.getBoundingClientRect()
+    menuRect = menu.getBoundingClientRect()
+    position = {x: event.clientX, y: event.clientY}
+
+    if position.x + menuRect.width > bodyRect.width
+      position.x -= menuRect.width if position.x >= menuRect.width
+    end
+
+    if position.y + menuRect.height > bodyRect.height
+      position.y -= menuRect.height if position.y >= menuRect.height
+    end
+
+    menu.style.left = position.x + 'px'
+    menu.style.top = position.y + 'px'
     event.preventDefault()
   end
 
@@ -132,6 +150,27 @@ class Parts < React
       else
         window.parent.location.href = '../..'
       end
+    end
+  end
+
+  # rotate an attachment
+  def rotate_attachment(event)
+    message = window.parent.location.pathname
+
+    data = {
+      selected: @selected,
+      message: message,
+      direction: event.currentTarget.textContent
+    }
+
+    @busy = true
+    HTTP.post '../../actions/rotate-attachment', data do |response|
+      @attachments = response.attachments
+      @selected = response.selected
+      @busy = false
+
+      # reload attachment in content pane
+      window.parent.frames.content.location.href = response.selected
     end
   end
 

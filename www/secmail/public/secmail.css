@@ -69,6 +69,14 @@ ul.contextMenu {
   padding-left: 28px;
 }
 
+.divider {
+  height: 2px;
+  width:100%;
+  margin: 9px 0;
+  padding: 0 4px;
+  background-color: #ccc;
+  }
+
 .spinner {
   position: absolute;
   z-index: -1;
