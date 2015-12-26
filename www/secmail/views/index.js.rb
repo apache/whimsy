@@ -83,7 +83,7 @@ class Index < React
 
   # fetch a month's worth of messages
   def fetch_month()
-    HTTP.get("/#{@nextmbox}", :json) do |response|
+    HTTP.get("/#{@nextmbox}", :json).then {|response|
       # update latest mbox
       @nextmbox = response.mbox
 
@@ -92,7 +92,10 @@ class Index < React
 
       # select oldest message
       self.selectRow Status.selected || @messages.last unless @selected
-    end
+    }.catch {|error|
+      console.log error
+      alert error
+    }
   end
 
   # update @selected, given either a DOM event or a message
@@ -110,9 +113,9 @@ class Index < React
     end
 
     # ensure selected message is not deleted
-    index = @messages.findIndex {|m| return m.href == href}
+    index = @messages.find_index {|m| m.href == href}
     index -= 1 while index >= 0 and @messages[index].status == :deleted
-    index = @messages.findIndex {|m| return m.status != :deleted} if index == -1
+    index = @messages.find_index {|m| m.status != :deleted} if index == -1
 
     @selected = Status.selected = @messages[index].href
   end
@@ -127,36 +130,41 @@ class Index < React
 
   def undo(event)
     message = Status.popStack()
-    selected = @messages.find {|m| return m.href == message}
+    selected = @messages.find {|m| m.href == message}
     if selected
       self.selectRow selected
       selected.status = :deletePending
 
       # send request to server to remove delete status
-      HTTP.patch(selected.href, status: nil) do
+      HTTP.patch(selected.href, status: nil).then {
         delete selected.status
         self.forceUpdate()
         self.selectRow message
-      end
+      }.catch {|error|
+        alert error
+      }
     end
   end
 
   def refresh(event)
     @checking = true
-    HTTP.post "actions/check-mail", mbox: @@mbox do |response|
+    HTTP.post("actions/check-mail", mbox: @@mbox).then {
       location.reload()
-    end
+    }.catch {|error|
+      alert error
+      @checking = false
+    }
   end
 
   # handle keyboard events
   def keydown(event)
     if event.keyCode == 38 # up
-      index = @messages.findIndex {|m| return m.href == @selected}
+      index = @messages.find_index {|m| m.href == @selected}
       self.selectRow @messages[index-1] if index > 0
       event.preventDefault()
 
     elsif event.keyCode == 40 # down
-      index = @messages.findIndex {|m| return m.href == @selected} + 1
+      index = @messages.find_index {|m| m.href == @selected} + 1
       while index < @messages.length and @messages[index].status == :deleted
         index += 1
       end
@@ -164,7 +172,7 @@ class Index < React
       event.preventDefault()
 
     elsif event.keyCode == 13 or event.keyCode == 39 # enter/return or right
-      selected = @messages.find {|m| return m.href == @selected}
+      selected = @messages.find {|m| m.href == @selected}
       window.location.href = selected.href if selected
 
     elsif event.keyCode == 8 or event.keyCode == 46 # backspace or delete
@@ -173,7 +181,7 @@ class Index < React
 
         # mark item as delete pending
         selected = @selected
-        index = @messages.findIndex {|m| return m.href == selected}
+        index = @messages.find_index {|m| m.href == selected}
         @messages[index].status = :deletePending if index >= 0
 
         # move selected pointer
@@ -186,13 +194,15 @@ class Index < React
         end
 
         # send request to server to perform delete
-        HTTP.delete(selected) do
-          index = @messages.findIndex {|m| return m.href == selected}
+        HTTP.delete(selected).then {
+          index = @messages.find_index {|m| m.href == selected}
           @messages[index].status = :deleted if index >= 0
           Status.pushDeleted selected
           self.selectRow selected if @selected == selected
           self.forceUpdate()
-        end
+        }.catch {|error|
+          alert error
+        }
       end
 
     elsif event.keyCode == 'Z'.ord

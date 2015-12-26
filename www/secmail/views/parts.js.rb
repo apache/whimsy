@@ -147,10 +147,13 @@ class Parts < React
     end
 
     @busy = true
-    HTTP.post form.action, data do |response|
+    HTTP(post form.action, data).then {|response|
       @busy = false
       alert response.result
-    end
+    }.catch {|error|
+      alert error
+      @busy = false
+    }
   end
 
   # hide context menu whenever a click is received outside the menu
@@ -163,10 +166,12 @@ class Parts < React
     document.querySelector('.contextMenu').style.display = :none
   end
 
+  # clicking on an attachment selects it
   def select(event)
     @selected = event.currentTarget.querySelector('a').getAttribute('href')
   end
 
+  # handle keyboard events
   def keydown(event)
     if event.keyCode == 8 or event.keyCode == 46 # backspace or delete
       if event.metaKey or event.ctrlKey
@@ -174,10 +179,13 @@ class Parts < React
         event.stopPropagation()
 
         pathname = window.parent.location.pathname
-        HTTP.delete(pathname) do
+        HTTP.delete(pathname).then {
           Status.pushDeleted pathname
           window.parent.location.href = '../..'
-        end
+        }.catch {|error|
+          alert error
+          @busy = false
+        }
       end
     end
   end
@@ -190,12 +198,15 @@ class Parts < React
     }
 
     @busy = true
-    HTTP.post '../../actions/burst', data do |response|
+    HTTP.post('../../actions/burst', data).then {|response|
       @attachments = response.attachments
       @selected = response.selected
       @busy = false
       window.parent.frames.content.location.href=response.selected
-    end
+    }.catch {|error|
+      alert error
+      @busy = false
+    }
   end
 
   # burst a PDF into individual pages
@@ -206,7 +217,7 @@ class Parts < React
     }
 
     @busy = true
-    HTTP.post '../../actions/delete-attachment', data do |response|
+    HTTP.post('../../actions/delete-attachment', data).then {|response|
       if response.attachments and not response.attachments.empty?
         @attachments = response.attachments
         @busy = false
@@ -214,7 +225,10 @@ class Parts < React
       else
         window.parent.location.href = '../..'
       end
-    end
+    }.catch {|error|
+      alert error
+      @busy = false
+    }
   end
 
   # rotate an attachment
@@ -228,14 +242,17 @@ class Parts < React
     }
 
     @busy = true
-    HTTP.post '../../actions/rotate-attachment', data do |response|
+    HTTP.post('../../actions/rotate-attachment', data).then {|response|
       @attachments = response.attachments
       @selected = response.selected
       @busy = false
 
       # reload attachment in content pane
       window.parent.frames.content.location.href = response.selected
-    end
+    }.catch {|error|
+      alert error
+      @busy = false
+    }
   end
 
   #
@@ -290,13 +307,16 @@ class Parts < React
 
     @busy = true
     @drag = nil
-    HTTP.post '../../actions/drop', data do |response| 
+    HTTP.post('../../actions/drop', data).then {|response| 
       @attachments = response.attachments
       @selected = response.selected
       @busy = false
       target.classList.remove 'drop-target'
       window.parent.frames.content.location.href=response.selected
-    end
+    }.catch {|error|
+      alert error
+      @busy = false
+    }
   end
 
   # cancel drag operation
