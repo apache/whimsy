@@ -1,3 +1,8 @@
+#
+# Parts list for a message: shows attachments, handles context
+# menus and drag and drop, and hosts forms.
+#
+
 class Parts < React
   def initialize
     @selected = nil
@@ -5,7 +10,12 @@ class Parts < React
     @attachments = []
     @drag = nil
     @form = nil
+    @menu = nil
   end
+
+  ########################################################################
+  #                     HTML rendering of this frame                     #
+  ########################################################################
 
   def render
     # common options for all list items
@@ -17,7 +27,7 @@ class Parts < React
       onDragLeave: self.dragLeave,
       onDragEnd: self.dragEnd,
       onDrop: self.drop,
-      onContextMenu: self.menu,
+      onContextMenu: self.showMenu,
       onClick: self.select
     }
 
@@ -47,8 +57,9 @@ class Parts < React
       _li "\u2716 delete", onMouseDown: self.delete_attachment
     end
 
-    # filing options
-    if @selected
+    if @selected and not @menu
+
+      # filing options
       _table.doctype do
         _tr do
           _td do
@@ -94,15 +105,19 @@ class Parts < React
     _img.spinner src: '../../rotatingclock-slow2.gif' if @busy
   end
 
-  # initialize attachments list with the data from the server
+  ########################################################################
+  #                           React lifecycle                            #
+  ########################################################################
+
+  # initial list of attachments comes from the server; may be updated
+  # by context menu actions.
   def componentWillMount()
     @attachments = @@attachments
   end
 
-  # disable context menu and register mouse and keyboard handlers
+  # register mouse and keyboard handlers, hide context menu
   def componentDidMount()
-    document.querySelector('.contextMenu').style.display = :none
-    window.onmousedown = self.window_click
+    window.onmousedown = self.hideMenu
 
     # register keyboard handler on parent window and all frames
     window.parent.onkeydown = self.keydown
@@ -110,11 +125,17 @@ class Parts < React
     for i in 0...frames.length
       frames[i].onkeydown=self.keydown
     end
+
+    self.hideMenu()
   end
 
+  ########################################################################
+  #                             Context menu                             #
+  ########################################################################
+
   # position and show context menu
-  def menu(event)
-    @selected = event.currentTarget.textContent
+  def showMenu(event)
+    @menu = event.currentTarget.textContent
     menu = document.querySelector('.contextMenu')
     menu.style.position = :absolute
     menu.style.display = :block
@@ -136,6 +157,89 @@ class Parts < React
     event.preventDefault()
   end
 
+  # hide context menu whenever a click is received outside the menu
+  def hideMenu(event)
+    target = event && event.target
+    while target
+      return if target.class == 'contextMenu'
+      target = target.parentNode
+    end
+
+    document.querySelector('.contextMenu').style.display = :none
+
+    @menu = nil
+    @busy = false
+  end
+
+  # burst a PDF into individual pages
+  def burst(event)
+    data = {
+      selected: @menu,
+      message: window.parent.location.pathname
+    }
+
+    @busy = true
+    HTTP.post('../../actions/burst', data).then {|response|
+      @attachments = response.attachments
+      @selected = response.selected
+      self.hideMenu()
+      window.parent.frames.content.location.href=response.selected
+    }.catch {|error|
+      alert error
+      self.hideMenu()
+    }
+  end
+
+  # burst a PDF into individual pages
+  def delete_attachment(event)
+    data = {
+      selected: @menu,
+      message: window.parent.location.pathname
+    }
+
+    @busy = true
+    HTTP.post('../../actions/delete-attachment', data).then {|response|
+      if response.attachments and not response.attachments.empty?
+        @attachments = response.attachments
+        self.hideMenu()
+        window.parent.frames.content.location.href='_body_'
+      else
+        window.parent.location.href = '../..'
+      end
+    }.catch {|error|
+      alert error
+      self.hideMenu()
+    }
+  end
+
+  # rotate an attachment
+  def rotate_attachment(event)
+    message = window.parent.location.pathname
+
+    data = {
+      selected: @menu,
+      message: message,
+      direction: event.currentTarget.textContent
+    }
+
+    @busy = true
+    HTTP.post('../../actions/rotate-attachment', data).then {|response|
+      @attachments = response.attachments
+      @selected = response.selected
+      self.hideMenu()
+
+      # reload attachment in content pane
+      window.parent.frames.content.location.href = response.selected
+    }.catch {|error|
+      alert error
+      self.hideMenu()
+    }
+  end
+
+  ########################################################################
+  #                            Miscellaneous                             #
+  ########################################################################
+
   # form submission - handles all forms
   def submit(event)
     event.preventDefault()
@@ -154,16 +258,6 @@ class Parts < React
       alert error
       @busy = false
     }
-  end
-
-  # hide context menu whenever a click is received outside the menu
-  def window_click(event)
-    target = event.target
-    while target
-      return if target.class == 'contextMenu'
-      target = target.parentNode
-    end
-    document.querySelector('.contextMenu').style.display = :none
   end
 
   # clicking on an attachment selects it
@@ -190,79 +284,16 @@ class Parts < React
     end
   end
 
-  # burst a PDF into individual pages
-  def burst(event)
-    data = {
-      selected: @selected,
-      message: window.parent.location.pathname
-    }
-
-    @busy = true
-    HTTP.post('../../actions/burst', data).then {|response|
-      @attachments = response.attachments
-      @selected = response.selected
-      @busy = false
-      window.parent.frames.content.location.href=response.selected
-    }.catch {|error|
-      alert error
-      @busy = false
-    }
-  end
-
-  # burst a PDF into individual pages
-  def delete_attachment(event)
-    data = {
-      selected: @selected,
-      message: window.parent.location.pathname
-    }
-
-    @busy = true
-    HTTP.post('../../actions/delete-attachment', data).then {|response|
-      if response.attachments and not response.attachments.empty?
-        @attachments = response.attachments
-        @busy = false
-        window.parent.frames.content.location.href='_body_'
-      else
-        window.parent.location.href = '../..'
-      end
-    }.catch {|error|
-      alert error
-      @busy = false
-    }
-  end
-
-  # rotate an attachment
-  def rotate_attachment(event)
-    message = window.parent.location.pathname
-
-    data = {
-      selected: @selected,
-      message: message,
-      direction: event.currentTarget.textContent
-    }
-
-    @busy = true
-    HTTP.post('../../actions/rotate-attachment', data).then {|response|
-      @attachments = response.attachments
-      @selected = response.selected
-      @busy = false
-
-      # reload attachment in content pane
-      window.parent.frames.content.location.href = response.selected
-    }.catch {|error|
-      alert error
-      @busy = false
-    }
-  end
-
+  ########################################################################
+  #                          drag/drop support                           #
+  ########################################################################
   #
-  # drag/drop support.  Note: support varies by browser (in particular,
-  # when events are called and whether or not a particular event has
-  # access to dataTransfer data.)  Accordingly, the below is coded in
-  # a way that is mildly redundant and uses React.js state data in lieu of
-  # dataTransfer.  Oddly, with some browsers, drag and drop isn't possible
-  # without setting something in dataTransfer, so that data is set too, even
-  # though it is not used.
+  # Note: support varies by browser (in particular, when events are called
+  # and whether or not a particular event has access to dataTransfer data.)
+  # Accordingly, the below is coded in a way that is mildly redundant and
+  # uses React.js state data in lieu of dataTransfer.  Oddly, with some
+  # browsers, drag and drop isn't possible without setting something in
+  # dataTransfer, so that data is set too, even though it is not used.
   #
 
   # start by capturing the 'href' attribute

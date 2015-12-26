@@ -63,6 +63,10 @@ form .btn {
   margin-top: 0.5em;
 }
 
+#attachments li {
+  width: 100%
+}
+
 .contextMenu {
   position: absolute;
   z-index: 9999999;
