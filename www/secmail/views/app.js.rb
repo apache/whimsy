@@ -3,6 +3,7 @@ require_relative 'status'
 
 require_relative 'index'
 require_relative 'parts'
+require_relative 'check-signature'
 
 require_relative 'forms/icla'
 require_relative 'forms/grant'

@@ -27,6 +27,13 @@ class Attachment
     name.untaint
   end
 
+  def as_file
+    file = Tempfile.new([safe_name, '.pdf'], encoding: Encoding::BINARY)
+    file.write(body)
+    file.rewind
+    file
+  end
+
   def as_pdf
     file = Tempfile.new([safe_name, '.pdf'], encoding: Encoding::BINARY)
     file.write(body)

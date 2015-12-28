@@ -37,6 +37,10 @@ class Parts < React
         options[:className] = 'dragging'
       elsif attachment == @selected
         options[:className] = 'selected'
+      elsif attachment == @selected + '.asc'
+        options[:className] = 'signature'
+      elsif attachment == @selected + '.sig'
+        options[:className] = 'signature'
       else
         options[:className] = nil
       end
@@ -58,6 +62,8 @@ class Parts < React
     end
 
     if @selected and not @menu
+
+      _CheckSignature selected: @selected, attachments: @attachments
 
       # filing options
       _table.doctype do
