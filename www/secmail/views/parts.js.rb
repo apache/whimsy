@@ -294,6 +294,8 @@ class Parts < React
           @busy = false
         }
       end
+    elsif event.keyCode == 38 # up
+      window.parent.location.href = '../..'
     end
   end
 
