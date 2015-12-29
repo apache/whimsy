@@ -37,9 +37,7 @@ class Parts < React
         options[:className] = 'dragging'
       elsif attachment == @selected
         options[:className] = 'selected'
-      elsif attachment == @selected + '.asc'
-        options[:className] = 'signature'
-      elsif attachment == @selected + '.sig'
+      elsif attachment == @selected + '.asc' or attachment == @selected + '.sig'
         options[:className] = 'signature'
       else
         options[:className] = nil
@@ -251,13 +249,22 @@ class Parts < React
     event.preventDefault()
     form = event.currentTarget
 
-    data = {}
+    # collect up name of selected attachment and all input fields
+    data = {message: window.parent.location.pathname, selected: @selected}
     Array(form.querySelectorAll('input')).each do |field|
       data[field.name] = field.value if field.name
     end
 
+    # add signature (if present)
+    @attachments.each do |attachment|
+      if attachment == @selected + '.asc' or attachment == @selected + '.sig'
+        data.signature = attach
+      end
+    end
+
+    # submit HTTP post request
     @busy = true
-    HTTP(post form.action, data).then {|response|
+    HTTP.post(form.action, data).then {|response|
       @busy = false
       alert response.result
     }.catch {|error|

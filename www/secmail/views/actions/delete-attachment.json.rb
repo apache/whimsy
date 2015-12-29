@@ -2,10 +2,7 @@
 # delete an attachment
 #
 
-month, hash = @message.match(%r{/(\d+)/(\w+)}).captures
-
-mbox = Mailbox.new(month)
-message = mbox.find(hash)
+message = Mailbox.find(@message)
 
 message.delete_attachment @selected
 

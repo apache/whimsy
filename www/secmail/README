@@ -18,7 +18,7 @@ Notes:
 
   Secretary email archive currently requires about approximately 11 Gigabytes.
 
-  Some functions will require installations of imageMagick and pdftk.
+  Some functions will require installations of gpg, imageMagick and pdftk.
 
   OS X El Capitan users may want to look at:
     http://stackoverflow.com/a/33248310

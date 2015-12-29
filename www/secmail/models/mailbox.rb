@@ -107,6 +107,14 @@ class Mailbox
   #
   # Find a message
   #
+  def self.find(message)
+    month, hash = message.match(%r{/(\d+)/(\w+)}).captures
+    Mailbox.new(month).find(hash)
+  end
+
+  #
+  # Find a message
+  #
   def find(hash)
     headers = YAML.load_file(yaml_file) rescue {}
     email = messages.find {|message| Mailbox.hash(message) == hash}

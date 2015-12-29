@@ -104,7 +104,7 @@ class ICLA < React
 
   # generate file name from the public name
   def genfilename()
-    @filename ||= @pubname.downcase().gsub(/\W/, '-') + '.pdf'
+    @filename ||= @pubname.downcase().gsub(/\W/, '-')
   end
 
   # show new account request window with fields filled in

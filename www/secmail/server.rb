@@ -9,6 +9,7 @@ require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 require 'sanitize'
 
+require_relative 'helpers'
 require_relative 'models/mailbox'
 
 # list of messages

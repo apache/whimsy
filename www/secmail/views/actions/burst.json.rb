@@ -2,10 +2,7 @@
 # burst a document into separate pages
 #
 
-month, hash = @message.match(%r{/(\d+)/(\w+)}).captures
-
-mbox = Mailbox.new(month)
-message = mbox.find(hash)
+message = Mailbox.find(@message)
 
 attachments = []
 

@@ -2,10 +2,7 @@
 # drop part of drag and drop
 #
 
-month, hash = @message.match(%r{/(\d+)/(\w+)}).captures
-
-mbox = Mailbox.new(month)
-message = mbox.find(hash)
+message = Mailbox.find(@message)
 
 begin
   source = message.find(@source).as_pdf

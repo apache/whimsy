@@ -86,4 +86,34 @@ class Message
       yaml[@hash] = @headers
     end
   end
+
+  # write one or more attachments to directory containing an svn checkout
+  def write_svn(repos, filename, *attachments)
+    attachments = attachments.flatten.compact
+
+    if attachments.length == 1
+      ext = File.extname(attachments.first).untaint
+      find(attachments.first).write_svn(repos, filename + ext)
+    else
+      # validate filename
+      if filename.start_with? '.' or filename !~ /\A[.\w]\Z/
+	 raise IOError.new("invalid filename: #{filename}")
+      end
+
+      # ensure directory doesn't exist
+      dest = File.join(iclas, filename).untaint
+      raise Errno::EEXIST.new(filename) if File.exist? dest
+
+      # create directory
+      Dir.mkdir dest
+      Kernel.system 'svn', 'add', dest
+
+      # write out selected attachment
+      attachments.each do |attachment|
+        find(attachment).write_svn(repos, dest)
+      end
+
+      File.join(repos, dest)
+    end
+  end
 end

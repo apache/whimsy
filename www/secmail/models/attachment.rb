@@ -53,4 +53,31 @@ class Attachment
 
     return file
   end
+
+  # write a file out to svn
+  def write_svn(repos, file)
+    if file.start_with? '.' or file !~ /\A[-.\w]+\Z/
+      raise IOError.new("Invalid filename: #{file}")
+    end
+
+    filename = File.join(repos, file)
+
+    if Dir.exist? filename
+      if name.start_with? '.' or name !~ /\A[.\w]+\Z/
+        raise IOError.new("Invalid filename: #{name}")
+      end
+
+      filename = File.join(filename, name)
+      raise Errno::EEXIST.new(File.join(file, name)) if File.exist? filename
+    else
+      raise Errno::EEXIST.new(file) if File.exist? filename
+    end
+
+    File.write filename, body, encoding: Encoding::BINARY
+
+    system 'svn', 'add', filename
+    system 'svn', 'propset', 'svn:mime-type', content_type.untaint, filename
+
+    filename
+  end
 end

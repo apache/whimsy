@@ -2,10 +2,7 @@
 # check signature on an attachment
 #
 
-month, hash = @message.match(%r{/(\d+)/(\w+)}).captures
-
-mbox = Mailbox.new(month)
-message = mbox.find(hash)
+message = Mailbox.find(@message)
 
 begin
   # fetch attachment and signature
