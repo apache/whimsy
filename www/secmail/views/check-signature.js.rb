@@ -1,3 +1,7 @@
+#
+# Check signatures for validity using gpg on the server
+#
+
 class CheckSignature < React
   def initialize
     @signature = nil
@@ -15,9 +19,7 @@ class CheckSignature < React
   end
 
   def componentWillReceiveProps()
-    @signature = @@attachments.find {|attachment|
-      attachment == @@selected + '.asc' or attachment == @@selected + '.sig'
-    }
+    @signature = CheckSignature.find(@@selected, @@attachments)
 
     if @signature and @signature != @checked
       @flag = 'alert-info'
@@ -45,5 +47,28 @@ class CheckSignature < React
         @flag = 'alert-warning'
       }
     end
+  end
+
+  # find signature file that matches the selected attachment from the list
+  # of attachments
+  def self.find(selected, attachments)
+    return unless selected
+
+    # first look for a signature that matches this selected file
+    signature = attachments.find {|attachment|
+      attachment == selected + '.asc' or attachment == selected + '.sig'
+    }
+
+    # if no exact match, look closer at the other attachment if there
+    # are exactly two attachments
+    if not signature and attachments.length == 2
+      signature = attachments.find {|attachment| attachment != selected}
+
+      unless signature.end_with? '.asc' or signature.end_with? '.sig'
+        signature = nil
+      end
+    end
+
+    return signature
   end
 end

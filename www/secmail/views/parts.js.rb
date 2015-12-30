@@ -31,13 +31,16 @@ class Parts < React
       onClick: self.select
     }
 
+    # locate corresponding signature file (if any)
+    signature = CheckSignature.find(@selected, @attachments)
+
     # list of attachments
     _ul @attachments, ref: 'attachments' do |attachment|
       if attachment == @drag
         options[:className] = 'dragging'
       elsif attachment == @selected
         options[:className] = 'selected'
-      elsif attachment == @selected + '.asc' or attachment == @selected + '.sig'
+      elsif attachment == signature
         options[:className] = 'signature'
       else
         options[:className] = nil
@@ -256,11 +259,7 @@ class Parts < React
     end
 
     # add signature (if present)
-    @attachments.each do |attachment|
-      if attachment == @selected + '.asc' or attachment == @selected + '.sig'
-        data.signature = attach
-      end
-    end
+    data.signature = CheckSignature.find(@selected, @attachments)
 
     # submit HTTP post request
     @busy = true
