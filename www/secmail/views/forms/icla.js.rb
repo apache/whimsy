@@ -1,6 +1,7 @@
 class ICLA < React
   def initialize
     @filed = false
+    @checked = nil
   end
 
   def render
@@ -48,7 +49,7 @@ class ICLA < React
         _tr do
           _th 'User ID'
           _td do
-            _input name: 'user', value: @user
+            _input name: 'user', value: @user, onBlur: self.validate_userid
           end
         end
 
@@ -119,6 +120,18 @@ class ICLA < React
     @@submit.call(event).then {|response|
       @filed = true
       alert response.result
+    }
+  end
+
+  # validate userid is available
+  def validate_userid(event)
+    return unless @user and @user != @checked
+    input = event.target
+    HTTP.post('../../actions/check-id', id: @user).then {|result|
+      input.setCustomValidity(result.message)
+      @checked = @user
+    }.catch {|message|
+      alert message
     }
   end
 
