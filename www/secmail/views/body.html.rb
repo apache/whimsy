@@ -43,7 +43,9 @@ _html do
         body.force_encoding(@message.html_part.charset)
       end
 
-      _{body.encode('utf-8', invalid: :replace, undef: :replace)}
+      nodes = _{body.encode('utf-8', invalid: :replace, undef: :replace)}
+
+      fixup_images(nodes)
     end
   elsif @message.text_part
     body = @message.text_part.body.to_s

@@ -11,11 +11,11 @@ class Message
   # find an attachment
   def find(name)
     headers = @headers[:attachments].find do |attach|
-      attach[:name] == name
+      attach[:name] == name or attach['Content-ID'].to_s == '<' + name + '>'
     end
 
     part = mail.attachments.find do |attach| 
-      attach.filename == name or attach['Content-ID'].to_s == name
+      attach.filename == name or attach['Content-ID'].to_s == '<' + name + '>'
     end
 
     if headers
