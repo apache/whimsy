@@ -185,7 +185,7 @@ class Parts < React
     @busy = true
     HTTP.post('../../actions/burst', data).then {|response|
       @attachments = response.attachments
-      @selected = response.selected
+      self.selectPart response.selected
       self.hideMenu()
       window.parent.frames.content.location.href=response.selected
     }.catch {|error|
@@ -229,7 +229,7 @@ class Parts < React
     @busy = true
     HTTP.post('../../actions/rotate-attachment', data).then {|response|
       @attachments = response.attachments
-      @selected = response.selected
+      self.selectPart response.selected
       self.hideMenu()
 
       # reload attachment in content pane
@@ -264,9 +264,9 @@ class Parts < React
 
     # submit HTTP post request
     @busy = true
-    HTTP.post(form.action, data).then {|response|
+    return HTTP.post(form.action, data).then {|response|
       @busy = false
-      alert response.result
+      return response
     }.catch {|error|
       alert error
       @busy = false
@@ -275,7 +275,19 @@ class Parts < React
 
   # clicking on an attachment selects it
   def select(event)
-    @selected = event.currentTarget.querySelector('a').getAttribute('href')
+    self.selectPart event.currentTarget.querySelector('a').getAttribute('href')
+  end
+
+  # if selection changes, reset form and radio buttons
+  def selectPart(part)
+    if @selected != part
+      @selected = part
+      @form = nil
+
+      Array(document.querySelectorAll('input[type=radio]')).each do |button|
+        button.checked = false
+      end
+    end
   end
 
   # handle keyboard events
@@ -354,9 +366,9 @@ class Parts < React
     @busy = true
     @drag = nil
     HTTP.post('../../actions/drop', data).then {|response| 
-      @attachments = response.attachments
-      @selected = response.selected
       @busy = false
+      @attachments = response.attachments
+      self.selectPart response.selected
       target.classList.remove 'drop-target'
       window.parent.frames.content.location.href=response.selected
     }.catch {|error|

@@ -1,11 +1,16 @@
 class ICLA < React
+  def initialize
+    @filed = false
+  end
+
   def render
-    _form action: '../../actions/icla', method: 'post', onSubmit: @@submit do
+    _form action: '../../actions/icla', method: 'post', onSubmit: self.file do
       _table.form do
         _tr do
           _th 'Real Name'
           _td do
-            _input name: 'realname', value: @realname, required: true
+            _input name: 'realname', value: @realname, required: true,
+               disabled: @filed
           end
         end
 
@@ -13,14 +18,15 @@ class ICLA < React
           _th 'Public Name'
           _td do
             _input name: 'pubname', value: @pubname, required: true,
-              onFocus: -> {@pubname ||= @realname}
+              disabled: @filed, onFocus: -> {@pubname ||= @realname}
           end
         end
 
         _tr do
           _th 'E-mail'
           _td do
-            _input name: 'email', value: @email, required: true, type: 'email'
+            _input name: 'email', value: @email, required: true, type: 'email',
+              disabled: @filed
           end
         end
 
@@ -28,7 +34,8 @@ class ICLA < React
           _th 'File Name'
           _td do
             _input name: 'filename', value: @filename, required: true,
-              pattern: '[a-zA-Z][-\w]+(\.[a-z]+)?', onFocus: self.genfilename
+              pattern: '[a-zA-Z][-\w]+(\.[a-z]+)?', onFocus: self.genfilename,
+              disabled: @filed
           end
         end
       end
@@ -68,7 +75,7 @@ class ICLA < React
       end
 
       _button.btn.btn_primary 'Request Account', ref: 'acreq',
-        onClick: self.acreq
+        onClick: self.request_account
     end
   end
 
@@ -88,7 +95,7 @@ class ICLA < React
       document.querySelector("input[name=#{name}]").validity.valid
     end
 
-    $file.disabled = !valid
+    $file.disabled = !valid or @filed
 
     # new account request form
     valid = true
@@ -99,7 +106,7 @@ class ICLA < React
       valid &= input.validity.valid
     end
 
-    $acreq.disabled = !valid or !@user
+    $acreq.disabled = !valid or !@user or !@filed
   end
 
   # generate file name from the public name
@@ -107,8 +114,16 @@ class ICLA < React
     @filename ||= @pubname.downcase().gsub(/\W/, '-')
   end
 
+  # handle ICLA form submission
+  def file(event)
+    @@submit.call(event).then {|response|
+      @filed = true
+      alert response.result
+    }
+  end
+
   # show new account request window with fields filled in
-  def acreq()
+  def request_account()
     params = %w{email user pmc podling votelink}.map do |name|
       "#{name}=#{encodeURIComponent(self.state[name])}"
     end
