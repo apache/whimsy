@@ -1,6 +1,5 @@
-************************************************************************
-*                               Preface                                *
-************************************************************************
+Preface
+*******
 
 Whimsy is a set of independent tools and a common library which typically will
 need to access various ASF SVN directories and/or LDAP.  To do development and
