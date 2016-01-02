@@ -83,7 +83,7 @@ Skip this section if you are running a Docker container or a Vagrant VM.
 
  2. A `TLS_CACERT` can be obtained via either of the following commands:
 
-        `ruby -r whimsy/asf -e "puts ASF::LDAP.cert"`
+        `ruby -r whimsy/asf -e "puts ASF::LDAP.cert"`<br/>
         `openssl s_client -connect ldap1-us-east.apache.org:636 </dev/null`
 
       Copy from BEGIN to END inclusive into the file 
