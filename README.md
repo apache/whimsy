@@ -30,10 +30,9 @@ This directory has two main subdirectories...
 
    Some of the scripts (like the roster tool) are long running servers.  The
    board agenda tool is currently hosted on github, but this will be
-   consolidated to the consolidated svn repository once the following
-   request is complete:
-
-     https://issues.apache.org/jira/browse/INFRA-10399
+   consolidated to the consolidated svn repository once 
+   [INFRA-10399](https://issues.apache.org/jira/browse/INFRA-10399) 
+   is complete.
 
 Setup
 =====
@@ -78,34 +77,34 @@ Skip this section if you are running a Docker container or a Vagrant VM.
 
 4. Access to LDAP requires configuration, and a cert.
  4.1 The model code determines what host and port to connect to by parsing
-      either /etc/ldap/ldap.conf or /etc/ldap/ldap.conf for a line that looks
+      either `/etc/ldap/ldap.conf` or `/etc/ldap/ldap.conf` for a line that looks
       like the following:
-        uri     ldaps://ldap1-us-east.apache.org:636
+        `uri     ldaps://ldap1-us-east.apache.org:636`
 
- 4.2 A TLS_CACERT can be obtained via either of the following commands:
+ 4.2 A `TLS_CACERT` can be obtained via either of the following commands:
 
-        ruby -r whimsy/asf -e "puts ASF::LDAP.cert"
-        openssl s_client -connect ldap1-us-east.apache.org:636 </dev/null
+        `ruby -r whimsy/asf -e "puts ASF::LDAP.cert"`
+        `openssl s_client -connect ldap1-us-east.apache.org:636 </dev/null`
 
       Copy from BEGIN to END inclusive into the file 
-      /etc/ldap/asf-ldap-client.pem.  Point to the file in
-      /etc/ldap/ldap.conf with a line like the following:
+      `/etc/ldap/asf-ldap-client.pem`.  Point to the file in
+      `/etc/ldap/ldap.conf` with a line like the following:
 
-        TLS_CACERT      /etc/ldap/asf-ldap-client.pem
+     ```   TLS_CACERT      /etc/ldap/asf-ldap-client.pem```
 
       N.B. OpenLDAP uses /etc/openldap/ instead of /etc/ldap/ 
       Adjust the paths above as necessary
  
       These above updates can be done for you with the following command:
 
-        sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
+        `sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"`
 
       Note: the certificate is needed because the LDAP hosts use a self-signed
       certificate
 
 5. Verify that the configuration is correct by running:
 
-   ruby examples/board.rb
+   `ruby examples/board.rb`
 
    See comments in that file for running the script as a standalone server.
 
