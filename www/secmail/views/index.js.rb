@@ -60,7 +60,11 @@ class Index < React
   # on initial load, fetch latest mailbox and subscribe to keyboard events,
   # initialize selected item.
   def componentDidMount()
-    self.fetch_month()
+    self.fetch_month() do
+      # for the first week of the month, fetch previous month too
+      self.fetch_month() if Date.new().getDate() <= 7
+    end
+
     window.onkeydown = self.keydown
      self.selectRow Status.selected if @messages.length > 0
   end
@@ -82,7 +86,7 @@ class Index < React
   end
 
   # fetch a month's worth of messages
-  def fetch_month()
+  def fetch_month(&block)
     HTTP.get("/#{@nextmbox}", :json).then {|response|
       # update latest mbox
       @nextmbox = response.mbox
@@ -92,6 +96,9 @@ class Index < React
 
       # select oldest message
       self.selectRow Status.selected || @messages.last unless @selected
+
+      # if block provided, call it
+      block() if block
     }.catch {|error|
       console.log error
       alert error
@@ -117,7 +124,7 @@ class Index < React
     index -= 1 while index >= 0 and @messages[index].status == :deleted
     index = @messages.find_index {|m| m.status != :deleted} if index == -1
 
-    @selected = Status.selected = @messages[index].href
+    @selected = Status.selected = (index >= 0 ? @messages[index].href : nil)
   end
 
   # navigate
