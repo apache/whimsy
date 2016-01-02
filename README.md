@@ -76,12 +76,12 @@ Skip this section if you are running a Docker container or a Vagrant VM.
 ```
 
 4. Access to LDAP requires configuration, and a cert.
- 4.1 The model code determines what host and port to connect to by parsing
+ 1. The model code determines what host and port to connect to by parsing
       either `/etc/ldap/ldap.conf` or `/etc/ldap/ldap.conf` for a line that looks
       like the following:
         `uri     ldaps://ldap1-us-east.apache.org:636`
 
- 4.2 A `TLS_CACERT` can be obtained via either of the following commands:
+ 2. A `TLS_CACERT` can be obtained via either of the following commands:
 
         `ruby -r whimsy/asf -e "puts ASF::LDAP.cert"`
         `openssl s_client -connect ldap1-us-east.apache.org:636 </dev/null`
