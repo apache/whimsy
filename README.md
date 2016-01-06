@@ -13,6 +13,12 @@ The primary advantage of using an image or a VM is isolation.  The primary
 disadvantage is that you will need to install your SVN credentials there and
 arrange to either duplicate or mount your SVN directories.
 
+Automated deployment via Puppet is still a work in progress; current status
+can be found in the following pages:
+[development](DEVELOPMENT.md),
+[deployment](DEPLOYMENT.md),
+[todos](TODOS.md).
+
 Overview
 ========
 
