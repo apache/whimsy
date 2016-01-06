@@ -108,8 +108,6 @@ class Parts < React
         React.createElement @form, headers: @@headers, submit: self.submit
       end
     end
-
-    _img.spinner src: '../../rotatingclock-slow2.gif' if @busy
   end
 
   ########################################################################
@@ -134,6 +132,14 @@ class Parts < React
     end
 
     self.hideMenu()
+  end
+
+  def componentDidUpdate()
+    if @busy
+      document.body.classList.add 'busy'
+    else
+      document.body.classList.remove 'busy'
+    end
   end
 
   ########################################################################

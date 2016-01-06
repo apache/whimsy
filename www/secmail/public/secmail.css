@@ -98,6 +98,10 @@ ul.contextMenu {
   cursor: pointer;
 }
 
+.busy, .busy input, .busy .contextMenu li:hover {
+  cursor: wait;
+}
+
 .contextMenu a {
   color: #333;
   text-decoration: none;
