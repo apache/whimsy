@@ -100,24 +100,24 @@ class Message
       find(attachments.first).write_svn(repos, filename + ext)
     else
       # validate filename
-      if filename.start_with? '.' or filename !~ /\A[.\w]\Z/
-	 raise IOError.new("invalid filename: #{filename}")
+      unless filename =~ /\A[a-zA-Z][-.\w]+\Z/
+	      raise IOError.new("invalid filename: #{filename}")
       end
 
       # ensure directory doesn't exist
-      dest = File.join(iclas, filename).untaint
+      dest = File.join(repos, filename).untaint
       raise Errno::EEXIST.new(filename) if File.exist? dest
 
       # create directory
       Dir.mkdir dest
-      Kernel.system 'svn', 'add', dest
 
       # write out selected attachment
       attachments.each do |attachment|
-        find(attachment).write_svn(repos, dest)
+        find(attachment).write_svn(repos, filename)
       end
 
-      File.join(repos, dest)
+      Kernel.system 'svn', 'add', dest
+      dest
     end
   end
 end

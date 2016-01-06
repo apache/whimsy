@@ -2,6 +2,7 @@ class ICLA < React
   def initialize
     @filed = false
     @checked = nil
+    @submitted = false
   end
 
   def render
@@ -96,7 +97,7 @@ class ICLA < React
       document.querySelector("input[name=#{name}]").validity.valid
     end
 
-    $file.disabled = !valid or @filed
+    $file.disabled = !valid or @filed or @submitted
 
     # new account request form
     valid = true
@@ -117,9 +118,15 @@ class ICLA < React
 
   # handle ICLA form submission
   def file(event)
+    @submitted = true
+
     @@submit.call(event).then {|response|
       @filed = true
+      @submitted = false
       alert response.result
+    }.catch {
+      @filed = false
+      @submitted = false
     }
   end
 

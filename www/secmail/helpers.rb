@@ -5,7 +5,7 @@ helpers do
     out, err, rc = Open3.capture3 'svn', 'cleanup', path
     out, err, rc = Open3.capture3 'svn', 'revert', '--recursive', path
     out, err, rc = Open3.capture3 'svn', 'status', path
-    File.unlink *out.scan(/^\?\s+(.*)/).flatten.map(&:untaint)
+    FileUtils.rm_rf out.scan(/^\?\s+(.*)/).flatten.map(&:untaint)
     out, err, rc = Open3.capture3 'svn', 'update', path
   end
 

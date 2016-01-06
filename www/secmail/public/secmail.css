@@ -98,7 +98,7 @@ ul.contextMenu {
   cursor: pointer;
 }
 
-.busy, .busy input, .busy .contextMenu li:hover {
+.busy, .busy input, .busy input:disabled, .busy .contextMenu li:hover {
   cursor: wait;
 }
 
