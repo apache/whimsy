@@ -62,7 +62,7 @@ class Parts < React
       _li "\u2716 delete", onMouseDown: self.delete_attachment
     end
 
-    if @selected and not @menu
+    if @selected and not @menu and @selected !~ /\.(asc|sig)$/
 
       _CheckSignature selected: @selected, attachments: @attachments
 
