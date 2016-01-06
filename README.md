@@ -60,22 +60,19 @@ Skip this section if you are running a Docker container or a Vagrant VM.
 3. current SVN checkouts of various repositories are made (or linked to from)
    `/home/whimsysvn/svn`
 
-```
-   svn co --depth=files https://svn.apache.org/repos/private/foundation
-```
+        svn co --depth=files https://svn.apache.org/repos/private/foundation
 
    You can specify an alternate location for these directories by placing
    a configuration file named `.whimsy` in your home directory.  The format
    for this file is YAML, and an example (be sure to include the dashed
    lines):
 
-```
-     :svn:
-     - /home/rubys/svn/foundation
-     - /home/rubys/svn/committers
-```
+        :svn:
+        - /home/rubys/svn/foundation
+        - /home/rubys/svn/committers
 
 4. Access to LDAP requires configuration, and a cert.
+
  1. The model code determines what host and port to connect to by parsing
       either `/etc/ldap/ldap.conf` or `/etc/ldap/ldap.conf` for a line that looks
       like the following:
