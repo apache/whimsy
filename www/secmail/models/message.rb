@@ -48,7 +48,7 @@ class Message
   end
 
   def text_part
-    mail.html_part
+    mail.text_part
   end
 
   def attachments
