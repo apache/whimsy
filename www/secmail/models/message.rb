@@ -27,6 +27,10 @@ class Message
     @mail ||= Mail.new(@email)
   end
 
+  def raw
+    @email
+  end
+
   def from
     mail[:from]
   end

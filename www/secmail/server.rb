@@ -101,6 +101,13 @@ get %r{^/(\d{6})/(\w+)/_headers_$} do |month, hash|
   _html :headers
 end
 
+# raw data for a single message
+get %r{^/(\d{6})/(\w+)/_raw_$} do |month, hash|
+  message = Mailbox.new(month).find(hash)
+  pass unless message
+  [200, {'Content-Type' => 'text/plain'}, message.raw]
+end
+
 # a specific attachment for a message
 get %r{^/(\d{6})/(\w+)/(.*?)$} do |month, hash, name|
   message = Mailbox.new(month).find(hash)
