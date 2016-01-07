@@ -84,7 +84,15 @@ class ICLA < React
   # on initial display, default various fields based on headers, and update
   # state 
   def componentDidMount()
-    @realname = @@headers.name
+    name = @@headers.name
+ 
+    # reorder name if there is a single comma present
+    parts = name.split(',')
+    if parts.length == 2 and parts[1] !~ /^\s*(jr|ph\.d)\.?$/i
+      name = "#{parts[1].strip()} #{parts[0]}" 
+    end
+
+    @realname = name
     @email = @@headers.from
     self.componentDidUpdate()
   end
