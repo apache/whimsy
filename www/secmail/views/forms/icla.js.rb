@@ -113,7 +113,7 @@ class ICLA < React
 
   # generate file name from the public name
   def genfilename()
-    @filename ||= @pubname.downcase().gsub(/\W/, '-')
+    @filename ||= asciize(@pubname.strip()).downcase().gsub(/\W/, '-')
   end
 
   # handle ICLA form submission

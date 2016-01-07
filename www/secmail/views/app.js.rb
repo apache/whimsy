@@ -1,3 +1,4 @@
+require_relative 'asciize'
 require_relative 'http'
 require_relative 'status'
 
