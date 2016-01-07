@@ -15,7 +15,7 @@ insert = [
   @realname.strip,
   @pubname.strip,
   @email.strip,
-  "Signed CLA; #{@filename}"
+  "Signed CLA;#{@filename}"
 ].join(':')
 
 # update iclas.txt
