@@ -1,0 +1,85 @@
+This directory contains a script that fetches and parsed secretary emails
+and a server that will enable exploration of those emails.
+
+
+Usage:
+
+  rake fetch
+  rake server
+
+Notes:
+
+  First fetch and parse will take approximately an hour, even with a relatively
+  fast machine and internet connection.  Subsequent fetches will take as
+  little as ten seconds or less.  (For the impatient: replace 'fetch' with
+  'fetch1' and you will only get the latest month.  At some later point,
+  running 'rake fetch' will fetch the remaining months as well as any new
+  emails that have arrived in the current month).
+
+  Secretary email archive currently requires about approximately 11 Gigabytes.
+
+  Some functions will require installations of gpg, imageMagick and pdftk.
+
+  OS X El Capitan users may want to look at:
+    http://stackoverflow.com/a/33248310
+
+Overview of files:
+
+  Gemfile:            Ruby configuration (installation of gems)
+  Rakefile:           Command line configuration (like 'make')
+  config.rb:          Customizations
+  config.ru:          Rack (webserver) configuration
+  mailbox.rb:         Encapsulate interface to wb server
+  officers-secretary: local copy of mailboxes and indexes (in YAML format)
+  parsemail.rb:       Fetch and parse emails
+  server.rb:          Web interface to emails
+  views:              HTML templates (in Wunderbar format)
+
+Overview of control flow:
+
+  server.rb:          Matches HTTP requests to methods and paths, and runs
+                      the associated code.  This code will either return a
+                      result directly (rare) or invoke a view using a method
+                      name starting with an underscore.  For more
+                      information, see:
+
+                      http://www.sinatrarb.com/documentation.html
+                      https://github.com/rubys/wunderbar/#readme
+
+  views:              Files in the views directory have two extensions, the
+                      first identifies the target type (html, json, js), the
+                      second indicates the language of the view (rb).
+
+    html views:       Method names that start with an underscore generate HTML.
+                      This HTML may pull in scripts, stylesheets, and have
+                      inline code that renders other views.  Views in the
+                      actions subdirectory produce responses to HTTP post
+                      requests.
+
+    js views:         This code is converted from Ruby to JavaScript.
+                      This conversion is aware of React.js and will perform
+                      additional React.js mappings when it encounters classes
+                      that derive from "React".  See
+
+                      https://facebook.github.io/react/docs/component-specs.html
+                      https://github.com/rubys/ruby2js#readme
+
+                      Note: in this application app.js.rb pulls in all of the
+                      other javascript files and returns the result as a
+                      single file.
+
+    json views:       The last statement identifies an object (typically a
+                      hash or array) that will be converted to JSON and sent
+                      back as a response.
+
+Model:
+
+  mailbox.rb:         read-only interface to a mailbox files found in
+                      officers-secretary as well as read/write interface
+                      to accompanying YAML file.
+
+  message.rb:         representation of an individual message, backed by
+                      both the mbox file and the YAML file.
+
+  attachment.rb:      representation of an individual attachment, backed by
+                      both the mbox file and the YAML file.

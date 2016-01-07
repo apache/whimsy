@@ -1,0 +1,131 @@
+#index table {
+  margin-left: 8px;
+}
+
+#index td:nth-child(2), #index th:nth-child(2) {
+  padding-right: 7px;
+  padding-left: 7px;
+}
+
+#index button {
+  margin: 5px;
+}
+
+.selected {
+  background-color: yellow;
+}
+
+.signature {
+  background-color: #FC0;
+}
+
+.dragging {
+  opacity: 0.5;
+}
+
+.drop-target {
+  border: 2px solid green;
+  border-radius: 1em;
+  padding: 0.5em;
+}
+
+.deleted {
+  opacity: 0.5;
+}
+
+table.doctype {
+  width: 100%;
+}
+
+table.doctype td {
+  text-align: center;
+}
+
+table.form {
+  width: 100%;
+  margin-left: 1em;
+  margin-top: 2em;
+}
+
+.form input {
+  width: 100%;
+}
+
+.form input:invalid {
+  border: 1px solid red;
+}
+
+.form th {
+  max-width: 4em;
+  height: 2.5em;
+  font-weight: normal;
+}
+
+form .btn {
+  display: block;
+  margin: auto;
+  margin-top: 0.5em;
+}
+
+#attachments li {
+  width: 100%
+}
+
+.contextMenu {
+  position: absolute;
+  z-index: 9999999;
+  border: solid 1px #CCC;
+  background: #EEE;
+  padding: 0px;
+  margin: 0px;
+  display: none;
+  background-repeat: no-repeat;
+}
+
+ul.contextMenu {
+  padding: 8px 0;
+}
+
+.contextMenu li {
+  list-style: none;
+  padding: 0px 8px;
+  margin: 0px;
+}
+
+.contextMenu li:hover {
+  background-color: #1E90FF;
+  color: white;
+  cursor: pointer;
+}
+
+.busy, .busy input, .busy input:disabled, .busy .contextMenu li:hover {
+  cursor: wait;
+}
+
+.contextMenu a {
+  color: #333;
+  text-decoration: none;
+  display: block;
+  line-height: 20px;
+  height: 20px;
+  background-position: 6px center;
+  background-repeat: no-repeat;
+  outline: none;
+  padding: 1px 5px;
+  padding-left: 28px;
+}
+
+.divider {
+  height: 2px;
+  width:100%;
+  margin: 9px 0;
+  padding: 0 4px;
+  background-color: #ccc;
+  }
+
+.spinner {
+  position: absolute;
+  z-index: -1;
+  right: 0;
+  top: 0;
+}

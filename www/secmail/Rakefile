@@ -1,0 +1,48 @@
+require_relative 'config'
+
+verbose false
+
+task :default do
+  puts 'Usage:'
+  sh 'rake', '-T'
+end
+
+file 'Gemfile.lock' => 'Gemfile' do
+  sh 'bundle update'
+  touch 'Gemfile.lock'
+end
+
+desc 'install dependencies'
+task :bundle => 'Gemfile.lock'
+
+desc 'Parse emails'
+task :parse => :bundle do
+  ruby 'parsemail.rb'
+end
+
+desc 'Fetch and parse emails'
+task :fetch => :bundle do
+  ruby 'parsemail.rb', '--fetch'
+end
+
+desc 'Fetch parse latest month only'
+task :fetch1 => :bundle do
+  ruby 'parsemail.rb', '--fetch1'
+end
+
+desc 'WebServer that provides an interface to explore emails'
+task :server => :bundle do
+  ENV['RACK_ENV']='production'
+
+  require 'wunderbar'
+  module Wunderbar::Listen
+    EXCLUDE = [ARCHIVE, 'public/assets']
+  end
+
+  require 'wunderbar/listen'
+end
+
+desc 'remove all parsed yaml files'
+task :clean do
+  rm_rf Dir["#{ARCHIVE}/*.yml"]
+end

@@ -2,6 +2,18 @@ require 'wunderbar'
 require 'ldap'
 
 module ASF
+  module LDAP
+     # https://www.pingmybox.com/dashboard?location=304
+     # https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
+    HOSTS = %w(
+      ldaps://ldap1-us-west.apache.org:636
+      ldaps://ldap1-eu-central.apache.org:636
+      ldaps://ldap2-us-west.apache.org:636
+      ldaps://ldap1-us-east.apache.org:636
+      ldaps://snappy5.apache.org:636
+    )
+  end
+
   # determine where ldap.conf resides
   if Dir.exist? '/etc/openldap'
     ETCLDAP = '/etc/openldap'
@@ -349,13 +361,7 @@ module ASF
       end
 
       # if all else fails, pick one at random
-      unless host
-        # https://www.pingmybox.com/dashboard?location=304
-        host = %w(ldaps://ldap1-us-west.apache.org:636
-          ldaps://ldap1-eu-central.apache.org:636
-          ldaps://ldap2-us-west.apache.org:636
-          ldaps://ldap1-us-east.apache.org:636).sample
-      end
+      host = ASF::LDAP::HOSTS.sample unless host
 
       host
     end

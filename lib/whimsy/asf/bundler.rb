@@ -14,14 +14,14 @@ module Bundler
 
       path = nil
       libs.each do |lib|
-	 if File.exist?("#{lib}/#{pname}")
-	   path = lib
-	 end
+         if File.exist?("#{lib}/#{pname}")
+           path = lib
+         end
       end
 
       if path
-	args.push({}) unless args.last.is_a?(Hash)
-	args.last[:path] = File.dirname(path)
+        args.push({}) unless args.last.is_a?(Hash)
+        args.last[:path] = File.dirname(path)
       end
 
       bundler_gem.bind(self).(name, *args)
