@@ -13,7 +13,7 @@ task :update do
 
   # locate passenger ruby
   conf = Dir['/etc/apache2/*/passenger.conf'].first
-  conf = File.read(conf)[/PassengerDefaultRuby (.*)/, 1] if conf
+  conf = File.read(conf)[/PassengerRuby "?(.*?)"?$/, 1] if conf
   if conf
     passruby = "#{File.dirname(conf)}/%s#{conf[/ruby([.\d]*)$/, 1]}"
   else
@@ -24,13 +24,13 @@ task :update do
   Dir['**/Gemfile'].each do |gemfile|
     Dir.chdir File.dirname(gemfile) do
       bundler = (File.exist?('config.ru') ? passruby : sysruby) % 'bundle'
-      bundler = (File.exist?(bundler) ? bundler : 'bundle')
+      bundler = 'bundle' unless File.exist?(bundler)
       system "#{bundler} update"
     end
   end
 
   # determine last update time
-  update_file = "#{Dir.home}/.whimsy-update"
+  update_file = "#{Process.uid == 0 ? '/root' : Dir.home}/.whimsy-update"
   new_baseline = Time.now
   old_baseline = File.mtime(update_file) rescue Time.at(0)
 
