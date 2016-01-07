@@ -10,6 +10,8 @@ class Message
 
   # find an attachment
   def find(name)
+    name = name[1...-1] if name =~ /<.*>/
+
     headers = @headers[:attachments].find do |attach|
       attach[:name] == name or attach['Content-ID'].to_s == '<' + name + '>'
     end
