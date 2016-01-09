@@ -1,6 +1,16 @@
+#
+# Encapsulate access to messages
+#
+
+require 'digest'
+require 'mail'
+
 class Message
   attr_reader :headers
 
+  #
+  # create a new message
+  #
   def initialize(mailbox, hash, headers, email)
     @hash = hash
     @mailbox = mailbox
@@ -8,7 +18,9 @@ class Message
     @email = email
   end
 
+  #
   # find an attachment
+  #
   def find(name)
     name = name[1...-1] if name =~ /<.*>/
 
@@ -24,6 +36,10 @@ class Message
       Attachment.new(self, headers, part)
     end
   end
+
+  #
+  # accessors
+  #
 
   def mail
     @mail ||= Mail.new(@email)
@@ -61,6 +77,10 @@ class Message
     @headers[:attachments].map {|attachment| attachment[:name]}
   end
 
+  #
+  # attachment operations: update, replace, delete
+  #
+
   def update_attachment name, values
     attachment = find(name)
     if attachment
@@ -87,13 +107,18 @@ class Message
     end
   end
 
+  #
+  # write updated headers to disk
+  #
   def write
     @mailbox.update do |yaml|
       yaml[@hash] = @headers
     end
   end
 
+  #
   # write one or more attachments to directory containing an svn checkout
+  #
   def write_svn(repos, filename, *attachments)
     attachments = attachments.flatten.compact
 
@@ -121,5 +146,92 @@ class Message
       Kernel.system 'svn', 'add', dest
       dest
     end
+  end
+
+  #
+  # What to use as a hash for mail
+  #
+  def self.hash(message)
+    Digest::SHA1.hexdigest(message[/^Message-ID:.*/i] || message)[0..9]
+  end
+
+  #
+  # parse a message, returning headers
+  #
+  def self.parse(message)
+    mail = Mail.read_from_string(message)
+
+    # parse from address
+    begin
+      from = Mail::Address.new(mail[:from].value).display_name
+    rescue Exception
+      from = mail[:from].value
+    end
+
+    # determine who should be copied on any responses
+    begin
+      cc = []
+      cc = mail[:to].to_s.split(/,\s*/)  if mail[:to]
+      cc += mail[:cc].to_s.split(/,\s*/) if mail[:cc]
+    rescue
+      cc = []
+      cc = mail[:to].value.split(/,\s*/)  if mail[:to]
+      cc += mail[:cc].value.split(/,\s*/) if mail[:cc]
+    end
+
+    # remove secretary and anybody on the to field from the cc list
+    cc.reject! do |email|
+      begin
+        address = Mail::Address.new(email).address
+        next true if address == 'secretary@apache.org'
+        next true if mail.from_addrs.include? address
+      rescue Exception
+        true
+      end
+    end
+
+    # start an entry for this mail
+    headers = {
+      from: mail.from_addrs.first,
+      name: from,
+      time: (mail.date.to_time.gmtime.iso8601 rescue nil),
+      cc: cc
+    }
+
+    # add in header fields
+    headers.merge! Mailbox.headers(mail)
+
+    # add in attachments
+    if mail.attachments.length > 0
+
+      attachments = mail.attachments.map do |attach|
+        # replace generic octet-stream with a more specific one
+        mime = attach.mime_type
+        if mime == 'application/octet-stream'
+          filename = attach.filename.downcase
+          mime = 'application/pdf' if filename.end_with? '.pdf'
+          mime = 'application/png' if filename.end_with? '.png'
+          mime = 'application/gif' if filename.end_with? '.gif'
+          mime = 'application/jpeg' if filename.end_with? '.jpg'
+          mime = 'application/jpeg' if filename.end_with? '.jpeg'
+        end
+
+        description = {
+          name: attach.filename,
+          length: attach.body.to_s.length,
+          mime: mime
+        }
+
+        if description[:name].empty? and attach['Content-ID']
+          description[:name] = attach['Content-ID'].to_s
+        end
+
+        description.merge(Mailbox.headers(attach))
+      end
+
+      headers[:attachments] = attachments
+    end
+
+    headers
   end
 end
