@@ -124,7 +124,7 @@ class Message
   #
   def write_email
     dir = @mailbox.dir
-    Dir.mkdir dir unless Dir.exist? dir
+    Dir.mkdir dir, 0755 unless Dir.exist? dir
     File.write File.join(dir, @hash), @email, encoding: Encoding::BINARY
   end
 
