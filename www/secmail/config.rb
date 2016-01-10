@@ -8,5 +8,5 @@ SOURCE = 'minotaur.apache.org:/home/apmail/private-arch/officers-secretary'
 # Where to save the archive locally
 #
 
-ARCHIVE = File.basename(SOURCE)
+ARCHIVE = (Dir.exist?('/srv/mail') ? '/srv/mail' : File.basename(SOURCE))
 
