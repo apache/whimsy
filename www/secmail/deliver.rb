@@ -18,5 +18,6 @@ mailbox = Mailbox.new(month)
 message = Message.new(mailbox, hash, headers, email)
 
 # write message to disk
+File.umask(0002)
 message.write_headers
 message.write_email
