@@ -4,6 +4,9 @@
 
 require 'digest'
 require 'mail'
+require 'time'
+
+require_relative 'attachment.rb'
 
 class Message
   attr_reader :headers
@@ -85,7 +88,7 @@ class Message
     attachment = find(name)
     if attachment
       attachment.headers.merge! values
-      write
+      write_headers
     end
   end
 
@@ -94,7 +97,7 @@ class Message
     if attachment
       index = @headers[:attachments].find_index(attachment.headers)
       @headers[:attachments][index, 1] = Array(values)
-      write
+      write_headers
     end
   end
 
@@ -103,17 +106,26 @@ class Message
     if attachment
       @headers[:attachments].delete attachment.headers
       @headers[:status] = :deleted if @headers[:attachments].empty?
-      write
+      write_headers
     end
   end
 
   #
   # write updated headers to disk
   #
-  def write
+  def write_headers
     @mailbox.update do |yaml|
       yaml[@hash] = @headers
     end
+  end
+
+  #
+  # write email to disk
+  #
+  def write_email
+    dir = @mailbox.dir
+    Dir.mkdir dir unless Dir.exist? dir
+    File.write File.join(dir, @hash), @email, encoding: Encoding::BINARY
   end
 
   #

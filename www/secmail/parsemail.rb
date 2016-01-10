@@ -10,8 +10,6 @@
 #   * Invalid from addresses
 #
 
-require 'time'
-
 require_relative 'models/mailbox'
 
 database = File.basename(SOURCE)
@@ -36,7 +34,7 @@ end
 width = 0
 Dir[File.join(database, '2*')].sort.each do |name|
   # skip YAML files, update output showing latest file being processed
-  next if name.end_with? '.yml'
+  next if name.end_with? '.yml' or name.end_with? '.mail'
   next if ARGV.any? {|arg| arg =~ /^\d{6}$/} and
     not ARGV.any? {|arg| name.include? "/#{arg}"}
   print "#{name.ljust(width)}\r"

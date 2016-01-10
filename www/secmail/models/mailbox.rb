@@ -10,7 +10,6 @@ require 'yaml'
 require_relative '../config.rb'
 
 require_relative 'message.rb'
-require_relative 'attachment.rb'
 
 class Mailbox
   #
@@ -20,7 +19,7 @@ class Mailbox
     options = %w(-av --no-motd)
 
     if mailboxes == nil
-      options += %w(--delete --exclude=*.yml)
+      options += %w(--delete --exclude=*.yml --exclude=*.mail)
       source = "#{SOURCE}/"
     elsif Array === mailboxes
       host, path = SOURCE.split(':', 2)
@@ -38,13 +37,14 @@ class Mailbox
   # Initialize a mailbox
   #
   def initialize(name)
-    name = File.basename(name, '.yml') if name.end_with? '.yml'
+    name = File.basename(name, '.yml')
 
     if name =~ /^\d+$/
-      @filename = Dir["#{ARCHIVE}/#{name}", "#{ARCHIVE}/#{name}.gz"].first.
-        untaint
+      @mbox = Dir["#{ARCHIVE}/#{name}", "#{ARCHIVE}/#{name}.gz"].first.untaint
+      @name = name.untaint
     else
-      @filename = name
+      @name = name.split('.').first
+      @mbox = "#{ARCHIVE}/#{name}"
     end
   end
 
@@ -70,22 +70,15 @@ class Mailbox
   end
 
   #
-  # Determine whether or not the mailbox exists
-  #
-  def exist?
-    @filename and File.exist?(@filename)
-  end
-
-  #
   # Read a mailbox and split it into messages
   #
   def messages
     return @messages if @messages
-    return [] unless exist?
+    return [] unless @mbox and File.exist?(@mbox)
 
-    mbox = File.read(@filename)
+    mbox = File.read(@mbox)
 
-    if @filename.end_with? '.gz'
+    if @mbox.end_with? '.gz'
       stream = StringIO.new(mbox)
       reader = Zlib::GzipReader.new(stream)
       mbox = reader.read
@@ -115,7 +108,13 @@ class Mailbox
   #
   def find(hash)
     headers = YAML.load_file(yaml_file) rescue {}
-    email = messages.find {|message| Message.hash(message) == hash}
+
+    if Dir.exist? dir and File.exist? File.join(dir, hash)
+      email = File.read(File.join(dir, hash), encoding: Encoding::BINARY)
+    else
+      email = messages.find {|message| Message.hash(message) == hash}
+    end
+
     Message.new(self, hash, headers[hash], email) if email
   end
 
@@ -130,19 +129,24 @@ class Mailbox
   # name of associated yaml file
   #
   def yaml_file
-    source = File.basename(@filename, '.gz').untaint
-    "#{ARCHIVE}/#{source}.yml"
+    "#{ARCHIVE}/#{@name}.yml"
+  end
+
+  #
+  # name of associated directory
+  #
+  def dir
+    "#{ARCHIVE}/#{@name}.mail"
   end
 
   #
   # return headers
   #
   def headers
-    source = File.basename(@filename, '.gz').untaint
     messages = YAML.load_file(yaml_file) rescue {}
     messages.delete :mtime
     messages.each do |key, value|
-      value[:source]=source
+      value[:source]=@name
     end
   end
 
@@ -182,11 +186,11 @@ class Mailbox
   #
   def parse
     mbox = YAML.load_file(yaml_file) || {} rescue {}
-    return if mbox[:mtime] == File.mtime(@filename)
+    return if mbox[:mtime] == File.mtime(@mbox)
 
     # open the YAML file for real (locking it this time)
     self.update do |mbox|
-      mbox[:mtime] = File.mtime(@filename)
+      mbox[:mtime] = File.mtime(@mbox)
 
       # process each message in the mailbox
       self.each do |message|
