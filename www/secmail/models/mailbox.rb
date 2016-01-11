@@ -40,8 +40,8 @@ class Mailbox
     name = File.basename(name, '.yml')
 
     if name =~ /^\d+$/
-      @mbox = Dir["#{ARCHIVE}/#{name}", "#{ARCHIVE}/#{name}.gz"].first.untaint
       @name = name.untaint
+      @mbox = Dir["#{ARCHIVE}/#{@name}", "#{ARCHIVE}/#{@name}.gz"].first.untaint
     else
       @name = name.split('.').first
       @mbox = "#{ARCHIVE}/#{name}"
