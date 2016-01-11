@@ -2,6 +2,8 @@
 # check signature on an attachment
 #
 
+ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
+
 message = Mailbox.find(@message)
 
 begin
