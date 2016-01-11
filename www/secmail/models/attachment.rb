@@ -28,14 +28,14 @@ class Attachment
   end
 
   def as_file
-    file = Tempfile.new([safe_name, '.pdf'], encoding: Encoding::BINARY)
+    file = SafeTempFile.new([safe_name, '.pdf'])
     file.write(body)
     file.rewind
     file
   end
 
   def as_pdf
-    file = Tempfile.new([safe_name, '.pdf'], encoding: Encoding::BINARY)
+    file = SafeTempFile.new([safe_name, '.pdf'])
     file.write(body)
     file.rewind
 
@@ -45,7 +45,7 @@ class Attachment
     ext = File.extname(name).downcase
 
     if IMAGE_TYPES.include? ext or content_type.start_with? 'image/'
-      pdf = Tempfile.new([safe_name, '.pdf'], encoding: Encoding::BINARY)
+      pdf = SafeTempFile.new([safe_name, '.pdf'])
       system 'convert', file.path, pdf.path
       file.unlink
       return pdf

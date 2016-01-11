@@ -11,6 +11,7 @@ require 'sanitize'
 
 require_relative 'helpers'
 require_relative 'models/mailbox'
+require_relative 'models/safetemp'
 
 # list of messages
 get '/' do

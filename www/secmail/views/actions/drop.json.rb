@@ -8,7 +8,7 @@ begin
   source = message.find(@source).as_pdf
   target = message.find(@target).as_pdf
 
-  output = Tempfile.new('output')
+  output = SafeTempFile.new('output')
 
   Kernel.system 'pdftk', target.path, source.path, 'cat', 'output',
     output.path
@@ -21,9 +21,9 @@ begin
   message.delete_attachment @source
 
 ensure
-  File.unlink source.path.untaint if source
-  File.unlink target.path.untaint if target
-  File.unlink output.path.untaint if output
+  source.unlink if source
+  target.unlink if target
+  output.unlink if output
 end
 
 {attachments: message.attachments, selected: name}

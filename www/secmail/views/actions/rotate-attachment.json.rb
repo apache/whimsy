@@ -11,7 +11,7 @@ begin
   direction = 'Left' if @direction.include? 'left'
   direction = 'Down' if @direction.include? 'flip'
 
-  output = Tempfile.new('output')
+  output = SafeTempFile.new('output')
 
   Kernel.system 'pdftk', selected.path, 'cat', "1-end#{direction}", 'output',
     output.path

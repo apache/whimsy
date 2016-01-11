@@ -40,8 +40,8 @@ begin
   ignore.each {|re| err.gsub! re, ''}
 
 ensure
-  File.unlink attachment.path.untaint if attachment
-  File.unlink signature.path.untaint if signature
+  attachment.unlink if attachment
+  signature.unlink if signature
 end
 
 {output: out, error: err, rc: rc.exitstatus}
