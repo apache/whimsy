@@ -185,6 +185,7 @@ class Mailbox
   # parse a mailbox, updating YAML
   #
   def parse
+    return unless @mbox
     mbox = YAML.load_file(yaml_file) || {} rescue {}
     return if mbox[:mtime] == File.mtime(@mbox)
 
