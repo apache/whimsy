@@ -16,7 +16,7 @@ require_relative 'models/mailbox'
 get '/' do
   # determine latest month for which there are messages
   archives = Dir["#{ARCHIVE}/*.yml"].select {|name| name =~ %r{/\d{6}\.yml$}}
-  @mbox = File.basename(archives.sort.last, '.yml')
+  @mbox = archives.empty? ? nil : File.basename(archives.sort.last, '.yml')
   _html :index
 end
 
