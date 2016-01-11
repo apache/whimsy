@@ -20,6 +20,11 @@ get '/' do
   _html :index
 end
 
+# alias for root directory
+get '/index.html' do
+  call env.merge('PATH_INFO' => '/')
+end
+
 # support for fetching previous month's worth of messages
 get %r{^/(\d{6})$} do |mbox|
   @mbox = mbox
