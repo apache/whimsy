@@ -30,7 +30,7 @@ begin
   message.replace_attachment @selected, attachments
 
 ensure
-  source.unlink if source
+  File.unlink source.path.untaint if source
 end
 
 {

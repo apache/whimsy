@@ -21,9 +21,9 @@ begin
   message.delete_attachment @source
 
 ensure
-  source.unlink if source
-  target.unlink if target
-  output.unlink if output
+  File.unlink source.path.untaint if source
+  File.unlink target.path.untaint if target
+  File.unlink output.path.untaint if output
 end
 
 {attachments: message.attachments, selected: name}
