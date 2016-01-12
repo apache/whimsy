@@ -10,7 +10,7 @@ module ASF
     @config = YAML.load_file("#@home/.whimsy") rescue {}
 
     # default :svn for backwards compatibility
-    @config[:svn] ||= ['/home/whimsysvn/svn/*']
+    @config[:svn] ||= ['/srv/svn/*', '/home/whimsysvn/svn/*', "#{@home}/svn/*"]
 
     # add libraries to RUBYLIB, load path
     (@config[:lib] || []).reverse.each do |lib|

@@ -1,5 +1,6 @@
 require 'uri'
 require 'thread'
+require 'open3'
 
 module ASF
 
@@ -14,9 +15,12 @@ module ASF
         svn = ASF::Config.get(:svn).map {|dir| dir.untaint}
         @repos ||= Hash[Dir[*svn].map { |name| 
           Dir.chdir name.untaint do
-            [`svn info`[/URL: (.*)/,1].sub(/^http:/,'https:'), Dir.pwd.untaint]
+            out, err, status = Open3.capture3('svn', 'info')
+            if status.success?
+              [out[/URL: (.*)/,1].sub(/^http:/,'https:'), Dir.pwd.untaint]
+            end
           end
-        }]
+        }.compact]
       end
     end
 
