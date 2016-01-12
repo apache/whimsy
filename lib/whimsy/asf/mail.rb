@@ -8,8 +8,8 @@ module ASF
       list = Hash.new
 
       # load info from LDAP
-      ASF::Person.preload(['mail', 'asf-altEmail'])
-      ASF::Person.collection.each do |name, person|
+      people = ASF::Person.preload(['mail', 'asf-altEmail'])
+      people.each do |name, person|
         (person.mail+person.alt_email).each do |mail|
           list[mail.downcase] = person
         end

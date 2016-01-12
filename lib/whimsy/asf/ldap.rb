@@ -172,6 +172,8 @@ module ASF
 
     # pre-fetch a given attribute, for a given list of people
     def self.preload(attributes, people={})
+      list = Hash.new {|hash, name| hash[name] = find(name)}
+
       attributes = [attributes].flatten
 
       if people.empty?
@@ -183,14 +185,16 @@ module ASF
       zero = Hash[attributes.map {|attribute| [attribute,nil]}]
 
       data = ASF.search_one(base, filter, attributes + ['uid'])
-      data = Hash[data.map! {|hash| [find(hash['uid'].first), hash]}]
+      data = Hash[data.map! {|hash| [list[hash['uid'].first], hash]}]
       data.each {|person, hash| person.attrs.merge!(zero.merge(hash))}
 
       if people.empty?
-        (collection.values - data.keys).each do |person| 
+        (list.values - data.keys).each do |person|
           person.attrs.merge! zero
         end
       end
+
+      list.values
     end
 
     def attrs

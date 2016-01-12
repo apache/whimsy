@@ -48,9 +48,13 @@ module ASF
       board = ASF::SVN['private/committers/board']
       file = "#{board}/committee-info.txt"
       return unless File.exist? file
+
+      list = Hash.new {|hash, name| hash[name] = find(name)}
+
       if @committee_info and File.mtime(file) == @committee_mtime
         return @committee_info 
       end
+
       @committee_mtime = File.mtime(file)
       @@svn_change = Time.parse(
         `svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
@@ -62,15 +66,16 @@ module ASF
       # extract the committee chairs (e-mail address is required here)
       head.scan(/^[ \t]+(\w.*?)[ \t][ \t]+(.*)[ \t]+<(.*?)@apache\.org>/).
         each do |committee, name, id|
-          find(committee).chairs << {name: name, id: id}
+          list[committee].chairs << {name: name, id: id}
         end
+
       # Extract the non-PMC committees (e-mail address may be absent)
       @nonpmcs = head.sub(/.*?also has/m,'').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
-        map {|name| find(name)}
+        map {|name| list[name]}
 
       info.each do |roster|
-        committee = find(@@namemap.call(roster[/(\w.*?)\s+\(/,1]))
+        committee = list[@@namemap.call(roster[/(\w.*?)\s+\(/,1])]
         committee.established = roster[/\(est\. (.*?)\)/, 1]
         roster.gsub! /^.*\(\s*emeritus\s*\).*/i do |line|
           committee.emeritus += line.scan(/<(.*?)@apache\.org>/).flatten
@@ -85,7 +90,7 @@ module ASF
       report.scan(/^([^\n]+)\n---+\n(.*?)\n\n/m).each do |period, committees|
         committees.scan(/^   \s*(.*)/).each do |committee|
           committee, comment = committee.first.split(/\s+#\s+/,2)
-          committee = find(committee)
+          committee = list[committee]
           if comment
             committee.report = "#{period}: #{comment}"
           elsif period == 'Next month'
@@ -96,7 +101,7 @@ module ASF
         end
       end
 
-      @committee_info = ASF::Committee.collection.values
+      @committee_info = list.values
     end
 
     def self.nonpmcs
