@@ -115,7 +115,7 @@ class Index < React
       if index == -1
         @messages << new_message
       elsif @messages[index].hash == new_message.hash
-        @messages[index] = @new_message
+        @messages[index] = new_message
       else
         @messages.splice index, 0, new_message
       end
@@ -174,8 +174,9 @@ class Index < React
 
   def refresh(event)
     @checking = true
-    HTTP.post("actions/check-mail", mbox: @@mbox).then {
-      location.reload()
+    HTTP.post("actions/check-mail", mbox: @@mbox).then {|response|
+      self.merge response.messages
+      @checking = false
     }.catch {|error|
       alert error
       @checking = false
