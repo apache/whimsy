@@ -1,5 +1,6 @@
 require 'wunderbar'
 require 'ldap'
+require 'weakref'
 
 module ASF
   module LDAP
@@ -107,20 +108,30 @@ module ASF
     end
 
     def self.[] name
-      collection[name] || new(name)
+      new(name)
     end
 
     def self.find name
-      collection[name] || new(name)
+      new(name)
     end
 
     def self.new name
-      collection[name] || super
+      begin
+        object = collection[name]
+        return object.reference if object and object.weakref_alive?
+      rescue
+      end
+
+      super
     end
 
     def initialize name
-      self.class.collection[name] = self
+      self.class.collection[name] = WeakRef.new(self)
       @name = name
+    end
+
+    def reference
+      self
     end
 
     unless Object.respond_to? :id

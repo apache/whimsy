@@ -1,6 +1,7 @@
 require_relative '../asf.rb'
 require 'rack'
 require 'etc'
+require 'thread'
 
 module ASF
   module Auth
@@ -33,7 +34,7 @@ module ASF
       ASF::Person.new(env.user)
     end
 
-    # Simply 'use' the following class in config.ru to limit access
+    # 'use' the following class in config.ru to limit access
     # to the application to ASF committers
     class Committers < Rack::Auth::Basic
       def initialize(app)
@@ -53,7 +54,7 @@ module ASF
       end
     end
 
-    # Simply 'use' the following class in config.ru to limit access
+    # 'use' the following class in config.ru to limit access
     # to the application to ASF members and officers and the accounting group.
     class MembersAndOfficers < Rack::Auth::Basic
       def initialize(app)
@@ -79,6 +80,87 @@ module ASF
           @app.call(env)
         else
           unauthorized
+        end
+      end
+    end
+  end
+
+  # 'use' the following class in config.ru to automatically run
+  # Garbage Collection every 'n' requests, or 'm' minutes.
+  #
+  # This tries to run garbage collection "out of band" (i.e., between
+  # requests), and when other requests are active (which can happen
+  # with threaded servers like Puma).
+  #
+  # In addition to keeping memory usage bounded, this keeps the LDAP
+  # cache from going stale.
+  #
+  class AutoGC
+    @@background = nil
+
+    def initialize(app, frequency=100, minutes=15)
+      @app = app
+      @frequency = frequency
+      @request_count = 0
+      @queue = Queue.new
+      @mutex = Mutex.new
+
+      if defined?(PhusionPassenger)
+        # https://github.com/suyccom/yousell/blob/master/config.ru
+        # https://www.phusionpassenger.com/library/indepth/ruby/out_of_band_work.html
+        if PhusionPassenger.respond_to?(:require_passenger_lib)
+          PhusionPassenger.require_passenger_lib 'rack/out_of_band_gc'
+        else
+          # Phusion Passenger < 4.0.33
+          require 'phusion_passenger/rack/out_of_band_gc'
+        end
+        @passenger = PhusionPassenger::Rack::OutOfBandGc.new(app.count)
+      end
+
+      Thread.kill(@@background) if @@background
+
+      if minutes
+        # divide minutes by frequency and use the result to determine the
+        # time between simulated requests
+        @@background = Thread.new do
+           seconds = minutes * 60.0 / frequency
+           loop do
+             sleep seconds
+             maybe_perform_gc
+           end
+        end
+      end
+    end
+
+    def call(env)
+      @queue.push 1
+
+      if @passenger
+        @passenger.call(env)
+      else
+        # https://github.com/puma/puma/issues/450
+        status, header, body = @app.call(env)
+
+        if ary = env['rack.after_reply']
+          ary << lambda {maybe_perform_gc}
+        else
+          Thread.new {sleep 0.1; maybe_perform_gc}
+        end
+
+        [status, header, body]
+      end
+    ensure
+      @queue.pop
+    end
+
+    def maybe_perform_gc
+      @mutex.synchronize do
+        @request_count += 1
+        if @queue.empty? and @request_count >= @frequency
+          @request_count = 0
+          disabled = GC.enable
+          GC.start
+          GC.disable if disabled
         end
       end
     end
