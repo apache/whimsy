@@ -4,28 +4,9 @@ index = available.find_index "#{ARCHIVE}/#{@mbox}.yml"
 
 # if found, process it
 if index
-  # fetch a list of headers for all messages in the maibox with attachments
-  headers = Mailbox.new(@mbox).headers.to_a.select do |id, message|
-    message[:attachments]
-  end
-
-  # extract relevant fields from the headers
-  headers.map! do |id, message|
-    {
-      time: message[:time],
-      href: "#{message[:source]}/#{id}/",
-      from: message[:from],
-      subject: message['Subject'],
-      status: message[:status]
-    }
-  end
-
-  # select previous mailbox
-  mbox = available[index-1].untaint
-
-  # return mailbox name and messages
+  # return previous mailbox name and headers for the messages in the mbox
   {
-    mbox: (File.basename(mbox, '.yml') if index > 0),
-    messages: headers.sort_by {|message| message[:time]}.reverse
+    mbox: (File.basename(available[index-1].untaint, '.yml') if index > 0),
+    messages: Mailbox.new(@mbox).client_headers
   }
 end

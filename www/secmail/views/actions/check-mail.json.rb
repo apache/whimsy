@@ -1,4 +1,7 @@
 Mailbox.fetch @mbox
-Mailbox.new(@mbox).parse
 
-{success: true}
+mbox = Mailbox.new(@mbox)
+
+mbox.parse
+
+{messages: mbox.client_headers}

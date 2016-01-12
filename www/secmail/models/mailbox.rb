@@ -140,7 +140,7 @@ class Mailbox
   end
 
   #
-  # return headers
+  # return headers (server view)
   #
   def headers
     messages = YAML.load_file(yaml_file) rescue {}
@@ -148,6 +148,30 @@ class Mailbox
     messages.each do |key, value|
       value[:source]=@name
     end
+  end
+
+  #
+  # return headers (client view)
+  #
+  def client_headers
+    # fetch a list of headers for all messages in the maibox with attachments
+    headers = self.headers.to_a.select do |id, message|
+      message[:attachments]
+    end
+
+    # extract relevant fields from the headers
+    headers.map! do |id, message|
+      {
+        time: message[:time],
+        href: "#{message[:source]}/#{id}/",
+        from: message[:from],
+        subject: message['Subject'],
+        status: message[:status]
+      }
+    end
+
+    # return messages sorted in reverse chronological order
+    headers.sort_by {|message| message[:time]}.reverse
   end
 
   #

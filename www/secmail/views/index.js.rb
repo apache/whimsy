@@ -92,17 +92,36 @@ class Index < React
       @nextmbox = response.mbox
 
       # add messages to list
-      @messages = @messages.concat(*response.messages)
+      self.merge response.messages
 
       # select oldest message
       self.selectRow Status.selected || @messages.last unless @selected
 
       # if block provided, call it
-      block() if block
+      block() if block and block.is_a? Function
     }.catch {|error|
       console.log error
       alert error
     }
+  end
+
+  # merge new messages into the list
+  def merge(messages)
+    messages.each do |new_message|
+      index = @messages.find_index do |old_message| 
+        old_message.time+old_message.hash <= new_message.time+new_message.hash
+      end
+
+      if index == -1
+        @messages << new_message
+      elsif @messages[index].hash == new_message.hash
+        @messages[index] = @new_message
+      else
+        @messages.splice index, 0, new_message
+      end
+    end
+
+    self.forceUpdate() unless messages.empty?
   end
 
   # update @selected, given either a DOM event or a message

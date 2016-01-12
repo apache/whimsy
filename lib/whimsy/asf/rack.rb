@@ -114,7 +114,8 @@ module ASF
           # Phusion Passenger < 4.0.33
           require 'phusion_passenger/rack/out_of_band_gc'
         end
-        @passenger = PhusionPassenger::Rack::OutOfBandGc.new(app.count)
+
+        @passenger = PhusionPassenger::Rack::OutOfBandGc.new(app, count)
       end
 
       Thread.kill(@@background) if @@background
