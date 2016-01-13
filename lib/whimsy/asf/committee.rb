@@ -70,7 +70,7 @@ module ASF
         end
 
       # Extract the non-PMC committees (e-mail address may be absent)
-      @nonpmcs = head.sub(/.*?also has/m,'').
+      @nonpmcs = head.sub(/.*?also has /m,'').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| list[name]}
 
