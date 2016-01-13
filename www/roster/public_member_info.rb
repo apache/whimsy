@@ -1,3 +1,5 @@
+require 'bundler/setup'
+
 require 'json'
 require 'whimsy/asf'
 
@@ -12,7 +14,9 @@ else
   # exit quickly if there has been no change
   if File.exist? ARGV.first
     source = "#{ASF::SVN['private/foundation']}/members.txt"
-    mtime = [File.mtime(source), File.mtime(__FILE__)].max
+    lib = File.expand_path('../../../lib', __FILE__)
+    mtime = Dir["#{lib}/**/*"].map {|file| File.mtime(file)}.max
+    mtime = [mtime, File.mtime(source), File.mtime(__FILE__)].max
     if File.mtime(ARGV.first) >= mtime
       previous_results = JSON.parse(File.read(ARGV.first)) rescue {}
       exit 0 if previous_results['gem_version'] == GEMVERSION
