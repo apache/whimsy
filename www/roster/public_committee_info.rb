@@ -1,3 +1,5 @@
+require 'bundler/setup'
+
 require 'json'
 require 'whimsy/asf'
 
