@@ -12,6 +12,7 @@ require 'sanitize'
 require_relative 'helpers'
 require_relative 'models/mailbox'
 require_relative 'models/safetemp'
+require_relative 'models/events'
 
 # list of messages
 get '/' do
@@ -123,4 +124,28 @@ get %r{^/(\d{6})/(\w+)/(.*?)$} do |month, hash, name|
   pass unless part
 
   [200, {'Content-Type' => part.content_type}, part.body.to_s]
+end
+
+# event stream for server sent events (a.k.a EventSource)
+get '/events', provides: 'text/event-stream' do
+  events = Events.new
+
+  stream :keep_open do |out|
+    out.callback {events.close}
+
+    loop do
+      event = events.pop
+
+      if Hash === event or Array === event
+        out << "data: #{JSON.dump(event)}\n\n"
+      elsif event == :heartbeat
+        out << ":\n"
+      elsif event == :exit
+        out.close
+        break
+      else
+        out << "data: #{event.inspect}\n\n"
+      end
+    end
+  end
 end

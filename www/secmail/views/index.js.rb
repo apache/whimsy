@@ -57,8 +57,8 @@ class Index < React
     @nextmbox = @@mbox
   end
 
-  # on initial load, fetch latest mailbox and subscribe to keyboard events,
-  # initialize selected item.
+  # on initial load, fetch latest mailbox, subscribe to keyboard and
+  # server side events, and initialize selected item.
   def componentDidMount()
     self.fetch_month() do
       # for the first week of the month, fetch previous month too
@@ -66,7 +66,21 @@ class Index < React
     end
 
     window.onkeydown = self.keydown
-     self.selectRow Status.selected if @messages.length > 0
+
+    # when events are received, update messages
+    events = EventSource.new('events')
+    events.addEventListener :message do |event|
+      messages = JSON.parse(event.data).messages
+      self.merge messages if messages
+    end
+
+    # close connection on exit
+    window.addEventListener :unload do |event|
+      events.close()
+    end
+
+    # select row
+    self.selectRow Status.selected if @messages.length > 0
   end
 
   # when content changes, ensure selected message is visible

@@ -32,7 +32,7 @@ end
 
 desc 'WebServer that provides an interface to explore emails'
 task :server => :bundle do
-  ENV['RACK_ENV']='production'
+  ENV['RACK_ENV']='development'
 
   require 'wunderbar'
   module Wunderbar::Listen
