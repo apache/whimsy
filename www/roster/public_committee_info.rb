@@ -40,7 +40,7 @@ info[:committees] = Hash[committees.map {|committee|
     established: committee.established,
     report: schedule,
     chair: Hash[committee.chairs.map {|chair|
-      [chair.delete(:id), chair]}],
+      chair = chair.dup; [chair.delete(:id), chair]}],
     roster: committee.roster,
     pmc: !ASF::Committee.nonpmcs.include?(committee)
   }]
