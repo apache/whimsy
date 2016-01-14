@@ -59,34 +59,47 @@ module ASF
       @@svn_change = Time.parse(
         `svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
 
+      # Split the file on lines starting "* ", i.e. the start of each group in section 3
       info = File.read(file).split(/^\* /)
+      # Extract the text before first entry in section 3 and split on section headers,
+      # keeping sections 1 (COMMITTEES) and 2 (REPORTING).
       head, report = info.shift.split(/^\d\./)[1..2]
+      # Drop lines which could match group entries
       head.gsub! /^\s+NAME\s+CHAIR\s*$/,'' # otherwise could match an entry with no e-mail
 
       # extract the committee chairs (e-mail address is required here)
+      # Note: this includes the non-PMC entries
       head.scan(/^[ \t]+(\w.*?)[ \t][ \t]+(.*)[ \t]+<(.*?)@apache\.org>/).
         each do |committee, name, id|
           list[committee].chairs << {name: name, id: id}
         end
 
       # Extract the non-PMC committees (e-mail address may be absent)
+      # first drop leading text so we only match non-PMCs
       @nonpmcs = head.sub(/.*?also has /m,'').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| list[name]}
 
+      # for each committee in section 3
       info.each do |roster|
+        # extract the committee name and canonicalise
         committee = list[@@namemap.call(roster[/(\w.*?)\s+\(/,1])]
+        # get the start date
         committee.established = roster[/\(est\. (.*?)\)/, 1]
+        # Extract any emeritus members (now probably redundant)
         roster.gsub! /^.*\(\s*emeritus\s*\).*/i do |line|
           committee.emeritus += line.scan(/<(.*?)@apache\.org>/).flatten
           ''
         end
+        # extract the availids (is this used?)
         committee.info = roster.scan(/<(.*?)@apache\.org>/).flatten
+        # drop (chair) markers and extract 0: name, 1: availid, 2: [date], 3: date
         committee.roster = Hash[roster.gsub(/\(\w+\)/, '').
           scan(/^\s*(.*?)\s*<(.*?)@apache\.org>\s+(\[(.*?)\])?/).
           map {|list| [list[1], {name: list[0], date: list[3]}]}]
       end
 
+      # process report section
       report.scan(/^([^\n]+)\n---+\n(.*?)\n\n/m).each do |period, committees|
         committees.scan(/^   \s*(.*)/).each do |committee|
           committee, comment = committee.first.split(/\s+#\s+/,2)

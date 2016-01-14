@@ -31,10 +31,10 @@
     <programming-language>JavaScript</programming-language>
     <category rdf:resource="http://projects.apache.org/category/content" />
     <repository>
-      <SVNRepository>
-        <location rdf:resource="https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy"/>
-        <browse rdf:resource="http://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy"/>
-      </SVNRepository>
+      <GitRepository>
+        <location rdf:resource="https://github.com/apache/whimsy.git"/>
+        <browse rdf:resource="https://github.com/apache/whimsy.git"/>
+      </GitRepository>
     </repository>
   </Project>
 </rdf:RDF>
