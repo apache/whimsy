@@ -71,6 +71,11 @@ form .btn {
   width: 100%
 }
 
+#attachments div.buttons {
+  text-align: center;
+  margin: 1em 0;
+}
+
 .contextMenu {
   position: absolute;
   z-index: 9999999;

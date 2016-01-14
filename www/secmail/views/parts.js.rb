@@ -64,7 +64,8 @@ class Parts < React
 
     if @selected and not @menu and @selected !~ /\.(asc|sig)$/
 
-      _CheckSignature selected: @selected, attachments: @attachments
+      _CheckSignature selected: @selected, attachments: @attachments,
+        headers: @@headers
 
       # filing options
       _table.doctype do

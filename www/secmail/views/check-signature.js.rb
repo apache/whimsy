@@ -11,6 +11,13 @@ class CheckSignature < React
   def render
     if @signature
       _div.alert @alert, class: @flag
+
+      if @alert.include? 'public key not found'
+        _div.buttons do
+          _button.btn.btn_primary 'email user requesting upload',
+            onClick: self.request_upload
+        end
+      end
     end
   end
 
@@ -70,5 +77,16 @@ class CheckSignature < React
     end
 
     return signature
+  end
+
+  # send an email requesting that the user upload their signature
+  def request_upload()
+    destination = @@headers.From
+    subject = "Re: #{@@headers.Subject}"
+    body = "Please upload your public key.\n\nhttps://pgp.mit.edu/"
+
+    window.location = "mailto:#{encodeURIComponent(destination)}" +
+      "?subject=#{encodeURIComponent(subject)}" +
+      "&body=#{encodeURIComponent(body)}"
   end
 end
