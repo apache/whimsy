@@ -101,7 +101,7 @@ module ASF
         end
       end
 
-      @committee_info = list.values
+      @committee_info = list.values.uniq
     end
 
     def self.nonpmcs
