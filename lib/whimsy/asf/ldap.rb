@@ -1,6 +1,7 @@
 require 'wunderbar'
 require 'ldap'
 require 'weakref'
+require 'net/http'
 
 module ASF
   module LDAP
@@ -14,6 +15,68 @@ module ASF
       ldaps://snappy5.apache.org:636
       ldaps://ldap2-lw-us.apache.org:636
     )
+
+    # fetch configuration from apache/infrastructure-puppet
+    def self.puppet_config
+      return @puppet if @puppet
+      file = '/apache/infrastructure-puppet/deployment/data/common.yaml'
+      http = Net::HTTP.new('raw.githubusercontent.com', 443)
+      http.use_ssl = true
+      @puppet = YAML.load(http.request(Net::HTTP::Get.new(file)).body)
+    end
+
+    # extract the ldapcert from the puppet configuration
+    def self.puppet_cert
+      puppet_config['ldapclient::ldapcert']
+    end
+
+    # extract the ldap servers from the puppet configuration
+    def self.puppet_ldapservers
+      puppet_config['ldapserver::slapd_peers'].values.
+        map {|host| "ldaps://#{host}:636"}
+    rescue
+      nil
+    end
+
+    # connect to LDAP
+    def self.connect
+      hosts.shuffle.each do |host|
+        Wunderbar.info "Connecting to LDAP server: #{host}"
+
+        begin
+          # request connection
+          uri = URI.parse(host)
+          if uri.scheme == 'ldaps'
+            ldap = ::LDAP::SSLConn.new(uri.host, uri.port)
+          else
+            ldap = ::LDAP::Conn.new(uri.host, uri.port)
+          end
+
+          # test the connection
+          ldap.bind
+          ldap.unbind rescue nil
+
+          # save the host
+          @host = host
+
+          return ldap
+        rescue ::LDAP::ResultError => re
+          Wunderbar.error "Error connecting to LDAP server #{host}: " +
+            re.message
+        end
+
+        return nil
+      end
+    end
+  end
+
+  # backwards compatibility for tools that called this interface, and
+  # a part of the refresh strategy (something that should be revisited
+  # with WeakReferences instead).
+  def self.init_ldap
+    return @ldap if @ldap
+    @mtime = Time.now
+    @ldap = ASF::LDAP.init
   end
 
   # determine where ldap.conf resides
@@ -21,27 +84,6 @@ module ASF
     ETCLDAP = '/etc/openldap'
   else
     ETCLDAP = '/etc/ldap'
-  end
-
-  # determine whether or not the LDAP API can be used
-  def self.init_ldap
-    @ldap = nil
-    @mtime = Time.now
-
-    host = ASF::LDAP.host
-
-    Wunderbar.info "Connecting to LDAP server: #{host}"
-
-    begin
-      uri = URI.parse(host)
-      if uri.scheme == 'ldaps'
-        @ldap = ::LDAP::SSLConn.new(uri.host, uri.port)
-      else
-        @ldap = ::LDAP::Conn.new(uri.host, uri.port)
-      end
-    rescue ::LDAP::ResultError=>re
-      Wunderbar.error "Error binding to LDAP server: message: ["+ re.message + "]"
-    end
   end
 
   def self.ldap
@@ -355,59 +397,91 @@ module ASF
   module LDAP
     def self.bind(user, password, &block)
       dn = ASF::Person.new(user).dn
+      ASF.ldap.unbind rescue nil
       if block
         ASF.ldap.bind(dn, password, &block)
+        ASF.init_ldap
       else
         ASF.ldap.bind(dn, password)
       end
-      ASF.init_ldap
+    end
+
+    # determine what LDAP hosts are available
+    def self.hosts
+      # try whimsy config
+      hosts = Array(ASF::Config.get(:ldap))
+
+      # check system configuration
+      if hosts.empty?
+        conf = "#{ETCLDAP}/ldap.conf"
+        if File.exist? conf
+          uris = File.read(conf)[/^uri\s+(.*)/i, 1].to_s
+          hosts = uris.scan(/ldaps?:\/\/\S+?:\d+/)
+        end
+      end
+
+      # if all else fails, use default list
+      hosts = ASF::LDAP::HOSTS if hosts.empty?
+
+      hosts
     end
 
     # select LDAP host
     def self.host
-      # try whimsy config
-      host = ASF::Config.get(:ldap)
-
-      # check system configuration
-      unless host
-        conf = "#{ETCLDAP}/ldap.conf"
-        if File.exist? conf
-          host = File.read(conf)[/^uri\s+(ldaps?:\/\/\S+?:\d+)/i, 1]
-        end
-      end
-
-      # if all else fails, pick one at random
-      host = ASF::LDAP::HOSTS.sample unless host
-
-      host
+      @host ||= hosts.sample
     end
 
     # query and extract cert from openssl output
-    def self.cert
+    def self.extract_cert
       host = LDAP.host[%r{//(.*?)(/|$)}, 1]
-      query = "openssl s_client -connect #{host} -showcerts"
-      output = `#{query} < /dev/null 2> /dev/null`
-      output[/^-+BEGIN.*?\n-+END[^\n]+\n/m]
+      puts ['openssl', 's_client', '-connect', host, '-showcerts'].join(' ')
+      out, err, rc = Open3.capture3 'openssl', 's_client',
+        '-connect', host, '-showcerts'
+      out[/^-+BEGIN.*?\n-+END[^\n]+\n/m]
     end
 
     # update /etc/ldap.conf. Usage:
+    #
     #   sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
+    #
     def self.configure
-      if not File.exist? "#{ETCLDAP}/asf-ldap-client.pem"
-        File.write "#{ETCLDAP}/asf-ldap-client.pem", self.cert
+      cert = Dir["#{ETCLDAP}/asf*-ldap-client.pem"].first
+
+      # verify/obtain/write the cert
+      if not cert
+        cert = "#{ETCLDAP}/asf-ldap-client.pem"
+        File.write cert, ASF::LDAP.puppet_cert || self.extract_cert
       end
 
+      # read the current configuration file
       ldap_conf = "#{ETCLDAP}/ldap.conf"
       content = File.read(ldap_conf)
-      unless content.include? 'asf-ldap-client.pem'
-        content.gsub!(/^TLS_CACERT/, '# TLS_CACERT')
-        content.gsub!(/^TLS_REQCERT/, '# TLS_REQCERT')
+
+      # ensure that the right cert is used
+      unless content =~ /asf.*-ldap-client\.pem/
+        content.gsub!(/^TLS_CACERT/i, '# TLS_CACERT')
         content += "TLS_CACERT #{ETCLDAP}/asf-ldap-client.pem\n"
-        content += "uri #{LDAP.host}\n"
-        content += "base dc=apache,dc=org\n"
-        content += "TLS_REQCERT allow\n" if ETCLDAP.include? 'openldap'
-        File.write(ldap_conf, content)
       end
+
+      # provide the URIs of the ldap hosts
+      content.gsub!(/^URI/, '# URI')
+      content += "uri \n" unless content =~ /^uri /
+      content[/uri (.*)\n/, 1] = hosts.join(' ')
+
+      # verify/set the base
+      unless content.include? 'base dc=apache'
+        content.gsub!(/^BASE/i, '# BASE')
+        content += "base dc=apache,dc=org\n"
+      end
+
+      # ensure TLS_REQCERT is allow (Mac OS/X only)
+      if ETCLDAP.include? 'openldap' and not content.include? 'REQCERT allow'
+        content.gsub!(/^TLS_REQCERT/i, '# TLS_REQCERT')
+        content += "TLS_REQCERT allow\n"
+      end
+
+      # write the configuration if there were any changes
+      File.write(ldap_conf, content) unless content == File.read(ldap_conf)
     end
   end
 end

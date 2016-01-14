@@ -24,7 +24,7 @@ Overview
 
 This directory has two main subdirectories...
 
-1. [lib/whimsy/asf](lib/whimsy/asf) contains the "model", i.e., a set of classes 
+1. [lib/whimsy/asf](lib/whimsy/asf) contains the "model", i.e., a set of classes
    which encapsulate access
    to a number of data sources such as LDAP, ICLAs, auth lists, etc.  This
    code originally was developed as a part of separate tools and was later
@@ -34,13 +34,13 @@ This directory has two main subdirectories...
 2. [www](www) contains the "view", largely a set of CGI scripts that produce HTML.
    Generally a CGI script is self contained, including all of the CSS,
    scripts, AJAX logic (client and server), SVG images, etc.  A single script
-   may also produce a set (subtree) of web pages. 
+   may also produce a set (subtree) of web pages.
 
    Some of the directories (like the roster tool) contain [rack](http://rack.github.io/)
    applications.  These can be run independently, or under the Apache web server through
-   the use of [Phusion Passenger](https://www.phusionpassenger.com/). 
-   
-   The board agenda tool is currently hosted [separately](https://github.com/rubys/whimsy-agenda) 
+   the use of [Phusion Passenger](https://www.phusionpassenger.com/).
+
+   The board agenda tool is currently hosted [separately](https://github.com/rubys/whimsy-agenda)
    on github, but this will be consolidated into this repository as a part of the effort
    to move whimsy.apache.org to a new VM.
 
@@ -60,11 +60,11 @@ Skip this section if you are running a Docker container or a Vagrant VM.
    'cd' in bash).
 
     For more information:
-    
+
     1. [Understanding Shims](https://github.com/sstephenson/rbenv#understanding-shims)
     2. [Understanding Binstubs](https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs)
     3. [Ruby Version Manager](https://rvm.io/)
-    
+
 
 2. Make sure that the `whimsy-asf` gem installed.  If it is not, run
 
@@ -87,8 +87,8 @@ Skip this section if you are running a Docker container or a Vagrant VM.
 4. Access to LDAP requires configuration, and a cert.
 
  1. The model code determines what host and port to connect to by parsing
-      either `/etc/ldap/ldap.conf` or `/etc/ldap/ldap.conf` for a line that looks
-      like the following:
+      either `/etc/ldap/ldap.conf` or `/etc/ldap/ldap.conf` for a line that
+      looks like the following:
         `uri     ldaps://ldap1-us-east.apache.org:636`
 
  2. A `TLS_CACERT` can be obtained via either of the following commands:
@@ -96,21 +96,25 @@ Skip this section if you are running a Docker container or a Vagrant VM.
         `ruby -r whimsy/asf -e "puts ASF::LDAP.cert"`<br/>
         `openssl s_client -connect ldap1-us-east.apache.org:636 </dev/null`
 
-      Copy from `BEGIN` to `END` inclusive into the file 
+      Copy from `BEGIN` to `END` inclusive into the file
       `/etc/ldap/asf-ldap-client.pem`.  Point to the file in
       `/etc/ldap/ldap.conf` with a line like the following:
 
      ```   TLS_CACERT      /etc/ldap/asf-ldap-client.pem```
 
-      N.B. OpenLDAP uses `/etc/openldap/` instead of `/etc/ldap/` 
-      Adjust the paths above as necessary
+      N.B. OpenLDAP on Mac OS/X uses `/etc/openldap/` instead of `/etc/ldap/`
+      Adjust the paths above as necessary.  Additionally ensure that
+      that `TLS_REQCERT` is set to `allow`.
 
-      Note: the certificate is needed because the LDAP hosts use a self-signed
-      certificate
-      
-   These above updates can be done for you with the following command:
+      Note: the certificate is needed because the ASF LDAP hosts use a
+      self-signed certificate.
+
+   All these updates can be done for you with the following command:
 
         sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
+
+   These above command can also be used to update your configuration as
+   the ASF changes LDAP servers.
 
 5. Verify that the configuration is correct by running:
 
@@ -121,12 +125,12 @@ Skip this section if you are running a Docker container or a Vagrant VM.
 Further Reading
 ===============
 
-An [example](https://github.com/rubys/whimsy-agenda#readme) of a complete tool 
-that makes full use of the library factoring, has a suite of test cases, and 
-client componentization (using ReactJS), and provides instructions for setting 
+An [example](https://github.com/rubys/whimsy-agenda#readme) of a complete tool
+that makes full use of the library factoring, has a suite of test cases, and
+client componentization (using ReactJS), and provides instructions for setting
 up both a Docker component and a Vagrant VM:
 
 If you would like to understand how the view code works, you can get started
-by looking at a 
-few of the [Wunderbar demos](https://github.com/rubys/wunderbar/tree/master/demo) 
+by looking at a few of the
+[Wunderbar demos](https://github.com/rubys/wunderbar/tree/master/demo)
 and [README](https://github.com/rubys/wunderbar/blob/master/README.md).
