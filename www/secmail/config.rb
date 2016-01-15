@@ -1,14 +1,14 @@
 #
-# Where to find the archive
+# Where to find the archive (remote and local)
 #
 
-SOURCE = 'minotaur.apache.org:/home/apmail/private-arch/officers-secretary'
-
-#
-# Where to save the archive locally
-#
-
-ARCHIVE = (Dir.exist?('/srv/mail') ? '/srv/mail' : File.basename(SOURCE))
+if Dir.exist? '/srv/mail'
+  SOURCE = 'whimsy-vm2.apache.org:/srv/mail'
+  ARCHIVE = '/srv/mail'
+else
+  SOURCE = 'minotaur.apache.org:/home/apmail/private-arch/officers-secretary'
+  ARCHIVE = File.basename(SOURCE)
+end
 
 #
 # GPG's work directory override

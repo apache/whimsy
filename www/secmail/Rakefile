@@ -25,7 +25,27 @@ task :fetch => :bundle do
   ruby 'parsemail.rb', '--fetch'
 end
 
-desc 'Fetch parse latest month only'
+desc 'create /srv/mail with the appropriate permissions'
+file '/srv/mail' do
+  begin
+    mkdir_p '/srv/mail'
+
+    require 'etc'
+    if Etc.getpwent.uid == 0
+      user = Etc.getpwnam(Etc.getlogin)
+      chown user.uid, user.gid, '/srv/mail'
+    end
+  rescue Errno::EACCES
+    sh 'sudo rake /srv/mail'
+  end
+end
+
+desc 'download mail from whimsy-vm2'
+task 'sync' => '/srv/mail' do
+  sh 'rsync -av --delete whimsy-vm2.apache.org:/srv/mail/ /srv/mail'
+end
+
+desc 'Fetch and parse latest month only'
 task :fetch1 => :bundle do
   ruby 'parsemail.rb', '--fetch1'
 end
