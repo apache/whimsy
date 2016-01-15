@@ -15,8 +15,8 @@ Current status:
    automatically deployed every 30 minutes.  Note that this includes the
    contents of scripts and applications too.
   
- * CGI scripts are working, but dependencies (gems, svn checkouts) have not
-   been installed.  A simple CGI:
+ * CGI scripts are working, and any dependencies listed in a `Gemfile` will
+   automatically be installed.  A simple CGI:
 
     https://github.com/apache/whimsy/blob/master/www/test.cgi
     https://whimsy-test.apache.org/test.cgi
@@ -37,9 +37,9 @@ Current status:
    user.
 
  * Rack applications are working and run under Passenger under Apache httpd.
-   Again, dependencies are not yet ready.  In addition to simply checking the
-   application, one line per passenger application needs to be added to the
-   deployment data:
+   Again, `Gemfile`s are used to specify dependencies.  In addition to simply
+   checking the application, one line per passenger application needs to be added
+   to the deployment data:
 
     https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm2.apache.org.yaml#L60
 
@@ -52,4 +52,4 @@ Current status:
    above; but more common conditions can be handled at the "Rack" level
    instead of at the application level making use of Rack middleware such as:
 
-    https://github.com/apache/whimsy/blob/master/lib/whimsy/asf/rack.rb#L56
+    https://github.com/apache/whimsy/blob/master/lib/whimsy/asf/rack.rb#L57
