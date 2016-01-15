@@ -1,8 +1,6 @@
 TODOs
 =====
 
-This directory has two main subdirectories...
-
 1. Get a handle on how to test LDAP changes locally.  LDAP is installed on
    whimsy-vm2, but not on local puppet-kitchen-vagrant repositories.
 
@@ -14,3 +12,7 @@ This directory has two main subdirectories...
 4. Deploy puma (https://forge.puppetlabs.com/deversus/puma), and merge the
    [board agenda](https://github.com/rubys/whimsy-agenda) tool into this
    repository.
+
+5. Implement a fine grained availability and monitoring system
+   [Whimsy-35](https://issues.apache.org/jira/browse/WHIMSY-35).
+   At the moment, this is a simple ping endpoint.
