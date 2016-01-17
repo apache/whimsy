@@ -40,6 +40,11 @@ $(function() {
         div.append($('<a>').addClass('list-group-item').
           text(value.data.toString()));
       }
+
+      // hot link text children
+      if (value.href) {
+        div.children('a:not(.data-toggle)').attr('href', value.href);
+      }
  
       // append each to the container
       container.append(anchor);

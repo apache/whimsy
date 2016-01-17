@@ -7,7 +7,11 @@ def Monitor.board_minutes(previous_status)
   log = File.expand_path('../../www/logs/collate_minutes')
 
   if File.read(log) =~ /\*\*\* (Exception.*) \*\*\*/
-    {level: 'danger', data: $1}
+    {
+      level: 'danger',
+      data: $1,
+      href: '../logs/collate_minutes'
+    }
   else
     "Last updated: #{File.mtime(index)}"
   end
