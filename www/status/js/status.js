@@ -61,7 +61,7 @@ $(function() {
 
       // update location hash in the url
       if (glyphicon.hasClass('glyphicon-chevron-right')) {
-        location.hash = $(this).attr('href');
+        history.replaceState(null, null, $(this).attr('href'));
       }
 
       // toggle the content
