@@ -50,7 +50,7 @@ $(function() {
   // fetch status from the server
   $.get('status.json', function(status) {
     // remove 'loading...' line
-    $('.well').text('');
+    $('.list-group-root').text('');
 
     // replace with status
     listGroup(status.data, '', $('.well'));

@@ -2,6 +2,12 @@ body {
   padding: 0 15px;
 }
 
+img.logo {
+  width: 60px;
+  float: left;
+  margin-right: 10px;
+}
+
 .list-group.list-group-root {
   padding: 0;
   overflow: hidden;

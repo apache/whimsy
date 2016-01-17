@@ -44,6 +44,7 @@ print <<-EOF
   </head>
 
   <body>
+    <img src="../whimsy.svg" class="logo"/>
     <h1>Whimsy-Test Status</h1>
 
     <div class="list-group list-group-root well">
