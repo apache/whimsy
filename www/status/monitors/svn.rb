@@ -13,13 +13,14 @@ def Monitor.svn(previous_status)
   # extract status for each repository
   updates.each do |update|
     level = 'success'
-    data = update[/^At revision \d+\.$/]
+    title = nil
+    data = revision = update[/^(Updated to|At) revision \d+\.$/]
 
     lines = update.split("\n")
     repository = lines.shift
 
     lines.reject! {|line| line == "Updating '.':"}
-    lines.reject! {|line| line =~ /^At revision \d+\.$/}
+    lines.reject! {|line| line =~ /^(Updated to|At) revision \d+\.$/}
 
     unless lines.empty?
       level = 'info'
@@ -28,12 +29,21 @@ def Monitor.svn(previous_status)
 
     lines.reject! {|line| line =~ /^[ADU]    /}
 
-    unless lines.empty?
+    if lines.empty?
+      if data.length == 1
+        title = "1 file updated"
+      else
+        title = "#{data.length} files updated"
+      end
+
+      data << revision if data.instance_of? Array
+    else
       level = 'danger'
       data = lines.dup
     end
 
     status[repository] = {level: level, data: data}
+    status[repository][:title] = title if title
   end
 
   {data: status}

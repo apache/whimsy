@@ -130,6 +130,10 @@ class Monitor
         if group.length != 1
           # indicate the number of item with that status
           status['title'] = "#{group.length} #{ISSUE_TYPE[status['level']]}"
+
+          if group.length <= 4
+            status['title'] += ': ' + group.map(&:first).join(', ')
+          end
         else
           # indicate the item with the problem
           key, value = group.first
