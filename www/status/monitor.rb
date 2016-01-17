@@ -13,7 +13,7 @@ class Monitor
 
   attr_reader :status
 
-  def initialize
+  def initialize(args = [])
     status_file = File.expand_path('../status.json', __FILE__)
     File.open(status_file, File::RDWR|File::CREAT, 0644) do |file|
       # lock the file
@@ -33,6 +33,8 @@ class Monitor
       # invoke each monitor, collecting status from each
       newstatus = {}
       self.class.singleton_methods.sort.each do |method|
+        next if args.length > 0 and not args.include? method.to_s
+
         # invoke method to determine current status
         begin
           previous = baseline[method] || {mtime: Time.at(0).gmtime.iso8601}
@@ -88,6 +90,11 @@ class Monitor
 
   # default fields, and propagate status 'upwards'
   def normalize(status)
+    # convert strings and arrays to status hashes
+    if status.instance_of? String or status.instance_of? Array
+      status = {data: status}
+    end
+
     # convert symbols to strings
     status.keys.each do |key|
       status[key.to_s] = status.delete(key) if key.instance_of? Symbol
@@ -113,13 +120,14 @@ class Monitor
       if status['data'].instance_of? Hash
         # find the values with the highest status level
         highest = status['data'].
-          group_by {|key, value| LEVELS.index(value['level']) || 9}.max
+          group_by {|key, value| LEVELS.index(value['level']) || 9}.max ||
+          [9, []]
 
         # adopt that level
         status['level'] = LEVELS[highest.first] || 'danger'
 
         group = highest.last
-        if group.length > 1
+        if group.length != 1
           # indicate the number of item with that status
           status['title'] = "#{group.length} #{ISSUE_TYPE[status['level']]}"
         else
@@ -148,5 +156,5 @@ end
 
 # for debugging purposes
 if __FILE__ == $0
-  puts JSON.pretty_generate(Monitor.new.status)
+  puts JSON.pretty_generate(Monitor.new(ARGV).status)
 end
