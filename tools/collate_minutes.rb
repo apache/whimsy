@@ -7,6 +7,10 @@ require 'nokogiri'
 require 'net/https'
 require 'fileutils'
 
+# for monitoring purposes
+at_exit { puts "\n*** Exception #{$!.class} ***" unless SystemExit === $! }
+boom
+
 # destination directory
 SITE_MINUTES = ASF::Config.get(:board_minutes) ||
   File.expand_path('../../www/board/minutes', __FILE__)

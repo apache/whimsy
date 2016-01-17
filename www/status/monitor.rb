@@ -37,6 +37,15 @@ class Monitor
         begin
           previous = baseline[method] || {mtime: Time.at(0).gmtime.iso8601}
           status = Monitor.send(method, previous) || previous
+
+          # convert non-hashes in proper statuses
+          if not status.instance_of? Hash
+            if status.instance_of? String or status.instance_of? Array
+              status = {data: status}
+            else
+              status = {level: 'danger', data: status.inspect}
+            end
+          end
         rescue Exception => e
           status = {
             level: 'danger', 
