@@ -64,6 +64,9 @@ class Pending
     end
   end
 
+  # disable listening when running tests
+  @@listener = Struct.new(:start, :stop).new if ENV['RACK_ENV'] == 'test'
+
   @@seen = {}
   @@listener.start
 end
