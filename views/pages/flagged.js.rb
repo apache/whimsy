@@ -19,7 +19,7 @@ class Flagged < React
           _span.owner " flagged by: #{flagged_by}"
         end
 
-        _AdditionalInfo item: item
+        _AdditionalInfo item: item, prefix: true
       end
     end
 

@@ -62,7 +62,7 @@ feature 'report' do
      text: 'Axis'
 
     # pending comments
-    expect(page).to have_selector 'h4#comments', text: 'Pending Comment'
+    expect(page).to have_selector 'h4#pending', text: 'Pending Comment'
     expect(page).to have_selector 'pre.comment', text: 'jt: Nice report!'
 
     # hidden forms

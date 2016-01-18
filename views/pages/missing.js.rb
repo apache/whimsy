@@ -45,7 +45,7 @@ class Missing < React
           end
         end
 
-        _AdditionalInfo item: item
+        _AdditionalInfo item: item, prefix: true
       end
     end
 

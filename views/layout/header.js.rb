@@ -122,7 +122,7 @@ class Header < React
 
             _li.divider
 
-            _li { _Link.help! text: 'Backchannel', href: 'backchannel' }
+            _li { _Link.backchannel! text: 'Backchannel', href: 'backchannel' }
 
             _li { _Link.help! text: 'Help', href: 'help' }
           end

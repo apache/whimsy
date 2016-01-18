@@ -86,6 +86,11 @@ feature 'other reports' do
     expect(page).to have_selector 'button[data-attach=AY]', text: 'flag'
     expect(page).to have_selector '.shepherd button', text: 'send email'
 
+    # prefixed sections
+    expect(page).to have_selector '#flink-comments', text: 'Comments'
+    expect(page).to have_selector '#james-actions', text: 'Action Items'
+    expect(page).to have_selector '#rave-minutes', text: 'Minutes'
+
     expect(page).to have_selector '.backlink[href="shepherd/Ross"]',
       text: 'Ross'
     expect(page).not_to have_selector '.nextlink'
@@ -172,7 +177,7 @@ feature 'other reports' do
      text: 'board_minutes_2015_01_21.txt'
   end
 
-  it "should show an help page" do
+  it "should show a help page" do
     visit '/2015-02-18/help'
 
     # navigation

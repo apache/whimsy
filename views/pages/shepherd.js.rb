@@ -28,7 +28,7 @@ class Shepherd < React
           first = false
         end
 
-        _AdditionalInfo item: item
+        _AdditionalInfo item: item, prefix: true
 
         # flag action
         if item.missing or not item.comments.empty?
