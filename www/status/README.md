@@ -72,8 +72,8 @@ the control flow section below.
 Control Flow
 ============
 
-Fetching the [https://whimsy-test.apache.org/status/] web page, which can be
-done either by browsers or pings, results in a call to
+Fetching the [https://whimsy-test.apache.org/status/](status) web page, which
+can be done either by browsers or pings, results in a call to
 [index.cgi](https://github.com/apache/whimsy/blob/master/www/status/index.cgi).
 If it has been more than 60 seconds since the last status update, index.cgi
 will call
@@ -86,12 +86,13 @@ Monitors are simple class methods.  Monitors can assume that they are called
 no more often than once a minute, and are passed the normalized results of the
 previous call.
 
-Monitors are called in response to a ping, so should produce results in
-sub-second time in order to avoid the ping timing out.  (Currently monitors
-are called in series, but in the future this may change to threads so that
-statuses may be collected in parallel.) Monitors that perform activities that
-take a substantial amount of time may elect to do so less frequently than once
-a minute, and can take advantage of the `mtime` values to do so.
+As monitors are called in response to a ping, they are expected to produce
+results in sub-second time in order to avoid the ping timing out.  (Currently
+monitors are called in series, but in the future this may change to threads so
+that statuses may be collected in parallel.) Monitors that perform activities
+that take a substantial amount of time may elect to do so less frequently than
+once a minute, and can take advantage of the `mtime` values to determine when
+to do so.
 
 Results are collected into a hash, and that hash is then normalized.
 Normalization resolves default values for items like levels and titles
