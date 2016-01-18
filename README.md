@@ -127,4 +127,4 @@ Further Reading
 
  * [Development](./DEVELOPMENT.md)
  * [Deployment](./DEPLOYMENT.md)
- * [Monitoring](./MONITORING.md)
+ * [Monitoring](./www/status/README.md)
