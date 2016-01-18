@@ -71,7 +71,7 @@ Skip this section if you are running a Docker container or a Vagrant VM.
   `gem install whimsy-asf`
 
 3. current SVN checkouts of various repositories are made (or linked to from)
-   `/home/whimsysvn/svn`
+   `/srv/svn`
 
         svn co --depth=files https://svn.apache.org/repos/private/foundation
 
@@ -127,4 +127,4 @@ Further Reading
 
  * [Development](./DEVELOPMENT.md)
  * [Deployment](./DEPLOYMENT.md)
- * [Monitoring](./MONITORING.md)
+ * [Monitoring](./www/status/README.md)
