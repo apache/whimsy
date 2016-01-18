@@ -65,9 +65,9 @@ array of Strings).
 Mtime
 -----
 
-Anchors and the top of each major branch emanating from the root have an mtime
-which indicates when that data was last updated.  This is described below in
-the control flow section below.
+Anchors and the top of each major branch emanating from the root have an
+*mtime* value which indicates when that data was last updated.  This is
+described below in the control flow section below.
 
 Control Flow
 ============
