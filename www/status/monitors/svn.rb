@@ -4,9 +4,9 @@
 
 def Monitor.svn(previous_status)
   # read cron log
-  log = File.expand_path('../../www/logs/svn-update')
-  updates = File.read(log).split("\n/srv/svn/")
-  updates.shift
+  log = File.expand_path('../../../logs/svn-update', __FILE__)
+  data = File.open(log) {|file| file.flock(File::LOCK_EX); file.read}
+  updates = data.split("\n/srv/svn/")[1..-1]
 
   status = {}
 
@@ -30,7 +30,10 @@ def Monitor.svn(previous_status)
     lines.reject! {|line| line =~ /^[ADU]    /}
 
     if lines.empty?
-      if data.length == 1
+      if not data
+        title = "partial response"
+        level = 'warning'
+      elsif data.length == 1
         title = "1 file updated"
       else
         title = "#{data.length} files updated"
@@ -42,7 +45,7 @@ def Monitor.svn(previous_status)
       data = lines.dup
     end
 
-    status[repository] = {level: level, data: data}
+    status[repository] = {level: level, data: data, href: '../logs/svn-update'}
     status[repository][:title] = title if title
   end
 
