@@ -54,7 +54,7 @@ print <<-EOF
     <p>
       This status is monitored by:
       <a href="https://www.pingmybox.com/dashboard?location=470">Ping My
-      Box</a>.
+      Box</a> (<a href="errors">full log</a>).
     </p>
   </body>
 </html>
