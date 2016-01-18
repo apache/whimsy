@@ -8,7 +8,11 @@ require 'net/https'
 require 'fileutils'
 
 # for monitoring purposes
-at_exit { puts "\n*** Exception #{$!.class} ***" unless SystemExit === $! }
+at_exit do
+  if $1 and not $1.instance_of? SystemExit
+    puts "\n*** Exception #{$!.class} ***"
+  end
+end
 
 # destination directory
 SITE_MINUTES = ASF::Config.get(:board_minutes) ||
