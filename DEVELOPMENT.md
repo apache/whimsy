@@ -53,3 +53,18 @@ Current status:
    instead of at the application level making use of Rack middleware such as:
 
     https://github.com/apache/whimsy/blob/master/lib/whimsy/asf/rack.rb#L57
+
+
+Further Reading
+===============
+
+The [board agenda](https://github.com/rubys/whimsy-agenda#readme) application
+is an eample of a complete tool that makes extensive use of the library
+factoring, has a suite of test cases, and client componentization (using
+ReactJS), and provides instructions for setting up both a Docker component and
+a Vagrant VM.
+
+If you would like to understand how the view code works, you can get started
+by looking at a few of the
+[Wunderbar demos](https://github.com/rubys/wunderbar/tree/master/demo)
+and [README](https://github.com/rubys/wunderbar/blob/master/README.md).

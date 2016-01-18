@@ -125,12 +125,6 @@ Skip this section if you are running a Docker container or a Vagrant VM.
 Further Reading
 ===============
 
-An [example](https://github.com/rubys/whimsy-agenda#readme) of a complete tool
-that makes full use of the library factoring, has a suite of test cases, and
-client componentization (using ReactJS), and provides instructions for setting
-up both a Docker component and a Vagrant VM:
-
-If you would like to understand how the view code works, you can get started
-by looking at a few of the
-[Wunderbar demos](https://github.com/rubys/wunderbar/tree/master/demo)
-and [README](https://github.com/rubys/wunderbar/blob/master/README.md).
+ * [Development](./DEVELOPMENT.md)
+ * [Deployment](./DEPLOYMENT.md)
+ * [Monitoring](./MONITORING.md)
