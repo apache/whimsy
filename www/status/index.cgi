@@ -53,7 +53,8 @@ print <<-EOF
 
     <p>
       This status is monitored by:
-      <a href="https://www.pingmybox.com/dashboard?location=470">Ping My Box</a>
+      <a href="https://www.pingmybox.com/dashboard?location=470">Ping My
+      Box</a>.
     </p>
   </body>
 </html>
