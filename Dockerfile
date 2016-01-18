@@ -3,9 +3,9 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN mkdir -p /srv/var
 
-ENV RUBY_VERSION 2.2
+ENV RUBY_VERSION 2.3
 ENV PHANTOMJS_VERSION 2.0.0
-ENV NODE_VERSION 4.1.1
+ENV NODEJS_VERSION 5
 
 # generate locales
 ENV LANG en_US.UTF-8
@@ -16,7 +16,11 @@ EXPOSE 9292
 # system packages
 RUN apt-get install -y software-properties-common && \
     apt-add-repository ppa:brightbox/ruby-ng && \
+    apt-get install -y curl &&\
+    (curl -sL https://deb.nodesource.com/setup_${NODEJS_VERSION}.x | \
+       sudo -E bash -) && \
     apt-get update -y && \
+    apt-get install -y nodejs &&\
     apt-get install -y ruby$RUBY_VERSION  && \
     apt-get install -y ruby$RUBY_VERSION-dev && \
     apt-get install -y wget && \
@@ -26,15 +30,8 @@ RUN apt-get install -y software-properties-common && \
     apt-get install -y libsasl2-dev && \
     apt-get install -y libxml2-dev && \
     apt-get install -y subversion && \
-    apt-get install -y lsof
-
-# io.js
-WORKDIR /srv/var
-RUN wget https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz  && \
-    tar -vxf node-v$NODE_VERSION-linux-x64.tar.xz && \
-    rm -f node-v$NODE_VERSION-linux-x64.tar.xz && \
-    ln -s /srv/var/node-v$NODE_VERSION-linux-x64/bin/node /usr/bin/node && \
-    ln -s /srv/var/node-v$NODE_VERSION-linux-x64/bin/npm /usr/bin/npm
+    apt-get install -y lsof && \
+    apt-get install -y zlib1g-dev
 
 # phantom.js - 2.0.0
 # https://github.com/ariya/phantomjs/issues/12948#issuecomment-78181293
@@ -58,7 +55,6 @@ RUN apt-get autoremove -y && \
    rm -rf /var/tmp/*
 
 # Whimsy Agenda
-RUN apt-get install zlib1g-dev
 RUN gem install bundler
 ADD Gemfile /home/agenda/ 
 WORKDIR /home/agenda
