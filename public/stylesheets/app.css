@@ -285,6 +285,23 @@ li.dropdown #nav.dropdown-toggle {
   cursor: pointer;
 }
 
+li.dropdown table {
+  padding: 0.5em;
+}
+
+li.dropdown table tr td:first-of-type {
+  text-align: right;
+  min-width: 2em;
+}
+
+li.dropdown table tr td:last-of-type {
+  min-width: 11em;
+}
+
+li.dropdown table td {
+  padding: 0 0.4em;
+}
+
 @media only screen and (max-height: 600px) {
   .navbar-fixed-top {
     z-index: 1050

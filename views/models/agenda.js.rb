@@ -273,6 +273,55 @@ class Agenda
     return shepherd
   end
 
+  # summary
+  def self.summary
+    results = []
+
+    # committee reports
+    count = 0
+    link = nil
+    Agenda.index.each do |item| 
+      if item.attach =~ /^[A-Z]+$/
+        count += 1
+        link ||= item.href
+      end
+    end
+    results << {color: 'available', count: count, href: link, 
+        text: 'committee reports'}
+
+    # special orders
+    count = 0
+    link = nil
+    Agenda.index.each do |item| 
+      if item.attach =~ /^7[A-Z]+$/
+        count += 1
+        link ||= item.href
+      end
+    end
+    results << {color: 'available', count: count, href: link, 
+      text: 'special orders'}
+
+    # awaiting preapprovals
+    count = 0
+    Agenda.index.each {|item| count += 1 if item.color == 'ready'}
+    results << {color: 'ready', count: count, href: 'queue',
+      text: 'awaiting preapprovals'}
+
+    # flagged reports
+    count = 0
+    Agenda.index.each {|item| count += 1 if item.flagged_by}
+    results << {color: 'commented', count: count, href: 'flagged', 
+      text: 'flagged reports'}
+
+    # missing reports
+    count = 0
+    Agenda.index.each {|item| count += 1 if item.missing}
+    results <<  {color: 'missing', count: count, href: 'missing',
+      text: 'missing reports'}
+
+    return results
+  end
+
   #
   # Methods on individual agenda items
   #

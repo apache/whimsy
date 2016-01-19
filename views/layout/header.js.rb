@@ -89,6 +89,27 @@ class Header < React
               end
             end
           end
+
+        else
+          _li.dropdown do
+            _a.dropdown_toggle.info! data_toggle: "dropdown" do
+              _ 'summary'
+              _b.caret
+            end
+
+            summary = @@item.summary || Agenda.summary
+
+            _table.table_bordered.online.dropdown_menu do
+              summary.each do |status|
+                text = status.text
+                text.sub!(/s$/, '') if status.count == 1
+                _tr class: status.color do
+                  _td {_Link text: status.count, href: status.href}
+                  _td {_Link text: text, href: status.href}
+                end
+              end
+            end
+          end
         end
 
         # 'navigation' dropdown
