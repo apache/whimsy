@@ -76,7 +76,7 @@ module ASF
   def self.init_ldap
     return @ldap if @ldap
     @mtime = Time.now
-    @ldap = ASF::LDAP.init
+    @ldap = ASF::LDAP.connect
   end
 
   # determine where ldap.conf resides
