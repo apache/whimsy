@@ -28,9 +28,11 @@ class Index < React
           color = 'hidden' if message.status == :deleted
           color = 'selected' if message.href == @selected
 
+          time = Date.new(Date.parse(message.time)).toLocaleString()
+
           _tr class: color, onClick: self.selectRow, onDoubleClick: self.nav do
             _td do
-              _a message.time, href: "#{message.href}"
+              _a time, href: "#{message.href}", title: message.time
             end 
             _td message.from
             _td message.subject
