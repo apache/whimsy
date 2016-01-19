@@ -53,7 +53,7 @@ $(function() {
       }
  
       // provide ISO-8601 formatted GMT time as a tooltip
-      if (value.mtime) {
+      if (value.mtime && !value.title) {
         div.children('a:not(.data-toggle)').attr('title', value.mtime);
       }
 
