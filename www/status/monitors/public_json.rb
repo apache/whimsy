@@ -11,7 +11,7 @@ def Monitor.public_json(previous_status)
     name = File.basename(log).sub('public-', '')
 
     if File.size(log) == 0
-      status[name] = {data: "Last updated #{File.mtime(log)}"}
+      status[name] = {mtime: File.mtime(log)}
     else
       status[name] = {level: 'danger', data: File.readlines(log)}
     end

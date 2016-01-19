@@ -30,8 +30,8 @@ _html do
 
   _table.table do
     _tr_ do
-      _th 'Time'
       _th 'Pinger'
+      _th 'Time'
       _th 'Status'
       _th 'Error'
     end
@@ -39,11 +39,11 @@ _html do
     exceptions.sort.reverse.each do |time, pinger, text|
       color = (text.include?('HTTP/1.1 3') ? 'warning' : 'danger')
       _tr_ class: color do
-        _td time.iso8601
         _td align: 'right' do
           _a pinger, href:
             "https://www.pingmybox.com/pings?location=470&pinger=#{pinger}"
         end
+        _td.time time.iso8601
         _td text[/^HTTP\/1.1 (\d+)/, 1] 
         _td text.sub(/^HTTP\/1.1 \d+/, '')
       end
@@ -53,6 +53,14 @@ _html do
   _p do
     _a 'raw log', href: uri.to_s
   end
+
+  _script %{
+    Array.from(document.querySelectorAll('.time')).forEach(function(time) {
+      var date = new Date(Date.parse(time.textContent));
+      time.setAttribute('title', time.textContent);
+      time.textContent = date.toLocaleString();
+    });
+  }
 end
 
 

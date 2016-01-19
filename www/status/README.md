@@ -69,6 +69,10 @@ Anchors and the top of each major branch emanating from the root have an
 *mtime* value which indicates when that data was last updated.  This is
 described below in the control flow section below.
 
+Leaf nodes can have a mtime value in place of data.  Such values will be
+converted to local time and displayed as the last update value.  Hovering over
+such items will show the GMT value of the time specified in ISO-8601 format.
+
 Control Flow
 ============
 
@@ -87,12 +91,11 @@ no more often than once a minute, and are passed the normalized results of the
 previous call.
 
 As monitors are called in response to a ping, they are expected to produce
-results in sub-second time in order to avoid the ping timing out.  (Currently
-monitors are called in series, but in the future this may change to threads so
-that statuses may be collected in parallel.) Monitors that perform activities
-that take a substantial amount of time may elect to do so less frequently than
-once a minute, and can take advantage of the `mtime` values to determine when
-to do so.
+results in sub-second time in order to avoid the ping timing out.  (Monitors
+are run in separate threads to minimize the total elapsed time).  Monitors
+that perform activities that take a substantial amount of time may elect to do
+so less frequently than once a minute, and can take advantage of the `mtime`
+values to determine when to do so.
 
 Results are collected into a hash, and that hash is then normalized.
 Normalization resolves default values for items like levels and titles

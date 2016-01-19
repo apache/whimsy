@@ -6,6 +6,7 @@
 
 require 'json'
 require 'time'
+require 'thread'
 
 class Monitor
   # match http://getbootstrap.com/components/#alerts
@@ -30,42 +31,52 @@ class Monitor
         return
       end
 
-      # invoke each monitor, collecting status from each
-      newstatus = {}
+      # start each monitor in a separate thread
+      threads = []
       self.class.singleton_methods.sort.each do |method|
         next if args.length > 0 and not args.include? method.to_s
 
-        # invoke method to determine current status
-        begin
-          previous = baseline[method] || {mtime: Time.at(0).gmtime.iso8601}
-          status = Monitor.send(method, previous) || previous
+        threads << Thread.new do
+          begin
+            # invoke method to determine current status
+            previous = baseline[method] || {mtime: Time.at(0)}
+            status = Monitor.send(method, previous) || previous
 
-          # convert non-hashes in proper statuses
-          if not status.instance_of? Hash
-            if status.instance_of? String or status.instance_of? Array
-              status = {data: status}
-            else
-              status = {level: 'danger', data: status.inspect}
+            # convert non-hashes in proper statuses
+            if not status.instance_of? Hash
+              if status.instance_of? String or status.instance_of? Array
+                status = {data: status}
+              else
+                status = {level: 'danger', data: status.inspect}
+              end
             end
-          end
-        rescue Exception => e
-          status = {
-            level: 'danger', 
-            data: {
-              exception: {
-                level: 'danger', 
-                text: e.inspect, 
-                data: e.backtrace
+          rescue Exception => e
+            status = {
+              level: 'danger',
+              data: {
+                exception: {
+                  level: 'danger',
+                  text: e.inspect,
+                  data: e.backtrace
+                }
               }
             }
-          }
+          end
+
+          # default mtime to now
+          status['mtime'] ||= Time.now if status.instance_of? Hash
+
+          # store status in thread local storage
+          Thread.current[:name] = method.to_s
+          Thread.current[:status] = status
         end
+      end
 
-        # default mtime to now
-        status['mtime'] ||= Time.now.gmtime.iso8601 if status.instance_of? Hash
-
-        # update baseline
-        newstatus[method] = status
+      # collect status from each monitor thread
+      newstatus = {}
+      threads.each do |thread|
+        thread.join
+        newstatus[thread[:name]] = thread[:status]
       end
 
       # normalize status
@@ -104,10 +115,15 @@ class Monitor
     if status['data'].instance_of? Hash
       # recursively normalize the data structure
       status['data'].values.each {|value| normalize(value)}
-    elsif not status['data']
+    elsif not status['data'] and not status['mtime']
       # default data
       status['data'] = 'missing'
       status['level'] ||= 'danger'
+    end
+
+    # normalize time
+    if status['mtime'].instance_of? Time
+      status['mtime'] = status['mtime'].gmtime.iso8601
     end
 
     # normalize level (filling in title when this occurs)
