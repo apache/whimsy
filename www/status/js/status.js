@@ -25,6 +25,12 @@ $(function() {
       var div = $('<div>').addClass('list-group').addClass('collapse').
         attr('id', prefix + item);
 
+      // default data to mtime, if present
+      if (!value.data && value.mtime) {
+        value.data = "Last updated " +
+          new Date(Date.parse(value.mtime)).toLocaleString()
+      }
+
       // build nested content (recursively if value.data is an object)
       if (!value.data) {
         div.append($('<a>').addClass('list-group-item').
@@ -46,6 +52,11 @@ $(function() {
         div.children('a:not(.data-toggle)').attr('href', value.href);
       }
  
+      // provide ISO-8601 formatted GMT time as a tooltip
+      if (value.mtime) {
+        div.children('a:not(.data-toggle)').attr('title', value.mtime);
+      }
+
       // append each to the container
       container.append(anchor);
       container.append(div);

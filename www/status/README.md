@@ -69,6 +69,10 @@ Anchors and the top of each major branch emanating from the root have an
 *mtime* value which indicates when that data was last updated.  This is
 described below in the control flow section below.
 
+Leaf nodes can have a mtime value in place of data.  Such values will be
+converted to local time and displayed as the last update value.  Hovering over
+such items will show the GMT value of the time specified in ISO-8601 format.
+
 Control Flow
 ============
 

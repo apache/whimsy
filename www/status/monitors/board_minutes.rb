@@ -19,6 +19,6 @@ def Monitor.board_minutes(previous_status)
       href: '../logs/collate_minutes'
     }
   else
-    "Last updated: #{File.mtime(index)}"
+    {mtime: File.mtime(index)}
   end
 end

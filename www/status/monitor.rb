@@ -37,7 +37,7 @@ class Monitor
 
         # invoke method to determine current status
         begin
-          previous = baseline[method] || {mtime: Time.at(0).gmtime.iso8601}
+          previous = baseline[method] || {mtime: Time.at(0)}
           status = Monitor.send(method, previous) || previous
 
           # convert non-hashes in proper statuses
@@ -62,7 +62,7 @@ class Monitor
         end
 
         # default mtime to now
-        status['mtime'] ||= Time.now.gmtime.iso8601 if status.instance_of? Hash
+        status['mtime'] ||= Time.now if status.instance_of? Hash
 
         # update baseline
         newstatus[method] = status
@@ -104,10 +104,15 @@ class Monitor
     if status['data'].instance_of? Hash
       # recursively normalize the data structure
       status['data'].values.each {|value| normalize(value)}
-    elsif not status['data']
+    elsif not status['data'] and not status['mtime']
       # default data
       status['data'] = 'missing'
       status['level'] ||= 'danger'
+    end
+
+    # normalize time
+    if status['mtime'].instance_of? Time
+      status['mtime'] = status['mtime'].gmtime.iso8601
     end
 
     # normalize level (filling in title when this occurs)
