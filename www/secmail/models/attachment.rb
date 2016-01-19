@@ -13,7 +13,19 @@ class Attachment
   end
 
   def content_type
-    headers[:mime] || @part.content_type
+    type = headers[:mime] || @part.content_type
+
+    if type == 'application/octet-stream'
+      type = 'text/plain' if name.end_with? '.sig'
+      type = 'text/plain' if name.end_with? '.asc'
+      type = 'application/pdf' if name.end_with? '.pdf'
+      type = 'image/gif' if name.end_with? '.gif'
+      type = 'image/jpeg' if name.end_with? '.jpg'
+      type = 'image/jpeg' if name.end_with? '.jpeg'
+      type = 'image/png' if name.end_with? '.png'
+    end
+
+    type
   end
 
   def body
