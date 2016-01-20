@@ -44,7 +44,7 @@ RUN apt-get install -y libfreetype6 && \
     wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 && \
     tar -vxjf phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 phantomjs && \
     rm -f phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 && \
-    ln -s /srv/var/phantomjs /usr/bin/phantomjs
+    mv phantomjs /usr/bin
 
 # Clean Up
 RUN apt-get autoremove -y && \
