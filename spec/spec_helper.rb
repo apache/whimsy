@@ -18,4 +18,6 @@ if
   end
 then
   require 'capybara/poltergeist'
+else
+  puts STDERR, "phantomjs is not available in PATH, not loading poltergeist"
 end
