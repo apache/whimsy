@@ -2,6 +2,7 @@ require 'wunderbar'
 require 'ldap'
 require 'weakref'
 require 'net/http'
+require 'base64'
 
 module ASF
   module LDAP
@@ -54,7 +55,6 @@ module ASF
 
           # test the connection
           ldap.bind
-          ldap.unbind rescue nil
 
           # save the host
           @host = host
@@ -256,6 +256,10 @@ module ASF
       ASF::Member.status[name] or ASF.members.include? self
     end
 
+    def asf_officer_or_member?
+      asf_member? or ASF.pmc_chairs.include? self
+    end
+
     def asf_committer?
        ASF::Group.new('committers').include? self
     end
@@ -403,6 +407,25 @@ module ASF
         ASF.init_ldap
       else
         ASF.ldap.bind(dn, password)
+      end
+    end
+
+    # validate HTTP authorization, and optionally invoke a block bound to
+    # that user.
+    def self.http_auth(string, &block)
+      auth = Base64.decode64(string[/Basic (.*)/, 1] || '')
+      user, password = auth.split(':', 2)
+      return unless password
+
+      if block
+        self.bind(user, password, &block)
+      else
+        begin
+          ASF::LDAP.bind(user, password) {}
+          return ASF::Person.new(user)
+        rescue ::LDAP::ResultError
+          return nil
+        end
       end
     end
 
