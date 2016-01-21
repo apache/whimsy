@@ -265,7 +265,7 @@ module ASF
     end
 
     def banned?
-      not attrs['loginShell'] or attrs['loginShell'].include? "/usr/bin/false"
+      not attrs['loginShell'] or attrs['loginShell'].include? "/usr/bin/false" or attrs['loginShell'].include? "bin/nologin" or attrs['loginShell'].include? "bin/no-cla"
     end
 
     def mail
