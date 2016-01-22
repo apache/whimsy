@@ -61,12 +61,13 @@ module ASF
 
           return ldap
         rescue ::LDAP::ResultError => re
-          Wunderbar.error "Error connecting to LDAP server #{host}: " +
-            re.message
+          Wunderbar.warn "Error connecting to LDAP server #{host}: " +
+            re.message + " (continuing)"
         end
 
-        return nil
       end
+      Wunderbar.error "Failed to connect to any LDAP host"
+      return nil
     end
   end
 
