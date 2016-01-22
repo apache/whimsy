@@ -15,6 +15,7 @@ module ASF
     # add libraries to RUBYLIB, load path
     (@config[:lib] || []).reverse.each do |lib|
       next unless File.exist? lib
+      lib = File.realpath(lib)
       ENV['RUBYLIB']=([lib] + ENV['RUBYLIB'].to_s.split(':')).uniq.join(':')
       $LOAD_PATH.unshift lib.untaint unless $LOAD_PATH.include? lib
     end
