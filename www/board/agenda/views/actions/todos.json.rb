@@ -2,7 +2,7 @@
 # Secretary post-meeting todo list
 #
 
-TLPREQ = '/var/tools/secretary/tlpreq'
+TLPREQ = '/srv/secretary/tlpreq'
 
 date = params[:date].gsub('-', '_')
 date.untaint if date =~ /^\d+_\d+_\d+$/
