@@ -32,18 +32,13 @@ class Pending
 
     yield pending
 
-    begin
-      @@listener.stop
-      work = work_file(user)
-      File.open(work, 'w') do |file|
-        file.write YAML.dump(pending)
-      end
-      @@seen[work] = File.mtime(work)
-    ensure
-      @@listener.start
+    work = work_file(user)
+    File.open(work, 'w') do |file|
+      file.write YAML.dump(pending)
     end
+    @@seen[work] = File.mtime(work)
 
-    Events.post type: :pending, value: pending, private: user
+    IPC.post type: :pending, value: pending, private: user
 
     pending
   end
@@ -55,9 +50,9 @@ class Pending
       file = File.basename(path)
       if file =~ /^board_minutes_\d{4}_\d\d_\d\d\.yml$/
         agenda = file.sub('minutes', 'agenda').sub('.yml', '.txt')
-        Events.post type: :minutes, agenda: agenda, value: YAML.load_file(path)
+        IPC.post type: :minutes, agenda: agenda, value: YAML.load_file(path)
       elsif file =~ /^(\w+)\.yml$/
-        Events.post type: :pending, private: $1, value: YAML.load_file(path)
+        IPC.post type: :pending, private: $1, value: YAML.load_file(path)
       else
         STDERR.puts file
       end
@@ -68,5 +63,6 @@ class Pending
   @@listener = Struct.new(:start, :stop).new if ENV['RACK_ENV'] == 'test'
 
   @@seen = {}
+
   @@listener.start
 end

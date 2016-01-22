@@ -33,6 +33,7 @@ else
 end
 
 require_relative './routes'
+require_relative './models/ipc'
 require_relative './models/pending'
 require_relative './models/events'
 require_relative './models/agenda'

@@ -5,43 +5,46 @@
 #
 class Agenda
   @@mutex = Mutex.new
-  @@cache = Hash.new(mtime: 0)
 
   def self.[](file)
-    @@cache[file]
+    IPC[file]
+  end
+
+  def self.[]=(file, data)
+    IPC[file] = data
   end
 
   def self.update_cache(file, path, contents, quick)
     parsed = ASF::Board::Agenda.parse(contents, quick)
-    @@cache[file] = {mtime: (quick ? -1 : File.mtime(path)), parsed: parsed}
-    Events.post type: :agenda, file: file unless quick
+    Agenda[file] = {mtime: (quick ? -1 : File.mtime(path)), parsed: parsed}
+    IPC.post type: :agenda, file: file unless quick
   end
 
   def self.uptodate(file)
     path = File.expand_path(file, FOUNDATION_BOARD).untaint
     return false unless File.exist? path
-    return self[file][:mtime] == File.mtime(path)
+    return Agenda[file][:mtime] == File.mtime(path)
   end
 
   def self.parse(file, mode)
     # for quick mode, anything will do
     mode = :quick if ENV['RACK_ENV'] == 'test'
-    return self[file][:parsed] if mode == :quick and self[file][:mtime] != 0
+    return Agenda[file][:parsed] if mode == :quick and Agenda[file][:mtime] != 0
 
     file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
     path = File.expand_path(file, FOUNDATION_BOARD).untaint
     
     return unless File.exist? path
 
-    if self[file][:mtime] != File.mtime(path)
+    if Agenda[file][:mtime] != File.mtime(path)
       @@mutex.synchronize do
-        if self[file][:mtime] != File.mtime(path)
+        if Agenda[file][:mtime] != File.mtime(path)
           self.update_cache(file, path, File.read(path), mode == :quick)
         end
       end
 
       # do a full parse in the background if a quick parse was done
-      if @@cache[file][:mtime] == -1
+      if Agenda[file][:mtime] == -1
         Thread.new do
           self.update(file, nil)
           parse(file, :full)
@@ -49,7 +52,7 @@ class Agenda
       end
     end
 
-    self[file][:parsed]
+    Agenda[file][:parsed]
   end
 
   # update agenda file in SVN
@@ -70,7 +73,7 @@ class Agenda
 
       # capture current version of the file
       path = File.join(FOUNDATION_BOARD, file)
-      baseline = File.read(path) if @@cache[file][:mtime] == File.mtime(path)
+      baseline = File.read(path) if Agenda[file][:mtime] == File.mtime(path)
 
       # check out empty directory
       board = `svn info #{FOUNDATION_BOARD}`[/URL: (.*)/, 1]
@@ -87,14 +90,9 @@ class Agenda
 
         # if the output differs, update and commit the file in question
         if output != input
-          begin
-            @@listener.stop
-            IO.write(path, output)
-            _.system ['svn', 'commit', auth, path, '-m', message]
-            @@seen[path] = File.mtime(path)
-          ensure
-            @@listener.start
-          end
+          IO.write(path, output)
+          _.system ['svn', 'commit', auth, path, '-m', message]
+          @@seen[path] = File.mtime(path)
         end
       end
 
@@ -111,7 +109,7 @@ class Agenda
       end
 
       # return the result
-      _.method_missing(:_agenda, @@cache[file][:parsed])
+      _.method_missing(:_agenda, Agenda[file][:parsed])
     end
 
   ensure
