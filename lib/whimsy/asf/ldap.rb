@@ -10,11 +10,12 @@ module ASF
      # https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
     HOSTS = %w(
       ldaps://ldap1-us-west.apache.org:636
-      ldaps://ldap1-eu-central.apache.org:636
       ldaps://ldap1-lw-us.apache.org:636
       ldaps://ldap2-us-west.apache.org:636
+      ldaps://ldap1-lw-eu.apache.org:636
       ldaps://snappy5.apache.org:636
       ldaps://ldap2-lw-us.apache.org:636
+      ldaps://ldap2-lw-eu.apache.org:636
     )
 
     # fetch configuration from apache/infrastructure-puppet
