@@ -1,10 +1,16 @@
 #!/usr/local/bin/ruby2.3.0
 
+require 'bundler/setup'
+
+require 'fileutils'
 require 'open3'
 require 'wunderbar'
+require 'whimsy/asf'
 
-if ENV['REQUEST_METHOD'] == 'POST'
-  # not implemented yet.
+members = ASF.members
+user = ASF::LDAP.http_auth(ENV['HTTP_AUTHORIZATION'])
+
+unless user
   print "Status: 401 Unauthorized\r\n"
   print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
   exit
@@ -14,21 +20,45 @@ output, error, status = Open3.capture3 '/usr/local/bin/ruby2.3.0',
   Gem.bin_path('passenger', 'passenger-status')
 
 _html do
+  _title 'Phusion Passenger Status'
   _style %{
     input[type=submit] {
       margin-left: 2em;
       padding: 5px 15px;
-      background: #F00;
-      color: #FFF;
-      border: 2px solid #C00;
+      background: #F2DEDE;
+      color: #A94442;
+      border: 2px solid #EBCCCC;
       font-weight: bold;
       font-size: larger;
       border-radius: 5px;
       cursor: pointer;
     }
+
+    h1 a {
+      text-decoration: none;
+      outline: none;
+    }
+
+    .alert {
+      padding: 15px;
+      display: inline-block;
+      margin-left: 1em;
+      margin-bottom: 20px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: #3C763D;
+      background-color: #DFF0D8;
+      border-color: #D6E9C6;
+    }
   }
 
-  _h1 'Phusion Passenger Status'
+  _h1 do
+    _a href: 'https://www.phusionpassenger.com/' do
+      _img src: 'images/passenger.png'
+    end
+
+    _ 'Phusion Passenger Status'
+  end
 
   sections = output.split(/^(---.*---)\n/)
   _pre sections.shift
@@ -41,11 +71,18 @@ _html do
         _pre app
 
         path = app[/\A(\/.*):/, 1]
-        restart = File.join(path.untaint, "tmp/restart.txt") if path
-        if restart and File.exist? restart
-          _form method: 'post' do
-             _input type: 'hidden', value: restart
-             _input type: 'submit', value: 'restart'
+        if user.asf_officer_or_member?
+          restart = File.join(path.untaint, "tmp/restart.txt") if path
+          if restart and File.exist? restart
+            if _.post? and @restart == restart
+              FileUtils.touch restart
+              _span.alert "#{path} will restart on next request."
+            else
+              _form method: 'post' do
+                 _input type: 'hidden', name: 'restart', value: restart
+                 _input type: 'submit', value: 'restart'
+              end
+            end
           end
         end
       end

@@ -403,6 +403,8 @@ module ASF
   module LDAP
     def self.bind(user, password, &block)
       dn = ASF::Person.new(user).dn
+      raise ::LDAP::ResultError.new('Unknown user') unless dn
+
       ASF.ldap.unbind rescue nil
       if block
         ASF.ldap.bind(dn, password, &block)
@@ -415,7 +417,7 @@ module ASF
     # validate HTTP authorization, and optionally invoke a block bound to
     # that user.
     def self.http_auth(string, &block)
-      auth = Base64.decode64(string[/Basic (.*)/, 1] || '')
+      auth = Base64.decode64(string.to_s[/Basic (.*)/, 1] || '')
       user, password = auth.split(':', 2)
       return unless password
 

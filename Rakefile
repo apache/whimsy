@@ -13,9 +13,9 @@ task :update do
 
   # locate passenger ruby
   conf = Dir['/etc/apache2/*/passenger.conf'].first
-  conf = File.read(conf)[/PassengerRuby "?(.*?)"?$/, 1] if conf
-  if conf
-    passruby = "#{File.dirname(conf)}/%s#{conf[/ruby([.\d]*)$/, 1]}"
+  ruby = File.read(conf)[/PassengerRuby "?(.*?)"?$/, 1] if conf
+  if ruby
+    passruby = "#{File.dirname(ruby)}/%s#{ruby[/ruby([.\d]*)$/, 1]}"
   else
     passruby = sysruby
   end
@@ -23,7 +23,14 @@ task :update do
   # update gems
   Dir['**/Gemfile'].each do |gemfile|
     Dir.chdir File.dirname(gemfile) do
-      bundler = (File.exist?('config.ru') ? passruby : sysruby) % 'bundle'
+      ruby = File.read('Gemfile')[/^ruby ['"](.*?)['"]/, 1]
+      ruby = `which ruby#{ruby}`.chomp if ruby
+      if ruby and not ruby.empty?
+        bundler = "#{File.dirname(ruby)}/bundle#{ruby[/ruby([.\d]*)$/, 1]}"
+      else
+        bundler = (File.exist?('config.ru') ? passruby : sysruby) % 'bundle'
+      end
+
       bundler = 'bundle' unless File.exist?(bundler)
       system "#{bundler} update"
     end
