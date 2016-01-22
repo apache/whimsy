@@ -17,4 +17,8 @@ module ASF
     times = sources.map {|source| File.mtime(source)}
     times.max.gmtime
   end
+  def self.library_gitinfo
+    return @info if @info
+    @info = `git show --format="%h  %cI"  -s HEAD`.chomp
+  end
 end
