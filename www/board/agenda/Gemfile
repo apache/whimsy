@@ -1,12 +1,15 @@
 source 'https://rubygems.org'
 
+root = '../../../..'
+asf_version = File.read(File.expand_path("#{root}/asf.version", __FILE__)).chomp
+gem 'whimsy-asf', asf_version, path: File.expand_path(root, __FILE__)
+
 gem 'rake'
 gem 'wunderbar', '>= 1.0.0'
 gem 'ruby2js', '>= 2.0.13'
 gem 'sinatra'
 gem 'nokogumbo'
 gem 'execjs', ('<2.5.1' if RUBY_VERSION =~ /^1/)
-gem 'whimsy-asf', '>= 0.0.14'
 gem 'listen', ('~> 2.10' if RUBY_VERSION =~ /^1/)
 gem 'activesupport'
 gem 'mail'

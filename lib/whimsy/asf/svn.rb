@@ -14,6 +14,7 @@ module ASF
       @semaphore.synchronize do
         svn = ASF::Config.get(:svn).map {|dir| dir.untaint}
         @repos ||= Hash[Dir[*svn].map { |name| 
+          next unless Dir.exist? name.untaint
           Dir.chdir name.untaint do
             out, err, status = Open3.capture3('svn', 'info')
             if status.success?
