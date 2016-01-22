@@ -1,0 +1,18 @@
+---
+started: 1421865240000.0
+Call to order: '10:34'
+Roll Call: ! "Directors Present:\n\n  Rich Bowen\n  Doug Cutting\n  Bertrand Delacretaz\n  Ross Gardler left at 11:04\n  Jim Jagielski\n  Chris Mattmann\n \   Brett Porter\n  Sam Ruby\n  Greg Stein\n\nDirectors Absent:\n\n  none\n\nExecutive Officers Present:\n\n  Craig L Russell\n\nExecutive Officers Absent:\n\n  none\n\nGuests:\n\n \   Sean Kelly\n  Jake Farrell\n  Daniel Gruno\n  Shane Curcuru\n  Kevin A. McGrail\n  Hadrian Zbarcea\n  Tom Barber\n  Tom Pappas\n  David Nalley\n \   Henri Yandell\n  Marvin Humphrey\n  Andrea Pescetti"
+December 17, 2014: approved
+Deltacloud: ! '@Brett: Request a better report for next month'
+Incubator: ! '@Greg: Please don''t include mentors who didn''t sign off'
+Isis: ! "@Bertrand: Follow up with PMC regarding commercial sponsoring \n    and external
+  repository"
+Rave: ! '@Sam: Is the project ready for retirement?  Additional text that will
+require a reflow onto multiple lines'
+Tuscany: ! '@Greg: Is it time to retire the project?'
+Wink: ! '@Doug: Is the project ready to retire?'
+Establish Samza: unanimous
+Change Labs Chair: unanimous
+Change Tiles Chair: unanimous
+Change ZooKeeper Chair: unanimous
+Discussion Items: Looks like March 24-26 would be a good time for the meeting.

@@ -1,0 +1,54 @@
+---
+approved:
+- '7'
+unapproved:
+- '9'
+flagged:
+- H
+comments:
+  I: Nice report!
+seen:
+  A: 
+  C:
+  - ! 'cm: Reminder email sent'
+  D:
+  - ! 'cm: Reminder email sent'
+  E:
+  - ! 'sr: Reminder email sent'
+  L:
+  - ! 'bd: Reminder email sent'
+  O:
+  - ! 'rg: Reminder email sent'
+  Y:
+  - ! 'rb: Reminder email sent'
+  Z:
+  - ! 'cm: Reminder email sent'
+  AA:
+  - ! 'rb: Reminder email sent'
+  AM:
+  - ! 'rg: Reminder email sent'
+  AO:
+  - ! 'sr: Reminder email sent'
+  AR:
+  - ! 'cm: Reminder email sent'
+  AU:
+  - ! 'rb: Reminder email sent'
+  AV:
+  - ! 'cm: Reminder email sent'
+  BD:
+  - ! 'bd: Reminder email sent'
+  BK:
+  - ! 'rg: Reminder email sent'
+  BO:
+  - ! 'sr: Reminder email sent'
+  BR:
+  - ! 'rb: Reminder email sent'
+initials: jt
+agenda: board_agenda_2015_01_21.txt
+status:
+- :owner: Sam
+  :text: ! "follow up with PMC for clarification on the relationship\n       between
+    the addons and the project"
+  :pmc: Isis
+  :date: 
+  :status: Clarification provided in this month's report.

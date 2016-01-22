@@ -1,0 +1,135 @@
+#
+# Routing request based on path and query information in the URL
+#
+# Additionally provides defaults for color and title, and 
+# determines what buttons are required.
+#
+# Returns item, buttons, and options
+
+class Router
+  # route request based on path and query from the window location (URL)
+  def self.route(path, query)
+    options = {}
+    buttons = []
+
+    if not path or path == '.'
+      item = Agenda
+
+    elsif path == 'search'
+      item = {view: Search, query: query}
+
+    elsif path == 'comments'
+      item = {view: Comments}
+
+    elsif path == 'backchannel'
+      item = {view: Backchannel, title: 'Agenda Backchannel',
+        online: Server.online}
+
+    elsif path == 'queue'
+      item = {view: Queue, title: 'Queued approvals and comments'}
+
+    elsif path == 'flagged'
+      item = {view: Flagged, title: 'Flagged reports'}
+
+    elsif path == 'missing'
+      item = {view: Missing, title: 'Missing reports',
+        buttons: [{form: InitialReminder}, {button: FinalReminder}]}
+
+    elsif path =~ %r{^flagged/[-\w]+$}
+      item = Agenda.find(path[8..-1])
+      options = {traversal: :flagged}
+
+    elsif path =~ %r{^queue/[-\w]+$}
+      item = Agenda.find(path[6..-1])
+      options = {traversal: :queue}
+
+    elsif path =~ %r{^shepherd/queue/[-\w]+$}
+      item = Agenda.find(path[15..-1])
+      options = {traversal: :shepherd}
+
+    elsif path =~ %r{^shepherd/\w+$}
+      shepherd = path[9..-1]
+
+      item = {view: Shepherd, shepherd: shepherd, next: nil, prev: nil,
+        title: "Shepherded by #{shepherd}"}
+
+      # determine next/previous links
+      Agenda.index.each do |i|
+        if i.shepherd and i.comments
+          next if i.shepherd.include? ' '
+
+          href = "shepherd/#{i.shepherd}"
+          if i.shepherd > shepherd
+            if not item.next or item.next.href > href
+              item.next = {title: i.shepherd, href: href}
+            end
+          elsif i.shepherd < shepherd
+            if not item.prev or item.prev.href < href
+              item.prev = {title: i.shepherd, href: href}
+            end
+          end
+        end
+      end
+
+    elsif path == 'help'
+      item = {view: Help}
+
+    else
+      item = Agenda.find(path)
+    end
+
+    # bail unless an item was found
+    return {} unless item
+
+    # provide defaults for required properties
+    item.color ||= 'blank'
+    item.title ||= item.view.displayName
+
+    # determine what buttons are required, merging defaults, form provided
+    # overrides, and any overrides provided by the agenda item itself
+    buttons = item.buttons
+    buttons = item.view.buttons().concat(buttons || []) if item.view.buttons
+    if buttons
+      buttons = buttons.map do |button|
+        props = {text: 'button', attrs: {className: 'btn'}, form: button.form}
+
+        # form overrides
+        form = button.form
+        if form and form.button
+          for name in form.button
+            if name == 'text'
+              props.text = form.button.text
+            elsif name == 'class' or name == 'classname'
+              props.attrs.className += " #{form.button[name].gsub('_', '-')}"
+            else
+              props.attrs[name.gsub('_', '-')] = form.button[name]
+            end
+          end
+        else
+          # no form or form has no separate button: so this is just a button
+          props.delete 'text'
+          props.type = button.button || form
+          props.attrs = {item: item, server: Server}
+        end
+
+        # item overrides
+        for name in button
+          if name == 'text'
+            props.text = button.text
+          elsif name == 'class' or name == 'classname'
+            props.attrs.className += " #{button[name].gsub('_', '-')}"
+          elsif name != 'form'
+            props.attrs[name.gsub('_', '-')] = button[name]
+          end
+        end
+
+        # clear modals
+        document.body.classList.remove('modal-open') if defined? document
+
+        return props
+      end
+    end
+
+    return {item: item, buttons: buttons, options: options}
+  end
+end
