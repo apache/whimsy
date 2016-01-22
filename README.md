@@ -87,7 +87,7 @@ Skip this section if you are running a Docker container or a Vagrant VM.
 4. Access to LDAP requires configuration, and a cert.
 
  1. The model code determines what host and port to connect to by parsing
-      either `/etc/ldap/ldap.conf` or `/etc/ldap/ldap.conf` for a line that
+      either `/etc/ldap/ldap.conf` or `/etc/openldap/ldap.conf` for a line that
       looks like the following:
         `uri     ldaps://ldap1-us-east.apache.org:636`
 
