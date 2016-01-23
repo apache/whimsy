@@ -25,7 +25,7 @@
 #   rubys2 = ASF::Person.find('rubys')
 #   GC.start
 #   rubys3 = ASF::Person.find('rubys')
-#   puts [rubys1.__id__, rubys2.__id__, ruby3.__id__]
+#   puts [rubys1.__id__, rubys2.__id__, rubys3.__id__]
 #
 
 require 'wunderbar'
