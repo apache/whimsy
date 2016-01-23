@@ -352,7 +352,7 @@ module ASF
     end
 
     def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn, memberUid)).map do |results|
+      Hash[ASF.search_one(base, "cn=*", %w(dn memberUid)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         group = ASF::Group.find(cn)
         members = results['memberUid']
@@ -386,7 +386,7 @@ module ASF
     end
 
     def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn, member)).map do |results|
+      Hash[ASF.search_one(base, "cn=*", %w(dn member)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         committee = ASF::Committee.find(cn)
         members = results['member']
