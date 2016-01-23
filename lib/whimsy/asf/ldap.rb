@@ -109,32 +109,35 @@ module ASF
 
   def self.pmc_chairs
     begin
-      @pmc_chairs and @pmc_chairs[0..-1]
+      return @pmc_chairs[0..-1] if @pmc_chairs 
     rescue WeakRef::RefError
-      pmc_chairs ||= Service.find('pmc-chairs').members
-      @pmc_chairs = WeakRef.new(pmc_chairs)
-      pmc_chairs
     end
+
+    pmc_chairs = Service.find('pmc-chairs').members
+    @pmc_chairs = WeakRef.new(pmc_chairs)
+    pmc_chairs
   end
 
   def self.committers
     begin
-      @committers and @committers[0..-1]
+      return @committers[0..-1] if @committers
     rescue WeakRef::RefError
-      committers = Group.find('committers').members
-      @committers = WeakRef.new(committers)
-      committers
     end
+
+    committers = Group.find('committers').members
+    @committers = WeakRef.new(committers)
+    return committers
   end
 
   def self.members
     begin
-      @members and @members[0..-1]
+      return @members[0..-1] if @members
     rescue WeakRef::RefError
-      members ||= Group.find('member').members
-      @members = WeakRef.new(members)
-      members
     end
+
+    members = Group.find('member').members
+    @members = WeakRef.new(members)
+    members
   end
 
   class Base
