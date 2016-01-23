@@ -72,13 +72,9 @@ module ASF
     end
   end
 
-  # backwards compatibility for tools that called this interface, and
-  # a part of the refresh strategy (something that should be revisited
-  # with WeakReferences instead).
+  # backwards compatibility for tools that called this interface
   def self.init_ldap
-    return @ldap if @ldap
-    @mtime = Time.now
-    @ldap = ASF::LDAP.connect
+    @ldap ||= ASF::LDAP.connect
   end
 
   # determine where ldap.conf resides
@@ -111,30 +107,34 @@ module ASF
     result
   end
 
-  def self.refresh(symbol)
-    if not @mtime or Time.now - @mtime > 300.0
-      @mtime = Time.now
-    end
-
-    if instance_variable_get("#{symbol}_mtime") != @mtime
-      instance_variable_set("#{symbol}_mtime", @mtime)
-      instance_variable_set(symbol, nil)
-    end
-  end
-
   def self.pmc_chairs
-    refresh(:@pmc_chairs)
-    @pmc_chairs ||= Service.find('pmc-chairs').members
+    begin
+      @pmc_chairs and @pmc_chairs[0..-1]
+    rescue WeakRef::RefError
+      pmc_chairs ||= Service.find('pmc-chairs').members
+      @pmc_chairs = WeakRef.new(pmc_chairs)
+      pmc_chairs
+    end
   end
 
   def self.committers
-    refresh(:@committers)
-    @committers ||= Group.find('committers').members
+    begin
+      @committers and @committers[0..-1]
+    rescue WeakRef::RefError
+      committers = Group.find('committers').members
+      @committers = WeakRef.new(committers)
+      committers
+    end
   end
 
   def self.members
-    refresh(:@members)
-    @members ||= Group.find('member').members
+    begin
+      @members and @members[0..-1]
+    rescue WeakRef::RefError
+      members ||= Group.find('member').members
+      @members = WeakRef.new(members)
+      members
+    end
   end
 
   class Base
