@@ -1,3 +1,33 @@
+#
+# Encapsulate access to LDAP, caching results for performance.  For best
+# performance in applications that access large number of objects, make use
+# of the preload methods to pre-fetch multiple objects in a single LDAP
+# call, and rely on the cache to find the objects later.
+#
+# The cache makes heavy use of Weak References internally to enable garbage
+# collection to reclaim objects; among other things, this ensures that
+# LDAP results don't become too stale.
+#
+# Until garbage collection reclaims an object, calls to find methods for the
+# same name is guaranteed to return the same object.  Holding on to the
+# results of find or preload calls (by assigning it to a variable) is
+# sufficient to prevent reclaiming of objects.
+#
+# To illustrate, the following is likely to return the same id twice, followed
+# by a new id:
+#   puts ASF::Person.find('rubys').__id__
+#   puts ASF::Person.find('rubys').__id__
+#   GC.start
+#   puts ASF::Person.find('rubys').__id__
+#
+# By contrast, the following is guaranteed to produce the same id three times:
+#   rubys1 = ASF::Person.find('rubys')
+#   rubys2 = ASF::Person.find('rubys')
+#   GC.start
+#   rubys3 = ASF::Person.find('rubys')
+#   puts [rubys1.__id__, rubys2.__id__, ruby3.__id__]
+#
+
 require 'wunderbar'
 require 'ldap'
 require 'weakref'
@@ -107,37 +137,34 @@ module ASF
     result
   end
 
-  def self.pmc_chairs
-    begin
-      return @pmc_chairs[0..-1] if @pmc_chairs 
-    rescue WeakRef::RefError
+  # safely dereference a weakref array attribute.  Block provided is
+  # used when reference is not set or has been reclaimed.
+  def self.dereference_weakref(object, attr, &block)
+    attr = "@#{attr}"
+    value = object.instance_variable_get(attr) || block.call
+    value[0..-1]
+  rescue WeakRef::RefError
+    value = block.call
+  ensure
+    if value and not value.instance_of? WeakRef
+      object.instance_variable_set(attr, WeakRef.new(value))
     end
+  end
 
-    pmc_chairs = Service.find('pmc-chairs').members
-    @pmc_chairs = WeakRef.new(pmc_chairs)
-    pmc_chairs
+  def self.weakref(attr, &block)
+    self.dereference_weakref(self, attr, &block)
+  end
+
+  def self.pmc_chairs
+    weakref(:pmc_chairs) {Service.find('pmc-chairs').members}
   end
 
   def self.committers
-    begin
-      return @committers[0..-1] if @committers
-    rescue WeakRef::RefError
-    end
-
-    committers = Group.find('committers').members
-    @committers = WeakRef.new(committers)
-    return committers
+    weakref(:committers) {Group.find('committers').members}
   end
 
   def self.members
-    begin
-      return @members[0..-1] if @members
-    rescue WeakRef::RefError
-    end
-
-    members = Group.find('member').members
-    @members = WeakRef.new(members)
-    members
+    weakref(:members) {Group.find('member').members}
   end
 
   class Base
@@ -180,6 +207,10 @@ module ASF
 
     def reference
       self
+    end
+
+    def weakref(attr, &block)
+      ASF.dereference_weakref(self, attr, &block)
     end
 
     unless Object.respond_to? :id
@@ -362,26 +393,16 @@ module ASF
       end]
     end
 
-    def modifyTimestamp=(ts)
-      @modifyTimestamp = ts
-    end
-
-    def modifyTimestamp
-      @modifyTimestamp
-    end
+    attr_accessor :modifyTimestamp
 
     def members=(members)
       @members = WeakRef.new(members)
     end
 
     def members
-      begin
-        members = @members[0..-1] if @members
-      rescue WeakRef::RefError
+      members = weakref(:members) do
+        ASF.search_one(base, "cn=#{name}", 'memberUid').flatten
       end
-
-      members ||= ASF.search_one(base, "cn=#{name}", 'memberUid').flatten
-      @members = members
 
       members.map {|uid| Person.find(uid)}
     end
@@ -405,26 +426,16 @@ module ASF
       end]
     end
 
-    def modifyTimestamp=(ts)
-      @modifyTimestamp = ts
-    end
-
-    def modifyTimestamp
-      @modifyTimestamp
-    end
+    attr_accessor :modifyTimestamp
 
     def members=(members)
       @members = WeakRef.new(members)
     end
 
     def members
-      begin
-        members = @members[0..-1] if @members
-      rescue WeakRef::RefError
+      members = weakref(:members) do
+        ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
-
-      members ||= ASF.search_one(base, "cn=#{name}", 'member').flatten
-      @members = members
 
       members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
