@@ -19,6 +19,6 @@ module ASF
   end
   def self.library_gitinfo
     return @info if @info
-    @info = `git show --format="%h  %cI"  -s HEAD`.chomp
+    @info = `git show --format="%h  %ci"  -s HEAD`.chomp
   end
 end
