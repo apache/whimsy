@@ -352,13 +352,22 @@ module ASF
     end
 
     def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn memberUid)).map do |results|
+      Hash[ASF.search_one(base, "cn=*", %w(dn memberUid modifyTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         group = ASF::Group.find(cn)
+        group.modifyTimestamp = results['modifyTimestamp']
         members = results['memberUid']
         group.members = members || []
         [group, members]
       end]
+    end
+
+    def modifyTimestamp=(ts)
+      @modifyTimestamp = ts
+    end
+
+    def modifyTimestamp
+      @modifyTimestamp
     end
 
     def members=(members)
