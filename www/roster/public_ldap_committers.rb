@@ -30,18 +30,20 @@ GITINFO = ASF.library_gitinfo rescue '?'
 ldap = ASF.init_ldap
 exit 1 unless ldap
 
-# gather committer info
+# normal members of the AS
 ids = {}
-# banned or deceased or emeritus or ...
+# still a committer, but banned or deceased or emeritus or ...
 ban = {}
 # people entries that are not committers (and not in nologin)
 non = {}
 # people entries that are not committers (in nologin)
 nonb = {}
 
+comms = ASF.committers
 peeps = ASF::Person.preload(['cn', 'loginShell']) # for performance
 
-peeps.sort_by {|a| a.id}.each do |entry|
+# For each ASF committer group member, check if they can login:
+comms.sort_by {|a| a.id}.each do |entry|
     if entry.banned?
         ban[entry.id] = entry.public_name 
     else
@@ -49,8 +51,9 @@ peeps.sort_by {|a| a.id}.each do |entry|
     end
 end
 
+# Now see if there are any left-over people
 peeps.sort_by {|a| a.name}.each do |e|
-  unless ASF.committers.include? e
+  unless comms.include? e
      if e.banned?
          nonb[e.name] = e.public_name
      else
