@@ -1,7 +1,6 @@
 # Creates JSON output with the following format:
 #
 # {
-#   "last_updated": "2016-01-20 00:47:45 UTC",
 #   "git_info": "9d1cefc  2016-01-22T11:44:14+00:00",
 #   "committers": { // committers who have valid login shells
 #     "uid": "Public Name",
@@ -63,7 +62,7 @@ peeps.sort_by {|a| a.name}.each do |e|
 end
 
 info = {
-  last_updated: ASF::ICLA.svn_change,
+  # There does not seem to be a useful timestamp here
   git_info: GITINFO,
   committers: ids,
   committers_nologin: ban,
