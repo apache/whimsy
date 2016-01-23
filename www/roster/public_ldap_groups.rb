@@ -19,13 +19,6 @@ require 'whimsy/asf'
 
 GITINFO = ASF.library_gitinfo rescue '?'
 
-# parse arguments for output file name
-if ARGV.length == 0 or ARGV.first == '-'
-  output = STDOUT
-else
-  output = File.open(ARGV.first, 'w')
-end
-
 ldap = ASF.init_ldap
 exit 1 unless ldap
 
@@ -47,6 +40,14 @@ info = {
   groups: entries,
 }
 
-# output results
-output.puts JSON.pretty_generate(info)
-output.close
+# format as JSON
+results = JSON.pretty_generate(info)
+
+# parse arguments for output file name
+if ARGV.length == 0 or ARGV.first == '-'
+  # write to STDOUT
+  puts results
+elsif not File.exist?(ARGV.first) or File.read(ARGV.first) != results
+  # replace file as contents have changed
+  File.write(ARGV.first, results)
+end
