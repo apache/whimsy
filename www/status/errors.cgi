@@ -19,7 +19,8 @@ response = http.request(request)
 
 # extract time, pinger, and exception from response
 exceptions = YAML.load(response.body).map do |hash| 
-  exception = hash['debug'][/Caught exception: .*?: (.*)/m, 1].strip
+  exception = (hash['debug'][/Caught exception: .*?: (.*)/m, 1] ||
+    hash['debug'][/Caught exception: (.*)/m, 1]).to_s.strip
   [Time.at(hash['time']), hash['pinger'], exception]
 end
 
