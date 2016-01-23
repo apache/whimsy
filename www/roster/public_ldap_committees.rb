@@ -1,13 +1,15 @@
 # Creates JSON output with the following format:
 #
 # {
-#   "last_updated": "2016-01-20 00:47:45 UTC",
+#   "lastTimestamp": "20160119171152Z", // most recent modifyTimestamp
 #   "git_info": "9d1cefc  2016-01-22T11:44:14+00:00",
 #   "committees": {
-#     "abdera": [
-#       "uid",
+#     "abdera": {
+#       "modifyTimestamp": "20111204095436Z",
+#       "roster": ["uid",
 #       ...
-#     ],
+#       ]
+#     },
 #     ...
 #   },
 # }
@@ -22,21 +24,26 @@ GITINFO = ASF.library_gitinfo rescue '?'
 ldap = ASF.init_ldap
 exit 1 unless ldap
 
-# gather committer info
+# gather committee info
 entries = {}
 
 committees = ASF::Committee.preload # for performance
 
+lastStamp = ''
 committees.keys.sort_by {|a| a.name}.each do |entry|
     m = []
     entry.members.sort_by {|a| a.name}.each do |e|
         m << e.name
     end
-    entries[entry.name] = m
+    lastStamp = entry.modifyTimestamp if entry.modifyTimestamp > lastStamp
+    entries[entry.name] = {
+        modifyTimestamp: entry.modifyTimestamp,
+        roster: m 
+    }
 end
 
 info = {
-  last_updated: ASF::ICLA.svn_change,
+  lastTimestamp: lastStamp,
   git_info: GITINFO,
   committees: entries,
 }
