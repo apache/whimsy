@@ -19,6 +19,8 @@ require 'bundler/setup'
 
 require 'whimsy/asf'
 
+require 'open3'
+
 GITINFO = ASF.library_gitinfo rescue '?'
 
 ldap = ASF.init_ldap
@@ -56,6 +58,9 @@ if ARGV.length == 0 or ARGV.first == '-'
   # write to STDOUT
   puts results
 elsif not File.exist?(ARGV.first) or File.read(ARGV.first) != results
+  out, err, rc = Open3.capture3('diff', '-u', ARGV.first, '-', stdin_data: results)
+  puts out if err.empty? and rc.exitstatus == 1
+
   # replace file as contents have changed
   File.write(ARGV.first, results)
 end

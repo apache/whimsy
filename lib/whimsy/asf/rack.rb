@@ -176,8 +176,6 @@ module ASF
     end
 
     def call(env)
-      env['HTTP_X_WUNDERBAR_BASE'] ||= env['SCRIPT_NAME']
-
       if env['HTTPS'] == 'on'
         env['SCRIPT_URI'].sub!(/^http:/, 'https:')
         env['SERVER_PORT'] = '443'
