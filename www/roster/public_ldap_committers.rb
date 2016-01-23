@@ -39,9 +39,9 @@ non = {}
 # people entries that are not committers (in nologin)
 nonb = {}
 
-peeps = ASF::Person.preload('loginShell',{}) # needed for the banned? method
+peeps = ASF::Person.preload(['cn', 'loginShell']) # for performance
 
-ASF.committers.sort_by {|a| a.id}.each do |entry|
+peeps.sort_by {|a| a.id}.each do |entry|
     if entry.banned?
         ban[entry.id] = entry.public_name 
     else
@@ -50,8 +50,7 @@ ASF.committers.sort_by {|a| a.id}.each do |entry|
 end
 
 peeps.sort_by {|a| a.name}.each do |e|
-  if ASF.committers.include? e
-  else
+  unless ASF.committers.include? e
      if e.banned?
          nonb[e.name] = e.public_name
      else

@@ -25,7 +25,9 @@ exit 1 unless ldap
 # gather committer info
 entries = {}
 
-ASF::Committee.list.sort_by {|a| a.name}.each do |entry|
+committees = ASF::Committee.preload # for performance
+
+committees.keys.sort_by {|a| a.name}.each do |entry|
     m = []
     entry.members.sort_by {|a| a.name}.each do |e|
         m << e.name

@@ -25,7 +25,9 @@ exit 1 unless ldap
 # gather committer info
 entries = {}
 
-ASF::Group.list.sort_by {|a| a.name}.each do |entry|
+groups = ASF::Group.preload # for performance
+
+groups.keys.sort_by {|a| a.name}.each do |entry|
     next if entry.name == 'committers'
     m = []
     entry.members.sort_by {|a| a.name}.each do |e|

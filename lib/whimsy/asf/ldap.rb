@@ -351,9 +351,30 @@ module ASF
       end
     end
 
+    def self.preload
+      Hash[ASF.search_one(base, "cn=*", %w(dn, memberUid)).map do |results|
+        cn = results['dn'].first[/^cn=(.*?),/, 1]
+        group = ASF::Group.find(cn)
+        members = results['memberUid']
+        group.members = members || []
+        [group, members]
+      end]
+    end
+
+    def members=(members)
+      @members = WeakRef.new(members)
+    end
+
     def members
-      ASF.search_one(base, "cn=#{name}", 'memberUid').flatten.
-        map {|uid| Person.find(uid)}
+      begin
+        members = @members[0..-1] if @members
+      rescue WeakRef::RefError
+      end
+
+      members ||= ASF.search_one(base, "cn=#{name}", 'memberUid').flatten
+      @members = members
+
+      members.map {|uid| Person.find(uid)}
     end
   end
 
@@ -364,9 +385,30 @@ module ASF
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| Committee.find(cn)}
     end
 
+    def self.preload
+      Hash[ASF.search_one(base, "cn=*", %w(dn, member)).map do |results|
+        cn = results['dn'].first[/^cn=(.*?),/, 1]
+        committee = ASF::Committee.find(cn)
+        members = results['member']
+        committee.members = members
+        [committee, members]
+      end]
+    end
+
+    def members=(members)
+      @members = WeakRef.new(members)
+    end
+
     def members
-      ASF.search_one(base, "cn=#{name}", 'member').flatten.
-        map {|uid| Person.find uid[/uid=(.*?),/,1]}
+      begin
+        members = @members[0..-1] if @members
+      rescue WeakRef::RefError
+      end
+
+      members ||= ASF.search_one(base, "cn=#{name}", 'member').flatten
+      @members = members
+
+      members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
     def dn
