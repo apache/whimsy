@@ -355,7 +355,7 @@ module ASF
       Hash[ASF.search_one(base, "cn=*", %w(dn memberUid modifyTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         group = ASF::Group.find(cn)
-        group.modifyTimestamp = results['modifyTimestamp']
+        group.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
         members = results['memberUid']
         group.members = members || []
         [group, members]
