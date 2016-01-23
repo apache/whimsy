@@ -19,6 +19,10 @@ namespace :server do
   end
 end
 
+task "touch" do
+  sh 'touch', File.expand_path('../tmp/restart.txt', __FILE__)
+end
+
 file 'test/work' do
   mkdir_p 'test/work'
 end

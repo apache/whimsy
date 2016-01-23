@@ -17,6 +17,12 @@ get '/missing' do
   status 302
 end
 
+# for debugging purposes
+get '/env' do
+  content_type 'text/plain'
+  JSON.pretty_generate(env: env, ENV: ENV.to_h)
+end
+
 # all agenda pages
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   agenda = "board_agenda_#{date.gsub('-','_')}.txt"
