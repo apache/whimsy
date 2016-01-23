@@ -11,7 +11,11 @@
 #     "uid": "Public Name",
 #     ...
 #   },
-#   "non_committers": { // entries in 'ou=people,dc=apache,dc=org' who are not committers
+#   "non_committers": { // entries in 'ou=people,dc=apache,dc=org' who are not committers but who can login
+#     "uid": "Public Name",
+#     ...
+#   },
+#   "non_committers_nologin": { // entries in 'ou=people,dc=apache,dc=org' who are not committers and have invalid shells
 #     "uid": "Public Name",
 #     ...
 # }
@@ -32,6 +36,8 @@ ids = {}
 ban = {}
 # people entries that are not committers (and not in nologin)
 non = {}
+# people entries that are not committers (in nologin)
+nonb = {}
 
 peeps = ASF::Person.preload('loginShell',{}) # needed for the banned? method
 
@@ -46,7 +52,11 @@ end
 peeps.sort_by {|a| a.name}.each do |e|
   if ASF.committers.include? e
   else
-      non[e.name] = e.public_name
+     if e.banned?
+         nonb[e.name] = e.public_name
+     else
+         non[e.name] = e.public_name
+     end
   end
 end
 
@@ -56,6 +66,7 @@ info = {
   committers: ids,
   committers_nologin: ban,
   non_committers: non,
+  non_committers_nologin: nonb,
 }
 
 # format as JSON
