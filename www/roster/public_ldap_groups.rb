@@ -2,7 +2,6 @@
 #
 # {
 #   "lastTimestamp": "20160119171152Z", // most recent modifyTimestamp
-#   "git_info": "9d1cefc  2016-01-22T11:44:14+00:00",
 #   "groups": {
 #     "abdera": {
 #       "modifyTimestamp": "20111204095436Z",
@@ -45,7 +44,6 @@ end
 
 info = {
   lastTimestamp: lastStamp,
-  git_info: GITINFO,
   groups: entries,
 }
 
@@ -57,6 +55,9 @@ if ARGV.length == 0 or ARGV.first == '-'
   # write to STDOUT
   puts results
 elsif not File.exist?(ARGV.first) or File.read(ARGV.first) != results
+  puts "git_info: #{GITINFO}"
   # replace file as contents have changed
   File.write(ARGV.first, results)
+else
+  puts "git_info: #{GITINFO}"
 end

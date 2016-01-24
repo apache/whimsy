@@ -1,7 +1,6 @@
 # Creates JSON output with the following format:
 #
 # {
-#   "git_info": "9d1cefc  2016-01-22T11:44:14+00:00",
 #   "committers": { // committers who have valid login shells
 #     "uid": "Public Name",
 #     ...
@@ -63,7 +62,6 @@ end
 
 info = {
   # There does not seem to be a useful timestamp here
-  git_info: GITINFO,
   committers: ids,
   committers_nologin: ban,
   non_committers: non,
@@ -78,6 +76,9 @@ if ARGV.length == 0 or ARGV.first == '-'
   # write to STDOUT
   puts results
 elsif not File.exist?(ARGV.first) or File.read(ARGV.first) != results
+  puts "git_info: #{GITINFO}"
   # replace file as contents have changed
   File.write(ARGV.first, results)
+else
+  puts "git_info: #{GITINFO}"
 end
