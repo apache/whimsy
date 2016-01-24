@@ -15,16 +15,19 @@ def Monitor.public_json(previous_status)
       mtime: File.mtime(log)
     }
 
-    if File.size(log) != 0
-      if File.read(log).start_with? '--- '
-        status[name].merge! level: 'info', title: 'updated'
-      else
-        status[name].merge! level: 'danger', data: File.readlines(log)
-      end
+    contents = File.read(log)
+
+    contents.sub! /^git_info: .*\n+/, ''
+
+    if contents.sub! /^--- .*?\n(\n|\Z)/m, ''
+      status[name].merge! level: 'info', title: 'updated'
+    end
+
+    unless contents.empty?
+      status[name].merge! level: 'danger', data: contents.split("\n")
     end
 
   end
-
 
   {data: status}
 end

@@ -17,15 +17,11 @@
 #    },
 # 
 
-require 'bundler/setup'
-
-require 'whimsy/asf'
+require_relative 'public_json_common'
 
 require 'net/http'
 require 'json'
 require 'open3'
-
-GITINFO = ASF.library_gitinfo rescue '?'
 
 file = '/apache/infrastructure-puppet/deployment/modules/subversion_server/files/authorization/asf-authorization-template'
 http = Net::HTTP.new('raw.githubusercontent.com', 443)
@@ -41,27 +37,7 @@ body.scan(/^(\w[^=\s]*)[ \t]*=[ \t]*(\w.*)$/) do |grp, mem|
   groups[grp] = mem.gsub(/\s/,'').split(/,/).sort.uniq
 end
 
-info = {
+public_json_output(
   # There does not seem to be a useful timestamp here
   groups: groups,
-}
-
-# format as JSON
-results = JSON.pretty_generate(info)
-
-# parse arguments for output file name
-if ARGV.length == 0 or ARGV.first == '-'
-  # write to STDOUT
-  puts results
-elsif not File.exist?(ARGV.first) or File.read(ARGV.first) != results
-
-  puts "git_info: #{GITINFO}"
-
-  out, err, rc = Open3.capture3('diff', '-u', ARGV.first, '-', stdin_data: results)
-  puts out if err.empty? and rc.exitstatus == 1
-
-  # replace file as contents have changed
-  File.write(ARGV.first, results)
-else
-  puts "git_info: #{GITINFO}"
-end
+)
