@@ -1,7 +1,6 @@
 # Creates JSON output with the following format:
 #
 # {
-#   "git_info": "9d1cefc  2016-01-22T11:44:14+00:00",
 #   "committers": { // committers who have valid login shells
 #     "uid": "Public Name",
 #     ...

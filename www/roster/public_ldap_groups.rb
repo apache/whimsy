@@ -2,7 +2,6 @@
 #
 # {
 #   "lastTimestamp": "20160119171152Z", // most recent modifyTimestamp
-#   "git_info": "9d1cefc  2016-01-22T11:44:14+00:00",
 #   "groups": {
 #     "abdera": {
 #       "modifyTimestamp": "20111204095436Z",
