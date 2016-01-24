@@ -21,12 +21,12 @@ module ASF
     def self.decode(env)
       class << env; attr_accessor :user, :password; end
 
-      if env['HTTP_AUTHORIZATION']
+      if env['HTTP_AUTHORIZATION'].to_s.empty?
+        env.user = env['REMOTE_USER'] || ENV['USER'] || Etc.getpwuid.name
+      else
         require 'base64'
         env.user, env.password = Base64.decode64(env['HTTP_AUTHORIZATION'][
-          /^Basic ([A-Za-z0-9+\/=]+)$/,1]).split(':',2)
-      else
-        env.user = env['REMOTE_USER'] || ENV['USER'] || Etc.getpwuid.name
+          /^Basic ([A-Za-z0-9+\/=]+)$/,1].to_s).split(':',2)
       end
 
       env['REMOTE_USER'] ||= env.user
