@@ -5,7 +5,7 @@ asf_version = File.read(File.expand_path("#{root}/asf.version", __FILE__)).chomp
 gem 'whimsy-asf', asf_version, path: File.expand_path(root, __FILE__)
 
 gem 'rake'
-gem 'wunderbar', '>= 1.0.0'
+gem 'wunderbar', '>= 1.0.16'
 gem 'ruby2js', '>= 2.0.13'
 gem 'sinatra'
 gem 'nokogumbo'

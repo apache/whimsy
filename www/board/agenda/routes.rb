@@ -20,7 +20,17 @@ end
 # for debugging purposes
 get '/env' do
   content_type 'text/plain'
-  JSON.pretty_generate(env: env, ENV: ENV.to_h)
+
+  asset = {
+    path: Wunderbar::Asset.path,
+    root: Wunderbar::Asset.root,
+    virtual: Wunderbar::Asset.virtual,
+    scripts: Wunderbar::Asset.scripts.map do |script|
+     {path: script.path} 
+    end
+  }
+
+  JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
 end
 
 # all agenda pages
@@ -28,10 +38,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   agenda = "board_agenda_#{date.gsub('-','_')}.txt"
   pass unless Agenda.parse agenda, :quick
 
-  @base = (env['SCRIPT_URL']||env['PATH_INFO']).chomp(path).untaint
-  if env['HTTP_X_WUNDERBAR_BASE']
-    @base = File.join(env['HTTP_X_WUNDERBAR_BASE'], @base)
-  end
+  @base = "#{env['SCRIPT_NAME']}/#{date}/"
 
   if env['REMOTE_USER']
     userid = env['REMOTE_USER']
