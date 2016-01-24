@@ -45,7 +45,6 @@ end
 
 info = {
   lastTimestamp: lastStamp,
-  git_info: GITINFO,
   groups: entries,
 }
 
@@ -57,6 +56,9 @@ if ARGV.length == 0 or ARGV.first == '-'
   # write to STDOUT
   puts results
 elsif not File.exist?(ARGV.first) or File.read(ARGV.first) != results
+  puts "git_info: #{GITINFO}"
   # replace file as contents have changed
   File.write(ARGV.first, results)
+else
+  puts "git_info: #{GITINFO}"
 end
