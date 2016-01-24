@@ -19,15 +19,17 @@ def Monitor.svn(previous_status)
     lines = update.split("\n")
     repository = lines.shift
 
-    lines.reject! {|line| line == "Updating '.':"}
-    lines.reject! {|line| line =~ /^(Updated to|At) revision \d+\.$/}
+    lines.reject! do |line| 
+      line == "Updating '.':" or
+      line =~ /^(Checked out|Updated to|At) revision \d+\.$/
+    end
 
     unless lines.empty?
       level = 'info'
       data = lines.dup
     end
 
-    lines.reject! {|line| line =~ /^[ADU]    /}
+    lines.reject! {|line| line =~ /^([ADU] | U)   /}
 
     if lines.empty?
       if not data
@@ -39,7 +41,7 @@ def Monitor.svn(previous_status)
         title = "#{data.length} files updated"
       end
 
-      data << revision if data.instance_of? Array
+      data << revision if revision and data.instance_of? Array
     else
       level = 'danger'
       data = lines.dup

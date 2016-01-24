@@ -1,0 +1,68 @@
+---
+:git:
+
+  infrastructure-puppet:
+    url: infrastructure-puppet.git
+
+:svn:
+
+  Bills:
+    url: private/financials/Bills
+
+  Meetings:
+    url: private/foundation/Meetings
+
+  apmail_bin:
+    url: infra/infrastructure/apmail/trunk/bin
+    depth: files
+
+  authorization:
+    url: infra/infrastructure/trunk/subversion/authorization
+    depth: files
+
+  board:
+    url: private/committers/board
+    depth: files
+
+  foundation:
+    url: private/foundation
+    depth: files
+
+  foundation_board:
+    url: private/foundation/board
+
+  iclas:
+    url: private/documents/iclas
+
+  incubator-content:
+    url: asf/incubator/public/trunk/content
+    depth: files
+
+  incubator_site_author:
+    url: http://svn.apache.org/repos/asf/incubator/public/trunk/content
+
+  minutes:
+    url: asf/infrastructure/site/trunk/content/foundation/records/minutes
+
+  officers:
+    url: private/foundation/officers
+    depth: files
+
+  prospects:
+    url: private/foundation/Fundraising/prospects
+    depth: files
+
+  site-board:
+    url: asf/infrastructure/site/trunk/content/foundation/board
+    depth: files
+
+  site-root:
+    url: asf/infrastructure/site/trunk/content
+    depth: files
+
+  sponsorship:
+    url: private/foundation/Fundraising/sponsorship
+    depth: files
+
+  templates:
+    url: asf/infrastructure/site/trunk/templates

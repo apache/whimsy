@@ -12,7 +12,7 @@ module ASF
 
     def self.repos
       @semaphore.synchronize do
-        svn = ASF::Config.get(:svn).map {|dir| dir.untaint}
+        svn = Array(ASF::Config.get(:svn)).map {|dir| dir.untaint}
         @repos ||= Hash[Dir[*svn].map { |name| 
           next unless Dir.exist? name.untaint
           Dir.chdir name.untaint do

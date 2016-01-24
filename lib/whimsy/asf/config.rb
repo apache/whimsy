@@ -9,8 +9,20 @@ module ASF
 
     @config = YAML.load_file("#@home/.whimsy") rescue {}
 
-    # default :svn for backwards compatibility
-    @config[:svn] ||= ['/srv/svn/*', '/home/whimsysvn/svn/*', "#{@home}/svn/*"]
+    # default :svn and :git
+    @config[:svn] ||= '/srv/svn/*'
+    @config[:git] ||= '/srv/git/*'
+
+    @config[:lib] ||= []
+
+    # add gems to lib
+    (@config[:gem] || {}).to_a.reverse.each do |name, version|
+      begin
+        gem = Gem::Specification.find_by_name(name, version)
+        @config[:lib] += Dir[gem.lib_dirs_glob]
+      rescue Gem::LoadError
+      end
+    end
 
     # add libraries to RUBYLIB, load path
     (@config[:lib] || []).reverse.each do |lib|

@@ -57,3 +57,58 @@ task :update do
   FileUtils.touch update_file
   File.utime new_baseline, new_baseline, update_file
 end
+
+task :config do
+  $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
+  require 'whimsy/asf/config'
+end
+
+namespace :svn do
+  task :update => :config do
+    repository = YAML.load_file(File.expand_path('../repository.yml', __FILE__))
+
+    # checkout/update svn repositories
+    svn = ASF::Config.get(:svn)
+    if svn.instance_of? String and svn.end_with? '/*'
+      Dir.chdir File.dirname(svn) do
+        require 'uri'
+        base = URI.parse('https://svn.apache.org/repos/')
+        repository[:svn].each do |name, description|
+          puts
+          puts File.join(Dir.pwd, name)
+          if Dir.exist? name
+            Dir.chdir(name) {system 'svn cleanup'; system 'svn up'}
+          else
+            system 'svn', 'checkout', 
+              "--depth=#{description['depth'] || 'infinity'}",
+              (base + description['url']).to_s, name
+          end
+        end
+      end
+    end
+  end
+end
+
+namespace :git do
+  task :pull => :config do
+    repository = YAML.load_file(File.expand_path('../repository.yml', __FILE__))
+
+    # clone/pull git repositories
+    git = ASF::Config.get(:git)
+    if git.instance_of? String and git.end_with? '/*'
+      Dir.chdir File.dirname(git) do
+        require 'uri'
+        base = URI.parse('git://git.apache.org/')
+        repository[:git].each do |name, description|
+          puts
+          puts File.join(Dir.pwd, name)
+          if Dir.exist? name
+            Dir.chdir(name) {system 'git pull'}
+          else
+            system 'git', 'clone', (base + description['url']).to_s, name
+          end
+        end
+      end
+    end
+  end
+end
