@@ -9,7 +9,6 @@
 #
 # Output looks like:
 # {
-#   "git_info": "5623ad5  2016-01-23 16:26:01 -0500",
 #   "groups": {
 #     "batchee": [
 #       "uid",
