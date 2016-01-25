@@ -10,6 +10,7 @@
 require 'bundler/setup'
 
 require 'whimsy/asf'
+require 'json'
 
 require 'open3'
 

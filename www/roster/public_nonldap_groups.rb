@@ -20,7 +20,6 @@
 require_relative 'public_json_common'
 
 require 'net/http'
-require 'json'
 
 file = '/apache/infrastructure-puppet/deployment/modules/subversion_server/files/authorization/asf-authorization-template'
 http = Net::HTTP.new('raw.githubusercontent.com', 443)
