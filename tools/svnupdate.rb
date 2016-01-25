@@ -9,7 +9,7 @@ mail = Mail.new(STDIN.read)
 
 LOG = '/srv/whimsy/www/logs/svn-update'
 
-if mail.subject =~ %r{^board: r\d+ - in /foundation/board}
+if mail.subject =~ %r{^board: r\d+ -( in)? /foundation/board}
 
   # prevent concurrent updates being performed by the cron job
   File.open(LOG, File::RDWR|File::CREAT, 0644) do |log|
