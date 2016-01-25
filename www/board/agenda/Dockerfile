@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN mkdir -p /srv/var
 
 ENV RUBY_VERSION 2.3
-ENV PHANTOMJS_VERSION 2.0.0
+ENV PHANTOMJS_VERSION 2.1.1
 ENV NODEJS_VERSION 5
 
 # generate locales
@@ -33,18 +33,13 @@ RUN apt-get install -y software-properties-common && \
     apt-get install -y lsof && \
     apt-get install -y zlib1g-dev
 
-# phantom.js - 2.0.0
-# https://github.com/ariya/phantomjs/issues/12948#issuecomment-78181293
-RUN apt-get install -y libfreetype6 && \
-    apt-get install -y libjpeg8 && \
-    apt-get install -y libfontconfig && \
-    wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu48_4.8.1.1-3ubuntu0.6_amd64.deb && \
-    dpkg -i libicu48_4.8.1.1-3ubuntu0.6_amd64.deb && \
-    rm -f libicu48_4.8.1.1-3ubuntu0.6_amd64.deb && \
-    wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 && \
-    tar -vxjf phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 phantomjs && \
-    rm -f phantomjs-$PHANTOMJS_VERSION-ubuntu-12.04.tar.bz2 && \
-    mv phantomjs /usr/bin
+# phantom.js
+# http://phantomjs.org/download.html
+RUN apt-get install -y libfontconfig && \
+    wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 && \
+    tar -vxjf phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 phantomjs-$PHANTOMJS_VERSION-linux-x86_64/bin/phantomjs && \
+    mv phantomjs-$PHANTOMJS_VERSION-linux-x86_64/bin/phantomjs /usr/bin &&\
+    rm -rf phantomjs-$PHANTOMJS_VERSION-linux-x86_64
 
 # Clean Up
 RUN apt-get autoremove -y && \
