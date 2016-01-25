@@ -11,6 +11,8 @@ require 'bundler/setup'
 
 require 'whimsy/asf'
 
+require 'open3'
+
 GITINFO = ASF.library_gitinfo rescue '?'
 
 def public_json_output(info)
