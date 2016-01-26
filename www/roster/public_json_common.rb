@@ -28,7 +28,7 @@ def public_json_output(info)
 
   elsif not File.exist?(ARGV.first) or File.read(ARGV.first).chomp != results
 
-    puts "git_info: #{GITINFO}"
+    puts "_INFO git_info: #{GITINFO}"
 
     # can get the following error if stdin_data is very large and diff fails with an error
     # before reading all the input, e.g. because the input file is missing:
@@ -51,7 +51,7 @@ def public_json_output(info)
 
   else
 
-    puts "git_info: #{GITINFO}"
+    puts "_INFO git_info: #{GITINFO}"
 
   end
 end
