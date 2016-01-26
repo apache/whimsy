@@ -30,9 +30,21 @@ def public_json_output(info)
 
     puts "git_info: #{GITINFO}"
 
-    out, err, rc = Open3.capture3('diff', '-u', ARGV.first, '-',
-      stdin_data: results + "\n")
-    puts "\n#{out}\n" if err.empty? and rc.exitstatus == 1
+    # can get the following error if stdin_data is very large and diff fails with an error
+    # before reading all the input, e.g. because the input file is missing:
+    #   open3.rb:287:in `write': Broken pipe (Errno::EPIPE)
+    # so first check for file present, but also fail gracefully if there is a further issue
+    # (if the diff fails we don't want to lose the output entirely)
+
+    if File.exist?(ARGV.first)
+      begin
+        out, err, rc = Open3.capture3('diff', '-u', ARGV.first, '-',
+          stdin_data: results + "\n")
+        puts "\n#{out}\n" if err.empty? and rc.exitstatus == 1
+        rescue
+          # ignore failure here
+      end
+    end
 
     # replace file as contents have changed
     File.write(ARGV.first, results + "\n")
