@@ -30,7 +30,6 @@ groups = ASF::Group.preload # for performance
 
 lastStamp = ''
 groups.keys.sort_by {|a| a.name}.each do |entry|
-    next if entry.name == 'committers'
     m = []
     entry.members.sort_by {|a| a.name}.each do |e|
         m << e.name
