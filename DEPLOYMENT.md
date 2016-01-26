@@ -12,6 +12,10 @@ contained in the following two files:
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/init.pp
 
+ * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/cronjobs.pp
+
+ * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/procmail.pp
+
 Instructions:
 
  * https://github.com/rubys/puppet-kitchen#readme
