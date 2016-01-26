@@ -16,11 +16,9 @@
 
 require 'bundler/setup'
 
+require_relative 'public_json_common'
+
 require 'whimsy/asf'
-
-require 'open3'
-
-GITINFO = ASF.library_gitinfo rescue '?'
 
 ldap = ASF.init_ldap
 exit 1 unless ldap
@@ -48,20 +46,4 @@ info = {
   committees: entries,
 }
 
-# format as JSON
-results = JSON.pretty_generate(info)
-
-# parse arguments for output file name
-if ARGV.length == 0 or ARGV.first == '-'
-  # write to STDOUT
-  puts results
-elsif not File.exist?(ARGV.first) or File.read(ARGV.first) != results
-  puts "git_info: #{GITINFO}"
-  out, err, rc = Open3.capture3('diff', '-u', ARGV.first, '-', stdin_data: results)
-  puts out if err.empty? and rc.exitstatus == 1
-
-  # replace file as contents have changed
-  File.write(ARGV.first, results)
-else
-  puts "git_info: #{GITINFO}"
-end
+public_json_output(info)

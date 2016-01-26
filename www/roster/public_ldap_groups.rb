@@ -16,9 +16,9 @@
 
 require 'bundler/setup'
 
-require 'whimsy/asf'
+require_relative 'public_json_common'
 
-GITINFO = ASF.library_gitinfo rescue '?'
+require 'whimsy/asf'
 
 ldap = ASF.init_ldap
 exit 1 unless ldap
@@ -47,17 +47,4 @@ info = {
   groups: entries,
 }
 
-# format as JSON
-results = JSON.pretty_generate(info)
-
-# parse arguments for output file name
-if ARGV.length == 0 or ARGV.first == '-'
-  # write to STDOUT
-  puts results
-elsif not File.exist?(ARGV.first) or File.read(ARGV.first) != results
-  puts "git_info: #{GITINFO}"
-  # replace file as contents have changed
-  File.write(ARGV.first, results)
-else
-  puts "git_info: #{GITINFO}"
-end
+public_json_output(info)
