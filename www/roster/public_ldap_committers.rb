@@ -1,5 +1,7 @@
-# Creates JSON output with the following format:
+# Use to create JSON output with the following format:
 #
+#  NO LONGER USED, please see public-ldap-groups (committers) and public-ldap-people instead
+# 
 # {
 #   "committers": {
 #     "uid": {
@@ -22,49 +24,8 @@ require 'bundler/setup'
 
 require_relative 'public_json_common'
 
-require 'whimsy/asf'
-
-ldap = ASF.init_ldap
-exit 1 unless ldap
-
-# ASF committers
-com = {}
-# people entries that are not committers
-peo = {}
-
-comms = ASF.committers
-peeps = ASF::Person.preload(['cn', 'loginShell']) # for performance
-
-# Make output smaller by ommitting commonest case (noLogin: false)
-def makeEntry(hash, e)
-  if e.banned?
-    hash[e.id] = {
-        name: e.public_name,
-        noLogin: true
-    }
-  else
-    hash[e.id] = {
-        name: e.public_name,
-    }
-  end
-end
-
-# List each ASF committer group member 
-comms.sort_by {|a| a.id}.each do |e|
-  makeEntry(com, e)
-end
-
-# Now see if there are any left-over people
-peeps.sort_by {|a| a.name}.each do |e|
-  unless comms.include? e
-    makeEntry(peo, e)
-  end
-end
-
 info = {
-  # There does not seem to be a useful timestamp here
-  committers: com,
-  non_committers: peo,
+    comment: "Please use public-ldap-groups (committers) and public-ldap-people instead"
 }
 
 public_json_output(info)
