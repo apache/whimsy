@@ -38,7 +38,6 @@ def makeEntry(hash, e)
   end
 end
 
-# Now see if there are any left-over people
 peeps.sort_by {|a| a.name}.each do |e|
     makeEntry(peo, e)
 end
