@@ -17,11 +17,10 @@ def Monitor.public_json(previous_status)
 
     contents = File.read(log)
 
-    contents.sub! /^git_info: .*\n+/, ''
-
     # Ignore Wunderbar logging for normal messages (TODO ignore _WARN ?)
     contents.sub! /^(_INFO|_DEBUG) .*\n+/, ''
 
+    # diff -u output:
     if contents.sub! /^--- .*?\n(\n|\Z)/m, ''
       status[name].merge! level: 'info', title: 'updated'
     end
