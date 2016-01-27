@@ -10,12 +10,14 @@
 # Output looks like:
 # {
 #   "groups": {
-#     "batchee": [
-#       "uid",
-#       ...
-#     ] 
-#    },
-# 
+#     "batchee": {
+#       "roster": [
+#         "uid",
+#          ...
+#       ]
+#     }
+#   },
+# }
 
 require_relative 'public_json_common'
 
@@ -32,7 +34,11 @@ groups = {}
 
 # find the locally defined groups
 body.scan(/^(\w[^=\s]*)[ \t]*=[ \t]*(\w.*)$/) do |grp, mem|
-  groups[grp] = mem.gsub(/\s/,'').split(/,/).sort.uniq
+  groups[grp] = {
+      # we use same syntax as for normal groups
+      # this will allow future expansion e.g. if we can flag podlings somehow
+      roster: mem.gsub(/\s/,'').split(/,/).sort.uniq
+      }
 end
 
 public_json_output(
