@@ -456,9 +456,29 @@ module ASF
       "cn=#{id},#{self.class.base}"
     end
 
+    def self.preload
+      Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp)).map do |results|
+        cn = results['dn'].first[/^cn=(.*?),/, 1]
+        service = ASF::Service.find(cn)
+        service.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
+        members = results['member'] || []
+        service.members = members
+        [service, members]
+      end]
+    end
+
+    attr_accessor :modifyTimestamp
+
+    def members=(members)
+      @members = WeakRef.new(members)
+    end
+
     def members
-      ASF.search_one(base, "cn=#{name}", 'member').flatten.
-        map {|uid| Person.find uid[/uid=(.*?),/,1]}
+      members = weakref(:members) do
+        ASF.search_one(base, "cn=#{name}", 'member').flatten
+      end
+
+      members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
     def remove(people)
