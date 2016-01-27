@@ -134,7 +134,7 @@ module ASF
 
     result.map! {|hash| hash[attrs]} if String === attrs
 
-    result
+    result.compact
   end
 
   # safely dereference a weakref array attribute.  Block provided is
