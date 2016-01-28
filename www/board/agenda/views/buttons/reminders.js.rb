@@ -60,6 +60,7 @@ class InitialReminder < React
 
       # buttons
       _button.btn_default 'Close', data_dismiss: 'modal'
+      _button.btn_info 'Dry Run', onClick: self.click, disabled: @disabled
       _button.btn_primary 'Submit', onClick: self.click, disabled: @disabled
     end
   end
@@ -67,9 +68,11 @@ class InitialReminder < React
   # on click, disable the input fields and buttons and submit
   def click(event)
     @disabled = true
+    dryrun = (event.target.textContent == 'Dry Run')
 
     # data to be sent to the server
     data = {
+      dryrun: dryrun,
       agenda: Agenda.file,
       subject: @subject,
       message: @message,
@@ -84,6 +87,9 @@ class InitialReminder < React
     post 'send-reminders', data do |response|
       if not response
         alert("Server error - check console log")
+      elsif dryrun
+        console.log response
+        alert("Dry run - check console log")
       elsif response.count == data.pmcs.length
         alert("Reminders have been sent to: #{data.pmcs.join(', ')}.")
       elsif response.count and response.unsent

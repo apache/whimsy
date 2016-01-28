@@ -2,7 +2,7 @@
 # send reminders
 #
 
-sent = []
+sent = {}
 
 # utilize smtp without certificate verification
 Mail.defaults do
@@ -17,6 +17,7 @@ subject = @subject.untaint
 # iterate over the agenda
 Agenda.parse(@agenda, :full).each do |item|
   next unless @pmcs.include? item['title']
+  next unless item['chair_email']
 
   # substitute [whoTo] values
   if item['to'] == 'president'
@@ -49,9 +50,9 @@ Agenda.parse(@agenda, :full).each do |item|
   end
 
   # deliver mail
-  mail.deliver!
-  sent << item['title']
+  mail.deliver! unless @dryrun
+  sent[item['title']] = mail.to_s
 end
 
 # provide a response to the request
-{count: sent.length, unsent: @pmcs - sent}
+{count: sent.length, unsent: @pmcs - sent.keys, sent: sent, dryrun: @dryrun}
