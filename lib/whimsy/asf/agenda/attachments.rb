@@ -35,7 +35,7 @@ class ASF::Board::Agenda
       unless @quick
         begin
           committee = ASF::Committee.find(attrs['title'])
-          attrs['chair_email'] = committee.chair.mail.first
+          attrs['chair_email'] = "#{committee.chair.id}@apache.org"
           attrs['mail_list'] = committee.mail_list
           attrs.delete('mail_list') if attrs['mail_list'].include? ' '
 
