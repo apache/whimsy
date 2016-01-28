@@ -455,23 +455,4 @@ module Angular::AsfRosterServices
     end
   end
 
-  class Changes
-    @@list = Roster::CHANGES
-
-    def self.find(name)
-      @@list[name] ||= {} if name
-
-      unless @@fetched and (Date.new().getTime()-@@fetched) < 300_000
-        @@fetched = Date.new().getTime()
-        $http.get('json/changes').success do |result|
-          for pmc in result
-            @@list[pmc] ||= {}
-            angular.copy result[pmc], @@list[pmc]
-          end
-        end
-      end
-
-      return @@list[name]
-    end
-  end
 end
