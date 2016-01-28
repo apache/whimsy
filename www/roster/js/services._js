@@ -13,7 +13,6 @@ module Angular::AsfRosterServices
     PODLINGS = []
     INFO = {}
     SITE = {}
-    CHANGES = {}
 
     def self.user
       main = document.querySelector('main')
