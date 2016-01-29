@@ -18,8 +18,13 @@ def Monitor.public_json(previous_status)
 
       contents = File.read(log, encoding: Encoding::UTF_8)
 
-      # Ignore Wunderbar logging for normal messages (TODO ignore _WARN ?)
-      contents.sub! /^(_INFO|_DEBUG) .*\n+/, ''
+      # Ignore Wunderbar logging for normal messages (may occur multiple times)
+      contents.gsub! /^(_INFO|_DEBUG) .*\n+/, ''
+
+      # Wunderbar warning (TODO - extract the text and return it?)
+      if contents.gsub! /^_WARN .*?\n+/, ''
+        status[name].merge! level: 'warning', title: 'warning'
+      end
 
       # diff -u output:
       if contents.sub! /^--- .*?\n(\n|\Z)/m, ''
