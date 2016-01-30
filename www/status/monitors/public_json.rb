@@ -21,14 +21,20 @@ def Monitor.public_json(previous_status)
       # Ignore Wunderbar logging for normal messages (may occur multiple times)
       contents.gsub! /^(_INFO|_DEBUG) .*\n+/, ''
 
-      # Wunderbar warning (TODO - extract the text and return it?)
-      if contents.gsub! /^_WARN .*?\n+/, ''
-        status[name].merge! level: 'warning', title: 'warning'
-      end
-
       # diff -u output:
       if contents.sub! /^--- .*?\n(\n|\Z)/m, ''
         status[name].merge! level: 'info', title: 'updated'
+      end
+
+      # Wunderbar warning
+      warnings = contents.scan(/^_WARN (.*?)\n+/)
+      if warnings.length == 1
+        contents.sub! /^_WARN (.*?)\n+/, ''
+        status[name].merge! level: 'warning', data: $1
+      elsif warnings.length > 0
+        contents.gsub! /^_WARN (.*?)\n+/, ''
+        status[name].merge! level: 'warning', data: warnings.flatten,
+          title: "#{warnings.length} warnings"
       end
 
       unless contents.empty?
