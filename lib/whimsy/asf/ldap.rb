@@ -126,11 +126,7 @@ module ASF
     Wunderbar.info "ldapsearch -x -LLL -b #{base} -s one #{filter} " +
       "#{[attrs].flatten.join(' ')}"
     
-    begin
-      result = @ldap.search2(base, ::LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
-    rescue
-      result = []
-    end
+    result = @ldap.search2(base, ::LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
 
     result.map! {|hash| hash[attrs]} if String === attrs
 
