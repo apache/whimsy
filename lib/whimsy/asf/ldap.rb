@@ -534,10 +534,14 @@ module ASF
         if File.exist? conf
           uris = File.read(conf)[/^uri\s+(.*)/i, 1].to_s
           hosts = uris.scan(/ldaps?:\/\/\S+?:\d+/)
+          Wunderbar.debug "Using hosts from LDAP config"
         end
+      else
+        Wunderbar.debug "Using hosts from Whimsy config"
       end
 
       # if all else fails, use default list
+      Wunderbar.debug "Using default host list" if hosts.empty?
       hosts = ASF::LDAP::HOSTS if hosts.empty?
 
       hosts
