@@ -39,8 +39,8 @@ end
 info = {
   last_updated: ASF::ICLA.svn_change,
   gem_version: GEMVERSION,
-  committers: ids,
-  non_committers: noid
+  committers: ids.sort,
+  non_committers: noid.sort
 }
 
 # output results
