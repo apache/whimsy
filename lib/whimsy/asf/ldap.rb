@@ -123,10 +123,18 @@ module ASF
     init_ldap unless defined? @ldap
     return [] unless @ldap
 
-    Wunderbar.info "ldapsearch -x -LLL -b #{base} -s one #{filter} " +
+    target = @ldap.instance_variable_get('@args').join(":") rescue '?'
+
+    Wunderbar.info "[#{target}] ldapsearch -x -LLL -b #{base} -s one #{filter} " +
       "#{[attrs].flatten.join(' ')}"
-    
-    result = @ldap.search2(base, ::LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
+
+    begin
+      result = @ldap.search2(base, ::LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
+    rescue Exception => re
+      Wunderbar.warn "[#{target}] => #{re.inspect} for ldapsearch -x -LLL -b #{base} -s one #{filter} " +
+        "#{[attrs].flatten.join(' ')}"
+      raise re
+    end
 
     result.map! {|hash| hash[attrs]} if String === attrs
 
