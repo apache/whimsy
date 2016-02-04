@@ -36,6 +36,7 @@ require 'base64'
 
 module ASF
   module LDAP
+    Wunderbar.log_level = 'info' # Temporary for testing
      # https://www.pingmybox.com/dashboard?location=304
      # https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
     HOSTS = %w(
