@@ -122,8 +122,6 @@ module ASF
 
   # search with a scope of one
   def self.search_one(base, filter, attrs=nil)
-    init_ldap unless defined? @ldap
-    return [] unless @ldap
 
     target = @ldap.get_option(::LDAP::LDAP_OPT_HOST_NAME) rescue '?'
     cmd = "ldapsearch -x -LLL -b #{base} -s one #{filter} " +
@@ -131,12 +129,23 @@ module ASF
 
     Wunderbar.info "[#{target}] #{cmd}"
 
+    # simple-minded single retry
     begin
-      result = @ldap.search2(base, ::LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
+      _search_one(base, filter, attrs)
     rescue Exception => re
-      Wunderbar.warn "[#{target}] => #{re.inspect} for #{cmd}"
-      raise
+      Wunderbar.warn "[#{target}] => #{re.inspect} for #{cmd}, retrying ..."
+      @ldap.unbind rescue nil
+      @ldap = false # force new connection
+      # Let this one fail 
+      _search_one(base, filter, attrs)
     end
+  end
+
+  def self._search_one(base, filter, attrs)
+    init_ldap unless @ldap
+    return [] unless @ldap
+
+    result = @ldap.search2(base, ::LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
 
     result.map! {|hash| hash[attrs]} if String === attrs
 
