@@ -72,7 +72,8 @@ module ASF
 
     # connect to LDAP
     def self.connect
-      hosts.shuffle.each do |host|
+      loop do
+        host = next_host
         Wunderbar.info "Connecting to LDAP server: #{host}"
 
         begin
@@ -533,6 +534,7 @@ module ASF
 
     # determine what LDAP hosts are available
     def self.hosts
+      return @hosts if @hosts # cache the hosts list
       # try whimsy config
       hosts = Array(ASF::Config.get(:ldap))
 
@@ -552,7 +554,15 @@ module ASF
       Wunderbar.debug "Using default host list" if hosts.empty?
       hosts = ASF::LDAP::HOSTS if hosts.empty?
 
-      hosts
+      hosts.shuffle!
+      #Wunderbar.debug "Hosts:\n#{hosts.join(' ')}"
+      @hosts = hosts
+    end
+
+    # Ensure we only use each host once
+    def self.next_host
+       @he ||= hosts.to_enum 
+       @he.next
     end
 
     # select LDAP host
