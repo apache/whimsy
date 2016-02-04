@@ -123,7 +123,7 @@ module ASF
     init_ldap unless defined? @ldap
     return [] unless @ldap
 
-    target = @ldap.get_option(LDAP::LDAP_OPT_HOST_NAME) rescue '?'
+    target = @ldap.get_option(::LDAP::LDAP_OPT_HOST_NAME) rescue '?'
     cmd = "ldapsearch -x -LLL -b #{base} -s one #{filter} " +
       "#{[attrs].flatten.join(' ')}"
 
