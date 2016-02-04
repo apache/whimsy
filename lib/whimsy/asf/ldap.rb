@@ -393,8 +393,8 @@ module ASF
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         group = ASF::Group.find(cn)
         group.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
-        members = results['memberUid']
-        group.members = members || []
+        members = results['memberUid']  || []
+        group.members = members
         [group, members]
       end]
     end
@@ -426,7 +426,7 @@ module ASF
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         committee = ASF::Committee.find(cn)
         committee.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
-        members = results['member']
+        members = results['member'] || []
         committee.members = members
         [committee, members]
       end]
