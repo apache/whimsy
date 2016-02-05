@@ -20,13 +20,15 @@ require_relative 'public_json_common'
 
 require 'whimsy/asf'
 
-ldap = ASF.init_ldap
-exit 1 unless ldap
-
 # gather committee info
 entries = {}
 
 committees = ASF::Committee.preload # for performance
+
+if committees.empty?
+  Wunderbar.error "No results retrieved, output not created"
+  exit 0
+end
 
 lastStamp = ''
 committees.keys.sort_by {|a| a.name}.each do |entry|

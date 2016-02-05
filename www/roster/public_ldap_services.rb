@@ -20,13 +20,15 @@ require_relative 'public_json_common'
 
 require 'whimsy/asf'
 
-ldap = ASF.init_ldap
-exit 1 unless ldap
-
 # gather unix group info
 entries = {}
 
 groups = ASF::Service.preload # for performance
+
+if groups.empty?
+  Wunderbar.error "No results retrieved, output not created"
+  exit 0
+end
 
 lastStamp = ''
 groups.keys.sort_by {|a| a.name}.each do |entry|

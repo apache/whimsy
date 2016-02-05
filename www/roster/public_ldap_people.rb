@@ -16,13 +16,15 @@ require_relative 'public_json_common'
 
 require 'whimsy/asf'
 
-ldap = ASF.init_ldap
-exit 1 unless ldap
-
 # ASF people
 peo = {}
 
 peeps = ASF::Person.preload(['cn', 'loginShell']) # for performance
+
+if peeps.empty?
+  Wunderbar.error "No results retrieved, output not created"
+  exit 0
+end
 
 # Make output smaller by ommitting commonest case (noLogin: false)
 def makeEntry(hash, e)
