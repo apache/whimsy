@@ -73,7 +73,7 @@ module ASF
 
     # connect to LDAP
     def self.connect
-      host.length.times do
+      loop do
         host = next_host
         Wunderbar.info "Connecting to LDAP server: #{host}"
 
@@ -97,8 +97,8 @@ module ASF
           Wunderbar.warn "Error connecting to LDAP server #{host}: " +
             re.message + " (continuing)"
         end
-      end
 
+      end
       Wunderbar.error "Failed to connect to any LDAP host"
       return nil
     end
