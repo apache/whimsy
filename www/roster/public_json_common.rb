@@ -17,7 +17,11 @@ require 'open3'
 require 'wunderbar'
 Wunderbar.log_level = 'info' # Temporary for testing
 
+# Allow diff output to be suppressed
+@noDiff = ARGV.delete '--nodiff'
+
 GITINFO = ASF.library_gitinfo rescue '?'
+
 
 def public_json_output(info)
   # format as JSON
@@ -39,7 +43,7 @@ def public_json_output(info)
     # so first check for file present, but also fail gracefully if there is a further issue
     # (if the diff fails we don't want to lose the output entirely)
 
-    if File.exist?(ARGV.first)
+    if File.exist?(ARGV.first) and ! @noDiff
       begin
         out, err, rc = Open3.capture3('diff', '-u', ARGV.first, '-',
           stdin_data: results + "\n")
