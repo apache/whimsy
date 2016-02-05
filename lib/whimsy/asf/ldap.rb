@@ -73,7 +73,8 @@ module ASF
 
     # connect to LDAP
     def self.connect
-      loop do
+      # Try each host at most once
+      hosts.length.times do
         host = next_host
         Wunderbar.info "Connecting to LDAP server: #{host}"
 
@@ -99,6 +100,7 @@ module ASF
         end
 
       end
+
       Wunderbar.error "Failed to connect to any LDAP host"
       return nil
     end
@@ -569,9 +571,9 @@ module ASF
       @hosts = hosts
     end
 
-    # Ensure we only use each host once
+    # Ensure we use each host in turn
     def self.next_host
-       @he ||= hosts.to_enum 
+       @he ||= hosts.cycle 
        @he.next
     end
 
