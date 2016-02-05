@@ -14,6 +14,9 @@ require 'json'
 
 require 'open3'
 
+require 'wunderbar'
+Wunderbar.log_level = 'info' # Temporary for testing
+
 GITINFO = ASF.library_gitinfo rescue '?'
 
 def public_json_output(info)
