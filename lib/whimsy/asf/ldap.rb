@@ -124,18 +124,18 @@ module ASF
   # search with a scope of one, with automatic retry/failover
   def self.search_one(base, filter, attrs=nil)
 
-    target = @ldap.get_option(::LDAP::LDAP_OPT_HOST_NAME) rescue '?'
     cmd = "ldapsearch -x -LLL -b #{base} -s one #{filter} " +
       "#{[attrs].flatten.join(' ')}"
 
-    Wunderbar.info "[#{target}] #{cmd}"
-
     # try once per host, with a minimum of two tries
-    attempts_left = [ASF::LDAP.hosts.length, 2].min
+    attempts_left = [ASF::LDAP.hosts.length, 2].max
     begin
       attempts_left -= 1
       init_ldap unless @ldap
       return [] unless @ldap
+
+      target = @ldap.get_option(::LDAP::LDAP_OPT_HOST_NAME) rescue '?'
+      Wunderbar.info "[#{target}] #{cmd}"
 
       result = @ldap.search2(base, ::LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
     rescue Exception => re
