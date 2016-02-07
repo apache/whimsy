@@ -22,8 +22,8 @@ Levels
 ------
 
 Each node is associated with a status *level*.  Valid levels are `success`,
-`info`, `warning` and `danger`.  (These levels are modelled after Bootstrap
-[alerts](http://getbootstrap.com/components/#alerts)).
+`info`, `warning`, `danger`, and `fatal`.  (The first four levels are modelled
+after Bootstrap [alerts](http://getbootstrap.com/components/#alerts)).
 
 Default level for valid leaf nodes is `success`.  Invalid leaf nodes (e.g., a
 node consisting of a `nil` value) have a level of `danger`.  Only leaf nodes
@@ -31,8 +31,9 @@ that in the form of a Hash can have levels.  Leaf nodes that are not Hashes
 will be normalized into a Hash with a `level` and `data`.
 
 Default level for non-leaf nodes is the highest level in children nodes (where
-`danger` > `warning`, `warning` > `info` and `info` > `success`).  Normally
-monitors will not assign level values for non-leaf nodes.
+`fatal` > `danger`, `danger` > `warning`, `warning` > `info` and `info` >
+`success`).  Normally monitors will not assign level values for non-leaf
+nodes.
 
 Titles
 ------

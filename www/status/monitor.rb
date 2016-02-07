@@ -10,7 +10,7 @@ require 'thread'
 
 class Monitor
   # match http://getbootstrap.com/components/#alerts
-  LEVELS = %w(success info warning danger)
+  LEVELS = %w(success info warning danger fatal)
 
   attr_reader :status
 
@@ -52,10 +52,10 @@ class Monitor
             end
           rescue Exception => e
             status = {
-              level: 'danger',
+              level: 'fatal',
               data: {
                 exception: {
-                  level: 'danger',
+                  level: 'fatal',
                   text: e.inspect,
                   data: e.backtrace
                 }
@@ -130,7 +130,7 @@ class Monitor
     if status['level']
       if not LEVELS.include? status['level']
         status['title'] ||= "invalid status: #{status['level'].inspect}"
-        status['level'] = 'danger'
+        status['level'] = 'fatal'
       end
     else
       if status['data'].instance_of? Hash
@@ -140,7 +140,7 @@ class Monitor
           [9, []]
 
         # adopt that level
-        status['level'] = LEVELS[highest.first] || 'danger'
+        status['level'] = LEVELS[highest.first] || 'fatal'
 
         group = highest.last
         if group.length != 1

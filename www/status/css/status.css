@@ -58,3 +58,8 @@ a.list-group-item.alert-danger {
   background-color: #f2dede;
   color: #a94442;
 }
+
+a.list-group-item.alert-fatal {
+  background-color: #ff0000;
+  color: #FFFFFF;
+}
