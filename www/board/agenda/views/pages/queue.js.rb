@@ -42,7 +42,7 @@ class Queue < React
       if @comments.empty?
         _p.col_xs_12 {_em 'None.'} 
       else
-        _dl.dl_horizontal @comments do |item|
+        _dl.dl_horizontal(@comments) do |item|
           _dt do
             _Link text: item.title, href: item.href
           end
