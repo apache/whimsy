@@ -20,6 +20,7 @@ gem 'execjs', ('<2.5.1' if RUBY_VERSION =~ /^1/)
 gem 'listen', ('~> 2.10' if RUBY_VERSION =~ /^1/)
 gem 'activesupport'
 gem 'mail'
+gem 'parser', '2.3.0.2'
 
 gem 'mime-types', '~> 2.6'
 
