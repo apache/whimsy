@@ -5,11 +5,11 @@
 _html do
   _base href: '..'
   _title 'ASF Committer Search'
-  _link rel: 'stylesheet', href: '../stylesheets/app.css'
+  _link rel: 'stylesheet', href: 'stylesheets/app.css'
 
   _banner breadcrumbs: {
-    roster: 'https://whimsy.apache.org/roster',
-    committer: 'https://whimsy.apache.org/roster/committers'
+    roster: '..',
+    committer: '.'
   }
 
   _h1 'Committer - Search'

@@ -1,8 +1,10 @@
+body {margin: 10px 33px}
 h1 .note, h2 .note {font-size: small}
 h2 {margin-bottom: 0}
 h4 {margin-left: 1em}
 table ul {margin: 0; padding: 0; list-style: none}
-table {border-spacing: 0 1em}
+table {border-spacing: 0}
+table.wide {border-spacing: 0 1em}
 .wide td:first-child {text-align: right; padding: 0}
 .wide td:first-child:after {content: ' —'}
 .wide td:last-child {border-left: solid 1px #000; padding: 0 0.5em}
@@ -21,3 +23,7 @@ td:hover .hint {
   color: black; font-weight: normal}
 
 .list-none {list-style-type: none; padding-left: 1.5em; margin-top: 0.5em}
+
+.breadcrumbs {padding: 10px 20px}
+
+label {margin-right: 8px}

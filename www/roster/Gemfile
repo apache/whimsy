@@ -1,10 +1,24 @@
 source 'https://rubygems.org'
 
-base = '../../..'
+root = '../../..'
+version_file = File.expand_path("#{root}/asf.version", __FILE__)
+if File.exist? version_file
+  # for deployment and local testing
+  asf_version = File.read(version_file).chomp
+  gem 'whimsy-asf', asf_version, path: File.expand_path(root, __FILE__)
+else
+  # for docker purposes (atleast for now)
+  gem 'whimsy-asf'
+end
 
-asf_version = File.read(File.expand_path("#{base}/asf.version", __FILE__)).chomp
+gem 'rake'
+gem 'wunderbar', '>= 1.0.0'
+gem 'ruby2js', '>= 2.0.0'
+gem 'sinatra'
+gem 'nokogumbo'
+gem 'execjs', ('<2.5.1' if RUBY_VERSION =~ /^1/)
+gem 'listen', ('~> 2.10' if RUBY_VERSION =~ /^1/)
 
-gem 'whimsy-asf', asf_version, path: File.expand_path(base, __FILE__)
-
-gem 'ruby2js'
-gem 'wunderbar'
+group :demo do
+  gem 'puma'
+end

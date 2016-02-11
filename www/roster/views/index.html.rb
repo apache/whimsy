@@ -4,10 +4,10 @@
 
 _html do
   _title 'ASF Roster'
-  _link rel: 'stylesheet', href: '../stylesheets/app.css'
+  _link rel: 'stylesheet', href: 'stylesheets/app.css'
 
   _banner breadcrumbs: {
-    roster: 'https://www.whimsy.org/roster'
+    roster: '.'
   }
 
   _h1_ 'Roster'

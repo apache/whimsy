@@ -1,15 +1,19 @@
+require 'weakref'
 
 module ASF
 
   class Mail
     def self.list
-      return @list if @list
+      begin
+        return @list[0..-1]
+      rescue NoMethodError, WeakRef::RefError
+      end
 
       list = Hash.new
 
       # load info from LDAP
       people = ASF::Person.preload(['mail', 'asf-altEmail'])
-      people.each do |name, person|
+      people.each do |person|
         (person.mail+person.alt_email).each do |mail|
           list[mail.downcase] = person
         end
@@ -28,7 +32,8 @@ module ASF
         list["#{icla.id.downcase}@apache.org"] ||= person
       end
 
-      @list = list
+      @list = WeakRef.new(list)
+      list
     end
 
     def self.lists(public_private= false)

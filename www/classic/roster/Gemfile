@@ -1,0 +1,10 @@
+source 'https://rubygems.org'
+
+base = '../../..'
+
+asf_version = File.read(File.expand_path("#{base}/asf.version", __FILE__)).chomp
+
+gem 'whimsy-asf', asf_version, path: File.expand_path(base, __FILE__)
+
+gem 'ruby2js'
+gem 'wunderbar'

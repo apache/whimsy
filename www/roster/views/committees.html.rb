@@ -5,11 +5,11 @@
 _html do
   _base href: '..'
   _title 'ASF Committee Roster'
-  _link rel: 'stylesheet', href: '../stylesheets/app.css'
+  _link rel: 'stylesheet', href: 'stylesheets/app.css'
 
   _banner breadcrumbs: {
-    roster: 'https://whimsy.apache.org/roster',
-    committee: 'https://whimsy.apache.org/roster/committere'
+    roster: '.',
+    committee: 'committee/'
   }
 
   _h1 'PMCs'
@@ -18,7 +18,7 @@ _html do
     @committees.each do |pmc|
       _tr_ do
         _td do
-          _a pmc.display_name, href: pmc.name
+          _a pmc.display_name, href: "committee/#{pmc.name}"
         end
         _td do
           pmc.chairs.each_with_index do |chair, index|

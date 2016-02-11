@@ -6,8 +6,8 @@ class Wunderbar::HtmlMarkup
   def _banner(args)
     # logo
     _a href: 'http://whimsy.apache.org/' do
-      _img src: 'https://id.apache.org/img/asf_logo_wide.png',
-        alt: 'ASF Logo', title: 'ASF Logo'
+      _img alt: 'ASF Logo', title: 'ASF Logo',
+        src: 'https://www.apache.org/foundation/press/kit/asf_logo_small.png'
     end
 
     # breadcrumbs

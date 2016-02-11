@@ -17,7 +17,7 @@ class Committee < React
         person = roster[id]
 
         _tr do
-          _td {_a id, href: "../committer/#{id}"}
+          _td {_a id, href: "committer/#{id}"}
           _td person.name
         end
       end
