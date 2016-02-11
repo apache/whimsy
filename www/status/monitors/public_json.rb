@@ -3,6 +3,8 @@
 #
 
 def Monitor.public_json(previous_status)
+  grace_period = 86_400 # one day
+
   logs = File.expand_path('../../www/logs/public-*')
 
   status = {}
@@ -37,6 +39,13 @@ def Monitor.public_json(previous_status)
           title: "#{warnings.length} warnings"
       end
 
+      # Check to see if the log has been updated recently
+      if Time.now - File.mtime(log) > grace_period
+        status[name].merge! level: 'danger',
+          data: "Last updated: #{File.mtime(log).to_s}"
+      end
+
+      # Treat everything left as an error to be reported
       unless contents.empty?
         status[name].merge! level: 'danger', data: contents.split("\n")
       end
