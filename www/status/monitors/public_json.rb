@@ -3,7 +3,9 @@
 #
 
 def Monitor.public_json(previous_status)
-  grace_period = 86_400 # one day
+  danger_period = 86_400 # one day
+
+  warning_period = 5400 # 1.5 hours
 
   logs = File.expand_path('../../www/logs/public-*')
 
@@ -40,9 +42,15 @@ def Monitor.public_json(previous_status)
       end
 
       # Check to see if the log has been updated recently
-      if Time.now - File.mtime(log) > grace_period
+      if Time.now - File.mtime(log) > warning_period
+        status[name].merge! level: 'warning',
+          data: "Last updated: #{File.mtime(log).to_s} (more than 1.5 hours old)"
+      end
+
+      # Check to see if the log has been updated recently
+      if Time.now - File.mtime(log) > danger_period
         status[name].merge! level: 'danger',
-          data: "Last updated: #{File.mtime(log).to_s}"
+          data: "Last updated: #{File.mtime(log).to_s} (more than 24 hours old)"
       end
 
       # Treat everything left as an error to be reported
