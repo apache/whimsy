@@ -58,7 +58,7 @@ class Report < React
 
   def componentWillReceiveProps()
     # determine what text filters to run
-    @filters = [hotlink, self.privates, self.jira]
+    @filters = [hotlink, self.privates, self.jira, self.linebreak]
     @filters << self.localtime if @@item.title == 'Call to order'
     @filters << self.names if @@item.people
     @filters << self.president_attachments if @@item.title == 'President'
@@ -85,6 +85,35 @@ class Report < React
   #
   ### filters
   #
+
+  # Break long lines
+  def linebreak(text)
+    # find long, breakable lines
+    regex = Regexp.new(/.{80}.*/, 'g')
+    result = nil
+    indicies = [];
+    while result = regex.exec(text)
+      line = result[0]
+      lastspace = /^.*\s\S/.exec(line)[0].length - 1
+      indicies.unshift([line, result.index]) if lastspace > 40
+    end
+
+    # reflow each line found
+    indicies.each do |info|
+      line = info[0]
+      index = info[1]
+      prefix = /^\W*/.exec(line)[0]
+      indent = ' ' * prefix.length
+      replacement = '<span class="hilite" title="reflowed">' + prefix +
+        Flow.text(line[prefix.length..-1], indent).gsub("\n", "\n" + indent) +
+        "</span>"
+
+      text = text.slice(0, index) + replacement + 
+        text.slice(index + line.length)
+    end
+
+    return text
+  end
 
   # Convert start time to local time on Call to order page
   def localtime(text)
