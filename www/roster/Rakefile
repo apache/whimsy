@@ -1,0 +1,26 @@
+require 'bundler'
+Bundler.require(:default, :development)
+
+task :server => :listen do
+  ENV['RACK_ENV']='development'
+  sh 'passenger start'
+end
+
+task :listen do
+  dirs = [
+    File.expand_path('..', File.realpath(__FILE__)),
+    File.expand_path('../../../lib', File.realpath(__FILE__))
+  ]
+
+  listener = Listen.to(*dirs) do |modified, added, removed|
+    puts "detected update: #{(modified + added + removed).join(', ')}"
+    FileUtils.touch "#{dirs.first}/tmp/restart.txt"
+  end
+
+  listener.ignore /~$/
+  listener.ignore /^\..*\.sw\w$/
+  listener.ignore /passenger.\d+\.(log|pid(\.lock)?)$/
+
+  listener.start
+end
+

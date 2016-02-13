@@ -1,0 +1,3 @@
+To test locally, run:
+
+    rake server
