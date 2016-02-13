@@ -3,7 +3,8 @@ Bundler.require(:default, :development)
 
 task :server => :listen do
   ENV['RACK_ENV']='development'
-  sh 'passenger start'
+  at_exit {sleep 0.5}
+  sh 'bundle exec passenger start'
 end
 
 task :listen do
