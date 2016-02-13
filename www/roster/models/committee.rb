@@ -11,6 +11,7 @@ class Committee
 
     response = {
       id: id,
+      chair: pmc.chair.id,
       display_name: pmc.display_name,
       description: pmc.description,
       schedule: pmc.schedule,

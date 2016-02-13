@@ -1,5 +1,6 @@
 body {margin: 10px 33px}
 h1 .note, h2 .note {font-size: small}
+h1 small {font-weight: normal; font-size: medium}
 h2 {margin-bottom: 0}
 h4 {margin-left: 1em}
 table ul {margin: 0; padding: 0; list-style: none}

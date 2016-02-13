@@ -10,7 +10,6 @@ class Committee < React
 
     _h2 'PMC'
     _table do
-
       roster = @@committee.roster
 
       for id in roster
@@ -19,6 +18,30 @@ class Committee < React
         _tr do
           _td {_a id, href: "committer/#{id}"}
           _td person.name
+          _td person.date
+
+          if id == @@committee.chair
+            _td.chair 'chair'
+          end
+        end
+      end
+    end
+
+    if @@committee.committers.keys().all? {|id| @@committee.roster[id]}
+      _p 'All committers are members of the PMC'
+    else
+      _h2 'Committers'
+      _table do
+        committers = @@committee.committers
+
+        for id in committers
+          next if @@committee.roster[id]
+          person = committers[id]
+
+          _tr do
+            _td {_a id, href: "committer/#{id}"}
+            _td person
+          end
         end
       end
     end

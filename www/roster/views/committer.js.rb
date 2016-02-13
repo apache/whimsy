@@ -46,6 +46,16 @@ class Committer < React
           end
         end
       end
+
+      _tr do
+        _td 'Groups'
+        _td do
+          _ul @@committer.groups do |pmc|
+            next if @@committer.committees.include? pmc
+            _li {_a pmc, href: "committee/#{pmc}"}
+          end
+        end
+      end
     end
   end
 end
