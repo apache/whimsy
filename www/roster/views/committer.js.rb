@@ -41,7 +41,7 @@ class Committer < React
       _tr do
         _td 'Committees'
         _td do
-          _ul @@committer.committees do |pmc|
+          _ul @@committer.committees.sort do |pmc|
             _li {_a pmc, href: "committee/#{pmc}"}
           end
         end
@@ -50,7 +50,7 @@ class Committer < React
       _tr do
         _td 'Groups'
         _td do
-          _ul @@committer.groups do |pmc|
+          _ul @@committer.groups.sort do |pmc|
             next if @@committer.committees.include? pmc
             _li {_a pmc, href: "committee/#{pmc}"}
           end
