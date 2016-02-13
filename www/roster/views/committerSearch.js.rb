@@ -7,15 +7,27 @@ class CommitterSearch < React
   end
 
   def componentDidMount()
+    # start with (possibly stale) data from local storage when available
+    ls_committers = localStorage.getItem('roster-committers')
+    if ls_committers
+      @committers = JSON.parse(ls_committers)
+      @ready = true
+      self.change(target: {value: @search}) unless @search.empty?
+    end
+
+    # load fresh data from the server
+    ls_committers = localStorage.getItem('roster-committers')
     Polyfill.require(%w(Promise fetch)) do
-      fetch('committer/index.json', credentials: 'include').then do |response|
+      fetch('committer/index.json', credentials: 'include').then {|response|
         response.json().then do |committers|
-          @ready = true
           @committers = committers
-          search = @search
-          self.change(target: {value: search}) unless search.empty?
+          @ready = true
+          self.change(target: {value: @search}) unless @search.empty?
+          localStorage.setItem('roster-committers', @committers.inspect)
         end
-      end
+      }.catch {|error|
+        console.log error
+      }
     end
   end
 
