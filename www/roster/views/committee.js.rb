@@ -10,7 +10,7 @@ class Committee < React
 
     _h2 'PMC'
     _table do
-      roster = @@committee.roster
+      roster = @@committee.roster.sort
 
       for id in roster
         person = roster[id]
@@ -32,7 +32,7 @@ class Committee < React
     else
       _h2 'Committers'
       _table do
-        committers = @@committee.committers
+        committers = @@committee.committers.sort
 
         for id in committers
           next if @@committee.roster[id]
