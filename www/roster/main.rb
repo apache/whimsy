@@ -49,6 +49,7 @@ get '/committee/:name.json' do |name|
 end
 
 get '/committee/:name' do |name|
+  @auth = Auth.info(env)
   @committee = Committee.serialize(name)
   _html :committee
 end
