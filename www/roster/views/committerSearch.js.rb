@@ -8,7 +8,7 @@ class CommitterSearch < React
 
   def componentDidMount()
     Polyfill.require(%w(Promise fetch)) do
-      fetch('committer/index.json').then do |response|
+      fetch('committer/index.json', mode: 'same-origin').then do |response|
         response.json().then do |committers|
           @ready = true
           @committers = committers
