@@ -68,18 +68,18 @@ class CommitterSearch < React
         elsif list.length > 99
           _p "#{list.length} entries match"
         else
-          _table do
+          _table.table.table_hover do
             _thead do
               _tr do
                 _th 'id'
-                _th 'name'
+                _th 'public name'
                 _th 'email'
               end
             end
 
             _tbody do
               list.each do |person|
-                _tr do
+                _tr data_id: person.id, onDoubleClick: self.select do
                   _td {_a person.id, href: "committer/#{person.id}"}
 
                   if person.member
@@ -91,10 +91,25 @@ class CommitterSearch < React
                   _td person.mail.first
                 end
               end
+
+              if @@add
+                _tr.alert_success do
+                  _td 'Double click on a row to add', colspan: 3
+                end
+              end
             end
           end
+
         end
       end
+    end
+  end
+
+  def select(event)
+    if @@add
+      id = event.currentTarget.dataset.id
+      person = @list.find {|person| person.id == id}
+      @@add.call(person)
     end
   end
 end

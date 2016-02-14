@@ -15,14 +15,17 @@ class Committee < React
 
     _p @@committee.description
 
-    _div.alert.alert_success 'Double click on a row to edit' if auth
+    if auth
+      _div.alert.alert_success 'Double click on a row to edit.  ' +
+        "Double click on \u2795 to add."
+    end
 
     # main content
     _PMCMembers auth: @@auth, committee: @@committee
     _PMCCommitters auth: @@auth, committee: @@committee
 
-    # hidden form
-    _PMCConfirm if @@auth
+    # hidden orm
+    _PMCConfirm if auth
   end
 end
 
@@ -32,6 +35,7 @@ end
 
 class PMCMembers < React
   def initialize
+    @roster = {}
     @state = :closed
   end
 
@@ -46,18 +50,15 @@ class PMCMembers < React
         end
       end
 
-      roster = @@committee.roster
+      _tbody do
+        @roster.each do |person|
+          _PMCMember auth: @@auth, person: person, committee: @@committee
+        end
 
-      for id in roster
-        person = roster[id]
-        person.id = id
-
-        _PMCMember auth: @@auth, person: person, committee: @@committee
-      end
-
-      if @@auth
-        _tr onDoubleClick: self.select do
-          _td((@state == :open ? '' : '+'), colspan: 4)
+        if @@auth
+          _tr onDoubleClick: self.select do
+            _td((@state == :open ? '' : "\u2795"), colspan: 4)
+          end
         end
       end
     end
@@ -69,13 +70,34 @@ class PMCMembers < React
    end
   end
 
-  def select
+  # update props on initial load
+  def componentWillMount()
+    self.componentWillReceiveProps()
+  end
+
+  # compute roster
+  def componentWillReceiveProps()
+    @roster = []
+    
+    for id in @@committee.roster
+      person = @@committee.roster[id]
+      person.id = id
+      @roster << person
+    end
+  end
+
+  # open search box
+  def select()
     return unless @@auth
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
   end
 
+  # add a person to the displayed list of PMC members
   def add(person)
+    person.date = 'pending'
+    @roster << person
+    @state = :closed
   end
 end
 
@@ -97,17 +119,16 @@ class PMCCommitters < React
           end
         end
 
-        committers = @@committee.committers
+        _tbody do
+          @committers.each do |person|
+            next if @@committee.roster[person.id]
+            _PMCCommitter auth: @@auth, person: person, committee: @@committee
+          end
 
-        for id in committers
-          next if @@committee.roster[id]
-          _PMCCommitter auth: @@auth, person: {id: id, name: committers[id]},
-            committee: @@committee
-        end
-
-        if @@auth
-          _tr onDoubleClick: self.select do
-            _td((@state == :open ? '' : '+'), colspan: 4)
+          if @@auth
+            _tr onDoubleClick: self.select do
+              _td((@state == :open ? '' : '+'), colspan: 4)
+            end
           end
         end
       end
@@ -120,13 +141,32 @@ class PMCCommitters < React
     end
   end
 
-  def select
+  # update props on initial load
+  def componentWillMount()
+    self.componentWillReceiveProps()
+  end
+
+  # compute list of committers
+  def componentWillReceiveProps()
+    @committers = []
+    
+    for id in @@committee.committers
+      @committers << {id: id, name: @@committee.committers[id]}
+    end
+  end
+
+  # open search box
+  def select()
     return unless @@auth
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
   end
 
+  # add a person to the displayed list of committers
   def add(person)
+    person.date = 'pending'
+    @committers << person
+    @state = :closed
   end
 end
 
@@ -147,10 +187,22 @@ class PMCMember < React
 
       if @state == :open
         _td do 
-          _button.btn.btn_warning 'Remove from PMC', data_target: '#confirm',
-            data_toggle: 'modal',
-            data_confirmation: "Remove #{@@person.name} from the " +
-              "#{@@committee.display_name} PMC?"
+          if @@person.date == 'pending'
+           _button.btn.btn_primary 'Add as a committer and to the PMC',
+             data_target: '#confirm', data_toggle: 'modal',
+             data_confirmation: "Add #{@@person.name} to the " +
+               "#{@@committee.display_name} PMC and grant committer access?"
+
+           _button.btn.btn_warning 'Add to PMC only', data_target: '#confirm',
+             data_toggle: 'modal',
+             data_confirmation: "Add #{@@person.name} to the " +
+               "#{@@committee.display_name} PMC?"
+          else
+            _button.btn.btn_warning 'Remove from PMC',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Remove #{@@person.name} from the " +
+                "#{@@committee.display_name} PMC?"
+          end
         end
       elsif @@person.id == @@committee.chair
         _td.chair 'chair'
@@ -160,7 +212,18 @@ class PMCMember < React
     end
   end
 
-  def select
+  # update props on initial load
+  def componentWillMount()
+    self.componentWillReceiveProps()
+  end
+
+  # automatically open pending entries
+  def componentWillReceiveProps()
+    @state = :open if @@person.date == 'pending'
+  end
+
+  # toggle display of buttons
+  def select()
     return unless @@auth
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
@@ -183,14 +246,25 @@ class PMCCommitter < React
 
       if @state == :open
         _td do
-          _button.btn.btn_warning 'Remove as Committer',
-            data_target: '#confirm', data_toggle: 'modal',
-            data_confirmation: "Remove #{@@person.name} as a Committer?"
+          if @@person.date == 'pending'
+             _button.btn.btn_primary 'Add as a committer only',
+               data_target: '#confirm', data_toggle: 'modal',
+               data_confirmation: "Grant #{@@person.name} committer access?"
 
-          _button.btn.btn_primary 'Add to PMC',
-            data_target: '#confirm', data_toggle: 'modal',
-            data_confirmation: "Add #{@@person.name} to the " +
-              "#{@@committee.display_name} PMC?"
+             _button.btn.btn_success 'Add as a committer and to the PMC',
+               data_target: '#confirm', data_toggle: 'modal',
+               data_confirmation: "Add #{@@person.name} to the " +
+                 "#{@@committee.display_name} PMC and grant committer access?"
+          else
+            _button.btn.btn_warning 'Remove as Committer',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Remove #{@@person.name} as a Committer?"
+
+            _button.btn.btn_primary 'Add to PMC',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Add #{@@person.name} to the " +
+                "#{@@committee.display_name} PMC?"
+          end
         end
       else
         _td ''
@@ -198,7 +272,18 @@ class PMCCommitter < React
     end
   end
 
-  def select
+  # update props on initial load
+  def componentWillMount()
+    self.componentWillReceiveProps()
+  end
+
+  # automatically open pending entries
+  def componentWillReceiveProps()
+    @state = :open if @@person.date == 'pending'
+  end
+
+  # toggle display of buttons
+  def select()
     return unless @@auth
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
