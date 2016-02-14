@@ -1,13 +1,23 @@
-require 'bundler'
-Bundler.require(:default, :development)
-
-task :server => :listen do
+# standalone roster server
+task :server => [:bundle, :listen] do
   ENV['RACK_ENV']='development'
   at_exit {sleep 0.5}
   sh 'bundle exec passenger start'
 end
 
-task :listen do
+file 'Gemfile.lock' => 'Gemfile' do
+  sh 'bundle update'
+  touch 'Gemfile.lock'
+end
+
+desc 'install dependencies'
+task :bundle => 'Gemfile.lock' do
+  require 'bundler'
+  Bundler.require(:default, :development)
+end
+
+# restart server when files update
+task :listen => :bundle do
   dirs = [
     File.expand_path('..', File.realpath(__FILE__)),
     File.expand_path('../../../lib', File.realpath(__FILE__))
