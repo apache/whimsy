@@ -84,6 +84,15 @@ class PMCMembers < React
       roster << person
     end
 
+    for id in @@committee.ldap
+      person = @@committee.roster[id]
+      if person
+        person.ldap = true
+      else
+        roster << {id: id, name: @@committee.ldap[id], ldap: true}
+      end
+    end
+
     @roster = roster.sort_by {|person| person.name}
   end
 
@@ -192,6 +201,7 @@ class PMCMember < React
         _td do 
           if @@person.date == 'pending'
            _button.btn.btn_primary 'Add as a committer and to the PMC',
+             # not added yet
              data_target: '#confirm', data_toggle: 'modal',
              data_confirmation: "Add #{@@person.name} to the " +
                "#{@@committee.display_name} PMC and grant committer access?"
@@ -200,13 +210,37 @@ class PMCMember < React
              data_toggle: 'modal',
              data_confirmation: "Add #{@@person.name} to the " +
                "#{@@committee.display_name} PMC?"
+          elsif not @@person.date
+             # in LDAP but not in committee-info.txt
+            _button.btn.btn_warning 'Remove from LDAP',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Remove #{@@person.name} from LDAP?"
+
+            _button.btn.btn_success 'Add to committee_info.txt',
+              disabled: true,
+              data_confirmation: "Add to #{@@person.name} committee_info.txt"
+          elsif not @@person.ldap
+             # in committee-info.txt but not in ldap
+            _button.btn.btn_success 'Add to LDAP',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Add #{@@person.name} to LDAP?"
+
+            _button.btn.btn_warning 'Remove from committee_info.txt',
+              disabled: true,
+              data_confirmation: 
+                "Remove #{@@person.name} from committee_info.txt?"
           else
+            # in both LDAP and committee-info.txt
             _button.btn.btn_warning 'Remove from PMC',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} from the " +
                 "#{@@committee.display_name} PMC?"
           end
         end
+      elsif not @@person.date
+        _td.issue 'not in committee_info.txt'
+      elsif not @@person.ldap
+        _td.issue 'not in LDAP'
       elsif @@person.id == @@committee.chair
         _td.chair 'chair'
       else
