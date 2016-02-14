@@ -35,7 +35,6 @@ end
 
 class PMCMembers < React
   def initialize
-    @roster = {}
     @state = :closed
   end
 
@@ -77,13 +76,15 @@ class PMCMembers < React
 
   # compute roster
   def componentWillReceiveProps()
-    @roster = []
+    roster = []
     
     for id in @@committee.roster
       person = @@committee.roster[id]
       person.id = id
-      @roster << person
+      roster << person
     end
+
+    @roster = roster.sort_by {|person| person.name}
   end
 
   # open search box
@@ -127,7 +128,7 @@ class PMCCommitters < React
 
           if @@auth
             _tr onDoubleClick: self.select do
-              _td((@state == :open ? '' : '+'), colspan: 4)
+              _td((@state == :open ? '' : "\u2795"), colspan: 3)
             end
           end
         end
@@ -148,11 +149,13 @@ class PMCCommitters < React
 
   # compute list of committers
   def componentWillReceiveProps()
-    @committers = []
+    committers = []
     
     for id in @@committee.committers
-      @committers << {id: id, name: @@committee.committers[id]}
+      committers << {id: id, name: @@committee.committers[id]}
     end
+
+    @committers = committers.sort_by {|person| person.name}
   end
 
   # open search box
