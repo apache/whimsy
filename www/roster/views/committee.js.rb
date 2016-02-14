@@ -4,16 +4,16 @@
 
 class Committee < React
   def render
-    auth = (@@auth.id == @@committee.chair or @@auth.secretary)
+    auth = (@@auth.id == @committee.chair or @@auth.secretary)
 
     # header
     _h1 do
-      _a @@committee.display_name, href: @@committee.site
+      _a @committee.display_name, href: @committee.site
       _span ' '
-      _small "established #{@@committee.established}"
+      _small "established #{@committee.established}"
     end
 
-    _p @@committee.description
+    _p @committee.description
 
     if auth
       _div.alert.alert_success 'Double click on a row to edit.  ' +
@@ -21,11 +21,26 @@ class Committee < React
     end
 
     # main content
-    _PMCMembers auth: @@auth, committee: @@committee
-    _PMCCommitters auth: @@auth, committee: @@committee
+    _PMCMembers auth: auth, committee: @committee
+    _PMCCommitters auth: auth, committee: @committee
 
-    # hidden orm
-    _PMCConfirm if auth
+    # hidden form
+    _PMCConfirm pmc: @committee.id, update: self.update if auth
+  end
+
+  # capture committee on initial load
+  def componentWillMount()
+    @committee = @@committee
+  end
+
+  # capture committee on subsequent loads
+  def componentWillReceiveProps()
+    @committee = @@committee
+  end
+
+  # update committee from conformation form
+  def update(committee)
+    @committee = committee
   end
 end
 
@@ -198,21 +213,23 @@ class PMCMember < React
       _td @@person.date
 
       if @state == :open
-        _td do 
+        _td data_id: @@person.id do 
           if @@person.date == 'pending'
-           _button.btn.btn_primary 'Add as a committer and to the PMC',
-             # not added yet
-             data_target: '#confirm', data_toggle: 'modal',
-             data_confirmation: "Add #{@@person.name} to the " +
-               "#{@@committee.display_name} PMC and grant committer access?"
+            _button.btn.btn_primary 'Add as a committer and to the PMC',
+              # not added yet
+              data_action: 'add pmc commit',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Add #{@@person.name} to the " +
+                "#{@@committee.display_name} PMC and grant committer access?"
 
-           _button.btn.btn_warning 'Add to PMC only', data_target: '#confirm',
-             data_toggle: 'modal',
-             data_confirmation: "Add #{@@person.name} to the " +
-               "#{@@committee.display_name} PMC?"
+            _button.btn.btn_warning 'Add to PMC only', data_target: '#confirm',
+              data_action: 'add pmc', data_toggle: 'modal',
+              data_confirmation: "Add #{@@person.name} to the " +
+                "#{@@committee.display_name} PMC?"
           elsif not @@person.date
-             # in LDAP but not in committee-info.txt
+            # in LDAP but not in committee-info.txt
             _button.btn.btn_warning 'Remove from LDAP',
+              data_action: 'remove pmc', 
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} from LDAP?"
 
@@ -222,6 +239,7 @@ class PMCMember < React
           elsif not @@person.ldap
              # in committee-info.txt but not in ldap
             _button.btn.btn_success 'Add to LDAP',
+              data_action: 'add pmc', 
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} to LDAP?"
 
@@ -232,6 +250,7 @@ class PMCMember < React
           else
             # in both LDAP and committee-info.txt
             _button.btn.btn_warning 'Remove from PMC',
+              data_action: 'remove pmc commit', 
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} from the " +
                 "#{@@committee.display_name} PMC?"
@@ -282,22 +301,26 @@ class PMCCommitter < React
       _td @@person.name
 
       if @state == :open
-        _td do
+        _td data_id: @@person.id do 
           if @@person.date == 'pending'
-             _button.btn.btn_primary 'Add as a committer only',
-               data_target: '#confirm', data_toggle: 'modal',
-               data_confirmation: "Grant #{@@person.name} committer access?"
+            _button.btn.btn_primary 'Add as a committer only',
+              data_action: 'add commit', 
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Grant #{@@person.name} committer access?"
 
-             _button.btn.btn_success 'Add as a committer and to the PMC',
-               data_target: '#confirm', data_toggle: 'modal',
-               data_confirmation: "Add #{@@person.name} to the " +
+            _button.btn.btn_success 'Add as a committer and to the PMC',
+              data_action: 'add pmc commit', 
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Add #{@@person.name} to the " +
                  "#{@@committee.display_name} PMC and grant committer access?"
           else
             _button.btn.btn_warning 'Remove as Committer',
+              data_action: 'remove commit', 
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} as a Committer?"
 
             _button.btn.btn_primary 'Add to PMC',
+              data_action: 'add pmc', 
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} to the " +
                 "#{@@committee.display_name} PMC?"
@@ -353,7 +376,7 @@ class PMCConfirm < React
 
           _div.modal_footer do
             _button.btn.btn_default 'Cancel', data_dismiss:"modal"
-            _button.btn @button, data_dismiss:"modal", class: @color
+            _button.btn @button, class: @color, onClick: self.post
           end
         end
       end
@@ -363,9 +386,34 @@ class PMCConfirm < React
   def componentDidMount()
     jQuery('#confirm').on('show.bs.modal') do |event|
       button = event.relatedTarget
+      @id = button.parentNode.dataset.id
+      @action = button.dataset.action
       @text = button.dataset.confirmation
       @color = button.classList[1]
       @button = button.textContent
     end
+  end
+
+  def post()
+    args = {method: 'post', headers: {'Content-Type' => 'application/json'}}
+
+    targets = @action.split(' ')
+    action = targets.shift()
+    args.body = {pmc: @@pmc, id: @id, action: action, targets: targets}.inspect
+
+    fetch('actions/committee', args).then {|response|
+      content_type = response.headers.get('content-type') || ''
+      if response.status == 200 and content_type.include? 'json'
+        response.json().then do |json|
+          @@update.call(json)
+        end
+      else
+        alert "#{response.status} #{response.statusText}"
+      end
+      jQuery('#confirm').modal(:hide)
+    }.catch {|error|
+      alert errror
+      jQuery('#confirm').modal(:hide)
+    }
   end
 end

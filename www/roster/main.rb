@@ -63,3 +63,9 @@ get '/committer/:name' do |name|
   @committer = Committer.serialize(name)
   _html :committer
 end
+
+# posted actions
+post '/actions/:file' do
+  _json :"actions/#{params[:file]}"
+end
+
