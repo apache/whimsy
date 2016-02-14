@@ -6,6 +6,7 @@ class Committee < React
   def render
     auth = (@@auth.id == @@committee.chair or @@auth.secretary)
 
+    # header
     _h1 do
       _a @@committee.display_name, href: @@committee.site
       _span ' '
@@ -16,6 +17,25 @@ class Committee < React
 
     _div.alert.alert_success 'Double click on a row to edit' if auth
 
+    # main content
+    _PMCMembers auth: @@auth, committee: @@committee
+    _PMCCommitters auth: @@auth, committee: @@committee
+
+    # hidden form
+    _PMCConfirm if @@auth
+  end
+end
+
+#
+# Show PMC members
+#
+
+class PMCMembers < React
+  def initialize
+    @state = :closed
+  end
+
+  def render
     _h2 'PMC'
     _table.table.table_hover do
       _thead do
@@ -32,12 +52,39 @@ class Committee < React
         person = roster[id]
         person.id = id
 
-        _PMCMember auth: auth, person: person, committee: @@committee
+        _PMCMember auth: @@auth, person: person, committee: @@committee
       end
 
-      _PMCMemberAdd if auth
+      if @@auth
+        _tr onDoubleClick: self.select do
+          _td((@state == :open ? '' : '+'), colspan: 4)
+        end
+      end
     end
 
+   if @state == :open
+     _div.search_box do
+       _CommitterSearch add: self.add
+     end
+   end
+  end
+
+  def select
+    return unless @@auth
+    window.getSelection().removeAllRanges()
+    @state = ( @state == :open ? :closed : :open )
+  end
+
+  def add(person)
+  end
+end
+
+#
+# Committers on the PMC
+#
+
+class PMCCommitters < React
+  def render
     if @@committee.committers.keys().all? {|id| @@committee.roster[id]}
       _p 'All committers are members of the PMC'
     else
@@ -54,15 +101,32 @@ class Committee < React
 
         for id in committers
           next if @@committee.roster[id]
-          _PMCCommitter auth: auth, person: {id: id, name: committers[id]},
+          _PMCCommitter auth: @@auth, person: {id: id, name: committers[id]},
             committee: @@committee
         end
 
-        _PMCCommitterAdd if auth
+        if @@auth
+          _tr onDoubleClick: self.select do
+            _td((@state == :open ? '' : '+'), colspan: 4)
+          end
+        end
+      end
+
+      if @state == :open
+        _div.search_box do
+          _CommitterSearch add: self.add
+        end
       end
     end
+  end
 
-    _PMCConfirm if auth
+  def select
+    return unless @@auth
+    window.getSelection().removeAllRanges()
+    @state = ( @state == :open ? :closed : :open )
+  end
+
+  def add(person)
   end
 end
 
@@ -104,42 +168,6 @@ class PMCMember < React
 end
 
 #
-# Add a member to the PMC
-#
-
-class PMCMemberAdd < React
-  def initialize
-    @state = :closed
-  end
-
-  def render
-    _tr onDoubleClick: self.select do
-      if @state == :open
-        _td '+'
-        _td { _input }
-        _td colspan: 2 do
-          _button.btn.btn_primary 'Add as a committer and to the PMC',
-            data_target: '#confirm', data_toggle: 'modal',
-            data_confirmation: "Add #{@@person.name} to the " +
-              "#{@@committee.display_name} PMC and as a committer?"
-          _button.btn.btn_warning 'Add to PMC only', data_target: '#confirm',
-            data_toggle: 'modal',
-            data_confirmation: "Add #{@@person.name} to the " +
-              "#{@@committee.display_name} PMC?"
-        end
-      else
-        _td '+', colspan: 4
-      end
-    end
-  end
-
-  def select
-    window.getSelection().removeAllRanges()
-    @state = ( @state == :open ? :closed : :open )
-  end
-end
-
-#
 # Show a committer
 #
 
@@ -158,6 +186,7 @@ class PMCCommitter < React
           _button.btn.btn_warning 'Remove as Committer',
             data_target: '#confirm', data_toggle: 'modal',
             data_confirmation: "Remove #{@@person.name} as a Committer?"
+
           _button.btn.btn_primary 'Add to PMC',
             data_target: '#confirm', data_toggle: 'modal',
             data_confirmation: "Add #{@@person.name} to the " +
@@ -177,34 +206,8 @@ class PMCCommitter < React
 end
 
 #
-# Add a committer
+# Confirmation dialog
 #
-
-class PMCCommitterAdd < React
-  def initialize
-    @state = :closed
-  end
-
-  def render
-    _tr onDoubleClick: self.select do
-      if @state == :open
-        _td '+'
-        _td { _input }
-        _td colspan: 2 do
-          _button.btn.btn_success 'add as a committer only'
-          _button.btn.btn_primary 'add as a committer and to the PMC'
-        end
-      else
-        _td '+', colspan: 4
-      end
-    end
-  end
-
-  def select
-    window.getSelection().removeAllRanges()
-    @state = ( @state == :open ? :closed : :open )
-  end
-end
 
 class PMCConfirm < React
   def initialize

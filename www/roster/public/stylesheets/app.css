@@ -35,3 +35,7 @@ button.btn {margin: 0 8px}
   border-top-left-radius: 6px;
   border-top-right-radius: 6px
 }
+
+.search-box {
+  margin: -20px 0 40px 40px;
+}
