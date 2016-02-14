@@ -14,6 +14,8 @@ class Committee < React
 
     _p @@committee.description
 
+    _div.alert.alert_success 'Double click on a row to edit' if auth
+
     _h2 'PMC'
     _table.table.table_hover do
       _thead do
@@ -30,7 +32,7 @@ class Committee < React
         person = roster[id]
         person.id = id
 
-        _PMCMember auth: auth, person: person, chair: @@committee.chair
+        _PMCMember auth: auth, person: person, committee: @@committee
       end
 
       _PMCMemberAdd if auth
@@ -52,12 +54,15 @@ class Committee < React
 
         for id in committers
           next if @@committee.roster[id]
-          _PMCCommitter auth: auth, person: {id: id, name: committers[id]}
+          _PMCCommitter auth: auth, person: {id: id, name: committers[id]},
+            committee: @@committee
         end
 
         _PMCCommitterAdd if auth
       end
     end
+
+    _PMCConfirm if auth
   end
 end
 
@@ -77,8 +82,13 @@ class PMCMember < React
       _td @@person.date
 
       if @state == :open
-        _td { _button.btn.btn_warning 'remove from PMC' }
-      elsif @@person.id == @@chair
+        _td do 
+          _button.btn.btn_warning 'Remove from PMC', data_target: '#confirm',
+            data_toggle: 'modal',
+            data_confirmation: "Remove #{@@person.name} from the " +
+              "#{@@committee.display_name} PMC?"
+        end
+      elsif @@person.id == @@committee.chair
         _td.chair 'chair'
       else
         _td ''
@@ -108,8 +118,14 @@ class PMCMemberAdd < React
         _td '+'
         _td { _input }
         _td colspan: 2 do
-          _button.btn.btn_primary 'add as a committer and to the PMC'
-          _button.btn.btn_success 'add to PMC only'
+          _button.btn.btn_primary 'Add as a committer and to the PMC',
+            data_target: '#confirm', data_toggle: 'modal',
+            data_confirmation: "Add #{@@person.name} to the " +
+              "#{@@committee.display_name} PMC and as a committer?"
+          _button.btn.btn_warning 'Add to PMC only', data_target: '#confirm',
+            data_toggle: 'modal',
+            data_confirmation: "Add #{@@person.name} to the " +
+              "#{@@committee.display_name} PMC?"
         end
       else
         _td '+', colspan: 4
@@ -139,8 +155,13 @@ class PMCCommitter < React
 
       if @state == :open
         _td do
-          _button.btn.btn_warning 'remove as committer'
-          _button.btn.btn_primary 'add to PMC'
+          _button.btn.btn_warning 'Remove as Committer',
+            data_target: '#confirm', data_toggle: 'modal',
+            data_confirmation: "Remove #{@@person.name} as a Committer?"
+          _button.btn.btn_primary 'Add to PMC',
+            data_target: '#confirm', data_toggle: 'modal',
+            data_confirmation: "Add #{@@person.name} to the " +
+              "#{@@committee.display_name} PMC?"
         end
       else
         _td ''
@@ -182,5 +203,44 @@ class PMCCommitterAdd < React
   def select
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
+  end
+end
+
+class PMCConfirm < React
+  def initialize
+    @text = 'text'
+    @color = 'btn-default'
+    @button = 'OK'
+  end
+
+  def render
+    _div.modal.fade.confirm! tabindex: -1 do
+      _div.modal_dialog do
+        _div.modal_content do
+          _div.modal_header.bg_info do
+            _button.close 'x', data_dismiss: 'modal'
+            _h4.modal_title 'Confirm Request'
+          end
+
+          _div.modal_body do
+            _p @text
+          end
+
+          _div.modal_footer do
+            _button.btn.btn_default 'Cancel', data_dismiss:"modal"
+            _button.btn @button, data_dismiss:"modal", class: @color
+          end
+        end
+      end
+    end
+  end
+
+  def componentDidMount()
+    jQuery('#confirm').on('show.bs.modal') do |event|
+      button = event.relatedTarget
+      @text = button.dataset.confirmation
+      @color = button.classList[1]
+      @button = button.textContent
+    end
   end
 end

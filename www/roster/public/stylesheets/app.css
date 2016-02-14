@@ -30,3 +30,8 @@ td:hover .hint {
 label {margin-right: 8px}
 
 button.btn {margin: 0 8px}
+
+.modal-header {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px
+}
