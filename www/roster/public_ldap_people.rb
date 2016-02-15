@@ -19,7 +19,7 @@ require 'whimsy/asf'
 # ASF people
 peo = {}
 
-peeps = ASF::Person.preload(['cn', 'loginShell', ['asf-personalURL']]) # for performance
+peeps = ASF::Person.preload(['cn', 'loginShell', 'asf-personalURL']) # for performance
 
 if peeps.empty?
   Wunderbar.error "No results retrieved, output not created"
