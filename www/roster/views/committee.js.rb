@@ -395,11 +395,17 @@ class PMCConfirm < React
   end
 
   def post()
-    args = {method: 'post', headers: {'Content-Type' => 'application/json'}}
-
+    # parse action extracted from the button
     targets = @action.split(' ')
     action = targets.shift()
-    args.body = {pmc: @@pmc, id: @id, action: action, targets: targets}.inspect
+
+    # construct arguments to fetch
+    args = {
+      method: 'post',
+      credentials: 'include',
+      headers: {'Content-Type' => 'application/json'},
+      body: {pmc: @@pmc, id: @id, action: action, targets: targets}.inspect
+    }
 
     fetch('actions/committee', args).then {|response|
       content_type = response.headers.get('content-type') || ''
