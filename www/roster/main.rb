@@ -69,3 +69,7 @@ post '/actions/:file' do
   _json :"actions/#{params[:file]}"
 end
 
+# attic issues
+get '/attic/issues.json' do
+  _json Attic.issues
+end
