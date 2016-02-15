@@ -19,7 +19,7 @@ require 'whimsy/asf'
 # ASF people
 peo = {}
 
-peeps = ASF::Person.preload(['cn', 'loginShell', 'asf-personalURL']) # for performance
+peeps = ASF::Person.preload(['cn', 'loginShell', 'asf-personalURL', 'createTimestamp', 'modifyTimestamp']) # for performance
 
 if peeps.empty?
   Wunderbar.error "No results retrieved, output not created"
@@ -41,12 +41,24 @@ def makeEntry(hash, e)
   end
 end
 
+lastmodifyTimestamp = ''
+lastcreateTimestamp = ''
+
 peeps.sort_by {|a| a.name}.each do |e|
-    makeEntry(peo, e)
+  makeEntry(peo, e)
+  createTimestamp = e.createTimestamp
+  if (createTimestamp > lastcreateTimestamp)
+    lastcreateTimestamp = createTimestamp
+  end
+  modifyTimestamp = e.modifyTimestamp
+  if (modifyTimestamp > lastmodifyTimestamp)
+    lastmodifyTimestamp = modifyTimestamp
+  end
 end
 
 info = {
-  # There does not seem to be a useful timestamp here
+  lastcreateTimestamp: lastcreateTimestamp,
+  lastmodifyTimestamp: lastmodifyTimestamp,
   people: peo,
 }
 
