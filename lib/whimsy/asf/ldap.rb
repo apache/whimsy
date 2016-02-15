@@ -425,6 +425,22 @@ module ASF
 
       members.map {|uid| Person.find(uid)}
     end
+
+    def dn
+      @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
+    end
+
+    def remove(people)
+      people = Array(people).map(&:id)
+      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'memberUid', people)
+      ASF.ldap.modify(self.dn, [mod])
+    end
+
+    def add(people)
+      people = Array(people).map(&:dn)
+      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'memberUid', people)
+      ASF.ldap.modify(self.dn, [mod])
+    end
   end
 
   class Committee < Base
@@ -461,6 +477,18 @@ module ASF
 
     def dn
       @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
+    end
+
+    def remove(people)
+      people = Array(people).map(&:dn)
+      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'member', people)
+      ASF.ldap.modify(self.dn, [mod])
+    end
+
+    def add(people)
+      people = Array(people).map(&:dn)
+      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'member', people)
+      ASF.ldap.modify(self.dn, [mod])
     end
   end
 

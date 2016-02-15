@@ -10,6 +10,19 @@ file 'Gemfile.lock' => 'Gemfile' do
   touch 'Gemfile.lock'
 end
 
+# setup authentication
+task :auth do
+  require 'etc'
+  require 'io/console'
+  require 'base64'
+
+  user = ENV['USER'] || ETC.getlogin
+  STDOUT.write "Enter password for #{user}: "
+  password = STDIN.noecho(&:gets).chomp
+  ENV['HTTP_AUTHORIZATION'] = "Basic #{Base64.encode64("#{user}:#{password}")}"
+  STDOUT.puts
+end
+
 desc 'install dependencies'
 task :bundle => 'Gemfile.lock' do
   require 'bundler'
