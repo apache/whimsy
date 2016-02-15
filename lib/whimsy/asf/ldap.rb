@@ -402,17 +402,18 @@ module ASF
     end
 
     def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn memberUid modifyTimestamp)).map do |results|
+      Hash[ASF.search_one(base, "cn=*", %w(dn memberUid modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         group = ASF::Group.find(cn)
         group.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
+        group.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
         members = results['memberUid']  || []
         group.members = members
         [group, members]
       end]
     end
 
-    attr_accessor :modifyTimestamp
+    attr_accessor :modifyTimestamp, :createTimestamp
 
     def members=(members)
       @members = WeakRef.new(members)
@@ -451,17 +452,18 @@ module ASF
     end
 
     def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp)).map do |results|
+      Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         committee = ASF::Committee.find(cn)
         committee.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
+        committee.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
         members = results['member'] || []
         committee.members = members
         [committee, members]
       end]
     end
 
-    attr_accessor :modifyTimestamp
+    attr_accessor :modifyTimestamp, :createTimestamp
 
     def members=(members)
       @members = WeakRef.new(members)
@@ -504,17 +506,18 @@ module ASF
     end
 
     def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp)).map do |results|
+      Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         service = ASF::Service.find(cn)
         service.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
+        service.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
         members = results['member'] || []
         service.members = members
         [service, members]
       end]
     end
 
-    attr_accessor :modifyTimestamp
+    attr_accessor :modifyTimestamp, :createTimestamp
 
     def members=(members)
       @members = WeakRef.new(members)

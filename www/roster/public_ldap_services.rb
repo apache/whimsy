@@ -38,12 +38,14 @@ groups.keys.sort_by {|a| a.name}.each do |entry|
     end
     lastStamp = entry.modifyTimestamp if entry.modifyTimestamp > lastStamp
     entries[entry.name] = {
+        createTimestamp: entry.createTimestamp,
         modifyTimestamp: entry.modifyTimestamp,
         roster: m 
     }
 end
 
 info = {
+  # Is there a use case for the last createTimestamp ?
   lastTimestamp: lastStamp,
   services: entries,
 }
