@@ -332,7 +332,7 @@ module ASF
     end
 
     def pgp_key_fingerprints
-      attrs['asf-pgpKeyFingerprint']
+      attrs['asf-pgpKeyFingerprint'] || []
     end
 
     def urls
