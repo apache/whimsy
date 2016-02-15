@@ -40,7 +40,7 @@ info = {
   last_updated: ASF::ICLA.svn_change,
   gem_version: GEMVERSION,
   committers: ids.sort,
-  non_committers: noid.sort
+  non_committers: noid # do not sort because the input is already sorted by surname
 }
 
 # output results
