@@ -254,12 +254,21 @@ class PMCMember < React
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} from the " +
                 "#{@@committee.display_name} PMC?"
+
+            if not @@committee.committers[@@person.id]
+              _button.btn.btn_primary 'Add as a committer',
+                data_action: 'add commit', 
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Grant #{@@person.name} committer access?"
+            end
           end
         end
       elsif not @@person.date
         _td.issue 'not in committee_info.txt'
       elsif not @@person.ldap
         _td.issue 'not in LDAP'
+      elsif not @@committee.committers[@@person.id]
+        _td.issue 'not in committer list'
       elsif @@person.id == @@committee.chair
         _td.chair 'chair'
       else
