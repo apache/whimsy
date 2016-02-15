@@ -1,6 +1,6 @@
 if env.password
   ASF::LDAP.bind(env.user, env.password) do
-    person = ASF::Person.find(@person)
+    person = ASF::Person.find(@id)
     pmc = ASF::Committee.find(@pmc) if @targets.include? 'pmc'
     group = ASF::Group.find(@pmc) if @targets.include? 'commit'
 
