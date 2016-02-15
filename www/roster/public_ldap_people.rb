@@ -57,8 +57,8 @@ peeps.sort_by {|a| a.name}.each do |e|
 end
 
 info = {
-  lastcreateTimestamp: lastcreateTimestamp,
-  lastmodifyTimestamp: lastmodifyTimestamp,
+  lastCreateTimestamp: lastcreateTimestamp,
+  lastTimestamp: lastmodifyTimestamp, # other public json files use this name
   people: peo,
 }
 
