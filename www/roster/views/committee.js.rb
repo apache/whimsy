@@ -9,8 +9,7 @@ class Committee < React
     # header
     _h1 do
       _a @committee.display_name, href: @committee.site
-      _span ' '
-      _small "established #{@committee.established}"
+      _small " established #{@committee.established}" if @committee.established
     end
 
     _p @committee.description

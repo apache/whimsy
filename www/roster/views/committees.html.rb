@@ -14,12 +14,21 @@ _html do
 
   _h1 'PMCs'
 
-  _table do
-    @committees.each do |pmc|
+  _table.table.table_hover do
+    _thead do
+      _tr do
+        _th 'Name'
+        _th 'Chair(s)'
+        _th 'Notes'
+      end
+    end
+
+    @committees.sort_by {|pmc| pmc.display_name.downcase}.each do |pmc|
       _tr_ do
         _td do
           _a pmc.display_name, href: "committee/#{pmc.name}"
         end
+
         _td do
           pmc.chairs.each_with_index do |chair, index|
             if @members.include? chair[:id]
@@ -30,6 +39,12 @@ _html do
 
             _span ', ' unless index == 0
           end
+        end
+
+        if not pmc.established
+          _td.issue 'Not in committee-info.txt'
+        else
+          _td
         end
       end
     end
