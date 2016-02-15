@@ -17,7 +17,7 @@ class Wunderbar::HtmlMarkup
           _span.glyphicon.glyphicon_home
         end
 
-        _a 'whimsy', href: 'https://www.whimsy.org/'
+        _a 'whimsy', href: '/'
         args[:breadcrumbs].each do |name, link|
           _span "\u00BB"
           _a name.to_s, href: link
