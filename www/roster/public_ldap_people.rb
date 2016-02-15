@@ -28,15 +28,11 @@ end
 
 # Make output smaller by ommitting commonest case (noLogin: false)
 def makeEntry(hash, e)
+  hash[e.id] = {
+      name: e.public_name,
+  }
   if e.banned?
-    hash[e.id] = {
-        name: e.public_name,
-        noLogin: true
-    }
-  else
-    hash[e.id] = {
-        name: e.public_name,
-    }
+    hash[e.id][:noLogin] = true
   end
 end
 
