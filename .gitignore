@@ -1,3 +1,4 @@
 pkg
+.buildpath
 .project
 Gemfile.lock
