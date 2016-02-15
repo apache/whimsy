@@ -17,6 +17,6 @@ _html do
 
   _script src: 'app.js'
   _.render '#main' do
-    _Committee committee: @committee, auth: @auth
+    _PMC committee: @committee, auth: @auth
   end
 end
