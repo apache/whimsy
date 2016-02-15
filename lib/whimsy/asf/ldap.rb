@@ -71,7 +71,7 @@ module ASF
     end
 
     # connect to LDAP
-    def self.connect
+    def self.connect(test = true)
       # Try each host at most once
       hosts.length.times do
         host = next_host
@@ -87,7 +87,7 @@ module ASF
           end
 
           # test the connection
-          ldap.bind
+          ldap.bind if test
 
           # save the host
           @host = host
@@ -106,8 +106,9 @@ module ASF
   end
 
   # backwards compatibility for tools that called this interface
-  def self.init_ldap
-    @ldap ||= ASF::LDAP.connect
+  def self.init_ldap(reset = false)
+    @ldap = nil if reset
+    @ldap ||= ASF::LDAP.connect(!reset)
   end
 
   # determine where ldap.conf resides
@@ -144,7 +145,7 @@ module ASF
         raise
       else
         Wunderbar.warn "[#{target}] => #{re.inspect} for #{cmd}, retrying ..."
-        @ldap.unbind rescue nil
+        @ldap.unbind if @ldap.bound? rescue nil
         @ldap = nil # force new connection
         sleep 1
         retry
@@ -435,12 +436,14 @@ module ASF
       people = Array(people).map(&:id)
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'memberUid', people)
       ASF.ldap.modify(self.dn, [mod])
+      @members = nil
     end
 
     def add(people)
       people = Array(people).map(&:dn)
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'memberUid', people)
       ASF.ldap.modify(self.dn, [mod])
+      @members = nil
     end
   end
 
@@ -485,12 +488,14 @@ module ASF
       people = Array(people).map(&:dn)
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'member', people)
       ASF.ldap.modify(self.dn, [mod])
+      @members = nil
     end
 
     def add(people)
       people = Array(people).map(&:dn)
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'member', people)
       ASF.ldap.modify(self.dn, [mod])
+      @members = nil
     end
   end
 
@@ -535,12 +540,14 @@ module ASF
       people = Array(people).map(&:dn)
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'member', people)
       ASF.ldap.modify(self.dn, [mod])
+      @members = nil
     end
 
     def add(people)
       people = Array(people).map(&:dn)
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'member', people)
       ASF.ldap.modify(self.dn, [mod])
+      @members = nil
     end
   end
 
@@ -549,12 +556,13 @@ module ASF
       dn = ASF::Person.new(user).dn
       raise ::LDAP::ResultError.new('Unknown user') unless dn
 
-      ASF.ldap.unbind rescue nil
+      ASF.ldap.unbind if ASF.ldap.bound? rescue nil
+      ldap = ASF.init_ldap(true)
       if block
-        ASF.ldap.bind(dn, password, &block)
-        ASF.init_ldap
+        ldap.bind(dn, password, &block)
+        ASF.init_ldap(true)
       else
-        ASF.ldap.bind(dn, password)
+        ldap.bind(dn, password)
       end
     end
 
