@@ -19,7 +19,7 @@ require 'whimsy/asf'
 # ASF people
 peo = {}
 
-peeps = ASF::Person.preload(['cn', 'loginShell']) # for performance
+peeps = ASF::Person.preload(['cn', 'loginShell', ['asf-personalURL']]) # for performance
 
 if peeps.empty?
   Wunderbar.error "No results retrieved, output not created"
@@ -33,6 +33,11 @@ def makeEntry(hash, e)
   }
   if e.banned?
     hash[e.id][:noLogin] = true
+  else
+    # Don't publish urls for banned logins
+    if not e.urls.empty?
+      hash[e.id][:urls] = e.urls
+    end
   end
 end
 
