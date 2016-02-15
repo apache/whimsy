@@ -6,11 +6,10 @@ module ASF
   end
 
   class Committee < Base
-    attr_accessor :info, :emeritus, :report, :roster, :established, :chairs,
+    attr_accessor :info, :report, :roster, :established, :chairs,
       :schedule
     def initialize(*args)
       @info = []
-      @emeritus = []
       @chairs = []
       @roster = {}
       super
@@ -86,11 +85,6 @@ module ASF
         committee = list[@@namemap.call(roster[/(\w.*?)\s+\(/,1])]
         # get the start date
         committee.established = roster[/\(est\. (.*?)\)/, 1]
-        # Extract any emeritus members (now probably redundant)
-        roster.gsub! /^.*\(\s*emeritus\s*\).*/i do |line|
-          committee.emeritus += line.scan(/<(.*?)@apache\.org>/).flatten
-          ''
-        end
         # extract the availids (is this used?)
         committee.info = roster.scan(/<(.*?)@apache\.org>/).flatten
         # drop (chair) markers and extract 0: name, 1: availid, 2: [date], 3: date
