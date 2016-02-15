@@ -3,9 +3,14 @@ class Auth
     ASF::Auth.decode(env)
     info = {id: env.user}
 
-    secretary = ASF::Service.find('asf-secretary')
-    if secretary.members.include?  ASF::Person.find(env.user)
+    user = ASF::Person.find(env.user)
+
+    if ASF::Service.find('asf-secretary').members.include? user
       info[:secretary] = true
+    end
+
+    if ASF::Service.find('apldap').members.include? user
+      info[:root] = true
     end
 
     info

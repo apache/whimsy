@@ -4,7 +4,7 @@
 
 class Committee < React
   def render
-    auth = (@@auth.id == @committee.chair or @@auth.secretary)
+    auth = (@@auth.id == @committee.chair or @@auth.secretary or @@auth.root)
 
     # header
     _h1 do
