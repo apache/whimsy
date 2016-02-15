@@ -3,10 +3,10 @@ if env.password
     pmc = ASF::Committee.find(@pmc) if @targets.include? 'pmc'
     group = ASF::Group.find(@pmc) if @targets.include? 'commit'
 
-    if action == 'add'
+    if @action == 'add'
       pmc.add(@person) if pmc
       group.add(@person) if group
-    elsif action == 'remove'
+    elsif @action == 'remove'
       pmc.remove(@person) if pmc
       group.remove(@person) if group
     end
