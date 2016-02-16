@@ -3,6 +3,7 @@
 #
 
 sent = {}
+unsent = []
 
 # utilize smtp without certificate verification
 Mail.defaults do
@@ -10,14 +11,27 @@ Mail.defaults do
 end
 
 # extract values for common fields
-sender = ASF::Person.find(env.user)
-from = "#{sender.public_name} <#{sender.id}@apache.org>".untaint
 subject = @subject.untaint
+unless @from
+  sender = ASF::Person.find(env.user)
+  @from = "#{sender.public_name} <#{sender.id}@apache.org>".untaint
+end
 
 # iterate over the agenda
 Agenda.parse(@agenda, :full).each do |item|
-  next unless @pmcs.include? item['title']
-  next unless item['chair_email']
+  # decide whether or not to skip the report based on the setting of @pmcs
+  next if @pmcs and not @pmcs.include? item['title']
+  next if not @pmcs and not item['report'].to_s.empty?
+
+  # select exec officer, additional officer, and committee reports
+  next unless item[:attach] =~ /^(4[A-Z]|\d|[A-Z]+)$/
+
+  # bail if chair email can't be found
+  unless item['chair_email']
+    unsent << item['title']
+    next
+  end
+
 
   # substitute [whoTo] values
   if item['to'] == 'president'
@@ -34,7 +48,7 @@ Agenda.parse(@agenda, :full).each do |item|
 
   # construct email
   mail = Mail.new do
-    from from
+    from @from
     to "#{item['owner']} <#{item['chair_email']}>".untaint
     subject subject
 
@@ -50,9 +64,10 @@ Agenda.parse(@agenda, :full).each do |item|
   end
 
   # deliver mail
-  mail.deliver! unless @dryrun
+# mail.deliver! unless @dryrun
   sent[item['title']] = mail.to_s
 end
 
 # provide a response to the request
-{count: sent.length, unsent: @pmcs - sent.keys, sent: sent, dryrun: @dryrun}
+unsent += @pmcs - sent.keys if @pmcs
+{count: sent.length, unsent: unsent, sent: sent, dryrun: @dryrun}
