@@ -1,4 +1,3 @@
-ASF::Committee.load_committee_info
 
 class Committee
   def self.serialize(id)
@@ -7,7 +6,8 @@ class Committee
     pmc = ASF::Committee.find(id)
     committers = ASF::Group.find(id).members
 
-    ASF::Person.preload('cn', (pmc.members + committers).uniq)
+    ASF::Committee.load_committee_info
+    people = ASF::Person.preload('cn', (pmc.members + committers).uniq)
 
     response = {
       id: id,
