@@ -12,7 +12,7 @@ _html do
 
   _h1_ 'Roster'
 
-  _table do
+  _table.counts do
 
     ### committers
 
@@ -26,6 +26,20 @@ _html do
       end
 
       _td 'Search for committers by name, user id, or email address'
+    end
+
+    ### members
+
+    _tr do
+      _td do
+        _a @members.length, href: 'members'
+      end
+
+      _td do
+        _a 'Members', href: 'members'
+      end
+
+      _td 'Active ASF members'
     end
 
     ### PMCs

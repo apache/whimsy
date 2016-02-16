@@ -19,6 +19,7 @@ require_relative 'models'
 get '/' do
   @committers = ASF::Person.list
   @committees = ASF::Committee.list
+  @members = ASF::Member.list.keys - ASF::Member.status.keys
   _html :index
 end
 
@@ -62,6 +63,15 @@ end
 get '/committer/:name' do |name|
   @committer = Committer.serialize(name)
   _html :committer
+end
+
+# member list
+get '/members' do
+  _html :members
+end
+
+get '/members.json' do
+  _json Hash[ASF.members.map {|person| [person.id, person.public_name]}.sort]
 end
 
 # posted actions

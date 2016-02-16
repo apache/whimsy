@@ -15,7 +15,10 @@ module ASF
     end
 
     def self.list
-      result = Hash[self.new(true).map {|name, text| [name, {text: text}]}]
+      result = Hash[self.new(true).map {|id, text| 
+        [id, {text: text, name: text[/(.*?)\s*(\(|\/\*|$)/, 1]}]
+      }]
+
       self.status.each do |name, value|
         result[name]['status'] = value
       end
