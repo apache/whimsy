@@ -58,7 +58,7 @@ class Report < React
 
   def componentWillReceiveProps()
     # determine what text filters to run
-    @filters = [hotlink, self.privates, self.jira, self.linebreak]
+    @filters = [self.linebreak, hotlink, self.privates, self.jira]
     @filters << self.localtime if @@item.title == 'Call to order'
     @filters << self.names if @@item.people
     @filters << self.president_attachments if @@item.title == 'President'
@@ -89,7 +89,7 @@ class Report < React
   # Break long lines
   def linebreak(text)
     # find long, breakable lines
-    regex = Regexp.new(/.{80}.*/, 'g')
+    regex = Regexp.new(/.{80}.+/, 'g')
     result = nil
     indicies = [];
     while result = regex.exec(text)
