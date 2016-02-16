@@ -33,9 +33,29 @@ def public_json_output(info)
     # write to STDOUT
     puts results
 
-  elsif not File.exist?(ARGV.first) or File.read(ARGV.first).chomp != results
+  else
 
-    puts "_INFO git_info: #{GITINFO}"
+    write_output(ARGV.first, results)
+
+  end
+
+end
+
+# Format and write output to specific file
+def public_json_output_file(info, file)
+  # format as JSON
+  results = JSON.pretty_generate(info)
+
+  write_output(file, results)
+
+end
+
+# Write formatted output to specific file
+def write_output(file, results)
+
+  if not File.exist?(file) or File.read(file).chomp != results
+
+    puts "_INFO git_info: #{GITINFO} - creating/updating #{file}"
 
     # can get the following error if stdin_data is very large and diff fails with an error
     # before reading all the input, e.g. because the input file is missing:
@@ -43,22 +63,23 @@ def public_json_output(info)
     # so first check for file present, but also fail gracefully if there is a further issue
     # (if the diff fails we don't want to lose the output entirely)
 
-    if File.exist?(ARGV.first) and ! @noDiff
+    if File.exist?(file) and ! @noDiff
       begin
-        out, err, rc = Open3.capture3('diff', '-u', ARGV.first, '-',
+        out, err, rc = Open3.capture3('diff', '-u', file, '-',
           stdin_data: results + "\n")
         puts "\n#{out}\n" if err.empty? and rc.exitstatus == 1
         rescue
           # ignore failure here
       end
     end
-
+  
     # replace file as contents have changed
-    File.write(ARGV.first, results + "\n")
+    File.write(file, results + "\n")
 
   else
-
-    puts "_INFO git_info: #{GITINFO}"
-
+  
+    puts "_INFO git_info: #{GITINFO} - no change to #{file}"
+  
   end
+
 end
