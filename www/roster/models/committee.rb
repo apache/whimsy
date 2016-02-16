@@ -1,4 +1,3 @@
-
 class Committee
   def self.serialize(id)
     response = {}
@@ -8,6 +7,9 @@ class Committee
 
     ASF::Committee.load_committee_info
     people = ASF::Person.preload('cn', (pmc.members + committers).uniq)
+
+    prefix = pmc.mail_list + '-'
+    lists = ASF::Mail.lists(true).select {|list| list.start_with? prefix}
 
     response = {
       id: id,
@@ -20,7 +22,8 @@ class Committee
       established: pmc.established,
       ldap: Hash[pmc.members.map {|person| [person.id, person.cn]}],
       committers: Hash[committers.map {|person| [person.id, person.cn]}],
-      roster: pmc.roster
+      roster: pmc.roster,
+      mail: Hash[lists]
     }
 
     response
