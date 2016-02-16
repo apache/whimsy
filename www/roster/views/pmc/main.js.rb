@@ -61,8 +61,7 @@ class PMC < React
     if @attic == nil and not committee.established and defined? fetch
       @attic = []
 
-      console.log 'issuing fetch'
-      fetch('/attic/issues.json', credentials: 'include').then {|response|
+      fetch('attic/issues.json', credentials: 'include').then {|response|
         if response.status == 200
           response.json().then do |json|
             @attic = json
