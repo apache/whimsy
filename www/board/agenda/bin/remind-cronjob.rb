@@ -1,6 +1,10 @@
 #
 # This is a sketch of what it would take to send board agendas via a cronjob.
+#
 # It currently sets @dryrun to true, preventing emails from being sent out.
+#
+# AGENDA_WORK is a directory that can be used to store information, depending
+# on the strategy the cron job takes.
 #
 
 Dir.chdir File.expand_path('../..', __FILE__)
@@ -10,6 +14,8 @@ require 'mail'
 require 'listen'
 
 FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
+AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
+
 require './models/agenda'
 require './models/ipc'
 
