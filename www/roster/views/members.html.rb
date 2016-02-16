@@ -17,7 +17,7 @@ _html do
   # *                             Summary                              *
   # ********************************************************************
 
-  _h1 'Summary'
+  _h1_ 'Summary'
 
   summary = ASF::Member.status
 
@@ -55,7 +55,7 @@ _html do
   # *                          Complete list                           *
   # ********************************************************************
 
-  _h1 'Members'
+  _h1_ 'Members'
 
   _table.table.table_hover do
     _thead do
