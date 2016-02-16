@@ -39,3 +39,7 @@ button.btn {margin: 0 8px}
 .search-box {
   margin: -20px 0 40px 40px;
 }
+
+#main > span > ul {
+  margin-top: 1em;
+}

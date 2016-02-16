@@ -40,6 +40,21 @@ class PMC < React
     _PMCMembers auth: auth, committee: @committee
     _PMCCommitters auth: auth, committee: @committee
 
+    # reporting schedule
+    _h2 'Reporting Schedule'
+    _ul do
+      _li @committee.report
+
+      if @committee.schedule and @committee.schedule != @committee.report
+        _li @committee.schedule 
+      end
+
+      _li do
+        _a 'Prior reports', href: 'https://whimsy.apache.org/board/minutes/' +
+          @committee.display_name.gsub(/\s+/, '_')
+      end
+    end
+
     # hidden form
     _PMCConfirm pmc: @committee.id, update: self.update if auth
   end
