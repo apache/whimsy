@@ -3,7 +3,6 @@
 #
 
 _html do
-  _base href: '..'
   _title 'ASF Member list'
   _link rel: 'stylesheet', href: 'stylesheets/app.css'
 
