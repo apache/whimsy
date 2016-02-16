@@ -18,6 +18,9 @@ table.wide {color: #000; border-collapse: separate; font-size: 100%}
 .chair {color: green; font-weight:bold} 
 .member {font-weight: bold}
 
+thead:hover th.sorting-desc:after {content: ' \25bc'}
+thead:hover th.sorting-asc:after {content: ' \25b2'}
+
 td .hint {display: none}
 td:hover .hint {
   position: absolute; display: block; background-color: #FFF;

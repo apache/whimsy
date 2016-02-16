@@ -60,33 +60,39 @@ _html do
   _table.table.table_hover do
     _thead do
       _tr do
-        _th 'id'
-        _th 'public name'
-        _th 'status'
+        _th 'id', data_sort: 'string'
+        _th.sorting_asc 'public name', data_sort: 'string'
+        _th 'status', data_sort: 'string'
       end
     end
 
-    members.sort_by {|id, info| info[:name]}.each do |id, info|
-      _tr_ do
-        _td! do
-          if ldap.include? ASF::Person.find(id)
-            _b {_a id, href: "committer/#{id}"}
-          else
-            _a id, href: "committer/#{id}"
-            
-            info[:issue] ||= 'Not in LDAP' if not info['status']
+    _tbody do
+      members.sort_by {|id, info| info[:name]}.each do |id, info|
+        _tr_ do
+          _td! do
+            if ldap.include? ASF::Person.find(id)
+              _b {_a id, href: "committer/#{id}"}
+            else
+              _a id, href: "committer/#{id}"
+              
+              info[:issue] ||= 'Not in LDAP' if not info['status']
+            end
           end
-        end
 
-        _td info[:name]
+          _td info[:name]
 
-        if info[:issue]
-          _td.issue info[:issue]
-        elsif
-          _td info['status']
+          if info[:issue]
+            _td.issue info[:issue]
+          elsif
+            _td info['status']
+          end
         end
       end
     end
   end
 
+
+  _script %{
+    $(".table").stupidtable();
+  }
 end

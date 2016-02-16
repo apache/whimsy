@@ -10,6 +10,7 @@ require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap/theme'
 require 'wunderbar/react'
 require 'wunderbar/underscore'
+require 'wunderbar/jquery/stupidtable'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 
