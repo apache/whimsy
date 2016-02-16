@@ -14,11 +14,7 @@
 # }
 #
 
-require 'bundler/setup'
-
 require_relative 'public_json_common'
-
-require 'whimsy/asf'
 
 # gather committee info
 entries = {}

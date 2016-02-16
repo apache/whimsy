@@ -10,11 +10,7 @@
 # }
 #
 
-require 'bundler/setup'
-
 require_relative 'public_json_common'
-
-require 'whimsy/asf'
 
 # ASF people
 peo = {}
