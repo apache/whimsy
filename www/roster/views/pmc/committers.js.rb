@@ -126,7 +126,11 @@ class PMCCommitter < React
   end
 
   # automatically open pending entries
-  def componentWillReceiveProps()
+  def componentWillReceiveProps(newprops)
+    if self.committee and newprops.committee.id != self.committee.id
+      @state = :closed 
+    end
+
     @state = :open if @@person.date == 'pending'
   end
 

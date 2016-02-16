@@ -4,6 +4,7 @@
 
 class PMCMembers < React
   def initialize
+    @committee = {}
     @state = :closed
   end
 
@@ -166,7 +167,8 @@ class PMCMember < React
   end
 
   # automatically open pending entries
-  def componentWillReceiveProps()
+  def componentWillReceiveProps(newprops)
+    @state = :closed if @committee and newprops.committee.id != @committee.id
     @state = :open if @@person.date == 'pending'
   end
 
