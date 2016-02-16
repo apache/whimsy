@@ -4,6 +4,7 @@ class Committee
 
     pmc = ASF::Committee.find(id)
     committers = ASF::Group.find(id).members
+    return if pmc.members.empty? and committers.empty?
 
     ASF::Committee.load_committee_info
     people = ASF::Person.preload('cn', (pmc.members + committers).uniq)

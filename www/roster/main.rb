@@ -28,10 +28,18 @@ get '/committer/' do
   _html :committers
 end
 
+get '/committer' do
+  call env.merge('PATH_INFO' => '/committer/')
+end
+
 get '/committee/' do
   @members = ASF::Member.list.keys
   @committees = ASF::Committee.list
   _html :committees
+end
+
+get '/committee' do
+  call env.merge('PATH_INFO' => '/committee/')
 end
 
 get '/committer/index.json' do
@@ -54,6 +62,7 @@ end
 get '/committee/:name' do |name|
   @auth = Auth.info(env)
   @committee = Committee.serialize(name)
+  pass unless @committee
   _html :committee
 end
 
@@ -63,6 +72,7 @@ end
 
 get '/committer/:name' do |name|
   @committer = Committer.serialize(name)
+  pass unless @committer
   _html :committer
 end
 
