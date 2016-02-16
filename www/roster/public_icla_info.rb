@@ -16,7 +16,7 @@ end
 
 info = {
   last_updated: ASF::ICLA.svn_change,
-  committers: ids.sort,
+  committers: Hash[ids.sort],
   non_committers: noid # do not sort because the input is already sorted by surname
 }
 
