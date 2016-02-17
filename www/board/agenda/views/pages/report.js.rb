@@ -94,8 +94,10 @@ class Report < React
     indicies = [];
     while result = regex.exec(text)
       line = result[0]
-      lastspace = /^.*\s\S/.exec(line)[0].length - 1
-      indicies.unshift([line, result.index]) if lastspace > 40
+      lastspace = /^.*\s\S/.exec(line)
+      if lastspace and lastspace[0].lentgh -1 > 40
+        indicies.unshift([line, result.index]) 
+      end
     end
 
     # reflow each line found
