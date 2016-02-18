@@ -64,7 +64,7 @@ Agenda.parse(@agenda, :full).each do |item|
   end
 
   # deliver mail
-# mail.deliver! unless @dryrun
+  mail.deliver! unless @dryrun
   sent[item['title']] = mail.to_s
 end
 
