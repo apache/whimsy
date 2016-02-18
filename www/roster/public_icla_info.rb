@@ -14,10 +14,29 @@ ASF::ICLA.each do |entry|
   end
 end
 
-info = {
-  last_updated: ASF::ICLA.svn_change,
-  committers: Hash[ids.sort],
-  non_committers: noid # do not sort because the input is already sorted by surname
-}
+# 2 files specified - split id/noid into separate files
+if ARGV.length == 2
 
-public_json_output(info)
+  info_id = {
+    last_updated: ASF::ICLA.svn_change,
+    committers: Hash[ids.sort]
+  }
+  public_json_output_file(info_id, ARGV.shift)
+  
+  info_noid = {
+    last_updated: ASF::ICLA.svn_change,
+    non_committers: noid
+  }
+  public_json_output_file(info_noid, ARGV.shift)
+
+else # combined (original) output file
+
+  info = {
+    last_updated: ASF::ICLA.svn_change,
+    committers: Hash[ids.sort],
+    non_committers: noid # do not sort because the input is already sorted by surname
+  }
+
+  public_json_output(info) # original full output
+
+end
