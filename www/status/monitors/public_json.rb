@@ -23,7 +23,7 @@ def Monitor.public_json(previous_status)
       contents = File.read(log, encoding: Encoding::UTF_8)
 
       # Ignore Wunderbar logging for normal messages (may occur multiple times)
-      contents.gsub! /^(_INFO|_DEBUG) .*\n+/, ''
+      contents.gsub! /^(_INFO|_DEBUG) .*?\n+/, ''
 
       # diff -u output:
       if contents.sub! /^--- .*?\n(\n|\Z)/m, ''
