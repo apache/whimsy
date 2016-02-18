@@ -29,12 +29,6 @@ Workflow:
 Manual Steps
 ------------
 
-The following additional steps are required to get a the Whimsy VM up and running:
+The following additional step is required to get a the Whimsy VM up and running:
 
- * Configuring `/root/.subversion/config` and `/root/.subversion/servers` store auth-creds and to use
-   the username `whimsysvn`.
-
- * Initial checkouts of the various svn sources used by various whimsy tools.  These checkouts are
-   to be placed in the `/srv/svn` directory, owned by `root` and often have `--depth=files` specified.
-   The [svninfo](tools/svninfo) tool may be used to build a script that can be used to perform
-   the checkouts.  Once checked out, the sources will be kept up to date by a cron job.
+ * Configuring `/whimsysvn/.subversion/config` and `/whimsysvn/.subversion/servers` to store auth-creds.
