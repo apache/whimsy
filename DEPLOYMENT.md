@@ -36,5 +36,5 @@ The following additional steps are required to get a the Whimsy VM up and runnin
 
  * Initial checkouts of the various svn sources used by various whimsy tools.  These checkouts are
    to be placed in the `/srv/svn` directory, owned by `root` and often have `--depth=files` specified.
-   The [svninfo](toools/svninfo) tool may be used to build a script that can be used to perform
+   The [svninfo](tools/svninfo) tool may be used to build a script that can be used to perform
    the checkouts.  Once checked out, the sources will be kept up to date by a cron job.
