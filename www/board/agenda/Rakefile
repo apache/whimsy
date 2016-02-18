@@ -82,6 +82,10 @@ task :work => ['test/work/board',
 namespace :test do
   task :setup => [:reset, :work]
   task :server => 'server:test'
+
+  task :stress => :setup do
+    ruby 'test/stresstest.rb'
+  end
 end
 
 task :clobber do

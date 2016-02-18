@@ -2,7 +2,7 @@
 # Pre-app approval/unapproval/flagging/unflagging of an agenda item
 
 Pending.update(env.user, @agenda) do |pending|
-  agenda = Agenda.parse @agenda, :quick
+  agenda = Agenda.parse @agenda, :full
   @initials ||= pending['initials']
 
   approved = pending['approved']

@@ -33,6 +33,7 @@ require 'ldap'
 require 'weakref'
 require 'net/http'
 require 'base64'
+require 'thread'
 
 module ASF
   module LDAP
@@ -47,6 +48,9 @@ module ASF
       ldaps://ldap2-lw-us.apache.org:636
       ldaps://ldap2-lw-eu.apache.org:636
     )
+
+    CONNECT_LOCK = Mutex.new
+    HOST_QUEUE = Queue.new
 
     # fetch configuration from apache/infrastructure-puppet
     def self.puppet_config
@@ -74,7 +78,10 @@ module ASF
     def self.connect(test = true)
       # Try each host at most once
       hosts.length.times do
-        host = next_host
+        # Ensure we use each host in turn
+        hosts.each {|host| HOST_QUEUE.push host} if HOST_QUEUE.empty?
+        host = HOST_QUEUE.shift
+
         Wunderbar.info "Connecting to LDAP server: #{host}"
 
         begin
@@ -105,10 +112,12 @@ module ASF
     end
   end
 
-  # backwards compatibility for tools that called this interface
+  # public entry point for establishing a connection safely
   def self.init_ldap(reset = false)
-    @ldap = nil if reset
-    @ldap ||= ASF::LDAP.connect(!reset)
+    ASF::LDAP::CONNECT_LOCK.synchronize do
+      @ldap = nil if reset
+      @ldap ||= ASF::LDAP.connect(!reset)
+    end
   end
 
   # determine where ldap.conf resides
@@ -612,20 +621,9 @@ module ASF
       @hosts = hosts
     end
 
-    # Ensure we use each host in turn
-    def self.next_host
-       @he ||= hosts.cycle 
-       @he.next
-    end
-
-    # select LDAP host
-    def self.host
-      @host ||= hosts.sample
-    end
-
     # query and extract cert from openssl output
     def self.extract_cert
-      host = LDAP.host[%r{//(.*?)(/|$)}, 1]
+      host = hosts.sample[%r{//(.*?)(/|$)}, 1]
       puts ['openssl', 's_client', '-connect', host, '-showcerts'].join(' ')
       out, err, rc = Open3.capture3 'openssl', 's_client',
         '-connect', host, '-showcerts'

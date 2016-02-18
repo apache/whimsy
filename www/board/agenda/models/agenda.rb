@@ -56,7 +56,9 @@ class Agenda
   end
 
   # update agenda file in SVN
-  def self.update(file, message, &block)
+  def self.update(file, message, retries=20, &block)
+    commit_rc = 999
+
     # Create a temporary work directory
     dir = Dir.mktmpdir
 
@@ -91,17 +93,23 @@ class Agenda
         # if the output differs, update and commit the file in question
         if output != input
           IO.write(path, output)
-          _.system ['svn', 'commit', auth, path, '-m', message]
+          commit_rc = _.system ['svn', 'commit', auth, path, '-m', message]
           @@seen[path] = File.mtime(path)
+        else
+          commit_rc = 0
         end
       end
 
       # update the file in question; update output if mtime changed
       # (it may not: during testing, commits are prevented)
       path = File.join(FOUNDATION_BOARD, file)
-      mtime = File.mtime(path) if output
-      _.system ['svn', 'update', auth, path]
-      output = IO.read(path) if mtime != File.mtime(path)
+      File.open(path, 'r') do |fh|
+        fh.flock(File::LOCK_EX)
+        _.system ['svn', 'cleanup', FOUNDATION_BOARD]
+        mtime = File.mtime(path) if output
+        _.system ['svn', 'update', auth, path]
+        output = IO.read(path) if mtime != File.mtime(path)
+      end
 
       # reparse the file if the output changed
       if output != baseline or mtime != File.mtime(path)
@@ -114,6 +122,15 @@ class Agenda
 
   ensure
     FileUtils.rm_rf dir
+
+    unless commit_rc == 0
+      if retries > 0
+        sleep rand(41-retries*2)*0.1 if retries <= 20
+        update(file, message, retries-1, &block)
+      else
+        raise Exception.new("svn commit failed")
+      end
+    end
   end
 
   # listen for changes to agenda files
