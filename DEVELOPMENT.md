@@ -5,7 +5,7 @@ Applications consist of static data, CGI scripts, Rack applications, and a
 single Puma application (the board agenda, which has some unique response time
 requirements), and cron jobs.
 
-The goal is to make it so that every committers on the Whimy PMC can both
+The goal is to make it so that every committer on the Whimsy PMC can both
 deploy changes and new applications.  A new VM has been provisioned for this
 purpose: https://whimsy-test.apache.org/.
 
