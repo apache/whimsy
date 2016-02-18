@@ -1,7 +1,10 @@
 module ASF
 
   class ICLA
-    attr_accessor :id, :legal_name, :name, :email
+    # N.B. only id and name should be considered public
+    # form and claRef may contain details of the legal name beyond that in the public name
+    attr_accessor :id, :legal_name, :name, :email, :form
+    attr_accessor :claRef # cla name or SVN revision info
 
     @@mtime = nil
 
@@ -94,12 +97,18 @@ module ASF
       elsif @@name_index and not @@name_index.empty?
         @@name_index.values.each(&block)
       elsif SOURCE and File.exist?(SOURCE)
-        File.read(SOURCE).scan(/^([-\w]+):(.*?):(.*?):(.*?):/).each do |list|
+        File.read(SOURCE).scan(/^([-\w]+):(.*?):(.*?):(.*?):(.*)/).each do |list|
           icla = ICLA.new()
           icla.id = list[0]
           icla.legal_name = list[1]
           icla.name = list[2]
           icla.email = list[3]
+          icla.form = list[4]
+          match = icla.form.match(/^Signed CLA(?:;(\S+)| \((\+=.+)\))/)
+          if match
+            # match either the cla name or the SVN ref (+=...)
+            icla.claRef = match[1] || match[2]
+          end
           block.call(icla)
         end
       end
