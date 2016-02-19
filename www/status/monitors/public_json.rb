@@ -2,19 +2,21 @@
 # Monitor status of public json directory
 #
 
+require 'fileutils'
+
 def Monitor.public_json(previous_status)
   danger_period = 86_400 # one day
 
   warning_period = 5400 # 1.5 hours
 
-  logs = File.expand_path('../../www/logs/public-*')
+  logs = File.expand_path('../../www/logs/public-*.log')
 
   status = {}
 
   Dir[logs].each do |log|
-    begin
-      name = File.basename(log).sub('public-', '')
+    name = File.basename(log).sub('public-', '')
 
+    begin
       status[name] = {
         href: "../logs/#{File.basename(log)}",
         mtime: File.mtime(log)
@@ -68,6 +70,11 @@ def Monitor.public_json(previous_status)
           }
         }
       }
+    end
+
+    if status[name][:level]
+      FileUtils.copy log, log.sub /\.log$/, '.' + status[name][:level],
+        preserve: true
     end
   end
 
