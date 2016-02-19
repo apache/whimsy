@@ -6,9 +6,10 @@ task :default => :spec
 task :spec => 'test:setup'
 task :test => :spec
 
-task :server do
+task :server => [:bundle, :listen] do
   ENV['RACK_ENV']='development'
-  require 'wunderbar/listen'
+  at_exit {sleep 0.5}
+  sh 'bundle exec passenger start'
 end
 
 namespace :server do
@@ -144,4 +145,28 @@ namespace :svn do
       end
     end
   end
+end
+
+task :bundle => 'Gemfile.lock' do
+  require 'bundler'
+  Bundler.require(:default, :development)
+end
+
+# restart server when files update
+task :listen => :bundle do
+  dirs = [
+    File.expand_path('..', File.realpath(__FILE__)),
+    File.expand_path('../../../../lib', File.realpath(__FILE__))
+  ]
+
+  listener = Listen.to(*dirs) do |modified, added, removed|
+    puts "detected update: #{(modified + added + removed).join(', ')}"
+    FileUtils.touch "#{dirs.first}/tmp/restart.txt"
+  end
+
+  listener.ignore /~$/
+  listener.ignore /^\..*\.sw\w$/
+  listener.ignore /passenger.\d+\.(log|pid(\.lock)?)$/
+
+  listener.start
 end

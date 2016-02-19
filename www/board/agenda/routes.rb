@@ -2,6 +2,15 @@
 # Server side Sinatra routes
 #
 
+# temporary
+get %r{^/(\d\d\d\d-\d\d-\d\d)/feedback$} do |date|
+  _html :feedback
+end
+get %r{^/(\d\d\d\d-\d\d-\d\d)/feedback.json$} do |date|
+  @agenda = "board_agenda_#{date.gsub('-', '_')}.txt".untaint
+  _json :'actions/feedback'
+end
+
 # redirect root to latest agenda
 get '/' do
   agenda = dir('board_agenda_*.txt').sort.last
@@ -225,4 +234,3 @@ get '/text/draft/:file' do |file|
     end
   end
 end
-
