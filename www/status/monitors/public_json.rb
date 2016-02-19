@@ -26,7 +26,7 @@ def Monitor.public_json(previous_status)
       contents.gsub! /^(_INFO|_DEBUG) .*?\n+/, ''
 
       # diff -u output:
-      if contents.sub! /^--- .*?\n(\n|\Z)/m, ''
+      if contents.gsub! /^--- .*?\n(\n|\Z)/m, ''
         status[name].merge! level: 'info', title: 'updated'
       end
 
