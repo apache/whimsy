@@ -108,6 +108,24 @@ feature 'other reports' do
       text: 'Mesos'
   end
 
+  it "should skip to flagged items once meeting has started" do
+    visit '/2015-02-18/Security-Team'
+    expect(page).to have_selector '.nextlink[href="flagged/Axis"]',
+      text: 'Axis'
+
+    visit '/2015-02-18/flagged/Axis'
+    expect(page).to have_selector '.backlink[href="Security-Team"]',
+      text: 'Security Team'
+
+    visit '/2015-02-18/flagged/Lenya'
+    expect(page).to have_selector '.nextlink[href="Change-Geronimo-Chair"]',
+      text: 'Change Geronimo Chair'
+
+    visit '/2015-02-18/Change-Geronimo-Chair'
+    expect(page).to have_selector '.backlink[href="flagged/Lenya"]',
+      text: 'Lenya'
+  end
+
   it "should highlight and crosslink action items" do
     visit '/2015-01-21/Action-Items'
 
@@ -132,10 +150,18 @@ feature 'other reports' do
   end
 
   it "should draft action items" do
-    visit '/2015-02-18/Action-Items'
-    expect(page).to have_selector 'p.alert-info', 
-      text: 'Action Items have yet to be posted'
-    expect(page).to have_selector 'button.btn-primary', text: 'post actions'
+    yaml = 'test/work/data/board_minutes_2015_02_18.yml'
+    minutes = YAML.load_file(yaml)
+    begin
+      File.write(yaml, YAML.dump(minutes.merge('started' => false)))
+
+      visit '/2015-02-18/Action-Items'
+      expect(page).to have_selector 'p.alert-info', 
+        text: 'Action Items have yet to be posted'
+      expect(page).to have_selector 'button.btn-primary', text: 'post actions'
+    ensure
+      File.write(yaml, YAML.dump(minutes))
+    end
   end
 
   it "should show flagged items" do

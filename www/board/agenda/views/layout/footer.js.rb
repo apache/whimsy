@@ -2,6 +2,11 @@
 # Layout footer consisting of a previous link, any number of buttons,
 # followed by a next link.
 #
+# Overrides previous and next links when traversal is queue, shepherd, or
+# Flagged.  Injects the flagged items into the flow once the meeting starts
+# (last additional officer <-> first flagged &&
+#  last flagged <-> first Special order)
+#
 
 class Footer < React
   def render
@@ -30,7 +35,25 @@ class Footer < React
         while link and not link.flagged
           link = link.prev
         end
-        link ||= {href: "../flagged", title: 'Flagged'}
+
+        unless link
+          if Minutes.started
+            link = Agenda.index.find {|item| item.attach == 'A'}.prev
+            prefix = ''
+          end
+
+          link ||= {href: "../flagged", title: 'Flagged'}
+        end
+      elsif 
+        Minutes.started and @@item.attach =~ /\d/ and
+        link and link.attach =~ /^[A-Z]/
+      then
+        Agenda.index.each do |item| 
+          if item.flagged
+            prefix = 'flagged/'
+            link = item 
+          end
+        end
       end
 
       if link
@@ -74,9 +97,20 @@ class Footer < React
       elsif @@options.traversal == :flagged
         prefix = 'flagged/'
         while link and not link.flagged
-          link = link.next
+          if Minutes.started and link.index
+            prefix = ''
+            break
+          else
+            link = link.next
+          end
         end
         link ||= {href: "../flagged", title: 'Flagged'}
+      elsif Minutes.started and link and link.attach == 'A'
+        while link and not link.flagged and link.attach =~ /^[A-Z]/
+          link = link.next
+        end
+
+        prefix = 'flagged/' if link and link.attach =~ /^[A-Z]/
       end
 
       if link
