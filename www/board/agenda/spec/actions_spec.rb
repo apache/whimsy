@@ -407,5 +407,6 @@ feature 'server actions' do
     else
       @transcript += `#{Shellwords.join(args)}`
     end
+    0
   end
 end
