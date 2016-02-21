@@ -59,7 +59,7 @@ end
 _html do
   _h1 'Non-participating active members'
 
-  @meetingsMissed = (@meetingsMissed || 7).to_i
+  @meetingsMissed = (@meetingsMissed || 5).to_i
 
   # selection
   _form_ do
@@ -96,9 +96,9 @@ _html do
 end
 
 _json do
-  meetingsMissed = (@meetingsMissed || 7).to_i
+  meetingsMissed = (@meetingsMissed || 5).to_i
   inactive = matrix.select {|id, name, missed| id and missed > meetingsMissed}
   Hash[inactive.map {|id, name, missed| 
-    [id, {name: name, missed: missed, status: 'no response yet'}]
+    [id, {name: name, missed: missed-1, status: 'no response yet'}]
   }]
 end
