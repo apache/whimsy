@@ -5,11 +5,12 @@ require 'whimsy/asf'
 require 'wunderbar/bootstrap'
 require 'date'
 require 'json'
+require 'tmpdir'
 
 # locate and read the attendance file
 MEETINGS = ASF::SVN['private/foundation/Meetings']
 attendance = JSON.parse(IO.read("#{MEETINGS}/attendance.json"))
-latest = Dir["#{MEETINGS}/2*"].sort.last
+latest = Dir["#{MEETINGS}/2*"].sort.last.untaint
 tracker = JSON.parse(IO.read("#{latest}/non-participants.json"))
 
 # determine user's name as found in members.txt
@@ -18,10 +19,14 @@ matrix = attendance['matrix'][name]
 
 # produce HTML
 _html do
+  _style :system
   _style %{
     div.status, .status form {margin-left: 16px}
     .btn {margin: 4px}
     form {margin-bottom: 1em}
+    .transcript {margin: 0 16px}
+    .transcript pre {border: none; line-height: 0}
+    pre._hilite {background-color: yellow}
   }
 
   if not tracker[$USER]
@@ -29,6 +34,33 @@ _html do
   else
     _p.alert.alert_warning "You have missed the last " + 
       tracker[$USER]['missed'].to_s + " meetings."
+
+    if _.post? and @status
+      _h3_ 'Session Transcript'
+
+      # setup authentication
+      if $PASSWORD
+        auth = [['--username', $USER, '--password', $PASSWORD]]
+      else
+        auth = [[]]
+      end
+
+      # apply and commit changes
+      Dir.mktmpdir do |dir|
+        _div_.transcript do
+          work = `svn info #{latest}`[/URL: (.*)/, 1]
+          _.system ['svn', 'checkout', auth, '--depth', 'empty', work, dir]
+           json = File.join(dir, '/non-participants.json')
+          _.system ['svn', 'update', auth, json]
+          tracker = JSON.parse(IO.read(json))
+          tracker[$USER]['status'] = @status
+          IO.write(json, JSON.pretty_generate(tracker))
+          _.system ['svn', 'diff', json], hilite: [/"status":/],
+            class: {hilight: '_stdout _hilite'}
+          _.system ['svn', 'commit', auth, json, '-m', status]
+        end
+      end
+    end
 
     _h1_ 'Status'
 
