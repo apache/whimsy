@@ -1,4 +1,5 @@
 #!/usr/bin/ruby1.9.1
+$:.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 require 'wunderbar'
 require 'date'
@@ -43,6 +44,17 @@ idMap["Thomas Fischer"] = 'tfischer'
 idMap["Wilfredo Sanchez"] = 'wsanchez'
 # idMap["William Stoddard"] = 'stoddard'
 
+# analyze attendance
+matrix = attendance.scan(/^[(A-Za-z].*\]\s*$/).map do |line|
+  name = line[nameField].strip
+  id = idMap[name]
+  next unless id
+  data = cols.map {|field| line[field].strip}.reverse
+  missed = data.index {|datum| datum != '-'} + 1
+ 
+  [id, name, missed]
+end
+
 # produce HTML
 _html do
   _h1 'Non-participating active members'
@@ -67,12 +79,8 @@ _html do
       _th 'Last participated'
     end
 
-    attendance.scan(/^[(A-Za-z].*\]\s*$/).each do |line|
-      name = line[nameField].strip
-      id = idMap[name]
+    matrix.each do |id, name, missed|
       next unless id
-      data = cols.map {|field| line[field].strip}.reverse
-      missed = data.index {|datum| datum != '-'} + 1
     
       if missed > @meetingsMissed
         _tr_ do
@@ -85,4 +93,12 @@ _html do
   end
 
   _p "Count: #{count}"
+end
+
+_json do
+  meetingsMissed = (@meetingsMissed || 7).to_i
+  inactive = matrix.select {|id, name, missed| id and missed > meetingsMissed}
+  Hash[inactive.map {|id, name, missed| 
+    [id, {name: name, missed: missed, status: 'no response yet'}]
+  }]
 end
