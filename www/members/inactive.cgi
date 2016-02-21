@@ -50,14 +50,14 @@ _html do
         _div_.transcript do
           work = `svn info #{latest}`[/URL: (.*)/, 1]
           _.system ['svn', 'checkout', auth, '--depth', 'empty', work, dir]
-           json = File.join(dir, '/non-participants.json')
+           json = File.join(dir, 'non-participants.json')
           _.system ['svn', 'update', auth, json]
           tracker = JSON.parse(IO.read(json))
           tracker[$USER]['status'] = @status
           IO.write(json, JSON.pretty_generate(tracker))
           _.system ['svn', 'diff', json], hilite: [/"status":/],
             class: {hilight: '_stdout _hilite'}
-          _.system ['svn', 'commit', auth, json, '-m', status]
+          _.system ['svn', 'commit', auth, json, '-m', @status]
         end
       end
     end
