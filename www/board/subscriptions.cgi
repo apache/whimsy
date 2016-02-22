@@ -105,12 +105,12 @@ _html do
           if not id.include? '*'
             _td person.public_name
           else
-	    icla = ASF::ICLA.find_by_email(id)
-	    if icla
+            icla = ASF::ICLA.find_by_email(id)
+            if icla
               _td.issue icla.name
-	    else
+            else
               _td.issue '*notinavail*'
-	    end
+            end
           end
 
           if info_chairs.include? person
@@ -137,34 +137,34 @@ _html do
     unless missing.empty?
       _h3_.unsub! 'Not subscribed to the list'
       _table border: '1', cellpadding: '2', cellspacing: '0' do
-	_tr do
-	  _th 'id'
-	  _th 'name'
-	  _th 'committee'
-	end
-	missing.sort.each do |id|
+        _tr do
+          _th 'id'
+          _th 'name'
+          _th 'committee'
+        end
+        missing.sort.each do |id|
           person = ASF::Person.find(id)
-	  _tr_ do
-	    if person.asf_member?
-	      _td! {_strong id}
-	    else
-	      _td id
-	    end
-	    _td person.public_name
-	    if info_chairs.include? person
+          _tr_ do
+            if person.asf_member?
+              _td! {_strong id}
+            else
+              _td id
+            end
+            _td person.public_name
+            if info_chairs.include? person
               text = info_chairs[person].uniq.map(&:display_name).join(', ')
-	      if ldap_chairs.include? person
-		_td text
-	      else
-		_td.issue text
-	      end
-	    elsif ldap_chairs.include? person
-	      _td.issue '***LDAP only***'
-	    else
-	      _td
-	    end
-	  end
-	end
+              if ldap_chairs.include? person
+                _td text
+              else
+                _td.issue text
+              end
+            elsif ldap_chairs.include? person
+              _td.issue '***LDAP only***'
+            else
+              _td
+            end
+          end
+        end
       end
     end
   end
