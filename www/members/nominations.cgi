@@ -6,16 +6,19 @@ require 'wunderbar'
 require 'whimsy/asf'
 
 # link to members private-arch
-MBOX = "https://mail-search.apache.org/members/private-arch/members/201503.mbox/"
+MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
 
 # get a list of current members messages
 archive = Dir['/home/apmail/members/archive/*/*']
 
 # select messages that have a subject line starting with [MEMBER NOMINATION]
 emails = []
+year = Time.new.year.to_s
 archive.each do |email|
   next if email.end_with? '/index'
   message = IO.read(email, mode: 'rb')
+  puts message[/^Date: .*/]
+  next unless message[/^Date: .*/].to_s.include? year
   subject = message[/^Subject: .*/]
   next unless subject.include? "[MEMBER NOMINATION]"
   mail = Mail.new(message)
@@ -28,7 +31,8 @@ meeting = Dir["#{MEETINGS}/2*"].sort.last
 nominations = IO.read("#{meeting}/nominated-members.txt").
   scan(/^-+--\s+(.*?)\n/).flatten.
   map {|name| name.gsub(/<.*|\(\w+@.*/, '').strip}
-nominations.shift
+nominations.shift if nominations.first.empty?
+nominations.pop if nominations.last.empty?
 
 
 url = `cd #{meeting}; svn info`[/URL: (.*)/, 1]
@@ -58,7 +62,8 @@ _html do
   # output an unordered list of subjects linked to the message archive
   _ul emails do |mail|
     _li do
-      href = MBOX + URI.escape('<' + mail.message_id + '>')
+      href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' + 
+        URI.escape('<' + mail.message_id + '>')
 
       if nominations.any? {|name| mail.subject.downcase =~ /\b#{name}\b/}
         _a.present mail.subject, href: href
