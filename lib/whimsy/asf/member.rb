@@ -15,8 +15,10 @@ module ASF
     end
 
     def self.list
-      result = Hash[self.new(true).map {|id, text| 
-        [id, {text: text, name: text[/(.*?)\s*(\(|\/\*|$)/, 1]}]
+      result = Hash[self.new(true).map {|id, text|
+        # extract 1st line and remove any trailing /* comment */
+        name = text[/(.*?)\n/, 1].sub(/\s+\/\*.*/,'')
+        [id, {text: text, name: name}]
       }]
 
       self.status.each do |name, value|
