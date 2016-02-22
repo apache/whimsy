@@ -35,3 +35,11 @@ The following additional step is required to get a the Whimsy VM up and running:
 
  * Add the following cron job to apmail@hermes:
      * `16 * * * * ezmlm-list /home/apmail/lists/apache.org/board/ . | ssh whimsy-vm2.apache.org 'cat > /srv/subscriptions/board'`
+
+ * Add the following mail subscriptions:
+    * Subscribe `svnupdate@whimsy-vm2.apache.org` to `board@apache.org`.
+      Alternately, add it to the `board-cvs` alias.
+    * Subscribe `board@whimsy-vm2.apache.org` to `board@apache.org`.
+    * Subscribe `members@whimsy-vm2.apache.org` to `members@apache.org`.
+    * Add `secretary@whimsy-vm2.apache.org` to the `secretary@apache.org`
+      alias.
