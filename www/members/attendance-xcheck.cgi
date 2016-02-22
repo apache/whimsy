@@ -15,20 +15,31 @@ Dir["#{meetings}/*/memapp-received.txt"].each do |received|
   meeting = File.basename(File.dirname(received))
   next if meeting.include? 'template'
   text = File.read(received)
-  list = text.scan(/<(.*)@.*>.*Yes/i) + text.scan(/^(?:yes\s+)+(\w\S*)/)
+  list = text.scan(/<(.*)@.*>.*Yes/i) + 
+    text.scan(/^(?:no\s*)*(?:yes\s+)+(\w\S*)/)
   list.flatten.each {|id| added[id] = meeting}
 end
 
 # cross check against members.txt
 missing = []
 ASF::Member.list.each do |id, info|
-  unless attend.delete info[:name] or info['status']
-    missing << [info[:name], added[id]] unless info[:name].empty?
+  unless attend.delete(info[:name]) or info['status']
+    missing << [info[:name], added[id]]
   end
 end
 
 # produce HTML
 _html do
+  _style %{
+    table {margin-left: 12px}
+  }
+
+  # common banner
+  _a href: 'https://whimsy.apache.org/' do
+    _img title: "ASF Logo", alt: "ASF Logo",
+      src: "https://www.apache.org/img/asf_logo.png"
+  end
+
   _h1_ 'members.txt vs attendance.json cross-check'
 
   _h2_ 'Listed as attending a members meeting, but not in members.txt'
