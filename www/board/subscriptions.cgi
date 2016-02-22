@@ -5,7 +5,7 @@ require 'whimsy/asf'
 require 'whimsy/asf/podlings'
 require 'whimsy/asf/site'
 
-SUBSCRIPTIONS = '/home/apmail/subscriptions/board'
+SUBSCRIPTIONS = '/srv/subscriptions/board'
 
 info_chairs = ASF::Committee.load_committee_info.group_by(&:chair)
 ldap_chairs = ASF.pmc_chairs
