@@ -29,7 +29,7 @@ def Monitor.svn(previous_status)
       data = lines.dup
     end
 
-    lines.reject! {|line| line =~ /^([ADU] | U)   /}
+    lines.reject! {|line| line =~ /^([ADU] |[ U]U)   /}
 
     if lines.empty?
       if not data
