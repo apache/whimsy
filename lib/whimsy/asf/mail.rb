@@ -5,7 +5,7 @@ module ASF
   class Mail
     def self.list
       begin
-        return @list[0..-1]
+        return Hash[@list.to_a] if @list
       rescue NoMethodError, WeakRef::RefError
       end
 
