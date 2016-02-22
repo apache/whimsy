@@ -33,7 +33,7 @@ _html do
     # common banner
     _a href: 'https://whimsy.apache.org/' do
       _img title: "ASF Logo", alt: "ASF Logo",
-        src: "http://www.apache.org/img/asf_logo.png"
+        src: "https://www.apache.org/img/asf_logo.png"
     end
 
     # start with the Watch List itself
