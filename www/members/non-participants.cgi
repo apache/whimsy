@@ -4,61 +4,43 @@ $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'whimsy/asf'
 require 'wunderbar'
 require 'date'
+require 'json'
 
 # separator / is added when link is generated
 ROSTER = "https://whimsy.apache.org/roster/committer"
 
 # locate and read the attendance file
 MEETINGS = ASF::SVN['private/foundation/Meetings']
-attendance = IO.read("#{MEETINGS}/attendance.txt")
-
-# scan the headings, extract column information
-headings = attendance[/^(\s+\d+)+/]
-col = 0
-cols = headings.scan(/(\s+)(\d+)/).map {|spaces, date|
-  col += spaces.length
-  Range.new(col, col+=date.length)
-}
-
-# column information for the member name
-nameField =  0...cols.first.begin
+attendance = JSON.parse(IO.read("#{MEETINGS}/attendance.json"))
 
 # extract and format dates
-dates = cols.map {|range| headings[range]}.
+dates = attendance['dates'].sort.
   map {|date| Date.parse(date).strftime('%Y-%b-%d')}
 
 # compute mappings of names to ids
-active = ASF::Member.list.select {|id, data| not data['status']}
-nameMap = Hash[active.map {|id, data| [id, data[:text].split("\n").first]}]
-idMap = Hash[nameMap.map {|id, name| [name.gsub(/[^\x20-\x7F]/, ''), id]}]
-
-# handle cases where names in attendance don't match members.txt
-idMap["Antonio Gallardo Rivera"] = "antonio"
-# idMap["Astrid Keler"] = ?
-# idMap["Astrid Stolper"] = ?
-idMap["Craig Russell"] = 'clr'
-idMap["Donald A. Ball Jr."] = 'balld'
-idMap["Maisonobe Luc"] = 'luc'
-idMap["Noirin Shirley"] = 'noirin'
-idMap["Reto Bachmann-Gmr"] = 'reto'
-idMap["Robertus W.A.M. Huijben (\"Bert\")"] = 'rhuijben'
-idMap["Thomas Fischer"] = 'tfischer'
-idMap["Wilfredo Sanchez"] = 'wsanchez'
-# idMap["William Stoddard"] = 'stoddard'
+members = ASF::Member.list
+active = members.select {|id, data| not data['status']}
+nameMap = Hash[members.map {|id, data| [id, data[:name]]}]
+idMap = Hash[nameMap.to_a.map(&:reverse)]
 
 # analyze attendance
-matrix = attendance.scan(/^[(A-Za-z].*\]\s*$/).map do |line|
-  name = line[nameField].strip
+matrix = attendance['matrix'].map do |name, meetings|
   id = idMap[name]
   next unless id
-  data = cols.map {|field| line[field].strip}.reverse
-  missed = data.index {|datum| datum != '-'} + 1
+  data = meetings.sort.reverse.map(&:last)
+  missed = (data.index {|datum| datum != '-'} || data.length)
  
   [id, name, missed]
 end
 
 # produce HTML
 _html do
+  # common banner
+  _a href: 'https://whimsy.apache.org/' do
+    _img title: "ASF Logo", alt: "ASF Logo",
+      src: "https://www.apache.org/img/asf_logo.png"
+  end
+
   _h1 'Non-participating active members'
 
   @meetingsMissed = (@meetingsMissed || 5).to_i
