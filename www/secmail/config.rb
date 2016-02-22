@@ -4,7 +4,7 @@
 
 if Dir.exist? '/srv/mail'
   SOURCE = 'whimsy-vm2.apache.org:/srv/mail'
-  ARCHIVE = '/srv/mail'
+  ARCHIVE = '/srv/mail/secretary'
 else
   SOURCE = 'minotaur.apache.org:/home/apmail/private-arch/officers-secretary'
   ARCHIVE = File.basename(SOURCE)
