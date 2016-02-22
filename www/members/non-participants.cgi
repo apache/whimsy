@@ -19,14 +19,14 @@ dates = attendance['dates'].sort.
 
 # compute mappings of names to ids
 members = ASF::Member.list
-active = members.select {|id, data| not data['status']}
+active = Hash[members.select {|id, data| not data['status']}]
 nameMap = Hash[members.map {|id, data| [id, data[:name]]}]
 idMap = Hash[nameMap.to_a.map(&:reverse)]
 
 # analyze attendance
 matrix = attendance['matrix'].map do |name, meetings|
   id = idMap[name]
-  next unless id
+  next unless id and active[id]
   data = meetings.sort.reverse.map(&:last)
   missed = (data.index {|datum| datum != '-'} || data.length)
  
@@ -81,8 +81,8 @@ end
 
 _json do
   meetingsMissed = (@meetingsMissed || 5).to_i
-  inactive = matrix.select {|id, name, missed| id and missed > meetingsMissed}
+  inactive = matrix.select {|id, name, missed| id and missed >= meetingsMissed}
   Hash[inactive.map {|id, name, missed| 
-    [id, {name: name, missed: missed-1, status: 'no response yet'}]
+    [id, {name: name, missed: missed, status: 'no response yet'}]
   }]
 end
