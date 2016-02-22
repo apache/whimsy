@@ -87,7 +87,7 @@ _html do
             _th 'Seconded?'
           else
             _th 'Nominated?'
-	  end
+          end
           
           _th 'AvailID'
           _th 'Name'
@@ -107,23 +107,23 @@ _html do
             if request =~ /appstatus/
               cols = status[person.id]
 
-	      if cols[0] == 'yes'
+              if cols[0] == 'yes'
                 _td cols[0]
               else
                 _td.issue cols[0]
-	      end
+              end
 
               _td cols[1]
 
-	      if cols[1] == 'no' or cols[2] == 'yes'
+              if cols[1] == 'no' or cols[2] == 'yes'
                 _td cols[2]
               else
                 _td.issue cols[2]
               end
 
-	      if cols[3] == 'yes'
+              if cols[3] == 'yes'
                 _td cols[3], class: ('issue' unless person.asf_member?)
-	      elsif cols[1] == 'no'
+              elsif cols[1] == 'no'
                 _td cols[3], class: ('issue' if person.asf_member?)
               else
                 _td.issue cols[3]
@@ -134,13 +134,13 @@ _html do
               else
                 _td.issue 'no'
               end
-	    else
+            else
               if nominations.include? person.id
                 _td 'yes'
               else
                 _td
               end
-	    end
+            end
 
             # ASF id
             if person.id =~ /^notinavail_\d+$/
@@ -158,68 +158,68 @@ _html do
   
 
             if request !~ /appstatus/
-	      # committees
-	      _td do
-		person.committees.sort_by(&:name).each do |committee|
-		  if committee.chair == person
-		    _strong do
-		      _a committee.name, href: "/roster/committee/#{committee.name}"
-		    end
-		  else
-		    _a committee.name, href: "/roster/committee/#{committee.name}"
-		  end
-		end
-	      end
-    
-	      # chair since
-	      chair = person.committees.find {|committee| committee.chair == person}
-	      if chair
-		minutes = Dir['/var/www/whimsy/board/minutes/*'].find do |name|
-		  File.basename(name).split('.').first.downcase.gsub(/[_\W]/,'') ==
-		    "#{chair.name.gsub(/\W/,'')}"
-		end
-    
-		search_string = "RESOLVED, that #{person.public_name}"
-		search_string.force_encoding('utf-8')
-
-		# search published minutes
-                if minutes
-		  resolution = nil
-		  minutes.untaint
-		  Nokogiri::HTML(File.read(minutes)).search('pre').each do |pre|
-		    if pre.text.include? search_string
-		      resolution = pre
-		      while resolution and resolution.name != 'h2'
-		        resolution = resolution.previous
-		      end
-		      break if resolution
-		    end
-		  end
-		end
-    
-		date = 'unknown'
-                if minutes
-		  minutes = '/board/minutes/' + File.basename(minutes)
+              # committees
+              _td do
+                person.committees.sort_by(&:name).each do |committee|
+                  if committee.chair == person
+                    _strong do
+                      _a committee.name, href: "/roster/committee/#{committee.name}"
+                    end
+                  else
+                    _a committee.name, href: "/roster/committee/#{committee.name}"
+                  end
                 end
-		if resolution
-		  minutes += '#' + resolution.at('a')['id']
-		  date = Date.parse(resolution.text)
-		else
-		  # search unpublished agendas
-		  board = ASF::SVN['private/foundation/board']
-		  Dir["#{board}/board_agenda_*"].sort.each do |agenda|
-		    agenda.untaint
-		    if File.read(agenda).include? search_string
-		      minutes = "#{SVN_BOARD}/#{File.basename(agenda)}"
-		      date = agenda.gsub('_','-')[/(\d+-\d+-\d+)/,1]
-		      break
-		    end
-		  end
-		end
+              end
+    
+              # chair since
+              chair = person.committees.find {|committee| committee.chair == person}
+              if chair
+                minutes = Dir['/var/www/whimsy/board/minutes/*'].find do |name|
+                  File.basename(name).split('.').first.downcase.gsub(/[_\W]/,'') ==
+                    "#{chair.name.gsub(/\W/,'')}"
+                end
+    
+                search_string = "RESOLVED, that #{person.public_name}"
+                search_string.force_encoding('utf-8')
 
-		_td do
-		  _a date, href: minutes
-		end
+                # search published minutes
+                if minutes
+                  resolution = nil
+                  minutes.untaint
+                  Nokogiri::HTML(File.read(minutes)).search('pre').each do |pre|
+                    if pre.text.include? search_string
+                      resolution = pre
+                      while resolution and resolution.name != 'h2'
+                        resolution = resolution.previous
+                      end
+                      break if resolution
+                    end
+                  end
+                end
+    
+                date = 'unknown'
+                if minutes
+                  minutes = '/board/minutes/' + File.basename(minutes)
+                end
+                if resolution
+                  minutes += '#' + resolution.at('a')['id']
+                  date = Date.parse(resolution.text)
+                else
+                  # search unpublished agendas
+                  board = ASF::SVN['private/foundation/board']
+                  Dir["#{board}/board_agenda_*"].sort.each do |agenda|
+                    agenda.untaint
+                    if File.read(agenda).include? search_string
+                      minutes = "#{SVN_BOARD}/#{File.basename(agenda)}"
+                      date = agenda.gsub('_','-')[/(\d+-\d+-\d+)/,1]
+                      break
+                    end
+                  end
+                end
+
+                _td do
+                  _a date, href: minutes
+                end
               end
             end
           end
