@@ -164,10 +164,10 @@ _html do
                 person.committees.sort_by(&:name).each do |committee|
                   if committee.chair == person
                     _strong do
-                      _a committee.name, href: "/roster/committee/#{committee.name}"
+                      _a committee.name, href: "../../roster/committee/#{committee.name}"
                     end
                   else
-                    _a committee.name, href: "/roster/committee/#{committee.name}"
+                    _a committee.name, href: "../../roster/committee/#{committee.name}"
                   end
                 end
               end
@@ -175,7 +175,7 @@ _html do
               # chair since
               chair = person.committees.find {|committee| committee.chair == person}
               if chair
-                minutes = Dir['/var/www/whimsy/board/minutes/*'].find do |name|
+                minutes = Dir['../board/minutes/*'].find do |name|
                   File.basename(name).split('.').first.downcase.gsub(/[_\W]/,'') ==
                     "#{chair.name.gsub(/\W/,'')}"
                 end
@@ -200,7 +200,7 @@ _html do
     
                 date = 'unknown'
                 if minutes
-                  minutes = '/board/minutes/' + File.basename(minutes)
+                  minutes = '../../board/minutes/' + File.basename(minutes)
                 end
                 if resolution
                   minutes += '#' + resolution.at('a')['id']
