@@ -9,12 +9,23 @@ meetings = ASF::SVN['private/foundation/Meetings']
 json = JSON.parse(IO.read "#{meetings}/attendance.json")
 attend = json['matrix'].keys
 
+# parse received info
+added = Hash.new('unknown')
+Dir["#{meetings}/*/memapp-received.txt"].each do |received|
+  meeting = File.basename(File.dirname(received))
+  next if meeting.include? 'template'
+  text = File.read(received)
+  list = text.scan(/<(.*)@.*>.*Yes/i) + text.scan(/^(?:yes\s+)+(\w\S*)/)
+  list.flatten.each {|id| added[id] = meeting}
+end
+
 # cross check against members.txt
 missing = []
 ASF::Member.list.each do |id, info|
-  missing << info[:name] unless attend.delete info[:name] or info['status']
+  unless attend.delete info[:name] or info['status']
+    missing << [info[:name], added[id]] unless info[:name].empty?
+  end
 end
-missing.delete ''
 
 # produce HTML
 _html do
@@ -30,9 +41,18 @@ _html do
   
   _h2_ 'Listed in members.txt but not listed as attending a members meeting'
 
-  _ul do
-    missing.sort.each do |name|
-      _li name
+  _table do
+    _thead do
+      _th 'name'
+      _th 'date added as a member'
+    end
+
+    missing.sort.each do |name, meeting|
+      next if meeting =~ /^2015/
+      _tr_ do
+        _td name
+        _td meeting
+      end
     end
   end
 end
