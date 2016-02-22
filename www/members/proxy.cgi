@@ -1,4 +1,6 @@
 #!/usr/bin/ruby1.9.1
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+
 require 'wunderbar'
 require 'whimsy/asf'
 require 'date'
