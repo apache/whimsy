@@ -175,7 +175,9 @@ module ASF
   rescue WeakRef::RefError
     value = block.call
   ensure
-    if value and not value.instance_of? WeakRef
+    if not value or RUBY_VERSION.start_with? '1'
+      object.instance_variable_set(attr, value)
+    elsif value and not value.instance_of? WeakRef
       object.instance_variable_set(attr, WeakRef.new(value))
     end
   end
