@@ -62,10 +62,11 @@ _html do
     end
 
     ids = []
+    maillist = ASF::Mail.list
 
     File.readlines(SUBSCRIPTIONS).each do |line|
-      person = ASF::Mail.list[line.downcase.strip]
-      person ||= ASF::Mail.list[line.downcase.strip.sub(/\+\w+@/,'@')]
+      person = maillist[line.downcase.strip]
+      person ||= maillist[line.downcase.strip.sub(/\+\w+@/,'@')]
       if person
         id = person.id
         id = '*notinavail*' if id == 'notinavail'
