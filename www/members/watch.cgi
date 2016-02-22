@@ -14,6 +14,7 @@ meetings = ASF::SVN['private/foundation/Meetings']
 _html do
   _head_ do
     _title 'Potential Member Watch'
+    _base href: File.basename(ENV['SCRIPT_NAME'])
     _style %{
       th {border-bottom: solid black}
       table {border-spacing: 1em 0.2em }
@@ -231,27 +232,27 @@ _html do
     _ul do
       unless request =~ /appstatus/
         _li do
-          _a 'Application Status', href: '/members/watch/appstatus'
+          _a 'Application Status', href: 'watch/appstatus'
         end
       end
       unless list == watch_list
         _li do
-          _a 'Potential Member Watch List', href: '/members/watch'
+          _a 'Potential Member Watch List', href: 'watch'
         end
       end
       unless request =~ /nominees/
         _li do
-          _a 'Nominees', href: '/members/watch/nominees'
+          _a 'Nominees', href: 'watch/nominees'
         end
       end
       unless request =~ /multiple/
         _li do
-          _a 'Active in Multiple (>=3) PMCs', href: '/members/watch/multiple'
+          _a 'Active in Multiple (>=3) PMCs', href: 'watch/multiple'
         end
       end
       unless request =~ /chairs/
         _li do
-          _a 'Non-member PMC chairs', href: '/members/watch/chairs'
+          _a 'Non-member PMC chairs', href: 'watch/chairs'
         end
       end
     end
