@@ -4,7 +4,8 @@ require 'whimsy/asf'
 require 'wunderbar'
 require 'date'
 
-ROSTER = "https://whimsy.apache.org/roster/committer/"
+# separator / is added when link is generated
+ROSTER = "https://whimsy.apache.org/roster/committer"
 
 # locate and read the attendance file
 MEETINGS = ASF::SVN['private/foundation/Meetings']
