@@ -2,7 +2,7 @@
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'whimsy/asf'
-require 'wunderbar'
+require 'wunderbar/bootstrap'
 require 'date'
 require 'json'
 
@@ -35,6 +35,12 @@ end
 
 # produce HTML
 _html do
+  _style %{
+    table {margin: 16px}
+    .count {margin-left: 24px}
+    li {margin: 16px 0}
+  }
+
   # common banner
   _a href: 'https://whimsy.apache.org/' do
     _img title: "ASF Logo", alt: "ASF Logo",
@@ -57,10 +63,12 @@ _html do
   end
 
   count = 0
-  _table do
-    _tr do
-      _th 'Name'
-      _th 'Last participated'
+  _table.table.table_hover do
+    _thead do
+      _tr do
+        _th 'Name'
+        _th 'Last participated'
+      end
     end
 
     matrix.each do |id, name, missed|
@@ -76,7 +84,21 @@ _html do
     end
   end
 
-  _p "Count: #{count}"
+  _div.count "Count: #{count}"
+
+  _h3 'Definitions'
+
+  _ul do
+    _li 'Active members are members that are neither emeritus nor deceased.'
+    _li do
+      _ 'Participating is defined by doing at least one of the following:'
+      _ul do
+        _li 'Attending a members meeting'
+        _li 'Voting in an election'
+        _li 'Assigning a proxy'
+      end
+    end
+  end
 end
 
 _json do
