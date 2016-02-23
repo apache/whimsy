@@ -34,9 +34,15 @@ module ASF
 
     # load ICLA information for every committer
     def self.preload
+      people = []
       each do |icla|
-        ASF::Person.find(icla.id).icla =  icla unless icla.id == 'notinaval'
+        unless icla.id == 'notinaval'
+          person = ASF::Person.find(icla.id)
+          people << person
+          person.icla = icla
+        end
       end
+      people
     end
 
     # find ICLA by ID

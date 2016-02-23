@@ -24,6 +24,7 @@ module ASF
       self.status.each do |name, value|
         result[name]['status'] = value
       end
+
       result
     end
 
