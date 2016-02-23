@@ -67,11 +67,11 @@ get '/committee/:name' do |name|
 end
 
 get '/committer/:name.json' do |name|
-  _json Committer.serialize(name)
+  _json Committer.serialize(name, env)
 end
 
 get '/committer/:name' do |name|
-  @committer = Committer.serialize(name)
+  @committer = Committer.serialize(name, env)
   pass unless @committer
   _html :committer
 end

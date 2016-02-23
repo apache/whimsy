@@ -1,5 +1,5 @@
 class Committer
-  def self.serialize(id)
+  def self.serialize(id, env)
     response = {}
 
     person = ASF::Person.find(id)
@@ -33,6 +33,21 @@ class Committer
     response[:groups] = person.groups.map(&:name)
 
     response[:committees] = person.committees.map(&:name)
+
+    if ASF::Person.find(env.user).asf_member?
+      member = {}
+
+      if person.asf_member?
+	member[:info] = person.members_txt
+	member[:status] = ASF::Member.status[id] || 'Active'
+      else
+        if person.member_nomination
+	  member[:nomination] = person.member_nomination
+	end
+      end
+
+      response[:member] = member
+    end
 
     response
   end

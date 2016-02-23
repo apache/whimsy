@@ -1,3 +1,5 @@
+require 'weakref'
+
 module ASF
   class Member
     include Enumerable
@@ -39,7 +41,11 @@ module ASF
     end
 
     def self.status
-      return @status if @status
+      begin
+        return Hash[@status.to_a] if @status
+      rescue NoMethodError, WeakRef::RefError
+      end
+
       status = {}
       foundation = ASF::SVN['private/foundation']
       return status unless foundation
@@ -49,18 +55,15 @@ module ASF
         header.sub!(/s\n=+/,'')
         text.scan(/Avail ID: (.*)/).flatten.each {|id| status[id] = header}
       end
-      @status = status
-    end
 
-    def initialize(full = nil)
-      @full = (full.nil? ? ASF::Person.new($USER).asf_member? : full)
+      @status = WeakRef.new(status)
+      status
     end
 
     def each
       foundation = ASF::SVN['private/foundation']
       File.read("#{foundation}/members.txt").split(/^ \*\) /).each do |section|
         id = section[/Avail ID: (.*)/,1]
-        section = '' unless @full
         yield id, section.sub(/\n.*\n===+\s*?\n(.*\n)+.*/,'').strip if id
       end
       nil
@@ -85,7 +88,7 @@ module ASF
 
   class Person
     def members_txt
-      @members_txt ||= ASF::Member.find_text_by_id(name)
+      @members_txt ||= ASF::Member.find_text_by_id(id)
     end
 
     def member_emails

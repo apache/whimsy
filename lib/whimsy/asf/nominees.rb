@@ -32,7 +32,7 @@ module ASF
     end
 
     def member_nomination
-      Person.member_nominees[self]
+      @member_nomination ||= Person.member_nominees[self]
     end
   end
 end
