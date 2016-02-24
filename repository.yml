@@ -48,6 +48,9 @@
     url: private/foundation/officers
     depth: files
 
+  officers_historic:
+    url: private/foundation/officers/historic
+
   prospects:
     url: private/foundation/Fundraising/prospects
     depth: files
