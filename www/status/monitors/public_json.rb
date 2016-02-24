@@ -76,8 +76,12 @@ def Monitor.public_json(previous_status)
       }
     end
 
-    if status[name][:level] and status[name][:level] != 'info'
-      FileUtils.copy log, archive,
+    # Save a copy of the log
+    # append the severity so can track more problems
+    lvl = status[name][:level] 
+    if lvl and lvl != 'info'
+      name = File.basename(log)
+      FileUtils.copy log, File.join(archive, name + '.' + lvl),
         preserve: true
     end
   end
