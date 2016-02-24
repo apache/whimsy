@@ -56,6 +56,29 @@ class Committer < React
           end
         end
       end
+
+      if @@committer.member
+        if @@committer.member.status
+          _tr do
+            _td 'Member status'
+            _td @@committer.member.status
+          end
+        end
+
+        if @@committer.member.info
+          _tr do
+            _td 'Members.txt'
+            _td {_pre @@committer.member.info}
+          end
+        end
+
+        if @@committer.member.nomination
+          _tr do
+            _td 'nomination'
+            _td {_pre @@committer.member.nomination}
+          end
+        end
+      end
     end
   end
 end
