@@ -76,7 +76,7 @@ def Monitor.public_json(previous_status)
       }
     end
 
-    if status[name][:level]
+    if status[name][:level] and status[name][:level] != 'info'
       FileUtils.copy log, archive,
         preserve: true
     end
