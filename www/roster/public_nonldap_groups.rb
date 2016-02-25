@@ -22,6 +22,15 @@
 require_relative 'public_json_common'
 
 require 'net/http'
+require 'open-uri'
+require 'nokogiri'
+
+PODLINGS = 'http://incubator.apache.org/podlings.xml'
+pods = {}
+podlings = Nokogiri::XML(open(PODLINGS))
+podlings.search('podling').each do |podling|
+  pods[podling['resource']] = podling['status']
+end
 
 file = '/apache/infrastructure-puppet/deployment/modules/subversion_server/files/authorization/asf-authorization-template'
 http = Net::HTTP.new('raw.githubusercontent.com', 443)
@@ -39,6 +48,8 @@ body.scan(/^(\w[^=\s]*)[ \t]*=[ \t]*(\w.*)$/) do |grp, mem|
       # this will allow future expansion e.g. if we can flag podlings somehow
       roster: mem.gsub(/\s/,'').split(/,/).sort.uniq
       }
+  # add podling type entry if there is one
+  groups[grp][:podling] = pods[grp] if pods[grp]
 end
 
 public_json_output(
