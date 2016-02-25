@@ -56,9 +56,9 @@ Skip this section if you are running a Docker container or a Vagrant VM.
     3. [Ruby Version Manager](https://rvm.io/)
 
 
-2. Make sure that the `whimsy-asf` gem installed.  If it is not, run
+2. Make sure that the `whimsy-asf` and `bundler` gems are installed:
 
-  `gem install whimsy-asf`
+  `gem install whimsy-asf bundler`
 
 3. current SVN checkouts of various repositories are made (or linked to from)
    `/srv/svn`
@@ -111,6 +111,82 @@ Skip this section if you are running a Docker container or a Vagrant VM.
    `ruby examples/board.rb`
 
    See comments in that file for running the script as a standalone server.
+
+Running Scripts/Applications
+============================
+
+If there is a `Gemfile` in the directory containing the script or application
+you wish to run, dependencies needed for execution can be installed using the
+command `bundle install`.
+
+1. CGI applications can be run from a command line, and produce output to
+   standard out.  If you would prefer to see the output in a browser, you
+   will need to have a web server configured to run CGI, and a small CGI
+   script which runs your application.  For CGI scripts that make use of
+   wunderbar, this script can be generated and installed for you by
+   passing a `--install` option on the command, for example:
+
+       ruby examples/board.rb --install=~/Sites/
+
+   Note that by default CGI scripts run as a user with a different home
+   directory very little privileges.  You may need to copy or symlink your
+   `~/.whimsy` file and/or run using
+   [suexec](http://httpd.apache.org/docs/current/suexec.html).
+
+2. Rack applications can be run as a standalone web server.  If a `Rakefile`
+   is provided, the convention is that `rake server` will start the server,
+   typically with listeners that will automatically restart the application
+   if any source file changes.  If a `Rakefile` isn't present, the `rackup`
+   command can be used to start the application.
+
+Advanced configuration
+======================
+
+Note: these instructions are for Ubuntu.  Tailor as necessary for Mac OSX or
+Red Hat.
+
+Setting things up so that the entire whimsy website is available as
+http://localhost/whimsy/:
+
+1. Add an alias
+
+        Alias /whimsy /srv/whimsy/www
+        <Directory /srv/whimsy/www>
+           Order allow,deny
+           Allow from all
+           Require all granted
+           Options Indexes FollowSymLinks MultiViews ExecCGI
+           MultiViewsMatch Any
+           DirectoryIndex index.html index.cgi
+           AddHandler cgi-script .cgi
+        </Directory>
+
+2. Configure `suexec` by editing `/etc/apache2/suexec/www-data`:
+
+       /srv
+       public_html
+
+3. Install passenger by running either running 
+   `passenger-install-apache2-module` and following its instructions, or
+   by visiting https://www.phusionpassenger.com/library/install/apache/install/oss/.
+
+4. Configure individual rack applications:
+
+       Alias /whimsy/board/agenda/ /srv/whimsy/www/board/agenda
+       <Location /whimsy/board/agenda>
+         PassengerBaseURI /whimsy/board/agenda
+         PassengerAppRoot /srv/whimsy/www/board/agenda
+         PassengerAppEnv development
+         Options -Multiviews
+       </Location>
+
+5. (Optional) run a service that will restart your passenger applications
+   whenever the source to that application is modified by creating a
+   `~/.config/upstart/whimsy-listener` file with the following contents:
+
+       description "listen for changes to whimsy applications"
+       start on dbus SIGNAL=SessionNew
+       exec /srv/whimsy/tools/toucher
 
 Further Reading
 ===============
