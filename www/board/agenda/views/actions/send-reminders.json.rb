@@ -12,9 +12,10 @@ end
 
 # extract values for common fields
 subject = @subject.untaint
-unless @from
+from = @from
+unless from
   sender = ASF::Person.find(env.user)
-  @from = "#{sender.public_name} <#{sender.id}@apache.org>".untaint
+  from = "#{sender.public_name} <#{sender.id}@apache.org>".untaint
 end
 
 # iterate over the agenda
@@ -48,7 +49,7 @@ Agenda.parse(@agenda, :full).each do |item|
 
   # construct email
   mail = Mail.new do
-    from @from
+    from from
     to "#{item['owner']} <#{item['chair_email']}>".untaint
     subject subject
 
