@@ -1,21 +1,20 @@
 Development Status
 ==================
 
-Applications consist of static data, CGI scripts, Rack applications, and a
-single Puma application (the board agenda, which has some unique response time
-requirements), and cron jobs.
+Applications consist of static data, CGI scripts, Rack applications, and 
+cron jobs.
 
-The goal is to make it so that every committer on the Whimsy PMC can both
+Every committer on the Whimsy PMC can both
 deploy changes and new applications.  A new VM has been provisioned for this
 purpose: https://whimsy-test.apache.org/.
 
 Current status:
 
- * Static content is working.  Changes pushed to GitHub master will be
+ * **Static content**  Changes pushed to GitHub master will be
    automatically deployed every 30 minutes.  Note that this includes the
    contents of scripts and applications too.
   
- * CGI scripts are working, and any dependencies listed in a `Gemfile` will
+ * **CGI scripts** any dependencies listed in a `Gemfile` will
    automatically be installed.  A simple CGI:
 
     https://github.com/apache/whimsy/blob/master/www/test.cgi
@@ -25,7 +24,7 @@ Current status:
    a single line to the deployment data identifying the location of the
    script:
 
-    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm2.apache.org.yaml#L65
+    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm2.apache.org.yaml#L93
 
    Note that the LDAP module does not currently handle boolean conditions
    (example: members or officers).  The way to handle this is to do
@@ -36,12 +35,12 @@ Current status:
    first line of their output if access to this tool is not permitted for the
    user.
 
- * Rack applications are working and run under Passenger under Apache httpd.
+ * **Rack applications** run under Passenger under Apache httpd.
    Again, `Gemfile`s are used to specify dependencies.  In addition to simply
    checking the application, one line per passenger application needs to be added
    to the deployment data:
 
-    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm2.apache.org.yaml#L60
+    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm2.apache.org.yaml#L86
 
    A simple rack application (two empty directories, and a one line file):
 
@@ -53,6 +52,9 @@ Current status:
    instead of at the application level making use of Rack middleware such as:
 
     https://github.com/apache/whimsy/blob/master/lib/whimsy/asf/rack.rb#L57
+    
+ * **Cron jobs** are managed by puppet.  See [deployment](DEPLOYMENT.md) for more
+   information.
 
 
 Further Reading
