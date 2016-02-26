@@ -14,7 +14,7 @@ meetings = ASF::SVN['private/foundation/Meetings']
 _html do
   _head_ do
     _title 'Potential Member Watch'
-    _base href: File.basename(ENV['SCRIPT_NAME'])
+    _base href: File.dirname(ENV['SCRIPT_NAME'])
     _style %{
       th {border-bottom: solid black}
       table {border-spacing: 1em 0.2em }
