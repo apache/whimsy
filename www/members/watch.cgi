@@ -148,10 +148,10 @@ _html do
               _td
             elsif person.asf_member?
               _td! do
-                _strong {_a person.id, href: "/roster/committer/#{person.id}"}
+                _strong {_a person.id, href: "roster/committer/#{person.id}"}
               end
             else
-              _td! {_a person.id, href: "/roster/committer/#{person.id}"}
+              _td! {_a person.id, href: "roster/committer/#{person.id}"}
             end
 
             # public name
@@ -164,10 +164,10 @@ _html do
                 person.committees.sort_by(&:name).each do |committee|
                   if committee.chair == person
                     _strong do
-                      _a committee.name, href: "../../roster/committee/#{committee.name}"
+                      _a committee.name, href: "roster/committee/#{committee.name}"
                     end
                   else
-                    _a committee.name, href: "../../roster/committee/#{committee.name}"
+                    _a committee.name, href: "roster/committee/#{committee.name}"
                   end
                 end
               end
@@ -200,7 +200,7 @@ _html do
     
                 date = 'unknown'
                 if minutes
-                  minutes = '../../board/minutes/' + File.basename(minutes)
+                  minutes = 'board/minutes/' + File.basename(minutes)
                 end
                 if resolution
                   minutes += '#' + resolution.at('a')['id']
@@ -232,27 +232,27 @@ _html do
     _ul do
       unless request =~ /appstatus/
         _li do
-          _a 'Application Status', href: 'watch/appstatus'
+          _a 'Application Status', href: 'members/watch/appstatus'
         end
       end
       unless list == watch_list
         _li do
-          _a 'Potential Member Watch List', href: 'watch'
+          _a 'Potential Member Watch List', href: 'members/watch'
         end
       end
       unless request =~ /nominees/
         _li do
-          _a 'Nominees', href: 'watch/nominees'
+          _a 'Nominees', href: 'members/watch/nominees'
         end
       end
       unless request =~ /multiple/
         _li do
-          _a 'Active in Multiple (>=3) PMCs', href: 'watch/multiple'
+          _a 'Active in Multiple (>=3) PMCs', href: 'members/watch/multiple'
         end
       end
       unless request =~ /chairs/
         _li do
-          _a 'Non-member PMC chairs', href: 'watch/chairs'
+          _a 'Non-member PMC chairs', href: 'members/watch/chairs'
         end
       end
     end
