@@ -2,7 +2,7 @@ Deployment
 ==========
 
 The contents of this repository are deployed to the following VM:
-https://whimsy-test.apache.org/.
+https://whimsy.apache.org/.
 
 The new VM is based on Ubuntu 14.04 (the current Whimsy is based on Ubuntu
 12.04), and is more completely managed by Puppet.  The puppet definition is

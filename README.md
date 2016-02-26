@@ -5,8 +5,7 @@ Whimsy hosts static content, repository checkouts/clones, CGI scripts, Rack
 applications, and cron jobs.
 
 Every committer on the Whimsy PMC can both deploy changes and new
-applications.  A new VM has been provisioned for this purpose:
-https://whimsy-test.apache.org/.
+applications to https://whimsy.apache.org/.
 
 Details by content type:
 
@@ -24,7 +23,7 @@ Details by content type:
    automatically be installed.  A simple CGI:
 
     https://github.com/apache/whimsy/blob/master/www/test.cgi
-    https://whimsy-test.apache.org/test.cgi
+    https://whimsy.apache.org/test.cgi
 
    Many CGI scripts will require user authentication.  This is done by adding
    a single line to the deployment data identifying the location of the
@@ -52,7 +51,7 @@ Details by content type:
    A simple rack application (two empty directories, and a one line file):
 
     https://github.com/apache/whimsy/tree/master/www/racktest
-    https://whimsy-test.apache.org/racktest
+    https://whimsy.apache.org/racktest
 
    Authentication requirements will also need to be two phase, like with CGI
    above; but more common conditions can be handled at the "Rack" level

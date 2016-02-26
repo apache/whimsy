@@ -33,7 +33,7 @@ print <<-EOF
 <html>
   <head>
     <meta charset="UTF-8"/>
-    <title>Whimsy-Test Status</title>
+    <title>Whimsy Status</title>
     
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/status.css"/>
