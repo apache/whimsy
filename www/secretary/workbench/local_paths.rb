@@ -6,6 +6,9 @@ unless ENV['HOME']
   ENV['HOME'] = $1 if ENV['SCRIPT_FILENAME'] =~ /(.*?)\/Sites\//
 end
 
+# override home for whimsy
+ENV['HOME'] = '/var/www' if `hostname`.chomp == 'whimsy-vm2'
+
 # look for local_paths.yml or ~/.secassist (in that order)
 config = 'local_paths.yml'
 if not File.exist?(config) and ENV['HOME']
