@@ -80,6 +80,29 @@ class Committer < React
         end
       end
 
+      if committer.mail
+        _tr do
+          _td 'Email addresses'
+          _td do
+            _ul committer.mail do |url|
+              _li do
+                _a url, href: 'mailto:' + url
+              end
+            end
+          end
+        end
+      end
+
+      if committer.githubUsername
+        _tr do
+          _td 'GitHub username'
+          _td do
+            _a committer.githubUsername, href: 
+              "https://github.com/" + committer.githubUsername
+          end
+        end
+      end
+
       if committer.member
         if committer.member.status
           _tr do

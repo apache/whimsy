@@ -28,6 +28,10 @@ class Committer
       response[:pgp] = person.pgp_key_fingerprints 
     end
 
+    if person.attrs['githubUsername']
+      response[:githubUsername] = person.githubUsername
+    end
+
     response[:urls] = person.urls unless person.urls.empty?
 
     response[:committees] = person.committees.map(&:name)
