@@ -7,3 +7,5 @@ require_relative 'pmc/confirm'
 
 require_relative 'committer'
 require_relative 'committerSearch'
+
+require_relative 'group'

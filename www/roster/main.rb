@@ -76,6 +76,16 @@ get '/committer/:name' do |name|
   _html :committer
 end
 
+get '/group/:name.json' do |name|
+  _json Group.serialize(name)
+end
+
+get '/group/:name' do |name|
+  @group = Group.serialize(name)
+  pass unless @group
+  _html :group
+end
+
 # member list
 get '/members' do
   _html :members
