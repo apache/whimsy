@@ -29,7 +29,7 @@ Workflow:
 Manual Steps
 ------------
 
-The following additional step is required to get a the Whimsy VM up and running:
+The following additional steps are required to get the Whimsy VM up and running:
 
  * Configuring `/whimsysvn/.subversion/config` and `/whimsysvn/.subversion/servers` to store auth-creds.
 
@@ -43,3 +43,15 @@ The following additional step is required to get a the Whimsy VM up and running:
     * Subscribe `members@whimsy-vm2.apache.org` to `members@apache.org`.
     * Add `secretary@whimsy-vm2.apache.org` to the `secretary@apache.org`
       alias.
+
+The following additional steps are required for now, but will hopefully go
+away once the transition away from the secretary workbench is complete:
+
+ * Configuring `/var/www/.subversion/config` and
+   `/var/www/.subversion/servers` to store auth-creds and to use the
+   `whimsysvn` user.
+
+ * Using the `www-data` user, check out the following repositories:
+   * `svn co https://svn.apache.org/repos/private/foundation /srv/secretary/workbench/foundation`
+   * `svn co https://svn.apache.org/repos/private/documents /srv/secretary/workbench/documents`
+
