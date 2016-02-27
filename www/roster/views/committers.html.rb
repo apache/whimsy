@@ -8,8 +8,8 @@ _html do
   _link rel: 'stylesheet', href: 'stylesheets/app.css'
 
   _banner breadcrumbs: {
-    roster: '..',
-    committer: '.'
+    roster: '.',
+    committer: 'committer/'
   }
 
   _h1 'Committer - Search'
