@@ -30,9 +30,24 @@ class Committer
 
     response[:urls] = person.urls unless person.urls.empty?
 
-    response[:groups] = person.groups.map(&:name)
-
     response[:committees] = person.committees.map(&:name)
+
+    response[:groups] = []
+    response[:committer] = []
+    committees = ASF::Committee.list.map(&:id)
+    person.groups.map(&:name).each do |group|
+      if committees.include? group
+        unless response[:committees].include? group
+          response[:committer] << group 
+        end
+      else
+        response[:groups] << group
+      end
+    end
+
+    response[:committees].sort!
+    response[:groups].sort!
+    response[:committer].sort!
 
     if ASF::Person.find(env.user).asf_member?
       member = {}

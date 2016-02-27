@@ -38,23 +38,38 @@ class Committer < React
         end
       end
 
-      _tr do
-        _td 'Committees'
-        _td do
-          _ul @@committer.committees do |pmc|
-            _li {_a pmc, href: "committee/#{pmc}"}
-          end
-        end
+      unless @@committer.committees.empty?
+	_tr do
+	  _td 'Committees'
+	  _td do
+	    _ul @@committer.committees do |pmc|
+	      _li {_a pmc, href: "committee/#{pmc}"}
+	    end
+	  end
+	end
       end
 
-      _tr do
-        _td 'Groups'
-        _td do
-          _ul @@committer.groups do |pmc|
-            next if @@committer.committees.include? pmc
-            _li {_a pmc, href: "committee/#{pmc}"}
-          end
-        end
+      unless @@committer.committer.empty?
+	_tr do
+	  _td 'Committer'
+	  _td do
+	    _ul @@committer.committer do |pmc|
+	      _li {_a pmc, href: "committee/#{pmc}"}
+	    end
+	  end
+	end
+      end
+
+      if false # not ready yet
+	_tr do
+	  _td 'Groups'
+	  _td do
+	    _ul @@committer.groups do |pmc|
+	      next if @@committer.committees.include? pmc
+	      _li {_a pmc, href: "committee/#{pmc}"}
+	    end
+	  end
+	end
       end
 
       if @@committer.member
