@@ -73,7 +73,7 @@ _html do
     end
 
     # for efficiency, preload public_names
-    ASF::Person.preload('cn', list)
+    people = ASF::Person.preload('cn', list)
 
     _table do
 
