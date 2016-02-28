@@ -25,14 +25,18 @@ This directory has two main subdirectories...
    refactored out into a common library.  Some of the older tools don't fully
    make use of this refactoring.
 
-2. [www](www) contains the "view", largely a set of CGI scripts that produce HTML.
-   Generally a CGI script is self contained, including all of the CSS,
+2. [www](www) contains the "view", largely a set of CGI scripts that produce
+   HTML.  Generally a CGI script is self contained, including all of the CSS,
    scripts, AJAX logic (client and server), SVG images, etc.  A single script
-   may also produce a set (subtree) of web pages.
+   may also produce a set (subtree) of web pages.  CGI scripts can be
+   identified by their `.cgi` file extension.
 
-   Some of the directories (like the roster tool) contain [rack](http://rack.github.io/)
-   applications.  These can be run independently, or under the Apache web server through
+   Some of the directories (like the roster tool) contain
+   [rack](http://rack.github.io/) applications.  These can be run
+   independently, or under the Apache web server through
    the use of [Phusion Passenger](https://www.phusionpassenger.com/).
+   Directories containing Rack applications can be identified by the presence
+   of a file with the name of `config.ru`.
 
 Setup
 =====
