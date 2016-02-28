@@ -28,6 +28,10 @@ class Committer
       response[:pgp] = person.pgp_key_fingerprints 
     end
 
+    if person.attrs['asf-sascore']
+      response[:sascore] = person.attrs['asf-sascore'].first
+    end
+
     if person.attrs['githubUsername']
       response[:githubUsername] = person.githubUsername
     end

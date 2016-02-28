@@ -71,9 +71,15 @@ get '/committer/:name.json' do |name|
 end
 
 get '/committer/:name' do |name|
+  @auth = Auth.info(env)
   @committer = Committer.serialize(name, env)
   pass unless @committer
   _html :committer
+end
+
+post '/committer/:name' do |name|
+  @userid = name
+  _json :'/actions/committer'
 end
 
 get '/group/:name.json' do |name|
