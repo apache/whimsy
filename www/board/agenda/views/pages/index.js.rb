@@ -10,19 +10,19 @@ class Index < React
 
     _table.table_bordered do
       _thead do
-	      _th 'Attach'
-	      _th 'Title'
-	      _th 'Owner'
-	      _th 'Shepherd'
+        _th 'Attach'
+        _th 'Title'
+        _th 'Owner'
+        _th 'Shepherd'
       end
 
       _tbody Agenda.index do |row|
-	      _tr class: row.color do
-	        _td row.attach
-	        _td { _Link text: row.title, href: row.href }
-	        _td row.owner
-	        _td row.shepherd
-	      end
+        _tr class: row.color do
+          _td row.attach
+          _td { _Link text: row.title, href: row.href }
+          _td row.owner
+          _td row.shepherd
+        end
       end
     end
   end

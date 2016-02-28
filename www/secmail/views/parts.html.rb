@@ -21,7 +21,7 @@ _html do
   _ul do
     _li do
       _a 'Response time', target: 'content',
-	href: 'https://whimsy.apache.org/secretary/response-time'
+        href: 'https://whimsy.apache.org/secretary/response-time'
     end
     _li do
       _a 'Mail Search', target: 'content',
@@ -33,51 +33,51 @@ _html do
     end
     _li do
       _a 'Committers by id', target: 'content',
-	href: 'http://people.apache.org/committer-index.html'
+        href: 'http://people.apache.org/committer-index.html'
     end
     _li do
       _a 'ICLAs', target: 'content',
-	href: 'https://svn.apache.org/repos/private/documents/iclas'
+        href: 'https://svn.apache.org/repos/private/documents/iclas'
     end
     _li do
       _a 'CCLAs', target: 'content',
-	href: 'https://svn.apache.org/repos/private/documents/cclas'
+        href: 'https://svn.apache.org/repos/private/documents/cclas'
     end
     _li do
       _a 'Grants', target: 'content',
-	href: 'https://svn.apache.org/repos/private/documents/grants'
+        href: 'https://svn.apache.org/repos/private/documents/grants'
     end
     _li do
       _a 'Incubator', target: 'content',
-	href: 'http://incubator.apache.org'
+        href: 'http://incubator.apache.org'
     end
     _li do
       _a 'Project Proposals', target: 'content',
-	href: 'https://wiki.apache.org/incubator/ProjectProposals'
+        href: 'https://wiki.apache.org/incubator/ProjectProposals'
     end
     _li do
       _a 'ICLA lint', target: 'content',
-	href: 'https://whimsy.apache.org/secretary/icla-lint'
+        href: 'https://whimsy.apache.org/secretary/icla-lint'
     end
     _li do
       _a 'Public names', target: 'content',
-	href: 'https://whimsy.apache.org/secretary/public-names'
+        href: 'https://whimsy.apache.org/secretary/public-names'
     end
     _li do
       _a 'Board subscriptions', target: 'content',
-	href: 'https://whimsy.apache.org/board/subscriptions/'
+        href: 'https://whimsy.apache.org/board/subscriptions/'
     end
     _li do
       _a 'Mail aliases', target: 'content',
-	href: 'https://id.apache.org/info/MailAlias.txt'
+        href: 'https://id.apache.org/info/MailAlias.txt'
     end
     _li do
       _a 'Member list', target: 'content',
-	href: 'https://svn.apache.org/repos/private/foundation/members.txt'
+        href: 'https://svn.apache.org/repos/private/foundation/members.txt'
     end
     _li do
       _a 'How to use this tool', href: 'HOWTO.html',
-	target: 'content'
+        target: 'content'
     end
     if File.exist? '/var/tools/secretary/secmail'
       _li {_p {_hr}}

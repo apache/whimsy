@@ -140,7 +140,7 @@ class Message
     else
       # validate filename
       unless filename =~ /\A[a-zA-Z][-.\w]+\Z/
-	      raise IOError.new("invalid filename: #{filename}")
+        raise IOError.new("invalid filename: #{filename}")
       end
 
       # ensure directory doesn't exist
