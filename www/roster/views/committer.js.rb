@@ -93,6 +93,20 @@ class Committer < React
         end
       end
 
+      if committer.pgp
+        _tr do
+          _td 'PGP key'
+          _td committer.pgp
+        end
+      end
+
+      if committer.sascore
+        _tr.editable do
+          _td 'SpamAssassin score'
+          _td committer.sascore
+        end
+      end
+
       if committer.githubUsername
         _tr do
           _td 'GitHub username'

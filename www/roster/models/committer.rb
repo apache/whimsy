@@ -57,12 +57,12 @@ class Committer
       member = {}
 
       if person.asf_member?
-	member[:info] = person.members_txt
-	member[:status] = ASF::Member.status[id] || 'Active'
+        member[:info] = person.members_txt
+        member[:status] = ASF::Member.status[id] || 'Active'
       else
         if person.member_nomination
-	  member[:nomination] = person.member_nomination
-	end
+          member[:nomination] = person.member_nomination
+        end
       end
 
       response[:member] = member
