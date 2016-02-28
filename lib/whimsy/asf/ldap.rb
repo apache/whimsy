@@ -359,9 +359,12 @@ module ASF
       Group.list("memberUid=#{name}")
     end
 
+    def services
+      Service.list("member=#{dn}")
+    end
+
     def dn
-      value = attrs['dn']
-      value.first if Array === value
+      "uid=#{name},#{ASF::Person.base}"
     end
 
     def method_missing(name, *args)

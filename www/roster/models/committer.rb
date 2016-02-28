@@ -36,7 +36,7 @@ class Committer
 
     response[:committees] = person.committees.map(&:name)
 
-    response[:groups] = []
+    response[:groups] = person.services
     response[:committer] = []
     committees = ASF::Committee.list.map(&:id)
     person.groups.map(&:name).each do |group|
