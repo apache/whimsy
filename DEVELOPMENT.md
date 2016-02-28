@@ -139,6 +139,12 @@ command `bundle install`.
    if any source file changes.  If a `Rakefile` isn't present, the `rackup`
    command can be used to start the application.
 
+   If you are testing an application that makes changes to LDAP, you will
+   need to enter your ASF password.  To do so, substiture `rake auth server`
+   for the `rake server` command above.  This will prompt you for your
+   password.  Should your ASF availid differ from your local user id,
+   set the `USER` environment variable prior to executing this command.
+
 Advanced configuration
 ======================
 
