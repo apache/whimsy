@@ -56,12 +56,12 @@ get '/committer/index.json' do
 end
 
 get '/committee/:name.json' do |name|
-  _json Committee.serialize(name)
+  _json Committee.serialize(name, env)
 end
 
 get '/committee/:name' do |name|
   @auth = Auth.info(env)
-  @committee = Committee.serialize(name)
+  @committee = Committee.serialize(name, env)
   pass unless @committee
   _html :committee
 end

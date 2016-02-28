@@ -40,6 +40,23 @@ class PMC < React
     _PMCMembers auth: auth, committee: @committee
     _PMCCommitters auth: auth, committee: @committee
 
+    _h2 'Mail lists'
+    _ul do
+      for name in @committee.mail
+        _li do
+          if @committee.mail[name] == 'public'
+            _a name, href: "http://mail-archives.apache.org/mod_mbox/#{name}/"
+          elsif @@committee.roster[@@auth.id]
+            _a name, href: 
+              "https://mail-search.apache.org/pmc/private-arch/#{name}/"
+          else
+            _a name, href: 
+              "https://mail-search.apache.org/members/private-arch/#{name}/"
+          end
+        end
+      end
+    end
+
     # reporting schedule
     _h2 'Reporting Schedule'
     _ul do

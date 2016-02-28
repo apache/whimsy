@@ -1,5 +1,5 @@
 class Committee
-  def self.serialize(id)
+  def self.serialize(id, env)
     response = {}
 
     pmc = ASF::Committee.find(id)
@@ -9,8 +9,16 @@ class Committee
     ASF::Committee.load_committee_info
     people = ASF::Person.preload('cn', (pmc.members + committers).uniq)
 
-    prefix = pmc.mail_list + '-'
-    lists = ASF::Mail.lists(true).select {|list| list.start_with? prefix}
+    lists = ASF::Mail.lists(true).select do |list, mode|
+      list =~ /^#{pmc.mail_list}\b/
+    end
+
+    unless
+      pmc.roster.include? env.user or
+      ASF::Person.find(env.user).asf_member?
+    then
+      lists = lists.select {|list, mode| mode == 'public'}
+    end
 
     response = {
       id: id,
@@ -24,7 +32,7 @@ class Committee
       ldap: Hash[pmc.members.map {|person| [person.id, person.cn]}],
       committers: Hash[committers.map {|person| [person.id, person.cn]}],
       roster: pmc.roster,
-      mail: Hash[lists]
+      mail: Hash[lists.sort]
     }
 
     response
