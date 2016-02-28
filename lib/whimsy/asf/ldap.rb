@@ -311,6 +311,11 @@ module ASF
       @attrs ||= LazyHash.new {ASF.search_one(base, "uid=#{name}").first}
     end
 
+    def reload!
+      @attrs = nil
+      attrs
+    end
+
     def public_name
       return icla.name if icla
       cn = [attrs['cn']].flatten.first

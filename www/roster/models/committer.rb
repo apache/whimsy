@@ -3,6 +3,7 @@ class Committer
     response = {}
 
     person = ASF::Person.find(id)
+    person.reload!
     return unless person.attrs['cn']
 
     response[:id] = id
