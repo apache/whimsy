@@ -6,7 +6,7 @@ class Committer < React
   def render
     # usage information for authenticated users (owner, secretary, etc.)
     if @auth
-      _div.alert.alert_success 'Double click on a fields in this color to edit.'
+      _div.alert.alert_success 'Double click on a field in this color to edit.'
     end
 
     _h2 "#{@committer.id}@apache.org"
@@ -41,7 +41,7 @@ class Committer < React
           _td 'Personal URL'
           _td do
             _ul @committer.urls do |url|
-              _a url, href: url
+              _li {_a url, href: url}
             end
           end
         end
