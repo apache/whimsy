@@ -104,8 +104,12 @@ class Committer < React
 
       if @committer.pgp
         _tr do
-          _td 'PGP key'
-          _td @committer.pgp
+          _td 'PGP keys'
+          _td do
+            _ul @committer.pgp do |key|
+            _li {_samp key}
+            end
+          end
         end
       end
 
