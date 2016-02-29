@@ -31,6 +31,9 @@ This directory has two main subdirectories...
    may also produce a set (subtree) of web pages.  CGI scripts can be
    identified by their `.cgi` file extension.
 
+Rack applications
+=================
+
    Some of the directories (like the roster tool) contain
    [rack](http://rack.github.io/) applications.  These can be run
    independently, or under the Apache web server through
@@ -137,7 +140,7 @@ command `bundle install`.
    `~/.whimsy` file and/or run using
    [suexec](http://httpd.apache.org/docs/current/suexec.html).
 
-2. Rack applications can be run as a standalone web server.  If a `Rakefile`
+2. Rack applications (*) can be run as a standalone web server.  If a `Rakefile`
    is provided, the convention is that `rake server` will start the server,
    typically with listeners that will automatically restart the application
    if any source file changes.  If a `Rakefile` isn't present, the `rackup`
@@ -148,6 +151,8 @@ command `bundle install`.
    for the `rake server` command above.  This will prompt you for your
    password.  Should your ASF availid differ from your local user id,
    set the `USER` environment variable prior to executing this command.
+
+   (*) see above
 
 Advanced configuration
 ======================
