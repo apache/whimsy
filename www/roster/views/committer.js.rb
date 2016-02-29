@@ -149,7 +149,10 @@ class Committer < React
         if @committer.member.info
           _tr do
             _td 'Members.txt'
-            _td {_pre @committer.member.info}
+            _td do
+              _pre @committer.member.info,
+                class: ('small' if @committer.member.info =~ /.{81}/)
+            end
           end
         end
 
