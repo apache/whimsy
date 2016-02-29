@@ -1,6 +1,6 @@
 #!/usr/bin/ruby1.9.1
 
-require 'wunderbar/jquery'
+require 'wunderbar'
 
 # response to form requests
 if ENV['REQUEST_METHOD'].upcase == 'POST'
@@ -56,14 +56,19 @@ _html do
   end
 
   _script %{
-    $('input').on('input', function() {
-      if ($('input').is(function () {return this.matches(':invalid')})) {
-        console.log('disabled');
-        $('input[type=submit]').prop('disabled', true);
-      } else {
-        console.log('enabled');
-        $('input[type=submit]').prop('disabled', false);
-      }
-    });
+    var inputs = Array.prototype.slice.call(document.querySelectorAll("input"));
+    var submit = document.querySelector("input[type=submit]");
+
+    inputs.forEach(function(input) {
+      input.addEventListener("input", function() {
+        if (inputs.some(function(input) {
+          return input.matches(":invalid")
+        })) {
+          submit.disabled = true
+        } else {
+          submit.disabled = false
+        }
+      })
+    })
   }
 end
