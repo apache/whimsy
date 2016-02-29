@@ -122,7 +122,12 @@ _html do
       require 'tmpdir'
       Dir.mktmpdir do |tmpdir|
         svn = `svn info #{MEETINGS}/#{meeting}`[/URL: (.*)/, 1]
-        `svn checkout #{svn.untaint} #{tmpdir.untaint}`
+
+        _.system [
+          'svn', 'checkout', svn.untaint, tmpdir.untaint,
+          ['--no-auth-cache', '--non-interactive'],
+          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+        ]
 
         Dir.chdir(tmpdir) do
           _h3 'Commit Log'
