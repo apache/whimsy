@@ -4,6 +4,7 @@ $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'
 require 'whimsy/asf'
 require 'date'
+require 'tmpdir'
 
 # Update ~/.whimsy to have a :svn: entry for the following:
 MEETINGS = ASF::SVN['private/foundation/Meetings']
@@ -12,6 +13,10 @@ _html do
   _link href: "css/bootstrap.min.css", rel: 'stylesheet'
   _link href: "css/bootstrap-combobox.css", rel: 'stylesheet'
   _style :system
+  _style %{
+    .transcript {margin: 0 16px}
+    .transcript pre {border: none; line-height: 0}
+  }
 
   meeting = File.basename(Dir["#{MEETINGS}/2*"].sort.last).untaint
 
@@ -100,6 +105,8 @@ _html do
 
   else
     _body? do
+      _h3_ 'Session Transcript'
+
       # collect data
       proxy = File.read("#{MEETINGS}/#{meeting}/member_proxy.txt")
       user = ASF::Person.find($USER)
@@ -119,53 +126,55 @@ _html do
       proxyform = proxy.untaint
 
       # report on commit
-      require 'tmpdir'
-      Dir.mktmpdir do |tmpdir|
-        svn = `svn info #{MEETINGS}/#{meeting}`[/URL: (.*)/, 1]
+      _div.transcript do
+        Dir.mktmpdir do |tmpdir|
+          svn = `svn info #{MEETINGS}/#{meeting}`[/URL: (.*)/, 1]
 
-        _.system [
-          'svn', 'checkout', svn.untaint, tmpdir.untaint,
-          ['--no-auth-cache', '--non-interactive'],
-          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
-        ]
-
-        Dir.chdir(tmpdir) do
-          _h3 'Commit Log'
-          # write proxy form
-          filename = "proxies-received/#$USER.txt".untaint
-          File.write(filename, proxyform)
-          _.system ['svn', 'add', filename]
-
-          # get a list of proxies
-          list = Dir['proxies-received/*.txt'].map do |file|
-            form = File.read(file.untaint)
-      
-            id = file[/([-A-Za-z0-9]+)\.\w+$/, 1]
-            proxy = form[/hereby authorize ([\S].*) to act/, 1].gsub('_', ' ').strip
-            name = form[/signature: ([\S].*)/, 1].gsub(/[\/_]/, ' ').strip
-
-            "   #{proxy.ljust(24)} #{name} (#{id})"
-          end
-  
-          # gather a list of all non-text proxies
-          nontext = Dir['proxies-received/*'].
-            reject {|file| file.end_with? '.txt'}.
-            map {|file| file[/([A-Za-z0-9]+)\.\w+$/, 1]}
-
-          # update proxies file
-          proxies = IO.read('proxies')
-          list += proxies.scan(/   \S.*\(\S+\)$/).
-            select {|line| nontext.include? line[/\((\S+)\)$/, 1]}
-          proxies[/.*-\n(.*)/m, 1] = list.flatten.sort.join("\n") + "\n"
-          IO.write('proxies', proxies)
-
-          # commit
           _.system [
-            'svn', 'commit', filename, 'proxies',
-            '-m', "assign #{@proxy} as my proxy",
+            'svn', 'checkout', '--quiet', svn.untaint, tmpdir.untaint,
             ['--no-auth-cache', '--non-interactive'],
             (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
           ]
+
+          Dir.chdir(tmpdir) do
+            _h3 'Commit Log'
+            # write proxy form
+            filename = "proxies-received/#$USER.txt".untaint
+            File.write(filename, proxyform)
+            _.system ['svn', 'add', filename]
+
+            # get a list of proxies
+            list = Dir['proxies-received/*.txt'].map do |file|
+              form = File.read(file.untaint)
+        
+              id = file[/([-A-Za-z0-9]+)\.\w+$/, 1]
+              proxy = form[/hereby authorize ([\S].*) to act/, 1].
+                gsub('_', ' ').strip
+              name = form[/signature: ([\S].*)/, 1].gsub(/[\/_]/, ' ').strip
+
+              "   #{proxy.ljust(24)} #{name} (#{id})"
+            end
+    
+            # gather a list of all non-text proxies
+            nontext = Dir['proxies-received/*'].
+              reject {|file| file.end_with? '.txt'}.
+              map {|file| file[/([A-Za-z0-9]+)\.\w+$/, 1]}
+
+            # update proxies file
+            proxies = IO.read('proxies')
+            list += proxies.scan(/   \S.*\(\S+\)$/).
+              select {|line| nontext.include? line[/\((\S+)\)$/, 1]}
+            proxies[/.*-\n(.*)/m, 1] = list.flatten.sort.join("\n") + "\n"
+            IO.write('proxies', proxies)
+
+            # commit
+            _.system [
+              'svn', 'commit', filename, 'proxies',
+              '-m', "assign #{@proxy} as my proxy",
+              ['--no-auth-cache', '--non-interactive'],
+              (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+            ]
+          end
         end
       end
 
