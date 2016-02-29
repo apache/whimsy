@@ -14,4 +14,4 @@ if env.password
   end
 end
 
-Committee.serialize(@pmc)
+Committee.serialize(@pmc, env)
