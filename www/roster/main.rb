@@ -22,6 +22,7 @@ get '/' do
   @committers = ASF::Person.list
   @committees = ASF::Committee.list
   @members = ASF::Member.list.keys - ASF::Member.status.keys
+  @groups = Group.list
   @podlings = ASF::Podlings.new.to_h.values
   _html :index
 end
@@ -92,6 +93,12 @@ get '/group/:name' do |name|
   @group = Group.serialize(name)
   pass unless @group
   _html :group
+end
+
+get '/group/' do
+  @groups = Group.list
+  @podlings = ASF::Podlings.new.to_h
+  _html :groups
 end
 
 # member list

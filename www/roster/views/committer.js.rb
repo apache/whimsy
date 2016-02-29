@@ -77,6 +77,8 @@ class Committer < React
           _td 'Groups'
           _td do
             _ul @committer.groups do |group|
+              next if group == 'apldap'
+
               if group == 'committers'
                 _li {_a group, href: "committer/"}
               elsif group == 'member'
@@ -127,7 +129,11 @@ class Committer < React
         if @committer.member.status
           _tr do
             _td 'Member status'
-            _td @committer.member.status
+            if @committer.member.info
+              _td @committer.member.status
+            else
+              _td.not_found 'Not in members.txt'
+            end
           end
         end
 

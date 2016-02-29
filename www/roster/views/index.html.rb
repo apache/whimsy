@@ -71,5 +71,19 @@ _html do
       _td 'Active podlings at the ASF'
     end
 
+    ### Groups
+
+    _tr do
+      _td do
+        _a @groups.length, href: 'group/'
+      end
+
+      _td do
+        _a 'Groups', href: 'group/'
+      end
+
+      _td 'Assorted other groups from various sources'
+    end
+
   end
 end

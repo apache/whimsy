@@ -3,6 +3,25 @@
 #
 
 class Group
+  def self.list
+    # start with groups that aren't PMCs
+    groups = ASF::Group.list.map(&:id)
+    groups -= ASF::Committee.list.map(&:id)
+    groups.map! {|group| [group, "LDAP group"]}
+
+    # add services...
+    groups += ASF::Service.list.map {|service| [service, "LDAP service"]}
+
+    # add authorization (asf and pit)
+    groups += ASF::Authorization.new('asf').to_h.
+      map {|id, list| [id, "ASF Auth"]}
+
+    groups += ASF::Authorization.new('pit').to_h.
+      map {|id, list| [id, "PIT Auth"]}
+
+    groups.sort
+  end
+
   def self.serialize(id)
     response = {}
 
