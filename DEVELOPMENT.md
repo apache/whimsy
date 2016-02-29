@@ -178,8 +178,8 @@ http://localhost/whimsy/:
 
 2. Configure `suexec` by editing `/etc/apache2/suexec/www-data`:
 
-       /srv
-       public_html
+        /srv
+        public_html
 
 3. Install passenger by running either running 
    `passenger-install-apache2-module` and following its instructions, or
@@ -187,13 +187,13 @@ http://localhost/whimsy/:
 
 4. Configure individual rack applications:
 
-       Alias /whimsy/board/agenda/ /srv/whimsy/www/board/agenda
-       <Location /whimsy/board/agenda>
-         PassengerBaseURI /whimsy/board/agenda
-         PassengerAppRoot /srv/whimsy/www/board/agenda
-         PassengerAppEnv development
-         Options -Multiviews
-       </Location>
+        Alias /whimsy/board/agenda/ /srv/whimsy/www/board/agenda
+        <Location /whimsy/board/agenda>
+          PassengerBaseURI /whimsy/board/agenda
+          PassengerAppRoot /srv/whimsy/www/board/agenda
+          PassengerAppEnv development
+          Options -Multiviews
+        </Location>
 
 5. (Optional) run a service that will restart your passenger applications
    whenever the source to that application is modified by creating a
