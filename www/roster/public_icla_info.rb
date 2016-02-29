@@ -19,8 +19,7 @@ if ARGV.length == 2
 
   info_id = {
     last_updated: ASF::ICLA.svn_change,
-    committers: Hash[ids.sort],
-    non_committers: noid # TEMPORARY - keep old format until apps have been updated
+    committers: Hash[ids.sort]
   }
   public_json_output_file(info_id, ARGV.shift)
   
