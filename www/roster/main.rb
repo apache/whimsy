@@ -5,6 +5,7 @@
 #
 
 require 'whimsy/asf'
+require 'whimsy/asf/podlings'
 
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap/theme'
@@ -21,6 +22,7 @@ get '/' do
   @committers = ASF::Person.list
   @committees = ASF::Committee.list
   @members = ASF::Member.list.keys - ASF::Member.status.keys
+  @podlings = ASF::Podlings.new.to_h.values
   _html :index
 end
 
@@ -99,6 +101,13 @@ end
 
 get '/members.json' do
   _json Hash[ASF.members.map {|person| [person.id, person.public_name]}.sort]
+end
+
+# member list
+get '/podlings' do
+  @podlings = ASF::Podlings.new.to_a.map {|id, hash| hash.merge id: id}
+
+  _html :podlings
 end
 
 # posted actions

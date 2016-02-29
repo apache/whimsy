@@ -56,5 +56,20 @@ _html do
       _td 'Active projects at the ASF'
     end
 
+    ### Podlings
+
+    _tr do
+      _td do
+        _a @podlings.select {|podling| podling[:status] == 'current'}.length,
+          href: 'podlings'
+      end
+
+      _td do
+        _a 'Podlings', href: 'podlings'
+      end
+
+      _td 'Active podlings at the ASF'
+    end
+
   end
 end
