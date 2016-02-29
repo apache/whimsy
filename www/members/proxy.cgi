@@ -137,7 +137,6 @@ _html do
           ]
 
           Dir.chdir(tmpdir) do
-            _h3 'Commit Log'
             # write proxy form
             filename = "proxies-received/#$USER.txt".untaint
             File.write(filename, proxyform)
