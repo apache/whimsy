@@ -113,21 +113,6 @@ class Committer < React
         end
       end
 
-      _tr data_edit: 'sascore' do
-        _td 'SpamAssassin score'
-        _td do
-          if @edit_sascore
-            _form method: 'post' do
-              _input type: 'number', min: 0, max: 10, 
-                name: 'sascore', defaultValue: @committer.sascore
-              _input type: 'submit', value: 'submit'
-            end
-          else
-            _span @committer.sascore
-          end
-        end
-      end
-
       if @committer.githubUsername
         _tr do
           _td 'GitHub username'
@@ -160,6 +145,21 @@ class Committer < React
           _tr do
             _td 'nomination'
             _td {_pre @committer.member.nomination}
+          end
+        end
+      end
+
+      _tr data_edit: 'sascore' do
+        _td 'SpamAssassin score'
+        _td do
+          if @edit_sascore
+            _form method: 'post' do
+              _input type: 'number', min: 0, max: 10, 
+                name: 'sascore', defaultValue: @committer.sascore
+              _input type: 'submit', value: 'submit'
+            end
+          else
+            _span @committer.sascore
           end
         end
       end
