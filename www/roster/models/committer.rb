@@ -54,6 +54,14 @@ class Committer
       end
     end
 
+    ASF::Authorization.new('asf').each do |group, members|
+      response[:groups] << group if members.include? id
+    end
+
+    ASF::Authorization.new('pit').each do |group, members|
+      response[:groups] << group if members.include? id
+    end
+
     response[:committees].sort!
     response[:groups].sort!
     response[:committer].sort!
