@@ -16,6 +16,9 @@
     url: infra/infrastructure/apmail/trunk/bin
     depth: files
 
+  attic-xdocs:
+    url: asf/attic/site/xdocs/projects
+
   authorization:
     url: infra/infrastructure/trunk/subversion/authorization
     depth: files

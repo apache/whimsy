@@ -5,6 +5,9 @@
 _html do
   _title 'ASF Podling list'
   _link rel: 'stylesheet', href: 'stylesheets/app.css'
+  _style %{
+    p {margin-top: 0.5em}
+  }
 
   _banner breadcrumbs: {
     roster: '.',
@@ -40,7 +43,8 @@ _html do
   color = {
     'current'   => 'bg-info',
     'graduated' => 'bg-success',
-    'retired'   => 'bg-warning'
+    'retired'   => 'bg-warning',
+    'attic'     => 'bg-danger'
    }
 
   _h1_ 'Podlings'
@@ -57,13 +61,27 @@ _html do
 
     _tbody do
       @podlings.sort_by {|podling| podling[:name].downcase}.each do |podling|
-        _tr_ class: color[podling[:status]] do
+        status = (@attic.include?(podling[:id]) ? 'attic' : podling[:status])
+
+        _tr_ class: color[status] do
           _td do
             _a podling[:name], href:
               "http://incubator.apache.org/projects/#{podling[:id]}.html"
           end
 
-          _td podling[:status]
+          if @committees.include? podling[:id]
+            _td data_sort_value: "#{podling[:status]} - pmc" do
+              _a podling[:status], href: "committee/#{podling[:id]}"
+            end
+          elsif @attic.include? podling[:id]
+            _td data_sort_value: "#{podling[:status]} - attic" do
+              _a podling[:status], href:
+                "http://attic.apache.org/projects/#{podling[:id]}.html"
+            end
+          else
+            _td podling[:status]
+          end
+
           _td podling[:description]
         end
       end

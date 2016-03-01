@@ -112,6 +112,9 @@ end
 
 # member list
 get '/podlings' do
+  attic = ASF::SVN['asf/attic/site/xdocs/projects']
+  @attic = Dir["#{attic}/*.xml"].map {|file| File.basename(file, '.xml')}
+  @committees = ASF::Committee.list.map(&:id)
   @podlings = ASF::Podlings.new.to_a.map {|id, hash| hash.merge id: id}
 
   _html :podlings
