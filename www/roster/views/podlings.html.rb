@@ -41,6 +41,7 @@ _html do
    }
 
   _h1_ 'Podlings'
+  _h5_ 'Click on a column heading to change the sort order'
 
   _table.table.table_hover do
     _thead do
