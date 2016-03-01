@@ -28,6 +28,11 @@ _html do
     end
   end
 
+  _p do
+    _ 'Data is derived from:'
+    _a 'podlings.xml', href: 'https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings.xml'
+  end
+
   # ********************************************************************
   # *                          Complete list                           *
   # ********************************************************************
@@ -64,7 +69,6 @@ _html do
       end
     end
   end
-
 
   _script %{
     $(".table").stupidtable();
