@@ -56,3 +56,5 @@ away once the transition away from the secretary workbench is complete:
    * `svn co https://svn.apache.org/repos/private/documents /srv/secretary/workbench/documents`
    * `svn co https://svn.apache.org/repos/infra/infrastructure/trunk/subreq /srv/secretary/workbench/subreq`
 
+ * Copy `www/secretary/workbench/secmail.rb` to
+   `/srv/secretary/workbench/secmail.rb`
