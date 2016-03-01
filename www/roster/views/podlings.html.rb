@@ -45,9 +45,9 @@ _html do
   _table.table.table_hover do
     _thead do
       _tr do
-        _th.sorting_asc 'name', data_sort: 'string-ins'
-        _th 'description', data_sort: 'string'
-        _th 'status', data_sort: 'string'
+        _th.sorting_asc 'Name', data_sort: 'string-ins'
+        _th 'Status', data_sort: 'string'
+        _th 'Description', data_sort: 'string'
       end
     end
 
@@ -59,8 +59,8 @@ _html do
               "http://incubator.apache.org/projects/#{podling[:id]}.html"
           end
 
-          _td podling[:description]
           _td podling[:status]
+          _td podling[:description]
         end
       end
     end
