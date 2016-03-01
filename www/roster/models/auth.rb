@@ -13,6 +13,10 @@ class Auth
       info[:root] = true
     end
 
+    if user.asf_member?
+      info[:member] = true
+    end
+
     info
   end
 end

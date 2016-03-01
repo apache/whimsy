@@ -70,6 +70,13 @@ class PMC < React
         _a 'Prior reports', href: 'https://whimsy.apache.org/board/minutes/' +
           @committee.display_name.gsub(/\s+/, '_')
       end
+
+      if @committee.ldap[@@auth.id] or @@auth.member
+        _li do
+          _a 'Apache Committee Report Helper',
+            href: "https://reporter.apache.org/?#{@committee.id}"
+        end
+      end
     end
 
     # hidden form
