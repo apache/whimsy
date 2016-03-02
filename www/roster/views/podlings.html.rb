@@ -48,8 +48,15 @@ _html do
    }
 
   _h1_ 'Podlings'
-  _h5_ 'Click on a column heading to change the sort order'
-
+  _h5_ do
+    _ 'Click on a column heading to change the sort order ('
+    color.each do |state, clazz|
+      _{"<span class='#{clazz}'>#{state}</span>"}
+      _ " "
+    end
+    _ ")"
+  end
+    
   _table.table.table_hover do
     _thead do
       _tr do
