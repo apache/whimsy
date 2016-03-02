@@ -48,3 +48,6 @@ button.btn {margin: 0 8px}
 #main > span > ul {
   margin-top: 1em;
 }
+
+pre.wide {padding: 0 8px; width: 60em; overflow-x: hidden; margin: 6px 0}
+pre.wide:hover {overflow-x: scroll}

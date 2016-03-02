@@ -124,6 +124,19 @@ class Committer < React
         end
       end
 
+      if @committer.ssh
+        _tr do
+          _td 'SSH keys'
+          _td do
+            _ul @committer.ssh do |key|
+              _li.ssh do
+                _pre.wide key
+              end
+            end
+          end
+        end
+      end
+
       if @committer.githubUsername
         _tr do
           _td 'GitHub username'

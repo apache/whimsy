@@ -25,8 +25,12 @@ class Committer
 
     response[:mail] = person.all_mail
 
-    if person.pgp_key_fingerprints and not person.pgp_key_fingerprints.empty?
+    unless person.pgp_key_fingerprints.empty?
       response[:pgp] = person.pgp_key_fingerprints 
+    end
+
+    unless person.ssh_public_keys.empty?
+      response[:ssh] = person.ssh_public_keys
     end
 
     if person.attrs['asf-sascore']

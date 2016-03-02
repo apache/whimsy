@@ -352,6 +352,10 @@ module ASF
       attrs['asf-pgpKeyFingerprint'] || []
     end
 
+    def ssh_public_keys
+      attrs['sshPublicKey'] || []
+    end
+
     def urls
       attrs['asf-personalURL'] || []
     end
