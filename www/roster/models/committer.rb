@@ -83,9 +83,15 @@ class Committer
         member[:status] = ASF::Member.status[id] || 'Active'
 
         apps = ASF::SVN['private/documents/member_apps']
-        memapp = member[:info].split("\n").first.downcase.gsub(/\s/, '-')
-        if apps and File.exist? File.join(apps, memapp + '.pdf')
-          response[:forms][:member] = memapp + '.pdf'
+        [
+          person.icla.legal_name, 
+          person.icla.name,
+          member[:info].split("\n").first.strip
+        ].uniq.each do |name|
+          memapp = name.downcase.gsub(/\s/, '-')
+          if apps and File.exist? File.join(apps, memapp + '.pdf')
+            response[:forms][:member] = memapp + '.pdf'
+          end
         end
       else
         if person.member_nomination
