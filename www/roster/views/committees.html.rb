@@ -32,9 +32,9 @@ _html do
         _td do
           pmc.chairs.each_with_index do |chair, index|
             if @members.include? chair[:id]
-              _b! {_a chair[:name], href: "../committer/#{chair[:id]}"}
+              _b! {_a chair[:name], href: "committer/#{chair[:id]}"}
             else
-              _a chair[:name], href: "../committer/#{chair[:id]}"
+              _a chair[:name], href: "committer/#{chair[:id]}"
             end
 
             _span ', ' unless index == 0
