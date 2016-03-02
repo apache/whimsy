@@ -67,11 +67,26 @@ class Committer
     response[:committer].sort!
 
     if ASF::Person.find(env.user).asf_member?
+      response[:forms] = {}
+
+      iclas = ASF::SVN['private/documents/iclas']
+      if File.exist? File.join(iclas, person.icla.claRef + '.pdf')
+        response[:forms][:icla] = person.icla.claRef + '.pdf'
+      elsif Dir.exist? File.join(iclas, person.icla.claRef)
+        response[:forms][:icla] = person.icla.claRef + '/'
+      end
+
       member = {}
 
       if person.asf_member?
         member[:info] = person.members_txt
         member[:status] = ASF::Member.status[id] || 'Active'
+
+        apps = ASF::SVN['private/documents/member_apps']
+        memapp = member[:info].split("\n").first.downcase.gsub(/\s/, '-')
+        if File.exist? File.join(apps, memapp + '.pdf')
+          response[:forms][:member] = memapp + '.pdf'
+        end
       else
         if person.member_nomination
           member[:nomination] = person.member_nomination
@@ -79,6 +94,7 @@ class Committer
       end
 
       response[:member] = member
+
     end
 
     response

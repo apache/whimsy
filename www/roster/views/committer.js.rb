@@ -149,8 +149,33 @@ class Committer < React
 
         if @committer.member.nomination
           _tr do
-            _td 'nomination'
+            _td 'Nomination'
             _td {_pre @committer.member.nomination}
+          end
+        end
+        j
+        if @committer.forms
+          _tr do
+            _td 'Forms on file'
+            _td do
+              _ul do
+                for form in @committer.forms
+                  link = @committer.forms[form]
+                  
+                  if form == 'icla'
+                    _li do
+                      _a 'ICLA', href: "https://svn.apache.org/repos/private/documents/iclas/#{link}"
+                    end
+                  elsif form == 'member'
+                    _li do
+                      _a 'Membership App', href: "https://svn.apache.org/repos/private/documents/member_apps/#{link}"
+                    end
+                  else
+                    _li "#{form}: #{link}"
+                  end
+                end
+              end
+            end
           end
         end
       end
