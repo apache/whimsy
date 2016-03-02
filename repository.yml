@@ -41,9 +41,6 @@
     url: asf/incubator/public/trunk/content
     depth: files
 
-  incubator_site_author:
-    url: http://svn.apache.org/repos/asf/incubator/public/trunk/content
-
   member_apps:
     url: private/documents/member_apps
 
