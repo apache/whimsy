@@ -84,7 +84,7 @@ class Committer
 
         apps = ASF::SVN['private/documents/member_apps']
         memapp = member[:info].split("\n").first.downcase.gsub(/\s/, '-')
-        if File.exist? File.join(apps, memapp + '.pdf')
+        if apps and File.exist? File.join(apps, memapp + '.pdf')
           response[:forms][:member] = memapp + '.pdf'
         end
       else
