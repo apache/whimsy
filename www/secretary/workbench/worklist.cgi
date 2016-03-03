@@ -16,10 +16,6 @@ _html do
 
     _pre do
       _ `date` + "\n"
-      secmail_status = 'http://minotaur.apache.org/~apmail/secmail.txt'
-      secmail_status = 'http://140.211.11.9/~apmail/secmail.txt' # DNS issues
-      _a `curl -s #{secmail_status}`.sub(': ', ":\n"), href: secmail_status,
-        target: '_blank'
     end
 
     if `which svn`.empty?
