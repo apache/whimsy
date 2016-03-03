@@ -7,7 +7,7 @@ module ASF
     def self.member_nominees
       begin
         return Hash[@member_nominees.to_a] if @member_nominees
-      rescue NoMethodError, WeakRef::RefError
+      rescue
       end
 
       meetings = ASF::SVN['private/foundation/Meetings']

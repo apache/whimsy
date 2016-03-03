@@ -43,11 +43,11 @@ module ASF
     def self.status
       begin
         return Hash[@status.to_a] if @status
-      rescue NoMethodError, WeakRef::RefError
+      rescue
       end
 
       status = {}
-      foundation = ASF::SVN['private/foundation']
+      foundation = ASF::SVN.find('private/foundation')
       return status unless foundation
       sections = File.read("#{foundation}/members.txt").split(/(.*\n===+)/)
       sections.shift(3)

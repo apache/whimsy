@@ -72,8 +72,10 @@ _html do
       list = watch_list
     end
 
-    # for efficiency, preload public_names
+    # for efficiency, preload public_names, member status, and nominees
     people = ASF::Person.preload('cn', list)
+    members = ASF::Member.status
+    nominees = ASF::Person.member_nominees
 
     _table do
 
