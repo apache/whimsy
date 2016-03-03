@@ -10,6 +10,7 @@ require 'yaml'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 
+# load list of repositories
 repository_file = File.expand_path('../../../repository.yml', __FILE__)
 repository = YAML.load_file(repository_file)
 
@@ -54,29 +55,91 @@ _html do
   end
 
   _script %{
+    var local = #{!!defined? Sinatra};
+
+    // update status of a row based on a sever response
+    function updateStatus(tr, response) {
+      var tds = $('td', tr);
+      tds[1].textContent = response.local;
+      tds[2].textContent = response.server;
+
+      // update row color
+      if (tds[1].textContent != tds[2].textContent) {
+        tr.setAttribute('class', 'bg-warning');
+
+        if (local) {
+          $(tds[3]).append('<button class="btn btn-info">update</button>');
+          $('button', tr).on('click', sendRequest);
+        }
+      } else {
+        tr.setAttribute('class', 'bg-success');
+        if (local) $(tds[3]).empty();
+      }
+    };
+
+    // when running locally, add a fourth column, and create a function
+    // used to send requests to the server
+    if (local) {
+      $('thead tr').append('<th>action</th');
+      $('tbody tr').append('<td></td');
+
+      function sendRequest(event) {
+        var tr = event.currentTarget.parentNode.parentNode;
+        var action = event.currentTarget.textContent;
+        var tds = $('td', tr);
+        var name = tds[0].textContent;
+        event.currentTarget.disabled = true;
+        $.getJSON('?action=' + action + '&name=' + name, function(response) {
+          updateStatus(tr, response);
+          event.currentTarget.disabled = false;
+        });
+      }
+    }
+
     // fetch server revision for each row
     $('tbody tr').each(function(index, tr) {
       var tds = $('td', tr);
       var path = tds[0].getAttribute('title');
-      if (tds[1].textContent == '') return;
-      $.getJSON('?name=' + tds[0].textContent, function(response) {
-        tds[2].textContent = response.rev;
-
-        // update row color
-        if (tds[1].textContent != tds[2].textContent) {
-          tr.classList.add('bg-warning');
-        } else {
-          tr.classList.add('bg-success');
-        }
-      });
+      if (tds[1].textContent == '') {
+        $(tds[3]).append('<button class="btn btn-success">checkout</button>');
+        $('button', tr).prop('disabled', true);
+      } else {
+        $.getJSON('?name=' + tds[0].textContent, function(response) {
+          updateStatus(tr, response);
+        });
+      }
     });
   }
 end
 
+# process XMLHttpRequests
 _json do
   local_path = ASF::SVN[@name.untaint]
   if local_path
+    if @action == 'update'
+      `svn cleanup #{local_path.untaint}`
+      log = `svn update #{local_path.untaint}`
+    end
+
     repository_url = `svn info #{local_path}`[/^URL: (.*)/, 1]
-    {rev: `svn info #{repository_url.untaint}`[/^Revision: (.*)/, 1]}
+
+    {
+      log: log.to_s.split("\n"),
+      local: `svn info #{local_path.untaint}`[/^Revision: (.*)/, 1],
+      server: `svn info #{repository_url.untaint}`[/^Revision: (.*)/, 1]
+    }
+  end
+end
+
+# standalone (local) support
+if __FILE__ == $0
+  require 'wunderbar/sinatra'
+
+  get '/whimsy.svg' do
+    send_file File.expand_path('../../whimsy.svg', __FILE__)
+  end
+
+  get '/css/status.css' do
+    send_file File.expand_path('../css/status.css', __FILE__)
   end
 end
