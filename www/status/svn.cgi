@@ -18,6 +18,8 @@ _html do
   _link rel: 'stylesheet', href: 'css/status.css'
   _img.logo src: '../whimsy.svg'
 
+  writable = true
+
   _h1_ 'SVN Repository Status'
 
   _table.table do
@@ -37,6 +39,7 @@ _html do
 
         if local
           rev = `svn info #{local}`[/^Revision: (.*)/, 1]
+          writable &&= File.writable?(local)
         else
           color = 'bg-danger'
         end
@@ -55,7 +58,7 @@ _html do
   end
 
   _script %{
-    var local = #{!!defined? Sinatra};
+    var local = #{writable};
 
     // update status of a row based on a sever response
     function updateStatus(tr, response) {
@@ -132,7 +135,7 @@ _json do
 end
 
 # standalone (local) support
-if __FILE__ == $0
+if __FILE__ == $0 and not ENV['GATEWAY_INTERFACE']
   require 'wunderbar/sinatra'
 
   get '/whimsy.svg' do
