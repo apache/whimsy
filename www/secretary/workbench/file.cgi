@@ -794,19 +794,19 @@ _html do
           _.system "svn rm #{@source}#{at}"
         elsif @dest == 'flip'
           _h1 'Flip'
-          _.system "pdftk #{@source} cat 1-endS output #{@source}.tmp"
+          _.system "pdftk #{@source} cat 1-endSouth output #{@source}.tmp"
           _.system "mv #{@source}.tmp #{@source}"
         elsif @dest == 'restore'
           _h1 'Restore'
-          _.system "pdftk #{@source} cat 1-endN output #{@source}.tmp"
+          _.system "pdftk #{@source} cat 1-endNorth output #{@source}.tmp"
           _.system "mv #{@source}.tmp #{@source}"
         elsif @dest == 'rotate right'
           _h1 'Rotate Right'
-          _.system "pdftk #{@source} cat 1-endE output #{@source}.tmp"
+          _.system "pdftk #{@source} cat 1-endEast output #{@source}.tmp"
           _.system "mv #{@source}.tmp #{@source}"
         elsif @dest == 'rotate left'
           _h1 'Rotate Left'
-          _.system "pdftk #{@source} cat 1-endW output #{@source}.tmp"
+          _.system "pdftk #{@source} cat 1-endWest output #{@source}.tmp"
           _.system "mv #{@source}.tmp #{@source}"
         elsif @dest == 'junk'
           _.system(['svn', 'rm', '--force', "#{@source}#{at}"])
