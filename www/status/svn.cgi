@@ -31,7 +31,7 @@ _html do
 
     _tbody do
       repository[:svn].values.sort_by {|value| value['url']}.each do |svn|
-        local = ASF::SVN[svn['url']] unless svn['url'] =~ /^https?:/
+        local = ASF::SVN.find(svn['url']) unless svn['url'] =~ /^https?:/
 
         color = nil
 

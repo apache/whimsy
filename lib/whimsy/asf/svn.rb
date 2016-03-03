@@ -44,7 +44,7 @@ module ASF
       # recursively try parent directory
       if name.include? '/'
         base = File.basename(name).untaint
-        result = self[File.dirname(name)]
+        result = find(File.dirname(name))
         if result and File.exist?(File.join(result, base))
           File.join(result, base)
         end
