@@ -30,6 +30,10 @@ module ASF
     end
 
     def self.[](name)
+      self.find!(name)
+    end
+
+    def self.find(name)
       return @testdata[name] if @testdata[name]
 
       result = repos[(@mock+name.sub('private/','')).to_s.sub(/\/*$/, '')] ||
@@ -45,6 +49,16 @@ module ASF
           File.join(result, base)
         end
       end
+    end
+
+    def self.find!(name)
+      result = self.find(name)
+
+      if not result
+        raise Exception.new("Unable to find svn checkout for #{@base + name}")
+      end
+
+      result
     end
   end
 
