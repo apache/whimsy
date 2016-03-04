@@ -17,6 +17,12 @@ repository = YAML.load_file(repository_file)
 _html do
   _link rel: 'stylesheet', href: 'css/status.css'
   _img.logo src: '../whimsy.svg'
+  _style %{
+    td:nth-child(2), th:nth-child(2) {display: none}
+    @media screen and (min-width: 1200px) {
+       td:nth-child(2), th:nth-child(2) {display: table-cell}
+    }
+  }
 
   writable = true
 
@@ -26,6 +32,7 @@ _html do
     _thead do
       _tr do
         _th 'respository'
+        _th 'local path'
         _th 'local revision'
         _th 'server revision'
       end
@@ -46,6 +53,7 @@ _html do
 
         _tr_ class: color do
           _td svn['url'], title: local
+          _td local
           _td rev
           if local
             _td '(loading)'
@@ -63,20 +71,20 @@ _html do
     // update status of a row based on a sever response
     function updateStatus(tr, response) {
       var tds = $('td', tr);
-      tds[1].textContent = response.local;
-      tds[2].textContent = response.server;
+      tds[2].textContent = response.local;
+      tds[3].textContent = response.server;
 
       // update row color
-      if (tds[1].textContent != tds[2].textContent) {
+      if (tds[2].textContent != tds[3].textContent) {
         tr.setAttribute('class', 'bg-warning');
 
         if (local) {
-          $(tds[3]).append('<button class="btn btn-info">update</button>');
+          $(tds[4]).append('<button class="btn btn-info">update</button>');
           $('button', tr).on('click', sendRequest);
         }
       } else {
         tr.setAttribute('class', 'bg-success');
-        if (local) $(tds[3]).empty();
+        if (local) $(tds[4]).empty();
       }
     };
 
@@ -103,8 +111,8 @@ _html do
     $('tbody tr').each(function(index, tr) {
       var tds = $('td', tr);
       var path = tds[0].getAttribute('title');
-      if (tds[1].textContent == '') {
-        $(tds[3]).append('<button class="btn btn-success">checkout</button>');
+      if (tds[2].textContent == '') {
+        $(tds[4]).append('<button class="btn btn-success">checkout</button>');
         $('button', tr).prop('disabled', true);
       } else {
         $.getJSON('?name=' + tds[0].textContent, function(response) {
