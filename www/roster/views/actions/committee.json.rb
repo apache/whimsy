@@ -27,9 +27,10 @@ if env.password
   details << pmc.dn if pmc
 
   pmc ||= ASF::Committee.find(@pmc)
+  from = ASF::Person.find(env.user)
 
   mail = Mail.new do
-    from "#{ASF::Person.find(env.user).public_name} <#{env.user}@apache.org>"
+    from "#{from.public_name} <#{from.id}@apache.org>"
     to "private@#{pmc.mail_list}.apache.org"
     bcc "root@apache.org"
     subject "#{person.public_name} #{action} #{pmc.display_name} #{list}"
