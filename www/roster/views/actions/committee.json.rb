@@ -1,10 +1,10 @@
 if env.password
+  person = ASF::Person.find(@id)
+  pmc = ASF::Committee.find(@pmc) if @targets.include? 'pmc'
+  group = ASF::Group.find(@pmc) if @targets.include? 'commit'
+
   # update LDAP
   ASF::LDAP.bind(env.user, env.password) do
-    person = ASF::Person.find(@id)
-    pmc = ASF::Committee.find(@pmc) if @targets.include? 'pmc'
-    group = ASF::Group.find(@pmc) if @targets.include? 'commit'
-
     if @action == 'add'
       pmc.add(person) if pmc
       group.add(person) if group
