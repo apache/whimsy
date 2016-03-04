@@ -18,8 +18,8 @@ hash = Digest::SHA1.hexdigest(mail[/^Message-ID:.*/i] || mail)[0..9]
 # build file name
 file = "#{MAIL_ROOT}/#{dest[/^[-\w]+/]}/#{time.strftime("%Y%m")}/#{hash}"
 
+File.umask 0002
 FileUtils.mkdir_p File.dirname(file)
 File.write file, mail, encoding: Encoding::BINARY
 File.utime time, time, file
-File.umask 0002
 File.chmod 0644, file
