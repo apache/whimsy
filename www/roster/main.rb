@@ -20,6 +20,11 @@ require 'ruby2js/filter/require'
 require_relative 'banner'
 require_relative 'models'
 
+# Disable smtp certificate verification
+Mail.defaults do
+  delivery_method :smtp, openssl_verify_mode: 'none'
+end
+
 get '/' do
   if env['REQUEST_URI'].end_with? '/'
     @committers = ASF::Person.list
