@@ -361,15 +361,21 @@ module ASF
     end
 
     def committees
-      Committee.list("member=uid=#{name},#{base}")
+      weakref(:committees) do
+        Committee.list("member=uid=#{name},#{base}")
+      end
     end
 
     def groups
-      Group.list("memberUid=#{name}")
+      weakref(:groups) do
+        Group.list("memberUid=#{name}")
+      end
     end
 
     def services
-      Service.list("member=#{dn}")
+      weakref(:services) do
+        Service.list("member=#{dn}")
+      end
     end
 
     def dn
