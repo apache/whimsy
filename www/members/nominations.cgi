@@ -22,9 +22,9 @@ archive.each do |email|
   message = IO.read(email, mode: 'rb')
   next unless message[/^Date: .*/].to_s.include? year
   subject = message[/^Subject: .*/]
-  next unless subject.include? "[MEMBER NOMINATION]"
+  next unless subject.upcase.include? "MEMBER NOMINATION"
   mail = Mail.new(message)
-  emails << mail if mail.subject.start_with? "[MEMBER NOMINATION]"
+  emails << mail if mail.subject =~ /^\[?MEMBER NOMINATION]?/i
 end
 
 # parse nominations for names and ids
@@ -50,6 +50,8 @@ _html do
 
   _style %{
     .missing {background-color: yellow}
+    .flexbox {display: flex; flex-flow: row wrap}
+    .flexitem {flex-grow: 1}
   }
 
   # common banner
@@ -58,36 +60,47 @@ _html do
       src: "https://www.apache.org/img/asf_logo.png"
   end
 
-  _h1_! do
-    _ "Nominations in "
-    _a 'svn', href: File.join(svnurl, 'nominated-members.txt')
-  end
+  _div.flexbox do
+    _div.flexitem do
+      _h1_! do
+        _ "Nominations in "
+        _a 'svn', href: File.join(svnurl, 'nominated-members.txt')
+      end
 
-  _ul nominations.sort_by {|person| person[:name]} do |person|
-    _li! do
-      _a person[:name], href: "#{ROSTER}/#{person[:id]}"
+      _ul nominations.sort_by {|person| person[:name]} do |person|
+        _li! do
+          match = /\b#{person[:name]}\b/i
+          if emails.any? {|mail| mail.subject.downcase =~ match}
+            _a.present person[:name], href: "#{ROSTER}/#{person[:id]}"
+          else
+            _a.missing person[:name], href: "#{ROSTER}/#{person[:id]}"
+          end
+        end
+      end
     end
-  end
 
-  nominations.map! {|person| person[:name].downcase}
+    nominations.map! {|person| person[:name].downcase}
 
-  _h1_.posted! "Posted nominations reports"
+    _div.flexitem do
+      _h1_.posted! "Posted nominations reports"
 
-  # attempt to sort reports by PMC name
-  emails.sort_by! do |mail| 
-    mail.subject.downcase.gsub('- ', '')
-  end
+      # attempt to sort reports by PMC name
+      emails.sort_by! do |mail| 
+        mail.subject.downcase.gsub('- ', '')
+      end
 
-  # output an unordered list of subjects linked to the message archive
-  _ul emails do |mail|
-    _li do
-      href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' + 
-        URI.escape('<' + mail.message_id + '>')
+      # output an unordered list of subjects linked to the message archive
+      _ul emails do |mail|
+        _li do
+          href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' + 
+            URI.escape('<' + mail.message_id + '>')
 
-      if nominations.any? {|name| mail.subject.downcase =~ /\b#{name}\b/}
-        _a.present mail.subject, href: href
-      else
-        _a.missing mail.subject, href: href
+          if nominations.any? {|name| mail.subject.downcase =~ /\b#{name}\b/}
+            _a.present mail.subject, href: href
+          else
+            _a.missing mail.subject, href: href
+          end
+        end
       end
     end
   end
