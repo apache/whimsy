@@ -30,8 +30,8 @@ if env.password
   from = ASF::Person.find(env.user)
 
   mail = Mail.new do
-    from "#{from.public_name} <#{from.id}@apache.org>"
-    to "private@#{pmc.mail_list}.apache.org"
+    from "#{from.public_name} <#{from.id}@apache.org>".untaint
+    to "private@#{pmc.mail_list}.apache.org".untaint
     bcc "root@apache.org"
     subject "#{person.public_name} #{action} #{pmc.display_name} #{list}"
     body "Current roster can be found at:\n\n" +
