@@ -19,12 +19,16 @@ require_relative 'banner'
 require_relative 'models'
 
 get '/' do
-  @committers = ASF::Person.list
-  @committees = ASF::Committee.list
-  @members = ASF::Member.list.keys - ASF::Member.status.keys
-  @groups = Group.list
-  @podlings = ASF::Podlings.new.to_h.values
-  _html :index
+  if env['REQUEST_URI'].end_with? '/'
+    @committers = ASF::Person.list
+    @committees = ASF::Committee.list
+    @members = ASF::Member.list.keys - ASF::Member.status.keys
+    @groups = Group.list
+    @podlings = ASF::Podlings.new.to_h.values
+    _html :index
+  else
+    redirect to('/')
+  end
 end
 
 get '/committer/' do
@@ -32,7 +36,7 @@ get '/committer/' do
 end
 
 get '/committer' do
-  call env.merge('PATH_INFO' => '/committer/')
+  redirect to('/committer/')
 end
 
 get '/committee/' do
@@ -42,8 +46,7 @@ get '/committee/' do
 end
 
 get '/committee' do
-  call env.merge('PATH_INFO' => '/committee/')
-end
+  redirect to('/committee/')
 
 get '/committer/index.json' do
   # bulk loading the mail information makes things go faster
