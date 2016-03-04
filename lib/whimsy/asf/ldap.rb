@@ -469,7 +469,7 @@ module ASF
     end
 
     def add(people)
-      people = Array(people).map(&:dn)
+      people = Array(people).map(&:id)
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'memberUid', people)
       ASF.ldap.modify(self.dn, [mod])
       @members = nil
