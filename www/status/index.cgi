@@ -45,7 +45,7 @@ print <<-EOF
 
   <body>
     <img src="../whimsy.svg" class="logo"/>
-    <h1>Whimsy-Test Status</h1>
+    <h1>Whimsy VM2 Status</h1>
 
     <div class="list-group list-group-root well">
       Loading...
@@ -56,6 +56,13 @@ print <<-EOF
       <a href="https://www.pingmybox.com/dashboard?location=470">Ping My
       Box</a> (<a href="errors">full log</a>).
     </p>
+
+    <h2>Additional status</h2>
+
+    <ul>
+      <li><a href="passenger">Passenger</a> (ASF committer only)</li>
+      <li><a href="svn">Subversion</a></li>
+    </ul>
   </body>
 </html>
 EOF
