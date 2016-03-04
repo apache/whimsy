@@ -17,6 +17,7 @@ gem 'ruby2js', '>= 2.0.0'
 gem 'sinatra'
 gem 'nokogumbo'
 gem 'execjs'
+gem 'mail'
 
 group :development do
   gem 'passenger'

@@ -7,6 +7,8 @@
 require 'whimsy/asf'
 require 'whimsy/asf/podlings'
 
+require 'mail'
+
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap/theme'
 require 'wunderbar/react'

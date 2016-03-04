@@ -1,4 +1,5 @@
 if env.password
+  # update LDAP
   ASF::LDAP.bind(env.user, env.password) do
     person = ASF::Person.find(@id)
     pmc = ASF::Committee.find(@pmc) if @targets.include? 'pmc'
@@ -12,6 +13,34 @@ if env.password
       group.remove(person) if group
     end
   end
+
+  # compose E-mail
+  action = (@action == 'add' ? 'added to' : 'removed from')
+  if pmc
+    list = group ? 'PMC and committers list' : 'PMC list'
+  else
+    list = 'committers list'
+  end
+
+  details = [person.dn]
+  details << group.dn if group
+  details << pmc.dn if pmc
+
+  pmc ||= ASF::Committee.find(@pmc)
+
+  mail = Mail.new do
+    from "#{ASF::Person.find(env.user).public_name} <#{env.user}@apache.org>"
+    to "private@#{pmc.mail_list}.apache.org"
+    bcc "root@apache.org"
+    subject "#{person.public_name} #{action} #{pmc.display_name} #{list}"
+    body "Current roster can be found at:\n\n" +
+      "  https://whimsy.apache.org/roster/committee/#{pmc.id}\n\n" +
+      "LDAP details:\n\n  #{details.join("\n  ")}"
+  end
+
+  # deliver email
+  mail.deliver!
 end
 
+# return updated committee info to the client
 Committee.serialize(@pmc, env)
