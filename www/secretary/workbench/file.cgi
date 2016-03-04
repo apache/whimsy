@@ -10,6 +10,8 @@ require 'whimsy/asf'
 
 ENV['LANG'] = 'en_US.UTF-8'
 
+ENV['GNUPGHOME'] = '/srv/gpg' if Dir.exist?('/srv/gpg')
+
 def html_fragment(&block)
   x = Wunderbar::HtmlMarkup.new({})
   x.instance_eval(&block)
