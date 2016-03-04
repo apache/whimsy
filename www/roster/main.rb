@@ -47,6 +47,7 @@ end
 
 get '/committee' do
   redirect to('/committee/')
+end
 
 get '/committer/index.json' do
   # bulk loading the mail information makes things go faster
