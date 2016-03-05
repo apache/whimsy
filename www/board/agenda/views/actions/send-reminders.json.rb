@@ -2,13 +2,10 @@
 # send reminders
 #
 
+ASF::Mail.configure
+
 sent = {}
 unsent = []
-
-# utilize smtp without certificate verification
-Mail.defaults do
-  delivery_method :smtp, openssl_verify_mode: 'none'
-end
 
 # extract values for common fields
 subject = @subject.untaint

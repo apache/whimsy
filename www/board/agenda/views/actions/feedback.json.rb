@@ -2,6 +2,8 @@
 # send feedback on reports
 #
 
+ASF::Mail.configure
+
 # fetch minutes
 @minutes = @agenda.sub('_agenda_', '_minutes_')
 minutes_file = "#{AGENDA_WORK}/#{@minutes.sub('.txt', '.yml')}"
@@ -12,11 +14,6 @@ if File.exist? minutes_file
   minutes = YAML.load_file(minutes_file) || {}
 else
   minutes = {}
-end
-
-# utilize smtp without certificate verification
-Mail.defaults do
-  delivery_method :smtp, openssl_verify_mode: 'none'
 end
 
 # extract values for common fields

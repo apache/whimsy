@@ -116,6 +116,37 @@ Skip this section if you are running a Docker container or a Vagrant VM.
 
    See comments in that file for running the script as a standalone server.
 
+6. Configuring sending of mail (optional):
+
+   Configuration of outbound mail delivery is done through the `.whimsy`
+   file.  Three examples are provided below, followed by links to where
+   documentation of the parameters can be found.
+
+        :sendmail:
+          delivery_method: sendmail
+
+        :sendmail:
+          delivery_method: smtp
+          address: smtp-server.nc.rr.com
+          domain:  intertwingly.net
+
+        :sendmail:
+          delivery_method: smtp
+          address: smtp.gmail.com
+          port: 587
+          domain: apache.org
+          user_name: username
+          password: password
+          authentication: plain
+          enable_starttls_auto: true
+
+   For more details, see the mail gem documention for
+   [smtp](http://www.rubydoc.info/github/mikel/mail/Mail/SMTP),
+   [exim](http://www.rubydoc.info/github/mikel/mail/Mail/Exim),
+   [sendmail](http://www.rubydoc.info/github/mikel/mail/Mail/Sendmail),
+   [testmailer](http://www.rubydoc.info/github/mikel/mail/Mail/TestMailer), and
+   [filedelivery](http://www.rubydoc.info/github/mikel/mail/Mail/FileDelivery)
+
 Running Scripts/Applications
 ============================
 
