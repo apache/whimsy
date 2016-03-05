@@ -24,6 +24,7 @@ archive.each do |email|
   subject = message[/^Subject: .*/]
   next unless subject.upcase.include? "MEMBER NOMINATION"
   mail = Mail.new(message)
+  next if mail.subject.downcase == 'member nomination process'
   emails << mail if mail.subject =~ /^\[?MEMBER NOMINATION]?/i
 end
 
@@ -52,6 +53,8 @@ _html do
     .missing {background-color: yellow}
     .flexbox {display: flex; flex-flow: row wrap}
     .flexitem {flex-grow: 1}
+    .flexitem:first-child {order: 2}
+    .flexitem:last-child {order: 1}
   }
 
   # common banner
@@ -82,7 +85,11 @@ _html do
     nominations.map! {|person| person[:name].downcase}
 
     _div.flexitem do
-      _h1_.posted! "Posted nominations reports"
+      _h1_.posted! do
+        _a "Posted", href:
+          'https://mail-search.apache.org/members/private-arch/members/'
+        _ " nominations reports"
+      end
 
       # attempt to sort reports by PMC name
       emails.sort_by! do |mail| 
