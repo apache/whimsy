@@ -6,12 +6,28 @@ require 'wunderbar'
 if ENV['REQUEST_METHOD'].upcase == 'POST'
   cgi = CGI.new
   cgi.out 'type' => 'text/plain' do
+    # extract parameters
     hostname = cgi.params['hostname'].first
     docroot = cgi.params['docroot'].first
 
+    # read live configuration
     conf = File.read(Dir['/etc/apache2/sites-available/*whimsy*.conf'].first)
 
-    conf[/<VirtualHost (.*)>/, 1] = hostname
+    # enable all interfaces
+    conf[/<VirtualHost (.*):\d+>/, 1] = '*'
+
+    # replace hostname
+    conf[/ServerName (.*)/, 1] = hostname
+
+    # don't override error or custom logs
+    conf[/()ErrorLog/, 1] = '# '
+    conf[/()CustomLog/, 1] = '# '
+
+    # disable Passenger Default user and group
+    conf[/()PassengerDefaultUser/, 1] = '# '
+    conf[/()PassengerDefaultGroup/, 1] = '# '
+
+    # global replace docroot
     conf.gsub! '/srv/whimsy', docroot.chomp('/')
 
     conf
@@ -31,6 +47,9 @@ _html do
     select {width: 3.06in}
     input[type=checkbox] {margin-left: 6em; width: 1em}
     input[type=submit] {margin-top: 0.5em; margin-left: 3em; width: 8em}
+
+    ul {padding: 0; display: flex; flex-wrap: wrap}
+    li {width: 10%; list-style-type: none; margin: 0 2em}
   }
 
   _form method: 'post' do
@@ -53,12 +72,20 @@ _html do
 
       _input type: 'submit', value: 'Submit'
     end
+
+    _h3 'Modules required'
+    _ul do
+      Dir['/etc/apache2/mods-enabled/*.conf'].sort.each do |conf|
+        _li File.basename(conf, '.conf')
+      end
+    end
   end
 
   _script %{
     var inputs = Array.prototype.slice.call(document.querySelectorAll("input"));
     var submit = document.querySelector("input[type=submit]");
 
+    // only enable submit button when all inputs are valid
     inputs.forEach(function(input) {
       input.addEventListener("input", function() {
         if (inputs.some(function(input) {

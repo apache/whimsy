@@ -183,47 +183,33 @@ command `bundle install`.
 Advanced configuration
 ======================
 
-Note: these instructions are for Ubuntu.  Tailor as necessary for Mac OSX or
-Red Hat.
+Setting things up so that the **entire** whimsy website is available as
+a virtual host, complete with authentication:
 
-Setting things up so that the entire whimsy website is available as
-http://localhost/whimsy/:
-
-1. Add an alias
-
-        Alias /whimsy /srv/whimsy/www
-        <Directory /srv/whimsy/www>
-           Order allow,deny
-           Allow from all
-           Require all granted
-           Options Indexes FollowSymLinks MultiViews ExecCGI
-           MultiViewsMatch Any
-           DirectoryIndex index.html index.cgi
-           AddHandler cgi-script .cgi
-        </Directory>
-
-2. Configure `suexec` by editing `/etc/apache2/suexec/www-data`:
-
-        /srv
-        public_html
-
-3. Install passenger by running either running 
+1. Install passenger by running either running 
    `passenger-install-apache2-module` and following its instructions, or
    by visiting https://www.phusionpassenger.com/library/install/apache/install/oss/.
 
-4. Configure individual rack applications:
+2. Visit [vhost-generator](https://whimsy.apache.org/test/vhost-generator) to
+   generate a custom a vhost definition, and to see which apache modules need
+   to be installed.
 
-        Alias /whimsy/board/agenda/ /srv/whimsy/www/board/agenda
-        <Location /whimsy/board/agenda>
-          PassengerBaseURI /whimsy/board/agenda
-          PassengerAppRoot /srv/whimsy/www/board/agenda
-          PassengerAppEnv development
-          Options -Multiviews
-        </Location>
+   a. On Ubuntu, place the generated vhost definition into
+      `/etc/apache2/sites-available` and enable the site using `a2ensite`.
+      Enable the modules you need using `a2ensite`.  Restart the Apache httpd
+      web server using `service apache2 restart`.
 
-5. (Optional) run a service that will restart your passenger applications
-   whenever the source to that application is modified by creating a
-   `~/.config/upstart/whimsy-listener` file with the following contents:
+   b. On Mac OS/X, place the generated vhost definition into
+      `/private/etc/apache2/extra/httpd-vhosts.conf`.  Edit
+      `/etc/apache2/httpd.conf` and uncomment out the line that includes
+      `httpd-vhosts.conf`, and
+      enable the modules you need by uncommenting out the associated lines.
+      Restart the Apache httpd web server using `apachectl restart`.
+
+3. (Optional) run a service that will restart your passenger applications
+   whenever the source to that application is modified.  On Ubuntu, this is
+   done  by creating a `~/.config/upstart/whimsy-listener` file with the
+   following contents:
 
        description "listen for changes to whimsy applications"
        start on dbus SIGNAL=SessionNew
