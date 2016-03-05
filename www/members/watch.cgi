@@ -234,26 +234,36 @@ _html do
 
     _h2_ 'Related Links'
     _ul do
-      unless request =~ /appstatus/
+      if Time.new.strftime('%Y%m%d') < File.basename(meeting)
         _li do
-          _a 'Application Status', href: 'members/watch/appstatus'
+          _a 'Posted nominations vs svn', href: 'members/watch/nominees'
+        end
+      else
+        unless request =~ /appstatus/
+          _li do
+            _a 'Application Status', href: 'members/watch/appstatus'
+          end
         end
       end
+
       unless list == watch_list
         _li do
           _a 'Potential Member Watch List', href: 'members/watch'
         end
       end
+
       unless request =~ /nominees/
         _li do
           _a 'Nominees', href: 'members/watch/nominees'
         end
       end
+
       unless request =~ /multiple/
         _li do
           _a 'Active in Multiple (>=3) PMCs', href: 'members/watch/multiple'
         end
       end
+
       unless request =~ /chairs/
         _li do
           _a 'Non-member PMC chairs', href: 'members/watch/chairs'

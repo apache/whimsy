@@ -67,7 +67,8 @@ _html do
   _div.flexbox do
     _div.flexitem do
       _h1_! do
-        _ "Nominations in "
+        _a 'Nominations', href: 'watch/nominees'
+        _ ' in '
         _a 'svn', href: File.join(svnurl, 'nominated-members.txt')
       end
 
