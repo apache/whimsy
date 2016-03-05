@@ -55,6 +55,7 @@ _html do
     .flexitem {flex-grow: 1}
     .flexitem:first-child {order: 2}
     .flexitem:last-child {order: 1}
+    .count {margin-left: 4em}
   }
 
   # common banner
@@ -69,6 +70,8 @@ _html do
         _ "Nominations in "
         _a 'svn', href: File.join(svnurl, 'nominated-members.txt')
       end
+
+      _p.count "Count: #{nominations.count}"
 
       _ul nominations.sort_by {|person| person[:name]} do |person|
         _li! do
@@ -90,6 +93,8 @@ _html do
           'https://mail-search.apache.org/members/private-arch/members/'
         _ " nominations reports"
       end
+
+      _p.count "Count: #{emails.count}"
 
       # attempt to sort reports by PMC name
       emails.sort_by! do |mail| 
