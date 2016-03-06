@@ -25,7 +25,7 @@ archive.each do |email|
   next unless subject.upcase.include? "MEMBER NOMINATION"
   mail = Mail.new(message)
   next if mail.subject.downcase == 'member nomination process'
-  emails << mail if mail.subject =~ /^\[?MEMBER NOMINATION]?/i
+  emails << mail if mail.subject =~ /^\[?MEMBER NOMINATION\]?/i
 end
 
 # parse nominations for names and ids
@@ -40,6 +40,10 @@ nominations.pop if nominations.last.empty?
 nominations.map! do |line| 
   {name: line.gsub(/<.*|\(\w+@.*/, '').strip, id: line[/([.\w]+)@/, 1]}
 end
+
+# preload names
+people = ASF::Person.preload('cn', 
+  nominations.map {|nominee| ASF::Person.find(nominee[:id])})
 
 # location of svn repository
 svnurl = `cd #{meeting}; svn info`[/URL: (.*)/, 1]
@@ -67,26 +71,33 @@ _html do
   _div.flexbox do
     _div.flexitem do
       _h1_! do
-        _a 'Nominations', href: 'watch/nominees'
+        _a 'Nominees', href: 'watch/nominees'
         _ ' in '
         _a 'svn', href: File.join(svnurl, 'nominated-members.txt')
       end
 
       _p.count "Count: #{nominations.count}"
 
-      _ul nominations.sort_by {|person| person[:name]} do |person|
+      _ul nominations.sort_by {|nominee| nominee[:name]} do |nominee|
         _li! do
-          match = /\b#{person[:name]}\b/i
+          person = ASF::Person.find(nominee[:id])
+          match = /\b(#{nominee[:name]}|#{person.public_name})\b/i
+
           if emails.any? {|mail| mail.subject.downcase =~ match}
-            _a.present person[:name], href: "#{ROSTER}/#{person[:id]}"
+            _a.present person.public_name, href: "#{ROSTER}/#{nominee[:id]}"
           else
-            _a.missing person[:name], href: "#{ROSTER}/#{person[:id]}"
+            _a.missing person.public_name, href: "#{ROSTER}/#{nominee[:id]}"
+          end
+
+          if nominee[:name] != person.public_name
+            _span " (as #{nominee[:name]})"
           end
         end
       end
     end
 
-    nominations.map! {|person| person[:name].downcase}
+    nominees = nominations.map! {|person| person[:name]}
+    nominees += people.map {|person| person.public_name}
 
     _div.flexitem do
       _h1_.posted! do
@@ -108,7 +119,7 @@ _html do
           href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' + 
             URI.escape('<' + mail.message_id + '>')
 
-          if nominations.any? {|name| mail.subject.downcase =~ /\b#{name}\b/}
+          if nominees.any? {|name| mail.subject =~ /\b#{name}\b/i}
             _a.present mail.subject, href: href
           else
             _a.missing mail.subject, href: href
