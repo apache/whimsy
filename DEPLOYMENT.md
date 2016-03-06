@@ -39,6 +39,8 @@ The following additional steps are required to get the Whimsy VM up and running:
  * Add the following mail subscriptions:
     * Subscribe `svnupdate@whimsy-vm2.apache.org` to `board@apache.org`.
       Alternately, add it to the `board-cvs` alias.
+    * Subscribe `svnupdate@whimsy-vm2.apache.org` to 
+      `committers-cvs@apache.org`.
     * Subscribe `board@whimsy-vm2.apache.org` to `board@apache.org`.
     * Subscribe `members@whimsy-vm2.apache.org` to `members@apache.org`.
     * Add `secretary@whimsy-vm2.apache.org` to the `secretary@apache.org`
