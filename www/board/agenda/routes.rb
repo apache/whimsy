@@ -14,8 +14,7 @@ end
 # redirect root to latest agenda
 get '/' do
   agenda = dir('board_agenda_*.txt').sort.last
-  response.headers['Location'] = "#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/"
-  status 302
+  redirect to("/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/")
 end
 
 # redirect missing to missing page for the latest agenda
