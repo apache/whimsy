@@ -136,7 +136,7 @@ class PMCMember < React
           else
             # in both LDAP and committee-info.txt
             _button.btn.btn_warning 'Remove from PMC',
-              data_action: 'remove pmc commit', 
+              data_action: 'remove pmc info commit', 
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} from the " +
                 "#{@@committee.display_name} PMC?"
