@@ -53,11 +53,19 @@ if env.password
       File.write(file, info)
 
       # commit changes
-      Kernel.system 'svn', 'commit', '--quiet',
+      rc = Kernel.system 'svn', 'commit', '--quiet',
         '--no-auth-cache', '--non-interactive',
         '--username', env.user.untaint, '--password', env.password.untaint,
         tmpdir.untaint, '--message',
         "#{@pmc} #{@action == 'add' ? '+' : '-'}= #{@id}"
+
+      if rc
+        # update cache
+        ASF::Committee.parse_committee_info(info)
+      else
+        # die
+        raise Error.new('Update committee-info.txt failed')
+      end
     end
   end
 

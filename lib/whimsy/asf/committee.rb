@@ -52,14 +52,19 @@ module ASF
         return @committee_info 
       end
 
-      list = Hash.new {|hash, name| hash[name] = find(name)}
 
       @committee_mtime = File.mtime(file)
       @@svn_change = Time.parse(
         `svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
 
+      parse_committee_info File.read(file)
+    end
+
+    def self.parse_committee_info(contents)
+      list = Hash.new {|hash, name| hash[name] = find(name)}
+
       # Split the file on lines starting "* ", i.e. the start of each group in section 3
-      info = File.read(file).split(/^\* /)
+      info = contents.split(/^\* /)
       # Extract the text before first entry in section 3 and split on section headers,
       # keeping sections 1 (COMMITTEES) and 2 (REPORTING).
       head, report = info.shift.split(/^\d\./)[1..2]
