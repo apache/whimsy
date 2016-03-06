@@ -51,7 +51,7 @@ _html do
   _h5_ do
     _ 'Click on a column heading to change the sort order ('
     color.each do |state, clazz|
-      _{"<span class='#{clazz}'>#{state}</span>"}
+      _span state, class: clazz
       _ " "
     end
     _ ")"
