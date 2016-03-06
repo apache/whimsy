@@ -236,7 +236,7 @@ _html do
     _ul do
       if Time.new.strftime('%Y%m%d') < File.basename(meeting)
         _li do
-          _a 'Posted nominations vs svn', href: 'members/watch/nominees'
+          _a 'Posted nominations vs svn', href: 'members/nominations'
         end
       else
         unless request =~ /appstatus/
