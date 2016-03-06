@@ -32,13 +32,14 @@ _html do
   # ********************************************************************
 
   _h1_ 'Groups'
+  _h5_ 'Click on a column heading to change the sort order'
 
   _table.table.table_hover do
     _thead do
       _tr do
-        _th.sorting_asc 'name', data_sort: 'string-ins'
-        _th 'group type', data_sort: 'string'
-        _th 'notes', data_sort: 'notes'
+        _th.sorting_asc 'Name', data_sort: 'string-ins'
+        _th 'Group type', data_sort: 'string'
+        _th 'Notes', data_sort: 'notes'
       end
     end
 

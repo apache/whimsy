@@ -56,13 +56,14 @@ _html do
   # ********************************************************************
 
   _h1_ 'Members'
+  _h5_ 'Click on a column heading to change the sort order'
 
   _table.table.table_hover do
     _thead do
       _tr do
-        _th 'id', data_sort: 'string'
-        _th.sorting_asc 'public name', data_sort: 'string'
-        _th 'status', data_sort: 'string'
+        _th 'Id', data_sort: 'string'
+        _th.sorting_asc 'Public name', data_sort: 'string'
+        _th 'Status', data_sort: 'string'
       end
     end
 
