@@ -22,10 +22,11 @@ archive.each do |email|
   message = IO.read(email, mode: 'rb')
   next unless message[/^Date: .*/].to_s.include? year
   subject = message[/^Subject: .*/]
-  next unless subject.upcase.include? "MEMBER NOMINATION"
+  next unless subject.upcase.include? "MEMBER"
+  next unless subject.upcase.include? "NOMINATION"
   mail = Mail.new(message)
   next if mail.subject.downcase == 'member nomination process'
-  emails << mail if mail.subject =~ /^\[?MEMBER NOMINATION\]?/i
+  emails << mail if mail.subject =~ /^\[?MEMBER(SHIP)? NOMINATION\]?/i
 end
 
 # parse nominations for names and ids
