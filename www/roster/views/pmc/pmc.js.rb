@@ -101,13 +101,13 @@ class PMCMember < React
           if @@person.date == 'pending'
             _button.btn.btn_primary 'Add as a committer and to the PMC',
               # not added yet
-              data_action: 'add pmc commit',
+              data_action: 'add pmc info commit',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} to the " +
                 "#{@@committee.display_name} PMC and grant committer access?"
 
             _button.btn.btn_warning 'Add to PMC only', data_target: '#confirm',
-              data_action: 'add pmc', data_toggle: 'modal',
+              data_action: 'add pmc info', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} to the " +
                 "#{@@committee.display_name} PMC?"
           elsif not @@person.date
@@ -118,7 +118,8 @@ class PMCMember < React
               data_confirmation: "Remove #{@@person.name} from LDAP?"
 
             _button.btn.btn_success 'Add to committee_info.txt',
-              disabled: true,
+              data_action: 'add info',
+              data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add to #{@@person.name} committee_info.txt"
           elsif not @@person.ldap
              # in committee-info.txt but not in ldap
@@ -128,7 +129,8 @@ class PMCMember < React
               data_confirmation: "Add #{@@person.name} to LDAP?"
 
             _button.btn.btn_warning 'Remove from committee_info.txt',
-              disabled: true,
+              data_action: 'remove info',
+              data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: 
                 "Remove #{@@person.name} from committee_info.txt?"
           else

@@ -8,6 +8,7 @@ require 'whimsy/asf'
 require 'whimsy/asf/podlings'
 
 require 'mail'
+require 'tmpdir'
 
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap/theme'

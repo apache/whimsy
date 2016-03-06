@@ -56,10 +56,10 @@ module ASF
 
       if sendmail
         # convert string keys to symbols
-        options = Hash[options.map {|key, value| [key.to_sym, value]}]
+        options = Hash[sendmail.map {|key, value| [key.to_sym, value.untaint]}]
 
         # extract delivery method
-        method = options.delete(:delivery_method).to_s.to_sym
+        method = options.delete(:delivery_method).to_sym
       else
         # provide defaults that work on whimsy-vm* infrastructure.  Since
         # procmail is configured with a self-signed certificate, verification

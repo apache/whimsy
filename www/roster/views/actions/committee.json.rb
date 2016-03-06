@@ -14,6 +14,53 @@ if env.password
     end
   end
 
+  # update committee-info.txt
+  if @targets.include? 'info'
+    Dir.mktmpdir do |tmpdir|
+      # checkout committers/board
+      Kernel.system 'svn', 'checkout', '--quiet',
+        '--no-auth-cache', '--non-interactive',
+        '--username', env.user.untaint, '--password', env.password.untaint,
+        'https://svn.apache.org/repos/private/committers/board', tmpdir.untaint
+
+      # read in committee-info.txt
+      file = File.join(tmpdir, 'committee-info.txt')
+      info = File.read(file)
+
+      info.scan(/^\* (?:.|\n)*?\n\s*?\n/).each do |block|
+        # find committee
+        next unless ASF::Committee.find(block[/\* (.*?)\s+\(/, 1]).id == @pmc
+
+        # split block into lines
+        lines = block.strip.split("\n")
+
+        # add or remove person
+        if @action == 'add'
+          unless lines.any? {|line| line.include? "<#{@id}@apache.org>"}
+            name = "#{person.public_name.ljust(26)} <#{@id}@apache.org>"
+            lines << "    #{name.ljust(60)}[#{Time.new.strftime('%Y-%m-%d')}]"
+          end
+        else
+          lines.reject! {|line| line.include? "<#{@id}@apache.org>"}
+        end
+
+        # replace committee block with new information
+        info.sub! block, ([lines.shift] + lines.sort).join("\n") + "\n\n"
+        break
+      end
+
+      # write file out to disk
+      File.write(file, info)
+
+      # commit changes
+      Kernel.system 'svn', 'commit', '--quiet',
+        '--no-auth-cache', '--non-interactive',
+        '--username', env.user.untaint, '--password', env.password.untaint,
+        tmpdir.untaint, '--message',
+        "#{@pmc} #{@action == 'add' ? '+' : '-'}= #{@id}"
+    end
+  end
+
   # compose E-mail
   action = (@action == 'add' ? 'added to' : 'removed from')
   if pmc
