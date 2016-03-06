@@ -3,12 +3,13 @@
 require 'wunderbar'
 
 # response to form requests
-if ENV['REQUEST_METHOD'].upcase == 'POST'
+if ENV['REQUEST_METHOD'].to_s.upcase == 'POST'
   cgi = CGI.new
   cgi.out 'type' => 'text/plain' do
     # extract parameters
     hostname = cgi.params['hostname'].first
     docroot = cgi.params['docroot'].first
+    https = cgi.params['https'].first
 
     # read live configuration
     conf = File.read(Dir['/etc/apache2/sites-available/*whimsy*.conf'].first)
@@ -29,6 +30,9 @@ if ENV['REQUEST_METHOD'].upcase == 'POST'
 
     # global replace docroot
     conf.gsub! '/srv/whimsy', docroot.chomp('/')
+
+    # global replace docroot
+    conf.gsub! /SetEnv HTTPS .*/, "SetEnv HTTPS #{https}"
 
     conf
   end
@@ -70,10 +74,18 @@ _html do
           value: '/srv/whimsy'
       end
 
+      _div_ do
+        _label 'HTTPS', for: 'https'
+        _select id: 'https', name: 'https' do
+          _option 'on'
+          _option 'off', selected: true
+        end
+      end
+
       _input type: 'submit', value: 'Submit'
     end
 
-    _h3 'Modules required'
+    _h3 'Modules enabled'
     _ul do
       Dir['/etc/apache2/mods-enabled/*.load'].sort.each do |conf|
         _li File.basename(conf, '.load')
