@@ -75,8 +75,8 @@ _html do
 
     _h3 'Modules required'
     _ul do
-      Dir['/etc/apache2/mods-enabled/*.conf'].sort.each do |conf|
-        _li File.basename(conf, '.conf')
+      Dir['/etc/apache2/mods-enabled/*.load'].sort.each do |conf|
+        _li File.basename(conf, '.load')
       end
     end
   end
