@@ -1,4 +1,4 @@
-#!/usr/bin/ruby1.9.1
+#!/usr/bin/ruby
 require 'wunderbar/script'
 require 'ruby2js/filter/functions'
 require 'whimsy/asf'

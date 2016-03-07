@@ -1,4 +1,4 @@
-#!/usr/bin/ruby1.9.1
+#!/usr/bin/ruby
 require 'wunderbar'
 require 'mail'
 require 'whimsy/asf'

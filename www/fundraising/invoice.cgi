@@ -1,4 +1,4 @@
-#!/usr/bin/ruby1.9.1
+#!/usr/bin/ruby
 # encoding: utf-8
 require 'wunderbar'
 require "date"
