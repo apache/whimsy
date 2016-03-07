@@ -70,5 +70,8 @@
     url: private/foundation/Fundraising/sponsorship
     depth: files
 
+  steve:
+    url: asf/steve/trunk
+
   templates:
     url: asf/infrastructure/site/trunk/templates
