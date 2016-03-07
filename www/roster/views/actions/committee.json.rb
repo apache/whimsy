@@ -38,7 +38,8 @@ if env.password
         if @action == 'add'
           unless lines.any? {|line| line.include? "<#{@id}@apache.org>"}
             name = "#{person.public_name.ljust(26)} <#{@id}@apache.org>"
-            lines << "    #{name.ljust(60)}[#{Time.new.strftime('%Y-%m-%d')}]"
+            time = Time.new.gmtime.strftime('%Y-%m-%d')
+            lines << "    #{name.ljust(59)} [#{time}]"
           end
         else
           lines.reject! {|line| line.include? "<#{@id}@apache.org>"}
