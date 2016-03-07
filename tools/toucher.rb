@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 #
 # Watch for updates to sources to passenger applications, and restart those
 # applications whenever changes occur.

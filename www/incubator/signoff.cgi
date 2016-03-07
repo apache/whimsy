@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 # quick and dirty script to tally up which mentors have been providing
 # signoffs and which have not.

@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 require 'wunderbar/script'
 require 'ruby2js/filter/functions'
 require 'whimsy/asf'

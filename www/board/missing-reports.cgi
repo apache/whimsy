@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 require 'whimsy/asf/agenda'
 
 records = 'http://www.apache.org/foundation/records/minutes/'

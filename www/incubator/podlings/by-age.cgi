@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 require 'nokogiri'
 require 'date'
 require 'net/http'
