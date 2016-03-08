@@ -23,7 +23,7 @@
 require_relative 'public_json_common'
 
 require 'net/http'
-pods = Hash[ASF::Podlings.new.map {|podling, definition| [podling, definition[:status]]}]
+pods = Hash[ASF::Podlings.to_enum.map {|podling, definition| [podling, definition[:status]]}]
 
 file = '/apache/infrastructure-puppet/deployment/modules/subversion_server/files/authorization/asf-authorization-template'
 http = Net::HTTP.new('raw.githubusercontent.com', 443)

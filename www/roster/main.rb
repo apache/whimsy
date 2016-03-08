@@ -28,7 +28,7 @@ get '/' do
     @committees = ASF::Committee.list
     @members = ASF::Member.list.keys - ASF::Member.status.keys
     @groups = Group.list
-    @podlings = ASF::Podlings.new.to_h.values
+    @podlings = ASF::Podlings.to_h.values
     _html :index
   else
     redirect to('/')
@@ -105,7 +105,7 @@ end
 
 get '/group/' do
   @groups = Group.list
-  @podlings = ASF::Podlings.new.to_h
+  @podlings = ASF::Podlings.to_h
   _html :groups
 end
 
@@ -123,7 +123,7 @@ get '/podlings' do
   attic = ASF::SVN['asf/attic/site/xdocs/projects']
   @attic = Dir["#{attic}/*.xml"].map {|file| File.basename(file, '.xml')}
   @committees = ASF::Committee.list.map(&:id)
-  @podlings = ASF::Podlings.new.to_a.map {|id, hash| hash.merge id: id}
+  @podlings = ASF::Podlings.to_enum.map {|id, hash| hash.merge id: id}
 
   _html :podlings
 end

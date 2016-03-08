@@ -51,7 +51,7 @@ module ASF
     end
 
     # return the entire list as a hash
-    def self.list
+    def self.to_h
       Hash[self.new.to_a]
     end
   end

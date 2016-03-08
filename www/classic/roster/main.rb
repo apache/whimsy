@@ -79,7 +79,7 @@ end
 
 get '/json/podlings' do
   _json do
-    _! Hash[ASF::Podlings.new.map {|podling, definition| [podling, definition]}]
+    _! ASF::Podlings.to_h
   end
 end
 
