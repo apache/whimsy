@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 require 'wunderbar'
 require 'whimsy/asf'
-require 'whimsy/asf/podlings'
-require 'whimsy/asf/site'
 require 'yaml'
 require 'date'
 

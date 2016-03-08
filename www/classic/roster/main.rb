@@ -5,8 +5,6 @@
 #
 
 require 'whimsy/asf'
-require 'whimsy/asf/podlings'
-require 'whimsy/asf/site'
 
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap/theme'

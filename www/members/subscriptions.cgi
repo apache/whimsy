@@ -3,8 +3,6 @@ $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'wunderbar'
 require 'whimsy/asf'
-require 'whimsy/asf/podlings'
-require 'whimsy/asf/site'
 
 SUBSCRIPTIONS = '/home/apmail/subscriptions/members'
 

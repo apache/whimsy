@@ -2,7 +2,6 @@
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'whimsy/asf'
-require 'whimsy/asf/podlings'
 require 'wunderbar/bootstrap'
 
 _html do
@@ -16,7 +15,7 @@ _html do
       _th 'mailing lists'
     end
 
-    ASF::Podlings.new.to_a.sort.each do |name, description|
+    ASF::Podlings.to_enum.sort.each do |name, description|
       next if description[:status] == 'retired'
       next if description[:status] == 'graduated'
 

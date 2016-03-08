@@ -21,7 +21,6 @@
 # }
 
 require_relative 'public_json_common'
-require 'whimsy/asf/podlings'
 
 require 'net/http'
 pods = Hash[ASF::Podlings.new.map {|podling, definition| [podling, definition[:status]]}]

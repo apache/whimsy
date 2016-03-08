@@ -5,7 +5,6 @@
 #
 
 require 'whimsy/asf'
-require 'whimsy/asf/podlings'
 
 require 'mail'
 require 'tmpdir'

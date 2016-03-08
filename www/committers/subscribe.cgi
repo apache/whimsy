@@ -2,8 +2,6 @@
 require 'wunderbar'
 require 'mail'
 require 'whimsy/asf'
-require 'whimsy/asf/podlings'
-require 'whimsy/asf/site'
 require 'time'
 
 $SAFE = 1

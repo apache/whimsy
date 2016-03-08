@@ -44,5 +44,15 @@ module ASF
         yield node['resource'], data
       end
     end
+
+    # convenience method for iterating over the entire list
+    def self.to_enum
+      self.new.to_enum    
+    end
+
+    # return the entire list as a hash
+    def self.list
+      Hash[self.new.to_a]
+    end
   end
 end
