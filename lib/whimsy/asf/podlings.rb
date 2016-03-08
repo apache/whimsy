@@ -5,7 +5,7 @@ module ASF
   class Podlings
     include Enumerable
 
-    def quarter
+    def self.quarter
       [
         Date.today.strftime('%B'),
         Date.today.next_month.strftime('%B'),
@@ -13,7 +13,7 @@ module ASF
       ]
     end
 
-    def each
+    def self.each
       incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
       podlings = Nokogiri::XML(File.read("#{incubator_content}/podlings.xml"))
       podlings.search('podling').map do |node|
@@ -45,14 +45,9 @@ module ASF
       end
     end
 
-    # convenience method for iterating over the entire list
-    def self.to_enum
-      self.new.to_enum    
-    end
-
     # return the entire list as a hash
     def self.to_h
-      Hash[self.new.to_a]
+      Hash[self.to_a]
     end
   end
 end
