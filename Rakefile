@@ -100,12 +100,18 @@ namespace :git do
         require 'uri'
         base = URI.parse('git://git.apache.org/')
         repository[:git].each do |name, description|
+          branch = description['branch']
+
           puts
           puts File.join(Dir.pwd, name)
           if Dir.exist? name
-            Dir.chdir(name) {system 'git pull'}
+            Dir.chdir(name) do
+              system "git checkout #{branch}" if branch
+              system 'git pull'
+            end
           else
             system 'git', 'clone', (base + description['url']).to_s, name
+            Dir.chdir(name) {system "git checkout #{branch}"} if branch
           end
         end
       end
