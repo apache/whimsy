@@ -51,10 +51,10 @@ _html do
           _td type
 
           if @podlings[name]
-            if @podlings[name][:status] == 'retired'
+            if @podlings[name].status == 'retired'
               _td.issue "retired podling"
             else
-              _td "#{@podlings[name][:status]} podling"
+              _td "#{@podlings[name].status} podling"
             end
           else
             _td

@@ -79,7 +79,7 @@ end
 
 get '/json/podlings' do
   _json do
-    _! ASF::Podlings.to_h
+    _! ASF::Podling.to_h
   end
 end
 

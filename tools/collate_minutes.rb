@@ -55,24 +55,22 @@ canonical.merge! \
     'security team'               => 'security',
     'c++ standard library'        => 'stdcxx'
 
-# parse podling information
+# extract podling information
 site = {}
-podlings = Nokogiri::XML(File.read("#{INCUBATOR_SITE_AUTHOR}/podlings.xml"))
-podlings.search('podling').each do |podling|
-  if podling['name'].downcase != podling['resource']
-    canonical[podling['name'].downcase] = podling['resource']
+ASF::Podling.list.each do |podling|
+  if podling.display_name.downcase != podling.name
+    canonical[podling.display_name.downcase] = podling.name
   end
 
-  if podling['status'] == 'graduated' and podling['enddate']
-    next if podling['enddate'].length < 10
-    next if Date.today - Date.parse(podling['enddate']) > 90
+  if podling.status == 'graduated' and podling.enddate
+    next if Date.today - podling.enddate > 90
   end
 
-  site[podling["resource"]] = {
-    :name => podling["name"],
-    :status => podling["status"],
-    :link => incubator + "projects/#{podling["resource"]}.html",
-    :text => podling.at('description').text
+  site[podling.name] = {
+    name:   podling.display_name,
+    status: podling.status,
+    link:   incubator + "projects/#{podling.name}.html",
+    text:   podling.description
   }
 end
 

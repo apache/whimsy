@@ -15,18 +15,19 @@ _html do
       _th 'mailing lists'
     end
 
-    ASF::Podlings.to_enum.sort.each do |name, description|
-      next if description[:status] == 'retired'
-      next if description[:status] == 'graduated'
+    ASF::Podling.list.sort_by {|podling| podling.name}.each do |podling|
+      next if podling.status == 'retired'
+      next if podling.status == 'graduated'
 
       _tr_ do
         _td! do
-          _a name, href: "http://incubator.apache.org/projects/#{name}.html"
+          _a podling.display_name, 
+            href: "http://incubator.apache.org/projects/#{podling.name}.html"
         end
 
-        _td description[:status]
-        _td description[:reporting].join(', ')
-        _td lists.select {|list| list.start_with? "#{name}-"}.join(', ')
+        _td podling.status
+        _td podling.reporting.join(', ')
+        _td lists.select {|list| list.start_with? "#{podling.name}-"}.join(', ')
       end
     end
   end

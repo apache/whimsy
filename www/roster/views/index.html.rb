@@ -60,7 +60,7 @@ _html do
 
     _tr do
       _td do
-        _a @podlings.select {|podling| podling[:status] == 'current'}.length,
+        _a @podlings.select {|podling| podling.status == 'current'}.length,
           href: 'podlings'
       end
 

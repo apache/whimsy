@@ -21,7 +21,7 @@ _html do
   _h1_ 'Summary'
  
   _table.counts do
-    @podlings.group_by {|podling| podling[:status]}.sort.each do |status, list|
+    @podlings.group_by {|podling| podling.status}.sort.each do |status, list|
       _tr do
         _td list.count
         _td do
@@ -67,29 +67,29 @@ _html do
     end
 
     _tbody do
-      @podlings.sort_by {|podling| podling[:name].downcase}.each do |podling|
-        status = (@attic.include?(podling[:id]) ? 'attic' : podling[:status])
+      @podlings.sort_by {|podling| podling.name.downcase}.each do |podling|
+        status = (@attic.include?(podling.name) ? 'attic' : podling.status)
 
         _tr_ class: color[status] do
           _td do
-            _a podling[:name], href:
-              "http://incubator.apache.org/projects/#{podling[:id]}.html"
+            _a podling.display_name, href:
+              "http://incubator.apache.org/projects/#{podling.name}.html"
           end
 
-          if @committees.include? podling[:id]
-            _td data_sort_value: "#{podling[:status]} - pmc" do
-              _a podling[:status], href: "committee/#{podling[:id]}"
+          if @committees.include? podling.name
+            _td data_sort_value: "#{podling.status} - pmc" do
+              _a podling.status, href: "committee/#{podling.name}"
             end
-          elsif @attic.include? podling[:id]
-            _td data_sort_value: "#{podling[:status]} - attic" do
-              _a podling[:status], href:
-                "http://attic.apache.org/projects/#{podling[:id]}.html"
+          elsif @attic.include? podling.name
+            _td data_sort_value: "#{podling.status} - attic" do
+              _a podling.status, href:
+                "http://attic.apache.org/projects/#{podling.name}.html"
             end
           else
-            _td podling[:status]
+            _td podling.status
           end
 
-          _td podling[:description]
+          _td podling.description
         end
       end
     end
