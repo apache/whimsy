@@ -8,7 +8,6 @@ sent = {}
 unsent = []
 
 # extract values for common fields
-subject = @subject.untaint
 from = @from
 unless from
   sender = ASF::Person.find(env.user)
@@ -43,6 +42,7 @@ Agenda.parse(@agenda, :full).each do |item|
 
   # substitute [project] values
   reminder.gsub! '[project]', item['title'].gsub(/\W/, '-')
+  subject = @subject.gsub('[project]', item['title']).untaint
 
   # construct email
   mail = Mail.new do
