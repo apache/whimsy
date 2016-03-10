@@ -55,7 +55,7 @@ def write_output(file, results)
 
   if not File.exist?(file) or File.read(file).chomp != results
 
-    puts "_INFO git_info: #{GITINFO} - creating/updating #{file}"
+    Wunderbar.info "git_info: #{GITINFO} - creating/updating #{file}"
 
     # can get the following error if stdin_data is very large and diff fails with an error
     # before reading all the input, e.g. because the input file is missing:
@@ -78,7 +78,7 @@ def write_output(file, results)
 
   else
   
-    puts "_INFO git_info: #{GITINFO} - no change to #{file}"
+    Wunderbar.info "git_info: #{GITINFO} - no change to #{file}"
   
   end
 
