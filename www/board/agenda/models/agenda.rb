@@ -100,23 +100,12 @@ class Agenda
         end
       end
 
-      # update the file in question; update output if mtime changed
-      # (it may not: during testing, commits are prevented)
-      path = File.join(FOUNDATION_BOARD, file)
-      File.open(path, 'r') do |fh|
-        fh.flock(File::LOCK_EX)
-        _.system ['svn', 'cleanup', FOUNDATION_BOARD]
-        mtime = File.mtime(path) if output
-        _.system ['svn', 'update', auth, path]
-        output = IO.read(path) if mtime != File.mtime(path)
-      end
-
-      # reparse the file if the output changed
-      if output != baseline or mtime != File.mtime(path)
+      # update the cache if the file has changed
+      if output != baseline
         self.update_cache(file, path, output, ENV['RACK_ENV'] == 'test')
       end
 
-      # return the result
+      # return the result in the response
       _.method_missing(:_agenda, Agenda[file][:parsed])
     end
 
