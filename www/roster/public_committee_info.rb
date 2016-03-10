@@ -1,33 +1,43 @@
-require 'bundler/setup'
+# Creates JSON output from committee-info.txt with the following format:
+#{
+#  "last_updated": "2016-03-04 04:50:00 UTC",
+#  "committees": {
+#    "abdera": {
+#      "display_name": "Abdera",
+#      "site": "http://abdera.apache.org/",
+#      "description": "Atom Publishing Protocol Implementation",
+#      "mail_list": "abdera",
+#      "established": "11/2008",
+#      "report": [
+#        "Next month: missing in February",
+#        "February",
+#        "May",
+#        "August",
+#        "November"
+#      ],
+#      "chair": {
+#        "availid": {
+#          "name": "Some One"
+#        }
+#      },
+#      "roster": {
+#        "availid": {
+#          "name": "Some One",
+#          "date": "2009-10-21"
+#         },
+#      ...
+#      },
+#      "pmc": true
+#    },
 
-require 'json'
-require 'whimsy/asf'
-
-GEMVERSION = Gem.loaded_specs['whimsy-asf'].version.to_s rescue nil
-  # rescue is to allow for running with local library rather than a Gem
-
-# parse arguments for output file name
-if ARGV.length == 0 or ARGV.first == '-'
-  output = STDOUT
-else
-  # exit quickly if there has been no change
-  if File.exist? ARGV.first
-    source = "#{ASF::SVN['private/committers/board']}/committee-info.txt"
-    lib = File.expand_path('../../../lib', __FILE__)
-    mtime = Dir["#{lib}/**/*"].map {|file| File.mtime(file)}.max
-    mtime = [mtime, File.mtime(source), File.mtime(__FILE__)].max
-    if File.mtime(ARGV.first) >= mtime
-      previous_results = JSON.parse(File.read ARGV.first) rescue {}
-      exit 0 if previous_results['gem_version'] == GEMVERSION
-    end
-  end
-
-  output = File.open(ARGV.first, 'w')
-end
+require_relative 'public_json_common'
 
 # gather committee info
 committees = ASF::Committee.load_committee_info
-info = {last_updated: ASF::Committee.svn_change, gem_version: GEMVERSION}
+
+# reformat the data
+info = {last_updated: ASF::Committee.svn_change}
+
 info[:committees] = Hash[committees.map {|committee|
   schedule = committee.schedule.to_s.split(/,\s*/)
   schedule.unshift committee.report if committee.report != committee.schedule
@@ -48,6 +58,4 @@ info[:committees] = Hash[committees.map {|committee|
   }]
 }]
 
-# output results
-output.puts JSON.pretty_generate(info)
-output.close
+public_json_output(info)
