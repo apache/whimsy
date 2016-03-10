@@ -1,4 +1,4 @@
-Subject: ASF Board Report for [month] [year] is now due
+Subject: ASF Board Report for [month] [year] is now due from [project]
 
 This email was sent on behalf of the ASF Board.
 
