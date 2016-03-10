@@ -17,6 +17,11 @@ require 'open3'
 require 'wunderbar'
 Wunderbar.log_level = 'info' # Temporary for testing
 
+# Add datestamp to log messages (progname is not needed as each prog has its own logfile)
+Wunderbar.logger.formatter = proc { |severity, datetime, progname, msg|
+      "_#{severity} #{datetime} #{msg}\n"
+    }
+
 # Allow diff output to be suppressed
 @noDiff = ARGV.delete '--nodiff'
 
