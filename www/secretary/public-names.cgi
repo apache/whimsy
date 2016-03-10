@@ -33,7 +33,7 @@ _html do
   _h1 "public names: LDAP vs ICLA.txt"
 
   # prefetch LDAP data
-  ASF::Person.preload('cn')
+  people = ASF::Person.preload(%w(cn dn))
 
   if @updates
 
@@ -155,7 +155,7 @@ _html do
     ASF::ICLA.each do |icla|
       next if icla.id == 'notinavail'
       person = ASF::Person.find(icla.id)
-      next unless person.dn
+      next unless person.dn and person.attrs['cn']
 
       if person.cn != icla.name
         # locate point at which names differ
