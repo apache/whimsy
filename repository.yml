@@ -3,6 +3,7 @@
 
   infrastructure-puppet:
     url: infrastructure-puppet.git
+    branch: deployment
 
 :svn:
 
