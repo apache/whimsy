@@ -4,7 +4,6 @@
 #
 # {
 #  "last_updated": "2015-11-29 23:45:50 UTC", // date of members.txt
-#  "gem_version": "0.0.75",
 #  "code_version": "2016-02-02 17:20:38 UTC",
 #  "members": [
 #    "m1",
