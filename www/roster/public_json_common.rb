@@ -27,7 +27,16 @@ Wunderbar.logger.formatter = proc { |severity, datetime, progname, msg|
 
 GITINFO = ASF.library_gitinfo rescue '?'
 
-
+# Pretty-prints the JSON input and writes it to the output.
+# If the output is not STDOUT, then it is checked to see
+# if it has changed. If not, the output file is not touched.
+# If it has changed, the file is rewritten, and the diffs
+# are obtained and written to STDOUT.
+# The method logs whether the output file has been created/updated
+# or is unchanged.
+# No log messages are generated if no output file was specified.
+# Params:
+# +info+:: JSON hash to be written
 def public_json_output(info)
   # format as JSON
   results = JSON.pretty_generate(info)
