@@ -115,9 +115,13 @@ class Commit < React
       Agenda.load response.agenda
       Pending.load response.pending
       @disabled = false
-      jQuery('#commit-form').modal(:hide)
-      document.body.classList.remove('modal-open')
-      jQuery('.modal-backdrop').remove();
+
+      # delay jQuery updates to give React a chance to make updates first
+      setTimeout 300 do
+        jQuery('#commit-form').modal(:hide)
+        document.body.classList.remove('modal-open')
+        jQuery('.modal-backdrop').remove();
+      end
     end
   end
 end
