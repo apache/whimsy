@@ -57,7 +57,7 @@ class Agenda
 
   # update agenda file in SVN
   def self.update(file, message, retries=20, &block)
-    commit_rc = 999
+    commit_rc = (message ? 999 : 0)
 
     # Create a temporary work directory
     dir = Dir.mktmpdir
