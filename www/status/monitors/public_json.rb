@@ -31,8 +31,8 @@ def Monitor.public_json(previous_status)
       # Ignore Wunderbar logging for normal messages (may occur multiple times)
       contents.gsub! /^(_INFO|_DEBUG) .*?\n+/, ''
 
-      # diff -u output:
-      if contents.gsub! /^--- .*?\n(\n|\Z)/m, ''
+      # diff -u output: (may have additional \n at end)
+      if contents.gsub! /^--- .*?\n\n?(\n|\Z)/m, ''
         status[name].merge! level: 'info', title: 'updated'
       end
 
