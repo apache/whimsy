@@ -10,7 +10,8 @@ require 'fileutils'
 # for monitoring purposes
 at_exit do
   if $! and not $!.instance_of? SystemExit
-    puts "\n*** Exception #{$!.class} ***"
+    msg = "#{$!.backtrace.first} #{$!.message}" rescue $!
+    puts "\n*** Exception #{$!.class} : #{msg} ***"
   end
 end
 
@@ -767,6 +768,8 @@ page = layout do |x|
 end
 
 open("#{SITE_MINUTES}/index.html", 'w') {|file| file.write page}
+
+print("Wrote #{SITE_MINUTES}/index.html\n")
 
 if `hostname`.strip == 'rubix'
   system "rsync -av #{SITE_MINUTES}/ " +
