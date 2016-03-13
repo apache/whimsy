@@ -9,7 +9,7 @@ require 'fileutils'
 
 # for monitoring purposes
 at_exit do
-  if $1 and not $1.instance_of? SystemExit
+  if $! and not $!.instance_of? SystemExit
     puts "\n*** Exception #{$!.class} ***"
   end
 end
