@@ -73,7 +73,7 @@ class Committer
     if ASF::Person.find(env.user).asf_member?
       response[:forms] = {}
 
-      if person.icla.claRef # Not all people have iclas
+      if person.icla and person.icla.claRef # Not all people have iclas
         iclas = ASF::SVN['private/documents/iclas']
         if File.exist? File.join(iclas, person.icla.claRef + '.pdf')
           response[:forms][:icla] = person.icla.claRef + '.pdf'
@@ -84,19 +84,21 @@ class Committer
 
       member = {}
 
-      if person.asf_member?
+      if person.asf_member? # TODO is this the correct check? it includes people in members unix group
         member[:info] = person.members_txt
         member[:status] = ASF::Member.status[id] || 'Active'
 
-        apps = ASF::SVN['private/documents/member_apps']
-        [
-          person.icla.legal_name, 
-          person.icla.name,
-          member[:info].split("\n").first.strip
-        ].uniq.each do |name|
-          memapp = name.downcase.gsub(/\s/, '-')
-          if apps and File.exist? File.join(apps, memapp + '.pdf')
-            response[:forms][:member] = memapp + '.pdf'
+        if person.icla # not all members have iclas
+          apps = ASF::SVN['private/documents/member_apps']
+          [
+            person.icla.legal_name, 
+            person.icla.name,
+            member[:info].split("\n").first.strip
+          ].uniq.each do |name|
+            memapp = name.downcase.gsub(/\s/, '-')
+            if apps and File.exist? File.join(apps, memapp + '.pdf')
+              response[:forms][:member] = memapp + '.pdf'
+            end
           end
         end
       else
