@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'date'
 require 'mail'
 require 'wunderbar'
 require 'whimsy/asf/agenda'
@@ -7,12 +8,19 @@ require 'whimsy/asf/agenda'
 # link to board private-arch
 MBOX = "https://mail-search.apache.org/members/private-arch/board"
 
+# only look at this month's and last month's mailboxes, and within those
+# only look at emails that were received in the last month.
+current = Date.today.strftime('%Y%m')
+previous = (Date.parse(current + '01')-1).strftime('%Y%m')
+cuttoff = Date.parse(previous + Date.today.strftime('%d')).to_time
+
 # get a list of current board messages
-archive = Dir['/home/apmail/board/archive/*/*']
+archive = Dir["/srv/mail/board/#{previous}/*", "/srv/mail/board/#{current}/*"]
 
 # select messages that have a subject line starting with [REPORT]
 reports = []
 archive.each do |email|
+  next if File.mtime(email) < cuttoff
   next if email.end_with? '/index'
   message = IO.read(email, mode: 'rb')
   subject = message[/^Subject: .*/]
