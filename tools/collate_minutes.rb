@@ -570,10 +570,11 @@ def layout(title = nil)
     $calendar.at('title').content = "Board Meeting Minutes"
 #   $calendar.at('h2').content = "Board Meeting Minutes"
   end
+  stamp = DateTime.now.strftime '%Y-%m-%d %H:%M'
   section = $calendar.at('.container p strong').parent.parent
   paragraphs = section.search('p')
   paragraphs.first.children.last.content =
-    paragraphs.first.children.last.content.sub 'is a', 'is extracted from a'
+    paragraphs.first.children.last.content.sub 'is a', "was extracted (@ #{stamp}) from a"
 
   section.children.each {|child| child.remove}
   section.add_child paragraphs[0]
