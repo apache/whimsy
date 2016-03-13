@@ -73,7 +73,7 @@ class Committer
     if ASF::Person.find(env.user).asf_member?
       response[:forms] = {}
 
-      if person.icla.claRef # Not all people in members unix group have iclas
+      if person.icla.claRef # Not all people have iclas
         iclas = ASF::SVN['private/documents/iclas']
         if File.exist? File.join(iclas, person.icla.claRef + '.pdf')
           response[:forms][:icla] = person.icla.claRef + '.pdf'
