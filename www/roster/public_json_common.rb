@@ -16,7 +16,7 @@ require 'open3'
 
 require 'wunderbar'
 
-Wunderbar.log_level = 'info' unless Wunderbar.log_level == 'debug' # don't override command-line level
+Wunderbar.log_level = 'info' unless Wunderbar.logger.info? # try not to override CLI flags
 
 # Add datestamp to log messages (progname is not needed as each prog has its own logfile)
 Wunderbar.logger.formatter = proc { |severity, datetime, progname, msg|
