@@ -3,9 +3,10 @@
 # Most of the heavy lifting is done by ASF::Board::Agenda in the whimsy-asf
 # gem.  This class is mainly focused on caching the results.
 #
+# This code also maintains a "working copy" of agendas when updates are
+# made that may not yet be reflected in the local svn checkout.
+#
 class Agenda
-  @@mutex = Mutex.new
-
   def self.[](file)
     IPC[file]
   end
@@ -16,8 +17,16 @@ class Agenda
 
   def self.update_cache(file, path, contents, quick)
     parsed = ASF::Board::Agenda.parse(contents, quick)
-    Agenda[file] = {mtime: (quick ? -1 : File.mtime(path)), parsed: parsed}
-    IPC.post type: :agenda, file: file unless quick
+    update = {mtime: (quick ? -1 : File.mtime(path)), parsed: parsed}
+    unless IPC[file] and IPC[file] == update
+      before = Agenda[file] and Agenda[file][:parsed]
+
+      Agenda[file] = update
+
+      unless quick or before == update[:parsed]
+        IPC.post type: :agenda, file: file, mtime: update[:mtime].to_f
+      end
+    end
   end
 
   def self.uptodate(file)
@@ -36,8 +45,15 @@ class Agenda
     
     return unless File.exist? path
 
+    # Does the working copy have more recent data?
+    working_copy = File.join(AGENDA_WORK, file)
+    if File.size?(working_copy) and File.mtime(working_copy) > File.mtime(path)
+      path = working_copy
+    end
+
     if Agenda[file][:mtime] != File.mtime(path)
-      @@mutex.synchronize do
+      File.open(working_copy, File::RDWR|File::CREAT, 0644) do |work_file|
+        work_file.flock(File::LOCK_EX)
         if Agenda[file][:mtime] != File.mtime(path)
           self.update_cache(file, path, File.read(path), mode == :quick)
         end
@@ -70,8 +86,12 @@ class Agenda
       auth = [['--username', env.user, '--password', env.password]]
     end
 
-    @@mutex.synchronize do
-      file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
+    file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
+
+    working_copy = File.join(AGENDA_WORK, file)
+
+    File.open(working_copy, File::RDWR|File::CREAT, 0644) do |work_file|
+      work_file.flock(File::LOCK_EX)
 
       # capture current version of the file
       path = File.join(FOUNDATION_BOARD, file)
@@ -98,11 +118,22 @@ class Agenda
         else
           commit_rc = 0
         end
+      else
+        output = IO.read(path)
       end
 
-      # update the cache if the file has changed
-      if output != baseline
-        self.update_cache(file, path, output, ENV['RACK_ENV'] == 'test')
+      # update the work file, and optionally the cache, if successful
+      if commit_rc == 0
+        work_file.rewind
+
+        if output != baseline
+          # update the cache if the file has changed
+          self.update_cache(file, path, output, ENV['RACK_ENV'] == 'test')
+          work_file.write(output)
+          work_file.flush
+        end
+
+        work_file.truncate(work_file.pos)
       end
 
       # return the result in the response

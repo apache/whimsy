@@ -11,6 +11,7 @@ class Agenda
   # (re)-load an agenda, creating instances for each item, and linking
   # each instance to their next and previous items.
   def self.load(list)
+    return unless list
     @@index.clear()
     prev = nil
 
