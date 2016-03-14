@@ -8,6 +8,14 @@ require 'ostruct'
 require 'nokogiri'
 require 'net/https'
 require 'fileutils'
+require 'wunderbar'
+
+Wunderbar.log_level = 'info' unless Wunderbar.logger.info? # try not to override CLI flags
+
+# Add datestamp to log messages (progname is not needed as each prog has its own logfile)
+Wunderbar.logger.formatter = proc { |severity, datetime, progname, msg|
+      "_#{severity} #{datetime} #{msg}\n"
+    }
 
 # for monitoring purposes
 at_exit do
@@ -15,7 +23,10 @@ at_exit do
     msg = "#{$!.backtrace.first} #{$!.message}" rescue $!
     puts "\n*** Exception #{$!.class} : #{msg} ***"
   end
+  Wunderbar.info "Finished #{__FILE__}"
 end
+
+Wunderbar.info "Starting #{__FILE__}"
 
 # destination directory
 SITE_MINUTES = ASF::Config.get(:board_minutes) ||
@@ -772,4 +783,4 @@ end
 
 open("#{SITE_MINUTES}/index.html", 'w') {|file| file.write page}
 
-print("Wrote #{SITE_MINUTES}/index.html\n")
+Wunderbar.info "Wrote #{SITE_MINUTES}/index.html"
