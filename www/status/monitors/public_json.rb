@@ -63,6 +63,11 @@ def Monitor.public_json(previous_status)
       unless contents.empty?
         status[name].merge! level: 'danger', data: contents.split("\n")
       end
+      # monitor.rb ignores data if title is set
+      # TODO: is this a bug in monitor.rb ?
+      if status[name][:data]
+        status[name].delete_if { |k, v| k.eql? :title}
+      end
     rescue Exception => e
       status[name] = {
         level: 'danger',
