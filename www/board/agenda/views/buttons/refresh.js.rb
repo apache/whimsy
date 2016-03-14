@@ -14,7 +14,7 @@ class Refresh < React
     @disabled = true
     post 'refresh', agenda: Agenda.file do |response|
       @disabled = false
-      Agenda.load response.agenda
+      Agenda.load response.agenda, response.digest
     end
   end
 end

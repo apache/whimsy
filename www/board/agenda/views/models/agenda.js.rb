@@ -7,11 +7,13 @@
 class Agenda
   @@index = []
   @@etag = nil
+  @@digest = nil
 
   # (re)-load an agenda, creating instances for each item, and linking
   # each instance to their next and previous items.
-  def self.load(list)
+  def self.load(list, digest)
     return unless list
+    @@digest = digest
     @@index.clear()
     prev = nil
 
@@ -52,10 +54,10 @@ class Agenda
   end
 
   # fetch agenda if etag is not supplied
-  def self.fetch(etag)
+  def self.fetch(etag, digest)
     if etag
       @@etag = etag
-    else
+    elsif digest != @@digest or not @@etag
       xhr = XMLHttpRequest.new()
       xhr.open('GET', "../#{@@date}.json", true)
       xhr.setRequestHeader('If-None-Match', @@etag) if @@etag
@@ -69,6 +71,8 @@ class Agenda
       end
       xhr.send()
     end
+
+    @@digest = digest
   end
 
   # return the entire agenda
@@ -224,6 +228,11 @@ class Agenda
   # the file associated with this agenda
   def self.file
     "board_agenda_#{@@date.gsub('-', '_')}.txt"
+  end
+
+  # get the digest of the file associated with this agenda
+  def self.digest
+    @@digest
   end
 
   # previous link for the agenda index page
@@ -437,7 +446,7 @@ class Agenda
 end
 
 Events.subscribe :agenda do |message|
-  Agenda.fetch(nil) if message.file == Agenda.file
+  Agenda.fetch(nil, message.digest) if message.file == Agenda.file
 end
 
 Events.subscribe :server do |message|

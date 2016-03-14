@@ -21,7 +21,7 @@ class PostActions < React
     @disabled = true
     post 'post-actions', data do |response|
       @disabled = false
-      Agenda.load response.agenda
+      Agenda.load response.agenda, response.digest
     end
   end
 end

@@ -44,7 +44,7 @@ class Main < React
       Server[prop] = @@server[prop]
     end
 
-    Agenda.load(@@page.parsed)
+    Agenda.load(@@page.parsed, @@page.digest)
     Minutes.load(@@page.minutes)
     self.route(@@page.path, @@page.query)
 
@@ -129,7 +129,7 @@ class Main < React
     window.onresize()
 
     # if agenda is stale, fetch immediately; otherwise save etag
-    Agenda.fetch(@@page.etag)
+    Agenda.fetch(@@page.etag, @@page.digest)
 
     # start backchannel
     Events.monitor()

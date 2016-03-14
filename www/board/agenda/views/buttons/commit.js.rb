@@ -112,7 +112,7 @@ class Commit < React
   def click(event)
     @disabled = true
     post 'commit', message: @message, initials: Pending.initials do |response|
-      Agenda.load response.agenda
+      Agenda.load response.agenda, response.digest
       Pending.load response.pending
       @disabled = false
 

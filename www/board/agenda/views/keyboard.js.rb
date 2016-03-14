@@ -81,7 +81,7 @@ class Keyboard
         Main.refresh()
         post 'refresh', agenda: Agenda.file do |response|
           clock_counter -= 1
-          Agenda.load response.agenda
+          Agenda.load response.agenda, response.digest
           Main.refresh()
         end
         return false

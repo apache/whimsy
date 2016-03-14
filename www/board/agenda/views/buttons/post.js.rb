@@ -198,7 +198,7 @@ class Post < React
       jQuery('#post-report-form').modal(:hide)
       document.body.classList.remove('modal-open')
       @disabled = false
-      Agenda.load response.agenda
+      Agenda.load response.agenda, response.digest
     end
   end
 end

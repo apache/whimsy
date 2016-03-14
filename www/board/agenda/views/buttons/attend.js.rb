@@ -40,7 +40,7 @@ class Attend < React
     @disabled = true
     post 'attend', data do |response|
       @disabled = false
-      Agenda.load response.agenda
+      Agenda.load response.agenda, response.digest
     end
   end
 end

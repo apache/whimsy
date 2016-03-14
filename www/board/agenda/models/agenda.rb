@@ -6,6 +6,9 @@
 # This code also maintains a "working copy" of agendas when updates are
 # made that may not yet be reflected in the local svn checkout.
 #
+
+require 'digest'
+
 class Agenda
   def self.[](file)
     IPC[file]
@@ -16,16 +19,16 @@ class Agenda
   end
 
   def self.update_cache(file, path, contents, quick)
-    parsed = ASF::Board::Agenda.parse(contents, quick)
-    update = {mtime: (quick ? -1 : File.mtime(path)), parsed: parsed}
-    unless IPC[file] and IPC[file] == update
-      before = Agenda[file] and Agenda[file][:parsed]
+    update = {
+      mtime: (quick ? -1 : File.mtime(path)),
+      parsed: ASF::Board::Agenda.parse(contents, quick),
+      digest: Digest::SHA256.base64digest(contents)
+    }
 
-      Agenda[file] = update
-
-      unless quick or before == update[:parsed]
-        IPC.post type: :agenda, file: file, mtime: update[:mtime].to_f
-      end
+    current = IPC[file]
+    unless current and current[:digest] == update[:digest]
+      IPC[file] = update
+      IPC.post type: :agenda, file: file, digest: update[:digest] unless quick
     end
   end
 
@@ -138,6 +141,7 @@ class Agenda
 
       # return the result in the response
       _.method_missing(:_agenda, Agenda[file][:parsed])
+      _.method_missing(:_digest, Agenda[file][:digest])
     end
 
   ensure
