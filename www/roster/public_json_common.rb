@@ -7,13 +7,11 @@
 # Status updates: https://whimsy-test.apache.org/status/
 #
 
-require 'bundler/setup'
-
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'whimsy/asf'
 require 'json'
 
 require 'open3'
-
 require 'wunderbar'
 
 Wunderbar.log_level = 'info' unless Wunderbar.logger.info? # try not to override CLI flags
