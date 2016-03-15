@@ -47,6 +47,11 @@ class Report < React
 
       _section do
         _AdditionalInfo item: @@item
+
+        _div.report_info do
+          _h4 'Report Info'
+          _Info item: @@item
+        end
       end
     end
   end

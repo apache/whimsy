@@ -267,6 +267,10 @@ footer button {
   margin-bottom: 1em;
 }
 
+.flexbox .report-info {
+  display: none;
+}
+
 @media only screen and (min-width: 1200px) {
   .flexbox {
     display: flex;
@@ -277,6 +281,18 @@ footer button {
   .flexbox > section {
     justify-content: flex-start;
     min-width: 48%;
+  }
+
+  .navbar .report-info {
+    display: none
+  }
+
+  .flexbox .report-info {
+    display: block;
+  }
+
+  .flexbox .report-info .dl-horizontal {
+    margin-left: -3em;
   }
 }
 

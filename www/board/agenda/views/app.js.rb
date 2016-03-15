@@ -48,6 +48,7 @@ require_relative 'elements/additional-info'
 require_relative 'elements/link'
 require_relative 'elements/modal-dialog'
 require_relative 'elements/text'
+require_relative 'elements/info'
 
 # Model
 require_relative 'models/events'
