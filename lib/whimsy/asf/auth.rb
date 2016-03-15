@@ -12,11 +12,13 @@ module ASF
     end
 
     def each
+      # TODO - should this read the Git repo directly?
       auth = ASF::Git.find('infrastructure-puppet')
       if auth
         auth += '/modules/subversion_server/files/authorization'
       else
-        auth = ASF::SVN['infra/infrastructure/trunk/subversion/authorization']
+        # SVN copy is no longer in use - see INFRA-11452
+        raise Exception.new("Cannot find Git: infrastructure-puppet")
       end
 
       File.read("#{auth}/#{@file}-authorization-template").
