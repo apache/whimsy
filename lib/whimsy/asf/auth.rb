@@ -26,6 +26,13 @@ module ASF
         yield pmc, ids.split(',')
       end
     end
+
+    unless Enumerable.instance_methods.include? :to_h
+      # backwards compatibility for Ruby versions <= 2.0
+      def to_h
+        Hash[self.to_a]
+      end
+    end
   end
 
   class Person
