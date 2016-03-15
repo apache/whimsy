@@ -8,26 +8,16 @@ class Group
     groups = ASF::Group.list.map(&:id)
     groups -= ASF::Committee.list.map(&:id)
     groups.map! {|group| [group, "LDAP group"]}
+
     # add services...
     groups += ASF::Service.list.map {|service| [service, "LDAP service"]}
 
     # add authorization (asf and pit)
-    begin
-      groups += ASF::Authorization.new('asf').to_h.
-        map {|id, list| [id, "ASF Auth"]}
-    rescue # in case to_h does not work
-      ASF::Authorization.new('asf').each do |id,list|
-        groups += [[id, "ASF Auth"]]
-      end
-    end
-    begin
-      groups += ASF::Authorization.new('pit').to_h.
-        map {|id, list| [id, "PIT Auth"]}
-    rescue # in case to_h does not work
-      ASF::Authorization.new('pit').each do |id,list|
-        groups += [[id, "PIT Auth"]]
-      end
-    end
+    groups += ASF::Authorization.new('asf').to_h.
+      map {|id, list| [id, "ASF Auth"]}
+
+    groups += ASF::Authorization.new('pit').to_h.
+      map {|id, list| [id, "PIT Auth"]}
 
     groups.sort
   end
