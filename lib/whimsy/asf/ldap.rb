@@ -82,7 +82,7 @@ module ASF
         hosts.each {|host| HOST_QUEUE.push host} if HOST_QUEUE.empty?
         host = HOST_QUEUE.shift
 
-        Wunderbar.info "Connecting to LDAP server: #{host}"
+        Wunderbar.info "[#{host}] - Connecting to LDAP server"
 
         begin
           # request connection
@@ -101,7 +101,7 @@ module ASF
 
           return ldap
         rescue ::LDAP::ResultError => re
-          Wunderbar.warn "Error connecting to LDAP server #{host}: " +
+          Wunderbar.warn "[#{host}] - Error connecting to LDAP server: " +
             re.message + " (continuing)"
         end
 
