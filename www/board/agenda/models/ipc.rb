@@ -46,7 +46,7 @@ class IPC_Server
         RbConfig::CONFIG["ruby_install_name"] + RbConfig::CONFIG["EXEEXT"]
       )
 
-      exec(ruby, __FILE__, '--server-only')
+      exec(ruby, __FILE__.dup.untaint, '--server-only')
     end
 
     Process.detach pid
