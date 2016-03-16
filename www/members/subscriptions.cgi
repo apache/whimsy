@@ -4,7 +4,7 @@ $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'
 require 'whimsy/asf'
 
-SUBSCRIPTIONS = '/home/apmail/subscriptions/members'
+SUBSCRIPTIONS = '/srv/subscriptions/members'
 
 _html do
   _head_ do

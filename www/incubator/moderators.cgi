@@ -10,7 +10,7 @@ unless user.asf_member? or ASF::Committee['incubator'].members.include? user
   exit
 end
 
-SUBSCRIPTIONS = '/home/apmail/subscriptions/incubator-mods'
+SUBSCRIPTIONS = '/srv/subscriptions/incubator-mods'
 PODLINGS = "#{ASF::SVN['asf/incubator/public/trunk/content']}/podlings.xml"
 
 exceptions = {
