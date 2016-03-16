@@ -34,6 +34,9 @@ The following additional steps are required to get the Whimsy VM up and running:
  * Configuring `/whimsysvn/.subversion/config` and `/whimsysvn/.subversion/servers` to store auth-creds.
 
  * Add the following cron job to apmail@hermes:
+     * `11  4,10,16,22  *       *       *       for list in /home/apmail/lists/incubator
+.apache.org/*; do echo; echo $list/mod; ezmlm-list $list mod; done | ssh whimsy-
+vm.apache.org 'cat > subscriptions/incubator-mods'`
      * `16 * * * * ezmlm-list /home/apmail/lists/apache.org/board/ . | ssh whimsy-vm2.apache.org 'cat > /srv/subscriptions/board'`
      * `46 * * * * ezmlm-list /home/apmail/lists/apache.org/members/ . | ssh whimsy-vm2.
 apache.org 'cat > /srv/subscriptions/members'`
