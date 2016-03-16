@@ -45,19 +45,25 @@ Agenda.parse(@agenda, :full).each do |item|
 
   next if text.strip.empty?
 
+  # build cc list
+  cc = ['board@apache.org']
+  
+  if item['mail_list']
+    if item[:attach] =~ /^[A-Z]+/
+      cc << "private@#{item['mail_list']}.apache.org".untaint
+    elsif item['mail_list'].include? '@'
+      cc << item['mail_list'].untaint
+    else
+      cc << "#{item['mail_list']}@apache.org".untaint
+    end
+  end
+
   # construct email
   mail = Mail.new do
     from from
     to "#{item['owner']} <#{item['chair_email']}>".untaint
+    cc cc
     subject "Board feedback on #{date} #{item['title']} report"
-
-    if item['mail_list']
-      if item[:attach] =~ /^[A-Z]+/
-        cc "private@#{item['mail_list']}.apache.org".untaint
-      else
-        cc "#{item['mail_list']}@apache.org".untaint
-      end
-    end
 
     body text.strip.untaint
   end
