@@ -17,9 +17,11 @@ else
 end
 
 # extract values for common fields
-unless @from
+if @from
+  from = @from
+else
   sender = ASF::Person.find(env.user || ENV['USER'])
-  @from = "#{sender.public_name} <#{sender.id}@apache.org>".untaint
+  from = "#{sender.public_name} <#{sender.id}@apache.org>".untaint
 end
 
 output = []
@@ -30,6 +32,7 @@ Agenda.parse(@agenda, :full).each do |item|
   next unless item[:attach] =~ /^(4[A-Z]|\d|[A-Z]+)$/
   next unless item['chair_email']
 
+  # collect comments and minutes
   text = ''
 
   if item['comments'] and not item['comments'].empty?
@@ -44,7 +47,7 @@ Agenda.parse(@agenda, :full).each do |item|
 
   # construct email
   mail = Mail.new do
-    from @from
+    from from
     to "#{item['owner']} <#{item['chair_email']}>".untaint
     subject "Board feedback on #{date} #{item['title']} report"
 
@@ -59,6 +62,9 @@ Agenda.parse(@agenda, :full).each do |item|
     body text.strip.untaint
   end
 
+  mail.deliver! unless @dryrun
+
+  # add to output
   output << {
     attach: item[:attach],
     title: item['title'],

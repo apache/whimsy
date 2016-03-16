@@ -8,6 +8,12 @@ get %r{^/(\d\d\d\d-\d\d-\d\d)/feedback$} do |date|
 end
 get %r{^/(\d\d\d\d-\d\d-\d\d)/feedback.json$} do |date|
   @agenda = "board_agenda_#{date.gsub('-', '_')}.txt".untaint
+  @dryrun = true
+  _json :'actions/feedback'
+end
+post %r{^/(\d\d\d\d-\d\d-\d\d)/feedback.json$} do |date|
+  @agenda = "board_agenda_#{date.gsub('-', '_')}.txt".untaint
+  @dryrun = false
   _json :'actions/feedback'
 end
 
