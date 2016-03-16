@@ -10,6 +10,7 @@
 #
 #   ruby examples/board.rb --install=/Users/rubys/Sites/
 
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'whimsy/asf'
 
 _html do

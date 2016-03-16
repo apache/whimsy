@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'whimsy/asf/agenda'
 
 records = 'http://www.apache.org/foundation/records/minutes/'
