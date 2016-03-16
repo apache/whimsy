@@ -201,6 +201,11 @@ module ASF
   class Base
     attr_reader :name
 
+    # define default sort key (make Base objects sortable)
+    def <=>(other)
+      @name <=> other.name
+    end
+
     def self.base
       @base
     end
