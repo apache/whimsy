@@ -52,9 +52,14 @@ _html do
         end
 
         _tr_ class: color do
-          _td svn['url'], title: local
+          _td! title: local do
+            _a svn['url'], href: "https://svn.apache.org/repos/#{svn['url']}"
+          end
+
           _td local
+
           _td rev
+
           if local
             _td '(loading)'
           else
