@@ -63,6 +63,7 @@ Agenda.parse(@agenda, :full).each do |item|
     from from
     to "#{item['owner']} <#{item['chair_email']}>".untaint
     cc cc
+    reply_to cc
     subject "Board feedback on #{date} #{item['title']} report"
 
     body text.strip.untaint
