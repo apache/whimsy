@@ -45,13 +45,10 @@ if @establish and env.password
     contents = establish.join("\n") + "\n"
     File.write filename, contents
     system "svn add #{filename}"
-STDERR.puts user: env.user.tainted?
-STDERR.puts password: env.password.tainted?
-STDERR.puts filename: filename.tainted?
-STDERR.puts date: date.tainted?
-    system 'svn', 'commit', '--username', env.user, '--password', env.password,
-      filename, '-m', 'record #{date} approved TLP resolutions'
-    if $? == 0
+    rc = system ['svn', 'commit', 
+      ['--username', env.user, '--password', env.password],
+      filename, '-m', 'record #{date} approved TLP resolutions']
+    if rc == 0
       victims += establish
     else
       system "svn rm --force #{filename}"
