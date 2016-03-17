@@ -25,8 +25,10 @@ class Agenda
       digest: Digest::SHA256.base64digest(contents)
     }
 
+    # update cache if there wasn't a previous entry, the digest changed,
+    # or the previous entry was the result of a 'quick' parse.
     current = IPC[file]
-    unless current and current[:digest] == update[:digest]
+    if not current or current[:digest]!=update[:digest] or current[:mtime]<=0
       IPC[file] = update
       IPC.post type: :agenda, file: file, digest: update[:digest] unless quick
     end
