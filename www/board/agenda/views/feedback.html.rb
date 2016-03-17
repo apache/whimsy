@@ -1,12 +1,12 @@
 _html do
-  _head do
-    _style %{
+  _head_ do
+    _meta name: "viewport", content: 'width=device-width', initial_scale: 1
+    _style_ %{
       div:empty {display: none}
-      .feedback pre {min-width: 640px; display: inline-block}
     }
   end
 
-  _body.feedback do
+  _body do
     _div.alert
 
     _form_ method: 'post' do
