@@ -10,7 +10,7 @@ module ASF
 
     @@mtime = nil
 
-    OFFICERS = ASF::SVN['private/foundation/officers']
+    OFFICERS = ASF::SVN.find('private/foundation/officers')
     SOURCE = OFFICERS ? "#{OFFICERS}/iclas.txt" : nil
 
     # flush caches if source file changed

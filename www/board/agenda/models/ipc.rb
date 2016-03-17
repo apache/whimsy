@@ -61,7 +61,7 @@ end
 if ENV['RACK_ENV'] == 'test'
 
   require_relative 'events'
-  IPC = Events = EventService
+  IPC = EventService
 
 elsif ARGV[0] == '--server-only'
 

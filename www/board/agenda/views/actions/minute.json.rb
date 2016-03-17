@@ -112,6 +112,6 @@ end
 
 File.write minutes_file, YAML.dump(minutes)
 
-Events.post type: :minutes, agenda: @agenda, value: minutes
+IPC.post type: :minutes, agenda: @agenda, value: minutes
 
 minutes

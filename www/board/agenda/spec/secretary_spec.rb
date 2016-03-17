@@ -89,10 +89,10 @@ feature 'report' do
       @message = 'Draft minutes for 2015-02-18'
       @text = draft
 
+      file = "#{FOUNDATION_BOARD}/board_minutes_2015_02_18.txt"
+
       begin
         eval(File.read('views/actions/draft.json.rb'))
-
-        file = "#{FOUNDATION_BOARD}/board_minutes_2015_02_18.txt"
 
         expect(File.exist? file).to be true
         expect(File.read file).to eq draft
