@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
-ruby '2.3.0'
+# N.B. It is recommended to use ruby 2.3.0, but 2.0.0 should work
+raise 'Ruby version must be at least 2.0' unless  RUBY_VERSION.to_f >= 2.0
 
 root = '../../..'
 asf_version = File.read(File.expand_path("#{root}/asf.version", __FILE__)).chomp

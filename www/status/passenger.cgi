@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby2.3.0
+#!/usr/bin/env ruby
 
 require 'bundler/setup'
 
@@ -15,8 +15,7 @@ unless user
   print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
   exit
 end
-
-output, error, status = Open3.capture3 '/usr/local/bin/ruby2.3.0',
+output, error, status = Open3.capture3 'ruby',
   Gem.bin_path('passenger', 'passenger-status')
 
 _html do
