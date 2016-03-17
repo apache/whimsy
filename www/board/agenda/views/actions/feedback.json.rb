@@ -31,6 +31,7 @@ Agenda.parse(@agenda, :full).each do |item|
   # select exec officer, additional officer, and committee reports
   next unless item[:attach] =~ /^(4[A-Z]|\d|[A-Z]+)$/
   next unless item['chair_email']
+  next unless @dryrun or @checked[item['title'].gsub(/\s/, '_')]
 
   # collect comments and minutes
   text = ''
