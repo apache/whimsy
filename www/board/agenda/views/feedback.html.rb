@@ -2,17 +2,18 @@ _html do
   _head do
     _style %{
       div:empty {display: none}
+      .feedback pre {min-width: 640px; display: inline-block}
     }
   end
 
-  _body do
+  _body.feedback do
     _div.alert
 
-    _form method: 'post' do
+    _form_ method: 'post' do
       _button.btn.btn_primary 'Send email', type: 'submit', disabled: true
     end
 
-    _p 'loading'
+    _p_ 'loading'
 
     _script %{
       var button = document.querySelector('button');
