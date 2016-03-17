@@ -76,9 +76,6 @@ file '/home/vagrant/bin/checkout-svn' do
     update officers \\
       https://svn.apache.org/repos/private/foundation/officers files
 
-    update authorization \\
-      https://svn.apache.org/repos/infra/infrastructure/trunk/subversion/authorization files
-
   EOF
 end
 

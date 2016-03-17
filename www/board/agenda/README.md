@@ -334,7 +334,6 @@ in your home directory.  The file format is YAML, and here is mine:
     :svn:
     - /home/rubys/svn/foundation
     - /home/rubys/svn/committers
-    - /home/rubys/svn/authorization
     - /home/rubys/svn/site/templates
     - /home/rubys/svn/apmail
 

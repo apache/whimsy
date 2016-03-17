@@ -20,10 +20,6 @@
   attic-xdocs:
     url: asf/attic/site/xdocs/projects
 
-  authorization:
-    url: infra/infrastructure/trunk/subversion/authorization
-    depth: files
-
   board:
     url: private/committers/board
     depth: files
