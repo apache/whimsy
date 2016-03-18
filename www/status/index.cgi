@@ -35,9 +35,6 @@ print <<-EOF
     <meta charset="UTF-8"/>
     <title>Whimsy Status</title>
 
-    <!-- #{ENV['HTTP_AUTHORIZATION']} -->
-    <!-- #{ENV['HTTP_X_AUTHENTICATED_USER']} -->
-
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/status.css"/>
     
