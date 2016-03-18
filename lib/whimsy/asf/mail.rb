@@ -117,7 +117,7 @@ module ASF
       when 'executive assistant'
         'ea@apache.org'
       when 'legal affairs'
-        'legal-discuss@apache.org'
+        'legal-internal@apache.org'
       when 'marketing and publicity'
         'press@apache.org'
       when 'tac'
