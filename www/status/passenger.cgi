@@ -1,4 +1,5 @@
-#!/usr/bin/env ruby
+#!/usr/local/bin/ruby2.3.0
+# must agree with the Ruby version in PassengerDefaultRuby in passenger.conf
 
 require 'bundler/setup'
 
@@ -15,7 +16,9 @@ unless user
   print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
   exit
 end
-output, error, status = Open3.capture3 'ruby',
+
+# Must agree with the passenger Ruby version as above
+output, error, status = Open3.capture3 '/usr/local/bin/ruby2.3.0',
   Gem.bin_path('passenger', 'passenger-status')
 
 _html do
