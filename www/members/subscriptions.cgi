@@ -57,11 +57,12 @@ _html do
 
     members = ASF::Member.new.map {|id, text| ASF::Person[id]}
     ASF::Person.preload('cn', members)
+    maillist = ASF::Mail.list
 
     subscriptions = []
     File.readlines(SUBSCRIPTIONS).each do |line|
-      person = ASF::Mail.list[line.downcase.strip]
-      person ||= ASF::Mail.list[line.downcase.strip.sub(/\+\w+@/,'@')]
+      person = maillist[line.downcase.strip]
+      person ||= maillist[line.downcase.strip.sub(/\+\w+@/,'@')]
       if person
         id = person.id
         id = '*notinavail*' if id == 'notinavail'
