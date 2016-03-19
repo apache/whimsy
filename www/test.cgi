@@ -15,3 +15,10 @@ ENV.sort.each do |k,v|
   print "#{k} #{v}\n"
 end
 
+# Optional extra info (from the main script only)
+query = ENV['QUERY_STRING']
+if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
+    print "\n"
+    system('type','ruby')
+    system('ruby','-v')
+end
