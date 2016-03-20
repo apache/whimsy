@@ -19,6 +19,13 @@ end
 query = ENV['QUERY_STRING']
 if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
     print "\n"
-    system('type','ruby')
+    system('which','-a','ruby')
     system('ruby','-v')
+    wait=query.match(/^sleep=(\d+)$/)[1].to_i rescue 0
+    if wait > 0
+      print "\nWaiting #{wait} seconds ..."
+      STDOUT.flush
+      sleep wait
+      print " done waiting\n"
+    end
 end
