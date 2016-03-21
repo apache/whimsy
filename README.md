@@ -2,7 +2,7 @@ Overview
 ==================
 
 Whimsy hosts static content, repository checkouts/clones, CGI scripts, Rack
-applications, and cron jobs.
+applications, tools, and cron jobs.
 
 Every committer on the Whimsy PMC can both deploy changes and new
 applications to https://whimsy.apache.org/.
