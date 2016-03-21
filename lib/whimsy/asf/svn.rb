@@ -94,9 +94,12 @@ module ASF
           contents = yield tmpdir, ''
         end
      
-        # update the temporary copy
+        # create/update the temporary copy
         if contents and not contents.empty?
           File.write tmpfile, contents
+          _.system ['svn', 'add',
+            ['--username', env.user, '--password', env.password],
+            tmpfile]
         elsif File.file? tmpfile
           File.unlink tmpfile
           _.system ['svn', 'delete',
@@ -105,12 +108,12 @@ module ASF
         end
 
         # commit the changes
-        _.system ['svn', 'commit', '--message', msg.untaint,
+        rc = _.system ['svn', 'commit', '--message', msg.untaint,
           ['--username', env.user, '--password', env.password],
           tmpfile]
 
         # fail if there are pending changes
-        unless `svn st`.empty?
+        unless rc == 0 and `svn st`.empty?
           raise "svn failure #{File.join(svn, basename)}"
         end
       ensure
