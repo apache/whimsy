@@ -1,6 +1,8 @@
 require 'uri'
 require 'thread'
 require 'open3'
+require 'fileutils'
+require 'tmpdir'
 
 module ASF
 
@@ -59,6 +61,61 @@ module ASF
       end
 
       result
+    end
+
+    # update a file in SVN, working entirely in a temporary directory
+    def self.update(path, msg, env, _)
+      dir = File.dirname(path)
+      basename = File.basename(path)
+
+      if path.start_with? '/' and not path.include? '..' and File.exist?(path)
+        dir.untaint
+        basename.untaint
+      end
+      
+      tmpdir = Dir.mktmpdir.untaint
+      tmpfile = File.join(tmpdir, basename).untaint
+
+      begin
+        # create an empty checkout
+        _.system ['svn', 'checkout', '--depth', 'empty',
+          ['--username', env.user, '--password', env.password],
+          `svn info #{dir}`[/URL: (.*)/, 1], tmpdir]
+
+        # retrieve the file to be updated (may not exist)
+        _.system ['svn', 'update',
+          ['--username', env.user, '--password', env.password],
+          tmpfile]
+
+        # determine the new contents
+        if File.file? tmpfile
+          contents = yield tmpdir, File.read(tmpfile)
+        else
+          contents = yield tmpdir, ''
+        end
+     
+        # update the temporary copy
+        if contents and not contents.empty?
+          File.write tmpfile, contents
+        elsif File.file? tmpfile
+          File.unlink tmpfile
+          _.system ['svn', 'delete',
+            ['--username', env.user, '--password', env.password],
+            tmpfile]
+        end
+
+        # commit the changes
+        _.system ['svn', 'commit', '--message', msg.untaint,
+          ['--username', env.user, '--password', env.password],
+          tmpfile]
+
+        # fail if there are pending changes
+        unless `svn st`.empty?
+          raise "svn failure #{File.join(svn, basename)}"
+        end
+      ensure
+        FileUtils.rm_rf tmpdir
+      end
     end
   end
 

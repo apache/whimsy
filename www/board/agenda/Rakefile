@@ -6,6 +6,19 @@ task :default => :spec
 task :spec => 'test:setup'
 task :test => :spec
 
+# setup authentication
+task :auth do
+  require 'etc'
+  require 'io/console'
+  require 'base64'
+
+  user = ENV['USER'] || ETC.getlogin
+  STDOUT.write "Enter password for #{user}: "
+  password = STDIN.noecho(&:gets).chomp
+  ENV['HTTP_AUTHORIZATION'] = "Basic #{Base64.encode64("#{user}:#{password}")}"
+  STDOUT.puts
+end
+
 task :server => [:bundle, :listen] do
   ENV['RACK_ENV']='development'
   at_exit {sleep 0.5}

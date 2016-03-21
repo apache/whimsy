@@ -44,72 +44,42 @@ end
 calendar.sub! /^(\s*-\s+#{fdate}\s*\n)/, ''
 
 #Commit the Minutes
-Dir.chdir MINUTES do
-  unless Dir.exist? year.to_s
-    _.system "mkdir #{year}"
-    _.system "svn add #{year}"
+ASF::SVN.update MINUTES, @message, env, _ do |tmpdir, old_contents|
+  tmp = File.join(tmpdir, File.basename(MINUTES), year.to_s).untaint
+
+  unless Dir.exist? tmp
+    _.system "mkdir #{tmp}"
+    _.system "svn add #{tmp}"
   end
 
   if not File.exist? "#{year}/board_minutes_#{@date}.txt"
-    _.system "cp #{BOARD_PRIVATE}/board_minutes_#{@date}.txt #{year}"
-    _.system "svn add #{year}/board_minutes_#{@date}.txt"
-
-    _.system [
-      'svn', 'commit', '-m', @message, year.to_s,
-      ['--no-auth-cache', '--non-interactive'],
-      (['--username', env.user, '--password', env.password] if env.password)
-    ]
-
-    File.unlink 'svn-commit.tmp' if File.exist? 'svn-commit.tmp'
-
-    unless `svn st`.empty?
-      raise "svn failure #{MINUTES}"
-    end
+    _.system "cp #{BOARD_PRIVATE}/board_minutes_#{@date}.txt #{tmp}"
+    _.system "svn add #{tmp}/board_minutes_#{@date}.txt"
   end
+
+  nil
 end
 
 # Update the Calendar
-Dir.chdir BOARD_SITE do
-  if File.read(CALENDAR) != calendar
-    File.open(CALENDAR, 'w') {|fh| fh.write calendar}
-
-    _.system [
-      'svn', 'commit', '-m', @message, File.basename(CALENDAR),
-      ['--no-auth-cache', '--non-interactive'],
-      (['--username', env.user, '--password', env.password] if env.password)
-    ]
-
-    unless `svn st`.empty?
-      raise "svn failure #{BOARD_SITE}"
-    end
+if File.read(CALENDAR) != calendar
+  ASF::SVN.update CALENDAR, @message, env, _ do |tmpdir, old_contents|
+    calendar
   end
 end
 
 # Clean up board directory
-Dir.chdir BOARD_PRIVATE do
-  updated = false
+ASF::SVN.update BOARD_PRIVATE, @message, env, _ do |tmpdir, old_contents|
+  tmp = File.join(tmpdir, File.basename(BOARD_PRIVATE)).untaint
 
-  if File.exist? "board_minutes_#{@date}.txt"
-    _.system "svn rm board_minutes_#{@date}.txt"
-    updated = true
+  if File.exist? "#{tmp}/board_minutes_#{@date}.txt"
+    _.system "svn rm #{tmp}/board_minutes_#{@date}.txt"
   end
   
-  if File.exist? "board_agenda_#{@date}.txt"
-    _.system "svn mv board_agenda_#{@date}.txt archived_agendas"
-    updated = true
+  if File.exist? "#{tmp}/board_agenda_#{@date}.txt"
+    _.system "svn mv #{tmp}/board_agenda_#{@date}.txt #{tmp}/archived_agendas"
   end
 
-  if updated
-    _.system [
-      'svn', 'commit', '-m', @message,
-      ['--no-auth-cache', '--non-interactive'],
-      (['--username', env.user, '--password', env.password] if env.password)
-    ]
-
-    unless `svn st`.empty?
-      raise "svn failure: #{BOARD_PRIVATE}"
-    end
-  end
+  nil
 end
 
 Dir.chdir(BOARD_PRIVATE) {Dir['board_minutes_*.txt'].sort}
