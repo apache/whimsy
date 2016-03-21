@@ -161,9 +161,13 @@ _html do
 
             # update proxies file
             proxies = IO.read('proxies')
-            list += proxies.scan(/   \S.*\(\S+\)$/).
-              select {|line| nontext.include? line[/\((\S+)\)$/, 1]}
+            existing = proxies.scan(/   \S.*\(\S+\).*$/)
+            existing_ids = existing.map {|line| line[/\((\S+)\)/, 1] }
+            added = list.
+              reject {|line| existing_ids.include? line[/\((\S+)\)$/, 1]}
+            list = added + existing
             proxies[/.*-\n(.*)/m, 1] = list.flatten.sort.join("\n") + "\n"
+
             IO.write('proxies', proxies)
 
             # commit
