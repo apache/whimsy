@@ -16,11 +16,13 @@ ENV.sort.each do |k,v|
 end
 
 # Optional extra info (from the main script only)
-query = ENV['QUERY_STRING']
+query = ENV['QUERY_STRING'] || ARGV[0]
 if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
     print "\n"
     system('which','-a','ruby')
+    system('which','-a','ruby2.3.0')
     system('ruby','-v')
+    system('gem','env')
     wait=query.match(/^sleep=(\d+)$/)[1].to_i rescue 0
     if wait > 0
       print "\nWaiting #{wait} seconds ..."
