@@ -4,6 +4,8 @@
 #  * Closes all sockets when restart is detected
 #
 
+require 'json'
+
 class EventService
   attr_accessor :user
   attr_accessor :token
@@ -78,6 +80,32 @@ class EventService
       EventService.post type: :depart, user: event.user, present: present,
         timestamp: Time.now.to_f*1000
     end
+  end
+
+  # send events to a hijacked socket
+  def self.hijack(user, socket)
+    STDERR.puts 'hijacked'
+    subscription = subscribe(user)
+    loop do
+      event = pop(subscription)
+      STDERR.puts event
+      if Hash === event or Array === event
+        socket.write "data: #{JSON.dump(event)}\n\n"
+      elsif event == :heartbeat
+        socket.write ":\n"
+      elsif event == :exit
+        break
+      elsif event == nil
+        subscription = subscribe(env.user)
+      else
+        socket.write "data: #{event.inspect}\n\n"
+      end
+      socket.flush
+    end
+  ensure
+    STDERR.puts 'done'
+    unsubscribe(subscription)
+    socket.close
   end
 
   # When restart signal is detected, close all open connections

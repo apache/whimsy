@@ -202,26 +202,24 @@ end
 
 # event stream for server sent events (a.k.a EventSource)
 get '/events', provides: 'text/event-stream' do
-  stream :keep_open do |out|
-    subscription = IPC.subscribe(env.user)
-    out.callback {IPC.unsubscribe(subscription)}
+  # hijack io socket
+  env['rack.hijack'].call
+  io = env['rack.hijack_io']
 
-    loop do
-      event = IPC.pop(subscription)
-      if Hash === event or Array === event
-        out << "data: #{JSON.dump(event)}\n\n"
-      elsif event == :heartbeat
-        out << ":\n"
-      elsif event == :exit
-        out.close
-        break
-      elsif event == nil
-        subscription = IPC.subscribe(env.user)
-      else
-        out << "data: #{event.inspect}\n\n"
-      end
-    end
-  end
+  # send HTTP headers
+  io.write "HTTP/1.1 200 OK\r\n"
+  io.write "Content-Type: text/event-stream\r\n"
+  io.write "\r\n"
+  io.flush
+
+  # hand off socket to event server
+  socket = UNIXSocket.new(IPC_Server::HIJACK_SOCKET)
+  socket.sendmsg env.user, 0, nil,
+    Socket::AncillaryData.int(:UNIX, :SOCKET, :RIGHTS, io.fileno)
+  socket.close
+
+  # for logging purposes
+  "event stream"
 end
 
 # draft minutes

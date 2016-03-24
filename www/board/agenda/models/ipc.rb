@@ -18,7 +18,9 @@ require 'drb'
 require 'thread'
 
 class IPC_Server
-  SOCKET = 'druby://:9146'
+  AGENDA_WORK = ARGV[1] unless defined? AGENDA_WORK
+  DRB_SOCKET = 'drbunix://' + File.expand_path('drb.sock', AGENDA_WORK)
+  HIJACK_SOCKET = File.expand_path('hijack.sock', AGENDA_WORK)
 
   attr_accessor :object
 
@@ -46,7 +48,7 @@ class IPC_Server
         RbConfig::CONFIG["ruby_install_name"] + RbConfig::CONFIG["EXEEXT"]
       )
 
-      exec(ruby, __FILE__.dup.untaint, '--server-only')
+      exec(ruby, __FILE__.dup.untaint, '--server-only' , AGENDA_WORK)
     end
 
     Process.detach pid
@@ -66,24 +68,78 @@ if ENV['RACK_ENV'] == 'test'
 elsif ARGV[0] == '--server-only'
 
   if  __FILE__ == $0
-    Signal.trap('INT') {sleep 1; exit}
-    Signal.trap('TERM') {exit}
-    Signal.trap('USR2') {exit}
+    STDERR.puts 'forked'
+begin
+    # daemonize
+    # Process.daemon
 
+    # clean up any sockets left behind
+    if File.exist? IPC_Server::HIJACK_SOCKET
+      begin
+        UNIXSocket.new(IPC_Server::HIJACK_SOCKET).close
+      rescue Errno::ECONNREFUSED
+        File.unlink IPC_Server::HIJACK_SOCKET
+      end
+    end
+
+    # try not to leave any sockets behind
+    at_exit do
+      STDERR.puts 'exiting'
+      begin
+        File.unlink IPC_Server::HIJACK_SOCKET
+        File.unlink DRB_SOCKET.split('//').last
+      rescue
+      end
+    end
+
+    # exit on signal
+    Signal.trap('INT') {sleep 1; STDERR.puts 'bye'; exit}
+    Signal.trap('TERM') {STDERR.puts 'bye'; exit}
+    Signal.trap('USR2') {STDERR.puts 'bye'; exit}
+
+    # event code
     require_relative 'events'
 
     begin
-      DRb.start_service(IPC_Server::SOCKET, EventService)
+      # start IPC connection to EventService
+      DRb.start_service(IPC_Server::DRB_SOCKET, EventService)
+
+      # listen for hijacked sockets
+      STDERR.puts 'starting...'
+      listener = UNIXServer.new(IPC_Server::HIJACK_SOCKET)
+      STDERR.puts 'listening...'
+
+      loop do
+        Thread.start(listener.accept) do |client|
+        STDERR.puts 'got something...'
+          # Receive message, socket, pass to EventService
+          msg, sockaddr, rflags, *controls = client.recvmsg(scm_rights: true)
+          ancdata = controls.find {|ancdata| ancdata.cmsg_is?(:SOCKET, :RIGHTS)}
+          client.close
+          STDERR.puts msg
+          STDERR.puts ancdata
+          begin
+          EventService.hijack(msg, ancdata.unix_rights[0]) if ancdata
+          rescue Exception => e
+            STDERR.puts e
+          end
+        end
+      end
+
       DRb.thread.join
     rescue Errno::EADDRINUSE => e
       exit
     end
+rescue Exception => e
+  STDERR.puts e
+  STDERR.puts e.backtrace
+end
   end
 
 else
 
   # IPC client
-  IPC = IPC_Server.new(DRbObject.new(nil, IPC_Server::SOCKET))
+  IPC = IPC_Server.new(DRbObject.new(nil, IPC_Server::DRB_SOCKET))
 
 end
 
