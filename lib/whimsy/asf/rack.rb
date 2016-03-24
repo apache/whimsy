@@ -6,15 +6,15 @@ require 'thread'
 module ASF
   module Auth
     DIRECTORS = {
-      'rbowen'      => 'rb',
       'curcuru'     => 'sc',
       'bdelacretaz' => 'bd',
+      'isabel'      => 'id',
+      'marvin'      => 'mh',
       'jim'         => 'jj',
       'mattmann'    => 'cm',
-      'ke4qqq'      => 'dn',
       'brett'       => 'bp',
-      'rubys'       => 'sr',
-      'gstein'      => 'gs'
+      'gstein'      => 'gs',
+      'markt'       => 'mt'
     }
 
     # decode HTTP authorization, when present
