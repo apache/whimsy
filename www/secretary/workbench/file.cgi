@@ -395,7 +395,7 @@ _json do
     cmd, group, availid = @cmd, @group, @availid
     _html html_fragment {
       _pre cmd, class: '_stdin'
-      ldap = ASF.init_ldap
+      ldap = ASF.init_ldap(true)
       ldap.bind("uid=#{$USER},ou=people,dc=apache,dc=org", $PASSWORD)
 
       ldap.modify "cn=#{group},ou=groups,dc=apache,dc=org",
