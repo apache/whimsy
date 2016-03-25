@@ -84,6 +84,32 @@ module ASF
       file = "#{foundation}/members.txt"
       return Time.parse(`svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
     end
+
+    # sort an entire members.txt file
+    def self.sort(source)
+      # split into sections
+      sections = source.split(/^([A-Z].*\n===+\n\n)/)
+      p sections.length
+
+      # sort sections that contain names
+      sections.map! do |section|
+        next section unless section.start_with? ' *) '
+
+        # split into entries, and normalize those entries
+        entries = section.split(/^\s\*\)\s/)
+        entries.shift
+        entries.map! {|entry| " *) " + entry.strip + "\n\n"}
+
+        # sort the entries
+        entries.sort_by! do |entry|
+          ASF::Person.sortable_name(entry[/\)\s(.*?)\s*(\/\*|$)/, 1])
+        end
+
+        entries.join
+      end
+
+      sections.join
+    end
   end
 
   class Person
