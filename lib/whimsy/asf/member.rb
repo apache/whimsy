@@ -92,11 +92,11 @@ module ASF
 
       # sort sections that contain names
       sections.map! do |section|
-        next section unless section.start_with? ' *) '
+        next section unless section =~ /^\s\*\)\s/
 
         # split into entries, and normalize those entries
         entries = section.split(/^\s\*\)\s/)
-        entries.shift
+        header = entries.shift
         entries.map! {|entry| " *) " + entry.strip + "\n\n"}
 
         # sort the entries
@@ -104,7 +104,7 @@ module ASF
           ASF::Person.sortable_name(entry[/\)\s(.*?)\s*(\/\*|$)/, 1])
         end
 
-        entries.join
+        header + entries.join
       end
 
       sections.join
