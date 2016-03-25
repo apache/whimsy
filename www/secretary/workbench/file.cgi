@@ -645,7 +645,10 @@ _html do
         " Avail ID: #{@mavailid}"
       ].compact.join("\n") + "\n"
 
-      sorted = members.sort_by {|member| lname(member.split("\n").first)}
+      sorted = members.sort_by do |member| 
+        ASF::ICLA.lname(member.split("\n").first)
+      end
+
       members_txt[pattern,1] = " *) " + sorted.join("\n *) ")
       members_txt[/We now number (\d+) active members\./,1] = 
         members.length.to_s
