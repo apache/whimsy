@@ -89,7 +89,6 @@ module ASF
     def self.sort(source)
       # split into sections
       sections = source.split(/^([A-Z].*\n===+\n\n)/)
-      p sections.length
 
       # sort sections that contain names
       sections.map! do |section|
