@@ -28,9 +28,10 @@ matrix = attendance['matrix'].map do |name, meetings|
   id = idMap[name]
   next unless id and active[id]
   data = meetings.sort.reverse.map(&:last)
+  first = data.length
   missed = (data.index {|datum| datum != '-'} || data.length)
  
-  [id, name, missed]
+  [id, name, first, missed]
 end
 
 # produce HTML
@@ -67,17 +68,23 @@ _html do
     _thead do
       _tr do
         _th 'Name'
+        _th 'Membership start date'
         _th 'Last participated'
       end
     end
 
-    matrix.each do |id, name, missed|
+    matrix.each do |id, name, first, missed|
       next unless id
     
       if missed > @meetingsMissed
         _tr_ do
           _td! {_a nameMap[id], href: "#{ROSTER}/#{id}"}
-          _td dates[-missed]
+          _td dates[-first-1] || dates.first
+          if missed >= first
+            _td {_em 'never'}
+          else
+            _td dates[-missed]
+          end
         end
         count += 1
       end
