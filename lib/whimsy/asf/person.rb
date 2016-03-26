@@ -19,6 +19,8 @@ module ASF
         name.gsub! /\u00fc|u\u0308/, 'ue'
 
         # latin 1
+        name.gsub! /\u00c9/, 'e'
+        name.gsub! /\u00d3/, 'o'
         name.gsub! /[\u00e0-\u00e5]/, 'a'
         name.gsub! /\u00e7/, 'c'
         name.gsub! /[\u00e8-\u00eb]/, 'e'
@@ -72,7 +74,7 @@ module ASF
       name.last.sub! /^IJ/, 'Ij'
       name.unshift(suffix) if suffix
       name.map! {|word| asciize(word)}
-      name.reverse.join(' ')
+      name.reverse.join(' ').downcase
     end
 
     def sortable_name
