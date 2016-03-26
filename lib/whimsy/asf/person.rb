@@ -65,7 +65,7 @@ module ASF
       suffix = (name.shift if name.first =~ SUFFIXES)
       suffix += ' ' + name.shift if name.first =~ SUFFIXES
       name << name.shift
-      name << name.shift if name.first=='Lewis' and name.last=='Ship'
+#     name << name.shift if name.first=='Lewis' and name.last=='Ship'
       name << name.shift if name.first=='Gallardo' and name.last=='Rivera'
       name << name.shift if name.first=="S\u00e1nchez" and name.last=='Vega'
       # name << name.shift if name.first=='van'
