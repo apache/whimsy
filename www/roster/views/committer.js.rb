@@ -149,7 +149,7 @@ class Committer < React
 
       if @committer.member
         if @committer.member.status
-          _tr do
+          _tr data_edit: ('memstat' if true) do
             _td 'Member status'
             if @committer.member.info
               _td @committer.member.status

@@ -15,7 +15,7 @@ attendance = JSON.parse(IO.read("#{MEETINGS}/attendance.json"))
 
 # extract and format dates
 dates = attendance['dates'].sort.
-  map {|date| Date.parse(date).strftime('%Y-%b-%d')}
+  map {|date| Date.parse(date).strftime('%Y-%b')}
 
 # compute mappings of names to ids
 members = ASF::Member.list
