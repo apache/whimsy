@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../../../lib', __FILE__))
+
 require 'wunderbar'
 require 'open3'
 require './local_paths'
