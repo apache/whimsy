@@ -112,12 +112,18 @@ module ASF
   end
 
   class Person
-    def members_txt
+    def members_txt(full = false)
+      prefix, suffix = " *) ", "\n\n" if full
       @members_txt ||= ASF::Member.find_text_by_id(id)
+      "#{prefix}#{@members_txt}#{suffix}" if @members_txt
     end
 
     def member_emails
       ASF::Member.emails(members_txt)
+    end
+
+    def member_name
+      members_txt[/(\w.*?)\s*(\/|$)/, 1] if members_txt
     end
   end
 end
