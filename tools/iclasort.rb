@@ -4,6 +4,11 @@ require 'whimsy/asf'
 OFFICERS = ASF::SVN['private/foundation/officers']
 
 Dir.chdir OFFICERS
+
+iclas = OFFICERS + '/iclas.txt'
+puts 'svn update ' + iclas
+system 'svn update ' + iclas
+
 source = File.read('iclas.txt')
 sorted = ASF::ICLA.sort(source)
 
