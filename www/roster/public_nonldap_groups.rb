@@ -52,7 +52,7 @@ end
 
 public_json_output(
   # There does not seem to be a useful timestamp here
-  groups: groups,
+  groups: groups
   # TODO decide how to present the data: separate key or attribute or file
   #pitgroups: pitgroups
 )
