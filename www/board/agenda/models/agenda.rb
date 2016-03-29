@@ -28,7 +28,9 @@ class Agenda
     # update cache if there wasn't a previous entry, the digest changed,
     # or the previous entry was the result of a 'quick' parse.
     current = IPC[file]
-    if not current or current[:digest]!=update[:digest] or current[:mtime]<=0
+    if not current or current[:digest] != update[:digest] or
+      current[:mtime].to_i <= 0
+    then
       IPC[file] = update
       IPC.post type: :agenda, file: file, digest: update[:digest] unless quick
     end
