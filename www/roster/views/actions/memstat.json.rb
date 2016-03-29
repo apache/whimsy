@@ -13,11 +13,11 @@ Dir.mktmpdir do |tmpdir|
   tmpdir.untaint
 
   # checkout out empty foundation directory
-  system ['svn', 'checkout', '--quiet', '--depth', 'empty', *[auth],
+  system ['svn', 'checkout', '--quiet', '--depth', 'empty', auth,
     'https://svn.apache.org/repos/private/foundation', tmpdir]
 
   # fetch single file: members.txt
-  system ['svn', 'update', '--quiet', *[auth], "#{tmpdir}/members.txt"]
+  system ['svn', 'update', '--quiet', auth, "#{tmpdir}/members.txt"]
 
   # read full members.txt
   text = File.read("#{tmpdir}/members.txt")
@@ -28,7 +28,7 @@ Dir.mktmpdir do |tmpdir|
   # determine where to put the entry
   if @action == 'emeritus'
     index = text.index(/^\s\*\)\s/, text.index(/^Emeritus/))
-  elsif @action == 'emeritus'
+  elsif @action == 'active'
     index = text.index(/^\s\*\)\s/, text.index(/^Active/))
   else
     raise Exception.new("invalid action #{action.inspect}")
@@ -40,8 +40,10 @@ Dir.mktmpdir do |tmpdir|
   # sort the text and save the result to disk
   File.write("#{tmpdir}/members.txt", ASF::Member.sort(text))
 
-  # for now, just show what would have been committed
-  system ['svn', 'diff', "#{tmpdir}/members.txt"]
+  # commit changes
+  rc = system ['svn', 'commit', auth, "#{tmpdir}/members.txt",
+    '--message', "Move #{ASF::Person.find(@userid).member_name} to #{action}"]
+  raise Exception.new("svn commit failed") unless rc == 0
 end
 
 # return  updated committer info
