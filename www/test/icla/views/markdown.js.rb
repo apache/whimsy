@@ -23,7 +23,7 @@ class Markdown < React
 
       if indent > 0
         spaces = Array.new(indent+1).join(' ')
-        text = text.replace("^#{spaces}", 'g'), '')
+        text = text.replace(new Regexp("^#{spaces}", 'g'), '')
       end
     end
 
