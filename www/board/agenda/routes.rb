@@ -75,9 +75,9 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   pending = Pending.get(userid)
   initials = pending['initials'] || username.gsub(/[^A-Z]/, '').downcase
 
-  if ASF::Auth::DIRECTORS[userid] or userid == 'test'
+  if userid == 'test' or ASF::Service['board'].members.map(&:id).include? userid
     role = :director
-  elsif %w(clr).include? userid
+  elsif ASF::Service['asf-secretary'].members.map(&:id).include? userid
     role = :secretary
   else
     role = :guest
@@ -93,8 +93,9 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     initials: initials,
     online: IPC.present,
     role: role,
-    directors: Hash[ASF::Auth::DIRECTORS.map {|id, initials| 
-      [initials, ASF::Person.find(id).public_name.split(' ').first]
+    directors: Hash[ASF::Service['board'].members.map {|person| 
+      initials = person.public_name.gsub(/[^A-Z]/, '').downcase
+      [initials, person.public_name.split(' ').first]
     }]
   }
 
