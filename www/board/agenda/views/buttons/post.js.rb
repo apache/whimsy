@@ -165,9 +165,9 @@ class Post < React
     return false if @disabled
 
     if @@button.text == 'add resolution'
-      return @report != '' and @title != ''
+      return @report != '' && @title != ''
     else
-      return @report != @@item.text and @message != ''
+      return @report != @@item.text && @message != ''
     end
   end
 
