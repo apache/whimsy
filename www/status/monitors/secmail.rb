@@ -7,3 +7,8 @@ def Monitor.secmail(previous_status)
 
   {mtime: File.mtime(log)}
 end
+
+# for debugging purposes
+if __FILE__ == $0
+  puts Monitor.secmail(nil)
+end
