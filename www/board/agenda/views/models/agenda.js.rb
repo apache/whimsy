@@ -181,9 +181,9 @@ class Agenda
   end
 
   def ready_for_review(initials)
-    return defined? @approved and not self.missing and
-      not @approved.include? initials and 
-      not (@flagged_by and @flagged_by.include? initials)
+    return defined?(@approved) && !self.missing &&
+      !@approved.include?(initials) &&
+      !(@flagged_by && @flagged_by.include?(initials))
   end
 
   # the default view to use for the agenda as a whole
