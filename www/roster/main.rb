@@ -88,9 +88,8 @@ get '/committer/:name' do |name|
   _html :committer
 end
 
-post '/committer/:name' do |name|
-  @userid = name
-  _json :'/actions/committer'
+post '/committer/:userid/:file' do |name, file|
+  _json :"actions/#{params[:file]}"
 end
 
 get '/group/:name.json' do |name|

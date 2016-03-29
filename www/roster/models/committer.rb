@@ -75,10 +75,11 @@ class Committer
 
       if person.icla and person.icla.claRef # Not all people have iclas
         iclas = ASF::SVN['private/documents/iclas']
-        if File.exist? File.join(iclas, person.icla.claRef + '.pdf')
-          response[:forms][:icla] = person.icla.claRef + '.pdf'
-        elsif Dir.exist? File.join(iclas, person.icla.claRef)
-          response[:forms][:icla] = person.icla.claRef + '/'
+        claRef = person.icla.claRef.untaint
+        if File.exist? File.join(iclas, claRef + '.pdf')
+          response[:forms][:icla] = claRef + '.pdf'
+        elsif Dir.exist? File.join(iclas, claRef)
+          response[:forms][:icla] = claRef + '/'
         end
       end
 
@@ -95,7 +96,7 @@ class Committer
             person.icla.name,
             member[:info].split("\n").first.strip
           ].uniq.each do |name|
-            memapp = name.downcase.gsub(/\s/, '-')
+            memapp = name.downcase.gsub(/\s/, '-').untaint
             if apps and File.exist? File.join(apps, memapp + '.pdf')
               response[:forms][:member] = memapp + '.pdf'
             end

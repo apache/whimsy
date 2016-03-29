@@ -155,12 +155,14 @@ class Committer < React
               _td do
                 _span @committer.member.status
                if @edit_memstat
-                 if @committer.member.status.include? 'Active'
-                   _button.btn.btn_primary 'move to emeritus',
-                     disabled: true
-                 elsif @committer.member.status.include? 'Emeritus'
-                   _button.btn.btn_primary 'move to active',
-                     disabled: true
+                 _form.inline method: 'post' do
+                   if @committer.member.status.include? 'Active'
+                     _button.btn.btn_primary 'move to emeritus',
+                       name: 'action', value: 'emeritus'
+                   elsif @committer.member.status.include? 'Emeritus'
+                     _button.btn.btn_primary 'move to active',
+                       name: 'action', value: 'active'
+                   end
                  end
                end
               end
@@ -268,26 +270,36 @@ class Committer < React
   def componentDidUpdate()
     Array(document.querySelectorAll('tr[data-edit]')).each do |tr|
       form = tr.querySelector('form')
-      form.addEventListener 'submit', self.submit if form
+      if form
+        form.setAttribute 'data-action', tr.getAttribute('data-edit')
+        jQuery('input[type=submit],button', form).click(self.submit)
+      end
     end
   end
 
   # submit form using AJAX
   def submit(event)
     event.preventDefault()
-    form = event.currentTarget
-    target = form.target
+    form = jQuery(event.currentTarget).closest('form')
+    target = event.target
+
+    formData = form.serializeArray();
+    if target and target.getAttribute('value')
+      formData.push name: target.getAttribute('name'),
+        value: target.getAttribute('value')
+    end
 
     jQuery.ajax(
-      method: (form.method || 'GET').upcase(),
-      data: jQuery(form).serialize(),
+      method: (form[0].method || 'GET').upcase(),
+      url: document.location.href + '/' + form[0].getAttribute('data-action'),
+      data: formData,
       dataType: 'json',
 
       success: ->(response) {
-        @committer = response
+        @committer = response.committer if response.committer
 
         # turn off edit mode on this field
-        tr = jQuery(document.querySelector('form')).closest('tr')[0]
+        tr = form.closest('tr')[0]
         if tr
           field = "edit_#{tr.dataset.edit}"
           changes = {}
@@ -302,13 +314,13 @@ class Committer < React
 
       complete: ->(response) do
         # reenable form for later reuse
-        Array(form.querySelectorAll('input')).each do |input|
+        Array(form[0].querySelectorAll('input')).each do |input|
           input.disabled = false
         end
       end
     )
 
-    Array(form.querySelectorAll('input')).each do |input|
+    Array(form[0].querySelectorAll('input')).each do |input|
       input.disabled = true
     end
   end

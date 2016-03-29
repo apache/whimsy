@@ -1,5 +1,5 @@
 #
-# Update LDAP attributes for a committer
+# Update LDAP SpamAssassin score attribute for a committer
 #
 
 # probably not needed as LDAP will fail anyway, but ensure that the user
