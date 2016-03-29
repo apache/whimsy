@@ -35,7 +35,8 @@ def Monitor.svn(previous_status)
       if not data
         title = "partial response"
         level = 'warning'
-      elsif data.length == 1
+      # data may be a String rather than an array in which case .length is its length, not 1
+      elsif String  === data or data.length == 1
         title = "1 file updated"
       else
         title = "#{data.length} files updated"
@@ -52,4 +53,9 @@ def Monitor.svn(previous_status)
   end
 
   {data: status}
+end
+
+# for debugging purposes
+if __FILE__ == $0
+  puts Monitor.svn(nil)
 end
