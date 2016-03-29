@@ -383,7 +383,7 @@ class PMCConfirm < React
           end
 
           _div.modal_footer do
-            _button.btn.btn_default 'Cancel', data_dismiss:"modal"
+            _button.btn.btn_default 'Cancel', data_dismiss: 'modal'
             _button.btn @button, class: @color, onClick: self.post
           end
         end
