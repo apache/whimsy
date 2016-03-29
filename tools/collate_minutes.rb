@@ -56,6 +56,7 @@ incubator = URI.parse('http://incubator.apache.org/')
 # quick exit if everything is up to date
 if File.exist? "#{SITE_MINUTES}/index.html"
   input = Dir["#{SVN_SITE_RECORDS_MINUTES}/*/board_minutes_20*.txt",
+    "#{TEMPLATES}/index.html", # if the template changes, we need to regenerate
     "#{BOARD}/board_minutes_20*.txt"].
     map {|name| File.stat(name).mtime}.push(File.stat(__FILE__).mtime).max
   exit if File.stat("#{SITE_MINUTES}/index.html").mtime >= input
