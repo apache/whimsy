@@ -73,7 +73,9 @@ _html do
       _pre 'Destination is required', class: '_stderr'
     else
       # append funding source to message, if present
-      @message += "\n\nFunding source: #{@source}" if @source
+      if @source and not @source.empty?
+        @message += "\n\nFunding source: #{@source}" 
+      end
       
       # perform all operations in a temporary directory
       Dir.mktmpdir do |tmpdir|
