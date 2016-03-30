@@ -3,7 +3,8 @@ require 'weakref'
 module ASF
   class Member
     include Enumerable
-    attr_accessor :full
+    @@text = nil
+    @@mtime = 0
 
     def self.find_text_by_id(value)
       new.each do |id, text|
@@ -42,14 +43,14 @@ module ASF
 
     def self.status
       begin
+        @status = nil if @mtime != @@mtime
+        @mtime = @@mtime
         return Hash[@status.to_a] if @status
       rescue
       end
 
       status = {}
-      foundation = ASF::SVN.find('private/foundation')
-      return status unless foundation
-      sections = File.read("#{foundation}/members.txt").split(/(.*\n===+)/)
+      sections = ASF::Member.text.split(/(.*\n===+)/)
       sections.shift(3)
       sections.each_slice(2) do |header, text|
         header.sub!(/s\n=+/,'')
@@ -61,8 +62,7 @@ module ASF
     end
 
     def each
-      foundation = ASF::SVN['private/foundation']
-      File.read("#{foundation}/members.txt").split(/^ \*\) /).each do |section|
+      ASF::Member.text.split(/^ \*\) /).each do |section|
         id = section[/Avail ID: (.*)/,1]
         yield id, section.sub(/\n.*\n===+\s*?\n(.*\n)+.*/,'').strip if id
       end
@@ -108,6 +108,34 @@ module ASF
       end
 
       sections.join
+    end
+
+    # cache the contents of members.txt.  Primary purpose isn't performance,
+    # but rather to have a local copy that can be updated and used until
+    # the svn working copy catches up
+    def self.text
+      foundation = ASF::SVN.find('private/foundation')
+      return nil unless foundation
+
+      begin
+        text = @@text[0..-1] if @@text
+      rescue WeakRef::RefError
+        @@mtime = 0
+      end
+
+      if File.mtime("#{foundation}/members.txt").to_i > @@mtime.to_i
+        @@mtime = File.mtime("#{foundation}/members.txt")
+        text = File.read("#{foundation}/members.txt")
+        @@text = WeakRef.new(text)
+      end
+
+      text
+    end
+
+    # update local copy of members.txt
+    def self.text=text
+      @@mtime = Time.now
+      @@text = WeakRef.new(text)
     end
   end
 

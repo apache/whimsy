@@ -37,8 +37,11 @@ Dir.mktmpdir do |tmpdir|
   # perform the insertion
   text.insert index, entry
 
-  # sort the text and save the result to disk
-  File.write("#{tmpdir}/members.txt", ASF::Member.sort(text))
+  # sort and save locally the updated text
+  ASF::Member.text = ASF::Member.sort(text)
+
+  # save the results to disk
+  File.write("#{tmpdir}/members.txt", ASF::Member.text)
 
   # commit changes
   rc = system ['svn', 'commit', auth, "#{tmpdir}/members.txt",

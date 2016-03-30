@@ -25,4 +25,4 @@ else
 end
 
 # return updated committer info
-Committer.serialize(@userid, env)
+_committer Committer.serialize(@userid, env)

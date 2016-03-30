@@ -314,13 +314,13 @@ class Committer < React
 
       complete: ->(response) do
         # reenable form for later reuse
-        Array(form[0].querySelectorAll('input')).each do |input|
+        Array(form[0].querySelectorAll('input, button')).each do |input|
           input.disabled = false
         end
       end
     )
 
-    Array(form[0].querySelectorAll('input')).each do |input|
+    Array(form[0].querySelectorAll('input, button')).each do |input|
       input.disabled = true
     end
   end
