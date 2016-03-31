@@ -52,12 +52,6 @@ _html do
   end
 
   if @file
-    # extract remote user's svn credentials
-    auth = ['--no-auth-cache', '--non-interactive']
-    if $PASSWORD
-      auth += ['--username', $USER, '--password', $PASSWORD]
-    end
-
     # destination directory
     bills = 'https://svn.apache.org/repos/private/financials/Bills'
 
@@ -76,32 +70,13 @@ _html do
       if @source and not @source.empty?
         @message += "\n\nFunding source: #{@source}" 
       end
-      
-      # perform all operations in a temporary directory
-      Dir.mktmpdir do |tmpdir|
-        tmpdir.untaint
-        Dir.chdir tmpdir do
-          _h2 'Commit log'
 
-          # checkout out empty destination directory
-          _.system ['svn', 'checkout', '--quiet', '--depth', 'empty', auth,
-            File.join(bills, @dest), '.']
-
-          # fetch single file to see if it already exists
-          _.system ['svn', 'update', '--quiet', auth, name]
-
-          if File.exist? name
-            _pre "File #{name} already exists", class: '_stderr'
-          else
-            # write file out to disk
-            File.write(name, @file.read)
-            _.system ['svn', 'add', name]
-
-            # commit
-            _.system ['svn', 'commit', auth, '-m', @message, name]
-          end
-        end
-      end
+      # add file to svn
+      _.system ['svnmucc', '-r', '0', '--message', @message,
+         ['--no-auth-cache', '--non-interactive'],
+         (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
+        '--', 'put', '-', File.join(bills, @dest, name)],
+        stdin: @file
     end
   end
 end
