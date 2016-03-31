@@ -13,29 +13,50 @@ class Committer < React
 
     _table.wide do
 
-      _tr do
+      # Name
+      _tr data_edit: ('pubname' if @@auth.secretary) do
         _td 'Name'
         _td do
           name = @committer.name
 
-          if name.public_name==name.legal_name and name.public_name==name.ldap
-            _span @committer.name.public_name
-          else
-            _ul do
-              _li "#{@committer.name.public_name} (public name)"
-
-              if name.legal_name and name.legal_name != name.public_name
-                _li "#{@committer.name.legal_name} (legal name)"
+          if @edit_pubname
+            _form.inline method: 'post' do
+              _div do
+                _label 'public name', for: 'publicname'
+                _input.publicname! name: 'publicname', required: true,
+                  defaultValue: name.public_name
               end
-
-              if name.ldap and name.ldap != name.public_name
-                _li "#{@committer.name.ldap} (ldap)"
+              _div do
+                _label 'legal name', for: 'legalname'
+                _input.legalname! name: 'legalname', required: true,
+                  defaultValue: name.legal_name
+              end
+              _button.btn.btn_primary 'submit'
+            end
+          else
+            if 
+              name.public_name==name.legal_name and 
+              name.public_name==name.ldap
+            then
+              _span @committer.name.public_name
+            else
+              _ul do
+                _li "#{@committer.name.public_name} (public name)"
+  
+                if name.legal_name and name.legal_name != name.public_name
+                  _li "#{@committer.name.legal_name} (legal name)"
+                end
+  
+                if name.ldap and name.ldap != name.public_name
+                  _li "#{@committer.name.ldap} (ldap)"
+                end
               end
             end
           end
         end
       end
 
+      # Personal URL
       if @committer.urls
         _tr do
           _td 'Personal URL'
@@ -47,6 +68,7 @@ class Committer < React
         end
       end
 
+      # Committees
       committees = @committer.committees
       unless committees.empty?
         _tr do
@@ -59,6 +81,7 @@ class Committer < React
         end
       end
 
+      # Committer
       commit_list = @committer.committer
       unless commit_list.all? {|pmc| committees.include? pmc}
         _tr do
@@ -72,6 +95,7 @@ class Committer < React
         end
       end
 
+      # Groups
       unless @committer.groups.empty?
         _tr do
           _td 'Groups'
@@ -91,6 +115,7 @@ class Committer < React
         end
       end
 
+      # Email addresses
       if @committer.mail
         _tr do
           _td 'Email addresses'
@@ -104,6 +129,7 @@ class Committer < React
         end
       end
 
+      # PGP keys
       if @committer.pgp
         _tr do
           _td 'PGP keys'
@@ -124,6 +150,7 @@ class Committer < React
         end
       end
 
+      # SSH keys
       if @committer.ssh
         _tr do
           _td 'SSH keys'
@@ -137,6 +164,7 @@ class Committer < React
         end
       end
 
+      # GitHub username
       if @committer.githubUsername
         _tr do
           _td 'GitHub username'
@@ -148,6 +176,7 @@ class Committer < React
       end
 
       if @committer.member
+        # Member status
         if @committer.member.status
           _tr data_edit: ('memstat' if @@auth.secretary) do
             _td 'Member status'
@@ -172,12 +201,22 @@ class Committer < React
           end
         end
 
+        # Members.txt
         if @committer.member.info
-          _tr do
+          _tr data_edit: 'memtext' do
             _td 'Members.txt'
             _td do
-              _pre @committer.member.info,
-                class: ('small' if @committer.member.info =~ /.{81}/)
+              if @edit_memtext
+                _form.inline method: 'post' do
+                  _div do
+                    _textarea defaultValue: @committer.member.info
+                  end
+                  _button.btn.btn_primary 'submit'
+                end
+              else
+                _pre @committer.member.info,
+                  class: ('small' if @committer.member.info =~ /.{81}/)
+              end
             end
           end
         end
@@ -188,8 +227,10 @@ class Committer < React
             _td {_pre @committer.member.nomination}
           end
         end
-        j
+
+        # Forms on file
         if @committer.forms
+          documents = "https://svn.apache.org/repos/private/documents"
           _tr do
             _td 'Forms on file'
             _td do
@@ -199,11 +240,12 @@ class Committer < React
                   
                   if form == 'icla'
                     _li do
-                      _a 'ICLA', href: "https://svn.apache.org/repos/private/documents/iclas/#{link}"
+                      _a 'ICLA', href: "#{documents}/iclas/#{link}"
                     end
                   elsif form == 'member'
                     _li do
-                      _a 'Membership App', href: "https://svn.apache.org/repos/private/documents/member_apps/#{link}"
+                      _a 'Membership App', 
+                        href: "#{documents}/member_apps/#{link}"
                     end
                   else
                     _li "#{form}: #{link}"
@@ -215,6 +257,7 @@ class Committer < React
         end
       end
 
+      # SpamAssassin score
       _tr data_edit: 'sascore' do
         _td 'SpamAssassin score'
         _td do
