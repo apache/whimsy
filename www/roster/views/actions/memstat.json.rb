@@ -37,8 +37,8 @@ Dir.mktmpdir do |tmpdir|
   # perform the insertion
   text.insert index, entry
 
-  # sort and save locally the updated text
-  ASF::Member.text = ASF::Member.sort(text)
+  # save the updated text
+  ASF::Member.text = text
 
   # save the results to disk
   File.write("#{tmpdir}/members.txt", ASF::Member.text)
