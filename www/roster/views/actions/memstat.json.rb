@@ -2,26 +2,14 @@
 entry = ASF::Person.find(@userid).members_txt(true)
 raise Exception.new("unable to find member entry for #{userid}") unless entry
 
-# extract remote user's svn credentials
-auth = ['--no-auth-cache', '--non-interactive']
-if env.password
-  auth += ['--username', env.user.untaint, '--password', env.password.untaint]
-end
+# identify file to be updated
+members_txt = ASF::SVN['private/foundation/members.txt']
 
-# perform all operations in a temporary directory
-Dir.mktmpdir do |tmpdir|
-  tmpdir.untaint
+# construct commit message
+message = "Move #{ASF::Person.find(@userid).member_name} to #{@action}"
 
-  # checkout out empty foundation directory
-  system ['svn', 'checkout', '--quiet', '--depth', 'empty', auth,
-    'https://svn.apache.org/repos/private/foundation', tmpdir]
-
-  # fetch single file: members.txt
-  system ['svn', 'update', '--quiet', auth, "#{tmpdir}/members.txt"]
-
-  # read full members.txt
-  text = File.read("#{tmpdir}/members.txt")
-
+# update members.txt
+ASF::SVN.update(members_txt, message, env, _) do |dir, text|
   # remove user's entry
   text.sub! entry, ''
 
@@ -39,15 +27,7 @@ Dir.mktmpdir do |tmpdir|
 
   # save the updated text
   ASF::Member.text = text
-
-  # save the results to disk
-  File.write("#{tmpdir}/members.txt", ASF::Member.text)
-
-  # commit changes
-  rc = system ['svn', 'commit', auth, "#{tmpdir}/members.txt",
-    '--message', "Move #{ASF::Person.find(@userid).member_name} to #{@action}"]
-  raise Exception.new("svn commit failed") unless rc == 0
 end
 
-# return  updated committer info
-_committer Committer.serialize('rubys', env)
+# return updated committer info
+_committer Committer.serialize(@userid, env)

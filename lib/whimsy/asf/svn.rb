@@ -118,17 +118,21 @@ module ASF
 
         # determine the new contents
         if File.file? tmpfile
+          previous_contents = File.read(tmpfile)
           contents = yield tmpdir, File.read(tmpfile)
         else
+          previous_contents = nil
           contents = yield tmpdir, ''
         end
      
         # create/update the temporary copy
         if contents and not contents.empty?
           File.write tmpfile, contents
-          _.system ['svn', 'add',
-            ['--username', env.user, '--password', env.password],
-            tmpfile]
+          if not previous_contents
+            _.system ['svn', 'add',
+              ['--username', env.user, '--password', env.password],
+              tmpfile]
+          end
         elsif File.file? tmpfile
           File.unlink tmpfile
           _.system ['svn', 'delete',
