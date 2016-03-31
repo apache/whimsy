@@ -45,7 +45,7 @@ Dir.mktmpdir do |tmpdir|
 
   # commit changes
   rc = system ['svn', 'commit', auth, "#{tmpdir}/members.txt",
-    '--message', "Move #{ASF::Person.find(@userid).member_name} to #{action}"]
+    '--message', "Move #{ASF::Person.find(@userid).member_name} to #{@action}"]
   raise Exception.new("svn commit failed") unless rc == 0
 end
 
