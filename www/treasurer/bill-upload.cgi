@@ -70,7 +70,7 @@ _html do
         @message += "\n\nFunding source: #{@source}" 
       end
 
-      # add file to svn
+      # add file to svn (--revision 0 means it won't overwrite an existing file)
       _.system ['svnmucc', '--revision', '0', '--message', @message,
          ['--no-auth-cache', '--non-interactive'],
          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
