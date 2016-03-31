@@ -63,6 +63,35 @@ module ASF
       result
     end
 
+    # retrieve revision, content for a file in svn
+    def self.get(path, user=nil, password=nil)
+      # build svn info command
+      cmd = ['svn', 'info', path, '--non-interactive']
+
+      # password was supplied, add credentials
+      if password
+        cmd += ['--username', user, '--password', password, '--no-auth-cache']
+      end
+
+      # default the values to return
+      revision = '0'
+      content = nil
+
+      # issue svn info command
+      stdout, status = Open3.capture2(*cmd)
+      if status.success?
+        # extract revision number
+        revision = stdout[/^Revision: (\d+)/, 1]
+
+        # extract contents
+        cmd[1] = 'cat'
+        content, status = Open3.capture2(*cmd)
+      end
+
+      # return results
+      return revision, content
+    end
+
     # update a file in SVN, working entirely in a temporary directory
     def self.update(path, msg, env, _)
       dir = File.dirname(path)
