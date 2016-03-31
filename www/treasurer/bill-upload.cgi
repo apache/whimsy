@@ -2,7 +2,6 @@
 
 require 'whimsy/asf'
 require 'wunderbar'
-require 'tmpdir'
 
 user = ASF::Person.new($USER)
 unless user.asf_member? or ASF.pmc_chairs.include?  user or $USER=='ea'
@@ -72,7 +71,7 @@ _html do
       end
 
       # add file to svn
-      _.system ['svnmucc', '-r', '0', '--message', @message,
+      _.system ['svnmucc', '--revision', '0', '--message', @message,
          ['--no-auth-cache', '--non-interactive'],
          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
         '--', 'put', '-', File.join(bills, @dest, name)],
