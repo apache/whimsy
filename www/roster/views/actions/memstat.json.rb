@@ -27,6 +27,9 @@ ASF::SVN.update(members_txt, message, env, _) do |dir, text|
 
   # save the updated text
   ASF::Member.text = text
+
+  # return the updated (and normalized) text
+  ASF::Member.text
 end
 
 # return updated committer info
