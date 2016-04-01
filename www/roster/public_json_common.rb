@@ -88,12 +88,12 @@ def write_output(file, results)
           mail = Mail.new do
             from ENV['MAIL_FROM'] || 'dev@whimsical.apache.org'
             to 'sebb@apache.org' # For testing purposes, will be changed to notifications@whimsical.a.o
+            subject "Difference(s) in #{file}"
             if ldaphost
-              subject "Difference(s) in #{file} (#{ldaphost})"
+              body "\n#{ldaphost}\n\n#{out}\n"
             else
-              subject "Difference(s) in #{file}"
-            end 
-            body "\n#{out}\n"
+              body "\n#{out}\n"
+            end
           end
           # deliver mail
           mail.deliver!
