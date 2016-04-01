@@ -5,6 +5,8 @@ require 'time'
 json = File.expand_path('../status.json', __FILE__)
 status = JSON.parse(File.read(json)) rescue {}
 git_info = `git show --format="%h  %ci"  -s HEAD`.strip rescue "?"
+# TODO better format; don't assume we use master
+git_repo = `git ls-remote origin master`.strip rescue "?"
 
 # Get new status every minute
 if not status['mtime'] or Time.now - Time.parse(status['mtime']) > 60
@@ -64,6 +66,7 @@ print <<-EOF
       <li><a href="passenger">Passenger</a> (ASF committer only)</li>
       <li><a href="svn">Subversion</a></li>
       <li>Git code info: #{git_info}</li>
+      <li>Git repo info: #{git_repo}</li>
     </ul>
   </body>
 </html>
