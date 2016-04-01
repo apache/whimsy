@@ -15,14 +15,21 @@ ENV.sort.each do |k,v|
   print "#{k} #{v}\n"
 end
 
+def puts_system(*cmd)
+  puts ['$', cmd].join ' '
+  system *cmd
+end
+
 # Optional extra info (from the main script only)
 query = ENV['QUERY_STRING'] || ARGV[0]
 if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
     print "\n"
-    system('which','-a','ruby')
-    system('which','-a','ruby2.3.0')
-    system('ruby','-v')
-    system('gem','env')
+    puts_system('which','-a','ruby')
+    puts_system('which','-a','ruby2.3.0')
+    puts_system('ruby','-v')
+    puts_system('gem','env')
+    puts_system('service puppet status')
+    puts_system('git ls-remote origin master')
     wait=query.match(/^sleep=(\d+)$/)[1].to_i rescue 0
     if wait > 0
       print "\nWaiting #{wait} seconds ..."
