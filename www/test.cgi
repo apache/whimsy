@@ -2,8 +2,6 @@
 
 print "Content-type: text/plain\r\n\r\n"
 
-#print ENV.inspect
-
 ENV.sort.each do |k,v|
   if k.eql? 'HTTP_AUTHORIZATION'
       # cannot use sub! because value is fozen
@@ -37,4 +35,5 @@ if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
       sleep wait
       print " done waiting\n"
     end
+    print "All done\n"
 end
