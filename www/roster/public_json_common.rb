@@ -80,9 +80,21 @@ def write_output(file, results)
       begin
         out, err, rc = Open3.capture3('diff', '-u', file, '-',
           stdin_data: results + "\n")
-        puts "\n#{out}\n" if err.empty? and rc.exitstatus == 1
-        rescue
-          # ignore failure here
+        if err.empty? and rc.exitstatus == 1
+          puts "\n#{out}\n"
+          require 'mail'
+          ASF::Mail.configure
+          mail = Mail.new do
+            from 'dev@whimsical.apache.org'
+            to 'sebb@apache.org' # For testing purposes, will be changed to notifications@whimsical.a.o
+            subject "Difference(s) in #{file}"
+            body "\n#{out}\n"
+          end
+          # deliver mail
+          mail.deliver!
+        end
+      rescue
+        # ignore failure here
       end
     end
   
