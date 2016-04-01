@@ -84,10 +84,15 @@ def write_output(file, results)
           puts "\n#{out}\n"
           require 'mail'
           ASF::Mail.configure
+          ldaphost = ASF::LDAP.host()
           mail = Mail.new do
-            from 'dev@whimsical.apache.org'
+            from ENV['MAIL_FROM'] || 'dev@whimsical.apache.org'
             to 'sebb@apache.org' # For testing purposes, will be changed to notifications@whimsical.a.o
-            subject "Difference(s) in #{file}"
+            if ldaphost
+              subject "Difference(s) in #{file} (#{ldaphost})"
+            else
+              subject "Difference(s) in #{file}"
+            end 
             body "\n#{out}\n"
           end
           # deliver mail
