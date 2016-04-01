@@ -623,6 +623,11 @@ module ASF
       end
     end
 
+    # Return the last chosen host (if any)
+    def self.host
+      @host
+    end
+
     # determine what LDAP hosts are available
     def self.hosts
       return @hosts if @hosts # cache the hosts list
