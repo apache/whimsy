@@ -14,7 +14,7 @@ class PersonMemberText < React
 
           _form.inline method: 'post' do
             _div do
-              _textarea defaultValue: committer.member.info
+              _textarea name: 'entry', defaultValue: committer.member.info
             end
             _button.btn.btn_primary 'submit'
           end
