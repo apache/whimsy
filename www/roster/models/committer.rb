@@ -96,6 +96,7 @@ class Committer
             person.icla.name,
             member[:info].split("\n").first.strip
           ].uniq.each do |name|
+            next unless name
             memapp = name.downcase.gsub(/\s/, '-').untaint
             if apps and File.exist? File.join(apps, memapp + '.pdf')
               response[:forms][:member] = memapp + '.pdf'

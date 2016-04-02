@@ -93,7 +93,7 @@ module ASF
     end
 
     # update a file in SVN, working entirely in a temporary directory
-    def self.update(path, msg, env, _)
+    def self.update(path, msg, env, _, options={})
       dir = File.dirname(path)
       basename = File.basename(path)
 
@@ -140,10 +140,15 @@ module ASF
             tmpfile]
         end
 
-        # commit the changes
-        rc = _.system ['svn', 'commit', '--message', msg.untaint,
-          ['--username', env.user, '--password', env.password],
-          tmpfile]
+        if options[:dryrun]
+          # show what would have been committed
+          rc = _.system ['svn', 'diff', tmpfile]
+        else
+          # commit the changes
+          rc = _.system ['svn', 'commit', '--message', msg.untaint,
+            ['--username', env.user, '--password', env.password],
+            tmpfile]
+        end
 
         # fail if there are pending changes
         unless rc == 0 and `svn st`.empty?
