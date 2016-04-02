@@ -97,6 +97,8 @@ def write_output(file, results)
               body "\n#{out}\n"
             end
           end
+          # in spite of what the docs say, this does not seem to work in the body above
+          mail.charset = 'utf-8'
           # deliver mail
           mail.deliver!
         end
