@@ -1,6 +1,7 @@
 class Committer < React
   def initialize
     @committer = {}
+    @response = nil
   end
 
   def render
@@ -273,6 +274,24 @@ class Committer < React
         end
       end
     end
+
+    # modal dialog for dry run results
+    _div.modal.fade tabindex: -1 do
+      _div.modal_dialog do
+        _div.modal_content do
+          _div.modal_header do
+            _button.close 'x', data_dismiss: 'modal'
+            _h4 'Dry run results'
+          end
+          _div.modal_body do
+            _textarea value: JSON.stringify(@response, nil, 2), readonly: true
+          end
+          _div.modal_footer do
+            _button.btn.btn_default 'Close', data_dismiss: 'modal'
+          end
+        end
+      end
+    end
   end
 
   # capture committer on initial load
@@ -326,12 +345,21 @@ class Committer < React
     form = jQuery(event.currentTarget).closest('form')
     target = event.target
 
+    # serialize form
     formData = form.serializeArray();
-    if target and target.getAttribute('value')
+
+    # add button if it has a value
+    if target and target.getAttribute('name') and target.getAttribute('value')
       formData.push name: target.getAttribute('name'),
         value: target.getAttribute('value')
     end
 
+    # indicate dryrun is requested if option or control key is down
+    if event.altKey or event.ctrlKey
+      formData.unshift name: 'dryrun', value: true 
+    end
+
+    # issue request
     jQuery.ajax(
       method: (form[0].method || 'GET').upcase(),
       url: document.location.href + '/' + form[0].getAttribute('data-action'),
@@ -356,15 +384,18 @@ class Committer < React
       },
 
       complete: ->(response) do
-        # reenable form for later reuse
-        Array(form[0].querySelectorAll('input, button')).each do |input|
-          input.disabled = false
+        # show results of dryrun
+        if formData[0] and formData[0].name == 'dryrun'
+          @response = response.responseJSON
+          jQuery('div.modal').modal('show')
         end
+
+        # reenable form for later reuse
+        jQuery('input, button', form).prop('disabled', false)
       end
     )
 
-    Array(form[0].querySelectorAll('input, button')).each do |input|
-      input.disabled = true
-    end
+    # disable input
+    jQuery('input, button', form).prop('disabled', true)
   end
 end
