@@ -9,7 +9,7 @@ members_txt = ASF::SVN['private/foundation/members.txt']
 message = "Move #{ASF::Person.find(@userid).member_name} to #{@action}"
 
 # update members.txt
-ASF::SVN.update(members_txt, message, env, _) do |dir, text|
+_svn.update members_txt, message: message do |dir, text|
   # remove user's entry
   text.sub! entry, ''
 
