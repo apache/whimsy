@@ -117,7 +117,7 @@ class Person < React
     end
 
     # modal dialog for dry run results
-    _div.modal.fade tabindex: -1 do
+    _div.modal.fade.wide_form tabindex: -1 do
       _div.modal_dialog do
         _div.modal_content do
           _div.modal_header do
