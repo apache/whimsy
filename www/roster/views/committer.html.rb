@@ -17,6 +17,6 @@ _html do
 
   _script src: 'app.js'
   _.render '#main' do
-    _Committer committer: @committer, auth: @auth
+    _Person committer: @committer, auth: @auth
   end
 end
