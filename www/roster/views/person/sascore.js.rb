@@ -11,7 +11,7 @@ class PersonSascore < React
 
       _td do
 
-        if @edit_sascore
+        if @@person.state.edit_sascore
 
           _form method: 'post' do
             _input type: 'number', min: 0, max: 10, 
