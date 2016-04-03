@@ -1,3 +1,12 @@
 To test locally, run:
 
     rake server
+
+If you are running commands/actions that require authentication, start your
+sever using:
+
+    rake auth server
+
+Doing so will prompt you for your password.  Should your username for apache
+not match your local user name, set the `USER` environment variable to your
+apache user id before running the above command.
