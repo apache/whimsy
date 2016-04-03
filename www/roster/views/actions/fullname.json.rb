@@ -4,9 +4,9 @@
 person = ASF::Person.find(@userid)
 
 # update LDAP
-if person.public_name != @publicname
+if person.attrs['cn'] != @publicname
   _ldap.update do
-    _previous person.public_name
+    _previous person.attrs['cn']
 
     if @publicname and not @dryrun
       person.modify 'cn', @publicname
