@@ -99,11 +99,13 @@ def write_output(file, results)
           end
           # in spite of what the docs say, this does not seem to work in the body above
           mail.charset = 'utf-8'
+          # Replace .mail suffix with more accurate one
+          mail.message_id = "<#{Mail.random_tag}@#{::Socket.gethostname}.apache.org>"
           # deliver mail
           mail.deliver!
         end
-      rescue
-        # ignore failure here
+      rescue => e
+        Wunderbar.info "Got exception #{e}"
       end
     end
   
