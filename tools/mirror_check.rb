@@ -10,6 +10,8 @@ TODO this is a work in progress...
 
 Ideally the causes of some of the problems should be reported ...
 
+Note: the GUI interface is currently at www/members/mirror_check.cgi
+
 =end
 
 require 'wunderbar'
@@ -275,8 +277,7 @@ def display
   _h4_ 'F: fatal, E: Error, W: warning, I: info (success)'
 end
 
-# Are we really running under a shell?
-if __FILE__ == $0 and ENV['SHELL'] and ! ENV['REQUEST_METHOD']
+if __FILE__ == $0
   init
   url = ARGV[0] || DEFAULT
   url += '/' unless url.end_with? '/'
@@ -287,55 +288,5 @@ if __FILE__ == $0 and ENV['SHELL'] and ! ENV['REQUEST_METHOD']
     puts "#{url} had #{@fails} errors"
   else
     puts "#{url} passed all the tests"
-  end
-  exit # important; don't continue with the script
-end
-
-############################################################# Web Page ########################################################
-
-print "Status: 200 OK\r\n"
-
-_html do
-  _style %{
-    textarea, .mod, label {display: block}
-    input[type=submit] {display: block; margin-top: 1em}
-    input[name=podling], p, .mod, textarea {margin-left: 2em}
-    .subdomain, .domain {color: #000}
-    legend {background: #141; color: #DFD; padding: 0.4em}
-#    .name {width: 6em}
-    ._stdin {color: #C000C0; margin-top: 1em}
-    ._stdout {color: #000}
-    .error, ._stderr {color: #F00}
-    .request {background-color: #BDF}
-  }
-
-  _body? do
-    _h2 "Mirror Checker"
-    _p do
-      _ 'This page can be used to check that an Apache software mirror has been set up correctly'
-    end
-    _p do
-      _ 'Please see the'
-      _a 'Apache how-to mirror page', href: 'http://www.apache.org/info/how-to-mirror.html'
-      _ 'for details on setting up an ASF mirror.'
-    end
-
-    _form method: 'post' do
-      _fieldset do
-        _legend 'ASF Mirror Check Request'
-        _h3_ 'Mirror URL'
-        _input.name name: 'url', required: true, pattern: URLPAT,
-                    placeholder: 'mirror URL',
-                    size: 30, 
-                    value: DEFAULT
-        _input type: 'submit', value: 'Check Mirror'
-      end
-    end
-
-    if _.post?
-      init
-      checkHTTP(@url)
-      display
-    end
   end
 end
