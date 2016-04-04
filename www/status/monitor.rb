@@ -39,7 +39,7 @@ class Monitor
         threads << Thread.new do
           begin
             # invoke method to determine current status
-            previous = baseline[method] || {mtime: Time.at(0)}
+            previous = baseline['data'][method.to_s] || {mtime: Time.at(0)}
             status = Monitor.send(method, previous) || previous
 
             # convert non-hashes in proper statuses
