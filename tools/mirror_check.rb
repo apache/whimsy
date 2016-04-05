@@ -141,21 +141,21 @@ def check_page(base, page, severity=:E, expectedStatus="200")
 end
 
 def checkIndex(page, type)
+  asfData = @pages[type]
+  links = parseIndexPage(page)
   if type == :tlps
-    fav = page.match('favicon.ico')
-    zzz = page.match('zzz/')
-    if fav.length == 1 and zzz.length == 1
-      if fav.begin(0) < zzz.begin(0)
+    fav = links.index('favicon.ico')
+    zzz = links.index('zzz')
+    if fav and zzz
+      if fav < zzz
         W "Incorrect page order - found favicon.ico before zzz/; folders should be listed before files"
       else
         I "Found favicon.ico and zzz/ in the page in the correct order (i.e. folders are listed before files)"
       end
     else
-      W "Expecting to find favicon.ico and zzz/ in the page"
+      W "Expecting to find favicon.ico #{fav} and zzz/ #{zzz} in the page"
     end
   end
-  asfData = @pages[type]
-  links = parseIndexPage(page)
   links.each {|l|
     W "Index #{type} the link #{l} is not shown on ASF site" unless asfData.include? l
   }
