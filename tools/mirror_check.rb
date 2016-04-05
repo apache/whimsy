@@ -148,19 +148,19 @@ def checkIndex(page, type)
     zzz = links.index('zzz')
     if fav and zzz
       if fav < zzz
-        W "Incorrect page order - found favicon.ico before zzz/; folders should be listed before files"
+        W "Index for #{type}: incorrect #{type} page order - found favicon.ico before zzz/; folders should be listed before files"
       else
-        I "Found favicon.ico and zzz/ in the page in the correct order (i.e. folders are listed before files)"
+        I "Index for #{type}: found favicon.ico and zzz/ in the page in the correct order (i.e. folders are listed before files)"
       end
     else
-      W "Expecting to find favicon.ico #{fav} and zzz/ #{zzz} in the page"
+      W "Index for #{type}: expected to find favicon.ico #{fav} and zzz/ #{zzz} in the page, but at least one is missing"
     end
   end
   links.each {|l|
-    W "Index #{type} the link #{l} is not shown on ASF site" unless asfData.include? l
+    W "Index for #{type}: the link #{l} is not shown on ASF site" unless asfData.include? l
   }
   asfData.each {|l|
-    W "Index #{type} the link #{l} is not shown on SUT" unless links.include? l    
+    W "Index for #{type}: the link #{l} is not shown on the mirror site" unless links.include? l    
   }  
 end
 
@@ -173,8 +173,6 @@ def parseIndexPage(page)
   links.each { |l|
     if l[1] == l[0]
       folders << l[1]
-    else
-      print "Mistmatched names: #{l}\n"
     end
   }
   folders
