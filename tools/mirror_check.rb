@@ -316,6 +316,13 @@ def display
   _h4_ 'F: fatal, E: Error, W: warning, I: info (success)'
 end
 
+# Called by GUI when POST is pushed
+def doPost(url)
+  init
+  checkHTTP(url)
+  display
+end
+
 if __FILE__ == $0
   init
   url = ARGV[0] || DEFAULT

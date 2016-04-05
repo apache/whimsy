@@ -40,9 +40,7 @@ _html do
     end
 
     if _.post?
-      init
-      checkHTTP(@url)
-      display
+      doPost(@url)
     end
   end
 end
