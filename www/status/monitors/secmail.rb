@@ -10,5 +10,6 @@ end
 
 # for debugging purposes
 if __FILE__ == $0
-  puts Monitor.secmail(nil)
+  require_relative 'unit_test'
+  runtest('secmail') # must agree with method name above
 end

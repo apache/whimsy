@@ -25,5 +25,6 @@ end
 
 # for debugging purposes
 if __FILE__ == $0
-  puts Monitor.board_minutes(nil)
+  require_relative 'unit_test'
+  runtest('board_minutes') # must agree with method name above
 end

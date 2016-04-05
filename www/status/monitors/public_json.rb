@@ -96,6 +96,6 @@ end
 
 # for debugging purposes
 if __FILE__ == $0
-  require 'json'
-  puts JSON.pretty_generate(Monitor.public_json(nil))
+  require_relative 'unit_test'
+  runtest('public_json') # must agree with method name above
 end

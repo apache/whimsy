@@ -34,6 +34,6 @@ end
 
 # for debugging purposes
 if __FILE__ == $0
-  require 'json'
-  puts JSON.pretty_generate(Monitor.system(nil))
+  require_relative 'unit_test'
+  runtest('system') # must agree with method name above
 end

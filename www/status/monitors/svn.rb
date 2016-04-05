@@ -57,5 +57,6 @@ end
 
 # for debugging purposes
 if __FILE__ == $0
-  puts Monitor.svn(nil)
+  require_relative 'unit_test'
+  runtest('svn') # must agree with method name above
 end
