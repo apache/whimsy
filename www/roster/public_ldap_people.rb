@@ -54,7 +54,9 @@ end
 
 info = {
   lastCreateTimestamp: lastcreateTimestamp,
-  lastTimestamp: lastmodifyTimestamp, # other public json files use this name
+#  This field has been disabled because it changes much more frequently than expected
+#  This means that the file is flagged as having changed even when no other content has
+#  lastTimestamp: lastmodifyTimestamp, # other public json files use this name
   people: peo,
 }
 
