@@ -62,6 +62,13 @@ Details by content type:
  * **Cron jobs** are managed by puppet.  See [deployment](DEPLOYMENT.md) for more
    information.
 
+Git repos
+=========
+The code is hosted at
+    https://github.com/apache/whimsy.git
+and now also at
+    https://git-dual.apache.org/repos/asf/whimsy.git
+
 Further Reading
 ===============
 
