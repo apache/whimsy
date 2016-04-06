@@ -39,27 +39,27 @@ img.logo {
   margin-right: 5px;
 }
 
-a.list-group-item.alert-success {
+a.list-group-item.alert-success, .alert-success {
   color: #3c763d;
   background-color: #dff0d8;
 }
 
-a.list-group-item.alert-info {
+a.list-group-item.alert-info, .alert-info {
   color: #31708f;
   background-color: #d9edf7;
 }
 
-a.list-group-item.alert-warning {
+a.list-group-item.alert-warning, .alert-warning {
   color: #8a6d3b;
   background-color: #fcf8e3;
 }
 
-a.list-group-item.alert-danger {
+a.list-group-item.alert-danger, .alert-danger {
   background-color: #f2dede;
   color: #a94442;
 }
 
-a.list-group-item.alert-fatal {
+a.list-group-item.alert-fatal, .alert-fatal {
   background-color: #ff0000;
   color: #FFFFFF;
 }

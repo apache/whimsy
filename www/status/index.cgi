@@ -54,6 +54,21 @@ print <<-EOF
       Loading...
     </div>
 
+    <table>
+    <tr>
+      <td class="alert-success">Success</td>
+      <td>&nbsp;</td>
+      <td class="alert-info">Info</td>
+      <td>&nbsp;</td>
+      <td class="alert-warning">Warning</td>
+      <td>&nbsp;</td>
+      <td class="alert-danger">Danger</td>
+      <td>&nbsp;</td>
+      <td class="alert-fatal">Fatal</td>
+    </tr>
+    </table>
+    <br/>
+
     <p>
       This status is monitored by:
       <a href="https://www.pingmybox.com/dashboard?location=470">Ping My
