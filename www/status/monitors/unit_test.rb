@@ -7,7 +7,7 @@ require 'json'
 def runtest(method_name)
   status_file = File.expand_path('../../status.json', __FILE__)
   baseline = JSON.parse(File.read(status_file)) rescue {}
-  baseline['data'] = {} unless baseline['data'].instance_of? Hash
-  previous = baseline['data'][method_name] || {mtime: Time.at(0)}
+  baseline[:data] = {} unless baseline[:data].instance_of? Hash
+  previous = baseline[:data][method_name] || {mtime: Time.at(0)}
   puts JSON.pretty_generate(Monitor.send(method_name, previous))
 end

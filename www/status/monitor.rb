@@ -23,7 +23,7 @@ class Monitor
 
       # fetch previous status
       baseline = JSON.parse(file.read) rescue {}
-      baseline['data'] = {} unless baseline['data'].instance_of? Hash
+      baseline[:data] = {} unless baseline[:data].instance_of? Hash
 
       # If status was updated while waiting for the lock, use the new status
       if not File.exist?(status_file) or mtime != File.mtime(status_file)
@@ -39,7 +39,7 @@ class Monitor
         threads << Thread.new do
           begin
             # invoke method to determine current status
-            previous = baseline['data'][method.to_s] || {mtime: Time.at(0)}
+            previous = baseline[:data][method.to_s] || {mtime: Time.at(0)}
             status = Monitor.send(method, previous) || previous
 
             # convert non-hashes in proper statuses
@@ -64,7 +64,7 @@ class Monitor
           end
 
           # default mtime to now
-          status['mtime'] ||= Time.now if status.instance_of? Hash
+          status[:mtime] ||= Time.now if status.instance_of? Hash
 
           # store status in thread local storage
           Thread.current[:name] = method.to_s
@@ -106,62 +106,57 @@ class Monitor
       status = {data: status}
     end
 
-    # convert symbols to strings
-    status.keys.each do |key|
-      status[key.to_s] = status.delete(key) if key.instance_of? Symbol
-    end
-
     # normalize data
-    if status['data'].instance_of? Hash
+    if status[:data].instance_of? Hash
       # recursively normalize the data structure
-      status['data'].values.each {|value| normalize(value)}
-    elsif not status['data'] and not status['mtime']
+      status[:data].values.each {|value| normalize(value)}
+    elsif not status[:data] and not status[:mtime]
       # default data
-      status['data'] = 'missing'
-      status['level'] ||= 'danger'
+      status[:data] = 'missing'
+      status[:level] ||= 'danger'
     end
 
     # normalize time
-    if status['mtime'].instance_of? Time
-      status['mtime'] = status['mtime'].gmtime.iso8601
+    if status[:mtime].instance_of? Time
+      status[:mtime] = status[:mtime].gmtime.iso8601
     end
 
     # normalize level (filling in title when this occurs)
-    if status['level']
-      if not LEVELS.include? status['level']
-        status['title'] ||= "invalid status: #{status['level'].inspect}"
-        status['level'] = 'fatal'
+    if status[:level]
+      if not LEVELS.include? status[:level]
+        status[:title] ||= "invalid status: #{status[:level].inspect}"
+        status[:level] = 'fatal'
       end
     else
-      if status['data'].instance_of? Hash
+      if status[:data].instance_of? Hash
         # find the values with the highest status level
-        highest = status['data'].
-          group_by {|key, value| LEVELS.index(value['level']) || 9}.max ||
+        highest = status[:data].
+          group_by {|key, value| LEVELS.index(value[:level]) || 9}.max ||
           [9, []]
 
         # adopt that level
-        status['level'] = LEVELS[highest.first] || 'fatal'
+        status[:level] = LEVELS[highest.first] || 'fatal'
 
         group = highest.last
         if group.length != 1
           # indicate the number of item with that status
-          status['title'] = "#{group.length} #{ISSUE_TYPE[status['level']]}"
+          status[:title] = "#{group.length} #{ISSUE_TYPE[status[:level]]}"
 
           if group.length <= 4
-            status['title'] += ': ' + group.map(&:first).join(', ')
+            status[:title] += ': ' + group.map(&:first).join(', ')
           end
         else
           # indicate the item with the problem
           key, value = group.first
-          if value['title']
-            status['title'] ||= "#{key} #{value['title']}"
+          if value[:title]
+            status[:title] ||= "#{key} #{value[:title]}"
           else
-            status['title'] ||= "#{key} #{value['data'].inspect}"
+            status[:title] ||= "#{key} #{value[:data].inspect}"
           end
         end
       else
         # default level
-        status['level'] ||= 'success'
+        status[:level] ||= 'success'
       end
     end
 
