@@ -3,6 +3,7 @@
 #
 
 require 'fileutils'
+require 'time'
 
 def Monitor.public_json(previous_status)
   danger_period = 86_400 # one day
@@ -18,14 +19,14 @@ def Monitor.public_json(previous_status)
   status = {}
 
   Dir[logs].each do |log|
-    name = File.basename(log).sub('public-', '')
+    name = File.basename(log).sub('public-', '').to_sym
 
     begin
       status[name] = {
         href: "../logs/#{File.basename(log)}",
-        mtime: File.mtime(log)
+        mtime: File.mtime(log).gmtime.iso8601, # to agree with normalise
+        level: 'success' # to agree with normalise
       }
-
       contents = File.read(log, encoding: Encoding::UTF_8)
 
       # Ignore Wunderbar logging for normal messages (may occur multiple times)
@@ -81,13 +82,15 @@ def Monitor.public_json(previous_status)
       }
     end
 
-    # Save a copy of the log
-    # append the severity so can track more problems
-    lvl = status[name][:level] 
-    if lvl and lvl != 'info'
-      name = File.basename(log)
-      FileUtils.copy log, File.join(archive, name + '.' + lvl),
-        preserve: true
+    # Has there been a change since the last check?
+    if status[name] != previous_status[:data][name]
+      lvl = status[name][:level] 
+      if lvl and lvl != 'info' # was there a problem?
+        # Save a copy of the log; append the severity so can track more problems
+        name = File.basename(log)
+        # temporarily allow the date stamp to be updated so we can see if the file is copied mulitple times
+        FileUtils.copy log, File.join(archive, name + '.' + lvl) #, preserve: true
+      end
     end
   end
 

@@ -1,8 +1,20 @@
 #
 # Overall monitor class is responsible for loading and running each
 # monitor in the `monitors` directory, collecting and normalizing the
-# results and outputting it as JSON.
+# results and outputting it as JSON for use in the GUI.
 #
+# The previous status is passed to the monitor on the next run so it can
+# determine when to take non-idempotent actions such as sending a message
+#
+# The monitors are called frequently, so the return status built up by
+# a monitor should be easily comparable with the input status. This means
+# using the same key and value formats (at least for monitors that need to
+# compare them).
+#
+# Although both string and symbolic keys can be used in hashes, the syntax
+# for symbolic keys is rather neater, so we use symbolic keys throughout.
+# This means that the JSON file is parsed into a hash using symbolic keys,
+# and any variables used as keys need to be converted to symbols.
 
 require 'json'
 require 'time'
@@ -21,8 +33,8 @@ class Monitor
       mtime = File.exist?(status_file) ? File.mtime(status_file) : Time.at(0)
       file.flock(File::LOCK_EX)
 
-      # fetch previous status
-      baseline = JSON.parse(file.read) rescue {}
+      # fetch previous status (using symbolic keys)
+      baseline = JSON.parse(file.read, {symbolize_names: true}) rescue {}
       baseline[:data] = {} unless baseline[:data].instance_of? Hash
 
       # If status was updated while waiting for the lock, use the new status
@@ -39,7 +51,7 @@ class Monitor
         threads << Thread.new do
           begin
             # invoke method to determine current status
-            previous = baseline[:data][method.to_s] || {mtime: Time.at(0)}
+            previous = baseline[:data][method.to_sym] || {mtime: Time.at(0)}
             status = Monitor.send(method, previous) || previous
 
             # convert non-hashes in proper statuses
@@ -116,7 +128,8 @@ class Monitor
       status[:level] ||= 'danger'
     end
 
-    # normalize time
+    # normalize time 
+    # If the called monitor wants to compare status hashes it should store the correct format
     if status[:mtime].instance_of? Time
       status[:mtime] = status[:mtime].gmtime.iso8601
     end

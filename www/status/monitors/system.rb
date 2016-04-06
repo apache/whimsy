@@ -6,16 +6,17 @@
 require 'time'
 
 def Monitor.system(previous_status)
-  name='puppet'
+  name=:puppet
   status = {}
   status[name] = {
-    mtime: Time.now.gmtime.iso8601,
-    command: 'service puppet status'
+    command: 'service puppet status',
   }
   begin
     puppet = `service puppet status`.strip
-    if puppet.include? ' * agent is running'
-      status[name].merge! level: 'warning', title: puppet
+    if puppet.include? '* agent is running'
+      status[name].merge! level: 'success', data: puppet
+    else
+      status[name].merge! level: 'warning', data: puppet
     end
     rescue Exception => e
       status[name] = {
