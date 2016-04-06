@@ -83,7 +83,10 @@ class CheckSignature < React
   def request_upload()
     destination = @@headers.From
     subject = "Re: #{@@headers.Subject}"
-    body = "Please upload your public key.\n\nhttps://pgp.mit.edu/"
+    body = "Dear #{@@headers.name},\n\n" +
+      "Can you please upload your public key?\n\n" + 
+      "http://apache.org/licenses/#submitting\n\n" +
+      "Regards,\n\n"
 
     window.location = "mailto:#{encodeURIComponent(destination)}" +
       "?subject=#{encodeURIComponent(subject)}" +
