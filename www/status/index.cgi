@@ -54,16 +54,12 @@ print <<-EOF
       Loading...
     </div>
 
-    <table>
+    <table class="status-legend">
     <tr>
       <td class="alert-success">Success</td>
-      <td>&nbsp;</td>
       <td class="alert-info">Info</td>
-      <td>&nbsp;</td>
       <td class="alert-warning">Warning</td>
-      <td>&nbsp;</td>
       <td class="alert-danger">Danger</td>
-      <td>&nbsp;</td>
       <td class="alert-fatal">Fatal</td>
     </tr>
     </table>

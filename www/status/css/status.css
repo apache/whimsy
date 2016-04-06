@@ -63,3 +63,12 @@ a.list-group-item.alert-fatal, .alert-fatal {
   background-color: #ff0000;
   color: #FFFFFF;
 }
+
+.status-legend {
+  border-spacing: 0.5em;
+  border-collapse: separate;
+}
+
+.status-legend td {
+  padding: 5px;
+}
