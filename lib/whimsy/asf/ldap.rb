@@ -467,6 +467,7 @@ module ASF
     end
 
     def remove(people)
+      @members = nil
       people = (Array(people) & members).map(&:id)
       return if people.empty?
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'memberUid', people)
@@ -476,6 +477,7 @@ module ASF
     end
 
     def add(people)
+      @members = nil
       people = (Array(people) - members).map(&:id)
       return if people.empty?
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'memberUid', people)
@@ -523,6 +525,7 @@ module ASF
     end
 
     def remove(people)
+      @members = nil
       people = Array(people & members).map(&:dn)
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'member', people)
       ASF.ldap.modify(self.dn, [mod])
@@ -531,6 +534,7 @@ module ASF
     end
 
     def add(people)
+      @members = nil
       people = Array(people - members).map(&:dn)
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'member', people)
       ASF.ldap.modify(self.dn, [mod])
@@ -577,16 +581,20 @@ module ASF
     end
 
     def remove(people)
+      @members = nil
       people = Array(people - members).map(&:dn)
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'member', people)
       ASF.ldap.modify(self.dn, [mod])
+    ensure
       @members = nil
     end
 
     def add(people)
+      @members = nil
       people = Array(people & members).map(&:dn)
       mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'member', people)
       ASF.ldap.modify(self.dn, [mod])
+    ensure
       @members = nil
     end
   end
