@@ -109,7 +109,7 @@ class Committer
         end
       end
 
-      response[:member] = member
+      response[:member] = member unless member.empty?
 
     end
 
