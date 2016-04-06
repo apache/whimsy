@@ -83,9 +83,9 @@ def Monitor.public_json(previous_status)
     end
 
     # Has there been a change since the last check?
-    if status[name] != previous_status[:data][name]
+    if previous_status[:data] and status[name] != previous_status[:data][name]
       lvl = status[name][:level] 
-      if lvl and lvl != 'info' # was there a problem?
+      if lvl and lvl != 'info' and lvl != 'success' # was there a problem?
         # Save a copy of the log; append the severity so can track more problems
         name = File.basename(log)
         # temporarily allow the date stamp to be updated so we can see if the file is copied mulitple times
