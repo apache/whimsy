@@ -89,8 +89,7 @@ def Monitor.public_json(previous_status)
       if lvl and lvl != 'info' and lvl != 'success' # was there a problem?
         # Save a copy of the log; append the severity so can track more problems
         name = File.basename(log)
-        # temporarily allow the date stamp to be updated so we can see if the file is copied mulitple times
-        FileUtils.copy log, File.join(archive, name + '.' + lvl) #, preserve: true
+        FileUtils.copy log, File.join(archive, name + '.' + lvl), preserve: true
         $stderr.puts "Would send e-mail for #{name} #{lvl}"
       end
     end
