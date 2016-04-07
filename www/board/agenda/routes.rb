@@ -246,3 +246,8 @@ get '/text/draft/:file' do |file|
     end
   end
 end
+
+# historical comments
+get '/historical-comments' do
+  _json HistoricalComments.comments
+end
