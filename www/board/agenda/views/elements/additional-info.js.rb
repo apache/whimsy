@@ -43,6 +43,8 @@ class AdditionalInfo < React
       # historical comments
       if history and not @prefix
         for date in history
+          next if Agenda.file == "board_agenda_#{date}.txt"
+
           _h5.history do
             _span "\u2022 "
             _a date.gsub('_', '-'),
