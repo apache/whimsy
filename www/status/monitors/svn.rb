@@ -17,7 +17,7 @@ def Monitor.svn(previous_status)
     data = revision = update[/^(Updated to|At) revision \d+\.$/]
 
     lines = update.split("\n")
-    repository = lines.shift
+    repository = lines.shift.to_sym
 
     lines.reject! do |line| 
       line == "Updating '.':" or
