@@ -1,6 +1,27 @@
 #
 # Monitor status of svn updates
 #
+=begin
+Sample input:
+---- cut here ---
+
+/srv/svn/Bills
+Updating '.':
+At revision 67610.
+
+/srv/svn/Meetings
+Updating '.':
+At revision 67610.
+
+---- cut here ---
+
+Output status level can be:
+Success - workspace is up to date
+Info - one or more files updated
+Warning - partial response
+Danger - unexpected text in log file
+
+=end
 
 def Monitor.svn(previous_status)
   # read cron log
