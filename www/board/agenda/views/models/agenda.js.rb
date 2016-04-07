@@ -134,21 +134,7 @@ class Agenda
 
   # return comments as an array of individual comments
   def comments
-    results = []
-    return results unless @comments
-
-    comment = ''
-    @comments.split("\n").each do |line|
-      if line =~ /^\S/
-        results << comment unless comment.empty?
-        comment = line
-      else
-        comment += "\n" + line
-      end
-    end
-
-    results << comment unless comment.empty?
-    return results
+    splitComments(@comments)
   end
 
   # item's comments excluding comments that have been seen before

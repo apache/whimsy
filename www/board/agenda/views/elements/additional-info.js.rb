@@ -31,11 +31,28 @@ class AdditionalInfo < React
     end
 
     # posted comments
-    unless @@item.comments.empty?
+    history = HistoricalComments.find(@@item.title)
+    if not @@item.comments.empty? or (history and not @prefix)
       _h4 'Comments', id: "#{@prefix}comments"
       @@item.comments.each do |comment|
         _pre.comment do
           _Text raw: comment, filters: [hotlink]
+        end
+      end
+
+      # historical comments
+      if history and not @prefix
+        for date in history
+          _h5.history do
+            _span "\u2022 "
+            _a date.gsub('_', '-'),
+              href: HistoricalComments.link(date, @@item.title)
+            _span ':'
+          end
+
+          _pre.comment do
+            _Text raw: history[date], filters: [hotlink]
+          end
         end
       end
     end

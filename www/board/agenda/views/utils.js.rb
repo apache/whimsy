@@ -173,3 +173,26 @@ class Flow
     return lines.join("\n")
   end
 end
+
+#
+# Split comments string into individual comments
+#
+
+def splitComments(string)
+  results = []
+  return results unless string
+
+  comment = ''
+  string.split("\n").each do |line|
+    if line =~ /^\S/
+      results << comment unless comment.empty?
+      comment = line
+    else
+      comment += "\n" + line
+    end
+  end
+
+  results << comment unless comment.empty?
+  return results
+end
+
