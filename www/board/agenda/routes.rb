@@ -206,6 +206,11 @@ get %r{/json/chat/(\d\d\d\d_\d\d_\d\d)} do |date|
   end
 end
 
+# historical comments
+get '/json/historical-comments' do
+  _json HistoricalComments.comments
+end
+
 # event stream for server sent events (a.k.a EventSource)
 get '/events', provides: 'text/event-stream' do
   stream :keep_open do |out|
@@ -245,9 +250,4 @@ get '/text/draft/:file' do |file|
       end
     end
   end
-end
-
-# historical comments
-get '/historical-comments' do
-  _json HistoricalComments.comments
 end
