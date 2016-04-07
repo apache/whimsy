@@ -26,6 +26,7 @@ if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
     puts_system('which','-a','ruby2.3.0')
     puts_system('ruby','-v')
     puts_system('gem','env')
+    puts_system('which','-a','gem')
     puts_system('service puppet status')
     puts_system('git ls-remote origin master')
     wait=query.match(/^sleep=(\d+)$/)[1].to_i rescue 0
