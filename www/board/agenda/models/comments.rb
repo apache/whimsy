@@ -16,12 +16,12 @@ class HistoricalComments
       sort_by {|file| File.basename(file)}.
       map {|file| file.untaint}
 
+    # drop latest agenda
+    agendas.pop
+
     # return previous results unless an agenda has been updated
     mtime = agendas.map {|file| File.mtime(file)}.max
     return @@comments if mtime == @@mtime
-
-    # drop latest agenda
-    agendas.pop
 
     # initialize comments to empty hash of hashes
     comments = Hash.new {|hash, key| hash[key] = {}}
