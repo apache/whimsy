@@ -2,10 +2,12 @@
 # Monitor status of secretarial mail
 #
 
+require 'time'
+
 def Monitor.secmail(previous_status)
   log = '/srv/mail/procmail.log'
 
-  {mtime: File.mtime(log)}
+{mtime: File.mtime(log).gmtime.iso8601, level: 'success'} # to agree with normalise
 end
 
 # for debugging purposes
