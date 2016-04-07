@@ -85,7 +85,7 @@ def Monitor.public_json(previous_status)
     # Has there been a change since the last check?
     if previous_status[:data] and status[name] != previous_status[:data][name]
       lvl = status[name][:level] 
-      $stderr.puts "Status has changed for #{name} #{lvl}"
+#      $stderr.puts "Status has changed for #{name} #{lvl}"
       if lvl and lvl != 'info' and lvl != 'success' # was there a problem?
         # Save a copy of the log; append the severity so can track more problems
         name = File.basename(log)
