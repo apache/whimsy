@@ -25,10 +25,11 @@ end
 
 # The following is what infrastructure team sees:
 if %w(success info).include? status[:level]
-  print "Status: 200 OK\r\n\r\n"
+  summary_status = "200 OK"
 else
-  print "Status: 400 #{status[:title] || 'failure'}\r\n\r\n"
+  summary_status = "400 #{status[:title] || 'failure'}"
 end
+print "Status: #{summary_status}\r\n\r\n"
 
 # What the browser sees:
 print <<-EOF
@@ -54,6 +55,9 @@ print <<-EOF
       Loading...
     </div>
 
+    <p>
+    Overall status: #{summary_status}
+    </p>
     <table class="status-legend">
     <tr>
       <td class="alert-success">Success</td>
