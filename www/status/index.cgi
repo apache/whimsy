@@ -9,7 +9,7 @@ git_info = `git show --format="%h  %ci"  -s HEAD`.strip rescue "?"
 git_repo = `git ls-remote origin master`.strip rescue "?"
 
 # Get new status every minute
-if not status['mtime'] or Time.now - Time.parse(status['mtime']) > 60
+if not status[:mtime] or Time.now - Time.parse(status[:mtime]) > 60
   begin
     require_relative './monitor'
     status = Monitor.new.status || {}
@@ -24,10 +24,10 @@ if not status['mtime'] or Time.now - Time.parse(status['mtime']) > 60
 end
 
 # The following is what infrastructure team sees:
-if %w(success info).include? status['level']
+if %w(success info).include? status[:level]
   print "Status: 200 OK\r\n\r\n"
 else
-  print "Status: 400 #{status['title'] || 'failure'}\r\n\r\n"
+  print "Status: 400 #{status[:title] || 'failure'}\r\n\r\n"
 end
 
 # What the browser sees:
