@@ -40,6 +40,7 @@ def Monitor.public_json(previous_status)
         level: 'success' # to agree with normalise
       }
       contents = File.read(log, encoding: Encoding::UTF_8)
+      contents_save = contents.dup # in case we need to send an email
 
       # Ignore Wunderbar logging for normal messages (may occur multiple times)
       contents.gsub! /^(_INFO|_DEBUG) .*?\n+/, ''
@@ -91,6 +92,27 @@ def Monitor.public_json(previous_status)
           file = File.basename(log)
           FileUtils.copy log, File.join(archive, file + '.' + lvl), preserve: true
           $stderr.puts "Would send e-mail for #{name} #{lvl}"
+          begin
+            require 'mail'
+            $LOAD_PATH.unshift File.realpath(File.expand_path('../../../../lib', __FILE__))
+            require 'whimsy/asf'
+            ASF::Mail.configure
+            mail = Mail.new do
+            from 'Public JSON job monitor  <dev@whimsical.apache.org>'
+      #            to 'Notification List <notifications@whimsical.apache.org>'
+              to 'sebbaz@gmail.com' # TEMP for testing purposes
+              subject "Problem (#{lvl}) detected in #{name} job"
+              body "\nLOG: #{contents_save}\nSTATUS: #{status[name]}\n"
+            end
+            # in spite of what the docs say, this does not seem to work in the body above
+            mail.charset = 'utf-8'
+            # Replace .mail suffix with more accurate one
+            mail.message_id = "<#{Mail.random_tag}@#{::Socket.gethostname}.apache.org>"
+            # deliver mail
+            mail.deliver!
+          rescue => e
+            $stderr.puts "Send mail failed: exception #{e}" # record error in server log
+          end
         end
       end
 
