@@ -2,6 +2,18 @@
 # Monitor status of public json directory
 #
 
+=begin
+
+Checks log files with names 'public-*' for relevant output.
+
+Possible status level output:
+Success - only DEBUG or INFO messages seen
+Info - diff -u output detected
+Warning - WARN log messages seen or file more than 1.5 hours old
+Danger - File more than 24 hours old or Exception while processing
+
+=end
+
 require 'fileutils'
 require 'time'
 
