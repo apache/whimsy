@@ -81,6 +81,19 @@ def Monitor.public_json(previous_status)
       if status[name][:data]
         status[name].delete_if { |k, v| k.eql? :title}
       end
+
+      # Has there been a change since the last check?
+      if previous_status[:data] and status[name] != previous_status[:data][name]
+        lvl = status[name][:level] 
+        #      $stderr.puts "Status has changed for #{name} #{lvl}"
+        if lvl and lvl != 'info' and lvl != 'success' # was there a problem?
+          # Save a copy of the log; append the severity so can track more problems
+          file = File.basename(log)
+          FileUtils.copy log, File.join(archive, file + '.' + lvl), preserve: true
+          $stderr.puts "Would send e-mail for #{name} #{lvl}"
+        end
+      end
+
     rescue Exception => e
       status[name] = {
         level: 'danger',
@@ -92,18 +105,6 @@ def Monitor.public_json(previous_status)
           }
         }
       }
-    end
-
-    # Has there been a change since the last check?
-    if previous_status[:data] and status[name] != previous_status[:data][name]
-      lvl = status[name][:level] 
-#      $stderr.puts "Status has changed for #{name} #{lvl}"
-      if lvl and lvl != 'info' and lvl != 'success' # was there a problem?
-        # Save a copy of the log; append the severity so can track more problems
-        name = File.basename(log)
-        FileUtils.copy log, File.join(archive, name + '.' + lvl), preserve: true
-        $stderr.puts "Would send e-mail for #{name} #{lvl}"
-      end
     end
   end
 
