@@ -4,9 +4,6 @@ require 'time'
 
 json = File.expand_path('../status.json', __FILE__)
 status = JSON.parse(File.read(json)) rescue {}
-git_info = `git show --format="%h  %ci"  -s HEAD`.strip rescue "?"
-# TODO better format; don't assume we use master
-git_repo = `git ls-remote origin master`.strip rescue "?"
 
 # Get new status every minute
 if not status[:mtime] or Time.now - Time.parse(status[:mtime]) > 60
@@ -30,6 +27,10 @@ else
   summary_status = "400 #{status[:title] || 'failure'}"
 end
 print "Status: #{summary_status}\r\n\r\n"
+
+git_info = `git show --format="%h  %ci"  -s HEAD`.strip rescue "?"
+# TODO better format; don't assume we use master
+git_repo = `git ls-remote origin master`.strip rescue "?"
 
 # What the browser sees:
 print <<-EOF
