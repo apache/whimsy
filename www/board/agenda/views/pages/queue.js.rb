@@ -71,7 +71,7 @@ class Queue < React
       end
 
       # Ready
-      unless @ready.empty?
+      if Server.role == :director and not @ready.empty?
         _div.row.col_xs_12 { _hr }
 
         _h4 'Ready for review'
