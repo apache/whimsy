@@ -21,7 +21,12 @@ class Index < React
           _td row.attach
           _td { _Link text: row.title, href: row.href }
           _td row.owner
-          _td row.shepherd
+          _td do
+            if row.shepherd
+              _Link text: row.shepherd,
+                href: "shepherd/#{row.shepherd.split(' ').first}"
+            end
+          end
         end
       end
     end

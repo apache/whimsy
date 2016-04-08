@@ -11,7 +11,12 @@ class Info < React
 
       if @@item.shepherd
         _dt 'Shepherd'
-        _dd @@item.shepherd
+        _dd do
+          if @@item.shepherd
+            _Link text: @@item.shepherd, 
+              href: "shepherd/#{@@item.shepherd.split(' ').first}"
+          end
+        end
       end
 
       if @@item.flagged_by and not @@item.flagged_by.empty?
