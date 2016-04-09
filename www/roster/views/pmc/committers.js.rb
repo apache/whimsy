@@ -11,7 +11,7 @@ class PMCCommitters < React
     then
       _p 'All committers are members of the PMC'
     else
-      _h2 'Committers'
+      _h2.committers! 'Committers'
       _table.table.table_hover do
         _thead do
           _tr do

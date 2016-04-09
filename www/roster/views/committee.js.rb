@@ -53,7 +53,7 @@ class PMCMembers < React
   end
 
   def render
-    _h2 'PMC'
+    _h2.pmc! 'PMC'
     _table.table.table_hover do
       _thead do
         _tr do
@@ -134,7 +134,7 @@ class PMCCommitters < React
     if @@committee.committers.keys().all? {|id| @@committee.roster[id]}
       _p 'All committers are members of the PMC'
     else
-      _h2 'Committers'
+      _h2.committers! 'Committers'
       _table.table.table_hover do
         _thead do
           _tr do

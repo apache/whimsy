@@ -40,7 +40,7 @@ class PMC < React
     _PMCMembers auth: auth, committee: @committee
     _PMCCommitters auth: auth, committee: @committee
 
-    _h2 'Mail lists'
+    _h2.mail! 'Mail lists'
     _ul do
       for name in @committee.mail
         _li do
@@ -58,7 +58,7 @@ class PMC < React
     end
 
     # reporting schedule
-    _h2 'Reporting Schedule'
+    _h2.reporting! 'Reporting Schedule'
     _ul do
       _li @committee.report
 
