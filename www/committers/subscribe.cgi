@@ -57,6 +57,8 @@ lists.sort!
 addrs = (["#{$USER}@apache.org"] + user.mail + user.alt_email)
 
 _html do
+  # better system output styling (errors in red)
+  _style :system
   _head_ do
     _title 'ASF Mailing List Self-subscription'
   end
