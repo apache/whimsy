@@ -49,7 +49,8 @@ Agenda.update(@agenda, @message) do |agenda|
       pattern = /(\n\n    #{@attach[-1]}\. #{item['title']} \[.*?\]).*?\n\n(    [B-Z]\.| 5\.)/m
       @report.gsub! /^(.)/, '       \1'
     elsif @attach =~ /^7\w/
-      pattern = /(^\s+#{@attach[-1]}\.\s+#{@fulltitle})\n.*?\n( {1,6}\w\.)/m
+      title = item['fulltitle'] || item['title']
+      pattern = /(^\s+#{@attach[-1]}\.\s+#{title})\n.*?\n( {1,6}\w\.)/m
       @report.gsub! /^(.)/, '       \1'
     else
       pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])\n.*?\n(-{40})/m
