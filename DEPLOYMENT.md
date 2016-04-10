@@ -4,8 +4,7 @@ Deployment
 The contents of this repository are deployed to the following VM:
 https://whimsy.apache.org/.
 
-The new VM is based on Ubuntu 14.04 (the current Whimsy is based on Ubuntu
-12.04), and is more completely managed by Puppet.  The puppet definition is
+This VM is based on Ubuntu 14.04 and is managed by Puppet.  The puppet definition is
 contained in the following files:
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm2.apache.org.yaml
@@ -16,9 +15,14 @@ contained in the following files:
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/procmail.pp
 
-Instructions:
+Instructions for local testing of deployment changes:
 
- * https://github.com/rubys/puppet-kitchen#readme
+ * https://github.com/apache/infrastructure-puppet-kitchen#readme
+   * addition to [Make modules useable](https://github.com/apache/infrastructure-puppet-kitchen#make-modules-useable) step:
+ 
+            rm -rf zmanda_asf
+            mkdir -p zmanda_asf/manifests
+            echo "class zmanda_asf::client (){}" > zmanda_asf/manifests/client.pp
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/vhosts_whimsy/README.md
 
