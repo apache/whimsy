@@ -80,7 +80,7 @@ class Agenda
 
   # update agenda file in SVN
   def self.update(file, message, retries=20, &block)
-    commit_rc = (message ? 999 : 0)
+    commit_rc = 0
 
     # Create a temporary work directory
     dir = Dir.mktmpdir
@@ -122,15 +122,13 @@ class Agenda
           IO.write(path, output)
           commit_rc = _.system ['svn', 'commit', auth, path, '-m', message]
           @@seen[path] = File.mtime(path)
-        else
-          commit_rc = 0
         end
       else
         output = IO.read(path)
       end
 
-      # update the work file, and optionally the cache, if successful
       if commit_rc == 0
+        # update the work file, and optionally the cache, if successful
         work_file.rewind
 
         if output != baseline
@@ -141,6 +139,14 @@ class Agenda
         end
 
         work_file.truncate(work_file.pos)
+      else
+        # if not successful, retry
+        if retries > 0
+          sleep rand(41-retries*2)*0.1 if retries <= 20
+          update(file, message, retries-1, &block)
+        else
+          raise Exception.new("svn commit failed")
+        end
       end
 
       # return the result in the response
@@ -150,15 +156,6 @@ class Agenda
 
   ensure
     FileUtils.rm_rf dir
-
-    unless commit_rc == 0
-      if retries > 0
-        sleep rand(41-retries*2)*0.1 if retries <= 20
-        update(file, message, retries-1, &block)
-      else
-        raise Exception.new("svn commit failed")
-      end
-    end
   end
 
   # listen for changes to agenda files
