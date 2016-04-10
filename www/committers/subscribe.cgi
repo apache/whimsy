@@ -66,13 +66,9 @@ _html do
         _h2_.error "Invalid input"
         break
       end
-      Dir.chdir '/var/tools/infra/subreq'
-      `svn update --non-interactive`
-      fn = "#{$USER}-#{@list}-#{Time.now.strftime '%Y%m%d-%H%M%S-%L'}.json".untaint
-      if File.exist? fn
-        _h2_.error "Too many concurrent requests"
-        break
-      end
+
+      # Each user can only subscribe once to each list in each timeslot
+      fn = "#{$USER}-#{@list}.json".untaint
 
       vars = {
         version: FORMAT_NUMBER,
@@ -86,17 +82,21 @@ _html do
       request = JSON.pretty_generate(vars) + "\n"
       _pre request
 
-      # commit it
-      File.open(fn, 'w') { |file| file.write request }
-      _.system(['svn', 'add', '--', fn])
-      _.system [
-        'svn', 'commit', ['--no-auth-cache', '--non-interactive'],
+      SUBREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/subreq'
+
+      # add file to svn (--revision 0 means it won't overwrite an existing file)
+      _.system ['svnmucc',
+        ['--revision', '0'],
+        '--message', "#{@list}@ += #{$USER}",
         '--with-revprop', "whimsy:author=#{$USER}",
-        '-m', "#{@list}@ += #{$USER}",
-        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
-        '--', fn
-      ]
-      _ 'Request successful. You will be subscribed within the hour.'
+         ['--no-auth-cache', '--non-interactive'],
+         ['--root-url', SUBREQ],
+         (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
+        '--', 'put', '-', fn],
+        stdin: request+ "\n" # seems to need extra EOL
+      
+      _p 'Request successful (unless indicated otherwise above). You will be subscribed within the hour.'
+
     end
     unless _.post?
     end
