@@ -126,6 +126,8 @@ module ASF
   else
     ETCLDAP = '/etc/ldap'
   end
+  # Note: FreeBSD seems to use
+  # /usr/local/etc/openldap/ldap.conf
 
   def self.ldap
     @ldap || self.init_ldap
