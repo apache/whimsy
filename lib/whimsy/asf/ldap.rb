@@ -39,14 +39,15 @@ module ASF
   module LDAP
      # https://www.pingmybox.com/dashboard?location=304
      # https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
+     # Updated 2016-04-11 
     HOSTS = %w(
-      ldaps://ldap1-us-west.apache.org:636
-      ldaps://ldap1-lw-us.apache.org:636
-      ldaps://ldap2-us-west.apache.org:636
+      ldaps://devops.apache.org:636
       ldaps://ldap1-lw-eu.apache.org:636
-      ldaps://snappy5.apache.org:636
-      ldaps://ldap2-lw-us.apache.org:636
+      ldaps://ldap1-lw-us.apache.org:636
       ldaps://ldap2-lw-eu.apache.org:636
+      ldaps://ldap2-lw-us.apache.org:636
+      ldaps://snappy5.apache.org:636
+      ldaps://themis.apache.org:636
     )
 
     CONNECT_LOCK = Mutex.new
@@ -58,6 +59,8 @@ module ASF
       file = '/apache/infrastructure-puppet/deployment/data/common.yaml'
       http = Net::HTTP.new('raw.githubusercontent.com', 443)
       http.use_ssl = true
+      # the enclosing method is optional, so we only require the gem here
+      require 'yaml'
       @puppet = YAML.load(http.request(Net::HTTP::Get.new(file)).body)
     end
 
@@ -718,6 +721,33 @@ module ASF
 
       # write the configuration if there were any changes
       File.write(ldap_conf, content) unless content == File.read(ldap_conf)
+    end
+  end
+end
+
+if __FILE__ == $0
+  module ASF
+    module LDAP
+      def self.getHOSTS
+        HOSTS
+      end
+    end
+  end
+  hosts=ASF::LDAP.getHOSTS().sort!
+  puppet=ASF::LDAP.puppet_ldapservers().sort!
+  if hosts == puppet
+    puts("LDAP HOSTS array is up to date with the puppet list")
+  else
+    puts("LDAP HOSTS array does not agree with the puppet list")
+    hostsonly=hosts-puppet
+    if hostsonly.length > 0
+      print("In HOSTS but not in puppet:")
+      puts(hostsonly)
+    end
+    puppetonly=puppet-hosts
+    if puppetonly.length > 0
+      print("In puppet but not in HOSTS: ")
+      puts(puppetonly)
     end
   end
 end
