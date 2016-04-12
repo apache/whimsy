@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-base = '../../..'
+base = '../../../..'
 
 asf_version = File.read(File.expand_path("#{base}/asf.version", __FILE__)).chomp
 
