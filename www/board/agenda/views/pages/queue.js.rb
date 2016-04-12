@@ -13,25 +13,27 @@ class Queue < React
   def render
     _div.col_xs_12 do
 
-      # Approvals
-      _h4 'Approvals'
-      _p.col_xs_12 do
-        @approvals.each_with_index do |item, index|
-          _span ', ' if index > 0
-          _Link text: item.title, href: "queue/#{item.href}"
+      if Server.role == :director
+        # Approvals
+        _h4 'Approvals'
+        _p.col_xs_12 do
+          @approvals.each_with_index do |item, index|
+            _span ', ' if index > 0
+            _Link text: item.title, href: "queue/#{item.href}"
+          end
+          _em 'None.' if @approvals.empty?
         end
-        _em 'None.' if @approvals.empty?
-      end
 
-      # Unapproved
-      %w(Unapprovals Flagged Unflagged).each do |section|
-        list = self.state[section.downcase()]
-        unless list.empty?
-          _h4 section
-          _p.col_xs_12 do
-            list.each_with_index do |item, index|
-              _span ', ' if index > 0
-              _Link text: item.title, href: item.href
+        # Unapproved
+        %w(Unapprovals Flagged Unflagged).each do |section|
+          list = self.state[section.downcase()]
+          unless list.empty?
+            _h4 section
+            _p.col_xs_12 do
+              list.each_with_index do |item, index|
+                _span ', ' if index > 0
+                _Link text: item.title, href: item.href
+              end
             end
           end
         end

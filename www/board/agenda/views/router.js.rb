@@ -27,6 +27,7 @@ class Router
 
     elsif path == 'queue'
       item = {view: Queue, title: 'Queued approvals and comments'}
+      item.title = 'Queued comments' unless Server.role == :director
 
     elsif path == 'flagged'
       item = {view: Flagged, title: 'Flagged reports'}

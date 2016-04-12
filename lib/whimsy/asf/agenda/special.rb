@@ -23,7 +23,7 @@ class ASF::Board::Agenda
       title.sub! /\sthe\s/, ' '
       title.sub! /\sApache\s/, ' '
       title.sub! /\sCommittee\s/, ' '
-      title.sub! /\sProject(\s|$)/, '\1'
+      title.sub! /\sProject(\s|$)/i, '\1'
       title.sub! /\sPMC(\s|$)/, '\1'
       title.sub! /\s\(.*\)$/, ''
 
