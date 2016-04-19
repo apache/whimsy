@@ -40,15 +40,7 @@ class Events
   end
 
   def self.monitor()
-    # determine localStorage variable prefix based on url up to the date
-    base = document.getElementsByTagName("base")[0].href
-    origin = location.origin
-    if not origin # compatibility: http://s.apache.org/X2L
-      origin = window.location.protocol + "//" + window.location.hostname + 
-        (window.location.port ? ':' + window.location.port : '')
-    end
-    @@prefix = base[origin.length..-1].sub(/\/\d{4}-\d\d-\d\d\/.*/, '').
-      gsub(/^\W+|\W+$/, '').gsub(/\W+/, '_') || location.port
+    @@prefix = JSONStorage.prefix
 
     # pick something unique to identify this tab/window
     @@timestamp = Date.new().getTime() + Math.random()
@@ -152,5 +144,21 @@ class Events
   def self.log(message)
     return if !navigator.userAgent or navigator.userAgent.include? 'PhantomJS'
     console.log message
+  end
+
+  # make the computed prefix available
+  def self.prefix
+    return @@prefix if @@prefix
+
+    # determine localStorage variable prefix based on url up to the date
+    base = document.getElementsByTagName("base")[0].href
+    origin = location.origin
+    if not origin # compatibility: http://s.apache.org/X2L
+      origin = window.location.protocol + "//" + window.location.hostname + 
+        (window.location.port ? ':' + window.location.port : '')
+    end
+
+    @@prefix = base[origin.length..-1].sub(/\/\d{4}-\d\d-\d\d\/.*/, '').
+      gsub(/^\W+|\W+$/, '').gsub(/\W+/, '_') || location.port
   end
 end
