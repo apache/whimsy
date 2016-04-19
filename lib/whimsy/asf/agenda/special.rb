@@ -91,14 +91,19 @@ class ASF::Board::Agenda
             if chairname =~ /\s\(([-.\w]+)\)$/
               # if chair's id is present in parens, use that value
               attrs['chair'] = $1 unless $1.empty?
+              chairname.sub! /\s+\(.*\)$/, ''
             else
               # match chair's name against people in the committee
               chair = people.find {|person| person.first == chairname}
               attrs['chair'] = (chair ? chair.last : nil)
             end
 
-            unless attrs['chair']
-              attrs['warnings'] ||= ['Chair not found in resolution'] 
+            unless people.include? [chairname, attrs['chair']]
+              if attrs['chair']
+                attrs['warnings'] ||= ['Chair not member of PMC'] 
+              else
+                attrs['warnings'] ||= ['Chair not found in resolution'] 
+              end
             end
           else
             attrs['warnings'] ||= ['Chair not found in resolution'] 
