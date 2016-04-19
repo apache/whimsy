@@ -80,7 +80,7 @@ class AdditionalInfo < React
       _ul do
         @@item.special_orders.each do |resolution|
           _li do
-            _Link text: resolution.title, href: resolution.link
+            _Link text: resolution.title, href: resolution.href
           end
         end
       end
