@@ -75,6 +75,17 @@ class AdditionalInfo < React
       _ActionItems item: @@item, filter: {pmc: @@item.title}
     end
 
+    unless @@item.special_orders.empty?
+      _h4 'Special Orders', id: "#{@prefix}orders"
+      _ul do
+        @@item.special_orders.each do |resolution|
+          _li do
+            _Link text: resolution.title, href: resolution.link
+          end
+        end
+      end
+    end
+
     # minutes
     minutes = Minutes.get(@@item.title)
     if minutes

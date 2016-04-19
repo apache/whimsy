@@ -166,6 +166,18 @@ class Agenda
     end
   end
 
+  def special_orders
+    items = []
+
+    if @attach =~ /^[A-Z]+$/
+      Agenda.index.each do |item|
+        items << item if item.attach =~ /^7/ and item.roster == @roster
+      end
+    end
+
+    return items
+  end
+
   def ready_for_review(initials)
     return defined?(@approved) && !self.missing &&
       !@approved.include?(initials) &&
