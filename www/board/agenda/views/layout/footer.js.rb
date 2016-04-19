@@ -114,6 +114,7 @@ class Footer < React
       end
 
       if link
+        prefix = '' unless  link.attach =~ /^[A-Z]/
         _Link.nextlink.navbar_brand text: link.title, rel: 'next', 
          href: "#{prefix}#{link.href}"
       elsif @@item.prev or @@item.next
