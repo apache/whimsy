@@ -190,6 +190,8 @@ class Agenda
         list << {form: PublishMinutes}
       elsif Minutes.ready_to_post_draft
         list << {form: DraftMinutes}
+      else
+        list << {button: SendFeedback}
       end
     end
 
@@ -387,8 +389,12 @@ class Agenda
         then
           list << {form: PublishMinutes}
         end
-      elsif @title == 'Adjournment' and Minutes.ready_to_post_draft
-        list << {form: DraftMinutes}
+      elsif @title == 'Adjournment' 
+        if Minutes.ready_to_post_draft
+          list << {form: DraftMinutes}
+        else
+          list << {button: SendFeedback}
+        end
       end
     end
 

@@ -116,7 +116,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
 end
 
 # append slash to agenda page if not present
-get %r{/(\d\d\d\d-\d\d-\d\d)$} do |date|
+get %r{^/(\d\d\d\d-\d\d-\d\d)$} do |date|
   redirect to("/#{date}/")
 end
 
