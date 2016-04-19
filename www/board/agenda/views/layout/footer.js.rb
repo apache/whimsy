@@ -104,7 +104,7 @@ class Footer < React
             link = link.next
           end
         end
-        link ||= {href: "../flagged", title: 'Flagged'}
+        link ||= {href: "flagged", title: 'Flagged'}
       elsif Minutes.started and link and link.attach == 'A'
         while link and not link.flagged and link.attach =~ /^[A-Z]/
           link = link.next
