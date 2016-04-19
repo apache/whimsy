@@ -187,11 +187,10 @@ class Agenda
 
     if Server.role == :secretary 
       if Server.drafts.include? Agenda.file.sub('agenda', 'minutes')
+        list << {button: SendFeedback}
         list << {form: PublishMinutes}
       elsif Minutes.ready_to_post_draft
         list << {form: DraftMinutes}
-      else
-        list << {button: SendFeedback}
       end
     end
 
@@ -392,7 +391,7 @@ class Agenda
       elsif @title == 'Adjournment' 
         if Minutes.ready_to_post_draft
           list << {form: DraftMinutes}
-        else
+        elsif Server.drafts.include? Agenda.file.sub('agenda', 'minutes')
           list << {button: SendFeedback}
         end
       end
