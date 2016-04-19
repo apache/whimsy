@@ -87,8 +87,16 @@ class ASF::Board::Agenda
             "#{whimsy}/board/minutes/#{name.gsub(/\W/,'_')}"
           if text =~ /FURTHER RESOLVED, that\s+([^,]*?),?\s+be\b/
             chairname = $1.gsub(/\s+/, ' ').strip
-            chair = people.find {|person| person.first == chairname}
-            attrs['chair'] = (chair ? chair.last : nil)
+
+            if chairname =~ /\s\(([-.\w]+)\)$/
+              # if chair's id is present in parens, use that value
+              attrs['chair'] = $1
+            else
+              # match chair's name against people in the committee
+              chair = people.find {|person| person.first == chairname}
+              attrs['chair'] = (chair ? chair.last : nil)
+            end
+
             unless chair and chair.last
               attrs['warnings'] ||= ['Chair not found in resolution'] 
             end
