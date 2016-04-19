@@ -52,8 +52,10 @@ class AdditionalInfo < React
             _span ':'
           end
 
-          _pre.comment do
-            _Text raw: history[date], filters: [hotlink]
+          splitComments(history[date]).each do |comment|
+            _pre.comment do
+              _Text raw: comment, filters: [hotlink]
+            end
           end
         end
       end
