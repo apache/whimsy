@@ -32,7 +32,7 @@ class JSONStorage
   def self.get(name)
     if defined? sessionStorage
       name = JSONStorage.prefix + '-' + name
-      return JSON.parse(localStorage.getItem(name) || 'null')
+      return JSON.parse(sessionStorage.getItem(name) || 'null')
     end
   end
 end
