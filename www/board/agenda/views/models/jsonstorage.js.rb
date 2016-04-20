@@ -1,9 +1,9 @@
 #
-# Simplify access to localStorage for JSON objects
+# Simplify access to sessionStorage for JSON objects
 #
 
 class JSONStorage
-  # determine localStorage variable prefix based on url up to the date
+  # determine sessionStorage variable prefix based on url up to the date
   def self.prefix
     return @@prefix if @@prefix
 
@@ -21,13 +21,16 @@ class JSONStorage
   # store an item, converting it to JSON
   def self.put(name, value)
     name = JSONStorage.prefix + '-' + name
-    localStorage.setItem(name, JSON.stringify(value))
+    begin
+      sessionStorage.setItem(name, JSON.stringify(value))
+    rescue => e
+    end
     return value
   end
 
   # retrieve an item, converting it back to an object
   def self.get(name)
-    if defined? localStorage
+    if defined? sessionStorage
       name = JSONStorage.prefix + '-' + name
       return JSON.parse(localStorage.getItem(name) || 'null')
     end
