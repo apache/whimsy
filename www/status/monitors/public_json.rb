@@ -98,9 +98,8 @@ def Monitor.public_json(previous_status)
             require 'whimsy/asf'
             ASF::Mail.configure
             mail = Mail.new do
-            from 'Public JSON job monitor  <dev@whimsical.apache.org>'
-      #            to 'Notification List <notifications@whimsical.apache.org>'
-              to 'sebbaz@gmail.com' # TEMP for testing purposes
+              from 'Public JSON job monitor  <dev@whimsical.apache.org>'
+              to 'Notification List <notifications@whimsical.apache.org>'
               subject "Problem (#{lvl}) detected in #{name} job"
               body "\nLOG: #{contents_save}\nSTATUS: #{status[name]}\n"
             end
