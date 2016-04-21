@@ -37,7 +37,8 @@ Agenda.parse(@agenda, :full).each do |item|
   text = ''
 
   if item['comments'] and not item['comments'].empty?
-    text += "\nComments:\n#{item['comments'].gsub(/^/, '  ')}\n"
+    comments = item['comments'].gsub(/^(\S)/, "\n\\1")
+    text += "\nComments:\n#{comments.gsub(/^/, '  ')}\n"
   end
 
   if minutes[item['title']]
