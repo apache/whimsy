@@ -80,4 +80,14 @@ Agenda.parse(@agenda, :full).each do |item|
   }
 end
 
+# indicate that feedback has been sent
+unless @dryrun
+  minutes[:todos] ||= {}
+  minutes[:todos][:feedback_sent] ||= []
+  minutes[:todos][:feedback_sent] += output.map {|item| item[:title]}
+  File.write minutes_file, YAML.dump(minutes)
+  IPC.post type: :minutes, agenda: @agenda, value: minutes
+end
+
+# return output to client
 output

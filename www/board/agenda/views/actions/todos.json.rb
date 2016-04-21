@@ -10,6 +10,20 @@ agenda = "board_agenda_#{date}.txt"
 victims = Dir["#{TLPREQ}/victims-#{date}.*.txt"].
   map {|name| File.read(name.untaint).lines().map(&:chomp)}.flatten
 
+# fetch minutes
+@minutes = agenda.sub('_agenda_', '_minutes_')
+minutes_file = "#{AGENDA_WORK}/#{@minutes.sub('.txt', '.yml')}"
+minutes_file.untaint if @minutes =~ /^board_minutes_\d+_\d+_\d+\.txt$/
+
+if File.exist? minutes_file
+  minutes = YAML.load_file(minutes_file) || {}
+else
+  minutes = {}
+end
+
+minutes[:todos] ||= {}
+todos = minutes[:todos].dup
+
 ########################################################################
 #                               Actions                                #
 ########################################################################
@@ -23,6 +37,9 @@ if @remove and env.password
   ASF::LDAP.bind(env.user, env.password) do
     chairs.remove people
   end
+
+  minutes[:todos][:removed] ||= []
+  minutes[:todos][:removed] += people.map {|person| person.id}
 end
 
 if @add and env.password
@@ -34,6 +51,9 @@ if @add and env.password
   ASF::LDAP.bind(env.user, env.password) do
     chairs.add people
   end
+
+  minutes[:todos][:added] ||= []
+  minutes[:todos][:added] += people.map {|person| person.id}
 end
 
 if @establish and env.password
@@ -54,6 +74,14 @@ if @establish and env.password
       system "svn rm --force #{filename}"
     end
   end
+
+  minutes[:todos][:established] ||= []
+  minutes[:todos][:established] += establish
+end
+
+unless todos == minutes[:todos]
+  File.write minutes_file, YAML.dump(minutes)
+  IPC.post type: :minutes, agenda: @agenda, value: minutes
 end
 
 ########################################################################
@@ -91,3 +119,4 @@ _establish establish.
   map {|name, resolution| {name: name, resolution: resolution}}
 _terminate terminate.
   map {|name, resolution| {name: name, resolution: resolution}}
+_minutes minutes
