@@ -417,7 +417,8 @@ dl.chatlog dd.info {
 }
 
 #rollcall li {
-  line-height: 180%;
+  display: flex;
+  height: 30px;
 }
 
 #rollcall ul li input[type=checkbox] {
@@ -435,9 +436,8 @@ dl.chatlog dd.info {
 }
 
 #rollcall ul li:hover input[type=text] {
-  display: inline;
-  height: 100%;
-  line-height: 100%;
+  display: inline-block;
+  margin-bottom: 10px;
 }
 
 #rollcall ul li:hover span {
