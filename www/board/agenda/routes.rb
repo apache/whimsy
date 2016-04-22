@@ -112,6 +112,8 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     agenda.sub('agenda', 'minutes').sub('.txt', '.yml')
   @page[:minutes] = YAML.load(File.read(minutes)) if File.exist? minutes
 
+  @cssmtime = File.mtime('public/stylesheets/app.css').to_i
+
   _html :'main'
 end
 

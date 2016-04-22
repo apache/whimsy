@@ -5,7 +5,7 @@
 _html do
   _base href: @base
   _title 'ASF Board Agenda'
-  _link rel: 'stylesheet', href: '../stylesheets/app.css'
+  _link rel: 'stylesheet', href: "../stylesheets/app.css?#{@cssmtime}"
 
   _div_.main!
 
