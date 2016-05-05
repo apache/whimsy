@@ -58,7 +58,7 @@ class Footer < React
 
       if link
         _Link.backlink.navbar_brand text: link.title, rel: 'prev', 
-         href: "#{prefix}#{link.href}"
+         href: "#{prefix}#{link.href}", class: link.color
       elsif @@item.prev or @@item.next
         # without this, Chrome will sometimes make the footer too tall
         _a.navbar_brand
@@ -116,9 +116,9 @@ class Footer < React
       if link
         prefix = '' unless  link.attach =~ /^[A-Z]/
         _Link.nextlink.navbar_brand text: link.title, rel: 'next', 
-         href: "#{prefix}#{link.href}"
+         href: "#{prefix}#{link.href}", class: link.color
       elsif @@item.prev or @@item.next
-        # keep Chrome happy
+        # without this, Chrome will sometimes make the footer too tall
         _a.nextarea.navbar_brand
       end
     end
