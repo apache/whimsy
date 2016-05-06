@@ -53,7 +53,7 @@ module ASF
       templates = ASF::SVN['asf/infrastructure/site/trunk/content']
       file = "#{templates}/index.html"
       if not File.exist?(file)
-        Wunderbar.warn "Unable to find 'infrastructure/site/trunk/content'"
+        Wunderbar.error "Unable to find 'infrastructure/site/trunk/content'"
         return {}
       end
       return @@list if not @@list.empty? and File.mtime(file) == @@mtime
