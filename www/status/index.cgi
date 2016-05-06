@@ -21,7 +21,7 @@ if not status[:mtime] or Time.now - Time.parse(status[:mtime]) > 60
 end
 
 # The following is what infrastructure team sees:
-if %w(success info).include? status[:level]
+if %w(success info warning).include? status[:level]
   summary_status = "200 OK"
 else
   summary_status = "400 #{status[:title] || 'failure'}"
