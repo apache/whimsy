@@ -69,10 +69,15 @@ def public_json_output_file(info, file)
 
 end
 
+# Massage the strings to drop the timestamps so spurious changes are not reported/saved
+def removeTimestamps(s)
+  return s.sub(/  "last_updated": "[^"]+",/, '')
+end
+
 # Write formatted output to specific file
 def write_output(file, results)
 
-  if not File.exist?(file) or File.read(file).chomp != results
+  if not File.exist?(file) or removeTimestamps(File.read(file).chomp) != removeTimestamps(results)
 
     Wunderbar.info "git_info: #{GITINFO} - creating/updating #{file}"
 
