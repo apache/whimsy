@@ -26,6 +26,12 @@ Wunderbar.logger.formatter = proc { |severity, datetime, progname, msg|
 
 GITINFO = ASF.library_gitinfo rescue '?'
 
+class ChangeStatus
+  UNCHANGED = :unchanged
+  CHANGED   = :changed
+  NEW       = :new
+end
+
 # Pretty-prints the JSON input and writes it to the output.
 # If the output is not STDOUT, then it is checked to see
 # if it has changed. If not, the output file is not touched.
@@ -70,6 +76,12 @@ def write_output(file, results)
 
     Wunderbar.info "git_info: #{GITINFO} - creating/updating #{file}"
 
+    if File.exist?(file)
+      @changed = ChangeStatus::CHANGED
+    else
+      @changed = ChangeStatus::NEW
+    end
+
     # can get the following error if stdin_data is very large and diff fails with an error
     # before reading all the input, e.g. because the input file is missing:
     #   open3.rb:287:in `write': Broken pipe (Errno::EPIPE)
@@ -113,7 +125,31 @@ def write_output(file, results)
   else
   
     Wunderbar.info "git_info: #{GITINFO} - no change to #{file}"
-  
+    @changed = ChangeStatus::UNCHANGED
+
   end
 
+end
+
+# for debugging purposes
+if __FILE__ == $0
+  @noDiff = true
+  info = {}
+  require 'Tempfile'
+  file = Tempfile.new('test.tmp')
+  path = file.path
+  file.unlink # must not exist originally
+  begin
+    warn('Expecting create/update')
+    public_json_output_file(info, path)
+    warn('expecting new',@changed)
+    info = {a: 1}
+    public_json_output_file(info, path)
+    warn('expecting changed',@changed)
+    public_json_output_file(info, path)
+    warn('expecting unchanged',@changed)
+  ensure
+     file.close
+     file.unlink   # deletes the temp file
+  end
 end
