@@ -103,7 +103,7 @@ def write_output(file, results)
           mail.deliver!
         end
       rescue => e
-        Wunderbar.info "Got exception #{e}"
+        Wunderbar.warn "Got exception #{e}"
       end
     end
   
