@@ -5,6 +5,9 @@
     url: infrastructure-puppet.git
     branch: deployment
 
+  letsencrypt:
+    url: https://github.com/letsencrypt/letsencrypt
+
 :svn:
 
   Bills:
