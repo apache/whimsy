@@ -121,7 +121,7 @@ def write_output(file, results)
             if ldaphost
               body "\n#{ldaphost}\n\n#{out}\n"
             else
-              body "\nPID: #{Process.pid}\n#{out}\n"
+              body "\n#{out}\n"
             end
           end
           # in spite of what the docs say, this does not seem to work in the body above
