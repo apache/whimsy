@@ -32,6 +32,18 @@ class ChangeStatus
   NEW       = :new
 end
 
+def changed?
+  return @changed == ChangeStatus::CHANGED
+end
+
+def unchanged?
+  return @changed == ChangeStatus::UNCHANGED
+end
+
+def new?
+  return @changed == ChangeStatus::NEW
+end
+
 # Pretty-prints the JSON input and writes it to the output.
 # If the output is not STDOUT, then it is checked to see
 # if it has changed. If not, the output file is not touched.
@@ -109,7 +121,7 @@ def write_output(file, results)
             if ldaphost
               body "\n#{ldaphost}\n\n#{out}\n"
             else
-              body "\n#{out}\n"
+              body "\nPID: #{Process.pid}\n#{out}\n"
             end
           end
           # in spite of what the docs say, this does not seem to work in the body above
