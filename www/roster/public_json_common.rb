@@ -81,6 +81,28 @@ def public_json_output_file(info, file)
 
 end
 
+def sendMail(subject, body)
+  begin
+    require 'mail'
+    ASF::Mail.configure
+    ldaphost = ASF::LDAP.host()
+    mail = Mail.new do
+      from 'Public JSON file updates  <dev@whimsical.apache.org>'
+      to 'Notification List <notifications@whimsical.apache.org>'
+      subject subject
+      body body
+    end
+    # in spite of what the docs say, this does not seem to work in the body above
+    mail.charset = 'utf-8'
+    # Replace .mail suffix with more accurate one
+    mail.message_id = "<#{Mail.random_tag}@#{::Socket.gethostname}.apache.org>"
+    # deliver mail
+    mail.deliver!
+  rescue => e
+    Wunderbar.warn "sendMail failed with exception: #{e}"
+  end
+end
+
 # Massage the strings to drop the timestamps so spurious changes are not reported/saved
 def removeTimestamps(s)
   return s.sub(/  "last_updated": "[^"]+",/, '')
@@ -111,25 +133,13 @@ def write_output(file, results)
           stdin_data: results + "\n")
         if err.empty? and rc.exitstatus == 1
           puts "\n#{out}\n"
-          require 'mail'
-          ASF::Mail.configure
           ldaphost = ASF::LDAP.host()
-          mail = Mail.new do
-            from 'Public JSON file updates  <dev@whimsical.apache.org>'
-            to 'Notification List <notifications@whimsical.apache.org>'
-            subject "Difference(s) in #{file}"
-            if ldaphost
-              body "\n#{ldaphost}\n\n#{out}\n"
-            else
-              body "\n#{out}\n"
-            end
+          if ldaphost
+            body = "\n#{ldaphost}\n\n#{out}\n"
+          else
+            body = "\n#{out}\n"
           end
-          # in spite of what the docs say, this does not seem to work in the body above
-          mail.charset = 'utf-8'
-          # Replace .mail suffix with more accurate one
-          mail.message_id = "<#{Mail.random_tag}@#{::Socket.gethostname}.apache.org>"
-          # deliver mail
-          mail.deliver!
+          sendMail("Difference(s) in #{file}", body)
         end
       rescue => e
         Wunderbar.warn "Got exception #{e}"
