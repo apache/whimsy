@@ -59,3 +59,22 @@ info[:committees] = Hash[committees.map {|committee|
 }]
 
 public_json_output(info)
+
+# Check if there is an unexpected entry
+# we only do this if the file has changed to avoid excessive reports
+if changed? or true
+  last_updated = info[:last_updated]
+  info[:committees].each { |pmc, entry|
+    entry[:roster].each { |name, value|
+      jdate = value[:date]
+      if jdate
+        joined = Time.utc(jdate)
+        if joined > last_updated
+          msg = "Unexpected joining date: PMC: #{pmc} Id: #{name} entry: #{value} (last_updated: #{last_updated})"
+          Wunderbar.warn msg
+          sendMail('Error detected processing committee-info.txt', msg)
+        end
+      end
+    }
+  }
+end
