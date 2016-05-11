@@ -87,21 +87,22 @@ module ASF
       # for each committee in section 3
       info.each do |roster|
         # extract the committee name and canonicalise
-        committee = list[@@namemap.call(roster[/(\w.*?)\s+\(/,1])]
+        committee = list[@@namemap.call(roster[/(\w.*?)[ \t]+\(/,1])]
         # get the start date
         committee.established = roster[/\(est\. (.*?)\)/, 1]
         # extract the availids (is this used?)
         committee.info = roster.scan(/<(.*?)@apache\.org>/).flatten
         # drop (chair) markers and extract 0: name, 1: availid, 2: [date], 3: date
+        # the date is optional (e.g. infrastructure)
         committee.roster = Hash[roster.gsub(/\(\w+\)/, '').
-          scan(/^\s*(.*?)\s*<(.*?)@apache\.org>\s+(\[(.*?)\])?/).
+          scan(/^[ \t]*(.*?)[ \t]*<(.*?)@apache\.org>(?:[ \t]+(\[(.*?)\]))?/).
           map {|list| [list[1], {name: list[0], date: list[3]}]}]
       end
 
       # process report section
       report.scan(/^([^\n]+)\n---+\n(.*?)\n\n/m).each do |period, committees|
-        committees.scan(/^   \s*(.*)/).each do |committee|
-          committee, comment = committee.first.split(/\s+#\s+/,2)
+        committees.scan(/^   [ \t]*(.*)/).each do |committee|
+          committee, comment = committee.first.split(/[ \t]+#[ \t]+/,2)
           committee = list[committee]
           if comment
             committee.report = "#{period}: #{comment}"
