@@ -35,7 +35,10 @@ Manual Steps
 
 The following additional steps are required to get the Whimsy VM up and running:
 
- * Configuring `/whimsysvn/.subversion/config` and `/whimsysvn/.subversion/servers` to store auth-creds.
+ * Run the following command to create an SSL cert (see [tutorial](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-14-04) for details):
+     * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org`
+
+ * Configuring `~/whimsysvn/.subversion/config` and `~/whimsysvn/.subversion/servers` to store auth-creds.
 
  * Add the following cron job to apmail@hermes:
      * `11  4,10,16,22 * * * for list in /home/apmail/lists/incubator.apache.org/*; do echo; echo $list/mod; ezmlm-list $list mod; done | ssh whimsy-vm2.apache.org 'cat > /srv/subscriptions/incubator-mods'`
