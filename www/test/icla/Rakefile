@@ -14,8 +14,8 @@ file "views/pages.js.rb" => FileList['views/pages/*.js.rb'] do
     # evaluate each page in a module, and output a 'require' statement for each
     Dir.chdir(File.expand_path('../views', __FILE__)) do
       Dir['pages/*.js.rb'].each do |page|
-	eval "module Pages; #{File.read page}; end"
-	pages.puts "require_relative #{page.sub(/\.js\.rb$/, '').inspect}"
+        eval "module Pages; #{File.read page}; end"
+        pages.puts "require_relative #{page.sub(/\.js\.rb$/, '').inspect}"
       end
     end
 
