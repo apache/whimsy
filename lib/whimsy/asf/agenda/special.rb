@@ -99,7 +99,9 @@ class ASF::Board::Agenda
             end
 
             unless people.include? [chairname, attrs['chair']]
-              if attrs['chair']
+              if people.empty?
+                attrs['warnings'] ||= ['Unable to locate PMC email addresses'] 
+              elsif attrs['chair']
                 attrs['warnings'] ||= ['Chair not member of PMC'] 
               else
                 attrs['warnings'] ||= ['Chair not found in resolution'] 
