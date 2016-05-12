@@ -49,9 +49,9 @@ class ASF::Board::Agenda
 
       people = text.scan(/#{list_item}\((#{asfid})\)\s*$/)
       people += text.scan(/#{list_item}\((#{asfid})(?:@|\s*at\s*)
-        (?:\.\.\.|apache\.org)\)\s*$/x)
+        (?:\.\.\.|apache\.org|apache\sdot\sorg)\)\s*$/xi)
       people += text.scan(/#{list_item}<(#{asfid})(?:@|\s*at\s*)
-        (?:\.\.\.|apache\.org|apache\sdot\sorg)>\s*$/x)
+        (?:\.\.\.|apache\.org|apache\sdot\sorg)>\s*$/xi)
 
       whimsy = 'https://whimsy.apache.org'
       if title =~ /Change (.*?) Chair/ or title =~ /Terminate (\w+)$/
