@@ -16,5 +16,5 @@ end
 
 group :demo do
   gem 'puma'
-  gem 'listen'
+  gem 'listen', ('~> 3.0.7' if RUBY_VERSION =~ /^2\.[01]/)
 end
