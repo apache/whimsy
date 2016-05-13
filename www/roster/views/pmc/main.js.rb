@@ -42,17 +42,11 @@ class PMC < React
 
     _h2.mail! 'Mail lists'
     _ul do
-      for name in @committee.mail
+      for mail_name in @committee.mail
+        parsed = mail_name.match(/^(.*?)-(.*)/)
         _li do
-          if @committee.mail[name] == 'public'
-            _a name, href: "http://mail-archives.apache.org/mod_mbox/#{name}/"
-          elsif @@committee.roster[@@auth.id]
-            _a name, href: 
-              "https://mail-search.apache.org/pmc/private-arch/#{name}/"
-          else
-            _a name, href: 
-              "https://mail-search.apache.org/members/private-arch/#{name}/"
-          end
+          _a mail_name, href: 'https://lists.apache.org/list.html?' +
+            "#{parsed[2]}@#{parsed[1]}.apache.org"
         end
       end
     end
