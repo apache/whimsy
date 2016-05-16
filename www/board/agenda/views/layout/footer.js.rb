@@ -88,12 +88,12 @@ class Footer < React
         while link and not link.ready_for_review(Server.initials)
           link = link.next
         end
-        link ||= {href: '../queue', title: 'Queue'}
+        link ||= {href: 'queue', title: 'Queue'}
       elsif @@options.traversal == :shepherd
         while link and link.shepherd != @@item.shepherd
           link = link.next
         end
-        link ||= {href: "../#{@@item.shepherd}", title: 'Shepherd'}
+        link ||= {href: "shepherd/#{@@item.shepherd}", title: 'shepherd'}
       elsif @@options.traversal == :flagged
         prefix = 'flagged/'
         while link and not link.flagged
