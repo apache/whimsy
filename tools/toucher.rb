@@ -9,7 +9,7 @@ require 'fileutils'
 
 watch = Hash.new {|hash, key| hash[key] = []}
 
-Dir["#{File.real_path('/srv/whimsy')}/**/restart.txt"].each do |restart|
+Dir["#{File.expand_path('../..', __FILE__)}/**/restart.txt"].each do |restart|
   app = File.expand_path('../..', restart)
   next unless File.exist? "#{app}/config.ru"
 
