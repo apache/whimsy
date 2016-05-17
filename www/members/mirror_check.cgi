@@ -33,7 +33,7 @@ _html do
         _ 'Mirror URL'
         _input.name name: 'url', required: true, pattern: URLPAT,
                     placeholder: 'mirror URL',
-                    size: 30, 
+                    size: 50, 
                     value: DEFAULT
         _input type: 'submit', value: 'Check Mirror'
       end
