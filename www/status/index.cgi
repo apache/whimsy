@@ -32,6 +32,8 @@ git_info = `git show --format="%h  %ci"  -s HEAD`.strip rescue "?"
 # TODO better format; don't assume we use master
 git_repo = `git ls-remote origin master`.strip rescue "?"
 
+hostname = `hostname`
+
 # What the browser sees:
 print <<-EOF
 <!DOCTYPE html>
@@ -50,7 +52,7 @@ print <<-EOF
 
   <body>
     <img src="../whimsy.svg" class="logo"/>
-    <h1>Whimsy VM2 Status</h1>
+    <h1>Whimsy Status for #{hostname}</h1>
 
     <div class="list-group list-group-root well">
       Loading...
