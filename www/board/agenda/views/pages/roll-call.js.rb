@@ -175,7 +175,7 @@ class Attendee < React
       end
 
       unless @@walkon or @checked or @@person.role==:guest or @@person.attending
-        _span ' (expected to be absent)' unless @notes
+        _span "\u00A0(expected to be absent)" unless @notes
       end
 
       unless @@walkon
