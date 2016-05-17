@@ -228,12 +228,27 @@ main hr {
   border-color: #DDD;
 }
 
+.table-bordered {
+  width: 100%;
+}
+
+.table-bordered tr {
+  line-height: 200%;
+}
+
+.table-bordered td {
+  padding: 4px;
+}
+
 @media screen and (min-width: 768px) {
   .wide-form .modal-dialog {
     width: 80%;
   }
   .wide-form .modal-footer {
     margin-top: 0  
+  }
+  .table-bordered {
+    width: auto;
   }
 }
 
