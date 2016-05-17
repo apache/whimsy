@@ -93,6 +93,7 @@ def getHTTPHdrs(url)
   url.untaint
   uri = URI.parse(url)
   http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = uri.scheme == 'https'
   request = Net::HTTP::Head.new(uri.request_uri)
   http.request(request)
 end
@@ -101,7 +102,7 @@ def check_CT(base, page, severity=:E, expectedStatus = 200)
   path = base + page
   response = getHTTPHdrs(path)
   if response.code.to_i != expectedStatus
-    test severity, "HTTP status #{response.code} for #{path}" unless severity == nil
+    test severity, "HTTP status #{response.code} for '#{path}'" unless severity == nil
     return nil
   end
   ct = response['Content-Type'] || 'unknown'
@@ -119,10 +120,7 @@ def getHTTP(url)
   url.untaint
   uri = URI.parse(url)
   http = Net::HTTP.new(uri.host, uri.port)
-  if uri.scheme == 'https'
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE 
-  end
+  http.use_ssl = uri.scheme == 'https'
   request = Net::HTTP::Get.new(uri.request_uri)
   http.request(request)
 end
