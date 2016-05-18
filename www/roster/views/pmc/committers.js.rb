@@ -85,8 +85,14 @@ class PMCCommitter < React
 
   def render
     _tr onDoubleClick: self.select do
-      _td {_a @@person.id, href: "committer/#{@@person.id}"}
-      _td @@person.name
+
+      if @@committee.asfmembers.include? @@person.id
+        _td { _b { _a @@person.id, href: "committer/#{@@person.id}"} }
+        _td { _b @@person.name }
+      else
+        _td { _a @@person.id, href: "committer/#{@@person.id}" }
+        _td @@person.name
+      end
 
       if @state == :open
         _td data_id: @@person.id do 
