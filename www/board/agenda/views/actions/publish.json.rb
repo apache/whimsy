@@ -44,20 +44,19 @@ end
 calendar.sub! /^(\s*-\s+#{fdate}\s*\n)/, ''
 
 #Commit the Minutes
-ASF::SVN.update MINUTES, @message, env, _ do |tmpdir, old_contents|
-  tmp = File.join(tmpdir, File.basename(MINUTES), year.to_s).untaint
+ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
+  yeardir = File.join(tmpdir, year.to_s).untaint
+  _.system "svn up #{yeardir}"
 
-  unless Dir.exist? tmp
-    _.system "mkdir #{tmp}"
-    _.system "svn add #{tmp}"
+  unless Dir.exist? yeardir
+    _.system "mkdir #{yeardir}"
+    _.system "svn add #{yeardir}"
   end
 
-  if not File.exist? "#{year}/board_minutes_#{@date}.txt"
-    _.system "cp #{BOARD_PRIVATE}/board_minutes_#{@date}.txt #{tmp}"
-    _.system "svn add #{tmp}/board_minutes_#{@date}.txt"
+  if not File.exist? "#{yeardir}/board_minutes_#{@date}.txt"
+    _.system "cp #{BOARD_PRIVATE}/board_minutes_#{@date}.txt #{yeardir}"
+    _.system "svn add #{yeardir}/board_minutes_#{@date}.txt"
   end
-
-  nil
 end
 
 # Update the Calendar
@@ -68,18 +67,18 @@ if File.read(CALENDAR) != calendar
 end
 
 # Clean up board directory
-ASF::SVN.update BOARD_PRIVATE, @message, env, _ do |tmpdir, old_contents|
-  tmp = File.join(tmpdir, File.basename(BOARD_PRIVATE)).untaint
-
-  if File.exist? "#{tmp}/board_minutes_#{@date}.txt"
-    _.system "svn rm #{tmp}/board_minutes_#{@date}.txt"
+ASF::SVN.update BOARD_PRIVATE, @message, env, _ do |tmpdir|
+  _.system "svn up #{tmpdir}/board_minutes_#{@date}.txt"
+  if File.exist? "#{tmpdir}/board_minutes_#{@date}.txt"
+    _.system "svn rm #{tmpdir}/board_minutes_#{@date}.txt"
   end
   
-  if File.exist? "#{tmp}/board_agenda_#{@date}.txt"
-    _.system "svn mv #{tmp}/board_agenda_#{@date}.txt #{tmp}/archived_agendas"
+  _.system "svn up #{tmpdir}/board_agenda_#{@date}.txt"
+  if File.exist? "#{tmpdir}/board_agenda_#{@date}.txt"
+    _.system "svn up --depth empty #{tmpdir}/archived_agendas"
+    _.system "svn mv #{tmpdir}/board_agenda_#{@date}.txt " +
+      "#{tmpdir}/archived_agendas"
   end
-
-  nil
 end
 
 Dir.chdir(BOARD_PRIVATE) {Dir['board_minutes_*.txt'].sort}

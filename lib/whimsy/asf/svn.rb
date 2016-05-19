@@ -92,10 +92,16 @@ module ASF
       return revision, content
     end
 
-    # update a file in SVN, working entirely in a temporary directory
+    # update a file or directory in SVN, working entirely in a temporary
+    # directory
     def self.update(path, msg, env, _, options={})
-      dir = File.dirname(path)
-      basename = File.basename(path)
+      if File.directory? path
+        dir = path
+        basename = nil
+      else
+        dir = File.dirname(path)
+        basename = File.basename(path)
+      end
 
       if path.start_with? '/' and not path.include? '..' and File.exist?(path)
         dir.untaint
@@ -103,7 +109,6 @@ module ASF
       end
       
       tmpdir = Dir.mktmpdir.untaint
-      tmpfile = File.join(tmpdir, basename).untaint
 
       begin
         # create an empty checkout
@@ -112,15 +117,26 @@ module ASF
           `svn info #{dir}`[/URL: (.*)/, 1], tmpdir]
 
         # retrieve the file to be updated (may not exist)
-        _.system ['svn', 'update',
-          ['--username', env.user, '--password', env.password],
-          tmpfile]
+	if basename
+          tmpfile = File.join(tmpdir, basename).untaint
+          _.system ['svn', 'update',
+            ['--username', env.user, '--password', env.password],
+            tmpfile]
+	else
+	  tmpfile = nil
+	end
 
         # determine the new contents
-        if File.file? tmpfile
+	if not tmpfile
+	  # updating a directory
+          previous_contents = contents = nil
+          yield tmpdir, ''
+        elsif File.file? tmpfile
+	  # updating an existing file
           previous_contents = File.read(tmpfile)
           contents = yield tmpdir, File.read(tmpfile)
         else
+	  # updating a new file
           previous_contents = nil
           contents = yield tmpdir, ''
         end
@@ -133,7 +149,7 @@ module ASF
               ['--username', env.user, '--password', env.password],
               tmpfile]
           end
-        elsif File.file? tmpfile
+        elsif tmpfile and File.file? tmpfile
           File.unlink tmpfile
           _.system ['svn', 'delete',
             ['--username', env.user, '--password', env.password],
@@ -147,12 +163,12 @@ module ASF
           # commit the changes
           rc = _.system ['svn', 'commit', '--message', msg.untaint,
             ['--username', env.user, '--password', env.password],
-            tmpfile]
+            tmpfile || tmpdir]
         end
 
         # fail if there are pending changes
         unless rc == 0 and `svn st`.empty?
-          raise "svn failure #{File.join(svn, basename)}"
+          raise "svn failure #{path.inspect}"
         end
       ensure
         FileUtils.rm_rf tmpdir
