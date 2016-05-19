@@ -109,7 +109,7 @@ end
 
 # Massage the strings to drop the timestamps so spurious changes are not reported/saved
 def removeTimestamps(s)
-  return s.sub(/  "last_updated": "[^"]+",/, '')
+  return s.sub(/  "last_updated|code_version": "[^"]+",/, '')
 end
 
 # Write formatted output to specific file
