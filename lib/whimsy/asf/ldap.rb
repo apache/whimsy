@@ -377,6 +377,19 @@ module ASF
         @name
       end
     end
+
+    def self.mod_add(attr, vals)
+      ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, attr.to_s, Array(vals))
+    end
+
+    def self.mod_replace(attr, vals)
+      vals = Array(vals) unless Hash === vals
+      ::LDAP::Mod.new(::LDAP::LDAP_MOD_REPLACE, attr.to_s, vals)
+    end
+
+    def self.mod_delete(attr, vals)
+      ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, attr.to_s, Array(vals))
+    end
   end
 
   class LazyHash < Hash
@@ -536,9 +549,7 @@ module ASF
     end
 
     def modify(attr, value)
-      value = Array(value) unless Hash === value
-      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_REPLACE, attr.to_s, value)
-      ASF.ldap.modify(self.dn, [mod])
+      ASF.ldap.modify(self.dn, [mod_replace(attr.to_s, value)])
       attrs[attr.to_s] = value
     end
   end
@@ -589,24 +600,45 @@ module ASF
       @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
     end
 
+    # remove people from an existing group
     def remove(people)
       @members = nil
       people = (Array(people) & members).map(&:id)
       return if people.empty?
-      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'memberUid', people)
-      ASF.ldap.modify(self.dn, [mod])
+      ASF.ldap.modify(self.dn, [mod_delete('memberUid', people)])
     ensure
       @members = nil
     end
 
+    # add people to an existing group
     def add(people)
       @members = nil
       people = (Array(people) - members).map(&:id)
       return if people.empty?
-      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'memberUid', people)
-      ASF.ldap.modify(self.dn, [mod])
+      ASF.ldap.modify(self.dn, [mod_add('memberUid', people)])
     ensure
       @members = nil
+    end
+
+    # add a new group
+    def self.add(name, people)
+      nextgid = ASF::search_one(ASF::Group.base, 'cn=*', 'gidNumber').
+        flatten.map(&:to_i).max + 1
+
+      entry = [
+        mod_add('objectClass', ['posixGroup', 'top']),
+        mod_add('cn', name),
+        mod_add('userPassword', '{crypt}*'),
+        mod_add('gidNumber', nextgid.to_s),
+        mod_add('memberUid', people.map(&:id))
+      ]
+
+      ASF.ldap.add("cn=#{name},#{base}", entry)
+    end
+
+    # remove a group
+    def self.remove(name)
+      ASF.ldap.delete("cn=#{name},#{base}")
     end
   end
 
@@ -647,24 +679,38 @@ module ASF
       @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
     end
 
+    # remove people from a committee
     def remove(people)
       @members = nil
-      people = Array(people & members).map(&:dn)
-      return if people.empty?
-      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'member', people)
-      ASF.ldap.modify(self.dn, [mod])
+      people = (Array(people) & members).map(&:dn)
+      ASF.ldap.modify(self.dn, [mod_delete('member', people)])
     ensure
       @members = nil
     end
 
+    # add people to a committee
     def add(people)
       @members = nil
-      people = Array(people - members).map(&:dn)
-      return if people.empty?
-      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'member', people)
-      ASF.ldap.modify(self.dn, [mod])
+      people = (Array(people) - members).map(&:dn)
+      ASF.ldap.modify(self.dn, [mod_add('member', people)])
     ensure
       @members = nil
+    end
+
+    # add a new committee
+    def self.add(name, people)
+      entry = [
+        mod_add('objectClass', ['groupOfNames', 'top']),
+        mod_add('cn', name),
+        mod_add('member', Array(people).map(&:dn))
+      ]
+
+      ASF.ldap.add("cn=#{name},#{base}", entry)
+    end
+
+    # remove a committee
+    def self.remove(name)
+      ASF.ldap.delete("cn=#{name},#{base}")
     end
   end
 
@@ -707,20 +753,16 @@ module ASF
 
     def remove(people)
       @members = nil
-      people = Array(people & members).map(&:dn)
-      return if people.empty?
-      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, 'member', people)
-      ASF.ldap.modify(self.dn, [mod])
+      people = Array(people - members).map(&:dn)
+      ASF.ldap.modify(self.dn, [mod_delete('member', people)])
     ensure
       @members = nil
     end
 
     def add(people)
       @members = nil
-      people = Array(people - members).map(&:dn)
-      return if people.empty?
-      mod = ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, 'member', people)
-      ASF.ldap.modify(self.dn, [mod])
+      people = (Array(people) & members).map(&:dn)
+      ASF.ldap.modify(self.dn, [mod_add('member', people)])
     ensure
       @members = nil
     end
