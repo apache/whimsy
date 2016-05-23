@@ -103,7 +103,7 @@ def sendMail(subject, body)
     # deliver mail
     mail.deliver!
   rescue => e
-    Wunderbar.warn "sendMail failed with exception: #{e}"
+    Wunderbar.warn "sendMail [#{subject}] failed with exception: #{e}"
   end
 end
 
