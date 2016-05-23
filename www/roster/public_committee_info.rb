@@ -68,7 +68,7 @@ if changed? or true
     entry[:roster].each { |name, value|
       jdate = value[:date]
       if jdate
-        joined = Time.utc(jdate)
+        joined = Date.parse(jdate,'').to_time
         if joined > last_updated
           msg = "Unexpected joining date: PMC: #{pmc} Id: #{name} entry: #{value} (last_updated: #{last_updated})"
           Wunderbar.warn msg
