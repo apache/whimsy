@@ -124,10 +124,10 @@ class PMCMember < React
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} from LDAP?"
 
-            _button.btn.btn_success 'Add to committee_info.txt',
+            _button.btn.btn_success 'Add to committee-info.txt',
               data_action: 'add info',
               data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Add to #{@@person.name} committee_info.txt"
+              data_confirmation: "Add to #{@@person.name} committee-info.txt"
           elsif not @@person.ldap
              # in committee-info.txt but not in ldap
             _button.btn.btn_success 'Add to LDAP',
@@ -135,11 +135,11 @@ class PMCMember < React
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} to LDAP?"
 
-            _button.btn.btn_warning 'Remove from committee_info.txt',
+            _button.btn.btn_warning 'Remove from committee-info.txt',
               data_action: 'remove info',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: 
-                "Remove #{@@person.name} from committee_info.txt?"
+                "Remove #{@@person.name} from committee-info.txt?"
           else
             # in both LDAP and committee-info.txt
             _button.btn.btn_warning 'Remove from PMC',
@@ -157,7 +157,7 @@ class PMCMember < React
           end
         end
       elsif not @@person.date
-        _td.issue 'not in committee_info.txt'
+        _td.issue 'not in committee-info.txt'
       elsif not @@person.ldap
         _td.issue 'not in LDAP'
       elsif not @@committee.committers[@@person.id]
