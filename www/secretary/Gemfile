@@ -10,3 +10,4 @@ end
 
 gem 'ruby2js', '>= 2.0.0'
 gem 'wunderbar'
+gem 'mail'
