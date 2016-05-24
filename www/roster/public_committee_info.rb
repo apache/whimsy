@@ -69,7 +69,9 @@ if changed? or true
       jdate = value[:date]
       if jdate
         joined = Date.parse(jdate,'').to_time
-        if joined > last_updated
+        # Joining date must not be before the file was updated
+        # N.B. this won't be true for new PMCs - TODO allow for this
+        if joined < last_updated
           msg = "Unexpected joining date: PMC: #{pmc} Id: #{name} entry: #{value} (last_updated: #{last_updated})"
           Wunderbar.warn msg
           sendMail('Error detected processing committee-info.txt', msg)
