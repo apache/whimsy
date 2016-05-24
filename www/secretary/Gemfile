@@ -11,3 +11,5 @@ end
 gem 'ruby2js', '>= 2.0.0'
 gem 'wunderbar'
 gem 'mail'
+gem 'mime-types', ('~> 2.99' if RUBY_VERSION < '2')
+
