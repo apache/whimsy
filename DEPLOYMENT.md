@@ -55,6 +55,9 @@ The following additional steps are required to get the Whimsy VM up and running:
     * Add `secretary@whimsy-vm2.apache.org` to the `secretary@apache.org`
       alias.
 
+ * Verify that email can be sent to non-apache.org email addresses
+   * Run [testmail.rb](tools/testmail.rb)
+
 The following additional steps are required for now, but will hopefully go
 away once the transition away from the secretary workbench is complete:
 
