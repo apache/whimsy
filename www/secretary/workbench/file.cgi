@@ -227,6 +227,8 @@ def email(target, message)
     template = vars.doctype + '.erb'
     template.taint unless template =~ /^\w[.\w]+$/
     if defined?(MAIL) and File.exist?(template)
+      # prepare to send mail
+      ASF::Mail.configure
 
       # extract fields from the Mail defaults
       Mail.defaults do
