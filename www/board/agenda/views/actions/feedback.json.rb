@@ -47,6 +47,18 @@ Agenda.parse(@agenda, :full).each do |item|
 
   next if text.strip.empty?
 
+  # add standard footer
+  text += "\n" + %{
+    This feedback was generated automatically by the secretary from the
+    comments made on your board report.
+    Comments that do not ask specific questions should be noted by the PMC
+    and taken into consideration as appropriate for future board reports.
+    Where a comment asks a specific question, it should be answered in your
+    next board report unless otherwise stated in the comment.
+    If you have any queries or concerns regarding any of the comments they
+    should be sent to the board@ mailing list.
+  }.gsub(/^ {4}/, '').strip
+
   # build cc list
   cc = ['board@apache.org']
   
