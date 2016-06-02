@@ -42,7 +42,7 @@ Agenda.parse(@agenda, :full).each do |item|
   end
 
   if minutes[item['title']]
-    text += "\nMinutes:\n#{minutes[item['title']].gsub(/^/, '  ')}\n"
+    text += "\nMinutes:\n\n#{minutes[item['title']].gsub(/^/, '  ')}\n"
   end
 
   next if text.strip.empty?
