@@ -204,7 +204,7 @@ def svn_info(source)
   info
 end
 
-def email(target, message)
+def send_email(target, message)
   pending = YAML.load(open(PENDING_YML))
 
   require MAIL if defined?(MAIL)
@@ -214,9 +214,9 @@ def email(target, message)
   pending.each do |pending_hash|
     next unless pending_hash['email'] == target
 
-    vars = OpenStruct.new(pending_hash.map {|k,v| 
+    vars = OpenStruct.new(Hash[pending_hash.map {|k,v| 
       [k.gsub(/\W/,'_'), v.dup.untaint]
-    })
+    }])
     vars.commit_message = message
 
     # collapse pmc and podling variable names
@@ -238,10 +238,10 @@ def email(target, message)
       end
 
       # expand template
-      def vars.get_binding
-        binding
+      def vars.render(template)
+        ERB.new(template).result(binding)
       end
-      message = ERB.new(open(template).read.untaint).result(vars.get_binding)
+      message = vars.render(open(template).read.untaint)
       headers = message.slice!(/\A(\w+: .*\r?\n)*(\r?\n)*/)
 
       mail = Mail.new do
@@ -354,7 +354,7 @@ _json do
   elsif @cmd == 'icla.txt issues'
     _html check
   elsif @cmd =~ /email (.*)/
-    _html email $1, @message
+    _html send_email $1, @message
   elsif @cmd =~ /svn (update|revert -R|cleanup)/ and committable.include? @file
     op, file = $1.split(' '), @file
     _html html_fragment {
