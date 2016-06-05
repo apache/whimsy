@@ -36,7 +36,7 @@ Manual Steps
 The following additional steps are required to get the Whimsy VM up and running:
 
  * Run the following command to create an SSL cert (see [tutorial](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-14-04) for details):
-     * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org`
+     * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org -d whimsy3.apache.org -d whimsy-vm3.apache.org -d whimsy-test.apache.org`
 
  * Configure `~/whimsysvn/.subversion/config` and `~/whimsysvn/.subversion/servers` to store auth-creds.
 
