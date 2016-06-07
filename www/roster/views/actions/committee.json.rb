@@ -94,6 +94,8 @@ if env.password
       "  https://whimsy.apache.org/roster/committee/#{pmc.id}\n\n" +
       "LDAP details:\n\n  #{details.join("\n  ")}"
   end
+  # Header for root@'s lovely email filters
+  mail.header['X-For-Root'] = 'yes'
 
   # deliver email
   mail.deliver!
