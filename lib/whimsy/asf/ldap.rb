@@ -549,7 +549,7 @@ module ASF
     end
 
     def modify(attr, value)
-      ASF.ldap.modify(self.dn, [mod_replace(attr.to_s, value)])
+      ASF.ldap.modify(self.dn, [ASF::Base.mod_replace(attr.to_s, value)])
       attrs[attr.to_s] = value
     end
   end
@@ -605,7 +605,7 @@ module ASF
       @members = nil
       people = (Array(people) & members).map(&:id)
       return if people.empty?
-      ASF.ldap.modify(self.dn, [mod_delete('memberUid', people)])
+      ASF.ldap.modify(self.dn, [ASF::Base.mod_delete('memberUid', people)])
     ensure
       @members = nil
     end
@@ -615,7 +615,7 @@ module ASF
       @members = nil
       people = (Array(people) - members).map(&:id)
       return if people.empty?
-      ASF.ldap.modify(self.dn, [mod_add('memberUid', people)])
+      ASF.ldap.modify(self.dn, [ASF::Base.mod_add('memberUid', people)])
     ensure
       @members = nil
     end
@@ -683,7 +683,7 @@ module ASF
     def remove(people)
       @members = nil
       people = (Array(people) & members).map(&:dn)
-      ASF.ldap.modify(self.dn, [mod_delete('member', people)])
+      ASF.ldap.modify(self.dn, [ASF::Base.mod_delete('member', people)])
     ensure
       @members = nil
     end
@@ -692,7 +692,7 @@ module ASF
     def add(people)
       @members = nil
       people = (Array(people) - members).map(&:dn)
-      ASF.ldap.modify(self.dn, [mod_add('member', people)])
+      ASF.ldap.modify(self.dn, [ASF::Base.mod_add('member', people)])
     ensure
       @members = nil
     end
@@ -754,7 +754,7 @@ module ASF
     def remove(people)
       @members = nil
       people = Array(people - members).map(&:dn)
-      ASF.ldap.modify(self.dn, [mod_delete('member', people)])
+      ASF.ldap.modify(self.dn, [ASF::Base.mod_delete('member', people)])
     ensure
       @members = nil
     end
@@ -762,7 +762,7 @@ module ASF
     def add(people)
       @members = nil
       people = (Array(people) & members).map(&:dn)
-      ASF.ldap.modify(self.dn, [mod_add('member', people)])
+      ASF.ldap.modify(self.dn, [ASF::Base.mod_add('member', people)])
     ensure
       @members = nil
     end
