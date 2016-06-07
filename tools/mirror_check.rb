@@ -45,9 +45,7 @@ TODO - any more checks?
 
 $SAFE = 1
 
-DEFAULT = 'http://localhost/dist/'
-
-URLPAT = '^https?://[^/]+/(\S+/)?$'
+URLMATCH = %r!^https?://[^/]+/(\S+/)?$!i
 HTTPDIRS = %w(zzz/ mirror-tests/) # must exist
 HDRMATCH = %r!<h\d>Apache Software Foundation Distribution Meta-Directory</h\d>! # must be on the zzz index page
 FTRMATCH = %r!This directory contains meta-data for the ASF mirroring system.! # must be on the zzz index page
@@ -197,7 +195,23 @@ end
 
 # Suite: perform all the HTTP checks
 def checkHTTP(base)
+  # We don't check the pattern on the form for two reasons:
+  # - not all browsers support it
+  # - allows the input to be more flexible
+
+  # Fix up the URL
+  base += '/' unless base.end_with? '/'
+  base = 'http://' + base unless base.start_with? 'http'
+  # Now check the syntax:
+
   I "Checking #{base} ..."
+
+  unless URLMATCH.match(base)
+    F "Invalid URL syntax: #{base}"
+    return  
+  end
+
+  setup
 
   # Check the mirror time (and that zzz/ is readable)
   time = check_page(base, 'zzz/time.txt', severity = :F)
@@ -265,6 +279,9 @@ def init
   # build a list of validation errors
   @tests = []
   @fails = 0
+end
+
+def setup
   tlps = parseIndexPage(check_page('http://www.apache.org/dist/',''))
   podlings = parseIndexPage(check_page('http://www.apache.org/dist/incubator/',''))
   @pages = {:tlps => tlps, :podlings => podlings}
@@ -325,7 +342,6 @@ end
 if __FILE__ == $0
   init
   url = ARGV[0] || DEFAULT
-  url += '/' unless url.end_with? '/'
   checkHTTP(url)
   # display the test results
   @tests.each { |t| t.map{|k, v| puts "#{k}: - #{v}"}} 

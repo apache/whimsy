@@ -31,10 +31,9 @@ _html do
       _fieldset do
         _legend 'ASF Mirror Check Request'
         _ 'Mirror URL'
-        _input.name name: 'url', required: true, pattern: URLPAT,
+        _input.name name: 'url', required: true,
                     placeholder: 'mirror URL',
-                    size: 50, 
-                    value: DEFAULT
+                    size: 50
         _input type: 'submit', value: 'Check Mirror'
       end
     end
