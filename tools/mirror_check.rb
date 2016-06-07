@@ -298,10 +298,13 @@ def display
     showList(fatals, "Fatal errors:")
     showList(errors, "Errors:")
     showList(warns, "Warnings:")
+    # Cannot easily copy/paste URLs; use layout suitable for copy/paste into e.g. JIRA issue/e-mail
     _p do
-      _ 'Please see the'
-      _a 'Apache mirror configuration instructions', href: 'http://www.apache.org/info/how-to-mirror.html#Configuration'
-      _ 'for further details on configuring your mirror server.'
+      _ 'Please see the Apache mirror configuration instructions [1] for further details on configuring your mirror server.'
+    end
+    _p do
+    _ '[1] '
+      _a 'http://www.apache.org/info/how-to-mirror.html#Configuration', href: 'http://www.apache.org/info/how-to-mirror.html#Configuration'
     end
   end
 
