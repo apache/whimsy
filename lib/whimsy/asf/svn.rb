@@ -117,26 +117,26 @@ module ASF
           `svn info #{dir}`[/URL: (.*)/, 1], tmpdir]
 
         # retrieve the file to be updated (may not exist)
-	if basename
+        if basename
           tmpfile = File.join(tmpdir, basename).untaint
           _.system ['svn', 'update',
             ['--username', env.user, '--password', env.password],
             tmpfile]
-	else
-	  tmpfile = nil
-	end
+        else
+          tmpfile = nil
+        end
 
         # determine the new contents
-	if not tmpfile
-	  # updating a directory
+        if not tmpfile
+          # updating a directory
           previous_contents = contents = nil
           yield tmpdir, ''
         elsif File.file? tmpfile
-	  # updating an existing file
+          # updating an existing file
           previous_contents = File.read(tmpfile)
           contents = yield tmpdir, File.read(tmpfile)
         else
-	  # updating a new file
+          # updating a new file
           previous_contents = nil
           contents = yield tmpdir, ''
         end
