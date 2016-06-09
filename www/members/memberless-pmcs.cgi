@@ -6,6 +6,8 @@
 
 require 'whimsy/asf'
 require 'wunderbar/bootstrap'
+require 'wunderbar/jquery/stupidtable'
+require 'date'
 
 members = ASF::Member.list.keys
 committees = ASF::Committee.load_committee_info
@@ -40,9 +42,9 @@ _html do
   _table_.table.table_striped do
     _thead_ do
       _tr do
-        _th 'PMC'
-        _th 'Established'
-        _th 'Count' if count > 1
+        _th 'PMC', data_sort: 'string-ins'
+        _th 'Established', data_sort: 'string'
+        _th 'Count', data_sort: 'int' if count > 1
       end
     end
 
@@ -54,10 +56,14 @@ _html do
           _td! do
             _a pmc.display_name, href: "../roster/committee/#{pmc.id}"
           end
-          _td pmc.established
+          _td Date.parse(pmc.established).strftime('%Y/%m')
           _td (pmc.roster.keys & members).length if count > 1
         end
       end
     end
   end
+
+  _script %{
+    $(".table").stupidtable();
+  }
 end
