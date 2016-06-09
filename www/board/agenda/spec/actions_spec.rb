@@ -11,7 +11,6 @@ feature 'server actions' do
   before :each do
     @test_data = IO.read('test/work/data/test.yml')
     @test_mins = IO.read('test/work/data/board_minutes_2015_02_18.yml')
-    @transcript = ''
     @cleanup = []
   end
 
@@ -373,40 +372,5 @@ feature 'server actions' do
     @cleanup.each do |file| 
       Agenda[File.basename(file)].replace :mtime=>0
     end
-  end
-
-  # 
-  # administrivia
-  #
-
-  # wunderbar environment
-  def _
-    self
-  end
-
-  # sinatra environment
-  def env
-    Struct.new(:user, :password).new('test', nil)
-  end
-
-  # capture wunderbar 'json' output methods
-  def method_missing(method, *args, &block)
-    if method =~ /^_(\w+)$/ and args.length == 1
-      instance_variable_set "@#$1", args.first
-    else
-      super
-    end
-  end
-
-  # run system commands, appending output to transcript.
-  # intercept commits, adding the files to the cleanup list
-  def system(*args)
-    args.flatten!
-    if args[1] == 'commit'
-      @cleanup <<= args[2]
-    else
-      @transcript += `#{Shellwords.join(args)}`
-    end
-    0
   end
 end

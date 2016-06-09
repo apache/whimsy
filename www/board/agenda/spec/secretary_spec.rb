@@ -92,7 +92,7 @@ feature 'report' do
       file = "#{FOUNDATION_BOARD}/board_minutes_2015_02_18.txt"
 
       begin
-        eval(File.read('views/actions/draft.json.rb'))
+        eval(File.read('views/actions/draft.json.rb'), nil, 'draft.json.rb')
 
         expect(File.exist? file).to be true
         expect(File.read file).to eq draft
