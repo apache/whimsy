@@ -39,6 +39,10 @@ task "touch" do
   sh 'touch', File.expand_path('../tmp/restart.txt', __FILE__)
 end
 
+file 'node_modules' do
+  sh 'npm install'
+end
+
 file 'test/work' do
   mkdir_p 'test/work'
 end
@@ -96,7 +100,7 @@ task :work => ['test/work/board',
   *testfiles.map {|testfile| "test/work/data/#{testfile}.yml"}]
 
 namespace :test do
-  task :setup => [:reset, :work]
+  task :setup => [:reset, :work, 'node_modules']
   task :server => 'server:test'
 
   task :stress => :setup do
