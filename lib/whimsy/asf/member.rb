@@ -50,7 +50,7 @@ module ASF
       end
 
       status = {}
-      sections = ASF::Member.text.split(/(.*\n===+)/)
+      sections = ASF::Member.text.to_s.split(/(.*\n===+)/)
       sections.shift(3)
       sections.each_slice(2) do |header, text|
         header.sub!(/s\n=+/,'')
