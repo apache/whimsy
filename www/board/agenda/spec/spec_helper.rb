@@ -50,14 +50,17 @@ module MockServer
   # intercept commits, adding the files to the cleanup list
   def system(*args)
     args.flatten!
-    if args[1] == 'commit' and @cleanup
-      @cleanup <<= args[2]
+    if args[1] == 'commit'
+      @commits ||= {}
+      @commits[File.basename args[2]] = File.read(args[2])
+      `svn revert #{args[2]}`
+      0
     else
       args.reject! {|arg| Array === arg}
       @transcript ||= ''
       @transcript += `#{Shellwords.join(args)}`
+      $?.exitstatus
     end
-    0
   end
 end
 

@@ -369,8 +369,10 @@ feature 'server actions' do
       File.unlink 'test/work/data/test.bak'
     end
 
-    @cleanup.each do |file| 
-      Agenda[File.basename(file)].replace :mtime=>0
+    if @commits
+      @commits.each do |name, contents| 
+        Agenda[name].replace :mtime=>0
+      end
     end
   end
 end

@@ -162,9 +162,9 @@ module ASF
           rc = _.system ['svn', 'diff', tmpfile]
         else
           # commit the changes
-          rc = _.system ['svn', 'commit', '--message', msg.untaint,
+          rc = _.system ['svn', 'commit', tmpfile || tmpdir,
             ['--username', env.user, '--password', env.password],
-            tmpfile || tmpdir]
+            '--message', msg.untaint]
         end
 
         # fail if there are pending changes
