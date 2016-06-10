@@ -17,7 +17,7 @@ feature 'report' do
     expect(page).to have_selector 'pre', 
       text: 'Sally produced our first quarterly report'
     expect(page).to have_selector '.private',
-      %r{<private>\s*whisper, whisper, whisper\s*</private>}
+      text: %r{<private>\s*whisper, whisper, whisper\s*</private>}
     expect(page).to have_selector 'a[href="Executive-Assistant"]', 
      text: 'Executive Assistant'
     expect(page).to have_selector '.pres-missing[href="Travel-Assistance"]', 
