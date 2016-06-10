@@ -372,6 +372,7 @@ feature 'server actions' do
     if @commits
       @commits.each do |name, contents| 
         Agenda[name].replace :mtime=>0
+        File.unlink "#{AGENDA_WORK}/#{name}"
       end
     end
   end
