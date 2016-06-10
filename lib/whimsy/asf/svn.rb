@@ -139,6 +139,7 @@ module ASF
           # updating a new file
           previous_contents = nil
           contents = yield tmpdir, ''
+          previous_contents = File.read(tmpfile) if File.file? tmpfile
         end
      
         # create/update the temporary copy
@@ -167,7 +168,7 @@ module ASF
         end
 
         # fail if there are pending changes
-        unless rc == 0 and `svn st`.empty?
+        unless rc == 0 and `svn st #{tmpfile || tmpdir}`.empty?
           raise "svn failure #{path.inspect}"
         end
       ensure

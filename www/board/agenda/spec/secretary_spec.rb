@@ -94,6 +94,7 @@ feature 'report' do
       begin
         eval(File.read('views/actions/draft.json.rb'), nil, 'draft.json.rb')
 
+        system 'svn', 'update', file
         expect(File.exist? file).to be true
         expect(File.read file).to eq draft
       ensure

@@ -50,9 +50,10 @@ module MockServer
   # intercept commits, adding the files to the cleanup list
   def system(*args)
     args.flatten!
-    if args[1] == 'commit'
-      @cleanup <<= args[2] if @cleanup
+    if args[1] == 'commit' and @cleanup
+      @cleanup <<= args[2]
     else
+      args.reject! {|arg| Array === arg}
       @transcript ||= ''
       @transcript += `#{Shellwords.join(args)}`
     end
