@@ -37,18 +37,19 @@ ASF::Authorization.new('asf').each do |grp, mem|
   groups[grp][:podling] = pods[grp] if pods[grp]
 end
 
-pitgroups = {}
-
-# find the locally defined groups
-ASF::Authorization.new('pit').each do |grp, mem|
-  pitgroups[grp] = {
-      # we use same syntax as for normal groups
-      # this will allow future expansion e.g. if we can flag podlings somehow
-      roster: mem.sort.uniq
-      }
-  # add podling type entry if there is one
-  pitgroups[grp][:podling] = pods[grp] if pods[grp]
-end
+# Not currently used
+#pitgroups = {}
+#
+## find the locally defined groups
+#ASF::Authorization.new('pit').each do |grp, mem|
+#  pitgroups[grp] = {
+#      # we use same syntax as for normal groups
+#      # this will allow future expansion e.g. if we can flag podlings somehow
+#      roster: mem.sort.uniq
+#      }
+#  # add podling type entry if there is one
+#  pitgroups[grp][:podling] = pods[grp] if pods[grp]
+#end
 
 public_json_output(
   # There does not seem to be a useful timestamp here
