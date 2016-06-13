@@ -64,7 +64,7 @@ module ASF
         @block = block 
       end
 
-      def call(env, &block)
+      def call(env)
         authorized = ( ENV['RACK_ENV'] == 'test' )
 
         person = ASF::Auth.decode(env)
