@@ -7,7 +7,7 @@ https://whimsy.apache.org/.
 This VM is based on Ubuntu 14.04 and is managed by Puppet.  The puppet definition is
 contained in the following files:
 
- * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm2.apache.org.yaml
+ * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm3.apache.org.yaml
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/init.pp
 
@@ -41,18 +41,18 @@ The following additional steps are required to get the Whimsy VM up and running:
  * Configure `~/whimsysvn/.subversion/config` and `~/whimsysvn/.subversion/servers` to store auth-creds.
 
  * Add the following cron job to apmail@hermes:
-     * `11  4,10,16,22 * * * for list in /home/apmail/lists/incubator.apache.org/*; do echo; echo $list/mod; ezmlm-list $list mod; done | ssh whimsy-vm2.apache.org 'cat > /srv/subscriptions/incubator-mods'`
-     * `16 * * * * ezmlm-list /home/apmail/lists/apache.org/board/ . | ssh whimsy-vm2.apache.org 'cat > /srv/subscriptions/board'`
-     * `46 * * * * ezmlm-list /home/apmail/lists/apache.org/members/ . | ssh whimsy-vm2.apache.org 'cat > /srv/subscriptions/members'`
+     * `11  4,10,16,22 * * * for list in /home/apmail/lists/incubator.apache.org/*; do echo; echo $list/mod; ezmlm-list $list mod; done | ssh whimsy-vm3.apache.org 'cat > /srv/subscriptions/incubator-mods'`
+     * `16 * * * * ezmlm-list /home/apmail/lists/apache.org/board/ . | ssh whimsy-vm3.apache.org 'cat > /srv/subscriptions/board'`
+     * `46 * * * * ezmlm-list /home/apmail/lists/apache.org/members/ . | ssh whimsy-vm3.apache.org 'cat > /srv/subscriptions/members'`
 
  * Add the following mail subscriptions:
-    * Subscribe `svnupdate@whimsy-vm2.apache.org` to `board@apache.org`.
+    * Subscribe `svnupdate@whimsy-vm3.apache.org` to `board@apache.org`.
       Alternately, add it to the `board-cvs` alias.
-    * Subscribe `svnupdate@whimsy-vm2.apache.org` to 
+    * Subscribe `svnupdate@whimsy-vm3.apache.org` to 
       `committers-cvs@apache.org`.
-    * Subscribe `board@whimsy-vm2.apache.org` to `board@apache.org`.
-    * Subscribe `members@whimsy-vm2.apache.org` to `members@apache.org`.
-    * Add `secretary@whimsy-vm2.apache.org` to the `secretary@apache.org`
+    * Subscribe `board@whimsy-vm3.apache.org` to `board@apache.org`.
+    * Subscribe `members@whimsy-vm3.apache.org` to `members@apache.org`.
+    * Add `secretary@whimsy-vm3.apache.org` to the `secretary@apache.org`
       alias.
 
  * Verify that email can be sent to non-apache.org email addresses
