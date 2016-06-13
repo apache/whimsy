@@ -7,7 +7,7 @@ unless ENV['HOME']
 end
 
 # override home for whimsy
-ENV['HOME'] = '/var/www' if `hostname`.chomp == 'whimsy-vm2'
+ENV['HOME'] = '/var/www' if `hostname`.chomp == 'whimsy-vm3'
 
 # look for local_paths.yml or ~/.secassist (in that order)
 config = 'local_paths.yml'
