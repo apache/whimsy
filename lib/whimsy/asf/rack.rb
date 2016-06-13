@@ -59,18 +59,19 @@ module ASF
     # 'use' the following class in config.ru to limit access
     # to the application to ASF members and officers and the accounting group.
     class MembersAndOfficers < Rack::Auth::Basic
-      def initialize(app)
+      def initialize(app, &block)
         super(app, "ASF Members and Officers", &proc {})
+        @block = block 
       end
 
-      def call(env)
+      def call(env, &block)
         authorized = ( ENV['RACK_ENV'] == 'test' )
 
         person = ASF::Auth.decode(env)
 
-        authorized ||= DIRECTORS[env.user]
         authorized ||= person.asf_member?
         authorized ||= ASF.pmc_chairs.include? person
+        authorized ||= @block.call(env) if @block
 
         if not authorized
           accounting = ASF::Authorization.new('pit').
