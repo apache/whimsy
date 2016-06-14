@@ -74,6 +74,8 @@ if env.password
   action = (@action == 'add' ? 'added to' : 'removed from')
   if pmc
     list = group ? 'PMC and committers list' : 'PMC list'
+  elsif @targets.include? 'info'
+    list = 'in committee-info.txt'
   else
     list = 'committers list'
   end
