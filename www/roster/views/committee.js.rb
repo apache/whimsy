@@ -282,7 +282,8 @@ class PMCMember < React
   end
 
   # automatically open pending entries
-  def componentWillReceiveProps()
+  def componentWillReceiveProps(newprops)
+    @state = :closed if self.person != newprops.person
     @state = :open if @@person.date == 'pending'
   end
 
@@ -346,7 +347,8 @@ class PMCCommitter < React
   end
 
   # automatically open pending entries
-  def componentWillReceiveProps()
+  def componentWillReceiveProps(newprops)
+    @state = :closed if self.person != newprops.person
     @state = :open if @@person.date == 'pending'
   end
 
