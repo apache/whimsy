@@ -8,6 +8,8 @@ if File.exist? version_file
   gem 'whimsy-asf', asf_version, path: File.expand_path(root, __FILE__)
 end
 
+gem 'mime-types', ('~> 2.99' if RUBY_VERSION < '2')
+
 gem 'wunderbar'
 gem 'escape'
 gem 'mail'
