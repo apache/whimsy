@@ -39,6 +39,21 @@ class ASF::Board::Agenda
       if text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min != 8
         attrs['warnings'] << 'Resolution is not indented 7 spaces'
       end
+
+      title_checks = {
+        /^Establish/i => /^Establish the Apache .* Project$/,
+        /^Change.*Chair/i => /^Change the Apache .* Project Chair$/,
+        /^Terminate/i => /^Terminate the Apache .* Project$/,
+      }
+
+      title_checks.each do |select, match|
+        if fulltitle =~ select and fulltitle !~ match
+          attrs['warnings'] << 
+            "Non-standard title wording: #{fulltitle.inspect}; " +
+            "expected #{match.inspect}"
+        end
+      end
+
       attrs.delete 'indent'
       attrs.delete 'warnings' if attrs['warnings'].empty?
 
