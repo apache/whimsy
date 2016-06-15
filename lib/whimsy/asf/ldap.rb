@@ -231,6 +231,33 @@ module ASF
       # write the configuration if there were any changes
       File.write(ldap_conf, content) unless content == File.read(ldap_conf)
     end
+
+    # dump more information on LDAP errors - modify
+    def self.modify(dn, list)
+      ASF::LDAP.modify(dn, list)
+    rescue LDAP::ResultError
+      Wunderbar.warn(list.inspect)
+      Wunderbar.warn(dn.to_s)
+      raise
+    end
+
+    # dump more information on LDAP errors - add
+    def self.add(dn, list)
+      ASF::LDAP.add(dn, list)
+    rescue LDAP::ResultError
+      Wunderbar.warn(list.inspect)
+      Wunderbar.warn(dn.to_s)
+      raise
+    end
+
+    # dump more information on LDAP errors - delete
+    def self.delete(dn, list)
+      ASF::LDAP.delete(dn, list)
+    rescue LDAP::ResultError
+      Wunderbar.warn(list.inspect)
+      Wunderbar.warn(dn.to_s)
+      raise
+    end
   end
 
   # public entry point for establishing a connection safely
@@ -549,7 +576,7 @@ module ASF
     end
 
     def modify(attr, value)
-      ASF.ldap.modify(self.dn, [ASF::Base.mod_replace(attr.to_s, value)])
+      ASF::LDAP.modify(self.dn, [ASF::Base.mod_replace(attr.to_s, value)])
       attrs[attr.to_s] = value
     end
   end
@@ -605,7 +632,7 @@ module ASF
       @members = nil
       people = (Array(people) & members).map(&:id)
       return if people.empty?
-      ASF.ldap.modify(self.dn, [ASF::Base.mod_delete('memberUid', people)])
+      ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('memberUid', people)])
     ensure
       @members = nil
     end
@@ -615,7 +642,7 @@ module ASF
       @members = nil
       people = (Array(people) - members).map(&:id)
       return if people.empty?
-      ASF.ldap.modify(self.dn, [ASF::Base.mod_add('memberUid', people)])
+      ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('memberUid', people)])
     ensure
       @members = nil
     end
@@ -633,12 +660,12 @@ module ASF
         mod_add('memberUid', people.map(&:id))
       ]
 
-      ASF.ldap.add("cn=#{name},#{base}", entry)
+      ASF::LDAP.add("cn=#{name},#{base}", entry)
     end
 
     # remove a group
     def self.remove(name)
-      ASF.ldap.delete("cn=#{name},#{base}")
+      ASF::LDAP.delete("cn=#{name},#{base}")
     end
   end
 
@@ -683,7 +710,7 @@ module ASF
     def remove(people)
       @members = nil
       people = (Array(people) & members).map(&:dn)
-      ASF.ldap.modify(self.dn, [ASF::Base.mod_delete('member', people)])
+      ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('member', people)])
     ensure
       @members = nil
     end
@@ -692,7 +719,7 @@ module ASF
     def add(people)
       @members = nil
       people = (Array(people) - members).map(&:dn)
-      ASF.ldap.modify(self.dn, [ASF::Base.mod_add('member', people)])
+      ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('member', people)])
     ensure
       @members = nil
     end
@@ -705,12 +732,12 @@ module ASF
         mod_add('member', Array(people).map(&:dn))
       ]
 
-      ASF.ldap.add("cn=#{name},#{base}", entry)
+      ASF::LDAP.add("cn=#{name},#{base}", entry)
     end
 
     # remove a committee
     def self.remove(name)
-      ASF.ldap.delete("cn=#{name},#{base}")
+      ASF::LDAP.delete("cn=#{name},#{base}")
     end
   end
 
@@ -754,7 +781,7 @@ module ASF
     def remove(people)
       @members = nil
       people = Array(people - members).map(&:dn)
-      ASF.ldap.modify(self.dn, [ASF::Base.mod_delete('member', people)])
+      ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('member', people)])
     ensure
       @members = nil
     end
@@ -762,7 +789,7 @@ module ASF
     def add(people)
       @members = nil
       people = (Array(people) & members).map(&:dn)
-      ASF.ldap.modify(self.dn, [ASF::Base.mod_add('member', people)])
+      ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('member', people)])
     ensure
       @members = nil
     end
