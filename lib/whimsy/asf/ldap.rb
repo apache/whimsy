@@ -235,7 +235,7 @@ module ASF
     # dump more information on LDAP errors - modify
     def self.modify(dn, list)
       ASF::LDAP.modify(dn, list)
-    rescue LDAP::ResultError
+    rescue ::LDAP::ResultError
       Wunderbar.warn(list.inspect)
       Wunderbar.warn(dn.to_s)
       raise
@@ -244,7 +244,7 @@ module ASF
     # dump more information on LDAP errors - add
     def self.add(dn, list)
       ASF::LDAP.add(dn, list)
-    rescue LDAP::ResultError
+    rescue ::LDAP::ResultError
       Wunderbar.warn(list.inspect)
       Wunderbar.warn(dn.to_s)
       raise
@@ -253,7 +253,7 @@ module ASF
     # dump more information on LDAP errors - delete
     def self.delete(dn, list)
       ASF::LDAP.delete(dn, list)
-    rescue LDAP::ResultError
+    rescue ::LDAP::ResultError
       Wunderbar.warn(list.inspect)
       Wunderbar.warn(dn.to_s)
       raise
