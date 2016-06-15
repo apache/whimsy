@@ -51,7 +51,9 @@ print <<-EOF
   </head>
 
   <body>
-    <img src="../whimsy.svg" class="logo"/>
+    <a href="/">
+      <img alt="Whimsy logo" title="Whimsy logo" src="../whimsy.svg" class="logo"/>
+    </a>
     <h1>Whimsy Status for #{hostname}</h1>
 
     <div class="list-group list-group-root well">
