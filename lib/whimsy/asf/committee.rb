@@ -60,6 +60,34 @@ module ASF
       parse_committee_info File.read(file)
     end
 
+    # insert (replacing if necessary) a new committee
+    def self.establish(contents, pmc, date, people)
+      # split into foot, sections (array) and head
+      foot = contents[/^=+\s*\Z/]
+      contents.sub! /^=+\s*\Z/, ''
+      sections = contents.split(/^\* /)
+      head = sections.shift
+
+      # remove existing section (if present)
+      sections.delete_if {|section| section.downcase.start_with? pmc.downcase}
+
+      # build new section
+      section  = ["#{pmc}  (est. #{date.strftime('%m/%Y')})"]
+      people.sort.each do |id, name|
+        name = "#{name.ljust(26)} <#{id}@apache.org>"
+        section << "    #{(name).ljust(59)} [#{date.strftime('%Y-%m-%d')}]"
+      end
+
+      # add new section
+      sections << section.join("\n") + "\n\n\n"
+
+      # sort sections
+      sections.sort_by!(&:downcase)
+
+      # re-attach parts
+      head + '* ' + sections.join('* ') + foot
+    end
+
     def self.parse_committee_info(contents)
       list = Hash.new {|hash, name| hash[name] = find(name)}
 
