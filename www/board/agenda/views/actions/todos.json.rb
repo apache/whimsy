@@ -59,6 +59,31 @@ end
 if @establish and env.password
   establish = @establish.select {|title, checked| checked}.map(&:first)
 
+  # common to all establish resolutions
+  chairs = ASF::Service.find('pmc-chairs')
+  cinfo = "#{ASF::SVN['private/committers/board']}/committee-info.txt"
+  established = Date.parse(date.gsub('_', '-'))
+
+  # update LDAP, committee-info.txt
+  establish.each do |pmc|
+    resolution = agenda.find {|item| item['title'] == "Establish #{pmc}"}
+
+    chair = ASF::Person.find(resolution['chair'])
+    members = resolution['people'].map {|id, hash| ASF::Person.find(id)}
+    people = resolution['people'].map {|id, hash| [id, hash[:name]]}
+
+    ASF::SVN.update cinfo, resolution['title'], env, _ do |tmpdir, contents|
+      ASF::Committee.establish(contents, pmc, established, people)
+    end
+
+    ASF::LDAP.bind(env.user, env.password) do
+      chairs.add [chair] unless chairs.members.include? chair
+      ASF::Group.add(pmc, members)
+      ASF::Committee.add(pmc, members)
+    end 
+  end
+
+  # create 'victims' file for legacy tlpreq tool
   Dir.chdir TLPREQ do
     count = Dir["victims-#{date}.*.txt"].length
     filename = "victims-#{date}.#{count}.txt"
