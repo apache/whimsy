@@ -49,7 +49,23 @@ class AdditionalInfo < React
             _span "\u2022 "
             _a date.gsub('_', '-'),
               href: HistoricalComments.link(date, @@item.title)
-            _span ':'
+            _span ': '
+
+            # compute date range for month
+            dfr = Date.parse(date.gsub('_', '-'))
+            dto = Math.max(dfr + 31 * 86_400_000, Date.now())
+
+            # convert to ISO format
+            dfr = Date.new(dfr).toISOString().substr(0,10)
+            dto = Date.new(dto).toISOString().substr(0,10)
+
+            # link to mail archive for feedback thread
+            if dfr > '2016-04'
+              _a '(thread)', 
+                href: 'https://lists.apache.org/list.html?board@apache.org:' +
+                  "d=dfr=#{dfr}|dto=#{dto}:" +
+                  "Board%20feedback%20on%20#{dfr}%20#{@@item.title}%20report"
+            end
           end
 
           splitComments(history[date]).each do |comment|
