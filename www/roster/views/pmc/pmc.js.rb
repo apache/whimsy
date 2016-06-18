@@ -24,7 +24,7 @@ class PMCMembers < React
           _PMCMember auth: @@auth, person: person, committee: @@committee
         end
 
-        if @@auth
+        if @@auth and not @@committee.roster.keys().empty?
           _tr onDoubleClick: self.select do
             _td((@state == :open ? '' : "\u2795"), colspan: 4)
           end
@@ -124,10 +124,12 @@ class PMCMember < React
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} from LDAP?"
 
-            _button.btn.btn_success 'Add to committee-info.txt',
-              data_action: 'add info',
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Add to #{@@person.name} committee-info.txt"
+            unless @@committee.roster.keys().empty?
+              _button.btn.btn_success 'Add to committee-info.txt',
+                data_action: 'add info',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Add to #{@@person.name} committee-info.txt"
+            end
           elsif not @@person.ldap
              # in committee-info.txt but not in ldap
             _button.btn.btn_success 'Add to LDAP',

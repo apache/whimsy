@@ -32,8 +32,12 @@ class PMC < React
 
     # usage information for authenticated users (PMC chair, etc.)
     if auth
-      _div.alert.alert_success 'Double click on a row to edit.  ' +
-        "Double click on \u2795 to add."
+      _div.alert.alert_success do
+        _span 'Double click on a row to edit.'
+        unless @committee.roster.keys().empty?
+          _span "  Double click on \u2795 to add."
+        end
+      end
     end
 
     # main content
