@@ -51,16 +51,12 @@ class AdditionalInfo < React
               href: HistoricalComments.link(date, @@item.title)
             _span ': '
 
-            # compute date range for month
-            dfr = Date.parse(date.gsub('_', '-'))
-            dto = Math.min(dfr + 30 * 86_400_000, Date.now())
-
-            # convert to ISO format
-            dfr = Date.new(dfr).toISOString().substr(0,10)
-            dto = Date.new(dto).toISOString().substr(0,10)
-
             # link to mail archive for feedback thread
-            if dfr > '2016-04'
+            if date > '2016_04' # when feedback emails were first started
+              # compute date range: from date of that meeting to now
+              dfr = date.gsub('_', '-')
+              dto = Date.new(Date.now()).toISOString()[0...10]
+
               _a '(thread)', 
                 href: 'https://lists.apache.org/list.html?board@apache.org&' +
                   "d=dfr=#{dfr}|dto=#{dto}&header_subject=" +
