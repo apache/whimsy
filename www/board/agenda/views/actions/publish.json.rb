@@ -41,7 +41,7 @@ else
 end
 
 # remove from calendar
-calendar.sub! /^(\s*-\s+#{fdate}\s*\n)/, ''
+calendar.sub! /^(\s*[*-]\s+#{fdate}\s*?\n)/, ''
 
 #Commit the Minutes
 ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
