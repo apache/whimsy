@@ -78,8 +78,8 @@ if @establish and env.password
 
     ASF::LDAP.bind(env.user, env.password) do
       chairs.add [chair] unless chairs.members.include? chair
-      ASF::Group.add(pmc, members)
-      ASF::Committee.add(pmc, members)
+      ASF::Group.add(pmc.downcase, members)
+      ASF::Committee.add(pmc.downcase, members)
     end 
   end
 
