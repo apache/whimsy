@@ -66,7 +66,9 @@ if @establish and env.password
 
   # update LDAP, committee-info.txt
   establish.each do |pmc|
-    resolution = agenda.find {|item| item['title'] == "Establish #{pmc}"}
+    resolution = Agenda.parse(agenda, :full).find do |item| 
+      item['title'] == "Establish #{pmc}"
+    end
 
     chair = ASF::Person.find(resolution['chair'])
     members = resolution['people'].map {|id, hash| ASF::Person.find(id)}

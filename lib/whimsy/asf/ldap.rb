@@ -251,8 +251,8 @@ module ASF
     end
 
     # dump more information on LDAP errors - delete
-    def self.delete(dn, list)
-      ASF.ldap.delete(dn, list)
+    def self.delete(dn)
+      ASF.ldap.delete(dn)
     rescue ::LDAP::ResultError
       Wunderbar.warn(list.inspect)
       Wunderbar.warn(dn.to_s)
