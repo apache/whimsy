@@ -116,10 +116,15 @@ module ASF
       info.each do |roster|
         # extract the committee name and canonicalise
         committee = list[@@namemap.call(roster[/(\w.*?)[ \t]+\(/,1])]
-        # get the start date
-        committee.established = roster[/\(est\. (.*?)\)/, 1]
+
+        # get and normalize the start date
+        established = roster[/\(est\. (.*?)\)/, 1]
+        established = "0#{established}" if established =~ /^\d\//
+        committee.established = established
+
         # extract the availids (is this used?)
         committee.info = roster.scan(/<(.*?)@apache\.org>/).flatten
+
         # drop (chair) markers and extract 0: name, 1: availid, 2: [date], 3: date
         # the date is optional (e.g. infrastructure)
         committee.roster = Hash[roster.gsub(/\(\w+\)/, '').
