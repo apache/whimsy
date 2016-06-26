@@ -2,6 +2,8 @@
 # support for sorting of names
 #
 
+require_relative 'person/override-dates.rb'
+
 module ASF
 
   class Person
@@ -76,6 +78,18 @@ module ASF
 
     def sortable_name
       Person.sortable_name(self.public_name)
+    end
+
+    # determine account creation date.  Notes:
+    #  *) LDAP info is not accurate for dates prior to 2009.  See
+    #     person/override-dates.rb
+    #  *) createTimestamp isn't loaded by default (but can either be preloaded
+    #     or fetched explicitly)
+    def createTimestamp
+      result = @@create_date[name] 
+      result ||= attrs['createTimestamp']
+      result ||= ASF.search_one(base, "uid=#{name}", 'createTimestamp')[0][0]
+      result
     end
   end
 end
