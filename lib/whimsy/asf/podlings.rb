@@ -124,6 +124,22 @@ module ASF
     def [](name)
       return self.send name if self.respond_to? name
     end
+
+    # development mailing list associated with a given podling
+    def dev_mail_list
+      case name
+      when 'climatemodeldiagnosticanalyzer'
+        'dev@cmda.incubator.apache.org'
+      when 'blur'
+        'blur-dev@incubator.apache.org'
+      when 'wave'
+        'wave-dev@incubator.apache.org'
+      when 'log4cxx2'
+        'log4cxx-dev@logging.apache.org'
+      else
+        "dev@#{name}.apache.org"
+      end
+    end
   end
 
   # more backwards compatibility
