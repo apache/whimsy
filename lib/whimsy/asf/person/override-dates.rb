@@ -1,5 +1,15 @@
 # Corrected creation dates for accounts created before 2009
-# Not accurate for dates prior to 2004
+#
+# Derived from grepping the private mail archives for the account creation notices,
+# once those took on a common format (Subject: [NOTICE] Account created: First Last (uid)). 
+# That means from 7th July 2004 onwards.
+# Not accurate for earlier dates.
+#
+# For those with a date currently in ldap of 20090519,
+# but no notice email found in private email searching,
+# a "more likely" default of 20040701 dummy value is set in the override file.
+#
+# TODO fix the default dates
 #
 # See https://issues.apache.org/jira/browse/WHIMSY-63
 
