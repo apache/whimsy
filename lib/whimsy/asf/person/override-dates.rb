@@ -1717,6 +1717,7 @@ class ASF::Person
     "seanahn"=>"20090115183654Z",
     "seanoc"=>"20060820232317Z",
     "sebor"=>"20050714205332Z",
+    "sebb"=>"20030923000000Z", # LDAP record was recreated in 2011; date is the earliest commit I could find
     "seelmann"=>"20061221220407Z",
     "seguin"=>"20040701000000Z",
     "senaka"=>"20080128212940Z",
