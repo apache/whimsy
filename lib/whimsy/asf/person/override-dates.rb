@@ -1,13 +1,20 @@
-# Corrected creation dates for accounts created before 2009
+# Corrected creation dates for accounts created before May 2009
 #
-# Derived from grepping the private mail archives for the account creation notices,
-# once those took on a common format (Subject: [NOTICE] Account created: First Last (uid)). 
-# That means from 7th July 2004 onwards.
-# Not accurate for earlier dates.
+# On the 7th July 2004, a common format for account creation notifications to
+# PMCs (Subject: [NOTICE] Account created: First Last (uid)) was introduced.
+# By grepping the private mail archives for these, creation dates between
+# 20040707 and 20090519 have be found.
 #
-# For those with a date currently in ldap of 20090519,
-# but no notice email found in private email searching,
-# a "more likely" default of 20040701 dummy value is set in the override file.
+# In 2002 and 2003, many but not all creation requests were sent to root or
+# the pmc with a format "Preferred userid: (uid)" or "Username: (uid)", these
+# have also been found from grepping private mail archives (but a few we may
+# treat the requested date as the creation date). Not all creation requests
+# from this period are covered though, as the request email format wasn't
+# required.
+#
+# For those accounts with the "dummy" creation date set in LDAP of 20090519,
+# where no other PMC request or notification emails have been found via
+# grep, a "more likely" default of 20040701 dummy value is set as an override.
 #
 # TODO fix the default dates
 #
