@@ -62,7 +62,7 @@ module ASF
     end
 
     def each
-      ASF::Member.text.split(/^ \*\) /).each do |section|
+      ASF::Member.text.to_s.split(/^ \*\) /).each do |section|
         id = section[/Avail ID: (.*)/,1]
         yield id, section.sub(/\n.*\n===+\s*?\n(.*\n)+.*/,'').strip if id
       end
