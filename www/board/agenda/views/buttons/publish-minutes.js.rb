@@ -46,7 +46,7 @@ class PublishMinutes < React
         date = @@item.text[/board_minutes_(\d+_\d+_\d+)\.txt/, 1]
         url = document.baseURI.sub(/[-\d]+\/$/, date.gsub('_', '-')) + '.json'
   
-        fetch url, :json do |agenda|
+        retrieve url, :json do |agenda|
           self.summary agenda, date
         end
       end

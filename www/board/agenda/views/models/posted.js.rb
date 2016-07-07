@@ -10,7 +10,7 @@ class Posted
     # fetch list of reports on first reference
     if not @@fetched and defined? XMLHttpRequest
       @@list = JSONStorage.get('posted') || []
-      fetch 'https://whimsy.apache.org/board/posted-reports', :json do |list|
+      retrieve 'https://whimsy.apache.org/board/posted-reports', :json do |list|
         @@list = JSONStorage.put('posted', list) if list
       end
 

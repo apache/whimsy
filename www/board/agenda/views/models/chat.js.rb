@@ -8,7 +8,7 @@ class Chat
   def self.fetch_backlog()
     return if Chat.fetch_requested
 
-    fetch "chat/#{Agenda.file[/\d[\d_]+/]}", :json do |messages|
+    retrieve "chat/#{Agenda.file[/\d[\d_]+/]}", :json do |messages|
       messages.each {|message| Chat.add message}
       Chat.backlog_fetched = true
     end

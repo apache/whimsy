@@ -11,7 +11,7 @@ class HistoricalComments
       return @@comments[title]
     elsif defined? XMLHttpRequest
       @@comments = JSONStorage.get('comments') || {}
-      fetch('historical-comments', :json) do |comments|
+      retrieve('historical-comments', :json) do |comments|
         @@comments = JSONStorage.put('comments', comments) if comments
       end
     end

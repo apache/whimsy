@@ -32,7 +32,7 @@ class DraftMinutes < React
   def componentDidMount()
     @draft = ''
     jQuery('#draft-minute-form').on 'shown.bs.modal' do
-      fetch "draft/#{Agenda.title.gsub('-', '_')}", :text do |draft|
+      retrieve "draft/#{Agenda.title.gsub('-', '_')}", :text do |draft|
         ~'#draft-minute-text'.focus()
         @disabled = false
         @draft = draft

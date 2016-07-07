@@ -113,7 +113,7 @@ class RollCall < React
       @disabled = false
     else
       @disabled = true
-      fetch 'committers', :json do |committers|
+      retrieve 'committers', :json do |committers|
         Server.committers = committers || []
         @disabled = false
       end

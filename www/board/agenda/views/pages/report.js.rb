@@ -80,7 +80,7 @@ class Report < React
         Server.drafts.include? "board_minutes_#{date}.txt"
       then
         @@item.minutes = ''
-        fetch "minutes/#{date}", :text do |minutes|
+        retrieve "minutes/#{date}", :text do |minutes|
           @@item.minutes = minutes
         end
       end

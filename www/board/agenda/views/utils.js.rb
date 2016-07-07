@@ -77,7 +77,11 @@ def post(target, data, &block)
 end
 
 # "AJAX" style get request to the server, with a callback
-def fetch(target, type, &block)
+#
+# Would love to use/build on 'fetch', but alas:
+#
+#   https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API#Browser_compatibility 
+def retrieve(target, type, &block)
   xhr = XMLHttpRequest.new()
 
   def xhr.onreadystatechange()

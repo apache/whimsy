@@ -28,7 +28,7 @@ class InitialReminder < React
       reminder = 'reminder2'
     end
 
-    fetch reminder, :json do |response|
+    retrieve reminder, :json do |response|
       @subject = response.subject
       @message = response.body
       @disabled = false

@@ -10,7 +10,7 @@ class JIRA
       return @@list.include? name
     elsif defined? XMLHttpRequest
       @@list = JSONStorage.get('jira') || []
-      fetch('jira', :json) do |list|
+      retrieve('jira', :json) do |list|
         @@list = JSONStorage.put('jira', list) if list
       end
     end
