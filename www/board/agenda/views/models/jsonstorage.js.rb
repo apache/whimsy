@@ -46,7 +46,10 @@ class JSONStorage
   # other browsers fall back to XMLHttpRequest (AJAX).
   def self.fetch(name, &block)
 
-    if defined? fetch and defined? caches
+    if 
+      defined? fetch and defined? caches and
+      (location.protocol == 'https:' or location.hostname == 'localhost')
+    then
       caches.open('board/agenda').then do |cache|
         fetched = nil
         clock_counter += 1
@@ -74,7 +77,7 @@ class JSONStorage
 
         # check cache
         cache.match(name).then do |response|
-          if not fetched
+          if response and not fetched
             response.json().then do |json| 
               clock_counter -= 1
               fetched = json
