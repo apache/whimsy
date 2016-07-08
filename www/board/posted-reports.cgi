@@ -7,7 +7,7 @@ require 'wunderbar'
 require 'whimsy/asf/agenda'
 
 # link to board private-arch
-MBOX = "https://mail-search.apache.org/members/private-arch/board"
+THREAD = "https://lists.apache.org/thread.html/"
 
 # only look at this month's and last month's mailboxes, and within those
 # only look at emails that were received in the last month.
@@ -57,8 +57,7 @@ _html do
   # output an unordered list of subjects linked to the message archive
   _ul reports do |mail|
     _li do
-      mbox = mail.date.strftime("#{MBOX}/%Y%m.mbox/")
-      href = mbox + URI.escape('<' + mail.message_id + '>')
+      href = THREAD + URI.escape('<' + mail.message_id + '>')
 
       if missing.any? {|title| mail.subject.downcase =~ /\b#{title}\b/}
         _a.missing mail.subject, href: href
@@ -72,10 +71,8 @@ end
 # produce JSON output of reports
 _json do
   _ reports do |mail|
-    mbox = mail.date.strftime("#{MBOX}/%Y%m.mbox/")
-
     _subject mail.subject
-    _link mbox + URI.escape('<' + mail.message_id + '>')
+    _link THREAD + URI.escape('<' + mail.message_id + '>')
 
     subject = mail.subject.downcase
     _missing missing.any? {|title| subject =~ /\b#{title}\b/}
