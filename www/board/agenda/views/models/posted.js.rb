@@ -8,10 +8,10 @@ class Posted
     results = []
 
     # fetch list of reports on first reference
-    if not @@fetched and defined? XMLHttpRequest
-      @@list = JSONStorage.get('posted') || []
-      retrieve 'https://whimsy.apache.org/board/posted-reports', :json do |list|
-        @@list = JSONStorage.put('posted', list) if list
+    if not @@fetched
+      @@list = []
+      JSONStorage.fetch 'posted-reports' do |list|
+        @@list = list
       end
 
       @@fetched = true
