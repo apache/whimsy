@@ -9,10 +9,10 @@ class HistoricalComments
   def self.find(title)
     if @@comments
       return @@comments[title]
-    elsif defined? XMLHttpRequest
-      @@comments = JSONStorage.get('comments') || {}
-      retrieve('historical-comments', :json) do |comments|
-        @@comments = JSONStorage.put('comments', comments) if comments
+    else
+      @@comments = {}
+      JSONStorage.fetch('historical-comments') do |comments|
+        @@comments = comments
       end
     end
   end
