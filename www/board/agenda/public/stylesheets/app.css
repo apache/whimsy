@@ -16,6 +16,14 @@ a {color: #000}
 .reviewed   {background-color: #8F8 !important}
 .commented  {background-color: #FD6 !important}
 
+.navbar-brand.blank {background-color: rgba(221, 221, 221, 0.7) !important}
+.navbar-brand.missing {background-color: rgba(255, 136, 136, 0.7) !important}
+.navbar-brand.rejected {background-color: rgba(255, 136, 136, 0.7) !important}
+.navbar-brand.ready {background-color: rgba(255, 204, 136, 0.7) !important}
+.navbar-brand.available {background-color: rgba(187, 255, 187, 0.7) !important}
+.navbar-brand.reviewed {background-color: rgba(187, 255, 187, 0.7) !important}
+.navbar-brand.commented {background-color: rgba(255, 221, 102, 0.7) !important}
+
 .pres-missing {color: #F00}
 
 /* sidebar */
