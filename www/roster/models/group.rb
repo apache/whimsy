@@ -19,6 +19,9 @@ class Group
     groups += ASF::Authorization.new('pit').to_h.
       map {|id, list| [id, "PIT Auth"]}
 
+    # add app groups
+    groups += ASF::AppGroup.list.map {|app| [app, "LDAP app group"]}
+
     groups.sort
   end
 
@@ -31,6 +34,11 @@ class Group
     if group.members.empty?
       type = 'LDAP service'
       group = ASF::Service.find(id)
+    end
+
+    if group.members.empty?
+      type = 'LDAP app group'
+      group = ASF::AppGroup.find(id)
     end
 
     if not group.members.empty?

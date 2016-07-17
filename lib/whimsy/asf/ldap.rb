@@ -283,6 +283,16 @@ module ASF
 
   # search with a scope of one, with automatic retry/failover
   def self.search_one(base, filter, attrs=nil)
+    self.search_scope(::LDAP::LDAP_SCOPE_ONELEVEL, base, filter, attrs)
+  end
+
+  # search with a scope of subtree, with automatic retry/failover
+  def self.search_subtree(base, filter, attrs=nil)
+    self.search_scope(::LDAP::LDAP_SCOPE_SUBTREE, base, filter, attrs)
+  end
+
+  # search with a specified scope, with automatic retry/failover
+  def self.search_scope(scope, base, filter, attrs=nil)
 
     cmd = "ldapsearch -x -LLL -b #{base} -s one #{filter} " +
       "#{[attrs].flatten.join(' ')}"
@@ -297,7 +307,7 @@ module ASF
       target = @ldap.get_option(::LDAP::LDAP_OPT_HOST_NAME) rescue '?'
       Wunderbar.info "[#{target}] #{cmd}"
 
-      result = @ldap.search2(base, ::LDAP::LDAP_SCOPE_ONELEVEL, filter, attrs)
+      result = @ldap.search2(base, scope, filter, attrs)
     rescue Exception => re
       if attempts_left <= 0
         Wunderbar.error "[#{target}] => #{re.inspect} for #{cmd}"
@@ -792,6 +802,34 @@ module ASF
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('member', people)])
     ensure
       @members = nil
+    end
+  end
+
+  class AppGroup < Service
+    @base = 'ou=apps,ou=groups,dc=apache,dc=org'
+
+    def dn
+      @dn ||= ASF.search_subtree(self.class.base, "cn=#{name}", 'dn').first.first
+    end
+
+    def base
+      @base = dn.sub(/^cn=.*?,/, '')
+    end
+
+    def self.list(filter='cn=*')
+      ASF.search_subtree(base, filter, 'cn').flatten
+    end
+
+    def self.preload
+      Hash[ASF.search_subtree(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
+        cn = results['dn'].first[/^cn=(.*?),/, 1]
+        service = ASF::Service.find(cn)
+        service.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
+        service.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
+        members = results['member'] || []
+        service.members = members
+        [service, members]
+      end]
     end
   end
 
