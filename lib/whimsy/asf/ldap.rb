@@ -809,11 +809,18 @@ module ASF
     @base = 'ou=apps,ou=groups,dc=apache,dc=org'
 
     def dn
-      @dn ||= ASF.search_subtree(self.class.base, "cn=#{name}", 'dn').first.first
+      return @dn if @dn
+      dns = ASF.search_subtree(self.class.base, "cn=#{name}", 'dn')
+      @dn = dns.first.first unless dns.empty?
+      @dn
     end
 
     def base
-      @base = dn.sub(/^cn=.*?,/, '')
+      if dn
+        dn.sub(/^cn=.*?,/, '')
+      else
+        super
+      end
     end
 
     def self.list(filter='cn=*')
