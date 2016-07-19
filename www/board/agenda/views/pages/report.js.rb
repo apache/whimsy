@@ -232,11 +232,15 @@ class Report < React
 
   # private sections
   def privates(text)
-    private_sections =
+    private_inline = /([ \t]*&lt;private&gt;.*?&lt;\/private&gt;)/
+
+    private_lines =
       Regexp.new('^([ \t]*&lt;private&gt;(?:\n|.)*?&lt;/private&gt;)(\s*)$',
       'mig')
 
-    return text.gsub(private_sections, '<div class="private">$1</div>')
+    return text.
+      gsub(private_inline, '<span class="private">$1</span>').
+      gsub(private_lines, '<div class="private">$1</div>')
   end
   
   # expand president's attachments

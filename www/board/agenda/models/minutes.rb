@@ -164,6 +164,8 @@ class Minutes
     minutes.sub! /^End of agenda/, 'End of minutes'
 
     minutes.gsub! /^\s*<private>.*?<\/private>\s*?\n/mi, ''
+    minutes.gsub! /[ \t]*<private>.*?<\/private>/i, ''
+
     minutes.gsub! /\n( *)\[ comments:.*?\n\1 ? ?\]/m, ''
 
     minutes
