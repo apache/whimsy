@@ -230,14 +230,20 @@ class Report < React
     return text
   end
 
-  # private sections
+  # highlight private sections - these sections appear in the agenda but
+  # will be removed when the minutes are produced (see models/minutes.rb)
   def privates(text)
+    # inline <private>...</private> sections (and preceding spaces and tabs)
+    # where the <private> and </private> are on the same line.
     private_inline = /([ \t]*&lt;private&gt;.*?&lt;\/private&gt;)/
 
+    # block of lines (and preceding whitespace) where the first line starts
+    # with <private> and the last line ends </private>.
     private_lines =
       Regexp.new('^([ \t]*&lt;private&gt;(?:\n|.)*?&lt;/private&gt;)(\s*)$',
       'mig')
 
+    # return the text with private sections marked with class private
     return text.
       gsub(private_inline, '<span class="private">$1</span>').
       gsub(private_lines, '<div class="private">$1</div>')

@@ -163,7 +163,13 @@ class Minutes
     minutes.sub! 'Meeting Agenda', 'Meeting Minutes'
     minutes.sub! /^End of agenda/, 'End of minutes'
 
+    # remove block of lines (and preceding whitespace including blank lines)
+    # where the first line starts with <private> and the last line ends with
+    # </private>.
     minutes.gsub! /^\s*<private>.*?<\/private>\s*?\n/mi, ''
+
+    # remove inline <private>...</private> sections (and preceding spaces
+    # and tabs) where the <private> and </private> are on the same line.
     minutes.gsub! /[ \t]*<private>.*?<\/private>/i, ''
 
     minutes.gsub! /\n( *)\[ comments:.*?\n\1 ? ?\]/m, ''
