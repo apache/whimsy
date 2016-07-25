@@ -4,6 +4,7 @@ require 'whimsy/asf/rack'
 
 # https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/asf/rack.rb
 use ASF::HTTPS_workarounds
+use ASF::ETAG_Deflator_workaround
 use ASF::Auth::Committers
 use Rack::Deflater
 

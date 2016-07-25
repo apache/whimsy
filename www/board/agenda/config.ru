@@ -15,4 +15,6 @@ end
 
 use ASF::HTTPS_workarounds
 
+use ASF::ETAG_Deflator_workaround
+
 run Sinatra::Application

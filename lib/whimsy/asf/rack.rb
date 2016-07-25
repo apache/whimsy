@@ -170,6 +170,29 @@ module ASF
     end
   end
 
+  # Running deflate and etag together confuses caching:
+  #
+  # https://httpd.apache.org/docs/trunk/mod/mod_deflate.html#deflatealteretag
+  # http://scarff.id.au/blog/2009/apache-304-and-mod_deflate-revisited/
+  #
+  # workaround is to strip the suffix in Rack middleware
+  class ETAG_Deflator_workaround
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      if env['HTTP_IF_NONE_MATCH']
+        STDERR.puts env['HTTP_IF_NONE_MATCH']
+        env['HTTP_IF_NONE_MATCH'] =
+          env['HTTP_IF_NONE_MATCH'].sub(/-gzip"$/, '"')
+        STDERR.puts env['HTTP_IF_NONE_MATCH']
+      end
+
+      return @app.call(env)
+    end
+  end
+
   # Apache httpd on whimsy-vm is behind a proxy that converts https
   # requests into http requests.  Update the environment variables to
   # match.
@@ -193,7 +216,7 @@ module ASF
         end
       end
 
-      return  @app.call(env)
+      return @app.call(env)
     end
   end
 
