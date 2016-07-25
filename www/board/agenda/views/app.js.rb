@@ -54,6 +54,7 @@ require_relative 'elements/info'
 
 # Model
 require_relative 'models/events'
+require_relative 'models/pagecache'
 require_relative 'models/agenda'
 require_relative 'models/minutes'
 require_relative 'models/chat'

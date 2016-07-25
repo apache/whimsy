@@ -68,7 +68,11 @@ class CacheStatus < React
   def componentWillReceiveProps()
     if defined? caches
       caches.open('board/agenda').then do |cache|
-        @cache = cache.keys()
+        cache.matchAll().then do |responses|
+          cache = responses.map {|response| response.url}
+          cache.sort()
+          @cache = cache
+        end
       end
 
       navigator.serviceWorker.getRegistrations().then do |registrations|
