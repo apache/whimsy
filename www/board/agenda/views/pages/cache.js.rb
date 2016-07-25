@@ -23,7 +23,10 @@ class CacheStatus < React
       _p 'empty'
     else
       _ul @cache do |item|
-        _li item
+        basename = item.split('/').pop()
+        basename = 'index.html' if basename == ''
+        basename = item.split('/')[-2] + '.html' if basename == 'bootstrap.html'
+        _li {_Link text: item, href: "cache/#{basename}"}
       end
     end
 
@@ -77,6 +80,43 @@ class CacheStatus < React
 
       navigator.serviceWorker.getRegistrations().then do |registrations|
         @registrations = registrations
+      end
+    end
+  end
+end
+
+#
+# Individual Cache page
+#
+
+class CachePage < React
+  def initialize
+    @response = {}
+    @text = ''
+  end
+
+  def render
+    _h2 @response.url
+    _p "#{@response.status} #{@response.statusText}"
+    _pre @text
+  end
+
+  # update on first update
+  def componentDidMount()
+    if defined? caches
+      basename = location.href.split('/').pop()
+      basename = '' if basename == 'index.html'
+      basename = 'bootstrap.html' if basename =~ /^\d+-\d+-\d+\.html$/
+
+      caches.open('board/agenda').then do |cache|
+        cache.matchAll().then do |responses|
+          responses.each do |response| 
+            if response.url.split('/').pop() == basename
+              @response = response
+              response.text().then {|text| @text = text}
+            end
+          end
+        end
       end
     end
   end

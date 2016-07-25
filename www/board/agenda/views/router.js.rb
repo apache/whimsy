@@ -75,8 +75,11 @@ class Router
     elsif path == 'help'
       item = {view: Help}
 
-    elsif path == 'cache'
+    elsif path == 'cache/'
       item = {view: CacheStatus}
+
+    elsif path =~ %r{^cache/}
+      item = {view: CachePage}
 
     else
       item = Agenda.find(path)

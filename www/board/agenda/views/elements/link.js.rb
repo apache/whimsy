@@ -38,7 +38,7 @@ class Link < React
 
     href = event.target.getAttribute('href')
 
-    if href =~ %r{^(\.|(flagged/|(shepherd/)?(queue/)?)[-\w]+)$}
+    if href =~ %r{^(\.|cache/.*|(flagged/|(shepherd/)?(queue/)?)[-\w]+)$}
       event.stopPropagation()
       event.preventDefault()
       Main.navigate href
