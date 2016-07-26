@@ -183,10 +183,8 @@ module ASF
 
     def call(env)
       if env['HTTP_IF_NONE_MATCH']
-        STDERR.puts env['HTTP_IF_NONE_MATCH']
         env['HTTP_IF_NONE_MATCH'] =
           env['HTTP_IF_NONE_MATCH'].sub(/-gzip"$/, '"')
-        STDERR.puts env['HTTP_IF_NONE_MATCH']
       end
 
       return @app.call(env)
