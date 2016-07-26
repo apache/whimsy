@@ -85,7 +85,7 @@ class Keyboard
           Main.refresh()
         end
         return false
-      elsif event.keyCode == '='.ord
+      elsif event.keyCode == '='.ord or event.keyCode == 187 # "="
         Main.navigate "cache/"
         return false
       end

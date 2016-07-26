@@ -98,6 +98,26 @@ class CachePage < React
   def render
     _h2 @response.url
     _p "#{@response.status} #{@response.statusText}"
+
+    if @response.headers
+      # avoid buggy @response.headers.keys()
+      keys = []
+      iterator = @response.headers.entries()
+      entry = iterator.next()
+      while not entry.done
+        keys << entry.value[0] unless entry.value[0] == 'status'
+        entry = iterator.next()
+      end
+
+      keys.sort()
+
+      _ul do 
+        keys.each do |key|
+          _li "#{key}: #{@response.headers.get(key)}"
+        end
+      end
+    end
+
     _pre @text
   end
 
