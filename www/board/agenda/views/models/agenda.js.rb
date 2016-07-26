@@ -58,18 +58,60 @@ class Agenda
     if etag
       @@etag = etag
     elsif digest != @@digest or not @@etag
-      xhr = XMLHttpRequest.new()
-      xhr.open('GET', "../#{@@date}.json", true)
-      xhr.setRequestHeader('If-None-Match', @@etag) if @@etag
-      xhr.responseType = 'text'
-      def xhr.onreadystatechange()
-        if xhr.readyState == 4 and xhr.status == 200 and xhr.responseText != ''
-          @@etag = xhr.getResponseHeader('ETag')
-          Agenda.load(JSON.parse(xhr.responseText))
-          Main.refresh()
+      if PageCache.enabled
+        loaded = false
+
+        # if bootstrapping and cache is available, load it
+        if not digest
+          caches.open('board/agenda').then do |cache|
+            cache.match("#{@@date}.json").then do |response|
+              if response
+                response.json().then do |json| 
+                  Agenda.load(json) unless loaded
+                  Main.refresh()
+                end
+              end
+            end
+          end
         end
+
+        # set fetch options: credentials and etag
+        options = {credentials: 'include'}
+        options['headers'] = {'If-None-Match' => @@etag} if @@etag
+
+        # perform fetch
+        fetch("../#{@@date}.json", options).then do |response|
+          if response
+            loaded = true
+
+            # load response into the agenda
+            response.clone().json().then do |json| 
+              @@etag = response.headers.get('etag')
+              Agenda.load(json)
+              Main.refresh()
+            end
+
+            # save response in the cache
+            caches.open('board/agenda').then do |cache|
+              cache.put("#{@@date}.json", response)
+            end
+          end
+        end
+      else
+        # AJAX fallback
+        xhr = XMLHttpRequest.new()
+        xhr.open('GET', "../#{@@date}.json", true)
+        xhr.setRequestHeader('If-None-Match', @@etag) if @@etag
+        xhr.responseType = 'text'
+        def xhr.onreadystatechange()
+          if xhr.readyState==4 and xhr.status==200 and xhr.responseText!=''
+            @@etag = xhr.getResponseHeader('ETag')
+            Agenda.load(JSON.parse(xhr.responseText))
+            Main.refresh()
+          end
+        end
+        xhr.send()
       end
-      xhr.send()
     end
 
     @@digest = digest
