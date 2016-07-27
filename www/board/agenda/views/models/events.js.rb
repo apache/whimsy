@@ -40,10 +40,6 @@ class Events
   end
 
   def self.monitor()
-    window.addEventListener :load do |event|
-      PageCache.preload()
-    end
-
     @@prefix = JSONStorage.prefix
 
     # pick something unique to identify this tab/window

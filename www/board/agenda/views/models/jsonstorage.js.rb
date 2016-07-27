@@ -54,16 +54,13 @@ class JSONStorage
         fetched = nil
         clock_counter += 1
 
-        # construct arguments to fetch
-        args = {
-          method: 'get',
-          credentials: 'include',
-          headers: {'Accept' => 'application/json'},
-        }
+        # construct request
+        request = Request.new("../json/#{name}", method: 'get',
+          credentials: 'include', headers: {'Accept' => 'application/json'})
 
         # dispatch request
-        fetch("../json/#{name}", args).then do |response|
-          cache.put(name, response.clone())
+        fetch(request).then do |response|
+          cache.put(request, response.clone())
 
           response.json().then do |json| 
             unless fetched and fetched.inspect == json.inspect
@@ -76,7 +73,7 @@ class JSONStorage
         end
 
         # check cache
-        cache.match(name).then do |response|
+        cache.match("../json/#{name}").then do |response|
           if response and not fetched
             response.json().then do |json| 
               clock_counter -= 1

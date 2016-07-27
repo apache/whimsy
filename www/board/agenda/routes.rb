@@ -115,7 +115,6 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   @cssmtime = File.mtime('public/stylesheets/app.css').to_i
 
   if path == 'bootstrap.html'
-    @page[:path] = ''
     @page[:parsed] = [@page[:parsed].first]
     @page[:digest] = nil
     @page[:etag] = nil

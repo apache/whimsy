@@ -3,6 +3,10 @@
 #
 
 class CacheStatus < React
+  def self.buttons()
+    return [{button: ClearCache}, {button: UnregisterWorker}]
+  end
+
   def initialize
     @cache = []
     @registrations = []
@@ -80,6 +84,69 @@ class CacheStatus < React
 
       navigator.serviceWorker.getRegistrations().then do |registrations|
         @registrations = registrations
+      end
+    end
+  end
+end
+
+#
+# A button that clear the cache
+#
+class ClearCache < React
+  def initialize
+    @disabled = true
+  end
+
+  def render
+    _button.btn.btn_primary 'Clear Cache', onClick: self.click,
+      disabled: @disabled
+  end 
+
+  # update on first update
+  def componentDidMount()
+    self.componentWillReceiveProps()
+  end
+
+  # enable button if there is anything in the cache
+  def componentWillReceiveProps()
+    if defined? caches
+      caches.open('board/agenda').then do |cache|
+        cache.matchAll().then do |responses|
+          @disabled = responses.empty?
+        end
+      end
+    end
+  end
+
+  def click(event)
+    if defined? caches
+      caches.delete('board/agenda').then do |status|
+        Main.refresh()
+      end
+    end
+  end
+end
+
+#
+# A button that removes the service worker.  Sadly, it doesn't seem to have
+# any affect on the list of registrations that is dynamically returned.
+#
+class UnregisterWorker < React
+  def render
+    _button.btn.btn_primary 'Unregister ServiceWorker', onClick: self.click
+  end 
+
+  def click(event)
+    if defined? caches
+      navigator.serviceWorker.getRegistrations().then do |registrations|
+        base = URL.new('..', document.getElementsByTagName('base')[0].href).href
+        registrations.each do |registration|
+          if registration.scope == base
+            registration.unregister().then do |status|
+              Main.refresh()
+            end
+          end
+        end
       end
     end
   end

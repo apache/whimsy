@@ -64,7 +64,7 @@ class Agenda
         # if bootstrapping and cache is available, load it
         if not digest
           caches.open('board/agenda').then do |cache|
-            cache.match("#{@@date}.json").then do |response|
+            cache.match("../#{@@date}.json").then do |response|
               if response
                 response.json().then do |json| 
                   Agenda.load(json) unless loaded
@@ -78,9 +78,10 @@ class Agenda
         # set fetch options: credentials and etag
         options = {credentials: 'include'}
         options['headers'] = {'If-None-Match' => @@etag} if @@etag
+        request = Request.new("../#{@@date}.json", options)
 
         # perform fetch
-        fetch("../#{@@date}.json", options).then do |response|
+        fetch(request).then do |response|
           if response
             loaded = true
 
@@ -93,7 +94,7 @@ class Agenda
 
             # save response in the cache
             caches.open('board/agenda').then do |cache|
-              cache.put("#{@@date}.json", response)
+              cache.put(request, response)
             end
           end
         end

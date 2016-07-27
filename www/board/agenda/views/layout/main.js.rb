@@ -46,6 +46,7 @@ class Main < React
 
     Agenda.load(@@page.parsed, @@page.digest)
     Minutes.load(@@page.minutes)
+
     self.route(@@page.path, @@page.query)
 
     # free memory
@@ -92,7 +93,15 @@ class Main < React
     # store initial state in history, taking care not to overwrite
     # history set by the Search component.
     if not history.state or not history.state.query
-      history.replaceState({path: @@page.path}, nil, @@page.path)
+      path = @@page.path
+
+      if path == 'bootstrap.html'
+        path = document.location.href
+        base = document.getElementsByTagName('base')[0].href
+        path = path.slice(base.length) if path.start_with? base
+      end
+
+      history.replaceState({path: path}, nil, path)
     end
 
     # listen for back button, and re-route/re-render when it occcurs
@@ -144,7 +153,13 @@ class Main < React
     Agenda.fetch(@@page.etag, @@page.digest)
 
     # start backchannel
-    Events.monitor()
+    if PageCache.enabled
+      # use Service Workers
+      PageCache.register()
+    else
+      # use localStorage
+      Events.monitor()
+    end
   end
 
   # after each subsequent re-rendering, resize main window
