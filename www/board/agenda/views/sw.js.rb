@@ -1,16 +1,14 @@
 #
 # A very simple service worker
 #
-#   1) Return back cached bootstrap page instead of fetching agenda pages
+#   1) Create an event source and pass all events received to all clients
+#
+#   2) Return back cached bootstrap page instead of fetching agenda pages
 #      from the network.  Bootstrap will construct page from cached
-#      agenda.json, as well as updating the cache.
+#      agenda.json, as well as update the cache.
 #
-#   2) For all other pages, serve cached content when offline
-#
-
-# polyfill if necessary
-window = self
-importScripts 'assets/eventsource.min.js' unless defined? EventSource
+#   3) For all other pages, serve cached content when offline
+# 
 
 events = nil
 
@@ -47,7 +45,6 @@ self.addEventListener :fetch do |event|
       caches.open('board/agenda').then do |cache|
         date =  url.split('/')[0]
         return cache.match("#{date}/bootstrap.html").then do |response|
-          console.log response
           return response || fetch(event.request.url, credentials: 'include')
         end
       end
@@ -55,9 +52,8 @@ self.addEventListener :fetch do |event|
   else
     event.respondWith(
       fetch(event.request, credentials: 'include').catch do |error|
-        caches.open('board/agenda').then do |cache|
-          return cache.match(event.request.url) do |response|
-            console.log response
+        return caches.open('board/agenda').then do |cache|
+          return cache.match(event.request) do |response|
             return response || error
           end
         end
