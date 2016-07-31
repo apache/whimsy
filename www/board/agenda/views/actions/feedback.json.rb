@@ -16,6 +16,8 @@ else
   minutes = {}
 end
 
+feedback_sent = minutes[:todos][:feedback_sent] rescue []
+
 # extract values for common fields
 if @from
   from = @from
@@ -89,6 +91,7 @@ Agenda.parse(@agenda, :full).each do |item|
   output << {
     attach: item[:attach],
     title: item['title'],
+    sent: feedback_sent.include?(item['title']),
     mail: mail.to_s
   }
 end

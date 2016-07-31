@@ -44,7 +44,6 @@ require_relative 'buttons/showseen'
 require_relative 'buttons/timestamp'
 require_relative 'buttons/vote'
 require_relative 'buttons/email'
-require_relative 'buttons/feedback'
 
 # Common elements
 require_relative 'elements/additional-info'

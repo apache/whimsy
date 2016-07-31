@@ -8,6 +8,7 @@ class Adjournment < React
       add: [],
       remove: [],
       establish: [],
+      feedback: [],
       loading: true,
       fetched: false
     })
@@ -43,6 +44,10 @@ class Adjournment < React
 
         unless Todos.establish.empty?
           _EstablishActions action: 'remove'
+        end
+
+        unless Todos.feedback.empty?
+          _FeedbackReminder
         end
       end
 
@@ -279,6 +284,22 @@ class EstablishActions < React
   end
 end
 
+########################################################################
+#                      Reminder to draft feedback                      #
+########################################################################
+
+class FeedbackReminder < React
+  def render
+    _p 'Draft feedback:'
+
+    _ul Todos.feedback do |title|
+      _li title
+    end
+
+    _button.checklist.btn.btn_default 'Submit',
+      onClick:-> {window.location.href = 'feedback'}
+  end
+end
 
 ########################################################################
 #                             shared state                             #

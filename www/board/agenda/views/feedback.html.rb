@@ -30,7 +30,7 @@ _html do
           input.setAttribute('type', 'checkbox');
           input.setAttribute('name', 'checked[' +
             message.title.replace(/\s/g, '_') + ']');
-          input.checked = true;
+          input.checked = !message.sent;
           h1.insertBefore(input, h1.firstChild);
 
           var pre = document.createElement('pre');
