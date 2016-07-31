@@ -445,8 +445,6 @@ class Agenda
       elsif @title == 'Adjournment' 
         if Minutes.ready_to_post_draft
           list << {form: DraftMinutes}
-        elsif Server.drafts.include? Agenda.file.sub('agenda', 'minutes')
-          list << {button: SendFeedback}
         end
       end
     end
