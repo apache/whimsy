@@ -25,6 +25,20 @@ end
 minutes[:todos] ||= {}
 todos = minutes[:todos].dup
 
+# iterate over the agenda, finding items where there is either comments or
+# minutes that can be forwarded to the PMC
+feedback = []
+Agenda.parse(agenda, :full).each do |item|
+  # select exec officer, additional officer, and committee reports
+  next unless item[:attach] =~ /^(4[A-Z]|\d|[A-Z]+)$/
+  next unless item['chair_email']
+
+  next unless minutes[item['title']] or 
+    (item['comments'] and not item['comments'].empty?)
+
+  feedback << item['title'] unless todos[:feedback_sent].include? item['title']
+end
+
 ########################################################################
 #                               Actions                                #
 ########################################################################
@@ -154,3 +168,4 @@ _establish establish.
 _terminate terminate.
   map {|name, resolution| {name: name, resolution: resolution}}
 _minutes minutes
+_feedback feedback
