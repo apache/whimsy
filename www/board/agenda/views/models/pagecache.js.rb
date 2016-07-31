@@ -11,15 +11,13 @@ class PageCache
 
   # is page cache available?
   def self.enabled
-    # disable service workers for now.  See:
-    # https://lists.w3.org/Archives/Public/public-webapps/2016JulSep/0016.html
-    return false
-
     unless location.protocol == 'https:' or location.hostname == 'localhost'
       return false
     end
 
-    defined?(ServiceWorker) and defined?(navigator)
+    # disable service workers for now.  See:
+    # https://lists.w3.org/Archives/Public/public-webapps/2016JulSep/0016.html
+    false and defined?(ServiceWorker) and defined?(navigator)
   end
 
   # registration and related startup actions
@@ -39,17 +37,41 @@ class PageCache
     end
   end
 
-  # add/update bootstrap.html in the cache
+  # aggressively attempt to preload pages directly used by the agenda pages
+  # into the appropriate cache.
   def self.preload()
     return unless PageCache.enabled?
 
     request = Request.new('bootstrap.html', credentials: 'include')
-
     fetch(request).then do |response|
-      response.clone().text().then do |text|
-        caches.open('board/agenda').then do |cache|
-          cache.put(request, response)
-        end
+
+      # add/update bootstrap.html in the cache
+      caches.open('board/agenda').then do |cache|
+        cache.put(request, response.clone())
+      end
+
+      urls = []
+
+      # search body text for scripts
+      script = Regexp.new(/<script.*?>/, 'g')
+      matches = text.match(script)
+      matches.each do |match|
+        src = match.match(/src="(.*?)"/)
+        urls << URL.new(src[1], base) if src
+      end
+
+      # search body text for links to stylesheets
+      links = Regexp.new(/<link.*?>/, 'g')
+      matches = text.match(links)
+      matches.each do |match|
+        href = match.match(/href="(.*?)"/)
+        urls << URL.new(href[1], base) if href
+      end
+
+      # update browser cache with latest scripts and stylesheets.  Note: no
+      # network requests will be made if these pages are up to date
+      urls.each do |url|
+        fetch(Request.new(url, credentials: 'include'))
       end
     end
   end
