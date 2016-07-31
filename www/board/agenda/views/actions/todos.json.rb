@@ -7,6 +7,7 @@ TLPREQ = '/srv/secretary/tlpreq'
 date = params[:date].gsub('-', '_')
 date.untaint if date =~ /^\d+_\d+_\d+$/
 agenda = "board_agenda_#{date}.txt"
+`svn up #{TLPREQ}`
 victims = Dir["#{TLPREQ}/victims-#{date}.*.txt"].
   map {|name| File.read(name.untaint).lines().map(&:chomp)}.flatten
 
@@ -80,8 +81,14 @@ if @establish and env.password
 
     ASF::LDAP.bind(env.user, env.password) do
       chairs.add [chair] unless chairs.members.include? chair
-      ASF::Group.add(pmc.downcase, members)
-      ASF::Committee.add(pmc.downcase, members)
+
+      if ASF::Group.find(pmc.downcase).members.empty?
+        ASF::Group.add(pmc.downcase, members)
+      end
+
+      if ASF::Committee.find(pmc.downcase).members.empty?
+        ASF::Committee.add(pmc.downcase, members)
+      end
     end 
   end
 
