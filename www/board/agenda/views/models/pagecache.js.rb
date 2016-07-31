@@ -13,7 +13,6 @@ class PageCache
   def self.enabled
     # disable service workers for now.  See:
     # https://lists.w3.org/Archives/Public/public-webapps/2016JulSep/0016.html
-    return false 
 
     unless location.protocol == 'https:' or location.hostname == 'localhost'
       return false
@@ -33,9 +32,9 @@ class PageCache
     scope = URL.new('..', document.getElementsByTagName('base')[0].href)
     navigator.serviceWorker.register(scope + 'sw.js', scope)
 
-    # listen for events
+    # forward service worker events
     navigator.serviceWorker.addEventListener :message do |event|
-      Events.dispatch event
+      Events.dispatch event.data
     end
   end
 

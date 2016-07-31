@@ -49,7 +49,7 @@ self.addEventListener :fetch do |event|
         end
       end
     )
-  else
+  elsif false #disable for now
     event.respondWith(
       fetch(event.request, credentials: 'include').catch do |error|
         return caches.open('board/agenda').then do |cache|
