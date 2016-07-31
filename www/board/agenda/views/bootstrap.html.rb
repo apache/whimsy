@@ -12,7 +12,7 @@ _html do
     _footer
   end
 
-  _script src: '../app.js', lang: 'text/javascript'
+  _script src: "../app.js?#{@appmtime}", lang: 'text/javascript'
   _script %{
     React.render(React.createElement(Main, 
       #{JSON.generate(server: @server, page: @page)}),

@@ -113,6 +113,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   @page[:minutes] = YAML.load(File.read(minutes)) if File.exist? minutes
 
   @cssmtime = File.mtime('public/stylesheets/app.css').to_i
+  @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
 
   if path == 'bootstrap.html'
     @page[:parsed] = [@page[:parsed].first]

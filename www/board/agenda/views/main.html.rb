@@ -10,7 +10,7 @@ _html do
 
   _div_.main!
 
-  _script src: '../app.js'
+  _script src: "../app.js?#{@appmtime}", lang: 'text/javascript'
   _.render '#main' do
     _Main server: @server, page: @page
   end
