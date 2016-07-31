@@ -13,6 +13,7 @@ class PageCache
   def self.enabled
     # disable service workers for now.  See:
     # https://lists.w3.org/Archives/Public/public-webapps/2016JulSep/0016.html
+    return false
 
     unless location.protocol == 'https:' or location.hostname == 'localhost'
       return false
