@@ -90,13 +90,13 @@ class Adjournment < React
             end
           end
         end
+      end
 
-        _section do
-          minutes = Minutes.get(@@item.title)
-          if minutes
-            _h3 'Minutes'
-            _pre.comment minutes
-          end
+      _section do
+        minutes = Minutes.get(@@item.title)
+        if minutes
+          _h3 'Minutes'
+          _pre.comment minutes
         end
       end
     end
