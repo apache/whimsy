@@ -9,6 +9,7 @@ class Adjournment < React
       remove: [],
       establish: [],
       feedback: [],
+      minutes: {},
       loading: true,
       fetched: false
     })
@@ -49,13 +50,53 @@ class Adjournment < React
         unless Todos.feedback.empty?
           _FeedbackReminder
         end
-      end
 
-      _section do
-        minutes = Minutes.get(@@item.title)
-        if minutes
-          _h3 'Minutes'
-          _pre.comment minutes
+        # display a list of completed actions
+        completed = Todos.minutes.todos
+        if 
+          completed and (
+          not completed.added.empty? or 
+          not completed.removed.empty? or
+          not completed.established.empty? or 
+          not completed.feedback_sent.empty?)
+        then
+          _h3 'Completed actions'
+
+          unless completed.added.empty?
+            _p 'Added to PMC chairs'
+            _ul completed.added do |id|
+              _li {_a id, href: "../../../roster/committer/#{id}"}
+            end
+          end
+
+          unless completed.removed.empty?
+            _p 'Removed from PMC chairs'
+            _ul completed.removed do |id|
+              _li {_a id, href: "../../../roster/committer/#{id}"}
+            end
+          end
+
+          unless completed.established.empty?
+            _p 'Established PMCs'
+            _ul completed.established do |pmc|
+              _li {_a pmc, href: "../../../roster/committee/#{pmc}"}
+            end
+          end
+
+          unless completed.feedback_sent.empty?
+            _p 'Sent feedback'
+            _ul completed.feedback_sent do |pmc|
+              _li {_Link text: pmc, href: pmc.gsub(/\s+/, '-')} 
+            end
+          end
+        end
+
+        _section do
+          minutes = Minutes.get(@@item.title)
+          if minutes
+            _h3 'Minutes'
+            _pre.comment minutes
+          end
         end
       end
     end
@@ -292,8 +333,8 @@ class FeedbackReminder < React
   def render
     _p 'Draft feedback:'
 
-    _ul Todos.feedback do |title|
-      _li title
+    _ul Todos.feedback do |pmc|
+      _li {_Link text: pmc, href: pmc.gsub(/\s+/, '-')}
     end
 
     _button.checklist.btn.btn_default 'Submit',
