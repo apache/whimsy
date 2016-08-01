@@ -15,9 +15,13 @@ class PageCache
       return false
     end
 
-    # disable service workers for now.  See:
+    # disable service workers for the production server(s) for now.  See:
     # https://lists.w3.org/Archives/Public/public-webapps/2016JulSep/0016.html
-    false and defined?(ServiceWorker) and defined?(navigator)
+    if location.hostname =~ /^whimsy.*\.apache\.org$/
+      return false unless location.hostname.include? '-test'
+    end
+
+    defined?(ServiceWorker) and defined?(navigator)
   end
 
   # registration and related startup actions
