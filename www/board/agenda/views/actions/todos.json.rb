@@ -36,7 +36,9 @@ Agenda.parse(agenda, :full).each do |item|
   next unless minutes[item['title']] or 
     (item['comments'] and not item['comments'].empty?)
 
-  feedback << item['title'] unless todos[:feedback_sent].include? item['title']
+  unless todos[:feedback_sent] and todos[:feedback_sent].include? item['title']
+    feedback << item['title'] 
+  end
 end
 
 ########################################################################
