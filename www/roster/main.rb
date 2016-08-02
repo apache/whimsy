@@ -97,8 +97,9 @@ get '/group/:name.json' do |name|
 end
 
 get '/group/:name' do |name|
+  @auth = Auth.info(env)
   @group = Group.serialize(name)
-  pass unless @group
+  pass unless @group and not @group.empty?
   _html :group
 end
 

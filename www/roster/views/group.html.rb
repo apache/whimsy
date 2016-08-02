@@ -17,6 +17,6 @@ _html do
 
   _script src: 'app.js'
   _.render '#main' do
-    _Group group: @group
+    _Group group: @group, auth: @auth
   end
 end
