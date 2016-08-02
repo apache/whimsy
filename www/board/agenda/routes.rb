@@ -19,8 +19,9 @@ end
 
 # redirect root to latest agenda
 get '/' do
+  url = "#{request.scheme}://#{request.host}#{request.path}"
   agenda = dir('board_agenda_*.txt').sort.last
-  redirect to("/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/")
+  redirect "#{url}#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/"
 end
 
 # redirect missing to missing page for the latest agenda
