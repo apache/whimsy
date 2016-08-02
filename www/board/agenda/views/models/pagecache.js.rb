@@ -54,28 +54,31 @@ class PageCache
         cache.put(request, response.clone())
       end
 
-      urls = []
+      # update browser cache with latest scripts and stylesheets.
+      response.text().then do |text|
+        urls = []
 
-      # search body text for scripts
-      script = Regexp.new(/<script.*?>/, 'g')
-      matches = text.match(script)
-      matches.each do |match|
-        src = match.match(/src="(.*?)"/)
-        urls << URL.new(src[1], base) if src
-      end
+        # search body text for scripts
+        script = Regexp.new(/<script.*?>/, 'g')
+        matches = text.match(script)
+        matches.each do |match|
+          src = match.match(/src="(.*?)"/)
+          urls << URL.new(src[1], base) if src
+        end
 
-      # search body text for links to stylesheets
-      links = Regexp.new(/<link.*?>/, 'g')
-      matches = text.match(links)
-      matches.each do |match|
-        href = match.match(/href="(.*?)"/)
-        urls << URL.new(href[1], base) if href
-      end
+        # search body text for links to stylesheets
+        links = Regexp.new(/<link.*?>/, 'g')
+        matches = text.match(links)
+        matches.each do |match|
+          href = match.match(/href="(.*?)"/)
+          urls << URL.new(href[1], base) if href
+        end
 
-      # update browser cache with latest scripts and stylesheets.  Note: no
-      # network requests will be made if these pages are up to date
-      urls.each do |url|
-        fetch(Request.new(url, credentials: 'include'))
+        # Fetch each URL.  Note: no network requests will be made if these
+        # pages are up to date
+        urls.each do |url|
+          fetch(Request.new(url, credentials: 'include'))
+        end
       end
     end
   end
