@@ -759,13 +759,24 @@ module ASF
     end
 
     def dn
-      "cn=#{id},#{self.class.base}"
+      return @dn if @dn
+      dns = ASF.search_subtree(self.class.base, "cn=#{name}", 'dn')
+      @dn = dns.first.first unless dns.empty?
+      @dn
+    end
+
+    def base
+      if dn
+        dn.sub(/^cn=.*?,/, '')
+      else
+        super
+      end
     end
 
     def self.preload
       Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
-        service = ASF::Service.find(cn)
+        service = self.find(cn)
         service.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
         service.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
         members = results['member'] || []
@@ -807,72 +818,10 @@ module ASF
 
   class AppGroup < Service
     @base = 'ou=apps,ou=groups,dc=apache,dc=org'
-
-    def dn
-      return @dn if @dn
-      dns = ASF.search_subtree(self.class.base, "cn=#{name}", 'dn')
-      @dn = dns.first.first unless dns.empty?
-      @dn
-    end
-
-    def base
-      if dn
-        dn.sub(/^cn=.*?,/, '')
-      else
-        super
-      end
-    end
-
-    def self.list(filter='cn=*')
-      ASF.search_subtree(base, filter, 'cn').flatten
-    end
-
-    def self.preload
-      Hash[ASF.search_subtree(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
-        cn = results['dn'].first[/^cn=(.*?),/, 1]
-        service = ASF::Service.find(cn)
-        service.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
-        service.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
-        members = results['member'] || []
-        service.members = members
-        [service, members]
-      end]
-    end
   end
 
   class AuthGroup < Service
     @base = 'ou=auth,ou=groups,dc=apache,dc=org'
-
-    def dn
-      return @dn if @dn
-      dns = ASF.search_subtree(self.class.base, "cn=#{name}", 'dn')
-      @dn = dns.first.first unless dns.empty?
-      @dn
-    end
-
-    def base
-      if dn
-        dn.sub(/^cn=.*?,/, '')
-      else
-        super
-      end
-    end
-
-    def self.list(filter='cn=*')
-      ASF.search_subtree(base, filter, 'cn').flatten
-    end
-
-    def self.preload
-      Hash[ASF.search_subtree(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
-        cn = results['dn'].first[/^cn=(.*?),/, 1]
-        service = self.find(cn)
-        service.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
-        service.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
-        members = results['member'] || []
-        service.members = members
-        [service, members]
-      end]
-    end
   end
 
 end
