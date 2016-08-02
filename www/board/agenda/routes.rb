@@ -141,6 +141,13 @@ post '/json/:file' do
   _json :"actions/#{params[:file]}"
 end
 
+# Raw minutes
+get %r{(\d\d\d\d-\d\d-\d\d).ya?ml} do |file|
+  minutes = AGENDA_WORK + '/' + "board_minutes_#{file.gsub('-','_')}.yml"
+  pass unless File.exists? minutes
+  _text File.read minutes
+end
+
 # updates to agenda data
 get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
   file = "board_agenda_#{file.gsub('-','_')}.txt"
