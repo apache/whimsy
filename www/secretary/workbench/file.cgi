@@ -287,7 +287,7 @@ def send_email(target, message)
       cc << vars.email_cc if vars.email_cc
 
       # calculate podling list name
-      if vars.podling 
+      if vars.podling and vars.podling =~ /^\w[-\w]+$/
         if OLDPODLINGS.include?(vars.podling) 
           vars.podlinglist = "#{vars.podling}-private@incubator.apache.org"
         else
@@ -297,7 +297,7 @@ def send_email(target, message)
 
       # add pmc and podling lists, if supplied
       cc << "private@#{vars.pmc}.apache.org" if vars.pmc
-      cc << "#{vars.podlinglist}" if vars.podling
+      cc << "#{vars.podlinglist}" if vars.podlinglist
       cc << "private@incubator.apache.org" if vars.podling and not vars.pmc
 
       # replace the list of cc's
