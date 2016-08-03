@@ -21,7 +21,7 @@
 #   * (optional) jQuery http://code.jquery.com/jquery.min.js
 #
 # Installation instructions:
-#
+#_.post?
 #  ruby submit-account-request.rb --install=/var/www
 #
 #    1) Specify a path that supports cgi, like public-html or Sites.
@@ -35,10 +35,7 @@
 #   Point your web browser at your generated cgi script.  For best results,
 #   use a browser that implements HTML5 form validation.
 
-$SAFE=1
-
-require 'rubygems'
-require 'cgi-spa'
+require 'wunderbar'
 require 'mail'
 require 'date'
 require 'open3'
@@ -63,7 +60,8 @@ SVN = "/usr/bin/svn"
 
 # get up to date...
 `#{SVN} cleanup #{INFRA}/acreq #{OFFICERS} #{APMAIL}/bin`
-`#{SVN} revert -R #{INFRA}/acreq`
+_.post?`#{SVN} revert -R #{INFRA}/acreq`
+st?
 unless `#{SVN} status -q #{INFRA}/acreq`.empty?
   raise "acreq/ working copy is dirty"
 end
@@ -114,12 +112,12 @@ pending = File.read(REQUESTS).scan(/^\w.*?;.*?;(.*?);/).flatten
 pending.each {|email| iclas.delete email}
 
 # HTML output
-$cgi.html do |x| 
-  x.head do
-    x.meta :charset => 'utf-8'
-    x.title 'Submit ASF Account Request'
+_html do
+  _head do
+    _meta :charset => 'utf-8'
+    _title 'Submit ASF Account Request'
 
-    x.style! <<-'EOF'
+    _style! <<-'EOF'
       label {width: 6em; float: left}
       legend {background: #141; color: #DFD; padding: 0.4em}
       fieldset {background: #EFE; width: 28em}
@@ -150,7 +148,7 @@ $cgi.html do |x|
      src =  'https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'
     end
 
-    x.script '', :src => src
+    _script '', :src => src
 
     scriptSrc = <<-EOF
       $(function() {
@@ -191,108 +189,108 @@ $cgi.html do |x|
         });
 
         // allow selected fields to be set based on parameters passed
-        if (#{$param.user.to_s.inspect} != '')
-          $('#user').val(#{$param.user.to_s.inspect});
-        $('#email').val(#{$param.email.to_s.inspect}).trigger('change');
-        $('#pmc').val(#{$param.pmc.to_s.inspect}).trigger('change').
+        if (#{@user.to_s.inspect} != '')
+          $('#user').val(#{@user.to_s.inspect});
+        $('#email').val(#{@email.to_s.inspect}).trigger('change');
+        $('#pmc').val(#{@pmc.to_s.inspect}).trigger('change').
           attr('required', 'required');
-        $('#podling').val(#{$param.podling.to_s.inspect});
-        if (#{$param.votelink.to_s.inspect} != '')
-          $('#votelink').val(#{$param.votelink.to_s.inspect});
+        $('#podling').val(#{@podling.to_s.inspect});
+        if (#{@votelink.to_s.inspect} != '')
+          $('#votelink').val(#{@votelink.to_s.inspect});
       });
     EOF
-    x.script scriptSrc, :type => "text/javascript" 
+    _script scriptSrc, :type => "text/javascript" 
   end
 
-  x.body do
-    x.form :method=>'post' do
-      x.fieldset do
-        x.legend 'ASF New Account Request'
+  _body do
+    _form :method=>'post' do
+      _fieldset do
+        _legend 'ASF New Account Request'
 
-        x.div do
-          x.label 'User ID', :for=>"user"
-          x.input :name=>"user", :id=>"user", :autofocus => "autofocus",
+        _div do
+          _label 'User ID', :for=>"user"
+          _input :name=>"user", :id=>"user", :autofocus => "autofocus",
             :type=>"text", :required => "required",
             :pattern => '^[a-z][-a-z0-9_]+$' # useridvalidationpattern dup
         end
 
-        x.div do
-          x.label 'Name', :for=>"name"
-          x.select :name=>"name", :id=>"name", :required => "required" do
-            x.option '', :value => ''
+        _div do
+          _label 'Name', :for=>"name"
+          _select :name=>"name", :id=>"name", :required => "required" do
+            _option '', :value => ''
             iclas.invert.to_a.sort.each do |name, email|
-              x.option name, :value => name, 'data-email' => email
+              _option name, :value => name, 'data-email' => email
             end
           end
         end
 
-        x.div do
-          x.label 'Email', :for=>"email"
-          x.select :name=>"email", :id=>"email", :required => "required" do
-            x.option '', :value => ''
+        _div do
+          _label 'Email', :for=>"email"
+          _select :name=>"email", :id=>"email", :required => "required" do
+            _option '', :value => ''
             iclas.to_a.sort_by {|email, name| email.downcase}.
               each do |email, name|
-              x.option email.downcase, :value => email, 'data-name' => name
+              _option email.downcase, :value => email, 'data-name' => name
             end
           end
         end
 
-        x.div do
-          x.label 'PMC', :for=>"pmc"
-          x.select :name=>"pmc", :id=>"pmc" do
-            x.option '', :value => ''
+        _div do
+          _label 'PMC', :for=>"pmc"
+          _select :name=>"pmc", :id=>"pmc" do
+            _option '', :value => ''
             pmcs.each do |pmc| 
-              x.option pmc, {:value => pmc}
+              _option pmc, {:value => pmc}
             end
           end
         end
 
-        x.div do
-          x.label 'Podling', :for=>"podling"
-          x.select :name=>"podling", :id=>"podling" do
-            x.option '', :value => ''
+        _div do
+          _label 'Podling', :for=>"podling"
+          _select :name=>"podling", :id=>"podling" do
+            _option '', :value => ''
             podlings.each do |podling| 
-              x.option podling, {:value => podling}
+              _option podling, {:value => podling}
             end
           end
         end
 
-        x.div do
-          x.label 'Vote Link', :for=>"votelink"
-          x.input :name=>"votelink", :id=>"votelink", :type=>"text",
+        _div do
+          _label 'Vote Link', :for=>"votelink"
+          _input :name=>"votelink", :id=>"votelink", :type=>"text",
             :pattern => '.*://.*|.*@.*'
         end
 
-        x.div do
-          x.label 'Comments', :for=>"comments"
-          x.textarea "", :name=>"comments", :id=>"comments" 
+        _div do
+          _label 'Comments', :for=>"comments"
+          _textarea "", :name=>"comments", :id=>"comments" 
         end
 
-        x.input :type=>"submit", :value=>"Submit"
+        _input :type=>"submit", :value=>"Submit"
       end
     end
 
-    if $HTTP_POST
+    if _.post?
       # server side validation
-      if pending.include? $param.email
-        x.div "Account request already pending for #{$param.email}", :class => 'error'
-      elsif taken.include? $param.user
-        x.div "UserID #{$param.user} is not available", :class => 'error'
-      elsif $param.user !~ /^[a-z][a-z0-9_]+$/ # useridvalidationpattern dup (disallow '-' in names because of INFRA-7390)
-        x.div "Invalid userID #{$param.user}", :class => 'error'
-      elsif $param.user.length > 16
+      if pending.include? @email
+        _div "Account request already pending for #{@email}", :class => 'error'
+      elsif taken.include? @user
+        _div "UserID #{@user} is not available", :class => 'error'
+      elsif @user !~ /^[a-z][a-z0-9_]+$/ # useridvalidationpattern dup (disallow '-' in names because of INFRA-7390)
+        _div "Invalid userID #{@user}", :class => 'error'
+      elsif @user.length > 16
         # http://forums.freebsd.org/showthread.php?t=14636
-        x.div "UserID #{$param.user} is too long (max 16)", :class => 'error'
-      elsif $param.pmc !~ /^[0-9a-z-]+$/
-        x.div "Unsafe PMC #{$param.pmc}", :class => 'error'
-      elsif $param.podling and $param.podling !~ /^[0-9a-z-]*$/
-        x.div "Unsafe podling name #{$param.podling}", :class => 'error'
-      elsif not iclas.include? $param.email
-        x.div "No ICLA on record for #{$param.email}", :class => 'error'
-      elsif not iclas[$param.email] == $param.name
-        x.div "Name #{$param.name} does not match name on ICLA", :class => 'error'
-      elsif not pmcs.include? $param.pmc
-        x.div "Unrecognized PMC name #{$param.pmc}", :class => 'error'
+        _div "UserID #{@user} is too long (max 16)", :class => 'error'
+      elsif @pmc !~ /^[0-9a-z-]+$/
+        _div "Unsafe PMC #{@pmc}", :class => 'error'
+      elsif @podling and @podling !~ /^[0-9a-z-]*$/
+        _div "Unsafe podling name #{@podling}", :class => 'error'
+      elsif not iclas.include? @email
+        _div "No ICLA on record for #{@email}", :class => 'error'
+      elsif not iclas[@email] == @name
+        _div "Name #{@name} does not match name on ICLA", :class => 'error'
+      elsif not pmcs.include? @pmc
+        _div "Unrecognized PMC name #{@pmc}", :class => 'error'
       else
 
         # verb tense to be used in messages
@@ -308,23 +306,23 @@ $cgi.html do |x|
         submitter_name.untaint
         
         # build the line to be added
-        line = "#{$param.user};#{$param.name};#{$param.email};#{$param.pmc};" +
-          "#{$param.pmc};#{Date.today.strftime('%m-%d-%Y')};yes;yes;no;"
+        line = "#{@user};#{@name};#{@email};#{@pmc};" +
+          "#{@pmc};#{Date.today.strftime('%m-%d-%Y')};yes;yes;no;"
 
         # determine the requesting party and cc_list
-        $param.pmc =~ /([\w.-]+)/
+        @pmc =~ /([\w.-]+)/
         requestor = $1
         requestor.untaint
-        cc_list = ["private@#{$param.pmc}.apache.org".untaint]
-        if requestor == 'incubator' and not $param.podling.empty?
-          if File.read("#{APMAIL}/bin/.archives").include? "incubator-#{$param.podling}-private"
-            cc_list << "#{$param.podling}-private@#{$param.pmc}.apache.org".untaint
+        cc_list = ["private@#{@pmc}.apache.org".untaint]
+        if requestor == 'incubator' and not @podling.empty?
+          if File.read("#{APMAIL}/bin/.archives").include? "incubator-#{@podling}-private"
+            cc_list << "#{@podling}-private@#{@pmc}.apache.org".untaint
           else
-            cc_list << "private@#{$param.podling}.#{$param.pmc}.apache.org".untaint
+            cc_list << "private@#{@podling}.#{@pmc}.apache.org".untaint
           end
-          requestor = "#{$param.podling}@incubator".untaint
+          requestor = "#{@podling}@incubator".untaint
         end
-        cc_list << "<#{$param.email}>".untaint # TODO: add $param.name RFC822-escaped
+        cc_list << "<#{@email}>".untaint # TODO: add @name RFC822-escaped
 
         # build the mail to be sent
         mail = Mail.new do
@@ -336,21 +334,21 @@ $cgi.html do |x|
           return_path "root@apache.org"
           to      "root@apache.org"
           cc      cc_list
-          subject "[FORM] Account Request - #{requestor}: #{$param.name}"
+          subject "[FORM] Account Request - #{requestor}: #{@name}"
 
           ENV['REMOTE_ADDR'] =~ /(\w[\w.-]+)/
           ra = $1
           ra.untaint
 
           body <<-EOF.gsub(/^ {12}/, '').gsub(/(Vote reference:)?\n\s+\n/, "\n\n")
-            Prospective userid: #{$param.user}
-            Full name: #{$param.name}
-            Forwarding email address: #{$param.email}
+            Prospective userid: #{@user}
+            Full name: #{@name}
+            Forwarding email address: #{@email}
 
             Vote reference:
-              #{$param.votelink.gsub('mail-search.apache.org/pmc/', 'mail-search.apache.org/members/')}
+              #{@votelink.gsub('mail-search.apache.org/pmc/', 'mail-search.apache.org/members/')}
 
-            #{$param.comments}
+            #{@comments}
 
             -- 
             Submitted by https://#{ENV['HTTP_HOST']}#{ENV['REQUEST_URI'].split('?').first}
@@ -365,7 +363,7 @@ $cgi.html do |x|
           begin
             mail.deliver!
           rescue Exception => exception
-            x.pre exception.inspect, :class => 'error'
+            _pre exception.inspect, :class => 'error'
             tobe = 'would have been '
           end
         end
@@ -380,14 +378,14 @@ $cgi.html do |x|
           # and commit the change ...
           command = "#{SVN} commit #{INFRA}/acreq/new-account-reqs.txt -m " + 
             "#{requestor} account request by #{submitter_id}".inspect
-          x.h2 'Commit messages'
+          _h2 'Commit messages'
           Open3.popen3(command) do |pin, pout, perr|
             [
               Thread.new do
-                x.p pout.readline.chomp, :class=>'stdout' until pout.eof?
+                _p pout.readline.chomp, :class=>'stdout' until pout.eof?
               end,
               Thread.new do
-                x.p perr.readline.chomp, :class=>'stderr' until perr.eof?
+                _p perr.readline.chomp, :class=>'stderr' until perr.eof?
               end,
               Thread.new do
                 pin.close
@@ -397,23 +395,23 @@ $cgi.html do |x|
         end
 
         # report on status
-        x.h2 "New entry #{tobe}added:"
-        x.pre line
-        x.h2 "Mail #{tobe}sent:"
-        x.pre mail.to_s, :class => 'email'
+        _h2 "New entry #{tobe}added:"
+        _pre line
+        _h2 "Mail #{tobe}sent:"
+        _pre mail.to_s, :class => 'email'
       end
     end
 
-    unless $HTTP_POST
-      x.p do
+    unless _.post?
+      _p do
         if query_string.has_key? 'fulllist'
-          x.span 'This page shows all ICLAs ever received.  Click here to'
-          x.a 'show only ICLAs received recently', :href => '?'
-          x.span '.'
+          _span 'This page shows all ICLAs ever received.  Click here to'
+          _a 'show only ICLAs received recently', :href => '?'
+          _span '.'
         else
-          x.span 'This page shows only ICLAs received recently.  Click here to'
-          x.a 'choose from the full list of ICLA submitters', :href => '?fulllist=1'
-          x.span '.'
+          _span 'This page shows only ICLAs received recently.  Click here to'
+          _a 'choose from the full list of ICLA submitters', :href => '?fulllist=1'
+          _span '.'
         end
       end
     end
