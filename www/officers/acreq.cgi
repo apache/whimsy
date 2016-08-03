@@ -1,16 +1,16 @@
 #!/usr/bin/ruby
 #
-#   Just for demo purposes at the moment.  Builds a properly formatted
-#   and validated new-account-reqs.txt entry based on web input.  With
-#   the proper browser and with jquery installed, this will do full client
-#   side validation.  Server-side validation will also be done.
+#   Build a properly formatted and validated new-account-reqs.txt entry based
+#   on web input.  Does both full client validation and Server-side
+#   validation.
 #
-#   In demo mode, this script simply shows the formatted line that would
-#   be added to the file and the email to be sent.  In non-demo mode, it
-#   actually appends the line to the file and issue a svn commit, returns
+#   Should validation succeed, the entry will be appended to the
+#   new-account-reqs.txt and committed.  An email will be sent to root
+#   (copying the relevant pmc private list) of the request.
+#
+#   The response contains
 #   the messages produced by the commit (if any) in the response, and
-#   sends an email to root (copying the relevant pmc private list) of the
-#   request.
+#   a copy of the email that was sent.
 #
 # Prereqs:
 #
@@ -36,6 +36,7 @@
 #   use a browser that implements HTML5 form validation.
 
 require 'wunderbar'
+require 'whimsy/asf'
 require 'mail'
 require 'date'
 require 'open3'
@@ -57,17 +58,19 @@ NON_PMC_UNIX_GROUPS = %w(
 )
 
 SVN = "/usr/bin/svn"
+ACREQ = ASF::SVN['infra/infrastructure/trunk/acreq']
+OFFICERS = ASF::SVN['private/foundation/officers']
+APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
 
 # get up to date...
-`#{SVN} cleanup #{INFRA}/acreq #{OFFICERS} #{APMAIL}/bin`
-_.post?`#{SVN} revert -R #{INFRA}/acreq`
-st?
-unless `#{SVN} status -q #{INFRA}/acreq`.empty?
+`#{SVN} cleanup #{ACREQ} #{OFFICERS} #{APMAIL_BIN}`
+`#{SVN} revert -R #{ACREQ}` if ENV[' REQUEST_METHOD'] == 'POST'
+unless `#{SVN} status -q #{ACREQ}`.empty?
   raise "acreq/ working copy is dirty"
 end
-`#{SVN} update --ignore-externals #{INFRA}/acreq #{OFFICERS} #{APMAIL}/bin`
+`#{SVN} update --ignore-externals #{ACREQ} #{OFFICERS} #{APMAIL_BIN}`
 
-REQUESTS = "#{INFRA}/acreq/new-account-reqs.txt"
+REQUESTS = "#{ACREQ}/new-account-reqs.txt"
 
 # grab the current list of PMCs from ldap
 pmcs = `/usr/local/bin/list_unix_group.pl`.chomp.split("\n") - NON_PMC_UNIX_GROUPS
@@ -315,7 +318,7 @@ _html do
         requestor.untaint
         cc_list = ["private@#{@pmc}.apache.org".untaint]
         if requestor == 'incubator' and not @podling.empty?
-          if File.read("#{APMAIL}/bin/.archives").include? "incubator-#{@podling}-private"
+          if File.read("#{APMAIL_BIN}/.archives").include? "incubator-#{@podling}-private"
             cc_list << "#{@podling}-private@#{@pmc}.apache.org".untaint
           else
             cc_list << "private@#{@podling}.#{@pmc}.apache.org".untaint
@@ -376,7 +379,7 @@ _html do
           end
 
           # and commit the change ...
-          command = "#{SVN} commit #{INFRA}/acreq/new-account-reqs.txt -m " + 
+          command = "#{SVN} commit #{ACREQ}/new-account-reqs.txt -m " + 
             "#{requestor} account request by #{submitter_id}".inspect
           _h2 'Commit messages'
           Open3.popen3(command) do |pin, pout, perr|
@@ -417,40 +420,3 @@ _html do
     end
   end
 end
-
-__END__
-# Doesn't actually have any effect !?  The one in the .rb file has an effect.
-$SAFE = 1
-
-# tailor these lines as necessary
-INFRA = '..'
-APMAIL = '../../apmail'
-OFFICERS = '../../foundation/officers'
-
-# uncomment the next line if you have installed gems in a non-standard location
-# ENV['GEM_PATH'] = '/prefix/install-dir'
-
-require 'rubygems'
-require 'mail'
-
-# customize the delivery method
-Mail.defaults do
-  # probably will work out of the box on ASF hardware
-  delivery_method :sendmail
-
-### For comparison, here's how to connect to gmail
-# delivery_method :smtp,
-#   :address =>        "smtp.gmail.com",
-#   :port =>           587, 
-#   :domain =>         "apache.org",
-#   :authentication => "plain",
-#   :user_name =>      "username",
-#   :password =>       "password",
-#   :enable_starttls_auto => true
-end
-
-# this should be pretty self evident
-DEMO_MODE = true
-
-# potentially useful when installed on a personal machine
-# ENV['REMOTE_USER'] ||= `/usr/bin/whoami`.chomp
