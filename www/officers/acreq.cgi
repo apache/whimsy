@@ -95,7 +95,7 @@ _html do
   _head do
     _title 'Submit ASF Account Request'
 
-    _style! <<-'EOF'
+    _style %{
       label {width: 6em; float: left}
       legend {background: #141; color: #DFD; padding: 0.4em}
       fieldset {background: #EFE; width: 28em}
@@ -108,16 +108,8 @@ _html do
       .stdout {background-color: yellow; margin: 0}
       .stderr {background-color: red; color: white; margin: 0}
       pre.email {background-color: #BDF; padding: 1em 3em; border-radius: 1em}
-    EOF
+    }
 
-    ENV['SCRIPT_FILENAME'] =~ /(.*)/
-    sf = $1
-    sf.untaint
-    
-    ENV['DOCUMENT_ROOT'] =~ /(.*)/
-    dr = $1
-    dr.untaint
-    
     _script %{
       $(function() {
 
