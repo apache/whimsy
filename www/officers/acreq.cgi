@@ -46,7 +46,7 @@ APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
 unless `#{SVN} status -q #{ACREQ}`.empty?
   raise "acreq/ working copy is dirty"
 end
-`#{SVN} update --ignore-externals #{ACREQ} #{OFFICERS} #{APMAIL_BIN}`
+`#{SVN} update --ignore-externals #{ACREQ}`
 
 REQUESTS = "#{ACREQ}/new-account-reqs.txt"
 
