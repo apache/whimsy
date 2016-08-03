@@ -12,28 +12,6 @@
 #   the messages produced by the commit (if any) in the response, and
 #   a copy of the email that was sent.
 #
-# Prereqs:
-#
-#   * svn checkout of infra/infrastructure/trunk and foundation/officers
-#   * Web server with the ability to run cgi (Apache httpd recommended)
-#   * Ruby 1.8.x or later
-#   * cgi-spa and mail gems ([sudo] gem install cgi-spa mail)
-#   * (optional) jQuery http://code.jquery.com/jquery.min.js
-#
-# Installation instructions:
-#_.post?
-#  ruby submit-account-request.rb --install=/var/www
-#
-#    1) Specify a path that supports cgi, like public-html or Sites.
-#    2) Tailor the paths and smtp settings in the generated
-#       submit-account-request.cgi as necessary.
-#    3) Download jQuery from the link above into either the directory
-#       containing the CGI or in the DOCUMENT_ROOT for the web server
-#
-# Execution instructions:
-#
-#   Point your web browser at your generated cgi script.  For best results,
-#   use a browser that implements HTML5 form validation.
 
 require 'wunderbar'
 require 'whimsy/asf'
@@ -73,12 +51,10 @@ end
 REQUESTS = "#{ACREQ}/new-account-reqs.txt"
 
 # grab the current list of PMCs from ldap
-pmcs = `/usr/local/bin/list_unix_group.pl`.chomp.split("\n") - NON_PMC_UNIX_GROUPS
+pmcs = ASF::Committee.list.map(&:name).sort - NON_PMC_UNIX_GROUPS
 
 # grab the list of podling mailing lists from apmail
-podlings = REXML::Document.new(
-    Net::HTTP.get_response(URI.parse 'http://incubator.apache.org/podlings.xml').body
-  ).root.elements.collect { |x| x.attributes['status'] == 'current' && x.attributes['resource'] }.select { |x| x }.sort
+podlings = ASF::Podling.list.map(&:name).sort
 
 # grab the list of iclas that have no ids assigned
 query_string = CGI::parse ENV['QUERY_STRING']
