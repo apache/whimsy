@@ -13,7 +13,7 @@
 #   a copy of the email that was sent.
 #
 
-require 'wunderbar'
+require 'wunderbar/jquery'
 require 'whimsy/asf'
 require 'mail'
 require 'date'
@@ -93,7 +93,6 @@ pending.each {|email| iclas.delete email}
 # HTML output
 _html do
   _head do
-    _meta :charset => 'utf-8'
     _title 'Submit ASF Account Request'
 
     _style! <<-'EOF'
@@ -119,17 +118,7 @@ _html do
     dr = $1
     dr.untaint
     
-    if (Pathname(sf).dirname + 'jquery.min.js').exist?
-      src = 'jquery.min.js'
-    elsif (Pathname(dr) + 'jquery.min.js').exist?
-      src = '/jquery.min.js'
-    else
-     src =  'https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'
-    end
-
-    _script '', :src => src
-
-    scriptSrc = <<-EOF
+    _script %{
       $(function() {
 
         // if name changes, change email to match
@@ -177,99 +166,98 @@ _html do
         if (#{@votelink.to_s.inspect} != '')
           $('#votelink').val(#{@votelink.to_s.inspect});
       });
-    EOF
-    _script scriptSrc, :type => "text/javascript" 
+    }
   end
 
   _body do
-    _form :method=>'post' do
+    _form method: 'post' do
       _fieldset do
         _legend 'ASF New Account Request'
 
         _div do
-          _label 'User ID', :for=>"user"
-          _input :name=>"user", :id=>"user", :autofocus => "autofocus",
-            :type=>"text", :required => "required",
-            :pattern => '^[a-z][-a-z0-9_]+$' # useridvalidationpattern dup
+          _label 'User ID', for: "user"
+          _input name: "user", id: "user", autofocus: true,
+            type: "text", required: true,
+            pattern: '^[a-z][-a-z0-9_]+$' # useridvalidationpattern dup
         end
 
         _div do
-          _label 'Name', :for=>"name"
-          _select :name=>"name", :id=>"name", :required => "required" do
-            _option '', :value => ''
+          _label 'Name', for: "name"
+          _select name: "name", id: "name", required: true do
+            _option value: ''
             iclas.invert.to_a.sort.each do |name, email|
-              _option name, :value => name, 'data-email' => email
+              _option name, value: name, data_email: email
             end
           end
         end
 
         _div do
-          _label 'Email', :for=>"email"
-          _select :name=>"email", :id=>"email", :required => "required" do
-            _option '', :value => ''
+          _label 'Email', for: "email"
+          _select name: "email", id: "email", required: true do
+            _option value: ''
             iclas.to_a.sort_by {|email, name| email.downcase}.
               each do |email, name|
-              _option email.downcase, :value => email, 'data-name' => name
+              _option email.downcase, value: email, data_name:name
             end
           end
         end
 
         _div do
-          _label 'PMC', :for=>"pmc"
-          _select :name=>"pmc", :id=>"pmc" do
-            _option '', :value => ''
+          _label 'PMC', for: "pmc"
+          _select name: "pmc", id: "pmc" do
+            _option value: ''
             pmcs.each do |pmc| 
-              _option pmc, {:value => pmc}
+              _option pmc, value: pmc
             end
           end
         end
 
         _div do
-          _label 'Podling', :for=>"podling"
-          _select :name=>"podling", :id=>"podling" do
-            _option '', :value => ''
+          _label 'Podling', for: "podling"
+          _select name: "podling", id: "podling" do
+            _option value: ''
             podlings.each do |podling| 
-              _option podling, {:value => podling}
+              _option podling, value: podling
             end
           end
         end
 
         _div do
-          _label 'Vote Link', :for=>"votelink"
-          _input :name=>"votelink", :id=>"votelink", :type=>"text",
-            :pattern => '.*://.*|.*@.*'
+          _label 'Vote Link', for: "votelink"
+          _input name: "votelink", id: "votelink", type: "text",
+            pattern: '.*://.*|.*@.*'
         end
 
         _div do
-          _label 'Comments', :for=>"comments"
-          _textarea "", :name=>"comments", :id=>"comments" 
+          _label 'Comments', for: "comments"
+          _textarea name: "comments", id: "comments" 
         end
 
-        _input :type=>"submit", :value=>"Submit"
+        _input type: "submit", value: "Submit"
       end
     end
 
     if _.post?
       # server side validation
       if pending.include? @email
-        _div "Account request already pending for #{@email}", :class => 'error'
+        _div.error "Account request already pending for #{@email}"
       elsif taken.include? @user
-        _div "UserID #{@user} is not available", :class => 'error'
+        _div.error "UserID #{@user} is not available"
       elsif @user !~ /^[a-z][a-z0-9_]+$/ # useridvalidationpattern dup (disallow '-' in names because of INFRA-7390)
-        _div "Invalid userID #{@user}", :class => 'error'
+        _div.error "Invalid userID #{@user}"
       elsif @user.length > 16
         # http://forums.freebsd.org/showthread.php?t=14636
-        _div "UserID #{@user} is too long (max 16)", :class => 'error'
+        _div.error "UserID #{@user} is too long (max 16)"
       elsif @pmc !~ /^[0-9a-z-]+$/
-        _div "Unsafe PMC #{@pmc}", :class => 'error'
+        _div.error "Unsafe PMC #{@pmc}"
       elsif @podling and @podling !~ /^[0-9a-z-]*$/
-        _div "Unsafe podling name #{@podling}", :class => 'error'
+        _div.error "Unsafe podling name #{@podling}"
       elsif not iclas.include? @email
-        _div "No ICLA on record for #{@email}", :class => 'error'
+        _div.error "No ICLA on record for #{@email}"
       elsif not iclas[@email] == @name
-        _div "Name #{@name} does not match name on ICLA", :class => 'error'
+        _div.error "Name #{@name} does not match name on ICLA"
       elsif not pmcs.include? @pmc
-        _div "Unrecognized PMC name #{@pmc}", :class => 'error'
+        _div.error "Unrecognized PMC name #{@pmc}"
       else
 
         # verb tense to be used in messages
@@ -342,7 +330,7 @@ _html do
           begin
             mail.deliver!
           rescue Exception => exception
-            _pre exception.inspect, :class => 'error'
+            _pre.error exception.inspect
             tobe = 'would have been '
           end
         end
@@ -361,10 +349,10 @@ _html do
           Open3.popen3(command) do |pin, pout, perr|
             [
               Thread.new do
-                _p pout.readline.chomp, :class=>'stdout' until pout.eof?
+                _p.stdout pout.readline.chomp until pout.eof?
               end,
               Thread.new do
-                _p perr.readline.chomp, :class=>'stderr' until perr.eof?
+                _p.stderr perr.readline.chomp until perr.eof?
               end,
               Thread.new do
                 pin.close
@@ -377,19 +365,19 @@ _html do
         _h2 "New entry #{tobe}added:"
         _pre line
         _h2 "Mail #{tobe}sent:"
-        _pre mail.to_s, :class => 'email'
+        _pre.email mail.to_s
       end
     end
 
     unless _.post?
       _p do
-        if query_string.has_key? 'fulllist'
+        if @fulllist
           _span 'This page shows all ICLAs ever received.  Click here to'
-          _a 'show only ICLAs received recently', :href => '?'
+          _a 'show only ICLAs received recently', href: '?'
           _span '.'
         else
           _span 'This page shows only ICLAs received recently.  Click here to'
-          _a 'choose from the full list of ICLA submitters', :href => '?fulllist=1'
+          _a 'choose from the full list of ICLA submitters', href: '?fulllist=1'
           _span '.'
         end
       end
