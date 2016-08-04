@@ -225,7 +225,7 @@ _html do
           _textarea name: "comments", id: "comments" 
         end
 
-        _input type: "submit", value: "Submit"
+        _input type: "submit", value: "Submit", disabled: true
       end
     end
 
