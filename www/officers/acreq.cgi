@@ -21,7 +21,7 @@ require 'mail'
 require 'date'
 require 'open3'
 
-user = ASF::Person.new($USER)
+user = ASF::Auth.decode(env = {})
 unless user.asf_member? or ASF.pmc_chairs.include? user
   print "Status: 401 Unauthorized\r\n"
   print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
@@ -45,7 +45,6 @@ OFFICERS = 'https://svn.apache.org/repos/private/foundation/officers'
 APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
 
 # get up to date data...
-ASF::Auth.decode(env = {})
 SVN = "/usr/bin/svn --username #{env.user} --password #{env.password}"
 requests = `#{SVN} cat #{ACREQ}/new-account-reqs.txt`
 officers = `#{SVN} cat #{OFFICERS}/iclas.txt`
@@ -256,14 +255,6 @@ _html do
         # verb tense to be used in messages
         tobe = 'to be ' if DEMO_MODE
 
-        # capture submitter information
-        ENV['REMOTE_USER'] =~ /(\w+)/
-        submitter_id = $1
-        submitter_id.untaint
-        
-        submitter_name = officers[/^#{submitter_id}:.*?:(.*?):/,1]
-        submitter_name.untaint
-        
         # build the line to be added
         line = "#{@user};#{@name};#{@email};#{@pmc};" +
           "#{@pmc};#{Date.today.strftime('%m-%d-%Y')};yes;yes;no;"
@@ -285,11 +276,7 @@ _html do
 
         # build the mail to be sent
         mail = Mail.new do
-          if submitter_name
-            from  "#{submitter_name} <#{submitter_id}@apache.org>"
-          else
-            from  "#{submitter_id}@apache.org"
-          end
+          from  "#{user.public_name} <#{user.id}@apache.org>"
           return_path "root@apache.org"
           to      "root@apache.org"
           cc      cc_list
@@ -335,7 +322,7 @@ _html do
 
           # and commit the change ...
           command = "#{SVN} commit #{ACREQ}/new-account-reqs.txt -m " + 
-            "#{requestor} account request by #{submitter_id}".inspect
+            "#{requestor} account request by #{user.id}".inspect
           _h2 'Commit messages'
           Open3.popen3(command) do |pin, pout, perr|
             [
