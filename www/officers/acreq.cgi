@@ -16,7 +16,7 @@
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'wunderbar/jquery'
-require 'whimsy/asf'
+require 'whimsy/asf/rack'
 require 'mail'
 require 'date'
 require 'open3'
@@ -41,12 +41,14 @@ NON_PMC_UNIX_GROUPS = %w(
 )
 
 SVN = "/usr/bin/svn"
-ACREQ = ASF::SVN['infra/infrastructure/trunk/acreq']
+ACREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/acreq'
 OFFICERS = ASF::SVN['private/foundation/officers']
 APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
 
 # get up to date...
-REQUESTS = "#{ACREQ}/new-account-reqs.txt"
+ASF::Auth.decode(env = {})
+auth = "--username #{env.user} --password #{env.password}"
+requests = `svn cat #{ACREQ}/new-account-reqs.txt #{auth}`
 
 # grab the current list of PMCs from ldap
 pmcs = ASF::Committee.list.map(&:name).sort - NON_PMC_UNIX_GROUPS
@@ -72,7 +74,7 @@ end
 taken = File.read("#{OFFICERS}/iclas.txt").scan(/^(\w+?):/).flatten.sort.uniq
 
 # add the list of userids that are pending
-taken += File.read(REQUESTS).scan(/^(\w.*?);/).flatten
+taken += requests.scan(/^(\w.*?);/).flatten
 
 # add member ids that do not have ICLAs
 taken += %w(andi andrei arved dgaudet pcs rasmus ssb zeev)  
@@ -84,7 +86,7 @@ taken += %w(an james jean rgb soc swaroop)
 taken += %w(r rw)  
 
 # get a list of pending new account requests (by email)
-pending = File.read(REQUESTS).scan(/^\w.*?;.*?;(.*?);/).flatten
+pending = requests.scan(/^\w.*?;.*?;(.*?);/).flatten
 
 # remove pending email addresses from the selection list
 pending.each {|email| iclas.delete email}
@@ -328,7 +330,6 @@ _html do
 
         unless tobe
           # Update the new-account-reqs file...
-          requests = File.read(REQUESTS)
           File.open(REQUESTS, 'w') do |file|
             file.write("#{requests}#{line}\n")
           end
