@@ -13,6 +13,8 @@
 #   a copy of the email that was sent.
 #
 
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+
 require 'wunderbar/jquery'
 require 'whimsy/asf'
 require 'mail'
