@@ -40,15 +40,15 @@ NON_PMC_UNIX_GROUPS = %w(
   member
 )
 
-SVN = "/usr/bin/svn"
 ACREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/acreq'
-OFFICERS = ASF::SVN['private/foundation/officers']
+OFFICERS = 'https://svn.apache.org/repos/private/foundation/officers'
 APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
 
-# get up to date...
+# get up to date data...
 ASF::Auth.decode(env = {})
-auth = "--username #{env.user} --password #{env.password}"
-requests = `svn cat #{ACREQ}/new-account-reqs.txt #{auth}`
+SVN = "/usr/bin/svn --username #{env.user} --password #{env.password}"
+requests = `#{SVN} cat #{ACREQ}/new-account-reqs.txt`
+officers = `#{SVN} cat #{OFFICERS}/iclas.txt`
 
 # grab the current list of PMCs from ldap
 pmcs = ASF::Committee.list.map(&:name).sort - NON_PMC_UNIX_GROUPS
@@ -60,8 +60,8 @@ podlings = ASF::Podling.list.select {|podling| podling.status == 'current'}.
 # grab the list of iclas that have no ids assigned
 query_string = CGI::parse ENV['QUERY_STRING']
 if query_string.has_key? 'fulllist'
-  iclas = Hash[*File.read("#{OFFICERS}/iclas.txt").
-    scan(/^notinavail:.*?:(.*?):(.*?):Signed CLA/).flatten.reverse]
+  iclas = Hash[*officers.scan(/^notinavail:.*?:(.*?):(.*?):Signed CLA/).
+    flatten.reverse]
 else
   oldrev = \
     `#{SVN} log --incremental -q -r HEAD:0 -l300 -- #{OFFICERS}/iclas.txt`.
@@ -71,7 +71,7 @@ else
 end
 
 # grab the list of userids that have been assigned (for validation purposes)
-taken = File.read("#{OFFICERS}/iclas.txt").scan(/^(\w+?):/).flatten.sort.uniq
+taken = officers.scan(/^(\w+?):/).flatten.sort.uniq
 
 # add the list of userids that are pending
 taken += requests.scan(/^(\w.*?);/).flatten
@@ -261,8 +261,7 @@ _html do
         submitter_id = $1
         submitter_id.untaint
         
-        submitter_name = 
-          File.read("#{OFFICERS}/iclas.txt")[/^#{submitter_id}:.*?:(.*?):/,1]
+        submitter_name = officers[/^#{submitter_id}:.*?:(.*?):/,1]
         submitter_name.untaint
         
         # build the line to be added
