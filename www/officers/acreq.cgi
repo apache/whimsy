@@ -49,8 +49,9 @@ REQUESTS = "#{ACREQ}/new-account-reqs.txt"
 # grab the current list of PMCs from ldap
 pmcs = ASF::Committee.list.map(&:name).sort - NON_PMC_UNIX_GROUPS
 
-# grab the list of podling mailing lists from apmail
-podlings = ASF::Podling.list.map(&:name).sort
+# grab the list of active podlings
+podlings = ASF::Podling.list.select {|podling| podling.status == 'current'}.
+  map(&:name).sort
 
 # grab the list of iclas that have no ids assigned
 query_string = CGI::parse ENV['QUERY_STRING']
