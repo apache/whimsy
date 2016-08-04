@@ -57,13 +57,18 @@ podlings = ASF::Podling.list.select {|podling| podling.status == 'current'}.
   map(&:name).sort
 
 # grab the list of iclas that have no ids assigned
-query_string = CGI::parse ENV['QUERY_STRING']
-if query_string.has_key? 'fulllist'
+query = CGI::parse ENV['QUERY_STRING']
+iclas = Array(query['iclas']).last
+email = Array(query['email']).last
+if iclas == 'all'
   iclas = Hash[*officers.scan(/^notinavail:.*?:(.*?):(.*?):Signed CLA/).
     flatten.reverse]
+elsif iclas == '1' and email and officers =~ /^notinavail:.*?:(.*?):#{email}:/
+  iclas = {email => $1}
 else
+  count = iclas ? iclas.to_i : 300 rescue 300
   oldrev = \
-    `#{SVN} log --incremental -q -r HEAD:0 -l300 -- #{OFFICERS}/iclas.txt`.
+    `#{SVN} log --incremental -q -r HEAD:0 -l#{count} -- #{OFFICERS}/iclas.txt`.
     split("\n")[-1].split()[0][1..-1].to_i
   iclas = Hash[*`#{SVN} diff -r #{oldrev}:HEAD -- #{OFFICERS}/iclas.txt`.
     scan(/^[+]notinavail:.*?:(.*?):(.*?):Signed CLA/).flatten.reverse]
@@ -349,13 +354,13 @@ _html do
 
     unless _.post?
       _p do
-        if @fulllist
+        if @iclas == 'all'
           _span 'This page shows all ICLAs ever received.  Click here to'
           _a 'show only ICLAs received recently', href: '?'
           _span '.'
         else
           _span 'This page shows only ICLAs received recently.  Click here to'
-          _a 'choose from the full list of ICLA submitters', href: '?fulllist=1'
+          _a 'choose from the full list of ICLA submitters', href: '?iclas=all'
           _span '.'
         end
       end
