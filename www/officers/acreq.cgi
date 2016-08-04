@@ -287,10 +287,6 @@ _html do
           cc      cc_list
           subject "[FORM] Account Request - #{requestor}: #{@name}"
 
-          ENV['REMOTE_ADDR'] =~ /(\w[\w.-]+)/
-          ra = $1
-          ra.untaint
-
           body <<-EOF.gsub(/^ {12}/, '').gsub(/(Vote reference:)?\n\s+\n/, "\n\n")
             Prospective userid: #{@user}
             Full name: #{@name}
@@ -303,7 +299,7 @@ _html do
 
             -- 
             Submitted by https://#{ENV['HTTP_HOST']}#{ENV['REQUEST_URI'].split('?').first}
-            From #{`/usr/bin/host #{ra}`.chomp}
+            From #{`/usr/bin/host #{ENV['REMOTE_ADDR'].dup.untaint}`.chomp}
             Using #{ENV['HTTP_USER_AGENT']}
           EOF
         end
