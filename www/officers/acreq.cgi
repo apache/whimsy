@@ -22,7 +22,6 @@ require 'pathname'
 require 'rexml/document'
 require 'net/http'
 
-
 # List of unix groups that do NOT correspond to PMCs
 NON_PMC_UNIX_GROUPS = %w(
   apsite
@@ -41,13 +40,6 @@ OFFICERS = ASF::SVN['private/foundation/officers']
 APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
 
 # get up to date...
-`#{SVN} cleanup #{ACREQ} #{OFFICERS} #{APMAIL_BIN}`
-`#{SVN} revert -R #{ACREQ}` if ENV[' REQUEST_METHOD'] == 'POST'
-unless `#{SVN} status -q #{ACREQ}`.empty?
-  raise "acreq/ working copy is dirty"
-end
-`#{SVN} update --ignore-externals #{ACREQ}`
-
 REQUESTS = "#{ACREQ}/new-account-reqs.txt"
 
 # grab the current list of PMCs from ldap
