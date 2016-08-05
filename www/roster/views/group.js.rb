@@ -5,6 +5,7 @@
 class Group < React
   def initialize
     @state = :closed
+    @pending = {}
   end
 
   def render
@@ -42,7 +43,14 @@ class Group < React
 
       _tbody do
         members.each do |id|
-          _GroupMember id: id, name: group.members[id], auth: auth
+          _GroupMember id: id, name: group.members[id], auth: auth, 
+            pending: false
+        end
+
+        for id in @pending
+          next if group.members[id]
+          _GroupMember id: id, name: @pending[id], auth: auth, 
+            pending: true
         end
 
         if auth
@@ -51,24 +59,25 @@ class Group < React
           end
         end
       end
+    end
 
-      if @state == :open
-        _div.search_box do
-          _CommitterSearch add: self.add
-        end
+    if @state == :open
+      _div.search_box do
+        _CommitterSearch add: self.add
       end
     end
   end
 
   # open search box
   def select()
-    return unless @@auth
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
   end
 
   # add a person to the displayed list of group members
   def add(person)
+    @pending[person.id] = person.name
+    @state = :closed
   end
 end
 
@@ -86,12 +95,19 @@ class GroupMember < React
       _td {_a @@id, href: "committer/#{@@id}"}
       _td @@name
 
-      if @state == :open
+      if @@pending
+        _td do
+          _button.btn.btn_success 'Add to Group',
+            data_action: 'add group',
+            data_target: '#confirm', data_toggle: 'modal',
+            data_confirmation: "Add #{@@name}"
+        end
+      elsif @state == :open
         _td do
           _button.btn.btn_warning 'Remove from Group',
             data_action: 'remove group',
             data_target: '#confirm', data_toggle: 'modal',
-            data_confirmation: "Remove #{@@name} from LDAP?"
+            data_confirmation: "Remove #{@@name}"
         end
       else
         _td ''
