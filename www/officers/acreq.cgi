@@ -20,6 +20,7 @@ require 'whimsy/asf/rack'
 require 'mail'
 require 'date'
 require 'open3'
+require 'tmpdir'
 
 user = ASF::Auth.decode(env = {})
 unless user.asf_member? or ASF.pmc_chairs.include? user
@@ -316,27 +317,32 @@ _html do
         end
 
         unless tobe
-          # Update the new-account-reqs file...
-          File.open(REQUESTS, 'w') do |file|
-            file.write("#{requests}#{line}\n")
-          end
+          Dir.mktmpdir do |tmpdir|
+            # Checkout the ACREQ directory
+            `#{SVN} co #{ACREQ} #{tmpdir}`
 
-          # and commit the change ...
-          command = "#{SVN} commit #{ACREQ}/new-account-reqs.txt -m " + 
-            "#{requestor} account request by #{user.id}".inspect
-          _h2 'Commit messages'
-          Open3.popen3(command) do |pin, pout, perr|
-            [
-              Thread.new do
-                _p.stdout pout.readline.chomp until pout.eof?
-              end,
-              Thread.new do
-                _p.stderr perr.readline.chomp until perr.eof?
-              end,
-              Thread.new do
-                pin.close
-              end
-            ].each {|thread| thread.join}
+            # Update the new-account-reqs file...
+            File.open("#{tmpdir}/new-account-reqs.txt", 'a') do |file|
+              file.puts(line)
+            end
+
+            # and commit the change ...
+            command = "#{SVN} commit #{tmpdir}/new-account-reqs.txt -m " + 
+              "#{requestor} account request by #{user.id}".inspect
+            _h2 'Commit messages'
+            Open3.popen3(command) do |pin, pout, perr|
+              [
+                Thread.new do
+                  _p.stdout pout.readline.chomp until pout.eof?
+                end,
+                Thread.new do
+                  _p.stderr perr.readline.chomp until perr.eof?
+                end,
+                Thread.new do
+                  pin.close
+                end
+              ].each {|thread| thread.join}
+            end
           end
         end
 
