@@ -231,7 +231,7 @@ _html do
           _textarea name: "comments", id: "comments" 
         end
 
-        _input type: "submit", value: "Submit", disabled: true
+        _input type: "submit", value: "Submit"
       end
     end
 
@@ -258,8 +258,7 @@ _html do
         _div.error "Unrecognized PMC name #{@pmc}"
       else
 
-        # verb tense to be used in messages
-        tobe = 'to be ' if DEMO_MODE
+        tobe = nil
 
         # build the line to be added
         line = "#{@user};#{@name};#{@email};#{@pmc};" +
@@ -286,35 +285,25 @@ _html do
           return_path "root@apache.org"
           to      "root@apache.org"
           cc      cc_list
-          subject "[FORM] Account Request - #{requestor}: #{@name}"
-
-          body <<-EOF.gsub(/^ {12}/, '').gsub(/(Vote reference:)?\n\s+\n/, "\n\n")
-            Prospective userid: #{@user}
-            Full name: #{@name}
-            Forwarding email address: #{@email}
-
-            Vote reference:
-              #{@votelink.gsub('mail-search.apache.org/pmc/', 'mail-search.apache.org/members/')}
-
-            #{@comments}
-
-            -- 
-            Submitted by https://#{ENV['HTTP_HOST']}#{ENV['REQUEST_URI'].split('?').first}
-            From #{`/usr/bin/host #{ENV['REMOTE_ADDR'].dup.untaint}`.chomp}
-            Using #{ENV['HTTP_USER_AGENT']}
-          EOF
         end
 
-        unless DEMO_MODE
-          # deliver the email.  Done first as undeliverable mail stops
-          # the process
-          begin
-            mail.deliver!
-          rescue Exception => exception
-            _pre.error exception.inspect
-            tobe = 'would have been '
-          end
-        end
+        mail.subject "[FORM] Account Request - #{requestor}: #{@name}"
+
+        mail.body = <<-EOF.gsub(/^ {10}/, '').gsub(/(Vote reference:)?\n\s+\n/, "\n\n")
+          Prospective userid: #{@user}
+          Full name: #{@name}
+          Forwarding email address: #{@email}
+
+          Vote reference:
+            #{@votelink.to_s.gsub('mail-search.apache.org/pmc/', 'mail-search.apache.org/members/')}
+
+          #{@comments}
+
+          -- 
+          Submitted by https://#{ENV['HTTP_HOST']}#{ENV['REQUEST_URI'].split('?').first}
+          From #{`/usr/bin/host #{ENV['REMOTE_ADDR'].dup.untaint}`.chomp}
+          Using #{ENV['HTTP_USER_AGENT']}
+        EOF
 
         unless tobe
           Dir.mktmpdir do |tmpdir|
@@ -346,12 +335,11 @@ _html do
           end
         end
 
-        # report on status
-        _h2 "New entry #{tobe}added:"
-        _pre line
-        _h2 "Mail #{tobe}sent:"
-        _pre.email mail.to_s
-      end
+      # report on status
+      _h2 "New entry #{tobe}added:"
+      _pre line
+      _h2 "Mail #{tobe}sent:"
+      _pre.email mail.to_s
     end
 
     unless _.post?
