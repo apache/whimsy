@@ -47,7 +47,7 @@ APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
 # get up to date data...
 SVN = "/usr/bin/svn --username #{env.user} --password #{env.password}"
 requests = `#{SVN} cat #{ACREQ}/new-account-reqs.txt`
-officers = `#{SVN} cat #{OFFICERS}/iclas.txt`
+iclas_txt = `#{SVN} cat #{OFFICERS}/iclas.txt`
 
 # grab the current list of PMCs from ldap
 pmcs = ASF::Committee.list.map(&:name).sort - NON_PMC_UNIX_GROUPS
@@ -61,9 +61,9 @@ query = CGI::parse ENV['QUERY_STRING']
 iclas = Array(query['iclas']).last
 email = Array(query['email']).last
 if iclas == 'all'
-  iclas = Hash[*officers.scan(/^notinavail:.*?:(.*?):(.*?):Signed CLA/).
+  iclas = Hash[*iclas_txt.scan(/^notinavail:.*?:(.*?):(.*?):Signed CLA/).
     flatten.reverse]
-elsif iclas == '1' and email and officers =~ /^notinavail:.*?:(.*?):#{email}:/
+elsif iclas == '1' and email and iclas_txt =~ /^notinavail:.*?:(.*?):#{email}:/
   iclas = {email => $1}
 else
   count = iclas ? iclas.to_i : 300 rescue 300
@@ -75,7 +75,7 @@ else
 end
 
 # grab the list of userids that have been assigned (for validation purposes)
-taken = officers.scan(/^(\w+?):/).flatten.sort.uniq
+taken = iclas_txt.scan(/^(\w+?):/).flatten.sort.uniq
 
 # add the list of userids that are pending
 taken += requests.scan(/^(\w.*?);/).flatten
