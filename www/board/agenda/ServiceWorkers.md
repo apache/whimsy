@@ -108,11 +108,16 @@ can't surface modal dialogs to prompt for authentication information.  The
 symptom is that you get an authentication error.  If this happens, do a [force
 reload](https://en.wikipedia.org/wiki/Wikipedia:Bypass_your_cache).
 
+Firefox bug report: https://bugzilla.mozilla.org/show_bug.cgi?id=1291893
+
 To date, I've yet to figure out how to effectively report this bug to Chrome.
 See [twitter](https://twitter.com/samruby/status/758673369021710336),
 [w3c](https://lists.w3.org/Archives/Public/public-webapps/2016JulSep/0016.html),
 and
 [blog](http://intertwingly.net/blog/2016/07/11/Service-Workers-First-Impressions).
+
+On the plus side, this likely will be resolved as a part of the recent change
+to the Fetch spec: https://github.com/whatwg/fetch/issues/70
 
 This is an early preview, so there may be problems with sockets not restarting
 after exiting and reloading.  The focus so far has been on the display of
