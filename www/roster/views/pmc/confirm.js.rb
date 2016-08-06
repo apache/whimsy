@@ -7,6 +7,7 @@ class PMCConfirm < React
     @text = 'text'
     @color = 'btn-default'
     @button = 'OK'
+    @disabled = false
   end
 
   def render
@@ -23,8 +24,10 @@ class PMCConfirm < React
           end
 
           _div.modal_footer do
-            _button.btn.btn_default 'Cancel', data_dismiss: 'modal'
-            _button.btn @button, class: @color, onClick: self.post
+            _button.btn.btn_default 'Cancel', data_dismiss: 'modal',
+              disabled: @disabled
+            _button.btn @button, class: @color, onClick: self.post,
+              disabled: @disabled
           end
         end
       end
@@ -55,6 +58,7 @@ class PMCConfirm < React
       body: {pmc: @@pmc, id: @id, action: action, targets: targets}.inspect
     }
 
+    @disabled = true
     fetch('actions/committee', args).then {|response|
       content_type = response.headers.get('content-type') || ''
       if response.status == 200 and content_type.include? 'json'
@@ -65,9 +69,11 @@ class PMCConfirm < React
         alert "#{response.status} #{response.statusText}"
       end
       jQuery('#confirm').modal(:hide)
+      @disabled = false
     }.catch {|error|
       alert errror
       jQuery('#confirm').modal(:hide)
+      @disabled = false
     }
   end
 end

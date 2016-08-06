@@ -82,7 +82,7 @@ class Group < React
   # update group from conformation form
   def update(group)
     # remove members of the group from pending lists
-    for id in group
+    for id in group.members
       @pending.delete(id)
     end
 
@@ -140,7 +140,7 @@ class GroupMember < React
 
   # automatically close row when id changes
   def componentWillReceiveProps(newprops)
-    @state = :closed if newprops.id != @@id
+    @state = :closed if newprops.id != self.props.id
   end
 
   # toggle display of buttons
@@ -160,6 +160,7 @@ class GroupConfirm < React
     @text = 'text'
     @color = 'btn-default'
     @button = 'OK'
+    @disabled = false
   end
 
   def render
@@ -180,8 +181,10 @@ class GroupConfirm < React
           end
 
           _div.modal_footer do
-            _button.btn.btn_default 'Cancel', data_dismiss: 'modal'
-            _button.btn @button, class: @color, onClick: self.post
+            _button.btn.btn_default 'Cancel', data_dismiss: 'modal',
+              disabled: @disabled
+            _button.btn @button, class: @color, onClick: self.post,
+              disabled: @disabled
           end
         end
       end
@@ -208,6 +211,7 @@ class GroupConfirm < React
       body: {group: @@group, id: @id, action: @action}.inspect
     }
 
+    @disabled = true
     fetch('actions/authgroup', args).then {|response|
       content_type = response.headers.get('content-type') || ''
       if response.status == 200 and content_type.include? 'json'
@@ -218,9 +222,11 @@ class GroupConfirm < React
         alert "#{response.status} #{response.statusText}"
       end
       jQuery('#confirm').modal(:hide)
+      @disabled = false
     }.catch {|error|
       alert errror
       jQuery('#confirm').modal(:hide)
+      @disabled = false
     }
   end
 end
