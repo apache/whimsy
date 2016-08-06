@@ -98,17 +98,19 @@ class PMC < React
     if @attic == nil and not committee.established and defined? fetch
       @attic = []
 
-      fetch('attic/issues.json', credentials: 'include').then {|response|
-        if response.status == 200
-          response.json().then do |json|
-            @attic = json
+      Polyfill.require(%w(Promise fetch)) do
+        fetch('attic/issues.json', credentials: 'include').then {|response|
+          if response.status == 200
+            response.json().then do |json|
+              @attic = json
+            end
+          else
+            console.log "Attic JIRA #{response.status} #{response.statusText}"
           end
-        else
-          console.log "Attic JIRA #{response.status} #{response.statusText}"
-        end
-      }.catch {|error|
-        console.log "Attic JIRA #{errror}"
-      }
+        }.catch {|error|
+          console.log "Attic JIRA #{errror}"
+        }
+      end
     end
   end
 end

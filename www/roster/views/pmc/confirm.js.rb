@@ -59,21 +59,23 @@ class PMCConfirm < React
     }
 
     @disabled = true
-    fetch('actions/committee', args).then {|response|
-      content_type = response.headers.get('content-type') || ''
-      if response.status == 200 and content_type.include? 'json'
-        response.json().then do |json|
-          @@update.call(json)
+    Polyfill.require(%w(Promise fetch)) do
+      fetch('actions/committee', args).then {|response|
+        content_type = response.headers.get('content-type') || ''
+        if response.status == 200 and content_type.include? 'json'
+          response.json().then do |json|
+            @@update.call(json)
+          end
+        else
+          alert "#{response.status} #{response.statusText}"
         end
-      else
-        alert "#{response.status} #{response.statusText}"
-      end
-      jQuery('#confirm').modal(:hide)
-      @disabled = false
-    }.catch {|error|
-      alert errror
-      jQuery('#confirm').modal(:hide)
-      @disabled = false
-    }
+        jQuery('#confirm').modal(:hide)
+        @disabled = false
+      }.catch {|error|
+        alert errror
+        jQuery('#confirm').modal(:hide)
+        @disabled = false
+      }
+    end
   end
 end
