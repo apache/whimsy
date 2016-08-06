@@ -801,7 +801,7 @@ module ASF
 
     def remove(people)
       @members = nil
-      people = Array(people & members).map(&:dn)
+      people = (Array(people) & members).map(&:dn)
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('member', people)])
     ensure
       @members = nil

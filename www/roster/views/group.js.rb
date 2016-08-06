@@ -9,7 +9,7 @@ class Group < React
   end
 
   def render
-    group = @@group
+    group = @group
     members = group.members.keys().sort_by {|id| group.members[id]}
 
     if group.type == 'LDAP auth group'
@@ -48,7 +48,6 @@ class Group < React
         end
 
         for id in @pending
-          next if group.members[id]
           _GroupMember id: id, name: @pending[id], auth: auth, 
             pending: true
         end
@@ -68,6 +67,27 @@ class Group < React
     end
 
     _GroupConfirm group: group.id, update: self.update if auth
+  end
+
+  # capture group on initial load
+  def componentWillMount()
+    self.update(@@group)
+  end
+
+  # capture group on subsequent loads
+  def componentWillReceiveProps()
+    self.update(@@group)
+  end
+
+  # update group from conformation form
+  def update(group)
+    # remove members of the group from pending lists
+    for id in group
+      @pending.delete(id)
+    end
+
+    # capture group
+    @group = group
   end
 
   # open search box
@@ -97,22 +117,18 @@ class GroupMember < React
       _td {_a @@id, href: "committer/#{@@id}"}
       _td @@name
 
-      if @@pending
-        _td do
-          _button.btn.btn_success 'Add to Group',
-            data_action: 'add group',
+      _td data_id: @@id do
+        if @@pending
+          _button.btn.btn_success 'Add to Group', data_action: 'add',
             data_target: '#confirm', data_toggle: 'modal',
             data_confirmation: "Add #{@@name} to"
-        end
-      elsif @state == :open
-        _td do
-          _button.btn.btn_warning 'Remove from Group',
-            data_action: 'remove group',
+        elsif @state == :open
+          _button.btn.btn_warning 'Remove from Group', data_action: 'remove',
             data_target: '#confirm', data_toggle: 'modal',
             data_confirmation: "Remove #{@@name} from"
+        else
+          _span ''
         end
-      else
-        _td ''
       end
     end
   end
@@ -184,19 +200,15 @@ class GroupConfirm < React
   end
 
   def post()
-    # parse action extracted from the button
-    targets = @action.split(' ')
-    action = targets.shift()
-
     # construct arguments to fetch
     args = {
       method: 'post',
       credentials: 'include',
       headers: {'Content-Type' => 'application/json'},
-      body: {group: @@group, id: @id, action: action, targets: targets}.inspect
+      body: {group: @@group, id: @id, action: @action}.inspect
     }
 
-    fetch('actions/group', args).then {|response|
+    fetch('actions/authgroup', args).then {|response|
       content_type = response.headers.get('content-type') || ''
       if response.status == 200 and content_type.include? 'json'
         response.json().then do |json|
