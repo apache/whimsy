@@ -66,6 +66,8 @@ class Group < React
         _CommitterSearch add: self.add
       end
     end
+
+    _GroupConfirm group: group.id, update: self.update if auth
   end
 
   # open search box
@@ -100,14 +102,14 @@ class GroupMember < React
           _button.btn.btn_success 'Add to Group',
             data_action: 'add group',
             data_target: '#confirm', data_toggle: 'modal',
-            data_confirmation: "Add #{@@name}"
+            data_confirmation: "Add #{@@name} to"
         end
       elsif @state == :open
         _td do
           _button.btn.btn_warning 'Remove from Group',
             data_action: 'remove group',
             data_target: '#confirm', data_toggle: 'modal',
-            data_confirmation: "Remove #{@@name}"
+            data_confirmation: "Remove #{@@name} from"
         end
       else
         _td ''
@@ -130,5 +132,83 @@ class GroupMember < React
     return unless @@auth
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
+  end
+end
+
+#
+# Confirmation dialog
+#
+
+class GroupConfirm < React
+  def initialize
+    @text = 'text'
+    @color = 'btn-default'
+    @button = 'OK'
+  end
+
+  def render
+    _div.modal.fade.confirm! tabindex: -1 do
+      _div.modal_dialog do
+        _div.modal_content do
+          _div.modal_header.bg_info do
+            _button.close 'x', data_dismiss: 'modal'
+            _h4.modal_title 'Confirm Request'
+          end
+
+          _div.modal_body do
+            _p do 
+              _span "#{@text} the "
+              _code @@group
+              _span " authorization group?"
+            end
+          end
+
+          _div.modal_footer do
+            _button.btn.btn_default 'Cancel', data_dismiss: 'modal'
+            _button.btn @button, class: @color, onClick: self.post
+          end
+        end
+      end
+    end
+  end
+
+  def componentDidMount()
+    jQuery('#confirm').on('show.bs.modal') do |event|
+      button = event.relatedTarget
+      @id = button.parentNode.dataset.id
+      @action = button.dataset.action
+      @text = button.dataset.confirmation
+      @color = button.classList[1]
+      @button = button.textContent
+    end
+  end
+
+  def post()
+    # parse action extracted from the button
+    targets = @action.split(' ')
+    action = targets.shift()
+
+    # construct arguments to fetch
+    args = {
+      method: 'post',
+      credentials: 'include',
+      headers: {'Content-Type' => 'application/json'},
+      body: {group: @@group, id: @id, action: action, targets: targets}.inspect
+    }
+
+    fetch('actions/group', args).then {|response|
+      content_type = response.headers.get('content-type') || ''
+      if response.status == 200 and content_type.include? 'json'
+        response.json().then do |json|
+          @@update.call(json)
+        end
+      else
+        alert "#{response.status} #{response.statusText}"
+      end
+      jQuery('#confirm').modal(:hide)
+    }.catch {|error|
+      alert errror
+      jQuery('#confirm').modal(:hide)
+    }
   end
 end
