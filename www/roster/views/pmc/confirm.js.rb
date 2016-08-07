@@ -24,6 +24,7 @@ class PMCConfirm < React
           end
 
           _div.modal_footer do
+            _span.status 'Processing request...' if @disabled
             _button.btn.btn_default 'Cancel', data_dismiss: 'modal',
               disabled: @disabled
             _button.btn @button, class: @color, onClick: self.post,

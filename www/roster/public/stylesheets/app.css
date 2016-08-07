@@ -19,6 +19,8 @@ table.wide {color: #000; border-collapse: separate; font-size: 100%}
 .member {font-weight: bold}
 .editable td:first-child {color: blue}
 
+.status {font-weight: bold; float: left; color: green}
+
 thead:hover th.sorting-desc:after {content: ' \25bc'}
 thead:hover th.sorting-asc:after {content: ' \25b2'}
 
