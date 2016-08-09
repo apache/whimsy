@@ -83,12 +83,12 @@ Skip this section if you are running a Docker container or a Vagrant VM.
  1. The model code determines what host and port to connect to by parsing
       either `/etc/ldap/ldap.conf` or `/etc/openldap/ldap.conf` for a line that
       looks like the following:
-        `uri     ldaps://ldap1-us-east.apache.org:636`
+        `uri     ldaps://ldap1-lw-us.apache.org:636`
 
  2. A `TLS_CACERT` can be obtained via either of the following commands:
 
         `ruby -r whimsy/asf -e "puts ASF::LDAP.cert"`<br/>
-        `openssl s_client -connect ldap1-us-east.apache.org:636 </dev/null`
+        `openssl s_client -connect ldap1-lw-us.apache.org:636 </dev/null`
 
       Copy from `BEGIN` to `END` inclusive into the file
       `/etc/ldap/asf-ldap-client.pem`.  Point to the file in
