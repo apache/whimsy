@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 #
 #   Build a properly formatted and validated new-account-reqs.txt entry based
 #   on web input.  Does both full client validation and Server-side
