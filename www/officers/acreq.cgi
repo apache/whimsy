@@ -335,11 +335,12 @@ _html do
           end
         end
 
-      # report on status
-      _h2 "New entry #{tobe}added:"
-      _pre line
-      _h2 "Mail #{tobe}sent:"
-      _pre.email mail.to_s
+        # report on status
+        _h2 "New entry #{tobe}added:"
+        _pre line
+        _h2 "Mail #{tobe}sent:"
+        _pre.email mail.to_s
+      end
     end
 
     unless _.post?
