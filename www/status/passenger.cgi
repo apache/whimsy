@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby2.3.0
+#!/usr/bin/env ruby
 # must agree with the Ruby version in PassengerDefaultRuby in passenger.conf
 
 require 'bundler/setup'
