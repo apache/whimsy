@@ -307,6 +307,8 @@ _html do
 
         unless tobe
           Dir.mktmpdir do |tmpdir|
+            tmpdir.untaint
+
             # Checkout the ACREQ directory
             `#{SVN} co #{ACREQ} #{tmpdir}`
 
