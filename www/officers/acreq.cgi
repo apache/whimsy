@@ -103,6 +103,7 @@ _html do
   _head do
     _title 'Submit ASF Account Request'
 
+    _style :system
     _style %{
       label {width: 6em; float: left}
       legend {background: #141; color: #DFD; padding: 0.4em}
@@ -113,8 +114,6 @@ _html do
       input[type=checkbox] {margin-left: 6em; width: 1em}
       input[type=submit] {margin-top: 0.5em; margin-left: 3em; width: 8em}
       .error {margin: 1em; padding: 1em; background: red; color: white}
-      .stdout {background-color: yellow; margin: 0}
-      .stderr {background-color: red; color: white; margin: 0}
       pre.email {background-color: #BDF; padding: 1em 3em; border-radius: 1em}
     }
 

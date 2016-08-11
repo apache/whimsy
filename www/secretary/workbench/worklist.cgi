@@ -472,7 +472,7 @@ _html do
 
           if File.exist? COMPLETED_YML
             last = YAML.load(File.read COMPLETED_YML).last
-            params = {}
+            params = {iclas: 1}
             %w{email user pmc podling votelink}.each do |name|
               params[name] = last[name] if last[name]
             end
@@ -482,8 +482,7 @@ _html do
             end
           end
 
-          _a 'New Account', target: 'viewport',
-            href: 'https://id.apache.org/acreq/members/' + query
+          _a 'New Account', target: 'viewport', href: '/officers/acreq' + query
         end
         _li do
           _a 'Committers by id', target: 'viewport',
