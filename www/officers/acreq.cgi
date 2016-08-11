@@ -282,6 +282,7 @@ _html do
         cc_list << "<#{@email}>".untaint # TODO: add @name RFC822-escaped
 
         # build the mail to be sent
+        ASF::Mail.configure
         mail = Mail.new do
           from  "#{user.public_name} <#{user.id}@apache.org>"
           return_path "root@apache.org"
