@@ -472,11 +472,12 @@ _html do
 
           if File.exist? COMPLETED_YML
             last = YAML.load(File.read COMPLETED_YML).last
-            params = {iclas: '1'}
+            params = {}
             %w{email user pmc podling votelink}.each do |name|
               params[name] = last[name] if last[name]
             end
             unless params.empty?
+              params['iclas'] = '1'
               query = '?' + params.
                 map {|name,value| "#{name}=#{CGI.escape value}"}.join('&')
             end
