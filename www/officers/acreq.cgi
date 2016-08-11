@@ -320,11 +320,10 @@ _html do
 
           # and commit the change ...
           _h2 'Commit messages'
-          rc = _.system ['/usr/bin/svn', [
+          rc = _.system ['/usr/bin/svn',
             ['--username', env.user, '--password', env.password],
             'commit', "#{tmpdir}/new-account-reqs.txt",
             '-m', "#{requestor} account request by #{user.id}"]
-          end
 
           if rc == 0
             mail.deliver!
