@@ -21,6 +21,7 @@ require 'mail'
 require 'date'
 require 'open3'
 require 'tmpdir'
+require 'shellwords'
 
 user = ASF::Auth.decode(env = {})
 unless user.asf_member? or ASF.pmc_chairs.include? user
@@ -46,7 +47,8 @@ OFFICERS = 'https://svn.apache.org/repos/private/foundation/officers'
 APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
 
 # get up to date data...
-SVN = "/usr/bin/svn --username #{env.user} --password #{env.password}"
+SVN = ("/usr/bin/svn --username #{Shellwords.escape env.user} " +
+  "--password #{Shellwords.escape env.password}").untaint
 requests = `#{SVN} cat #{ACREQ}/new-account-reqs.txt`
 iclas_txt = `#{SVN} cat #{OFFICERS}/iclas.txt`
 
@@ -305,35 +307,29 @@ _html do
           Using #{ENV['HTTP_USER_AGENT']}
         EOF
 
-        unless tobe
-          Dir.mktmpdir do |tmpdir|
-            tmpdir.untaint
+        Dir.mktmpdir do |tmpdir|
+          tmpdir.untaint
 
-            # Checkout the ACREQ directory
-            `#{SVN} co #{ACREQ} #{tmpdir}`
+          # Checkout the ACREQ directory
+          `#{SVN} co #{ACREQ} #{tmpdir}`
 
-            # Update the new-account-reqs file...
-            File.open("#{tmpdir}/new-account-reqs.txt", 'a') do |file|
-              file.puts(line)
-            end
+          # Update the new-account-reqs file...
+          File.open("#{tmpdir}/new-account-reqs.txt", 'a') do |file|
+            file.puts(line)
+          end
 
-            # and commit the change ...
-            command = "#{SVN} commit #{tmpdir}/new-account-reqs.txt -m " + 
-              "#{requestor} account request by #{user.id}".inspect
-            _h2 'Commit messages'
-            Open3.popen3(command) do |pin, pout, perr|
-              [
-                Thread.new do
-                  _p.stdout pout.readline.chomp until pout.eof?
-                end,
-                Thread.new do
-                  _p.stderr perr.readline.chomp until perr.eof?
-                end,
-                Thread.new do
-                  pin.close
-                end
-              ].each {|thread| thread.join}
-            end
+          # and commit the change ...
+          _h2 'Commit messages'
+          rc = _.system ['/usr/bin/svn', [
+            ['--username', env.user, '--password', env.password],
+            'commit', "#{tmpdir}/new-account-reqs.txt",
+            '-m', "#{requestor} account request by #{user.id}"]
+          end
+
+          if rc == 0
+            mail.deliver!
+          else
+            tobe = 'that would have been '
           end
         end
 
