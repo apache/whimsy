@@ -472,7 +472,7 @@ _html do
 
           if File.exist? COMPLETED_YML
             last = YAML.load(File.read COMPLETED_YML).last
-            params = {iclas: 1}
+            params = {iclas: '1'}
             %w{email user pmc podling votelink}.each do |name|
               params[name] = last[name] if last[name]
             end
