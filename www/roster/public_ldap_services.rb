@@ -16,7 +16,7 @@
 
 require_relative 'public_json_common'
 
-# gather unix group info
+# gather service group info
 entries = {}
 
 groups = ASF::Service.preload # for performance
