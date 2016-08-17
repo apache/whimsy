@@ -142,6 +142,7 @@ class Agenda
       else
         # if not successful, retry
         if retries > 0
+          work_file.close
           sleep rand(41-retries*2)*0.1 if retries <= 20
           update(file, message, retries-1, &block)
         else
