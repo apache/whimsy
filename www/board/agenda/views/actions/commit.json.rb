@@ -9,6 +9,9 @@ updates = YAML.load_file("#{AGENDA_WORK}/#{user}.yml")
 agenda_file = updates['agenda']
 
 Agenda.update(agenda_file, @message) do |agenda|
+  # refetch to make sure the data is fresh (handles retries, locks, etc...)
+  updates = YAML.load_file("#{AGENDA_WORK}/#{user}.yml")
+
   approved = updates['approved']
   unapproved = updates['unapproved'] || []
   flagged = updates['flagged'] || []
