@@ -5,10 +5,10 @@
 class Adjournment < React
   def initialize
     Todos.set({
-      add: [],
-      remove: [],
-      establish: [],
-      feedback: [],
+      added: [],
+      removed: [],
+      established: [],
+      feedback_sent: [],
       minutes: {},
       loading: true,
       fetched: false
