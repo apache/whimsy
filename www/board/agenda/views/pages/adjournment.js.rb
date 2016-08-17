@@ -5,10 +5,10 @@
 class Adjournment < React
   def initialize
     Todos.set({
-      added: [],
-      removed: [],
-      established: [],
-      feedback_sent: [],
+      add: [],
+      remove: [],
+      establish: [],
+      feedback: [],
       minutes: {},
       loading: true,
       fetched: false
@@ -54,7 +54,7 @@ class Adjournment < React
         # display a list of completed actions
         completed = Todos.minutes.todos
         if 
-          completed and (
+          completed and completed.keys().length > 0 and (
           not completed.added.empty? or 
           not completed.removed.empty? or
           not completed.established.empty? or 
@@ -189,7 +189,6 @@ class TodoActions < React
         _ " (#{person.name})"
 
         if @@action == 'add' and person.resolution
-        console.log person
           resolution = Minutes.get(person.resolution)
           if resolution
             _ ' - '
