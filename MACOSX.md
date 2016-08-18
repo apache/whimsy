@@ -109,7 +109,7 @@ Notes:
  * The ldapsearch command is the standard LDAP utility on MacOSX.
  * To pick up the latest code, the above needs to be run from the directory
    you issued the `git clone` command.  Alternately, provide the full path
-   to the `whimsy/lib` directory.
+   to the `whimsy/lib` directory on the `ASF::LDAP.configure` command.
  * Periodically the infrastructure team reconfigures LDAP servers, which may
    require this command to be run again.
  * Alternatives to running this command can be found in step 4 of
