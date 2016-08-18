@@ -7,7 +7,8 @@ running on Mac OS/X.
 Install Homebrew
 ----------------
 
-Follow the instructions from [brew.sh](http://brew.sh/).
+Follow the instructions from [brew.sh](http://brew.sh/). You might
+have to change shells if you are using csh. Bash works fine.
 
 Verify using:
 
@@ -52,10 +53,15 @@ Verify:
 $ ruby -r whimsy/asf -e 'p ASF.constants'
 [:Config, :Base, :Committee, :LDAP, :ETCLDAP, :LazyHash, :Person, :Group, :Service, :Mail, :SVN, :Git, :ICLA, :Authorization, :Member, :Site, :Podling, :Podlings]
 
-
 $ bundler -v
 Bundler version 1.12.5
 ```
+
+Notes:
+
+You may have trouble installing due to the dependency on nokogiri. There are issues
+with its dependencies. This page suggests some workarounds:
+https://github.com/sparklemotion/nokogiri/issues/1483
 
 Clone whimsy
 ------------
@@ -86,6 +92,7 @@ Configure LDAP
 Install:
 
 ```
+$ cd <path-to-git-whimsy>
 $ sudo ruby -I whimsy/lib -r whimsy/asf -e "ASF::LDAP.configure"
 ```
 
@@ -99,6 +106,7 @@ cn: Sam Ruby
 
 Notes: 
 
+ * The ldapsearch command is the standard LDAP utility on MacOSX.
  * To pick up the latest code, the above needs to be run from the directory
    you issued the `git clone` command.  Alternately, provide the full path
    to the `whimsy/lib` directory.
