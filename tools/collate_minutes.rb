@@ -278,7 +278,7 @@ FileUtils.mkdir_p SITE_MINUTES
 
           next if title == 'April 2011 podling reports'
 
-          title.sub! 'ACE', 'Ace'
+          title.sub! 'Ace', 'ACE' # WHIMSY-31
           title.sub! 'Bean Validation', 'BeanValidation'
           title.sub! 'Bluesky', 'BlueSky'
           title.sub! 'Easyant', 'EasyAnt'
