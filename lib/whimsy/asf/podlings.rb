@@ -95,6 +95,7 @@ module ASF
         podlings.search('podling').map do |node|
           @list << new(node)
         end
+        @mtime = File.mtime(podlings_xml)
       end
 
       @list
