@@ -138,3 +138,63 @@ Notes:
    already has port 80 open.
  * `sudo apachectl restart` is how you restart apache; launchctl itself is for
    controlling what processes automatically start at startup.
+
+Configure Apache httpd to run under your user id
+------------------------------------------------
+
+First, lock down Apache so that it can only be accessed from your localhost
+(using either IPv4 or IPv6).  As you will be configuring Apache httpd to be
+running with your ID, this will prevent external hackers from exploiting that
+code to update your filesystem and do other nasty things.
+
+Edit `/etc/apache2/httpd.conf` using sudo and your favorite text editor.
+Locate the first line that says `Require all granted`.  This should be around
+line 263.  Replace that line with the following three lines:
+
+```
+<RequireAny>
+  Require ip 127.0.0.1
+  Require ip ::1
+</RequireAny>
+```
+
+Find the next occurence of `Require all granted`.  It should now be around
+line 386.  Replace it with `Require all denied`.
+
+Now go back to the top of the file and search or `User`.  Replace the first
+`_www` with your local user id (this may be different than your ASF availid --
+that's OK).  Replace the second `_www` with `staff`.
+
+Save your changes.
+
+Restart Apache httpd using `sudo apachectl restart`.
+
+Verify that you can continue to access the server by re-issuing the following
+command:
+
+```
+$ curl localhost
+<html><body><h1>It works!</h1></body></html>
+```
+
+Make whimsy.local an alias for your machine
+-------------------------------------------
+
+Edit `/etc/hosts` using sudo and your favorite text editor.
+
+Find either line that contains the word `localhost` and add `whimsy.local` to
+it.  For example, if you chose what is likely to be the final line in the file
+and update it, it would look like this:
+
+```
+::1             localhost whimsy.local
+```
+
+Save your changes.
+
+Verify that you can access the server using this new alias:
+
+$ curl whimsy.local
+<html><body><h1>It works!</h1></body></html>
+```
+
