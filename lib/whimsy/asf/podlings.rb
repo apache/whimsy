@@ -48,6 +48,7 @@ module ASF
     # parse startdate
     def startdate
       return unless @startdate
+      # assume 15th (mid-month) if no day specified
       return Date.parse("#@startdate-15") if @startdate.length < 8
       Date.parse(@startdate)
     rescue ArgumentError
@@ -57,6 +58,7 @@ module ASF
     # parse enddate
     def enddate
       return unless @enddate
+      # assume 15th (mid-month) if no day specified
       return Date.parse("#@enddate-15") if @enddate.length < 8
       Date.parse(@enddate)
     rescue ArgumentError
