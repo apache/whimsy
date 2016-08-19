@@ -162,8 +162,9 @@ Find the next occurence of `Require all granted`.  It should now be around
 line 386.  Replace it with `Require all denied`.
 
 Now go back to the top of the file and search or `User`.  Replace the first
-`_www` with your local user id (this may be different than your ASF availid --
-that's OK).  Replace the second `_www` with `staff`.
+`_www` with your local user id.  This may be different than your ASF availid --
+that's OK.  Your local user id is the response to whoami.
+Replace the second `_www` with `staff`.
 
 Save your changes.
 
