@@ -54,36 +54,36 @@ class Adjournment < React
         # display a list of completed actions
         completed = Todos.minutes.todos
         if 
-          completed and (
-          not completed.added.empty? or 
-          not completed.removed.empty? or
-          not completed.established.empty? or 
-          not completed.feedback_sent.empty?)
+          completed and completed.keys().length > 0 and (
+          (completed.added and not completed.added.empty?) or 
+          (completed.removed and not completed.removed.empty?) or
+          (completed.established and not completed.established.empty?) or 
+          (completed.feedback_sent and not completed.feedback_sent.empty?))
         then
           _h3 'Completed actions'
 
-          unless completed.added.empty?
+          if completed.added and not completed.added.empty?
             _p 'Added to PMC chairs'
             _ul completed.added do |id|
               _li {_a id, href: "../../../roster/committer/#{id}"}
             end
           end
 
-          unless completed.removed.empty?
+          if completed.removed and not completed.removed.empty?
             _p 'Removed from PMC chairs'
             _ul completed.removed do |id|
               _li {_a id, href: "../../../roster/committer/#{id}"}
             end
           end
 
-          unless completed.established.empty?
+          if completed.established and not completed.established.empty?
             _p 'Established PMCs'
             _ul completed.established do |pmc|
               _li {_a pmc, href: "../../../roster/committee/#{pmc}"}
             end
           end
 
-          unless completed.feedback_sent.empty?
+          if completed.feedback_sent and not completed.feedback_sent.empty?
             _p 'Sent feedback'
             _ul completed.feedback_sent do |pmc|
               _li {_Link text: pmc, href: pmc.gsub(/\s+/, '-')} 
@@ -189,7 +189,6 @@ class TodoActions < React
         _ " (#{person.name})"
 
         if @@action == 'add' and person.resolution
-        console.log person
           resolution = Minutes.get(person.resolution)
           if resolution
             _ ' - '

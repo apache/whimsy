@@ -140,7 +140,7 @@ def check
     name.split.each do |word|
       next if word.length == 1 and word !~ /\w/
       next if word =~ /^\W/
-      next if %w(van von da de del der den dos i).include? word
+      next if %w(van von da de del der den dos i tot la).include? word
       output << ['case', name] if word !~ /[A-Z][a-z]*/
     end
 
