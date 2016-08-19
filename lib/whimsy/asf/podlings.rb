@@ -101,6 +101,10 @@ module ASF
       @list
     end
 
+    def self.mtime
+      @mtime
+    end
+
     # find a podling by name
     def self.find(name)
       list.find {|podling| podling.name == name}
