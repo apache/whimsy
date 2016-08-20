@@ -261,14 +261,15 @@ LoadModule expires_module libexec/apache2/mod_expires.so
 ```
 
 
-Edit `whimsy/config/whimsy.conf` and replace all occurrences of
-`/Users/rubys/git/whimsy` with the path that you cloned whimsy.
-
 Copy whimsy vhost definition to your apache2 configuration:
 
 ```
 sudo cp whimsy/config/whimsy.conf /private/etc/apache2/other
 ```
+
+Edit `private/etc/apache2/other/whimsy.conf` and replace all occurrences of
+`/Users/rubys/git/whimsy` with the path that you cloned whimsy.
+
 Restart Apache httpd using `sudo apachectl restart`.
 
 Update your local paths to refer to your local test repositories:
