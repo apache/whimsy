@@ -196,6 +196,90 @@ Save your changes.
 Verify that you can access the server using this new alias:
 
 $ curl whimsy.local
+```
 <html><body><h1>It works!</h1></body></html>
 ```
 
+Install passenger
+------------------------------------------------
+
+Install:
+
+``
+$ gem install passenger
+$ passenger-install-apache2-module
+$ sudo apache2ctl restart
+```
+
+For the second step ('passenger-install-apache2-module`), you will need to
+follow the instructions -- which essentially are to press enter twice and then
+copy a file to specified location.  If for any reason you skip that last step,
+you can redo it with the following command:
+
+```
+$ sudo bash -c 'passenger-install-apache2-module --snippet > /etc/apache2/other/passenger.conf'
+```
+
+Verify:
+
+Check that the server information includes 'Phusion_Passenger':
+
+```
+$ curl --head whimsy.local
+HTTP/1.1 200 OK
+Date: Fri, 19 Aug 2016 12:23:23 GMT
+Server: Apache/2.4.18 (Unix) Phusion_Passenger/5.0.30
+Content-Location: index.html.en
+Vary: negotiate
+TCN: choice
+Last-Modified: Mon, 11 Jun 2007 18:53:14 GMT
+ETag: "2d-432a5e4a73a80"
+Accept-Ranges: bytes
+Content-Length: 45
+Content-Type: text/html
+```
+
+Configure whimsy.local vhost
+----------------------------
+
+
+**Note**: At the present time, nothing is ever written to the error log, even
+when services fail.  This is being debugged.
+
+Once again, Edit `/etc/apache2/httpd.conf` using sudo and your favorite text editor.
+
+Uncomment out the following lines:
+
+```
+LoadModule expires_module libexec/apache2/mod_ldap
+
+LoadModule expires_module libexec/apache2/mod_authnz_ldap
+
+LoadModule expires_module libexec/apache2/mod_expires.so
+
+LoadModule expires_module libexec/apache2/mod_rewrite
+```
+
+Copy whimsy vhost definition to your apache2 configuration:
+
+```
+sudo cp whimsy/config/whimsy.conf /private/etc/apache2/other
+```
+
+Edit `whimsy/config/whimsy.conf` and replace all occurrences of
+`/Users/rubys/git/whimsy` with the path that you cloned whimsy.
+
+Restart Apache httpd using `sudo apachectl restart`.
+
+Verify:
+
+Visit [http://whimsy.local/](http://whimsy.local).  You should see the
+whimsy home page.
+
+**Note**: If you navigate to
+[http://whimsy.local/board/agenda](http://whimsy.local/board/agenda), you will
+be prompted for your apache user and password.  Once you have authenticated,
+you will see an Internal Server Error, which isn't surprising as that
+application isn't yet set up.  What is surprising is that there is nothing in
+`/var/log/apache2/whimsy_error.log`.
+when services fail.  This is being debugged.
