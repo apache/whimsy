@@ -205,10 +205,10 @@ Install passenger
 
 Install:
 
-``
+```
 $ gem install passenger
 $ passenger-install-apache2-module
-$ sudo apache2ctl restart
+$ sudo apachectl restart
 ```
 
 For the second step ('passenger-install-apache2-module`), you will need to
