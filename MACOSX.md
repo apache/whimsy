@@ -271,6 +271,9 @@ sudo cp whimsy/config/whimsy.conf /private/etc/apache2/other
 ```
 Restart Apache httpd using `sudo apachectl restart`.
 
+Update your local paths to refer to your local test repositories:
+whimsy/www/secretary/workbench/local_paths.yml
+
 Verify:
 
 Visit [http://whimsy.local/](http://whimsy.local).  You should see the
