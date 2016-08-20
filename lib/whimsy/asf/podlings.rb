@@ -20,6 +20,9 @@ module ASF
     def initialize(node)
       @name = node['name']
       @resource = node['resource']
+      # Needed for matching against mailing list names 
+      @resourceAliases = []
+      @resourceAliases = node['resourceAliases'].split(/,\s*/) if node['resourceAliases']
       @status = node['status']
       @enddate = node['enddate']
       @startdate = node['startdate']
@@ -147,6 +150,23 @@ module ASF
         "dev@#{name}.apache.org"
       end
     end
+
+    # Is this a podling mailing list?
+    def mail_list?(list)
+      return true if _match_mailname?(list, name())
+      # Also check aliases
+      @resourceAliases.each {|name|
+        return true if _match_mailname?(list, name)
+      }
+      return false
+    end
+
+    # Match against new and old list types
+    def _match_mailname?(list, _name)
+      return true if list.start_with?("#{_name}-")
+      return true if list.start_with?("incubator-#{_name}-")
+    end
+
   end
 
   # more backwards compatibility
