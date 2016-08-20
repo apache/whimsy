@@ -27,7 +27,7 @@ _html do
 
         _td podling.status
         _td podling.reporting.join(', ')
-        _td lists.select {|list| list.start_with? "#{podling.name}-" || list.start_with? "incubator-#{podling.name}-"}.join(', ')
+        _td lists.select {|list| list.start_with?("#{podling.name}-") || list.start_with?("incubator-#{podling.name}-") }.join(', ')
       end
     end
   end
