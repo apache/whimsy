@@ -9,11 +9,9 @@ end
 # override home for whimsy
 ENV['HOME'] = '/var/www' if `hostname`.chomp == 'whimsy-vm3'
 
-# look for local_paths.yml or ~/.secassist (in that order)
-config = 'local_paths.yml'
-if not File.exist?(config) and ENV['HOME']
-  config = File.expand_path('~/.secassist')
-end
+# look for ~/.secassist or local_paths.yml (in that order)
+config = File.expand_path('~/.secassist')
+config = 'local_paths.yml' unless File.exist?(config)
 
 # set constants based on the configuration file
 require 'yaml'

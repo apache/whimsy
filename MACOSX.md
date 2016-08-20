@@ -272,9 +272,6 @@ Edit `private/etc/apache2/other/whimsy.conf` and replace all occurrences of
 
 Restart Apache httpd using `sudo apachectl restart`.
 
-Update your local paths to refer to your local test repositories:
-whimsy/www/secretary/workbench/local_paths.yml
-
 Verify:
 
 Visit [http://whimsy.local/](http://whimsy.local).  You should see the
@@ -287,3 +284,10 @@ you will see an Internal Server Error, which isn't surprising as that
 application isn't yet set up.  What is surprising is that there is nothing in
 `/var/log/apache2/whimsy_error.log`.
 when services fail.  This is being debugged.
+
+Additional (application specific) configuration
+-----------------------------------------------
+
+A number of individual tools require additional configuration:
+
+* [config/secretary-workbench.md](config/secretary-workbench.md)
