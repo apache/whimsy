@@ -31,6 +31,13 @@ module ASF
       @champion = node.at('champion')['availid'] if node.at('champion')
 
       @reporting = node.at('reporting')
+
+      # Note: the following optional elements are not currently processed:
+      # - resolution
+      # - retiring/graduating
+      # The following podling attributes are not processed:
+      # - longname
+      # - sponsor
     end
 
     # map resource to name
