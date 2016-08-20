@@ -167,6 +167,33 @@ module ASF
       return true if list.start_with?("incubator-#{_name}-")
     end
 
+    # Return the instance as a hash
+    def as_hash # might be confusing to use to_h here?
+      hash = {
+        name: @name,
+        status: status,
+        description: description,
+        mentors: mentors,
+        startdate: startdate,
+      }
+      hash[:enddate] = enddate if enddate
+      hash[:champion] = champion if champion
+
+      # Tidy up the reporting output
+      r = @reporting
+      if r.instance_of? Nokogiri::XML::Element
+        group = r['group']
+        hash[:reporting] = {
+          group: group
+        }
+        hash[:reporting][:text] = r.text if r.text.length > 0
+        hash[:reporting][:monthly] = r.text.split(/,\s*/) if r['monthly']
+      else
+        hash[:reporting] = r if r
+      end
+      hash
+    end
+
   end
 
   # more backwards compatibility
