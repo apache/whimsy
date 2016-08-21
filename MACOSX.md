@@ -243,8 +243,7 @@ Configure whimsy.local vhost
 ----------------------------
 
 
-**Note**: At the present time, nothing is ever written to the error log, even
-when services fail.  This is being debugged.
+**Note**: At the present time, LDAP authentication fails, apparently without writing any errors to any log.  This is being debugged.
 
 Once again, Edit `/etc/apache2/httpd.conf` using sudo and your favorite text editor.
 
@@ -277,13 +276,10 @@ Verify:
 Visit [http://whimsy.local/](http://whimsy.local).  You should see the
 whimsy home page.
 
-**Note**: If you navigate to
+**Note**: If you navigate to an URL that requires authentication like
 [http://whimsy.local/board/agenda](http://whimsy.local/board/agenda), you will
 be prompted for your apache user and password.  Once you have authenticated,
-you will see an Internal Server Error, which isn't surprising as that
-application isn't yet set up.  What is surprising is that there is nothing in
-`/var/log/apache2/whimsy_error.log`.
-when services fail.  This is being debugged.
+you will see an Internal Server Error.  This is being debugged.
 
 Additional (application specific) configuration
 -----------------------------------------------
