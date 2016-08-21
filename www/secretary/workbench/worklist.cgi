@@ -76,9 +76,9 @@ _html do
           elsif pending['doctype'] == 'nda'
             message = "NDA for #{pending['realname']}"
           elsif pending['doctype'] == 'incomplete'
-            message = "Incomplete for #{pending['nname']}"
+            message = "Incomplete document received from #{pending['iname']}"
           elsif pending['doctype'] == 'unsigned'
-            message = "Unsigned for #{pending['nname']}"
+            message = "Unsigned document received from #{pending['uname']}"
           end
         end
       end
@@ -215,17 +215,17 @@ _html do
             _table do
               _tr do
                 _td do
-                  _label 'Name', for: 'nname'
+                  _label 'Name', for: 'iname'
                 end
                 _td do
-                  _input type: :text, name: 'nname', id: 'nname'
+                  _input type: :text, name: 'iname', id: 'iname'
                 end
               end
 
               _tr do
                 _td.label 'EMail'
                 _td.input do
-                  _input name: 'nemail', id: 'nemail', type: 'email'
+                  _input name: 'iemail', id: 'iemail', type: 'email'
                 end
               end
             end
@@ -235,17 +235,17 @@ _html do
             _table do
               _tr do
                 _td do
-                  _label 'Name', for: 'nname'
+                  _label 'Name', for: 'uname'
                 end
                 _td do
-                  _input type: :text, name: 'nname', id: 'nname'
+                  _input type: :text, name: 'uname', id: 'uname'
                 end
               end
 
               _tr do
                 _td.label 'EMail'
                 _td.input do
-                  _input name: 'nemail', id: 'nemail', type: 'email'
+                  _input name: 'uemail', id: 'uemail', type: 'email'
                 end
               end
 
@@ -503,13 +503,13 @@ _html do
             _tr do
               _td.label 'PMC'
               _td.input do
-                _input name: 'cpmc', id: 'cpmc', type: 'text'
+                _input name: 'ipmc', id: 'ipmc', type: 'text'
               end
             end
             _tr do
               _td.label 'Podling'
               _td.input do
-                _input name: 'cpodling', id: 'cpodling', type: 'text'
+                _input name: 'ipodling', id: 'ipodling', type: 'text'
               end
             end
           end
@@ -517,13 +517,13 @@ _html do
             _tr do
               _td.label 'PMC'
               _td.input do
-                _input name: 'cpmc', id: 'cpmc', type: 'text'
+                _input name: 'upmc', id: 'upmc', type: 'text'
               end
             end
             _tr do
               _td.label 'Podling'
               _td.input do
-                _input name: 'cpodling', id: 'cpodling', type: 'text'
+                _input name: 'upodling', id: 'upodling', type: 'text'
               end
             end
           end

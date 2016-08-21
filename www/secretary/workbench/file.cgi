@@ -611,11 +611,10 @@ _html do
       update_pending params, dest
 
     when 'incomplete'
-      _.system "whoami"
       @realname ||= @iname
       dest = "incomplete"
 
-      _h1 "Incomplete from #{@iname}"
+      _h1 "Incomplete document received from #{@iname}"
       _.move @source, dest
 
       update_pending params, dest
@@ -624,7 +623,7 @@ _html do
       @realname ||= @nname
       dest = "unsigned"
 
-      _h1 "Unsigned from #{@uname}"
+      _h1 "Unsigned document received from #{@uname}"
       _.move @source, dest
 
       update_pending params, dest
