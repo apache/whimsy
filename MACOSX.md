@@ -242,9 +242,6 @@ Content-Type: text/html
 Configure whimsy.local vhost
 ----------------------------
 
-
-**Note**: At the present time, LDAP authentication fails, apparently without writing any errors to any log.  This is being debugged.
-
 Once again, Edit `/etc/apache2/httpd.conf` using sudo and your favorite text editor.
 
 Uncomment out the following lines:
@@ -259,6 +256,11 @@ LoadModule ldap_module libexec/apache2/mod_ldap.so
 LoadModule expires_module libexec/apache2/mod_expires.so
 ```
 
+Add the following line:
+
+```
+LDAPVerifyServerCert Off
+```
 
 Copy whimsy vhost definition to your apache2 configuration:
 
@@ -273,13 +275,16 @@ Restart Apache httpd using `sudo apachectl restart`.
 
 Verify:
 
-Visit [http://whimsy.local/](http://whimsy.local).  You should see the
-whimsy home page.
-
-**Note**: If you navigate to an URL that requires authentication like
-[http://whimsy.local/board/agenda](http://whimsy.local/board/agenda), you will
-be prompted for your apache user and password.  Once you have authenticated,
-you will see an Internal Server Error.  This is being debugged.
++ **Static content**: Visit [http://whimsy.local/](http://whimsy.local).  You
+  should see the [whimsy home page](https://whimsy.apache.org/).
++ **CGI scripts**: Visit
+  [http://whimsy.local/test.cgi](http://whimsy.local/test.cgi).  You should see
+  a list of environment variables.  Compare with [test.cgi on
+  whimsy](https://whimsy.apache.org/test.cgi).
++ **Passenger/Rack applications**: Visit
+  [http://whimsy.local/racktest](http://whimsy.local/racktest).  You should see
+  a list of environment variables.  Compare with [racktest on
+  whimsy](https://whimsy.apache.org/racktest).
 
 Additional (application specific) configuration
 -----------------------------------------------
@@ -287,3 +292,10 @@ Additional (application specific) configuration
 A number of individual tools require additional configuration:
 
 * [config/secretary-workbench.md](config/secretary-workbench.md)
+
+Debugging
+---------
+
+When things go wrong, check `/var/log/apache2/whimsy_error.log` and
+`/var/log/apache2/error_log`.
+
