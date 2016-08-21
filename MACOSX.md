@@ -286,6 +286,15 @@ Verify:
   a list of environment variables.  Compare with [racktest on
   whimsy](https://whimsy.apache.org/racktest).
 
+Compare the `PATH` values with your local (command line) environment.
+Various whimsy tools will make use of a number of commands (`svn`, `pdftk`)
+and it is important that these tools (and the correct version of each) can
+be found on the `PATH` defined to the Apache httpd web server.  If you find
+you need to adjust this, edit the `SetEnv PATH` line in
+`/etc/apache2/other/whimsy.conf`, restart the server and verify the path
+again.
+
+
 Additional (application specific) configuration
 -----------------------------------------------
 
