@@ -357,7 +357,7 @@ _json do
     _html send_email $1, @message
   elsif @cmd =~ /svn (update|revert -R|cleanup)/ and committable.include? @file
     op, file = $1.split(' '), @file
-    op += ['--username', $USER, '--password', $PASSWORD] if $PASSWORD
+    op << ['--username', $USER, '--password', $PASSWORD] if $PASSWORD
     _html html_fragment {
       _.system [ 'svn', *op, file ]
     }
