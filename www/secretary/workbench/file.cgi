@@ -65,7 +65,8 @@ def update_pending fields, dest
 
   # copy email field
   fields['email'] ||= fields['gemail'] || fields['cemail'] ||
-                      fields['nemail'] || fields['memail']
+                      fields['nemail'] || fields['memail'] ||
+                      fields['iemail'] || fields['uemail']
   fields.delete('email') unless fields['email']
   
   # Concatenate the fields to the pending list and write to disk
@@ -357,6 +358,7 @@ _json do
     _html send_email $1, @message
   elsif @cmd =~ /svn (update|revert -R|cleanup)/ and committable.include? @file
     op, file = $1.split(' '), @file
+    op << ['--username', $USER, '--password', $PASSWORD] if $PASSWORD
     _html html_fragment {
       _.system [ 'svn', *op, file ]
     }
@@ -424,7 +426,7 @@ DESTINATION = {
   "operations" => "to_operations",
   "dup" => "deadletter/dup",
   "incomplete" => "deadletter/incomplete",
-  "unsigned" => "deadletter/incomplete"
+  "unsigned" => "deadletter/unsigned"
 }
 
 line = nil
@@ -605,6 +607,25 @@ _html do
         end
         _.system "svn diff #{ndalist}", hilite: @nid
       end
+
+      update_pending params, dest
+
+    when 'incomplete'
+      _.system "whoami"
+      @realname ||= @iname
+      dest = "incomplete"
+
+      _h1 "Incomplete from #{@iname}"
+      _.move @source, dest
+
+      update_pending params, dest
+
+    when 'unsigned'
+      @realname ||= @nname
+      dest = "unsigned"
+
+      _h1 "Unsigned from #{@uname}"
+      _.move @source, dest
 
       update_pending params, dest
 
@@ -856,6 +877,8 @@ _html do
           icla: %w( realname email ),
           ccla: %w( cemail contact ),
           nda: %w( nname nemail nid ),
+          incomplete: %w( iname iemail ),
+          unsigned: %w( uname uemail ),
           mem: %w( memail ),
           grant: %w( gname gemail ),
         } 
