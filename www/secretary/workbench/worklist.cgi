@@ -54,7 +54,7 @@ _html do
         files << line.sub(DOCUMENTS, 'documents')
       end
 
-      message = 'Faxes received'
+      message = 'spam'
 
       if File.exist? PENDING_YML
         pending = YAML.load(open(PENDING_YML))
