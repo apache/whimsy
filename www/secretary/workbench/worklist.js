@@ -112,6 +112,9 @@ $(document).ready(function() {
       $.post('file.cgi', {cmd: 'svninfo', source: link}, function(info) {
         if (!$('#realname').val()) $('#realname').val(info.from);
         if (!$('#nname').val())    $('#nname').val(info.from);
+        if (!$('#iname').val())    $('#iname').val(info.from);
+        if (!$('#uname').val())    $('#uname').val(info.from);
+        if (!$('#pname').val())    $('#pname').val(info.from);
         if (!$('#contact').val())  $('#contact').val(info.from);
         if (!$('#gname').val())    $('#gname').val(info.from);
         if (!$('#email').val())    $('#email').val(info.email);
@@ -119,6 +122,9 @@ $(document).ready(function() {
         if (!$('#gemail').val())   $('#gemail').val(info.email);
         if (!$('#nemail').val())   $('#nemail').val(info.email);
         if (!$('#memail').val())   $('#memail').val(info.email);
+        if (!$('#iemail').val())   $('#iemail').val(info.email);
+        if (!$('#uemail').val())   $('#uemail').val(info.email);
+        if (!$('#pemail').val())   $('#pemail').val(info.email);
         if (!$('#nid').val()) {
           var email = $('#email').val();
           if (email.match(/^\w+@apache.org$/)) {

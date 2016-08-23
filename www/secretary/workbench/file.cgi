@@ -65,7 +65,8 @@ def update_pending fields, dest
 
   # copy email field
   fields['email'] ||= fields['gemail'] || fields['cemail'] ||
-                      fields['nemail'] || fields['memail']
+                      fields['nemail'] || fields['memail'] ||
+                      fields['iemail'] || fields['uemail'] || fields['pemail']
   fields.delete('email') unless fields['email']
   
   # Concatenate the fields to the pending list and write to disk
@@ -425,7 +426,7 @@ DESTINATION = {
   "operations" => "to_operations",
   "dup" => "deadletter/dup",
   "incomplete" => "deadletter/incomplete",
-  "unsigned" => "deadletter/incomplete"
+  "unsigned" => "deadletter/unsigned"
 }
 
 line = nil
@@ -606,6 +607,34 @@ _html do
         end
         _.system "svn diff #{ndalist}", hilite: @nid
       end
+
+      update_pending params, dest
+
+    when 'incomplete'
+      Dir.chdir(RECEIVED) do
+        @realname ||= @iname
+
+        _h1 "Incomplete document received from #{@iname}"
+        _.move @source, 'deadletter/incomplete'
+
+      end
+
+      update_pending params, 'deadletter/incomplete'
+
+    when 'unsigned'
+      Dir.chdir(RECEIVED) do
+        @realname ||= @nname
+
+        _h1 "Unsigned document received from #{@uname}"
+        _.move @source, 'deadletter/unsigned'
+      end
+
+      update_pending params, dest
+
+    when 'publickey'
+      @realname ||= @iname
+
+      _h1 "Public key not found for #{@pname}"
 
       update_pending params, dest
 
@@ -857,6 +886,9 @@ _html do
           icla: %w( realname email ),
           ccla: %w( cemail contact ),
           nda: %w( nname nemail nid ),
+          incomplete: %w( iname iemail ),
+          unsigned: %w( uname uemail ),
+          publickey: %w( pname pemail ),
           mem: %w( memail ),
           grant: %w( gname gemail ),
         } 
