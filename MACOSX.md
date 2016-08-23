@@ -106,7 +106,6 @@ cn: Sam Ruby
 
 Notes: 
 
- * The ldapsearch command is the standard LDAP utility on MacOSX.
  * To pick up the latest code, the above needs to be run from the directory
    you issued the `git clone` command.  Alternately, provide the full path
    to the `whimsy/lib` directory on the `ASF::LDAP.configure` command.
@@ -114,6 +113,7 @@ Notes:
    require this command to be run again.
  * Alternatives to running this command can be found in step 4 of
    [DEVELOPMENT.md](https://github.com/apache/whimsy/blob/master/DEVELOPMENT.md)
+ * The `ldapsearch` command is the standard LDAP utility on MacOSX.
 
 
 Start Apache httpd
@@ -195,8 +195,8 @@ Save your changes.
 
 Verify that you can access the server using this new alias:
 
-$ curl whimsy.local
 ```
+$ curl whimsy.local
 <html><body><h1>It works!</h1></body></html>
 ```
 
@@ -293,6 +293,52 @@ be found on the `PATH` defined to the Apache httpd web server.  If you find
 you need to adjust this, edit the `SetEnv PATH` line in
 `/etc/apache2/other/whimsy.conf`, restart the server and verify the path
 again.
+
+
+Configure sending of mail
+-------------------------
+
+Every mail delivery system appears to be different.  Once whitelisted,
+`sendmail` works fine on `whimsy-vm3.apache.org`.  Others may require
+passwords or may throttle the rate at which emails can be sent.
+
+The one option that appears to work for everybody is gmail.
+
+Create a `~/.whimsy` file, and add the following content:
+
+```
+---
+:sendmail:
+  delivery_method: smtp
+  address: smtp.gmail.com
+  port: 587
+  domain: apache.org
+  user_name: username
+  password: password
+  authentication: plain
+  enable_starttls_auto: true
+```
+
+Verify this works:
+
+```
+$ ruby whimsy/tools/testmail.rb 
+```
+
+Note Gmail will just be used as a delivery mechanism, you can still
+use a different address (such as your @apache.org email address) as
+the *from* address.  The `domain` above should match the host portion of
+the from address.  
+
+Should your Apache user id differ from your local user id, either specify your
+ASF user id as the first parameter to the testmail.rb program, or set the USER
+environment variable to your ASF user id before running this script.
+
+If this fails, check your email for a response from Google.  You may need
+to approve this application.
+
+Information on other ways to configure sending mail can be found at
+[DEVELOPMENT.md](DEVELOPMENT.md#setup) step 6.
 
 
 Additional (application specific) configuration
