@@ -80,7 +80,7 @@ _html do
           elsif pending['doctype'] == 'unsigned'
             message = "Unsigned document received from #{pending['uname']}"
           elsif pending['doctype'] == 'publickey'
-            message = "Public key not found for #{pending['iname']}"
+            message = "Public key not found for #{pending['pname']}"
           end
         end
       end
