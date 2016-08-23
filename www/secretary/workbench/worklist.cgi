@@ -2,7 +2,7 @@
 require 'wunderbar'
 require 'yaml'
 
-DOCTYPES = %w{icla grant ccla nda incomplete unsigned other}
+DOCTYPES = %w{icla grant ccla nda other incomplete unsigned publickey}
 
 _html do
   _head_ do
@@ -31,7 +31,7 @@ _html do
     begin
       begin
         require './local_paths'
-        DOCTYPES.insert(-2, 'mem') if defined?(MEETING)
+        DOCTYPES.insert(-1, 'mem') if defined?(MEETING)
       rescue
         _h2_ 'Syntax error in local_paths.yml'
         raise 
@@ -79,6 +79,8 @@ _html do
             message = "Incomplete document received from #{pending['iname']}"
           elsif pending['doctype'] == 'unsigned'
             message = "Unsigned document received from #{pending['uname']}"
+          elsif pending['doctype'] == 'publickey'
+            message = "Public key not found for #{pending['iname']}"
           end
         end
       end
@@ -133,14 +135,29 @@ _html do
         _form.doctype! target: 'viewport', action: 'file.cgi', method: 'post' do
           _table_ do
             _tr do
-              DOCTYPES.each do |doctype|
+              DOCTYPES[0..4].each do |doctype|
                 _td align: 'center' do
                   _input type: 'radio', name: 'doctype', value: doctype
                 end
               end
             end
             _tr do
-              DOCTYPES.each do |doctype|
+              DOCTYPES[0..4].each do |doctype|
+                _td doctype, align: 'center'
+              end
+            end
+          end
+
+          _table_ do
+            _tr do
+              DOCTYPES[5..-1].each do |doctype|
+                _td align: 'center' do
+                  _input type: 'radio', name: 'doctype', value: doctype
+                end
+              end
+            end
+            _tr do
+              DOCTYPES[5..-1].each do |doctype|
                 _td doctype, align: 'center'
               end
             end
@@ -249,6 +266,26 @@ _html do
                 end
               end
 
+            end
+          end
+
+          _div_ id: 'publickey-form' do
+            _table do
+              _tr do
+                _td do
+                  _label 'Name', for: 'pname'
+                end
+                _td do
+                  _input type: :text, name: 'pname', id: 'pname'
+                end
+              end
+
+              _tr do
+                _td.label 'EMail'
+                _td.input do
+                  _input name: 'pemail', id: 'pemail', type: 'email'
+                end
+              end
             end
           end
 
@@ -499,6 +536,7 @@ _html do
               end
             end
           end
+
           _table id: 'incomplete2-form' do
             _tr do
               _td.label 'PMC'
@@ -513,6 +551,7 @@ _html do
               end
             end
           end
+
           _table id: 'unsigned2-form' do
             _tr do
               _td.label 'PMC'
@@ -524,6 +563,20 @@ _html do
               _td.label 'Podling'
               _td.input do
                 _input name: 'upodling', id: 'upodling', type: 'text'
+              end
+            end
+          end
+          _table id: 'publickey2-form' do
+            _tr do
+              _td.label 'PMC'
+              _td.input do
+                _input name: 'ppmc', id: 'ppmc', type: 'text'
+              end
+            end
+            _tr do
+              _td.label 'Podling'
+              _td.input do
+                _input name: 'ipodling', id: 'ipodling', type: 'text'
               end
             end
           end

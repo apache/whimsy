@@ -66,7 +66,7 @@ def update_pending fields, dest
   # copy email field
   fields['email'] ||= fields['gemail'] || fields['cemail'] ||
                       fields['nemail'] || fields['memail'] ||
-                      fields['iemail'] || fields['uemail']
+                      fields['iemail'] || fields['uemail'] || fields['pemail']
   fields.delete('email') unless fields['email']
   
   # Concatenate the fields to the pending list and write to disk
@@ -611,20 +611,31 @@ _html do
       update_pending params, dest
 
     when 'incomplete'
-      @realname ||= @iname
-      dest = "incomplete"
+      Dir.chdir(RECEIVED) do
+        @realname ||= @iname
 
-      _h1 "Incomplete document received from #{@iname}"
-      _.move @source, dest
+        _h1 "Incomplete document received from #{@iname}"
+        _.move @source, dest
+
+      end
+
+      update_pending params, 'deadletter/incomplete'
+
+    when 'unsigned'
+      Dir.chdir(RECEIVED) do
+
+        @realname ||= @nname
+
+        _h1 "Unsigned document received from #{@uname}"
+        _.move @source, 'deadletter/unsigned'
+      end
 
       update_pending params, dest
 
-    when 'unsigned'
-      @realname ||= @nname
-      dest = "unsigned"
+    when 'publickey'
+      @realname ||= @iname
 
-      _h1 "Unsigned document received from #{@uname}"
-      _.move @source, dest
+      _h1 "Public key not found for #{@pname}"
 
       update_pending params, dest
 
