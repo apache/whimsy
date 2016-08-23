@@ -47,7 +47,7 @@ checkout of `documents/received`.
 Run:
 
 ```
-$sudo apachectl restart
+$ sudo apachectl restart
 ```
 
 Install pdftk

@@ -1,8 +1,6 @@
 require 'mail'
 
 Mail.defaults do
-  delivery_method :sendmail
-
   if $USER == 'clr'
 
     @from = 'Craig L Russell <clr@apache.org>'
@@ -52,5 +50,3 @@ Mail.defaults do
     }
   end
 end
-
-

@@ -208,7 +208,7 @@ end
 def send_email(target, message)
   pending = YAML.load(open(PENDING_YML))
 
-  require MAIL if defined?(MAIL)
+  require_relative 'secmail'
   require 'erb'
 
   mails = []
@@ -227,7 +227,7 @@ def send_email(target, message)
     # send email, if template exists
     template = vars.doctype + '.erb'
     template.taint unless template =~ /^\w[.\w]+$/
-    if defined?(MAIL) and File.exist?(template)
+    if File.exist?(template)
       # prepare to send mail
       ASF::Mail.configure
 
