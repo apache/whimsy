@@ -3,5 +3,4 @@ foundation: /srv/secretary/workbench/foundation
 officers:   /srv/secretary/workbench/foundation/officers
 documents:  /srv/secretary/workbench/documents
 received:   /srv/secretary/workbench/documents/received
-mail:       /srv/secretary/workbench/secmail.rb
 subreq:     /srv/secretary/workbench/subreq
