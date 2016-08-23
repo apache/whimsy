@@ -941,8 +941,8 @@ _html do
 
 	  if verify
 	    stderr2out = { class: {stderr: '_stdout'} }
-	    _.system ['gpg', '--verify', '--keyserver', 'pgpkeys.mit.edu', *verify], stderr2out
-            if _.target!.include? "gpg: Can't check signature: public key not found"
+	    _.system ['gpg', 'pgpkeys.mit.edu', *verify], stderr2out
+            if _.target!.include? "gpg: Can't check signature:"
               keyid = _.target![/[RD]SA key ID (\w+)/,1]
               if keyid
 	        _.system ['gpg', '--keyserver', 'pgpkeys.mit.edu',
