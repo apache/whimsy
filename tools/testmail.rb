@@ -1,12 +1,18 @@
 #
 # Test the ability to send email to non-apache.org email addresses
 #
+# Should your local user id not match your ASF user id, either specify your
+# ASF user as the first argument to this script, or set the USER environment
+# variable.
+#
+# Note: this will send an email to THAT user.
+#
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'whimsy/asf'
 require 'mail'
 require 'etc'
-person = ASF::Person.find(Etc.getlogin)
+person = ASF::Person.find(ARGV.first || ENV['USER'] || Etc.getlogin)
 
 ASF::Mail.configure
 
