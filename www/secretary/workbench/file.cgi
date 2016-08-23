@@ -221,8 +221,8 @@ def send_email(target, message)
     vars.commit_message = message
 
     # collapse pmc and podling variable names
-    vars.pmc ||= vars.cpmc || vars.gpmc
-    vars.podling ||= vars.cpodling || vars.gpodling
+    vars.pmc ||= vars.cpmc || vars.gpmc || vars.ipmc || vars.upmc || vars.ppmc
+    vars.podling ||= vars.cpodling || vars.gpodling || vars.ipodling || vars.upodling || vars.ppodling
 
     # send email, if template exists
     template = vars.doctype + '.erb'
