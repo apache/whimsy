@@ -615,7 +615,7 @@ _html do
         @realname ||= @iname
 
         _h1 "Incomplete document received from #{@iname}"
-        _.move @source, dest
+        _.move @source, 'deadletter/incomplete'
 
       end
 
@@ -623,7 +623,6 @@ _html do
 
     when 'unsigned'
       Dir.chdir(RECEIVED) do
-
         @realname ||= @nname
 
         _h1 "Unsigned document received from #{@uname}"
@@ -889,6 +888,7 @@ _html do
           nda: %w( nname nemail nid ),
           incomplete: %w( iname iemail ),
           unsigned: %w( uname uemail ),
+          publickey: %w( pname pemail ),
           mem: %w( memail ),
           grant: %w( gname gemail ),
         } 
