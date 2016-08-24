@@ -81,7 +81,7 @@ def public_json_output_file(info, file)
 
 end
 
-def sendMail(subject, body)
+def sendMail(subject, body, to='Notification List <notifications@whimsical.apache.org>')
   if `hostname`.include? 'vm2'
     Wunderbar.info "Detected vm2, not sending mail: #{subject}"
     return
@@ -92,7 +92,7 @@ def sendMail(subject, body)
     ldaphost = ASF::LDAP.host()
     mail = Mail.new do
       from 'Public JSON file updates  <dev@whimsical.apache.org>'
-      to 'Notification List <notifications@whimsical.apache.org>'
+      to to
       subject subject
       body body
     end
