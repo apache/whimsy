@@ -435,7 +435,7 @@ _html do
   _head_ do
     _title 'File Document'
 
-    if ! %w{check update commit view}.include?(@action.to_s.downcase)
+    if ! %w{check update commit view danger}.include?(@action.to_s.downcase)
       _script 'parent.frames[0].location.reload()'
     end
 
