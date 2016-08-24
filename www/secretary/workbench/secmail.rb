@@ -3,7 +3,7 @@ require 'mail'
 Mail.defaults do
   if $USER == 'clr'
 
-    @from = 'Craig L Russell <clr@apache.org>'
+    @from = 'Craig L Russell <secretary@apache.org>'
     @sig = %{
       -- Craig L Russell
       Secretary, Apache Software Foundation
