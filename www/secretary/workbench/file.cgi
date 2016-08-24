@@ -1052,6 +1052,10 @@ _html do
         end
       end
   
+    when 'danger'
+      _h2 'Potentially dangerous content'
+      _a @link, href: '/members/received/' + @link
+
     else
       _h2 'Unsupported action'
       _table border: 1, cellpadding: 10, cellspacing: 0 do
