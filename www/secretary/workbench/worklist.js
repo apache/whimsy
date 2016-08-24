@@ -99,10 +99,13 @@ $(document).ready(function() {
     if (directory || link.match(/pgp\.txt$/)) {
       parent.frames[1].location.href = 'file.cgi?action=view&dir=' +
         encodeURIComponent(link);
-    } else {
+    } else if (link.match(/\.(pdf|txt)$/)) {
       var href = link;
       if ($(this).attr('data-mtime')) href += '?' + $(this).attr('data-mtime');
       parent.frames[1].location.href = '/members/received/' + href;
+    } else  {
+      parent.frames[1].location.href = 'file.cgi?action=danger&link=' +
+        encodeURIComponent(link);
     }
 
     if (!link.match(/^eFax-\d+\.pdf$/)) {
