@@ -116,7 +116,7 @@ end
 # Write formatted output to specific file
 def write_output(file, results)
 
-  if not File.exist?(file) or (@old_file=File.read(file).chomp; removeTimestamps(old_file)) != removeTimestamps(results)
+  if not File.exist?(file) or (@old_file=File.read(file).chomp; removeTimestamps(@old_file)) != removeTimestamps(results)
 
     Wunderbar.info "git_info: #{GITINFO} - creating/updating #{file}"
 
