@@ -44,7 +44,7 @@ Install dependencies
 Install:
 
 ```
-$ gem install whimsy-asf bundler
+$ gem install whimsy-asf bundler mail
 ```
 
 Verify:
@@ -254,6 +254,8 @@ LoadModule authnz_ldap_module libexec/apache2/mod_authnz_ldap.so
 LoadModule ldap_module libexec/apache2/mod_ldap.so
 
 LoadModule expires_module libexec/apache2/mod_expires.so
+
+LoadModule cgi_module libexec/apache2/mod_cgi.so
 ```
 
 Add the following line:
