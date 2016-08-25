@@ -1,5 +1,3 @@
-boom
-
 require File.expand_path('../main.rb', __FILE__)
 
 require 'whimsy/asf/rack'
