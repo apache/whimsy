@@ -14,6 +14,8 @@ require 'whimsy/asf'
 repository_file = File.expand_path('../../../repository.yml', __FILE__)
 repository = YAML.load_file(repository_file)
 
+svnrepos = ASF::Config.get(:svn)
+
 _html do
   _link rel: 'stylesheet', href: 'css/status.css'
   _img.logo src: '../whimsy.svg'
@@ -25,10 +27,11 @@ _html do
   }
 
   writable = true
+  svnroot = (svnrepos.length == 1 && svnrepos.first =~ /^(\/\w[-.\w]*)+\/\*$/)
 
   _h1_ 'SVN Repository Status'
 
-  _table.table do
+  _table_.table do
     _thead do
       _tr do
         _th 'respository'
@@ -72,6 +75,7 @@ _html do
 
   _script %{
     var local = #{writable};
+    var svnroot = #{!!svnroot};
 
     // update status of a row based on a sever response
     function updateStatus(tr, response) {
@@ -84,7 +88,7 @@ _html do
         tr.setAttribute('class', 'bg-warning');
 
         if (local) {
-          $(tds[4]).append('<button class="btn btn-info">update</button>');
+          $(tds[4]).html('<button class="btn btn-info">update</button>');
           $('button', tr).on('click', sendRequest);
         }
       } else {
@@ -108,29 +112,43 @@ _html do
         $.getJSON('?action=' + action + '&name=' + name, function(response) {
           updateStatus(tr, response);
           event.currentTarget.disabled = false;
+          updateAll();
         });
       }
+
+      // add checkout buttons
+      if (svnroot) {
+        $('tbody tr').each(function(index, tr) {
+          var tds = $('td', tr);
+          var path = tds[0].getAttribute('title');
+          if (tds[2].textContent == '') {
+            $(tds[4]).html('<button class="btn btn-success">checkout</button>');
+            $('button', tr).on('click', sendRequest);
+          }
+        })
+      };
     }
 
     // fetch server revision for each row
-    $('tbody tr').each(function(index, tr) {
-      var tds = $('td', tr);
-      var path = tds[0].getAttribute('title');
-      if (tds[2].textContent == '') {
-        $(tds[4]).append('<button class="btn btn-success">checkout</button>');
-        $('button', tr).prop('disabled', true);
-      } else {
-        $.getJSON('?name=' + tds[0].textContent, function(response) {
-          updateStatus(tr, response);
-        });
-      }
-    });
+    function updateAll() {
+      $('tbody tr').each(function(index, tr) {
+        var tds = $('td', tr);
+        var path = tds[0].getAttribute('title');
+        if (tds[2].textContent != '') {
+          $.getJSON('?name=' + tds[0].textContent, function(response) {
+            updateStatus(tr, response);
+          });
+        }
+      });
+    }
+
+    updateAll();
   }
 end
 
 # process XMLHttpRequests
 _json do
-  local_path = ASF::SVN[@name.untaint]
+  local_path = ASF::SVN.find(@name.untaint)
   if local_path
     if @action == 'update'
       `svn cleanup #{local_path.untaint}`
@@ -139,12 +157,26 @@ _json do
 
     repository_url = `svn info #{local_path}`[/^URL: (.*)/, 1]
 
-    {
-      log: log.to_s.split("\n"),
-      local: `svn info #{local_path.untaint}`[/^Revision: (.*)/, 1],
-      server: `svn info #{repository_url.untaint}`[/^Revision: (.*)/, 1]
-    }
+  else
+    if @action == 'checkout'
+
+      repo = repository[:svn].find {|name, value| value['url'] == @name}
+      local_path = svnrepos.first.chomp('*') + repo.first
+
+      repository_url = @name
+      unless repository_url =~ /^https?:/
+        repository_url = "https://svn.apache.org/repos/#{repository_url}"
+      end
+
+      log = `svn checkout #{repository_url.untaint} #{local_path.untaint}`
+    end
   end
+
+  {
+    log: log.to_s.split("\n"),
+    local: `svn info #{local_path.untaint}`[/^Revision: (.*)/, 1],
+    server: `svn info #{repository_url.untaint}`[/^Revision: (.*)/, 1]
+  }
 end
 
 # standalone (local) support
