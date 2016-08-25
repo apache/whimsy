@@ -40,21 +40,42 @@ If you don't see 2.3.1, run `hash -r` and try again.  If you previously
 installed ruby via brew, you may need to run `brew upgrade ruby` instead.
 
 
+Upgrade Node.js
+---------------
+
+Install:
+
+```
+$ brew install node
+$ npm install -g npm
+```
+
+Verify:
+
+```
+$ node -v
+v6.4.0
+$ npm -v
+3.10.6
+```
+
+If you don't see v6 or higher, run `hash -r` and try again.  If you previously
+installed node via brew, you may need to run `brew upgrade node` instead.
+
+
 Install dependencies
 ------------
 
 Install:
 
 ```
-$ gem install whimsy-asf bundler mail
+$ gem install whimsy-asf bundler mail listen
 ```
 
 Verify:
 
 ```
-$ ruby -r whimsy/asf -e 'p ASF.constants'
-[:Config, :Base, :Committee, :LDAP, :ETCLDAP, :LazyHash, :Person, :Group, :Service, :Mail, :SVN, :Git, :ICLA, :Authorization, :Member, :Site, :Podling, :Podlings]
-
+$ gem list
 $ bundler -v
 Bundler version 1.12.5
 ```

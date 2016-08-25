@@ -9,6 +9,7 @@ Run:
 
 ```
 $ bundle install
+$ npm install
 ```
 
 Look for a line that says either `Bundle complete!` or `Bundle updated!`.
