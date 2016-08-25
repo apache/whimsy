@@ -66,14 +66,17 @@ if changed? and @old_file
   # Note: symbolize_names=false to avoid symbolising variable keys such as pmc and user names
   # However the current JSON (info) uses symbols for fixed keys - beware!
   previous = JSON.parse(@old_file, :symbolize_names=>false)
-  previous_updated = Time.parse(previous['last_updated'])
   previous = previous['committees']
   last_updated = info[:last_updated] # This is a Time instance
   # the joining date should normally be the same as the date when the file was updated:
   updated_day1 = last_updated.strftime("%Y-%m-%d") # day of update
-  # and the date must be after the last_updated date of the previous file
-  # however for those in an earlier timezone it could be a few hours earlier
-  updated_day2 = (previous_updated-3600*4).strftime("%Y-%m-%d") # day of previous update
+  # and the date must be after the last time the data was checked.
+  # Unfortunately the last_updated field is only updated when the content changes -
+  # there is currently no record of when the last check was done.
+  # For now, just assume that this is done every 15 mins. This may cause spurious reports
+  # if the checks are ever suspended for longer and meanwhile changes occur. 
+  # Note: for those in an earlier timezone the date could be a few hours earlier
+  updated_day2 = (last_updated-3600*4).strftime("%Y-%m-%d") # day of previous update
 
   info[:committees].each { |pmc, entry|
     previouspmc = previous[pmc] # get the original details (if any)
