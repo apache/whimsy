@@ -2,7 +2,9 @@ Installation on Mac OS/X
 ========================
 
 Step by step instruction on getting a full whimsy test environment up and
-running on Mac OS/X.
+running on Mac OS/X.  Not all steps are required for every tool, but steps
+common to many tools are included here, and additional steps required for
+specific tools are linked at the bottom of these instructions.
 
 Install Homebrew
 ----------------
@@ -341,6 +343,34 @@ to approve this application.
 
 Information on other ways to configure sending mail can be found at
 [DEVELOPMENT.md](DEVELOPMENT.md#setup) step 6.
+
+
+Make applications restart on change
+-----------------------------------
+
+While CGI scripts and static pages (HTML, CSS, JavaScript) can be changed
+and are immediately available to be served without restarting the server,
+Passenger/Rack applications need to be restarted to pick up changes.  To
+make this easier, whimsy has a small tool that will watch for file system
+changes and restart applications that might be affected on the receipt of
+the next request.
+
+To have this tool launch automatically, copy `whimsy/config/toucher.plist` to
+'~/Library/LaunchAgents/'.  Edit the paths in the `ProgramArguments` as
+required.  And start via:
+
+```
+launchctl load ~/Library/LaunchAgents/toucher.plist
+```
+
+To verify that it is working, touch a file in an application, and verify
+that `tmp/restart.txt` has been updated.  Example:
+
+```
+$ ls -l whimsy/www/board/agenda/tmp/restart.txt
+$ touch whimsy/www/board/agenda/README.md
+$ ls -l whimsy/www/board/agenda/tmp/restart.txt
+```
 
 
 Additional (application specific) configuration

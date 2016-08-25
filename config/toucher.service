@@ -1,0 +1,10 @@
+[Unit]
+Description=Restart whimsy applications upon update
+
+[Service]
+User=rubys
+Group=rubys
+ExecStart=/usr/bin/ruby /home/rubys/git/whimsy/tools/toucher.rb
+
+[Install]
+WantedBy=multi-user.target
