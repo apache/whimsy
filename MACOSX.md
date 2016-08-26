@@ -365,6 +365,41 @@ to approve this application.
 Information on other ways to configure sending mail can be found at
 [DEVELOPMENT.md](DEVELOPMENT.md#setup) step 6.
 
+Identify location of svn checkouts
+----------------------------------
+
+Edit `~/.whimsy` and add a list of checked out ASF repositories that may
+be referenced by whimsy tools.  For example:
+
+```
+:svn:
+- /Users/clr/apache/foundation
+- /Users/clr/apache/documents
+- /Users/clr/apache/committers
+```
+
+Note: wildcards are permitted.  The above can more economically be expressed
+as:
+
+```
+:svn:
+- /Users/clr/apache/*
+```
+
+Verify by visiting
+[http://whimsy.local/status/svn](http://whimsy.local/status/svn).
+
+If you have at least one entry that ends with a `*`, and the
+parent directory exists and is writable, this tool
+will be able to do a check-out for you.
+
+Note that some checkouts (and possibly even some updates) may take longer than
+the Apache httpd
+[timeout](https://httpd.apache.org/docs/2.4/mod/core.html#timeout), which
+defaults to 60 seconds, and if so, this tool won't automatically update when
+the operation completes.  Should that happen, simply refresh the page to see
+the changes.
+
 
 Make applications restart on change
 -----------------------------------

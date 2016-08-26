@@ -32,14 +32,3 @@ Add paths to foundation board and committers board directory.  For example:
 - /Users/rubys/svn/foundation/board
 - /Users/rubys/svn/committers/board
 ```
-
-Note: wildcards may be used, and providing a path to a higher level directory
-within the same svn checkout is not only supported, but recommended.
-
-For example, if all of your ASF checkouts are in the same directory, you can
-do something like the following:
-
-```
-:svn:
-- /Users/rubys/svn/*
-```
