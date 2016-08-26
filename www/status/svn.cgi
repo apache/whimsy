@@ -80,8 +80,9 @@ _html do
     // update status of a row based on a sever response
     function updateStatus(tr, response) {
       var tds = $('td', tr);
-      tds[2].textContent = response.local;
-      tds[3].textContent = response.server;
+      if (response.path) tds[1].textContent = response.path;
+      if (response.local) tds[2].textContent = response.local;
+      if (response.server) tds[3].textContent = response.server;
 
       // update row color
       if (tds[2].textContent != tds[3].textContent) {
@@ -174,6 +175,7 @@ _json do
 
   {
     log: log.to_s.split("\n"),
+    path: local_path,
     local: `svn info #{local_path.untaint}`[/^Revision: (.*)/, 1],
     server: `svn info #{repository_url.untaint}`[/^Revision: (.*)/, 1]
   }
