@@ -2,7 +2,9 @@ Installation on Mac OS/X
 ========================
 
 Step by step instruction on getting a full whimsy test environment up and
-running on Mac OS/X.
+running on Mac OS/X.  Not all steps are required for every tool, but steps
+common to many tools are included here, and additional steps required for
+specific tools are linked at the bottom of these instructions.
 
 Install Homebrew
 ----------------
@@ -38,21 +40,42 @@ If you don't see 2.3.1, run `hash -r` and try again.  If you previously
 installed ruby via brew, you may need to run `brew upgrade ruby` instead.
 
 
+Upgrade Node.js
+---------------
+
+Install:
+
+```
+$ brew install node
+$ npm install -g npm
+```
+
+Verify:
+
+```
+$ node -v
+v6.4.0
+$ npm -v
+3.10.6
+```
+
+If you don't see v6 or higher, run `hash -r` and try again.  If you previously
+installed node via brew, you may need to run `brew upgrade node` instead.
+
+
 Install dependencies
 ------------
 
 Install:
 
 ```
-$ gem install whimsy-asf bundler
+$ gem install whimsy-asf bundler mail listen
 ```
 
 Verify:
 
 ```
-$ ruby -r whimsy/asf -e 'p ASF.constants'
-[:Config, :Base, :Committee, :LDAP, :ETCLDAP, :LazyHash, :Person, :Group, :Service, :Mail, :SVN, :Git, :ICLA, :Authorization, :Member, :Site, :Podling, :Podlings]
-
+$ gem list
 $ bundler -v
 Bundler version 1.12.5
 ```
@@ -254,6 +277,8 @@ LoadModule authnz_ldap_module libexec/apache2/mod_authnz_ldap.so
 LoadModule ldap_module libexec/apache2/mod_ldap.so
 
 LoadModule expires_module libexec/apache2/mod_expires.so
+
+LoadModule cgi_module libexec/apache2/mod_cgi.so
 ```
 
 Add the following line:
@@ -340,13 +365,78 @@ to approve this application.
 Information on other ways to configure sending mail can be found at
 [DEVELOPMENT.md](DEVELOPMENT.md#setup) step 6.
 
+Identify location of svn checkouts
+----------------------------------
+
+Edit `~/.whimsy` and add a list of checked out ASF repositories that may
+be referenced by whimsy tools.  For example:
+
+```
+:svn:
+- /Users/clr/apache/foundation
+- /Users/clr/apache/documents
+- /Users/clr/apache/committers
+```
+
+Note: wildcards are permitted.  The above can more economically be expressed
+as:
+
+```
+:svn:
+- /Users/clr/apache/*
+```
+
+Verify by visiting
+[http://whimsy.local/status/svn](http://whimsy.local/status/svn).
+
+If you have at least one entry that ends with a `*`, and the
+parent directory exists and is writable, this tool
+will be able to do a check-out for you.
+
+Note that some checkouts (and possibly even some updates) may take longer than
+the Apache httpd
+[timeout](https://httpd.apache.org/docs/2.4/mod/core.html#timeout), which
+defaults to 60 seconds, and if so, this tool won't automatically update when
+the operation completes.  Should that happen, simply refresh the page to see
+the changes.
+
+
+Make applications restart on change
+-----------------------------------
+
+While CGI scripts and static pages (HTML, CSS, JavaScript) can be changed
+and are immediately available to be served without restarting the server,
+Passenger/Rack applications need to be restarted to pick up changes.  To
+make this easier, whimsy has a small tool that will watch for file system
+changes and restart applications that might be affected on the receipt of
+the next request.
+
+To have this tool launch automatically, copy `whimsy/config/toucher.plist` to
+'~/Library/LaunchAgents/'.  Edit the paths in the `ProgramArguments` as
+required.  And start via:
+
+```
+launchctl load ~/Library/LaunchAgents/toucher.plist
+```
+
+To verify that it is working, touch a file in an application, and verify
+that `tmp/restart.txt` has been updated.  Example:
+
+```
+$ ls -l whimsy/www/board/agenda/tmp/restart.txt
+$ touch whimsy/www/board/agenda/README.md
+$ ls -l whimsy/www/board/agenda/tmp/restart.txt
+```
+
 
 Additional (application specific) configuration
 -----------------------------------------------
 
 A number of individual tools require additional configuration:
 
+* [config/board-agenda.md](config/board-agenda.md)
 * [config/secretary-workbench.md](config/secretary-workbench.md)
+* [config/officers-acreq.md](config/officers-acreq.md)
 
 Debugging
 ---------

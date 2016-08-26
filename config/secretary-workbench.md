@@ -11,11 +11,7 @@ Run:
 $ bundle install
 ```
 
-The last line of the output should say:
-
-```
-Bundle updated!
-```
+Look for a line that says either `Bundle complete!` or `Bundle updated!`.
 
 Indentify where files are to be found
 -------------------------------------
