@@ -436,6 +436,7 @@ A number of individual tools require additional configuration:
 
 * [config/board-agenda.md](config/board-agenda.md)
 * [config/secretary-workbench.md](config/secretary-workbench.md)
+* [config/officers-acreq.md](config/officers-acreq.md)
 
 Debugging
 ---------
