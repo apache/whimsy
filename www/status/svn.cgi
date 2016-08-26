@@ -14,7 +14,7 @@ require 'whimsy/asf'
 repository_file = File.expand_path('../../../repository.yml', __FILE__)
 repository = YAML.load_file(repository_file)
 
-svnrepos = ASF::Config.get(:svn)
+svnrepos = Array(ASF::Config.get(:svn))
 
 _html do
   _link rel: 'stylesheet', href: 'css/status.css'
@@ -27,7 +27,8 @@ _html do
   }
 
   writable = true
-  svnroot = (svnrepos.length == 1 && svnrepos.first =~ /^(\/\w[-.\w]*)+\/\*$/)
+  svnroot = (svnrepos.length == 1 && svnrepos.first =~ /^(\/\w[-.\w]*)+\/\*$/ &&
+    File.writable?(svnrepos.first.chomp('*').untaint))
 
   _h1_ 'SVN Repository Status'
 
