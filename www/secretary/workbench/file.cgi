@@ -611,22 +611,23 @@ _html do
       update_pending params, dest
 
     when 'incomplete'
+      dest = "#{RECEIVED}/deadletter/incomplete/#{File.basename(@source)}"
+
       Dir.chdir(RECEIVED) do
         @realname ||= @iname
-
         _h1 "Incomplete document received from #{@iname}"
-        _.move @source, 'deadletter/incomplete'
-
+        _.move @source, dest
       end
 
-      update_pending params, 'deadletter/incomplete'
+      update_pending params, dest
 
     when 'unsigned'
-      Dir.chdir(RECEIVED) do
-        @realname ||= @nname
+      dest = "#{RECEIVED}/deadletter/unsigned/#{File.basename(@source)}"
 
+      Dir.chdir(RECEIVED) do
+        @realname ||= @uname
         _h1 "Unsigned document received from #{@uname}"
-        _.move @source, 'deadletter/unsigned'
+        _.move @source, dest
       end
 
       update_pending params, dest
