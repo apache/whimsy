@@ -643,6 +643,10 @@ _html do
           _a 'How to use this tool', href: 'HOWTO.html',
             target: 'viewport'
         end
+        _li do
+          _a 'Show pending.yml', href: 'RECEIVED/pending.yml',
+            target: 'viewport'
+        end
 
         if File.exist? '/var/tools/secretary/secmail'
           _li {_p {_hr}}
