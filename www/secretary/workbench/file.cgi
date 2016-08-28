@@ -260,10 +260,14 @@ def send_email(target, message)
 
           # override subject?
           if vars.email_subject and !vars.email_subject.empty?
-            if vars.email_subject =~ /^re:\s/i
-              subject vars.email_subject
-            else
-              subject 'Re: ' + vars.email_subject
+            begin
+              if vars.email_subject =~ /^re:\s/i
+                subject vars.email_subject
+              else
+                subject 'Re: ' + vars.email_subject
+              end
+            rescue
+              # some error in the subject; use the subject in the .erb file
             end
           end
         end
