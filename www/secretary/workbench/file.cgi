@@ -266,7 +266,7 @@ def send_email(target, message)
               else
                 subject 'Re: ' + vars.email_subject
               end
-            rescue
+            rescue UndefinedConversionError
               # some error in the subject; use the subject in the .erb file
             end
           end
