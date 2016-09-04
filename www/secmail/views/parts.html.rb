@@ -3,7 +3,8 @@
 #
 
 _html do
-  _link rel: 'stylesheet', type: 'text/css', href: '../../secmail.css'
+  _link rel: 'stylesheet', type: 'text/css', 
+    href: "../../secmail.css?#{@cssmtime}"
 
   _ul_ do
     _li! {_a 'text', href: '_body_', target: 'content'}

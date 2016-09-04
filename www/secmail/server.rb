@@ -19,6 +19,7 @@ get '/' do
   # determine latest month for which there are messages
   archives = Dir["#{ARCHIVE}/*.yml"].select {|name| name =~ %r{/\d{6}\.yml$}}
   @mbox = archives.empty? ? nil : File.basename(archives.sort.last, '.yml')
+  @cssmtime = File.mtime('public/secmail.css').to_i
   _html :index
 end
 
@@ -91,6 +92,7 @@ get %r{^/(\d{6})/(\w+)/_index_$} do |month, hash|
   @attachments = message.attachments
   @headers = message.headers.dup
   @headers.delete :attachments
+  @cssmtime = File.mtime('public/secmail.css').to_i
   _html :parts
 end
 
