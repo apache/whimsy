@@ -6,13 +6,13 @@ message = Mailbox.find(@message)
 iclas = ASF::SVN['private/documents/iclas']
 
 # write attachment (+ signature, if present) to the documents/iclas directory
-task "svn commit #{@filename}" do
+_task "svn commit #{@filename}" do
   svn_reset iclas
   dest = message.write_svn(iclas, @filename, @selected, @signature)
 end
 
 # insert line into iclas.txt
-task "svn commit iclas.txt" do
+_task "svn commit iclas.txt" do
   # construct line to be inserted
   insert = [
     'notinavail',

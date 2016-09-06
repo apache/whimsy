@@ -50,7 +50,8 @@ end
 
 # task lists
 post '/tasklist/:file' do
-  @tasklist = JSON.parse(_json :"actions/#{params[:file]}")['tasklist']
+  dryrun = _json(:"actions/#{params[:file]}")
+  @tasklist = JSON.parse(dryrun)['tasklist']
   _html :tasklist
 end
 
