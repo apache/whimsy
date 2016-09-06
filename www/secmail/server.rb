@@ -130,6 +130,17 @@ get %r{^/(\d{6})/(\w+)/_raw_$} do |month, hash|
   [200, {'Content-Type' => 'text/plain'}, message.raw]
 end
 
+# intercede for potentially dangerous message attachments
+get %r{^/(\d{6})/(\w+)/_danger_/(.*?)$} do |month, hash, name|
+  message = Mailbox.new(month).find(hash)
+  pass unless message
+
+  @part = message.find(name)
+  pass unless @part
+
+  _html :danger
+end
+
 # a specific attachment for a message
 get %r{^/(\d{6})/(\w+)/(.*?)$} do |month, hash, name|
   message = Mailbox.new(month).find(hash)

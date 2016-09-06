@@ -46,8 +46,14 @@ class Parts < React
         options[:className] = nil
       end
 
+      if attachment =~ /\.(pdf|txt|jpeg|jpg|gif|png)$/
+        link = attachment
+      else
+        link = "_danger_/#{attachment}"
+      end
+
       _li options do
-        _a attachment, href: attachment, target: 'content', draggable: 'false'
+        _a attachment, href: link, target: 'content', draggable: 'false'
       end
     end
 
