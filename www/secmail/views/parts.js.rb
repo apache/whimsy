@@ -127,7 +127,7 @@ class Parts < React
 
       elsif @form == :edit
 
-        _ul do
+        _ul.editPart! do
           _li "\u2704 burst", onMouseDown: self.burst
           _li.divider
           _li "\u21B7 right", onMouseDown: self.rotate_attachment
@@ -231,7 +231,7 @@ class Parts < React
   # burst a PDF into individual pages
   def burst(event)
     data = {
-      selected: @menu,
+      selected: @menu || @selected,
       message: window.parent.location.pathname
     }
 
@@ -250,7 +250,7 @@ class Parts < React
   # burst a PDF into individual pages
   def delete_attachment(event)
     data = {
-      selected: @menu,
+      selected: @menu || @selected,
       message: window.parent.location.pathname
     }
 
@@ -274,7 +274,7 @@ class Parts < React
     message = window.parent.location.pathname
 
     data = {
-      selected: @menu,
+      selected: @menu || @selected,
       message: message,
       direction: event.currentTarget.textContent
     }
