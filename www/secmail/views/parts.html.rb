@@ -7,7 +7,7 @@ _html do
     href: "../../secmail.css?#{@cssmtime}"
 
   _header_ do
-    _h1.bg_success do
+    _h3.bg_success do
       _a 'Secretary Mail', href: '../..', target: '_parent'
     end
   end
