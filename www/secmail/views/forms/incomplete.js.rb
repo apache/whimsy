@@ -1,4 +1,4 @@
-class INCOMPLETE < React
+class Incomplete < React
   def render
     _p 'INCOMPLETE'
   end

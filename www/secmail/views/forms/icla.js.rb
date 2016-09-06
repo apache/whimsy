@@ -6,6 +6,8 @@ class ICLA < React
   end
 
   def render
+    _h4 'ICLA'
+
     _form action: '../../actions/icla', method: 'post', onSubmit: self.file do
       _table.form do
         _tr do

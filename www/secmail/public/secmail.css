@@ -33,12 +33,17 @@
   opacity: 0.5;
 }
 
-table.doctype {
-  width: 100%;
+.doctype label {
+  display: block
 }
 
-table.doctype td {
-  text-align: center;
+.doctype input[type=radio] {
+  width: 3em
+}
+
+#parts h4 {
+  padding: 10px 1em;
+  background-color: #d9e9f7;
 }
 
 table.form {
@@ -67,11 +72,11 @@ form .btn {
   margin-top: 0.5em;
 }
 
-#attachments li {
+#attachments li.attachment {
   width: 100%
 }
 
-#attachments div.buttons {
+#parts div.buttons {
   text-align: center;
   margin: 1em 0;
 }

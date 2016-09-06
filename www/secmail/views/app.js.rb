@@ -11,3 +11,7 @@ require_relative 'forms/grant'
 require_relative 'forms/ccla'
 require_relative 'forms/nda'
 require_relative 'forms/memapp'
+
+require_relative 'forms/incomplete'
+require_relative 'forms/unsigned'
+require_relative 'forms/pubkey'

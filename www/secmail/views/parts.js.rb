@@ -9,7 +9,7 @@ class Parts < React
     @busy = false
     @attachments = []
     @drag = nil
-    @form = nil
+    @form = :categorize
     @menu = nil
   end
 
@@ -35,7 +35,7 @@ class Parts < React
     signature = CheckSignature.find(@selected, @attachments)
 
     # list of attachments
-    _ul @attachments, ref: 'attachments' do |attachment|
+    _ul.attachments! @attachments, ref: 'attachments' do |attachment|
       if attachment == @drag
         options[:className] = 'dragging'
       elsif attachment == @selected
@@ -67,48 +67,91 @@ class Parts < React
       _CheckSignature selected: @selected, attachments: @attachments,
         headers: @@headers
 
-      # filing options
-      _table.doctype do
-        _tr do
-          _td do
+      _ul.nav.nav_tabs do
+        _li class: ('active' unless @form == :edit) do
+          _a 'Categorize', onMouseDown: self.tabSelect
+        end
+        _li class: ('active' if @form == :edit) do
+          _a 'Edit', onMouseDown: self.tabSelect
+        end
+      end
+
+      if @form == :categorize
+
+        # filing options
+        _div.doctype do
+          _label do
             _input type: 'radio', name: 'doctype', value: 'icla',
               onClick: -> {@form = ICLA}
+            _span 'icla'
           end
 
-          _td do
-            _input type: 'radio', name: 'doctype', value: 'grant',
-              onClick: -> {@form = Grant}
-          end
-
-          _td do
+          _label do
             _input type: 'radio', name: 'doctype', value: 'ccla',
               onClick: -> {@form = CCLA}
+            _span 'ccla'
           end
 
-          _td do
-            _input type: 'radio', name: 'doctype', value: 'nda',
-              onClick: -> {@form = NDA}
+          _label do
+            _input type: 'radio', name: 'doctype', value: 'grant',
+              onClick: -> {@form = Grant}
+            _span 'software grant'
           end
 
-          _td do
+          _label do
             _input type: 'radio', name: 'doctype', value: 'mem',
               onClick: -> {@form = MemApp}
+            _span 'membership application'
+          end
+
+          _hr
+
+          _label do
+            _input type: 'radio', name: 'doctype', value: 'incomplete',
+              onClick: -> {@form = Incomplete}
+            _span 'incomplete form'
+          end
+
+          _label do
+            _input type: 'radio', name: 'doctype', value: 'unsigned',
+              onClick: -> {@form = Unsigned}
+            _span 'unsigned form'
+          end
+
+          _label do
+            _input type: 'radio', name: 'doctype', value: 'pubkey',
+              onClick: -> {@form = Unsigned}
+            _span 'upload public key'
           end
         end
 
-        _tr do
-          _td 'icla'
-          _td 'grant'
-          _td 'ccla'
-          _td 'nda'
-          _td 'mem'
-        end
-      end
+      elsif @form == :edit
 
-      if @form
+        _ul do
+          _li "\u2704 burst", onMouseDown: self.burst
+          _li.divider
+          _li "\u21B7 right", onMouseDown: self.rotate_attachment
+          _li "\u21c5 flip", onMouseDown: self.rotate_attachment
+              _li "\u21B6 left", onMouseDown: self.rotate_attachment
+          _li.divider
+          _li "\u2716 delete", onMouseDown: self.delete_attachment
+        end
+
+      else
+
         React.createElement @form, headers: @@headers, submit: self.submit
+
       end
     end
+  end
+
+  ########################################################################
+  #                            Tab selection                             #
+  ########################################################################
+
+  def tabSelect(event)
+    @form = event.currentTarget.textContent.downcase()
+    jQuery('.doctype input').prop('checked', false)
   end
 
   ########################################################################
@@ -288,7 +331,7 @@ class Parts < React
   def selectPart(part)
     if @selected != part
       @selected = part
-      @form = nil
+      @form = :categorize
 
       Array(document.querySelectorAll('input[type=radio]')).each do |button|
         button.checked = false

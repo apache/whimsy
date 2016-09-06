@@ -12,12 +12,13 @@ _html do
     _li! {_a 'raw', href: '_raw_', target: 'content'}
   end
 
-  _div.attachments!
+  _div.parts!
 
   _script src: '../../app.js'
-  _.render '#attachments' do
+  _.render '#parts' do
     _Parts attachments: @attachments, headers: @headers
   end
+
   _h4_ 'Links'
   _ul do
     _li do

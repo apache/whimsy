@@ -14,6 +14,13 @@ require_relative 'models/mailbox'
 require_relative 'models/safetemp'
 require_relative 'models/events'
 
+class Wunderbar::JsonBuilder
+  def _task(title, &block)
+    @_target[:tasklist] ||= []
+    @_target[:tasklist] << title
+  end
+end
+
 # list of messages
 get '/' do
   # determine latest month for which there are messages
@@ -39,6 +46,12 @@ get %r{^/(\d{6})/(\w+)/$} do |month, hash|
   @message = Mailbox.new(month).headers[hash]
   pass unless @message
   _html :message
+end
+
+# task lists
+post '/tasklist/:file' do
+  @tasklist = JSON.parse(_json :"actions/#{params[:file]}")['tasklist']
+  _html :tasklist
 end
 
 # posted actions
