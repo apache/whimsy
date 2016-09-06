@@ -1,3 +1,7 @@
+header h1 {
+  margin-top: 0;
+}
+
 #index table {
   margin-left: 8px;
 }

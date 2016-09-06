@@ -6,6 +6,12 @@ _html do
   _link rel: 'stylesheet', type: 'text/css', 
     href: "../../secmail.css?#{@cssmtime}"
 
+  _header_ do
+    _h1.bg_success do
+      _a 'Secretary Mail', href: '../..', target: '_parent'
+    end
+  end
+
   _ul_ do
     _li! {_a 'text', href: '_body_', target: 'content'}
     _li! {_a 'headers', href: '_headers_', target: 'content'}
@@ -18,6 +24,8 @@ _html do
   _.render '#parts' do
     _Parts attachments: @attachments, headers: @headers
   end
+
+  _hr_
 
   _h4_ 'Links'
   _ul do
