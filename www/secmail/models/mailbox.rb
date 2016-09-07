@@ -100,7 +100,7 @@ class Mailbox
   #
   def self.find(message)
     month, hash = message.match(%r{/(\d+)/(\w+)}).captures
-    Mailbox.new(month).find(hash)
+    Mailbox.new(month.untaint).find(hash.untaint)
   end
 
   #

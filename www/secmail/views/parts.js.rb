@@ -145,7 +145,8 @@ class Parts < React
 
       else
 
-        React.createElement @form, headers: @@headers, submit: self.submit
+        React.createElement @form, headers: @@headers, selected: @selected,
+          submit: self.submit
 
       end
     end

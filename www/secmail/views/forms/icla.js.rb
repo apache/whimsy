@@ -8,7 +8,10 @@ class ICLA < React
   def render
     _h4 'ICLA'
 
-    _form action: '../../tasklist/icla', method: 'post', onSubmit: self.file do
+    _form action: '../../tasklist/icla', method: 'post', target: 'content' do
+      _input type: 'hidden', name: 'message'
+      _input type: 'hidden', name: 'selected'
+
       _table.form do
         _tr do
           _th 'Real Name'
@@ -119,6 +122,9 @@ class ICLA < React
     end
 
     $acreq.disabled = !valid or !@user or !@filed
+
+    jQuery('input[name=message]').val(window.parent.location.pathname)
+    jQuery('input[name=selected]').val(@@selected)
   end
 
   # generate file name from the public name
