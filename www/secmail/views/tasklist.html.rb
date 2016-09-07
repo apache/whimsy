@@ -17,5 +17,8 @@ _html do
 
     _button.btn.btn_primary 'proceed'
 
+    _script "var params = #{JSON.generate(params)};"
+
+    _script src: '../tasklist.js'
   end
 end

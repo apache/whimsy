@@ -50,6 +50,11 @@ end
 
 # task lists
 post '/tasklist/:file' do
+  @params = params.dup
+  @params.delete :file
+  @params.delete 'splat'
+  @params.delete 'captures'
+
   @dryrun = JSON.parse(_json(:"actions/#{params[:file]}"))
   _html :tasklist
 end

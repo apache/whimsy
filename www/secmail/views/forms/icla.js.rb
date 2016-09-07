@@ -8,7 +8,7 @@ class ICLA < React
   def render
     _h4 'ICLA'
 
-    _form action: '../../tasklist/icla', method: 'post', target: 'content' do
+    _form method: 'post', action: '../../tasklist/icla', target: 'content' do
       _input type: 'hidden', name: 'message'
       _input type: 'hidden', name: 'selected'
 
@@ -100,6 +100,13 @@ class ICLA < React
     @realname = name
     @email = @@headers.from
     self.componentDidUpdate()
+
+    # watch for status updates
+    window.addEventListener 'message' do |event|
+      console.log(event)
+      @submitted = false
+      @filed = false
+    end
   end
 
   # as fields change, enable/disable the associated buttons and adjust
@@ -123,6 +130,8 @@ class ICLA < React
 
     $acreq.disabled = !valid or !@user or !@filed
 
+    # wire up form
+    jQuery('form')[0].addEventListener('submit', self.file)
     jQuery('input[name=message]').val(window.parent.location.pathname)
     jQuery('input[name=selected]').val(@@selected)
   end
@@ -136,15 +145,17 @@ class ICLA < React
   def file(event)
     @submitted = true
 
-    @@submit.call(event).then {|response|
-      @filed = true
-      @submitted = false
-      alert response.result
-    }.catch {
-      @filed = false
-      @submitted = false
-    }
+#   @@submit.call(event).then {|response|
+#     @filed = true
+#     @submitted = false
+#     alert response.result
+#   }.catch {
+#     @filed = false
+#     @submitted = false
+#   }
   end
+
+
 
   # validate userid is available
   def validate_userid(event)
