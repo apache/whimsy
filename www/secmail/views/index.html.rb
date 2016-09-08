@@ -3,11 +3,11 @@ _html do
 
   _header_ do
     _h1.bg_success do
-      _a 'Secretary Mail', href: '../..', target: '_parent'
+      _a 'Secretary Mail', href: '.'
     end
   end
 
-  _div.index!
+  _div_.index!
 
   _script src: 'app.js'
   _.render '#index' do

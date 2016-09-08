@@ -46,9 +46,11 @@ class Index < React
         onClick: self.fetch_month
     end
 
-    unless window.location.hostname =~ /^whimsy(-test)?\.apache\.org$/
-      _button.btn.btn_success 'check for new mail', onClick: self.refresh,
-        disabled: @checking
+    if defined? window
+      unless window.location.hostname =~ /^whimsy(-test)?\.apache\.org$/
+        _button.btn.btn_success 'check for new mail', onClick: self.refresh,
+          disabled: @checking
+      end
     end
 
     unless Status.undoStack.empty?

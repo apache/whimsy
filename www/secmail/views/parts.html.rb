@@ -18,7 +18,7 @@ _html do
     _li! {_a 'raw', href: '_raw_', target: 'content'}
   end
 
-  _div.parts!
+  _div_.parts!
 
   _script src: '../../app.js'
   _.render '#parts' do
