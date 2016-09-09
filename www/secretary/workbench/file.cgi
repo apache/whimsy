@@ -1031,7 +1031,7 @@ _html do
         end
 
         pending.each do |vars|
-          vars = OpenStruct.new(vars.map {|k,v| [k.gsub(/\W/,'_'),v]})
+          vars = OpenStruct.new(Hash[vars.map {|k,v| [k.gsub(/\W/,'_'),v]}])
           _h2 "email #{vars.email}"
           _form do
             _input name: 'email', value: vars.email, type: 'hidden'

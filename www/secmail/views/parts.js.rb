@@ -74,11 +74,14 @@ class Parts < React
         headers: @@headers
 
       _ul.nav.nav_tabs do
-        _li class: ('active' unless @form == :edit) do
+        _li class: ('active' unless [:edit, :mail].include?(@form)) do
           _a 'Categorize', onMouseDown: self.tabSelect
         end
         _li class: ('active' if @form == :edit) do
           _a 'Edit', onMouseDown: self.tabSelect
+        end
+        _li class: ('active' if @form == :mail) do
+          _a 'Mail', onMouseDown: self.tabSelect
         end
       end
 
@@ -141,6 +144,18 @@ class Parts < React
               _li "\u21B6 left", onMouseDown: self.rotate_attachment
           _li.divider
           _li "\u2716 delete", onMouseDown: self.delete_attachment
+        end
+
+      elsif @form == :mail
+
+        _div.partmail! do
+          _h3 'cc'
+          _textarea (@@headers.cc || []).join("\n"), name: 'cc'
+
+          _h3 'bcc'
+          _textarea (@@headers.bcc || []).join("\n"), name: 'bcc'
+
+          _button.btn.btn_primary 'Save'
         end
 
       else
