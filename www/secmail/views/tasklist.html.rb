@@ -19,6 +19,6 @@ _html do
 
     _script "var params = #{JSON.generate(params)};"
 
-    _script src: '../tasklist.js'
+    _script src: "../tasklist.js?#{@jsmtime}"
   end
 end

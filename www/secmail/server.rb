@@ -16,8 +16,17 @@ require_relative 'models/events'
 
 class Wunderbar::JsonBuilder
   def _task(title, &block)
-    @_target[:tasklist] ||= []
-    @_target[:tasklist] << title
+    if @task
+      rc = _.system ['echo', 'hi']
+      rc = _.system ['echo', rc.to_s]
+      rc = _.system ['svn', 'foobar']
+      rc = _.system ['echo', rc.to_s]
+      rc = _.system ['foobar']
+      @task = nil
+    else
+      @_target[:tasklist] ||= []
+      @_target[:tasklist] << title
+    end
   end
 end
 
@@ -50,13 +59,14 @@ end
 
 # task lists
 post '/tasklist/:file' do
-  @params = params.dup
-  @params.delete :file
-  @params.delete 'splat'
-  @params.delete 'captures'
+  @jsmtime = File.mtime('public/tasklist.js').to_i
 
-  @dryrun = JSON.parse(_json(:"actions/#{params[:file]}"))
-  _html :tasklist
+  if request.content_type == 'application/json'
+    _json(:"actions/#{params[:file]}")
+  else
+    @dryrun = JSON.parse(_json(:"actions/#{params[:file]}"))
+    _html :tasklist
+  end
 end
 
 # posted actions
