@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>ASF Secretary Mail application</title>
+    <link rel="stylesheet" type="text/css" href="assets/bootstrap-min.css"/>
+  </head>
+
+  <body>
+    <h1>
+      <a href="." target="_parent">ASF Secretary Mail Application</a>
+    </h1>
+
+    <p>This is a major rewrite of the CGI version of the ASF Secretary
+    Workbench focusing on maintainability, performance, and usability</p>
+
+    <p>The previous version hid and showed portions of a single form
+    that contained every possible parameter, had a single script that
+    performed every possible action, and hid values in the svn properties and
+    the browser DOM for later use; this version has separate forms and scripts
+    for every action, the complete original email is available to this tool
+    and values are passed as parameters.</p>
+
+    <p>The previous version has a separate cronjob that periodically
+    would scan for new email and copy new attachments into SVN, and the
+    first action the workbench would take when visited would be to update
+    the working copy from SVN, emails are stored and indexed immediately
+    upon receipt.  This script also runs as a Passenger application, shaving
+    approximately a half second off of each server interaction.</p>
+
+    <p>This tool was originally redesigned to be more app-like.  Over time
+    much of the user interface from the original tool was added, resulting
+    in there sometimes being multiple ways to accomplish a single task.
+    In general, this version aims to show you more information from the
+    original email (dates, subjects, and even text) than the previous
+    version of the tool</p>
+
+    <p>As the data is never in SVN until you put it there, there never
+    are any <em>pending</em> actions that need to be cleaned up and
+    there is no working copy that can become <em>wedged</em>.</p>
+
+    <h2>Index page</h2>
+
+    <p>This pages shows emails containing attachments that have yet to be
+    processed.  It dynamically updates as new emails arrive.</p>
+
+    <p>To process an email, either click on the timestamp or double click
+    on the row.</p>
+
+    <p>A single action is possible from this index page: deleting spam.
+    Select (single click) the row containing the spam and click
+    either command-delete (Mac OS/X) or control-backspace (Windows and
+    Linux).  A button will appear at the bottom of the list enabling you
+    to undo the last deletion.</p>
+
+    <h2>Parts page</h2>
+
+    <p>This view is split into two panes, where results of actions taken on
+    the left display on the right.</p>
+
+    <p>With a single click, you can see a text, headers (i.e. parsed), and
+    raw view of the original email.</p>
+
+    <p>Following these actions are a list of attachments.  Click on one
+    to view the attachments and provide access to forms for further
+    processing.  Right clicking (or control-click on Mac OS/X) on the
+    attachment will bring up an edit menu.  Drag and drop an attachment
+    over another attachment to append (staple) the dragged attachment to
+    the attachment onto which it was dropped.</p>
+
+    <p>If you click on at attachment with an associated (detached) signature,
+    that signature will also be selected and the signature will be verified
+    with the results shown below the list of attachments.</p>
+
+    <p>Actions are organized into tabs.  To switch or return to a set of
+    actions, simply click on the tab.</p>
+
+    <p>Categorize allows you to select how you want to process this document.
+    Should you mistakenly select the wrong option, click on the tab to again
+    see the list of options.</p>
+
+    <p>Fill out the form and click on the button to initiate the processing of
+    the document selected.    This will result in a list of actions to be
+    taken to show up on the right hand pane.  Review and confirm this list,
+    and the actions will sequentially be taken on your behalf.  Should
+    an action fail, you will be given the choice to cancel or proceed.</p>
+
+    <p>A list of links follows this form.</p>
+
+    <p>Deleting the entire email is also possible from this page.  Click
+    either command-delete (Mac OS/X) or control-backspace (Windows and
+    Linux).</p>
+
+    <p>Clicking on the <span class="bg-success">Secretary Mail</span> header
+    at the top of the left pan will return you to the
+    <a href="." target="_parent">index</a> page.</p>
+
+    <h2>Source code</h2>
+
+    <p>Clones of this repository can be found at
+    <a href="https://git-dual.apache.org/repos/asf?p=whimsy.git">ASF</a> and
+    <a href="https://github.com/apache/whimsy/">github</a>.</p>
+
+    <p>The secmail application can be found in the
+    <a href="https://github.com/apache/whimsy/tree/master/www/secmail">www/secmail</a>
+    subdirectory</a>.
+  </body>
+</html>

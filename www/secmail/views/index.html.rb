@@ -1,9 +1,10 @@
 _html do
+  _title 'ASF Secretary Mail'
   _link rel: 'stylesheet', type: 'text/css', href: "secmail.css?#{@cssmtime}"
 
   _header_ do
     _h1.bg_success do
-      _a 'Secretary Mail', href: '.'
+      _a 'ASF Secretary Mail', href: '.'
     end
   end
 

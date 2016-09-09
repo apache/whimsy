@@ -3,7 +3,7 @@
 #
 
 _html do
-  _title 'ASF Secretary Workbench'
+  _title 'ASF Secretary Mail'
 
   _frameset cols: '20%, 70%' do
     _frame src: '_index_'

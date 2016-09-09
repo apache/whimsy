@@ -8,7 +8,7 @@ _html do
 
   _header_ do
     _h3.bg_success do
-      _a 'Secretary Mail', href: '../..', target: '_parent'
+      _a 'ASF Secretary Mail', href: '../..', target: '_parent'
     end
   end
 
@@ -19,11 +19,6 @@ _html do
   end
 
   _div_.parts!
-
-  _script src: '../../app.js'
-  _.render '#parts' do
-    _Parts attachments: @attachments, headers: @headers
-  end
 
   _hr_
 
@@ -86,7 +81,7 @@ _html do
         href: 'https://svn.apache.org/repos/private/foundation/members.txt'
     end
     _li do
-      _a 'How to use this tool', href: 'HOWTO.html',
+      _a 'How to use this tool', href: '../../HOWTO.html',
         target: 'content'
     end
     if File.exist? '/var/tools/secretary/secmail'
@@ -94,4 +89,10 @@ _html do
       _li {_a 'Upload email', href: 'upload', target: 'content'}
     end
   end
+
+  _script src: '../../app.js'
+  _.render '#parts' do
+    _Parts attachments: @attachments, headers: @headers
+  end
+
 end
