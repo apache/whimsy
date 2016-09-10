@@ -161,7 +161,7 @@ class Parts < React
       else
 
         React.createElement @form, headers: @@headers, selected: @selected,
-          submit: self.submit
+          signature: signature, submit: self.submit
 
       end
     end
