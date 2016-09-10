@@ -11,6 +11,7 @@ class ICLA < React
     _form method: 'post', action: '../../tasklist/icla', target: 'content' do
       _input type: 'hidden', name: 'message'
       _input type: 'hidden', name: 'selected'
+      _input type: 'hidden', name: 'signature', value: @@signature
 
       _table.form do
         _tr do

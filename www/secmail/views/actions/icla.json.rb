@@ -5,8 +5,11 @@
 message = Mailbox.find(@message)
 iclas = ASF::SVN['private/documents/iclas']
 
+# extract file extension
+fileext = File.extname(@selected) if @signature.empty?
+
 # write attachment (+ signature, if present) to the documents/iclas directory
-_task "svn commit documents/iclas/#@filename" do
+_task "svn commit documents/iclas/#@filename#{fileext}" do
   svn_reset iclas
   dest = message.write_svn(iclas, @filename, @selected, @signature)
 end
