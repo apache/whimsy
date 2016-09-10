@@ -61,7 +61,21 @@ class Message
   end
 
   def cc
-    mail[:cc]
+    @headers[:cc]
+  end
+
+  def cc=(value)
+    value=value.split("\n") if String === value
+    @headers[:cc]=value
+  end
+
+  def bcc
+    @headers[:bcc]
+  end
+
+  def bcc=(value)
+    value=value.split("\n") if String === value
+    @headers[:bcc]=value
   end
 
   def subject

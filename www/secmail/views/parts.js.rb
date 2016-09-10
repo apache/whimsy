@@ -71,7 +71,7 @@ class Parts < React
     if @selected and not @menu and @selected !~ /\.(asc|sig)$/
 
       _CheckSignature selected: @selected, attachments: @attachments,
-        headers: @@headers
+        headers: @headers
 
       _ul.nav.nav_tabs do
         _li class: ('active' unless [:edit, :mail].include?(@form)) do
@@ -150,17 +150,17 @@ class Parts < React
 
         _div.partmail! do
           _h3 'cc'
-          _textarea (@@headers.cc || []).join("\n"), name: 'cc'
+          _textarea value: @cc, name: 'cc'
 
           _h3 'bcc'
-          _textarea (@@headers.bcc || []).join("\n"), name: 'bcc'
+          _textarea value: @bcc, name: 'bcc'
 
-          _button.btn.btn_primary 'Save'
+          _button.btn.btn_primary 'Save', onClick: self.update_mail
         end
 
       else
 
-        React.createElement @form, headers: @@headers, selected: @selected,
+        React.createElement @form, headers: @headers, selected: @selected,
           signature: signature, submit: self.submit
 
       end
@@ -198,6 +198,18 @@ class Parts < React
     end
 
     self.hideMenu()
+
+    self.extractHeaders(@@headers)
+  end
+
+  def componentWillReceiveProps()
+    self.extractHeaders(@@headers)
+  end
+
+  def extractHeaders(headers)
+    @cc = (headers.cc || []).join("\n")
+    @bcc = (headers.bcc || []).join("\n")
+    @headers = headers
   end
 
   def componentDidUpdate()
@@ -313,6 +325,27 @@ class Parts < React
       alert error
       self.hideMenu()
     }
+  end
+
+  ########################################################################
+  #                             Update email                             #
+  ########################################################################
+
+  def update_mail(event)
+    event.target.disabled = true
+
+    jQuery.ajax(
+      type: "POST",
+      url: "../../actions/update-mail",
+      data: {
+        message: window.parent.location.pathname,
+        cc: @cc,
+        bcc: @bcc
+      },
+      dataType: 'json',
+      success: ->(data) { self.extractHeaders(data.headers) },
+      complete: -> { event.target.disabled = false }
+    )
   end
 
   ########################################################################
