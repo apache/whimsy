@@ -37,6 +37,11 @@ function nexttask(proceed) {
         if (json.transcript) {
           var pre = $('<pre>');
           pre.text(json.transcript.join("\n"));
+
+          // highlight commands
+          pre.html(("\n" + pre.html()).replace(/\n(\$ \w+ .*)/g, 
+            "\n<b>$1</b>").trim());
+
           task.append(pre);
         }
 
