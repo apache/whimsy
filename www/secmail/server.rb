@@ -16,16 +16,13 @@ require_relative 'models/events'
 
 class Wunderbar::JsonBuilder
   def _task(title, &block)
-    if @task
-      rc = _.system ['echo', 'hi']
-      rc = _.system ['echo', rc.to_s]
-      rc = _.system ['svn', 'foobar']
-      rc = _.system ['echo', rc.to_s]
-      rc = _.system ['foobar']
-      @task = nil
-    else
+    if not @task
       @_target[:tasklist] ||= []
       @_target[:tasklist] << title
+    elsif @task == title
+      block.call
+      @task = nil
+    else
     end
   end
 end

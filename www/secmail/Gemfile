@@ -6,7 +6,7 @@ gem 'zip'
 gem 'whimsy-asf', '~> 0.0.73'
 gem 'sinatra'
 gem 'sanitize'
-gem 'wunderbar', '~> 1.0.13'
+gem 'wunderbar', '~> 1.0.26'
 gem 'ruby2js', '~> 2.0.12'
 gem 'execjs'
 gem 'listen', ('~> 3.0.7' if RUBY_VERSION =~ /^2\.[01]/)

@@ -146,7 +146,7 @@ class Message
   # write one or more attachments to directory containing an svn checkout
   #
   def write_svn(repos, filename, *attachments)
-    attachments = attachments.flatten.compact
+    attachments = attachments.flatten.reject {|name| name.to_s.empty?}
 
     if attachments.length == 1
       ext = File.extname(attachments.first).untaint
