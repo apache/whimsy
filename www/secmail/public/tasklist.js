@@ -72,8 +72,12 @@ function nexttask(proceed) {
     spinner.remove();
 
     if (tasks.length) {
+      $('h1').removeClass('bg-info').addClass('bg-danger').
+        text('Processing Aborted');
       message = {status: 'aborted'}
     } else {
+      $('h1').removeClass('bg-info').addClass('bg-success').
+        text('Processing Complete');
       message = {status: 'complete'}
     }
 
@@ -82,6 +86,8 @@ function nexttask(proceed) {
 };
 
 $('button').click(function(event) {
+  $('h1').removeClass('bg-warning').addClass('bg-info').
+    text('Request Status');
   $(this).prop('disabled', true);
   nexttask(true);
 });
