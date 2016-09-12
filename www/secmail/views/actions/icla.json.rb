@@ -87,6 +87,15 @@ _task "email #@email" do
   mail.cc = (mail.cc + message.cc).uniq if message.cc
   mail.bcc = message.bcc - mail.cc if message.bcc
 
+  # add reply info
+  mail.in_reply_to = message.id
+  mail.references = message.id
+  if message.subject =~ /^re:\s/i
+    mail.subject = message.subject
+  else
+    mail.subject = 'Re: ' + message.subject
+  end
+
   # echo email
   _message mail.to_s
 

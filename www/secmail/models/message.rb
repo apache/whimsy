@@ -52,6 +52,10 @@ class Message
     @email
   end
 
+  def id
+    @headers['Message-ID']
+  end
+
   def from
     mail[:from]
   end
