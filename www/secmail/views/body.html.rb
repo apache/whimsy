@@ -17,10 +17,10 @@ _html do
       _td @message.to
     end
 
-    if @message.cc
+    if @message.cc and not @message.cc.empty?
       _tr do
         _td 'Cc:'
-        _td @message.cc
+        _td @message.cc.join(', ')
       end
     end
 
