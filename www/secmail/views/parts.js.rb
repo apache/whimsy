@@ -47,7 +47,7 @@ class Parts < React
       end
 
       if attachment =~ /\.(pdf|txt|jpeg|jpg|gif|png)$/
-        link = attachment
+        link = "./#{attachment}"
       else
         link = "_danger_/#{attachment}"
       end

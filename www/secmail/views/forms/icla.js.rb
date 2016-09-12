@@ -134,7 +134,7 @@ class ICLA < React
     # wire up form
     jQuery('form')[0].addEventListener('submit', self.file)
     jQuery('input[name=message]').val(window.parent.location.pathname)
-    jQuery('input[name=selected]').val(@@selected)
+    jQuery('input[name=selected]').val(@@selected.split('/').pop())
   end
 
   # generate file name from the public name
