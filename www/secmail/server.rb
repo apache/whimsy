@@ -16,6 +16,9 @@ require_relative 'models/mailbox'
 require_relative 'models/safetemp'
 require_relative 'models/events'
 
+require 'whimsy/asf'
+ASF::Mail.configure
+
 class Wunderbar::JsonBuilder
   def _task(title, &block)
     if not @task

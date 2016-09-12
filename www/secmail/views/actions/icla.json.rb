@@ -23,8 +23,13 @@ _task "svn commit documents/iclas/#@filename#{fileext}" do
     # create/add file(s)
     dest = message.write_svn("#{dir}/iclas", @filename, @selected, @signature)
 
-    # stub for now
+    # Show files to be added
     _.system 'svn', 'status', "#{dir}/iclas"
+
+    # commit changes
+    _.system! 'svn', 'commit', "#{dir}/iclas/#{@filename}",
+      ['--non-interactive', '--no-auth-cache'],
+      ['--username', env.user.untaint, '--password', env.password.untaint]
   end
 end
 
@@ -58,7 +63,13 @@ _task "svn commit foundation/officers/iclas.txt" do
     File.write dest, iclas_txt
 
     # show the changes
-    _.system 'svn', 'diff', dest
+    _.system! 'svn', 'diff', dest
+
+    # commit changes
+    _.system! 'svn', 'commit', dest,
+      ['--non-interactive', '--no-auth-cache'],
+      ['--username', env.user.untaint, '--password', env.password.untaint]
+
   end
 end
 
@@ -77,6 +88,7 @@ _task "email #@email" do
 
   # echo email
   _message mail.to_s
-end
 
-{result: "stub for ICLA, filename: #{@filename}"}
+  # deliver mail
+  mail.deliver!
+end
