@@ -1,4 +1,5 @@
 _html do
+  _link rel: 'stylesheet', href: "../secmail.css?#{@cssmtime}"
 
   if @dryrun['exception']
 

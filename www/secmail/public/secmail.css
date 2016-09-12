@@ -167,3 +167,8 @@ ul#editPart {
   height: 7em;
   width: 100%;
 }
+
+pre.bg-info {
+  white-space: pre-wrap;
+  word-break: normal;
+}

@@ -59,6 +59,7 @@ end
 # task lists
 post '/tasklist/:file' do
   @jsmtime = File.mtime('public/tasklist.js').to_i
+  @cssmtime = File.mtime('public/secmail.css').to_i
 
   if request.content_type == 'application/json'
     _json(:"actions/#{params[:file]}")
