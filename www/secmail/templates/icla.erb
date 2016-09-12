@@ -1,0 +1,18 @@
+To:   <%= @pubname.inspect %> <<%= @email %>>
+From: <%= @from %>
+Cc:   secretary@apache.org
+Subject: Your ICLA sent to Apache Secretary
+
+Dear <%= @pubname %>,
+
+This message acknowledges receipt of your ICLA, which has been filed in the Apache Software Foundation records.
+
+If you have been invited as a committer, please advise the project PMC that your ICLA has been filed.
+
+If you have not been invited, please refer to http://www.apache.org/foundation/how-it-works.html#developers
+for more information about roles at Apache.
+
+Warm Regards,
+
+<%= @sig %>
+

@@ -1,0 +1,13 @@
+to:   <%= @realname.inspect %> <<%= @nemail %>>
+from: <%= @from %>
+cc:   secretary@apache.org
+bcc:  <%= @bcc %>
+subject: Your JCP NDA
+
+Dear <%= @realname %>,
+
+This message acknowledges receipt of your NDA, which has been filed in the Apache Software Foundation records.
+
+Warm Regards,
+
+<%= @sig %>

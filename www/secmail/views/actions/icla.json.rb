@@ -64,6 +64,19 @@ end
 
 # send confirmation email
 _task "email #@email" do
+  # obtain per-user information
+  _personalize_email(env.user)
+
+  # build mail from template
+  template = File.expand_path('../../../templates/icla.erb', __FILE__).untaint
+  mail = Mail.new(ERB.new(File.read(template).untaint).result(binding))
+
+  # adjust copy lists
+  mail.cc = (mail.cc + message.cc).uniq if message.cc
+  mail.bcc = message.bcc - mail.cc if message.bcc
+
+  # echo email
+  _message mail.to_s
 end
 
 {result: "stub for ICLA, filename: #{@filename}"}

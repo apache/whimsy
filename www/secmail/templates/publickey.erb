@@ -1,0 +1,16 @@
+to:   <%= @realname.inspect %> <<%= @pemail %>>
+from: <%= @from %>
+cc:   secretary@apache.org
+bcc:  <%= @bcc %>
+subject: Missing public key
+
+Dear <%= @realname %>,
+
+We received this document but cannot verify your signature without
+your public key. Please upload your public key to pgpkeys.mit.edu.
+
+http://www.apache.org/licenses/#submitting
+
+Warm Regards,
+
+<%= @sig %>

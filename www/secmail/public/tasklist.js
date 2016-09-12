@@ -45,6 +45,12 @@ function nexttask(proceed) {
           task.append(pre);
         }
 
+        if (json.message) {
+          var pre = $('<pre class="bg-info">');
+          pre.text(json.message);
+          task.append(pre);
+        }
+
         if (json.exception) {
           var pre = $('<pre class="bg-danger">');
           if (json.backtrace) {
