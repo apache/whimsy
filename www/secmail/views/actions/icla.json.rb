@@ -27,7 +27,8 @@ _task "svn commit documents/iclas/#@filename#{fileext}" do
     _.system 'svn', 'status', "#{dir}/iclas"
 
     # commit changes
-    _.system! 'svn', 'commit', "#{dir}/iclas/#{@filename}",
+    _.system! 'svn', 'commit', "#{dir}/iclas/#{@filename}#{fileext}",
+      '-m', "ICLA from #{@pubname}",
       ['--non-interactive', '--no-auth-cache'],
       ['--username', env.user.untaint, '--password', env.password.untaint]
   end
@@ -48,7 +49,7 @@ _task "svn commit foundation/officers/iclas.txt" do
     # checkout empty officers directory
     _.system! 'svn', 'checkout', '--depth', 'empty',
       'https://svn.apache.org/repos/private/foundation/officers', 
-      "#{dir}/officers",
+      "#{dir}/officers", '-m', "ICLA from #{@pubname}",
       ['--non-interactive', '--no-auth-cache'],
       ['--username', env.user.untaint, '--password', env.password.untaint]
 
