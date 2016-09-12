@@ -5,7 +5,7 @@ var spinner = $('<img src="../spinner.gif"/>');
 if (typeof fetch === 'undefined') {
   var script = document.createElement('script');
   script.type = 'text/javascript';
-  script.src = 'public/fetch.js';
+  script.src = '../fetch.js';
   $('head').append(script);
 };
 
