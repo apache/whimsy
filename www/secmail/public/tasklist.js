@@ -99,13 +99,15 @@ $('button').click(function(event) {
   }
 });
 
-// have delete key return to index
+// have delete and up keys return to index
 $(document).on('keypress', function(event) {
   if (event.keyCode == 8 || event.keyCode == 46) { // backspace or delete
     var tag = event.target.tagName.toLowerCase();
     if (tag != 'input' && tag != 'textarea')  {
       window.parent.location.href = '..';
     }
+  } else if (event.keyCode == 38) { // up
+    window.parent.location.href = '..';
   }
 });
 
