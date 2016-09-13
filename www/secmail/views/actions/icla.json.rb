@@ -122,3 +122,65 @@ _task "email #@email" do
   # deliver mail
   mail.deliver!
 end
+
+if @user and not @user.empty? and pmc and not @votelink.empty?
+  _task "svn commit infra/acreq/new-account-reqs.txt" do
+    line = [
+      @user,
+      @pubname,
+      @email,
+      pmc.name,
+      pmc.name,
+      Date.today.strftime('%m-%d-%Y'),
+      'yes',
+      'yes',
+      'no'
+    ].join(';')
+
+    Dir.mktmpdir do |dir|
+      # checkout acreq directory
+      _.system! 'svn', 'checkout', '--depth', 'files',
+        'https://svn.apache.org/repos/infra/infrastructure/trunk/acreq', 
+        "#{dir}/acreq",
+        ['--non-interactive', '--no-auth-cache'],
+        ['--username', env.user.untaint, '--password', env.password.untaint]
+
+      # update new-account-reqs.txt
+      dest = "#{dir}/acreq/new-account-reqs.txt"
+
+      # update iclas.txt
+      File.write dest, File.read(dest) + line + "\n"
+
+      # show the changes
+      _.system! 'svn', 'diff', dest
+
+      # commit changes
+      _.system! 'svn', 'commit', dest, '-m', 
+        "#{@user} account request by #{env.user}",
+        ['--non-interactive', '--no-auth-cache'],
+        ['--username', env.user.untaint, '--password', env.password.untaint]
+    end
+  end
+
+  # notify root@
+  _task "email root@apache.org" do
+    # obtain per-user information
+    _personalize_email(env.user)
+
+    # build mail from template
+    template = File.expand_path('../../../templates/acreq.erb', __FILE__).untaint
+    mail = Mail.new(ERB.new(File.read(template).untaint).result(binding))
+
+    # adjust copy lists
+    cc = mail.cc # from the template
+    cc << "private@#{pmc.mail_list}.apache.org" if pmc # copy pmc
+    cc << podling.private_mail_list if podling # copy podling
+    mail.cc = cc.uniq
+
+    # echo email
+    _message mail.to_s
+
+    # deliver mail
+    mail.deliver!
+  end
+end

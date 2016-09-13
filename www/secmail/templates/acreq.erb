@@ -1,0 +1,16 @@
+To:   root@apache.org
+From: <%= @from %>
+Cc:   <%= @pubname.inspect %> <<%= @email %>>
+Subject: [FORM] Account Request - <%= @email %>: <%= @pubname %>
+
+Prospective userid: <%= @user %>
+Full name: <%= @realname %>
+Forwarding email address: <%= @email %>
+
+Vote reference:
+  <%= @votelink.to_s.gsub('mail-search.apache.org/pmc/', %'mail-search.apache.org/members/') %>
+
+-- 
+Submitted by <%= URI.join(env['SCRIPT_URI'], '..') %>
+From <%= `/usr/bin/host #{env['REMOTE_ADDR'].dup.untaint}`.chomp %>
+Using <%= env['HTTP_USER_AGENT'] %>
