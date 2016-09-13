@@ -35,7 +35,7 @@ module ASF
       value = value.downcase
       each do |id, text|
         emails(text).each do |email|
-          return Person[id] if email.downcase == value
+          return Person.find(id) if email.downcase == value
         end
       end
       nil

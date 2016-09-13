@@ -55,7 +55,7 @@ _html do
 
     ldap = ASF::Group['member'].members
 
-    members = ASF::Member.new.map {|id, text| ASF::Person[id]}
+    members = ASF::Member.new.map {|id, text| ASF::Person.find(id)}
     ASF::Person.preload('cn', members)
     maillist = ASF::Mail.list
 

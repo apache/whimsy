@@ -485,6 +485,12 @@ module ASF
       list.values
     end
 
+    # return person only if it actually exits
+    def self.[] name
+      person = super
+      person.attrs['dn'] ? nil : person
+    end
+
     def attrs
       @attrs ||= LazyHash.new {ASF.search_one(base, "uid=#{name}").first}
     end
@@ -621,6 +627,12 @@ module ASF
 
     attr_accessor :modifyTimestamp, :createTimestamp
 
+    # return group only if it actually exits
+    def self.[] name
+      group = super
+      group.members.empty? ? nil : group
+    end
+
     def members=(members)
       @members = WeakRef.new(members)
     end
@@ -699,6 +711,12 @@ module ASF
     end
 
     attr_accessor :modifyTimestamp, :createTimestamp
+
+    # return committee only if it actually exits
+    def self.[] name
+      committee = super
+      committee.members.empty? ? nil : committee
+    end
 
     def members=(members)
       @members = WeakRef.new(members)

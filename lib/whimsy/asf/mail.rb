@@ -21,7 +21,9 @@ module ASF
 
       # load all member emails in one pass
       ASF::Member.each do |id, text|
-        Member.emails(text).each {|mail| list[mail.downcase] ||= Person[id]}
+        Member.emails(text).each do |mail| 
+          list[mail.downcase] ||= Person.find(id)
+        end
       end
 
       # load all ICLA emails in one pass
