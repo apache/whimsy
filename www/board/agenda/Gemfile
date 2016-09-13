@@ -14,7 +14,7 @@ end
 gem 'rake'
 gem 'wunderbar', '>= 1.0.16'
 gem 'ruby2js', '>= 2.0.13'
-gem 'sinatra'
+gem 'sinatra', '~> 1.4'
 gem 'nokogumbo'
 gem 'execjs', ('<2.5.1' if RUBY_VERSION =~ /^1/)
 gem 'listen', ('~> 3.0.7' if RUBY_VERSION =~ /^2\.[01]/)

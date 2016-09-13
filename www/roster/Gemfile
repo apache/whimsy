@@ -15,7 +15,7 @@ end
 gem 'rake'
 gem 'wunderbar', '>= 1.0.0'
 gem 'ruby2js', '>= 2.0.0'
-gem 'sinatra'
+gem 'sinatra', '~> 1.4'
 gem 'nokogumbo'
 gem 'execjs'
 gem 'mail'
