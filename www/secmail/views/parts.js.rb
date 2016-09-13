@@ -396,6 +396,8 @@ class Parts < React
       end
     elsif event.keyCode == 38 # up
       window.parent.location.href = '../..'
+    elsif event.keyCode == 13 # enter/return
+      event.stopPropagation()
     end
   end
 
