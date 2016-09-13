@@ -161,7 +161,7 @@ class Parts < React
       else
 
         React.createElement @form, headers: @headers, selected: @selected,
-          signature: signature, submit: self.submit
+          signature: signature
 
       end
     end
@@ -200,6 +200,8 @@ class Parts < React
     self.hideMenu()
 
     self.extractHeaders(@@headers)
+
+    window.addEventListener 'message', self.status_update
   end
 
   def componentWillReceiveProps()
@@ -290,8 +292,12 @@ class Parts < React
 
     @busy = true
     HTTP.post('../../actions/delete-attachment', data).then {|response|
-      if response.attachments and not response.attachments.empty?
-        @attachments = response.attachments
+      @attachments = response.attachments
+      if event.type == 'message'
+        signature = CheckSignature.find(@selected, @attachments)
+        @selected = signature
+        self.delete_attachment(event) if signature
+      elsif response.attachments and not response.attachments.empty?
         self.hideMenu()
         window.parent.frames.content.location.href='_body_'
       else
@@ -352,31 +358,6 @@ class Parts < React
   #                            Miscellaneous                             #
   ########################################################################
 
-  # form submission - handles all forms
-  def submit(event)
-    event.preventDefault()
-    form = event.currentTarget
-
-    # collect up name of selected attachment and all input fields
-    data = {message: window.parent.location.pathname, selected: @selected}
-    Array(form.querySelectorAll('input')).each do |field|
-      data[field.name] = field.value if field.name
-    end
-
-    # add signature (if present)
-    data.signature = CheckSignature.find(@selected, @attachments)
-
-    # submit HTTP post request
-    @busy = true
-    return HTTP.post(form.action, data).then {|response|
-      @busy = false
-      return response
-    }.catch {|error|
-      alert error
-      @busy = false
-    }
-  end
-
   # clicking on an attachment selects it
   def select(event)
     self.selectPart event.currentTarget.querySelector('a').getAttribute('href')
@@ -415,6 +396,13 @@ class Parts < React
       end
     elsif event.keyCode == 38 # up
       window.parent.location.href = '../..'
+    end
+  end
+
+  # tasklist completion events
+  def status_update(event)
+    if event.data.status == 'complete'
+      self.delete_attachment(event)
     end
   end
 

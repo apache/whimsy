@@ -103,11 +103,11 @@ class ICLA < React
     self.componentDidUpdate()
 
     # watch for status updates
-    window.addEventListener 'message' do |event|
-      console.log(event)
-      @submitted = false
-      @filed = false
-    end
+    window.addEventListener 'message', self.status_update
+  end
+
+  def componentWillUnmount()
+    window.removeEventListener 'message', self.status_update
   end
 
   # as fields change, enable/disable the associated buttons and adjust
@@ -145,18 +145,8 @@ class ICLA < React
   # handle ICLA form submission
   def file(event)
     @submitted = true
-
-#   @@submit.call(event).then {|response|
-#     @filed = true
-#     @submitted = false
-#     alert response.result
-#   }.catch {
-#     @filed = false
-#     @submitted = false
-#   }
+    @filed = true
   end
-
-
 
   # validate userid is available
   def validate_userid(event)
@@ -178,5 +168,11 @@ class ICLA < React
 
     window.parent.frames.content.location.href = 
       "https://id.apache.org/acreq/members/?" + params.join('&')
+  end
+
+  # when tasks complete (or are aborted) reset form
+  def status_update(event)
+    @submitted = false
+    @filed = false
   end
 end

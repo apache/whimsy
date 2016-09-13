@@ -75,9 +75,11 @@ function nexttask(proceed) {
       $('h1').removeClass('bg-info').addClass('bg-danger').
         text('Processing Aborted');
       message = {status: 'aborted'}
+      $('button').text('resume').prop('disabled', false);
     } else {
       $('h1').removeClass('bg-info').addClass('bg-success').
         text('Processing Complete');
+      $('button').text('mail index').prop('disabled', false);
       message = {status: 'complete'}
     }
 
@@ -87,10 +89,14 @@ function nexttask(proceed) {
 
 // start the process when the button is clicked
 $('button').click(function(event) {
-  $('h1').removeClass('bg-warning').addClass('bg-info').
-    text('Request Status');
-  $(this).prop('disabled', true);
-  nexttask(true);
+  if (tasks.length) {
+    $('h1').removeClass('bg-warning').addClass('bg-info').
+      text('Request Status');
+    $(this).prop('disabled', true);
+    nexttask(true);
+  } else {
+    window.parent.location.href = '..';
+  }
 });
 
 // have delete key return to index
