@@ -384,6 +384,7 @@ class Parts < React
 
   # if selection changes, reset form and radio buttons
   def selectPart(part)
+    part = part.split('/').pop()
     if @selected != part
       @selected = part
       @form = :categorize
