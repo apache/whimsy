@@ -410,6 +410,8 @@ class Parts < React
           alert error
           @busy = false
         }
+      elsif !%w(input textarea).include? event.target.tagName.downcase()
+        window.parent.location.href = '../..'
       end
     elsif event.keyCode == 38 # up
       window.parent.location.href = '../..'

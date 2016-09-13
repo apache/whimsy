@@ -85,10 +85,21 @@ function nexttask(proceed) {
   }
 };
 
+// start the process when the button is clicked
 $('button').click(function(event) {
   $('h1').removeClass('bg-warning').addClass('bg-info').
     text('Request Status');
   $(this).prop('disabled', true);
   nexttask(true);
+});
+
+// have delete key return to index
+$(document).on('keypress', function(event) {
+  if (event.keyCode == 8 || event.keyCode == 46) { // backspace or delete
+    var tag = event.target.tagName.toLowerCase();
+    if (tag != 'input' && tag != 'textarea')  {
+      window.parent.location.href = '..';
+    }
+  }
 });
 
