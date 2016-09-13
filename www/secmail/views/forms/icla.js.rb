@@ -48,42 +48,32 @@ class ICLA < React
         end
       end
 
-      _input.btn.btn_primary value: 'File', type: 'submit', ref: 'file'
-    end
-
-    _form do
       _table.form do
         _tr do
           _th 'User ID'
           _td do
-            _input name: 'user', value: @user, onBlur: self.validate_userid
+            _input name: 'user', value: @user, onBlur: self.validate_userid,
+              disabled: @filed
           end
         end
 
         _tr do
-          _th 'PMC'
+          _th 'Project'
           _td do
-            _input name: 'pmc', value: @pmc
-          end
-        end
-
-        _tr do
-          _th 'Podling'
-          _td do
-            _input name: 'podling', value: @podling
+            _input name: 'project', value: @project, disabled: @filed
           end
         end
 
         _tr do
           _th 'Vote Link'
           _td do
-            _input type: 'url', name: 'votelink', value: @votelink
+            _input type: 'url', name: 'votelink', value: @votelink,
+              disabled: @filed
           end
         end
       end
 
-      _button.btn.btn_primary 'Request Account', ref: 'acreq',
-        onClick: self.request_account
+      _input.btn.btn_primary value: 'File', type: 'submit', ref: 'file'
     end
   end
 
@@ -118,18 +108,15 @@ class ICLA < React
       document.querySelector("input[name=#{name}]").validity.valid
     end
 
-    $file.disabled = !valid or @filed or @submitted
-
     # new account request form
     valid = true
-    %w(user pmc podling votelink).each do |name|
+    %w(user project votelink).each do |name|
       input = document.querySelector("input[name=#{name}]")
       input.required = @user && !@user.empty?
-      input.required = false if name == 'podling' and @pmc != 'incubator'
       valid &= input.validity.valid
     end
 
-    $acreq.disabled = !valid or !@user or !@filed
+    $file.disabled = !valid or @filed or @submitted
 
     # wire up form
     jQuery('form')[0].addEventListener('submit', self.file)
@@ -158,16 +145,6 @@ class ICLA < React
     }.catch {|message|
       alert message
     }
-  end
-
-  # show new account request window with fields filled in
-  def request_account()
-    params = %w{email user pmc podling votelink}.map do |name|
-      "#{name}=#{encodeURIComponent(self.state[name])}"
-    end
-
-    window.parent.frames.content.location.href = 
-      "https://id.apache.org/acreq/members/?" + params.join('&')
   end
 
   # when tasks complete (or are aborted) reset form

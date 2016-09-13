@@ -5,11 +5,28 @@
 #  - send email
 #
 
+# extract message
 message = Mailbox.find(@message)
-iclas = ASF::SVN['private/documents/iclas']
 
 # extract file extension
 fileext = File.extname(@selected) if @signature.empty?
+
+# extract/verify project
+if @project and not @project.empty?
+  pmc = ASF::Committee[@project]
+
+  if not pmc
+    podling = ASF::Podling.find(@project)
+
+    if podling and not %w(graduated retired).include? podling.status
+      pmc = ASF::Committee['incubator']
+    end
+  end
+
+  if not pmc
+    _warn "#{@project} is not an active PMC or podling"
+  end
+end
 
 # write attachment (+ signature, if present) to the documents/iclas directory
 _task "svn commit documents/iclas/#@filename#{fileext}" do
