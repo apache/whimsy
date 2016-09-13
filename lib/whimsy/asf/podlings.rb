@@ -158,6 +158,15 @@ module ASF
       end
     end
 
+    # private mailing list associated with a given podling
+    def private_mail_list
+      if name == 'log4cxx2'
+        'private@logging.apache.org'
+      else
+        dev_mail_list.sub('dev', 'private')
+      end
+    end
+
     # Is this a podling mailing list?
     def mail_list?(list)
       return true if _match_mailname?(list, name())

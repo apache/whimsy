@@ -131,8 +131,10 @@ class ICLA < React
 
   # handle ICLA form submission
   def file(event)
-    @submitted = true
-    @filed = true
+    setTimeout 0 do
+      @submitted = true
+      @filed = true
+    end
   end
 
   # validate userid is available

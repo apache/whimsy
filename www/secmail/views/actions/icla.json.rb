@@ -87,7 +87,6 @@ _task "svn commit foundation/officers/iclas.txt" do
     _.system! 'svn', 'commit', dest, '-m', "ICLA from #{@pubname}",
       ['--non-interactive', '--no-auth-cache'],
       ['--username', env.user.untaint, '--password', env.password.untaint]
-
   end
 end
 
@@ -101,8 +100,12 @@ _task "email #@email" do
   mail = Mail.new(ERB.new(File.read(template).untaint).result(binding))
 
   # adjust copy lists
-  mail.cc = (mail.cc + message.cc).uniq if message.cc
-  mail.bcc = message.bcc - mail.cc if message.bcc
+  cc = mail.cc # from the template
+  cc += message.cc if message.cc # from the email message
+  cc << "private@#{pmc.mail_list}.apache.org" if pmc # copy pmc
+  cc << podling.private_mail_list if podling # copy podling
+  mail.cc = cc.uniq
+  mail.bcc = message.bcc - cc if message.bcc
 
   # add reply info
   mail.in_reply_to = message.id
