@@ -8,6 +8,8 @@ class ICLA < React
   def render
     _h4 'ICLA'
 
+    _button 'clear form', onClick: -> {@pubname = @realname = @email = ''}
+
     _form method: 'post', action: '../../tasklist/icla', target: 'content' do
       _input type: 'hidden', name: 'message'
       _input type: 'hidden', name: 'selected'
@@ -89,6 +91,7 @@ class ICLA < React
     end
 
     @realname = name
+    @pubname = name
     @email = @@headers.from
     self.componentDidUpdate()
 
@@ -123,9 +126,9 @@ class ICLA < React
     jQuery('input[name=selected]').val(@@selected)
   end
 
-  # generate file name from the public name
+  # generate file name from the real name
   def genfilename()
-    @filename ||= asciize(@pubname.strip()).downcase().gsub(/\W/, '-')
+    @filename ||= asciize(@realname.strip()).downcase().gsub(/\W/, '-')
   end
 
   # handle ICLA form submission
