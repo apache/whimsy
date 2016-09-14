@@ -15,22 +15,10 @@ require_relative 'helpers'
 require_relative 'models/mailbox'
 require_relative 'models/safetemp'
 require_relative 'models/events'
+require_relative 'tasks'
 
 require 'whimsy/asf'
 ASF::Mail.configure
-
-class Wunderbar::JsonBuilder
-  def _task(title, &block)
-    if not @task
-      @_target[:tasklist] ||= []
-      @_target[:tasklist] << title
-    elsif @task == title
-      block.call
-      @task = nil
-    else
-    end
-  end
-end
 
 # list of messages
 get '/' do

@@ -172,3 +172,7 @@ pre.bg-info {
   white-space: pre-wrap;
   word-break: normal;
 }
+
+#tasklist input, #tasklist textarea {
+  width: 100%;
+}

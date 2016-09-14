@@ -10,9 +10,16 @@ _html do
 
     _h1.bg_warning 'Operations to be performed'
   
-    _ul do
+    _ul.tasklist! do
       @dryrun['tasklist'].each do |task|
-        _li {_h3 task}
+        _li do 
+          _h3 task['title']
+
+          task['form'].each do |element|
+            element.last[:disabled] = true if Hash === element.last
+            tag! *element
+          end
+        end
       end
     end
 

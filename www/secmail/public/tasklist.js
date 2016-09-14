@@ -34,6 +34,9 @@ function nexttask(proceed) {
     fetch('', options).then(function(response) {
       // display output
       response.json().then(function(json) {
+        // remove all but the heading
+        task.parent().empty().append(task);
+
         if (json.transcript) {
           var pre = $('<pre>');
           pre.text(json.transcript.join("\n"));
@@ -42,7 +45,8 @@ function nexttask(proceed) {
           pre.html(("\n" + pre.html()).replace(/\n(\$ \w+ .*)/g, 
             "\n<b>$1</b>").trim());
 
-          task.append(pre);
+          // append results
+          task.parent().append(pre);
         }
 
         if (json.message) {
