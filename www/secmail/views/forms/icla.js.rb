@@ -8,6 +8,8 @@ class ICLA < React
   def render
     _h4 'ICLA'
 
+    _button 'clear form', onClick: -> {@pubname = @realname = @email = ''}
+
     _form method: 'post', action: '../../tasklist/icla', target: 'content' do
       _input type: 'hidden', name: 'message'
       _input type: 'hidden', name: 'selected'
