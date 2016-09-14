@@ -109,7 +109,6 @@ class ICLA < React
     end
 
     # new account request form
-    valid = true
     %w(user project votelink).each do |name|
       input = document.querySelector("input[name=#{name}]")
       input.required = @user && !@user.empty?
