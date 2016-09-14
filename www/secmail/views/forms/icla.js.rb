@@ -89,6 +89,7 @@ class ICLA < React
     end
 
     @realname = name
+    @pubname = name
     @email = @@headers.from
     self.componentDidUpdate()
 
@@ -123,9 +124,9 @@ class ICLA < React
     jQuery('input[name=selected]').val(@@selected)
   end
 
-  # generate file name from the public name
+  # generate file name from the real name
   def genfilename()
-    @filename ||= asciize(@pubname.strip()).downcase().gsub(/\W/, '-')
+    @filename ||= asciize(@realname.strip()).downcase().gsub(/\W/, '-')
   end
 
   # handle ICLA form submission
