@@ -115,22 +115,30 @@ class Parts < React
 
           _hr
 
-          _label do
-            _input type: 'radio', name: 'doctype', value: 'incomplete',
-              onClick: -> {@form = Incomplete}
-            _span 'incomplete form'
-          end
+          # reject message with message
+          _form method: 'POST', target: 'content' do
+            _input type: 'hidden', name: 'message',
+              value: window.parent.location.pathname
+            _input type: 'hidden', name: 'selected', value: @@selected
+            _input type: 'hidden', name: 'signature', value: @@signature
 
-          _label do
-            _input type: 'radio', name: 'doctype', value: 'unsigned',
-              onClick: -> {@form = Unsigned}
-            _span 'unsigned form'
-          end
+            _label do
+              _input type: 'radio', name: 'doctype', value: 'incomplete',
+                onClick: self.reject
+              _span 'incomplete form'
+            end
 
-          _label do
-            _input type: 'radio', name: 'doctype', value: 'pubkey',
-              onClick: -> {@form = Unsigned}
-            _span 'upload public key'
+            _label do
+              _input type: 'radio', name: 'doctype', value: 'unsigned',
+                onClick: self.reject
+              _span 'unsigned form'
+            end
+
+            _label do
+              _input type: 'radio', name: 'doctype', value: 'pubkey',
+                onClick: self.reject
+              _span 'upload public key'
+            end
           end
         end
 
@@ -352,6 +360,16 @@ class Parts < React
       success: ->(data) { self.extractHeaders(data.headers) },
       complete: -> { event.target.disabled = false }
     )
+  end
+
+  ########################################################################
+  #                         Reject attachment                            #
+  ########################################################################
+
+  def reject(event)
+    form = jQuery(event.target).closest('form')
+    form.attr('action', "../../tasklist/#{event.target.value}")
+    form.submit()
   end
 
   ########################################################################

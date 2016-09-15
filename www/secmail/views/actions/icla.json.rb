@@ -112,29 +112,17 @@ end
 # send confirmation email
 task "email #@email" do
   # build mail from template
-  mail = Mail.new(template('icla.erb'))
-
-  # adjust copy lists
-  cc = mail.cc # from the template
-  cc += message.cc if message.cc # from the email message
-  cc << "private@#{pmc.mail_list}.apache.org" if pmc # copy pmc
-  cc << podling.private_mail_list if podling # copy podling
-  mail.cc = cc.uniq
-  mail.bcc = message.bcc - cc if message.bcc
-
-  # untaint email addresses
-  mail.to = mail.to.map {|email| email.dup.untaint}
-  mail.cc = mail.cc.map {|email| email.dup.untaint}
-  mail.bcc = mail.bcc.map {|email| email.dup.untaint} if message.bcc
-
-  # add reply info
-  mail.in_reply_to = message.id
-  mail.references = message.id
-  if message.subject =~ /^re:\s/i
-    mail.subject = message.subject
-  else
-    mail.subject = 'Re: ' + message.subject
-  end
+  @email = message.from
+  mail = message.reply(
+    from: @from,
+    to: @email.addrs,
+    cc: [
+      'secretary@apache.org',
+      ("private@#{pmc.mail_list}.apache.org" if pmc), # copy pmc
+      (podling.private_mail_list if podling) # copy podling
+    ],
+    body: template('icla.erb')
+  )
 
   # echo email
   form do
@@ -200,15 +188,13 @@ if @user and not @user.empty? and pmc and not @votelink.empty?
     mail = Mail.new(template('acreq.erb'))
 
     # adjust copy lists
-    cc = mail.cc # from the template
+    cc = mail.cc.split(',') # from the template
     cc << "private@#{pmc.mail_list}.apache.org" if pmc # copy pmc
     cc << podling.private_mail_list if podling # copy podling
-    mail.cc = cc.uniq
+    mail.cc = cc.uniq.map {|email| email.dup.untaint}
 
-    # untaint email addresses
+    # untaint to email addresses
     mail.to = mail.to.map {|email| email.dup.untaint}
-    mail.cc = mail.cc.map {|email| email.dup.untaint}
-    mail.bcc = mail.bcc.map {|email| email.dup.untaint} if message.bcc
 
     # echo email
     form do

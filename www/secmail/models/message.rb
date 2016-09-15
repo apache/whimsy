@@ -179,6 +179,108 @@ class Message
   end
 
   #
+  # Construct a reply message, and in the process merge the email
+  # address from the original message (from, to, cc) with any additional
+  # address provided on the call (to, cc, bcc).  Remove any duplicates
+  # that may occur not only due to the merge, but also comparing across
+  # field types (for example, don't cc an address listed on the to field).
+  #
+  # Finally, canonicalize (format) the email addresses and ensure that
+  # the results aren't marked ask tainted, as the Ruby SMTP library will
+  # refuse to send to tainted addresses, and in the secretary mail application
+  # the addresses are expected to come from the mail archive and the
+  # secretary, both of which can be trusted.
+  #
+  def reply(fields)
+    mail = Mail.new
+
+    # fill in the from address
+    mail.from = fields[:from]
+
+    # fill in the reply to headers
+    mail.in_reply_to = self.id
+    mail.references = self.id
+
+    # fill in the subject from the original email
+    if self.subject =~ /^re:\s/i
+      mail.subject = self.subject
+    else
+      mail.subject = 'Re: ' + self.subject
+    end
+
+    # fill in the subject from the original email
+    mail.body = fields[:body]
+
+    # gather up the to, cc, and bcc addresses
+    to = []
+    cc = []
+    bcc = []
+
+    # process 'to' addresses on method call
+    if fields[:to]
+      Array(fields[:to]).compact.each do |addr|
+        addr = Mail::Address.new(addr) if addr.is_a? String
+        next if to.any? {|a| a.address = addr.address}
+        to << addr
+      end
+    end
+
+    # process 'from' addresses from original email
+    self.from.addrs.each do |addr|
+      next if to.any? {|a| a.address == addr.address}
+      if fields[:to]
+        next if cc.any? {|a| a.address == addr.address}
+        cc << addr
+      else
+        to << addr
+      end
+    end
+
+    # process 'to' addresses from original email
+    self.to.addrs.each do |addr|
+      next if to.any? {|a| a.address == addr.address}
+      next if cc.any? {|a| a.address == addr.address}
+      cc << addr
+    end
+
+    # process 'cc' addresses from original email
+    self.cc.each do |addr|
+      addr = Mail::Address.new(addr) if addr.is_a? String
+      next if to.any? {|a| a.address == addr.address}
+      cc << addr
+    end
+
+    # process 'cc' addresses on method call
+    if fields[:cc]
+      Array(fields[:cc]).compact.each do |addr|
+        addr = Mail::Address.new(addr) if addr.is_a? String
+        next if to.any? {|a| a.address == addr.address}
+        next if cc.any? {|a| a.address == addr.address}
+        cc << addr
+      end
+    end
+
+    # process 'bcc' addresses on method call
+    if fields[:bcc]
+      Array(fields[:bcc]).compact.each do |addr|
+        addr = Mail::Address.new(addr) if addr.is_a? String
+        next if to.any? {|a| a.address == addr.address}
+        next if cc.any? {|a| a.address == addr.address}
+        next if bcc.any? {|a| a.address == addr.address}
+        bcc << addr
+      end
+    end
+
+    # reformat and untaint email addresses
+    mail[:to] = to.map {|addr| addr.format.dup.untaint}
+    mail[:cc] = cc.map {|addr| addr.format.dup.untaint} unless cc.empty?
+    mail[:bcc] = bcc.map {|addr| addr.format.dup.untaint} unless bcc.empty?
+
+    # return the resulting email
+    mail
+  end
+
+  #
   # What to use as a hash for mail
   #
   def self.hash(message)

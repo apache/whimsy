@@ -1,10 +1,4 @@
-to:   <%= @realname.inspect %> <<%= @nemail %>>
-from: <%= @from %>
-cc:   secretary@apache.org
-bcc:  <%= @bcc %>
-subject: Unsigned Document
-
-Dear <%= @realname %>,
+Dear <%= @email.display_names.join(', ') %>,
 
 We received this document but it appears to be unsigned.
 Please sign and resubmit to secretary@apache.org

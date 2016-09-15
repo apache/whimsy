@@ -1,9 +1,4 @@
-To:   <%= @pubname.inspect %> <<%= @email %>>
-From: <%= @from %>
-Cc:   secretary@apache.org
-Subject: Your ICLA sent to Apache Secretary
-
-Dear <%= @pubname %>,
+Dear <%= @email.display_names.join(', ') %>,
 
 This message acknowledges receipt of your ICLA, which has been filed in the Apache Software Foundation records.
 
