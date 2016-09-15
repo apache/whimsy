@@ -45,7 +45,7 @@ class Wunderbar::JsonBuilder
 
   def svn *args
     args << svnauth if %(checkout update commit).include? args.first
-    _.system 'svn', *args
+    _.system! 'svn', *args
   end
 
   def svnauth

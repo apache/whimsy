@@ -75,7 +75,7 @@ function nexttask(proceed) {
 
     spinner.remove();
 
-    if (tasks.length) {
+    if (!proceed) {
       $('h1').removeClass('bg-info').addClass('bg-danger').
         text('Processing Aborted');
       message = {status: 'aborted'}

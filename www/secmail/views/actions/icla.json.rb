@@ -122,6 +122,11 @@ task "email #@email" do
   mail.cc = cc.uniq
   mail.bcc = message.bcc - cc if message.bcc
 
+  # untaint email addresses
+  mail.to = mail.to.map {|email| email.dup.untaint}
+  mail.cc = mail.cc.map {|email| email.dup.untaint}
+  mail.bcc = mail.bcc.map {|email| email.dup.untaint} if message.bcc
+
   # add reply info
   mail.in_reply_to = message.id
   mail.references = message.id
@@ -182,8 +187,7 @@ if @user and not @user.empty? and pmc and not @votelink.empty?
       svn 'diff', dest
 
       # commit changes
-      svn 'commit', dest, '-m', 
-        "#{@user} account request by #{env.user}"
+      svn 'commit', dest, '-m', "#{@user} account request by #{env.user}"
     end
   end
 
@@ -200,6 +204,11 @@ if @user and not @user.empty? and pmc and not @votelink.empty?
     cc << "private@#{pmc.mail_list}.apache.org" if pmc # copy pmc
     cc << podling.private_mail_list if podling # copy podling
     mail.cc = cc.uniq
+
+    # untaint email addresses
+    mail.to = mail.to.map {|email| email.dup.untaint}
+    mail.cc = mail.cc.map {|email| email.dup.untaint}
+    mail.bcc = mail.bcc.map {|email| email.dup.untaint} if message.bcc
 
     # echo email
     form do
