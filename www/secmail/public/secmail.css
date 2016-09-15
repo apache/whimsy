@@ -176,3 +176,7 @@ pre.bg-info {
 #tasklist input, #tasklist textarea {
   width: 100%;
 }
+
+#parts table {
+  margin-top: 14px; 
+}
