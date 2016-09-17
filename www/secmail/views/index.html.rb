@@ -12,6 +12,6 @@ _html do
 
   _script src: 'app.js'
   _.render '#index' do
-    _Index mbox: @mbox
+    _Index mbox: @mbox, messages: @messages
   end
 end
