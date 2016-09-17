@@ -169,7 +169,7 @@ if @user and not @user.empty? and pmc and not @votelink.empty?
       dest = "#{dir}/acreq/new-account-reqs.txt"
 
       # update iclas.txt
-      File.write dest, File.read(dest) + line + "\n"
+      File.write dest, File.read(dest) + @acreq + "\n"
 
       # show the changes
       svn 'diff', dest
