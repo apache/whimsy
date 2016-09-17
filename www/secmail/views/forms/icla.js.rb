@@ -9,7 +9,8 @@ class ICLA < React
     _h4 'ICLA'
 
     _div.buttons do
-      _button 'clear form', onClick: -> {@pubname = @realname = @email = ''}
+      _button 'clear form', 
+        onClick: -> {@pubname = @realname = @email = @filename = ''}
     end
 
     _form method: 'post', action: '../../tasklist/icla', target: 'content' do
@@ -22,7 +23,7 @@ class ICLA < React
           _th 'Real Name'
           _td do
             _input name: 'realname', value: @realname, required: true,
-               disabled: @filed
+               disabled: @filed, onChange: self.changeRealName
           end
         end
 
@@ -46,8 +47,7 @@ class ICLA < React
           _th 'File Name'
           _td do
             _input name: 'filename', value: @filename, required: true,
-              pattern: '[a-zA-Z][-\w]+(\.[a-z]+)?', onFocus: self.genfilename,
-              disabled: @filed
+              pattern: '[a-zA-Z][-\w]+(\.[a-z]+)?', disabled: @filed
           end
         end
       end
@@ -94,6 +94,7 @@ class ICLA < React
 
     @realname = name
     @pubname = name
+    @filename = self.genfilename(name)
     @email = @@headers.from
     self.componentDidUpdate()
 
@@ -128,9 +129,14 @@ class ICLA < React
     jQuery('input[name=selected]').val(@@selected)
   end
 
+  def changeRealName(event)
+    @realname = event.target.value;
+    @filename = self.genfilename(event.target.value)
+  end
+
   # generate file name from the real name
-  def genfilename()
-    @filename ||= asciize(@realname.strip()).downcase().gsub(/\W/, '-')
+  def genfilename(realname)
+    return asciize(realname.strip()).downcase().gsub(/\W+/, '-')
   end
 
   # handle ICLA form submission
