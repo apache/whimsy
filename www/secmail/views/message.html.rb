@@ -5,7 +5,7 @@
 _html do
   _title 'ASF Secretary Mail'
 
-  _frameset cols: '20%, 70%' do
+  _frameset cols: '25%, 70%' do
     _frame src: '_index_'
     _frame name: 'content', src: '_body_'
   end
