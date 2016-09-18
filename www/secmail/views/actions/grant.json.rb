@@ -91,7 +91,9 @@ task "svn commit foundation/officers/grants.txt" do
     svn 'update', dest
 
     # update grants.txt
-    File.write dest, File.read(dest) + @grantlines + "\n"
+    marker = "\n# registering.  documents on way to Secretary.\n"
+    File.write dest,
+      File.read(dest).split(marker).insert(1, "\n#{@grantlines}\n", marker).join
 
     # show the changes
     svn 'diff', dest
