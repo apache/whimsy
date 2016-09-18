@@ -56,11 +56,11 @@ table.form {
   margin-top: 2em;
 }
 
-.form input {
+.form input, .form textarea {
   width: 100%;
 }
 
-.form input:invalid {
+.form input:invalid, .form textarea:invalid {
   border: 1px solid red;
 }
 

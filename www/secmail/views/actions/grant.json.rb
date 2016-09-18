@@ -1,7 +1,7 @@
 #
 # File an ICLA:
-#  - add files to documents/cclas
-#  - add entry to officers/cclas.txt
+#  - add files to documents/grants
+#  - add entry to officers/grants.txt
 #  - respond to original email
 #
 
@@ -32,14 +32,14 @@ end
 _personalize_email(env.user)
 
 # initialize commit message
-@document = "CCLA from #{@company}"
+@document = "Software Grant from #{@company}"
 
 ########################################################################
-#                            document/cclas                            #
+#                           document/grants                            #
 ########################################################################
 
-# write attachment (+ signature, if present) to the documents/cclas directory
-task "svn commit documents/cclas/#@filename#{fileext}" do
+# write attachment (+ signature, if present) to the documents/grants directory
+task "svn commit documents/grants/#@filename#{fileext}" do
   form do
     _input value: @selected, name: 'selected'
 
@@ -51,44 +51,33 @@ task "svn commit documents/cclas/#@filename#{fileext}" do
   complete do |dir|
     # checkout empty directory
     svn 'checkout', '--depth', 'empty',
-      'https://svn.apache.org/repos/private/documents/cclas', "#{dir}/cclas"
+      'https://svn.apache.org/repos/private/documents/grants', "#{dir}/grants"
 
     # create/add file(s)
-    dest = message.write_svn("#{dir}/cclas", @filename, @selected, @signature)
+    dest = message.write_svn("#{dir}/grants", @filename, @selected, @signature)
 
     # Show files to be added
-    svn 'status', "#{dir}/cclas"
+    svn 'status', "#{dir}/grants"
 
     # commit changes
-    svn 'commit', "#{dir}/cclas/#{@filename}#{fileext}", '-m', @document
+    svn 'commit', "#{dir}/grants/#{@filename}#{fileext}", '-m', @document
   end
 end
 
 ########################################################################
-#                          officers/cclas.txt                          #
+#                         officers/grants.txt                          #
 ########################################################################
 
-# insert line into iclas.txt
-task "svn commit foundation/officers/cclas.txt" do
+# insert line into grants.txt
+task "svn commit foundation/officers/grants.txt" do
   # construct line to be inserted
-  @cclalines = "notinavail:" + @company.strip
-
-  unless @contact.empty?
-    @cclalines += " - #{@contact.strip}"
-  end
-
-  @cclalines += ":#{@email.strip}:Signed Corp CLA"
-
-  unless @employees.empty?
-    @cclalines += " for #{@employees.strip.gsub(/\s*\n\s*/, ', ')}"
-  end
-
-  unless @product.empty?
-    @cclalines += " for #{@product.strip}"
-  end
+  @grantlines = "#{@company.strip}" +
+    "\n  file: #{@filename}#{fileext}" +
+    "\n  for: #{@description.strip.gsub(/\r?\n\s*/,"\n       ")}"
 
   form do
-    _input value: @cclalines, name: 'cclalines'
+    _textarea @grantlines, name: 'grantlines', 
+      rows: @grantlines.split("\n").length
   end
 
   complete do |dir|
@@ -97,12 +86,12 @@ task "svn commit foundation/officers/cclas.txt" do
       'https://svn.apache.org/repos/private/foundation/officers', 
       "#{dir}/officers"
 
-    # retrieve cclas.txt
-    dest = "#{dir}/officers/cclas.txt"
+    # retrieve grants.txt
+    dest = "#{dir}/officers/grants.txt"
     svn 'update', dest
 
-    # update cclas.txt
-    File.write dest, File.read(dest) + @cclalines + "\n"
+    # update grants.txt
+    File.write dest, File.read(dest) + @grantlines + "\n"
 
     # show the changes
     svn 'diff', dest
@@ -121,13 +110,12 @@ task "email #@email" do
   # build mail from template
   mail = message.reply(
     from: @from,
-    to: "#{@contact.inspect} <#{@email}>",
     cc: [
       'secretary@apache.org',
       ("private@#{pmc.mail_list}.apache.org" if pmc), # copy pmc
       (podling.private_mail_list if podling) # copy podling
     ],
-    body: template('ccla.erb')
+    body: template('grant.erb')
   )
 
   # echo email

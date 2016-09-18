@@ -112,10 +112,9 @@ end
 # send confirmation email
 task "email #@email" do
   # build mail from template
-  @email = message.from
   mail = message.reply(
     from: @from,
-    to: @email.addrs,
+    to: "#{@name.inspect} <#{@email}>",
     cc: [
       'secretary@apache.org',
       ("private@#{pmc.mail_list}.apache.org" if pmc), # copy pmc

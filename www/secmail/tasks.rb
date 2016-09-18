@@ -19,6 +19,11 @@ class Wunderbar::JsonBuilder
     @_target[:tasklist].last[:form] << ['input', '', *args]
   end
 
+  def _textarea *args
+    return if @task
+    @_target[:tasklist].last[:form] << ['textarea', *args]
+  end
+
   def _message mail
     if @task
       super
