@@ -111,6 +111,15 @@ end
 
 # send confirmation email
 task "email #@email" do
+  # chose reply based on whether or not the project/userid info was provided
+  if @user
+    reply = 'icla-account-requested.erb'
+  elsif @product
+    reply = 'icla-pmc-notified.erb'
+  else
+    reply = 'icla.erb'
+  end
+
   # build mail from template
   mail = message.reply(
     from: @from,
@@ -120,7 +129,7 @@ task "email #@email" do
       ("private@#{pmc.mail_list}.apache.org" if pmc), # copy pmc
       (podling.private_mail_list if podling) # copy podling
     ],
-    body: template('icla.erb')
+    body: template(reply)
   )
 
   # echo email
