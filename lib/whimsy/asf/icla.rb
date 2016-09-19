@@ -87,7 +87,7 @@ module ASF
 
     # list of all ids
     def self.availids
-      return unless SOURCE
+      return [] unless SOURCE
       refresh
       return @@availids if @@availids
       availids = []
