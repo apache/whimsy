@@ -164,7 +164,7 @@ class Mailbox
       {
         time: message[:time],
         href: "#{message[:source]}/#{id}/",
-        from: message[:from],
+        from: message[:name] || message[:from],
         subject: message['Subject'],
         status: message[:status]
       }
