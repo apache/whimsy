@@ -187,7 +187,7 @@ if @user and not @user.empty? and pmc and not @votelink.empty?
     mail = Mail.new(template('acreq.erb'))
 
     # adjust copy lists
-    cc = mail.cc.split(',') # from the template
+    cc = ["#{@pubname.inspect} <#{@email}>"]
     cc << "private@#{pmc.mail_list}.apache.org" if pmc # copy pmc
     cc << podling.private_mail_list if podling # copy podling
     mail.cc = cc.uniq.map {|email| email.dup.untaint}
