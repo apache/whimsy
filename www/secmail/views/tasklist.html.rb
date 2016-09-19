@@ -6,6 +6,10 @@ _html do
     _h2.bg_danger @dryrun['exception']
     _pre @dryrun['backtrace'].join("\n")
 
+    _script %{
+      var message = {status: 'warning'}
+      window.parent.frames[0].postMessage(message, '*')
+    }
   else
 
     _h1.bg_warning 'Operations to be performed'
