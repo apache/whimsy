@@ -219,7 +219,7 @@ class Message
     # process 'to' addresses on method call
     if fields[:to]
       Array(fields[:to]).compact.each do |addr|
-        addr = Mail::Address.new(addr) if addr.is_a? String
+        addr = liberal_email_parser(addr) if addr.is_a? String
         next if to.any? {|a| a.address = addr.address}
         to << addr
       end
@@ -245,7 +245,7 @@ class Message
 
     # process 'cc' addresses from original email
     self.cc.each do |addr|
-      addr = Mail::Address.new(addr) if addr.is_a? String
+      addr = liberal_email_parser(addr) if addr.is_a? String
       next if to.any? {|a| a.address == addr.address}
       cc << addr
     end
@@ -253,7 +253,7 @@ class Message
     # process 'cc' addresses on method call
     if fields[:cc]
       Array(fields[:cc]).compact.each do |addr|
-        addr = Mail::Address.new(addr) if addr.is_a? String
+        addr = liberal_email_parser(addr) if addr.is_a? String
         next if to.any? {|a| a.address == addr.address}
         next if cc.any? {|a| a.address == addr.address}
         cc << addr
@@ -263,7 +263,7 @@ class Message
     # process 'bcc' addresses on method call
     if fields[:bcc]
       Array(fields[:bcc]).compact.each do |addr|
-        addr = Mail::Address.new(addr) if addr.is_a? String
+        addr = liberal_email_parser(addr) if addr.is_a? String
         next if to.any? {|a| a.address == addr.address}
         next if cc.any? {|a| a.address == addr.address}
         next if bcc.any? {|a| a.address == addr.address}
@@ -295,7 +295,7 @@ class Message
 
     # parse from address
     begin
-      from = Mail::Address.new(mail[:from].value).display_name
+      from = liberal_email_parser(mail[:from].value).display_name
     rescue Exception
       from = mail[:from].value
     end
@@ -314,7 +314,7 @@ class Message
     # remove secretary and anybody on the to field from the cc list
     cc.reject! do |email|
       begin
-        address = Mail::Address.new(email).address
+        address = liberal_email_parser(email).address
         next true if address == 'secretary@apache.org'
         next true if mail.from_addrs.include? address
       rescue Exception
@@ -365,5 +365,26 @@ class Message
     end
 
     headers
+  end
+
+private
+
+  # see https://github.com/mikel/mail/issues/39
+  def liberal_email_parser(addr)
+    addr = Mail::Address.new(addr)
+  rescue Mail::Field::ParseError
+    if addr =~ /^"([^"]*)" <(.*)>$/
+      addr = Mail::Address.new
+      addr.address = $2
+      addr.display_name = $1
+    elsif addr =~ /^([^"]*) <(.*)>$/
+      addr = Mail::Address.new
+      addr.address = $2
+      addr.display_name = $1
+    else
+      raise
+    end
+
+    return addr
   end
 end
