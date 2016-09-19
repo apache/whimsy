@@ -16,10 +16,11 @@ gem 'rake'
 gem 'zip'
 gem 'sinatra', '~> 1.4'
 gem 'sanitize'
-gem 'wunderbar', '~> 1.0.26'
+gem 'wunderbar', '~> 1.0.27'
 gem 'ruby2js', '~> 2.0.12'
 gem 'execjs'
 gem 'listen', ('~> 3.0.7' if RUBY_VERSION =~ /^2\.[01]/)
+gem 'escape'
 
 group :demo do
   gem 'puma'

@@ -9,6 +9,7 @@ require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 require 'erb'
 require 'sanitize'
+require 'escape'
 
 require_relative 'personalize'
 require_relative 'helpers'
