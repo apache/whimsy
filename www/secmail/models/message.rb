@@ -219,7 +219,7 @@ class Message
     # process 'to' addresses on method call
     if fields[:to]
       Array(fields[:to]).compact.each do |addr|
-        addr = liberal_email_parser(addr) if addr.is_a? String
+        addr = Message.liberal_email_parser(addr) if addr.is_a? String
         next if to.any? {|a| a.address = addr.address}
         to << addr
       end
@@ -245,7 +245,7 @@ class Message
 
     # process 'cc' addresses from original email
     self.cc.each do |addr|
-      addr = liberal_email_parser(addr) if addr.is_a? String
+      addr = Message.liberal_email_parser(addr) if addr.is_a? String
       next if to.any? {|a| a.address == addr.address}
       cc << addr
     end
@@ -253,7 +253,7 @@ class Message
     # process 'cc' addresses on method call
     if fields[:cc]
       Array(fields[:cc]).compact.each do |addr|
-        addr = liberal_email_parser(addr) if addr.is_a? String
+        addr = Message.liberal_email_parser(addr) if addr.is_a? String
         next if to.any? {|a| a.address == addr.address}
         next if cc.any? {|a| a.address == addr.address}
         cc << addr
@@ -263,7 +263,7 @@ class Message
     # process 'bcc' addresses on method call
     if fields[:bcc]
       Array(fields[:bcc]).compact.each do |addr|
-        addr = liberal_email_parser(addr) if addr.is_a? String
+        addr = Message.liberal_email_parser(addr) if addr.is_a? String
         next if to.any? {|a| a.address == addr.address}
         next if cc.any? {|a| a.address == addr.address}
         next if bcc.any? {|a| a.address == addr.address}
@@ -297,7 +297,7 @@ class Message
     begin
       from = liberal_email_parser(mail[:from].value).display_name
     rescue Exception
-      from = mail[:from].value
+      from = mail[:from].value.sub(/\s+<.*?>$/)
     end
 
     # determine who should be copied on any responses
@@ -367,10 +367,8 @@ class Message
     headers
   end
 
-private
-
   # see https://github.com/mikel/mail/issues/39
-  def liberal_email_parser(addr)
+  def self.liberal_email_parser(addr)
     addr = Mail::Address.new(addr)
   rescue Mail::Field::ParseError
     if addr =~ /^"([^"]*)" <(.*)>$/
