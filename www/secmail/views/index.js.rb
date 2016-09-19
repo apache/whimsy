@@ -7,11 +7,12 @@ class Index < React
     @selected = nil
     @messages = []
     @checking = false
+    @fetched = false
   end
 
   def render
     if not @messages or @messages.all? {|message| message.status == :deleted}
-      _p 'No documents remain to be processed.'
+      _p 'All documents have been processed.'
     else
       _table do
 	_thead do
@@ -45,7 +46,7 @@ class Index < React
       end
     end
 
-    if @nextmbox
+    if @fetched and @nextmbox
       _button.btn.btn_primary 'download previous month',
         onClick: self.fetch_month
     end
@@ -113,6 +114,9 @@ class Index < React
   # fetch a month's worth of messages
   def fetch_month(&block)
     HTTP.get(@nextmbox, :json).then {|response|
+      # indicate that (at least one) fetch is complete
+      @fetched = true
+
       # update latest mbox
       @nextmbox = response.mbox
 
