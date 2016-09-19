@@ -14,7 +14,7 @@ class Index < React
     if not @messages or @messages.all? {|message| message.status == :deleted}
       _p 'All documents have been processed.'
     else
-      _table do
+      _table.table do
 	_thead do
 	  _tr do
 	    _th 'Timestamp'
