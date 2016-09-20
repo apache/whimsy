@@ -80,7 +80,7 @@ form .btn {
   width: 100%
 }
 
-#parts div.buttons {
+div.buttons {
   text-align: center;
   margin: 1em 0;
 }

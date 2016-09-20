@@ -33,14 +33,20 @@ _html do
         _span @dryrun['warn']
        end
 
-      _button.btn.btn_danger 'proceed'
+      _div.buttons do
+        _button.btn.btn_danger.proceed! 'proceed anyway'
+        _button.btn.btn_warning.cancel! 'cancel', disabled: true
+      end
 
       _script %{
         var message = {status: 'warning'}
         window.parent.frames[0].postMessage(message, '*')
       }
     else
-      _button.btn.btn_primary 'proceed'
+      _div.buttons do
+        _button.btn.btn_primary.proceed! 'proceed'
+        _button.btn.btn_warning.cancel! 'cancel'
+      end
     end
 
     _script "var params = #{JSON.generate(params)};"

@@ -8,7 +8,8 @@ class CCLA < React
     _h4 'CCLA'
 
     _div.buttons do
-      _button 'clear form', onClick: -> {@contact = @email = ''}
+      _button 'clear form', disabled: @filed,
+        onClick: -> {@contact = @email = ''}
     end
 
     _form method: 'post', action: '../../tasklist/ccla', target: 'content' do

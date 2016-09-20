@@ -9,7 +9,7 @@ class ICLA < React
     _h4 'ICLA'
 
     _div.buttons do
-      _button 'clear form', 
+      _button 'clear form', disabled: @filed,
         onClick: -> {@pubname = @realname = @email = @filename = ''}
     end
 

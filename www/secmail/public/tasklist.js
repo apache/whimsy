@@ -78,29 +78,41 @@ function nexttask(proceed) {
     if (!proceed) {
       $('h1').removeClass('bg-info').addClass('bg-danger').
         text('Processing Aborted');
-      message = {status: 'aborted'}
+      message = {status: 'aborted'};
       $('button').text('resume').prop('disabled', false);
     } else {
       $('h1').removeClass('bg-info').addClass('bg-success').
         text('Processing Complete');
       $('button').html('return to<br>mail index').prop('disabled', false);
-      message = {status: 'complete'}
+      message = {status: 'complete'};
     }
 
     window.parent.frames[0].postMessage(message, '*')
   }
 };
 
-// start the process when the button is clicked
-$('button').click(function(event) {
+// start the process when the proceed button is clicked
+$('button#proceed').click(function(event) {
   if (tasks.length) {
     $('h1').removeClass('bg-warning').addClass('bg-info').
       text('Request Status');
     $(this).prop('disabled', true);
+    $('button#cancel').prop('disabled', true);
     nexttask(true);
   } else {
     window.parent.location.href = '..';
   }
+});
+
+// end the process when the cancel button is clicked
+$('button#cancel').click(function(event) {
+  $(this).prop('disabled', true);
+  $('button#proceed').prop('disabled', true);
+  message = {status: 'cancelled'};
+  window.parent.frames[0].postMessage(message, '*');
+  $('ul')[0].style.opacity = '0.5';
+  $('h1').removeClass('bg-info').addClass('bg-danger').
+    text('Operation canceled');
 });
 
 // have delete and up keys return to index
