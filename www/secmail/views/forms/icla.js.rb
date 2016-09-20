@@ -127,6 +127,14 @@ class ICLA < React
     jQuery('form')[0].addEventListener('submit', self.file)
     jQuery('input[name=message]').val(window.parent.location.pathname)
     jQuery('input[name=selected]').val(@@selected)
+
+    # Safari autocomplete workaround: trigger change on leaving field
+    # https://github.com/facebook/react/issues/2125
+    if navigator.userAgent.include? "Safari"
+      Array(document.getElementsByTagName('input')).each do |input|
+        input.addEventListener('blur', self.onblur)
+      end
+    end
   end
 
   def changeRealName(event)
@@ -137,6 +145,11 @@ class ICLA < React
   # generate file name from the real name
   def genfilename(realname)
     return asciize(realname.strip()).downcase().gsub(/\W+/, '-')
+  end
+
+  # when leaving an input field, trigger change event (for Safari)
+  def onblur(event)
+    jQuery(event.target).trigger(:change)
   end
 
   # handle ICLA form submission
