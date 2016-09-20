@@ -112,6 +112,7 @@ task "email #@email" do
   # build mail from template
   mail = message.reply(
     from: @from,
+    to: "#{@name.inspect} <#{@email}>",
     cc: [
       'secretary@apache.org',
       ("private@#{pmc.mail_list}.apache.org" if pmc), # copy pmc
