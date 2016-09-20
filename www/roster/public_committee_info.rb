@@ -84,6 +84,10 @@ if changed? and @old_file
       entry[:roster].each { |name, value|
         if !previouspmc['roster'][name] # new name, check the date is OK
           newdate = value[:date]
+          if newdate == nil
+            Wunderbar.warn "Un-dated member for #{pmc}: #{name} #{value[:name]} #{newdate}"
+            next
+          end
           if newdate <= updated_day1 and newdate >= updated_day2 # in range
             Wunderbar.info "New member for #{pmc}: #{name} #{value[:name]} #{newdate}"
           elsif newdate > updated_day1
