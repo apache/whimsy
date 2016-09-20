@@ -302,7 +302,7 @@ class Parts < React
     HTTP.post('../../actions/delete-attachment', data).then {|response|
       @attachments = response.attachments
       if event.type == 'message'
-        signature = CheckSignature.find(@selected, @attachments)
+        signature = CheckSignature.find(@selected, response.attachments)
         @selected = signature
         self.delete_attachment(event) if signature
       elsif response.attachments and not response.attachments.empty?
