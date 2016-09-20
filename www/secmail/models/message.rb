@@ -26,6 +26,7 @@ class Message
   #
   def find(name)
     name = name[1...-1] if name =~ /<.*>/
+    name = name[2..-1] if name.start_with? './'
 
     headers = @headers[:attachments].find do |attach|
       attach[:name] == name or attach['Content-ID'].to_s == '<' + name + '>'

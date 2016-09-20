@@ -473,8 +473,8 @@ class Parts < React
     event.preventDefault()
 
     data = {
-      source: @drag,
-      target: href,
+      source: @drag.split('/').pop(),
+      target: href.split('/').pop(),
       message: window.parent.location.pathname
     }
 
