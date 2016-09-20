@@ -79,21 +79,27 @@ if changed? and @old_file
   updated_day2 = (last_updated-3600*4).strftime("%Y-%m-%d") # day of previous update
 
   info[:committees].each { |pmc, entry|
+    next if pmc == 'infrastructure' # no dates
     previouspmc = previous[pmc] # get the original details (if any)
     if previouspmc # we have an existing entry
       entry[:roster].each { |name, value|
+        newdate = value[:date]
+        if newdate == nil
+          Wunderbar.warn "Un-dated member for #{pmc}: #{name} #{value[:name]} #{newdate}"
+          next
+        end
         if !previouspmc['roster'][name] # new name, check the date is OK
-          newdate = value[:date]
-          if newdate == nil
-            Wunderbar.warn "Un-dated member for #{pmc}: #{name} #{value[:name]} #{newdate}"
-            next
-          end
           if newdate <= updated_day1 and newdate >= updated_day2 # in range
             Wunderbar.info "New member for #{pmc}: #{name} #{value[:name]} #{newdate}"
           elsif newdate > updated_day1
             Wunderbar.warn "Future-dated member for #{pmc}: #{name} #{value[:name]} #{newdate}"
           else
             Wunderbar.warn "Past-dated member for #{pmc}: #{name} #{value[:name]} #{newdate}"
+          end
+        else
+          olddate = previouspmc['roster'][name]['date']
+          if olddate != newdate
+            Wunderbar.warn "Changed date member for #{pmc}: #{name} #{value[:name]} #{olddate} => #{newdate}"
           end
         end
       }
