@@ -114,7 +114,9 @@ task "email #@email" do
   # chose reply based on whether or not the project/userid info was provided
   if @user and not @user.empty?
     reply = 'icla-account-requested.erb'
-  elsif @project and not @project.empty?
+  elsif pmc
+    @notify = "the #{pmc.display_name} PMC has"
+    @notify.sub 'has', "and the #{podling.display_name} podling have" if podling
     reply = 'icla-pmc-notified.erb'
   else
     reply = 'icla.erb'
