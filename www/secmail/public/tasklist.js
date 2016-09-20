@@ -83,7 +83,8 @@ function nexttask(proceed) {
     } else {
       $('h1').removeClass('bg-info').addClass('bg-success').
         text('Processing Complete');
-      $('button').html('return to<br>mail index').prop('disabled', false);
+      $('button#process').html('return to<br>mail index').
+        prop('disabled', false);
       message = {status: 'complete'};
     }
 
