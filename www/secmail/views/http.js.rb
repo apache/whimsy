@@ -78,7 +78,6 @@ class HTTP
 
       def xhr.onreadystatechange()
         if xhr.readyState == 4
-          console.log xhr.status
           if xhr.status == 200
             resolve()
           else
