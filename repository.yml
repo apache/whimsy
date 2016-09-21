@@ -27,12 +27,18 @@
     url: private/committers/board
     depth: files
 
+  cclas:
+    url: private/documents/cclas
+
   foundation:
     url: private/foundation
     depth: files
 
   foundation_board:
     url: private/foundation/board
+
+  grants:
+    url: private/documents/grants
 
   iclas:
     url: private/documents/iclas
