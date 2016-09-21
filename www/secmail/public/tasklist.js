@@ -79,11 +79,11 @@ function nexttask(proceed) {
       $('h1').removeClass('bg-info').addClass('bg-danger').
         text('Processing Aborted');
       message = {status: 'aborted'};
-      $('button').text('resume').prop('disabled', false);
+      $('button#proceed').text('resume').prop('disabled', false);
     } else {
       $('h1').removeClass('bg-info').addClass('bg-success').
         text('Processing Complete');
-      $('button#process').html('return to<br>mail index').
+      $('button#proceed').html('return to<br>mail index').
         prop('disabled', false);
       message = {status: 'complete'};
     }
