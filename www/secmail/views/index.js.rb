@@ -12,37 +12,43 @@ class Index < React
 
   def render
     if not @messages or @messages.all? {|message| message.status == :deleted}
-      _p 'All documents have been processed.'
+      _p.container_fluid 'All documents have been processed.'
     else
       _table.table do
-	_thead do
-	  _tr do
-	    _th 'Timestamp'
-	    _th 'From'
-	    _th 'Subject'
-	  end
-	end
+        _thead do
+          _tr do
+            _th 'Timestamp'
+            _th 'From'
+            _th 'Subject'
+          end
+        end
 
-	_tbody do
-	  @messages.each do |message|
+        _tbody do
+          @messages.each do |message|
 
-	    # determine the 'color' to use for the row
-	    color = nil
-	    color = 'deleted' if message.status == :deletePending
-	    color = 'hidden' if message.status == :deleted
-	    color = 'selected' if message.href == @selected
+            # determine the 'color' to use for the row
+            color = nil
+            color = 'deleted' if message.status == :deletePending
+            color = 'hidden' if message.status == :deleted
+            color = 'selected' if message.href == @selected
 
-	    time = Date.new(Date.parse(message.time)).toLocaleString()
+            time = Date.new(Date.parse(message.time)).toLocaleString()
 
-	    _tr class: color, onClick: self.selectRow, onDoubleClick: self.nav do
-	      _td do
-		_a time, href: "#{message.href}", title: message.time
-	      end 
-	      _td message.from
-	      _td message.subject
-	    end
-	  end
-	end
+            row_options = {
+              class: color, 
+              onClick: self.selectRow, 
+              onDoubleClick: self.nav
+            }
+
+            _tr row_options do
+              _td do
+                _a time, href: "#{message.href}", title: message.time
+              end 
+              _td message.from
+              _td message.subject
+            end
+          end
+        end
       end
     end
 
