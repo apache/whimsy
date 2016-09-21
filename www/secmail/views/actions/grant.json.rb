@@ -11,6 +11,14 @@ message = Mailbox.find(@message)
 # extract file extension
 fileext = File.extname(@selected) if @signature.empty?
 
+# verify that a grant under that name doesn't already exist
+if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
+  grant = "#{ASF::SVN['private/documents/grants']}/#@filename#{fileext}"
+  if File.exist? grant.untaint
+    _warn "documents/grants/#@filename#{fileext} already exists"
+  end
+end
+
 # extract/verify project
 if @project and not @project.empty?
   pmc = ASF::Committee[@project]

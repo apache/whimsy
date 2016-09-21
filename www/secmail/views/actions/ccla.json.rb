@@ -11,6 +11,14 @@ message = Mailbox.find(@message)
 # extract file extension
 fileext = File.extname(@selected) if @signature.empty?
 
+# verify that a CCLA under that name doesn't already exist
+if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
+  ccla = "#{ASF::SVN['private/documents/cclas']}/#@filename#{fileext}"
+  if File.exist? ccla.untaint
+    _warn "documents/cclas/#@filename#{fileext} already exists"
+  end
+end
+
 # extract/verify project
 if @project and not @project.empty?
   pmc = ASF::Committee[@project]
