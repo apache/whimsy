@@ -39,6 +39,10 @@ begin
     /^gpg:\s+There is no indication that the signature belongs to the owner\.$/
   ]
 
+  unless err.valid_encoding?
+    err = err.force_encoding('windows-1252').encode('utf-8') 
+  end
+
   ignore.each {|re| err.gsub! re, ''}
 
 ensure
