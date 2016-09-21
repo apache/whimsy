@@ -96,7 +96,8 @@ class Message
   end
 
   def attachments
-    @headers[:attachments].map {|attachment| attachment[:name]}
+    @headers[:attachments].map {|attachment| attachment[:name]}.
+      select {|name| name != 'signature.asc'}
   end
 
   #
