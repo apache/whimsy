@@ -24,6 +24,7 @@ class Status
   end
 
   def self.pushDeleted(value)
+    value = value[/\w+\/\w+\/?$/].sub(/\/?$/, '/')
     secmail = Status.secmail
     secmail.undoStack ||= []
     secmail.undoStack << value
