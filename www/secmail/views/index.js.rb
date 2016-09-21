@@ -35,7 +35,7 @@ class Index < React
             time = Date.new(Date.parse(message.time)).toLocaleString()
 
             row_options = {
-              class: color, 
+              className: color, 
               onClick: self.selectRow, 
               onDoubleClick: self.nav
             }
