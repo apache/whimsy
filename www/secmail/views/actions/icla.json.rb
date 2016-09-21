@@ -124,7 +124,11 @@ task "email #@email" do
     reply = 'icla-account-requested.erb'
   elsif pmc
     @notify = "the #{pmc.display_name} PMC has"
-    @notify.sub 'has', "and the #{podling.display_name} podling have" if podling
+
+    if podling
+      @notify.sub! /has$/, "and the #{podling.display_name} podling have"
+    end
+
     reply = 'icla-pmc-notified.erb'
   else
     reply = 'icla.erb'
