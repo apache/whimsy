@@ -249,6 +249,7 @@ class Message
     self.cc.each do |addr|
       addr = Message.liberal_email_parser(addr) if addr.is_a? String
       next if to.any? {|a| a.address == addr.address}
+      next if cc.any? {|a| a.address == addr.address}
       cc << addr
     end
 
