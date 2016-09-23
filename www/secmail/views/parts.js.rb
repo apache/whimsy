@@ -140,6 +140,14 @@ class Parts < React
               _span 'upload public key'
             end
           end
+
+          _hr
+
+          _label do
+            _input type: 'radio', name: 'doctype', value: 'forward',
+              onClick: -> {@form = Forward}
+            _span 'forward email'
+          end
         end
 
       elsif @form == :edit
