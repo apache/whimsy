@@ -311,6 +311,7 @@ class Parts < React
       @attachments = response.attachments
       if event.type == 'message'
         signature = CheckSignature.find(@selected, response.attachments)
+        @busy = false
         @selected = signature
         self.delete_attachment(event) if signature
       elsif response.attachments and not response.attachments.empty?
