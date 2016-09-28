@@ -27,7 +27,10 @@ end
 end
 
 # everybody approve tomcat
-threads = ASF::Auth::DIRECTORS.map do |userid, initials|
+threads = ASF::Service['board'].members.map do |person|
+  userid = person.id
+  initials = person.public_name.gsub(/[^A-Z]/, '').downcase
+
   Thread.new do
     File.unlink "test/work/data/#{userid}.yml" rescue nil
 
@@ -58,7 +61,10 @@ threads.each {|thread| thread.join}
 agenda = File.read('test/work/board/board_agenda_2015_02_18.txt')
 approvals = agenda[/Tomcat\.\s+approved: (.*)/, 1]
 print approvals.inspect + ' ...'
-if approvals.split(/,\s*/).sort == ASF::Auth::DIRECTORS.values.sort
+expected = ASF::Service['board'].members.map do |person|
+   person.public_name.gsub(/[^A-Z]/, '').downcase
+end
+if approvals.split(/,\s*/).sort == expected.sort
   puts 'success'
 else
   puts 'failure'

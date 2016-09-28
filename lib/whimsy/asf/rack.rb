@@ -5,18 +5,6 @@ require 'thread'
 
 module ASF
   module Auth
-    DIRECTORS = {
-      'curcuru'     => 'sc',
-      'bdelacretaz' => 'bd',
-      'isabel'      => 'id',
-      'marvin'      => 'mh',
-      'jim'         => 'jj',
-      'mattmann'    => 'cm',
-      'brett'       => 'bp',
-      'gstein'      => 'gs',
-      'markt'       => 'mt'
-    }
-
     # decode HTTP authorization, when present
     def self.decode(env)
       class << env; attr_accessor :user, :password; end
