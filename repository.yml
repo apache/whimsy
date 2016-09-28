@@ -57,6 +57,10 @@
     url: private/foundation/officers
     depth: files
 
+  personnel-duties:
+    url: private/foundation/officers/personnel-duties
+    depth: files
+
   officers_historic:
     url: private/foundation/officers/historic
 
