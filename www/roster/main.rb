@@ -13,6 +13,7 @@ require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap/theme'
 require 'wunderbar/react'
 require 'wunderbar/underscore'
+require 'wunderbar/markdown'
 require 'wunderbar/jquery/stupidtable'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
@@ -136,4 +137,29 @@ end
 # attic issues
 get '/attic/issues.json' do
   _json Attic.issues
+end
+
+# overall organization chart
+get '/orgchart/' do
+  @org = OrgChart.load
+  _html :orgchart
+end
+
+# individual duties
+get '/orgchart/:name' do |name|
+  person = ASF::Person.find(env.user)
+
+  unless person.asf_member? or ASF.pmc_chairs.include? person
+    halt 401, "Not authorized\n"
+  end
+
+  @org = OrgChart.load
+  @role = @org[name]
+  pass unless @role
+
+  @oversees = @org.select do |role, duties|
+    duties['info']['reports-to'].split(/[, ]+/).include? name
+  end
+
+  _html :duties
 end

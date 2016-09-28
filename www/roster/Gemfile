@@ -19,6 +19,8 @@ gem 'sinatra', '~> 1.4'
 gem 'nokogumbo'
 gem 'execjs'
 gem 'mail'
+gem 'kramdown'
+gem 'sanitize'
 
 group :development do
   gem 'passenger'
