@@ -20,21 +20,7 @@ if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
 end
 
 # extract/verify project
-if @project and not @project.empty?
-  pmc = ASF::Committee[@project]
-
-  if not pmc
-    podling = ASF::Podling.find(@project)
-
-    if podling and not %w(graduated retired).include? podling.status
-      pmc = ASF::Committee['incubator']
-    end
-  end
-
-  if not pmc
-    _warn "#{@project} is not an active PMC or podling"
-  end
-end
+_extract_project
 
 # obtain per-user information
 _personalize_email(env.user)
@@ -132,8 +118,8 @@ task "email #@email" do
     to: "#{@contact.inspect} <#{@email}>",
     cc: [
       'secretary@apache.org',
-      ("private@#{pmc.mail_list}.apache.org" if pmc), # copy pmc
-      (podling.private_mail_list if podling) # copy podling
+      ("private@#{@pmc.mail_list}.apache.org" if @pmc), # copy pmc
+      (@podling.private_mail_list if @podling) # copy podling
     ],
     body: template('ccla.erb')
   )

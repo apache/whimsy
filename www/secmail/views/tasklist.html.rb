@@ -29,6 +29,13 @@ _html do
       end
     end
 
+    if @dryrun['info']
+      _div.alert.alert_warning do
+        _b 'Note:'
+        _span @dryrun['info']
+      end
+    end
+
     if @dryrun['warn']
       _div.alert.alert_danger do
         _b 'Warning:'

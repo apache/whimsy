@@ -22,21 +22,7 @@ if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
 end
 
 # extract/verify project
-if @project and not @project.empty?
-  pmc = ASF::Committee[@project]
-
-  if not pmc
-    podling = ASF::Podling.find(@project)
-
-    if podling and not %w(graduated retired).include? podling.status
-      pmc = ASF::Committee['incubator']
-    end
-  end
-
-  if not pmc
-    _warn "#{@project} is not an active PMC or podling"
-  end
-end
+_extract_project
 
 # obtain per-user information
 _personalize_email(env.user)
@@ -122,11 +108,11 @@ task "email #@email" do
   # chose reply based on whether or not the project/userid info was provided
   if @user and not @user.empty?
     reply = 'icla-account-requested.erb'
-  elsif pmc
-    @notify = "the #{pmc.display_name} PMC has"
+  elsif @pmc
+    @notify = "the #{@pmc.display_name} PMC has"
 
-    if podling
-      @notify.sub! /has$/, "and the #{podling.display_name} podling have"
+    if @podling
+      @notify.sub! /has$/, "and the #{@podling.display_name} podling have"
     end
 
     reply = 'icla-pmc-notified.erb'
@@ -140,8 +126,8 @@ task "email #@email" do
     to: "#{@pubname.inspect} <#{@email}>",
     cc: [
       'secretary@apache.org',
-      ("private@#{pmc.mail_list}.apache.org" if pmc), # copy pmc
-      (podling.private_mail_list if podling) # copy podling
+      ("private@#{@pmc.mail_list}.apache.org" if @pmc), # copy pmc
+      (@podling.private_mail_list if @podling) # copy podling
     ],
     body: template(reply)
   )
@@ -157,7 +143,7 @@ task "email #@email" do
   end
 end
 
-if @user and not @user.empty? and pmc and not @votelink.empty?
+if @user and not @user.empty? and @pmc and not @votelink.empty?
 
   ######################################################################
   #                   acreq/new-account-reqs.txt                       #
@@ -169,8 +155,8 @@ if @user and not @user.empty? and pmc and not @votelink.empty?
       @user,
       @pubname,
       @email,
-      pmc.name,
-      pmc.name,
+      @pmc.name,
+      @pmc.name,
       Date.today.strftime('%m-%d-%Y'),
       'yes',
       'yes',
@@ -211,8 +197,8 @@ if @user and not @user.empty? and pmc and not @votelink.empty?
 
     # adjust copy lists
     cc = ["#{@pubname.inspect} <#{@email}>"]
-    cc << "private@#{pmc.mail_list}.apache.org" if pmc # copy pmc
-    cc << podling.private_mail_list if podling # copy podling
+    cc << "private@#{@pmc.mail_list}.apache.org" if @pmc # copy pmc
+    cc << @podling.private_mail_list if @podling # copy podling
     mail.cc = cc.uniq.map {|email| email.dup.untaint}
 
     # untaint to email addresses

@@ -154,7 +154,7 @@ module ASF
       when 'log4cxx2'
         'log4cxx-dev@logging.apache.org'
       else
-        "dev@#{name}.apache.org"
+        "dev@#{name}.apache.org" if ASF::Mail.lists.include? "#{name}-dev"
       end
     end
 
@@ -163,7 +163,8 @@ module ASF
       if name == 'log4cxx2'
         'private@logging.apache.org'
       else
-        dev_mail_list.sub('dev', 'private')
+        list = dev_mail_list
+        list && list.sub('dev', 'private')
       end
     end
 
