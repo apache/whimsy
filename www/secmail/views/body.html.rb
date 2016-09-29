@@ -3,6 +3,9 @@
 #
 
 _html do
+  _link rel: 'stylesheet', type: 'text/css', 
+    href: "../../secmail.css?#{@cssmtime}"
+
   #
   # Selected headers
   #
@@ -54,6 +57,6 @@ _html do
       body.force_encoding(@message.text_part.charset)
     end
 
-    _pre body.encode('utf-8', invalid: :replace, undef: :replace)
+    _pre.bg_info body.encode('utf-8', invalid: :replace, undef: :replace)
   end
 end

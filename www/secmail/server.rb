@@ -122,6 +122,7 @@ end
 # message body for a single message
 get %r{^/(\d{6})/(\w+)/_body_$} do |month, hash|
   @message = Mailbox.new(month).find(hash)
+  @cssmtime = File.mtime('public/secmail.css').to_i
   pass unless @message
   _html :body
 end
