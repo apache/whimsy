@@ -152,9 +152,13 @@ class Message
   # write one or more attachments to directory containing an svn checkout
   #
   def write_svn(repos, filename, *attachments)
+    # drop all nil and empty values
     attachments = attachments.flatten.reject {|name| name.to_s.empty?}
 
-    if attachments.length == 1
+    # if last argument is a Hash, treat it as name/value pairs
+    attachments += attachments.pop.to_a if Hash === attachments.last
+
+    if attachments.flatten.length == 1
       ext = File.extname(attachments.first).untaint
       find(attachments.first).write_svn(repos, filename + ext)
     else
@@ -171,8 +175,8 @@ class Message
       Dir.mkdir dest
 
       # write out selected attachment
-      attachments.each do |attachment|
-        find(attachment).write_svn(repos, filename)
+      attachments.each do |attachment, basename|
+        find(attachment).write_svn(repos, filename, basename)
       end
 
       Kernel.system 'svn', 'add', dest

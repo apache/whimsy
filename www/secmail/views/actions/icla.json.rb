@@ -47,7 +47,12 @@ task "svn commit documents/iclas/#@filename#{fileext}" do
       'https://svn.apache.org/repos/private/documents/iclas', "#{dir}/iclas"
 
     # create/add file(s)
-    dest = message.write_svn("#{dir}/iclas", @filename, @selected, @signature)
+    if @signature.to_s.empty?
+      dest = message.write_svn("#{dir}/iclas", @filename, @selected)
+    else
+      dest = message.write_svn("#{dir}/iclas", @filename, 
+        @selected => 'icla.pdf', @signature => 'icla.pdf.asc')
+    end
 
     # Show files to be added
     svn 'status', "#{dir}/iclas"

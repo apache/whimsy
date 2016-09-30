@@ -67,9 +67,9 @@ class Attachment
   end
 
   # write a file out to svn
-  def write_svn(repos, file)
+  def write_svn(repos, file, path=nil)
     filename = File.join(repos, file)
-    filename = File.join(filename, safe_name) if Dir.exist? filename
+    filename = File.join(filename, path || safe_name) if Dir.exist? filename
 
     raise Errno::EEXIST.new(file) if File.exist? filename
     File.write filename, body, encoding: Encoding::BINARY
