@@ -78,9 +78,11 @@ class Index < React
   # on initial load, fetch latest mailbox, subscribe to keyboard and
   # server side events, and initialize selected item.
   def componentDidMount()
+    today = Date.new()
+    twice = (today.getMonth()+1==@nextmbox[4..5].to_i and today.getDate()<=7)
     self.fetch_month() do
       # for the first week of the month, fetch previous month too
-      self.fetch_month() if Date.new().getDate() <= 7
+      self.fetch_month() if @nextmbox and twice
     end
 
     window.onkeydown = self.keydown
