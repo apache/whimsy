@@ -57,6 +57,10 @@ class Parts < React
       end
     end
 
+    if @headers and @headers.secmail and @headers.secmail.status
+      _div.alert.alert_info @headers.secmail.status
+    end
+
     # context menu that displays when you 'right click' an attachment
     _ul.contextMenu do
       _li "\u2704 burst", onMouseDown: self.burst
@@ -432,6 +436,10 @@ class Parts < React
   def status_update(event)
     if event.data.status == 'complete'
       self.delete_attachment(event)
+    elsif event.data.status == 'keep'
+      @selected = nil
+      @form = :categorize
+      self.extractHeaders event.data.headers if event.data.headers
     end
   end
 

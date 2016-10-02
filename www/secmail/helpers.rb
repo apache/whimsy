@@ -22,25 +22,34 @@ class Wunderbar::JsonBuilder
   #
 
   def _extract_project
-		if @project and not @project.empty?
-			@pmc = ASF::Committee[@project]
+    if @project and not @project.empty?
+      @pmc = ASF::Committee[@project]
 
-			if not @pmc
-				@podling = ASF::Podling.find(@project)
+      if not @pmc
+        @podling = ASF::Podling.find(@project)
 
-				if @podling and not %w(graduated retired).include? @podling.status
-					@pmc = ASF::Committee['incubator']
+        if @podling and not %w(graduated retired).include? @podling.status
+          @pmc = ASF::Committee['incubator']
 
           unless @podling.private_mail_list
             _info "#{@project} mailing lists have not yet been set up"
             @podling = nil 
           end
-				end
-			end
+        end
+      end
 
-			if not @pmc
-				_warn "#{@project} is not an active PMC or podling"
-			end
-		end
+      if not @pmc
+        _warn "#{@project} is not an active PMC or podling"
+      end
+    end
+  end
+
+  # update the status of a message
+  def _status(status_text)
+    message = Mailbox.find(@message)
+    message.headers[:secmail] ||= {}
+    message.headers[:secmail][:status] = status_text
+    message.write_headers
+    _headers message.headers
   end
 end

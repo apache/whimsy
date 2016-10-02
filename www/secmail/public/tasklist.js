@@ -1,5 +1,7 @@
 var tasks = $('h3');
 var spinner = $('<img src="../spinner.gif"/>');
+var disposition = null;
+var headers = null;
 
 // Load fetch shim, if needed (e.g., by Safari)
 if (typeof fetch === 'undefined') {
@@ -63,10 +65,14 @@ function nexttask(proceed) {
           pre.text(json.exception);
           task.append(pre);
         }
-      });
 
-      // conditionally proceed to the next task
-      nexttask(response.ok || confirm(response.statusText + "; continue?"));
+        if (json.disposition) disposition = json.disposition;
+        if (json.headers) headers = json.headers;
+
+        // conditionally proceed to the next task
+        nexttask(response.ok || 
+          confirm(response.statusText + "; continue?"));
+      });
     }).catch(function(error) {
       nexttask(confirm(error.message + "; continue?"));
     });
@@ -86,9 +92,10 @@ function nexttask(proceed) {
       $('button#cancel').remove();
       $('button#proceed').html('return to<br>mail index').
         prop('disabled', false);
-      message = {status: 'complete'};
+      message = {status: disposition || 'complete'};
     }
 
+    if (headers) message.headers = headers;
     window.parent.frames[0].postMessage(message, '*')
   }
 };
