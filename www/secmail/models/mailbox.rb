@@ -156,7 +156,7 @@ class Mailbox
   def client_headers
     # fetch a list of headers for all messages in the maibox with attachments
     headers = self.headers.to_a.select do |id, message|
-      message[:attachments]
+      not Message.attachments(message).empty?
     end
 
     # extract relevant fields from the headers

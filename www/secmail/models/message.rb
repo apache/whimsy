@@ -97,11 +97,17 @@ class Message
     mail.text_part
   end
 
-  def attachments
-    @headers[:attachments].
+  def self.attachments(headers)
+    attachments = headers[:attachments]
+    return [] unless attachments
+    attachments.
       reject {|attachment| SIG_MIMES.include? attachment[:mime]}.
       map {|attachment| attachment[:name]}.
       select {|name| name != 'signature.asc'}
+  end
+
+  def attachments
+    Message.attachments(@headers)
   end
 
   #
