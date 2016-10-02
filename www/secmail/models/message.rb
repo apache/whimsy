@@ -11,6 +11,8 @@ require_relative 'attachment.rb'
 class Message
   attr_reader :headers
 
+  SIG_MIMES = %w(application/pkcs7-signature application/pgp-signature)
+
   #
   # create a new message
   #
@@ -96,7 +98,9 @@ class Message
   end
 
   def attachments
-    @headers[:attachments].map {|attachment| attachment[:name]}.
+    @headers[:attachments].
+      reject {|attachment| not SIG_MIMES.include? attachment[:mime]}.
+      map {|attachment| attachment[:name]}.
       select {|name| name != 'signature.asc'}
   end
 
