@@ -99,7 +99,7 @@ class Message
 
   def attachments
     @headers[:attachments].
-      reject {|attachment| not SIG_MIMES.include? attachment[:mime]}.
+      reject {|attachment| SIG_MIMES.include? attachment[:mime]}.
       map {|attachment| attachment[:name]}.
       select {|name| name != 'signature.asc'}
   end
