@@ -81,8 +81,14 @@ class Index < React
     today = Date.new()
     twice = (today.getMonth()+1==@nextmbox[4..5].to_i and today.getDate()<=7)
     self.fetch_month() do
-      # for the first week of the month, fetch previous month too
-      self.fetch_month() if @nextmbox and twice
+      if @nextmbox and twice
+        # for the first week of the month, fetch previous month too
+        self.fetch_month() do
+          @fetched = true
+        end
+      else
+        @fetched = true
+      end
     end
 
     window.onkeydown = self.keydown
@@ -122,9 +128,6 @@ class Index < React
   # fetch a month's worth of messages
   def fetch_month(&block)
     HTTP.get(@nextmbox, :json).then {|response|
-      # indicate that (at least one) fetch is complete
-      @fetched = true
-
       # update latest mbox
       @nextmbox = response.mbox
 
