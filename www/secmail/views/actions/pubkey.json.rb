@@ -27,7 +27,7 @@ task "email #{message.from}" do
   complete do
     mail.deliver!
 
-    _status 'email requesting upload of public key sent.'
+    _status 'request to upload public key already has been sent.'
     _disposition :keep
   end
 end
