@@ -136,3 +136,8 @@ $(document).on('keypress', function(event) {
   }
 });
 
+// reenable form on exit of page
+window.addEventListener('unload', function(){
+  message = {status: 'exit'};
+  window.parent.frames[0].postMessage(message, '*');
+});
