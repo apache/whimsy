@@ -113,8 +113,13 @@ EM.run do
       headers = msg.slice!(/\A(\w+:\s*.*\r?\n)\s*(\n|\Z)/).to_s
       headers = YAML.safe_load(headers) || {} rescue {}
 
+      # echo message to all of the clients
       clients.each do |client|
-        client.send msg
+        EM.defer(
+          ->() {client.send msg},
+          ->(response) {},
+          ->(error) {client.close rescue nil}
+        )
       end
     end
   end
