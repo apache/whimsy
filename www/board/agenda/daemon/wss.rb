@@ -5,6 +5,7 @@ require 'listen'
 require 'ostruct'
 require 'optparse'
 require 'yaml'
+require 'rbconfig'
 
 clients = []
 
@@ -70,7 +71,7 @@ exit 0 if options.kill
 
 listener = Listen.to(__dir__) do |modified, added, removed|
   puts 'restarting'
-  exec File.expand_path(__FILE__), *ARGV
+  exec RbConfig.ruby, File.expand_path(__FILE__), *ARGV
 end
 listener.start
 
