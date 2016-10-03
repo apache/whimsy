@@ -22,8 +22,8 @@ gem 'activesupport'
 gem 'mail'
 
 gem 'websocket-eventmachine-server'
+gem 'websocket-client-simple'
 gem 'concurrent-ruby'
-
 
 gem 'mime-types', '~> 2.6'
 

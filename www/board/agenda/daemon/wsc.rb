@@ -1,4 +1,8 @@
+#!/usr/bin/env ruby
+require 'bundler/setup'
 require 'websocket-client-simple'
+require 'optparse'
+require 'ostruct'
 
 # monkey patch for https://github.com/shokai/websocket-client-simple/issues/24
 class WebSocket::Client::Simple::Client
@@ -7,7 +11,33 @@ class WebSocket::Client::Simple::Client
   end
 end
 
-ws = WebSocket::Client::Simple.connect 'ws://localhost:34234'
+########################################################################
+#                         Parse argument list                          #
+########################################################################
+
+options = OpenStruct.new
+options.host = 'localhost'
+options.port = 34234
+
+opt_parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
+
+  opts.on "-h", "--host HOST", 'Host to connect to' do |host|
+    options.host = host
+  end
+
+  opts.on "-p", "--port PORT", 'Port to connect to' do |port|
+    options.port = port
+  end
+end
+
+opt_parser.parse!(ARGV)
+
+########################################################################
+#                         Connect to WebSocket                         #
+########################################################################
+
+ws = WebSocket::Client::Simple.connect "ws://#{options.host}:#{options.port}"
 
 ws.on :message do |msg|
   puts msg.data
