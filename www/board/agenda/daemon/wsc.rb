@@ -2,7 +2,7 @@ require 'websocket-client-simple'
 
 # monkey patch for https://github.com/shokai/websocket-client-simple/issues/24
 class WebSocket::Client::Simple::Client
-  def sleep
+  def sleep(*args)
     close
   end
 end
