@@ -46,7 +46,7 @@ class Parts < React
         options[:className] = nil
       end
 
-      if attachment =~ /\.(pdf|txt|jpeg|jpg|gif|png)$/
+      if attachment =~ /\.(pdf|txt|jpeg|jpg|gif|png)$/i
         link = "./#{attachment}"
       else
         link = "_danger_/#{attachment}"

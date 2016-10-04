@@ -11,7 +11,7 @@
 message = Mailbox.find(@message)
 
 # extract file extension
-fileext = File.extname(@selected) if @signature.empty?
+fileext = File.extname(@selected).downcase if @signature.empty?
 
 # verify that an ICLA under that name doesn't already exist
 if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
