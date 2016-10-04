@@ -18,7 +18,7 @@ require 'concurrent'
 #
 
 class Session
-  WORKDIR = File.expand_path('sessions', __dir__)
+  WORKDIR = File.expand_path('sessions', AGENDA_WORK)
   DAY = 24*60*60 # seconds
 
   @@sessions = Concurrent::Map.new
@@ -64,27 +64,27 @@ class Session
     @@semaphore.synchronize do
       # default files to all files in the workdir and @@sessions hash
       files ||= Dir["#{WORKDIR}/*"].map {|file| file.dup.untaint} +
-	@@sessions.keys.map {|secret| File.join(WORKDIR, secret)}
+        @@sessions.keys.map {|secret| File.join(WORKDIR, secret)}
 
       files.uniq.each do |file|
-	secret = File.basename(file)
-	session = @@sessions[secret]
+        secret = File.basename(file)
+        session = @@sessions[secret]
 
-	File.delete file if session and session[:mtime] < Time.now - 2 * DAY
+        File.delete file if session and session[:mtime] < Time.now - 2 * DAY
 
-	if File.exist? file
-	  # update class variables if the file changed
-	  mtime = File.mtime(file)
-	  next if session and session[:mtime] == mtime
+        if File.exist? file
+          # update class variables if the file changed
+          mtime = File.mtime(file)
+          next if session and session[:mtime] == mtime
 
-	  session = {id: File.read(file), secret: secret, mtime: mtime}
-	  @@sessions[secret] == session
-	  @@users[session[:id]] << session
-	else
-	  # remove session if the file no longer exists
-	  @@users[session[:id]].delete(session) if session
-	  @@sessions.delete(secret)
-	end
+          session = {id: File.read(file), secret: secret, mtime: mtime}
+          @@sessions[secret] == session
+          @@users[session[:id]] << session
+        else
+          # remove session if the file no longer exists
+          @@users[session[:id]].delete(session) if session
+          @@sessions.delete(secret)
+        end
       end
     end
   end

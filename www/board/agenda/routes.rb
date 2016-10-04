@@ -92,6 +92,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     firstname: username.split(' ').first.downcase,
     initials: initials,
     online: IPC.present,
+    session: Session.user(userid),
     role: role,
     directors: Hash[ASF::Service['board'].members.map {|person| 
       initials = person.public_name.gsub(/[^A-Z]/, '').downcase
