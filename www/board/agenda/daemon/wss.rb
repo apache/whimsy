@@ -19,6 +19,7 @@ options.port = 34234
 options.privkey = Dir['/etc/letsencrypt/live/*/privkey.pem'].first
 options.chain = Dir['/etc/letsencrypt/live/*/fullchain.pem'].first
 options.kill = false
+options.timeout = 900
 
 opt_parser = OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
@@ -41,6 +42,10 @@ opt_parser = OptionParser.new do |opts|
 
   opts.on "--kill [SIGNAL]", 'Kill existing process' do |signal|
     options.kill = signal || 'INT'
+  end
+
+  opts.on '-t', "--timeout [900]", 'inactivity timeout' do |timeout|
+    options.timeout = timeout.to_i
   end
 end
 
@@ -102,6 +107,7 @@ end
 EM.run do
   WebSocket::EventMachine::Server.start(server_options) do |ws|
     ws.onopen do |handshake|
+      ws.comm_inactivity_timeout = options.timeout
       clients << ws
     end
 
