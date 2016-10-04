@@ -18,6 +18,7 @@ end
 options = OpenStruct.new
 options.host = 'localhost'
 options.port = 34234
+options.protocol = 'ws'
 
 opt_parser = OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
@@ -29,6 +30,10 @@ opt_parser = OptionParser.new do |opts|
   opts.on "-p", "--port PORT", 'Port to connect to' do |port|
     options.port = port
   end
+
+  opts.on "--secure", 'Use secure web sockets (wss)' do
+    options.protocol = 'wss'
+  end
 end
 
 opt_parser.parse!(ARGV)
@@ -37,7 +42,8 @@ opt_parser.parse!(ARGV)
 #                         Connect to WebSocket                         #
 ########################################################################
 
-ws = WebSocket::Client::Simple.connect "ws://#{options.host}:#{options.port}"
+url ="#{options.protocol}://#{options.host}:#{options.port}"
+ws = WebSocket::Client::Simple.connect url
 
 ws.on :message do |msg|
   puts msg.data

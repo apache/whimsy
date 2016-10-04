@@ -17,7 +17,7 @@ options = OpenStruct.new
 options.host = '0.0.0.0'
 options.port = 34234
 options.privkey = Dir['/etc/letsencrypt/live/*/privkey.pem'].first
-options.chain = Dir['/etc/letsencrypt/live/*/chain.pem'].first
+options.chain = Dir['/etc/letsencrypt/live/*/fullchain.pem'].first
 options.kill = false
 
 opt_parser = OptionParser.new do |opts|
