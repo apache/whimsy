@@ -86,4 +86,13 @@ _html do
     end
 
   end
+
+  person = ASF::Person.find(env.user)
+  if person.asf_member? or ASF.pmc_chairs.include? person
+    _hr
+
+    _p do
+      _a 'Organization Chart', href: 'orgchart/'
+    end
+  end
 end
