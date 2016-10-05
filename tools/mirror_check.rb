@@ -213,6 +213,9 @@ def checkHTTP(base)
 
   setup
 
+  response = getHTTPHdrs(base)
+  I "Server: #{response['server']}"
+
   # Check the mirror time (and that zzz/ is readable)
   time = check_page(base, 'zzz/time.txt', severity = :F)
   if time
@@ -341,8 +344,8 @@ end
 
 if __FILE__ == $0
   init
-  url = ARGV[0] || DEFAULT
-  checkHTTP(url)
+  url = ARGV[0] || abort("Need URL to test!")
+  checkHTTP(url+"") # allow url to be untainted later
   # display the test results
   @tests.each { |t| t.map{|k, v| puts "#{k}: - #{v}"}} 
   if @fails > 0
