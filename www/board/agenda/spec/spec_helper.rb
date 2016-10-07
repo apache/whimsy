@@ -66,4 +66,9 @@ end
 
 RSpec.configure do |config|
   config.include MockServer
+
+  config.before(:each) do
+    FileUtils.rm_rf Agenda::CACHE
+    FileUtils.mkdir_p Agenda::CACHE
+  end
 end

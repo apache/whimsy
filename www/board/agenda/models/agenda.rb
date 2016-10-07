@@ -10,12 +10,33 @@
 require 'digest'
 
 class Agenda
+  CACHE = File.join(AGENDA_WORK, 'cache')
+  FileUtils.mkdir_p CACHE
+
   def self.[](file)
-    IPC[file]
+    path = File.join(CACHE, file.sub(/\.txt$/, '.yml'))
+    path.untaint if file =~ /^board_agenda_\d+_\d+_\d+\.txt$/
+    data = if File.exist? path
+      File.open(path) do |file|
+        file.flock(File::LOCK_SH)
+        YAML.load(file.read) || {mtime: 0}
+      end
+    else
+      {mtime: 0}
+    end
+
   end
 
   def self.[]=(file, data)
-    IPC[file] = data
+    path = File.join(CACHE, file.sub(/\.txt$/, '.yml'))
+    path.untaint if file =~ /^board_agenda_\d+_\d+_\d+\.txt$/
+    File.open(path, File::RDWR|File::CREAT, 0644) do |file|
+      file.flock(File::LOCK_EX)
+      file.write(YAML.dump(data))
+      file.flush
+      file.truncate(file.pos)
+    end
+    data
   end
 
   def self.update_cache(file, path, contents, quick)
@@ -27,11 +48,11 @@ class Agenda
 
     # update cache if there wasn't a previous entry, the digest changed,
     # or the previous entry was the result of a 'quick' parse.
-    current = IPC[file]
+    current = Agenda[file]
     if not current or current[:digest] != update[:digest] or
       current[:mtime].to_i <= 0
     then
-      IPC[file] = update
+      Agenda[file] = update
       IPC.post type: :agenda, file: file, digest: update[:digest] unless quick
     end
   end
