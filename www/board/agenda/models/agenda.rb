@@ -12,30 +12,42 @@ require 'digest'
 class Agenda
   CACHE = File.join(AGENDA_WORK, 'cache')
   FileUtils.mkdir_p CACHE
+  @@cache = Hash.new {|hash, key| hash[key] = {mtime: 0}}
 
+  # fetch parsed agenda from in memory cache if up to date, otherwise
+  # fall back to disk.
   def self.[](file)
     path = File.join(CACHE, file.sub(/\.txt$/, '.yml'))
     path.untaint if file =~ /^board_agenda_\d+_\d+_\d+\.txt$/
-    data = if File.exist? path
-      File.open(path) do |file|
-        file.flock(File::LOCK_SH)
-        YAML.load(file.read) || {mtime: 0}
+    data = @@cache[file]
+
+    if File.exist?(path) and File.mtime(path) != data[:mtime]
+      File.open(path) do |fh|
+        fh.flock(File::LOCK_SH)
+        data = YAML.load(fh.read)
       end
-    else
-      {mtime: 0}
+      @@cache[file] = data
     end
 
+    data
   end
 
+  # update both in memory and disk caches with new parsed agenda
   def self.[]=(file, data)
     path = File.join(CACHE, file.sub(/\.txt$/, '.yml'))
     path.untaint if file =~ /^board_agenda_\d+_\d+_\d+\.txt$/
-    File.open(path, File::RDWR|File::CREAT, 0644) do |file|
-      file.flock(File::LOCK_EX)
-      file.write(YAML.dump(data))
-      file.flush
-      file.truncate(file.pos)
+
+    File.open(path, File::RDWR|File::CREAT, 0644) do |fh|
+      fh.flock(File::LOCK_EX)
+      fh.write(YAML.dump(data))
+      fh.flush
+      fh.truncate(fh.pos)
+      if data[:mtime].instance_of? Time
+        File.utime data[:mtime], data[:mtime], path
+      end
     end
+
+    @@cache[file] = data
     data
   end
 
