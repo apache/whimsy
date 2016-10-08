@@ -70,6 +70,7 @@ class Parts < React
       _li "\u21B6 left", onMouseDown: self.rotate_attachment
       _li.divider
       _li "\u2716 delete", onMouseDown: self.delete_attachment
+      _li "\u2709 pdf-ize", onMouseDown: self.pdfize
     end
 
     if @selected and not @menu and @selected !~ /\.(asc|sig)$/
@@ -164,6 +165,7 @@ class Parts < React
               _li "\u21B6 left", onMouseDown: self.rotate_attachment
           _li.divider
           _li "\u2716 delete", onMouseDown: self.delete_attachment
+          _li "\u2709 pdf-ize", onMouseDown: self.pdfize
         end
 
       elsif @form == :mail
@@ -342,6 +344,29 @@ class Parts < React
 
     @busy = true
     HTTP.post('../../actions/rotate-attachment', data).then {|response|
+      @attachments = response.attachments
+      self.selectPart response.selected
+      self.hideMenu()
+
+      # reload attachment in content pane
+      window.parent.frames.content.location.href = response.selected
+    }.catch {|error|
+      alert error
+      self.hideMenu()
+    }
+  end
+
+  # convert an attachment to pdf
+  def pdfize(event)
+    message = window.parent.location.pathname
+
+    data = {
+      selected: @menu || @selected,
+      message: message
+    }
+
+    @busy = true
+    HTTP.post('../../actions/pdfize', data).then {|response|
       @attachments = response.attachments
       self.selectPart response.selected
       self.hideMenu()
