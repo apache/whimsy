@@ -6,6 +6,7 @@ require 'ostruct'
 require 'optparse'
 require 'yaml'
 require 'rbconfig'
+require 'json'
 
 require_relative './session'
 
