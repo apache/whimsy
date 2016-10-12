@@ -3,6 +3,8 @@ require 'thread'
 require 'securerandom'
 require 'concurrent'
 
+require 'whimsy/asf/config'
+
 #
 # Low-tech, file based session manager.  Each session is stored as a separate
 # file on disk, and expires after two days.  Each request for a new session
@@ -18,6 +20,7 @@ require 'concurrent'
 #
 
 class Session
+  AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
   WORKDIR = File.expand_path('sessions', AGENDA_WORK)
   DAY = 24*60*60 # seconds
 
@@ -70,16 +73,19 @@ class Session
         secret = File.basename(file)
         session = @@sessions[secret]
 
-        File.delete file if session and session[:mtime] < Time.now - 2 * DAY
 
         if File.exist? file
-          # update class variables if the file changed
-          mtime = File.mtime(file)
-          next if session and session[:mtime] == mtime
+          if File.mtime(file) < Time.now - 2 * DAY
+            File.delete file 
+          else
+            # update class variables if the file changed
+            mtime = File.mtime(file)
+            next if session and session[:mtime] == mtime
 
-          session = {id: File.read(file), secret: secret, mtime: mtime}
-          @@sessions[secret] == session
-          @@users[session[:id]] << session
+            session = {id: File.read(file), secret: secret, mtime: mtime}
+            @@sessions[secret] = session
+            @@users[session[:id]] << session
+          end
         else
           # remove session if the file no longer exists
           @@users[session[:id]].delete(session) if session
@@ -91,4 +97,7 @@ class Session
 
   # ensure the working directory exists
   FileUtils.mkdir_p WORKDIR
+
+  # load initial data from disk
+  self.load
 end

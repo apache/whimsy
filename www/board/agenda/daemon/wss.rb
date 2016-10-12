@@ -7,7 +7,10 @@ require 'optparse'
 require 'yaml'
 require 'rbconfig'
 
-clients = []
+require_relative './session'
+
+users = {}
+sessions = {}
 
 ########################################################################
 #                         Parse argument list                          #
@@ -85,7 +88,7 @@ listener.start
 ########################################################################
 
 at_exit do
-  clients.each do |client|
+  sessions.keys.each do |client|
     client.close
   end
 end
@@ -106,13 +109,9 @@ end
 
 EM.run do
   WebSocket::EventMachine::Server.start(server_options) do |ws|
-    ws.onopen do |handshake|
-      ws.comm_inactivity_timeout = options.timeout
-      clients << ws
-    end
-
     ws.onclose do 
-     clients.delete ws
+      id = sessions.delete(ws)
+      users[id].delete ws if id
     end
 
     ws.onmessage do |msg|
@@ -120,13 +119,33 @@ EM.run do
       headers = msg.slice!(/\A(\w+:\s*.*\r?\n)\s*(\n|\Z)/).to_s
       headers = YAML.safe_load(headers) || {} rescue {}
 
-      # echo message to all of the clients
-      clients.each do |client|
-        EM.defer(
-          ->() {client.send msg},
-          ->(response) {},
-          ->(error) {client.close rescue nil}
-        )
+      if headers['session']
+        STDERR.puts headers.inspect
+        session = Session[headers['session']]
+        STDERR.puts session.inspect
+        if session
+          users[session[:id]] = ws
+          sessions[ws] = session[:id]
+        end
+      end
+
+      # forward message
+      unless msg.empty?
+        if headers['private']
+          # send only to a specific user
+          clients = users[headers['private']] || []
+        else
+          # send to all users
+          clients = sessions.keys
+        end
+
+        clients.each do |client|
+          EM.defer(
+            ->() {client.send msg},
+            ->(response) {},
+            ->(error) {client.close rescue nil}
+          )
+        end
       end
     end
   end

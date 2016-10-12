@@ -234,30 +234,6 @@ get '/json/historical-comments' do
   _json HistoricalComments.comments
 end
 
-# event stream for server sent events (a.k.a EventSource)
-get '/events', provides: 'text/event-stream' do
-  stream :keep_open do |out|
-    subscription = IPC.subscribe(env.user)
-    out.callback {IPC.unsubscribe(subscription)}
-
-    loop do
-      event = IPC.pop(subscription)
-      if Hash === event or Array === event
-        out << "data: #{JSON.dump(event)}\n\n"
-      elsif event == :heartbeat
-        out << ":\n"
-      elsif event == :exit
-        out.close
-        break
-      elsif event == nil
-        subscription = IPC.subscribe(env.user)
-      else
-        out << "data: #{event.inspect}\n\n"
-      end
-    end
-  end
-end
-
 # draft minutes
 get '/text/draft/:file' do |file|
   agenda = "board_agenda_#{file.gsub('-','_')}.txt".untaint

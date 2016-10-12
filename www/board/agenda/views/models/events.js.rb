@@ -1,7 +1,7 @@
 #
-# Motivation: browsers limit the number of open HTTP connections to any
-# one host to somewhere between 4-10.  "Long polling" keeps an HTTP
-# connection open making it impractical to have one EventSource per tab.
+# Motivation: browsers limit the number of open web socket connections to any
+# one host to somewhere between 6 and 250, making it impractical to have one
+# Web Socket per tab.
 #
 # The solution below uses localStorage to communicate between tabs, with
 # the majority of logic involved with the "election" of a master.  This
@@ -9,17 +9,9 @@
 #
 # Alternatives include: 
 #
-# * Replacing Server Side Events with Web Sockets which will require more open
-#   connections (and therefore server load) as well as require special proxy
-#   configuration (mod_proxy_wstunnel) and server coding (faye-websocket or
-#   equivalent).
-#
 # * Replacing localStorage with Service Workers.  This would be much cleaner,
 #   unfortunately Service Workers aren't widely deployed yet.  Sadly, the
 #   state isn't much better for Shared Web Workers.
-#
-# Notable downside to Server Side Events is lack of native support by IE.
-# This is readily addressed by a polyfill.
 #
 ###
 #
@@ -33,6 +25,7 @@
 
 class Events
   @@subscriptions = {}
+  @@socket = nil
 
   def self.subscribe event, &block
     @@subscriptions[event] ||= []
@@ -109,23 +102,43 @@ class Events
 
   # master logic
   def self.master()
-    events = EventSource.new('../events')
+    self.connectToServer()
 
-    # dispatch events received to all windows
-    events.addEventListener :message do |event|
-      localStorage.setItem("#{@@prefix}-event", event.data)
-      self.dispatch event.data
-    end
-
-    # proof of life
+    # proof of life; maintain connection to the server
     setTimeout 25_000 do
       localStorage.setItem("#{@@prefix}-timestamp", Date.new().getTime())
+      self.connectToServer()
     end
 
     # close connection on exit
     window.addEventListener :unload do |event|
-      events.close()
+      @@socket.close() if @@socket
     end
+  end
+
+  # establish a connection to the server
+  def self.connectToServer()
+    return if @@socket
+
+    socket_url = window.location.protocol.sub('http', 'ws') + "//" + 
+        window.location.hostname + ':34234/'
+
+    @@socket = WebSocket.new(socket_url)
+
+    def @@socket.onopen(event)
+      @@socket.send "session: #{Server.session}\n\n"
+    end
+
+    def @@socket.onmessage(event)
+      localStorage.setItem("#{@@prefix}-event", event.data)
+      self.dispatch event.data
+    end
+
+    def @@socket.onclose(event)
+      @@socket = nil
+    end
+  rescue => e
+    console.log e
   end
 
   # dispatch logic (common to all tabs)

@@ -8,7 +8,6 @@ require 'whimsy/asf/agenda'
 
 require 'wunderbar/sinatra'
 require 'wunderbar/react'
-require 'wunderbar/eventsource'
 require 'wunderbar/bootstrap/theme'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
@@ -36,12 +35,13 @@ FileUtils.mkdir_p AGENDA_WORK if not Dir.exist? AGENDA_WORK
 require_relative './routes'
 require_relative './models/ipc'
 require_relative './models/pending'
-require_relative './models/events'
 require_relative './models/agenda'
 require_relative './models/minutes'
 require_relative './models/comments'
 require_relative './helpers/string'
 require_relative './daemon/session'
+
+require 'websocket-client-simple'
 
 # if AGENDA_WORK doesn't exist yet, make it
 if not Dir.exist? AGENDA_WORK

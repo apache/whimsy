@@ -1,37 +1,10 @@
 #
 # A very simple service worker
 #
-#   1) Create an event source and pass all events received to all clients
-#
-#   2) Return back cached bootstrap page instead of fetching agenda pages
+#   *) Return back cached bootstrap page instead of fetching agenda pages
 #      from the network.  Bootstrap will construct page from cached
 #      agenda.json, as well as update the cache.
 # 
-
-events = nil
-
-self.addEventListener :activate do |event|
-  # close any pre-existing event socket
-  if events
-    begin
-      events.close()
-    rescue => e
-      events = nil
-    end
-  end
- 
-  # create a new event source
-  events = EventSource.new('events')
- 
-  # dispatch any events received to clients
-  events.addEventListener :message do |event|
-    clients.matchAll().then do |list|
-      list.each do |client|
-        client.postMessage(event.data)
-      end
-    end
-  end
-end
 
 self.addEventListener :fetch do |event|
   scope = self.registration.scope
