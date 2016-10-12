@@ -63,5 +63,5 @@ ws.on :error do |e|
 end
 
 loop do
-  ws.send STDIN.gets.strip
+  ws.send STDIN.gets
 end

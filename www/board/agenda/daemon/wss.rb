@@ -9,7 +9,7 @@ require 'rbconfig'
 
 require_relative './session'
 
-users = {}
+users = Hash.new {|hash, key| hash[key] = []}
 sessions = {}
 
 ########################################################################
@@ -120,12 +120,11 @@ EM.run do
       headers = YAML.safe_load(headers) || {} rescue {}
 
       if headers['session']
-        STDERR.puts headers.inspect
         session = Session[headers['session']]
-        STDERR.puts session.inspect
         if session
-          users[session[:id]] = ws
+          users[session[:id]] << ws
           sessions[ws] = session[:id]
+          ws.send JSON.dump(session.merge type: 'login')
         end
       end
 
