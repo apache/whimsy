@@ -105,7 +105,7 @@ class Events
     self.connectToServer()
 
     # proof of life; maintain connection to the server
-    setTimeout 25_000 do
+    setInterval 25_000 do
       localStorage.setItem("#{@@prefix}-timestamp", Date.new().getTime())
       self.connectToServer()
     end
