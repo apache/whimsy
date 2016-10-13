@@ -9,9 +9,7 @@ require 'rbconfig'
 require 'json'
 
 require_relative './session'
-
-users = Hash.new {|hash, key| hash[key] = []}
-sessions = {}
+require_relative './channel'
 
 ########################################################################
 #                         Parse argument list                          #
@@ -89,9 +87,7 @@ listener.start
 ########################################################################
 
 at_exit do
-  sessions.keys.each do |client|
-    client.close
-  end
+  Channel.close_all
 end
 
 ########################################################################
@@ -111,8 +107,7 @@ end
 EM.run do
   WebSocket::EventMachine::Server.start(server_options) do |ws|
     ws.onclose do 
-      id = sessions.delete(ws)
-      users[id].delete ws if id
+      Channel.delete ws
     end
 
     ws.onmessage do |msg|
@@ -123,8 +118,7 @@ EM.run do
       if headers['session']
         session = Session[headers['session']]
         if session
-          users[session[:id]] << ws
-          sessions[ws] = session[:id]
+          Channel.add ws, session[:id]
           ws.send JSON.dump(session.merge type: 'login')
         end
       end
@@ -132,19 +126,9 @@ EM.run do
       # forward message
       unless msg.empty?
         if headers['private']
-          # send only to a specific user
-          clients = users[headers['private']] || []
+          Channel.post_private headers['private'], msg
         else
-          # send to all users
-          clients = sessions.keys
-        end
-
-        clients.each do |client|
-          EM.defer(
-            ->() {client.send msg},
-            ->(response) {},
-            ->(error) {client.close rescue nil}
-          )
+          Channel.post_all msg
         end
       end
     end
