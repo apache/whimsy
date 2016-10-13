@@ -57,7 +57,7 @@ class ICLA < React
           _th 'User ID'
           _td do
             _input name: 'user', value: @user, onBlur: self.validate_userid,
-              disabled: @filed
+              disabled: @filed, pattern: '^[a-z][-a-z0-9_]+$'
           end
         end
 
