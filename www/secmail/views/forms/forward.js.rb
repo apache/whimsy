@@ -18,6 +18,12 @@ class Forward < React
 
       _label do
         _input type: 'radio', name: 'destination',
+          onClick: self.forward, value: 'chairman@apache.org'
+        _span 'chairman'
+      end
+
+      _label do
+        _input type: 'radio', name: 'destination',
           onClick: self.forward, value: 'legal-internal@apache.org'
         _span 'legal-internal'
       end
