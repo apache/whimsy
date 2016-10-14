@@ -134,9 +134,17 @@ class Events
       self.dispatch event.data
     end
 
-    def @@socket.onclose(event)
+    def @@socket.onerror(event)
+      console.log 'WebSocket connection terminated' unless @@socket
       @@socket = nil
     end
+
+    def @@socket.onclose(event)
+      console.log 'WebSocket connection terminated' unless @@socket
+      @@socket = nil
+    end
+
+    console.log 'WebSocket connection established'
   rescue => e
     console.log e
   end
