@@ -6,18 +6,20 @@
 require 'json'
 require 'concurrent'
 
+require_relative './session'
+
 class Channel
   @@sockets = Concurrent::Map.new
   @@users = Concurrent::Map.new {|map,key| map[key]=[]}
 
   # add a new socket/userid pair
   def self.add(ws, id)
-    if @@users[id].empty?
+    @@users[id] << ws
+    @@sockets[ws] = id
+    if @@users[id].length == 1
       self.post_all(type: :arrive, user: id, present: self.present,
         timestamp: Time.now.to_f*1000)
     end
-    @@users[id] << ws
-    @@sockets[ws] = id
   end
 
   # send a message to a list of clients
@@ -57,7 +59,17 @@ class Channel
 
   # return a list of active users
   def self.present
-    @@users.keys
+    users = @@users.keys
+    path = File.join(Session::WORKDIR, 'present.yml')
+
+    File.open(path, File::RDWR|File::CREAT, 0644) do |fh|
+      fh.flock(File::LOCK_EX)
+      fh.write(YAML.dump(users))
+      fh.flush
+      fh.truncate(fh.pos)
+    end
+
+    users
   end
 
   # close all open sockets

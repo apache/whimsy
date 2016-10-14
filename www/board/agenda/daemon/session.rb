@@ -70,9 +70,9 @@ class Session
         @@sessions.keys.map {|secret| File.join(WORKDIR, secret)}
 
       files.uniq.each do |file|
+        next if file =~ /\.yml$/
         secret = File.basename(file)
         session = @@sessions[secret]
-
 
         if File.exist? file
           if File.mtime(file) < Time.now - 2 * DAY

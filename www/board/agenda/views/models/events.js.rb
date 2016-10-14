@@ -127,6 +127,7 @@ class Events
 
     def @@socket.onopen(event)
       @@socket.send "session: #{Server.session}\n\n"
+      console.log 'WebSocket connection established'
     end
 
     def @@socket.onmessage(event)
@@ -135,16 +136,15 @@ class Events
     end
 
     def @@socket.onerror(event)
-      console.log 'WebSocket connection terminated' unless @@socket
+      console.log 'WebSocket connection terminated' if @@socket
       @@socket = nil
     end
 
     def @@socket.onclose(event)
-      console.log 'WebSocket connection terminated' unless @@socket
+      console.log 'WebSocket connection terminated' if @@socket
       @@socket = nil
     end
 
-    console.log 'WebSocket connection established'
   rescue => e
     console.log e
   end
