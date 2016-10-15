@@ -46,6 +46,7 @@ class Pending
   # listen for changes to pending and minutes files
   @@listener = Listen.to(AGENDA_WORK) do |modified, added, removed|
     modified.each do |path|
+      next if path.end_with? '/sessions/present.yml'
       next if File.exist?(path) and @@seen[path] == File.mtime(path)
       file = File.basename(path)
       if file =~ /^board_minutes_\d{4}_\d\d_\d\d\.yml$/
