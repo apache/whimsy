@@ -152,14 +152,12 @@ class Main < React
     # if agenda is stale, fetch immediately; otherwise save etag
     Agenda.fetch(@@page.etag, @@page.digest)
 
+    # start Service Worker
+    console.log 'starting'
+    PageCache.register() if PageCache.enabled
+  
     # start backchannel
-    if PageCache.enabled
-      # use Service Workers
-      PageCache.register()
-    else
-      # use localStorage
-      Events.monitor()
-    end
+    Events.monitor()
   end
 
   # after each subsequent re-rendering, resize main window
