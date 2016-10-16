@@ -76,9 +76,13 @@ exit 0 if options.kill
 #                   Restart when source file changes                   #
 ########################################################################
 
-listener = Listen.to(__dir__) do |modified, added, removed|
+def restart_process
   puts 'restarting'
   exec RbConfig.ruby, File.expand_path(__FILE__), *ARGV
+end
+
+listener = Listen.to(__dir__) do |modified, added, removed|
+  restart_process
 end
 listener.start
 
@@ -104,7 +108,14 @@ if options.privkey and options.chain
     }
 end
 
+active = Time.now
+
 EM.run do
+  # restart once an hour when inactive
+  EM.add_periodic_timer(900) do
+    restart_process if Time.now - active >= 3600
+  end
+
   WebSocket::EventMachine::Server.start(server_options) do |ws|
     ws.onclose do 
       Channel.delete ws
@@ -118,6 +129,7 @@ EM.run do
       if headers['session']
         session = Session[headers['session']]
         if session
+          restart_process if headers['restart']
           Channel.add ws, session[:id]
           ws.send JSON.dump(session.merge type: 'login')
         end
@@ -131,6 +143,8 @@ EM.run do
           Channel.post_all msg
         end
       end
+
+      active = Time.now
     end
   end
 end
