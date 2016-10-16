@@ -3,6 +3,9 @@ require 'bundler/setup'
 require 'websocket-client-simple'
 require 'optparse'
 require 'ostruct'
+require 'etc'
+
+require_relative './session'
 
 # monkey patch for https://github.com/shokai/websocket-client-simple/issues/24
 class WebSocket::Client::Simple::Client
@@ -19,6 +22,8 @@ options = OpenStruct.new
 options.host = 'localhost'
 options.port = 34234
 options.protocol = 'ws'
+options.user = Etc.getlogin
+options.restart = false
 
 opt_parser = OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
@@ -33,6 +38,14 @@ opt_parser = OptionParser.new do |opts|
 
   opts.on "--secure", 'Use secure web sockets (wss)' do
     options.protocol = 'wss'
+  end
+
+  opts.on "--user USER", 'User to log in as' do |user|
+    options.user = user
+  end
+
+  opts.on "--restart", 'restart WebSocket daemon process' do
+    options.restart = true
   end
 end
 
@@ -50,7 +63,15 @@ ws.on :message do |msg|
 end
 
 ws.on :open do
-  ws.send 'hello!!!'
+  Dir["#{Session::WORKDIR}/*"].find do |file| 
+    if File.read(file) == options.user
+      if options.restart
+        ws.send "session: #{File.basename(file)}\nrestart: true\n\n"
+      else
+        ws.send "session: #{File.basename(file)}\n\n"
+      end
+    end
+  end
 end
 
 ws.on :close do |e|

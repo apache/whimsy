@@ -123,7 +123,7 @@ EM.run do
 
     ws.onmessage do |msg|
       # extract headers
-      headers = msg.slice!(/\A(\w+:\s*.*\r?\n)\s*(\n|\Z)/).to_s
+      headers = msg.slice!(/\A(\w+:\s*.*\r?\n)+\s*(\n|\Z)/).to_s
       headers = YAML.safe_load(headers) || {} rescue {}
 
       if headers['session']
