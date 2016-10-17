@@ -90,7 +90,16 @@ class Events
       localStorage.setItem("#{@@prefix}-master", @@master = @@timestamp)
       @@ondeck = localStorage.removeItem("#{@@prefix}-ondeck")
 
-      self.master()
+      if Server.session
+        self.master()
+      else
+        options = {credentials: 'include'}
+        request = Request.new("../session.json", options)
+        fetch(request).then do |response|
+          Server.session = response.session
+          self.master()
+        end
+      end
 
     elsif 
       @@ondeck == nil and @@master != @@timestamp and

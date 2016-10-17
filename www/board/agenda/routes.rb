@@ -31,6 +31,12 @@ get '/missing' do
   status 302
 end
 
+get '/session.json' do
+  _json do
+    {session: Session.user(env.user)}
+  end
+end
+
 # for debugging purposes
 get '/env' do
   content_type 'text/plain'
@@ -120,6 +126,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     @page[:parsed] = [@page[:parsed].first]
     @page[:digest] = nil
     @page[:etag] = nil
+    @server[:session] = nil
     _html :bootstrap
   else
     _html :main
