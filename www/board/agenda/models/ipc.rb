@@ -17,7 +17,7 @@ module IPC
         done = false
         ws.on :open do
           if data[:private]
-            headers = "session: #{data[:private]}\n\n"
+            headers = "private: #{data[:private]}\n\n"
           else
             headers = ''
           end
