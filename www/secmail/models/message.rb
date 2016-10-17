@@ -220,8 +220,10 @@ class Message
     # fill in the subject from the original email
     if self.subject =~ /^re:\s/i
       mail.subject = self.subject
-    else
+    elsif self.subject
       mail.subject = 'Re: ' + self.subject
+    elsif fields[:subject]
+      mail.subject = fields[:subject]
     end
 
     # fill in the subject from the original email

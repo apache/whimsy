@@ -100,7 +100,7 @@ task "svn commit foundation/officers/iclas.txt" do
     svn 'diff', dest
 
     # commit changes
-    svn 'commit', dest, '-m', "ICLA from #{@pubname}"
+    svn 'commit', dest, '-m', "ICLA for #{@pubname}"
   end
 end
 
@@ -127,6 +127,7 @@ task "email #@email" do
 
   # build mail from template
   mail = message.reply(
+    subject: "ICLA for #{@pubname}",
     from: @from,
     to: "#{@pubname.inspect} <#{@email}>",
     cc: [

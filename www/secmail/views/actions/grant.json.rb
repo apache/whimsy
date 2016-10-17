@@ -105,6 +105,7 @@ end
 task "email #@email" do
   # build mail from template
   mail = message.reply(
+    subject: @document,
     from: @from,
     to: "#{@name.inspect} <#{@email}>",
     cc: [
