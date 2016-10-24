@@ -17,7 +17,7 @@ module ASF
 
     # mapping of committee names to canonical names (generally from ldap)
     # See also www/roster/committee.cgi
-    @@aliases = Hash.new {|hash, name| name}
+    @@aliases = Hash.new {|hash, name| name.downcase}
     @@aliases.merge! \
       'community development'       => 'comdev',
       'conference planning'         => 'concom',
