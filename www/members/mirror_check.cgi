@@ -32,6 +32,7 @@ _html do
         _legend 'ASF Mirror Check Request'
         _ 'Mirror URL'
         _input.name name: 'url', required: true,
+                    value: ENV['QUERY_STRING'],
                     placeholder: 'mirror URL',
                     size: 50
         _input type: 'submit', value: 'Check Mirror'
