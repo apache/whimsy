@@ -135,6 +135,10 @@ EM.run do
           restart_process if headers['restart']
           Channel.add ws, session[:id]
           ws.send JSON.dump(session.merge type: 'login')
+        else
+          msg = ''
+          ws.send JSON.dump(type: 'unauthorized', session: headers['session'])
+          EM.add_timer(1) {ws.close}
         end
       end
 

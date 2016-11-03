@@ -36,7 +36,7 @@ class Session
 
     # if not found, try refreshing data from disk and try again
     if not session
-      self.load 
+      Session.load 
       session = @@users[id].sort_by {|session| session[:mtime]}.last
       session = nil if session and session[:mtime] < Time.now - DAY
     end
@@ -59,7 +59,15 @@ class Session
 
   # retrieve session for a given secret
   def self.[](secret)
-    @@sessions[secret]
+    session = @@sessions[secret]
+
+    # if not found, try refreshing data from disk and try again
+    if not session
+      Session.load
+      session = @@sessions[secret]
+    end
+
+    session
   end
 
   # load sessions from disk
