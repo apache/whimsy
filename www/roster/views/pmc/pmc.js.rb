@@ -144,13 +144,25 @@ class PMCMember < React
                 "Remove #{@@person.name} from committee-info.txt?"
           else
             # in both LDAP and committee-info.txt
-            _button.btn.btn_warning 'Remove from PMC',
-              data_action: 'remove pmc info commit', 
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Remove #{@@person.name} from the " +
-                "#{@@committee.display_name} PMC?"
+            if @@committee.committers[@@person.id]
+              _button.btn.btn_warning 'Remove only from PMC',
+                data_action: 'remove pmc info',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Remove #{@@person.name} from the " +
+                  "#{@@committee.display_name} PMC but leave as a committer?"
 
-            if not @@committee.committers[@@person.id]
+              _button.btn.btn_warning 'Remove as committer and from PMC',
+                data_action: 'remove pmc info commit',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Remove #{@@person.name} as commiter and " +
+                  "from the #{@@committee.display_name} PMC?"
+            else
+              _button.btn.btn_warning 'Remove from PMC',
+                data_action: 'remove pmc info',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Remove #{@@person.name} from the " +
+                  "#{@@committee.display_name} PMC?"
+
               _button.btn.btn_primary 'Add as a committer',
                 data_action: 'add commit', 
                 data_target: '#confirm', data_toggle: 'modal',
