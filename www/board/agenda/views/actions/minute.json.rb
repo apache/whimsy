@@ -112,6 +112,4 @@ end
 
 File.write minutes_file, YAML.dump(minutes)
 
-IPC.post type: :minutes, agenda: @agenda, value: minutes
-
 minutes

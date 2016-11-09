@@ -65,7 +65,6 @@ class Agenda
       current[:mtime].to_i <= 0
     then
       Agenda[file] = update
-      IPC.post type: :agenda, file: file, digest: update[:digest] unless quick
     end
   end
 
@@ -154,7 +153,6 @@ class Agenda
         if output != input
           IO.write(path, output)
           commit_rc = _.system ['svn', 'commit', auth, path, '-m', message]
-          @@seen[path] = File.mtime(path)
         end
       else
         output = IO.read(path)
@@ -191,21 +189,4 @@ class Agenda
   ensure
     FileUtils.rm_rf dir
   end
-
-  # listen for changes to agenda files
-  @@listener = Listen.to(FOUNDATION_BOARD) do |modified, added, removed|
-    modified.each do |path|
-      next if File.exist?(path) and @@seen[path] == File.mtime(path)
-      file = File.basename(path)
-      if file =~ /^board_agenda_[\d_]+.txt$/
-        self.update_cache(file, path, File.read(path), false)
-      end
-    end
-  end
-
-  # disable listening when running tests
-  @@listener = Struct.new(:start, :stop).new if ENV['RACK_ENV'] == 'test'
-
-  @@seen = {}
-  @@listener.start
 end

@@ -36,35 +36,7 @@ class Pending
     File.open(work, 'w') do |file|
       file.write YAML.dump(pending)
     end
-    @@seen[work] = File.mtime(work)
-
-    IPC.post type: :pending, value: pending, private: user
 
     pending
   end
-
-  # listen for changes to pending and minutes files
-  @@listener = Listen.to(AGENDA_WORK) do |modified, added, removed|
-    modified.each do |path|
-      next if path.end_with? '/sessions/present.yml'
-      next if path =~ /board_agenda_\d+_\d+_\d+.txt$/
-      next if File.exist?(path) and @@seen[path] == File.mtime(path)
-      file = File.basename(path)
-      if file =~ /^board_minutes_\d{4}_\d\d_\d\d\.yml$/
-        agenda = file.sub('minutes', 'agenda').sub('.yml', '.txt')
-        IPC.post type: :minutes, agenda: agenda, value: YAML.load_file(path)
-      elsif file =~ /^(\w+)\.yml$/
-        IPC.post type: :pending, private: $1, value: YAML.load_file(path)
-      else
-        STDERR.puts file
-      end
-    end
-  end
-
-  # disable listening when running tests
-  @@listener = Struct.new(:start, :stop).new if ENV['RACK_ENV'] == 'test'
-
-  @@seen = {}
-
-  @@listener.start
 end

@@ -25,6 +25,4 @@ end
 
 drafts = Dir.chdir(FOUNDATION_BOARD) {Dir['board_minutes_*.txt'].sort}
 
-IPC.post type: :server, drafts: drafts
-
 drafts

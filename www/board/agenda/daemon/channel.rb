@@ -5,12 +5,18 @@
 
 require 'json'
 require 'concurrent'
+require 'listen'
+require 'digest'
+require 'yaml'
 
 require_relative './session'
+require 'whimsy/asf/svn'
 
 class Channel
   @@sockets = Concurrent::Map.new
   @@users = Concurrent::Map.new {|map,key| map[key]=[]}
+
+  FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
 
   # add a new socket/userid pair
   def self.add(ws, id)
@@ -41,6 +47,7 @@ class Channel
 
   # send a message to a specific user
   def self.post_private(user, msg)
+    msg = JSON.dump(msg) if msg.instance_of? Hash
     self.post @@users[user] || [], msg
   end
 
@@ -78,4 +85,44 @@ class Channel
       client.close
     end
   end
+
+  # listen for changes to agenda files
+  board_listener = Listen.to(FOUNDATION_BOARD) do |modified, added, removed|
+    STDERR.puts [modified, added, removed].inspect
+    modified.each do |path|
+      next unless File.exist?(path)
+      file = File.basename(path)
+      if file =~ /^board_agenda_[\d_]+.txt$/
+        contents = File.read(path)
+        digest = Digest::SHA256.base64digest(contents)
+        self.post_all type: :agenda, file: file, digest: digest
+      end
+    end
+  end
+
+  board_listener.start
+ # listen for changes to pending and minutes files
+  work_listener = Listen.to(Session::AGENDA_WORK) do |modified, added, removed|
+    modified.each do |path|
+      next if path.end_with? '/sessions/present.yml'
+      next unless File.exist?(path)
+      file = File.basename(path)
+      if path =~ /board_agenda_\d+_\d+_\d+.txt$/
+        contents = File.read(path)
+        digest = Digest::SHA256.base64digest(contents)
+        self.post_all type: :agenda, file: file, digest: digest
+      elsif file =~ /^board_minutes_\d{4}_\d\d_\d\d\.yml$/
+        agenda = file.sub('minutes', 'agenda').sub('.yml', '.txt')
+        self.post_all type: :minutes, agenda: agenda, 
+          value: YAML.load_file(path)
+      elsif file =~ /^(\w+)\.yml$/
+        self.post_private $1, type: :pending, private: $1,
+          value: YAML.load_file(path)
+      else
+        STDERR.puts file
+      end
+    end
+  end
+
+  work_listener.start
 end

@@ -153,7 +153,6 @@ class Main < React
     Agenda.fetch(@@page.etag, @@page.digest)
 
     # start Service Worker
-    console.log 'starting'
     PageCache.register() if PageCache.enabled
   
     # start backchannel

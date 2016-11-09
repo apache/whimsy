@@ -18,7 +18,6 @@ FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
 AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
 
 require './models/agenda'
-require './models/ipc'
 
 # draft reminder text
 @reminder = ARGV.first || 'reminder1'

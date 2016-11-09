@@ -102,7 +102,6 @@ unless @dryrun
   minutes[:todos][:feedback_sent] ||= []
   minutes[:todos][:feedback_sent] += output.map {|item| item[:title]}
   File.write minutes_file, YAML.dump(minutes)
-  IPC.post type: :minutes, agenda: @agenda, value: minutes
 end
 
 # return output to client

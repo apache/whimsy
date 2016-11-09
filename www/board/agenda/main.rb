@@ -33,7 +33,6 @@ end
 FileUtils.mkdir_p AGENDA_WORK if not Dir.exist? AGENDA_WORK
 
 require_relative './routes'
-require_relative './models/ipc'
 require_relative './models/pending'
 require_relative './models/agenda'
 require_relative './models/minutes'

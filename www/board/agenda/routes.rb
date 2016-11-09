@@ -89,6 +89,15 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     role = :guest
   end
 
+  # determine who is present
+  @present = []
+  @present_mtime = nil
+  file = File.join(AGENDA_WORK, 'sessions', 'present.yml')
+  if File.exist?(file) and File.mtime(file) != @present_mtime
+    @present_mtime = File.mtime(file)
+    @present = YAML.load_file(file)
+  end
+
   @server = {
     userid: userid,
     agendas: dir('board_agenda_*.txt').sort,
@@ -97,7 +106,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     username: username,
     firstname: username.split(' ').first.downcase,
     initials: initials,
-    online: IPC.present,
+    online: @present,
     session: Session.user(userid),
     role: role,
     directors: Hash[ASF::Service['board'].members.map {|person| 
