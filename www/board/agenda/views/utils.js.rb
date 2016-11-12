@@ -158,7 +158,9 @@ class Flow
     for i in 0...lines.length
       indent = lines[i].match(/( *)(.?.?)(.*)/m)
 
-      if (indent[1] == '' and indent[2] != '* ') or indent[3] == ''
+      if lines[i].length <= 78
+        # do nothing, doesn't require reflow
+      elsif (indent[1] == '' and indent[2] != '* ') or indent[3] == ''
         # not indented (or short) -> split
         lines[i] = lines[i].
           gsub(/(.{1,#{len}})( +|$\n?)|(.{1,#{len}})/, "$1$3\n").
