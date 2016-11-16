@@ -11,10 +11,17 @@ class ASF::Board::Agenda
 
     scan @file, pattern do |attrs|
 
+      # join multiline titles
+      while attrs['report'].start_with? '        '
+        append, attrs['report'] = attrs['report'].split("\n", 2)
+        attrs['title'] += ' ' + append.strip
+      end
+
       attrs['title'].sub! /^Report from the VP of /, ''
       attrs['title'].sub! /^Report from the /, ''
       attrs['title'].sub! /^Status report for the /, ''
       attrs['title'].sub! /^Apache /, ''
+      attrs['title'].sub! 'Apache Software Foundation', 'ASF'
 
       if attrs['title'] =~ /\s*\[.*\]$/
         attrs['owner'] = attrs['title'][/\[(.*?)\]/, 1]

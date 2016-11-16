@@ -168,6 +168,13 @@ FileUtils.mkdir_p SITE_MINUTES
     .(.*?)\n                       # report
     (?=-{41,}\n(?:End|Attach))     # separator
   /mx).each do |attach,title,text|
+
+    # join multiline titles
+    while text.start_with? '        '
+      append, text = text.split("\n", 2)
+      title += ' ' + append.strip
+    end
+    
     title.sub! /Special /, ''
     title.sub! /Requested /, ''
     title.sub! /(^| )Report To The Board( On)?( |$)/i, ''
@@ -183,6 +190,7 @@ FileUtils.mkdir_p SITE_MINUTES
     title.sub! /\s[Cc]ommittee?\s*$/, ''
     title.sub! /\s[Pp]roject\s*$/, ''
     title.sub! /\sPMC$/, ''
+    title.sub! 'Apache Software Foundation', 'ASF'
 
     title.sub! /^Logging$/, 'Logging Services'
     title.sub! 'stdcxx', 'C++ Standard Library'
