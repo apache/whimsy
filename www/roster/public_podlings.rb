@@ -50,7 +50,11 @@
 #            "July"
 #          ]
 #         },
-#         "champion": "criccomini"
+#       "champion": "criccomini",
+#       "resource": "airflow",
+#       "resourceAliases": [
+#
+#       ]
 #     },
 #     "accumulo": {
 #       ...
