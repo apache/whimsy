@@ -5,7 +5,7 @@ require_relative '../asf'
 module ASF
   class Podling
     include Enumerable
-    attr_accessor :name, :status, :description, :mentors, :champion, :reporting
+    attr_accessor :name, :resource, :resourceAliases, :status, :description, :mentors, :champion, :reporting
 
     # three consecutive months, starting with this one
     def quarter
@@ -208,6 +208,8 @@ module ASF
       else
         hash[:reporting] = r if r
       end
+      hash[:resource] = resource
+      hash[:resourceAliases] = resourceAliases
       hash
     end
 
