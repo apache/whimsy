@@ -12,47 +12,26 @@ FORMAT_NUMBER = 3 # json format number
 user = ASF::Person.new($USER)
 # authz handled by httpd
 
-# TODO dedup, copied from mlreq
-class Podlings
-  def self.list
-    return @list if @list
-    # extract the names of podlings (and aliases) from podlings.xml
-    require 'nokogiri'
-    incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
-      current = Nokogiri::XML(File.read("#{incubator_content}/podlings.xml")).
-      search('podling[status=current]')
-    podlings = current.map {|podling| podling['resource']}
-    podlings += current.map {|podling| podling['resourceAliases']}.compact.
-      map {|names| names.split(/[, ]+/)}.flatten
-    @list = podlings
+# get the possible names of the current and retired podlings
+current=[]
+retired=[]
+ASF::Podling.list.each {|p|
+  names = p['resourceAliases'] # array, may be empty
+  names.push p['resource'] # single string, always present
+  status = p['status']
+  if status == 'current'
+    current.concat(names)
+  elsif status == 'retired'
+    retired.concat(names)
   end
-end
-
-lists = ASF::Mail.lists
-lists.delete_if {|list| list =~ /^(ea|secretary|president|treasurer|chairman|committers$)/ }
-lists.delete_if {|list| list =~ /(^|-)security$|^security(-|$)/ }
+}
 
 pmcs = ASF::Committee.list.map(&:mail_list)
-seen = Hash.new
-lists.each do |list|
-  seen[list] = 0
-  seen[list] = 1 if pmcs.include? list.split('-').first
-  seen[list] = 2 if Podlings.list.include? list.split('-').first
-  seen[list] = 2 if (list.split('-').first == 'incubator') \
-                    && (Podlings.list.include? list.split('-')[1])
-end
 
-unless user.asf_member?
-  # non-members only see specifically whitelisted foundation lists as well
-  # as all non-private committee lists
-  whitelist = ['infrastructure', 'jobs', 'site-dev', 'committers-cvs',
-     'site-cvs', 'concom', 'party']
-  lists.delete_if {|list| seen[list] < 1 and not whitelist.include? list}
-  lists.delete_if {|list| list =~ /-private$/}
-  lists += ['board'] if ASF.pmc_chairs.include? user
-end
+lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user))
 
 lists.sort!
+
 
 addrs = (["#{$USER}@apache.org"] + user.mail + user.alt_email)
 
@@ -117,11 +96,16 @@ _html do
         _select name: 'list' do
           seen = Hash.new
           lists.each do |list|
+            ln = list.split('-').first
+            ln = 'empire-db' if ln == 'empire'
             seen[list] = 0
-            seen[list] = 1 if pmcs.include? list.split('-').first
-            seen[list] = 2 if Podlings.list.include? list.split('-').first
-            seen[list] = 2 if (list.split('-').first == 'incubator') \
-                              && (Podlings.list.include? list.split('-')[1])
+            seen[list] = 1 if pmcs.include? ln
+            seen[list] = 2 if current.include? ln
+            seen[list] = 2 if (ln == 'incubator') \
+                              && (current.include? list.split('-')[1])
+            seen[list] = 3 if retired.include? ln
+            seen[list] = 3 if (ln == 'incubator') \
+                      && (retired.include? list.split('-')[1])
           end
           _option '--- Foundation lists ---', disabled: 'disabled'
           lists.find_all { |list| seen[list] == 0 }.each do |list|

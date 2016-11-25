@@ -38,17 +38,45 @@ module ASF
       list
     end
 
-    def self.lists(public_private= false)
+    # Parse the .archives file to get the list names
+    def self._load_lists
       apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
       file = File.join(apmail_bin, '.archives')
       if not @lists or File.mtime(file) != @list_mtime
-        @list_mtime = File.mtime(file)
-        @lists = Hash[File.read(file).scan(
+        lists = Hash[File.read(file).scan(
           /^\s+"(\w[-\w]+)", "\/home\/apmail\/(public|private)-arch\//
         )]
+        # Drop the infra test lists
+        lists.delete_if {|list| list =~ /-infra-[a-z]$/ }
+        @lists = lists
+        @list_mtime = File.mtime(file)
       end
+    end
 
+    def self.lists(public_private= false)
+      Mail._load_lists
       public_private ? @lists : @lists.keys
+    end
+
+    # which lists are available for subscription via Whimsy?
+    def self.cansub(member, pmc_chair)
+      Mail._load_lists
+      if member
+          lists = @lists.keys
+          # These are not subscribable via Whimsy
+          lists.delete_if {|list| list =~ /^(ea|secretary|president|treasurer|chairman|committers|pmc-chairs)$/ }
+          lists.delete_if {|list| list =~ /(^|-)security$|^security(-|$)/ }
+          lists
+      else
+          whitelist = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'concom', 'party']
+          # Can always subscribe to public lists and the whitelist
+          lists = @lists.keys.select{|key| @lists[key] == 'public' or whitelist.include? key}
+          # Chairs need the board
+          if pmc_chair
+            lists += ['board']
+          end
+          lists
+      end
     end
 
     # common configuration for sending mail
