@@ -1,6 +1,6 @@
 # check to see if an id is available
 
-if ASF::Person.new(@id).icla?
+if ASF::ICLA.taken?(@id)
   {message: 'userid is already taken'}
 else
   {message: ''}
