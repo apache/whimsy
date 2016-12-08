@@ -10,6 +10,18 @@ module ASF
 
     @@mtime = nil
 
+    # historic user ids (not in iclas.txt)
+    @@availids_historic = nil
+
+    # list of availids that should not be used
+    # start with list of ids that match ones with embedded hyphens, e.g. an-selm (INFRA-7390) 
+    @@availids_reserved = %w(an james jean rgb soc swaroop)
+
+    # add list of tokens that could be mistaken for names and special marker id
+    @@availids_reserved.concat(%w(r rw notinavail))
+ 
+    # TODO what about root, postmaster etc?
+
     OFFICERS = ASF::SVN.find('private/foundation/officers')
     SOURCE = OFFICERS ? "#{OFFICERS}/iclas.txt" : nil
 
@@ -145,6 +157,36 @@ module ASF
 
       headers.join("\n") + "\n" + 
         lines.sort_by {|line| lname(line + "\n")}.join("\n") + "\n"
+    end
+
+    def self.availids_historic
+      return @@availids_historic if @@availids_historic
+      archive = ASF::SVN['private/foundation/officers/historic']
+      historic = []
+      JSON.parse(File.read("#{archive}/committers.json")).each() { |k, v| historic << k }
+      @@availids_historic = historic
+    end
+
+    def self.availids_reserved
+      @@availids_reserved
+    end
+
+    # list of all availids that are are taken or reserved
+    def self.availids_taken()
+      self.availids_reserved + self.availids_historic + self.availids
+    end
+
+    # is the availid taken (in use or reserved)?
+    def self.taken?(id)
+      puts(id)
+      return self.availids_reserved.include?(id) ||
+             self.availids.include?(id) ||
+             self.availids_historic.include?(id)
+    end
+
+    # is the id available?
+    def self.available?(id)
+      return ! self.taken?(id)
     end
   end
 
