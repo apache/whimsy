@@ -82,7 +82,7 @@ module ASF
         each {|icla| @@name_index[icla.name] = icla}
       end
 
-      @@email_index[value]
+      @@name_index[value]
     end
 
     # list of all ids
