@@ -78,19 +78,10 @@ else
 end
 
 # grab the list of userids that have been assigned (for validation purposes)
-taken = iclas_txt.scan(/^(\w+?):/).flatten.sort.uniq
+taken = ASF::ICLA.availids_taken() # these are in use or reserved
 
 # add the list of userids that are pending
 taken += requests.scan(/^(\w.*?);/).flatten
-
-# add member ids that do not have ICLAs
-taken += %w(andi andrei arved dgaudet pcs rasmus ssb zeev)  
-
-# add list of ids that match ones with embedded hyphens, e.g. an-selm (INFRA-7390)
-taken += %w(an james jean rgb soc swaroop)  
-
-# add list of tokens that could be mistaken for names
-taken += %w(r rw)  
 
 # get a list of pending new account requests (by email)
 pending = requests.scan(/^\w.*?;.*?;(.*?);/).flatten
