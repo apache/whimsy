@@ -61,12 +61,6 @@ module ASF
         authorized ||= ASF.pmc_chairs.include? person
         authorized ||= @block.call(env) if @block
 
-        if not authorized
-          accounting = ASF::Authorization.new('pit').
-            find {|group, list| group=='accounting'}
-          authorized = (accounting and accounting.last.include? env.user)
-        end
-
         if authorized
           @app.call(env)
         else
