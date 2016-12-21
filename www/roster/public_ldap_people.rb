@@ -39,7 +39,8 @@ def makeEntry(hash, e)
     end
     # only add entry if there is a fingerprint
     if not e.pgp_key_fingerprints.empty?
-      hash[e.id][:key_fingerprints] = e.pgp_key_fingerprints
+      # need to sort to avoid random changes which seem to occur for fingerprints
+      hash[e.id][:key_fingerprints] = e.pgp_key_fingerprints.sort
     end
   end
 end
