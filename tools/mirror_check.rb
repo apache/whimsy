@@ -253,11 +253,15 @@ def checkHTTP(base)
   check_page(base, 'harmony/', :E, expectedStatus="301")
 
   zbody = check_page(base, HTTPDIR)
-  if  %r{<table}i.match(zbody)
-    W "#{HTTPDIR} - TABLE detected"
-  else
-    I "#{HTTPDIR} - No TABLE detected, OK"
-  end
+# Not sure this is useful on its own anymore
+# It was originally used to detect sites with advertising wrappers,
+# but most recent examples have been tables around directory listings
+# which is obviously OK as it does not affect the user experience.
+#  if  %r{<table}i.match(zbody)
+#    W "#{HTTPDIR} - TABLE detected"
+#  else
+#    I "#{HTTPDIR} - No TABLE detected, OK"
+#  end
   checkHdrFtr(base+HTTPDIR, zbody)
   if HDRMATCH.match(zbody)
     I "Index page for #{HTTPDIR} contains the expected header text"
