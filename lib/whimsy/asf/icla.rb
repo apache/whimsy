@@ -95,7 +95,7 @@ module ASF
       return @@availids if @@availids
       availids = []
       each {|icla| availids << icla.id unless icla.id == 'notinavail'}
-      @availids = availids
+      @@availids = availids
     end
 
     # iterate over all of the ICLAs
