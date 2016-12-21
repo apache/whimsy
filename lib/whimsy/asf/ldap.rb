@@ -294,7 +294,9 @@ module ASF
   # search with a specified scope, with automatic retry/failover
   def self.search_scope(scope, base, filter, attrs=nil)
 
-    cmd = "ldapsearch -x -LLL -b #{base} -s one #{filter} " +
+    # Dummy command, used for logging purposes only
+    sname = %w(base one sub children)[scope] rescue scope
+    cmd = "ldapsearch -x -LLL -b #{base} -s #{sname} #{filter} " +
       "#{[attrs].flatten.join(' ')}"
 
     # try once per host, with a minimum of two tries
