@@ -61,14 +61,19 @@ _html do
     _tr do
       _td do
         _a @podlings.select {|podling| podling.status == 'current'}.length,
-          href: 'podlings'
+          href: 'ppmc/'
       end
 
       _td do
-        _a 'Podlings', href: 'podlings'
+        _a 'Podlings', href: 'ppmc/'
       end
 
-      _td 'Active podlings at the ASF'
+      _td! do 
+        _span 'Active podlings at the ASF ('
+        _a @podlings.length, href: 'podlings'
+        _span ' total)'
+      end
+
     end
 
     ### Groups

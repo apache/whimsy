@@ -142,6 +142,11 @@ module ASF
       return self.send name if self.respond_to? name
     end
 
+    # list of PPMC members
+    def members
+      ASF::Project.find(id).members
+    end
+
     # development mailing list associated with a given podling
     def dev_mail_list
       case name

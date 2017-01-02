@@ -19,7 +19,7 @@ _html do
       _tr do
         _th 'Name'
         _th 'Chair(s)'
-        _th 'Notes'
+        _th 'Description'
       end
     end
 
@@ -44,7 +44,7 @@ _html do
         if not pmc.established
           _td.issue 'Not in committee-info.txt'
         else
-          _td
+          _td pmc.description
         end
       end
     end

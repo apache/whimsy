@@ -39,15 +39,13 @@ module ASF
   module LDAP
      # https://www.pingmybox.com/dashboard?location=304
      # https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
-     # Updated 2016-04-11 
+     # Updated 2017-01-02 
     HOSTS = %w(
-      ldaps://devops.apache.org:636
-      ldaps://ldap1-lw-eu.apache.org:636
-      ldaps://ldap1-lw-us.apache.org:636
-      ldaps://ldap2-lw-eu.apache.org:636
-      ldaps://ldap2-lw-us.apache.org:636
-      ldaps://snappy5.apache.org:636
       ldaps://themis.apache.org:636
+      ldaps://ldap1-lw-us.apache.org:636
+      ldaps://ldap1-lw-eu.apache.org:636
+      ldaps://devops.apache.org:636
+      ldaps://snappy5.apache.org:636
     )
 
     CONNECT_LOCK = Mutex.new
@@ -690,6 +688,22 @@ module ASF
     # remove a group
     def self.remove(name)
       ASF::LDAP.delete("cn=#{name},#{base}")
+    end
+  end
+
+  class Project < Base
+    @base = 'ou=project,ou=groups,dc=apache,dc=org'
+
+    def self.list(filter='cn=*')
+      ASF.search_one(base, filter, 'cn').flatten
+    end
+
+    def members
+      members = weakref(:members) do
+        ASF.search_one(base, "cn=#{name}", 'member').flatten
+      end
+
+      members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
   end
 

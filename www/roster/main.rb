@@ -119,7 +119,26 @@ get '/members.json' do
   _json Hash[ASF.members.map {|person| [person.id, person.public_name]}.sort]
 end
 
-# member list
+# active podling list
+get '/ppmc/' do
+  @projects = ASF::Project.list
+  @ppmcs = ASF::Podling.list.select {|podling| podling.status == 'current'}
+  _html :ppmcs
+end
+
+# individual podling info
+get '/ppmc/:name.json' do |name|
+  _json PPMC.serialize(name)
+end
+
+get '/ppmc/:name' do |name|
+  @ppmc = PPMC.serialize(name)
+  pass unless @ppmc
+  _html :ppmc
+end
+
+
+# complete podling list
 get '/podlings' do
   attic = ASF::SVN['asf/attic/site/xdocs/projects']
   @attic = Dir["#{attic}/*.xml"].map {|file| File.basename(file, '.xml')}
