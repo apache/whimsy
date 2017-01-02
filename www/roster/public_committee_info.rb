@@ -78,6 +78,9 @@ if changed? and @old_file
   # Note: for those in an earlier timezone the date could be a few hours earlier
   updated_day2 = (last_updated-3600*4).strftime("%Y-%m-%d") # day of previous update
 
+  # for validating UIDs
+  uids = ASF::Person.list().map(&:id)
+
   info[:committees].each { |pmc, entry|
     next if pmc == 'infrastructure' # no dates
     previouspmc = previous[pmc] # get the original details (if any)
@@ -107,6 +110,9 @@ if changed? and @old_file
       Wunderbar.info "New PMC detected: #{pmc}"
       # Could check that the joining dates are all the same?
     end
+    entry[:roster].each { |id,value|
+      Wunderbar.warn "#{pmc}: unknown uid #{id}" unless uids.include?(id)
+    }
   }
 
   previous.each { |pmc, entry|
@@ -114,4 +120,5 @@ if changed? and @old_file
       Wunderbar.info "Deleted PMC detected: #{pmc}"
     end
   }
+  
 end

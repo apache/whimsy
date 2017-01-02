@@ -48,3 +48,11 @@ info[:members].sort!
 info[:ex_members] = Hash[info[:ex_members].sort]
 
 public_json_output(info)
+
+if changed? and @old_file
+  # for validating UIDs
+  uids = ASF::Person.list().map(&:id)
+  info[:members].each do |id|
+    Wunderbar.warn "member: unknown uid #{id}" unless uids.include?(id)      
+  end
+end

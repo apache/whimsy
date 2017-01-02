@@ -57,3 +57,13 @@ public_json_output(
   # TODO decide how to present the data: separate key or attribute or file
   #pitgroups: pitgroups
 )
+
+if changed? and @old_file
+  # for validating UIDs
+  uids = ASF::Person.list().map(&:id)
+  groups.each do |name, entry|
+    entry[:roster].each do |id|
+      Wunderbar.warn "#{name}: unknown uid #{id}" unless uids.include?(id)      
+    end
+  end
+end

@@ -49,3 +49,13 @@ info = {
 }
 
 public_json_output(info)
+
+if changed? and @old_file
+  # for validating UIDs
+  uids = ASF::Person.list().map(&:id)
+  entries.each do |name, entry|
+    entry[:roster].each do |id|
+      Wunderbar.warn "#{name}: unknown uid #{id}" unless uids.include?(id)      
+    end
+  end
+end
