@@ -121,10 +121,10 @@ _html do
             else
               _td.issue text
             end
-          elsif ldap_chairs.include? person
-            _td.issue '***LDAP only***'
           elsif person.asf_member?
             _td
+          elsif ldap_chairs.include? person
+            _td.issue '***LDAP only***'
           else
             _td.issue '*** non-member, non-officer ***'
           end
