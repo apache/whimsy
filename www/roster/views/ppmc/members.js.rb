@@ -15,6 +15,7 @@ class PPMCMembers < React
         _tr do
           _th 'id'
           _th 'public name'
+          _th 'notes'
         end
       end
 
@@ -53,15 +54,6 @@ class PPMCMembers < React
       roster << person
     end
 
-    for id in @@ppmc.ldap
-      person = @@ppmc.roster[id]
-      if person
-        person.ldap = true
-      else
-        roster << {id: id, name: @@ppmc.ldap[id], ldap: true}
-      end
-    end
-
     @roster = roster.sort_by {|person| person.name}
   end
 
@@ -92,12 +84,18 @@ class PPMCMember < React
   def render
     _tr onDoubleClick: self.select do
 
-      if false # @@ppmc.asfmembers.include? @@person.id
-        _td { _b @@person.name }
+      if @@person.member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" } }
+        _td { _b @@person.name }
       else
         _td { _a @@person.id, href: "committer/#{@@person.id}" }
         _td @@person.name
+      end
+        
+      if @@ppmc.mentors.include? @@person.id
+        _td 'mentor'
+      else
+        _td
       end
     end
   end
