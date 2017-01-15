@@ -128,11 +128,11 @@ end
 
 # individual podling info
 get '/ppmc/:name.json' do |name|
-  _json PPMC.serialize(name)
+  _json PPMC.serialize(name, env)
 end
 
 get '/ppmc/:name' do |name|
-  @ppmc = PPMC.serialize(name)
+  @ppmc = PPMC.serialize(name, env)
   pass unless @ppmc
   _html :ppmc
 end

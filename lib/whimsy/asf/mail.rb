@@ -159,4 +159,11 @@ module ASF
       end
     end
   end
+
+  class Podling
+    def mail_list
+      name
+    end
+  end
+
 end

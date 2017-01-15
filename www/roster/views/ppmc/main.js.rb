@@ -26,6 +26,18 @@ class PPMC < React
     # main content
     _PPMCMembers auth: auth, ppmc: @ppmc
 
+    # mailing lists
+    _h2.mail! 'Mail lists'
+    _ul do
+      for mail_name in @ppmc.mail
+        parsed = mail_name.match(/^(.*?)-(.*)/)
+        _li do
+          _a mail_name, href: 'https://lists.apache.org/list.html?' +
+            "#{parsed[2]}@#{parsed[1]}.apache.org"
+        end
+      end
+    end
+
     # hidden form
     # _PPMCConfirm pmc: @ppmc.id, update: self.update if auth
   end
