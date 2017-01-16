@@ -40,6 +40,17 @@ class PPMC < React
       end
     end
 
+    # reporting schedule
+    _h2.reporting! 'Reporting Schedule'
+    _ul do
+      _li @ppmc.schedule.join(', ')
+
+      _li do
+        _a 'Prior reports', href: 'https://whimsy.apache.org/board/minutes/' +
+          @ppmc.display_name.gsub(/\s+/, '_')
+      end
+    end
+
     # hidden form
     # _PPMCConfirm pmc: @ppmc.id, update: self.update if auth
   end

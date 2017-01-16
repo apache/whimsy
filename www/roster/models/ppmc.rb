@@ -23,7 +23,8 @@ class PPMC
       roster: ppmc.members.map {|person|
         [person.id, {name: person.public_name, member: person.asf_member?}]
       }.to_h,
-      mail: Hash[lists.sort]
+      mail: Hash[lists.sort],
+      schedule: ppmc.reporting,
     }
 
     response
