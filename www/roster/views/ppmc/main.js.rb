@@ -8,7 +8,9 @@ class PPMC < React
 
     # header
     _h1 do
-      _a @ppmc.display_name, href: @ppmc.site
+      _a @@ppmc.display_name, 
+        href: "https://incubator.apache.org/projects/#{@@ppmc.id}.html"
+      _small " established #{@ppmc.established}" if @ppmc.established
     end
 
     _p @ppmc.description

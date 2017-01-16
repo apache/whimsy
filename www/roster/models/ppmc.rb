@@ -18,7 +18,7 @@ class PPMC
       display_name: ppmc.display_name,
       description: ppmc.description,
       schedule: ppmc.reporting,
-      established: ppmc.startdate,
+      established: ppmc.startdate.to_s,
       mentors: ppmc.mentors,
       roster: ppmc.members.map {|person|
         [person.id, {name: person.public_name, member: person.asf_member?}]
