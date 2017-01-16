@@ -94,11 +94,11 @@ class PMCMember < React
     _tr onDoubleClick: self.select do
 
       if @@committee.asfmembers.include? @@person.id
-        _td { _b @@person.name }
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" } }
+        _td { _b @@person.name }
       else
+        _td { _a @@person.id, href: "committer/#{@@person.id}" }
         _td @@person.name
-	_td { _a @@person.id, href: "committer/#{@@person.id}" }
       end
 
       _td @@person.date
