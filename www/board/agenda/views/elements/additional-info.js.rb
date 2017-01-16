@@ -1,11 +1,12 @@
 #
 # Display information associated with an agenda item:
 #   - special notes
+#   - minutes
 #   - posted reports
+#   - action items
 #   - posted comments
 #   - pending comments
-#   - action items
-#   - minutes
+#   - historical comments
 #
 # Note: if AdditionalInfo is included multiple times in a page, set
 #       prefix to true (or a string) to ensure rendered id attributes
@@ -16,6 +17,13 @@ class AdditionalInfo < React
   def render
     # special notes
     _p.notes @@item.notes if @@item.notes
+
+    # minutes
+    minutes = Minutes.get(@@item.title)
+    if minutes
+      _h4 'Minutes', id: "#{@prefix}minutes"
+      _pre.comment minutes
+    end
 
     # posted reports
     if @@item.missing
@@ -30,6 +38,25 @@ class AdditionalInfo < React
       end
     end
 
+    # action items
+    if @@item.title != 'Action Items' and not @@item.actions.empty?
+      _h4 id: "#{@prefix}actions" do
+        _Link text: 'Action Items', href: 'Action-Items'
+      end
+      _ActionItems item: @@item, filter: {pmc: @@item.title}
+    end
+
+    unless @@item.special_orders.empty?
+      _h4 'Special Orders', id: "#{@prefix}orders"
+      _ul do
+        @@item.special_orders.each do |resolution|
+          _li do
+            _Link text: resolution.title, href: resolution.href
+          end
+        end
+      end
+    end
+
     # posted comments
     history = HistoricalComments.find(@@item.title)
     if not @@item.comments.empty? or (history and not @prefix)
@@ -38,6 +65,12 @@ class AdditionalInfo < React
         _pre.comment do
           _Text raw: comment, filters: [hotlink]
         end
+      end
+
+      # pending comments
+      if @@item.pending
+        _h5 'Pending Comment', id: "#{@prefix}pending"
+        _pre.comment Flow.comment(@@item.pending, Pending.initials)
       end
 
       # historical comments
@@ -71,38 +104,12 @@ class AdditionalInfo < React
           end
         end
       end
-    end
-
-    # pending comments
-    if @@item.pending
-      _h4 'Pending Comment', id: "#{@prefix}pending"
-      _pre.comment Flow.comment(@@item.pending, Pending.initials)
-    end
-
-    # action items
-    if @@item.title != 'Action Items' and not @@item.actions.empty?
-      _h4 id: "#{@prefix}actions" do
-        _Link text: 'Action Items', href: 'Action-Items'
+    else
+      # pending comments
+      if @@item.pending
+        _h4 'Pending Comment', id: "#{@prefix}pending"
+        _pre.comment Flow.comment(@@item.pending, Pending.initials)
       end
-      _ActionItems item: @@item, filter: {pmc: @@item.title}
-    end
-
-    unless @@item.special_orders.empty?
-      _h4 'Special Orders', id: "#{@prefix}orders"
-      _ul do
-        @@item.special_orders.each do |resolution|
-          _li do
-            _Link text: resolution.title, href: resolution.href
-          end
-        end
-      end
-    end
-
-    # minutes
-    minutes = Minutes.get(@@item.title)
-    if minutes
-      _h4 'Minutes', id: "#{@prefix}minutes"
-      _pre.comment minutes
     end
   end
 

@@ -691,11 +691,18 @@ module ASF
     end
   end
 
+  # Ultimately, this will include both PMCs and PPMCs, and enable separate
+  # updating of owners and members.  For now this is only used for PPMCs
+  # and owners and members are kept in sync.
   class Project < Base
     @base = 'ou=project,ou=groups,dc=apache,dc=org'
 
     def self.list(filter='cn=*')
       ASF.search_one(base, filter, 'cn').flatten
+    end
+
+    def dn
+      @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
     end
 
     def members
@@ -704,6 +711,50 @@ module ASF
       end
 
       members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+    end
+
+    def owners
+      owners = weakref(:owners) do
+        ASF.search_one(base, "cn=#{name}", 'owner').flatten
+      end
+
+      owners.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+    end
+
+    # remove people from a project
+    def remove(people)
+      @owners = nil
+      removals = (Array(people) & owners).map(&:dn)
+      unless removals.empty?
+        ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('owner', removals)])
+      end
+
+      @members = nil
+      removals = (Array(people) & members).map(&:dn)
+      unless removals.empty?
+        ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('member', removals)])
+      end
+    ensure
+      @members = nil
+      @owners = nil
+    end
+
+    # add people to a project
+    def add(people)
+      @owners = nil
+      additions = (Array(people) - owners).map(&:dn)
+      unless additions.empty?
+        ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('owner', additions)])
+      end
+
+      @members = nil
+      additions = (Array(people) - members).map(&:dn)
+      unless additions.empty?
+        ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('member', additions)])
+      end
+    ensure
+      @members = nil
+      @owners = nil
     end
   end
 
