@@ -93,7 +93,7 @@ class PPMCMember < React
       end
         
       if @@ppmc.mentors.include? @@person.id
-        _td 'mentor'
+        _td.chair 'mentor'
       else
         _td
       end
