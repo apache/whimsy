@@ -157,14 +157,16 @@ module ASF
       case name
       when 'climatemodeldiagnosticanalyzer'
         'dev@cmda.incubator.apache.org'
-      when 'blur'
-        'blur-dev@incubator.apache.org'
-      when 'wave'
-        'wave-dev@incubator.apache.org'
+      when 'odftoolkit'
+        'odf-dev@incubator.apache.org'
       when 'log4cxx2'
         'log4cxx-dev@logging.apache.org'
       else
-        "dev@#{name}.apache.org" if ASF::Mail.lists.include? "#{name}-dev"
+        if ASF::Mail.lists.include? "#{name}-dev"
+          "dev@#{name}.apache.org" 
+        elsif ASF::Mail.lists.include? "incubator-#{name}-dev"
+          "#{name}-dev@incubator.apache.org" 
+        end
       end
     end
 
@@ -174,7 +176,7 @@ module ASF
         'private@logging.apache.org'
       else
         list = dev_mail_list
-        list && list.sub('dev', 'private')
+        list ? list.sub('dev', 'private') : 'private@incubator.apache.org'
       end
     end
 
