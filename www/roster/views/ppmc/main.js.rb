@@ -18,9 +18,9 @@ class PPMC < React
     # usage information for authenticated users (PMC chair, etc.)
     if auth
       _div.alert.alert_success do
-        _span 'Double click on a row to edit.'
+        _span 'Double click on a row to show actions.'
         unless @ppmc.roster.keys().empty?
-          _span "  Double click on \u2795 to add."
+          _span "  Click on \u2795 to add."
         end
       end
     end
@@ -52,7 +52,7 @@ class PPMC < React
     end
 
     # hidden form
-    # _PPMCConfirm pmc: @ppmc.id, update: self.update if auth
+    _PPMCConfirm pmc: @ppmc.id, update: self.update if auth
   end
 
   # capture ppmc on initial load

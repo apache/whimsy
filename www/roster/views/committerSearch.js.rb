@@ -46,7 +46,9 @@ class CommitterSearch < React
           person.mail.any? {|mail| mail.include? part}
         }
       then
-        list << person
+        unless @@exclude and @@exclude.include? person.id
+          list << person
+        end
       end
     end
   end
@@ -71,6 +73,7 @@ class CommitterSearch < React
           _table.table.table_hover do
             _thead do
               _tr do
+                _th
                 _th 'id'
                 _th 'public name'
                 _th 'email'
@@ -79,7 +82,8 @@ class CommitterSearch < React
 
             _tbody do
               list.each do |person|
-                _tr data_id: person.id, onDoubleClick: self.select do
+                _tr do
+                  _td "\u2795", data_id: person.id, onClick: self.select
                   _td {_a person.id, href: "committer/#{person.id}"}
 
                   if person.member
@@ -94,7 +98,7 @@ class CommitterSearch < React
 
               if @@add
                 _tr.alert_success do
-                  _td 'Double click on a row to add', colspan: 3
+                  _td "Click on \u2795 to add", colspan: 3
                 end
               end
             end

@@ -19,6 +19,7 @@ require_relative 'person/sascore'
 
 require_relative 'ppmc/main'
 require_relative 'ppmc/members'
+require_relative 'ppmc/confirm'
 
 require_relative 'committerSearch'
 

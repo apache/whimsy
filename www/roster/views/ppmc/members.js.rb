@@ -25,7 +25,7 @@ class PPMCMembers < React
         end
 
         if @@auth and not @@ppmc.roster.keys().empty?
-          _tr onDoubleClick: self.select do
+          _tr onClick: self.select do
             _td((@state == :open ? '' : "\u2795"), colspan: 4)
           end
         end
@@ -34,7 +34,7 @@ class PPMCMembers < React
 
    if @state == :open
      _div.search_box do
-       _CommitterSearch add: self.add
+       _CommitterSearch add: self.add, exclude: @roster.map {|person| person.id}
      end
    end
   end
@@ -66,7 +66,7 @@ class PPMCMembers < React
 
   # add a person to the displayed list of PMC members
   def add(person)
-    person.date = 'pending'
+    person.status = 'pending'
     @roster << person
     @state = :closed
   end
@@ -92,10 +92,26 @@ class PPMCMember < React
         _td @@person.name
       end
         
-      if @@ppmc.mentors.include? @@person.id
-        _td.chair 'mentor'
-      else
-        _td
+      _td do
+        if @state == :open
+          if @@person.status == 'pending'
+            _button.btn.btn_primary 'Add to the PPMC',
+              data_action: 'add',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Add #{@@person.name} to the " +
+                "#{@@ppmc.display_name} PPMC?"
+          else
+            _button.btn.btn_warning 'Remove from the PPMC',
+              data_action: 'remove',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Remove #{@@person.name} from the " +
+                "#{@@ppmc.display_name} PPMC?"
+          end
+        elsif @@person.status == 'pending'
+          _span'pending'
+        elsif @@ppmc.mentors.include? @@person.id
+          _span.chair 'mentor'
+        end
       end
     end
   end
@@ -108,7 +124,7 @@ class PPMCMember < React
   # automatically open pending entries
   def componentWillReceiveProps(newprops)
     @state = :closed if @ppmc and newprops.ppmc.id != @ppmc.id
-    @state = :open if @@person.date == 'pending'
+    @state = :open if @@person.status == 'pending'
   end
 
   # toggle display of buttons
