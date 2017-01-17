@@ -142,6 +142,11 @@ module ASF
       return self.send name if self.respond_to? name
     end
 
+    # list of PPMC owners
+    def owners
+      ASF::Project.find(id).owners
+    end
+
     # list of PPMC members
     def members
       ASF::Project.find(id).members

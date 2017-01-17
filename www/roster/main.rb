@@ -132,6 +132,7 @@ get '/ppmc/:name.json' do |name|
 end
 
 get '/ppmc/:name' do |name|
+  @auth = Auth.info(env)
   @ppmc = PPMC.serialize(name, env)
   pass unless @ppmc
   _html :ppmc
