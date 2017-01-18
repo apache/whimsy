@@ -4,7 +4,8 @@
 
 class PPMC < React
   def render
-    auth = @@auth and (@@auth.secretary or @@auth.root)
+    auth = @@auth and (@@auth.secretary or @@auth.root or
+      @@pmc.owners.include? auth.id)
 
     # header
     _h1 do
