@@ -702,7 +702,7 @@ module ASF
     end
 
     def dn
-      @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
+      @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first rescue nil
     end
 
     def members
