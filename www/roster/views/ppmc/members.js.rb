@@ -92,7 +92,7 @@ class PPMCMember < React
         _td @@person.name
       end
         
-      _td do
+      _td data_id: @@person.id do
         if @state == :open
           if @@person.status == 'pending'
             _button.btn.btn_primary 'Add to the PPMC',
@@ -123,7 +123,7 @@ class PPMCMember < React
 
   # automatically open pending entries
   def componentWillReceiveProps(newprops)
-    @state = :closed if @ppmc and newprops.ppmc.id != @ppmc.id
+    @state = :closed if newprops.person.id != self.props.person.id
     @state = :open if @@person.status == 'pending'
   end
 
