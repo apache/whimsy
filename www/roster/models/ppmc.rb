@@ -9,7 +9,7 @@ class PPMC
     end
 
     user = ASF::Person.find(env.user)
-    unless user.asf_member? or pmc.members.include? user
+    unless user.asf_member? or ppmc.members.include? user
       lists = lists.select {|list, mode| mode == 'public'}
     end
 
