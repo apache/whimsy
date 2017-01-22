@@ -38,7 +38,7 @@ class PPMCConfirm < React
   def componentDidMount()
     jQuery('#confirm').on('show.bs.modal') do |event|
       button = event.relatedTarget
-      @id = button.parentNode.dataset.id
+      @ids = button.parentNode.dataset.ids
       @action = button.dataset.action
       @text = button.dataset.confirmation
       @color = button.classList[1]
@@ -56,7 +56,7 @@ class PPMCConfirm < React
       method: 'post',
       credentials: 'include',
       headers: {'Content-Type' => 'application/json'},
-      body: {ppmc: @@ppmc, id: @id, action: action, targets: targets}.inspect
+      body: {ppmc: @@ppmc, ids: @ids, action: action, targets: targets}.inspect
     }
 
     @disabled = true

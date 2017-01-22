@@ -22,6 +22,7 @@ class PPMC < React
         _span 'Double click on a row to show actions.'
         unless @ppmc.roster.keys().empty?
           _span "  Click on \u2795 to add."
+          _span "  Multiple people can be added with a single confirmation."
         end
       end
     end

@@ -1,28 +1,37 @@
 if env.password
-  person = ASF::Person.find(@id)
+  people = @ids.split(',').map {|id| ASF::Person.find(id)}
   project = ASF::Project.find(@ppmc)
 
   # update LDAP
   ASF::LDAP.bind(env.user, env.password) do
     if @action == 'add'
-      project.add(person)
+      project.add(people)
     elsif @action == 'remove'
-      project.remove(person)
+      project.remove(people)
     end
   end
 
   # compose E-mail
   action = (@action == 'add' ? 'added to' : 'removed from')
-  details = [person.dn, project.dn]
+  details = people.map {|person| person.dn} + [project.dn]
   from = ASF::Person.find(env.user)
   ppmc = ASF::Podling.find(@ppmc)
 
+  # extract people's names (for short lists) or ids (for longer lists)
+  if people.length <= 2
+    who = people.map {|person| person.public_name}.join(' and ')
+  else
+    who = people[0..-2].map {|person| person.id}.join(', ') + 
+      ', and ' + person.last.id
+  end
+
+  # draft email
   mail = Mail.new do
     from "#{from.public_name} <#{from.id}@apache.org>".untaint
     to ppmc.private_mail_list.untaint
     cc 'private@incubator.apache.org'
     bcc 'root@apache.org'
-    subject "#{person.public_name} #{action} #{ppmc.display_name} PPMC"
+    subject "#{who} #{action} #{ppmc.display_name} PPMC"
     body "Current roster can be found at:\n\n" +
       "  https://whimsy.apache.org/roster/ppmc/#{ppmc.id}\n\n" +
       "LDAP details:\n\n  #{details.join("\n  ")}"
