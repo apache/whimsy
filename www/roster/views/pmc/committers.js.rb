@@ -95,7 +95,7 @@ class PMCCommitter < React
       end
 
       if @state == :open
-        _td data_id: @@person.id do 
+        _td data_ids: @@person.id do 
           if @@person.date == 'pending'
             _button.btn.btn_primary 'Add as a committer only',
               data_action: 'add commit', 

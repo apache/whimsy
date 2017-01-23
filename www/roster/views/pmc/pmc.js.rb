@@ -104,7 +104,7 @@ class PMCMember < React
       _td @@person.date
 
       if @state == :open
-        _td data_id: @@person.id do 
+        _td data_ids: @@person.id do 
           if @@person.date == 'pending'
             _button.btn.btn_primary 'Add as a committer and to the PMC',
               # not added yet

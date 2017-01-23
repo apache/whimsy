@@ -78,7 +78,9 @@ class PMC < React
     end
 
     # hidden form
-    _PMCConfirm pmc: @committee.id, update: self.update if auth
+    if auth
+      _Confirm action: :committee, project: @committee.id, update: self.update
+    end
   end
 
   # capture committee on initial load

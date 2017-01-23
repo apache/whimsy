@@ -1,6 +1,6 @@
 if env.password
   people = @ids.split(',').map {|id| ASF::Person.find(id)}
-  project = ASF::Project.find(@ppmc)
+  project = ASF::Project.find(@project)
 
   # update LDAP
   ASF::LDAP.bind(env.user, env.password) do
@@ -15,7 +15,7 @@ if env.password
   action = (@action == 'add' ? 'added to' : 'removed from')
   details = people.map {|person| person.dn} + [project.dn]
   from = ASF::Person.find(env.user)
-  ppmc = ASF::Podling.find(@ppmc)
+  ppmc = ASF::Podling.find(@project)
 
   # extract people's names (for short lists) or ids (for longer lists)
   if people.length <= 2
@@ -45,4 +45,4 @@ if env.password
 end
 
 # return updated committee info to the client
-PPMC.serialize(@ppmc, env)
+PPMC.serialize(@project, env)

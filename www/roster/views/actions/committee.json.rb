@@ -1,16 +1,16 @@
 if env.password
-  person = ASF::Person.find(@id)
-  pmc = ASF::Committee.find(@pmc) if @targets.include? 'pmc'
-  group = ASF::Group.find(@pmc) if @targets.include? 'commit'
+  people = @ids.split(',').map {|id| ASF::Person.find(id)}
+  pmc = ASF::Committee.find(@project) if @targets.include? 'pmc'
+  group = ASF::Group.find(@project) if @targets.include? 'commit'
 
   # update LDAP
   ASF::LDAP.bind(env.user, env.password) do
     if @action == 'add'
-      pmc.add(person) if pmc
-      group.add(person) if group
+      pmc.add(people) if pmc
+      group.add(people) if group
     elsif @action == 'remove'
-      pmc.remove(person) if pmc
-      group.remove(person) if group
+      pmc.remove(people) if pmc
+      group.remove(people) if group
     end
   end
 
@@ -29,20 +29,23 @@ if env.password
 
       info.scan(/^\* (?:.|\n)*?\n\s*?\n/).each do |block|
         # find committee
-        next unless ASF::Committee.find(block[/\* (.*?)\s+\(/, 1]).id == @pmc
+        next unless ASF::Committee.find(block[/\* (.*?)\s+\(/, 1]).id==@project
 
         # split block into lines
         lines = block.strip.split("\n")
 
-        # add or remove person
-        if @action == 'add'
-          unless lines.any? {|line| line.include? "<#{@id}@apache.org>"}
-            name = "#{person.public_name.ljust(26)} <#{@id}@apache.org>"
-            time = Time.new.gmtime.strftime('%Y-%m-%d')
-            lines << "    #{name.ljust(59)} [#{time}]"
+        # add or remove people
+        people.each do |person|
+          id = person.id
+          if @action == 'add'
+            unless lines.any? {|line| line.include? "<#{id}@apache.org>"}
+              name = "#{person.public_name.ljust(26)} <#{id}@apache.org>"
+              time = Time.new.gmtime.strftime('%Y-%m-%d')
+              lines << "    #{name.ljust(59)} [#{time}]"
+            end
+          else
+            lines.reject! {|line| line.include? "<#{id}@apache.org>"}
           end
-        else
-          lines.reject! {|line| line.include? "<#{@id}@apache.org>"}
         end
 
         # replace committee block with new information
@@ -58,7 +61,7 @@ if env.password
         '--no-auth-cache', '--non-interactive',
         '--username', env.user.untaint, '--password', env.password.untaint,
         tmpdir.untaint, '--message',
-        "#{@pmc} #{@action == 'add' ? '+' : '-'}= #{@id}"
+        "#{@project} #{@action == 'add' ? '+' : '-'}= #{@id}"
 
       if rc
         # update cache
@@ -80,22 +83,32 @@ if env.password
     list = 'committers list'
   end
 
-  details = [person.dn]
+  details = people.map {|person| person.dn}
   details << group.dn if group
   details << pmc.dn if pmc
 
-  pmc ||= ASF::Committee.find(@pmc)
+  pmc ||= ASF::Committee.find(@project)
   from = ASF::Person.find(env.user)
 
+  # extract people's names (for short lists) or ids (for longer lists)
+  if people.length <= 2
+    who = people.map {|person| person.public_name}.join(' and ')
+  else
+    who = people[0..-2].map {|person| person.id}.join(', ') + 
+      ', and ' + person.last.id
+  end
+
+  # draft email
   mail = Mail.new do
     from "#{from.public_name} <#{from.id}@apache.org>".untaint
     to "private@#{pmc.mail_list}.apache.org".untaint
     bcc "root@apache.org"
-    subject "#{person.public_name} #{action} #{pmc.display_name} #{list}"
+    subject "#{who} #{action} #{pmc.display_name} #{list}"
     body "Current roster can be found at:\n\n" +
       "  https://whimsy.apache.org/roster/committee/#{pmc.id}\n\n" +
       "LDAP details:\n\n  #{details.join("\n  ")}"
   end
+
   # Header for root@'s lovely email filters
   mail.header['X-For-Root'] = 'yes'
 
@@ -104,4 +117,4 @@ if env.password
 end
 
 # return updated committee info to the client
-Committee.serialize(@pmc, env)
+Committee.serialize(@project, env)

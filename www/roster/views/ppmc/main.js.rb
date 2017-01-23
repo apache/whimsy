@@ -54,7 +54,7 @@ class PPMC < React
     end
 
     # hidden form
-    _PPMCConfirm ppmc: @ppmc.id, update: self.update if auth
+    _Confirm action: :ppmc, project: @ppmc.id, update: self.update if auth
   end
 
   # capture ppmc on initial load

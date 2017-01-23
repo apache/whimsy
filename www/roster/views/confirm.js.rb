@@ -2,7 +2,7 @@
 # Confirmation dialog
 #
 
-class PPMCConfirm < React
+class Confirm < React
   def initialize
     @text = 'text'
     @color = 'btn-default'
@@ -56,12 +56,17 @@ class PPMCConfirm < React
       method: 'post',
       credentials: 'include',
       headers: {'Content-Type' => 'application/json'},
-      body: {ppmc: @@ppmc, ids: @ids, action: action, targets: targets}.inspect
+      body: {
+        project: @@project, 
+        ids: @ids, 
+        action: action, 
+        targets: targets
+      }.inspect
     }
 
     @disabled = true
     Polyfill.require(%w(Promise fetch)) do
-      fetch('actions/ppmc', args).then {|response|
+      fetch("actions/#{@@action}", args).then {|response|
         content_type = response.headers.get('content-type') || ''
         if response.status == 200 and content_type.include? 'json'
           response.json().then do |json|
