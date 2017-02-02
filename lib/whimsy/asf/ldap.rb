@@ -701,8 +701,33 @@ module ASF
       ASF.search_one(base, filter, 'cn').flatten
     end
 
+    def self.preload
+      Hash[ASF.search_one(base, "cn=*", %w(dn member owner modifyTimestamp createTimestamp)).map do |results|
+        cn = results['dn'].first[/^cn=(.*?),/, 1]
+        project = self.find(cn)
+        project.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
+        project.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
+        members = results['member'] || []
+        owners = results['owner'] || []
+        project.members = members
+        project.owners = owners
+        [project, [members, owners]] # TODO is this correct? it seems to work...
+      end]
+    end
+
+    attr_accessor :modifyTimestamp, :createTimestamp
+
+
     def dn
       @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first rescue nil
+    end
+
+    def members=(members)
+      @members = WeakRef.new(members)
+    end
+
+    def owners=(owners)
+      @owners = WeakRef.new(owners)
     end
 
     def members
