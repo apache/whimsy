@@ -16,8 +16,8 @@ Verify using:
 
 ```
 $ brew --version
-Homebrew 0.9.9 (git revision b39eb; last commit 2016-08-18)
-Homebrew/homebrew-core (git revision d20c; last commit 2016-08-18)
+Homebrew 1.1.9
+Homebrew/homebrew-core (git revision 5b9a; last commit 2017-02-05)
 ```
 
 Upgrade Ruby
@@ -33,10 +33,10 @@ Verify:
 
 ```
 $ ruby -v
-ruby 2.3.1p112 (2016-04-26 revision 54768) [x86_64-darwin15]
+ruby 2.4.0p0 (2016-12-24 revision 57164) [x86_64-darwin16]
 ```
 
-If you don't see 2.3.1, run `hash -r` and try again.  If you previously
+If you don't see 2.3.1 or later, run `hash -r` and try again.  If you previously
 installed ruby via brew, you may need to run `brew upgrade ruby` instead.
 
 
@@ -54,9 +54,9 @@ Verify:
 
 ```
 $ node -v
-v6.4.0
+v7.5.0
 $ npm -v
-3.10.6
+4.1.2
 ```
 
 If you don't see v6 or higher, run `hash -r` and try again.  If you previously
@@ -77,13 +77,13 @@ Verify:
 ```
 $ gem list
 $ bundler -v
-Bundler version 1.12.5
+Bundler version 1.14.3
 ```
 
 Notes:
 
-You may have trouble installing due to the dependency on nokogiri. There are issues
-with its dependencies. This page suggests some workarounds:
+You may have trouble installing due to the dependency on nokogiri. There are
+issues with its dependencies. This page suggests some workarounds:
 https://github.com/sparklemotion/nokogiri/issues/1483
 
 Clone whimsy
