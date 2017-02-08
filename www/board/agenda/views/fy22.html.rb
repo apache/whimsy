@@ -13,7 +13,7 @@ _html do
 
   _h2 'FY22 budget worksheet'
 
-  _p "Instructions: change an input field and press the tab key"
+  _p "Instructions: change an input field and press the tab key."
 
   _table.table.table_striped do
     _thead do
@@ -221,7 +221,9 @@ _html do
     end
   end
 
-  _script %{
+  _p "Units are in thousands of dollars US."
+
+  _script %q{
     values = {
       donations: 110,
       sponsorship: 1000,
