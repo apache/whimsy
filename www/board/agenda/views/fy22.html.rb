@@ -33,7 +33,9 @@ _html do
       end
 
       _tr do
-        _td.indented 'Total Public Donations'
+        _td.indented do
+          _a 'Total Public Donations', href: 'https://s.apache.org/sxYI'
+        end
         _td.num 89
         _td.num 90
         _td.num 110
@@ -42,7 +44,9 @@ _html do
       end
 
       _tr do
-        _td.indented 'Total Sponsorship'
+        _td.indented do
+          _a 'Total Sponsorship', href: 'https://s.apache.org/sxYI'
+        end
         _td.num 968
         _td.num 900
         _td.num '1,000'
@@ -95,7 +99,9 @@ _html do
       end
 
       _tr do
-        _td.indented 'Infrastructure'
+        _td.indented do
+          _a 'Infrastructure', href: 'https://s.apache.org/Rlse'
+        end
         _td.num 723
         _td.num 868
         _td.num 868
@@ -113,7 +119,9 @@ _html do
       end
 
       _tr do
-        _td.indented 'Publicity'
+        _td.indented do
+          _a 'Publicity', href: 'https://s.apache.org/lv76'
+        end
         _td.num 141
         _td.num 273
         _td.num 352
@@ -122,7 +130,9 @@ _html do
       end
 
       _tr do
-        _td.indented 'Brand Management'
+        _td.indented do
+          _a 'Brand Management', href: 'https://s.apache.org/gXdY'
+        end
         _td.num 84
         _td.num 92
         _td.num 141
@@ -140,7 +150,9 @@ _html do
       end
 
       _tr do
-        _td.indented 'Travel Assistance'
+        _td.indented do
+          _a 'Travel Assistance', href: 'https://s.apache.org/4LdI'
+        end
         _td.num 62
         _td.num 0
         _td.num 79
@@ -149,7 +161,9 @@ _html do
       end
 
       _tr do
-        _td.indented 'Treasury'
+        _td.indented do
+          _a 'Treasury', href: 'https://s.apache.org/EGiC'
+        end
         _td.num 48
         _td.num 49
         _td.num 51
@@ -158,7 +172,9 @@ _html do
       end
 
       _tr do
-        _td.indented 'Fundraising'
+        _td.indented do
+          _a 'Fundraising', href: 'https://s.apache.org/sxYI'
+        end
         _td.num 8
         _td.num 18
         _td.num 23
@@ -167,7 +183,9 @@ _html do
       end
 
       _tr do
-        _td.indented 'General & Administrative'
+        _td.indented do
+          _a 'General & Administrative', href: 'https://s.apache.org/4LdI'
+        end
         _td.num 114
         _td.num 50
         _td.num 139
