@@ -53,6 +53,10 @@ get '/env' do
   JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
 end
 
+get %r{/(\d\d\d\d-\d\d-\d\d)/fy22} do |date|
+  _html :fy22
+end
+
 # all agenda pages
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   agenda = "board_agenda_#{date.gsub('-','_')}.txt"
