@@ -3,7 +3,7 @@
 #
 class FY22 < React
   def initialize
-    @budget = {
+    @budget = (Minutes.started && Minutes.get('budget')) || {
       donations: 110,
       sponsorship: 1000,
       infrastructure: 868,
@@ -15,6 +15,12 @@ class FY22 < React
       fundraising: 23,
       generalAndAdministrative: 139,
     }
+
+    if Server.role == :secretary or not Minutes.started
+      @disabled = false
+    else
+      @disabled = true
+    end
 
     self.recalc();
   end
@@ -58,7 +64,7 @@ class FY22 < React
           _td.num 110
           _td.num 135
           _td.num do 
-            _input.donations! onBlur: self.change,
+            _input.donations! onBlur: self.change, disabled: @disabled,
               defaultValue: @budget.donations.toLocaleString()
           end
         end
@@ -72,7 +78,7 @@ class FY22 < React
           _td.num (1_000).toLocaleString()
           _td.num (1_100).toLocaleString()
           _td.num do 
-            _input.sponsorship! onBlur: self.change,
+            _input.sponsorship! onBlur: self.change, disabled: @disabled,
               defaultValue: @budget.sponsorship.toLocaleString()
           end
         end
@@ -130,7 +136,7 @@ class FY22 < React
           _td.num 868
           _td.num 868
           _td.num do 
-            _input.infrastructure! onBlur: self.change,
+            _input.infrastructure! onBlur: self.change, disabled: @disabled,
               defaultValue: @budget.infrastructure.toLocaleString()
           end
         end
@@ -153,7 +159,7 @@ class FY22 < React
           _td.num 352
           _td.num 540
           _td.num do 
-            _input.publicity! onBlur: self.change,
+            _input.publicity! onBlur: self.change, disabled: @disabled,
               defaultValue: @budget.publicity.toLocaleString()
           end
         end
@@ -167,7 +173,7 @@ class FY22 < React
           _td.num 141
           _td.num 218
           _td.num do 
-            _input.brandManagement! onBlur: self.change,
+            _input.brandManagement! onBlur: self.change, disabled: @disabled,
               defaultValue: @budget.brandManagement.toLocaleString()
           end
         end
@@ -179,7 +185,7 @@ class FY22 < React
           _td.num 12
           _td.num 12
           _td.num do 
-            _input.conferences! onBlur: self.change,
+            _input.conferences! onBlur: self.change, disabled: @disabled,
               defaultValue: @budget.conferences.toLocaleString()
           end
         end
@@ -193,7 +199,7 @@ class FY22 < React
           _td.num 79
           _td.num 150
           _td.num do 
-            _input.travelAssistance! onBlur: self.change,
+            _input.travelAssistance! onBlur: self.change, disabled: @disabled,
               defaultValue: @budget.travelAssistance.toLocaleString()
           end
         end
@@ -207,7 +213,7 @@ class FY22 < React
           _td.num 51
           _td.num 61
           _td.num do 
-            _input.treasury! onBlur: self.change,
+            _input.treasury! onBlur: self.change, disabled: @disabled,
               defaultValue: @budget.treasury.toLocaleString()
           end
         end
@@ -221,7 +227,7 @@ class FY22 < React
           _td.num 23
           _td.num 23
           _td.num do 
-            _input.fundraising! onBlur: self.change,
+            _input.fundraising! onBlur: self.change, disabled: @disabled,
               defaultValue: @budget.fundraising.toLocaleString()
           end
         end
@@ -236,6 +242,7 @@ class FY22 < React
           _td.num 300
           _td.num do 
             _input.generalAndAdministrative! onBlur: self.change,
+              disabled: @disabled,
               defaultValue: @budget.generalAndAdministrative.toLocaleString()
           end
         end
@@ -290,6 +297,7 @@ class FY22 < React
     _p "Units are in thousands of dollars US."
   end
 
+  # evaluate computed fields
   def recalc()
     @budget.income = @budget.donations + @budget.sponsorship + 28 + 4
 
@@ -303,10 +311,39 @@ class FY22 < React
     @budget.cash = 1656 - 2*130 + 3*@budget.net
   end
 
+  # update budget item when an input field changes
   def change(event)
     @budget[event.target.id] = parseInt(event.target.value.gsub(/\D/, '')) || 0
     event.target.value = @budget[event.target.id].toLocaleString()
     self.recalc()
+
+    if Server.role == :secretary and Minutes.started
+      post 'budget', agenda: Agenda.file, budget: @budget do |budget|
+        @budget = budget if budget
+      end
+    end
+
     self.forceUpdate()
+  end
+
+  # receive updated budget values
+  def componentWillReceiveProps()
+    budget = Minutes.get('budget')
+
+    if budget and budget != @budget and Minutes.started
+
+      for item in budget
+        element = document.getElementById(item)
+
+        if element.tagName == 'INPUT'
+          element.value = budget[item].toLocaleString()
+        else
+          element.textContent = budget[item].toLocaleString()
+        end
+      end
+
+      @budget = budget
+      @disabled = true unless Server.role == :secretary
+    end
   end
 end
