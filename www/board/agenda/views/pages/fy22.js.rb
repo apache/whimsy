@@ -69,8 +69,8 @@ class FY22 < React
           end
           _td.num 968
           _td.num 900
-          _td.num '1,000'
-          _td.num '1,100'
+          _td.num (1_000).toLocaleString()
+          _td.num (1_100).toLocaleString()
           _td.num do 
             _input.sponsorship! onBlur: self.change,
               defaultValue: @budget.sponsorship.toLocaleString()
@@ -106,10 +106,10 @@ class FY22 < React
 
         _tr do
           _td.indented 'Total Income'
-          _td.num '1,089'
-          _td.num '1,022'
-          _td.num '1,142'
-          _td.num '1,267'
+          _td.num (1_089).toLocaleString()
+          _td.num (1_022).toLocaleString()
+          _td.num (1_142).toLocaleString()
+          _td.num (1_267).toLocaleString()
           _td.num.income! @budget.income.toLocaleString()
         end
 
@@ -251,11 +251,11 @@ class FY22 < React
 
         _tr do
           _td.indented 'Total Expense'
-          _td.num '1,219'
-          _td.num '1,390'
-          _td.num '1,693'
-          _td.num '2,199'
-          _td.num.expense! @budget.expense
+          _td.num (1_219).toLocaleString()
+          _td.num (1_390).toLocaleString()
+          _td.num (1_693).toLocaleString()
+          _td.num (2_199).toLocaleString()
+          _td.num.expense! @budget.expense.toLocaleString()
         end
 
         _tr do
@@ -264,11 +264,11 @@ class FY22 < React
 
         _tr do
           _td 'Net'
-          _td.num '-130'
-          _td.num '-369'
-          _td.num '-552'
-          _td.num '-993'
-          _td.num.net! @budget.net,
+          _td.num -130
+          _td.num -369
+          _td.num -552
+          _td.num -993
+          _td.num.net! @budget.net.toLocaleString(),
             class: (@budget.net < 0 ? 'danger' : 'success')
         end
 
@@ -278,11 +278,11 @@ class FY22 < React
 
         _tr do
           _td 'Cash'
-          _td.num '1,656'
+          _td.num (1_656).toLocaleString()
           _td.num 290
           _td.num -259
-          _td.num -1403
-          _td.num.cash! @budget.cash
+          _td.num (-1_403).toLocaleString()
+          _td.num.cash! @budget.cash.toLocaleString()
         end
       end
     end
@@ -291,21 +291,22 @@ class FY22 < React
   end
 
   def recalc()
-    @budget.income = @budget.donations + @budget.sponsorship + 28 + 4;
+    @budget.income = @budget.donations + @budget.sponsorship + 28 + 4
 
     @budget.expense = @budget.infrastructure + 27 + @budget.publicity + 
       @budget.brandManagement + @budget.conferences + 
       @budget.travelAssistance + @budget.treasury + @budget.fundraising + 
       @budget.generalAndAdministrative;
 
-    @budget.net = @budget.income - @budget.expense;
+    @budget.net = @budget.income - @budget.expense
 
-    @budget.cash = 1656 - 2*130 + 3*@budget.net;
+    @budget.cash = 1656 - 2*130 + 3*@budget.net
   end
 
   def change(event)
-    @budget[event.target.id] = parseInt(event.target.value.gsub(/\D/, '')) || 0;
-    self.recalc();
+    @budget[event.target.id] = parseInt(event.target.value.gsub(/\D/, '')) || 0
+    event.target.value = @budget[event.target.id].toLocaleString()
+    self.recalc()
     self.forceUpdate()
   end
 end
