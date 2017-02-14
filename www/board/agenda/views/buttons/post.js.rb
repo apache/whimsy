@@ -36,6 +36,18 @@ class Post < React
         placeholder: @label, rows: 17, disabled: @disabled, 
         onChange: self.change_text
 
+      # upload of spreadsheet from virtual
+      if @@item.title == 'Treasurer'
+        _form do
+          _div.form_group do
+            _label 'financial spreadsheet from virtual', for: 'upload'
+            _input.upload! type: 'file', value: @upload
+            _button.btn.btn_primary 'Upload', onClick: self.upload,
+              disabled: @disabled || !@upload
+          end
+        end
+      end
+
       #input field: commit_message
       if @@button.text != 'add resolution'
         _input.post_report_message! label: 'commit message', 
@@ -171,8 +183,31 @@ class Post < React
     end
   end
 
-  # when save button is pushed, post comment and dismiss modal when complete
+  # upload contents of spreadsheet in base64; append extracted table to report
+  def upload(event)
+    @disabled = true
+    event.preventDefault()
 
+    reader = FileReader.new
+    def reader.onload(event)
+      result = event.target.result
+      base64 = btoa(String.fromCharCode.apply(null, Uint8Array.new(result)))
+      post 'financials', spreadsheet: base64 do |response|
+        report = @report
+        report += "\n" if report and not report.end_with? "\n"
+        report += "\n" if report
+        report += response.table
+
+        self.change_text target: {value: report}
+
+        @upload = nil
+        @disabled = false
+      end
+    end
+    reader.readAsArrayBuffer(document.getElementById('upload').files[0])
+  end
+
+  # when save button is pushed, post comment and dismiss modal when complete
   def submit(event)
     @edited = false
 

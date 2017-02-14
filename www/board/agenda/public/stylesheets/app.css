@@ -490,3 +490,7 @@ h5.history {
   margin-left: 1em;
 }
 
+input[type=file]#upload {
+  display: inline-block;
+  margin-right: 1em;
+}

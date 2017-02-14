@@ -27,6 +27,8 @@ gem 'concurrent-ruby'
 
 gem 'mime-types', '~> 2.6'
 
+gem 'rubyXL'
+
 group :test do
   gem 'rspec'
   gem 'capybara'
