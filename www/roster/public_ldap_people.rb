@@ -35,7 +35,8 @@ def makeEntry(hash, e)
   else
     # Don't publish urls for banned logins
     if not e.urls.empty?
-      hash[e.id][:urls] = e.urls
+      # need to sort to avoid random changes which seem to occur for urls
+      hash[e.id][:urls] = e.urls.sort
     end
     # only add entry if there is a fingerprint
     if not e.pgp_key_fingerprints.empty?
