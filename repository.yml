@@ -64,20 +64,12 @@
   officers_historic:
     url: private/foundation/officers/historic
 
-  prospects:
-    url: private/foundation/Fundraising/prospects
-    depth: files
-
   site-board:
     url: asf/infrastructure/site/trunk/content/foundation/board
     depth: files
 
   site-root:
     url: asf/infrastructure/site/trunk/content
-    depth: files
-
-  sponsorship:
-    url: private/foundation/Fundraising/sponsorship
     depth: files
 
   steve:
