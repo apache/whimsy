@@ -29,6 +29,7 @@
     <asfext:pmc rdf:resource="http://whimsy.apache.org" />
     <shortdesc>Whimsy is a site where a set of absolutely unnecessary yet often quite handy applications are deployed. </shortdesc>
     <programming-language>JavaScript</programming-language>
+    <programming-language>Ruby</programming-language>
     <category rdf:resource="http://projects.apache.org/category/content" />
     <repository>
       <GitRepository>
