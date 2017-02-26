@@ -122,6 +122,11 @@ module ASF
         established = "0#{established}" if established =~ /^\d\//
         committee.established = established
 
+        # match non-empty entries and check the syntax
+        roster.scan(/^[ \t]+.+$/) do |line|
+            Wunderbar.warn "Invalid syntax: #{committee.name} '#{line}'" unless line =~ /\s<(.*?)@apache\.org>\s/
+        end
+
         # extract the availids (is this used?)
         committee.info = roster.scan(/<(.*?)@apache\.org>/).flatten
 
