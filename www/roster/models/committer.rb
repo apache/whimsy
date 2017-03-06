@@ -94,7 +94,8 @@ class Committer
           [
             person.icla.legal_name, 
             person.icla.name,
-            member[:info].split("\n").first.strip
+            # allow for member in LDAP to not be in members.txt (e.g. infra staff)
+            (member[:info] or "?\n").split("\n").first.strip
           ].uniq.each do |name|
             next unless name
             memapp = name.downcase.gsub(/\s/, '-').untaint
