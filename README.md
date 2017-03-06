@@ -67,7 +67,7 @@ Git repos
 The code is hosted at
     https://github.com/apache/whimsy.git
 and now also at
-    https://git-dual.apache.org/repos/asf/whimsy.git
+    https://gitbox.apache.org/repos/asf/whimsy.git
 
 Further Reading
 ===============

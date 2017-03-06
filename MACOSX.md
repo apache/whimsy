@@ -95,7 +95,7 @@ following:
 ```
 git clone git@github.com:apache/whimsy.git
 git clone https://github.com/apache/whimsy.git
-git clone https://git-dual.apache.org/repos/asf/whimsy.git
+git clone https://gitbox.apache.org/repos/asf/whimsy.git
 ```
 
 The first command makes things easier if you want to push to the GitHub clone
@@ -105,7 +105,7 @@ other remotes via commands like:
 
 ```
 git remote add github git@github.com:apache/whimsy.git
-git remote add asf https://git-dual.apache.org/repos/asf/whimsy.git
+git remote add asf https://gitbox.apache.org/repos/asf/whimsy.git
 ```
 
 

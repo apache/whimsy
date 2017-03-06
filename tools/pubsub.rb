@@ -23,7 +23,7 @@ script = File.basename(__FILE__, '.rb')
 #
 
 options = OpenStruct.new
-options.remote = 'https://git-dual.apache.org/repos/asf/whimsy.git'
+options.remote = 'https://gitbox.apache.org/repos/asf/whimsy.git'
 options.local = '/srv/whimsy'
 options.pidfile = "/var/run/#{script}.pid"
 options.streamURL = 'http://gitpubsub-wip.apache.org:2069/json/*'
