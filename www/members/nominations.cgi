@@ -23,10 +23,10 @@ archive.each do |email|
   next unless message[/^Date: .*/].to_s.include? year
   subject = message[/^Subject: .*/]
   next unless subject.upcase.include? "MEMBER"
-  next unless subject.upcase.include? "NOMINATION"
+  next unless subject.upcase =~ /NOMI[NM]ATION/
   mail = Mail.new(message)
   next if mail.subject.downcase == 'member nomination process'
-  emails << mail if mail.subject =~ /^\[?MEMBER(SHIP)? NOMINATION\]?/i
+  emails << mail if mail.subject =~ /^\[?MEMBER(SHIP)? NOMI[MN]ATION\]?/i
 end
 
 # parse nominations for names and ids
