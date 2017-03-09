@@ -50,6 +50,7 @@ lastmodifyTimestamp = ''
 lastcreateTimestamp = ''
 
 peeps.sort_by {|a| a.name}.each do |e|
+  next if e.id == 'apldaptest' # not a valid person
   makeEntry(peo, e)
   createTimestamp = e.createTimestamp
   if (createTimestamp > lastcreateTimestamp)
