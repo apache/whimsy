@@ -521,7 +521,8 @@ module ASF
     end
 
     def banned?
-      not attrs['loginShell'] or %w(/usr/bin/false bin/nologin bin/no-cla).any? {|a| attrs['loginShell'].first.include? a}
+      # FreeBSD uses /usr/bin/false; Ubuntu uses /bin/false
+      not attrs['loginShell'] or %w(/bin/false bin/nologin bin/no-cla).any? {|a| attrs['loginShell'].first.include? a}
     end
 
     def mail
