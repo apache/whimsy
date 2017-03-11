@@ -494,3 +494,7 @@ input[type=file]#upload {
   display: inline-block;
   margin-right: 1em;
 }
+
+#post-report-text {
+  font-family: monospace
+}
