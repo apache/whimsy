@@ -8,6 +8,9 @@ require 'rubyXL'
 require 'active_support'
 require 'active_support/core_ext/numeric/conversions'
 
+# for debugging purposes; read spreadsheet from file if run from command line
+@spreadsheet = Base64.encode64(File.read(ARGV.first)) if __FILE__ == $0
+
 # parse worksheet
 # https://github.com/weshatheleopard/rubyXL/issues/235
 begin
@@ -52,7 +55,10 @@ rows.shift(2)
 # move headings from second to seventh row
 headings = rows.delete_at(1)
 headings[2] = headings[6] = 'Budget'
-1.upto(7) {|i| headings[i] = headings[i].rjust(12) if headings[i]}
+1.upto(7) do |i|
+  headings[i] = headings[i].strftime("%b-%y") if DateTime === headings[i]
+  headings[i] = headings[i].rjust(12) if headings[i]
+end
 rows.insert(6, headings)
 
 # delete empty rows
@@ -75,5 +81,8 @@ rows.each do |row|
     output << row[0].strip
   end
 end
+
+# print output to stdout if run from the command line
+puts output if __FILE__ == $0
 
 {table: output.join("\n")}
