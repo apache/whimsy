@@ -13,7 +13,7 @@ module ASF
       meetings = ASF::SVN['private/foundation/Meetings']
       nominations = Dir["#{meetings}/*/nominated-members.txt"].sort.last.untaint
 
-      nominations = File.read(nominations).split(/^\s*---+\s*/)
+      nominations = File.read(nominations).split(/^\s*---+--\s*/)
       nominations.shift(2)
 
       nominees = {}

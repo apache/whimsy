@@ -33,7 +33,7 @@ end
 MEETINGS = ASF::SVN['private/foundation/Meetings']
 meeting = Dir["#{MEETINGS}/2*"].sort.last
 nominations = IO.read("#{meeting}/nominated-members.txt").
-  scan(/^-+--\s+(.*?)\n/).flatten
+  scan(/^---+--\s+(.*?)\n/).flatten
 
 nominations.shift if nominations.first == '<empty line>'
 nominations.pop if nominations.last.empty?
@@ -109,9 +109,9 @@ _html do
 
       _p.count "Count: #{emails.count}"
 
-      # attempt to sort reports by PMC name
+      # attempt to sort reports by nominee name
       emails.sort_by! do |mail| 
-        mail.subject.downcase.gsub('- ', '')
+        mail.subject.downcase.gsub('- ', '').sub(/\[.*?\]\s*/, '')
       end
 
       # output an unordered list of subjects linked to the message archive
