@@ -124,7 +124,7 @@ def getHTTP(url)
 end
 
 # check page can be read => body
-def check_page(base, page, severity=:E, expectedStatus="200")
+def check_page(base, page, severity=:E, expectedStatus="200", log=true)
   path = base + page
   response = getHTTP(path)
   code = response.code ||  '?'
@@ -132,7 +132,7 @@ def check_page(base, page, severity=:E, expectedStatus="200")
     test(severity, "Fetched #{path} - HTTP status: #{code} expected: #{expectedStatus}") unless severity == nil
     return nil
   end
-  I "Fetched #{path} - OK"
+  I "Fetched #{path} - OK" if log
   response.body
 end
 
@@ -289,8 +289,8 @@ def init
 end
 
 def setup
-  tlps = parseIndexPage(check_page('http://www.apache.org/dist/',''))
-  podlings = parseIndexPage(check_page('http://www.apache.org/dist/incubator/',''))
+  tlps = parseIndexPage(check_page('https://www.apache.org/dist/','',:E,"200",log=false))
+  podlings = parseIndexPage(check_page('https://www.apache.org/dist/incubator/','',:E,"200",false))
   @pages = {:tlps => tlps, :podlings => podlings}
 end
 
@@ -348,7 +348,7 @@ end
 
 if __FILE__ == $0
   init
-  url = ARGV[0] || abort("Need URL to test!")
+  url = ARGV[0] || "localhost" # easier to test in an IDE
   checkHTTP(url+"") # allow url to be untainted later
   # display the test results
   @tests.each { |t| t.map{|k, v| puts "#{k}: - #{v}"}} 
