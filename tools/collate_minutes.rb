@@ -527,8 +527,9 @@ FileUtils.mkdir_p SITE_MINUTES
   end
 
   # parse (Executive) Officer Reports
-  execs = minutes[/Officer Reports(.*?)\n\s+\d+\./m,1]
+  execs = minutes[/Officer Reports(.*?)\n\s{1,3}\d+\./m,1]
   if execs
+    execs.sub! /\s*Executive officer reports approved.*?\n*\Z/, ''
     execs.scan(/
       \n\s+(\w+)\.\s([^\n]*?)\n         # attach, title
       (.*?)                             # text
@@ -553,7 +554,7 @@ FileUtils.mkdir_p SITE_MINUTES
       report.title = 'Treasurer' if report.title =~ /Treasurer/
       report.meeting = date
       report.attach = '*' + title
-      report.text = text
+      report.text = text.dup
       pending[title] = report
     end
   end
