@@ -27,7 +27,9 @@ if env.password
   to = group.members
   to << person unless to.include? person
   to.delete from unless to.length == 1
-  to = to.map {|person| "#{person.public_name} <#{person.id}@apache.org>"}
+  to = to.map do |person| 
+    "#{person.public_name} <#{person.id}@apache.org>".untaint
+  end
 
   # replace with sending to the private@pmc list if this is a pmc owned group
   pmc = ASF::Committee.find(group.id.split('-').first)
@@ -35,6 +37,9 @@ if env.password
     to = pmc.mail_list
     to = "private@#{to}.apache.org" unless to.include? '@'
   end
+
+  # other committees
+  to = 'fundraising@apache.org' if group.id == 'fundraising'
 
   # construct email
   mail = Mail.new do
