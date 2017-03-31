@@ -13,7 +13,7 @@ THREAD = "https://lists.apache.org/thread.html/"
 # only look at emails that were received in the last month.
 current = Date.today.strftime('%Y%m')
 previous = (Date.parse(current + '01')-1).strftime('%Y%m')
-cuttoff = Date.parse(previous + Date.today.strftime('%d')).to_time
+cuttoff = (Date.today << 1).to_time
 
 # get a list of current board messages
 archive = Dir["/srv/mail/board/#{previous}/*", "/srv/mail/board/#{current}/*"]
