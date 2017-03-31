@@ -62,7 +62,7 @@ end
 #                          officers/cclas.txt                          #
 ########################################################################
 
-# insert line into iclas.txt
+# insert line into cclas.txt
 task "svn commit foundation/officers/cclas.txt" do
   # construct line to be inserted
   @cclalines = "notinavail:" + @company.strip
