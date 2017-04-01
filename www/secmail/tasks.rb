@@ -48,6 +48,16 @@ class Wunderbar::JsonBuilder
     end
   end
 
+  def _transcript *args
+    return unless @task
+    super
+  end
+
+  def _backtrace *args
+    return unless @task
+    super
+  end
+
   def svn *args
     args << svnauth if %(checkout update commit).include? args.first
     _.system! 'svn', *args

@@ -123,11 +123,14 @@ task "update cn=member,ou=groups,dc=apache,dc=org in LDAP" do
     ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",
       env.password.untaint)
 
-    ldap.modify "cn=#{member},ou=groups,dc=apache,dc=org",
+    ldap.modify "cn=member,ou=groups,dc=apache,dc=org",
       [LDAP.mod(LDAP::LDAP_MOD_ADD, 'memberUid', [@availid])]
 
-    _pre "add member: #{ldap.err2string(ldap.err)} (#{ldap.err})",
-      class: (ldap.err == 0 ? '_stdout' : '_stderr')
+    if ldap.err == 0
+      _transcript ["LDAP mod add: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
+    else
+      _backtrace ["LDAP mod add: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
+    end
 
     ldap.unbind
   end
@@ -202,13 +205,17 @@ task "svn commit memapp-received.text" do
       "https://svn.apache.org/repos/private/foundation/Meetings/#{meeting}",
       "#{dir}/#{meeting}"
 
+    # retrieve memapp-received.txt
+    dest = "#{dir}/#{meeting}/memapp-received.txt"
+    svn 'update', dest
+
     # create/add file(s)
-    received = File.read("#{dir}/#{meeting}/memapp-received.txt")
+    received = File.read(dest)
     received[/.*\s#{@availid}\s.*/] = @line
-    File.write("#{dir}/#{meeting}/memapp-received.txt", received)
+    File.write(dest, received)
 
     # Show changes
-    svn 'diff', ""#{dir}/#{meeting}"
+    svn 'diff', "#{dir}/#{meeting}"
 
     # commit changes
     svn 'commit', "#{dir}/#{meeting}/memapp-received.txt", '-m', @document
