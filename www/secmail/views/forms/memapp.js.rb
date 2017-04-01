@@ -1,6 +1,7 @@
 class MemApp < React
   def initialize
     @received = []
+    @filed = false
     @disabled = true
   end
 
@@ -9,6 +10,7 @@ class MemApp < React
 
     _form method: 'post', action: '../../tasklist/memapp', target: 'content' do
       _input type: 'hidden', name: 'message'
+      _input type: 'hidden', name: 'selected'
       _input type: 'hidden', name: 'signature', value: @@signature
 
       _table.form do
@@ -33,7 +35,8 @@ class MemApp < React
             _label 'Full Name', for: 'fullname'
           end
           _td do
-            _input type: :text, name: 'fullname', id: 'fullname', value: @name
+            _input type: :text, name: 'fullname', id: 'fullname', value: @name,
+              disabled: @filed
           end
         end
 
@@ -42,7 +45,7 @@ class MemApp < React
             _label 'Address', for: 'addr'
           end
           _td do
-            _textarea rows: 5, name: 'addr', id: 'addr'
+            _textarea rows: 5, name: 'addr', id: 'addr', disabled: @filed
           end
         end
 
@@ -51,7 +54,8 @@ class MemApp < React
             _label 'Country', for: 'country'
           end
           _td do
-            _input type: :text, name: 'country', id: 'country'
+            _input type: :text, name: 'country', id: 'country',
+              disabled: @filed
           end
         end
 
@@ -60,7 +64,7 @@ class MemApp < React
             _label 'Telephone', for: 'tele'
           end
           _td do
-            _input type: :text, name: 'tele', id: 'tele'
+            _input type: :text, name: 'tele', id: 'tele', disabled: @filed
           end
         end
 
@@ -69,7 +73,7 @@ class MemApp < React
             _label 'Fax', for: 'fax'
           end
           _td do
-            _input type: :text, name: 'fax', id: 'fax'
+            _input type: :text, name: 'fax', id: 'fax', disabled: @filed
           end
         end
 
@@ -78,7 +82,8 @@ class MemApp < React
             _label 'E-Mail', for: 'email'
           end
           _td do
-            _input type: :email, name: 'email', id: 'email', value: @email
+            _input type: :email, name: 'email', id: 'email', value: @email,
+              disabled: @filed
           end
         end
 
@@ -88,7 +93,7 @@ class MemApp < React
           end
           _td do
             _input type: :text, name: 'filename', id: 'filename',
-              value: @filename
+              value: @filename, disabled: @filed
           end
         end
       end
@@ -97,15 +102,27 @@ class MemApp < React
     end
   end
 
-  # on initial display, default email and fetch memapp-received.txt
+  # on initial display, wire up form, default email and fetch 
+  # memapp-received.txt
   def componentDidMount()
+    # wire up form
+    jQuery('form')[0].addEventListener('submit', self.file)
+    jQuery('input[name=message]').val(window.parent.location.pathname)
+    jQuery('input[name=selected]').val(@@selected)
+
+    # default email
     @email = @@headers.from
 
+    # fetch memapp-received information
     jQuery.getJSON('../../memapp.json') do |result|
       @received = result.received
     end
+
+    # watch for status updates
+    window.addEventListener 'message', self.status_update
   end
 
+  # when id is selected, default full name and filename
   def setid(event)
     id = event.target.value
     @received.each do |line|
@@ -115,5 +132,19 @@ class MemApp < React
         @disabled = false
       end
     end
+  end
+
+  # handle membership application form submission
+  def file(event)
+    setTimeout 0 do
+      @disabled = true
+      @filed = true
+    end
+  end
+
+  # when tasks complete (or are aborted) reset form
+  def status_update(event)
+    @disabled = false
+    @filed = false
   end
 end
