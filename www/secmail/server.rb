@@ -167,6 +167,10 @@ get %r{^/(\d{6})/(\w+)/(.*?)$} do |month, hash, name|
   [200, {'Content-Type' => part.content_type}, part.body.to_s]
 end
 
+get '/memapp.json' do
+  _json :memapp
+end
+
 # event stream for server sent events (a.k.a EventSource)
 get '/events', provides: 'text/event-stream' do
   events = Events.new
