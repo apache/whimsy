@@ -167,8 +167,16 @@ get %r{^/(\d{6})/(\w+)/(.*?)$} do |month, hash, name|
   [200, {'Content-Type' => part.content_type}, part.body.to_s]
 end
 
+# parse memapp-received
 get '/memapp.json' do
   _json :memapp
+end
+
+# return email for a given id
+get '/email.json' do
+  _json do
+    {email: ASF::Person.find(params[:id]).mail}
+  end
 end
 
 # event stream for server sent events (a.k.a EventSource)

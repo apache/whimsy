@@ -130,6 +130,12 @@ class MemApp < React
         @name = line.name
         @filename = asciize(line.name).downcase().gsub(/\W+/, '-')
         @disabled = false
+
+        if @@headers.from =~ /@apache.org$/
+          jQuery.getJSON('../../email.json', id: id) do |result|
+            @email = result.email
+          end
+        end
       end
     end
   end
