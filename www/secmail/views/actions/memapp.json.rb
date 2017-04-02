@@ -242,6 +242,11 @@ task "email #@email" do
     body: template('mem.erb')
   )
 
+  # drop members@ from the replies
+  if mail.cc.include? 'members@apache.org'
+    mail.cc = mail['cc'].value.select {|name| name !~ /\bmembers@apache.org\b/}
+  end
+
   # echo email
   form do
     _message mail.to_s
