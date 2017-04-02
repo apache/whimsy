@@ -175,7 +175,7 @@ end
 # return email for a given id
 get '/email.json' do
   _json do
-    {email: ASF::Person.find(params[:id]).mail}
+    {email: ASF::Person.find(params[:id]).mail.first}
   end
 end
 
