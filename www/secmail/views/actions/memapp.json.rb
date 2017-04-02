@@ -120,19 +120,24 @@ task "update cn=member,ou=groups,dc=apache,dc=org in LDAP" do
 
   complete do
     ldap = ASF.init_ldap(true)
-    ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",
-      env.password.untaint)
-
-    ldap.modify "cn=member,ou=groups,dc=apache,dc=org",
-      [LDAP.mod(LDAP::LDAP_MOD_ADD, 'memberUid', [@availid])]
-
-    if ldap.err == 0
-      _transcript ["LDAP mod add: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
+    if ASF::Group.find('member').include? ASF::Person.find(@availid)
+      _transcript ["#@availid already in group member"]
     else
-      _backtrace ["LDAP mod add: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
-    end
+      ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",
+        env.password.untaint)
 
-    ldap.unbind
+      ldap.modify "cn=member,ou=groups,dc=apache,dc=org",
+        [LDAP.mod(LDAP::LDAP_MOD_ADD, 'memberUid', [@availid])]
+
+      log = ["LDAP mod add: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
+      if ldap.err == 0
+        _transcript log
+      else
+        _backtrace log
+      end
+
+      ldap.unbind
+    end
   end
 end
 
