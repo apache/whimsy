@@ -9,6 +9,7 @@ specific tools are linked at the bottom of these instructions.
 Install Homebrew
 ----------------
 
+Homebrew is a package manager for OSX, which is used to install other tools.
 Follow the instructions from [brew.sh](http://brew.sh/). You might
 have to change shells if you are using csh. Bash works fine.
 
@@ -23,7 +24,7 @@ Homebrew/homebrew-core (git revision 5b9a; last commit 2017-02-05)
 Upgrade Ruby
 ------------
 
-Install:
+Much of Whimsy is written in Ruby.  Install:
 
 ```
 $ brew install ruby
@@ -63,7 +64,7 @@ If you don't see v6 or higher, run `hash -r` and try again.  If you previously
 installed node via brew, you may need to run `brew upgrade node` instead.
 
 
-Install dependencies
+Install Ruby gem dependencies
 ------------
 
 Install:
@@ -85,12 +86,14 @@ Notes:
 You may have trouble installing due to the dependency on nokogiri. There are
 issues with its dependencies. This page suggests some workarounds:
 https://github.com/sparklemotion/nokogiri/issues/1483
+The simplest solution may be `xcode-select --install` unless you know
+that's already configured.
 
-Clone whimsy
+Clone the Whimsy code
 ------------
 
-Depending on whether or not you have a GitHub account, run one of the
-following:
+Depending on whether or not you have a GitHub account ([Apache committer setup](https://git-wip-us.apache.org/)), 
+run one of the following:
 
 ```
 git clone git@github.com:apache/whimsy.git
@@ -112,7 +115,7 @@ git remote add asf https://gitbox.apache.org/repos/asf/whimsy.git
 Configure LDAP
 --------------
 
-Install:
+Many Whimsy modules use Apache's LDAP directory.  Install:
 
 ```
 $ cd <path-to-git-whimsy>
@@ -142,7 +145,7 @@ Notes:
 Start Apache httpd
 ------------------
 
-Install:
+Running Whimsy tools locally depends on httpd.  Install:
 
 ```
 sudo launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist
@@ -186,8 +189,8 @@ line 386.  Replace it with `Require all denied`.
 
 Now go back to the top of the file and search or `User`.  Replace the first
 `_www` with your local user id.  This may be different than your ASF availid --
-that's OK.  Your local user id is the response to whoami.
-Replace the second `_www` with `staff`.
+that's OK.  Your local user id is the response to `whoami`.
+Replace the second `_www` with `staff` (that's the group name).
 
 Save your changes.
 
