@@ -15,7 +15,7 @@ class Attachment
   def content_type
     type = headers[:mime] || @part.content_type
 
-    if type == 'application/octet-stream'
+    if type == 'application/octet-stream' or type == 'text/plain'
       type = 'text/plain' if name.end_with? '.sig'
       type = 'text/plain' if name.end_with? '.asc'
       type = 'application/pdf' if name.end_with? '.pdf'
