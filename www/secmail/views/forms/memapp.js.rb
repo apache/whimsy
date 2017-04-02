@@ -36,7 +36,7 @@ class MemApp < React
           end
           _td do
             _input type: :text, name: 'fullname', id: 'fullname', value: @name,
-              disabled: @filed
+              disabled: @filed, onChange: self.changeFullName
           end
         end
 
@@ -120,6 +120,12 @@ class MemApp < React
 
     # watch for status updates
     window.addEventListener 'message', self.status_update
+  end
+
+  # when fullname changes, change filename
+  def changeFullName(event)
+    @name = event.target.value
+    @filename = asciize(event.target.value).downcase().gsub(/\W+/, '-')
   end
 
   # when id is selected, default full name and filename
