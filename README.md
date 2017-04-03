@@ -1,11 +1,40 @@
-Overview
+Apache Whimsy Project Overview
 ==================
 
-Whimsy hosts static content, repository checkouts/clones, CGI scripts, Rack
-applications, tools, and cron jobs.
+Apache Whimsy is a collection of useful organizational tools used by 
+the ASF and Apache committers to access and manipulate data about 
+Apache people, projects, and more.  Whimsy is both an Apache PMC, 
+this codebase, and the live deployed instance of https://whimsy.apache.org/.
+
+The ASF's Whimsy instance hosts static content, repository checkouts/clones, CGI scripts, Rack
+applications, tools, and cron jobs.  Note: features accessing private 
+ASF data are restricted to committers, Members, or Officers of the ASF. 
 
 Every committer on the Whimsy PMC can both deploy changes and new
-applications to https://whimsy.apache.org/.
+applications to https://whimsy.apache.org/. 
+
+How Tos and Get The Code
+===============
+
+Whimsy source code is hosted at:
+    https://github.com/apache/whimsy.git
+and now also mirrored for Apache committers at:
+    https://gitbox.apache.org/repos/asf/whimsy.git
+
+ * [How To Develop Whimsy Code](./DEVELOPMENT.md)
+ * [Submit Bugs](https://issues.apache.org/jira/browse/WHIMSY)
+ * [Questions? Email The List](https://lists.apache.org/list.html?dev@whimsical.apache.org)
+ * [Deployment Instructions](./DEPLOYMENT.md)
+ * [Monitoring How To](./www/status/README.md) - [Live Whimsy Status](https://whimsy.apache.org/status/)
+ * [How To Setup on Mac OSX](./MACOSX.md)
+ * [Dependency Listing](./SOFTWARE.md)
+ * [Todos](TODOS.md).
+
+Whimsy Architecture - Live Instance
+===================
+
+Whimsy is run in an Apache hosted VM with httpd, Rack, Ruby, and variety of other tools 
+that directly interface with various parts of Apache organziational records.
 
 Details by content type:
 
@@ -29,7 +58,7 @@ Details by content type:
    a single line to the deployment data identifying the location of the
    script:
 
-    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm2.apache.org.yaml#L93
+    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm3.apache.org.yaml#L126
 
    Note that the LDAP module does not currently handle boolean conditions
    (example: members or officers).  The way to handle this is to do
@@ -46,7 +75,7 @@ Details by content type:
    checking the application, one line per passenger application needs to be
    added to the deployment data:
 
-    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm2.apache.org.yaml#L86
+    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm3.apache.org.yaml#L119
 
    A simple rack application (two empty directories, and a one line file):
 
@@ -61,18 +90,3 @@ Details by content type:
     
  * **Cron jobs** are managed by puppet.  See [deployment](DEPLOYMENT.md) for more
    information.
-
-Git repos
-=========
-The code is hosted at
-    https://github.com/apache/whimsy.git
-and now also at
-    https://gitbox.apache.org/repos/asf/whimsy.git
-
-Further Reading
-===============
-
- * [Development](./DEVELOPMENT.md)
- * [Deployment](./DEPLOYMENT.md)
- * [Monitoring](./www/status/README.md)
- * [Todos](TODOS.md).

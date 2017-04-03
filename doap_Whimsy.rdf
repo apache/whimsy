@@ -31,6 +31,8 @@
     <programming-language>JavaScript</programming-language>
     <programming-language>Ruby</programming-language>
     <category rdf:resource="http://projects.apache.org/category/content" />
+    <bug-database rdf:resource="https://issues.apache.org/jira/browse/WHIMSY" />
+    <mailing-list rdf:resource="https://lists.apache.org/list.html?dev@whimsical.apache.org" />
     <repository>
       <GitRepository>
         <location rdf:resource="https://github.com/apache/whimsy.git"/>
