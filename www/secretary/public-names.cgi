@@ -54,9 +54,12 @@ _html do
 
     # update SVN
     unless svn_updates.empty?
-      officers = '/var/tools/secretary/foundation/officers'
-      _.system ['svn', 'cleanup', officers]
-      _.system ['svn', 'up', officers]
+      officers = Dir.mktmpdir.untaint
+      _.system ['svn', 'checkout', '--depth', 'empty',
+        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
+        'https://svn.apache.org/repos/private/foundation/officers',
+        officers]
+      _.system ['svn', 'up', officers + '/iclas.txt']
       iclas = File.read(officers + '/iclas.txt')
 
       updates.each do |id, names|
