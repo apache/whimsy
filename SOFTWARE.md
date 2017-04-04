@@ -1,5 +1,15 @@
-The project relies on various additional software packages.
-These are documented here for ease of reference.
+Whimsy runs atop a variety of software and configuration dependencies.
+This document is merely an overview, and is not necessarily complete.
+
+## Software Dependencies
+
+- Apache HTTP Web Server 2.x
+- Ruby 1.9.x
+- Rack
+- Phusion Passenger
+- Puppet (for our production deployment)
+
+A variety of Ruby gems:
 
 Wunderbar - HTML Generator and CGI application support
 Source: https://github.com/rubys/wunderbar
@@ -11,7 +21,6 @@ Source: https://github.com/bearded/ruby-ldap
 Gem: ruby-ldap
 Module: ldap
 
-TBC
+nokogiri - HTML parser for Ruby
 
-Bundled Gems
-json
+Other Ruby gems as in `asf.gemspec`.

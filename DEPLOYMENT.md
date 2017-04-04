@@ -1,11 +1,10 @@
 Deployment
 ==========
 
-The contents of this repository are deployed to the following VM:
-https://whimsy.apache.org/.
+The contents of this repository are automatically deployed to the https://whimsy.apache.org/ VM every 30 minutes.
 
-This VM is based on Ubuntu 14.04 and is managed by Puppet.  The puppet definition is
-contained in the following files:
+This VM runs Ubuntu 14.04 and is managed by Puppet.  The puppet definition is
+contained in the following files:<a name="puppetnode"></a>
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm3.apache.org.yaml
 

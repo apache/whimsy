@@ -25,6 +25,7 @@ and now also mirrored for Apache committers at:
  * [Submit Bugs](https://issues.apache.org/jira/browse/WHIMSY)
  * [Questions? Email The List](https://lists.apache.org/list.html?dev@whimsical.apache.org)
  * [Deployment Instructions](./DEPLOYMENT.md)
+ * [Configuration Pointers](./CONFIGURE.md)
  * [Monitoring How To](./www/status/README.md) - [Live Whimsy Status](https://whimsy.apache.org/status/)
  * [How To Setup on Mac OSX](./MACOSX.md)
  * [Dependency Listing](./SOFTWARE.md)
@@ -73,11 +74,9 @@ Details by content type:
    [Phusion Passenger](https://www.phusionpassenger.com/) under Apache httpd.
    Again, `Gemfile`s are used to specify dependencies.  In addition to simply
    checking the application, one line per passenger application needs to be
-   added to the deployment data:
+   added to the puppet file under 'passenger:` as seen in [DEPLOYMENT.md](./DEPLOYMENT.md#puppetnode).
 
-    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm3.apache.org.yaml#L119
-
-   A simple rack application (two empty directories, and a one line file):
+   A sample rack application (two empty directories, and a one line file):
 
     https://github.com/apache/whimsy/tree/master/www/racktest
     https://whimsy.apache.org/racktest
@@ -90,3 +89,12 @@ Details by content type:
     
  * **Cron jobs** are managed by puppet.  See [deployment](DEPLOYMENT.md) for more
    information.
+   
+ * **Generated JSON data** files are automatically generated into 
+   the [`/public`](https://whimsy.apache.org/public/) directory, to 
+   cache freqently used data for whimsy and other applications. 
+  
+ * **Data models** for many Whimsy tools are in `lib/whimsy/asf`, and 
+   most **views** for tools are stored in `www`.  Note what Whimsy has 
+   a wide variety of sometimes unrelated tools, so not everything 
+   here uses the same models.

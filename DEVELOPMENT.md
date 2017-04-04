@@ -5,18 +5,19 @@ Whimsy is a set of independent tools and a common library which typically will
 need to access various ASF SVN directories and/or LDAP.  To do development and
 testing, you will need access to a machine on which you are willing to install
 libraries which do things like access LDAP, XML parsing, composing mail and
-the like.  While some tools may work on Microsoft Windows, many don't
-currently.  Alternatives include a Docker image, a custom Vagrant VM, and
-a Kitchen/Puppet managed Vagrant VM.
+the like for full functionality.  
 
-The primary advantage of using an image or a VM is isolation.  The primary
-disadvantage is that you will need to install your SVN credentials there and
-arrange to either duplicate or mount your SVN directories.
+While some tools may work on Microsoft Windows, many don't currently.  
+Alternatives include a Docker image, a custom Vagrant VM, and a Kitchen/Puppet 
+managed Vagrant VM (as the live instance does).  The primary advantage 
+of using an image or a VM is isolation.  The primary disadvantage is that 
+you will need to install your SVN credentials there and arrange to either 
+duplicate or mount needed SVN directories.
 
-Overview
+Architecture Overview
 ========
 
-This directory has two main subdirectories...
+The core Whimsy code is split into model/view, with a variety of independent tools.
 
 1. [lib/whimsy/asf](lib/whimsy/asf) contains the "model", i.e., a set of classes
    which encapsulate access
@@ -38,13 +39,18 @@ This directory has two main subdirectories...
    Directories containing Rack applications can be identified by the presence
    of a file with the name of `config.ru`.
 
-Setup
+3. [tools](tools) contains miscellaneous and testing tools.
+
+4. [config](config) contains some sample configuration data for 
+   installing various services needed.  
+
+Setup Whimsy Locally
 =====
 
 This section is for those desiring to run a whimsy tool on their own machine.
-Skip this section if you are running a Docker container or a Vagrant VM.
+[See below for deploying](#advanced-configuration) in a Docker container or a Vagrant VM.
 
-1. The ruby version needs be ruby 1.9.3 or higher.  Verify with `ruby -v`.
+1. Setup ruby 1.9.3 or higher.  Verify with `ruby -v`.
    If you use a system provided version of Ruby, you may need to prefix
    certain commands (like gem install) with `sudo`.  Alternatives to using
    the system provided version include using a Ruby version manager like
@@ -60,17 +66,17 @@ Skip this section if you are running a Docker container or a Vagrant VM.
     3. [Ruby Version Manager](https://rvm.io/)
 
 
-2. Make sure that the `whimsy-asf` and `bundler` gems are installed:
+2. Install the `whimsy-asf` and `bundler` gems:
 
   `gem install whimsy-asf bundler`
 
-3. current SVN checkouts of various repositories are made (or linked to from)
+3. SVN checkout ASF repositories into (or linked to from)
    `/srv/svn`
 
         svn co --depth=files https://svn.apache.org/repos/private/foundation
 
    You can specify an alternate location for these directories by placing
-   a configuration file named `.whimsy` in your home directory.  The format
+   a [configuration file](CONFIGURE.md) named `.whimsy` in your home directory.  The format
    for this file is YAML, and an example (be sure to include the dashed
    lines):
 
@@ -78,7 +84,7 @@ Skip this section if you are running a Docker container or a Vagrant VM.
         - /home/rubys/svn/foundation
         - /home/rubys/svn/committers
 
-4. Access to LDAP requires configuration, and a cert.
+4. Configure LDAP servers and certificates:
 
  1. The model code determines what host and port to connect to by parsing
       either `/etc/ldap/ldap.conf` or `/etc/openldap/ldap.conf` for a line that
@@ -103,7 +109,7 @@ Skip this section if you are running a Docker container or a Vagrant VM.
       Note: the certificate is needed because the ASF LDAP hosts use a
       self-signed certificate.
 
-   All these updates can be done for you with the following command:
+      **Simple way to configure LDAP is**:
 
         sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
 
@@ -116,7 +122,7 @@ Skip this section if you are running a Docker container or a Vagrant VM.
 
    See comments in that file for running the script as a standalone server.
 
-6. Configuring sending of mail (optional):
+6. Configure sending of mail (optional):
 
    Configuration of outbound mail delivery is done through the `.whimsy`
    file.  Three examples are provided below, followed by links to where
@@ -214,11 +220,13 @@ a virtual host, complete with authentication:
        description "listen for changes to whimsy applications"
        start on dbus SIGNAL=SessionNew
        exec /srv/whimsy/tools/toucher
+       
+More details about the live Whimsy instance are in [DEPLOYMENT.md](DEPLOYMENT.md)
 
 Further Reading
 ===============
 
-The [board agenda](https://github.com/rubys/whimsy-agenda#readme) application
+The [board agenda](www/board/agenda) application
 is an eample of a complete tool that makes extensive use of the library
 factoring, has a suite of test cases, and client componentization (using
 ReactJS), and provides instructions for setting up both a Docker component and
