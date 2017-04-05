@@ -27,11 +27,20 @@ _html do
     .transcript {margin: 0 16px}
     .transcript pre {border: none; line-height: 0}
     pre._hilite {background-color: yellow}
+    form p {margin-top: 1em}
+    textarea {width: 100%; height: 8em}
+    textarea:disabled {background-color: #EEEEEE}
   }
 
-  if not tracker[$USER]
-    _p.alert.alert_success "You are not on the list"
-  else
+  # defaults for active users
+  tracker[$USER] ||= {
+    'missed' => 0,
+    'status' => 'not on the inactive list'
+  }
+
+  active = (tracker[$USER]['missed'] == 0)
+
+  if not active
     _p.alert.alert_warning "You have missed the last " + 
       tracker[$USER]['missed'].to_s + " meetings."
 
@@ -50,10 +59,11 @@ _html do
         _div_.transcript do
           work = `svn info #{latest}`[/URL: (.*)/, 1]
           _.system ['svn', 'checkout', auth, '--depth', 'empty', work, dir]
-           json = File.join(dir, 'non-participants.json')
+          json = File.join(dir, 'non-participants.json')
           _.system ['svn', 'update', auth, json]
           tracker = JSON.parse(IO.read(json))
           tracker[$USER]['status'] = @status
+          tracker[$USER]['status'] = @suggestions
           IO.write(json, JSON.pretty_generate(tracker))
           _.system ['svn', 'diff', json], hilite: [/"status":/],
             class: {hilight: '_stdout _hilite'}
@@ -61,60 +71,66 @@ _html do
         end
       end
     end
+  end
 
-    _h1_ 'Status'
+  _h1_ 'Poll of Inactive Members'
 
-    _div.status do
-      _p %{
-        We are reaching out to those members that have not participated in
-        ASF Members Meetings or Elections in over five years, and asking each
-        of them whether they wish to remain active or go emeritus.  You can
-        indicate your choice by pushing one of the buttons below.
-      }
+  _div.status do
+    _p %{
+      We are reaching out to those members that have not participated in
+      ASF Members Meetings or Elections in over three years, and asking each
+      of them whether they wish to remain active or go emeritus.  You can
+      indicate your choice by pushing one of the buttons below.
+    }
 
-      _p_ do
-        _span 'Your current status is: '
-        _code tracker[$USER]['status']
-      end
-
-      _p 'Update your status:'
-
-      _form method: 'post' do
-        _button.btn.btn_success 'I wish to remain active',
-          name: 'status', value: 'remain active',
-          disabled: tracker[$USER]['status'] == 'remain active'
-        _button.btn.btn_warning 'I consent to being placed in emeritus status',
-          name: 'status', value: 'go emeritus',
-          disabled: tracker[$USER]['status'] == 'go emeritus'
-      end
-
-      _p_ %{
-        Should you chose to remain active, please consider participating, at
-        least by proxy, in the upcoming membership meeting.  See the links
-        below for more information.
-      }
+    _p_ do
+      _span 'Your current status is: '
+      _code tracker[$USER]['status']
     end
 
-    _h3_ 'Links'
+    _form method: 'post' do
+      _p %{
+        Please provide input on what more we can do to make it easier
+        for you to participate:
+      }
 
-    _ul do
-      _li do
-        _a 'Meeting Notice', href:
-          'https://svn.apache.org/repos/private/foundation/Meetings/' +
-          File.basename(latest) + '/NOTICE.txt'
-      end
-      _li do
-        _a 'Meeting Agenda', href:
-          'https://svn.apache.org/repos/private/foundation/Meetings/' +
-          File.basename(latest) + '/agenda.txt'
-      end
-      _li do
-        _a 'Assign a proxy', href: 'https://whimsy.apache.org/members/proxy'
-      end
-      _li do
-        _a 'Members.txt', href:
-          'https://svn.apache.org/repos/private/foundation/members.txt'
-      end
+      _textarea name: 'suggestions', disabled: active
+
+      _p 'Update your status:'
+      _button.btn.btn_success 'I wish to remain active',
+        name: 'status', value: 'remain active',
+        disabled: active or tracker[$USER]['status'] == 'remain active'
+      _button.btn.btn_warning 'I would like to go emeritus',
+        name: 'status', value: 'go emeritus',
+        disabled: active or tracker[$USER]['status'] == 'go emeritus'
+    end
+
+    _p_ %{
+      Should you chose to remain active, please consider participating, at
+      least by proxy, in the upcoming membership meeting.  See the links
+      below for more information.
+    }
+  end
+
+  _h3_ 'Links'
+
+  _ul do
+    _li do
+      _a 'Meeting Notice', href:
+        'https://svn.apache.org/repos/private/foundation/Meetings/' +
+        File.basename(latest) + '/NOTICE.txt'
+    end
+    _li do
+      _a 'Meeting Agenda', href:
+        'https://svn.apache.org/repos/private/foundation/Meetings/' +
+        File.basename(latest) + '/agenda.txt'
+    end
+    _li do
+      _a 'Assign a proxy', href: 'https://whimsy.apache.org/members/proxy'
+    end
+    _li do
+      _a 'Members.txt', href:
+        'https://svn.apache.org/repos/private/foundation/members.txt'
     end
   end
 
