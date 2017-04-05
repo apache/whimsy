@@ -116,7 +116,11 @@ _html do
                 _td.issue cols[0]
               end
 
-              _td cols[1]
+              if cols[0] == 'no' or cols[1] == 'yes'
+                _td cols[1]
+              else
+                _td.issue cols[1]
+              end
 
               if cols[1] == 'no' or cols[2] == 'yes'
                 _td cols[2]
