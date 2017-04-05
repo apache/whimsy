@@ -109,9 +109,13 @@ _html do
 end
 
 _json do
-  meetingsMissed = (@meetingsMissed || 5).to_i
-  inactive = matrix.select {|id, name, missed| id and missed >= meetingsMissed}
-  Hash[inactive.map {|id, name, missed| 
+  meetingsMissed = (@meetingsMissed || 3).to_i
+
+  inactive = matrix.select do |id, name, first, missed|
+    id and missed >= meetingsMissed
+  end
+
+  Hash[inactive.map {|id, name, first, missed| 
     [id, {name: name, missed: missed, status: 'no response yet'}]
   }]
 end
