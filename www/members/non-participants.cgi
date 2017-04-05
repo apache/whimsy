@@ -50,7 +50,7 @@ _html do
 
   _h1 'Non-participating active members'
 
-  @meetingsMissed = (@meetingsMissed || 5).to_i
+  @meetingsMissed = (@meetingsMissed || 3).to_i
 
   # selection
   _form_ do
