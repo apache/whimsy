@@ -76,14 +76,14 @@ _html do
     matrix.each do |id, name, first, missed|
       next unless id
     
-      if missed > @meetingsMissed
+      if missed >= @meetingsMissed
         _tr_ do
           _td! {_a nameMap[id], href: "#{ROSTER}/#{id}"}
           _td dates[-first-1] || dates.first
           if missed >= first
             _td {_em 'never'}
           else
-            _td dates[-missed]
+            _td dates[-missed-1]
           end
         end
         count += 1
