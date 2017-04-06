@@ -13,19 +13,35 @@ class Wunderbar::HtmlMarkup
     case style
     when :fullsize
       _div.header do
-        _a href: 'https://whimsy.apache.org/' do
-          _img title: "ASF Logo", alt: "ASF Logo",
-          src: "https://www.apache.org/img/asf_logo.png"
-        end
-        _a href: '/' do
-          _img title: "Whimsy logo", alt: "Whimsy hat", src: "../whimsy.svg", width: "140" 
+        _ul class: 'nav nav-tabs' do
+          _li role: 'presentation' do
+            _a href: 'https://www.apache.org/' do
+              _img title: 'ASF Logo', alt: 'ASF Logo', width: 250, height: 101,
+              src: 'https://www.apache.org/foundation/press/kit/asf_logo_small.png'
+            end
+          end
+          _li role: 'presentation' do
+            _a href: '/' do
+              _img title: 'Whimsy logo', alt: 'Whimsy hat', src: 'https://whimsy.apache.org/whimsy.svg', height: 101 
+            end
+          end
+          _li role: 'presentation' do
+            _a href: 'https://lists.apache.org/list.html?dev@whimsical.apache.org' do 
+              _ 'Mailing list'
+            end
+          end
+          _li role: 'presentation' do
+            _a href: '/technology' do 
+              _ 'About this site'
+            end
+          end
         end
         _h1 title
       end
     else
       _a href: 'https://whimsy.apache.org/' do
-        _img title: "ASF Logo", alt: "ASF Logo",
-        src: "https://www.apache.org/img/asf_logo.png"
+        _img title: 'ASF Logo', alt: 'ASF Logo',
+        src: 'https://www.apache.org/img/asf_logo.png'
       end
       _h2 title
     end
@@ -55,7 +71,7 @@ _html do
   
   _body? do
     _whimsy_header :fullsize, PAGETITLE
-    _table do
+    _table class: "table " do
       _thead_ do
         _tr do
           docketcols.each { |h| _th h }
