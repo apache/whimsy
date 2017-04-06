@@ -77,3 +77,7 @@
 
   templates:
     url: asf/infrastructure/site/trunk/templates
+
+  brandlist:
+    url: private/foundation/Brand
+    depth: files
