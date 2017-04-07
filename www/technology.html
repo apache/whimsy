@@ -3,34 +3,39 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Apache Whimsy Project And Server Code</title>
-  <style type="text/css">
-  th {border-bottom: solid black}
-  table {border-spacing: 1em 0.2em }
-  tr td:first-child {text-align: center}
-  .issue {color: red; font-weight: bold}
-  </style>
   <link rel="stylesheet" type="text/css" href="members/assets/bootstrap-min.css?1491171314"/>
+  <style type="text/css">
+  .footer { 
+    margin-top: 20px;
+    margin-left: 20px;
+  }
+  </style>
 </head>
-
 <body>
   <div class="header container-fluid">
     <div class="row">
-      <div class="col-md-3 .hidden-xs .hidden-sm .col-md-offset-1">
+      <div class="col-md-4 col-sm-4 hidden-xs">
         <a href="https://www.apache.org/">
-          <img title="ASF Logo" alt="ASF Logo" width="250" height="101" src="https://www.apache.org/foundation/press/kit/asf_logo_small.png"/>
+          <img title="ASF Logo" alt="ASF Logo" width="250" height="101" style="margin-left: 10px; margin-top: 10px;" src="https://www.apache.org/foundation/press/kit/asf_logo_small.png"/>
         </a>
       </div>
-      <div class="col-md-2 .hidden-xs">
+      <div class="col-md-3 col-sm-3 col-xs-3">
         <a href="/">
           <img title="Whimsy logo" alt="Whimsy hat" src="https://whimsy.apache.org/whimsy.svg" height="101"/>
         </a>
       </div>
-      <div class="col-md-6 .align-bottom">
+      <div class="col-md-5 col-sm-5 col-xs-8 align-bottom">
         <ul class="nav nav-tabs">
           <li role="presentation">
+            <a href="https://github.com/apache/whimsy/">
+              Code
+            </a>
+          </li>
+          <li role="presentation">
             <a href="https://lists.apache.org/list.html?dev@whimsical.apache.org">
-              Mailing list
+              Questions
             </a>
           </li>
           <li role="presentation">
@@ -45,10 +50,10 @@
   
   <div class="content container-fluid">
     <div class="row">
-      <div class="col-md-5 .col-md-offset-1">
+      <div class="col-md-6 col-sm-4">
         <h2>About Whimsy Code</h2>
         <ul>
-          <li>Source: 
+          <li>Get the source: 
             <a href="https://gitbox.apache.org/repos/asf/whimsy.git">Apache</a>
             <a href="https://github.com/apache/whimsy">GitHub</a></li>
             - 
@@ -56,22 +61,20 @@
           </li>
           <li><a href="https://issues.apache.org/jira/browse/WHIMSY/">Issue Tracker</a></li>
           <li><a href="https://github.com/apache/whimsy/blob/master/README.md">README</a></li>
-          <li><a href="https://github.com/apache/whimsy/blob/master/DEVELOPMENT.md">Development locally</a></li>
-          <li><a href="https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md">Deployment on this server</a></li>
-          <li><a href="https://github.com/apache/whimsy/blob/master/www/status/README.md">Monitoring How-To</a></li>
+          <li><a href="https://github.com/apache/whimsy/blob/master/DEVELOPMENT.md">How to: Develop locally</a></li>
+          <li><a href="https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md">How to: Deploy this server</a></li>
+          <li><a href="https://github.com/apache/whimsy/blob/master/www/status/README.md">How to: Monitoring setup</a></li>
         </ul>
-        <h2>Operational issues</h2>    
+        <h2>Operational Issues</h2>    
         <ul>
           <li><a href="status/">Current server status</a></li>
-          <li><a href="https://lists.apache.org/list.html?dev@whimsical.apache.org">Contact the
-            Apache Whimsy Project</a></li>
-          <li><a href="http://www.apache.org/dev/infra-contact#how">Contact the
-            Infrastructure team</a></li>
-            <li><a href="https://github.com/apache/whimsy/blob/master/CONFIGURE.md">Configuration Docs</a></li>
+          <li><a href="https://lists.apache.org/list.html?dev@whimsical.apache.org">Contact the Apache Whimsy Project</a></li>
+          <li><a href="http://www.apache.org/dev/infra-contact#how">Contact the Infrastructure team</a></li>
+          <li><a href="https://github.com/apache/whimsy/blob/master/CONFIGURE.md">Configuration Docs</a></li>
         </ul>
       </div>
-      <div class="col-md-5">
-        <h2>Technology behind Whimsy</h2>  
+      <div class="col-md-6 col-sm-4">
+        <h2>Technology Behind Whimsy</h2>  
         <ul>
           <li><a href="http://getbootstrap.com/">Bootstrap</a></li>
           <li><a href="http://www.w3.org/Style/CSS/">CSS</a></li>
@@ -84,7 +87,7 @@
           <li><a href="http://www.w3.org/TR/SVG/">SVG</a></li>
           <li><a href="https://github.com/rubys/wunderbar#readme">Wunderbar</a></li>
         </ul>        
-        <h2>Tools behind the Technology</h2>        
+        <h2>Tools Running Whimsy</h2>        
         <ul>
           <li><a href="http://httpd.apache.org/">Apache HTTPD</a></li>
           <li><a href="http://tools.ietf.org/html/rfc3875">CGI</a></li>
@@ -97,18 +100,24 @@
   </div>
   
   <div class="footer container-fluid">
-    <h2>Related Apache Resources</h2>  
-    <ul>
-      <li>
-        <a href="https://www.apache.org/foundation/governance">ASF Governance Overview</a>
-      </li>
-      <li>
-        <a href="https://projects.apache.org/">Other Apache Projects</a>
-      </li>
-      <li>
-        <a href="https://www.apache.org/dev">Apache Developer How-Tos</a>
-      </li>
-    </ul>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Related Apache Resources</h3>
+      </div>
+      <div class="panel-body">
+        <ul>
+          <li>
+            <a href="https://www.apache.org/foundation/governance">ASF Governance Overview</a>
+          </li>
+          <li>
+            <a href="https://projects.apache.org/">Other Apache Projects</a>
+          </li>
+          <li>
+            <a href="https://www.apache.org/dev">Apache Developer How-Tos</a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </body>
 </html>
