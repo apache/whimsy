@@ -16,13 +16,14 @@ duplicate or mount needed SVN directories.
 
 Contents :books:
 -------
-[Architecture](#architecture-overview)
-[Setup Whimsy Locally](#setup-whimsy-locally)
-[Running Whimsy Applications](#running-whimsy-applications)
-[Advanced Configuration](#advanced-configuration)
-[Server Configuration](DEPLOYMENT.md)
-[Further Reading](#further-reading)
-[How To / FAQ](#how-to-faq)
+
+- [Architecture](#architecture-overview)
+- [Setup Whimsy Locally](#setup-whimsy-locally)
+- [Running Whimsy Applications](#running-whimsy-applications)
+- [Advanced Configuration](#advanced-configuration)
+- [Server Configuration](DEPLOYMENT.md)
+- [Further Reading](#further-reading)
+- [How To / FAQ](#how-to-faq)
 
 Architecture Overview
 ========
@@ -95,12 +96,12 @@ This section is for those desiring to run a whimsy tool on their own machine.
 
 4. **Configure LDAP** servers and certificates:
 
-  1. The model code determines what host and port to connect to by parsing
+    1. The model code determines what host and port to connect to by parsing
       either `/etc/ldap/ldap.conf` or `/etc/openldap/ldap.conf` for a line that
       looks like the following:
         `uri     ldaps://ldap1-lw-us.apache.org:636`
 
-  2. A `TLS_CACERT` can be obtained via either of the following commands:
+    2. A `TLS_CACERT` can be obtained via either of the following commands:
 
         `ruby -r whimsy/asf -e "puts ASF::LDAP.cert"`<br/>
         `openssl s_client -connect ldap1-lw-us.apache.org:636 </dev/null`
@@ -163,7 +164,7 @@ This section is for those desiring to run a whimsy tool on their own machine.
    [testmailer](http://www.rubydoc.info/github/mikel/mail/Mail/TestMailer), and
    [filedelivery](http://www.rubydoc.info/github/mikel/mail/Mail/FileDelivery)
 
-Running Whimsy Applications
+Running Whimsy Applications :car:
 ============================
 
 If there is a `Gemfile` in the directory containing the script or application
@@ -233,7 +234,7 @@ a virtual host, complete with authentication:
        
 More details about the production Whimsy instance are in [DEPLOYMENT.md](DEPLOYMENT.md)
 
-How To / FAQ
+How To / FAQ :question:
 ============
 
 ### How To: Create A New Whimsy CGI
