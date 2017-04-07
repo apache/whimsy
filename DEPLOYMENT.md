@@ -1,10 +1,19 @@
-Deployment
+Deploying Production Whimsy.apache.org
 ==========
 
-The contents of this repository are automatically deployed to the https://whimsy.apache.org/ VM every 30 minutes.
+The contents of this repository are automatically deployed to the production 
+https://whimsy.apache.org/ VM every 30 minutes - so be sure to test 
+your changes before pushing to master.
 
-This VM runs Ubuntu 14.04 and is managed by Puppet.  The puppet definition is
-contained in the following files:<a name="puppetnode"></a>
+Production Configuration
+==========
+
+The Whimsy VM runs Ubuntu 14.04 and is fully managed by Puppet using 
+the normal methods Apache infra uses for managing servers.  Note however 
+that management of Whimsy is a PMC responsibility.  
+
+<a name="puppetnode"></a>
+The **puppet definition** is contained in the following files:
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm3.apache.org.yaml
 
@@ -14,8 +23,11 @@ contained in the following files:<a name="puppetnode"></a>
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/procmail.pp
 
-Instructions for local testing of deployment changes:
+Before pushing any changes here, understand the Apache Infra puppet workflow and test:
 
+ * https://cwiki.apache.org/confluence/display/INFRA/Git+workflow+for+infrastructure-puppet+repo
+   To understand the high-level workflow for puppet changes.
+   
  * https://github.com/apache/infrastructure-puppet-kitchen#readme
    * addition to [Make modules useable](https://github.com/apache/infrastructure-puppet-kitchen#make-modules-useable) step:
  
@@ -24,11 +36,17 @@ Instructions for local testing of deployment changes:
             echo "class zmanda_asf::client (){}" > zmanda_asf/manifests/client.pp
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/vhosts_whimsy/README.md
+   This details the changes to default puppet we use for Whimsy.
 
-Workflow:
+Configuration Locations
+----
+Application developers may need to know where different things are configured:
 
- * https://cwiki.apache.org/confluence/display/INFRA/Git+workflow+for+infrastructure-puppet+repo
- 
+- Much of the server config is in the puppet definition whimsy-vm3.apache.org.yaml
+- SVN updaters are in [repository.yml](repository.yml)
+- Public JSON generation comes from tools and controlled by whimsy_server/manifests/cronjobs.pp
+- 
+
 Manual Steps
 ------------
 

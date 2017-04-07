@@ -30,10 +30,12 @@ Whimsy can be run on a client or in a local container for development use.
   
 * **Tool-specific configurations** can be found in config/ directory  
 
-## Production whimsy
+## Production Server Configuration
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for full details.  We use Puppet to 
 provision the production VM with the basic dependencies as well as the 
 Whimsy code.  A number of configuration steps ensure the production instance
 has access to LDAP, SVN repositories (some read/write), local mail
 sending and receiving/subscriptions.
+
+**Log files** are LDAP secured to Members in: https://whimsy.apache.org/members/log/

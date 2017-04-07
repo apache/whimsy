@@ -4,8 +4,8 @@ Preface
 Whimsy is a set of independent tools and a common library which typically will
 need to access various ASF SVN directories and/or LDAP.  To do development and
 testing, you will need access to a machine on which you are willing to install
-libraries which do things like access LDAP, XML parsing, composing mail and
-the like for full functionality.  
+libraries which do things like access LDAP, XML parsing, ASF Subversion repos,
+composing mail and the like for full functionality.  
 
 While some tools may work on Microsoft Windows, many don't currently.  
 Alternatives include a Docker image, a custom Vagrant VM, and a Kitchen/Puppet 
@@ -13,6 +13,16 @@ managed Vagrant VM (as the live instance does).  The primary advantage
 of using an image or a VM is isolation.  The primary disadvantage is that 
 you will need to install your SVN credentials there and arrange to either 
 duplicate or mount needed SVN directories.
+
+Contents :books:
+-------
+[Architecture](#architecture-overview)
+[Setup Whimsy Locally](#setup-whimsy-locally)
+[Running Whimsy Applications](#running-whimsy-applications)
+[Advanced Configuration](#advanced-configuration)
+[Server Configuration](DEPLOYMENT.md)
+[Further Reading](#further-reading)
+[How To / FAQ](#how-to-faq)
 
 Architecture Overview
 ========
@@ -50,7 +60,7 @@ Setup Whimsy Locally
 This section is for those desiring to run a whimsy tool on their own machine.
 [See below for deploying](#advanced-configuration) in a Docker container or a Vagrant VM.
 
-1. Setup ruby 1.9.3 or higher.  Verify with `ruby -v`.
+1. **Setup ruby 1.9.3 or higher.**  Verify with `ruby -v`.
    If you use a system provided version of Ruby, you may need to prefix
    certain commands (like gem install) with `sudo`.  Alternatives to using
    the system provided version include using a Ruby version manager like
@@ -66,32 +76,31 @@ This section is for those desiring to run a whimsy tool on their own machine.
     3. [Ruby Version Manager](https://rvm.io/)
 
 
-2. Install the `whimsy-asf` and `bundler` gems:
+2. **Install ruby gems:** `whimsy-asf` and `bundler`:
 
   `gem install whimsy-asf bundler`
 
-3. SVN checkout ASF repositories into (or linked to from)
+3. **SVN checkout ASF repositories** into (or linked to from)
    `/srv/svn`
 
         svn co --depth=files https://svn.apache.org/repos/private/foundation
 
    You can specify an alternate location for these directories by placing
-   a [configuration file](CONFIGURE.md) named `.whimsy` in your home directory.  The format
-   for this file is YAML, and an example (be sure to include the dashed
-   lines):
+   a YAML [configuration file](CONFIGURE.md) named `.whimsy` in your home 
+   directory  An minimal example (be sure to include the dashed lines!):
 
         :svn:
         - /home/rubys/svn/foundation
         - /home/rubys/svn/committers
 
-4. Configure LDAP servers and certificates:
+4. **Configure LDAP** servers and certificates:
 
- 1. The model code determines what host and port to connect to by parsing
+  1. The model code determines what host and port to connect to by parsing
       either `/etc/ldap/ldap.conf` or `/etc/openldap/ldap.conf` for a line that
       looks like the following:
         `uri     ldaps://ldap1-lw-us.apache.org:636`
 
- 2. A `TLS_CACERT` can be obtained via either of the following commands:
+  2. A `TLS_CACERT` can be obtained via either of the following commands:
 
         `ruby -r whimsy/asf -e "puts ASF::LDAP.cert"`<br/>
         `openssl s_client -connect ldap1-lw-us.apache.org:636 </dev/null`
@@ -109,20 +118,21 @@ This section is for those desiring to run a whimsy tool on their own machine.
       Note: the certificate is needed because the ASF LDAP hosts use a
       self-signed certificate.
 
-      **Simple way to configure LDAP is**:
+      Simple way to configure LDAP is:
 
         sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
 
-   These above command can also be used to update your configuration as
-   the ASF changes LDAP servers.
+      These commands can also be used to update your configuration as
+      the ASF changes LDAP servers; they are cached in your `.whimsy`.
 
-5. Verify that the configuration is correct by running:
+5. **Verify your configuration** by running:
 
    `ruby examples/board.rb`
 
+   It should print out an HTML page with current board members.
    See comments in that file for running the script as a standalone server.
 
-6. Configure sending of mail (optional):
+6. **Configure mail sending** :mailbox_with_mail: (_optional_):
 
    Configuration of outbound mail delivery is done through the `.whimsy`
    file.  Three examples are provided below, followed by links to where
@@ -153,7 +163,7 @@ This section is for those desiring to run a whimsy tool on their own machine.
    [testmailer](http://www.rubydoc.info/github/mikel/mail/Mail/TestMailer), and
    [filedelivery](http://www.rubydoc.info/github/mikel/mail/Mail/FileDelivery)
 
-Running Scripts/Applications
+Running Whimsy Applications
 ============================
 
 If there is a `Gemfile` in the directory containing the script or application
@@ -186,7 +196,7 @@ command `bundle install`.
    password.  Should your ASF availid differ from your local user id,
    set the `USER` environment variable prior to executing this command.
 
-Advanced configuration
+Advanced Configuration
 ======================
 
 Setting things up so that the **entire** whimsy website is available as
@@ -221,7 +231,29 @@ a virtual host, complete with authentication:
        start on dbus SIGNAL=SessionNew
        exec /srv/whimsy/tools/toucher
        
-More details about the live Whimsy instance are in [DEPLOYMENT.md](DEPLOYMENT.md)
+More details about the production Whimsy instance are in [DEPLOYMENT.md](DEPLOYMENT.md)
+
+How To / FAQ
+============
+
+### How To: Create A New Whimsy CGI
+
+The simplest way to create a new standalone tool is copy an existing .cgi. 
+Important things to check:
+
+- chmod 755 is likely needed
+- Double-check paths to the lib/asf files (which you will be using a lot)
+- Test locally first; in production logs are in [/members/log](https://whimsy.apache.org/members/log/)
+
+### How To: Use New SVN Directories
+
+Some SVN repos/files are checked out via cron jobs regularly for 
+caching and read only access.  Some applications checkout needed files 
+just when running into temp dirs (typically to modify them and commit 
+changes).  If you have trouble using the existing [ASF::SVN classes](lib/whimsy/asf/svn.rb) 
+class to access files from Subversion on the server, then check:
+
+- Default SVN checkouts: [repository.yml](repository.yml)
 
 Further Reading
 ===============
