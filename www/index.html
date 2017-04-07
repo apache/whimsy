@@ -2,7 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8"/>
-    <title>Whimsy</title>
+    <title>Apache Whimsy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Apache Whimsy Project And Server Code</title>
+    <link rel="stylesheet" type="text/css" href="members/assets/bootstrap-min.css?1491171314"/>
     <style type="text/css">
       h2 {text-decoration: underline}
       header h2 span {display: none}
@@ -12,93 +15,180 @@
         border: 3px solid #B7B; padding: 1em; border-radius: 1em;
         position: absolute; background-color: white}
       aside ol {margin-bottom: 0}
+      .footer { 
+        margin-top: 20px;
+        margin-left: 20px;
+      }
     </style>
   </head>
-
   <body>
-    <a href="http://www.apache.org/"><img title="ASF Logo"src="https://www.apache.org/foundation/press/kit/asf_logo_small.png"/></a>
-    <a href="/"><img src="whimsy.svg" width="140" title="Whimsy logo"/></a>
+    <div class="header container-fluid">
+      <div class="row">
+        <div class="col-sm-4 hidden-xs">
+          <a href="https://www.apache.org/">
+            <img title="ASF Logo" alt="ASF Logo" width="250" height="101" style="margin-left: 10px; margin-top: 10px;" src="https://www.apache.org/foundation/press/kit/asf_logo_small.png"/>
+          </a>
+        </div>
+        <div class="col-sm-2 col-xs-2">
+          <a href="/">
+            <img title="Whimsy logo" alt="Whimsy hat" src="https://whimsy.apache.org/whimsy.svg" height="101"/>
+          </a>
+        </div>
+        <div class="col-sm-6 col-xs-9 align-bottom">
+          <ul class="nav nav-tabs">
+            <li role="presentation">
+              <a href="https://github.com/apache/whimsy/">
+                Code
+              </a>
+            </li>
+            <li role="presentation">
+              <a href="https://lists.apache.org/list.html?dev@whimsical.apache.org">
+                Questions
+              </a>
+            </li>
+            <li role="presentation">
+              <a href="status/">
+                Server status
+              </a>
+            </li>
+            <li role="presentation">
+              <a href="/technology">
+                About this site
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  
+    <div class="content container-fluid">
+      <div class="row">
+        <div class="col-md-8 col-lg-8">
+        <header>
+          <h2><a href="http://dictionary.reference.com/browse/whimsy">Whim<span>·</span>sy</a></h2>
+          <aside>
+            [hwim-zee, wim-] noun, plural whim·sies.
+            <ol>
+              <li>capricious humor or disposition; extravagant, fanciful, or
+              excessively playful expression: a play with lots of whimsy.</li>
+              <li>an odd or fanciful notion.</li>
+              <li>anything odd or fanciful; a product of playful or capricious
+              fancy: a whimsy from an otherwise thoughtful writer.</li>
+            </ol>
+          </aside>
+          <blockquote>
+            Whimsy is a site where a set of unnecessary yet highly useful applications are deployed at Apache. 
+          </blockquote>
+          <p>The Apache Whimsy project manages this server, and maintains the tools here.
+             Our focus is on providing organizational information about the ASF and our projects
+             in easy to consume ways, and to help automate corporate processes at the ASF to 
+             make the paperwork behind the scenes easier for our many volunteers.
+          </p>
+        </header>
+      </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 col-lg-8">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Publicly Acessible Tools</h3>
+            </div>
+            <div class="panel-body">
+              <ul>
+                <li><a href="https://www.apache.org/foundation/board/calendar.html">Board Minutes Collated by Date</a></li>
+                <li><a href="board/minutes/">Board Minutes Collated by PMC/officer/topic</a></li>
+                <li><a href="incubator/podlings/by-age">Incubator podlings by age</a></li>
+                <li><a href="public/">Generated JSON data files</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Available To Committers</h3>
+            </div>
+            <div class="panel-body">
+              <ul>
+                <li><a href="roster/">Rosters (PMCs, committers, members, groups, podlings)</a></li>
+                <li><a href="committers/subscribe">Mailing list subscription</a></li>
+                <li><a href="committers/svn-info">svn info command helper</a></li>
+              </ul>
+            </div>
+          </div>        
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Available to Members and Officers</h3>
+            </div>
+            <div class="panel-body">
+              <ul>
+                <li><a href="board/agenda/">Board Agenda</a></li>
+                <li><a href="board/subscriptions">PMC-chair vs board subscriptions</a></li>
+              </ul>
+            </div>
+          </div>        
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Available to Members</h3>
+            </div>
+            <div class="panel-body">
+              <ul>
+                <li><a href="members/subscriptions/">Member subscription cross-checks</a></li>
+                <li><a href="members/watch/">Member watch</a></li>
+                <li><a href="members/whatif">STV Explorer</a></li>
+                <li><a href="members/proxy">Proxy form (ASF members meeting)</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Available to Members and IPMC</h3>
+            </div>
+            <div class="panel-body">
+              <ul>
+                <li><a href="incubator/moderators">Incubator moderators</a></li>
+              </ul>
+            </div>
+          </div>        
+          <div class="panel panel-warning">
+            <div class="panel-heading">
+              <h3 class="panel-title">Available to Secretarial Team</h3>
+            </div>
+            <div class="panel-body">
+              <ul>
+                <li><a href="secretary/workbench/">Secretary Workbench</a></li>
+                <li><a href="secretary/icla-lint">Lint test for iclas.txt</a></li>
+                <li><a href="secretary/public-names">Public names: LDAP vs icla.txt</a></li>
+                <li><a href="secretary/response-time">Response time test</a></li>
+                <li><a href="secmail/">Secretary Mail</a> (experimental)</li>
+              </ul>
+            </div>
+          </div>        
+        </div>
+      </div>
+    </div>
 
-    <header>
-      <h2><a href="http://dictionary.reference.com/browse/whimsy">Whim<span>·</span>sy</a></h2>
-      <aside>
-        [hwim-zee, wim-] noun, plural whim·sies.
-        <ol>
-          <li>capricious humor or disposition; extravagant, fanciful, or
-          excessively playful expression: a play with lots of whimsy.</li>
-          <li>an odd or fanciful notion.</li>
-          <li>anything odd or fanciful; a product of playful or capricious
-          fancy: a whimsy from an otherwise thoughtful writer.</li>
-        </ol>
-      </aside>
-
-      <blockquote>
-        Whimsy is a site where a set of absolutely unnecessary yet often quite
-        handy applications are deployed. 
-      </blockquote>
-    </header>
-
-    <blockquote>
-      <a href="status/">Current status</a>.
-    </blockquote>
-
-    <blockquote>
-      Feel free to <a href="technology.html">look under the hood</a>.
-    </blockquote>
-
-    <blockquote>
-      See also the list of Apache Infrastructure
-      <a href="https://infra.apache.org/">in-house projects</a> and
-      <a href="https://reference.apache.org/">reference library</a>.
-    </blockquote>
-
-    <h2 id="public">Open to the Public</h2>
-    <ul>
-      <li><a href="board/minutes/">Board Minutes Collated by PMC/officer/topic</a></li>
-      <li><a href="incubator/podlings/by-age">Incubator podlings by age</a></li>
-      <li><a href="public/">Generated JSON data files</a></li>
-    </ul>
-
-    <h2 id="committers">Open to Committers</h2>
-    <ul>
-      <li><a href="roster/">Rosters (PMCs, committers, members, groups, podlings)</a></li>
-      <li><a href="committers/subscribe">Mailing list subscription</a></li>
-    </ul>
-
-    <h2 id="officers+members">Open to Officers and Members</h2>
-    <ul>
-      <li><a href="board/agenda/">Board Agenda</a></li>
-      <li><a href="board/subscriptions">PMC-chair vs board subscriptions</a></li>
-<!-- retired
-      <li><a href="board/draft-minutes">Board Minutes - draft</a></li>
-      <li><a href="fundraising/sponsorship/">Fundraising Sponsorship</a></li>
-      <li><a href="fundraising/prospects/">Fundraising Prospects</a></li>
-      <li><a href="treasurer/expenses/">Treasurer Expenses</a></li>
-      <li><a href="treasurer/paypal/">Treasurer PayPal</a></li>
-      <li><a href="treasurer/statements/">Treasurer Statements</a></li>
--->
-    </ul>
-
-    <h2 id="member">Member Only</h2>
-    <ul>
-      <li><a href="members/subscriptions/">Member subscription cross-checks</a></li>
-      <li><a href="members/watch/">Member watch</a></li>
-      <li><a href="members/whatif">STV Explorer</a></li>
-      <li><a href="members/proxy">Proxy form (ASF members meeting)</a></li>
-    </ul>
-
-    <h2 id="secretary">Secretarial team</h2>
-    <ul>
-      <li><a href="secretary/workbench/">Secretary Workbench</a></li>
-      <li><a href="secretary/icla-lint">Lint test for iclas.txt</a></li>
-      <li><a href="secretary/public-names">Public names: LDAP vs icla.txt</a></li>
-      <li><a href="secretary/response-time">Response time test</a></li>
-      <li><a href="secmail/">Secretary Mail</a> (experimental)</li>
-    </ul>
-
-    <h2 id="other">Other</h2>
-    <ul>
-      <li><a href="incubator/moderators">Incubator moderators</a></li>
-    </ul>
+    <div class="footer container-fluid">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Related Apache Resources</h3>
+        </div>
+        <div class="panel-body">
+          <ul>
+            <li>
+              <a href="https://infra.apache.org/">Apache Infra Team Projects</a>
+            </li>
+            <li>
+              <a href="https://projects.apache.org/">Other Apache Projects</a>
+            </li>
+            <li>
+              <a href="https://reference.apache.org/">Apache Infra Reference Library</a>
+            </li>
+            <li>
+              <a href="https://www.apache.org/dev">Apache Developer How-Tos</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <script src="js/bootstrap.min.js" lang="text/javascript"></script>
   </body>
 </html>
