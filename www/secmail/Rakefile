@@ -54,6 +54,7 @@ desc 'WebServer that provides an interface to explore emails'
 task :server => :bundle do
   ENV['RACK_ENV']='development'
 
+  require 'bundler/setup'
   require 'wunderbar'
   module Wunderbar::Listen
     EXCLUDE = [ARCHIVE, 'public/assets']
