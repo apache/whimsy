@@ -11,47 +11,9 @@ MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
 # link to roster page
 ROSTER = 'https://whimsy.apache.org/roster/committer'
 
-# get a list of current members messages
-year = Time.new.year.to_s
-archive = Dir["/srv/mail/members/#{year}*/*"]
-
-# select messages that have a subject line starting with [MEMBER NOMINATION]
-emails = []
-archive.each do |email|
-  next if email.end_with? '/index'
-  message = IO.read(email, mode: 'rb')
-  next unless message[/^Date: .*/].to_s.include? year
-  subject = message[/^Subject: .*/]
-  next unless subject.upcase.include? "MEMBER"
-  next unless subject.upcase =~ /NOMI[NM]ATION/
-  mail = Mail.new(message)
-  next if mail.subject.downcase == 'member nomination process'
-  emails << mail if mail.subject =~ /^\[?MEMBER(SHIP)? NOMI[MN]ATION\]?/i
-end
-
-# parse nominations for names and ids
-MEETINGS = ASF::SVN['private/foundation/Meetings']
-meeting = Dir["#{MEETINGS}/2*"].sort.last
-nominations = IO.read("#{meeting}/nominated-members.txt").
-  scan(/^---+--\s+(.*?)\n/).flatten
-
-nominations.shift if nominations.first == '<empty line>'
-nominations.pop if nominations.last.empty?
-
-nominations.map! do |line| 
-  {name: line.gsub(/<.*|\(\w+@.*/, '').strip, id: line[/([.\w]+)@/, 1]}
-end
-
-# preload names
-people = ASF::Person.preload('cn', 
-  nominations.map {|nominee| ASF::Person.find(nominee[:id])})
-
-# location of svn repository
-svnurl = `cd #{meeting}; svn info`[/URL: (.*)/, 1]
-
 # produce HTML output of reports, highlighting ones that have not (yet)
 # been posted
-_html do
+_html? do
   _title 'Member nominations cross-check'
 
   _style %{
@@ -68,6 +30,43 @@ _html do
     _img title: "ASF Logo", alt: "ASF Logo",
       src: "https://www.apache.org/img/asf_logo.png"
   end
+  # get a list of current members messages
+  year = Time.new.year.to_s
+  archive = Dir["/srv/mail/members/#{year}*/*"]
+
+  # select messages that have a subject line starting with [MEMBER NOMINATION]
+  emails = []
+  archive.each do |email|
+    next if email.end_with? '/index'
+    message = IO.read(email, mode: 'rb')
+    next unless message[/^Date: .*/].to_s.include? year
+    subject = message[/^Subject: .*/]
+    next unless subject.upcase.include? "MEMBER"
+    next unless subject.upcase =~ /NOMI[NM]ATION/
+    mail = Mail.new(message)
+    next if mail.subject.downcase == 'member nomination process'
+    emails << mail if mail.subject =~ /^\[?MEMBER(SHIP)? NOMI[MN]ATION\]?/i
+  end
+
+  # parse nominations for names and ids
+  MEETINGS = ASF::SVN['private/foundation/Meetings']
+  meeting = Dir["#{MEETINGS}/2*"].sort.last
+  nominations = IO.read("#{meeting}/nominated-members.txt").
+    scan(/^---+--\s+(.*?)\n/).flatten
+
+  nominations.shift if nominations.first == '<empty line>'
+  nominations.pop if nominations.last.empty?
+
+  nominations.map! do |line| 
+    {name: line.gsub(/<.*|\(\w+@.*/, '').strip, id: line[/([.\w]+)@/, 1]}
+  end
+
+  # preload names
+  people = ASF::Person.preload('cn', 
+    nominations.map {|nominee| ASF::Person.find(nominee[:id])})
+
+  # location of svn repository
+  svnurl = `cd #{meeting}; svn info`[/URL: (.*)/, 1]
 
   _div.flexbox do
     _div.flexitem do
