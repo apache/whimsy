@@ -11,6 +11,7 @@ class Parts < React
     @drag = nil
     @form = :categorize
     @menu = nil
+    @project = nil
   end
 
   ########################################################################
@@ -143,6 +144,11 @@ class Parts < React
               _input type: 'radio', name: 'doctype', value: 'pubkey',
                 onClick: self.reject
               _span 'upload public key'
+            end
+
+            _label do
+              _span 'project: '
+              _input name: 'project', value: @project
             end
           end
 
