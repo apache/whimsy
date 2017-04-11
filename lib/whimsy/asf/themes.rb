@@ -37,6 +37,17 @@ class Wunderbar::HtmlMarkup
       end
     end
   end
+    
+  # Wrap content with nicer fluid margins
+  def _whimsy_content colstyle="col-lg-11"
+    _div.content.container_fluid do
+      _div.row do
+        _div class: colstyle do
+          yield
+        end
+      end
+    end
+  end
   
   # Emit ASF style footer with (optional) list of related links
   def _whimsy_footer related

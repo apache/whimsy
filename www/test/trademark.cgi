@@ -26,9 +26,9 @@ _html do
     docket = CSV.read("#{brand_dir}/trademark-registrations.csv", headers:true)
     docketcols = %w[ Mark Jurisdiction Class ] 
     # TODO: consolidate Jurisdiction info by 'Mark' column  
-    # TODO add error recovery
+    # TODO: add optional json output to convert rarely-changed registered CSV into checkinable JSON
     projects = JSON.parse(Net::HTTP.get(URI('https://projects.apache.org/json/foundation/projects.json')))
-    _div.container_fluid do
+    _whimsy_content do
       _table class: "table " do
         _thead_ do
           _tr do
