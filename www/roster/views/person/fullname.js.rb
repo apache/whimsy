@@ -27,6 +27,12 @@ class PersonName < React
                 defaultValue: name.legal_name
             end
 
+            _div do
+              _label 'given name', for: 'givenname'
+              _input.legalname! name: 'givenname', required: true,
+                defaultValue: name.given_name
+            end
+
             _button.btn.btn_primary 'submit'
           end
 

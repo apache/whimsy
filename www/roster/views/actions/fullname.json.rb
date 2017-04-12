@@ -4,12 +4,19 @@
 person = ASF::Person.find(@userid)
 
 # update LDAP
-if person.attrs['cn'] != @publicname
+if person.attrs['cn'] != @publicname || person.attrs['givenName'] != @givenname
   _ldap.update do
-    _previous person.attrs['cn']
+    _previous({
+      publicname: person.attrs['cn'], 
+      givenname: person.attrs['givenName']
+    })
 
-    if @publicname and not @dryrun
+    if not @dryrun and @publicname and person.attrs['cn'] != @publicname
       person.modify 'cn', @publicname
+    end
+
+    if not @dryrun and @givenname and person.attrs['givenName'] != @givenname
+      person.modify 'givenName', @givenname
     end
   end
 end
