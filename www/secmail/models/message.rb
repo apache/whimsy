@@ -59,6 +59,10 @@ class Message
     @headers['Message-ID']
   end
 
+  def date
+    mail[:date]
+  end
+
   def from
     mail[:from]
   end
