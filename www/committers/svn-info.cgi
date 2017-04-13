@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'
+require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 
 _html do
