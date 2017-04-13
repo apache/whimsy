@@ -19,12 +19,12 @@ class Wunderbar::HtmlMarkup
                 src: 'https://www.apache.org/foundation/press/kit/asf_logo_small.png'
             end
           end
-          _div.col_sm_2.col_xs_2 do
+          _div.col_sm_3.col_xs_3 do
             _a href: '/' do
-              _img title: 'Whimsy logo', alt: 'Whimsy hat', src: 'https://whimsy.apache.org/whimsy.svg', height: 101 
+              _img title: 'Whimsy logo', alt: 'Whimsy hat', src: 'https://whimsy.apache.org/whimsy.svg', width: 145, height: 101 
             end
           end
-          _div.col_sm_6.col_xs_9.align_bottom do 
+          _div.col_sm_5.col_xs_9.align_bottom do 
             _ul class: 'nav nav-tabs' do
               _li role: 'presentation' do
                 _a 'Code', href: 'https://github.com/apache/whimsy/'
@@ -33,7 +33,7 @@ class Wunderbar::HtmlMarkup
                 _a 'Questions', href: 'https://lists.apache.org/list.html?dev@whimsical.apache.org'
               end
               _li role: 'presentation' do
-                _a 'About this site', href: '/technology'
+                _a 'About', href: '/technology'
               end
               _li role: 'presentation' do
                 _span.badge id: 'script-ok'
