@@ -7,30 +7,33 @@ require 'date'
 require 'json'
 require 'tmpdir'
 
-# locate and read the attendance file
-MEETINGS = ASF::SVN['private/foundation/Meetings']
-attendance = JSON.parse(IO.read("#{MEETINGS}/attendance.json"))
-latest = Dir["#{MEETINGS}/2*"].sort.last.untaint
-tracker = JSON.parse(IO.read("#{latest}/non-participants.json"))
-
-# determine user's name as found in members.txt
-name = ASF::Member.find_text_by_id($USER).to_s.split("\n").first
-matrix = attendance['matrix'][name]
-
 # produce HTML
 _html do
-  _style :system
-  _style %{
-    div.status, .status form {margin-left: 16px}
-    .btn {margin: 4px}
-    form {margin-bottom: 1em}
-    .transcript {margin: 0 16px}
-    .transcript pre {border: none; line-height: 0}
-    pre._hilite {background-color: yellow}
-    form p {margin-top: 1em}
-    textarea {width: 100%; height: 8em}
-    textarea:disabled {background-color: #EEEEEE}
-  }
+  _head_ do
+    _style :system
+    _style %{
+      div.status, .status form {margin-left: 16px}
+      .btn {margin: 4px}
+      form {margin-bottom: 1em}
+      .transcript {margin: 0 16px}
+      .transcript pre {border: none; line-height: 0}
+      pre._hilite {background-color: yellow}
+      form p {margin-top: 1em}
+      textarea {width: 100%; height: 8em}
+      textarea:disabled {background-color: #EEEEEE}
+    }    
+  end
+  _body? do
+  _whimsy_header 'Poll of Inactive Members'
+  # locate and read the attendance file
+  MEETINGS = ASF::SVN['private/foundation/Meetings']
+  attendance = JSON.parse(IO.read("#{MEETINGS}/attendance.json"))
+  latest = Dir["#{MEETINGS}/2*"].sort.last.untaint
+  tracker = JSON.parse(IO.read("#{latest}/non-participants.json"))
+
+  # determine user's name as found in members.txt
+  name = ASF::Member.find_text_by_id($USER).to_s.split("\n").first
+  matrix = attendance['matrix'][name]
 
   # defaults for active users
   tracker[$USER] ||= {
@@ -41,7 +44,7 @@ _html do
   active = (tracker[$USER]['missed'] == 0)
 
   if not active
-    _p.alert.alert_warning "You have missed the last " + 
+    _p.alert.alert_warning "Dear #{name}, You have missed the last " + 
       tracker[$USER]['missed'].to_s + " meetings."
 
     if _.post? and @status
@@ -72,26 +75,28 @@ _html do
       end
     end
   end
-
-  _h1_ 'Poll of Inactive Members'
-
+  
+  _whimsy_content do
   _div.status do
     _p %{
       We are reaching out to those members that have not participated in
       ASF Members Meetings or Elections in over three years, and asking each
-      of them whether they wish to remain active or go emeritus.  You can
-      indicate your choice by pushing one of the buttons below.
+      of them whether they wish to remain active or go emeritus.  Inactive members can
+      indicate their choice by pushing one of the buttons below.
     }
 
     _p_ do
-      _span 'Your current status is: '
+      _span "#{name}, your current status is: "
       _code tracker[$USER]['status']
+    end
+    if active
+      _p.text_success "Great! Thanks for attending most/all Member's meetings!"
     end
 
     _form method: 'post' do
       _p %{
-        Please provide input on what more we can do to make it easier
-        for you to participate:
+        Please let us know how the ASF can make it easier
+        for you to participate in Member's Meetings:
       }
 
       _textarea name: 'suggestions', disabled: active
@@ -112,16 +117,16 @@ _html do
     }
   end
 
-  _h3_ 'Links'
+  _h3_ 'Meeting Information Links'
 
   _ul do
     _li do
-      _a 'Meeting Notice', href:
+      _a "Meeting Notice #{File.basename(latest)}", href:
         'https://svn.apache.org/repos/private/foundation/Meetings/' +
         File.basename(latest) + '/NOTICE.txt'
     end
     _li do
-      _a 'Meeting Agenda', href:
+      _a "Meeting Agenda #{File.basename(latest)}", href:
         'https://svn.apache.org/repos/private/foundation/Meetings/' +
         File.basename(latest) + '/agenda.txt'
     end
@@ -129,12 +134,12 @@ _html do
       _a 'Assign a proxy', href: 'https://whimsy.apache.org/members/proxy'
     end
     _li do
-      _a 'Members.txt', href:
+      _a 'Read Members.txt', href:
         'https://svn.apache.org/repos/private/foundation/members.txt'
     end
   end
 
-  _h1_ 'Attendance history'
+  _h1_ 'Your Attendance history'
 
   if not name
 
@@ -146,7 +151,6 @@ _html do
 
   else
 
-    count = 0
     _table.table.table_sm style: 'margin: 0 24px; width: auto' do
       _thead do
         _tr do
@@ -186,5 +190,7 @@ _html do
         end
       end
     end
+  end
+  end
   end
 end
