@@ -15,14 +15,10 @@ brand_dir = ASF::SVN['private/foundation/Brand']
 _json do
   docket = CSV.read("#{brand_dir}/docket.csv", headers:true)
   docketcols = %w[ TrademarkName TrademarkStatus CountryName Class RegNumber ]
-  # Map Mark names to PMC identifiers (only openoffice.org so far)
-  docket.each do |r|
-    r << ['pmc', r['TrademarkName'].downcase.sub('.org','').sub(' & design','')]
-  end
   dockethash = {}
-
   # Create hash based on pmc with aggregated data
   docket.each do |r|
+    r << ['pmc', r['TrademarkName'].downcase.sub('.org','').sub(' & design','')]
     key = r['pmc'].to_sym
     if dockethash.key?(key)
       # Aggregate specific values
