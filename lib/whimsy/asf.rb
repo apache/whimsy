@@ -12,6 +12,7 @@ require_relative 'asf/member'
 require_relative 'asf/site'
 require_relative 'asf/podlings'
 require_relative 'asf/person'
+require_relative 'asf/themes'
 
 module ASF
   def self.library_mtime
