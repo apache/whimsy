@@ -8,7 +8,7 @@ require 'date'
 #
 # Provide a report on PMCs with a given number of ASF members
 #
-
+counts = [1, 2, 3, 4]
 _html do
   _body? do
     count = (@count || 3).to_i    
@@ -21,6 +21,7 @@ _html do
     members = ASF::Member.list.keys
     committees = ASF::Committee.load_committee_info
     _whimsy_content do
+      
       _table_.table.table_striped do
         _thead_ do
           _tr do
@@ -30,7 +31,15 @@ _html do
             _th 'Chair', data_sort: 'string'
           end
         end
-        
+        _p do
+          _ 'Switch to:'
+          counts.each do |c|
+            _a href: "/members/memberless-pmcs?count=#{c}" do
+              _button.btn.btn_info c
+            end
+            _ " | " unless c.equal? counts.last 
+          end
+        end
         _tbody do
           committees.sort_by {|pmc| pmc.display_name.downcase}.each do |pmc|
             next if pmc.roster.keys.empty? # EA, Marketing, etc.
