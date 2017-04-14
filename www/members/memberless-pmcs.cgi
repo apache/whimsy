@@ -1,69 +1,62 @@
-#!/usr/bin/ruby
-
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+require 'whimsy/asf'
+require 'wunderbar'
+require 'wunderbar/bootstrap'
+require 'wunderbar/jquery/stupidtable'
+require 'date'
 #
 # Provide a report on PMCs with a given number of ASF members
 #
 
-require 'whimsy/asf'
-require 'wunderbar/bootstrap'
-require 'wunderbar/jquery/stupidtable'
-require 'date'
-
-members = ASF::Member.list.keys
-committees = ASF::Committee.load_committee_info
-
 _html do
-  count = (@count || 1).to_i
-
-  if count == 1
-    title = 'PMCs without any ASF members'
-  else
-    title = "PMCs without at least #{count} ASF members"
-  end
-
-  _title title
-
-  _style %{
-    img.logo {
-      width: 160px;
-      margin-left: 10px;
-    }
-  }
-
-  # banner
-  _a href: 'https://whimsy.apache.org/' do
-    _img title: "ASF Logo", alt: "ASF Logo",
-      src: "https://www.apache.org/img/asf_logo.png"
-  end
-  _img.logo src: '../../whimsy.svg'
-
-  _h1_ title
-
-  _table_.table.table_striped do
-    _thead_ do
-      _tr do
-        _th 'PMC', data_sort: 'string-ins'
-        _th 'Established', data_sort: 'string'
-        _th 'Count', data_sort: 'int' if count > 1
-      end
+  _body? do
+    count = (@count || 3).to_i    
+    if count == 1
+      title = 'PMCs without any ASF members'
+    else
+      title = "PMCs without at least #{count} ASF members"
     end
-
-    _tbody do
-      committees.sort_by {|pmc| pmc.display_name.downcase}.each do |pmc|
-        next if pmc.roster.keys.empty? # EA, Marketing, etc.
-        next unless (pmc.roster.keys & members).length < count
-        _tr_ do
-          _td! do
-            _a pmc.display_name, href: "../roster/committee/#{pmc.id}"
+    _whimsy_header title
+    members = ASF::Member.list.keys
+    committees = ASF::Committee.load_committee_info
+    _whimsy_content do
+      _table_.table.table_striped do
+        _thead_ do
+          _tr do
+            _th 'PMC', data_sort: 'string-ins'
+            _th 'Established', data_sort: 'string'
+            _th 'Count', data_sort: 'int' if count > 1
+            _th 'Chair', data_sort: 'string'
           end
-          _td Date.parse(pmc.established).strftime('%Y/%m')
-          _td (pmc.roster.keys & members).length if count > 1
+        end
+        
+        _tbody do
+          committees.sort_by {|pmc| pmc.display_name.downcase}.each do |pmc|
+            next if pmc.roster.keys.empty? # EA, Marketing, etc.
+            next unless (pmc.roster.keys & members).length < count
+            _tr_ do
+              _td! do
+                _a pmc.display_name, href: "../roster/committee/#{pmc.id}"
+              end
+              _td Date.parse(pmc.established).strftime('%Y/%m')
+              _td (pmc.roster.keys & members).length if count > 1
+              _td pmc.chair.cn
+            end
+          end
         end
       end
+      
+      _script %{
+        var table = $(".table").stupidtable();
+        table.on("aftertablesort", function (event, data) {
+          var th = $(this).find("th");
+          th.find(".arrow").remove();
+          var dir = $.fn.stupidtable.dir;
+          var arrow = data.direction === dir.ASC ? "&uarr;" : "&darr;";
+          th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+          });
+        }
+      end
     end
   end
-
-  _script %{
-    $(".table").stupidtable();
-  }
-end
