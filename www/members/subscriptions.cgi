@@ -3,53 +3,48 @@ $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'wunderbar'
 require 'whimsy/asf'
+require 'wunderbar/jquery/stupidtable'
 
 SUBSCRIPTIONS = '/srv/subscriptions/members'
 
 _html do
-  _head_ do
-    _title 'Apache Members cross-check'
-    _style %{
-      table {border-collapse: collapse}
-      th, td { border: 1pt solid black}
-      .issue {color: red}
-    }
-  end
-
   _body? do
-
-    _h1_ 'Apache Members cross-check'
-
+    _whimsy_header 'Apache Members Cross-check'
+    _div.panel.panel_primary do
+      _div.panel_heading {_h3.panel_title 'How This Works'}
+      _div.panel_body do
+        _p! do
+          _ 'This process starts with the list of subscribers to '
+          _a 'members@apache.org', href: 'https://mail-search.apache.org/members/private-arch/members/'
+          _ '.  It then uses '
+          _a 'members.txt', href: 'https://svn.apache.org/repos/private/foundation/members.txt'
+          _ ', '
+          _a 'iclas.txt', href: 'https://svn.apache.org/repos/private/foundation/officers/iclas.txt'
+          _ ', and '
+          _code 'ldapsearch mail'
+          _ ' to attempt to match the email address to an Apache ID.  '
+          _ 'Those that are not found are listed as '
+          _code.text_danger '*missing*'
+          _ '.  Emeritus members are '
+          _em 'listed in italics'
+          _ '.  Non ASF members are '
+          _span.text_danger 'listed in red'
+          _ '.'
+        end
+        _p! do
+          _ 'The resulting list is then cross-checked against '
+          _code 'ldapsearch cn=member'
+          _ '.  Membership that is only listed in one of these two sources is also '
+          _span.text_danger 'listed in red'
+          _ '.'
+        end
+      end
+    end
     _p! do
-      _ 'This process starts with the list of subscribers to '
-      _a 'members@apache.org', href: 'https://mail-search.apache.org/members/private-arch/members/'
-      _ '.  It then uses '
-      _a 'members.txt', href: 'https://svn.apache.org/repos/private/foundation/members.txt'
-      _ ', '
-      _a 'iclas.txt', href: 'https://svn.apache.org/repos/private/foundation/officers/iclas.txt'
+      _ 'Separate tables below show '
+      _a 'Members not subscribed to the list', href: "#unsub"
       _ ', and '
-      _code 'ldapsearch mail'
-      _ ' to attempt to match the email address to an Apache ID.  '
-      _ 'Those that are not found are listed as '
-      _code.issue '*missing*'
-      _ '.  Emeritus members are '
-      _em 'listed in italics'
-      _ '.  Non ASF members are '
-      _span.issue 'listed in red'
-      _ '.'
-    end
-
-    _p! do
-      _ 'The resulting list is then cross-checked against '
-      _code 'ldapsearch cn=member'
-      _ '.  Membership that is only listed in one of these two sources is also '
-      _span.issue 'listed in red'
-      _ '.'
-    end
-
-    _p! do
-      _ 'ASF members for which a matching email address can not be found are '
-      _a 'listed in a separate table', href: "#unsub"
+      _a 'Entries in LDAP but not members.txt', href: "#ldap"
       _ '.'
     end
 
@@ -73,23 +68,23 @@ _html do
       subscriptions << [id, person, line.strip]
     end
 
-    _table_ border: '1', cellpadding: '2', cellspacing: '0' do
+    _table.table do
       _tr do
-        _th 'id'
-        _th 'email'
-        _th 'name'
+        _th 'id', data_sort: 'string'
+        _th 'email', data_sort: 'string'
+        _th 'name', data_sort: 'string'
       end
       subscriptions.sort.each do |id, person, email|
         next if email == 'members-archive@apache.org'
         _tr_ do
           if id.include? '*'
-            _td.issue id
+            _td.text_danger id
           elsif not person.asf_member?
-            _td.issue id, title: 'Non Member'
+            _td.text_danger id, title: 'Non Member', data_sort_value: '1'
           elsif person.asf_member? != true
-            _td {_em id, title: 'Emeritus'}
+            _td(data_sort_value: '2') {_em id, title: 'Emeritus'} 
           elsif not ldap.include? person
-            _td {_strong.issue id, title: 'Not in LDAP'}
+            _td(data_sort_value: '3')  {_strong.text_danger id, title: 'Not in LDAP'}
           else
             _td id
           end
@@ -109,25 +104,25 @@ _html do
 
     unless missing.empty?
       _h3_.unsub! 'Not subscribed to the list'
-      _table border: 1, cellpadding: 2, cellspacing: 0 do
-	_tr_ do
-	  _th 'id'
-	  _th 'name'
-	end
-	missing.sort_by(&:name).each do |person|
-	  _tr do
-	    if not ldap.include? person
-	      _td {_strong.issue person.id, title: 'Not in LDAP'}
-	    else
-	      _td person.id
-	    end
-            if person.public_name
-	      _td person.public_name
+      _table.table do
+        _tr_ do
+          _th 'id'
+          _th 'name'
+        end
+        missing.sort_by(&:name).each do |person|
+          _tr do
+            if not ldap.include? person
+              _td {_strong.text_danger person.id, title: 'Not in LDAP'}
             else
-              _td.issue '*notinavail*'
+              _td person.id
             end
-	  end
-	end
+            if person.public_name
+              _td person.public_name
+            else
+              _td.text_danger '*notinavail*'
+            end
+          end
+        end
       end
     end
 
@@ -135,17 +130,17 @@ _html do
 
     unless extras.empty?
       _h3_.ldap! 'In LDAP but not in members.txt'
-      _table border: 1, cellpadding: 2, cellspacing: 0 do
-	_tr_ do
-	  _th 'id'
-	  _th 'name'
-	end
-	extras.sort.each do |person|
-	  _tr do
-	    _td person.id
-	    _td person.public_name
-	  end
-	end
+      _table.table do
+        _tr_ do
+          _th 'id'
+          _th 'name'
+        end
+        extras.sort.each do |person|
+          _tr do
+            _td person.id
+            _td person.public_name
+          end
+        end
       end
     end
   end
