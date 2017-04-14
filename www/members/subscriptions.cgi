@@ -3,6 +3,7 @@ $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'wunderbar'
 require 'whimsy/asf'
+require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 
 SUBSCRIPTIONS = '/srv/subscriptions/members'
@@ -143,5 +144,15 @@ _html do
         end
       end
     end
+    _script %{
+      var table = $(".table").stupidtable();
+      table.on("aftertablesort", function (event, data) {
+        var th = $(this).find("th");
+        th.find(".arrow").remove();
+        var dir = $.fn.stupidtable.dir;
+        var arrow = data.direction === dir.ASC ? "&uarr;" : "&darr;";
+        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+        });
+      }
   end
 end
