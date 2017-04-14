@@ -5,35 +5,21 @@ require 'wunderbar'
 require 'whimsy/asf'
 require 'nokogiri'
 require 'date'
+require 'wunderbar/bootstrap'
+require 'wunderbar/jquery/stupidtable'
 
 SVN_BOARD = "https://svn.apache.org/repos/private/foundation/board"
 meetings = ASF::SVN['private/foundation/Meetings']
 
 _html do
   _head_ do
-    _title 'Potential Member Watch'
     _base href: File.dirname(ENV['SCRIPT_NAME'])
-    _style %{
-      th {border-bottom: solid black}
-      table {border-spacing: 1em 0.2em }
-      tr td:first-child {text-align: center}
-      .issue {color: red; font-weight: bold}
-      .header span {float: right}
-      .header span:after {padding-left: 0.5em}
-      .headerSortUp span:after {content: " \u2198"}
-      .headerSortDown span:after {content: " \u2197"}
-    }
-    _script src: '/jquery.min.js'
-    _script src: '/jquery.tablesorter.js'
   end
 
   _body? do
-    # common banner
-    _a href: 'https://whimsy.apache.org/' do
-      _img title: "ASF Logo", alt: "ASF Logo",
-        src: "https://www.apache.org/img/asf_logo.png"
-    end
-
+    _whimsy_header 'Potential ASF Member Watch List'
+    _whimsy_content do
+    
     # start with the Watch List itself
     watch_list = ASF::Person.member_watch_list.keys
     meeting =
@@ -45,7 +31,69 @@ _html do
     nominations += txt.scan(/^---+\n\s*\w+.*\(([a-z]+)@apache\.org\)/).flatten
 
     # determine which list to report on, based on the URI
-    request = ENV['REQUEST_URI']
+    request = ENV['REQUEST_URI']  
+    
+    _div.row do
+      _div.col_md_8 do
+        _div.panel.panel_primary do
+          _div.panel_heading {_h3.panel_title 'How This Works'}
+          _div.panel_body do
+            _p! do
+              _ 'To help evaluate potential Member candidates, here are a number of ways to see where non-Members are participating broadly at the ASF.'
+              _ 'The table(s) below include non-Members who are chairs, widely active, have been nominated, or other criteria (depending on this URL).'
+            end
+          end
+        end
+      end
+      _div.col_md_4 do
+        _div.panel.panel_primary do
+          _div.panel_heading {_h3.panel_title 'Related Links'}
+          _div.panel_body do
+            _ul do
+              if Time.new.strftime('%Y%m%d') < File.basename(meeting)
+                _li do
+                  _a 'Posted nominations vs svn', href: 'members/nominations'
+                end
+              else
+                unless request =~ /appstatus/
+                  _li do
+                    _a 'Application Status', href: 'members/watch/appstatus'
+                  end
+                end
+              end
+              
+              _li do
+                _a 'Potential Member Watch List', href: 'members/watch'
+              end
+
+              unless request =~ /nominees/
+                _li do
+                  _a 'Nominees', href: 'members/watch/nominees'
+                end
+              end
+
+              unless request =~ /multiple/
+                _li do
+                  _a 'Active in Multiple (>=3) PMCs', href: 'members/watch/multiple'
+                end
+              end
+
+              unless request =~ /chairs/
+                _li do
+                  _a 'Non-member PMC chairs', href: 'members/watch/chairs'
+                end
+              end
+
+              _li do
+                _a 'PMCs with no members', href: 'members/memberless-pmcs'
+              end
+            end
+          end
+        end
+      end
+    end
+    
+    list = {} # Avoid lint errors of shadowing
     if request =~ /multiple/
       _h2_ 'Active In Multiple Committees'
       list = ASF::Committee.list.map {|committee| committee.members}.
@@ -57,16 +105,16 @@ _html do
       list = ASF.pmc_chairs
       list -= ASF.members
     elsif request =~ /nominees/
-      _h2_ 'Nominees'
+      _h2_ 'Member Nominees'
       list = nominations.uniq.map {|id| ASF::Person.find(id)}
     elsif request =~ /appstatus/
-      _h2_ 'Application Status'
+      _h2_ 'Elected Members - Application Status'
       status = File.read("#{meeting}/memapp-received.txt").
         scan(/^(yes|no)\s+(yes|no)\s+(yes|no)\s+(yes|no)\s+(\w+)\s/)
       status = Hash[status.map {|tokens| [tokens.pop, tokens]}]
       list = status.keys.map {|id| ASF::Person.find(id)}
     else
-      _h2_ 'Watch List'
+      _h2_ 'From potential-member-watch-list.txt'
       list = watch_list
     end
 
@@ -77,27 +125,27 @@ _html do
     members = ASF::Member.status
     nominees = ASF::Person.member_nominees
 
-    _table do
+    _table.table do
 
       _thead_ do
         _tr do
           if request =~ /appstatus/
-            _th 'Invited?'
-            _th 'Applied?'
-            _th 'members@?'
-            _th 'Karma'
+            _th 'Invited?', data_sort: 'string'
+            _th 'Applied?', data_sort: 'string'
+            _th 'members@?', data_sort: 'string'
+            _th 'Karma', data_sort: 'string'
           elsif request =~ /nominees/
             _th 'Seconded?'
           else
             _th 'Nominated?'
           end
           
-          _th 'AvailID'
-          _th 'Name'
+          _th 'AvailID', data_sort: 'string'
+          _th 'Name', data_sort: 'string'
 
           if request !~ /appstatus/
-          _th 'Committees'
-          _th 'Chair Since'
+          _th 'Committees', data_sort: 'string'
+          _th 'Chair Since', data_sort: 'string'
           end
         end
       end
@@ -113,19 +161,19 @@ _html do
               if cols[0] == 'yes'
                 _td cols[0]
               else
-                _td.issue cols[0]
+                _td.text_danger cols[0]
               end
 
               if cols[0] == 'no' or cols[1] == 'yes'
                 _td cols[1]
               else
-                _td.issue cols[1]
+                _td.text_danger cols[1]
               end
 
               if cols[1] == 'no' or cols[2] == 'yes'
                 _td cols[2]
               else
-                _td.issue cols[2]
+                _td.text_danger cols[2]
               end
 
               if cols[3] == 'yes'
@@ -133,13 +181,13 @@ _html do
               elsif cols[1] == 'no'
                 _td cols[3], class: ('issue' if person.asf_member?)
               else
-                _td.issue cols[3]
+                _td.text_danger cols[3]
               end
             elsif request =~ /nominees/
               if person.member_nomination =~ /Seconded by: \w/
                 _td 'yes'
               else
-                _td.issue 'no'
+                _td.text_danger 'no'
               end
             else
               if nominations.include? person.id
@@ -234,53 +282,16 @@ _html do
       end
     end
 
-    _h2_ 'Related Links'
-    _ul do
-      if Time.new.strftime('%Y%m%d') < File.basename(meeting)
-        _li do
-          _a 'Posted nominations vs svn', href: 'members/nominations'
-        end
-      else
-        unless request =~ /appstatus/
-          _li do
-            _a 'Application Status', href: 'members/watch/appstatus'
-          end
-        end
-      end
-
-      unless list == watch_list
-        _li do
-          _a 'Potential Member Watch List', href: 'members/watch'
-        end
-      end
-
-      unless request =~ /nominees/
-        _li do
-          _a 'Nominees', href: 'members/watch/nominees'
-        end
-      end
-
-      unless request =~ /multiple/
-        _li do
-          _a 'Active in Multiple (>=3) PMCs', href: 'members/watch/multiple'
-        end
-      end
-
-      unless request =~ /chairs/
-        _li do
-          _a 'Non-member PMC chairs', href: 'members/watch/chairs'
-        end
-      end
-
-      _li do
-        _a 'PMCs with no members', href: 'members/memberless-pmcs'
-      end
-    end
-
     _script %{
-      var numheaders = $('thead th').length;
-      $('table').tablesorter({sortList: [[numheaders-1,0]]});
-      $('.header').append('<span></span>');
-    }
+      var table = $(".table").stupidtable();
+      table.on("aftertablesort", function (event, data) {
+        var th = $(this).find("th");
+        th.find(".arrow").remove();
+        var dir = $.fn.stupidtable.dir;
+        var arrow = data.direction === dir.ASC ? "&uarr;" : "&darr;";
+        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+        });
+      }
+  end
   end
 end
