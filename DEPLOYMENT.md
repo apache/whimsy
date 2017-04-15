@@ -55,7 +55,9 @@ The following additional steps are required to get the Whimsy VM up and running:
  * Run the following command to create an SSL cert (see [tutorial](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-14-04) for details):
      * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org -d whimsy3.apache.org -d whimsy-vm3.apache.org -d whimsy-test.apache.org`
 
- * Configure `~/whimsysvn/.subversion/config` and `~/whimsysvn/.subversion/servers` to store auth-creds.
+ * Configure `/var/www/.subversion/config` and
+   `/var/www/.subversion/servers` to store auth-creds and to use the
+   `whimsysvn` user.
 
  * Add the following cron job to apmail@hermes:
      * `11  4,10,16,22 * * * for list in /home/apmail/lists/incubator.apache.org/*; do echo; echo $list/mod; ezmlm-list $list mod; done | ssh whimsy-vm3.apache.org 'cat > /srv/subscriptions/incubator-mods'`
@@ -72,15 +74,15 @@ The following additional steps are required to get the Whimsy VM up and running:
     * Add `secretary@whimsy-vm3.apache.org` to the `secretary@apache.org`
       alias.
 
+ * Using the `www-data` user, copy over the following directories from
+   the previous whimsy-vm* server: `/srv/agenda`, `/srv/mail/board`,
+   `/srv/mail/members`, `/srv/mail/secretary`.
+ 
  * Verify that email can be sent to non-apache.org email addresses
    * Run [testmail.rb](tools/testmail.rb)
 
 The following additional steps are required for now, but will hopefully go
 away once the transition away from the secretary workbench is complete:
-
- * Configure `/var/www/.subversion/config` and
-   `/var/www/.subversion/servers` to store auth-creds and to use the
-   `whimsysvn` user.
 
  * Using the `www-data` user, check out the following repositories:
    * `svn co https://svn.apache.org/repos/private/foundation /srv/secretary/workbench/foundation`
