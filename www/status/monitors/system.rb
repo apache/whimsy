@@ -19,7 +19,9 @@ def Monitor.system(previous_status)
 
     puppet = `service puppet status`.force_encoding('utf-8').strip
 
-    if puppet.include? '* agent is running'
+    if puppet.include? 'Active: active (running)'
+      status[name].merge! level: 'success', data: puppet
+    elsif puppet.include? '* agent is running'
       status[name].merge! level: 'success', data: puppet
     else
       status[name].merge! level: 'warning', data: puppet
