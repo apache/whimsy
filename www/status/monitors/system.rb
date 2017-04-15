@@ -13,9 +13,9 @@ def Monitor.system(previous_status)
   }
 
   begin
-    env['LC_ALL'] = 'en_US.UTF-8'
-    env['LANG'] = 'en_US.UTF-8'
-    env['LANGUAGE'] = 'en_US.UTF-8'
+    ENV['LC_ALL'] = 'en_US.UTF-8'
+    ENV['LANG'] = 'en_US.UTF-8'
+    ENV['LANGUAGE'] = 'en_US.UTF-8'
 
     puppet = `service puppet status`.force_encoding('utf-8').strip
 
