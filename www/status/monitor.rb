@@ -94,6 +94,9 @@ class Monitor
       # normalize status
       @status = normalize(data: newstatus)
 
+      File.write(File.expand_path("../../logs/status.data", __FILE__),
+        @status.inspect)
+
       # update results
       file.rewind
       file.write JSON.pretty_generate(@status)
