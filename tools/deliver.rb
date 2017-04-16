@@ -8,7 +8,7 @@ require 'fileutils'
 
 MAIL_ROOT = '/srv/mail'
 
-mail = STDIN.read
+mail = STDIN.read.force_encoding('binary')
 
 # extract info
 dest = mail[/List-Id: <(.*)>/, 1] || mail[/Delivered-To.* (\S+)\s*$/, 1]
