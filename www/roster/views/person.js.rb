@@ -80,11 +80,12 @@ class Person < React
           _tr do
             _td 'Moderates'
             _td do
-              _ul @committer.moderates.keys() do |list|
+              _ul @committer.moderates.keys() do |list_name|
                 _li do
-                  _span list
+                  _a list_name, href: 'https://lists.apache.org/list.html?' +
+                    list_name
                   _span " as "
-                  _span @committer.moderates[list].join(', ')
+                  _span @committer.moderates[list_name].join(', ')
                 end
               end
             end
