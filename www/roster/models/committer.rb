@@ -118,6 +118,24 @@ class Committer
 
     end
 
+    if ASF::Person.find(env.user).asf_member? or env.user = id
+      response[:moderates] = {}
+
+      if File.exist? LIST_MODS
+        moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
+          list = stanza.match(/(\w+\.apache\.org)\/(.*?)\//)
+
+          ["#{list[2]}@#{list[1]}", stanza.scan(/^(.*@.*)/).flatten]
+        end
+
+       user_emails = person.all_mail
+        moderators.each do |mail_list, list_moderators|
+          matches = (list_moderators & user_emails)
+          response[:moderates][mail_list] = matches unless matches.empty?
+        end
+      end
+    end
+
     response
   end
 end

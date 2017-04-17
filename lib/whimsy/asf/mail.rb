@@ -128,7 +128,7 @@ module ASF
     end
 
     def all_mail
-      active_emails + obsolete_emails
+      (active_emails + obsolete_emails + ["#{id}@apache.org"]).uniq
     end
   end
 

@@ -75,6 +75,22 @@ class Person < React
           _PersonEmail person: self
         end
 
+        # Moderates
+        if @committer.moderates
+          _tr do
+            _td 'Moderates'
+            _td do
+              _ul @committer.moderates.keys() do |list|
+                _li do
+                  _span list
+                  _span " as "
+                  _span @committer.moderates[list].join(', ')
+                end
+              end
+            end
+          end
+        end
+
         # PGP keys
         if @committer.pgp
           _PersonPgpKeys person: self

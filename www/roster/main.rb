@@ -23,6 +23,8 @@ require_relative 'models'
 
 ASF::Mail.configure
 
+LIST_MODS = '/srv/subscriptions/list-mods'
+
 get '/' do
   if env['REQUEST_URI'].end_with? '/'
     @committers = ASF::Person.list

@@ -13,10 +13,20 @@ class Committee
       list =~ /^#{pmc.mail_list}\b/
     end
 
-    unless
-      pmc.roster.include? env.user or
-      ASF::Person.find(env.user).asf_member?
-    then
+    moderators = nil
+
+    if pmc.roster.include? env.user or ASF::Person.find(env.user).asf_member?
+      if File.exist? LIST_MODS
+         mail_list = "#{pmc.mail_list}.apache.org"
+         moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
+           list = stanza.match(/(\w+\.apache\.org)\/(.*?)\//)
+           next unless list[1] == mail_list
+ 
+           ["#{list[2]}@#{list[1]}", stanza.scan(/^(.*@.*)/).flatten.sort]
+        end
+        moderators = moderators.compact.to_h
+      end
+    else
       lists = lists.select {|list, mode| mode == 'public'}
     end
 
@@ -33,7 +43,8 @@ class Committee
       committers: Hash[committers.map {|person| [person.id, person.cn]}],
       asfmembers: (ASF.members & people).map(&:id),
       roster: pmc.roster,
-      mail: Hash[lists.sort]
+      mail: Hash[lists.sort],
+      moderators: moderators,
     }
 
     response

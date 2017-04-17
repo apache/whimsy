@@ -44,13 +44,38 @@ class PMC < React
     _PMCMembers auth: auth, committee: @committee
     _PMCCommitters auth: auth, committee: @committee
 
-    _h2.mail! 'Mail lists'
-    _ul do
-      for mail_name in @committee.mail
-        parsed = mail_name.match(/^(.*?)-(.*)/)
-        _li do
-          _a mail_name, href: 'https://lists.apache.org/list.html?' +
-            "#{parsed[2]}@#{parsed[1]}.apache.org"
+    # mailing lists
+    if @committee.moderators
+      _h2.mail! 'Mail list moderators'
+      _table do
+        _thead do
+          _tr do
+            _th 'list name'
+            _th 'moderators'
+          end
+        end
+        _tbody do
+          for list_name in @committee.moderators
+            _tr do
+              _td do
+                _a list_name, href: 'https://lists.apache.org/list.html?' +
+                  list_name
+              end
+              _td @committee.moderators[list_name].join(', ')
+            end
+          end
+        end
+      end
+    else
+      _h2.mail! 'Mail lists'
+      _ul do
+        for mail_name in @committee.mail
+          parsed = mail_name.match(/^(.*?)-(.*)/)
+          list_name = "#{parsed[2]}@#{parsed[1]}.apache.org"
+          _li do
+            _a list_name, href: 'https://lists.apache.org/list.html?' +
+              list_name
+          end
         end
       end
     end

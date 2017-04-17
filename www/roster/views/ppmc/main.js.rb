@@ -31,13 +31,37 @@ class PPMC < React
     _PPMCMembers auth: auth, ppmc: @ppmc
 
     # mailing lists
-    _h2.mail! 'Mail lists'
-    _ul do
-      for mail_name in @ppmc.mail
-        parsed = mail_name.match(/^(.*?)-(.*)/)
-        _li do
-          _a mail_name, href: 'https://lists.apache.org/list.html?' +
-            "#{parsed[2]}@#{parsed[1]}.apache.org"
+    if @ppmc.moderators
+      _h2.mail! 'Mail list moderators'
+      _table do
+        _thead do
+          _tr do
+            _th 'list name'
+            _th 'moderators'
+          end
+        end
+        _tbody do
+          for list_name in @ppmc.moderators
+            _tr do
+              _td do
+                _a list_name, href: 'https://lists.apache.org/list.html?' +
+                  list_name
+              end
+              _td @ppmc.moderators[list_name].join(', ')
+            end
+          end
+        end
+      end
+    else
+      _h2.mail! 'Mail lists'
+      _ul do
+        for mail_name in @ppmc.mail
+          parsed = mail_name.match(/^(.*?)-(.*)/)
+          mail_list = "#{parsed[2]}@#{parsed[1]}.apache.org"
+          _li do
+            _a mail_list, href: 'https://lists.apache.org/list.html?' +
+              mail_list
+          end
         end
       end
     end
