@@ -123,7 +123,7 @@ class Committer
 
       if File.exist? LIST_MODS
         moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
-          list = stanza.match(/(\w+\.apache\.org)\/(.*?)\//)
+          list = stanza.match(/(\w*\.?apache\.org)\/(.*?)\//)
 
           ["#{list[2]}@#{list[1]}", stanza.scan(/^(.*@.*)/).flatten]
         end

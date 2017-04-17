@@ -14,7 +14,8 @@ class PPMC
          mail_list = ppmc.mail_list
          moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
            list = stanza.match(/(\w+)\.apache\.org\/(.*?)\//)
-           next unless list[1] == mail_list or list[2] =~ /^#{mail_list}-/
+           next unless list and 
+             (list[1] == mail_list or list[2] =~ /^#{mail_list}-/)
  
            ["#{list[2]}@#{list[1]}.apache.org", 
              stanza.scan(/^(.*@.*)/).flatten.sort]

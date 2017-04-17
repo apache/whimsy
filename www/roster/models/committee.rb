@@ -20,7 +20,7 @@ class Committee
          mail_list = "#{pmc.mail_list}.apache.org"
          moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
            list = stanza.match(/(\w+\.apache\.org)\/(.*?)\//)
-           next unless list[1] == mail_list
+           next unless list and list[1] == mail_list
  
            ["#{list[2]}@#{list[1]}", stanza.scan(/^(.*@.*)/).flatten.sort]
         end
