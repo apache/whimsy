@@ -22,7 +22,7 @@ if env.password
     who = people.map {|person| person.public_name}.join(' and ')
   else
     who = people[0..-2].map {|person| person.id}.join(', ') + 
-      ', and ' + person.last.id
+      ', and ' + people.last.id
   end
 
   # draft email
