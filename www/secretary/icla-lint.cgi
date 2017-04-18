@@ -115,6 +115,8 @@ _html do
 
       elsif comment == 'Signed CLA'
         issue, note = 'missing', 'missing stub/dir name'
+      elsif comment.start_with? 'disabled;' and ASF::Person.new(id).banned?
+        # no issue
       else
         issue, note = 'mismatch', "doesn't match pattern"
       end
