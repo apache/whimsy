@@ -82,8 +82,8 @@ def public_json_output_file(info, file)
 end
 
 def sendMail(subject, body, to='Notification List <notifications@whimsical.apache.org>')
-  if `hostname`.include? 'vm2'
-    Wunderbar.info "Detected vm2, not sending mail: #{subject}"
+  if `hostname`.include? 'vm4'
+    Wunderbar.info "Detected vm4, not sending mail: #{subject}"
     return
   end
   begin
