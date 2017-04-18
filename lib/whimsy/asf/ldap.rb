@@ -488,7 +488,7 @@ module ASF
     # return person only if it actually exits
     def self.[] name
       person = super
-      person.attrs['dn'] ? nil : person
+      person.attrs['dn'] ? person : nil
     end
 
     def attrs
