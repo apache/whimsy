@@ -77,7 +77,7 @@ _html do
           _pre request
         end
         
-        SUBREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/subreq'
+        SUBREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/subreq/'
         
         # add file to svn (--revision 0 means it won't overwrite an existing file)
         _.system ['svnmucc',
