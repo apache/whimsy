@@ -5,6 +5,8 @@ require 'wunderbar/bootstrap'
 require 'mail'
 require 'whimsy/asf'
 require 'time'
+require 'tmpdir'
+require 'escape'
 
 $SAFE = 1
 
@@ -79,22 +81,45 @@ _html do
         
         SUBREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/subreq/'
         
-        # add file to svn (--revision 0 means it won't overwrite an existing file)
-        _.system ['svnmucc',
-          ['--revision', '0'],
-          '--message', "#{@list}@ += #{$USER}",
-          '--with-revprop', "whimsy:author=#{$USER}",
-          ['--no-auth-cache', '--non-interactive'],
-          ['--root-url', SUBREQ],
-          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
-          '--', 'put', '-', fn],
-          stdin: request+ "\n" # seems to need extra EOL
+        rc = 999
+
+        Dir.mktmpdir do |tmpdir|
+          tmpdir.untaint
+
+          _.system ['svn', 'checkout', SUBREQ, tmpdir,
+            ['--no-auth-cache', '--non-interactive'],
+            (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)]
+
+          Dir.chdir tmpdir do
+
+            if File.exist? fn
+              File.write(fn, request + "\n")
+              _.system ['svn', 'st']
+            else
+              File.write(fn, request + "\n")
+              _.system ['svn', 'add', fn]
+            end
+          
+            rc = _.system ['svn', 'commit', fn,
+              '--message', "#{@list}@ += #{$USER}",
+              ['--no-auth-cache', '--non-interactive'],
+              (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)]
+          end
+        end
         
-        _div.alert.alert_success role: 'alert' do
-          _p do
-            _span.strong 'Request successfully submitted'
-            _ '(unless indicated otherwise above). You will be subscribed within the hour.'
-          end          
+        if rc == 0
+          _div.alert.alert_success role: 'alert' do
+            _p do
+              _span.strong 'Request successfully submitted'
+              _ 'You will be subscribed within the hour.'
+            end          
+          end
+        else
+          _div.alert.alert_danger role: 'alert' do
+            _p do
+              _span.strong 'Request Failed, see above for details'
+            end          
+          end
         end
       end
       unless _.post?
