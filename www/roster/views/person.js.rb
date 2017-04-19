@@ -76,7 +76,7 @@ class Person < React
         end
 
         # Moderates
-        if @committer.moderates
+        if @committer.moderates and @committer.moderates.keys().length > 0
           _tr do
             _td 'Moderates'
             _td do
