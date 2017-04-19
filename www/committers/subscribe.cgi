@@ -54,7 +54,51 @@ _html do
         end
       end
       
+      _form method: 'post' do
+        _fieldset do
+          _legend 'ASF Mailing List Self-subscription'                
+          _label 'Subscribe'
+          _select name: 'addr' do
+            addrs.each do |addr|
+              _option addr
+            end
+          end
+          
+          _ 'to'
+          _select name: 'list' do
+            seen = Hash.new
+            lists.each do |list|
+              ln = list.split('-').first
+              ln = 'empire-db' if ln == 'empire'
+              seen[list] = 0
+              seen[list] = 1 if pmcs.include? ln
+              seen[list] = 2 if current.include? ln
+              seen[list] = 2 if (ln == 'incubator') \
+              && (current.include? list.split('-')[1])
+              seen[list] = 3 if retired.include? ln
+              seen[list] = 3 if (ln == 'incubator') \
+              && (retired.include? list.split('-')[1])
+            end
+            _option '--- Foundation lists ---', disabled: 'disabled'
+            lists.find_all { |list| seen[list] == 0 }.each do |list|
+              _option list
+            end
+            _option '--- Top-Level Projects ---', disabled: 'disabled'
+            lists.find_all { |list| seen[list] == 1 }.each do |list|
+              _option list
+            end
+            _option '--- Podlings ---', disabled: 'disabled'
+            lists.find_all { |list| seen[list] == 2 }.each do |list|
+              _option list
+            end
+          end
+          _input type: 'submit', value: 'Submit Request'
+        end
+      end
+
       if _.post?
+        _hr
+
         unless addrs.include? @addr and lists.include? @list
           _h2_.text_danger {_span.label.label_danger 'Invalid Input'} 
           _p 'Both email and list to subscribe to are required!'
@@ -120,49 +164,6 @@ _html do
               _span.strong 'Request Failed, see above for details'
             end          
           end
-        end
-      end
-      unless _.post?
-      end
-      _form method: 'post' do
-        _fieldset do
-          _legend 'ASF Mailing List Self-subscription'                
-          _label 'Subscribe'
-          _select name: 'addr' do
-            addrs.each do |addr|
-              _option addr
-            end
-          end
-          
-          _ 'to'
-          _select name: 'list' do
-            seen = Hash.new
-            lists.each do |list|
-              ln = list.split('-').first
-              ln = 'empire-db' if ln == 'empire'
-              seen[list] = 0
-              seen[list] = 1 if pmcs.include? ln
-              seen[list] = 2 if current.include? ln
-              seen[list] = 2 if (ln == 'incubator') \
-              && (current.include? list.split('-')[1])
-              seen[list] = 3 if retired.include? ln
-              seen[list] = 3 if (ln == 'incubator') \
-              && (retired.include? list.split('-')[1])
-            end
-            _option '--- Foundation lists ---', disabled: 'disabled'
-            lists.find_all { |list| seen[list] == 0 }.each do |list|
-              _option list
-            end
-            _option '--- Top-Level Projects ---', disabled: 'disabled'
-            lists.find_all { |list| seen[list] == 1 }.each do |list|
-              _option list
-            end
-            _option '--- Podlings ---', disabled: 'disabled'
-            lists.find_all { |list| seen[list] == 2 }.each do |list|
-              _option list
-            end
-          end
-          _input type: 'submit', value: 'Submit Request'
         end
       end
     end
