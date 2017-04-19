@@ -37,6 +37,8 @@ addrs = (["#{$USER}@apache.org"] + user.mail + user.alt_email)
 _html do
   # better system output styling (errors in red)
   _style :system
+  _script src: 'assets/bootstrap-select.js'
+  _link rel: 'stylesheet', href: 'assets/bootstrap-select.css'
   _body? do
     _whimsy_header 'ASF Mailing List Self-subscription'
     _whimsy_content do
@@ -65,7 +67,7 @@ _html do
           end
           
           _ 'to'
-          _select name: 'list' do
+          _select name: 'list', data_live_search: 'true' do
             seen = Hash.new
             lists.each do |list|
               ln = list.split('-').first
@@ -79,17 +81,23 @@ _html do
               seen[list] = 3 if (ln == 'incubator') \
               && (retired.include? list.split('-')[1])
             end
-            _option '--- Foundation lists ---', disabled: 'disabled'
-            lists.find_all { |list| seen[list] == 0 }.each do |list|
-              _option list
+
+            _optgroup label: 'Foundation lists' do
+              lists.find_all { |list| seen[list] == 0 }.each do |list|
+                _option list
+              end
             end
-            _option '--- Top-Level Projects ---', disabled: 'disabled'
-            lists.find_all { |list| seen[list] == 1 }.each do |list|
-              _option list
+
+            _optgroup label: 'Top-Level Projects' do
+              lists.find_all { |list| seen[list] == 1 }.each do |list|
+                _option list
+              end
             end
-            _option '--- Podlings ---', disabled: 'disabled'
-            lists.find_all { |list| seen[list] == 2 }.each do |list|
-              _option list
+
+            _optgroup label: 'Podlings' do
+              lists.find_all { |list| seen[list] == 2 }.each do |list|
+                _option list
+              end
             end
           end
           _input type: 'submit', value: 'Submit Request'
@@ -167,5 +175,9 @@ _html do
         end
       end
     end
+
+    _script %{
+      $('select').selectpicker({});
+    }
   end
 end
