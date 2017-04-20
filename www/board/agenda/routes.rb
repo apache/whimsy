@@ -172,6 +172,17 @@ get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
   begin
     _json do
       last_modified Agenda[file][:mtime]
+      minutes = AGENDA_WORK + '/' + file.sub('_agenda_', '_minutes_').
+        sub('.txt', '.yml')
+
+      # merge in minutes, if available
+      if File.exists? minutes
+        minutes = YAML.load_file(minutes)
+        Agenda[file][:parsed].each do |item|
+          item[:minutes] = minutes[item['title']] if minutes[item['title']]
+        end
+      end
+
       Agenda[file][:parsed]
     end
   ensure
