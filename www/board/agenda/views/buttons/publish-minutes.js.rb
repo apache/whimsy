@@ -69,7 +69,7 @@ class PublishMinutes < React
 
     agenda.each do |item|
       if item.attach =~ /^7\w$/
-        if item.minutes and item.minutes.include? 'tabled'
+        if item.minutes and item.minutes.downcase().include? 'tabled'
           summary += "    * #{item.title.trim()} (tabled)\n"
         else
           summary += "    * #{item.title.trim()}\n"
