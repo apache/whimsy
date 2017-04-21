@@ -1,15 +1,27 @@
 source 'https://rubygems.org'
 
-root = '../../../..'
+root = '../../..'
 version_file = File.expand_path("#{root}/asf.version", __FILE__)
 if File.exist? version_file
   # for deployment and local testing
   asf_version = File.read(version_file).chomp
   gem 'whimsy-asf', asf_version, path: File.expand_path(root, __FILE__)
+else
+  # for docker purposes (atleast for now)
+  gem 'whimsy-asf'
 end
 
-gem 'mime-types', ('~> 2.99' if RUBY_VERSION < '2')
-
-gem 'wunderbar'
-gem 'escape'
 gem 'mail'
+gem 'rake'
+gem 'zip'
+gem 'sinatra', '~> 1.4'
+gem 'sanitize'
+gem 'wunderbar', '~> 1.0.27'
+gem 'ruby2js', '~> 2.0.12'
+gem 'execjs'
+gem 'listen', ('~> 3.0.7' if RUBY_VERSION =~ /^2\.[01]/)
+gem 'escape'
+
+group :demo do
+  gem 'puma'
+end
