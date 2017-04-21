@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-root = '../../..'
+root = '../../../..'
 version_file = File.expand_path("#{root}/asf.version", __FILE__)
 if File.exist? version_file
   # for deployment and local testing
