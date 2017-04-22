@@ -30,7 +30,6 @@ _html do
           end
         end
       end
-      ct, ticket, hotel, travel = 0, 0, 0, 0
       _div.row do
       _table.table.table_hover do
         _thead_ do
@@ -45,21 +44,11 @@ _html do
         end
         _tbody do
           conflist.each do | conf |
-            ct += 1
             _tr_ do
               _td do 
                 _a conf['name'], href: conf['website']
               end
               if conf['speaker_kit'] then
-                if conf['speaker_kit']['ticket_included'] then
-                  ticket += 1
-                end
-                if conf['speaker_kit']['hotel_included'] then
-                  hotel += 1
-                end
-                if conf['speaker_kit']['travel_included'] then
-                  travel += 1
-                end
                 _td conf['speaker_kit']['ticket_included']
                 _td conf['speaker_kit']['hotel_included']
                 _td conf['speaker_kit']['travel_included']              
@@ -82,9 +71,20 @@ _html do
         end
       end
     end
+    counts = %w(ticket_included hotel_included travel_included).map do |field|
+    matches = conflist.select do |conf|
+        conf['speaker_kit'] && conf['speaker_kit'][field]
+      end
+
+      [field, matches.count]
+    end
+    counts = counts.to_h
     _p.count do 
-      _b "Out of total: #{ct} conferences"
-      _ ", ones that cover ticket: #{ticket}, hotel: #{hotel}, travel: #{travel}."
+      _b "Out of total: #{conflist.count} conferences"
+      _ ", number that cover:"
+      counts.each do |s, v|
+        _ "#{s}: #{v}"
+      end
     end
     
     _script %{
