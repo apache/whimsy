@@ -20,9 +20,9 @@ and crazy ideas alike.  Comments appreciated.
 - [ ] Share common code for places where we jump thru hoops or regexes
       to account for historical or file formats or odd PMC names.
       
-      - foundation/board/scripts/collate_minutes.rb
-      - lib/whimsy/asf/committee.rb
-      - lib/whimsy/asf/site.rb
+    - [tools/collate_minutes.rb](tools/collate_minutes.rb)
+    - [lib/whimsy/asf/committee.rb](lib/whimsy/asf/committee.rb)
+    - [lib/whimsy/asf/site.rb](lib/whimsy/asf/site.rb)
 
 ## Crazy Ideas :tada:
 
