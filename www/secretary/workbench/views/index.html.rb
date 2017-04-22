@@ -1,4 +1,10 @@
 _html do
+  if ENV["RACK_BASE_URI"] + '/' == _.env['REQUEST_URI']
+    # not sure why Passenger/rack is eating the trailing slash here.
+    # add it back in.
+    _base href: _.env['REQUEST_URI']
+  end
+
   _title 'ASF Secretary Mail'
   _link rel: 'stylesheet', type: 'text/css', href: "secmail.css?#{@cssmtime}"
 
