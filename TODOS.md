@@ -9,14 +9,6 @@ and crazy ideas alike.  Comments appreciated.
 
 ## Core Improvements :round_pushpin:
 
-- [ ]  Define/document strategy for maintaining checkout data (mostly SVN) which is
-   needed by multiple applications.  For production, that will mean deployment
-   on things like credentials for the `whimsysvn` user.  For local testing
-   that likely will mean mounting local directories by the VM.
-
-- [ ] Deploy [puma](http://puma.io/) (https://forge.puppetlabs.com/deversus/puma), and merge the
-      [board agenda](https://github.com/rubys/whimsy-agenda) tool into this repo.
-
 - [ ] Define core ASF style & header information in the model and 
       implement in various applications.  [WHIMSY-81](https://issues.apache.org/jira/browse/WHIMSY-81)
 
