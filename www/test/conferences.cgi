@@ -6,6 +6,7 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 require 'whimsy/asf/themes'
+require 'date'
 
 PAGETITLE = 'FOSS Conference Listings'
 
@@ -21,10 +22,10 @@ _html do
             _div.panel_heading {_h3.panel_title 'FOSS Conference Listings'}
             _div.panel_body do
               _ 'Listing various self-reported FOSS Conferences and their claimed speaker support status.  Data from '
-              _a 'afilina/dev-community-data', href: 'https://github.com/afilina/dev-community-data/'
+              _a_ 'afilina/dev-community-data', href: 'https://github.com/afilina/dev-community-data/'
               _ ', calendar website at '
-              _a 'ConFoo Community', href: 'https://community.confoo.ca/'
-              _ '.  Click to sort table.'
+              _a_ 'ConFoo Community', href: 'https://community.confoo.ca/'
+              _ '.  Click to sort table.  "False" propercase entries are when conference doesn\'t report any speaker reimbursement details.' 
             end
           end
         end
@@ -67,7 +68,12 @@ _html do
                 _td 'False'
                 _td 'False'
               end
-              _td conf['last_event']
+              if conf['events'] then
+                laste = conf['events'].max_by {|e| Date.parse(e['event_end'])}
+                _td laste['event_end']
+              else
+                _td conf['last_event']
+              end
               _td do 
                 _a conf['twitter'], href: conf['twitter']
               end
