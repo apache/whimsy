@@ -25,6 +25,13 @@ and crazy ideas alike.  Comments appreciated.
 
 - [ ] Implement custom server error messages.
 
+- [ ] Share common code for places where we jump thru hoops or regexes
+      to account for historical or file formats or odd PMC names.
+      
+      - foundation/board/scripts/collate_minutes.rb
+      - lib/whimsy/asf/committee.rb
+      - lib/whimsy/asf/site.rb
+
 ## Crazy Ideas :tada:
 
 - [ ] Create templates for new applications and normalize behaviors of 
