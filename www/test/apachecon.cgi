@@ -19,7 +19,9 @@ _html do
   _body? do
     _whimsy_header PAGETITLE
     ac_dir = ASF::SVN['private/foundation/ApacheCon']
-    csv = CSV.read("#{ac_dir}/apacheconhistory.csv", headers:true)
+    history = File.read("#{ac_dir}/apacheconhistory.csv")
+    history.sub! "\uFEFF", '' # remove Zero Width No-Break Space
+    csv = CSV.parse(history, headers:true)
     _whimsy_content do
       _p 'Past ApacheCons include:'
       _ul do
