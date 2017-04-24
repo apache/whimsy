@@ -72,9 +72,17 @@ committees.sort_by {|committee| committee.name}.each do |committee|
       end
     end
 
-    data[:license] = uri + a['href'].strip if a.text.downcase == 'license'
-    data[:thanks] = uri + a['href'].strip if a.text.downcase == 'thanks'
-    data[:security] = uri + a['href'].strip if a.text.downcase == 'security'
+    if a.text.downcase.strip =~ /licenses?/
+      data[:license] = uri + a['href'].strip 
+    end
+
+    if a.text.downcase.strip == 'thanks'
+      data[:thanks] = uri + a['href'].strip 
+    end
+
+    if a.text.downcase.strip == 'security'
+      data[:security] = uri + a['href'].strip 
+    end
 
     if %w(sponsorship donate).include? a.text.downcase
       data[:sponsorship] = uri + a['href'].strip
