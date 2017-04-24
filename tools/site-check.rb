@@ -84,7 +84,7 @@ committees.sort_by {|committee| committee.name}.each do |committee|
       data[:security] = uri + a['href'].strip 
     end
 
-    if %w(sponsorship donate).include? a.text.downcase
+    if %w(sponsorship donate).concat(['sponsor apache']).include? a.text.downcase
       data[:sponsorship] = uri + a['href'].strip
     end
   end
