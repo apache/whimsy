@@ -72,7 +72,7 @@ committees.sort_by {|committee| committee.name}.each do |committee|
       end
     end
 
-    if a.text.downcase.strip =~ /licenses?/
+    if a.text.downcase.strip =~ /licenses?/ and a['href'].include? 'apache.org'
       data[:license] = uri + a['href'].strip 
     end
 
