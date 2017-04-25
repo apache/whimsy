@@ -77,7 +77,7 @@ def parse(site, name)
       data[:security] = uri + a['href'].strip 
     end
 
-    if %w(sponsorship donate).concat(['sponsor apache']).include? a_text
+    if %w(sponsorship donate).concat(['sponsor apache','sponsoring apache']).include? a_text
       data[:sponsorship] = uri + a['href'].strip
     end
   end
