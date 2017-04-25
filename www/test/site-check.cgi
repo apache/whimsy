@@ -11,6 +11,30 @@ PAGETITLE = 'Apache TLP Website Link Checks'
 cols = %w( events foundation license sponsorship security thanks )
 DATAURI = 'https://whimsy.apache.org/public/site-scan.json'
 
+def analyze(sites)
+    counts = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
+    { 
+      'events' => %r{apache.org/events/current-event}i,
+      'license' => %r{apache.org/license}i,
+      'sponsorship' => %r{apache.org/foundation/sponsorship}i,
+      'security' => %r{apache.org/security}i,
+      'thanks' => %r{apache.org/foundation/thanks}i
+    }.each do |nam, pat|
+      counts[nam]['text-success'] = sites.select{ |k, site| site[nam] =~ pat  }.count
+      counts[nam]['text-warning'] = 0 # Reorder output 
+      counts[nam]['text-danger'] = sites.select{ |k, site| site[nam].nil? }.count
+      counts[nam]['text-warning'] = sites.size - counts[nam]['text-success'] - counts[nam]['text-danger']
+    end
+    
+    [
+      counts, {
+      'text-success' => 'Sites with links to primary ASF page',
+      'text-warning' => 'Sites with link, but not ASF one',
+      'text-danger' => 'Sites with no link for this topic'
+      }
+    ]
+end
+
 _html do
   _head do
     _style %{
@@ -30,28 +54,41 @@ _html do
       crawl_time = response['last-modified']
       sites = JSON.parse(response.body)
     end
-
+    analysis = analyze(sites)
+    
     _whimsy_header PAGETITLE
 
     _whimsy_content do
       _div.panel.panel_default do
         _div!.panel_heading 'Common Links Found On TLP Sites'
-        _div!.panel_body do
+        _div.panel_body do
           _ 'Current (beta) status of Apache PMC top level websites vis-a-vis '
           _a 'required links', href: 'https://www.apache.org/foundation/marks/pmcs#navigation'
-          _ ', generated statically.  '
+          _ '.  '
           _a 'See crawler code', href: 'https://whimsy.apache.org/tools/site-check.rb'
           _ ' and '
           _a 'raw JSON data', href: DATAURI         
-          _ ".  Last crawl time: #{crawl_time}."
+          _ ".  Last crawl time: #{crawl_time} over #{sites.size} sites."
+          _br
+          _ul do
+            analysis[1].each do |cls, desc|
+              _li desc, class: cls
+            end
+          end  
         end
       end
       _table.table.table_condensed.table_striped do
         _thead do  
           _tr do
             _th! 'Project', data_sort: 'string-ins'
-            cols.each do |c|
-              _th! c.capitalize, data_sort: 'string'
+            cols.each do |col|
+              _th! data_sort: 'string' do 
+                _ col.capitalize
+                analysis[0][col].each do |cls, val|
+                  _ ' '
+                  _span.badge val, class: cls
+                end
+              end
             end
           end
         end
