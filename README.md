@@ -3,7 +3,7 @@ Apache Whimsy Project Overview
 
 Apache Whimsy is a collection of useful organizational tools used by 
 the ASF and Apache committers to access and manipulate data about 
-Apache people, projects, and more.  Whimsy is both an Apache PMC, 
+Apache people, projects, and processes.  Whimsy is both an [Apache PMC](https://whimsical.apache.org/), 
 this codebase, and the live deployed instance of https://whimsy.apache.org/.
 
 The ASF's Whimsy instance hosts static content, repository checkouts/clones, CGI scripts, Rack
@@ -11,7 +11,7 @@ applications, tools, and cron jobs.  Note: features accessing private
 ASF data are restricted to committers, Members, or Officers of the ASF. 
 
 Every committer on the Whimsy PMC can both deploy changes and new
-applications to https://whimsy.apache.org/. 
+applications to https://whimsy.apache.org/ which is auto-deployed every 30 minutes. 
 
 How Tos and Get The Code
 ===============
@@ -28,7 +28,7 @@ and now also mirrored for Apache committers at:
  * [Configuration Pointers](./CONFIGURE.md)
  * [Monitoring How To](./www/status/README.md) - [Live Whimsy Status](https://whimsy.apache.org/status/)
  * [How To Setup on Mac OSX](./MACOSX.md)
- * [Dependency Listing](./SOFTWARE.md)
+ * [Dependency Listing](./CONFIGURE.md#Dependencies)
  * [Todos](TODOS.md).
 
 Whimsy Architecture - Live Instance

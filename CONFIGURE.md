@@ -2,7 +2,22 @@
 
 As a collection of tools that directly access organizational data, 
 there are a number of places that you will need to configure to 
-have most of the code work as expected.
+have most of the code work as expected.  Whimsy Ruby code can 
+run either in a local environment or with a webserver.
+
+## Dependencies
+
+- Compilers & Servers
+  - Ruby 2.x.x (Production version: 2.3.)
+  - Apache HTTP Web Server 2.x
+  - Rack
+  - Phusion Passenger
+  - Puppet (for our [production](DEPLOYMENT.md) deployment)
+- A variety of Ruby gems
+  - [Wunderbar](https://github.com/rubys/wunderbar) - HTML Generator and CGI application support
+  - [Ruby-ldap](https://github.com/bearded/ruby-ldap) - LDAP for Ruby
+  - [nokogiri](https://github.com/sparklemotion/nokogiri) - HTML parser for Ruby
+  - Full gem dependencies in `asf.gemspec`
 
 ## Local Clients / Development
 
