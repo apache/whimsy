@@ -28,22 +28,13 @@ def fetch(uri)
   end
 end
 
-# scan all committees, including non-pmcs
-ASF::Committee.load_committee_info
-committees = (ASF::Committee.list + ASF::Committee.nonpmcs).uniq
-
-results = {}
-
-committees.sort_by {|committee| committee.name}.each do |committee|
-  next unless committee.site
-
-  # fetch, parse committee site
-  uri, request, response = fetch(committee.site)
+def parse(site, name)
+  uri, request, response = fetch(site)
   doc = Nokogiri::HTML(response.body)
 
   # default data
   data = {
-    display_name: committee.display_name,
+    display_name: name,
     uri: uri.to_s,
     events: nil,
     foundation: nil,
@@ -88,8 +79,25 @@ committees.sort_by {|committee| committee.name}.each do |committee|
       data[:sponsorship] = uri + a['href'].strip
     end
   end
-
-  results[committee.name] = data
+  return data
 end
 
+results = {}
+
+if ARGV.length == 2
+  site = ARGV.shift
+  name = ARGV.shift
+  results[name] = parse(site, name)
+else
+  # scan all committees, including non-pmcs
+  ASF::Committee.load_committee_info
+  committees = (ASF::Committee.list + ASF::Committee.nonpmcs).uniq
+  
+  committees.sort_by {|committee| committee.name}.each do |committee|
+    next unless committee.site
+  
+    # fetch, parse committee site
+    results[committee.name] = parse(committee.site, committee.display_name)
+  end
+end
 puts JSON.pretty_generate(results)
