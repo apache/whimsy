@@ -45,34 +45,33 @@ _html do
           _a 'raw JSON data', href: DATAURI         
           _ ".  Last crawl time: #{crawl_time}."
         end
-
-        _table.table.table_condensed.table_striped do
-          _thead do  
-            _tr do
-              _th! 'Project', data_sort: 'string'
-              cols.each do |c|
-                _th! c.capitalize, data_sort: 'string'
-              end
+      end
+      _table.table.table_condensed.table_striped do
+        _thead do  
+          _tr do
+            _th! 'Project', data_sort: 'string-ins'
+            cols.each do |c|
+              _th! c.capitalize, data_sort: 'string'
             end
           end
+        end
 
-          _tbody do
-            sites.each do |n, links|
-              _tr do
-                _td do 
-                  _a! "#{links['display_name']}", href: links['uri']
-                end
-                cols.each do |c|
-                  if not links[c]
-                    _td ''
-                  elsif links[c] =~ /^http/
-                    _td do
-                      _a links[c].sub(/https?:\/\//, '').
-                        sub(/(www\.)?apache\.org/i, 'a.o'), href: links[c]
-                    end
-                  else
-                    _td links[c]
+        _tbody do
+          sites.each do |n, links|
+            _tr do
+              _td do 
+                _a! "#{links['display_name']}", href: links['uri']
+              end
+              cols.each do |c|
+                if not links[c]
+                  _td ''
+                elsif links[c] =~ /^http/
+                  _td do
+                    _a links[c].sub(/https?:\/\//, '').
+                      sub(/(www\.)?apache\.org/i, 'a.o'), href: links[c]
                   end
+                else
+                  _td links[c]
                 end
               end
             end
