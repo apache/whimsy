@@ -26,7 +26,8 @@ _html do
           _ ', generated statically.'
           _a! 'See crawler code', href: 'https://whimsy.apache.org/tools/site-check.rb'
           _ ', and '
-          _a! 'raw JSON data.', href: DATAURI  
+          _a! 'raw JSON data', href: DATAURI         
+          _ ", last crawl time: TBD"
         end
         _table.table.table_condensed.table_striped do
           _thead do  
