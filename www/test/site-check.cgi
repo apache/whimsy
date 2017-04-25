@@ -84,6 +84,7 @@ _html do
             cols.each do |col|
               _th! data_sort: 'string' do 
                 _ col.capitalize
+                _br
                 analysis[0][col].each do |cls, val|
                   _ ' '
                   _span.label val, class: cls
