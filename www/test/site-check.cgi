@@ -20,7 +20,7 @@ _html do
 
   _body? do
 
-    local_copy = File.expand_path('../public/site-check.json').untaint
+    local_copy = File.expand_path('../public/site-scan.json').untaint
 
     if File.exist? local_copy
       crawl_time = File.mtime(local_copy).rfc2822
