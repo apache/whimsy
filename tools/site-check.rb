@@ -63,19 +63,21 @@ def parse(site, name)
       end
     end
 
-    if a.text.downcase.strip =~ /licenses?/ and a['href'].include? 'apache.org'
+    a_text = a.text.downcase.strip
+
+    if a_text =~ /licenses?/ and a['href'].include? 'apache.org'
       data[:license] = uri + a['href'].strip 
     end
 
-    if a.text.downcase.strip == 'thanks'
+    if a_text == 'thanks'
       data[:thanks] = uri + a['href'].strip 
     end
 
-    if a.text.downcase.strip == 'security'
+    if a_text == 'security'
       data[:security] = uri + a['href'].strip 
     end
 
-    if %w(sponsorship donate).concat(['sponsor apache']).include? a.text.downcase
+    if %w(sponsorship donate).concat(['sponsor apache']).include? a_text
       data[:sponsorship] = uri + a['href'].strip
     end
   end
