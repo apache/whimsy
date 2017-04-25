@@ -5,6 +5,15 @@ The contents of this repository are automatically deployed to the production
 https://whimsy.apache.org/ VM every 30 minutes - so be sure to test 
 your changes before pushing to master.
 
+Configuration Locations
+----
+Application developers may need to know where different things are configured:
+
+- Most **httpd config** is in the puppet definition whimsy-vm*.apache.org.yaml (below)
+- **SVN / git** updaters are in [repository.yml](repository.yml)
+- **Public JSON** generation comes from tools and controlled by whimsy_server/manifests/cronjobs.pp
+- **LDAP** configured in whimsy-vm*.apache.org.yaml
+
 Production Configuration
 ==========
 
@@ -15,11 +24,11 @@ that management of Whimsy is a PMC responsibility.
 <a name="puppetnode"></a>
 The **puppet definition** is contained in the following files:
 
- * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm3.apache.org.yaml
+ * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm3.apache.org.yaml (Includes modules, software, vhosts, ldap realms, and httpd.conf)
 
- * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/init.pp
+ * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/init.pp (Defines various tools and directories used in some tools)
 
- * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/cronjobs.pp
+ * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/cronjobs.pp (Cronjobs control when /public/*.json is built and code and mail updates)
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/procmail.pp
 
@@ -37,15 +46,6 @@ Before pushing any changes here, understand the Apache Infra puppet workflow and
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/vhosts_whimsy/README.md
    This details the changes to default puppet we use for Whimsy.
-
-Configuration Locations
-----
-Application developers may need to know where different things are configured:
-
-- Much of the server config is in the puppet definition whimsy-vm3.apache.org.yaml
-- SVN updaters are in [repository.yml](repository.yml)
-- Public JSON generation comes from tools and controlled by whimsy_server/manifests/cronjobs.pp
-- 
 
 Manual Steps
 ------------

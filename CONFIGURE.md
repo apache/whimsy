@@ -23,9 +23,9 @@ run either in a local environment or with a webserver.
 
 Whimsy can be run on a client or in a local container for development use.
 
-* **App-wide default settings** are stored in a YAML formatted 
+* **App-wide default settings** are stored in a local YAML formatted 
   `~/.whimsy` file, notably including an `svn` pointer to where various 
-  local repo checkouts live as well as `sendmail` config (if used).  
+  local repo checkouts live as well as `sendmail` config (if used). 
   See also `lib/whimsy/asf/config.rb`
   
 * **LDAP configuration** will be stored in `/etc/(ldap|openldap)/ldap.conf`
@@ -39,9 +39,9 @@ Whimsy can be run on a client or in a local container for development use.
 * **Log files and debugging** are typically found in `/var/log/apache2/whimsy_error.log` 
   and `/var/log/apache2/error_log`
   
-* **Development setup instructions** are in [DEVELOPMENT.md](DEVELOPMENT.md) and [MACOSX.md](DEVELOPMENT.md).
+* **Development setup instructions** are in [DEVELOPMENT.md](DEVELOPMENT.md) and [MACOSX.md](MACOSX.md).
 
-* **whimsy-asf Gem** is a set of the core whimsy model as a normal Gem: [asf.gemspec](asf.gemspec)
+* **whimsy-asf Gem** is a set of the core lib/whimsy/asf model as a normal Gem: [asf.gemspec](asf.gemspec)
   
 * **Tool-specific configurations** can be found in config/ directory  
 
@@ -53,4 +53,4 @@ Whimsy code.  A number of configuration steps ensure the production instance
 has access to LDAP, SVN repositories (some read/write), local mail
 sending and receiving/subscriptions.
 
-**Log files** are LDAP secured to Members in: https://whimsy.apache.org/members/log/
+* **Log files** are LDAP secured to Members in: https://whimsy.apache.org/members/log/
