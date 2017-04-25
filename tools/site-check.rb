@@ -14,7 +14,7 @@ require 'net/http'
 require 'nokogiri'
 require 'json'
 
-# fetch uri, followin redirects
+# fetch uri, following redirects
 def fetch(uri)
   uri = URI.parse(uri)
   Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
