@@ -20,17 +20,17 @@ def analyze(sites)
       'security' => %r{apache.org/security}i,
       'thanks' => %r{apache.org/foundation/thanks}i
     }.each do |nam, pat|
-      counts[nam]['text-success'] = sites.select{ |k, site| site[nam] =~ pat  }.count
-      counts[nam]['text-warning'] = 0 # Reorder output 
-      counts[nam]['text-danger'] = sites.select{ |k, site| site[nam].nil? }.count
-      counts[nam]['text-warning'] = sites.size - counts[nam]['text-success'] - counts[nam]['text-danger']
+      counts[nam]['label-success'] = sites.select{ |k, site| site[nam] =~ pat  }.count
+      counts[nam]['label-warning'] = 0 # Reorder output 
+      counts[nam]['label-danger'] = sites.select{ |k, site| site[nam].nil? }.count
+      counts[nam]['label-warning'] = sites.size - counts[nam]['label-success'] - counts[nam]['label-danger']
     end
     
     [
       counts, {
-      'text-success' => 'Sites with links to primary ASF page',
-      'text-warning' => 'Sites with link, but not ASF one',
-      'text-danger' => 'Sites with no link for this topic'
+      'label-success' => '# Sites with links to primary ASF page',
+      'label-warning' => '# Sites with link, but not ASF one',
+      'label-danger' => '# Sites with no link for this topic'
       }
     ]
 end
@@ -72,7 +72,7 @@ _html do
           _br
           _ul do
             analysis[1].each do |cls, desc|
-              _li desc, class: cls
+              _li.label desc, class: cls
             end
           end  
         end
@@ -86,7 +86,7 @@ _html do
                 _ col.capitalize
                 analysis[0][col].each do |cls, val|
                   _ ' '
-                  _span.badge val, class: cls
+                  _span.label val, class: cls
                 end
               end
             end
