@@ -166,6 +166,12 @@ Notes:
    already has port 80 open.
  * `sudo apachectl restart` is how you restart apache; launchctl itself is for
    controlling what processes automatically start at startup.
+ * If `curl` gives `Connection refused` then try kicking httpd:
+    * `sudo /usr/sbin/apachectl stop`
+    * `sudo /usr/sbin/httpd`
+      * If it works, then press CTRL-C and `sudo /usr/sbin/apachectl start`
+      * If it gave you `AH00526: Syntax error on line 20 of /private/etc/apache2/extra/httpd-mpm.conf`
+        then you may need to [delete the LockFile section](https://apple.stackexchange.com/questions/211015/el-capitan-apache-error-message-ah00526).
 
 Configure Apache httpd to run under your user id
 ------------------------------------------------
