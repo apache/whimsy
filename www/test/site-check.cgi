@@ -12,6 +12,7 @@ cols = %w( events foundation license sponsorship security thanks )
 DATAURI = 'https://whimsy.apache.org/public/site-scan.json'
 
 def analyze(sites)
+    success = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
     counts = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
     { 
       'events' => %r{apache.org/events/current-event}i,
@@ -20,7 +21,8 @@ def analyze(sites)
       'security' => %r{apache.org/security}i,
       'thanks' => %r{apache.org/foundation/thanks}i
     }.each do |nam, pat|
-      counts[nam]['label-success'] = sites.select{ |k, site| site[nam] =~ pat  }.count
+      success[nam] = sites.select{ |k, site| site[nam] =~ pat  }.keys
+      counts[nam]['label-success'] = success[nam].count
       counts[nam]['label-warning'] = 0 # Reorder output 
       counts[nam]['label-danger'] = sites.select{ |k, site| site[nam].nil? }.count
       counts[nam]['label-warning'] = sites.size - counts[nam]['label-success'] - counts[nam]['label-danger']
@@ -31,7 +33,7 @@ def analyze(sites)
       'label-success' => '# Sites with links to primary ASF page',
       'label-warning' => '# Sites with link, but not an expected ASF one',
       'label-danger' => '# Sites with no link for this topic'
-      }
+      }, success
     ]
 end
 
@@ -105,8 +107,13 @@ _html do
                   _td ''
                 elsif links[c] =~ /^http/
                   _td do
+                    if ! analysis[2].include? c or analysis[2][c].include? n
+                      cls = '' # link not present or link OK
+                    else
+                      cls = 'label-warning'
+                    end
                     _a links[c].sub(/https?:\/\//, '').
-                      sub(/(www\.)?apache\.org/i, 'a.o'), href: links[c]
+                      sub(/(www\.)?apache\.org/i, 'a.o'), href: links[c], class: cls
                   end
                 else
                   _td links[c]
