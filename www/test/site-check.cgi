@@ -15,7 +15,7 @@ def analyze(sites)
     counts = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
     { 
       'events' => %r{apache.org/events/current-event}i,
-      'license' => %r{apache.org/license}i,
+      'license' => %r{apache.org/licenses/$}i, # should link to parent license page only
       'sponsorship' => %r{apache.org/foundation/sponsorship}i,
       'security' => %r{apache.org/security}i,
       'thanks' => %r{apache.org/foundation/thanks}i
@@ -29,7 +29,7 @@ def analyze(sites)
     [
       counts, {
       'label-success' => '# Sites with links to primary ASF page',
-      'label-warning' => '# Sites with link, but not ASF one',
+      'label-warning' => '# Sites with link, but not an expected ASF one',
       'label-danger' => '# Sites with no link for this topic'
       }
     ]
