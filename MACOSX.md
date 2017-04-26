@@ -5,6 +5,7 @@ Step by step instruction on getting a full whimsy test environment up and
 running on Mac OS/X.  Not all steps are required for every tool, but steps
 common to many tools are included here, and additional steps required for
 specific tools are linked at the bottom of these instructions.
+See Also the general DEVELOPMENT.md configuration notes.
 
 Install Homebrew
 ----------------
@@ -132,6 +133,7 @@ cn: Sam Ruby
 
 Notes: 
 
+ * See DEVELOPMENT.md for more [LDAP configuration](DEVELOPMENT.md#ldapconfig).
  * To pick up the latest code, the above needs to be run from the directory
    you issued the `git clone` command.  Alternately, provide the full path
    to the `whimsy/lib` directory on the `ASF::LDAP.configure` command.

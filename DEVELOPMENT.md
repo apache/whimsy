@@ -7,13 +7,6 @@ testing, you will need access to a machine on which you are willing to install
 libraries which do things like access LDAP, XML parsing, ASF Subversion repos,
 composing mail and the like for full functionality.  
 
-While some tools may work on Microsoft Windows, many don't currently.  
-Alternatives include a Docker image, a custom Vagrant VM, and a Kitchen/Puppet 
-managed Vagrant VM (as the live instance does).  The primary advantage 
-of using an image or a VM is isolation.  The primary disadvantage is that 
-you will need to install your SVN credentials there and arrange to either 
-duplicate or mount needed SVN directories.
-
 Contents :books:
 -------
 
@@ -24,6 +17,7 @@ Contents :books:
 - [Server Configuration](DEPLOYMENT.md)
 - [Further Reading](#further-reading)
 - [How To / FAQ](#how-to-faq)
+- [Running Whimsy on Windows](#whimsy-on-windows)
 
 Architecture Overview
 ========
@@ -65,21 +59,21 @@ This section is for those desiring to run a whimsy tool on their own machine.
    If you use a system provided version of Ruby, you may need to prefix
    certain commands (like gem install) with `sudo`.  Alternatives to using
    the system provided version include using a Ruby version manager like
-   rbenv or rvm.  Rbenv generally requires you to be more aware of what you
-   are doing (e.g., the need for shims).  While rvm tends to be more of a set
-   and forget operation, it tends to be more system intrusive (e.g. aliasing
-   'cd' in bash).
+   `rbenv` or `rvm`.  Rbenv generally requires you to be more aware of what you
+   are doing (e.g., the need for rbenv shims).  Rvm tends to be more of a set
+   and forget operation, but it tends to be more system intrusive (e.g. aliasing
+   'cd' in bash).  Note the Whimsy server currently uses **ruby 2.3+**.
 
     For more information:
 
-    1. [Understanding Shims](https://github.com/sstephenson/rbenv#understanding-shims)
-    2. [Understanding Binstubs](https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs)
-    3. [Ruby Version Manager](https://rvm.io/)
+    1. [Understanding rbenv Shims](https://github.com/sstephenson/rbenv#understanding-shims)
+    2. [Understanding rbenv Binstubs](https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs)
+    3. [Ruby Version Manager - rvmah](https://rvm.io/)
 
 
 2. **Install ruby gems:** `whimsy-asf` and `bundler`:
 
-  `gem install whimsy-asf bundler`
+  `gem install whimsy-asf bundler`  (mail and listen may be needed too)
 
 3. **SVN checkout ASF repositories** into (or linked to from)
    `/srv/svn`
@@ -95,6 +89,7 @@ This section is for those desiring to run a whimsy tool on their own machine.
         - /home/rubys/svn/committers
 
 4. **Configure LDAP** servers and certificates:
+<a name="ldapconfig"> </a>
 
     1. The model code determines what host and port to connect to by parsing
       either `/etc/ldap/ldap.conf` or `/etc/openldap/ldap.conf` for a line that
@@ -131,7 +126,8 @@ This section is for those desiring to run a whimsy tool on their own machine.
    `ruby examples/board.rb`
 
    It should print out an HTML page with current board members.
-   See comments in that file for running the script as a standalone server.
+   See comments in the `board.rb` file for running the script as a 
+   standalone server to view in a local web browser.
 
 6. **Configure mail sending** :mailbox_with_mail: (_optional_):
 
@@ -169,7 +165,8 @@ Running Whimsy Applications :car:
 
 If there is a `Gemfile` in the directory containing the script or application
 you wish to run, dependencies needed for execution can be installed using the
-command `bundle install`.
+command `bundle install`.  Similarly, if starting from scratch you 
+may need `gem install rake`.
 
 1. CGI applications can be run from a command line, and produce output to
    standard out.  If you would prefer to see the output in a browser, you
@@ -255,6 +252,16 @@ changes).  If you have trouble using the existing [ASF::SVN classes](lib/whimsy/
 class to access files from Subversion on the server, then check:
 
 - Default SVN checkouts: [repository.yml](repository.yml)
+
+Whimsy On Windows
+=================
+
+While some tools may work on Microsoft Windows, many don't currently.  
+Alternatives for Windows include a Docker image, a custom Vagrant VM, and a Kitchen/Puppet 
+managed Vagrant VM (as the [live instance](DEPLOYMENT.md) does).  The primary advantage 
+of using an image or a VM is isolation.  The primary disadvantage is that 
+you will need to install your SVN credentials there and arrange to either 
+duplicate or mount needed SVN directories.
 
 Further Reading
 ===============
