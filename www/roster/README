@@ -1,3 +1,12 @@
+This Whimsy Roster tool presents a variety of organizational data about 
+people and groups at the ASF in a convenient and secure manner. 
+It uses Rack and Sinatra to run the server, Wunderbar for output, and 
+the whimsy/asf library to directly access a variety of ASF data 
+sources and files.
+
+Run Roster Locally :car:
+===
+
 To test locally, run:
 
     rake server
@@ -7,6 +16,28 @@ sever using:
 
     rake auth server
 
-Doing so will prompt you for your password.  Should your username for apache
+Doing so will prompt you for your ASF password.  Should your ASF username
 not match your local user name, set the `USER` environment variable to your
 apache user id before running the above command.
+
+Issues?  [Local setup](../../DEVELOPMENT.md#running-whimsy-applications-car).
+
+Architecture Overview
+===
+
+The roster tool primarily displays data from a variety of sources 
+(private and public), and in some cases allows self-service for 
+Apache committers to update data directly.
+
+* config.ru and main.rb are the startup and central control.
+
+* models/ obviously provide the data models; many of them mirror but 
+  add functionality to some of the whimsy/asf models.
+  
+* views/ provide the individual view pages.html.rb and (when used) 
+  associated pages.js.rb scripts that make interactive features work,
+  using React.js.
+
+* lib/whimsy/asf/auth is used by a few tools to do specific authorization 
+  steps **within** the tool - instead of simply relying on httpd 
+  to gate access to a URL as a whole.

@@ -185,3 +185,13 @@ get '/orgchart/:name' do |name|
 
   _html :duties
 end
+
+error do
+  @errors = env
+  _html :errors
+end
+
+not_found do
+  @errors = env
+  _html :errors
+end
