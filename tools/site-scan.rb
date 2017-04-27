@@ -88,10 +88,12 @@ def parse(site, name)
     next unless node.is_a?(Nokogiri::XML::Text)
     # scrub is needed as some sites have invalid UTF-8 bytes
     txt = node.text.scrub
-    if txt =~ / trademarks /
+    # trademarks may appear twice. TODO use array?
+    if txt =~ / trademarks / and not data[:trademarks]
       t, p = getText(txt, node)
       data[:trademarks] = t
       data[:tradeparent] = p if p
+      puts t,p
     end
     if txt =~ /Copyright / or txt =~ /©/
       t, p = getText(txt, node)
@@ -106,7 +108,11 @@ end
 def getText(txt, node)
   parent = nil # debug to show where parent needed to be fetched
   if not txt =~ /Apache Software Foundation/i # have we got all the text?
-    txt = node.parent.text.scrub
+    if node.parent.name == 'a' # e.g. whimsical. such parents don't have extra text.
+      txt = node.parent.parent.text.scrub
+    else
+      txt = node.parent.text.scrub
+    end
     parent = true
   end
   # TODO strip extra text where possible.
