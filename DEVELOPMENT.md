@@ -87,6 +87,9 @@ This section is for those desiring to run a whimsy tool on their own machine.
         :svn:
         - /home/rubys/svn/foundation
         - /home/rubys/svn/committers
+   
+   See repository.yml for a full list of repos needed.  Different tools 
+   require different local checkouts to function; some require git clone.
 
 4. **Configure LDAP** servers and certificates:
 <a name="ldapconfig"> </a>
@@ -243,15 +246,25 @@ Important things to check:
 - Double-check paths to the lib/asf files (which you will be using a lot)
 - Test locally first; in production logs are in [/members/log](https://whimsy.apache.org/members/log/)
 
-### How To: Use New SVN Directories
+### How To: Use New SVN or Git Directories
 
-Some SVN repos/files are checked out via cron jobs regularly for 
+Some SVN/Git repos/files are checked out via cron jobs regularly for 
 caching and read only access.  Some applications checkout needed files 
 just when running into temp dirs (typically to modify them and commit 
 changes).  If you have trouble using the existing [ASF::SVN classes](lib/whimsy/asf/svn.rb) 
 class to access files from Subversion on the server, then check:
 
 - Default SVN checkouts: [repository.yml](repository.yml)
+
+### How To: Keep Your Local Environment Updated
+
+`rake update git:pull svn:update` will crawl the tree, updating all 
+gems as well as pulling/updating any existing git or svn checkouts that
+you have locally from repository.yml.
+
+Note also that sometimes you may need to `bundle exec *command*` instead 
+of just doing `bundle *command*`, since using the exec uses a subtly 
+different set of gem versions from the local director.
 
 Whimsy On Windows
 =================
@@ -270,7 +283,7 @@ The [board agenda](www/board/agenda) application
 is an eample of a complete tool that makes extensive use of the library
 factoring, has a suite of test cases, and client componentization (using
 ReactJS), and provides instructions for setting up both a Docker component and
-a Vagrant VM.
+a Vagrant VM.  There are [custom setup steps](config/board-agenda.md) to run it locally.
 
 If you would like to understand how the view code works, you can get started
 by looking at a few of the
