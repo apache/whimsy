@@ -8,13 +8,16 @@ require 'wunderbar/jquery/stupidtable'
 require 'net/http'
 
 PAGETITLE = 'Apache TLP Website Link Checks'
-cols = %w( events foundation license sponsorship security thanks )
+cols = %w( events foundation license sponsorship security thanks copyright trademarks )
 DATAURI = 'https://whimsy.apache.org/public/site-scan.json'
 
 def analyze(sites)
     success = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
     counts = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
     { 
+      'copyright' => %r{Copyright [^.]+ Apache Software Foundation}i, # Do we need '[Tt]he ASF'?
+      # TODO more checks needed here, e.g. ASF registered and 3rd party marks
+      'trademarks' => %r{trademarks of [Tt]he Apache Software Foundation}i,
       'events' => %r{apache.org/events/current-event}i,
       'license' => %r{apache.org/licenses/$}i, # should link to parent license page only
       'sponsorship' => %r{apache.org/foundation/sponsorship}i,
@@ -103,20 +106,20 @@ _html do
                 _a! "#{links['display_name']}", href: links['uri']
               end
               cols.each do |c|
+                if analysis[2].include? c and not analysis[2][c].include? n
+                    cls = 'label-warning'
+                else
+                    cls = '' # link not present or link OK
+                end
                 if not links[c]
                   _td ''
                 elsif links[c] =~ /^http/
                   _td do
-                    if ! analysis[2].include? c or analysis[2][c].include? n
-                      cls = '' # link not present or link OK
-                    else
-                      cls = 'label-warning'
-                    end
                     _a links[c].sub(/https?:\/\//, '').
                       sub(/(www\.)?apache\.org/i, 'a.o'), href: links[c], class: cls
                   end
                 else
-                  _td links[c]
+                  _td links[c].gsub(/Apache Software Foundation/,'ASF'), class: cls
                 end
               end
             end
