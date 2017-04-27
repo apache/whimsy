@@ -1,4 +1,4 @@
-Configuring the Board Agenda
+Configuring the Board Agenda Tool
 
 Install Dependencies
 --------------------
@@ -38,13 +38,12 @@ Install poltergeist
 
 (optional, used by tests)
 
-```
-$ brew install poltergeist
-```
+[poltergeist is now installed](https://github.com/teampoltergeist/poltergeist/tree/v1.13.0#installation) via `bundle install` from the Gemfile.
 
 Verify using:
 
 ```
-$ bundle install rake test
+$ bundle install 
+$ rake test
 ```
 
