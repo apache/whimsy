@@ -116,7 +116,7 @@ def getText(txt, node)
   end
   # TODO strip extra text where possible.
   # Note: both copyright and trademark can be in same text (e.g. Cayenne)
-  return txt.gsub(/\s+/, ' ').strip, parent
+  return txt.gsub(/[[:space:]]+/, ' ').strip, parent
 end
 
 $verbose = ARGV.delete '--verbose'
