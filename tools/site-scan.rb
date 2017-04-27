@@ -28,6 +28,10 @@ def fetch(uri)
   end
 end
 
+def squash(text)
+  text.scrub.gsub(/[[:space:]]+/, ' ').strip
+end
+
 def parse(site, name)
   uri, request, response = fetch(site)
   doc = Nokogiri::HTML(response.body)
@@ -52,7 +56,7 @@ def parse(site, name)
       if img
         data[:foundation] = uri + img['src'].strip
       else
-        data[:foundation] = a.text 
+        data[:foundation] = squash(a.text) 
       end
     end
 
@@ -86,18 +90,19 @@ def parse(site, name)
   end
   doc.traverse do |node|
     next unless node.is_a?(Nokogiri::XML::Text)
-    # scrub is needed as some sites have invalid UTF-8 bytes
-    # gsub needed because we may need to match multiple words
-    txt = node.text.scrub.gsub(/[[:space:]]+/, ' ')
-    # trademarks may appear twice. TODO use array?
-    if txt =~ / Apache feather\b/ and not data[:trademarks]
+
+    txt = squash(node.text)
+
+    if txt =~ /\btrademarks\b/ and not data[:trademarks]
       t, p = getText(txt, node)
-      data[:trademarks] = t
+      # drop previous text if it looks like Copyright sentence
+      data[:trademarks] = t.sub(/^.*?Copyright .+? Foundation[.]?/,'').strip
       data[:tradeparent] = p if p
     end
     if txt =~ /Copyright / or txt =~ /©/
       t, p = getText(txt, node)
-      data[:copyright] = t
+      # drop text around the Copyright (or the symbol)
+      data[:copyright] = t.sub(/^.*?((Copyright|©) .+? Foundation[.]?).*/,'\1').strip
       data[:copyparent] = p if p
     end
   end
@@ -109,15 +114,13 @@ def getText(txt, node)
   parent = nil # debug to show where parent needed to be fetched
   if not txt =~ /Apache Software Foundation/i # have we got all the text?
     if node.parent.name == 'a' # e.g. whimsical. such parents don't have extra text.
-      txt = node.parent.parent.text.scrub
+      txt = squash(node.parent.parent.text)
     else
-      txt = node.parent.text.scrub
+      txt = squash(node.parent.text)
     end
     parent = true
   end
-  # TODO strip extra text where possible.
-  # Note: both copyright and trademark can be in same text (e.g. Cayenne)
-  return txt.gsub(/[[:space:]]+/, ' ').strip, parent
+  return txt, parent
 end
 
 $verbose = ARGV.delete '--verbose'
