@@ -64,6 +64,7 @@ def parse(site, name)
     end
 
     a_text = a.text.downcase.strip
+    $stderr.puts a_text if $verbose
 
     if a_text =~ /licenses?/ and a['href'].include? 'apache.org'
       data[:license] = uri + a['href'].strip 
@@ -83,6 +84,8 @@ def parse(site, name)
   end
   return data
 end
+
+$verbose = ARGV.delete '--verbose'
 
 results = {}
 
