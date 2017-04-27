@@ -17,6 +17,7 @@ _html do
     _thead do
       _th 'Title'
       _th 'Contact, Chair, or Person holding that title'
+      _th 'Public Website'
     end
 
     _tbody do
@@ -31,6 +32,11 @@ _html do
           _td do
             id = value['info']['id'] || value['info']['chair']
             _a ASF::Person.find(id).public_name, href: "committer/#{id}"
+          end
+          
+          # Website - often valuable to people looking for info
+          _td do
+            value['info']['website'].nil? ? _('')  : _a('website', href: value['info']['website'])
           end
         end
       end
