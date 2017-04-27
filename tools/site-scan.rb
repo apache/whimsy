@@ -41,6 +41,8 @@ def parse(site, name)
     license: nil,
     sponsorship: nil,
     security: nil,
+    trademarks: nil,
+    copyright: nil,
   }
 
   # scan each link
@@ -80,6 +82,17 @@ def parse(site, name)
 
     if ['sponsorship', 'donate', 'sponsor apache','sponsoring apache'].include? a_text
       data[:sponsorship] = uri + a['href'].strip
+    end
+  end
+  doc.traverse do |node|
+    next unless node.is_a?(Nokogiri::XML::Text)
+    # scrub is needed as some sites have invalid UTF-8 bytes
+    txt = node.text.scrub.gsub(/\s+/, ' ').strip
+    if txt =~ /trademarks of [Tt]he Apache Software Foundation/
+      data[:trademarks] = txt
+    end
+    if txt =~ /Copyright .+ [Tt]he Apache Software Foundation/
+      data[:copyright] = txt
     end
   end
   return data
