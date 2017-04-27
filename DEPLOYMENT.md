@@ -60,10 +60,11 @@ The following additional steps are required to get the Whimsy VM up and running:
    `whimsysvn` user.
 
  * Add the following cron job to apmail@hermes:
-     * `11  4,10,16,22 * * * for list in /home/apmail/lists/incubator.apache.org/*; do echo; echo $list/mod; ezmlm-list $list mod; done | ssh whimsy-vm3.apache.org 'cat > /srv/subscriptions/incubator-mods'`
+     * `11  4,10,16,22 * * * for list in /home/apmail/lists/incubator.apache.org/*; do echo; echo $list/mod; ezmlm-list $list mod; done | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/incubator-mods'`
      * `11  1,7,13,19   *       *       *       for list in /home/apmail/lists/*apache.org/*; do echo; echo $list/mod; ezmlm-list $list mod; done 2>/dev/null | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/list-mods'`
-     * `16 * * * * ezmlm-list /home/apmail/lists/apache.org/board/ . | ssh whimsy-vm3.apache.org 'cat > /srv/subscriptions/board'`
-     * `46 * * * * ezmlm-list /home/apmail/lists/apache.org/members/ . | ssh whimsy-vm3.apache.org 'cat > /srv/subscriptions/members'`
+     * `11  3,9,15,21   *       *       *       for list in /home/apmail/lists/*apache.org/*; do echo; echo $list/mod; ezmlm-list $list 2>/dev/null; done | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/list-subs'`
+     * `16 * * * * ezmlm-list /home/apmail/lists/apache.org/board/ . | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/board'`
+     * `46 * * * * ezmlm-list /home/apmail/lists/apache.org/members/ . | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/members'`
 
  * Add the following mail subscriptions:
     * Subscribe `svnupdate@whimsy-vm3.apache.org` to `board@apache.org`.

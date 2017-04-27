@@ -92,6 +92,23 @@ class Person < React
           end
         end
 
+        # subscriptions
+        if @committer.subscriptions
+          _tr do
+            _td 'Subscriptions'
+            _td do
+              _ul @committer.subscriptions do |list_email|
+                _li do
+                  _a list_email[0], 
+                    href: 'https://lists.apache.org/list.html?' + list_email[0]
+                  _span " as "
+                  _span list_email[1]
+                end
+              end
+            end
+          end
+        end
+
         # PGP keys
         if @committer.pgp
           _PersonPgpKeys person: self

@@ -1,4 +1,6 @@
 class Committer
+  LIST_SUBS = '/srv/subscriptions/list-subs'
+
   def self.serialize(id, env)
     response = {}
 
@@ -132,6 +134,22 @@ class Committer
         moderators.each do |mail_list, list_moderators|
           matches = (list_moderators & user_emails)
           response[:moderates][mail_list] = matches unless matches.empty?
+        end
+      end
+    end
+
+    if env.user == id and File.exists? LIST_SUBS
+      response[:subscriptions] = []
+      emails = person.all_mail
+
+      File.read(LIST_SUBS).split(/\n\n/).each do |stanza|
+        list = stanza.match(/(\w*\.?apache\.org)\/(.*?)(\n|\Z)/)
+
+        subs = stanza.scan(/^(.*@.*)/).flatten
+        emails.each do |email|
+          if subs.include? email
+            response[:subscriptions] << ["#{list[2]}@#{list[1]}", email]
+          end
         end
       end
     end
