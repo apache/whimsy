@@ -86,7 +86,8 @@ end
 
 results = {}
 
-if ARGV.length == 2
+# Parse a single site given its URL
+if ARGV.length == 2 and ARGV.first =~ /^https?:/
   site = ARGV.shift
   name = ARGV.shift
   results[name] = parse(site, name)
@@ -97,7 +98,11 @@ else
   
   committees.sort_by {|committee| committee.name}.each do |committee|
     next unless committee.site
-  
+    # if parameters specified, parse only those names
+    if ARGV.length > 0
+      next unless ARGV.include? committee.name
+    end
+
     # fetch, parse committee site
     results[committee.name] = parse(committee.site, committee.display_name)
   end
