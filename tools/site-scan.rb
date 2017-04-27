@@ -93,7 +93,7 @@ def parse(site, name)
       data[:trademarks] = t
       data[:tradeparent] = p if p
     end
-    if txt =~ /Copyright /
+    if txt =~ /Copyright / or txt =~ /©/
       t, p = getText(txt, node)
       data[:copyright] = t
       data[:copyparent] = p if p
