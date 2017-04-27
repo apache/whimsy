@@ -87,15 +87,31 @@ def parse(site, name)
   doc.traverse do |node|
     next unless node.is_a?(Nokogiri::XML::Text)
     # scrub is needed as some sites have invalid UTF-8 bytes
-    txt = node.text.scrub.gsub(/\s+/, ' ').strip
-    if txt =~ /trademarks of [Tt]he Apache Software Foundation/
-      data[:trademarks] = txt
+    txt = node.text.scrub
+    if txt =~ / trademarks /
+      t, p = getText(txt, node)
+      data[:trademarks] = t
+      data[:tradeparent] = p if p
     end
-    if txt =~ /Copyright .+ [Tt]he Apache Software Foundation/
-      data[:copyright] = txt
+    if txt =~ /Copyright /
+      t, p = getText(txt, node)
+      data[:copyright] = t
+      data[:copyparent] = p if p
     end
   end
   return data
+end
+
+# get the text; use parent if text does not appear to be complete
+def getText(txt, node)
+  parent = nil # debug to show where parent needed to be fetched
+  if not txt =~ /Apache Software Foundation/i # have we got all the text?
+    txt = node.parent.text.scrub
+    parent = true
+  end
+  # TODO strip extra text where possible.
+  # Note: both copyright and trademark can be in same text (e.g. Cayenne)
+  return txt.gsub(/\s+/, ' ').strip, parent
 end
 
 $verbose = ARGV.delete '--verbose'
