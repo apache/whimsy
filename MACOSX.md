@@ -84,11 +84,12 @@ Bundler version 1.14.3
 
 Notes:
 
-You may have trouble installing due to the dependency on nokogiri. There are
-issues with its dependencies. This page suggests some workarounds:
-https://github.com/sparklemotion/nokogiri/issues/1483
-The simplest solution may be `xcode-select --install` unless you know
-that's already configured.
+* Some tools may need a [`bundle install`](DEVELOPMENT.md#running-whimsy-applications-car) run for additional gems.
+* You may have trouble installing due to the dependency on nokogiri. There are
+  issues with its dependencies. This page suggests some workarounds:
+  https://github.com/sparklemotion/nokogiri/issues/1483
+  The simplest solution may be `xcode-select --install` unless you know
+  that's already configured.
 
 Clone the Whimsy code
 ------------

@@ -68,12 +68,12 @@ This section is for those desiring to run a whimsy tool on their own machine.
 
     1. [Understanding rbenv Shims](https://github.com/sstephenson/rbenv#understanding-shims)
     2. [Understanding rbenv Binstubs](https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs)
-    3. [Ruby Version Manager - rvmah](https://rvm.io/)
+    3. [Ruby Version Manager - rvm](https://rvm.io/)
 
 
 2. **Install ruby gems:** `whimsy-asf` and `bundler`:
 
-  `gem install whimsy-asf bundler`  (mail and listen may be needed too)
+   `gem install whimsy-asf bundler`  (mail and listen may be needed too)
 
 3. **SVN checkout ASF repositories** into (or linked to from)
    `/srv/svn`
