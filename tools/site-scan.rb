@@ -89,7 +89,7 @@ def parse(site, name)
     # scrub is needed as some sites have invalid UTF-8 bytes
     txt = node.text.scrub
     # trademarks may appear twice. TODO use array?
-    if txt =~ / Apache feather logo / and not data[:trademarks]
+    if txt =~ / Apache feather logo\b/ and not data[:trademarks]
       t, p = getText(txt, node)
       data[:trademarks] = t
       data[:tradeparent] = p if p
