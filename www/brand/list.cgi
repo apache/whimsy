@@ -84,10 +84,10 @@ def _marks(marks)
         if itm[STAT] == REGISTERED then
           if itm[COUNTRY] == USA then
             _li.list_group_item do
-              _a "In the #{itm[COUNTRY]}, class #{itm[CLASS]}, reg # #{itm[REG]}", href: 'usptolink'
+              _a! "In the #{itm[COUNTRY]}, class #{itm[CLASS]}, reg # #{itm[REG]}", href: "https://tsdr.uspto.gov/#caseNumber=#{itm[REG]}&caseSearchType=US_APPLICATION&caseType=DEFAULT&searchType=statusSearch"
             end
           else
-            _li.list_group_item "In #{itm[COUNTRY]}, class #{itm[CLASS]}, reg # #{itm[REG]}", href: 'usptolink'
+            _li.list_group_item "In #{itm[COUNTRY]}, class #{itm[CLASS]}, reg # #{itm[REG]}"
           end
         end
       end
