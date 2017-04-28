@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby
+# Wvisible:brand,trademarks
+PAGETITLE = 'Listing of Apache Trademarks'
+
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'csv'
 require 'json'
@@ -7,11 +10,47 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'net/http'
 
-PAGETITLE = 'Listing of Apache Trademarks - DEPRECATED'
-COUNTRY = 'CountryName' # Fieldnames from counsel provided docket
+# Fieldnames/values from counsel provided docket.csv
+MNAM = 'TrademarkName'
+COUNTRY = 'CountryName' 
 STAT = 'TrademarkStatus'
 CLASS = 'Class'
 REG = 'RegNumber'
+APPNUMBER = 'AppNumber'
+CLASSGOODS = 'ClassGoods'
+REGISTERED = 'Registered'
+USA = 'United States of America'
+
+# Transform docket spreadsheet into structured JSON
+def csv2json
+  brand_dir = ASF::SVN['private/foundation/Brand']
+  csv = CSV.read("#{brand_dir}/docket.csv", headers:true)
+  docket = {}
+  csv.each do |r|
+    r << ['pmc', r[MNAM].downcase.sub('.org','').sub(' & design','')]
+    key = r['pmc'].to_sym
+    mrk = {}
+    %W[ #{STAT} #{COUNTRY} #{CLASS} #{APPNUMBER} #{REG} #{CLASSGOODS} ].each do |col|
+      mrk[col] = r[col]
+    end  
+    if not docket.key?(key)
+      docket[key] = { r[MNAM] => [mrk] }
+    else
+      if not (docket[key]).key?(r[MNAM])
+        docket[key][r[MNAM]] = [mrk]
+      else
+        docket[key][r[MNAM]] << mrk      
+      end
+    end
+  end
+  
+  docket
+end
+
+# Since the CSV changes rarely, it is manually checked in separately
+_json do
+  csv2json
+end
 
 def _unreg(name, url, desc, parent, n)
   _div.panel.panel_default do
@@ -42,8 +81,8 @@ def _marks(marks)
         _{"#{mark} &reg;"}
       end
       items.each do |itm|
-        if itm[STAT] == 'Registered' then
-          if itm[COUNTRY] == 'United States of America' then
+        if itm[STAT] == REGISTERED then
+          if itm[COUNTRY] == USA then
             _li.list_group_item do
               _a "In the #{itm[COUNTRY]}, class #{itm[CLASS]}, reg # #{itm[REG]}", href: 'usptolink'
             end
@@ -92,12 +131,8 @@ _html do
     docket = JSON.parse(File.read("#{brand_dir}/docket.json"))
     projects = JSON.parse(Net::HTTP.get(URI('https://projects.apache.org/json/foundation/projects.json')))
 
-    _whimsy_content do 
+    _whimsy_content do
       _h3 'The ASF holds the following registered trademarks:'
-      _h3 do
-        _ 'THIS PAGE IS DEPRECATED, please '
-        _a 'see the new /brand/list page instead', href: 'https://whimsy.apache.org/brand/list'
-      end
       docket.each do |pmc, marks|
         if pmc == 'apache' then
           _apache(marks)
@@ -122,7 +157,8 @@ _html do
 
     _whimsy_footer({
       "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
-      "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List"
+      "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List",
+      "https://www.apache.org/foundation/marks/contact" => "Contact Us About Trademarks"
       })
   end
 end
