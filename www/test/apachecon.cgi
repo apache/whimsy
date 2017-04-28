@@ -6,7 +6,7 @@ require 'whimsy/asf'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 
-PAGETITLE = 'ApacheCon Historical Listing'
+PAGETITLE = 'ApacheCon Historical Listing - DEPRECATED'
 ifields = {
   'SessionList'	=> 'glyphicon_th_list',
   'SlideArchive' => 'glyphicon_file',
@@ -23,7 +23,11 @@ _html do
     history.sub! "\uFEFF", '' # remove Zero Width No-Break Space
     csv = CSV.parse(history, headers:true)
     _whimsy_content do
-      _p 'Past ApacheCons include:'
+      _p do 
+        _ 'THIS PAGE IS DEPRECATED - please see '
+        _a '/events/past', href: 'https://whimsy.apache.org/events/past'
+        _ 'instead. Past ApacheCons include:'
+      end
       _ul do
         csv.each do |r|
           _li do

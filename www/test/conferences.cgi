@@ -8,7 +8,7 @@ require 'wunderbar/jquery/stupidtable'
 require 'whimsy/asf/themes'
 require 'date'
 
-PAGETITLE = 'FOSS Conference Listings'
+PAGETITLE = 'FOSS Conference Listings - DEPRECATED'
 
 _html do
   _body? do
@@ -16,6 +16,11 @@ _html do
     
     conflist = JSON.parse(Net::HTTP.get(URI('https://raw.githubusercontent.com/afilina/dev-community-data/master/data/conferences.json')))
     _whimsy_content do
+      _p do 
+        _ 'THIS PAGE IS DEPRECATED - please see '
+        _a '/events/other', href: 'https://whimsy.apache.org/events/other'
+        _ 'instead!'
+      end
       _div.row do
         _div.col_sm_10 do
           _div.panel.panel_primary do
