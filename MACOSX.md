@@ -238,21 +238,27 @@ $ curl whimsy.local
 Install passenger
 ------------------------------------------------
 
+Follow the [Installing Passenger + Apache on Mac OS X](https://www.phusionpassenger.com/library/install/apache/install/oss/osx/) instructions, which are summaried below:.
+
 Install:
 
 ```
-$ gem install passenger
-$ passenger-install-apache2-module
-$ sudo apachectl restart
+$ brew install passenger
+$ brew info passenger
 ```
 
-For the second step ('passenger-install-apache2-module`), you will need to
-follow the instructions -- which essentially are to press enter twice and then
-copy a file to specified location.  If for any reason you skip that last step,
-you can redo it with the following command:
+For the second step (1brew info passenger`), you will need to
+follow the instructions -- which essentially is to copy a few lines to
+to a specified location.  Despite what it says, change the last line to
 
 ```
-$ sudo bash -c 'passenger-install-apache2-module --snippet > /etc/apache2/other/passenger.conf'
+PassengerDefaultRuby /usr/local/bin/ruby
+```
+
+Restart the server:
+
+```
+sudo apachectl restart
 ```
 
 Verify:
@@ -282,6 +288,8 @@ Once again, Edit `/etc/apache2/httpd.conf` using sudo and your favorite text edi
 Uncomment out the following lines:
 
 ```
+LoadModule speling_module libexec/apache2/mod_speling.so
+
 LoadModule rewrite_module libexec/apache2/mod_rewrite.so
 
 LoadModule authnz_ldap_module libexec/apache2/mod_authnz_ldap.so
