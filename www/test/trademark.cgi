@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# Wvisible:deprecated,brand Listing of trademarks-old
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'csv'
 require 'json'

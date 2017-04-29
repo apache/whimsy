@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Transform docket.csv into JSON structure for other uses
+# Wvisible:deprecated,tools Transform docket.csv into JSON structure for other uses
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'csv'
 require 'json'
