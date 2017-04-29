@@ -11,9 +11,8 @@ homelinks = {}
 
 Dir["#{startdir}/*.cgi"].each do |f|
   File.open(f).each_line.map(&:chomp).each do |line|
-    if line =~ /^\#\sWvisible\:\s*/i then
-      line =~ /# Wvisible:(.*?) (.*)/; line = [$1.split(','), $2]
-      puts "2 #{line}"
+    if line =~ /^\#\sWvisible\:(.*?)\s+(.*)/i then
+      line = [$1.split(','), $2]
       homelinks[f] = line # TODO make paths relative for easy _a output
     end
   end
