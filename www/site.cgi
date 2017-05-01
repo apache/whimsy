@@ -1,5 +1,14 @@
 #!/usr/bin/env ruby
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+
+# ensure that there is a path (even a slash will do) after the script name
+unless ENV['PATH_INFO'] and not ENV['PATH_INFO'].empty?
+  print "Status: 301 Moved Permanently\r\n"
+  print "Location: #{ENV['SCRIPT_URL']}/\r\n"
+  print "\r\n"
+  exit
+end
+
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'json'
 require 'whimsy/asf'
 require 'wunderbar'
@@ -40,6 +49,16 @@ def analyze(sites)
     ]
 end
 
+def label(analysis, links, c, n)
+  if not links[c]
+    'label-danger'
+  elsif analysis[2].include? c and not analysis[2][c].include? n
+    'label-warning'
+  else
+    'label-success'
+  end
+end
+
 _html do
   _head do
     _style %{
@@ -48,6 +67,8 @@ _html do
   end
 
   _body? do
+
+    path = env['PATH_INFO']
 
     local_copy = File.expand_path('../public/site-scan.json').untaint
 
@@ -82,51 +103,70 @@ _html do
           end  
         end
       end
-      _table.table.table_condensed.table_striped do
-        _thead do  
-          _tr do
-            _th! 'Project', data_sort: 'string-ins'
-            cols.each do |col|
-              _th! data_sort: 'string' do 
-                _ col.capitalize
-                _br
-                analysis[0][col].each do |cls, val|
-                  _ ' '
-                  _span.label val, class: cls
-                end
-              end
-            end
-          end
-        end
 
-        _tbody do
-          sites.each do |n, links|
-            _tr do
-              _td do 
-                _a! "#{links['display_name']}", href: links['uri']
-              end
-              cols.each do |c|
-                if analysis[2].include? c and not analysis[2][c].include? n
-                    cls = 'label-warning'
-                else
-                    cls = '' # link not present or link OK
-                end
-                if not links[c]
-                  _td ''
-                elsif links[c] =~ /^http/
-                  _td do
-                    _a links[c].sub(/https?:\/\//, '').
-                      sub(/(www\.)?apache\.org/i, 'a.o'), href: links[c], class: cls
-                  end
-                else
-                  _td links[c].gsub(/Apache Software Foundation/,'ASF'), class: cls
-                end
+      if path_info =~ %r{/project/(.+)}
+        # details for an individual project
+        project = $1
+        links = sites[project]
+        _h2 sites[project]['display_name']
+        _table.table.table_striped do
+          _tbody do
+            cols.each do |col|
+              _tr do
+                _td col
+                _td links[col], class: label(analysis, links, col, project)
               end
             end
           end
         end
-      end
-    end      
+      elsif path_info =~ %r{/check/(.+)}
+        # details for a single check
+        col = $1
+        _h2 col
+        _table.table do
+          _tbody do
+	    sites.each do |n, links|
+              _tr class: label(analysis, links, col, n) do
+                _td links['display_name']
+                _td links[col]
+              end
+            end
+          end
+        end
+      else
+        # overview
+	_table.table.table_condensed.table_striped do
+	  _thead do  
+	    _tr do
+	      _th! 'Project', data_sort: 'string-ins'
+	      cols.each do |col|
+		_th! data_sort: 'string' do 
+		  _a col.capitalize, href: "check/#{col}"
+		  _br
+		  analysis[0][col].each do |cls, val|
+		    _ ' '
+		    _span.label val, class: cls
+		  end
+		end
+	      end
+	    end
+	  end
+
+	  _tbody do
+	    sites.each do |n, links|
+	      _tr do
+		_td do 
+		  _a "#{links['display_name']}", href: "project/#{n}"
+		end
+		cols.each do |c|
+		  _td '', class: label(analysis, links, c, n)
+		end
+	      end
+	    end
+	  end
+	end
+      end      
+    end
 
     _script %{
       var table = $(".table").stupidtable();
