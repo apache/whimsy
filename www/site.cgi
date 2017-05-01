@@ -18,21 +18,22 @@ require 'net/http'
 
 PAGETITLE = 'Apache TLP Website Link Checks'
 cols = %w( events foundation license sponsorship security thanks copyright trademarks )
+CHECKS = { 
+  'copyright'   => %r{[Cc]opyright [^.]+ Apache Software Foundation}, # Do we need '[Tt]he ASF'?
+  # TODO more checks needed here, e.g. ASF registered and 3rd party marks
+  'trademarks'  => %r{trademarks of [Tt]he Apache Software Foundation},
+  'events'      => %r{apache.org/events/current-event},
+  'license'     => %r{apache.org/licenses/$}, # should link to parent license page only
+  'sponsorship' => %r{apache.org/foundation/sponsorship},
+  'security'    => %r{apache.org/[Ss]ecurity},
+  'thanks'      => %r{apache.org/foundation/thanks},
+}
 DATAURI = 'https://whimsy.apache.org/public/site-scan.json'
 
 def analyze(sites)
     success = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
     counts = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
-    { 
-      'copyright' => %r{Copyright [^.]+ Apache Software Foundation}i, # Do we need '[Tt]he ASF'?
-      # TODO more checks needed here, e.g. ASF registered and 3rd party marks
-      'trademarks' => %r{trademarks of [Tt]he Apache Software Foundation}i,
-      'events' => %r{apache.org/events/current-event}i,
-      'license' => %r{apache.org/licenses/$}i, # should link to parent license page only
-      'sponsorship' => %r{apache.org/foundation/sponsorship}i,
-      'security' => %r{apache.org/security}i,
-      'thanks' => %r{apache.org/foundation/thanks}i
-    }.each do |nam, pat|
+    CHECKS.each do |nam, pat|
       success[nam] = sites.select{ |k, site| site[nam] =~ pat  }.keys
       counts[nam]['label-success'] = success[nam].count
       counts[nam]['label-warning'] = 0 # Reorder output 
@@ -125,6 +126,13 @@ _html do
         # details for a single check
         col = $1
         _h2 col
+        if CHECKS.include? col
+          _p do
+            _ '(Expected to match the regular expression: '
+            _ CHECKS[col]
+            _ ')'
+          end
+        end
         _table.table do
           _tbody do
 	    sites.each do |n, links|
