@@ -93,7 +93,8 @@ def parse(site, name)
 
     txt = squash(node.text)
 
-    if txt =~ /\btrademarks\b/ and not data[:trademarks]
+    # allow override if phrase looks good
+    if (txt =~ /\btrademarks\b/  and not data[:trademarks]) or txt =~/are trademarks of [Tt]he Apache Software/
       t, p = getText(txt, node)
       # drop previous text if it looks like Copyright sentence
       data[:trademarks] = t.sub(/^.*?Copyright .+? Foundation[.]?/,'').strip
