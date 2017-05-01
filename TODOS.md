@@ -15,14 +15,18 @@ and crazy ideas alike.  Comments appreciated.
 - [ ] Improve error handling in appropriate scripts to provide friendly
       user-visible cues on completion or stacktrace.  [On Mailing List](https://lists.apache.org/thread.html/a6743ba8e0132f865e2f43ea5eded30ad2bc81aeb2445973b8f89087@%3Cdev.whimsical.apache.org%3E)
 
-- [ ] Implement custom server error messages.
+- [ ] Implement custom server error messages. (done for /www browse and roster tool)
 
 - [ ] Share common code for places where we jump thru hoops or regexes
       to account for historical or file formats or odd PMC names.
       
-    - [tools/collate_minutes.rb](tools/collate_minutes.rb)
-    - [lib/whimsy/asf/committee.rb](lib/whimsy/asf/committee.rb)
-    - [lib/whimsy/asf/site.rb](lib/whimsy/asf/site.rb)
+    - [tools/collate_minutes.rb](tools/collate_minutes.rb) - maps PMC names displayed in board reports like concom
+    - [lib/whimsy/asf/committee.rb](lib/whimsy/asf/committee.rb) - maps PMC names within Committee @@aliases
+    - [lib/whimsy/asf/site.rb](lib/whimsy/asf/site.rb) - maps URLs for groups within Site @@default
+    - [lib/whimsy/asf/mail.rb](lib/whimsy/asf/mail.rb) - maps mail list names within Committee.mail_list
+
+- [ ] Show flow of data generated or consumed, tying back to the Role/Group that maintains it.
+      See json-editor branch (poorly named, I know)
 
 ## Crazy Ideas :tada:
 
@@ -33,6 +37,7 @@ and crazy ideas alike.  Comments appreciated.
       of other available (and publishable) scripts there. 
       Scan curdir; forall *.cgi where second line includes WVisible, display name/link.
       Using a positive comment ensures only scripts wishing to be displayed are visible.
+      see tools/wwwdocs.rb
 
 
 
