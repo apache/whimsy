@@ -108,7 +108,9 @@ _html do
         # details for an individual project
         project = $1
         links = sites[project]
-        _h2 sites[project]['display_name']
+        _h2 do
+          _a links['display_name'], href: links['uri']
+        end
         _table.table.table_striped do
           _tbody do
             cols.each do |col|
@@ -127,7 +129,9 @@ _html do
           _tbody do
 	    sites.each do |n, links|
               _tr class: label(analysis, links, col, n) do
-                _td links['display_name']
+                _td do 
+                  _a links['display_name'], href: links['uri']
+                end
                 _td links[col]
               end
             end
