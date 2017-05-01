@@ -20,6 +20,7 @@ PAGETITLE = 'Apache TLP Website Link Checks'
 cols = %w( events foundation license sponsorship security thanks copyright trademarks )
 CHECKS = { 
   'copyright'   => %r{[Cc]opyright [^.]+ Apache Software Foundation}, # Do we need '[Tt]he ASF'?
+  'foundation'   => %r{.},
   # TODO more checks needed here, e.g. ASF registered and 3rd party marks
   'trademarks'  => %r{trademarks of [Tt]he Apache Software Foundation},
   'events'      => %r{apache.org/events/current-event},
