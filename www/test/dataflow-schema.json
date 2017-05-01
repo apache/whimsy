@@ -1,0 +1,67 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {},
+    "id": "https://whimsy.apache.org/public/dataflow-schema.json",
+    "properties": {
+        "datafile": {
+            "id": "/properties/datafile",
+            "properties": {
+                "generator": {
+                    "default": "ASF::Committee|filename.cgi",
+                    "description": "The code that generates/writes this data; either ASF::Class or path/file.rb.",
+                    "id": "/properties/datafile/properties/generator",
+                    "title": "Generator",
+                    "type": "string"
+                },
+                "maintainer": {
+                    "default": "role|mailing-list",
+                    "description": "Group responsible for maintaining this data; ASF officer role or mailinglist.",
+                    "id": "/properties/datafile/properties/maintainer",
+                    "title": "Maintainer",
+                    "type": "string"
+                },
+                "model": {
+                    "default": "ASF::Committee|filename.rb",
+                    "description": "Any code that reads or models this data; either ASF::Class or path/file.rb.",
+                    "id": "/properties/datafile/properties/model",
+                    "title": "DataModel",
+                    "type": "string"
+                },
+                "sources": {
+                    "additionalItems": true,
+                    "id": "/properties/datafile/properties/sources",
+                    "items": {
+                        "default": "private/committers/board/committee-info.txt",
+                        "description": "List of path/filename of data sources this is derived from.",
+                        "id": "/properties/datafile/properties/sources/items",
+                        "title": "Sources",
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                },
+                "usedby": {
+                    "additionalItems": true,
+                    "id": "/properties/datafile/properties/usedby",
+                    "items": {
+                        "default": "https://projects.apache.org/index.html",
+                        "description": "Known tools/websites that directly rely on this data.",
+                        "id": "/properties/datafile/properties/usedby/items",
+                        "title": "UsedBy",
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                }
+            },
+            "required": [
+                "maintainer"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "datafile"
+    ],
+    "type": "object"
+}

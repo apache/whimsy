@@ -1,0 +1,16 @@
+{
+  "committee-info.json": {
+    "period": "d",
+    "maintainer": "generator",
+    "model": "ASF::Committee",
+    "generator": "tools/public_committee_info.rb",
+    "usedby": [
+      "https://projects.apache.org",
+      "https://whimsy.apache.org/"
+    ],
+    "sources": [
+      "private/committers/board/committee-info.txt",
+      "ASF::LDAP"
+    ]
+  }
+}
