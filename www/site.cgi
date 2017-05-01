@@ -117,7 +117,7 @@ _html do
           _tbody do
             cols.each do |col|
               _tr do
-                _td col
+                _td col.capitalize
                 _td links[col], class: label(analysis, links, col, project)
               end
             end
@@ -126,11 +126,11 @@ _html do
       elsif path_info =~ %r{/check/(.+)}
         # details for a single check
         col = $1
-        _h2 col
+        _h2 col.capitalize
         if CHECKS.include? col
-          _p do
+          _p! do
             _ '(Expected to match the regular expression: '
-            _ CHECKS[col]
+            _code CHECKS[col].inspect
             _ ')'
           end
         end
