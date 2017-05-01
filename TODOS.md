@@ -24,6 +24,7 @@ and crazy ideas alike.  Comments appreciated.
     - [lib/whimsy/asf/committee.rb](lib/whimsy/asf/committee.rb) - maps PMC names within Committee @@aliases
     - [lib/whimsy/asf/site.rb](lib/whimsy/asf/site.rb) - maps URLs for groups within Site @@default
     - [lib/whimsy/asf/mail.rb](lib/whimsy/asf/mail.rb) - maps mail list names within Committee.mail_list
+    - [lib/whimsy/asf/podlings.rb](lib/whimsy/asf/podlings.rb) - maps mail list names within *_mail_list
 
 - [ ] Show flow of data generated or consumed, tying back to the Role/Group that maintains it.
       See json-editor branch (poorly named, I know)
