@@ -165,6 +165,12 @@ _html do
 	    end
 	  end
 
+          sort_order = {
+            'label-success' => 1,
+            'label-warning' => 2,
+            'label-danger'  => 3
+          }
+
 	  _tbody do
 	    sites.each do |n, links|
 	      _tr do
@@ -172,7 +178,8 @@ _html do
 		  _a "#{links['display_name']}", href: "project/#{n}"
 		end
 		cols.each do |c|
-		  _td '', class: label(analysis, links, c, n)
+		  cls = label(analysis, links, c, n)
+		  _td '', class: cls, data_sort_value: sort_order[cls]
 		end
 	      end
 	    end
