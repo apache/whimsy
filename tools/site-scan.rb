@@ -93,7 +93,8 @@ def parse(site, name)
 
     txt = squash(node.text)
 
-    if txt =~ /\btrademarks\b/ and not data[:trademarks]
+    # allow override if phrase looks good
+    if (txt =~ /\btrademarks\b/  and not data[:trademarks]) or txt =~/are trademarks of [Tt]he Apache Software/
       t, p = getText(txt, node)
       # drop previous text if it looks like Copyright sentence
       data[:trademarks] = t.sub(/^.*?Copyright .+? Foundation[.]?/,'').strip
@@ -114,10 +115,13 @@ def getText(txt, node)
   parent = nil # debug to show where parent needed to be fetched
   if not txt =~ /Apache Software Foundation/i # have we got all the text?
     if node.parent.name == 'a' # e.g. whimsical. such parents don't have extra text.
-      txt = squash(node.parent.parent.text)
+      newnode = node.parent.parent
     else
-      txt = squash(node.parent.text)
+      newnode = node.parent
     end
+    # ensure <br> is treated as a separator when extracting the combined text
+    newnode.css('br').each{ |br| br.replace(" ") }
+    txt = squash(newnode.text)
     parent = true
   end
   return txt, parent
