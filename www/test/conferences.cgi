@@ -1,4 +1,9 @@
 #!/usr/bin/env ruby
+print "Status: 301 Moved Permanently\r\n"
+print "Location: ../events/other\r\n"
+print "\r\n"
+exit
+
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'json'
 require 'net/http'

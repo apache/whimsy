@@ -1,4 +1,9 @@
 #!/usr/bin/env ruby
+print "Status: 301 Moved Permanently\r\n"
+print "Location: ../brand/list\r\n"
+print "\r\n"
+exit
+
 # Wvisible:deprecated,brand Listing of trademarks-old
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'csv'
