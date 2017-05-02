@@ -177,6 +177,7 @@ get '/orgchart/:name' do |name|
 
   @org = OrgChart.load
   @role = @org[name]
+  @desc = OrgChart.desc
   pass unless @role
 
   @oversees = @org.select do |role, duties|

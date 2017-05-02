@@ -74,6 +74,9 @@ _html do
           else
             _td value, class: pvt 
           end
+          _td class: pvt do
+            _(@desc[key]) if @desc.key?(key)
+          end
         end
       end
     end
