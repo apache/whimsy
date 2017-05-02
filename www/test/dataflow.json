@@ -1,16 +1,240 @@
 {
-  "committee-info.json": {
-    "period": "d",
-    "maintainer": "generator",
-    "model": "ASF::Committee",
-    "generator": "tools/public_committee_info.rb",
-    "usedby": [
-      "https://projects.apache.org",
-      "https://whimsy.apache.org/"
-    ],
+  "https://whimsy.apache.org/public/committee-info.json": {
+    "description": "Committee (PMC) names and membership",
+    "maintainer": "/www/roster/public_committee_info.rb",
     "sources": [
-      "private/committers/board/committee-info.txt",
-      "ASF::LDAP"
+      "/lib/whimsy/asf/committee.rb",
+      "/lib/whimsy/asf/person.rb",
+      "private/committers/board/committee-info.txt"
     ]
+  },
+  "https://whimsy.apache.org/public/icla-info.json": {
+    "description": "Names of people who have submitted ICLAs who have uids (committer accounts)",
+    "maintainer": "/tools/icla-info.rb",
+    "sources": [
+      "/lib/whimsy/asf/icla.rb"
+    ]
+  },
+  "https://whimsy.apache.org/public/icla-info_noid.json": {
+    "description": "Names of people who have submitted ICLAs who don't (yet) have uids (commiter accounts)",
+    "maintainer": "/tools/icla-info_noid.rb",
+    "sources": [
+      "/lib/whimsy/asf/icla.rb"
+    ]
+  },
+  "https://whimsy.apache.org/public/member-info.json": {
+    "description": "ASF Member name listing",
+    "maintainer": "/tools/member-info.rb",
+    "sources": [
+      "/lib/whimsy/asf/member.rb"
+    ]
+  },
+  "https://whimsy.apache.org/public/public_ldap_authgroups.json": {
+    "description": "Membership of LDAP auth groups. Membership of an LDAP auth group is used to grant commit karma for sub-project and other resources",
+    "maintainer": "/www/roster/public_ldap_authgroups.rb",
+    "sources": [
+      "/lib/whimsy/asf/ldap.rb"
+    ]
+  },
+  "https://whimsy.apache.org/public/public_ldap_committees.json": {
+    "description": "Membership of LDAP committee groups. Note: Membership of an LDAP committee group != membership of the PMC",
+    "maintainer": "/www/roster/public_ldap_committees.rb",
+    "sources": [
+      "/lib/whimsy/asf/ldap.rb"
+    ]
+  },
+  "https://whimsy.apache.org/public/public_ldap_groups.json": {
+    "description": "Membership of LDAP unix groups. Membership of an LDAP unix group is used to grant commit karma for a whole project",
+    "maintainer": "/www/roster/public_ldap_groups.rb",
+    "sources": [
+      "/lib/whimsy/asf/ldap.rb"
+    ]
+  },
+  "https://whimsy.apache.org/public/public_ldap_people.json": {
+    "description": "Basic details of LDAP personal entries. Shows the public name and whether the login is currently disabled",
+    "maintainer": "/www/roster/public_ldap_people.rb",
+    "sources": [
+      "/lib/whimsy/asf/ldap.rb"
+    ]
+  },
+  "https://whimsy.apache.org/public/public_ldap_services.json": {
+    "description": "Membership of LDAP service groups. For example pmc_chairs shows the list of people with PMC chair karma",
+    "maintainer": "/www/roster/public_ldap_services.rb",
+    "sources": [
+      "/lib/whimsy/asf/ldap.rb"
+    ]
+  },
+  "https://whimsy.apache.org/public/public_nonldap_groups.json": {
+    "description": "Membership of auth groups not defined in LDAP. For example, Incubator podlings",
+    "maintainer": "/www/roster/public_nonldap_groups.rb",
+    "sources": [
+      "/lib/whimsy/asf/ldap.rb"
+    ]
+  },
+  "https://whimsy.apache.org/public/public_podling_status.json": {
+    "description": "Current Incubation status of each podling",
+    "maintainer": "/www/roster/public_podling_status.rb",
+    "sources": [
+      "/lib/whimsy/asf/podlings.rb"
+    ]
+  },
+  "https://whimsy.apache.org/public/public_podlings.json": {
+    "description": "Listings of podling data TODO?",
+    "maintainer": "/www/roster/public_podlings.rb",
+    "sources": [
+      "/lib/whimsy/asf/podlings.rb"
+    ]
+  },
+  "https://whimsy.apache.org/public/site-scan.json": {
+    "description": "Current status of project websites relating to required navigation links",
+    "maintainer": "/tools/site-scan.rb",
+    "sources": [
+      "https://www.apache.org/foundation/marks/pmcs"
+    ]
+  },
+  "https://www.apache.org/foundation/marks/pmcs": {
+    "description": "Policy for display of Apache PMC websites",
+    "maintainer": "brand"
+  },
+  "/lib/whimsy/asf/auth.rb": {
+    "description": "ASF::Authorization: Models LDAP and other authorizations based on id.apache.org; See also ASF::Person",
+    "maintainer": "whimsy",
+    "sources": [
+      "infrastructure-puppet/modules/subversion_server/files/authorization/"
+    ]
+  },
+  "/lib/whimsy/asf/committee.rb": {
+    "description": "ASF::Committee: model both PMCs and other committees; See also ASF::Person",
+    "maintainer": "whimsy",
+    "sources": [
+      "private/committers/board/committee-info.txt"
+    ]
+  },
+  "/lib/whimsy/asf/icla.rb": {
+    "description": "ASF::ICLA: Tracks ICLAs and names; See also ASF::Person",
+    "maintainer": "whimsy",
+    "sources": [
+      "private/foundation/officers/iclas.txt", 
+      "*reserved-ids.yml", 
+      "*historic/committers.json"
+    ]
+  },
+  "/lib/whimsy/asf/ldap.rb": {
+    "description": "ASF::LDAP: See also ASF::Config, Person, Member, Group",
+    "maintainer": "whimsy",
+    "sources": [
+      "ASF::LDAP::HOSTS", 
+      "/apache/infrastructure-puppet/deployment/data/common.yaml"
+    ]
+  },
+  "/lib/whimsy/asf/mail.rb": {
+    "description": "ASF::Mail: Associate email addresses with Persons; See also ASF::Config, Person, Committee, Podling",
+    "maintainer": "whimsy",
+    "sources": [
+      "infra/infrastructure/apmail/trunk/bin/.archives"
+    ]
+  },
+  "/lib/whimsy/asf/member.rb": {
+    "description": "ASF::Member: Data and auth about ASF Members; See also ASF::Person",
+    "maintainer": "whimsy",
+    "sources": [
+      "private/foundation/members.txt"
+    ]
+  },
+  "/lib/whimsy/asf/nominees.rb": {
+    "description": "Extends ASF::Person to add data about nominees around meetings",
+    "maintainer": "whimsy",
+    "sources": [
+      "special/nominated-members.txt"
+    ]
+  },
+  "/lib/whimsy/asf/person.rb": {
+    "description": "ASF::Person: Data about an ICLA signer, committer, etc.; Extensive integration with ASF::LDAP for auth",
+    "maintainer": "whimsy",
+    "sources": [
+      "/lib/whimsy/asf/ldap.rb",
+      "/lib/whimsy/asf/icla.rb"
+    ]
+  },
+  "/lib/whimsy/asf/podlings.rb": {
+    "description": "ASF::Podlings: Committee analogue for Incubator podlings",
+    "maintainer": "whimsy",
+    "sources": [
+      "asf/incubator/public/trunk/content/podlings.xml"
+    ]
+  },
+  "/lib/whimsy/asf/rack.rb": {
+    "description": "ASF::Rack: add functionality to ASF::Auth, ASF::Committers, ASF::MembersAndOfficers",
+    "maintainer": "whimsy"
+  },
+  "/lib/whimsy/asf/site.rb": {
+    "description": "ASF::Site: Utility methods added to ASF::Committee",
+    "maintainer": "whimsy",
+    "sources": [
+      "asf/infrastructure/site/trunk/content/index.html"
+    ]
+  },
+  "/lib/whimsy/asf/svn.rb": {
+    "description": "ASF::SVN: Utility for SVN repo and file access; See also ASF::Config(reads .whimsy)",
+    "maintainer": "whimsy"
+  },
+  "/lib/whimsy/asf/git.rb": {
+    "description": "ASF::Git: Utility for Git repo and file access; See also ASF::Config(reads .whimsy)",
+    "maintainer": "whimsy"
+  },
+  "/lib/whimsy/asf/agenda.rb": {
+    "description": "ASF::Board::Agenda: Utility for approved and posted board minutes; many touchpoints: roster tool, board minutes",
+    "maintainer": "whimsy",
+    "sources": [
+      "https://www.apache.org/foundation/board/"
+    ]
+  },
+  "private/committers/board/committee-info.txt": {
+    "description": "Official record of PMC and committee membership",
+    "maintainer": "secretary"
+  },
+  "infrastructure-puppet/modules/subversion_server/files/authorization/": {
+    "description": "Authorization records for source control repos",
+    "maintainer": "infra-staff"
+  },
+  "private/foundation/officers/iclas.txt": {
+    "description": "Official record of signed ICLAs",
+    "maintainer": "secretary"
+  },
+  "*reserved-ids.yml": {
+    "description": "ID names reserved from use by committers",
+    "maintainer": "infra-staff"
+  },
+  "*historic/committers.json": {
+    "description": "Historical data about past committer date changes",
+    "maintainer": "whimsy"
+  },
+  "/apache/infrastructure-puppet/deployment/data/common.yaml": {
+    "description": "Core infrastructure data locations",
+    "maintainer": "infra-staff"
+  },
+  "infra/infrastructure/apmail/trunk/bin/.archives": {
+    "description": "Records about mail archives and emails",
+    "maintainer": "infra-staff"
+  },
+  "private/foundation/members.txt": {
+    "description": "Official record of ASF corporate Membership",
+    "maintainer": "secretary"
+  },
+  "special/nominated-members.txt": {
+    "description": "Temporary listing of Member nominees before a Member's Meeting",
+    "maintainer": "secretary"
+  },
+  "asf/incubator/public/trunk/content/podlings.xml": {
+    "description": "Listing of active podlings and incubation status details",
+    "maintainer": "incubator"
+  },
+  "asf/infrastructure/site/trunk/content/index.html": {
+    "description": "Listing of active podling websites",
+    "maintainer": "incubator"
+  },
+  "https://www.apache.org/foundation/board/": {
+    "description": "Official records and calendar of ASF Board of Directors",
+    "maintainer": "secretary"
   }
 }
