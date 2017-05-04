@@ -18,8 +18,8 @@ Verify using:
 
 ```
 $ brew --version
-Homebrew 1.1.9
-Homebrew/homebrew-core (git revision 5b9a; last commit 2017-02-05)
+Homebrew 1.2.0
+Homebrew/homebrew-core (git revision e8fa; last commit 2017-05-04)
 ```
 
 Upgrade Ruby
@@ -35,7 +35,7 @@ Verify:
 
 ```
 $ ruby -v
-ruby 2.4.0p0 (2016-12-24 revision 57164) [x86_64-darwin16]
+ruby 2.4.1p111 (2017-03-22 revision 58053) [x86_64-darwin16]
 ```
 
 If you don't see 2.3.1 or later, run `hash -r` and try again.  If you previously
@@ -56,9 +56,9 @@ Verify:
 
 ```
 $ node -v
-v7.5.0
+v7.10.0
 $ npm -v
-4.1.2
+4.2.0
 ```
 
 If you don't see v6 or higher, run `hash -r` and try again.  If you previously
@@ -79,7 +79,7 @@ Verify:
 ```
 $ gem list
 $ bundler -v
-Bundler version 1.14.3
+Bundler version 1.14.6
 ```
 
 Notes:
