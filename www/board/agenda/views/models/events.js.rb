@@ -134,7 +134,7 @@ class Events
     socket_url = window.location.protocol.sub('http', 'ws') + "//" + 
         window.location.hostname + ':34234/'
 
-    @@socket = WebSocket.new(socket_url)
+    @@socket = WebSocket.new(Server.websocket)
 
     def @@socket.onopen(event)
       @@socket.send "session: #{Server.session}\n\n"
