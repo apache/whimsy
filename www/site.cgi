@@ -93,7 +93,7 @@ _html do
           _ 'Current (beta) status of Apache PMC top level websites vis-a-vis '
           _a 'required links', href: 'https://www.apache.org/foundation/marks/pmcs#navigation'
           _ '.  '
-          _a 'See crawler code', href: 'https://whimsy.apache.org/tools/site-check.rb'
+          _a 'See crawler code', href: 'https://raw.githubusercontent.com/apache/whimsy/master/tools/site-scan.rb'
           _ ' and '
           _a 'raw JSON data', href: DATAURI         
           _ ".  Last crawl time: #{crawl_time} over #{sites.size} sites."
