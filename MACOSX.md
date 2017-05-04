@@ -288,6 +288,10 @@ Once again, Edit `/etc/apache2/httpd.conf` using sudo and your favorite text edi
 Uncomment out the following lines:
 
 ```
+LoadModule proxy_module libexec/apache2/mod_proxy.so
+
+LoadModule proxy_wstunnel_module libexec/apache2/mod_proxy_wstunnel.so
+
 LoadModule speling_module libexec/apache2/mod_speling.so
 
 LoadModule rewrite_module libexec/apache2/mod_rewrite.so
