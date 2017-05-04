@@ -112,7 +112,9 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     directors: Hash[ASF::Service['board'].members.map {|person| 
       initials = person.public_name.gsub(/[^A-Z]/, '').downcase
       [initials, person.public_name.split(' ').first]
-    }]
+    }],
+    websocket: (env['rack.url_scheme'].sub('http', 'ws')) + '://' +
+      env['SERVER_NAME'] + env['SCRIPT_NAME'] + '/websocket/'
   }
 
   @page = {
