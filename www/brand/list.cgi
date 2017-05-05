@@ -57,13 +57,13 @@ def _unreg(pmc, proj, parent, n)
   _div.panel.panel_default  id: pmc do
     _div.panel_heading role: "tab", id: "urh#{n}" do
       _h4.panel_title do
-        _a role: "button", data_toggle: "collapse",  aria_expanded: "true", data_parent: "##{parent}", href: "#urc#{n}", aria_controls: "#urc#{n}" do
+        _a.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{parent}", href: "#urc#{n}", aria_controls: "urc#{n}" do
           _ proj['name']
           _{"&trade; software"}
         end
       end
     end
-    _div.panel_collapse.collapse.in id: "#urc#{n}", role: "tabpanel", aria_labelledby: "urh#{n}" do
+    _div.panel_collapse.collapse id: "urc#{n}", role: "tabpanel", aria_labelledby: "urh#{n}" do
       _div.panel_body do
         _a href: proj['homepage'] do
           _ proj['name']
