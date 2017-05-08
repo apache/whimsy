@@ -17,14 +17,14 @@ Application developers may need to know where different things are configured:
 Production Configuration
 ==========
 
-The Whimsy VM runs Ubuntu 14.04 and is fully managed by Puppet using 
+The Whimsy VM runs Ubuntu 16.04 and is fully managed by Puppet using 
 the normal methods Apache infra uses for managing servers.  Note however 
 that management of Whimsy is a PMC responsibility.  
 
 <a name="puppetnode"></a>
 The **puppet definition** is contained in the following files:
 
- * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm3.apache.org.yaml (Includes modules, software, vhosts, ldap realms, and httpd.conf)
+ * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm4.apache.org.yaml (Includes modules, software, vhosts, ldap realms, and httpd.conf)
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/init.pp (Defines various tools and directories used in some tools)
 
@@ -53,7 +53,7 @@ Manual Steps
 The following additional steps are required to get the Whimsy VM up and running:
 
  * Run the following command to create an SSL cert (see [tutorial](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-14-04) for details):
-     * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org -d whimsy3.apache.org -d whimsy-vm3.apache.org -d whimsy-test.apache.org`
+     * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org -d whimsy4.apache.org -d whimsy-vm4.apache.org -d whimsy-test.apache.org`
 
  * Configure `/var/www/.subversion/config` and
    `/var/www/.subversion/servers` to store auth-creds and to use the
@@ -67,13 +67,13 @@ The following additional steps are required to get the Whimsy VM up and running:
      * `46 * * * * ezmlm-list /home/apmail/lists/apache.org/members/ . | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/members'`
 
  * Add the following mail subscriptions:
-    * Subscribe `svnupdate@whimsy-vm3.apache.org` to `board@apache.org`.
+    * Subscribe `svnupdate@whimsy-vm4.apache.org` to `board@apache.org`.
       Alternately, add it to the `board-cvs` alias.
-    * Subscribe `svnupdate@whimsy-vm3.apache.org` to 
+    * Subscribe `svnupdate@whimsy-vm4.apache.org` to 
       `committers-cvs@apache.org`.
-    * Subscribe `board@whimsy-vm3.apache.org` to `board@apache.org`.
-    * Subscribe `members@whimsy-vm3.apache.org` to `members@apache.org`.
-    * Add `secretary@whimsy-vm3.apache.org` to the `secretary@apache.org`
+    * Subscribe `board@whimsy-vm4.apache.org` to `board@apache.org`.
+    * Subscribe `members@whimsy-vm4.apache.org` to `members@apache.org`.
+    * Add `secretary@whimsy-vm4.apache.org` to the `secretary@apache.org`
       alias.
 
  * Using the `www-data` user, copy over the following directories from
@@ -82,15 +82,3 @@ The following additional steps are required to get the Whimsy VM up and running:
  
  * Verify that email can be sent to non-apache.org email addresses
    * Run [testmail.rb](tools/testmail.rb)
-
-The following additional steps are required for now, but will hopefully go
-away once the transition away from the secretary workbench is complete:
-
- * Using the `www-data` user, check out the following repositories:
-   * `svn co https://svn.apache.org/repos/private/foundation /srv/secretary/workbench/foundation`
-   * `svn co https://svn.apache.org/repos/private/documents /srv/secretary/workbench/documents`
-   * `svn co https://svn.apache.org/repos/infra/infrastructure/trunk/subreq /srv/secretary/workbench/subreq`
-   * `svn co https://svn.apache.org/repos/infra/infrastructure/trunk/tlpreq/input /srv/secretary/tlpreq`
-
- * Copy `www/secretary/workbench/secmail.rb` to
-   `/srv/secretary/workbench/secmail.rb`
