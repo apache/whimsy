@@ -93,7 +93,7 @@ _html do
           _ 'Current (beta) status of Apache PMC top level websites vis-a-vis '
           _a 'required links', href: 'https://www.apache.org/foundation/marks/pmcs#navigation'
           _ '.  '
-          _a 'See crawler code', href: 'https://whimsy.apache.org/tools/site-check.rb'
+          _a 'See crawler code', href: 'https://gitbox.apache.org/repos/asf?p=whimsy.git;a=blob_plain;f=tools/site-scan.rb;hb=HEAD'
           _ ' and '
           _a 'raw JSON data', href: DATAURI         
           _ ".  Last crawl time: #{crawl_time} over #{sites.size} sites."
@@ -165,6 +165,12 @@ _html do
 	    end
 	  end
 
+          sort_order = {
+            'label-success' => 1,
+            'label-warning' => 2,
+            'label-danger'  => 3
+          }
+
 	  _tbody do
 	    sites.each do |n, links|
 	      _tr do
@@ -172,7 +178,8 @@ _html do
 		  _a "#{links['display_name']}", href: "project/#{n}"
 		end
 		cols.each do |c|
-		  _td '', class: label(analysis, links, c, n)
+		  cls = label(analysis, links, c, n)
+		  _td '', class: cls, data_sort_value: sort_order[cls]
 		end
 	      end
 	    end

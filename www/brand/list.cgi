@@ -8,6 +8,7 @@ require 'json'
 require 'whimsy/asf'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
+require 'wunderbar/jquery'
 require 'net/http'
 
 # Fieldnames/values from counsel provided docket.csv
@@ -52,23 +53,23 @@ _json do
   csv2json
 end
 
-def _unreg(name, url, desc, parent, n)
-  _div.panel.panel_default do
+def _unreg(pmc, proj, parent, n)
+  _div.panel.panel_default  id: pmc do
     _div.panel_heading role: "tab", id: "urh#{n}" do
       _h4.panel_title do
-        _a role: "button", data_toggle: "collapse",  aria_expanded: "true", data_parent: "##{parent}", href: "#urc#{n}", aria_controls: "#urc#{n}" do
-          _ name
+        _a.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{parent}", href: "#urc#{n}", aria_controls: "urc#{n}" do
+          _ proj['name']
           _{"&trade; software"}
         end
       end
     end
-    _div.panel_collapse.collapse.in id: "#urc#{n}", role: "tabpanel", aria_labelledby: "urh#{n}" do
+    _div.panel_collapse.collapse id: "urc#{n}", role: "tabpanel", aria_labelledby: "urh#{n}" do
       _div.panel_body do
-        _a href: url do
-          _ name
+        _a href: proj['homepage'] do
+          _ proj['name']
         end
         _ ': '
-        _ desc
+        _ proj['description']
       end
     end
   end
@@ -95,23 +96,23 @@ def _marks(marks)
   end
 end
 
-def _project(name, url, marks)
-  _div.panel.panel_primary do
+def _project(pmc, proj, marks)
+  _div.panel.panel_primary id: pmc do
     _div.panel_heading do 
       _h3!.panel_title do 
-        _a! name, href: url
+        _a! proj['name'], href: proj['homepage']
         _{"&reg; software"}
       end
     end
     _div.panel_body do
-      _{"The ASF owns the following registered trademarks for our #{name}&reg; software:"}
+      _{"The ASF owns the following registered trademarks for our #{proj['name']}&reg; software:"}
     end
     _marks marks
   end
 end
 
 def _apache(marks)
-  _div.panel.panel_primary do
+  _div.panel.panel_primary id: 'apache' do
     _div.panel_heading do 
       _h3.panel_title do 
         _{"Our APACHE&reg; trademarks"}
@@ -137,7 +138,7 @@ _html do
         if pmc == 'apache' then
           _apache(marks)
         elsif projects[pmc] then
-          _project projects[pmc]['name'], projects[pmc]['homepage'], marks
+          _project pmc, projects[pmc], marks
         else
           _.comment! '# TODO map all pmc names to projects or podlings'
           _project 'Apache ' + pmc.capitalize, 'https://' + pmc + '.apache.org', marks
@@ -149,7 +150,7 @@ _html do
       _div.panel_group id: parent, role: "tablist", aria_multiselectable: "true" do
         projects.each_with_index do |(pnam, proj), num|
           unless docket[pnam] then
-            _unreg(proj['name'], proj['homepage'], proj['description'], parent, num)
+            _unreg(pnam, proj, parent, num)
           end
         end
       end

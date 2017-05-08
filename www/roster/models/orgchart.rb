@@ -1,5 +1,6 @@
 class OrgChart
   @@duties = {}
+  @@desc = {}
 
   def self.load
     @@source ||= ASF::SVN['private/foundation/officers/personnel-duties']
@@ -14,11 +15,26 @@ class OrgChart
       @@duties[name] = data
     end
 
+    file = "#{@@source}/README"
+    unless @@desc['mtime'] and @@desc['mtime'] > File.mtime(file).to_f
+      data = Hash[*File.read(file).split(/^\[(.*)\]\n/)[1..-1].map(&:strip)]
+      if data['info'] then
+        data = YAML.load(data['info'])
+        data['mtime'] = File.mtime(file).to_f
+        @@desc = data
+      end
+    end
+
     @@duties
   end
 
   def self.[](name)
     self.load
     @@duties[name]
+  end
+  
+  def self.desc
+    self.load
+    @@desc
   end
 end
