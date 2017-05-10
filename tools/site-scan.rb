@@ -15,13 +15,17 @@ require 'nokogiri'
 require 'json'
 
 # fetch uri, following redirects
-def fetch(uri)
+def fetch(uri, depth=1)
+  if depth > 5
+    raise IOError.new("Too many redirects (#{depth}) detected at #{uri}")
+  end
   uri = URI.parse(uri)
   Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
     request = Net::HTTP::Get.new(uri.request_uri)
     response = http.request(request)
     if response.code =~ /^3\d\d/
-      fetch response['location']
+      $stderr.puts "Redirect #{uri}" if $verbose
+      fetch response['location'], depth+1
     else
       return uri, request, response
     end
