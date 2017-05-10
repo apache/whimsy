@@ -27,7 +27,7 @@ def fetch(uri, depth=1)
       $stderr.puts "Redirect #{uri}" if $verbose
       fetch response['location'], depth+1
     else
-      return uri, request, response
+      return uri, response
     end
   end
 end
@@ -37,7 +37,7 @@ def squash(text)
 end
 
 def parse(site, name)
-  uri, request, response = fetch(site)
+  uri, response = fetch(site)
   doc = Nokogiri::HTML(response.body)
 
   # default data
