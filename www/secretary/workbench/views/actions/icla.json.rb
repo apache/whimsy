@@ -47,7 +47,7 @@ task "svn commit documents/iclas/#@filename#{fileext}" do
       'https://svn.apache.org/repos/private/documents/iclas', "#{dir}/iclas"
 
     # create/add file(s)
-    if @signature.to_s.empty? or not @selected.end_with? '.pdf'
+    if @signature.to_s.empty? or fileext != '.pdf'
       message.write_svn("#{dir}/iclas", @filename, @selected, @signature)
     else
       message.write_svn("#{dir}/iclas", @filename, 
