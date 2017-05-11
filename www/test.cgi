@@ -37,5 +37,20 @@ if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
       sleep wait
       print " done waiting\n"
     end
+    require 'socket'
+    hostname = Socket.gethostname
+    require 'resolv'
+    master = nil
+    current = nil
+    Resolv::DNS.open do |rs|
+      master = rs.getaddress("whimsy.apache.org")
+      current = rs.getaddress(hostname) rescue nil
+    end
+    print "master: #{master} current: #{current}\n"
+    if current == master
+      print "This system is the Whimsy master\n"
+    else
+      print "This system is not the Whimsy master\n"
+    end
     print "All done\n"
 end
