@@ -23,7 +23,7 @@ BOARD_REGEX = { # Non-interesting email subjects from board
   notice: /\A\[NOTICE\]/i,
   report: /\A\[REPORT\]/i,
   resolution: /\A\[RESOLUTION\]/i,
-  svn_agenda: %r{\Aboard: r\d{4,7} - /foundation/board/board_agenda_},
+  svn_agenda: %r{\Aboard: r\d{4,7} - /foundation/board/},
   svn_iclas: %r{\Aboard: r\d{4,7} - /foundation/officers/iclas.txt}
 }
 
@@ -61,6 +61,7 @@ def analyze(fname, results, subject_regex, errors)
     end
     begin
       results << {}
+      subjects = []
       results.last[:date] = f.chomp('.json')
       results.last[:email] = jzon['emails'].size
       results.last[:interesting] = results.last[:email]
@@ -68,7 +69,13 @@ def analyze(fname, results, subject_regex, errors)
       subject_regex.each do |t, s|
         results.last[t] = jzon['emails'].select{ |email| email['subject'] =~ s }.size
         results.last[:interesting] -= results.last[t] if subject_regex.keys.include? t 
-        # TODO: return a list of all subject lines that are interesting for human analysis
+      end
+      # TODO: there's a more rubyish way to combine these loops
+      subject_regex.each do |t, s|
+        jzon['emails'].reject!{ |email| email['subject'] =~ s }
+      end
+      jzon['emails'].each do |email|
+        subjects << email['subject']
       end
       # max = 0
       # total = 0
@@ -89,10 +96,10 @@ def analyze(fname, results, subject_regex, errors)
           break if ctr > 5
         end
       end
+      return subjects
     rescue Exception => e
       errors << "Bogosity! analyzing #{f} raised #{e.message[0..255]}"
       errors << "\t#{e.backtrace.join("\n\t")}"
-      return
     end
   end
 end
@@ -101,9 +108,19 @@ end
 def run_analyze(dir, list, subject_regex)
   results = []
   errors = []
+  subjects = []
   output = File.join("#{dir}", "output-#{list}")
   Dir[File.join("#{dir}", "#{list}*.json")].each do |fname|
-    analyze(fname, results, subject_regex, errors)
+    subjects = analyze(fname, results, subject_regex, errors)
+    if subjects
+      responses = subjects.select {|subj| subj =~ /Re:/i }.size
+      File.open("#{fname.chomp('.json')}.txt", "w") do |f|
+        f.puts "COUNTS - Replies:#{responses}, New Messages:#{subjects.size - responses}"
+        subjects.sort.each do |s|
+          f.puts s.delete("\n")
+        end
+      end
+    end
   end
   CSV.open("#{output}.csv",'w', :write_headers=> true, :headers => CSV_COLS) do |csv|
     results.each do |r|
@@ -119,7 +136,7 @@ def run_analyze(dir, list, subject_regex)
   File.open("#{output}.json", "w") do |f|
     f.puts JSON.pretty_generate(results)
   end
-  
+    
   results
 end
 
