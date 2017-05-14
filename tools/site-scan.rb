@@ -14,31 +14,119 @@ require 'net/http'
 require 'nokogiri'
 require 'json'
 
-# fetch uri, following redirects
-def fetch(uri, depth=1)
-  if depth > 5
-    raise IOError.new("Too many redirects (#{depth}) detected at #{uri}")
+# Simple cache for site pages
+class Cache
+  # Don't bother checking cache entries that are younger (seconds)
+  attr_accessor :minage
+  attr_accessor :enabled
+
+  def initialize(dir: '.cache', minage: 3600, enabled: true)
+    @dir = dir
+    @enabled = enabled
+    @minage = minage
+    FileUtils.mkdir_p dir
   end
-  uri = URI.parse(uri)
-  Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
-    request = Net::HTTP::Get.new(uri.request_uri)
-    response = http.request(request)
-    if response.code =~ /^3\d\d/
-      $stderr.puts "Redirect #{uri}" if $verbose
-      fetch response['location'], depth+1
+
+  def get(id, url)
+    if not @enabled
+      uri, res = fetch(url)
+      return uri, res.body
+    end
+    age, lastmod, uri, data = read_cache(id)
+    if age < minage
+      return uri, data, 'recent' # we have a recent cache entry
+    end
+    if data and lastmod
+      # let's see if the page has been updated
+      uri, res = fetch(url, {'If-Modified-Since' => lastmod})
+      if res.is_a?(Net::HTTPSuccess)
+        write_cache(id, uri, res)
+        return uri, res.body, 'updated'
+      elsif res.is_a?(Net::HTTPNotModified)
+        path = makepath(id)
+        mtime = Time.now
+        File.utime(mtime, mtime, path) # show we checked the page
+        return uri, data, 'unchanged'
+      else
+        return nil, res, 'error'
+      end
     else
-      return uri, response
+      uri, res = fetch(url)
+      write_cache(id, uri, res)
+      return uri, res.body, data ? 'no last mod' : 'missing'
     end
   end
+
+  private
+
+  # fetch uri, following redirects
+  def fetch(uri, options={}, depth=1)
+    if depth > 5
+      raise IOError.new("Too many redirects (#{depth}) detected at #{url}")
+    end
+    uri = URI.parse(uri)
+    Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      request = Net::HTTP::Get.new(uri.request_uri)
+      options.each do |k,v|
+        request[k] = v
+      end
+      response = http.request(request)
+      if response.code == '304' # Not modified
+        return uri, response      
+      elsif response.code =~ /^3\d\d/ # assume redirect
+        fetch response['location'], options, depth+1
+      else
+        return uri, response
+      end
+    end
+  end
+
+  # File cache contains last modified followed by the data
+  # The file mod time can be used to skip any checks for recently updated files
+  def write_cache(id, uri, res)
+    path = makepath(id)
+    open path, 'wb' do |io|
+      io.puts res['Last-Modified']
+      io.puts uri
+      io.write res.body
+    end
+  end
+
+  # return age, last-modified, uri, data
+  def read_cache(id)
+    path = makepath(id)
+    mtime = File.stat(path).mtime rescue nil
+    last = nil
+    data = nil
+    uri = nil
+    if mtime
+      open path, 'rb' do |io|
+        last = io.gets.chomp
+        uri = URI.parse(io.gets.chomp)
+        data = io.read
+#       Fri, 12 May 2017 14:10:23 GMT
+#       123456789012345678901234567890
+        last = nil unless last.length > 25
+      end
+    end
+    
+    return Time.now - (mtime ? mtime : Time.new(0)), last, uri, data
+  end
+
+  def makepath(id)
+    name = id.gsub /[^\w]/, '_'
+    File.join @dir, "#{name}.html"
+  end
+
 end
 
 def squash(text)
   text.scrub.gsub(/[[:space:]]+/, ' ').strip
 end
 
-def parse(site, name)
-  uri, response = fetch(site)
-  doc = Nokogiri::HTML(response.body)
+def parse(id, site, name)
+  uri, response = $cache.get(id, site)
+  doc = Nokogiri::HTML(response)
 
   # default data
   data = {
@@ -135,11 +223,13 @@ $verbose = ARGV.delete '--verbose'
 
 results = {}
 
+$cache = Cache.new()
+
 # Parse a single site given its URL
 if ARGV.length == 2 and ARGV.first =~ /^https?:/
   site = ARGV.shift
   name = ARGV.shift
-  results[name] = parse(site, name)
+  results[name] = parse(name, site, name)
 else
   # scan all committees, including non-pmcs
   ASF::Committee.load_committee_info
@@ -153,7 +243,7 @@ else
     end
 
     # fetch, parse committee site
-    results[committee.name] = parse(committee.site, committee.display_name)
+    results[committee.name] = parse(committee.name, committee.site, committee.display_name)
   end
 end
 puts JSON.pretty_generate(results)
