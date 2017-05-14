@@ -127,7 +127,7 @@ _html do
                 _td do
                   if cls == 'label-warning'
                     _ '(Expected to match the regular expression: '
-                    _code CHECKS[col].inspect
+                    _code CHECKS[col].source
                     _ ')'
                   else
                     _ ''
@@ -144,7 +144,7 @@ _html do
         if CHECKS.include? col
           _p! do
             _ '(Expected to match the regular expression: '
-            _code CHECKS[col].inspect
+            _code CHECKS[col].source
             _ ')'
           end
         end
