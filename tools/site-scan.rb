@@ -20,11 +20,15 @@ class Cache
   attr_accessor :minage
   attr_accessor :enabled
 
-  def initialize(dir: '.cache', minage: 3600, enabled: true)
+  def initialize(dir: '/tmp/site-scan-cache', minage: 3600, enabled: true)
     @dir = dir
     @enabled = enabled
     @minage = minage
-    FileUtils.mkdir_p dir
+    begin
+      FileUtils.mkdir_p dir
+    rescue
+      @enabled = false
+    end
   end
 
   def get(id, url)
