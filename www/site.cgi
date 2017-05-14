@@ -17,10 +17,11 @@ require 'wunderbar/jquery/stupidtable'
 require 'net/http'
 
 PAGETITLE = 'Apache TLP Website Link Checks'
-cols = %w( events foundation license sponsorship security thanks copyright trademarks )
+cols = %w( uri events foundation license sponsorship security thanks copyright trademarks )
 CHECKS = { 
+  'uri'         => %r{https?://[^.]+\.apache\.org},
   'copyright'   => %r{[Cc]opyright [^.]+ Apache Software Foundation}, # Do we need '[Tt]he ASF'?
-  'foundation'   => %r{.},
+  'foundation'  => %r{.},
   # TODO more checks needed here, e.g. ASF registered and 3rd party marks
   'trademarks'  => %r{trademarks of [Tt]he Apache Software Foundation},
   'events'      => %r{apache.org/events/current-event},
@@ -116,9 +117,19 @@ _html do
         _table.table.table_striped do
           _tbody do
             cols.each do |col|
+              cls = label(analysis, links, col, project)
               _tr do
                 _td col.capitalize
-                _td links[col], class: label(analysis, links, col, project)
+                _td links[col], class: cls
+                _td do
+                  if cls == 'label-warning'
+                    _ '(Expected to match the regular expression: '
+                    _code CHECKS[col].inspect
+                    _ ')'
+                  else
+                    _ ''
+                  end
+                end
               end
             end
           end
