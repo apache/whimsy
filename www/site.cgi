@@ -16,6 +16,7 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 require 'net/http'
+require 'time' # for httpdate
 
 PAGETITLE = 'Apache TLP Website Link Checks'
 cols = %w( uri events foundation license sponsorship security thanks copyright trademarks )
@@ -53,6 +54,7 @@ def analyze(sites)
     ]
 end
 
+# n = project name
 def label(analysis, links, c, n)
   if not links[c]
     'label-danger'
@@ -77,7 +79,7 @@ _html do
     local_copy = File.expand_path('../public/site-scan.json', __FILE__).untaint
 
     if File.exist? local_copy
-      crawl_time = File.mtime(local_copy).rfc2822
+      crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
       sites = JSON.parse(File.read(local_copy))
     else
       response = Net::HTTP.get_response(URI(DATAURI))
