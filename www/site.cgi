@@ -8,7 +8,9 @@ unless ENV['PATH_INFO'] and not ENV['PATH_INFO'].empty?
   exit
 end
 
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'json'
+require 'whimsy/asf'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
