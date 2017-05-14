@@ -10,6 +10,7 @@ end
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'json'
+# needed for _whimsy_header/footer
 require 'whimsy/asf'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
