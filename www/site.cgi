@@ -74,7 +74,7 @@ _html do
 
     path = env['PATH_INFO']
 
-    local_copy = File.expand_path('../public/site-scan.json').untaint
+    local_copy = File.expand_path('../public/site-scan.json', __FILE__).untaint
 
     if File.exist? local_copy
       crawl_time = File.mtime(local_copy).rfc2822
