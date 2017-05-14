@@ -150,7 +150,8 @@ def parse(id, site, name)
     if a['href'] =~ %r{^https?://(www\.)?apache\.org/?$}
       img = a.at('img')
       if img
-        data[:foundation] = uri + img['src'].strip
+        # use the title (hover text) in preference to the source
+        data[:foundation] = img['title'] ? squash(img['title']) : uri + img['src'].strip
       else
         data[:foundation] = squash(a.text) 
       end
