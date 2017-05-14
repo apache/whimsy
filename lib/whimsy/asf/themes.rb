@@ -14,14 +14,14 @@ class Wunderbar::HtmlMarkup
         _div.row do
           _div.col_sm_4.hidden_xs do
             _a href: 'https://www.apache.org/' do
-              _img title: 'ASF Logo', alt: 'ASF Logo', width: 250, height: 101,
+              _img title: 'The Apache Software Foundation', alt: 'ASF Logo', width: 250, height: 101,
                 style: "margin-left: 10px; margin-top: 10px;",
                 src: 'https://www.apache.org/foundation/press/kit/asf_logo_small.png'
             end
           end
           _div.col_sm_3.col_xs_3 do
             _a href: '/' do
-              _img title: 'Whimsy logo', alt: 'Whimsy hat', src: 'https://whimsy.apache.org/whimsy.svg', width: 145, height: 101 
+              _img title: 'Whimsy project home', alt: 'Whimsy hat logo', src: 'https://whimsy.apache.org/whimsy.svg', width: 145, height: 101 
             end
           end
           _div.col_sm_5.col_xs_9.align_bottom do 
