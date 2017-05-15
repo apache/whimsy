@@ -53,10 +53,16 @@ def analyze(sites)
     ]
 end
 
-def label(analysis, links, c, n)
-  if not links[c]
+# Determine the color of a given table cell, given:
+#   - overall analysis of the sites, in particular the third column
+#     which is a list projects that successfully matched the check
+#   - list of links for the project in question
+#   - the column in question (which indicates the check being reported on)
+#   - the name of the project
+def label(analysis, links, col, name)
+  if not links[col]
     'label-danger'
-  elsif analysis[2].include? c and not analysis[2][c].include? n
+  elsif analysis[2].include? col and not analysis[2][col].include? name
     'label-warning'
   else
     'label-success'
