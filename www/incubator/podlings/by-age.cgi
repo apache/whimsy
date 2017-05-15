@@ -47,16 +47,16 @@ _html do
     # Standard Incubator header
     _div.container do
       _div.row do
-        _div.span12 do
+        _div.span8 do
           _a href: "http://www.apache.org/" do
-            _img alt: "The Apache Software Foundation", border: "0",
-              src: "http://www.apache.org/images/asf_logo_wide.gif"
+            _img alt: "The Apache Software Foundation", border: 0, height: 88,
+              src: "http://www.apache.org/img/asf_logo.png"
           end
         end
-        _div.span4 do
+        _div.span8 do
           _a href: "http://incubator.apache.org/" do
-            _img alt: "Apache Incubator", border: "0",
-              src: "http://incubator.apache.org/images/apache-incubator-logo.png"
+            _img alt: "Apache Incubator", border: 0, height: 88,
+              src: "https://incubator.apache.org/images/incubator_feather_egg_logo_sm.png"
           end
         end
       end
