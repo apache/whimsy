@@ -121,7 +121,15 @@ _html do
               cls = label(analysis, links, col, project)
               _tr do
                 _td col.capitalize
-                _td links[col], class: cls
+
+                if links[col] =~ /^https?:/
+                  _td class: cls do
+                    _a links[col], href: links[col]
+                  end
+                else
+                  _td links[col], class: cls
+                end
+
                 _td do
                   if cls == 'label-warning'
                     _ '(Expected to match the regular expression: '
@@ -153,7 +161,14 @@ _html do
                 _td do 
                   _a links['display_name'], href: links['uri']
                 end
-                _td links[col]
+
+                if links[col] =~ /^https?:/
+                  _td do
+                    _a links[col], href: links[col]
+                  end
+                else
+                  _td links[col]
+                end
               end
             end
           end
