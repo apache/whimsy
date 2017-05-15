@@ -128,6 +128,8 @@ def squash(text)
   text.scrub.gsub(/[[:space:]]+/, ' ').strip
 end
 
+#########################################################################
+
 def parse(id, site, name)
   uri, response = $cache.get(id, site)
   doc = Nokogiri::HTML(response)
@@ -147,7 +149,11 @@ def parse(id, site, name)
 
   # scan each link
   doc.css('a').each do |a|
-    if a['href'] =~ %r{^https?://(www\.)?apache\.org/?$}
+
+    # check the link targets
+    a_href = a['href'] ? a['href'].strip : '' # empty string won't match and won't cause NPE
+
+    if a_href =~ %r{^https?://(www\.)?apache\.org/?$}
       img = a.at('img')
       if img
         # use the title (hover text) in preference to the source
@@ -157,34 +163,37 @@ def parse(id, site, name)
       end
     end
 
-    if a['href'] and a['href'].include? 'apache.org/events/'
+    if a_href.include? 'apache.org/events/'
       img = a.at('img')
       if img
         data[:events] = uri + img['src'].strip
       else
-        data[:events] = uri + a['href'].strip
+        data[:events] = uri + a_href
       end
     end
 
+    # check the link text
     a_text = a.text.downcase.strip
     $stderr.puts a_text if $verbose
 
-    if a_text =~ /licenses?/ and a['href'].include? 'apache.org'
-      data[:license] = uri + a['href'].strip 
+    if a_text =~ /licenses?/ and a_href.include? 'apache.org'
+      data[:license] = uri + a_href 
     end
 
     if a_text == 'thanks'
-      data[:thanks] = uri + a['href'].strip 
+      data[:thanks] = uri + a_href 
     end
 
     if a_text == 'security'
-      data[:security] = uri + a['href'].strip 
+      data[:security] = uri + a_href 
     end
 
     if ['sponsorship', 'donate', 'sponsor apache','sponsoring apache'].include? a_text
-      data[:sponsorship] = uri + a['href'].strip
+      data[:sponsorship] = uri + a_href
     end
   end
+
+  # Now scan the page text
   doc.traverse do |node|
     next unless node.is_a?(Nokogiri::XML::Text)
 
