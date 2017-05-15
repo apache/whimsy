@@ -173,7 +173,7 @@ class Message
     attachments += attachments.pop.to_a if Hash === attachments.last
 
     if attachments.flatten.length == 1
-      ext = File.extname(attachments.first).untaint
+      ext = File.extname(attachments.first).downcase.untaint
       find(attachments.first).write_svn(repos, filename + ext)
     else
       # validate filename

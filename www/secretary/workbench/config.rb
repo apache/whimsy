@@ -3,7 +3,7 @@
 #
 
 if Dir.exist? '/srv/mail'
-  SOURCE = 'whimsy-vm3.apache.org:/srv/mail/secretary'
+  SOURCE = 'whimsy.apache.org:/srv/mail/secretary'
   ARCHIVE = '/srv/mail/secretary'
 else
   SOURCE = 'minotaur.apache.org:/home/apmail/private-arch/officers-secretary'

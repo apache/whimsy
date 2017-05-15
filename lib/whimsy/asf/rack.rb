@@ -173,6 +173,25 @@ module ASF
     end
   end
 
+  # compute document root for the site
+  class DocumentRoot
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      unless ENV['DOCUMENT_ROOT']
+        base = Dir.pwd
+        if base.end_with? ENV['PASSENGER_BASE_URI']
+          base = base[0...-ENV['PASSENGER_BASE_URI'].length]
+        end
+        ENV['DOCUMENT_ROOT'] = base
+      end
+
+      return @app.call(env)
+    end
+  end
+
   # Apache httpd on whimsy-vm is behind a proxy that converts https
   # requests into http requests.  Update the environment variables to
   # match.
