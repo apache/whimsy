@@ -151,7 +151,7 @@ def parse(id, site, name)
   doc.css('a').each do |a|
 
     # check the link targets
-    a_href = a['href'] ? a['href'].strip : '' # empty string won't match and won't cause NPE
+    a_href = a['href'].to_s.strip
 
     if a_href =~ %r{^https?://(www\.)?apache\.org/?$}
       img = a.at('img')

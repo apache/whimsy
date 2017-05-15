@@ -10,8 +10,7 @@ end
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'json'
-# needed for _whimsy_header/footer
-require 'whimsy/asf'
+require 'whimsy/asf/themes'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
@@ -54,7 +53,6 @@ def analyze(sites)
     ]
 end
 
-# n = project name
 def label(analysis, links, c, n)
   if not links[c]
     'label-danger'
