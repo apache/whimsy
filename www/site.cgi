@@ -31,6 +31,24 @@ CHECKS = {
   'security'    => %r{apache.org/[Ss]ecurity},
   'thanks'      => %r{apache.org/foundation/thanks},
 }
+DOCS = {
+  'uri'         => ['https://www.apache.org/foundation/marks/pmcs#websites',
+                    'The homepage for any ProjectName must be served from http://ProjectName.apache.org'],
+#  'copyright'   => 'TBA',
+  'foundation'  => ['https://www.apache.org/foundation/marks/pmcs#navigation',
+                    'All projects must feature some prominent link back to the main ASF homepage at http://www.apache.org/'],
+  'trademarks'  => ['https://www.apache.org/foundation/marks/pmcs#attributions',
+                    'All project or product homepages must feature a prominent trademark attribution of all applicable Apache trademarks'],
+#  'events'      => 'TBA',
+  'license'     => ['https://www.apache.org/foundation/marks/pmcs#navigation',
+                    '"License" should link to: http://www.apache.org/licenses/'],
+  'sponsorship' => ['https://www.apache.org/foundation/marks/pmcs#navigation',
+                    '"Sponsorship" or "Donate" should link to: http://www.apache.org/foundation/sponsorship.html'],
+  'security'    => ['https://www.apache.org/foundation/marks/pmcs#navigation',
+                    '"Security" should link to either to a project-specific page [...], or to the main http://www.apache.org/security/ page'],
+  'thanks'      => ['https://www.apache.org/foundation/marks/pmcs#navigation',
+                    '"Thanks" should link to: http://www.apache.org/foundation/thanks.html'],
+}
 DATAURI = 'https://whimsy.apache.org/public/site-scan.json'
 
 def analyze(sites)
@@ -158,6 +176,11 @@ _html do
             _ '(Expected to match the regular expression: '
             _code CHECKS[col].source
             _ ')'
+          end
+          _p do
+            if DOCS.include? col
+              _a DOCS[col][1], href: DOCS[col][0]
+            end
           end
         end
         _table.table do
