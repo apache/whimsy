@@ -246,6 +246,11 @@ if ARGV.length == 2 and ARGV.first =~ /^https?:/
   name = ARGV.shift
   results[name] = parse(name, site, name)
 else
+  if ARGV.first =~ %r{[./]} # have we a file name?
+    outfile = ARGV.shift
+  else
+    outfile = nil
+  end
   # scan all committees, including non-pmcs
   ASF::Committee.load_committee_info
   committees = (ASF::Committee.list + ASF::Committee.nonpmcs).uniq
@@ -261,4 +266,8 @@ else
     results[committee.name] = parse(committee.name, committee.site, committee.display_name)
   end
 end
-puts JSON.pretty_generate(results)
+if outfile
+  File.write(outfile, JSON.pretty_generate(results))
+else
+  puts JSON.pretty_generate(results)
+end
