@@ -34,7 +34,7 @@ class Cache
   def get(id, url)
     if not @enabled
       uri, res = fetch(url)
-      return uri, res.body
+      return uri, res.body, 'nocache'
     end
     age, lastmod, uri, data = read_cache(id)
     if age < minage
@@ -131,7 +131,8 @@ end
 #########################################################################
 
 def parse(id, site, name)
-  uri, response = $cache.get(id, site)
+  uri, response, status = $cache.get(id, site)
+  $stderr.puts "#{id} #{uri} #{status}"
   doc = Nokogiri::HTML(response)
 
   # default data
