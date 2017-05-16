@@ -17,13 +17,14 @@ require 'json'
 # Simple cache for site pages
 class Cache
   # Don't bother checking cache entries that are younger (seconds)
+  # This is mainly intended for local testing
   attr_accessor :minage
   attr_accessor :enabled
 
-  def initialize(dir: '/tmp/site-scan-cache', minage: 3600, enabled: true)
+  def initialize(dir: '/tmp/site-scan-cache', minage: 3000, enabled: true)
     @dir = dir
     @enabled = enabled
-    @minage = minage
+    @minage = minage # default to 50 mins as cron job runs every hour
     begin
       FileUtils.mkdir_p dir
     rescue
