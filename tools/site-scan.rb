@@ -132,7 +132,7 @@ end
 
 def parse(id, site, name)
   uri, response, status = $cache.get(id, site)
-#  $stderr.puts "#{id} #{uri} #{status}"
+  $stderr.puts "#{id} #{uri} #{status}"
   doc = Nokogiri::HTML(response)
 
   # default data
