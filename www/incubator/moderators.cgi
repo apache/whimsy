@@ -51,7 +51,7 @@ _html do
         _div class: 'span4' do
           _a href: "http://incubator.apache.org/" do
             _img alt: "Apache Incubator", border: "0",
-              src: "http://incubator.apache.org/images/apache-incubator-logo.png"
+              src: "https://incubator.apache.org/images/incubator_feather_egg_logo_sm.png"
           end
         end
       end
