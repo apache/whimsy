@@ -40,6 +40,20 @@ def Monitor.system(previous_status)
     }
   end
 
+  # Are we the master node?
+  begin
+    require_relative '../../whimsy'
+    master = Whimsy.master?
+    rescue LoadError, StandardError => e
+      master = e.inspect
+  end
+  name = :master
+  status[name] = {command: 'Whimsy.master?'}
+  # TODO change the false level to warning or danger at some point?
+  # N.B. need to compare with true as master may be a string, i.e. 'truthy'
+  status[name] = {level: master == true ? 'success' : 'info',
+                  data: master.to_s}
+
   {data: status}
 end
 
