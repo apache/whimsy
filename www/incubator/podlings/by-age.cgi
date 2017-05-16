@@ -34,9 +34,9 @@ _html do
     _meta charset: 'utf=8'
     _title 'Incubated Projects - Apache Incubator'
     _link rel: "stylesheet", type: 'text/css',
-      href: "http://incubator.apache.org/style/bootstrap-1-3-0-min.css"
+      href: "https://incubator.apache.org/style/bootstrap-1-3-0-min.css"
     _link rel: "stylesheet", type: 'text/css',
-      href: "http://incubator.apache.org/style/style.css"
+      href: "https://incubator.apache.org/style/style.css"
     _style %{
       svg { float: right; width: 8em; height: 8em; padding-right: 5%; }
       body { margin: 0 2em }
@@ -48,13 +48,13 @@ _html do
     _div.container do
       _div.row do
         _div.span8 do
-          _a href: "http://www.apache.org/" do
+          _a href: "https://www.apache.org/" do
             _img alt: "The Apache Software Foundation", border: 0, height: 88,
-              src: "http://www.apache.org/img/asf_logo.png"
+              src: "https://www.apache.org/img/asf_logo.png"
           end
         end
         _div.span8 do
-          _a href: "http://incubator.apache.org/" do
+          _a href: "https://incubator.apache.org/" do
             _img alt: "Apache Incubator", border: 0, height: 88,
               src: "https://incubator.apache.org/images/incubator_feather_egg_logo_sm.png"
           end
@@ -94,7 +94,7 @@ _html do
     _h2 'Statistics'
     _p! do
       _ "Count:      #{duration.length} PPMCs ("
-      _a 'history', href: 'http://incubator.apache.org/history/'
+      _a 'history', href: 'https://incubator.apache.org/history/'
       _ ")"
     end
     _p "Mean age:   #{(mean+0.5).to_i} days"
@@ -103,7 +103,7 @@ _html do
     # Sorted list of podlings
     _h2_! do
       _a 'Currently in incubation',
-       href: 'http://incubator.apache.org/projects/#current'
+       href: 'https://incubator.apache.org/projects/#current'
       _ ', sorted by age'
     end
 
