@@ -10,10 +10,6 @@ end
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'json'
-require 'whimsy/asf/themes'
-require 'wunderbar'
-require 'wunderbar/bootstrap'
-require 'wunderbar/jquery/stupidtable'
 require 'net/http'
 require 'time' # for httpdate
 
@@ -71,6 +67,38 @@ def analyze(sites)
     ]
 end
 
+def getsites
+    local_copy = File.expand_path('../public/site-scan.json', __FILE__).untaint
+    if File.exist? local_copy
+      crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
+      sites = JSON.parse(File.read(local_copy))
+    else
+      response = Net::HTTP.get_response(URI(DATAURI))
+      crawl_time = response['last-modified']
+      sites = JSON.parse(response.body)
+    end
+  return sites, crawl_time
+end
+
+sites, crawl_time = getsites()
+
+analysis = analyze(sites)
+
+# Allow CLI testing, e.g. "PATH_INFO=/ ruby www/site.cgi >test.json"
+# SCRIPT_NAME will always be set for a CGI invocation
+unless ENV['SCRIPT_NAME']
+  puts JSON.pretty_generate(analysis)
+  exit
+end
+
+# Only required for CGI use
+# if these are required earlier, the code creates an unnecessary 'assets' directory
+
+require 'whimsy/asf/themes'
+require 'wunderbar'
+require 'wunderbar/bootstrap'
+require 'wunderbar/jquery/stupidtable'
+
 # Determine the color of a given table cell, given:
 #   - overall analysis of the sites, in particular the third column
 #     which is a list projects that successfully matched the check
@@ -96,20 +124,6 @@ _html do
 
   _body? do
 
-    path = env['PATH_INFO']
-
-    local_copy = File.expand_path('../public/site-scan.json', __FILE__).untaint
-
-    if File.exist? local_copy
-      crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
-      sites = JSON.parse(File.read(local_copy))
-    else
-      response = Net::HTTP.get_response(URI(DATAURI))
-      crawl_time = response['last-modified']
-      sites = JSON.parse(response.body)
-    end
-    analysis = analyze(sites)
-    
     _whimsy_header PAGETITLE
 
     _whimsy_content do
