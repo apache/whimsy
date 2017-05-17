@@ -551,6 +551,12 @@ module ASF
       end
     end
 
+    def projects
+      weakref(:projects) do
+        Project.list("member=uid=#{name},#{base}")
+      end
+    end
+
     def groups
       weakref(:groups) do
         Group.list("memberUid=#{name}")
@@ -699,7 +705,7 @@ module ASF
     @base = 'ou=project,ou=groups,dc=apache,dc=org'
 
     def self.list(filter='cn=*')
-      ASF.search_one(base, filter, 'cn').flatten
+      ASF.search_one(base, filter, 'cn').flatten.map {|cn| Project.find(cn)}
     end
 
     def self.preload

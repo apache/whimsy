@@ -51,6 +51,8 @@ class Committer
 
     response[:committees] = person.committees.map(&:name)
 
+    response[:projects] = person.projects.map(&:name)
+
     response[:groups] = person.services
     response[:committer] = []
     committees = ASF::Committee.list.map(&:id)
