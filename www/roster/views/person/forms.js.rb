@@ -7,10 +7,10 @@ class PersonForms < React
     committer = @@person.state.committer
     documents = "https://svn.apache.org/repos/private/documents"
 
-    _tr do
-      _td 'Forms on file'
+    _div.row do
+      _div.name 'Forms on file'
 
-      _td do
+      _div.value do
         _ul do
           for form in committer.forms
             link = committer.forms[form]

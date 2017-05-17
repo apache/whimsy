@@ -6,10 +6,10 @@ class PersonSascore < React
   def render
     committer = @@person.state.committer
 
-    _tr data_edit: 'sascore' do
-      _td 'SpamAssassin score'
+    _div.row data_edit: 'sascore' do
+      _div.name 'SpamAssassin score'
 
-      _td do
+      _div.value do
 
         if @@person.state.edit_sascore
 

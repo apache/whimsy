@@ -6,10 +6,10 @@ class PersonUrls < React
   def render
     committer = @@person.state.committer
 
-    _tr do
-      _td 'Personal URL'
+    _div.row do
+      _div.name 'Personal URL'
 
-      _td do
+      _div.value do
         _ul committer.urls do |url|
           _li {_a url, href: url}
         end

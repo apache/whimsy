@@ -6,11 +6,11 @@ class PersonMemberStatus < React
   def render
     committer = @@person.state.committer
 
-    _tr data_edit: ('memstat' if @@person.props.auth.secretary) do
-      _td 'Member status'
+    _div.row data_edit: ('memstat' if @@person.props.auth.secretary) do
+      _div.name 'Member status'
 
       if committer.member.info
-        _td do
+        _div.value do
           _span committer.member.status
 
          if @@person.state.edit_memstat
@@ -26,7 +26,7 @@ class PersonMemberStatus < React
          end
         end
       else
-        _td.not_found 'Not in members.txt'
+        _div.value.not_found 'Not in members.txt'
       end
     end
   end

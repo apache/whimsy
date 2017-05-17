@@ -6,11 +6,11 @@ class PersonSshKeys < React
   def render
     committer = @@person.state.committer
 
-    _tr do
-      _td 'SSH keys'
+    _div.row do
+      _div.name 'SSH keys'
 
 
-      _td do
+      _div.value do
         _ul committer.ssh do |key|
           _li.ssh do
             _pre.wide key

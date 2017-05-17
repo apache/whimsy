@@ -6,10 +6,10 @@ class PersonGitHub < React
   def render
     committer = @@person.state.committer
 
-    _tr data_edit: 'github' do
-      _td 'GitHub username'
+    _div.row data_edit: 'github' do
+      _div.name 'GitHub username'
 
-      _td do
+      _div.value do
 
         if @@person.state.edit_github
 
