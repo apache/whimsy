@@ -208,6 +208,9 @@ FileUtils.mkdir_p SITE_MINUTES
     title.sub! /^Infrastructure .*/, 'Infrastructure'
     title.sub! /^Labs .*/, 'Labs'
     title.sub! 'TCL', 'Tcl'
+    title.sub! 'Orc', 'ORC'
+    title.sub! 'Steve', 'STeVe'
+    title.sub! 'Openmeetings', 'OpenMeetings'
     title.sub! 'Web services', 'Web Services'
     title.sub! 'ASF Rep. for W3C', 'W3C Relations'
 
@@ -299,6 +302,8 @@ FileUtils.mkdir_p SITE_MINUTES
           title.sub! 'lucene4c', 'Lucene4c'
           title.sub! 'Lucene.NET', 'Lucene.Net'
           title.sub! 'Ode', 'ODE'
+          title.sub! 'Singa', 'SINGA'
+          title.sub! 'Openmeetings', 'OpenMeetings'
           title.sub! 'ODFToolkit', 'ODF Toolkit'
           title.sub! 'OpenOffice.org', 'OpenOffice'
           title.sub! 'OpenEJB', 'TomEE'
@@ -522,6 +527,9 @@ FileUtils.mkdir_p SITE_MINUTES
     report.title.sub! 'PRC', 'Public Relations'
     report.title.sub! /Security$/, 'Security Team'
     report.title.sub! 'Apache/TCL', 'Tcl'
+    report.title.sub! 'Orc', 'ORC'
+    report.title.sub! 'Steve', 'STeVe'
+    report.title.sub! 'Openmeetings', 'OpenMeetings'
 
     pending[title] = report
   end
