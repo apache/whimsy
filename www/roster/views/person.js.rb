@@ -67,6 +67,18 @@ class Person < React
       end
     end
 
+    # Podlings
+    unless @committer.projects.empty?
+      _div.row do
+	_div.name 'Podlings'
+	_div.value do
+	  _ul @committer.projects do |project|
+	    _li {_a project, href: "ppmc/#{project}"}
+	  end
+	end
+      end
+    end
+
     # Email addresses
     if @committer.mail
       _PersonEmail person: self
