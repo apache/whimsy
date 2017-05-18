@@ -496,7 +496,7 @@ FileUtils.mkdir_p SITE_MINUTES
       match = pattern.match(report.title)
       if match
         report.subtitle = report.title
-        if select.is_a? Fixnum
+        if select.is_a? Integer
           report.title = match[select]
         else
           report.title = select
