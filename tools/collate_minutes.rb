@@ -384,6 +384,7 @@ FileUtils.mkdir_p SITE_MINUTES
   end
 
   # parse other agenda items
+  establish='' # pick up misplaced PMC creates
   minutes.scan(/
     \n\s*(\w+)\.\s                    # attach
     (Discussion\sItems|Unfinished\sBusiness|New\sBusiness|Announcements)\n
@@ -393,6 +394,10 @@ FileUtils.mkdir_p SITE_MINUTES
     next if text.strip.empty?
     next if text =~ /\A\s*none\.?\s*\Z/i
     next if text =~ /\A\s*no unfinished business\.?\s*\Z/i
+    if text =~ /Establish the Apache \S+ Project/ # 2012_08_28
+      establish += text
+      next
+    end
     report = OpenStruct.new
     report.title ||= title #.downcase
     report.meeting = date
@@ -402,12 +407,13 @@ FileUtils.mkdir_p SITE_MINUTES
   end
 
   # parse Special Orders
-  orders = minutes.split(/^ \d\. Special Orders/,2).last.split(/^ \d\./,2).first
+  orders = establish + minutes.split(/^ \d\. Special Orders/,2).last.split(/^ \d\./,2).first
+  # Some section ids have a leading digit, hence [\s\d]
   orders.scan(/
-    \s{4}([A-Z])\.          # agenda item
+    \s{3}[\s\d]([A-Z])\.    # agenda item
     \s+(.*?)\n\s*\n         # title
     (.*?)                   # text
-    (?=\n\s{4,5}[A-Z]\.\s|\z) # next section
+    (?=\n\s{3,4}[\s\d][A-Z]\.\s|\z) # next section
   /mx).each do |attach,title,text|
     next if title.count("\n")>1
     report = OpenStruct.new
