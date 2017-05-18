@@ -51,7 +51,7 @@ class Committer
 
     response[:committees] = person.committees.map(&:name)
 
-    response[:projects] = person.projects.map(&:name)
+    response[:projects] = person.projects.map(&:name).sort
 
     response[:groups] = person.services
     response[:committer] = []
