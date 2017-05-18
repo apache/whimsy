@@ -425,6 +425,7 @@ FileUtils.mkdir_p SITE_MINUTES
 
       :E, 1, /Establishing a PMC for a (.*) project/,
       :E, 1, /Establish (.+?) as a top level project/,
+      :E, 1, /Establish (AsterixDB)/, # 2016_04_20
       :E, 4, /Estab?lish(ing|ment)? (of )?(the |an )?(.+?) (board )?(PMC|[pP]roject|[cC]ommittee)$/,
       :E, 2, /Creat(e|ion of) the (.+?) (Project|PMC)/,
       :E, 2, /To (re-establish|create) the (.+?) PMC/,
