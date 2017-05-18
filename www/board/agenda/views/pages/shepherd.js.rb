@@ -19,14 +19,10 @@ class Shepherd < React
     end
 
     # list agenda items associated with this shepherd
-    first = true
     Agenda.index.each do |item|
       if item.shepherd and item.shepherd.downcase().start_with? shepherd
-        _h3 class: item.color do
-          _Link text: item.title, href: "shepherd/queue/#{item.href}",
-            class: ('default' if first)
-          first = false
-        end
+        _Link text: item.title, href: "shepherd/queue/#{item.href}",
+          class: "h3 #{item.color}"
 
         _AdditionalInfo item: item, prefix: true
 

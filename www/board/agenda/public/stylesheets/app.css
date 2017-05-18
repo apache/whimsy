@@ -64,6 +64,11 @@ h3 span.owner {
   font-size: medium;
 }
 
+/* block links */
+a.h3, a.h4 {
+  display: block;
+}
+
 /* center the table */
 table {
   margin-left: auto;
