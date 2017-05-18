@@ -311,10 +311,6 @@ footer button {
     min-width: 48%;
   }
 
-  .navbar .report-info {
-    display: none
-  }
-
   .flexbox .report-info {
     display: block;
   }
