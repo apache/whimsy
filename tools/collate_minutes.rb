@@ -795,7 +795,7 @@ page = layout do |x|
               info = site[canonical[title.downcase]]
               if info
                 if %w{dormant retired}.include? info[:status]
-                  x.em do
+                  x.del do
                     x.a title, :href => link[title], :title => info[:text]
                   end
                 else
