@@ -165,9 +165,16 @@ unapproved = Dir["#{BOARD}/board_minutes_20*.txt"].sort
 
 FileUtils.mkdir_p SITE_MINUTES
 
+seen={}
+
 (posted+unapproved).each do |txt|
   date = $1 if txt =~ /(\d\d\d\d_\d\d_\d\d)/
   next unless date
+  if seen.has_key? date
+    Wunderbar.warn "Already processed #{seen[date]}; skipping #{txt}"
+    next
+  end
+  seen[date] = txt
   minutes = open(txt) {|file| file.read}
   print "\r#{date}"
   $stdout.flush
