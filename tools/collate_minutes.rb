@@ -461,6 +461,7 @@ FileUtils.mkdir_p SITE_MINUTES
       :M, 2, /Update (membership of the )?(.+?) Committee/,
       :M, 1, /Change to the (.*)? Committee Membership/,
       :M, 1, /Change the Apache (.*) Project Name/,
+      :M, 1, /Change the Apache (.*) Project Management Committee/,
        1, 1, /Update ?(audit.+?) Membership/i,
       :M, 1, /Update ?(.+?) Membership/,
       :R, 1, /Rename.* to the ?(.+?) Project/,
