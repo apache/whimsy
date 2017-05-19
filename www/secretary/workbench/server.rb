@@ -179,6 +179,21 @@ get '/email.json' do
   end
 end
 
+# return a list of iclas
+get '/iclas.json' do
+  list = []
+  ASF::ICLA.each do |icla|
+    list << {
+      filename: icla.claRef,
+      id: icla.id,
+      name: icla.name,
+      fullname: icla.legal_name,
+      email: icla.email
+    }
+  end
+  list.to_json
+end
+
 # event stream for server sent events (a.k.a EventSource)
 get '/events', provides: 'text/event-stream' do
   events = Events.new
