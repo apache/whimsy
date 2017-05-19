@@ -53,14 +53,30 @@ end
 
 incubator = URI.parse('http://incubator.apache.org/')
 
+DELETE = ARGV.delete '--delete' # delete obsolete files?
+
+force = ARGV.delete '--force' # rerun regardless
+
+YYYYMMDD = ARGV.first || '20*' # Allow override of minutes to process
+
+MINUTES_NAME = "board_minutes_#{YYYYMMDD}.txt"
+MINUTES_PATH = "#{SVN_SITE_RECORDS_MINUTES}/*/#{MINUTES_NAME}"
+
+Wunderbar.info "Processing minutes matching #{MINUTES_NAME}"
+
 # quick exit if everything is up to date
 if File.exist? "#{SITE_MINUTES}/index.html"
-  input = Dir["#{SVN_SITE_RECORDS_MINUTES}/*/board_minutes_20*.txt",
+  input = Dir[MINUTES_PATH,
     "#{TEMPLATES}/index.html", # if the template changes, we need to regenerate
     "#{BOARD}/board_minutes_20*.txt"].
     map {|name| File.stat(name).mtime}.push(File.stat(__FILE__).mtime).max
-  exit if File.stat("#{SITE_MINUTES}/index.html").mtime >= input
+  if File.stat("#{SITE_MINUTES}/index.html").mtime >= input
+    Wunderbar.info "All up to date!"
+    exit unless force
+  end
 end
+
+Wunderbar.info "Updating files" 
 
 # mapping of committee names to canonical names (generally from ldap)
 canonical = Hash.new {|hash, name| name}
@@ -148,7 +164,7 @@ end
 
 agenda = {}
 
-posted = Dir["#{SVN_SITE_RECORDS_MINUTES}/*/board_minutes_20*.txt"].sort
+posted = Dir[MINUTES_PATH].sort
 unapproved = Dir["#{BOARD}/board_minutes_20*.txt"].sort
 
 FileUtils.mkdir_p SITE_MINUTES
@@ -626,8 +642,14 @@ end
 Dir.entries(SITE_MINUTES).each do |p|
   next unless p.end_with? '.html'
   next if p == 'index.html'
-  Wunderbar.info "Outdated? #{p}" unless link.has_value? p
-  # TODO delete the old file?
+  unless link.has_value? p
+    if DELETE
+      Wunderbar.info "Dropping #{p}"
+      File.delete(File.join(SITE_MINUTES,p))
+    else
+      Wunderbar.info "Outdated? #{p}"
+    end
+  end
 end
 
 # output each individual report by owner
