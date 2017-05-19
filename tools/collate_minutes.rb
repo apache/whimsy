@@ -221,6 +221,8 @@ FileUtils.mkdir_p SITE_MINUTES
     title.sub! "Infrastructure (President's)", 'Infrastructure'
     title.sub! 'Java Community Process', 'JCP'
     title.sub! 'James', 'JAMES'
+    title.sub! /APR$/, 'Portable Runtime (APR)'
+    title.sub! /Portable Runtime$/, 'Portable Runtime (APR)'
     title.sub! 'TomEE (OpenEJB)', 'TomEE'
     title.sub! 'OpenEJB', 'TomEE'
     title.sub! 'Public Relations Commitee', 'Public Relations'
@@ -540,7 +542,8 @@ FileUtils.mkdir_p SITE_MINUTES
     end
 
     report.title.sub! /^Apache /, ''
-    report.title.sub! 'APR', 'Portable Runtime'
+    report.title.sub! /APR$/, 'Portable Runtime (APR)'
+    report.title.sub! /Portable Runtime$/, 'Portable Runtime (APR)'
     report.title.sub! 'standing Audit', 'Audit'
     report.title.sub! /^HTTPD?$/, 'HTTP Server'
     report.title.sub! 'ISIS', 'Isis'
