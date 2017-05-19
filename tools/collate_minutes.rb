@@ -67,7 +67,6 @@ Wunderbar.info "Processing minutes matching #{MINUTES_NAME}"
 # quick exit if everything is up to date
 if File.exist? "#{SITE_MINUTES}/index.html"
   input = Dir[MINUTES_PATH,
-    "#{TEMPLATES}/index.html", # if the template changes, we need to regenerate
     "#{BOARD}/board_minutes_20*.txt"].
     map {|name| File.stat(name).mtime}.push(File.stat(__FILE__).mtime).max
   if File.stat("#{SITE_MINUTES}/index.html").mtime >= input
@@ -84,7 +83,10 @@ canonical.merge! \
     'conference planning'         => 'concom',
     'conferences'                 => 'concom',
     'security team'               => 'security',
-    'c++ standard library'        => 'stdcxx'
+    'c++ standard library'        => 'stdcxx',
+    'http server'                 => 'httpd',
+    'web services'                => 'ws',
+    'xml graphics'                => 'xmlgraphics'
 
 # extract podling information
 site = {}
@@ -105,19 +107,21 @@ ASF::Podling.list.each do |podling|
   }
 end
 
-# parse site information
-index = File.read("#{TEMPLATES}/index.html")
-projects = index[/<section id="projects-list".*?<\/section>/m]
-projects.scan(/<a href="(.*?)" title="(.*?)">(.*?)</).each do |link, text, name|
-  site[canonical[name.downcase]] = {:name => name, :link => link, :text => text}
+# get site information
+DATAURI = 'https://whimsy.apache.org/public/committee-info.json'
+local_copy = File.expand_path('../public/site-scan.json', __FILE__).untaint
+if File.exist? local_copy
+  sites = JSON.parse(File.read(local_copy))
+else
+  response = Net::HTTP.get_response(URI(DATAURI))
+  sites = JSON.parse(response.body)
 end
 
-skeleton = File.read("#{TEMPLATES}/index.html")
-projects = skeleton[/<section id="projects-list">(.*?)<\/section>/m,1]
-projects.scan(/<a href="(.*?)" title="(.*?)">(.*?)</).each do |link, text, name|
-  cname = canonical[name.downcase]
-  link = 'https://www.apache.org' + link if link =~ /^\//
-  site[cname] = {:name => name, :link => link, :text => text}
+sites['committees'].each do |id,v|
+  site[id] = {:name => v['display_name'], :link => v['site'], :text => v['description']}
+  if id == 'lucenenet' # hack
+    site['lucene.net'] = {:name => v['display_name'], :link => v['site'], :text => v['description']}
+  end
 end
 
 # parse the calendar for layout info (note: hack for &raquo)
