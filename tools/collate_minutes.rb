@@ -623,6 +623,13 @@ def layout(title = nil)
   $calendar.to_xhtml
 end
 
+Dir.entries(SITE_MINUTES).each do |p|
+  next unless p.end_with? '.html'
+  next if p == 'index.html'
+  Wunderbar.info "Outdated? #{p}" unless link.has_value? p
+  # TODO delete the old file?
+end
+
 # output each individual report by owner
 agenda.sort.each do |title, reports|
   puts title
@@ -661,7 +668,8 @@ agenda.sort.each do |title, reports|
         text.gsub! /^#{' '*indent}/, '' if indent > 0
         text = $1 + text if text =~ /\A\w.*\n(\s+)/
         text = text.to_s.rstrip
-        x.pre text, class: 'report' unless text.strip.empty?
+        # N.B. The syntax "class: report" causes problems for the Eclipse Ruby plugin
+        x.pre text, 'class' => 'report' unless text.strip.empty?
 
         if report.comments and report.comments.strip != ''
           report.comments.split(/\n\s*\n/).each do |p|
@@ -683,7 +691,10 @@ agenda.sort.each do |title, reports|
 
   dest = "#{SITE_MINUTES}/#{link[title]}"
   unless File.exist?(dest) and File.read(dest) == page
+    Wunderbar.info  "Writing #{link[title]}"
     open(dest, 'w') {|file| file.write page}
+#  else
+#    Wunderbar.info  "Not updating #{link[title]}"
   end
 end
 
