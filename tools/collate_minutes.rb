@@ -79,14 +79,6 @@ Wunderbar.info "Updating files"
 
 # mapping of committee names to canonical names (generally from ldap)
 canonical = Hash.new {|hash, name| name}
-canonical.merge! \
-    'conference planning'         => 'concom',
-    'conferences'                 => 'concom',
-    'security team'               => 'security',
-    'c++ standard library'        => 'stdcxx',
-    'http server'                 => 'httpd',
-    'web services'                => 'ws',
-    'xml graphics'                => 'xmlgraphics'
 
 # extract podling information
 site = {}
@@ -117,11 +109,11 @@ else
   sites = JSON.parse(response.body)
 end
 
-sites['committees'].each do |id,v|
-  site[id] = {:name => v['display_name'], :link => v['site'], :text => v['description']}
-  if id == 'lucenenet' # hack
-    site['lucene.net'] = {:name => v['display_name'], :link => v['site'], :text => v['description']}
+sites['committees'].each do |id,v| 
+  if v['display_name'].downcase != id
+    canonical[v['display_name'].downcase] = id
   end
+  site[id] = {:name => v['display_name'], :link => v['site'], :text => v['description']}
 end
 
 # parse the calendar for layout info (note: hack for &raquo)
