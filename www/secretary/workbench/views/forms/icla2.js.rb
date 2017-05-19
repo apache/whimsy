@@ -31,7 +31,11 @@ class ICLA2 < React
           then
             _li do
               _input type: 'radio', name: 'icla',
-                onClick: -> {@icla = icla} 
+                onClick: -> {
+                  window.parent.frames.content.location.href = 
+                    location.toString()[/.*\//] + @@selected
+                  @icla = icla
+                }
               _a icla.name, href: "../../icla/#{icla.filename}",
                 target: 'content'
            end

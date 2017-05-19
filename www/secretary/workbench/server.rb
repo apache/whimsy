@@ -194,6 +194,15 @@ get '/iclas.json' do
   list.to_json
 end
 
+# redirect to an icla
+get %r{/icla/(.*)} do |filename|
+  checkout = 'https://svn.apache.org/repos/private/documents/iclas'
+  iclas = ASF::SVN['private/documents/iclas']
+  file = Dir["#{iclas}/#{filename}", "#{iclas}/#{filename}.*"].first
+  pass unless file
+  redirect to(checkout + '/' + File.basename(file))
+end
+
 # event stream for server sent events (a.k.a EventSource)
 get '/events', provides: 'text/event-stream' do
   events = Events.new
