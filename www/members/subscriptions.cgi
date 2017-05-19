@@ -8,6 +8,14 @@ require 'wunderbar/jquery/stupidtable'
 
 SUBSCRIPTIONS = '/srv/subscriptions/members'
 
+ARCHIVERS = %w(
+  members-archive@apache.org
+  archive-asf-private@cust-asf.ponee.io
+  members@mmpoc.apache.org
+  members@whimsy-vm3.apache.org
+  members@whimsy-vm4.apache.org
+)
+
 _html do
   _body? do
     _whimsy_header 'Apache Members Cross-check'
@@ -76,7 +84,7 @@ _html do
         _th 'name', data_sort: 'string'
       end
       subscriptions.sort.each do |id, person, email|
-        next if email == 'members-archive@apache.org'
+        next if ARCHIVERS.include? email
         _tr_ do
           if id.include? '*'
             _td.text_danger id
