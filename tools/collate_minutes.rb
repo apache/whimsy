@@ -559,13 +559,15 @@ FileUtils.mkdir_p SITE_MINUTES
   end
 
   # parse (Executive) Officer Reports
-  execs = minutes[/Officer Reports(.*?)\n\s{1,3}\d+\./m,1]
+  execs = minutes[/Officer Reports(.*?)\n[[:blank:]]{1,3}\d+\./m,1]
   if execs
     execs.sub! /\s*Executive officer reports approved.*?\n*\Z/, ''
+    # attachments start like this:
+    att_prefix = '\n[[:blank:]]{1,5}([A-Z])\.[[:blank:]]'
     execs.scan(/
-      \n\s+(\w+)\.\s([^\n]*?)\n         # attach, title
+      #{att_prefix}([^\n]*?)\n          # attach, title
       (.*?)                             # text
-      (?=\n\s+\w\.\s|\Z)                # separator
+      (?=#{att_prefix}|\Z)              # separator
     /mx).each do |attach, title, text|
       next unless text
       next unless title
