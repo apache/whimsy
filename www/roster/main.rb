@@ -200,9 +200,24 @@ get '/env' do
     path: Wunderbar::Asset.path,
     root: Wunderbar::Asset.root,
     virtual: Wunderbar::Asset.virtual,
-    scripts: Wunderbar::Asset.scripts.map do |script|
-     {path: script.path}
-    end
+    scripts: Wunderbar::Asset.scripts.map {|script|
+      source = script.options[:file]
+      {
+        path: script.path, 
+        source: source,
+        mtime: source && File.mtime(source),
+        size: source && File.size(source),
+      }
+    },
+    stylesheets: Wunderbar::Asset.stylesheets.map {|stylesheet|
+      source = stylesheet.options[:file]
+      {
+        path: stylesheet.path, 
+        source: source,
+        mtime: source && File.mtime(source),
+        size: source && File.size(source),
+      }
+    },
   }
 
   JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
