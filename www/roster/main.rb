@@ -192,6 +192,22 @@ get '/orgchart/:name' do |name|
   _html :duties
 end
 
+# for debugging purposes
+get '/env' do
+  content_type 'text/plain'
+
+  asset = {
+    path: Wunderbar::Asset.path,
+    root: Wunderbar::Asset.root,
+    virtual: Wunderbar::Asset.virtual,
+    scripts: Wunderbar::Asset.scripts.map do |script|
+     {path: script.path}
+    end
+  }
+
+  JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
+end
+
 error do
   @errors = env
   _html :errors
