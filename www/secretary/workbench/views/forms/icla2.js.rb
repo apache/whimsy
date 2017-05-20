@@ -48,6 +48,7 @@ class ICLA2 < React
       _input type: 'hidden', name: 'message'
       _input type: 'hidden', name: 'selected'
       _input type: 'hidden', name: 'signature', value: @@signature
+      _input type: 'hidden', name: 'filename', value: @icla && @icla.filename
 
       _h5 'Current values'
 
@@ -148,7 +149,8 @@ class ICLA2 < React
       document.querySelector("input[name=#{name}]").validity.valid
     end
 
-    # $file.disabled = !valid or @filed or @submitted
+    # $file.disabled = !valid or !icla or !@icla.filename or
+    #   @filed or @submitted
 
     # wire up form
     jQuery('form')[0].addEventListener('submit', self.file)
