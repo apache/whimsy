@@ -57,6 +57,8 @@ DELETE = ARGV.delete '--delete' # delete obsolete files?
 
 force = ARGV.delete '--force' # rerun regardless
 
+NOSTAMP = ARGV.delete '--nostamp' # don't add dynamic timestamp to pages (for debug compares)
+
 YYYYMMDD = ARGV.first || '20*' # Allow override of minutes to process
 
 MINUTES_NAME = "board_minutes_#{YYYYMMDD}.txt"
@@ -621,6 +623,13 @@ agenda.each do |title, reports|
   link[title] = title.sub('C++','Cxx').gsub(/\W/,'_') + '.html'
 end
 
+# Simplify creating content
+def getHTMLbody()
+  builder = Builder::XmlMarkup.new :indent => 2
+  yield builder
+  return Nokogiri::HTML(builder.target!).at('body').children
+end
+
 # Combine content produced here with the template fetched previously
 def layout(title = nil)
   builder = Builder::XmlMarkup.new :indent => 2
@@ -633,15 +642,40 @@ def layout(title = nil)
     $calendar.at('title').content = "Board Meeting Minutes"
 #   $calendar.at('h2').content = "Board Meeting Minutes"
   end
-  stamp = DateTime.now.strftime '%Y-%m-%d %H:%M'
-  section = $calendar.at('.container p strong').parent.parent
-  paragraphs = section.search('p')
-  paragraphs.first.children.last.content =
-    paragraphs.first.children.last.content.sub 'is a', "was extracted (@ #{stamp}) from a"
+  stamp = (NOSTAMP ? DateTime.new(1970) :  DateTime.now).strftime '%Y-%m-%d %H:%M'
 
+  # Adjust the page header
+  
+  # find the intro para; assume it is the first para with a strong tag
+  # then back up to the main container class for the page content
+  section = $calendar.at('.container p strong').parent.parent
+  # Extract all the paragraphs
+  paragraphs = section.search('p')
+
+  # remove all the existing content
   section.children.each {|child| child.remove}
-  section.add_child paragraphs[0]
+
+  # Add the replacement first para
+  section.add_child getHTMLbody {|x|
+    x.p do
+      x.text! "This was extracted (@ #{stamp}) from a list of"
+      x.a 'minutes', :href => 'http://www.apache.org/foundation/records/minutes/'
+      x.text! "which have been approved by the Board."
+      x.br
+      x.strong 'Please Note'
+      x.text! <<-EOT # squiggly heredoc causes problems for Eclipse plugin
+      The Board typically approves the previous meeting's minutes at the
+      beginning of every Board meeting; therefore, this list below may not
+      contain the minutes of the most recent Board meeting.
+      EOT
+    end
+  }
+
+  # and the second para which is assumed to be the list of years
   section.add_child paragraphs[1]
+  section.add_child "\n" # separator to make it easier to read source
+
+  # now add the content provided by the builder block
   content.at('body').children.each {|child| section.add_child child}
 
   $calendar.to_xhtml
