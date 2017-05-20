@@ -84,6 +84,11 @@ get '/committer/:name.json' do |name|
   _json Committer.serialize(name, env)
 end
 
+# make __self__ an alias for one's own page
+get '/committer/__self__' do
+  redirect to("committer/#{env.user}")
+end
+
 get '/committer/:name' do |name|
   @auth = Auth.info(env)
   @committer = Committer.serialize(name, env)
