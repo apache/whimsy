@@ -105,13 +105,13 @@ end
 DATAURI = 'https://whimsy.apache.org/public/committee-info.json'
 local_copy = File.expand_path('../public/site-scan.json', __FILE__).untaint
 if File.exist? local_copy
-  sites = JSON.parse(File.read(local_copy))
+  cinfo = JSON.parse(File.read(local_copy))
 else
   response = Net::HTTP.get_response(URI(DATAURI))
-  sites = JSON.parse(response.body)
+  cinfo = JSON.parse(response.body)
 end
 
-sites['committees'].each do |id,v| 
+cinfo['committees'].each do |id,v| 
   if v['display_name'].downcase != id
     canonical[v['display_name'].downcase] = id
   end
