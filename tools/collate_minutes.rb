@@ -186,16 +186,20 @@ seen={}
   minutes.scan(/
     -{41}\n                        # separator
     Attachment\s\s?(\w+):[ ](.+?)\n # Attachment, Title
-    .(.*?)\n                       # report
+    (.)(.*?)\n                     # separator, report
     (?=-{41,}\n(?:End|Attach))     # separator
-  /mx).each do |attach,title,text|
+  /mx).each do |attach,title,cont,text|
 
-    # join multiline titles
-    while text.start_with? '        '
-      append, text = text.split("\n", 2)
-      title += ' ' + append.strip
+    # We need to keep the start of the second line.
+    # Otherwise leading spaces in the report body look like a continuation line
+    if cont == ' ' # continuation line was not empty; check if it's a continuation
+      # join multiline titles
+      while text.start_with? '        '
+        append, text = text.split("\n", 2)
+        title += ' ' + append.strip
+      end
     end
-    
+
     title.sub! /Special /, ''
     title.sub! /Requested /, ''
     title.sub! /(^| )Report To The Board( On)?( |$)/i, ''
