@@ -809,7 +809,11 @@ page = layout do |x|
               if info
                 x.a title, :href => link[title], :title => info[:text]
               else
-                x.em { x.a title, :href => link[title] }
+                if cinfo['committees'][title]
+                  x.em { x.a title, :href => link[title] }
+                else
+                  x.del { x.a title, :href => link[title] }
+                end
               end
             end
           end
