@@ -317,12 +317,17 @@ seen={}
           next if title == 'April 2011 podling reports'
 
           title.sub! 'Ace', 'ACE' # WHIMSY-31
-          title.sub! 'Bean Validation', 'BeanValidation'
+          title.sub! 'ADF Faces', 'MyFaces' # via Trinidad
+          title.sub! 'Bean Validation', 'BVal'
+          title.sub! 'BeanValidation', 'BVal'
+          title.sub! 'Amber', 'Oltu'
           title.sub! 'Bluesky', 'BlueSky'
           title.sub! 'Easyant', 'EasyAnt'
           title.sub! 'Callback', 'Cordova'
+          title.sub! 'Deft', 'AWF'
           title.sub! /CeltiX[Ff]ire/, 'CXF'
           title.sub! 'Empire-DB', 'Empire-db'
+          title.sub! 'Fleece', 'Johnzon'
           title.sub! 'IVY', 'Ivy'
           title.sub! 'JackRabbit', 'Jackrabbit'
           title.sub! 'Juice', 'JuiCE'
