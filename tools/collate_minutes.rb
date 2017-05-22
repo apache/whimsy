@@ -163,7 +163,7 @@ end
 agenda = {}
 
 posted = Dir[MINUTES_PATH].sort
-unapproved = Dir["#{BOARD}/board_minutes_20*.txt"].sort
+unapproved = Dir["#{BOARD}/#{MINUTES_NAME}"].sort
 
 FileUtils.mkdir_p SITE_MINUTES
 
