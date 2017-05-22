@@ -677,9 +677,9 @@ def layout(title = nil)
       x.strong 'Please Note'
       x.text! <<-EOT # squiggly heredoc causes problems for Eclipse plugin
       The Board typically approves the previous meeting's minutes at the
-      beginning of every Board meeting; therefore, this list below may not
-      contain the minutes of the most recent Board meeting.
-      EOT
+      beginning of every Board meeting; therefore, the list below does not
+      normally contain details from the minutes of the most recent Board meeting.
+      EOT # ' terminate quote for Eclipse plugin...
     end
   }
 
