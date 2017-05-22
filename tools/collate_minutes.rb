@@ -675,11 +675,12 @@ def layout(title = nil)
       x.text! "which have been approved by the Board."
       x.br
       x.strong 'Please Note'
-      x.text! <<-EOT # squiggly heredoc causes problems for Eclipse plugin
-      The Board typically approves the previous meeting's minutes at the
+      # squiggly heredoc causes problems for Eclipse plugin, but leading spaces don't matter here
+      x.text! <<-EOT
+      The Board typically approves the minutes of the previous meeting at the
       beginning of every Board meeting; therefore, the list below does not
       normally contain details from the minutes of the most recent Board meeting.
-      EOT # ' terminate quote for Eclipse plugin...
+      EOT
     end
   }
 
