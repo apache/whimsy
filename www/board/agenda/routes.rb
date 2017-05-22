@@ -3,15 +3,15 @@
 #
 
 # temporary
-get %r{^/(\d\d\d\d-\d\d-\d\d)/feedback$} do |date|
+get %r{/(\d\d\d\d-\d\d-\d\d)/feedback} do |date|
   _html :feedback
 end
-get %r{^/(\d\d\d\d-\d\d-\d\d)/feedback.json$} do |date|
+get %r{/(\d\d\d\d-\d\d-\d\d)/feedback.json} do |date|
   @agenda = "board_agenda_#{date.gsub('-', '_')}.txt".untaint
   @dryrun = true
   _json :'actions/feedback'
 end
-post %r{^/(\d\d\d\d-\d\d-\d\d)/feedback.json$} do |date|
+post %r{/(\d\d\d\d-\d\d-\d\d)/feedback.json} do |date|
   @agenda = "board_agenda_#{date.gsub('-', '_')}.txt".untaint
   @dryrun = false
   _json :'actions/feedback'
@@ -145,7 +145,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
 end
 
 # append slash to agenda page if not present
-get %r{^/(\d\d\d\d-\d\d-\d\d)$} do |date|
+get %r{/(\d\d\d\d-\d\d-\d\d)} do |date|
   redirect to("/#{date}/")
 end
 
@@ -160,14 +160,14 @@ post '/json/:file' do
 end
 
 # Raw minutes
-get %r{(\d\d\d\d-\d\d-\d\d).ya?ml} do |file|
+get %r{/(\d\d\d\d-\d\d-\d\d).ya?ml} do |file|
   minutes = AGENDA_WORK + '/' + "board_minutes_#{file.gsub('-','_')}.yml"
   pass unless File.exists? minutes
   _text File.read minutes
 end
 
 # updates to agenda data
-get %r{(\d\d\d\d-\d\d-\d\d).json} do |file|
+get %r{/(\d\d\d\d-\d\d-\d\d).json} do |file|
   file = "board_agenda_#{file.gsub('-','_')}.txt"
   pass unless Agenda.parse file, :full
 
