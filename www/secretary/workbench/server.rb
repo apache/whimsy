@@ -161,7 +161,7 @@ get %r{/(\d{6})/(\w+)/(.*?)} do |month, hash, name|
   message = Mailbox.new(month).find(hash)
   pass unless message
 
-  part = message.find(name)
+  part = message.find(URI.decode(name))
   pass unless part
 
   [200, {'Content-Type' => part.content_type}, part.body.to_s]
