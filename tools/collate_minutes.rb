@@ -712,6 +712,12 @@ Dir.entries(SITE_MINUTES).each do |p|
   end
 end
 
+# remove variable date from page
+def remove_date(page)
+  # '%Y-%m-%d %H:%M'
+  page.sub /This was extracted \(@ \d\d\d\d-\d\d-\d\d \d\d:\d\d\) from a list of/,''
+end
+
 # output each individual report by owner
 agenda.sort.each do |title, reports|
   puts title
@@ -772,7 +778,7 @@ agenda.sort.each do |title, reports|
   end
 
   dest = "#{SITE_MINUTES}/#{link[title]}"
-  unless File.exist?(dest) and File.read(dest) == page
+  unless File.exist?(dest) and remove_date(File.read(dest)) == remove_date(page)
     Wunderbar.info  "Writing #{link[title]}"
     open(dest, 'w') {|file| file.write page}
 #  else
