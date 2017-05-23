@@ -10,6 +10,15 @@ class PMC < React
   def render
     auth = (@@auth.id == @committee.chair or @@auth.secretary or @@auth.root)
 
+    # add jump links to main sections of page
+    _div.breadcrumbs do
+      _a 'PMC', :href => "committee/#{@committee[:id]}#pmc"
+      _span " \u00BB "
+      _a 'Mail Moderators', :href => "committee/#{@committee[:id]}#mail"
+      _span " \u00BB "
+      _a 'Reporting Schedule', :href => "committee/#{@committee[:id]}#reporting"
+    end
+
     # header
     _h1 do
       _a @committee.display_name, href: @committee.site
