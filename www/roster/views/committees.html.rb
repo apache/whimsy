@@ -31,13 +31,13 @@ _html do
 
         _td do
           pmc.chairs.each_with_index do |chair, index|
+            _span ', ' unless index == 0
+
             if @members.include? chair[:id]
               _b! {_a chair[:name], href: "committer/#{chair[:id]}"}
             else
               _a chair[:name], href: "committer/#{chair[:id]}"
             end
-
-            _span ', ' unless index == 0
           end
         end
 

@@ -103,7 +103,9 @@ module ASF
       # Note: this includes the non-PMC entries
       head.scan(/^[ \t]+(\w.*?)[ \t][ \t]+(.*)[ \t]+<(.*?)@apache\.org>/).
         each do |committee, name, id|
-          list[committee].chairs << {name: name, id: id}
+          unless list[committee].chairs.any? {|chair| chair[:id] == id}
+            list[committee].chairs << {name: name, id: id}
+          end
         end
 
       # Extract the non-PMC committees (e-mail address may be absent)
