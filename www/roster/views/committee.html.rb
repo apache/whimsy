@@ -10,7 +10,7 @@ _html do
   _banner breadcrumbs: {
     roster: '.',
     committee: 'committee/',
-    @committee[:id] => "/committere/#{@committee[:id]}"
+    @committee[:id] => "committee/#{@committee[:id]}"
   }
 
   _div_.main!
