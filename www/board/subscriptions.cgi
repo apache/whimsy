@@ -6,6 +6,16 @@ require 'whimsy/asf'
 
 SUBSCRIPTIONS = '/srv/subscriptions/board'
 
+ARCHIVERS = %w(
+  board-archive@apache.org
+  archive-asf-private@cust-asf.ponee.io
+  board@mmpoc.apache.org
+  board@whimsy-vm3.apache.org
+  board@whimsy-vm4.apache.org
+  svnupdate@whimsy-vm3.apache.org
+  svnupdate@whimsy-vm4.apache.org
+)
+
 info_chairs = ASF::Committee.load_committee_info.group_by(&:chair)
 ldap_chairs = ASF.pmc_chairs
 
@@ -85,7 +95,7 @@ _html do
       end
 
       ids.sort.each do |id, person, email|
-        next if email == 'board-archive@apache.org'
+        next if ARCHIVERS.include? email
         _tr_ do
           href = "/roster/committer/#{id}"
           if person.asf_member?
