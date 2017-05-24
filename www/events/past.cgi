@@ -10,10 +10,10 @@ require 'wunderbar/bootstrap'
 
 ifields = {
   'SessionList'	=> ['glyphicon_th_list', 'Session Listing'],
-  'SlideArchive' => ['glyphicon_file', 'Session Listing'],
-  'VideoArchive' => ['glyphicon_facetime_video', 'Session Listing'],
-  'AudioArchive' => ['glyphicon_headphones', 'Session Listing'],
-  'PhotoAlbum' => ['glyphicon_camera', 'Session Listing']
+  'SlideArchive' => ['glyphicon_file', 'Slide Archives'],
+  'VideoArchive' => ['glyphicon_facetime_video', 'Video Archive'],
+  'AudioArchive' => ['glyphicon_headphones', 'Audio Archive'],
+  'PhotoAlbum' => ['glyphicon_camera', 'Photo Album']
 }
 
 _html do
