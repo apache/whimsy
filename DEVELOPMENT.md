@@ -12,17 +12,19 @@ Contents :books:
 
 - [Architecture](#architecture-overview)
 - [Setup Whimsy Locally](#setup-whimsy-locally)
-- [Running Whimsy Applications](#running-whimsy-applications)
+- [Running Whimsy Applications](#running-whimsy-applications-car)
 - [Advanced Configuration](#advanced-configuration)
 - [Server Configuration](DEPLOYMENT.md)
 - [Further Reading](#further-reading)
-- [How To / FAQ](#how-to-faq)
+- [How To / FAQ](#how-to--faq-question)
+- [Running Whimsy on Mac OSX](MACOSX.md)
 - [Running Whimsy on Windows](#whimsy-on-windows)
 
 Architecture Overview
 ========
 
-The core Whimsy code is split into model/view, with a variety of independent tools.
+The core Whimsy code is split into model/view, plus a variety of 
+tools, some of which use the model, and some completely independent.
 
 1. [lib/whimsy/asf](lib/whimsy/asf) contains the "model", i.e., a set of classes
    which encapsulate access
@@ -44,10 +46,14 @@ The core Whimsy code is split into model/view, with a variety of independent too
    Directories containing Rack applications can be identified by the presence
    of a file with the name of `config.ru`.
 
-3. [tools](tools) contains miscellaneous and testing tools.
+3. [tools](tools) contains miscellaneous and testing tools, as well as 
+   scripts that may generate intermediate data files.
 
 4. [config](config) contains some sample configuration data for 
-   installing various services needed.  
+   installing various services needed.
+
+5. [www/roster/public_*](www/roster) contains a number of scripts run 
+   by cron jobs or manually that create various data files in www/public.
 
 Setup Whimsy Locally
 =====
@@ -169,7 +175,8 @@ Running Whimsy Applications :car:
 If there is a `Gemfile` in the directory containing the script or application
 you wish to run, dependencies needed for execution can be installed using the
 command `bundle install`.  Similarly, if starting from scratch you 
-may need `gem install rake`.
+may need `gem install rake`.  Periodically if underlying gems like 
+wunderbar are updated, you may need `bundle update`.
 
 1. CGI applications can be run from a command line, and produce output to
    standard out.  If you would prefer to see the output in a browser, you
@@ -264,7 +271,7 @@ you have locally from repository.yml.
 
 Note also that sometimes you may need to `bundle exec *command*` instead 
 of just doing `bundle *command*`, since using the exec uses a subtly 
-different set of gem versions from the local director.
+different set of gem versions from the local directory.
 
 Whimsy On Windows
 =================
