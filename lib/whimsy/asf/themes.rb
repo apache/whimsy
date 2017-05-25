@@ -58,7 +58,7 @@ class Wunderbar::HtmlMarkup
   end
   
   # Emit ASF style footer with (optional) list of related links
-  def _whimsy_footer related
+  def _whimsy_footer **args
     _div.footer.container_fluid do
       _div.panel.panel_default do 
         _div.panel_heading do
@@ -66,9 +66,15 @@ class Wunderbar::HtmlMarkup
         end
         _div.panel_body do
           _ul do
-            related.each do |url, desc|
+            if args.key?('related')
+              args['related'].each do |url, desc|
+                _li do
+                  _a desc, href: url
+                end
+              end
+            else
               _li do
-                _a desc, href: url
+                _a 'Whimsy Source Code', href: 'https://github.com/apache/whimsy/'
               end
             end
           end
@@ -90,5 +96,80 @@ class Wunderbar::HtmlMarkup
       end
     end
   end
+    
+  def _whimsy_nav **args
+    _nav.navbar.navbar_default do
+      _div.container_fluid do
+        _div.navbar_header do       
+          _button.navbar_toggle.collapsed type: "button", data_toggle: "collapse", data_target: "#bs_example_navbar_collapse_1", aria_expanded: "false" do
+            _span.sr_only "Toggle navigation"
+            _span.icon_bar
+            _span.icon_bar
+          end
+          _a.navbar_brand href: '/' do
+            _img title: 'Whimsy project home', alt: 'Whimsy hat logo', src: 'https://whimsy.apache.org/whimsy.svg', height: 30
+          end
+        end
+        _div.collapse.navbar_collapse id: "bs_example_navbar_collapse_1" do
+          _ul.nav.navbar_nav do
+            _li do
+              _a 'Code', href: 'https://github.com/apache/whimsy/'
+            end
+            _li do
+              _a 'Questions', href: 'https://lists.apache.org/list.html?dev@whimsical.apache.org'
+            end
+            _li do
+              _a 'About Whimsy', href: '/technology'
+            end
+          end
+          _ul.nav.navbar_nav.navbar_right do
+            _li.dropdown do
+              _a.dropdown_toggle href: "#", data_toggle: "dropdown", role: "button", aria_haspopup: "true", aria_expanded: "false" do
+                _ 'Apache'
+                _span.caret
+              end
+              _ul.dropdown_menu do
+                _li do
+                  _a 'License', href: 'http://www.apache.org/licenses/'
+                end
+                _li do
+                  _a 'Donate', href: 'http://www.apache.org/foundation/sponsorship.html'
+                end
+                _li do
+                  _a 'Thanks', href: 'http://www.apache.org/foundation/thanks.html'
+                end
+                _li do
+                  _a 'Security', href: 'http://www.apache.org/security/'
+                end
+                _li.divider role: 'separator'
+                _li do
+                  _a 'About The ASF', href: 'http://www.apache.org/'
+                end    
+              end
+            end
+          end
+        end
+      end
+    end
+  end
   
+  # Emit complete bootstrap theme (container/row/column) for common use cases
+  def _whimsy_body **args
+    puts JSON.pretty_generate(args)
+    _whimsy_nav args
+    _div.content.container_fluid do
+      _div.row do
+        _div.col_sm_12 do
+          _h1 args['title']
+        end
+      end
+      _div.row do
+        _div.col_sm_12 do
+          yield
+        end
+      end
+      _whimsy_footer args
+    end
+  end
+
 end
