@@ -458,7 +458,7 @@ seen={}
     next if title.count("\n")>1
     report = OpenStruct.new
     title.sub! /(^|\n)\s*Resolution R\d:/, ''
-    title.sub!(/^Resolution (\[R\d\]|to|for) ./) {|c| c[-1..-1].upcase}
+    title.sub!(/^(?:Proposed )?Resolution (\[R\d\]|to|for) ./) {|c| c[-1..-1].upcase}
     title.sub! /\.$/, ''
     report.title ||= title.strip
     report.meeting = date
