@@ -66,8 +66,8 @@ class Wunderbar::HtmlMarkup
         end
         _div.panel_body do
           _ul do
-            if args.key?('related')
-              args['related'].each do |url, desc|
+            if args.key?(:related)
+              args[:related].each do |url, desc|
                 _li do
                   _a desc, href: url
                 end
@@ -155,12 +155,11 @@ class Wunderbar::HtmlMarkup
   
   # Emit complete bootstrap theme (container/row/column) for common use cases
   def _whimsy_body **args
-    puts JSON.pretty_generate(args)
     _whimsy_nav args
     _div.content.container_fluid do
       _div.row do
         _div.col_sm_12 do
-          _h1 args['title']
+          _h1 args[:title]
         end
       end
       _div.row do
