@@ -10,21 +10,21 @@
   },
   "https://whimsy.apache.org/public/icla-info.json": {
     "description": "Names of people who have submitted ICLAs who have uids (committer accounts)",
-    "maintainer": "/tools/icla-info.rb",
+    "maintainer": "/www/roster/public_icla_info.rb",
     "sources": [
       "/lib/whimsy/asf/icla.rb"
     ]
   },
   "https://whimsy.apache.org/public/icla-info_noid.json": {
     "description": "Names of people who have submitted ICLAs who don't (yet) have uids (commiter accounts)",
-    "maintainer": "/tools/icla-info_noid.rb",
+    "maintainer": "/www/roster/public_icla_info.rb",
     "sources": [
       "/lib/whimsy/asf/icla.rb"
     ]
   },
   "https://whimsy.apache.org/public/member-info.json": {
     "description": "ASF Member name listing",
-    "maintainer": "/tools/member-info.rb",
+    "maintainer": "/www/roster/public_member_info.rb",
     "sources": [
       "/lib/whimsy/asf/member.rb"
     ]
