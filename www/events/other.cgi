@@ -34,21 +34,18 @@ _html do
     _whimsy_content do
       _div.row do
         _div.col_sm_10 do
-          _div.panel.panel_primary do
-            _div.panel_heading {_h3.panel_title PAGETITLE}
-            _div.panel_body do
-              _ "Listing #{conflist.count} self-reported FOSS Conferences and their claimed speaker support status.  Data from "
-              _a_ 'afilina/dev-community-data', href: 'https://github.com/afilina/dev-community-data/'
-              _ ', calendar website at '
-              _a_ 'ConFoo Community', href: 'https://community.confoo.ca/'
-              _ '.  Click to sort table.  "False" propercase entries are when conference doesn\'t report any speaker reimbursement details.'
-              _br
-              _p 'Conferences that include speaker benefit types:' 
-              _ul do
-                counts.each do |s, num|
-                  _li "#{cols[s]}: #{num}"
-                end
-              end  
+          _whimsy_panel PAGETITLE do
+            _ "Listing #{conflist.count} self-reported FOSS Conferences and their claimed speaker support status.  Data from "
+            _a_ 'afilina/dev-community-data', href: 'https://github.com/afilina/dev-community-data/'
+            _ ', calendar website at '
+            _a_ 'ConFoo Community', href: 'https://community.confoo.ca/'
+            _ '.  Click to sort table.  "False" propercase entries are when conference doesn\'t report any speaker reimbursement details.'
+            _br
+            _p 'Conferences that include speaker benefit types:' 
+            _ul do
+              counts.each do |s, num|
+                _li "#{cols[s]}: #{num}"
+              end
             end
           end
         end
