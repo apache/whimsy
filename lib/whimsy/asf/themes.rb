@@ -76,4 +76,19 @@ class Wunderbar::HtmlMarkup
       end
     end
   end
+  
+  # Emit a panel with title and body content
+  def _whimsy_panel(title, style: 'panel-default', header: 'h3')
+    _div.panel class: style do
+      _div.panel_heading do 
+        _.tag! header, class: 'panel-title' do
+          _ title
+        end
+      end
+      _div.panel_body do
+        yield
+      end
+    end
+  end
+  
 end

@@ -17,24 +17,21 @@ _html do
     _whimsy_content do
       _div.row do
         _div.col_sm_11 do
-          _div.panel.panel_primary do
-            _div.panel_heading {_h3.panel_title 'What Data Comes From Where'}
-            _div.panel_body do
-              _p %{ Whimsy tools consume and produce a variety of data files 
-                about PMCs and the ASF as a whole.  This non-comprehensive 
-                page explains which tools generate what intermediate data, 
-                and where the canonical underlying data sources are (many
-                of which are privately stored). .json files generated in 
-                /public are consumed by many other websites.
+          _whimsy_panel 'What Data Comes From Where' do
+            _p %{ Whimsy tools consume and produce a variety of data files 
+              about PMCs and the ASF as a whole.  This non-comprehensive 
+              page explains which tools generate what intermediate data, 
+              and where the canonical underlying data sources are (many
+              of which are privately stored). .json files generated in 
+              /public are consumed by many other websites.
+            }
+            _p do 
+              _ %{ Whimsy has a number of cron jobs - typically hourly - 
+                that periodically regenerate the /public directory, but 
+                only when the underlying data source has changed.
+                See the 
               }
-              _p do 
-                _ %{ Whimsy has a number of cron jobs - typically hourly - 
-                  that periodically regenerate the /public directory, but 
-                  only when the underlying data source has changed.
-                  See the 
-                }
-                _a 'server docs for more info.', href: 'https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md'
-              end
+              _a 'server docs for more info.', href: 'https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md'
             end
           end
         end
