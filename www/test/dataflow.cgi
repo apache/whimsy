@@ -27,12 +27,14 @@ _html do
                 of which are privately stored). .json files generated in 
                 /public are consumed by many other websites.
               }
-              _p %{ Whimsy has a number of cron jobs - typically hourly - 
-                that periodically regenerate the /public directory, but 
-                only when the underlying data source has changed.
-                See the 
-              }
-              _a 'server docs for more info.', href: 'https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md'
+              _p do 
+                _ %{ Whimsy has a number of cron jobs - typically hourly - 
+                  that periodically regenerate the /public directory, but 
+                  only when the underlying data source has changed.
+                  See the 
+                }
+                _a 'server docs for more info.', href: 'https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md'
+              end
             end
           end
         end
