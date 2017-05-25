@@ -675,7 +675,11 @@ def layout(title = nil)
   # Add the replacement first para
   section.add_child getHTMLbody {|x|
     x.p do
-      x.text! "This was extracted (@ #{stamp}) from a list of"
+      if title
+        x.text! "This was extracted (@ #{stamp}) from a list of"
+      else # main index, which is always replaced
+        x.text! "Last run: #{stamp}. The data is extracted from a list of"
+      end
       x.a 'minutes', :href => 'http://www.apache.org/foundation/records/minutes/'
       x.text! "which have been approved by the Board."
       x.br
