@@ -1,0 +1,47 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {},
+    "id": "https://whimsy.apache.org/public/dataflow-schema.json",
+    "properties": {
+        "datafile": {
+            "id": "/properties/datafile",
+            "properties": {
+              "description": {
+                  "default": "Describe what data is in the file",
+                  "description": "This is the description of the thing itself.",
+                  "id": "/properties/datafile/properties/description",
+                  "title": "Description",
+                  "type": "string"
+              },
+                "maintainer": {
+                    "default": "role|path/tool.rb",
+                    "description": "Group/script responsible for maintaining this data; ASF officer role or mailinglist.",
+                    "id": "/properties/datafile/properties/maintainer",
+                    "title": "Maintainer",
+                    "type": "string"
+                },
+                "sources": {
+                    "additionalItems": true,
+                    "id": "/properties/datafile/properties/sources",
+                    "items": {
+                        "default": "private/committers/board/committee-info.txt",
+                        "description": "List of path/filename of data sources this is derived from.",
+                        "id": "/properties/datafile/properties/sources/items",
+                        "title": "Sources",
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                }
+            },
+            "required": [
+                "maintainer"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "datafile"
+    ],
+    "type": "object"
+}
