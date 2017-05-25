@@ -85,3 +85,7 @@
   apachecon:
     url: private/foundation/ApacheCon
     depth: files
+
+  comdevtalks:
+    url: asf/comdev/site/trunk/content/speakers/talks
+    depth: files
