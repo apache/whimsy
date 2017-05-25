@@ -6,4 +6,6 @@ use ASF::HTTPS_workarounds
 use ASF::Auth::MembersAndOfficers
 use ASF::AutoGC
 
+use ASF::DocumentRoot
+
 run Sinatra::Application

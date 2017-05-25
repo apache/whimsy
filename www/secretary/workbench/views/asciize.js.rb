@@ -10,7 +10,16 @@ def asciize(name)
     name.gsub! /\u00f6|o\u0308/, 'oe'
     name.gsub! /\u00fc|u\u0308/, 'ue'
 
-    # latin 1
+    # latin 1 - uppercase
+    name.gsub! /[\u00c0-\u00c5]/, 'a'
+    name.gsub! /\u00c7/, 'c'
+    name.gsub! /[\u00c8-\u00cb]/, 'e'
+    name.gsub! /[\u00cc-\u00cf]/, 'i'
+    name.gsub! /[\u00d2-\u00d6]|\u00d8/, 'o'
+    name.gsub! /[\u00d9-\u00dc]/, 'u'
+    name.gsub! /[\u00dd]/, 'y'
+
+    # latin 1 - lowercase
     name.gsub! /[\u00e0-\u00e5]/, 'a'
     name.gsub! /\u00e7/, 'c'
     name.gsub! /[\u00e8-\u00eb]/, 'e'

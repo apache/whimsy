@@ -12,143 +12,150 @@ class Person < React
 
     _h2 "#{@committer.id}@apache.org"
 
-    _table.wide do
-      _tbody do
+    # Name
+    _PersonName person: self
 
-        # Name
-        _PersonName person: self
+    # Personal URL
+    if @committer.urls
+      _PersonUrls person: self
+    end
 
-        # Personal URL
-        if @committer.urls
-          _PersonUrls person: self
-        end
-
-        # Committees
-        committees = @committer.committees
-        unless committees.empty?
-          _tr do
-            _td 'Committees'
-            _td do
-              _ul committees do |pmc|
-                _li {_a pmc, href: "committee/#{pmc}"}
-              end
-            end
-          end
-        end
-
-        # Committer
-        commit_list = @committer.committer
-        unless commit_list.all? {|pmc| committees.include? pmc}
-          _tr do
-            _td 'Committer'
-            _td do
-              _ul commit_list do |pmc|
-                next if committees.include? pmc
-                _li {_a pmc, href: "committee/#{pmc}"}
-              end
-            end
-          end
-        end
-
-        # Groups
-        unless @committer.groups.empty?
-          _tr do
-            _td 'Groups'
-            _td do
-              _ul @committer.groups do |group|
-                next if group == 'apldap'
-
-                if group == 'committers'
-                  _li {_a group, href: "committer/"}
-                elsif group == 'member'
-                  _li {_a group, href: "members"}
-                else
-                  _li {_a group, href: "group/#{group}"}
-                end
-              end
-            end
-          end
-        end
-
-        # Email addresses
-        if @committer.mail
-          _PersonEmail person: self
-        end
-
-        # Moderates
-        if @committer.moderates and @committer.moderates.keys().length > 0
-          _tr do
-            _td 'Moderates'
-            _td do
-              _ul @committer.moderates.keys() do |list_name|
-                _li do
-                  _a list_name, href: 'https://lists.apache.org/list.html?' +
-                    list_name
-                  _span " as "
-                  _span @committer.moderates[list_name].join(', ')
-                end
-              end
-            end
-          end
-        end
-
-        # subscriptions
-        if @committer.subscriptions
-          _tr do
-            _td 'Subscriptions'
-            _td do
-              _ul @committer.subscriptions do |list_email|
-                _li do
-                  _a list_email[0], 
-                    href: 'https://lists.apache.org/list.html?' + list_email[0]
-                  _span " as "
-                  _span list_email[1]
-                end
-              end
-            end
-          end
-        end
-
-        # PGP keys
-        if @committer.pgp
-          _PersonPgpKeys person: self
-        end
-
-        # SSH keys
-        if @committer.ssh
-          _PersonSshKeys person: self
-        end
-
-        # GitHub username
-        if @committer.githubUsername
-          _PersonGitHub person: self
-        end
-
-        if @committer.member
-          _PersonMemberStatus person: self
-
-          # Members.txt
-          if @committer.member.info
-            _PersonMemberText person: self
-          end
-
-          if @committer.member.nomination
-            _tr do
-              _td 'Nomination'
-              _td {_pre @committer.member.nomination}
-            end
-          end
-
-          # Forms on file
-          if @committer.forms
-            _PersonForms person: self
-          end
-        end
-
-        # SpamAssassin score
-        _PersonSascore person: self
+    # Committees
+    committees = @committer.committees
+    unless committees.empty?
+      _div.row do
+	_div.name 'Committees'
+	_div.value do
+	  _ul committees do |pmc|
+	    _li {_a pmc, href: "committee/#{pmc}"}
+	  end
+	end
       end
     end
+
+    # Committer
+    commit_list = @committer.committer
+    unless commit_list.all? {|pmc| committees.include? pmc}
+      _div.row do
+	_div.name 'Committer'
+	_div.value do
+	  _ul commit_list do |pmc|
+	    next if committees.include? pmc
+	    _li {_a pmc, href: "committee/#{pmc}"}
+	  end
+	end
+      end
+    end
+
+    # Groups
+    unless @committer.groups.empty?
+      _div.row do
+	_div.name 'Groups'
+	_div.value do
+	  _ul @committer.groups do |group|
+	    next if group == 'apldap'
+
+	    if group == 'committers'
+	      _li {_a group, href: "committer/"}
+	    elsif group == 'member'
+	      _li {_a group, href: "members"}
+	    else
+	      _li {_a group, href: "group/#{group}"}
+	    end
+	  end
+	end
+      end
+    end
+
+    # Podlings
+    unless @committer.projects.empty?
+      _div.row do
+	_div.name 'Podlings'
+	_div.value do
+	  _ul @committer.projects do |project|
+	    _li {_a project, href: "ppmc/#{project}"}
+	  end
+	end
+      end
+    end
+
+    # Email addresses
+    if @committer.mail
+      _PersonEmail person: self
+    end
+
+    # Moderates
+    if @committer.moderates and @committer.moderates.keys().length > 0
+      _div.row do
+	_div.name 'Moderates'
+	_div.value do
+	  _ul @committer.moderates.keys() do |list_name|
+	    _li do
+	      _a list_name, href: 'https://lists.apache.org/list.html?' +
+		list_name
+	      _span " as "
+	      _span @committer.moderates[list_name].join(', ')
+	    end
+	  end
+	end
+      end
+    end
+
+    # subscriptions
+    if @committer.subscriptions
+      _div.row do
+	_div.name 'Subscriptions'
+	_div.value do
+	  _ul @committer.subscriptions do |list_email|
+	    _li do
+	      _a list_email[0], 
+		href: 'https://lists.apache.org/list.html?' + list_email[0]
+	      _span " as "
+	      _span list_email[1]
+	    end
+	  end
+	end
+      end
+    end
+
+    # PGP keys
+    if @committer.pgp
+      _PersonPgpKeys person: self
+    end
+
+    # SSH keys
+    if @committer.ssh
+      _PersonSshKeys person: self
+    end
+
+    # GitHub username
+    if @committer.githubUsername
+      _PersonGitHub person: self
+    end
+
+    if @committer.member
+      _PersonMemberStatus person: self
+
+      # Members.txt
+      if @committer.member.info
+	_PersonMemberText person: self
+      end
+
+      if @committer.member.nomination
+	_div.row do
+	  _div.name 'Nomination'
+	  _div.value {_pre @committer.member.nomination}
+	end
+      end
+
+      # Forms on file
+      if @committer.forms
+	_PersonForms person: self
+      end
+    end
+
+    # SpamAssassin score
+    _PersonSascore person: self
 
     # modal dialog for dry run results
     _div.modal.fade.wide_form tabindex: -1 do
@@ -187,9 +194,9 @@ class Person < React
   # and watch for double clicks on them
   def componentDidMount()
     return unless @auth
-    Array(document.querySelectorAll('tr[data-edit]')).each do |tr|
-      tr.addEventListener('dblclick', self.dblclick)
-      tr.querySelector('td').classList.add 'bg-success'
+    Array(document.querySelectorAll('div.row[data-edit]')).each do |div|
+      div.addEventListener('dblclick', self.dblclick)
+      div.querySelector('div.name').classList.add 'bg-success'
     end
   end
 

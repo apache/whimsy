@@ -6,10 +6,10 @@ class PersonPgpKeys < React
   def render
     committer = @@person.state.committer
 
-    _tr do
-      _td 'PGP keys'
+    _div.row do
+      _div.name 'PGP keys'
 
-      _td do
+      _div.value do
         _ul committer.pgp do |key|
           _li do
             if key =~ /^[0-9a-fA-F ]+$/
@@ -26,4 +26,3 @@ class PersonPgpKeys < React
     end
   end
 end
-

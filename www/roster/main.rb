@@ -84,6 +84,11 @@ get '/committer/:name.json' do |name|
   _json Committer.serialize(name, env)
 end
 
+# make __self__ an alias for one's own page
+get '/committer/__self__' do
+  redirect to("committer/#{env.user}")
+end
+
 get '/committer/:name' do |name|
   @auth = Auth.info(env)
   @committer = Committer.serialize(name, env)
@@ -185,6 +190,37 @@ get '/orgchart/:name' do |name|
   end
 
   _html :duties
+end
+
+# for debugging purposes
+get '/env' do
+  content_type 'text/plain'
+
+  asset = {
+    path: Wunderbar::Asset.path,
+    root: Wunderbar::Asset.root,
+    virtual: Wunderbar::Asset.virtual,
+    scripts: Wunderbar::Asset.scripts.map {|script|
+      source = script.options[:file]
+      {
+        path: script.path, 
+        source: source,
+        mtime: source && File.mtime(source),
+        size: source && File.size(source),
+      }
+    },
+    stylesheets: Wunderbar::Asset.stylesheets.map {|stylesheet|
+      source = stylesheet.options[:file]
+      {
+        path: stylesheet.path, 
+        source: source,
+        mtime: source && File.mtime(source),
+        size: source && File.size(source),
+      }
+    },
+  }
+
+  JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
 end
 
 error do

@@ -10,17 +10,15 @@ end
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'json'
-require 'whimsy/asf'
-require 'wunderbar'
-require 'wunderbar/bootstrap'
-require 'wunderbar/jquery/stupidtable'
 require 'net/http'
+require 'time' # for httpdate
 
 PAGETITLE = 'Apache TLP Website Link Checks'
-cols = %w( events foundation license sponsorship security thanks copyright trademarks )
+cols = %w( uri events foundation license sponsorship security thanks copyright trademarks )
 CHECKS = { 
+  'uri'         => %r{https?://[^.]+\.apache\.org},
   'copyright'   => %r{[Cc]opyright [^.]+ Apache Software Foundation}, # Do we need '[Tt]he ASF'?
-  'foundation'   => %r{.},
+  'foundation'  => %r{.},
   # TODO more checks needed here, e.g. ASF registered and 3rd party marks
   'trademarks'  => %r{trademarks of [Tt]he Apache Software Foundation},
   'events'      => %r{apache.org/events/current-event},
@@ -28,6 +26,24 @@ CHECKS = {
   'sponsorship' => %r{apache.org/foundation/sponsorship},
   'security'    => %r{apache.org/[Ss]ecurity},
   'thanks'      => %r{apache.org/foundation/thanks},
+}
+DOCS = {
+  'uri'         => ['https://www.apache.org/foundation/marks/pmcs#websites',
+                    'The homepage for any ProjectName must be served from http://ProjectName.apache.org'],
+#  'copyright'   => 'TBA',
+  'foundation'  => ['https://www.apache.org/foundation/marks/pmcs#navigation',
+                    'All projects must feature some prominent link back to the main ASF homepage at http://www.apache.org/'],
+  'trademarks'  => ['https://www.apache.org/foundation/marks/pmcs#attributions',
+                    'All project or product homepages must feature a prominent trademark attribution of all applicable Apache trademarks'],
+#  'events'      => 'TBA',
+  'license'     => ['https://www.apache.org/foundation/marks/pmcs#navigation',
+                    '"License" should link to: http://www.apache.org/licenses/'],
+  'sponsorship' => ['https://www.apache.org/foundation/marks/pmcs#navigation',
+                    '"Sponsorship" or "Donate" should link to: http://www.apache.org/foundation/sponsorship.html'],
+  'security'    => ['https://www.apache.org/foundation/marks/pmcs#navigation',
+                    '"Security" should link to either to a project-specific page [...], or to the main http://www.apache.org/security/ page'],
+  'thanks'      => ['https://www.apache.org/foundation/marks/pmcs#navigation',
+                    '"Thanks" should link to: http://www.apache.org/foundation/thanks.html'],
 }
 DATAURI = 'https://whimsy.apache.org/public/site-scan.json'
 
@@ -51,10 +67,48 @@ def analyze(sites)
     ]
 end
 
-def label(analysis, links, c, n)
-  if not links[c]
+def getsites
+    local_copy = File.expand_path('../public/site-scan.json', __FILE__).untaint
+    if File.exist? local_copy
+      crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
+      sites = JSON.parse(File.read(local_copy))
+    else
+      response = Net::HTTP.get_response(URI(DATAURI))
+      crawl_time = response['last-modified']
+      sites = JSON.parse(response.body)
+    end
+  return sites, crawl_time
+end
+
+sites, crawl_time = getsites()
+
+analysis = analyze(sites)
+
+# Allow CLI testing, e.g. "PATH_INFO=/ ruby www/site.cgi >test.json"
+# SCRIPT_NAME will always be set for a CGI invocation
+unless ENV['SCRIPT_NAME']
+  puts JSON.pretty_generate(analysis)
+  exit
+end
+
+# Only required for CGI use
+# if these are required earlier, the code creates an unnecessary 'assets' directory
+
+require 'whimsy/asf/themes'
+require 'wunderbar'
+require 'wunderbar/bootstrap'
+require 'wunderbar/jquery/stupidtable'
+
+# Determine the color of a given table cell, given:
+#   - overall analysis of the sites, in particular the third column
+#     which is a list projects that successfully matched the check
+#   - list of links for the project in question
+#   - the column in question (which indicates the check being reported on)
+#   - the name of the project
+def label(analysis, links, col, name)
+  if not links[col]
     'label-danger'
-  elsif analysis[2].include? c and not analysis[2][c].include? n
+  elsif analysis[2].include? col and not analysis[2][col].include? name
     'label-warning'
   else
     'label-success'
@@ -70,20 +124,6 @@ _html do
 
   _body? do
 
-    path = env['PATH_INFO']
-
-    local_copy = File.expand_path('../public/site-scan.json').untaint
-
-    if File.exist? local_copy
-      crawl_time = File.mtime(local_copy).rfc2822
-      sites = JSON.parse(File.read(local_copy))
-    else
-      response = Net::HTTP.get_response(URI(DATAURI))
-      crawl_time = response['last-modified']
-      sites = JSON.parse(response.body)
-    end
-    analysis = analyze(sites)
-    
     _whimsy_header PAGETITLE
 
     _whimsy_content do
@@ -116,9 +156,27 @@ _html do
         _table.table.table_striped do
           _tbody do
             cols.each do |col|
+              cls = label(analysis, links, col, project)
               _tr do
                 _td col.capitalize
-                _td links[col], class: label(analysis, links, col, project)
+
+                if links[col] =~ /^https?:/
+                  _td class: cls do
+                    _a links[col], href: links[col]
+                  end
+                else
+                  _td links[col], class: cls
+                end
+
+                _td do
+                  if cls == 'label-warning'
+                    _ '(Expected to match the regular expression: '
+                    _code CHECKS[col].source
+                    _ ')'
+                  else
+                    _ ''
+                  end
+                end
               end
             end
           end
@@ -130,8 +188,13 @@ _html do
         if CHECKS.include? col
           _p! do
             _ '(Expected to match the regular expression: '
-            _code CHECKS[col].inspect
+            _code CHECKS[col].source
             _ ')'
+          end
+          _p do
+            if DOCS.include? col
+              _a DOCS[col][1], href: DOCS[col][0]
+            end
           end
         end
         _table.table do
@@ -141,7 +204,14 @@ _html do
                 _td do 
                   _a links['display_name'], href: links['uri']
                 end
-                _td links[col]
+
+                if links[col] =~ /^https?:/
+                  _td do
+                    _a links[col], href: links[col]
+                  end
+                else
+                  _td links[col]
+                end
               end
             end
           end

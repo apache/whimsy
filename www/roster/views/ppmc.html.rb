@@ -10,7 +10,7 @@ _html do
   _banner breadcrumbs: {
     roster: '.',
     ppmc: 'ppmc/',
-    @ppmc[:id] => "/committere/#{@ppmc[:id]}"
+    @ppmc[:id] => "ppmc/#{@ppmc[:id]}"
   }
 
   _div_.main!

@@ -102,6 +102,12 @@ class Parts < React
           end
 
           _label do
+            _input type: 'radio', name: 'doctype', value: 'icla2',
+              onClick: -> {@form = ICLA2}
+            _span 'additional icla'
+          end
+
+          _label do
             _input type: 'radio', name: 'doctype', value: 'ccla',
               onClick: -> {@form = CCLA}
             _span 'ccla'

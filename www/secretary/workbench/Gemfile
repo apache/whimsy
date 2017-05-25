@@ -14,9 +14,9 @@ end
 gem 'mail'
 gem 'rake'
 gem 'zip'
-gem 'sinatra', '~> 1.4'
+gem 'sinatra', '~> 2.0'
 gem 'sanitize'
-gem 'wunderbar', '~> 1.0.27'
+gem 'wunderbar', '~> 1.1.0'
 gem 'ruby2js', '~> 2.0.12'
 gem 'execjs'
 gem 'listen', ('~> 3.0.7' if RUBY_VERSION =~ /^2\.[01]/)

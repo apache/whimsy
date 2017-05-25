@@ -29,6 +29,7 @@ end
 def makeEntry(hash, e)
   hash[e.id] = {
       name: e.public_name,
+      createTimestamp:  e.createTimestamp,
   }
   if e.banned?
     hash[e.id][:noLogin] = true

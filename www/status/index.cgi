@@ -34,6 +34,14 @@ git_repo = `git ls-remote origin master`.strip rescue "?"
 
 hostname = `hostname`
 
+# Are we the master node?
+begin
+  require_relative '../whimsy'
+  master = Whimsy.master?
+  rescue LoadError, StandardError => e
+    master = e
+end
+
 # What the browser sees:
 print <<-EOF
 <!DOCTYPE html>
@@ -54,7 +62,7 @@ print <<-EOF
     <a href="/">
       <img alt="Whimsy logo" title="Whimsy logo" src="../whimsy.svg" class="logo"/>
     </a>
-    <h1>Whimsy Status for #{hostname}</h1>
+    <h1>Whimsy Status for #{hostname} (master=#{master})</h1>
 
     <div class="list-group list-group-root well">
       Loading...

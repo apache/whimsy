@@ -43,13 +43,13 @@ get '/index.html' do
 end
 
 # support for fetching previous month's worth of messages
-get %r{^/(\d{6})$} do |mbox|
+get %r{/(\d{6})} do |mbox|
   @mbox = mbox
   _json :index
 end
 
 # retrieve a single message
-get %r{^/(\d{6})/(\w+)/$} do |month, hash|
+get %r{/(\d{6})/(\w+)/} do |month, hash|
   @message = Mailbox.new(month).headers[hash]
   pass unless @message
   _html :message
@@ -74,7 +74,7 @@ post '/actions/:file' do
 end
 
 # mark a single message as deleted
-delete %r{^/(\d+)/(\w+)/$} do |month, hash|
+delete %r{/(\d+)/(\w+)/} do |month, hash|
   success = false
 
   Mailbox.update(month) do |headers|
@@ -89,7 +89,7 @@ delete %r{^/(\d+)/(\w+)/$} do |month, hash|
 end
 
 # update a single message
-patch %r{^/(\d{6})/(\w+)/$} do |month, hash|
+patch %r{/(\d{6})/(\w+)/} do |month, hash|
   success = false
 
   Mailbox.update(month) do |headers|
@@ -113,7 +113,7 @@ patch %r{^/(\d{6})/(\w+)/$} do |month, hash|
 end
 
 # list of parts for a single message
-get %r{^/(\d{6})/(\w+)/_index_$} do |month, hash|
+get %r{/(\d{6})/(\w+)/_index_} do |month, hash|
   message = Mailbox.new(month).find(hash)
   pass unless message
   @attachments = message.attachments
@@ -124,7 +124,7 @@ get %r{^/(\d{6})/(\w+)/_index_$} do |month, hash|
 end
 
 # message body for a single message
-get %r{^/(\d{6})/(\w+)/_body_$} do |month, hash|
+get %r{/(\d{6})/(\w+)/_body_} do |month, hash|
   @message = Mailbox.new(month).find(hash)
   @cssmtime = File.mtime('public/secmail.css').to_i
   pass unless @message
@@ -132,21 +132,21 @@ get %r{^/(\d{6})/(\w+)/_body_$} do |month, hash|
 end
 
 # header data for a single message
-get %r{^/(\d{6})/(\w+)/_headers_$} do |month, hash|
+get %r{/(\d{6})/(\w+)/_headers_} do |month, hash|
   @headers = Mailbox.new(month).headers[hash]
   pass unless @headers
   _html :headers
 end
 
 # raw data for a single message
-get %r{^/(\d{6})/(\w+)/_raw_$} do |month, hash|
+get %r{/(\d{6})/(\w+)/_raw_} do |month, hash|
   message = Mailbox.new(month).find(hash)
   pass unless message
   [200, {'Content-Type' => 'text/plain'}, message.raw]
 end
 
 # intercede for potentially dangerous message attachments
-get %r{^/(\d{6})/(\w+)/_danger_/(.*?)$} do |month, hash, name|
+get %r{/(\d{6})/(\w+)/_danger_/(.*?)} do |month, hash, name|
   message = Mailbox.new(month).find(hash)
   pass unless message
 
@@ -157,11 +157,11 @@ get %r{^/(\d{6})/(\w+)/_danger_/(.*?)$} do |month, hash, name|
 end
 
 # a specific attachment for a message
-get %r{^/(\d{6})/(\w+)/(.*?)$} do |month, hash, name|
+get %r{/(\d{6})/(\w+)/(.*?)} do |month, hash, name|
   message = Mailbox.new(month).find(hash)
   pass unless message
 
-  part = message.find(name)
+  part = message.find(URI.decode(name))
   pass unless part
 
   [200, {'Content-Type' => part.content_type}, part.body.to_s]
@@ -177,6 +177,30 @@ get '/email.json' do
   _json do
     {email: ASF::Person.find(params[:id]).mail.first}
   end
+end
+
+# return a list of iclas
+get '/iclas.json' do
+  list = []
+  ASF::ICLA.each do |icla|
+    list << {
+      filename: icla.claRef,
+      id: icla.id,
+      name: icla.name,
+      fullname: icla.legal_name,
+      email: icla.email
+    }
+  end
+  list.to_json
+end
+
+# redirect to an icla
+get %r{/icla/(.*)} do |filename|
+  checkout = 'https://svn.apache.org/repos/private/documents/iclas'
+  iclas = ASF::SVN['private/documents/iclas']
+  file = Dir["#{iclas}/#{filename}", "#{iclas}/#{filename}.*"].first
+  pass unless file
+  redirect to(checkout + '/' + File.basename(file))
 end
 
 # event stream for server sent events (a.k.a EventSource)

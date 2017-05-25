@@ -23,13 +23,14 @@ _html do
       end
     end
 
+    project_names = @projects.map {|project| project.name}
     @ppmcs.sort_by {|ppmc| ppmc.display_name.downcase}.each do |ppmc|
       _tr_ do
         _td do
-          if @projects.include? ppmc.name
+          if project_names.include? ppmc.name
             _a ppmc.display_name, href: "ppmc/#{ppmc.name}"
           else
-            _span ppmc.display_name
+            _span.label_danger ppmc.display_name
           end
         end
 

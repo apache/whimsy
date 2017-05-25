@@ -53,22 +53,34 @@ end
 
 incubator = URI.parse('http://incubator.apache.org/')
 
+DELETE = ARGV.delete '--delete' # delete obsolete files?
+
+force = ARGV.delete '--force' # rerun regardless
+
+NOSTAMP = ARGV.delete '--nostamp' # don't add dynamic timestamp to pages (for debug compares)
+
+YYYYMMDD = ARGV.first || '20*' # Allow override of minutes to process
+
+MINUTES_NAME = "board_minutes_#{YYYYMMDD}.txt"
+MINUTES_PATH = "#{SVN_SITE_RECORDS_MINUTES}/*/#{MINUTES_NAME}"
+
+Wunderbar.info "Processing minutes matching #{MINUTES_NAME}"
+
 # quick exit if everything is up to date
 if File.exist? "#{SITE_MINUTES}/index.html"
-  input = Dir["#{SVN_SITE_RECORDS_MINUTES}/*/board_minutes_20*.txt",
-    "#{TEMPLATES}/index.html", # if the template changes, we need to regenerate
+  input = Dir[MINUTES_PATH,
     "#{BOARD}/board_minutes_20*.txt"].
     map {|name| File.stat(name).mtime}.push(File.stat(__FILE__).mtime).max
-  exit if File.stat("#{SITE_MINUTES}/index.html").mtime >= input
+  if File.stat("#{SITE_MINUTES}/index.html").mtime >= input
+    Wunderbar.info "All up to date!"
+    exit unless force
+  end
 end
+
+Wunderbar.info "Updating files" 
 
 # mapping of committee names to canonical names (generally from ldap)
 canonical = Hash.new {|hash, name| name}
-canonical.merge! \
-    'conference planning'         => 'concom',
-    'conferences'                 => 'concom',
-    'security team'               => 'security',
-    'c++ standard library'        => 'stdcxx'
 
 # extract podling information
 site = {}
@@ -89,19 +101,21 @@ ASF::Podling.list.each do |podling|
   }
 end
 
-# parse site information
-index = File.read("#{TEMPLATES}/index.html")
-projects = index[/<section id="projects-list".*?<\/section>/m]
-projects.scan(/<a href="(.*?)" title="(.*?)">(.*?)</).each do |link, text, name|
-  site[canonical[name.downcase]] = {:name => name, :link => link, :text => text}
+# get site information
+DATAURI = 'https://whimsy.apache.org/public/committee-info.json'
+local_copy = File.expand_path('../public/site-scan.json', __FILE__).untaint
+if File.exist? local_copy
+  cinfo = JSON.parse(File.read(local_copy))
+else
+  response = Net::HTTP.get_response(URI(DATAURI))
+  cinfo = JSON.parse(response.body)
 end
 
-skeleton = File.read("#{TEMPLATES}/index.html")
-projects = skeleton[/<section id="projects-list">(.*?)<\/section>/m,1]
-projects.scan(/<a href="(.*?)" title="(.*?)">(.*?)</).each do |link, text, name|
-  cname = canonical[name.downcase]
-  link = 'https://www.apache.org' + link if link =~ /^\//
-  site[cname] = {:name => name, :link => link, :text => text}
+cinfo['committees'].each do |id,v| 
+  if v['display_name'].downcase != id
+    canonical[v['display_name'].downcase] = id
+  end
+  site[id] = {:name => v['display_name'], :link => v['site'], :text => v['description']}
 end
 
 # parse the calendar for layout info (note: hack for &raquo)
@@ -148,14 +162,21 @@ end
 
 agenda = {}
 
-posted = Dir["#{SVN_SITE_RECORDS_MINUTES}/*/board_minutes_20*.txt"].sort
-unapproved = Dir["#{BOARD}/board_minutes_20*.txt"].sort
+posted = Dir[MINUTES_PATH].sort
+unapproved = Dir["#{BOARD}/#{MINUTES_NAME}"].sort
 
 FileUtils.mkdir_p SITE_MINUTES
+
+seen={}
 
 (posted+unapproved).each do |txt|
   date = $1 if txt =~ /(\d\d\d\d_\d\d_\d\d)/
   next unless date
+  if seen.has_key? date
+    Wunderbar.warn "Already processed #{seen[date]}; skipping #{txt}"
+    next
+  end
+  seen[date] = txt
   minutes = open(txt) {|file| file.read}
   print "\r#{date}"
   $stdout.flush
@@ -165,16 +186,20 @@ FileUtils.mkdir_p SITE_MINUTES
   minutes.scan(/
     -{41}\n                        # separator
     Attachment\s\s?(\w+):[ ](.+?)\n # Attachment, Title
-    .(.*?)\n                       # report
+    (.)(.*?)\n                     # separator, report
     (?=-{41,}\n(?:End|Attach))     # separator
-  /mx).each do |attach,title,text|
+  /mx).each do |attach,title,cont,text|
 
-    # join multiline titles
-    while text.start_with? '        '
-      append, text = text.split("\n", 2)
-      title += ' ' + append.strip
+    # We need to keep the start of the second line.
+    # Otherwise leading spaces in the report body look like a continuation line
+    if cont == ' ' # continuation line was not empty; check if it's a continuation
+      # join multiline titles
+      while text.start_with? '        '
+        append, text = text.split("\n", 2)
+        title += ' ' + append.strip
+      end
     end
-    
+
     title.sub! /Special /, ''
     title.sub! /Requested /, ''
     title.sub! /(^| )Report To The Board( On)?( |$)/i, ''
@@ -201,6 +226,8 @@ FileUtils.mkdir_p SITE_MINUTES
     title.sub! "Infrastructure (President's)", 'Infrastructure'
     title.sub! 'Java Community Process', 'JCP'
     title.sub! 'James', 'JAMES'
+    title.sub! /APR$/, 'Portable Runtime (APR)'
+    title.sub! /Portable Runtime$/, 'Portable Runtime (APR)'
     title.sub! 'TomEE (OpenEJB)', 'TomEE'
     title.sub! 'OpenEJB', 'TomEE'
     title.sub! 'Public Relations Commitee', 'Public Relations'
@@ -208,6 +235,9 @@ FileUtils.mkdir_p SITE_MINUTES
     title.sub! /^Infrastructure .*/, 'Infrastructure'
     title.sub! /^Labs .*/, 'Labs'
     title.sub! 'TCL', 'Tcl'
+    title.sub! 'Orc', 'ORC'
+    title.sub! 'Steve', 'STeVe'
+    title.sub! 'Openmeetings', 'OpenMeetings'
     title.sub! 'Web services', 'Web Services'
     title.sub! 'ASF Rep. for W3C', 'W3C Relations'
 
@@ -287,21 +317,36 @@ FileUtils.mkdir_p SITE_MINUTES
           next if title == 'April 2011 podling reports'
 
           title.sub! 'Ace', 'ACE' # WHIMSY-31
-          title.sub! 'Bean Validation', 'BeanValidation'
+          title.sub! 'ADF Faces', 'MyFaces' # via Trinidad
+          title.sub! 'Bean Validation', 'BVal'
+          title.sub! 'BeanValidation', 'BVal'
+          title.sub! 'Amber', 'Oltu'
+          title.sub! 'Argus', 'Ranger'
           title.sub! 'Bluesky', 'BlueSky'
           title.sub! 'Easyant', 'EasyAnt'
           title.sub! 'Callback', 'Cordova'
+          title.sub! 'Deft', 'AWF'
+          title.sub! /CeltiX[Ff]ire/, 'CXF'
           title.sub! 'Empire-DB', 'Empire-db'
+          title.sub! 'Fleece', 'Johnzon'
           title.sub! 'IVY', 'Ivy'
           title.sub! 'JackRabbit', 'Jackrabbit'
           title.sub! 'Juice', 'JuiCE'
+          title.sub! /\bKi\b/, 'Shiro'
+          title.sub! 'JSecurity', 'Shiro'
           title.sub! 'log4php', 'Log4php'
           title.sub! 'lucene4c', 'Lucene4c'
           title.sub! 'Lucene.NET', 'Lucene.Net'
           title.sub! 'Ode', 'ODE'
+          title.sub! 'Optiq', 'Calcite'
+          title.sub! 'Oscar', 'Felix'
+          title.sub! 'Quarks', 'Edgent'
+          title.sub! 'Singa', 'SINGA'
+          title.sub! 'Openmeetings', 'OpenMeetings'
           title.sub! 'ODFToolkit', 'ODF Toolkit'
           title.sub! 'OpenOffice.org', 'OpenOffice'
           title.sub! 'OpenEJB', 'TomEE'
+          title.sub! 'Stratosphere', 'Flink'
           title.sub! 'Socialsite', 'SocialSite'
           title.sub! 'stdcxx', 'C++ Standard Library'
           title.sub! 'STDCXX', 'C++ Standard Library'
@@ -379,6 +424,7 @@ FileUtils.mkdir_p SITE_MINUTES
   end
 
   # parse other agenda items
+  establish='' # pick up misplaced PMC creates
   minutes.scan(/
     \n\s*(\w+)\.\s                    # attach
     (Discussion\sItems|Unfinished\sBusiness|New\sBusiness|Announcements)\n
@@ -388,6 +434,10 @@ FileUtils.mkdir_p SITE_MINUTES
     next if text.strip.empty?
     next if text =~ /\A\s*none\.?\s*\Z/i
     next if text =~ /\A\s*no unfinished business\.?\s*\Z/i
+    if text =~ /Establish the Apache \S+ Project/ # 2012_08_28
+      establish += text
+      next
+    end
     report = OpenStruct.new
     report.title ||= title #.downcase
     report.meeting = date
@@ -397,12 +447,13 @@ FileUtils.mkdir_p SITE_MINUTES
   end
 
   # parse Special Orders
-  orders = minutes.split(/^ \d\. Special Orders/,2).last.split(/^ \d\./,2).first
+  orders = establish + minutes.split(/^ \d\. Special Orders/,2).last.split(/^ \d\./,2).first
+  # Some section ids have a leading digit, hence [\s\d]
   orders.scan(/
-    \s{4}([A-Z])\.          # agenda item
+    \s{3}[\s\d]([A-Z])\.    # agenda item
     \s+(.*?)\n\s*\n         # title
     (.*?)                   # text
-    (?=\n\s{4,5}[A-Z]\.\s|\z) # next section
+    (?=\n\s{3,4}[\s\d][A-Z]\.\s|\z) # next section
   /mx).each do |attach,title,text|
     next if title.count("\n")>1
     report = OpenStruct.new
@@ -420,6 +471,7 @@ FileUtils.mkdir_p SITE_MINUTES
 
       :E, 1, /Establishing a PMC for a (.*) project/,
       :E, 1, /Establish (.+?) as a top level project/,
+      :E, 1, /Establish (AsterixDB)/, # 2016_04_20
       :E, 4, /Estab?lish(ing|ment)? (of )?(the |an )?(.+?) (board )?(PMC|[pP]roject|[cC]ommittee)$/,
       :E, 2, /Creat(e|ion of) the (.+?) (Project|PMC)/,
       :E, 2, /To (re-establish|create) the (.+?) PMC/,
@@ -449,6 +501,7 @@ FileUtils.mkdir_p SITE_MINUTES
       :M, 2, /Update (membership of the )?(.+?) Committee/,
       :M, 1, /Change to the (.*)? Committee Membership/,
       :M, 1, /Change the Apache (.*) Project Name/,
+      :M, 1, /Change the Apache (.*) Project Management Committee/,
        1, 1, /Update ?(audit.+?) Membership/i,
       :M, 1, /Update ?(.+?) Membership/,
       :R, 1, /Rename.* to the ?(.+?) Project/,
@@ -496,7 +549,7 @@ FileUtils.mkdir_p SITE_MINUTES
       match = pattern.match(report.title)
       if match
         report.subtitle = report.title
-        if select.is_a? Fixnum
+        if select.is_a? Integer
           report.title = match[select]
         else
           report.title = select
@@ -507,7 +560,8 @@ FileUtils.mkdir_p SITE_MINUTES
     end
 
     report.title.sub! /^Apache /, ''
-    report.title.sub! 'APR', 'Portable Runtime'
+    report.title.sub! /APR$/, 'Portable Runtime (APR)'
+    report.title.sub! /Portable Runtime$/, 'Portable Runtime (APR)'
     report.title.sub! 'standing Audit', 'Audit'
     report.title.sub! /^HTTPD?$/, 'HTTP Server'
     report.title.sub! 'ISIS', 'Isis'
@@ -522,18 +576,23 @@ FileUtils.mkdir_p SITE_MINUTES
     report.title.sub! 'PRC', 'Public Relations'
     report.title.sub! /Security$/, 'Security Team'
     report.title.sub! 'Apache/TCL', 'Tcl'
+    report.title.sub! 'Orc', 'ORC'
+    report.title.sub! 'Steve', 'STeVe'
+    report.title.sub! 'Openmeetings', 'OpenMeetings'
 
     pending[title] = report
   end
 
   # parse (Executive) Officer Reports
-  execs = minutes[/Officer Reports(.*?)\n\s{1,3}\d+\./m,1]
+  execs = minutes[/Officer Reports(.*?)\n[[:blank:]]{1,3}\d+\./m,1]
   if execs
     execs.sub! /\s*Executive officer reports approved.*?\n*\Z/, ''
+    # attachments start like this:
+    att_prefix = '\n[[:blank:]]{1,5}([A-Z])\.[[:blank:]]'
     execs.scan(/
-      \n\s+(\w+)\.\s([^\n]*?)\n         # attach, title
+      #{att_prefix}([^\n]*?)\n          # attach, title
       (.*?)                             # text
-      (?=\n\s+\w\.\s|\Z)                # separator
+      (?=#{att_prefix}|\Z)              # separator
     /mx).each do |attach, title, text|
       next unless text
       next unless title
@@ -581,6 +640,13 @@ agenda.each do |title, reports|
   link[title] = title.sub('C++','Cxx').gsub(/\W/,'_') + '.html'
 end
 
+# Simplify creating content
+def getHTMLbody()
+  builder = Builder::XmlMarkup.new :indent => 2
+  yield builder
+  return Nokogiri::HTML(builder.target!).at('body').children
+end
+
 # Combine content produced here with the template fetched previously
 def layout(title = nil)
   builder = Builder::XmlMarkup.new :indent => 2
@@ -593,18 +659,63 @@ def layout(title = nil)
     $calendar.at('title').content = "Board Meeting Minutes"
 #   $calendar.at('h2').content = "Board Meeting Minutes"
   end
-  stamp = DateTime.now.strftime '%Y-%m-%d %H:%M'
-  section = $calendar.at('.container p strong').parent.parent
-  paragraphs = section.search('p')
-  paragraphs.first.children.last.content =
-    paragraphs.first.children.last.content.sub 'is a', "was extracted (@ #{stamp}) from a"
+  stamp = (NOSTAMP ? DateTime.new(1970) :  DateTime.now).strftime '%Y-%m-%d %H:%M'
 
+  # Adjust the page header
+  
+  # find the intro para; assume it is the first para with a strong tag
+  # then back up to the main container class for the page content
+  section = $calendar.at('.container p strong').parent.parent
+  # Extract all the paragraphs
+  paragraphs = section.search('p')
+
+  # remove all the existing content
   section.children.each {|child| child.remove}
-  section.add_child paragraphs[0]
+
+  # Add the replacement first para
+  section.add_child getHTMLbody {|x|
+    x.p do
+      x.text! "This was extracted (@ #{stamp}) from a list of"
+      x.a 'minutes', :href => 'http://www.apache.org/foundation/records/minutes/'
+      x.text! "which have been approved by the Board."
+      x.br
+      x.strong 'Please Note'
+      # squiggly heredoc causes problems for Eclipse plugin, but leading spaces don't matter here
+      x.text! <<-EOT
+      The Board typically approves the minutes of the previous meeting at the
+      beginning of every Board meeting; therefore, the list below does not
+      normally contain details from the minutes of the most recent Board meeting.
+      EOT
+    end
+  }
+
+  # and the second para which is assumed to be the list of years
   section.add_child paragraphs[1]
+  section.add_child "\n" # separator to make it easier to read source
+
+  # now add the content provided by the builder block
   content.at('body').children.each {|child| section.add_child child}
 
   $calendar.to_xhtml
+end
+
+Dir.entries(SITE_MINUTES).each do |p|
+  next unless p.end_with? '.html'
+  next if p == 'index.html'
+  unless link.has_value? p
+    if DELETE
+      Wunderbar.info "Dropping #{p}"
+      File.delete(File.join(SITE_MINUTES,p))
+    else
+      Wunderbar.info "Outdated? #{p}"
+    end
+  end
+end
+
+# remove variable date from page
+def remove_date(page)
+  # '%Y-%m-%d %H:%M'
+  page.sub /This was extracted \(@ \d\d\d\d-\d\d-\d\d \d\d:\d\d\) from a list of/,''
 end
 
 # output each individual report by owner
@@ -645,7 +756,8 @@ agenda.sort.each do |title, reports|
         text.gsub! /^#{' '*indent}/, '' if indent > 0
         text = $1 + text if text =~ /\A\w.*\n(\s+)/
         text = text.to_s.rstrip
-        x.pre text, class: 'report' unless text.strip.empty?
+        # N.B. The syntax "class: report" causes problems for the Eclipse Ruby plugin
+        x.pre text, 'class' => 'report' unless text.strip.empty?
 
         if report.comments and report.comments.strip != ''
           report.comments.split(/\n\s*\n/).each do |p|
@@ -666,8 +778,11 @@ agenda.sort.each do |title, reports|
   end
 
   dest = "#{SITE_MINUTES}/#{link[title]}"
-  unless File.exist?(dest) and File.read(dest) == page
+  unless File.exist?(dest) and remove_date(File.read(dest)) == remove_date(page)
+    Wunderbar.info  "Writing #{link[title]}"
     open(dest, 'w') {|file| file.write page}
+#  else
+#    Wunderbar.info  "Not updating #{link[title]}"
   end
 end
 
@@ -714,7 +829,11 @@ page = layout do |x|
               if info
                 x.a title, :href => link[title], :title => info[:text]
               else
-                x.em { x.a title, :href => link[title] }
+                if cinfo['committees'][title]
+                  x.em { x.a title, :href => link[title] }
+                else
+                  x.del { x.a title, :href => link[title] }
+                end
               end
             end
           end
@@ -740,7 +859,7 @@ page = layout do |x|
               info = site[canonical[title.downcase]]
               if info
                 if %w{dormant retired}.include? info[:status]
-                  x.em do
+                  x.del do
                     x.a title, :href => link[title], :title => info[:text]
                   end
                 else

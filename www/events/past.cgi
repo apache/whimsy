@@ -9,11 +9,11 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 
 ifields = {
-  'SessionList'	=> ['glyphicon_th_list', 'Session Listing'],
-  'SlideArchive' => ['glyphicon_file', 'Session Listing'],
-  'VideoArchive' => ['glyphicon_facetime_video', 'Session Listing'],
-  'AudioArchive' => ['glyphicon_headphones', 'Session Listing'],
-  'PhotoAlbum' => ['glyphicon_camera', 'Session Listing']
+  'SessionList'	=> ['glyphicon-th-list', 'Session Listing'],
+  'SlideArchive' => ['glyphicon-file', 'Slide Archives'],
+  'VideoArchive' => ['glyphicon-facetime-video', 'Video Archive'],
+  'AudioArchive' => ['glyphicon-headphones', 'Audio Archive'],
+  'PhotoAlbum' => ['glyphicon-camera', 'Photo Album']
 }
 
 _html do

@@ -59,7 +59,7 @@ class PPMCMembers < React
     if @state == :open
       _div.search_box do
         _CommitterSearch add: self.add, 
-          exclude: @roster.map {|person| person.id}
+          exclude: @roster.map {|person| person.id unless person.issue}
       end
     end
   end
@@ -134,6 +134,8 @@ class PPMCMember < React
           end
         elsif @@person.status == :pending
           _span 'pending'
+        elsif @@person.issue
+          _span.issue @@person.issue
         elsif @@ppmc.mentors.include? @@person.id
           _span.chair 'mentor'
         end

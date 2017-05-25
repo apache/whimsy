@@ -27,9 +27,9 @@ _html do
   _head do
     _title 'Apache Incubator moderators'
     _link rel: "stylesheet", type: 'text/css',
-      href: "http://incubator.apache.org/style/bootstrap-1-3-0-min.css"
+      href: "https://incubator.apache.org/style/bootstrap-1-3-0-min.css"
     _link rel: "stylesheet", type: 'text/css',
-      href: "http://incubator.apache.org/style/style.css"
+      href: "https://incubator.apache.org/style/style.css"
     _style %{
       body { margin: 0 2em }
       p, h3 {margin-left: 2em}
@@ -42,16 +42,16 @@ _html do
     # Standard Incubator header
     _div class: 'container' do
       _div class: 'row' do
-        _div class: 'span12' do
-          _a href: "http://www.apache.org/" do
-            _img alt: "The Apache Software Foundation", border: "0",
-              src: "http://www.apache.org/images/asf_logo_wide.gif"
+        _div class: 'span8' do
+          _a href: "https://www.apache.org/" do
+            _img alt: "The Apache Software Foundation", border: 0, height: 88,
+              src: "https://www.apache.org/img/asf_logo.png"
           end
         end
-        _div class: 'span4' do
-          _a href: "http://incubator.apache.org/" do
-            _img alt: "Apache Incubator", border: "0",
-              src: "http://incubator.apache.org/images/apache-incubator-logo.png"
+        _div class: 'span8' do
+          _a href: "https://incubator.apache.org/" do
+            _img alt: "Apache Incubator", border: 0, height: 88,
+              src: "https://incubator.apache.org/images/incubator_feather_egg_logo_sm.png"
           end
         end
       end
@@ -104,7 +104,7 @@ _html do
 	if name
           _h2 id: podling do
 	    _a podling, 
-	      href: "http://incubator.apache.org/projects/#{name}.html"
+	      href: "https://incubator.apache.org/projects/#{name}.html"
 	  end
 	else
           _h2 podling, id: podling

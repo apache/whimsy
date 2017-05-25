@@ -17,4 +17,6 @@ use ASF::HTTPS_workarounds
 
 use ASF::ETAG_Deflator_workaround
 
+use ASF::DocumentRoot
+
 run Sinatra::Application

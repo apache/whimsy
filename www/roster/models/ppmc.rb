@@ -26,6 +26,20 @@ class PPMC
       lists = lists.select {|list, mode| mode == 'public'}
     end
 
+    roster = ppmc.members.map {|person|
+      [person.id, {name: person.public_name, member: person.asf_member?}]
+    }.to_h
+
+    ppmc.mentors.each do |mentor|
+      next if roster[mentor]
+      person = ASF::Person.find(mentor)
+      roster[person.id] = {
+        name: person.public_name, 
+        member: person.asf_member?,
+        issue: 'listed as mentor, but not in LDAP'
+      }
+    end
+
     response = {
       id: id,
       display_name: ppmc.display_name,
@@ -34,9 +48,7 @@ class PPMC
       established: ppmc.startdate.to_s,
       mentors: ppmc.mentors,
       owners: ppmc.owners.map {|person| person.id},
-      roster: ppmc.members.map {|person|
-        [person.id, {name: person.public_name, member: person.asf_member?}]
-      }.to_h,
+      roster: roster,
       mail: Hash[lists.sort],
       moderators: moderators,
     }

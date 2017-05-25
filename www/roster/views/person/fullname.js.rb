@@ -6,10 +6,10 @@ class PersonName < React
   def render
     committer = @@person.state.committer
 
-    _tr data_edit: ('fullname' if @@person.props.auth.secretary) do
-      _td 'Name'
+    _div.row data_edit: ('fullname' if @@person.props.auth.secretary) do
+      _div.name 'Name'
 
-      _td do
+      _div.value do
         name = committer.name
 
         if @@person.state.edit_fullname

@@ -6,10 +6,10 @@ class PersonMemberText < React
   def render
     committer = @@person.state.committer
 
-    _tr data_edit: 'memtext' do
-      _td 'Members.txt'
+    _div.row data_edit: 'memtext' do
+      _div.name 'Members.txt'
 
-      _td do
+      _div.value do
         if @@person.state.edit_memtext
 
           _form.inline method: 'post' do
