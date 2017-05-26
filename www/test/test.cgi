@@ -1,36 +1,24 @@
 #!/usr/bin/env ruby
-# Wvisible:deprecated,tools Transform docket.csv into JSON structure for other uses
+PAGETITLE = 'Example Whimsy Script With Styles' # Wvisible:tools
+
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
-require 'csv'
 require 'json'
 require 'whimsy/asf'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
-require 'net/http'
-require 'whimsy/asf/themes'
 
-MNAM = 'TrademarkName'
-brand_dir = ASF::SVN['private/foundation/Brand']
-csv = CSV.read("#{brand_dir}/docket.csv", headers:true)
-docket = {}
-csv.each do |r|
-  r << ['pmc', r[MNAM].downcase.sub('.org','').sub(' & design','')]
-  key = r['pmc'].to_sym
-  mrk = {}
-  %w[ TrademarkStatus CountryName Class AppNumber RegNumber ClassGoods ].each do |col|
-    mrk[col] = r[col]
-  end  
-  if not docket.key?(key)
-    docket[key] = { r[MNAM] => [mrk] }
-  else
-    if not (docket[key]).key?(r[MNAM])
-      docket[key][r[MNAM]] = [mrk]
-    else
-      docket[key][r[MNAM]] << mrk      
+_html do
+  _body? do
+    _whimsy_body2 title: "Sample New Whimsy Style", related: {
+      "https://projects.apache.org/" => "Learn About Apache Projects",
+      "https://community.apache.org/" => "Get Community Help",
+      "https://github.com/apache/whimsy/" => "Read The Whimsy Code"
+    } do
+      _whimsy_panel "Your Data Here" do
+        _p "This is where your code would output data or a form or whatever!"
+        _p "All headers/footers and nicely wrapping a row is handled by themes.rb"
+      end
+      
     end
   end
-end
-
-_json do
-  docket
 end
