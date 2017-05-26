@@ -112,8 +112,7 @@ class Wunderbar::HtmlMarkup
   end
   
   # Emit a bootstrap navbar with required ASF links
-  # TODO Add breadcrumbs? Do we really need them?
-  def _whimsy_nav **args
+  def _whimsy_nav
     _nav.navbar.navbar_default do
       _div.container_fluid do
         _div.navbar_header do
@@ -188,26 +187,25 @@ class Wunderbar::HtmlMarkup
     end
   end
 
-  def _whimsy_body2 **args
-    _whimsy_nav args
+  def _whimsy_body2 title, related, helpblock
+    _whimsy_nav
     _div.content.container_fluid do
       _div.row do
         _div.col_sm_12 do
-          _h1 args[:title]
+          _h1 title
         end
       end
       _div.row do
         _div.col_md_8 do
           _whimsy_panel "About This Script" do
-            _p "Lambda intro would go here. Ipsum lorem to the lorax tree. Lambda intro would go here. Ipsum lorem to the lorax tree. "
-            _p "Hello, World! Lambda intro would go here. Ipsum lorem to the lorax tree. Lambda intro would go here. Ipsum lorem to the lorax tree. "
+            helpblock.call
           end
         end
         _div.col_md_4 do
           _whimsy_panel "More Whimsy", style: "panel-info" do
             _ul do
-              if args.key?(:related)
-                args[:related].each do |url, desc|
+              if related
+                related.each do |url, desc|
                   _li do
                     _a desc, href: url
                   end

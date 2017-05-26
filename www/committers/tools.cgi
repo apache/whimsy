@@ -10,11 +10,23 @@ require '../../tools/wwwdocs.rb'
 
 _html do
   _body? do
-    _whimsy_body2 title: PAGETITLE, related: {
-      "https://projects.apache.org/" => "Learn About Apache Projects",
-      "https://community.apache.org/" => "Get Community Help",
-      "https://github.com/apache/whimsy/" => "Read The Whimsy Code"
-    } do
+    _whimsy_body2(
+      PAGETITLE, {
+        "https://projects.apache.org/" => "Apache Project Listing",
+        "https://reference.apache.org/" => "Infra Reference Pages",
+        "https://github.com/apache/whimsy/blob/master/www/committers/tools.cgi" => "See This Code"
+      },
+      -> {
+        _ 'This page shows a '
+        _em 'partial'
+        _ ' listing of the useful data and tools that Whimsy provides to Apache committers.'
+        _br
+        _ 'It is generated automatically from tools that opt-in. Future improvements 
+        include automatically noting which tools require which auth (public|committer|member|officer).'
+        _br
+        _ 'If you find this useful, please let us know at dev@whimsical!.'
+      }
+    ) do
       scan = scandir("../#{SCANDIR}") # TODO Should be a static generated file
       scan.reject{ |k, v| v[1] =~ /\A#{ISERR}/ }
         .group_by{ |k, v| v[1][0] }
