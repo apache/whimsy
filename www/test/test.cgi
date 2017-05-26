@@ -1,21 +1,24 @@
 #!/usr/bin/env ruby
-PAGETITLE = 'Example Whimsy Script With Styles '# Wvisible:tools
+PAGETITLE = 'Example Whimsy Script With Styles' # Wvisible:tools
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'json'
 require 'whimsy/asf'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
-require 'whimsy/asf/themes'
 
 _html do
   _body? do
-    _whimsy_body title: "This is title", foo: "bar", related: {
-      "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
-      "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List",
-      "https://www.apache.org/foundation/marks/contact" => "Contact Us About Trademarks"
+    _whimsy_body2 title: "Sample New Whimsy Style", related: {
+      "https://projects.apache.org/" => "Learn About Apache Projects",
+      "https://community.apache.org/" => "Get Community Help",
+      "https://github.com/apache/whimsy/" => "Read The Whimsy Code"
     } do
-      _p "bare paragraph"
+      _whimsy_panel "Your Data Here" do
+        _p "This is where your code would output data or a form or whatever!"
+        _p "All headers/footers and nicely wrapping a row is handled by themes.rb"
+      end
+      
     end
   end
 end
