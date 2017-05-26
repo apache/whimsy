@@ -119,10 +119,11 @@ _html do
       end
     end
     
-    _whimsy_footer({
-      "https://community.apache.org/" => "Apache Community Development",
-      "https://community.apache.org/speakers/" => "Apache Speaker Resources",
-      "https://apachecon.com/" => "ApacheCon Conferences"
-      })
+    _whimsy_footer(
+      related: {
+        "https://community.apache.org/" => "Apache Community Development",
+        "https://community.apache.org/speakers/" => "Apache Speaker Resources",
+        "https://apachecon.com/" => "ApacheCon Conferences"
+        })
     end
   end

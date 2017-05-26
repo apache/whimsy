@@ -268,10 +268,11 @@ _html do
         th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
       });
     }
-    _whimsy_footer({
-      "https://www.apache.org/foundation/marks/pmcs" => "Apache Project Branding Policy",
-      "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
-      "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List"
-    })
+    _whimsy_footer(
+      related: {
+        "https://www.apache.org/foundation/marks/pmcs" => "Apache Project Branding Policy",
+        "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
+        "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List"
+      })
   end
 end

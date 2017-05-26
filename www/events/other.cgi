@@ -101,12 +101,13 @@ _html do
             th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
             });
           }
-        _whimsy_footer({
-          "https://github.com/afilina/dev-community-data" => "FOSS conference listing - ConFoo",
-          "https://github.com/szabgab/codeandtalk.com" => "FOSS conference listing - CodeAndTalk",
-          "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
-          "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List"
-        })
+        _whimsy_footer(
+          related: {
+            "https://github.com/afilina/dev-community-data" => "FOSS conference listing - ConFoo",
+            "https://github.com/szabgab/codeandtalk.com" => "FOSS conference listing - CodeAndTalk",
+            "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
+            "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List"
+          })
       end
     end
   end

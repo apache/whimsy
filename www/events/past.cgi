@@ -48,9 +48,10 @@ _html do
       end
     end
     
-    _whimsy_footer({
-      "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
-      "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List"
+    _whimsy_footer(
+      related: {
+        "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
+        "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List"
       })
   end
 end
