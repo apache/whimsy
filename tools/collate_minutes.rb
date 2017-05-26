@@ -103,10 +103,12 @@ end
 
 # get site information
 DATAURI = 'https://whimsy.apache.org/public/committee-info.json'
-local_copy = File.expand_path('../public/site-scan.json', __FILE__).untaint
+local_copy = File.expand_path('../../www/public/committee-info.json', __FILE__).untaint
 if File.exist? local_copy
+  Wunderbar.info "Using local copy of committee-info.json"
   cinfo = JSON.parse(File.read(local_copy))
 else
+  Wunderbar.info "Fetching remote copy of committee-info.json"
   response = Net::HTTP.get_response(URI(DATAURI))
   cinfo = JSON.parse(response.body)
 end
