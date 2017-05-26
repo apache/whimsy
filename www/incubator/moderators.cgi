@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "Incubator Mailing List Moderators" # Wvisible:incubator mail
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'

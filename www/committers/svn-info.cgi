@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "Subversion Info Helper" # Wvisible:tools svn
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'
 require 'wunderbar/bootstrap'

@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = 'Other FOSS Conference Listings' # Wvisible:events
+PAGETITLE = "Other FOSS Conference Listings" # Wvisible:events
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'json'

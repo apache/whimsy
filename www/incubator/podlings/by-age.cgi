@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "Incubator Podlings By Age" # Wvisible:incubator historical
 require 'nokogiri'
 require 'date'
 require 'net/http'

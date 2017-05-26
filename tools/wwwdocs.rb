@@ -1,20 +1,29 @@
 #!/usr/bin/env ruby
-# Wvisible:tools Crawl scripts and emit homepage related links
+# Scan all /www scripts for WVisible PAGETITLE and categories
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
-require 'json'
+SCANDIR = "../www"
+ISERR = '!'
 
- # TODO: crawl all tools that might be URLs under www
- # If there's a Wvisible line, store it's cat,egor,ies And long description
-startdir = '../www/test'
-
-homelinks = {}
-
-Dir["#{startdir}/*.cgi"].each do |f|
-  File.open(f).each_line.map(&:chomp).each do |line|
-    if line =~ /^\#\sWvisible\:(.*?)\s+(.*)/i then
-      line = [$1.split(','), $2]
-      homelinks[f] = line # TODO make paths relative for easy _a output
+# Return [PAGETITLE, [cat,egories] ] after WVisible; or same as !Bogosity error
+def scanfile(f)
+  begin
+    File.open(f).each_line.map(&:chomp).each do |line|
+      if line =~ /\APAGETITLE\s?=\s?"([^"]+)"\s?#\s?WVisible:(.*)/i then
+        return [$1, $2.chomp.split(%r{[\s,]})]
+      end
     end
+    return nil
+  rescue Exception => e
+    return ["!Bogosity! #{e.message[0..255]}", "\t#{e.backtrace.join("\n\t")}"]
   end
 end
-puts JSON.pretty_generate homelinks
+
+# Return data only about WVisible cgis, plus any errors
+def scandir(dir)
+  links = {}
+  Dir["#{dir}/**/*.cgi".untaint].each do |f|
+    l = scanfile(f.untaint)
+    links[f.sub(dir, '')] = l if l
+  end
+  return links
+end

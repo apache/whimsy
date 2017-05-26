@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "Incubator Mentor Signoffs" # Wvisible:incubator
 
 # quick and dirty script to tally up which mentors have been providing
 # signoffs and which have not.

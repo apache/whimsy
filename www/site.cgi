@@ -13,7 +13,7 @@ require 'json'
 require 'net/http'
 require 'time' # for httpdate
 
-PAGETITLE = 'Apache TLP Website Link Checks'
+PAGETITLE = "Apache TLP Website Link Checks" # Wvisible:sites,brand
 cols = %w( uri events foundation license sponsorship security thanks copyright trademarks )
 CHECKS = { 
   'uri'         => %r{https?://[^.]+\.apache\.org},
