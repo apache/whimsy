@@ -1,3 +1,7 @@
+if @targets.include? 'mentor'
+  raise Exception.new('mentor updates not yet implemented') 
+end
+
 if env.password
   people = @ids.split(',').map {|id| ASF::Person.find(id)}
   project = ASF::Project.find(@project)
@@ -5,9 +9,11 @@ if env.password
   # update LDAP
   ASF::LDAP.bind(env.user, env.password) do
     if @action == 'add'
-      project.add(people)
+      project.add_owners(people) if @targets.include? 'ppmc'
+      project.add_members(people) if @targets.include? 'committer'
     elsif @action == 'remove'
-      project.remove(people)
+      project.remove_owners(people) if @targets.include? 'ppmc'
+      project.remove_members(people) if @targets.include? 'committer'
     end
   end
 

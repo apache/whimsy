@@ -754,13 +754,24 @@ module ASF
     end
 
     # remove people from a project
-    def remove(people)
+    def add(people)
+      add_owners(people)
+      add_members(people)
+    end
+
+    # remove people as owners project
+    def remove_owners(people)
       @owners = nil
       removals = (Array(people) & owners).map(&:dn)
       unless removals.empty?
         ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('owner', removals)])
       end
+    ensure
+      @owners = nil
+    end
 
+    # remove people as members of a project
+    def remove_members(people)
       @members = nil
       removals = (Array(people) & members).map(&:dn)
       unless removals.empty?
@@ -768,17 +779,27 @@ module ASF
       end
     ensure
       @members = nil
-      @owners = nil
     end
 
     # add people to a project
     def add(people)
+      add_owners(people)
+      add_members(people)
+    end
+
+    # add people as owners of a project
+    def add_owners(people)
       @owners = nil
       additions = (Array(people) - owners).map(&:dn)
       unless additions.empty?
         ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('owner', additions)])
       end
+    ensure
+      @owners = nil
+    end
 
+    # add people as members of a project
+    def add_members(people)
       @members = nil
       additions = (Array(people) - members).map(&:dn)
       unless additions.empty?
@@ -786,7 +807,6 @@ module ASF
       end
     ensure
       @members = nil
-      @owners = nil
     end
   end
 

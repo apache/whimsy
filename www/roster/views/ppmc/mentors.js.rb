@@ -1,8 +1,8 @@
 #
-# Show PPMC members
+# Show PPMC mentors
 #
 
-class PPMCMembers < React
+class PPMCMentors < React
   def initialize
     @state = :closed
   end
@@ -10,7 +10,7 @@ class PPMCMembers < React
   def render
     pending = [] 
 
-    _h2.pmc! 'PPMC'
+    _h2.pmc! 'Mentors'
     _table.table.table_hover do
       _thead do
         _tr do
@@ -22,7 +22,7 @@ class PPMCMembers < React
 
       _tbody do
         @roster.each do |person|
-          _PPMCMember auth: @@auth, person: person, ppmc: @@ppmc
+          _PPMCMentor auth: @@auth, person: person, ppmc: @@ppmc
           pending << person.id if person.status == :pending
         end
 
@@ -72,7 +72,7 @@ class PPMCMembers < React
   def componentWillReceiveProps()
     roster = []
     
-    @@ppmc.owners.each do |id|
+    @@ppmc.mentors.each do |id|
       person = @@ppmc.roster[id]
       person.id = id
       roster << person
@@ -97,10 +97,10 @@ class PPMCMembers < React
 end
 
 #
-# Show a member of the PPMC
+# Show a mentor forthe PPMC
 #
 
-class PPMCMember < React
+class PPMCMentor < React
   def initialize
     @state = :closed
   end
@@ -119,24 +119,30 @@ class PPMCMember < React
       _td data_ids: @@person.id do
         if @state == :open
           if @@person.status == :pending
-            _button.btn.btn_primary 'Add to the PPMC',
-              data_action: 'add ppmc committer',
+            _button.btn.btn_primary 'Add as a mentor',
+              data_action: 'add mentor ppmc committer',
               data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Add #{@@person.name} to the " +
+              data_confirmation: "Add #{@@person.name} as a mentor to the " +
                 "#{@@ppmc.display_name} PPMC?"
           else
-            _button.btn.btn_warning 'Remove from the PPMC',
-              data_action: 'remove ppmc committer',
+            unless @@ppmc.owners.include? @@person.id
+              _button.btn.btn_primary 'Add to the PPMC',
+                data_action: 'add ppmc committer',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Add #{@@person.name} as member of the " +
+                  "#{@@ppmc.display_name} PPMC?"
+            end
+
+            _button.btn.btn_warning 'Remove as a mentor',
+              data_action: 'remove mentor ppmc committer',
               data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Remove #{@@person.name} from the " +
-                "#{@@ppmc.display_name} PPMC?"
+              data_confirmation: "Remove #{@@person.name} as a mentor from " +
+                "the #{@@ppmc.display_name} PPMC?"
           end
         elsif @@person.status == :pending
           _span 'pending'
-        elsif @@person.issue
-          _span.issue @@person.issue
-        elsif @@ppmc.mentors.include? @@person.id
-          _span.chair 'mentor'
+        elsif not @@ppmc.owners.include? @@person.id
+          _span.issue 'not on the PPMC'
         end
       end
     end

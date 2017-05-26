@@ -36,7 +36,7 @@ class PPMC
       roster[person.id] = {
         name: person.public_name, 
         member: person.asf_member?,
-        issue: 'listed as mentor, but not in LDAP'
+        issue: 'listed as mentor, but not a member of the PPMC'
       }
     end
 
