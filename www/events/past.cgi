@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = 'ApacheCon Historical Listing' # Wvisible:apachecon
+PAGETITLE = "ApacheCon Historical Listing" # Wvisible:apachecon
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'csv'

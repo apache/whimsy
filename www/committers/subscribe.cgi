@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "ASF Mailing List Self-subscription" # Wvisible:mail subscribe
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'
 require 'wunderbar/bootstrap'
@@ -40,7 +41,7 @@ _html do
   _script src: 'assets/bootstrap-select.js'
   _link rel: 'stylesheet', href: 'assets/bootstrap-select.css'
   _body? do
-    _whimsy_header 'ASF Mailing List Self-subscription'
+    _whimsy_header PAGETITLE
     _whimsy_content do
       _div.row do
         _div.panel.panel_primary do
@@ -58,7 +59,7 @@ _html do
       
       _form method: 'post' do
         _fieldset do
-          _legend 'ASF Mailing List Self-subscription'                
+          _legend PAGETITLE
           _label 'Subscribe'
           _select name: 'addr' do
             addrs.each do |addr|

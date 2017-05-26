@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
-# Wvisible:brand,trademarks
-PAGETITLE = 'Listing of Apache Trademarks'
+PAGETITLE = "Listing of Apache Trademarks" # Wvisible:brand,trademarks
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'csv'

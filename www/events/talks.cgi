@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = 'Apache Related Talks Listing' # Wvisible:events
+PAGETITLE = "Apache Related Talks Listing" # Wvisible:events
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'json'
