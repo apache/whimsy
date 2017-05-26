@@ -103,10 +103,12 @@ end
 
 # get site information
 DATAURI = 'https://whimsy.apache.org/public/committee-info.json'
-local_copy = File.expand_path('../public/site-scan.json', __FILE__).untaint
+local_copy = File.expand_path('../../www/public/committee-info.json', __FILE__).untaint
 if File.exist? local_copy
+  Wunderbar.info "Using local copy of committee-info.json"
   cinfo = JSON.parse(File.read(local_copy))
 else
+  Wunderbar.info "Fetching remote copy of committee-info.json"
   response = Net::HTTP.get_response(URI(DATAURI))
   cinfo = JSON.parse(response.body)
 end
@@ -675,7 +677,11 @@ def layout(title = nil)
   # Add the replacement first para
   section.add_child getHTMLbody {|x|
     x.p do
-      x.text! "This was extracted (@ #{stamp}) from a list of"
+      if title
+        x.text! "This was extracted (@ #{stamp}) from a list of"
+      else # main index, which is always replaced
+        x.text! "Last run: #{stamp}. The data is extracted from a list of"
+      end
       x.a 'minutes', :href => 'http://www.apache.org/foundation/records/minutes/'
       x.text! "which have been approved by the Board."
       x.br
