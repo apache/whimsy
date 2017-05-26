@@ -53,7 +53,7 @@ end
 
 incubator = URI.parse('http://incubator.apache.org/')
 
-DELETE = ARGV.delete '--delete' # delete obsolete files?
+KEEP = ARGV.delete '--keep' # keep obsolete files?
 
 force = ARGV.delete '--force' # rerun regardless
 
@@ -709,7 +709,7 @@ Dir.entries(SITE_MINUTES).each do |p|
   next unless p.end_with? '.html'
   next if p == 'index.html'
   unless link.has_value? p
-    if DELETE
+    unless KEEP
       Wunderbar.info "Dropping #{p}"
       File.delete(File.join(SITE_MINUTES,p))
     else
