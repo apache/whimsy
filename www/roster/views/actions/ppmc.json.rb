@@ -77,7 +77,7 @@ if env.password
         '--no-auth-cache', '--non-interactive',
         '--username', env.user.untaint, '--password', env.password.untaint,
         tmpdir.untaint, '--message',
-        "#{@project} #{target} #{@action == 'add' ? '+' : '-'}= #{who}"
+        "#{@project} #{target} #{@action == 'add' ? '+' : '-'}= #{who}".untaint
 
       if rc
         # update cache
