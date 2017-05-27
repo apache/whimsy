@@ -10,7 +10,12 @@ require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 require 'date'
 
-# TODO format change coming: https://github.com/afilina/dev-community-data/issues/90 
+# TODO format change coming: https://github.com/afilina/dev-community-data/issues/90
+# The format has already changed; conferences.json is no longer available.
+# Can get a JSON directory listing from
+# https://api.github.com/repos/afilina/dev-community-data/contents/data/conferences
+# TODO use the listing to get the individual files.
+# Do we need to use caching and conditional GETs to avoid unnecessary downloads?
 conflist = JSON.parse(Net::HTTP.get(URI('https://raw.githubusercontent.com/afilina/dev-community-data/master/data/conferences.json')))
 SPEAKERKIT = 'speaker_kit'
 cols = {
