@@ -7,7 +7,7 @@ ISERR = '!'
 AUTHMAP = { # From whimsy-vm4.apache.org.yaml
   'ASF Committers' => 'text-muted',
   'ASF Members and Officers' => 'text-primary',
-  'ASF Members and Incubator PMC' => 'text-info',
+  'ASF Members and Incubator PMC' => 'text-success',
   'ASF Members' => 'text-warning',
   'ASF Secretarial Team' => 'text-danger'
 }
@@ -75,4 +75,3 @@ def get_annotated_scan(dir)
   auth = get_auth()
   return annotate_scan(scan, auth)
 end
-
