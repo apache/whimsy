@@ -19,17 +19,23 @@ _html do
       -> {
         _ 'This page shows a '
         _em 'partial'
-        _ ' listing of the useful data and tools that Whimsy provides to Apache committers.'
-        _br
-        _ 'It is generated automatically from tools that opt-in. Future improvements 
-        include automatically noting which tools require which auth (public|committer|member|officer).'
-        _br
-        _ 'If you find this useful, please let us know at dev@whimsical!.'
+        _ ' listing of tools that Whimsy provides. If you find this useful, please email dev@whimsical!'
+        _ul do
+          _li do
+            _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
+            _ 'Publicly available'
+          end
+          AUTHMAP.each do |realm, style|
+            _li do
+              _span.glyphicon.glyphicon_lock :aria_hidden, class: "#{style}"
+              _ "#{realm}"
+            end
+          end
+        end
       }
     ) do
-      scan = scandir("../#{SCANDIR}") # TODO Should be a static generated file
-      scan.reject{ |k, v| v[1] =~ /\A#{ISERR}/ }
-        .group_by{ |k, v| v[1][0] }
+      scan = get_annotated_scan("../#{SCANDIR}")
+      scan.group_by{ |k, v| v[1][0] }
         .each do | category, links |
         _ul.list_group do
           _li.list_group_item.active do
@@ -37,6 +43,13 @@ _html do
           end
           links.each do |l, desc|
             _li.list_group_item do
+              if 2 == desc.length
+                _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
+              else
+                _span class: desc[2] do
+                  _span.glyphicon.glyphicon_lock :aria_hidden
+                end
+              end
               _a "#{desc[0]}", href: l
               _ ' - '
               _code! do
