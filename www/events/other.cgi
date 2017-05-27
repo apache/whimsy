@@ -10,13 +10,133 @@ require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 require 'date'
 
-# TODO format change coming: https://github.com/afilina/dev-community-data/issues/90
-# The format has already changed; conferences.json is no longer available.
-# Can get a JSON directory listing from
-# https://api.github.com/repos/afilina/dev-community-data/contents/data/conferences
-# TODO use the listing to get the individual files.
-# Do we need to use caching and conditional GETs to avoid unnecessary downloads?
-conflist = JSON.parse(Net::HTTP.get(URI('https://raw.githubusercontent.com/afilina/dev-community-data/master/data/conferences.json')))
+
+# Simple cache for site pages
+class Cache
+  # Don't bother checking cache entries that are younger (seconds)
+  # This is mainly intended for local testing
+  attr_accessor :minage
+  attr_accessor :enabled
+
+  def initialize(dir: '/tmp/other-cache', minage: 3000, enabled: true)
+    @dir = dir
+    @enabled = enabled
+    @minage = minage # default to 50 mins
+    begin
+      FileUtils.mkdir_p dir
+    rescue
+      @enabled = false
+    end
+  end
+
+  def get(id, url)
+    if not @enabled
+      uri, res = fetch(url)
+      return uri, res.body, 'nocache'
+    end
+    age, etag, uri, data = read_cache(id)
+    if age < minage
+      return uri, data, 'recent' # we have a recent cache entry
+    end
+    if data and etag
+      # let's see if the page has been updated
+      uri, res = fetch(url, {'If-None-Match' => etag})
+      if res.is_a?(Net::HTTPSuccess)
+        write_cache(id, uri, res)
+        return uri, res.body, 'updated'
+      elsif res.is_a?(Net::HTTPNotModified)
+        path = makepath(id)
+        mtime = Time.now
+        File.utime(mtime, mtime, path) # show we checked the page
+        return uri, data, 'unchanged'
+      else
+        return nil, res, 'error'
+      end
+    else
+      uri, res = fetch(url)
+      write_cache(id, uri, res)
+      return uri, res.body, data ? 'no last mod' : 'missing'
+    end
+  end
+
+  private
+
+  # fetch uri, following redirects
+  def fetch(uri, options={}, depth=1)
+    if depth > 5
+      raise IOError.new("Too many redirects (#{depth}) detected at #{url}")
+    end
+    uri = URI.parse(uri)
+    Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      request = Net::HTTP::Get.new(uri.request_uri)
+      options.each do |k,v|
+        request[k] = v
+      end
+      response = http.request(request)
+      if response.code == '304' # Not modified
+        return uri, response      
+      elsif response.code =~ /^3\d\d/ # assume redirect
+        fetch response['location'], options, depth+1
+      else
+        return uri, response
+      end
+    end
+  end
+
+  # File cache contains last modified followed by the data
+  # The file mod time can be used to skip any checks for recently updated files
+  def write_cache(id, uri, res)
+    path = makepath(id)
+    open path, 'wb' do |io|
+      io.puts res['Etag']
+      io.puts uri
+      io.write res.body
+    end
+  end
+
+  # return age, last-modified, uri, data
+  def read_cache(id)
+    path = makepath(id)
+    mtime = File.stat(path).mtime rescue nil
+    etag = nil
+    data = nil
+    uri = nil
+    if mtime
+      open path, 'rb' do |io|
+        etag = io.gets.chomp
+        uri = URI.parse(io.gets.chomp)
+        data = io.read
+#       Fri, 12 May 2017 14:10:23 GMT
+#       123456789012345678901234567890
+#        etag = nil unless last.length > 25
+      end
+    end
+    return Time.now - (mtime ? mtime : Time.new(0)), etag, uri, data
+  end
+
+  def makepath(id)
+    name = id.gsub /[^\w]/, '_'
+    File.join @dir, "#{name}"
+  end
+
+end
+
+$cache = Cache.new()
+
+def getJSON(url,name)
+  uri, response, status = $cache.get(name, url)
+#  $stderr.puts "#{name} #{uri} #{status}"
+  JSON.parse(response)
+end
+
+DIRURL = 'https://api.github.com/repos/afilina/dev-community-data/contents/data/conferences'
+
+conflist = []
+
+getJSON(DIRURL,'index').each do |e|
+  conflist << getJSON(e['download_url'], e['name'])
+end
+
 SPEAKERKIT = 'speaker_kit'
 cols = {
   'ticket_included' => 'Speaker Pass',
@@ -44,7 +164,7 @@ _html do
             _a_ 'afilina/dev-community-data', href: 'https://github.com/afilina/dev-community-data/'
             _ ', calendar website at '
             _a_ 'ConFoo Community', href: 'https://community.confoo.ca/'
-            _ '.  Click to sort table.  "False" propercase entries are when conference doesn\'t report any speaker reimbursement details.'
+            _ '.  Click column header to sort table.'
             _br
             _p 'Conferences that include speaker benefit types:' 
             _ul do
@@ -77,9 +197,9 @@ _html do
                       _td! conf[SPEAKERKIT][id]
                     end            
                   else
-                    _td 'False'
-                    _td 'False'
-                    _td 'False'
+                    _td 'Unknown'
+                    _td 'Unknown'
+                    _td 'Unknown'
                   end
                   if conf['events'] then
                     laste = conf['events'].max_by {|e| Date.parse(e['event_end'])}
