@@ -47,7 +47,9 @@ class CommitterSearch < React
         }
       then
         unless @@exclude and @@exclude.include? person.id
-          list << person
+          if not @@include or @@include.empty? or @@include.include? person.id
+            list << person
+          end
         end
       end
     end

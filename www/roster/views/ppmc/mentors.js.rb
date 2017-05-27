@@ -5,6 +5,7 @@
 class PPMCMentors < React
   def initialize
     @state = :closed
+    @ipmc = []
   end
 
   def render
@@ -57,7 +58,7 @@ class PPMCMentors < React
 
     if @state == :open
       _div.search_box do
-        _CommitterSearch add: self.add, 
+        _CommitterSearch add: self.add, include: @ipmc,
           exclude: @roster.map {|person| person.id unless person.issue}
       end
     end
@@ -79,6 +80,25 @@ class PPMCMentors < React
     end
 
     @roster = roster.sort_by {|person| person.name}
+  end
+
+  # fetch IPMC list
+  def componentDidMount()
+    return unless @@auth
+    Polyfill.require(%w(Promise fetch)) do
+      fetch('committee/incubator.json', credentials: 'include').then {|response|
+	if response.status == 200
+	  response.json().then do |json|
+	    console.log json.committers.keys()
+	    @ipmc = json.roster.keys()
+	  end
+	else
+	  console.log "IPMC #{response.status} #{response.statusText}"
+	end
+      }.catch {|error|
+	console.log "IPMC #{errror}"
+      }
+    end
   end
 
   # open search box
