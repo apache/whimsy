@@ -38,8 +38,8 @@ class PPMCMentors < React
                 list = pending[0..-2].join(', ') + ", and " +  pending[-1]
               end
 
-              _button.btn.btn_success 'Add all to the PPMC',
-                data_action: 'add ppmc committer',
+              _button.btn.btn_success 'Add all as mentors',
+                data_action: 'add ppmc committer mentor',
                 data_target: '#confirm', data_toggle: 'modal',
                 data_confirmation: "Add #{list} to the " +
                   "#{@@ppmc.display_name} PPMC?"
