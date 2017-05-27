@@ -4,13 +4,15 @@ if env.password
   group = ASF::Group.find(@project) if @targets.include? 'commit'
 
   # update LDAP
-  ASF::LDAP.bind(env.user, env.password) do
-    if @action == 'add'
-      pmc.add(people) if pmc
-      group.add(people) if group
-    elsif @action == 'remove'
-      pmc.remove(people) if pmc
-      group.remove(people) if group
+  if @targets.include? 'ppmc' or @targets.include? 'committer'
+    ASF::LDAP.bind(env.user, env.password) do
+      if @action == 'add'
+	pmc.add(people) if pmc
+	group.add(people) if group
+      elsif @action == 'remove'
+	pmc.remove(people) if pmc
+	group.remove(people) if group
+      end
     end
   end
 
@@ -98,12 +100,21 @@ if env.password
       ', and ' + person.last.id
   end
 
+  # identify what has changed
+  if @targets.include? 'mentor'
+    target = 'mentors'
+  elsif @targets.include? 'ppmc'
+    target = 'PMC'
+  else
+    target = 'committers'
+  end
+
   # draft email
   mail = Mail.new do
     from "#{from.public_name} <#{from.id}@apache.org>".untaint
     to "private@#{pmc.mail_list}.apache.org".untaint
     bcc "root@apache.org"
-    subject "#{who} #{action} #{pmc.display_name} #{list}"
+    subject "#{who} #{action} #{ppmc.display_name} #{target}"
     body "Current roster can be found at:\n\n" +
       "  https://whimsy.apache.org/roster/committee/#{pmc.id}\n\n" +
       "LDAP details:\n\n  #{details.join("\n  ")}"

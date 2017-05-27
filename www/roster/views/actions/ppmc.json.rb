@@ -7,13 +7,15 @@ if env.password
   project = ASF::Project.find(@project)
 
   # update LDAP
-  ASF::LDAP.bind(env.user, env.password) do
-    if @action == 'add'
-      project.add_owners(people) if @targets.include? 'ppmc'
-      project.add_members(people) if @targets.include? 'committer'
-    elsif @action == 'remove'
-      project.remove_owners(people) if @targets.include? 'ppmc'
-      project.remove_members(people) if @targets.include? 'committer'
+  if @targets.include? 'ppmc' or @targets.include? 'committer'
+    ASF::LDAP.bind(env.user, env.password) do
+      if @action == 'add'
+        project.add_owners(people) if @targets.include? 'ppmc'
+        project.add_members(people) if @targets.include? 'committer'
+      elsif @action == 'remove'
+        project.remove_owners(people) if @targets.include? 'ppmc'
+        project.remove_members(people) if @targets.include? 'committer'
+      end
     end
   end
 
@@ -31,13 +33,22 @@ if env.password
       ', and ' + people.last.id
   end
 
+  # identify what has changed
+  if @targets.include? 'mentor'
+    target = 'mentors'
+  elsif @targets.include? 'ppmc'
+    target = 'PMC'
+  else
+    target = 'committers'
+  end
+
   # draft email
   mail = Mail.new do
     from "#{from.public_name} <#{from.id}@apache.org>".untaint
     to ppmc.private_mail_list.untaint
     cc 'private@incubator.apache.org'
     bcc 'root@apache.org'
-    subject "#{who} #{action} #{ppmc.display_name} PPMC"
+    subject "#{who} #{action} #{ppmc.display_name} #{target}"
     body "Current roster can be found at:\n\n" +
       "  https://whimsy.apache.org/roster/ppmc/#{ppmc.id}\n\n" +
       "LDAP details:\n\n  #{details.join("\n  ")}"
