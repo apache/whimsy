@@ -99,6 +99,14 @@ module ASF
       incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
       podlings_xml = "#{incubator_content}/podlings.xml"
 
+      # see if there is a later version
+      cache = ASF::Config.get(:cache)
+      if File.exist? "#{cache}/podlings.xml"
+        if File.mtime("#{cache}/podlings.xml") > File.mtime(podlings_xml)
+          podlings_xml = "#{cache}/podlings.xml"
+        end
+      end
+
       if @mtime != File.mtime(podlings_xml)
         @list = []
         podlings = Nokogiri::XML(File.read(podlings_xml))

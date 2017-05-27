@@ -70,7 +70,7 @@ if env.password
         ASF::Committee.parse_committee_info(info)
       else
         # die
-        raise Error.new('Update committee-info.txt failed')
+        raise Exception.new('Update committee-info.txt failed')
       end
     end
   end

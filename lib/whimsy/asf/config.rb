@@ -12,6 +12,7 @@ module ASF
     # default :svn and :git
     @config[:svn] ||= '/srv/svn/*'
     @config[:git] ||= '/srv/git/*'
+    @config[:cache] ||= '/srv/cache'
 
     @config[:lib] ||= []
 
