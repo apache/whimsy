@@ -10,12 +10,13 @@ require 'wunderbar/bootstrap'
 _html do
   _body? do
     _whimsy_body2(
-      "Sample Whimsy Theme", {
-        "https://projects.apache.org/" => "Whimsy Tool Listing",
+      title: PAGETITLE, 
+      related: {
+        "https://whimsy.apache.org/committers/tools" => "Whimsy Tool Listing",
         "https://community.apache.org/" => "Get Community Help",
         "https://github.com/apache/whimsy/" => "Read The Whimsy Code"
       },
-      -> {
+      helpblock: -> {
         _p "This www/test/test.cgi script shows a proposed new way to write whimsy tools."
         _p "Using lib/whimsy/theme and _whimsy_body2 means users have a consistent UI for different tools, 
         and means that simple descriptions or help documentation are included at the start of each tool."
@@ -26,7 +27,6 @@ _html do
         _p "This is where your code would output data or a form or whatever!"
         _p "All headers/footers and nicely wrapping a row is handled by themes.rb"
       end
-      
     end
   end
 end

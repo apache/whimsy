@@ -11,12 +11,13 @@ require '../../tools/wwwdocs.rb'
 _html do
   _body? do
     _whimsy_body2(
-      PAGETITLE, {
+      title: PAGETITLE, 
+      related: {
         "https://projects.apache.org/" => "Apache Project Listing",
         "https://reference.apache.org/" => "Infra Reference Pages",
         "https://github.com/apache/whimsy/blob/master/www/committers/tools.cgi" => "See This Code"
       },
-      -> {
+      helpblock: -> {
         _ 'This page shows a '
         _em 'partial'
         _ ' listing of tools that Whimsy provides. If you find this useful, please email dev@whimsical!'

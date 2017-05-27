@@ -187,7 +187,8 @@ class Wunderbar::HtmlMarkup
     end
   end
 
-  def _whimsy_body2 title, related, helpblock
+  # Emit complete bootstrap theme, with related links, and helpblock of intro text
+  def _whimsy_body2(title: 'MOAR WHIMSY!', related: {}, helpblock: nil)
     _whimsy_nav
     _div.content.container_fluid do
       _div.row do
@@ -198,7 +199,13 @@ class Wunderbar::HtmlMarkup
       _div.row do
         _div.col_md_8 do
           _whimsy_panel "About This Script" do
-            helpblock.call
+            if helpblock
+              helpblock.call
+            else
+              # TODO: make this point to the specific cgi being run
+              _a 'See the code', href: 'https://github.com/apache/whimsy/'
+            end
+
           end
         end
         _div.col_md_4 do
