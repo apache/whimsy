@@ -118,6 +118,8 @@ class PPMCCommitter < React
                 "#{@@ppmc.display_name} PPMC?"
           end
         end
+      elsif not @@person.icommit
+        _span.issue 'not listed as an incubator committer'
       else
         _td ''
       end

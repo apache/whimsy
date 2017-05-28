@@ -159,6 +159,8 @@ class PPMCMember < React
           _span 'pending'
         elsif not @@ppmc.committers.include? @@person.id
           _span.issue 'not listed as a committer'
+        elsif not @@person.icommit
+          _span.issue 'not listed as an incubator committer'
         end
       end
     end
