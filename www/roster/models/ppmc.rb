@@ -48,6 +48,7 @@ class PPMC
       established: ppmc.startdate.to_s,
       mentors: ppmc.mentors,
       owners: ppmc.owners.map {|person| person.id},
+      committers: ppmc.members.map {|person| person.id},
       roster: roster,
       mail: Hash[lists.sort],
       moderators: moderators,

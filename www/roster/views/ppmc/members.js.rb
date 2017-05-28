@@ -119,17 +119,32 @@ class PPMCMember < React
       _td data_ids: @@person.id do
         if @state == :open
           if @@person.status == :pending
-            _button.btn.btn_primary 'Add to the PPMC',
+            # not added yet
+            _button.btn.btn_primary 'Add as a committer and to the PPMC',
               data_action: 'add ppmc committer',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} to the " +
-                "#{@@ppmc.display_name} PPMC?"
+                "#{@@ppmc.display_name} PPMC and grant committer access?"
+
+            if @@ppmc.committers.all? {|person| @@ppmc.owners.include? person}
+              _button.btn.btn_warning 'Add as a committer only',
+                data_action: 'add committer',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Add #{@@person.name} to the " +
+                  "#{@@ppmc.display_name} PPMC and grant committer access?"
+            end
           else
-            _button.btn.btn_warning 'Remove from the PPMC',
-              data_action: 'remove ppmc committer',
+            _button.btn.btn_warning 'Remove only from the PPMC',
+              data_action: 'remove ppmc',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} from the " +
-                "#{@@ppmc.display_name} PPMC?"
+                "#{@@ppmc.display_name} PPMC but leave as a committer?"
+
+            _button.btn.btn_warning 'Remove as committer and from the PPMC',
+              data_action: 'remove ppmc committer',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Remove #{@@person.name} as a commiter and " +
+                "from the #{@@ppmc.display_name} PPMC?"
           end
         elsif @@person.status == :pending
           _span 'pending'
