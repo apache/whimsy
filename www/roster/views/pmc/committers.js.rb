@@ -17,6 +17,7 @@ class PMCCommitters < React
           _tr do
             _th 'id'
             _th 'public name'
+            _th 'notes'
           end
         end
 
