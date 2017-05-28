@@ -94,7 +94,7 @@ class Cache
     end
   end
 
-  # return age, last-modified, uri, data
+  # return age, etag, uri, data
   def read_cache(id)
     path = makepath(id)
     mtime = File.stat(path).mtime rescue nil
@@ -106,9 +106,6 @@ class Cache
         etag = io.gets.chomp
         uri = URI.parse(io.gets.chomp)
         data = io.read
-#       Fri, 12 May 2017 14:10:23 GMT
-#       123456789012345678901234567890
-#        etag = nil unless last.length > 25
       end
     end
     return Time.now - (mtime ? mtime : Time.new(0)), etag, uri, data
