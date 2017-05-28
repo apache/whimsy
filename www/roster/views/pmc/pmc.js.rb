@@ -106,8 +106,8 @@ class PMCMember < React
       if @state == :open
         _td data_ids: @@person.id do 
           if @@person.date == 'pending'
+            # not added yet
             _button.btn.btn_primary 'Add as a committer and to the PMC',
-              # not added yet
               data_action: 'add pmc info commit',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} to the " +
@@ -117,6 +117,15 @@ class PMCMember < React
               data_action: 'add pmc info', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} to the " +
                 "#{@@committee.display_name} PMC?"
+
+            if @@committee.committers.all? {|person| @@committee.owners.include? person}
+               _button.btn.btn_warning 'Add as a committer only',
+                 data_action: 'add commit',
+                 data_target: '#confirm', data_toggle: 'modal',
+                 data_confirmation: "Add #{@@person.name} as a " +
+                   "#{@@committee.display_name} PPMC committer?"
+            end
+
           elsif not @@person.date
             # in LDAP but not in committee-info.txt
             _button.btn.btn_warning 'Remove from LDAP',

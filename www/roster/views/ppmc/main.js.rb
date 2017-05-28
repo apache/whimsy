@@ -30,6 +30,7 @@ class PPMC < React
     # main content
     _PPMCMentors auth: @@auth.ipmc, ppmc: @ppmc
     _PPMCMembers auth: auth, ppmc: @ppmc
+    _PPMCCommitters auth: auth, ppmc: @ppmc
 
     # mailing lists
     if @ppmc.moderators
