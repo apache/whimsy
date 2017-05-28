@@ -22,6 +22,7 @@ class PPMCMembers < React
 
       _tbody do
         @roster.each do |person|
+          next if @@ppmc.mentors.include? person.id
           _PPMCMember auth: @@auth, person: person, ppmc: @@ppmc
           pending << person.id if person.status == :pending
         end
@@ -134,24 +135,30 @@ class PPMCMember < React
                   "#{@@ppmc.display_name} PPMC and grant committer access?"
             end
           else
+            if @@ppmc.committers.include? @@person.id
+              _button.btn.btn_warning 'Remove as committer and from the PPMC',
+                data_action: 'remove ppmc committer',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Remove #{@@person.name} as a commiter " +
+                  "and from the #{@@ppmc.display_name} PPMC?"
+            else
+              _button.btn.btn_primary 'Add as committer',
+                data_action: 'add committer',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Add #{@@person.name} as a committer " +
+                  "for the #{@@ppmc.display_name} PPMC?"
+            end
+
             _button.btn.btn_warning 'Remove only from the PPMC',
               data_action: 'remove ppmc',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} from the " +
                 "#{@@ppmc.display_name} PPMC but leave as a committer?"
-
-            _button.btn.btn_warning 'Remove as committer and from the PPMC',
-              data_action: 'remove ppmc committer',
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Remove #{@@person.name} as a commiter and " +
-                "from the #{@@ppmc.display_name} PPMC?"
           end
         elsif @@person.status == :pending
           _span 'pending'
-        elsif @@person.issue
-          _span.issue @@person.issue
-        elsif @@ppmc.mentors.include? @@person.id
-          _span.chair 'mentor'
+        elsif not @@ppmc.committers.include? @@person.id
+          _span.issue 'not listed as a committer'
         end
       end
     end

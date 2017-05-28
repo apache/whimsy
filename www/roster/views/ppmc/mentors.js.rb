@@ -153,8 +153,14 @@ class PPMCMentor < React
                   "#{@@ppmc.display_name} PPMC?"
             end
 
-            _button.btn.btn_warning 'Remove as a mentor',
+            _button.btn.btn_warning 'Remove as a mentor and from the PMC',
               data_action: 'remove mentor ppmc committer',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Remove #{@@person.name} as a mentor, PPMC " +
+                "member, and committer from the #{@@ppmc.display_name} PPMC?"
+
+            _button.btn.btn_warning 'Remove only as a mentor',
+              data_action: 'remove mentor',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} as a mentor from " +
                 "the #{@@ppmc.display_name} PPMC?"
