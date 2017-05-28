@@ -19,7 +19,7 @@ if env.password
   if @targets.include? 'mentor'
     target = 'mentors'
   elsif @targets.include? 'ppmc'
-    target = 'PMC'
+    target = 'PPMC'
   else
     target = 'committers'
   end
