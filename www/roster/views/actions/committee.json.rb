@@ -4,7 +4,7 @@ if env.password
   group = ASF::Group.find(@project) if @targets.include? 'commit'
 
   # update LDAP
-  if @targets.include? 'ppmc' or @targets.include? 'committer'
+  if @targets.include? 'pmc' or @targets.include? 'commit'
     ASF::LDAP.bind(env.user, env.password) do
       if @action == 'add'
 	pmc.add(people) if pmc
@@ -103,7 +103,7 @@ if env.password
   # identify what has changed
   if @targets.include? 'mentor'
     target = 'mentors'
-  elsif @targets.include? 'ppmc'
+  elsif @targets.include? 'pmc'
     target = 'PMC'
   else
     target = 'committers'
@@ -114,7 +114,7 @@ if env.password
     from "#{from.public_name} <#{from.id}@apache.org>".untaint
     to "private@#{pmc.mail_list}.apache.org".untaint
     bcc "root@apache.org"
-    subject "#{who} #{action} #{ppmc.display_name} #{target}"
+    subject "#{who} #{action} #{pmc.display_name} #{target}"
     body "Current roster can be found at:\n\n" +
       "  https://whimsy.apache.org/roster/committee/#{pmc.id}\n\n" +
       "LDAP details:\n\n  #{details.join("\n  ")}"
