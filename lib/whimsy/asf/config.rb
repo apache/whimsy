@@ -12,6 +12,11 @@ module ASF
     # default :svn and :git
     @config[:svn] ||= '/srv/svn/*'
     @config[:git] ||= '/srv/git/*'
+    # The cache is used for local copies of SVN files that may be updated by Whimsy
+    # for example: podlings.xml
+    # www/roster/views/actions/ppmc.json.rb (write)
+    # lib/whimsy/asf/podlings.rb (read)
+    # see: http://mail-archives.apache.org/mod_mbox/whimsical-dev/201705.mbox/%3CCAFG6u8FJwvWvnd29O-cUZyQnCXrRvWSRDc11zaPx6_Y4ihnsfg%40mail.gmail.com%3E
     @config[:cache] ||= '/srv/cache'
 
     @config[:lib] ||= []
