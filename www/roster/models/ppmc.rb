@@ -26,6 +26,7 @@ class PPMC
       lists = lists.select {|list, mode| mode == 'public'}
     end
 
+    ipmc = ASF::Committee.find('incubator').members
     incubator_committers = ASF::Group.find('incubator').members
 
     roster = ppmc.members.map {|person|
@@ -37,11 +38,11 @@ class PPMC
     }.to_h
 
     ppmc.mentors.each do |mentor|
-      next if roster[mentor]
       person = ASF::Person.find(mentor)
       roster[person.id] = {
         name: person.public_name, 
         member: person.asf_member?,
+        ipmc: ipmc.include?(person),
         icommit: incubator_committers.include?(person)
       }
     end

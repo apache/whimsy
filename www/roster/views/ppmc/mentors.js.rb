@@ -131,8 +131,11 @@ class PPMCMentor < React
       if @@person.member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" } }
         _td { _b @@person.name }
-      else
+      elsif @@person.name
         _td { _a @@person.id, href: "committer/#{@@person.id}" }
+        _td @@person.name
+      else
+        _td @@person.id
         _td @@person.name
       end
         
@@ -167,8 +170,14 @@ class PPMCMentor < React
           end
         elsif @@person.status == :pending
           _span 'pending'
+        elsif not @@person.name
+          _span.issue 'invalid user'
         elsif not @@ppmc.owners.include? @@person.id
           _span.issue 'not on the PPMC'
+        elsif not @@person.ipmc
+          _span.issue 'not on the IPMC'
+        elsif not @@person.icommit
+          _span.issue 'not listed as an incubator committer'
         end
       end
     end
