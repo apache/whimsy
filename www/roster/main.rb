@@ -227,12 +227,12 @@ get '/env' do
   JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
 end
 
-error do
+not_found do
   @errors = env
-  _html :errors
+  _html :not_found
 end
 
-not_found do
+error do
   @errors = env
   _html :errors
 end
