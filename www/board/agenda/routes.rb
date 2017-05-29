@@ -53,6 +53,35 @@ get '/env' do
   JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
 end
 
+# agenda followup
+get %r{/(\d\d\d\d-\d\d-\d\d)/followup\.json} do |date|
+  pass unless Dir.exist? '/srv/mail/board'
+
+  agenda = "board_agenda_#{date.gsub('-','_')}.txt"
+  pass unless Agenda.parse agenda, :quick
+  
+  # select agenda items that have comments
+  parsed = Agenda[agenda][:parsed]
+  followup = parsed.select {|item| not item['comments'].to_s.empty?}.
+    map {|item| [item['title'], {comments: item['comments'], 
+      shepherd: item['shepherd'], mail_list: item['mail_list'], count: 0}]}.
+    to_h
+  
+  # count number of feedback emails found in the board archive
+  start = Time.parse(date)
+  months = Dir['/srv/mail/board/*'].sort[-2..-1]
+  months = Dir['/srv/mail/board/*'].sort[-2..-1]
+  Dir[*months.map {|month| "#{month}/*"}].each do |file|
+    next unless File.mtime(file) > start
+    raw = File.read(file).force_encoding(Encoding::BINARY)
+    next unless raw =~ /Subject: .*Board feedback on 2017-05-17 (.*) report/
+    followup[$1][:count] += 1 if followup[$1]
+  end
+
+  # return results
+  _json followup
+end
+
 # all agenda pages
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   agenda = "board_agenda_#{date.gsub('-','_')}.txt"
