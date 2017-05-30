@@ -35,7 +35,7 @@ _html do
   _table_.table do
     _thead do
       _tr do
-        _th 'respository'
+        _th 'repository'
         _th 'local path'
         _th 'local revision'
         _th 'server revision'
