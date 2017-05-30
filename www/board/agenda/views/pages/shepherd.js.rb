@@ -56,8 +56,11 @@ class Shepherd < React
 
     unless followup.empty?
       _h2 'Feedback that may require followup'
+
       followup.each do |followup|
-        _div.h3.ready followup.title
+        link = followup.title.gsub(/[^a-zA-Z0-9]+/, '-')
+        _a.h3.ready followup.title, href: "../#{@prior_date}/#{link}"
+
         splitComments(followup.comments).each do |comment|
           _pre.comment comment
         end
@@ -74,11 +77,11 @@ class Shepherd < React
     end
 
     # determine date of previous meeting
-    agenda = Server.agendas[-2]
-    return unless agenda
-    date = agenda[/\d+_\d+_\d+/].gsub('_', '-')
+    prior_agenda = Server.agendas[-2]
+    return unless prior_agenda
+    @prior_date = prior_agenda[/\d+_\d+_\d+/].gsub('_', '-')
 
-    retrieve "../#{date}/followup.json", :json do |followup|
+    retrieve "../#{@prior_date}/followup.json", :json do |followup|
       Shepherd.followup = followup
       @followup = followup
     end
