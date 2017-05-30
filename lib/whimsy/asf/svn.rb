@@ -63,6 +63,37 @@ module ASF
       result
     end
 
+
+    # retrieve info, [err] for a path in svn
+    def self.getInfo(path, user=nil, password=nil)
+      # build svn info command
+      cmd = ['svn', 'info', path, '--non-interactive']
+    
+      # password was supplied, add credentials
+      if password
+        cmd += ['--username', user, '--password', password, '--no-auth-cache']
+      end
+    
+      # issue svn info command
+      out, err, status = Open3.capture3(*cmd)
+      if status.success?
+        return out
+      else
+        return nil, err
+      end
+    end
+
+    # retrieve revision, [err] for a path in svn
+    def self.getRevision(path, user=nil, password=nil)
+      out, err = getInfo(path, user, password)
+      if out
+        # extract revision number
+        return out[/^Revision: (\d+)/, 1]
+      else
+        return out, err
+      end
+    end
+
     # retrieve revision, content for a file in svn
     def self.get(path, user=nil, password=nil)
       # build svn info command
@@ -177,4 +208,10 @@ module ASF
     end
   end
 
+end
+
+if __FILE__ == $0 # local testing
+  path = ARGV.shift||'.'
+  puts ASF::SVN.getInfo(path, *ARGV)
+  puts ASF::SVN.getRevision(path, *ARGV)
 end

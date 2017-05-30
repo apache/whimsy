@@ -160,7 +160,7 @@ _json do
       log = `svn update #{local_path.untaint}`
     end
 
-    repository_url = `svn info #{local_path}`[/^URL: (.*)/, 1]
+    repository_url = ASF::SVN.getInfo(local_path)[/^URL: (.*)/, 1]
 
   else
     if @action == 'checkout'
@@ -177,11 +177,13 @@ _json do
     end
   end
 
+  local, lerr = ASF::SVN.getRevision(local_path.untaint)
+  server, serr = ASF::SVN.getRevision(repository_url.untaint)
   {
     log: log.to_s.split("\n"),
     path: local_path,
-    local: `svn info #{local_path.untaint}`[/^Revision: (.*)/, 1],
-    server: `svn info #{repository_url.untaint}`[/^Revision: (.*)/, 1]
+    local: local || lerr.split("\n").last, # generally the last SVN error line is the cause
+    server: server || serr.split("\n").last
   }
 end
 
