@@ -6,6 +6,7 @@
 class Shepherd < React
   def initialize
     @disabled = false
+    @followup = []
   end
 
   def render
@@ -15,8 +16,9 @@ class Shepherd < React
     if actions.actions.any? {|action| action.owner == @@item.shepherd}
       _h2 'Action Items'
       _ActionItems item: actions, filter: {owner: @@item.shepherd}
-      _h2 'Committee Reports'
     end
+
+    _h2 'Committee Reports'
 
     # list agenda items associated with this shepherd
     Agenda.index.each do |item|
@@ -41,6 +43,44 @@ class Shepherd < React
           end
         end
       end
+    end
+
+    # list feedback items that may need to be followed up
+    followup = []
+    for title in @followup
+       next unless @followup[title].shepherd == @@item.shepherd
+       next if Agenda.index.any? {|item| item.title == title}
+       @followup[title].title = title
+       followup << @followup[title]
+    end
+
+    unless followup.empty?
+      _h2 'Feedback that may require followup'
+      followup.each do |followup|
+        _div.h3.ready followup.title
+        splitComments(followup.comments).each do |comment|
+          _pre.comment comment
+        end
+      end
+    end
+  end
+
+  # Fetch followup items
+  def componentDidMount()
+    # if cached, reuse
+    if Shepherd.followup
+      @followup = Shepherd.followup
+      return
+    end
+
+    # determine date of previous meeting
+    agenda = Server.agendas[-2]
+    return unless agenda
+    date = agenda[/\d+_\d+_\d+/].gsub('_', '-')
+
+    retrieve "../#{date}/followup.json", :json do |followup|
+      Shepherd.followup = followup
+      @followup = followup
     end
   end
 
