@@ -81,6 +81,9 @@ _html do
     // update status of a row based on a sever response
     function updateStatus(tr, response) {
       var tds = $('td', tr);
+      [1,2,3].forEach(function(i) {
+         tds[i].textContent = '?' // show response has arrived at least
+      });
       if (response.path) tds[1].textContent = response.path;
       if (response.local) tds[2].textContent = response.local;
       if (response.server) tds[3].textContent = response.server;
