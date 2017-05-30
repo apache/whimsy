@@ -48,6 +48,7 @@ class Shepherd < React
     # list feedback items that may need to be followed up
     followup = []
     for title in @followup
+       next unless @followup[title].count == 1
        next unless @followup[title].shepherd == @@item.shepherd
        next if Agenda.index.any? {|item| item.title == title}
        @followup[title].title = title
