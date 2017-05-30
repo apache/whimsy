@@ -77,8 +77,8 @@ The following additional steps are required to get the Whimsy VM up and running:
       alias.
 
  * Using the `www-data` user, copy over the following directories from
-   the previous whimsy-vm* server: `/srv/agenda`, `/srv/mail/board`,
-   `/srv/mail/members`, `/srv/mail/secretary`.
+   the previous whimsy-vm* server: `/var/www/.subversion`, `/srv/agenda`,
+   `/srv/mail/board`, `/srv/mail/members`, `/srv/mail/secretary`.
  
  * Verify that email can be sent to non-apache.org email addresses
    * Run [testmail.rb](tools/testmail.rb)
