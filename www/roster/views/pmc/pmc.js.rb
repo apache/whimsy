@@ -118,7 +118,10 @@ class PMCMember < React
               data_confirmation: "Add #{@@person.name} to the " +
                 "#{@@committee.display_name} PMC?"
 
-            if @@committee.committers.all? {|person| @@committee.owners.include? person}
+  
+            committers = @@committee.committers.keys()
+            pmc = @@committee.ldap.keys()
+            if committers.all? {|person| pmc.include? person}
                _button.btn.btn_warning 'Add as a committer only',
                  data_action: 'add commit',
                  data_target: '#confirm', data_toggle: 'modal',
