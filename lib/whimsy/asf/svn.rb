@@ -66,6 +66,7 @@ module ASF
 
     # retrieve info, [err] for a path in svn
     def self.getInfo(path, user=nil, password=nil)
+      return nil, 'path must not be nil' unless path
       # build svn info command
       cmd = ['svn', 'info', path, '--non-interactive']
     
