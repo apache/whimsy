@@ -7,13 +7,21 @@ if env.password
   if @targets.include? 'pmc' or @targets.include? 'commit'
     ASF::LDAP.bind(env.user, env.password) do
       if @action == 'add'
-	pmc.add(people) if pmc
-	group.add(people) if group
+        pmc.add(people) if pmc
+        group.add(people) if group
       elsif @action == 'remove'
-	pmc.remove(people) if pmc
-	group.remove(people) if group
+        pmc.remove(people) if pmc
+        group.remove(people) if group
       end
     end
+  end
+
+  # extract people's names (for short lists) or ids (for longer lists)
+  if people.length <= 2
+    who = people.map {|person| person.public_name}.join(' and ')
+  else
+    who = people[0..-2].map {|person| person.id}.join(', ') + 
+      ', and ' + person.last.id
   end
 
   # update committee-info.txt
@@ -63,7 +71,7 @@ if env.password
         '--no-auth-cache', '--non-interactive',
         '--username', env.user.untaint, '--password', env.password.untaint,
         tmpdir.untaint, '--message',
-        "#{@project} #{@action == 'add' ? '+' : '-'}= #{@id}"
+        "#{@project} #{@action == 'add' ? '+' : '-'}= #{who}"
 
       if rc
         # update cache
@@ -91,14 +99,6 @@ if env.password
 
   pmc ||= ASF::Committee.find(@project)
   from = ASF::Person.find(env.user)
-
-  # extract people's names (for short lists) or ids (for longer lists)
-  if people.length <= 2
-    who = people.map {|person| person.public_name}.join(' and ')
-  else
-    who = people[0..-2].map {|person| person.id}.join(', ') + 
-      ', and ' + person.last.id
-  end
 
   # identify what has changed
   if @targets.include? 'mentor'
