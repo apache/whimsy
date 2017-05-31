@@ -25,7 +25,7 @@ class PMCMembers < React
         end
 
         if @@auth and not @@committee.roster.keys().empty?
-          _tr onDoubleClick: self.select do
+          _tr onClick: self.select do
             _td((@state == :open ? '' : "\u2795"), colspan: 4)
           end
         end

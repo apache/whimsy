@@ -44,7 +44,7 @@ class PMC < React
       _div.alert.alert_success do
         _span 'Double click on a row to edit.'
         unless @committee.roster.keys().empty?
-          _span "  Double click on \u2795 to add."
+          _span "  Click on \u2795 to add."
         end
       end
     end

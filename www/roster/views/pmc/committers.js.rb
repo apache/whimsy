@@ -29,7 +29,7 @@ class PMCCommitters < React
           end
 
           if @@auth
-            _tr onDoubleClick: self.select do
+            _tr onClick: self.select do
               _td((@state == :open ? '' : "\u2795"), colspan: 3)
             end
           end
