@@ -156,8 +156,8 @@ _json do
   local_path = ASF::SVN.find(@name.untaint)
   if local_path
     if @action == 'update'
-      `svn cleanup #{local_path.untaint}`
-      log = `svn update #{local_path.untaint}`
+      log = `svn cleanup #{local_path.untaint} 2>&1`
+      log = log + `svn update #{local_path.untaint} 2>&1`
     end
 
     repository_url = ASF::SVN.getInfo(local_path)[/^URL: (.*)/, 1]
@@ -173,7 +173,7 @@ _json do
         repository_url = "https://svn.apache.org/repos/#{repository_url}"
       end
 
-      log = `svn checkout #{repository_url.untaint} #{local_path.untaint}`
+      log = `svn checkout #{repository_url.untaint} #{local_path.untaint} 2>&1`
     end
   end
 
