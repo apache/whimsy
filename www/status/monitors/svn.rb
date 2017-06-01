@@ -23,13 +23,20 @@ Danger - unexpected text in log file
 
 =end
 
+require 'fileutils'
+
 def Monitor.svn(previous_status)
+  logdir = File.expand_path('../../../logs', __FILE__)
+  archive = File.join(logdir,'archive')
+  FileUtils.mkdir(archive) unless File.directory?(archive)
+
   # read cron log
   log = File.expand_path('../../../logs/svn-update', __FILE__)
   data = File.open(log) {|file| file.flock(File::LOCK_EX); file.read}
   updates = data.split(%r{\n(?:/\w+)*/srv/svn/})[1..-1]
 
   status = {}
+  seen_level = {}
 
   # extract status for each repository
   updates.each do |update|
@@ -56,6 +63,7 @@ def Monitor.svn(previous_status)
       if not data
         title = "partial response"
         level = 'warning'
+        seen_level[level] = true
       # data may be a String rather than an array in which case .length is its length, not 1
       elsif String  === data or data.length == 1
         title = "1 file updated"
@@ -67,12 +75,23 @@ def Monitor.svn(previous_status)
     else
       level = 'danger'
       data = lines.dup
+      seen_level[level] = true
     end
 
     status[repository] = {level: level, data: data, href: '../logs/svn-update'}
     status[repository][:title] = title if title
   end
 
+  # save as the highest level seen
+  %w{danger warning}.each do |lvl|
+    if seen_level[lvl]
+      # Save a copy of the log; append the severity so can track more problems
+      file = File.basename(log)
+      FileUtils.copy log, File.join(archive, file + '.' + lvl), preserve: true
+      break
+    end
+  end
+  
   {data: status}
 end
 
