@@ -26,6 +26,7 @@ _html do
     }
   }
 
+  # remains true if all local checkouts are writable
   writable = true
   svnroot = (svnrepos.length == 1 && svnrepos.first =~ /^(\/\w[-.\w]*)+\/\*$/ &&
     File.writable?(svnrepos.first.chomp('*').untaint))
@@ -75,7 +76,7 @@ _html do
   end
 
   _script %{
-    var local = #{writable};
+    var writable = #{writable};
     var svnroot = #{!!svnroot};
 
     // update status of a row based on a sever response
@@ -92,19 +93,19 @@ _html do
       if (tds[2].textContent != tds[3].textContent) {
         tr.setAttribute('class', 'bg-warning');
 
-        if (local) {
+        if (writable) {
           $(tds[4]).html('<button class="btn btn-info">update</button>');
           $('button', tr).on('click', sendRequest);
         }
       } else {
         tr.setAttribute('class', 'bg-success');
-        if (local) $(tds[4]).empty();
+        if (writable) $(tds[4]).empty();
       }
     };
 
     // when running locally, add a fourth column, and create a function
     // used to send requests to the server
-    if (local) {
+    if (writable) {
       $('thead tr').append('<th>action</th');
       $('tbody tr').append('<td></td');
 
@@ -177,13 +178,13 @@ _json do
     end
   end
 
-  local, lerr = ASF::SVN.getRevision(local_path.untaint)
-  server, serr = ASF::SVN.getRevision(repository_url.untaint)
+  localrev, lerr = ASF::SVN.getRevision(local_path.untaint)
+  serverrev, serr = ASF::SVN.getRevision(repository_url.untaint)
   {
     log: log.to_s.split("\n"),
     path: local_path,
-    local: local || lerr.split("\n").last, # generally the last SVN error line is the cause
-    server: server || serr.split("\n").last
+    local: localrev || lerr.split("\n").last, # generally the last SVN error line is the cause
+    server: serverrev || serr.split("\n").last
   }
 end
 
