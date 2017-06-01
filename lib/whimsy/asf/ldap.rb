@@ -753,10 +753,10 @@ module ASF
       owners.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
-    # remove people from a project
-    def add(people)
-      add_owners(people)
-      add_members(people)
+    # remove people from a project as owners and members
+    def remove(people)
+      remove_owners(people)
+      remove_members(people)
     end
 
     # remove people as owners project
@@ -781,7 +781,7 @@ module ASF
       @members = nil
     end
 
-    # add people to a project
+    # add people to a project as members and owners
     def add(people)
       add_owners(people)
       add_members(people)
