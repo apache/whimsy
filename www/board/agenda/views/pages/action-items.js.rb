@@ -110,7 +110,7 @@ class ActionItems < React
 
       if not first
         # Update action item (hidden form)
-        _ModalDialog ref: 'updateStatusForm', color: 'commented' do
+        _ModalDialog id: 'updateStatusForm', color: 'commented' do
           _h4 'Update Action Item'
 
           _p do
@@ -176,7 +176,7 @@ class ActionItems < React
 
   # autofocus on action status in update action form
   def componentDidMount()
-    jQuery(~updateStatusForm).on 'shown.bs.modal' do
+    jQuery('#updateStatusForm').on 'shown.bs.modal' do
       ~statusText.focus()
     end
   end
@@ -199,7 +199,7 @@ class ActionItems < React
     action.baseline = action.status
 
     # show dialog
-    jQuery(~updateStatusForm).modal(:show)
+    jQuery('#updateStatusForm').modal(:show)
 
     # update state
     self.setState(action)
