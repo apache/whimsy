@@ -10,6 +10,11 @@ Updating '.':
 At revision 67610.
 
 /srv/svn/site-root
+Updating '.':
+U    index.html
+Updated to revision 1797393.
+
+/srv/svn/site-root
 A    site-root/extpaths.txt
  U   site-root
 Checked out revision 1797381.
@@ -17,6 +22,15 @@ Checked out revision 1797381.
 /x1/srv/svn/personnel-duties
 Updating '.':
 svn: E175002: Unexpected HTTP status 400 'Bad Request' on '/repos/private/!svn/rvr/76960/foundation/officers/personnel-duties'
+
+/x1/srv/svn/personnel-duties
+#!: failed!
+#!: Updating '.':
+#!: svn: E175002: Unexpected HTTP status 400 'Bad Request' on '/repos/private/!svn/rvr/76960/foundation/officers/personnel-duties'
+#!: will retry in 10 seconds
+Updating '.':
+svn: E175002: Unexpected HTTP status 400 'Bad Request' on '/repos/private/!svn/rvr/76960/foundation/officers/personnel-duties'
+Updated to revision 1797393.
 
 ---- cut here ---
 
@@ -54,6 +68,8 @@ def Monitor.svn(previous_status)
 
     lines.reject! do |line| 
       line == "Updating '.':" or
+      # must agree with Rakefile/PREFIX
+      line.start_with?('#!: ') or
       line =~ /^(Checked out|Updated to|At) revision \d+\.$/
     end
 

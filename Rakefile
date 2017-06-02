@@ -1,4 +1,5 @@
 require 'rubygems/package_task'
+require 'open3'
 
 spec = eval(File.read('asf.gemspec'))
 Gem::PackageTask.new(spec) do |pkg|
@@ -77,7 +78,34 @@ namespace :svn do
           puts
           puts File.join(Dir.pwd, name)
           if Dir.exist? name
-            Dir.chdir(name) {system 'svn cleanup'; system 'svn up'}
+            Dir.chdir(name) {
+              system 'svn cleanup'
+              outerr = nil
+              # svn update can fail sometimes, so we retry
+              2.times do |i|
+                if i > 0
+                  PREFIX = '#!:' # must agree with monitors/svn.rb
+                  # log the failure - prefix tells monitor to ignore it
+                  puts "#{PREFIX} failed!"
+                  outerr.split("\n").each do |l|
+                    puts "#{PREFIX} #{l}"                    
+                  end
+                  n = 10
+                  puts "#{PREFIX} will retry in #{n} seconds"
+                  sleep n                    
+                end
+                begin
+                  outerr, status = Open3.capture2e('svn up')
+                  if status.success?
+                    break
+                  end
+                rescue => e
+                  outerr = e.inspect
+                  break
+                end
+              end
+              puts outerr # show what happened last
+            }
           else
             system 'svn', 'checkout', 
               "--depth=#{description['depth'] || 'infinity'}",
