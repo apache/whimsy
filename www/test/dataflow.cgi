@@ -12,13 +12,15 @@ GITWHIMSY = 'https://github.com/apache/whimsy/blob/master'
 
 _html do
   _body? do
-    deplist = JSON.parse(File.read(DATAFLOWDATA)) 
-    _whimsy_body title: PAGETITLE, related: {
-      "https://projects.apache.org/" => "Apache Projects Listing",
-      "https://home.apache.org/" => "Apache Committer Phonebook",
-      "https://community.apache.org/" => "Apache Community Development"
-    } do
-      _whimsy_panel 'What Data Comes From Where' do
+    deplist = JSON.parse(File.read(DATAFLOWDATA))
+    _whimsy_body(
+      title: PAGETITLE,
+      related: {
+        "https://projects.apache.org/" => "Apache Projects Listing",
+        "https://home.apache.org/" => "Apache Committer Phonebook",
+        "https://community.apache.org/" => "Apache Community Development"
+      },
+      helpblock: -> {
         _p %{ Whimsy tools consume and produce a variety of data files 
           about PMCs and the ASF as a whole.  This non-comprehensive 
           page explains which tools generate what intermediate data, 
@@ -34,7 +36,8 @@ _html do
           }
           _a 'server docs for more info.', href: 'https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md'
         end
-      end
+      }
+    ) do
       _ul.list_group do
         deplist.each do |dep, info|
           _li.list_group_item do
