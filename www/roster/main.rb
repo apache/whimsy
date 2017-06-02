@@ -138,6 +138,13 @@ get '/ppmc/:name.json' do |name|
   _json PPMC.serialize(name, env)
 end
 
+post '/ppmc/:name/establish' do |name|
+  @name = name
+  @chair = params[:chair] || env.user
+  @description = params[:description]
+  _text :'ppmc/establish'
+end
+
 get '/ppmc/:name' do |name|
   @auth = Auth.info(env)
 
