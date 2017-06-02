@@ -183,6 +183,26 @@ get '/json/posted-reports' do
   _json :"actions/posted-reports"
 end
 
+# podling name searches
+get '/json/podlingnamesearch' do
+
+  query = 'https://issues.apache.org/jira/rest/api/2/search?' +
+    'jql=project=PODLINGNAMESEARCH&fields=summary'
+
+  issues = JSON.parse(Net::HTTP.get URI(query))['issues']
+
+  issues.map! do |issue|
+    title = issue['fields']['summary']
+    name = title[/"Apache ([A-Z].*?)"/, 1]
+    name ||= title[/'Apache ([A-Z].*?)'/, 1]
+    name ||= title[/.*Apache ([A-Z]\S*)/, 1]
+    name ||= title.gsub('Apache', '')[/.*\b([A-Z]\S*)/, 1]
+    [name, {link: issue['self']}] if name
+  end
+
+  _json issues.compact.sort.to_h
+end
+
 # posted actions
 post '/json/:file' do
   _json :"actions/#{params[:file]}"
