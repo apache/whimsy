@@ -9,9 +9,14 @@ Sample input:
 Updating '.':
 At revision 67610.
 
-/srv/svn/Meetings
+/srv/svn/site-root
+A    site-root/extpaths.txt
+ U   site-root
+Checked out revision 1797381.
+
+/x1/srv/svn/personnel-duties
 Updating '.':
-At revision 67610.
+svn: E175002: Unexpected HTTP status 400 'Bad Request' on '/repos/private/!svn/rvr/76960/foundation/officers/personnel-duties'
 
 ---- cut here ---
 
