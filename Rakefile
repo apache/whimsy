@@ -73,7 +73,7 @@ namespace :svn do
       Dir.chdir File.dirname(svn) do
         require 'uri'
         base = URI.parse('https://svn.apache.org/repos/')
-        repository[:svn].each do |name, description|
+        (repository[:svn] || {}).each do |name, description|
           puts
           puts File.join(Dir.pwd, name)
           if Dir.exist? name
@@ -99,7 +99,7 @@ namespace :git do
       Dir.chdir File.dirname(git) do
         require 'uri'
         base = URI.parse('git://git.apache.org/')
-        repository[:git].each do |name, description|
+        (repository[:git] || {}).each do |name, description|
           branch = description['branch']
 
           puts
