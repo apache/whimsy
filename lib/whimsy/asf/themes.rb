@@ -171,7 +171,7 @@ class Wunderbar::HtmlMarkup
   
   # Emit complete bootstrap theme (container/row/column) for common use cases
   def _whimsy_body **args
-    _whimsy_nav args
+    _whimsy_nav
     _div.content.container_fluid do
       _div.row do
         _div.col_sm_12 do
