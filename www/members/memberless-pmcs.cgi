@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "Crosscheck PMCs with few/no ASF Members" # Wvisible:members
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'whimsy/asf'
 require 'wunderbar'
@@ -13,24 +14,19 @@ _html do
   _body? do
     count = (@count || 3).to_i    
     if count == 1
-      title = 'PMCs without any ASF members'
+      subtitle = 'PMCs without any ASF members'
     else
-      title = "PMCs without at least #{count} ASF members"
+      subtitle = "PMCs without at least #{count} ASF members"
     end
-    _whimsy_header title
-    members = ASF::Member.list.keys
-    committees = ASF::Committee.load_committee_info
-    _whimsy_content do
-      
-      _table_.table.table_striped do
-        _thead_ do
-          _tr do
-            _th 'PMC', data_sort: 'string-ins'
-            _th 'Established', data_sort: 'string'
-            _th 'Count', data_sort: 'int' if count > 1
-            _th 'Chair', data_sort: 'string'
-          end
-        end
+    _whimsy_body(
+      title: PAGETITLE,
+      subtitle: subtitle,
+      related: {
+        'https://whimsy.apache.org/members/watch' => 'Potential Member Watch List',
+        'https://whimsy.apache.org/roster/committee/' => 'All PMC Rosters'
+      },
+      helpblock: -> {
+        _p 'This displays PMC names where there are few/no ASF Members listed on the PMC.'
         _p do
           _ 'Switch to:'
           counts.each do |c|
@@ -38,6 +34,20 @@ _html do
               _button.btn.btn_info c
             end
             _ " | " unless c.equal? counts.last 
+          end
+          _ ' members on a PMC.'
+        end
+      }
+    ) do
+      members = ASF::Member.list.keys
+      committees = ASF::Committee.load_committee_info
+      _table_.table.table_striped do
+        _thead_ do
+          _tr do
+            _th 'PMC', data_sort: 'string-ins'
+            _th 'Established', data_sort: 'string'
+            _th 'Count', data_sort: 'int' if count > 1
+            _th 'Chair', data_sort: 'string'
           end
         end
         _tbody do
@@ -66,6 +76,7 @@ _html do
           th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
           });
         }
-      end
     end
   end
+end
+

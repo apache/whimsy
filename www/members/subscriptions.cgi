@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "Aapche members@ Subscription Crosscheck" # Wvisible:members
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'wunderbar'
@@ -18,10 +19,14 @@ ARCHIVERS = %w(
 
 _html do
   _body? do
-    _whimsy_header 'Apache Members Cross-check'
-    _div.panel.panel_primary do
-      _div.panel_heading {_h3.panel_title 'How This Works'}
-      _div.panel_body do
+    _whimsy_body(
+      title: PAGETITLE,
+      related: {
+        'https://whimsy.apache.org/roster/members' => 'Listing Of All Members',
+        'https://whimsy.apache.org/committers/subscribe' => 'Committers Self-Subscribe Tool',
+        'https://lists.apache.org' => 'Apache Ponymail List Archives'
+      },
+      helpblock: -> {
         _p! do
           _ 'This process starts with the list of subscribers to '
           _a 'members@apache.org', href: 'https://mail-search.apache.org/members/private-arch/members/'
@@ -47,16 +52,15 @@ _html do
           _span.text_danger 'listed in red'
           _ '.'
         end
-      end
-    end
-    _p! do
-      _ 'Separate tables below show '
-      _a 'Members not subscribed to the list', href: "#unsub"
-      _ ', and '
-      _a 'Entries in LDAP but not members.txt', href: "#ldap"
-      _ '.'
-    end
-
+        _p! do
+          _ 'Separate tables below show '
+          _a 'Members not subscribed to the list', href: "#unsub"
+          _ ', and '
+          _a 'Entries in LDAP but not members.txt', href: "#ldap"
+          _ '.'
+        end
+      }
+    ) do
     ldap = ASF::Group['member'].members
 
     members = ASF::Member.new.map {|id, text| ASF::Person.find(id)}
@@ -162,5 +166,6 @@ _html do
         th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
         });
       }
+    end
   end
 end

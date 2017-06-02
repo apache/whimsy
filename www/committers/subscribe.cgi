@@ -41,21 +41,22 @@ _html do
   _script src: 'assets/bootstrap-select.js'
   _link rel: 'stylesheet', href: 'assets/bootstrap-select.css'
   _body? do
-    _whimsy_header PAGETITLE
-    _whimsy_content do
-      _div.row do
-        _div.panel.panel_primary do
-          _div.panel_heading {_h3.panel_title 'How To Subscribe'}
-          _div.panel_body do
-            _ 'This page allows Apache committers to auto-subscribe to various mailing lists.'
-            _span.text_info 'Note:' 
-            _ 'Only your registered email address(es) are listed here. To change your email addresses, login to '
-            _a 'https://id.apache.org/', href: "https://id.apache.org/details/#{$USER}"
-            _ 'to add or remove forwarding or alternate addresses.'
-            _br
-          end
-        end
-      end
+    _whimsy_body(
+      title: PAGETITLE,
+      subtitle: 'How To Subscribe',
+      related: {
+        'https://www.apache.org/foundation/mailinglists.html' => 'Apache Mailing List Info Page',
+        'https://lists.apache.org' => 'Apache Mailing List Archives',
+        'https://whimsy.apache.org/committers/moderationhelper.cgi' => 'Mailing List Moderation Helper'
+      },
+      helpblock: -> {
+        _ 'This page allows Apache committers to auto-subscribe to various mailing lists.'
+        _span.text_info 'Note:' 
+        _ 'Only your registered email address(es) are listed here. To change your email addresses, login to '
+        _a 'https://id.apache.org/', href: "https://id.apache.org/details/#{$USER}"
+        _ 'to add or remove forwarding or alternate addresses.'
+      }
+    ) do
       
       _form method: 'post' do
         _fieldset do

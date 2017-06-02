@@ -8,15 +8,26 @@ require 'whimsy/asf'
 _html do
   _body? do
     _style :system
-    _whimsy_header 'ASF SVN info'
-    _whimsy_content do
-      _p.lead 'SVN Info takes a URL and reports info on that file in the repository.'
+    _whimsy_body(
+      title: PAGETITLE,
+      related: {
+        'https://www.apache.org/dev/#version-control' => "How To Use Apache's SVN and Git",
+        'https://svn.apache.org/viewvc/' => 'View Public SVN Repositories',
+        'https://github.com/apache/' => 'View Public Git Repositories'
+      },
+      helpblock: -> {
+        _ 'Enter the URL to a file in an Apache Subversion repository to see the results of the '
+        _code 'svn info'
+        _ "command on that file.  This is useful if you don't have a subversion client locally."
+      }
+    ) do
+            
       _form do
         _div.form_group do
           _label.control_label for: 'url' do
             _ 'Enter a svn.apache.org/repos URL'
           end
-          _input.form_control type: 'text', name: 'url', size: 120, placeholder: 'SVN URL'
+          _input.form_control type: 'text', name: 'url', size: 120, placeholder: 'https://svn.apache.org/repos/asf/'
         end
         _div.form_group do
           _input.btn.btn_primary type: 'submit', value: 'Submit'

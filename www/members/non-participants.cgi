@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "Active Members not participating in meetings" # Wvisible:meeting
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'whimsy/asf'
@@ -38,43 +39,36 @@ end
 # produce HTML
 _html do
   _body? do
-    _whimsy_header 'Active Members not participating in meetings'
-    _whimsy_content do
-      
+    _whimsy_body(
+      title: PAGETITLE,
+      subtitle: 'Select A Date:',
+      related: {
+        'https://whimsy.apache.org/members/inactive' => 'Inactive Member Feedback Form',
+        'https://whimsy.apache.org/members/proxy' => 'Members Meeting Proxy Assignment',
+        'https://whimsy.apache.org/members/subscriptions' => 'Members@ Mailing List Crosscheck'
+      },
+      helpblock: -> {
+        _form_ do
+          _span "List of members that have not participated, starting with the "
+          _select name: 'meetingsMissed', onChange: 'this.form.submit()' do
+            dates.reverse.each_with_index do |name, i|
+              _option name, value: i+1, selected: (i+1 == @meetingsMissed)
+            end
+          end
+          _span "meeting.  Active members does not include emeritus or deceased members."
+        end
+        _h4 'Definitions'
+        _p do
+          _ 'Participating is defined by doing at least one of the following:'
+          _ul do
+            _li 'Attending a members meeting'
+            _li 'Voting in an election'
+            _li 'Assigning a proxy'
+          end
+        end
+      }
+    ) do
     @meetingsMissed = (@meetingsMissed || 3).to_i
-      
-    _div.row do
-      _div.col_md_6 do
-        _div.panel.panel_primary do
-          _div.panel_heading {_h3.panel_title 'Select Date'}
-          _div.panel_body do
-            _form_ do
-              _span "List of members that have not participated, starting with the "
-              _select name: 'meetingsMissed', onChange: 'this.form.submit()' do
-                dates.reverse.each_with_index do |name, i|
-                  _option name, value: i+1, selected: (i+1 == @meetingsMissed)
-                end
-              end
-              _span "meeting.  Active members does not include emeritus or deceased members."
-            end
-          end
-        end
-      end
-      _div.col_md_6 do
-        _div.panel.panel_primary do
-          _div.panel_heading {_h3.panel_title 'Definitions'}
-          _div.panel_body do
-            _ 'Participating is defined by doing at least one of the following:'
-            _ul do
-              _li 'Attending a members meeting'
-              _li 'Voting in an election'
-              _li 'Assigning a proxy'
-            end
-          end
-        end
-      end
-    end
-    
     count = 0
     _table.table.table_hover do
       _thead do

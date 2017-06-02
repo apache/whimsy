@@ -126,13 +126,29 @@ end
 
 _html do
   _body? do
-    _whimsy_header PAGETITLE
-    brand_dir = ASF::SVN['private/foundation/Brand']
-    docket = JSON.parse(File.read("#{brand_dir}/docket.json"))
-    projects = JSON.parse(Net::HTTP.get(URI('https://projects.apache.org/json/foundation/projects.json')))
-
-    _whimsy_content do
-      _h3 'The ASF holds the following registered trademarks:'
+    _whimsy_body(
+      title: PAGETITLE,
+      related: {
+        "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
+        "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List",
+        "https://www.apache.org/foundation/marks/contact" => "Contact Us About Trademarks"
+      },
+      helpblock: -> {
+        _p "This is an automated listing of the trademarks claimed by the ASF on behalf of our many project communities."
+        _ul do
+          _li do
+            _a 'Registered trademarks', href: '#registered'
+          end
+          _li do
+            _a 'Other trademarks', href: '#unreg_a'
+          end
+        end
+      }
+    ) do
+      brand_dir = ASF::SVN['private/foundation/Brand']
+      docket = JSON.parse(File.read("#{brand_dir}/docket.json"))
+      projects = JSON.parse(Net::HTTP.get(URI('https://projects.apache.org/json/foundation/projects.json')))
+      _h3 'The ASF holds the following registered trademarks:', id: 'registered'
       docket.each do |pmc, marks|
         if pmc == 'apache' then
           _apache(marks)
@@ -154,11 +170,5 @@ _html do
         end
       end
     end
-
-    _whimsy_footer({
-      "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
-      "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List",
-      "https://www.apache.org/foundation/marks/contact" => "Contact Us About Trademarks"
-      })
   end
 end

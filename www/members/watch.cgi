@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "Potential ASF Member Watch List" # Wvisible:members
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'wunderbar'
@@ -17,9 +18,18 @@ _html do
   end
 
   _body? do
-    _whimsy_header 'Potential ASF Member Watch List'
-    _whimsy_content do
-    
+    _whimsy_body(
+      title: PAGETITLE,
+      related: {
+        'https://whimsy.apache.org/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
+        'https://whimsy.apache.org/members/nominations' => 'Members Meeting Nomination Crosscheck',
+        'https://svn.apache.org/repos/private/foundation/Meetings/' => 'Official Meeting Agenda Directory'
+      },
+      helpblock: -> {
+        _ 'To help evaluate potential Member candidates, here are a number of ways to see where non-Members are participating broadly at the ASF.'
+        _ 'The table(s) below include non-Members who are chairs, widely active, have been nominated, or other criteria (depending on this URL).'
+      }
+    ) do    
     # start with the Watch List itself
     watch_list = ASF::Person.member_watch_list.keys
     meeting =
@@ -34,18 +44,7 @@ _html do
     request = ENV['REQUEST_URI']  
     
     _div.row do
-      _div.col_md_8 do
-        _div.panel.panel_primary do
-          _div.panel_heading {_h3.panel_title 'How This Works'}
-          _div.panel_body do
-            _p! do
-              _ 'To help evaluate potential Member candidates, here are a number of ways to see where non-Members are participating broadly at the ASF.'
-              _ 'The table(s) below include non-Members who are chairs, widely active, have been nominated, or other criteria (depending on this URL).'
-            end
-          end
-        end
-      end
-      _div.col_md_4 do
+      _div.col_sm10 do
         _div.panel.panel_primary do
           _div.panel_heading {_h3.panel_title 'Related Links'}
           _div.panel_body do

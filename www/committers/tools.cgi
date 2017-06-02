@@ -10,7 +10,7 @@ require '../../tools/wwwdocs.rb'
 
 _html do
   _body? do
-    _whimsy_body2(
+    _whimsy_body(
       title: PAGETITLE, 
       related: {
         "https://projects.apache.org/" => "Apache Project Listing",
@@ -28,7 +28,7 @@ _html do
           end
           AUTHMAP.each do |realm, style|
             _li do
-              _span.glyphicon.glyphicon_lock :aria_hidden, class: "#{style}"
+              _span.glyphicon.glyphicon_lock :aria_hidden, class: "#{style}", aria_label: "#{realm}"
               _ "#{realm}"
             end
           end
@@ -47,7 +47,7 @@ _html do
               if 2 == desc.length
                 _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
               else
-                _span class: desc[2] do
+                _span class: desc[2], aria_label: "#{AUTHMAP.key(desc[2])}" do
                   _span.glyphicon.glyphicon_lock :aria_hidden
                 end
               end

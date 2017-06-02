@@ -170,7 +170,7 @@ class Wunderbar::HtmlMarkup
   end
   
   # Emit complete bootstrap theme, with related links, and helpblock of intro text
-  def _whimsy_body(title: 'MOAR WHIMSY!', related: {}, helpblock: nil)
+  def _whimsy_body(title: 'MOAR WHIMSY!', subtitle: 'About This Script', related: {}, helpblock: nil)
     _whimsy_nav
     _div.content.container_fluid do
       _div.row do
@@ -180,7 +180,7 @@ class Wunderbar::HtmlMarkup
       end
       _div.row do
         _div.col_md_8 do
-          _whimsy_panel "About This Script" do
+          _whimsy_panel subtitle do
             if helpblock
               helpblock.call
             else

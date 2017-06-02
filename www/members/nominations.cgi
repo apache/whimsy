@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "Member nominations cross-check" # Wvisible:meeting
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'mail'
@@ -52,8 +53,6 @@ svnurl = `cd #{meeting}; svn info`[/URL: (.*)/, 1]
 # produce HTML output of reports, highlighting ones that have not (yet)
 # been posted
 _html do
-  _title 'Member nominations cross-check'
-
   _style %{
     .missing {background-color: yellow}
     .flexbox {display: flex; flex-flow: row wrap}
@@ -62,12 +61,17 @@ _html do
     .flexitem:last-child {order: 1}
     .count {margin-left: 4em}
   }
-
-  # common banner
-  _a href: 'https://whimsy.apache.org/' do
-    _img title: "ASF Logo", alt: "ASF Logo",
-      src: "https://www.apache.org/img/asf_logo.png"
-  end
+  _whimsy_body(
+    title: PAGETITLE,
+    related: {
+      'https://whimsy.apache.org/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
+      'https://svn.apache.org/repos/private/foundation/Meetings/' => 'Official Meeting Agenda Directory'
+    },
+    helpblock: -> {
+      _ 'This script checks new member nomination statements from members@ against the official meeting ballot files, and highlights differences. '
+      _ 'This probably only works in the period shortly before or after a Members meeting!'
+    }
+  ) do
 
   _div.flexbox do
     _div.flexitem do
@@ -129,6 +133,7 @@ _html do
       end
     end
   end
+end
 end
 
 # produce JSON output of reports

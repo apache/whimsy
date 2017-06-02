@@ -57,39 +57,46 @@ _html do
     .check {color: rgb(0,114,178)}
     .blank {color: rgb(230,159,0); font-style: italic; font-weight: bold}
   }
-
-  _h1 'Mentor signoffs over the last twelve months'
-
-  _p! do
-    _span.check 'Blue'
-    _ ' means signoff is present, '
-    _span.blank 'orange'
-    _ ' means signoff is absent.'
-  end
-
-  _p 'Hover over podling name to see date.'
-
-  _table_ do
-    mentors.sort.each do |name, entries|
-      _tr_ do
-        _td do
-          if people[name]
-            if ASF::Person.find(people[name]).asf_member?
-              _b! {_a name, href: roster + people[name]}
+  _whimsy_body(
+    title: PAGETITLE,
+    related: {
+      'https://incubator.apache.org/projects/' => 'Incubator Podling List',
+      'https://whimsy.apache.org/incubator/moderators' => 'Incubator Mailing List Moderators'
+    },
+    helpblock: -> {
+      _ do
+        _ 'This script checks past several months Incubator podling reports for mentor signoff. '
+        _span.check 'Blue'
+        _ ' means signoff is present, '
+        _span.blank 'orange'
+        _ ' means signoff is absent.'
+      end
+      _br
+      _ 'Hover over podling name to see date.'
+    }
+  ) do
+    _table_ do
+      mentors.sort.each do |name, entries|
+        _tr_ do
+          _td do
+            if people[name]
+              if ASF::Person.find(people[name]).asf_member?
+                _b! {_a name, href: roster + people[name]}
+              else
+                _a name, href: roster + people[name]
+              end
             else
-              _a name, href: roster + people[name]
+              _a name, href: roster + '?q=' + URI.encode(name)
             end
-          else
-            _a name, href: roster + '?q=' + URI.encode(name)
           end
-        end
 
-        _td do
-          entries.each do |entry|
-            if entry[:checked]
-              _span.check entry[:podling], title: entry[:date]
-            else
-              _span.blank entry[:podling], title: entry[:date]
+          _td do
+            entries.each do |entry|
+              if entry[:checked]
+                _span.check entry[:podling], title: entry[:date]
+              else
+                _span.blank entry[:podling], title: entry[:date]
+              end
             end
           end
         end

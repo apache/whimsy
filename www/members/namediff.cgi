@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "Crosscheck Members Names With ICLAs"  # Wvisible:members
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'whimsy/asf'
@@ -7,13 +8,20 @@ require 'wunderbar/jquery/stupidtable'
 
 _html do
   _body? do
-    _whimsy_header 'ASF Member name differences'
-    _whimsy_content do
-      _p_ do
-        _ 'Cross-check of members.txt vs iclas.txt.'
-        _span.text_danger 'REMINDER: members.txt and Legal names below are NOT public data - keep confidential!'
-      end
-      
+    _whimsy_body(
+      title: PAGETITLE,
+      related: {
+        'https://whimsy.apache.org/roster/members' => 'Listing Of All Members',
+        'https://svn.apache.org/repos/private/foundation/officers/iclas.txt' => 'ICLA.txt Listing',
+      },
+      helpblock: -> {
+        _p_ do
+          _ 'Cross-check of members.txt vs iclas.txt.'
+          _br
+          _span.text_danger 'REMINDER: members.txt and Legal names below are NOT public data - keep this page confidential!'
+        end
+      }
+    ) do
       ASF::ICLA.preload
       ldap_members = ASF::Member.list.map {|id, info| ASF::Person.find(id)}
       ASF::Person.preload('cn', ldap_members)

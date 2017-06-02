@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+PAGETITLE = "Member's Meeting Attendance Cross-Check" # Wvisible:meeting
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'whimsy/asf'
@@ -30,39 +31,36 @@ end
 
 # produce HTML
 _html do
-  _style %{
-    table {margin-left: 12px}
-  }
-
-  # common banner
-  _a href: 'https://whimsy.apache.org/' do
-    _img title: "ASF Logo", alt: "ASF Logo",
-      src: "https://www.apache.org/img/asf_logo.png"
-  end
-
-  _h1_ 'members.txt vs attendance.json cross-check'
-
-  _h2_ 'Listed as attending a members meeting, but not in members.txt'
-
-  _ul do
-    attend.sort.each do |name|
-      _li name
+  _whimsy_body(
+    title: PAGETITLE,
+    related: {
+      'https://whimsy.apache.org/members/inactive' => 'Inactive Member Feedback Form',
+      'https://whimsy.apache.org/members/proxy' => 'Members Meeting Proxy Assignment',
+      'https://whimsy.apache.org/members/subscriptions' => 'Members@ Mailing List Crosscheck'
+    },
+    helpblock: -> {
+      _ 'This script cross-checks all people listed in members.txt versus the official attendance.json file that notes which members attended (or proxied) which meetings.'
+    }
+  ) do
+    _h2_ 'Listed as attending a members meeting, but not in members.txt'
+    _ul do
+      attend.sort.each do |name|
+        _li name
+      end
     end
-  end
-  
-  _h2_ 'Listed in members.txt but not listed as attending a members meeting'
-
-  _table do
-    _thead do
-      _th 'name'
-      _th 'date added as a member'
-    end
-
-    missing.sort.each do |name, meeting|
-      next if meeting =~ /^2015/
-      _tr_ do
-        _td name
-        _td meeting
+    
+    _h2_ 'Listed in members.txt but not listed as attending a members meeting'
+    _table do
+      _thead do
+        _th 'name'
+        _th 'date added as a member'
+      end
+      missing.sort.each do |name, meeting|
+        next if meeting =~ /^2015/
+        _tr_ do
+          _td name
+          _td meeting
+        end
       end
     end
   end
