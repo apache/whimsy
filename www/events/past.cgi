@@ -18,40 +18,45 @@ ifields = {
 
 _html do
   _body? do
-    _whimsy_header PAGETITLE
-    ac_dir = ASF::SVN['private/foundation/ApacheCon']
-    history = File.read("#{ac_dir}/apacheconhistory.csv")
-    history.sub! "\uFEFF", '' # remove Zero Width No-Break Space
-    csv = CSV.parse(history, headers:true)
-    _whimsy_content do
-      _p do
-        _ 'ApacheCon is the official conference of the ASF, and the next '
-        _a 'ApacheCon is in Miami, May 2017!', href: 'http://events.linuxfoundation.org/events/apachecon-north-america/'
-      end 
-      _p 'ApacheCon has been going on since before the ASF was born, and includes great events:'
+    _whimsy_body(
+      title: PAGETITLE,
+      related: {
+        "https://community.apache.org/calendars/" => "Upcoming Apache-related Event Calendar",
+        "https://www.apache.org/events/meetups.html" => "Upcoming Apache-related Meetups",
+        "https://whimsy.apache.org/events/other" => "Some non-Apache related event listings"
+      },
+      helpblock: -> {
+        _p do
+          _ 'ApacheCon is the official conference of the ASF, and the last '
+          _a 'ApacheCon was in Miami, May 2017!', href: 'http://events.linuxfoundation.org/events/apachecon-north-america/'
+        end 
+        _p 'ApacheCon has been going on since before the ASF was born, and includes great events:'
+      }
+    ) do
+      ac_dir = ASF::SVN['private/foundation/ApacheCon']
+      history = File.read("#{ac_dir}/apacheconhistory.csv")
+      history.sub! "\uFEFF", '' # remove Zero Width No-Break Space
+      csv = CSV.parse(history, headers:true)
       _ul do
         csv.each do |r|
           _li do
             _a r['Name'], href: r['Link']
             _ ", was held in #{r['Location']}. "
-            _br
-            ifields.each do |fn, g|
-              if r[fn] then
-                _a! href: r[fn] do
-                  _span!.glyphicon class: "#{g[0]}"
-                  _! ' ' + g[1]
+            _ul do
+              ifields.each do |fn, g|
+                if r[fn] then
+                  _li do
+                    _a! href: r[fn] do
+                      _span!.glyphicon class: "#{g[0]}"
+                      _! ' ' + g[1]
+                    end
+                  end
                 end
               end
             end
           end
-        end        
+        end
       end
     end
-    
-    _whimsy_footer(
-      related: {
-        "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
-        "https://www.apache.org/foundation/marks/list/" => "Official Apache Trademark List"
-      })
   end
 end

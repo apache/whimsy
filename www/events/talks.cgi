@@ -90,14 +90,21 @@ end
 
 _html do
   _body? do
-    _whimsy_header PAGETITLE
-    talks, submitters = get_talks_submitters()
-    _whimsy_content do
-      _p do
-        _ 'DRAFT listing of curated Apache non-technical talks - about the Apache Way, licenses, brands, governance, and ASF history.'
-        _a 'See the source data.', href: COMDEVTALKS
-      end
-
+    _whimsy_body(
+      title: PAGETITLE,
+      related: {
+        "https://community.apache.org/" => "Apache Community Development",
+        "https://community.apache.org/speakers/" => "Apache Speaker Resources",
+        "https://apachecon.com/" => "ApacheCon Conferences"
+      },
+      helpblock: -> {
+        _p do
+          _ 'DRAFT listing of curated Apache non-technical talks - about the Apache Way, licenses, brands, governance, and ASF history.'
+          _a 'See the source data.', href: COMDEVTALKS
+        end
+      }
+    ) do
+      talks, submitters = get_talks_submitters()
       alltalks = talks.group_by { |t| t[1]['topics'][0]}
       _p do
         _ 'All talks by topics: '
@@ -118,12 +125,5 @@ _html do
         end
       end
     end
-    
-    _whimsy_footer(
-      related: {
-        "https://community.apache.org/" => "Apache Community Development",
-        "https://community.apache.org/speakers/" => "Apache Speaker Resources",
-        "https://apachecon.com/" => "ApacheCon Conferences"
-        })
-    end
   end
+end
