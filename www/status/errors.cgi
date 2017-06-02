@@ -44,7 +44,7 @@ _html do
           _a pinger, href:
             "https://www.pingmybox.com/pings?location=470&pinger=#{pinger}"
         end
-        _td.time time.iso8601
+        _td time.gmtime # show time in UTC for consistency
         _td text[/^HTTP\/1.1 (\d+)/, 1] 
         _td text.sub(/^HTTP\/1.1 \d+/, '')
       end
