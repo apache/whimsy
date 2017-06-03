@@ -3,6 +3,7 @@ PAGETITLE = "Member's Meeting Attendance Cross-Check" # Wvisible:meeting
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'whimsy/asf'
+require 'wunderbar/bootstrap'
 require 'json'
 
 # read in attendance
