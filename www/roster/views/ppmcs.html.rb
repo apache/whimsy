@@ -30,7 +30,7 @@ _html do
           if project_names.include? ppmc.name
             _a ppmc.display_name, href: "ppmc/#{ppmc.name}"
           else
-            _span.label_danger ppmc.display_name
+            _a.label_danger ppmc.display_name, href: "ppmc/#{ppmc.name}"
           end
         end
 

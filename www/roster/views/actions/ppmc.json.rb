@@ -5,7 +5,11 @@ if env.password
   # update LDAP
   if @targets.include? 'ppmc' or @targets.include? 'committer'
     ASF::LDAP.bind(env.user, env.password) do
-      if @action == 'add'
+      if @targets.include? 'ldap'
+        if @action == 'add'
+          project.create(people)
+        end
+      elsif @action == 'add'
         project.add_owners(people) if @targets.include? 'ppmc'
         project.add_members(people) if @targets.include? 'committer'
       elsif @action == 'remove'

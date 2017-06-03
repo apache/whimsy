@@ -724,9 +724,25 @@ module ASF
 
     attr_accessor :modifyTimestamp, :createTimestamp
 
-
     def dn
       @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first rescue nil
+    end
+
+    # create an LDAP group for this project
+    def create(people)
+      people = Array(people).map(&:dn)
+
+      entry = [
+        ASF::Base.mod_add('objectClass', ['groupOfNames', 'top']),
+        ASF::Base.mod_add('cn', name), 
+        ASF::Base.mod_add('member', people),
+        ASF::Base.mod_add('owner', people)
+      ]
+
+      ASF::LDAP.add("cn=#{name},#{base}", entry)
+
+      self.owners = people
+      self.members = people
     end
 
     def members=(members)

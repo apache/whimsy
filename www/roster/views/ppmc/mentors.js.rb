@@ -89,7 +89,6 @@ class PPMCMentors < React
       fetch('committee/incubator.json', credentials: 'include').then {|response|
 	if response.status == 200
 	  response.json().then do |json|
-	    console.log json.committers.keys()
 	    @ipmc = json.roster.keys()
 	  end
 	else

@@ -3,14 +3,18 @@
 #
 
 class PPMC < React
+  def initialize
+    @create_disabled = false
+  end
+
   def render
     auth = @@auth and (@@auth.secretary or @@auth.root or
-      @@ppmc.owners.include? @@auth.id)
+      @ppmc.owners.include? @@auth.id)
 
     # header
     _h1 do
-      _a @@ppmc.display_name, 
-        href: "https://incubator.apache.org/projects/#{@@ppmc.id}.html"
+      _a @ppmc.display_name, 
+        href: "https://incubator.apache.org/projects/#{@ppmc.id}.html"
       _small " established #{@ppmc.established}" if @ppmc.established
     end
 
@@ -25,6 +29,11 @@ class PPMC < React
           _span "  Multiple people can be added with a single confirmation."
         end
       end
+    end
+
+    if @ppmc.owners.empty? and (@@auth.root or @@auth.secretary)
+      _button.btn.btn_primary 'Create project in LDAP', onClick: self.post,
+        disabled: @create_disabled
     end
 
     # main content
@@ -96,5 +105,40 @@ class PPMC < React
   # update ppmc from conformation form
   def update(ppmc)
     @ppmc = ppmc
+  end
+
+  # create project in ldap
+  def post()
+    # construct arguments to fetch
+    args = {
+      method: 'post',
+      credentials: 'include',
+      headers: {'Content-Type' => 'application/json'},
+      body: {
+        project: @ppmc.id, 
+        ids: @ppmc.mentors.join(','), 
+        action: 'add', 
+        targets: ['ldap', 'ppmc', 'committer']
+      }.inspect
+    }
+
+    @disabled = true
+    Polyfill.require(%w(Promise fetch)) do
+      @create_disabled = true
+      fetch("actions/ppmc", args).then {|response|
+        content_type = response.headers.get('content-type') || ''
+        if response.status == 200 and content_type.include? 'json'
+          response.json().then do |json|
+            self.update(json)
+          end
+        else
+          alert "#{response.status} #{response.statusText}"
+        end
+        @create_disabled = false
+      }.catch {|error|
+        alert errror
+        @create_disabled = false
+      }
+    end
   end
 end
