@@ -74,6 +74,14 @@ Install:
 $ gem install whimsy-asf bundler mail listen
 ```
 
+If you're using Mac OS El Capitan or higher, you may need to do this:
+
+```
+$ sudo gem install bundler -n /usr/local/bin`
+```
+
+Which installs bundler outside `/usr/bin`
+
 Verify:
 
 ```
