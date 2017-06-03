@@ -52,6 +52,7 @@ require_relative 'elements/link'
 require_relative 'elements/modal-dialog'
 require_relative 'elements/text'
 require_relative 'elements/info'
+require_relative 'elements/pns'
 
 # Model
 require_relative 'models/events'

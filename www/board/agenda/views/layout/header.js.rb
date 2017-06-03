@@ -14,6 +14,10 @@ class Header < React
     _header.navbar.navbar_fixed_top class: @@item.color do
       _div.navbar_brand @@item.title
 
+      if @@item.attach =~ /^7/ and @@item.title =~ /^Establish /
+        _PodlingNameSearch item: @@item
+      end
+
       _span.clock! "\u231B" if clock_counter > 0
 
       _ul.nav.nav_pills.navbar_right do

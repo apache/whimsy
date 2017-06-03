@@ -499,3 +499,10 @@ input[type=file]#upload {
 #post-report-text {
   font-family: monospace
 }
+
+/* podling name search */
+.pns {
+  float: left;
+  font-size: 24px;
+  padding-top: 5px;
+}

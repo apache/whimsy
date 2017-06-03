@@ -187,7 +187,7 @@ end
 get '/json/podlingnamesearch' do
 
   query = 'https://issues.apache.org/jira/rest/api/2/search?' +
-    'jql=project=PODLINGNAMESEARCH&fields=summary'
+    'jql=project=PODLINGNAMESEARCH&fields=summary,resolution'
 
   issues = JSON.parse(Net::HTTP.get URI(query))['issues']
 
@@ -197,7 +197,10 @@ get '/json/podlingnamesearch' do
     name ||= title[/'Apache ([A-Z].*?)'/, 1]
     name ||= title[/.*Apache ([A-Z]\S*)/, 1]
     name ||= title.gsub('Apache', '')[/.*\b([A-Z]\S*)/, 1]
-    [name, {link: issue['self']}] if name
+    next unless name
+    resolution = issue['fields']['resolution']
+    resolution = resolution ? resolution['name'] : 'Unresolved'
+    [name, {issue: issue['key'], resolution: resolution}]
   end
 
   _json issues.compact.sort.to_h
