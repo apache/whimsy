@@ -64,7 +64,7 @@ def Monitor.svn(previous_status)
   updates.each do |update|
     level = 'success'
     title = nil
-    data = revision = update[REV_RE]
+    data = revision = update[REV_RE] # data === String
 
     lines = update.split("\n")
     repository = lines.shift.to_sym
@@ -78,7 +78,7 @@ def Monitor.svn(previous_status)
 
     unless lines.empty?
       level = 'info'
-      data = lines.dup
+      data = lines.dup # array
     end
 
     lines.reject! {|line| line =~ /^([ADU] |[ U]U)   /}
@@ -88,8 +88,9 @@ def Monitor.svn(previous_status)
         title = "partial response"
         level = 'warning'
         seen_level[level] = true
-      # data may be a String rather than an array in which case .length is its length, not 1
-      elsif String  === data or data.length == 1
+      elsif String  === data # only saw revision message
+        title = "No files updated"
+      elsif data.length == 1
         title = "1 file updated"
       else
         title = "#{data.length} files updated"
