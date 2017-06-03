@@ -44,6 +44,9 @@ Danger - unexpected text in log file
 
 require 'fileutils'
 
+# Match revision messages
+REV_RE = %r{^(Checked out|Updated to|At) revision \d+\.$}
+
 def Monitor.svn(previous_status)
   logdir = File.expand_path('../../../logs', __FILE__)
   archive = File.join(logdir,'archive')
@@ -61,7 +64,7 @@ def Monitor.svn(previous_status)
   updates.each do |update|
     level = 'success'
     title = nil
-    data = revision = update[/^(Updated to|At) revision \d+\.$/]
+    data = revision = update[REV_RE]
 
     lines = update.split("\n")
     repository = lines.shift.to_sym
@@ -70,7 +73,7 @@ def Monitor.svn(previous_status)
       line == "Updating '.':" or
       # must agree with Rakefile/PREFIX
       line.start_with?('#!: ') or
-      line =~ /^(Checked out|Updated to|At) revision \d+\.$/
+      line =~ REV_RE
     end
 
     unless lines.empty?
