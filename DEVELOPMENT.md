@@ -107,7 +107,7 @@ This section is for those desiring to run a whimsy tool on their own machine.
 
     2. A `TLS_CACERT` can be obtained via either of the following commands:
 
-        `ruby -r whimsy/asf -e "puts ASF::LDAP.cert"`<br/>
+        `ruby -r whimsy/asf -e "puts ASF::LDAP.extract_cert"`<br/>
         `openssl s_client -connect ldap1-lw-us.apache.org:636 </dev/null`
 
       Copy from `BEGIN` to `END` inclusive into the file
