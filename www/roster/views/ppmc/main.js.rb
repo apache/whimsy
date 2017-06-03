@@ -88,6 +88,9 @@ class PPMC < React
       end
     end
 
+    # Graduation resolution
+    _PPMCGraduate ppmc: @ppmc, id: @@auth.id
+
     # hidden form
     _Confirm action: :ppmc, project: @ppmc.id, update: self.update if auth
   end

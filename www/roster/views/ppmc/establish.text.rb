@@ -6,6 +6,8 @@ list = podling.owners.map {|person| [person.public_name, person.id]}
 width = list.map {|name, id| name.length}.max
 
 resolution = <<-EOF
+Establish the Apache #{podling.display_name} Project
+
 WHEREAS, the Board of Directors deems it to be in the best interests of the
 Foundation and consistent with the Foundation's purpose to establish a Project
 Management Committee charged with the creation and maintenance of open-source
@@ -53,7 +55,7 @@ hereafter discharged.
 EOF
 
 # reflow paragraphs
-line_width = 80
+line_width = 72
 resolution = resolution.split("\n\n").map do |paragraph|
   paragraph.gsub(/\s+/, ' ').
     gsub(/(.{1,#{line_width}})(\s+|$)/, "\\1\n").strip
@@ -62,6 +64,7 @@ resolution = resolution.join("\n\n")
 
 # insert list of proposed PMC members
 resolution.sub! '*** LIST ***',
-  list.map {|name, id| " * #{name.ljust(width)} <#{id}@apache.org>"}.join("\n")
+  list.sort_by {|name, id| name}.
+    map {|name, id| " * #{name.ljust(width)} <#{id}@apache.org>"}.join("\n")
 
 resolution
