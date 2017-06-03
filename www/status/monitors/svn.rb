@@ -51,8 +51,8 @@ def Monitor.svn(previous_status)
 
   # read cron log
   log = File.expand_path('../../../logs/svn-update', __FILE__)
-  data = File.open(log) {|file| file.flock(File::LOCK_EX); file.read}
-  updates = data.split(%r{\n(?:/\w+)*/srv/svn/})[1..-1]
+  fdata = File.open(log) {|file| file.flock(File::LOCK_EX); file.read}
+  updates = fdata.split(%r{\n(?:/\w+)*/srv/svn/})[1..-1]
 
   status = {}
   seen_level = {}
