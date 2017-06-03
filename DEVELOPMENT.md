@@ -81,6 +81,12 @@ This section is for those desiring to run a whimsy tool on their own machine.
 
    `gem install whimsy-asf bundler`  (mail and listen may be needed too)
 
+   - If you're using Mac OS El Capitan or higher, you may need to do this:
+
+   `sudo gem install bundler -n /usr/local/bin`
+
+   Which installs bundler outside `/usr/bin`
+
 3. **SVN checkout ASF repositories** into (or linked to from)
    `/srv/svn`
 
@@ -107,12 +113,11 @@ This section is for those desiring to run a whimsy tool on their own machine.
 
     2. A `TLS_CACERT` can be obtained via either of the following commands:
 
-        `ruby -r whimsy/asf -e "puts ASF::LDAP.extract_cert"`<br/>
-        `openssl s_client -connect ldap1-lw-us.apache.org:636 </dev/null`
+        - `ruby -r whimsy/asf -e "puts ASF::LDAP.extract_cert"`
+        - `openssl s_client -connect ldap1-lw-us.apache.org:636 </dev/null`
 
-      Copy from `BEGIN` to `END` inclusive into the file
-      `/etc/ldap/asf-ldap-client.pem`.  Point to the file in
-      `/etc/ldap/ldap.conf` with a line like the following:
+      Copy from `BEGIN` to `END` inclusive into the file `/etc/ldap/asf-ldap-client.pem`.
+      Point to the file in `/etc/ldap/ldap.conf` with a line like the following:
 
      ```   TLS_CACERT      /etc/ldap/asf-ldap-client.pem```
 
