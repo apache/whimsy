@@ -221,7 +221,8 @@ def parse(id, site, name)
 
   # see if image has been uploaded
   if IMAGE_DIR
-    data[:image] = Dir["#{IMAGE_DIR}/#{id}.*"].first
+    data[:image] = Dir["#{IMAGE_DIR}/#{id}.*"].
+      map {|path| File.basename(path)}.first
   end
 
   return data
