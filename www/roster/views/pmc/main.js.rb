@@ -23,6 +23,9 @@ class PMC < React
     _h1 do
       _a @committee.display_name, href: @committee.site
       _small " established #{@committee.established}" if @committee.established
+      if @committee.image
+        _img src: "https://apache.org/img/#{@committee.image}"
+      end
     end
 
     _p @committee.description

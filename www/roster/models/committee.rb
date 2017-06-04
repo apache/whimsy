@@ -16,6 +16,9 @@ class Committee
     comdev = ASF::SVN['asf/comdev/projects.apache.org/site/json/foundation']
     info = JSON.parse(File.read("#{comdev}/projects.json"))[id]
 
+    image_dir = ASF::SVN.find('asf/infrastructure/site/trunk/content/img')
+    image = Dir["#{image_dir}/#{id}.*"].map {|path| File.basename(path)}.last
+
     moderators = nil
 
     if pmc.roster.include? env.user or ASF::Person.find(env.user).asf_member?
@@ -49,6 +52,7 @@ class Committee
       mail: Hash[lists.sort],
       moderators: moderators,
       project_info: info,
+      image: image,
     }
 
     response
