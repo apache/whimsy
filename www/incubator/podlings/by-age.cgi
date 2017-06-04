@@ -87,6 +87,7 @@ _html do
             end
             _li "Mean age:   #{(mean+0.5).to_i} days"
             _li "Median age: #{(duration.reduce(:+)/duration.length + 0.5).to_i} days"
+            _li "Oldest podling: #{(duration.first).to_i} days"
           end
           }
       ) do
