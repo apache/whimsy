@@ -71,6 +71,9 @@
     url: asf/infrastructure/site/trunk/content/foundation/board
     depth: files
 
+  site-img:
+    url: asf/infrastructure/site/trunk/content/img
+
   site-root:
     url: asf/infrastructure/site/trunk/content
     depth: files
