@@ -39,7 +39,8 @@ ruby 2.4.1p111 (2017-03-22 revision 58053) [x86_64-darwin16]
 ```
 
 If you don't see 2.3.1 or later, run `hash -r` and try again.  If you previously
-installed ruby via brew, you may need to run `brew upgrade ruby` instead.
+installed ruby via brew, you may need to run `brew upgrade ruby` instead.  If you use
+`rbenv` install via `rbenv install 2.4.1`
 
 
 Upgrade Node.js
@@ -255,13 +256,15 @@ $ brew install passenger
 $ brew info passenger
 ```
 
-For the second step (1brew info passenger`), you will need to
+For the second step (`brew info passenger`), you will need to
 follow the instructions -- which essentially is to copy a few lines to
-to a specified location.  Despite what it says, change the last line to
+to a specified location.  If your ruby is installed in `/usr/local/bin`, change the last line to
 
 ```
 PassengerDefaultRuby /usr/local/bin/ruby
 ```
+
+Likewise, if you used `rbenv` to manage your ruby install, point to that location instead.
 
 Restart the server:
 
@@ -319,13 +322,13 @@ Add the following line:
 LDAPVerifyServerCert Off
 ```
 
-Copy whimsy vhost definition to your apache2 configuration:
+Copy whimsy vhost definition to your apache2 configuration (from the root of your whimsy git checkout):
 
 ```
-sudo cp whimsy/config/whimsy.conf /private/etc/apache2/other
+sudo cp config/whimsy.conf /private/etc/apache2/other
 ```
 
-Edit `private/etc/apache2/other/whimsy.conf` and replace all occurrences of
+Edit `/private/etc/apache2/other/whimsy.conf` and replace all occurrences of
 `/Users/rubys/git/whimsy` with the path that you cloned whimsy.
 
 Restart Apache httpd using `sudo apachectl restart`.
