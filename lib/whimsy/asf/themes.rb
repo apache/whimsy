@@ -216,4 +216,58 @@ class Wunderbar::HtmlMarkup
       _whimsy_foot
     end    
   end
+  # Emit complete bootstrap theme, with related links, and helpblock of intro text
+  def _whimsy_body(title: 'MOAR WHIMSY!', subtitle: 'About This Script', related: {}, helpblock: nil)
+    _whimsy_nav
+    _div.content.container_fluid do
+      _div.row do
+        _div.col_sm_12 do
+          _h1 title
+        end
+      end
+      _div.row do
+        _div.col_md_8 do
+          _whimsy_panel subtitle do
+            if helpblock
+              helpblock.call
+            else
+              # TODO: make this point to the specific cgi being run
+              _a 'See the code', href: 'https://github.com/apache/whimsy/'
+            end
+
+          end
+        end
+        _div.col_md_4 do
+          _whimsy_panel "More Whimsy", style: "panel-info" do
+            _ul list_style_position: 'inside' do
+              if related
+                related.each do |url, desc|
+                  if url =~ /.*\.(png|jpg|svg|gif)\z/i
+                    # Extension: allow images, style to align with bullets
+                    _li.list_unstyled do
+                      _img alt: desc, src: url, height: '60px', style: 'margin-left: -20px; padding: 2px 0px;'
+                    end
+                  else
+                    _li do
+                      _a desc, href: url
+                    end
+                  end
+                end
+              else
+                _li do
+                  _a 'Whimsy Source Code', href: 'https://github.com/apache/whimsy/'
+                end
+              end
+            end
+          end
+        end
+      end      
+      _div.row do
+        _div.col_sm_12 do
+          yield
+        end
+      end
+      _whimsy_foot
+    end    
+  end
 end

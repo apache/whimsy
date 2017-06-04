@@ -9,10 +9,11 @@ require 'wunderbar/bootstrap'
 
 _html do
   _body? do
-    _whimsy_body2(
+    _whimsy_body(
       title: PAGETITLE, 
       related: {
         "https://whimsy.apache.org/committers/tools" => "Whimsy Tool Listing",
+        "https://incubator.apache.org/images/incubator_feather_egg_logo_sm.png" => "Incubator Logo",
         "https://community.apache.org/" => "Get Community Help",
         "https://github.com/apache/whimsy/" => "Read The Whimsy Code"
       },
