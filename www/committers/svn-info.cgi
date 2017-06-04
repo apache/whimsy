@@ -36,9 +36,11 @@ _html do
       
       if @url
         # output svn info
-        _.system ['svn', 'info', @url,
-          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD) ]
+        _div.well.well_lg do
+          _.system ['svn', 'info', @url,
+            (['--username', $USER, '--password', $PASSWORD] if $PASSWORD) ]
         end
       end
     end
   end
+end
