@@ -111,6 +111,34 @@ class PMC < React
       end
     end
 
+    _h2.links! 'Links'
+    _ul do
+      _li {_a 'Site check', href: "../site/project/#{@committee.id}"}
+
+      info = @committee.project_info
+
+      if info.doap
+        _li {_a 'DOAP', href: info.doap}
+      end
+
+      if info['bug-database']
+        _li {_a 'Bug Database', href: info['bug-database']}
+      end
+
+      if info.repository and not info.repository.empty?
+        if info.repository.length == 1
+          _li {_a 'Repository', href: info.repository.first}
+        else
+          _li do
+            _span 'Repositories:'
+            _ul info.repository do |repository|
+              _li {_a repository, href: repository}
+            end
+          end
+        end
+      end
+    end
+
     # hidden form
     if auth
       _Confirm action: :committee, project: @committee.id, update: self.update

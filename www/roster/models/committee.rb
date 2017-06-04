@@ -13,6 +13,9 @@ class Committee
       list =~ /^#{pmc.mail_list}\b/
     end
 
+    comdev = ASF::SVN['asf/comdev/projects.apache.org/site/json/foundation']
+    info = JSON.parse(File.read("#{comdev}/projects.json"))[id]
+
     moderators = nil
 
     if pmc.roster.include? env.user or ASF::Person.find(env.user).asf_member?
@@ -45,6 +48,7 @@ class Committee
       roster: pmc.roster,
       mail: Hash[lists.sort],
       moderators: moderators,
+      project_info: info,
     }
 
     response
