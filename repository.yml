@@ -30,6 +30,9 @@
   cclas:
     url: private/documents/cclas
 
+  comdev-foundation:
+    url: asf/comdev/projects.apache.org/site/json/foundation
+
   foundation:
     url: private/foundation
     depth: files
