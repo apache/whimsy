@@ -14,11 +14,12 @@ require 'net/http'
 require 'time' # for httpdate
 
 PAGETITLE = "Apache TLP Website Link Checks" # Wvisible:sites,brand
-cols = %w( uri events foundation license sponsorship security thanks copyright trademarks )
+cols = %w( uri events foundation image license sponsorship security thanks copyright trademarks )
 CHECKS = { 
   'uri'         => %r{https?://[^.]+\.apache\.org},
   'copyright'   => %r{[Cc]opyright [^.]+ Apache Software Foundation}, # Do we need '[Tt]he ASF'?
   'foundation'  => %r{.},
+  'image'  => %r{.},
   # TODO more checks needed here, e.g. ASF registered and 3rd party marks
   'trademarks'  => %r{trademarks of [Tt]he Apache Software Foundation},
   'events'      => %r{apache.org/events/current-event},
