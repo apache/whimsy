@@ -24,9 +24,33 @@ _html do
         _p "Similarly, having a listing of related tools in the right hand panel helps end users find other interesting tools here."
       }
     ) do
-      _whimsy_panel "Your Data Here" do
-        _p "This is where your code would output data or a form or whatever!"
-        _p "All headers/footers and nicely wrapping a row is handled by themes.rb"
+      _whimsy_panel_table(
+        title: "Your Table Title Here",
+        helpblock: -> {
+          _p "Explain any additional details (if needed) about your table data here."
+        }
+      ) do
+        _table.table.table_hover.table_striped do
+          _thead_ do
+            _tr do
+              _th 'Row Number'
+              _th 'Column Two'
+            end
+            _tbody do
+              datums = ["Fred", "Francie", "Flubber"]
+              [1, 2, 3].each do | row |
+                _tr_ do
+                  _td do
+                    _ row
+                  end
+                  _td do
+                    _ datums[row]
+                  end
+                end
+              end
+            end
+          end
+        end
       end
     end
   end
