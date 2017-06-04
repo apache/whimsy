@@ -7,7 +7,7 @@ class PodlingNameSearch < React
     _span.pns title: 'podling name search' do
       if Server.podlingnamesearch
         if not @results
-          _span "\u2718"
+          _abbr "\u2718", title: 'No PODLINGNAMESEARCH found'
         elsif @results.resolution == 'Fixed'
           _a "\u2714", href: 'https://issues.apache.org/jira/browse/' +
             @results.issue
