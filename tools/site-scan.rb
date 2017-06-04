@@ -131,6 +131,8 @@ end
 
 #########################################################################
 
+IMAGE_DIR = ASF::SVN.find('asf/infrastructure/site/trunk/content/img')
+
 def parse(id, site, name)
   uri, response, status = $cache.get(id, site)
   $stderr.puts "#{id} #{uri} #{status}"
@@ -147,6 +149,7 @@ def parse(id, site, name)
     security: nil,
     trademarks: nil,
     copyright: nil,
+    image: nil,
   }
 
   # scan each link
@@ -215,6 +218,12 @@ def parse(id, site, name)
       data[:copyparent] = p if p
     end
   end
+
+  # see if image has been uploaded
+  if IMAGE_DIR
+    data[:image] = Dir["#{IMAGE_DIR}/#{id}.*"].first
+  end
+
   return data
 end
 
@@ -267,6 +276,8 @@ else
     results[committee.name] = parse(committee.name, committee.site, committee.display_name)
   end
 end
+
+# Output results
 if outfile
   File.write(outfile, JSON.pretty_generate(results))
 else
