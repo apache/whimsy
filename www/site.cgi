@@ -158,7 +158,9 @@ _html do
             cols.each do |col|
               cls = label(analysis, links, col, project)
               _tr do
-                _td col.capitalize
+                _td do
+                  _a col.capitalize, href: "../check/#{col}"
+                end
 
                 if links[col] =~ /^https?:/
                   _td class: cls do
@@ -202,7 +204,7 @@ _html do
 	    sites.each do |n, links|
               _tr class: label(analysis, links, col, n) do
                 _td do 
-                  _a links['display_name'], href: links['uri']
+                  _a links['display_name'], href: "../project/#{n}"
                 end
 
                 if links[col] =~ /^https?:/
