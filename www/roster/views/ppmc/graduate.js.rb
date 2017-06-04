@@ -49,24 +49,36 @@ class PPMCGraduate < React
     end
   end
 
+  def resize(textarea)
+    textarea.css('height', 0)
+    textarea.css('height', Math.max(50, textarea[0].scrollHeight)+'px')
+  end
+
   def componentDidMount()
     textarea = jQuery('#graduate textarea')
 
     jQuery('#graduate').on('show.bs.modal') do |event|
       @project = @@ppmc.display_name
-      @description = @@ppmc.description
+      @description = @@ppmc.description.gsub(/\s+/, ' ').strip().
+        sub(/^(Apache )?#{@@ppmc.display_name}\s(is )?/, '').sub(/\.$/, '')
 
-      textarea.css('height', 0)
-      textarea.css('height',Math.max(50, textarea[0].scrollHeight)+'px')
+      self.resize(textarea)
 
       @owners = @@ppmc.owners.
         map {|id| {id: id, name: @@ppmc.roster[id].name}}.
         sort_by {|person| person.name}
     end
 
-    textarea.on('keyup') do |event|
-      textarea.css('height', 0)
-      textarea.css('height', Math.max(50, textarea[0].scrollHeight)+'px')
+    jQuery('#graduate').on('shown.bs.modal') do |event|
+      self.resize(textarea)
     end
+
+    textarea.on('keyup') do |event|
+      self.resize(textarea)
+    end
+  end
+
+  def componentDidUpdate()
+    self.resize(jQuery('#graduate textarea'))
   end
 end

@@ -12,7 +12,7 @@ WHEREAS, the Board of Directors deems it to be in the best interests of the
 Foundation and consistent with the Foundation's purpose to establish a Project
 Management Committee charged with the creation and maintenance of open-source
 software, for distribution at no charge to the public, related to
-#{@description}
+#{@description}.
 
 NOW, THEREFORE, BE IT RESOLVED, that a Project Management Committee (PMC), to
 be known as the "Apache #{podling.display_name} Project", be and hereby is
