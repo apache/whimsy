@@ -309,13 +309,13 @@ def display
   warns = tests(:W)
 
   if !fatals.empty?
-    _h2_ "The mirror at #@url failed our checks:"
+    _h2_.bg_danger "The mirror at #@url failed our checks:"
   elsif !errors.empty?    
-    _h2_ "The mirror at #@url has some problems:"
+    _h2_.bg_warning "The mirror at #@url has some problems:"
   elsif !warns.empty?
-    _h2_ "The mirror at #@url has some minor issues"
+    _h2_.bg_warning "The mirror at #@url has some minor issues"
   else
-    _h2_ "The mirror at #@url looks OK, thanks for using this service"
+    _h2_.bg_success "The mirror at #@url looks OK, thanks for using this service"
   end
 
   if @fails > 0
