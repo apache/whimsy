@@ -14,6 +14,8 @@ Danger - unexpected text in log file
 
 require 'fileutils'
 
+SUMMARY_RE = %r{^ \d+ files? changed(, \d+ insertions?\(\+\))?(, \d+ deletions?\(-\))?$}
+
 def Monitor.git(previous_status)
   logdir = File.expand_path('../../../logs', __FILE__)
   log = File.join(logdir, 'git-pull')
@@ -38,7 +40,7 @@ def Monitor.git(previous_status)
     level = 'success'
     title = nil
     data = revision = update[/^(Already up-to-date.|Updating [0-9a-f]+\.\.[0-9a-f]+)$/]
-    title = update[/^ \d+ files? changed(, \d+ insertions\(\+\))?(, \d+ deletions\(-\))?$/]
+    title = update[SUMMARY_RE]
     show 'data', data
 
     lines = update.split("\n")
@@ -53,15 +55,16 @@ def Monitor.git(previous_status)
       'Fast-forward',
       'Updating ',
       ' create mode ',
-      # TODO Should these 2 lines be handled differently?
+      # TODO Should these 3 lines be handled differently?
       'From git://',
       ' * [new branch]',
+      'From https://',
     ]
       
     lines.reject! do |line| 
       line.start_with?(*start_ignores) or
-      line =~ /^ \d+ files? changed(, \d+ insertions\(\+\))?(, \d+ deletions\(-\))?$/ or
-      line =~  /^ +[0-9a-f]+\.\.[0-9a-f]+ +\S+ -> \S+$/ # branch
+      line =~ SUMMARY_RE or
+      line =~  /^ +[0-9a-f]+\.\.[0-9a-f]+ +\S+ +-> \S+$/ # branch
     end
 
     unless lines.empty?
@@ -70,7 +73,7 @@ def Monitor.git(previous_status)
     end
 
     # Drop the individual file details
-    lines.reject! {|line| line =~  /^ \S+ +\| [ \d]\d+ /}
+    lines.reject! {|line| line =~  /^ \S+ +\|  ?\d+ /}
 
     show 'lines', lines
     if lines.empty?
@@ -174,3 +177,11 @@ Fast-forward
 
 /x1/srv/git/letsencrypt
 Already up-to-date.
+
+/x1/srv/git/letsencrypt2
+From https://github.com/letsencrypt/letsencrypt
+   d25069d..6ee934b  master     -> origin/master
+Updating d25069d..6ee934b
+Fast-forward
+ certbot-route53/certbot_route53/authenticator.py | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
