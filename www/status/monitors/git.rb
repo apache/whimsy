@@ -58,7 +58,8 @@ def Monitor.git(previous_status)
       
     lines.reject! do |line| 
       line.start_with?(*start_ignores) or
-      line =~ /^ \d+ files changed, \d+ insertions\(\+\), \d+ deletions\(-\)$/
+      line =~ /^ \d+ files? changed, \d+ insertions\(\+\), \d+ deletions\(-\)$/ or
+      line =~  /^ +[0-9a-f]+\.\.[0-9a-f]+ +\S+ -> \S+$/ # branch
     end
 
     unless lines.empty?
@@ -67,7 +68,7 @@ def Monitor.git(previous_status)
     end
 
     # Drop the individual file details
-    lines.reject! {|line| line =~  /^ \S+ +\| [ \d]\d /}
+    lines.reject! {|line| line =~  /^ \S+ +\| [ \d]\d+ /}
 
     show 'lines', lines
     if lines.empty?
@@ -151,6 +152,16 @@ Your branch is up-to-date with 'origin/deployment'.
 From git://git.apache.org/infrastructure-puppet
  * [new branch]      humbedooh/multimail-1.5 -> origin/humbedooh/multimail-1.5
 Already up-to-date.
+
+/x1/srv/git/infrastructure-puppet4
+Already on 'deployment'
+Your branch is up-to-date with 'origin/deployment'.
+From git://git.apache.org/infrastructure-puppet
+   83e4220..7394a6e  deployment -> origin/deployment
+Updating 83e4220..7394a6e
+Fast-forward
+ modules/gitbox/files/asfgit/git_multimail.py | 1009 +++++++++++++++++++-------
+ 1 file changed, 737 insertions(+), 272 deletions(-)
 
 /x1/srv/git/letsencrypt
 Already up-to-date.
