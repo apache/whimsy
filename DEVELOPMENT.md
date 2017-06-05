@@ -181,7 +181,8 @@ If there is a `Gemfile` in the directory containing the script or application
 you wish to run, dependencies needed for execution can be installed using the
 command `bundle install`.  Similarly, if starting from scratch you 
 may need `gem install rake`.  Periodically if underlying gems like 
-wunderbar are updated, you may need `bundle update`.
+wunderbar are updated, you may need `bundle update`.  
+See also [How To: Keep Your Local Environment Updated](#how-to-keep-your-local-environment-updated)
 
 1. CGI applications can be run from a command line, and produce output to
    standard out.  If you would prefer to see the output in a browser, you
@@ -277,6 +278,37 @@ you have locally from repository.yml.
 Note also that sometimes you may need to `bundle exec *command*` instead 
 of just doing `bundle *command*`, since using the exec uses a subtly 
 different set of gem versions from the local directory.
+
+### How To: Authenticate/Authorize Your Scripts
+
+User authentication for any CGI script is provided by the http server's 
+LDAP module, and can be done by by adding the path to the CGI in the 
+deployment descriptor for the server under the appropriate `authldap` realm:
+
+https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm4.apache.org.yaml#L127
+
+Note that the LDAP module does not currently handle boolean conditions
+(example: members **or** officers).  The way to handle this is to do
+authentication in two passes.  The first pass will be done by the Apache
+http server, and verify that the user is a part of the most inclusive group
+(typically: committers).  That is done as above in `authldap`.
+
+The CGI scripts that need to do more specific authorization will need to
+check `ASF::Auth` in their code, and output a "Status: 401 Unauthorized" 
+line if access to the tool is **not** permitted for the user.
+
+```ruby
+require 'whimsy/asf/rack' # Ensures server auth is passed thru
+require 'whimsy/asf' # Provides ASF::Auth class
+
+user = ASF::Auth.decode(env = {})
+unless user.asf_member? or ASF.pmc_chairs.include? user
+  print "Status: 401 Unauthorized\r\n"
+  print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
+  exit
+end
+```
+
 
 Whimsy On Windows
 =================
