@@ -729,20 +729,21 @@ module ASF
     end
 
     # create an LDAP group for this project
-    def create(people)
-      people = Array(people).map(&:dn)
+    def create(owners, committers=nil)
+      owners = Array(owners).map(&:dn)
+      committers = Array(committers || owners).map(&:dn)
 
       entry = [
         ASF::Base.mod_add('objectClass', ['groupOfNames', 'top']),
         ASF::Base.mod_add('cn', name), 
-        ASF::Base.mod_add('member', people),
-        ASF::Base.mod_add('owner', people)
+        ASF::Base.mod_add('owner', owners),
+        ASF::Base.mod_add('member', committers),
       ]
 
       ASF::LDAP.add("cn=#{name},#{base}", entry)
 
-      self.owners = people
-      self.members = people
+      self.owners = owners
+      self.members = committers
     end
 
     def members=(members)
@@ -775,7 +776,7 @@ module ASF
       remove_members(people)
     end
 
-    # remove people as owners project
+    # remove people as owners of a project
     def remove_owners(people)
       @owners = nil
       removals = (Array(people) & owners).map(&:dn)
@@ -863,6 +864,59 @@ module ASF
       end
 
       members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+    end
+
+    # transitional methods
+    def owners
+      if name == 'incubator'
+        ASF::Project.find('incubator').owners
+      else
+        members
+      end
+    end
+
+    def committers
+      if name == 'incubator'
+        ASF::Project.find('incubator').members
+      else
+        ASF::Group.find(name).members
+      end
+    end
+
+    # remove people as owners of a project
+    def remove_owners(people)
+      if name == 'incubator'
+        ASF::Project.find('incubator').remove_owners(people)
+      else
+        remove(people)
+      end
+    end
+
+    # remove people as members of a project
+    def remove_committers(people)
+      if name == 'incubator'
+        ASF::Project.find('incubator').remove_members(people)
+      else
+        ASF::Group.find(name).remove(people)
+      end
+    end
+
+    # add people as owners of a project
+    def add_owners(people)
+      if name == 'incubator'
+        ASF::Project.find('incubator').add_owners(people)
+      else
+        add(people)
+      end
+    end
+
+    # add people as members of a project
+    def add_committers(people)
+      if name == 'incubator'
+        ASF::Project.find('incubator').add_members(people)
+      else
+        ASF::Group.find(name).add(people)
+      end
     end
 
     def dn
