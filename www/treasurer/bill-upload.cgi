@@ -5,6 +5,8 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery'
 require 'whimsy/asf'
+require 'tmpdir'
+require 'escape'
 
 
 user = ASF::Person.new($USER)
@@ -98,13 +100,25 @@ _html do
             if @source and not @source.empty?
               @message += "\n\nFunding source: #{@source}" 
             end
-            # add file to svn (--revision 0 means it won't overwrite an existing file)
             _p 'Log of your upload/checkin follows:'
-            _.system ['svnmucc', '--revision', '0', '--message', @message,
-               ['--no-auth-cache', '--non-interactive'],
-               (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
-              '--', 'put', '-', File.join(bills, @dest, name)],
-              stdin: @file
+
+            Dir.mktmpdir do |tmpdir|
+              tmpdir.untaint
+
+              _.system ['svn', 'checkout', File.join(bills, @dest), tmpdir,
+                '--depth=empty',
+                ['--no-auth-cache', '--non-interactive'],
+                (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)]
+
+              Dir.chdir tmpdir do
+                File.write(name, @file.read)
+                _.system ['svn', 'add', name]
+
+                _.system ['svn', 'commit', name, '--message', @message,
+                  ['--no-auth-cache', '--non-interactive'],
+                  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)]
+              end
+            end
           end
         end
       end
