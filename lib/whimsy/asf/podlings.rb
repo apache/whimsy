@@ -88,6 +88,11 @@ module ASF
       @reporting
     end
 
+    # provides a concatenated reporting schedule
+    def schedule
+      self.reporting + self.monthly
+    end
+
     # list of podlings
     def self.list
       incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
@@ -218,6 +223,8 @@ module ASF
           group: group
         }
         hash[:reporting][:text] = r.text if r.text.length > 0
+        hash[:reporting][:monthly] = r.text.split(/,\s*/) if r['monthly']
+        hash[:reporting][:schedule] = self.schedule
       else
         hash[:reporting] = r if r
       end
