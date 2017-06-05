@@ -51,6 +51,9 @@ def Monitor.git(previous_status)
       '  (use "git pull" ',
       'Fast-forward',
       'Updating ',
+      # TODO Should these 2 lines be handled differently?
+      'From git://',
+      ' * [new branch]',
     ]
       
     lines.reject! do |line| 
@@ -140,6 +143,13 @@ Fast-forward
 /x1/srv/git/infrastructure-puppet2
 Already on 'deployment'
 Your branch is up-to-date with 'origin/deployment'.
+Already up-to-date.
+
+/x1/srv/git/infrastructure-puppet3
+Already on 'deployment'
+Your branch is up-to-date with 'origin/deployment'.
+From git://git.apache.org/infrastructure-puppet
+ * [new branch]      humbedooh/multimail-1.5 -> origin/humbedooh/multimail-1.5
 Already up-to-date.
 
 /x1/srv/git/letsencrypt
