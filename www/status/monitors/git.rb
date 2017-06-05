@@ -38,6 +38,7 @@ def Monitor.git(previous_status)
     level = 'success'
     title = nil
     data = revision = update[/^(Already up-to-date.|Updating [0-9a-f]+\.\.[0-9a-f]+)$/]
+    title = update[/^ \d+ files? changed(, \d+ insertions\(\+\))?(, \d+ deletions\(-\))?$/]
     show 'data', data
 
     lines = update.split("\n")
@@ -51,6 +52,7 @@ def Monitor.git(previous_status)
       '  (use "git pull" ',
       'Fast-forward',
       'Updating ',
+      ' create mode ',
       # TODO Should these 2 lines be handled differently?
       'From git://',
       ' * [new branch]',
@@ -58,7 +60,7 @@ def Monitor.git(previous_status)
       
     lines.reject! do |line| 
       line.start_with?(*start_ignores) or
-      line =~ /^ \d+ files? changed, \d+ insertions\(\+\), \d+ deletions\(-\)$/ or
+      line =~ /^ \d+ files? changed(, \d+ insertions\(\+\))?(, \d+ deletions\(-\))?$/ or
       line =~  /^ +[0-9a-f]+\.\.[0-9a-f]+ +\S+ -> \S+$/ # branch
     end
 
@@ -78,10 +80,6 @@ def Monitor.git(previous_status)
         seen_level[level] = true
       elsif String  === data
         title = "No files updated"
-      elsif data.length == 1
-        title = "1 file updated"
-      else
-        title = "#{data.length} files updated"
       end
 
       data << revision if revision and data.instance_of? Array
@@ -162,6 +160,17 @@ Updating 83e4220..7394a6e
 Fast-forward
  modules/gitbox/files/asfgit/git_multimail.py | 1009 +++++++++++++++++++-------
  1 file changed, 737 insertions(+), 272 deletions(-)
+
+/x1/srv/git/infrastructure-puppet5
+Already on 'deployment'
+Your branch is up-to-date with 'origin/deployment'.
+From git://git.apache.org/infrastructure-puppet
+   f827a83..b649da5  deployment -> origin/deployment
+Updating f827a83..b649da5
+Fast-forward
+ .../git_mirror_asf/files/bin/graduate-podling.py   | 159 +++++++++++++++++++++
+ 1 file changed, 159 insertions(+)
+ create mode 100644 modules/git_mirror_asf/files/bin/graduate-podling.py
 
 /x1/srv/git/letsencrypt
 Already up-to-date.
