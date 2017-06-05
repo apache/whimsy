@@ -81,9 +81,9 @@ class PPMC < React
     _h2.reporting! 'Reporting Schedule'
     _ul do
       _li @ppmc.schedule.join(', ')
-
+      _li "Monthly: #{@ppmc.monthly.join (', ')}" if @ppmc.monthly and !@ppmc.monthly.empty?
       _li do
-        _a 'Prior reports', href: 'https://whimsy.apache.org/board/minutes/' +
+        _a 'Prior Board Reports', href: 'https://whimsy.apache.org/board/minutes/' +
           @ppmc.display_name.gsub(/\s+/, '_')
       end
     end

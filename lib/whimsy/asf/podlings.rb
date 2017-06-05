@@ -5,7 +5,7 @@ require_relative '../asf'
 module ASF
   class Podling
     include Enumerable
-    attr_accessor :name, :resource, :resourceAliases, :status, :description, :mentors, :champion, :reporting
+    attr_accessor :name, :resource, :resourceAliases, :status, :description, :mentors, :champion, :reporting, :monthly
 
     # three consecutive months, starting with this one
     def quarter
@@ -30,7 +30,8 @@ module ASF
       @mentors = node.search('mentor').map {|mentor| mentor['username']}
       @champion = node.at('champion')['availid'] if node.at('champion')
 
-      @reporting = node.at('reporting')
+      @reporting = node.at('reporting') if node.at('reporting')
+      @monthly = @reporting.text.split(/,\s*/) if @reporting and @reporting.text
 
       # Note: the following optional elements are not currently processed:
       # - resolution
@@ -79,16 +80,9 @@ module ASF
     def reporting
       if @reporting.instance_of? Nokogiri::XML::Element
         group = @reporting['group']
-        monthly = @reporting.text.split(/,\s*/) if @reporting['monthly']
         @reporting = %w(January April July October) if group == '1'
         @reporting = %w(February May August November) if group == '2'
         @reporting = %w(March June September December) if group == '3'
-        @reporting.rotate! until quarter.include? @reporting.first
-
-        if monthly
-          monthly.shift until monthly.empty? or quarter.include? monthly.first
-          @reporting = (monthly + @reporting).uniq
-        end
       end
 
       @reporting
@@ -224,7 +218,6 @@ module ASF
           group: group
         }
         hash[:reporting][:text] = r.text if r.text.length > 0
-        hash[:reporting][:monthly] = r.text.split(/,\s*/) if r['monthly']
       else
         hash[:reporting] = r if r
       end
