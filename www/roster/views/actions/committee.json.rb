@@ -7,11 +7,11 @@ if env.password
   if @targets.include? 'pmc' or @targets.include? 'commit'
     ASF::LDAP.bind(env.user, env.password) do
       if @action == 'add'
-        pmc.add(people) if pmc
-        group.add(people) if group
+        pmc.add_owners(people) if pmc
+        pmc.add_committers(people) if group
       elsif @action == 'remove'
-        pmc.remove(people) if pmc
-        group.remove(people) if group
+        pmc.remove_owners(people) if pmc
+        pmc.remove_committers(people) if group
       end
     end
   end
@@ -94,16 +94,19 @@ if env.password
   end
 
   details = people.map {|person| person.dn}
-  details << group.dn if group
-  details << pmc.dn if pmc
+  if pmc.id == 'incubator'
+    details << "#{pmc.dn};attr=owner" if pmc
+    details << "#{pmc.dn};attr=member" if group
+  else
+    details << pmc.dn if pmc
+    details << group.dn if group
+  end
 
   pmc ||= ASF::Committee.find(@project)
   from = ASF::Person.find(env.user)
 
   # identify what has changed
-  if @targets.include? 'mentor'
-    target = 'mentors'
-  elsif @targets.include? 'pmc'
+  if @targets.include? 'pmc'
     target = 'PMC'
   else
     target = 'committers'

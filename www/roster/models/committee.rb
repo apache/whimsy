@@ -3,11 +3,12 @@ class Committee
     response = {}
 
     pmc = ASF::Committee.find(id)
-    committers = ASF::Group.find(id).members
-    return if pmc.members.empty? and committers.empty?
+    members = pmc.members
+    committers = pmc.committers
+    return if members.empty? and committers.empty?
 
     ASF::Committee.load_committee_info
-    people = ASF::Person.preload('cn', (pmc.members + committers).uniq)
+    people = ASF::Person.preload('cn', (members + committers).uniq)
 
     lists = ASF::Mail.lists(true).select do |list, mode|
       list =~ /^#{pmc.mail_list}\b/
@@ -45,7 +46,7 @@ class Committee
       report: pmc.report,
       site: pmc.site,
       established: pmc.established,
-      ldap: Hash[pmc.members.map {|person| [person.id, person.cn]}],
+      ldap: Hash[members.map {|person| [person.id, person.cn]}],
       committers: Hash[committers.map {|person| [person.id, person.cn]}],
       asfmembers: (ASF.members & people).map(&:id),
       roster: pmc.roster,

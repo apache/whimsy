@@ -8,7 +8,12 @@ class PMC < React
   end
 
   def render
-    auth = (@@auth.id == @committee.chair or @@auth.secretary or @@auth.root)
+    if @committee.name == 'incubator'
+      auth = (@@auth.secretary or @@auth.root or
+        @committee.ldap.keys().include? @@auth.id)
+    else
+      auth = (@@auth.id == @committee.chair or @@auth.secretary or @@auth.root)
+    end
 
     # add jump links to main sections of page
     _div.breadcrumbs do
