@@ -37,7 +37,7 @@ Whimsy Architecture - Live Instance
 Whimsy is run in an Apache hosted VM with httpd, Rack, Ruby, and variety of other tools 
 that directly interface with various parts of Apache organziational records.
 
-Details by content type:
+Details for each type of deployed tool or script:
 
  * **Static content**  Changes pushed to GitHub master will be
    automatically deployed every 30 minutes.  Note that this includes the
@@ -55,20 +55,21 @@ Details by content type:
     https://github.com/apache/whimsy/blob/master/www/test.cgi
     https://whimsy.apache.org/test.cgi
 
-   Many CGI scripts will require user authentication.  This is done by adding
-   a single line to the deployment data identifying the location of the
-   script:
+ * **Authentication for CGI Scripts** User authentication for any CGI 
+   script is provided by the http server's LDAP module, and can be 
+   done by by adding the path to the CGI in the deployment descriptor
+   for the server under the appropriate `authldap` realm:
 
-    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm3.apache.org.yaml#L126
+    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm4.apache.org.yaml#L127
 
    Note that the LDAP module does not currently handle boolean conditions
    (example: members or officers).  The way to handle this is to do
    authentication in two passes.  The first pass will be done by the Apache
-   web server, and verify that the user is a part of the most inclusive group
-   (typically: committers).  The CGI scripts that need to do more will need to
+   http server, and verify that the user is a part of the most inclusive group
+   (typically: committers).  The CGI scripts that need to do more authorization will need to
    perform additional checks, and output a "Status: 401 Unauthorized" as the
    first line of their output if access to this tool is not permitted for the
-   user.
+   user (example script: www/officers/acreq.cgi).
 
  * **Rack applications** run under
    [Phusion Passenger](https://www.phusionpassenger.com/) under Apache httpd.
@@ -79,20 +80,23 @@ Details by content type:
    A sample rack application (two empty directories, and a one line file):
 
     https://github.com/apache/whimsy/tree/master/www/racktest
+    
     https://whimsy.apache.org/racktest
 
    Authentication requirements will also need to be two phase, like with CGI
    above; but more common conditions can be handled at the "Rack" level
    instead of at the application level making use of Rack middleware such as:
 
-    https://github.com/apache/whimsy/blob/master/lib/whimsy/asf/rack.rb#L57
+    https://github.com/apache/whimsy/blob/master/lib/whimsy/asf/rack.rb#L56
     
  * **Cron jobs** are managed by puppet.  See [deployment](DEPLOYMENT.md) for more
    information.
    
  * **Generated JSON data** files are automatically generated into 
    the [`/public`](https://whimsy.apache.org/public/) directory, to 
-   cache freqently used data for whimsy and other applications. 
+   cache freqently used data for whimsy and other applications.  These 
+   are usually run from a cron calling a www/roster/public_*.rb file.
+   See also an [overview of data dependencies and flow](https://whimsy.apache.org/test/dataflow.cgi). 
   
  * **Data models** for many Whimsy tools are in `lib/whimsy/asf`, and 
    most **views** for tools are stored in `www`.  Note what Whimsy has 
