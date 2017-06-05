@@ -55,21 +55,7 @@ Details for each type of deployed tool or script:
     https://github.com/apache/whimsy/blob/master/www/test.cgi
     https://whimsy.apache.org/test.cgi
 
- * **Authentication for CGI Scripts** User authentication for any CGI 
-   script is provided by the http server's LDAP module, and can be 
-   done by by adding the path to the CGI in the deployment descriptor
-   for the server under the appropriate `authldap` realm:
-
-    https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm4.apache.org.yaml#L127
-
-   Note that the LDAP module does not currently handle boolean conditions
-   (example: members or officers).  The way to handle this is to do
-   authentication in two passes.  The first pass will be done by the Apache
-   http server, and verify that the user is a part of the most inclusive group
-   (typically: committers).  The CGI scripts that need to do more authorization will need to
-   perform additional checks, and output a "Status: 401 Unauthorized" as the
-   first line of their output if access to this tool is not permitted for the
-   user (example script: www/officers/acreq.cgi).
+ * **Authentication for CGI Scripts** See the [DEVELOPMENT.md FAQ](./DEVELOPMENT.md#how-to-authenticateauthorize-your-scripts).
 
  * **Rack applications** run under
    [Phusion Passenger](https://www.phusionpassenger.com/) under Apache httpd.
