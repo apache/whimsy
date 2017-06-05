@@ -52,6 +52,7 @@ class PPMC
       display_name: ppmc.display_name,
       description: ppmc.description,
       schedule: ppmc.reporting,
+      monthly: ppmc.monthly,
       established: ppmc.startdate.to_s,
       mentors: ppmc.mentors,
       owners: ppmc.owners.map {|person| person.id},
