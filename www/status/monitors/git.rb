@@ -64,7 +64,8 @@ def Monitor.git(previous_status)
     lines.reject! do |line| 
       line.start_with?(*start_ignores) or
       line =~ SUMMARY_RE or
-      line =~  /^ +[0-9a-f]+\.\.[0-9a-f]+ +\S+ +-> \S+$/ # branch
+      line =~  /^ +[0-9a-f]+\.\.[0-9a-f]+ +\S+ +-> \S+$/ or # branch
+      line =~  /^ +\+ [0-9a-f]+\.\.\.[0-9a-f]+ +\S+ +-> \S+ +\(forced update\)$/ # branch
     end
 
     unless lines.empty?
@@ -89,6 +90,7 @@ def Monitor.git(previous_status)
     else
       level = 'danger'
       data = lines.dup
+      title = nil
       seen_level[level] = true
     end
 
@@ -185,3 +187,14 @@ Updating d25069d..6ee934b
 Fast-forward
  certbot-route53/certbot_route53/authenticator.py | 6 +-----
  1 file changed, 1 insertion(+), 5 deletions(-)
+
+/x1/srv/git/letsencrypt3
+From https://github.com/letsencrypt/letsencrypt
+   0e4f559..2325438  master     -> origin/master
+ + 9564bce...e40eba0 fix-oldest-tests -> origin/fix-oldest-tests  (forced update)
+   8061f7a..41098b3  ipv6       -> origin/ipv6
+Updating 0e4f559..2325438
+Fast-forward
+ certbot-route53/certbot_route53/authenticator.py      | 14 +++++++++-----
+ certbot-route53/certbot_route53/authenticator_test.py | 18 +++++++-----------
+ 2 files changed, 16 insertions(+), 16 deletions(-)
