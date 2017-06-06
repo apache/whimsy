@@ -82,9 +82,9 @@ def public_json_output_file(info, file)
 end
 
 def sendMail(subject, body, to='Notification List <notifications@whimsical.apache.org>')
-  hostname = `hostname`.chomp
-  if not hostname.include? 'vm4'
-    Wunderbar.info "Did not detect vm4 in #{hostname}, not sending mail: #{subject}"
+  require_relative '../whimsy'
+  if not Whimsy.master?
+    Wunderbar.info "Did not detect master status, not sending mail: #{subject}"
     return
   end
   begin
