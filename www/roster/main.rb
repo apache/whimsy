@@ -167,6 +167,14 @@ get '/podlings' do
   _html :podlings
 end
 
+# gives a list of podlings that would report in a given month based on current status
+get '/podlings/reporting/:month.json' do |month|
+  _json ASF::Podling.list
+            .select { |p| p.status == 'current' }
+            .select { |p| (p.reporting.include? month if p.reporting) || (p.monthly.include? month if p.monthly) }
+            .map { |p| { id: p.id, name: p.name, list: p.dev_mail_list } }
+end
+
 # posted actions
 post '/actions/:file' do
   _json :"actions/#{params[:file]}"
