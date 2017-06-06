@@ -233,6 +233,36 @@ module ASF
       hash
     end
 
+    # parse (and cache) names mentioned in podlingnamesearches
+    def self.namesearch
+      # cache JIRA response
+      cache = "#{ASF::Config.get(:cache)}/pns.jira"
+      if not File.exist?(cache) or File.mtime(cache) > Time.now - 300
+        query = 'https://issues.apache.org/jira/rest/api/2/search?' +
+          'jql=project=PODLINGNAMESEARCH&fields=summary,resolution'
+        File.write cache, Net::HTTP.get(URI(query))
+      end
+
+      # parse JIRA titles for proposed name
+      issues = JSON.parse(File.read(cache))['issues'].map do |issue|
+        title = issue['fields']['summary']
+        name = title[/"Apache ([A-Z].*?)"/, 1]
+        name ||= title[/'Apache ([A-Z].*?)'/, 1]
+        name ||= title[/.*Apache ([A-Z]\S*)/, 1]
+        name ||= title.gsub('Apache', '')[/.*\b([A-Z]\S*)/, 1]
+        next unless name
+        resolution = issue['fields']['resolution']
+        resolution = resolution ? resolution['name'] : 'Unresolved'
+        [name, {issue: issue['key'], resolution: resolution}]
+      end
+
+      issues.sort.to_h
+    end
+
+    # return podlingnamesearch for this podling
+    def namesearch
+      Podling.namesearch[display_name]
+    end
   end
 
   # more backwards compatibility
