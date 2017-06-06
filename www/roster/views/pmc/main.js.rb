@@ -8,7 +8,7 @@ class PMC < React
   end
 
   def render
-    if @committee.name == 'incubator'
+    if @committee.id == 'incubator'
       auth = (@@auth.secretary or @@auth.root or
         @committee.ldap.keys().include? @@auth.id)
     else
@@ -17,11 +17,11 @@ class PMC < React
 
     # add jump links to main sections of page
     _div.breadcrumbs do
-      _a 'PMC', :href => "committee/#{@committee[:id]}#pmc"
+      _a 'PMC', :href => "committee/#{@committee.id}#pmc"
       _span " \u00BB "
-      _a 'Mail Moderators', :href => "committee/#{@committee[:id]}#mail"
+      _a 'Mail Moderators', :href => "committee/#{@committee.id}#mail"
       _span " \u00BB "
-      _a 'Reporting Schedule', :href => "committee/#{@committee[:id]}#reporting"
+      _a 'Reporting Schedule', :href => "committee/#{@committee.id}#reporting"
     end
 
     # header
