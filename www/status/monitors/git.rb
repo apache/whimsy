@@ -55,6 +55,7 @@ def Monitor.git(previous_status)
       'Fast-forward',
       'Updating ',
       ' create mode ',
+      ' rename ',
       # TODO Should these 3 lines be handled differently?
       'From git://',
       ' * [new branch]',
@@ -74,7 +75,12 @@ def Monitor.git(previous_status)
     end
 
     # Drop the individual file details
-    lines.reject! {|line| line =~  /^ \S+ +\|  ?\d+ /}
+    lines.reject! {|line|
+      # certbot-route53/certbot_route53/authenticator.py | 6 +-----
+      line =~  /^ \S+ +\|  ?\d+/ or
+      # {certbot-route53 => certbot-dns-route53}/.gitignore          |  0
+      line =~  /^ \S+ => \S+ +\|  ?\d+/
+    }
 
     show 'lines', lines
     if lines.empty?
@@ -198,3 +204,44 @@ Fast-forward
  certbot-route53/certbot_route53/authenticator.py      | 14 +++++++++-----
  certbot-route53/certbot_route53/authenticator_test.py | 18 +++++++-----------
  2 files changed, 16 insertions(+), 16 deletions(-)
+
+/x1/srv/git/letsencrypt4
+From https://github.com/letsencrypt/letsencrypt
+   7531c98..e0f3c05  master     -> origin/master
+   8a46a0c..a8e4143  fix-oldest-tests -> origin/fix-oldest-tests
+   d283103..ca4538b  ipv6       -> origin/ipv6
+Updating 7531c98..e0f3c05
+Fast-forward
+ {certbot-route53 => certbot-dns-route53}/.gitignore          |  0
+ {certbot-route53 => certbot-dns-route53}/LICENSE             |  0
+ {certbot-route53 => certbot-dns-route53}/MANIFEST.in         |  0
+ {certbot-route53 => certbot-dns-route53}/README.md           |  2 +-
+ .../certbot_dns_route53}/__init__.py                         |  0
+ certbot-dns-route53/certbot_dns_route53/authenticator.py     | 12 ++++++++++++
+ .../certbot_dns_route53/dns_route53.py                       |  4 ++--
+ .../certbot_dns_route53/dns_route53_test.py                  |  6 +++---
+ .../examples/sample-aws-policy.json                          |  2 +-
+ {certbot-route53 => certbot-dns-route53}/setup.cfg           |  0
+ {certbot-route53 => certbot-dns-route53}/setup.py            |  7 ++++---
+ .../tools/tester.pkoch-macos_sierra.sh                       |  0
+ certbot/cli.py                                               |  3 +++
+ certbot/plugins/disco.py                                     |  1 +
+ certbot/plugins/selection.py                                 |  5 ++++-
+ tests/letstest/scripts/test_apache2.sh                       |  2 +-
+ tools/venv.sh                                                |  2 +-
+ tools/venv3.sh                                               |  2 +-
+ tox.cover.sh                                                 |  6 +++---
+ tox.ini                                                      |  8 ++++----
+ 20 files changed, 41 insertions(+), 21 deletions(-)
+ rename {certbot-route53 => certbot-dns-route53}/.gitignore (100%)
+ rename {certbot-route53 => certbot-dns-route53}/LICENSE (100%)
+ rename {certbot-route53 => certbot-dns-route53}/MANIFEST.in (100%)
+ rename {certbot-route53 => certbot-dns-route53}/README.md (97%)
+ rename {certbot-route53/certbot_route53 => certbot-dns-route53/certbot_dns_route53}/__init__.py (100%)
+ create mode 100644 certbot-dns-route53/certbot_dns_route53/authenticator.py
+ rename certbot-route53/certbot_route53/authenticator.py => certbot-dns-route53/certbot_dns_route53/dns_route53.py (96%)
+ rename certbot-route53/certbot_route53/authenticator_test.py => certbot-dns-route53/certbot_dns_route53/dns_route53_test.py (97%)
+ rename {certbot-route53 => certbot-dns-route53}/examples/sample-aws-policy.json (91%)
+ rename {certbot-route53 => certbot-dns-route53}/setup.cfg (100%)
+ rename {certbot-route53 => certbot-dns-route53}/setup.py (88%)
+ rename {certbot-route53 => certbot-dns-route53}/tools/tester.pkoch-macos_sierra.sh (100%)
