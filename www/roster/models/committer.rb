@@ -51,7 +51,8 @@ class Committer
 
     response[:committees] = person.committees.map(&:name)
 
-    response[:projects] = person.projects.map(&:name).sort
+    response[:podlings] = 
+      (person.projects.map(&:name) & ASF::Podling.current.map(&:id)).sort
 
     response[:groups] = person.services
     response[:committer] = []

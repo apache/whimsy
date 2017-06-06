@@ -68,12 +68,12 @@ class Person < React
     end
 
     # Podlings
-    unless @committer.projects.empty?
+    unless @committer.podlings.empty?
       _div.row do
 	_div.name 'Podlings'
 	_div.value do
-	  _ul @committer.projects do |project|
-	    _li {_a project, href: "ppmc/#{project}"}
+	  _ul @committer.podlings do |podlings|
+	    _li {_a podlings, href: "ppmc/#{podlings}"}
 	  end
 	end
       end

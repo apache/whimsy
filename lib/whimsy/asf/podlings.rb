@@ -118,6 +118,10 @@ module ASF
       @list
     end
 
+    def self.current
+      list.select {|podling| podling.status == 'current'}
+    end
+
     def self.mtime
       @mtime
     end
