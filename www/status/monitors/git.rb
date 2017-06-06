@@ -100,7 +100,7 @@ def Monitor.git(previous_status)
       seen_level[level] = true
     end
 
-    status[repository] = {level: level, data: data, href: '../logs/svn-update'}
+    status[repository] = {level: level, data: data, href: '../logs/git-pull'}
     status[repository][:title] = title if title
   end
 
