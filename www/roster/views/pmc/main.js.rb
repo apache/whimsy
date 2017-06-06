@@ -53,6 +53,7 @@ class PMC < React
         _span 'Double click on a row to edit.'
         unless @committee.roster.keys().empty?
           _span "  Click on \u2795 to add."
+          _span "  Multiple people can be added with a single confirmation."
         end
       end
     end

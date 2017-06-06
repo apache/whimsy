@@ -58,7 +58,7 @@ class PPMCMembers < React
 
     if @state == :open
       _div.search_box do
-        _CommitterSearch add: self.add, 
+        _CommitterSearch add: self.add, multiple: true,
           exclude: @roster.map {|person| person.id unless person.issue}
       end
     end

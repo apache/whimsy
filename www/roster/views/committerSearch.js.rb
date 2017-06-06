@@ -100,7 +100,13 @@ class CommitterSearch < React
 
               if @@add
                 _tr.alert_success do
-                  _td "Click on \u2795 to add", colspan: 3
+                  _td colspan: 4 do
+                    _span "Click on \u2795 to add."
+                    if @@multiple
+                      _span "  Multiple people can be added with " +
+                       "a single confirmation."
+                    end
+                  end
                 end
               end
             end

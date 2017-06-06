@@ -4,6 +4,8 @@
 
 class PPMCCommitters < React
   def render
+    pending = [] 
+
     if @@ppmc.committers.all? {|id| @@ppmc.owners.include? id}
       _p 'All committers are members of the PPMC'
     else
@@ -21,7 +23,29 @@ class PPMCCommitters < React
           @committers.each do |person|
             next if @@ppmc.owners.include? person.id
             _PPMCCommitter auth: @@auth, person: person, ppmc: @@ppmc
+            pending << person.id if person.status == :pending
           end
+
+	  if pending.length > 1
+	    _tr do
+	      _td colspan: 2
+	      _td data_ids: pending.join(',') do
+
+		# produce a list of ids to be added
+		if pending.length == 2
+		  list = "#{pending[0]} and #{pending[1]}"
+		else
+		  list = pending[0..-2].join(', ') + ", and " +  pending[-1]
+		end
+
+		_button.btn.btn_success 'Add all as committers',
+		  data_action: 'add ppmc committer',
+		  data_target: '#confirm', data_toggle: 'modal',
+		  data_confirmation: "Add #{list} as committers for " +
+		    "#{@@ppmc.display_name} PPMC?"
+	      end
+	    end
+	  end
 
           if @@auth
             _tr onClick: self.select do
@@ -33,7 +57,8 @@ class PPMCCommitters < React
 
       if @state == :open
         _div.search_box do
-          _CommitterSearch add: self.add
+          _CommitterSearch add: self.add, multiple: true,
+            exclude: @committers.map {|person| person.id unless person.issue}
         end
       end
     end
@@ -66,7 +91,7 @@ class PPMCCommitters < React
 
   # add a person to the displayed list of committers
   def add(person)
-    person.date = 'pending'
+    person.status = 'pending'
     @committers << person
     @state = :closed
   end
@@ -94,17 +119,17 @@ class PPMCCommitter < React
 
       if @state == :open
         _td data_ids: @@person.id do 
-          if @@person.date == 'pending'
-            _button.btn.btn_primary 'Add as a committer only',
-              data_action: 'add committer', 
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Grant #{@@person.name} committer access?"
-
+          if @@person.status == 'pending'
             _button.btn.btn_success 'Add as a committer and to the PPMC',
               data_action: 'add ppmc committer', 
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} to the " +
                  "#{@@ppmc.display_name} PPMC and grant committer access?"
+
+            _button.btn.btn_primary 'Add as a committer only',
+              data_action: 'add committer', 
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Grant #{@@person.name} committer access?"
           else
             _button.btn.btn_warning 'Remove as Committer',
               data_action: 'remove committer', 
@@ -134,7 +159,7 @@ class PPMCCommitter < React
   # automatically open pending entries
   def componentWillReceiveProps(newprops)
     @state = :closed if newprops.person.id != self.props.person.id
-    @state = :open if @@person.date == 'pending'
+    @state = :open if @@person.status == 'pending'
   end
 
   # toggle display of buttons

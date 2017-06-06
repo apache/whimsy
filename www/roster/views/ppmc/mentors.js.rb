@@ -58,7 +58,7 @@ class PPMCMentors < React
 
     if @state == :open
       _div.search_box do
-        _CommitterSearch add: self.add, include: @ipmc,
+        _CommitterSearch add: self.add, include: @ipmc, multiple: true,
           exclude: @roster.map {|person| person.id unless person.issue}
       end
     end
