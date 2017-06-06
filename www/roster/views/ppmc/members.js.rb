@@ -48,7 +48,7 @@ class PPMCMembers < React
           end
         end
 
-        if @@auth and not @@ppmc.roster.keys().empty?
+        if @@auth and @@auth.ppmc and not @@ppmc.roster.keys().empty?
           _tr onClick: self.select do
             _td((@state == :open ? '' : "\u2795"), colspan: 4)
           end
@@ -84,7 +84,7 @@ class PPMCMembers < React
 
   # open search box
   def select()
-    return unless @@auth
+    return unless @@auth and @@auth.ppmc
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
   end
@@ -179,7 +179,7 @@ class PPMCMember < React
 
   # toggle display of buttons
   def select()
-    return unless @@auth
+    return unless @@auth and @@auth.ppmc
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
   end

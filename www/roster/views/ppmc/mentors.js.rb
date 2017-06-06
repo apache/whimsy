@@ -48,7 +48,7 @@ class PPMCMentors < React
           end
         end
 
-        if @@auth and not @@ppmc.roster.keys().empty?
+        if @@auth and @@auth.ipmc and not @@ppmc.roster.keys().empty?
           _tr onClick: self.select do
             _td((@state == :open ? '' : "\u2795"), colspan: 4)
           end
@@ -84,7 +84,7 @@ class PPMCMentors < React
 
   # fetch IPMC list
   def componentDidMount()
-    return unless @@auth
+    return unless @@auth and @@auth.ipmc
     Polyfill.require(%w(Promise fetch)) do
       fetch('committee/incubator.json', credentials: 'include').then {|response|
 	if response.status == 200
@@ -102,7 +102,7 @@ class PPMCMentors < React
 
   # open search box
   def select()
-    return unless @@auth
+    return unless @@auth and @@auth.ipmc
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
   end
@@ -195,7 +195,7 @@ class PPMCMentor < React
 
   # toggle display of buttons
   def select()
-    return unless @@auth
+    return unless @@auth and @@auth.ipmc
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
   end

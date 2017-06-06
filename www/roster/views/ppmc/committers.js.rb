@@ -47,7 +47,7 @@ class PPMCCommitters < React
 	    end
 	  end
 
-          if @@auth
+          if @@auth and @@auth.ppmc
             _tr onClick: self.select do
               _td((@state == :open ? '' : "\u2795"), colspan: 3)
             end
@@ -84,7 +84,7 @@ class PPMCCommitters < React
 
   # open search box
   def select()
-    return unless @@auth
+    return unless @@auth and @@auth.ppmc
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
   end
@@ -164,7 +164,7 @@ class PPMCCommitter < React
 
   # toggle display of buttons
   def select()
-    return unless @@auth
+    return unless @@auth and @@auth.ppmc
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
   end

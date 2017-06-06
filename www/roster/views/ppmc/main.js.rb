@@ -8,8 +8,10 @@ class PPMC < React
   end
 
   def render
-    auth = @@auth and (@@auth.secretary or @@auth.root or
-      @ppmc.owners.include? @@auth.id)
+    if @@auth
+      @@auth.ppmc = (@@auth.secretary or @@auth.root or
+        @ppmc.owners.include? @@auth.id)
+    end
 
     # header
     _h1 do
@@ -21,9 +23,16 @@ class PPMC < React
     _p @ppmc.description
 
     # usage information for authenticated users (PMC chair, etc.)
-    if auth
+    if @@auth.ppmc or @@auth.ipmc
       _div.alert.alert_success do
-        _span 'Double click on a row to show actions.'
+        if (@@auth.ppmc and @@auth.ipmc) or @@auth.root or @@auth.secretary
+          _span 'Double click on a row to show actions.'
+        elsif @@auth.ppmc
+          _span 'Double click on a PPMC or Committers row to show actions.'
+        else
+          _span 'Double click on a Mentors row to show actions.'
+        end
+
         unless @ppmc.roster.keys().empty?
           _span "  Click on \u2795 to add."
           _span "  Multiple people can be added with a single confirmation."
@@ -37,9 +46,9 @@ class PPMC < React
     end
 
     # main content
-    _PPMCMentors auth: @@auth.ipmc, ppmc: @ppmc
-    _PPMCMembers auth: auth, ppmc: @ppmc
-    _PPMCCommitters auth: auth, ppmc: @ppmc
+    _PPMCMentors auth: @@auth, ppmc: @ppmc
+    _PPMCMembers auth: @@auth, ppmc: @ppmc
+    _PPMCCommitters auth: @@auth, ppmc: @ppmc
 
     # mailing lists
     if @ppmc.moderators
@@ -92,7 +101,9 @@ class PPMC < React
     _PPMCGraduate ppmc: @ppmc, id: @@auth.id
 
     # hidden form
-    _Confirm action: :ppmc, project: @ppmc.id, update: self.update if auth
+    if @@auth.ppmc or @@auth.ipmc
+      _Confirm action: :ppmc, project: @ppmc.id, update: self.update
+    end
   end
 
   # capture ppmc on initial load
