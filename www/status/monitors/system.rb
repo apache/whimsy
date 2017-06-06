@@ -51,7 +51,7 @@ def Monitor.system(previous_status)
   status[name] = {command: 'Whimsy.master?'}
   # TODO change the false level to warning or danger at some point?
   # N.B. need to compare with true as master may be a string, i.e. 'truthy'
-  status[name] = {level: master == true ? 'success' : 'info',
+  status[name] = {level: master == true ? 'success' : 'warning',
                   data: master.to_s}
 
   {data: status}
