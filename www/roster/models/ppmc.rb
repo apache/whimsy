@@ -60,6 +60,7 @@ class PPMC
       roster: roster,
       mail: Hash[lists.sort],
       moderators: moderators,
+      namesearch: ppmc.namesearch,
     }
 
     response

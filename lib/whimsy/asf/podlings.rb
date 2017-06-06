@@ -228,8 +228,10 @@ module ASF
       else
         hash[:reporting] = r if r
       end
+
       hash[:resource] = resource
       hash[:resourceAliases] = resourceAliases
+      hash[:namesearch] = namesearch if namesearch
       hash
     end
 
