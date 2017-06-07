@@ -156,6 +156,7 @@ end
 project = File.basename(options.remote, '.git')
 
 begin
+  mtime = File.mtime(__FILE__)
   while ps_thread.alive?
     notification = notification_queue.pop
     next unless notification['commit']['project'] == project
@@ -169,6 +170,7 @@ begin
         system 'rake update'
       end
     end
+    next if mtime != File.mtime(__FILE__)
   end
 rescue SignalException => e
   STDERR.puts e
