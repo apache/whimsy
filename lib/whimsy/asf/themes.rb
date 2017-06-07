@@ -100,7 +100,7 @@ class Wunderbar::HtmlMarkup
   end
   
   # Emit a panel with title and body content
-  def _whimsy_panel(title, style: 'panel-default', header: 'h3')
+  def _whimsy_panel(title, style: 'panel-primary', header: 'h3')
     _div.panel class: style do
       _div.panel_heading do 
         _.tag! header, class: 'panel-title' do
@@ -114,7 +114,7 @@ class Wunderbar::HtmlMarkup
   end
   
   # Emit a panel with helpblock and table https://getbootstrap.com/components/#panels-tables
-  def _whimsy_panel_table(title: 'Table Title', style: 'panel-default', header: 'h2', helpblock: nil)
+  def _whimsy_panel_table(title: 'Table Title', style: 'panel-primary', header: 'h2', helpblock: nil)
     _div.panel class: style do
       _div.panel_heading do 
         _.tag! header, class: 'panel-title' do
@@ -187,7 +187,7 @@ class Wunderbar::HtmlMarkup
   end
 
   # Emit complete bootstrap theme, with related links, and helpblock of intro text
-  def _whimsy_body(title: 'MOAR WHIMSY!', subtitle: 'About This Script', related: {}, helpblock: nil)
+  def _whimsy_body(title: 'MOAR WHIMSY!', subtitle: 'About This Script', relatedtitle: 'Related Whimsy Links', related: {}, helpblock: nil)
     _whimsy_nav
     _div.content.container_fluid do
       _div.row do
@@ -197,18 +197,16 @@ class Wunderbar::HtmlMarkup
       end
       _div.row do
         _div.col_md_8 do
-          _whimsy_panel subtitle do
+          _whimsy_panel subtitle, style: "panel-info" do
             if helpblock
               helpblock.call
             else
-              # TODO: make this point to the specific cgi being run
-              _a 'See the code', href: 'https://github.com/apache/whimsy/'
+              _a 'See this code', href: "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}"
             end
-
           end
         end
         _div.col_md_4 do
-          _whimsy_panel "More Whimsy", style: "panel-info" do
+          _whimsy_panel relatedtitle, style: "panel-default" do
             _ul list_style_position: 'inside' do
               if related
                 related.each do |url, desc|
@@ -225,7 +223,7 @@ class Wunderbar::HtmlMarkup
                 end
               else
                 _li do
-                  _a 'Whimsy Source Code', href: 'https://github.com/apache/whimsy/'
+                  _a 'See this code', href: "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}"
                 end
               end
             end
