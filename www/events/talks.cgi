@@ -13,14 +13,14 @@ talks = {}
 submitters = {}
 TOPICMAP = {
   'apacheway' => "The Apache Way of Project Governance And Behaviors",
-  'community' => "Talks On Community Health And Maintenance",
-  'developers' => "Focus On How Developers Work In Apache Projects",
+  'community' => "Community Health And Maintenance",
+  'developers' => "Focus On Developers In Apache Projects",
   'incubator' => "About The Apache Incubator And Joining The ASF",
   'contributors' => "Focus On Non-Technical Project Contributors"
 }
 
 def _talk(talk, submitters, parent, n)
-  _div.panel.panel_default  id: talk[0] do
+  _div.panel.panel_info  id: talk[0] do
     talk = talk[1] # originally an array of ['Apache_Way_2017', {...} ]
     _div.panel_heading role: "tab", id: "#{parent}#{n}" do
       _h3.panel_title do
@@ -48,7 +48,10 @@ def _talk(talk, submitters, parent, n)
         _tbody do
           _tr do
             _td do
-              _ talk['abstract'] # TODO allow markdown styles
+              # TODO allow markdown styles
+              talk['abstract'].split(/\n+/).each do |line|
+                _p line
+              end 
             end
           end
           if talk['slides']
@@ -92,15 +95,27 @@ _html do
   _body? do
     _whimsy_body(
       title: PAGETITLE,
+      subtitle: 'Great Conference Talks About Apache Community',
       related: {
         "https://community.apache.org/" => "Apache Community Development",
         "https://community.apache.org/speakers/" => "Apache Speaker Resources",
+        "https://community.apache.org/speakers/slides.html" => "More Apache-related Slides",
         "https://apachecon.com/" => "ApacheCon Conferences"
       },
       helpblock: -> {
         _p do
-          _ 'DRAFT listing of curated Apache non-technical talks - about the Apache Way, licenses, brands, governance, and ASF history.'
+          _ 'Curated listing of selected Apache '
+          _em 'non-technical' 
+          _ %{
+            talks - about the Apache Way, licenses, brands, governance, and ASF history.
+            This is just a small sample of the many great talks on open source communities from our many experienced Apache speakers.
+            }
+        end
+        _p do
+          _ 'To be included here, talks must have gotten good feedback at an ApacheCon, and must include slides and preferably video/audio. '
           _a 'See the source data.', href: COMDEVTALKS
+          _ 'Many more Apache-related slides are on the '
+          _a 'ComDev Slides page.', href: 'https://community.apache.org/speakers/slides.html'
         end
       }
     ) do
