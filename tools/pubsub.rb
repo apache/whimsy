@@ -80,8 +80,15 @@ else
   # optionally daemonize
   Process.daemon if options.daemonize
 
+  # Determine if pidfile is writable
+  if File.exist? options.pidfile
+    writable = File.writable? options.pidfile
+  else
+    writable = File.writable? File.dirname(options.pidfile)
+  end
+
   # PID file management
-  if File.writable? options.pidfile
+  if writable
     File.write options.pidfile, Process.pid.to_s
     at_exit { File.delete options.pidfile if File.exists? options.pidfile }
   else
