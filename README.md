@@ -31,6 +31,36 @@ and now also mirrored for Apache committers at:
  * [Dependency Listing](./CONFIGURE.md#Dependencies)
  * [Todos](TODOS.md).
 
+How To Get Involved!
+===============
+
+Since Whimsy hosts many independent tools that make finding or updating information 
+at the ASF simpler, there are plenty of places for Apache committers to 
+get involved.  Bugs or improvement suggestions for the many 
+[tools available on Whimsy](https://whimsy.apache.org/committers/tools) are always appreciated.
+
+If you have an idea for a new Whimsy tool, [email us](mailto:dev@whimsical.apache.org?subject=[IDEA] New tool idea)! 
+The PMC supports a rich server environment, so deploying a new tool is as 
+simple as proposing a .cgi with a bit of Ruby code.  We also have deployments 
+of Rack and Sinatra apps, and use JavaScript and Wunderbar for most of the 
+UI building in most tools. The Whimsy server also supports direct access 
+to Apache SVN or git repositories, making consuming data simple.
+
+The Whimsy committers are always looking for new ideas to improve processes 
+at Apache, and we can either help you get started or suggest how to 
+approach just about any sort of "find this ASF data and streamline that 
+process" ideas.
+
+Most documentation is in the code or in the repo, and our dev@whimsical
+mailing list is active.  Note that many Whimsy tools access committer- or 
+member-private data, so some tools are access restricted.
+
+**Historical note:** The live production whimsy.apache.org server was used for 
+the board agenda tool and more before we became the Apache Whimsy top level 
+project.  That's why [whimsy.apache.org](https://whimsy.apache.org/) is 
+the production server, and mailing lists and a homepage are hosted 
+on the [whimsical.apache.org](https://whimsical.apache.org/) domain.
+
 Whimsy Architecture - Live Instance
 ===================
 
