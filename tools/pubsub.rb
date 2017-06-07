@@ -108,7 +108,7 @@ end
 # prime the pump
 restartable = false
 notification_queue = Queue.new
-notification_queue.push 'commit' => {'project' => 'whimsy'}
+notification_queue.push 'project' => 'whimsy'
 
 ps_thread = Thread.new do
   begin
@@ -126,8 +126,10 @@ ps_thread = Thread.new do
 
             if notification['stillalive']
               restartable = true
+            elsif notification['push']
+              notification_queue << notification['push']
             elsif notification['commit']
-              notification_queue << notification
+              notification_queue << notification['commit']
             elsif notification['svnpubsub']
               next
             else
@@ -158,7 +160,7 @@ project = File.basename(options.remote, '.git')
 begin
   while ps_thread.alive?
     notification = notification_queue.pop
-    next unless notification['commit']['project'] == project
+    next unless notification['project'] == project
     notification_queue.clear
     Dir.chdir(options.local) do
       before = `git log --oneline -1`
