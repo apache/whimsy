@@ -6,6 +6,7 @@ require 'wunderbar/bootstrap'
 require 'wunderbar/jquery'
 require 'whimsy/asf/rack'
 require 'whimsy/asf'
+require 'whimsy/public'
 require 'mail'
 require 'date'
 require 'json'
@@ -101,7 +102,7 @@ def emit_form()
   # Store auth so we know Apache ID of submitter
   user = ASF::Auth.decode(env = {})
   docket = JSON.parse(File.read("#{ASF::SVN['private/foundation/Brand']}/docket.json")) # To annotate pmcs with (R) symbol
-  committees = ASF::Committee.load_committee_info
+  committees = Public.getJSON('committee-info.json')['committees']
 
   _whimsy_panel("Report A Potential Misuse Of Apache\u00AE Brands", style: 'panel-success') do
     _form.form_horizontal method: 'post' do
@@ -110,13 +111,12 @@ def emit_form()
         _div.col_sm_9 do
           _select.form_control name: 'project', id: 'project', required: true do
             _option value: ''
-            committees.each do |entry|
-              if !entry.nonpmc?
-                pmc = entry.name
+            committees.each do |pmc, entry|
+              if entry['pmc']
                 if docket[pmc]
-                  _option "#{entry.display_name} \u00AE", value: pmc
+                  _option "#{entry['display_name']} \u00AE", value: pmc
                 else
-                  _option "#{entry.display_name} \u2122", value: pmc
+                  _option "#{entry['display_name']} \u2122", value: pmc
                 end
               end
             end
