@@ -77,9 +77,9 @@ def Monitor.git(previous_status)
     # Drop the individual file details
     lines.reject! {|line|
       # certbot-route53/certbot_route53/authenticator.py | 6 +-----
-      line =~  /^ \S+ +\|  ?\d+/ or
+      line =~  /^ \S+ +\| +\d+/ or
       # {certbot-route53 => certbot-dns-route53}/.gitignore          |  0
-      line =~  /^ \S+ => \S+ +\|  ?\d+/
+      line =~  /^ \S+ => \S+ +\| +\d+/
     }
 
     show 'lines', lines
