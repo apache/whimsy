@@ -47,7 +47,7 @@ optionparser = OptionParser.new do |opts|
     options.daemonize = true
   end
 
-  opts.on ''--puppet', "Use puppet agent to update" do
+  opts.on '--puppet', "Use puppet agent to update" do
     options.puppet = true
   end
 
@@ -196,7 +196,7 @@ begin
         end
       end
     end
-    next if mtime != File.mtime(__FILE__)
+    break if mtime != File.mtime(__FILE__)
   end
 rescue SignalException => e
   STDERR.puts e
