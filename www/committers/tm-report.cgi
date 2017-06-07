@@ -13,17 +13,6 @@ require 'yaml'
 
 BRANDLIST = 'Apache Brand Management <trademarks@apache.org>'
 
-# List of unix groups that do NOT correspond to PMCs (copied from officers/acreq.cgi)
-NON_PMC_UNIX_GROUPS = %w(
-apsite
-audit
-board
-committers
-concom
-db-site
-incubator-site
-member
-)
 FORM_FIELDS = %w(
 reporter
 reporteremail
@@ -112,7 +101,7 @@ def emit_form()
   # Store auth so we know Apache ID of submitter
   user = ASF::Auth.decode(env = {})
   docket = JSON.parse(File.read("#{ASF::SVN['private/foundation/Brand']}/docket.json")) # To annotate pmcs with (R) symbol
-  pmcs = ASF::Committee.list.map(&:name).sort - NON_PMC_UNIX_GROUPS
+  committees = ASF::Committee.load_committee_info
 
   _whimsy_panel("Report A Potential Misuse Of Apache\u00AE Brands", style: 'panel-success') do
     _form.form_horizontal method: 'post' do
@@ -121,11 +110,14 @@ def emit_form()
         _div.col_sm_9 do
           _select.form_control name: 'project', id: 'project', required: true do
             _option value: ''
-            pmcs.each do |pmc|
-              if docket[pmc]
-                _option "#{pmc.capitalize} \u00AE", value: pmc
-              else
-                _option "#{pmc.capitalize} \u2122", value: pmc
+            committees.each do |entry|
+              if !entry.nonpmc?
+                pmc = entry.name
+                if docket[pmc]
+                  _option "#{entry.display_name} \u00AE", value: pmc
+                else
+                  _option "#{entry.display_name} \u2122", value: pmc
+                end
               end
             end
           end
