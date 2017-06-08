@@ -9,8 +9,8 @@ class PPMC < React
 
   def render
     if @@auth
-      @@auth.ppmc = (@@auth.secretary or @@auth.root or
-        @ppmc.owners.include? @@auth.id)
+      @@auth.ppmc = @@auth.member or @ppmc.owners.include? @@auth.id
+      @@auth.ipmc ||= @@auth.member
     end
 
     # header
