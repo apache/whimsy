@@ -209,7 +209,7 @@ module ASF
     end
 
     def podlingStatus
-      @resource.untaint if @resource =~ /\A\w+\Z/
+      @resource.untaint if @resource =~ /\a\w+\z/
       incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
       resource_yml = "#{incubator_content}/podlings/#{@resource}.yml"
       if File.exist?(resource_yml)
