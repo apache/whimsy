@@ -59,6 +59,7 @@ def Monitor.git(previous_status)
       # TODO Should these 3 lines be handled differently?
       'From git://',
       ' * [new branch]',
+      ' * [new tag]',
       'From https://',
     ]
       
@@ -79,7 +80,9 @@ def Monitor.git(previous_status)
       # certbot-route53/certbot_route53/authenticator.py | 6 +-----
       line =~  /^ \S+ +\| +\d+/ or
       # {certbot-route53 => certbot-dns-route53}/.gitignore          |  0
-      line =~  /^ \S+ => \S+ +\| +\d+/
+      line =~  /^ \S+ => \S+ +\| +\d+/ or
+      # letsencrypt-auto-source/letsencrypt-auto.sig       | Bin 256 -> 256 bytes
+      line =~  /^ \S+ +\| Bin \d+ -> \d+ bytes/
     }
 
     show 'lines', lines
@@ -245,3 +248,36 @@ Fast-forward
  rename {certbot-route53 => certbot-dns-route53}/setup.cfg (100%)
  rename {certbot-route53 => certbot-dns-route53}/setup.py (88%)
  rename {certbot-route53 => certbot-dns-route53}/tools/tester.pkoch-macos_sierra.sh (100%)
+
+/x1/srv/git/letsencrypt5
+From https://github.com/letsencrypt/letsencrypt
+ * [new branch]      0.15.x     -> origin/0.15.x
+ * [new branch]      candidate-0.15.0 -> origin/candidate-0.15.0
+ * [new tag]         v0.15.0    -> v0.15.0
+Already up-to-date.
+
+/x1/srv/git/letsencrypt6
+From https://github.com/letsencrypt/letsencrypt
+   a06dec3..895a525  master     -> origin/master
+Updating a06dec3..895a525
+Fast-forward
+ acme/setup.py                                      |   2 +-
+ certbot-apache/setup.py                            |   2 +-
+ certbot-auto                                       | 124 ++++++------
+ certbot-compatibility-test/setup.py                |   2 +-
+ certbot-dns-cloudflare/setup.py                    |   2 +-
+ certbot-dns-cloudxns/setup.py                      |   2 +-
+ certbot-dns-digitalocean/setup.py                  |   2 +-
+ certbot-dns-dnsimple/setup.py                      |   2 +-
+ certbot-dns-google/setup.py                        |   2 +-
+ certbot-dns-nsone/setup.py                         |   2 +-
+ certbot-dns-route53/setup.py                       |   2 +-
+ certbot-nginx/setup.py                             |   2 +-
+ certbot/__init__.py                                |   2 +-
+ docs/cli-help.txt                                  | 215 ++++++++++++++++-----
+ letsencrypt-auto                                   | 124 ++++++------
+ letsencrypt-auto-source/certbot-auto.asc           |  14 +-
+ letsencrypt-auto-source/letsencrypt-auto           |  26 +--
+ letsencrypt-auto-source/letsencrypt-auto.sig       | Bin 256 -> 256 bytes
+ .../pieces/certbot-requirements.txt                |  24 +--
+ 19 files changed, 336 insertions(+), 215 deletions(-)
