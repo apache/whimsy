@@ -1,7 +1,7 @@
 class Pending
   # determine the name of the work file associated with a given user
   def self.work_file(user)
-    "#{AGENDA_WORK}/#{user}.yml".untaint if user =~ /\A\w+\Z/
+    "#{AGENDA_WORK}/#{user}.yml".untaint if user =~ /\A\w+\z/
   end
 
   # fetch and parse a work file

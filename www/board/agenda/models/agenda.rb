@@ -79,7 +79,7 @@ class Agenda
     mode = :quick if ENV['RACK_ENV'] == 'test'
     return Agenda[file][:parsed] if mode == :quick and Agenda[file][:mtime] != 0
 
-    file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
+    file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\z/
     path = File.expand_path(file, FOUNDATION_BOARD).untaint
     
     return unless File.exist? path
@@ -125,7 +125,7 @@ class Agenda
       auth = [['--username', env.user, '--password', env.password]]
     end
 
-    file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\Z/
+    file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\z/
 
     working_copy = File.join(AGENDA_WORK, file)
 

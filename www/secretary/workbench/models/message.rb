@@ -177,7 +177,7 @@ class Message
       find(attachments.first).write_svn(repos, filename + ext)
     else
       # validate filename
-      unless filename =~ /\A[a-zA-Z][-.\w]+\Z/
+      unless filename =~ /\A[a-zA-Z][-.\w]+\z/
         raise IOError.new("invalid filename: #{filename}")
       end
 

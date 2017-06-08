@@ -434,8 +434,8 @@ seen={}
     (?=\n\s?\d)                       # separator
   /mx).each do |attach, title, text|
     next if text.strip.empty?
-    next if text =~ /\A\s*none\.?\s*\Z/i
-    next if text =~ /\A\s*no unfinished business\.?\s*\Z/i
+    next if text =~ /\A\s*none\.?\s*\z/i
+    next if text =~ /\A\s*no unfinished business\.?\s*\z/i
     if text =~ /Establish the Apache \S+ Project/ # 2012_08_28
       establish += text
       next

@@ -3,7 +3,7 @@
 #
 
 user = env.user
-user = user.dup.untaint if user =~ /\A\w+\Z/
+user = user.dup.untaint if user =~ /\A\w+\z/
 updates = YAML.load_file("#{AGENDA_WORK}/#{user}.yml")
 
 agenda_file = updates['agenda']

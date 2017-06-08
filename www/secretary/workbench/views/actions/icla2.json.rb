@@ -20,7 +20,7 @@ _personalize_email(env.user)
 ########################################################################
 
 iclas = ASF::SVN['private/documents/iclas'].untaint
-@filename.untaint if @filename =~ /\A\w[-.\w]*\Z/
+@filename.untaint if @filename =~ /\A\w[-.\w]*\z/
 
 if not Dir.exist? "#{iclas}/#@filename"
   @existing = File.basename(Dir["#{iclas}/#@filename.*"].first)
