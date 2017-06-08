@@ -209,8 +209,8 @@ module ASF
     end
 
     def podlingStatus
-      incubator_content = ASF::SVN['asf/incubator/public/trunk/content/podlings']
-      resource_yml = "#{incubator_content}/#{@resource}.yml"
+      incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
+      resource_yml = "#{incubator_content}/podlings/#{@resource}.yml"
       if File.exist?(resource_yml)
         Psych.load_file(resource_yml)
       else
