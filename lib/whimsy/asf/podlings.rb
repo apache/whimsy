@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'date'
+require 'psych'
 require_relative '../asf'
 
 module ASF
@@ -207,6 +208,16 @@ module ASF
       return true if list.start_with?("incubator-#{_name}-")
     end
 
+    def podlingStatus
+      incubator_content = ASF::SVN['asf/incubator/public/trunk/content/podlings']
+      resource_yml = "#{incubator_content}/#{@resource}.yml"
+      if File.exist?(resource_yml)
+        Psych.load_file(resource_yml)
+      else
+        nil
+      end
+    end
+
     # Return the instance as a hash
     def as_hash # might be confusing to use to_h here?
       hash = {
@@ -220,6 +231,7 @@ module ASF
       hash[:champion] = champion if champion
 
       # Tidy up the reporting output
+      podlingStatus = self.podlingStatus
       r = @reporting
       if r.instance_of? Nokogiri::XML::Element
         group = r['group']
@@ -236,6 +248,7 @@ module ASF
       hash[:resource] = resource
       hash[:resourceAliases] = resourceAliases
       hash[:namesearch] = namesearch if namesearch
+      hash[:podlingStatus] = podlingStatus if podlingStatus
       hash
     end
 

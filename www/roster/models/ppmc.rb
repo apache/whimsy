@@ -47,6 +47,8 @@ class PPMC
       }
     end
 
+    statusInfo = ppmc.podlingStatus
+
     response = {
       id: id,
       display_name: ppmc.display_name,
@@ -60,6 +62,7 @@ class PPMC
       roster: roster,
       mail: Hash[lists.sort],
       moderators: moderators,
+      podlingStatus: statusInfo,
       namesearch: ppmc.namesearch,
     }
 

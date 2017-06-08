@@ -97,6 +97,14 @@ class PPMC < React
       end
     end
 
+    _h2.podlingStatus! 'Podling Status'
+    _h3 'Naming'
+    _ul do
+      _li do
+        _a "Podling name search (#{@ppmc.namesearch.resolution})", href: 'https://issues.apache.org/jira/browse/' + @ppmc.namesearch.issue
+      end if @ppmc.namesearch
+    end
+
     # Graduation resolution
     _PPMCGraduate ppmc: @ppmc, id: @@auth.id
 
