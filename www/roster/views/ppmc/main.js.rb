@@ -104,7 +104,7 @@ class PPMC < React
         _a "Podling name search (#{@ppmc.namesearch.resolution})", href: 'https://issues.apache.org/jira/browse/' + @ppmc.namesearch.issue
       end if @ppmc.namesearch
       _li do
-        _a "No Podling Name Search on file", href: 'http://incubator.apache.org/guides/names.html#name-search'
+        _a "No Podling Name Search on file", href: 'https://incubator.apache.org/guides/names.html#name-search'
       end if !@ppmc.namesearch
     end
 
