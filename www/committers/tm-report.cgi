@@ -126,7 +126,7 @@ def emit_form()
       emit_input(label: 'URL showing the misuse', name: 'url', required: true,
         pattern: '.*://.*|.*@.*', placeholder: 'http://company.com/page.html',
         icon: 'glyphicon-link', iconlabel: 'Must be a URL', type: 'url',
-        helptext: 'Provide the valid URL that shows an example of this misuse')
+        helptext: 'Provide a valid URL that shows an example of this misuse')
 
       emit_input(label: 'Specific phrase or sentence showing misuse', name: 'phrase', required: true,
         icon: 'glyphicon-question-sign', iconlink: 'https://www.apache.org/foundation/marks/reporting#issues', 
@@ -160,7 +160,7 @@ def emit_form()
         helptext: "Briefly describe in your own words why this use doesn't give proper credit to the Apache project")
 
       _div.form_group do
-        _label.control_label.col_sm_3 'Do you know if individual(s) from this company (if any) involved in this Apache project? (optional)', for: 'involved'
+        _label.control_label.col_sm_3 'Do you know if individual(s) from this company (if any) are involved in this Apache project? (optional)', for: 'involved'
         _div.col_sm_9 do
           _select.form_control name: 'involved', id: 'involved' do
             _option value: ''
