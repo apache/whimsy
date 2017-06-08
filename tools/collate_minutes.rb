@@ -542,6 +542,7 @@ seen={}
       '@', 'Appoint Executive Officers', /Officer Appointments/i,
       '@', 'Set Date for Members Meeting', /date.* member'?s meeting/i,
       '@', 'PMC Membership Change Process', /Empower PMC chairs to change the membership/i,
+      '@', 'PMC Membership Change Process', /Amend the Procedure for PMC Membership Changes/i,
       '@', 'Secretarial Assistant', /Approve contract with Jon Jagielski/,
       '@', 'Alleged JBoss IP Infringement', /alleged JBoss IP infringe?ment/,
       '@', 'Discussion Items', /^Discuss/
