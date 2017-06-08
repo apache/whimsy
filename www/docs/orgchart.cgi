@@ -56,14 +56,12 @@ def emit_role(role: {}, oversees: {}, desc: {})
   id = role['info']['id'] || role['info']['chair']
   _whimsy_panel_table(
   title: "#{role['info']['role']} - #{ASF::Person.find(id).public_name}",
-  helpblock: -> {
-    _ 'This officer of the ASF has the following responsibilities.' 
-  }
   ) do
     _table.table.table_striped do
       _tbody do
         role['info'].each do |key, value|
           next if key == 'role'
+          next if key == 'roster' # No purpose in public display
           next if key =~ /private/i
           next unless value
           _tr_ do
@@ -99,33 +97,37 @@ def emit_role(role: {}, oversees: {}, desc: {})
               _td value
             end
             _td do
-              _(@desc[key]) if @desc.key?(key)
+              _(desc[key]) if desc.key?(key)
             end
+          end
+        end
+      end
+    end
+    unless oversees.empty?
+      oversees = oversees.sort_by {|name, duties| duties['info']['role']}
+      _ul.list_group do
+        _li.list_group_item.active do
+          _h4 'This Officer Oversees'
+        end
+        oversees.each do |name, duties|
+          _li.list_group_item do
+            _a duties['info']['role'], href: "orgchart/#{name}"
           end
         end
       end
     end
     
-    unless oversees.empty?
-      oversees = oversees.sort_by {|name, duties| duties['info']['role']}
-      _h3 'This Officer Oversees'
-      _table.table do
-        _tbody do
-          oversees.each do |name, duties|
-            _tr do
-              _td do
-                _a duties['info']['role'], href: "orgchart/#{name}"
-              end
-            end
-          end
+    _ul.list_group do
+      role.each do |title, text|
+        next if title == 'info' or title == 'mtime'
+        next if title =~ /private/i
+        _li.list_group_item.active do 
+          _h4 title.capitalize
+        end
+        _li.list_group_item do
+          _p text
         end
       end
-    end
-    role.each do |title, text|
-      next if title == 'info' or title == 'mtime'
-      next if title =~ /private/i
-      _h3.text_capitalize(title)
-      _markdown text
     end
   end
 end
@@ -147,7 +149,7 @@ _html do
           _li do
             _a desc, href: url
           end
-        end
+        end 
       end
     }
     ) do
@@ -163,11 +165,11 @@ _html do
           end
           emit_role(role: orgchart[name], oversees: oversees, desc: ASF::OrgChart.desc)
         else
-          _whimsy_panel("ERROR: role #{role} not found", style: 'panel-danger') do
+          _whimsy_panel("ERROR: role '#{name}' not found", style: 'panel-danger') do
             _ 'Sorry, the URL you attempted to access '
             _code request
             _ ' is not a valid role.'
-            _a 'Back to the orgchart.', href: ENV['SCRIPT_NAME']
+            _a 'Go back to the orgchart', href: ENV['SCRIPT_NAME']
           end
         end
       else
