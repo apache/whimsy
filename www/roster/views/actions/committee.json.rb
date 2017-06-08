@@ -1,16 +1,16 @@
 if env.password
   people = @ids.split(',').map {|id| ASF::Person.find(id)}
-  pmc = ASF::Committee.find(@project) if @targets.include? 'pmc'
+  pmc = ASF::Committee.find(@project)
   group = ASF::Group.find(@project) if @targets.include? 'commit'
 
   # update LDAP
   if @targets.include? 'pmc' or @targets.include? 'commit'
     ASF::LDAP.bind(env.user, env.password) do
       if @action == 'add'
-        pmc.add_owners(people) if pmc
+        pmc.add_owners(people) if @targets.include? 'pmc'
         pmc.add_committers(people) if group
       elsif @action == 'remove'
-        pmc.remove_owners(people) if pmc
+        pmc.remove_owners(people) if @targets.include? 'pmc'
         pmc.remove_committers(people) if group
       end
     end
@@ -85,7 +85,7 @@ if env.password
 
   # compose E-mail
   action = (@action == 'add' ? 'added to' : 'removed from')
-  if pmc
+  if @targets.include? 'pmc'
     list = group ? 'PMC and committers list' : 'PMC list'
   elsif @targets.include? 'info'
     list = 'in committee-info.txt'
@@ -95,14 +95,13 @@ if env.password
 
   details = people.map {|person| person.dn}
   if pmc.id == 'incubator'
-    details << "#{pmc.dn};attr=owner" if pmc
+    details << "#{pmc.dn};attr=owner" if @targets.include? 'pmc'
     details << "#{pmc.dn};attr=member" if group
   else
-    details << pmc.dn if pmc
+    details << pmc.dn if @targets.include? 'pmc'
     details << group.dn if group
   end
 
-  pmc ||= ASF::Committee.find(@project)
   from = ASF::Person.find(env.user)
 
   # identify what has changed
