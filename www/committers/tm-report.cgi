@@ -113,10 +113,11 @@ def emit_form()
             _option value: ''
             committees.each do |pmc, entry|
               if entry['pmc']
+                display_name = entry['display_name']
                 if docket[pmc]
-                  _option "#{entry['display_name']} \u00AE", value: pmc
+                  _option "#{display_name} \u00AE", value: pmc
                 else
-                  _option "#{entry['display_name']} \u2122", value: pmc
+                  _option "#{display_name} \u2122", value: pmc
                 end
               end
             end
