@@ -68,6 +68,9 @@ namespace :svn do
   task :update => :config do
     repository = YAML.load_file(File.expand_path('../repository.yml', __FILE__))
 
+    # must be outside loop
+    PREFIX = '#!:' # must agree with monitors/svn.rb
+
     # checkout/update svn repositories
     svn = ASF::Config.get(:svn)
     if svn.instance_of? String and svn.end_with? '/*'
@@ -84,7 +87,6 @@ namespace :svn do
               # svn update can fail sometimes, so we retry
               2.times do |i|
                 if i > 0
-                  PREFIX = '#!:' # must agree with monitors/svn.rb
                   # log the failure - prefix tells monitor to ignore it
                   puts "#{PREFIX} failed!"
                   outerr.split("\n").each do |l|
