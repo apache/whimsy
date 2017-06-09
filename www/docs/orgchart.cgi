@@ -126,7 +126,7 @@ def emit_role(role: {}, oversees: {}, desc: {})
           _h4 title.capitalize
         end
         _li.list_group_item do
-          _p text
+          _markdown text
         end
       end
     end
