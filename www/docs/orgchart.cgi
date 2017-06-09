@@ -6,6 +6,7 @@ require 'whimsy/asf'
 require 'whimsy/asf/orgchart' # New class not yet in gem; duplicates www/roster/models/orgchart
 require 'wunderbar'
 require 'wunderbar/bootstrap'
+require 'wunderbar/markdown'
 OTHER_LINKS = {
   'https://people.apache.org/phonebook.html' => 'Apache Project Rosters Listing',
   'https://incubator.apache.org/projects/#current' => 'Apache Incubator Podling Listing',
