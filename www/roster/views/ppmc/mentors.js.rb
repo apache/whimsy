@@ -141,25 +141,36 @@ class PPMCMentor < React
       _td data_ids: @@person.id do
         if @state == :open
           if @@person.status == :pending
-            _button.btn.btn_primary 'Add as a mentor',
-              data_action: 'add mentor ppmc committer',
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Add #{@@person.name} as a mentor to the " +
-                "#{@@ppmc.display_name} PPMC?"
-          else
-            unless @@ppmc.owners.include? @@person.id
-              _button.btn.btn_primary 'Add to the PPMC',
-                data_action: 'add ppmc committer',
+            if @@auth.ppmc
+              _button.btn.btn_primary 'Add as a mentor',
+                data_action: 'add mentor ppmc committer',
                 data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Add #{@@person.name} as member of the " +
+                data_confirmation: "Add #{@@person.name} as a mentor to the " +
+                  "#{@@ppmc.display_name} PPMC?"
+            else
+              _button.btn.btn_primary 'Add only as a mentor',
+                data_action: 'add mentor',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Add #{@@person.name} as a mentor to the " +
                   "#{@@ppmc.display_name} PPMC?"
             end
+          else
+            if @@auth.ppmc
+	      unless @@ppmc.owners.include? @@person.id
+		_button.btn.btn_primary 'Add to the PPMC',
+		  data_action: 'add ppmc committer',
+		  data_target: '#confirm', data_toggle: 'modal',
+		  data_confirmation: "Add #{@@person.name} as member of the " +
+		    "#{@@ppmc.display_name} PPMC?"
+	      end
 
-            _button.btn.btn_warning 'Remove as a mentor and from the PMC',
-              data_action: 'remove mentor ppmc committer',
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Remove #{@@person.name} as a mentor, PPMC " +
-                "member, and committer from the #{@@ppmc.display_name} PPMC?"
+	      _button.btn.btn_warning 'Remove as a mentor and from the PMC',
+		data_action: 'remove mentor ppmc committer',
+		data_target: '#confirm', data_toggle: 'modal',
+		data_confirmation: "Remove #{@@person.name} as a mentor, " +
+		  "PPMC member, and committer from the " +
+                  "#{@@ppmc.display_name} PPMC?"
+            end
 
             _button.btn.btn_warning 'Remove only as a mentor',
               data_action: 'remove mentor',
