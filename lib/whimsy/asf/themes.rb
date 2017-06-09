@@ -121,8 +121,10 @@ class Wunderbar::HtmlMarkup
           _ title
         end
       end
-      _div.panel_body do
-        helpblock.call if helpblock
+      if helpblock
+        _div.panel_body do
+          helpblock.call
+        end
       end
       yield
     end
