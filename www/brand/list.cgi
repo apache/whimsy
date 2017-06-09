@@ -54,15 +54,15 @@ end
 
 def _unreg(pmc, proj, parent, n)
   _div.panel.panel_default  id: pmc do
-    _div.panel_heading role: "tab", id: "urh#{n}" do
+    _div.panel_heading role: "tab", id: "#{parent}h#{n}" do
       _h4.panel_title do
-        _a.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{parent}", href: "#urc#{n}", aria_controls: "urc#{n}" do
+        _a.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{parent}", href: "##{parent}c#{n}", aria_controls: "#{parent}c#{n}" do
           _ proj['name']
           _{"&trade; software"}
         end
       end
     end
-    _div.panel_collapse.collapse id: "urc#{n}", role: "tabpanel", aria_labelledby: "urh#{n}" do
+    _div.panel_collapse.collapse id: "#{parent}c#{n}", role: "tabpanel", aria_labelledby: "#{parent}h#{n}" do
       _div.panel_body do
         _a href: proj['homepage'] do
           _ proj['name']
@@ -104,7 +104,17 @@ def _project(pmc, proj, marks)
       end
     end
     _div.panel_body do
-      _{"The ASF owns the following registered trademarks for our #{proj['name']}&reg; software:"}
+      allr = true # If any are not Registered, just say "or applied for..."; ignore other status details
+      marks.each do |mark, items|
+        if items.any? {|itm| itm[STAT] != REGISTERED }
+          allr = allr & false
+        end
+      end
+      if allr
+        _{"The ASF owns the following registered trademarks for our #{proj['name']}&reg; software:"}
+      else
+        _{"The ASF owns the following registered or applied for trademarks for our #{proj['name']}&reg; software:"}
+      end
     end
     _marks marks
   end
@@ -153,19 +163,22 @@ _html do
         if pmc == 'apache' then
           _apache(marks)
         elsif projects[pmc] then
+          # TODO fix display of LUCENE and other products that don't match projects key
           _project pmc, projects[pmc], marks
         else
-          _.comment! '# TODO map all pmc names to projects or podlings'
+          # TODO map all pmc names to projects or podlings
           _project 'Apache ' + pmc.capitalize, 'https://' + pmc + '.apache.org', marks
         end
       end
-      
       _h3 'The ASF holds the following unregistered trademarks:'
-      parent = "unreg_a" # TODO: split up by letter
-      _div.panel_group id: parent, role: "tablist", aria_multiselectable: "true" do
-        projects.each_with_index do |(pnam, proj), num|
-          unless docket[pnam] then
-            _unreg(pnam, proj, parent, num)
+      allproj = projects.group_by { |k| k[0].slice(0) } # TODO group by software product name
+      allproj.each do |ltr, parr|
+        parent = "unreg_#{ltr}_"
+        _div.panel_group id: parent, role: "tablist", aria_multiselectable: "true" do
+          parr.each_with_index do |x, num|
+            unless docket[x[0]] then
+              _unreg(x[0], x[1], parent, num)
+            end
           end
         end
       end
