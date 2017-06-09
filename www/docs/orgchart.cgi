@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Apache Org Chart Display" # Wvisible:orgchart
+PAGETITLE = "Apache Corporate Organization Chart" # Wvisible:orgchart
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'json'
 require 'whimsy/asf'
@@ -16,7 +16,7 @@ OTHER_LINKS = {
 # Output the orgchart overview
 def emit_orgchart(org: {})
   _whimsy_panel_table(
-  title: "Apache Corporate Organization Chart",
+  title: 'Apache Corporate Organization Chart',
   helpblock: -> {
     _ 'This is a listing of most '
     _em 'corporate'
@@ -27,9 +27,9 @@ def emit_orgchart(org: {})
   ) do
     _table.table.table_striped do
       _thead do
-        _th 'Title'
+        _th 'Title / Role'
         _th 'Contact, Chair, or Person holding that title'
-        _th 'Public Website'
+        _th 'Website'
       end
       _tbody do
         org.sort_by {|key, value| value['info']['role']}.each do |key, value|
@@ -42,7 +42,8 @@ def emit_orgchart(org: {})
               __ ASF::Person.find(id).public_name
             end
             _td do
-              value['info']['website'].nil? ? _('')  : _a('website', href: value['info']['website'])
+              web = value['info']['website']
+              web.nil? ? _('')  : _a(web.sub(%r{http(s)?//}, ''), href: web)
             end
           end
         end
@@ -59,27 +60,27 @@ def emit_role(role: {}, oversees: {}, desc: {})
   ) do
     _table.table.table_striped do
       _tbody do
-        role['info'].each do |key, value|
-          next if key == 'role'
-          next if key == 'roster' # No purpose in public display
-          next if key =~ /private/i
+        role['info'].each do |k, value|
+          next if k == 'role'
+          next if k == 'roster' # No purpose in public display
+          next if k =~ /private/i
           next unless value
+          key = k.downcase # Prevent case mismatches
           _tr_ do
-            _td key
+            # Different output than www/roster/orgchart
+            _td do
+              _(desc[key]) if desc.key?(key)
+            end
             if %w(id chair).include? key
               _td do
-                if value == 'tbd'
-                  _span value
-                else
-                  _a value, href: "roster/#{value}"
-                end
+                _ ASF::Person.find(id).public_name
               end
             elsif %w(reports-to).include? key
               _td! do
                 value.split(/[, ]+/).each_with_index do |role_inner, index|
                   _span ', ' if index > 0
                   if role_inner == 'members'
-                    _a role_inner, href: "roster/members"
+                    _a 'Apache Membership', href: 'https://www.apache.org/foundation/members'
                   else
                     _a role_inner, href: "orgchart/#{role_inner}"
                   end
@@ -96,9 +97,6 @@ def emit_role(role: {}, oversees: {}, desc: {})
             else
               _td value
             end
-            _td do
-              _(desc[key]) if desc.key?(key)
-            end
           end
         end
       end
@@ -109,14 +107,17 @@ def emit_role(role: {}, oversees: {}, desc: {})
         _li.list_group_item.active do
           _h4 'This Officer Oversees'
         end
-        oversees.each do |name, duties|
-          _li.list_group_item do
-            _a duties['info']['role'], href: "orgchart/#{name}"
+        _li.list_unstyled do
+          _ul style: 'margin-top: 15px; margin-bottom: 15px;' do
+            oversees.each do |name, duties|
+              _li do
+                _a duties['info']['role'], href: "orgchart/#{name}"
+              end
+            end
           end
         end
       end
     end
-    
     _ul.list_group do
       role.each do |title, text|
         next if title == 'info' or title == 'mtime'
@@ -136,14 +137,15 @@ _html do
   _body? do
     _whimsy_body(
     title: PAGETITLE,
+    relatedtitle: 'More About ASF Operations',
     related: {
       "https://www.apache.org/foundation/governance/orgchart" => "Graphical Org Chart",
       "https://www.apache.org/foundation" => "Official ASF Officer Listing",
       "https://www.apache.org/foundation/governance/" => "Corporate Governance At The ASF"
     },
     helpblock: -> {
-      _p "ALPHA1 - NOT IMPLEMENTED YET"
-      _p "This is a sample implementation of a public orgchart, copying part of the features of /roster tool."
+      _p "The ASF is a 501C3 non-profit corporation in the US - and there's a lot going on the corporate side of the ASF, to keep the corporate records and infrastructure that the many Apache projects you use working."
+      _p "Below is a listing of the officers and people who make the corporate side of the ASF work.  Here are a few more links that explain how corporate governance works at the ASF, which is separate from how Apache PMCs work."
       _ul do
         OTHER_LINKS.each do |url, desc|
           _li do
