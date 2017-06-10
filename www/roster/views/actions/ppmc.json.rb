@@ -38,6 +38,7 @@ if env.password
             removals = people & icommit
             podlings = ASF::Podling.current.map(&:id)
             removals.select do |person| 
+              not incubator.owners.include? person and
               (person.projects.map(&:id) & podlings).empty?
             end
             incubator.remove_committers(removals) unless removals.empty?
