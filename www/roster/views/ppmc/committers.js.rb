@@ -131,6 +131,14 @@ class PPMCCommitter < React
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Grant #{@@person.name} committer access?"
           else
+            if @@auth.ipmc and not @@person.icommit
+              _button.btn.btn_primary 'Add as an incubator committer',
+                data_action: 'add icommit',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Add #{@@person.name} as a commiter " +
+                  "for the incubator PPMC?"
+            end
+
             _button.btn.btn_warning 'Remove as Committer',
               data_action: 'remove committer', 
               data_target: '#confirm', data_toggle: 'modal',

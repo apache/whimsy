@@ -135,6 +135,14 @@ class PPMCMember < React
                   "#{@@ppmc.display_name} PPMC and grant committer access?"
             end
           else
+            if @@auth.ipmc and not @@person.icommit
+              _button.btn.btn_primary 'Add as an incubator committer',
+                data_action: 'add icommit',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Add #{@@person.name} as a commiter " +
+                  "for the incubator PPMC?"
+            end
+
             if @@ppmc.committers.include? @@person.id
               _button.btn.btn_warning 'Remove as committer and from the PPMC',
                 data_action: 'remove ppmc committer',
