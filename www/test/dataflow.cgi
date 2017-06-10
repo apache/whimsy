@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Public Datafiles And Dependencies" # Wvisible:tools,data
+PAGETITLE = "Public Datafiles And Dependencies" # Wvisible:tools data
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'json'
@@ -35,6 +35,12 @@ _html do
             See the 
           }
           _a 'server docs for more info.', href: 'https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md'
+          _ ' You can see the '
+          _a 'code for this script', href: "#{GITWHIMSY}/www#{ENV['SCRIPT_NAME']}"
+          _ ' the '
+          _a 'underlying data file', href: "#{GITWHIMSY}/www/#{DATAFLOWDATA}"
+          _ ' and see the '
+          _a 'key to this data.', href: "#datakey"
         end
       }
     ) do
@@ -49,7 +55,7 @@ _html do
             elsif dep =~ %r{\A/} then
               _code! do
                 _a! dep, href: "#{GITWHIMSY}#{dep}"
-              end              
+              end
             else
               _code! dep
             end
@@ -60,9 +66,14 @@ _html do
               _a.text_muted "#{info['maintainer']}", href: "#{GITWHIMSY}#{info['maintainer']}"
             else
               _span.text_muted 'Maintained by role/PMC: '
+              # TODO use a public lookup instead of committer-private roster tool
               _a.text_muted "#{info['maintainer']}", href: "https://whimsy.apache.org/roster/orgchart/#{info['maintainer']}"
             end
             _br
+            if info.key?('format') then
+              _span "Data structure: #{info['format']}"
+              _br
+            end
             if info.key?('sources') then
               _span 'Derived from:'
               _ul do
@@ -76,7 +87,8 @@ _html do
           end
         end
       end
-      _p do 
+      _p do
+        _a '', name: 'datakey'
         _ "The #{DATAFLOWDATA} file is currently a manually maintained file where the hash key identifies a file: "
         _ul do
           _li "Starting with 'http' means it's at a public URL"

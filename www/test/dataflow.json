@@ -1,6 +1,11 @@
 {
+  "https://whimsy.apache.org/test/dataflow.json": {
+    "description": "List of other public JSON and other data sources and underlying code models.",
+    "maintainer": "whimsy"
+  },
   "https://whimsy.apache.org/public/committee-info.json": {
     "description": "Committee (PMC) names and membership",
+    "format": "hash of hashes['committees']['accumulo']['display_name'] = 'Accumulo'",
     "maintainer": "/www/roster/public_committee_info.rb",
     "sources": [
       "/lib/whimsy/asf/committee.rb",
@@ -10,6 +15,7 @@
   },
   "https://whimsy.apache.org/public/icla-info.json": {
     "description": "Names of people who have submitted ICLAs who have uids (committer accounts)",
+    "format": "hash of hash['committers']['curcuru'] = 'Shane Curcuru'",
     "maintainer": "/www/roster/public_icla_info.rb",
     "sources": [
       "/lib/whimsy/asf/icla.rb"
@@ -17,6 +23,7 @@
   },
   "https://whimsy.apache.org/public/icla-info_noid.json": {
     "description": "Names of people who have submitted ICLAs who don't (yet) have uids (commiter accounts)",
+    "format": "hash of array['non_committers'][0] = 'NonCommitter Name'",
     "maintainer": "/www/roster/public_icla_info.rb",
     "sources": [
       "/lib/whimsy/asf/icla.rb"
@@ -24,6 +31,7 @@
   },
   "https://whimsy.apache.org/public/member-info.json": {
     "description": "ASF Member name listing",
+    "format": "hash of arrays['members'][0] = 'aadamchik' and hash['ex_members']['dion'] = 'Deceased Member (RIP)'",
     "maintainer": "/www/roster/public_member_info.rb",
     "sources": [
       "/lib/whimsy/asf/member.rb"
@@ -31,6 +39,7 @@
   },
   "https://whimsy.apache.org/public/public_ldap_authgroups.json": {
     "description": "Membership of LDAP auth groups. Membership of an LDAP auth group is used to grant commit karma for sub-project and other resources",
+    "format": "hash of hashes['auth']['apachecon']['roster'][11] = 'rbowen'",
     "maintainer": "/www/roster/public_ldap_authgroups.rb",
     "sources": [
       "/lib/whimsy/asf/ldap.rb"
@@ -38,6 +47,7 @@
   },
   "https://whimsy.apache.org/public/public_ldap_committees.json": {
     "description": "Membership of LDAP committee groups. Note: Membership of an LDAP committee group != membership of the PMC",
+    "format": "hash of hashes['committees']['accumulo']['roster'][0] = 'acordova'",
     "maintainer": "/www/roster/public_ldap_committees.rb",
     "sources": [
       "/lib/whimsy/asf/ldap.rb"
@@ -45,6 +55,7 @@
   },
   "https://whimsy.apache.org/public/public_ldap_groups.json": {
     "description": "Membership of LDAP unix groups. Membership of an LDAP unix group is used to grant commit karma for a whole project",
+    "format": "hash of hashes['groups']['accumulo']['roster'][0] = 'acordova'",
     "maintainer": "/www/roster/public_ldap_groups.rb",
     "sources": [
       "/lib/whimsy/asf/ldap.rb"
@@ -52,6 +63,7 @@
   },
   "https://whimsy.apache.org/public/public_ldap_people.json": {
     "description": "Basic details of LDAP personal entries. Shows the public name and whether the login is currently disabled",
+    "format": "hash of hashes['people']['curcuru']['name'] = 'Shane Curcuru'",
     "maintainer": "/www/roster/public_ldap_people.rb",
     "sources": [
       "/lib/whimsy/asf/ldap.rb"
@@ -59,6 +71,7 @@
   },
   "https://whimsy.apache.org/public/public_ldap_services.json": {
     "description": "Membership of LDAP service groups. For example pmc_chairs shows the list of people with PMC chair karma",
+    "format": "hash of hashes['services']['board']['roster'][1] = 'brett'",
     "maintainer": "/www/roster/public_ldap_services.rb",
     "sources": [
       "/lib/whimsy/asf/ldap.rb"
@@ -66,6 +79,7 @@
   },
   "https://whimsy.apache.org/public/public_nonldap_groups.json": {
     "description": "Membership of auth groups not defined in LDAP. For example, Incubator podlings",
+    "format": "hash of hashes['groups']['blur']['roster'][0] = 'dblevins'",
     "maintainer": "/www/roster/public_nonldap_groups.rb",
     "sources": [
       "/lib/whimsy/asf/ldap.rb"
@@ -73,6 +87,7 @@
   },
   "https://whimsy.apache.org/public/public_podling_status.json": {
     "description": "Current Incubation status of each podling",
+    "format": "hash of hashes['podling']['abdera'] = 'graduated'",
     "maintainer": "/www/roster/public_podling_status.rb",
     "sources": [
       "/lib/whimsy/asf/podlings.rb"
@@ -80,6 +95,7 @@
   },
   "https://whimsy.apache.org/public/public_podlings.json": {
     "description": "Listings of podling data TODO?",
+    "format": "hash of hashes['podling']['abdera']['name'] = 'Abdera'",
     "maintainer": "/www/roster/public_podlings.rb",
     "sources": [
       "/lib/whimsy/asf/podlings.rb"
@@ -87,6 +103,7 @@
   },
   "https://whimsy.apache.org/public/site-scan.json": {
     "description": "Current status of project websites relating to required navigation links",
+    "format": "hash of hashes['accumulo']['display_name'] = 'Accumulo'",
     "maintainer": "/tools/site-scan.rb",
     "sources": [
       "https://www.apache.org/foundation/marks/pmcs"
@@ -124,7 +141,7 @@
     "maintainer": "whimsy",
     "sources": [
       "ASF::LDAP::HOSTS", 
-      "/apache/infrastructure-puppet/deployment/data/common.yaml"
+      "apache/infrastructure-puppet/deployment/data/common.yaml"
     ]
   },
   "/lib/whimsy/asf/mail.rb": {
@@ -209,7 +226,7 @@
     "description": "Historical data about past committer date changes",
     "maintainer": "whimsy"
   },
-  "/apache/infrastructure-puppet/deployment/data/common.yaml": {
+  "apache/infrastructure-puppet/deployment/data/common.yaml": {
     "description": "Core infrastructure data locations",
     "maintainer": "infra-staff"
   },
