@@ -47,7 +47,7 @@ class PPMC
       }
     end
 
-    statusInfo = ppmc.podlingStatus
+    statusInfo = ppmc.podlingStatus || {news: []}
 
     response = {
       id: id,
