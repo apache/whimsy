@@ -21,6 +21,7 @@ module ASF
     def initialize(node)
       @name = node['name']
       @resource = node['resource']
+      @sponsor = node['sponsor']
       # Needed for matching against mailing list names 
       @resourceAliases = []
       @resourceAliases = node['resourceAliases'].split(/,\s*/) if node['resourceAliases']
@@ -39,7 +40,6 @@ module ASF
       # - retiring/graduating
       # The following podling attributes are not processed:
       # - longname
-      # - sponsor
     end
 
     # map resource to name
@@ -250,8 +250,30 @@ module ASF
       hash[:resource] = resource
       hash[:resourceAliases] = resourceAliases
       hash[:namesearch] = namesearch if namesearch
+      hash[:sponsor] = @sponsor if @sponsor
+      enddate = Date.new()
+      enddate = Date.parse(@enddate) if @enddate
+
+      hash[:duration] = (enddate - Date.parse(@startdate)).to_i
       hash[:podlingStatus] = podlingStatus if podlingStatus
       hash
+    end
+
+    def default_status
+      {
+          issueTracker: 'jira',
+          dateAccepted: nil,
+          wiki: self.resource.upcase,
+          jira: self.resource.upcase,
+          proposal: 'http://wiki.apache.org/incubator/'+self.resource.capitalize+"Proposal",
+          asfCopyright: nil,
+          distributionRights: nil,
+          ipClearance: nil,
+          sga: nil,
+          website: 'http://'+self.resource+'.incubator.apache.org',
+          graduationDate: nil,
+          resolution: nil
+      }
     end
 
     # parse (and cache) names mentioned in podlingnamesearches
