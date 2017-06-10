@@ -231,7 +231,7 @@ module ASF
           newsItem[:date] = ni[:date].strftime('%Y-%m-%d')
           newsItem[:note] = ni[:note]
           hash[:news].push(newsItem)
-        end if  rawYaml[:news]
+        end if rawYaml[:news]
         hash
       else
         nil
@@ -273,7 +273,7 @@ module ASF
       enddate = Date.parse(@enddate) if @enddate
 
       hash[:duration] = (enddate - Date.parse(@startdate)).to_i
-      hash[:podlingStatus] = podlingStatus if podlingStatus
+      hash[:podlingStatus] = podlingStatus || []
       hash
     end
 
