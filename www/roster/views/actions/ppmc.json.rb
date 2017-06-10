@@ -104,7 +104,9 @@ if env.password
   mail = Mail.new do
     from "#{from.public_name} <#{from.id}@apache.org>".untaint
     to ppmc.private_mail_list.untaint
-    cc 'private@incubator.apache.org'
+    if ppmc.private_mail_list != 'private@incubator.apache.org'
+      cc 'private@incubator.apache.org'
+    end
     bcc 'root@apache.org'
     subject "#{who} #{action} #{ppmc.display_name} #{target}"
     body "Current roster can be found at:\n\n" +
