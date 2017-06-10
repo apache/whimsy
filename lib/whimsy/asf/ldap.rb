@@ -730,8 +730,8 @@ module ASF
 
     # create an LDAP group for this project
     def create(owners, committers=nil)
-      owners = Array(owners).map(&:dn)
       committers = Array(committers || owners).map(&:dn)
+      owners = Array(owners).map(&:dn)
 
       entry = [
         ASF::Base.mod_add('objectClass', ['groupOfNames', 'top']),
