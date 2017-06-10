@@ -62,6 +62,7 @@ class PPMC
       roster: roster,
       mail: Hash[lists.sort],
       moderators: moderators,
+      duration: ppmc.duration,
       podlingStatus: statusInfo,
       namesearch: ppmc.namesearch,
     }

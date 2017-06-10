@@ -119,6 +119,7 @@ class PPMC < React
     # reporting schedule
     _h3.reporting! 'Reporting Schedule'
     _ul do
+      _li "Incubating for "+@ppmc.duration+" days"
       _li @ppmc.schedule.join(', ')
       _li "Monthly: #{@ppmc.monthly.join (', ')}" if @ppmc.monthly and !@ppmc.monthly.empty?
       _li do

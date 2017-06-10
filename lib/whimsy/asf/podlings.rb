@@ -77,6 +77,13 @@ module ASF
       nil
     end
 
+    def duration
+      enddate = Date.today
+      enddate = Date.parse(@enddate) if @enddate
+
+      (enddate - Date.parse(@startdate)).to_i
+    end
+
     # lazy evaluation of reporting
     def reporting
       if @reporting.instance_of? Nokogiri::XML::Element
@@ -269,10 +276,7 @@ module ASF
       hash[:resourceAliases] = resourceAliases
       hash[:namesearch] = namesearch if namesearch
       hash[:sponsor] = @sponsor if @sponsor
-      enddate = Date.today
-      enddate = Date.parse(@enddate) if @enddate
-
-      hash[:duration] = (enddate - Date.parse(@startdate)).to_i
+      hash[:duration] = self.duration
       hash[:podlingStatus] = podlingStatus
       hash
     end
