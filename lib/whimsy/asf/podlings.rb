@@ -269,7 +269,7 @@ module ASF
       hash[:resourceAliases] = resourceAliases
       hash[:namesearch] = namesearch if namesearch
       hash[:sponsor] = @sponsor if @sponsor
-      enddate = Date.new()
+      enddate = Date.today
       enddate = Date.parse(@enddate) if @enddate
 
       hash[:duration] = (enddate - Date.parse(@startdate)).to_i
