@@ -1,6 +1,13 @@
 if env.password
   people = @ids.split(',').map {|id| ASF::Person.find(id)}
-  project = ASF::Project.find(@project)
+
+  # if target is ONLY icommit, use incubator in the email message, etc.
+  # Otherwise, use the project (podling).
+  if @targets == ['icommit']
+    project = ASF::Project.find('incubator')
+  else
+    project = ASF::Project.find(@project)
+  end
 
   # update LDAP
   if @targets.include? 'ppmc' or @targets.include? 'committer'
@@ -15,6 +22,27 @@ if env.password
       elsif @action == 'remove'
         project.remove_owners(people) if @targets.include? 'ppmc'
         project.remove_members(people) if @targets.include? 'committer'
+      end
+
+      # when adding a commiter to a podling, also add the commiter to
+      # the incubator.  For removals, remove the individual as an
+      # incubator committer when they are not a commiter for andy podling
+      if @targets.include? 'icommit' or @targets.include? 'committer'
+        incubator = ASF::Project.find('incubator')
+        user = ASF::Person.find(env.user)
+        if user.asf_member? or incubator.owners.include? person
+          if @action == 'add'
+            additions = people - icommit
+            incubator.add_committers(additions) unless additions.empty?
+          else
+            removals = people & icommit
+            podlings = ASF::Podling.current.map(&:id)
+            removals.select do |person| 
+              (person.projects.map(&:id) & podlings).empty?
+            end
+            incubator.remove_committers(removals) unless removals.empty?
+          end
+        end
       end
     end
   end
@@ -98,20 +126,33 @@ if env.password
   action = (@action == 'add' ? 'added to' : 'removed from')
   details = people.map {|person| person.dn} + [project.dn]
   from = ASF::Person.find(env.user)
-  ppmc = ASF::Podling.find(@project)
 
   # draft email
-  mail = Mail.new do
-    from "#{from.public_name} <#{from.id}@apache.org>".untaint
-    to ppmc.private_mail_list.untaint
-    if ppmc.private_mail_list != 'private@incubator.apache.org'
-      cc 'private@incubator.apache.org'
+  if @targets == ['icommit']
+    mail = Mail.new do
+      from "#{from.public_name} <#{from.id}@apache.org>".untaint
+      to 'private@incubator.apache.org'
+      bcc 'root@apache.org'
+      subject "#{who} #{action} incubator #{target}"
+      body "Current roster can be found at:\n\n" +
+	"  https://whimsy.apache.org/roster/committee/incubator\n\n" +
+	"LDAP details:\n\n  #{details.join("\n  ")}"
     end
-    bcc 'root@apache.org'
-    subject "#{who} #{action} #{ppmc.display_name} #{target}"
-    body "Current roster can be found at:\n\n" +
-      "  https://whimsy.apache.org/roster/ppmc/#{ppmc.id}\n\n" +
-      "LDAP details:\n\n  #{details.join("\n  ")}"
+  else
+    ppmc = ASF::Podling.find(@project)
+
+    mail = Mail.new do
+      from "#{from.public_name} <#{from.id}@apache.org>".untaint
+      to ppmc.private_mail_list.untaint
+      if ppmc.private_mail_list != 'private@incubator.apache.org'
+	cc 'private@incubator.apache.org'
+      end
+      bcc 'root@apache.org'
+      subject "#{who} #{action} #{ppmc.display_name} #{target}"
+      body "Current roster can be found at:\n\n" +
+	"  https://whimsy.apache.org/roster/ppmc/#{ppmc.id}\n\n" +
+	"LDAP details:\n\n  #{details.join("\n  ")}"
+    end
   end
 
   # Header for root@'s lovely email filters
