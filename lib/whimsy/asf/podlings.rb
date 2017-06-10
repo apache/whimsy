@@ -211,8 +211,8 @@ module ASF
     def podlingStatus
       # resource can contain '-'
       @resource.untaint if @resource =~ /\A[-\w]+\z/
-      incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
-      resource_yml = "#{incubator_content}/podlings/#{@resource}.yml"
+      incubator_content = ASF::SVN['asf/incubator/public/trunk/content/podlings']
+      resource_yml = "#{incubator_content}/#{@resource}.yml"
       if File.exist?(resource_yml)
         rawYaml = Psych.load_file(resource_yml)
         hash = { }
@@ -234,7 +234,7 @@ module ASF
         end if rawYaml[:news]
         hash
       else
-        nil
+        {news:[]}
       end
     end
 
@@ -273,7 +273,7 @@ module ASF
       enddate = Date.parse(@enddate) if @enddate
 
       hash[:duration] = (enddate - Date.parse(@startdate)).to_i
-      hash[:podlingStatus] = podlingStatus || []
+      hash[:podlingStatus] = podlingStatus
       hash
     end
 

@@ -46,6 +46,10 @@
   iclas:
     url: private/documents/iclas
 
+  incubator-podlings:
+    url: asf/incubator/public/trunk/content/podlings
+    depth: files
+
   incubator-content:
     url: asf/incubator/public/trunk/content
     depth: files
