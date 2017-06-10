@@ -21,6 +21,7 @@ class PPMC < React
     end
 
     _p @ppmc.description
+    _a 'Podling Proposal', href: @ppmc.podlingStatus.proposal if @ppmc.podlingStatus.proposal
 
     # usage information for authenticated users (PMC chair, etc.)
     if @@auth.ppmc or @@auth.ipmc
@@ -52,7 +53,7 @@ class PPMC < React
 
     # mailing lists
     if @ppmc.moderators
-      _h2.mail! 'Mail list moderators'
+      _h2.mail! 'Mailing list moderators'
       _table do
         _thead do
           _tr do
@@ -73,7 +74,7 @@ class PPMC < React
         end
       end
     else
-      _h2.mail! 'Mail lists'
+      _h2.mail! 'Mailing lists'
       _ul do
         for mail_name in @ppmc.mail
           parsed = mail_name.match(/^(.*?)-(.*)/)
@@ -86,27 +87,65 @@ class PPMC < React
       end
     end
 
+    _h2.podlingStatus! 'Podling Status'
+
+    # infra styled resources
+    _h3 'Resources'
+    _ul do
+      _li do
+        _a "GitHub", href: 'https://github.com/apache?q=incubator-' + @ppmc.id
+      end if @ppmc.podlingStatus.sourceControl == 'github'
+      _li do
+        _a 'https://issues.apache.org/jira/browse/' + @ppmc.podlingStatus.jira,href: 'https://issues.apache.org/jira/browse/' + @ppmc.podlingStatus.jira
+      end if @ppmc.podlingStatus.jira
+      _li do
+        _a 'https://cwiki.apache.org/confluence/display/' + @ppmc.podlingStatus.wiki,href: 'https://cwiki.apache.org/confluence/display/' + @ppmc.podlingStatus.wiki
+      end if @ppmc.podlingStatus.wiki
+    end
+
+    _h3 'Licensing'
+    _ul do
+      _li do
+        _a 'IP Clearance Form: '+ @ppmc.podlingStatus.ipClearance, href: @ppmc.podlingStatus.ipClearance
+      end if @ppmc.podlingStatus.ipClearance
+      _li 'Software Grant Received on: '+@ppmc.podlingStatus.sga if @ppmc.podlingStatus.sga
+      _li.podlingWarning 'No Software Grant and No IP Clearance Filed' unless @ppmc.podlingStatus.sga || @ppmc.podlingStatus.ipClearance
+      _li 'Confirmation of ASF Copyright Headers on Source Code on: '+@ppmc.podlingStatus.asfCopyright if @ppmc.podlingStatus.asfCopyright
+      _li.podlingWarning 'No Release Yet/Missing ASF Copyright Headers on Source Code' unless @ppmc.podlingStatus.asfCopyright
+      _li 'Confirmation of Binary Distribution Licensing: '+@ppmc.podlingStatus.distributionRights if @ppmc.podlingStatus.distributionRights
+      _li.podlingWarning 'No Release Yet/Binary has licensing issues' unless @ppmc.podlingStatus.distributionRights
+    end
+
     # reporting schedule
-    _h2.reporting! 'Reporting Schedule'
+    _h3.reporting! 'Reporting Schedule'
     _ul do
       _li @ppmc.schedule.join(', ')
       _li "Monthly: #{@ppmc.monthly.join (', ')}" if @ppmc.monthly and !@ppmc.monthly.empty?
       _li do
-        _a 'Prior Board Reports', href: 'https://whimsy.apache.org/board/minutes/' +
-          @ppmc.display_name.gsub(/\s+/, '_')
+        _a 'Prior Board Reports', href: '/board/minutes/' +
+            @ppmc.display_name.gsub(/\s+/, '_')
       end
     end
 
-    _h2.podlingStatus! 'Podling Status'
+    # website and naming
     _h3 'Naming'
     _ul do
       _li do
         _a "Podling name search (#{@ppmc.namesearch.resolution})", href: 'https://issues.apache.org/jira/browse/' + @ppmc.namesearch.issue
       end if @ppmc.namesearch
-      _li do
+      _li.podlingWarning do
         _a "No Podling Name Search on file", href: 'https://incubator.apache.org/guides/names.html#name-search'
-      end if !@ppmc.namesearch
+      end unless @ppmc.namesearch
+      _li do
+        _a @ppmc.display_name + ' Website', href: @ppmc.podlingStatus.website
+      end
     end
+    _h3 'News' unless @ppmc.podlingStatus.news.empty?
+    _ul do
+      @ppmc.podlingStatus.news.each { |ni|
+        _li ni.date + ' - ' + ni.note
+      }
+    end unless @ppmc.podlingStatus.news.empty?
 
     # Graduation resolution
     _PPMCGraduate ppmc: @ppmc, id: @@auth.id

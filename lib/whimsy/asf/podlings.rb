@@ -11,9 +11,9 @@ module ASF
     # three consecutive months, starting with this one
     def quarter
       [
-        Date.today.strftime('%B'),
-        Date.today.next_month.strftime('%B'),
-        Date.today.next_month.next_month.strftime('%B')
+          Date.today.strftime('%B'),
+          Date.today.next_month.strftime('%B'),
+          Date.today.next_month.next_month.strftime('%B')
       ]
     end
 
@@ -29,7 +29,7 @@ module ASF
       @enddate = node['enddate']
       @startdate = node['startdate']
       @description = node.at('description').text
-      @mentors = node.search('mentor').map {|mentor| mentor['username']}
+      @mentors = node.search('mentor').map { |mentor| mentor['username'] }
       @champion = node.at('champion')['availid'] if node.at('champion')
 
       @reporting = node.at('reporting') if node.at('reporting')
@@ -120,7 +120,7 @@ module ASF
     end
 
     def self.current
-      list.select {|podling| podling.status == 'current'}
+      list.select { |podling| podling.status == 'current' }
     end
 
     def self.mtime
@@ -129,7 +129,7 @@ module ASF
 
     # find a podling by name
     def self.find(name)
-      list.find {|podling| podling.name == name}
+      list.find { |podling| podling.name == name }
     end
 
     # below is for backwards compatibility
@@ -146,7 +146,7 @@ module ASF
 
     # provide a list of podling names and descriptions
     def self.each(&block)
-      list.each {|podling| block.call podling.name, podling}
+      list.each { |podling| block.call podling.name, podling }
     end
 
     # allow attributes to be accessed as hash
@@ -167,18 +167,18 @@ module ASF
     # development mailing list associated with a given podling
     def dev_mail_list
       case name
-      when 'climatemodeldiagnosticanalyzer'
-        'dev@cmda.incubator.apache.org'
-      when 'odftoolkit'
-        'odf-dev@incubator.apache.org'
-      when 'log4cxx2'
-        'log4cxx-dev@logging.apache.org'
-      else
-        if ASF::Mail.lists.include? "#{name}-dev"
-          "dev@#{name}.apache.org" 
-        elsif ASF::Mail.lists.include? "incubator-#{name}-dev"
-          "#{name}-dev@incubator.apache.org" 
-        end
+        when 'climatemodeldiagnosticanalyzer'
+          'dev@cmda.incubator.apache.org'
+        when 'odftoolkit'
+          'odf-dev@incubator.apache.org'
+        when 'log4cxx2'
+          'log4cxx-dev@logging.apache.org'
+        else
+          if ASF::Mail.lists.include? "#{name}-dev"
+            "dev@#{name}.apache.org"
+          elsif ASF::Mail.lists.include? "incubator-#{name}-dev"
+            "#{name}-dev@incubator.apache.org"
+          end
       end
     end
 
@@ -196,7 +196,7 @@ module ASF
     def mail_list?(list)
       return true if _match_mailname?(list, name())
       # Also check aliases
-      @resourceAliases.each {|name|
+      @resourceAliases.each { |name|
         return true if _match_mailname?(list, name)
       }
       return false
@@ -214,7 +214,25 @@ module ASF
       incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
       resource_yml = "#{incubator_content}/podlings/#{@resource}.yml"
       if File.exist?(resource_yml)
-        Psych.load_file(resource_yml)
+        rawYaml = Psych.load_file(resource_yml)
+        hash = { }
+        hash[:sga] = rawYaml[:sga].strftime('%Y-%m-%d') if rawYaml[:sga]
+        hash[:asfCopyright] = rawYaml[:asfCopyright].strftime('%Y-%m-%d') if rawYaml[:asfCopyright]
+        hash[:distributionRights] = rawYaml[:distributionRights].strftime('%Y-%m-%d') if rawYaml[:distributionRights]
+        hash[:ipClearance] = rawYaml[:ipClearance]
+        hash[:sourceControl] = rawYaml[:sourceControl]
+        hash[:wiki] = rawYaml[:wiki]
+        hash[:jira] = rawYaml[:jira]
+        hash[:proposal] = rawYaml[:proposal]
+        hash[:website] = rawYaml[:website]
+        hash[:news] = []
+        for ni in rawYaml[:news]
+          newsItem = {}
+          newsItem[:date] = ni[:date].strftime('%Y-%m-%d')
+          newsItem[:note] = ni[:note]
+          hash[:news].push(newsItem)
+        end if  rawYaml[:news]
+        hash
       else
         nil
       end
@@ -223,11 +241,11 @@ module ASF
     # Return the instance as a hash
     def as_hash # might be confusing to use to_h here?
       hash = {
-        name: @name,
-        status: status,
-        description: description,
-        mentors: mentors,
-        startdate: startdate,
+          name: @name,
+          status: status,
+          description: description,
+          mentors: mentors,
+          startdate: startdate,
       }
       hash[:enddate] = enddate if enddate
       hash[:champion] = champion if champion
@@ -238,7 +256,7 @@ module ASF
       if r.instance_of? Nokogiri::XML::Element
         group = r['group']
         hash[:reporting] = {
-          group: group
+            group: group
         }
         hash[:reporting][:text] = r.text if r.text.length > 0
         hash[:reporting][:monthly] = r.text.split(/,\s*/) if r['monthly']
@@ -262,7 +280,6 @@ module ASF
     def default_status
       {
           issueTracker: 'jira',
-          dateAccepted: nil,
           wiki: self.resource.upcase,
           jira: self.resource.upcase,
           proposal: 'http://wiki.apache.org/incubator/'+self.resource.capitalize+"Proposal",
@@ -282,7 +299,7 @@ module ASF
       cache = "#{ASF::Config.get(:cache)}/pns.jira"
       if not File.exist?(cache) or File.mtime(cache) > Time.now - 300
         query = 'https://issues.apache.org/jira/rest/api/2/search?' +
-          'jql=project=PODLINGNAMESEARCH&fields=summary,resolution'
+            'jql=project=PODLINGNAMESEARCH&fields=summary,resolution'
         File.write cache, Net::HTTP.get(URI(query))
       end
 

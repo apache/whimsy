@@ -18,6 +18,8 @@ td, th {padding-left: 0.5em; padding-right: 0.5em}
 .chair {color: green; font-weight:bold} 
 .member {font-weight: bold}
 .editable td:first-child {color: blue}
+.podlingWarning{color: red; font-weight: bold}
+.podlingWarning > a{color: red; font-weight: bold}
 
 .status {font-weight: bold; float: left; color: green}
 
