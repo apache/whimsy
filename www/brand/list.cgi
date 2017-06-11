@@ -58,22 +58,21 @@ _json do
 end
 
 def _unreg(pmc, proj, parent, n)
-  _div.panel.panel_default  id: pmc do
-    _div.panel_heading role: "tab", id: "#{parent}h#{n}" do
-      _h4.panel_title do
-        _a.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{parent}", href: "##{parent}c#{n}", aria_controls: "#{parent}c#{n}" do
-          _ proj['name']
+  _div!.panel.panel_default  id: pmc do
+    _div!.panel_heading role: "tab", id: "#{parent}h#{n}" do
+      _h4!.panel_title do
+        _a!.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{parent}", href: "##{parent}c#{n}", aria_controls: "#{parent}c#{n}" do
+          _! proj['name']
           _{"&trade; software"}
         end
       end
     end
-    _div.panel_collapse.collapse id: "#{parent}c#{n}", role: "tabpanel", aria_labelledby: "#{parent}h#{n}" do
-      _div.panel_body do
-        _a href: proj['homepage'] do
-          _ proj['name']
+    _div!.panel_collapse.collapse id: "#{parent}c#{n}", role: "tabpanel", aria_labelledby: "#{parent}h#{n}" do
+      _div!.panel_body do
+        _a! href: proj['homepage'] do
+          _! "#{proj['name']}: "
         end
-        _ ': '
-        _ proj['description']
+        _! proj['description']
       end
     end
   end
