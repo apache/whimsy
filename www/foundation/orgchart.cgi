@@ -23,7 +23,9 @@ def emit_orgchart(org: {})
     _em 'corporate'
     _ ' officers and roles at the ASF. This does '
     _strong 'not'
-    _ ' include the VP of each Apache PMC that provide software products.' 
+    _ ' include the many Apache '
+    _em 'Project'
+    _ ' VPs that help build Apache software products in our communities.' 
   }
   ) do
     _table.table.table_striped do
@@ -40,11 +42,11 @@ def emit_orgchart(org: {})
             end
             _td do
               id = value['info']['id'] || value['info']['chair']
-              __ ASF::Person.find(id).public_name
+              _ ASF::Person.find(id).public_name
             end
             _td do
               web = value['info']['website']
-              web.nil? ? _('')  : _a(web.sub(%r{http(s)?//}, ''), href: web)
+              web.nil? ? _('')  : _a(web.sub(%r{http(s)?://}, ''), href: web)
             end
           end
         end
@@ -62,11 +64,11 @@ def emit_role(role: {}, oversees: {}, desc: {})
     _table.table.table_striped do
       _tbody do
         role['info'].each do |k, value|
-          next if k == 'role'
-          next if k == 'roster' # No purpose in public display
-          next if k =~ /private/i
-          next unless value
           key = k.downcase # Prevent case mismatches
+          next if key == 'role'
+          next if key == 'roster' # No purpose in public display yet
+          next if key =~ /private/i
+          next unless value
           _tr_ do
             # Different output than www/roster/orgchart
             _td do
@@ -91,7 +93,7 @@ def emit_role(role: {}, oversees: {}, desc: {})
               _td do
                 _a value, href: "mailto:#{value}"
               end
-            elsif %w(roster resolution).include? key
+            elsif %w(resolution website).include? key
               _td do
                 _a value, href: value
               end
