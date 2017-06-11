@@ -13,6 +13,7 @@ OTHER_LINKS = {
   'https://people.apache.org/committer-index.html' => 'Apache Individual Committer Listing',
   'https://www.apache.org/foundation/members' => 'Social Listing Of ASF Members'
 }
+URLROOT = '/foundation/orgchart'
 
 # Output the orgchart overview
 def emit_orgchart(org: {})
@@ -38,11 +39,16 @@ def emit_orgchart(org: {})
         org.sort_by {|key, value| value['info']['role']}.each do |key, value|
           _tr_ do
             _td do
-              _a value['info']['role'], href: "/foundation/orgchart/#{key}"
+              _a value['info']['role'], href: "#{URLROOT}/#{key}"
             end
             _td do
               id = value['info']['id'] || value['info']['chair']
-              _ ASF::Person.find(id).public_name || id
+              tmp = ASF::Person[id]
+              if tmp.nil?
+                _em id
+              else
+                _ tmp.public_name
+              end
             end
             _td do
               web = value['info']['website']
@@ -58,7 +64,20 @@ end
 # Output one role's duties and data
 def emit_role(role: {}, oversees: {}, desc: {})
   id = role['info']['id'] || role['info']['chair']
-  idnam = ASF::Person.find(id).public_name || id
+  tmp = ASF::Person[id]
+  if tmp.nil?
+    idnam = id
+  else
+    idnam = tmp.public_name
+  end
+  _ol.breadcrumb do
+    _li do
+      _a 'OrgChart', href: "#{URLROOT}"
+    end
+    _li.active do
+      _ "#{role['info']['role']}"
+    end
+  end
   _whimsy_panel_table(
   title: "#{role['info']['role']} - #{idnam}",
   ) do
@@ -77,7 +96,11 @@ def emit_role(role: {}, oversees: {}, desc: {})
             end
             if %w(id chair).include? key
               _td do
-                _ idnam
+                if tmp.nil?
+                  _em idnam
+                else
+                  _ idnam
+                end
               end
             elsif %w(reports-to).include? key
               _td! do
@@ -86,7 +109,7 @@ def emit_role(role: {}, oversees: {}, desc: {})
                   if role_inner == 'members'
                     _a 'Apache Membership', href: 'https://www.apache.org/foundation/members'
                   else
-                    _a role_inner, href: "/foundation/orgchart/#{role_inner}"
+                    _a role_inner, href: "#{URLROOT}/#{role_inner}"
                   end
                 end
               end
@@ -115,7 +138,7 @@ def emit_role(role: {}, oversees: {}, desc: {})
           _ul style: 'margin-top: 15px; margin-bottom: 15px;' do
             oversees.each do |name, duties|
               _li do
-                _a duties['info']['role'], href: "/foundation/orgchart/#{name}"
+                _a duties['info']['role'], href: "#{URLROOT}/#{name}"
               end
             end
           end
@@ -175,12 +198,12 @@ _html do
             _ 'Sorry, the URL you attempted to access '
             _code request
             _ ' is not a valid role.'
-            _a 'Go back to the orgchart', href: '/orgchart'
+            _a 'Go back to the orgchart', href: "#{URLROOT}"
           end
         end
       else
         _p "DEBUG: You may be running this script from the command line."
-        _a 'Go back to the orgchart', href: '/orgchart'
+        _a 'Go back to the orgchart', href: "#{URLROOT}"
       end
     end
   end
