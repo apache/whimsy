@@ -83,6 +83,12 @@ _html do
                 end
               end
 
+              unless request =~ /mentors/
+                _li do
+                  _a 'Non-member incubator mentors', href: 'members/watch/mentors'
+                end
+              end
+
               _li do
                 _a 'PMCs with no members', href: 'members/memberless-pmcs'
               end
@@ -102,6 +108,11 @@ _html do
     elsif request =~ /chairs/
       _h2_ 'PMC Chairs'
       list = ASF.pmc_chairs
+      list -= ASF.members
+    elsif request =~ /mentors/
+      _h2_ 'Incubator Mentors'
+      list = ASF::Podling.current.map {|podling| podling.mentors}.flatten.
+        uniq.map {|id| ASF::Person.find(id)}
       list -= ASF.members
     elsif request =~ /nominees/
       _h2_ 'Member Nominees'
