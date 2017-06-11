@@ -82,6 +82,7 @@ if ARGV.length == 2
   podh = Hash[ASF::Podling.list.map {|podling| [podling.name, podling.as_hash]}]
   podh.each do |p| # drop empty aliases
     p[1].delete(:resourceAliases) if p[1][:resourceAliases].length == 0
+    p[1].delete(:duration) # This changes every day ...
   end
   public_json_output_file({
     last_updated: mtime,
