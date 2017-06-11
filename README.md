@@ -23,7 +23,7 @@ and now also mirrored for Apache committers at:
 
  * [How To Develop Whimsy Code](./DEVELOPMENT.md)
  * [Submit Bugs](https://issues.apache.org/jira/browse/WHIMSY)
- * [Questions? Email The List](https://lists.apache.org/list.html?dev@whimsical.apache.org)
+ * [Questions? See the Mailing List](https://lists.apache.org/list.html?dev@whimsical.apache.org)
  * [Deployment Instructions](./DEPLOYMENT.md)
  * [Configuration Pointers](./CONFIGURE.md)
  * [Monitoring How To](./www/status/README.md) - [Live Whimsy Status](https://whimsy.apache.org/status/)
@@ -37,9 +37,10 @@ How To Get Involved!
 Since Whimsy hosts many independent tools that make finding or updating information 
 at the ASF simpler, there are plenty of places for Apache committers to 
 get involved.  Bugs or improvement suggestions for the many 
-[tools available on Whimsy](https://whimsy.apache.org/committers/tools) are always appreciated.
+[tools available on Whimsy](https://whimsy.apache.org/committers/tools) 
+or [list of public datafiles](https://whimsy.apache.org/test/dataflow.cgi) are always appreciated.
 
-If you have an idea for a new Whimsy tool, [email us](mailto:dev@whimsical.apache.org?subject=[IDEA] New tool idea)! 
+If you have an idea for a new Whimsy tool, [email us](mailto:dev@whimsical.apache.org?subject=Tool-Idea)! 
 The PMC supports a rich server environment, so deploying a new tool is as 
 simple as proposing a .cgi with a bit of Ruby code.  We also have deployments 
 of Rack and Sinatra apps, and use JavaScript and Wunderbar for most of the 
