@@ -21,6 +21,11 @@ CLASSGOODS = 'ClassGoods'
 REGISTERED = 'Registered'
 USA = 'United States of America'
 
+UNREG_ID = 'unreg_'
+MAP_PMC_REG = {
+  'lucene' => 'lucene-core'
+}
+
 # Transform docket spreadsheet into structured JSON
 def csv2json
   brand_dir = ASF::SVN['private/foundation/Brand']
@@ -95,11 +100,11 @@ def _marks(marks)
   end
 end
 
-def _project(pmc, proj, marks)
+def _project(pmc, pnam, purl, marks)
   _div.panel.panel_primary id: pmc do
     _div.panel_heading do 
       _h3!.panel_title do 
-        _a! proj['name'], href: proj['homepage']
+        _a! pnam, href: purl
         _{"&reg; software"}
       end
     end
@@ -111,9 +116,9 @@ def _project(pmc, proj, marks)
         end
       end
       if allr
-        _{"The ASF owns the following registered trademarks for our #{proj['name']}&reg; software:"}
+        _{"The ASF owns the following registered trademarks for our #{pnam}&reg; software:"}
       else
-        _{"The ASF owns the following registered or applied for trademarks for our #{proj['name']}&reg; software:"}
+        _{"The ASF owns the following registered or applied for trademarks for our #{pnam}&reg; software:"}
       end
     end
     _marks marks
@@ -145,13 +150,17 @@ _html do
       },
       helpblock: -> {
         _p "This is an automated listing of the trademarks claimed by the ASF on behalf of our many project communities."
-        _ul do
-          _li do
-            _a 'Registered trademarks', href: '#registered'
+        _p do
+          _ 'See the list of '
+          _a 'Registered trademarks', href: '#registered'
+          _ ' or see other trademarks by letter: '
           end
-          _li do
-            _a 'Other trademarks', href: '#unreg_a'
-          end
+          _ul.list_inline do
+            ("A".."Z").each do |ltr|
+              _li do
+                _a ltr, href: "##{UNREG_ID}#{ltr.downcase}"
+              end
+            end
         end
       }
     ) do
@@ -159,21 +168,22 @@ _html do
       docket = JSON.parse(File.read("#{brand_dir}/docket.json"))
       projects = JSON.parse(Net::HTTP.get(URI('https://projects.apache.org/json/foundation/projects.json')))
       _h3 'The ASF holds the following registered trademarks:', id: 'registered'
-      docket.each do |pmc, marks|
+      docket.each do |proj, marks|
+        # Map project name to name in projects.json for unusual cases
+        MAP_PMC_REG.key?(proj) ? pmc = MAP_PMC_REG[proj] :  pmc = proj
         if pmc == 'apache' then
           _apache(marks)
-        elsif projects[pmc] then
-          # TODO fix display of LUCENE and other products that don't match projects key
-          _project pmc, projects[pmc], marks
+        elsif projects.key?(pmc) then
+          _project pmc, projects[pmc]['name'], projects[pmc]['homepage'], marks
         else
           # TODO map all pmc names to projects or podlings
-          _project 'Apache ' + pmc.capitalize, 'https://' + pmc + '.apache.org', marks
+          _project pmc.downcase, 'Apache ' + pmc.capitalize, 'https://' + pmc + '.apache.org', marks
         end
       end
       _h3 'The ASF holds the following unregistered trademarks:'
-      allproj = projects.group_by { |k| k[0].slice(0) } # TODO group by software product name
-      allproj.each do |ltr, parr|
-        parent = "unreg_#{ltr}_"
+      allproj = projects.group_by { |k, v| /Apache\s+(.)/.match(v['name'])[1] }
+      allproj.sort.each do |ltr, parr|
+        parent = "#{UNREG_ID}#{ltr.downcase}"
         _div.panel_group id: parent, role: "tablist", aria_multiselectable: "true" do
           parr.each_with_index do |x, num|
             unless docket[x[0]] then
