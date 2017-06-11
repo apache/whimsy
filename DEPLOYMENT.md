@@ -1,9 +1,16 @@
 Deploying Production Whimsy.apache.org
 ==========
 
-The contents of this repository are automatically deployed to the production 
-https://whimsy.apache.org/ VM every 30 minutes - so be sure to test 
-your changes before pushing to master.
+The production `whimsy.apache.org` server is managed by [Puppet](puppetnode), and 
+is automatically udpated whenever commits are made to the master branch
+of this repository.  Thus code changes here are reflected in the production
+server within a few minutes.  In the event of a major server crash, the 
+infra team simply re-deploys the whole VM from Puppet.
+
+**Committers:** please test changes to end-user critical scripts before 
+committing to master! 
+
+To deploy a completely _new_ whimsy VM, see [Manual Steps](#manual-steps).
 
 Configuration Locations
 ----
@@ -11,15 +18,32 @@ Application developers may need to know where different things are configured:
 
 - Most **httpd config** is in the puppet definition whimsy-vm*.apache.org.yaml (below)
 - **SVN / git** updaters are in [repository.yml](repository.yml)
-- **Public JSON** generation comes from tools and controlled by whimsy_server/manifests/cronjobs.pp
+- **Public JSON** generation comes from various tools/public*.rb scripts
+  and is controlled by whimsy_server/manifests/cronjobs.pp
+- **Misc server config** is executed by whimsy_server/manifests/init.pp
 - **LDAP** configured in whimsy-vm*.apache.org.yaml
+
+How Production Is Updated
+----
+
+- When Puppet updates the whimsy VM, it uses modules/whimsy_server/manifests/init.pp
+  to define the 'whimsy-pubsub' service which runs [tools/pubsub.rb](tools/pubsub.rb)
+- pubsub.rb watches for any commits from the whimsy git repo at gitbox.apache.org
+- When it detects a change, it tells Puppet to update the VM as a whole
+- Puppet then updates various repositories, ensures required tools and setup 
+  is done if there are other changes to dependencies, and when needed restarts most 
+  services that might need a restart
+- Puppet also does a `rake update` to update various gem or ruby settings
+
+Thus, in less than 5 minutes from any git push, the server is running the new code!
+
 
 Production Configuration
 ==========
 
 The Whimsy VM runs Ubuntu 16.04 and is fully managed by Puppet using 
 the normal methods Apache infra uses for managing servers.  Note however 
-that management of Whimsy is a PMC responsibility.  
+that management of Whimsy code and tools is a PMC responsibility.  
 
 <a name="puppetnode"></a>
 The **puppet definition** is contained in the following files:
@@ -50,7 +74,8 @@ Before pushing any changes here, understand the Apache Infra puppet workflow and
 Manual Steps
 ------------
 
-The following additional steps are required to get the Whimsy VM up and running:
+The following additional steps are required to get a new Whimsy VM up 
+and running - these are only needed for a new deployment.
 
  * Run the following command to create an SSL cert (see [tutorial](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-14-04) for details):
      * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org -d whimsy4.apache.org -d whimsy-vm4.apache.org -d whimsy-test.apache.org`

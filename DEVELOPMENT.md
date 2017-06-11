@@ -309,6 +309,16 @@ unless user.asf_member? or ASF.pmc_chairs.include? user
 end
 ```
 
+### How To: Add A New Mailing List-Id
+
+Whimsy can use ASF::Mail to view mailing lists locally by having the 
+server subscribe to the list.
+
+- Subscribe _listname_@whimsy-_server_vmname_.apache.org to the desired 
+  mailing list (see also [Deployment instructions](DEPLOYMENT.md#manual-steps))
+- Add your _listname_ to the `:apache_mailmap:` entry in [puppet](https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm4.apache.org.yaml#L63)
+- Note that tools/deliver.rb will dump all mail locally (it does not 
+  currently get cleaned out) where it can be used by ASF::Mail 
 
 Whimsy On Windows
 =================
