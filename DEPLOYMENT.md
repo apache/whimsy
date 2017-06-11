@@ -18,7 +18,7 @@ Application developers may need to know where different things are configured:
 
 - Most **httpd config** is in the puppet definition whimsy-vm*.apache.org.yaml (below)
 - **SVN / git** updaters are in [repository.yml](repository.yml)
-- **Public JSON** generation comes from various tools/public*.rb scripts
+- **Public JSON** generation comes from various www/roster/public_*.rb scripts
   and is controlled by whimsy_server/manifests/cronjobs.pp
 - **Misc server config** is executed by whimsy_server/manifests/init.pp
 - **LDAP** configured in whimsy-vm*.apache.org.yaml
