@@ -25,6 +25,8 @@ class Attachment
       type = 'image/png' if name.end_with? '.png'
     end
 
+    type = "image/#{$1}" if type =~ /^application\/(jpeg|gif|png)$/
+
     type
   end
 
