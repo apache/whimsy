@@ -181,9 +181,9 @@ _html do
         end
       end
       _h3 'The ASF holds the following unregistered trademarks:'
-      allproj = projects.group_by { |k, v| /Apache\s+(.)/.match(v['name'])[1] }
+      allproj = projects.group_by { |k, v| /Apache\s+(.)/.match(v['name'])[1].downcase }
       allproj.sort.each do |ltr, parr|
-        parent = "#{UNREG_ID}#{ltr.downcase}"
+        parent = "#{UNREG_ID}#{ltr}"
         _div.panel_group id: parent, role: "tablist", aria_multiselectable: "true" do
           parr.each_with_index do |x, num|
             unless docket[x[0]] then
