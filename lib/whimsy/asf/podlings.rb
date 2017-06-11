@@ -78,10 +78,9 @@ module ASF
     end
 
     def duration
-      enddate = Date.today
-      enddate = Date.parse(@enddate) if @enddate
-
-      (enddate - Date.parse(@startdate)).to_i
+      last = enddate || Date.today
+      first = startdate || Date.today
+      (last - first).to_i
     end
 
     # lazy evaluation of reporting
