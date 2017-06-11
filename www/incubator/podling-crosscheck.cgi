@@ -48,8 +48,8 @@ _html do
 
       podlings = ASF::Podling.current.map {|podling| podling.id}
       podling_committers = ASF::Project.preload.
-	select {|name, project| podlings.include? name}.
-	map {|name, project| project.members}.flatten.uniq
+	select {|project, members| podlings.include? project.name}.
+	map {|project,members| project.members}.flatten.uniq
 
       #
       ### Podling mentors vs IPMC
