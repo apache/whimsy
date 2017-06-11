@@ -25,10 +25,18 @@ _html do
         "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code"
       },
       helpblock: -> {
-        _p %{
-          This script cross-checks Incubator PMC lists in LDAP, mentor lists
-          in podlings.xml, and Podling lists in LDAP.
-        }
+        _p! do
+          _ 'This script cross-checks '
+          _a 'Incubator PMC lists in LDAP',
+            href: '../../roster/committee/incubator'
+          _ ', '
+          _a 'mentor lists in podlings.xml',
+            href: 'https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings.xml'
+          _ ',  and '
+          _a 'Podling lists in LDAP',
+            href: '../../roster/ppmc'
+          _ '.'
+        end
       }
     ) do
 
