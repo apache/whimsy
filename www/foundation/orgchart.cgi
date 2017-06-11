@@ -38,7 +38,7 @@ def emit_orgchart(org: {})
         org.sort_by {|key, value| value['info']['role']}.each do |key, value|
           _tr_ do
             _td do
-              _a value['info']['role'], href: "/orgchart/#{key}"
+              _a value['info']['role'], href: "/foundation/orgchart/#{key}"
             end
             _td do
               id = value['info']['id'] || value['info']['chair']
@@ -85,7 +85,7 @@ def emit_role(role: {}, oversees: {}, desc: {})
                   if role_inner == 'members'
                     _a 'Apache Membership', href: 'https://www.apache.org/foundation/members'
                   else
-                    _a role_inner, href: "/orgchart/#{role_inner}"
+                    _a role_inner, href: "/foundation/orgchart/#{role_inner}"
                   end
                 end
               end
@@ -114,7 +114,7 @@ def emit_role(role: {}, oversees: {}, desc: {})
           _ul style: 'margin-top: 15px; margin-bottom: 15px;' do
             oversees.each do |name, duties|
               _li do
-                _a duties['info']['role'], href: "/orgchart/#{name}"
+                _a duties['info']['role'], href: "/foundation/orgchart/#{name}"
               end
             end
           end
