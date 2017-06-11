@@ -71,8 +71,15 @@ _html do
                             href: "../../roster/ppmc/#{podling.id}"
                         end
                         _td do
-                          _a person.public_name,
-                            href: "../../roster/committer/#{person.id}"
+                          if person.asf_member?
+                            _b do
+                              _a person.public_name,
+                                href: "../../roster/committer/#{person.id}"
+                            end
+                          else
+                            _a person.public_name,
+                              href: "../../roster/committer/#{person.id}"
+                          end
                         end
                       end
                     end
@@ -112,8 +119,15 @@ _html do
                             href: "../../roster/ppmc/#{podling.id}"
                         end
                         _td do
-                          _a person.public_name,
-                            href: "../../roster/committer/#{person.id}"
+                          if person.asf_member?
+                            _b do
+                              _a person.public_name,
+                                href: "../../roster/committer/#{person.id}"
+                            end
+                          else
+                            _a person.public_name,
+                              href: "../../roster/committer/#{person.id}"
+                          end
                         end
                       end
                     end
@@ -143,8 +157,15 @@ _html do
                 next if podling_committers.include? person
                 _tr_ do
                   _td do
-                    _a person.public_name,
-                      href: "../../roster/committer/#{person.id}"
+		    if person.asf_member?
+		      _b do
+			_a person.public_name,
+			  href: "../../roster/committer/#{person.id}"
+		      end
+		    else
+		      _a person.public_name,
+			href: "../../roster/committer/#{person.id}"
+		    end
                   end
                 end
               end
