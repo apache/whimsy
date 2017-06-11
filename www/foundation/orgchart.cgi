@@ -42,7 +42,7 @@ def emit_orgchart(org: {})
             end
             _td do
               id = value['info']['id'] || value['info']['chair']
-              _ ASF::Person.find(id).public_name
+              _ ASF::Person.find(id).public_name || id
             end
             _td do
               web = value['info']['website']
@@ -58,8 +58,9 @@ end
 # Output one role's duties and data
 def emit_role(role: {}, oversees: {}, desc: {})
   id = role['info']['id'] || role['info']['chair']
+  idnam = ASF::Person.find(id).public_name || id
   _whimsy_panel_table(
-  title: "#{role['info']['role']} - #{ASF::Person.find(id).public_name}",
+  title: "#{role['info']['role']} - #{idnam}",
   ) do
     _table.table.table_striped do
       _tbody do
@@ -76,7 +77,7 @@ def emit_role(role: {}, oversees: {}, desc: {})
             end
             if %w(id chair).include? key
               _td do
-                _ ASF::Person.find(id).public_name
+                _ idnam
               end
             elsif %w(reports-to).include? key
               _td! do
