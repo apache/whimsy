@@ -38,7 +38,7 @@ def emit_orgchart(org: {})
         org.sort_by {|key, value| value['info']['role']}.each do |key, value|
           _tr_ do
             _td do
-              _a value['info']['role'], href: "orgchart/#{key}"
+              _a value['info']['role'], href: "/#{key}"
             end
             _td do
               id = value['info']['id'] || value['info']['chair']
@@ -85,7 +85,7 @@ def emit_role(role: {}, oversees: {}, desc: {})
                   if role_inner == 'members'
                     _a 'Apache Membership', href: 'https://www.apache.org/foundation/members'
                   else
-                    _a role_inner, href: "orgchart/#{role_inner}"
+                    _a role_inner, href: "/#{role_inner}"
                   end
                 end
               end
@@ -114,7 +114,7 @@ def emit_role(role: {}, oversees: {}, desc: {})
           _ul style: 'margin-top: 15px; margin-bottom: 15px;' do
             oversees.each do |name, duties|
               _li do
-                _a duties['info']['role'], href: "orgchart/#{name}"
+                _a duties['info']['role'], href: "/#{name}"
               end
             end
           end
@@ -174,11 +174,12 @@ _html do
             _ 'Sorry, the URL you attempted to access '
             _code request
             _ ' is not a valid role.'
-            _a 'Go back to the orgchart', href: ENV['SCRIPT_NAME']
+            _a 'Go back to the orgchart', href: '/orgchart'
           end
         end
       else
-        _p "DEBUG: You are running this script from the command line."
+        _p "DEBUG: You may be running this script from the command line."
+        _a 'Go back to the orgchart', href: '/orgchart'
       end
     end
   end
