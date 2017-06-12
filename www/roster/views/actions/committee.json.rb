@@ -71,7 +71,7 @@ if env.password
         '--no-auth-cache', '--non-interactive',
         '--username', env.user.untaint, '--password', env.password.untaint,
         tmpdir.untaint, '--message',
-        "#{@project} #{@action == 'add' ? '+' : '-'}= #{who}"
+        "#{@project} #{@action == 'add' ? '+' : '-'}= #{who}".untaint
 
       if rc
         # update cache
@@ -104,19 +104,12 @@ if env.password
 
   from = ASF::Person.find(env.user)
 
-  # identify what has changed
-  if @targets.include? 'pmc'
-    target = 'PMC'
-  else
-    target = 'committers'
-  end
-
   # draft email
   mail = Mail.new do
     from "#{from.public_name} <#{from.id}@apache.org>".untaint
     to "private@#{pmc.mail_list}.apache.org".untaint
     bcc "root@apache.org"
-    subject "#{who} #{action} #{pmc.display_name} #{target}"
+    subject "#{who} #{action} #{pmc.display_name} #{list}"
     body "Current roster can be found at:\n\n" +
       "  https://whimsy.apache.org/roster/committee/#{pmc.id}\n\n" +
       "LDAP details:\n\n  #{details.join("\n  ")}"

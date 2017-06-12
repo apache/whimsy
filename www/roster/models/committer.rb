@@ -145,6 +145,11 @@ class Committer
       response[:subscriptions] = []
       emails = person.all_mail
 
+      # File format
+      # blank line
+      # /home/apmail/lists/accumulo.apache.org/commits
+      # archive@mail-archive.com
+      # ...
       File.read(LIST_SUBS).split(/\n\n/).each do |stanza|
         list = stanza.match(/(\w*\.?apache\.org)\/(.*?)(\n|\Z)/)
 
