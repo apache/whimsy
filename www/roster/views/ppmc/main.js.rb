@@ -201,7 +201,7 @@ class PPMC < React
         end
         @create_disabled = false
       }.catch {|error|
-        alert errror
+        alert error
         @create_disabled = false
       }
     end

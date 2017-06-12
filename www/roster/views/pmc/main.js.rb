@@ -187,7 +187,7 @@ class PMC < React
             console.log "Attic JIRA #{response.status} #{response.statusText}"
           end
         }.catch {|error|
-          console.log "Attic JIRA #{errror}"
+          console.log "Attic JIRA #{error}"
         }
       end
     end

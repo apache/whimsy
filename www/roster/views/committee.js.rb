@@ -429,7 +429,7 @@ class PMCConfirm < React
         end
         jQuery('#confirm').modal(:hide)
       }.catch {|error|
-        alert errror
+        alert error
         jQuery('#confirm').modal(:hide)
       }
     end

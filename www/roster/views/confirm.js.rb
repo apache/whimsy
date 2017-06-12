@@ -78,7 +78,7 @@ class Confirm < React
         jQuery('#confirm').modal(:hide)
         @disabled = false
       }.catch {|error|
-        alert errror
+        alert error
         jQuery('#confirm').modal(:hide)
         @disabled = false
       }
