@@ -90,7 +90,7 @@ class Wunderbar::HtmlMarkup
         _{'Copyright &copy; 2017, the Apache Software Foundation. Licensed under the '}
         _a 'Apache License, Version 2.0', rel: 'license', href: 'http://www.apache.org/licenses/LICENSE-2.0'
         _ ' | '
-        _a 'Prvacy Policy', href: 'https://www.apache.org/foundation/policies/privacy'
+        _a 'Privacy Policy', href: 'https://www.apache.org/foundation/policies/privacy'
         _br
         _{'Apache&reg;, the names of Apache projects, and the multicolor feather logo are '}
         _a 'registered trademarks or trademarks', href: 'https://www.apache.org/foundation/marks/list/'
