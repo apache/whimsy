@@ -21,7 +21,6 @@ class PPMC < React
     end
 
     _p @ppmc.description
-    _a 'Podling Proposal', href: @ppmc.podlingStatus.proposal if @ppmc.podlingStatus.proposal
 
     # usage information for authenticated users (PMC chair, etc.)
     if @@auth.ppmc or @@auth.ipmc
@@ -88,7 +87,17 @@ class PPMC < React
     end
 
     _h2.podlingStatus! 'Podling Status'
-
+    _h3 'Information'
+    _ul do
+      _li do
+        _a 'Podling Proposal', href: @ppmc.podlingStatus.proposal if @ppmc.podlingStatus.proposal
+      end
+      _li "Incubating for "+@ppmc.duration+" days"
+      _li do
+        _a 'Prior Board Reports', href: '/board/minutes/' +
+            @ppmc.display_name.gsub(/\s+/, '_')
+      end
+    end
     # infra styled resources
     _h3 'Resources'
     _ul do
@@ -119,13 +128,8 @@ class PPMC < React
     # reporting schedule
     _h3.reporting! 'Reporting Schedule'
     _ul do
-      _li "Incubating for "+@ppmc.duration+" days"
       _li @ppmc.schedule.join(', ')
       _li "Monthly: #{@ppmc.monthly.join (', ')}" if @ppmc.monthly and !@ppmc.monthly.empty?
-      _li do
-        _a 'Prior Board Reports', href: '/board/minutes/' +
-            @ppmc.display_name.gsub(/\s+/, '_')
-      end
     end
 
     # website and naming
