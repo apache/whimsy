@@ -12,18 +12,35 @@ module ASF
     @semaphore = Mutex.new
     @testdata = {}
 
+    REPOSITORY = File.expand_path('../../../../repository.yml', __FILE__).
+      untaint
+    @@repository_mtime = nil
+
     def self.repos
       @semaphore.synchronize do
         svn = Array(ASF::Config.get(:svn)).map {|dir| dir.untaint}
-        @repos ||= Hash[Dir[*svn].map { |name| 
-          next unless Dir.exist? name.untaint
-          Dir.chdir name.untaint do
-            out, err, status = Open3.capture3('svn', 'info')
-            if status.success?
-              [out[/URL: (.*)/,1].sub(/^http:/,'https:'), Dir.pwd.untaint]
+
+        # reload if repository changes
+        if File.exist?(REPOSITORY) && @@repository_mtime!=File.mtime(REPOSITORY)
+          @repos = nil
+        end
+
+        # reuse previous results if already scanned
+        unless @repos
+          @@repository_mtime = File.exist?(REPOSITORY) && File.mtime(REPOSITORY)
+
+          @repos = Hash[Dir[*svn].map { |name| 
+            next unless Dir.exist? name.untaint
+            Dir.chdir name.untaint do
+              out, err, status = Open3.capture3('svn', 'info')
+              if status.success?
+                [out[/URL: (.*)/,1].sub(/^http:/,'https:'), Dir.pwd.untaint]
+              end
             end
-          end
-        }.compact]
+          }.compact]
+        end
+
+        @repos
       end
     end
 
