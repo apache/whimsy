@@ -69,7 +69,7 @@ _html do
     _h1 'Apache Incubator moderators'
 
     moderators = Hash[File.read(SUBSCRIPTIONS).split(/\n\n/).
-      select {|k,v| k =~ /incubator.apache.org/}.
+      select {|k,v| k =~ /incubator.apache.org/ && k !~ /\/infra-(dev2?|[a-z])\//}.
       map {|stanza| [stanza[/incubator.apache.org\/(.*)\//,1],
       stanza.scan(/^(.*@.*)/).flatten]}]
 
