@@ -141,6 +141,17 @@ module ASF
       return revision, content
     end
 
+    def self.updateSimple(path)
+      cmd = ['svn', 'update', path, '--non-interactive']
+      stdout, status = Open3.capture2(*cmd)
+      revision = 0
+      if status.success?
+        # extract revision number
+        revision = stdout[/^At revision (\d+)/, 1]
+      end
+      revision
+    end
+
     # update a file or directory in SVN, working entirely in a temporary
     # directory
     def self.update(path, msg, env, _, options={})

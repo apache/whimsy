@@ -69,6 +69,11 @@
 
 require_relative 'public_json_common'
 
+incubaorContent = ASF::SVN.find('asf/incubator/public/trunk/content')
+incubatorPodlings = ASF::SVN.find('asf/incubator/public/trunk/content/podlings')
+ASF::SVN.updateSimple(incubaorContent);
+ASF::SVN.updateSimple(incubatorPodlings);
+
 pods = Hash[ASF::Podling.list.map {|podling| [podling.name, podling.status]}]
 
 mtime =  ASF::Podling.mtime # must be after call to list()
@@ -86,6 +91,6 @@ if ARGV.length == 2
   end
   public_json_output_file({
     last_updated: mtime,
-    podling: podh    
+    podling: podh
   }, ARGV[1])
 end
