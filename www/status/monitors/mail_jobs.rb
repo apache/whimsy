@@ -1,15 +1,14 @@
 #
-# Monitor status of public json directory
+# Monitor status of /srv/subscription directory
 #
 
 =begin
 
-Checks log files with names 'public-*' for relevant output.
+Checks /srv/subscription files for fresheness
 
 Possible status level output:
-Success - only DEBUG or INFO messages seen
-Info - diff -u output detected
-Warning - WARN log messages seen or file more than 1.5 hours old
+Success - File up to date
+Warning - File more than 7 hours old
 Danger - File more than 24 hours old or Exception while processing
 
 =end
