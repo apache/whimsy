@@ -29,6 +29,7 @@ if env.password
       # incubator committer when they are not a commiter for andy podling
       if @targets.include? 'icommit' or @targets.include? 'committer'
         incubator = ASF::Project.find('incubator')
+        icommit = incubator.members
         user = ASF::Person.find(env.user)
         if user.asf_member? or incubator.owners.include? person
           if @action == 'add'
