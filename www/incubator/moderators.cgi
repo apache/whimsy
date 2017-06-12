@@ -13,7 +13,7 @@ unless user.asf_member? or ASF::Committee['incubator'].members.include? user
   exit
 end
 
-SUBSCRIPTIONS = '/srv/subscriptions/incubator-mods'
+SUBSCRIPTIONS = '/srv/subscriptions/list-mods'
 PODLINGS = "#{ASF::SVN['asf/incubator/public/trunk/content']}/podlings.xml"
 
 exceptions = {
@@ -69,6 +69,7 @@ _html do
     _h1 'Apache Incubator moderators'
 
     moderators = Hash[File.read(SUBSCRIPTIONS).split(/\n\n/).
+      select {|k,v| k =~ /incubator.apache.org/}.
       map {|stanza| [stanza[/incubator.apache.org\/(.*)\//,1],
       stanza.scan(/^(.*@.*)/).flatten]}]
 
