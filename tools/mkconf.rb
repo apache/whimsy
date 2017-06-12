@@ -18,7 +18,7 @@ conf.gsub! /\n\s*SSL.*/, ''
 conf.gsub! /\n\s*## SSL.*/, ''
 conf.gsub! "SetEnv HTTPS", "# SetEnv HTTPS"
 
-conf.gsub! '/x1/srv/whimsy', File.expand_path('../..', __FILE__)
+conf.gsub! '/x1/srv/whimsy', '/srv/whimsy'
 
 conf.sub! /^SetEnv PATH .*/ do |line|
   line[/PATH\s+(\/.*?):/, 1] = '/usr/local/bin'

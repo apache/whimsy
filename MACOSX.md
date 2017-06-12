@@ -322,14 +322,18 @@ Add the following line:
 LDAPVerifyServerCert Off
 ```
 
-Copy whimsy vhost definition to your apache2 configuration (from the root of your whimsy git checkout):
+Copy whimsy vhost definition to your apache2 configuration (from the root of your whimsy git clone):
 
 ```
 sudo cp config/whimsy.conf /private/etc/apache2/other
 ```
 
-Edit `/private/etc/apache2/other/whimsy.conf` and replace all occurrences of
-`/Users/rubys/git/whimsy` with the path that you cloned whimsy.
+Also from the root of your whimsy git checkout, establish a symbolic link to your whimsy git clone directory:
+
+```
+sudo mkdir -p /srv
+sudo ln -s `pwd` /srv/whimsy
+```
 
 Restart Apache httpd using `sudo apachectl restart`.
 
