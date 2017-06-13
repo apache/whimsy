@@ -1,7 +1,7 @@
 #
 # File an additional ICLA:
 #  - [optional] move existing ICLA into a directory
-#  - add files to (new) documents/iclas direcotry
+#  - add files to (new) documents/iclas dirctory
 #  - modify officers/iclas.txt entry
 #  - respond to original email
 #
@@ -29,17 +29,39 @@ if not Dir.exist? "#{iclas}/#@filename"
       _input value: @existing, name: 'existing'
     end
 
-    complete do
+    complete do |dir|
+      # checkout empty officers directory
+      svn 'checkout', '--depth', 'empty',
+        'https://svn.apache.org/repos/private/documents/iclas', "#{dir}/iclas"
+
+      # update file to be moved
+      svn 'update', "#{dir}/iclas/#{@existing}"
+
+      # create target directory
+      FileUtils.mkdir "#{dir}/iclas/#{@filename}"
+      svn 'add', "#{dir}/iclas/#{@filename}"
+
+      # update file to be moved
+      svn 'mv', "#{dir}/iclas/#{@existing}", 
+        "#{dir}/iclas/#@filename/icla#{File.extname(@existing)}"
+
+      # commit changes
+      svn 'commit', "#{dir}/iclas", '-m', "move previous ICLA from #{@pubname}"
     end
   end
 end
 
 ########################################################################
-#                            document/iclas                            #
+#                          file new document                           #
 ########################################################################
 
+# determine initial value for the counter
+svndir = ASF::SVN['https://svn.apache.org/repos/private/documents/iclas']
+count = Dir["#{svndir}/#@filename/*"].
+      map {|name| name[/.*(\d+)\./, 1] || 1}.map(&:to_i).max + 1
+
 # write attachment (+ signature, if present) to the documents/iclas directory
-task "svn commit documents/iclas/#@filename#{fileext}" do
+task "svn commit documents/iclas/icla#{count}#{fileext}" do
   form do
     _input value: @selected, name: 'selected'
 
@@ -49,24 +71,26 @@ task "svn commit documents/iclas/#@filename#{fileext}" do
   end
 
   complete do |dir|
-    # checkout empty directory
-    svn 'checkout', '--depth', 'empty',
-      'https://svn.apache.org/repos/private/documents/iclas', "#{dir}/iclas"
+    # checkout directory
+    svn 'checkout', 
+      "https://svn.apache.org/repos/private/documents/iclas/#@filename",
+      "#{dir}/#@filename"
+
+    # determine numeric suffix for the new ICLA
+    count = Dir["#{dir}/#@filename/*"].
+      map {|name| name[/.*(\d+)\./, 1] || 1}.map(&:to_i).max + 1
 
     # create/add file(s)
-    if @signature.to_s.empty? or fileext != '.pdf'
-      message.write_svn("#{dir}/iclas", @filename, @selected, @signature)
-    else
-      message.write_svn("#{dir}/iclas", @filename, 
-        @selected => 'icla.pdf', @signature => 'icla.pdf.asc')
-    end
+    files = {@selected => "icla#{count}#{fileext}"}
+    files[@signature]  = "icla#{count}pdf.asc" unless @signature.to_s.empty?
+    message.write_svn(dir, @filename, files)
 
     # Show files to be added
-    svn 'status', "#{dir}/iclas"
+    svn 'status', "#{dir}/#@filename"
 
     # commit changes
-    svn 'commit', "#{dir}/iclas/#{@filename}#{fileext}",
-      '-m', "ICLA from #{@pubname}"
+    svn 'commit', "#{dir}/#@filename/#{@filename}#{fileext}",
+      '-m', "additional ICLA from #{@pubname}"
   end
 end
 

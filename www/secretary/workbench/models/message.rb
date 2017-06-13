@@ -181,19 +181,18 @@ class Message
         raise IOError.new("invalid filename: #{filename}")
       end
 
-      # ensure directory doesn't exist
+      # create directory, if necessary
       dest = File.join(repos, filename).untaint
-      raise Errno::EEXIST.new(filename) if File.exist? dest
-
-      # create directory
-      Dir.mkdir dest
+      unless File.exist? dest
+        Dir.mkdir dest 
+        Kernel.system 'svn', 'add', dest
+      end
 
       # write out selected attachment
       attachments.each do |attachment, basename|
         find(attachment).write_svn(repos, filename, basename)
       end
 
-      Kernel.system 'svn', 'add', dest
       dest
     end
   end
