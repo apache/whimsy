@@ -8,7 +8,7 @@ Checks /srv/subscription files for fresheness
 
 Possible status level output:
 Success - File up to date
-Warning - File more than 7 hours old
+Warning - File more than 1 + cron hours old
 Danger - File more than 24 hours old or Exception while processing
 
 =end
@@ -19,8 +19,6 @@ require 'time'
 def Monitor.mail_jobs(previous_status)
   danger_period = 86_400 # one day
 
-  warning_hours = 7 # cron job should run every 6 hours
-  warning_period = warning_hours * 3600
 
   logdir = '/srv/subscriptions'
   logs = File.join(logdir, '*')
@@ -32,6 +30,9 @@ def Monitor.mail_jobs(previous_status)
     next if name == :'incubator-mods' # obsolete
 
     begin
+      warning_hours = get_hours(name)
+      warning_period = warning_hours * 3600
+
       status[name] = {
         href: "../logs/#{File.basename(log)}",
         mtime: File.mtime(log).gmtime.iso8601, # to agree with normalise
@@ -71,6 +72,17 @@ def Monitor.mail_jobs(previous_status)
   end
 
   {data: status}
+end
+
+private
+
+def get_hours(name)
+  job_hours = { # how often the jobs run
+    board:   1,
+    members: 1,
+  }
+  job_hours.default = 6
+  job_hours[name] + 1
 end
 
 # for debugging purposes
