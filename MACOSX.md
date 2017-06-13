@@ -193,7 +193,8 @@ code to update your filesystem and do other nasty things.
 
 Edit `/etc/apache2/httpd.conf` using sudo and your favorite text editor.
 Locate the first line that says `Require all granted`.  This should be around
-line 263.  Replace that line with the following three lines:
+line 263 at the end of the section `Directory "/Library/WebServer/Documents"` or similar
+Replace that line with the following four lines:
 
 ```
 <RequireAny>
@@ -203,9 +204,10 @@ line 263.  Replace that line with the following three lines:
 ```
 
 Find the next occurence of `Require all granted`.  It should now be around
-line 386.  Replace it with `Require all denied`.
+line 386 in the section `Directory "/Library/WebServer/CGI-Executables` or similar
+Replace it with `Require all denied`.
 
-Now go back to the top of the file and search or `User`.  Replace the first
+Now go back to the top of the file and search for `User`.  Replace the first
 `_www` with your local user id.  This may be different than your ASF availid --
 that's OK.  Your local user id is the response to `whoami`.
 Replace the second `_www` with `staff` (that's the group name).
