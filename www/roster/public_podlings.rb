@@ -69,10 +69,11 @@
 
 require_relative 'public_json_common'
 
-incubaorContent = ASF::SVN.find('asf/incubator/public/trunk/content')
-incubatorPodlings = ASF::SVN.find('asf/incubator/public/trunk/content/podlings')
-ASF::SVN.updateSimple(incubaorContent);
-ASF::SVN.updateSimple(incubatorPodlings);
+# figure out what to do to get svn updates, then uncomment this
+# incubaorContent = ASF::SVN.find('asf/incubator/public/trunk/content')
+# incubatorPodlings = ASF::SVN.find('asf/incubator/public/trunk/content/podlings')
+# ASF::SVN.updateSimple(incubaorContent);
+# ASF::SVN.updateSimple(incubatorPodlings);
 
 pods = Hash[ASF::Podling.list.map {|podling| [podling.name, podling.status]}]
 
