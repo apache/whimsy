@@ -50,8 +50,10 @@ The **puppet definition** is contained in the following files:
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm4.apache.org.yaml (Includes modules, software, vhosts, ldap realms, and httpd.conf)
 
- * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/init.pp (Defines various tools and directories used in some tools)
+ * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/vhosts_whimsy/lib/puppet/parser/functions/preprocess_vhosts.rb (macro functions used above)
 
+ * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/init.pp (Defines various tools and directories used in some tools)
+ 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/cronjobs.pp (Cronjobs control when /public/*.json is built and code and mail updates)
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/procmail.pp
