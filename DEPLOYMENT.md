@@ -86,7 +86,7 @@ and running - these are only needed for a new deployment.
 
  * Add the following cron jobs to apmail@hermes:
      * `11  1,7,13,19 * * * for list in /home/apmail/lists/*apache.org/*; do echo; echo $list/mod; ezmlm-list $list mod; done 2>/dev/null | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/list-mods'`
-     * `11  3,9,15,21 * * * for list in /home/apmail/lists/*apache.org/*; do echo; echo $list/mod; ezmlm-list $list 2>/dev/null; done | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/list-subs'`
+     * `11  3,9,15,21 * * * for list in /home/apmail/lists/*apache.org/*; do echo; echo $list; ezmlm-list $list 2>/dev/null; done | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/list-subs'`
      * `16     *      * * * ezmlm-list /home/apmail/lists/apache.org/board/ . | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/board'`
      * `46     *      * * * ezmlm-list /home/apmail/lists/apache.org/members/ . | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/members'`
      
