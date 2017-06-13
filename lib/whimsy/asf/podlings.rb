@@ -240,7 +240,7 @@ module ASF
         end if rawYaml[:news]
         hash
       else
-        {news:[]}
+        {news: []}
       end
     end
 
