@@ -102,12 +102,17 @@ if env.password
     details << group.dn if group
   end
 
+  cc = people.map do |person| 
+    "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
+  end
+
   from = ASF::Person.find(env.user)
 
   # draft email
   mail = Mail.new do
     from "#{from.public_name} <#{from.id}@apache.org>".untaint
     to "private@#{pmc.mail_list}.apache.org".untaint
+    cc cc
     bcc "root@apache.org"
     subject "#{who} #{action} #{pmc.display_name} #{list}"
     body "Current roster can be found at:\n\n" +

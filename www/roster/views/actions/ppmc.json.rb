@@ -143,12 +143,18 @@ if env.password
   else
     ppmc = ASF::Podling.find(@project)
 
+    cc = people.map do |person| 
+      "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
+    end
+
+    if ppmc.private_mail_list != 'private@incubator.apache.org'
+      cc << 'private@incubator.apache.org'
+    end
+
     mail = Mail.new do
       from "#{from.public_name} <#{from.id}@apache.org>".untaint
       to ppmc.private_mail_list.untaint
-      if ppmc.private_mail_list != 'private@incubator.apache.org'
-	cc 'private@incubator.apache.org'
-      end
+      cc cc
       bcc 'root@apache.org'
       subject "#{who} #{action} #{ppmc.display_name} #{target}"
       body "Current roster can be found at:\n\n" +
