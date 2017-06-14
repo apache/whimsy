@@ -9,6 +9,9 @@
 # extract message
 message = Mailbox.find(@message)
 
+# find person
+person = ASF::Person.find(@id)
+
 # extract file extension
 fileext = File.extname(@selected).downcase if @signature.empty?
 
@@ -57,8 +60,8 @@ end
 
 # determine initial value for the counter
 svndir = ASF::SVN['https://svn.apache.org/repos/private/documents/iclas']
-count = Dir["#{svndir}/#@filename/*"].
-      map {|name| name[/.*(\d+)\./, 1] || 1}.map(&:to_i).max + 1
+count = (Dir["#{svndir}/#@filename/*"].
+      map {|name| name[/.*(\d+)\./, 1] || 1}.map(&:to_i).max || 1) + 1
 
 # write attachment (+ signature, if present) to the documents/iclas directory
 task "svn commit documents/iclas/icla#{count}#{fileext}" do
@@ -100,13 +103,15 @@ end
 
 # insert line into iclas.txt
 task "svn commit foundation/officers/iclas.txt" do
+  icla = ASF::ICLA.find_by_id(@id)
+
   # construct line to be inserted
   @iclaline ||= [
-    'notinavail',
-    @realname.to_s.strip,
+    @id,
+    icla.legal_name,
     @pubname.strip,
     @email.strip,
-    "Signed CLA;#{@filename}"
+    icla.form
   ].join(':')
 
   form do
@@ -124,8 +129,9 @@ task "svn commit foundation/officers/iclas.txt" do
     svn 'update', dest
 
     # update iclas.txt
-    iclas_txt = ASF::ICLA.sort(File.read(dest) + @iclaline + "\n")
-    File.write dest, iclas_txt
+    iclas_txt = File.read(dest)
+    iclas_txt[/^#{@id}:.*/] = @iclaline
+    File.write dest, ASF::ICLA.sort(iclas_txt)
 
     # show the changes
     svn 'diff', dest
@@ -136,35 +142,51 @@ task "svn commit foundation/officers/iclas.txt" do
 end
 
 ########################################################################
+#                      update public name in LDAP                      #
+########################################################################
+
+if person.public_name != @pubname
+  task "change public name in LDAP" do
+    form do
+      _input value: @pubname, name: 'pubname'
+    end
+
+    complete do
+      ldap = ASF.init_ldap(true)
+
+      ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",
+        env.password.untaint)
+
+      ldap.modify person.dn, [ASF::Base.mod_replace('cn', @pubname.strip)]
+
+      log = ["LDAP modify: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
+      if ldap.err == 0
+        _transcript log
+      else
+        _backtrace log
+      end
+
+      ldap.unbind
+    end
+  end
+end
+
+########################################################################
 #                           email submitter                            #
 ########################################################################
 
 # send confirmation email
 task "email #@email" do
-  # chose reply based on whether or not the project/userid info was provided
-  if @user and not @user.empty?
-    reply = 'icla-account-requested.erb'
-  elsif @pmc
-    @notify = "the #{@pmc.display_name} PMC has"
-
-    if @podling
-      @notify.sub! /has$/, "and the #{@podling.display_name} podling have"
-    end
-
-    reply = 'icla-pmc-notified.erb'
-  else
-    reply = 'icla.erb'
-  end
+  cc = person.all_mail.map {|email| "#{@pubname.inspect} <#{email}>"}
+  cc << 'secretary@apache.org'
 
   # build mail from template
   mail = message.reply(
     subject: "ICLA for #{@pubname}",
     from: @from,
     to: "#{@pubname.inspect} <#{@email}>",
-    cc: [
-      'secretary@apache.org',
-    ],
-    body: template(reply)
+    cc: cc,
+    body: template('icla2.erb')
   )
 
   # echo email
@@ -175,5 +197,33 @@ task "email #@email" do
   # deliver mail
   complete do
     mail.deliver!
+  end
+end
+
+########################################################################
+#                     update email address in LDAP                     #
+########################################################################
+
+task "change email address in LDAP" do
+  form do
+    _input value: @email, name: 'email'
+  end
+
+  complete do
+    ldap = ASF.init_ldap(true)
+
+    ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",
+      env.password.untaint)
+
+    ldap.modify person.dn, [ASF::Base.mod_replace('mail', @email.strip)]
+
+    log = ["LDAP modify: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
+    if ldap.err == 0
+      _transcript log
+    else
+      _backtrace log
+    end
+
+    ldap.unbind
   end
 end

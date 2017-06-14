@@ -49,6 +49,7 @@ class ICLA2 < React
       _input type: 'hidden', name: 'selected'
       _input type: 'hidden', name: 'signature', value: @@signature
       _input type: 'hidden', name: 'filename', value: @icla && @icla.filename
+      _input type: 'hidden', name: 'id', value: @icla && @icla.id
 
       _h5 'Current values'
 
@@ -94,7 +95,7 @@ class ICLA2 < React
       end
 
       _input.btn.btn_primary value: 'File', type: 'submit', ref: 'file',
-        disabled: true
+        disabled: @submitted
     end
   end
 
