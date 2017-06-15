@@ -97,6 +97,7 @@ class Person < React
               _span @committer.moderates[list_name].join(', ')
             end
           end
+          _ "(last checked #{@committer.modtime})"
         end
       end
     end
@@ -114,6 +115,7 @@ class Person < React
               _span list_email[1]
             end
           end
+          _ "(last checked #{@committer.subtime})"
         end
       end
     end
