@@ -143,7 +143,7 @@ class PPMC < React
     _h3.reporting! 'Reporting Schedule'
     _ul do
       _li @ppmc.schedule.join(', ')
-      _li "Monthly: #{@ppmc.monthly.join (', ')}" if @ppmc.monthly and !@ppmc.monthly.empty?
+      _li "Monthly: #{@ppmc.monthly.join(', ')}" if @ppmc.monthly and !@ppmc.monthly.empty?
     end
 
     # website and naming
