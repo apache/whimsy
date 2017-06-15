@@ -22,6 +22,8 @@ class PMC < React
       _a 'Mail Moderators', :href => "committee/#{@committee.id}#mail"
       _span " \u00BB "
       _a 'Reporting Schedule', :href => "committee/#{@committee.id}#reporting"
+      _span " \u00BB "
+      _a 'Links', :href => "committee/#{@committee.id}#links"
     end
 
     # header

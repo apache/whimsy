@@ -13,6 +13,17 @@ class PPMC < React
       @@auth.ipmc ||= @@auth.member
     end
 
+    # add jump links to main sections of page
+    _div.breadcrumbs do
+      _a 'PPMC', :href => "ppmc/#{@ppmc.id}#ppmc"
+      _span " \u00BB "
+      _a 'Mail Moderators', :href => "ppmc/#{@ppmc.id}#mail"
+      _span " \u00BB "
+      _a 'Reporting Schedule', :href => "ppmc/#{@ppmc.id}#reporting"
+      _span " \u00BB "
+      _a 'Status', :href => "ppmc/#{@ppmc.id}#podlingStatus"
+    end
+
     # header
     _h1 do
       _a @ppmc.display_name, 
