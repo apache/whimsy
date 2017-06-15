@@ -300,7 +300,7 @@ module ASF
     def self.namesearch
       # cache JIRA response
       cache = "#{ASF::Config.get(:cache)}/pns.jira"
-      if not File.exist?(cache) or File.mtime(cache) > Time.now - 300
+      if not File.exist?(cache) or File.mtime(cache) < Time.now - 300
         query = 'https://issues.apache.org/jira/rest/api/2/search?' +
             'jql=project=PODLINGNAMESEARCH&fields=summary,resolution'
         File.write cache, Net::HTTP.get(URI(query))
