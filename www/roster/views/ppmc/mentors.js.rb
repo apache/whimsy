@@ -11,7 +11,7 @@ class PPMCMentors < React
   def render
     pending = [] 
 
-    _h2.pmc! 'Mentors'
+    _h2.mentors! 'Mentors'
     _table.table.table_hover do
       _thead do
         _tr do
