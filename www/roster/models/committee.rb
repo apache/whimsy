@@ -24,6 +24,7 @@ class Committee
 
     if pmc.roster.include? env.user or ASF::Person.find(env.user).asf_member?
       if File.exist? LIST_MODS
+         modtime = File.mtime(LIST_MODS)
          mail_list = "#{pmc.mail_list}.apache.org"
          moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
            list = stanza.match(/(\w+\.apache\.org)\/(.*?)\//)
@@ -52,6 +53,7 @@ class Committee
       roster: pmc.roster,
       mail: Hash[lists.sort],
       moderators: moderators,
+      modtime: modtime,
       project_info: info,
       image: image,
     }

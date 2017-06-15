@@ -127,6 +127,7 @@ class Committer
       response[:moderates] = {}
 
       if File.exist? LIST_MODS
+        response[:modtime] = File.mtime(LIST_MODS)
         moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
           list = stanza.match(/(\w*\.?apache\.org)\/(.*?)\//)
 
@@ -143,6 +144,7 @@ class Committer
 
     if env.user == id and File.exists? LIST_SUBS
       response[:subscriptions] = []
+      response[:subtime] = File.mtime(LIST_SUBS)
       emails = person.all_mail
 
       # File format

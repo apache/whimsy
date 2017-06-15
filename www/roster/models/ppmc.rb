@@ -11,6 +11,7 @@ class PPMC
     user = ASF::Person.find(env.user)
     if user.asf_member? or ppmc.members.include? user
       if File.exist? LIST_MODS
+         modtime = File.mtime(LIST_MODS)
          mail_list = ppmc.mail_list
          moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
            list = stanza.match(/(\w+)\.apache\.org\/(.*?)\//)
@@ -62,6 +63,7 @@ class PPMC
       roster: roster,
       mail: Hash[lists.sort],
       moderators: moderators,
+      modtime: modtime,
       duration: ppmc.duration,
       podlingStatus: statusInfo,
       namesearch: ppmc.namesearch,
