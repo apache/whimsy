@@ -63,7 +63,10 @@ class PPMC < React
 
     # mailing lists
     if @ppmc.moderators
-      _h2.mail! 'Mailing list moderators'
+      _h2.mail! do
+        _ 'Mailing list moderators'
+        _small " (last checked #{@ppmc.modtime})"
+      end
       _table do
         _thead do
           _tr do
