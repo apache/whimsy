@@ -85,21 +85,21 @@ if env.password
       people.each do |person|
         id = person.id
         if @action == 'add'
-	  podlings.sub! pre do |element|
-	    element.sub! /<mentors>.*<\/mentors>/m do |mentors|
-	      spaces = mentors[/(\s+)<mentor /, 1] || 
-		mentors[/(\s+)<\/mentors>/, 1] + '    '
-	      mentors[/()\s+<\/mentors>/, 1] = spaces +
-		"<mentor username=#{id.inspect}>#{person.public_name}</mentor>"
-	      mentors
-	    end
-	    element
-	  end
+          podlings.sub! pre do |element|
+            element.sub! /<mentors>.*<\/mentors>/m do |mentors|
+              spaces = mentors[/(\s+)<mentor /, 1] || 
+                mentors[/(\s+)<\/mentors>/, 1] + '    '
+              mentors[/()\s+<\/mentors>/, 1] = spaces +
+                "<mentor username=#{id.inspect}>#{person.public_name}</mentor>"
+              mentors
+            end
+            element
+          end
         else
-	  podlings.sub! pre do |element|
-	    element.sub! /\s+<mentor username=#{id.inspect}>.*<\/mentor>/, ''
-	    element
-	  end
+          podlings.sub! pre do |element|
+            element.sub! /\s+<mentor username=#{id.inspect}>.*<\/mentor>/, ''
+            element
+          end
         end
       end
 
@@ -137,8 +137,8 @@ if env.password
       bcc 'root@apache.org'
       subject "#{who} #{action} incubator #{target}"
       body "Current roster can be found at:\n\n" +
-	"  https://whimsy.apache.org/roster/committee/incubator\n\n" +
-	"LDAP details:\n\n  #{details.join("\n  ")}"
+        "  https://whimsy.apache.org/roster/committee/incubator\n\n" +
+        "LDAP details:\n\n  #{details.join("\n  ")}"
     end
   else
     ppmc = ASF::Podling.find(@project)
@@ -158,8 +158,8 @@ if env.password
       bcc 'root@apache.org'
       subject "#{who} #{action} #{ppmc.display_name} #{target}"
       body "Current roster can be found at:\n\n" +
-	"  https://whimsy.apache.org/roster/ppmc/#{ppmc.id}\n\n" +
-	"LDAP details:\n\n  #{details.join("\n  ")}"
+        "  https://whimsy.apache.org/roster/ppmc/#{ppmc.id}\n\n" +
+        "LDAP details:\n\n  #{details.join("\n  ")}"
     end
   end
 

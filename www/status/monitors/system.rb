@@ -31,11 +31,11 @@ def Monitor.system(previous_status)
     status[name] = {
       level: 'danger',
       data: {
-      	exception: {
-      	  level: 'danger',
-      	  text: e.inspect,
-      	  data: e.backtrace
-      	}
+        exception: {
+          level: 'danger',
+          text: e.inspect,
+          data: e.backtrace
+        }
       }
     }
   end

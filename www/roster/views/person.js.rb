@@ -24,12 +24,12 @@ class Person < React
     committees = @committer.committees
     unless committees.empty?
       _div.row do
-        	_div.name 'Committees'
-        	_div.value do
-        	  _ul committees do |pmc|
-        	    _li {_a pmc, href: "committee/#{pmc}"}
-        	  end
-        	end
+        _div.name 'Committees'
+        _div.value do
+          _ul committees do |pmc|
+            _li {_a pmc, href: "committee/#{pmc}"}
+          end
+        end
       end
     end
 
@@ -37,45 +37,45 @@ class Person < React
     commit_list = @committer.committer
     unless commit_list.all? {|pmc| committees.include? pmc}
       _div.row do
-        	_div.name 'Committer'
-        	_div.value do
-        	  _ul commit_list do |pmc|
-        	    next if committees.include? pmc
-        	    _li {_a pmc, href: "committee/#{pmc}"}
-        	  end
-        	end
+        _div.name 'Committer'
+        _div.value do
+          _ul commit_list do |pmc|
+            next if committees.include? pmc
+            _li {_a pmc, href: "committee/#{pmc}"}
+          end
+        end
       end
     end
 
     # Groups
     unless @committer.groups.empty?
       _div.row do
-        	_div.name 'Groups'
-        	_div.value do
-        	  _ul @committer.groups do |group|
-        	    next if group == 'apldap'
-        
-        	    if group == 'committers'
-        	      _li {_a group, href: "committer/"}
-        	    elsif group == 'member'
-        	      _li {_a group, href: "members"}
-        	    else
-        	      _li {_a group, href: "group/#{group}"}
-        	    end
-        	  end
-        	end
+        _div.name 'Groups'
+        _div.value do
+          _ul @committer.groups do |group|
+            next if group == 'apldap'
+       
+            if group == 'committers'
+              _li {_a group, href: "committer/"}
+            elsif group == 'member'
+              _li {_a group, href: "members"}
+            else
+              _li {_a group, href: "group/#{group}"}
+            end
+          end
+        end
       end
     end
 
     # Podlings
     unless @committer.podlings.empty?
       _div.row do
-        	_div.name 'Podlings'
-        	_div.value do
-        	  _ul @committer.podlings do |podlings|
-        	    _li {_a podlings, href: "ppmc/#{podlings}"}
-        	  end
-        	end
+        _div.name 'Podlings'
+        _div.value do
+          _ul @committer.podlings do |podlings|
+            _li {_a podlings, href: "ppmc/#{podlings}"}
+          end
+        end
       end
     end
 
@@ -87,34 +87,34 @@ class Person < React
     # Moderates
     if @committer.moderates and @committer.moderates.keys().length > 0
       _div.row do
-        	_div.name 'Moderates'
-        	_div.value do
-        	  _ul @committer.moderates.keys() do |list_name|
-        	    _li do
-        	      _a list_name, href: 'https://lists.apache.org/list.html?' +
-        		list_name
-        	      _span " as "
-        	      _span @committer.moderates[list_name].join(', ')
-        	    end
-        	  end
-        	end
+        _div.name 'Moderates'
+        _div.value do
+          _ul @committer.moderates.keys() do |list_name|
+            _li do
+              _a list_name, href: 'https://lists.apache.org/list.html?' +
+                list_name
+              _span " as "
+              _span @committer.moderates[list_name].join(', ')
+            end
+          end
+        end
       end
     end
 
     # subscriptions
     if @committer.subscriptions
       _div.row do
-        	_div.name 'Subscriptions'
-        	_div.value do
-        	  _ul @committer.subscriptions do |list_email|
-        	    _li do
-        	      _a list_email[0], 
-        	        href: 'https://lists.apache.org/list.html?' + list_email[0]
-        	      _span " as "
-        	      _span list_email[1]
-        	    end
-        	  end
-        	end
+        _div.name 'Subscriptions'
+        _div.value do
+          _ul @committer.subscriptions do |list_email|
+            _li do
+              _a list_email[0],
+                href: 'https://lists.apache.org/list.html?' + list_email[0]
+              _span " as "
+              _span list_email[1]
+            end
+          end
+        end
       end
     end
 
@@ -142,10 +142,10 @@ class Person < React
       end
 
       if @committer.member.nomination
-        	_div.row do
-        	  _div.name 'Nomination'
-        	  _div.value {_pre @committer.member.nomination}
-        	end
+        _div.row do
+          _div.name 'Nomination'
+          _div.value {_pre @committer.member.nomination}
+        end
       end
 
       # Forms on file

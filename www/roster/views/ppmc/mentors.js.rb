@@ -87,15 +87,15 @@ class PPMCMentors < React
     return unless @@auth and @@auth.ipmc
     Polyfill.require(%w(Promise fetch)) do
       fetch('committee/incubator.json', credentials: 'include').then {|response|
-	if response.status == 200
-	  response.json().then do |json|
-	    @ipmc = json.roster.keys()
-	  end
-	else
-	  console.log "IPMC #{response.status} #{response.statusText}"
-	end
+        if response.status == 200
+          response.json().then do |json|
+            @ipmc = json.roster.keys()
+          end
+        else
+          console.log "IPMC #{response.status} #{response.statusText}"
+        end
       }.catch {|error|
-	console.log "IPMC #{errror}"
+        console.log "IPMC #{errror}"
       }
     end
   end
@@ -156,19 +156,19 @@ class PPMCMentor < React
             end
           else
             if @@auth.ppmc
-	      unless @@ppmc.owners.include? @@person.id
-		_button.btn.btn_primary 'Add to the PPMC',
-		  data_action: 'add ppmc committer',
-		  data_target: '#confirm', data_toggle: 'modal',
-		  data_confirmation: "Add #{@@person.name} as member of the " +
-		    "#{@@ppmc.display_name} PPMC?"
-	      end
+              unless @@ppmc.owners.include? @@person.id
+                _button.btn.btn_primary 'Add to the PPMC',
+                  data_action: 'add ppmc committer',
+                  data_target: '#confirm', data_toggle: 'modal',
+                  data_confirmation: "Add #{@@person.name} as member of the " +
+                    "#{@@ppmc.display_name} PPMC?"
+              end
 
-	      _button.btn.btn_warning 'Remove as a mentor and from the PMC',
-		data_action: 'remove mentor ppmc committer',
-		data_target: '#confirm', data_toggle: 'modal',
-		data_confirmation: "Remove #{@@person.name} as a mentor, " +
-		  "PPMC member, and committer from the " +
+              _button.btn.btn_warning 'Remove as a mentor and from the PMC',
+                data_action: 'remove mentor ppmc committer',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Remove #{@@person.name} as a mentor, " +
+                  "PPMC member, and committer from the " +
                   "#{@@ppmc.display_name} PPMC?"
             end
 

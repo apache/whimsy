@@ -15,34 +15,34 @@ class PPMCGraduate < React
       _div.modal_dialog do
         _div.modal_content do
           _form method: 'post', action: "ppmc/#{@@ppmc.id}/establish" do
-	    _div.modal_header.bg_info do
-	      _button.close 'x', data_dismiss: 'modal'
-	      _h4.modal_title "Establish Apache #{@project}"
-	    end
+            _div.modal_header.bg_info do
+              _button.close 'x', data_dismiss: 'modal'
+              _h4.modal_title "Establish Apache #{@project}"
+            end
 
-	    _div.modal_body do
-	      _p do
-		_b 'Complete this sentence: '
-		_span "Apache #{@project} consists of software related to"
-	      end
+            _div.modal_body do
+              _p do
+                _b 'Complete this sentence: '
+                _span "Apache #{@project} consists of software related to"
+              end
 
-	      _textarea name: 'description', value: @description, rows: 4
+              _textarea name: 'description', value: @description, rows: 4
 
-	      _p { _b 'Choose a chair' }
+              _p { _b 'Choose a chair' }
 
-	      _select name: 'chair' do
-		@owners.each do |person|
-		  _option person.name, value: person.id,
-		    selected: person.id == @@id
-		end
-	      end
-	    end
+              _select name: 'chair' do
+                @owners.each do |person|
+                  _option person.name, value: person.id,
+                    selected: person.id == @@id
+                end
+              end
+            end
 
-	    _div.modal_footer do
-	      _span.status 'Processing request...' if @disabled
-	      _button.btn.btn_default 'Cancel', data_dismiss: 'modal'
-	      _button.btn.btn_primary 'Draft Resolution'
-	    end
+            _div.modal_footer do
+              _span.status 'Processing request...' if @disabled
+              _button.btn.btn_default 'Cancel', data_dismiss: 'modal'
+              _button.btn.btn_primary 'Draft Resolution'
+            end
           end
         end
       end

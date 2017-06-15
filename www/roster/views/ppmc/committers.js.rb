@@ -26,26 +26,26 @@ class PPMCCommitters < React
             pending << person.id if person.status == :pending
           end
 
-	  if pending.length > 1
-	    _tr do
-	      _td colspan: 2
-	      _td data_ids: pending.join(',') do
+          if pending.length > 1
+            _tr do
+              _td colspan: 2
+              _td data_ids: pending.join(',') do
 
-		# produce a list of ids to be added
-		if pending.length == 2
-		  list = "#{pending[0]} and #{pending[1]}"
-		else
-		  list = pending[0..-2].join(', ') + ", and " +  pending[-1]
-		end
+                # produce a list of ids to be added
+                if pending.length == 2
+                  list = "#{pending[0]} and #{pending[1]}"
+                else
+                  list = pending[0..-2].join(', ') + ", and " +  pending[-1]
+                end
 
-		_button.btn.btn_success 'Add all as committers',
-		  data_action: 'add ppmc committer',
-		  data_target: '#confirm', data_toggle: 'modal',
-		  data_confirmation: "Add #{list} as committers for " +
-		    "#{@@ppmc.display_name} PPMC?"
-	      end
-	    end
-	  end
+                _button.btn.btn_success 'Add all as committers',
+                  data_action: 'add ppmc committer',
+                  data_target: '#confirm', data_toggle: 'modal',
+                  data_confirmation: "Add #{list} as committers for " +
+                    "#{@@ppmc.display_name} PPMC?"
+              end
+            end
+          end
 
           if @@auth and @@auth.ppmc
             _tr onClick: self.select do

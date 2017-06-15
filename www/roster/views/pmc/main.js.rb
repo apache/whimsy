@@ -132,30 +132,30 @@ class PMC < React
       info = @committee.project_info
 
       if info
-	if info.doap
-	  _li {_a 'DOAP', href: info.doap}
-	end
+        if info.doap
+          _li {_a 'DOAP', href: info.doap}
+        end
 
-	if info['download-page']
-	  _li {_a 'Download Page', href: info['download-page']}
-	end
+        if info['download-page']
+          _li {_a 'Download Page', href: info['download-page']}
+        end
 
-	if info['bug-database']
-	  _li {_a 'Bug Database', href: info['bug-database']}
-	end
+        if info['bug-database']
+          _li {_a 'Bug Database', href: info['bug-database']}
+        end
 
-	if info.repository and not info.repository.empty?
-	  if info.repository.length == 1
-	    _li {_a 'Repository', href: info.repository.first}
-	  else
-	    _li do
-	      _span 'Repositories:'
-	      _ul info.repository do |repository|
-		_li {_a repository, href: repository}
-	      end
-	    end
-	  end
-	end
+        if info.repository and not info.repository.empty?
+          if info.repository.length == 1
+            _li {_a 'Repository', href: info.repository.first}
+          else
+            _li do
+              _span 'Repositories:'
+              _ul info.repository do |repository|
+                _li {_a repository, href: repository}
+              end
+            end
+          end
+        end
       end
     end
 
