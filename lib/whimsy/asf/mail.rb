@@ -47,7 +47,7 @@ module ASF
           /^\s+"(\w[-\w]+)", "\/home\/apmail\/(public|private)-arch\//
         )]
         # Drop the infra test lists
-        lists.delete_if {|list| list =~ /-infra-[a-z]$/ }
+        lists.delete_if {|list| list =~ /-infra-[a-z]$/ or list == 'incubator-infra-dev' }
         @lists = lists
         @list_mtime = File.mtime(file)
       end
