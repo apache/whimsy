@@ -29,6 +29,9 @@ class Committee
          moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
            list = stanza.match(/(\w+\.apache\.org)\/(.*?)\//)
            next unless list and list[1] == mail_list
+           # Drop the infra test lists
+           next if list[2] =~ /^infra-[a-z]$/
+           next if list[1] == 'incubator.apache.org' && list[2] =~ /^infra-dev2?$/
  
            ["#{list[2]}@#{list[1]}", stanza.scan(/^(.*@.*)/).flatten.sort]
         end
