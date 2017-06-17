@@ -26,7 +26,9 @@ if env.password
 
       # when adding a commiter to a podling, also add the commiter to
       # the incubator.  For removals, remove the individual as an
-      # incubator committer when they are not a commiter for andy podling
+      # incubator committer when they are not a committer for any podling
+      # TODO is that correct? What if they need general incubator karma?
+      # should probably not remove the commit bit from incubator members
       if @targets.include? 'icommit' or @targets.include? 'committer'
         incubator = ASF::Project.find('incubator')
         icommit = incubator.members
