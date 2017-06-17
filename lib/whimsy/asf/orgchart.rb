@@ -1,6 +1,6 @@
 ##
 # Part of the whimsy/ASF module of classes that provide simple access to ASF data.
-module ASF
+module ASF # :nodoc:
   
   ##
   # Reads and provides access to the officers/personnel-duties/ROLENAME.yaml files.

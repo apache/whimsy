@@ -264,15 +264,14 @@ module ASF
     end
   end
 
-  # determine where ldap.conf resides
-  if Dir.exist? '/etc/openldap'
-    ETCLDAP = '/etc/openldap'
-  else
-    ETCLDAP = '/etc/ldap'
+  # Directory where ldap.conf resides.  Differs based on operating system.
+  ETCLDAP = case
+    when Dir.exist?('/etc/openldap') then '/etc/openldap'
+    when Dir.exist?('/usr/local/etc/openldap') then '/user/local//etc/openldap'
+    else '/etc/ldap'
   end
-  # Note: FreeBSD seems to use
-  # /usr/local/etc/openldap/ldap.conf
 
+  # Returns existing LDAP connection, creating one if necessary.
   def self.ldap
     @ldap || self.init_ldap
   end
@@ -340,18 +339,26 @@ module ASF
     end
   end
 
+  # shortcut for derefernce weakref
   def self.weakref(attr, &block)
     self.dereference_weakref(self, attr, &block)
   end
 
+  # Obtain a list of PMC chairs from LDAP 
+  # <tt>cn=pmc-chairs,ou=groups,ou=services,dc=apache,dc=org</tt>
   def self.pmc_chairs
     weakref(:pmc_chairs) {Service.find('pmc-chairs').members}
   end
 
+  # Obtain a list of committers from LDAP 
+  # <tt>cn=committers,ou=groups,dc=apache,dc=org</tt>
   def self.committers
     weakref(:committers) {Group.find('committers').members}
   end
 
+  # Obtain a list of members from LDAP 
+  # <tt>cn=member,ou=groups,dc=apache,dc=org</tt>
+  # Note: includes some non-ASF member infrastructure contractors
   def self.members
     weakref(:members) {Group.find('member').members}
   end
