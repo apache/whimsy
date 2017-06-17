@@ -1,11 +1,12 @@
 # load configuration information from $HOME/.whimsy
 
 require 'yaml'
+require 'etc'
 
 module ASF
 
   class Config
-    @home = ENV['HOME'] || Dir.pwd
+    @home = ENV['HOME'] || Dir.home(Etc.getpwuid.name)
 
     @config = YAML.load_file("#@home/.whimsy") rescue {}
 
