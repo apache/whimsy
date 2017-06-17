@@ -6,11 +6,18 @@ require 'tzinfo/data'
 require 'digest/md5'
 
 module ASF
+  #
+  # module which contains the Agenda class
+  #
   module Board
   end
 end
 
+#
+# Class which contains a number of parsers.
+#
 class ASF::Board::Agenda
+  # mapping of agenda section numbers to section names
   CONTENTS = {
     '2.' => 'Roll Call',
     '3A' => 'Minutes',
@@ -23,15 +30,23 @@ class ASF::Board::Agenda
   }
 
   @@parsers = []
+  # convenience method.  If passed a file, will create an instance of this
+  # class and call the parse method on that object.  If passed a block, will
+  # add that block to the list of parsers.
   def self.parse(file=nil, quick=false, &block)
     @@parsers << block if block
     new.parse(file, quick)  if file
   end
 
+  # start with an empty list of sections.  Sections are added and returned by
+  # calling the <tt>parse</tt> method.
   def initialize
     @sections = {}
   end
 
+  # helper method to scan a section for a pattern.  Regular expression named
+  # matches will be captured and the section will be added to <tt>@sections</tt>
+  # if a match is found.
   def scan(text, pattern, &block)
     # convert tabs to spaces
     text.gsub!(/^(\t+)/) {|tabs| ' ' * (8*tabs.length)}
@@ -53,6 +68,17 @@ class ASF::Board::Agenda
     end
   end
 
+  # parse a board agenda file by passing it through each parser.  Additionally,
+  # converts the file to utf-8, adds index markers for major sections, looks
+  # for flagged reports, and performs various minor cleanup actions.
+  #
+  # If <tt>quick</tt> is <tt>false</tt>, cross-checks with committee membership
+  # will be performed.  This supports the board agenda tools's strategy to
+  # quickly display possibly stale and possible incomplete data and then to
+  # update the presentation using React.JS once later and/or more complete
+  # data is available.
+  #
+  # Returns a list of sections.
   def parse(file, quick=false)
     @file = file
     @quick = quick
@@ -136,10 +162,12 @@ class ASF::Board::Agenda
     @sections.values
   end
 
+  # provide a link to the collated minutes for a given report
   def minutes(title)
     "https://whimsy.apache.org/board/minutes/#{title.gsub(/\W/,'_')}"
   end
 
+  # convert a PST/PDT time to UTC as a JavaScript integer
   def timestamp(time)
     date = @file[/(\w+ \d+, \d+)/]
     tz = TZInfo::Timezone.get('America/Los_Angeles')

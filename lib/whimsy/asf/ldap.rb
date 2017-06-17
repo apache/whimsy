@@ -363,7 +363,18 @@ module ASF
     weakref(:members) {Group.find('member').members}
   end
 
+  # Superclass for all classes which are backed by LDAP data.  Encapsulates
+  # the management of collections to weak references to instance data, for
+  # both performance and funcational reasons.  Sequentially finding the same
+  # same object will return the same instance unless the prior instance has
+  # been reclaimed by garbage collection.  This often prevents large numbers
+  # of requests to fetch the same data from LDAP.
+  #
+  # This class also contains a number of helper classes that will construct
+  # various LDAP <tt>mod</tt> objects.
   class Base
+    # Simple name for the LDAP object, generally the value of <tt>uid</tt>
+    # for people, and the value of <tt>cn</tt> for all of the rest.
     attr_reader :name
 
     # define default sort key (make Base objects sortable)
@@ -371,26 +382,36 @@ module ASF
       @name <=> other.name
     end
 
+    # return the LDAP base for this object: identifies the subtree where
+    # which this object can be found.
     def self.base
       @base
     end
 
+    # return the LDAP base for this object: identifies the subtree where
+    # which this object can be found.
     def base
       self.class.base
     end
 
+    # return the collection of instances of this class, as a hash.  Note the
+    # values are weak references, so may have already been reclaimed.
     def self.collection
       @collection ||= Hash.new
     end
 
+    # Find an instance of this class, given a name
     def self.[] name
       new(name)
     end
 
+    # Find an instance of this class, given a name
     def self.find name
       new(name)
     end
 
+    # Create an instance of this class, given a name.  Note: if an instance
+    # already exists, it will return a handle to the existing object.
     def self.new name
       begin
         object = collection[name]
@@ -401,34 +422,44 @@ module ASF
       super
     end
 
+    # create an instance of this class, returning a weak reference to the
+    # object for reuse.  Note: self.new will check for such a reference and
+    # return it in favor of allocating a new object.
     def initialize name
       self.class.collection[name] = WeakRef.new(self)
       @name = name
     end
 
+    # returns a reference to the underlying object.  Useful for converting
+    # weak references to strong references.
     def reference
       self
     end
 
+    # construct a weak reference to this object
     def weakref(attr, &block)
       ASF.dereference_weakref(self, attr, &block)
     end
 
-    unless Object.respond_to? :id
-      def id
-        @name
-      end
+    # Return the simple name for this LDAP object.  This is the value of
+    # <tt>uid</tt> for people objects, and the value of <tt>cn</tt> for all
+    # other objects.
+    def id
+      @name
     end
 
+    # helper method to construct LDAP_MOD_ADD objects
     def self.mod_add(attr, vals)
       ::LDAP::Mod.new(::LDAP::LDAP_MOD_ADD, attr.to_s, Array(vals))
     end
 
+    # helper method to construct LDAP_MOD_REPLACE objects
     def self.mod_replace(attr, vals)
       vals = Array(vals) unless Hash === vals
       ::LDAP::Mod.new(::LDAP::LDAP_MOD_REPLACE, attr.to_s, vals)
     end
 
+    # helper method to construct LDAP_MOD_DELETE objects
     def self.mod_delete(attr, vals)
       ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, attr.to_s, Array(vals))
     end
