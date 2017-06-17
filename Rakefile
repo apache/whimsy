@@ -54,6 +54,9 @@ task :update do
     end
   end
 
+  # rebuild API documentation
+  Rake::Task['rdoc'].invoke
+
   # update baseline time
   FileUtils.touch update_file
   File.utime new_baseline, new_baseline, update_file
@@ -146,5 +149,13 @@ namespace :git do
         end
       end
     end
+  end
+end
+
+# update documentation
+task :rdoc do
+  Dir.chdir File.dirname(__FILE__) do
+    system 'rdoc', 'lib', '--output', 'www/docs/api', 
+      '--title', 'whimsy/asf lib'
   end
 end
