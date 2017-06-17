@@ -4,6 +4,17 @@ require 'open3'
 module ASF
 
   class Git
+    GITHUB_HOST = 'raw.githubusercontent.com'
+    INFRA_PUPPET = '/apache/infrastructure-puppet/deployment/'
+  
+    def self.infra_puppet(file)
+      # get a file from infrastructure puppet (e.g. 'data/common.yaml')
+      file = INFRA_PUPPET + file
+      http = Net::HTTP.new(GITHUB_HOST, 443)
+      http.use_ssl = true
+      http.request(Net::HTTP::Get.new(file)).body
+    end
+
     @semaphore = Mutex.new
 
     def self.repos

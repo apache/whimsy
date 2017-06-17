@@ -54,12 +54,10 @@ module ASF
     # fetch configuration from apache/infrastructure-puppet
     def self.puppet_config
       return @puppet if @puppet
-      file = '/apache/infrastructure-puppet/deployment/data/common.yaml'
-      http = Net::HTTP.new('raw.githubusercontent.com', 443)
-      http.use_ssl = true
       # the enclosing method is optional, so we only require the gem here
       require 'yaml'
-      @puppet = YAML.load(http.request(Net::HTTP::Get.new(file)).body)
+      require_relative 'git' # just in case
+      @puppet = YAML.load(ASF::Git.infra_puppet('data/common.yaml'))
     end
 
     # extract the ldapcert from the puppet configuration
