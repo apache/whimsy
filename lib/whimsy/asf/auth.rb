@@ -1,16 +1,23 @@
 module ASF
 
+  # parse the <tt>-authorization-template</tt> files contained within
+  # <tt>infrastructure-puppet/modules/subversion_server/files/authorization</tt>
   class Authorization
     include Enumerable
 
+    # Return the set of authorizations a given user (availid) has access to.
     def self.find_by_id(value)
       new.select {|auth, ids| ids.include? value}.map(&:first)
     end
 
+    # Select a given <tt>-authorization-template</tt>, valid values are
+    # <tt>asf</tt> and <tt>pit</tt>.
     def initialize(file='asf')
       @file = file
     end
 
+    # Iteratively return each entry in the authorization file as a pair
+    # of values: a name and list of ids.
     def each
       # TODO - should this read the Git repo directly?
       auth = ASF::Git.find('infrastructure-puppet')

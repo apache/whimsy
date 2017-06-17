@@ -4,6 +4,8 @@ require 'etc'
 require 'thread'
 
 module ASF
+  # Rack support for HTTP Authorization, contains a number of classes that
+  # can be <tt>use</tt>d within a <tt>config.ru</tt> of a Passenger application.
   module Auth
     # decode HTTP authorization, when present
     def self.decode(env)
@@ -27,10 +29,13 @@ module ASF
     # 'use' the following class in config.ru to limit access
     # to the application to ASF committers
     class Committers < Rack::Auth::Basic
+      # Specify 'ASF Committers' as the HTTP auth Realm
       def initialize(app)
         super(app, "ASF Committers", &proc {})
       end
 
+      # Returns <tt>unauthorized</tt> unless running in test mode or
+      # the authenticated user is an ASF Committer
       def call(env)
         authorized = ( ENV['RACK_ENV'] == 'test' )
 
@@ -47,11 +52,17 @@ module ASF
     # 'use' the following class in config.ru to limit access
     # to the application to ASF members and officers and the accounting group.
     class MembersAndOfficers < Rack::Auth::Basic
+      # Specify 'ASF Members and Officers' as the HTTP auth Realm
       def initialize(app, &block)
         super(app, "ASF Members and Officers", &proc {})
         @block = block 
       end
 
+      # Returns <tt>unauthorized</tt> unless running in test mode or
+      # the authenticated user is an ASF Member, a PMC Chair, or if a
+      # block is specified on the <tt>new</tt> call, and that block
+      # returns a <tt>true</tt> value.  Block is used by the board agenda
+      # to allow invited guests to see the agenda.
       def call(env)
         authorized = ( ENV['RACK_ENV'] == 'test' )
 
@@ -83,6 +94,10 @@ module ASF
   class AutoGC
     @@background = nil
 
+    # Define the frequency with which GC should be run (as in every 'n'
+    # requests), and the maximum number of idle minutes between GC runs.
+    # This class also will make use of PhusionPassenger's out of band GC,
+    # if available.
     def initialize(app, frequency=100, minutes=15)
       @app = app
       @frequency = frequency
@@ -118,6 +133,11 @@ module ASF
       end
     end
 
+    # Rack middleware used to push an object onto the queue prior to the
+    # request (this stops AutoGC from running during the request), and popping
+    # it afterward the request completes.  Also will spin off a thread to
+    # run GC after the reply completes (using rack.after_reply if available),
+    # otherwise using a standard Thread.
     def call(env)
       @queue.push 1
 
@@ -139,6 +159,8 @@ module ASF
       @queue.pop
     end
 
+    # Run GC when no requests are active and after every <tt>@frequency</tt>
+    # events.  
     def maybe_perform_gc
       @mutex.synchronize do
         @request_count += 1

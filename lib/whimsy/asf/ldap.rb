@@ -1028,14 +1028,18 @@ module ASF
     end
   end
 
+  # <tt>ou=apps</tt> subtree of <tt>ou=groups,dc=apache,dc=org</tt>, currently
+  # only used for <tt>hudson-jobadmin</tt>
   class AppGroup < Service
     @base = 'ou=apps,ou=groups,dc=apache,dc=org'
   end
 
+  # <tt>ou=auth</tt> subtree of <tt>ou=groups,dc=apache,dc=org</tt>, used for
+  # subprojects and a variety of organizational constructs (accounting,
+  # exec-officers, fundraising, trademarks, ...)
   class AuthGroup < Service
     @base = 'ou=auth,ou=groups,dc=apache,dc=org'
   end
-
 end
 
 if __FILE__ == $0
