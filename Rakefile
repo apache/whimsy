@@ -153,7 +153,8 @@ namespace :git do
 end
 
 # update documentation
-task :rdoc do
+task :rdoc => 'www/docs/api/index.html'
+file 'www/docs/api/index.html' => Rake::FileList['lib/**/*.rb'] do
   Dir.chdir File.dirname(__FILE__) do
     system 'rdoc', 'lib', '--output', 'www/docs/api', '--force-output',
       '--title', 'whimsy/asf lib'
