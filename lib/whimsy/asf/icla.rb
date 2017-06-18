@@ -2,18 +2,39 @@ require 'json'
 
 module ASF
 
+  #
+  # Provide access to the contents of iclas.txt.
+  #
+  # N.B. only id and name should be considered public
+  # form and claRef may contain details of the legal name beyond that in the public name
   class ICLA
-    # N.B. only id and name should be considered public
-    # form and claRef may contain details of the legal name beyond that in the public name
-    attr_accessor :id, :legal_name, :name, :email, :form
-    attr_accessor :claRef # cla name or SVN revision info
+    # availid of the ICLA, or <tt>notinavail</tt> if no id has been issued
+    attr_accessor :id
+
+    # legal name for the individual; should not be shared
+    attr_accessor :legal_name
+
+    # public name for the individual; should match LDAP
+    attr_accessor :name
+
+    # email address from the ICLA
+    attr_accessor :email
+
+    # lists the name of the form on file; includes claRef information
+    attr_accessor :form
+
+    # cla name or SVN revision info; extracted from the form
+    attr_accessor :claRef 
 
     @@mtime = nil
 
     # list of availids that should not be used
     @@availids_reserved = nil
 
+    # location of a working copy of the officers directory in SVN
     OFFICERS = ASF::SVN.find('private/foundation/officers')
+
+    # location of the iclas.txt file; may be <tt>nil</tt> if not found.
     SOURCE = OFFICERS ? "#{OFFICERS}/iclas.txt" : nil
 
     # flush caches if source file changed
@@ -29,6 +50,7 @@ module ASF
       end
     end
 
+    # Date and time of the last change in <tt>iclas.txt</tt> in the working copy
     def self.svn_change
       self.refresh
       if SOURCE
@@ -141,7 +163,7 @@ module ASF
       "#{name}:#{rest}"
     end
 
-    # sort an entire iclas.txt file
+    # sort an entire <tt>iclas.txt</tt> file
     def self.sort(source)
       headers = source.scan(/^#.*/)
       lines = source.scan(/^\w.*/)
@@ -150,6 +172,7 @@ module ASF
         lines.sort_by {|line| lname(line + "\n")}.join("\n") + "\n"
     end
 
+    # list of reserved availids
     def self.availids_reserved
       return @@availids_reserved if @@availids_reserved
       archive = ASF::SVN['private/foundation/officers']

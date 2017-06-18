@@ -37,8 +37,10 @@ require 'thread'
 
 module ASF
   module LDAP
-     # https://www.pingmybox.com/dashboard?location=304
-     # https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
+
+     # Derived from the following sources:
+     # * https://www.pingmybox.com/dashboard?location=304
+     # * https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
      # Updated 2017-01-02 
     HOSTS = %w(
       ldaps://themis.apache.org:636
@@ -48,7 +50,10 @@ module ASF
       ldaps://snappy5.apache.org:636
     )
 
+    # Mutex preventing simultaneous connections to LDAP from a single process
     CONNECT_LOCK = Mutex.new
+
+    # Round robin list of LDAP hosts to be tried after failure
     HOST_QUEUE = Queue.new
 
     # fetch configuration from apache/infrastructure-puppet
@@ -110,6 +115,8 @@ module ASF
       return nil
     end
 
+    # connect to LDAP with a user and password; generally required for
+    # update operations.
     def self.bind(user, password, &block)
       dn = ASF::Person.new(user).dn
       raise ::LDAP::ResultError.new('Unknown user') unless dn
@@ -228,7 +235,7 @@ module ASF
       File.write(ldap_conf, content) unless content == File.read(ldap_conf)
     end
 
-    # dump more information on LDAP errors - modify
+    # modify an entry in LDAP; dump information on LDAP errors
     def self.modify(dn, list)
       ASF.ldap.modify(dn, list)
     rescue ::LDAP::ResultError
@@ -237,7 +244,7 @@ module ASF
       raise
     end
 
-    # dump more information on LDAP errors - add
+    # add an entry to LDAP; dump information on LDAP errors
     def self.add(dn, list)
       ASF.ldap.add(dn, list)
     rescue ::LDAP::ResultError
@@ -246,7 +253,7 @@ module ASF
       raise
     end
 
-    # dump more information on LDAP errors - delete
+    # delete an entry from LDAP; dump information on LDAP errors
     def self.delete(dn)
       ASF.ldap.delete(dn)
     rescue ::LDAP::ResultError
@@ -465,17 +472,17 @@ module ASF
     end
   end
 
+  # a hash of attributes which is not populated until the first attempt
+  # to reference a value
   class LazyHash < Hash
+    # capture an initializer to be called only if necessary.
     def initialize(&initializer)
       @initializer = initializer
     end
 
-    def load
-     return unless @initializer
-     merge! @initializer.call || {}
-     @initializer = super
-    end
-
+    # if referencing a key that is not in the hash, and the initializer has
+    # not yet been called, call the initializer, merge the results, and
+    # try again.
     def [](key)
       result = super
       if not result and not keys.include? key and @initializer
@@ -1124,7 +1131,7 @@ end
 if __FILE__ == $0
   module ASF
     module LDAP
-      def self.getHOSTS
+      def self.getHOSTS # :nodoc:
         HOSTS
       end
     end
