@@ -56,6 +56,8 @@ module ASF
 	    end
 	  }.compact]
         end
+
+        @repos
       end
     end
 
