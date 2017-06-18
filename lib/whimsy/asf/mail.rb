@@ -183,6 +183,7 @@ module ASF
   end
 
   class Podling
+    # base name used in constructing mailing list name.
     def mail_list
       name
     end

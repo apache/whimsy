@@ -4,9 +4,40 @@ require 'psych'
 require_relative '../asf'
 
 module ASF
+
+  # Represents a podling, drawing information from both podlings.xml and LDAP.
+
   class Podling
     include Enumerable
-    attr_accessor :name, :resource, :resourceAliases, :status, :description, :mentors, :champion, :reporting, :monthly
+
+    # name of the podling, from podlings.xml
+    attr_writer :name
+
+    # name of the podling, from podlings.xml
+    attr_accessor  :resource
+
+    # array of aliases for the podling, from podlings.xml
+    attr_accessor  :resourceAliases
+
+    # status of the podling, from podlings.xml.  Valid values are
+    # <tt>current</tt>, <tt>graduated</tt>, or <tt>retired</tt>.
+    attr_accessor  :status
+
+    # description of the podling, from podlings.xml
+    attr_accessor  :description
+
+    # list of userids of the mentors, from podlings.xml
+    attr_accessor  :mentors
+
+    # userid of the champion, from podlings.xml
+    attr_accessor  :champion
+
+    # list of months in the normal reporting schedule for this podling.
+    attr_accessor  :reporting
+
+    # if reporting monthly, a list of months reports are expected.  Can also
+    # ge <tt>nil</tt> or an empty list.  From podlings.xml.
+    attr_accessor  :monthly
 
     # three consecutive months, starting with this one
     def quarter
@@ -42,7 +73,8 @@ module ASF
       # - longname
     end
 
-    # map resource to name
+    # name for this podling, originally from the resource attribute in
+    # podlings.xml.
     def name
       @resource
     end
@@ -52,12 +84,13 @@ module ASF
       @resource
     end
 
-    # map name to display_name
+    # display name for this podling, originally from the name attribute in
+    # podlings.xml.
     def display_name
       @name || @resource
     end
 
-    # parse startdate
+    # date this podling was accepted for incubation
     def startdate
       return unless @startdate
       # assume 15th (mid-month) if no day specified
@@ -67,7 +100,8 @@ module ASF
       nil
     end
 
-    # parse enddate
+    # date this podling either retired or graduated.  <tt>nil</tt> for
+    # current podlings.
     def enddate
       return unless @enddate
       # assume 15th (mid-month) if no day specified
@@ -77,6 +111,7 @@ module ASF
       nil
     end
 
+    # number of days in incubation
     def duration
       last = enddate || Date.today
       first = startdate || Date.today
@@ -100,7 +135,7 @@ module ASF
       self.reporting + self.monthly
     end
 
-    # list of podlings
+    # list of all podlings, regardless of status
     def self.list
       incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
       podlings_xml = "#{incubator_content}/podlings.xml"
@@ -125,10 +160,13 @@ module ASF
       @list
     end
 
+    # list of current podlings
     def self.current
       list.select { |podling| podling.status == 'current' }
     end
 
+    # last modified time of podlings.xml in the local working directory,
+    # as of the last time #list was called.
     def self.mtime
       @mtime
     end
@@ -160,12 +198,12 @@ module ASF
       return self.send name if self.respond_to? name
     end
 
-    # list of PPMC owners
+    # list of PPMC owners from LDAP
     def owners
       ASF::Project.find(id).owners
     end
 
-    # list of PPMC members
+    # list of PPMC committers from LDAP
     def members
       ASF::Project.find(id).members
     end
@@ -214,6 +252,9 @@ module ASF
       return true if list.start_with?("incubator-#{_name}-")
     end
 
+    # status information associated with this podling.  Keys in the hash return
+    # include: <tt>:ipClearance</tt>, <tt>:sourceControl</tt>, <tt>:wiki</tt>,
+    # <tt>:jira</tt>, <tt>:proposal</tt>, <tt>:website</tt>, <tt>:news</tt>
     def podlingStatus
       # resource can contain '-'
       @resource.untaint if @resource =~ /\A[-\w]+\z/
@@ -244,7 +285,11 @@ module ASF
       end
     end
 
-    # Return the instance as a hash
+    # Return the instance as a hash.  Keys in the hash are:
+    # <tt>:name</tt>, <tt>:status</tt>, <tt>:description</tt>,
+    # <tt>:mentors</tt>, <tt>:startdate</tt>, <tt>:champion</tt>,
+    # <tt>:reporting</tt>, <tt>:resource</tt>, <tt>:resourceAliases</tt>,
+    # <tt>:sponsor</tt>, <tt>:duration</tt>, and <tt>:podlingStatus</tt>
     def as_hash # might be confusing to use to_h here?
       hash = {
           name: @name,
@@ -280,6 +325,11 @@ module ASF
       hash
     end
 
+    # status information associated with this podling.  Keys in the hash return
+    # include: <tt>:issueTracker</tt>, <tt>:wiki</tt>, <tt>:jira</tt>,
+    # <tt>:proposal</tt>, <tt>:asfCopyright, <tt>:distributionRights</tt>,
+    # <tt>:ipClearance</tt>, <tt>:sga</tt>, <tt>:website</tt>,
+    # <tt>:graduationDate</tt>, <tt>:resolution</tt>
     def default_status
       {
           issueTracker: 'jira',

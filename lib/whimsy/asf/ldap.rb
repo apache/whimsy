@@ -771,6 +771,7 @@ module ASF
   class Project < Base
     @base = 'ou=project,ou=groups,dc=apache,dc=org'
 
+    # obtain a list of projects from LDAP
     def self.list(filter='cn=*')
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| Project.find(cn)}
     end
@@ -820,14 +821,18 @@ module ASF
       self.members = committers
     end
 
+    # setter for members, should only be called by #preload.
     def members=(members)
       @members = WeakRef.new(members)
     end
 
+    # setter for owners, should only be called by #preload.
     def owners=(owners)
       @owners = WeakRef.new(owners)
     end
 
+    # list of committers on this project.  Stored in LDAP as a <tt>member</tt>
+    # attribute.
     def members
       members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
@@ -836,6 +841,8 @@ module ASF
       members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
+    # list of owners on this project.  Stored in LDAP as a <tt>owners</tt>
+    # attribute.
     def owners
       owners = weakref(:owners) do
         ASF.search_one(base, "cn=#{name}", 'owner').flatten
@@ -844,13 +851,13 @@ module ASF
       owners.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
-    # remove people from a project as owners and members
+    # remove people from a project as owners and members in LDAP
     def remove(people)
       remove_owners(people)
       remove_members(people)
     end
 
-    # remove people as owners of a project
+    # remove people as owners of a project in LDAP
     def remove_owners(people)
       @owners = nil
       removals = (Array(people) & owners).map(&:dn)
@@ -861,7 +868,7 @@ module ASF
       @owners = nil
     end
 
-    # remove people as members of a project
+    # remove people as members of a project in LDAP
     def remove_members(people)
       @members = nil
       removals = (Array(people) & members).map(&:dn)
@@ -872,13 +879,13 @@ module ASF
       @members = nil
     end
 
-    # add people to a project as members and owners
+    # add people to a project as members and owners in LDAP
     def add(people)
       add_owners(people)
       add_members(people)
     end
 
-    # add people as owners of a project
+    # add people as owners of a project in LDAP
     def add_owners(people)
       @owners = nil
       additions = (Array(people) - owners).map(&:dn)
@@ -889,7 +896,7 @@ module ASF
       @owners = nil
     end
 
-    # add people as members of a project
+    # add people as members of a project in LDAP
     def add_members(people)
       @members = nil
       additions = (Array(people) - members).map(&:dn)
