@@ -605,6 +605,7 @@ module ASF
       end
     end
 
+    # Designated Name from LDAP
     def dn
       "uid=#{name},#{ASF::Person.base}"
     end
@@ -640,13 +641,20 @@ module ASF
     end
   end
 
+  #
+  # Access to LDAP groups; where committer lists for PMCs have traditionally
+  # been stored.  The intent is to move this data to member attributes on
+  # Project lists.
+  #
   class Group < Base
     @base = 'ou=groups,dc=apache,dc=org'
 
+    # obtain a list of groups from LDAP
     def self.list(filter='cn=*')
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| find(cn)}
     end
 
+    # determine if a given ASF::Person is a member of this group
     def include?(person)
       filter = "(&(cn=#{name})(memberUid=#{person.name}))"
       if ASF.search_one(base, filter, 'cn').empty?
@@ -656,6 +664,8 @@ module ASF
       end
     end
 
+    # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
+    # <tt>createTimestamp</tt> for all groups in LDAP.
     def self.preload
       Hash[ASF.search_one(base, "cn=*", %w(dn memberUid modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
@@ -668,7 +678,11 @@ module ASF
       end]
     end
 
-    attr_accessor :modifyTimestamp, :createTimestamp
+    # Date this committee was last modified in LDAP.
+    attr_accessor :modifyTimestamp
+
+    # Date this committee was initially created in LDAP.
+    attr_accessor :createTimestamp
 
     # return group only if it actually exits
     def self.[] name
@@ -676,10 +690,12 @@ module ASF
       group.members.empty? ? nil : group
     end
 
+    # setter for members, should only be used by #preload
     def members=(members)
       @members = WeakRef.new(members)
     end
 
+    # return a list of ASF::People who are memers of this group
     def members
       members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'memberUid').flatten
@@ -688,11 +704,12 @@ module ASF
       members.map {|uid| Person.find(uid)}
     end
 
+    # Designated Name from LDAP
     def dn
       @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
     end
 
-    # remove people from an existing group
+    # remove people from an existing group in LDAP
     def remove(people)
       @members = nil
       people = (Array(people) & members).map(&:id)
@@ -702,7 +719,7 @@ module ASF
       @members = nil
     end
 
-    # add people to an existing group
+    # add people to an existing group in LDAP
     def add(people)
       @members = nil
       people = (Array(people) - members).map(&:id)
@@ -712,7 +729,7 @@ module ASF
       @members = nil
     end
 
-    # add a new group
+    # add a new group to LDAP
     def self.add(name, people)
       nextgid = ASF::search_one(ASF::Group.base, 'cn=*', 'gidNumber').
         flatten.map(&:to_i).max + 1
@@ -728,7 +745,7 @@ module ASF
       ASF::LDAP.add("cn=#{name},#{base}", entry)
     end
 
-    # remove a group
+    # remove a group from LDAP
     def self.remove(name)
       ASF::LDAP.delete("cn=#{name},#{base}")
     end
@@ -744,6 +761,8 @@ module ASF
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| Project.find(cn)}
     end
 
+    # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
+    # <tt>createTimestamp</tt> for all projects in LDAP.
     def self.preload
       Hash[ASF.search_one(base, "cn=*", %w(dn member owner modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
@@ -758,8 +777,13 @@ module ASF
       end]
     end
 
-    attr_accessor :modifyTimestamp, :createTimestamp
+    # Date this committee was last modified in LDAP.
+    attr_accessor :modifyTimestamp
 
+    # Date this committee was initially created in LDAP.
+    attr_accessor :createTimestamp
+
+    # Designated Name from LDAP
     def dn
       @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first rescue nil
     end
@@ -1017,6 +1041,7 @@ module ASF
       ASF.search_one(base, filter, 'cn').flatten
     end
 
+    # Designated Name from LDAP
     def dn
       return @dn if @dn
       dns = ASF.search_subtree(self.class.base, "cn=#{name}", 'dn')
@@ -1032,6 +1057,8 @@ module ASF
       end
     end
 
+    # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
+    # <tt>createTimestamp</tt> for all services in LDAP.
     def self.preload
       Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
@@ -1044,7 +1071,12 @@ module ASF
       end]
     end
 
-    attr_accessor :modifyTimestamp, :createTimestamp
+    # Date this committee was last modified in LDAP.
+    attr_accessor :modifyTimestamp
+
+    # Date this committee was initially created in LDAP.
+    attr_accessor :createTimestamp
+
 
     def members=(members)
       @members = WeakRef.new(members)

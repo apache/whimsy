@@ -177,14 +177,17 @@ module ASF
   # Running deflate and etag together confuses caching:
   #
   # https://httpd.apache.org/docs/trunk/mod/mod_deflate.html#deflatealteretag
+  #
   # http://scarff.id.au/blog/2009/apache-304-and-mod_deflate-revisited/
   #
   # workaround is to strip the suffix in Rack middleware
   class ETAG_Deflator_workaround
+    # capture the app
     def initialize(app)
       @app = app
     end
 
+    # strip <tt>-gzip</tt> from the <tt>If-None-Match</tt> HTTP header.
     def call(env)
       if env['HTTP_IF_NONE_MATCH']
         env['HTTP_IF_NONE_MATCH'] =
@@ -195,12 +198,16 @@ module ASF
     end
   end
 
-  # compute document root for the site
+  # compute document root for the site.  Needed by Rack/Passenger applications
+  # that wish to use support site wide assets (stylesheets, javascripts).
   class DocumentRoot
+    # capture the application
     def initialize(app)
       @app = app
     end
 
+    # compute the document root by striping the <tt>PASSENGER_BASE_URI</tt> from
+    # the the current working directory.
     def call(env)
       unless ENV['DOCUMENT_ROOT']
         base = Dir.pwd
@@ -214,14 +221,18 @@ module ASF
     end
   end
 
-  # Apache httpd on whimsy-vm is behind a proxy that converts https
-  # requests into http requests.  Update the environment variables to
-  # match.
+  # Apache httpd on the original whimsy-vm was behind a proxy that converts
+  # https requests into http requests.  Update the environment variables to
+  # match.  This middleware is likely now obsolte.
   class HTTPS_workarounds
+    # capture the app
     def initialize(app)
       @app = app
     end
 
+    # if <tt>HTTPS</tt> is set in the environment, rewrite the
+    # <tt>SCRIPT_URI</tt> and <tt>SERVER_PORT</tt>; and strip
+    # <tt>index.html</tt> from the <tt>PATH_INFO</tt> and <tt>SCRIPT_URI</tt>.
     def call(env)
       if env['HTTPS'] == 'on'
         env['SCRIPT_URI'].sub!(/^http:/, 'https:')
