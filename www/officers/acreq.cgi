@@ -36,7 +36,8 @@ OFFICERS = 'https://svn.apache.org/repos/private/foundation/officers'
 APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
 
 # get up to date data...
-SVN = ("/usr/bin/svn --username #{Shellwords.escape env.user} " +
+# TODO replace with library method see WHIMSY-103
+SVN = ("svn --username #{Shellwords.escape env.user} " +
   "--password #{Shellwords.escape env.password}").untaint
 requests = `#{SVN} cat #{ACREQ}/new-account-reqs.txt`
 iclas_txt = `#{SVN} cat #{OFFICERS}/iclas.txt`
