@@ -494,7 +494,7 @@ module ASF
       ASF.search_one(base, filter, 'uid').flatten.map {|uid| find(uid)}
     end
 
-    # pre-fetch a given attribute, for a given list of people
+    # pre-fetch a given set of attributes, for a given list of people
     def self.preload(attributes, people={})
       list = Hash.new {|hash, name| hash[name] = find(name)}
 
@@ -866,10 +866,13 @@ module ASF
   class Committee < Base
     @base = 'ou=pmc,ou=committees,ou=groups,dc=apache,dc=org'
 
+    # return a list of committees, from LDAP.
     def self.list(filter='cn=*')
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| Committee.find(cn)}
     end
 
+    # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
+    # <tt>createTimestamp</tt> for all committees in LDAP.
     def self.preload
       Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
@@ -882,7 +885,11 @@ module ASF
       end]
     end
 
-    attr_accessor :modifyTimestamp, :createTimestamp
+    # Date this committee was last modified in LDAP.
+    attr_accessor :modifyTimestamp
+
+    # Date this committee was initially created in LDAP.
+    attr_accessor :createTimestamp
 
     # return committee only if it actually exits
     def self.[] name
@@ -890,10 +897,14 @@ module ASF
       committee.members.empty? ? nil : committee
     end
 
+    # setter for members attribute, should only be used by 
+    # ASF::Committee.preload
     def members=(members)
       @members = WeakRef.new(members)
     end
 
+    # DEPRECATED.  List of members for this committee.  Use owners as it
+    # is less ambiguous.
     def members
       members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
@@ -902,7 +913,8 @@ module ASF
       members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
-    # transitional methods
+    # List of owners for this committee, i.e. people who are members of the
+    # committee and have update access.  Data is obtained from LDAP.
     def owners
       if name == 'incubator'
         ASF::Project.find('incubator').owners
@@ -911,6 +923,8 @@ module ASF
       end
     end
 
+    # List of committers for this committee.  Data is obtained from LDAP.  This
+    # data is generally stored in an attribute named <tt>member</tt>.
     def committers
       if name == 'incubator'
         ASF::Project.find('incubator').members
@@ -919,7 +933,7 @@ module ASF
       end
     end
 
-    # remove people as owners of a project
+    # remove people as owners of a project in LDAP
     def remove_owners(people)
       if name == 'incubator'
         ASF::Project.find('incubator').remove_owners(people)
@@ -928,7 +942,7 @@ module ASF
       end
     end
 
-    # remove people as members of a project
+    # remove people as members of a project in LDAP
     def remove_committers(people)
       if name == 'incubator'
         ASF::Project.find('incubator').remove_members(people)
@@ -937,7 +951,7 @@ module ASF
       end
     end
 
-    # add people as owners of a project
+    # add people as owners of a project in LDAP
     def add_owners(people)
       if name == 'incubator'
         ASF::Project.find('incubator').add_owners(people)
@@ -946,7 +960,8 @@ module ASF
       end
     end
 
-    # add people as members of a project
+    # add people as committers of a project.  This information is stored
+    # in LDAP using a <tt>members</tt> attribute.
     def add_committers(people)
       if name == 'incubator'
         ASF::Project.find('incubator').add_members(people)
@@ -955,11 +970,12 @@ module ASF
       end
     end
 
+    # Designated Name from LDAP
     def dn
       @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
     end
 
-    # remove people from a committee
+    # DEPRECATED remove people from a committee.  Call #remove_owners instead.
     def remove(people)
       @members = nil
       people = (Array(people) & members).map(&:dn)
@@ -968,7 +984,7 @@ module ASF
       @members = nil
     end
 
-    # add people to a committee
+    # DEPRECATED.  add people to a committee.  Call #add_owners instead.
     def add(people)
       @members = nil
       people = (Array(people) - members).map(&:dn)
@@ -977,7 +993,7 @@ module ASF
       @members = nil
     end
 
-    # add a new committee
+    # add a new committee to LDAP
     def self.add(name, people)
       entry = [
         mod_add('objectClass', ['groupOfNames', 'top']),
@@ -988,7 +1004,7 @@ module ASF
       ASF::LDAP.add("cn=#{name},#{base}", entry)
     end
 
-    # remove a committee
+    # remove a committee from LDAP
     def self.remove(name)
       ASF::LDAP.delete("cn=#{name},#{base}")
     end

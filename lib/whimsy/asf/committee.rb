@@ -2,12 +2,54 @@ require 'time'
 
 module ASF
 
-  class Base
+  # Define super class to prevent circular references.  This class is
+  # actually defined in ldap.rb which is require'd after committee.rb.
+  class Base # :nodoc:
   end
 
+  #
+  # Representation for a committee (either a PMC, a board committee, or
+  # a President's committee).  This data is parsed from 
+  # <tt>committee-info.txt</tt>, and is augmened by data from LDAP,
+  # ASF::Site, and ASF::Mail.
+  #
+  # Note that the simple attributes which are sourced from
+  # <tt>committee-info.txt</tt> data is generally not available until
+  # ASF::Committee.load_committee_info is called.
+  #
+  # Similarly, the simple attributes which are sourced from LDAP is
+  # generally not available until ASF::Committee.preload is called.
+
   class Committee < Base
-    attr_accessor :info, :report, :roster, :established, :chairs,
-      :schedule
+    # list of chairs for this committee.  Returned as a list of hashes
+    # containing the <tt>:name</tt> and <tt>:id</tt>.  Data is obtained from
+    # <tt>committee-info.txt</tt>.
+    attr_accessor :chairs
+
+    # list of members for this committee.  Returned as a list of ids.
+    # Data is obtained from <tt>committee-info.txt</tt>.
+    attr_reader :info
+
+    # when this committee is next expected to report.  May be a string
+    # containing values such as "Next month: missing in May", "Next month: new,
+    # montly through July".  Data is obtained from <tt>committee-info.txt</tt>.
+    attr_writer :report
+
+    # list of members for this committee.  Returned as a list of hash
+    # mapping ids to a hash of <tt>:name</tt> and <tt>:date</tt> values. 
+    # Data is obtained from <tt>committee-info.txt</tt>.
+    attr_accessor :roster
+
+    # Date this committee was established in the format MM/YYYY.
+    # Data is obtained from <tt>committee-info.txt</tt>.
+    attr_accessor :established
+
+    # list of months when his committee typically  reports.  Returned
+    # as a comma separated string.  Data is obtained from
+    # <tt>committee-info.txt</tt>.
+    attr_accessor :schedule
+
+    # create an empty committee instance
     def initialize(*args)
       @info = []
       @chairs = []
@@ -43,6 +85,9 @@ module ASF
       cname
     end
 
+    # load committee info from <tt>committee-info.txt</tt>.  Will not reparse
+    # if the file has already been parsed and the underlying file has not
+    # changed.
     def self.load_committee_info
       board = ASF::SVN['private/committers/board']
       file = "#{board}/committee-info.txt"
@@ -52,7 +97,6 @@ module ASF
         return @committee_info 
       end
 
-
       @committee_mtime = File.mtime(file)
       @@svn_change = Time.parse(
         `svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
@@ -60,7 +104,7 @@ module ASF
       parse_committee_info File.read(file)
     end
 
-    # insert (replacing if necessary) a new committee
+    # insert (replacing if necessary) a new committee into committee-info.txt
     def self.establish(contents, pmc, date, people)
       # split into foot, sections (array) and head
       foot = contents[/^=+\s*\Z/]
@@ -88,6 +132,10 @@ module ASF
       head + '* ' + sections.join('* ') + foot
     end
 
+    # extract chairs, list of nonpmcs, roster, start date, and reporting
+    # information from <tt>committee-info.txt</tt>.  Note: this method is
+    # intended to be internal, use ASF::Committee.load_committee_info as it
+    # will cache this data.
     def self.parse_committee_info(contents)
       list = Hash.new {|hash, name| hash[name] = find(name)}
 
@@ -157,20 +205,29 @@ module ASF
       @committee_info = list.values.uniq
     end
 
+    # return a list of non-PMC committees.  Data is obtained from
+    # <tt>committee-info.txt</tt>
     def self.nonpmcs
       @nonpmcs
     end
 
+    # Finds a committee based on the name of the Committee.  Is aware of
+    # a number of aliases for a given committee.  Will set display name
+    # if the name being searched on contains an uppercase character.
     def self.find(name)
       result = super(@@namemap.call(name))
       result.display_name = name if name =~ /[A-Z]/
       result
     end
 
+    # Return the Last Changed Date for <tt>committee-info.txt</tt> in svn as
+    # a <tt>Time</tt> object.  Data is based on the previous call to
+    # ASF::Committee.load_committee_info.
     def self.svn_change
       @@svn_change
     end
 
+    # returns the (first) chair as an instance of the ASF::Person class.
     def chair
       Committee.load_committee_info
       if @chairs.length >= 1
@@ -180,28 +237,42 @@ module ASF
       end
     end
 
+    # Version of name suitable for display purposes.  Typically in uppercase.
+    # Data is sourced from <tt>committee-info.txt</tt>.
     def display_name
       Committee.load_committee_info
       @display_name || name
     end
 
+    # setter for display_name, should only be used by
+    # ASF::Committee.load_committee_info
     def display_name=(name)
       @display_name ||= name
     end
 
+    # when this committee is next expected to report.  May be a string
+    # containing values such as "Next month: missing in May", "Next month: new,
+    # montly through July".  Or may be a list of months, separated by commas.
+    # Data is obtained from <tt>committee-info.txt</tt>.
     def report
       @report || @schedule
     end
 
+    # setter for display_name, should only be used by
+    # ASF::Committee.load_committee_info
     def info=(list)
       @info = list
     end
 
+    # hash of availid => public_name for members (owners) of this committee
+    # Data is obtained from <tt>committee-info.txt</tt>.
     def names
       Committee.load_committee_info
       Hash[@roster.map {|id, info| [id, info[:name]]}]
     end
 
+    # if true, this committee is not a PMC.  
+    # Data is obtained from <tt>committee-info.txt</tt>.
     def nonpmc?
       Committee.nonpmcs.include? self
     end

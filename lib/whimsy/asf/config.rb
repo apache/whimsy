@@ -5,6 +5,12 @@ require 'etc'
 
 module ASF
 
+  #
+  # Support for local (development) configuration overrides to be stored in
+  # <tt>~/.whimsy</tt> files in YAML format.  Allows the specification of where
+  # subversion, git, and other files are stored, where updated files are
+  # cached, mailing list configuration, and other values.
+  #
   class Config
     @home = ENV['HOME'] || Dir.home(Etc.getpwuid.name)
 
@@ -13,6 +19,7 @@ module ASF
     # default :svn and :git
     @config[:svn] ||= '/srv/svn/*'
     @config[:git] ||= '/srv/git/*'
+
     # The cache is used for local copies of SVN files that may be updated by Whimsy
     # for example: podlings.xml
     # www/roster/views/actions/ppmc.json.rb (write)
@@ -39,6 +46,8 @@ module ASF
       $LOAD_PATH.unshift lib.untaint unless $LOAD_PATH.include? lib
     end
 
+    # Look up a configuration value by name (generally a symbol, like
+    # <tt>:svn</tt>).
     def self.get(value)
       @config[value]
     end

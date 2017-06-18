@@ -92,11 +92,13 @@ module ASF
 
 
   class Committee
+    # website for this committee.  Data is sourced from ASF::Site.
     def site
       site = ASF::Site.find(name)
       site[:link] if site
     end
 
+    # description for this committee.  Data is sourced from ASF::Site.
     def description
       site = ASF::Site.find(name)
       site[:text] if site
