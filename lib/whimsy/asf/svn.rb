@@ -154,6 +154,7 @@ module ASF
 
     # update a file or directory in SVN, working entirely in a temporary
     # directory
+    # Intended for use from GUI code
     def self.update(path, msg, env, _, options={})
       if File.directory? path
         dir = path
@@ -170,6 +171,7 @@ module ASF
       
       tmpdir = Dir.mktmpdir.untaint
 
+      # N.B. the extra enclosing [] tell _.system not to show their contents on error
       begin
         # create an empty checkout
         _.system ['svn', 'checkout', '--depth', 'empty',
