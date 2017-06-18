@@ -2,6 +2,9 @@ module ASF
 
   class Person < Base
   
+    # Return a hash of individuals in the member watch list.  Keys are
+    # ASF::Person objects, values are the text from
+    # <tt>potential-member-watch-list.txt</tt>..
     def self.member_watch_list
       return @member_watch_list if @member_watch_list
 
@@ -29,6 +32,7 @@ module ASF
       @member_watch_list = member_watch_list
     end
 
+    # This person's entry in <tt>potential-member-watch-list.txt</tt>.
     def member_watch
       text = Person.member_watch_list[self]
       if text

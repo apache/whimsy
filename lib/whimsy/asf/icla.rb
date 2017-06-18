@@ -199,14 +199,17 @@ module ASF
   end
 
   class Person
+    # ASF::ICLA information for this person.
     def icla
       @icla ||= ASF::ICLA.find_by_id(name)
     end
 
+    # setter for icla, should only be used by ASF::ICLA.preload
     def icla=(icla)
       @icla = icla
     end
 
+    # does this individual have an ICLA on file?
     def icla?
       @icla || ICLA.availids.include?(name)
     end

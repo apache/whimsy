@@ -163,16 +163,20 @@ module ASF
   end
 
   class Person
+    # text entry from <tt>members.txt</tt>.  If <tt>full</tt> is <tt>true</tt>,
+    # this will also include the text delimiters.
     def members_txt(full = false)
       prefix, suffix = " *) ", "\n\n" if full
       @members_txt ||= ASF::Member.find_text_by_id(id)
       "#{prefix}#{@members_txt}#{suffix}" if @members_txt
     end
 
+    # email addresses from members.txt
     def member_emails
       ASF::Member.emails(members_txt)
     end
 
+    # Person's name as found in members.txt
     def member_name
       members_txt[/(\w.*?)\s*(\/|$)/, 1] if members_txt
     end

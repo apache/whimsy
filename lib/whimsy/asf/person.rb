@@ -1,10 +1,12 @@
-#
-# support for sorting of names
-#
-
 require_relative 'person/override-dates.rb'
 
 module ASF
+
+  #
+  # An instance of this class represents a person.  Data comes from a variety
+  # of sources: LDAP, <tt>asf--authorization-template</tt>, <tt>iclas.txt</tt>,
+  # <tt>members.txt</tt>, <tt>nominated-members.txt</tt>, and
+  # <tt>potential-member-watch-list.txt</tt>.
 
   class Person
     # sort support
@@ -61,6 +63,7 @@ module ASF
       name.strip.gsub /[^\w]+/, '-'
     end
 
+    # generational suffixes
     SUFFIXES = /^([Jj][Rr]\.?|I{2,3}|I?V|VI{1,3}|[A-Z]\.)$/
 
     # rearrange line in an order suitable for sorting
@@ -76,20 +79,44 @@ module ASF
       name.reverse.join(' ').downcase
     end
 
+    # return name in a sortable order (last name first)
     def sortable_name
       Person.sortable_name(self.public_name)
     end
 
     # determine account creation date.  Notes:
-    #  *) LDAP info is not accurate for dates prior to 2009.  See
-    #     person/override-dates.rb
-    #  *) createTimestamp isn't loaded by default (but can either be preloaded
-    #     or fetched explicitly)
+    # *  LDAP info is not accurate for dates prior to 2009.  See
+    #    person/override-dates.rb
+    # *  createTimestamp isn't loaded by default (but can either be preloaded
+    #    or fetched explicitly)
     def createTimestamp
       result = @@create_date[name] 
       result ||= attrs['createTimestamp'][0]
       result ||= ASF.search_one(base, "uid=#{name}", 'createTimestamp')[0][0]
       result
+    end
+
+    # return person's public name, searching a variety of sources, starting
+    # with iclas.txt, then LDAP, and finally the archives.
+    def public_name
+      return icla.name if icla
+      cn = [attrs['cn']].flatten.first
+      cn.force_encoding('utf-8') if cn.respond_to? :force_encoding
+      return cn if cn
+      ASF.search_archive_by_id(name)
+    end
+
+    # Returns <tt>true</tt> if this person is listed as an ASF member in
+    # _either_ LDAP or <tt>members.txt</tt>.
+    def asf_member?
+      ASF::Member.status[name] or ASF.members.include? self
+    end
+
+    # Returns <tt>true</tt> if this person is listed as an ASF member in
+    # _either_ LDAP or <tt>members.txt</tt> or this person is listed as
+    # an PMC chair in LDAP.
+    def asf_officer_or_member?
+      asf_member? or ASF.pmc_chairs.include? self
     end
   end
 end

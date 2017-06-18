@@ -43,6 +43,7 @@ module ASF
   end
 
   class Person
+    # return a list of ASF authorizations that contain this individual
     def auth
       @auths ||= ASF::Authorization.find_by_id(name)
     end

@@ -1,30 +1,31 @@
-# Corrected creation dates for accounts created before May 2009
-#
-# On the 7th July 2004, a common format for account creation notifications to
-# PMCs (Subject: [NOTICE] Account created: First Last (uid)) was introduced.
-# By grepping the private mail archives for these, creation dates between
-# 20040707 and 20090519 have be found.
-#
-# In 2002 and 2003, many but not all creation requests were sent to root or
-# the pmc with a format "Preferred userid: (uid)" or "Username: (uid)", these
-# have also been found from grepping private mail archives (but a few we may
-# treat the requested date as the creation date). Not all creation requests
-# from this period are covered though, as the request email format wasn't
-# required.
-#
-# Other dates have been found from scanning SVN logs for the earliest
-# appearance of the availid. These are indicated with a comment giving the revision number
-# It's not known how accurate these dates are.
-#
-# For those accounts with the "dummy" creation date set in LDAP of 20090519,
-# where no other PMC request or notification emails have been found via
-# grep, a "more likely" default of 20040701 dummy value is set as an override.
-#
-# TODO fix the default dates
-#
-# See https://issues.apache.org/jira/browse/WHIMSY-63
-
 class ASF::Person
+
+  # Corrected creation dates for accounts created before May 2009
+  #
+  # On the 7th July 2004, a common format for account creation notifications to
+  # PMCs (Subject: [NOTICE] Account created: First Last (uid)) was introduced.
+  # By grepping the private mail archives for these, creation dates between
+  # 20040707 and 20090519 have be found.
+  #
+  # In 2002 and 2003, many but not all creation requests were sent to root or
+  # the pmc with a format "Preferred userid: (uid)" or "Username: (uid)", these
+  # have also been found from grepping private mail archives (but a few we may
+  # treat the requested date as the creation date). Not all creation requests
+  # from this period are covered though, as the request email format wasn't
+  # required.
+  #
+  # Other dates have been found from scanning SVN logs for the earliest
+  # appearance of the availid. These are indicated with a comment giving the
+  # revision number It's not known how accurate these dates are.
+  #
+  # For those accounts with the "dummy" creation date set in LDAP of 20090519,
+  # where no other PMC request or notification emails have been found via
+  # grep, a "more likely" default of 20040701 dummy value is set as an override.
+  #
+  # TODO fix the default dates
+  #
+  # See https://issues.apache.org/jira/browse/WHIMSY-63
+
   @@create_date = {
     "aadamchik"=>"20060414170210Z",
     "aaf"=>"20080522205123Z",

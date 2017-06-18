@@ -4,6 +4,8 @@ module ASF
 
   class Person < Base
   
+    # Return a hash of nominated members.  Keys are ASF::Person objects,
+    # values are the nomination text.
     def self.member_nominees
       begin
         return Hash[@member_nominees.to_a] if @member_nominees
@@ -31,6 +33,7 @@ module ASF
       nominees
     end
 
+    # Return the member nomination text for this individual
     def member_nomination
       @member_nomination ||= Person.member_nominees[self]
     end

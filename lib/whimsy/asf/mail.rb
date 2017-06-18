@@ -114,6 +114,7 @@ module ASF
   end
 
   class Person < Base
+    # find a Person by email address
     def self.find_by_email(value)
       value.downcase!
 
@@ -121,6 +122,9 @@ module ASF
       return person if person
     end
 
+    # List of inactive email addresses: currently only contains the address in
+    # <tt>iclas.txt</tt> if it is not contained in the list of active email
+    # addresses.
     def obsolete_emails
       return @obsolete_emails if @obsolete_emails
       result = []
@@ -132,10 +136,14 @@ module ASF
       @obsolete_emails = result
     end
 
+    # Active emails: primary email address, alt email addresses, and 
+    # member email addresses.
     def active_emails
       (mail + alt_email + member_emails).uniq
     end
 
+    # All known email addresses: includes active, obsolete, and apache.org
+    # email addresses.
     def all_mail
       (active_emails + obsolete_emails + ["#{id}@apache.org"]).uniq
     end

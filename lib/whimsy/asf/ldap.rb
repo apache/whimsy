@@ -116,7 +116,8 @@ module ASF
     end
 
     # connect to LDAP with a user and password; generally required for
-    # update operations.
+    # update operations.  If a block is passed, the connection will be
+    # closed after the block executes.
     def self.bind(user, password, &block)
       dn = ASF::Person.new(user).dn
       raise ::LDAP::ResultError.new('Unknown user') unless dn
@@ -497,6 +498,8 @@ module ASF
   class Person < Base
     @base = 'ou=people,dc=apache,dc=org'
 
+    # Obtain a list of people (committers).  LDAP filters may be used
+    # to retrieve only a subset.
     def self.list(filter='uid=*')
       ASF.search_one(base, filter, 'uid').flatten.map {|uid| find(uid)}
     end
@@ -529,83 +532,82 @@ module ASF
     end
 
     # return person only if it actually exits
-    def self.[] name
+    def self.[] id
       person = super
       person.attrs['dn'] ? person : nil
     end
 
+    # list of LDAP attributes for this person, populated lazily upon
+    # first reference.
     def attrs
       @attrs ||= LazyHash.new {ASF.search_one(base, "uid=#{name}").first}
     end
 
+    # reload all attributes from LDAP
     def reload!
       @attrs = nil
       attrs
     end
 
-    def public_name
-      return icla.name if icla
-      cn = [attrs['cn']].flatten.first
-      cn.force_encoding('utf-8') if cn.respond_to? :force_encoding
-      return cn if cn
-      ASF.search_archive_by_id(name)
-    end
-
-    def asf_member?
-      ASF::Member.status[name] or ASF.members.include? self
-    end
-
-    def asf_officer_or_member?
-      asf_member? or ASF.pmc_chairs.include? self
-    end
-
+    # Is this person listed in the committers LDAP group?
     def asf_committer?
        ASF::Group.new('committers').include? self
     end
 
+    # determine if the person is banned.  If scanning a large list, consider
+    # preloading the <tt>loginShell</tt> attributes for these people.
     def banned?
       # FreeBSD uses /usr/bin/false; Ubuntu uses /bin/false
       not attrs['loginShell'] or %w(/bin/false bin/nologin bin/no-cla).any? {|a| attrs['loginShell'].first.include? a}
     end
 
+    # primary mail addresses
     def mail
       attrs['mail'] || []
     end
 
+    # list all of the alternative emails for this person
     def alt_email
       attrs['asf-altEmail'] || []
     end
 
+    # list all of the PGP key fingerprints
     def pgp_key_fingerprints
       attrs['asf-pgpKeyFingerprint'] || []
     end
 
+    # list all of the ssh public keys
     def ssh_public_keys
       attrs['sshPublicKey'] || []
     end
 
+    # list all of the personal URLs
     def urls
       attrs['asf-personalURL'] || []
     end
 
+    # list of LDAP committees that this individual is a member of
     def committees
       weakref(:committees) do
         Committee.list("member=uid=#{name},#{base}")
       end
     end
 
+    # list of LDAP projects that this individual is a member of
     def projects
       weakref(:projects) do
         Project.list("member=uid=#{name},#{base}")
       end
     end
 
+    # list of LDAP groups that this individual is a member of
     def groups
       weakref(:groups) do
         Group.list("memberUid=#{name}")
       end
     end
 
+    # list of LDAP services that this individual is a member of
     def services
       weakref(:services) do
         Service.list("member=#{dn}")
@@ -617,6 +619,9 @@ module ASF
       "uid=#{name},#{ASF::Person.base}"
     end
 
+    # Allow artibtrary LDAP attibutes to be referenced as object properties.
+    # Example: <tt>ASF::Person.find('rubys').cn</tt>.  Can also be used
+    # to modify an LDAP attribute.
     def method_missing(name, *args)
       if name.to_s.end_with? '=' and args.length == 1
         return modify(name.to_s[0..-2], args)
@@ -642,6 +647,8 @@ module ASF
       end
     end
 
+    # update an LDAP attribute for this person.  This needs to be run
+    # either inside or after ASF::LDAP.bind.
     def modify(attr, value)
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_replace(attr.to_s, value)])
       attrs[attr.to_s] = value

@@ -327,7 +327,4 @@ module ASF
       Podling.namesearch[display_name]
     end
   end
-
-  # more backwards compatibility
-  Podlings = Podling
 end
