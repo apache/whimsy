@@ -45,16 +45,16 @@ module ASF
         unless @repos
           @@repository_mtime = File.exist?(REPOSITORY) && File.mtime(REPOSITORY)
 
-	  @repos = Hash[Dir[*git].map { |name| 
-	    next unless Dir.exist? name.untaint
-	    Dir.chdir name.untaint do
-	      out, err, status = 
-		Open3.capture3(*%(git config --get remote.origin.url))
-	      if status.success?
-		[File.basename(out.chomp, '.git'), Dir.pwd.untaint]
-	      end
-	    end
-	  }.compact]
+          @repos = Hash[Dir[*git].map { |name|
+            next unless Dir.exist? name.untaint
+            Dir.chdir name.untaint do
+              out, err, status =
+                Open3.capture3(*%(git config --get remote.origin.url))
+              if status.success?
+                [File.basename(out.chomp, '.git'), Dir.pwd.untaint]
+              end
+            end
+          }.compact]
         end
 
         @repos
