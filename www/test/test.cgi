@@ -18,6 +18,8 @@ _html do
   _body? do
     _whimsy_body(
       title: PAGETITLE,
+      subtitle: 'About This Example Script',
+      relatedtitle: 'More Useful Links',
       related: {
         "https://whimsy.apache.org/committers/tools" => "Whimsy Tool Listing",
         "https://incubator.apache.org/images/incubator_feather_egg_logo_sm.png" => "Incubator Logo, to show that graphics can appear",
@@ -31,6 +33,10 @@ _html do
           Any related whimsy or other (projects.a.o, etc.) links should be in the related: listing on the top right to help users find other useful things.
           This provides a consistent user experience.
         }
+      },
+      breadcrumbs: {
+        dataflow: '/test/dataflow.cgi',
+        testscript: '/test/test.cgi'
       }
     ) do
       # IF YOUR SCRIPT EMITS A LARGE TABLE

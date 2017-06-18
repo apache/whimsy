@@ -188,8 +188,14 @@ class Wunderbar::HtmlMarkup
     end
   end
 
-  # Emit complete bootstrap theme, with related links, and helpblock of intro text
-  def _whimsy_body(title: 'MOAR WHIMSY!', subtitle: 'About This Script', relatedtitle: 'Related Whimsy Links', related: {}, helpblock: nil)
+  # Emit complete bootstrap theme, with related links, and helpblock of intro text, optional breadcrumbs
+  def _whimsy_body(title: 'MOAR WHIMSY!', 
+      subtitle: 'About This Script', 
+      relatedtitle: 'Related Whimsy Links', 
+      related: nil, 
+      helpblock: nil,
+      breadcrumbs: nil
+    )
     _whimsy_nav
     _div.content.container_fluid do
       _div.row do
@@ -234,6 +240,21 @@ class Wunderbar::HtmlMarkup
       end      
       _div.row do
         _div.col_sm_12 do
+          if breadcrumbs
+            _ol.breadcrumb do
+              _li do
+                _a href: 'https://whimsy.apache.org/' do
+                  _span.glyphicon.glyphicon_home
+                end
+              end
+              breadcrumbs.each do |name, link|
+                _li.active do
+                  _a name.to_s, href: link
+                end
+              end
+            end
+          end
+          # Primary content from caller emitted below
           yield
         end
       end
