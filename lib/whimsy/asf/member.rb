@@ -6,6 +6,7 @@ module ASF
     @@text = nil
     @@mtime = 0
 
+    # Return the members.txt value assocaited with a given id
     def self.find_text_by_id(value)
       new.each do |id, text|
         return text if id==value
@@ -13,10 +14,14 @@ module ASF
       nil
     end
 
+    # An iterator that returns a list of ids and associated members.txt entries.
     def self.each(&block)
       new.each(&block)
     end
 
+    # return a list of <tt>members.txt</tt> entries as a Hash.  Keys are
+    # availids.  Values are a Hash with the following keys:
+    # <tt>:text</tt>, <tt>:name</tt>, <tt>"status"</tt>.
     def self.list
       result = Hash[self.new.map {|id, text|
         # extract 1st line and remove any trailing /* comment */
@@ -31,6 +36,7 @@ module ASF
       result
     end
 
+    # Find the ASF::Person associated with a given email
     def self.find_by_email(value)
       value = value.downcase
       each do |id, text|
@@ -41,6 +47,10 @@ module ASF
       nil
     end
 
+    # Return a hash of non-active ASF members and their status.  Keys are
+    # availids.  Values are strings from the section header under which the
+    # member is listed: currently either <tt>Emeritus (Non-voting) Member</tt>
+    # or <tt>Deceased Member</tt>.
     def self.status
       begin
         @status = nil if @mtime != @@mtime
@@ -61,6 +71,7 @@ module ASF
       status
     end
 
+    # An iterator that returns a list of ids and associated members.txt entries.
     def each
       ASF::Member.text.to_s.split(/^ \*\) /).each do |section|
         id = section[/Avail ID: (.*)/,1]
@@ -69,16 +80,21 @@ module ASF
       nil
     end
 
+    # Determine if the person associated with a given id is an ASF member.
+    # Returns a boolean value.
     def self.find(id)
       each {|availid| return true if availid == id}
       return false
     end
 
+    # extract member emails from members.txt entry
     def self.emails(text)
       emails = text.to_s.scan(/Email: (.*(?:\n\s+\S+@.*)*)/).flatten.
         join(' ').split(/\s+/).grep(/@/)
     end
 
+    # Return the Last Changed Date for <tt>members.txt</tt> in svn as
+    # a <tt>Time</tt> object.
     def self.svn_change
       foundation = ASF::SVN['private/foundation']
       file = "#{foundation}/members.txt"

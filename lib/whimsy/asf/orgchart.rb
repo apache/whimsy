@@ -1,13 +1,16 @@
 ##
-# Part of the whimsy/ASF module of classes that provide simple access to ASF data.
+# Part of the whimsy/ASF module of classes that provide simple access to ASF
+# data.
 module ASF # :nodoc:
   
   ##
-  # Reads and provides access to the officers/personnel-duties/ROLENAME.yaml files.
+  # Reads and provides access to the
+  # <tt>officers/personnel-duties/ROLENAME.yaml</tt> files.
   class OrgChart
     @@duties = {}
     @@desc = {}
     
+    # parse any changed YAML role files.
     def self.load
       @@source ||= ASF::SVN['private/foundation/officers/personnel-duties']
       @@source.untaint
@@ -44,7 +47,7 @@ module ASF # :nodoc:
     end
     
     ##
-    # Access descriptions of the ['info'] section fields
+    # Access descriptions of the <tt>['info']</tt> section fields
     def self.desc
       self.load
       @@desc

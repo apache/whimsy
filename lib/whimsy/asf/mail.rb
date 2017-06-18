@@ -3,6 +3,8 @@ require 'weakref'
 module ASF
 
   class Mail
+    # return a Hash containing complete list of all known emails, and the
+    # ASF::Person that is associated with that email.
     def self.list
       begin
         return Hash[@list.to_a] if @list
@@ -53,7 +55,11 @@ module ASF
       end
     end
 
-    def self.lists(public_private= false)
+    # get a list of all mailing lists.  If <tt>public_private</tt> is
+    # <tt>false</tt> this will be a simple list.  If <tt>public_private</tt> is
+    # <tt>true</tt>, return a Hash where the values are either <tt>public</tt>
+    # or <tt>private</tt>.
+    def self.lists(public_private=false)
       Mail._load_lists
       public_private ? @lists : @lists.keys
     end
@@ -79,7 +85,10 @@ module ASF
       end
     end
 
-    # common configuration for sending mail
+    # common configuration for sending mail; loads <tt>:sendmail</tt>
+    # configuration from <tt>~/.whimsy</tt> if available; otherwise default
+    # to disable openssl verification as that is what it required in order
+    # to work on the infrastructure provided whimsy-vm.
     def self.configure
       # fetch overrides
       sendmail = ASF::Config.get(:sendmail)
