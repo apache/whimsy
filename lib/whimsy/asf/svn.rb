@@ -174,14 +174,14 @@ module ASF
       # N.B. the extra enclosing [] tell _.system not to show their contents on error
       begin
         # create an empty checkout
-        _.system ['svn', 'checkout', '--depth', 'empty',
+        _.system ['svn', 'checkout', '--depth', 'empty', '--non-interactive',
           ['--username', env.user, '--password', env.password],
           `svn info #{dir}`[/URL: (.*)/, 1], tmpdir]
 
         # retrieve the file to be updated (may not exist)
         if basename
           tmpfile = File.join(tmpdir, basename).untaint
-          _.system ['svn', 'update',
+          _.system ['svn', 'update', '--non-interactive',
             ['--username', env.user, '--password', env.password],
             tmpfile]
         else
@@ -208,13 +208,13 @@ module ASF
         if contents and not contents.empty?
           File.write tmpfile, contents
           if not previous_contents
-            _.system ['svn', 'add',
+            _.system ['svn', 'add', '--non-interactive',
               ['--username', env.user, '--password', env.password],
               tmpfile]
           end
         elsif tmpfile and File.file? tmpfile
           File.unlink tmpfile
-          _.system ['svn', 'delete',
+          _.system ['svn', 'delete', '--non-interactive',
             ['--username', env.user, '--password', env.password],
             tmpfile]
         end
@@ -224,7 +224,7 @@ module ASF
           rc = _.system ['svn', 'diff', tmpfile]
         else
           # commit the changes
-          rc = _.system ['svn', 'commit', tmpfile || tmpdir,
+          rc = _.system ['svn', 'commit', tmpfile || tmpdir, '--non-interactive',
             ['--username', env.user, '--password', env.password],
             '--message', msg.untaint]
         end
