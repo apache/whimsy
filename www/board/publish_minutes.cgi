@@ -6,7 +6,7 @@ require 'date'
 require 'whimsy/asf'
 require 'shellwords'
 
-secretary = %w(clr rubys jcarman).include? $USER
+secretary = ASF::Service['asf-secretary'].members.map(&:id).include? $USER
 
 unless secretary 
   print "Status: 401 Unauthorized\r\n"
