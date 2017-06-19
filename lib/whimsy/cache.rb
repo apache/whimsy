@@ -27,13 +27,13 @@ class Cache
     end
     @enabled = enabled
     @minage = minage
-    init_cache(dir) if enabled
+    init_cache(@dir) if enabled
   end
 
   # enable the cache
   def enabled=(enabled)
     @enabled = enabled
-    init_cache(dir) if enabled
+    init_cache(@dir) if enabled
   end
   
   # gets the URL content
