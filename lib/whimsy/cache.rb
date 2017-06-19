@@ -7,8 +7,16 @@ require 'wunderbar'
 class Cache
   # Don't bother checking cache entries that are younger (seconds)
   attr_accessor :minage
+
+  # Is the cache enabled?
   attr_reader :enabled
 
+  # Create the cache
+  #
+  # Parameters:
+  # - dir - where to store the files
+  # - minage - don't check remote copy if the file is newer than this number of seconds
+  # - enabled - is the cache enabled initially
   def initialize(dir: '/tmp/cache',
         minage: 600, # 10 mins
         enabled: true)
@@ -18,13 +26,16 @@ class Cache
     init_cache(dir) if enabled
   end
 
+  # enable the cache
   def enabled=(enabled)
     @enabled = enabled
     init_cache(dir) if enabled
   end
   
   # gets the URL content
+  #
   # Caches the response and returns that if unchanged or recent
+  #
   # Returns: 
   # - uri (after redirects)
   # - content
