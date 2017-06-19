@@ -3,6 +3,9 @@ require 'nokogiri'
 
 module ASF
 
+  # A list of ASF sites, formed by parsing
+  # <tt>asf/infrastructure/site/trunk/content</tt> from svn.
+
   class Site
     # add entries that are not currently defined in index.html (or elsewhere)
     @@default = {
@@ -49,6 +52,8 @@ module ASF
     }
     @@list = {}
 
+    # a Hash of all sites.  Keys are the committee names.  Values are a hash
+    # with <tt>:link</tt>, and <tt>:text<tt> values.
     def self.list
       templates = ASF::SVN['asf/infrastructure/site/trunk/content']
       file = "#{templates}/index.html"
@@ -84,6 +89,7 @@ module ASF
       @@list
     end
 
+    # find the site for a give committee.
     def self.find(committee)
       committee = committee.name if ASF::Committee == committee
       list[committee]

@@ -8,8 +8,11 @@ require 'net/https'
 require 'fileutils'
 
 module Public
+  # location of where public files are placed on the web
   DATAURI = 'https://whimsy.apache.org/public/'
 
+  # contents of a given public file, read from local copy if possible,
+  # fetched from the web otherwise
   def self.getfile(pubname)
     local_copy = File.expand_path('../../../www/public/'+pubname, __FILE__.untaint).untaint
     if File.exist? local_copy
@@ -23,6 +26,8 @@ module Public
     end
   end
 
+  # contents of a given public file, read from local copy if possible,
+  # fetched from the web otherwise; parsed as JSON
   def self.getJSON(pubname)
     JSON.parse(getfile(pubname))
   end

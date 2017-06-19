@@ -1055,9 +1055,13 @@ module ASF
     end
   end
 
+  #
+  # Access to LDAP services (<tt>ou=groups,ou=services,dc=apache,dc=org</tt>)
+  #
   class Service < Base
     @base = 'ou=groups,ou=services,dc=apache,dc=org'
 
+    # return a list of services, from LDAP.
     def self.list(filter='cn=*')
       ASF.search_one(base, filter, 'cn').flatten
     end
@@ -1070,6 +1074,7 @@ module ASF
       @dn
     end
 
+    # base subtree for this service
     def base
       if dn
         dn.sub(/^cn=.*?,/, '')
@@ -1098,11 +1103,12 @@ module ASF
     # Date this committee was initially created in LDAP.
     attr_accessor :createTimestamp
 
-
+    # setters for members.  Should only be called by #preload
     def members=(members)
       @members = WeakRef.new(members)
     end
 
+    # list of members for this service in LDAP
     def members
       members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
@@ -1111,6 +1117,7 @@ module ASF
       members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
+    # remove people from this service in LDAP
     def remove(people)
       @members = nil
       people = (Array(people) & members).map(&:dn)
@@ -1119,6 +1126,7 @@ module ASF
       @members = nil
     end
 
+    # add people to this service in LDAP
     def add(people)
       @members = nil
       people = (Array(people) - members).map(&:dn)

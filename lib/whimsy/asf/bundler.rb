@@ -1,10 +1,10 @@
 require 'bundler'
 require 'whimsy/asf/config'
 
-#
-# modify bundler to be aware of whimsy library overrides
-#
 module Bundler
+  #
+  # modify bundler to be aware of whimsy library overrides
+  #
   class Dsl
     bundler_gem = instance_method(:gem)
     libs = ASF::Config.get(:lib)

@@ -6,16 +6,27 @@ require 'tmpdir'
 
 module ASF
 
+  #
+  # Provide access to files stored in Subversion, generally to local working
+  # copies that are updated via cronjobs.
+  #
+  # Note: svn paths passed to various #find methods are resolved relative to
+  # <tt>https://svn.apache.org/repos/</tt> if they are not full URIs.
+  #
+
   class SVN
     @base = URI.parse('https://svn.apache.org/repos/')
     @mock = 'file:///var/tools/svnrep/'
     @semaphore = Mutex.new
     @testdata = {}
 
+    # path to <tt>repository.yml</tt> in the source.
     REPOSITORY = File.expand_path('../../../../repository.yml', __FILE__).
       untaint
     @@repository_mtime = nil
 
+    # a hash of local working copies of Subversion repositories.  Keys are
+    # subversion paths; values are file paths.
     def self.repos
       @semaphore.synchronize do
         svn = Array(ASF::Config.get(:svn)).map {|dir| dir.untaint}
@@ -44,14 +55,20 @@ module ASF
       end
     end
 
+    # set a local directory corresponding to a path in Subversion.  Useful
+    # as a test data override.
     def self.[]=(name, path)
       @testdata[name] = File.expand_path(path).untaint
     end
 
+    # find a local directory corresponding to a path in Subversion.  Throws
+    # an exception if not found.
     def self.[](name)
       self.find!(name)
     end
 
+    # find a local directory corresponding to a path in Subversion.  Returns
+    # <tt>nil</tt> if not found.
     def self.find(name)
       return @testdata[name] if @testdata[name]
 
@@ -70,6 +87,8 @@ module ASF
       end
     end
 
+    # find a local directory corresponding to a path in Subversion.  Throws
+    # an exception if not found.
     def self.find!(name)
       result = self.find(name)
 
@@ -141,6 +160,10 @@ module ASF
       return revision, content
     end
 
+    # Updates a working copy, and returns revision number
+    #
+    # Note: working copies updated out via cron jobs can only be accessed 
+    # read only by processes that run under the Apache web server.
     def self.updateSimple(path)
       cmd = ['svn', 'update', path, '--non-interactive']
       stdout, status = Open3.capture2(*cmd)
