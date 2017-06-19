@@ -19,19 +19,19 @@ module ASF
     # Iteratively return each non_LDAP entry in the authorization file as a pair
     # of values: a name and list of ids.
     def each
-      read_auth.
-        scan(/^([-\w]+)=(\w.*)$/).each do |pmc, ids|
+      read_auth.scan(/^([-\w]+)=(\w.*)$/).each do |pmc, ids|
         yield pmc, ids.split(',')
       end
     end
 
-    # Iteratively return each ou=project entry in the authorization file as the group name
+    # Return an array of the ou=project entries in the authorization file
     def projects
+      arr = []
       #incubator={ldap:cn=incubator,ou=project,ou=groups,dc=apache,dc=org;attr=member}
-      read_auth.
-        scan(/^\w[^=]+={ldap:cn=(\w[^,]+),ou=project,ou=groups/).each do |group|
-        yield group[0]
+      read_auth.scan(/^\w[^=]+={ldap:cn=(\w[^,]+),ou=project,ou=groups/).each do |group|
+        arr << group[0]
       end
+      arr
     end
 
     unless Enumerable.instance_methods.include? :to_h
@@ -62,6 +62,20 @@ module ASF
     # return a list of ASF authorizations that contain this individual
     def auth
       @auths ||= ASF::Authorization.find_by_id(name)
+    end
+  end
+
+  class Group
+    # does this group use ou=project?
+    def usesproject?
+      @usesproject ||= ASF::Authorization.new('asf').projects.include?(name)
+    end
+  end
+
+  class Committee
+    # does this committee use ou=project?
+    def usesproject?
+      @usesproject ||= ASF::Authorization.new('pit').projects.include?(name)
     end
   end
 end
