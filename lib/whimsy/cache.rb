@@ -17,8 +17,8 @@ class Cache
   # - dir - where to store the files
   # - minage - don't check remote copy if the file is newer than this number of seconds
   # - enabled - is the cache enabled initially
-  def initialize(dir: '/tmp/cache',
-        minage: 600, # 10 mins
+  def initialize(dir: '/tmp/whimsy-cache',
+        minage: 3000, # 50 mins
         enabled: true)
     @dir = dir
     @enabled = enabled
