@@ -14,13 +14,17 @@ class Cache
   # Create the cache
   #
   # Parameters:
-  # - dir - where to store the files
+  # - dir - where to store the files. Path is relative to '/tmp/whimsy-cache'
   # - minage - don't check remote copy if the file is newer than this number of seconds
   # - enabled - is the cache enabled initially
   def initialize(dir: '/tmp/whimsy-cache',
         minage: 3000, # 50 mins
         enabled: true)
-    @dir = dir
+    if dir.start_with?('/')
+      @dir = dir
+    else
+      @dir = File.join('/tmp/whimsy-cache', dir)
+    end
     @enabled = enabled
     @minage = minage
     init_cache(dir) if enabled
