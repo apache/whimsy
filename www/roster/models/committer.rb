@@ -129,7 +129,8 @@ class Committer
       if File.exist? LIST_MODS
         response[:modtime] = File.mtime(LIST_MODS)
         moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
-          list = stanza.match(/(\w*\.?apache\.org)\/(.*?)\//)
+          # list names can include '-': empire-db
+          list = stanza.match(/\/([-\w]*\.?apache\.org)\/(.*?)\//)
 
           ["#{list[2]}@#{list[1]}", stanza.scan(/^(.*@.*)/).flatten]
         end
@@ -153,7 +154,8 @@ class Committer
       # archive@mail-archive.com
       # ...
       File.read(LIST_SUBS).split(/\n\n/).each do |stanza|
-        list = stanza.match(/(\w*\.?apache\.org)\/(.*?)(\n|\Z)/)
+        # list names can include '-': empire-db
+        list = stanza.match(/\/([-\w]*\.?apache\.org)\/(.*?)(\n|\Z)/)
 
         subs = stanza.scan(/^(.*@.*)/).flatten
         emails.each do |email|

@@ -27,7 +27,8 @@ class Committee
          modtime = File.mtime(LIST_MODS)
          mail_list = "#{pmc.mail_list}.apache.org"
          moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
-           list = stanza.match(/(\w+\.apache\.org)\/(.*?)\//)
+           # list names can include '-': empire-db
+           list = stanza.match(/\/([-\w]+\.apache\.org)\/(.*?)\//)
            next unless list and list[1] == mail_list
            # Drop the infra test lists
            next if list[2] =~ /^infra-[a-z]$/

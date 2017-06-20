@@ -14,7 +14,8 @@ class PPMC
          modtime = File.mtime(LIST_MODS)
          mail_list = ppmc.mail_list
          moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
-           list = stanza.match(/(\w+)\.apache\.org\/(.*?)\//)
+           # list names can include '-': empire-db
+           list = stanza.match(/\/([-\w]+)\.apache\.org\/(.*?)\//)
            next unless list and 
              (list[1] == mail_list or list[2] =~ /^#{mail_list}-/)
  
