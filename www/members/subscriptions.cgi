@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Aapche members@ Subscription Crosscheck" # Wvisible:members
+PAGETITLE = "Apache members@ Subscription Crosscheck" # Wvisible:members
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'wunderbar'
