@@ -95,7 +95,7 @@ and running - these are only needed for a new deployment.
    This is done by updating [crontab_apmail](https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/crontab_apmail.txt); then follow the instructions there.
 
  * Add the following mail subscriptions:
-    * Subscribe `svnupdate@whimsy-vm4.apache.org` to `board@apache.org`.
+    * Subscribe `svnupdate@whimsy-vm4.apache.org` to `board-commits@apache.org`.
       Alternately, add it to the `board-cvs` alias.
     * Subscribe `svnupdate@whimsy-vm4.apache.org` to 
       `committers-cvs@apache.org`.
