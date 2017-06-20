@@ -96,10 +96,10 @@ class Report < React
     return text.gsub 'TODO', '<span class="missing">TODO</span>'
   end
 
-  # Break long lines
+  # Break long lines, treating HTML Entities (like &amp;) as one character
   def linebreak(text)
     # find long, breakable lines
-    regex = Regexp.new(/.{80}.+/, 'g')
+    regex = Regexp.new(/(\&\w+;|.){80}.+/, 'g')
     result = nil
     indicies = [];
     while result = regex.exec(text)
@@ -107,7 +107,7 @@ class Report < React
       break if line.gsub(/\&\w+;/, '.').length < 80
 
       lastspace = /^.*\s\S/.exec(line)
-      if lastspace and lastspace[0].length - 1 > 40
+      if lastspace and lastspace[0].gsub(/\&\w+;/, '.').length - 1 > 40
         indicies.unshift([line, result.index]) 
       end
     end
