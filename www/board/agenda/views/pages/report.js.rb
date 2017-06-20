@@ -104,6 +104,8 @@ class Report < React
     indicies = [];
     while result = regex.exec(text)
       line = result[0]
+      break if line.gsub(/\&\w+;/, '.').length < 80
+
       lastspace = /^.*\s\S/.exec(line)
       if lastspace and lastspace[0].length - 1 > 40
         indicies.unshift([line, result.index]) 
@@ -235,7 +237,8 @@ class Report < React
   def privates(text)
     # inline <private>...</private> sections (and preceding spaces and tabs)
     # where the <private> and </private> are on the same line.
-    private_inline = /([ \t]*&lt;private&gt;.*?&lt;\/private&gt;)/
+    private_inline = Regexp.new('([ \t]*&lt;private&gt;.*?&lt;\/private&gt;)',
+      'ig')
 
     # block of lines (and preceding whitespace) where the first line starts
     # with <private> and the last line ends </private>.
