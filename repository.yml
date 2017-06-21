@@ -2,7 +2,7 @@
 :git:
 
   infrastructure-puppet:
-    url: https://gitbox.apache.org/repos/asf/infrastructure-puppet.git
+    url:  https://github.com/apache/infrastructure-puppet.git
     branch: deployment
 
   letsencrypt:
