@@ -29,7 +29,7 @@ class PPMC
     end
 
     ipmc = ASF::Committee.find('incubator').members
-    incubator_committers = ASF::Group.find('incubator').members
+    incubator_committers = ASF::Committee.find('incubator').committers
 
     roster = ppmc.members.map {|person|
       [person.id, {
