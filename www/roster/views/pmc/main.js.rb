@@ -8,7 +8,7 @@ class PMC < React
   end
 
   def render
-    if @committee.id == 'incubator'
+    if @committee.guinea_pig
       auth = (@@auth.secretary or @@auth.root or
         @committee.ldap.keys().include? @@auth.id)
     else

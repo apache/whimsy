@@ -47,6 +47,7 @@ class Committee
       modtime: modtime,
       project_info: info,
       image: image,
+      guinea_pig: ASF::Committee::GUINEAPIGS.include?(id),
     }
 
     response

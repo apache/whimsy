@@ -94,7 +94,7 @@ if env.password
   end
 
   details = people.map {|person| person.dn}
-  if pmc.id == 'incubator'
+  if ASF::Committee::GUINEAPIGS.include? pmc.id
     details << "#{pmc.dn};attr=owner" if @targets.include? 'pmc'
     details << "#{pmc.dn};attr=member" if group
   else
