@@ -137,12 +137,21 @@ namespace :git do
 
           puts
           puts File.join(Dir.pwd, name)
+
           if Dir.exist? name
             Dir.chdir(name) do
+              # update the location of the remote, if necessary
+              remote = `git config --get remote.origin.url`.chomp
+              if remote != (base + description['url']).to_s
+                `git config remote.origin.url #{base + description['url']}`
+              end
+
+              # pull changes
               system "git checkout #{branch}" if branch
               system 'git pull'
             end
           else
+            # fresh checkout
             system 'git', 'clone', (base + description['url']).to_s, name
             Dir.chdir(name) {system "git checkout #{branch}"} if branch
           end
