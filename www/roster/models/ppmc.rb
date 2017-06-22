@@ -28,8 +28,9 @@ class PPMC
       lists = lists.select {|list, mode| mode == 'public'}
     end
 
-    ipmc = ASF::Committee.find('incubator').members
-    incubator_committers = ASF::Committee.find('incubator').committers
+    pmc = ASF::Committee.find('incubator')
+    ipmc = pmc.members
+    incubator_committers = pmc.committers
 
     roster = ppmc.members.map {|person|
       [person.id, {
