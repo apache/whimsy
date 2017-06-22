@@ -958,11 +958,14 @@ module ASF
       members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
+    # temp list of projects that have moved over to new project LDAP schema
+    GUINEAPIGS = %w(incubator whimsy)
+
     # List of owners for this committee, i.e. people who are members of the
     # committee and have update access.  Data is obtained from LDAP.
     def owners
-      if name == 'incubator'
-        ASF::Project.find('incubator').owners
+      if GUINEAPIGS.include? name
+        ASF::Project.find(name).owners
       else
         members
       end
@@ -971,8 +974,8 @@ module ASF
     # List of committers for this committee.  Data is obtained from LDAP.  This
     # data is generally stored in an attribute named <tt>member</tt>.
     def committers
-      if name == 'incubator'
-        ASF::Project.find('incubator').members
+      if GUINEAPIGS.include? name
+        ASF::Project.find(name).members
       else
         ASF::Group.find(name).members
       end
@@ -980,8 +983,8 @@ module ASF
 
     # remove people as owners of a project in LDAP
     def remove_owners(people)
-      if name == 'incubator'
-        ASF::Project.find('incubator').remove_owners(people)
+      if GUINEAPIGS.include? name
+        ASF::Project.find(name).remove_owners(people)
       else
         remove(people)
       end
@@ -989,8 +992,8 @@ module ASF
 
     # remove people as members of a project in LDAP
     def remove_committers(people)
-      if name == 'incubator'
-        ASF::Project.find('incubator').remove_members(people)
+      if GUINEAPIGS.include? name
+        ASF::Project.find(name).remove_members(people)
       else
         ASF::Group.find(name).remove(people)
       end
@@ -998,8 +1001,8 @@ module ASF
 
     # add people as owners of a project in LDAP
     def add_owners(people)
-      if name == 'incubator'
-        ASF::Project.find('incubator').add_owners(people)
+      if GUINEAPIGS.include? name
+        ASF::Project.find(name).add_owners(people)
       else
         add(people)
       end
@@ -1008,8 +1011,8 @@ module ASF
     # add people as committers of a project.  This information is stored
     # in LDAP using a <tt>members</tt> attribute.
     def add_committers(people)
-      if name == 'incubator'
-        ASF::Project.find('incubator').add_members(people)
+      if GUINEAPIGS.include? name
+        ASF::Project.find(name).add_members(people)
       else
         ASF::Group.find(name).add(people)
       end
