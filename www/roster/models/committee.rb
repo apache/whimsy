@@ -23,21 +23,8 @@ class Committee
     moderators = nil
 
     if pmc.roster.include? env.user or ASF::Person.find(env.user).asf_member?
-      if File.exist? LIST_MODS
-         modtime = File.mtime(LIST_MODS)
-         mail_list = "#{pmc.mail_list}.apache.org"
-         moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
-           # list names can include '-': empire-db
-           list = stanza.match(/\/([-\w]+\.apache\.org)\/(.*?)\//)
-           next unless list and list[1] == mail_list
-           # Drop the infra test lists
-           next if list[2] =~ /^infra-[a-z]$/
-           next if list[1] == 'incubator.apache.org' && list[2] =~ /^infra-dev2?$/
- 
-           ["#{list[2]}@#{list[1]}", stanza.scan(/^(.*@.*)/).flatten.sort]
-        end
-        moderators = moderators.compact.to_h
-      end
+      require 'whimsy/asf/mlist'
+      moderators, modtime = ASF::MLIST.list_moderators(pmc.mail_list)
     else
       lists = lists.select {|list, mode| mode == 'public'}
     end

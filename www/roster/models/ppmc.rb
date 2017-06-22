@@ -10,20 +10,8 @@ class PPMC
 
     user = ASF::Person.find(env.user)
     if user.asf_member? or ppmc.members.include? user
-      if File.exist? LIST_MODS
-         modtime = File.mtime(LIST_MODS)
-         mail_list = ppmc.mail_list
-         moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
-           # list names can include '-': empire-db
-           list = stanza.match(/\/([-\w]+)\.apache\.org\/(.*?)\//)
-           next unless list and 
-             (list[1] == mail_list or list[2] =~ /^#{mail_list}-/)
- 
-           ["#{list[2]}@#{list[1]}.apache.org", 
-             stanza.scan(/^(.*@.*)/).flatten.sort]
-        end
-        moderators = moderators.compact.to_h
-      end
+      require 'whimsy/asf/mlist'
+      moderators, modtime = ASF::MLIST.list_moderators(ppmc.mail_list, true)
     else
       lists = lists.select {|list, mode| mode == 'public'}
     end

@@ -80,8 +80,38 @@ module ASF
       end
       response
     end
-    # roster/models/committee: for a mail domain, extract lists and their moderators
-    # roster/models/committer:
+
+    def self.list_moderators(mail_domain, podling=false)
+      # for a mail domain, extract related lists and their moderators
+      # also returns the time when the data was last checked
+      # If podling==true, then also check for old-style podling names
+
+      return nil, nil unless File.exist? LIST_MODS
+
+      moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
+        # list names can include '-': empire-db
+        m = stanza.match(/\/(?'domain'[-\w]+)\.apache\.org\/(?'sublist'.*?)\//)
+        # normal tlp style:
+        #/home/apmail/lists/commons.apache.org/dev/mod
+        # possible podling styles (new, old):
+        #/home/apmail/lists/batchee.apache.org/dev/mod
+        #/home/apmail/lists/incubator.apache.org/blur-dev/mod
+        next unless m # did not parse
+        # drop infra test lists
+        next if m['sublist'] =~ /^infra-[a-z]$/
+        next if m['domain'] == 'incubator.apache.org' && m['sublist'] =~ /^infra-dev2?$/
+        # if podling, also check for old-style names
+        # we need to check for incubator domain to avoid spurious matches, e.g. with
+        # /home/apmail/lists/db.apache.org/commons-dev/mod
+
+        next unless m['domain'] == mail_domain or
+            (podling && m['domain'] == 'incubator' && m['sublist'] =~ /^#{mail_domain}-/)
+ 
+        ["#{m['sublist']}@#{m['domain']}.apache.org", stanza.scan(/^(.*@.*)/).flatten.sort]
+      end
+      return moderators.compact.to_h, File.mtime(LIST_MODS)
+    end
+
     private
 
     MEMBERS_SUBSCRIPTIONS = '/srv/subscriptions/members'
@@ -94,3 +124,6 @@ module ASF
 
   end
 end
+#if __FILE__ == $0
+#p  ASF::MLIST.list_moderators(ARGV.shift||'blur', true)
+#end
