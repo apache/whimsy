@@ -46,7 +46,7 @@ end
 
 get '/committee/' do
   @members = ASF::Member.list.keys
-  @committees = ASF::Committee.list
+  @committees = ASF::Committee.pmcs
   _html :committees
 end
 

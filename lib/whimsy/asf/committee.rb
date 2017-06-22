@@ -205,6 +205,13 @@ module ASF
       @committee_info = list.values.uniq
     end
 
+    # return a list of PMC committees.  Data is obtained from
+    # <tt>committee-info.txt</tt>
+    def self.pmcs
+      committees = ASF::Committee.load_committee_info
+      committees - @nonpmcs
+    end
+
     # return a list of non-PMC committees.  Data is obtained from
     # <tt>committee-info.txt</tt>
     def self.nonpmcs
