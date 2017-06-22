@@ -3,8 +3,7 @@
 $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
 require 'wunderbar'
 require 'whimsy/asf'
-
-SUBSCRIPTIONS = '/srv/subscriptions/board'
+require 'whimsy/asf/mlist'
 
 ARCHIVERS = %w(
   board-archive@apache.org
@@ -73,7 +72,7 @@ _html do
     ids = []
     maillist = ASF::Mail.list
 
-    File.readlines(SUBSCRIPTIONS).each do |line|
+    ASF::MLIST.board_subscribers do |line|
       person = maillist[line.downcase.strip]
       person ||= maillist[line.downcase.strip.sub(/\+\w+@/,'@')]
       if person

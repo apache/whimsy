@@ -4,6 +4,7 @@ PAGETITLE = "Incubator Mailing List Moderators" # Wvisible:incubator mail
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'
 require 'whimsy/asf'
+require 'whimsy/asf/mlist'
 require 'nokogiri'
 
 user = ASF::Person.new($USER)
@@ -13,7 +14,6 @@ unless user.asf_member? or ASF::Committee['incubator'].members.include? user
   exit
 end
 
-SUBSCRIPTIONS = '/srv/subscriptions/list-mods'
 PODLINGS = "#{ASF::SVN['asf/incubator/public/trunk/content']}/podlings.xml"
 
 exceptions = {
@@ -68,10 +68,7 @@ _html do
 
     _h1 'Apache Incubator moderators'
 
-    moderators = Hash[File.read(SUBSCRIPTIONS).split(/\n\n/).
-      select {|k,v| k =~ /incubator.apache.org/ && k !~ /\/infra-(dev2?|[a-z])\//}.
-      map {|stanza| [stanza[/incubator.apache.org\/(.*)\//,1],
-      stanza.scan(/^(.*@.*)/).flatten]}]
+    moderators = ASF::MLIST.incubator_mods
 
     _h1 'Index'
 

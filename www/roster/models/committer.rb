@@ -1,5 +1,4 @@
 class Committer
-  LIST_SUBS = '/srv/subscriptions/list-subs'
 
   def self.serialize(id, env)
     response = {}
@@ -126,44 +125,13 @@ class Committer
     if ASF::Person.find(env.user).asf_member? or env.user = id
       response[:moderates] = {}
 
-      if File.exist? LIST_MODS
-        response[:modtime] = File.mtime(LIST_MODS)
-        moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
-          # list names can include '-': empire-db
-          list = stanza.match(/\/([-\w]*\.?apache\.org)\/(.*?)\//)
-
-          ["#{list[2]}@#{list[1]}", stanza.scan(/^(.*@.*)/).flatten]
-        end
-
-       user_emails = person.all_mail
-        moderators.each do |mail_list, list_moderators|
-          matches = (list_moderators & user_emails)
-          response[:moderates][mail_list] = matches unless matches.empty?
-        end
-      end
+      require 'whimsy/asf/mlist'
+      ASF::MLIST.moderates(person.all_mail, response)
     end
 
-    if env.user == id and File.exists? LIST_SUBS
-      response[:subscriptions] = []
-      response[:subtime] = File.mtime(LIST_SUBS)
-      emails = person.all_mail
-
-      # File format
-      # blank line
-      # /home/apmail/lists/accumulo.apache.org/commits
-      # archive@mail-archive.com
-      # ...
-      File.read(LIST_SUBS).split(/\n\n/).each do |stanza|
-        # list names can include '-': empire-db
-        list = stanza.match(/\/([-\w]*\.?apache\.org)\/(.*?)(\n|\Z)/)
-
-        subs = stanza.scan(/^(.*@.*)/).flatten
-        emails.each do |email|
-          if subs.include? email
-            response[:subscriptions] << ["#{list[2]}@#{list[1]}", email]
-          end
-        end
-      end
+    if env.user == id
+      require 'whimsy/asf/mlist'
+      ASF::MLIST.subscriptions(person.all_mail, response)
     end
 
     response

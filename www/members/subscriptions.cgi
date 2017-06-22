@@ -4,10 +4,9 @@ $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'wunderbar'
 require 'whimsy/asf'
+require 'whimsy/asf/mlist'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
-
-SUBSCRIPTIONS = '/srv/subscriptions/members'
 
 ARCHIVERS = %w(
   members-archive@apache.org
@@ -68,7 +67,7 @@ _html do
     maillist = ASF::Mail.list
 
     subscriptions = []
-    File.readlines(SUBSCRIPTIONS).each do |line|
+    ASF::MLIST.members_subscribers do |line|
       person = maillist[line.downcase.strip]
       person ||= maillist[line.downcase.strip.sub(/\+\w+@/,'@')]
       if person
