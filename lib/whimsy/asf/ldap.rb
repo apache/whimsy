@@ -118,7 +118,18 @@ module ASF
     # connect to LDAP with a user and password; generally required for
     # update operations.  If a block is passed, the connection will be
     # closed after the block executes.
-    def self.bind(user, password, &block)
+    #
+    # when run in irb, will default user and prompt for password
+    def self.bind(user=nil, password=nil, &block)
+      if not user or not password
+        raise ArgumentError.new('wrong number of arguments') unless $0 == 'irb'
+
+        require 'etc'
+        require 'io/console'
+        user ||= Etc.getlogin
+        password = STDIN.getpass("Password:")
+      end
+
       dn = ASF::Person.new(user).dn
       raise ::LDAP::ResultError.new('Unknown user') unless dn
 
