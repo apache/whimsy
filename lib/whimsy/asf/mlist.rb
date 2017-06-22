@@ -12,14 +12,14 @@ module ASF
     def self.board_subscribers
       # yield the list of board subscribers
       File.readlines(BOARD_SUBSCRIPTIONS).each do |line|
-        yield line
+        yield line.strip
       end
     end
 
     def self.members_subscribers
       # yield the list of subscribers to members@
       File.readlines(MEMBERS_SUBSCRIPTIONS).each do |line|
-        yield line
+        yield line.strip
       end
     end
 

@@ -73,8 +73,8 @@ _html do
     maillist = ASF::Mail.list
 
     ASF::MLIST.board_subscribers do |line|
-      person = maillist[line.downcase.strip]
-      person ||= maillist[line.downcase.strip.sub(/\+\w+@/,'@')]
+      person = maillist[line.downcase]
+      person ||= maillist[line.downcase.sub(/\+\w+@/,'@')]
       if person
         id = person.id
         id = '*notinavail*' if id == 'notinavail'
@@ -82,7 +82,7 @@ _html do
         person = ASF::Person.find('notinavail')
         id = '*missing*'
       end
-      ids << [id, person, line.strip]
+      ids << [id, person, line]
     end
 
     _table_ border: '1', cellpadding: '2', cellspacing: '0' do
