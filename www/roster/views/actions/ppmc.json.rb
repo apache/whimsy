@@ -33,7 +33,7 @@ if env.password
         incubator = ASF::Project.find('incubator')
         icommit = incubator.members
         user = ASF::Person.find(env.user)
-        if user.asf_member? or incubator.owners.include? person
+        if user.asf_member? or incubator.owners.include? user
           if @action == 'add'
             additions = people - icommit
             incubator.add_committers(additions) unless additions.empty?
