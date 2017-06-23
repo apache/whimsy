@@ -99,7 +99,7 @@ module ASF
         next unless m # did not parse
         # drop infra test lists
         next if m['sublist'] =~ /^infra-[a-z]$/
-        next if m['domain'] == 'incubator.apache.org' && m['sublist'] =~ /^infra-dev2?$/
+        next if m['domain'] == 'incubator' && m['sublist'] =~ /^infra-dev2?$/
         # if podling, also check for old-style names
         # we need to check for incubator domain to avoid spurious matches, e.g. with
         # /home/apmail/lists/db.apache.org/commons-dev/mod
