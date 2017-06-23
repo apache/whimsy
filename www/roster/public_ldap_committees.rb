@@ -1,4 +1,5 @@
 # Reads LDAP ou=pmc,ou=committees,ou=groups,dc=apache,dc=org
+# Also reads ou=projects
 # Creates JSON output with the following format:
 #
 # {
@@ -21,6 +22,7 @@ require_relative 'public_json_common'
 entries = {}
 
 committees = ASF::Committee.preload # for performance
+projects = ASF::Project.preload
 
 if committees.empty?
   Wunderbar.error "No results retrieved, output not created"
@@ -28,15 +30,34 @@ if committees.empty?
 end
 
 lastStamp = ''
+
+# Hack: ensure all names are represented in the hash
+ASF::Committee::GUINEAPIGS.each do |pig|
+  unless ASF::Committee.find(pig).modifyTimestamp # hack detect missing entry
+    committees[ASF::Committee.new(pig)] = [] # add a dummy entry
+  end 
+end
+
 committees.keys.sort_by {|a| a.name}.each do |entry|
     m = []
-    entry.members.sort_by {|a| a.name}.each do |e|
-        m << e.name
+    if ASF::Committee::GUINEAPIGS.include? entry.name
+        project = ASF::Project.find(entry.name)
+        createTimestamp = project.createTimestamp
+        modifyTimestamp = project.modifyTimestamp
+        project.owners.sort_by {|a| a.name}.each do |e|
+            m << e.name
+        end
+    else
+        createTimestamp = entry.createTimestamp
+        modifyTimestamp = entry.modifyTimestamp
+        entry.members.sort_by {|a| a.name}.each do |e|
+            m << e.name
+        end
     end
-    lastStamp = entry.modifyTimestamp if entry.modifyTimestamp > lastStamp
+    lastStamp = modifyTimestamp if modifyTimestamp > lastStamp
     entries[entry.name] = {
-        createTimestamp: entry.createTimestamp,
-        modifyTimestamp: entry.modifyTimestamp,
+        createTimestamp: createTimestamp,
+        modifyTimestamp: modifyTimestamp,
         roster: m 
     }
 end
