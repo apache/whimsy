@@ -82,6 +82,9 @@ and running - these are only needed for a new deployment.
  * Run the following command to create an SSL cert (see [tutorial](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-14-04) for details):
      * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org -d whimsy4.apache.org -d whimsy-vm4.apache.org -d whimsy-test.apache.org`
 
+ * Configure `/home/whimsysvn/.subversion/config` and
+   `/home/whimsysvn/.subversion/servers` to store auth-creds.
+
  * Configure `/var/www/.subversion/config` and
    `/var/www/.subversion/servers` to store auth-creds and to use the
    `whimsysvn` user.
@@ -105,8 +108,8 @@ and running - these are only needed for a new deployment.
       alias.
 
  * Using the `www-data` user, copy over the following directories from
-   the previous whimsy-vm* server: `/var/www/.subversion`, `/srv/agenda`,
-   `/srv/mail/board`, `/srv/mail/members`, `/srv/mail/secretary`.
+   the previous whimsy-vm* server: `/srv/agenda`, `/srv/mail/board`,
+   `/srv/mail/members`, `/srv/mail/secretary`.
  
  * Verify that email can be sent to non-apache.org email addresses
    * Run [testmail.rb](tools/testmail.rb)
