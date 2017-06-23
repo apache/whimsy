@@ -23,7 +23,7 @@ def scan_file(f)
     end
     return nil
   rescue Exception => e
-    return ["!Bogosity! #{e.message[0..255]}", "\t#{e.backtrace.join("\n\t")}"]
+    return ["#{ISERR}Bogosity! #{e.message[0..255]}", "\t#{e.backtrace.join("\n\t")}"]
   end
 end
 
