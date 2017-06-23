@@ -71,7 +71,8 @@ that directly interface with various parts of Apache organziational records.
 Details for each type of deployed tool or script:
 
  * **Static content**  Changes pushed to GitHub master will be
-   automatically deployed every 30 minutes.  Note that this includes the
+   automatically deployed - every commit triggers the puppet agent to 
+   do an update, which may take a few minutes.  Note that this includes the
    contents of scripts and applications too.
   
  * **Repository checkouts/clones**  An copy of a number of repositories

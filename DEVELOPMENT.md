@@ -16,6 +16,7 @@ Contents :books:
 - [Advanced Configuration](#advanced-configuration)
 - [Server Configuration](DEPLOYMENT.md)
 - [Further Reading](#further-reading)
+- [Documentation Standards](#documentation-standards)
 - [How To / FAQ](#how-to--faq-question)
 - [Running Whimsy on Mac OSX](MACOSX.md)
 - [Running Whimsy on Windows](#whimsy-on-windows)
@@ -246,6 +247,29 @@ a virtual host, complete with authentication:
        exec /srv/whimsy/tools/toucher
        
 More details about the production Whimsy instance are in [DEPLOYMENT.md](DEPLOYMENT.md)
+
+Documentation Standards
+============
+
+As a collection of semi-independent tools, Whimsy has a number of 
+different ways to document code or functionality for users.
+
+- **RDoc for whimsy/asf module** The Rakefile has an RDoc task that now 
+  processes the lib/whimsy/ directory, which can be run locally, and 
+  is run automatically on the server into https://whimsy.apache.org/docs/api/
+  
+- **End user instructions** are provided in many tools by defining a 
+  `PAGETITLE` and a `helpblock ->` which are put into a consistent place 
+  on the page for users when using whimsy/asf/themes.  This information 
+  is also parsed to generate a committer-only 
+  [listing of useful Whiimsy tools](https://whimsy.apache.org/committers/tools). 
+
+- **Data dependencies** and the flow of data between different Whimsy 
+  processes and other websites are described in [test/dataflow.cgi](https://whimsy.apache.org/test/dataflow.cgi)
+
+- **How-To for whimsy committers** are what you're reading right here 
+  in DEVELOPMENT.md and in DEPLOYMENT.md, CONFIGURE.md, MACOSX.md
+
 
 How To / FAQ :question:
 ============
