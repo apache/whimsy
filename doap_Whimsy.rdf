@@ -38,6 +38,10 @@
         <location rdf:resource="https://github.com/apache/whimsy.git"/>
         <browse rdf:resource="https://github.com/apache/whimsy.git"/>
       </GitRepository>
+      <GitRepository>
+        <location rdf:resource="https://gitbox.apache.org/repos/asf/whimsy.git"/>
+        <browse   rdf:resource="https://gitbox.apache.org/repos/asf/whimsy.git"/>
+      </GitRepository>
     </repository>
   </Project>
 </rdf:RDF>
