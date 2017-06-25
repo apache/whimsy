@@ -114,6 +114,9 @@ module ASF
 
     private
 
+    # board and member subs details are part of LIST_SUBS
+    # however they are generated more frequently at present
+    # the files could be dropped if/when that changes
     MEMBERS_SUBSCRIPTIONS = '/srv/subscriptions/members'
 
     BOARD_SUBSCRIPTIONS = '/srv/subscriptions/board'
