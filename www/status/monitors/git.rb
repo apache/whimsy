@@ -55,6 +55,7 @@ def Monitor.git(previous_status)
       'Fast-forward',
       'Updating ',
       ' create mode ',
+      ' delete mode ',
       ' rename ',
       # TODO Should these 3 lines be handled differently?
       'From git://',
@@ -132,11 +133,11 @@ end
 
 # for debugging purposes
 if __FILE__ == $0
-  require_relative 'unit_test'
-  runtest('git') # must agree with method name above
-#  DATA.each do |l|
-#    puts l
-#  end
+  response = Monitor.git(nil) # must agree with method name above
+  data = response[:data]
+  data.each do |k,v|
+    puts "#{k} #{data[k][:level]}"
+  end
 end
 
 # test data
@@ -185,6 +186,24 @@ Fast-forward
  .../git_mirror_asf/files/bin/graduate-podling.py   | 159 +++++++++++++++++++++
  1 file changed, 159 insertions(+)
  create mode 100644 modules/git_mirror_asf/files/bin/graduate-podling.py
+
+/x1/srv/git/infrastructure-puppet6
+Already on 'deployment'
+Your branch is up-to-date with 'origin/deployment'.
+From https://github.com/apache/infrastructure-puppet
+   1eaab02..bafa433  deployment -> origin/deployment
+Updating 1eaab02..bafa433
+Fast-forward
+ .../files/projects/archive-snapshots-monthly.sh    | 14 -----
+ .../files/projects/create-ofbiz-archives-index.sh  | 54 ------------------
+ .../files/projects/create-ofbiz-snapshots-index.sh | 64 ----------------------
+ .../files/projects/remove-snapshots-daily.sh       | 14 -----
+ modules/buildbot_asf/manifests/init.pp             | 51 -----------------
+ 5 files changed, 197 deletions(-)
+ delete mode 100755 modules/buildbot_asf/files/projects/archive-snapshots-monthly.sh
+ delete mode 100755 modules/buildbot_asf/files/projects/create-ofbiz-archives-index.sh
+ delete mode 100755 modules/buildbot_asf/files/projects/create-ofbiz-snapshots-index.sh
+ delete mode 100755 modules/buildbot_asf/files/projects/remove-snapshots-daily.sh
 
 /x1/srv/git/letsencrypt
 Already up-to-date.
