@@ -69,7 +69,7 @@ _html do
     subscriptions = []
     ASF::MLIST.members_subscribers do |line|
       person = maillist[line.downcase]
-      person ||= maillist[line.downcase.sub(/\+\w+@/,'@')]
+      person ||= maillist[line.downcase.sub(/[-+]\w+@/,'@')] # allow for trailing +- suffix
       if person
         id = person.id
         id = '*notinavail*' if id == 'notinavail'
