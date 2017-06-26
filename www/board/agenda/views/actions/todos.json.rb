@@ -108,22 +108,16 @@ if @establish and env.password
     end 
   end
 
-  # create 'victims' file for legacy tlpreq tool
-  Dir.chdir TLPREQ do
-    count = Dir["victims-#{date}.*.txt"].length
+  # create 'victims' file for tlpreq tool
+  count = Dir["#{TLPREQ}/victims-#{date}.*.txt"].length
+  message = "record #{date} approved TLP resolutions"
+  ASF:SVN.update TLPREQ, message, env, _ do |tmpdir|
     filename = "victims-#{date}.#{count}.txt"
     contents = establish.join("\n") + "\n"
-    File.write filename, contents
-    system "svn add #{filename}"
-    rc = system ['svn', 'commit', 
-      ['--username', env.user, '--password', env.password],
-      filename, '-m', 'record #{date} approved TLP resolutions']
-    if rc == 0
-      victims += establish
-    else
-      system "svn rm --force #{filename}"
-    end
+    File.write "#{tmpdir}/#{filename}", contents
+    _.system "svn add #{tmpdir}/#{filename}"
   end
+  victims += establish
 
   minutes[:todos][:established] ||= []
   minutes[:todos][:established] += establish
