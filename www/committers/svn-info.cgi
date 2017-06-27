@@ -38,7 +38,8 @@ _html do
         # output svn info
         _div.well.well_lg do
           _.system ['svn', 'info', @url,
-            (['--username', $USER, '--password', $PASSWORD] if $PASSWORD) ]
+            ['--non-interactive', '--no-auth-cache'], # not needed in output
+            (['--username', $USER, '--password', $PASSWORD] if $PASSWORD) ] # must not be in output
         end
       end
     end
