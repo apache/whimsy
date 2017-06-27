@@ -88,7 +88,7 @@ class JSONStorage
     elsif defined? XMLHttpRequest
 
       # retrieve from the network only
-      retrieve name, :json, &block
+      retrieve name, :json, block
 
     end
   end
