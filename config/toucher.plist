@@ -8,7 +8,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/usr/local/bin/ruby</string>
-        <string>/Users/rubys/git/whimsy/tools/toucher.rb</string>
+        <string>/srv/whimsy/tools/toucher.rb</string>
     </array>
 
     <key>KeepAlive</key>

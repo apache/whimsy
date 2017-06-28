@@ -453,8 +453,7 @@ changes and restart applications that might be affected on the receipt of
 the next request.
 
 To have this tool launch automatically, copy `whimsy/config/toucher.plist` to
-'~/Library/LaunchAgents/'.  Edit the paths in the `ProgramArguments` as
-required.  And start via:
+'~/Library/LaunchAgents/'.  Start via:
 
 ```
 launchctl load ~/Library/LaunchAgents/toucher.plist

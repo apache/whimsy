@@ -13,7 +13,7 @@ Dir["#{File.expand_path('../..', __FILE__)}/**/restart.txt"].each do |restart|
   app = File.expand_path('../..', restart)
   next unless File.exist? "#{app}/config.ru"
 
-  watch[app] << restart
+  watch[File.realpath(app)] << restart
 
   if File.exist? "#{app}/Gemfile.lock"
     paths = File.read("#{app}/Gemfile.lock")[/^PATH.*?\n\n/m].to_s
