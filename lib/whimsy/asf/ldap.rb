@@ -1031,7 +1031,11 @@ module ASF
 
     # Designated Name from LDAP
     def dn
-      @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
+      if GUINEAPIGS.include? name
+        @dn ||= ASF::Project.find(name).dn
+      else
+        @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
+      end
     end
 
     # DEPRECATED remove people from a committee.  Call #remove_owners instead.
