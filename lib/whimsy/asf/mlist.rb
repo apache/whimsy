@@ -49,7 +49,7 @@ module ASF
       File.read(LIST_SUBS).split(/\n\n/).each do |stanza|
         # list names can include '-': empire-db
         list = stanza.match(/\/([-\w]*\.?apache\.org)\/(.*?)(\n|\Z)/)
-
+        next unless list # ignore invalid list headers
         subs = stanza.scan(/^(.*@.*)/).flatten
         emails.each do |email|
           if subs.include? email
@@ -70,11 +70,13 @@ module ASF
       moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
         # list names can include '-': empire-db
         list = stanza.match(/\/([-\w]*\.?apache\.org)\/(.*?)\//)
+        next unless list # ignore invalid list headers
 
         ["#{list[2]}@#{list[1]}", stanza.scan(/^(.*@.*)/).flatten]
       end
 
-      moderators.each do |mail_list, list_moderators|
+      # need compact to skip invalid list headers [nil, nil]
+      moderators.compact.each do |mail_list, list_moderators|
         matches = (list_moderators & user_emails)
         response[:moderates][mail_list] = matches unless matches.empty?
       end
