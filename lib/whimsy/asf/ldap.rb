@@ -599,9 +599,19 @@ module ASF
 
     # list of LDAP committees that this individual is a member of
     def committees
-      weakref(:committees) do
+      # legacy LDAP entries
+      committees = weakref(:committees) do
         Committee.list("member=uid=#{name},#{base}")
       end
+
+      # add in projects (currently only includes GUINEAPIGS)
+      projects = self.projects.map(&:name)
+      committees += ASF::Committee.pmcs.select do |pmc| 
+        projects.include? pmc.name
+      end
+
+      # dedup
+      committees.uniq
     end
 
     # list of LDAP projects that this individual is a member of
