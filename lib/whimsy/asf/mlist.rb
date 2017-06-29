@@ -9,23 +9,23 @@ module ASF
     # Potentially also the methods could check if access was allowed.
     # This is currently done by the callers
     
+    # yield the list of board subscribers
     def self.board_subscribers
-      # yield the list of board subscribers
       File.readlines(BOARD_SUBSCRIPTIONS).each do |line|
         yield line.strip
       end
     end
 
+    # yield the list of subscribers to members@
     def self.members_subscribers
-      # yield the list of subscribers to members@
       File.readlines(MEMBERS_SUBSCRIPTIONS).each do |line|
         yield line.strip
       end
     end
 
+    # return a hash of incubator moderators
+    # list-name => [subscribers]
     def self.incubator_mods
-      # return a hash of incubator moderators
-      # list-name => [subscribers]
       moderators = Hash[File.read(LIST_MODS).split(/\n\n/).
         select {|k,v| k =~ /incubator.apache.org/ && k !~ /\/infra-(dev2?|[a-z])\//}.
         map {|stanza| [stanza[/incubator.apache.org\/(.*)\//,1],
@@ -33,8 +33,8 @@ module ASF
       moderators
     end
 
+    # return a hash of subscriptions for the list of emails provided
     def self.subscriptions(emails, response = {})
-      # return a hash of subscriptions for the list of emails provided
       
       return response unless File.exists? LIST_SUBS
 
@@ -60,8 +60,8 @@ module ASF
       response
     end
 
+    # return the mailing lists which are moderated by any of the list of emails
     def self.moderates(user_emails, response = {})
-      # return the mailing lists which are moderated by any of the list of emails
 
       return response unless File.exists? LIST_MODS
 
@@ -83,10 +83,10 @@ module ASF
       response
     end
 
+    # for a mail domain, extract related lists and their moderators
+    # also returns the time when the data was last checked
+    # If podling==true, then also check for old-style podling names
     def self.list_moderators(mail_domain, podling=false)
-      # for a mail domain, extract related lists and their moderators
-      # also returns the time when the data was last checked
-      # If podling==true, then also check for old-style podling names
 
       return nil, nil unless File.exist? LIST_MODS
 
