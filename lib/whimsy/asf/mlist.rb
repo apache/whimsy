@@ -24,6 +24,10 @@ module ASF
     end
 
     # return a hash of subscriptions for the list of emails provided
+    # the following keys are added to the response hash:
+    # :subtime - the timestamp when the data was last updated
+    # :subscriptions - an array of pairs: [list name, subscriber email]
+    # N.B. not the same format as the moderates() method
     def self.subscriptions(emails, response = {})
       
       return response unless File.exists? LIST_SUBS
@@ -51,6 +55,10 @@ module ASF
     end
 
     # return the mailing lists which are moderated by any of the list of emails
+    # the following keys are added to the response hash:
+    # :modtime - the timestamp when the data was last updated
+    # :moderates - a hash. key: list name; entry: array of moderators
+    # N.B. not the same format as the subscriptions() method
     def self.moderates(user_emails, response = {})
 
       return response unless File.exists? LIST_MODS
