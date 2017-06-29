@@ -980,7 +980,7 @@ module ASF
     end
 
     # temp list of projects that have moved over to new project LDAP schema
-    GUINEAPIGS = %w(incubator whimsy jmeter axis)
+    GUINEAPIGS = %w(incubator whimsy jmeter axis mynewt atlas)
 
     # List of owners for this committee, i.e. people who are members of the
     # committee and have update access.  Data is obtained from LDAP.
