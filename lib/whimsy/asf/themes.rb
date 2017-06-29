@@ -188,7 +188,9 @@ class Wunderbar::HtmlMarkup
     end
   end
 
-  # Emit complete bootstrap theme, with related links, and helpblock of intro text, optional breadcrumbs
+  # Emit complete bootstrap theme to wrap cgi output, including nav and footer
+  # If helpblock or related, then emit helpblock and related* panels before content
+  # If breadcrumbs, emit those immediately before content
   def _whimsy_body(title: 'MOAR WHIMSY!', 
       subtitle: 'About This Script', 
       relatedtitle: 'Related Whimsy Links', 
@@ -203,41 +205,43 @@ class Wunderbar::HtmlMarkup
           _h1 title
         end
       end
-      _div.row do
-        _div.col_md_8 do
-          _whimsy_panel subtitle, style: "panel-info" do
-            if helpblock
-              helpblock.call
-            else
-              _a 'See this code', href: "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}"
+      if helpblock or related
+        _div.row do
+          _div.col_md_8 do
+            _whimsy_panel subtitle, style: "panel-info" do
+              if helpblock
+                helpblock.call
+              else
+                _a 'See this code', href: "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}"
+              end
             end
           end
-        end
-        _div.col_md_4 do
-          _whimsy_panel relatedtitle, style: "panel-default" do
-            _ul list_style_position: 'inside' do
-              if related
-                related.each do |url, desc|
-                  if url =~ /.*\.(png|jpg|svg|gif)\z/i
-                    # Extension: allow images, style to align with bullets
-                    _li.list_unstyled do
-                      _img alt: desc, src: url, height: '60px', style: 'margin-left: -20px; padding: 2px 0px;'
-                    end
-                  else
-                    _li do
-                      _a desc, href: url
+          _div.col_md_4 do
+            _whimsy_panel relatedtitle, style: "panel-default" do
+              _ul list_style_position: 'inside' do
+                if related
+                  related.each do |url, desc|
+                    if url =~ /.*\.(png|jpg|svg|gif)\z/i
+                      # Extension: allow images, style to align with bullets
+                      _li.list_unstyled do
+                        _img alt: desc, src: url, height: '60px', style: 'margin-left: -20px; padding: 2px 0px;'
+                      end
+                    else
+                      _li do
+                        _a desc, href: url
+                      end
                     end
                   end
-                end
-              else
-                _li do
-                  _a 'See this code', href: "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}"
+                else
+                  _li do
+                    _a 'See this code', href: "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}"
+                  end
                 end
               end
             end
           end
         end
-      end      
+      end
       _div.row do
         _div.col_sm_12 do
           if breadcrumbs
