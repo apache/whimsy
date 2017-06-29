@@ -68,7 +68,7 @@ _html do
 
     _h1 'Apache Incubator moderators'
 
-    moderators = ASF::MLIST.incubator_mods
+    moderators = ASF::MLIST.list_moderators('incubator')[0]
 
     _h1 'Index'
 
@@ -112,7 +112,7 @@ _html do
         current = podling
       end
 
-      _h3_ list.sub(podling, '')
+      _h3_ list.sub(podling, '').sub('@incubator.apache.org',  '')
 
       _table do
         moderators[list].sort.each do |moderator|

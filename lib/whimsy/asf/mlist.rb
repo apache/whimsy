@@ -23,16 +23,6 @@ module ASF
       end
     end
 
-    # return a hash of incubator moderators
-    # list-name => [subscribers]
-    def self.incubator_mods
-      moderators = Hash[File.read(LIST_MODS).split(/\n\n/).
-        select {|k,v| k =~ /incubator.apache.org/ && k !~ /\/infra-(dev2?|[a-z])\//}.
-        map {|stanza| [stanza[/incubator.apache.org\/(.*)\//,1],
-        stanza.scan(/^(.*@.*)/).flatten]}]
-      moderators
-    end
-
     # return a hash of subscriptions for the list of emails provided
     def self.subscriptions(emails, response = {})
       
