@@ -15,6 +15,14 @@ module ASF
         yield line.strip
       end
     end
+    ## When more frequent cronjobs are possible, the above Could be replaced by:
+#    def self.board_subscribers
+#      if block_given?
+#        list_filter('sub','apache.org','board').each {|y| yield y}
+#      else
+#        list_filter('sub','apache.org','board')
+#      end
+#    end
 
     # yield the list of subscribers to members@
     def self.members_subscribers
@@ -22,6 +30,15 @@ module ASF
         yield line.strip
       end
     end
+
+    ## When more frequent cronjobs are possible, the above Could be replaced by:
+#    def self.members_subscribers
+#      if block_given?
+#        list_filter('sub','apache.org','members').each {|y| yield y}
+#      else
+#        list_filter('sub','apache.org','members')
+#      end
+#    end
 
     # return a hash of subscriptions for the list of emails provided
     # the following keys are added to the response hash:
