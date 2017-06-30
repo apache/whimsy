@@ -35,19 +35,10 @@ module ASF
       response[:subscriptions] = []
       response[:subtime] = File.mtime(LIST_SUBS)
 
-      # File format
-      # blank line
-      # /home/apmail/lists/accumulo.apache.org/commits
-      # archive@mail-archive.com
-      # ...
-      File.read(LIST_SUBS).split(/\n\n/).each do |stanza|
-        # list names can include '-': empire-db
-        list = stanza.match(/\/([-\w]*\.?apache\.org)\/(.*?)(\n|\Z)/)
-        next unless list # ignore invalid list headers
-        subs = stanza.scan(/^(.*@.*)/).flatten
+      list_parse('sub') do |dom, list, subs|
         emails.each do |email|
           if subs.include? email
-            response[:subscriptions] << ["#{list[2]}@#{list[1]}", email]
+            response[:subscriptions] << ["#{list}@#{dom}", email]
           end
         end
       end
@@ -65,18 +56,9 @@ module ASF
 
       response[:moderates] = {}
       response[:modtime] = File.mtime(LIST_MODS)
-      moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
-        # list names can include '-': empire-db
-        list = stanza.match(/\/([-\w]*\.?apache\.org)\/(.*?)\//)
-        next unless list # ignore invalid list headers
-
-        ["#{list[2]}@#{list[1]}", stanza.scan(/^(.*@.*)/).flatten]
-      end
-
-      # need compact to skip invalid list headers [nil, nil]
-      moderators.compact.each do |mail_list, list_moderators|
-        matches = (list_moderators & user_emails)
-        response[:moderates][mail_list] = matches unless matches.empty?
+      list_parse('mod') do |dom, list, emails|
+        matching = (user_emails & emails) # grab entries common to both
+        response[:moderates]["#{list}@#{dom}"] = matching unless matching.empty?
       end
       response
     end
@@ -88,31 +70,73 @@ module ASF
 
       return nil, nil unless File.exist? LIST_MODS
 
-      moderators = File.read(LIST_MODS).split(/\n\n/).map do |stanza|
-        # list names can include '-': empire-db
-        m = stanza.match(/\/(?'domain'[-\w]+)\.apache\.org\/(?'sublist'.*?)\//)
+      moderators = {}
+      list_parse('mod') do |dom, list, subs|
+
+        # drop infra test lists
+        next if list =~ /^infra-[a-z]$/
+        next if dom == 'incubator.apache.org' && list =~ /^infra-dev2?$/
+
         # normal tlp style:
         #/home/apmail/lists/commons.apache.org/dev/mod
         # possible podling styles (new, old):
         #/home/apmail/lists/batchee.apache.org/dev/mod
         #/home/apmail/lists/incubator.apache.org/blur-dev/mod
-        next unless m # did not parse
-        # drop infra test lists
-        next if m['sublist'] =~ /^infra-[a-z]$/
-        next if m['domain'] == 'incubator' && m['sublist'] =~ /^infra-dev2?$/
-        # if podling, also check for old-style names
-        # we need to check for incubator domain to avoid spurious matches, e.g. with
-        # /home/apmail/lists/db.apache.org/commons-dev/mod
-
-        next unless m['domain'] == mail_domain or
-            (podling && m['domain'] == 'incubator' && m['sublist'] =~ /^#{mail_domain}-/)
- 
-        ["#{m['sublist']}@#{m['domain']}.apache.org", stanza.scan(/^(.*@.*)/).flatten.sort]
+        next unless "#{mail_domain}.apache.org" == dom or
+           (podling && dom == 'incubator.apache.org' && list =~ /^#{mail_domain}-/)
+        moderators["#{list}@#{dom}"] = subs.sort
       end
-      return moderators.compact.to_h, File.mtime(LIST_MODS)
+      return moderators.to_h, File.mtime(LIST_MODS)
     end
 
     private
+
+    # Filter the appropriate list, matching on domain and list
+    # Params:
+    # - type: 'mod' or 'sub'
+    # - matchdom: must match the domain (e.g. 'httpd.apache.org')
+    # - matchlist: must match the list (e.g. 'dev')
+    # The email addresses are returned as an array. May be empty.
+    # If there is no match, then nil is returned
+    def self.list_filter(type, matchdom, matchlist)
+      list_parse(type) do |dom, list, emails|
+          return emails if matchdom == dom && matchlist == list 
+      end
+      return nil
+    end
+    
+    # Parses the list-mods/list-subs files
+    # Param: type = 'mod' or 'sub'
+    # Yields:
+    # - domain (e.g. [xxx.].apache.org)
+    # - list (e.g. dev)
+    # - emails as an array
+    def self.list_parse(type)
+      if type == 'mod'
+        path = LIST_MODS
+        suffix = '/mod'
+      elsif type == 'sub'
+        path = LIST_SUBS
+        suffix = ''
+      else
+        raise ArgumentError.new('type: expecting mod or sub')
+      end
+      # split file into paragraphs
+      File.read(path).split(/\n\n/).each do |stanza|
+        # domain may start in column 1 or following a '/'
+        # match [/home/apmail/lists/][accumulo.]apache.org/dev[/mod]
+        # list names can include '-': empire-db
+        match = stanza.match(/(?:^|\/)([-\w]*\.?apache\.org)\/(.*?)#{suffix}(?:\n|\Z)/)
+        if match
+          dom = match[1]
+          list = match[2]
+          yield dom, list, stanza.scan(/^(.*@.*)/).flatten
+        else
+          # don't allow mismatches as that means the RE is wrong
+          raise ArgumentError.new("Unexpected section #{stanza}")
+        end
+      end
+    end
 
     # board and member subs details are part of LIST_SUBS
     # however they are generated more frequently at present
