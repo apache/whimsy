@@ -12,7 +12,7 @@ class Group < React
     group = @group
     members = group.members.keys().sort_by {|id| group.members[id]}
 
-    if group.type == 'LDAP auth group'
+    if group.type == 'LDAP auth group' or group.id == 'asf-secretary'
       auth = (members.include? @@auth.id or @@auth.secretary or @@auth.root)
     else
       auth = false 
@@ -66,7 +66,7 @@ class Group < React
       end
     end
 
-    _GroupConfirm group: group.id, update: self.update if auth
+    _GroupConfirm group: group, update: self.update if auth
   end
 
   # capture group on initial load
@@ -175,8 +175,8 @@ class GroupConfirm < React
           _div.modal_body do
             _p do 
               _span "#{@text} the "
-              _code @@group
-              _span " authorization group?"
+              _code @@group.id
+              _span " #{@@group.type}?"
             end
           end
 
@@ -204,17 +204,27 @@ class GroupConfirm < React
   end
 
   def post()
+    # identify the action
+    if @@group.type == 'LDAP auth group'
+      action = 'actions/authgroup'
+    elsif @@group.type == 'LDAP service'
+      action = 'actions/service'
+    else
+      alert "unsupported group type: #{@@group.type}"
+      return
+    end
+
     # construct arguments to fetch
     args = {
       method: 'post',
       credentials: 'include',
       headers: {'Content-Type' => 'application/json'},
-      body: {group: @@group, id: @id, action: @action}.inspect
+      body: {group: @@group.id, id: @id, action: @action}.inspect
     }
 
     @disabled = true
     Polyfill.require(%w(Promise fetch)) do
-      fetch('actions/authgroup', args).then {|response|
+      fetch(action, args).then {|response|
         content_type = response.headers.get('content-type') || ''
         if response.status == 200 and content_type.include? 'json'
           response.json().then do |json|
