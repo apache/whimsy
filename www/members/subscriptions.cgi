@@ -16,6 +16,8 @@ ARCHIVERS = %w(
   members@whimsy-vm4.apache.org
 )
 
+subscribers, modtime = ASF::MLIST.members_subscribers
+
 _html do
   _body? do
     _whimsy_body(
@@ -27,15 +29,17 @@ _html do
       },
       helpblock: -> {
         _p! do
-          _ 'This process starts with the list of subscribers to '
+          _ "This process starts with the list of subscribers (updated #{modtime}) to "
           _a 'members@apache.org', href: 'https://mail-search.apache.org/members/private-arch/members/'
-          _ '.  It then uses '
+          _br
+          _ 'These are matched against '
           _a 'members.txt', href: 'https://svn.apache.org/repos/private/foundation/members.txt'
           _ ', '
           _a 'iclas.txt', href: 'https://svn.apache.org/repos/private/foundation/officers/iclas.txt'
           _ ', and '
           _code 'ldapsearch mail'
-          _ ' to attempt to match the email address to an Apache ID.  '
+          _ ' to attempt to match the email address to an Apache ID.'
+          _br
           _ 'Those that are not found are listed as '
           _code.text_danger '*missing*'
           _ '.  Emeritus members are '
@@ -67,7 +71,7 @@ _html do
     maillist = ASF::Mail.list
 
     subscriptions = []
-    ASF::MLIST.members_subscribers do |line|
+    subscribers.each do |line|
       person = maillist[line.downcase]
       person ||= maillist[line.downcase.sub(/[-+]\w+@/,'@')] # allow for trailing +- suffix
       if person

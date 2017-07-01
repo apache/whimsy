@@ -9,11 +9,9 @@ module ASF
     # Potentially also the methods could check if access was allowed.
     # This is currently done by the callers
     
-    # yield the list of board subscribers
+    # Return an array of board subscribers followed by the file update time
     def self.board_subscribers
-      File.readlines(BOARD_SUBSCRIPTIONS).each do |line|
-        yield line.strip
-      end
+      return File.read(BOARD_SUBSCRIPTIONS).split("\n"), File.mtime(BOARD_SUBSCRIPTIONS)
     end
     ## When more frequent cronjobs are possible, the above Could be replaced by:
 #    def self.board_subscribers
@@ -24,11 +22,9 @@ module ASF
 #      end
 #    end
 
-    # yield the list of subscribers to members@
+    # Return an array of members@ subscribers followed by the file update time
     def self.members_subscribers
-      File.readlines(MEMBERS_SUBSCRIPTIONS).each do |line|
-        yield line.strip
-      end
+      return File.read(MEMBERS_SUBSCRIPTIONS).split("\n"), File.mtime(MEMBERS_SUBSCRIPTIONS)
     end
 
     ## When more frequent cronjobs are possible, the above Could be replaced by:
