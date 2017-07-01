@@ -140,9 +140,17 @@ _html do
         Dir.mktmpdir do |tmpdir|
           tmpdir.untaint
 
+          # commit using user's credentials if possible, otherwise use whisysvn
+          if not $PASSWORD
+            credentials = nil
+          elsif user.asf_member? or ASF.pmc_chairs.include? user
+            credentials = ['--username', $USER, '--password', $PASSWORD]
+          else
+            credentials = ['--username', 'whimsysvn']
+          end
+
           _.system ['svn', 'checkout', SUBREQ, tmpdir,
-            ['--no-auth-cache', '--non-interactive'],
-            (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)]
+            ['--no-auth-cache', '--non-interactive'], credentials]
 
           Dir.chdir tmpdir do
 
@@ -156,8 +164,7 @@ _html do
           
             rc = _.system ['svn', 'commit', fn,
               '--message', "#{@list}@ += #{$USER}",
-              ['--no-auth-cache', '--non-interactive'],
-              (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)]
+              ['--no-auth-cache', '--non-interactive'], credentials]
           end
         end
         
