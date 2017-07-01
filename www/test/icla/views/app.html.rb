@@ -8,7 +8,7 @@ _html lang: 'en', _width: '80' do
     _link rel: 'shortcut icon',
       href: 'https://whimsy.apache.org/favicon.ico'
     _title 'ASF ICLA demo'
-    _link href: 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700%7cDroid+Serif:400,700',
+    _link href: 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700%7cDroid+Serif:400,700',
       rel: 'stylesheet', type: 'text/css'
     _link href: 'https://www.apache.org/css/min.bootstrap.css',
       rel: 'stylesheet'
