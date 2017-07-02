@@ -143,7 +143,7 @@ _html do
           # commit using user's credentials if possible, otherwise use whisysvn
           if not $PASSWORD
             credentials = nil
-          elsif user.asf_member? or ASF.pmc_chairs.include? user
+          elsif user.asf_member?
             credentials = ['--username', $USER, '--password', $PASSWORD]
           else
             credentials = ['--username', 'whimsysvn']
