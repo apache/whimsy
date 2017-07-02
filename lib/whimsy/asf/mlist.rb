@@ -11,30 +11,23 @@ module ASF
     
     # Return an array of board subscribers followed by the file update time
     def self.board_subscribers
-      return File.read(BOARD_SUBSCRIPTIONS).split("\n"), File.mtime(BOARD_SUBSCRIPTIONS)
+      # Allow for cutover to new cron jobs which only generate list-subs/list-mods
+      if isRecent(BOARD_SUBSCRIPTIONS)
+        return File.read(BOARD_SUBSCRIPTIONS).split("\n"), File.mtime(BOARD_SUBSCRIPTIONS)
+      else
+        return list_filter('sub', 'apache.org', 'board'), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+      end
     end
-    ## When more frequent cronjobs are possible, the above Could be replaced by:
-#    def self.board_subscribers
-#      if block_given?
-#        list_filter('sub','apache.org','board').each {|y| yield y}
-#      else
-#        list_filter('sub','apache.org','board')
-#      end
-#    end
 
     # Return an array of members@ subscribers followed by the file update time
     def self.members_subscribers
-      return File.read(MEMBERS_SUBSCRIPTIONS).split("\n"), File.mtime(MEMBERS_SUBSCRIPTIONS)
+      # Allow for cutover to new cron jobs which only generate list-subs/list-mods
+      if isRecent(MEMBERS_SUBSCRIPTIONS) 
+        return File.read(MEMBERS_SUBSCRIPTIONS).split("\n"), File.mtime(MEMBERS_SUBSCRIPTIONS)
+      else
+        return list_filter('sub', 'apache.org', 'members'), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+      end
     end
-
-    ## When more frequent cronjobs are possible, the above Could be replaced by:
-#    def self.members_subscribers
-#      if block_given?
-#        list_filter('sub','apache.org','members').each {|y| yield y}
-#      else
-#        list_filter('sub','apache.org','members')
-#      end
-#    end
 
     # return a hash of subscriptions for the list of emails provided
     # the following keys are added to the response hash:
@@ -46,7 +39,7 @@ module ASF
       return response unless File.exists? LIST_SUBS
 
       response[:subscriptions] = []
-      response[:subtime] = File.mtime(LIST_SUBS)
+      response[:subtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
 
       list_parse('sub') do |dom, list, subs|
         emails.each do |email|
@@ -68,7 +61,7 @@ module ASF
       return response unless File.exists? LIST_MODS
 
       response[:moderates] = {}
-      response[:modtime] = File.mtime(LIST_MODS)
+      response[:modtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_MODS))
       list_parse('mod') do |dom, list, emails|
         matching = (user_emails & emails) # grab entries common to both
         response[:moderates]["#{list}@#{dom}"] = matching unless matching.empty?
@@ -99,10 +92,14 @@ module ASF
            (podling && dom == 'incubator.apache.org' && list =~ /^#{mail_domain}-/)
         moderators["#{list}@#{dom}"] = subs.sort
       end
-      return moderators.to_h, File.mtime(LIST_MODS)
+      return moderators.to_h, (File.mtime(LIST_TIME) rescue File.mtime(LIST_MODS))
     end
 
     private
+
+    def self.isRecent(file)
+      return File.exist?(file) && ( Time.now - File.mtime(file) ) < 60*60*5
+    end
 
     # Filter the appropriate list, matching on domain and list
     # Params:
@@ -161,6 +158,10 @@ module ASF
     LIST_MODS = '/srv/subscriptions/list-mods'
 
     LIST_SUBS = '/srv/subscriptions/list-subs'
+
+    # If this file exists, it is the time when the data was last extracted
+    # The mods and subs files are only updated if they have changed
+    LIST_TIME = '/srv/subscriptions/list-start'
 
   end
 end
