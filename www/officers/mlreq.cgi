@@ -1,12 +1,13 @@
-#!/usr/bin/ruby1.9.1
+#!/usr/bin/env ruby
+PAGETITLE = "Apache Mailing list Request Form" # Wvisible:infra mail list
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'
 require 'shellwords'
 require 'mail'
 require 'whimsy/asf'
+require 'whimsy/asf/rack'
 require 'whimsy/asf/podlings'
 require 'whimsy/asf/site'
-
-$SAFE = 1
 
 # This is a version number check embedded in the json files.
 # 
@@ -14,8 +15,9 @@ $SAFE = 1
 # in production for some number before that.
 FORMAT_NUMBER = 4
 
-user = ASF::Person.new($USER)
-AUTHORIZED = (user.asf_member? or ASF.pmc_chairs.include?(user) or $USER=='ea')
+user = ASF::Auth.decode(env = {})
+
+AUTHORIZED = (user.asf_member? or ASF.pmc_chairs.include?(user))
 if !AUTHORIZED && env['REQUEST_METHOD'].to_s != 'GET'
   print "Status: 401 Unauthorized\r\n"
   print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
@@ -23,7 +25,7 @@ if !AUTHORIZED && env['REQUEST_METHOD'].to_s != 'GET'
 end
 
 lists = ASF::Mail.lists
-pmcs = ASF::Committee.list.map(&:mail_list)
+pmcs = ASF::Committee.pmcs.map(&:mail_list)
 pmcs.delete_if {|pmc| not lists.include? "#{pmc}-private"}
 
 # INFRA-11555
@@ -195,9 +197,9 @@ _html do
 
         _.system [
           'svn', 'commit', '--no-auth-cache', '--non-interactive',
-          '-m', "#{request} mailing list request by #{$USER} via " + 
+          '-m', "#{request} mailing list request by #{env.user} via " + 
             env['SERVER_ADDR'],
-          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
+          (['--username', env.user, '--password', env.password] if env.password),
           '--', *tocommit
         ]
         _p do
