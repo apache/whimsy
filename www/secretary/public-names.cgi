@@ -223,6 +223,7 @@ _html do
         _th 'id'
         _th 'cn'
         _th 'mail'
+        _th 'Committer?' # non-committers won't have iclas (usually)
       end
 
       ldap.each do |person|
@@ -235,6 +236,7 @@ _html do
           end
           _td person.cn
           _td person.mail.first
+          _td person.asf_committer?
         end
       end
     end
