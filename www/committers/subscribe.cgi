@@ -30,7 +30,7 @@ ASF::Podling.list.each {|p|
   end
 }
 
-pmcs = ASF::Committee.list.map(&:mail_list)
+pmcs = ASF::Committee.pmcs.map(&:mail_list)
 lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user))
 lists.sort!
 addrs = (["#{$USER}@apache.org"] + user.mail + user.alt_email)
