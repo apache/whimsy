@@ -6,6 +6,7 @@ PAGETITLE = "Board Agenda Auth Tester" # Wvisible:agenda debug
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'
+require 'wunderbar/bootstrap'
 require 'whimsy/asf/rack'
 require 'whimsy/asf/agenda'
 
