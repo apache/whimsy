@@ -21,8 +21,8 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        'https://whimsy.apache.org/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
-        'https://whimsy.apache.org/members/nominations' => 'Members Meeting Nomination Crosscheck',
+        '/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
+        '/members/nominations' => 'Members Meeting Nomination Crosscheck',
         'https://svn.apache.org/repos/private/foundation/Meetings/' => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {

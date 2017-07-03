@@ -50,7 +50,7 @@ class Header < React
 
             _ul.online.dropdown_menu @@item.online do |id|
               _li do
-                _a id, href: "https://whimsy.apache.org/roster/committer/#{id}"
+                _a id, href: "/roster/committer/#{id}"
               end
             end
           end

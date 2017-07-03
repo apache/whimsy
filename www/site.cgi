@@ -127,7 +127,7 @@ _html do
     title: PAGETITLE,
     subtitle: 'Checking TLP Websites For Required Links',
     related: {
-      "https://whimsy.apache.org/committers/tools" => "Whimsy Tool Listing",
+      "/committers/tools" => "Whimsy Tool Listing",
       "https://www.apache.org/foundation/marks/pmcs#navigation" => "Required PMC Links Policy",
       "https://github.com/apache/whimsy/" => "Read The Whimsy Code"
     },

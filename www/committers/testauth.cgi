@@ -13,9 +13,9 @@ _html do
   _whimsy_body(
     title: PAGETITLE,
     related: {
-      'https://whimsy.apache.org/board/minutes/' => 'Board Meeting Minutes (public)',
-      'https://whimsy.apache.org/board/agenda/' => 'Board Agenda Tool (restricted)',
-      'https://whimsy.apache.org/status/' => 'Whimsy Server Status'
+      '/board/minutes/' => 'Board Meeting Minutes (public)',
+      '/board/agenda/' => 'Board Agenda Tool (restricted)',
+      '/status/' => 'Whimsy Server Status'
     },
     helpblock: -> {
       _ 'This script checks your authorization to use the agenda tool, and checks if you are listed as attending the current board meeting in the official agenda.'

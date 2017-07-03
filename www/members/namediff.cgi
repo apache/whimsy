@@ -11,7 +11,7 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        'https://whimsy.apache.org/roster/members' => 'Listing Of All Members',
+        '/roster/members' => 'Listing Of All Members',
         'https://svn.apache.org/repos/private/foundation/officers/iclas.txt' => 'ICLA.txt Listing',
       },
       helpblock: -> {

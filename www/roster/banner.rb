@@ -15,7 +15,7 @@ class Wunderbar::HtmlMarkup
         end
         _div.col_sm_3.col_xs_3 do
           _a href: '/' do
-            _img title: 'Whimsy logo', alt: 'Whimsy hat', src: 'https://whimsy.apache.org/whimsy.svg', width: 145, height: 101 
+            _img title: 'Whimsy logo', alt: 'Whimsy hat', src: '/whimsy.svg', width: 145, height: 101 
           end
         end
         _div.col_sm_5.col_xs_9.align_bottom do 

@@ -28,7 +28,7 @@ _html do
       subtitle: 'How To Upload Bills',
       related: {
         'https://treasurer.apache.org/' => 'ASF Treasurer Process Documentation',
-        'https://whimsy.apache.org/committers/svn-info' => 'SVN Info helper (to check file status)'
+        '/committers/svn-info' => 'SVN Info helper (to check file status)'
       },
       helpblock: -> {
         _p %{

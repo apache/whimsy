@@ -145,7 +145,7 @@ _html do
       title: PAGETITLE,
       subtitle: 'How To Make Account Requests',
       related: {
-        'https://whimsy.apache.org/roster' => 'Whimsy Roster Tool',
+        '/roster' => 'Whimsy Roster Tool',
         'https://reference.apache.org/infra' => 'Infra Reference Documentation',
         'https://reference.apache.org/pmc/acreq' => 'Infra How To Create New Account Docs'
       },

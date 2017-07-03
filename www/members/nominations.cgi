@@ -10,7 +10,7 @@ require 'whimsy/asf'
 MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
 
 # link to roster page
-ROSTER = 'https://whimsy.apache.org/roster/committer'
+ROSTER = '/roster/committer'
 
 # get a list of current members messages
 year = Time.new.year.to_s
@@ -64,7 +64,7 @@ _html do
   _whimsy_body(
     title: PAGETITLE,
     related: {
-      'https://whimsy.apache.org/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
+      '/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
       'https://svn.apache.org/repos/private/foundation/Meetings/' => 'Official Meeting Agenda Directory'
     },
     helpblock: -> {

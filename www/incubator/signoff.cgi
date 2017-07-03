@@ -49,7 +49,7 @@ agendas.each do |file|
   end
 end
 
-roster = 'https://whimsy.apache.org/roster/committer/'
+roster = '/roster/committer/'
 
 _html do
   # http://bconnelly.net/2013/10/creating-colorblind-friendly-figures/
@@ -61,7 +61,7 @@ _html do
     title: PAGETITLE,
     related: {
       'https://incubator.apache.org/projects/' => 'Incubator Podling List',
-      'https://whimsy.apache.org/incubator/moderators' => 'Incubator Mailing List Moderators'
+      '/incubator/moderators' => 'Incubator Mailing List Moderators'
     },
     helpblock: -> {
       _ do

@@ -131,7 +131,7 @@ _html do
         File.basename(latest) + '/agenda.txt'
     end
     _li do
-      _a 'Assign a proxy', href: 'https://whimsy.apache.org/members/proxy'
+      _a 'Assign a proxy', href: '/members/proxy'
     end
     _li do
       _a 'Read Members.txt', href:

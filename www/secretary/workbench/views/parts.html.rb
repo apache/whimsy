@@ -26,7 +26,7 @@ _html do
   _ul do
     _li do
       _a 'Response time', target: 'content',
-        href: 'https://whimsy.apache.org/secretary/response-time'
+        href: '/secretary/response-time'
     end
     _li do
       _a 'Mail Search', target: 'content',
@@ -62,15 +62,15 @@ _html do
     end
     _li do
       _a 'ICLA lint', target: 'content',
-        href: 'https://whimsy.apache.org/secretary/icla-lint'
+        href: '/secretary/icla-lint'
     end
     _li do
       _a 'Public names', target: 'content',
-        href: 'https://whimsy.apache.org/secretary/public-names'
+        href: '/secretary/public-names'
     end
     _li do
       _a 'Board subscriptions', target: 'content',
-        href: 'https://whimsy.apache.org/board/subscriptions/'
+        href: '/board/subscriptions/'
     end
     _li do
       _a 'Mail aliases', target: 'content',

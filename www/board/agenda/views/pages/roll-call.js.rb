@@ -166,7 +166,7 @@ class Attendee < React
     _li onMouseOver: self.focus do
       _input type: :checkbox, checked: @checked, onChange: self.click
 
-      roster = 'https://whimsy.apache.org/roster/committer/'
+      roster = '/roster/committer/'
       if @@person.id
         _a @@person.name, href: "#{roster}#{@@person.id}",
           style: {fontWeight: (@@person.member ? 'bold' : 'normal')}

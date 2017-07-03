@@ -61,7 +61,7 @@ class ActionItems < React
                   href: "../#{action.date}/#{action.pmc.gsub(/\W/, '-')}"
               else
                 _a action.date, href: 
-                  'https://whimsy.apache.org/board/minutes/' +
+                  '/board/minutes/' +
                   action.pmc.gsub(/\W/, '_') +
                   "#minutes_#{action.date.gsub('-', '_')}"
               end

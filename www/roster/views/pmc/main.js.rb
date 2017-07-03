@@ -113,7 +113,7 @@ class PMC < React
       end
 
       _li do
-        _a 'Prior reports', href: 'https://whimsy.apache.org/board/minutes/' +
+        _a 'Prior reports', href: '/board/minutes/' +
           @committee.display_name.gsub(/\s+/, '_')
       end
 

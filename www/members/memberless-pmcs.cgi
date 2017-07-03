@@ -22,8 +22,8 @@ _html do
       title: PAGETITLE,
       subtitle: subtitle,
       related: {
-        'https://whimsy.apache.org/members/watch' => 'Potential Member Watch List',
-        'https://whimsy.apache.org/roster/committee/' => 'All PMC Rosters'
+        '/members/watch' => 'Potential Member Watch List',
+        '/roster/committee/' => 'All PMC Rosters'
       },
       helpblock: -> {
         _p 'This displays PMC names where there are few/no ASF Members listed on the PMC.'

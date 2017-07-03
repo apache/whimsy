@@ -67,7 +67,7 @@ _html do
             else
               _span.text_muted 'Maintained by role/PMC: '
               # TODO use a public lookup instead of committer-private roster tool
-              _a.text_muted "#{info['maintainer']}", href: "https://whimsy.apache.org/roster/orgchart/#{info['maintainer']}"
+              _a.text_muted "#{info['maintainer']}", href: "/roster/orgchart/#{info['maintainer']}"
             end
             _br
             if info.key?('format') then

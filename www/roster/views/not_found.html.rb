@@ -18,7 +18,7 @@ _html do
                 We'll double-check our crystal balls, but you should 
                 probably try another 
               }
-              _a 'magic link.', href: 'https://whimsy.apache.org/roster/'
+              _a 'magic link.', href: '/roster/'
               _ul do
                 %w( sinatra.error sinatra.route REQUEST_URI ).each do |k|
                   _li "#{k} = #{@errors[k]}"

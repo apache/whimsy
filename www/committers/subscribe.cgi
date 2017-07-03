@@ -47,7 +47,7 @@ _html do
       related: {
         'https://www.apache.org/foundation/mailinglists.html' => 'Apache Mailing List Info Page',
         'https://lists.apache.org' => 'Apache Mailing List Archives',
-        'https://whimsy.apache.org/committers/moderationhelper.cgi' => 'Mailing List Moderation Helper'
+        '/committers/moderationhelper.cgi' => 'Mailing List Moderation Helper'
       },
       helpblock: -> {
         _ 'This page allows Apache committers to auto-subscribe to various mailing lists.'
