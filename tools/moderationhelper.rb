@@ -42,11 +42,13 @@ _html do
           _ 'Enter the ASF mailing list name, subscriber email (if needed) and press generate.'
           _br
           _ 'The generated To: address can be copy/pasted into an email, or you may find the link works for you.'
+          _br
+          _ 'ezmlm will'
         end
         _table do
           _tr do
-            _th 'Mailing list'
-            _th 'Subscriber'
+            _th 'Mailing list information'
+            _th 'Subscriber updates'
           end
           _tr do
             _td do
@@ -68,7 +70,7 @@ _html do
             _td do
               _label do
                 _input type: "radio", name: "cmd", value: "subscribe", required: true, checked: false
-                _ 'subscribe'
+                _ 'subscribe (normal subscription: can post and gets messages)'
               end              
             end
           end
@@ -90,13 +92,13 @@ _html do
             _td do
               _label do
                 _input type: "radio", name: "cmd", value: "allow-list", required: true, checked: false
-                _ 'allow-list'
+                _ 'allow-list (currently allowed to post)'
               end
             end
             _td do
               _label do
                 _input type: "radio", name: "cmd", value: "allow-subscribe", required: true, checked: false
-                _ 'allow-subscribe'
+                _ 'allow-subscribe (allow posting without getting messages)'
               end              
             end
           end
@@ -104,13 +106,13 @@ _html do
             _td do
               _label do
                 _input type: "radio", name: "cmd", value: "allow-log", required: true, checked: false
-                _ 'allow-log'
+                _ 'allow-log (history)'
               end
             end
             _td do
               _label do
                 _input type: "radio", name: "cmd", value: "allow-unsubscribe", required: true, checked: false
-                _ 'allow-unsubscribe'
+                _ 'allow-unsubscribe (drop allow posting)'
               end              
             end
           end
@@ -118,13 +120,13 @@ _html do
             _td do
               _label do
                 _input type: "radio", name: "cmd", value: "deny-list", required: true, checked: false
-                _ 'deny-list'
+                _ 'deny-list (currently denied to post)'
               end
             end
             _td do
               _label do
                 _input type: "radio", name: "cmd", value: "deny-subscribe", required: true, checked: false
-                _ 'deny-subscribe'
+                _ 'deny-subscribe (prevent posting)'
               end              
             end
           end
@@ -132,13 +134,13 @@ _html do
             _td do
               _label do
                 _input type: "radio", name: "cmd", value: "deny-log", required: true, checked: false
-                _ 'deny-log'
+                _ 'deny-log (historic)'
               end
             end
             _td do
               _label do
                 _input type: "radio", name: "cmd", value: "deny-unsubscribe", required: true, checked: false
-                _ 'deny-unsubscribe'
+                _ 'deny-unsubscribe (remove from list of denied posters)'
               end              
             end
           end
@@ -152,6 +154,15 @@ _html do
             _li 'subscribers can post and will receive mail'
             _li 'allow-subscribers can post; they do not get copies of mails (this is used for e.g. press@)'
             _li 'deny-subscribers cannot post; their posts will be rejected without needing moderation'
+          end
+          _ 'See also: '
+          _ul do
+            _li do
+              _a 'Information on Subscribing/Unsubscribing', href: 'http://www.apache.org/foundation/mailinglists.html#subscribing'              
+            end
+            _li do
+              _a 'Guide for moderators', href: 'http://apache.org/dev/committers.html#mail-moderate'
+            end
           end
         end
         _input type: 'submit', value: 'Generate'
