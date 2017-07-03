@@ -1,4 +1,4 @@
-#
+ #
 # Show a PMC
 #
 
@@ -15,15 +15,20 @@ class PMC < React
       auth = (@@auth.id == @committee.chair or @@auth.secretary or @@auth.root)
     end
 
-    # add jump links to main sections of page
-    _div.breadcrumbs do
-      _a 'PMC', :href => "committee/#{@committee.id}#pmc"
-      _span " \u00BB "
-      _a 'Mail Moderators', :href => "committee/#{@committee.id}#mail"
-      _span " \u00BB "
-      _a 'Reporting Schedule', :href => "committee/#{@committee.id}#reporting"
-      _span " \u00BB "
-      _a 'Links', :href => "committee/#{@committee.id}#links"
+    # add jump links to main sections of page using Bootstrap nav element
+    _ul.nav.nav_pills do
+      _li role: "presentation" do
+        _a 'PMC', :href => "committee/#{@committee.id}#pmc"
+      end
+      _li role: "presentation" do
+        _a 'Mail Moderators', :href => "committee/#{@committee.id}#mail"
+      end
+      _li role: "presentation" do
+        _a 'Reporting Schedule', :href => "committee/#{@committee.id}#reporting"
+      end
+      _li role: "presentation" do
+        _a 'Links', :href => "committee/#{@committee.id}#links"
+      end
     end
 
     # header
@@ -103,55 +108,53 @@ class PMC < React
       end
     end
 
-    # reporting schedule
-    _h2.reporting! 'Reporting Schedule'
-    _ul do
-      _li @committee.report
 
-      if @committee.schedule and @committee.schedule != @committee.report
-        _li @committee.schedule 
-      end
-
-      _li do
-        _a 'Prior reports', href: 'https://whimsy.apache.org/board/minutes/' +
-          @committee.display_name.gsub(/\s+/, '_')
-      end
-
-      if @committee.ldap[@@auth.id] or @@auth.member
-        _li do
-          _a 'Apache Committee Report Helper',
-            href: "https://reporter.apache.org/?#{@committee.id}"
-        end
-      end
-    end
-
-    _h2.links! 'Links'
-    _ul do
-      _li {_a 'Site check', href: "../site/project/#{@committee.id}"}
-
-      info = @committee.project_info
-
-      if info
-        if info.doap
-          _li {_a 'DOAP', href: info.doap}
-        end
-
-        if info['download-page']
-          _li {_a 'Download Page', href: info['download-page']}
-        end
-
-        if info['bug-database']
-          _li {_a 'Bug Database', href: info['bug-database']}
-        end
-
-        if info.repository and not info.repository.empty?
-          if info.repository.length == 1
-            _li {_a 'Repository', href: info.repository.first}
-          else
+    # reporting schedule and links
+    _div.row do
+      _div.col_md_6 do
+        _h3.reporting! 'Reporting Schedule'
+        _ul do
+          _li @committee.report
+          if @committee.schedule and @committee.schedule != @committee.report
+            _li @committee.schedule 
+          end
+          _li do
+            _a 'Prior reports', href: 'https://whimsy.apache.org/board/minutes/' +
+              @committee.display_name.gsub(/\s+/, '_')
+          end
+          if @committee.ldap[@@auth.id] or @@auth.member
             _li do
-              _span 'Repositories:'
-              _ul info.repository do |repository|
-                _li {_a repository, href: repository}
+              _a 'Apache Committee Report Helper',
+                href: "https://reporter.apache.org/?#{@committee.id}"
+            end
+          end
+        end
+      end
+      _div.col_md_6 do
+        _h3.links! 'Links'
+        _ul do
+          _li {_a 'Site check', href: "../site/project/#{@committee.id}"}
+          info = @committee.project_info
+          if info
+            if info.doap
+              _li {_a 'DOAP', href: info.doap}
+            end
+            if info['download-page']
+              _li {_a 'Download Page', href: info['download-page']}
+            end
+            if info['bug-database']
+              _li {_a 'Bug Database', href: info['bug-database']}
+            end
+            if info.repository and not info.repository.empty?
+              if info.repository.length == 1
+                _li {_a 'Repository', href: info.repository.first}
+              else
+                _li do
+                  _span 'Repositories:'
+                  _ul info.repository do |repository|
+                    _li {_a repository, href: repository}
+                  end
+                end
               end
             end
           end

@@ -56,9 +56,18 @@ class CommitterSearch < React
   end
 
   def render
-    _label 'Search:', for: 'search-text'
-    _input.search_text! autofocus: true, value: @search, onChange: self.change
-
+    _div.form_group do
+      _label.control_label.col_sm_3 'Search for', for:  'search-text'
+      _div.col_sm_9 do
+        _div.input_group do
+          _input.form_control.search_text! autofocus: true, value: @search, onChange: self.change
+          _span.input_group_addon do
+            _span.glyphicon.glyphicon_user aria_label: "Committer ID or name"
+          end
+        end
+      end
+    end
+    
     if @search.length
       if not @ready
         _p 'loading...'
