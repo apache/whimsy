@@ -11,7 +11,7 @@ div.value {border-spacing: 0}
 .wide td:first-child {text-align: right; padding: 0}
 .wide td:first-child:after {content: ' —'}
 .wide td:last-child {border-left: solid 1px #000; padding: 0 0.5em}
-table {margin-left: 1em; margin-top: 0.5em}
+table {margin-top: 0.5em}
 td, th {padding-left: 0.5em; padding-right: 0.5em}
 .issue:before, .chair:before {content: '\21d0  '}
 .issue, .not-found {color: red; font-weight:bold} 

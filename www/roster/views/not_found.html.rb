@@ -7,8 +7,12 @@ _html do
     _link rel: 'stylesheet', href: 'stylesheets/app.css'
   end
   _body? do
-    _whimsy_header '404 Error - Apache Whimsy'
-    _whimsy_content do
+    _whimsy_body(
+      title: '404 Not Found Error - Apache Whimsy',
+      breadcrumbs: {
+        roster: '.',
+      }
+    ) do
       _div.row do
         _div.col_sm_10 do
           _div.panel.panel_danger do

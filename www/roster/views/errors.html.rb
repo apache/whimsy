@@ -7,8 +7,12 @@ _html do
     _link rel: 'stylesheet', href: 'stylesheets/app.css'
   end
   _body? do
-    _whimsy_header '500 Error - Apache Whimsy'
-    _whimsy_content do
+    _whimsy_body(
+      title: '500 Internal Server Error - Apache Whimsy',
+      breadcrumbs: {
+        roster: '.',
+      }
+    ) do
       _div.row do
         _div.col_sm_10 do
           _div.panel.panel_danger do
@@ -21,6 +25,10 @@ _html do
                   _li "#{k} = #{@errors[k]}"
                 end
               end
+              _p do
+                _ 'ASF Members may also review access protected: '
+                _a '/members/log/', href: '/members/log/'
+              end 
             end
           end
         end
