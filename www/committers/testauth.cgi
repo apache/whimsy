@@ -22,7 +22,7 @@ _html do
     }
   ) do
     FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
-    agenda = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].sort.last
+    agenda = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].sort.last.untaint
     agenda = ASF::Board::Agenda.parse(File.read(agenda))
     roll = agenda.find {|item| item['title'] == 'Roll Call'}
 
