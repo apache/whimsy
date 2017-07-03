@@ -10,6 +10,13 @@ class Committer
     response[:id] = id
 
     response[:member] = person.asf_member?
+    # reformat the timestamp
+    m = person.createTimestamp.match(/^(\d\d\d\d)(\d\d)(\d\d)/)
+    if m
+      response[:createTimestamp] = m[1] + '-' + m[2] + '-' + m[3]
+    else # should not happen, but ...
+      response[:createTimestamp] = person.createTimestamp
+    end
 
     name = {}
 

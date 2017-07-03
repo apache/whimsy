@@ -599,9 +599,19 @@ module ASF
 
     # list of LDAP committees that this individual is a member of
     def committees
-      weakref(:committees) do
+      # legacy LDAP entries
+      committees = weakref(:committees) do
         Committee.list("member=uid=#{name},#{base}")
       end
+
+      # add in projects (currently only includes GUINEAPIGS)
+      projects = self.projects.map(&:name)
+      committees += ASF::Committee.pmcs.select do |pmc| 
+        projects.include? pmc.name
+      end
+
+      # dedup
+      committees.uniq
     end
 
     # list of LDAP projects that this individual is a member of
@@ -970,7 +980,7 @@ module ASF
     end
 
     # temp list of projects that have moved over to new project LDAP schema
-    GUINEAPIGS = %w(incubator whimsy jmeter axis)
+    GUINEAPIGS = %w(incubator whimsy jmeter axis mynewt atlas)
 
     # List of owners for this committee, i.e. people who are members of the
     # committee and have update access.  Data is obtained from LDAP.
@@ -1031,7 +1041,11 @@ module ASF
 
     # Designated Name from LDAP
     def dn
-      @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
+      if GUINEAPIGS.include? name
+        @dn ||= ASF::Project.find(name).dn
+      else
+        @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
+      end
     end
 
     # DEPRECATED remove people from a committee.  Call #remove_owners instead.

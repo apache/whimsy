@@ -27,7 +27,7 @@
     <name>Apache Whimsy</name>
     <homepage rdf:resource="http://whimsy.apache.org/" />
     <asfext:pmc rdf:resource="http://whimsy.apache.org" />
-    <shortdesc>Whimsy is a site where a set of absolutely unnecessary yet often quite handy applications are deployed. </shortdesc>
+    <shortdesc>Tools that display and visualize various bits of data related to ASF organizations and processes. The production Whimsy server also has a number of tools that automate some organizational processes, like adding PMC members to official corporate rosters or reading, updating, and approving the monthly board agenda.</shortdesc>
     <programming-language>JavaScript</programming-language>
     <programming-language>Ruby</programming-language>
     <category rdf:resource="http://projects.apache.org/category/content" />

@@ -22,7 +22,7 @@ get '/invite' do
   @view = 'invite'
 
   # get a complete list of PMCs
-  @pmcs = ASF::Committee.list.map(&:name).sort
+  @pmcs = ASF::Committee.pmcs.map(&:name).sort
 
   # for non ASF members, limit PMCs to ones for which the user is either a
   # member of the PMC or is a committer.

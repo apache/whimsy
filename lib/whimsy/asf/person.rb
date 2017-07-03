@@ -91,7 +91,7 @@ module ASF
     #    or fetched explicitly)
     def createTimestamp
       result = @@create_date[name] 
-      result ||= attrs['createTimestamp'][0]
+      result ||= attrs['createTimestamp'][0] rescue nil # in case not loaded
       result ||= ASF.search_one(base, "uid=#{name}", 'createTimestamp')[0][0]
       result
     end

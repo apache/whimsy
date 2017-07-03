@@ -17,6 +17,7 @@ ARCHIVERS = %w(
 
 info_chairs = ASF::Committee.load_committee_info.group_by(&:chair)
 ldap_chairs = ASF.pmc_chairs
+subscribers, modtime = ASF::MLIST.board_subscribers
 
 _html do
   _head_ do
@@ -33,15 +34,17 @@ _html do
     _h1 'Apache pmc-chair/board list'
 
     _p! do
-      _ 'This process starts with the list of subscribers to '
+      _ "This process starts with the list of subscribers (updated #{modtime}) to "
       _a 'board@apache.org', href: 'https://mail-search.apache.org/members/private-arch/board/'
-      _ '.  '
+      _br
+      _ 'These are matched against '
       _a 'members.txt', href: 'https://svn.apache.org/repos/private/foundation/members.txt'
       _ ', '
       _a 'iclas.txt', href: 'https://svn.apache.org/repos/private/foundation/officers/iclas.txt'
       _ ', and '
       _code 'ldapsearch mail'
       _ ' to attempt to match the email address to an Apache ID.  '
+      _br
       _ 'Those that are not found are listed as '
       _code.issue '*missing*'
       _ '.  ASF members are '
@@ -72,7 +75,7 @@ _html do
     ids = []
     maillist = ASF::Mail.list
 
-    ASF::MLIST.board_subscribers do |line|
+    subscribers.each do |line|
       person = maillist[line.downcase]
       person ||= maillist[line.downcase.sub(/\+\w+@/,'@')]
       if person

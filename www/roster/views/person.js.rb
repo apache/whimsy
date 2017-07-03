@@ -15,6 +15,13 @@ class Person < React
     # Name
     _PersonName person: self
 
+    _div.row do
+      _div.name 'LDAP Create Date'
+      _div.value do
+        _ @committer.createTimestamp
+      end
+    end
+
     # Personal URL
     if @committer.urls
       _PersonUrls person: self
