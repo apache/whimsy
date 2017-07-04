@@ -330,10 +330,12 @@ Copy whimsy vhost definition to your apache2 configuration (from the root of you
 sudo cp config/whimsy.conf /private/etc/apache2/other
 ```
 
-Also from the root of your whimsy git checkout, establish a symbolic link to your whimsy git clone directory:
+Also from the root of your whimsy git checkout, make a `/srv/cache` directory
+owned by you, and establish a symbolic link to your whimsy git clone directory:
 
 ```
-sudo mkdir -p /srv
+sudo mkdir -p /srv/cache
+sudo chown `id -un`:`id -gn` /srv/cache
 sudo ln -s `pwd` /srv/whimsy
 ```
 
