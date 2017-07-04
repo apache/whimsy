@@ -21,20 +21,24 @@ _html do
       # ********************************************************************
       # *                             Summary                              *
       # ********************************************************************
-      _whimsy_panel_table(
-        title: 'Summary - Count of non-PMC Groups',
-        helpblock: -> {
-          _ 'This data is for non-PMC groups, including unix groups and other LDAP groups; many of which are '
-          _span.glyphicon.glyphicon_lock :aria_hidden, class: 'text-primary', aria_label: 'ASF Members Private'
-          _ ' private to the ASF.'
-        }
-      ) do
-        _table.counts do
-          @groups.group_by(&:last).sort.each do |name, list|
-            _tr do
-              _td list.count
-              _td name
+      _div.row do
+        _div.col_md_5 do
+          _div.well.well_sm do
+            _table.counts do
+              @groups.group_by(&:last).sort.each do |name, list|
+                _tr do
+                  _td list.count
+                  _td name
+                end
+              end
             end
+          end
+        end
+        _div.col_md_6 do
+          _p do
+            _ 'This data is for non-PMC groups, including unix groups and other LDAP groups; many of which are '
+            _span.glyphicon.glyphicon_lock :aria_hidden, class: 'text-primary', aria_label: 'ASF Members Private'
+            _ ' private to the ASF.'
           end
         end
       end
