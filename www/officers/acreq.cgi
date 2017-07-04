@@ -19,18 +19,6 @@ unless user.asf_member? or ASF.pmc_chairs.include? user
   exit
 end
 
-# List of unix groups that do NOT correspond to PMCs
-NON_PMC_UNIX_GROUPS = %w(
-  apsite
-  audit
-  board
-  committers
-  concom
-  db-site
-  incubator-site
-  member
-)
-
 ACREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/acreq'
 OFFICERS = 'https://svn.apache.org/repos/private/foundation/officers'
 APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
@@ -43,11 +31,14 @@ requests = `#{SVN} cat #{ACREQ}/new-account-reqs.txt`
 iclas_txt = `#{SVN} cat #{OFFICERS}/iclas.txt`
 
 # grab the current list of PMCs from ldap
-pmcs = ASF::Committee.list.map(&:name).sort - NON_PMC_UNIX_GROUPS
+pmcs = ASF::Committee.pmcs.map(&:name).sort
 
 # grab the list of active podlings
 podlings = ASF::Podling.list.select {|podling| podling.status == 'current'}.
   map(&:name).sort
+
+# combined list of pmcs and projects
+projects = (pmcs + podlings).uniq.sort
 
 # grab the list of iclas that have no ids assigned
 query = CGI::parse ENV['QUERY_STRING']
@@ -117,23 +108,13 @@ _html do
           }
         });
 
-        // if pmc is incubator, enable podling, else disable and clear podling
-        $('#pmc').change(function() {
-          if ($(this).val() == 'incubator') {
-            $('#podling').removeAttr('disabled', 'disabled');
-          } else {
-            $('#podling').attr('disabled', 'disabled')[0].
-              selectedIndex = -1;
-          }
-        });
-
         // allow selected fields to be set based on parameters passed
         if (#{@user.to_s.inspect} != '')
           $('#user').val(#{@user.to_s.inspect});
         $('#email').val(#{@email.to_s.inspect}).trigger('change');
-        $('#pmc').val(#{@pmc.to_s.inspect}).trigger('change').
+        @project ||= (@podling || @pmc)
+        $('#project').val(#{@project.to_s.inspect}).trigger('change').
           attr('required', 'required');
-        $('#podling').val(#{@podling.to_s.inspect});
         if (#{@votelink.to_s.inspect} != '')
           $('#votelink').val(#{@votelink.to_s.inspect});
       });
@@ -207,24 +188,12 @@ _html do
               end
 
               _div.form_group do
-                _label.control_label.col_sm_2 'PMC', for: "pmc"
+                _label.control_label.col_sm_2 'Project', for: "project"
                 _div.col_sm_10 do
-                  _select.form_control name: "pmc", id: "pmc" do
+                  _select.form_control name: "project", id: "pmc" do
                     _option value: ''
-                    pmcs.each do |pmc| 
-                      _option pmc, value: pmc
-                    end
-                  end
-                end
-              end
-
-              _div.form_group do
-                _label.control_label.col_sm_2 'Podling', for: "podling"
-                _div.col_sm_10 do
-                  _select.form_control name: "podling", id: "podling" do
-                    _option value: ''
-                    podlings.each do |podling| 
-                      _option podling, value: podling
+                    projects.each do |project| 
+                      _option project, value: project
                     end
                   end
                 end
@@ -265,22 +234,32 @@ _html do
                 elsif @user.length > 16
                   # http://forums.freebsd.org/showthread.php?t=14636
                   _div.bg_danger "UserID #{@user} is too long (max 16)"
-                elsif @pmc !~ /^[0-9a-z-]+$/
-                  _div.bg_danger "Unsafe PMC #{@pmc}"
-                elsif @podling and @podling !~ /^[0-9a-z-]*$/
-                  _div.bg_danger "Unsafe podling name #{@podling}"
+                elsif @project !~ /^[0-9a-z-]+$/
+                  _div.bg_danger "Unsafe Project #{@project}"
                 elsif not iclas.include? @email
                   _div.bg_danger "No ICLA on record for #{@email}"
                 elsif not iclas[@email] == @name
                   _div.bg_danger "Name #{@name} does not match name on ICLA"
-                elsif not pmcs.include? @pmc
-                  _div.bg_danger "Unrecognized PMC name #{@pmc}"
+                elsif not projects.include? @project
+                  _div.bg_danger "Unrecognized Project name #{@project}"
                 else
+
+                  # determine pmc and podling from project; compute list
+                  # of groups the individual is to be added to
+                  if podlings.include? @project
+                    @pmc = 'incubator'
+                    @podling = @project
+                    groups = "#@pmc,@podling"
+                  else
+                    @pmc = 'incubator'
+                    @podling = nil
+                    groups = "#@pmc"
+                  end
 
                   tobe = nil
 
                   # build the line to be added
-                  line = "#{@user};#{@name};#{@email};#{@pmc};" +
+                  line = "#{@user};#{@name};#{@email};#{groups};" +
                     "#{@pmc};#{Date.today.strftime('%m-%d-%Y')};yes;yes;no;"
 
                   # determine the requesting party and cc_list
