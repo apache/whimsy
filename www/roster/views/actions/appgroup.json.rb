@@ -4,7 +4,7 @@
 
 if env.password
   person = ASF::Person.find(@id)
-  group = ASF::Approup.find(@group)
+  group = ASF::AppGroup.find(@group)
 
   # update LDAP
   ASF::LDAP.bind(env.user, env.password) do
