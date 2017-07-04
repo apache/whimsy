@@ -204,6 +204,19 @@ class Report < React
       end
     end
 
+    # highlight any non-apache.org email addresses in establish resolutions
+    if @@item.title =~ /^Establish/
+      text.gsub! /(&lt;|\()[-.\w]+@(([-\w]+\.)+\w+)(&gt;|\))/ do |match|
+        if match =~ /@apache\.org/
+          match
+        else
+          '<span class="commented" title="non @apache.org email address">' +
+          match + '</span>'
+        end
+      end
+    end
+
+
     # highlight mis-spelling of previous and proposed chair names
     if @@item.title.start_with? 'Change' and text =~ /\(\w[-_.\w]+\)/
       text.sub!(/heretofore\s+appointed\s+(\w(\s|.)*?)\s+\(/) do |text, name|
