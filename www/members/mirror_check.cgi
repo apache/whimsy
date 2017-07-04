@@ -16,13 +16,14 @@ _html do
     },
     helpblock: -> {
       _p do
-        _ 'This page can be used to check that an Apache software distribution mirror has been set up correctly.'
+        _ 'This page can be used to check that a proposed Apache software distribution mirror has been set up correctly.'
       end
       _p do
         _ 'Please see the'
         _a 'Apache how-to mirror page', href: 'http://www.apache.org/info/how-to-mirror.html'
         _ 'for the full details on setting up an ASF mirror.'
       end
+      _p 'Note that not all mirrors have to carry the OpenOffice distributables'
     }
     ) do
       _whimsy_panel('Check A Mirror Site', style: 'panel-success') do
