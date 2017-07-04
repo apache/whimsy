@@ -1172,6 +1172,24 @@ module ASF
     def self.list(filter='cn=*')
       ASF.search_subtree(base, filter, 'cn').flatten.map {|cn| find(cn)}
     end
+
+    # remove people from an application group.
+    def remove(people)
+      @members = nil
+      people = (Array(people) & members).map(&:dn)
+      ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('member', people)])
+    ensure
+      @members = nil
+    end
+
+    # add people to an application group.
+    def add(people)
+      @members = nil
+      people = (Array(people) - members).map(&:dn)
+      ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('member', people)])
+    ensure
+      @members = nil
+    end
   end
 
   # <tt>ou=auth</tt> subtree of <tt>ou=groups,dc=apache,dc=org</tt>, used for
