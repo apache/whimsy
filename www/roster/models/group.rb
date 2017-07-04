@@ -60,6 +60,11 @@ class Group
         members: Hash[group.members.map {|person| [person.id, person.cn]}]
       }
 
+      if id == 'hudson-jobadmin'
+        response[:owners] = ASF::Service.find('hudson-admin').members.
+          map {|owner| owner.id}
+      end
+
     else
 
       type = 'asf-auth'

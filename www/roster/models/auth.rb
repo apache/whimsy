@@ -17,6 +17,10 @@ class Auth
       info[:member] = true
     end
 
+    if ASF.pmc_chairs.include? user
+      info[:pmc_chair] = true
+    end
+
     info
   end
 end
