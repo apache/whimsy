@@ -140,7 +140,7 @@ class Report < React
 
   # replace ids with committer links
   def names(text)
-    roster = 'https://whimsy.apache.org/roster/committer/'
+    roster = '/roster/committer/'
 
     for id in @@item.people
       person = @@item.people[id]

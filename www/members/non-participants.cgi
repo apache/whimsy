@@ -9,7 +9,7 @@ require 'json'
 require 'wunderbar/jquery/stupidtable'
 
 # separator / is added when link is generated
-ROSTER = "https://whimsy.apache.org/roster/committer"
+ROSTER = "/roster/committer"
 
 # locate and read the attendance file
 MEETINGS = ASF::SVN['private/foundation/Meetings']
@@ -43,9 +43,9 @@ _html do
       title: PAGETITLE,
       subtitle: 'Select A Date:',
       related: {
-        'https://whimsy.apache.org/members/inactive' => 'Inactive Member Feedback Form',
-        'https://whimsy.apache.org/members/proxy' => 'Members Meeting Proxy Assignment',
-        'https://whimsy.apache.org/members/subscriptions' => 'Members@ Mailing List Crosscheck'
+        '/members/inactive' => 'Inactive Member Feedback Form',
+        '/members/proxy' => 'Members Meeting Proxy Assignment',
+        '/members/subscriptions' => 'Members@ Mailing List Crosscheck'
       },
       helpblock: -> {
         _form_ do

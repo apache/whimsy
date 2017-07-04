@@ -6,7 +6,7 @@ _html lang: 'en', _width: '80' do
   _head_ do
     _meta name: 'viewport', content: 'width=device-width, initial-scale=1'
     _link rel: 'shortcut icon',
-      href: 'https://whimsy.apache.org/favicon.ico'
+      href: '/favicon.ico'
     _title 'ASF ICLA demo'
     _link href: 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700%7cDroid+Serif:400,700',
       rel: 'stylesheet', type: 'text/css'
@@ -55,7 +55,7 @@ _html lang: 'en', _width: '80' do
               _ " » "
               _a 'Legal', href: 'https://www.apache.org/legal/'
               _ " » "
-              _a 'ICLA', href: 'https://whimsy.apache.org/test/icla/'
+              _a 'ICLA', href: '/test/icla/'
             end
 
             _ul_.nav.navbar_nav.navbar_right do
@@ -190,7 +190,7 @@ _html lang: 'en', _width: '80' do
         _div.col_md_9.col_sm_8.col_xs_12 do
           _img src: 'https://id.apache.org/img/asf_logo_wide.png',
             alt: 'Apache Logo', style: 'max-width: 77%;'
-          _img src: 'https://whimsy.apache.org/whimsy.svg',
+          _img src: '/whimsy.svg',
             alt: 'Whimsy Logo', style: 'max-width: 22%'
         end
 

@@ -179,8 +179,7 @@ _html do
 
         _tr_ do
           _td! do
-            _a icla.id, 
-              href: "https://whimsy.apache.org/roster/committer/#{icla.id}"
+            _a icla.id, href: "/roster/committer/#{icla.id}"
           end
           _td icla.legal_name.gsub(' ', "\u00A0"), draggable: 'true'
 
@@ -231,8 +230,7 @@ _html do
 
         _tr_ do
           _td! do
-            _a person.id, href:
-              "https://whimsy.apache.org/roster/committer/#{person.id}"
+            _a person.id, href: "/roster/committer/#{person.id}"
           end
           _td person.cn
           _td person.mail.first

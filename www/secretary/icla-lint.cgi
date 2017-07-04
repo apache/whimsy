@@ -129,7 +129,7 @@ _html do
             if id == 'notinavail' or issue == 'notinldap'
               _ id
             else
-              _a id, href: 'https://whimsy.apache.org/roster/committer/' + id
+              _a id, href: '/roster/committer/' + id
             end
           end
 

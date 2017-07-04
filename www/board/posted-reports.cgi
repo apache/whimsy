@@ -46,7 +46,7 @@ _html do
 
   _h1 "Posted PMC reports"
 
-  _a agenda, href: 'https://whimsy.apache.org/board/agenda/' +
+  _a agenda, href: '/board/agenda/' +
     agenda[/\d+_\d+_\d+/].gsub('_', '-') + '/'
 
   # attempt to sort reports by PMC name

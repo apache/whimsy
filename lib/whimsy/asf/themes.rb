@@ -21,7 +21,7 @@ class Wunderbar::HtmlMarkup
           end
           _div.col_sm_3.col_xs_3 do
             _a href: '/' do
-              _img title: 'Whimsy project home', alt: 'Whimsy hat logo', src: 'https://whimsy.apache.org/whimsy.svg', width: 145, height: 101 
+              _img title: 'Whimsy project home', alt: 'Whimsy hat logo', src: '/whimsy.svg', width: 145, height: 101 
             end
           end
           _div.col_sm_5.col_xs_9.align_bottom do 
@@ -141,7 +141,7 @@ class Wunderbar::HtmlMarkup
             _span.icon_bar
           end
           _a.navbar_brand href: '/' do
-            _img title: 'Whimsy project home', alt: 'Whimsy hat logo', src: 'https://whimsy.apache.org/whimsy.svg', height: 30
+            _img title: 'Whimsy project home', alt: 'Whimsy hat logo', src: '/whimsy.svg', height: 30
           end
         end
         _div.collapse.navbar_collapse id: "navbar_collapse" do
@@ -247,7 +247,7 @@ class Wunderbar::HtmlMarkup
           if breadcrumbs
             _ol.breadcrumb do
               _li do
-                _a href: 'https://whimsy.apache.org/' do
+                _a href: '/' do
                   _span.glyphicon.glyphicon_home
                 end
               end

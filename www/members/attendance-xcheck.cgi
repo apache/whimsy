@@ -35,9 +35,9 @@ _html do
   _whimsy_body(
     title: PAGETITLE,
     related: {
-      'https://whimsy.apache.org/members/inactive' => 'Inactive Member Feedback Form',
-      'https://whimsy.apache.org/members/proxy' => 'Members Meeting Proxy Assignment',
-      'https://whimsy.apache.org/members/subscriptions' => 'Members@ Mailing List Crosscheck'
+      '/members/inactive' => 'Inactive Member Feedback Form',
+      '/members/proxy' => 'Members Meeting Proxy Assignment',
+      '/members/subscriptions' => 'Members@ Mailing List Crosscheck'
     },
     helpblock: -> {
       _ 'This script cross-checks all people listed in members.txt versus the official attendance.json file that notes which members attended (or proxied) which meetings.'

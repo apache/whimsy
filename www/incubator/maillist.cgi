@@ -12,11 +12,11 @@ _html do
       title: PAGETITLE,
       related: {
         'https://incubator.apache.org/projects/' => 'Incubator Podling List',
-        'https://whimsy.apache.org/incubator/moderators' => 'Incubator Mailing List Moderators'
+        '/incubator/moderators' => 'Incubator Mailing List Moderators'
       },
       helpblock: -> {
         _ 'This provides a complete listing of Incubator podling mailing lists, derived from '
-        _a 'https://whimsy.apache.org/test/dataflow.cgi#/lib/whimsy/asf/podlings.rb', href: 'https://whimsy.apache.org/test/dataflow.cgi#/lib/whimsy/asf/podlings.rb'
+        _a 'https://whimsy.apache.org/test/dataflow.cgi#/lib/whimsy/asf/podlings.rb', href: '/test/dataflow.cgi#/lib/whimsy/asf/podlings.rb'
       }
     ) do
       lists = ASF::Mail.lists

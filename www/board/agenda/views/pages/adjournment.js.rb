@@ -185,7 +185,7 @@ class TodoActions < React
           }
 
         _a person.id,
-          href: "https://whimsy.apache.org/roster/committer/#{person.id}"
+          href: "/roster/committer/#{person.id}"
         _ " (#{person.name})"
 
         if @@action == 'add' and person.resolution

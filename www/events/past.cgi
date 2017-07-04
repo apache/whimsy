@@ -23,7 +23,7 @@ _html do
       related: {
         "https://community.apache.org/calendars/" => "Upcoming Apache-related Event Calendar",
         "https://www.apache.org/events/meetups.html" => "Upcoming Apache-related Meetups",
-        "https://whimsy.apache.org/events/other" => "Some non-Apache related event listings"
+        "/events/other" => "Some non-Apache related event listings"
       },
       helpblock: -> {
         _p do

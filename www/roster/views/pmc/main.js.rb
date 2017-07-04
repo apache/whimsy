@@ -108,7 +108,6 @@ class PMC < React
       end
     end
 
-
     # reporting schedule and links
     _div.row do
       _div.col_md_6 do

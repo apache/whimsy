@@ -23,8 +23,8 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        'https://whimsy.apache.org/roster/members' => 'Listing Of All Members',
-        'https://whimsy.apache.org/committers/subscribe' => 'Committers Self-Subscribe Tool',
+        '/roster/members' => 'Listing Of All Members',
+        '/committers/subscribe' => 'Committers Self-Subscribe Tool',
         'https://lists.apache.org' => 'Apache Ponymail List Archives'
       },
       helpblock: -> {

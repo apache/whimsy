@@ -6,6 +6,7 @@ PAGETITLE = "Board Agenda Auth Tester" # Wvisible:agenda debug
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'
+require 'wunderbar/bootstrap'
 require 'whimsy/asf/rack'
 require 'whimsy/asf/agenda'
 
@@ -13,16 +14,16 @@ _html do
   _whimsy_body(
     title: PAGETITLE,
     related: {
-      'https://whimsy.apache.org/board/minutes/' => 'Board Meeting Minutes (public)',
-      'https://whimsy.apache.org/board/agenda/' => 'Board Agenda Tool (restricted)',
-      'https://whimsy.apache.org/status/' => 'Whimsy Server Status'
+      '/board/minutes/' => 'Board Meeting Minutes (public)',
+      '/board/agenda/' => 'Board Agenda Tool (restricted)',
+      '/status/' => 'Whimsy Server Status'
     },
     helpblock: -> {
       _ 'This script checks your authorization to use the agenda tool, and checks if you are listed as attending the current board meeting in the official agenda.'
     }
   ) do
     FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
-    agenda = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].sort.last
+    agenda = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].sort.last.untaint
     agenda = ASF::Board::Agenda.parse(File.read(agenda))
     roll = agenda.find {|item| item['title'] == 'Roll Call'}
 

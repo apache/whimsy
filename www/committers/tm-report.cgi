@@ -243,7 +243,7 @@ _html do
     related: {
       'https://www.apache.org/foundation/marks/reporting' => 'Trademark Reporting Guidelines',
       'https://www.apache.org/foundation/marks/resources' => 'Apache Trademark Policy Site Map',
-      'https://whimsy.apache.org/brand/list' => 'Comprehensive List Of Apache Trademarks'
+      '/brand/list' => 'Comprehensive List Of Apache Trademarks'
     },
     helpblock: -> {
       _p.bg_danger %{
