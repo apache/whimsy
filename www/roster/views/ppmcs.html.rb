@@ -4,16 +4,10 @@
 
 _html do
   _base href: '..'
-  _title 
   _link rel: 'stylesheet', href: 'stylesheets/app.css'
-
-  _banner breadcrumbs: {
-    roster: '.',
-    ppmc: 'ppmc/'
-  }
   _body? do
     _whimsy_body(
-      title: 'ASF Podling PMC Roster',
+      title: 'ASF Podling List',
       breadcrumbs: {
         roster: '.',
         ppmc: 'ppmc/'

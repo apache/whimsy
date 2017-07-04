@@ -13,15 +13,20 @@ class PPMC < React
       @@auth.ipmc ||= @@auth.member
     end
 
-    # add jump links to main sections of page
-    _div.breadcrumbs do
-      _a 'PPMC', :href => "ppmc/#{@ppmc.id}#ppmc"
-      _span " \u00BB "
-      _a 'Mail Moderators', :href => "ppmc/#{@ppmc.id}#mail"
-      _span " \u00BB "
-      _a 'Reporting Schedule', :href => "ppmc/#{@ppmc.id}#reporting"
-      _span " \u00BB "
-      _a 'Status', :href => "ppmc/#{@ppmc.id}#podlingStatus"
+    # add jump links to main sections of page using Bootstrap nav element
+    _ul.nav.nav_pills do
+      _li role: "presentation" do
+        _a 'PPMC', :href => "ppmc/#{@ppmc.id}#ppmc"
+      end
+      _li role: "presentation" do
+        _a 'Mail Moderators', :href => "ppmc/#{@ppmc.id}#mail"
+      end
+      _li role: "presentation" do
+        _a 'Reporting Schedule', :href => "ppmc/#{@ppmc.id}#reporting"
+      end
+      _li role: "presentation" do
+        _a 'Status', :href => "ppmc/#{@ppmc.id}#podlingStatus"
+      end
     end
 
     # header
