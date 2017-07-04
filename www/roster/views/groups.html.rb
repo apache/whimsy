@@ -4,7 +4,6 @@
 
 _html do
   _base href: '..'
-  _title 
   _link rel: 'stylesheet', href: 'stylesheets/app.css'
 
   _banner breadcrumbs: {
