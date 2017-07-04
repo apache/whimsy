@@ -23,7 +23,7 @@ class Group
     groups += ASF::AuthGroup.list.map {|group| [group, "LDAP Auth Group"]}
 
     # add app groups
-    groups += ASF::AppGroup.list.map {|app| [app, "LDAP app group"]}
+    groups += ASF::AppGroup.list.map {|app| [app.id, "LDAP app group"]}
 
     groups.sort
   end

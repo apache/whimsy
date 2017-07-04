@@ -1168,6 +1168,10 @@ module ASF
   # only used for <tt>hudson-jobadmin</tt>
   class AppGroup < Service
     @base = 'ou=apps,ou=groups,dc=apache,dc=org'
+
+    def self.list(filter='cn=*')
+      ASF.search_subtree(base, filter, 'cn').flatten.map {|cn| find(cn)}
+    end
   end
 
   # <tt>ou=auth</tt> subtree of <tt>ou=groups,dc=apache,dc=org</tt>, used for
