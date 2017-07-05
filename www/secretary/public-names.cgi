@@ -13,7 +13,7 @@ unless user.asf_member? or ASF.pmc_chairs.include? user
 end
 
 # default HOME directory
-require 'env'
+require 'etc'
 ENV['HOME'] ||= Etc.getpwuid.dir
 
 _html do
