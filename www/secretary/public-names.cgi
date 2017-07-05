@@ -60,7 +60,7 @@ _html do
         'https://svn.apache.org/repos/private/foundation/officers',
         officers]
       _.system ['svn', 'up', officers + '/iclas.txt']
-      break unless File.exist? officers + '/iclas.txt'
+      next unless File.exist? officers + '/iclas.txt'
       iclas = File.read(officers + '/iclas.txt')
 
       updates.each do |id, names|
