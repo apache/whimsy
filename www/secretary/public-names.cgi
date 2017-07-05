@@ -12,6 +12,10 @@ unless user.asf_member? or ASF.pmc_chairs.include? user
   exit
 end
 
+# default HOME directory
+require 'env'
+ENV['HOME'] ||= Etc.getpwuid.dir
+
 _html do
   _style :system if @updates
 
@@ -59,6 +63,7 @@ _html do
         (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
         'https://svn.apache.org/repos/private/foundation/officers',
         officers]
+
       _.system ['svn', 'up', officers + '/iclas.txt']
       next unless File.exist? officers + '/iclas.txt'
       iclas = File.read(officers + '/iclas.txt')
