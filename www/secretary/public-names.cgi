@@ -59,7 +59,7 @@ _html do
         (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
         'https://svn.apache.org/repos/private/foundation/officers',
         officers]
-      _.system ['svn', 'up', officers + '/iclas.txt']
+      _.system ['svn', 'up', '--username', 'whimsysvn', officers + '/iclas.txt']
       next unless File.exist? officers + '/iclas.txt'
       iclas = File.read(officers + '/iclas.txt')
 
