@@ -86,9 +86,8 @@ and running - these are only needed for a new deployment.
    `/home/whimsysvn/.subversion/servers` to store auth-creds.
 
  * Configure `/var/www/.subversion/config` and
-   `/var/www/.subversion/servers` to store auth-creds and to use the
-   `whimsysvn` user.  `chmod` the files in
-   `/var/www/.subversion/auth/svn.simple` to `440`.
+   `/var/www/.subversion/servers` to use the `whimsysvn` user and to *not*
+   store the auth-creds.
 
  * Add the following cron jobs to apmail@hermes:
      * `11  1,7,13,19 * * * for list in /home/apmail/lists/*apache.org/*; do echo; echo $list/mod; ezmlm-list $list mod; done 2>/dev/null | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/list-mods'`
