@@ -72,13 +72,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "list", required: true, checked: false
+                  _input type: "radio", name: "cmd", value: "list", required: true, checked: (@cmd == "list")
                   _ 'list (current subscribers)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "subscribe", required: true, checked: false
+                  _input type: "radio", name: "cmd", value: "subscribe", required: true, checked: (@cmd == "subscribe")
                   _ 'subscribe (normal subscription: can post and gets messages)'
                 end
               end
@@ -86,13 +86,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "log", required: true, checked: false
+                  _input type: "radio", name: "cmd", value: "log", required: true, checked: (@cmd == "log")
                   _ 'log (history of changes to the subscribers)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "unsubscribe", required: true, checked: true
+                  _input type: "radio", name: "cmd", value: "unsubscribe", required: true, checked: (@cmd == "unsubscribe" || @cmd == nil)
                   _ 'unsubscribe'
                 end
               end
@@ -100,13 +100,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "allow-list", required: true, checked: false
+                  _input type: "radio", name: "cmd", value: "allow-list", required: true, checked: (@cmd == "allow-list")
                   _ 'allow-list (currently allowed to post)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "allow-subscribe", required: true, checked: false
+                  _input type: "radio", name: "cmd", value: "allow-subscribe", required: true, checked: (@cmd == "allow-subscribe")
                   _ 'allow-subscribe (allow posting without getting messages)'
                 end
               end
@@ -114,13 +114,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "allow-log", required: true, checked: false
+                  _input type: "radio", name: "cmd", value: "allow-log", required: true, checked: (@cmd == "allow-log")
                   _ 'allow-log (history)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "allow-unsubscribe", required: true, checked: false
+                  _input type: "radio", name: "cmd", value: "allow-unsubscribe", required: true, checked: (@cmd == "allow-unsubscribe")
                   _ 'allow-unsubscribe (drop allow posting)'
                 end
               end
@@ -128,13 +128,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "deny-list", required: true, checked: false
+                  _input type: "radio", name: "cmd", value: "deny-list", required: true, checked: (@cmd == "deny-list")
                   _ 'deny-list (currently denied to post)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "deny-subscribe", required: true, checked: false
+                  _input type: "radio", name: "cmd", value: "deny-subscribe", required: true, checked: (@cmd == "deny-subscribe")
                   _ 'deny-subscribe (prevent posting)'
                 end
               end
@@ -142,13 +142,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "deny-log", required: true, checked: false
+                  _input type: "radio", name: "cmd", value: "deny-log", required: true, checked: (@cmd == "deny-log")
                   _ 'deny-log (historic)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "deny-unsubscribe", required: true, checked: false
+                  _input type: "radio", name: "cmd", value: "deny-unsubscribe", required: true, checked: (@cmd == "deny-unsubscribe")
                   _ 'deny-unsubscribe (remove from list of denied posters)'
                 end
               end
