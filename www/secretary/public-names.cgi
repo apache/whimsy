@@ -64,7 +64,9 @@ _html do
         'https://svn.apache.org/repos/private/foundation/officers',
         officers]
 
-      _.system ['svn', 'up', officers + '/iclas.txt']
+      _.system ['svn', 'update', 
+        ['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+        officers + '/iclas.txt']
       next unless File.exist? officers + '/iclas.txt'
       iclas = File.read(officers + '/iclas.txt')
 
@@ -104,7 +106,6 @@ _html do
         end
       end
 
-      next
       _.system ['svn', 'commit', '-m', message, 
         ['--no-auth-cache', '--non-interactive'],
         (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
