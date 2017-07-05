@@ -125,6 +125,12 @@ class ASF::Board::Agenda
           else
             attrs['warnings'] ||= ['Chair not found in resolution'] 
           end
+
+          if text.scan(/[<(][-.\w]+@(?:[-\w]+\.)+\w+[>)]/).
+            any? {|email| not email.include? 'apache.org'}
+          then
+            attrs['warnings'] ||= ['non apache.org email address found'] 
+          end
         end
       end
 
