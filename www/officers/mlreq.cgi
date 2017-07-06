@@ -172,7 +172,6 @@ _html do
         queue.each do |vars|
           mlreq = "#{vars[:subdomain]}-#{vars[:localpart]}".
                     gsub(/[^-\w]/,'_')
-          mlreq = "input/#{mlreq}"
           vars[:message] = @message unless @message.empty?
           request = JSON.pretty_generate(vars) + "\n"
           _pre.request request
@@ -185,7 +184,7 @@ _html do
         if incubator
           # Use '+' so it sorts first.
           mlreq = "#{queue.first[:subdomain]}".gsub(/[^-\w]/,'_')
-          mlreq = "input/#{mlreq.untaint}+.json"
+          mlreq = "#{mlreq.untaint}+.json"
           File.open(mlreq, 'w') { |file|
             file.write JSON.pretty_generate({
               version: FORMAT_NUMBER,
