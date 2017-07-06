@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Incubator/Podling crosscheck" # Wvisible:tools
+PAGETITLE = "Incubator/Podling crosscheck" # Wvisible:incubator
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'json'

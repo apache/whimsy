@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Board Agenda Auth Tester" # Wvisible:agenda debug
+PAGETITLE = "Board Agenda Auth Tester" # Wvisible:board tools
 #
 # Small CGI to help debug board agenda authentication issues
 #

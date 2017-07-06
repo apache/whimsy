@@ -8,6 +8,17 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require '../../tools/wwwdocs.rb'
 
+NONCGIS = {
+  '/board/agenda/' => 
+    [ 'Board Agenda Tool', 
+      ['board', 'meeting'],
+    'text-primary'],
+  '/roster/' => 
+    [ 'ASF Roster Tool', 
+      ['orgchart'],
+    'text-muted']
+}
+
 _html do
   _body? do
     _whimsy_body(
@@ -15,12 +26,15 @@ _html do
       related: {
         "https://projects.apache.org/" => "Apache Project Listing",
         "https://reference.apache.org/" => "Infra Reference Pages",
-        "https://github.com/apache/whimsy/blob/master/www/committers/tools.cgi" => "See This Code"
+        "https://github.com/apache/whimsy/blob/master/www/committers/tools.cgi" => "See This Code",
+        "mailto:dev@whimsical.apache.org?subject=[FEEDBACK] committers/tools idea" => "Email Feedback To dev@whimsical"
       },
       helpblock: -> {
-        _ 'This page shows a '
-        _em 'partial'
-        _ ' listing of tools that Whimsy provides. If you find this useful, please email dev@whimsical!'
+        _p.pull_right do
+          _ 'This page shows a '
+          _em 'partial'
+          _ ' listing of tools that Whimsy provides.'
+        end
         _ul do
           _li do
             _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
@@ -36,11 +50,19 @@ _html do
       }
     ) do
       scan = get_annotated_scan("../#{SCANDIR}")
-      scan.group_by{ |k, v| v[1][0] }
-        .each do | category, links |
+      scan.merge!(NONCGIS)
+      scan_by = scan.group_by{ |k, v| v[1][0] }
+      _ul.list_inline do
+        scan_by.each do |cat, l|
+          _li do
+            _a "#{cat.capitalize}", href: "##{cat}"
+          end
+        end
+      end
+      scan_by.each do | category, links |
         _ul.list_group do
           _li.list_group_item.active do
-            _ category.capitalize
+            _span category.capitalize, id: category
           end
           links.each do |l, desc|
             _li.list_group_item do
