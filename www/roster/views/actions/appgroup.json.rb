@@ -14,6 +14,30 @@ if env.password
       group.remove(person)
     end
   end
+
+  # compose E-mail
+  action = (@action == 'add' ? 'added to' : 'removed from')
+  list = "#{@group} LDAP appgroup"
+
+  details = [person.dn, group.dn]
+
+  from = ASF::Person.find(env.user)
+
+  # construct email
+  mail = Mail.new do
+    from "#{from.public_name} <#{from.id}@apache.org>".untaint
+    to "root@apache.org"
+    subject "#{person.public_name} #{action} #{list}"
+    body "Current roster can be found at:\n\n" +
+      "  https://whimsy.apache.org/roster/group/#{service.id}\n\n" +
+      "LDAP details:\n\n  #{details.join("\n  ")}"
+  end
+
+  # Header for root@'s lovely email filters
+  mail.header['X-For-Root'] = 'yes'
+
+  # deliver email
+  mail.deliver!
 end
 
 # return updated committee info to the client
