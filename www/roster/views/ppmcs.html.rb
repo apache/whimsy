@@ -37,7 +37,13 @@ _html do
 
             _td ppmc.startdate
 
-            _td ppmc.description
+            _td do
+              if project_names.include? ppmc.name
+                _p ppmc.description
+              else
+                _p ppmc.description + " (not in ldap)"
+              end
+            end
           end
         end
       end

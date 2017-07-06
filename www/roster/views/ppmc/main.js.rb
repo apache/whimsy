@@ -121,16 +121,16 @@ class PPMC < React
     _h3 'Resources'
     _ul do
       _li do
-        _a "GitHub", href: 'https://github.com/apache?q=incubator-' + @ppmc.id
+        _a "GitHub", href: 'https://github.com/apache?q=incubator-' + @ppmc.id, target: '_new'
       end if @ppmc.podlingStatus.sourceControl == 'github'
       _li do
-        _a "Git Repositories", href: 'https://git-wip-us.apache.org/repos/asf?s=incubator-' + @ppmc.id
+        _a "Git Repositories", href: 'https://git-wip-us.apache.org/repos/asf?s=incubator-' + @ppmc.id, target: '_new'
       end if !@ppmc.podlingStatus.sourceControl || @ppmc.podlingStatus.sourceControl == 'git' || @ppmc.podlingStatus.sourceControl == 'asfgit'
       _li do
-        _a 'https://issues.apache.org/jira/browse/' + @ppmc.podlingStatus.jira,href: 'https://issues.apache.org/jira/browse/' + @ppmc.podlingStatus.jira
+        _a 'https://issues.apache.org/jira/browse/' + @ppmc.podlingStatus.jira,href: 'https://issues.apache.org/jira/browse/' + @ppmc.podlingStatus.jira, target: '_new'
       end if @ppmc.podlingStatus.jira
       _li do
-        _a 'https://cwiki.apache.org/confluence/display/' + @ppmc.podlingStatus.wiki,href: 'https://cwiki.apache.org/confluence/display/' + @ppmc.podlingStatus.wiki
+        _a 'https://cwiki.apache.org/confluence/display/' + @ppmc.podlingStatus.wiki,href: 'https://cwiki.apache.org/confluence/display/' + @ppmc.podlingStatus.wiki, target: '_new'
       end if @ppmc.podlingStatus.wiki
     end
 
