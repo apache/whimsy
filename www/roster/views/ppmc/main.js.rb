@@ -162,9 +162,11 @@ class PPMC < React
 
     # website and naming
     _h3 'Naming'
+    resolution = @ppmc.namesearch.resolution
+    resolution = 'Approved' if resolution == 'Fixed'
     _ul do
       _li do
-        _a "Podling name search (#{@ppmc.namesearch.resolution})", href: 'https://issues.apache.org/jira/browse/' + @ppmc.namesearch.issue
+        _a "Podling name search (#{resolution})", href: 'https://issues.apache.org/jira/browse/' + @ppmc.namesearch.issue
       end if @ppmc.namesearch
       _li.podlingWarning do
         _a "No Podling Name Search on file", href: 'https://incubator.apache.org/guides/names.html#name-search'
