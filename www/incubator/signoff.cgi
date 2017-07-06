@@ -3,7 +3,9 @@ PAGETITLE = "Incubator Mentor Signoffs" # Wvisible:incubator
 
 # quick and dirty script to tally up which mentors have been providing
 # signoffs and which have not.
-
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+require 'wunderbar'
+require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 
 # authenticate
@@ -60,42 +62,51 @@ _html do
   _whimsy_body(
     title: PAGETITLE,
     related: {
+      'https://incubator.apache.org/images/incubator_feather_egg_logo_sm.png' => 'Apache Incubator Egg Logo',
       'https://incubator.apache.org/projects/' => 'Incubator Podling List',
       '/incubator/moderators' => 'Incubator Mailing List Moderators'
     },
     helpblock: -> {
-      _ do
+      _p do
         _ 'This script checks past several months Incubator podling reports for mentor signoff. '
         _span.check 'Blue'
         _ ' means signoff is present, '
         _span.blank 'orange'
         _ ' means signoff is absent.'
+        _br
+        _ 'Hover over podling name to see date.'
       end
-      _br
-      _ 'Hover over podling name to see date.'
     }
   ) do
-    _table_ do
-      mentors.sort.each do |name, entries|
-        _tr_ do
-          _td do
-            if people[name]
-              if ASF::Person.find(people[name]).asf_member?
-                _b! {_a name, href: roster + people[name]}
+    _table_.table do
+      _thead_ do
+        _tr do
+          _th 'Mentor name'
+          _th 'Podling Monthly Reports'
+        end
+      end
+      _tbody do
+        mentors.sort.each do |name, entries|
+          _tr_ do
+            _td do
+              if people[name]
+                if ASF::Person.find(people[name]).asf_member?
+                  _b! {_a name, href: roster + people[name]}
+                else
+                  _a name, href: roster + people[name]
+                end
               else
-                _a name, href: roster + people[name]
+                _a name, href: roster + '?q=' + URI.encode(name)
               end
-            else
-              _a name, href: roster + '?q=' + URI.encode(name)
             end
-          end
 
-          _td do
-            entries.each do |entry|
-              if entry[:checked]
-                _span.check entry[:podling], title: entry[:date]
-              else
-                _span.blank entry[:podling], title: entry[:date]
+            _td do
+              entries.each do |entry|
+                if entry[:checked]
+                  _span.check entry[:podling], title: entry[:date]
+                else
+                  _span.blank entry[:podling], title: entry[:date]
+                end
               end
             end
           end

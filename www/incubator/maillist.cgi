@@ -11,6 +11,7 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
+        'https://incubator.apache.org/images/incubator_feather_egg_logo_sm.png' => 'Apache Incubator Egg Logo',
         'https://incubator.apache.org/projects/' => 'Incubator Podling List',
         '/incubator/moderators' => 'Incubator Mailing List Moderators'
       },
