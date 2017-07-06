@@ -42,7 +42,7 @@ POD_PAT = '^[a-z][a-z0-9]+$'
 
 _html do
 
-  incubator = (env['PATH_INFO'].to_s.include? 'incubator')
+  incubator = (ENV['PATH_INFO'].to_s.include? 'incubator')
 
   _head_ do
     if incubator
@@ -198,7 +198,7 @@ _html do
         _.system [
           'svn', 'commit', '--no-auth-cache', '--non-interactive',
           '-m', "#{request} mailing list request by #{env.user} via " + 
-            env['SERVER_ADDR'],
+            ENV['SERVER_NAME'],
           (['--username', env.user, '--password', env.password] if env.password),
           '--', *tocommit
         ]
