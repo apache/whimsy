@@ -8,6 +8,8 @@ require 'whimsy/asf'
 require 'whimsy/asf/rack'
 require 'whimsy/asf/podlings'
 require 'whimsy/asf/site'
+require 'tmpdir'
+require 'fileutils'
 
 # This is a version number check embedded in the json files.
 # 
@@ -67,10 +69,17 @@ _html do
 
   _body? do
     if _.post?
-      Dir.chdir '/var/tools/infra/mlreq'
-      `/bin/rm -- *`
-      `svn revert --non-interactive -R ./`
-      `svn update --non-interactive`
+      tmpdir = Dir.mktmpdir
+      at_exit { FileUtils.remove_entry tmpdir }
+
+      _.system [
+        'svn', 'checkout', '--no-auth-cache', '--non-interactive',
+        (['--username', env.user, '--password', env.password] if env.password),
+        'https://svn.apache.org/repos/infra/infrastructure/trunk/mlreq/input',
+        tmpdir + '/mlreq'
+      ]
+
+      Dir.chdir tmpdir + '/mlreq'
 
       # extract moderators from input fields or text area
       mods = params.select {|name,value| name =~ /^mod\d+$/ and value != ['']}.
