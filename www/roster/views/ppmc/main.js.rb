@@ -162,10 +162,10 @@ class PPMC < React
 
     # website and naming
     _h3 'Naming'
-    resolution = @ppmc.namesearch.resolution
-    resolution = 'Approved' if resolution == 'Fixed'
     _ul do
       _li do
+        resolution = @ppmc.namesearch.resolution
+        resolution = 'Approved' if resolution == 'Fixed'
         _a "Podling name search (#{resolution})", href: 'https://issues.apache.org/jira/browse/' + @ppmc.namesearch.issue
       end if @ppmc.namesearch
       _li.podlingWarning do
