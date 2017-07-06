@@ -115,8 +115,8 @@ class PPMC < React
     _h3 'Information'
     _ul do
       _li do
-        _a 'Podling Proposal', href: @ppmc.podlingStatus.proposal if @ppmc.podlingStatus.proposal
-      end
+        _a 'Podling Proposal', href: @ppmc.podlingStatus.proposal
+      end if @ppmc.podlingStatus.proposal
       _li "Incubating for "+@ppmc.duration+" days"
       _li do
         _a 'Prior Board Reports', href: '/board/minutes/' +
