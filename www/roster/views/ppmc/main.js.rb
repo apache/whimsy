@@ -13,6 +13,12 @@ class PPMC < React
       @@auth.ipmc ||= @@auth.member
     end
 
+    # disable modification until the project is set up
+    if @ppmc.owners.empty?
+      @@auth.ppmc = false
+      @@auth.ipmc = false
+    end
+
     # add jump links to main sections of page using Bootstrap nav element
     _ul.nav.nav_pills do
       _li role: "presentation" do
