@@ -65,7 +65,7 @@ _html do
         officers]
 
       _.system ['svn', 'update', 
-        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
+        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
         officers + '/iclas.txt']
       next unless File.exist? officers + '/iclas.txt'
       iclas = File.read(officers + '/iclas.txt')
