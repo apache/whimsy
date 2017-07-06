@@ -29,7 +29,7 @@ if env.password
     to "root@apache.org"
     subject "#{person.public_name} #{action} #{list}"
     body "Current roster can be found at:\n\n" +
-      "  https://whimsy.apache.org/roster/group/#{service.id}\n\n" +
+      "  https://whimsy.apache.org/roster/group/#{group.id}\n\n" +
       "LDAP details:\n\n  #{details.join("\n  ")}"
   end
 
