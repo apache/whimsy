@@ -22,6 +22,9 @@ class PPMCGraduate < React
 
             _div.modal_body do
               _p do
+                _b "Once you've drafted this resolution, make sure you review it on the podling's private list"
+              end
+              _p do
                 _b 'Complete this sentence: '
                 _span "Apache #{@project} consists of software related to"
               end
