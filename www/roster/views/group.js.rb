@@ -30,7 +30,7 @@ class Group < React
     if auth
       _div.alert.alert_success do
         _span 'Double click on a row to edit.'
-        _span "  Double click on \u2795 to add."
+        _span "  Click on \u2795 to add."
       end
     end
 
@@ -55,7 +55,7 @@ class Group < React
         end
 
         if auth
-          _tr onDoubleClick: self.select do
+          _tr onClick: self.select do
             _td((@state == :open ? '' : "\u2795"), colspan: 4)
           end
         end
