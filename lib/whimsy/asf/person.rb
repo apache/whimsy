@@ -79,6 +79,18 @@ module ASF
       name.reverse.join(' ').downcase
     end
 
+    # parse a name into LDAP fields
+    def self.ldap_name(name)
+      words = name.gsub(',', '').split(' ')
+      result = {'cn' => name}
+      result['title'] = words.shift if words.first == 'Dr.'
+      result['title'] ||= words.pop if words.last =~ /^Ph\.D\.?/
+      result['generationQualifier'] = words.pop if words.last =~ SUFFIXES
+      result['givenName'] = words.first
+      result['sn'] = words.last
+      result
+    end
+
     # return name in a sortable order (last name first)
     def sortable_name
       Person.sortable_name(self.public_name)

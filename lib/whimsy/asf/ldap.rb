@@ -34,6 +34,7 @@ require 'weakref'
 require 'net/http'
 require 'base64'
 require 'thread'
+require 'securerandom'
 
 module ASF
   module LDAP
@@ -269,7 +270,6 @@ module ASF
     def self.delete(dn)
       ASF.ldap.delete(dn)
     rescue ::LDAP::ResultError
-      Wunderbar.warn(list.inspect)
       Wunderbar.warn(dn.to_s)
       raise
     end
@@ -509,6 +509,10 @@ module ASF
   class Person < Base
     @base = 'ou=people,dc=apache,dc=org'
 
+    def self.group_base
+      'ou=people,' + ASF::Group.base
+    end
+
     # Obtain a list of people (committers).  LDAP filters may be used
     # to retrieve only a subset.
     def self.list(filter='uid=*')
@@ -673,6 +677,84 @@ module ASF
     def modify(attr, value)
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_replace(attr.to_s, value)])
       attrs[attr.to_s] = value
+    end
+
+    # add a new person to LDAP.  Attrs must include uid, cn, and mail
+    def self.add(attrs)
+      # convert keys to strings
+      attrs = attrs.map {|key, value| [key.to_s, value]}.to_h
+
+      # verify required arguments are present
+      %w(uid cn mail).each do |required|
+        unless attrs.include? required
+          raise ArgumentError.new("missing attribute #{required}")
+        end
+      end
+
+      availid = attrs['uid']
+
+      # determine next uid and group
+      nextuid = ASF::search_one(ASF::Person.base, 'uid=*', 'uidNumber').
+        flatten.map(&:to_i).max + 1
+
+      nextgid = ASF::search_one(group_base, 'cn=*', 'gidNumber').
+        flatten.map(&:to_i).max + 1
+ 
+      # fixed attributes
+      attrs.merge!({
+        'uidNumber' => nextuid.to_s,
+        'gidNumber' => nextuid.to_s,
+        'asf-committer-email' => "#{availid}@apache.org",
+        'objectClass' => %w(person top posixAccount organizationalPerson
+           inetOrgPerson asf-committer hostObject ldapPublicKey)
+      })
+
+      # defaults
+      attrs['loginShell'] ||= '/usr/local/bin/bash'
+      attrs['homeDirectory'] ||= "/home/#{availid}"
+      attrs['host'] ||= "home.apache.org"
+      attrs['asf-sascore'] ||= "10"
+
+      # parse name
+      attrs = ASF::Person.ldap_name(attrs['cn']).merge(attrs)
+
+      # generate a password that is between 8 and 16 alphanumeric characters
+      if not attrs['userPassword']
+        while attrs['userPassword'].to_s.length < 8
+          attrs['userPassword'] = SecureRandom.base64(12).gsub(/\W+/, '')
+        end
+      end
+
+      # create new LDAP group
+      entry = [
+        mod_add('objectClass', ['posixGroup', 'top']),
+        mod_add('cn', availid),
+        mod_add('userPassword', '{crypt}*'),
+        mod_add('gidNumber', nextgid.to_s),
+      ]
+
+      ASF::LDAP.add("cn=#{availid},#{group_base}", entry)
+
+      # create new LDAP person
+      begin
+        entry = attrs.map {|key, value| mod_add(key, value)}
+        ASF::LDAP.add("uid=#{availid},#{base}", entry)
+      rescue
+        # don't leave an orphan group behind
+        ASF::LDAP.delete("cn=#{availid},#{group_base}") rescue nil
+        raise
+      end
+
+      # return person object with password filled in
+      person = ASF::Person.find(availid)
+      person.attrs['userPassword'] = [attrs['userPassword']]
+      person
+    end
+
+    # remove a person from LDAP
+    def self.remove(availid)
+      ASF::LDAP.delete("cn=#{availid},#{group_base}")
+      ASF::LDAP.delete("uid=#{availid},#{base}")
     end
   end
 
