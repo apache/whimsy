@@ -27,7 +27,7 @@ class PMCCommitters < React
         _tbody do
           @committers.each do |person|
             next if @@committee.members.include? person.id
-            next if @@committee.ldap[person.id]
+            next if @@committee.ldap.include? person.id
             _PMCCommitter auth: @@auth, person: person, committee: @@committee
           end
 

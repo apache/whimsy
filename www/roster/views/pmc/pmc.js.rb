@@ -49,7 +49,7 @@ class PMCMembers < React
     roster = []
     
     for id in @@committee.roster
-      if @@committee.members.include?(id) or @@committee.ldap[id]
+      if @@committee.members.include?(id) or @@committee.ldap.include?(id)
         person = @@committee.roster[id]
         person.id = id
         roster << person
@@ -113,7 +113,7 @@ class PMCMember < React
 
   
             committers = @@committee.committers.keys()
-            pmc = @@committee.ldap.keys()
+            pmc = @@committee.members
             if committers.all? {|person| pmc.include? person}
                _button.btn.btn_warning 'Add as a committer only',
                  data_action: 'add commit',
@@ -136,7 +136,7 @@ class PMCMember < React
                 data_confirmation: "Add to #{@@person.name} committee-info.txt"
             end
           elsif not @@person.ldap
-             # in committee-info.txt but not in ldap
+             # in committee-info.txt but not in LDAP
             _button.btn.btn_success 'Add to LDAP',
               data_action: 'add pmc', 
               data_target: '#confirm', data_toggle: 'modal',

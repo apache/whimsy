@@ -53,7 +53,7 @@ class Committee
       report: pmc.report,
       site: pmc.site,
       established: pmc.established,
-      ldap: Hash[members.map {|person| [person.id, person.cn]}],
+      ldap: members.map(&:id),
       members: pmc.roster.keys,
       committers: Hash[committers.map {|person| [person.id, person.cn]}],
       asfmembers: (ASF.members & people).map(&:id),
