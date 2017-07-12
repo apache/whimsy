@@ -6,7 +6,7 @@ class PMCCommitters < React
   def render
     if
       @@committee.committers.keys().all? do |id|
-        @@committee.roster[id] or @@committee.ldap[id]
+        @@committee.roster[id] or @@committee.members.include? id
       end
     then
       _p 'All committers are members of the PMC'
@@ -26,7 +26,7 @@ class PMCCommitters < React
 
         _tbody do
           @committers.each do |person|
-            next if @@committee.roster[person.id]
+            next if @@committee.members.include? person.id
             next if @@committee.ldap[person.id]
             _PMCCommitter auth: @@auth, person: person, committee: @@committee
           end

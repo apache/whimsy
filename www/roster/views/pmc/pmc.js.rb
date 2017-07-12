@@ -49,17 +49,10 @@ class PMCMembers < React
     roster = []
     
     for id in @@committee.roster
-      person = @@committee.roster[id]
-      person.id = id
-      roster << person
-    end
-
-    for id in @@committee.ldap
-      person = @@committee.roster[id]
-      if person
-        person.ldap = true
-      else
-        roster << {id: id, name: @@committee.ldap[id], ldap: true}
+      if @@committee.members.include?(id) or @@committee.ldap[id]
+        person = @@committee.roster[id]
+        person.id = id
+        roster << person
       end
     end
 

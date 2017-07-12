@@ -29,6 +29,21 @@ class Committee
       lists = lists.select {|list, mode| mode == 'public'}
     end
 
+    roster = pmc.roster.dup
+    roster.each {|key, info| info['role'] = 'PMC member'}
+
+    members.each do |person|
+      roster[person.id] ||= {name: person.public_name, role: 'PMC member'}
+      roster[person.id]['ldap'] = true
+    end
+
+    committers.each do |person|
+      roster[person.id] ||= {name: person.public_name}
+      roster[person.id]['role'] ||= 'Committer'
+    end
+
+    roster[pmc.chair.id]['role'] = 'PMC chair' if pmc.chair
+
     response = {
       id: id,
       chair: pmc.chair && pmc.chair.id,
@@ -39,9 +54,10 @@ class Committee
       site: pmc.site,
       established: pmc.established,
       ldap: Hash[members.map {|person| [person.id, person.cn]}],
+      members: pmc.roster.keys,
       committers: Hash[committers.map {|person| [person.id, person.cn]}],
       asfmembers: (ASF.members & people).map(&:id),
-      roster: pmc.roster,
+      roster: roster,
       mail: Hash[lists.sort],
       moderators: moderators,
       modtime: modtime,

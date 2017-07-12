@@ -3,6 +3,7 @@ require_relative 'polyfill'
 require_relative 'pmc/main'
 require_relative 'pmc/pmc'
 require_relative 'pmc/committers'
+require_relative 'pmc/roster'
 
 require_relative 'person'
 require_relative 'person/fullname'

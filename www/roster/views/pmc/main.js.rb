@@ -10,7 +10,7 @@ class PMC < React
   def render
     if @committee.guinea_pig
       auth = (@@auth.secretary or @@auth.root or
-        @committee.ldap.keys().include? @@auth.id)
+        @committee.members.include? @@auth.id)
     else
       auth = (@@auth.id == @committee.chair or @@auth.secretary or @@auth.root)
     end
@@ -55,7 +55,7 @@ class PMC < React
     end
 
     # usage information for authenticated users (PMC chair, etc.)
-    if auth
+    if auth and not @search
       _div.alert.alert_success do
         _span 'Double click on a row to edit.'
         unless @committee.roster.keys().empty?
@@ -65,9 +65,22 @@ class PMC < React
       end
     end
 
+    _div.row key: 'databar' do
+      _div.col_sm_6 do
+      end
+      _div.col_sm_6 do
+        _input.form_control type: 'search', placeholder: 'search',
+          value: @search
+      end
+    end
+
     # main content
-    _PMCMembers auth: auth, committee: @committee
-    _PMCCommitters auth: auth, committee: @committee
+    if @search
+      _PMCRoster auth: auth, committee: @committee, search: @search
+    else
+      _PMCMembers auth: auth, committee: @committee
+      _PMCCommitters auth: auth, committee: @committee
+    end
 
     # mailing lists
     if @committee.moderators
@@ -121,7 +134,7 @@ class PMC < React
             _a 'Prior reports', href: 'https://whimsy.apache.org/board/minutes/' +
               @committee.display_name.gsub(/\s+/, '_')
           end
-          if @committee.ldap[@@auth.id] or @@auth.member
+          if @committee.members.include?(@@auth.id) or @@auth.member
             _li do
               _a 'Apache Committee Report Helper',
                 href: "https://reporter.apache.org/?#{@committee.id}"
