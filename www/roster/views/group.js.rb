@@ -14,7 +14,7 @@ class Group < React
 
     if group.type == 'LDAP auth group' or group.id == 'asf-secretary'
       auth = (members.include? @@auth.id or @@auth.secretary or @@auth.root)
-    elsif group.id = 'hudson-jobadmin'
+    elsif group.id == 'hudson-jobadmin'
       auth = @@auth.pmc_chair or group.owners.include? @@auth.id
     else
       auth = false 
