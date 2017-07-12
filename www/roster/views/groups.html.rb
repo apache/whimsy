@@ -8,14 +8,14 @@ _html do
 
   _banner breadcrumbs: {
     roster: '.',
-    group: 'group'
+    group: 'group/'
   }
   _body? do
     _whimsy_body(
       title: 'ASF Non-PMC Group list',
       breadcrumbs: {
         roster: '.',
-        group: 'group'
+        group: 'group/'
       }
     ) do
       # ********************************************************************
