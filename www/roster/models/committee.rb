@@ -55,7 +55,7 @@ class Committee
       established: pmc.established,
       ldap: members.map(&:id),
       members: pmc.roster.keys,
-      committers: Hash[committers.map {|person| [person.id, person.cn]}],
+      committers: committers.map(&:id),
       asfmembers: (ASF.members & people).map(&:id),
       roster: roster,
       mail: Hash[lists.sort],

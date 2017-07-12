@@ -5,8 +5,8 @@
 class PMCCommitters < React
   def render
     if
-      @@committee.committers.keys().all? do |id|
-        @@committee.roster[id] or @@committee.members.include? id
+      @@committee.committers.all? do |id|
+        @@committee.members.include? id
       end
     then
       _p 'All committers are members of the PMC'
@@ -56,8 +56,10 @@ class PMCCommitters < React
   def componentWillReceiveProps()
     committers = []
     
-    for id in @@committee.committers
-      committers << {id: id, name: @@committee.committers[id]}
+    @@committee.committers.each do |id|
+      person = @@committee.roster[id]
+      person.id = id
+      committers << person
     end
 
     @committers = committers.sort_by {|person| person.name}

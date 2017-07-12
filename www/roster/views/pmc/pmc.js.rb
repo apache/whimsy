@@ -112,7 +112,7 @@ class PMCMember < React
                 "#{@@committee.display_name} PMC?"
 
   
-            committers = @@committee.committers.keys()
+            committers = @@committee.committers
             pmc = @@committee.members
             if committers.all? {|person| pmc.include? person}
                _button.btn.btn_warning 'Add as a committer only',
@@ -149,7 +149,7 @@ class PMCMember < React
                 "Remove #{@@person.name} from committee-info.txt?"
           else
             # in both LDAP and committee-info.txt
-            if @@committee.committers[@@person.id]
+            if @@committee.committers.include? @@person.id
               _button.btn.btn_warning 'Remove only from PMC',
                 data_action: 'remove pmc info',
                 data_target: '#confirm', data_toggle: 'modal',
@@ -179,7 +179,7 @@ class PMCMember < React
         _td.issue 'not in committee-info.txt'
       elsif not @@person.ldap
         _td.issue 'not in LDAP'
-      elsif not @@committee.committers[@@person.id]
+      elsif not @@committee.committers.include? @@person.id
         _td.issue 'not in committer list'
       elsif @@person.id == @@committee.chair
         _td.chair 'chair'
