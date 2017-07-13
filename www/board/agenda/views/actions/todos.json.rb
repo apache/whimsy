@@ -150,7 +150,7 @@ Agenda.parse(agenda, :full).each do |item|
 end
 
 add = transitioning.keys - ASF.pmc_chairs
-remove = ASF.pmc_chairs - ASF::Committee.list.map(&:chair) - transitioning.keys
+remove = ASF.pmc_chairs - ASF::Committee.pmcs.map(&:chair) - transitioning.keys
 victims.each {|victim| establish.delete victim}
 
 _add add.map {|person| {id: person.id, name: person.public_name, 
