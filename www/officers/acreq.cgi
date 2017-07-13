@@ -28,7 +28,7 @@ APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
 SVN = ("svn --username #{Shellwords.escape env.user} " +
   "--password #{Shellwords.escape env.password}").untaint
 requests = `#{SVN} cat #{ACREQ}/new-account-reqs.txt`
-iclas_txt = `#{SVN} cat #{OFFICERS}/iclas.txt`
+iclas_txt = `#{SVN} cat #{OFFICERS}/iclas.txt`.force_encoding('utf-8')
 
 # grab the current list of PMCs from ldap
 pmcs = ASF::Committee.pmcs.map(&:name).sort
@@ -112,8 +112,8 @@ _html do
         if (#{@user.to_s.inspect} != '')
           $('#user').val(#{@user.to_s.inspect});
         $('#email').val(#{@email.to_s.inspect}).trigger('change');
-        @project ||= (@podling || @pmc)
-        $('#project').val(#{@project.to_s.inspect}).trigger('change').
+        var project = #{(@project || @podling || @pmc).to_s.inspect};
+        $('#project').val(project).trigger('change').
           attr('required', 'required');
         if (#{@votelink.to_s.inspect} != '')
           $('#votelink').val(#{@votelink.to_s.inspect});
@@ -251,7 +251,7 @@ _html do
                     @podling = @project
                     groups = "#@pmc,@podling"
                   else
-                    @pmc = 'incubator'
+                    @pmc = @project
                     @podling = nil
                     groups = "#@pmc"
                   end
