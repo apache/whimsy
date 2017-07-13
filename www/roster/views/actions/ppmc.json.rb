@@ -10,7 +10,7 @@ if env.password
   end
 
   # update LDAP
-  if @targets.include? 'ppmc' or @targets.include? 'committer'
+  if %w(ppmc committer icommit).any? {|target| @targets.include? target}
     ASF::LDAP.bind(env.user, env.password) do
       if @targets.include? 'ldap'
         if @action == 'add'
@@ -36,7 +36,7 @@ if env.password
         if user.asf_member? or incubator.owners.include? user
           if @action == 'add'
             additions = people - icommit
-            incubator.add_committers(additions) unless additions.empty?
+            incubator.add_members(additions) unless additions.empty?
           else
             removals = people & icommit
             podlings = ASF::Podling.current.map(&:id)
