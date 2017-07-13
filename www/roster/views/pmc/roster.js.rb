@@ -26,6 +26,7 @@ class PMCRoster < React
         _tr do
           _th 'id'
           _th 'public name'
+          _th 'role'
         end
       end
 
