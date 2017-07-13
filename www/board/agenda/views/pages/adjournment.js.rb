@@ -200,6 +200,11 @@ class TodoActions < React
 
     _button.checklist.btn.btn_default 'Submit', disabled: @disabled,
       onClick: self.submit
+
+    if @@action == 'add'
+      _button.checklist.btn.btn_default 'Email Congrats', disabled: @disabled,
+        onClick: self.launch_email_client
+    end
   end
 
   def submit()
