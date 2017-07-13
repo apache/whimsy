@@ -520,12 +520,12 @@ module ASF
     end
 
     # pre-fetch a given set of attributes, for a given list of people
-    def self.preload(attributes, people={})
+    def self.preload(attributes, people=[])
       list = Hash.new {|hash, name| hash[name] = find(name)}
 
       attributes = [attributes].flatten
 
-      if people.empty?
+      if people.empty? or people.length > 1000
         filter = "(|#{attributes.map {|attribute| "(#{attribute}=*)"}.join})"
       else
         filter = "(|#{people.map {|person| "(uid=#{person.name})"}.join})"
