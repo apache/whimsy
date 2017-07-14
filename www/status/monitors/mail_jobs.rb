@@ -27,10 +27,10 @@ def Monitor.mail_jobs(previous_status)
 
   Dir[logs].each do |log|
     name = File.basename(log).to_sym
-    next if name == :'incubator-mods' # obsolete
+    next unless name == :'list-start' # only list-start is now guaranteed to be updated (hourly)
 
     begin
-      warning_hours = get_hours(name)
+      warning_hours = 2
       warning_period = warning_hours * 3600
 
       status[name] = {
@@ -75,15 +75,6 @@ def Monitor.mail_jobs(previous_status)
 end
 
 private
-
-def get_hours(name)
-  job_hours = { # how often the jobs run
-    board:   1,
-    members: 1,
-  }
-  job_hours.default = 6
-  job_hours[name] + 1
-end
 
 # for debugging purposes
 if __FILE__ == $0
