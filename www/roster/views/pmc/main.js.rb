@@ -67,6 +67,11 @@ class PMC < React
 
     _div.row key: 'databar' do
       _div.col_sm_6 do
+        if auth
+          _button.btn.btn_default 'Add',
+              data_target: '#pmcadd', data_toggle: 'modal'
+          _button.btn.btn_default 'Modify', disabled: true
+        end
       end
       _div.col_sm_6 do
         _input.form_control type: 'search', placeholder: 'search',
@@ -174,9 +179,10 @@ class PMC < React
       end
     end
 
-    # hidden form
+    # hidden forms
     if auth
       _Confirm action: :committee, project: @committee.id, update: self.update
+      _PMCAdd committee: @@committee, update: self.update
     end
   end
 

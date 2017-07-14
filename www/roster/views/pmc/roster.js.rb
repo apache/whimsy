@@ -36,7 +36,7 @@ class PMCRoster < React
 
       _tbody do
         matches.each do |person|
-          _tr do
+          _tr key: "pmc_#{person.id}" do
             _td do
                _input type: 'checkbox', checked: person.selected || false,
                  onChange: -> {self.toggleSelect(person)}

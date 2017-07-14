@@ -60,7 +60,7 @@ class CommitterSearch < React
       _label.control_label.col_sm_3 'Search for', for:  'search-text'
       _div.col_sm_9 do
         _div.input_group do
-          _input.form_control.search_text! autofocus: true, value: @search, onChange: self.change
+          _input.form_control autofocus: true, value: @search, onChange: self.change
           _span.input_group_addon do
             _span.glyphicon.glyphicon_user aria_label: "Committer ID or name"
           end
@@ -131,6 +131,7 @@ class CommitterSearch < React
       id = event.currentTarget.dataset.id
       person = @list.find {|person| person.id == id}
       @@add.call(person)
+      @search = ''
     end
   end
 end
