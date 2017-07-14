@@ -11,9 +11,12 @@ class PMCRoster < React
     for id in @@committee.roster do
       person = @@committee.roster[id]
 
-      next unless search.all? {|term|
-        id.include? term or person.name.downcase().include? term
+      match = search.all? {|term|
+        id.include? term or person.name.downcase().include? term or
+        person.role.downcase().include? term
       }
+
+      next unless match or person.selected
 
       person.id = id
       matches << person
@@ -24,6 +27,7 @@ class PMCRoster < React
     _table.table.table_hover do
       _thead do
         _tr do
+          _th
           _th 'id'
           _th 'public name'
           _th 'role'
@@ -33,6 +37,11 @@ class PMCRoster < React
       _tbody do
         matches.each do |person|
           _tr do
+            _td do
+               _input type: 'checkbox', checked: person.selected || false,
+                 onChange: -> {self.toggleSelect(person)}
+            end
+
             if @@committee.asfmembers.include? person.id
               _td { _b { _a person.id, href: "committer/#{person.id}" } }
               _td { _b person.name }
@@ -40,6 +49,7 @@ class PMCRoster < React
               _td { _a person.id, href: "committer/#{person.id}" }
               _td person.name
             end
+
             _td person.role
           end
         end
@@ -49,5 +59,10 @@ class PMCRoster < React
     if matches.length == 0
       _div.alert.alert_warning 'No matches'
     end
+  end
+
+  def toggleSelect(person)
+    person.selected = !person.selected
+    self.forceUpdate()
   end
 end
