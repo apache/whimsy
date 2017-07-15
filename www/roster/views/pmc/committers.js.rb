@@ -18,6 +18,7 @@ class PMCCommitters < React
       _table.table.table_hover do
         _thead do
           _tr do
+            _th
             _th 'id'
             _th 'public name'
             _th 'notes'
@@ -91,6 +92,10 @@ class PMCCommitter < React
 
   def render
     _tr onDoubleClick: self.select do
+      _td do
+         _input type: 'checkbox', checked: @@person.selected || false,
+           onChange: -> {self.toggleSelect(@@person)}
+      end
 
       if @@committee.asfmembers.include? @@person.id
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}"} }
@@ -148,5 +153,11 @@ class PMCCommitter < React
     return unless @@auth
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
+  end
+
+  # toggle checkbox
+  def toggleSelect(person)
+    person.selected = !person.selected
+    PMC.refresh()
   end
 end
