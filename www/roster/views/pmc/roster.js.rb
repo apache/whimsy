@@ -63,6 +63,6 @@ class PMCRoster < React
 
   def toggleSelect(person)
     person.selected = !person.selected
-    self.forceUpdate()
+    PMC.refresh()
   end
 end

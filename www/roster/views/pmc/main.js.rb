@@ -69,8 +69,18 @@ class PMC < React
       _div.col_sm_6 do
         if auth
           _button.btn.btn_default 'Add',
-              data_target: '#pmcadd', data_toggle: 'modal'
-          _button.btn.btn_default 'Modify', disabled: true
+            data_target: '#pmcadd', data_toggle: 'modal'
+
+          mod_disabled = true
+          for id in @committee.roster
+            if @committee.roster[id].selected
+              mod_disabled = false
+              break
+            end
+          end
+
+          _button.btn.btn_default 'Modify', disabled: mod_disabled,
+            data_target: '#pmcmod', data_toggle: 'modal'
         end
       end
       _div.col_sm_6 do
@@ -183,6 +193,7 @@ class PMC < React
     if auth
       _Confirm action: :committee, project: @committee.id, update: self.update
       _PMCAdd committee: @@committee, update: self.update
+      _PMCMod committee: @@committee, update: self.update
     end
   end
 
@@ -194,6 +205,16 @@ class PMC < React
   # capture committee on subsequent loads
   def componentWillReceiveProps()
     self.update(@@committee)
+  end
+
+  # refresh the current page
+  def refresh()
+    self.forceUpdate()
+  end
+
+  def componentDidMount()
+    # export refesh method
+    PMC.refresh = self.refresh
   end
 
   # update committee from conformation form

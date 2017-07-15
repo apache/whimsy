@@ -5,6 +5,7 @@ require_relative 'pmc/pmc'
 require_relative 'pmc/committers'
 require_relative 'pmc/roster'
 require_relative 'pmc/add'
+require_relative 'pmc/mod'
 
 require_relative 'person'
 require_relative 'person/fullname'
