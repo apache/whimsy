@@ -128,7 +128,7 @@ module ASF
         require 'etc'
         require 'io/console'
         user ||= Etc.getlogin
-        password = STDIN.getpass("Password:")
+        password = STDIN.getpass("Password for #{user}:")
       end
 
       dn = ASF::Person.new(user).dn
