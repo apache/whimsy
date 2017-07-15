@@ -11,22 +11,12 @@ module ASF
     
     # Return an array of board subscribers followed by the file update time
     def self.board_subscribers
-      # Allow for cutover to new cron jobs which only generate list-subs/list-mods
-      if isRecent(BOARD_SUBSCRIPTIONS)
-        return File.read(BOARD_SUBSCRIPTIONS).split("\n"), File.mtime(BOARD_SUBSCRIPTIONS)
-      else
-        return list_filter('sub', 'apache.org', 'board'), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
-      end
+      return list_filter('sub', 'apache.org', 'board'), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
     # Return an array of members@ subscribers followed by the file update time
     def self.members_subscribers
-      # Allow for cutover to new cron jobs which only generate list-subs/list-mods
-      if isRecent(MEMBERS_SUBSCRIPTIONS) 
-        return File.read(MEMBERS_SUBSCRIPTIONS).split("\n"), File.mtime(MEMBERS_SUBSCRIPTIONS)
-      else
-        return list_filter('sub', 'apache.org', 'members'), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
-      end
+      return list_filter('sub', 'apache.org', 'members'), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
     # return a hash of subscriptions for the list of emails provided
@@ -148,13 +138,6 @@ module ASF
       end
     end
 
-    # board and member subs details are part of LIST_SUBS
-    # however they are generated more frequently at present
-    # the files could be dropped if/when that changes
-    MEMBERS_SUBSCRIPTIONS = '/srv/subscriptions/members'
-
-    BOARD_SUBSCRIPTIONS = '/srv/subscriptions/board'
-    
     LIST_MODS = '/srv/subscriptions/list-mods'
 
     LIST_SUBS = '/srv/subscriptions/list-subs'
