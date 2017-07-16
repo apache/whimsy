@@ -62,14 +62,28 @@ class Committer
 
     response[:groups] = person.services
     response[:committer] = []
-    committees = ASF::Committee.list.map(&:id)
+    committees = ASF::Committee.pmcs.map(&:name)
     person.groups.map(&:name).each do |group|
       if committees.include? group
         unless response[:committees].include? group
+          # Legacy LDAP unix group
           response[:committer] << group 
         end
       else
         response[:groups] << group
+      end
+    end
+
+    # Get project(member) details
+    person.projects.select{|prj| prj.members.include? person}.map(&:name).each do |group|
+      if committees.include? group
+          # Don't show committer karma if person has committee karma
+          unless response[:committees].include? group
+            # LDAP project group
+            response[:committer] << group 
+          end
+      else
+        # TODO should this populate anything?
       end
     end
 
