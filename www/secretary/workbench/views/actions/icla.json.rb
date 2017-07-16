@@ -138,6 +138,13 @@ task "email #@email" do
     body: template(reply)
   )
 
+  # set Reply-To header to podling or pmc private mailing list 
+  if @podling
+    mail.headers['Reply-To'] = @podling.private_mail_list
+  elsif @pmc
+    mail.headers['Reply-To'] = "private@#{@pmc.mail_list}.apache.org"
+  end
+
   # echo email
   form do
     _message mail.to_s
