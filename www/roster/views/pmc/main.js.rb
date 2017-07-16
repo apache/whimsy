@@ -54,17 +54,7 @@ class PMC < React
       end
     end
 
-    # usage information for authenticated users (PMC chair, etc.)
-    if auth and not @search
-      _div.alert.alert_success do
-        _span 'Double click on a row to edit.'
-        unless @committee.roster.keys().empty?
-          _span "  Click on \u2795 to add."
-          _span "  Multiple people can be added with a single confirmation."
-        end
-      end
-    end
-
+    # action bar: add, modify, search
     _div.row key: 'databar' do
       _div.col_sm_6 do
         if auth
@@ -79,8 +69,12 @@ class PMC < React
             end
           end
 
-          _button.btn.btn_default 'Modify', disabled: mod_disabled,
-            data_target: '#pmcmod', data_toggle: 'modal'
+          if mod_disabled
+            _button.btn.btn_default 'Modify', disabled: true
+          else
+            _button.btn.btn_primary 'Modify',
+              data_target: '#pmcmod', data_toggle: 'modal'
+          end
         end
       end
       _div.col_sm_6 do

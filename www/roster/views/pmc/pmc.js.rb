@@ -5,7 +5,6 @@
 class PMCMembers < React
   def initialize
     @committee = {}
-    @state = :closed
   end
 
   def render
@@ -13,7 +12,7 @@ class PMCMembers < React
     _table.table.table_hover do
       _thead do
         _tr do
-          _th
+          _th if @@auth
           _th 'id'
           _th 'public name'
           _th 'starting date'
@@ -24,20 +23,8 @@ class PMCMembers < React
         @roster.each do |person|
           _PMCMember auth: @@auth, person: person, committee: @@committee
         end
-
-        if @@auth and not @@committee.roster.keys().empty?
-          _tr onClick: self.select do
-            _td((@state == :open ? '' : "\u2795"), colspan: 4)
-          end
-        end
       end
     end
-
-   if @state == :open
-     _div.search_box do
-       _CommitterSearch add: self.add
-     end
-   end
   end
 
   # update props on initial load
@@ -59,20 +46,6 @@ class PMCMembers < React
 
     @roster = roster.sort_by {|person| person.name}
   end
-
-  # open search box
-  def select()
-    return unless @@auth
-    window.getSelection().removeAllRanges()
-    @state = ( @state == :open ? :closed : :open )
-  end
-
-  # add a person to the displayed list of PMC members
-  def add(person)
-    person.date = 'pending'
-    @roster << person
-    @state = :closed
-  end
 end
 
 #
@@ -85,10 +58,12 @@ class PMCMember < React
   end
 
   def render
-    _tr onDoubleClick: self.select do
-      _td do
-         _input type: 'checkbox', checked: @@person.selected || false,
-           onChange: -> {self.toggleSelect(@@person)}
+    _tr do
+      if @@auth
+        _td do
+           _input type: 'checkbox', checked: @@person.selected || false,
+             onChange: -> {self.toggleSelect(@@person)}
+        end
       end
 
       if @@committee.asfmembers.include? @@person.id
@@ -102,32 +77,8 @@ class PMCMember < React
       _td @@person.date
 
       if @state == :open
-        _td data_ids: @@person.id do 
-          if @@person.date == 'pending'
-            # not added yet
-            _button.btn.btn_primary 'Add as a committer and to the PMC',
-              data_action: 'add pmc info commit',
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Add #{@@person.name} to the " +
-                "#{@@committee.display_name} PMC and grant committer access?"
-
-            _button.btn.btn_warning 'Add to PMC only', data_target: '#confirm',
-              data_action: 'add pmc info', data_toggle: 'modal',
-              data_confirmation: "Add #{@@person.name} to the " +
-                "#{@@committee.display_name} PMC?"
-
-  
-            committers = @@committee.committers
-            pmc = @@committee.members
-            if committers.all? {|person| pmc.include? person}
-               _button.btn.btn_warning 'Add as a committer only',
-                 data_action: 'add commit',
-                 data_target: '#confirm', data_toggle: 'modal',
-                 data_confirmation: "Add #{@@person.name} as a " +
-                   "#{@@committee.display_name} PPMC committer?"
-            end
-
-          elsif not @@person.date
+        _td data_ids: @@person.id, onDoubleClick: self.select do 
+          if not @@person.date
             # in LDAP but not in committee-info.txt
             _button.btn.btn_warning 'Remove from LDAP',
               data_action: 'remove pmc', 
@@ -181,15 +132,15 @@ class PMCMember < React
           end
         end
       elsif not @@person.date
-        _td.issue 'not in committee-info.txt'
+        _td.issue.clickable 'not in committee-info.txt', onClick: self.select
       elsif not @@person.ldap
-        _td.issue 'not in LDAP'
+        _td.issue.clickable 'not in LDAP', onClick: self.select
       elsif not @@committee.committers.include? @@person.id
-        _td.issue 'not in committer list'
+        _td.issue.clickable 'not in committer list', onClick: self.select
       elsif @@person.id == @@committee.chair
-        _td.chair 'chair'
+        _td.chair.clickable 'chair', onClick: self.select
       else
-        _td ''
+        _td.clickable '', onClick: self.select
       end
     end
   end
@@ -199,10 +150,9 @@ class PMCMember < React
     self.componentWillReceiveProps()
   end
 
-  # automatically open pending entries
+  # automatically close entries when id changes
   def componentWillReceiveProps(newprops)
     @state = :closed if newprops.person.id != self.props.person.id
-    @state = :open if @@person.date == 'pending'
   end
 
   # toggle display of buttons

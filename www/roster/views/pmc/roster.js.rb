@@ -5,6 +5,7 @@
 class PMCRoster < React
   def render
     matches = []
+    found = false
 
     search = @@search.downcase().strip().split(/\s+/)
 
@@ -17,6 +18,7 @@ class PMCRoster < React
       }
 
       next unless match or person.selected
+      found = true if match
 
       person.id = id
       matches << person
@@ -27,7 +29,7 @@ class PMCRoster < React
     _table.table.table_hover do
       _thead do
         _tr do
-          _th
+          _th if @@auth
           _th 'id'
           _th 'public name'
           _th 'role'
@@ -37,9 +39,11 @@ class PMCRoster < React
       _tbody do
         matches.each do |person|
           _tr key: "pmc_#{person.id}" do
-            _td do
-               _input type: 'checkbox', checked: person.selected || false,
-                 onChange: -> {self.toggleSelect(person)}
+            if @@auth
+              _td do
+                 _input type: 'checkbox', checked: person.selected || false,
+                   onChange: -> {self.toggleSelect(person)}
+              end
             end
 
             if @@committee.asfmembers.include? person.id
@@ -56,9 +60,7 @@ class PMCRoster < React
       end
     end
 
-    if matches.length == 0
-      _div.alert.alert_warning 'No matches'
-    end
+    _div.alert.alert_warning 'No matches' unless found
   end
 
   def toggleSelect(person)
