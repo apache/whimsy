@@ -312,8 +312,10 @@ class FeedbackReminder < React
   def render
     _p 'Draft feedback:'
 
-    _ul Todos.feedback do |pmc|
-      _li {_Link text: pmc, href: pmc.gsub(/\s+/, '-')}
+    _ul.list_group.row Todos.feedback do |pmc|
+      _li.list_group_item.col_xs_6.col_sm_4.col_md_3.col_lg_2 do
+        _Link text: pmc, href: pmc.gsub(/\s+/, '-')
+     end
     end
 
     _button.checklist.btn.btn_default 'Submit',
