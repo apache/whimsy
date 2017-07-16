@@ -609,7 +609,8 @@ module ASF
       end
 
       # add in projects (currently only includes GUINEAPIGS)
-      projects = self.projects.map(&:name)
+      # Get list of project names where the person is an owner
+      projects = self.projects.select{|prj| prj.owners.include? self}.map(&:name)
       committees += ASF::Committee.pmcs.select do |pmc| 
         projects.include? pmc.name
       end
