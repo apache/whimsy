@@ -69,6 +69,22 @@ if @add and env.password
     chairs.add people
   end
 
+  # send out congratulations email
+  ASF::Mail.configure
+  sender = ASF::Person.new(env.user)
+  mail = Mail.new do
+    from "#{sender.public_name} <#{sender.id}@apache.org>"
+    to people.map {|person| "#{person.public_name} <#{person.id}@apache.org>"}
+    cc 'Apache Board <board@apache.org>'
+    body "Dear new PMC chairs,\n\nCongratulations on your new role at " +
+    "Apache. I've changed your LDAP privileges to reflect your new " +
+    "status.\n\nPlease read this and update the foundation records:\n" +
+    "https://svn.apache.org/repos/private/foundation/officers/advice-for-new-pmc-chairs.txt" +
+    "\n\nWarm regards,\n\n#{sender.public_name}"
+  end
+
+  mail.deliver!
+
   minutes[:todos][:added] ||= []
   minutes[:todos][:added] += people.map {|person| person.id}
 end

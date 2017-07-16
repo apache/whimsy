@@ -171,7 +171,7 @@ class TodoActions < React
 
   def render
     if @@action == 'add'
-      _p 'Add to pmc-chairs:'
+      _p 'Add to pmc-chairs and email welcome message:'
     else
       _p 'Remove from pmc-chairs:'
     end
@@ -200,11 +200,6 @@ class TodoActions < React
 
     _button.checklist.btn.btn_default 'Submit', disabled: @disabled,
       onClick: self.submit
-
-    if @@action == 'add'
-      _button.checklist.btn.btn_default 'Email Congrats', disabled: @disabled,
-        onClick: self.launch_email_client
-    end
   end
 
   def submit()
@@ -217,26 +212,6 @@ class TodoActions < React
       @disabled = false
       Todos.set todos
     end
-  end
-
-  # launch email client, pre-filling the destination, subject, and body
-  def launch_email_client()
-    people = []
-    @people.each do |person|
-      people << "#{person.name} <#{person.email}>" if @checked[person.id]
-    end
-    destination = "mailto:#{people.join(',')}?cc=board@apache.org"
-
-    subject = "Congratulations on your new role at Apache"
-    body = "Dear new PMC chairs,\n\nCongratulations on your new role at " +
-    "Apache. I've changed your LDAP privileges to reflect your new " +
-    "status.\n\nPlease read this and update the foundation records:\n" +
-    "https://svn.apache.org/repos/private/foundation/officers/advice-for-new-pmc-chairs.txt" +
-    "\n\nWarm regards,\n\n#{Server.username}"
-
-    window.location = destination +
-      "&subject=#{encodeURIComponent(subject)}" +
-      "&body=#{encodeURIComponent(body)}"
   end
 end
 
