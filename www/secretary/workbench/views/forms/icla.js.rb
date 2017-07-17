@@ -114,11 +114,14 @@ class ICLA < React
       document.querySelector("input[name=#{name}]").validity.valid
     end
 
-    # new account request form
-    %w(user project votelink).each do |name|
-      input = document.querySelector("input[name=#{name}]")
-      input.required = @user && !@user.empty?
-      valid &= input.validity.valid
+    # new account request form - perform checks only if user is valid
+    user = document.querySelector("input[name=user]")
+    if user.value.length > 0 and user.validity.valid
+      %w(project votelink).each do |name|
+        input = document.querySelector("input[name=#{name}]")
+        input.required = @user && !@user.empty?
+        valid &= input.validity.valid
+      end
     end
 
     $file.disabled = !valid or @filed or @submitted

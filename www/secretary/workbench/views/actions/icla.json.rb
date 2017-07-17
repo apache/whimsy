@@ -27,6 +27,10 @@ _extract_project
 # obtain per-user information
 _personalize_email(env.user)
 
+# determine if the user id requested is valid and avaliable
+@valid_user = (@user =~ /^[a-z][a-z0-9]{2,}$/)
+@valid_user &&= !(ASF::ICLA.taken?(@user) or ASF::Mail.taken?(@user))
+
 ########################################################################
 #                            document/iclas                            #
 ########################################################################
@@ -112,7 +116,11 @@ end
 task "email #@email" do
   # chose reply based on whether or not the project/userid info was provided
   if @user and not @user.empty?
-    reply = 'icla-account-requested.erb'
+    if @valid_user
+      reply = 'icla-account-requested.erb'
+    else
+      reply = 'icla-invalid-id.erb'
+    end
   elsif @pmc
     @notify = "the #{@pmc.display_name} PMC has"
 
@@ -156,7 +164,7 @@ task "email #@email" do
   end
 end
 
-if @user and not @user.empty? and @pmc and not @votelink.empty?
+if @valid_user and @pmc and not @votelink.empty?
 
   ######################################################################
   #                   acreq/new-account-reqs.txt                       #
