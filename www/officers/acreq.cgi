@@ -59,7 +59,7 @@ else
 end
 
 # grab the list of userids that have been assigned (for validation purposes)
-taken = ASF::ICLA.availids_taken() # these are in use or reserved
+taken = (ASF::ICLA.availids_taken + ASF::Mail.qmail_ids).uniq
 
 # add the list of userids that are pending
 taken += requests.scan(/^(\w.*?);/).flatten
@@ -78,6 +78,7 @@ _html do
     _style :system
     _style %{
       pre.email {background-color: #BDF; padding: 1em 3em; border-radius: 1em}
+      input:invalid {border: solid 3px #F00}
     }
 
     _script %{
@@ -158,7 +159,7 @@ _html do
                 _div.col_sm_10 do
                   _input.form_control name: "user", id: "user", autofocus: true,
                     type: "text", required: true,
-                    pattern: '^[a-z][-a-z0-9_]+$' # useridvalidationpattern dup
+                    pattern: '^[a-z][a-z0-9]{2,}$' # useridvalidationpattern dup
                 end
               end
 
@@ -229,7 +230,7 @@ _html do
                   _div.bg_danger "Account request already pending for #{@email}"
                 elsif taken.include? @user
                   _div.bg_danger "UserID #{@user} is not available"
-                elsif @user !~ /^[a-z][a-z0-9_]+$/ # useridvalidationpattern dup (disallow '-' in names because of INFRA-7390)
+                elsif @user !~ /^[a-z][a-z0-9]{2,}$/ # useridvalidationpattern dup (disallow '-' in names because of INFRA-7390)
                   _div.bg_danger "Invalid userID #{@user}"
                 elsif @user.length > 16
                   # http://forums.freebsd.org/showthread.php?t=14636
