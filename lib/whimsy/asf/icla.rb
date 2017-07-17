@@ -187,7 +187,6 @@ module ASF
 
     # is the availid taken (in use or reserved)?
     def self.taken?(id)
-      puts(id)
       return self.availids_reserved.include?(id) ||
              self.availids.include?(id)
     end

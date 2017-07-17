@@ -111,6 +111,15 @@ module ASF
         delivery_method method, options
       end
     end
+
+    def self.qmail_ids
+      return [] unless File.exist? '/srv/subscriptions/qmail.ids'
+      File.read('/srv/subscriptions/qmail.ids').split
+    end
+
+    def self.taken?(id)
+      self.qmail_ids.include? id
+    end
   end
 
   class Person < Base
