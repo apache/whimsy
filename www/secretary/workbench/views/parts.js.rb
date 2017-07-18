@@ -154,7 +154,12 @@ class Parts < React
 
             _label do
               _span 'project: '
-              _input name: 'project', value: @project
+              _select name: 'project', value: @project, disabled: @filed do
+                _option ''
+                @@projects.each do |project|
+                  _option project
+                end
+              end
             end
           end
 
@@ -195,7 +200,7 @@ class Parts < React
       else
 
         React.createElement @form, headers: @headers, selected: @selected,
-          signature: signature
+          projects: @@projects, signature: signature
 
       end
     end

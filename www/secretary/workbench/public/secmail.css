@@ -56,7 +56,7 @@ table.form {
   margin-top: 2em;
 }
 
-.form input, .form textarea {
+.form input, .form textarea, .form select {
   width: 100%;
 }
 

@@ -120,6 +120,7 @@ get %r{/(\d{6})/(\w+)/_index_} do |month, hash|
   @headers = message.headers.dup
   @headers.delete :attachments
   @cssmtime = File.mtime('public/secmail.css').to_i
+  @projects = (ASF::Podling.current+ASF::Committee.pmcs).map(&:name).sort
   _html :parts
 end
 

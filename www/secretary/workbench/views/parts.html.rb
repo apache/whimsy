@@ -92,7 +92,7 @@ _html do
 
   _script src: '../../app.js'
   _.render '#parts' do
-    _Parts attachments: @attachments, headers: @headers
+    _Parts attachments: @attachments, headers: @headers, projects: @projects
   end
 
 end

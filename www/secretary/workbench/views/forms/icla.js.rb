@@ -64,7 +64,12 @@ class ICLA < React
         _tr do
           _th 'Project'
           _td do
-            _input name: 'project', value: @project, disabled: @filed
+            _select name: 'project', value: @project, disabled: @filed do
+              _option ''
+              @@projects.each do |project|
+                _option project
+              end
+            end
           end
         end
 
@@ -117,11 +122,8 @@ class ICLA < React
 
     # new account request form - perform checks only if user is valid
     user = document.querySelector("input[name=user]")
-    project = document.querySelector("input[name=project]")
+    project = document.querySelector("select[name=project]")
     votelink = document.querySelector("input[name=votelink]")
-
-    # always validate project
-    valid &= project.validity.valid
 
     # project votelink are only required with valid users; only validate
     # votelink if the user is valid
