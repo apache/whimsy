@@ -148,9 +148,9 @@ task "email #@email" do
 
   # set Reply-To header to podling or pmc private mailing list 
   if @podling
-    mail.headers['Reply-To'] = @podling.private_mail_list
+    mail.header['Reply-To'] = @podling.private_mail_list
   elsif @pmc
-    mail.headers['Reply-To'] = "private@#{@pmc.mail_list}.apache.org"
+    mail.header['Reply-To'] = "private@#{@pmc.mail_list}.apache.org"
   end
 
   # echo email
