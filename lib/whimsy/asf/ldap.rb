@@ -1043,6 +1043,7 @@ module ASF
     # return committee only if it actually exits
     def self.[] name
       committee = super
+      return committee if GUINEAPIGS.include? name
       committee.members.empty? ? nil : committee
     end
 
