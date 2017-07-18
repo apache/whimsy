@@ -77,7 +77,8 @@ class ICLA < React
         end
       end
 
-      _input.btn.btn_primary value: 'File', type: 'submit', ref: 'file'
+      _input.btn.btn_primary value: 'File', type: 'submit', ref: 'file',
+        formnovalidate: true
     end
   end
 
