@@ -125,13 +125,16 @@ class ICLA < React
     project = document.querySelector("select[name=project]")
     votelink = document.querySelector("input[name=votelink]")
 
+    valid &&= project.validity.valid
+
     # project votelink are only required with valid users; only validate
     # votelink if the user is valid
     if user.validity.valid and user.value.length > 0
       project.required = votelink.required = true
       valid &= votelink.validity.valid
     else
-      project.required = votelink.required = false
+      votelink.required = false
+      project.required = (user.value.length > 0)
     end
 
     $file.disabled = !valid or @filed or @submitted

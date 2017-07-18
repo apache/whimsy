@@ -60,7 +60,7 @@ table.form {
   width: 100%;
 }
 
-.form input:invalid, .form textarea:invalid {
+.form input:invalid, .form select:invalid, .form textarea:invalid {
   border: 1px solid red;
 }
 
