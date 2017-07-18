@@ -54,7 +54,8 @@ class Parts < React
       end
 
       _li options do
-        _a attachment, href: link, target: 'content', draggable: 'false'
+        _a attachment, href: link, target: 'content', draggable: 'false',
+          onClick: self.navigate
       end
     end
 
@@ -241,6 +242,21 @@ class Parts < React
     self.extractHeaders(@@headers)
 
     window.addEventListener 'message', self.status_update
+
+    # add click handler on all non-part links.  Note: part links may
+    # change, and click handlers are established above
+    parts = Array(document.querySelectorAll('#parts a[target=content'))
+    Array(document.querySelectorAll('a[target=content')).each do |link|
+      next if parts.include? link
+      link.onclick = self.navigate
+    end
+
+    # when back button is clicked, go all of the way back
+    history_length =  window.history.length
+    window.addEventListener 'popstate' do |event|
+      console.log 'popstate'
+      window.history.go(history_length - window.history.length)
+    end
   end
 
   def componentWillReceiveProps()
@@ -554,5 +570,11 @@ class Parts < React
   # cancel drag operation
   def dragEnd(event)
     @drag = nil
+  end
+
+  # implement content navigation using the history API
+  def navigate(event)
+    destination = event.target.attributes['href'].value
+    window.parent.frames.content.history.replaceState({}, nil, destination)
   end
 end
