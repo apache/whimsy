@@ -114,22 +114,28 @@ end
 
 # send confirmation email
 task "email #@email" do
-  # chose reply based on whether or not the project/userid info was provided
-  if @user and not @user.empty?
-    if @valid_user
-      reply = 'icla-account-requested.erb'
-    else
-      reply = 'icla-invalid-id.erb'
-    end
-  elsif @pmc
+  # set up notify for body of message
+  if @pmc
     @notify = "the #{@pmc.display_name} PMC has"
-
     if @podling
       @notify.sub! /has$/, "and the #{@podling.display_name} podling have"
     end
+  end
 
+  # choose reply message based on whether or not the project/userid info was provided
+  if @user and not @user.empty?
+    if @valid_user
+      # pmc vote verified and id is valid
+      reply = 'icla-account-requested.erb'
+    else
+      # pmc vote verified but id is invalid
+      reply = 'icla-invalid-id.erb'
+    end
+  elsif @pmc
+    # no pmc vote but pmc was requested to be notified or user is active on project
     reply = 'icla-pmc-notified.erb'
   else
+    # no evidence of project activity by the submitter
     reply = 'icla.erb'
   end
 
