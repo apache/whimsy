@@ -73,10 +73,16 @@ if @add and env.password
   ASF::Mail.configure
   sender = ASF::Person.new(env.user)
   mail = Mail.new do
-    from "#{sender.public_name} <#{sender.id}@apache.org>"
-    to people.map {|person| "#{person.public_name} <#{person.id}@apache.org>"}
+    from "#{sender.public_name} <#{sender.id}@apache.org>".untaint
+
+    to people.map do |person|
+      "<#{person.id}@apache.org>".untaint
+    end
+
     cc 'Apache Board <board@apache.org>'
+
     subject "Congratulations on your new role at Apache"
+
     body "Dear new PMC chairs,\n\nCongratulations on your new role at " +
     "Apache. I've changed your LDAP privileges to reflect your new " +
     "status.\n\nPlease read this and update the foundation records:\n" +
