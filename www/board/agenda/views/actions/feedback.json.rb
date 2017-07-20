@@ -23,7 +23,7 @@ if @from
   from = @from
 else
   sender = ASF::Person.find(env.user || ENV['USER'])
-  from = "#{sender.public_name} <#{sender.id}@apache.org>".untaint
+  from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
 end
 
 output = []

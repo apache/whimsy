@@ -73,10 +73,10 @@ if @add and env.password
   ASF::Mail.configure
   sender = ASF::Person.new(env.user)
   mail = Mail.new do
-    from "#{sender.public_name} <#{sender.id}@apache.org>".untaint
+    from "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
 
     to people.map do |person|
-      "<#{person.id}@apache.org>".untaint
+      "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
     end
 
     cc 'Apache Board <board@apache.org>'
