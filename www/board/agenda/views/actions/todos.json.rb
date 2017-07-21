@@ -120,13 +120,28 @@ if @establish and env.password
 
     ASF::LDAP.bind(env.user, env.password) do
       chairs.add [chair] unless chairs.members.include? chair
+      guineapig = ASF::Committee::GUINEAPIGS.include?(pmc.id)
 
-      if ASF::Group.find(pmc.downcase).members.empty?
-        ASF::Group.add(pmc.downcase, members)
+      # old style definitions
+      unless guineapig
+        if ASF::Group.find(pmc.downcase).members.empty?
+          ASF::Group.add(pmc.downcase, members)
+        end
+
+        if ASF::Committee.find(pmc.downcase).members.empty?
+          ASF::Committee.add(pmc.downcase, members)
+        end
       end
 
-      if ASF::Committee.find(pmc.downcase).members.empty?
-        ASF::Committee.add(pmc.downcase, members)
+      # new style definitions
+      project = ASF::Project.find(pmc.downcase)
+      if not project
+        project.create(members, members)
+      elsif not guineapig
+        # sync project owners with new PMC list
+	project.add_owners(members)
+	project.remove_owners(project.owners - members)
+	project.add_members(members)
       end
     end 
   end
