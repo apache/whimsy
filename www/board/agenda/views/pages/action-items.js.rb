@@ -161,7 +161,7 @@ class ActionItems < React
               next unless match
             end
 
-            _ "* #{action.owner}: #{action.text}\n"
+            _ "* #{action.owner}: #{action.text.gsub("\n", "\n        ")}\n"
             _ "      [ "
             if action.item
               _Link text: action.item.title, href: action.item.href,
