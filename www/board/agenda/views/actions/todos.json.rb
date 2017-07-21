@@ -149,7 +149,7 @@ if @establish and env.password
   # create 'victims' file for tlpreq tool
   count = Dir["#{TLPREQ}/victims-#{date}.*.txt"].length
   message = "record #{date} approved TLP resolutions"
-  ASF:SVN.update TLPREQ, message, env, _ do |tmpdir|
+  ASF::SVN.update TLPREQ, message, env, _ do |tmpdir|
     filename = "victims-#{date}.#{count}.txt"
     contents = establish.join("\n") + "\n"
     File.write "#{tmpdir}/#{filename}", contents
