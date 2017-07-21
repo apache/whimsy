@@ -880,6 +880,12 @@ module ASF
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| Project.find(cn)}
     end
 
+    # return project only if it actually exits
+    def self.[] name
+      project = super
+      project.members.empty? ? nil : project
+    end
+
     # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
     # <tt>createTimestamp</tt> for all projects in LDAP.
     def self.preload
@@ -1091,6 +1097,8 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).remove_owners(people)
       else
+        project = ASF::Project['name']
+        project.remove_owners(people) if project
         remove(people)
       end
     end
@@ -1100,6 +1108,8 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).remove_members(people)
       else
+        project = ASF::Project['name']
+        project.remove_members(people) if project
         ASF::Group.find(name).remove(people)
       end
     end
@@ -1109,6 +1119,8 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).add_owners(people)
       else
+        project = ASF::Project['name']
+        project.add_owners(people) if project
         add(people)
       end
     end
@@ -1119,6 +1131,8 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).add_members(people)
       else
+        project = ASF::Project['name']
+        project.add_members(people) if project
         ASF::Group.find(name).add(people)
       end
     end
