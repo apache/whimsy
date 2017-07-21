@@ -120,7 +120,7 @@ if @establish and env.password
 
     ASF::LDAP.bind(env.user, env.password) do
       chairs.add [chair] unless chairs.members.include? chair
-      guineapig = ASF::Committee::GUINEAPIGS.include?(pmc.id)
+      guineapig = ASF::Committee::GUINEAPIGS.include?(pmc.downcase)
 
       # old style definitions
       unless guineapig
