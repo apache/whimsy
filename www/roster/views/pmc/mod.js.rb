@@ -100,7 +100,7 @@ class PMCMod < React
       headers: {'Content-Type' => 'application/json'},
       body: {
         project: @@committee.id, 
-        ids: @people.map {|person| person.id}, 
+        ids: @people.map {|person| person.id}.join(' '), 
         action: action, 
         targets: targets
       }.inspect
