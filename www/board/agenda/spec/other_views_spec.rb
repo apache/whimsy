@@ -16,7 +16,7 @@ feature 'other reports' do
     visit '/2015-01-21/comments'
 
     # unseen items
-    expect(page).to have_selector 'h4 a', text: 'Curator'
+    expect(page).to have_selector 'a.h4', text: 'Curator'
     expect(page).to have_selector 'pre', 
       text: /last PMC member and committer additions/
 
@@ -68,20 +68,20 @@ feature 'other reports' do
     visit '/2015-01-21/shepherd/Sam'
 
     # action items
-    expect(page).to have_selector 'pre.report span', 
+    expect(page).to have_selector 'pre.report', 
       text: '* Sam: pursue a report for Abdera'
     expect(page).to have_selector 'pre.report em', 
       text: "Clarification provided in this month's report."
 
     # committee reports
-    expect(page).to have_selector 'h3.reviewed a[href="shepherd/queue/Flink"]',
+    expect(page).to have_selector 'a.reviewed[href="shepherd/queue/Flink"]',
       text: 'Flink'
-    expect(page).to have_selector 'a.default', text: 'Airavata'
+    expect(page).to have_selector 'a.missing', text: 'Airavata'
     expect(page).to have_selector 'h4', text: 'Comments'
     expect(page).to have_selector 'pre.comment span', 
       text: 'cm: great report!'
     expect(page).to have_selector 'h4', text: 'Action Items'
-    expect(page).to have_selector 'pre.report span', 
+    expect(page).to have_selector 'pre.report', 
       text: '* Chris: Please clarify what "voted on" means'
     expect(page).to have_selector 'button[data-attach=AY]', text: 'flag'
     expect(page).to have_selector '.shepherd button', text: 'send email'
