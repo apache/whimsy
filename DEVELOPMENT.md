@@ -358,7 +358,7 @@ Further Reading
 ===============
 
 The [board agenda](www/board/agenda) application
-is an eample of a complete tool that makes extensive use of the library
+is an example of a complete tool that makes extensive use of the library
 factoring, has a suite of test cases, and client componentization (using
 ReactJS), and provides instructions for setting up both a Docker component and
 a Vagrant VM.  There are [custom setup steps](config/board-agenda.md) to run it locally.
