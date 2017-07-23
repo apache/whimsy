@@ -55,8 +55,9 @@ class Help < React
     _form.role! do
       %w(Secretary Director Guest).each do |role|
         _div do
-          _input role, type: 'radio', name: 'role', value: role.downcase(),
+          _input type: 'radio', name: 'role', value: role.downcase(),
             checked: role.downcase() == Server.role, onChange: self.setRole
+          _ role
         end
       end
     end
