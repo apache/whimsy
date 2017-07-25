@@ -358,9 +358,8 @@ module ASF
 
       # parse JIRA titles for proposed name
       issues = JSON.parse(File.read(cache))['issues'].map do |issue|
-        name = issue['fields']['customfield_12310520']
         title = issue['fields']['summary']
-        name ||= title[/"Apache ([A-Z].*?)"/, 1]
+        name = title[/"Apache ([A-Z].*?)"/, 1]
         name ||= title[/'Apache ([A-Z].*?)'/, 1]
         name ||= title[/.*Apache ([A-Z]\S*)/, 1]
         name ||= title.gsub('Apache', '')[/.*\b([A-Z]\S*)/, 1]
