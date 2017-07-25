@@ -352,15 +352,24 @@ module ASF
       cache = "#{ASF::Config.get(:cache)}/pns.jira"
       if not File.exist?(cache) or File.mtime(cache) < Time.now - 300
         query = 'https://issues.apache.org/jira/rest/api/2/search?' +
+            'maxResults=1000&' +
             'jql=project=PODLINGNAMESEARCH&fields=summary,resolution,customfield_12310520'
         File.write cache, Net::HTTP.get(URI(query))
       end
 
       # parse JIRA titles for proposed name
       issues = JSON.parse(File.read(cache))['issues'].map do |issue|
-        title = issue['fields']['summary']
-        name = title[/"Apache ([A-Z].*?)"/, 1]
-        name ||= title[/'Apache ([A-Z].*?)'/, 1]
+        title = issue['fields']['summary'].strip.gsub(/\s+/, ' ')
+        name = issue['fields']['customfield_12310520']
+
+        if name
+          name.sub! /^Apache\s+/, ''
+          name.gsub! /\s+\(.*?\)/, ''
+          name = nil if name =~ /^This/ or name !~ /[A-Z]/
+        end
+
+        name ||= title[/"Apache ([a-zA-Z].*?)"/, 1]
+        name ||= title[/'Apache ([a-zA-Z].*?)'/, 1]
         name ||= title[/.*Apache ([A-Z]\S*)/, 1]
         name ||= title.gsub('Apache', '')[/.*\b([A-Z]\S*)/, 1]
         next unless name
@@ -369,7 +378,8 @@ module ASF
         [name, {issue: issue['key'], resolution: resolution}]
       end
 
-      issues.sort.to_h
+      STDERR.puts issues.compact.map(&:first).sort
+      issues.compact.sort_by(&:first).to_h
     end
 
     # return podlingnamesearch for this podling
