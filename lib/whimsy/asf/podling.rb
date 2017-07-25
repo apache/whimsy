@@ -378,7 +378,6 @@ module ASF
         [name, {issue: issue['key'], resolution: resolution}]
       end
 
-      STDERR.puts issues.compact.map(&:first).sort
       issues.compact.sort_by(&:first).to_h
     end
 
