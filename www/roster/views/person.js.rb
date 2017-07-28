@@ -221,7 +221,7 @@ class Person < React
 
   # after update, register event listeners on forms
   def componentDidUpdate()
-    Array(document.querySelectorAll('tr[data-edit]')).each do |tr|
+    Array(document.querySelectorAll('div[data-edit]')).each do |tr|
       form = tr.querySelector('form')
       if form
         form.setAttribute 'data-action', tr.getAttribute('data-edit')
