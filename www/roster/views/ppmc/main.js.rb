@@ -62,15 +62,46 @@ class PPMC < React
       end
     end
 
-    if @ppmc.owners.empty? and (@@auth.root or @@auth.secretary)
-      _button.btn.btn_primary 'Create project in LDAP', onClick: self.post,
-        disabled: @create_disabled
+    # action bar: add, modify, search
+    _div.row key: 'databar' do
+      _div.col_sm_6 do
+        if @@auth.ipmc or @@auth.ipmc
+          _button.btn.btn_default 'Add', disabled: true,
+            data_target: '#pmcadd', data_toggle: 'modal'
+
+          mod_disabled = true
+          for id in @ppmc.roster
+            if @ppmc.roster[id].selected
+              mod_disabled = false
+              break
+            end
+          end
+
+          if mod_disabled
+            _button.btn.btn_default 'Modify', disabled: true
+          else
+            _button.btn.btn_primary 'Modify',
+              data_target: '#pmcmod', data_toggle: 'modal'
+          end
+        elsif @ppmc.owners.empty? and (@@auth.root or @@auth.secretary)
+          _button.btn.btn_primary 'Create project in LDAP', onClick: self.post,
+            disabled: @create_disabled
+        end
+      end
+      _div.col_sm_6 do
+        _input.form_control type: 'search', placeholder: 'search',
+          value: @search
+      end
     end
 
     # main content
-    _PPMCMentors auth: @@auth, ppmc: @ppmc
-    _PPMCMembers auth: @@auth, ppmc: @ppmc
-    _PPMCCommitters auth: @@auth, ppmc: @ppmc
+    if @search
+      _PPMCRoster auth: @@auth, ppmc: @ppmc, search: @search
+    else
+      _PPMCMentors auth: @@auth, ppmc: @ppmc
+      _PPMCMembers auth: @@auth, ppmc: @ppmc
+      _PPMCCommitters auth: @@auth, ppmc: @ppmc
+    end
 
     # mailing lists
     if @ppmc.moderators
@@ -204,6 +235,16 @@ class PPMC < React
   # update ppmc from conformation form
   def update(ppmc)
     @ppmc = ppmc
+  end
+
+  # refresh the current page
+  def refresh()
+    self.forceUpdate()
+  end
+
+  def componentDidMount()
+    # export refesh method
+    PPMC.refresh = self.refresh
   end
 
   # create project in ldap
