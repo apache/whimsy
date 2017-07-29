@@ -14,6 +14,7 @@ class PPMCMembers < React
     _table.table.table_hover do
       _thead do
         _tr do
+          _th if @@auth.ppmc
           _th 'id'
           _th 'public name'
           _th 'notes'
@@ -109,6 +110,13 @@ class PPMCMember < React
   def render
     _tr onDoubleClick: self.select do
 
+      if @@auth.ppmc
+        _td do
+           _input type: 'checkbox', checked: @@person.selected || false,
+             onChange: -> {self.toggleSelect(@@person)}, disabled: true
+        end
+      end
+
       if @@person.member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" } }
         _td { _b @@person.name }
@@ -190,5 +198,11 @@ class PPMCMember < React
     return unless @@auth and @@auth.ppmc
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
+  end
+
+  # toggle checkbox
+  def toggleSelect(person)
+    person.selected = !person.selected
+    PPMC.refresh()
   end
 end

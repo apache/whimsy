@@ -19,12 +19,14 @@ class PPMC
     pmc = ASF::Committee.find('incubator')
     ipmc = pmc.owners
     incubator_committers = pmc.committers
+    owners = ppmc.owners
 
     roster = ppmc.members.map {|person|
       [person.id, {
         name: person.public_name, 
         member: person.asf_member?,
-        icommit: incubator_committers.include?(person)
+        icommit: incubator_committers.include?(person),
+        role: (owners.include?(person) ? 'PPMC Member' : 'Committer')
       }]
     }.to_h
 
@@ -34,7 +36,8 @@ class PPMC
         name: person.public_name, 
         member: person.asf_member?,
         ipmc: ipmc.include?(person),
-        icommit: incubator_committers.include?(person)
+        icommit: incubator_committers.include?(person),
+        role: 'Mentor'
       }
     end
 

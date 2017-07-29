@@ -15,6 +15,7 @@ class PPMCMentors < React
     _table.table.table_hover do
       _thead do
         _tr do
+          _th if @@auth.ipmc
           _th 'id'
           _th 'public name'
           _th 'notes'
@@ -116,7 +117,7 @@ class PPMCMentors < React
 end
 
 #
-# Show a mentor forthe PPMC
+# Show a mentor of the PPMC
 #
 
 class PPMCMentor < React
@@ -126,6 +127,13 @@ class PPMCMentor < React
 
   def render
     _tr onDoubleClick: self.select do
+
+      if @@auth.ipmc
+        _td do
+           _input type: 'checkbox', checked: @@person.selected || false,
+             onChange: -> {self.toggleSelect(@@person)}, disabled: true
+        end
+      end
 
       if @@person.member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" } }
@@ -209,5 +217,11 @@ class PPMCMentor < React
     return unless @@auth and @@auth.ipmc
     window.getSelection().removeAllRanges()
     @state = ( @state == :open ? :closed : :open )
+  end
+
+  # toggle checkbox
+  def toggleSelect(person)
+    person.selected = !person.selected
+    PPMC.refresh()
   end
 end
