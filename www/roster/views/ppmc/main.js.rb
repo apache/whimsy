@@ -54,11 +54,6 @@ class PPMC < React
         else
           _span 'Double click on a Mentors row to show actions.'
         end
-
-        unless @ppmc.roster.keys().empty?
-          _span "  Click on \u2795 to add."
-          _span "  Multiple people can be added with a single confirmation."
-        end
       end
     end
 
@@ -66,8 +61,8 @@ class PPMC < React
     _div.row key: 'databar' do
       _div.col_sm_6 do
         if @@auth.ipmc or @@auth.ipmc
-          _button.btn.btn_default 'Add', disabled: true,
-            data_target: '#pmcadd', data_toggle: 'modal'
+          _button.btn.btn_default 'Add',
+            data_target: '#ppmcadd', data_toggle: 'modal'
 
           mod_disabled = true
           for id in @ppmc.roster
@@ -81,7 +76,7 @@ class PPMC < React
             _button.btn.btn_default 'Modify', disabled: true
           else
             _button.btn.btn_primary 'Modify',
-              data_target: '#pmcmod', data_toggle: 'modal'
+              data_target: '#ppmcmod', data_toggle: 'modal'
           end
         elsif @ppmc.owners.empty? and (@@auth.root or @@auth.secretary)
           _button.btn.btn_primary 'Create project in LDAP', onClick: self.post,
@@ -216,9 +211,10 @@ class PPMC < React
     # Graduation resolution
     _PPMCGraduate ppmc: @ppmc, id: @@auth.id
 
-    # hidden form
+    # hidden forms
     if @@auth.ppmc or @@auth.ipmc
       _Confirm action: :ppmc, project: @ppmc.id, update: self.update
+      _PPMCAdd ppmc: @@ppmc, update: self.update, auth: @@auth
     end
   end
 

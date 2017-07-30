@@ -3,10 +3,6 @@
 #
 
 class PPMCMembers < React
-  def initialize
-    @state = :closed
-  end
-
   def render
     pending = [] 
 
@@ -48,19 +44,6 @@ class PPMCMembers < React
             end
           end
         end
-
-        if @@auth and @@auth.ppmc and not @@ppmc.roster.keys().empty?
-          _tr onClick: self.select do
-            _td((@state == :open ? '' : "\u2795"), colspan: 4)
-          end
-        end
-      end
-    end
-
-    if @state == :open
-      _div.search_box do
-        _CommitterSearch add: self.add, multiple: true,
-          exclude: @roster.map {|person| person.id unless person.issue}
       end
     end
   end
@@ -83,18 +66,10 @@ class PPMCMembers < React
     @roster = roster.sort_by {|person| person.name}
   end
 
-  # open search box
-  def select()
-    return unless @@auth and @@auth.ppmc
-    window.getSelection().removeAllRanges()
-    @state = ( @state == :open ? :closed : :open )
-  end
-
   # add a person to the displayed list of PMC members
   def add(person)
     person.status = :pending
     @roster << person
-    @state = :closed
   end
 end
 

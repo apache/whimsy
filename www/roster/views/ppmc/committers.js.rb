@@ -47,19 +47,6 @@ class PPMCCommitters < React
               end
             end
           end
-
-          if @@auth and @@auth.ppmc
-            _tr onClick: self.select do
-              _td((@state == :open ? '' : "\u2795"), colspan: 3)
-            end
-          end
-        end
-      end
-
-      if @state == :open
-        _div.search_box do
-          _CommitterSearch add: self.add, multiple: true,
-            exclude: @committers.map {|person| person.id unless person.issue}
         end
       end
     end
@@ -83,18 +70,10 @@ class PPMCCommitters < React
     @committers = committers.sort_by {|person| person.name}
   end
 
-  # open search box
-  def select()
-    return unless @@auth and @@auth.ppmc
-    window.getSelection().removeAllRanges()
-    @state = ( @state == :open ? :closed : :open )
-  end
-
   # add a person to the displayed list of committers
   def add(person)
     person.status = 'pending'
     @committers << person
-    @state = :closed
   end
 end
 

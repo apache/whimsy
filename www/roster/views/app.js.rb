@@ -24,6 +24,7 @@ require_relative 'ppmc/mentors'
 require_relative 'ppmc/members'
 require_relative 'ppmc/committers'
 require_relative 'ppmc/roster'
+require_relative 'ppmc/add'
 require_relative 'ppmc/graduate'
 
 require_relative 'committerSearch'

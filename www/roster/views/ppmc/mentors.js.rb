@@ -4,7 +4,6 @@
 
 class PPMCMentors < React
   def initialize
-    @state = :closed
     @ipmc = []
   end
 
@@ -48,19 +47,6 @@ class PPMCMentors < React
             end
           end
         end
-
-        if @@auth and @@auth.ipmc and not @@ppmc.roster.keys().empty?
-          _tr onClick: self.select do
-            _td((@state == :open ? '' : "\u2795"), colspan: 4)
-          end
-        end
-      end
-    end
-
-    if @state == :open
-      _div.search_box do
-        _CommitterSearch add: self.add, include: @ipmc, multiple: true,
-          exclude: @roster.map {|person| person.id unless person.issue}
       end
     end
   end
@@ -101,18 +87,10 @@ class PPMCMentors < React
     end
   end
 
-  # open search box
-  def select()
-    return unless @@auth and @@auth.ipmc
-    window.getSelection().removeAllRanges()
-    @state = ( @state == :open ? :closed : :open )
-  end
-
   # add a person to the displayed list of PMC members
   def add(person)
     person.status = :pending
     @roster << person
-    @state = :closed
   end
 end
 
