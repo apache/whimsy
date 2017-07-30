@@ -44,19 +44,6 @@ class PPMC < React
 
     _p @ppmc.description
 
-    # usage information for authenticated users (PMC chair, etc.)
-    if @@auth.ppmc or @@auth.ipmc
-      _div.alert.alert_success do
-        if (@@auth.ppmc and @@auth.ipmc) or @@auth.root or @@auth.secretary
-          _span 'Double click on a row to show actions.'
-        elsif @@auth.ppmc
-          _span 'Double click on a PPMC or Committers row to show actions.'
-        else
-          _span 'Double click on a Mentors row to show actions.'
-        end
-      end
-    end
-
     # action bar: add, modify, search
     _div.row key: 'databar' do
       _div.col_sm_6 do

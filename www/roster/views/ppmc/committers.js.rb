@@ -82,17 +82,13 @@ end
 #
 
 class PPMCCommitter < React
-  def initialize
-    @state = :closed
-  end
-
   def render
-    _tr onDoubleClick: self.select do
+    _tr do
 
       if @@auth.ppmc
         _td do
            _input type: 'checkbox', checked: @@person.selected || false,
-             onChange: -> {self.toggleSelect(@@person)}, disabled: true
+             onChange: -> {self.toggleSelect(@@person)}
         end
       end
 
@@ -104,39 +100,15 @@ class PPMCCommitter < React
         _td @@person.name
       end
 
-      if @state == :open
+      if @@person.selected
         _td data_ids: @@person.id do 
-          if @@person.status == 'pending'
-            _button.btn.btn_success 'Add as a committer and to the PPMC',
-              data_action: 'add ppmc committer', 
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Add #{@@person.name} to the " +
-                 "#{@@ppmc.display_name} PPMC and grant committer access?"
-
-            _button.btn.btn_primary 'Add as a committer only',
-              data_action: 'add committer', 
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Grant #{@@person.name} committer access?"
-          else
-            if @@auth.ipmc and not @@person.icommit
-              _button.btn.btn_primary 'Add as an incubator committer',
-                data_action: 'add icommit',
-                data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Add #{@@person.name} as a commiter " +
-                  "for the incubator PPMC?"
-            end
-
-            _button.btn.btn_warning 'Remove as Committer',
-              data_action: 'remove committer', 
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Remove #{@@person.name} as a Committer?"
-
-            _button.btn.btn_primary 'Add to PPMC',
-              data_action: 'add ppmc', 
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Add #{@@person.name} to the " +
-                "#{@@ppmc.display_name} PPMC?"
-          end
+	  if @@auth.ipmc and not @@person.icommit
+	    _button.btn.btn_primary 'Add as an incubator committer',
+	      data_action: 'add icommit',
+	      data_target: '#confirm', data_toggle: 'modal',
+	      data_confirmation: "Add #{@@person.name} as a commiter " +
+		"for the incubator PPMC?"
+	  end
         end
       elsif not @@person.icommit
         _span.issue 'not listed as an incubator committer'
@@ -144,24 +116,6 @@ class PPMCCommitter < React
         _td ''
       end
     end
-  end
-
-  # update props on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
-  # automatically open pending entries
-  def componentWillReceiveProps(newprops)
-    @state = :closed if newprops.person.id != self.props.person.id
-    @state = :open if @@person.status == 'pending'
-  end
-
-  # toggle display of buttons
-  def select()
-    return unless @@auth and @@auth.ppmc
-    window.getSelection().removeAllRanges()
-    @state = ( @state == :open ? :closed : :open )
   end
 
   # toggle checkbox
