@@ -215,6 +215,7 @@ class PPMC < React
     if @@auth.ppmc or @@auth.ipmc
       _Confirm action: :ppmc, project: @ppmc.id, update: self.update
       _PPMCAdd ppmc: @ppmc, update: self.update, auth: @@auth
+      _PPMCMod ppmc: @ppmc, update: self.update, auth: @@auth
     end
   end
 

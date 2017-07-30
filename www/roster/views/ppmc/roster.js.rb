@@ -42,7 +42,7 @@ class PPMCRoster < React
             if @@auth.ipmc or @@auth.ppmc
               _td do
                  _input type: 'checkbox', checked: person.selected || false,
-                   onChange: -> {self.toggleSelect(person)}, disabled: true
+                   onChange: -> {self.toggleSelect(person)}
               end
             end
 
