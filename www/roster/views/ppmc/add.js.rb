@@ -79,16 +79,16 @@ class PPMCAdd < React
   end
 
   def componentDidMount()
-    jQuery('#pmcadd').on('show.bs.modal') do |event|
+    jQuery('#ppmcadd').on('show.bs.modal') do |event|
       button = event.relatedTarget
-      setTimeout(500) { jQuery('#pmcadd input').focus() }
+      setTimeout(500) { jQuery('#ppmcadd input').focus() }
     end
   end
 
   def add(person)
     @people << person
     self.forceUpdate()
-    jQuery('#pmcadd input').focus()
+    jQuery('#ppmcadd input').focus()
   end
 
   def post(event)
@@ -122,11 +122,11 @@ class PPMCAdd < React
         else
           alert "#{response.status} #{response.statusText}"
         end
-        jQuery('#pmcadd').modal(:hide)
+        jQuery('#ppmcadd').modal(:hide)
         @disabled = false
       }.catch {|error|
         alert error
-        jQuery('#pmcadd').modal(:hide)
+        jQuery('#ppmcadd').modal(:hide)
         @disabled = false
       }
     end

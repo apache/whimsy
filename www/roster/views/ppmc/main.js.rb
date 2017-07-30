@@ -214,7 +214,7 @@ class PPMC < React
     # hidden forms
     if @@auth.ppmc or @@auth.ipmc
       _Confirm action: :ppmc, project: @ppmc.id, update: self.update
-      _PPMCAdd ppmc: @@ppmc, update: self.update, auth: @@auth
+      _PPMCAdd ppmc: @ppmc, update: self.update, auth: @@auth
     end
   end
 
