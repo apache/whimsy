@@ -402,13 +402,13 @@ module ASF
     end
 
     # return the LDAP base for this object: identifies the subtree where
-    # which this object can be found.
+    # this object can be found.
     def self.base
       @base
     end
 
     # return the LDAP base for this object: identifies the subtree where
-    # which this object can be found.
+    # this object can be found.
     def base
       self.class.base
     end
