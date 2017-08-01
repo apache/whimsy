@@ -513,7 +513,7 @@ module ASF
       'ou=people,' + ASF::Group.base
     end
 
-    # Obtain a list of people (committers).  LDAP filters may be used
+    # Obtain a list of people known to LDAP.  LDAP filters may be used
     # to retrieve only a subset.
     def self.list(filter='uid=*')
       ASF.search_one(base, filter, 'uid').flatten.map {|uid| find(uid)}
