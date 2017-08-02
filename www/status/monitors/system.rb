@@ -54,6 +54,16 @@ def Monitor.system(previous_status)
   status[name] = {level: master == true ? 'success' : 'warning',
                   data: master.to_s}
 
+  # Is ASF::LDAP.hosts up to date?
+  require_relative '../../../lib/whimsy/asf'
+  name = :ldap
+  pls = ASF::LDAP.puppet_ldapservers.sort
+  hosts = ASF::LDAP::HOSTS.sort
+  diff = (pls-hosts).map {|host| "+#{host}"}
+  diff += (hosts-pls).map {|host| "-#{host}"}
+  status[name] = {level: diff.empty? ? 'success' : 'warning',
+                  data: diff.join(' ')}
+
   {data: status}
 end
 
