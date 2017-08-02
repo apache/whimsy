@@ -17,7 +17,7 @@ def Monitor.system(previous_status)
     ENV['LANG'] = 'en_US.UTF-8'
     ENV['LANGUAGE'] = 'en_US.UTF-8'
 
-    puppet = `service puppet status`.force_encoding('utf-8').strip
+    puppet = `service puppet status`.force_encoding('utf-8').strip.split("\n")
 
     if puppet.include? 'Active: active (running)'
       status[name].merge! level: 'success', data: puppet
@@ -59,10 +59,13 @@ def Monitor.system(previous_status)
   name = :ldap
   pls = ASF::LDAP.puppet_ldapservers.sort
   hosts = ASF::LDAP::HOSTS.sort
-  diff = (pls-hosts).map {|host| "+#{host}"}
-  diff += (hosts-pls).map {|host| "-#{host}"}
-  status[name] = {level: diff.empty? ? 'success' : 'warning',
-                  data: diff.join(' ')}
+  diff = (pls-hosts).map {|host| "+ #{host}"}
+  diff += (hosts-pls).map {|host| "- #{host}"}
+  if diff.empty?
+    status[name] = {level: 'success', data: hosts}
+  else
+    status[name] = {level: 'warning', data: diff}
+  end
 
   {data: status}
 end
