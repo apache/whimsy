@@ -17,14 +17,14 @@ def Monitor.system(previous_status)
     ENV['LANG'] = 'en_US.UTF-8'
     ENV['LANGUAGE'] = 'en_US.UTF-8'
 
-    puppet = `service puppet status`.force_encoding('utf-8').strip.split("\n")
+    puppet = `service puppet status`.force_encoding('utf-8').strip
 
     if puppet.include? 'Active: active (running)'
-      status[name].merge! level: 'success', data: puppet
+      status[name].merge! level: 'success', data: puppet.split("\n")
     elsif puppet.include? '* agent is running'
-      status[name].merge! level: 'success', data: puppet
+      status[name].merge! level: 'success', data: puppet.split("\n")
     else
-      status[name].merge! level: 'warning', data: puppet
+      status[name].merge! level: 'warning', data: puppet.split("\n")
     end
 
   rescue Exception => e
