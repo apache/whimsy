@@ -3,6 +3,7 @@
 # preprocess_vhosts.rb puppet macro
 #
 
+$LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'whimsy/asf'
 
 IP = ASF::Git['infrastructure-puppet']
