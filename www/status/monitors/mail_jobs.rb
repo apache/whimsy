@@ -34,7 +34,6 @@ def Monitor.mail_jobs(previous_status)
       warning_period = warning_hours * 3600
 
       status[name] = {
-        href: "../logs/#{File.basename(log)}",
         mtime: File.mtime(log).gmtime.iso8601, # to agree with normalise
         level: 'success' # to agree with normalise
       }
