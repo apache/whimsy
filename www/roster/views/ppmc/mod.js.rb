@@ -126,7 +126,7 @@ class PPMCMod < React
 
     @disabled = true
     Polyfill.require(%w(Promise fetch)) do
-      fetch("actions/committee", args).then {|response|
+      fetch("actions/ppmc", args).then {|response|
         content_type = response.headers.get('content-type') || ''
         if response.status == 200 and content_type.include? 'json'
           response.json().then do |json|
