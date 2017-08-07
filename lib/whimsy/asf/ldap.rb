@@ -1097,7 +1097,7 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).remove_owners(people)
       else
-        project = ASF::Project['name']
+        project = ASF::Project[name]
         project.remove_owners(people) if project
         remove(people)
       end
@@ -1108,7 +1108,7 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).remove_members(people)
       else
-        project = ASF::Project['name']
+        project = ASF::Project[name]
         project.remove_members(people) if project
         ASF::Group.find(name).remove(people)
       end
@@ -1119,7 +1119,7 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).add_owners(people)
       else
-        project = ASF::Project['name']
+        project = ASF::Project[name]
         project.add_owners(people) if project
         add(people)
       end
@@ -1131,7 +1131,7 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).add_members(people)
       else
-        project = ASF::Project['name']
+        project = ASF::Project[name]
         project.add_members(people) if project
         ASF::Group.find(name).add(people)
       end
