@@ -119,10 +119,10 @@ module ASF
     # update operations.  If a block is passed, the connection will be
     # closed after the block executes.
     #
-    # when run in irb, will default user and prompt for password
+    # when run interactively, will default user and prompt for password
     def self.bind(user=nil, password=nil, &block)
       if not user or not password
-        raise ArgumentError.new('wrong number of arguments') unless $0 == 'irb'
+        raise ArgumentError.new('wrong number of arguments') unless STDIN.isatty
 
         require 'etc'
         require 'io/console'

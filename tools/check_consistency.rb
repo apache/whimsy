@@ -2,6 +2,10 @@
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'whimsy/asf'
 
+fix = (ARGV.include? '--fix')
+
+ASF::LDAP.bind if fix
+
 groups = ASF::Group.preload # for performance
 committees = ASF::Committee.preload # for performance
 projects = ASF::Project.preload
@@ -20,6 +24,11 @@ groups.keys.sort_by {|a| a.name}.each do |entry|
       end
       if p != g
         puts "#{entry.name}: pm-g=#{p-g} g-pm=#{g-p}" 
+
+        if fix
+          project.add_members(entry.members-project.members) unless (g-p).empty?
+          project.remove_members(project.members-entry.members) unless (p-g).empty?
+        end
       end
     end
 end
@@ -39,6 +48,11 @@ committees.keys.sort_by {|a| a.name}.each do |entry|
       end
       if p != c
         puts "#{entry.name}: po-c=#{p-c} c-po=#{c-p}" 
+
+        if fix
+          project.add_owners(entry.members-project.owners) unless (c-p).empty?
+          project.remove_owners(project.owners-entry.members) unless (p-c).empty?
+        end
       end
     end
 end
