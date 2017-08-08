@@ -56,3 +56,29 @@ committees.keys.sort_by {|a| a.name}.each do |entry|
       end
     end
 end
+
+puts ""
+puts "current podlings(asf-auth) ~ project(members, owners)"
+pods = Hash[ASF::Podling.list.map {|podling| [podling.name, podling.status]}]
+ASF::Authorization.new('asf').each do |grp, mem|
+  if pods[grp] == 'current'
+    mem.sort!.uniq!
+    project = ASF::Project[grp]
+    if project
+      pm = []
+      project.members.sort_by {|a| a.name}.each do |e|
+          pm << e.name
+      end
+      po = []
+      project.owners.sort_by {|a| a.name}.each do |e|
+          po << e.name
+      end
+      if mem != pm
+        puts "#{grp}: pm-auth=#{pm-mem} auth-pm=#{mem-pm}" 
+      end
+      if mem != po
+        puts "#{grp}: po-auth=#{po-mem} auth-po=#{mem-po}" 
+      end
+    end
+  end
+end
