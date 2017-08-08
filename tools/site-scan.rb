@@ -155,7 +155,7 @@ else
   end
   # scan all committees, including non-pmcs
   ASF::Committee.load_committee_info
-  committees = (ASF::Committee.list + ASF::Committee.nonpmcs).uniq
+  committees = (ASF::Committee.pmcs + ASF::Committee.nonpmcs).uniq
   
   committees.sort_by {|committee| committee.name}.each do |committee|
     next unless committee.site
