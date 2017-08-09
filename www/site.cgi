@@ -22,11 +22,11 @@ CHECKS = {
   'image'  => %r{.},
   # TODO more checks needed here, e.g. ASF registered and 3rd party marks
   'trademarks'  => %r{trademarks of [Tt]he Apache Software Foundation},
-  'events'      => %r{apache.org/events/current-event},
-  'license'     => %r{apache.org/licenses/$}, # should link to parent license page only
-  'sponsorship' => %r{apache.org/foundation/sponsorship},
-  'security'    => %r{apache.org/[Ss]ecurity},
-  'thanks'      => %r{apache.org/foundation/thanks},
+  'events'      => %r{^https?://.*apache.org/events/current-event},
+  'license'     => %r{^https?://.*apache.org/licenses/$}, # should link to parent license page only
+  'sponsorship' => %r{^https?://.*apache.org/foundation/sponsorship},
+  'security'    => %r{^https?://.*apache.org/[Ss]ecurity},
+  'thanks'      => %r{^https?://.*apache.org/foundation/thanks},
 }
 DOCS = {
   'uri'         => ['https://www.apache.org/foundation/marks/pmcs#websites',
