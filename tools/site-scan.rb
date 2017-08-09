@@ -73,19 +73,35 @@ def parse(id, site, name)
     $stderr.puts a_text if $verbose
 
     if a_text =~ /licenses?/ and a_href.include? 'apache.org'
-      data[:license] = uri + a_href 
+      begin
+        data[:license] = uri + a_href 
+      rescue
+        data[:license] = a_href
+      end
     end
 
     if a_text == 'thanks'
-      data[:thanks] = uri + a_href 
+      begin
+        data[:thanks] = uri + a_href 
+      rescue
+        data[:thanks] = a_href
+      end
     end
 
     if a_text == 'security'
-      data[:security] = uri + a_href 
+      begin
+        data[:security] = uri + a_href 
+      rescue
+        data[:security] = a_href
+      end
     end
 
     if ['sponsorship', 'donate', 'sponsor apache','sponsoring apache'].include? a_text
-      data[:sponsorship] = uri + a_href
+      begin
+        data[:sponsorship] = uri + a_href
+      rescue
+        data[:sponsorship] = a_href
+      end
     end
   end
 
