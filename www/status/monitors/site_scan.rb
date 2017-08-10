@@ -18,7 +18,7 @@ def Monitor.site_scan(previous_status)
   logfile = File.expand_path('../../www/logs/site-scan')
   log = File.read(logfile)
 
-  log.gsub! /\w+ https?:\S+ \w+\n/, ''
+  log.gsub! /^([-\w]+ )*https?:\S+ \w+\n/, ''
 
   danger_period = 86_400 # one day
 
