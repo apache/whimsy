@@ -105,7 +105,7 @@ class PPMCAdd < React
       headers: {'Content-Type' => 'application/json'},
       body: {
         project: @@ppmc.id, 
-        ids: @people.map {|person| person.id}.join(' '), 
+        ids: @people.map {|person| person.id}.join(','), 
         action: action, 
         targets: targets
       }.inspect
