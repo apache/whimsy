@@ -9,9 +9,13 @@ ASF::LDAP.bind if fix
 groups = ASF::Group.preload # for performance
 committees = ASF::Committee.preload # for performance
 projects = ASF::Project.preload
-
+summary=Hash.new { |h, k| h[k] = { } }
+projects.keys.sort_by {|a| a.name}.each do |entry|
+  summary[entry.name]['p']=1
+end
 puts "project.members ~ group.members"
 groups.keys.sort_by {|a| a.name}.each do |entry|
+    summary[entry.name]['g']=1
     project = ASF::Project[entry.name]
     if project
       p = []
@@ -36,6 +40,7 @@ end
 puts ""
 puts "project.owners ~ committee.members"
 committees.keys.sort_by {|a| a.name}.each do |entry|
+    summary[entry.name]['c']=1
     project = ASF::Project[entry.name]
     if project
       p = []
@@ -60,7 +65,13 @@ end
 puts ""
 puts "current podlings(asf-auth) ~ project(members, owners)"
 pods = Hash[ASF::Podling.list.map {|podling| [podling.name, podling.status]}]
+# flag current podlings to show what records they have
+pods.each do |name,status|
+  summary[name]['pod'] = status if status == 'current'
+end
+# Scan the local defines and report differences
 ASF::Authorization.new('asf').each do |grp, mem|
+  summary[grp]['pod'] = pods[grp] + ' (has local definition)'
   if pods[grp] == 'current'
     mem.sort!.uniq!
     project = ASF::Project[grp]
@@ -81,4 +92,12 @@ ASF::Authorization.new('asf').each do |grp, mem|
       end
     end
   end
+end
+# Show where names are defined
+puts "\nSummary of name definitions (proj,grp,cttee,status)"
+def show(v,k)
+  v[k] == 1 ? k : '-'
+end
+summary.sort.map do |k,v|
+  puts "#{k.ljust(30)} #{show(v,'p')} #{show(v,'g')} #{show(v,'c')} #{v['pod'] rescue ''}"
 end
