@@ -13,6 +13,16 @@ module ASF
     # Select a given <tt>-authorization-template</tt>, valid values are
     # <tt>asf</tt> and <tt>pit</tt>.
     def initialize(file='asf')
+      # TODO - should this read the Git repo directly?
+      # Probably not: this file is read frequently so would need to be cached anyway
+      # The Git clone is updated every 10 minutes which should be sufficiently recent
+      auth = ASF::Git.find('infrastructure-puppet')
+      if auth
+        @auth = auth + '/modules/subversion_server/files/authorization'
+      else
+        # SVN copy is no longer in use - see INFRA-11452
+        raise Exception.new("Cannot find Git: infrastructure-puppet")
+      end
       @file = file
     end
 
@@ -44,17 +54,7 @@ module ASF
     private
 
     def read_auth
-      # TODO - should this read the Git repo directly?
-      # Probably not: this file is read frequently so would need to be cached anyway
-      # The Git clone is updated every 10 minutes which should be sufficiently recent
-      auth = ASF::Git.find('infrastructure-puppet')
-      if auth
-        auth += '/modules/subversion_server/files/authorization'
-      else
-        # SVN copy is no longer in use - see INFRA-11452
-        raise Exception.new("Cannot find Git: infrastructure-puppet")
-      end
-      File.read("#{auth}/#{@file}-authorization-template")
+      File.read("#{@auth}/#{@file}-authorization-template")
     end
   end
 
