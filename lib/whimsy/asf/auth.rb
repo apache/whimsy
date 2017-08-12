@@ -12,16 +12,24 @@ module ASF
 
     # Select a given <tt>-authorization-template</tt>, valid values are
     # <tt>asf</tt> and <tt>pit</tt>.
-    def initialize(file='asf')
+    # The optional <tt>auth_path</tt> parameter allows the directory path to be overridden
+    # This is intended for testing only
+    def initialize(file='asf',auth_path=nil)
       # TODO - should this read the Git repo directly?
       # Probably not: this file is read frequently so would need to be cached anyway
       # The Git clone is updated every 10 minutes which should be sufficiently recent
-      auth = ASF::Git.find('infrastructure-puppet')
-      if auth
-        @auth = auth + '/modules/subversion_server/files/authorization'
+      if auth_path
+        require 'wunderbar'
+        Wunderbar.warn "Overriding Git infrastructure-puppet auth path as: #{auth_path}"
+        @auth = auth_path
       else
-        # SVN copy is no longer in use - see INFRA-11452
-        raise Exception.new("Cannot find Git: infrastructure-puppet")
+        auth = ASF::Git.find('infrastructure-puppet')
+        if auth
+          @auth = auth + '/modules/subversion_server/files/authorization'
+        else
+          # SVN copy is no longer in use - see INFRA-11452
+          raise Exception.new("Cannot find Git: infrastructure-puppet")
+        end
       end
       @file = file
     end
@@ -42,6 +50,11 @@ module ASF
         arr << group[0]
       end
       arr
+    end
+
+    # Return the auth path used to find asf-auth and pit-auth
+    def path
+      @auth
     end
 
     unless Enumerable.instance_methods.include? :to_h
