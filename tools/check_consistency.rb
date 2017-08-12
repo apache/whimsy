@@ -2,9 +2,11 @@
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'whimsy/asf'
 
-fix = (ARGV.include? '--fix')
+fix = ARGV.delete '--fix'
 
 ASF::LDAP.bind if fix
+
+auth_path=ARGV.shift
 
 groups = ASF::Group.preload # for performance
 committees = ASF::Committee.preload # for performance
@@ -70,7 +72,7 @@ pods.each do |name,status|
   summary[name]['pod'] = status if status == 'current'
 end
 # Scan the local defines and report differences
-ASF::Authorization.new('asf').each do |grp, mem|
+ASF::Authorization.new('asf',auth_path).each do |grp, mem|
   summary[grp]['pod'] = pods[grp] + ' (has local definition)'
   if pods[grp] == 'current'
     mem.sort!.uniq!
