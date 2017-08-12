@@ -57,31 +57,27 @@ class Committer
 
     response[:committees] = person.committees.map(&:name)
 
-    response[:podlings] = 
-      (person.projects.map(&:name) & ASF::Podling.current.map(&:id)).sort
-
     response[:groups] = person.services
     response[:committer] = []
+    response[:podlings] = []
     committees = ASF::Committee.pmcs.map(&:name)
+    podlings = ASF::Podling.current.map(&:id)
     person.groups.map(&:name).each do |group|
-      if committees.include? group
-        unless response[:committees].include? group
-          # Legacy LDAP unix group
-          response[:committer] << group 
-        end
-      else
+      unless committees.include? group
         response[:groups] << group
       end
     end
 
     # Get project(member) details
-    person.projects.select{|prj| prj.members.include? person}.map(&:name).each do |group|
-      if committees.include? group
+    person.projects.map(&:name).each do |project|
+      if committees.include? project
           # Don't show committer karma if person has committee karma
-          unless response[:committees].include? group
+          unless response[:committees].include? project
             # LDAP project group
-            response[:committer] << group 
+            response[:committer] << project 
           end
+      elsif podlings.include? project
+        response[:podlings] << project 
       else
         # TODO should this populate anything?
       end
@@ -98,6 +94,7 @@ class Committer
     response[:committees].sort!
     response[:groups].sort!
     response[:committer].sort!
+    response[:podlings].sort!
 
     if ASF::Person.find(env.user).asf_member?
       response[:forms] = {}
