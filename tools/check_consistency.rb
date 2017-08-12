@@ -10,11 +10,13 @@ auth_path=ARGV.shift
 
 groups = ASF::Group.preload # for performance
 committees = ASF::Committee.preload # for performance
+
 projects = ASF::Project.preload
 summary=Hash.new { |h, k| h[k] = { } }
-projects.keys.sort_by {|a| a.name}.each do |entry|
+projects.keys.each do |entry|
   summary[entry.name]['p']=1
 end
+
 puts "project.members ~ group.members"
 groups.keys.sort_by {|a| a.name}.each do |entry|
     summary[entry.name]['g']=1
