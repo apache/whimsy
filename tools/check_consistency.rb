@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 # basic check of LDAP consistency
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'whimsy/asf'
