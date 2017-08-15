@@ -5,6 +5,7 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'mail'
 require 'whimsy/asf'
+require 'whimsy/asf/mlist'
 require 'time'
 require 'tmpdir'
 require 'escape'
@@ -50,7 +51,7 @@ _html do
         '/committers/moderationhelper.cgi' => 'Mailing List Moderation Helper'
       },
       helpblock: -> {
-        _ 'This page allows Apache committers to auto-subscribe to various mailing lists.'
+        _ 'This page allows Apache committers to auto-subscribe to, and auto-unsubscribe from, various mailing lists.'
         _span.text_info 'Note:' 
         _ 'Only your registered email address(es) are listed here. To change your email addresses, login to '
         _a 'https://id.apache.org/', href: "https://id.apache.org/details/#{$USER}"
@@ -58,9 +59,24 @@ _html do
       }
     ) do
       
+      seen = Hash.new
+      lists.each do |list|
+        ln = list.split('-').first
+        ln = 'empire-db' if ln == 'empire'
+        seen[list] = 0
+        seen[list] = 1 if pmcs.include? ln
+        seen[list] = 2 if current.include? ln
+        seen[list] = 2 if (ln == 'incubator') \
+        && (current.include? list.split('-')[1])
+        seen[list] = 3 if retired.include? ln
+        seen[list] = 3 if (ln == 'incubator') \
+        && (retired.include? list.split('-')[1])
+      end
+
       _form method: 'post' do
+        _input type: 'hidden', name: 'request', value: 'sub'
         _fieldset do
-          _legend PAGETITLE
+          _legend 'Subscribe Request:'
           _label 'Subscribe'
           _select name: 'addr' do
             addrs.each do |addr|
@@ -70,20 +86,6 @@ _html do
           
           _ 'to'
           _select name: 'list', data_live_search: 'true' do
-            seen = Hash.new
-            lists.each do |list|
-              ln = list.split('-').first
-              ln = 'empire-db' if ln == 'empire'
-              seen[list] = 0
-              seen[list] = 1 if pmcs.include? ln
-              seen[list] = 2 if current.include? ln
-              seen[list] = 2 if (ln == 'incubator') \
-              && (current.include? list.split('-')[1])
-              seen[list] = 3 if retired.include? ln
-              seen[list] = 3 if (ln == 'incubator') \
-              && (retired.include? list.split('-')[1])
-            end
-
             _optgroup label: 'Foundation lists' do
               lists.find_all { |list| seen[list] == 0 }.each do |list|
                 _option list
@@ -105,6 +107,61 @@ _html do
           _input type: 'submit', value: 'Submit Request'
         end
       end
+
+      _p
+      _hr
+      _p
+
+      _form method: 'post' do
+        _input type: 'hidden', name: 'request', value: 'unsub'
+        _fieldset do
+          _legend 'Unsubscribe Request:'
+          _label 'Unsubscribe'
+          _select.uaddr! name: 'addr' do
+            addrs.each do |addr|
+              _option addr
+            end
+          end
+          _ 'from'
+
+          # collect subscriptions
+          response = {}
+          ASF::MLIST.subscriptions(user.all_mail, response)
+          subscriptions = response[:subscriptions].group_by {|list, mail| list}
+          subscriptions = subscriptions.map do |list, names|
+            list = $1 if list =~ /^(.*?)@apache\.org$/
+            list = "#$2-#$1" if list =~ /^(.*?)@(.*?)\.apache\.org$/
+            [list, names.map(&:last)]
+          end.to_h
+
+          _select.ulist! name: 'list', data_live_search: 'true' do
+            _optgroup label: 'Foundation lists' do
+              lists.find_all { |list| seen[list] == 0 }.each do |list|
+                next unless subscriptions.include? list
+                _option list, data_emails: subscriptions[list].join(' ')
+              end
+            end
+
+            _optgroup label: 'Top-Level Projects' do
+              lists.find_all { |list| seen[list] == 1 }.each do |list|
+                next unless subscriptions.include? list
+                _option list, data_emails: subscriptions[list].join(' ')
+              end
+            end
+
+            _optgroup label: 'Podlings' do
+              lists.find_all { |list| seen[list] == 2 }.each do |list|
+                next unless subscriptions.include? list
+                _option list, data_emails: subscriptions[list].join(' ')
+              end
+            end
+          end
+
+          _input type: 'submit', value: 'Submit Request'
+        end
+      end
+
+      _p
 
       if _.post?
         _hr
@@ -128,12 +185,19 @@ _html do
           chair_p: ASF.pmc_chairs.include?(user),
         }
         request = JSON.pretty_generate(vars) + "\n"
+
         _div.well do
-          _p 'Submitting subscribe request:'
+          if @request != 'unsub'
+            _p 'Submitting subscribe request:'
+          else
+            _p 'Submitting unsubscribe request:'
+          end
+
           _pre request
         end
         
         SUBREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/subreq/'
+        SUBREQ.sub! '/subreq', '/unsubreq' if @request == 'unsub'
         
         rc = 999
 
@@ -161,9 +225,14 @@ _html do
               File.write(fn, request + "\n")
               _.system ['svn', 'add', fn]
             end
+ 
+            if @request != 'unsub'
+              message = "#{@list} += #{$USER}"
+            else
+              message = "#{@list} -= #{$USER}"
+            end
           
-            rc = _.system ['svn', 'commit', fn,
-              '--message', "#{@list}@ += #{$USER}",
+            rc = _.system ['svn', 'commit', fn, '--message', message,
               ['--no-auth-cache', '--non-interactive'], credentials]
           end
         end
@@ -172,7 +241,11 @@ _html do
           _div.alert.alert_success role: 'alert' do
             _p do
               _span.strong 'Request successfully submitted'
-              _ 'You will be subscribed within the hour.'
+              if @request != 'unsub'
+                _ 'You will be subscribed within the hour.'
+              else
+                _ 'You will be unsubscribed within the hour.'
+              end
             end          
           end
         else
@@ -187,6 +260,34 @@ _html do
 
     _script %{
       $('select').selectpicker({});
+
+      function select_emails() {
+        var emails = $('#ulist option:selected').attr('data-emails').split(' ');
+        var oldval = $('#addr').val();
+        var newval = null;
+        $('#uaddr option').each(function() {
+          if (emails.indexOf($(this).text()) == -1) {
+            this.disabled = true;
+            if (this.textContent == oldval) oldval = nil;
+          } else {
+            this.disabled = false;
+            newval = newval || this.textContent;
+          };
+        });
+
+        if (newval && !oldval) {
+          $('#uaddr').val(newval);
+          $('button[data-id=uaddr] .filter-option').text(newval);
+        }
+
+        $('#uaddr').selectpicker('render');
+      }
+
+      select_emails();
+
+      $('#ulist').change(function() {
+        select_emails();
+      });
     }
   end
 end
