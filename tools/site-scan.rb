@@ -25,7 +25,7 @@ end
 IMAGE_DIR = ASF::SVN.find('asf/infrastructure/site/trunk/content/img')
 
 def parse(id, site, name)
-  uri, response, status = $cache.get(site)
+  uri, response, status = $cache.get(site.to_s)
   $stderr.puts "#{id} #{uri} #{status}"
   doc = Nokogiri::HTML(response)
 
