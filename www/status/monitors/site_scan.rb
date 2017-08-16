@@ -6,7 +6,7 @@
 The code checks the site-scan log file
 
 Possible status level responses:
-Danger - log contains an unexpected content
+Danger - log contains unexpected content
 Warning - log hasn't been updated within a day
 Info - log is recent and contains only expected content
 
@@ -15,7 +15,8 @@ Info - log is recent and contains only expected content
 require 'time'
 
 def Monitor.site_scan(previous_status)
-  logfile = File.expand_path('../../www/logs/site-scan')
+  logdir = File.expand_path('../../www/logs')
+  logfile = File.join(logdir, 'site-scan')
   log = File.read(logfile)
 
   log.gsub! /^([-\w]+ )*https?:\S+ \w+\n/, ''
@@ -23,6 +24,12 @@ def Monitor.site_scan(previous_status)
   danger_period = 86_400 # one day
 
   if not log.empty?
+    # Archive the log file
+    require 'fileutils'
+    archive = File.join(logdir,'archive')
+    FileUtils.mkdir(archive) unless File.directory?(archive)
+    file = File.basename(logfile)
+    FileUtils.copy logfile, File.join(archive, file + '.danger'), preserve: true
     {
       level: 'danger',
       data: log.split("\n"),
