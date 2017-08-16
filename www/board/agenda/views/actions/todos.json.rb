@@ -73,10 +73,16 @@ if @add and env.password
   ASF::Mail.configure
   sender = ASF::Person.new(env.user)
   mail = Mail.new do
-    from "#{sender.public_name} <#{sender.id}@apache.org>"
-    to people.map {|person| "#{person.public_name} <#{person.id}@apache.org>"}
+    from "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
+
+    to people.map do |person|
+      "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
+    end
+
     cc 'Apache Board <board@apache.org>'
+
     subject "Congratulations on your new role at Apache"
+
     body "Dear new PMC chairs,\n\nCongratulations on your new role at " +
     "Apache. I've changed your LDAP privileges to reflect your new " +
     "status.\n\nPlease read this and update the foundation records:\n" +
@@ -114,13 +120,28 @@ if @establish and env.password
 
     ASF::LDAP.bind(env.user, env.password) do
       chairs.add [chair] unless chairs.members.include? chair
+      guineapig = ASF::Committee::GUINEAPIGS.include?(pmc.downcase)
 
-      if ASF::Group.find(pmc.downcase).members.empty?
-        ASF::Group.add(pmc.downcase, members)
+      # old style definitions
+      unless guineapig
+        if ASF::Group.find(pmc.downcase).members.empty?
+          ASF::Group.add(pmc.downcase, members)
+        end
+
+        if ASF::Committee.find(pmc.downcase).members.empty?
+          ASF::Committee.add(pmc.downcase, members)
+        end
       end
 
-      if ASF::Committee.find(pmc.downcase).members.empty?
-        ASF::Committee.add(pmc.downcase, members)
+      # new style definitions
+      project = ASF::Project.find(pmc.downcase)
+      if not project
+        project.create(members, members)
+      elsif not guineapig
+        # sync project owners with new PMC list
+	project.add_owners(members)
+	project.remove_owners(project.owners - members)
+	project.add_members(members)
       end
     end 
   end
@@ -128,7 +149,7 @@ if @establish and env.password
   # create 'victims' file for tlpreq tool
   count = Dir["#{TLPREQ}/victims-#{date}.*.txt"].length
   message = "record #{date} approved TLP resolutions"
-  ASF:SVN.update TLPREQ, message, env, _ do |tmpdir|
+  ASF::SVN.update TLPREQ, message, env, _ do |tmpdir|
     filename = "victims-#{date}.#{count}.txt"
     contents = establish.join("\n") + "\n"
     File.write "#{tmpdir}/#{filename}", contents

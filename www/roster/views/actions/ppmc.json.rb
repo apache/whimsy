@@ -1,5 +1,8 @@
 if env.password
-  people = @ids.split(',').map {|id| ASF::Person.find(id)}
+  people = @ids.split(',').map {|id| ASF::Person[id]}
+
+  # validate ids
+  raise ArgumentError.new("ids=#{@ids}") if people.any? {|person| person.nil?}
 
   # if target is ONLY icommit, use incubator in the email message, etc.
   # Otherwise, use the project (podling).

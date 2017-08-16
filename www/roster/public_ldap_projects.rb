@@ -11,7 +11,9 @@
 #       ],
 #       "owners": [
 #         "abcd",
-#       ]
+#       ],
+#        "pmc": true|false, (may be absent)
+#        "podling": "current|graduated|retired" (may be absent)
 #     },
 #     ...
 #   },
@@ -35,6 +37,14 @@ if projects.empty?
   exit 0
 end
 
+# committee status
+committees = Hash[ASF::Committee.load_committee_info.map {|committee|
+  [ committee.name.gsub(/[^-\w]/,'') , !committee.nonpmc? ]
+}]
+
+# podling status
+pods = Hash[ASF::Podling.list.map {|podling| [podling.name, podling.status]}]
+
 lastStamp = ''
 projects.keys.sort_by {|a| a.name}.each do |entry|
     next if entry.name == 'apldap' # infra team would prefer this not be publicized
@@ -54,6 +64,14 @@ projects.keys.sort_by {|a| a.name}.each do |entry|
         members: m,
         owners: o 
     }
+    pmc = committees[entry.name]
+    if pmc
+        entries[entry.name][:pmc]=pmc
+    end
+    pod = pods[entry.name]
+    if pod
+        entries[entry.name][:podling]=pod
+    end
 end
 
 info = {

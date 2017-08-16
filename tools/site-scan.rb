@@ -25,7 +25,7 @@ end
 IMAGE_DIR = ASF::SVN.find('asf/infrastructure/site/trunk/content/img')
 
 def parse(id, site, name)
-  uri, response, status = $cache.get(site)
+  uri, response, status = $cache.get(site.to_s)
   $stderr.puts "#{id} #{uri} #{status}"
   doc = Nokogiri::HTML(response)
 
@@ -73,19 +73,35 @@ def parse(id, site, name)
     $stderr.puts a_text if $verbose
 
     if a_text =~ /licenses?/ and a_href.include? 'apache.org'
-      data[:license] = uri + a_href 
+      begin
+        data[:license] = uri + a_href 
+      rescue
+        data[:license] = a_href
+      end
     end
 
     if a_text == 'thanks'
-      data[:thanks] = uri + a_href 
+      begin
+        data[:thanks] = uri + a_href 
+      rescue
+        data[:thanks] = a_href
+      end
     end
 
     if a_text == 'security'
-      data[:security] = uri + a_href 
+      begin
+        data[:security] = uri + a_href 
+      rescue
+        data[:security] = a_href
+      end
     end
 
     if ['sponsorship', 'donate', 'sponsor apache','sponsoring apache'].include? a_text
-      data[:sponsorship] = uri + a_href
+      begin
+        data[:sponsorship] = uri + a_href
+      rescue
+        data[:sponsorship] = a_href
+      end
     end
   end
 
@@ -155,7 +171,7 @@ else
   end
   # scan all committees, including non-pmcs
   ASF::Committee.load_committee_info
-  committees = (ASF::Committee.list + ASF::Committee.nonpmcs).uniq
+  committees = (ASF::Committee.pmcs + ASF::Committee.nonpmcs).uniq
   
   committees.sort_by {|committee| committee.name}.each do |committee|
     next unless committee.site

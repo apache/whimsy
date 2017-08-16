@@ -69,7 +69,7 @@ feature 'report' do
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Edit comment'
     expect(page).to have_selector 'input[id=flag][type=checkbox]'
-    expect(page).to have_selector 'span', text: 'item requires discussion'
+    expect(page).to have_selector 'span', text: 'item requires discussion or follow up'
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Edit Report'
     expect(page).to have_selector '#post-report-text',

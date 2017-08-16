@@ -3,10 +3,6 @@
 #
 
 class PPMCMembers < React
-  def initialize
-    @state = :closed
-  end
-
   def render
     pending = [] 
 
@@ -14,6 +10,7 @@ class PPMCMembers < React
     _table.table.table_hover do
       _thead do
         _tr do
+          _th if @@auth.ppmc
           _th 'id'
           _th 'public name'
           _th 'notes'
@@ -47,19 +44,6 @@ class PPMCMembers < React
             end
           end
         end
-
-        if @@auth and @@auth.ppmc and not @@ppmc.roster.keys().empty?
-          _tr onClick: self.select do
-            _td((@state == :open ? '' : "\u2795"), colspan: 4)
-          end
-        end
-      end
-    end
-
-    if @state == :open
-      _div.search_box do
-        _CommitterSearch add: self.add, multiple: true,
-          exclude: @roster.map {|person| person.id unless person.issue}
       end
     end
   end
@@ -82,18 +66,10 @@ class PPMCMembers < React
     @roster = roster.sort_by {|person| person.name}
   end
 
-  # open search box
-  def select()
-    return unless @@auth and @@auth.ppmc
-    window.getSelection().removeAllRanges()
-    @state = ( @state == :open ? :closed : :open )
-  end
-
   # add a person to the displayed list of PMC members
   def add(person)
     person.status = :pending
     @roster << person
-    @state = :closed
   end
 end
 
@@ -102,12 +78,15 @@ end
 #
 
 class PPMCMember < React
-  def initialize
-    @state = :closed
-  end
-
   def render
-    _tr onDoubleClick: self.select do
+    _tr do
+
+      if @@auth.ppmc
+        _td do
+           _input type: 'checkbox', checked: @@person.selected || false,
+             onChange: -> {self.toggleSelect(@@person)}
+        end
+      end
 
       if @@person.member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" } }
@@ -118,53 +97,22 @@ class PPMCMember < React
       end
         
       _td data_ids: @@person.id do
-        if @state == :open
-          if @@person.status == :pending
-            # not added yet
-            _button.btn.btn_primary 'Add as a committer and to the PPMC',
-              data_action: 'add ppmc committer',
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Add #{@@person.name} to the " +
-                "#{@@ppmc.display_name} PPMC and grant committer access?"
+        if @@person.selected
+	  if @@auth.ipmc and not @@person.icommit
+	    _button.btn.btn_primary 'Add as an incubator committer',
+	      data_action: 'add icommit',
+	      data_target: '#confirm', data_toggle: 'modal',
+	      data_confirmation: "Add #{@@person.name} as a commiter " +
+		"for the incubator PPMC?"
+	  end
 
-            if @@ppmc.committers.all? {|person| @@ppmc.owners.include? person}
-              _button.btn.btn_warning 'Add as a committer only',
-                data_action: 'add committer',
-                data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Add #{@@person.name} to the " +
-                  "#{@@ppmc.display_name} PPMC and grant committer access?"
-            end
-          else
-            if @@auth.ipmc and not @@person.icommit
-              _button.btn.btn_primary 'Add as an incubator committer',
-                data_action: 'add icommit',
-                data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Add #{@@person.name} as a commiter " +
-                  "for the incubator PPMC?"
-            end
-
-            if @@ppmc.committers.include? @@person.id
-              _button.btn.btn_warning 'Remove as committer and from the PPMC',
-                data_action: 'remove ppmc committer',
-                data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Remove #{@@person.name} as a commiter " +
-                  "and from the #{@@ppmc.display_name} PPMC?"
-            else
-              _button.btn.btn_primary 'Add as committer',
-                data_action: 'add committer',
-                data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Add #{@@person.name} as a committer " +
-                  "for the #{@@ppmc.display_name} PPMC?"
-            end
-
-            _button.btn.btn_warning 'Remove only from the PPMC',
-              data_action: 'remove ppmc',
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Remove #{@@person.name} from the " +
-                "#{@@ppmc.display_name} PPMC but leave as a committer?"
-          end
-        elsif @@person.status == :pending
-          _span 'pending'
+	  unless @@ppmc.committers.include? @@person.id
+	    _button.btn.btn_primary 'Add as committer',
+	      data_action: 'add committer',
+	      data_target: '#confirm', data_toggle: 'modal',
+	      data_confirmation: "Add #{@@person.name} as a committer " +
+		"for the #{@@ppmc.display_name} PPMC?"
+	  end
         elsif not @@ppmc.committers.include? @@person.id
           _span.issue 'not listed as a committer'
         elsif not @@person.icommit
@@ -174,21 +122,9 @@ class PPMCMember < React
     end
   end
 
-  # update props on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
-  # automatically open pending entries
-  def componentWillReceiveProps(newprops)
-    @state = :closed if newprops.person.id != self.props.person.id
-    @state = :open if @@person.status == :pending
-  end
-
-  # toggle display of buttons
-  def select()
-    return unless @@auth and @@auth.ppmc
-    window.getSelection().removeAllRanges()
-    @state = ( @state == :open ? :closed : :open )
+  # toggle checkbox
+  def toggleSelect(person)
+    person.selected = !person.selected
+    PPMC.refresh()
   end
 end

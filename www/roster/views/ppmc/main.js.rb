@@ -44,33 +44,46 @@ class PPMC < React
 
     _p @ppmc.description
 
-    # usage information for authenticated users (PMC chair, etc.)
-    if @@auth.ppmc or @@auth.ipmc
-      _div.alert.alert_success do
-        if (@@auth.ppmc and @@auth.ipmc) or @@auth.root or @@auth.secretary
-          _span 'Double click on a row to show actions.'
-        elsif @@auth.ppmc
-          _span 'Double click on a PPMC or Committers row to show actions.'
-        else
-          _span 'Double click on a Mentors row to show actions.'
-        end
+    # action bar: add, modify, search
+    _div.row key: 'databar' do
+      _div.col_sm_6 do
+        if @@auth.ipmc or @@auth.ipmc
+          _button.btn.btn_default 'Add',
+            data_target: '#ppmcadd', data_toggle: 'modal'
 
-        unless @ppmc.roster.keys().empty?
-          _span "  Click on \u2795 to add."
-          _span "  Multiple people can be added with a single confirmation."
+          mod_disabled = true
+          for id in @ppmc.roster
+            if @ppmc.roster[id].selected
+              mod_disabled = false
+              break
+            end
+          end
+
+          if mod_disabled
+            _button.btn.btn_default 'Modify', disabled: true
+          else
+            _button.btn.btn_primary 'Modify',
+              data_target: '#ppmcmod', data_toggle: 'modal'
+          end
+        elsif @ppmc.owners.empty? and (@@auth.root or @@auth.secretary)
+          _button.btn.btn_primary 'Create project in LDAP', onClick: self.post,
+            disabled: @create_disabled
         end
+      end
+      _div.col_sm_6 do
+        _input.form_control type: 'search', placeholder: 'search',
+          value: @search
       end
     end
 
-    if @ppmc.owners.empty? and (@@auth.root or @@auth.secretary)
-      _button.btn.btn_primary 'Create project in LDAP', onClick: self.post,
-        disabled: @create_disabled
-    end
-
     # main content
-    _PPMCMentors auth: @@auth, ppmc: @ppmc
-    _PPMCMembers auth: @@auth, ppmc: @ppmc
-    _PPMCCommitters auth: @@auth, ppmc: @ppmc
+    if @search
+      _PPMCRoster auth: @@auth, ppmc: @ppmc, search: @search
+    else
+      _PPMCMentors auth: @@auth, ppmc: @ppmc
+      _PPMCMembers auth: @@auth, ppmc: @ppmc
+      _PPMCCommitters auth: @@auth, ppmc: @ppmc
+    end
 
     # mailing lists
     if @ppmc.moderators
@@ -185,9 +198,11 @@ class PPMC < React
     # Graduation resolution
     _PPMCGraduate ppmc: @ppmc, id: @@auth.id
 
-    # hidden form
+    # hidden forms
     if @@auth.ppmc or @@auth.ipmc
       _Confirm action: :ppmc, project: @ppmc.id, update: self.update
+      _PPMCAdd ppmc: @ppmc, update: self.update, auth: @@auth
+      _PPMCMod ppmc: @ppmc, update: self.update, auth: @@auth
     end
   end
 
@@ -204,6 +219,16 @@ class PPMC < React
   # update ppmc from conformation form
   def update(ppmc)
     @ppmc = ppmc
+  end
+
+  # refresh the current page
+  def refresh()
+    self.forceUpdate()
+  end
+
+  def componentDidMount()
+    # export refesh method
+    PPMC.refresh = self.refresh
   end
 
   # create project in ldap

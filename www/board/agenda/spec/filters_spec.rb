@@ -57,7 +57,7 @@ describe "filters", type: :feature, server: :react do
       end
 
       expect(page).to have_selector \
-        'a[href="https://whimsy.apache.org/roster/committer/rubys"]'
+        'a[href="/roster/committer/rubys"]'
       expect(page).to have_selector 'b', text: 'Sam Ruby'
       expect(page).to have_selector 'a.commented', text: 'Greg Stein'
     end

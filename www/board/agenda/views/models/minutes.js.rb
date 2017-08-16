@@ -24,7 +24,7 @@ class Minutes
 
     for title in @@list
       minutes = @@list[title] + "\n\n"
-      pattern = RegExp.new('^(?:@|AI\s+)(\w+):?\s+([\s\S]*?)(\n\n|$)', 'gm')
+      pattern = RegExp.new('^(?:@|AI\s+)(\w+):?\s+([\s\S]*?)(\n\n|$)', 'g')
       match = pattern.exec(minutes)
       while match
         actions << {owner: match[1], text: match[2], 

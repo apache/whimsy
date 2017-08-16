@@ -4,7 +4,6 @@
 
 class PPMCMentors < React
   def initialize
-    @state = :closed
     @ipmc = []
   end
 
@@ -15,6 +14,7 @@ class PPMCMentors < React
     _table.table.table_hover do
       _thead do
         _tr do
+          _th if @@auth.ipmc
           _th 'id'
           _th 'public name'
           _th 'notes'
@@ -47,19 +47,6 @@ class PPMCMentors < React
             end
           end
         end
-
-        if @@auth and @@auth.ipmc and not @@ppmc.roster.keys().empty?
-          _tr onClick: self.select do
-            _td((@state == :open ? '' : "\u2795"), colspan: 4)
-          end
-        end
-      end
-    end
-
-    if @state == :open
-      _div.search_box do
-        _CommitterSearch add: self.add, include: @ipmc, multiple: true,
-          exclude: @roster.map {|person| person.id unless person.issue}
       end
     end
   end
@@ -100,32 +87,27 @@ class PPMCMentors < React
     end
   end
 
-  # open search box
-  def select()
-    return unless @@auth and @@auth.ipmc
-    window.getSelection().removeAllRanges()
-    @state = ( @state == :open ? :closed : :open )
-  end
-
   # add a person to the displayed list of PMC members
   def add(person)
     person.status = :pending
     @roster << person
-    @state = :closed
   end
 end
 
 #
-# Show a mentor forthe PPMC
+# Show a mentor of the PPMC
 #
 
 class PPMCMentor < React
-  def initialize
-    @state = :closed
-  end
-
   def render
-    _tr onDoubleClick: self.select do
+    _tr do
+
+      if @@auth.ipmc
+        _td do
+           _input type: 'checkbox', checked: @@person.selected || false,
+             onChange: -> {self.toggleSelect(@@person)}
+        end
+      end
 
       if @@person.member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" } }
@@ -139,47 +121,16 @@ class PPMCMentor < React
       end
         
       _td data_ids: @@person.id do
-        if @state == :open
-          if @@person.status == :pending
-            if @@auth.ppmc
-              _button.btn.btn_primary 'Add as a mentor',
-                data_action: 'add mentor ppmc committer',
-                data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Add #{@@person.name} as a mentor to the " +
-                  "#{@@ppmc.display_name} PPMC?"
-            else
-              _button.btn.btn_primary 'Add only as a mentor',
-                data_action: 'add mentor',
-                data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Add #{@@person.name} as a mentor to the " +
-                  "#{@@ppmc.display_name} PPMC?"
-            end
-          else
-            if @@auth.ppmc
-              unless @@ppmc.owners.include? @@person.id
-                _button.btn.btn_primary 'Add to the PPMC',
-                  data_action: 'add ppmc committer',
-                  data_target: '#confirm', data_toggle: 'modal',
-                  data_confirmation: "Add #{@@person.name} as member of the " +
-                    "#{@@ppmc.display_name} PPMC?"
-              end
-
-              _button.btn.btn_warning 'Remove as a mentor and from the PMC',
-                data_action: 'remove mentor ppmc committer',
-                data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Remove #{@@person.name} as a mentor, " +
-                  "PPMC member, and committer from the " +
-                  "#{@@ppmc.display_name} PPMC?"
-            end
-
-            _button.btn.btn_warning 'Remove only as a mentor',
-              data_action: 'remove mentor',
-              data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Remove #{@@person.name} as a mentor from " +
-                "the #{@@ppmc.display_name} PPMC?"
-          end
-        elsif @@person.status == :pending
-          _span 'pending'
+        if @@person.selected
+	  if @@auth.ppmc
+	    unless @@ppmc.owners.include? @@person.id
+	      _button.btn.btn_primary 'Add to the PPMC',
+		data_action: 'add ppmc committer',
+		data_target: '#confirm', data_toggle: 'modal',
+		data_confirmation: "Add #{@@person.name} as member of the " +
+		  "#{@@ppmc.display_name} PPMC?"
+	    end
+	  end
         elsif not @@person.name
           _span.issue 'invalid user'
         elsif not @@ppmc.owners.include? @@person.id
@@ -193,21 +144,9 @@ class PPMCMentor < React
     end
   end
 
-  # update props on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
-  # automatically open pending entries
-  def componentWillReceiveProps(newprops)
-    @state = :closed if newprops.person.id != self.props.person.id
-    @state = :open if @@person.status == :pending
-  end
-
-  # toggle display of buttons
-  def select()
-    return unless @@auth and @@auth.ipmc
-    window.getSelection().removeAllRanges()
-    @state = ( @state == :open ? :closed : :open )
+  # toggle checkbox
+  def toggleSelect(person)
+    person.selected = !person.selected
+    PPMC.refresh()
   end
 end

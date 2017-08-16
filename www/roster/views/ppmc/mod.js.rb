@@ -2,19 +2,19 @@
 # Add People to a project
 #
 
-class PMCMod < React
+class PPMCMod < React
   def initialize
     @people = []
   end
 
   def render
-    _div.modal.fade.pmcmod! tabindex: -1 do
+    _div.modal.fade.ppmcmod! tabindex: -1 do
       _div.modal_dialog do
         _div.modal_content do
           _div.modal_header.bg_info do
             _button.close 'x', data_dismiss: 'modal'
             _h4.modal_title "Modify People's Roles in the " + 
-              @@committee.display_name + ' Project'
+              @@ppmc.display_name + ' Podling'
           end
 
           _div.modal_body do
@@ -44,20 +44,38 @@ class PMCMod < React
             _button.btn.btn_default 'Cancel', data_dismiss: 'modal',
               disabled: @disabled
 
-            # show add to PMC button only if every person is not on the PMC
-            if @people.all? {|person| !@@committee.members.include? person.id}
-              _button.btn.btn_primary "Add to PMC", 
-	        data_action: 'add pmc info',
-	        onClick: self.post, disabled: (@people.empty?)
+            if @@auth.ppmc
+	      # show add to PPMC button only if every person is not on the PPMC
+	      if @people.all? {|person| !@@ppmc.owners.include? person.id}
+		_button.btn.btn_primary "Add to PPMC", 
+		  data_action: 'add ppmc',
+		  onClick: self.post, disabled: (@people.empty?)
+	      end
+            end
+
+            # show add as mentor button only if every person is not a mentor
+            if @@auth.ipmc
+              if @people.all? {|person| !@@ppmc.mentors.include? person.id}
+                plural = (@people.length > 1 ? 's' : '')
+
+                action = 'add mentor'
+                if @people.any? {|person| !@@ppmc.owners.include? person.id}
+	          action += ' ppmc'
+                end
+
+                _button.btn.btn_primary "Add as Mentor#{plural}", 
+	          data_action: action, onClick: self.post,
+                  disabled: (@people.empty?)
+              end
             end
 
             # remove from all relevant locations
-            remove_from = ['commit']
-            if @people.any? {|person| @@committee.members.include? person.id}
-              remove_from << 'info'
+            remove_from = ['committer']
+            if @people.any? {|person| @@ppmc.owners.include? person.id}
+              remove_from << 'ppmc'
             end
-            if @people.any? {|person| @@committee.ldap.include? person.id}
-              remove_from << 'pmc'
+            if @people.any? {|person| @@ppmc.mentors.include? person.id}
+              remove_from << 'mentor'
             end
 
             _button.btn.btn_primary 'Remove from project', onClick: self.post,
@@ -69,12 +87,12 @@ class PMCMod < React
   end
 
   def componentDidMount()
-    jQuery('#pmcmod').on('show.bs.modal') do |event|
+    jQuery('#ppmcmod').on('show.bs.modal') do |event|
       button = event.relatedTarget
-      setTimeout(500) { jQuery('#pmcmod input').focus() }
+      setTimeout(500) { jQuery('#ppmcmod input').focus() }
 
       selected = []
-      roster = @@committee.roster
+      roster = @@ppmc.roster
       for id in roster
         if roster[id].selected
           roster[id].id = id
@@ -99,7 +117,7 @@ class PMCMod < React
       credentials: 'include',
       headers: {'Content-Type' => 'application/json'},
       body: {
-        project: @@committee.id, 
+        project: @@ppmc.id, 
         ids: @people.map {|person| person.id}.join(','), 
         action: action, 
         targets: targets
@@ -108,7 +126,7 @@ class PMCMod < React
 
     @disabled = true
     Polyfill.require(%w(Promise fetch)) do
-      fetch("actions/committee", args).then {|response|
+      fetch("actions/ppmc", args).then {|response|
         content_type = response.headers.get('content-type') || ''
         if response.status == 200 and content_type.include? 'json'
           response.json().then do |json|
@@ -117,11 +135,11 @@ class PMCMod < React
         else
           alert "#{response.status} #{response.statusText}"
         end
-        jQuery('#pmcmod').modal(:hide)
+        jQuery('#ppmcmod').modal(:hide)
         @disabled = false
       }.catch {|error|
         alert error
-        jQuery('#pmcmod').modal(:hide)
+        jQuery('#ppmcmod').modal(:hide)
         @disabled = false
       }
     end

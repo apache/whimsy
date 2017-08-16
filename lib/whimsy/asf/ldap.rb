@@ -42,13 +42,12 @@ module ASF
      # Derived from the following sources:
      # * https://www.pingmybox.com/dashboard?location=304
      # * https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
-     # Updated 2017-01-02 
+     # Updated 2017-08-01
     HOSTS = %w(
       ldaps://themis.apache.org:636
       ldaps://ldap1-lw-us.apache.org:636
       ldaps://ldap1-lw-eu.apache.org:636
       ldaps://devops.apache.org:636
-      ldaps://snappy5.apache.org:636
     )
 
     # Mutex preventing simultaneous connections to LDAP from a single process
@@ -120,10 +119,10 @@ module ASF
     # update operations.  If a block is passed, the connection will be
     # closed after the block executes.
     #
-    # when run in irb, will default user and prompt for password
+    # when run interactively, will default user and prompt for password
     def self.bind(user=nil, password=nil, &block)
       if not user or not password
-        raise ArgumentError.new('wrong number of arguments') unless $0 == 'irb'
+        raise ArgumentError.new('wrong number of arguments') unless STDIN.isatty
 
         require 'etc'
         require 'io/console'
@@ -402,13 +401,13 @@ module ASF
     end
 
     # return the LDAP base for this object: identifies the subtree where
-    # which this object can be found.
+    # this object can be found.
     def self.base
       @base
     end
 
     # return the LDAP base for this object: identifies the subtree where
-    # which this object can be found.
+    # this object can be found.
     def base
       self.class.base
     end
@@ -513,7 +512,7 @@ module ASF
       'ou=people,' + ASF::Group.base
     end
 
-    # Obtain a list of people (committers).  LDAP filters may be used
+    # Obtain a list of people known to LDAP.  LDAP filters may be used
     # to retrieve only a subset.
     def self.list(filter='uid=*')
       ASF.search_one(base, filter, 'uid').flatten.map {|uid| find(uid)}
@@ -880,6 +879,12 @@ module ASF
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| Project.find(cn)}
     end
 
+    # return project only if it actually exits
+    def self.[] name
+      project = super
+      project.members.empty? ? nil : project
+    end
+
     # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
     # <tt>createTimestamp</tt> for all projects in LDAP.
     def self.preload
@@ -1064,7 +1069,8 @@ module ASF
     end
 
     # temp list of projects that have moved over to new project LDAP schema
-    GUINEAPIGS = %w(incubator whimsy jmeter axis mynewt atlas accumulo geronimo)
+    GUINEAPIGS = %w(incubator whimsy jmeter axis mynewt atlas accumulo
+      madlib streams fluo)
 
     # List of owners for this committee, i.e. people who are members of the
     # committee and have update access.  Data is obtained from LDAP.
@@ -1091,6 +1097,8 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).remove_owners(people)
       else
+        project = ASF::Project[name]
+        project.remove_owners(people) if project
         remove(people)
       end
     end
@@ -1100,6 +1108,8 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).remove_members(people)
       else
+        project = ASF::Project[name]
+        project.remove_members(people) if project
         ASF::Group.find(name).remove(people)
       end
     end
@@ -1109,6 +1119,8 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).add_owners(people)
       else
+        project = ASF::Project[name]
+        project.add_owners(people) if project
         add(people)
       end
     end
@@ -1119,6 +1131,8 @@ module ASF
       if GUINEAPIGS.include? name
         ASF::Project.find(name).add_members(people)
       else
+        project = ASF::Project[name]
+        project.add_members(people) if project
         ASF::Group.find(name).add(people)
       end
     end

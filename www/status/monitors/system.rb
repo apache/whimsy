@@ -20,11 +20,11 @@ def Monitor.system(previous_status)
     puppet = `service puppet status`.force_encoding('utf-8').strip
 
     if puppet.include? 'Active: active (running)'
-      status[name].merge! level: 'success', data: puppet
+      status[name].merge! level: 'success', data: puppet.split("\n")
     elsif puppet.include? '* agent is running'
-      status[name].merge! level: 'success', data: puppet
+      status[name].merge! level: 'success', data: puppet.split("\n")
     else
-      status[name].merge! level: 'warning', data: puppet
+      status[name].merge! level: 'warning', data: puppet.split("\n")
     end
 
   rescue Exception => e
@@ -53,6 +53,19 @@ def Monitor.system(previous_status)
   # N.B. need to compare with true as master may be a string, i.e. 'truthy'
   status[name] = {level: master == true ? 'success' : 'warning',
                   data: master.to_s}
+
+  # Is ASF::LDAP.hosts up to date?
+  require_relative '../../../lib/whimsy/asf'
+  name = :ldap
+  pls = ASF::LDAP.puppet_ldapservers.sort
+  hosts = ASF::LDAP::HOSTS.sort
+  diff = (pls-hosts).map {|host| "+ #{host}"}
+  diff += (hosts-pls).map {|host| "- #{host}"}
+  if diff.empty?
+    status[name] = {level: 'success', data: hosts}
+  else
+    status[name] = {level: 'warning', data: diff}
+  end
 
   {data: status}
 end

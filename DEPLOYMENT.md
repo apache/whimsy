@@ -89,14 +89,10 @@ and running - these are only needed for a new deployment.
    `/var/www/.subversion/servers` to use the `whimsysvn` user and to *not*
    store the auth-creds.
 
- * Add the following cron jobs to apmail@hermes:
-     * `11  1,7,13,19 * * * for list in /home/apmail/lists/*apache.org/*; do echo; echo $list/mod; ezmlm-list $list mod; done 2>/dev/null | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/list-mods'`
-     * `11  3,9,15,21 * * * for list in /home/apmail/lists/*apache.org/*; do echo; echo $list; ezmlm-list $list 2>/dev/null; done | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/list-subs'`
-     * `16     *      * * * ezmlm-list /home/apmail/lists/apache.org/board/ . | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/board'`
-     * `46     *      * * * ezmlm-list /home/apmail/lists/apache.org/members/ . | ssh whimsy-vm4.apache.org 'cat > /srv/subscriptions/members'`
+ * Update the following cron scripts under https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin:
+     * listmodsubs.sh - if necessary, add an rsync to the old Whimsy host
+     * whimsy_qmail_ids.sh - add the new host
      
-   This is done by updating [crontab_apmail](https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/crontab_apmail.txt); then follow the instructions there.
-
  * Add the following mail subscriptions:
     * Subscribe `svnupdate@whimsy-vm4.apache.org` to `board-commits@apache.org`.
       Alternately, add it to the `board-cvs` alias.

@@ -250,7 +250,7 @@ _html do
                   if podlings.include? @project
                     @pmc = 'incubator'
                     @podling = @project
-                    groups = "#@pmc,@podling"
+                    groups = "#@pmc,#@podling"
                   else
                     @pmc = @project
                     @podling = nil

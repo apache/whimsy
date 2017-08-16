@@ -2,19 +2,19 @@
 # Add People to a project
 #
 
-class PMCAdd < React
+class PPMCAdd < React
   def initialize
     @people = []
   end
 
   def render
-    _div.modal.fade.pmcadd! tabindex: -1 do
+    _div.modal.fade.ppmcadd! tabindex: -1 do
       _div.modal_dialog do
         _div.modal_content do
           _div.modal_header.bg_info do
             _button.close 'x', data_dismiss: 'modal'
-            _h4.modal_title 'Add People to the ' + @@committee.display_name +
-	      ' Project'
+            _h4.modal_title 'Add People to the ' + @@ppmc.display_name +
+	      ' Podling'
           end
 
           _div.modal_body do
@@ -42,7 +42,7 @@ class PMCAdd < React
 	      end
 
               _CommitterSearch add: self.add,
-	        exclude: @@committee.roster.keys().
+	        exclude: @@ppmc.roster.keys().
 		  concat(@people.map {|person| person.id})
             end
           end
@@ -55,12 +55,23 @@ class PMCAdd < React
 
 	    plural = (@people.length > 1 ? 's' : '')
 
-            _button.btn.btn_primary "Add as committer#{plural}", 
-	      data_action: 'add commit',
-	      onClick: self.post, disabled: (@people.empty?)
+            if @@auth.ppmc
+              _button.btn.btn_primary "Add as committer#{plural}", 
+	        data_action: 'add committer',
+	        onClick: self.post, disabled: (@people.empty?)
 
-            _button.btn.btn_primary 'Add to PMC', onClick: self.post,
-	      data_action: 'add pmc info commit', disabled: (@people.empty?)
+              _button.btn.btn_primary 'Add to PPMC', onClick: self.post,
+	        data_action: 'add ppmc committer', disabled: (@people.empty?)
+            end
+
+            if @@auth.ipmc
+              action = 'add mentor'
+              action += ' ppmc committer' if @@auth.ppmc
+
+              _button.btn.btn_primary "Add as mentor#{plural}", 
+	        data_action: action, onClick: self.post,
+                 disabled: (@people.empty?)
+            end
           end
         end
       end
@@ -68,16 +79,16 @@ class PMCAdd < React
   end
 
   def componentDidMount()
-    jQuery('#pmcadd').on('show.bs.modal') do |event|
+    jQuery('#ppmcadd').on('show.bs.modal') do |event|
       button = event.relatedTarget
-      setTimeout(500) { jQuery('#pmcadd input').focus() }
+      setTimeout(500) { jQuery('#ppmcadd input').focus() }
     end
   end
 
   def add(person)
     @people << person
     self.forceUpdate()
-    jQuery('#pmcadd input').focus()
+    jQuery('#ppmcadd input').focus()
   end
 
   def post(event)
@@ -93,7 +104,7 @@ class PMCAdd < React
       credentials: 'include',
       headers: {'Content-Type' => 'application/json'},
       body: {
-        project: @@committee.id, 
+        project: @@ppmc.id, 
         ids: @people.map {|person| person.id}.join(','), 
         action: action, 
         targets: targets
@@ -102,7 +113,7 @@ class PMCAdd < React
 
     @disabled = true
     Polyfill.require(%w(Promise fetch)) do
-      fetch("actions/committee", args).then {|response|
+      fetch("actions/ppmc", args).then {|response|
         content_type = response.headers.get('content-type') || ''
         if response.status == 200 and content_type.include? 'json'
           response.json().then do |json|
@@ -111,11 +122,11 @@ class PMCAdd < React
         else
           alert "#{response.status} #{response.statusText}"
         end
-        jQuery('#pmcadd').modal(:hide)
+        jQuery('#ppmcadd').modal(:hide)
         @disabled = false
       }.catch {|error|
         alert error
-        jQuery('#pmcadd').modal(:hide)
+        jQuery('#ppmcadd').modal(:hide)
         @disabled = false
       }
     end
