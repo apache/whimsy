@@ -33,6 +33,7 @@ ASF::Podling.list.each {|p|
 
 pmcs = ASF::Committee.pmcs.map(&:mail_list)
 lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user))
+lists -= ASF::Mail.deprecated
 lists.sort!
 addrs = user.all_mail
 

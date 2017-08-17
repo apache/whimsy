@@ -64,6 +64,12 @@ module ASF
       public_private ? @lists : @lists.keys
     end
 
+    # list of mailing lists that aren't actively seeking new subscribers
+    def self.deprecated
+      apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
+      YAML.load_file(File.join(apmail_bin, 'deprecated_mailing_lists.yml'))
+    end
+
     # which lists are available for subscription via Whimsy?
     def self.cansub(member, pmc_chair)
       Mail._load_lists
