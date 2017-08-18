@@ -8,7 +8,7 @@ before_install:
   - nvm install 7
 sudo: required
 before_script:
-  - sudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
+  - rvmsudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
 gemfile:
   - www/board/agenda/Gemfile
 notifications:
