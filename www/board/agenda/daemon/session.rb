@@ -20,7 +20,12 @@ require 'whimsy/asf/config'
 #
 
 class Session
-  AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
+  if ENV['RACK_ENV'] == 'test'
+    AGENDA_WORK = File.expand_path('test/work/data').untaint
+  else
+    AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
+  end
+
   WORKDIR = File.expand_path('sessions', AGENDA_WORK)
   DAY = 24*60*60 # seconds
 
