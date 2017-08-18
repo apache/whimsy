@@ -170,8 +170,12 @@ file 'www/docs/api/index.html' => Rake::FileList['lib/**/*.rb'] do
   end
 end
 
-task :test do
-  Dir.chdir 'www/board/agenda' do
-    sh 'rake test'
+# Travis support: run the tests associated with the bundle in question
+task :default do
+  bg = ENV['BUNDLE_GEMFILE']
+  if bg and bg != __FILE__
+    Dir.chdir File.dirname(bg) do
+      sh 'rake test'
+    end
   end
 end
