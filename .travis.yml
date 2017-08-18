@@ -6,6 +6,9 @@ rvm: # http://rubies.travis-ci.org/
   - 2.4.0 # https://github.com/travis-ci/travis-ci/issues/7848
 before_install:
   - nvm install 7
+sudo: required
+before_script:
+  - sudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
 gemfile:
   - www/board/agenda/Gemfile
 notifications:
