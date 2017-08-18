@@ -121,7 +121,7 @@ class Cache
   rescue Net::OpenTimeout
     # retry timeouts (essentially treat them as self redirects)
     raise if depth >= 5
-    fetch(uri, options, depth+1)
+    fetch(uri.to_x, options, depth+1)
   end
 
   # File cache contains last modified followed by the data
