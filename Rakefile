@@ -169,3 +169,9 @@ file 'www/docs/api/index.html' => Rake::FileList['lib/**/*.rb'] do
       '--title', 'whimsy/asf lib'
   end
 end
+
+task :test do
+  Dir.chdir 'www/board/agenda' do
+    sh 'rake test'
+  end
+end

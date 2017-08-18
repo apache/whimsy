@@ -1,0 +1,8 @@
+language: ruby
+os:
+  - osx
+  - linux
+rvm: # http://rubies.travis-ci.org/
+  - 2.4.0 # https://github.com/travis-ci/travis-ci/issues/7848
+gemfile:
+  - www/board/agenda/Gemfile
