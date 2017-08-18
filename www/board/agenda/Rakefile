@@ -189,3 +189,8 @@ task :listen => :bundle do
 
   listener.start
 end
+
+# cleanup
+require 'rake/clean'
+CLEAN.include 'passenger.3000.*', 'test/work'
+CLOBBER.include 'node_modules'
