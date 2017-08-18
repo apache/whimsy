@@ -202,7 +202,7 @@ end
 
 # updates to agenda data
 get %r{/(\d\d\d\d-\d\d-\d\d).json} do |file|
-  file = "board_agenda_#{file.gsub('-','_')}.txt"
+  file = "board_agenda_#{file.gsub('-','_')}.txt".untaint
   pass unless Agenda.parse file, :full
 
   begin
