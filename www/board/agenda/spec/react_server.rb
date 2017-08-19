@@ -55,12 +55,18 @@ class ReactServer
   # stop server
   def self.stop
     return unless @@pid
-    http = Net::HTTP.new('localhost', @@port)
-    request = Net::HTTP::Post.new('/', {})
-    request.body = "response.end('bye'); process.exit(0)"
-    response = http.request(request)
-    Process.wait(@@pid)
-    @@pid = nil
+
+    begin
+      http = Net::HTTP.new('localhost', @@port)
+      request = Net::HTTP::Post.new('/', {})
+      request.body = "response.end('bye'); process.exit(0)"
+      response = http.request(request)
+    rescue Errno::ECONNREFUSED
+      nil
+    ensure
+      Process.wait(@@pid)
+      @@pid = nil
+    end
   end
 
   # the server itself
