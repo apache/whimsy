@@ -39,7 +39,7 @@ task "touch" do
   sh 'touch', File.expand_path('../tmp/restart.txt', __FILE__)
 end
 
-file 'node_modules' do
+file 'package-lock.json' => 'package.json' do
   sh 'npm install'
 end
 
@@ -100,7 +100,7 @@ task :work => ['test/work/board',
   *testfiles.map {|testfile| "test/work/data/#{testfile}.yml"}]
 
 namespace :test do
-  task :setup => [:reset, :work, 'node_modules']
+  task :setup => [:reset, :work, 'package-lock.json']
   task :server => 'server:test'
 
   task :stress => :setup do
@@ -193,4 +193,4 @@ end
 # cleanup
 require 'rake/clean'
 CLEAN.include 'passenger.3000.*', 'test/work'
-CLOBBER.include 'node_modules'
+CLOBBER.include 'node_modules', 'package-lock.json'
