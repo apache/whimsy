@@ -41,6 +41,7 @@ end
 
 file 'package-lock.json' => 'package.json' do
   sh 'npm install'
+  sh 'touch package-lock.json'
 end
 
 file 'test/work' do
