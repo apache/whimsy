@@ -2,9 +2,6 @@ language: ruby
 os:
   - osx
   - linux
-dist: trusty
-addons:
-  chrome: beta
 rvm: # http://rubies.travis-ci.org/
   - 2.4.0 # https://github.com/travis-ci/travis-ci/issues/7848
 before_install:
