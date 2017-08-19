@@ -71,9 +71,9 @@ class ReactServer
 
   # the server itself
   @@server = proc do
-    jsdom = require("jsdom").jsdom
-    global.document = jsdom('<html><body></body></html>')
-    global.window = document.defaultView
+    JSDOM = require("jsdom").JSDOM
+    global.window = JSDOM.new('<html><body></body></html>').window
+    global.document = global.window.document
     global.navigator = global.window.navigator
 
     React = require('react')
