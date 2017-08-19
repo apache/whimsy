@@ -1,5 +1,6 @@
 passenger.3000.*
 test/work
 Gemfile.lock
+package-lock.json
 node_modules
 .vagrant
