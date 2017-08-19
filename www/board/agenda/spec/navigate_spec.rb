@@ -11,7 +11,7 @@ feature 'navigation', js: true do
       text: 'Clerezza'
 
     # Right button should advance to Cocoon report
-    find('body').native.send_keys(:right)
+    find('body').native.send_keys(:Right)
     expect(page).to have_selector '.navbar-fixed-top.reviewed .navbar-brand', 
       text: 'Cocoon'
     expect(page).to have_selector 'pre', 

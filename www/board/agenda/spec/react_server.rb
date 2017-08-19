@@ -61,7 +61,6 @@ class ReactServer
     response = http.request(request)
     Process.wait(@@pid)
     @@pid = nil
-  rescue Errno::ECONNREFUSED
   end
 
   # the server itself
