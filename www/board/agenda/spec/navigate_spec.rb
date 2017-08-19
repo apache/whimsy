@@ -6,6 +6,8 @@ require_relative 'spec_helper'
 
 feature 'navigation', js: true do
   it "should navigate to the Cocoon report and back" do
+    skip "headless browser test not run on Travis" if ENV['TRAVIS']
+
     visit '/2015-02-18/Clerezza'
     expect(page).to have_selector '.navbar-fixed-top.reviewed .navbar-brand', 
       text: 'Clerezza'
