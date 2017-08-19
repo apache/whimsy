@@ -3,11 +3,11 @@
 #
 # 'To' header will be replaced
 # 'From' header will effectively be replaced
-# Transport headers names will be prepended with 'X-'
+# Transport and return path headers names will be prepended with 'X-'
 # Original content headers will be dropped (and recreated).
 #
 
-munge = %w(received delivered-to)
+munge = %w(received delivered-to return-path)
 skip = %w(content-type content-transfer-encoding)
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
