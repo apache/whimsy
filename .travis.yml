@@ -10,6 +10,7 @@ gemfile:
 os:
   - osx
   - linux
+dist: trusty
 
 ########################################################################
 #                           VM Configuration                           #
