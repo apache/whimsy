@@ -10,8 +10,8 @@ The ASF's Whimsy instance hosts static content, repository checkouts/clones, CGI
 applications, tools, and cron jobs.  Note: features accessing private 
 ASF data are restricted to committers, Members, or Officers of the ASF. 
 
-Every committer on the Whimsy PMC can both deploy changes and new
-applications to https://whimsy.apache.org/ which is auto-deployed every 30 minutes. 
+Every commit pushed to master is deployed within minutes to https://whimsy.apache.org/ using 
+[GitPubSub](https://www.apache.org/dev/gitpubsub.html).
 
 [![Build Status](https://travis-ci.org/apache/whimsy.svg)](https://travis-ci.org/apache/whimsy)
 
