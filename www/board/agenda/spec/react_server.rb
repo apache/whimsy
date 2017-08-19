@@ -77,8 +77,9 @@ class ReactServer
     global.navigator = global.window.navigator
 
     React = require('react')
-    ReactAddons = require('react/addons')
-    TestUtils = React.addons.TestUtils
+    ReactDOM = require('react-dom')
+    ReactDOMServer = require('react-dom/server');
+    TestUtils = require('react-dom/test-utils')
     Simulate = TestUtils.Simulate
 
     jQuery = require('jquery')

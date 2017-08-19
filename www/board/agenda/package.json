@@ -10,6 +10,7 @@
   "devDependencies": {
     "jsdom": "^5.4.3",
     "jquery": "^3.2.1",
-    "react": "^0.13.3"
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
   }
 }

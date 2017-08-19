@@ -14,8 +14,9 @@ describe "filters", type: :feature, server: :react do
       @item = @parsed.find {|item| item['title'] == 'Clerezza'}
 
       on_react_server do
-        React.render _Report(item: Agenda.new(@item)), document.body do
-          response.end document.body.innerHTML
+        container = document.createElement('div')
+        ReactDOM.render _Report(item: Agenda.new(@item)), container do
+          response.end container.innerHTML
         end
       end
 
@@ -31,8 +32,9 @@ describe "filters", type: :feature, server: :react do
       @item = @parsed.find {|item| item['title'] == 'Call to order'}
 
       on_react_server do
-        React.render _Report(item: Agenda.new(@item)), document.body do
-          response.end document.body.innerHTML
+        container = document.createElement('div')
+        ReactDOM.render _Report(item: Agenda.new(@item)), container do
+          response.end container.innerHTML
         end
       end
 
@@ -51,8 +53,9 @@ describe "filters", type: :feature, server: :react do
       })
 
       on_react_server do
-        React.render _Report(item: Agenda.new(@item)), document.body do
-          response.end document.body.innerHTML
+        container = document.createElement('div')
+        ReactDOM.render _Report(item: Agenda.new(@item)), container do
+          response.end container.innerHTML
         end
       end
 

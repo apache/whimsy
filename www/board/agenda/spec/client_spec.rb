@@ -23,7 +23,7 @@ describe "client", type: :feature, server: :react do
           _item.prev item.prev.href, class: item.href if item.prev
         end
 
-        response.end React.renderToStaticMarkup(output)
+        response.end ReactDOMServer.renderToStaticMarkup(output)
       end
 
       expect(page).not_to have_selector '.Call-to-order.prev'

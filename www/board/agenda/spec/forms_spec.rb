@@ -13,8 +13,9 @@ describe "forms", type: :feature, server: :react do
     it "has an add-comment form with a disabled Save button" do
       on_react_server do
         server = {pending: {}, initials: 'sr'}
-        React.render _AddComment(item: {}, server: server), document.body do
-          response.end document.body.innerHTML
+        container = document.createElement('div')
+        ReactDOM.render _AddComment(item: {}, server: server), container do
+          response.end container.innerHTML
         end
       end
 
@@ -31,11 +32,12 @@ describe "forms", type: :feature, server: :react do
     it "should enable Save button after input" do
       on_react_server do
         server = {pending: {}, initials: 'sr'}
-        React.render _AddComment(item: {}, server: server), document.body do
-          node = ~'#comment_text'
+        container = document.createElement('div')
+        ReactDOM.render _AddComment(item: {}, server: server), container do
+          node = container.querySelector('#comment-text')
           node.textContent = 'Good job!'
           Simulate.change node, target: {value: 'Good job!'}
-          response.end document.body.innerHTML
+          response.end container.innerHTML
         end
       end
 
@@ -54,8 +56,9 @@ describe "forms", type: :feature, server: :react do
       @item = parsed.find {|item| item['title'] == 'Executive Vice President'}
       on_react_server do
         item = Agenda.new(@item)
-        React.render _Post(item: item, button: 'edit report'), document.body do
-          response.end document.body.innerHTML
+        container = document.createElement('div')
+        ReactDOM.render _Post(item: item, button: 'edit report'), container do
+          response.end container.innerHTML
         end
       end
 
@@ -69,10 +72,12 @@ describe "forms", type: :feature, server: :react do
       @item = parsed.find {|item| item['title'] == 'Executive Vice President'}
       on_react_server do
         item = Agenda.new(@item)
-        React.render _Post(item: item, button: 'edit report'), document.body do
-          Simulate.click ~'.btn-danger'
-          ~'#post-report-text'.textContent = this.state.report
-          response.end document.body.innerHTML
+        container = document.createElement('div')
+        ReactDOM.render _Post(item: item, button: 'edit report'), container do
+          Simulate.click container.querySelector('.btn-danger')
+          post_report = container.querySelector('#post-report-text')
+          post_report.textContent = this.state.report
+          response.end container.innerHTML
         end
       end
 
@@ -91,8 +96,9 @@ describe "forms", type: :feature, server: :react do
       on_react_server do
         Agenda.load(@parsed)
         server = {pending: {approved: ['7'], comments: {I: 'Nice report!'}}}
-        React.render _Commit(item: {}, server: server), document.body do
-          response.end document.body.innerHTML
+        container = document.createElement('div')
+        ReactDOM.render _Commit(item: {}, server: server), container do
+          response.end container.innerHTML
         end
       end
 
