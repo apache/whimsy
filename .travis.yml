@@ -1,21 +1,47 @@
-language: ruby
+########################################################################
+#                           Test definition                            #
+########################################################################
+
+# list of Gemfiles associated with tools to be tested
+gemfile:
+  - www/board/agenda/Gemfile
+
+# platforms to test on
 os:
   - osx
   - linux
-dist: trusty
+
+########################################################################
+#                           VM Configuration                           #
+########################################################################
+
+# Ruby version 2.4.0 (see comments as to why not 2.4.1)
+language: ruby
+rvm: # http://rubies.travis-ci.org/
+  - 2.4.0 # https://github.com/travis-ci/travis-ci/issues/7848
+
+# add subversion on Linux
 addons:
   apt:
     packages:
     - subversion
-rvm: # http://rubies.travis-ci.org/
-  - 2.4.0 # https://github.com/travis-ci/travis-ci/issues/7848
+
+# install recent Node.js
 before_install:
   - nvm install 7
+
+# configure ASF LDAP
 sudo: required
 before_script:
   - rvmsudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
-gemfile:
-  - www/board/agenda/Gemfile
+
+########################################################################
+#                             Notification                             #
+########################################################################
+
+# where to send notifications
 notifications:
+  # https://issues.apache.org/jira/browse/INFRA-11080
+  # https://github.com/apache/infrastructure-puppet/pull/319
   email:
-  - notifications@whimsical.apache.org
+  - travis@whimsy-vm4.apache.org

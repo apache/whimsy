@@ -13,6 +13,8 @@ ASF data are restricted to committers, Members, or Officers of the ASF.
 Every committer on the Whimsy PMC can both deploy changes and new
 applications to https://whimsy.apache.org/ which is auto-deployed every 30 minutes. 
 
+[![Build Status](https://travis-ci.org/apache/whimsy.svg)](https://travis-ci.org/apache/whimsy)
+
 How Tos and Get The Code
 ===============
 
