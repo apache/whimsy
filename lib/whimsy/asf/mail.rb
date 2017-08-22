@@ -183,6 +183,8 @@ module ASF
         'trademarks@apache.org'
       when 'executive assistant'
         'ea@apache.org'
+      when 'infrastructure'
+        'infra'
       when 'legal affairs'
         'legal-internal@apache.org'
       when 'marketing and publicity'
