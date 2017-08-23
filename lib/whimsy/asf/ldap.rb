@@ -1306,8 +1306,8 @@ if __FILE__ == $0
       end
     end
   end
-  hosts=ASF::LDAP.getHOSTS().sort!
-  puppet=ASF::LDAP.puppet_ldapservers().sort!
+  hosts=ASF::LDAP.getHOSTS().sort
+  puppet=ASF::LDAP.puppet_ldapservers().sort
   if hosts == puppet
     puts("LDAP HOSTS array is up to date with the puppet list")
   else
