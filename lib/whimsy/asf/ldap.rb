@@ -75,7 +75,7 @@ module ASF
       puppet_config['ldapserver::slapd_peers'].values.
         map {|host| "ldaps://#{host}:636"}
     rescue
-      nil
+      []
     end
 
     # connect to LDAP
