@@ -82,6 +82,8 @@ def Monitor.git(previous_status)
       line =~  /^ \S+ +\| +\d+/ or
       # {certbot-route53 => certbot-dns-route53}/.gitignore          |  0
       line =~  /^ \S+ => \S+ +\| +\d+/ or
+      #  certbot/tests/testdata/{csr.der => csr_512.der}    | Bin
+      line =~  /^ \S+ => \S+ +\| Bin/ or
       # letsencrypt-auto-source/letsencrypt-auto.sig       | Bin 256 -> 256 bytes
       line =~  /^ \S+ +\| Bin \d+ -> \d+ bytes/
     }
@@ -136,7 +138,7 @@ if __FILE__ == $0
   response = Monitor.git(nil) # must agree with method name above
   data = response[:data]
   data.each do |k,v|
-    puts "#{k} #{data[k][:level]}"
+    puts "#{k} #{data[k][:level]} #{data[k][:title] or data[k][:data] }"
   end
 end
 
@@ -300,3 +302,63 @@ Fast-forward
  letsencrypt-auto-source/letsencrypt-auto.sig       | Bin 256 -> 256 bytes
  .../pieces/certbot-requirements.txt                |  24 +--
  19 files changed, 336 insertions(+), 215 deletions(-)
+
+/x1/srv/git/letsencrypt7
+From https://github.com/letsencrypt/letsencrypt
+   c33ee0e..8ca36a0  master     -> origin/master
+Updating c33ee0e..8ca36a0
+Fast-forward
+ certbot/plugins/common_test.py                     |   4 +-
+ certbot/tests/account_test.py                      |   8 ++--
+ certbot/tests/cert_manager_test.py                 |   2 +-
+ certbot/tests/client_test.py                       |  14 +++---
+ certbot/tests/crypto_util_test.py                  |  49 ++++++++++-----------
+ certbot/tests/main_test.py                         |  18 ++++----
+ certbot/tests/storage_test.py                      |  15 ++++---
+ certbot/tests/testdata/README                      |  11 +++++
+ .../{cert-5sans.pem => cert-5sans_512.pem}         |   0
+ .../testdata/{cert-san.pem => cert-san_512.pem}    |   0
+ certbot/tests/testdata/cert.b64jose                |   1 -
+ certbot/tests/testdata/cert.der                    | Bin 377 -> 0 bytes
+ .../{self_signed_cert.pem => cert_2048.pem}        |   0
+ certbot/tests/testdata/{cert.pem => cert_512.pem}  |   0
+ .../{self_signed_cert_bad.pem => cert_512_bad.pem} |   0
+ ...igned_fullchain.pem => cert_fullchain_2048.pem} |   0
+ certbot/tests/testdata/csr-6sans.pem               |  12 -----
+ certbot/tests/testdata/csr-6sans_512.conf          |  29 ++++++++++++
+ certbot/tests/testdata/csr-6sans_512.pem           |  12 +++++
+ .../{csr-nonames.pem => csr-nonames_512.pem}       |   0
+ certbot/tests/testdata/csr-nosans.pem              |   8 ----
+ certbot/tests/testdata/csr-nosans_512.conf         |  16 +++++++
+ certbot/tests/testdata/csr-nosans_512.pem          |   9 ++++
+ .../testdata/{csr-san.pem => csr-san_512.pem}      |   0
+ certbot/tests/testdata/{csr.der => csr_512.der}    | Bin
+ certbot/tests/testdata/{csr.pem => csr_512.pem}    |   0
+ certbot/tests/testdata/dsa512_key.pem              |  14 ------
+ certbot/tests/testdata/dsa_cert.pem                |  17 -------
+ certbot/tests/testdata/matching_cert.pem           |  14 ------
+ certbot/tests/testdata/rsa512_key_2.pem            |   9 ----
+ 30 files changed, 134 insertions(+), 128 deletions(-)
+ create mode 100644 certbot/tests/testdata/README
+ rename certbot/tests/testdata/{cert-5sans.pem => cert-5sans_512.pem} (100%)
+ rename certbot/tests/testdata/{cert-san.pem => cert-san_512.pem} (100%)
+ delete mode 100644 certbot/tests/testdata/cert.b64jose
+ delete mode 100644 certbot/tests/testdata/cert.der
+ rename certbot/tests/testdata/{self_signed_cert.pem => cert_2048.pem} (100%)
+ rename certbot/tests/testdata/{cert.pem => cert_512.pem} (100%)
+ rename certbot/tests/testdata/{self_signed_cert_bad.pem => cert_512_bad.pem} (100%)
+ rename certbot/tests/testdata/{self_signed_fullchain.pem => cert_fullchain_2048.pem} (100%)
+ delete mode 100644 certbot/tests/testdata/csr-6sans.pem
+ create mode 100644 certbot/tests/testdata/csr-6sans_512.conf
+ create mode 100644 certbot/tests/testdata/csr-6sans_512.pem
+ rename certbot/tests/testdata/{csr-nonames.pem => csr-nonames_512.pem} (100%)
+ delete mode 100644 certbot/tests/testdata/csr-nosans.pem
+ create mode 100644 certbot/tests/testdata/csr-nosans_512.conf
+ create mode 100644 certbot/tests/testdata/csr-nosans_512.pem
+ rename certbot/tests/testdata/{csr-san.pem => csr-san_512.pem} (100%)
+ rename certbot/tests/testdata/{csr.der => csr_512.der} (100%)
+ rename certbot/tests/testdata/{csr.pem => csr_512.pem} (100%)
+ delete mode 100644 certbot/tests/testdata/dsa512_key.pem
+ delete mode 100644 certbot/tests/testdata/dsa_cert.pem
+ delete mode 100644 certbot/tests/testdata/matching_cert.pem
+ delete mode 100644 certbot/tests/testdata/rsa512_key_2.pem
