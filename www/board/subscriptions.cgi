@@ -8,12 +8,11 @@ require 'whimsy/asf'
 require 'whimsy/asf/mlist'
 
 ARCHIVERS = %w(
+  archiver@mbox-vm.apache.org
   board-archive@apache.org
   archive-asf-private@cust-asf.ponee.io
   board@mmpoc.apache.org
-  board@whimsy-vm3.apache.org
   board@whimsy-vm4.apache.org
-  svnupdate@whimsy-vm3.apache.org
   svnupdate@whimsy-vm4.apache.org
 )
 
