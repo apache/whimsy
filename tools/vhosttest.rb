@@ -20,7 +20,7 @@ end
 require 'yaml'
 require "#{IP}/modules/vhosts_whimsy/lib/puppet/parser/functions/preprocess_vhosts.rb"
 
-facts = YAML.load_file("#{IP}//data/nodes/whimsy-vm3.apache.org.yaml")
+facts = YAML.load_file("#{IP}//data/nodes/whimsy.apache.org.yaml")
 facts = facts['vhosts_whimsy::vhosts::vhosts']['whimsy-vm-443']
 ldap = ASF::LDAP.hosts.sort.first
 
