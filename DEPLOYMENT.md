@@ -103,6 +103,8 @@ and running - these are only needed for a new deployment.
     * Add `secretary@whimsy-vm4.apache.org` to the `secretary@apache.org`
       alias.
 
+ * Update the lists of archivers in www/board|members/subscriptions.cgi
+
  * Using the `www-data` user, copy over the following directories from
    the previous whimsy-vm* server: `/srv/agenda`, `/srv/mail/board`,
    `/srv/mail/members`, `/srv/mail/secretary`.
