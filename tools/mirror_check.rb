@@ -46,7 +46,7 @@ TODO - any more checks?
 $SAFE = 1
 
 URLMATCH = %r!^https?://[^/]+/(\S+/)?$!i
-HTTPDIRS = %w(zzz/ mirror-tests/) # must exist
+HTTPDIRS = %w(zzz/ zzz/mirror-tests/) # must exist
 HDRMATCH = %r!<h\d>Apache Software Foundation Distribution Meta-Directory</h\d>! # must be on the zzz index page
 FTRMATCH = %r!This directory contains meta-data for the ASF mirroring system.! # must be on the zzz index page
 HASHDR =   %r!<html( [^>]+)?>.+?<body>!im
@@ -56,7 +56,7 @@ HTTPDIR = 'zzz/' # must appear in index page
 HTTP404 = 'zzz/___'; # Non-existent URL; should generate 404
 HTTPTEXT = 'zzz/README'; # text file (without extension) should generate Content-Type text/plain or none
 
-MIRRORTEST = 'mirror-tests/';
+MIRRORTEST = 'zzz/mirror-tests/';
 MIRRORTEST_FILES = %w(1mb.img.7z 1mb.img.bz2 1mb.img.tar.gz 1mb.img.tgz 1mb.img.zip) # no Content-Encoding !
 
 # save the result of a test
