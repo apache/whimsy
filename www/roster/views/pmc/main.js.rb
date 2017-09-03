@@ -2,7 +2,7 @@
 # Show a PMC
 #
 
-class PMC < React
+class PMC < Vue
   def initialize
     @attic = nil
   end
@@ -192,21 +192,16 @@ class PMC < React
   end
 
   # capture committee on initial load
-  def componentWillMount()
-    self.update(@@committee)
-  end
-
-  # capture committee on subsequent loads
-  def componentWillReceiveProps()
+  def created()
     self.update(@@committee)
   end
 
   # refresh the current page
   def refresh()
-    self.forceUpdate()
+    Vue.forceUpdate()
   end
 
-  def componentDidMount()
+  def mounted()
     # export refesh method
     PMC.refresh = self.refresh
   end

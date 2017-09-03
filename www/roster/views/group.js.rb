@@ -2,7 +2,7 @@
 # Show a committee
 #
 
-class Group < React
+class Group < Vue
   def initialize
     @state = :closed
     @pending = {}
@@ -72,12 +72,7 @@ class Group < React
   end
 
   # capture group on initial load
-  def componentWillMount()
-    self.update(@@group)
-  end
-
-  # capture group on subsequent loads
-  def componentWillReceiveProps()
+  def created()
     self.update(@@group)
   end
 
@@ -109,7 +104,7 @@ end
 # Show a member of the Group
 #
 
-class GroupMember < React
+class GroupMember < Vue
   def initialize
     @state = :closed
   end
@@ -157,7 +152,7 @@ end
 # Confirmation dialog
 #
 
-class GroupConfirm < React
+class GroupConfirm < Vue
   def initialize
     @text = 'text'
     @color = 'btn-default'
@@ -194,7 +189,7 @@ class GroupConfirm < React
     end
   end
 
-  def componentDidMount()
+  def mounted()
     jQuery('#confirm').on('show.bs.modal') do |event|
       button = event.relatedTarget
       @id = button.parentNode.dataset.id

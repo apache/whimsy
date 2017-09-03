@@ -2,7 +2,7 @@
 # Show PPMC mentors
 #
 
-class PPMCMentors < React
+class PPMCMentors < Vue
   def initialize
     @ipmc = []
   end
@@ -51,13 +51,8 @@ class PPMCMentors < React
     end
   end
 
-  # update props on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # compute roster
-  def componentWillReceiveProps()
+  def created()
     roster = []
     
     @@ppmc.mentors.each do |id|
@@ -98,7 +93,7 @@ end
 # Show a mentor of the PPMC
 #
 
-class PPMCMentor < React
+class PPMCMentor < Vue
   def render
     _tr do
 

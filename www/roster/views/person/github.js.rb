@@ -2,7 +2,7 @@
 # Render and edit a person's GitHub user name
 #
 
-class PersonGitHub < React
+class PersonGitHub < Vue
   def render
     committer = @@person.state.committer
 
@@ -11,10 +11,10 @@ class PersonGitHub < React
 
       _div.value do
 
-        if @@person.state.edit_github
+        if @@edit == :github
 
           _form method: 'post' do
-            _input name: 'githubuser', defaultValue: committer.githubUsername
+            _input name: 'githubuser', value: committer.githubUsername
             _input type: 'submit', value: 'submit'
           end
 

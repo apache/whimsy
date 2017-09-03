@@ -2,7 +2,7 @@
 # Show PMC members
 #
 
-class PMCMembers < React
+class PMCMembers < Vue
   def initialize
     @committee = {}
   end
@@ -27,13 +27,8 @@ class PMCMembers < React
     end
   end
 
-  # update props on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # compute roster
-  def componentWillReceiveProps()
+  def created()
     roster = []
     
     for id in @@committee.roster
@@ -52,7 +47,7 @@ end
 # Show a member of the PMC
 #
 
-class PMCMember < React
+class PMCMember < Vue
   def initialize
     @state = :closed
   end
@@ -62,7 +57,7 @@ class PMCMember < React
       if @@auth
         _td do
            _input type: 'checkbox', checked: @@person.selected || false,
-             onChange: -> {self.toggleSelect(@@person)}
+             onClick: -> {self.toggleSelect(@@person)}
         end
       end
 
@@ -143,16 +138,6 @@ class PMCMember < React
         _td.clickable '', onClick: self.select
       end
     end
-  end
-
-  # update props on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
-  # automatically close entries when id changes
-  def componentWillReceiveProps(newprops)
-    @state = :closed if newprops.person.id != self.props.person.id
   end
 
   # toggle display of buttons

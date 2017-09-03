@@ -1,4 +1,4 @@
-class CommitterSearch < React
+class CommitterSearch < Vue
   def initialize
     @list = []
     @ready = false
@@ -6,7 +6,7 @@ class CommitterSearch < React
     @committers = []
   end
 
-  def componentDidMount()
+  def mounted()
     # start with (possibly stale) data from local storage when available
     ls_committers = localStorage.getItem('roster-committers')
     if ls_committers
@@ -60,7 +60,8 @@ class CommitterSearch < React
       _label.control_label.col_sm_3 'Search for', for:  'search-text'
       _div.col_sm_9 do
         _div.input_group do
-          _input.form_control autofocus: true, value: @search, onChange: self.change
+          _input.form_control autofocus: true, value: @search, 
+            onInput: self.change
           _span.input_group_addon do
             _span.glyphicon.glyphicon_user aria_label: "Committer ID or name"
           end

@@ -2,7 +2,7 @@
 # Confirmation dialog
 #
 
-class Confirm < React
+class Confirm < Vue
   def initialize
     @text = 'text'
     @color = 'btn-default'

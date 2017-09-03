@@ -2,7 +2,7 @@
 # Render and edit a person's member status
 #
 
-class PersonMemberStatus < React
+class PersonMemberStatus < Vue
   def render
     committer = @@person.state.committer
 
@@ -13,7 +13,7 @@ class PersonMemberStatus < React
         _div.value do
           _span committer.member.status
 
-         if @@person.state.edit_memstat
+         if @@edit == :memstat
            _form.inline method: 'post' do
              if committer.member.status.include? 'Active'
                _button.btn.btn_primary 'move to emeritus',

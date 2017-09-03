@@ -2,7 +2,7 @@
 # Searchable PMC roster
 #
 
-class PMCRoster < React
+class PMCRoster < Vue
   def render
     matches = []
     found = false

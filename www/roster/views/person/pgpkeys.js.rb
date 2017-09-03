@@ -2,7 +2,7 @@
 # Render and edit a person's PGP keys
 #
 
-class PersonPgpKeys < React
+class PersonPgpKeys < Vue
   def render
     committer = @@person.state.committer
 

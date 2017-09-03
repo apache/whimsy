@@ -2,7 +2,7 @@
 # Add People to a project
 #
 
-class PMCMod < React
+class PMCMod < Vue
   def initialize
     @people = []
   end
@@ -68,7 +68,7 @@ class PMCMod < React
     end
   end
 
-  def componentDidMount()
+  def mounted()
     jQuery('#pmcmod').on('show.bs.modal') do |event|
       button = event.relatedTarget
       setTimeout(500) { jQuery('#pmcmod input').focus() }

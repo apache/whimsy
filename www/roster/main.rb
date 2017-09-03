@@ -11,7 +11,7 @@ require 'tmpdir'
 
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap/theme'
-require 'wunderbar/react'
+require 'wunderbar/vue'
 require 'wunderbar/underscore'
 require 'wunderbar/markdown'
 require 'wunderbar/jquery/stupidtable'

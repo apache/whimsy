@@ -2,7 +2,7 @@
 # Committers on the PPMC
 #
 
-class PPMCCommitters < React
+class PPMCCommitters < Vue
   def render
     pending = [] 
 
@@ -52,13 +52,8 @@ class PPMCCommitters < React
     end
   end
 
-  # update props on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # compute list of committers
-  def componentWillReceiveProps()
+  def created()
     committers = []
     
     @@ppmc.committers.each do |id|
@@ -81,7 +76,7 @@ end
 # Show a committer
 #
 
-class PPMCCommitter < React
+class PPMCCommitter < Vue
   def render
     _tr do
 

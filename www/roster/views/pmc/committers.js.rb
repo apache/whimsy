@@ -2,7 +2,7 @@
 # Committers on the PMC
 #
 
-class PMCCommitters < React
+class PMCCommitters < Vue
   def render
     if
       @@committee.committers.all? do |id|
@@ -35,13 +35,8 @@ class PMCCommitters < React
     end
   end
 
-  # update props on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # compute list of committers
-  def componentWillReceiveProps()
+  def created()
     committers = []
     
     @@committee.committers.each do |id|
@@ -58,7 +53,7 @@ end
 # Show a committer
 #
 
-class PMCCommitter < React
+class PMCCommitter < Vue
   def render
     _tr do
       if @@auth

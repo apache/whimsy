@@ -2,7 +2,7 @@
 # Draft an "Establish" resolution for a new PMC
 #
 
-class PPMCGraduate < React
+class PPMCGraduate < Vue
   def initialize
     @owners = []
   end

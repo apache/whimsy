@@ -2,7 +2,7 @@
 # Show PPMC members
 #
 
-class PPMCMembers < React
+class PPMCMembers < Vue
   def render
     pending = [] 
 
@@ -48,13 +48,8 @@ class PPMCMembers < React
     end
   end
 
-  # update props on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # compute roster
-  def componentWillReceiveProps()
+  def created()
     roster = []
     
     @@ppmc.owners.each do |id|
@@ -77,7 +72,7 @@ end
 # Show a member of the PPMC
 #
 
-class PPMCMember < React
+class PPMCMember < Vue
   def render
     _tr do
 
