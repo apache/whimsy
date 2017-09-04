@@ -4,6 +4,12 @@ require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/mlist'
 
+WHITELIST = [
+  /^archive-asf-private@cust-asf\.ponee\.io$/,
+  /^archiver@mbox-vm\.apache\.org$/,
+  /^security-archive@.*\.apache\.org$/,
+]
+
 # ensure that there is a trailing slash (so relative paths will work)
 if not ENV['PATH_INFO']
   print "Status: 302 Found\r\nLocation: #{ENV['SCRIPT_URI']}/\r\n\r\n"
@@ -33,10 +39,17 @@ _html do
       end
 
     elsif lists[path]
+      podling = ASF::Podling.find(path)
       committee = ASF::Committee.find(path)
+      project = ASF::Project.find(path)
       _h2 do
-        _a committee.display_name, 
-          href: "../../roster/committee/#{committee.id}"
+        if podling
+          _a podling.display_name, 
+            href: "../../roster/ppmc/#{podling.id}"
+        else
+          _a committee.display_name, 
+            href: "../../roster/committee/#{committee.id}"
+        end
       end
 
       _table.table do
@@ -51,11 +64,13 @@ _html do
           lists[path].sort_by {|email| email.downcase}.each do |email|
             person = ASF::Person.find_by_email(email)
             if person
-              if person.asf_member? or committee.committers.include? person
+              if person.asf_member? or project.members.include? person
                 color = 'bg-success'
               else
                 color = 'bg-warning'
               end
+            elsif WHITELIST.any? {|regex| email =~ regex}
+              color = ''
             else
               color = 'bg-danger'
             end
