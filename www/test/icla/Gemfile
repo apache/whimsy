@@ -12,7 +12,7 @@ else
 end
 
 gem 'rake'
-gem 'wunderbar', '>= 1.0.0'
+gem 'wunderbar'
 gem 'ruby2js', '>= 2.0.0'
 gem 'sinatra'
 gem 'nokogumbo'
