@@ -19,74 +19,66 @@ ASF::MLIST.list_parse('sub') do |dom, list, subs|
 end
 
 _html do
-  path = ENV['PATH_INFO'].sub('/', '')
-  if path == ''
-    _whimsy_body(
-      title: "Security Mailing List Subscriptions"
-    ) do
+  _whimsy_body(
+    title: "Security Mailing List Subscriptions"
+  ) do
+    path = ENV['PATH_INFO'].sub('/', '')
+    if path == ''
       _ul.list_group do
-	lists.each do |dom, subs|
-	  _li.list_group_item do
-	    _a dom, href: dom
-	  end
-	end
+        lists.each do |dom, subs|
+          _li.list_group_item do
+            _a dom, href: dom
+          end
+        end
       end
-    end
 
-  elsif lists[path]
-    committee = ASF::Committee.find('whimsy')
-
-    _whimsy_body(
-      title: "Security Mailing List Subscriptions: #{path}"
-    ) do
+    elsif lists[path]
+      committee = ASF::Committee.find(path)
+      _h2 do
+        _a committee.display_name, 
+          href: "../../roster/committee/#{committee.id}"
+      end
 
       _table.table do
-	_thead do
-	  _tr do
-	    _th 'email'
-	    _th 'person'
-	  end
-	end
+        _thead do
+          _tr do
+            _th 'email'
+            _th 'person'
+          end
+        end
 
-	_tbody do
-	  lists[path].sort_by {|email| email.downcase}.each do |email|
-	    person = ASF::Person.find_by_email(email)
-	    if person
-	      if person.asf_member? or committee.committers.include? person
-		color = 'bg-success'
-	      else
-		color = 'bg-warning'
-	      end
-	    else
-	      color = 'bg-danger'
-	    end
+        _tbody do
+          lists[path].sort_by {|email| email.downcase}.each do |email|
+            person = ASF::Person.find_by_email(email)
+            if person
+              if person.asf_member? or committee.committers.include? person
+                color = 'bg-success'
+              else
+                color = 'bg-warning'
+              end
+            else
+              color = 'bg-danger'
+            end
 
-	    _tr class: color do
-	       _td email
-	       if person
-		 if person.asf_member?
-		   _td do
-		     _b do
-		       _a person.public_name, 
-			 href: "../../roster/committer/#{person.id}"
-		     end
-		   end
-		 else
-		   _td do
-		     _a person.public_name, 
-		       href: "../../roster/committer/#{person.id}"
-		    end
-		 end
-	       else
-		 _td
-	       end
-	    end
-	  end
-	end
+            _tr class: color do
+              _td email
+              _td do
+                if person
+                  if person.asf_member?
+                    _b do
+                      _a person.public_name, 
+                        href: "../../roster/committer/#{person.id}"
+                    end
+                  else
+                    _a person.public_name, 
+                      href: "../../roster/committer/#{person.id}"
+                  end
+                end
+              end
+            end
+          end
+        end
       end
     end
-
-  else
-    print "Status: 404 Not Found\r\n\r\n"
   end
 end
