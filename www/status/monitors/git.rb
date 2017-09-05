@@ -57,6 +57,7 @@ def Monitor.git(previous_status)
       ' create mode ',
       ' delete mode ',
       ' rename ',
+      ' mode change ',
       # TODO Should these 3 lines be handled differently?
       'From git://',
       ' * [new branch]',
@@ -362,3 +363,17 @@ Fast-forward
  delete mode 100644 certbot/tests/testdata/dsa_cert.pem
  delete mode 100644 certbot/tests/testdata/matching_cert.pem
  delete mode 100644 certbot/tests/testdata/rsa512_key_2.pem
+
+/x1/srv/git/infrastructure-puppet7
+Already on 'deployment'
+Your branch is up-to-date with 'origin/deployment'.
+From https://github.com/apache/infrastructure-puppet
+   b03cfe6..21a99b2  deployment -> origin/deployment
+Updating b03cfe6..21a99b2
+Fast-forward
+ .../files/authorization/check-auth-templates.pl    |  16 +-
+ .../files/authorization/gen_asf-authorization.pl   | 291 ---------------------
+ .../files/authorization/pit-authorization-template |   2 +
+ 3 files changed, 10 insertions(+), 299 deletions(-)
+ mode change 100644 => 100755 modules/subversion_server/files/authorization/check-auth-templates.pl
+ delete mode 100755 modules/subversion_server/files/authorization/gen_asf-authorization.pl
