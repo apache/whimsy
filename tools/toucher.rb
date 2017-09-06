@@ -22,7 +22,8 @@ Dir["#{File.expand_path('../..', __FILE__)}/**/restart.txt"].each do |restart|
   end
 end
 
-listener = Listen.to(*watch.keys) do |modified, added, removed|
+watched = watch.keys.select {|dir| Dir.exist? dir}
+listener = Listen.to(*watched) do |modified, added, removed|
   touches = []
   (modified + added + removed).each do |file|
     watch.each do |path, restarts|
