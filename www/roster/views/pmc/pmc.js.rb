@@ -27,8 +27,16 @@ class PMCMembers < Vue
     end
   end
 
-  # compute roster
   def created()
+    self.computeRoster()
+  end
+
+  def beforeUpdate()
+    self.computeRoster()
+  end
+
+  # compute roster
+  def computeRoster()
     roster = []
     
     for id in @@committee.roster
