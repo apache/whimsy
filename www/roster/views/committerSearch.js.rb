@@ -109,10 +109,8 @@ class CommitterSearch < Vue
               end
 
               if @@add
-                _tr.alert_success do
-                  _td colspan: 4 do
-                    _span "Click on \u2795 to add."
-                  end
+                _tr do
+                  _td "Click on \u2795 to add.", colspan: 4
                 end
               end
             end
