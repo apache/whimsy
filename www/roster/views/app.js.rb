@@ -1,3 +1,4 @@
+require_relative 'vue-config'
 require_relative 'polyfill'
 
 require_relative 'pmc/main'
