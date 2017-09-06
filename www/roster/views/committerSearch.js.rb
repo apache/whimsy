@@ -112,10 +112,6 @@ class CommitterSearch < Vue
                 _tr.alert_success do
                   _td colspan: 4 do
                     _span "Click on \u2795 to add."
-                    if @@multiple
-                      _span "  Multiple people can be added with " +
-                       "a single confirmation."
-                    end
                   end
                 end
               end
