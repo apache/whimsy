@@ -65,7 +65,7 @@ class PPMCMentors < Vue
   end
 
   # fetch IPMC list
-  def componentDidMount()
+  def mounted()
     return unless @@auth and @@auth.ipmc
     Polyfill.require(%w(Promise fetch)) do
       fetch('committee/incubator.json', credentials: 'include').then {|response|

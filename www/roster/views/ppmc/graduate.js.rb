@@ -57,7 +57,7 @@ class PPMCGraduate < Vue
     textarea.css('height', Math.max(50, textarea[0].scrollHeight)+'px')
   end
 
-  def componentDidMount()
+  def mounted()
     textarea = jQuery('#graduate textarea')
 
     jQuery('#graduate').on('show.bs.modal') do |event|
@@ -81,7 +81,7 @@ class PPMCGraduate < Vue
     end
   end
 
-  def componentDidUpdate()
+  def updated()
     self.resize(jQuery('#graduate textarea'))
   end
 end

@@ -35,7 +35,7 @@ class Confirm < Vue
     end
   end
 
-  def componentDidMount()
+  def mounted()
     jQuery('#confirm').on('show.bs.modal') do |event|
       button = event.relatedTarget
       @ids = button.parentNode.dataset.ids

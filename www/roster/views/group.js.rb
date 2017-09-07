@@ -130,14 +130,14 @@ class GroupMember < Vue
     end
   end
 
-  # update props on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
+  # update id on initial load
+  def mounted()
+    @id = @@id
   end
 
   # automatically close row when id changes
-  def componentWillReceiveProps(newprops)
-    @state = :closed if newprops.id != self.props.id
+  def beforeUpdate()
+    @state = :closed if @id != @@id and @state != :closed
   end
 
   # toggle display of buttons
