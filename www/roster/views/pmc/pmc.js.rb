@@ -16,6 +16,7 @@ class PMCMembers < React
           _th 'id'
           _th 'public name'
           _th 'starting date'
+          _th 'status - click cell to adjust LDAP membership'
         end
       end
 
