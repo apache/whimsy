@@ -21,6 +21,9 @@ class PMC < React
         _a 'PMC', :href => "committee/#{@committee.id}#pmc"
       end
       _li role: "presentation" do
+        _a 'committers', :href => "committee/#{@committee.id}#committers"
+      end
+      _li role: "presentation" do
         _a 'Mail Moderators', :href => "committee/#{@committee.id}#mail"
       end
       _li role: "presentation" do
