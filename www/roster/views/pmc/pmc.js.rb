@@ -20,34 +20,25 @@ class PMCMembers < Vue
       end
 
       _tbody do
-        @roster.each do |person|
+        roster.each do |person|
           _PMCMember auth: @@auth, person: person, committee: @@committee
         end
       end
     end
   end
 
-  def created()
-    self.computeRoster()
-  end
-
-  def beforeUpdate()
-    self.computeRoster()
-  end
-
-  # compute roster
-  def computeRoster()
-    roster = []
+  def roster
+    result = []
     
     for id in @@committee.roster
       if @@committee.members.include?(id) or @@committee.ldap.include?(id)
         person = @@committee.roster[id]
         person.id = id
-        roster << person
+        result << person
       end
     end
 
-    @roster = roster.sort_by {|person| person.name}
+    result.sort_by {|person| person.name}
   end
 end
 

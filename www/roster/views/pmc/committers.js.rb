@@ -25,7 +25,7 @@ class PMCCommitters < Vue
         end
 
         _tbody do
-          @committers.each do |person|
+          committers.each do |person|
             next if @@committee.members.include? person.id
             next if @@committee.ldap.include? person.id
             _PMCCommitter auth: @@auth, person: person, committee: @@committee
@@ -36,16 +36,16 @@ class PMCCommitters < Vue
   end
 
   # compute list of committers
-  def created()
-    committers = []
+  def committers
+    result = []
     
     @@committee.committers.each do |id|
       person = @@committee.roster[id]
       person.id = id
-      committers << person
+      result << person
     end
 
-    @committers = committers.sort_by {|person| person.name}
+    result.sort_by {|person| person.name}
   end
 end
 
