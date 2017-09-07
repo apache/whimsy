@@ -16,7 +16,7 @@ class PMCMembers < Vue
           _th 'id'
           _th 'public name'
           _th 'starting date'
-          _th 'status - click cell to adjust LDAP membership'
+          _th 'status - click cell for actions'
         end
       end
 
