@@ -2,7 +2,7 @@
 # Render and edit a person's members.txt entry
 #
 
-class PersonMemberText < React
+class PersonMemberText < Vue
   def render
     committer = @@person.state.committer
 
@@ -10,11 +10,11 @@ class PersonMemberText < React
       _div.name 'Members.txt'
 
       _div.value do
-        if @@person.state.edit_memtext
+        if @@edit == :memtext
 
           _form.inline method: 'post' do
             _div do
-              _textarea name: 'entry', defaultValue: committer.member.info
+              _textarea committer.member.info, name: 'entry'
             end
             _button.btn.btn_primary 'submit'
           end

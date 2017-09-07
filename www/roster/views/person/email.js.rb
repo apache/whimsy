@@ -2,7 +2,7 @@
 # Render and edit a person's E-mail addresses
 #
 
-class PersonEmail < React
+class PersonEmail < Vue
   def render
     committer = @@person.state.committer
 

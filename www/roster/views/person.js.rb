@@ -1,4 +1,4 @@
-class Person < React
+class Person < Vue
   def initialize
     @committer = {}
     @response = nil
@@ -13,7 +13,7 @@ class Person < React
     _h2 "#{@committer.id}@apache.org"
 
     # Name
-    _PersonName person: self
+    _PersonName person: self, edit: @edit
 
     _div.row do
       _div.name 'LDAP Create Date'
@@ -139,15 +139,15 @@ class Person < React
 
     # GitHub username
     if @committer.githubUsername
-      _PersonGitHub person: self
+      _PersonGitHub person: self, edit: @edit
     end
 
     if @committer.member
-      _PersonMemberStatus person: self
+      _PersonMemberStatus person: self, edit: @edit
 
       # Members.txt
       if @committer.member.info
-        _PersonMemberText person: self
+        _PersonMemberText person: self, edit: @edit
       end
 
       if @committer.member.nomination
@@ -164,7 +164,7 @@ class Person < React
     end
 
     # SpamAssassin score
-    _PersonSascore person: self
+    _PersonSascore person: self, edit: @edit
 
     # modal dialog for dry run results
     _div.modal.fade.wide_form tabindex: -1 do
@@ -185,24 +185,22 @@ class Person < React
     end
   end
 
-  # capture committer on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
+  # initialize committer, determine if user is authorized to make
+  # changes, map Vue model to React model
+  def created()
+    @committer = @@committer
+    @auth = (@@auth.id == @@committer.id or @@auth.secretary or @@auth.root)
 
-  # replace committer on change, determine if user is authorized to make
-  # changes
-  def componentWillReceiveProps()
-    if @committer.id != @@committer.id
-      @committer = @@committer
-      @auth = (@@auth.id == @@committer.id or @@auth.secretary or @@auth.root)
-    end
+    # map Vue model to React model
+    self.state = self['$data']
+    self.props = self['$props']
   end
 
   # on initial display, look for add editable rows, highlight them,
   # and watch for double clicks on them
-  def componentDidMount()
+  def mounted()
     return unless @auth
+
     Array(document.querySelectorAll('div.row[data-edit]')).each do |div|
       div.addEventListener('dblclick', self.dblclick)
       div.querySelector('div.name').classList.add 'bg-success'
@@ -212,15 +210,12 @@ class Person < React
   # when a double click occurs, toggle the associated state
   def dblclick(event)
     tr = event.currentTarget
-    field = "edit_#{tr.dataset.edit}"
-    changes = {}
-    changes[field] = !self.state[field]
-    self.setState changes
+    @edit = tr.dataset.edit
     window.getSelection().removeAllRanges()
   end
 
   # after update, register event listeners on forms
-  def componentDidUpdate()
+  def updated()
     Array(document.querySelectorAll('div[data-edit]')).each do |tr|
       form = tr.querySelector('form')
       if form

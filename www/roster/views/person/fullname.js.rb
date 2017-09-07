@@ -2,7 +2,7 @@
 # Render and edit a person's name
 #
 
-class PersonName < React
+class PersonName < Vue
   def render
     committer = @@person.state.committer
 
@@ -12,25 +12,25 @@ class PersonName < React
       _div.value do
         name = committer.name
 
-        if @@person.state.edit_fullname
+        if @@edit == :fullname
 
           _form.inline method: 'post' do
             _div do
               _label 'public name', for: 'publicname'
               _input.publicname! name: 'publicname', required: true,
-                defaultValue: name.public_name
+                value: name.public_name
             end
 
             _div do
               _label 'legal name', for: 'legalname'
               _input.legalname! name: 'legalname', required: true,
-                defaultValue: name.legal_name
+                value: name.legal_name
             end
 
             _div do
               _label 'given name', for: 'givenname'
               _input.legalname! name: 'givenname', required: true,
-                defaultValue: name.given_name
+                value: name.given_name
             end
 
             _button.btn.btn_primary 'submit'

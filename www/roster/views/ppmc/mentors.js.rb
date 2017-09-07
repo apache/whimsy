@@ -2,7 +2,7 @@
 # Show PPMC mentors
 #
 
-class PPMCMentors < React
+class PPMCMentors < Vue
   def initialize
     @ipmc = []
   end
@@ -51,13 +51,8 @@ class PPMCMentors < React
     end
   end
 
-  # update props on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # compute roster
-  def componentWillReceiveProps()
+  def created()
     roster = []
     
     @@ppmc.mentors.each do |id|
@@ -70,7 +65,7 @@ class PPMCMentors < React
   end
 
   # fetch IPMC list
-  def componentDidMount()
+  def mounted()
     return unless @@auth and @@auth.ipmc
     Polyfill.require(%w(Promise fetch)) do
       fetch('committee/incubator.json', credentials: 'include').then {|response|
@@ -98,7 +93,7 @@ end
 # Show a mentor of the PPMC
 #
 
-class PPMCMentor < React
+class PPMCMentor < Vue
   def render
     _tr do
 

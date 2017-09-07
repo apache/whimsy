@@ -2,7 +2,7 @@
 # Confirmation dialog
 #
 
-class Confirm < React
+class Confirm < Vue
   def initialize
     @text = 'text'
     @color = 'btn-default'
@@ -35,7 +35,7 @@ class Confirm < React
     end
   end
 
-  def componentDidMount()
+  def mounted()
     jQuery('#confirm').on('show.bs.modal') do |event|
       button = event.relatedTarget
       @ids = button.parentNode.dataset.ids

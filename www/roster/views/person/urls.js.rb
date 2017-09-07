@@ -2,7 +2,7 @@
 # Render and edit a person's URLs
 #
 
-class PersonUrls < React
+class PersonUrls < Vue
   def render
     committer = @@person.state.committer
 

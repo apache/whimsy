@@ -2,7 +2,7 @@
 # Show a list of a person's forms on file
 #
 
-class PersonForms < React
+class PersonForms < Vue
   def render
     committer = @@person.state.committer
     documents = "https://svn.apache.org/repos/private/documents"

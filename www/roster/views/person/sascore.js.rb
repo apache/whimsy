@@ -2,7 +2,7 @@
 # Render and edit a person's SpamAssassin score
 #
 
-class PersonSascore < React
+class PersonSascore < Vue
   def render
     committer = @@person.state.committer
 
@@ -11,11 +11,11 @@ class PersonSascore < React
 
       _div.value do
 
-        if @@person.state.edit_sascore
+        if @@edit == :sascore
 
           _form method: 'post' do
             _input type: 'number', min: 0, max: 10, 
-              name: 'sascore', defaultValue: committer.sascore
+              name: 'sascore', value: committer.sascore
             _input type: 'submit', value: 'submit'
           end
 

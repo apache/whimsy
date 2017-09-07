@@ -2,7 +2,7 @@
 # Show a PPMC
 #
 
-class PPMC < React
+class PPMC < Vue
   def initialize
     @create_disabled = false
   end
@@ -207,12 +207,7 @@ class PPMC < React
   end
 
   # capture ppmc on initial load
-  def componentWillMount()
-    self.update(@@ppmc)
-  end
-
-  # capture ppmc on subsequent loads
-  def componentWillReceiveProps()
+  def created()
     self.update(@@ppmc)
   end
 
@@ -223,10 +218,10 @@ class PPMC < React
 
   # refresh the current page
   def refresh()
-    self.forceUpdate()
+    Vue.forceUpdate()
   end
 
-  def componentDidMount()
+  def mounted()
     # export refesh method
     PPMC.refresh = self.refresh
   end

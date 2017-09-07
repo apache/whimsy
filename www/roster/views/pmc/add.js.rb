@@ -2,7 +2,7 @@
 # Add People to a project
 #
 
-class PMCAdd < React
+class PMCAdd < Vue
   def initialize
     @people = []
   end
@@ -67,7 +67,7 @@ class PMCAdd < React
     end
   end
 
-  def componentDidMount()
+  def mounted()
     jQuery('#pmcadd').on('show.bs.modal') do |event|
       button = event.relatedTarget
       setTimeout(500) { jQuery('#pmcadd input').focus() }
@@ -76,7 +76,7 @@ class PMCAdd < React
 
   def add(person)
     @people << person
-    self.forceUpdate()
+    Vue.forceUpdate()
     jQuery('#pmcadd input').focus()
   end
 
@@ -106,11 +106,12 @@ class PMCAdd < React
         content_type = response.headers.get('content-type') || ''
         if response.status == 200 and content_type.include? 'json'
           response.json().then do |json|
-            @@update.call(json)
+            Vue.emit :update, json
           end
         else
           alert "#{response.status} #{response.statusText}"
         end
+
         jQuery('#pmcadd').modal(:hide)
         @disabled = false
       }.catch {|error|
