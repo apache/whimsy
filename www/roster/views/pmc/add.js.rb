@@ -106,11 +106,12 @@ class PMCAdd < Vue
         content_type = response.headers.get('content-type') || ''
         if response.status == 200 and content_type.include? 'json'
           response.json().then do |json|
-            @@update.call(json)
+            Vue.emit :update, json
           end
         else
           alert "#{response.status} #{response.statusText}"
         end
+
         jQuery('#pmcadd').modal(:hide)
         @disabled = false
       }.catch {|error|
