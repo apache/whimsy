@@ -189,8 +189,8 @@ class PMC < Vue
     # hidden forms
     if auth
       _Confirm action: :committee, project: @committee.id, update: self.update
-      _PMCAdd committee: @@committee, onUpdate: self.update
-      _PMCMod committee: @@committee, onUpdate: self.update
+      _PMCAdd project: @@committee, onUpdate: self.update
+      _PMCMod project: @@committee, onUpdate: self.update
     end
   end
 

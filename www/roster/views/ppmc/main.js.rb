@@ -201,8 +201,8 @@ class PPMC < Vue
     # hidden forms
     if @@auth.ppmc or @@auth.ipmc
       _Confirm action: :ppmc, project: @ppmc.id, update: self.update
-      _PPMCAdd ppmc: @ppmc, update: self.update, auth: @@auth
-      _PPMCMod ppmc: @ppmc, update: self.update, auth: @@auth
+      _PPMCAdd project: @ppmc, onUpdate: self.update, auth: @@auth
+      _PPMCMod project: @ppmc, onUpdate: self.update, auth: @@auth
     end
   end
 
