@@ -46,7 +46,7 @@ class PMCRoster < Vue
               end
             end
 
-            if @@committee.asfmembers.include? person.id
+            if person.member
               _td { _b { _a person.id, href: "committer/#{person.id}" } }
               _td { _b person.name }
             else
