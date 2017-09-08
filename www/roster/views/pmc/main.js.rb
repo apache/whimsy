@@ -88,7 +88,7 @@ class PMC < Vue
 
     # main content
     if @search
-      _PMCRoster auth: auth, committee: @committee, search: @search
+      _ProjectSearch auth: auth, project: @committee, search: @search
     else
       _PMCMembers auth: auth, committee: @committee
       _PMCCommitters auth: auth, committee: @committee

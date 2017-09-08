@@ -1,16 +1,16 @@
 #
-# Searchable PMC roster
+# Searchable Project roster
 #
 
-class PMCRoster < Vue
+class ProjectSearch < Vue
   def render
     matches = []
     found = false
 
     search = @@search.downcase().strip().split(/\s+/)
 
-    for id in @@committee.roster do
-      person = @@committee.roster[id]
+    for id in @@project.roster do
+      person = @@project.roster[id]
 
       match = search.all? {|term|
         id.include? term or person.name.downcase().include? term or
@@ -65,6 +65,6 @@ class PMCRoster < Vue
 
   def toggleSelect(person)
     person.selected = !person.selected
-    @@committee.refresh()
+    @@project.refresh()
   end
 end

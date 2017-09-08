@@ -78,7 +78,8 @@ class PPMC < Vue
 
     # main content
     if @search
-      _PPMCRoster auth: @@auth, ppmc: @ppmc, search: @search
+      _ProjectSearch project: @ppmc, search: @search,
+        auth: (@@auth.ipmc or @@auth.ppmc)
     else
       _PPMCMentors auth: @@auth, ppmc: @ppmc
       _PPMCMembers auth: @@auth, ppmc: @ppmc
