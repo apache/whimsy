@@ -47,7 +47,7 @@ class PPMC < Vue
     # action bar: add, modify, search
     _div.row key: 'databar' do
       _div.col_sm_6 do
-        if @@auth.ipmc or @@auth.ipmc
+        if @@auth.ipmc or @@auth.ppmc
           _button.btn.btn_default 'Add',
             data_target: '#ppmcadd', data_toggle: 'modal'
 
