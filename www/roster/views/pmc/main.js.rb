@@ -199,19 +199,11 @@ class PMC < Vue
     self.update(@@committee)
   end
 
-  # refresh the current page
-  def refresh()
-    Vue.forceUpdate()
-  end
-
-  def mounted()
-    # export refesh method
-    PMC.refresh = self.refresh
-  end
-
   # update committee from conformation form
   def update(committee)
     @committee = committee
+
+    @committee.refresh = proc { Vue.forceUpdate() }
 
     if @attic == nil and not committee.established and defined? fetch
       @attic = []

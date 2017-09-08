@@ -214,16 +214,8 @@ class PPMC < Vue
   # update ppmc from conformation form
   def update(ppmc)
     @ppmc = ppmc
-  end
 
-  # refresh the current page
-  def refresh()
-    Vue.forceUpdate()
-  end
-
-  def mounted()
-    # export refesh method
-    PPMC.refresh = self.refresh
+    @ppmc.refresh = proc { Vue.forceUpdate() }
   end
 
   # create project in ldap

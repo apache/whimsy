@@ -94,6 +94,6 @@ class PPMCMentor < Vue
   # toggle checkbox
   def toggleSelect(person)
     person.selected = !person.selected
-    PPMC.refresh()
+    @@ppmc.refresh()
   end
 end

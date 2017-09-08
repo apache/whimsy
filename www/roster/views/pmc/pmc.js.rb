@@ -150,6 +150,6 @@ class PMCMember < Vue
   # toggle checkbox
   def toggleSelect(person)
     person.selected = !person.selected
-    PMC.refresh()
+    @@committee.refresh()
   end
 end

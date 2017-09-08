@@ -65,6 +65,6 @@ class PMCRoster < Vue
 
   def toggleSelect(person)
     person.selected = !person.selected
-    PMC.refresh()
+    @@committee.refresh()
   end
 end

@@ -65,6 +65,6 @@ class PPMCRoster < Vue
 
   def toggleSelect(person)
     person.selected = !person.selected
-    PPMC.refresh()
+    @@ppmc.refresh()
   end
 end
