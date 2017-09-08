@@ -4,8 +4,6 @@
 
 class PPMCMembers < Vue
   def render
-    pending = [] 
-
     _h2.ppmc! 'PPMC'
     _table.table.table_hover do
       _thead do
@@ -18,53 +16,25 @@ class PPMCMembers < Vue
       end
 
       _tbody do
-        @roster.each do |person|
+        roster.each do |person|
           next if @@ppmc.mentors.include? person.id
           _PPMCMember auth: @@auth, person: person, ppmc: @@ppmc
-          pending << person.id if person.status == :pending
-        end
-
-        if pending.length > 1
-          _tr do
-            _td colspan: 2
-            _td data_ids: pending.join(',') do
-
-              # produce a list of ids to be added
-              if pending.length == 2
-                list = "#{pending[0]} and #{pending[1]}"
-              else
-                list = pending[0..-2].join(', ') + ", and " +  pending[-1]
-              end
-
-              _button.btn.btn_success 'Add all to the PPMC',
-                data_action: 'add ppmc committer',
-                data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Add #{list} to the " +
-                  "#{@@ppmc.display_name} PPMC?"
-            end
-          end
         end
       end
     end
   end
 
   # compute roster
-  def created()
-    roster = []
+  def roster
+    result = []
     
     @@ppmc.owners.each do |id|
       person = @@ppmc.roster[id]
       person.id = id
-      roster << person
+      result << person
     end
 
-    @roster = roster.sort_by {|person| person.name}
-  end
-
-  # add a person to the displayed list of PMC members
-  def add(person)
-    person.status = :pending
-    @roster << person
+    result.sort_by {|person| person.name}
   end
 end
 

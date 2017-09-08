@@ -21,7 +21,7 @@ class PPMCCommitters < Vue
         end
 
         _tbody do
-          @committers.each do |person|
+          committers.each do |person|
             next if @@ppmc.owners.include? person.id
             _PPMCCommitter auth: @@auth, person: person, ppmc: @@ppmc
             pending << person.id if person.status == :pending
@@ -53,22 +53,16 @@ class PPMCCommitters < Vue
   end
 
   # compute list of committers
-  def created()
-    committers = []
+  def committers
+    result = []
     
     @@ppmc.committers.each do |id|
       person = @@ppmc.roster[id]
       person.id = id
-      committers << person
+      result << person
     end
 
-    @committers = committers.sort_by {|person| person.name}
-  end
-
-  # add a person to the displayed list of committers
-  def add(person)
-    person.status = 'pending'
-    @committers << person
+    result.sort_by {|person| person.name}
   end
 end
 
@@ -97,13 +91,13 @@ class PPMCCommitter < Vue
 
       if @@person.selected
         _td data_ids: @@person.id do 
-	  if @@auth.ipmc and not @@person.icommit
-	    _button.btn.btn_primary 'Add as an incubator committer',
-	      data_action: 'add icommit',
-	      data_target: '#confirm', data_toggle: 'modal',
-	      data_confirmation: "Add #{@@person.name} as a commiter " +
-		"for the incubator PPMC?"
-	  end
+          if @@auth.ipmc and not @@person.icommit
+            _button.btn.btn_primary 'Add as an incubator committer',
+              data_action: 'add icommit',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Add #{@@person.name} as a commiter " +
+                "for the incubator PPMC?"
+          end
         end
       elsif not @@person.icommit
         _span.issue 'not listed as an incubator committer'

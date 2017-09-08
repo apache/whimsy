@@ -8,8 +8,6 @@ class PPMCMentors < Vue
   end
 
   def render
-    pending = [] 
-
     _h2.mentors! 'Mentors'
     _table.table.table_hover do
       _thead do
@@ -22,70 +20,24 @@ class PPMCMentors < Vue
       end
 
       _tbody do
-        @roster.each do |person|
+        roster.each do |person|
           _PPMCMentor auth: @@auth, person: person, ppmc: @@ppmc
-          pending << person.id if person.status == :pending
-        end
-
-        if pending.length > 1
-          _tr do
-            _td colspan: 2
-            _td data_ids: pending.join(',') do
-
-              # produce a list of ids to be added
-              if pending.length == 2
-                list = "#{pending[0]} and #{pending[1]}"
-              else
-                list = pending[0..-2].join(', ') + ", and " +  pending[-1]
-              end
-
-              _button.btn.btn_success 'Add all as mentors',
-                data_action: 'add ppmc committer mentor',
-                data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Add #{list} to the " +
-                  "#{@@ppmc.display_name} PPMC?"
-            end
-          end
         end
       end
     end
   end
 
   # compute roster
-  def created()
-    roster = []
+  def roster
+    result = []
     
     @@ppmc.mentors.each do |id|
       person = @@ppmc.roster[id]
       person.id = id
-      roster << person
+      result << person
     end
 
-    @roster = roster.sort_by {|person| person.name}
-  end
-
-  # fetch IPMC list
-  def mounted()
-    return unless @@auth and @@auth.ipmc
-    Polyfill.require(%w(Promise fetch)) do
-      fetch('committee/incubator.json', credentials: 'include').then {|response|
-        if response.status == 200
-          response.json().then do |json|
-            @ipmc = json.roster.keys()
-          end
-        else
-          console.log "IPMC #{response.status} #{response.statusText}"
-        end
-      }.catch {|error|
-        console.log "IPMC #{errror}"
-      }
-    end
-  end
-
-  # add a person to the displayed list of PMC members
-  def add(person)
-    person.status = :pending
-    @roster << person
+    result.sort_by {|person| person.name}
   end
 end
 
