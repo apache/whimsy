@@ -15,10 +15,11 @@ _html do
       }
     ) do
       _div_.main!
-      _script src: 'app.js'
-      _.render '#main' do
-        _Group group: @group, auth: @auth
-      end
+    end
+
+    _script src: 'app.js'
+    _.render '#main' do
+      _Group group: @group, auth: @auth
     end
   end
 end
