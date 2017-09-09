@@ -58,7 +58,8 @@ index = nil
 index_time = nil
 index_etag = nil
 get '/committer/index.json' do
-  index = nil if not index_time or Time.now-index_time > 300
+  # recompute index if the data is 5 minutes old or older
+  index = nil if not index_time or Time.now-index_time >= 300
 
   if not index
     # bulk loading the mail information makes things go faster
@@ -81,7 +82,7 @@ get '/committer/index.json' do
   last_modified index_time
   etag index_etag
   content_type 'application/json', charset: 'UTF-8'
-  expires [Time.now-index_time, 60].max
+  expires [300 - (Time.now-index_time), 60].max
   index
 end
 
