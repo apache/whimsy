@@ -54,35 +54,35 @@ get '/committee' do
   redirect to('/committee/')
 end
 
-@@index = nil
-@@index_time = nil
-@@index_etag = nil
+index = nil
+index_time = nil
+index_etag = nil
 get '/committer/index.json' do
-  @@index = nil if not @@index_time or Time.now-@@index_time > 300
+  index = nil if not index_time or Time.now-index_time > 300
 
-  if not @@index
+  if not index
     # bulk loading the mail information makes things go faster
     mail = Hash[ASF::Mail.list.group_by(&:last).
       map {|person, list| [person, list.map(&:first)]}]
 
     # build a list of people, their public-names, and email addresses
-    @@index = ASF::Person.list.sort_by(&:id).map {|person|
+    index = ASF::Person.list.sort_by(&:id).map {|person|
       result = {id: person.id, name: person.public_name, mail: mail[person]}
       result[:member] = true if person.asf_member?
       result
     }.to_json
 
     # cache
-    @@index_time = Time.now
-    @@index_etag = etag = Digest::MD5.hexdigest(@@index)
+    index_time = Time.now
+    index_etag = etag = Digest::MD5.hexdigest(index)
   end
 
   # send response
-  last_modified @@index_time
-  etag @@index_etag
+  last_modified index_time
+  etag index_etag
   headers 'type' => 'application/json', 'charset' => 'UTF-8'
-  expires [Time.now-@@index_time, 60].max
-  @@index
+  expires [Time.now-index_time, 60].max
+  index
 end
 
 get '/committee/:name.json' do |name|
