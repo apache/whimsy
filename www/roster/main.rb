@@ -101,7 +101,7 @@ end
 get '/committer/:name.json' do |name|
   data =  Committer.serialize(name, env)
   pass unless data
-  _json
+  _json data
 end
 
 # make __self__ an alias for one's own page
