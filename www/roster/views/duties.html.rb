@@ -40,7 +40,8 @@ _html do
                     if value == 'tbd'
                       _span value
                     else
-                      _a value, href: "roster/#{value}"
+#                      TODO allow for multiple holders?
+                      _a value, href: "committer/#{value}"
                     end
                   end
                 elsif %w(reports-to).include? key
