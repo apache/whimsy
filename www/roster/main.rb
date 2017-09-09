@@ -21,6 +21,8 @@ require 'ruby2js/filter/require'
 require_relative 'banner'
 require_relative 'models'
 
+disable :logging # suppress log of requests to stderr/error.log
+
 ASF::Mail.configure
 
 get '/' do

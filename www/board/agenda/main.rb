@@ -19,6 +19,8 @@ require 'net/http'
 require 'shellwords'
 require 'mail'
 
+disable :logging # suppress log of requests to stderr/error.log
+
 # determine where relevant data can be found
 if ENV['RACK_ENV'] == 'test'
   FOUNDATION_BOARD = File.expand_path('test/work/board').untaint

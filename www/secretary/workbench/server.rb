@@ -21,6 +21,8 @@ require_relative 'tasks'
 require 'whimsy/asf'
 ASF::Mail.configure
 
+disable :logging # suppress log of requests to stderr/error.log
+
 # list of messages
 get '/' do
   redirect to('/') if env['REQUEST_URI'] == env['SCRIPT_NAME']
