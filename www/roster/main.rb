@@ -80,7 +80,7 @@ get '/committer/index.json' do
   # send response
   last_modified index_time
   etag index_etag
-  headers 'type' => 'application/json', 'charset' => 'UTF-8'
+  content_type 'application/json', charset: 'UTF-8'
   expires [Time.now-index_time, 60].max
   index
 end
