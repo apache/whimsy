@@ -86,7 +86,9 @@ get '/committer/index.json' do
 end
 
 get '/committee/:name.json' do |name|
-  _json Committee.serialize(name, env)
+  data = Committee.serialize(name, env)
+  pass unless data
+  _json data
 end
 
 get '/committee/:name' do |name|
@@ -97,7 +99,9 @@ get '/committee/:name' do |name|
 end
 
 get '/committer/:name.json' do |name|
-  _json Committer.serialize(name, env)
+  data =  Committer.serialize(name, env)
+  pass unless data
+  _json
 end
 
 # make __self__ an alias for one's own page
