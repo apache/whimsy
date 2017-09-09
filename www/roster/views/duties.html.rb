@@ -92,7 +92,7 @@ _html do
             end
             _li.list_unstyled do
               _ul style: 'margin-top: 15px; margin-bottom: 15px;' do
-                oversees.each do |name, duties|
+                @oversees.each do |name, duties|
                   _li do
                     _a duties['info']['role'], href: "orgchart/#{name}"
                   end
