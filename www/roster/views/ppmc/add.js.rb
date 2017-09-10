@@ -47,6 +47,15 @@ class PPMCAdd < Vue
               _CommitterSearch add: self.add,
                 exclude: @@project.roster.keys().
                   concat(@people.map {|person| person.id})
+
+              _p do
+                _label do
+                  _input type: 'checkbox', checked: @notice_elapsed
+                  _a '72 hour Notice', 
+                    href: 'https://incubator.apache.org/guides/ppmc.html#voting_in_a_new_ppmc_member'
+                  _span ' period elapsed?'
+                end
+              end
             end
           end
 
@@ -64,7 +73,8 @@ class PPMCAdd < Vue
                 onClick: self.post, disabled: (@people.empty?)
 
               _button.btn.btn_primary 'Add to PPMC', onClick: self.post,
-                data_action: 'add ppmc committer', disabled: (@people.empty?)
+                data_action: 'add ppmc committer',
+                disabled: (@people.empty? or not @notice_elapsed)
             end
 
             if @@auth.ipmc
