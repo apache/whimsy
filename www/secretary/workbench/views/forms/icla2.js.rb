@@ -132,7 +132,6 @@ class ICLA2 < Vue
     @pubname = name
     @search = name
     @email = @@headers.from
-    self.componentDidUpdate()
 
     # watch for status updates
     window.addEventListener 'message', self.status_update

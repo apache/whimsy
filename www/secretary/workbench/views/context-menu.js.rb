@@ -6,13 +6,13 @@ class ContextMenu < Vue
   def render
     # context menu that displays when you 'right click' an attachment
     _ul.contextMenu do
-      _li "\u2704 burst", onMouseDown: self.burst
+      _li "\u2704 burst", onMousedown: self.burst
       _li.divider
-      _li "\u21B7 right", onMouseDown: self.rotate_attachment
-      _li "\u21c5 flip", onMouseDown: self.rotate_attachment
-      _li "\u21B6 left", onMouseDown: self.rotate_attachment
+      _li "\u21B7 right", onMousedown: self.rotate_attachment
+      _li "\u21c5 flip", onMousedown: self.rotate_attachment
+      _li "\u21B6 left", onMousedown: self.rotate_attachment
       _li.divider
-      _li "\u2716 delete", onMouseDown: self.delete_attachment
+      _li "\u2716 delete", onMousedown: self.delete_attachment
     end
   end
 

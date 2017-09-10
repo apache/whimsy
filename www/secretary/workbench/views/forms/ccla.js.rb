@@ -91,7 +91,6 @@ class CCLA < Vue
 
     @contact = name
     @email = @@headers.from
-    self.componentDidUpdate()
 
     # watch for status updates
     window.addEventListener 'message', self.status_update

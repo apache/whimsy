@@ -81,7 +81,6 @@ class Grant < Vue
 
     @name = name
     @email = @@headers.from
-    self.componentDidUpdate()
 
     # watch for status updates
     window.addEventListener 'message', self.status_update

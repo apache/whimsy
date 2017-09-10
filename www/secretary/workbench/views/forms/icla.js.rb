@@ -102,7 +102,6 @@ class ICLA < Vue
     @pubname = name
     @filename = self.genfilename(name)
     @email = @@headers.from
-    self.componentDidUpdate()
 
     # watch for status updates
     window.addEventListener 'message', self.status_update
@@ -137,7 +136,7 @@ class ICLA < Vue
       project.required = (user.value.length > 0)
     end
 
-    $file.disabled = !valid or @filed or @submitted
+    $refs.file.disabled = !valid or @filed or @submitted
 
     # wire up form
     jQuery('form')[0].addEventListener('submit', self.file)

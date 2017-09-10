@@ -67,14 +67,14 @@ class Parts < Vue
 
     # context menu that displays when you 'right click' an attachment
     _ul.contextMenu do
-      _li "\u2704 burst", onMouseDown: self.burst
+      _li "\u2704 burst", onMousedown: self.burst
       _li.divider
-      _li "\u21B7 right", onMouseDown: self.rotate_attachment
-      _li "\u21c5 flip", onMouseDown: self.rotate_attachment
-      _li "\u21B6 left", onMouseDown: self.rotate_attachment
+      _li "\u21B7 right", onMousedown: self.rotate_attachment
+      _li "\u21c5 flip", onMousedown: self.rotate_attachment
+      _li "\u21B6 left", onMousedown: self.rotate_attachment
       _li.divider
-      _li "\u2716 delete", onMouseDown: self.delete_attachment
-      _li "\u2709 pdf-ize", onMouseDown: self.pdfize
+      _li "\u2716 delete", onMousedown: self.delete_attachment
+      _li "\u2709 pdf-ize", onMousedown: self.pdfize
     end
 
     if @selected and not @menu and @selected !~ /\.(asc|sig)$/
@@ -84,13 +84,13 @@ class Parts < Vue
 
       _ul.nav.nav_tabs do
         _li class: ('active' unless [:edit, :mail].include?(@form)) do
-          _a 'Categorize', onMouseDown: self.tabSelect
+          _a 'Categorize', onMousedown: self.tabSelect
         end
         _li class: ('active' if @form == :edit) do
-          _a 'Edit', onMouseDown: self.tabSelect
+          _a 'Edit', onMousedown: self.tabSelect
         end
         _li class: ('active' if @form == :mail) do
-          _a 'Mail', onMouseDown: self.tabSelect
+          _a 'Mail', onMousedown: self.tabSelect
         end
       end
 
@@ -178,14 +178,14 @@ class Parts < Vue
       elsif @form == :edit
 
         _ul.editPart! do
-          _li "\u2704 burst", onMouseDown: self.burst
+          _li "\u2704 burst", onMousedown: self.burst
           _li.divider
-          _li "\u21B7 right", onMouseDown: self.rotate_attachment
-          _li "\u21c5 flip", onMouseDown: self.rotate_attachment
-              _li "\u21B6 left", onMouseDown: self.rotate_attachment
+          _li "\u21B7 right", onMousedown: self.rotate_attachment
+          _li "\u21c5 flip", onMousedown: self.rotate_attachment
+              _li "\u21B6 left", onMousedown: self.rotate_attachment
           _li.divider
-          _li "\u2716 delete", onMouseDown: self.delete_attachment
-          _li "\u2709 pdf-ize", onMouseDown: self.pdfize
+          _li "\u2716 delete", onMousedown: self.delete_attachment
+          _li "\u2709 pdf-ize", onMousedown: self.pdfize
         end
 
       elsif @form == :mail
@@ -202,9 +202,12 @@ class Parts < Vue
 
       else
 
-        React.createElement @form, headers: @headers, selected: @selected,
-          projects: @@projects, signature: signature
-
+        Vue.createElement @form, props: {
+          headers: @headers,
+          selected: @selected,
+          projects: @@projects,
+          signature: signature
+        }
       end
     end
   end
