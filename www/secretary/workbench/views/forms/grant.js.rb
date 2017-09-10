@@ -1,4 +1,4 @@
-class Grant < React
+class Grant < Vue
   def initialize
     @filed = false
     @submitted = false
@@ -70,7 +70,7 @@ class Grant < React
 
   # on initial display, default various fields based on headers, and update
   # state 
-  def componentDidMount()
+  def mounted()
     name = @@headers.name
  
     # reorder name if there is a single comma present
@@ -87,13 +87,13 @@ class Grant < React
     window.addEventListener 'message', self.status_update
   end
 
-  def componentWillUnmount()
+  def beforeDestroy()
     window.removeEventListener 'message', self.status_update
   end
 
   # as fields change, enable/disable the associated buttons and adjust
   # input requirements.
-  def componentDidUpdate()
+  def updated()
     # Grant file form
     valid = %w(company name email filename).all? do |name|
       document.querySelector("input[name=#{name}]").validity.valid

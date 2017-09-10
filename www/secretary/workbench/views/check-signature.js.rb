@@ -2,7 +2,7 @@
 # Check signatures for validity using gpg on the server
 #
 
-class CheckSignature < React
+class CheckSignature < Vue
   def initialize
     @signature = nil
     @checked = nil
@@ -14,11 +14,7 @@ class CheckSignature < React
     end
   end
 
-  def componentDidMount()
-    self.componentWillReceiveProps()
-  end
-
-  def componentWillReceiveProps()
+  def mounted()
     @signature = CheckSignature.find(@@selected, @@attachments)
 
     if @signature and @signature != @checked

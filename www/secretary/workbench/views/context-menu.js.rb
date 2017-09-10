@@ -2,7 +2,7 @@
 # Context menu with actions to apply to an attachment
 #
 
-class ContextMenu < React
+class ContextMenu < Vue
   def render
     # context menu that displays when you 'right click' an attachment
     _ul.contextMenu do
@@ -17,7 +17,7 @@ class ContextMenu < React
   end
 
   # disable context menu
-  def componentDidMount()
+  def mounted()
     document.querySelector('.contextMenu').style.display = :none
   end
 

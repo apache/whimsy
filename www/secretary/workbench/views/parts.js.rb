@@ -3,7 +3,7 @@
 # menus and drag and drop, and hosts forms.
 #
 
-class Parts < React
+class Parts < Vue
   def initialize
     @selected = nil
     @busy = false
@@ -21,15 +21,17 @@ class Parts < React
   def render
     # common options for all list items
     options = {
-      draggable: 'true',
-      onDragStart: self.dragStart,
-      onDragEnter: self.dragEnter,
-      onDragOver: self.dragOver,
-      onDragLeave: self.dragLeave,
-      onDragEnd: self.dragEnd,
-      onDrop: self.drop,
-      onContextMenu: self.showMenu,
-      onClick: self.select
+      attrs: {draggable: 'true'},
+      on: {
+        dragstart: self.dragStart,
+        dragenter: self.dragEnter,
+        dragover: self.dragOver,
+        dragleave: self.dragLeave,
+        dragend: self.dragEnd,
+        drop: self.drop,
+        contextmenu: self.showMenu,
+        click: self.select
+      }
     }
 
     # locate corresponding signature file (if any)
@@ -38,13 +40,13 @@ class Parts < React
     # list of attachments
     _ul.attachments! @attachments, ref: 'attachments' do |attachment|
       if attachment == @drag
-        options[:className] = 'dragging'
+        options[:class] = 'dragging'
       elsif attachment == @selected
-        options[:className] = 'selected'
+        options[:class] = 'selected'
       elsif attachment == signature
-        options[:className] = 'signature'
+        options[:class] = 'signature'
       else
-        options[:className] = nil
+        options[:class] = nil
       end
 
       if attachment =~ /\.(pdf|txt|jpeg|jpg|gif|png)$/i
@@ -222,12 +224,12 @@ class Parts < React
 
   # initial list of attachments comes from the server; may be updated
   # by context menu actions.
-  def componentWillMount()
+  def beforeMount()
     @attachments = @@attachments
   end
 
   # register mouse and keyboard handlers, hide context menu
-  def componentDidMount()
+  def mounted()
     window.onmousedown = self.hideMenu
 
     # register keyboard handler on parent window and all frames
@@ -254,12 +256,9 @@ class Parts < React
     # when back button is clicked, go all of the way back
     history_length =  window.history.length
     window.addEventListener 'popstate' do |event|
-      console.log 'popstate'
       window.history.go(history_length - window.history.length)
     end
-  end
 
-  def componentWillReceiveProps()
     self.extractHeaders(@@headers)
   end
 
@@ -269,7 +268,7 @@ class Parts < React
     @headers = headers
   end
 
-  def componentDidUpdate()
+  def updated()
     if @busy
       document.body.classList.add 'busy'
     else

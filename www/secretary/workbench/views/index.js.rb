@@ -2,7 +2,7 @@
 # Index page showing unprocessed messages with attachments
 #
 
-class Index < React
+class Index < Vue
   def initialize
     @selected = nil
     @messages = []
@@ -35,9 +35,8 @@ class Index < React
             time = Date.new(Date.parse(message.time)).toLocaleString()
 
             row_options = {
-              className: color, 
-              onClick: self.selectRow, 
-              onDoubleClick: self.nav
+              class: color, 
+              on: {click: self.selectRow, doubleClick: self.nav}
             }
 
             _tr row_options do
@@ -70,14 +69,14 @@ class Index < React
   end
 
   # initialize next mailbox (year+month)
-  def componentWillMount()
+  def beforeMount()
     @nextmbox = @@mbox
     self.merge @@messages if @@messages
   end
 
   # on initial load, fetch latest mailbox, subscribe to keyboard and
   # server side events, and initialize selected item.
-  def componentDidMount()
+  def mounted()
     today = Date.new()
     twice = (today.getMonth()+1==@nextmbox[4..5].to_i and today.getDate()<=7)
     self.fetch_month() do
@@ -110,7 +109,7 @@ class Index < React
   end
 
   # when content changes, ensure selected message is visible
-  def componentDidUpdate()
+  def updated()
     if @selected
       selected = document.querySelector("a[href='#{@selected}']")
       if selected
@@ -161,7 +160,7 @@ class Index < React
       end
     end
 
-    self.forceUpdate() unless messages.empty?
+    Vue.forceUpdate() unless messages.empty?
   end
 
   # update @selected, given either a DOM event or a message
@@ -204,7 +203,7 @@ class Index < React
       # send request to server to remove delete status
       HTTP.patch(selected.href, status: nil).then {
         delete selected.status
-        self.forceUpdate()
+        Vue.forceUpdate()
         self.selectRow message
       }.catch {|error|
         alert error
@@ -266,7 +265,7 @@ class Index < React
           @messages[index].status = :deleted if index >= 0
           Status.pushDeleted selected
           self.selectRow selected if @selected == selected
-          self.forceUpdate()
+          Vue.forceUpdate()
         }.catch {|error|
           alert error
         }

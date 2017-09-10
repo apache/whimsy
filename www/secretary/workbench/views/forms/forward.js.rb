@@ -1,4 +1,4 @@
-class Forward < React
+class Forward < Vue
   def render
     _h4 'Forward'
 

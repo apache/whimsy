@@ -1,4 +1,4 @@
-class MemApp < React
+class MemApp < Vue
   def initialize
     @received = []
     @filed = false
@@ -104,7 +104,7 @@ class MemApp < React
 
   # on initial display, wire up form, default email and fetch 
   # memapp-received.txt
-  def componentDidMount()
+  def mounted()
     # wire up form
     jQuery('form')[0].addEventListener('submit', self.file)
     jQuery('input[name=message]').val(window.parent.location.pathname)

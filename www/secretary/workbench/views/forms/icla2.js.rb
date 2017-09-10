@@ -1,4 +1,4 @@
-class ICLA2 < React
+class ICLA2 < Vue
   def initialize
     @filed = false
     @checked = nil
@@ -101,7 +101,7 @@ class ICLA2 < React
 
   # on initial display, default various fields based on headers, and update
   # state 
-  def componentDidMount()
+  def mounted()
     if ICLA2.iclas
       @disabled = false
     else
@@ -138,13 +138,13 @@ class ICLA2 < React
     window.addEventListener 'message', self.status_update
   end
 
-  def componentWillUnmount()
+  def beforeDestroy()
     window.removeEventListener 'message', self.status_update
   end
 
   # as fields change, enable/disable the associated buttons and adjust
   # input requirements.
-  def componentDidUpdate()
+  def updated()
     # ICLA file form
     valid = %w(pubname email).all? do |name|
       document.querySelector("input[name=#{name}]").validity.valid

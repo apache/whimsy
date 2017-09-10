@@ -1,4 +1,4 @@
-class CCLA < React
+class CCLA < Vue
   def initialize
     @filed = false
     @submitted = false
@@ -80,7 +80,7 @@ class CCLA < React
 
   # on initial display, default various fields based on headers, and update
   # state 
-  def componentDidMount()
+  def mounted()
     name = @@headers.name
  
     # reorder name if there is a single comma present
@@ -97,13 +97,13 @@ class CCLA < React
     window.addEventListener 'message', self.status_update
   end
 
-  def componentWillUnmount()
+  def beforeDestroy()
     window.removeEventListener 'message', self.status_update
   end
 
   # as fields change, enable/disable the associated buttons and adjust
   # input requirements.
-  def componentDidUpdate()
+  def updated()
     # CCLA file form
     valid = %w(company product contact email).all? do |name|
       document.querySelector("input[name=#{name}]").validity.valid
