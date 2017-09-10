@@ -77,6 +77,19 @@ input:disabled[type=submit] {cursor: not-allowed}
 
 .clickable {cursor: pointer}
 
+.modal p {
+  clear: both;
+}
+
+.modal label {
+  margin-top: 1em;
+}
+
+.modal label input[type=checkbox] {
+  margin-right: 10px;
+  margin-left: 15px;
+}
+
 @media screen and (min-width: 768px) {
   .wide-form .modal-dialog {
     width: 80%;
