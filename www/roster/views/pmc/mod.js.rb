@@ -38,7 +38,8 @@ class PMCMod < Vue
                   end
                 end
               end
-  						end
+            end
+
             # add to PMC button is only shown if every person is not on the PMC
             if @people.all? {|person| !@@project.members.include? person.id}
               _p do
