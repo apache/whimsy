@@ -25,6 +25,12 @@ disable :logging # suppress log of requests to stderr/error.log
 
 ASF::Mail.configure
 
+helpers do
+  def cssmtime
+    File.mtime('public/stylesheets/app.css').to_i
+  end
+end
+
 get '/' do
   if env['REQUEST_URI'].end_with? '/'
     @committers = ASF::Person.list

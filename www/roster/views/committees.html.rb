@@ -4,7 +4,7 @@
 
 _html do
   _base href: '..'
-  _link rel: 'stylesheet', href: 'stylesheets/app.css'
+  _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
   _whimsy_body(
     title: 'ASF Committees Listing',
     breadcrumbs: {
