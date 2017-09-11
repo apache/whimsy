@@ -3,6 +3,7 @@ class PPMC
     response = {}
 
     ppmc = ASF::Podling.find(id)
+    return unless ppmc # Not found
 
     lists = ASF::Mail.lists(true).select do |list, mode|
       list =~ /^(incubator-)?#{ppmc.mail_list}\b/
