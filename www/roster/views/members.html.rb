@@ -104,9 +104,9 @@ _html do
         end
       end
     end
-  end
 
-  _script %{
-    $("#members").stupidtable();
-  }
+    _script %{
+      $("#members").stupidtable();
+    }
+  end
 end
