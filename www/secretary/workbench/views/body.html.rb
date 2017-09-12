@@ -43,7 +43,7 @@ _html do
       body = @message.html_part.body.to_s
 
       if body.to_s.encoding == Encoding::BINARY and @message.html_part.charset
-        body.force_encoding(@message.html_part.charset)
+        body.force_encoding(@message.html_part.charset) rescue nil
       end
 
       nodes = _{body.encode('utf-8', invalid: :replace, undef: :replace)}
@@ -54,7 +54,7 @@ _html do
     body = @message.text_part.body.to_s
 
     if body.to_s.encoding == Encoding::BINARY and @message.text_part.charset
-      body.force_encoding(@message.text_part.charset)
+      body.force_encoding(@message.text_part.charset) rescue nil
     end
 
     _pre.bg_info body.encode('utf-8', invalid: :replace, undef: :replace)
