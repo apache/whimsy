@@ -5,9 +5,10 @@
 _html do
   _base href: '..'
   _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
+  _title @group[:id]
+
   _body? do
     _whimsy_body(
-      title: @group[:id],
       breadcrumbs: {
         roster: '.',
         group: 'group/',
