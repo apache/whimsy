@@ -312,3 +312,39 @@ get '/text/draft/:file' do |file|
     end
   end
 end
+
+# draft new agenda
+get '/new' do
+  # extract time and date for next meeting
+  @meeting = ASF::Board.nextMeeting
+  localtime = ASF::Board::TIMEZONE.utc_to_local(@meeting)
+  @time = localtime.strftime('%l:%M%P')
+
+  # Get directors, list of pmcs due to report, and shepherds
+  @directors = ASF::Board.directors
+  @pmcs = ASF::Board.reporting(@meeting)
+  @owner = ASF::Board::ShepherdStream.new
+
+  # build full time zone link
+  path = "/worldclock/fixedtime.html?iso=" +
+    localtime.strftime('%Y-%m-%dT%H:%M:%S') +
+    "&msg=ASF+Board+Meeting&p1=137" # time zone for PST/PDT locality
+  @tzlink = "http://www.timeanddate.com/#{path}"
+
+  # try to shorten time zone link
+  begin
+    shorten = 'http://www.timeanddate.com/createshort.html?url=' +
+      URI.escape(path + '&msg=ASF+Board+Meeting') + '&confirm=1'
+    shorten = URI.parse(shorten).read[/id=selectable>(.*?)</, 1]
+    @tzlink = shorten if shorten
+  end
+
+  # Get list of unpublished and unapproved minutes
+  draft = YAML.load_file(Dir["#{AGENDA_WORK}/board_minutes*.yml"].sort.last)
+  @minutes = Dir["#{ASF::SVN['private/foundation/board']}/board_minutes_*.txt"].
+    map {|file| Date.parse(file[/\d[_\d]+/].gsub('_', '-'))}.
+    select {|date| draft[date.strftime('%B %d, %Y')] != 'approved'}
+
+  template = File.read('data/agenda.erb')
+  _text Erubis::Eruby.new(template).result(binding)
+end
