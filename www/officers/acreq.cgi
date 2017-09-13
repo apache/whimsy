@@ -322,7 +322,7 @@ _html do
                     rc = _.system ['/usr/bin/svn',
                       ['--username', env.user, '--password', env.password],
                       'commit', "#{tmpdir}/new-account-reqs.txt",
-                      '-m', "#{requestor} account request by #{user.id}"]
+                      '-m', "#{@user} account request by #{user.id} for #{requestor}"]
 
                     if rc == 0
                       mail.deliver!
