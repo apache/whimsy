@@ -70,7 +70,6 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/followup\.json} do |date|
   # count number of feedback emails found in the board archive
   start = Time.parse(date)
   months = Dir['/srv/mail/board/*'].sort[-2..-1]
-  months = Dir['/srv/mail/board/*'].sort[-2..-1]
   Dir[*months.map {|month| "#{month}/*"}].each do |file|
     next unless File.mtime(file) > start
     raw = File.read(file).force_encoding(Encoding::BINARY)
