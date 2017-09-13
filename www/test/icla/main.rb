@@ -5,7 +5,7 @@
 require 'whimsy/asf'
 
 require 'wunderbar/sinatra'
-require 'wunderbar/react'
+require 'wunderbar/vue'
 require 'wunderbar/bootstrap/theme'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'

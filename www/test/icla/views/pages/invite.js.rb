@@ -1,4 +1,4 @@
-class Invite < React
+class Invite < Vue
   def initialize
     @disabled = true
     @alert = nil
@@ -31,9 +31,9 @@ class Invite < React
     #
 
     _div.form_group do
-      _label "Contributor's Name:", for: 'iclaname'
+      _label "Contributor's name:", for: 'iclaname'
       _input.form_control.iclaname! placeholder: 'Firstname Lastname',
-        required: true, onChange: self.setIclaName, value: @iclaname
+        required: true, value: @iclaname
     end
 
     _div.form_group do
@@ -122,7 +122,7 @@ class Invite < React
   end
 
   # when the form is initially loaded, set the focus on the iclaname field
-  def componentDidMount()
+  def mounted()
     document.getElementById('iclaname').focus()
   end
 

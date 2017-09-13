@@ -2,13 +2,12 @@
 # Convert markdown to html
 #
 
-class Markdown < React
-  def componentWillMount()
-    self.componentWillReceiveProps()
+class Markdown < Vue
+  def render
+    _span domPropsInnerHTML: html
   end
 
-  def componentWillReceiveProps()
-
+  def html
     # trim leading and trailing spaces
     text = @@text.sub(/^\s*\n/, '').sub(/\s+$/, '')
 
@@ -28,10 +27,6 @@ class Markdown < React
     end
 
     # convert markdown to text
-    @html = markd(text)
-  end
-
-  def render
-    _span dangerouslySetInnerHTML: { __html: @html }
+    markd(text)
   end
 end
