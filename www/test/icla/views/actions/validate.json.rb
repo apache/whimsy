@@ -41,7 +41,7 @@ if @votelink and not @votelink.empty?
   end
 
   # verify that the user submitting the form is on the PMC in question
-  unless pmc and pmc.members.include? user
+  unless pmc and pmc.owners.include? user
     _error "You must be on the #@pmc PMC to submit a vote link"
     _focus :pmc
   end

@@ -1,4 +1,4 @@
-class Preview < React
+class Preview < Vue
   def initialize
     @disabled = false
   end

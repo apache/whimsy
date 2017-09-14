@@ -21,6 +21,9 @@ class PMC < Vue
         _a 'PMC', :href => "committee/#{@committee.id}#pmc"
       end
       _li role: "presentation" do
+        _a 'committers', :href => "committee/#{@committee.id}#committers"
+      end
+      _li role: "presentation" do
         _a 'Mail Moderators', :href => "committee/#{@committee.id}#mail"
       end
       _li role: "presentation" do
@@ -85,7 +88,7 @@ class PMC < Vue
 
     # main content
     if @search
-      _PMCRoster auth: auth, committee: @committee, search: @search
+      _ProjectSearch auth: auth, project: @committee, search: @search
     else
       _PMCMembers auth: auth, committee: @committee
       _PMCCommitters auth: auth, committee: @committee
@@ -186,8 +189,8 @@ class PMC < Vue
     # hidden forms
     if auth
       _Confirm action: :committee, project: @committee.id, update: self.update
-      _PMCAdd committee: @@committee, onUpdate: self.update
-      _PMCMod committee: @@committee, onUpdate: self.update
+      _PMCAdd project: @@committee, onUpdate: self.update
+      _PMCMod project: @@committee, onUpdate: self.update
     end
   end
 
@@ -196,19 +199,11 @@ class PMC < Vue
     self.update(@@committee)
   end
 
-  # refresh the current page
-  def refresh()
-    Vue.forceUpdate()
-  end
-
-  def mounted()
-    # export refesh method
-    PMC.refresh = self.refresh
-  end
-
   # update committee from conformation form
   def update(committee)
     @committee = committee
+
+    @committee.refresh = proc { Vue.forceUpdate() }
 
     if @attic == nil and not committee.established and defined? fetch
       @attic = []

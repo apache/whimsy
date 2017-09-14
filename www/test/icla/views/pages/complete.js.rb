@@ -1,4 +1,4 @@
-class Complete < React
+class Complete < Vue
   def render
     _p %{
       At this point, the demo is complete.  If this were a real application:

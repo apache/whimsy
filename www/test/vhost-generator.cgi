@@ -24,9 +24,15 @@ if ENV['REQUEST_METHOD'].to_s.upcase == 'POST'
     conf[/()ErrorLog/, 1] = '# '
     conf[/()CustomLog/, 1] = '# '
 
-    # disable Passenger Default user and group
-    conf[/()PassengerDefaultUser/, 1] = '# '
-    conf[/()PassengerDefaultGroup/, 1] = '# '
+    # disable Passenger Default user and group (if present)
+    begin
+        conf[/()PassengerDefaultUser/, 1] = '# '
+    rescue 
+    end
+    begin
+        conf[/()PassengerDefaultGroup/, 1] = '# '
+    rescue
+    end
 
     # global replace docroot
     conf.gsub! '/srv/whimsy', docroot.chomp('/')

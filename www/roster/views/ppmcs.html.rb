@@ -1,10 +1,10 @@
 #
-# List of committees
+# List of podlings
 #
 
 _html do
   _base href: '..'
-  _link rel: 'stylesheet', href: 'stylesheets/app.css'
+  _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
   _body? do
     _whimsy_body(
       title: 'ASF Podling List',
@@ -14,13 +14,14 @@ _html do
       }
     ) do
       _p 'A listing of all Podling Project Management Committees (PPMCs) from the Apache Incubator.'
+      _p 'Click on column names to sort.'
 
       _table.table.table_hover do
         _thead do
           _tr do
-            _th 'Name'
-            _th 'Established'
-            _th 'Description'
+            _th.sorting_asc 'Name', data_sort: 'string-ins'
+            _th 'Established', data_sort: 'string'
+            _th 'Description', data_sort: 'string'
           end
         end
 
@@ -38,15 +39,19 @@ _html do
             _td ppmc.startdate
 
             _td do
+              # using _p here messes up the sort
               if project_names.include? ppmc.name
-                _p ppmc.description
+                _ ppmc.description
               else
-                _p ppmc.description + " (not in ldap)"
+                _ ppmc.description + " (not in ldap)"
               end
             end
           end
         end
       end
     end
+    _script %{
+      $(".table").stupidtable();
+    }
   end
 end

@@ -1,4 +1,4 @@
-class Interview < React
+class Interview < Vue
   def initialize
     @showQuestion1 = true
     @showQuestion2 = false

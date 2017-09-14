@@ -1,10 +1,12 @@
 require_relative 'vue-config'
 require_relative 'polyfill'
 
+require_relative 'mixins/add'
+require_relative 'mixins/mod'
+
 require_relative 'pmc/main'
 require_relative 'pmc/pmc'
 require_relative 'pmc/committers'
-require_relative 'pmc/roster'
 require_relative 'pmc/add'
 require_relative 'pmc/mod'
 
@@ -24,12 +26,12 @@ require_relative 'ppmc/main'
 require_relative 'ppmc/mentors'
 require_relative 'ppmc/members'
 require_relative 'ppmc/committers'
-require_relative 'ppmc/roster'
 require_relative 'ppmc/add'
 require_relative 'ppmc/mod'
 require_relative 'ppmc/graduate'
 
 require_relative 'committerSearch'
+require_relative 'projectSearch'
 require_relative 'confirm'
 
 require_relative 'group'

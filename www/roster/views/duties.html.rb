@@ -4,7 +4,7 @@
 PVTCLASS = 'text-warning'
 _html do
   _base href: '..'
-  _link rel: 'stylesheet', href: 'stylesheets/app.css'
+  _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
 
   _body? do
     _whimsy_body(
@@ -40,7 +40,8 @@ _html do
                     if value == 'tbd'
                       _span value
                     else
-                      _a value, href: "roster/#{value}"
+#                      TODO allow for multiple holders?
+                      _a value, href: "committer/#{value}"
                     end
                   end
                 elsif %w(reports-to).include? key
@@ -92,7 +93,7 @@ _html do
             end
             _li.list_unstyled do
               _ul style: 'margin-top: 15px; margin-bottom: 15px;' do
-                oversees.each do |name, duties|
+                @oversees.each do |name, duties|
                   _li do
                     _a duties['info']['role'], href: "orgchart/#{name}"
                   end

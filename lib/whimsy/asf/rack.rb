@@ -206,7 +206,7 @@ module ASF
       @app = app
     end
 
-    # compute the document root by striping the <tt>PASSENGER_BASE_URI</tt> from
+    # compute the document root by stripping the <tt>PASSENGER_BASE_URI</tt> from
     # the the current working directory.
     def call(env)
       unless ENV['DOCUMENT_ROOT']

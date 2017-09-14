@@ -40,10 +40,16 @@ class PodlingNameSearch < React
   def check(props)
     @results = nil
     name = props.item.title[/Establish (.*)/, 1]
+
+    # if full title contains a name in parenthesis, check for that name too
+    altname = props.item.fulltitle[/\((.*?)\)/, 1]
+
     if name and Server.podlingnamesearch
       for podling in Server.podlingnamesearch
         if name == podling
           @results = Server.podlingnamesearch[name]
+        elsif altname == podling
+          @results = Server.podlingnamesearch[altname]
         end
       end
     end

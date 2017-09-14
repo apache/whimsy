@@ -4,7 +4,7 @@
 
 _html do
   _base href: '..'
-  _link rel: 'stylesheet', href: 'stylesheets/app.css'
+  _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
   _whimsy_body(
     title: 'ASF Committees Listing',
     breadcrumbs: {
@@ -19,13 +19,14 @@ _html do
         _ 'are listed privately.'
       end
     end
+    _p 'Click on column names to sort.'
 
     _table.table.table_hover do
       _thead do
         _tr do
-          _th 'Name'
-          _th 'Chair(s)'
-          _th 'Description'
+          _th.sorting_asc 'Name', data_sort: 'string-ins'
+          _th 'Chair(s)', data_sort: 'string'
+          _th 'Description', data_sort: 'string'
         end
       end
 
@@ -56,4 +57,7 @@ _html do
       end
     end
   end
+  _script %{
+    $(".table").stupidtable();
+  }
 end

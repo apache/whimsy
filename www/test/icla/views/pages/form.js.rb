@@ -1,4 +1,4 @@
-class Form < React
+class Form < Vue
   def initialize
     @disabled = true
     @alert = nil
@@ -57,8 +57,9 @@ class Form < React
 
     if FormData.votelink
       _div.form_group do
-        _p 'Preferred Apache Id (format: ^[a-z][-a-z0-9_]+$):'
-        _input.form_control value: @apacheId, pattern: "^[a-z][-a-z0-9_]+$"
+        _p 'Preferred Apache Id (format: ^[a-z][-a-z0-9]{2,}$):'
+        _input.form_control.apacheId! value: @apacheId, 
+          pattern: "^[a-z][-a-z0-9]{2,}$"
       end
     end
 
@@ -73,12 +74,12 @@ class Form < React
   end
 
   # initialize public name from invitation
-  def componentWillMount()
+  def created()
     @publicName = FormData.fullname
   end
 
   # when the form is initially loaded, set the focus on the address field
-  def componentDidMount()
+  def mounted()
     document.getElementById('fullname').focus()
   end
 

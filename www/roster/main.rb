@@ -21,7 +21,15 @@ require 'ruby2js/filter/require'
 require_relative 'banner'
 require_relative 'models'
 
+disable :logging # suppress log of requests to stderr/error.log
+
 ASF::Mail.configure
+
+helpers do
+  def cssmtime
+    File.mtime('public/stylesheets/app.css').to_i
+  end
+end
 
 get '/' do
   if env['REQUEST_URI'].end_with? '/'
@@ -54,39 +62,42 @@ get '/committee' do
   redirect to('/committee/')
 end
 
-@@index = nil
-@@index_time = nil
-@@index_etag = nil
+index = nil
+index_time = nil
+index_etag = nil
 get '/committer/index.json' do
-  @@index = nil if not @@index_time or Time.now-@@index_time > 300
+  # recompute index if the data is 5 minutes old or older
+  index = nil if not index_time or Time.now-index_time >= 300
 
-  if not @@index
+  if not index
     # bulk loading the mail information makes things go faster
     mail = Hash[ASF::Mail.list.group_by(&:last).
       map {|person, list| [person, list.map(&:first)]}]
 
     # build a list of people, their public-names, and email addresses
-    @@index = ASF::Person.list.sort_by(&:id).map {|person|
+    index = ASF::Person.list.sort_by(&:id).map {|person|
       result = {id: person.id, name: person.public_name, mail: mail[person]}
       result[:member] = true if person.asf_member?
       result
     }.to_json
 
     # cache
-    @@index_time = Time.now
-    @@index_etag = etag = Digest::MD5.hexdigest(@@index)
+    index_time = Time.now
+    index_etag = etag = Digest::MD5.hexdigest(index)
   end
 
   # send response
-  last_modified @@index_time
-  etag @@index_etag
-  headers 'type' => 'application/json', 'charset' => 'UTF-8'
-  expires [Time.now-@@index_time, 60].max
-  @@index
+  last_modified index_time
+  etag index_etag
+  content_type 'application/json', charset: 'UTF-8'
+  expires [index_time+300, Time.now+60].max
+  index
 end
 
 get '/committee/:name.json' do |name|
-  _json Committee.serialize(name, env)
+  data = Committee.serialize(name, env)
+  pass unless data
+  _json data
 end
 
 get '/committee/:name' do |name|
@@ -97,7 +108,9 @@ get '/committee/:name' do |name|
 end
 
 get '/committer/:name.json' do |name|
-  _json Committer.serialize(name, env)
+  data =  Committer.serialize(name, env)
+  pass unless data
+  _json data
 end
 
 # make __self__ an alias for one's own page

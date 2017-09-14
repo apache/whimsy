@@ -47,7 +47,7 @@ class PPMC < Vue
     # action bar: add, modify, search
     _div.row key: 'databar' do
       _div.col_sm_6 do
-        if @@auth.ipmc or @@auth.ipmc
+        if @@auth.ipmc or @@auth.ppmc
           _button.btn.btn_default 'Add',
             data_target: '#ppmcadd', data_toggle: 'modal'
 
@@ -78,7 +78,8 @@ class PPMC < Vue
 
     # main content
     if @search
-      _PPMCRoster auth: @@auth, ppmc: @ppmc, search: @search
+      _ProjectSearch project: @ppmc, search: @search,
+        auth: (@@auth.ipmc or @@auth.ppmc)
     else
       _PPMCMentors auth: @@auth, ppmc: @ppmc
       _PPMCMembers auth: @@auth, ppmc: @ppmc
@@ -201,8 +202,8 @@ class PPMC < Vue
     # hidden forms
     if @@auth.ppmc or @@auth.ipmc
       _Confirm action: :ppmc, project: @ppmc.id, update: self.update
-      _PPMCAdd ppmc: @ppmc, update: self.update, auth: @@auth
-      _PPMCMod ppmc: @ppmc, update: self.update, auth: @@auth
+      _PPMCAdd project: @ppmc, onUpdate: self.update, auth: @@auth
+      _PPMCMod project: @ppmc, onUpdate: self.update, auth: @@auth
     end
   end
 
@@ -214,16 +215,8 @@ class PPMC < Vue
   # update ppmc from conformation form
   def update(ppmc)
     @ppmc = ppmc
-  end
 
-  # refresh the current page
-  def refresh()
-    Vue.forceUpdate()
-  end
-
-  def mounted()
-    # export refesh method
-    PPMC.refresh = self.refresh
+    @ppmc.refresh = proc { Vue.forceUpdate() }
   end
 
   # create project in ldap

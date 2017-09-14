@@ -2,7 +2,7 @@
 # Main class, nearly all scaffolding for demo purposes
 #
 
-class Main < React
+class Main < Vue
   def initialize
     @view = Invite
   end
@@ -11,18 +11,17 @@ class Main < React
     _main do
       _h1 'Demo: Invitation to Submit ICLA'
 
-      React.createElement(@view)
+      Vue.createElement(@view)
     end
   end
 
   # save data on first load
-  def componentWillMount()
+  def created()
     Server.data = @@data
-    self.componentWillReceiveProps()
   end
 
   # set view based on properties
-  def componentWillReceiveProps()
+  def mounted()
     if @@view == 'interview'
       @view = Interview
     else
@@ -37,7 +36,7 @@ class Main < React
   end
 
   # export navigation method on the client
-  def componentDidMount()
+  def mounted()
     Main.navigate = self.navigate
   end
 end

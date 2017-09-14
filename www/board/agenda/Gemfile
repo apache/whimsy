@@ -12,7 +12,7 @@ else
 end
 
 gem 'rake'
-gem 'wunderbar', '~> 1.1.1'
+gem 'wunderbar'
 gem 'ruby2js', '>= 2.0.17'
 gem 'sinatra', '~> 2.0'
 gem 'nokogumbo'
@@ -20,6 +20,7 @@ gem 'execjs', ('<2.5.1' if RUBY_VERSION =~ /^1/)
 gem 'listen', ('~> 3.0.7' if RUBY_VERSION =~ /^2\.[01]/)
 gem 'activesupport'
 gem 'mail'
+gem 'erubis'
 
 gem 'websocket-eventmachine-server'
 gem 'websocket-client-simple'

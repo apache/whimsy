@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
-require 'wunderbar'
+require 'wunderbar/bootstrap'
 
 _html lang: 'en', _width: '80' do
   _head_ do
@@ -8,10 +8,6 @@ _html lang: 'en', _width: '80' do
     _link rel: 'shortcut icon',
       href: '/favicon.ico'
     _title 'ASF ICLA demo'
-    _link href: 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700%7cDroid+Serif:400,700',
-      rel: 'stylesheet', type: 'text/css'
-    _link href: 'https://www.apache.org/css/min.bootstrap.css',
-      rel: 'stylesheet'
     _link href: 'https://www.apache.org/css/styles.css', rel: 'stylesheet'
     _link href: 'css/icla.css', rel: 'stylesheet'
 

@@ -4,10 +4,11 @@
 
 _html do
   _base href: '..'
-  _link rel: 'stylesheet', href: 'stylesheets/app.css'
+  _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
+  _title  @ppmc[:display_name]
+
   _body? do
     _whimsy_body(
-      title: @ppmc[:display_name],
       breadcrumbs: {
         roster: '.',
         ppmc: 'ppmc/',

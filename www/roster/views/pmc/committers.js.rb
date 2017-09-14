@@ -15,12 +15,13 @@ class PMCCommitters < Vue
         _ 'Committers'
         _small ' (excluding PMC members above)'
       end
+      _p 'Click on column name to search'
       _table.table.table_hover do
         _thead do
           _tr do
             _th if @@auth
-            _th 'id'
-            _th 'public name'
+            _th 'id', data_sort: 'string'
+            _th.sorting_asc 'public name', data_sort: 'string-ins'
           end
         end
 
@@ -33,6 +34,10 @@ class PMCCommitters < Vue
         end
       end
     end
+  end
+
+  def mounted()
+    jQuery('.table', $el).stupidtable()
   end
 
   # compute list of committers
@@ -63,7 +68,7 @@ class PMCCommitter < Vue
         end
       end
 
-      if @@committee.asfmembers.include? @@person.id
+      if @@person.member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}"} }
         _td { _b @@person.name }
       else
@@ -76,6 +81,6 @@ class PMCCommitter < Vue
   # toggle checkbox
   def toggleSelect(person)
     person.selected = !person.selected
-    PMC.refresh()
+    @@committee.refresh()
   end
 end

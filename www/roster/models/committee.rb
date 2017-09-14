@@ -30,17 +30,24 @@ class Committee
     end
 
     roster = pmc.roster.dup
-    roster.each {|key, info| info['role'] = 'PMC member'}
+    roster.each {|key, info| info[:role] = 'PMC member'}
 
     members.each do |person|
-      roster[person.id] ||= {name: person.public_name, role: 'PMC member'}
+      roster[person.id] ||= {
+        name: person.public_name, 
+        role: 'PMC member'
+      }
       roster[person.id]['ldap'] = true
     end
 
     committers.each do |person|
-      roster[person.id] ||= {name: person.public_name}
-      roster[person.id]['role'] ||= 'Committer'
+      roster[person.id] ||= {
+        name: person.public_name,
+        role: 'Committer'
+      }
     end
+
+    roster.each {|id, info| info[:member] = ASF::Person.find(id).asf_member?}
 
     roster[pmc.chair.id]['role'] = 'PMC chair' if pmc.chair
 
@@ -56,7 +63,6 @@ class Committee
       ldap: members.map(&:id),
       members: pmc.roster.keys,
       committers: committers.map(&:id),
-      asfmembers: (ASF.members & people).map(&:id),
       roster: roster,
       mail: Hash[lists.sort],
       moderators: moderators,

@@ -3,7 +3,7 @@
 #
 
 _html do
-  _link rel: 'stylesheet', href: 'stylesheets/app.css'
+  _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
   
   _body? do
     _whimsy_body(

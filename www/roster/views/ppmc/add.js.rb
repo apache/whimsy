@@ -1,49 +1,61 @@
 #
-# Add People to a project
+# Add People to a PPMC
 #
 
 class PPMCAdd < Vue
+  mixin ProjectAdd
+  options add_tag: "ppmcadd", add_action: 'actions/ppmc'
+
   def initialize
     @people = []
   end
 
   def render
-    _div.modal.fade.ppmcadd! tabindex: -1 do
+    _div.modal.fade id: $options.add_tag, tabindex: -1 do
       _div.modal_dialog do
         _div.modal_content do
           _div.modal_header.bg_info do
             _button.close 'x', data_dismiss: 'modal'
-            _h4.modal_title 'Add People to the ' + @@ppmc.display_name +
-	      ' Podling'
+            _h4.modal_title 'Add People to the ' + @@project.display_name +
+              ' Podling'
           end
 
           _div.modal_body do
             _div.container_fluid do
 
-	      unless @people.empty?
+              unless @people.empty?
                 _table.table do
                   _thead do
                     _tr do
-	              _th 'id'
-	              _th 'name'
-	              _th 'email'
-	            end
+                      _th 'id'
+                      _th 'name'
+                      _th 'email'
+                    end
                   end
                   _tbody do
                     @people.each do |person|
-	              _tr do
-	                _td person.id
-	                _td person.name
-	                _td person.mail[0]
-	              end
-	            end
+                      _tr do
+                        _td person.id
+                        _td person.name
+                        _td person.mail[0]
+                      end
+                    end
                   end
                 end
-	      end
+              end
 
               _CommitterSearch add: self.add,
-	        exclude: @@ppmc.roster.keys().
-		  concat(@people.map {|person| person.id})
+                exclude: @@project.roster.keys().
+                  concat(@people.map {|person| person.id})
+
+              _p do
+                _label do
+                  _input type: 'checkbox', checked: @notice_elapsed
+                  _a '72 hour Notice', 
+                    href: 'https://incubator.apache.org/guides/ppmc.html#voting_in_a_new_ppmc_member'
+                  _span ' period elapsed?'
+                end
+              end
             end
           end
 
@@ -53,15 +65,16 @@ class PPMCAdd < Vue
             _button.btn.btn_default 'Cancel', data_dismiss: 'modal',
               disabled: @disabled
 
-	    plural = (@people.length > 1 ? 's' : '')
+            plural = (@people.length > 1 ? 's' : '')
 
             if @@auth.ppmc
               _button.btn.btn_primary "Add as committer#{plural}", 
-	        data_action: 'add committer',
-	        onClick: self.post, disabled: (@people.empty?)
+                data_action: 'add committer',
+                onClick: self.post, disabled: (@people.empty?)
 
               _button.btn.btn_primary 'Add to PPMC', onClick: self.post,
-	        data_action: 'add ppmc committer', disabled: (@people.empty?)
+                data_action: 'add ppmc committer',
+                disabled: (@people.empty? or not @notice_elapsed)
             end
 
             if @@auth.ipmc
@@ -69,66 +82,12 @@ class PPMCAdd < Vue
               action += ' ppmc committer' if @@auth.ppmc
 
               _button.btn.btn_primary "Add as mentor#{plural}", 
-	        data_action: action, onClick: self.post,
+                data_action: action, onClick: self.post,
                  disabled: (@people.empty?)
             end
           end
         end
       end
-    end
-  end
-
-  def mounted()
-    jQuery('#ppmcadd').on('show.bs.modal') do |event|
-      button = event.relatedTarget
-      setTimeout(500) { jQuery('#ppmcadd input').focus() }
-    end
-  end
-
-  def add(person)
-    @people << person
-    self.forceUpdate()
-    jQuery('#ppmcadd input').focus()
-  end
-
-  def post(event)
-    button = event.currentTarget
-
-    # parse action extracted from the button
-    targets = button.dataset.action.split(' ')
-    action = targets.shift()
-
-    # construct arguments to fetch
-    args = {
-      method: 'post',
-      credentials: 'include',
-      headers: {'Content-Type' => 'application/json'},
-      body: {
-        project: @@ppmc.id, 
-        ids: @people.map {|person| person.id}.join(','), 
-        action: action, 
-        targets: targets
-      }.inspect
-    }
-
-    @disabled = true
-    Polyfill.require(%w(Promise fetch)) do
-      fetch("actions/ppmc", args).then {|response|
-        content_type = response.headers.get('content-type') || ''
-        if response.status == 200 and content_type.include? 'json'
-          response.json().then do |json|
-            @@update.call(json)
-          end
-        else
-          alert "#{response.status} #{response.statusText}"
-        end
-        jQuery('#ppmcadd').modal(:hide)
-        @disabled = false
-      }.catch {|error|
-        alert error
-        jQuery('#ppmcadd').modal(:hide)
-        @disabled = false
-      }
     end
   end
 end

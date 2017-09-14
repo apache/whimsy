@@ -4,7 +4,7 @@
 
 _html do
   _header do
-    _link rel: 'stylesheet', href: 'stylesheets/app.css'
+    _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
   end
   _body? do
     _whimsy_body(

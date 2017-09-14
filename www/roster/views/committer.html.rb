@@ -4,7 +4,7 @@
 
 _html do
   _base href: '..'
-  _link rel: 'stylesheet', href: 'stylesheets/app.css'
+  _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
   _body? do
     _whimsy_body(
       title: @committer[:name][:public_name],
@@ -15,10 +15,11 @@ _html do
       }
     ) do
       _div_.main!
-      _script src: 'app.js'
-      _.render '#main' do
-        _Person committer: @committer, auth: @auth
-      end
+    end
+
+    _script src: 'app.js'
+    _.render '#main' do
+      _Person committer: @committer, auth: @auth
     end
   end
 end
