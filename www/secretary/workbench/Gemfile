@@ -17,7 +17,7 @@ gem 'zip'
 gem 'sinatra', '~> 2.0'
 gem 'sanitize'
 gem 'wunderbar'
-gem 'ruby2js', '~> 2.0.12'
+gem 'ruby2js'
 gem 'execjs'
 gem 'listen', ('~> 3.0.7' if RUBY_VERSION =~ /^2\.[01]/)
 gem 'escape'
