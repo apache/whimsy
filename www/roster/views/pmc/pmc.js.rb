@@ -9,14 +9,15 @@ class PMCMembers < Vue
 
   def render
     _h2.pmc! 'PMC'
+    _p 'Click on column name to search'
     _table.table.table_hover do
       _thead do
         _tr do
           _th if @@auth
-          _th 'id'
-          _th 'public name'
-          _th 'starting date'
-          _th 'status - click cell for actions'
+          _th 'id', data_sort: 'string'
+          _th.sorting_asc 'public name', data_sort: 'string-ins'
+          _th 'starting date', data_sort: 'string'
+          _th 'status - click cell for actions', data_sort: 'string'
         end
       end
 
@@ -26,6 +27,10 @@ class PMCMembers < Vue
         end
       end
     end
+  end
+
+  def mounted()
+    jQuery('.table', $el).stupidtable()
   end
 
   def roster

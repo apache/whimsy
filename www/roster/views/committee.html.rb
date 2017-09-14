@@ -4,10 +4,11 @@
 
 _html do
   _base href: '..'
-  _link rel: 'stylesheet', href: 'stylesheets/app.css'
+  _title @committee[:display_name]
+  _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
+
   _body? do
     _whimsy_body(
-      title: @committee[:display_name],
       breadcrumbs: {
         roster: '.',
         committee: 'committee/',

@@ -5,6 +5,7 @@
 #
 
 require 'whimsy/asf/agenda'
+require 'whimsy/asf/board'
 
 require 'wunderbar/sinatra'
 require 'wunderbar/react'
@@ -18,6 +19,8 @@ require 'thread'
 require 'net/http'
 require 'shellwords'
 require 'mail'
+require 'open-uri'
+require 'erubis'
 
 disable :logging # suppress log of requests to stderr/error.log
 

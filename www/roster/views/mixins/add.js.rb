@@ -4,9 +4,16 @@
 
 class ProjectAdd < Vue::Mixin
   def mounted()
+    # autofocus when modal is shown
     jQuery("##{$options.add_tag}").on('show.bs.modal') do |event|
-      button = event.relatedTarget
-      setTimeout(500) { jQuery("##{$options.add_tag} input").focus() }
+      setTimeout(500) do
+         jQuery("##{$options.add_tag} input[autofocus]").focus()
+      end
+    end
+
+    # clear input when modal is dismissed
+    jQuery("##{$options.add_tag}").on('hidden.bs.modal') do |event|
+      @people = []
     end
   end
 

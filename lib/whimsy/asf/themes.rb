@@ -191,7 +191,7 @@ class Wunderbar::HtmlMarkup
   # Emit complete bootstrap theme to wrap cgi output, including nav and footer
   # If helpblock or related, then emit helpblock and related* panels before content
   # If breadcrumbs, emit those immediately before content
-  def _whimsy_body(title: 'MOAR WHIMSY!', 
+  def _whimsy_body(title: nil,
       subtitle: 'About This Script', 
       relatedtitle: 'Related Whimsy Links', 
       related: nil, 
@@ -202,7 +202,7 @@ class Wunderbar::HtmlMarkup
     _div.content.container_fluid do
       _div.row do
         _div.col_sm_12 do
-          _h1 title
+          _h1 title if title
         end
       end
       if helpblock or related

@@ -1,3 +1,5 @@
+require_relative 'vue-config'
+
 require_relative 'main'
 require_relative 'pages'
 

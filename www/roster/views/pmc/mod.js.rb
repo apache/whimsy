@@ -39,6 +39,18 @@ class PMCMod < Vue
                 end
               end
             end
+
+            # add to PMC button is only shown if every person is not on the PMC
+            if @people.all? {|person| !@@project.members.include? person.id}
+              _p do
+                _label do
+                  _input type: 'checkbox', checked: @notice_elapsed
+                  _a '72 hour Notice', 
+                    href: 'https://www.apache.org/dev/pmc.html#notice_period'
+                  _span ' period elapsed?'
+                end
+              end
+            end
           end
 
           _div.modal_footer do
@@ -51,7 +63,7 @@ class PMCMod < Vue
             if @people.all? {|person| !@@project.members.include? person.id}
               _button.btn.btn_primary "Add to PMC", 
                 data_action: 'add pmc info',
-                onClick: self.post, disabled: (@people.empty?)
+                onClick: self.post, disabled: (@people.empty? or not @notice_elapsed)
             end
 
             # remove from all relevant locations

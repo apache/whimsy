@@ -210,7 +210,7 @@ if @valid_user and @pmc and not @votelink.empty?
       svn 'diff', dest
 
       # commit changes
-      svn 'commit', dest, '-m', "#{@user} account request by #{env.user}"
+      svn 'commit', dest, '-m', "#{@user} account request by #{env.user} for #{@pmc.name}"
     end
   end
 
