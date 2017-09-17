@@ -1,7 +1,7 @@
 #
 # Approve/Unapprove a report
 #
-class Approve < React
+class Approve < Vue
   def initialize
     @disabled = false
     @request = 'approve'

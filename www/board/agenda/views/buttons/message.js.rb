@@ -1,7 +1,7 @@
 #
 # Message area for backchannel
 #
-class Message < React
+class Message < Vue
   def initialize
     @disabled = false
     @message = ''

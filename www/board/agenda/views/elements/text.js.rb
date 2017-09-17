@@ -2,20 +2,18 @@
 # Escape text for inclusion in HTML; optionally apply filters
 #
 
-class Text < React
-  def componentWillMount()
-    self.componentWillReceiveProps()
+class Text < Vue
+  def render
+    _span domPropsInnerHTML: text
   end
 
-  def componentWillReceiveProps()
-    @text = htmlEscape(@@raw || '')
+  def text
+    result = htmlEscape(@@raw || '')
 
     if @@filters
-      @@filters.each { |filter| @text = filter(@text) }
+      @@filters.each { |filter| result = filter(result) }
     end
-  end
 
-  def render
-    _span dangerouslySetInnerHTML: { __html: @text }
+    result
   end
 end

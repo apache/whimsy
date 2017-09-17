@@ -1,4 +1,4 @@
-class PublishMinutes < React
+class PublishMinutes < Vue
   def initialize
     @disabled = false
     @previous_title = nil

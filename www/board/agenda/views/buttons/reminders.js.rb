@@ -3,7 +3,7 @@
 # associated button) as well as a second button.
 #
 
-class InitialReminder < React
+class InitialReminder < Vue
   def initialize
     @disabled = true
     @subject = ''
@@ -108,7 +108,7 @@ end
 #
 # A button for final reminders
 #
-class FinalReminder < React
+class FinalReminder < Vue
   def render
     _button.btn.btn_primary 'send final reminders', 
       data_toggle: 'modal', data_target: '#reminder-form'

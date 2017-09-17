@@ -1,7 +1,7 @@
 #
 # Show/hide seen items
 #
-class ShowSeen < React
+class ShowSeen < Vue
   def initialize
     @label = 'show seen'
   end

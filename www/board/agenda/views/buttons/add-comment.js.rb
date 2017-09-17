@@ -8,7 +8,7 @@
 # form is dismissed.
 #
 
-class AddComment < React
+class AddComment < Vue
   def initialize
     @base = @comment = @@item.pending
     @disabled = false

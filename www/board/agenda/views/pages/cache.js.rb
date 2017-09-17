@@ -2,7 +2,7 @@
 # A page showing status of caches and service workers
 #
 
-class CacheStatus < React
+class CacheStatus < Vue
   def self.buttons()
     return [{button: ClearCache}, {button: UnregisterWorker}]
   end
@@ -92,7 +92,7 @@ end
 #
 # A button that clear the cache
 #
-class ClearCache < React
+class ClearCache < Vue
   def initialize
     @disabled = true
   end
@@ -131,7 +131,7 @@ end
 # A button that removes the service worker.  Sadly, it doesn't seem to have
 # any affect on the list of registrations that is dynamically returned.
 #
-class UnregisterWorker < React
+class UnregisterWorker < Vue
   def render
     _button.btn.btn_primary 'Unregister ServiceWorker', onClick: self.click
   end 
@@ -156,7 +156,7 @@ end
 # Individual Cache page
 #
 
-class CachePage < React
+class CachePage < Vue
   def initialize
     @response = {}
     @text = ''

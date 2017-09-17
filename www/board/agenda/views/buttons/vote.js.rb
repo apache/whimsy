@@ -1,4 +1,4 @@
-class Vote < React
+class Vote < Vue
   def initialize
     @disabled = false
   end

@@ -1,4 +1,4 @@
-class AddMinutes < React
+class AddMinutes < Vue
   def initialize
     @disabled = false
   end

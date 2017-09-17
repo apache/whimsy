@@ -1,7 +1,7 @@
 #
 # A button that mark all comments as 'seen', with an undo option
 #
-class MarkSeen < React
+class MarkSeen < Vue
   def initialize
     @disabled = false
     @label = 'mark seen'

@@ -1,7 +1,7 @@
 #
 # Timestamp start/stop of meeting
 #
-class Timestamp < React
+class Timestamp < Vue
   def initialize
     @disabled = false
   end

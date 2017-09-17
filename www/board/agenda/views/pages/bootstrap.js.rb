@@ -2,7 +2,7 @@
 # Blank canvas shown during bootstrapping
 #
 
-class BootStrapPage < React
+class BootStrapPage < Vue
   def render
     _p ''
   end

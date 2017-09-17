@@ -13,7 +13,7 @@ end
 
 gem 'rake'
 gem 'wunderbar'
-gem 'ruby2js', '>= 2.0.17'
+gem 'ruby2js'
 gem 'sinatra', '~> 2.0'
 gem 'nokogumbo'
 gem 'execjs', ('<2.5.1' if RUBY_VERSION =~ /^1/)

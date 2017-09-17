@@ -2,7 +2,7 @@
 # Determine status of podling name
 #
 
-class PodlingNameSearch < React
+class PodlingNameSearch < Vue
   def render
     _span.pns title: 'podling name search' do
       if Server.podlingnamesearch

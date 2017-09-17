@@ -2,7 +2,7 @@
 # Send email
 #
 
-class Email < React
+class Email < Vue
   def render
     _button.btn 'send email', class: self.mailto_class(),
       onClick: self.launch_email_client

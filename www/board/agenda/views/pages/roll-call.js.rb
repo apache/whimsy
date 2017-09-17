@@ -1,7 +1,7 @@
 #
 # Secretary Roll Call update form
 
-class RollCall < React
+class RollCall < Vue
   def initialize
     RollCall.lockFocus = false
     @guest = ''
@@ -136,7 +136,7 @@ end
 #
 # An individual attendee (Director, Executive Officer, or Guest)
 #
-class Attendee < React
+class Attendee < Vue
   def initialize
     # last posted value for notes for this attendee
     @base = ''

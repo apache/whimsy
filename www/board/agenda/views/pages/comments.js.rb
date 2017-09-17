@@ -3,7 +3,7 @@
 # Conditionally hide comments previously marked as seen.
 #
 
-class Comments < React
+class Comments < Vue
   def self.buttons()
     buttons = []
 

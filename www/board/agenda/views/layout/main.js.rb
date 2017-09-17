@@ -8,7 +8,7 @@
 #  * Resizing view to leave room for the Header and Footer
 #
 
-class Main < React
+class Main < Vue
   # common layout for all pages: header, main, footer, and forms
   def render
     if not @item
@@ -19,8 +19,8 @@ class Main < React
 
       view = nil
       _main do
-        React.createElement(@item.view, item: @item,
-         ref: proc {|component| Main.view=component})
+        Vue.createElement(@item.view, props: {item: @item,
+         ref: proc {|component| Main.view=component}})
       end
 
       _Footer item: @item, buttons: @buttons, options: @options
@@ -29,8 +29,8 @@ class Main < React
       if @buttons
         @buttons.each do |button|
           if button.form
-            React.createElement(button.form, item: @item, server: Server,
-              button: button)
+            Vue.createElement(button.form, props: {item: @item, server: Server,
+              button: button})
           end
         end
       end
@@ -38,7 +38,7 @@ class Main < React
   end
 
   # initial load of the agenda, and route first request
-  def componentWillMount()
+  def created()
     # copy server info for later use
     for prop in @@server
       Server[prop] = @@server[prop]
@@ -85,7 +85,7 @@ class Main < React
   end
 
   # additional client side initialization
-  def componentDidMount()
+  def mounted()
     # export navigate and refresh methods
     Main.navigate = self.navigate
     Main.refresh  = self.refresh
@@ -118,7 +118,7 @@ class Main < React
     # whenever the window is resized, adjust margins of the main area to
     # avoid overlapping the header and footer areas
     def window.onresize()
-      main = ~'main'
+      main = document.querySelector('main')
       if 
         window.innerHeight <= 400 and 
         document.body.scrollHeight > window.innerHeight
@@ -130,8 +130,10 @@ class Main < React
       else
         document.querySelector('footer').style.position = 'fixed'
         document.querySelector('header').style.position = 'fixed'
-        main.style.marginTop = "#{~'header.navbar'.clientHeight}px"
-        main.style.marginBottom = "#{~'footer.navbar'.clientHeight}px"
+        main.style.marginTop = 
+          "#{document.querySelector('header.navbar').clientHeight}px"
+        main.style.marginBottom = 
+          "#{document.querySelector('footer.navbar').clientHeight}px"
       end
 
       if Main.scrollTo == 0 or Main.scrollTo
@@ -160,7 +162,7 @@ class Main < React
   end
 
   # after each subsequent re-rendering, resize main window
-  def componentDidUpdate()
+  def updated()
     window.onresize()
   end
 end

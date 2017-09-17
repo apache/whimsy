@@ -1,4 +1,4 @@
-class Info < React
+class Info < Vue
   def render
     _dl.dl_horizontal class: @@position do
       _dt 'Attach'

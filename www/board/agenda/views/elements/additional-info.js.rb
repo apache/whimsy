@@ -13,7 +13,7 @@
 #       are unique.
 #
 
-class AdditionalInfo < React
+class AdditionalInfo < Vue
   def render
     # special notes
     _p.notes @@item.notes if @@item.notes

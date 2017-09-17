@@ -2,7 +2,7 @@
 # Overall Agenda page: simple table with one row for each item in the index
 #
 
-class Backchannel < React
+class Backchannel < Vue
   # place a message input field in the buttons area
   def self.buttons()
     return [{button: Message}]

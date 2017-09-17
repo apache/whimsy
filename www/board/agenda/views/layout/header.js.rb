@@ -5,7 +5,7 @@
 #
 # Finally: make info dropdown status 'sticky'
 
-class Header < React
+class Header < Vue
   def initialize
     @infodropdown = nil
   end

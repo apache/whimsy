@@ -1,7 +1,7 @@
 #
 # A button that will do a 'svn update' of the agenda on the server
 #
-class Refresh < React
+class Refresh < Vue
   def initialize
     @disabled = false
   end

@@ -4,7 +4,7 @@
 # For new resolutions, allow entry of title, but not commit message
 # For everything else, allow modification of commit message, but not title
 
-class Post < React
+class Post < Vue
   def initialize
     @disabled = false
     @alerted = false
@@ -62,13 +62,8 @@ class Post < React
     end
   end
 
-  # set properties on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # autofocus on report/resolution title/text
-  def componentDidMount()
+  def mounted()
     jQuery('#post-report-form').on 'shown.bs.modal' do
       if @@button.text == 'add resolution'
         ~'#post-report-title'.focus()
@@ -79,7 +74,7 @@ class Post < React
   end
 
   # match form title, input label, and commit message with button text
-  def componentWillReceiveProps(newprops)
+  def created(newprops)
     case @@button.text
     when 'post report'
       @header = 'Post Report'

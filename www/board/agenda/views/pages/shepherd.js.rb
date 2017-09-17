@@ -3,7 +3,7 @@
 # that are ready for review.
 #
 
-class Shepherd < React
+class Shepherd < Vue
   def initialize
     @disabled = false
     @followup = []

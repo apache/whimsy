@@ -1,3 +1,6 @@
+# config
+require_relative 'vue-config'
+
 # common
 require_relative 'router'
 require_relative 'keyboard'

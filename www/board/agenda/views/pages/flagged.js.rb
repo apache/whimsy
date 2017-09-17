@@ -2,7 +2,7 @@
 # A page showing all flagged reports
 #
 
-class Flagged < React
+class Flagged < Vue
   def render
     first = true
 

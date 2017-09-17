@@ -8,7 +8,7 @@
 #  last flagged <-> first Special order)
 #
 
-class Footer < React
+class Footer < Vue
   def render
     _footer.navbar.navbar_fixed_bottom class: @@item.color do
 
@@ -71,9 +71,9 @@ class Footer < React
         if @@buttons
           @@buttons.each do |button|
             if button.text
-              React.createElement('button', button.attrs, button.text)
+              Vue.createElement('button', {attrs: button.attrs}, button.text)
             elsif button.type
-              React.createElement(button.type, button.attrs)
+              Vue.createElement(button.type, {props: button.attrs})
             end
           end
         end

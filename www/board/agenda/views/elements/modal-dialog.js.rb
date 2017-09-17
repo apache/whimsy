@@ -5,66 +5,61 @@
 # distributed to header, body, and footer sections.
 #
 
-class ModalDialog < React
+class ModalDialog < Vue
   def initialize
     @header = []
     @body = []
     @footer = []
   end
 
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
-  def componentWillReceiveProps()
+  def created()
     @header.clear()
     @body.clear()
     @footer.clear()
 
-    @@children.each do |child|
-      if child.type == 'h4'
+    $slots.default.each do |slot|
+      if slot.tag == 'h4'
 
         # place h4 elements into the header, adding a modal-title class
-        child = self.addClass(child, 'modal-title')
-        @header << child
-        ModalDialog.h4 = child
+        slot = self.addClass(slot, 'modal-title')
+        @header << slot
 
-      elsif child.type == 'button'
+      elsif slot.tag == 'button'
 
         # place button elements into the footer, adding a btn class
-        child = self.addClass(child, 'btn')
-        @footer << child
+        slot = self.addClass(slot, 'btn')
+        @footer << slot
 
-      elsif child.type == 'input' or child.type == 'textarea'
+      elsif slot.tag == 'input' or slot.tag == 'textarea'
 
         # wrap input and textarea elements in a form-control, 
         # add label if present
 
-        child = self.addClass(child, 'form-control')
+        slot = self.addClass(slot, 'form-control')
 
         label = nil
-        if child.props.label and child.props.id
-          props = {htmlFor: child.props.id}
-          if child.props.type == 'checkbox'
-            props.className = 'checkbox'
-            label = React.createElement('label', props, child,
-              child.props.label)
-            child.props.delete 'label'
-            child = nil
+        if slot.data.attrs.label and slot.data.attrs.id
+          props = {attrs: {for: slot.data.attrs.id}}
+          if slot.data.attrs.type == 'checkbox'
+            props.class = ['checkbox']
+            label = Vue.createElement('label', props, [slot,
+              slot.data.attrs.label])
+            slot.data.attrs.delete 'label'
+            slot = nil
           else
-            label = React.createElement('label', props, child.props.label)
-            child = React.cloneElement(child, label: nil)
+            label = Vue.createElement('label', props, slot.data.attrs.label)
+            slot.data.attrs.delete 'label'
           end
         end
 
-        @body << React.createElement('div', {className: 'form-group'}, 
-          label, child)
+        @body << Vue.createElement('div', {class: 'form-group'}, 
+          [label, slot])
 
       else
 
         # place all other elements into the body
 
-        @body << child
+        @body << slot
       end
     end
   end
@@ -92,11 +87,11 @@ class ModalDialog < React
 
   # helper method: add a class to an element, returning new element
   def addClass(element, name)
-    if not element.props.className
-      element = React.cloneElement(element, className: name)
-    elsif not element.props.className.split(' ').include? name
-      element = React.cloneElement(element, 
-        className: element.props.className + " #{name}")
+    element.data ||= {}
+    if not element.data.class
+      element.data.class = [name]
+    elsif not element.data.class.include? name
+      element.data.class << name
     end
 
     return element

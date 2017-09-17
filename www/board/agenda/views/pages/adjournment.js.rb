@@ -2,7 +2,7 @@
 # Secretary version of Adjournment section: shows todos
 #
 
-class Adjournment < React
+class Adjournment < Vue
   def initialize
     Todos.set({
       add: [],
@@ -123,7 +123,7 @@ end
 #                          Add, Remove chairs                          #
 ########################################################################
 
-class TodoActions < React
+class TodoActions < Vue
   def initialize
     @checked = {}
     @disabled = true
@@ -219,7 +219,7 @@ end
 #                          Establish actions                           #
 ########################################################################
 
-class EstablishActions < React
+class EstablishActions < Vue
   def initialize
     @checked = {}
     @disabled = true
@@ -308,7 +308,7 @@ end
 #                      Reminder to draft feedback                      #
 ########################################################################
 
-class FeedbackReminder < React
+class FeedbackReminder < Vue
   def render
     _p 'Draft feedback:'
 

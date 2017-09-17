@@ -1,7 +1,7 @@
 #
 # FY22 budget worksheet
 #
-class FY22 < React
+class FY22 < Vue
   def initialize
     @budget = (Minutes.started && Minutes.get('budget')) || {
       donations: 110,

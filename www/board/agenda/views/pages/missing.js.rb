@@ -2,7 +2,7 @@
 # A page showing all flagged reports
 #
 
-class Missing < React
+class Missing < Vue
   def initialize
     @checked = {}
   end

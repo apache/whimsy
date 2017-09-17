@@ -3,7 +3,7 @@
 # that are ready for review.
 #
 
-class Queue < React
+class Queue < Vue
   def self.buttons()
     buttons = [{button: Refresh}]
     buttons << {form: Commit} if Pending.count > 0

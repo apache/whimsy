@@ -3,7 +3,7 @@
 # action item status updates.
 #
 
-class SelectActions < React
+class SelectActions < Vue
   def self.buttons()
     return [{button: PostActions}]
   end
@@ -37,7 +37,7 @@ class SelectActions < React
   end
 end
 
-class CandidateAction < React
+class CandidateAction < Vue
   def render
     _input type: 'checkbox', checked: !@@action.complete,
       onChange:-> {@@action.complete = !@@action.complete; self.forceUpdate()}

@@ -1,7 +1,7 @@
 #
 # Indicate intention to attend / regrets for meeting
 #
-class Attend < React
+class Attend < Vue
   def initialize
     @disabled = false
   end

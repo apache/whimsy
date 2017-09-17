@@ -118,17 +118,15 @@ At this point, you have something up and running.  Let's take a look around.
        stylesheet from [bootstrap](http://getbootstrap.com/).
 
      * a `<div>` element with an id of `main` followed by the HTML used
-       to present the first page fetched from the server.  If you want to
-       see a different page, go to that page and hit refresh then view
-       source again.  This content is nicely indented and other than
-       an abundance of `data-reactid` attributes that React uses to keep
-       track of things, it is fairly straightforward.
+       to present the first page fetched from the server.  If you want to see
+       a different page, go to that page and hit refresh then view source
+       again.  This content is nicely indented and is fairly straightforward.
 
-    * a few `<script>` elements that pull in react, jquery, bootstrap, and
+    * a few `<script>` elements that pull in vue, jquery, bootstrap, and
       the agenda app itself.  I suggest that you leave that for the moment,
       we'll come back to it.
 
-    * an inline script that calls `React.render` with a datastructure
+    * an inline script that calls `new Vue` with a datastructure
       containing all the data the app needs on the client to do navigation.
       Most importantly, this page contains a parsed agenda.   Mentally file
       that away for later consideration.
@@ -172,23 +170,19 @@ Viewing Source (this time, Actual Code)
 
  * the [views/pages/search.js.rb](views/pages/search.js.rb) file contains the
    code for the search page.  There are more methods defined here.  You will
-   find definitions for these methods in the React 
-   [Lifecycle Methods](http://facebook.github.io/react/docs/component-specs.html#lifecycle-methods).
-   You will see logic mixed with presentation.  React is deadly serious when
-   it adopted the slogan "rethink best practices".  What makes this work
-   is the component lifecycle that React provides.  Components have mutable
+   find definitions for these methods in the Vue 
+   [Lifecycle Methods](https://vuejs.org/v2/guide/instance.html#Lifecycle-Diagram).
+   You will see logic mixed with presentation.  What makes this work
+   is the component lifecycle that Vue provides.  Components have mutable
    state (which are the variables which are preceded by an `@` sign), and are
    passed immutable properties (variables preceded by two `@` signs).  Some
    methods are prohibited from mutating state (most notably: the `render`
-   method).  And one method (`componentWillReceiveProps`) even has access
-   to the before and after values for properties.  Don't get hung up on the
-   logic here, but do go to the navigation bar on the top right of the
-   browser page, and select `Search` and play with search live.
+   method).  Don't get hung up on the logic here, but do go to the navigation
+   bar on the top right of the browser page, and select `Search` and play with
+   search live.
 
-   Two items of special note.  `dangerouslySetInnerHTML` is React's
-   "don't blame me if things go wrong" way of allowing you to add text
-   that you have properly escaped into the content of an element.  Also,
-   we are directly making use of the browser APIs for updating the
+   An item of special note: we are directly making use of the browser APIs for
+   updating the
    [history](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history)
    of the window.
  
@@ -232,7 +226,7 @@ Viewing Source (this time, Actual Code)
  * I mentioned previously that element names that start with a capital
    letter are effectively macros.  You've seen `Index`, `Search`, and
    `AddComment` classes, each of which start with a capital letter.  These
-   actually are examples of what React calls components that I have described
+   actually are examples of what Vue calls components that I have described
    as acting like macros.  `views/main.html.rb' contains the 'top'.
    [views/app.js.rb](views/app.js.rb) lists all of the files that make up the
    client side of the application.
@@ -243,7 +237,7 @@ Viewing Source (this time, Actual Code)
    from the js.rb files mentioned above.  Undoubtedly you have seen small
    amounts of JavaScript before but I suspect that much of this looks foreign.
    Nicely indented, commented, vaguely familiar, but still somewhat foreign.
-   Many people these days generate JavaScript.  Popular with React is something
+   Many people these days generate JavaScript.  Popular with Vue is something
    called [JSX](http://facebook.github.io/react/docs/jsx-in-depth.html), but
    that's both controversial and [doesn't support if
    statements](http://facebook.github.io/react/tips/if-else-in-JSX.html).
@@ -298,12 +292,12 @@ Now onto the tests:
     (expressed in Ruby, but compiled to JavaScript) can be tested.  It does so
     by setting up a http server (the code for which is in
     [spec/react_server.rb](spec/react_server.rb)) which runs arbitrary scripts
-    and returns the results as HTML.  This approach excels at testing a React
+    and returns the results as HTML.  This approach excels at testing a Vue
     component.
 
   * [spec/client_spec.rb](spec/client_spec.rb) takes this a bit further to
     do a client side unit test.  Instance variables set in tests are passed
-    to the React server, and arbitrary JavaScript code can be executed using
+    to the Vue server, and arbitrary JavaScript code can be executed using
     this data.  Output is in the form of XHTML-style tags which is then
     matched against CSS (or xpath) expressions.
 
@@ -390,7 +384,7 @@ would involve:
     [views/layout/header.js.rb](views/layout/header.js.rb)
   * Adding the path to the `route` method in
     [views/router.js.rb](views/router.js.rb)
-  * Adding a React component for the page to `views/pages`
+  * Adding a Vue component for the page to `views/pages`
   * Adding any new files to [views/app.js.rb](views/app.js.rb)
   * Adding a specification to
     [specs/other_views_specs.rb](specs/other_views_specs.rb)
@@ -399,7 +393,7 @@ Adding a new modal dialog would involve:
 
   * Adding a entry to the buttons list in
     [views/models/agenda.rb](views/models/agenda.rb)
-  * Adding a React component for the form to `views/forms`
+  * Adding a Vue component for the form to `views/forms`
   * Adding a server side action to `views/actions`.  A number of [actions
     from the current agenda
     tool](https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/board/agenda/json)
@@ -423,7 +417,7 @@ Nothing is perfect.  Here are a few things to watch out for:
    [Ruby2JS filters](https://github.com/rubys/ruby2js#filters) reduce this
    gap by converting many common Ruby methods calls to JavaScript equivalents
    (e.g., `a.include? b` becomes `a.indexOf(b) != -1`).  Currently the
-   agenda tool makes use of the `react`, `functions` and `require` filters.
+   agenda tool makes use of the `vue`, `functions` and `require` filters.
 
  * In Ruby there isn't a difference between accessing attributes and methods
    which have no arguments.  In JavaScript there is.  To make this work,
@@ -442,7 +436,7 @@ Nothing is perfect.  Here are a few things to watch out for:
 
  * In Ruby, `$` is not a legal method name, so this common
    alias for `jQuery` isn't directly available.  jQuery isn't needed for
-   react, but is needed for Bootstrap.  As such there will be few places where
+   vue, but is needed for Bootstrap.  As such there will be few places where
    this will be needed.  As previously mentioned, I've considered using
    the `~` operator for this.
 
@@ -455,7 +449,7 @@ Further reading:
    framework for developing responsive, mobile first projects on the web
  * [capybara](https://github.com/jnicklas/capybara#readme) - helps you test
    web applications by simulating how a real user would interact with your app
- * [react](http://facebook.github.io/react/) - a JavaScript library for
+ * [vue](https://vuejs.org/) - a JavaScript library for
    building user interfaces 
  * [ruby2js](https://github.com/rubys/ruby2jw/#readme) - minimal yet
    extensible Ruby to JavaScript conversion. 

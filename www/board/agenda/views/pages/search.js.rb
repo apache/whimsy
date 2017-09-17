@@ -5,7 +5,7 @@
 #  * keep query string in window location URL in synch
 #
 
-class Search < React
+class Search < Vue
   # initialize query text based on data passed to the component
   def initialize
     @text = @@item.query || ''

@@ -2,7 +2,7 @@
 # Overall Agenda page: simple table with one row for each item in the index
 #
 
-class Index < React
+class Index < Vue
   def render
     _header do
       _h1 'ASF Board Agenda'

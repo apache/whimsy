@@ -1,4 +1,4 @@
-class DraftMinutes < React
+class DraftMinutes < Vue
   def initialize
     @disabled = true
   end

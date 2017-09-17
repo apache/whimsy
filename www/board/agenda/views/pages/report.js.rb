@@ -12,7 +12,7 @@
 # Filters may be used to highlight or hypertext link portions of the text.
 #
 
-class Report < React
+class Report < Vue
   def render
     _section.flexbox do
       _section do
@@ -56,12 +56,7 @@ class Report < React
     end
   end
 
-  # check for additional actions on initial render
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
-  def componentWillReceiveProps()
+  def created()
     # determine what text filters to run
     @filters = [self.linebreak, self.todo, hotlink, self.privates, self.jira]
     @filters = [self.localtime, hotlink] if @@item.title == 'Call to order'

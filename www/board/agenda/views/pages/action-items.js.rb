@@ -3,7 +3,7 @@
 # action item status updates.
 #
 
-class ActionItems < React
+class ActionItems < Vue
   def initialize
     @disabled = false
   end
@@ -73,19 +73,20 @@ class ActionItems < React
           end
 
           # launch edit dialog when there is a click on the status
-          attrs = {onClick: self.updateStatus, className: 'clickable'}
-          attrs = {} if Minutes.complete
+          options = {on: {click: self.updateStatus}, class: ['clickable']}
+          options = {} if Minutes.complete
+          options.attrs = {}
 
           # copy action properties to data attributes
           for name in action
-            attrs["data-#{name}"] = action[name]
+            options.attrs["data-#{name}"] = action[name]
           end
 
           # include pending updates
           pending = Pending.find_status(action)
           attrs['data-status'] = pending.status if pending
 
-          React.createElement('span', attrs) do
+          Vue.createElement('span', options) do
             # highlight missing action item status updates
             if pending
               _span "Status: "

@@ -3,34 +3,31 @@
 # processed locally by calling Main.navigate.
 #
 
-class Link < React
-  def initialize
-    @attrs = {}
-  end
-
-  def componentWillMount()
-    self.componentWillReceiveProps()
-    @attrs.onClick = self.click
-  end
-
-  def componentWillReceiveProps(props)
-    @text = props.text
-
-    for attr in props
-      next unless props[attr]
-      @attrs[attr] = props[attr] unless attr == 'text'
-    end
-
-    if props.href
-      @element = 'a'
-      @attrs.href = props.href.gsub(%r{(^|/)\w+/\.\.(/|$)}, '$1')
-    else
-      @element = 'span'
-    end
-  end
-
+class Link < Vue
   def render
-    React.createElement(@element, @attrs, @text)
+    Vue.createElement(element, options, @@text)
+  end
+
+  def element
+    if @@href
+      'a'
+    else
+      'span'
+    end
+  end
+
+  def options
+    result = {attrs: {}}
+
+    if @@href
+      result.attrs.href = @@href.gsub(%r{(^|/)\w+/\.\.(/|$)}, '$1')
+    end
+
+    result.attrs.rel = @@rel if @@rel
+
+    result.on = {click: self.click}
+
+    result 
   end
 
   def click(event)

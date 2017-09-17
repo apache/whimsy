@@ -1,4 +1,4 @@
-class Help < React
+class Help < Vue
   def render
     _h3 'Keyboard shortcuts'
     _dl.dl_horizontal do

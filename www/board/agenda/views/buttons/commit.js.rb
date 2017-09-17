@@ -3,7 +3,7 @@
 # and allow it to be changed.
 #
 
-class Commit < React
+class Commit < Vue
   def initialize
     @disabled = false
   end
