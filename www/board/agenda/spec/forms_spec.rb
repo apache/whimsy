@@ -3,20 +3,22 @@
 #
 
 require_relative 'spec_helper'
-require_relative 'react_server'
+require_relative 'vue_server'
 
-describe "forms", type: :feature, server: :react do
+describe "forms", type: :feature, server: :vue do
   #
   # Comment form
   #
   describe "comment form" do
     it "has an add-comment form with a disabled Save button" do
-      on_react_server do
-        server = {pending: {}, initials: 'sr'}
-        container = document.createElement('div')
-        ReactDOM.render _AddComment(item: {}, server: server), container do
-          response.end container.innerHTML
+      on_vue_server do
+        class TestCommentForm < Vue
+          def render
+            _AddComment(item: {}, server: {pending: {}, initials: 'sr'})
+          end
         end
+
+        Vue.renderResponse(TestCommentForm, response)
       end
 
       expect(page).to have_selector '.modal#comment-form'
@@ -30,17 +32,23 @@ describe "forms", type: :feature, server: :react do
     end
 
     it "should enable Save button after input" do
-      on_react_server do
+      on_vue_server do
         server = {pending: {}, initials: 'sr'}
-        container = document.createElement('div')
-        ReactDOM.render _AddComment(item: {}, server: server), container do
-          node = container.querySelector('#comment-text')
-          node.textContent = 'Good job!'
-          Simulate.change node, target: {value: 'Good job!'}
-          response.end container.innerHTML
+
+        class TestCommentForm < Vue
+          def render
+            _AddComment(item: {}, server: {pending: {}, initials: 'sr'})
+          end
         end
+
+        app = Vue.renderApp(TestCommentForm)
+        node = app.querySelector('#comment-text')
+        node.textContent = 'Good job!'
+        app.dispatchEvent(Event.new('input'))
+        response.end app.innerHTML
       end
 
+      puts page.body
       expect(page).to have_selector '.modal-footer .btn-warning', text: 'Delete'
       expect(page).to have_selector \
         '.modal-footer .btn-primary:not([disabled])', text: 'Save'
@@ -54,12 +62,16 @@ describe "forms", type: :feature, server: :react do
     it "should indicate when a reflow is needed" do
       parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
       @item = parsed.find {|item| item['title'] == 'Executive Vice President'}
-      on_react_server do
+      on_vue_server do
         item = Agenda.new(@item)
-        container = document.createElement('div')
-        ReactDOM.render _Post(item: item, button: 'edit report'), container do
-          response.end container.innerHTML
+
+        class TestPostForm < Vue
+          def render
+            _Post(item: item, button: 'edit report')
+          end
         end
+
+        Vue.renderResponse(TestPostForm, response)
       end
 
       expect(find('#post-report-text').value).to match(/to answer\nquestions/)
@@ -70,15 +82,21 @@ describe "forms", type: :feature, server: :react do
     it "should perform a reflow" do
       parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
       @item = parsed.find {|item| item['title'] == 'Executive Vice President'}
-      on_react_server do
+      on_vue_server do
         item = Agenda.new(@item)
-        container = document.createElement('div')
-        ReactDOM.render _Post(item: item, button: 'edit report'), container do
-          Simulate.click container.querySelector('.btn-danger')
-          post_report = container.querySelector('#post-report-text')
-          post_report.textContent = this.state.report
-          response.end container.innerHTML
+
+        class TestPost < Vue
+          def render
+            _Post(item: item, button: 'edit report')
+          end
         end
+
+        app = Vue.renderApp(TestPost)
+        button = app.querySelector('.btn-danger')
+        app.dispatchEvent(new Event('click'), button)
+        post_report = app.querySelector('#post-report-text')
+        post_report.textContent = this.state.report
+        response.end app.innerHTML
       end
 
       expect(find('#post-report-text').value).to match(/to\nanswer questions/)
@@ -93,13 +111,17 @@ describe "forms", type: :feature, server: :react do
   describe "commit form" do
     it "should generate a default commit message" do
       @parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
-      on_react_server do
+      on_vue_server do
         Agenda.load(@parsed)
         server = {pending: {approved: ['7'], comments: {I: 'Nice report!'}}}
-        container = document.createElement('div')
-        ReactDOM.render _Commit(item: {}, server: server), container do
-          response.end container.innerHTML
+
+        class TestCommit < Vue
+          def render
+            _Commit(item: {}, server: server)
+          end
         end
+
+        Vue.renderResponse TestCommit, response
       end
 
       expect(page).to have_selector '#commit-text',

@@ -37,7 +37,7 @@ class AddComment < Vue
       #input field: initials
       _input.comment_initials! label: 'Initials',
         placeholder: 'initials', disabled: @disabled,
-        defaultValue: @@server.pending.initials || @@server.initials
+        value: @@server.pending.initials || @@server.initials
 
       #input field: comment text
       _textarea.comment_text!  value: @comment, label: 'Comment',

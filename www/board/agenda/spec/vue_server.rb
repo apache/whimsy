@@ -1,6 +1,6 @@
 #
 # This class spawns a io.js process to run a HTTP server which accepts
-# POST requests containing React TestUtils scripts and responds with 
+# POST requests containing Vue/jsdom scripts and responds with 
 # HTML results.  It provides a Rack interface, enabling this server to
 # be run with Capybara/RackTest.
 #
@@ -10,9 +10,9 @@ require 'net/http'
 require 'stringio'
 
 require 'capybara/rspec'
-require 'ruby2js/filter/react'
+require 'ruby2js/filter/vue'
 
-class ReactServer
+class VueServer
   @@pid = nil
   @@port = nil
 
@@ -36,7 +36,7 @@ class ReactServer
         response = new.call('rack.input' => StringIO.new("response.end('hi')"))
         return if response.first == '200' and response.last == 'hi'
         STDERR.puts response
-        raise RuntimeError('Invalid ReactServer response received')
+        raise RuntimeError('Invalid VueServer response received')
       rescue Errno::ECONNREFUSED
         sleep i * 0.1
       end
@@ -71,16 +71,61 @@ class ReactServer
 
   # the server itself
   @@server = proc do
-    JSDOM = require("jsdom").JSDOM
-    global.window = JSDOM.new('<html><body></body></html>').window
-    global.document = global.window.document
-    global.navigator = global.window.navigator
+    cleanup = require("jsdom-global/register")
 
-    React = require('react')
-    ReactDOM = require('react-dom')
-    ReactDOMServer = require('react-dom/server');
-    TestUtils = require('react-dom/test-utils')
-    Simulate = TestUtils.Simulate
+    process.env.VUE_ENV = 'server'
+
+    Vue = require('vue')
+    Vue.config.productionTip = false
+
+    # render a response, using server side rendering
+    def Vue.renderResponse(component, response)
+      renderer = require('vue-server-renderer').createRenderer()
+      app = Vue.new(render: proc {|h| return h(component)})
+
+      renderer.renderToString(app) do |err, html|
+        if err
+          response.end(err.toString() + "\n" + err.stack)
+        else
+          response.end(html)
+        end
+      end
+    end
+
+    # render a element, using client side rendering
+    def Vue.renderElement(component)
+      outer = document.createElement('div')
+      inner = document.createElement('span')
+      outer.appendChild(inner);
+      Vue.new(el: inner, render: proc {|h| return h(component)})
+      return outer.firstChild
+    end
+
+    # render an app, using client side rendering.  Convenience methods are
+    # provided to querySelector, extract outerHTML and to dispatch events.
+    def Vue.renderApp(component)
+      outer = document.createElement('div')
+      inner = document.createElement('span')
+      outer.appendChild(inner);
+      app = Vue.new(el: inner, render: proc {|h| return h(component)})
+      inner = outer.firstChild
+
+      def app.outerHTML
+        return inner.outerHTML
+      end
+
+      def app.querySelector(selector)
+        return outer.querySelector(selector)
+      end
+
+      def app.dispatchEvent(event, element=nil)
+        element ||= inner
+        element.dispatchEvent(event)
+        app._watcher.run()
+      end
+
+      return app
+    end
 
     jQuery = require('jquery')
 
@@ -92,7 +137,7 @@ class ReactServer
       end
 
       request.on 'error' do |error|
-        console.log "ReactServer error: #{error.message}"
+        console.log "VueServer error: #{error.message}"
       end
 
       request.on 'end' do
@@ -110,22 +155,22 @@ class ReactServer
   end
 end
 
-shared_context "react_server", server: :react do
+shared_context "vue_server", server: :vue do
   #
   # administrivia
   #
   before :all do
-    ReactServer.start
+    VueServer.start
     Dir.chdir File.expand_path('../../views', __FILE__) do
       @_script = Ruby2JS.convert(File.read('app.js.rb'), file: 'app.js.rb')
     end
   end
 
   before :each do
-    @_app, Capybara.app = Capybara.app, ReactServer.new
+    @_app, Capybara.app = Capybara.app, VueServer.new
   end
 
-  def on_react_server(&block)
+  def on_vue_server(&block)
     locals = {}
     instance_variables.each do |ivar|
       next if ivar.to_s.start_with? '@_'
@@ -133,7 +178,7 @@ shared_context "react_server", server: :react do
     end
 
     page.driver.post('/', @_script + ';' +
-      Ruby2JS.convert(block, react: true, ivars: locals))
+      Ruby2JS.convert(block, vue: true, vue_h: '$h', ivars: locals).to_s)
   end
 
   after :each do
@@ -141,6 +186,6 @@ shared_context "react_server", server: :react do
   end
 
   at_exit do
-    ReactServer.stop
+    VueServer.stop
   end
 end

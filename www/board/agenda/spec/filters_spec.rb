@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
-require_relative 'react_server'
+require_relative 'vue_server'
 
-describe "filters", type: :feature, server: :react do
+describe "filters", type: :feature, server: :vue do
   before :all do
     @parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
   end
@@ -13,11 +13,16 @@ describe "filters", type: :feature, server: :react do
     it "should convert http addresses to links" do
       @item = @parsed.find {|item| item['title'] == 'Clerezza'}
 
-      on_react_server do
-        container = document.createElement('div')
-        ReactDOM.render _Report(item: Agenda.new(@item)), container do
-          response.end container.innerHTML
+      on_vue_server do
+        agenda_item = Agenda.new(@item)
+
+        class TestReport < Vue
+          def render
+            _Report item: agenda_item
+          end
         end
+
+        Vue.renderResponse TestReport, response
       end
 
       expect(page).to have_selector 'a[href="http://s.apache.org/EjO"]'
@@ -31,11 +36,16 @@ describe "filters", type: :feature, server: :react do
     it "should convert start time to local time on call to order" do
       @item = @parsed.find {|item| item['title'] == 'Call to order'}
 
-      on_react_server do
-        container = document.createElement('div')
-        ReactDOM.render _Report(item: Agenda.new(@item)), container do
-          response.end container.innerHTML
+      on_vue_server do
+        agenda_item = Agenda.new(@item)
+
+        class TestReport < Vue
+          def render
+            _Report item: agenda_item
+          end
         end
+
+        Vue.renderResponse TestReport, response
       end
 
       expect(page).to have_selector 'span.hilite', text: /Local Time:/
@@ -52,11 +62,16 @@ describe "filters", type: :feature, server: :react do
         rubys: {name: "Sam Ruby", member: true, attending: true}
       })
 
-      on_react_server do
-        container = document.createElement('div')
-        ReactDOM.render _Report(item: Agenda.new(@item)), container do
-          response.end container.innerHTML
+      on_vue_server do
+        agenda_item = Agenda.new(@item)
+
+        class TestReport < Vue
+          def render
+            _Report item: agenda_item
+          end
         end
+
+        Vue.renderResponse TestReport, response
       end
 
       expect(page).to have_selector \

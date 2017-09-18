@@ -7,7 +7,9 @@
   },
   "devDependencies": {
     "jsdom": "^11.1.0",
+    "jsdom-global": "^3.0.2",
     "jquery": "^3.2.1",
-    "vue": "^2.4.4"
+    "vue": "^2.4.4",
+    "vue-server-renderer": "^2.4.4"
   }
 }

@@ -5,9 +5,9 @@
 #
 
 require_relative 'spec_helper'
-require_relative 'react_server'
+require_relative 'vue_server'
 
-describe "client", type: :feature, server: :react do
+describe "client", type: :feature, server: :vue do
   #
   # Agenda model
   #
@@ -15,15 +15,21 @@ describe "client", type: :feature, server: :react do
     it "should link pages in agenda traversal order" do
       @parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
 
-      on_react_server do
-        agenda = Agenda.load(@parsed)
+      on_vue_server do
 
-        output = _div agenda do |item|
-          _item.next item.next.href, class: item.href if item.next
-          _item.prev item.prev.href, class: item.href if item.prev
+        agenda = Agenda.load(@parsed)
+        container = document.createElement('div')
+
+        class TestClient < Vue
+          def render
+            _div agenda do |item|
+              _item.next item.next.href, class: item.href if item.next
+              _item.prev item.prev.href, class: item.href if item.prev
+            end
+          end
         end
 
-        response.end ReactDOMServer.renderToStaticMarkup(output)
+        Vue.renderResponse(TestClient, response)
       end
 
       expect(page).not_to have_selector '.Call-to-order.prev'
