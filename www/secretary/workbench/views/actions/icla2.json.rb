@@ -92,7 +92,8 @@ task "svn commit documents/iclas/icla#{count}#{fileext}" do
     svn 'status', "#{dir}/#@filename"
 
     # commit changes
-    svn 'commit', "#{dir}/#@filename/#{@filename}#{fileext}",
+    svn 'commit', 
+      *files.values.map {|name| "#{dir}/#@filename/#{@name}"},
       '-m', "additional ICLA from #{@pubname}"
   end
 end
