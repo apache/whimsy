@@ -41,8 +41,7 @@ class AddComment < Vue
 
       #input field: comment text
       _textarea.comment_text!  value: @comment, label: 'Comment',
-        placeholder: 'comment', rows: 5, onChange: self.change,
-        disabled: @disabled
+        placeholder: 'comment', rows: 5, disabled: @disabled
 
       if Server.role == :director and @@item.attach =~ /^[A-Z]+$/
         _input.flag! type: 'checkbox', label: 'item requires discussion or follow up',
@@ -63,23 +62,9 @@ class AddComment < Vue
   end
 
   # autofocus on comment text
-  def componentDidMount()
+  def mounted()
     jQuery('#comment-form').on 'shown.bs.modal' do
       ~'#comment-text'.focus()
-    end
-  end
-
-  # update comment when textarea changes, triggering hiding/showing the
-  # Delete button and enabling/disabling the Save button.
-  def change(event)
-    @comment = event.target.value
-  end
-
-  # when item changes, reset base and comment
-  def componentWillReceiveProps(newprops)
-    if newprops.item.href != self.props.item.href
-      @checked = newprops.item.flagged
-      @base = @comment = newprops.item.pending || ''
     end
   end
 

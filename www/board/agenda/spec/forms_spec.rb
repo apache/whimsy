@@ -33,22 +33,22 @@ describe "forms", type: :feature, server: :vue do
 
     it "should enable Save button after input" do
       on_vue_server do
+        item = {}
         server = {pending: {}, initials: 'sr'}
 
         class TestCommentForm < Vue
           def render
-            _AddComment(item: {}, server: {pending: {}, initials: 'sr'})
+            _AddComment(item: item, server: server)
           end
         end
 
         app = Vue.renderApp(TestCommentForm)
         node = app.querySelector('#comment-text')
-        node.textContent = 'Good job!'
-        app.dispatchEvent(Event.new('input'))
-        response.end app.innerHTML
+        node.value = 'Good job!'
+        node.dispatchEvent(Event.new('input'))
+        Vue.nextTick { response.end app.outerHTML }
       end
 
-      puts page.body
       expect(page).to have_selector '.modal-footer .btn-warning', text: 'Delete'
       expect(page).to have_selector \
         '.modal-footer .btn-primary:not([disabled])', text: 'Save'
@@ -93,10 +93,10 @@ describe "forms", type: :feature, server: :vue do
 
         app = Vue.renderApp(TestPost)
         button = app.querySelector('.btn-danger')
-        app.dispatchEvent(new Event('click'), button)
+        button.dispatchEvent(Event.new('click'))
         post_report = app.querySelector('#post-report-text')
-        post_report.textContent = this.state.report
-        response.end app.innerHTML
+        post_report.value = this.state.report
+        Vue.nextTick { response.end app.outerHTML }
       end
 
       expect(find('#post-report-text').value).to match(/to\nanswer questions/)

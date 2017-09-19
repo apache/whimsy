@@ -68,20 +68,15 @@ class AddMinutes < Vue
   end
 
   # autofocus on minute text
-  def componentDidMount()
+  def mounted()
     jQuery('#minute-form').on 'shown.bs.modal' do
       ~'#minute-text'.focus()
     end
   end
 
   # when initially displayed, set various fields to match the item
-  def componentWillMount()
+  def created()
     self.setup(@@item)
-  end
-
-  # when item changes, reset various fields to match
-  def componentWillReceiveProps(newprops)
-    self.setup(newprops.item) if newprops.item.href != self.props.item.href
   end
 
   # reset base, draft minutes, shepherd, default ai_text, and indent

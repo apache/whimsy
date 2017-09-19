@@ -118,8 +118,7 @@ class VueServer
         return outer.querySelector(selector)
       end
 
-      def app.dispatchEvent(event, element=nil)
-        element ||= inner
+      def app.dispatchEvent(event, element)
         element.dispatchEvent(event)
         app._watcher.run()
       end

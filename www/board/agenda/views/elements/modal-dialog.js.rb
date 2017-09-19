@@ -6,29 +6,21 @@
 #
 
 class ModalDialog < Vue
-  def initialize
-    @header = []
-    @body = []
-    @footer = []
-  end
-
-  def created()
-    @header.clear()
-    @body.clear()
-    @footer.clear()
+  def collateSlots()
+    sections = {header: [], body: [], footer: []}
 
     $slots.default.each do |slot|
       if slot.tag == 'h4'
 
         # place h4 elements into the header, adding a modal-title class
         slot = self.addClass(slot, 'modal-title')
-        @header << slot
+        sections.header << slot
 
       elsif slot.tag == 'button'
 
         # place button elements into the footer, adding a btn class
         slot = self.addClass(slot, 'btn')
-        @footer << slot
+        sections.footer << slot
 
       elsif slot.tag == 'input' or slot.tag == 'textarea'
 
@@ -52,33 +44,37 @@ class ModalDialog < Vue
           end
         end
 
-        @body << Vue.createElement('div', {class: 'form-group'}, 
+        sections.body << Vue.createElement('div', {class: 'form-group'}, 
           [label, slot])
 
       else
 
         # place all other elements into the body
 
-        @body << slot
+        sections.body << slot
       end
     end
+
+    return sections
   end
 
   def render
+    sections = self.collateSlots()
+
     _div.modal.fade id: @@id, class: @@className do
       _div.modal_dialog do
         _div.modal_content do
           _div.modal_header class: @@color do
             _button.close "\u00d7", type: 'button', data_dismiss: 'modal'
-            _[*@header]
+            _[*sections.header]
           end
 
           _div.modal_body do
-            _[*@body]
+            _[*sections.body]
           end
 
           _div.modal_footer class: @@color do
-            _[*@footer]
+            _[*sections.footer]
           end
         end
       end
