@@ -95,6 +95,9 @@ class ASF::Board::Agenda
       @sections[section][:index] = index if @sections[section]
     end
 
+    # quick exit if none found -- non-standard format agenda
+    return [] if @sections.empty?
+
     # look for flags
     flagged_reports = Hash[@file[/ \d\. Committee Reports.*?\n\s+A\./m].
       scan(/# (.*?) \[(.*)\]/)]

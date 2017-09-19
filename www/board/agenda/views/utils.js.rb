@@ -55,14 +55,16 @@ def post(target, data, &block)
         elsif xhr.status == 404
           alert "Not Found: json/#{target}"
         elsif xhr.status >= 400
-          console.log(xhr.response)
           if not xhr.response
-            alert "Exception - #{xhr.statusText}"
+            message = "Exception - #{xhr.statusText}"
           elsif xhr.response.exception
-            alert "Exception\n#{xhr.response.exception}"
+            message = "Exception\n#{xhr.response.exception}"
           else
-            alert "Exception\n#{JSON.parse(xhr.responseText).exception}"
+            message = "Exception\n#{JSON.parse(xhr.responseText).exception}"
           end
+
+          console.log(message)
+          alert message
         end
       rescue => e
         console.log(e)
@@ -101,14 +103,16 @@ def retrieve(target, type, &block)
         elsif xhr.status == 404
           alert "Not Found: #{type}/#{target}"
         elsif xhr.status >= 400
-          console.log(xhr.response)
           if not xhr.response
-            alert "Exception - #{xhr.statusText}"
+            message = "Exception - #{xhr.statusText}"
           elsif xhr.response.exception
-            alert "Exception\n#{xhr.response.exception}"
+            message = "Exception\n#{xhr.response.exception}"
           else
-            alert "Exception\n#{JSON.parse(xhr.responseText).exception}"
+            message = "Exception\n#{JSON.parse(xhr.responseText).exception}"
           end
+
+          console.log(message)
+          alert(message)
         end
       rescue => e
         console.log(e)

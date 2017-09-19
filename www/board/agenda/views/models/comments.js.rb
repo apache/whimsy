@@ -12,7 +12,7 @@ class HistoricalComments
     else
       @@comments = {}
       JSONStorage.fetch('historical-comments') do |comments|
-        @@comments = comments
+        @@comments = comments || {}
       end
     end
   end
