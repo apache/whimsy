@@ -29,9 +29,14 @@ class HistoricalComments
     # gather up titles and comments
     agendas.reverse.each do |agenda|
       date = agenda[/\d+_\d+_\d+/]
-      ASF::Board::Agenda.parse(File.read(agenda), true).each do |report|
-        next if report['comments'].to_s.empty?
-        comments[report['title']][date] = report['comments']
+      begin
+        ASF::Board::Agenda.parse(File.read(agenda), true).each do |report|
+          next if report['comments'].to_s.empty?
+          comments[report['title']][date] = report['comments']
+        end
+      rescue => e
+        STDERR.puts e.to_s
+        e.backtrace.each {|line| STDERR.puts line}
       end
     end
 
