@@ -94,8 +94,6 @@ describe "forms", type: :feature, server: :vue do
         app = Vue.renderApp(TestPost)
         button = app.querySelector('.btn-danger')
         button.dispatchEvent(Event.new('click'))
-        post_report = app.querySelector('#post-report-text')
-        post_report.value = this.state.report
         Vue.nextTick { response.end app.outerHTML }
       end
 

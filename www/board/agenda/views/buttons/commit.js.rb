@@ -34,20 +34,15 @@ class Commit < Vue
     end
   end
 
-  # set message on initial display
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # autofocus on comment text
-  def componentDidMount()
+  def mounted()
     jQuery('#commit-form').on 'shown.bs.modal' do
       ~'#commit-text'.focus()
     end
   end
 
   # update message on re-display
-  def componentWillReceiveProps()
+  def created()
     pending = @@server.pending
     messages = []
 
@@ -101,11 +96,6 @@ class Commit < Vue
     end
 
     @message = messages.join("\n")
-  end
-
-  # update message when textarea changes
-  def change(event)
-    @message = event.target.value
   end
 
   # on click, disable the input fields and buttons and submit

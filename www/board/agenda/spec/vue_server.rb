@@ -102,7 +102,7 @@ class VueServer
     end
 
     # render an app, using client side rendering.  Convenience methods are
-    # provided to querySelector, extract outerHTML and to dispatch events.
+    # provided to querySelector, and to extract outerHTML.
     def Vue.renderApp(component)
       outer = document.createElement('div')
       inner = document.createElement('span')
@@ -116,11 +116,6 @@ class VueServer
 
       def app.querySelector(selector)
         return outer.querySelector(selector)
-      end
-
-      def app.dispatchEvent(event, element)
-        element.dispatchEvent(event)
-        app._watcher.run()
       end
 
       return app
