@@ -129,6 +129,5 @@ class Header < Vue
   # toggle info dropdown
   def toggleInfo
     @infodropdown = (@infodropdown ? nil : 'open')
-    console.log 'toggle'
   end
 end
