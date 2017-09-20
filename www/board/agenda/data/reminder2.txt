@@ -12,7 +12,10 @@ Times in other time zones:
 
   [timeZoneInfo]
 
-Full details about the process and schedule are in [1].
+Full details about the process and schedule are in [1]. Details about what a
+report should look like can be found at:
+
+  https://www.apache.org/foundation/board/reporting
 
 The report should be committed to the meeting agenda in the board directory
 in the foundation repository, trying to keep a similar format to the others.
