@@ -29,10 +29,6 @@ class Comments < Vue
     @showseen = ! @showseen
   end
 
-  def showseen
-    return @showseen
-  end
-
   def render
     found = false
 

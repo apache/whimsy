@@ -42,7 +42,7 @@ class Post < Vue
           _div.form_group do
             _label 'financial spreadsheet from virtual', for: 'upload'
             _input.upload! type: 'file', value: @upload
-            _button.btn.btn_primary 'Upload', onClick: self.upload,
+            _button.btn.btn_primary 'Upload', onClick: upload_spreadsheet,
               disabled: @disabled || !@upload
           end
         end
@@ -179,7 +179,7 @@ class Post < Vue
   end
 
   # upload contents of spreadsheet in base64; append extracted table to report
-  def upload(event)
+  def upload_spreadsheet(event)
     @disabled = true
     event.preventDefault()
 

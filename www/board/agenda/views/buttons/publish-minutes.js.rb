@@ -40,14 +40,14 @@ class PublishMinutes < Vue
     if @@item.title != @previous_title
       if not @@item.attach
         # Index page for a path month's agenda
-        self.summary Agenda.index, Agenda.title.gsub('-', '_')
+        self.summarize Agenda.index, Agenda.title.gsub('-', '_')
       elsif defined? XMLHttpRequest
         # Minutes from previous meetings section of the agenda
         date = @@item.text[/board_minutes_(\d+_\d+_\d+)\.txt/, 1]
         url = document.baseURI.sub(/[-\d]+\/$/, date.gsub('_', '-')) + '.json'
   
         retrieve url, :json do |agenda|
-          self.summary agenda, date
+          self.summarize agenda, date
         end
       end
 
@@ -63,7 +63,7 @@ class PublishMinutes < Vue
   end
 
   # compute default summary for web site and commit message
-  def summary(agenda, date)
+  def summarize(agenda, date)
     summary = "- [#{self.formatDate(date)}]" +
        "(../records/minutes/#{date[0..3]}/board_minutes_#{date}.txt)\n"
 
