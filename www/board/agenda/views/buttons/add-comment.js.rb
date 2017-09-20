@@ -64,7 +64,7 @@ class AddComment < Vue
   # autofocus on comment text
   def mounted()
     jQuery('#comment-form').on 'shown.bs.modal' do
-      ~'#comment-text'.focus()
+      document.getElementById("comment-text").focus()
     end
   end
 
@@ -75,7 +75,7 @@ class AddComment < Vue
 
   # when save button is pushed, post comment and dismiss modal when complete
   def save(event)
-    Server.initials = ~'#comment_initials'.value
+    Server.initials = document.getElementById("comment-initials").value
 
     data = {
       agenda: Agenda.file,

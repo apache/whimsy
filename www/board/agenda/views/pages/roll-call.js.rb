@@ -121,9 +121,9 @@ class RollCall < Vue
   # scroll walkon input field towards the center of the screen
   def updated()
     if RollCall.lockFocus and @guest.length >= 3
-      walkon = ~'.walkon'
+      walkon = document.getElementsByClassName("walkon")[0]
       offset = walkon.offsetTop + walkon.offsetHeight/2 - window.innerHeight/2
-      jQuery('html, body').animate({scrollTop: offset}, :slow);
+      jQuery('html, body').animate({scrollTop: offset}, :slow)
     end
   end
 end
@@ -144,7 +144,7 @@ class Attendee < Vue
       @checked = status.present
       @notes = (status.notes ? status.notes.sub(' - ', '') : '')
     else
-      @checked = ''
+      @checked = false
       @notes = ''
     end
   end
@@ -154,7 +154,7 @@ class Attendee < Vue
   # forms.  CSS controls which version of the notes is actually displayed.
   def render
     _li onMouseOver: self.focus do
-      _input type: :checkbox, checked: @checked, onChange: self.click
+      _input type: :checkbox, checked: @checked, onClick: self.click
 
       roster = '/roster/committer/'
       if @@person.id
@@ -185,7 +185,7 @@ class Attendee < Vue
   end
 
   # initialize pending update status
-  def componentDidMount()
+  def mounted()
     self.pending = false
   end
 
@@ -204,7 +204,7 @@ class Attendee < Vue
   end
 
   # after display is updated, send any pending updates to the server
-  def componentDidUpdate()
+  def updated()
     return unless self.pending
 
     data = {

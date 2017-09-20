@@ -53,7 +53,7 @@ class PublishMinutes < Vue
   # autofocus on minute text
   def mounted()
     jQuery('#publish-minutes-form').on 'shown.bs.modal' do
-      ~'#summary-text'.focus()
+      document.getElementById("summary-text").focus()
     end
   end
 

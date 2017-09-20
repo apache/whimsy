@@ -33,7 +33,7 @@ class DraftMinutes < Vue
     @draft = ''
     jQuery('#draft-minute-form').on 'shown.bs.modal' do
       retrieve "draft/#{Agenda.title.gsub('-', '_')}", :text do |draft|
-        ~'#draft-minute-text'.focus()
+        document.getElementById("draft-minute-text").focus()
         @disabled = false
         @draft = draft
         jQuery('#draft-minute-text').animate(scrollTop: 0)

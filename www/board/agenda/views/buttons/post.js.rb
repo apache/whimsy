@@ -66,9 +66,9 @@ class Post < Vue
   def mounted()
     jQuery('#post-report-form').on 'shown.bs.modal' do
       if @@button.text == 'add resolution'
-        ~'#post-report-title'.focus()
+        document.getElementById("post-report-title").focus()
       else
-        ~'#post-report-text'.focus()
+        document.getElementById("post-report-text").focus()
       end
     end
   end

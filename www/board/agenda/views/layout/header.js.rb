@@ -118,14 +118,9 @@ class Header < Vue
     end
   end
 
-  # set title on initial rendering
-  def componentDidMount()
-    self.componentDidUpdate()
-  end
-
   # update title to match the item title whenever page changes
-  def componentDidUpdate()
-    title = ~'title'
+  def mounted()
+    title = document.getElementsByTagName('title')[0]
     if title.textContent != @@item.title
       title.textContent = @@item.title
     end
@@ -134,5 +129,6 @@ class Header < Vue
   # toggle info dropdown
   def toggleInfo
     @infodropdown = (@infodropdown ? nil : 'open')
+    console.log 'toggle'
   end
 end
