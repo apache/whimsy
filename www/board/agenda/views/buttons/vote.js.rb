@@ -45,13 +45,8 @@ class Vote < Vue
   end
 
   # when initially displayed, set various fields to match the item
-  def componentWillMount()
+  def created()
     self.setup(@@item)
-  end
-
-  # when item changes, reset various fields to match
-  def componentWillReceiveProps(newprops)
-    self.setup(newprops.item) if newprops.item.href != self.props.item.href
   end
 
   # reset base, draft minutes, directors present, and vote type

@@ -30,6 +30,7 @@ class HistoricalComments
     agendas.reverse.each do |agenda|
       date = agenda[/\d+_\d+_\d+/]
       begin
+        puts agenda
         ASF::Board::Agenda.parse(File.read(agenda), true).each do |report|
           next if report['comments'].to_s.empty?
           comments[report['title']][date] = report['comments']

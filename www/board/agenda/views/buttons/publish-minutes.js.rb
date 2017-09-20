@@ -31,12 +31,7 @@ class PublishMinutes < Vue
   end
 
   # On first load, ensure summary is produced
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
-  # when page title changes, update form values
-  def componentWillReceiveProps()
+  def created()
     if @@item.title != @previous_title
       if not @@item.attach
         # Index page for a path month's agenda
@@ -56,7 +51,7 @@ class PublishMinutes < Vue
   end
 
   # autofocus on minute text
-  def componentDidMount()
+  def mounted()
     jQuery('#publish-minutes-form').on 'shown.bs.modal' do
       ~'#summary-text'.focus()
     end

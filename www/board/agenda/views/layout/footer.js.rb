@@ -70,8 +70,15 @@ class Footer < Vue
       _span do
         if @@buttons
           @@buttons.each do |button|
+
             if button.text
-              Vue.createElement('button', {attrs: button.attrs}, button.text)
+              props = {attrs: button.attrs}
+              if button.attrs.class
+                props.class = button.attrs.class.split(' ')
+                delete button.attrs.class
+              end
+
+              Vue.createElement('button', props, button.text)
             elsif button.type
               Vue.createElement(button.type, {props: button.attrs})
             end

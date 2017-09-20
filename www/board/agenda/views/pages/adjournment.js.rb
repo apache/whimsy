@@ -102,13 +102,8 @@ class Adjournment < Vue
     end
   end
 
-  # check for minutes being completed on first load
-  def componentDidMount()
-    self.componentDidUpdate()
-  end
-
   # fetch secretary todos once the minutes are complete
-  def componentDidUpdate()
+  def mounted()
     if Minutes.complete and Todos.loading and not Todos.fetched
       Todos.fetched = true
       retrieve "secretary-todos/#{Agenda.title}", :json do |todos|
@@ -130,13 +125,8 @@ class TodoActions < Vue
     @people = []
   end
 
-  # check for minutes being completed on first load
-  def componentDidMount()
-    self.componentWillReceiveProps()
-  end
-
   # update check marks based on current Todo list
-  def componentWillReceiveProps()
+  def created()
     @people = Todos[@@action]
 
     # uncheck people who were removed

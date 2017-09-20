@@ -110,7 +110,7 @@ class Router
     buttons = item.view.buttons().concat(buttons || []) if item.view.buttons
     if buttons
       buttons = buttons.map do |button|
-        props = {text: 'button', attrs: {className: 'btn'}, form: button.form}
+        props = {text: 'button', attrs: {class: 'btn'}, form: button.form}
 
         # form overrides
         form = button.form
@@ -119,7 +119,7 @@ class Router
             if name == 'text'
               props.text = form.button.text
             elsif name == 'class' or name == 'classname'
-              props.attrs.className += " #{form.button[name].gsub('_', '-')}"
+              props.attrs.class += " #{form.button[name].gsub('_', '-')}"
             else
               props.attrs[name.gsub('_', '-')] = form.button[name]
             end
@@ -136,7 +136,7 @@ class Router
           if name == 'text'
             props.text = button.text
           elsif name == 'class' or name == 'classname'
-            props.attrs.className += " #{button[name].gsub('_', '-')}"
+            props.attrs.class += " #{button[name].gsub('_', '-')}"
           elsif name != 'form'
             props.attrs[name.gsub('_', '-')] = button[name]
           end

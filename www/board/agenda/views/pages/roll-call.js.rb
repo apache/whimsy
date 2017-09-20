@@ -138,12 +138,7 @@ class Attendee < Vue
   end
 
   # perform initialization on first rendering
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
-  # whenever person changes, reflect current status
-  def componentWillReceiveProps()
+  def created()
     status = Minutes.attendees[@@person.name]
     if status
       @checked = status.present
