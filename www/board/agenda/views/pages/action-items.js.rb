@@ -84,7 +84,7 @@ class ActionItems < Vue
 
           # include pending updates
           pending = Pending.find_status(action)
-          attrs['data-status'] = pending.status if pending
+          options.attrs['data-status'] = pending.status if pending
 
           Vue.createElement('span', options) do
             # highlight missing action item status updates

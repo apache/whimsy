@@ -26,7 +26,7 @@ class Queue < Vue
 
         # Unapproved
         %w(Unapprovals Flagged Unflagged).each do |section|
-          list = self.state[section.downcase()]
+          list = $data[section.downcase()]
           unless list.empty?
             _h4 section
             _p.col_xs_12 do
@@ -88,13 +88,9 @@ class Queue < Vue
     end
   end
 
-  # set state on first load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # determine approvals, rejected, comments, and ready
-  def componentWillReceiveProps()
+  def created()
+  console.log('created')
     @approvals = []
     @unapprovals = []
     @flagged = []

@@ -67,13 +67,8 @@ class RollCall < Vue
     end
   end
 
-  # perform initialization on first rendering
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # collect a sorted list of people
-  def componentWillReceiveProps()
+  def created()
     people = []
 
     # start with those listed in the agenda
@@ -108,7 +103,7 @@ class RollCall < Vue
   end
 
   # client side initialization on first rendering
-  def componentDidMount()
+  def mounted()
     if Server.committers
       @disabled = false
     else
@@ -124,7 +119,7 @@ class RollCall < Vue
   end
 
   # scroll walkon input field towards the center of the screen
-  def componentDidUpdate()
+  def updated()
     if RollCall.lockFocus and @guest.length >= 3
       walkon = ~'.walkon'
       offset = walkon.offsetTop + walkon.offsetHeight/2 - window.innerHeight/2

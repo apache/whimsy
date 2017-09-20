@@ -7,13 +7,8 @@ class Missing < Vue
     @checked = {}
   end
 
-  # update checkmarks on first load
-  def componentDidMount()
-    self.componentWillReceiveProps()
-  end
-
   # update check marks based on current Index
-  def componentWillReceiveProps()
+  def mounted()
     Agenda.index.each do |item|
       @checked[item.title] = true unless defined? @checked[item.title]
     end

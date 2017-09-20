@@ -113,13 +113,8 @@ class AdditionalInfo < Vue
     end
   end
 
-  # ensure componentWillReceiveProps is called on before first rendering
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # determine prefix (if any)
-  def componentWillReceiveProps()
+  def created()
     if @@prefix == true
       @prefix = @@item.title.downcase() + '-'
     elsif @@prefix

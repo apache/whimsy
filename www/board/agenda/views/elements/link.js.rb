@@ -24,6 +24,7 @@ class Link < Vue
     end
 
     result.attrs.rel = @@rel if @@rel
+    result.attrs.id = @@id if @@id
 
     result.on = {click: self.click}
 

@@ -33,10 +33,9 @@ class Search < Vue
           # highlight matching strings in paragraph
           item.text.split(/\n\s*\n/).each do |paragraph|
             if paragraph.downcase().include? text
-              _pre.report dangerouslySetInnerHTML: {
-                __html: htmlEscape(paragraph).gsub(/(#{text})/i,
+              _pre.report domPropsInnerHTML:
+                htmlEscape(paragraph).gsub(/(#{text})/i,
                  "<span class='hilite'>$1</span>")
-              }
             end
           end
         end
