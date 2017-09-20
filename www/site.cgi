@@ -116,6 +116,74 @@ def label(analysis, links, col, name)
   end
 end
 
+def displayProject(project, links, cols, analysis)
+  _whimsy_panel_table(
+    title: "Site Check For Project - #{links['display_name']}",
+    helpblock: -> {
+      _a href: '../', aria_label: 'Home to site checker' do
+        _span.glyphicon.glyphicon_home :aria_hidden
+      end
+      _span.glyphicon.glyphicon_menu_right
+      _ ' Results for project: '
+      _a links['display_name'], href: links['uri']
+      _ ' Check Results column is the actual text found on the project homepage for this check.'
+    }
+  ) do
+    _table.table.table_striped do
+      _tbody do
+        _thead do
+          _tr do
+            _th! 'Check Type'
+            _th! 'Check Results'
+            _th! 'Check Description'
+          end
+        end
+        cols.each do |col|
+          cls = label(analysis, links, col, project)
+          _tr do
+            _td do
+              _a col.capitalize, href: "../check/#{col}"
+            end
+            
+            if links[col] =~ /^https?:/
+              _td class: cls do
+                _a links[col], href: links[col]
+              end
+            else
+              _td links[col], class: cls
+            end
+            
+            _td do
+              if cls == 'label-warning'
+                _ 'Expected to match the regular expression: '
+                _code CHECKS[col].source
+                _ ''
+              else
+                _ ''
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+def displayError(path)
+  _whimsy_panel_table(
+    title: "ERROR",
+    helpblock: -> {
+      _a href: '../', aria_label: 'Home to site checker' do
+        _span.glyphicon.glyphicon_home :aria_hidden
+      end
+      _span.glyphicon.glyphicon_menu_right
+      _span.text_danger "ERROR: The path #{path} is not a recognized command for this tool, sorry! "
+    }
+  ) do
+    _p.bold 'ERROR - please try again.'
+  end
+end
+
 _html do
   _head do
     _style %{
@@ -154,56 +222,10 @@ _html do
       if path_info =~ %r{/project/(.+)}
         # details for an individual project
         project = $1
-        links = sites[project]
-        _whimsy_panel_table(
-          title: "Site Check For Project - #{links['display_name']}",
-          helpblock: -> {
-            _a href: '../', aria_label: 'Home to site checker' do
-              _span.glyphicon.glyphicon_home :aria_hidden
-            end
-            _span.glyphicon.glyphicon_menu_right
-            _ ' Results for project: '
-            _a links['display_name'], href: links['uri']
-            _ ' Check Results column is the actual text found on the project homepage for this check.'
-          }
-        ) do
-          _table.table.table_striped do
-            _tbody do
-              _thead do
-                _tr do
-                  _th! 'Check Type'
-                  _th! 'Check Results'
-                  _th! 'Check Description'
-                end
-              end
-              cols.each do |col|
-                cls = label(analysis, links, col, project)
-                _tr do
-                  _td do
-                    _a col.capitalize, href: "../check/#{col}"
-                  end
-                  
-                  if links[col] =~ /^https?:/
-                    _td class: cls do
-                      _a links[col], href: links[col]
-                    end
-                  else
-                    _td links[col], class: cls
-                  end
-                  
-                  _td do
-                    if cls == 'label-warning'
-                      _ 'Expected to match the regular expression: '
-                      _code CHECKS[col].source
-                      _ ''
-                    else
-                      _ ''
-                    end
-                  end
-                end
-              end
-            end
-          end
+        if sites[project]
+          displayProject(project, sites[project], cols, analysis)
+        else
+          displayError(path_info)
         end
       elsif path_info =~ %r{/check/(.+)}
         # details for a single check
@@ -222,6 +244,8 @@ _html do
                 _ ' '
                 _a DOCS[col][1], href: DOCS[col][0]
               end
+            else
+              _span.text_danger "WARNING: the site checker may not understand type: #{col}, results may not be complete/available."
             end
           }
         ) do
