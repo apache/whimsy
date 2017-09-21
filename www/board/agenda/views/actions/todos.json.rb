@@ -134,14 +134,14 @@ if @establish and env.password
       end
 
       # new style definitions
-      project = ASF::Project.find(pmc.downcase)
+      project = ASF::Project[pmc.downcase]
       if not project
         project.create(members, members)
       elsif not guineapig
         # sync project owners with new PMC list
-	project.add_owners(members)
-	project.remove_owners(project.owners - members)
-	project.add_members(members)
+        project.add_owners(members)
+        project.remove_owners(project.owners - members)
+        project.add_members(members)
       end
     end 
   end

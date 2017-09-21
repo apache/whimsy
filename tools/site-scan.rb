@@ -25,14 +25,12 @@ end
 IMAGE_DIR = ASF::SVN.find('asf/infrastructure/site/trunk/content/img')
 
 def parse(id, site, name)
-  uri, response, status = $cache.get(site.to_s)
-  $stderr.puts "#{id} #{uri} #{status}"
-  doc = Nokogiri::HTML(response)
-
+  uri = URI.parse(site)
+    
   # default data
   data = {
     display_name: name,
-    uri: uri.to_s,
+    uri: site,
     events: nil,
     foundation: nil,
     license: nil,
@@ -42,6 +40,18 @@ def parse(id, site, name)
     copyright: nil,
     image: nil,
   }
+
+  # check if site exists
+  begin
+    Socket.getaddrinfo(uri.host, uri.scheme)
+  rescue SocketError
+    return data
+  end
+
+  uri, response, status = $cache.get(site.to_s)
+  $stderr.puts "#{id} #{uri} #{status}"
+  doc = Nokogiri::HTML(response)
+  data[:uri] = uri.to_s
 
   # scan each link
   doc.css('a').each do |a|
@@ -159,9 +169,9 @@ results = {}
 $cache = Cache.new(dir: 'site-scan')
 
 # Parse a single site given its URL
-if ARGV.length == 2 and ARGV.first =~ /^https?:/
+if (1..2).include? ARGV.length and ARGV.first =~ /^https?:\/\/\w/
   site = ARGV.shift
-  name = ARGV.shift
+  name = ARGV.shift || site[/\/(\w[^.]*)/, 1].capitalize
   results[name] = parse(name, site, name)
 else
   if ARGV.first =~ %r{[./]} # have we a file name?
