@@ -11,12 +11,8 @@ class Attend < Vue
       onClick: self.click, disabled: @disabled
   end
 
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # match person by either userid or name
-  def componentWillReceiveProps()
+  def created()
     person = @@item.people[Server.userid]
     if person
       @attending = person.attending

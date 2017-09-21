@@ -20,7 +20,7 @@ class PodlingNameSearch < Vue
   end
 
   # initial mount: fetch podlingnamesearch data unless already downloaded
-  def componentDidMount()
+  def mounted()
     if Server.podlingnamesearch
       self.check(self.props)
     else
@@ -29,11 +29,6 @@ class PodlingNameSearch < Vue
         self.check(self.props)
       end
     end
-  end
-
-  # when properties (in particular: title) changes, lookup name again
-  def componentWillReceiveProps(newprops)
-    self.check(newprops)
   end
 
   # lookup name in the establish resolution against the podlingnamesearches

@@ -15,7 +15,7 @@ class Message < Vue
   end
 
   # autofocus on the chat message when the page is initially displayed
-  def componentDidMount()
+  def mounted()
     document.getElementById("chatMessage").focus()
   end
 

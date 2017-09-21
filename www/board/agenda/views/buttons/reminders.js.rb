@@ -36,7 +36,7 @@ class InitialReminder < Vue
   end
 
   # wire up event handlers
-  def componentDidMount()
+  def mounted()
     Array(document.querySelectorAll('.btn-primary')).each do |button|
       if button.getAttribute('data-target') == '#reminder-form'
         button.onclick = self.loadText

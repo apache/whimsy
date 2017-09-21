@@ -57,12 +57,16 @@ class Search < Vue
   end
 
   # set history on initial rendering
-  def componentDidMount()
-    self.componentDidUpdate()
+  def mounted()
+    self.updateHistory()
   end
 
   # replace history state on subsequent renderings
-  def componentDidUpdate()
+  def updated()
+    self.updateHistory()
+  end
+
+  def updateHistory()
     state = {path: 'search', query: @text}
 
     if state.query

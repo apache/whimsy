@@ -70,7 +70,7 @@ class Shepherd < Vue
   end
 
   # Fetch followup items
-  def componentDidMount()
+  def mounted()
     # if cached, reuse
     if Shepherd.followup
       @followup = Shepherd.followup

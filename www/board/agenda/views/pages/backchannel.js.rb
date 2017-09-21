@@ -62,13 +62,13 @@ class Backchannel < Vue
   end
 
   # on initial display, fetch backlog
-  def componentDidMount()
+  def mounted()
     Main.scrollTo = -1
     Chat.fetch_backlog()
   end
 
   # if we are at the bottom of the page, keep it that way
-  def componentWillUpdate()
+  def beforeUpdate()
     if 
       window.pageYOffset + window.innerHeight >=
       document.documentElement.scrollHeight

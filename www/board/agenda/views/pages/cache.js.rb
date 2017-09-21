@@ -66,13 +66,8 @@ class CacheStatus < Vue
 
   end
 
-  # update on first update
-  def componentDidMount()
-    self.componentWillReceiveProps()
-  end
-
   # update caches
-  def componentWillReceiveProps()
+  def created()
     if defined? caches
       caches.open('board/agenda').then do |cache|
         cache.matchAll().then do |responses|
@@ -102,13 +97,8 @@ class ClearCache < Vue
       disabled: @disabled
   end 
 
-  # update on first update
-  def componentDidMount()
-    self.componentWillReceiveProps()
-  end
-
   # enable button if there is anything in the cache
-  def componentWillReceiveProps()
+  def created()
     if defined? caches
       caches.open('board/agenda').then do |cache|
         cache.matchAll().then do |responses|
@@ -189,7 +179,7 @@ class CachePage < Vue
   end
 
   # update on first update
-  def componentDidMount()
+  def mounted()
     if defined? caches
       basename = location.href.split('/').pop()
       basename = '' if basename == 'index.html'

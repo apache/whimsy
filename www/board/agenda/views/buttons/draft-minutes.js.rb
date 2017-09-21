@@ -29,7 +29,7 @@ class DraftMinutes < Vue
   end
 
   # autofocus on minute text; fetch draft
-  def componentDidMount()
+  def mounted()
     @draft = ''
     jQuery('#draft-minute-form').on 'shown.bs.modal' do
       retrieve "draft/#{Agenda.title.gsub('-', '_')}", :text do |draft|

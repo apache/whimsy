@@ -176,7 +176,7 @@ class ActionItems < Vue
   end
 
   # autofocus on action status in update action form
-  def componentDidMount()
+  def mounted()
     jQuery('#updateStatusForm').on 'shown.bs.modal' do
       ~statusText.focus()
     end

@@ -12,14 +12,9 @@ class Approve < Vue
     _button.btn.btn_primary @request, onClick: self.click, disabled: @disabled
   end
 
-  # set request and button text on initial load
-  def componentWillMount()
-    self.componentWillReceiveProps()
-  end
-
   # set request (and button text) depending on whether or not the
   # not this items was previously approved
-  def componentWillReceiveProps()
+  def created()
     if Pending.approved.include? @@item.attach
       @request = 'unapprove'
     elsif Pending.unapproved.include? @@item.attach

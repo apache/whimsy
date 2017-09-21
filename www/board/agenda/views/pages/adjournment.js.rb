@@ -216,13 +216,8 @@ class EstablishActions < Vue
     @podlings = []
   end
 
-  # check for minutes being completed on first load
-  def componentDidMount()
-    self.componentWillReceiveProps()
-  end
-
   # update check marks based on current Todo list
-  def componentWillReceiveProps()
+  def created()
     @podlings = Todos.establish
 
     # uncheck podlings that were removed

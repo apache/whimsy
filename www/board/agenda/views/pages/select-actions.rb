@@ -27,7 +27,7 @@ class SelectActions < Vue
     end
   end
 
-  def componentDidMount()
+  def mounted()
     retrieve 'potential-actions', :json do |response|
       if response
         SelectActions.list = response.actions

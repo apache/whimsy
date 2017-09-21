@@ -327,7 +327,7 @@ class FY22 < Vue
   end
 
   # receive updated budget values
-  def componentWillReceiveProps()
+  def created()
     budget = Minutes.get('budget')
 
     if budget and budget != @budget and Minutes.started
