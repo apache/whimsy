@@ -25,14 +25,12 @@ end
 IMAGE_DIR = ASF::SVN.find('asf/infrastructure/site/trunk/content/img')
 
 def parse(id, site, name)
-  uri, response, status = $cache.get(site.to_s)
-  $stderr.puts "#{id} #{uri} #{status}"
-  doc = Nokogiri::HTML(response)
-
+  uri = URI.parse(site)
+    
   # default data
   data = {
     display_name: name,
-    uri: uri.to_s,
+    uri: site,
     events: nil,
     foundation: nil,
     license: nil,
@@ -42,6 +40,18 @@ def parse(id, site, name)
     copyright: nil,
     image: nil,
   }
+
+  # check if site exists
+  begin
+    Socket.getaddrinfo(uri.host, uri.scheme)
+  rescue SocketError
+    return data
+  end
+
+  uri, response, status = $cache.get(site.to_s)
+  $stderr.puts "#{id} #{uri} #{status}"
+  doc = Nokogiri::HTML(response)
+  data[:uri] = uri.to_s
 
   # scan each link
   doc.css('a').each do |a|
