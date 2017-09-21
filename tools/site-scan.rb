@@ -169,9 +169,9 @@ results = {}
 $cache = Cache.new(dir: 'site-scan')
 
 # Parse a single site given its URL
-if ARGV.length == 2 and ARGV.first =~ /^https?:/
+if (1..2).include? ARGV.length and ARGV.first =~ /^https?:\/\/\w/
   site = ARGV.shift
-  name = ARGV.shift
+  name = ARGV.shift || site[/\/(\w[^.]*)/, 1].capitalize
   results[name] = parse(name, site, name)
 else
   if ARGV.first =~ %r{[./]} # have we a file name?
