@@ -95,14 +95,12 @@ class ASF::Board::Agenda
       @sections[section][:index] = index if @sections[section]
     end
 
-    # quick exit if none found -- non-standard format agenda
-    return [] if @sections.empty?
-
     # look for flags
     flagged_reports = Hash[@file[/ \d\. Committee Reports.*?\n\s+A\./m].
-      scan(/# (.*?) \[(.*)\]/)]
+      scan(/# (.*?) \[(.*)\]/)] rescue {}
 
     president = @sections.values.find {|item| item['title'] == 'President'}
+    return [] unless president # quick exit if non-standard format agenda
     preports = Range.new(*president['report'][/\d+ through \d+\.$/].scan(/\d+/)) 
     # cleanup text and comment whitespace, add flags
     @sections.each do |section, hash|
