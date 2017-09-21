@@ -64,6 +64,7 @@ module ASF
       'community development'       => 'comdev',
       'conference planning'         => 'concom',
       'conferences'                 => 'concom',
+      'distributed release audit tool'=> 'drat',
       'http server'                 => 'httpd',
       'httpserver'                  => 'httpd',
       'java community process'      => 'jcp',
