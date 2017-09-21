@@ -61,7 +61,7 @@ class VueServer
       request = Net::HTTP::Post.new('/', {})
       request.body = "response.end('bye'); process.exit(0)"
       response = http.request(request)
-    rescue Errno::ECONNREFUSED
+    rescue Errno::ECONNREFUSED, EOFError
       nil
     ensure
       Process.wait(@@pid)
