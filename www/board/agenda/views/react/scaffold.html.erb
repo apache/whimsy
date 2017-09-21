@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>ASF Board Agenda</title>
+    <base href="<%= @base %>"/>
+    <link rel="stylesheet" type="text/css" href="/assets/bootstrap-min.css"/>
+    <link rel="stylesheet" type="text/css" href="/assets/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../../stylesheets/app.css?<%= @cssmtime %>"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+
+  <body>
+    <div id="main"></div>
+
+    <script src="/assets/react-min.js"></script>
+    <script src="/assets/react-dom.min.js"></script>
+    <script src="/assets/jquery-min.js"></script>
+    <script src="/assets/bootstrap-min.js"></script>
+    <script src="../app.js?<%= @appmtime %>" lang="text/javascript"></script>
+    <script>//<![CDATA[
+      ReactDOM.render(React.createElement(Main,
+        <%= JSON.generate server: @server, page: @page %>),
+        document.getElementById("main"))
+    //]]></script>
+  </body>
+</html>
