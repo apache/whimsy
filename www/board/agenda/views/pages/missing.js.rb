@@ -24,7 +24,7 @@ class Missing < Vue
             _input type: 'checkbox', name: 'selected', value: item.title,
               checked: @checked[item.title], onChange:-> {
                 @checked[item.title] = !@checked[item.title]
-                self.forceUpdate()
+                Vue.forceUpdate()
               }
           end
 

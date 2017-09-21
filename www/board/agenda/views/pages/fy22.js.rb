@@ -323,7 +323,7 @@ class FY22 < Vue
       end
     end
 
-    self.forceUpdate()
+    Vue.forceUpdate()
   end
 
   # receive updated budget values

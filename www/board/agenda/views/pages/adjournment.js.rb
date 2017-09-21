@@ -4,15 +4,38 @@
 
 class Adjournment < Vue
   def initialize
-    Todos.set({
-      add: [],
-      remove: [],
-      establish: [],
-      feedback: [],
-      minutes: {},
-      loading: true,
-      fetched: false
-    })
+    @add = []
+    @remove = []
+    @establish = []
+    @feedback = []
+    @minutes = {}
+    @loading = true
+    @fetched = false
+  end
+
+  # export self as shared state
+  def created()
+    if defined? global
+      global.Todos = self
+    else
+      window.Todos = self
+    end
+  end
+
+  # update state
+  def set(value)
+    for attr in value
+      Todos[attr] = value[attr]
+    end
+  end
+
+  # find corresponding agenda item
+  def link(title)
+    link = nil
+    Agenda.index.each do |item|
+      link = item.href if item.title == title
+    end
+    return link
   end
 
   def render
@@ -156,7 +179,7 @@ class TodoActions < Vue
     end
     @disabled = disabled
 
-    self.forceUpdate()
+    Vue.forceUpdate()
   end
 
   def render
@@ -247,7 +270,7 @@ class EstablishActions < Vue
     end
     @disabled = disabled
 
-    self.forceUpdate()
+    Vue.forceUpdate()
   end
 
   def render
@@ -305,26 +328,5 @@ class FeedbackReminder < Vue
 
     _button.checklist.btn.btn_default 'Submit',
       onClick:-> {window.location.href = 'feedback'}
-  end
-end
-
-########################################################################
-#                             shared state                             #
-########################################################################
-
-class Todos
-  def self.set(value)
-    for attr in value
-      Todos[attr] = value[attr]
-    end
-  end
-
-  # find corresponding agenda item
-  def self.link(title)
-    link = nil
-    Agenda.index.each do |item|
-      link = item.href if item.title == title
-    end
-    return link
   end
 end
