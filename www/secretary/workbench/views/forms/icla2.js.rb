@@ -149,9 +149,6 @@ class ICLA2 < Vue
       document.querySelector("input[name=#{name}]").validity.valid
     end
 
-    # $file.disabled = !valid or !icla or !@icla.filename or
-    #   @filed or @submitted
-
     # wire up form
     jQuery('form')[0].addEventListener('submit', self.file)
     jQuery('input[name=message]').val(window.parent.location.pathname)

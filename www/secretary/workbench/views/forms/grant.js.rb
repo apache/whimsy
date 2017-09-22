@@ -100,7 +100,7 @@ class Grant < Vue
 
     valid &= document.querySelector("textarea[name=description]").validity.valid
 
-    $file.disabled = !valid or @filed or @submitted
+    $refs.file.disabled = !valid or @filed or @submitted
 
     # wire up form
     jQuery('form')[0].addEventListener('submit', self.file)
