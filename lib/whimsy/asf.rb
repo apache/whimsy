@@ -27,7 +27,7 @@ module ASF
   def self.library_mtime
     parent_dir = File.dirname(File.expand_path(__FILE__))
     sources = Dir.glob("#{parent_dir}/**/*")
-    times = sources.map {|source| File.mtime(source)}
+    times = sources.map {|source| File.mtime(source.untaint)}
     times.max.gmtime
   end
 

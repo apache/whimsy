@@ -14,6 +14,12 @@ class Agenda
   FileUtils.mkdir_p CACHE
   @@cache = Hash.new {|hash, key| hash[key] = {mtime: 0}}
 
+  # flush cache of files made with previous versions of the library
+  libmtime = ASF::library_mtime
+  Dir["#{CACHE}/*.yml"].each do |cache|
+    File.unlink(cache) if File.mtime(cache) < libmtime
+  end
+
   # fetch parsed agenda from in memory cache if up to date, otherwise
   # fall back to disk.
   def self.[](file)
