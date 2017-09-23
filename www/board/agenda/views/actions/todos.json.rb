@@ -172,10 +172,12 @@ end
 transitioning = {}
 establish = {}
 terminate = {}
+change = []
 
 Agenda.parse(agenda, :full).each do |item|
   next unless item[:attach] =~ /^7\w$/
-  if item['title'] =~ /^Change .*? Chair$/ and item['people']
+  if item['title'] =~ /^Change (.*?) Chair$/ and item['people']
+    change << {name: $1, resolution: item['title'], chair: item['chair']}
     item['people'].keys.each do |person|
       transitioning[ASF::Person.find(person)] = item['title']
     end
@@ -196,6 +198,7 @@ _add add.map {|person| {id: person.id, name: person.public_name,
   sort_by {|person| person[:id]}
 _remove remove.map {|person| {id: person.id, name: person.public_name}}.
   sort_by {|person| person[:id]}
+_change change
 _establish establish.
   map {|name, resolution| {name: name, resolution: resolution}}
 _terminate terminate.

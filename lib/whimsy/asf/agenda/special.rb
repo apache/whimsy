@@ -68,6 +68,8 @@ class ASF::Board::Agenda
       people += text.scan(/#{list_item}<(#{asfid})(?:@|\s*at\s*)
         (?:\.\.\.|apache\.org|apache\sdot\sorg)>\s*$/xi)
 
+      need_chair = false
+
       whimsy = 'https://whimsy.apache.org'
       if title =~ /Change (.*?) Chair/ or title =~ /Terminate (\w+)$/
         people.clear
@@ -95,36 +97,13 @@ class ASF::Board::Agenda
           attrs['warnings'] ||= ['Unable to match expected number of names']
           attrs['names'] = committee.names
         end
+
+        need_chair = true
       else
         if title =~ /Establish (.*)/
           name = $1
           attrs['prior_reports'] =
             "#{whimsy}/board/minutes/#{name.gsub(/\W/,'_')}"
-          if text =~ /FURTHER RESOLVED, that\s+([^,]*?),?\s+be\b/
-            chairname = $1.gsub(/\s+/, ' ').strip
-
-            if chairname =~ /\s\(([-.\w]+)\)$/
-              # if chair's id is present in parens, use that value
-              attrs['chair'] = $1 unless $1.empty?
-              chairname.sub! /\s+\(.*\)$/, ''
-            else
-              # match chair's name against people in the committee
-              chair = people.find {|person| person.first == chairname}
-              attrs['chair'] = (chair ? chair.last : nil)
-            end
-
-            unless people.include? [chairname, attrs['chair']]
-              if people.empty?
-                attrs['warnings'] ||= ['Unable to locate PMC email addresses'] 
-              elsif attrs['chair']
-                attrs['warnings'] ||= ['Chair not member of PMC'] 
-              else
-                attrs['warnings'] ||= ['Chair not found in resolution'] 
-              end
-            end
-          else
-            attrs['warnings'] ||= ['Chair not found in resolution'] 
-          end
 
           if text.scan(/[<(][-.\w]+@(?:[-\w]+\.)+\w+[>)]/).
             any? {|email| not email.include? 'apache.org'}
@@ -132,6 +111,36 @@ class ASF::Board::Agenda
             attrs['warnings'] ||= ['non apache.org email address found'] 
           end
         end
+
+        need_chair = true
+      end
+
+      if need_chair
+	if text =~ /FURTHER RESOLVED, that\s+([^,]*?),?\s+be\b/
+	  chairname = $1.gsub(/\s+/, ' ').strip
+
+	  if chairname =~ /\s\(([-.\w]+)\)$/
+	    # if chair's id is present in parens, use that value
+	    attrs['chair'] = $1 unless $1.empty?
+	    chairname.sub! /\s+\(.*\)$/, ''
+	  else
+	    # match chair's name against people in the committee
+	    chair = people.find {|person| person.first == chairname}
+	    attrs['chair'] = (chair ? chair.last : nil)
+	  end
+
+	  unless people.include? [chairname, attrs['chair']]
+	    if people.empty?
+	      attrs['warnings'] ||= ['Unable to locate PMC email addresses'] 
+	    elsif attrs['chair']
+	      attrs['warnings'] ||= ['Chair not member of PMC'] 
+	    else
+	      attrs['warnings'] ||= ['Chair not found in resolution'] 
+	    end
+	  end
+	else
+	  attrs['warnings'] ||= ['Chair not found in resolution'] 
+	end
       end
 
       people.map! do |name, id| 
