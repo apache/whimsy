@@ -3,6 +3,8 @@
 #
 
 class PodlingNameSearch < Vue
+  props [:item]
+
   def render
     _span.pns title: 'podling name search' do
       if Server.podlingnamesearch
@@ -22,11 +24,11 @@ class PodlingNameSearch < Vue
   # initial mount: fetch podlingnamesearch data unless already downloaded
   def mounted()
     if Server.podlingnamesearch
-      self.check(self.props)
+      self.check($props)
     else
       retrieve 'podlingnamesearch', :json do |results|
         Server.podlingnamesearch = results
-        self.check(self.props)
+        self.check($props)
       end
     end
   end
@@ -48,5 +50,7 @@ class PodlingNameSearch < Vue
         end
       end
     end
+
+    Vue.forceUpdate()
   end
 end
