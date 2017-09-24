@@ -6,6 +6,8 @@ class Adjournment < Vue
   def initialize
     @add = []
     @remove = []
+    @change = []
+    @terminate = []
     @establish = []
     @feedback = []
     @minutes = {}
@@ -48,7 +50,7 @@ class Adjournment < Vue
 
           if 
             Todos.add.empty? and Todos.remove.empty? and 
-            Todos.establish.empty?
+            Todos.change.empty? and Todos.establish.empty?
           then
             if Todos.loading
               _em 'Loading...'
@@ -58,16 +60,14 @@ class Adjournment < Vue
           end
         end
 
-        unless Todos.add.empty?
-          _TodoActions action: 'add'
+        unless 
+          Todos.add.empty? and Todos.change.empty? and Todos.establish.empty?
+        then
+          _PMCActions
         end
 
         unless Todos.remove.empty?
           _TodoActions action: 'remove'
-        end
-
-        unless Todos.establish.empty?
-          _EstablishActions action: 'remove'
         end
 
         unless Todos.feedback.empty?
@@ -134,6 +134,67 @@ class Adjournment < Vue
         Todos.loading = false
       end
     end
+  end
+end
+
+class PMCActions < Vue
+  def initialize
+    @resolutions = []
+  end
+
+  def render
+    _p do
+      _a 'PMC resolutions:', 
+        href: 'https://infra.apache.org/officers/tlpreq'
+    end
+
+    _ul.checklist @resolutions do |item|
+      _li do
+	_input type: 'checkbox', checked: item.checked,
+	  onChange:-> { item.checked = !item.checked; self.refresh() }
+
+	_Link text: item.title, href: Todos.link(item.title)
+
+	if item.minutes
+	  _ ' - '
+	  _Link text: item.minutes, href: Todos.link(item.title)
+	end
+      end
+    end
+
+    _button.checklist.btn.btn_default 'Submit', disabled: @disabled,
+      onClick: self.submit
+  end
+
+  # update check marks based on current Todo list
+  def created()
+    @resolutions = []
+    Agenda.index.each do |item|
+      if Todos.change.any? {|todo| todo.resolution == item.title}
+        action = :change
+      elsif Todos.establish.any? {|todo| todo.resolution == item.title}
+        action = :establish
+      elsif Todos.terminate.any? {|todo| todo.resolution == item.title}
+        action = :terminate
+      else
+        next
+      end
+    
+      minutes = Minutes.get(item.title)
+ 
+      @resolutions << {
+        action: action,
+        title: item.title,
+        minutes: minutes,
+        checked: (minutes != 'tabled')
+      }
+    end
+
+    self.refresh()
+  end
+
+  def refresh()
+    @disabled = @resolutions.all? {|item| not item.checked}
   end
 end
 
@@ -220,90 +281,6 @@ class TodoActions < Vue
 
     data = {}
     data[@@action] = @checked
-
-    post "secretary-todos/#{Agenda.title}", data do |todos|
-      @disabled = false
-      Todos.set todos
-    end
-  end
-end
-
-########################################################################
-#                          Establish actions                           #
-########################################################################
-
-class EstablishActions < Vue
-  def initialize
-    @checked = {}
-    @disabled = true
-    @podlings = []
-  end
-
-  # update check marks based on current Todo list
-  def created()
-    @podlings = Todos.establish
-
-    # uncheck podlings that were removed
-    for name in @checked
-      unless @podlings.any? {|podling| podling.name == name}
-        @checked[name] = false
-      end
-    end
-
-    # check podlings that were added
-    @podlings.each do |podling|
-      if @checked[podling.name] == undefined
-        if not podling.resolution or Minutes.get(podling.resolution) != 'tabled'
-          @checked[podling.name] = true 
-        end
-      end
-    end
-
-    self.refresh()
-  end
-
-  def refresh()
-    # disable button if nobody is checked
-    disabled = true
-    for id in @checked
-      disabled = false if @checked[id]
-    end
-    @disabled = disabled
-
-    Vue.forceUpdate()
-  end
-
-  def render
-    _p do
-      _a 'Establish pmcs:', 
-        href: 'https://infra.apache.org/officers/tlpreq'
-    end
-
-    _ul.checklist @podlings do |podling|
-      _li do
-        _input type: 'checkbox', checked: @checked[podling.name],
-          onChange:-> {
-            @checked[podling.name] = !@checked[podling.name]
-            self.refresh()
-          }
-
-        _span podling.name
-
-        resolution = Minutes.get(podling.resolution)
-        if resolution
-          _ ' - '
-          _Link text: resolution, href: Todos.link(podling.resolution)
-        end
-      end
-    end
-
-    _button.checklist.btn.btn_default 'Submit', disabled: @disabled,
-      onClick: self.submit
-  end
-
-  def submit()
-    @disabled = true
-    data = {establish: @checked}
 
     post "secretary-todos/#{Agenda.title}", data do |todos|
       @disabled = false
