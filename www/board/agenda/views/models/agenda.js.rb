@@ -409,13 +409,15 @@ class Agenda
 
     list << {button: Attend} if @title == 'Roll Call'
 
-    if @attach =~ /^(\d|7?[A-Z]+|4[A-Z])$/ and not Minutes.complete
-      if self.missing
-        list << {form: Post, text: 'post report'} 
-      elsif @attach =~ /^7\w/
-        list << {form: Post, text: 'edit resolution'} 
-      else
-        list << {form: Post, text: 'edit report'} 
+    if @attach =~ /^(\d|7?[A-Z]+|4[A-Z])$/
+      if Server.role == :secretary or not Minutes.complete
+	if self.missing
+	  list << {form: Post, text: 'post report'}
+	elsif @attach =~ /^7\w/
+	  list << {form: Post, text: 'edit resolution'}
+	else
+	  list << {form: Post, text: 'edit report'}
+	end
       end
     end
 
