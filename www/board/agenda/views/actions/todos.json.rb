@@ -170,7 +170,7 @@ end
 ########################################################################
 
 transitioning = {}
-establish = {}
+establish = []
 terminate = {}
 change = []
 
@@ -182,7 +182,8 @@ Agenda.parse(agenda, :full).each do |item|
       transitioning[ASF::Person.find(person)] = item['title']
     end
   elsif item['title'] =~ /^Establish\s*(.*?)\s*$/ and item['chair']
-    establish[$1] = item['title']
+    next if victims.include? $1
+    establish << {name: $1, resolution: item['title'], chair: item['chair']}
     transitioning[ASF::Person.find(item['chair'])] = item['title']
   elsif item['title'] =~ /^Terminate\s*(.*?)\s*$/
     terminate[$1] = item['title']
@@ -191,7 +192,6 @@ end
 
 add = transitioning.keys - ASF.pmc_chairs
 remove = ASF.pmc_chairs - ASF::Committee.pmcs.map(&:chair) - transitioning.keys
-victims.each {|victim| establish.delete victim}
 
 _add add.map {|person| {id: person.id, name: person.public_name, 
   email: person.mail.first, resolution: transitioning[person]}}.
@@ -199,8 +199,7 @@ _add add.map {|person| {id: person.id, name: person.public_name,
 _remove remove.map {|person| {id: person.id, name: person.public_name}}.
   sort_by {|person| person[:id]}
 _change change
-_establish establish.
-  map {|name, resolution| {name: name, resolution: resolution}}
+_establish establish
 _terminate terminate.
   map {|name, resolution| {name: name, resolution: resolution}}
 _minutes minutes

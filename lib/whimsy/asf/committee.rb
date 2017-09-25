@@ -153,6 +153,38 @@ module ASF
       contents
     end
 
+    # update chairs
+    def self.update_chairs(contents, establish, change, terminate)
+      # extract committee section; and then extract the lines containing
+      # committee names and chairs
+      section = contents[/^1\..*?\n=+/m]
+      committees = section[/-\n(.*?)\n\n/m, 1].scan(/^ +(.*?)  +(.*)/).to_h
+
+      # update/add chairs based on establish and change resolutions
+      (establish.merge(change)).each do |name, chair|
+	person = ASF::Person.find(chair)
+	committees[name] = "#{person.public_name} <#{person.id}@apache.org>"
+      end
+
+      # remove committees based on terminate resolutions
+      terminate.each do |name|
+	committees.delete(name)
+      end
+
+      # sort and concatenate committees
+      committees = committees.sort_by {|name, chair| name.downcase}.
+	map {|name, chair| "    #{name.ljust(23)} #{chair}"}.
+	join("\n")
+
+      # replace committee info in the section, and then replace the
+      # section in the committee-info contents
+      section[/-\n(.*?)\n\n/m, 1] = committees
+      contents[/^1\..*?\n=+/m] = section
+
+      # return result
+      contents
+    end
+
     # insert (replacing if necessary) a new committee into committee-info.txt
     def self.establish(contents, pmc, date, people)
       # split into foot, sections (array) and head
