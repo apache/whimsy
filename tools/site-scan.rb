@@ -50,6 +50,7 @@ def parse(id, site, name)
 
   uri, response, status = $cache.get(site.to_s)
   $stderr.puts "#{id} #{uri} #{status}"
+  return data if response.code == '404'
   doc = Nokogiri::HTML(response)
   data[:uri] = uri.to_s
 
