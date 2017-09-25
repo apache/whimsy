@@ -4,6 +4,8 @@
 # Server side router/controllers
 #
 
+ENV['LANG'] = 'en_US.UTF-8'
+
 require 'whimsy/asf'
 
 require 'mail'
