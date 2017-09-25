@@ -105,6 +105,54 @@ module ASF
       parse_committee_info File.read(file)
     end
 
+    # update next month section.  Remove entries that have reported or
+    # or expired; add (or update) entries that are missing; add entries
+    # for new committees.
+    def self.update_next_month(contents, date, missing, establish)
+      # extract next month section; and then extract the lines containing
+      # '#' signs from within that section
+      next_month = contents[/Next month.*?\n\n/m].chomp
+      block = next_month[/(.*#.*\n)+/] || ''
+
+      # remove expired entries
+      month = date.strftime("%B")
+      block.gsub!(/.* # new, monthly through #{month}\n/, '')
+
+      # update/remove existing 'missing' entries
+      block.gsub! /(.*?)# missing in .*\n/ do |line|
+	if missing.include? $1.strip
+	  missing.delete $1.strip
+	  "#{line.chomp}, #{month}\n"
+	else
+	  ''
+	end
+      end
+
+      # add new 'missing' entries
+      missing.each do |pmc|
+	block += "    #{pmc.ljust(22)} # missing in #{month}\n"
+      end
+
+      # add new 'established' entries
+      month = (date+91).strftime('%B')
+      establish.each do |pmc|
+	block += "    #{pmc.ljust(22)} # new, monthly through #{month}\n"
+      end
+
+      # replace/append block
+      if next_month.include? '#'
+        next_month[/(.*#.*\n)+/] = block.split("\n").sort.join("\n")
+      else
+        next_month += block
+      end
+
+      # replace next month section
+      contents[/Next month.*?\n\n/m] = next_month + "\n\n"
+
+      # return result
+      contents
+    end
+
     # insert (replacing if necessary) a new committee into committee-info.txt
     def self.establish(contents, pmc, date, people)
       # split into foot, sections (array) and head
