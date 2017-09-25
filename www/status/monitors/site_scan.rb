@@ -30,8 +30,10 @@ def Monitor.site_scan(previous_status)
     FileUtils.mkdir(archive) unless File.directory?(archive)
     file = File.basename(logfile)
     FileUtils.copy logfile, File.join(archive, file + '.danger'), preserve: true
+    level = 'danger'
+    level = 'warning' if log.gsub(/.* error\n/, '').empty?
     {
-      level: 'danger',
+      level: level,
       data: log.split("\n"),
       href: '../logs/site-scan'
     }
