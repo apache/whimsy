@@ -89,20 +89,31 @@ module ASF
     # load committee info from <tt>committee-info.txt</tt>.  Will not reparse
     # if the file has already been parsed and the underlying file has not
     # changed.
-    def self.load_committee_info
-      board = ASF::SVN['private/committers/board']
-      file = "#{board}/committee-info.txt"
-      return unless File.exist? file
+    def self.load_committee_info(contents = nil, info = nil)
+      if contents
+        if info
+          @committee_mtime = @@svn_change =
+            Time.parse(info[/Last Changed Date: (.*) \(/, 1]).gmtime
+        else
+          @committee_mtime = @@svn_change = Time.now
+        end
 
-      if @committee_info and File.mtime(file) == @committee_mtime
-        return @committee_info 
+        parse_committee_info contents
+      else
+        board = ASF::SVN['private/committers/board']
+        file = "#{board}/committee-info.txt"
+        return unless File.exist? file
+
+        if @committee_info and File.mtime(file) <= @committee_mtime
+          return @committee_info 
+        end
+
+        @committee_mtime = File.mtime(file)
+        @@svn_change = Time.parse(
+          `svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
+
+        parse_committee_info File.read(file)
       end
-
-      @committee_mtime = File.mtime(file)
-      @@svn_change = Time.parse(
-        `svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
-
-      parse_committee_info File.read(file)
     end
 
     # update next month section.  Remove entries that have reported or

@@ -320,6 +320,12 @@ get '/new' do
   localtime = ASF::Board::TIMEZONE.utc_to_local(@meeting)
   @time = localtime.strftime('%l:%M%P')
 
+  # retrieve latest committee info
+  url = 'private/committers/board/committee-info.txt'
+  info = ASF::SVN.getInfo(url, env.user, env.password)
+  revision, contents = ASF::SVN.get(url, env.user, env.password)
+  ASF::Committee.load_committee_info(contents)
+
   # Get directors, list of pmcs due to report, and shepherds
   @directors = ASF::Board.directors
   @pmcs = ASF::Board.reporting(@meeting)
@@ -346,5 +352,23 @@ get '/new' do
     select {|date| draft[date.strftime('%B %d, %Y')] != 'approved'}
 
   template = File.read('data/agenda.erb')
-  _text Erubis::Eruby.new(template).result(binding)
+  @agenda = Erubis::Eruby.new(template).result(binding)
+
+  _html :new
+end
+
+# post a new agenda
+post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
+  board = 'https://svn.apache.org/repos/private/foundation/board'
+  agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
+  auth = "--user #{env.user} --password #{env.password}"
+
+  Dir.mktmpdir do |dir|
+    `svn checkout --depth empty #{dir} #{auth}`
+    File.write "#{dir}/#{agenda}", params[:agenda]
+    `svn add #{dir}/#{agenda}`
+    `svn commit #{dir}/#{agenda} -message "Post #{date} agenda" #{auth}`
+  end
+
+  redirect to('/')
 end
