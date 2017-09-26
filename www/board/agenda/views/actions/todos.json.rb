@@ -131,7 +131,7 @@ if @establish and env.password
       # new style definitions
       project = ASF::Project[pmc.downcase]
       if not project
-        unless ASF::Committee[pmc.downcase]
+        unless ASF::Committee[pmc.downcase] or guineapig
           ASF::Committee.add(pmc.downcase, members)
         end
 
