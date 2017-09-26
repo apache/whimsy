@@ -506,3 +506,14 @@ input[type=file]#upload {
   font-size: 24px;
   padding-top: 5px;
 }
+
+/* post a new agenda */
+#new-agenda .text-center {
+  margin: 1em;
+}
+
+#new-agenda textarea {
+  font-family: monospace;
+  overflow: hidden;
+}
+}

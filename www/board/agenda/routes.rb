@@ -354,6 +354,7 @@ get '/new' do
   template = File.read('data/agenda.erb')
   @agenda = Erubis::Eruby.new(template).result(binding)
 
+  @cssmtime = File.mtime('public/stylesheets/app.css').to_i
   _html :new
 end
 
