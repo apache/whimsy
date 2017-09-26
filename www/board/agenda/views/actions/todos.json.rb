@@ -237,17 +237,20 @@ change = []
 parsed_agenda.each do |item|
   next unless item[:attach] =~ /^7\w$/
   if item['title'] =~ /^Change (.*?) Chair$/ and item['people']
-    next if Array(minutes[:todos][:changed]).include? $1
-    change << {name: $1, resolution: item['title'], chair: item['chair']}
+    pmc = ASF::Committee.find($1).id
+    next if Array(minutes[:todos][:changed]).include? pmc
+    change << {name: pmc, resolution: item['title'], chair: item['chair']}
     item['people'].keys.each do |person|
       transitioning[ASF::Person.find(person)] = item['title']
     end
   elsif item['title'] =~ /^Establish\s*(.*?)\s*$/ and item['chair']
-    next if Array(minutes[:todos][:established]).include? $1
-    establish << {name: $1, resolution: item['title'], chair: item['chair']}
+    pmc = ASF::Committee.find(pmc).id
+    next if Array(minutes[:todos][:established]).include? pmc
+    establish << {name: pmc, resolution: item['title'], chair: item['chair']}
     transitioning[ASF::Person.find(item['chair'])] = item['title']
   elsif item['title'] =~ /^Terminate\s*(.*?)\s*$/
-    next if Array(minutes[:todos][:terminated]).include? $1
+    pmc = ASF::Committee.find($1).id
+    next if Array(minutes[:todos][:terminated]).include? pmc
     terminate[$1] = item['title']
   end
 end

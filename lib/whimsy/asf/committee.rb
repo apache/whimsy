@@ -82,7 +82,7 @@ module ASF
       'incubating'                  => 'incubator' # special for index.html
 
     @@namemap = Proc.new do |name|
-      cname = @@aliases[name.sub(/\s+\(.*?\)/, '').downcase]
+      cname = @@aliases[name.sub(/\s+\(.*?\)/, '').downcase].gsub(/\s+/, '')
       cname
     end
 
