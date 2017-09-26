@@ -120,23 +120,23 @@ module ASF
 
       # update/remove existing 'missing' entries
       block.gsub! /(.*?)# missing in .*\n/ do |line|
-	if missing.include? $1.strip
-	  missing.delete $1.strip
-	  "#{line.chomp}, #{month}\n"
-	else
-	  ''
-	end
+        if missing.include? $1.strip
+          missing.delete $1.strip
+          "#{line.chomp}, #{month}\n"
+        else
+          ''
+        end
       end
 
       # add new 'missing' entries
       missing.each do |pmc|
-	block += "    #{pmc.ljust(22)} # missing in #{month}\n"
+        block += "    #{pmc.ljust(22)} # missing in #{month}\n"
       end
 
       # add new 'established' entries
       month = (date+91).strftime('%B')
       establish.each do |pmc|
-	block += "    #{pmc.ljust(22)} # new, monthly through #{month}\n"
+        block += "    #{pmc.ljust(22)} # new, monthly through #{month}\n"
       end
 
       # replace/append block
@@ -154,27 +154,25 @@ module ASF
     end
 
     # update chairs
-    def self.update_chairs(contents, establish, change, terminate)
+    def self.update_chairs(contents, establish_or_change, terminate)
       # extract committee section; and then extract the lines containing
       # committee names and chairs
       section = contents[/^1\..*?\n=+/m]
       committees = section[/-\n(.*?)\n\n/m, 1].scan(/^ +(.*?)  +(.*)/).to_h
 
       # update/add chairs based on establish and change resolutions
-      (establish.merge(change)).each do |name, chair|
-	person = ASF::Person.find(chair)
-	committees[name] = "#{person.public_name} <#{person.id}@apache.org>"
+      establish_or_change.each do |name, chair|
+        person = ASF::Person.find(chair)
+        committees[name] = "#{person.public_name} <#{person.id}@apache.org>"
       end
 
       # remove committees based on terminate resolutions
-      terminate.each do |name|
-	committees.delete(name)
-      end
+      terminate.each {|name| committees.delete(name)} if terminate
 
       # sort and concatenate committees
       committees = committees.sort_by {|name, chair| name.downcase}.
-	map {|name, chair| "    #{name.ljust(23)} #{chair}"}.
-	join("\n")
+        map {|name, chair| "    #{name.ljust(23)} #{chair}"}.
+        join("\n")
 
       # replace committee info in the section, and then replace the
       # section in the committee-info contents
@@ -198,8 +196,8 @@ module ASF
 
       # build new section
       section  = ["#{pmc}  (est. #{date.strftime('%m/%Y')})"]
-      people.sort.each do |id, name|
-        name = "#{name.ljust(26)} <#{id}@apache.org>"
+      people.sort.each do |id, person|
+        name = "#{person[:name].ljust(26)} <#{id}@apache.org>"
         section << "    #{(name).ljust(59)} [#{date.strftime('%Y-%m-%d')}]"
       end
 

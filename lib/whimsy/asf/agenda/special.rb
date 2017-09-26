@@ -25,7 +25,13 @@ class ASF::Board::Agenda
       title.sub! /\sCommittee\s/, ' '
       title.sub! /\sProject(\s|$)/i, '\1'
       title.sub! /\sPMC(\s|$)/, '\1'
-      title.sub! /\s\(.*\)$/, ''
+
+      if title =~ /^Establish .* \((.*)\)$/
+        title.sub! /\s.*?\(/, ' '
+        title.sub! /\)$/, ''
+      else
+        title.sub! /\s\(.*\)$/, ''
+      end
 
       attrs['fulltitle'] = fulltitle if title != fulltitle
 

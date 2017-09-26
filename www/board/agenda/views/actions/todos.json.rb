@@ -7,9 +7,6 @@ TLPREQ = '/srv/secretary/tlpreq'
 date = params[:date].gsub('-', '_')
 date.untaint if date =~ /^\d+_\d+_\d+$/
 agenda = "board_agenda_#{date}.txt"
-`svn up #{TLPREQ}`
-victims = Dir["#{TLPREQ}/victims-#{date}.*.txt"].
-  map {|name| File.read(name.untaint).lines().map(&:chomp)}.flatten
 
 # fetch minutes
 @minutes = agenda.sub('_agenda_', '_minutes_')
@@ -25,10 +22,12 @@ end
 minutes[:todos] ||= {}
 todos = minutes[:todos].dup
 
+parsed_agenda = Agenda.parse(agenda, :full)
+
 # iterate over the agenda, finding items where there is either comments or
 # minutes that can be forwarded to the PMC
 feedback = []
-Agenda.parse(agenda, :full).each do |item|
+parsed_agenda.each do |item|
   # select exec officer, additional officer, and committee reports
   next unless item[:attach] =~ /^(4[A-Z]|\d|[A-Z]+)$/
   next unless item['chair_email']
@@ -48,8 +47,7 @@ end
 if @remove and env.password
   chairs = ASF::Service.find('pmc-chairs')
 
-  people = @remove.select {|id, checked| checked}.
-    map {|id, checked| ASF::Person.find(id)}
+  people = @remove.map {|id| ASF::Person.find(id)}
 
   ASF::LDAP.bind(env.user, env.password) do
     chairs.remove people
@@ -59,67 +57,64 @@ if @remove and env.password
   minutes[:todos][:removed] += people.map {|person| person.id}
 end
 
-if @add and env.password
-  chairs = ASF::Service.find('pmc-chairs')
+# update committee-info.txt
+if (@change || @establish || @terminate) and env.password
+  cinfo = "#{ASF::SVN['private/committers/board']}/committee-info.txt"
 
-  people = @add.select {|id, checked| checked}.
-    map {|id, checked| ASF::Person.find(id)}
-
-  ASF::LDAP.bind(env.user, env.password) do
-    chairs.add people
+  todos  = Array(@change) + Array(@establish) + Array(@terminate)
+  if todos.length == 1
+    title = todos.first['title']
+  else
+    title = 'board resolutions: ' + todos.map {|todo| todo['name']}.join(', ')
   end
 
-  # send out congratulations email
-  ASF::Mail.configure
-  sender = ASF::Person.new(env.user)
-  mail = Mail.new do
-    from "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
-
-    to people.map do |person|
-      "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
+  ASF::SVN.update cinfo, title, env, _ do |tmpdir, contents|
+    unless minutes[:todos][:next_month]
+      # update list of reports expected next month
+      missing = parsed_agenda.
+        select {|item| item[:attach] =~ /^[A-Z]+$/ and item['missing']}.
+        map {|item| item['title']}
+      contents = ASF::Committee.update_next_month(contents, 
+        Date.parse(date.gsub('_', '-')), missing, 
+        Array(@establish).map {|resolution| resolution['name']})
     end
 
-    cc 'Apache Board <board@apache.org>'
+    # update chairs from establish, change, and terminate resolutions
+    chairs = todos.
+      map {|resolution| [resolution['name'], resolution['chair']]}.to_h
+    contents = ASF::Committee.update_chairs(contents, chairs, @terminate)
 
-    subject "Congratulations on your new role at Apache"
+    # add people from establish resolutions
+    established = Date.parse(date.gsub('_', '-'))
+    Array(@establish).each do |resolution|
+      item = parsed_agenda.find do |item| 
+        item['title'] == resolution['title']
+      end
 
-    body "Dear new PMC chairs,\n\nCongratulations on your new role at " +
-    "Apache. I've changed your LDAP privileges to reflect your new " +
-    "status.\n\nPlease read this and update the foundation records:\n" +
-    "https://svn.apache.org/repos/private/foundation/officers/advice-for-new-pmc-chairs.txt" +
-    "\n\nWarm regards,\n\n#{sender.public_name}"
+      contents = ASF::Committee.establish(contents, resolution['name'], 
+        established, item['people'])
+    end
+
+    contents
   end
 
-  mail.deliver!
-
-  minutes[:todos][:added] ||= []
-  minutes[:todos][:added] += people.map {|person| person.id}
+  minutes[:todos][:next_month] = true
+  File.write minutes_file, YAML.dump(minutes)
 end
 
+# update LDAP, create victims.txt
 if @establish and env.password
-  establish = @establish.select {|title, checked| checked}.map(&:first)
+  @establish.each do |resolution|
+    pmc = resolution['name']
 
-  # common to all establish resolutions
-  chairs = ASF::Service.find('pmc-chairs')
-  cinfo = "#{ASF::SVN['private/committers/board']}/committee-info.txt"
-  established = Date.parse(date.gsub('_', '-'))
-
-  # update LDAP, committee-info.txt
-  establish.each do |pmc|
-    resolution = Agenda.parse(agenda, :full).find do |item| 
-      item['title'] == "Establish #{pmc}"
+    item = parsed_agenda.find do |item| 
+      item['title'] == resolution['title']
     end
 
-    chair = ASF::Person.find(resolution['chair'])
-    members = resolution['people'].map {|id, hash| ASF::Person.find(id)}
-    people = resolution['people'].map {|id, hash| [id, hash[:name]]}
-
-    ASF::SVN.update cinfo, resolution['title'], env, _ do |tmpdir, contents|
-      ASF::Committee.establish(contents, pmc, established, people)
-    end
+    members = item['people'].map {|id, hash| ASF::Person.find(id)}
+    people = item['people'].map {|id, hash| [id, hash[:name]]}
 
     ASF::LDAP.bind(env.user, env.password) do
-      chairs.add [chair] unless chairs.members.include? chair
       guineapig = ASF::Committee::GUINEAPIGS.include?(pmc.downcase)
 
       # old style definitions
@@ -136,7 +131,11 @@ if @establish and env.password
       # new style definitions
       project = ASF::Project[pmc.downcase]
       if not project
-        project.create(members, members)
+        unless ASF::Committee[pmc.downcase]
+          ASF::Committee.add(pmc.downcase, members)
+        end
+
+        ASF::Project.find(pmc.downcase).create(members, members)
       elsif not guineapig
         # sync project owners with new PMC list
         project.add_owners(members)
@@ -146,19 +145,80 @@ if @establish and env.password
     end 
   end
 
-  # create 'victims' file for tlpreq tool
-  count = Dir["#{TLPREQ}/victims-#{date}.*.txt"].length
-  message = "record #{date} approved TLP resolutions"
-  ASF::SVN.update TLPREQ, message, env, _ do |tmpdir|
-    filename = "victims-#{date}.#{count}.txt"
-    contents = establish.join("\n") + "\n"
-    File.write "#{tmpdir}/#{filename}", contents
-    _.system "svn add #{tmpdir}/#{filename}"
-  end
-  victims += establish
+  establish = @establish.map {|resolution| resolution['name']}
 
+  # create 'victims' file for tlpreq tool
+  `svn up #{TLPREQ}`
+  establish -= Dir["#{TLPREQ}/victims-#{date}.*.txt"].
+     map {|name| File.read(name.untaint).lines().map(&:chomp)}.flatten
+  unless establish.empty?
+    count = Dir["#{TLPREQ}/victims-#{date}.*.txt"].length
+    message = "record #{date} approved TLP resolutions"
+    ASF::SVN.update TLPREQ, message, env, _ do |tmpdir|
+      filename = "victims-#{date}.#{count}.txt"
+      contents = establish.join("\n") + "\n"
+      File.write "#{tmpdir}/#{filename}", contents
+      _.system "svn add #{tmpdir}/#{filename}"
+    end
+  end
+end
+
+# update LDAP and send out congratulatory email
+if (@change || @establish) and env.password
+  chairs = ASF::Service.find('pmc-chairs')
+
+  todos  = Array(@change) + Array(@establish)
+  people = todos.map {|todo| ASF::Person.find(todo['chair'])}.uniq
+
+  # add new chairs to pmc-chairs
+  unless (people-chairs.members).empty?
+    ASF::LDAP.bind(env.user, env.password) do
+      chairs.add people-chairs.members
+    end
+  end
+
+  # send out congratulations email
+  ASF::Mail.configure
+  sender = ASF::Person.new(env.user)
+  mail = Mail.new do
+    from "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
+
+    to people.map {|person|
+      "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
+    }.to_a
+
+    cc 'Apache Board <board@apache.org>'
+
+    subject "Congratulations on your new role at Apache"
+
+    body "Dear new PMC chairs,\n\nCongratulations on your new role at " +
+    "Apache. I've changed your LDAP privileges to reflect your new " +
+    "status.\n\nPlease read this and update the foundation records:\n" +
+    "https://svn.apache.org/repos/private/foundation/officers/advice-for-new-pmc-chairs.txt" +
+    "\n\nWarm regards,\n\n#{sender.public_name}"
+  end
+
+  mail.deliver!
+end
+
+########################################################################
+#                    Update list of completed todos                    #
+########################################################################
+
+if @change
+  minutes[:todos][:changed] ||= []
+  minutes[:todos][:changed] += @change.map {|resolution| resolution['name']}
+end
+
+if @establish
   minutes[:todos][:established] ||= []
-  minutes[:todos][:established] += establish
+  minutes[:todos][:established] += 
+    @establish.map {|resolution| resolution['name']}
+end
+
+if @terminate
+  minutes[:todos][:terminated] ||= []
+  minutes[:todos][:terminated] += @terminate
 end
 
 unless todos == minutes[:todos]
@@ -174,18 +234,20 @@ establish = []
 terminate = {}
 change = []
 
-Agenda.parse(agenda, :full).each do |item|
+parsed_agenda.each do |item|
   next unless item[:attach] =~ /^7\w$/
   if item['title'] =~ /^Change (.*?) Chair$/ and item['people']
+    next if Array(minutes[:todos][:changed]).include? $1
     change << {name: $1, resolution: item['title'], chair: item['chair']}
     item['people'].keys.each do |person|
       transitioning[ASF::Person.find(person)] = item['title']
     end
   elsif item['title'] =~ /^Establish\s*(.*?)\s*$/ and item['chair']
-    next if victims.include? $1
+    next if Array(minutes[:todos][:established]).include? $1
     establish << {name: $1, resolution: item['title'], chair: item['chair']}
     transitioning[ASF::Person.find(item['chair'])] = item['title']
   elsif item['title'] =~ /^Terminate\s*(.*?)\s*$/
+    next if Array(minutes[:todos][:terminated]).include? $1
     terminate[$1] = item['title']
   end
 end

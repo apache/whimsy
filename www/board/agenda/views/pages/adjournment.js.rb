@@ -67,7 +67,7 @@ class Adjournment < Vue
         end
 
         unless Todos.remove.empty?
-          _TodoActions action: 'remove'
+          _TodoRemove
         end
 
         unless Todos.feedback.empty?
@@ -150,15 +150,15 @@ class PMCActions < Vue
 
     _ul.checklist @resolutions do |item|
       _li do
-	_input type: 'checkbox', checked: item.checked,
-	  onChange:-> { item.checked = !item.checked; self.refresh() }
+        _input type: 'checkbox', checked: item.checked,
+          onChange:-> { item.checked = !item.checked; self.refresh() }
 
-	_Link text: item.title, href: Todos.link(item.title)
+        _Link text: item.title, href: Todos.link(item.title)
 
-	if item.minutes
-	  _ ' - '
-	  _Link text: item.minutes, href: Todos.link(item.title)
-	end
+        if item.minutes
+          _ ' - '
+          _Link text: item.minutes, href: Todos.link(item.title)
+        end
       end
     end
 
@@ -166,28 +166,33 @@ class PMCActions < Vue
       onClick: self.submit
   end
 
-  # update check marks based on current Todo list
+  # gather a list of resolutions
   def created()
     @resolutions = []
+
     Agenda.index.each do |item|
-      if Todos.change.any? {|todo| todo.resolution == item.title}
-        action = :change
-      elsif Todos.establish.any? {|todo| todo.resolution == item.title}
-        action = :establish
-      elsif Todos.terminate.any? {|todo| todo.resolution == item.title}
-        action = :terminate
-      else
-        next
-      end
-    
-      minutes = Minutes.get(item.title)
+      action = name = nil
+
+      %w(change establish terminate).each do |todo_type|
+        Todos[todo_type].each do |todo| 
+          if todo.resolution == item.title
+            minutes = Minutes.get(item.title)
  
-      @resolutions << {
-        action: action,
-        title: item.title,
-        minutes: minutes,
-        checked: (minutes != 'tabled')
-      }
+            resolution = {
+              action: todo_type,
+              name: todo.name,
+              title: item.title,
+              minutes: minutes,
+              checked: (minutes != 'tabled')
+            }
+
+            resolution.chair = todo.chair if todo.chair
+            resolution.people = todo.people if todo.people
+
+            @resolutions << resolution
+          end
+        end
+      end
     end
 
     self.refresh()
@@ -196,13 +201,35 @@ class PMCActions < Vue
   def refresh()
     @disabled = @resolutions.all? {|item| not item.checked}
   end
+
+  def submit()
+    data = {
+      change: [],
+      establish: [],
+      terminate: []
+    }
+
+    @resolutions.each do |resolution|
+      data[resolution.action] << resolution if resolution.checked
+    end
+
+    data.change = nil if data.change.empty?
+    data.establish = nil if data.establish.empty?
+    data.terminate = nil if data.terminate.empty?
+
+    @disabled = true
+    post "secretary-todos/#{Agenda.title}", data do |todos|
+      @disabled = false
+      Todos.set todos
+    end
+  end
 end
 
 ########################################################################
-#                          Add, Remove chairs                          #
+#                            Remove chairs                             #
 ########################################################################
 
-class TodoActions < Vue
+class TodoRemove < Vue
   def initialize
     @checked = {}
     @disabled = true
@@ -211,7 +238,7 @@ class TodoActions < Vue
 
   # update check marks based on current Todo list
   def created()
-    @people = Todos[@@action]
+    @people = Todos.remove
 
     # uncheck people who were removed
     for id in @checked
@@ -244,11 +271,7 @@ class TodoActions < Vue
   end
 
   def render
-    if @@action == 'add'
-      _p 'Add to pmc-chairs and email welcome message:'
-    else
-      _p 'Remove from pmc-chairs:'
-    end
+    _p 'Remove from pmc-chairs:'
 
     _ul.checklist @people do |person|
       _li do
@@ -261,14 +284,6 @@ class TodoActions < Vue
         _a person.id,
           href: "/roster/committer/#{person.id}"
         _ " (#{person.name})"
-
-        if @@action == 'add' and person.resolution
-          resolution = Minutes.get(person.resolution)
-          if resolution
-            _ ' - '
-            _Link text: resolution, href: Todos.link(person.resolution)
-          end
-        end
       end
     end
 
@@ -279,10 +294,12 @@ class TodoActions < Vue
   def submit()
     @disabled = true
 
-    data = {}
-    data[@@action] = @checked
+    remove = []
+    for id in @checked
+      remove << id if @checked[id]
+    end
 
-    post "secretary-todos/#{Agenda.title}", data do |todos|
+    post "secretary-todos/#{Agenda.title}", remove: remove do |todos|
       @disabled = false
       Todos.set todos
     end
