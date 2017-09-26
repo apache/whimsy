@@ -167,38 +167,40 @@ end
 if (@change || @establish) and env.password
   chairs = ASF::Service.find('pmc-chairs')
 
+  # select all new chairs
   todos  = Array(@change) + Array(@establish)
   people = todos.map {|todo| ASF::Person.find(todo['chair'])}.uniq
+  people -= chairs.members
 
-  # add new chairs to pmc-chairs
-  unless (people-chairs.members).empty?
+  unless people.empty?
+    # add new chairs to pmc-chairs
     ASF::LDAP.bind(env.user, env.password) do
       chairs.add people-chairs.members
     end
+
+    # send out congratulations email
+    ASF::Mail.configure
+    sender = ASF::Person.new(env.user)
+    mail = Mail.new do
+      from "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
+
+      to people.map {|person|
+        "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
+      }.to_a
+
+      cc 'Apache Board <board@apache.org>'
+
+      subject "Congratulations on your new role at Apache"
+
+      body "Dear new PMC chairs,\n\nCongratulations on your new role at " +
+      "Apache. I've changed your LDAP privileges to reflect your new " +
+      "status.\n\nPlease read this and update the foundation records:\n" +
+      "https://svn.apache.org/repos/private/foundation/officers/advice-for-new-pmc-chairs.txt" +
+      "\n\nWarm regards,\n\n#{sender.public_name}"
+    end
+
+    mail.deliver!
   end
-
-  # send out congratulations email
-  ASF::Mail.configure
-  sender = ASF::Person.new(env.user)
-  mail = Mail.new do
-    from "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
-
-    to people.map {|person|
-      "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
-    }.to_a
-
-    cc 'Apache Board <board@apache.org>'
-
-    subject "Congratulations on your new role at Apache"
-
-    body "Dear new PMC chairs,\n\nCongratulations on your new role at " +
-    "Apache. I've changed your LDAP privileges to reflect your new " +
-    "status.\n\nPlease read this and update the foundation records:\n" +
-    "https://svn.apache.org/repos/private/foundation/officers/advice-for-new-pmc-chairs.txt" +
-    "\n\nWarm regards,\n\n#{sender.public_name}"
-  end
-
-  mail.deliver!
 end
 
 ########################################################################

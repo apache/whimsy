@@ -119,23 +119,28 @@ module ASF
       block.gsub!(/.* # new, monthly through #{month}\n/, '')
 
       # update/remove existing 'missing' entries
+      existing = []
       block.gsub! /(.*?)# missing in .*\n/ do |line|
         if missing.include? $1.strip
-          missing.delete $1.strip
-          "#{line.chomp}, #{month}\n"
+          existing << $1.strip
+          if line.chomp.end_with? month
+            line
+          else
+            "#{line.chomp}, #{month}\n"
+          end
         else
           ''
         end
       end
 
       # add new 'missing' entries
-      missing.each do |pmc|
+      (missing-existing).each do |pmc|
         block += "    #{pmc.ljust(22)} # missing in #{month}\n"
       end
 
       # add new 'established' entries
       month = (date+91).strftime('%B')
-      establish.each do |pmc|
+      (establish-existing).each do |pmc|
         block += "    #{pmc.ljust(22)} # new, monthly through #{month}\n"
       end
 
