@@ -8,6 +8,7 @@
 class Header < Vue
   def initialize
     @infodropdown = nil
+    @clock_counter = 0
   end
 
   def render
@@ -18,7 +19,7 @@ class Header < Vue
         _PodlingNameSearch item: @@item
       end
 
-      _span.clock! "\u231B" if clock_counter > 0
+      _span.clock! "\u231B" if @clock_counter > 0
 
       _ul.nav.nav_pills.navbar_right do
 
@@ -126,8 +127,20 @@ class Header < Vue
     end
   end
 
+  def beforeMount()
+    EventBus.on :clock_counter, self.update_counter
+  end
+
+  def beforeDestroy()
+    EventBus.off :clock_counter, self.update_counter
+  end
+
+  def update_counter(counter)
+    @clock_counter = counter
+  end
+
   # toggle info dropdown
-  def toggleInfo
+  def toggleInfo()
     @infodropdown = (@infodropdown ? nil : 'open')
   end
 end

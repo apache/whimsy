@@ -13,11 +13,6 @@ class SelectActions < Vue
     @names = []
   end
 
-  def created()
-    console.log 'created'
-    SelectActions.data = $data
-  end
-
   def render
     _h3 'Post Action Items'
 
@@ -37,6 +32,7 @@ class SelectActions < Vue
       if response
         @list = response.actions
         @names = response.names
+        EventBus.emit :potential_actions, @list
       end
     end
   end

@@ -209,8 +209,14 @@ class Person < Vue
 
   # when a double click occurs, toggle the associated state
   def dblclick(event)
-    tr = event.currentTarget
-    @edit = tr.dataset.edit
+    row = event.currentTarget
+
+    if row.dataset.edit == @edit
+      @edit = nil
+    else
+      @edit = row.dataset.edit
+    end
+
     window.getSelection().removeAllRanges()
   end
 
@@ -256,13 +262,8 @@ class Person < Vue
         @committer = response.committer if response.committer
 
         # turn off edit mode on this field
-        tr = form.closest('tr')[0]
-        if tr
-          field = "edit_#{tr.dataset.edit}"
-          changes = {}
-          changes[field] = false
-          self.setState changes
-        end
+        row = form.closest('.row')[0]
+        @edit = nil if row and row.dataset.edit == @edit
       },
 
       error: ->(response) {

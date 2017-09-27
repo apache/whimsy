@@ -1,5 +1,6 @@
 # config
 require_relative 'vue-config'
+require_relative 'event-bus'
 
 # common
 require_relative 'router'

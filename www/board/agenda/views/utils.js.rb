@@ -89,7 +89,7 @@ def retrieve(target, type, &block)
   def xhr.onreadystatechange()
     if xhr.readyState == 1
       clock_counter += 1
-      setTimeout(0) {Main.refresh()}
+      EventBus.emit :clock_counter, clock_counter
     elsif xhr.readyState == 4
       data = nil
 
@@ -120,7 +120,7 @@ def retrieve(target, type, &block)
 
       block(data)
       clock_counter -= 1
-      Main.refresh()
+      EventBus.emit :clock_counter, clock_counter
     end
   end
 
