@@ -28,7 +28,7 @@ class PostActions < Vue
     data = {
       agenda: Agenda.file,
       message: 'Post Action Items',
-      actions: SelectActions.data.list
+      actions: @list
     }
 
     @disabled = true
