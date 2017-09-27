@@ -362,14 +362,17 @@ end
 post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
   board = 'https://svn.apache.org/repos/private/foundation/board'
   agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
-  auth = "--user #{env.user} --password #{env.password}"
+  auth = "--username #{env.user} --password #{env.password}"
+
+  contents = params[:agenda].gsub("\r\n", "\n")
 
   Dir.mktmpdir do |dir|
-    `svn checkout --depth empty #{dir} #{auth}`
-    File.write "#{dir}/#{agenda}", params[:agenda]
+    `svn checkout --depth empty #{board} #{dir} #{auth}`
+    File.write "#{dir}/#{agenda}", contents
     `svn add #{dir}/#{agenda}`
     `svn commit #{dir}/#{agenda} -message "Post #{date} agenda" #{auth}`
+    Agenda.update_cache agenda, File.join(dir, agenda), contents, false
   end
 
-  redirect to('/')
+  redirect to("/#{date}/")
 end
