@@ -9,8 +9,13 @@ class SelectActions < Vue
   end
 
   def initialize
-    SelectActions.list = []
+    @list = []
     @names = []
+  end
+
+  def created()
+    console.log 'created'
+    SelectActions.data = $data
   end
 
   def render
@@ -21,7 +26,7 @@ class SelectActions < Vue
       'Click on the "post actions" button when done.'
 
     _pre.report do
-      SelectActions.list.each do |action|
+      @list.each do |action|
         _CandidateAction action: action, names: @names
       end
     end
@@ -30,7 +35,7 @@ class SelectActions < Vue
   def mounted()
     retrieve 'potential-actions', :json do |response|
       if response
-        SelectActions.list = response.actions
+        @list = response.actions
         @names = response.names
       end
     end
@@ -40,7 +45,7 @@ end
 class CandidateAction < Vue
   def render
     _input type: 'checkbox', checked: !@@action.complete,
-      onChange:-> {@@action.complete = !@@action.complete; Vue.forceUpdate()}
+      onChange:-> {@@action.complete = !@@action.complete}
     _span " "
     _span @@action.owner
     _span ": "

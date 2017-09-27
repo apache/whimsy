@@ -8,14 +8,14 @@ class PostActions < Vue
 
   def render
     _button.btn.btn_primary 'post actions', onClick: self.click, 
-      disabled: @disabled || SelectActions.list.empty?
+      disabled: @disabled || SelectActions.data.list.emtpy?
   end
 
   def click(event)
     data = {
       agenda: Agenda.file,
       message: 'Post Action Items',
-      actions: SelectActions.list
+      actions: SelectActions.data.list
     }
 
     @disabled = true

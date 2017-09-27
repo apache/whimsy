@@ -186,24 +186,20 @@ class ActionItems < Vue
   def updateStatus(event)
     parent = event.target.parentNode
 
-    # construct action from data attributes
-    action = {}
+    # update state from data attributes
     for i in 0...parent.attributes.length
       attr = parent.attributes[i]
-      action[attr.name[5..-1]] = attr.value if attr.name.start_with? 'data-'
+      $data[attr.name[5..-1]] = attr.value if attr.name.start_with? 'data-'
     end
 
     # unindent action
-    action.status.gsub!(/\n {14}/, "\n")
+    @status.gsub!(/\n {14}/, "\n")
 
     # set baseline to current value
-    action.baseline = action.status
+    @baseline = @status
 
     # show dialog
     jQuery('#updateStatusForm').modal(:show)
-
-    # update state
-    self.setState(action)
   end
 
   # when save button is pushed, post update and dismiss modal when complete
