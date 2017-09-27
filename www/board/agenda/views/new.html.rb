@@ -12,7 +12,7 @@ _html do
     _form method: 'post',  action: @meeting.strftime("%Y-%m-%d/") do
 
       _div.text_center do
-        _button.btn.btn_primary 'Post'
+        _button.btn.btn_primary 'Post', disabled: @disabled
       end
 
       _textarea.form_control @agenda, name: 'agenda',

@@ -347,9 +347,12 @@ get '/new' do
 
   # Get list of unpublished and unapproved minutes
   draft = YAML.load_file(Dir["#{AGENDA_WORK}/board_minutes*.yml"].sort.last)
-  @minutes = Dir["#{ASF::SVN['private/foundation/board']}/board_minutes_*.txt"].
+  @minutes = dir("board_minutes_*.txt").
     map {|file| Date.parse(file[/\d[_\d]+/].gsub('_', '-'))}.
     select {|date| draft[date.strftime('%B %d, %Y')] != 'approved'}
+
+  @disabled = dir("board_agenda_*.txt").
+    include? @meeting.strftime("board_agenda_%Y_%m_%d.txt")
 
   template = File.read('data/agenda.erb')
   @agenda = Erubis::Eruby.new(template).result(binding)
