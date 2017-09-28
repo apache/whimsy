@@ -58,6 +58,7 @@ def Monitor.git(previous_status)
       ' delete mode ',
       ' rename ',
       ' mode change ',
+      'HEAD is now at ',
       # TODO Should these 3 lines be handled differently?
       'From git://',
       ' * [new branch]',
