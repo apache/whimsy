@@ -139,8 +139,7 @@ At this point, you have something up and running.  Let's take a look around.
    underscore.  Methods and computed properties will not be.
 
  * If you are so inclined, you can actually make changes to the
-   datastructures.  Those changes won't be visible until you re-render.
-   Something to try: `Main.item._report = 'All is Good!'; Main.refresh()`
+   datastructures.  Something to try: `Main.item._report = 'All is Good!'`
 
  * One last thing before we leave this section, go to an agenda page, and
    replace the final `/` in the URL with `.json`.  The contents you see is

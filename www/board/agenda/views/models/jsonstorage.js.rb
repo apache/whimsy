@@ -52,7 +52,7 @@ class JSONStorage
     then
       caches.open('board/agenda').then do |cache|
         fetched = nil
-        clock_counter += 1
+        Header.clock_counter += 1
 
         # construct request
         request = Request.new("../json/#{name}", method: 'get',
@@ -64,7 +64,7 @@ class JSONStorage
 
           response.json().then do |json| 
             unless fetched and fetched.inspect == json.inspect
-              clock_counter -= 1 unless fetched
+              Header.clock_counter -= 1 unless fetched
               fetched = json
               block(json) if json
               Main.refresh()
@@ -76,7 +76,7 @@ class JSONStorage
         cache.match("../json/#{name}").then do |response|
           if response and not fetched
             response.json().then do |json| 
-              clock_counter -= 1
+              Header.clock_counter -= 1
               fetched = json
               block(json) if json
               Main.refresh()

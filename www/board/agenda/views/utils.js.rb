@@ -1,9 +1,6 @@
 # A convenient place to stash server data
 Server = {}
 
-# controls display of clock in the header
-clock_counter = 0
-
 #
 # function to assist with production of HTML and regular expressions
 #
@@ -88,8 +85,7 @@ def retrieve(target, type, &block)
 
   def xhr.onreadystatechange()
     if xhr.readyState == 1
-      clock_counter += 1
-      EventBus.emit :clock_counter, clock_counter
+      Header.clock_counter += 1
     elsif xhr.readyState == 4
       data = nil
 
@@ -119,8 +115,7 @@ def retrieve(target, type, &block)
       end
 
       block(data)
-      clock_counter -= 1
-      EventBus.emit :clock_counter, clock_counter
+      Header.clock_counter -= 1
     end
   end
 

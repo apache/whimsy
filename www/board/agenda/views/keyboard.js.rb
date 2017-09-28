@@ -79,10 +79,10 @@ class Keyboard
         Main.navigate "help"
         return false
       elsif event.keyCode == 'R'.ord
-        clock_counter += 1
+        Header.clock_counter += 1
         Main.refresh()
         post 'refresh', agenda: Agenda.file do |response|
-          clock_counter -= 1
+          Header.clock_counter -= 1
           Agenda.load response.agenda, response.digest
           Main.refresh()
         end
