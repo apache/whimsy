@@ -148,7 +148,8 @@ namespace :git do
 
               # pull changes
               system "git checkout #{branch}" if branch
-              system 'git pull'
+              system 'git fetch origin'
+              system "git reset --hard origin/#{branch || 'master'}"
             end
           else
             # fresh checkout
