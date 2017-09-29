@@ -11,18 +11,18 @@ class RollCall < Vue
     _section.flexbox do
       _section.rollcall! do
         _h3 'Directors'
-        _ul @people do |person|
+        _ul people do |person|
           _Attendee person: person if person.role == :director
         end
 
         _h3 'Executive Officers'
-        _ul @people do |person|
+        _ul people do |person|
           _Attendee person: person if person.role == :officer
         end
 
         _h3 'Guests'
         _ul do
-          @people.each do |person|
+          people.each do |person|
             _Attendee person: person if person.role == :guest
           end
 
@@ -43,7 +43,7 @@ class RollCall < Vue
                   person.id.include? part or 
                   person.name.downcase().include? part
                 } and
-                not @people.any? {|registered| registered.id == person.id}
+                not people.any? {|registered| registered.id == person.id}
               then
                 _Attendee person: person, walkon: true
                 found = true
@@ -68,31 +68,31 @@ class RollCall < Vue
   end
 
   # collect a sorted list of people
-  def created()
-    people = []
+  def people
+    list = []
 
     # start with those listed in the agenda
     for id in @@item.people
       person = @@item.people[id]
       person.id = id
-      people << person
+      list << person
     end
 
     # add remaining attendees
     attendees = Minutes.attendees
     if attendees
       for name in attendees
-        if not people.any? {|person| person.name == name}
+        if not list.any? {|person| person.name == name}
           person = attendees[name]
           person.name = name
           person.role = :guest
-          people << person
+          list << person
         end
       end
     end
 
     # sort list
-    @people = people.sort do |person1, person2| 
+    list.sort do |person1, person2| 
       return person1.sortName > person2.sortName ? 1 : -1
     end
   end
@@ -137,16 +137,26 @@ class Attendee < Vue
     @base = ''
   end
 
-  # perform initialization on first rendering
-  def created()
-    status = Minutes.attendees[@@person.name]
-    if status
-      @checked = status.present
-      @notes = (status.notes ? status.notes.sub(' - ', '') : '')
+  def created
+    @base = status.notes
+  end
+
+  # create a version of notes without the leading dash
+  def notes
+    status.notes ? status.notes.sub(' - ', '') : ''
+  end
+
+  def notes=(value)
+    if value
+      status.notes = " - #{value}"
     else
-      @checked = false
-      @notes = ''
+      status.notes = nil
     end
+  end
+
+  # perform initialization on first rendering
+  def status
+    Minutes.attendees[@@person.name] || {}
   end
 
   # render a checkbox, a hypertexted link of the attendee's name to the
@@ -154,7 +164,7 @@ class Attendee < Vue
   # forms.  CSS controls which version of the notes is actually displayed.
   def render
     _li onMouseOver: self.focus do
-      _input type: :checkbox, checked: @checked, onClick: self.click
+      _input type: :checkbox, checked: status.present, onClick: self.click
 
       roster = '/roster/committer/'
       if @@person.id
@@ -164,15 +174,15 @@ class Attendee < Vue
         _a.hilite @@person.name, href: "#{roster}?q=#{@@person.name}"
       end
 
-      unless @@walkon or @checked or @@person.role==:guest or @@person.attending
-        _span "\u00A0(expected to be absent)" unless @notes
+      unless @@walkon or status.present or @@person.role==:guest or @@person.attending
+        _span "\u00A0(expected to be absent)" unless status.notes
       end
 
       unless @@walkon
         _label
-        _input type: 'text', value: @notes, onBlur: self.blur,
+        _input type: 'text', value: self.notes, onBlur: self.blur,
           disabled: @disabled
-        _span " - #@notes" if @notes
+        _span status.notes
       end
     end
   end
@@ -184,36 +194,29 @@ class Attendee < Vue
     end
   end
 
-  # initialize pending update status
-  def mounted()
-    self.pending = false
-  end
-
-  # when checkbox is clicked, set pending update status
+  # when checkbox is clicked, post update
   def click(event)
-    @checked = event.target.checked
-    self.pending = true
+    status.present = event.target.checked
+    post_update()
   end
 
-  # when leaving a list item, set pending update status if value changed
+  # when leaving a list item, post update if value changed
   def blur()
-    if @base != @notes
-      self.pending = true
-      @base = @notes
+    if @base != status.notes
+      @base = status.notes
+      post_update()
     end
   end
 
-  # after display is updated, send any pending updates to the server
-  def updated()
-    return unless self.pending
-
+  # send updates to the server
+  def post_update()
     data = {
       agenda: Agenda.file,
       action: 'attendance',
       name: @@person.name,
       id: @@person.id,
-      present: @checked,
-      notes: @notes
+      present: status.present,
+      notes: notes
     }
 
     @disabled = true
@@ -222,7 +225,5 @@ class Attendee < Vue
       RollCall.clear_guest() if @@walkon
       @disabled = false
     end
-
-    self.pending = false
   end
 end
