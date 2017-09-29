@@ -3,19 +3,29 @@
 #
 
 class Minutes
-  @@list = {}
+  Vue.util.defineReactive @@list, {}
 
   # (re)-load minutes
   def self.load(list)
-    @@list = {}
+    old_keys = @@list.keys()
 
     if list
       for title in list
-        @@list[title] = list[title]
+        index = old_keys.indexOf(title)
+        if index >= 0
+          @@list[title]=list[title]
+          old_keys.splice(index, 1)
+        else
+          Vue.set @@list, title, list[title]
+        end
       end
     end
 
-    @@list.attendance ||= {}
+    old_keys.each do |key|
+      Vue.delete @@list, key
+    end
+
+    Vue.set @@list, 'attendance', {} unless @@list.attendance
   end
 
   # list of actions created during the meeting
