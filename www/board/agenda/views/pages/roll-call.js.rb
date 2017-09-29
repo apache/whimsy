@@ -156,7 +156,8 @@ class Attendee < Vue
 
   # perform initialization on first rendering
   def status
-    Minutes.attendees[@@person.name] || {}
+    return @saved_status if Header.clock_counter > 0
+    @saved_status = Minutes.attendees[@@person.name] || {}
   end
 
   # render a checkbox, a hypertexted link of the attendee's name to the
@@ -220,7 +221,9 @@ class Attendee < Vue
     }
 
     @disabled = true
+    Header.clock_counter += 1
     post 'minute', data do |minutes|
+      Header.clock_counter -= 1
       Minutes.load minutes
       RollCall.clear_guest() if @@walkon
       @disabled = false
