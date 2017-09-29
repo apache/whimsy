@@ -9,7 +9,7 @@ class PMCMembers < Vue
 
   def render
     _h2.pmc! 'PMC'
-    _p 'Click on column name to search'
+    _p 'Click on column name to sort'
     _table.table.table_hover do
       _thead do
         _tr do
