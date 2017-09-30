@@ -16,7 +16,10 @@
 class AdditionalInfo < Vue
   def render
     # special notes
-    _p.notes @@item.notes if @@item.notes
+    if @@item.notes
+      _p @@item.notes, 
+        class: ('notes' unless @@item.notes =~ /^new, monthly through/)
+    end
 
     # minutes
     minutes = Minutes.get(@@item.title)
