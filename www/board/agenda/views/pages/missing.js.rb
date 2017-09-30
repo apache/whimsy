@@ -8,7 +8,7 @@ class Missing < Vue
   end
 
   # update check marks based on current Index
-  def mounted()
+  def beforeMount()
     Agenda.index.each do |item|
       @checked[item.title] = true unless defined? @checked[item.title]
     end
@@ -22,7 +22,8 @@ class Missing < Vue
         _h3 class: item.color do
           if item.attach =~ /^[A-Z]+/
             _input type: 'checkbox', name: 'selected', value: item.title,
-              checked: @checked[item.title], onChange:-> {
+              checked: true, disabled: true, domPropsDisabled: false,
+              domPropsChecked: @checked[item.title], onClick:-> {
                 @checked[item.title] = !@checked[item.title]
                 Vue.forceUpdate()
               }
