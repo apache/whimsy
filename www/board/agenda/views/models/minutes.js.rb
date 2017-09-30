@@ -7,24 +7,7 @@ class Minutes
 
   # (re)-load minutes
   def self.load(list)
-    old_keys = @@list.keys()
-
-    if list
-      for title in list
-        index = old_keys.indexOf(title)
-        if index >= 0
-          @@list[title]=list[title]
-          old_keys.splice(index, 1)
-        else
-          Vue.set @@list, title, list[title]
-        end
-      end
-    end
-
-    old_keys.each do |key|
-      Vue.delete @@list, key
-    end
-
+    @@list = list
     Vue.set @@list, 'attendance', {} unless @@list.attendance
   end
 
