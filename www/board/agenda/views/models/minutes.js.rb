@@ -7,7 +7,7 @@ class Minutes
 
   # (re)-load minutes
   def self.load(list)
-    @@list = list
+    @@list = list || {}
     Vue.set @@list, 'attendance', {} unless @@list.attendance
   end
 

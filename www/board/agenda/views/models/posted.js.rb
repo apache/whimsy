@@ -1,7 +1,7 @@
 # Posted PMC reports - see https://whimsy.apache.org/board/posted-reports
 
 class Posted
-  @@list = []
+  Vue.util.defineReactive @@list, []
   @@fetched = false
 
   def self.get(title)

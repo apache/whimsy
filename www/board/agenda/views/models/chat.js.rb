@@ -1,6 +1,7 @@
 class Chat
-  @@log = []
-  @@topic = {}
+  Vue.util.defineReactive @@log, []
+  Vue.util.defineReactive @@topic, {}
+
   Chat.fetch_requested = false
   Chat.backlog_fetched = false
 

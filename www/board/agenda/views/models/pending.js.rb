@@ -4,6 +4,8 @@
 #
 
 class Pending
+  Vue.util.defineReactive Server.pending, nil
+
   def self.load(value)
     Server.pending = value if value
     Main.refresh()

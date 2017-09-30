@@ -3,7 +3,7 @@
 #
 
 class HistoricalComments
-  @@comments = nil
+  Vue.util.defineReactive @@comments, nil
 
   # find historical comments based on report title
   def self.find(title)

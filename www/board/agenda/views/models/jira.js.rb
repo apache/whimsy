@@ -3,7 +3,7 @@
 #
 
 class JIRA
-  @@list = nil
+  Vue.util.defineReactive @@list, nil
 
   def self.find(name)
     if @@list
