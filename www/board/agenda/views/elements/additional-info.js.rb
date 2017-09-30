@@ -30,7 +30,7 @@ class AdditionalInfo < Vue
       posted = Posted.get(@@item.title)
       unless posted.empty?
         _h4 'Posted reports', id: "#{@prefix}posted"
-        _ul posted do |post|
+        _ul.posted_reports posted do |post|
           _li do
             _a post.subject, href: post.link
           end

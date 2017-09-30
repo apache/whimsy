@@ -51,6 +51,17 @@ aside li {list-style: none}
   border-radius: 1em;
 }
 
+/* posted_reports */
+.posted-reports {
+  list-style: none;
+  background-color: #90EE90; 
+  padding: 0.3em 1em; 
+  margin: 1em 1em 0 1em;
+  font-weight: bold;
+  border: 1px solid SkyBlue;
+  border-radius: 1em;
+}
+
 /* make the header an eye catcher */
 h1, h2.subtitle {
   line-height: 2em;
