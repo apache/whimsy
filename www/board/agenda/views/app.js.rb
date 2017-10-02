@@ -5,6 +5,7 @@ require_relative 'event-bus'
 # common
 require_relative 'router'
 require_relative 'keyboard'
+require_relative 'touch'
 require_relative 'utils'
 
 # General layout

@@ -112,8 +112,9 @@ class Main < Vue
       end
     end
 
-    # start watching keystrokes
+    # start watching keystrokes and fingers
     Keyboard.initEventHandlers()
+    Touch.initEventHandlers()
 
     # whenever the window is resized, adjust margins of the main area to
     # avoid overlapping the header and footer areas
