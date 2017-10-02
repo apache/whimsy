@@ -20,7 +20,7 @@ class Touch
     end
 
     document.body.addEventListener :touchend do |event|
-      elapsed = startTime - Date.new().getTime()
+      elapsed = Date.new().getTime() - startTime
       return if elapsed > allowedTime
 
       touchobj = event.changedTouches[0]
@@ -45,7 +45,7 @@ class Touch
         link.click() if link
 
       when 'up', 'down'
-        Main.navigate history.state.path.sub(/[^\/]\/?$/, '') || '.'
+        Main.navigate history.state.path.sub(/[^\/]+\/?$/, '') || '.'
       end
     end
 
