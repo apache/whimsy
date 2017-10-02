@@ -10,10 +10,15 @@ require 'whimsy/asf/agenda'
 THREAD = "https://lists.apache.org/thread.html/"
 
 # only look at this month's and last month's mailboxes, and within those
-# only look at emails that were received in the last month.
+# only look at emails that were received since the previous board meeting.
 current = Date.today.strftime('%Y%m')
 previous = (Date.parse(current + '01')-1).strftime('%Y%m')
-cuttoff = (Date.today << 1).to_time
+last_meeting = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort[-2]
+if last_meeting
+  cutoff = (Date.parse(last_meeting[/\d[_\d]+/].gsub('_', '-'))+1).to_time
+else
+  cuttoff = (Date.today << 1).to_time
+end
 
 # get a list of current board messages
 archive = Dir["/srv/mail/board/#{previous}/*", "/srv/mail/board/#{current}/*"]
