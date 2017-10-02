@@ -17,7 +17,7 @@ last_meeting = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort[-2]
 if last_meeting
   cutoff = (Date.parse(last_meeting[/\d[_\d]+/].gsub('_', '-'))+1).to_time
 else
-  cuttoff = (Date.today << 1).to_time
+  cutoff = (Date.today << 1).to_time
 end
 
 # get a list of current board messages
@@ -27,7 +27,7 @@ archive = Dir["/srv/mail/board/#{previous}/*", "/srv/mail/board/#{current}/*"]
 reports = []
 archive.each do |email|
   email.untaint
-  next if File.mtime(email) < cuttoff
+  next if File.mtime(email) < cutoff
   next if email.end_with? '/index'
   message = IO.read(email, mode: 'rb')
   subject = message[/^Subject: .*/]
