@@ -41,11 +41,11 @@ class Touch
         link.click() if link
 
       when 'right'
-        link = document.querySelector("a[rel=prev]")
+        link = document.querySelector("a[rel=next]")
         link.click() if link
 
       when 'up', 'down'
-        Main.navigate history.state.path.sub(/\w+\/?$/, '') || '.'
+        Main.navigate history.state.path.sub(/[^\/]\/?$/, '') || '.'
       end
     end
 
