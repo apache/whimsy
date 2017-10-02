@@ -4,29 +4,36 @@
 
 class Touch
   def self.initEventHandlers()
+    # configuration
     threshold = 150 # minimum distance required to be considered a swipe
     limit = 100 # max distance in other direction
     allowedTime = 500 # maximum time
 
+    # state
     startX = 0
     startY = 0
     startTime = 0
 
-    document.body.addEventListener :touchstart do |event|
+    # capture start of swipe
+    window.addEventListener :touchstart do |event|
       touchobj = event.changedTouches[0]
       startX = touchobj.pageX
       startY = touchobj.pageY
       startTime = Date.new().getTime()
     end
 
-    document.body.addEventListener :touchend do |event|
+    # process end of swipe
+    window.addEventListener :touchend do |event|
+      # ignore if a touch lasted too long
       elapsed = Date.new().getTime() - startTime
       return if elapsed > allowedTime
 
+      # compute distances
       touchobj = event.changedTouches[0]
-      distX = startX - touchobj.pageX
-      distY = startY - touchobj.pageY
+      distX = touchobj.pageX - startX
+      distY = touchobj.pageY - startY
 
+      # compute direction
       swipedir = 'none'
 
       if Math.abs(distX) >= threshold and Math.abs(distY) <= limit
@@ -35,13 +42,14 @@ class Touch
         swipedir = (distY < 0) ? 'up' : 'down'
       end
 
+      # process swipe event
       case swipedir
       when 'left'
-        link = document.querySelector("a[rel=prev]")
+        link = document.querySelector("a[rel=next]")
         link.click() if link
 
       when 'right'
-        link = document.querySelector("a[rel=next]")
+        link = document.querySelector("a[rel=prev]")
         link.click() if link
 
       when 'up', 'down'
