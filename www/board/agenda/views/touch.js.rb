@@ -56,6 +56,7 @@ class Touch
         path = history.state.path.sub(/[^\/]+\/?$/, '') || '.'
         path = "shepherd/#{Main.item.shepherd}" if path == 'shepherd/queue/'
         path = "flagged" if path == 'flagged/'
+        path = "queue" if path == 'queue/'
 
         Main.navigate path
       end
