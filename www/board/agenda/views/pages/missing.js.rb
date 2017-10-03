@@ -18,7 +18,7 @@ class Missing < Vue
     first = true
 
     Agenda.index.each do |item|
-      if item.missing
+      if item.missing and item.owner
         _h3 class: item.color do
           if item.attach =~ /^[A-Z]+/
             _input type: 'checkbox', name: 'selected', value: item.title,
