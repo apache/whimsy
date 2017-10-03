@@ -37,9 +37,11 @@ class InitialReminder < Vue
 
   # wire up event handlers
   def mounted()
-    Array(document.querySelectorAll('.btn-primary')).each do |button|
-      if button.getAttribute('data-target') == '#reminder-form'
-        button.addEventListener :click, self.loadText
+    Vue.nextTick do
+      Array(document.querySelectorAll('.btn-primary')).each do |button|
+        if button.getAttribute('data-target') == '#reminder-form'
+          button.addEventListener :click, self.loadText
+        end
       end
     end
   end
