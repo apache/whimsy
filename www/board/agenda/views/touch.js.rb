@@ -53,7 +53,11 @@ class Touch
         link.click() if link
 
       when 'up', 'down'
-        Main.navigate history.state.path.sub(/[^\/]+\/?$/, '') || '.'
+        path = history.state.path.sub(/[^\/]+\/?$/, '') || '.'
+        path = "shepherd/#{Main.item.shepherd}" if path == 'shepherd/queue/'
+        path = "flagged" if path == 'flagged/'
+
+        Main.navigate path
       end
     end
 
