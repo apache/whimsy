@@ -7,15 +7,12 @@ _html do
   _link rel: 'stylesheet', href: "../stylesheets/app.css?#{@cssmtime}"
   _meta name: 'viewport', content: 'width=device-width, initial-scale=1.0'
 
-  _div.main! do
-    _header
-    _footer
-  end
+  _div.main!
 
   _script src: "../app.js?#{@appmtime}", lang: 'text/javascript'
   _script %{
-    React.render(React.createElement(Main, 
-      #{JSON.generate(server: @server, page: @page)}),
-      document.getElementById("main"))
+    new Vue({el: "#main", render: function($h) {
+      return $h("div", {attrs: {id: "main"}}, [$h(Main, {props:
+      #{JSON.generate(server: @server, page: @page)}})])}})
   }
 end

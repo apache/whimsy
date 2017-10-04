@@ -15,7 +15,7 @@ require 'whimsy/asf/config'
 # to additionally prevent concurrent updates.
 #
 # No direct use of timers, events, or threads are made allowing this
-# service to be used in a varienty of contexts (e.g. Sinatra and 
+# service to be used in a variety of contexts (e.g. Sinatra and 
 # EventMachine).
 #
 

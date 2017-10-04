@@ -120,17 +120,19 @@ class Main < Vue
     # avoid overlapping the header and footer areas
     def window.onresize()
       main = document.querySelector('main')
+      footer = document.querySelector('footer')
+      header = document.querySelector('header')
       if 
         window.innerHeight <= 400 and 
         document.body.scrollHeight > window.innerHeight
       then
-        document.querySelector('footer').style.position = 'relative'
-        document.querySelector('header').style.position = 'relative'
+        footer.style.position = 'relative' if footer
+        header.style.position = 'relative' if header
         main.style.marginTop = 0
         main.style.marginBottom = 0
       else
-        document.querySelector('footer').style.position = 'fixed'
-        document.querySelector('header').style.position = 'fixed'
+        footer.style.position = 'fixed' if footer
+        header.style.position = 'fixed' if header
         main.style.marginTop = 
           "#{document.querySelector('header.navbar').clientHeight}px"
         main.style.marginBottom = 

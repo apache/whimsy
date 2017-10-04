@@ -170,7 +170,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
 
   if path == 'bootstrap.html'
-    @page[:parsed] = [@page[:parsed].first]
+    @page[:parsed] = [{timestamp: @page[:parsed].first['timestamp']}]
     @page[:digest] = nil
     @page[:etag] = nil
     @server[:session] = nil
