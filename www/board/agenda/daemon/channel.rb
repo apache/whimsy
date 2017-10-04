@@ -88,7 +88,6 @@ class Channel
 
   # listen for changes to agenda files
   board_listener = Listen.to(FOUNDATION_BOARD) do |modified, added, removed|
-    STDERR.puts [modified, added, removed].inspect
     modified.each do |path|
       next unless File.exist?(path)
       file = File.basename(path)

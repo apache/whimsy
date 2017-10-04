@@ -134,6 +134,13 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     @present = YAML.load_file(file)
   end
 
+  if env['SERVER_NAME'] == 'localhost'
+    websocket = 'ws://localhost:34234/'  
+  else
+    websocket = (env['rack.url_scheme'].sub('http', 'ws')) + '://' +
+      env['SERVER_NAME'] + env['SCRIPT_NAME'] + '/websocket/'
+  end
+
   @server = {
     userid: userid,
     agendas: dir('board_agenda_*.txt').sort,
@@ -149,8 +156,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
       initials = person.public_name.gsub(/[^A-Z]/, '').downcase
       [initials, person.public_name.split(' ').first]
     }],
-    websocket: (env['rack.url_scheme'].sub('http', 'ws')) + '://' +
-      env['SERVER_NAME'] + env['SCRIPT_NAME'] + '/websocket/'
+    websocket: websocket
   }
 
   @page = {
