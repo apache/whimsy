@@ -8,7 +8,7 @@
 require 'rbconfig'
 
 if STDIN.tty?
-  conf = `ssh whimsy-vm4.apache.org cat \
+  conf = `ssh whimsy.apache.org cat \
     /etc/apache2/sites-enabled/*-whimsy-vm-443.conf`
 else
   conf = STDIN.read
