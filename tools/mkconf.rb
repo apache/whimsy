@@ -1,16 +1,23 @@
 #
 # Generate a whimsy.local version of the deployed whimsy configuration
 #
+# Example usage:
+#  ruby vhosttest.rb | ruby mkconf.rb /private/etc/apache2/other/whimsy.conf
+#
 
 require 'rbconfig'
 
-conf = `ssh whimsy-vm4.apache.org cat \
-  /etc/apache2/sites-enabled/*-whimsy-vm-443.conf`
+if STDIN.tty?
+  conf = `ssh whimsy-vm4.apache.org cat \
+    /etc/apache2/sites-enabled/*-whimsy-vm-443.conf`
+else
+  conf = STDIN.read
+end
 
 conf.sub! 'VirtualHost *:443', 'VirtualHost *:80'
 conf.sub! 'ServerName whimsy.apache.org', 'ServerName whimsy.local'
 
-conf.gsub! /\n\s*RemoteIPHeader.*/, ''
+conf.gsub! /(\A|\n)\s*RemoteIPHeader.*/, ''
 
 conf.gsub! /\n\s*PassengerDefault.*/, ''
 
