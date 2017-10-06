@@ -135,6 +135,10 @@ def parse(id, site, name)
       data[:copyright] = t.sub(/^.*?((Copyright|©) .+? Foundation[.]?).*/,'\1').strip
       data[:copyparent] = p if p
     end
+    if txt =~ / Incubation is required of all newly accepted projects /
+      t, p = getText(txt, node, / is an effort undergoing/)
+      data[:disclaimer] = t
+    end
   end
 
   # see if image has been uploaded
@@ -147,9 +151,9 @@ def parse(id, site, name)
 end
 
 # get the text; use parent if text does not appear to be complete
-def getText(txt, node)
+def getText(txt, node, match=/Apache Software Foundation/i)
   parent = nil # debug to show where parent needed to be fetched
-  if not txt =~ /Apache Software Foundation/i # have we got all the text?
+  if not txt =~ match # have we got all the text?
     if node.parent.name == 'a' # e.g. whimsical. such parents don't have extra text.
       newnode = node.parent.parent
     else
@@ -167,6 +171,8 @@ $verbose = ARGV.delete '--verbose'
 
 results = {}
 
+podlings = {}
+
 $cache = Cache.new(dir: 'site-scan')
 
 # Parse a single site given its URL
@@ -177,6 +183,11 @@ if (1..2).include? ARGV.length and ARGV.first =~ /^https?:\/\/\w/
 else
   if ARGV.first =~ %r{[./]} # have we a file name?
     outfile = ARGV.shift
+    if ARGV.first =~ %r{[./]} # have we another file name?
+      outfile2 = ARGV.shift
+    else
+      outfile2 = nil
+    end
   else
     outfile = nil
   end
@@ -193,6 +204,16 @@ else
 
     # fetch, parse committee site
     results[committee.name] = parse(committee.name, committee.site, committee.display_name)
+    
+  end
+  ASF::Podling.list.each do |podling| 
+    if podling.status == 'current' and podling.podlingStatus[:website]
+      # if parameters specified, parse only those names
+      if ARGV.length > 0
+        next unless ARGV.include? podling.name
+      end
+      podlings[podling.name] = parse(podling.name, podling.podlingStatus[:website], podling.display_name)
+    end
   end
 end
 
@@ -201,4 +222,7 @@ if outfile
   File.write(outfile, JSON.pretty_generate(results))
 else
   puts JSON.pretty_generate(results)
+end
+if outfile2
+  File.write(outfile2, JSON.pretty_generate(podlings))
 end
