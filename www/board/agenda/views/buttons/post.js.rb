@@ -74,7 +74,7 @@ class Post < Vue
   end
 
   # match form title, input label, and commit message with button text
-  def created(newprops)
+  def created()
     case @@button.text
     when 'post report'
       @header = 'Post Report'
@@ -97,7 +97,7 @@ class Post < Vue
       @message = "Edit #{@@item.title} Resolution"
     end
 
-    if not @edited or newprops.item.attach != self.props.item.attach
+    if not @edited
       text = @@item.text || '' 
       if @@item.title == 'President'
         text.sub! /\s*Additionally, please see Attachments \d through \d\./, ''
