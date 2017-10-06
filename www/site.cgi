@@ -201,7 +201,7 @@ _html do
     },
     helpblock: -> {
       _p do
-        _ 'This script periodically craws all Apache project websites to check them for a few specific links or text blocks that all projects are expected to have.'
+        _ 'This script periodically crawls all Apache project websites to check them for a few specific links or text blocks that all projects are expected to have.'
         _ 'The checks (currently in beta) include verifying that all '
         _a 'required links', href: 'https://www.apache.org/foundation/marks/pmcs#navigation'
         _ ' appear on a project homepage, along with checking if project logos appear in apache.org/img'
