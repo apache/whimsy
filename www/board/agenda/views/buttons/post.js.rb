@@ -64,14 +64,18 @@ class Post < Vue
 
   # autofocus on report/resolution title/text
   def mounted()
+    jQuery('#post-report-form').on 'show.bs.modal' do
+      # update contents when modal is about to be shown
+      self.retitle()
+    end
+
     jQuery('#post-report-form').on 'shown.bs.modal' do
+      # set focus once modal is shown
       if @@button.text == 'add resolution'
         document.getElementById("post-report-title").focus()
       else
         document.getElementById("post-report-text").focus()
       end
-
-      self.retitle()
     end
   end
 
