@@ -70,11 +70,18 @@ class Post < Vue
       else
         document.getElementById("post-report-text").focus()
       end
+
+      self.retitle()
     end
   end
 
-  # match form title, input label, and commit message with button text
+  # initialize form title, etc.
   def created()
+    self.retitle()
+  end
+
+  # match form title, input label, and commit message with button text
+  def retitle()
     case @@button.text
     when 'post report'
       @header = 'Post Report'
