@@ -111,7 +111,7 @@ _html do
                 (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)]
 
               Dir.chdir tmpdir do
-                File.write(name, @file.read)
+                IO.binwrite(name, @file.read)
                 _.system ['svn', 'add', name]
 
                 _.system ['svn', 'commit', name, '--message', @message,
