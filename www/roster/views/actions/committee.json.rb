@@ -1,7 +1,12 @@
 if env.password
-  people = @ids.split(',').map {|id| ASF::Person.find(id)}
-  pmc = ASF::Committee.find(@project)
+  people = @ids.split(',').map {|id| ASF::Person[id]}
+
+  pmc = ASF::Committee[@project]
   group = ASF::Group.find(@project) if @targets.include? 'commit'
+
+  # validate arguments
+  raise ArgumentError.new("ids=#{@ids}") if people.any? {|person| person.nil?}
+  raise ArgumentError.new("project=#{@project}") unless pmc
 
   # update LDAP
   if @targets.include? 'pmc' or @targets.include? 'commit'

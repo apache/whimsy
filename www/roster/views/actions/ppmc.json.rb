@@ -1,16 +1,17 @@
 if env.password
   people = @ids.split(',').map {|id| ASF::Person[id]}
 
-  # validate ids
-  raise ArgumentError.new("ids=#{@ids}") if people.any? {|person| person.nil?}
-
   # if target is ONLY icommit, use incubator in the email message, etc.
   # Otherwise, use the project (podling).
   if @targets == ['icommit']
     project = ASF::Project.find('incubator')
   else
-    project = ASF::Project.find(@project)
+    project = ASF::Project[@project]
   end
+
+  # validate arguments
+  raise ArgumentError.new("ids=#{@ids}") if people.any? {|person| person.nil?}
+  raise ArgumentError.new("project=#{@project}") unless project
 
   # update LDAP
   if %w(ppmc committer icommit).any? {|target| @targets.include? target}
