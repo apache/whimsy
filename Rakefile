@@ -120,6 +120,57 @@ namespace :svn do
       end
     end
   end
+
+  task :check => :config do
+    # check if the svn repositories have been set up OK
+    repository = YAML.load_file(File.expand_path('../repository.yml', __FILE__))
+    errors = 0
+    svn = ASF::Config.get(:svn)
+    if svn.instance_of? String and svn.end_with? '/*'
+      Dir.chdir File.dirname(svn) do
+        (repository[:svn] || {}).each do |name, description|
+          puts
+          puts File.join(Dir.pwd, name)
+          if Dir.exist? name
+            Dir.chdir(name) {
+              outerr = nil
+                begin
+                  outerr, status = Open3.capture2e('svn info --show-item url')
+                  if status.success?
+                    outerr.chomp!
+                    if outerr.end_with? description['url']
+                       puts "#{outerr} - OK"
+                       break
+                    else
+                       puts "#{outerr} - Error!\nExpected URL to end with:    #{description['url']}"
+                       errors += 1
+                    end
+                    break
+                  end
+                rescue => e
+                  outerr = e.inspect
+                  errors += 1
+                  break
+                end
+              puts outerr # show what happened last
+            }
+          else
+            require 'uri'
+            base = URI.parse('https://svn.apache.org/repos/')
+            puts "Directory not found - expecting checkout of #{(base + description['url']).to_s}"
+            errors += 1
+          end
+        end
+      end
+      puts
+      if errors > 0
+        puts "** Found #{errors} error(s) **"
+      else
+        puts "** No errors found **"
+      end
+    end
+  end
+
 end
 
 namespace :git do
