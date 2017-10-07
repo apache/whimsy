@@ -92,7 +92,7 @@ class Wunderbar::HtmlMarkup
         _ ' | '
         _a 'Privacy Policy', href: 'https://www.apache.org/foundation/policies/privacy'
         _br
-        _{'Apache&reg;, the names of Apache projects, and the multicolor feather logo are '}
+        _{"Apache\u00AE, the names of Apache projects, and the multicolor feather logo are "}
         _a 'registered trademarks or trademarks', href: 'https://www.apache.org/foundation/marks/list/'
         _ ' of the Apache Software Foundation in the United States and/or other countries.'
       end
