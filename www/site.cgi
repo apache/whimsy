@@ -13,7 +13,7 @@ require 'json'
 require 'net/http'
 require 'time' # for httpdate
 
-PAGETITLE = "Apache TLP Website Link Checks" # Wvisible:sites,brand
+PAGETITLE = "Apache TLP Website Checks" # Wvisible:sites,brand
 cols = %w( uri events foundation image license sponsorship security thanks copyright trademarks )
 CHECKS = { 
   'uri'         => %r{https?://[^.]+\.apache\.org},
@@ -193,7 +193,7 @@ _html do
   _body? do
     _whimsy_body(
     title: PAGETITLE,
-    subtitle: 'Checking TLP Websites For Required Links',
+    subtitle: 'Checking TLP Websites For required content',
     related: {
       "/committers/tools" => "Whimsy Tool Listing",
       "https://www.apache.org/foundation/marks/pmcs#navigation" => "Required PMC Links Policy",

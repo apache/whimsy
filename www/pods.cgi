@@ -205,7 +205,7 @@ _html do
   _body? do
     _whimsy_body(
     title: PAGETITLE,
-    subtitle: 'Checking TLP Websites For Required Links',
+    subtitle: 'Checking Podling Websites For required content',
     related: {
       "/committers/tools" => "Whimsy Tool Listing",
       "https://www.apache.org/foundation/marks/pmcs#navigation" => "Required PMC Links Policy",
