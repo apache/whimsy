@@ -41,7 +41,7 @@ end
 class CandidateAction < Vue
   def render
     _input type: 'checkbox', checked: !@@action.complete,
-      onChange:-> {@@action.complete = !@@action.complete}
+      onClick:-> {@@action.complete = !@@action.complete}
     _span " "
     _span @@action.owner
     _span ": "

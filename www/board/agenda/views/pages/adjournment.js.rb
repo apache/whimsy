@@ -151,7 +151,7 @@ class PMCActions < Vue
     _ul.checklist @resolutions do |item|
       _li do
         _input type: 'checkbox', checked: item.checked,
-          onChange:-> { item.checked = !item.checked; self.refresh() }
+          onClick:-> { item.checked = !item.checked; self.refresh() }
 
         _Link text: item.title, href: Todos.link(item.title)
 
@@ -276,7 +276,7 @@ class TodoRemove < Vue
     _ul.checklist @people do |person|
       _li do
         _input type: 'checkbox', checked: @checked[person.id],
-          onChange:-> {
+          onClick:-> {
             @checked[person.id] = !@checked[person.id]
             self.refresh()
           }

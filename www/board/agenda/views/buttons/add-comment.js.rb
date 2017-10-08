@@ -45,7 +45,7 @@ class AddComment < Vue
 
       if Server.role == :director and @@item.attach =~ /^[A-Z]+$/
         _input.flag! type: 'checkbox', label: 'item requires discussion or follow up',
-          onChange: self.flag, checked: @checked
+          onClick: self.flag, checked: @checked
       end
 
       # footer buttons
