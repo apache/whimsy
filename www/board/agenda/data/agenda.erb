@@ -69,7 +69,7 @@
 <% @minutes.zip('A'..'Z').each do |date, index| %>
     <%= index %>. The meeting of <%= date.strftime('%B %d, %Y') %>
 
-       See: board_minutes_<%= date.strftime('%y_%m_%d') %>.txt
+       See: board_minutes_<%= date.strftime('%Y_%m_%d') %>.txt
 
        [ approved:
          comments:
