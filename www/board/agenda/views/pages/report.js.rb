@@ -24,7 +24,7 @@ class Report < Vue
 
         _pre.report do
           if @@item.text
-            _Text raw: @@item.text, filters: @filters
+            _Text raw: @@item.text, filters: filters
           elsif @@item.missing
             _p {_em 'Missing'} 
           else
@@ -38,9 +38,9 @@ class Report < Vue
           end
         end
 
-        if @@item.minutes
+        if minutes
           _pre.comment do
-            _Text raw: @@item.minutes, filters: [hotlink]
+            _Text raw: minutes, filters: [hotlink]
           end
         end
       end
@@ -56,17 +56,21 @@ class Report < Vue
     end
   end
 
-  def created()
-    # determine what text filters to run
-    @filters = [self.linebreak, self.todo, hotlink, self.privates, self.jira]
-    @filters = [self.localtime, hotlink] if @@item.title == 'Call to order'
-    @filters << self.names if @@item.people
-    @filters << self.president_attachments if @@item.title == 'President'
+  # determine what text filters to run
+  def filters
+    list = [self.linebreak, self.todo, hotlink, self.privates, self.jira]
+    list = [self.localtime, hotlink] if @@item.title == 'Call to order'
+    list << self.names if @@item.people
+    list << self.president_attachments if @@item.title == 'President'
 
-    # special processing for Minutes from previous meetings
+    list = [self.linkMinutes] if @@item.attach =~ /^3[A-Z]$/
+
+    list
+  end
+
+  # special processing for Minutes from previous meetings
+  def minutes
     if @@item.attach =~ /^3[A-Z]$/
-      @filters = [self.linkMinutes]
-
       # if draft is available, fetch minutes for display
       date = @@item.text[/board_minutes_(\d+_\d+_\d+)\.txt/, 1]
 
@@ -74,12 +78,14 @@ class Report < Vue
         date and not defined? @@item.minutes and defined? XMLHttpRequest and
         Server.drafts.include? "board_minutes_#{date}.txt"
       then
-        @@item.minutes = ''
+        Vue.set @@item, 'minutes', ''
         retrieve "minutes/#{date}", :text do |minutes|
           @@item.minutes = minutes
         end
       end
     end
+
+    @@item.minutes
   end
 
   #

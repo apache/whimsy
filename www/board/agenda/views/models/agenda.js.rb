@@ -5,7 +5,7 @@
 #
 
 class Agenda
-  @@index = []
+  Vue.util.defineReactive @@index, []
   @@etag = nil
   @@digest = nil
 
