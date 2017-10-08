@@ -14,7 +14,7 @@ class Agenda
   def self.load(list, digest)
     return unless list
     @@digest = digest
-    @@index.clear()
+    @@index = []
     prev = nil
 
     list.each do |item|
