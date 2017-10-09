@@ -5,7 +5,10 @@ if env.password
   group = ASF::Group.find(@project) if @targets.include? 'commit'
 
   # validate arguments
-  raise ArgumentError.new("ids=#{@ids}") if people.any? {|person| person.nil?}
+  if @action != 'remove' and people.any? {|person| person.nil?}
+    raise ArgumentError.new("ids=#{@ids}") 
+  end
+
   raise ArgumentError.new("project=#{@project}") unless pmc
 
   # update LDAP

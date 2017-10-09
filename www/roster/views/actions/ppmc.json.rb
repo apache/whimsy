@@ -10,7 +10,10 @@ if env.password
   end
 
   # validate arguments
-  raise ArgumentError.new("ids=#{@ids}") if people.any? {|person| person.nil?}
+  if @action != 'remove' and people.any? {|person| person.nil?}
+    raise ArgumentError.new("ids=#{@ids}") 
+  end
+
   raise ArgumentError.new("project=#{@project}") unless project
 
   # update LDAP
