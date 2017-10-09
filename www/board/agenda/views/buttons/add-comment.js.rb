@@ -44,7 +44,8 @@ class AddComment < Vue
         placeholder: 'comment', rows: 5, disabled: @disabled
 
       if Server.role == :director and @@item.attach =~ /^[A-Z]+$/
-        _input.flag! type: 'checkbox', label: 'item requires discussion or follow up',
+        _input.flag! type: 'checkbox', 
+          label: 'item requires discussion or follow up',
           onClick: self.flag, checked: @checked
       end
 

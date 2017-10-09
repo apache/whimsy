@@ -164,6 +164,10 @@ class Agenda
     end
   end
 
+  def rejected
+    Minutes.rejected and Minutes.rejected.include?(@title)
+  end
+
   # compute href by taking the title and replacing all non alphanumeric
   # characters with dashes
   def href
@@ -192,7 +196,7 @@ class Agenda
 
   # retrieve the pending comment (if any) associated with this agenda item
   def pending
-    Pending.comments[@attach]
+    Pending.comments and Pending.comments[@attach]
   end
 
   # retrieve the action items associated with this agenda item
@@ -456,7 +460,7 @@ class Agenda
 
   # determine if this item is flagged, accounting for pending actions
   def flagged
-    return true if Pending.flagged.include? @attach
+    return true if Pending.flagged and Pending.flagged.include? @attach
     return false unless @flagged_by
     return false if @flagged_by.length == 1 and 
       @flagged_by.first == Server.initials and 
@@ -470,7 +474,7 @@ class Agenda
       'blank'
     elsif @warnings
       'missing'
-    elsif self.missing
+    elsif self.missing or self.rejected
       'missing'
     elsif @approved
       if self.flagged

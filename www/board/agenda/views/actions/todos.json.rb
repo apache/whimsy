@@ -74,8 +74,9 @@ if (@change || @establish || @terminate) and env.password
       missing = parsed_agenda.
         select {|item| item[:attach] =~ /^[A-Z]+$/ and item['missing']}.
         map {|item| item['title']}
+      rejected = minutes[:rejected] || []
       contents = ASF::Committee.update_next_month(contents, 
-        Date.parse(date.gsub('_', '-')), missing, 
+        Date.parse(date.gsub('_', '-')), missing, rejected,
         Array(@establish).map {|resolution| resolution['name']})
     end
 

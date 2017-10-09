@@ -110,6 +110,13 @@ else
   minutes.delete 'complete' if @title == 'Adjournment'
 end
 
+if @reject
+  minutes[:rejected] ||= []
+  minutes[:rejected] << @title unless minutes[:rejected].include? @title
+elsif minutes[:rejected]
+  minutes[:rejected].delete @title
+end
+
 File.write minutes_file, YAML.dump(minutes)
 
 minutes

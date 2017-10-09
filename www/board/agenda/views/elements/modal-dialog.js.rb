@@ -35,7 +35,7 @@ class ModalDialog < Vue
           if slot.data.attrs.type == 'checkbox'
             props.class = ['checkbox']
             label = Vue.createElement('label', props, [slot,
-              slot.data.attrs.label])
+              Vue.createElement('span', slot.data.attrs.label)])
             slot.data.attrs.delete 'label'
             slot = nil
           else

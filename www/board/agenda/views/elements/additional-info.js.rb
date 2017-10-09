@@ -16,6 +16,10 @@
 class AdditionalInfo < Vue
   def render
     # special notes
+    if @@item.rejected
+      _p.rejected 'Report was not accepted'
+    end
+
     if @@item.notes
       _p @@item.notes, 
         class: ('notes' unless @@item.notes =~ /^new, monthly through/)

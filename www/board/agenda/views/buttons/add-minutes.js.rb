@@ -44,6 +44,12 @@ class AddMinutes < Vue
         _textarea.col_md_7 value: @ai_text, rows: 1, cols: 40, tabIndex: 2
       end
 
+      if @@item.attach =~ /^[A-Z]+$/
+        _input.flag! type: 'checkbox', 
+          label: 'report was not accepted',
+          onClick: self.reject, checked: @checked
+      end
+
       # variable number of buttons
       _button.btn_default 'Cancel', type: 'button', data_dismiss: 'modal',
         onClick:-> {@draft = @base}
@@ -69,6 +75,10 @@ class AddMinutes < Vue
 
   # autofocus on minute text
   def mounted()
+    jQuery('#minute-form').on 'show.bs.modal' do
+      self.setup(@@item)
+    end
+
     jQuery('#minute-form').on 'shown.bs.modal' do
       document.getElementById("minute-text").focus()
     end
@@ -90,6 +100,7 @@ class AddMinutes < Vue
     @draft = draft
     @ai_owner = item.shepherd
     @indent = (@@item.attach =~ /^\w+$/ ? 8 : 4)
+    @checked = @@item.rejected
   end
 
   # add an additional AI to the draft minutes for this item
@@ -130,7 +141,8 @@ class AddMinutes < Vue
     data = {
       agenda: Agenda.file,
       title: @@item.title,
-      text: text
+      text: text,
+      reject: @checked
     }
 
     @disabled = true
@@ -140,6 +152,21 @@ class AddMinutes < Vue
       @disabled = false
       jQuery('#minute-form').modal(:hide)
       document.body.classList.remove('modal-open')
+    end
+  end
+
+  def reject(event)
+    @checked = ! @checked
+
+    data = {
+      agenda: Agenda.file,
+      title: @@item.title,
+      text: @base,
+      reject: @checked
+    }
+
+    post 'minute', data do |minutes|
+      Minutes.load minutes
     end
   end
 end

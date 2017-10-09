@@ -38,6 +38,10 @@ class Minutes
     @@list.attendance
   end
 
+  def self.rejected
+    @@list.rejected
+  end
+
   # return a list of actual or expected attendee names
   def self.attendee_names
     names = []

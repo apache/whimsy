@@ -13,36 +13,37 @@ class Pending
   end
 
   def self.count
+    return 0 unless Server.pending
     self.comments.keys().length + 
-      self.approved.keys().length +
-      self.unapproved.keys().length +
-      self.flagged.keys().length +
-      self.unflagged.keys().length +
+      self.approved.length +
+      self.unapproved.length +
+      self.flagged.length +
+      self.unflagged.length +
       self.status.keys().length
   end
 
   def self.comments
-    Server.pending ? Server.pending.comments : []
+    (Server.pending && Server.pending.comments) || {}
   end
 
   def self.approved
-    Server.pending.approved
+    Server.pending.approved || []
   end
 
   def self.unapproved
-    Server.pending.unapproved
+    Server.pending.unapproved || []
   end
 
   def self.flagged
-    Server.pending.flagged
+    Server.pending.flagged || []
   end
 
   def self.unflagged
-    Server.pending.unflagged
+    Server.pending.unflagged || []
   end
 
   def self.seen
-    Server.pending.seen
+    Server.pending.seen || {}
   end
 
   def self.initials
