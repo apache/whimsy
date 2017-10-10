@@ -32,6 +32,9 @@ class Router
     elsif path == 'flagged'
       item = {view: Flagged, title: 'Flagged reports'}
 
+    elsif path == 'rejected'
+      item = {view: Rejected, title: 'Reports which were NOT accepted'}
+
     elsif path == 'missing'
       item = {view: Missing, title: 'Missing reports',
         buttons: [{form: InitialReminder}, {button: FinalReminder}]}

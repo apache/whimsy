@@ -374,6 +374,14 @@ class Agenda
     results <<  {color: 'missing', count: count, href: 'missing',
       text: 'missing reports'}
 
+    # rejected reports
+    count = 0
+    Agenda.index.each {|item| count += 1 if item.rejected}
+    if Minutes.started or count > 0
+      results <<  {color: 'missing', count: count, href: 'rejected',
+        text: 'not accepted'}
+    end
+
     return results
   end
 
