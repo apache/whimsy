@@ -19,8 +19,7 @@ class Main < Vue
 
       view = nil
       _main do
-        Vue.createElement(@item.view, props: {item: @item,
-         ref: proc {|component| Main.view=component}})
+        Vue.createElement(@item.view, props: {item: @item}, ref: 'view')
       end
 
       _Footer item: @item, buttons: @buttons, options: @options
@@ -86,9 +85,10 @@ class Main < Vue
 
   # additional client side initialization
   def mounted()
-    # export navigate and refresh methods
+    # export navigate and refresh methods as well as view
     Main.navigate = self.navigate
     Main.refresh  = self.refresh
+    Main.view  = $refs.view
 
     # store initial state in history, taking care not to overwrite
     # history set by the Search component.
