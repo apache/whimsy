@@ -366,7 +366,7 @@ get '/new' do
     reject {|date| date >= @meeting.to_date}.
     reject {|date| draft[date.strftime('%B %d, %Y')] == 'approved'}
 
-  template = File.read('data/agenda.erb')
+  template = File.read('templates/agenda.erb')
   @disabled = dir("board_agenda_*.txt").
     include? @meeting.strftime("board_agenda_%Y_%m_%d.txt")
   @agenda = Erubis::Eruby.new(template).result(binding)

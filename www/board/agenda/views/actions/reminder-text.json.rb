@@ -3,7 +3,7 @@ require 'active_support/core_ext/integer/inflections.rb'
 
 # read template for the reminders
 @reminder.untaint if @reminder =~ /^reminder\d$/
-template = File.read("data/#@reminder.txt")
+template = File.read("templates/#@reminder.txt")
 
 # find the latest agenda
 agenda = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort.last.untaint
