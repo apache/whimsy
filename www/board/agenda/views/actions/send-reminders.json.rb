@@ -29,7 +29,6 @@ Agenda.parse(@agenda, :full).each do |item|
     next
   end
 
-
   # substitute [whoTo] values
   if item['to'] == 'president'
     reminder = @message.gsub('[whoTo]', 'operations@apache.org')
@@ -44,19 +43,24 @@ Agenda.parse(@agenda, :full).each do |item|
   reminder.gsub! '[project]', item['title'].gsub(/\W/, '-')
   subject = @subject.gsub('[project]', item['title']).untaint
 
+  # cc list
+  cclist = []
+  if item['mail_list']
+    if @selection == 'inactive'
+      cclist << "dev@#{item['mail_list']}.apache.org".untaint
+    elsif item[:attach] =~ /^[A-Z]+/
+      cclist << "private@#{item['mail_list']}.apache.org".untaint
+    else
+      cclist << "#{item['mail_list']}@apache.org".untaint
+    end
+  end
+
   # construct email
   mail = Mail.new do
     from from
     to "#{item['owner']} <#{item['chair_email']}>".untaint
+    cc cclist unless cclist.empty?
     subject subject
-
-    if item['mail_list']
-      if item[:attach] =~ /^[A-Z]+/
-        cc "private@#{item['mail_list']}.apache.org".untaint
-      else
-        cc "#{item['mail_list']}@apache.org".untaint
-      end
-    end
 
     body reminder.untaint
   end

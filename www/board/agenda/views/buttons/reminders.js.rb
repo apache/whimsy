@@ -89,6 +89,7 @@ class InitialReminder < Vue
       agenda: Agenda.file,
       subject: @subject,
       message: @message,
+      selection: @selection,
       pmcs: []
     }
 
