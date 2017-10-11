@@ -30,9 +30,11 @@ class Email < Vue
       subject = "Missing #{@@item.title} Board Report"
       body = "Dear #{@@item.owner},\n\nThe board report for " +
         "#{@@item.title} has not yet been submitted for this " +
-        "month's board meeting. If you're unable to get " +
+        "month's board meeting. If you or another member of the PMC are unable to get "+
         "it in by twenty-four hours before meeting time, " +
-        "please plan to report next month.\n\nThanks,\n\n " +
+        "please let the board know, and plan to report next month.\n\n" + 
+        '  https://www.apache.org/foundation/board/reporting#how' +
+        "\n\nThanks,\n\n " +
         "#{Server.username}\n\n" +
         "(on behalf of the ASF Board)"
     else
