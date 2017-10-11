@@ -290,7 +290,7 @@ get '/json/potential-actions' do
   _json :'actions/potential-actions'
 end
 
-get %r{/json/(reminder[12])} do |reminder|
+get %r{/json/(reminder[12]|non-responsive)} do |reminder|
   @reminder = reminder
   _json :'actions/reminder-text'
 end

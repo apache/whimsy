@@ -15,6 +15,7 @@ class InitialReminder < Vue
     {
       text: 'send initial reminders',
       class: 'btn_primary',
+      disabled: true,
       data_toggle: 'modal',
       data_target: '#reminder-form'
     }
@@ -22,7 +23,9 @@ class InitialReminder < Vue
 
   # fetch email template
   def loadText(event)
-    if event.target.textContent == 'send initial reminders'
+    if event.target.textContent.include? 'non-responsive'
+      reminder = 'non-responsive'
+    elsif event.target.textContent.include? 'initial'
       reminder = 'reminder1'
     else
       reminder = 'reminder2'
@@ -32,14 +35,21 @@ class InitialReminder < Vue
       @subject = response.subject
       @message = response.body
       @disabled = false
+
+      if reminder == 'non-responsive'
+        @selection = 'inactive'
+      else
+        @selection = 'active'
+      end
     end
   end
 
   # wire up event handlers
   def mounted()
     Vue.nextTick do
-      Array(document.querySelectorAll('.btn-primary')).each do |button|
+      Array(document.querySelectorAll('button')).each do |button|
         if button.getAttribute('data-target') == '#reminder-form'
+          button.disabled = false
           button.addEventListener :click, self.loadText
         end
       end
@@ -69,6 +79,7 @@ class InitialReminder < Vue
 
   # on click, disable the input fields and buttons and submit
   def click(event)
+    event.target.disabled = true
     @disabled = true
     dryrun = (event.target.textContent == 'Dry Run')
 
@@ -83,7 +94,9 @@ class InitialReminder < Vue
 
     # collect up a list of PMCs that are checked
     Array(document.querySelectorAll('input[type=checkbox]')).each do |input|
-      data.pmcs << input.value if input.checked
+      if input.checked and input.classList.contains(@selection)
+        data.pmcs << input.value
+      end
     end
 
     post 'send-reminders', data do |response|
@@ -100,6 +113,7 @@ class InitialReminder < Vue
         alert("No reminders were sent")
       end
 
+      event.target.disabled = true
       @disabled = false
       jQuery('#reminder-form').modal(:hide)
       document.body.classList.remove('modal-open')
@@ -112,7 +126,17 @@ end
 #
 class FinalReminder < Vue
   def render
-    _button.btn.btn_primary 'send final reminders', 
+    _button.btn.btn_primary 'send final reminders', disabled: true,
+      data_toggle: 'modal', data_target: '#reminder-form'
+  end
+end
+
+#
+# A button for warning non-responsive PMCs
+#
+class ProdReminder < Vue
+  def render
+    _button.btn.btn_danger 'prod non-responsive PMCs', disabled: true,
       data_toggle: 'modal', data_target: '#reminder-form'
   end
 end

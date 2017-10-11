@@ -3,6 +3,7 @@ require 'active_support/core_ext/integer/inflections.rb'
 
 # read template for the reminders
 @reminder.untaint if @reminder =~ /^reminder\d$/
+@reminder.untaint if @reminder =~ /^non-responsive$/
 template = File.read("templates/#@reminder.txt")
 
 # find the latest agenda

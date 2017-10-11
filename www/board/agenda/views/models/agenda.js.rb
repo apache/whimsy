@@ -164,8 +164,15 @@ class Agenda
     end
   end
 
+  # report was marked as NOT accepted during the meeting
   def rejected
     Minutes.rejected and Minutes.rejected.include?(@title)
+  end
+
+  # PMC has missed two consecutive months
+  def nonresponsive
+    @notes and @notes.include? 'missing' and 
+      @notes.sub(/^.*missing/, '').split(',').length >= 2
   end
 
   # compute href by taking the title and replacing all non alphanumeric

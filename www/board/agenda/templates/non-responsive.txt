@@ -1,0 +1,43 @@
+Subject: ASF Board Report for [project] - Repeated Reminder for [month] [year]
+
+Dear [project] community,
+
+In the governance model at the ASF the board delegates responsibility for
+managing projects to PMCs. To enable to board to provide oversight across the
+foundation, the PMCs are tasked with providing the board with a quarterly
+report on the health of the project. The board has noticed that the reports
+for [project] have been missed for a number of months.
+
+The reports to the board are normally written by the PMC chair but all PMC
+members have an individual responsibility to ensure that a report is
+submitted. If the PMC chair is not available then any PMC member can submit
+the report. If you need help with this process, please reach out to
+board@apache.org
+
+Please ensure that a report for [project] is submitted to the board for the
+next meeting.
+
+If the PMC chair is not going to be available for an extended period of time
+it may make sense to rotate the PMC chair. Rotating the PMC chair does not
+mean the current chair has failed. People's situations and interests change,
+and rotation is good as it allows more people to become familiar with that
+role. Again, if assistance is required with this process, please feel free to
+reach out to board@apache.org
+
+As projects mature, they will naturally reach a point where activity reduces
+to a level that the project is no longer sustainable. At Apache, projects
+reach this stage when there are no longer 3 active PMC members providing
+oversight. Projects that reach this stage are placed in the attic[1].  If
+[project] has reached this point, please reach out to the Attic project to
+arrange transfer. On the other hand, if your project is mostly dormant but
+still has at least three active PMC members it can stay in that state for as
+long as needed. If your project is in such a state, please mention that in
+your report and verify the PMC's state at regular intervals.
+
+Finally, if you have any questions please feel free to reach out to
+board@apache.org.
+
+Thanks,
+The ASF Board
+
+[1] (http://attic.apache.org/

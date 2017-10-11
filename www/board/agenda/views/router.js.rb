@@ -10,7 +10,6 @@ class Router
   # route request based on path and query from the window location (URL)
   def self.route(path, query)
     options = {}
-    buttons = []
 
     if not path or path == '.'
       item = Agenda
@@ -36,8 +35,13 @@ class Router
       item = {view: Rejected, title: 'Reports which were NOT accepted'}
 
     elsif path == 'missing'
-      item = {view: Missing, title: 'Missing reports',
-        buttons: [{form: InitialReminder}, {button: FinalReminder}]}
+      buttons = [{form: InitialReminder}, {button: FinalReminder}]
+
+      if Agenda.index.any? {|item| item.nonresponsive}
+        buttons << {form: ProdReminder}
+      end
+
+      item = {view: Missing, title: 'Missing reports', buttons: buttons}
 
     elsif path =~ %r{^flagged/[-\w]+$}
       item = Agenda.find(path[8..-1])
