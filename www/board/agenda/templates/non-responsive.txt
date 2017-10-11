@@ -3,8 +3,8 @@ Subject: ASF Board Report for [project] - Repeated Reminder for [month] [year]
 Dear [project] community,
 
 In the governance model at the ASF the board delegates responsibility for
-managing projects to PMCs. To enable to board to provide oversight across the
-foundation, the PMCs are tasked with providing the board with a quarterly
+managing projects to PMCs. To enable the board to provide oversight across the
+foundation, PMCs are tasked with providing the board with a quarterly
 report on the health of the project. The board has noticed that the reports
 for [project] have been missed for a number of months.
 
