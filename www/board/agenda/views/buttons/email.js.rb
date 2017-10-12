@@ -28,15 +28,26 @@ class Email < Vue
 
     if @@item.missing
       subject = "Missing #{@@item.title} Board Report"
-      body = "Dear #{@@item.owner},\n\nThe board report for " +
-        "#{@@item.title} has not yet been submitted for this " +
-        "month's board meeting. If you or another member of the PMC are unable to get "+
-        "it in by twenty-four hours before meeting time, " +
-        "please let the board know, and plan to report next month.\n\n" + 
-        '  https://www.apache.org/foundation/board/reporting#how' +
-        "\n\nThanks,\n\n " +
-        "#{Server.username}\n\n" +
-        "(on behalf of the ASF Board)"
+      body = %{
+        Dear #{@@item.owner},
+
+        The board report for #{@@item.title} has not yet been submitted for
+        this month's board meeting. If you or another member of the PMC are
+        unable to get it in by twenty-four hours before meeting time, please
+        let the board know, and plan to report next month.
+
+          https://www.apache.org/foundation/board/reporting#how
+
+        Thanks,
+
+        #{Server.username}
+
+        (on behalf of the ASF Board)
+      }
+
+      # strip indentation; concatenate lines within a paragraph
+      indent = body[/^\s*/]
+      body = body.strip().gsub(/#{indent}/, "\n").gsub(/(\S)\n(\S)/, "$1 $2")
     else
       subject = "#{@@item.title} Board Report"
       body = @@item.comments
