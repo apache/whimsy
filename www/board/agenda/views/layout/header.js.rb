@@ -120,8 +120,14 @@ class Header < Vue
     end
   end
 
-  # update title to match the item title whenever page changes
+  # update title to match the item title
   def mounted()
+    title = document.getElementsByTagName('title')[0]
+    title.textContent = @@item.title
+  end
+
+  # update title to match the item title whenever page changes
+  def updated()
     title = document.getElementsByTagName('title')[0]
     if title.textContent != @@item.title
       title.textContent = @@item.title
