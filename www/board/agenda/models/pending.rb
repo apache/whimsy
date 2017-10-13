@@ -8,7 +8,7 @@ class Pending
   def self.get(user, agenda=nil)
 
     file = work_file(user)
-    response = (File.exist?(file) ? YAML.load_file(file) : {})
+    response = ((file and File.exist?(file)) ? YAML.load_file(file) : {})
 
     # reset pending when agenda changes
     if agenda and agenda > response['agenda'].to_s
