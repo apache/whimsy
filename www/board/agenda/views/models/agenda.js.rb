@@ -83,7 +83,7 @@ class Agenda
 
         # perform fetch
         fetch(request).then do |response|
-          if response
+          if response and response.ok
             loaded = true
 
             # load response into the agenda
