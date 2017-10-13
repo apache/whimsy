@@ -213,6 +213,7 @@ _html do
     },
     helpblock: -> {
       _p do
+        _div.bg_danger 'NOTE: most podlings may not pass these checks yet during incubation - but they are expected to pass them before graduation.'
         _ 'This script periodically crawls all Apache podling websites to check them for a few specific links or text blocks that all podlings are expected to have.'
         _ 'The checks (currently in beta) include verifying that all '
         _a 'required links', href: 'https://www.apache.org/foundation/marks/pmcs#navigation'
