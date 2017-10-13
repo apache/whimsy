@@ -120,20 +120,6 @@ class Header < Vue
     end
   end
 
-  # set initial title to match the item title
-  def mounted()
-    title = document.getElementsByTagName('title')[0]
-    title.textContent = @@item.title
-  end
-
-  # update title to match the item title whenever page changes
-  def beforeUpdate()
-    title = document.getElementsByTagName('title')[0]
-    if title.textContent != @@item.title
-      title.textContent = @@item.title
-    end
-  end
-
   # toggle info dropdown
   def toggleInfo()
     @infodropdown = (@infodropdown ? nil : 'open')

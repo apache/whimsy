@@ -62,6 +62,9 @@ class Main < Vue
 
     Main.view = nil unless Main.item and Main.item.view == route.item.view
     Main.item = route.item
+
+    # update title to match the item title whenever page changes
+    document.getElementsByTagName('title')[0].textContent = route.item.title
   end
 
   # navigation method that updates history (back button) information
