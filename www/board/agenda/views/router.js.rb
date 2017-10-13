@@ -109,7 +109,12 @@ class Router
 
     # provide defaults for required properties
     item.color ||= 'blank'
-    item.title ||= item.view.displayName
+
+    if not item.title
+      item.title = item.view.options.name.
+        gsub(/(^|-)\w/) {|c| return c.upcase()}.
+        gsub('-', ' ').strip()
+    end
 
     # determine what buttons are required, merging defaults, form provided
     # overrides, and any overrides provided by the agenda item itself
