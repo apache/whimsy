@@ -8,6 +8,7 @@ class Agenda
   Vue.util.defineReactive @@index, []
   @@etag = nil
   @@digest = nil
+  Vue.util.defineReactive @@date, ''
 
   # (re)-load an agenda, creating instances for each item, and linking
   # each instance to their next and previous items.

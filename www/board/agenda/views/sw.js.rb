@@ -1,10 +1,14 @@
 #
 # A very simple service worker
 #
-#   *) Return back cached bootstrap page instead of fetching agenda pages
-#      from the network.  Bootstrap will construct page from cached
-#      agenda.json, as well as update the cache.
+#   *) Replace calls to fetch an agenda page with calls to fetch a bootstrap
+#      page.   This page will reconstruct the page requested using cached
+#      data and then request fresh data.  If the server doesn't respond
+#      with 0.5 seconds or fails, return a cached version of the bootstrap
+#      page.
 # 
+
+timeout = 500
 
 # install immediately
 self.addEventListener :install do
@@ -24,11 +28,44 @@ self.addEventListener :fetch do |event|
 
   if url =~ %r{^\d\d\d\d-\d\d-\d\d/} and event.request.method == 'GET'
     return if url.end_with? '/bootstrap.html'
+
     event.respondWith(
-      caches.open('board/agenda').then do |cache|
+      Promise.new do |fulfill, reject|
         date =  url.split('/')[0]
-        return cache.match("#{date}/bootstrap.html").then do |response|
-          return response || fetch(event.request.url, credentials: 'include')
+        bootstrap = "#{date}/bootstrap.html"
+        request = Request.new(bootstrap)
+        error = nil
+
+        caches.open('board/agenda').then do |cache|
+          # respond from cache if the server isn't fast enough
+          timeoutId = setTimeout timeout do
+            timeoutId = nil
+            cache.match(request).then do |response|
+              if response
+                fulfill response
+              else
+                fetch(event.request).then(fulfill, reject)
+              end
+            end
+          end
+
+          # fetch bootstrap.html
+          fetch(request).then {|response|
+            # cache the response if OK, fulfull the response if not timed out
+            if response.ok
+              cache.put(request, response.clone())
+              if timeoutId
+                clearTimeout timeoutId 
+                fulfill response
+              end
+            end
+          }.catch {|failure|
+            # fetch rejected before the timeout
+            if timeoutId
+              clearTimeout timeoutId 
+              reject failure 
+            end
+          }
         end
       end
     )
