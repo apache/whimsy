@@ -89,6 +89,14 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/followup\.json} do |date|
   _json followup
 end
 
+# pending items
+get %r{/(\d\d\d\d-\d\d-\d\d)/pending\.json} do |date|
+  userid = env.user
+  pending = Pending.get(userid)
+  pending[:userid] = userid
+  _json pending
+end
+
 # all agenda pages
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   agenda = "board_agenda_#{date.gsub('-','_')}.txt"
@@ -176,7 +184,10 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
 
   if path == 'bootstrap.html'
-    @page[:parsed] = [{timestamp: @page[:parsed].first['timestamp']}]
+    @server[:userid] = nil unless env.password
+    @page[:parsed] = [
+      {title: 'Roll Call', timestamp: @page[:parsed].first['timestamp']}
+    ]
     @page[:digest] = nil
     @page[:etag] = nil
     @server[:session] = nil

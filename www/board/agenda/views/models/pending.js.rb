@@ -6,6 +6,18 @@
 class Pending
   Vue.util.defineReactive Server.pending, nil
 
+  # fetch pending from server (needed for ServiceWorkers)
+  def self.fetch()
+    fetch('pending.json').then do |response|
+      if response.ok
+        response.json().then do |json|
+          Pending.load(json)
+          Server.userid = json.userid if json and json.userid
+        end
+      end
+    end
+  end
+
   def self.load(value)
     Server.pending = value if value
     Main.refresh()

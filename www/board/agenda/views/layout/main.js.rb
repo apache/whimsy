@@ -43,6 +43,7 @@ class Main < Vue
       Server[prop] = @@server[prop]
     end
 
+    Pending.fetch() unless Server.userid
     Agenda.load(@@page.parsed, @@page.digest)
     Minutes.load(@@page.minutes)
 
@@ -60,11 +61,14 @@ class Main < Vue
     @buttons = route.buttons
     @options = route.options
 
-    Main.view = nil unless Main.item and Main.item.view == route.item.view
+    unless Main.item and route.item and Main.item.view == route.item.view
+      Main.view = nil
+    end
+
     Main.item = route.item
 
     # update title to match the item title whenever page changes
-    if defined? document
+    if defined? document and route.item
       document.getElementsByTagName('title')[0].textContent = route.item.title
     end
   end
@@ -125,6 +129,8 @@ class Main < Vue
     # avoid overlapping the header and footer areas
     def window.onresize()
       main = document.querySelector('main')
+      return unless main
+
       footer = document.querySelector('footer')
       header = document.querySelector('header')
       if 
