@@ -8,7 +8,7 @@ class Pending
 
   # fetch pending from server (needed for ServiceWorkers)
   def self.fetch()
-    fetch('pending.json').then do |response|
+    fetch('pending.json', credentials: 'include').then do |response|
       if response.ok
         response.json().then do |json|
           Pending.load(json)
