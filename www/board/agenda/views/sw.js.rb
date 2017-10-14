@@ -16,8 +16,9 @@ self.addEventListener :install do
 end
 
 # take over responsibility for existing clients
-self.addEventListener :activate do
-  return self.clients.claim();
+# https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
+self.addEventListener :activate do |event|
+  event.waitUntil self.clients.claim();
 end
 
 # respond with bootstrap fetch patch
