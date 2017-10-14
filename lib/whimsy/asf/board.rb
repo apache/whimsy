@@ -31,7 +31,7 @@ module ASF
       month = meeting.strftime('%B')
       ASF::Committee.load_committee_info
       ASF::Committee.pmcs.select do |pmc| 
-        pmc.report.split(', ').include? month or
+        pmc.report.split(', ').include? month or pmc.report == 'Every month' or
         pmc.report.start_with? 'Next month'
       end
     end
