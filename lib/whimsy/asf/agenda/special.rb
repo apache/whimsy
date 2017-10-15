@@ -53,7 +53,9 @@ class ASF::Board::Agenda
       }
 
       title_checks.each do |select, match|
-        if fulltitle =~ select and fulltitle !~ match
+        if fulltitle =~ select and fulltitle !~ match and
+          fulltitle !~ /Establish.*position/i
+       then
           attrs['warnings'] << 
             "Non-standard title wording: #{fulltitle.inspect}; " +
             "expected #{match.inspect}"
