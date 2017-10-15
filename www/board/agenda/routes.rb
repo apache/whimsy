@@ -191,7 +191,23 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     @page[:digest] = nil
     @page[:etag] = nil
     @server[:session] = nil
-    _html :bootstrap
+
+    # capture all the variable content
+    hash = {
+      cssmtime: @cssmtime, 
+      appmtime: @appmtime, 
+      scripts: Wunderbar::Asset.scripts.
+        map {|script| [script.path, script.mtime.to_i]}.sort,
+      stylesheets: Wunderbar::Asset.stylesheets.
+        map {|stylesheet| [stylesheet.path, stylesheet.mtime.to_i]}.sort,
+      server: @server, 
+      page: @page
+    }
+
+    # detect if there were any modifications
+    etag Digest::MD5.hexdigest(JSON.dump(hash))
+
+    erb :"bootstrap.html"
   else
     _html :main
   end

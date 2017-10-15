@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>ASF Board Agenda</title>
+    <base href="<%= @base %>"/>
+<% Wunderbar::Asset.stylesheets.each do |stylesheet| %>
+    <link rel="stylesheet" href="/assets/<%= stylesheet.path %>?<%= stylesheet.mtime.to_i %>"/>
+<% end %>
+    <link rel="stylesheet" href="../stylesheets/app.css?<%= @cssmtime %>"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+
+  <body>
+    <div id="main"></div>
+
+<% Wunderbar::Asset.scripts.each do |script| %>
+    <script src="/assets/<%= script.path %>?<%= script.mtime.to_i %>"></script>
+<% end %>
+    <script src="../app.js?<%= @appmtime %>" lang="text/javascript"></script>
+    <script lang="text/javascript">
+      new Vue({el: "#main", render: function($h) {
+        return $h("div", {attrs: {id: "main"}}, [$h(Main, {props:
+        <%= JSON.generate(server: @server, page: @page) %>})])}})
+    </script>
+  </body>
+</html>
+<%= Wunderbar::Asset.scripts.map {|script| script.mtime.to_i}.sort %>
