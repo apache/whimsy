@@ -4,25 +4,24 @@
 class Approve < Vue
   def initialize
     @disabled = false
-    @request = 'approve'
   end
 
   # render a single button
   def render
-    _button.btn.btn_primary @request, onClick: self.click, disabled: @disabled
+    _button.btn.btn_primary request, onClick: self.click, disabled: @disabled
   end
 
   # set request (and button text) depending on whether or not the
   # not this items was previously approved
-  def created()
+  def request
     if Pending.approved.include? @@item.attach
-      @request = 'unapprove'
+      'unapprove'
     elsif Pending.unapproved.include? @@item.attach
-      @request = 'approve'
+      'approve'
     elsif @@item.approved and @@item.approved.include? Server.initials
-      @request = 'unapprove'
+      'unapprove'
     else
-      @request = 'approve'
+      'approve'
     end
   end
 
@@ -32,7 +31,7 @@ class Approve < Vue
       agenda: Agenda.file,
       initials: Server.initials,
       attach: @@item.attach,
-      request: @request
+      request: request
     }
 
     @disabled = true
