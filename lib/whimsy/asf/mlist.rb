@@ -19,6 +19,12 @@ module ASF
       return list_filter('sub', 'apache.org', 'members'), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
+    # Return an array of private@pmc subscribers followed by the file update time
+    # By default does not return the standard archivers
+    def self.private_subscribers(pmc, archivers=false)
+      return list_filter('sub', "#{pmc}.apache.org", 'private', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+    end
+
     # return a hash of subscriptions for the list of emails provided
     # the following keys are added to the response hash:
     # :subtime - the timestamp when the data was last updated
@@ -96,11 +102,18 @@ module ASF
     # - type: 'mod' or 'sub'
     # - matchdom: must match the domain (e.g. 'httpd.apache.org')
     # - matchlist: must match the list (e.g. 'dev')
+    # - archivers: whether to include standard ASF archivers (default true)
     # The email addresses are returned as an array. May be empty.
     # If there is no match, then nil is returned
-    def self.list_filter(type, matchdom, matchlist)
+    def self.list_filter(type, matchdom, matchlist, archivers=true)
       list_parse(type) do |dom, list, emails|
-          return emails if matchdom == dom && matchlist == list 
+          if matchdom == dom && matchlist == list
+            if archivers
+              return emails
+            else
+              return (emails - ARCHIVERS) - ["#{list}-archive@#{dom}"]
+            end
+          end
       end
       return nil
     end
@@ -138,6 +151,9 @@ module ASF
       end
     end
 
+    # Standard ASF archivers
+    ARCHIVERS = ["archive-asf-private@cust-asf.ponee.io", "archive-asf-public@cust-asf.ponee.io", "archiver@mbox-vm.apache.org"]
+
     LIST_MODS = '/srv/subscriptions/list-mods'
 
     LIST_SUBS = '/srv/subscriptions/list-subs'
@@ -149,5 +165,6 @@ module ASF
   end
 end
 #if __FILE__ == $0
-#p  ASF::MLIST.list_moderators(ARGV.shift||'blur', true)
+#  p  ASF::MLIST.list_moderators(ARGV.shift||'blur', true)
+#  p  ASF::MLIST.private_subscribers(ARGV.shift||'whimsical')
 #end
