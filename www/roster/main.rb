@@ -214,6 +214,14 @@ get '/orgchart/' do
   _html :orgchart
 end
 
+get '/orgchart' do
+  redirect to('/orgchart/')
+end
+
+get '/orgchart.cgi' do
+  redirect to('/orgchart/')
+end
+
 # individual duties
 get '/orgchart/:name' do |name|
   person = ASF::Person.find(env.user)

@@ -15,9 +15,12 @@ _html do
       }
     ) do
       _whimsy_panel_table(
-        title: 'Corporate Officer Listing',
+        title: 'Corporate Officer Listing (Member-private version)',
         helpblock: -> {
-          _ 'This table lists all Corporate officers of the ASF, not including Apache TLP project Vice Presidents (except for a few special PMCs).'
+          _ 'This table lists all Corporate officers of the ASF, not including Apache TLP project Vice Presidents (except for a few special PMCs). '
+          _a '(View source data)', href: 'https://svn.apache.org/repos/private/foundation/officers/personnel-duties/'
+          _ ' A publicly viewable version (not including private data) of this is also '
+          _a 'posted here.', href: 'https://whimsy.apache.org/foundation/orgchart/'
         }
       ) do
         _table.table do
