@@ -31,6 +31,8 @@ namespace :server do
   task :test => :work do
     ENV['RACK_ENV']='test'
     ENV['USER']='test'
+    require 'bundler'
+    Bundler.require(:default, :test)
     require 'wunderbar/listen'
   end
 end
