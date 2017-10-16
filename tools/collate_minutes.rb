@@ -739,7 +739,7 @@ agenda.sort.each do |title, reports|
       x.h1 title
     end
     reports.reverse.each do |report|
-      x.h2 do
+      x.h2 id: report.meeting.gsub('_', '-') do
         if report.posted
           href = "http://apache.org/foundation/records/minutes/" +
             "#{report.meeting[0...4]}/board_minutes_#{report.meeting}.txt"

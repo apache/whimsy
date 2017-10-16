@@ -64,6 +64,10 @@ class AddComment < Vue
 
   # autofocus on comment text
   def mounted()
+    jQuery('#comment-form').on 'show.bs.modal' do
+      @base = @comment = @@item.pending
+    end
+
     jQuery('#comment-form').on 'shown.bs.modal' do
       document.getElementById("comment-text").focus()
     end
