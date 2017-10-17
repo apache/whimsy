@@ -22,6 +22,7 @@ task :auth do
 end
 
 task :server => [:bundle, :listen] do
+  ENV['DOCUMENT_ROOT'] = File.expand_path('../..', Dir.pwd)
   ENV['RACK_ENV']='development'
   at_exit {sleep 0.5}
   sh 'bundle exec passenger start'
@@ -29,6 +30,7 @@ end
 
 namespace :server do
   task :test => :work do
+    ENV['DOCUMENT_ROOT'] = File.expand_path('../..', Dir.pwd)
     ENV['RACK_ENV']='test'
     ENV['USER']='test'
     require 'bundler'
