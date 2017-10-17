@@ -152,7 +152,8 @@ module ASF
     end
 
     # Standard ASF archivers
-    ARCHIVERS = ["archive-asf-private@cust-asf.ponee.io", "archive-asf-public@cust-asf.ponee.io", "archiver@mbox-vm.apache.org"]
+    ARCHIVERS = ["archive-asf-private@cust-asf.ponee.io", "archive-asf-public@cust-asf.ponee.io", "archiver@mbox-vm.apache.org", "restricted@mbox-vm.apache.org"]
+    # TODO alias archivers: either add list or use RE to filter them
 
     LIST_MODS = '/srv/subscriptions/list-mods'
 
