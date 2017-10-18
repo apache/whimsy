@@ -414,7 +414,13 @@ post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
     `svn checkout --depth empty #{board} #{dir} #{auth}`
     File.write "#{dir}/#{agenda}", contents
     `svn add #{dir}/#{agenda}`
-    `svn commit #{dir}/#{agenda} --message "Post #{date} agenda" #{auth}`
+
+    `svn update #{dir}/current.txt #{auth}`
+    File.unlink "#{dir}/current.txt"
+    File.symlink "#{dir}/#{agenda}", "#{dir}/current.txt"
+
+    files = ["#{dir}/#{agenda}", "#{dir}/current.txt"]
+    `svn commit #{files.join(' ')} --message "Post #{date} agenda" #{auth}`
     Agenda.update_cache agenda, File.join(dir, agenda), contents, false
   end
 
