@@ -120,7 +120,7 @@ class ASF::Board::Agenda
           end
         end
 
-        need_chair = true
+        need_chair = true unless fulltitle =~ /Establish.*position/i
       end
 
       if need_chair
