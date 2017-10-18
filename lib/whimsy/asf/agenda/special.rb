@@ -124,31 +124,31 @@ class ASF::Board::Agenda
       end
 
       if need_chair
-	if text =~ /FURTHER RESOLVED, that\s+([^,]*?),?\s+be\b/
-	  chairname = $1.gsub(/\s+/, ' ').strip
+        if text =~ /FURTHER RESOLVED, that\s+([^,]*?),?\s+be\b/
+          chairname = $1.gsub(/\s+/, ' ').strip
 
-	  if chairname =~ /\s\(([-.\w]+)\)$/
-	    # if chair's id is present in parens, use that value
-	    attrs['chair'] = $1 unless $1.empty?
-	    chairname.sub! /\s+\(.*\)$/, ''
-	  else
-	    # match chair's name against people in the committee
-	    chair = people.find {|person| person.first == chairname}
-	    attrs['chair'] = (chair ? chair.last : nil)
-	  end
+          if chairname =~ /\s\(([-.\w]+)\)$/
+            # if chair's id is present in parens, use that value
+            attrs['chair'] = $1 unless $1.empty?
+            chairname.sub! /\s+\(.*\)$/, ''
+          else
+            # match chair's name against people in the committee
+            chair = people.find {|person| person.first == chairname}
+            attrs['chair'] = (chair ? chair.last : nil)
+          end
 
-	  unless people.include? [chairname, attrs['chair']]
-	    if people.empty?
-	      attrs['warnings'] ||= ['Unable to locate PMC email addresses'] 
-	    elsif attrs['chair']
-	      attrs['warnings'] ||= ['Chair not member of PMC'] 
-	    else
-	      attrs['warnings'] ||= ['Chair not found in resolution'] 
-	    end
-	  end
-	else
-	  attrs['warnings'] ||= ['Chair not found in resolution'] 
-	end
+          unless people.include? [chairname, attrs['chair']]
+            if people.empty?
+              attrs['warnings'] ||= ['Unable to locate PMC email addresses'] 
+            elsif attrs['chair']
+              attrs['warnings'] ||= ['Chair not member of PMC'] 
+            else
+              attrs['warnings'] ||= ['Chair not found in resolution'] 
+            end
+          end
+        else
+          attrs['warnings'] ||= ['Chair not found in resolution'] 
+        end
       end
 
       people.map! do |name, id| 
