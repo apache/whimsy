@@ -9,7 +9,7 @@ module ASF
   class Site
     # add entries that are not currently defined in index.html (or elsewhere)
     @@default = {
-      "brand management" => {
+      "brandmanagement" => {
         link: "http://www.apache.org/foundation/marks/pmcs",
         text: "define how Apache projects should refer to trademarks and display their brand"
       },
@@ -17,7 +17,7 @@ module ASF
         link: "http://community.apache.org/",
         text: "Resources to help people become involved with Apache projects"
       },
-      "executive assistant" => {
+      "executiveassistant" => {
         link: "http://www.apache.org/foundation/ASF-EA.html",
         text: "Executive Assistant"
       },
@@ -29,11 +29,11 @@ module ASF
         link: "http://www.apache.org/dev/infrastructure.html",
         text: "Infrastructure Team"
       },
-      "legal affairs" => {
+      "legalaffairs" => {
         link: "http://www.apache.org/legal/",
         text: "Establishing and managing legal policies"
       },
-      "marketing and publicity" => {
+      "marketingandpublicity" => {
         link: "http://www.apache.org/press/",
         text: "public relations and for the press-related issues"
       },
@@ -45,7 +45,7 @@ module ASF
         link: "http://www.apache.org/travel/",
         text: "Travel Assistance Committee"
       },
-      "w3c relations" => {
+      "w3crelations" => {
         link: "http://www.apache.org/foundation/foundation-projects.html#w3c",
         text: "Liaison between the ASF and the World Wide Web Consortium"
       },
