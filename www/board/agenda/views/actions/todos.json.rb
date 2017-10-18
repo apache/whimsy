@@ -247,7 +247,7 @@ parsed_agenda.each do |item|
       transitioning[ASF::Person.find(person)] = item['title']
     end
   elsif item['title'] =~ /^Establish\s*(.*?)\s*$/ and item['chair']
-    pmc = ASF::Committee.find(pmc).id
+    pmc = ASF::Committee.find($1).id
     next if Array(minutes[:todos][:established]).include? pmc
     establish << {name: pmc, resolution: item['title'], chair: item['chair']}
     transitioning[ASF::Person.find(item['chair'])] = item['title']
