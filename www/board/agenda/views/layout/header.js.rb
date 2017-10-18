@@ -17,7 +17,9 @@ class Header < Vue
       _div.navbar_brand @@item.title
 
       if @@item.attach =~ /^7/ and @@item.title =~ /^Establish /
-        _PodlingNameSearch item: @@item
+        if @@item.title !~ /^Establish .*Position/i
+          _PodlingNameSearch item: @@item
+        end
       end
 
       _span.clock! "\u231B" if Header.clock_counter > 0
