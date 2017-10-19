@@ -62,7 +62,7 @@ Agenda.parse(@agenda, :full).each do |item|
   }.gsub(/^ {4}/, '').strip
 
   # build cc list
-  cc = ['board@apache.org']
+  cc = []
   
   if item['mail_list']
     if item[:attach] =~ /^[A-Z]+/
@@ -79,7 +79,7 @@ Agenda.parse(@agenda, :full).each do |item|
     from from
     to "#{item['owner']} <#{item['chair_email']}>".untaint
     cc cc
-    reply_to cc
+    reply_to ['board@apache.org'] + cc
     subject "Board feedback on #{date} #{item['title']} report"
 
     body text.strip.untaint
