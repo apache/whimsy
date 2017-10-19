@@ -181,6 +181,7 @@ class PMCActions < Vue
             resolution = {
               action: todo_type,
               name: todo.name,
+              display_name: item.title.sub(/^#{todo_type} /i, ''),
               title: item.title,
               minutes: minutes,
               checked: (minutes != 'tabled')

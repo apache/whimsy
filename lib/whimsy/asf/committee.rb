@@ -225,11 +225,12 @@ module ASF
       sections.delete_if {|section| section.downcase.start_with? pmc.downcase}
 
       # build new section
-      section  = ["#{pmc}  (est. #{date.strftime('%m/%Y')})"]
-      people.sort.each do |id, person|
+      people = people.map do |id, person|
         name = "#{person[:name].ljust(26)} <#{id}@apache.org>"
-        section << "    #{(name).ljust(59)} [#{date.strftime('%Y-%m-%d')}]"
+        "    #{(name).ljust(59)} [#{date.strftime('%Y-%m-%d')}]"
       end
+
+      section  = ["#{pmc}  (est. #{date.strftime('%m/%Y')})"] + people.sort
 
       # add new section
       sections << section.join("\n") + "\n\n\n"

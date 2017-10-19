@@ -77,12 +77,13 @@ if (@change || @establish || @terminate) and env.password
       rejected = minutes[:rejected] || []
       contents = ASF::Committee.update_next_month(contents, 
         Date.parse(date.gsub('_', '-')), missing, rejected,
-        Array(@establish).map {|resolution| resolution['name']})
+        Array(@establish).map {|resolution| resolution['display_name']})
     end
 
     # update chairs from establish, change, and terminate resolutions
-    chairs = todos.
-      map {|resolution| [resolution['name'], resolution['chair']]}.to_h
+    chairs = todos.map do |resolution| 
+      [resolution['display_name'], resolution['chair']]
+    end.to_h
     contents = ASF::Committee.update_chairs(contents, chairs, @terminate)
 
     # add people from establish resolutions
@@ -92,7 +93,7 @@ if (@change || @establish || @terminate) and env.password
         item['title'] == resolution['title']
       end
 
-      contents = ASF::Committee.establish(contents, resolution['name'], 
+      contents = ASF::Committee.establish(contents, resolution['display_name'], 
         established, item['people'])
     end
 
