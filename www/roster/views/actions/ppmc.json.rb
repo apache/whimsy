@@ -14,7 +14,9 @@ if env.password
     raise ArgumentError.new("ids=#{@ids}") 
   end
 
-  raise ArgumentError.new("project=#{@project}") unless project
+  unless @action == 'add' and @targets.include? 'ldap'
+    raise ArgumentError.new("project=#{@project}") unless project
+  end
 
   # update LDAP
   if %w(ppmc committer icommit).any? {|target| @targets.include? target}
