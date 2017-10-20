@@ -7,10 +7,10 @@ class Keyboard
 
     # keyboard navigation (unless on the search screen)
     def (document.body).onkeydown(event)
-      return if document.getElementById('search-text') or
+      return if event.metaKey or event.ctrlKey or event.altKey or
+        document.getElementById('search-text') or
         document.querySelector('.modal.in') or
         %w(input textarea).include? document.activeElement.tagName.downcase()
-      return if event.metaKey or event.ctrlKey
 
       if event.keyCode == 37 # '<-'
         link = document.querySelector("a[rel=prev]")
