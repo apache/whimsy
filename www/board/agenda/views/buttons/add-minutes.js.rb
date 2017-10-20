@@ -73,12 +73,13 @@ class AddMinutes < Vue
     end
   end
 
-  # autofocus on minute text
   def mounted()
+    # update form to match current item
     jQuery('#minute-form').on 'show.bs.modal' do
       self.setup(@@item)
     end
 
+    # autofocus on minute text
     jQuery('#minute-form').on 'shown.bs.modal' do
       document.getElementById("minute-text").focus()
     end

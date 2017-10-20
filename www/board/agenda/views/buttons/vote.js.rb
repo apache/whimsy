@@ -49,6 +49,19 @@ class Vote < Vue
     self.setup(@@item)
   end
 
+  def mounted()
+    # update form to match current item
+    jQuery('#comment-form').on 'show.bs.modal' do
+      self.setup(@@item)
+    end
+
+    # autofocus on comment text
+    jQuery('#comment-form').on 'shown.bs.modal' do
+      document.getElementById("vote-text").focus()
+    end
+  end
+
+
   # reset base, draft minutes, directors present, and vote type
   def setup(item)
     @directors = Minutes.directors_present
