@@ -23,6 +23,7 @@ if env.password
     ASF::LDAP.bind(env.user, env.password) do
       if @targets.include? 'ldap'
         if @action == 'add'
+          project = ASF::Project.find(@project)
           project.create(people)
         end
       elsif @action == 'add'
