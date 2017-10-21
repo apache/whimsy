@@ -417,7 +417,7 @@ post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
 
     `svn update #{dir}/current.txt #{auth}`
     File.unlink "#{dir}/current.txt"
-    File.symlink "#{dir}/#{agenda}", "#{dir}/current.txt"
+    File.symlink agenda, "#{dir}/current.txt"
 
     files = ["#{dir}/#{agenda}", "#{dir}/current.txt"]
     `svn commit #{files.join(' ')} --message "Post #{date} agenda" #{auth}`
