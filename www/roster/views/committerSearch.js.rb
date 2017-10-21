@@ -16,7 +16,6 @@ class CommitterSearch < Vue
     end
 
     # load fresh data from the server
-    ls_committers = localStorage.getItem('roster-committers')
     Polyfill.require(%w(Promise fetch)) do
       fetch('committer/index.json', credentials: 'include').then {|response|
         response.json().then do |committers|
