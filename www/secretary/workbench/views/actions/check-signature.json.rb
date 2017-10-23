@@ -11,8 +11,12 @@ begin
   attachment = message.find(@attachment).as_file
   signature  = message.find(@signature).as_file
 
+  # pick the latest gpg version
+  gpg = `which gpg2`.chomp
+  gpg = `which gpg`.chomp if gpg.empty?
+
   # run gpg verify command
-  out, err, rc = Open3.capture3 'gpg', '--verify', signature.path,
+  out, err, rc = Open3.capture3 gpg, '--verify', signature.path,
     attachment.path
 
   # if key is not found, fetch and try again
