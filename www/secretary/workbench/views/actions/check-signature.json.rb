@@ -21,7 +21,10 @@ begin
     attachment.path
 
   # if key is not found, fetch and try again
-  if err.include? "gpg: Can't check signature: public key not found"
+  if 
+    err.include? "gpg: Can't check signature: No public key" or
+    err.include? "gpg: Can't check signature: public key not found"
+  then
     # extract and fetch key
     keyid = err[/[RD]SA key ID (\w+)/,1].untaint
     out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', 'pgpkeys.mit.edu',
