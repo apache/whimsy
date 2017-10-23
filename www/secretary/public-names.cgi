@@ -34,7 +34,7 @@ _html do
     input[type=submit] {margin-top: 1em}
   }
 
-  _h1 "public names: LDAP vs ICLA.txt"
+  _h1 "public names: LDAP vs iclas.txt"
 
   # prefetch LDAP data
   people = ASF::Person.preload(%w(cn dn))
