@@ -8,7 +8,7 @@ user = ASF::Person.find(env.user)
 
 # validate email address
 begin
-  Socket.getaddrinfo(@iclaemail[/@(.*)/, 1], 'smtp')
+  Socket.getaddrinfo(@iclaemail[/@(.*)/, 1].untaint, 'smtp')
 
   if ASF::Person.find_by_email(@iclaemail)
     _error "ICLA already on file for #{@iclaemail}"
