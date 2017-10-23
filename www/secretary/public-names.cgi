@@ -150,7 +150,7 @@ _html do
 
   _h2_!.present! do
     _ 'Present in '
-    _a 'icla.txt', 
+    _a 'iclas.txt', 
       href: 'https://svn.apache.org/repos/private/foundation/officers/iclas.txt'
    _ ':'
   end
@@ -158,8 +158,8 @@ _html do
   _table do
     _tr do
       _th "availid"
-      _th "icla.txt real name"
-      _th "icla.txt public name"
+      _th "iclas.txt real name"
+      _th "iclas.txt public name"
       _th "LDAP cn"
     end
 
@@ -215,7 +215,7 @@ _html do
   end
 
   #################################################################### 
-  #   Show LDAP differences where entry is NOT present in icla.txt   #
+  #   Show LDAP differences where entry is NOT present in iclas.txt  #
   #################################################################### 
 
   icla = ASF::ICLA.availids
