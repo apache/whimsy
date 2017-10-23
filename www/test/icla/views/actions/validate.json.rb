@@ -24,12 +24,12 @@ if @votelink and not @votelink.empty?
   # attempt to fetch the page
   if @votelink =~ /^https?:/i
     uri = URI.parse(@votelink)
-    http = Net::HTTP.new(uri.host, uri.port)
+    http = Net::HTTP.new(uri.host.untaint, uri.port)
     if uri.scheme == 'https'
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE 
     end
-    request = Net::HTTP::Get.new(uri.request_uri)
+    request = Net::HTTP::Get.new(uri.request_uri.untaint)
     response = http.request(request)
     unless response.code.to_i < 400
       _error "HTTP status #{response.code} for #{@votelink}"
