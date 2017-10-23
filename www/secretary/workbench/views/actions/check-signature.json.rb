@@ -14,20 +14,21 @@ begin
   # pick the latest gpg version
   gpg = `which gpg2`.chomp
   gpg = `which gpg`.chomp if gpg.empty?
+  gpg.untaint
 
   # run gpg verify command
-  out, err, rc = Open3.capture3 gpg.untaint, '--verify', signature.path,
+  out, err, rc = Open3.capture3 gpg, '--verify', signature.path,
     attachment.path
 
   # if key is not found, fetch and try again
   if err.include? "gpg: Can't check signature: public key not found"
     # extract and fetch key
     keyid = err[/[RD]SA key ID (\w+)/,1].untaint
-    out2, err2, rc2 = Open3.capture3 'gpg', '--keyserver', 'pgpkeys.mit.edu',
+    out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', 'pgpkeys.mit.edu',
       '--recv-keys', keyid
 
     # run gpg verify command again
-    out, err, rc = Open3.capture3 'gpg', '--verify', signature.path,
+    out, err, rc = Open3.capture3 gpg, '--verify', signature.path,
       attachment.path
 
     # if verify failed, concatenate fetch output
