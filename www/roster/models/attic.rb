@@ -17,6 +17,7 @@ class Attic
           [ issue['key'], issue['fields']['summary'] ]
         end
       end
+      @mtime = Time.now
     end
 
     Hash[@issues]
