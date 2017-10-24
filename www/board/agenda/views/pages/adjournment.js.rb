@@ -234,52 +234,29 @@ class TodoRemove < Vue
   def initialize
     @checked = {}
     @disabled = true
-    @people = []
   end
 
   # update check marks based on current Todo list
   def created()
-    @people = Todos.remove
-
-    # uncheck people who were removed
-    for id in @checked
-      unless @people.any? {|person| person.id == id}
-        @checked[id] = false
-      end
-    end
-
-    # check people who were added
-    @people.each do |person|
+    Todos.remove.each do |person|
       if @checked[person.id] == undefined
         if not person.resolution or Minutes.get(person.resolution) != 'tabled'
           @checked[person.id] = true 
         end
       end
     end
-
-    self.refresh()
-  end
-
-  def refresh()
-    # disable button if nobody is checked
-    disabled = true
-    for id in @checked
-      disabled = false if @checked[id]
-    end
-    @disabled = disabled
-
-    Vue.forceUpdate()
   end
 
   def render
+    people = Todos.remove
+
     _p 'Remove from pmc-chairs:'
 
-    _ul.checklist @people do |person|
+    _ul.checklist people do |person|
       _li do
         _input type: 'checkbox', checked: @checked[person.id],
           onClick:-> {
             @checked[person.id] = !@checked[person.id]
-            self.refresh()
           }
 
         _a person.id,
@@ -288,8 +265,9 @@ class TodoRemove < Vue
       end
     end
 
-    _button.checklist.btn.btn_default 'Submit', disabled: @disabled,
-      onClick: self.submit
+    _button.checklist.btn.btn_default 'Submit', onClick: self.submit,
+      disabled: @disabled or people.length == 0 or
+        not people.any? {|person| @checked[persion.id]}
   end
 
   def submit()
@@ -303,6 +281,13 @@ class TodoRemove < Vue
     post "secretary-todos/#{Agenda.title}", remove: remove do |todos|
       @disabled = false
       Todos.set todos
+
+      # uncheck people who were removed
+      for id in @checked
+        unless Todos.remove.any? {|person| person.id == id}
+          @checked[id] = false
+        end
+      end
     end
   end
 end
