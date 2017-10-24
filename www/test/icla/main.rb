@@ -26,13 +26,12 @@ get '/invite' do
   # get a complete list of PMCs
   @pmcs = ASF::Committee.pmcs.map(&:name).sort
 
-  # for non ASF members, limit PMCs to ones for which the user is either a
-  # member of the PMC or is a committer.
+  # for non ASF members, limit PMCs to ones for which the user is a
+  # member of the PMC.
   user = ASF::Person.find(env.user)
   unless user.asf_member?
     committees = user.committees.map(&:name)
-    groups = user.groups.map(&:name)
-    @pmcs.select! {|pmc| committees.include?(pmc) or groups.include?(pmc)}
+    @pmcs.select! {|pmc| committees.include?(pmc)}
   end
 
   # render the HTML for the application
