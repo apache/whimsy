@@ -27,6 +27,28 @@ class PMCMembers < Vue
         end
       end
     end
+    if @@committee.analysePrivateSubs
+      _h4.crosscheck! 'Cross-check of private@ list subscriptions'
+      _p {
+        _ 'PMC entries above with (*) do not appear to be subscribed to the private list.'
+        _br
+        _ 'This could be because the person is subscribed with an address that is not in their LDAP record'
+      }
+      _p {
+        _ 'The following subscribers to the private list do not match the known emails for any of the existing PMC members.'
+        _br
+        _ 'They could be PMC members whose emails are not listed in their LDAP record.'
+        _br
+        _ 'Or ASF members, or they could be ex-PMC members who are still subscribed.'
+        _br
+        _br
+        _ul {
+          for mail in @@committee.unknownSubs
+            _li @@committee.unknownSubs[mail]
+          end
+        }
+      }
+    end
   end
 
   def mounted()
@@ -65,12 +87,15 @@ class PMCMember < Vue
              onClick: -> {self.toggleSelect(@@person)}
         end
       end
-
       if @@person.member
-        _td { _b { _a @@person.id, href: "committer/#{@@person.id}" } }
+        _td { _b { _a @@person.id, href: "committer/#{@@person.id}" }
+              _a ' (*)', href: "committee/#{@@committee.id}#crosscheck" if @@person.notSubbed
+            }
         _td { _b @@person.name }
       else
-        _td { _a @@person.id, href: "committer/#{@@person.id}" }
+        _td { _a @@person.id, href: "committer/#{@@person.id}"
+              _a ' (*)', href: "committee/#{@@committee.id}#crosscheck" if @@person.notSubbed
+            }
         _td @@person.name
       end
 

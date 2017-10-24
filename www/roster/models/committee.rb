@@ -21,10 +21,23 @@ class Committee
     image = Dir["#{image_dir}/#{id}.*"].map {|path| File.basename(path)}.last
 
     moderators = nil
-
-    if pmc.roster.include? env.user or ASF::Person.find(env.user).asf_member?
+    pSubs = Array.new # private@ subscribers
+    unknownSubs = nil # unknown private@ subscribers
+    currentUser = ASF::Person.find(env.user)
+    analysePrivateSubs = false # whether to show missing private@ subscriptions
+    if pmc.roster.include? env.user or currentUser.asf_member?
       require 'whimsy/asf/mlist'
       moderators, modtime = ASF::MLIST.list_moderators(pmc.mail_list)
+      analysePrivateSubs = currentUser.asf_member?
+      unless analysePrivateSubs # check for private moderator if not already allowed access
+        user_mail = currentUser.all_mail || []
+        pMods = moderators["private@#{pmc.mail_list}.apache.org"] || []
+        analysePrivateSubs = !(pMods & user_mail).empty?
+      end
+      if analysePrivateSubs
+        pSubs, _ = ASF::MLIST.private_subscribers(pmc.mail_list)
+        unknownSubs=Array.new(pSubs) # init ready to remove matched mails
+      end
     else
       lists = lists.select {|list, mode| mode == 'public'}
     end
@@ -37,6 +50,10 @@ class Committee
         name: person.public_name, 
         role: 'PMC member'
       }
+      if analysePrivateSubs
+        roster[person.id]['notSubbed'] = (person.all_mail & pSubs).empty?
+        unknownSubs -= person.all_mail
+      end
       roster[person.id]['ldap'] = true
     end
 
@@ -70,6 +87,8 @@ class Committee
       project_info: info,
       image: image,
       guinea_pig: ASF::Committee::GUINEAPIGS.include?(id),
+      analysePrivateSubs: analysePrivateSubs,
+      unknownSubs: unknownSubs,
     }
 
     response
