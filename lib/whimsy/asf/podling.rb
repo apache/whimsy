@@ -354,7 +354,11 @@ module ASF
         query = 'https://issues.apache.org/jira/rest/api/2/search?' +
             'maxResults=1000&' +
             'jql=project=PODLINGNAMESEARCH&fields=summary,resolution,customfield_12310520'
-        File.write cache, Net::HTTP.get(URI(query))
+        begin
+          File.write cache, Net::HTTP.get(URI(query))
+        rescue => e
+          Wunderbar.warn "ASF::Podling.namesearch: " + e.message
+        end
       end
 
       # parse JIRA titles for proposed name
