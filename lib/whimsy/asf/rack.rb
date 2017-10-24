@@ -39,7 +39,10 @@ module ASF
       def call(env)
         authorized = ( ENV['RACK_ENV'] == 'test' )
 
-        authorized ||= ASF::Auth.decode(env).asf_committer?
+        # Must always call decode as it adds required accessors
+        person = ASF::Auth.decode(env)
+
+        authorized ||= person.asf_committer?
 
         if authorized
           @app.call(env)
