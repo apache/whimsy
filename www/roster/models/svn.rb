@@ -5,7 +5,7 @@
 # for all Rack application (e.g., secmail, board/agenda, roster)
 #
 
-# provide methods to encapsulate updates update LDAP
+# provide methods to encapsulate LDAP update
 module ASF
   class SVN
     class JsonBuilder
