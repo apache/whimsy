@@ -357,7 +357,7 @@ module ASF
     end
   end
 
-  # shortcut for derefernce weakref
+  # shortcut for dereference weakref
   def self.weakref(attr, &block)
     self.dereference_weakref(self, attr, &block)
   end
