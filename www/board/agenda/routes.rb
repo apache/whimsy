@@ -28,6 +28,7 @@ end
 get '/shepherd' do
   user=ASF::Person.find(env.user).public_name.split(' ').first
   agenda = dir('board_agenda_*.txt').sort.last
+  pass unless agenda
   redirect File.dirname(request.path) +
     "/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/shepherd/#{user}"
 end
@@ -35,6 +36,7 @@ end
 # redirect missing to missing page for the latest agenda
 get '/missing' do
   agenda = dir('board_agenda_*.txt').sort.last
+  pass unless agenda # is this correct?
   response.headers['Location'] = 
     "#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/missing"
   status 302
