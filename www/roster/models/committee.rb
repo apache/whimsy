@@ -35,7 +35,7 @@ class Committee
         analysePrivateSubs = !(pMods & user_mail).empty?
       end
       if analysePrivateSubs
-        pSubs, _ = ASF::MLIST.private_subscribers(pmc.mail_list)
+        pSubs = canonhost(ASF::MLIST.private_subscribers(pmc.mail_list)[0]||[])
         unknownSubs=Array.new(pSubs) # init ready to remove matched mails
       end
     else
@@ -51,8 +51,9 @@ class Committee
         role: 'PMC member'
       }
       if analysePrivateSubs
-        roster[person.id]['notSubbed'] = (person.all_mail & pSubs).empty?
-        unknownSubs -= person.all_mail
+        allMail = canonhost(person.all_mail)
+        roster[person.id]['notSubbed'] = (allMail & pSubs).empty?
+        unknownSubs -= allMail
       end
       roster[person.id]['ldap'] = true
     end
@@ -92,5 +93,12 @@ class Committee
     }
 
     response
+  end
+
+  private
+
+  # canonicalise hostnames
+  def self.canonhost(list)
+    list.map {|i| i.sub(/@.+/) { |m| m.downcase } }
   end
 end
