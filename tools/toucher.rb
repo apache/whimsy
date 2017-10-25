@@ -9,9 +9,10 @@ require 'fileutils'
 
 watch = Hash.new {|hash, key| hash[key] = []}
 
-Dir["#{File.expand_path('../..', __FILE__)}/**/restart.txt"].each do |restart|
-  app = File.expand_path('../..', restart)
-  next unless File.exist? "#{app}/config.ru"
+Dir["#{File.expand_path('../..', __FILE__)}/**/config.ru"].each do |config|
+  app = File.expand_path('..', config)
+  FileUtils.mkdir_p "#{app}/tmp"
+  restart = "#{app}/tmp/restart.txt"
 
   watch[File.realpath(app)] << restart
 
