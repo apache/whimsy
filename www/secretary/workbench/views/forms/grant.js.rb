@@ -59,7 +59,12 @@ class Grant < Vue
         _tr do
           _th 'Project'
           _td do
-            _input name: 'project', value: @project, disabled: @filed
+            _select name: 'project', value: @project, disabled: @filed do
+              _option ''
+              @@projects.each do |project|
+                _option project
+              end
+            end
           end
         end
       end
