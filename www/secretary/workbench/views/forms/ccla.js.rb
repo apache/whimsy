@@ -86,7 +86,7 @@ class CCLA < Vue
   # on initial display, default various fields based on headers, and update
   # state 
   def mounted()
-    name = @@headers.name
+    name = @@headers.name || ''
  
     # reorder name if there is a single comma present
     parts = name.split(',')
