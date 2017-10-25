@@ -20,11 +20,8 @@ end
 # redirect root to latest agenda
 get '/' do
   agenda = dir('board_agenda_*.txt').sort.last
-  if agenda == ''
-    _html :not_found
-  else
-    redirect "#{request.path}#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/"
-  end
+  pass unless agenda
+  redirect "#{request.path}#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/"
 end
 
 # redirect shepherd to latest agenda
