@@ -28,6 +28,8 @@ disable :logging # suppress log of requests to stderr/error.log
 if ENV['RACK_ENV'] == 'test'
   FOUNDATION_BOARD = File.expand_path('test/work/board').untaint
   AGENDA_WORK = File.expand_path('test/work/data').untaint
+  STDERR.puts "* SVN board  : #{FOUNDATION_BOARD}"
+  STDERR.puts "* Agenda work: #{AGENDA_WORK}"
 else
   FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
   AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
