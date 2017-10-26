@@ -51,7 +51,7 @@ _html lang: 'en', _width: '80' do
               _ " » "
               _a 'Legal', href: 'https://www.apache.org/legal/'
               _ " » "
-              _a 'ICLA', href: '/test/icla/'
+              _a 'ICLA', href: '/project/icla/'
             end
 
             _ul_.nav.navbar_nav.navbar_right do
