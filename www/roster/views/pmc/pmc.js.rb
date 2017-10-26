@@ -35,6 +35,8 @@ class PMCMembers < Vue
         _ 'This could be because the person is subscribed with an address that is not in their LDAP record'
       }
       _p {
+        # We don't use the short-hand name: value syntax here to work-round Eclipse Ruby editor parsing bug
+        _span.glyphicon.glyphicon_lock aria_hidden: true, :class => 'text-primary', 'aria-label' => 'ASF Members and private@ moderators'
         _ 'The following subscribers to the private list do not match the known emails for any of the existing PMC members.'
         _br
         _ 'They could be PMC members whose emails are not listed in their LDAP record.'
