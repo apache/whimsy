@@ -215,6 +215,56 @@ module ASF
 
     # insert (replacing if necessary) a new committee into committee-info.txt
     def self.establish(contents, pmc, date, people)
+      ########################################################################
+      #         insert into assigned quarterly reporting periods             #
+      ########################################################################
+
+      # split into blocks
+      blocks = contents.split("\n\n")
+
+      # find the reportings schedules
+      index =  blocks.find_index {|section| section =~/January/}
+
+      # extract reporting schedules
+      slots = [
+	blocks[index+0].split("\n"),
+	blocks[index+1].split("\n"),
+	blocks[index+2].split("\n"),
+      ]
+
+      # ensure that spacing is uniform
+      slots.each {|slot| slot.unshift '' unless slot[0] == ''}
+
+      # determine tie breakers between months of the same length
+      preference = [(date.month)%3, (date.month-1)%3, (date.month-2)%3]
+
+      # pick the month with the shortest list
+      slot = (0..2).map {|i| [slots[i].length, preference, i]}.min.last
+
+      # temporarily remove headers
+      headers = slots[slot].shift(3)
+
+      # insert pmc into the reporting schedule
+      slots[slot] << "    " + pmc
+
+      # sort entries, case insensitive
+      slots[slot].sort_by!(&:downcase)
+
+      #restore headers
+      slots[slot].unshift *headers
+
+      # re-insert reporting schedules
+      blocks[index+0] = slots[0].join("\n")
+      blocks[index+1] = slots[1].join("\n")
+      blocks[index+2] = slots[2].join("\n")
+
+      # re-attach blocks
+      contents = blocks.join("\n\n")
+
+      ########################################################################
+      #         insert into COMMITTEE MEMBERSHIP AND CHANGE PROCESS          #
+      ########################################################################
+
       # split into foot, sections (array) and head
       foot = contents[/^=+\s*\Z/]
       contents.sub! /^=+\s*\Z/, ''
