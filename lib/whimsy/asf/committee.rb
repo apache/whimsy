@@ -76,12 +76,12 @@ module ASF
       'open climate workbench'      => 'climate',
       'c++ standard library'        => 'stdcxx',
       'travel assistance'           => 'tac',
-      'traffic server'              => 'trafficserver',
       'web services'                => 'ws',
-      'xml graphics'                => 'xmlgraphics',
       'incubating'                  => 'incubator' # special for index.html
 
     @@namemap = Proc.new do |name|
+      # Drop parenthesized comments and downcase before lookup; drop all spaces after lookup
+      # So aliases table does not need to contain entries for Traffic Server and XML Graphics.
       cname = @@aliases[name.sub(/\s+\(.*?\)/, '').downcase].gsub(/\s+/, '')
       cname
     end
