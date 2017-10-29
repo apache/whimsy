@@ -297,6 +297,9 @@ module ASF
     # intended to be internal, use ASF::Committee.load_committee_info as it
     # will cache this data.
     def self.parse_committee_info(contents)
+      # List uses full (display) names as keys, but the entries use the canonical names
+      # - the local version of find() converts the name
+      # - and stores the original as the display name if it has some upper case
       list = Hash.new {|hash, name| hash[name] = find(name)}
 
       # Split the file on lines starting "* ", i.e. the start of each group in section 3
@@ -324,8 +327,12 @@ module ASF
 
       # for each committee in section 3
       info.each do |roster|
-        # extract the committee name and canonicalise
-        committee = list[@@namemap.call(roster[/(\w.*?)[ \t]+\(/,1])]
+        # extract the committee name (and parenthesised comment if any)
+        name = roster[/(\w.*?)[ \t]+\(est/,1]
+        unless list.include?(name)
+          Wunderbar.warn "No chair entry detected for #{name} in section 3"
+        end
+        committee = list[name]
 
         # get and normalize the start date
         established = roster[/\(est\. (.*?)\)/, 1]
