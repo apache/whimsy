@@ -227,9 +227,9 @@ module ASF
 
       # extract reporting schedules
       slots = [
-	blocks[index+0].split("\n"),
-	blocks[index+1].split("\n"),
-	blocks[index+2].split("\n"),
+        blocks[index+0].split("\n"),
+        blocks[index+1].split("\n"),
+        blocks[index+2].split("\n"),
       ]
 
       # ensure that spacing is uniform
