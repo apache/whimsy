@@ -351,6 +351,10 @@ module ASF
       report.scan(/^([^\n]+)\n---+\n(.*?)\n\n/m).each do |period, committees|
         committees.scan(/^   [ \t]*(.*)/).each do |committee|
           committee, comment = committee.first.split(/[ \t]+#[ \t]+/,2)
+          unless list.include? committee
+            Wunderbar.warn "Unexpected name '#{committee}' in report section; ignored"
+            next
+          end
           committee = list[committee]
           if comment
             committee.report = "#{period}: #{comment}"
