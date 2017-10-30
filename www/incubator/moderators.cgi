@@ -80,15 +80,15 @@ _html do
           (0...cols).each do |j|
             _td do
               podling = podlings.keys.sort[i+j*slice]
-	      anchor = exceptions[podling] || podling
-	      if moderators.keys.any? {|list| anchor == list.split('-').first}
-	        _a podling, href: "##{anchor}"
+              anchor = exceptions[podling] || podling
+              if moderators.keys.any? {|list| anchor == list.split('-').first}
+                _a podling, href: "##{anchor}"
               else
-	        _indented_text podling
-	      end
+                _indented_text podling
+              end
             end
-	  end
-	end
+          end
+        end
       end
     end
 
@@ -98,16 +98,16 @@ _html do
       podling = list.split('-').first
       unless podling == current
         _hr_ if current
-	name = podling if podlings.include? podling
-	name ||= exceptions.invert[podling]
-	if name
+        name = podling if podlings.include? podling
+        name ||= exceptions.invert[podling]
+        if name
           _h2 id: podling do
-	    _a podling, 
-	      href: "https://incubator.apache.org/projects/#{name}.html"
-	  end
-	else
+            _a podling, 
+              href: "https://incubator.apache.org/projects/#{name}.html"
+          end
+        else
           _h2 podling, id: podling
-	end
+        end
         _p "Podling Status: #{podlings[name] || 'unknown'}"
         current = podling
       end
@@ -117,7 +117,7 @@ _html do
       _table do
         moderators[list].sort.each do |moderator|
           person = ASF::Person.find_by_email(moderator)
-	  _tr_ do
+          _tr_ do
             if person and person.id != 'notinavail'
               _td! {_a person.id, href: "/roster/committer/#{person.id}"}
               if person.asf_member?
@@ -133,8 +133,8 @@ _html do
               _td
               _td! {_em 'unknown'}
             end
-	    _td moderator
-	  end
+            _td moderator
+          end
         end
       end
     end

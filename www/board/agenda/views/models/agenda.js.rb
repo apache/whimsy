@@ -431,13 +431,13 @@ class Agenda
 
     if @attach =~ /^(\d|7?[A-Z]+|4[A-Z])$/
       if Server.role == :secretary or not Minutes.complete
-	if self.missing
-	  list << {form: Post, text: 'post report'}
-	elsif @attach =~ /^7\w/
-	  list << {form: Post, text: 'edit resolution'}
-	else
-	  list << {form: Post, text: 'edit report'}
-	end
+        if self.missing
+          list << {form: Post, text: 'post report'}
+        elsif @attach =~ /^7\w/
+          list << {form: Post, text: 'edit resolution'}
+        else
+          list << {form: Post, text: 'edit report'}
+        end
       end
     end
 

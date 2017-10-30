@@ -63,21 +63,21 @@ class PPMCMember < Vue
         
       _td data_ids: @@person.id do
         if @@person.selected
-	  if @@auth.ipmc and not @@person.icommit
-	    _button.btn.btn_primary 'Add as an incubator committer',
-	      data_action: 'add icommit',
-	      data_target: '#confirm', data_toggle: 'modal',
-	      data_confirmation: "Add #{@@person.name} as a commiter " +
-		"for the incubator PPMC?"
-	  end
+          if @@auth.ipmc and not @@person.icommit
+            _button.btn.btn_primary 'Add as an incubator committer',
+              data_action: 'add icommit',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Add #{@@person.name} as a commiter " +
+                "for the incubator PPMC?"
+          end
 
-	  unless @@ppmc.committers.include? @@person.id
-	    _button.btn.btn_primary 'Add as committer',
-	      data_action: 'add committer',
-	      data_target: '#confirm', data_toggle: 'modal',
-	      data_confirmation: "Add #{@@person.name} as a committer " +
-		"for the #{@@ppmc.display_name} PPMC?"
-	  end
+          unless @@ppmc.committers.include? @@person.id
+            _button.btn.btn_primary 'Add as committer',
+              data_action: 'add committer',
+              data_target: '#confirm', data_toggle: 'modal',
+              data_confirmation: "Add #{@@person.name} as a committer " +
+                "for the #{@@ppmc.display_name} PPMC?"
+          end
         elsif not @@ppmc.committers.include? @@person.id
           _span.issue 'not listed as a committer'
         elsif not @@person.icommit

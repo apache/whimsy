@@ -9,7 +9,7 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 
 ifields = {
-  'SessionList'	=> ['glyphicon-th-list', 'Session Listing'],
+  'SessionList' => ['glyphicon-th-list', 'Session Listing'],
   'SlideArchive' => ['glyphicon-file', 'Slide Archives'],
   'VideoArchive' => ['glyphicon-facetime-video', 'Video Archive'],
   'AudioArchive' => ['glyphicon-headphones', 'Audio Archive'],

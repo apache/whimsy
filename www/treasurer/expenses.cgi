@@ -112,31 +112,31 @@ _html do
       dates = statement.scan(/^\d\d\/\d\d/)
       amounts = statement.scan(/^[.,\d]+$/)
       details = statement.
-	scan(/^(?:WT |Bill Pay|WF Bus|Client Anal|Safe Box|Online Transfer).*/)
+        scan(/^(?:WT |Bill Pay|WF Bus|Client Anal|Safe Box|Online Transfer).*/)
 
       _form_.debits! style: ('display: none' unless debits.empty?) do
-	_button 'File'
-	_select_.category! do
-	  _option ''
-	  categories.each do |category|
-	    _option category
-	  end
-	end
-	_select_.date! do
-	  dates.sort.each do |date|
-	    _option date, value: date
-	  end
-	end
-	_select_.amount! do
-	  amounts.each do |amount|
-	    _option amount, value: amount
-	  end
-	end
-	_select_.detail! do
-	  details.each do |detail|
-	    _option detail.strip, value: detail.strip
-	  end
-	end
+        _button 'File'
+        _select_.category! do
+          _option ''
+          categories.each do |category|
+            _option category
+          end
+        end
+        _select_.date! do
+          dates.sort.each do |date|
+            _option date, value: date
+          end
+        end
+        _select_.amount! do
+          amounts.each do |amount|
+            _option amount, value: amount
+          end
+        end
+        _select_.detail! do
+          details.each do |detail|
+            _option detail.strip, value: detail.strip
+          end
+        end
       end
     end
 
@@ -230,12 +230,12 @@ _html do
           end
         end
         if @category
-	  _tfoot do
-	    _tr do
-	      _th 'Total'
-	      _td.total! total.currency, align: 'right'
-	    end
-	  end
+          _tfoot do
+            _tr do
+              _th 'Total'
+              _td.total! total.currency, align: 'right'
+            end
+          end
         end
       end
     end

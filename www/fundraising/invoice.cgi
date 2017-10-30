@@ -378,15 +378,15 @@ _html do
             quantity = $1
 
             if line.match(/[-@]?\s?\$\s?([,\d\.]+)$/)
-	      amt = $1.gsub(',', '')
-	      quantity ||= '1'
-	      price = quantity.to_i * amt.to_f
+              amt = $1.gsub(',', '')
+              quantity ||= '1'
+              price = quantity.to_i * amt.to_f
 
-	      # Format the float as a 2dp number
-	      price = "%0.2f" % price
+              # Format the float as a 2dp number
+              price = "%0.2f" % price
 
-	      # Now make it look pretty with commas
-	      price = price.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, '\1,')
+              # Now make it look pretty with commas
+              price = price.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, '\1,')
             else
               quantity = price = '' 
             end

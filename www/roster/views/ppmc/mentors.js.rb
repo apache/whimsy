@@ -69,15 +69,15 @@ class PPMCMentor < Vue
         
       _td data_ids: @@person.id do
         if @@person.selected
-	  if @@auth.ppmc
-	    unless @@ppmc.owners.include? @@person.id
-	      _button.btn.btn_primary 'Add to the PPMC',
-		data_action: 'add ppmc committer',
-		data_target: '#confirm', data_toggle: 'modal',
-		data_confirmation: "Add #{@@person.name} as member of the " +
-		  "#{@@ppmc.display_name} PPMC?"
-	    end
-	  end
+          if @@auth.ppmc
+            unless @@ppmc.owners.include? @@person.id
+              _button.btn.btn_primary 'Add to the PPMC',
+                data_action: 'add ppmc committer',
+                data_target: '#confirm', data_toggle: 'modal',
+                data_confirmation: "Add #{@@person.name} as member of the " +
+                  "#{@@ppmc.display_name} PPMC?"
+            end
+          end
         elsif not @@person.name
           _span.issue 'invalid user'
         elsif not @@ppmc.owners.include? @@person.id

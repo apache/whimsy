@@ -127,10 +127,10 @@ _html do
 
       if pattern == :index
         _tfoot_ do
-	  _tr do
-	    _th 'Total', colspan: 2, align: 'right'
-	    _th entries.map(&:last).reduce(&:+), align: 'right'
-	  end
+          _tr do
+            _th 'Total', colspan: 2, align: 'right'
+            _th entries.map(&:last).reduce(&:+), align: 'right'
+          end
         end
       end
     end

@@ -48,8 +48,8 @@ _html do
 
       podlings = ASF::Podling.current.map {|podling| podling.id}
       podling_committers = ASF::Project.preload.
-	select {|project, members| podlings.include? project.name}.
-	map {|project,members| project.members}.flatten.uniq
+        select {|project, members| podlings.include? project.name}.
+        map {|project,members| project.members}.flatten.uniq
 
       #
       ### Podling mentors vs IPMC
@@ -165,15 +165,15 @@ _html do
                 next if podling_committers.include? person
                 _tr_ do
                   _td do
-		    if person.asf_member?
-		      _b do
-			_a person.public_name,
-			  href: "../../roster/committer/#{person.id}"
-		      end
-		    else
-		      _a person.public_name,
-			href: "../../roster/committer/#{person.id}"
-		    end
+                    if person.asf_member?
+                      _b do
+                        _a person.public_name,
+                       href: "../../roster/committer/#{person.id}"
+                      end
+                    else
+                      _a person.public_name,
+                        href: "../../roster/committer/#{person.id}"
+                    end
                   end
                 end
               end
