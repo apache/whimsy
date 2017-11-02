@@ -90,6 +90,11 @@ input:disabled[type=submit] {cursor: not-allowed}
   margin-left: 15px;
 }
 
+.data-entry > .form-group {
+  padding-top: 2em;
+  clear: both;
+}
+
 @media screen and (min-width: 768px) {
   .wide-form .modal-dialog {
     width: 80%;
@@ -98,3 +103,4 @@ input:disabled[type=submit] {cursor: not-allowed}
     margin-top: 0
   }
 }
+

@@ -157,6 +157,13 @@ get '/members.json' do
   _json Hash[ASF.members.map {|person| [person.id, person.public_name]}.sort]
 end
 
+get '/ppmc/_new_' do
+  @pmcsAndBoard = (ASF::Committee.pmcs.map(&:id) + ['board']).sort
+  @officersAndMembers = (ASF.pmc_chairs + ASF.members).uniq.map(&:id)
+  @ipmc = ASF::Committee['incubator'].owners.map(&:id)
+  _html :ppmc_new
+end
+
 # active podling list
 get '/ppmc/' do
   @projects = ASF::Project.list

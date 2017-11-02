@@ -29,6 +29,7 @@ require_relative 'ppmc/committers'
 require_relative 'ppmc/add'
 require_relative 'ppmc/mod'
 require_relative 'ppmc/graduate'
+require_relative 'ppmc/new'
 
 require_relative 'committerSearch'
 require_relative 'projectSearch'
