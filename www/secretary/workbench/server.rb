@@ -18,6 +18,28 @@ require_relative 'models/safetemp'
 require_relative 'models/events'
 require_relative 'tasks'
 
+
+# monkey patch mail gem to work around a regression introduced in 2.7.0:
+# https://github.com/mikel/mail/pull/1168
+module Mail
+  class Message
+    def raw_source=(value)
+      @raw_source = ::Mail::Utilities.to_crlf(value)
+    end
+  end
+
+  module Utilities
+    def self.safe_for_line_ending_conversion?(string)
+      if RUBY_VERSION >= '1.9'
+        string.ascii_only? or 
+          (string.encoding != Encoding::BINARY and string.valid_encoding?)
+      else
+        string.ascii_only?
+      end
+    end
+  end
+end
+
 require 'whimsy/asf'
 ASF::Mail.configure
 
