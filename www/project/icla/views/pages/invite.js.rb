@@ -12,10 +12,9 @@ class Invite < Vue
 
   def render
     _p %{
-      You've come to this page because a contributor has has submitted
-      a large patch or because your PMC has voted in a new committer.
-      Invite them to fill out an Individual Contributor License Agreement
-      by filling out the following form.
+      This application allows PMC and PPMC members to invite a contributor
+      to submit an ICLA. Fill the following form and an invitation will be
+      sent to the email address on the form.
     }
 
     # error messages
@@ -54,17 +53,37 @@ class Invite < Vue
     end
 
     _p %{
-      Fill out the following only if the person was voted by the PMC to become
-      a committer or the person is an initial committer on a new project
-      accepted for incubation.  For new incubator projects use the
+      Fill the following field only if the person was voted by the PMC to become
+      a committer, or the person is an initial committer on a new project
+      accepted for incubation, or the person has been voted as a committer
+      on a podling.  For new incubator projects use the
       http://wiki.apache.org/incubator/XXXProposal link; for existing projects
       link to the [RESULT][VOTE] message in the mail archives.
     }
+    _ 'Navigate to '
+    _a "ponymail", href: "https://lists.apache.org"
+    _ ', select the appropriate message, right-click PermaLink, copy link'
+    _ ' to the clip-board, and paste the link here.'
+    _p
 
     _div.form_group do
-      _label "Vote link", for: 'votelink'
+      _label "VOTE link", for: 'votelink'
       _input.form_control.votelink! type: 'url', onChange: self.setVoteLink,
         value: @votelink
+    end
+
+    _p %{
+      Fill the following field only if the person was voted by the PMC to become
+      a PMC member, or voted by the PPMC to be a PPMC member. For existing
+      projects, link to the [NOTICE] message sent to the board.
+      For PPMCs, link to the [NOTICE] message sent to the incubator PMC.
+      The message must have been in the archives for at least 72 hours.
+    }
+
+    _div.form_group do
+      _label "NOTICE link", for: 'noticelink'
+      _input.form_control.noticelink! type: 'url', onChange: self.setNoticeLink,
+      value: @noticelink
     end
 
     #
@@ -147,6 +166,11 @@ class Invite < Vue
 
   def setVoteLink(event)
     @votelink = event.target.value
+    self.checkValidity()
+  end
+
+  def setNoticeLink(event)
+    @noticelink = event.target.value
     self.checkValidity()
   end
 

@@ -355,7 +355,7 @@ _html lang: 'en', _width: '80' do
         _div_.row do
           _div_.col_lg_12 do
             _p_!.text_center do
-              _ "Copyright © 2015 The Apache Software Foundation, Licensed " +
+              _ "Copyright © 2017 The Apache Software Foundation, Licensed " +
                 "under the "
               _a.white 'Apache License, Version 2.0',
                 href: 'http://www.apache.org/licenses/LICENSE-2.0'
