@@ -23,7 +23,15 @@ module ASF
 
     # time of next meeting
     def self.nextMeeting
-      self.calendar.select {|time| time > Time.now.utc}.min
+      time = self.calendar.select {|time| time > Time.now.utc}.min
+
+      if not time
+        require 'chronic'
+        time ||= Chronic.parse('3rd wednesday this month')
+        time = Chronic.parse('3rd wednesday next month') if time < Time.now.utc
+      end
+
+      time
     end
 
     # list of PMCs reporting in the specified meeting

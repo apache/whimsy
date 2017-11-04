@@ -269,6 +269,11 @@ get %r{/(\d\d\d\d-\d\d-\d\d).json} do |file|
   end
 end
 
+# draft committers report
+get '/text/committers-report' do
+  _text :committers_report
+end
+
 # draft minutes
 get '/text/minutes/:file' do |file|
   file = "board_minutes_#{file.gsub('-','_')}.txt".untaint
