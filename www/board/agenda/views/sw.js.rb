@@ -28,6 +28,7 @@ self.addEventListener :fetch do |event|
   url = url.slice(scope.length) if url.start_with? scope
 
   if url =~ %r{^\d\d\d\d-\d\d-\d\d/[-\w]*$} and event.request.method == 'GET'
+    return unless event.request.mode == 'navigate'
     return if url.end_with? '/bootstrap.html'
 
     event.respondWith(
