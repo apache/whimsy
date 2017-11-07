@@ -37,6 +37,7 @@ self.addEventListener :fetch do |event|
         bootstrap = "#{date}/bootstrap.html"
         request = Request.new(bootstrap)
         error = nil
+        timeoutId = nil
 
         caches.open('board/agenda').then do |cache|
           # respond from cache if the server isn't fast enough
