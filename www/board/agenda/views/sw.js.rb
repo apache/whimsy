@@ -34,8 +34,8 @@ self.addEventListener :fetch do |event|
     event.respondWith(
       Promise.new do |fulfill, reject|
         date =  url.split('/')[0]
-        bootstrap = "#{date}/bootstrap.html"
-        request = Request.new(bootstrap)
+        bootstrap = "#{scope}/#{date}/bootstrap.html"
+        request = Request.new(bootstrap, cache: "no-store")
         error = nil
         timeoutId = nil
 

@@ -37,7 +37,8 @@ class PageCache
 
     caches.open('board/agenda').then do |cache|
       # add bootstrap.html to the cache
-      request = Request.new('bootstrap.html')
+      base = document.getElementsByTagName('base')[0].href
+      request = Request.new(base + 'bootstrap.html', cache: "no-store")
       cache.match(request).then do |response|
         unless response
           fetch(request).then do |response|
