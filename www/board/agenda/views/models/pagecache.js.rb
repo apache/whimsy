@@ -30,17 +30,20 @@ class PageCache
     navigator.serviceWorker.register(scope + 'sw.js', scope)
   end
 
-  # aggressively attempt to preload pages directly used by the agenda pages
+  # ensure that bootstrap.html is in the cache
   # into the appropriate cache.
   def self.preload()
     return unless PageCache.enabled?
 
-    request = Request.new('bootstrap.html', credentials: 'include')
-    fetch(request).then do |response|
-
-      # add/update bootstrap.html in the cache
-      caches.open('board/agenda').then do |cache|
-        cache.put(request, response.clone())
+    caches.open('board/agenda').then do |cache|
+      # add bootstrap.html to the cache
+      request = Request.new('bootstrap.html')
+      cache.match(request).then do |response|
+        unless response
+          fetch(request).then do |response|
+            cache.put(request, response)
+          end
+        end
       end
     end
   end
