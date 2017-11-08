@@ -7,7 +7,7 @@ require 'mail'
 
 File.umask(0002)
 
-mail = Mail.new(STDIN.read)
+mail = Mail.new(STDIN.read.encode(crlf_newline: true))
 
 LOG = '/srv/whimsy/www/logs/svn-update'
 

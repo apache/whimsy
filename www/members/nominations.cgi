@@ -25,7 +25,7 @@ archive.each do |email|
   subject = message[/^Subject: .*/]
   next unless subject.upcase.include? "MEMBER"
   next unless subject.upcase =~ /NOMI[NM]ATION/
-  mail = Mail.new(message)
+  mail = Mail.new(message.encode(message.encoding, crlf_newline: true))
   next if mail.subject.downcase == 'member nomination process'
   emails << mail if mail.subject =~ /^\[?MEMBER(SHIP)? NOMI[MN]ATION\]?/i
 end
