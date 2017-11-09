@@ -148,6 +148,9 @@ class Flow
 
   # reflow text
   def self.text(text, indent='')
+    # remove trailing spaces on lines
+    text.gsub! /[ \r\t]+\n/, "\n"
+
     # join consecutive lines (making exception for <markers> like <private>)
     text.gsub! /([^\s>])\n(\w)/, '$1 $2'
 
