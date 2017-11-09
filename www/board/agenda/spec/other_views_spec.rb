@@ -108,22 +108,22 @@ feature 'other reports' do
       text: 'Mesos'
   end
 
-  it "should skip to flagged items once meeting has started" do
+  it "should skip to missing/flagged items once meeting has started" do
     visit '/2015-02-18/Security-Team'
-    expect(page).to have_selector '.nextlink[href="flagged/Axis"]',
-      text: 'Axis'
+    expect(page).to have_selector '.nextlink[href="flagged/Abdera"]',
+      text: 'Abdera'
 
-    visit '/2015-02-18/flagged/Axis'
+    visit '/2015-02-18/flagged/Abdera'
     expect(page).to have_selector '.backlink[href="Security-Team"]',
       text: 'Security Team'
 
-    visit '/2015-02-18/flagged/Lenya'
+    visit '/2015-02-18/flagged/Xerces'
     expect(page).to have_selector '.nextlink[href="Change-Geronimo-Chair"]',
       text: 'Change Geronimo Chair'
 
     visit '/2015-02-18/Change-Geronimo-Chair'
-    expect(page).to have_selector '.backlink[href="flagged/Lenya"]',
-      text: 'Lenya'
+    expect(page).to have_selector '.backlink[href="flagged/Xerces"]',
+      text: 'Xerces'
   end
 
   it "should highlight and crosslink action items" do

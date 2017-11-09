@@ -49,7 +49,7 @@ class Footer < Vue
         link and link.attach =~ /^[A-Z]/
       then
         Agenda.index.each do |item| 
-          if item.flagged
+          if item.flagged and item.attach =~ /^[A-Z]/
             prefix = 'flagged/'
             link = item 
           end
