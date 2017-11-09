@@ -34,7 +34,7 @@ class Post < Vue
       #input field: report text
       _textarea.post_report_text! label: @label, value: @report,
         placeholder: @label, rows: 17, disabled: @disabled, 
-        onChange: self.change_text
+        onInput: self.change_text
 
       # upload of spreadsheet from virtual
       if @@item.title == 'Treasurer'
@@ -123,6 +123,8 @@ class Post < Vue
       @alerted = true
     end
 
+    @base = @report
+
     if @@button.text == 'add resolution' or @@item.attach =~ /^[47]/
       @indent = '        '
     else
@@ -147,7 +149,21 @@ class Post < Vue
   # track changes to text value
   def change_text(event)
     @report = event.target.value
-    @edited = true
+    self.change_message()
+  end
+
+  # update default message to reflect whether only whitespace changes were
+  # made or if there is something more that was done
+  def change_message()
+    @edited = (@base != @report)
+
+    if @message =~ /(Edit|Reflow) #{@@item.title} Report/
+      if @edited and @base.gsub(/[ \t\n]+/, '') == @report.gsub(/[ \t\n]+/, '')
+         @message = "Reflow #{@@item.title} Report"
+      else
+         @message = "Edit #{@@item.title} Report"
+      end
+    end
   end
 
   # determine if reflow button should be default or danger color
@@ -176,6 +192,7 @@ class Post < Vue
     end
 
     @report = Flow.text(report, @indent)
+    self.change_message()
   end
 
   # determine if the form is ready to be submitted
