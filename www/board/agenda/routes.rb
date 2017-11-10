@@ -389,7 +389,7 @@ get '/new' do
   # try to shorten time zone link
   begin
     shorten = 'http://www.timeanddate.com/createshort.html?url=' +
-      URI.escape(path + '&msg=ASF+Board+Meeting') + '&confirm=1'
+      CGI.escape(path) + '&confirm=1'
     shorten = URI.parse(shorten).read[/id=selectable>(.*?)</, 1]
     @tzlink = shorten if shorten
   end
