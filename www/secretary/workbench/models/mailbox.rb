@@ -162,7 +162,7 @@ class Mailbox
     # extract relevant fields from the headers
     headers.map! do |id, message|
       {
-        time: message[:time],
+        time: message[:time] || '',
         href: "#{message[:source]}/#{id}/",
         from: message[:name] || message[:from],
         subject: message['Subject'],
