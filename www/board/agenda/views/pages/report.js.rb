@@ -117,11 +117,8 @@ class Report < Vue
     indicies.each do |info|
       line = info[0]
       index = info[1]
-      prefix = /^\W*/.exec(line)[0]
-      indent = ' ' * prefix.length
-      replacement = '<span class="hilite" title="reflowed">' + prefix +
-        Flow.text(line[prefix.length..-1], indent).gsub("\n", "\n" + indent) +
-        "</span>"
+      replacement = '<span class="hilite" title="reflowed">' + 
+        Flow.text(line) + "</span>"
 
       text = text.slice(0, index) + replacement + 
         text.slice(index + line.length)

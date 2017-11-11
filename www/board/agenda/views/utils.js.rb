@@ -158,21 +158,22 @@ class Flow
     lines = text.split("\n")
     len = 78 - indent.length
     for i in 0...lines.length
-      indent = lines[i].match(/( *)(.?.?)(.*)/m)
+      line = lines[i]
+      next if line.length <= len
+      prefix = /^\W*/.exec(line)[0]
 
-      if (indent[1] == '' and indent[2] != '* ') or indent[3] == ''
-        # not indented (or short) -> split
-        lines[i] = lines[i].
+      if prefix.length == 0
+        # not indented -> split
+        lines[i] = line.
           gsub(/(.{1,#{len}})( +|$\n?)|(.{1,#{len}})/, "$1$3\n").
           sub(/[\n\r]+$/, '')
       else
-        # preserve indentation.  indent[2] is the 'bullet' (if any) and is
-        # only to be placed on the first line.
-        n = 76 - indent[1].length;
-        lines[i] = indent[3].
-          gsub(/(.{1,#{n}})( +|$\n?)|(.{1,#{n}})/, indent[1] + "  $1$3\n").
-          sub(indent[1] + '  ', indent[1] + indent[2]).
-          sub(/[\n\r]+$/, '')
+        # preserve indentation.
+        n = len - prefix.length;
+        indent = prefix.gsub(/\W/, ' ')
+        lines[i] = line[prefix.length..-1].
+          gsub(/(.{1,#{n}})( +|$\n?)|(.{1,#{n}})/, indent + "$1$3\n").
+          sub(indent, prefix). sub(/[\n\r]+$/, '')
       end
     end
 
