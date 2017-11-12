@@ -165,15 +165,15 @@ class Flow
       if prefix.length == 0
         # not indented -> split
         lines[i] = line.
-          gsub(/(.{1,#{len}})( +|$\n?)|(.{1,#{len}})/, "$1$3\n").
+          gsub(/(.{1,#{len}})( +|$\n?)/, "$1\n").
           sub(/[\n\r]+$/, '')
       else
         # preserve indentation.
         n = len - prefix.length;
         indent = prefix.gsub(/\W/, ' ')
-        lines[i] = line[prefix.length..-1].
-          gsub(/(.{1,#{n}})( +|$\n?)|(.{1,#{n}})/, indent + "$1$3\n").
-          sub(indent, prefix). sub(/[\n\r]+$/, '')
+        lines[i] = prefix + line[prefix.length..-1].
+          gsub(/^(.{1,#{n}})( +|$\n?)/, indent + "$1\n").
+          sub(indent, '').sub(/[\n\r]+$/, '')
       end
     end
 
