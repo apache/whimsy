@@ -22,6 +22,9 @@ prototype_committer =
 "Congratulations! The #{pmc.name} #{pmc_type} hereby offers you committer privileges
 to the #{pmc.name} project.
 
+You can read more about what the expectations are for committers here:
+http://www.apache.org/dev/committers.html#committer-responsibilities
+
 These privileges are offered on the understanding that you'll use them
 reasonably and with common sense. We like to work on trust rather than
 unnecessary constraints.
@@ -42,9 +45,17 @@ address only.
 "
 
 prototype_pmc =
-"You are also invited to become a member of the #{pmc.name} #{pmc_type}.
-Being a #{pmc_type} member enables you to help guide the direction of the project.
-If you accept, you will have binding votes on releases and new committers.
+"You are also invited to become a member of the #{pmc.name} PMC.
+Being a PMC member enables you to help guide the direction of the project.
+You can read more about what the expectations are for PMC members here:
+http://www.apache.org/dev/pmc.html#audience
+"
+
+prototype_ppmc =
+"You are also invited to become a member of the #{pmc.name} PPMC.
+Being a PPMC member enables you to help guide the direction of the project.
+You can read more about what the expectations are for PPMC members here:
+https://incubator.apache.org/guides/ppmc.html
 "
 
 # validate email address
@@ -97,9 +108,10 @@ link = "#{scheme}://#{env['HTTP_HOST']}#{path}"
 _token token
 _invitation %{Dear #{@iclaname},
 
-#{prototype_contributor if @votelink.empty?}
-#{prototype_committer if not @votelink.empty?}
-#{prototype_pmc if @noticelink}
+#{prototype_contributor if @votelink.empty?}\
+#{prototype_committer if not @votelink.empty?}\
+#{prototype_pmc if @noticelink && pmc_type = 'PMC'}\
+#{prototype_ppmc if @noticelink && pmc_type = 'PPMC'}
 Click on this link to accept:
 #{link}
 

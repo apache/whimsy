@@ -30,7 +30,7 @@ get '/invite' do
     .map(&:name).sort
 
   # allow user to invite contributors for PMCs of which the user is a member,
-  # or for podlings if the user is a member of the IPMC.
+  # or for podlings if the user is a member of the PPMC.
   user = ASF::Person.find(env.user)
   committees = user.committees.map(&:name)
   ipmc = committees.include?('incubator')
