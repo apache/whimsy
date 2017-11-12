@@ -76,6 +76,11 @@ class Post < Vue
       else
         document.getElementById("post-report-text").focus()
       end
+
+      # scroll to the top
+      setTimeout 0 do
+        document.getElementById("post-report-text").scrollTop = 0
+      end
     end
   end
 
@@ -118,12 +123,13 @@ class Post < Vue
       @digest = @@item.digest
       @alerted = false
       @edited = false
+      @base = @report
     elsif not @alerted and @edited and @digest != @@item.digest
       alert 'edit conflict'
       @alerted = true
+    else
+      @report = @base
     end
-
-    @base = @report
 
     if @@button.text == 'add resolution' or @@item.attach =~ /^[47]/
       @indent = '        '
@@ -182,13 +188,15 @@ class Post < Vue
     report = @report
 
     # remove indentation
-    regex = RegExp.new('^( +)\S', 'gm')
-    indents = []
-    while (result = regex.exec(report))
-      indents.push result[1].length
-    end
-    unless indents.empty?
-      report.gsub!(RegExp.new('^' + ' ' * Math.min(*indents), 'gm'), '')
+    unless report =~ /^\S/
+      regex = RegExp.new('^( +)', 'gm')
+      indents = []
+      while (result = regex.exec(report))
+        indents.push result[1].length
+      end
+      unless indents.empty?
+        report.gsub!(RegExp.new('^' + ' ' * Math.min(*indents), 'gm'), '')
+      end
     end
 
     @report = Flow.text(report, @indent)
