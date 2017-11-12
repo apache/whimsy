@@ -8,6 +8,7 @@ class Invite < Vue
     @iclaemail = ''
     @pmc = ''
     @votelink = ''
+    @noticelink = ''
   end
 
   def render
@@ -43,22 +44,31 @@ class Invite < Vue
     end
 
     _div.form_group do
-      _label "PMC", for: 'pmc'
+      _label "PMC/PPMC", for: 'pmc'
       _select.form_control.pmc! required: true, onChange: self.setPMC, value: @pmc do
         _option ''
         Server.data.pmcs.each do |pmc|
           _option pmc
         end
+        _option '---'
+        Server.data.ppmcs.each do |ppmc|
+          _option ppmc
+        end
       end
     end
 
     _p %{
-      Fill the following field only if the person was voted by the PMC to become
-      a committer, or the person is an initial committer on a new project
-      accepted for incubation, or the person has been voted as a committer
-      on a podling.  For new incubator projects use the
-      http://wiki.apache.org/incubator/XXXProposal link; for existing projects
-      link to the [RESULT][VOTE] message in the mail archives.
+      For PMCs: Fill the following field only if the person was voted by the PMC
+      to become a committer.
+      Link to the [RESULT][VOTE] message in the mail archives.
+    }
+    _p %{
+      For PPMCs: Fill the following field only if the person is an initial
+      committer on a new project accepted for incubation, or the person
+      has been voted as a committer on a podling.
+      For new incubator projects use the
+      http://wiki.apache.org/incubator/XXXProposal link; for existing
+      podlings link to the [RESULT][VOTE] message in the mail archives.
     }
     _ 'Navigate to '
     _a "ponymail", href: "https://lists.apache.org"
@@ -73,10 +83,13 @@ class Invite < Vue
     end
 
     _p %{
-      Fill the following field only if the person was voted by the PMC to become
-      a PMC member, or voted by the PPMC to be a PPMC member. For existing
-      projects, link to the [NOTICE] message sent to the board.
-      For PPMCs, link to the [NOTICE] message sent to the incubator PMC.
+      For PMCs: Fill the following field only if the person was voted by the PMC
+      to become a PMC member. Link to the [NOTICE] message sent to the board.
+      The message must have been in the archives for at least 72 hours.
+    }
+    _p %{
+      For PPMCs: Fill the following field only if the person was voted by the
+      PPMC to be a PPMC member. Link to the [NOTICE] message sent to the incubator PMC.
       The message must have been in the archives for at least 72 hours.
     }
 
@@ -197,6 +210,7 @@ class Invite < Vue
       iclaemail: @iclaemail,
       pmc: @pmc,
       votelink: @votelink
+      #noticelink: @noticelink
     }
 
     @disabled = true
@@ -224,6 +238,7 @@ class Invite < Vue
     FormData.email = @iclaemail
     FormData.pmc = @pmc
     FormData.votelink = @votelink
+    FormData.noticelink = @noticelink
 
     # for demo purposes advance to the interview.  Note: the below line
     # updates the URL in a way that breaks the back button.

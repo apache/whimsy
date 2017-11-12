@@ -1,5 +1,5 @@
 #
-# Server side setup
+# Server side setup for whimsy/project
 #
 
 require 'whimsy/asf'
@@ -23,16 +23,19 @@ end
 get '/invite' do
   @view = 'invite'
 
-  # get a complete list of PMCs
+  # get a complete list of PMC and PPMC names
   @pmcs = ASF::Committee.pmcs.map(&:name).sort
+  @ppmcs = ASF::Podling.list
+    .select {|podling| podling.status == 'current'}
+    .map(&:name).sort
 
-  # for non ASF members, limit PMCs to ones for which the user is a
-  # member of the PMC.
+  # allow user to invite contributors for PMCs of which the user is a member,
+  # or for podlings if the user is a member of the IPMC.
   user = ASF::Person.find(env.user)
-  unless user.asf_member?
-    committees = user.committees.map(&:name)
-    @pmcs.select! {|pmc| committees.include?(pmc)}
-  end
+  committees = user.committees.map(&:name)
+  ipmc = committees.include?('incubator')
+  @pmcs.select! {|pmc| committees.include?(pmc)}
+  @ppmcs.select! {|ppmc| committees.include?('incubator') | committees.include?(ppmc)}
 
   # render the HTML for the application
   _html :app

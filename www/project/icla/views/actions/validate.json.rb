@@ -3,8 +3,49 @@ require 'net/http'
 require 'pathname'
 
 # find pmc and user information
+# all ppmcs are also pmcs but not all pmcs are ppmcs
+
 pmc = ASF::Committee.find(@pmc)
+ppmc = ASF::Podling.find(@pmc)
+pmc_type = if ppmc then 'PPMC' else 'PMC' end
+
 user = ASF::Person.find(env.user)
+
+# prototype mail text
+prototype_contributor =
+"Based on your contributions to #{pmc.name}, you are invited to submit an ICLA
+to The Apache Software Foundation, using the following form. Please see
+http://apache.org/licenses for details.
+"
+
+prototype_committer =
+"Congratulations! The #{pmc.name} #{pmc_type} hereby offers you committer privileges
+to the #{pmc.name} project.
+
+These privileges are offered on the understanding that you'll use them
+reasonably and with common sense. We like to work on trust rather than
+unnecessary constraints.
+
+Being a committer enables you to more easily make changes without needing to
+go through the patch submission process.
+
+Being a committer does not require you to participate any more than you already
+do. It does tend to make one even more committed ;-) You willprobably find that
+you spend more time here.
+
+Of course, you can decline and instead remain as a contributor, participating
+as you do now.
+
+This personal invitation is a chance for you to accept or decline in private.
+Either way, please let us know in reply to the private@#{pmc.name}.apache.org
+address only.
+"
+
+prototype_pmc =
+"You are also invited to become a member of the #{pmc.name} #{pmc_type}.
+Being a #{pmc_type} member enables you to help guide the direction of the project.
+If you accept, you will have binding votes on releases and new committers.
+"
 
 # validate email address
 begin
@@ -40,12 +81,6 @@ if @votelink and not @votelink.empty?
     _focus :votelink
   end
 
-  # verify that the user submitting the form is on the PMC in question
-  unless pmc and pmc.owners.include? user
-    _error "You must be on the #@pmc PMC to submit a vote link"
-    _focus :pmc
-  end
-
 end
 
 # add user and pmc emails to the response
@@ -62,12 +97,13 @@ link = "#{scheme}://#{env['HTTP_HOST']}#{path}"
 _token token
 _invitation %{Dear #{@iclaname},
 
-Based on your contributions, you are invited to submit an ICLA to The Apache
-Software Foundation, using the following form. Please see
-http://apache.org/licenses for details.
-
+#{prototype_contributor if @votelink.empty?}
+#{prototype_committer if not @votelink.empty?}
+#{prototype_pmc if @noticelink}
+Click on this link to accept:
 #{link}
 
-Thanks,
+Regards,
 #{user.public_name if user}
+On behalf of the #{pmc.name} project
 }
