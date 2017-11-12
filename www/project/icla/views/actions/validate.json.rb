@@ -73,6 +73,14 @@ end
 # validate vote link
 if @votelink and not @votelink.empty?
 
+  # verify that the link refers to lists.apache.org message on the project list
+  if not @votelink=~ /.*lists\.apache\.org.*/
+    _error "Please link to a message via lists.apache.org"
+  end
+  if not @votelink=~ /.*#{pmc.mail_list}.apache\.org.*/
+    _error "Please link to a message with the results of the vote sent to the private list"
+  end
+
   # attempt to fetch the page
   if @votelink =~ /^https?:/i
     uri = URI.parse(@votelink)
