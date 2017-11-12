@@ -28,14 +28,16 @@ self.addEventListener :fetch do |event|
   url = url.slice(scope.length) if url.start_with? scope
 
   if url =~ %r{^\d\d\d\d-\d\d-\d\d/[-\w]*$} and event.request.method == 'GET'
+    return unless event.request.mode == 'navigate'
     return if url.end_with? '/bootstrap.html'
 
     event.respondWith(
       Promise.new do |fulfill, reject|
         date =  url.split('/')[0]
-        bootstrap = "#{date}/bootstrap.html"
-        request = Request.new(bootstrap)
+        bootstrap = "#{scope}#{date}/bootstrap.html"
+        request = Request.new(bootstrap, cache: "no-store")
         error = nil
+        timeoutId = nil
 
         caches.open('board/agenda').then do |cache|
           # respond from cache if the server isn't fast enough

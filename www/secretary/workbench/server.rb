@@ -43,6 +43,8 @@ end
 require 'whimsy/asf'
 ASF::Mail.configure
 
+set :show_exceptions, true
+
 disable :logging # suppress log of requests to stderr/error.log
 
 # list of messages

@@ -269,6 +269,11 @@ get %r{/(\d\d\d\d-\d\d-\d\d).json} do |file|
   end
 end
 
+# draft committers report
+get '/text/committers-report' do
+  _text :committers_report
+end
+
 # draft minutes
 get '/text/minutes/:file' do |file|
   file = "board_minutes_#{file.gsub('-','_')}.txt".untaint
@@ -384,7 +389,7 @@ get '/new' do
   # try to shorten time zone link
   begin
     shorten = 'http://www.timeanddate.com/createshort.html?url=' +
-      URI.escape(path + '&msg=ASF+Board+Meeting') + '&confirm=1'
+      CGI.escape(path) + '&confirm=1'
     shorten = URI.parse(shorten).read[/id=selectable>(.*?)</, 1]
     @tzlink = shorten if shorten
   end

@@ -34,7 +34,7 @@ class Post < Vue
       #input field: report text
       _textarea.post_report_text! label: @label, value: @report,
         placeholder: @label, rows: 17, disabled: @disabled, 
-        onChange: self.change_text
+        onInput: self.change_text
 
       # upload of spreadsheet from virtual
       if @@item.title == 'Treasurer'
@@ -75,6 +75,11 @@ class Post < Vue
         document.getElementById("post-report-title").focus()
       else
         document.getElementById("post-report-text").focus()
+      end
+
+      # scroll to the top
+      setTimeout 0 do
+        document.getElementById("post-report-text").scrollTop = 0
       end
     end
   end
@@ -118,9 +123,12 @@ class Post < Vue
       @digest = @@item.digest
       @alerted = false
       @edited = false
+      @base = @report
     elsif not @alerted and @edited and @digest != @@item.digest
       alert 'edit conflict'
       @alerted = true
+    else
+      @report = @base
     end
 
     if @@button.text == 'add resolution' or @@item.attach =~ /^[47]/
@@ -147,7 +155,21 @@ class Post < Vue
   # track changes to text value
   def change_text(event)
     @report = event.target.value
-    @edited = true
+    self.change_message()
+  end
+
+  # update default message to reflect whether only whitespace changes were
+  # made or if there is something more that was done
+  def change_message()
+    @edited = (@base != @report)
+
+    if @message =~ /(Edit|Reflow) #{@@item.title} Report/
+      if @edited and @base.gsub(/[ \t\n]+/, '') == @report.gsub(/[ \t\n]+/, '')
+         @message = "Reflow #{@@item.title} Report"
+      else
+         @message = "Edit #{@@item.title} Report"
+      end
+    end
   end
 
   # determine if reflow button should be default or danger color
@@ -166,16 +188,19 @@ class Post < Vue
     report = @report
 
     # remove indentation
-    regex = RegExp.new('^( +)\S', 'gm')
-    indents = []
-    while (result = regex.exec(report))
-      indents.push result[1].length
-    end
-    unless indents.empty?
-      report.gsub!(RegExp.new('^' + ' ' * Math.min(*indents), 'gm'), '')
+    unless report =~ /^\S/
+      regex = RegExp.new('^( +)', 'gm')
+      indents = []
+      while (result = regex.exec(report))
+        indents.push result[1].length
+      end
+      unless indents.empty?
+        report.gsub!(RegExp.new('^' + ' ' * Math.min(*indents), 'gm'), '')
+      end
     end
 
     @report = Flow.text(report, @indent)
+    self.change_message()
   end
 
   # determine if the form is ready to be submitted

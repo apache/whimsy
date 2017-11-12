@@ -30,6 +30,8 @@ gem 'mime-types', '~> 2.6'
 
 gem 'rubyXL'
 
+gem 'chronic'
+
 group :test do
   gem 'rspec'
   gem 'puma'
