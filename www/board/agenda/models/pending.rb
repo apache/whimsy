@@ -23,6 +23,26 @@ class Pending
     response['comments'] ||= {} 
     response['seen']     ||= {}
 
+    # extract user information
+    response['userid'] ||= user
+
+    if user == 'test' and ENV['RACK_ENV'] == 'test'
+      username = 'Joe Tester'
+    else
+      username = ASF::Person.new(user).public_name
+      begin
+        username ||= Etc.getpwnam(userid)[4].split(',')[0].
+          force_encoding('utf-8')
+      rescue ArgumentError
+        username = 'Anonymous'
+      end
+    end
+
+    response['username'] ||= username
+    response['initials'] ||= username.gsub(/[^A-Z]/, '').downcase
+    response['firstname'] ||= username.split(' ').first.downcase
+
+    # return response
     response
   end
 

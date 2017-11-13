@@ -94,9 +94,7 @@ end
 
 # pending items
 get %r{/(\d\d\d\d-\d\d-\d\d)/pending\.json} do |date|
-  userid = env.user
-  pending = Pending.get(userid)
-  pending[:userid] = userid
+  pending = Pending.get(env.user)
   _json pending
 end
 
@@ -126,7 +124,6 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   end
 
   pending = Pending.get(userid)
-  initials = pending['initials'] || username.gsub(/[^A-Z]/, '').downcase
 
   if userid == 'test' or ASF::Service['board'].members.map(&:id).include? userid
     role = :director
@@ -157,9 +154,9 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     agendas: dir('board_agenda_*.txt').sort,
     drafts: dir('board_minutes_*.txt').sort,
     pending: pending,
-    username: username,
-    firstname: username.split(' ').first.downcase,
-    initials: initials,
+    username: pending['username'],
+    firstname: pending['firstname'],
+    initials: pending['initials'],
     online: @present,
     session: Session.user(userid),
     role: role,

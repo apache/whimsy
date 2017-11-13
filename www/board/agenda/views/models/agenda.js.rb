@@ -322,7 +322,7 @@ class Agenda
   def self.shepherd
     shepherd = nil
 
-    firstname = Server.firstname.downcase()
+    firstname = Pending.firstname.downcase()
     Agenda.index.each do |item|
       if 
         item.shepherd and 
@@ -480,7 +480,7 @@ class Agenda
     return true if Minutes.started and self.missing
     return false unless @flagged_by
     return false if @flagged_by.length == 1 and 
-      @flagged_by.first == Server.initials and 
+      @flagged_by.first == Pending.initials and 
       Pending.unflagged.include?(@attach)
     return ! @flagged_by.empty?
   end
