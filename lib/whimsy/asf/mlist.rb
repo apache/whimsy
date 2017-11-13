@@ -146,7 +146,8 @@ module ASF
           yield dom, list, stanza.scan(/^(.*@.*)/).flatten
         else
           # don't allow mismatches as that means the RE is wrong
-          raise ArgumentError.new("Unexpected section #{stanza}")
+          line=stanza[0..(stanza.index("\n")|| -1)]
+          raise ArgumentError.new("Unexpected section header #{line}")
         end
       end
     end
