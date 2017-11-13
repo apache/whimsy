@@ -220,7 +220,7 @@ class Invite < Vue
 
   # client side field validations
   def checkValidity()
-    @disabled = !%w(iclaname iclaemail pmc votelink).all? do |id|
+    @disabled = !%w(iclaname iclaemail pmc).all? do |id|
       document.getElementById(id).checkValidity()
     end
   end
