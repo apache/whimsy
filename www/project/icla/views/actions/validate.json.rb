@@ -145,9 +145,6 @@ link = "#{scheme}://#{env['HTTP_HOST']}#{path}"
 # add token and invitation to the response
 _token token
 _invitation %{Dear #{@iclaname},
-  votelink is #{@votelink}
-  noticelink is #{@noticelink}
-  pmc_type is #{pmc_type}
 
 #{prototype_contributor if @votelink.empty?}\
 #{prototype_committer if not @votelink.empty?}
