@@ -144,6 +144,9 @@ module ASF
           dom = match[1]
           list = match[2]
           yield dom, list, stanza.scan(/^(.*@.*)/).flatten
+        # or    [/home/apmail/lists/]apachecon.com/dev[/mod]
+        elsif stanza.match(/(?:^|\/)(apachecon\.com)\/(.*?)#{suffix}(?:\n|\Z)/)
+          # TODO - not sure how to handle these yet
         else
           # don't allow mismatches as that means the RE is wrong
           line=stanza[0..(stanza.index("\n")|| -1)]
