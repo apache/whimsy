@@ -33,15 +33,8 @@ Being a committer enables you to more easily make changes without needing to
 go through the patch submission process.
 
 Being a committer does not require you to participate any more than you already
-do. It does tend to make one even more committed ;-) You willprobably find that
-you spend more time here.
-
-Of course, you can decline and instead remain as a contributor, participating
-as you do now.
-
-This personal invitation is a chance for you to accept or decline in private.
-Either way, please let us know in reply to the private@#{pmc.name}.apache.org
-address only.
+do, but it does tend to make one even more committed ;-) You will probably find
+that you spend more time here.
 "
 
 prototype_pmc =
@@ -49,6 +42,7 @@ prototype_pmc =
 Being a PMC member enables you to help guide the direction of the project.
 You can read more about what the expectations are for PMC members here:
 http://www.apache.org/dev/pmc.html#audience
+
 "
 
 prototype_ppmc =
@@ -56,6 +50,7 @@ prototype_ppmc =
 Being a PPMC member enables you to help guide the direction of the project.
 You can read more about what the expectations are for PPMC members here:
 https://incubator.apache.org/guides/ppmc.html
+
 "
 
 # validate email address
@@ -73,12 +68,12 @@ end
 # validate vote link
 if @votelink and not @votelink.empty?
 
-  # verify that the link refers to lists.apache.org message on the project list
+# verify that the link refers to lists.apache.org message on the project list
   if not @votelink=~ /.*lists\.apache\.org.*/
     _error "Please link to a message via lists.apache.org"
   end
   if not @votelink=~ /.*#{pmc.mail_list}.apache\.org.*/
-    _error "Please link to a message with the results of the vote sent to the private list"
+    _error "Please link to the [RESULT][VOTE] message sent to the private list."
   end
 
   # attempt to fetch the page
@@ -102,6 +97,41 @@ if @votelink and not @votelink.empty?
 
 end
 
+# validate notice link
+if @noticelink and not @noticelink.empty?
+
+  # verify that the link refers to lists.apache.org message on the proper list
+  if not @noticelink=~ /.*lists\.apache\.org.*/
+    _error "Please link to a message via lists.apache.org"
+  end
+  if pmc_type == 'PMC' and not @noticelink=~ /.*board@apache\.org.*/
+    _error "Please link to the NOTICE message sent to the board list."
+  end
+  if pmc_type == 'PPMC' and not @noticelink=~ /.*private@incubator\.apache\.org.*/
+    _error "Please link to the NOTICE message sent to the incubator private list."
+  end
+
+  # attempt to fetch the page
+  if @noticelink =~ /^https?:/i
+    uri = URI.parse(@noticelink)
+    http = Net::HTTP.new(uri.host.untaint, uri.port)
+    if uri.scheme == 'https'
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
+    request = Net::HTTP::Get.new(uri.request_uri.untaint)
+    response = http.request(request)
+    unless response.code.to_i < 400
+      _error "HTTP status #{response.code} for #{@noticelink}"
+      _focus :noticelink
+    end
+    else
+    _error 'Only http(s) links are accepted for notice links'
+    _focus :noticelink
+  end
+
+end
+
 # add user and pmc emails to the response
 _userEmail "#{user.public_name} <#{user.mail.first}>" if user
 _pmcEmail "private@#{pmc.mail_list}.apache.org" if pmc
@@ -115,11 +145,20 @@ link = "#{scheme}://#{env['HTTP_HOST']}#{path}"
 # add token and invitation to the response
 _token token
 _invitation %{Dear #{@iclaname},
+  votelink is #{@votelink}
+  noticelink is #{@noticelink}
+  pmc_type is #{pmc_type}
 
 #{prototype_contributor if @votelink.empty?}\
-#{prototype_committer if not @votelink.empty?}\
-#{prototype_pmc if @noticelink && pmc_type = 'PMC'}\
-#{prototype_ppmc if @noticelink && pmc_type = 'PPMC'}
+#{prototype_committer if not @votelink.empty?}
+#{prototype_pmc if not @noticelink.empty? and (pmc_type == 'PMC')}\
+#{prototype_ppmc if not @noticelink.empty? and (pmc_type == 'PPMC')}\
+Of course, you can decline and instead remain as a contributor, participating
+as you do now.
+
+This personal invitation is a chance for you to accept or decline in private.
+Either way, please let us know in reply to the private@ address only.
+
 Click on this link to accept:
 #{link}
 

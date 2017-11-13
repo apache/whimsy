@@ -209,8 +209,8 @@ class Invite < Vue
       iclaname: @iclaname,
       iclaemail: @iclaemail,
       pmc: @pmc,
-      votelink: @votelink
-      #noticelink: @noticelink
+      votelink: @votelink,
+      noticelink: @noticelink
     }
 
     @disabled = true
