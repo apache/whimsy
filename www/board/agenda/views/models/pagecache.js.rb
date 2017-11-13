@@ -18,7 +18,16 @@ class PageCache
     # disable service workers for the production server(s) for now.  See:
     # https://lists.w3.org/Archives/Public/public-webapps/2016JulSep/0016.html
     if location.hostname =~ /^whimsy.*\.apache\.org$/
-      return false unless location.hostname.include? '-test'
+      unless location.hostname.include? '-test'
+        # unregister service worker
+        navigator.serviceWorker.getRegistrations().then do |registrations|
+          registrations.each do |registration|
+            registration.unregister()
+          end
+        end
+
+        return false
+      end
     end
 
     defined?(ServiceWorker) and defined?(navigator)
