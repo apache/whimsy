@@ -126,7 +126,7 @@ class Queue < Vue
         action = true
       end
 
-      if not action and item.ready_for_review(Server.initials)
+      if not action and item.ready_for_review(Pending.initials)
         result.ready << item 
       end
     end

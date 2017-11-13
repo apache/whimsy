@@ -16,6 +16,7 @@ class Pending
             Server.userid = json.userid if json.userid
             Server.initials = json.initials if json.initials
             Server.firstname = json.firstname if json.firstname
+            Server.username = json.firstname if json.username
           end
         end
       end
@@ -72,6 +73,10 @@ class Pending
 
   def self.firstname
     Server.pending.firstname || Server.firstname
+  end
+
+  def self.username
+    Server.pending.username || Server.username
   end
 
   def self.status

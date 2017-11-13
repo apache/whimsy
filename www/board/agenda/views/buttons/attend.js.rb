@@ -13,14 +13,14 @@ class Attend < Vue
 
   # match person by either userid or name
   def created()
-    person = @@item.people[Server.userid]
+    person = @@item.people[Pending.userid]
     if person
       @attending = person.attending
     else
       @attending = false
       for id in @@item.people
         person = @@item.people[id]
-        @attending = person.attending if person.name == Server.username
+        @attending = person.attending if person.name == Pending.username
       end
     end
   end
@@ -29,8 +29,8 @@ class Attend < Vue
     data = {
       agenda: Agenda.file,
       action: (@attending ? 'regrets' : 'attend'),
-      name: Server.username,
-      userid: Server.userid
+      name: Pending.username,
+      userid: Pending.userid
     }
 
     @disabled = true

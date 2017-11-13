@@ -56,7 +56,7 @@ class Backchannel < Vue
 
   # highlight mentions of my id
   def mention(text)
-    return text.gsub(/<.*?>|\b(#{Server.userid})\b/) do |match|
+    return text.gsub(/<.*?>|\b(#{Pending.userid})\b/) do |match|
       match[0] == '<' ? match : "<span class=mention>#{match}</span>"
     end
   end

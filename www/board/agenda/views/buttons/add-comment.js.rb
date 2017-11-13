@@ -81,12 +81,11 @@ class AddComment < Vue
 
   # when save button is pushed, post comment and dismiss modal when complete
   def save(event)
-    Server.initials = document.getElementById("comment-initials").value
-
     data = {
       agenda: Agenda.file,
       attach: @@item.attach,
-      initials: Server.initials,
+      initials: document.getElementById("comment-initials").value || 
+        Pending.initials,
       comment: @comment
     }
 
@@ -104,7 +103,7 @@ class AddComment < Vue
 
     data = {
       agenda: Agenda.file,
-      initials: Server.initials,
+      initials: Pending.initials,
       attach: @@item.attach,
       request: (event.target.checked ? 'flag' : 'unflag')
     }

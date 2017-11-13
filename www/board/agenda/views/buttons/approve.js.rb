@@ -18,7 +18,7 @@ class Approve < Vue
       'unapprove'
     elsif Pending.unapproved.include? @@item.attach
       'approve'
-    elsif @@item.approved and @@item.approved.include? Server.initials
+    elsif @@item.approved and @@item.approved.include? Pending.initials
       'unapprove'
     else
       'approve'
@@ -29,7 +29,7 @@ class Approve < Vue
   def click(event)
     data = {
       agenda: Agenda.file,
-      initials: Server.initials,
+      initials: Pending.initials,
       attach: @@item.attach,
       request: request
     }

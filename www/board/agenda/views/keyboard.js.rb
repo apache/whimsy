@@ -60,7 +60,7 @@ class Keyboard
         return false
       elsif event.keyCode == 'X'.ord
         if Main.item.attach and Minutes.started and not Minutes.complete
-          Chat.changeTopic user: Server.userid, link: Main.item.href,
+          Chat.changeTopic user: Pending.userid, link: Main.item.href,
             text: "current topic: #{Main.item.title}"
           return false
         end
