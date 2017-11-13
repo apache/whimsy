@@ -151,11 +151,19 @@ class Flow
     # remove trailing spaces on lines
     text.gsub! /[ \r\t]+\n/, "\n"
 
-    # join consecutive lines (making exception for <markers> like <private>)
-    text.gsub! /([^\s>])\n[ \t]*(\w)/, '$1 $2'
+    # split into lines
+    lines = text.split("\n")
+
+    # join consecutive lines, making exception for lines that start with a 
+    # hash (#) and <markers> like <private>, ")".
+    (lines.length-1).downto(1) do |i|
+      next if lines[i-1] =~ /^$|^#|\w>$/
+      if lines[i] =~ /^\s*\w/
+        lines.splice(i-1, 2, lines[i-1] + lines[i].sub(/^\s*/, ' '))
+      end
+    end
 
     # reflow each line
-    lines = text.split("\n")
     len = 78 - indent.length
     for i in 0...lines.length
       line = lines[i]
