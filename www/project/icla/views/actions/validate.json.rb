@@ -72,7 +72,7 @@ if @votelink and not @votelink.empty?
   if not @votelink=~ /.*lists\.apache\.org.*/
     _error "Please link to a message via lists.apache.org"
   end
-  if not @votelink=~ /.*#{pmc.mail_list}.apache\.org.*/
+  if not @votelink=~ /.*#{pmc.mail_list}(\.incubator)?\.apache\.org.*/
     _error "Please link to the [RESULT][VOTE] message sent to the private list."
   end
 

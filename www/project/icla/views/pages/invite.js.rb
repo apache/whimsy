@@ -9,6 +9,13 @@ class Invite < Vue
     @pmc = ''
     @votelink = ''
     @noticelink = ''
+
+# initialize conditional text
+    @showPMCVoteLink = false;
+    @showPPMCVoteLink = false;
+    @showPMCNoticeLink = false;
+    @showPPMCNoticeLink = false;
+
   end
 
   def render
@@ -57,48 +64,59 @@ class Invite < Vue
       end
     end
 
-    _p %{
-      For PMCs: Fill the following field only if the person was voted by the PMC
-      to become a committer.
-      Link to the [RESULT][VOTE] message in the mail archives.
-    }
-    _p %{
-      For PPMCs: Fill the following field only if the person is an initial
-      committer on a new project accepted for incubation, or the person
-      has been voted as a committer on a podling.
-      For new incubator projects use the
-      http://wiki.apache.org/incubator/XXXProposal link; for existing
-      podlings link to the [RESULT][VOTE] message in the mail archives.
-    }
-    _ 'Navigate to '
-    _a "ponymail", href: "https://lists.apache.org"
-    _ ', select the appropriate message, right-click PermaLink, copy link'
-    _ ' to the clip-board, and paste the link here.'
-    _p
+    if @showPMCVoteLink
+      _p %{
+        Fill the following field only if the person was voted by the PMC
+        to become a committer.
+        Link to the [RESULT][VOTE] message in the mail archives.
+      }
+    end
+    if @showPPMCVoteLink
+      _p %{
+        Fill the following field only if the person is an initial
+        committer on a new project accepted for incubation, or the person
+        has been voted as a committer on a podling.
+        For new incubator projects use the
+        http://wiki.apache.org/incubator/XXXProposal link; for existing
+        podlings link to the [RESULT][VOTE] message in the mail archives.
+      }
+    end
+    if @showPMCVoteLink or @showPPMCVoteLink
+      _ 'Navigate to '
+      _a "ponymail", href: "https://lists.apache.org"
+      _ ', select the appropriate message, right-click PermaLink, copy link'
+      _ ' to the clip-board, and paste the link here.'
+      _p
 
-    _div.form_group do
-      _label "VOTE link", for: 'votelink'
-      _input.form_control.votelink! type: 'url', onChange: self.setVoteLink,
+      _div.form_group do
+        _label "VOTE link", for: 'votelink'
+        _input.form_control.votelink! type: 'url', onChange: self.setVoteLink,
         value: @votelink
+      end
     end
-
-    _p %{
-      For PMCs: Fill the following field only if the person was voted by the PMC
-      to become a PMC member. Link to the [NOTICE] message sent to the board.
-      The message must have been in the archives for at least 72 hours.
-    }
-    _p %{
-      For PPMCs: Fill the following field only if the person was voted by the
-      PPMC to be a PPMC member. Link to the [NOTICE] message sent to the incubator PMC.
-      The message must have been in the archives for at least 72 hours.
-    }
-
-    _div.form_group do
-      _label "NOTICE link", for: 'noticelink'
-      _input.form_control.noticelink! type: 'url', onChange: self.setNoticeLink,
-      value: @noticelink
+    if @showPMCNoticeLink
+      _p %{
+        Fill the following field only if the person was voted by the PMC
+        to become a PMC member.
+        Link to the [NOTICE] message sent to the board.
+        The message must have been in the archives for at least 72 hours.
+      }
     end
-
+    if @showPPMCNoticeLink
+      _p %{
+        Fill the following field only if the person was voted by the
+        PPMC to be a PPMC member.
+        Link to the [NOTICE] message sent to the incubator PMC.
+        The message must have been in the archives for at least 72 hours.
+      }
+    end
+    if @showPMCNoticeLink or @showPPMCNoticeLink
+      _div.form_group do
+        _label "NOTICE link", for: 'noticelink'
+        _input.form_control.noticelink! type: 'url', onChange: self.setNoticeLink,
+        value: @noticelink
+      end
+    end
     #
     # Submission button
     #
@@ -174,6 +192,10 @@ class Invite < Vue
 
   def setPMC(event)
     @pmc = event.target.value
+    @showPMCVoteLink = Server.data.pmcs.include? @pmc
+    @showPPMCVoteLink = Server.data.ppmcs.include? @pmc
+    @showPMCNoticeLink = Server.data.pmcs.include? @pmc
+    @showPPMCNoticeLink = Server.data.ppmcs.include? @pmc
     self.checkValidity()
   end
 
