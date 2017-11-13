@@ -152,7 +152,7 @@ class Flow
     text.gsub! /[ \r\t]+\n/, "\n"
 
     # join consecutive lines (making exception for <markers> like <private>)
-    text.gsub! /([^\s>])\n(\w)/, '$1 $2'
+    text.gsub! /([^\s>])\n[ \t]*(\w)/, '$1 $2'
 
     # reflow each line
     lines = text.split("\n")
@@ -172,7 +172,7 @@ class Flow
         n = len - prefix.length;
         indent = prefix.gsub(/\W/, ' ')
         lines[i] = prefix + line[prefix.length..-1].
-          gsub(/^(.{1,#{n}})( +|$\n?)/, indent + "$1\n").
+          gsub(/(.{1,#{n}})( +|$\n?)/, indent + "$1\n").
           sub(indent, '').sub(/[\n\r]+$/, '')
       end
     end
