@@ -12,7 +12,11 @@ class Pending
       if response.ok
         response.json().then do |json|
           Pending.load(json)
-          Server.userid = json.userid if json and json.userid
+          if json
+            Server.userid = json.userid if json.userid
+            Server.initials = json.initials if json.initials
+            Server.firstname = json.firstname if json.firstname
+          end
         end
       end
     end
@@ -58,8 +62,16 @@ class Pending
     Server.pending.seen || {}
   end
 
+  def self.userid
+    Server.pending.userid || Server.userid
+  end
+
   def self.initials
     Server.pending.initials || Server.initials
+  end
+
+  def self.firstname
+    Server.pending.firstname || Server.firstname
   end
 
   def self.status
