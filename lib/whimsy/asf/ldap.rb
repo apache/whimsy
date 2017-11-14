@@ -505,6 +505,50 @@ module ASF
     end
   end
 
+  # Manage committers: list, add, and remove people not only from the list
+  # of people, but from the list of committers.
+  class Committer < Base
+    @base = 'ou=role,ou=groups,dc=apache,dc=org'
+
+    # get a list of committers
+    def self.list()
+      ASF.search_one(base, 'cn=committers', 'member').flatten.
+        map {|uid| Person.find uid[/uid=(.*?),/,1]}
+    end
+
+    # add a new committer to LDAP.  Attrs must include uid, cn, and mail
+    def self.add(attrs)
+      # add person to LDAP
+      person = ASF::Person.add(attrs)
+
+      # add person to 'new' committers list
+      ASF::LDAP.modify("cn=committers,#@base", 
+        [ASF::Base.mod_add('member', [person.dn])])
+
+      # add person to 'legacy' committers list
+      ASF::Group['committers'].add(person)
+
+      # return new person
+      person
+    end
+
+    # remove a committer from LDAP
+    def self.remove(person)
+      # if person is a string, find the person object
+      person = ASF::Person[person] if person.instance_of? String
+
+      # remove person to 'legacy' committers list, ignoring exceptions
+      ASF::Group['committers'].add(person) rescue nil
+
+      # remove person from 'new' committers list, ignoring exceptions
+      ASF::LDAP.modify("cn=committers,#@base", 
+        [ASF::Base.mod_delete('member', [person.dn])]) rescue nil
+
+      # remove person from LDAP
+      ASF::Person.remove(person.id)
+    end
+  end
+
   class Person < Base
     @base = 'ou=people,dc=apache,dc=org'
 
