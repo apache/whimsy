@@ -293,6 +293,29 @@ Content-Length: 45
 Content-Type: text/html
 ```
 
+This may fail on High Sierra with a [We cannot safely call it or ignore it in
+the fork() child process. Crashing
+instead.](https://blog.phusion.nl/2017/10/13/why-ruby-app-servers-break-on-macos-high-sierra-and-what-can-be-done-about-it/) message in your `/var/log/apache/error.log` file.  If so, do the following:
+
+```
+cp /System/Library/LaunchDaemons/org.apache.httpd.plist /Library/LaunchDaemons/
+```
+
+Edit ` /Library/LaunchDaemons/org.apache.httpd.plist` and add the following to
+`EnvironmentVariables/Dict`:
+
+```
+    <key>OBJC_DISABLE_INITIALIZE_FORK_SAFETY</key>
+    <string>YES</string>
+```
+
+Finally:
+
+```
+sudo launchctl unload /System/Library/LaunchDaemons/org.apache.httpd.plist
+sudo launchctl load -w /Library/LaunchDaemons/org.apache.httpd.plist
+```
+
 Configure whimsy.local vhost
 ----------------------------
 
