@@ -1,12 +1,15 @@
 if env.password
-  people = @ids.split(',').map {|id| ASF::Person[id]}
+  people = @ids.split(',').map {|id| ASF::Person.find(id)}
 
   pmc = ASF::Committee[@project]
   group = ASF::Group.find(@project) if @targets.include? 'commit'
 
   # validate arguments
-  if @action != 'remove' and people.any? {|person| person.nil?}
-    raise ArgumentError.new("ids=#{@ids}") 
+  if @action == 'remove' 
+    people = @ids.split(',').map {|id| ASF::Person.find(id)}
+  else
+    people = @ids.split(',').map {|id| ASF::Person[id]}
+    raise ArgumentError.new("ids=#{@ids}") if people.any? {|person| person.nil?}
   end
 
   raise ArgumentError.new("project=#{@project}") unless pmc
@@ -26,7 +29,7 @@ if env.password
 
   # extract people's names (for short lists) or ids (for longer lists)
   if people.length <= 2
-    who = people.map {|person| person.public_name}.join(' and ')
+    who = people.map {|person| person.public_name || person.id}.join(' and ')
   else
     who = people[0..-2].map {|person| person.id}.join(', ') + 
       ', and ' + people.last.id
