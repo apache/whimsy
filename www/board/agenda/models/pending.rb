@@ -31,7 +31,7 @@ class Pending
     else
       username = ASF::Person.new(user).public_name
       begin
-        username ||= Etc.getpwnam(userid)[4].split(',')[0].
+        username ||= Etc.getpwnam(user)[4].split(',')[0].
           force_encoding('utf-8')
       rescue ArgumentError
         username = 'Anonymous'
