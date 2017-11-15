@@ -535,10 +535,10 @@ module ASF
     # remove a committer from LDAP
     def self.remove(person)
       # if person is a string, find the person object
-      person = ASF::Person[person] if person.instance_of? String
+      person = ASF::Person.find(person) if person.instance_of? String
 
       # remove person to 'legacy' committers list, ignoring exceptions
-      ASF::Group['committers'].add(person) rescue nil
+      ASF::Group['committers'].remove(person) rescue nil
 
       # remove person from 'new' committers list, ignoring exceptions
       ASF::LDAP.modify("cn=committers,#@base", 
