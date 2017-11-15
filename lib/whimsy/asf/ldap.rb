@@ -537,7 +537,7 @@ module ASF
       # if person is a string, find the person object
       person = ASF::Person.find(person) if person.instance_of? String
 
-      # remove person to 'legacy' committers list, ignoring exceptions
+      # remove person from 'legacy' committers list, ignoring exceptions
       ASF::Group['committers'].remove(person) rescue nil
 
       # remove person from 'new' committers list, ignoring exceptions
