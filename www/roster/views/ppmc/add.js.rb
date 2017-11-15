@@ -51,7 +51,7 @@ class PPMCAdd < Vue
               _p do
                 _label do
                   _input type: 'checkbox', checked: @notice_elapsed
-                  _a '72 hour Notice', 
+                  _a '72 hour IPMC NOTICE', 
                     href: 'https://incubator.apache.org/guides/ppmc.html#voting_in_a_new_ppmc_member'
                   _span ' period elapsed?'
                 end

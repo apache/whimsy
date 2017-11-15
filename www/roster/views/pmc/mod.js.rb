@@ -45,7 +45,7 @@ class PMCMod < Vue
               _p do
                 _label do
                   _input type: 'checkbox', checked: @notice_elapsed
-                  _a '72 hour Notice', 
+                  _a '72 hour board@ NOTICE',
                     href: 'https://www.apache.org/dev/pmc.html#notice_period'
                   _span ' period elapsed?'
                 end
