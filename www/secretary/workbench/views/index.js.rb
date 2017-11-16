@@ -148,12 +148,14 @@ class Index < Vue
   def merge(messages)
     messages.each do |new_message|
       index = @messages.find_index do |old_message| 
-        old_message.time+old_message.hash <= new_message.time+new_message.hash
+        old_message.time < new_message.time or
+        (old_message.time == new_message.time and
+         old_message.href <= new_message.href)
       end
 
       if index == -1
         @messages << new_message
-      elsif @messages[index].hash == new_message.hash
+      elsif @messages[index].href == new_message.href
         @messages[index] = new_message
       else
         @messages.splice index, 0, new_message
