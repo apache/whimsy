@@ -169,7 +169,7 @@ _html do
                 if ldap_chairs.include? person
                   _td text
                 else
-                  _td.text_danger text
+                  _td.text_danger text, title: 'Chair is not in LDAP pmc-chairs group'
                 end
               elsif ldap_chairs.include? person
                 _td.text_danger '***LDAP only***'
