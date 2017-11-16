@@ -158,10 +158,11 @@ _html do
           missing.sort.each do |id|
             person = ASF::Person.find(id)
             _tr_ do
+              href = "/roster/committer/#{id}"
               if person.asf_member?
-                _td! {_strong id}
+                _td! {_strong {_a id, href: href}}
               else
-                _td id
+                _td {_a id, href: href}
               end
               _td person.public_name
               if info_chairs.include? person
