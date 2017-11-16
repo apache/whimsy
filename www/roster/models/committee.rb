@@ -22,7 +22,7 @@ class Committee
 
     moderators = nil
     pSubs = Array.new # private@ subscribers
-    unknownSubs = nil # unknown private@ subscribers
+    unknownSubs = [] # unknown private@ subscribers
     currentUser = ASF::Person.find(env.user)
     analysePrivateSubs = false # whether to show missing private@ subscriptions
     if pmc.roster.include? env.user or currentUser.asf_member?
