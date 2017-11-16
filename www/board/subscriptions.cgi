@@ -7,8 +7,10 @@ require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/mlist'
 
+# board@ will likely move to private@mbox at some point
 ARCHIVERS = %w(
   archiver@mbox-vm.apache.org
+  private@mbox-vm.apache.org
   board-archive@apache.org
   archive-asf-private@cust-asf.ponee.io
   board@mmpoc.apache.org
