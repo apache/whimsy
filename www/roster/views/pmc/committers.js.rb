@@ -9,6 +9,7 @@ class PMCCommitters < Vue
         @@committee.members.include? id
       end
     then
+      _h2.committers! 'Committers' 
       _p 'All committers are members of the PMC'
     else
       _h2.committers! do
