@@ -91,16 +91,16 @@ class Router
     elsif path =~ %r{^cache/}
       item = {view: CachePage}
 
-    elsif path == 'fy22'
-      item = {view: FY22, title: 'FY22 Budget Worksheet', color: 'available',
+    elsif path == 'fy23'
+      item = {view: FY23, title: 'FY23 Budget Worksheet', color: 'available',
         prev: {title: 'Discussion Items', href: 'Discussion-Items'},
         next: {title: 'Action Items', href: 'Action-Items'}}
 
     else
       item = Agenda.find(path)
 
-      if path == 'Discussion-Items' and Agenda.date =~ /^2017-02/
-        item.next = {title: 'FY22 Budget Worksheet', href: 'fy22'}
+      if path == 'Discussion-Items' and Agenda.date =~ /^2017-12/
+        item.next = {title: 'FY23 Budget Worksheet', href: 'fy23'}
       end
     end
 
