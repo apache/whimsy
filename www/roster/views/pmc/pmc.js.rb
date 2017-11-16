@@ -5,6 +5,7 @@
 class PMCMembers < Vue
   def initialize
     @committee = {}
+    @committers = []
   end
 
   def render
@@ -46,7 +47,32 @@ class PMCMembers < Vue
         _br
         _ul {
           for mail in @@committee.unknownSubs
-            _li @@committee.unknownSubs[mail]
+            addr = @@committee.unknownSubs[mail]
+            who = nil
+            @committers.each do |person|
+              if person.mail.any? {|mail| mail.include? addr}
+                who = person
+              end
+            end
+            _li {
+              _ addr
+              _ ' '
+              if who
+                if who.member
+                  _b {
+                    _ who.name
+                    _ ' ' 
+                    _a who.id, href: "committer/#{who.id}" 
+                  }
+                else
+                  _ who.name
+                  _ ' ' 
+                  _a who.id, href: "committer/#{who.id}" 
+                end
+              else
+                _ '(email not found)'
+              end
+            }
           end
         }
       }
@@ -55,6 +81,25 @@ class PMCMembers < Vue
 
   def mounted()
     jQuery('.table', $el).stupidtable()
+    # start with (possibly stale) data from local storage when available
+    # TODO does this need to use a different item name?
+    # Or how to share the code with committerSearch.js.rb?
+    ls_committers = localStorage.getItem('roster-committers')
+    if ls_committers
+      @committers = JSON.parse(ls_committers)
+    end
+
+    # load fresh data from the server
+    Polyfill.require(%w(Promise fetch)) do
+      fetch('committer/index.json', credentials: 'include').then {|response|
+        response.json().then do |committers|
+          @committers = committers
+          localStorage.setItem('roster-committers', @committers.inspect)
+        end
+      }.catch {|error|
+        console.log error
+      }
+    end
   end
 
   def roster
