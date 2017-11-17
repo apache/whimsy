@@ -344,6 +344,21 @@ server subscribe to the list.
 - Note that tools/deliver.rb will dump all mail locally (it does not 
   currently get cleaned out) where it can be used by ASF::Mail 
 
+### How To: Test Whimsy Library methods
+
+The following alias runs Interactive Ruby (irb) with the Whimsy library preloaded:
+
+    alias wrb='irb -I /srv/whimsy/lib -r whimsy/asf'
+
+Simple shell scripts can use the following:
+
+    #!/usr/bin/env ruby
+    $LOAD_PATH.unshift '/srv/whimsy/lib'
+    require 'whimsy/asf'
+
+Adjust the paths above if you have not installed code in the standard place 
+(or add a link from /srv/whimsy to your copy of the code)
+
 Whimsy On Windows
 =================
 
