@@ -35,47 +35,86 @@ class PMCMembers < Vue
         _br
         _ 'This could be because the person is subscribed with an address that is not in their LDAP record'
       }
-      _p {
-        # We don't use the short-hand name: value syntax here to work-round Eclipse Ruby editor parsing bug
-        _span.glyphicon.glyphicon_lock aria_hidden: true, :class => 'text-primary', 'aria-label' => 'ASF Members and private@ moderators'
-        _ 'The following subscribers to the private list do not match the known emails for any of the existing PMC members.'
-        _br
-        _ 'They could be PMC members whose emails are not listed in their LDAP record.'
-        _br
-        _ 'Or ASF members, or they could be ex-PMC members who are still subscribed.'
-        _br
-        _br
-        _ul {
-          for mail in @@committee.unknownSubs
-            addr = @@committee.unknownSubs[mail]
-            who = nil
-            @committers.each do |person|
-              if person.mail.any? {|mail| mail.include? addr}
-                who = person
+      # separate out the known ASF members and extract any matching committer details
+      unknownSubs = []
+      asfMembers = []
+      @@committee.unknownSubs.each{ |addr|
+        who = nil
+        @committers.each do |person|
+          if person.mail.any? {|mail| mail.include? addr}
+            who = person
+          end
+        end
+        if who
+          if who.member
+            asfMembers << { addr: addr, person: who }
+          else
+            unknownSubs << { addr: addr, person: who }
+          end
+        else
+          unknownSubs << { addr: addr, person: nil }
+        end
+      }
+      # Any unknown subscribers?
+      if unknownSubs.length > 0
+        _p {
+          # We don't use the short-hand name: value syntax here to work-round Eclipse Ruby editor parsing bug
+          _span.glyphicon.glyphicon_lock aria_hidden: true, :class => 'text-primary', 'aria-label' => 'ASF Members and private@ moderators'
+          _ 'The following subscribers to the private list do not match the known emails for any of the existing PMC (or ASF) members.'
+          _br
+          _ 'They could be PMC (or ASF) members whose emails are not listed in their LDAP record.'
+          _br
+          _ 'Or they could be ex-PMC members who are still subscribed.'
+          _br
+          _br
+          _ul {
+            unknownSubs.each do |sub|
+              person = sub['person']
+              if person
+                _li {
+                  _ sub['addr']
+                  _ ' '
+                  _ person['name']
+                  _ ' ' 
+                  _a person['id'], href: "committer/#{person['id']}"
+                } 
+              else
+                _li {
+                  _ sub['addr']
+                  _ ' '
+                  _ '(email not known)'
+                }
               end
             end
-            _li {
-              _ addr
-              _ ' '
-              if who
-                if who.member
-                  _b {
-                    _ who.name
-                    _ ' ' 
-                    _a who.id, href: "committer/#{who.id}" 
-                  }
-                else
-                  _ who.name
-                  _ ' ' 
-                  _a who.id, href: "committer/#{who.id}" 
-                end
-              else
-                _ '(email not found)'
-              end
-            }
-          end
+          }
         }
-      }
+      end
+      # Any ASF members?
+      if asfMembers.length > 0
+        _p {
+          # We don't use the short-hand name: value syntax here to work-round Eclipse Ruby editor parsing bug
+          _span.glyphicon.glyphicon_lock aria_hidden: true, :class => 'text-primary', 'aria-label' => 'ASF Members and private@ moderators'
+          _ 'The following ASF members are also subscribed to the list.'
+          _br
+          _br
+          _ul {
+            asfMembers.each do |sub|
+              person = sub['person']
+              if person
+                _li {
+                  _strong {
+                    _ sub['addr']
+                    _ ' '
+                    _ person['name']
+                    _ ' ' 
+                    _a person['id'], href: "committer/#{person['id']}"
+                  }
+                } 
+              end
+            end
+          }
+        }
+      end
     end
   end
 
