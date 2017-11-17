@@ -131,6 +131,13 @@ class PPMC < Vue
       _li do
         _a 'Podling Proposal', href: @ppmc.podlingStatus.proposal
       end if @ppmc.podlingStatus.proposal
+      _li "Status: " + @ppmc.status
+      _li do
+        _ "Established: " + @ppmc.established
+      end if @ppmc.established
+      _li do
+        _ "End date: " + @ppmc.enddate
+      end if @ppmc.enddate
       _li "Incubating for "+@ppmc.duration+" days"
       _li do
         _a 'Prior Board Reports', href: '/board/minutes/' +
@@ -170,7 +177,8 @@ class PPMC < Vue
     # reporting schedule
     _h3.reporting! 'Reporting Schedule'
     _ul do
-      _li @ppmc.schedule.join(', ')
+      # schedule may be missing
+      _li @ppmc.schedule ? @ppmc.schedule.join(', ') : '(none found)'
       _li "Monthly: #{@ppmc.monthly.join(', ')}" if @ppmc.monthly and !@ppmc.monthly.empty?
     end
 

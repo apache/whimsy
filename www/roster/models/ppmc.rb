@@ -51,6 +51,8 @@ class PPMC
       schedule: ppmc.reporting,
       monthly: ppmc.monthly,
       established: ppmc.startdate.to_s,
+      enddate: ppmc.enddate.to_s,
+      status: ppmc.status,
       mentors: ppmc.mentors,
       owners: ppmc.owners.map {|person| person.id},
       committers: ppmc.members.map {|person| person.id},
