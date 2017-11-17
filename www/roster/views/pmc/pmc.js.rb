@@ -36,25 +36,8 @@ class PMCMembers < Vue
         _ 'This could be because the person is subscribed with an address that is not in their LDAP record'
       }
       # separate out the known ASF members and extract any matching committer details
-      unknownSubs = []
-      asfMembers = []
-      @@committee.unknownSubs.each{ |addr|
-        who = nil
-        @committers.each do |person|
-          if person.mail.any? {|mail| mail.include? addr}
-            who = person
-          end
-        end
-        if who
-          if who.member
-            asfMembers << { addr: addr, person: who }
-          else
-            unknownSubs << { addr: addr, person: who }
-          end
-        else
-          unknownSubs << { addr: addr, person: nil }
-        end
-      }
+      unknownSubs = @@committee.unknownSubs
+      asfMembers = @@committee.asfMembers
       # Any unknown subscribers?
       if unknownSubs.length > 0
         _p {
@@ -120,25 +103,6 @@ class PMCMembers < Vue
 
   def mounted()
     jQuery('.table', $el).stupidtable()
-    # start with (possibly stale) data from local storage when available
-    # TODO does this need to use a different item name?
-    # Or how to share the code with committerSearch.js.rb?
-    ls_committers = localStorage.getItem('roster-committers')
-    if ls_committers
-      @committers = JSON.parse(ls_committers)
-    end
-
-    # load fresh data from the server
-    Polyfill.require(%w(Promise fetch)) do
-      fetch('committer/index.json', credentials: 'include').then {|response|
-        response.json().then do |committers|
-          @committers = committers
-          localStorage.setItem('roster-committers', @committers.inspect)
-        end
-      }.catch {|error|
-        console.log error
-      }
-    end
   end
 
   def roster

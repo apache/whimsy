@@ -22,7 +22,7 @@ class Committee
 
     moderators = nil
     pSubs = Array.new # private@ subscribers
-    unknownSubs = [] # unknown private@ subscribers
+    unMatchedSubs = [] # unknown private@ subscribers
     currentUser = ASF::Person.find(env.user)
     analysePrivateSubs = false # whether to show missing private@ subscriptions
     if pmc.roster.include? env.user or currentUser.asf_member?
@@ -36,7 +36,7 @@ class Committee
       end
       if analysePrivateSubs
         pSubs = canonhost(ASF::MLIST.private_subscribers(pmc.mail_list)[0]||[])
-        unknownSubs=Array.new(pSubs) # init ready to remove matched mails
+        unMatchedSubs=Array.new(pSubs) # init ready to remove matched mails
       end
     else
       lists = lists.select {|list, mode| mode == 'public'}
@@ -53,7 +53,7 @@ class Committee
       if analysePrivateSubs
         allMail = canonhost(person.all_mail)
         roster[person.id]['notSubbed'] = (allMail & pSubs).empty?
-        unknownSubs -= allMail
+        unMatchedSubs -= allMail
       end
       roster[person.id]['ldap'] = true
     end
@@ -68,6 +68,30 @@ class Committee
     roster.each {|id, info| info[:member] = ASF::Person.find(id).asf_member?}
 
     roster[pmc.chair.id]['role'] = 'PMC chair' if pmc.chair
+
+    # separate out the known ASF members and extract any matching committer details
+    unknownSubs = []
+    asfMembers = []
+    if unMatchedSubs.length > 0
+      load_emails # set up @people
+      unMatchedSubs.each{ |addr|
+        who = nil
+        @people.each do |person|
+          if person[:mail].any? {|mail| mail.include? addr}
+            who = person
+          end
+        end
+        if who
+          if who[:member]
+            asfMembers << { addr: addr, person: who }
+          else
+            unknownSubs << { addr: addr, person: who }
+          end
+        else
+          unknownSubs << { addr: addr, person: nil }
+        end
+      }
+    end
 
     response = {
       id: id,
@@ -90,12 +114,35 @@ class Committee
       guinea_pig: ASF::Committee::GUINEAPIGS.include?(id),
       analysePrivateSubs: analysePrivateSubs,
       unknownSubs: unknownSubs,
+      asfMembers: asfMembers,
     }
 
     response
   end
 
   private
+
+  def self.load_emails
+    # recompute index if the data is 5 minutes old or older
+    @people = nil if not @people_time or Time.now-@people_time >= 300
+  
+    if not @people
+      # bulk loading the mail information makes things go faster
+      mail = Hash[ASF::Mail.list.group_by(&:last).
+        map {|person, list| [person, list.map(&:first)]}]
+  
+      # build a list of people, their public-names, and email addresses
+      @people = ASF::Person.list.map {|person|
+        result = {id: person.id, name: person.public_name, mail: mail[person]}
+        result[:member] = true if person.asf_member?
+        result
+      }
+
+      # cache
+      @people_time = Time.now
+    end
+    @people
+  end
 
   # canonicalise hostnames
   def self.canonhost(list)
