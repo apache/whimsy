@@ -7,7 +7,7 @@ require 'pathname'
 
 pmc = ASF::Committee.find(@pmc)
 ppmc = ASF::Podling.find(@pmc)
-pmc_type = if ppmc then 'PPMC' else 'PMC' end
+pmc_type = if ppmc and ppmc.status == 'current' then 'PPMC' else 'PMC' end
 
 user = ASF::Person.find(env.user)
 
