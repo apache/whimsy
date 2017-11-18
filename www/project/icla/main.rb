@@ -37,6 +37,11 @@ get '/invite' do
   @pmcs.select! {|pmc| committees.include?(pmc)}
   @ppmcs.select! {|ppmc| committees.include?('incubator') | committees.include?(ppmc)}
 
+  # make a map of pmc name to pmc mail_list for validation of votes
+  @pmc_mail = {}
+  ASF::Committee.pmcs.each { |pmc| @pmc_mail[pmc.name] = pmc.mail_list}
+  ASF::Podling.list.each { |ppmc| @pmc_mail[ppmc.name] = ppmc.mail_list}
+
   # render the HTML for the application
   _html :app
 end

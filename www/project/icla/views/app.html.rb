@@ -373,7 +373,7 @@ _html lang: 'en', _width: '80' do
     _script src: 'app.js'
 
     _.render '#main' do
-      _Main data: {pmcs: @pmcs, ppmcs: @ppmcs}, view: @view
+      _Main data: {pmcs: @pmcs, ppmcs: @ppmcs, pmc_mail: @pmc_mail}, view: @view
     end
   end
 end

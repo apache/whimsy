@@ -13,8 +13,12 @@ class Invite < Vue
 # initialize conditional text
     @showPMCVoteLink = false;
     @showPPMCVoteLink = false;
+    @voteErrorMessage = '';
+    @showVoteErrorMessage = false;
     @showPMCNoticeLink = false;
     @showPPMCNoticeLink = false;
+    @noticeErrorMessage = '';
+    @showNoticeErrorMessage = false;
 
   end
 
@@ -93,6 +97,10 @@ class Invite < Vue
         _input.form_control.votelink! type: 'url', onChange: self.setVoteLink,
         value: @votelink
       end
+      if @showVoteErrorMessage
+        _p "#@voteErrorMessage"
+      end
+
     end
     if @showPMCNoticeLink
       _p %{
@@ -116,6 +124,9 @@ class Invite < Vue
         _input.form_control.noticelink! type: 'url', onChange: self.setNoticeLink,
         value: @noticelink
       end
+    end
+    if @showNoticeErrorMessage
+      _p "#@noticeErrorMessage"
     end
     #
     # Submission button
@@ -196,16 +207,47 @@ class Invite < Vue
     @showPPMCVoteLink = Server.data.ppmcs.include? @pmc
     @showPMCNoticeLink = Server.data.pmcs.include? @pmc
     @showPPMCNoticeLink = Server.data.ppmcs.include? @pmc
+    @showVoteErrorMessage = false;
+    @showNoticeErrorMessage = false;
     self.checkValidity()
   end
 
   def setVoteLink(event)
     @votelink = event.target.value
+    @showVoteErrorMessage = false
+    # verify that the link refers to lists.apache.org message on the project list
+    if not @votelink=~ /.*lists\.apache\.org.*/
+      @voteErrorMessage = "Error: Please link to\
+      a message via lists.apache.org"
+      @showVoteErrorMessage = true;
+    end
+    if not @votelink=~ /.*#{Server.data.pmc_mail[@pmc]}(\.incubator)?\.apache\.org.*/
+      @voteErrorMessage = "Error: Please link to\
+      the [RESULT][VOTE] message sent to the private list."
+      @showVoteErrorMessage = true;
+    end
     self.checkValidity()
   end
 
   def setNoticeLink(event)
     @noticelink = event.target.value
+    @showNoticeErrorMessage = false;
+    # verify that the link refers to lists.apache.org message on the proper list
+    if not @noticelink=~ /.*lists\.apache\.org.*/
+      @noticeErrorMessage = "Error: please link to\
+      a message via lists.apache.org"
+      @showNoticeErrorMessage = true;
+    end
+    if @showPMCNoticeLink and not @noticelink=~ /.*board@apache\.org.*/
+      @noticeErrorMessage = "Error: please link to\
+      the NOTICE message sent to the board list."
+      @showNoticeErrorMessage = true;
+    end
+    if @showPPMCNoticeLink and not @noticelink=~ /.*private@incubator\.apache\.org.*/
+      @noticeErrorMessage = "Error: please link to\
+      the NOTICE message sent to the incubator private list."
+      @showNoticeErrorMessage = true;
+    end
     self.checkValidity()
   end
 
@@ -220,7 +262,7 @@ class Invite < Vue
 
   # client side field validations
   def checkValidity()
-    @disabled = !%w(iclaname iclaemail pmc).all? do |id|
+    @disabled = !%w(iclaname iclaemail pmc votelink noticelink).all? do |id|
       document.getElementById(id).checkValidity()
     end
   end

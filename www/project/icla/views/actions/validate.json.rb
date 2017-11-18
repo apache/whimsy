@@ -35,6 +35,7 @@ go through the patch submission process.
 Being a committer does not require you to participate any more than you already
 do, but it does tend to make one even more committed ;-) You will probably find
 that you spend more time here.
+
 "
 
 prototype_pmc =
@@ -53,6 +54,13 @@ https://incubator.apache.org/guides/ppmc.html
 
 "
 
+prototype_committer_or_pmc =
+"Of course, you can decline and instead remain as a contributor, participating
+as you do now.
+
+This personal invitation is a chance for you to accept or decline in private.
+Either way, please let us know in reply to the private@ address only.
+"
 # validate email address
 begin
   Socket.getaddrinfo(@iclaemail[/@(.*)/, 1].untaint, 'smtp')
@@ -147,15 +155,10 @@ _token token
 _invitation %{Dear #{@iclaname},
 
 #{prototype_contributor if @votelink.empty?}\
-#{prototype_committer if not @votelink.empty?}
+#{prototype_committer if not @votelink.empty?}\
 #{prototype_pmc if not @noticelink.empty? and (pmc_type == 'PMC')}\
 #{prototype_ppmc if not @noticelink.empty? and (pmc_type == 'PPMC')}\
-Of course, you can decline and instead remain as a contributor, participating
-as you do now.
-
-This personal invitation is a chance for you to accept or decline in private.
-Either way, please let us know in reply to the private@ address only.
-
+#{prototype_committer_or_pmc if not @votelink.empty?}
 Click on this link to accept:
 #{link}
 
