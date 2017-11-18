@@ -140,7 +140,7 @@ class Committer
 
     end
 
-    if ASF::Person.find(env.user).asf_member? or env.user = id
+    if ASF::Person.find(env.user).asf_member? or env.user == id
       response[:moderates] = {}
 
       require 'whimsy/asf/mlist'
