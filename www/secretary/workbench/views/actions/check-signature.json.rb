@@ -26,7 +26,8 @@ begin
     err.include? "gpg: Can't check signature: public key not found"
   then
     # extract and fetch key
-    keyid = err[/[RD]SA key ID (\w+)/,1].untaint
+    keyid = err[/[RD]SA key (ID )?(\w+)/,2].untaint
+
     out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', 'pgpkeys.mit.edu',
       '--recv-keys', keyid
 
