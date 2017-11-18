@@ -105,7 +105,8 @@ class Message
     attachments = headers[:attachments]
     return [] unless attachments
     attachments.
-      reject {|attachment| SIG_MIMES.include? attachment[:mime]}.
+      reject {|attachment| SIG_MIMES.include?(attachment[:mime]) and
+        (not attachment[:name] or attachment[:name] !~ /\.pdf\.asc$/)}.
       map {|attachment| attachment[:name]}.
       select {|name| name != 'signature.asc'}
   end
