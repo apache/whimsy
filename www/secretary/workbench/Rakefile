@@ -57,7 +57,7 @@ task :server => :bundle do
   require 'bundler/setup'
   require 'wunderbar'
   module Wunderbar::Listen
-    EXCLUDE = [ARCHIVE, 'public/assets']
+    EXCLUDE = [ARCHIVE]
   end
 
   require 'wunderbar/listen'
