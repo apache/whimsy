@@ -252,7 +252,7 @@ class Agenda
       list << {form: Post, text: 'add resolution'}
     end
 
-    if Server.role == :secretary 
+    if Pending.role == :secretary 
       if Server.drafts.include? Agenda.file.sub('agenda', 'minutes')
         list << {form: PublishMinutes}
       elsif Minutes.ready_to_post_draft
@@ -405,9 +405,9 @@ class Agenda
       else
         SelectActions
       end
-    elsif @title == 'Roll Call' and Server.role == :secretary
+    elsif @title == 'Roll Call' and Pending.role == :secretary
       RollCall
-    elsif @title == 'Adjournment' and Server.role == :secretary
+    elsif @title == 'Adjournment' and Pending.role == :secretary
       Adjournment
     else
       Report
@@ -430,7 +430,7 @@ class Agenda
     list << {button: Attend} if @title == 'Roll Call'
 
     if @attach =~ /^(\d|7?[A-Z]+|4[A-Z])$/
-      if Server.role == :secretary or not Minutes.complete
+      if Pending.role == :secretary or not Minutes.complete
         if self.missing
           list << {form: Post, text: 'post report'}
         elsif @attach =~ /^7\w/
@@ -441,12 +441,12 @@ class Agenda
       end
     end
 
-    if Server.role == :director
+    if Pending.role == :director
       unless self.missing or @comments === undefined or Minutes.complete
         list << {button: Approve} 
       end
 
-    elsif Server.role == :secretary
+    elsif Pending.role == :secretary
       if @attach =~ /^7\w/
         list << {form: Vote}
       elsif Minutes.get(@title)

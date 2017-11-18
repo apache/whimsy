@@ -17,7 +17,7 @@ class FY23 < Vue
       chairman: 10,
     }
 
-    if Server.role == :secretary or not Minutes.started
+    if Pending.role == :secretary or not Minutes.started
       @disabled = false
     else
       @disabled = true
@@ -292,7 +292,7 @@ class FY23 < Vue
     event.target.value = @budget[event.target.id].toLocaleString()
     self.recalc()
 
-    if Server.role == :secretary and Minutes.started
+    if Pending.role == :secretary and Minutes.started
       post 'budget', agenda: Agenda.file, budget: @budget do |budget|
         @budget = budget if budget
       end
@@ -319,7 +319,7 @@ class FY23 < Vue
       end
 
       @budget = budget
-      @disabled = true unless Server.role == :secretary
+      @disabled = true unless Pending.role == :secretary
     end
   end
 end

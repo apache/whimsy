@@ -51,7 +51,7 @@ class Keyboard
         return false
       elsif event.keyCode == 'S'.ord
         if event.shiftKey
-          Server.role = :secretary
+          Pending.role = :secretary
           Main.refresh()
         else
           link = ~"#shepherd"[0]
