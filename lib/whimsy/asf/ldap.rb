@@ -28,6 +28,9 @@
 #   puts [rubys1.__id__, rubys2.__id__, rubys3.__id__]
 #
 
+# Note: custom ASF LDAP attributes are defined in the file:
+# https://github.com/apache/infrastructure-puppet/blob/deployment/modules/ldapserver/files/asf-custom.schema
+
 require 'wunderbar'
 require 'ldap'
 require 'weakref'
@@ -617,6 +620,20 @@ module ASF
     def banned?
       # FreeBSD uses /usr/bin/false; Ubuntu uses /bin/false
       not attrs['loginShell'] or %w(/bin/false bin/nologin bin/no-cla).any? {|a| attrs['loginShell'].first.include? a}
+    end
+
+    # determine if the person has no login.  If scanning a large list, consider
+    # preloading the <tt>loginShell</tt> attributes for these people.
+    def nologin?
+      # FreeBSD uses /usr/bin/false; Ubuntu uses /bin/false
+      not attrs['loginShell'] or %w(/bin/false bin/nologin bin/no-cla).any? {|a| attrs['loginShell'].first.include? a}
+    end
+
+    # determine if the person has asf-banned: yes.  If scanning a large list, consider
+    # preloading the <tt>asf-banned</tt> attributes for these people.
+    def asf_banned?
+      # No idea what this means (yet)
+      attrs['asf-banned'] == 'yes'
     end
 
     # primary mail addresses
