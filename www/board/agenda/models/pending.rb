@@ -38,9 +38,9 @@ class Pending
       end
     end
 
-    if userid=='test' or ASF::Service['board'].members.map(&:id).include? userid
+    if user == 'test' or ASF::Service['board'].members.map(&:id).include? user
       response['role'] = :director
-    elsif ASF::Service['asf-secretary'].members.map(&:id).include? userid
+    elsif ASF::Service['asf-secretary'].members.map(&:id).include? user
       response['role'] = :secretary
     else
       response['role'] = :guest
