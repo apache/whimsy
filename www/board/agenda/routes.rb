@@ -125,14 +125,6 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
 
   pending = Pending.get(userid)
 
-  if userid == 'test' or ASF::Service['board'].members.map(&:id).include? userid
-    role = :director
-  elsif ASF::Service['asf-secretary'].members.map(&:id).include? userid
-    role = :secretary
-  else
-    role = :guest
-  end
-
   # determine who is present
   @present = []
   @present_mtime = nil
@@ -159,7 +151,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     initials: pending['initials'],
     online: @present,
     session: Session.user(userid),
-    role: role,
+    role: pending['role'],
     directors: Hash[ASF::Service['board'].members.map {|person| 
       initials = person.public_name.gsub(/[^A-Z]/, '').downcase
       [initials, person.public_name.split(' ').first]

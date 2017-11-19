@@ -38,6 +38,14 @@ class Pending
       end
     end
 
+    if userid=='test' or ASF::Service['board'].members.map(&:id).include? userid
+      response['role'] = :director
+    elsif ASF::Service['asf-secretary'].members.map(&:id).include? userid
+      response['role'] = :secretary
+    else
+      response['role'] = :guest
+    end
+
     response['username'] ||= username
     response['initials'] ||= username.gsub(/[^A-Z]/, '').downcase
     response['firstname'] ||= username.split(' ').first.downcase
