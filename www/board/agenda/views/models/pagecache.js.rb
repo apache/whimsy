@@ -15,6 +15,8 @@ class PageCache
       return false
     end
 
+    return false unless defined?(ServiceWorker) and defined?(navigator)
+
     # disable service workers for the production server(s) for now.  See:
     # https://lists.w3.org/Archives/Public/public-webapps/2016JulSep/0016.html
     if location.hostname =~ /^whimsy.*\.apache\.org$/
@@ -30,7 +32,7 @@ class PageCache
       end
     end
 
-    defined?(ServiceWorker) and defined?(navigator)
+    return true
   end
 
   # registration and related startup actions

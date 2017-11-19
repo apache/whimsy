@@ -8,17 +8,30 @@ class Pending
 
   # fetch pending from server (needed for ServiceWorkers)
   def self.fetch()
-    fetch('pending.json', credentials: 'include').then do |response|
-      if response.ok
-        response.json().then do |json|
-          Pending.load(json)
-          if json
-            Server.userid = json.userid if json.userid
-            Server.initials = json.initials if json.initials
-            Server.firstname = json.firstname if json.firstname
-            Server.username = json.firstname if json.username
+    caches.open('board/agenda').then do |cache|
+      fetched = false
+      request = Request.new('pending.json', method: 'get',
+        credentials: 'include', headers: {'Accept' => 'application/json'})
+
+      # use data from last cache until a response is received
+      cache.match("../json/#{name}").then do |response|
+        if response and not fetched
+          response.json().then do |json| 
+	    Pending.load(json)
           end
         end
+      end
+
+      # update with the lastest once available
+      fetch(request).then do |response|
+	if response.ok
+          cache.put(request, response.clone())
+
+	  response.json().then do |json|
+            fetched = true
+	    Pending.load(json)
+	  end
+	end
       end
     end
   end
