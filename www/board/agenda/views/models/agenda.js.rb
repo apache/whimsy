@@ -252,7 +252,7 @@ class Agenda
       list << {form: Post, text: 'add resolution'}
     end
 
-    if Pending.role == :secretary 
+    if User.role == :secretary 
       if Server.drafts.include? Agenda.file.sub('agenda', 'minutes')
         list << {form: PublishMinutes}
       elsif Minutes.ready_to_post_draft
@@ -322,7 +322,7 @@ class Agenda
   def self.shepherd
     shepherd = nil
 
-    firstname = Pending.firstname.downcase()
+    firstname = User.firstname.downcase()
     Agenda.index.each do |item|
       if 
         item.shepherd and 
@@ -405,9 +405,9 @@ class Agenda
       else
         SelectActions
       end
-    elsif @title == 'Roll Call' and Pending.role == :secretary
+    elsif @title == 'Roll Call' and User.role == :secretary
       RollCall
-    elsif @title == 'Adjournment' and Pending.role == :secretary
+    elsif @title == 'Adjournment' and User.role == :secretary
       Adjournment
     else
       Report
@@ -430,7 +430,7 @@ class Agenda
     list << {button: Attend} if @title == 'Roll Call'
 
     if @attach =~ /^(\d|7?[A-Z]+|4[A-Z])$/
-      if Pending.role == :secretary or not Minutes.complete
+      if User.role == :secretary or not Minutes.complete
         if self.missing
           list << {form: Post, text: 'post report'}
         elsif @attach =~ /^7\w/
@@ -441,12 +441,12 @@ class Agenda
       end
     end
 
-    if Pending.role == :director
+    if User.role == :director
       unless self.missing or @comments === undefined or Minutes.complete
         list << {button: Approve} 
       end
 
-    elsif Pending.role == :secretary
+    elsif User.role == :secretary
       if @attach =~ /^7\w/
         list << {form: Vote}
       elsif Minutes.get(@title)
@@ -480,7 +480,7 @@ class Agenda
     return true if Minutes.started and self.missing
     return false unless @flagged_by
     return false if @flagged_by.length == 1 and 
-      @flagged_by.first == Pending.initials and 
+      @flagged_by.first == User.initials and 
       Pending.unflagged.include?(@attach)
     return ! @flagged_by.empty?
   end

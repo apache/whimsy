@@ -64,34 +64,6 @@ class Pending
     Server.pending.seen || {}
   end
 
-  def self.userid
-    Server.pending.userid || Server.userid
-  end
-
-  def self.initials
-    Server.pending.initials || Server.initials
-  end
-
-  def self.firstname
-    Server.pending.firstname || Server.firstname
-  end
-
-  def self.username
-    Server.pending.username || Server.username
-  end
-
-  def self.role
-    if Server.pending and Server.pending.role 
-      Server.pending.role
-    else
-      Server.role
-    end
-  end
-
-  def self.role=(role)
-    Server.pending.role = role
-  end
-
   def self.status
     Server.pending.status || []
   end

@@ -12,8 +12,8 @@ class Email < Vue
   # the report, otherwise render the text as a simple link.
   def mailto_class()
     if 
-      Pending.firstname and @@item.shepherd and
-      Pending.firstname.start_with? @@item.shepherd.downcase()
+      User.firstname and @@item.shepherd and
+      User.firstname.start_with? @@item.shepherd.downcase()
     then
       return 'btn-primary'
     else

@@ -184,7 +184,11 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
 
   if path == 'bootstrap.html'
-    @server[:userid] = nil unless env.password
+    unless env.password
+      @server[:userid] = nil 
+      @server[:role] = nil 
+    end
+
     @page[:parsed] = [
       {title: 'Roll Call', timestamp: @page[:parsed].first['timestamp']}
     ]

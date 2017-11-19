@@ -31,7 +31,7 @@ class Shepherd < Vue
         # flag action
         if item.missing or not item.comments.empty?
           if item.attach =~ /^[A-Z]+$/
-            mine = (shepherd == Pending.firstname ? 'btn-primary' : 'btn-link')
+            mine = (shepherd == User.firstname ? 'btn-primary' : 'btn-link')
 
             _div.shepherd do
               _button.btn (item.flagged ? 'unflag' : 'flag'), class: mine,
@@ -91,7 +91,7 @@ class Shepherd < Vue
   def click(event)
     data = {
       agenda: Agenda.file,
-      initials: Pending.initials,
+      initials: User.initials,
       attach: event.target.getAttribute('data-attach'),
       request: event.target.textContent
     }

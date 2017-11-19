@@ -20,7 +20,7 @@ class Footer < Vue
 
       if @@options.traversal == :queue
         prefix = 'queue/'
-        while link and not link.ready_for_review(Pending.initials)
+        while link and not link.ready_for_review(User.initials)
           link = link.prev
         end
         link ||= {href: '../queue', title: 'Queue'}
@@ -92,7 +92,7 @@ class Footer < Vue
       link = @@item.next
 
       if @@options.traversal == :queue
-        while link and not link.ready_for_review(Pending.initials)
+        while link and not link.ready_for_review(User.initials)
           link = link.next
         end
         link ||= {href: 'queue', title: 'Queue'}

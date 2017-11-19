@@ -51,7 +51,7 @@ class Keyboard
         return false
       elsif event.keyCode == 'S'.ord
         if event.shiftKey
-          Pending.role = :secretary
+          User.role = :secretary
           Main.refresh()
         else
           link = ~"#shepherd"[0]
@@ -60,7 +60,7 @@ class Keyboard
         return false
       elsif event.keyCode == 'X'.ord
         if Main.item.attach and Minutes.started and not Minutes.complete
-          Chat.changeTopic user: Pending.userid, link: Main.item.href,
+          Chat.changeTopic user: User.userid, link: Main.item.href,
             text: "current topic: #{Main.item.title}"
           return false
         end

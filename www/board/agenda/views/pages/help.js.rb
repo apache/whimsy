@@ -56,7 +56,7 @@ class Help < Vue
       %w(Secretary Director Guest).each do |role|
         _div do
           _input type: 'radio', name: 'role', value: role.downcase(),
-            checked: role.downcase() == Pending.role, onChange: self.setRole
+            checked: role.downcase() == User.role, onChange: self.setRole
           _ role
         end
       end
@@ -64,7 +64,7 @@ class Help < Vue
   end
 
   def setRole(event)
-    Pending.role = event.target.value
+    User.role = event.target.value
     Main.refresh()
   end
 end

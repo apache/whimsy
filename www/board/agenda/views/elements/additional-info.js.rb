@@ -77,7 +77,7 @@ class AdditionalInfo < Vue
       # pending comments
       if @@item.pending
         _h5 'Pending Comment', id: "#{@prefix}pending"
-        _pre.comment Flow.comment(@@item.pending, Pending.initials)
+        _pre.comment Flow.comment(@@item.pending, User.initials)
       end
 
       # historical comments
@@ -115,7 +115,7 @@ class AdditionalInfo < Vue
       # pending comments
       if @@item.pending
         _h4 'Pending Comment', id: "#{@prefix}pending"
-        _pre.comment Flow.comment(@@item.pending, Pending.initials)
+        _pre.comment Flow.comment(@@item.pending, User.initials)
       end
     end
   end

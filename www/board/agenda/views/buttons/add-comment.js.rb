@@ -43,7 +43,7 @@ class AddComment < Vue
       _textarea.comment_text!  value: @comment, label: 'Comment',
         placeholder: 'comment', rows: 5, disabled: @disabled
 
-      if Pending.role == :director and @@item.attach =~ /^[A-Z]+$/
+      if User.role == :director and @@item.attach =~ /^[A-Z]+$/
         _input.flag! type: 'checkbox', 
           label: 'item requires discussion or follow up',
           onClick: self.flag, checked: @checked
@@ -85,7 +85,7 @@ class AddComment < Vue
       agenda: Agenda.file,
       attach: @@item.attach,
       initials: document.getElementById("comment-initials").value || 
-        Pending.initials,
+        User.initials,
       comment: @comment
     }
 
@@ -103,7 +103,7 @@ class AddComment < Vue
 
     data = {
       agenda: Agenda.file,
-      initials: Pending.initials,
+      initials: User.initials,
       attach: @@item.attach,
       request: (event.target.checked ? 'flag' : 'unflag')
     }

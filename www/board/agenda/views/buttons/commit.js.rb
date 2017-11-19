@@ -101,7 +101,7 @@ class Commit < Vue
   # on click, disable the input fields and buttons and submit
   def click(event)
     @disabled = true
-    post 'commit', message: @message, initials: Pending.initials do |response|
+    post 'commit', message: @message, initials: User.initials do |response|
       Agenda.load response.agenda, response.digest
       Pending.load response.pending
       @disabled = false

@@ -13,7 +13,7 @@ class Queue < Vue
   def render
     _div.col_xs_12 do
 
-      if Pending.role == :director
+      if User.role == :director
         # Approvals
         _h4 'Approvals'
         _p.col_xs_12 do
@@ -73,7 +73,7 @@ class Queue < Vue
       end
 
       # Ready
-      if Pending.role == :director and not pending.ready.empty?
+      if User.role == :director and not pending.ready.empty?
         _div.row.col_xs_12 { _hr }
 
         _h4 'Ready for review'
@@ -126,7 +126,7 @@ class Queue < Vue
         action = true
       end
 
-      if not action and item.ready_for_review(Pending.initials)
+      if not action and item.ready_for_review(User.initials)
         result.ready << item 
       end
     end
