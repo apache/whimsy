@@ -37,7 +37,6 @@ class Pending
   end
 
   def self.load(value)
-    value.role = Server.pending.role if Server.pending and Server.pending.role
     Server.pending = value if value
     Main.refresh()
     return value
