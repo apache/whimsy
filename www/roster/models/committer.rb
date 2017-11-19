@@ -22,7 +22,10 @@ class Committer
 
     if person.icla
       name[:public_name] = person.public_name
-      name[:legal_name] = person.icla.legal_name
+
+      if id == env.user or ASF::Person.find(env.user).asf_member?
+        name[:legal_name] = person.icla.legal_name
+      end
     end
 
     unless person.attrs['cn'].empty?
