@@ -98,7 +98,9 @@ class Invite < Vue
         value: @votelink
       end
       if @showVoteErrorMessage
-        _p "#@voteErrorMessage"
+        _div.alert.alert_danger do
+          _span @voteErrorMessage
+        end
       end
 
     end
@@ -126,7 +128,9 @@ class Invite < Vue
       end
     end
     if @showNoticeErrorMessage
-      _p "#@noticeErrorMessage"
+      _div.alert.alert_danger do
+        _span @noticeErrorMessage
+      end
     end
     #
     # Submission button
@@ -209,46 +213,56 @@ class Invite < Vue
     @showPPMCNoticeLink = Server.data.ppmcs.include? @pmc
     @showVoteErrorMessage = false;
     @showNoticeErrorMessage = false;
+    checkVoteLink() if @votelink;
+    checkNoticeLink() if @noticelink;
     self.checkValidity()
   end
 
   def setVoteLink(event)
     @votelink = event.target.value
     @showVoteErrorMessage = false
+    checkVoteLink() if @votelink
+    self.checkValidity()
+  end
+
+  def checkVoteLink()
     # verify that the link refers to lists.apache.org message on the project list
     if not @votelink=~ /.*lists\.apache\.org.*/
       @voteErrorMessage = "Error: Please link to\
       a message via lists.apache.org"
       @showVoteErrorMessage = true;
     end
-    if not @votelink=~ /.*#{Server.data.pmc_mail[@pmc]}(\.incubator)?\.apache\.org.*/
+    if not @votelink=~ /.*private\@#{Server.data.pmc_mail[@pmc]}(\.incubator)?\.apache\.org.*/
       @voteErrorMessage = "Error: Please link to\
       the [RESULT][VOTE] message sent to the private list."
       @showVoteErrorMessage = true;
     end
-    self.checkValidity()
   end
 
   def setNoticeLink(event)
     @noticelink = event.target.value
     @showNoticeErrorMessage = false;
+    checkNoticeLink() if @noticelink
+    self.checkValidity()
+  end
+
+  def checkNoticeLink()
     # verify that the link refers to lists.apache.org message on the proper list
     if not @noticelink=~ /.*lists\.apache\.org.*/
       @noticeErrorMessage = "Error: please link to\
       a message via lists.apache.org"
       @showNoticeErrorMessage = true;
     end
-    if @showPMCNoticeLink and not @noticelink=~ /.*board@apache\.org.*/
+    if @showPMCNoticeLink and not @noticelink=~ /.*board\@apache\.org.*/
       @noticeErrorMessage = "Error: please link to\
       the NOTICE message sent to the board list."
       @showNoticeErrorMessage = true;
     end
-    if @showPPMCNoticeLink and not @noticelink=~ /.*private@incubator\.apache\.org.*/
+    if @showPPMCNoticeLink and not @noticelink=~ /.*private\@incubator\.apache\.org.*/
       @noticeErrorMessage = "Error: please link to\
       the NOTICE message sent to the incubator private list."
       @showNoticeErrorMessage = true;
     end
-    self.checkValidity()
   end
 
   def setInvitation(event)
