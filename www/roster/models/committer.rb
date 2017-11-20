@@ -99,7 +99,16 @@ class Committer
     response[:committer].sort!
     response[:podlings].sort!
 
-    if ASF::Person.find(env.user).asf_member?
+    member = {} # collect member info
+
+    inMembersTxt = ASF::Member.find(id) # i.e. present in members.txt
+
+    if inMembersTxt
+      # This is public
+      member[:status] = ASF::Member.status[id] || 'Active'
+    end
+
+    if ASF::Person.find(env.user).asf_member? # i.e. member karma
       response[:forms] = {}
 
       if person.icla and person.icla.claRef # Not all people have iclas
@@ -112,11 +121,9 @@ class Committer
         end
       end
 
-      member = {}
 
-      if person.asf_member? # TODO is this the correct check? it includes people in members unix group
+      if inMembersTxt
         member[:info] = person.members_txt
-        member[:status] = ASF::Member.status[id] || 'Active'
 
         if person.icla # not all members have iclas
           apps = ASF::SVN['private/documents/member_apps']
@@ -139,9 +146,9 @@ class Committer
         end
       end
 
-      response[:member] = member unless member.empty?
-
     end
+
+    response[:member] = member unless member.empty?
 
     if ASF::Person.find(env.user).asf_member? or env.user == id
       response[:moderates] = {}

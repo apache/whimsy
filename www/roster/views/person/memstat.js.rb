@@ -9,7 +9,7 @@ class PersonMemberStatus < Vue
     _div.row data_edit: ('memstat' if @@person.props.auth.secretary) do
       _div.name 'Member status'
 
-      if committer.member.info
+      if committer.member.status
         _div.value do
           _span committer.member.status
 
@@ -25,8 +25,6 @@ class PersonMemberStatus < Vue
            end
          end
         end
-      else
-        _div.value.not_found 'Not in members.txt'
       end
     end
   end
