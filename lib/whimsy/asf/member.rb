@@ -81,6 +81,7 @@ module ASF
     end
 
     # Determine if the person associated with a given id is an ASF member.
+    # Includes emeritus and deceased members
     # Returns a boolean value.
     def self.find(id)
       each {|availid| return true if availid == id}
