@@ -5,6 +5,7 @@
 
 class Pending
   Vue.util.defineReactive Server.pending, nil
+  Vue.util.defineReactive Server.offline, false
 
   # fetch pending from server (needed for ServiceWorkers)
   def self.fetch()
@@ -37,6 +38,7 @@ class Pending
   end
 
   def self.load(value)
+    Pending.initialize_offline()
     Server.pending = value if value
     Main.refresh()
     return value
@@ -95,6 +97,18 @@ class Pending
     return match
   end
 
+  # determine if offline operatios are (or should be) supported
+  def self.offline_enabled
+    return false unless PageCache.enabled
+
+    # disable offline in production for now
+    if location.hostname =~ /^whimsy.*\.apache\.org$/
+      return false unless location.hostname.include? '-test'
+    end
+
+    return true
+  end
+
   # offline storage using IndexDB
   def self.dbopen(&block)
     request = indexedDB.open("whimsy/board/agenda", 1)
@@ -142,6 +156,34 @@ class Pending
 	console.log 'pending write failed'
       end
     end
+  end
+
+  # change offline status
+  def self.setOffline(status = true)
+    Pending.initialize_offline()
+    localStorage.getItem(Pending.offline_var, status.to_s)
+  end
+
+  # synchronize offline status with other windows
+  def initialize_offline()
+    return if @@offline_initialized
+
+    Pending.offline_var = "#{JSONStorage.prefix}-offline"
+
+    if defined? local_storage
+      if localStorage.getItem(Pending.offline_var) == 'true'
+	Server.offline = true
+      end
+
+      # watch for changes
+      window.addEventListener :storage do |event|
+	if event.key == Pending.offline_var
+	  Server.offline = (event.newValue == 'true')
+	end
+      end
+    end
+
+    @@offline_initialized = true
   end
 end
 
