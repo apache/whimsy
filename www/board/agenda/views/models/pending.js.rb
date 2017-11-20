@@ -94,6 +94,55 @@ class Pending
 
     return match
   end
+
+  # offline storage using IndexDB
+  def self.dbopen(&block)
+    request = indexedDB.open("whimsy/board/agenda", 1)
+
+    def request.onerror(event)
+      console.log 'pending database not available'
+    end
+
+    def request.onsuccess(event)
+      block(event.target.result)
+    end
+
+    def request.onupgradeneeded(event)
+      db = event.target.result
+      objectstore = db.createObjectStore('pending', keyPath: 'key')
+    end
+  end
+
+  # fetch pending value.  Note: callback block will not be called if there
+  # is no data, or if the data is for another month's agenda
+  def self.dbget(&block)
+    self.dbopen do |db|
+      tx = db.transaction("pending", :readonly)
+      store = tx.objectStore("pending")
+      request = store.get('pending')
+
+      def request.onerror(event)
+	console.log 'no pending data'
+      end
+
+      def request.onsuccess(event)
+	block(request.result.value) if request.result.date == Agenda.date
+      end
+    end
+  end
+
+  # update pending value.
+  def self.dbput(value)
+    self.dbopen do |db|
+      tx = db.transaction("pending", :readwrite)
+      store = tx.objectStore("pending")
+      request = store.put(key: 'pending', agenda: Agenda.date, value: value)
+
+      def request.onerror(event)
+	console.log 'pending write failed'
+      end
+    end
+  end
 end
 
 Events.subscribe :pending do |message|
