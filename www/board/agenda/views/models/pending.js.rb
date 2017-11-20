@@ -165,7 +165,7 @@ class Pending
   end
 
   # synchronize offline status with other windows
-  def initialize_offline()
+  def self.initialize_offline()
     return if @@offline_initialized
 
     Pending.offline_var = "#{JSONStorage.prefix}-offline"
