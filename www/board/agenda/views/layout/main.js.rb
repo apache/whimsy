@@ -43,7 +43,7 @@ class Main < Vue
       Server[prop] = @@server[prop]
     end
 
-    Pending.fetch() unless Server.userid
+    Pending.fetch() if PageCache.enabled or not Server.userid
     Agenda.load(@@page.parsed, @@page.digest)
     Minutes.load(@@page.minutes)
 

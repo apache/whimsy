@@ -11,26 +11,28 @@ class PageCache
 
   # is page cache available?
   def self.enabled
+    return false unless defined? location
+
     unless location.protocol == 'https:' or location.hostname == 'localhost'
       return false
     end
 
     return false unless defined?(ServiceWorker) and defined?(navigator)
 
-    # disable service workers for the production server(s) for now.  See:
-    # https://lists.w3.org/Archives/Public/public-webapps/2016JulSep/0016.html
-    if location.hostname =~ /^whimsy.*\.apache\.org$/
-      unless location.hostname.include? '-test'
-        # unregister service worker
-        navigator.serviceWorker.getRegistrations().then do |registrations|
-          registrations.each do |registration|
-            registration.unregister()
-          end
-        end
-
-        return false
-      end
-    end
+#   # disable service workers for the production server(s) for now.  See:
+#   # https://lists.w3.org/Archives/Public/public-webapps/2016JulSep/0016.html
+#   if location.hostname =~ /^whimsy.*\.apache\.org$/
+#     unless location.hostname.include? '-test'
+#       # unregister service worker
+#       navigator.serviceWorker.getRegistrations().then do |registrations|
+#         registrations.each do |registration|
+#           registration.unregister()
+#         end
+#       end
+#
+#       return false
+#     end
+#   end
 
     return true
   end
