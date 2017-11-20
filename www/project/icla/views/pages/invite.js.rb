@@ -226,6 +226,7 @@ class Invite < Vue
   end
 
   def checkVoteLink()
+    document.getElementById('votelink').setCustomValidity('');
     # verify that the link refers to lists.apache.org message on the project list
     if not @votelink=~ /.*lists\.apache\.org.*/
       @voteErrorMessage = "Error: Please link to\
@@ -237,6 +238,9 @@ class Invite < Vue
       the [RESULT][VOTE] message sent to the private list."
       @showVoteErrorMessage = true;
     end
+    if @showVoteErrorMessage
+      document.getElementById('votelink').setCustomValidity(@voteErrorMessage);
+    end
   end
 
   def setNoticeLink(event)
@@ -247,6 +251,7 @@ class Invite < Vue
   end
 
   def checkNoticeLink()
+    document.getElementById('noticelink').setCustomValidity('');
     # verify that the link refers to lists.apache.org message on the proper list
     if not @noticelink=~ /.*lists\.apache\.org.*/
       @noticeErrorMessage = "Error: please link to\
@@ -262,6 +267,9 @@ class Invite < Vue
       @noticeErrorMessage = "Error: please link to\
       the NOTICE message sent to the incubator private list."
       @showNoticeErrorMessage = true;
+    end
+    if @showNoticeErrorMessage
+      document.getElementById('noticelink').setCustomValidity(@noticeErrorMessage);
     end
   end
 
