@@ -213,63 +213,67 @@ class Invite < Vue
     @showPPMCNoticeLink = Server.data.ppmcs.include? @pmc
     @showVoteErrorMessage = false;
     @showNoticeErrorMessage = false;
-    checkVoteLink() if @votelink;
-    checkNoticeLink() if @noticelink;
+    checkVoteLink() if document.getElementById('votelink');
+    checkNoticeLink() if document.getElementById('noticelink');
     self.checkValidity()
   end
 
   def setVoteLink(event)
     @votelink = event.target.value
     @showVoteErrorMessage = false
-    checkVoteLink() if @votelink
+    checkVoteLink()
     self.checkValidity()
   end
 
   def checkVoteLink()
     document.getElementById('votelink').setCustomValidity('');
-    # verify that the link refers to lists.apache.org message on the project list
-    if not @votelink=~ /.*lists\.apache\.org.*/
-      @voteErrorMessage = "Error: Please link to\
-      a message via lists.apache.org"
-      @showVoteErrorMessage = true;
-    end
-    if not @votelink=~ /.*private\@#{Server.data.pmc_mail[@pmc]}(\.incubator)?\.apache\.org.*/
-      @voteErrorMessage = "Error: Please link to\
-      the [RESULT][VOTE] message sent to the private list."
-      @showVoteErrorMessage = true;
-    end
-    if @showVoteErrorMessage
-      document.getElementById('votelink').setCustomValidity(@voteErrorMessage);
+    if (@votelink)
+      # verify that the link refers to lists.apache.org message on the project list
+      if not @votelink=~ /.*lists\.apache\.org.*/
+        @voteErrorMessage = "Error: Please link to\
+        a message via lists.apache.org"
+        @showVoteErrorMessage = true;
+      end
+      if not @votelink=~ /.*private\@#{Server.data.pmc_mail[@pmc]}(\.incubator)?\.apache\.org.*/
+        @voteErrorMessage = "Error: Please link to\
+        the [RESULT][VOTE] message sent to the private list."
+        @showVoteErrorMessage = true;
+      end
+      if @showVoteErrorMessage
+        document.getElementById('votelink').setCustomValidity(@voteErrorMessage);
+      end
     end
   end
 
   def setNoticeLink(event)
     @noticelink = event.target.value
     @showNoticeErrorMessage = false;
-    checkNoticeLink() if @noticelink
+    checkNoticeLink()
     self.checkValidity()
   end
 
   def checkNoticeLink()
     document.getElementById('noticelink').setCustomValidity('');
     # verify that the link refers to lists.apache.org message on the proper list
-    if not @noticelink=~ /.*lists\.apache\.org.*/
-      @noticeErrorMessage = "Error: please link to\
-      a message via lists.apache.org"
-      @showNoticeErrorMessage = true;
-    end
-    if @showPMCNoticeLink and not @noticelink=~ /.*board\@apache\.org.*/
-      @noticeErrorMessage = "Error: please link to\
-      the NOTICE message sent to the board list."
-      @showNoticeErrorMessage = true;
-    end
-    if @showPPMCNoticeLink and not @noticelink=~ /.*private\@incubator\.apache\.org.*/
-      @noticeErrorMessage = "Error: please link to\
-      the NOTICE message sent to the incubator private list."
-      @showNoticeErrorMessage = true;
-    end
-    if @showNoticeErrorMessage
-      document.getElementById('noticelink').setCustomValidity(@noticeErrorMessage);
+    if (@noticelink)
+      if not @noticelink=~ /.*lists\.apache\.org.*/
+        @noticeErrorMessage = "Error: please link to\
+        a message via lists.apache.org"
+        @showNoticeErrorMessage = true;
+      end
+      if @showPMCNoticeLink and not @noticelink=~ /.*board\@apache\.org.*/
+        @noticeErrorMessage = "Error: please link to\
+        the NOTICE message sent to the board list."
+        @showNoticeErrorMessage = true;
+      end
+      if @showPPMCNoticeLink and not @noticelink=~ /.*private\@incubator\.apache\.org.*/
+        @noticeErrorMessage = "Error: please link to\
+        the NOTICE message sent to the incubator private list."
+        @showNoticeErrorMessage = true;
+      end
+      if @showNoticeErrorMessage
+        document.getElementById('noticelink').setCustomValidity(@noticeErrorMessage);
+      end
     end
   end
 
@@ -285,7 +289,8 @@ class Invite < Vue
   # client side field validations
   def checkValidity()
     @disabled = !%w(iclaname iclaemail pmc votelink noticelink).all? do |id|
-      document.getElementById(id).checkValidity()
+      element = document.getElementById(id)
+      (not element) or element.checkValidity()
     end
   end
 
