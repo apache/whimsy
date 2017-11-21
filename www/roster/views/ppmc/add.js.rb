@@ -18,6 +18,12 @@ class PPMCAdd < Vue
             _button.close 'x', data_dismiss: 'modal'
             _h4.modal_title 'Add People to the ' + @@project.display_name +
               ' Podling'
+            _p {
+              _br
+              _b 'N.B'
+              _br
+              _ 'For existing committers, please select the committer from the list below and use the Modify button instead.'
+            }
           end
 
           _div.modal_body do
