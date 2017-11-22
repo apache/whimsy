@@ -7,6 +7,7 @@ class Queue < Vue
   def self.buttons()
     buttons = [{button: Refresh}]
     buttons << {form: Commit} if Pending.count > 0
+    buttons << {button: Offline} if Pending.offline_enabled
     return buttons
   end
 

@@ -161,7 +161,8 @@ class Pending
   # change offline status
   def self.setOffline(status = true)
     Pending.initialize_offline()
-    localStorage.getItem(Pending.offline_var, status.to_s)
+    localStorage.setItem(Pending.offline_var, status.to_s)
+    Server.offline = (status.to_s == 'true')
   end
 
   # synchronize offline status with other windows
@@ -170,7 +171,7 @@ class Pending
 
     Pending.offline_var = "#{JSONStorage.prefix}-offline"
 
-    if defined? local_storage
+    if defined? localStorage
       if localStorage.getItem(Pending.offline_var) == 'true'
 	Server.offline = true
       end

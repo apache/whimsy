@@ -27,8 +27,10 @@ class Header < Vue
       _ul.nav.nav_pills.navbar_right do
 
         # pending count
-        if Pending.count > 0
+        if Pending.count > 0 or Server.offline
           _li.label.label_danger do
+            _span 'OFFLINE: ' if Server.offline
+
             _Link text: Pending.count, href: 'queue'
           end
         end
