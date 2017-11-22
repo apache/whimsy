@@ -40,8 +40,8 @@ self.addEventListener :fetch do |event|
         timeoutId = nil
 
         caches.open('board/agenda').then do |cache|
-          # respond from cache if the server isn't fast enough
-          timeoutId = setTimeout timeout do
+          # common logic to reply from cache
+          replyFromCache = lambda do
             timeoutId = nil
             cache.match(request).then do |response|
               if response
@@ -52,22 +52,25 @@ self.addEventListener :fetch do |event|
             end
           end
 
+          # respond from cache if the server isn't fast enough
+          timeoutId = setTimeout(replyFromCache, timeout)
+
           # fetch bootstrap.html
           fetch(request).then {|response|
-            # cache the response if OK, fulfull the response if not timed out
+            # cache the response if OK, fulfill the response if not timed out
             if response.ok
               cache.put(request, response.clone())
               if timeoutId
                 clearTimeout timeoutId 
                 fulfill response
               end
+            else
+              # bad response: use cache instead
+              replyFromCache()
             end
           }.catch {|failure|
-            # fetch rejected before the timeout
-            if timeoutId
-              clearTimeout timeoutId 
-              reject failure 
-            end
+            # no response: use cache instead
+            replyFromCache()
           }
         end
       end
