@@ -25,6 +25,9 @@ class PPMC < Vue
         _a 'PPMC', :href => "ppmc/#{@ppmc.id}#ppmc"
       end
       _li role: "presentation" do
+        _a 'Committers', :href => "ppmc/#{@ppmc.id}#committers"
+      end
+      _li role: "presentation" do
         _a 'Mail Moderators', :href => "ppmc/#{@ppmc.id}#mail"
       end
       _li role: "presentation" do

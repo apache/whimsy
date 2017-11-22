@@ -6,16 +6,27 @@ class PPMCCommitters < Vue
   def render
     pending = [] 
 
-    if @@ppmc.committers.all? {|id| @@ppmc.owners.include? id}
+    _ ' ' # Not sure why, but without this the H2 elements are not generated
+
+    if
+      @@ppmc.committers.all? do |id|
+        @@ppmc.owners.include? id
+      end
+    then
+      _h2.committers! 'Committers'
       _p 'All committers are members of the PPMC'
     else
-      _h2.committers! 'Committers'
+      _h2.committers! do
+        _ 'Committers'
+        _small ' (excluding PPMC members above)'
+      end
+      _p 'Click on column name to sort'
       _table.table.table_hover do
         _thead do
           _tr do
             _th if @@auth.ppmc
-            _th 'id'
-            _th 'public name'
+            _th 'id', data_sort: 'string'
+            _th.sorting_asc 'public name', data_sort: 'string-ins'
             _th 'notes'
           end
         end
@@ -50,6 +61,10 @@ class PPMCCommitters < Vue
         end
       end
     end
+  end
+
+  def mounted()
+    jQuery('.table', $el).stupidtable()
   end
 
   # compute list of committers

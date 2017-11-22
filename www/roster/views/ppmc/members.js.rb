@@ -9,8 +9,8 @@ class PPMCMembers < Vue
       _thead do
         _tr do
           _th if @@auth.ppmc
-          _th 'id'
-          _th 'public name'
+          _th 'id', data_sort: 'string'
+          _th.sorting_asc 'public name', data_sort: 'string-ins'
           _th 'notes'
         end
       end
@@ -22,6 +22,10 @@ class PPMCMembers < Vue
         end
       end
     end
+  end
+
+  def mounted()
+    jQuery('.table', $el).stupidtable()
   end
 
   # compute roster
