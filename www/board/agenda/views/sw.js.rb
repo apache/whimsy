@@ -36,7 +36,6 @@ self.addEventListener :fetch do |event|
         date =  url.split('/')[0]
         bootstrap = "#{scope}#{date}/bootstrap.html"
         request = Request.new(bootstrap, cache: "no-store")
-        error = nil
         timeoutId = nil
 
         caches.open('board/agenda').then do |cache|
