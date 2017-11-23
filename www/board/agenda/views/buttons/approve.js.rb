@@ -35,9 +35,8 @@ class Approve < Vue
     }
 
     @disabled = true
-    post 'approve', data do |pending|
+    Pending.update 'approve', data do |pending|
       @disabled = false
-      Pending.load pending
     end
   end
 end

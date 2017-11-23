@@ -140,7 +140,11 @@ class Pending
       end
 
       def request.onsuccess(event)
-	block(request.result.value) if request.result.date == Agenda.date
+        if request.result and request.result.agenda == Agenda.date
+	  block(request.result.value) 
+        else
+	  block({})
+        end
       end
     end
   end
@@ -185,6 +189,41 @@ class Pending
     end
 
     @@offline_initialized = true
+  end
+
+  # apply pending update request: if offline, capture request locally, otherwise
+  # post it to the server.
+  def self.update(request, data, &block)
+    if Server.offline
+      Pending.dbget do |pending|
+        if request == 'approve'
+          pending.approve ||= {}
+          pending.approve[data.attach] = data.request
+
+          if data.request == 'approve'
+            index = Server.pending.unapproved.indexOf(Server.pending.attach)
+            Server.pending.unapproved.splice(index, 1) if index != -1
+            unless Server.pending.approved.include? data.attach
+              Server.pending.approved << data.attach 
+            end
+          else
+            index = Server.pending.approved.indexOf(data.attach)
+            Server.pending.approved.splice(index, 1) if index != -1
+            unless Server.pending.unapproved.include? data.attach
+              Server.pending.unapproved << data.attach 
+            end
+          end
+        end
+
+        Pending.dbput pending
+        block(Server.pending)
+      end
+    else
+      post request, data do |pending|
+        block(pending)
+        Pending.load(pending)
+      end
+    end
   end
 end
 
