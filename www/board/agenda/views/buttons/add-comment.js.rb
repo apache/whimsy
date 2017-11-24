@@ -90,7 +90,7 @@ class AddComment < Vue
     }
 
     @disabled = true
-    post 'comment', data do |pending|
+    Pending.update 'comment', data do |pending|
       jQuery('#comment-form').modal(:hide)
       document.body.classList.remove('modal-open')
       @disabled = false
@@ -108,7 +108,7 @@ class AddComment < Vue
       request: (event.target.checked ? 'flag' : 'unflag')
     }
 
-    post 'approve', data do |pending|
+    Pending.update 'approve', data do |pending|
       Pending.load pending
     end
   end

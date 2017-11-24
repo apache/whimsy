@@ -9,6 +9,7 @@ Pending.update(env.user, @agenda) do |pending|
   unapproved = pending['unapproved']
   flagged = pending['flagged']
   unflagged = pending['unflagged']
+  comments = pending['comments']
 
   if @pending['approve']
     @pending['approve'].each do |attach, request|
@@ -38,6 +39,16 @@ Pending.update(env.user, @agenda) do |pending|
 	unflagged << attach unless unflagged.include? attach or
 	  not agenda.find {|item| item[:attach] == attach and
 	    Array(item['flagged_by']).include? @initials}
+      end
+    end
+  end
+
+  if @pending['comment']
+    @pending['comment'].each do |attach, comment|
+      if comment.empty? 
+        comments.delete attach
+      else
+        comments[attach] = comment
       end
     end
   end

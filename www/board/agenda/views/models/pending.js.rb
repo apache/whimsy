@@ -209,27 +209,52 @@ class Pending
   def self.update(request, data, &block)
     if Server.offline
       Pending.dbget do |pending|
-        if request == 'approve'
-          pending.approve ||= {}
-          pending.approve[data.attach] = data.request
+        if request == 'comment'
+          pending.comment ||= {}
+          pending.comment[data.attach] = data.comment
+          Server.pending.comments[data.attach] = data.comment
+        elsif request == 'approve'
+          # update list of offline requests
+          if data.request.include? 'approve'
+            pending.approve ||= {}
+            pending.approve[data.attach] = data.request
+          elsif data.request.include? 'flag'
+            pending.flag ||= {}
+            pending.flag[data.attach] = data.request
+          end
 
+          # apply request locally
           if data.request == 'approve'
             index = Server.pending.unapproved.indexOf(Server.pending.attach)
             Server.pending.unapproved.splice(index, 1) if index != -1
             unless Server.pending.approved.include? data.attach
               Server.pending.approved << data.attach 
             end
-          else
+          elsif data.request == 'unapprove'
             index = Server.pending.approved.indexOf(data.attach)
             Server.pending.approved.splice(index, 1) if index != -1
             unless Server.pending.unapproved.include? data.attach
               Server.pending.unapproved << data.attach 
             end
+          elsif data.request == 'flag'
+            index = Server.pending.unflagged.indexOf(Server.pending.attach)
+            Server.pending.unflagged.splice(index, 1) if index != -1
+            unless Server.pending.flagged.include? data.attach
+              Server.pending.flagged << data.attach 
+            end
+          elsif data.request == 'unflag'
+            index = Server.pending.flagged.indexOf(data.attach)
+            Server.pending.flagged.splice(index, 1) if index != -1
+            unless Server.pending.unflagged.include? data.attach
+              Server.pending.unflagged << data.attach 
+            end
           end
         end
 
+        # store offline requests
         Pending.dbput pending
 
+        # inform caller, other tabs
         if block 
           block(Server.pending)
           Events.broadcast type: 'pending', value: Server.pending
