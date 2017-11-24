@@ -1,6 +1,6 @@
 #
-# Provide a thin (and quite possibly unnecessary) interface to the
-# Server.pending data structure.
+# Provide a thin interface to the Server.pending data structure, and
+# implement the client side of offline processing.
 #
 
 class Pending
@@ -188,6 +188,18 @@ class Pending
       end
     end
 
+    if Server.offline
+      # apply offline changes
+      Pending.dbget do |pending|
+	if pending.approve
+	  for attach in pending.approve
+	    data = {attach: attach, request: pending.approve[attach]}
+	    Pending.update('approve', data)
+	  end
+	end
+      end
+    end
+
     @@offline_initialized = true
   end
 
@@ -216,7 +228,7 @@ class Pending
         end
 
         Pending.dbput pending
-        block(Server.pending)
+        block(Server.pending) if block
       end
     else
       post request, data do |pending|
