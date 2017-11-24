@@ -160,6 +160,13 @@ class Events
     self.log e
   end
 
+  # set message to all processes
+  def self.broadcast(event)
+    event = event.inspect
+    localStorage.setItem("#{@@prefix}-event", event)
+    self.dispatch event
+  end
+
   # dispatch logic (common to all tabs)
   def self.dispatch(data)
     message = JSON.parse(data)

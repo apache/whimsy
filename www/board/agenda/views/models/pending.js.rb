@@ -228,7 +228,11 @@ class Pending
         end
 
         Pending.dbput pending
-        block(Server.pending) if block
+
+        if block 
+          block(Server.pending)
+          Events.broadcast type: 'pending', value: Server.pending
+        end
       end
     else
       post request, data do |pending|
