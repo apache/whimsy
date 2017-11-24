@@ -16,6 +16,7 @@ class Post < Vue
     {
       text: 'post report',
       class: 'btn_primary',
+      disabled: Server.offline,
       data_toggle: 'modal',
       data_target: '#post-report-form'
     }

@@ -167,6 +167,7 @@ class Pending
     Pending.initialize_offline()
     localStorage.setItem(Pending.offline_var, status.to_s)
     Server.offline = (status.to_s == 'true')
+    Main.refresh()
   end
 
   # synchronize offline status with other windows

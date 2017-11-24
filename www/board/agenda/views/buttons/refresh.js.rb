@@ -7,7 +7,8 @@ class Refresh < Vue
   end
 
   def render
-    _button.btn.btn_primary 'refresh', onClick: self.click, disabled: @disabled
+    _button.btn.btn_primary 'refresh', onClick: self.click, 
+      disabled: (@disabled or Server.offline)
   end
 
   def click(event)
