@@ -9,7 +9,9 @@
 #
 #   *) When a bootstrap.html page is loaded, a scan is made for references
 #      to javascripts and stylesheets, and if such a page is not present in
-#      the cache, it is fetched and the results are cached.
+#      the cache, it is fetched and the results are cached.  This is because
+#      browsers will sometimes try to request these pages -- even when marked
+#      as immutable -- when offline.
 #
 #   *) Requests for javascript and stylesheets are cached and used to
 #      respond to fetches that fail
@@ -28,7 +30,7 @@ self.addEventListener :activate do |event|
   event.waitUntil self.clients.claim();
 end
 
-# look for css and js files and ensure that each are cached
+# look for css and js files and in HTML response ensure that each are cached
 def preload(cache, base, text)
   pattern = Regexp.new('"[-.\w+/]+\.(css|js)\?\d+"', 'g')
 
@@ -77,19 +79,23 @@ self.addEventListener :fetch do |event|
 
         caches.open('board/agenda').then do |cache|
           # common logic to reply from cache
-          replyFromCache = lambda do
-            timeoutId = nil
+          replyFromCache = lambda do |refetch|
             cache.match(cache_request).then do |response|
+              clearTimeout timeoutId
+
               if response
                 fulfill response
-              else
+                timeoutId = nil
+              elsif refetch
                 fetch(event.request).then(fulfill, reject)
               end
             end
           end
 
           # respond from cache if the server isn't fast enough
-          timeoutId = setTimeout(replyFromCache, timeout)
+          timeoutId = setTimeout timeout do
+            replyFromCache(false)
+          end
 
           # fetch bootstrap.html or stylesheet or javascript
           fetch(fetch_request).then {|response|
@@ -99,7 +105,9 @@ self.addEventListener :fetch do |event|
 
               if fetch_request.url =~ /bootstrap\.html$/
                 response.clone().text().then do |text|
-                  preload(cache, fetch_request.url, text)
+                  setTimeout 5_000 do
+                    preload(cache, fetch_request.url, text)
+                  end
                 end
               end
 
@@ -109,11 +117,11 @@ self.addEventListener :fetch do |event|
               end
             else
               # bad response: use cache instead
-              replyFromCache()
+              replyFromCache(true)
             end
           }.catch {|failure|
             # no response: use cache instead
-            replyFromCache()
+            replyFromCache(true)
           }
         end
       end
