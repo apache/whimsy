@@ -168,6 +168,9 @@ class Pending
     localStorage.setItem(Pending.offline_var, status.to_s)
     Server.offline = (status.to_s == 'true')
     Main.refresh()
+
+    event = CustomEvent.new('offlineStatus', detail: Server.offline)
+    window.dispatchEvent(event)
   end
 
   # synchronize offline status with other windows
@@ -185,6 +188,9 @@ class Pending
       window.addEventListener :storage do |event|
 	if event.key == Pending.offline_var
 	  Server.offline = (event.newValue == 'true')
+
+          event = CustomEvent.new('offlineStatus', detail: Server.offline)
+          window.dispatchEvent(event)
 	end
       end
     end

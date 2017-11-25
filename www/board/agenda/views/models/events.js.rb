@@ -118,7 +118,20 @@ class Events
     # proof of life; maintain connection to the server
     setInterval 25_000 do
       localStorage.setItem("#{@@prefix}-timestamp", Date.new().getTime())
-      self.connectToServer()
+
+      if not Server.offline
+        self.connectToServer()
+      elsif @@socket
+        @@socket.close()
+      end
+    end
+
+    window.addEventListener :offlineStatus do |event|
+      if event.detail == true
+        @@socket.close() if @@socket
+      else
+        self.connectToServer()
+      end
     end
 
     # close connection on exit
