@@ -15,7 +15,7 @@ class Pending
         credentials: 'include', headers: {'Accept' => 'application/json'})
 
       # use data from last cache until a response is received
-      cache.match("../json/#{name}").then do |response|
+      cache.match(request).then do |response|
         if response and not fetched
           response.json().then do |json| 
 	    Pending.load(json)
