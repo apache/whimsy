@@ -64,6 +64,11 @@ get '/env' do
   JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
 end
 
+# enable debugging of the agenda cache
+get '/cache.json' do
+  _json Agenda.cache
+end
+
 # agenda followup
 get %r{/(\d\d\d\d-\d\d-\d\d)/followup\.json} do |date|
   pass unless Dir.exist? '/srv/mail/board'

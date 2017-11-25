@@ -14,6 +14,11 @@ class Agenda
   FileUtils.mkdir_p CACHE
   @@cache = Hash.new {|hash, key| hash[key] = {mtime: 0}}
 
+  # for debug purposes
+  def self.cache
+    @@cache
+  end
+
   # flush cache of files made with previous versions of the library
   libmtime = ASF::library_mtime
   Dir["#{CACHE}/*.yml"].each do |cache|
