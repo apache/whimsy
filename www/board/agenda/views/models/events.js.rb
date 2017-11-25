@@ -133,7 +133,7 @@ class Events
         self.connectToServer()
 
         # see if the agenda changed
-        fetch('digest.json').then do |response|
+        fetch('digest.json', credentials: 'include').then do |response|
           if response.ok
 	    response.json().then do |json|
 	      json.type = :agenda
