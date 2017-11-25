@@ -131,6 +131,16 @@ class Events
         @@socket.close() if @@socket
       else
         self.connectToServer()
+
+        # see if the agenda changed
+        fetch('digest.json').then do |response|
+          if response.ok
+	    response.json().then do |json|
+	      json.type = :agenda
+	      Events.broadcast json
+	    end
+          end
+        end
       end
     end
 

@@ -98,6 +98,16 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/pending\.json} do |date|
   _json pending
 end
 
+# agenda digest information
+get %r{/(\d\d\d\d-\d\d-\d\d)/digest\.json} do |date|
+  agenda = "board_agenda_#{date.gsub('-','_')}.txt"
+  _json(
+    file: agenda,
+    digest: Agenda[agenda][:digest],
+    etag: Agenda.uptodate(agenda) ? Agenda[agenda][:etag] : nil
+  )
+end
+
 # all agenda pages
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   agenda = "board_agenda_#{date.gsub('-','_')}.txt"
