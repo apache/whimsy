@@ -102,9 +102,9 @@ class Pending
     return false unless PageCache.enabled
 
     # disable offline in production for now
-    if location.hostname =~ /^whimsy.*\.apache\.org$/
-      return false unless location.hostname.include? '-test'
-    end
+#   if location.hostname =~ /^whimsy.*\.apache\.org$/
+#     return false unless location.hostname.include? '-test'
+#   end
 
     return true
   end
