@@ -19,7 +19,9 @@ class Main < Vue
 
       view = nil
       _main do
-        Vue.createElement(@item.view, props: {item: @item}, ref: 'view')
+        if Agenda.index[0].text # don't display page while bootstrapping
+          Vue.createElement(@item.view, props: {item: @item}, ref: 'view')
+        end
       end
 
       _Footer item: @item, buttons: @buttons, options: @options
