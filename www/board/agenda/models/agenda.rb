@@ -65,7 +65,6 @@ class Agenda
   def self.update_cache(file, path, contents, quick)
     update = {
       mtime: (quick ? -1 : File.mtime(path)),
-      parsed: ASF::Board::Agenda.parse(contents, quick),
       digest: Digest::SHA256.base64digest(contents)
     }
 
@@ -73,8 +72,16 @@ class Agenda
     # or the previous entry was the result of a 'quick' parse.
     current = Agenda[file]
     if not current or current[:digest] != update[:digest] or
-      current[:mtime].to_i <= 0
+      current[:mtime].to_i < update[:mtime].to_i
     then
+      if current and current[:digest] == update[:digest] and
+        current[:mtime].to_i > 0
+      then
+        update[:parsed] = current[:parsed]
+      else
+        update[:parsed] = ASF::Board::Agenda.parse(contents, quick)
+      end
+
       Agenda[file] = update
     end
   end
