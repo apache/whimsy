@@ -77,7 +77,7 @@ class Committee
       unMatchedSubs.each{ |addr|
         who = nil
         @people.each do |person|
-          if person[:mail].any? {|mail| mail.include? addr}
+          if person[:mail].any? {|mail| mail == addr}
             who = person
           end
         end
