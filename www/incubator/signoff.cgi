@@ -4,6 +4,7 @@ PAGETITLE = "Incubator Mentor Signoffs" # Wvisible:incubator
 # quick and dirty script to tally up which mentors have been providing
 # signoffs and which have not.
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+require 'nokogiri'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
@@ -34,6 +35,15 @@ ASF::Person.preload('cn')
 ASF::ICLA.preload()
 people = Hash[ASF::Person.list.map {|person| [person.public_name, person.id]}]
 mentors = {}
+projects = URI.parse('http://incubator.apache.org/projects/')
+table = Nokogiri::HTML(Net::HTTP.get(projects)).at('table')
+
+# extract a list of [podling names, table row]
+podlings = table.search('tr').map do |tr|
+  tds = tr.search('td')
+  next if tds.empty?
+  [tds.last.text, tr]
+end
 
 agendas.each do |file|
   date = file[/\d+_\d+_\d+/].gsub('_', '-')
@@ -41,13 +51,14 @@ agendas.each do |file|
   signoffs = agenda.scan(/^Signed-off-by:\s+.*?\n\n/m).join
   signoffs.scan(/\[(.+?)\]\((.*?)\) (.*)/).each do |check, podling, name|
     name.strip!
+    podling.strip!
     name.sub! /\s+\(.*?\)/, ''
     mentors[name] = [] unless mentors[name]
     mentors[name] << {
       date: date,
       checked: !check.strip.empty?,
-      podling: podling.strip
-    }
+      podling: podling
+    } if podlings.contains(podling)
   end
 end
 
