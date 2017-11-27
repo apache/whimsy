@@ -58,7 +58,7 @@ agendas.each do |file|
       date: date,
       checked: !check.strip.empty?,
       podling: podling
-    } if podlings.include? podling
+    }
   end
 end
 
