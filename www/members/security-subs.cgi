@@ -6,7 +6,7 @@ require 'whimsy/asf/mlist'
 
 WHITELIST = [
   /^archive-asf-private@cust-asf\.ponee\.io$/,
-  /^archiver@mbox-vm\.apache\.org$/,
+  /^private@mbox-vm\.apache\.org$/,
   /^security-archive@.*\.apache\.org$/,
 ]
 

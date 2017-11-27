@@ -9,7 +9,7 @@ require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 
 ARCHIVERS = %w(
-  archiver@mbox-vm.apache.org
+  private@mbox-vm.apache.org
   members-archive@apache.org
   archive-asf-private@cust-asf.ponee.io
   members@mmpoc.apache.org
