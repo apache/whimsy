@@ -6,13 +6,13 @@ class FY23 < Vue
     @budget = (Minutes.started && Minutes.get('budget')) || {
       donations: 141,
       sponsorship: 1104,
-      infrastructure: 880,
-      publicity: 394,
-      brandManagement: 154,
-      conferences: 37,
+      infrastructure: 1099,
+      publicity: 387,
+      brandManagement: 225,
+      conferences: 60,
       travelAssistance: 86,
       treasury: 52,
-      fundraising: 23,
+      fundraising: 38,
       generalAndAdministrative: 144,
       chairman: 10,
     }
@@ -36,7 +36,7 @@ class FY23 < Vue
     }
 
     _p "Instructions: change any input field and press the tab key to see " +
-      "new results. Try to make FY23 Budget Net non-negative."
+      "new results. Try to make FY23 Budget Cash non-negative."
 
     _table.table.table_sm.table_striped do
       _thead do
@@ -116,7 +116,7 @@ class FY23 < Vue
 
         _tr do
           _td.indented do
-            _a 'Infrastructure', href: 'https://s.apache.org/Rlse'
+            _a 'Infrastructure', href: 'https://s.apache.org/Db5J'
           end
           _td.num 818
           _td.num 868
@@ -135,7 +135,7 @@ class FY23 < Vue
 
         _tr do
           _td.indented do
-            _a 'Publicity', href: 'https://s.apache.org/lv76'
+            _a 'Publicity', href: 'https://s.apache.org/OTCg'
           end
           _td.num 182
           _td.num 352
@@ -147,7 +147,7 @@ class FY23 < Vue
 
         _tr do
           _td.indented do
-            _a 'Brand Management', href: 'https://s.apache.org/gXdY'
+            _a 'Brand Management', href: 'https://s.apache.org/qHyk'
           end
           _td.num 89
           _td.num 141
@@ -158,8 +158,10 @@ class FY23 < Vue
         end
 
         _tr do
-          _td.indented 'Conferences'
-          _td.num 37
+          _td.indented do
+            _a 'Conferences', href: 'https://s.apache.org/wPGQ'
+          end
+          _td.num 60
           _td.num 12
           _td.num do 
             _input.conferences! onBlur: self.change, disabled: @disabled,
@@ -249,10 +251,9 @@ class FY23 < Vue
 
         _tr do
           _td 'Net'
-          _td.num -181
+          _td.num -204
           _td.num -425
-          _td.num.net! @budget.net.toLocaleString(),
-            class: (@budget.net < 0 ? 'danger' : 'success')
+          _td.num.net! @budget.net.toLocaleString()
         end
 
         _tr do
@@ -262,8 +263,9 @@ class FY23 < Vue
         _tr do
           _td 'Cash'
           _td.num (1_318).toLocaleString()
-          _td.num -515
-          _td.num.cash! @budget.cash.toLocaleString()
+          _td.num.danger -515
+          _td.num.cash! @budget.cash.toLocaleString(),
+            class: (@budget.cash < 0 ? 'danger' : 'success')
         end
       end
     end
@@ -282,7 +284,7 @@ class FY23 < Vue
 
     @budget.net = @budget.income - @budget.expense
 
-    @budget.cash = 1318 - 2*181 + 3*@budget.net
+    @budget.cash = 1318 - 2*204 + 3*@budget.net
   end
 
   # update budget item when an input field changes
