@@ -46,7 +46,11 @@ class PageCache
 
     # register service worker
     scope = URL.new('..', document.getElementsByTagName('base')[0].href)
-    navigator.serviceWorker.register(scope + 'sw.js', scope)
+    navigator.serviceWorker.register(scope + 'sw.js', scope).then do
+      navigator.serviceWorker.addEventListener 'message' do |event|
+        window.location.reload() if event.data.type == 'reload'
+      end
+    end
   end
 
   # ensure that bootstrap.html is in the cache

@@ -16,6 +16,9 @@
 #   *) Requests for javascript and stylesheets are cached and used to
 #      respond to fetches that fail.  Once a new response is received,
 #      old responses (with different query strings) are deleted.
+#
+#   *) Inform clients of the need to reload if a slow server caused
+#      pages to be loaded with stale scripts and/or stylesheets
 # 
 
 timeout = 500
@@ -46,17 +49,34 @@ def cache_replace(cache, request, response)
   cache.put(request, response)
 end
 
+# request all clients to reload content if css or js changed
+def reload()
+  clients.matchAll().then do |clients|
+    clients.each do |client|
+      client.postMessage(type: 'reload')
+    end
+  end
+end
+
 # look for css and js files and in HTML response ensure that each are cached
-def preload(cache, base, text)
+def preload(cache, base, text, toolate)
   pattern = Regexp.new('"[-.\w+/]+\.(css|js)\?\d+"', 'g')
 
+  count = 0
+  changed = false
   while (match = pattern.exec(text))
+    count += 1
     path = match[0].split('"')[1]
     request = Request.new(URL.new(path, base))
     cache.match(request).then do |response|
-      if not response
+      if response
+        count -= 1
+      else
+        changed = true
         fetch(request).then do |response|
           cache_replace(cache, request, response) if response.ok
+          count -= 1
+          reload() if toolate and changed and count == 0
         end
       end
     end
@@ -84,49 +104,50 @@ def bootstrap(event, request)
     caches.open('board/agenda').then do |cache|
       # common logic to reply from cache
       replyFromCache = lambda do |refetch|
-	cache.match(request).then do |response|
-	  clearTimeout timeoutId
+        cache.match(request).then do |response|
+          clearTimeout timeoutId
 
-	  if response
-	    fulfill response
-	    timeoutId = nil
-	  elsif refetch
-	    fetch(event.request).then(fulfill, reject)
-	  end
-	end
+          if response
+            fulfill response
+            timeoutId = nil
+          elsif refetch
+            fetch(event.request).then(fulfill, reject)
+          end
+        end
       end
 
       # respond from cache if the server isn't fast enough
       timeoutId = setTimeout timeout do
-	replyFromCache(false)
+        replyFromCache(false)
       end
 
-      # attach to fetch bootstrap.html from the network
+      # attempt to fetch bootstrap.html from the network
       fetch(request).then {|response|
-	# cache the response if OK, fulfill the response if not timed out
-	if response.ok
-	  cache.put(request, response.clone())
+        # cache the response if OK, fulfill the response if not timed out
+        if response.ok
+          cache.put(request, response.clone())
 
           # preload stylesheets and javascripts
-	  if request.url =~ /bootstrap\.html$/
-	    response.clone().text().then do |text|
-	      setTimeout 3_000 do
-		preload(cache, request.url, text)
-	      end
-	    end
-	  end
+          if request.url =~ /bootstrap\.html$/
+            response.clone().text().then do |text|
+              toolate = !timeoutId
+              setTimeout(toolate ? 0 : 3_000) do
+                preload(cache, request.url, text, toolate)
+              end
+            end
+          end
 
-	  if timeoutId
-	    clearTimeout timeoutId 
-	    fulfill response
-	  end
-	else
-	  # bad response: use cache instead
-	  replyFromCache(true)
-	end
+          if timeoutId
+            clearTimeout timeoutId 
+            fulfill response
+          end
+        else
+          # bad response: use cache instead
+          replyFromCache(true)
+        end
       }.catch {|failure|
-	# no response: use cache instead
-	replyFromCache(true)
+        # no response: use cache instead
+        replyFromCache(true)
       }
     end
   end
