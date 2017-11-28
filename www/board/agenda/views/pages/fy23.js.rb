@@ -10,7 +10,7 @@ class FY23 < Vue
       publicity: 387,
       brandManagement: 225,
       conferences: 60,
-      travelAssistance: 86,
+      travelAssistance: 25,
       treasury: 52,
       fundraising: 38,
       generalAndAdministrative: 144,
@@ -171,7 +171,7 @@ class FY23 < Vue
 
         _tr do
           _td.indented do
-            _a 'Travel Assistance', href: 'https://s.apache.org/4LdI'
+            _a 'Travel Assistance', href: 'https://s.apache.org/22KK'
           end
           _td.num 50
           _td.num 79
