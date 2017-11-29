@@ -4,7 +4,7 @@
 class FY23 < Vue
   def initialize
     @budget = (Minutes.started && Minutes.get('budget')) || {
-      donations: 22,
+      donations: 220,
       sponsorship: 1665,
       infrastructure: 1099,
       publicity: 387,
