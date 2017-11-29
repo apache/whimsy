@@ -19,6 +19,10 @@
 #
 #   *) Inform clients of the need to reload if a slow server caused
 #      pages to be loaded with stale scripts and/or stylesheets
+#
+#   *) when requested to do so by a client, preload additional pages.  This
+#      is for the initial installation, as the pages will have already been
+#      loaded by the browser.
 # 
 
 timeout = 500
@@ -153,7 +157,7 @@ def bootstrap(event, request)
   end
 end
 
-# interept selected pages
+# intercept selected pages
 self.addEventListener :fetch do |event|
   scope = self.registration.scope
   url = event.request.url
@@ -179,6 +183,26 @@ self.addEventListener :fetch do |event|
       # cache and respond to js and css requests
       event.respondWith(fetch_from_cache(event))
 
+    end
+  end
+end
+
+# watch for preload requests
+self.addEventListener :message do |event|
+  if event.data.type == :preload
+    caches.open('board/agenda').then do |cache|
+      request = Request.new(event.data.url, cache: "no-store")
+      cache.match(request).then do |response|
+        unless response
+          fetch(request).then do |response|
+            if response.ok
+              response.text().then do |text|
+                preload(cache, request.url, text, false)
+              end
+            end
+          end
+        end
+      end
     end
   end
 end

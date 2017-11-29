@@ -39,37 +39,20 @@ class PageCache
 
   # registration and related startup actions
   def self.register()
-    # preload page cache once page finishes loading
-    window.addEventListener :load do |event|
-      PageCache.preload()
-    end
-
     # register service worker
     scope = URL.new('..', document.getElementsByTagName('base')[0].href)
     navigator.serviceWorker.register(scope + 'sw.js', scope).then do
+      # reload the page when requested to do so by the service worker
       navigator.serviceWorker.addEventListener 'message' do |event|
         window.location.reload() if event.data.type == 'reload'
       end
-    end
-  end
 
-  # ensure that bootstrap.html is in the cache
-  # into the appropriate cache.
-  def self.preload()
-    return unless PageCache.enabled?
-
-    caches.open('board/agenda').then do |cache|
-      # add bootstrap.html to the cache
+      # preload agenda and referenced pages for next requeset
       base = document.getElementsByTagName('base')[0].href
-      request = Request.new(base + 'bootstrap.html', cache: "no-store")
-      cache.match(request).then do |response|
-        unless response
-          fetch(request).then do |response|
-            cache.put(request, response)
-          end
-        end
+      navigator.serviceWorker.ready.then do |registration|
+        registration.active.postMessage type: 'preload',
+          url: base + 'bootstrap.html'
       end
     end
   end
-
 end
