@@ -4,15 +4,15 @@
 class FY23 < Vue
   def initialize
     @budget = (Minutes.started && Minutes.get('budget')) || {
-      donations: 141,
-      sponsorship: 1104,
+      donations: 22,
+      sponsorship: 1665,
       infrastructure: 1099,
       publicity: 387,
       brandManagement: 225,
       conferences: 60,
       travelAssistance: 25,
-      treasury: 52,
-      fundraising: 38,
+      treasury: 61,
+      fundraising: 58,
       generalAndAdministrative: 144,
       chairman: 10,
     }
@@ -56,7 +56,7 @@ class FY23 < Vue
 
         _tr do
           _td.indented do
-            _a 'Total Public Donations', href: 'https://s.apache.org/sxYI'
+            _a 'Total Public Donations', href: 'https://s.apache.org/zFgy'
           end
           _td.num 111
           _td.num 135
@@ -68,10 +68,10 @@ class FY23 < Vue
 
         _tr do
           _td.indented do
-            _a 'Total Sponsorship', href: 'https://s.apache.org/sxYI'
+            _a 'Total Sponsorship', href: 'https://s.apache.org/zFgy'
           end
           _td.num (1_084).toLocaleString()
-          _td.num (1_100).toLocaleString()
+          _td.num (1_500).toLocaleString()
           _td.num do 
             _input.sponsorship! onBlur: self.change, disabled: @disabled,
               value: @budget.sponsorship.toLocaleString()
@@ -102,7 +102,7 @@ class FY23 < Vue
         _tr do
           _td.indented 'Total Income'
           _td.num (1_227).toLocaleString()
-          _td.num (1_267).toLocaleString()
+          _td.num (1_667).toLocaleString()
           _td.num.income! @budget.income.toLocaleString()
         end
 
@@ -183,7 +183,7 @@ class FY23 < Vue
 
         _tr do
           _td.indented do
-            _a 'Treasury', href: 'https://s.apache.org/EGiC'
+            _a 'Treasury', href: 'https://s.apache.org/zFgy'
           end
           _td.num 49
           _td.num 51
@@ -195,10 +195,10 @@ class FY23 < Vue
 
         _tr do
           _td.indented do
-            _a 'Fundraising', href: 'https://s.apache.org/sxYI'
+            _a 'Fundraising', href: 'https://s.apache.org/zFgy'
           end
-          _td.num 38
-          _td.num 23
+          _td.num 46
+          _td.num 53
           _td.num do 
             _input.fundraising! onBlur: self.change, disabled: @disabled,
               value: @budget.fundraising.toLocaleString()
@@ -241,7 +241,7 @@ class FY23 < Vue
         _tr do
           _td.indented 'Total Expense'
           _td.num (1_418).toLocaleString()
-          _td.num (1_692).toLocaleString()
+          _td.num (1_722).toLocaleString()
           _td.num.expense! @budget.expense.toLocaleString()
         end
 
@@ -251,8 +251,8 @@ class FY23 < Vue
 
         _tr do
           _td 'Net'
-          _td.num -204
-          _td.num -425
+          _td.num -212
+          _td.num -55
           _td.num.net! @budget.net.toLocaleString()
         end
 
@@ -263,7 +263,7 @@ class FY23 < Vue
         _tr do
           _td 'Cash'
           _td.num (1_318).toLocaleString()
-          _td.num.danger -515
+          _td.num 595
           _td.num.cash! @budget.cash.toLocaleString(),
             class: (@budget.cash < 0 ? 'danger' : 'success')
         end
@@ -284,7 +284,7 @@ class FY23 < Vue
 
     @budget.net = @budget.income - @budget.expense
 
-    @budget.cash = 1318 - 2*204 + 3*@budget.net
+    @budget.cash = 1318 - 2*212 + 3*@budget.net
   end
 
   # update budget item when an input field changes
