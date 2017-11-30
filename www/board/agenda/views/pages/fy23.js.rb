@@ -12,7 +12,7 @@ class FY23 < Vue
       conferences: 60,
       travelAssistance: 25,
       treasury: 61,
-      fundraising: 58,
+      fundraising: 283,
       generalAndAdministrative: 144,
       chairman: 10,
     }
