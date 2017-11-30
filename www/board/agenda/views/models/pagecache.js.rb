@@ -42,9 +42,15 @@ class PageCache
     # register service worker
     scope = URL.new('..', document.getElementsByTagName('base')[0].href)
     navigator.serviceWorker.register(scope + 'sw.js', scope).then do
-      # reload the page when requested to do so by the service worker
+      # watch for reload requests from the service worker
       navigator.serviceWorker.addEventListener 'message' do |event|
-        window.location.reload() if event.data.type == 'reload'
+        if event.data.type == 'reload'
+          # ignore reload request if any input or textarea element is visible
+          inputs = document.querySelectorAll('input, textarea')
+          unless Array(inputs).map {|element| element.offsetWidth}.max() > 0
+            window.location.reload() 
+          end
+        end
       end
 
       # preload agenda and referenced pages for next requeset
