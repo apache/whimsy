@@ -42,8 +42,12 @@ class FY23 < Vue
       _thead do
         _tr do
           _th
-          _th 'FY18'
-          _th 'FY22'
+          _th do
+            _a 'FY18', href: 'https://whimsy.apache.org/board/minutes/Budget.html#2017-04-19'
+          end
+          _th do 
+            _a 'FY22', href: 'https://whimsy.apache.org/board/minutes/Discussion_Items.html#2017-02-27'
+          end
           _th 'FY23 Budget'
           _td
         end
@@ -195,7 +199,7 @@ class FY23 < Vue
 
         _tr do
           _td.indented do
-            _a 'Fundraising', href: 'https://s.apache.org/zFgy'
+            _a 'Fundraising', href: 'https://s.apache.org/7kuk'
           end
           _td.num 46
           _td.num 53
