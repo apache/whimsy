@@ -29,10 +29,10 @@ tools, some of which use the model, and some completely independent.
 
 1. [lib/whimsy/asf](lib/whimsy/asf) contains the "model", i.e., a set of classes
    which encapsulate access
-   to a number of data sources such as LDAP, ICLAs, auth lists, etc.  This
+   to a number of Apache-specific data sources such as LDAP, ICLAs, auth lists, etc.  This
    code originally was developed as a part of separate tools and was later
    refactored out into a common library.  Some of the older tools don't fully
-   make use of this refactoring.
+   make use of this refactoring.  See the [whimsy/asf API Docs](https://whimsy.apache.org/docs/api/).
 
 2. [www](www) contains the "view", largely a set of CGI scripts that produce
    HTML.  Generally a CGI script is self contained, including all of the CSS,
@@ -54,7 +54,8 @@ tools, some of which use the model, and some completely independent.
    installing various services needed.
 
 5. [www/roster/public_*](www/roster) contains a number of scripts run 
-   by cron jobs or manually that create various data files in www/public.
+   by cron jobs or manually that create various data files in 
+   [www/public on the production instance](https://whimsy.apache.org/public/).
 
 Setup Whimsy Locally
 =====
@@ -89,7 +90,7 @@ This section is for those desiring to run a whimsy tool on their own machine.
    Which installs bundler outside `/usr/bin`
 
 3. **SVN checkout ASF repositories** into (or linked to from)
-   `/srv/svn`
+   `/srv/svn` (only some tools require these)
 
         svn co --depth=files https://svn.apache.org/repos/private/foundation
 
@@ -134,7 +135,7 @@ This section is for those desiring to run a whimsy tool on their own machine.
         sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
 
       These commands can also be used to update your configuration as
-      the ASF changes LDAP servers; they are cached in your `.whimsy`.
+      the ASF changes LDAP servers; they are cached in your `~/.whimsy`.
 
 5. **Verify your configuration** by running:
 
@@ -146,7 +147,7 @@ This section is for those desiring to run a whimsy tool on their own machine.
 
 6. **Configure mail sending** :mailbox_with_mail: (_optional_):
 
-   Configuration of outbound mail delivery is done through the `.whimsy`
+   Configuration of outbound mail delivery is done through the `~/.whimsy`
    file.  Three examples are provided below, followed by links to where
    documentation of the parameters can be found.
 
@@ -254,7 +255,7 @@ Documentation Standards
 As a collection of semi-independent tools, Whimsy has a number of 
 different ways to document code or functionality for users.
 
-- **RDoc for whimsy/asf module** The Rakefile has an RDoc task that now 
+- **RDoc for whimsy/asf module APIs** The Rakefile has an RDoc task that now 
   processes the lib/whimsy/ directory, which can be run locally, and 
   is run automatically on the server into https://whimsy.apache.org/docs/api/
   
@@ -358,6 +359,19 @@ Simple shell scripts can use the following:
 
 Adjust the paths above if you have not installed code in the standard place 
 (or add a link from /srv/whimsy to your copy of the code)
+
+### How To: Match Email Addresses To Committers
+
+```ruby
+require 'whimsy/asf'
+require 'mail'
+
+from = 'Shane Curcuru <asf@shanecurcuru.org>'
+address = Mail::Address.new(from)
+person = ASF::Person.find_by_email(address.address.dup)
+p person # -> nil or an ASF::Person object
+```
+
 
 Whimsy On Windows
 =================
