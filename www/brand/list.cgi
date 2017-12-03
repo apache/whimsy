@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Listing of Apache Trademarks" # Wvisible:brand,trademarks
 
+# return output in JSON format if the query string includes 'json'
+ENV['HTTP_ACCEPT'] = 'application/json' if ENV['QUERY_STRING'].include? 'json'
+
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'csv'
 require 'json'
