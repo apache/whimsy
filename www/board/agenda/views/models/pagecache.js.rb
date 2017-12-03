@@ -34,7 +34,7 @@ class PageCache
 #     end
 #   end
 
-    return true
+    return defined? navigator.serviceWorker
   end
 
   # registration and related startup actions
