@@ -113,14 +113,14 @@ class Events
 
   # master logic
   def self.master()
-    self.connectToServer()
+    self.connectToServer(false)
 
     # proof of life; maintain connection to the server
     setInterval 25_000 do
       localStorage.setItem("#{@@prefix}-timestamp", Date.new().getTime())
 
       if not Server.offline
-        self.connectToServer()
+        self.connectToServer(true)
       elsif @@socket
         @@socket.close()
       end
@@ -130,17 +130,7 @@ class Events
       if event.detail == true
         @@socket.close() if @@socket
       else
-        self.connectToServer()
-
-        # see if the agenda changed
-        fetch('digest.json', credentials: 'include').then do |response|
-          if response.ok
-	    response.json().then do |json|
-	      json.type = :agenda
-	      Events.broadcast json
-	    end
-          end
-        end
+        self.connectToServer(true)
       end
     end
 
@@ -151,7 +141,7 @@ class Events
   end
 
   # establish a connection to the server
-  def self.connectToServer()
+  def self.connectToServer(check_for_updates)
     return if @@socket
 
     socket_url = window.location.protocol.sub('http', 'ws') + "//" + 
@@ -162,6 +152,18 @@ class Events
     def @@socket.onopen(event)
       @@socket.send "session: #{Server.session}\n\n"
       self.log 'WebSocket connection established'
+
+      if check_for_updates
+        # see if the agenda changed
+        fetch('digest.json', credentials: 'include').then do |response|
+          if response.ok
+            response.json().then do |json|
+              json.type = :agenda
+              Events.broadcast json
+            end
+          end
+        end
+      end
     end
 
     def @@socket.onmessage(event)
