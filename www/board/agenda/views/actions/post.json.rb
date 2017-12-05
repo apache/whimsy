@@ -15,8 +15,8 @@ Agenda.update(@agenda, @message) do |agenda|
   # remove trailing whitespace
   @report.sub! /\s*\Z/, ''
 
-  # convert unicode space characters (excluding CRLF) to an ASCII space
-  @report.gsub!(/[[:space:]]/) {|c| "\r\n".include?(c) ? c : ' '}
+  # convert unicode blank characters to an ASCII space
+  @report.gsub!(/[[:blank:]]/, ' ')
 
   if @attach == '7?'
     # new special order

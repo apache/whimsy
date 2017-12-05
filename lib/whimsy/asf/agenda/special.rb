@@ -68,7 +68,7 @@ class ASF::Board::Agenda
       next if @quick
 
       asfid = '[a-z][-.a-z0-9_]+' # dot added to help detect errors
-      list_item = '^[[:space:]]*(?:[-*\u2022]\s*)?(.*?)[[:space:]]+'
+      list_item = '^[[:blank:]]*(?:[-*\u2022]\s*)?(.*?)[[:blank:]]+'
 
       people = text.scan(/#{list_item}\((#{asfid})\)\s*$/)
       people += text.scan(/#{list_item}\((#{asfid})(?:@|\s*at\s*)
