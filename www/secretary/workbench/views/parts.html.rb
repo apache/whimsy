@@ -90,7 +90,7 @@ _html do
     end
   end
 
-  _script src: '../../app.js'
+  _script src: "../../app.js?#{@appmtime}"
   _.render '#parts' do
     _Parts attachments: @attachments, headers: @headers, projects: @projects
   end

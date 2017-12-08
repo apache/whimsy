@@ -16,7 +16,7 @@ _html do
 
   _div_.index!
 
-  _script src: 'app.js'
+  _script src: "./app.js?#{@appmtime}"
   _.render '#index' do
     _Index mbox: @mbox, messages: @messages
   end

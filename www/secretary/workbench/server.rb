@@ -60,6 +60,7 @@ get '/' do
   end
 
   @cssmtime = File.mtime('public/secmail.css').to_i
+  @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
   _html :index
 end
 
@@ -146,6 +147,7 @@ get %r{/(\d{6})/(\w+)/_index_} do |month, hash|
   @headers = message.headers.dup
   @headers.delete :attachments
   @cssmtime = File.mtime('public/secmail.css').to_i
+  @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
   @projects = (ASF::Podling.current+ASF::Committee.pmcs).map(&:name).sort
   _html :parts
 end
@@ -154,6 +156,7 @@ end
 get %r{/(\d{6})/(\w+)/_body_} do |month, hash|
   @message = Mailbox.new(month).find(hash)
   @cssmtime = File.mtime('public/secmail.css').to_i
+  @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
   pass unless @message
   _html :body
 end
