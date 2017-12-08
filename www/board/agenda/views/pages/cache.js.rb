@@ -66,8 +66,8 @@ class CacheStatus < Vue
 
   end
 
-  # update caches
-  def created()
+  # update information
+  def collect_data()
     if defined? caches
       caches.open('board/agenda').then do |cache|
         cache.matchAll().then do |responses|
@@ -82,36 +82,38 @@ class CacheStatus < Vue
       end
     end
   end
+
+  def mounted()
+    # initial observations
+    collect_data()
+
+    # update observations every 5 seconds
+    CacheStatus.timer = setInterval 5_000 do
+      collect_data()
+    end
+
+    # export method to allow update in response to button presses
+    CacheStatus.collect_data = self.collect_data
+  end
+
+  def beforeDestroy()
+    clearInterval CacheStatus.timer if CacheStatus.timer
+    CacheStatus.timer = nil
+  end
 end
 
 #
 # A button that clear the cache
 #
 class ClearCache < Vue
-  def initialize
-    @disabled = true
-  end
-
   def render
-    _button.btn.btn_primary 'Clear Cache', onClick: self.click,
-      disabled: @disabled
+    _button.btn.btn_primary 'Clear Cache', onClick: self.click
   end 
-
-  # enable button if there is anything in the cache
-  def created()
-    if defined? caches
-      caches.open('board/agenda').then do |cache|
-        cache.matchAll().then do |responses|
-          @disabled = responses.empty?
-        end
-      end
-    end
-  end
 
   def click(event)
     if defined? caches
       caches.delete('board/agenda').then do |status|
-        Main.refresh()
+        CacheStatus.collect_data()
       end
     end
   end
@@ -133,7 +135,7 @@ class UnregisterWorker < Vue
         registrations.each do |registration|
           if registration.scope == base
             registration.unregister().then do |status|
-              Main.refresh()
+              CacheStatus.collect_data()
             end
           end
         end
