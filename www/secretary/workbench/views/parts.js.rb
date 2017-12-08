@@ -65,6 +65,13 @@ class Parts < Vue
       _div.alert.alert_info @headers.secmail.status
     end
 
+    if @headers and @headers.secmail and @headers.secmail.notes
+      _div.alert.alert_warning do
+        _h5 'Notes:'
+        _span @headers.secmail.notes
+      end
+    end
+
     # context menu that displays when you 'right click' an attachment
     _ul.contextMenu do
       _li "\u2704 burst", onMousedown: self.burst
@@ -173,6 +180,18 @@ class Parts < Vue
               onClick: -> {@form = Forward}
             _span 'forward email'
           end
+
+          _hr
+
+          _label do
+            _input type: 'radio', name: 'doctype', value: 'forward',
+              onClick: -> {@form = Note}
+            if @headers and @headers.secmail and @headers.secmail.notes
+              _span 'edit note'
+            else
+              _span 'add note'
+            end
+          end
         end
 
       elsif @form == :edit
@@ -239,7 +258,10 @@ class Parts < Vue
     window.parent.onkeydown = self.keydown
     frames = window.parent.frames
     for i in 0...frames.length
-      frames[i].onkeydown=self.keydown
+      begin
+        frames[i].onkeydown=self.keydown
+      rescue => error
+      end
     end
 
     self.hideMenu()
