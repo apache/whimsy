@@ -99,18 +99,6 @@ def fetch_from_cache(event)
   end
 end
 
-# fetch from network with timeout
-def fetch_from_network(event, timeout)
-  return Promise.new do |fulfill, reject|
-    timeout = setTimeout(reject, timeout)
-    fetch(event.request).then(lambda {|response|
-      clearTimeout(timeout)
-      cache_replace(cache, event.request, response.clone())
-      fulfill(response)
-    }, reject)
-  end
-end
-
 # Return a bootstrap.html page within 0.5 seconds.  If the network responds
 # in time, go with that response, otherwise respond with a cached version.
 def bootstrap(event, request)
@@ -194,15 +182,6 @@ self.addEventListener :fetch do |event|
     elsif url =~ %r{\.(js|css)\?\d+$}
       # cache and respond to js and css requests
       event.respondWith(fetch_from_cache(event))
-
-    elsif url == '/' or url == ''
-      console.log '=' + url.inspect
-      # respond from network, with 1 second timeout; else use cache
-      event.respondWith(fetch_from_network(event, 1_000).catch {
-        return fetch_from_cache(event)
-      })
-    else
-      console.log '?' + url.inspect
     end
   end
 end
