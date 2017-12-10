@@ -34,7 +34,23 @@ class Person < Vue
         _div.name 'Committees'
         _div.value do
           _ul committees do |pmc|
-            _li {_a pmc, href: "committee/#{pmc}"}
+            noPMCsub = false
+            _li {
+              _a pmc, href: "committee/#{pmc}"
+              if @committer.privateNosub
+                if @committer.privateNosub.include? pmc
+                  noPMCsub = true
+                  _b " (*)"
+                end
+              end
+            }
+            if noPMCsub
+              _p {
+                _ '(*) could not find a subscription to the private@ mailing list for this committee'
+                _br
+                _ 'Perhaps the subscription address is not listed in the LDAP record'
+              }
+            end
           end
         end
       end

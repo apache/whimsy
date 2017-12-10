@@ -157,9 +157,23 @@ class Committer
       ASF::MLIST.moderates(person.all_mail, response)
     end
 
-    if env.user == id
+    auth = Auth.info(env)
+    if env.user == id or auth[:root] or auth[:secretary]
       require 'whimsy/asf/mlist'
       ASF::MLIST.subscriptions(person.all_mail, response)
+      # Check for missing private@ subscriptions
+      response[:privateNosub] = []
+      response[:committees].each do |id|
+        pmc = ASF::Committee.find(id)
+        pmail = "private@#{pmc.mail_list}.apache.org" rescue ''
+        subbed = false
+        response[:subscriptions].each do |sub|
+          if sub[0] == pmail
+            subbed = true
+          end
+        end
+        response[:privateNosub] << id unless subbed
+      end
     end
 
     response
