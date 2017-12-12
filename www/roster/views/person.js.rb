@@ -52,6 +52,8 @@ class Person < Vue
 	      _ '(*) could not find a subscription to the private@ mailing list for this committee'
 	      _br
 	      _ 'Perhaps the subscription address is not listed in the LDAP record'
+        _br 
+        _ '(Note that digest subscriptions are not currently included)'
 	    }
 	  end
         end
