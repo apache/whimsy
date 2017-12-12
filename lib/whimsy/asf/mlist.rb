@@ -52,7 +52,7 @@ module ASF
     # :digtime - the timestamp when the data was last updated
     # :digests - an array of pairs: [list name, subscriber email]
     # N.B. not the same format as the moderates() method
-    def self.ß(emails, response = {})
+    def self.digests(emails, response = {})
       
       return response unless File.exists? LIST_DIGS
 
