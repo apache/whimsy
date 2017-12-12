@@ -161,6 +161,8 @@ class Committer
     if env.user == id or auth[:root] or auth[:secretary]
       require 'whimsy/asf/mlist'
       ASF::MLIST.subscriptions(person.all_mail, response)
+      # (Does not update the response if the digest info is not available)
+      ASF::MLIST.digests(person.all_mail, response)
       # Check for missing private@ subscriptions
       response[:privateNosub] = []
       response[:committees].each do |id|

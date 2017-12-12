@@ -47,6 +47,28 @@ module ASF
       response
     end
 
+    # return a hash of digest subscriptions for the list of emails provided
+    # the following keys are added to the response hash:
+    # :digtime - the timestamp when the data was last updated
+    # :digests - an array of pairs: [list name, subscriber email]
+    # N.B. not the same format as the moderates() method
+    def self.ß(emails, response = {})
+      
+      return response unless File.exists? LIST_DIGS
+
+      response[:digests] = []
+      response[:digtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_DIGS))
+
+      list_parse('dig') do |dom, list, subs|
+        emails.each do |email|
+          if subs.include? email
+            response[:digests] << ["#{list}@#{dom}", email]
+          end
+        end
+      end
+      response
+    end
+
     # return the mailing lists which are moderated by any of the list of emails
     # the following keys are added to the response hash:
     # :modtime - the timestamp when the data was last updated
@@ -99,7 +121,7 @@ module ASF
 
     # Filter the appropriate list, matching on domain and list
     # Params:
-    # - type: 'mod' or 'sub'
+    # - type: 'mod' or 'sub' or 'dig'
     # - matchdom: must match the domain (e.g. 'httpd.apache.org')
     # - matchlist: must match the list (e.g. 'dev')
     # - archivers: whether to include standard ASF archivers (default true)
@@ -119,7 +141,7 @@ module ASF
     end
     
     # Parses the list-mods/list-subs files
-    # Param: type = 'mod' or 'sub'
+    # Param: type = 'mod' or 'sub' or 'dig'
     # Yields:
     # - domain (e.g. [xxx.].apache.org)
     # - list (e.g. dev)
@@ -130,6 +152,9 @@ module ASF
         suffix = '/mod'
       elsif type == 'sub'
         path = LIST_SUBS
+        suffix = ''
+      elsif type == 'dig'
+        path = LIST_DIGS
         suffix = ''
       else
         raise ArgumentError.new('type: expecting mod or sub')
@@ -162,6 +187,8 @@ module ASF
 
     LIST_SUBS = '/srv/subscriptions/list-subs'
 
+    LIST_DIGS = '/srv/subscriptions/list-digs'
+
     # If this file exists, it is the time when the data was last extracted
     # The mods and subs files are only updated if they have changed
     LIST_TIME = '/srv/subscriptions/list-start'
@@ -171,4 +198,5 @@ end
 #if __FILE__ == $0
 #  p  ASF::MLIST.list_moderators(ARGV.shift||'blur', true)
 #  p  ASF::MLIST.private_subscribers(ARGV.shift||'whimsical')
+#  p  ASF::MLIST.digests(['chrisd@apache.org'])
 #end
