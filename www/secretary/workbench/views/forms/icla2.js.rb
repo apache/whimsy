@@ -4,6 +4,7 @@ class ICLA2 < Vue
     @checked = nil
     @submitted = false
     @search = ''
+    @iclas = []
   end
 
   def render
@@ -18,10 +19,10 @@ class ICLA2 < Vue
       end
     end
 
-    if @search.length >= 3
+    if @search.length >= 3 and not @iclas.empty?
       search = @search.downcase().split(' ')
       _ul.icla_search do
-        ICLA2.iclas.each do |icla|
+        @iclas.each do |icla|
           if
             search.all? {|part|
               icla.id.include? part or
@@ -102,7 +103,7 @@ class ICLA2 < Vue
   # on initial display, default various fields based on headers, and update
   # state 
   def mounted()
-    if ICLA2.iclas
+    if not @iclas.empty?
       @disabled = false
     else
       @disabled = true
@@ -114,7 +115,7 @@ class ICLA2 < Vue
       }
       fetch('../../iclas.json', args).then do |response|
         response.json().then do |json|
-          ICLA2.iclas = json
+          @iclas = json
           @disabled = true
         end
       end
