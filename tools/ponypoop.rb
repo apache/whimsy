@@ -1,23 +1,22 @@
 #!/usr/bin/env ruby
 <<~HEREDOC
-Pony poop: simple statistics for Apache Ponymail monthly archives
-  - Methods to pull down stats.lua JSON structures of monthly archive reports
-  - Medhods to analyze local .json structures with chartable stats 
-   
-   See also: https://ponymail.incubator.apache.org/docs/api
-   See also: https://lists.apache.org/ngrams.html
+Pony poop: utilities for analyzing data from Apache Ponymail APIs 
+- Analyze stats.lua JSON output for subject/author analysis
+- Analyze mbox.lua mbox files for author/list/lines written analysis
+
+See also: https://ponymail.incubator.apache.org/docs/api
+See also: https://lists.apache.org/ngrams.html
 HEREDOC
 require 'json'
 require 'csv'
 require 'net/http'
 require 'cgi'
 require 'optparse'
-
-PONYSTATS = 'https://lists.apache.org/api/stats.lua?list=' # board&domain=apache.org&d=2017-04 becomes board-apache-org-201704.json
+require_relative 'ponyapi'
 
 # TODO: Fixup CSV output format to be more flexible, and/or add charting automatically
 CSV_COLS = %w( Date TotalEmails TotalInteresting TotalThreads Missing Feedback Notice Report Resolution SVNAgenda SVNICLAs Person1 Emails1 Person2 Emails2 Person3 Emails3 Person4 Emails4 Person5 Emails5 )
-BOARD_REGEX = { # Non-interesting email subjects from board
+BOARD_REGEX = { # Non-interesting email subjects from board # TODO add features for other lists
   missing: /\AMissing\s\S+\sBoard/,
   feedback: /\ABoard\sfeedback\son\s20/,
   notice: /\A\[NOTICE\]/i,
@@ -49,7 +48,7 @@ def analyze_threads(threads)
 end
 
 # Analyze a local .json for interesting vs. not interesting board@ subjects
-def analyze(fname, results, subject_regex, errors)
+def analyze_stats(fname, results, subject_regex, errors)
   begin
     f = File.basename(fname)
     begin
@@ -105,13 +104,13 @@ def analyze(fname, results, subject_regex, errors)
 end
 
 # Analyze a set of local .json files downloaded from lists.a.o
-def run_analyze(dir, list, subject_regex)
+def run_analyze_stats(dir, list, subject_regex)
   results = []
   errors = []
   subjects = []
   output = File.join("#{dir}", "output-#{list}")
   Dir[File.join("#{dir}", "#{list}*.json")].each do |fname|
-    subjects = analyze(fname, results, subject_regex, errors)
+    subjects = analyze_stats(fname, results, subject_regex, errors)
     if subjects
       responses = subjects.select {|subj| subj =~ /Re:/i }.size
       File.open("#{fname.chomp('.json')}.txt", "w") do |f|
@@ -136,77 +135,16 @@ def run_analyze(dir, list, subject_regex)
   File.open("#{output}.json", "w") do |f|
     f.puts JSON.pretty_generate(results)
   end
-    
+  
   results
 end
 
-# ## ### #### ##### ######
-# Download functions: grab monthly stats.lua data as .jsons
-# Grab monthly data from lists.a.o - for private lists
-def get_private_from_archive(dir, list, years, months, cookie)
-  cookieval = "ponymail=#{cookie}"
-  years.each do |y|
-    months.each do |m|
-      uri = URI("#{PONYSTATS}#{list}&domain=apache-org&d=#{y}-#{m}")
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request['Cookie'] = cookieval
-      r = http.request(request)
-      if r.code =~ /200/ then
-        File.open(File.join("#{dir}", "#{list}-apache-org-#{y}#{m}.json"), "w") do |f|
-          jzon = JSON.parse(r.body)
-          begin
-            f.puts JSON.pretty_generate(jzon)
-          rescue JSON::GeneratorError
-            puts "Bogosity: Generator error on #{r.code} for #{uri.request_uri}"
-            f.puts jzon
-          end    
-        end
-      else
-        puts "Double Bogus! #{r.code} for #{uri.request_uri}"
-      end
-    end
-  end
-end
-
-# ## ### #### ##### ######
-# Grab monthly data from lists.a.o - only for public lists
-# fetch uri, following redirects: tools/site-scan.rb
-def fetch(uri)
-  uri = URI.parse(uri)
-  Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
-    request = Net::HTTP::Get.new(uri.request_uri)
-    response = http.request(request)
-    if response.code =~ /^3\d\d/
-      fetch response['location']
-    else
-      return uri, request, response
-    end
-  end
-end
-
-# Grab monthly data from lists.a.o - for public lists
-def get_public_from_archive(dir, list, subdomain, year, month)
-  uri, request, response = fetch("#{PONYSTATS}#{list}&domain=#{subdomain}.apache.org&d=#{year}-#{month}")
-  pmails = JSON.parse(response.body)
-  
-  File.open(File.join("#{dir}", "#{list}-#{subdomain}-apache-org-#{year}-#{month}.json"), "w") do |f|
-    f.puts JSON.pretty_generate(pmails)
-  end  
-end
-
-def get_all_public(dir, list, subdomain, years, months)
-  years.each do |y|
-    months.each do |m|
-      get_public_from_archive dir, list, subdomain, y, m
-    end
-  end
-end
 
 # ## ### #### ##### ######
 # Check options and call needed methods
-# TODO: this assumes you correctly use -c and -s
+# TODO: Simplify and allow both:
+# - Downloading either stats or mbox
+# - Analyzing either stats or mbox
 def optparse
   options = {}
   OptionParser.new do |opts|
@@ -223,14 +161,14 @@ def optparse
       options[:list] = l.chomp('@')
     end
     
-    opts.on('-cCOOKIE', '--cookie COOKIE', 'For private lists, your ponymail logged-in cookie value') do |c|
+    opts.on('-cCOOKIE', '--cookie COOKIE', 'For private lists REQUIRED, your ponymail logged-in cookie value') do |c|
       options[:cookie] = c
     end
-    opts.on('-sSUBDOMAIN', '--list SUBDOMAIN', 'Root @ subdomain .apache.org (only if project list; hadoop or community or...) to download stats archive from') do |s|
+    opts.on('-sSUBDOMAIN', '--subdomain SUBDOMAIN', 'Root @ subdomain .apache.org (only if project list; hadoop or community or...) to download stats archive from') do |s|
       options[:subdomain] = s.chomp('@.')
     end
     
-    opts.on('-p', '--pull', 'Pull down stats into -d dir (otherwise, analyzes existing stats in dir)') do |p|
+    opts.on('-p', '--pull', 'Pull down stats into -d dir (otherwise, default analyzes existing stats in dir)') do |p|
       options[:pull] = true
     end
     
@@ -254,16 +192,12 @@ if __FILE__ == $PROGRAM_NAME
   options = optparse
   options[:list] ||= 'board'
   if options[:pull]
-    # TODO make months/years settable
-    raise ArgumentError "Must have a -c COOKIE to -p pull private archives" unless options[:cookie]
-    puts "BEGIN: Pulling down JSON to #{options[:dir]} of list: #{options[:list]} @ #{options[:subdomain]} "
-    get_private_from_archive options[:dir], options[:list], years, months, options[:cookie]
+    puts "BEGIN: Pulling down stats JSONs in #{options[:dir]} of list: #{options[:list]}@#{options[:subdomain]}"
+    PonyAPI::get_pony_stats_many options[:dir], options[:list], options[:subdomain], years, months, options[:cookie]
   else
     puts "BEGIN: Analyzing local JSONs in #{options[:dir]} of list: #{options[:list]}"
-    run_analyze options[:dir], options[:list], BOARD_REGEX
+    run_analyze_stats options[:dir], options[:list], BOARD_REGEX
   end
   puts "END: Thanks for running ponypoop - see results in #{options[:dir]}"
 end
-
-
 
