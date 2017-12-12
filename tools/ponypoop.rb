@@ -168,8 +168,11 @@ def optparse
       options[:subdomain] = s.chomp('@.')
     end
     
-    opts.on('-p', '--pull', 'Pull down stats into -d dir (otherwise, default analyzes existing stats in dir)') do |p|
+    opts.on('-p', '--pull', 'Pull down stats JSON files into -d dir (otherwise, default analyzes existing stats JSON in dir)') do |p|
       options[:pull] = true
+    end
+    opts.on('-m', '--mbox', 'Pull down mbox files into -d dir') do |p|
+      options[:mbox] = true
     end
     
     begin
@@ -194,6 +197,9 @@ if __FILE__ == $PROGRAM_NAME
   if options[:pull]
     puts "BEGIN: Pulling down stats JSONs in #{options[:dir]} of list: #{options[:list]}@#{options[:subdomain]}"
     PonyAPI::get_pony_stats_many options[:dir], options[:list], options[:subdomain], years, months, options[:cookie]
+  elsif options[:mbox]
+    puts "BEGIN: Pulling down mboxes in #{options[:dir]} of list: #{options[:list]}@#{options[:subdomain]}"
+    PonyAPI::get_pony_mbox_many options[:dir], options[:list], options[:subdomain], years, months, options[:cookie]
   else
     puts "BEGIN: Analyzing local JSONs in #{options[:dir]} of list: #{options[:list]}"
     run_analyze_stats options[:dir], options[:list], BOARD_REGEX

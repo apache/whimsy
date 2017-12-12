@@ -85,4 +85,14 @@ module PonyAPI
       puts "ERROR:get_public_mbox(#{uri}) returned code #{response.code}"
     end
   end
+  
+  # Get multiple years/months of mboxes
+  def get_pony_mbox_many(dir, list, subdomain, years, months, cookie)
+    years.each do |y|
+      months.each do |m|
+        get_pony_mbox dir, list, subdomain, y, m, cookie
+      end
+      sleep(1) # Be nice to the server; mboxes take effort
+    end
+  end
 end
