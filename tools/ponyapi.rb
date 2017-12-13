@@ -132,7 +132,7 @@ module PonyAPI
   # Fetch a Ponymail API, with optional logged-in cookie
   def fetch_pony(uri, cookie)
     uri = URI.parse(uri)
-    Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |https|
+    Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |https|
       request = Net::HTTP::Get.new(uri.request_uri)
       request['Cookie'] = "ponymail=#{cookie}" if cookie != ''
       response = https.request(request)
