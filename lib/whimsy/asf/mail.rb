@@ -169,7 +169,7 @@ module ASF
     # the dns (e.g. whimsical).  If so, it can be prefixed by a number of
     # list names (e.g. dev, private) and <tt>.apache.org</tt> is to be
     # appended.  In some cases, the name contains an <tt>@</tt> sign and
-    # is the fill name for the mail list.
+    # is the full name for the mail list.
     def mail_list
       case name.downcase
       when 'comdev'
