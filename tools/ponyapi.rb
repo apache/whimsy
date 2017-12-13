@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
-<<~HEREDOC
-Pony down: utilities for downloading Ponymail APIs (stats.lua or mbox.lua)
-See also: https://ponymail.incubator.apache.org/docs/api
-HEREDOC
+
+# PonyAPI: utilities for downloading Ponymail APIs (stats.lua or mbox.lua)
+# See also: https://ponymail.incubator.apache.org/docs/api
+
 require 'json'
 require 'csv'
 require 'net/http'
