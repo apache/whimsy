@@ -174,6 +174,12 @@ end
 
 if __FILE__ == $0
   method = ARGV.shift
+  if method == '-v'
+    verbose = true
+    method = ARGV.shift
+  else
+    verbose = false
+  end
   if method
     meth = PonyAPI.method(method)
     # process args to allow use of nil, true, false
@@ -190,7 +196,8 @@ if __FILE__ == $0
       end
     end
     $stderr.puts "Calling #{method}() using #{args.inspect}"
-    puts meth.call(*args).inspect
+    res = meth.call(*args)
+    puts res.inspect if verbose
   end
 #  PonyAPI.get_pony_mbox('.', 'dev', 'whimsical', 2017, 01, nil)
 #  PonyAPI.get_pony_stats('.', 'dev', 'whimsical', 2017, 01, nil)
