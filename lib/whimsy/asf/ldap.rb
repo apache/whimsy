@@ -41,9 +41,9 @@ require 'securerandom'
 require 'set'
 
 module ASF
-  module LDAP
-     @@weakrefs = Set.new
+  @@weakrefs = Set.new
 
+  module LDAP
      # Derived from the following sources:
      # * https://www.pingmybox.com/dashboard?location=304
      # * https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
