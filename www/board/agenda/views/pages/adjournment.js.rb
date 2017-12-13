@@ -233,7 +233,7 @@ end
 class TodoRemove < Vue
   def initialize
     @checked = {}
-    @disabled = true
+    @disabled = false
   end
 
   # update check marks based on current Todo list
