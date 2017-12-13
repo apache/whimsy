@@ -120,12 +120,12 @@ module PonyAPI
   private
 
   def get_cookie()
-    unless STDIN.isatty
+    unless $stdin.isatty
       puts "WARN:Input is not a tty; cannot prompt for a cookie"
       return nil
     end
     require 'io/console'
-    STDIN.getpass('Please provide the login cookie: ')
+    $stdin.getpass('Please provide the login cookie: ')
   end
 
   # Fetch a Ponymail API, with optional logged-in cookie
