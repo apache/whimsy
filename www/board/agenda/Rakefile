@@ -1,5 +1,10 @@
 $LOAD_PATH.unshift File.expand_path('../../../../lib', __FILE__)
 
+# Remove world writable directories that Travis may insert into the PATH,
+# as these cause security errors during testing
+ENV['PATH'] = ENV['PATH'].split(File::PATH_SEPARATOR).
+  reject {|path| File.world_writable? path}.join(File::PATH_SEPARATOR)
+
 require 'whimsy/asf/config'
 
 require 'rspec/core/rake_task'
