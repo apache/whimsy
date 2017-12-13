@@ -147,6 +147,25 @@ module PonyAPI
 end
 
 if __FILE__ == $0
+  method = ARGV.shift
+  if method
+    meth = PonyAPI.method(method)
+    # process args to allow use of nil, true, false
+    args = ARGV.map do |arg|
+      case arg
+      when 'nil'
+        nil
+      when 'true'
+        true
+      when 'false'
+        false
+      else
+        arg
+      end
+    end
+    $stderr.puts "Calling #{method}() using #{args.inspect}"
+    puts meth.call(*args).inspect
+  end
 #  PonyAPI.get_pony_mbox('.', 'dev', 'whimsical', 2017, 01, nil)
 #  PonyAPI.get_pony_stats('.', 'dev', 'whimsical', 2017, 01, nil)
 #  puts PonyAPI.get_pony_prefs(nil, nil, true)['login'].inspect
