@@ -10,9 +10,10 @@ require 'cgi'
 
 # Utilities for downloading from Ponymail APIs
 module PonyAPI
-  PONYSTATS = 'https://lists.apache.org/api/stats.lua?list=' # board&domain=apache.org&d=2017-04 becomes board-apache-org-201704-stats.json
-  PONYMBOX = 'https://lists.apache.org/api/mbox.lua?list=' # board@apache.org&date=2016-06 becomes board-apache-org-201707.mbox
-  PONYPREFS = 'https://lists.apache.org/api/preferences.lua' # => preferences.json
+  PONYHOST = ENV['PONYHOST'] || 'https://lists.apache.org/'
+  PONYSTATS = PONYHOST + 'api/stats.lua?list=' # board&domain=apache.org&d=2017-04 becomes board-apache-org-201704-stats.json
+  PONYMBOX  = PONYHOST + 'api/mbox.lua?list=' # board@apache.org&date=2016-06 becomes board-apache-org-201707.mbox
+  PONYPREFS = PONYHOST + 'api/preferences.lua' # => preferences.json
   
   extend self
 
