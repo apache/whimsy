@@ -11,8 +11,10 @@ require 'cgi'
 # Utilities for downloading from Ponymail APIs
 module PonyAPI
   PONYHOST = ENV['PONYHOST'] || 'https://lists.apache.org/'
-  PONYSTATS = PONYHOST + 'api/stats.lua?list=' # board&domain=apache.org&d=2017-04 becomes board-apache-org-201704-stats.json
-  PONYMBOX  = PONYHOST + 'api/mbox.lua?list=' # board@apache.org&date=2016-06 becomes board-apache-org-201707.mbox
+  PONYSTATS = PONYHOST + 'api/stats.lua?list=%{list}&domain=%{domain}&d=%{year}-%{month}' # board&domain=apache.org&d=2017-04 becomes board-apache-org-201704-stats.json
+  STATSMBOX = "%{list}-%{domNoDot}-%<year>.04d%<month>.02d-stats.json" # used to generate output file name
+  PONYMBOX  = PONYHOST + 'api/mbox.lua?list=%{list}@%{domain}&date=%{year}-%{month}' # board@apache.org&date=2016-06 becomes board-apache-org-201707.mbox
+  FILEMBOX  = "%{list}-%{domNoDot}-%<year>.04d%<month>.02d.mbox" # used to generate output file name
   PONYPREFS = PONYHOST + 'api/preferences.lua' # => preferences.json
   
   extend self
@@ -81,16 +83,10 @@ module PonyAPI
   # Download one month of stats as a JSON
   # Must supply cookie = 'ponymail-logged-in-cookie' if a private list
   def get_pony_stats(dir, list, subdomain, year, month, cookie)
-    if subdomain.nil? || subdomain == ''
-      getlist = "#{list}&domain=apache.org"
-      fname = "#{list}-apache-org-%04d%02d-stats.json" % [year, month]
-    else
-      getlist = "#{list}&domain=#{subdomain}.apache.org"
-      fname = "#{list}-#{subdomain}-apache-org-%04d%02d-stats.json" % [year, month]
-    end
-    uri, request, response = fetch_pony("#{PONYSTATS}#{getlist}&d=#{year}-#{month}", cookie)
+    args =  make_args(list, subdomain, year, month)
+    uri, request, response = fetch_pony(PONYSTATS % args, cookie)
     if response.code == '200' then
-      File.open(File.join("#{dir}", "#{fname}"), "w") do |f|
+      File.open(File.join(dir, STATSMBOX % args), "w") do |f|
         jzon = JSON.parse(response.body)
         begin
           f.puts JSON.pretty_generate(jzon)
@@ -117,16 +113,10 @@ module PonyAPI
   # Caveats: uses response's encoding; overwrites existing .json file
   # Must supply cookie = 'ponymail-logged-in-cookie' if a private list
   def get_pony_mbox(dir, list, subdomain, year, month, cookie)
-    if subdomain.nil? || subdomain == ''
-      getlist = "#{list}@apache.org"
-      fname = "#{list}-apache-org-%04d%02d.mbox" % [year, month]
-    else
-      getlist = "#{list}@#{subdomain}.apache.org"
-      fname = "#{list}-#{subdomain}-apache-org-%04d%02d.mbox" % [year, month]
-    end
-    uri, request, response = fetch_pony("#{PONYMBOX}#{getlist}&date=#{year}-#{month}", cookie)
+    args =  make_args(list, subdomain, year, month)
+    uri, request, response = fetch_pony(PONYMBOX % args, cookie)
     if response.code == '200'
-      File.open(File.join("#{dir}", "#{fname}"), "w:#{response.body.encoding}") do |f|
+      File.open(File.join(dir, FILEMBOX % args), "w:#{response.body.encoding}") do |f|
         f.puts response.body
       end
     else
@@ -145,6 +135,16 @@ module PonyAPI
   end
 
   private
+
+  # create an argument list suitable for string formatting
+  def make_args(list, subdomain, year, month)
+    if subdomain.nil? || subdomain == ''
+      domain = 'apache.org'
+    else
+      domain = subdomain + '.apache.org'
+    end
+    {list: list, subdomain: subdomain, domain: domain, domNoDot: domain.gsub('.','-'),year: year, month: month}
+  end
 
   def get_cookie()
     unless $stdin.isatty
