@@ -1,12 +1,10 @@
 #!/usr/bin/env ruby
-<<~HEREDOC
-Pony poop: utilities for analyzing data from Apache Ponymail APIs 
-- Analyze stats.lua JSON output for subject/author analysis
-- Analyze mbox.lua mbox files for author/list/lines written analysis
-
-See also: https://ponymail.incubator.apache.org/docs/api
-See also: https://lists.apache.org/ngrams.html
-HEREDOC
+# Pony poop: utilities for analyzing data from Apache Ponymail APIs 
+# - Analyze stats.lua JSON output for subject/author analysis
+# - Analyze mbox.lua mbox files for author/list/lines written analysis
+# 
+# See also: https://ponymail.incubator.apache.org/docs/api
+# See also: https://lists.apache.org/ngrams.html
 require 'json'
 require 'csv'
 require 'net/http'
@@ -22,8 +20,8 @@ BOARD_REGEX = { # Non-interesting email subjects from board # TODO add features 
   notice: /\A\[NOTICE\]/i,
   report: /\A\[REPORT\]/i,
   resolution: /\A\[RESOLUTION\]/i,
-  svn_agenda: %r{\Aboard: r\d{4,7} - /foundation/board/},
-  svn_iclas: %r{\Aboard: r\d{4,7} - /foundation/officers/iclas.txt}
+  svn_agenda: %r{\Aboard: r\d{4,8} - /foundation/board/},
+  svn_iclas: %r{\Aboard: r\d{4,8} - /foundation/officers/iclas.txt}
 }
 
 # ## ### #### ##### ######
