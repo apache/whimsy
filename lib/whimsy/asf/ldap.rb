@@ -38,9 +38,11 @@ require 'net/http'
 require 'base64'
 require 'thread'
 require 'securerandom'
+require 'set'
 
 module ASF
   module LDAP
+     @@weakrefs = Set.new
 
      # Derived from the following sources:
      # * https://www.pingmybox.com/dashboard?location=304
@@ -139,11 +141,14 @@ module ASF
       ASF.ldap.unbind if ASF.ldap.bound? rescue nil
       ldap = ASF.init_ldap(true)
       if block
+        self.flush_weakrefs
         ldap.bind(dn, password, &block)
         ASF.init_ldap(true)
       else
         ldap.bind(dn, password)
       end
+    ensure
+      self.flush_weakrefs
     end
 
     # validate HTTP authorization, and optionally invoke a block bound to
@@ -358,6 +363,18 @@ module ASF
     elsif value and not value.instance_of? WeakRef
       object.instance_variable_set(attr, WeakRef.new(value))
     end
+
+    # keep track of which weak references are saved
+    @@weakrefs << attr if object == self
+  end
+
+  # remove weak references
+  def self.flush_weakrefs
+    @@weakrefs.each do |attr|
+      object.instance_variable_remove(attr)
+    end
+
+    @@weakrefs.clear
   end
 
   # shortcut for dereference weakref
