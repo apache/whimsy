@@ -21,13 +21,14 @@ MBOX_EXT = '.mbox'
 
 # Read f.mbox or f.mbox.gz and return [message, message2, ...] or raise error
 def read_mbox(f)
-  mbox = File.read(f)
   if f.end_with? '.gz'
     stream = StringIO.new(mbox)
     reader = Zlib::GzipReader.new(stream)
     mbox = reader.read
     reader.close
     stream.close rescue nil
+  else
+    mbox = File.read(f)
   end
   mbox.force_encoding Encoding::ASCII_8BIT
   messages = mbox.split(/^From .*/)
