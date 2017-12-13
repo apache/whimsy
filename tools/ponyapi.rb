@@ -21,6 +21,32 @@ module PonyAPI
   # Must supply cookie = 'ponymail-logged-in-cookie' to show private lists
   # if cookie == 'prompt' and the script is run interactively then
   # you will be prompted to enter the cookie value
+  # The method writes the file 'lists.json' if dir != nil
+  # it returns the data as a hash
+  def get_pony_lists(dir, cookie=nil, sort_list=false)
+    jzon = get_pony_prefs(nil, cookie)
+    lists = jzon['lists']
+    if lists
+      if dir
+        # no real point sorting unless writing the file
+        lists = Hash[lists.sort] if sort_list
+        File.open(File.join("#{dir}", 'lists.json'), "w") do |f|
+          begin
+            f.puts JSON.pretty_generate(jzon)
+          rescue JSON::GeneratorError
+            puts "WARN:get_pony_lists() threw JSON::GeneratorError, continuing without pretty"
+            f.puts jzon
+          end    
+        end
+      end
+    end
+    lists
+  end
+
+  # Get preferences including a summary of all mailing lists by domain
+  # Must supply cookie = 'ponymail-logged-in-cookie' to show private lists
+  # if cookie == 'prompt' and the script is run interactively then
+  # you will be prompted to enter the cookie value
   # The method writes the file 'preferences.json' if dir != nil
   # it returns the data as a hash
   def get_pony_prefs(dir, cookie=nil, sort_list=false)
@@ -169,4 +195,5 @@ if __FILE__ == $0
 #  PonyAPI.get_pony_mbox('.', 'dev', 'whimsical', 2017, 01, nil)
 #  PonyAPI.get_pony_stats('.', 'dev', 'whimsical', 2017, 01, nil)
 #  puts PonyAPI.get_pony_prefs(nil, nil, true)['login'].inspect
+#  puts PonyAPI.get_pony_lists(nil,nil,true).keys.length
 end
