@@ -79,6 +79,7 @@ class Adjournment < Vue
         if 
           completed and completed.keys().length > 0 and (
           (completed.added and not completed.added.empty?) or 
+          (completed.changed and not completed.changed.empty?) or
           (completed.removed and not completed.removed.empty?) or
           (completed.established and not completed.established.empty?) or 
           (completed.feedback_sent and not completed.feedback_sent.empty?))
@@ -89,6 +90,13 @@ class Adjournment < Vue
             _p 'Added to PMC chairs'
             _ul completed.added do |id|
               _li {_a id, href: "../../../roster/committer/#{id}"}
+            end
+          end
+
+          if completed.changed and not completed.changed.empty?
+            _p 'Changed PMC chairs'
+            _ul completed.changed do |pmc|
+              _li {_a pmc, href: "../../../roster/committee/#{pmc}"}
             end
           end
 
