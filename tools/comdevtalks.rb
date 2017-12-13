@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
-<<~HEREDOC
-ComDev Talks: Parse ComDev listings of Apache-related talks
-HEREDOC
+
+#  ComDev Talks: Parse ComDev listings of Apache-related talks
+
 require 'yaml'
 require 'json'
 
