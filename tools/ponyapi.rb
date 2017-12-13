@@ -32,10 +32,10 @@ module PonyAPI
         lists = Hash[lists.sort] if sort_list
         File.open(File.join("#{dir}", 'lists.json'), "w") do |f|
           begin
-            f.puts JSON.pretty_generate(jzon)
+            f.puts JSON.pretty_generate(lists)
           rescue JSON::GeneratorError
             puts "WARN:get_pony_lists() threw JSON::GeneratorError, continuing without pretty"
-            f.puts jzon
+            f.puts lists
           end    
         end
       end
