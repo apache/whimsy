@@ -51,12 +51,12 @@ class Vote < Vue
 
   def mounted()
     # update form to match current item
-    jQuery('#comment-form').on 'show.bs.modal' do
+    jQuery('#vote-form').on 'show.bs.modal' do
       self.setup(@@item)
     end
 
     # autofocus on comment text
-    jQuery('#comment-form').on 'shown.bs.modal' do
+    jQuery('#vote-form').on 'shown.bs.modal' do
       document.getElementById("vote-text").focus()
     end
   end
