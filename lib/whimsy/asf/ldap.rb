@@ -141,14 +141,14 @@ module ASF
       ASF.ldap.unbind if ASF.ldap.bound? rescue nil
       ldap = ASF.init_ldap(true)
       if block
-        ASF.flush_weakrefs
+        self.flush_weakrefs # TODO fails
         ldap.bind(dn, password, &block)
         ASF.init_ldap(true)
       else
         ldap.bind(dn, password)
       end
     ensure
-      ASF.flush_weakrefs
+      self.flush_weakrefs # TODO fails
     end
 
     # validate HTTP authorization, and optionally invoke a block bound to
