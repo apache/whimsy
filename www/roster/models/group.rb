@@ -57,7 +57,7 @@ class Group
       response = {
         id: id,
         type: type,
-        members: Hash[group.members.map {|person| [person.id, person.cn]}]
+        members: Hash[group.members.map {|person| [person.id, (person.cn rescue '**Entry missing from LDAP people**')]}] # if id not in people
       }
 
       if id == 'hudson-jobadmin'
