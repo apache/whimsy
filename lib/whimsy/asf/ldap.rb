@@ -141,14 +141,14 @@ module ASF
       ASF.ldap.unbind if ASF.ldap.bound? rescue nil
       ldap = ASF.init_ldap(true)
       if block
-        self.flush_weakrefs # TODO fails
+        ASF.flush_weakrefs
         ldap.bind(dn, password, &block)
         ASF.init_ldap(true)
       else
         ldap.bind(dn, password)
       end
     ensure
-      self.flush_weakrefs # TODO fails
+      ASF.flush_weakrefs
     end
 
     # validate HTTP authorization, and optionally invoke a block bound to
@@ -368,10 +368,9 @@ module ASF
     @@weakrefs << attr if object == self
   end
 
-  # remove weak references
   def self.flush_weakrefs
     @@weakrefs.each do |attr|
-      object.remove_instance_variable(attr)
+      self.remove_instance_variable(attr)
     end
 
     @@weakrefs.clear
