@@ -72,7 +72,8 @@ if env.password
 
   # extract people's names (for short lists) or ids (for longer lists)
   if people.length <= 2
-    who = people.map {|person| person.public_name}.join(' and ')
+    # Person may not exist when ids are renamed
+    who = people.map {|person| (person.public_name rescue person.id)}.join(' and ')
   else
     who = people[0..-2].map {|person| person.id}.join(', ') + 
       ', and ' + people.last.id
