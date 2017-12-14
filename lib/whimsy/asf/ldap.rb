@@ -371,7 +371,7 @@ module ASF
   # remove weak references
   def self.flush_weakrefs
     @@weakrefs.each do |attr|
-      object.instance_variable_remove(attr)
+      object.remove_instance_variable(attr)
     end
 
     @@weakrefs.clear
