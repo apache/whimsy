@@ -1,5 +1,6 @@
 if env.password
-  people = @ids.split(',').map {|id| ASF::Person[id]}
+  # Allow for missing people
+  people = @ids.split(',').map {|id| ASF::Person[id] || ASF::Person.find(id) }
 
   # if target is ONLY icommit, use incubator in the email message, etc.
   # Otherwise, use the project (podling).
@@ -9,8 +10,8 @@ if env.password
     project = ASF::Project[@project]
   end
 
-  # validate arguments
-  if @action != 'remove' and people.any? {|person| person.nil?}
+  # validate arguments (dn attribute is only present for real people)
+  if @action != 'remove' and people.any? {|person| person.attrs['dn'].nil?}
     raise ArgumentError.new("ids=#{@ids}") 
   end
 
@@ -73,7 +74,7 @@ if env.password
   # extract people's names (for short lists) or ids (for longer lists)
   if people.length <= 2
     # Person may not exist when ids are renamed
-    who = people.map {|person| (person.public_name rescue person.id rescue '?' )}.join(' and ')
+    who = people.map {|person| (person.public_name || person.id )}.join(' and ')
   else
     who = people[0..-2].map {|person| person.id}.join(', ') + 
       ', and ' + people.last.id
