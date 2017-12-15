@@ -1,6 +1,12 @@
 if env.password
-  # Allow for missing people
-  people = @ids.split(',').map {|id| ASF::Person[id] || ASF::Person.find(id) }
+
+  # validate ids
+  if @action == 'remove' 
+    people = @ids.split(',').map {|id| ASF::Person.find(id)}
+  else
+    people = @ids.split(',').map {|id| ASF::Person[id]}
+    raise ArgumentError.new("ids=#{@ids}") if people.any? {|person| person.nil?}
+  end
 
   # if target is ONLY icommit, use incubator in the email message, etc.
   # Otherwise, use the project (podling).
@@ -8,11 +14,6 @@ if env.password
     project = ASF::Project.find('incubator')
   else
     project = ASF::Project[@project]
-  end
-
-  # validate arguments (dn attribute is only present for real people)
-  if @action != 'remove' and people.any? {|person| person.attrs['dn'].nil?}
-    raise ArgumentError.new("ids=#{@ids}") 
   end
 
   unless @action == 'add' and @targets.include? 'ldap'
