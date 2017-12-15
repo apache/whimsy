@@ -8,6 +8,9 @@ if env.password
     raise ArgumentError.new("ids=#{@ids}") if people.any? {|person| person.nil?}
   end
 
+  # Don't allow empty list
+  raise ArgumentError.new("ids='#{@ids}'") unless people.length > 0
+
   # if target is ONLY icommit, use incubator in the email message, etc.
   # Otherwise, use the project (podling).
   if @targets == ['icommit']

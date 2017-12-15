@@ -10,6 +10,9 @@ if env.password
     raise ArgumentError.new("ids=#{@ids}") if people.any? {|person| person.nil?}
   end
 
+  # Don't allow empty list
+  raise ArgumentError.new("ids='#{@ids}'") unless people.length > 0
+
   raise ArgumentError.new("project=#{@project}") unless pmc
 
   # update LDAP
