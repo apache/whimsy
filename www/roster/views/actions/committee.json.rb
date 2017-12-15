@@ -1,6 +1,4 @@
 if env.password
-  people = @ids.split(',').map {|id| ASF::Person.find(id)}
-
   pmc = ASF::Committee[@project]
   group = ASF::Group.find(@project) if @targets.include? 'commit'
 
