@@ -46,7 +46,7 @@ class ProjectMod < Vue::Mixin
       fetch($options.mod_action, args).then {|response|
 
         # raises alert if the response is not successful JSON
-        Utils.handle_json(response, lambda { |json| Vue.emit :update, json ; alert 'mod' } )
+        Utils.handle_json(response, lambda { |json| Vue.emit :update, json } )
 
         jQuery("##{$options.mod_tag}").modal(:hide)
         @disabled = false

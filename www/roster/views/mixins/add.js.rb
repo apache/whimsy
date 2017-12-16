@@ -48,7 +48,7 @@ class ProjectAdd < Vue::Mixin
       fetch($options.add_action, args).then {|response|
 
         # raises alert if the response is not successful JSON
-        Utils.handle_json(response, lambda { |json| Vue.emit :update, json; alert 'add' } )
+        Utils.handle_json(response, lambda { |json| Vue.emit :update, json } )
 
         jQuery("##{$options.add_tag}").modal(:hide)
         @disabled = false
