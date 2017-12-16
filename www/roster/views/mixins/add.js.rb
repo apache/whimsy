@@ -46,14 +46,9 @@ class ProjectAdd < Vue::Mixin
     @disabled = true
     Polyfill.require(%w(Promise fetch)) do
       fetch($options.add_action, args).then {|response|
-        content_type = response.headers.get('content-type') || ''
-        if response.status == 200 and content_type.include? 'json'
-          response.json().then do |json|
-            Vue.emit :update, json
-          end
-        else
-          alert "#{response.status} #{response.statusText}"
-        end
+
+        # raises alert if the response is not successful JSON
+        Utils.handle_json(response, lambda { |json| Vue.emit :update, json; alert 'add' } )
 
         jQuery("##{$options.add_tag}").modal(:hide)
         @disabled = false
