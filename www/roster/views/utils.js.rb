@@ -1,12 +1,12 @@
 class Utils
-  # Common processing to handle a response
-  # called from e.g. fetch($options.add_action, args).then {|response| ...
-  def self.handle_response(response)
+
+  # Common processing to handle a response that is expected to be JSON
+  def self.handle_json(response, success)
     content_type = response.headers.get('content-type') || ''
     isJson = content_type.include? 'json'
     if response.status == 200 and isJson
       response.json().then do |json|
-        Vue.emit :update, json
+        success json
       end
     else
       footer = 'See server log for full details'
