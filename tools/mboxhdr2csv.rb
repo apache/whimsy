@@ -9,11 +9,14 @@ require 'zlib'
 require 'json'
 require 'date'
 MBOX_EXT = '.mbox'
+MEMBER = 'member'
+COMMITTER = 'committer'
 
-# Analysis Ideas
+# Analyzing mbox files for interesting statistics to report:
 # Contentlines are only counted when ! has_key? nondiscuss
+#   Rationale: svn, JIRA, automated messages are primarly tool-created
 # Per list messages per month over time (PMOT)
-# count messages group by list -> graph months as time
+# Count messages group by list -> graph months as time
 # Per list contentlines per lists PMOT
 # User messages per lists PMOT
 # User contentlines per lists PMOT
@@ -53,7 +56,7 @@ def mbox2stats(f)
     begin
       # Preserve message order in case it's important
       order += 1
-      # Enforce linefeeds; makes Mail happy; borks binary attachments (not used)
+      # Enforce linefeeds; makes Mail happy; borks binary attachments (not used in this script)
       mail = Mail.read_from_string(message.gsub(/\r?\n/, "\r\n"))
       mdata[:order] = order
       begin # HACK for cases where some values don't parse, try to get good enough values in rescue
@@ -135,10 +138,16 @@ def find_who_from(msg)
     msg[:who] = 'Ross Gardler'
     msg[:committer] = MEMBER
   when /Craig (L )?Russell/i # Optimize since Secretary sends a lot of mail
-    msg[:who] = 'Craig (L )?Russell'
+    msg[:who] = 'Craig L Russell'
     msg[:committer] = MEMBER
   when /McGrail/i
     msg[:who] = 'Kevin A. McGrail'
+    msg[:committer] = MEMBER
+  when /sallykhudairi@yahoo/i 
+    msg[:who] = 'Sally Khudairi'
+    msg[:committer] = MEMBER
+  when /sk@haloworldwide.com/i
+    msg[:who] = 'Sally Khudairi'
     msg[:committer] = MEMBER
   else
     begin
@@ -212,11 +221,6 @@ end
 # Annotate mbox stats hash with various precomputed data
 def annotate_stats(mails)
   mails.each do |msg|
-    # Fixup bogus From data for Sally's old email address which might not parse
-    if msg['who'] =~ /sallykhudairi@yahoo/i
-      msg[:who] = 'Sally Khudairi'
-      msg[:committer] = 'member'
-    end
     # Translate date into y, m, d, w (day of week), h, z (timezone), (no minutes)
     begin
       d = DateTime.parse(msg['date'])
@@ -234,6 +238,7 @@ def annotate_stats(mails)
 end
 
 # Scan dir of mbox .json stats and annotate with nondiscussion markers
+# TODO: this should really be done on first parse pass, not later on
 # @return array of any errors
 def scan_dir_json_nondiscussion(dir)
   errors = []
@@ -244,34 +249,6 @@ def scan_dir_json_nondiscussion(dir)
       # Run both annotations
       mark_nondiscussion msgs
       annotate_stats msgs
-      # Now re-write the same file with this included data
-      File.open("#{f}", "w") do |fout|
-        fout.puts JSON.pretty_generate(jzon)
-      end
-    rescue => e
-      puts "ERROR:scan_dir_json_nondiscussion(#{f}) raised #{e.message[0..255]}"
-      errors << "#{e.message}\n\t#{e.backtrace.join("\n\t")}"
-      next
-    end
-  end
-  return errors
-end
-
-# Scan dir of mbox .json stats and fix Sally's bogus yahoo emails
-# @return array of any errors
-def fixup_sally_mail(dir)
-  errors = []
-  Dir["#{dir}/**/*.json".untaint].each do |f|
-    begin
-      jzon = JSON.parse(File.read(f))
-      msgs = jzon[0]  # Should be an array of [[msgs...], [errs...]}
-      msgs.each do |msg|
-        # Fixup bogus From data for Sally's old email address which might not parse
-        if msg['who'] =~ /sallykhudairi@yahoo/i || msg['who'] =~ /sk@haloworldwide.com/i
-          sv = {'who' => 'Sally Khudairi', 'committer' => 'member'}
-          msg.merge!(sv)
-        end
-      end
       # Now re-write the same file with this included data
       File.open("#{f}", "w") do |fout|
         fout.puts JSON.pretty_generate(jzon)
@@ -358,10 +335,8 @@ def liberal_email_parser(addr)
   return addr
 end
 
-# Simple annotations for best guesses or ASF attributes
+# Simple header annotations for best guesses of ASF attributes related to trademarks@
 SHANE = 'Shane'
-MEMBER = 'member'
-COMMITTER = 'committer'
 def annotate_headers(headers)
   headers.each do |header|
     if header[:from] =~ /\(JIRA\)/
@@ -422,37 +397,43 @@ def do_mbox2csv_hdr(dir)
 end
 
 # Combine all jsons of mbox stats into single csv, step by step
-# @return [ mailHsh, mailHsh2, ...]
-def scan_stats_to_csv(dir)
-  jzons = Dir["#{dir}/**/*.json".untaint]
-  puts "scan_stats_to_csv() processing #{jzons.length} files"
-  firstfile = jzons.shift
-  firstjson = JSON.parse(File.read(firstfile))
+# @return [ error1, error2, ...]
+def scan_stats_to_csv(dir, outname)
+  errors = []
+  filenames = Dir["#{dir}/**/*.json".untaint]
+  puts "scan_stats_to_csv() processing #{filenames.length} files"
+  firstfile = filenames.shift
+  jzon = JSON.parse(File.read(firstfile))
   # Write out headers and the first file in new csv
-  CSV.open(File.join("#{dir}", "mbox2stats.csv"), "w", headers: %w( year month day weekday hour zone listid who subject lines committer messageid inreplyto ), write_headers: true) do |csv|
-    firstjson[0].each do |m|
-      csv << [ m[:year], m[:month], m[:day], m[:weekday], m[:hour], m[:zone], m[:listid], m[:who], m[:subject], m[:lines], m[:committer], m[:messageid], m[:inreplyto]  ]
-    end
+  csvfile = File.join("#{dir}", outname)
+  csv = CSV.open(csvfile, "w", headers: %w( year month day weekday hour zone listid who subject lines committer messageid inreplyto ), write_headers: true)
+  jzon[0].each do |m|
+    csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['committer'], m['messageid'], m['inreplyto']  ]
   end
+  
   # Write out all remaining files, without headers, appending
-  jzons.each do |f|
+  filenames.each do |f|
     begin
-      jzon = JSON.parse(File.read(f))
-# TODO process json to csv once
+      j = JSON.parse(File.read(f))
+      j[0].each do |m|
+        csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['committer'], m['messageid'], m['inreplyto']  ]
+      end
     rescue => e
-      puts "ERROR:combine_stats(#{f}) raised #{e.message[0..255]}"
+      puts "ERROR:parse/write of #{f} raised #{e.message[0..255]}"
       errors << "#{e.message}\n\t#{e.backtrace.join("\n\t")}"
       next
     end
   end
+  # TODO ensure files closed?
   return errors
 end
 
 # Common use case - analyze mbox files to see how much everyone writes
-puts "DEBUG-TEST11j"
+puts "DEBUG-TESTcsv"
 # scan_dir_mbox2stats('/Users/curcuru/src/mail/', MBOX_EXT)
 # e = scan_dir_json_nondiscussion('/Users/curcuru/src/mail3/')
-e = fixup_sally_mail('/Users/curcuru/src/mail/')
+# e = fixup_sally_mail('/Users/curcuru/src/mail/')
+e = scan_stats_to_csv('/Users/curcuru/src/mail/', 'governance_mboxes2010-2017.csv')
 e.each do |x|
   p x
 end
