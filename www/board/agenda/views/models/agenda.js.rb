@@ -443,7 +443,7 @@ class Agenda
 
     if User.role == :director
       unless self.missing or @comments === undefined or Minutes.complete
-        list << {button: Approve} 
+        list << {button: Approve} if @attach =~ /^(3[A-Z]|\d+|[A-Z]+)$/
       end
 
     elsif User.role == :secretary
