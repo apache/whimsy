@@ -374,6 +374,9 @@ module ASF
     end
 
     @@weakrefs.clear
+
+    # run garbage collection
+    GC.start
   end
 
   # shortcut for dereference weakref
