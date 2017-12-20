@@ -6,6 +6,9 @@ module ASF
     # whilst the source files are not particularly difficult to parse, it makes
     # sense to centralise access so any necessary changes can be localised
 
+    # Note that email matching is case blind, but the original case is returned
+    # list and domain names are always returned as lower-case
+
     # Potentially also the methods could check if access was allowed.
     # This is currently done by the callers
     
@@ -39,7 +42,7 @@ module ASF
 
       list_parse('sub') do |dom, list, subs|
         emails.each do |email|
-          if subs.include? email
+          if downcase(subs).include? email.downcase
             response[:subscriptions] << ["#{list}@#{dom}", email]
           end
         end
@@ -61,7 +64,7 @@ module ASF
 
       list_parse('dig') do |dom, list, subs|
         emails.each do |email|
-          if subs.include? email
+          if downcase(subs).include? email.downcase
             response[:digests] << ["#{list}@#{dom}", email]
           end
         end
@@ -80,8 +83,9 @@ module ASF
 
       response[:moderates] = {}
       response[:modtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_MODS))
+      user_emails.map!{|m| m.downcase} # outside loop
       list_parse('mod') do |dom, list, emails|
-        matching = (user_emails & emails) # grab entries common to both
+        matching = emails.select{|m| user_emails.include? m.downcase}
         response[:moderates]["#{list}@#{dom}"] = matching unless matching.empty?
       end
       response
@@ -114,6 +118,10 @@ module ASF
     end
 
     private
+
+    def self.downcase(array)
+      array.map{|m| m.downcase}
+    end
 
     def self.isRecent(file)
       return File.exist?(file) && ( Time.now - File.mtime(file) ) < 60*60*5
@@ -167,8 +175,9 @@ module ASF
         # or    [/home/apmail/lists/]apachecon.com/announce[/mod]
         match = stanza.match(%r{(?:^|/)([-\w]*\.?apache\.org|apachecon\.com)/(.*?)#{suffix}(?:\n|\Z)})
         if match
-          dom = match[1]
-          list = match[2]
+          dom = match[1].downcase # just in case
+          list = match[2].downcase # just in case
+          # Keep original case of email addresses
           yield dom, list, stanza.scan(/^(.*@.*)/).flatten
         else
           # don't allow mismatches as that means the RE is wrong
