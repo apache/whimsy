@@ -8,7 +8,8 @@ class Committee
     return if members.empty? and committers.empty?
 
     ASF::Committee.load_committee_info
-    people = ASF::Person.preload('cn', (members + committers).uniq)
+    # We'll be needing the mail data later
+    people = ASF::Person.preload(['cn', 'mail', 'asf-altEmail'], (members + committers).uniq)
 
     lists = ASF::Mail.lists(true).select do |list, mode|
       list =~ /^#{pmc.mail_list}\b/
