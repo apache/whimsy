@@ -106,7 +106,7 @@ class ASF::Board::Agenda
           attrs['names'] = committee.names
         end
 
-        need_chair = true
+        need_chair = true unless title.start_with? 'Terminate'
       else
         if title =~ /Establish (.*)/
           name = $1

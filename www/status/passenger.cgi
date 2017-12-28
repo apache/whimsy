@@ -8,7 +8,6 @@ require 'open3'
 require 'wunderbar'
 require 'whimsy/asf'
 
-members = ASF.members
 user = ASF::LDAP.http_auth(ENV['HTTP_AUTHORIZATION'])
 
 unless user

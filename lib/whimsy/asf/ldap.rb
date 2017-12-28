@@ -374,6 +374,9 @@ module ASF
     end
 
     @@weakrefs.clear
+
+    # run garbage collection
+    GC.start
   end
 
   # shortcut for dereference weakref
@@ -535,8 +538,9 @@ module ASF
         map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
-    # add a new committer to LDAP.  Attrs must include uid, cn, and mail
-    def self.add(attrs)
+    # create a new person and add as a new committer to LDAP.
+    # Attrs must include uid, cn, and mail
+    def self.create(attrs)
       # add person to LDAP
       person = ASF::Person.add(attrs)
 
@@ -551,8 +555,10 @@ module ASF
       person
     end
 
-    # remove a committer from LDAP
-    def self.remove(person)
+    # completely remove a committer from LDAP
+    # ** DO NOT USE **
+    # In almost all cases, use deregister instead
+    def self.destroy(person)
       # if person is a string, find the person object
       person = ASF::Person.find(person) if person.instance_of? String
 
@@ -563,9 +569,42 @@ module ASF
       ASF::LDAP.modify("cn=committers,#@base", 
         [ASF::Base.mod_delete('member', [person.dn])]) rescue nil
 
-      # remove person from LDAP
+      # remove person from LDAP (should almost never be done)
       ASF::Person.remove(person.id)
     end
+
+    # register an existing person as a committer
+    # updates both committer LDAP groups
+    def self.register(person)
+      if person.instance_of? String
+        id = person # save for use in error message
+        person = ASF::Person[person] or raise ArgumentError.new("Cannot find person: '#{id}'") 
+      end
+
+      # add person to 'new' committers list
+      ASF::LDAP.modify("cn=committers,#@base", 
+        [ASF::Base.mod_add('member', [person.dn])])
+
+      # add person to 'legacy' committers list
+      ASF::Group['committers'].add(person)
+    end
+
+    # deregister an existing person as a committer
+    # updates both committer LDAP groups
+    def self.deregister(person)
+      if person.instance_of? String
+        id = person # save for use in error message
+        person = ASF::Person[person] or raise ArgumentError.new("Cannot find person: '#{id}'") 
+      end
+
+      # remove person from 'legacy' committers list
+      ASF::Group['committers'].remove(person)
+
+      # remove person from 'new' committers list
+      ASF::LDAP.modify("cn=committers,#@base", 
+        [ASF::Base.mod_delete('member', [person.dn])])
+    end
+
   end
 
   class Person < Base

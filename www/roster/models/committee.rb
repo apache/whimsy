@@ -8,7 +8,8 @@ class Committee
     return if members.empty? and committers.empty?
 
     ASF::Committee.load_committee_info
-    people = ASF::Person.preload('cn', (members + committers).uniq)
+    # We'll be needing the mail data later
+    people = ASF::Person.preload(['cn', 'mail', 'asf-altEmail'], (members + committers).uniq)
 
     lists = ASF::Mail.lists(true).select do |list, mode|
       list =~ /^#{pmc.mail_list}\b/
@@ -35,8 +36,9 @@ class Committee
         analysePrivateSubs = !(pMods & user_mail).empty?
       end
       if analysePrivateSubs
-        pSubs = canonhost(ASF::MLIST.private_subscribers(pmc.mail_list)[0]||[])
-        unMatchedSubs=Array.new(pSubs) # init ready to remove matched mails
+        pSubs = ASF::MLIST.private_subscribers(pmc.mail_list)[0]||[]
+        unMatchedSubs=Set.new(pSubs) # init ready to remove matched mails
+        pSubs.map!{|m| m.downcase} # for matching
       end
     else
       lists = lists.select {|list, mode| mode == 'public'}
@@ -51,9 +53,9 @@ class Committee
         role: 'PMC member'
       }
       if analysePrivateSubs
-        allMail = canonhost(person.all_mail)
+        allMail = person.all_mail.map{|m| m.downcase}
         roster[person.id]['notSubbed'] = (allMail & pSubs).empty?
-        unMatchedSubs -= allMail
+        unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
       end
       roster[person.id]['ldap'] = true
     end
@@ -77,7 +79,7 @@ class Committee
       unMatchedSubs.each{ |addr|
         who = nil
         @people.each do |person|
-          if person[:mail].any? {|mail| mail == addr}
+          if person[:mail].any? {|mail| mail.downcase == addr.downcase}
             who = person
           end
         end
@@ -144,8 +146,4 @@ class Committee
     @people
   end
 
-  # canonicalise hostnames
-  def self.canonhost(list)
-    list.map {|i| i.sub(/@.+/) { |m| m.downcase } }
-  end
 end
