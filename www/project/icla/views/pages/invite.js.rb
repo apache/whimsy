@@ -43,7 +43,7 @@ class Invite < Vue
 
     _div.form_group do
       _label "Contributor's name:", for: 'iclaname'
-      _input.form_control.iclaname! placeholder: 'Firstname Lastname',
+      _input.form_control.iclaname! placeholder: 'GivenName FamilyName',
         required: true, value: @iclaname
     end
 
@@ -234,7 +234,7 @@ class Invite < Vue
         a message via lists.apache.org"
         @showVoteErrorMessage = true;
       end
-      if not @votelink=~ /.*private\@#{Server.data.pmc_mail[@pmc]}(\.incubator)?\.apache\.org.*/
+      if not @votelink=~ /.*private\.#{@pmc_mail[@pmc]}(\.incubator)?\.apache\.org.*/
         @voteErrorMessage = "Error: Please link to\
         the [RESULT][VOTE] message sent to the private list."
         @showVoteErrorMessage = true;

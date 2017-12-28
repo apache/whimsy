@@ -9,7 +9,7 @@ class Main < Vue
 
   def render
     _main do
-      _h1 'Demo: Invitation to Submit ICLA'
+      _h1 'Demo: Discuss, Vote, and Invite'
 
       Vue.createElement(@view)
     end
@@ -24,6 +24,10 @@ class Main < Vue
   def mounted()
     if @@view == 'interview'
       @view = Interview
+    elsif @@view == 'discuss'
+      @view = Discuss
+    elsif @@view == 'vote'
+      @view = Vote
     else
       @view = Invite
     end
