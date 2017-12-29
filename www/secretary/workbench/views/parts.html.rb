@@ -30,7 +30,7 @@ _html do
     end
     _li do
       _a 'Mail Search', target: 'content',
-        href: 'https://mail-search.apache.org/search'
+        href: 'https://lists.apache.org/list.html?board@apache.org'
     end
     _li do
       _a 'Mail Browse', target: 'content',
