@@ -22,18 +22,12 @@ helpers do
     committees = user.committees.map(&:name)
     pmcs.select! {|pmc| committees.include?(pmc)}
     ppmcs.select! {|ppmc|
-      committees.include?('incubator') | committees.include?(ppmc)}
-    mailList = {}
-    pmcs.each {|pmcName| pmc = ASF::Committee.find(pmcName)
-      if pmc
-        mailList[pmcName] = pmc.mail_list
-      end
-    }
-    ppmcs.each {|ppmcName| ppmc = ASF::Committee.find(ppmcName)
-      if ppmc
-        mailList[ppmcName] = ppmc.mail_list
-      end
-    }
+      committees.include?('incubator') |
+      committees.include?(ppmc)}
+    # mailList is a hash where the key is the name of the PMC/PPMC and
+    # the value is the name of the mail list for the committee
+    mailList = pmcs.map{|pmc| [pmc, ASF::Committee.find(pmc).mail_list]}.to_h.
+      merge(ppmcs.map{|ppmc| [ppmc, ASF::Podling.find(ppmc).mail_list]}.to_h)
     hash = {
       'pmcs' => pmcs,
       'ppmcs' => ppmcs,

@@ -24,7 +24,8 @@ class Interview < Vue
       
     _p %{
       This process should only take a few minutes, and is entirely online.
-      First we will ask you three questions. Next, you will be asked to
+      First we will ask you verify your email address and Public Name.
+      Next, we will ask you three questions. Then, you will be asked to
       provide some information about yourself. Finally, you will get a chance
       to review and submit the completed form.
     }

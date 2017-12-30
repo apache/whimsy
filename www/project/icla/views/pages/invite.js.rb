@@ -9,6 +9,8 @@ class Invite < Vue
     @pmc = ''
     @votelink = ''
     @noticelink = ''
+    @phase = ''
+    @role = ''
 
 # initialize conditional text
     @showPMCVoteLink = false;
@@ -19,15 +21,34 @@ class Invite < Vue
     @showPPMCNoticeLink = false;
     @noticeErrorMessage = '';
     @showNoticeErrorMessage = false;
-
+    @showDiscussFrame = false;
+    @showVoteFrame = false;
+    @showPhaseFrame = false;
+    @showRoleFrame = false;
+    @discussComment = ''
+    @voteComment = ''
   end
 
   def render
     _p %{
-      This application allows PMC and PPMC members to invite a contributor
-      to submit an ICLA. Fill the following form and an invitation will be
-      sent to the email address on the form.
+      This application allows PMC and PPMC members to
+      discuss contributors to achieve consensus;
+      vote on contributors to become a committer or a PMC/PPMC member; or
+      simply invite them to submit an ICLA.
     }
+    _p %{
+      If you would like to discuss the candidate, go to the Discuss tab
+      after filling the contributor and PMC/PPMC fields.
+    }
+    _p %{
+      If you have discussed the candidate and would like to conduct a vote,
+      go to the Vote tab after filling the contributor and PMC/PPMC fields.
+    }
+    _p %{
+      If you have already achieved consensus, you can go to the Invite tab
+      after filling the contributor and PMC/PPMC fields.
+    }
+
 
     # error messages
     if @alert
@@ -67,7 +88,19 @@ class Invite < Vue
         end
       end
     end
-
+    if @showPhaseFrame
+      _ul.nav.nav_tabs do
+        _li class: ('active' if @phase == :discuss) do
+          _a 'Discuss', onClick: self.selectDiscuss
+        end
+        _li class: ('active' if @phase == :vote) do
+          _a 'Vote', onClick: self.selectVote
+        end
+        _li class: ('active' if @phase = :invite) do
+          _a 'Invite', onClick: self.selectInvite
+        end
+      end
+    end
     if @showPMCVoteLink
       _p %{
         Fill the following field only if the person was voted by the PMC
@@ -102,7 +135,6 @@ class Invite < Vue
           _span @voteErrorMessage
         end
       end
-
     end
     if @showPMCNoticeLink
       _p %{
@@ -132,15 +164,62 @@ class Invite < Vue
         _span @noticeErrorMessage
       end
     end
-    #
-    # Submission button
-    #
-
-    _p do
-      _button.btn.btn_primary 'Preview Invitation', disabled: @disabled,
-        onClick: self.previewInvitation
+    if @showRoleFrame
+      _div.form_group do
+        _label do
+          _input type: :radio, name: :role, value: :committer,
+            onClick: -> {@role = :committer}
+          _span :' Invite to become a committer'
+        end
+        _p
+        _label do
+          _input type: :radio, name: :role, value: :pmc,
+            onClick: -> {@role = :pmc}
+          _span ' Invite to become a committer and PMC/PPMC member'
+        end
+        _p
+        _label do
+          _input type: :radio, name: :role, value: :invite,
+            onClick: -> {@role = :invite}
+          _span ' Invite to submit an ICLA'
+        end
+        _p
+      end
+    end
+    if @showDiscussFrame
+      _span 'Comment'
+      _p
+      _textarea name: 'discussComment', value: @discussComment, rows: 4,
+      onChange: self.setDiscussComment
+    end
+    if @showVoteFrame
+      _span 'Comment'
+      _p
+      _textarea name: 'voteComment', value: @voteComment, rows: 4,
+        onChange: self.setVoteComment
     end
 
+    #
+    # Submission buttons
+    #
+    if @phase == 'invite'
+      _p do
+        _button.btn.btn_primary 'Preview Invitation', disabled: @disabled,
+        onClick: self.previewInvitation
+      end
+    end
+    if @phase == 'discuss'
+      _p do
+        _button.btn.btn_primary 'Preview Discussion', disabled: @disabled,
+        onClick: self.previewDiscussion
+      end
+    end
+    if @phase == 'vote'
+      _p do
+        _button.btn.btn_primary 'Preview Vote', disabled: @disabled,
+        onClick: self.previewVote
+      end
+    end
     #
     # Hidden form: preview invite email
     #
@@ -182,7 +261,7 @@ class Invite < Vue
         end
       end
     end
-
+    _p
 
   end
 
@@ -207,6 +286,48 @@ class Invite < Vue
 
   def setPMC(event)
     @pmc = event.target.value
+    @phase = :discuss
+    @showPhaseFrame = true
+    @showRoleFrame = true
+    self.checkValidity()
+    selectDiscuss()
+  end
+
+  def selectDiscuss(event)
+    @phase = :discuss
+    @showDiscussFrame = true;
+    @showRoleFrame = true;
+    @showVoteFrame = false;
+    @showPMCVoteLink = false
+    @showPPMCVoteLink = false
+    @showPMCNoticeLink = false
+    @showPPMCNoticeLink = false
+    @showVoteErrorMessage = false;
+    @showNoticeErrorMessage = false;
+    self.checkValidity()
+    @disabled = false;
+  end
+
+  def selectVote(event)
+    @phase = :vote
+    @showVoteFrame = true;
+    @showRoleFrame = true;
+    @showDiscussFrame = false;
+    @showPMCVoteLink = false
+    @showPPMCVoteLink = false
+    @showPMCNoticeLink = false
+    @showPPMCNoticeLink = false
+    @showVoteErrorMessage = false;
+    @showNoticeErrorMessage = false;
+    self.checkValidity()
+    @disabled = false;
+  end
+
+  def selectInvite(event)
+    @phase = :invite
+    @showDiscussFrame = false;
+    @showVoteFrame = false;
+    @showRoleFrame = false;
     @showPMCVoteLink = Server.data.pmcs.include? @pmc
     @showPPMCVoteLink = Server.data.ppmcs.include? @pmc
     @showPMCNoticeLink = Server.data.pmcs.include? @pmc
@@ -302,6 +423,46 @@ class Invite < Vue
       pmc: @pmc,
       votelink: @votelink,
       noticelink: @noticelink
+    }
+
+    @disabled = true
+    @alert = nil
+    post 'validate', data do |response|
+      @disabled = false
+      @alert = response.error
+      @userEmail = response.userEmail
+      @pmcEmail = response.pmcEmail
+      @invitation = response.invitation
+      @token = response.token
+      document.getElementById(response.focus).focus() if response.focus
+      jQuery('#invitation-preview').modal(:show) unless @alert
+    end
+  end
+  def previewDiscussion()
+    data = {
+      iclaname: @iclaname,
+      iclaemail: @iclaemail,
+      pmc: @pmc,
+    }
+
+    @disabled = true
+    @alert = nil
+    post 'validate', data do |response|
+      @disabled = false
+      @alert = response.error
+      @userEmail = response.userEmail
+      @pmcEmail = response.pmcEmail
+      @invitation = response.invitation
+      @token = response.token
+      document.getElementById(response.focus).focus() if response.focus
+      jQuery('#invitation-preview').modal(:show) unless @alert
+    end
+  end
+  def previewVote()
+    data = {
+      iclaname: @iclaname,
+      iclaemail: @iclaemail,
+      pmc: @pmc,
     }
 
     @disabled = true
