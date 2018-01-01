@@ -29,8 +29,8 @@ class Invite < Vue
     @showVoteFrame = false;
     @showPhaseFrame = false;
     @showRoleFrame = false;
-    @discussComment = ''
-    @voteComment = ''
+    @discussBody = ''
+    @voteBody = ''
   end
 
   def render
@@ -71,7 +71,6 @@ class Invite < Vue
       _input.form_control.iclaname! placeholder: 'GivenName FamilyName',
         required: true, value: @iclaname
     end
-
     _div.form_group do
       _label "Contributor's E-Mail address:", for: 'iclaemail'
       _input.form_control.iclaemail! type: 'email', required: true,
@@ -203,21 +202,17 @@ class Invite < Vue
     end
     if @showDiscussFrame
       _div 'Subject: ' + @subject
-      _p
-      _div 'Comment:'
-      _p
-      _textarea name: 'discussComment', value: @discussComment, rows: 4,
-        placeholder: 'Please discuss this candidate.',
-        onChange: self.setDiscussComment
+      _textarea.form_control rows: 4,
+        placeholder: 'Please discuss this candidate',
+        name: 'discussBody', value: @discussBody,
+        onChange: self.setDiscussBody
     end
     if @showVoteFrame
       _div 'Subject: ' + @subject
-      _p
-      _div 'Comment:'
-      _p
-      _textarea name: 'voteComment', value: @voteComment, rows: 4,
-        placeholder: 'Please vote on this candidate.',
-        onChange: self.setVoteComment
+      _textarea.form_control rows: 4,
+      placeholder: 'Please discuss this candidate',
+      name: 'voteBody', value: @voteBody,
+      onChange: self.setVoteBody
     end
 
     #
@@ -309,6 +304,7 @@ class Invite < Vue
     @pmc = event.target.value
     @pmcOrPPMC = (Server.data.pmcs.include? @pmc)? 'PMC' : 'PPMC'
     @phase = :discuss
+    @subject = ''
     @showPhaseFrame = true
     @showRoleFrame = true
     self.checkValidity()
@@ -317,6 +313,7 @@ class Invite < Vue
 
   def selectDiscuss(event)
     @phase = :discuss
+    @subject = ''
     @subjectPhase = '[DISCUSS]'
     @showDiscussFrame = true;
     @showRoleFrame = true;
@@ -331,8 +328,13 @@ class Invite < Vue
     @disabled = false;
   end
 
+  def setDiscussBody(event)
+    @discussBody = event.target.value
+  end
+
   def selectVote(event)
     @phase = :vote
+    @subject = ''
     @subjectPhase = '[VOTE]'
     @showVoteFrame = true;
     @showRoleFrame = true;
@@ -345,6 +347,10 @@ class Invite < Vue
     @showNoticeErrorMessage = false;
     self.checkValidity()
     @disabled = false;
+  end
+
+  def setVoteBody(event)
+    @voteBody = event.target.value
   end
 
   def selectInvite(event)
@@ -467,7 +473,7 @@ class Invite < Vue
       iclaname: @iclaname,
       iclaemail: @iclaemail,
       pmc: @pmc,
-      discussComment: @discussComment
+      discussBody: @discussBody
     }
 
     @disabled = true
@@ -488,7 +494,7 @@ class Invite < Vue
       iclaname: @iclaname,
       iclaemail: @iclaemail,
       pmc: @pmc,
-      voteComment: @voteComment
+      voteBody: @voteBody
     }
 
     @disabled = true
