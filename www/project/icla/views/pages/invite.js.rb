@@ -11,6 +11,10 @@ class Invite < Vue
     @noticelink = ''
     @phase = ''
     @role = ''
+    @roleText = ' to submit ICLA for '
+    @subject = ''
+    @subjectPhase = ''
+    @pmcOrPpmc = ''
 
 # initialize conditional text
     @showPMCVoteLink = false;
@@ -165,37 +169,54 @@ class Invite < Vue
       end
     end
     if @showRoleFrame
-      _div.form_group do
+      _div.form_check do
         _label do
           _input type: :radio, name: :role, value: :committer,
-            onClick: -> {@role = :committer}
-          _span :' Invite to become a committer'
+          onClick: -> {@role = :committer;
+            @subject = @subjectPhase + ' Invite ' + @iclaname +
+              ' to become committer for ' + @pmc
+          }
+          _span :' invite to become a committer'
         end
         _p
         _label do
           _input type: :radio, name: :role, value: :pmc,
-            onClick: -> {@role = :pmc}
-          _span ' Invite to become a committer and PMC/PPMC member'
+          onClick: -> {@role = :pmc;
+            @subject = @subjectPhase + ' Invite ' + @iclaname +
+              ' to become committer and ' + @pmcOrPPMC + ' member for ' + @pmc
+          }
+          _span ' invite to become a committer and ' + @pmcOrPPMC + ' member'
         end
-        _p
-        _label do
-          _input type: :radio, name: :role, value: :invite,
-            onClick: -> {@role = :invite}
-          _span ' Invite to submit an ICLA'
+        if @showDiscussFrame
+          _p
+          _label do
+            _input type: :radio, name: :role, value: :invite,
+            onClick: -> {@role = :invite;
+              @subject = @subjectPhase + ' Invite ' + @iclaname +
+              ' to submit an ICLA for ' + @pmc
+            }
+            _span ' invite to submit an ICLA'
+          end
         end
         _p
       end
     end
     if @showDiscussFrame
-      _span 'Comment'
+      _div 'Subject: ' + @subject
+      _p
+      _div 'Comment:'
       _p
       _textarea name: 'discussComment', value: @discussComment, rows: 4,
-      onChange: self.setDiscussComment
+        placeholder: 'Please discuss this candidate.',
+        onChange: self.setDiscussComment
     end
     if @showVoteFrame
-      _span 'Comment'
+      _div 'Subject: ' + @subject
+      _p
+      _div 'Comment:'
       _p
       _textarea name: 'voteComment', value: @voteComment, rows: 4,
+        placeholder: 'Please vote on this candidate.',
         onChange: self.setVoteComment
     end
 
@@ -286,6 +307,7 @@ class Invite < Vue
 
   def setPMC(event)
     @pmc = event.target.value
+    @pmcOrPPMC = (Server.data.pmcs.include? @pmc)? 'PMC' : 'PPMC'
     @phase = :discuss
     @showPhaseFrame = true
     @showRoleFrame = true
@@ -295,6 +317,7 @@ class Invite < Vue
 
   def selectDiscuss(event)
     @phase = :discuss
+    @subjectPhase = '[DISCUSS]'
     @showDiscussFrame = true;
     @showRoleFrame = true;
     @showVoteFrame = false;
@@ -310,6 +333,7 @@ class Invite < Vue
 
   def selectVote(event)
     @phase = :vote
+    @subjectPhase = '[VOTE]'
     @showVoteFrame = true;
     @showRoleFrame = true;
     @showDiscussFrame = false;
