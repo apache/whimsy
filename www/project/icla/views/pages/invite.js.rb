@@ -14,6 +14,7 @@ class Invite < Vue
     @roleText = ' to submit ICLA for '
     @subject = ''
     @subjectPhase = ''
+    @previewMessage = 'Preview'
     @pmcOrPpmc = ''
 
 # initialize conditional text
@@ -99,7 +100,7 @@ class Invite < Vue
         _li class: ('active' if @phase == :vote) do
           _a 'Vote', onClick: self.selectVote
         end
-        _li class: ('active' if @phase = :invite) do
+        _li class: ('active' if @phase == :invite) do
           _a 'Invite', onClick: self.selectInvite
         end
       end
@@ -177,7 +178,7 @@ class Invite < Vue
           }
           _span :' invite to become a committer'
         end
-        _p
+        _br
         _label do
           _input type: :radio, name: :role, value: :pmc,
           onClick: -> {@role = :pmc;
@@ -187,7 +188,7 @@ class Invite < Vue
           _span ' invite to become a committer and ' + @pmcOrPPMC + ' member'
         end
         if @showDiscussFrame
-          _p
+          _br
           _label do
             _input type: :radio, name: :role, value: :invite,
             onClick: -> {@role = :invite;
@@ -218,23 +219,9 @@ class Invite < Vue
     #
     # Submission buttons
     #
-    if @phase == 'invite'
-      _p do
-        _button.btn.btn_primary 'Preview Invitation', disabled: @disabled,
-        onClick: self.previewInvitation
-      end
-    end
-    if @phase == 'discuss'
-      _p do
-        _button.btn.btn_primary 'Preview Discussion', disabled: @disabled,
-        onClick: self.previewDiscussion
-      end
-    end
-    if @phase == 'vote'
-      _p do
-        _button.btn.btn_primary 'Preview Vote', disabled: @disabled,
-        onClick: self.previewVote
-      end
+    _p do
+      _button.btn.btn_primary @previewMessage, disabled: @disabled,
+      onClick: self.preview
     end
     #
     # Hidden form: preview invite email
@@ -315,6 +302,7 @@ class Invite < Vue
     @phase = :discuss
     @subject = ''
     @subjectPhase = '[DISCUSS]'
+    @previewMessage = 'Preview Discussion'
     @showDiscussFrame = true;
     @showRoleFrame = true;
     @showVoteFrame = false;
@@ -336,6 +324,7 @@ class Invite < Vue
     @phase = :vote
     @subject = ''
     @subjectPhase = '[VOTE]'
+    @previewMessage = 'Preview Vote'
     @showVoteFrame = true;
     @showRoleFrame = true;
     @showDiscussFrame = false;
@@ -355,6 +344,7 @@ class Invite < Vue
 
   def selectInvite(event)
     @phase = :invite
+    @previewMessage = 'Preview Invitation'
     @showDiscussFrame = false;
     @showVoteFrame = false;
     @showRoleFrame = false;
@@ -446,6 +436,16 @@ class Invite < Vue
   end
 
   # server side field validations
+  def preview()
+    if @phase == :invite
+      previewInvitation()
+      elsif @phase == :discuss
+      previewDiscussion()
+      elsif @phase == :vote
+      previewVote()
+    end
+  end
+
   def previewInvitation()
     data = {
       iclaname: @iclaname,
