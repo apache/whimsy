@@ -16,6 +16,7 @@ class Invite < Vue
     @subjectPhase = ''
     @previewMessage = 'Preview'
     @pmcOrPpmc = ''
+    @phasePrefix = ''
 
 # initialize conditional text
     @showPMCVoteLink = false;
@@ -174,9 +175,10 @@ class Invite < Vue
           _input type: :radio, name: :role, value: :committer,
           onClick: -> {@role = :committer;
             @subject = @subjectPhase + ' Invite ' + @iclaname +
-              ' to become committer for ' + @pmc
+              ' to become a committer for ' + @pmc
           }
-          _span :' invite to become a committer'
+          _span @phasePrefix +
+            ' invite to become a committer'
         end
         _br
         _label do
@@ -185,7 +187,8 @@ class Invite < Vue
             @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to become committer and ' + @pmcOrPPMC + ' member for ' + @pmc
           }
-          _span ' invite to become a committer and ' + @pmcOrPPMC + ' member'
+          _span @phasePrefix +
+            ' invite to become a committer and ' + @pmcOrPPMC + ' member'
         end
         if @showDiscussFrame
           _br
@@ -195,7 +198,8 @@ class Invite < Vue
               @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to submit an ICLA for ' + @pmc
             }
-            _span ' invite to submit an ICLA'
+            _span @phasePrefix +
+              ' invite to submit an ICLA'
           end
         end
         _p
@@ -204,14 +208,14 @@ class Invite < Vue
     if @showDiscussFrame
       _div 'Subject: ' + @subject
       _textarea.form_control rows: 4,
-        placeholder: 'Please discuss this candidate',
+        placeholder: 'This is a discussion for the candidate',
         name: 'discussBody', value: @discussBody,
         onChange: self.setDiscussBody
     end
     if @showVoteFrame
       _div 'Subject: ' + @subject
       _textarea.form_control rows: 4,
-      placeholder: 'Please discuss this candidate',
+      placeholder: 'This is a vote for the candidate. Here is my +1',
       name: 'voteBody', value: @voteBody,
       onChange: self.setVoteBody
     end
@@ -303,6 +307,7 @@ class Invite < Vue
     @subject = ''
     @subjectPhase = '[DISCUSS]'
     @previewMessage = 'Preview Discussion'
+    @phasePrefix = ' Start the discussion to'
     @showDiscussFrame = true;
     @showRoleFrame = true;
     @showVoteFrame = false;
@@ -325,6 +330,7 @@ class Invite < Vue
     @subject = ''
     @subjectPhase = '[VOTE]'
     @previewMessage = 'Preview Vote'
+    @phasePrefix = ' Start the vote to'
     @showVoteFrame = true;
     @showRoleFrame = true;
     @showDiscussFrame = false;
