@@ -56,6 +56,8 @@ get '/invite' do
   @ppmcs = projects['ppmcs']
   @pmc_mail = projects['pmcmail']
 
+  @cssmtime = File.mtime('public/css/icla.css')
+
   # render the HTML for the application
   _html :app
 end

@@ -9,7 +9,7 @@ _html lang: 'en', _width: '80' do
       href: '/favicon.ico'
     _title 'ASF ICLA demo'
     _link href: 'https://www.apache.org/css/styles.css', rel: 'stylesheet'
-    _link href: 'css/icla.css', rel: 'stylesheet'
+    _link href: "css/icla.css?#{@cssmtime}", rel: 'stylesheet'
 
     _.comment! 'Licensed to the Apache Software Foundation (ASF) under one ' +
       'or more contributor license agreements. See the NOTICE file ' +
