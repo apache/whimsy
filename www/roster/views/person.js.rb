@@ -43,6 +43,9 @@ class Person < Vue
                   _b " (*)"
                 end
               end
+              if @committer.chairOf.include? pmc
+                _ ' (chair)'
+              end
             }
           end
 
