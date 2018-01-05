@@ -165,8 +165,8 @@ class Committer
       ASF::MLIST.digests(person.all_mail, response)
       # Check for missing private@ subscriptions
       response[:privateNosub] = []
-      response[:committees].each do |id|
-        pmc = ASF::Committee.find(id)
+      response[:committees].each do |cttee|
+        pmc = ASF::Committee.find(cttee)
         pmail = "private@#{pmc.mail_list}.apache.org" rescue ''
         subbed = false
         response[:subscriptions].each do |sub|
@@ -174,7 +174,7 @@ class Committer
             subbed = true
           end
         end
-        response[:privateNosub] << id unless subbed
+        response[:privateNosub] << cttee unless subbed
       end
     end
 
