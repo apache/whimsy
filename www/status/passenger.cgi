@@ -8,7 +8,12 @@ require 'open3'
 require 'wunderbar'
 require 'whimsy/asf'
 
-user = ASF::LDAP.http_auth(ENV['HTTP_AUTHORIZATION'])
+# Allow override of user in test mode
+if ENV['RACK_ENV'] == 'test'
+    user = ASF::Person[ENV['USER']]
+else
+    user = ASF::LDAP.http_auth(ENV['HTTP_AUTHORIZATION'])
+end
 
 unless user
   print "Status: 401 Unauthorized\r\n"
