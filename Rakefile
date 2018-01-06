@@ -7,7 +7,7 @@ Gem::PackageTask.new(spec) do |pkg|
 end
 
 # update gems and restart applications as needed
-task :update do
+task :update, [:command] do |task, args|
   # locate system ruby
   sysruby = File.realpath(`which ruby`.chomp)
   sysruby = "#{File.dirname(sysruby)}/%s#{sysruby[/ruby([.\d]*)$/, 1]}"
@@ -33,7 +33,7 @@ task :update do
       end
 
       bundler = 'bundle' unless File.exist?(bundler)
-      system "#{bundler} update"
+      system "#{bundler} #{args.command || 'update'}"
     end
   end
 
@@ -60,6 +60,11 @@ task :update do
   # update baseline time
   FileUtils.touch update_file
   File.utime new_baseline, new_baseline, update_file
+end
+
+# pristine version of update
+task :pristine do
+  Rake::Task[:update].invoke('pristine')
 end
 
 task :config do
