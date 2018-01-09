@@ -28,6 +28,8 @@ chairs = ASF::Service.find('pmc-chairs')
 current = ASF::Committee.pmcs.map(&:chair).uniq
 # only remove people from LDAP who are not currently chairs
 to_be_removed = people.reject{|p| current.include?(p)}
+# only remove people who are currently in LDAP pmc-chairs
+to_be_removed.reject!{|p| !chairs.members.include?(p)}
 
 # execute the action
 if action == '--add' and not people.empty?
