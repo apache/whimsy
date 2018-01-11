@@ -20,8 +20,8 @@ class Main < Vue
     Server.data = @@data
   end
 
-  # set view based on properties
   def mounted()
+    # set view based on properties
     if @@view == 'interview'
       @view = Interview
     elsif @@view == 'discuss'
@@ -31,16 +31,14 @@ class Main < Vue
     else
       @view = Invite
     end
+
+    # export navigation method on the client
+    Main.navigate = self.navigate
   end
 
   # Another navigation means in support of the demo
   def navigate(view)
     @view = view
     window.scrollTo(0, 0)
-  end
-
-  # export navigation method on the client
-  def mounted()
-    Main.navigate = self.navigate
   end
 end
