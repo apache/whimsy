@@ -8,6 +8,8 @@ $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'whimsy/asf'
 
 # extract action to be performed
+dryrun = ARGV.delete('--dryrun')
+puts 'Dry run:' if dryrun
 action = ARGV.delete('--add') || ARGV.delete("--rm")
 
 # map arguments provided to people
@@ -26,16 +28,54 @@ chairs = ASF::Service.find('pmc-chairs')
 
 # get the list of current chairs from committee-info
 current = ASF::Committee.pmcs.map(&:chair).uniq
-# only remove people from LDAP who are not currently chairs
-to_be_removed = people.reject{|p| current.include?(p)}
+
+# partition people based on already in pmc-chairs
+already_in_pmc_chairs, not_in_pmc_chairs = people.partition{|p| chairs.members.include?(p)}
+
+#puts 'already in pmc-chairs: ' + already_in_pmc_chairs.map{|p|p.name}.join(' ')
+#puts 'not in pmc-chairs: ' + not_in_pmc_chairs.map{|p|p.name}.join(' ')
+
+if (action=='--add') & (!already_in_pmc_chairs.empty?)
+  puts 'The following ids were not added because they are '\
+  'already in ldap group pmc-chairs: ' +
+  already_in_pmc_chairs.map{|p| p.name}.join(' ')
+end
+
 # only remove people who are currently in LDAP pmc-chairs
-to_be_removed.reject!{|p| !chairs.members.include?(p)}
+if (action=='--rm') & (!not_in_pmc_chairs.empty?)
+  puts 'The following ids were not removed because they are '\
+    'not in ldap group pmc-chairs: ' +
+    not_in_pmc_chairs.map{|p| p.name}.join(' ')
+end
+
+# only remove people from LDAP who are not currently chairs in committee-info
+still_chairs, not_chairs = already_in_pmc_chairs.partition{|p| current.include?(p)}
+if (action=='--rm') & (!still_chairs.empty?)
+  puts 'The following ids were not removed because they are '\
+    'still listed as chair in committee-info.txt: ' +
+    still_chairs.map{|p| p.name}.join(' ')
+end
+
+# identify candidates for removal from LDAP pmc-chairs
+candidates_for_removal = chairs.members.select{|p|!current.include?(p)}
+puts 'The following members of LDAP pmc-chairs are not currently ' +
+  'listed as chairs in committee-info.txt: ' +
+  candidates_for_removal.map{|p|p.name}.join(' ')
+
+if ((action=='--add') & not_in_pmc_chairs.empty?) |
+    ((action=='--rm') & not_chairs.empty?)
+  puts 'Nothing to do.'
+end
 
 # execute the action
-if action == '--add' and not people.empty?
-  ASF::LDAP.bind { chairs.add(people) }
-elsif action == '--rm' and not to_be_removed.empty?
-  ASF::LDAP.bind { chairs.remove(to_be_removed) }
+if action == '--add' and not not_in_pmc_chairs.empty?
+  puts 'Adding: ' + not_in_pmc_chairs.map{|p|p.name}.join(' ')
+  exit if dryrun
+  ASF::LDAP.bind { chairs.add(not_in_pmc_chairs) }
+elsif action == '--rm' and not not_chairs.empty?
+  puts 'Removing: ' + not_chairs.map{|p|p.name}.join(' ')
+  exit if dryrun
+  ASF::LDAP.bind { chairs.remove(not_chairs) }
 else
-  STDERR.puts "Usage: #{$PROGRAM_NAME} (--add|--rm) list..."
+  STDERR.puts "Usage: #{$PROGRAM_NAME} [--dryrun] (--add|--rm) list..."
 end
