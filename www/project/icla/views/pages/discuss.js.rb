@@ -4,31 +4,46 @@ class Discuss < Vue
     @alert = nil
 
     # initialize form fields
-    @iclaname = ''
-    @iclaemail = ''
-    @pmc = ''
-    @votelink = ''
-    @noticelink = ''
-
-# initialize conditional text
-    @showPMCVoteLink = false;
-    @showPPMCVoteLink = false;
-    @voteErrorMessage = '';
-    @showVoteErrorMessage = false;
-    @showPMCNoticeLink = false;
-    @showPPMCNoticeLink = false;
-    @noticeErrorMessage = '';
-    @showNoticeErrorMessage = false;
+    @user = Server.data.user
+    @pmc = Server.data.contributor[:project]
+    @iclaname = Server.data.contributor[:name]
+    @iclaemail = Server.data.contributor[:email]
+    @token = Server.data.token
+    @comments = Server.data.comments
+    @discussBody = ''
+    @subject = Server.data.subject
+    @debug = true;
 
   end
 
   def render
     _p %{
-      This application allows PMC and PPMC members to:
-      discuss contributors to achieve consensus;
-      vote on contributors to become a committer or a PMC or PPMC member; or
-      simply invite them to submit an ICLA.
+      This form allows PMC and PPMC members to
+      discuss contributors to achieve consensus.
     }
+    _b "Project: " + @pmc
+    _p
+    _b "Contributor: " + @iclaname + " (" + @iclaemail + ")"
+    _p
+    _p "Subject: " + @subject
+    _p
+    #
+    # Form fields
+    #
+    _div.form_group do
+      _label "Comment from " + @user, for: 'discussBody'
+      _textarea.form_control rows: 4,
+      placeholder: 'new comment',
+      name: 'discussBody', value: @discussBody,
+      onChange: self.setDiscussBody
+    end
+    @comments.each {|c|
+      _b 'From: ' + c.member + ' Date: ' + c.timestamp
+      _p c.comment
+    }
+
+    _p 'token: ' + @token
+    _p 'comment: ' + @discussBody
 
     # error messages
     if @alert
@@ -38,108 +53,14 @@ class Discuss < Vue
       end
     end
 
-    #
-    # Form fields
-    #
 
-    _div.form_group do
-      _label "Contributor's name:", for: 'iclaname'
-      _input.form_control.iclaname! placeholder: 'GivenName FamilyName',
-        required: true, value: @iclaname
-    end
-
-    _div.form_group do
-      _label "Contributor's E-Mail address:", for: 'iclaemail'
-      _input.form_control.iclaemail! type: 'email', required: true,
-        placeholder: 'user@example.com', onChange: self.setIclaEmail,
-        value: @iclaemail
-    end
-
-    _div.form_group do
-      _label "PMC/PPMC", for: 'pmc'
-      _select.form_control.pmc! required: true, onChange: self.setPMC, value: @pmc do
-        _option ''
-        Server.data.pmcs.each do |pmc|
-          _option pmc
-        end
-        _option '---'
-        Server.data.ppmcs.each do |ppmc|
-          _option ppmc
-        end
-      end
-    end
-
-    if @showPMCVoteLink
-      _p %{
-        Fill the following field only if the person was voted by the PMC
-        to become a committer.
-        Link to the [RESULT][VOTE] message in the mail archives.
-      }
-    end
-    if @showPPMCVoteLink
-      _p %{
-        Fill the following field only if the person is an initial
-        committer on a new project accepted for incubation, or the person
-        has been voted as a committer on a podling.
-        For new incubator projects use the
-        http://wiki.apache.org/incubator/XXXProposal link; for existing
-        podlings link to the [RESULT][VOTE] message in the mail archives.
-      }
-    end
-    if @showPMCVoteLink or @showPPMCVoteLink
-      _ 'Navigate to '
-      _a "ponymail", href: "https://lists.apache.org"
-      _ ', select the appropriate message, right-click PermaLink, copy link'
-      _ ' to the clip-board, and paste the link here.'
-      _p
-
-      _div.form_group do
-        _label "VOTE link", for: 'votelink'
-        _input.form_control.votelink! type: 'url', onChange: self.setVoteLink,
-        value: @votelink
-      end
-      if @showVoteErrorMessage
-        _div.alert.alert_danger do
-          _span @voteErrorMessage
-        end
-      end
-
-    end
-    if @showPMCNoticeLink
-      _p %{
-        Fill the following field only if the person was voted by the PMC
-        to become a PMC member.
-        Link to the [NOTICE] message sent to the board.
-        The message must have been in the archives for at least 72 hours.
-      }
-    end
-    if @showPPMCNoticeLink
-      _p %{
-        Fill the following field only if the person was voted by the
-        PPMC to be a PPMC member.
-        Link to the [NOTICE] message sent to the incubator PMC.
-        The message must have been in the archives for at least 72 hours.
-      }
-    end
-    if @showPMCNoticeLink or @showPPMCNoticeLink
-      _div.form_group do
-        _label "NOTICE link", for: 'noticelink'
-        _input.form_control.noticelink! type: 'url', onChange: self.setNoticeLink,
-        value: @noticelink
-      end
-    end
-    if @showNoticeErrorMessage
-      _div.alert.alert_danger do
-        _span @noticeErrorMessage
-      end
-    end
     #
     # Submission button
     #
 
     _p do
-      _button.btn.btn_primary 'Preview Invitation', disabled: @disabled,
-        onClick: self.previewInvitation
+      _button.btn.btn_primary 'Submit comment', disabled: @disabled,
+        onClick: self.submitComment
     end
 
     #
@@ -184,103 +105,19 @@ class Discuss < Vue
       end
     end
 
-
   end
 
-  # when the form is initially loaded, set the focus on the iclaname field
+  # when the form is initially loaded, set the focus on the discussBody field
   def mounted()
-    document.getElementById('iclaname').focus()
+    document.getElementById('discussBody').focus()
   end
 
   #
   # field setters
   #
 
-  def setIclaName(event)
-    @iclaname = event.target.value
-    self.checkValidity()
-  end
-
-  def setIclaEmail(event)
-    @iclaemail = event.target.value
-    self.checkValidity()
-  end
-
-  def setPMC(event)
-    @pmc = event.target.value
-    @showPMCVoteLink = Server.data.pmcs.include? @pmc
-    @showPPMCVoteLink = Server.data.ppmcs.include? @pmc
-    @showPMCNoticeLink = Server.data.pmcs.include? @pmc
-    @showPPMCNoticeLink = Server.data.ppmcs.include? @pmc
-    @showVoteErrorMessage = false;
-    @showNoticeErrorMessage = false;
-    checkVoteLink() if document.getElementById('votelink');
-    checkNoticeLink() if document.getElementById('noticelink');
-    self.checkValidity()
-  end
-
-  def setVoteLink(event)
-    @votelink = event.target.value
-    @showVoteErrorMessage = false
-    checkVoteLink()
-    self.checkValidity()
-  end
-
-  def checkVoteLink()
-    document.getElementById('votelink').setCustomValidity('');
-    if (@votelink)
-      # verify that the link refers to lists.apache.org message on the project list
-      if not @votelink=~ /.*lists\.apache\.org.*/
-        @voteErrorMessage = "Error: Please link to\
-        a message via lists.apache.org"
-        @showVoteErrorMessage = true;
-      end
-      if not @votelink=~ /.*private\@#{Server.data.pmc_mail[@pmc]}(\.incubator)?\.apache\.org.*/
-        @voteErrorMessage = "Error: Please link to\
-        the [RESULT][VOTE] message sent to the private list."
-        @showVoteErrorMessage = true;
-      end
-      if @showVoteErrorMessage
-        document.getElementById('votelink').setCustomValidity(@voteErrorMessage);
-      end
-    end
-  end
-
-  def setNoticeLink(event)
-    @noticelink = event.target.value
-    @showNoticeErrorMessage = false;
-    checkNoticeLink()
-    self.checkValidity()
-  end
-
-  def checkNoticeLink()
-    document.getElementById('noticelink').setCustomValidity('');
-    # verify that the link refers to lists.apache.org message on the proper list
-    if (@noticelink)
-      if not @noticelink=~ /.*lists\.apache\.org.*/
-        @noticeErrorMessage = "Error: please link to\
-        a message via lists.apache.org"
-        @showNoticeErrorMessage = true;
-      end
-      if @showPMCNoticeLink and not @noticelink=~ /.*board\@apache\.org.*/
-        @noticeErrorMessage = "Error: please link to\
-        the NOTICE message sent to the board list."
-        @showNoticeErrorMessage = true;
-      end
-      if @showPPMCNoticeLink and not @noticelink=~ /.*private\@incubator\.apache\.org.*/
-        @noticeErrorMessage = "Error: please link to\
-        the NOTICE message sent to the incubator private list."
-        @showNoticeErrorMessage = true;
-      end
-      if @showNoticeErrorMessage
-        document.getElementById('noticelink').setCustomValidity(@noticeErrorMessage);
-      end
-    end
-  end
-
-  def setInvitation(event)
-    @invitation = event.target.value
-    self.checkValidity()
+  def setDiscussBody(event)
+    @discussBody = event.target.value
   end
 
   #
@@ -289,9 +126,9 @@ class Discuss < Vue
 
   # client side field validations
   def checkValidity()
-    @disabled = !%w(iclaname iclaemail pmc votelink noticelink).all? do |id|
+    @disabled = !%w(discussBody).all? do |id|
       element = document.getElementById(id)
-      (not element) or element.checkValidity()
+      not element.empty?
     end
   end
 

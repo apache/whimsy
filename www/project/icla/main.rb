@@ -64,14 +64,33 @@ end
 
 get '/discuss' do
   @view = 'discuss'
+  @user = env.user
 
   # get a complete list of PMC and PPMC names and mail lists
   projects = projectsForUser(env.user)
 
   # server data sent to client
-  @pmcs = projects['pmcs']
-  @ppmcs = projects['ppmcs']
-  @pmc_mail = projects['pmcmail']
+  @token = params['token']
+  # not needed for this form but required for other forms
+  @pmcs = []
+  @ppmcs = []
+  @pmc_mail = {}
+
+  # mocked for testing
+  @contributor = {
+    project: 'whimsy',
+    name: 'Joe Blow',
+    email: 'joe@blow.com'
+  }
+  @subject = '[DISCUSS] Invite Joe Blow to become committer '\
+  'and PMC member for whimsy'
+  comment1 = {member: 'sebb', timestamp: '11/30/2017 15:30:00',
+    comment: 'Seems like a good enough guy'}
+  comment2 = {member: 'rubys', timestamp: '12/04/2017 17:20:00',
+    comment: 'I agree'}
+  comment3 = {member: 'clr', timestamp: '12/06/2017 10:14:00',
+    comment: 'We could do better\nMuch better'}
+  @comments = [comment1, comment2, comment3]
 
   _html :app
 end
