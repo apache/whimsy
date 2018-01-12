@@ -33,7 +33,7 @@ class Discuss < Vue
     _div.form_group do
       _label "Comment from " + @user, for: 'discussBody'
       _textarea.form_control rows: 4,
-      placeholder: 'new comment',
+      required: true, placeholder: 'new comment',
       name: 'discussBody', value: @discussBody,
       onChange: self.setDiscussBody
     end
@@ -118,6 +118,7 @@ class Discuss < Vue
 
   def setDiscussBody(event)
     @discussBody = event.target.value
+    checkValidity()
   end
 
   #
