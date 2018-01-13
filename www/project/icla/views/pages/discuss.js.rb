@@ -12,7 +12,7 @@ class Discuss < Vue
     @comments = Server.data.comments
     @discussBody = ''
     @subject = Server.data.subject
-    @debug = true;
+    @debug = false;
 
   end
 
@@ -34,17 +34,17 @@ class Discuss < Vue
       _label "Comment from " + @user, for: 'discussBody'
       _textarea.form_control rows: 4,
       required: true, placeholder: 'new comment',
-      name: 'discussBody', value: @discussBody,
+      id: 'discussBody', value: @discussBody,
       onChange: self.setDiscussBody
     end
     @comments.each {|c|
       _b 'From: ' + c.member + ' Date: ' + c.timestamp
       _p c.comment
     }
-
+if @debug
     _p 'token: ' + @token
     _p 'comment: ' + @discussBody
-
+end
     # error messages
     if @alert
       _div.alert.alert_danger do
@@ -55,12 +55,17 @@ class Discuss < Vue
 
 
     #
-    # Submission button
+    # Submission buttons
     #
 
     _p do
-      _button.btn.btn_primary 'Submit comment', disabled: @disabled,
+      _button.btn.btn_primary 'Submit comment and continue to discuss',
+        disabled: @disabled,
         onClick: self.submitComment
+      _b ' or '
+      _button.btn.btn_primary 'Submit comment and start voting',
+        disabled: @disabled,
+        onClick: self.startVoting
     end
 
     #
