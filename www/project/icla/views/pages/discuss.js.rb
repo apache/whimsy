@@ -5,6 +5,7 @@ class Discuss < Vue
 
     # initialize form fields
     @user = Server.data.user
+    @proposer = Server.data.proposer
     @pmc = Server.data.contributor[:project]
     @iclaname = Server.data.contributor[:name]
     @iclaemail = Server.data.contributor[:email]
@@ -24,6 +25,8 @@ class Discuss < Vue
     _b "Project: " + @pmc
     _p
     _b "Contributor: " + @iclaname + " (" + @iclaemail + ")"
+    _p
+    _b "Proposed by: " + @proposer
     _p
     _p "Subject: " + @subject
     _p
@@ -66,6 +69,10 @@ end
       _button.btn.btn_primary 'Submit comment and start voting',
         disabled: @disabled,
         onClick: self.startVoting
+      _b ' or '
+      _button.btn.btn_primary 'Submit comment and invite contributor to submit ICLA',
+        disabled: @disabled,
+        onClick: self.invite
     end
 
     #
