@@ -71,6 +71,7 @@ get '/discuss' do
 
   # server data sent to client
   @token = params['token']
+  @debug = params['debug']
 
   # not needed for this form but required for other forms
   @pmcs = []
@@ -103,6 +104,7 @@ get '/vote' do
 
   # server data sent to client
   @token = params['token']
+  @debug = params['debug']
 
   # not needed for this form but required for other forms
   @pmcs = []

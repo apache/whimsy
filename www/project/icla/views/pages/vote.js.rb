@@ -16,9 +16,8 @@ class Vote < Vue
     @timestamp = ''
     @commentBody = ''
     @subject = Server.data.subject
-    @showComment = true;
-    @debug = false;
-
+    @showComment = false;
+    @debug = Server.data.debug
   end
 
   def render
@@ -96,25 +95,19 @@ class Vote < Vue
       _p 'vote: ' + @vote
     end
 
-
     #
-    # Submission button
+    # Submission buttons
     #
-
     _p do
       _button.btn.btn_primary 'Submit my vote', disabled: @disabled,
         onClick: self.submitVote
       _b ' or '
-      _button.btn.btn_primary 'Cancel the vote', disabled: @disabled,
+      _button.btn.btn_primary 'Cancel the vote', disabled: false,
         onClick: self.cancelVote
       _b ' or '
-      _button.btn.btn_primary 'Tally the vote', disabled: @disabled,
+      _button.btn.btn_primary 'Tally the vote', disabled: false,
         onClick: self.tallyVote
     end
-
-
-
-
 
     #
     # Hidden form: preview invite email
@@ -157,13 +150,15 @@ class Vote < Vue
         end
       end
     end
-
-
   end
 
-  # when the form is initially loaded, set the focus on the iclaname field
+  # when the form is redisplayed, e.g. after displaying/hiding the commentBody
+  def updated()
+    focusComment()
+  end
+
+  # when the form is initially loaded
   def mounted()
-    document.getElementById('commentBody').focus()
   end
 
   #
@@ -174,7 +169,10 @@ class Vote < Vue
     checkValidity()
   end
 
-
+  def focusComment()
+    f = document.getElementById('commentBody')
+    f.focus() if f
+  end
 
   #
   # validation and processing
@@ -182,10 +180,9 @@ class Vote < Vue
 
   # client side field validations
   def checkValidity()
-    # no vote or vote -1 without comment
+    # disabled if no vote or vote -1 without comment
     @disabled = (@vote == '' or (@vote == '-1' and @commentBody.empty?))
   end
-
 
   # server side field validations
   def previewInvitation()

@@ -376,7 +376,7 @@ _html lang: 'en', _width: '80' do
       _Main data: {pmcs: @pmcs, ppmcs: @ppmcs, pmc_mail: @pmc_mail,
         token: @token, contributor: @contributor, comments: @comments,
         user: @user, subject: @subject, phase: @phase, votes: @votes,
-        proposer: @proposer},
+        proposer: @proposer, debug: @debug},
         view: @view
     end
   end
