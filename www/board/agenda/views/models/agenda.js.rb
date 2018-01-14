@@ -28,8 +28,8 @@ class Agenda
 
     # remove president attachments from the normal flow
     @@index.each do |pres|
-      match = (pres.title == 'President' and pres.text and pres.text.
-        match(/Additionally, please see Attachments (\d) through (\d)/))
+      match = (pres.title == 'President') and pres.text and pres.text.
+        match(/Additionally, please see Attachments (\d) through (\d)/)
       next unless match
 
       first = last = nil
@@ -139,20 +139,12 @@ class Agenda
     for name in entry
       self["_#{name}"] = entry[name]
     end
-
-    @color = nil
   end
 
-  # provide read-write access to a number of properties 
-  attr :index, :color
-
   # provide read-only access to a number of properties 
-  attr_reader :attach, :title, :owner, :shepherd, :timestamp, :digest
+  attr_reader :attach, :title, :owner, :shepherd, :index, :timestamp, :digest
   attr_reader :approved, :roster, :prior_reports, :stats, :people, :notes
   attr_reader :chair_email, :mail_list, :warnings, :flagged_by
-
-  # provide write access to a number of properties 
-  attr_writer :color
 
   def fulltitle
     @fulltitle || @title
@@ -273,11 +265,7 @@ class Agenda
 
   # the default banner color to use for the agenda as a whole
   def self.color
-    @@color || 'blank'
-  end
-
-  def self.color=(color)
-    @@color = color
+    'blank'
   end
 
   # fetch the start date
@@ -499,9 +487,7 @@ class Agenda
 
   # banner color for this agenda item
   def color
-    if @color
-      @color
-    elsif not @title
+    if not @title
       'blank'
     elsif @warnings
       'missing'
