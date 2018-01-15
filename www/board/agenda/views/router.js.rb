@@ -99,7 +99,7 @@ class Router
     else
       item = Agenda.find(path)
 
-      if path == 'Discussion-Items' and Agenda.date =~ /^2017-12/
+      if path == 'Discussion-Items' and Agenda.date =~ /^2018-01/
         item.next = {title: 'FY23 Budget Worksheet', href: 'fy23'}
       end
     end
