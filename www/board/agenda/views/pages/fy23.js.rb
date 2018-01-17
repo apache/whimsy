@@ -13,7 +13,7 @@ class FY23 < Vue
       travelAssistance: 25,
       treasury: 61,
       fundraising: 283,
-      generalAndAdministrative: 144,
+      generalAndAdministrative: 44,
       chairman: 10,
     }
 
@@ -36,7 +36,7 @@ class FY23 < Vue
     }
 
     _p "Instructions: change any input field and press the tab key to see " +
-      "new results. Try to make FY23 Budget Cash non-negative."
+      "new results. Try to keep FY23 Budget Cash non-negative."
 
     _table.table.table_sm.table_striped do
       _thead do

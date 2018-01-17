@@ -56,7 +56,8 @@ get '/invite' do
   @ppmcs = projects['ppmcs']
   @pmc_mail = projects['pmcmail']
 
-  @cssmtime = File.mtime('public/css/icla.css')
+  @cssmtime = File.mtime('public/css/icla.css').to_i
+  @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
 
   # render the HTML for the application
   _html :app

@@ -112,6 +112,7 @@ Agenda.update(agenda_file, @message) do |agenda|
           flags.gsub! /\n +# .*? \[.*\]/, ''
           flags[/discussion:\n\n()/, 1] = flagged_reports.sort.
             map {|pmc, who| "        # #{pmc} [#{who.join(', ')}]\n"}.join
+          flags.sub!(/\n+(\s+)A\.\z/) {"\n\n#{$1}A."}
         end
 
         flags

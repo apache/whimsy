@@ -107,7 +107,7 @@ and running - these are only needed for a new deployment.
 
  * Using the `www-data` user, copy over the following directories from
    the previous whimsy-vm* server: `/srv/agenda`, `/srv/mail/board`,
-   `/srv/mail/members`, `/srv/mail/secretary`.
+   ``/srv/icla`, /srv/mail/members`, `/srv/mail/secretary`.
  
  * Verify that email can be sent to non-apache.org email addresses
    * Run [testmail.rb](tools/testmail.rb)

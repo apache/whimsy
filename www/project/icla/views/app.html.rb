@@ -370,7 +370,7 @@ _html lang: 'en', _width: '80' do
     end
 
     _.comment! '/ Footer'
-    _script src: 'app.js'
+    _script src: "app.js?#{@appmtime}"
 
     _.render '#main' do
       _Main data: {pmcs: @pmcs, ppmcs: @ppmcs, pmc_mail: @pmc_mail,
