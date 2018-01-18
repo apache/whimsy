@@ -187,6 +187,16 @@ class Post < Vue
   # perform a reflow of report text
   def reflow()
     report = @report
+    textarea = document.getElementById('post-report-text')
+    indent = start = finish = 0
+
+    # extract selection (if any)
+    if textarea.selectionEnd > textarea.selectionStart
+      start = textarea.selectionStart
+      start -= 1  while start > 0 and report[start-1] != "\n"
+      finish = textarea.selectionEnd
+      finish += 1 while report[finish] != '\n' and finish < report.length-1
+    end
 
     # remove indentation
     unless report =~ /^\S/
@@ -196,11 +206,20 @@ class Post < Vue
         indents.push result[1].length
       end
       unless indents.empty?
-        report.gsub!(RegExp.new('^' + ' ' * Math.min(*indents), 'gm'), '')
+        indent = Math.min(*indents)
+        report.gsub!(RegExp.new('^' + ' ' * indent, 'gm'), '')
       end
     end
 
-    @report = Flow.text(report, @indent)
+    # reflow selection or entire report
+    if finish > start
+      report = Flow.text(report[start..finish], @indent+indent)
+      report.gsub(/^/, ' ' * indent) if indent > 0
+      @report = @report[0...start] + report + @report[finish+1..-1]
+    else
+      @report = Flow.text(report, @indent)
+    end
+
     self.change_message()
   end
 
