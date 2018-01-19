@@ -191,7 +191,7 @@ class Post < Vue
     indent = start = finish = 0
 
     # extract selection (if any)
-    if textarea.selectionEnd > textarea.selectionStart
+    if textarea and textarea.selectionEnd > textarea.selectionStart
       start = textarea.selectionStart
       start -= 1  while start > 0 and report[start-1] != "\n"
       finish = textarea.selectionEnd
