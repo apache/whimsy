@@ -7,28 +7,29 @@ class Attend < Vue
   end
 
   def render
-    _button.btn.btn_primary (@attending ? 'regrets' : 'attend'),
+    _button.btn.btn_primary (attending ? 'regrets' : 'attend'),
       onClick: self.click, disabled: @disabled
   end
 
   # match person by either userid or name
-  def created()
+  def attending
+    return false unless @@item.people
     person = @@item.people[User.id]
     if person
-      @attending = person.attending
+      return person.attending
     else
-      @attending = false
       for id in @@item.people
         person = @@item.people[id]
-        @attending = person.attending if person.name == User.username
+        return person.attending if person.name == User.username
       end
+      return false
     end
   end
 
   def click(event)
     data = {
       agenda: Agenda.file,
-      action: (@attending ? 'regrets' : 'attend'),
+      action: (attending ? 'regrets' : 'attend'),
       name: User.username,
       userid: User.id
     }
