@@ -72,7 +72,7 @@ class VueServer
   # the server itself
   @@server = proc do
     cleanup = require("jsdom-global/register")
-    delete XMLHttpRequest
+    delete global.XMLHttpRequest
 
     process.env.VUE_ENV = 'server'
 
