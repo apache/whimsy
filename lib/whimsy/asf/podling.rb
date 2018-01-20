@@ -384,7 +384,6 @@ module ASF
         [name, {issue: issue['key'], resolution: resolution}]
       end
 
-      Wunderbar.warn "ASF::Podling.namesearch: " + 'return OK'
       issues.compact.sort_by(&:first).to_h
     end
 
