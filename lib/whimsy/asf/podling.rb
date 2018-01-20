@@ -355,7 +355,9 @@ module ASF
             'maxResults=1000&' +
             'jql=project=PODLINGNAMESEARCH&fields=summary,resolution,customfield_12310520'
         begin
-          File.write cache, Net::HTTP.get(URI(query))
+          res = Net::HTTP.get_response(URI(query))
+          res.value() # Raises error if not OK
+          File.write cache, res.body
         rescue => e
           Wunderbar.warn "ASF::Podling.namesearch: " + e.message
         end
@@ -382,6 +384,7 @@ module ASF
         [name, {issue: issue['key'], resolution: resolution}]
       end
 
+      Wunderbar.warn "ASF::Podling.namesearch: " + 'return OK'
       issues.compact.sort_by(&:first).to_h
     end
 
