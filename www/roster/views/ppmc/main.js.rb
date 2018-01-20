@@ -198,7 +198,10 @@ class PPMC < Vue
       end unless @ppmc.namesearch
       _li do
         _a @ppmc.display_name + ' Website', href: @ppmc.podlingStatus.website
-      end
+      end if @ppmc.podlingStatus.website
+      _li.podlingWarning do
+        _  'Website not defined'
+      end unless @ppmc.podlingStatus.website
     end
     _h3 'News' unless @ppmc.podlingStatus.news.empty?
     _ul do
