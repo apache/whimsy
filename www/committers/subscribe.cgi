@@ -122,7 +122,7 @@ _html do
       _form method: 'post' do
         _input type: 'hidden', name: 'request', value: 'unsub'
         _fieldset do
-          _legend 'Unsubscribe Request:'
+          _legend 'Unsubscribe Request: (choose the list first)'
           _label 'Unsubscribe'
           _select.uaddr! name: 'addr' do
             addrs.each do |addr|
