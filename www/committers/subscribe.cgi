@@ -55,14 +55,15 @@ _html do
       related: {
         'https://www.apache.org/foundation/mailinglists.html' => 'Apache Mailing List Info Page',
         'https://lists.apache.org' => 'Apache Mailing List Archives',
-        '/committers/moderationhelper.cgi' => 'Mailing List Moderation Helper'
+        '/committers/moderationhelper.cgi' => 'Mailing List Moderation Helper',
+        '/roster/committer/__self__' => 'Your details (including subscriptions)'
       },
       helpblock: -> {
         _ 'This page allows Apache committers to auto-subscribe to, and auto-unsubscribe from, various mailing lists.'
         _span.text_info 'Note:' 
         _ 'Only your registered email address(es) are listed here. To change your email addresses, login to '
         _a 'https://id.apache.org/', href: "https://id.apache.org/details/#{$USER}"
-        _ 'to add or remove forwarding or alternate addresses.'
+        _ 'to add or remove forwarding or alternate (alias) addresses.'
       }
     ) do
       
