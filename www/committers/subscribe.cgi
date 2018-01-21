@@ -85,14 +85,8 @@ _html do
         _input type: 'hidden', name: 'request', value: 'sub'
         _fieldset do
           _legend 'Subscribe Request:'
-          _label 'Subscribe'
-          _select name: 'addr' do
-            addrs.each do |addr|
-              _option addr
-            end
-          end
-          
-          _ 'to'
+
+          _label 'List name:'
           _select name: 'list', data_live_search: 'true' do
             _optgroup label: 'Foundation lists' do
               lists.find_all { |list| seen[list] == 0 }.each do |list|
@@ -112,6 +106,14 @@ _html do
               end
             end
           end
+
+          _label 'Email:'
+          _select name: 'addr' do
+            addrs.each do |addr|
+              _option addr
+            end
+          end
+
           _input type: 'submit', value: 'Submit Request'
         end
       end
@@ -123,15 +125,9 @@ _html do
       _form method: 'post' do
         _input type: 'hidden', name: 'request', value: 'unsub'
         _fieldset do
-          _legend 'Unsubscribe Request: (choose the list first)'
-          _label 'Unsubscribe'
-          _select.uaddr! name: 'addr' do
-            addrs.each do |addr|
-              _option addr
-            end
-          end
-          _ 'from'
+          _legend 'Unsubscribe Request:'
 
+          _label 'List name:'
           # collect subscriptions
           response = {}
           ASF::MLIST.subscriptions(user.all_mail, response)
@@ -162,6 +158,13 @@ _html do
                 next unless subscriptions.include? list
                 _option list, data_emails: subscriptions[list].join(' ')
               end
+            end
+          end
+
+          _label 'Email:'
+          _select.uaddr! name: 'addr' do
+            addrs.each do |addr|
+              _option addr
             end
           end
 
@@ -276,7 +279,7 @@ _html do
         $('#uaddr option').each(function() {
           if (emails.indexOf($(this).text()) == -1) {
             this.disabled = true;
-            if (this.textContent == oldval) oldval = nil;
+            if (this.textContent == oldval) oldval = null;
           } else {
             this.disabled = false;
             newval = newval || this.textContent;
