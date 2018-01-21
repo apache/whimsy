@@ -5,6 +5,7 @@
 require 'wunderbar/sinatra'
 require 'wunderbar/bootstrap'
 require 'wunderbar/vue'
+require 'ruby2js/es2017/strict'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 require 'erb'
