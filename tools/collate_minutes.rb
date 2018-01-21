@@ -110,6 +110,7 @@ if File.exist? local_copy
 else
   Wunderbar.info "Fetching remote copy of committee-info.json"
   response = Net::HTTP.get_response(URI(DATAURI))
+  response.value() # Raises error if not OK
   cinfo = JSON.parse(response.body)
 end
 
