@@ -20,6 +20,8 @@ conf.sub! 'ServerName whimsy.apache.org', 'ServerName whimsy.local'
 conf.gsub! /(\A|\n)\s*RemoteIPHeader.*/, ''
 
 conf.gsub! /\n\s*PassengerDefault.*/, ''
+conf.gsub! /\n\s*PassengerUser.*/, ''
+conf.gsub! /\n\s*PassengerGroup.*/, ''
 
 conf.gsub! /\n\s*SSL.*/, ''
 conf.gsub! /\n\s*## SSL.*/, ''
