@@ -88,7 +88,7 @@ class Wunderbar::HtmlMarkup
     _div.footer.container_fluid style: 'background-color: #f5f5f5; padding: 10px;' do
       _p.center do
         # &copy; and &reg; don't work here for cgi scripts - see WHIMSY-146
-        _{"Copyright \u00A9 2017, the Apache Software Foundation. Licensed under the "}
+        _{"Copyright \u00A9 #{Date.today.year}, the Apache Software Foundation. Licensed under the "}
         _a 'Apache License, Version 2.0', rel: 'license', href: 'http://www.apache.org/licenses/LICENSE-2.0'
         _ ' | '
         _a 'Privacy Policy', href: 'https://www.apache.org/foundation/policies/privacy'
