@@ -316,6 +316,12 @@ sudo launchctl unload /System/Library/LaunchDaemons/org.apache.httpd.plist
 sudo launchctl load -w /Library/LaunchDaemons/org.apache.httpd.plist
 ```
 
+N.B. Because of System Integrity Protection (SIP), it's not possible to edit files under /System.
+So the change is made to a copy. 
+However the original location is baked into apachectl which is also protected by SIP.
+This means apachectl ignores the change.
+A work-round for this is to create an updated copy of apachectl somewhere further up the path.
+ 
 Configure whimsy.local vhost
 ----------------------------
 
