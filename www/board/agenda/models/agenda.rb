@@ -130,6 +130,7 @@ class Agenda
 
   # update agenda file in SVN
   def self.update(file, message, retries=20, &block)
+    return unless block
     commit_rc = 0
 
     # Create a temporary work directory
@@ -205,6 +206,6 @@ class Agenda
     end
 
   ensure
-    FileUtils.rm_rf dir
+    FileUtils.rm_rf dir if dir
   end
 end
