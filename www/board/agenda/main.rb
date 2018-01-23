@@ -10,6 +10,8 @@ require 'whimsy/asf/board'
 require 'wunderbar/sinatra'
 require 'wunderbar/vue'
 require 'wunderbar/bootstrap/theme'
+require 'ruby2js/es2015'
+require 'ruby2js/strict'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 

@@ -12,8 +12,8 @@ else
 end
 
 gem 'rake'
-gem 'wunderbar'
-gem 'ruby2js'
+gem 'wunderbar', path: '/Users/rubys/git/wunderbar'
+gem 'ruby2js', path: '/Users/rubys/git/ruby2js'
 gem 'sinatra', '~> 2.0'
 gem 'nokogumbo'
 gem 'execjs', ('<2.5.1' if RUBY_VERSION =~ /^1/)
@@ -36,7 +36,7 @@ group :test do
   gem 'rspec'
   gem 'puma'
   gem 'capybara'
-  gem 'poltergeist'
+  gem 'selenium-webdriver'
 end
 
 group :development do
