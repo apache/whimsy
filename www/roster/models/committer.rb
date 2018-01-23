@@ -160,16 +160,21 @@ class Committer
     auth = Auth.info(env)
     if env.user == id or auth[:root] or auth[:secretary]
       require 'whimsy/asf/mlist'
-      ASF::MLIST.subscriptions(person.all_mail, response)
+      ASF::MLIST.subscriptions(person.all_mail, response) # updates response[:subscriptions]
       # (Does not update the response if the digest info is not available)
       ASF::MLIST.digests(person.all_mail, response)
       # Check for missing private@ subscriptions
       response[:privateNosub] = []
-      response[:chairOf] = []
-      response[:committees].each do |cttee|
-        pmc = ASF::Committee.find(cttee)
-        chairs = pmc.chairs.map {|x| x[:id]}
-        response[:chairOf] << cttee if chairs.include?(id) 
+    end
+
+    # chair info is public, so let everyone see it
+    response[:chairOf] = []
+    response[:committees].each do |cttee|
+      pmc = ASF::Committee.find(cttee)
+      chairs = pmc.chairs.map {|x| x[:id]}
+      response[:chairOf] << cttee if chairs.include?(id)
+      # mailing list info is not public ...
+      if response[:subscriptions] # did we get access to the mail?
         pmail = "private@#{pmc.mail_list}.apache.org" rescue ''
         subbed = false
         response[:subscriptions].each do |sub|
