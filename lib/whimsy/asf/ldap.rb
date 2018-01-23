@@ -45,14 +45,14 @@ module ASF
 
   module LDAP
      # Derived from the following sources:
-     # * https://www.pingmybox.com/dashboard?location=304
      # * https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
-     # Updated 2017-08-01
+     # Updated 2018-01-23
     HOSTS = %w(
-      ldaps://themis.apache.org:636
-      ldaps://ldap1-lw-us.apache.org:636
-      ldaps://ldap1-lw-eu.apache.org:636
-      ldaps://devops.apache.org:636
+      ldap1-lw-us.apache.org:636
+      ldap1-lw-eu.apache.org:636
+      ldap1-ec2-va.apache.org:636
+      ldap1-il-eu.apache.org:636
+      ldap2-lw-us.apache.org:636
     )
 
     # Mutex preventing simultaneous connections to LDAP from a single process
