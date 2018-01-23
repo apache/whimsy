@@ -10,7 +10,12 @@ _html do
 
   _div_.main!
 
-  _script src: "../app.js?#{@appmtime}", lang: 'text/javascript'
+  # force es5 for non-test visitors.  Visitors using browsers that support
+  # ServiceWorkers will receive es2017 versions of the script via
+  # views/bootstrap.html.erb.
+  app = (ENV['RACK_ENV'] == 'test' ? 'app' : 'app-es5')
+  _script src: "../#{app}.js?#{@appmtime}", lang: 'text/javascript'
+
   _.render '#main' do
     _Main server: @server, page: @page
   end
