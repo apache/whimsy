@@ -54,7 +54,7 @@ application.  They can also intercept requests to the server, and have caches.
 The board agenda tool will start a service worker when it detects that it is
 being run from whimsy-test.apache.org.  It will intercept load requests to any
 agenda page and substitute a response of a blank page, leveraging the ability of
-React.js to update pages dynamically.  It will then update that page twice:
+Vue.js to update pages dynamically.  It will then update that page twice:
 once with a cache of the last known state of the agenda, and then a second
 time with current data fetched from the server.
 

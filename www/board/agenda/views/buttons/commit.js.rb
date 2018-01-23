@@ -107,7 +107,7 @@ class Commit < Vue
       Pending.load response.pending
       @disabled = false
 
-      # delay jQuery updates to give React a chance to make updates first
+      # delay jQuery updates to give Vue a chance to make updates first
       setTimeout 300 do
         jQuery('#commit-form').modal(:hide)
         document.body.classList.remove('modal-open')

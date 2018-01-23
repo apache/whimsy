@@ -290,7 +290,7 @@ Now onto the tests:
   * [spec/forms_spec.rb](spec/forms_spec.rb) shows how client side logic
     (expressed in Ruby, but compiled to JavaScript) can be tested.  It does so
     by setting up a http server (the code for which is in
-    [spec/react_server.rb](spec/react_server.rb)) which runs arbitrary scripts
+    [spec/vue_server.rb](spec/vue_server.rb)) which runs arbitrary scripts
     and returns the results as HTML.  This approach excels at testing a Vue
     component.
 
