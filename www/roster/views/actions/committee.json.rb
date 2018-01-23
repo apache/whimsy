@@ -7,11 +7,11 @@ if env.password
     people = @ids.split(',').map {|id| ASF::Person.find(id)}
   else
     people = @ids.split(',').map {|id| ASF::Person[id]}
-    raise ArgumentError.new("ids=#{@ids}") if people.any? {|person| person.nil?}
+    raise ArgumentError.new("One or more null entries found: '#{@ids}'") if people.any? {|person| person.nil?}
   end
 
   # Don't allow empty list
-  raise ArgumentError.new("ids='#{@ids}'") unless people.length > 0
+  raise ArgumentError.new("No valid entries found: '#{@ids}'") unless people.length > 0
 
   raise ArgumentError.new("project=#{@project}") unless pmc
 
