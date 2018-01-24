@@ -114,7 +114,24 @@ class PMC < Vue
                 _a list_name, href: 'https://lists.apache.org/list.html?' +
                   list_name
               end
-              _td @committee.moderators[list_name].join(', ')
+              _td do
+                sep=''
+                @committee.moderators[list_name].each { |mod|
+                  _ sep
+                  id=nil
+                  if mod.end_with? '@apache.org'
+                    id=mod.sub(/@a.*/,'')
+                  else
+                    id = @committee.nonASFmails[mod]
+                  end
+                  if id
+                    _a mod, href: "committer/#{id}"
+                  else
+                    _ mod
+                  end
+                  sep=', '
+                }
+              end
             end
           end
         end

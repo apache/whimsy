@@ -74,7 +74,10 @@ class Committee
     # separate out the known ASF members and extract any matching committer details
     unknownSubs = []
     asfMembers = []
-    if unMatchedSubs.length > 0
+    # Also look for non-ASF mod emails
+    nonASFmails=Hash.new
+    moderators.each { |list,mods| mods.each {|m| nonASFmails[m]='' unless m.end_with? '@apache.org'} }
+    if unMatchedSubs.length > 0 or nonASFmails.length > 0
       load_emails # set up @people
       unMatchedSubs.each{ |addr|
         who = nil
@@ -91,6 +94,13 @@ class Committee
           end
         else
           unknownSubs << { addr: addr, person: nil }
+        end
+      }
+      nonASFmails.each {|k,v|
+        @people.each do |person|
+          if person[:mail].any? {|mail| mail.downcase == k.downcase}
+            nonASFmails[k] = person[:id]
+          end
         end
       }
     end
@@ -111,6 +121,7 @@ class Committee
       mail: Hash[lists.sort],
       moderators: moderators,
       modtime: modtime,
+      nonASFmails: nonASFmails,
       project_info: info,
       image: image,
       guinea_pig: ASF::Committee::GUINEAPIGS.include?(id),

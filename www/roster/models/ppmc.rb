@@ -9,10 +9,22 @@ class PPMC
       list =~ /^(incubator-)?#{ppmc.mail_list}\b/
     end
 
+    # Also look for non-ASF mod emails
+    nonASFmails=Hash.new
+
     user = ASF::Person.find(env.user)
     if user.asf_member? or ppmc.members.include? user
       require 'whimsy/asf/mlist'
       moderators, modtime = ASF::MLIST.list_moderators(ppmc.mail_list, true)
+      load_emails # set up @people
+      moderators.each { |list,mods| mods.each {|m| nonASFmails[m]='' unless m.end_with? '@apache.org'} }
+      nonASFmails.each {|k,v|
+        @people.each do |person|
+          if person[:mail].any? {|mail| mail.downcase == k.downcase}
+            nonASFmails[k] = person[:id]
+          end
+        end
+      }
     else
       lists = lists.select {|list, mode| mode == 'public'}
     end
@@ -60,6 +72,7 @@ class PPMC
       mail: Hash[lists.sort],
       moderators: moderators,
       modtime: modtime,
+      nonASFmails: nonASFmails,
       duration: ppmc.duration,
       podlingStatus: statusInfo,
       namesearch: ppmc.namesearch,
@@ -67,4 +80,29 @@ class PPMC
 
     response
   end
+
+  private
+
+  def self.load_emails
+    # recompute index if the data is 5 minutes old or older
+    @people = nil if not @people_time or Time.now-@people_time >= 300
+  
+    if not @people
+      # bulk loading the mail information makes things go faster
+      mail = Hash[ASF::Mail.list.group_by(&:last).
+        map {|person, list| [person, list.map(&:first)]}]
+  
+      # build a list of people, their public-names, and email addresses
+      @people = ASF::Person.list.map {|person|
+        result = {id: person.id, name: person.public_name, mail: mail[person]}
+        result[:member] = true if person.asf_member?
+        result
+      }
+  
+      # cache
+      @people_time = Time.now
+    end
+    @people
+  end
+
 end
