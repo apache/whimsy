@@ -9,6 +9,7 @@ require 'wunderbar/vue'
 require 'wunderbar/bootstrap/theme'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
+require 'json'
 
 disable :logging # suppress log of requests to stderr/error.log
 
@@ -34,7 +35,28 @@ helpers do
       'pmcmail' => mailList
     }
   end
+  def loadProgress(token)
+    if @token
+      # read the file corresponging to the token
+      # the file name is '/srv/<token>.json
+      @filename = '/srv/icla/' + token + '.json'
+      begin
+        @progress = JSON.parse(File.read(@filename))
+      rescue SystemCallError => e
+        @progress = {
+          phase: 'error', errorMessage: e.message, errorCode: e.errno
+        }
+      rescue JSON::ParserError => e
+        @progress = {
+          phase: 'error', errorMessage: e.message, errorCode: 999
+        }
+      end
+    end
+  end
 end
+
+@phase = ''
+@progress = ''
 
 #
 # Sinatra routes
@@ -42,7 +64,16 @@ end
 
 
 get '/' do
-  redirect to('/invite')
+  @token = params['token']
+  @progress = loadProgress(@token) if @token
+  @phase = @progress[:phase] if @progress
+  if @phase == 'discuss'
+    redirect to("/discuss?token=" + @token)
+  elsif @phase == 'vote'
+    redirect to("/vote?token=" + @token)
+  else
+    redirect to("/invite")
+  end
 end
 
 get '/invite' do
@@ -65,74 +96,40 @@ end
 
 get '/discuss' do
   @view = 'discuss'
-  @user = env.user
-
-  # get a complete list of PMC and PPMC names and mail lists
-  projects = projectsForUser(env.user)
 
   # server data sent to client
-  @token = params['token']
   @debug = params['debug']
+  @user = env.user
+  @token = params['token']
+  @progress = loadProgress(@token) if @token
 
   # not needed for this form but required for other forms
   @pmcs = []
   @ppmcs = []
   @pmc_mail = {}
 
-  # mocked for testing
-  @proposer = 'shane'
-  @contributor = {
-    project: 'whimsy',
-    name: 'Joe Blow',
-    email: 'joe@blow.com'
-  }
-  @subject = '[DISCUSS] Invite Joe Blow to become committer '\
-  'and PMC member for whimsy'
-  comment1 = {member: 'sebb', timestamp: '11/30/2017 15:30:00',
-    comment: "Seems like a good enough guy"}
-  comment2 = {member: 'rubys', timestamp: '12/04/2017 17:20:00',
-    comment: "I agree"}
-  comment3 = {member: 'clr', timestamp: '12/06/2017 10:14:00',
-    comment: "We could do better\nMuch better"}
-  @comments = [comment1, comment2, comment3]
+  @cssmtime = File.mtime('public/css/icla.css').to_i
+  @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
 
   _html :app
 end
 
 get '/vote' do
   @view = 'vote'
-  @user = env.user
 
-  # server data sent to client
-  @token = params['token']
+# server data sent to client
   @debug = params['debug']
+  @user = env.user
+  @token = params['token']
+  @progress = loadProgress(@token) if @token
 
   # not needed for this form but required for other forms
   @pmcs = []
   @ppmcs = []
   @pmc_mail = {}
 
-  # mocked for testing
-  @proposer = 'shane'
-  @contributor = {
-    project: 'whimsy',
-    name: 'Joe Blow',
-    email: 'joe@blow.com'
-  }
-  @subject = '[VOTE] Invite Joe Blow to become committer '\
-  'and PMC member for whimsy'
-  comment1 = {member: 'sebb', timestamp: '11/30/2017 15:30:00',
-    comment: "Seems like a good enough guy"}
-  comment2 = {member: 'rubys', timestamp: '12/04/2017 17:20:00',
-    comment: "I agree"}
-  comment3 = {member: 'clr', timestamp: '12/06/2017 10:14:00',
-    comment: "We could do better\nMuch better"}
-  @comments = [comment1, comment2, comment3]
-
-  vote1 = {vote: '+1', member: 'sebb', timestamp: '12/19/2017 15:30:00'}
-  vote2 = {vote: '+1', member: 'clr', timestamp: '12/20/2017 14:20:00'}
-  vote3 = {vote: '+1', member: 'rubys', timestamp: '12/22/2017 10:33:00'}
-  @votes = [vote1, vote2, vote3]
+  @cssmtime = File.mtime('public/css/icla.css').to_i
+  @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
 
   _html :app
 end

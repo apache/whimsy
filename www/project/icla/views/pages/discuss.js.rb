@@ -5,15 +5,29 @@ class Discuss < Vue
 
     # initialize form fields
     @user = Server.data.user
-    @proposer = Server.data.proposer
-    @pmc = Server.data.contributor[:project]
-    @iclaname = Server.data.contributor[:name]
-    @iclaemail = Server.data.contributor[:email]
+    console.log('discuss')
+    console.log('token: ' + Server.data.token)
+    console.log('user: ' + @user)
+    @progress = Server.data.progress
+    console.log('progress: ' + @progress.inspect)
+    @phase = @progress[:phase]
+    console.log('phase: ' + @phase)
+    if @phase == 'error'
+      @alert = @progress[:errorMessage]
+    elsif @phase != 'discuss'
+      @alert = "Wrong phase: " + @phase + "; should be discuss"
+    else
+    @pmc = @progress[:project]
+    @proposer = @progress[:proposer]
+    @contributor = @progress[:contributor]
+    @iclaname = @contributor[:name]
+    @iclaemail = @contributor[:email]
     @token = Server.data.token
-    @comments = Server.data.comments
+    @comments = @progress[:comments]
     @discussBody = ''
-    @subject = Server.data.subject
-    @debug = false;
+    @subject = @progress[:subject]
+    @debug = Server.data.debug
+    end
 
   end
 
@@ -22,57 +36,59 @@ class Discuss < Vue
       This form allows PMC and PPMC members to
       discuss contributors to achieve consensus.
     }
-    _b "Project: " + @pmc
-    _p
-    _b "Contributor: " + @iclaname + " (" + @iclaemail + ")"
-    _p
-    _b "Proposed by: " + @proposer
-    _p
-    _p "Subject: " + @subject
-    _p
-    #
-    # Form fields
-    #
-    _div.form_group do
-      _label "Comment from " + @user, for: 'discussBody'
-      _textarea.form_control rows: 4,
-      required: true, placeholder: 'new comment',
-      id: 'discussBody', value: @discussBody,
-      onChange: self.setDiscussBody
+    if @phase == 'discuss'
+      _b "Project: " + @pmc
+      _p
+      _b "Contributor: " + @iclaname + " (" + @iclaemail + ")"
+      _p
+      _b "Proposed by: " + @proposer
+      _p
+      _p "Subject: " + @subject
+      _p
+      #
+      # Form fields
+      #
+      _div.form_group do
+        _label "Comment from " + @user, for: 'discussBody'
+        _textarea.form_control rows: 4,
+        required: true, placeholder: 'new comment',
+        id: 'discussBody', value: @discussBody,
+        onChange: self.setDiscussBody
+      end
+      @comments.each {|c|
+        _b 'From: ' + c.member + ' Date: ' + c.timestamp
+        _p c.comment
+      }
+      #
+      # Submission buttons
+      #
+
+      _p do
+        _button.btn.btn_primary 'Submit comment and continue to discuss',
+        disabled: @disabled,
+        onClick: self.submitComment
+        _b ' or '
+        _button.btn.btn_primary 'Submit comment and start voting',
+        disabled: @disabled,
+        onClick: self.startVoting
+        _b ' or '
+        _button.btn.btn_primary 'Submit comment and invite contributor to submit ICLA',
+        disabled: @disabled,
+        onClick: self.invite
+      end
     end
-    @comments.each {|c|
-      _b 'From: ' + c.member + ' Date: ' + c.timestamp
-      _p c.comment
-    }
-if @debug
-    _p 'token: ' + @token
-    _p 'comment: ' + @discussBody
-end
+    if @debug
+      _p 'token: ' + @token.to_s
+      _p 'comment: ' + @discussBody.inspect
+      _p 'progress: ' + @progress.inspect
+    end
+
     # error messages
     if @alert
       _div.alert.alert_danger do
         _b 'Error: '
         _span @alert
       end
-    end
-
-
-    #
-    # Submission buttons
-    #
-
-    _p do
-      _button.btn.btn_primary 'Submit comment and continue to discuss',
-        disabled: @disabled,
-        onClick: self.submitComment
-      _b ' or '
-      _button.btn.btn_primary 'Submit comment and start voting',
-        disabled: @disabled,
-        onClick: self.startVoting
-      _b ' or '
-      _button.btn.btn_primary 'Submit comment and invite contributor to submit ICLA',
-        disabled: @disabled,
-        onClick: self.invite
     end
 
     #
@@ -121,7 +137,7 @@ end
 
   # when the form is initially loaded, set the focus on the discussBody field
   def mounted()
-    document.getElementById('discussBody').focus()
+    document.getElementById('discussBody').focus() if not @alert
   end
 
   #

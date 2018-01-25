@@ -5,19 +5,34 @@ class Vote < Vue
 
     # initialize form fields
     @user = Server.data.user
-    @proposer = Server.data.proposer
-    @pmc = Server.data.contributor[:project]
-    @iclaname = Server.data.contributor[:name]
-    @iclaemail = Server.data.contributor[:email]
+    console.log('vote')
+    #    console.log('time now: ' + Time.now.to_s)
+    console.log('token: ' + Server.data.token)
+    console.log('user: ' + @user)
+    @progress = Server.data.progress
+    console.log('progress: ' + @progress.inspect)
+    @phase = @progress[:phase]
+    console.log('phase: ' + @phase)
+    if @phase == 'error'
+      @alert = @progress[:errorMessage]
+    elsif @phase != 'vote'
+      @alert = "Wrong phase: " + @phase + "; should be vote"
+    else
+    @pmc = @progress[:project]
+    @proposer = @progress[:proposer]
+    @contributor = @progress[:contributor]
+    @iclaname = @contributor[:name]
+    @iclaemail = @contributor[:email]
     @token = Server.data.token
-    @comments = Server.data.comments
-    @votes = Server.data.votes
+    @comments = @progress[:comments]
+    @votes = @progress[:votes]
     @vote = ''
     @timestamp = ''
     @commentBody = ''
-    @subject = Server.data.subject
+    @subject = @progress[:subject]
     @showComment = false;
     @debug = Server.data.debug
+    end
   end
 
   def render
@@ -25,41 +40,85 @@ class Vote < Vue
       This form allows PMC and PPMC members to
       vote to invite a contributor to become a committer or a PMC/PPMC member.
     }
-    _b "Project: " + @pmc
-    _p
-    _b "Contributor: " + @iclaname + " (" + @iclaemail + ")"
-    _p
-    _b "Proposed by: " + @proposer
-    _p
-    _p "Subject: " + @subject
-    _p
-    _div.form_group.vote do
-      _label do
-        _input type: 'radio', name: 'vote', value: '+1',
-        onClick: -> {@vote = '+1'; @showComment = false; checkValidity()}
-        _span " +1 approve "
-      end
+    if @phase == 'vote'
+      _b "Project: " + @pmc
       _p
-      _label do
-        _input type: 'radio', name: 'vote', value: '+0',
-        onClick: -> {@vote = '+0'; @showComment = false; checkValidity()}
-        _span " +0 don't care "
-      end
+      _b "Contributor: " + @iclaname + " (" + @iclaemail + ")"
       _p
-      _label do
-        _input type: 'radio', name: 'vote', value: '-0',
-        onClick: -> {@vote = '-0'; @showComment = false; checkValidity()}
-        _span " -0 don't care "
-      end
+      _b "Proposed by: " + @proposer
       _p
-      _label do
-        _input type: 'radio', name: 'vote', value: '-1',
-        onClick: -> {@vote = '-1'; @showComment = true; checkValidity()}
-        _span " -1 disapprove, because... "
-      end
+      _p "Subject: " + @subject
       _p
+      _div.form_group.vote do
+        _label do
+          _input type: 'radio', name: 'vote', value: '+1',
+          onClick: -> {@vote = '+1'; @showComment = false; checkValidity()}
+          _span " +1 approve "
+        end
+        _p
+        _label do
+          _input type: 'radio', name: 'vote', value: '+0',
+          onClick: -> {@vote = '+0'; @showComment = false; checkValidity()}
+          _span " +0 don't care "
+        end
+        _p
+        _label do
+          _input type: 'radio', name: 'vote', value: '-0',
+          onClick: -> {@vote = '-0'; @showComment = false; checkValidity()}
+          _span " -0 don't care "
+        end
+        _p
+        _label do
+          _input type: 'radio', name: 'vote', value: '-1',
+          onClick: -> {@vote = '-1'; @showComment = true; checkValidity()}
+          _span " -1 disapprove, because... "
+        end
+        _p
+      end
+
+      #
+      # Form fields
+      #
+      if @showComment
+        _div.form_group do
+          _textarea.form_control rows: 4,
+          placeholder: 'reason to disapprove',
+          id: 'commentBody', value: @commentBody,
+          onChange: self.setCommentBody
+        end
+      end
+
+      # previous votes
+      @votes.each {|v|
+        _p v.vote + ' From: ' + v.member + ' Date: ' + v.timestamp
+      }
+
+      # previous comments
+      @comments.each {|c|
+        _b 'From: ' + c.member + ' Date: ' + c.timestamp
+        _p c.comment
+      }
+
+      #
+      # Submission buttons
+      #
+      _p do
+        _button.btn.btn_primary 'Submit my vote', disabled: @disabled,
+        onClick: self.submitVote
+        _b ' or '
+        _button.btn.btn_primary 'Cancel the vote', disabled: false,
+        onClick: self.cancelVote
+        _b ' or '
+        _button.btn.btn_primary 'Tally the vote', disabled: false,
+        onClick: self.tallyVote
+      end
     end
 
+    if @debug
+      _p 'token: ' + @token
+      _p 'comment: ' + @commentBody
+      _p 'vote: ' + @vote
+    end
     # error messages
     if @alert
       _div.alert.alert_danger do
@@ -68,46 +127,6 @@ class Vote < Vue
       end
     end
 
-    #
-    # Form fields
-    #
-    if @showComment
-      _div.form_group do
-        _textarea.form_control rows: 4,
-        placeholder: 'reason to disapprove',
-        id: 'commentBody', value: @commentBody,
-        onChange: self.setCommentBody
-      end
-    end
-
-    @votes.each {|v|
-      _p v.vote + ' From: ' + v.member + ' Date: ' + v.timestamp
-    }
-
-    @comments.each {|c|
-      _b 'From: ' + c.member + ' Date: ' + c.timestamp
-      _p c.comment
-    }
-
-    if @debug
-      _p 'token: ' + @token
-      _p 'comment: ' + @commentBody
-      _p 'vote: ' + @vote
-    end
-
-    #
-    # Submission buttons
-    #
-    _p do
-      _button.btn.btn_primary 'Submit my vote', disabled: @disabled,
-        onClick: self.submitVote
-      _b ' or '
-      _button.btn.btn_primary 'Cancel the vote', disabled: false,
-        onClick: self.cancelVote
-      _b ' or '
-      _button.btn.btn_primary 'Tally the vote', disabled: false,
-        onClick: self.tallyVote
-    end
 
     #
     # Hidden form: preview invite email
