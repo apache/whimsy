@@ -37,9 +37,10 @@ def Monitor.git(previous_status)
 
   # extract status for each repository
   updates.each do |update|
+    show 'update', update
     level = 'success'
     title = nil
-    data = revision = update[/^(Already up-to-date.|Updating [0-9a-f]+\.\.[0-9a-f]+)$/]
+    data = revision = update[/^(Already up-to-date.|Updating [0-9a-f]+\.\.[0-9a-f]+|HEAD is now at [0-9a-f]+.+)$/]
     title = update[SUMMARY_RE]
     show 'data', data
 
@@ -378,3 +379,13 @@ Fast-forward
  3 files changed, 10 insertions(+), 299 deletions(-)
  mode change 100644 => 100755 modules/subversion_server/files/authorization/check-auth-templates.pl
  delete mode 100755 modules/subversion_server/files/authorization/gen_asf-authorization.pl
+
+/x1/srv/git/infrastructure-puppet8
+Already on 'deployment'
+Your branch is up-to-date with 'origin/deployment'.
+HEAD is now at 4aafd69 Merge pull request #720 from rubys/rubys/noauth-source
+
+/x1/srv/git/letsencrypt8
+From https://github.com/letsencrypt/letsencrypt
+   e86bb7f..97ad9f9  plugin_storage -> origin/plugin_storage
+HEAD is now at a2239ba fix test_tests.sh (#5478)
