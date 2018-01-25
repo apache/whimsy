@@ -31,7 +31,7 @@ class PPMC < Vue
         if @ppmc.moderators
           _a 'Mail Moderators', :href => "ppmc/#{@ppmc.id}#mail"
         else
-          _a 'Mail List', :href => "ppmc/#{@ppmc.id}#mail"
+          _a 'Mail Lists', :href => "ppmc/#{@ppmc.id}#mail"
         end
       end
       _li role: "presentation" do
