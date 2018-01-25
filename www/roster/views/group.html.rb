@@ -18,7 +18,7 @@ _html do
       _div_.main!
     end
 
-    _script src: 'app.js'
+    _script src: "app.js?#{appmtime}"
     _.render '#main' do
       _Group group: @group, auth: @auth
     end

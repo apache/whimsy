@@ -31,6 +31,10 @@ helpers do
   def cssmtime
     File.mtime('public/stylesheets/app.css').to_i
   end
+  def appmtime
+    # TODO can this/should this be cached?
+    Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
+  end
 end
 
 get '/' do

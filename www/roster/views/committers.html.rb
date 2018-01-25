@@ -13,7 +13,7 @@ _html do
     }
   ) do
     _div_.main!
-    _script src: 'app.js'
+    _script src: "app.js?#{appmtime}"
     _.render '#main' do
       _CommitterSearch
     end
