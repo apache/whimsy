@@ -24,7 +24,11 @@ class PMC < Vue
         _a 'Committers', :href => "committee/#{@committee.id}#committers"
       end
       _li role: "presentation" do
-        _a 'Mail Moderators', :href => "committee/#{@committee.id}#mail"
+        if @committee.moderators
+          _a 'Mail Moderators', :href => "committee/#{@committee.id}#mail"
+        else
+          _a 'Mail Lists', :href => "committee/#{@committee.id}#mail"
+        end
       end
       _li role: "presentation" do
         _a 'Reporting Schedule', :href => "committee/#{@committee.id}#reporting"
