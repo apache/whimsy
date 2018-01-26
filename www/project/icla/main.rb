@@ -65,8 +65,8 @@ end
 
 get '/' do
   @token = params['token']
-  @progress = loadProgress(@token) if @token
-  @phase = @progress[:phase] if @progress
+  loadProgress(@token) if @token
+  @phase = @progress['phase'] if @progress
   if @phase == 'discuss'
     redirect to("/discuss?token=" + @token)
   elsif @phase == 'vote'
@@ -101,7 +101,7 @@ get '/discuss' do
   @debug = params['debug']
   @user = env.user
   @token = params['token']
-  @progress = loadProgress(@token) if @token
+  loadProgress(@token) if @token
 
   # not needed for this form but required for other forms
   @pmcs = []
@@ -121,7 +121,7 @@ get '/vote' do
   @debug = params['debug']
   @user = env.user
   @token = params['token']
-  @progress = loadProgress(@token) if @token
+  loadProgress(@token) if @token
 
   # not needed for this form but required for other forms
   @pmcs = []
