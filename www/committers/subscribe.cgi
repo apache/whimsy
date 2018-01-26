@@ -60,10 +60,16 @@ _html do
       },
       helpblock: -> {
         _ 'This page allows Apache committers to auto-subscribe to, and auto-unsubscribe from, various mailing lists.'
+        _br
         _span.text_info 'Note:' 
-        _ 'Only your registered email address(es) are listed here. To change your email addresses, login to '
+        _ 'Only your registered email address(es) are listed here.'
+        _br
+        _ 'To change your email addresses, login to '
         _a 'https://id.apache.org/', href: "https://id.apache.org/details/#{$USER}"
         _ 'to add or remove forwarding or alternate (alias) addresses.'
+        _p
+        _ 'Your existing subscriptions (and email addresses) can be found in your'
+        _a 'committer details', href: '/roster/committer/__self__'
       }
     ) do
       
