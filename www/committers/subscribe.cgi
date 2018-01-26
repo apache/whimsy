@@ -53,7 +53,7 @@ _html do
       title: PAGETITLE,
       subtitle: 'How To Subscribe',
       related: {
-        'https://www.apache.org/foundation/mailinglists.html' => 'Apache Mailing List Info Page',
+        'https://www.apache.org/foundation/mailinglists.html' => 'Apache Mailing List Info Page (describes manual subscription process)',
         'https://lists.apache.org' => 'Apache Mailing List Archives',
         '/committers/moderationhelper.cgi' => 'Mailing List Moderation Helper',
         '/roster/committer/__self__' => 'Your details (including subscriptions)'
