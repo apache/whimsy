@@ -319,7 +319,8 @@ _html do
 
                     # and commit the change ...
                     _h2 'Commit messages'
-                    rc = _.system ['/usr/bin/svn',
+                    # TODO replace with library method see WHIMSY-103
+                    rc = _.system ['svn',
                       ['--username', env.user, '--password', env.password],
                       'commit', "#{tmpdir}/new-account-reqs.txt",
                       '-m', "#{@user} account request by #{user.id} for #{requestor}"]
