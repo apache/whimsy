@@ -20,6 +20,7 @@ dist: trusty
 language: ruby
 rvm: # http://rubies.travis-ci.org/
   - 2.4.0 # https://github.com/travis-ci/travis-ci/issues/7848
+  - 2.5
 
 # add subversion on Linux
 addons:
@@ -30,6 +31,9 @@ addons:
 # install recent Node.js
 before_install:
   - nvm install 7
+
+  # Workaround for https://github.com/travis-ci/travis-ci/issues/8969
+  - gem update --system
 
 # configure ASF LDAP
 sudo: required
