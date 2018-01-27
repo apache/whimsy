@@ -87,7 +87,7 @@ Verify:
 ```
 $ gem list
 $ bundler -v
-Bundler version 1.14.6
+Bundler version 1.16.1
 ```
 
 Notes:
@@ -129,7 +129,7 @@ Many Whimsy modules use Apache's LDAP directory.  Install:
 
 ```
 $ cd <path-to-git-whimsy>
-$ sudo ruby -I whimsy/lib -r whimsy/asf -e "ASF::LDAP.configure"
+$ sudo ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"
 ```
 
 Verify:
