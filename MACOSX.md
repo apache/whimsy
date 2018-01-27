@@ -18,8 +18,8 @@ Verify using:
 
 ```
 $ brew --version
-Homebrew 1.2.0
-Homebrew/homebrew-core (git revision e8fa; last commit 2017-05-04)
+Homebrew 1.5.2
+Homebrew/homebrew-core (git revision 3244; last commit 2018-01-27)
 ```
 
 Upgrade Ruby
@@ -35,12 +35,11 @@ Verify:
 
 ```
 $ ruby -v
-ruby 2.4.1p111 (2017-03-22 revision 58053) [x86_64-darwin16]
+ruby 2.5.0p0 (2017-12-25 revision 61468) [x86_64-darwin17]
 ```
 
 If you don't see 2.3.1 or later, run `hash -r` and try again.  If you previously
-installed ruby via brew, you may need to run `brew upgrade ruby` instead.  If you use
-`rbenv` install via `rbenv install 2.4.1`
+installed ruby via brew, you may need to run `brew upgrade ruby` instead.  If you use `rbenv` install via `rbenv install 2.5.0`
 
 
 Upgrade Node.js
@@ -57,9 +56,9 @@ Verify:
 
 ```
 $ node -v
-v7.10.0
+v9.4.0
 $ npm -v
-4.2.0
+5.6.0
 ```
 
 If you don't see v6 or higher, run `hash -r` and try again.  If you previously
