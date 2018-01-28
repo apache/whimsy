@@ -56,7 +56,7 @@ helpers do
   def getMember(userId)
     user = ASF::Person.find(userId)
     mockId = params['mock']
-    if ASF::Person.find(mockId) != nil
+    if ASF::Person[mockId] != nil
       # if mock is set, set member to mock value
       return mockId
     else
@@ -67,7 +67,7 @@ end
 
 @phase = ''
 @progress = ''
-
+@extra = ''
 #
 # Sinatra routes
 #
@@ -75,12 +75,14 @@ end
 
 get '/' do
   @token = params['token']
+  @mock = params['mock']
+  @extra = "&mock=" + @mock if @mock
   loadProgress(@token) if @token
   @phase = @progress['phase'] if @progress
   if @phase == 'discuss'
-    redirect to("/discuss?token=" + @token)
+    redirect to("/discuss?token=" + @token + @extra)
   elsif @phase == 'vote'
-    redirect to("/vote?token=" + @token)
+    redirect to("/vote?token=" + @token + @extra)
   else
     redirect to("/invite")
   end
