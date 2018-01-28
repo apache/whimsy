@@ -53,6 +53,16 @@ helpers do
       end
     end
   end
+  def getMember(userId)
+    user = ASF::Person.find(userId)
+    mockId = params['mock']
+    if ASF::Person.find(mockId) != nil
+      # if mock is set, set member to mock value
+      return mockId
+    else
+     return userId
+    end
+  end
 end
 
 @phase = ''
@@ -79,10 +89,12 @@ end
 get '/invite' do
   @view = 'invite'
 
-  # get a complete list of PMC and PPMC names and mail lists
-  projects = projectsForUser(env.user)
 
   # server data sent to client
+  @user = env.user
+  @member = getMember(@user)
+  # get a complete list of PMC and PPMC names and mail lists
+  projects = projectsForUser(@member)
   @pmcs = projects['pmcs']
   @ppmcs = projects['ppmcs']
   @pmc_mail = projects['pmcmail']
@@ -100,6 +112,7 @@ get '/discuss' do
   # server data sent to client
   @debug = params['debug']
   @user = env.user
+  @member = getMember(@user)
   @token = params['token']
   loadProgress(@token) if @token
 
@@ -120,6 +133,7 @@ get '/vote' do
 # server data sent to client
   @debug = params['debug']
   @user = env.user
+  @member = getMember(@user)
   @token = params['token']
   loadProgress(@token) if @token
 

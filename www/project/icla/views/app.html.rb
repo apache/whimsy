@@ -374,7 +374,7 @@ _html lang: 'en', _width: '80' do
 
     _.render '#main' do
       _Main data: {pmcs: @pmcs, ppmcs: @ppmcs, pmc_mail: @pmc_mail,
-        token: @token, progress: @progress, user: @user,
+        token: @token, progress: @progress, user: @user, member: @member,
         debug: @debug},
         view: @view
     end

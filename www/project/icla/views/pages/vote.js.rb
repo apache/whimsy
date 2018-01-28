@@ -4,11 +4,10 @@ class Vote < Vue
     @alert = nil
 
     # initialize form fields
-    @user = Server.data.user
+    @member = Server.data.member
     console.log('vote')
-    #    console.log('time now: ' + Time.now.to_s)
     console.log('token: ' + Server.data.token)
-    console.log('user: ' + @user)
+    console.log('member: ' + @member)
     @progress = Server.data.progress
     console.log('progress: ' + @progress.inspect)
     @phase = @progress[:phase]
@@ -143,7 +142,7 @@ class Vote < Vue
             # headers
             _div do
               _b 'From: '
-              _span @userEmail
+              _span @memberEmail
             end
             _div do
               _b 'To: '
@@ -218,7 +217,7 @@ class Vote < Vue
     post 'validate', data do |response|
       @disabled = false
       @alert = response.error
-      @userEmail = response.userEmail
+      @memberEmail = response.memberEmail
       @pmcEmail = response.pmcEmail
       @invitation = response.invitation
       @token = response.token

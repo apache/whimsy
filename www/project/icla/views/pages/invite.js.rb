@@ -17,6 +17,7 @@ class Invite < Vue
     @previewMessage = 'Preview'
     @pmcOrPpmc = ''
     @phasePrefix = ''
+    @member = Server.data.member
 
 # initialize conditional text
     @showPMCVoteLink = false;
@@ -242,7 +243,7 @@ class Invite < Vue
             # headers
             _div do
               _b 'From: '
-              _span @userEmail
+              _span @memberEmail
             end
             _div do
               _b 'To: '
@@ -466,7 +467,7 @@ class Invite < Vue
     post 'validate', data do |response|
       @disabled = false
       @alert = response.error
-      @userEmail = response.userEmail
+      @memberEmail = response.memberEmail
       @pmcEmail = response.pmcEmail
       @invitation = response.invitation
       @token = response.token
@@ -487,7 +488,7 @@ class Invite < Vue
     post 'validate', data do |response|
       @disabled = false
       @alert = response.error
-      @userEmail = response.userEmail
+      @memberEmail = response.memberEmail
       @pmcEmail = response.pmcEmail
       @invitation = response.invitation
       @token = response.token
@@ -508,7 +509,7 @@ class Invite < Vue
     post 'validate', data do |response|
       @disabled = false
       @alert = response.error
-      @userEmail = response.userEmail
+      @memberEmail = response.memberEmail
       @pmcEmail = response.pmcEmail
       @invitation = response.invitation
       @token = response.token
