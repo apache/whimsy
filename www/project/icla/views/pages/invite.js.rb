@@ -18,6 +18,7 @@ class Invite < Vue
     @pmcOrPpmc = ''
     @phasePrefix = ''
     @member = Server.data.member
+    @pmc_mail = Server.data.pmc_mail
 
 # initialize conditional text
     @showPMCVoteLink = false;
@@ -32,8 +33,9 @@ class Invite < Vue
     @showVoteFrame = false;
     @showPhaseFrame = false;
     @showRoleFrame = false;
-    @discussBody = ''
+    @discussComment = ''
     @voteBody = ''
+    @bodyText = ''
   end
 
   def render
@@ -177,6 +179,8 @@ class Invite < Vue
           onClick: -> {@role = :committer;
             @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to become a committer for ' + @pmc
+            @bodyText = 'I propose to invite ' + @iclaname +
+              ' to become a committer.'
           }
           _span @phasePrefix +
             ' invite to become a committer'
@@ -187,6 +191,8 @@ class Invite < Vue
           onClick: -> {@role = :pmc;
             @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to become committer and ' + @pmcOrPPMC + ' member for ' + @pmc
+            @bodyText = 'I propose to invite ' + @iclaname +
+              ' to become a committer and ' + @pmcOrPPMC + ' member.'
           }
           _span @phasePrefix +
             ' invite to become a committer and ' + @pmcOrPPMC + ' member'
@@ -198,6 +204,8 @@ class Invite < Vue
             onClick: -> {@role = :invite;
               @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to submit an ICLA for ' + @pmc
+              @bodyText = 'I propose to invite ' + @iclaname +
+                ' to submit an ICLA.'
             }
             _span @phasePrefix +
               ' invite to submit an ICLA'
@@ -207,11 +215,16 @@ class Invite < Vue
       end
     end
     if @showDiscussFrame
+      _div 'From: ' + @member
+      _div 'To: private@' + @pmc_mail[@pmc] + '.apache.org'
       _div 'Subject: ' + @subject
+      _p
+      _span @bodyText
+      _p
       _textarea.form_control rows: 4,
-        placeholder: 'This is a discussion for the candidate',
-        name: 'discussBody', value: @discussBody,
-        onChange: self.setDiscussBody
+        placeholder: 'Here are my reasons:',
+        name: 'discussComment', value: @discussComment,
+        onChange: self.setdiscussComment
     end
     if @showVoteFrame
       _div 'Subject: ' + @subject
@@ -272,6 +285,41 @@ class Invite < Vue
     _p
 
   end
+  #
+  # Hidden form: preview discussion email
+  #
+  _div.modal.fade.discussion_preview! do
+    _div.modal_dialog do
+      _div.modal_content do
+        _div.modal_header do
+          _button.close "\u00d7", type: 'button', data_dismiss: 'modal'
+          _h4 'Preview Discussion Email'
+        end
+
+        _div.modal_body do
+          # headers
+          _div do
+            _b 'From: '
+            _span @member
+          end
+          _div do
+            _b 'To: '
+            _span @pmcEmail
+          end
+          _div do
+            _b
+            _span @message
+          end
+        end
+
+        _div.modal_footer do
+          _button.btn.btn_default 'Cancel', data_dismiss: 'modal'
+          _button.btn.btn_primary 'Mock Send', onClick: self.mockSend
+        end
+      end
+    end
+  end
+  _p
 
   # when the form is initially loaded, set the focus on the iclaname field
   def mounted()
@@ -322,8 +370,8 @@ class Invite < Vue
     @disabled = false;
   end
 
-  def setDiscussBody(event)
-    @discussBody = event.target.value
+  def setdiscussComment(event)
+    @discussComment = event.target.value
   end
 
   def selectVote(event)
@@ -480,20 +528,23 @@ class Invite < Vue
       iclaname: @iclaname,
       iclaemail: @iclaemail,
       pmc: @pmc,
-      discussBody: @discussBody
+      proposer: @member,
+      subject: @subject,
+      discussComment: @discussComment
     }
 
     @disabled = true
     @alert = nil
-    post 'validate', data do |response|
+    post 'discuss', data do |response|
       @disabled = false
       @alert = response.error
       @memberEmail = response.memberEmail
       @pmcEmail = response.pmcEmail
-      @invitation = response.invitation
+      @discussion = response.discussion
       @token = response.token
+      console.log(@token)
       document.getElementById(response.focus).focus() if response.focus
-      jQuery('#invitation-preview').modal(:show) unless @alert
+      jQuery('#discussion-preview').modal(:show) unless @alert
     end
   end
   def previewVote()
