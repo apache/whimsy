@@ -27,7 +27,7 @@ _html do
         "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code"
       },
       helpblock: -> {
-        _p "This www/test/test.cgi script shows a canonical way to write a simple whimsy tool that processes data and then displays it."
+        _p "This www/test/example.cgi script shows a canonical way to write a simple whimsy tool that processes data and then displays it."
         _p %{
           This helpblock appears at top left, and should explain to an end user what this script does for the user and why they might be interested.
           Any related whimsy or other (projects.a.o, etc.) links should be in the related: listing on the top right to help users find other useful things.
@@ -36,7 +36,7 @@ _html do
       },
       breadcrumbs: {
         dataflow: '/test/dataflow.cgi',
-        testscript: '/test/test.cgi'
+        testscript: '/test/example.cgi'
       }
     ) do
       # IF YOUR SCRIPT EMITS A LARGE TABLE
