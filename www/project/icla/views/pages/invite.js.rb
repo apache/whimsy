@@ -297,20 +297,16 @@ class Invite < Vue
 
           _div.modal_body do
             # headers
-            _div do
-              _b 'From: '
+            _div do _b 'From: '
               _span @member
             end
-            _div do
-              _b 'To: '
+            _div do _b 'To: '
               _span @pmcEmail
             end
-            _div do
-              _b 'Subject: '
+            _div do _b 'Subject: '
               _span @subject
             end
-            _div do
-              _b
+            _div do _b
               _pre @message
             end
           end
