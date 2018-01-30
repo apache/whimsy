@@ -104,8 +104,8 @@ module ASF
         file = "#{board}/committee-info.txt"
         return unless File.exist? file
 
-        if @committee_info and File.mtime(file) <= @committee_mtime
-          return @committee_info 
+        if @committee_mtime and File.mtime(file) <= @committee_mtime
+          return @committee_info  if @committee_info
         end
 
         @committee_mtime = File.mtime(file)
