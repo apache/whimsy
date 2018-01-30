@@ -23,7 +23,7 @@ class Vote < Vue
     @iclaname = @contributor[:name]
     @iclaemail = @contributor[:email]
     @token = Server.data.token
-    @comments = @progress[:comments]
+    @comments = @progress[:comments] ? @progress[:comments]: []
     @votes = @progress[:votes]
     @vote = ''
     @timestamp = ''

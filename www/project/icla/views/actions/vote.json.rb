@@ -23,18 +23,18 @@ rescue
   _error 'Invalid domain name in email address'
   _focus :iclaemail
 end
-# create the discussion object
+# create the vote object
 date = Time.now.to_date.to_s
 contributor = {:name => @iclaname, :email => @iclaemail}
-comment = @proposalText + "\n" + @discussComment
-comments = [{:member => @proposer, :timestamp => date, :comment => comment}]
+comment = @proposalText + "\n" + @voteComment
+votes = [{:vote =>'+1', :member => @proposer, :timestamp => date, :comment => comment}]
 discussion = {
-  :phase => 'discuss',
+  :phase => 'vote',
   :proposer => @proposer,
   :subject => @subject,
   :project => @pmc,
   :contributor => contributor,
-  :comments => comments
+  :votes => votes
 }
 
   # generate a token
@@ -60,7 +60,7 @@ _token token
 _subject params['subject']
 _discussion discussion
 _message %{#{comment}
-Use this link to continue the discussion:
+Use this link to vote:
 
 #{link}
 }

@@ -34,8 +34,9 @@ class Invite < Vue
     @showPhaseFrame = false;
     @showRoleFrame = false;
     @discussComment = ''
-    @voteBody = ''
+    @voteComment = ''
     @proposalText = ''
+    @voteProposalText = ''
   end
 
   def render
@@ -181,6 +182,7 @@ class Invite < Vue
               ' to become a committer for ' + @pmc
             @proposalText = 'I propose to invite ' + @iclaname +
               ' to become a committer.'
+            @voteProposalText = @proposalText + ' Here is my +1.'
           }
           _span @phasePrefix +
             ' invite to become a committer'
@@ -193,6 +195,7 @@ class Invite < Vue
               ' to become committer and ' + @pmcOrPPMC + ' member for ' + @pmc
             @proposalText = 'I propose to invite ' + @iclaname +
               ' to become a committer and ' + @pmcOrPPMC + ' member.'
+            @voteProposalText = @proposalText + ' Here is my +1.'
           }
           _span @phasePrefix +
             ' invite to become a committer and ' + @pmcOrPPMC + ' member'
@@ -227,11 +230,16 @@ class Invite < Vue
         onChange: self.setdiscussComment
     end
     if @showVoteFrame
+      _div 'From: ' + @member
+      _div 'To: private@' + @pmc_mail[@pmc] + '.apache.org'
       _div 'Subject: ' + @subject
+      _p
+      _span @voteProposalText
+      _p
       _textarea.form_control rows: 4,
-      placeholder: 'This is a vote for the candidate. Here is my +1',
-      name: 'voteBody', value: @voteBody,
-      onChange: self.setVoteBody
+      placeholder: 'Here are my reasons:',
+      name: 'voteComment', value: @voteComment,
+      onChange: self.setvoteComment
     end
 
     #
@@ -319,6 +327,41 @@ class Invite < Vue
     end
     _p
 
+    #
+    # Hidden form: preview vote email
+    #
+    _div.modal.fade.vote_preview! do
+      _div.modal_dialog do
+        _div.modal_content do
+          _div.modal_header do
+            _button.close "\u00d7", type: 'button', data_dismiss: 'modal'
+            _h4 'Vote Email'
+          end
+
+          _div.modal_body do
+            # headers
+            _div do _b 'From: '
+              _span @member
+            end
+            _div do _b 'To: '
+              _span @pmcEmail
+            end
+            _div do _b 'Subject: '
+              _span @subject
+            end
+            _div do _b
+              _pre @message
+            end
+          end
+
+          _div.modal_footer do
+            _button.btn.btn_default 'Close', data_dismiss: 'modal'
+          end
+        end
+      end
+    end
+    _p
+
   end
   # when the form is initially loaded, set the focus on the iclaname field
   def mounted()
@@ -354,7 +397,7 @@ class Invite < Vue
     @phase = :discuss
     @subject = ''
     @subjectPhase = '[DISCUSS]'
-    @previewMessage = 'Start Discussion'
+    @previewMessage = 'Start the Discussion'
     @phasePrefix = ' Start the discussion to'
     @showDiscussFrame = true;
     @showRoleFrame = true;
@@ -377,7 +420,7 @@ class Invite < Vue
     @phase = :vote
     @subject = ''
     @subjectPhase = '[VOTE]'
-    @previewMessage = 'Preview Vote'
+    @previewMessage = 'Start the Vote'
     @phasePrefix = ' Start the vote to'
     @showVoteFrame = true;
     @showRoleFrame = true;
@@ -392,8 +435,8 @@ class Invite < Vue
     @disabled = false;
   end
 
-  def setVoteBody(event)
-    @voteBody = event.target.value
+  def setvoteComment(event)
+    @voteComment = event.target.value
   end
 
   def selectInvite(event)
@@ -552,20 +595,25 @@ class Invite < Vue
       iclaname: @iclaname,
       iclaemail: @iclaemail,
       pmc: @pmc,
-      voteBody: @voteBody
+      proposer: @member,
+      subject: @subject,
+      proposalText: @voteProposalText,
+      voteComment: @voteComment,
+      voteComment: @voteComment
     }
 
     @disabled = true
     @alert = nil
-    post 'validate', data do |response|
+    post 'vote', data do |response|
+      console.log(response.inspect)
       @disabled = false
       @alert = response.error
       @memberEmail = response.memberEmail
       @pmcEmail = response.pmcEmail
-      @invitation = response.invitation
       @token = response.token
+      @message = response.message
       document.getElementById(response.focus).focus() if response.focus
-      jQuery('#invitation-preview').modal(:show) unless @alert
+      jQuery('#vote-preview').modal(:show) unless @alert
     end
   end
 
