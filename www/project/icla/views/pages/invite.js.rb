@@ -35,7 +35,7 @@ class Invite < Vue
     @showRoleFrame = false;
     @discussComment = ''
     @voteBody = ''
-    @bodyText = ''
+    @proposalText = ''
   end
 
   def render
@@ -72,19 +72,19 @@ class Invite < Vue
     #
 
     _div.form_group do
-      _label "Contributor's name:", for: 'iclaname'
+      _label "Contributor's name (required):", for: 'iclaname'
       _input.form_control.iclaname! placeholder: 'GivenName FamilyName',
         required: true, value: @iclaname
     end
     _div.form_group do
-      _label "Contributor's E-Mail address:", for: 'iclaemail'
+      _label "Contributor's E-Mail address (required):", for: 'iclaemail'
       _input.form_control.iclaemail! type: 'email', required: true,
         placeholder: 'user@example.com', onChange: self.setIclaEmail,
         value: @iclaemail
     end
 
     _div.form_group do
-      _label "PMC/PPMC", for: 'pmc'
+      _label "PMC/PPMC (required)", for: 'pmc'
       _select.form_control.pmc! required: true, onChange: self.setPMC, value: @pmc do
         _option ''
         Server.data.pmcs.each do |pmc|
@@ -179,7 +179,7 @@ class Invite < Vue
           onClick: -> {@role = :committer;
             @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to become a committer for ' + @pmc
-            @bodyText = 'I propose to invite ' + @iclaname +
+            @proposalText = 'I propose to invite ' + @iclaname +
               ' to become a committer.'
           }
           _span @phasePrefix +
@@ -191,7 +191,7 @@ class Invite < Vue
           onClick: -> {@role = :pmc;
             @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to become committer and ' + @pmcOrPPMC + ' member for ' + @pmc
-            @bodyText = 'I propose to invite ' + @iclaname +
+            @proposalText = 'I propose to invite ' + @iclaname +
               ' to become a committer and ' + @pmcOrPPMC + ' member.'
           }
           _span @phasePrefix +
@@ -204,7 +204,7 @@ class Invite < Vue
             onClick: -> {@role = :invite;
               @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to submit an ICLA for ' + @pmc
-              @bodyText = 'I propose to invite ' + @iclaname +
+              @proposalText = 'I propose to invite ' + @iclaname +
                 ' to submit an ICLA.'
             }
             _span @phasePrefix +
@@ -219,7 +219,7 @@ class Invite < Vue
       _div 'To: private@' + @pmc_mail[@pmc] + '.apache.org'
       _div 'Subject: ' + @subject
       _p
-      _span @bodyText
+      _span @proposalText
       _p
       _textarea.form_control rows: 4,
         placeholder: 'Here are my reasons:',
@@ -284,43 +284,46 @@ class Invite < Vue
     end
     _p
 
-  end
-  #
-  # Hidden form: preview discussion email
-  #
-  _div.modal.fade.discussion_preview! do
-    _div.modal_dialog do
-      _div.modal_content do
-        _div.modal_header do
-          _button.close "\u00d7", type: 'button', data_dismiss: 'modal'
-          _h4 'Preview Discussion Email'
-        end
+    #
+    # Hidden form: preview discussion email
+    #
+    _div.modal.fade.discussion_preview! do
+      _div.modal_dialog do
+        _div.modal_content do
+          _div.modal_header do
+            _button.close "\u00d7", type: 'button', data_dismiss: 'modal'
+            _h4 'Discussion Email'
+          end
 
-        _div.modal_body do
-          # headers
-          _div do
-            _b 'From: '
-            _span @member
+          _div.modal_body do
+            # headers
+            _div do
+              _b 'From: '
+              _span @member
+            end
+            _div do
+              _b 'To: '
+              _span @pmcEmail
+            end
+            _div do
+              _b 'Subject: '
+              _span @subject
+            end
+            _div do
+              _b
+              _pre @message
+            end
           end
-          _div do
-            _b 'To: '
-            _span @pmcEmail
-          end
-          _div do
-            _b
-            _span @message
-          end
-        end
 
-        _div.modal_footer do
-          _button.btn.btn_default 'Cancel', data_dismiss: 'modal'
-          _button.btn.btn_primary 'Mock Send', onClick: self.mockSend
+          _div.modal_footer do
+            _button.btn.btn_default 'Close', data_dismiss: 'modal'
+          end
         end
       end
     end
-  end
-  _p
+    _p
 
+  end
   # when the form is initially loaded, set the focus on the iclaname field
   def mounted()
     document.getElementById('iclaname').focus()
@@ -355,7 +358,7 @@ class Invite < Vue
     @phase = :discuss
     @subject = ''
     @subjectPhase = '[DISCUSS]'
-    @previewMessage = 'Preview Discussion'
+    @previewMessage = 'Start Discussion'
     @phasePrefix = ' Start the discussion to'
     @showDiscussFrame = true;
     @showRoleFrame = true;
@@ -530,6 +533,7 @@ class Invite < Vue
       pmc: @pmc,
       proposer: @member,
       subject: @subject,
+      proposalText: @proposalText,
       discussComment: @discussComment
     }
 
@@ -542,7 +546,7 @@ class Invite < Vue
       @pmcEmail = response.pmcEmail
       @discussion = response.discussion
       @token = response.token
-      console.log(@token)
+      @message = response.message
       document.getElementById(response.focus).focus() if response.focus
       jQuery('#discussion-preview').modal(:show) unless @alert
     end

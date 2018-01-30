@@ -76,7 +76,7 @@ end
 get '/' do
   @token = params['token']
   @mock = params['mock']
-  @extra = "&mock=" + @mock if @mock
+  @extra = @mock ? "&mock=" + @mock : ''
   loadProgress(@token) if @token
   @phase = @progress['phase'] if @progress
   if @phase == 'discuss'

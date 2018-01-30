@@ -50,7 +50,7 @@ class Discuss < Vue
       # Form fields
       #
       _div.form_group do
-        _label "Comment from " + @member, for: 'discussBody'
+        _label "Comment from " + @member + ' (required)', for: 'discussBody'
         _textarea.form_control rows: 4,
         required: true, placeholder: 'new comment',
         id: 'discussBody', value: @discussBody,
