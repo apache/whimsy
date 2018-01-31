@@ -11,6 +11,7 @@ else
   gem 'whimsy-asf'
 end
 
+gem 'mail'
 gem 'rake'
 gem 'wunderbar', '>= 1.2.6'
 gem 'ruby2js'

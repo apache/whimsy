@@ -19,6 +19,7 @@ class Invite < Vue
     @phasePrefix = ''
     @member = Server.data.member
     @pmc_mail = Server.data.pmc_mail
+    @user = Server.data.user
 
 # initialize conditional text
     @showPMCVoteLink = false;
@@ -592,6 +593,7 @@ class Invite < Vue
   end
   def previewVote()
     data = {
+      user: @user,
       iclaname: @iclaname,
       iclaemail: @iclaemail,
       pmc: @pmc,
