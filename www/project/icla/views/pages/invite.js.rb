@@ -177,21 +177,23 @@ class Invite < Vue
     if @showRoleFrame
       _div.form_check do
         _label do
-          _input type: :radio, name: :role, value: :committer,
+          _input type: :radio, name: :role, value: :committer, id: 'role_committer',
           onClick: -> {@role = :committer;
+            @disabled = false
             @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to become a committer for ' + @pmc
             @proposalText = 'I propose to invite ' + @iclaname +
               ' to become a committer.'
-            @voteProposalText = @proposalText + ' Here is my +1.'
+            @voteProposalText = @proposalText + "\nHere is my +1."
           }
           _span @phasePrefix +
             ' invite to become a committer'
         end
         _br
         _label do
-          _input type: :radio, name: :role, value: :pmc,
-          onClick: -> {@role = :pmc;
+          _input type: :radio, name: :role, value: :pmc, id: 'role_pmc',
+          onClick: -> {@role = :pmc
+            @disabled = false
             @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to become committer and ' + @pmcOrPPMC + ' member for ' + @pmc
             @proposalText = 'I propose to invite ' + @iclaname +
@@ -204,8 +206,9 @@ class Invite < Vue
         if @showDiscussFrame
           _br
           _label do
-            _input type: :radio, name: :role, value: :invite,
-            onClick: -> {@role = :invite;
+            _input type: :radio, name: :role, value: :invite, id: 'role_invite',
+            onClick: -> {@role = :invite
+              @disabled = false
               @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to submit an ICLA for ' + @pmc
               @proposalText = 'I propose to invite ' + @iclaname +
@@ -373,7 +376,13 @@ class Invite < Vue
   # field setters
   #
 
-  def setIclaName(event)
+  def resetCheckBoxes()
+    document.getElementById('role_pmc').checked = false if document.getElementById('role_pmc')
+    document.getElementById('role_committer').checked = false if document.getElementById('role_committer')
+    document.getElementById('role_invite').checked = false if document.getElementById('role_invite')
+  end
+
+def setIclaName(event)
     @iclaname = event.target.value
     self.checkValidity()
   end
@@ -410,7 +419,8 @@ class Invite < Vue
     @showVoteErrorMessage = false;
     @showNoticeErrorMessage = false;
     self.checkValidity()
-    @disabled = false;
+    @disabled = true;
+    self.resetCheckBoxes()
   end
 
   def setdiscussComment(event)
@@ -433,7 +443,8 @@ class Invite < Vue
     @showVoteErrorMessage = false;
     @showNoticeErrorMessage = false;
     self.checkValidity()
-    @disabled = false;
+    @disabled = true;
+    self.resetCheckBoxes()
   end
 
   def setvoteComment(event)
