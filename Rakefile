@@ -8,6 +8,23 @@ end
 
 # update gems and restart applications as needed
 task :update, [:command] do |task, args|
+  # determine last update time
+  update_file = "#{Process.uid == 0 ? '/root' : Dir.home}/.whimsy-update"
+  new_baseline = Time.now
+  old_baseline = File.mtime(update_file) rescue Time.at(0)
+
+  # restart passenger applications that have changed since the last update
+  Dir['**/config.ru'].each do |rackapp|
+    Dir.chdir File.dirname(rackapp) do
+      last_update = Dir['**/*'].map {|n| File.mtime n rescue Time.at(0)}.max
+      if last_update > old_baseline and Dir.exist? 'tmp'
+        FileUtils.touch 'tmp/.restart.txt'
+        FileUtils.chmod 0777, 'tmp/.restart.txt'
+        FileUtils.mv 'tmp/.restart.txt', 'tmp/restart.txt'
+      end
+    end
+  end
+
   # locate system ruby
   sysruby = File.realpath(`which ruby`.chomp)
   sysruby = "#{File.dirname(sysruby)}/%s#{sysruby[/ruby([.\d]*)$/, 1]}"
@@ -32,24 +49,19 @@ task :update, [:command] do |task, args|
         bundler = (File.exist?('config.ru') ? passruby : sysruby) % 'bundle'
       end
 
+      locktime = File.mtime('Gemfile.lock') rescue Time.at(0)
+
       bundler = 'bundle' unless File.exist?(bundler)
       system "#{bundler} #{args.command || 'update'}"
-    end
-  end
 
-  # determine last update time
-  update_file = "#{Process.uid == 0 ? '/root' : Dir.home}/.whimsy-update"
-  new_baseline = Time.now
-  old_baseline = File.mtime(update_file) rescue Time.at(0)
-
-  # restart passenger applications that have changed since the last update
-  Dir['**/config.ru'].each do |rackapp|
-    Dir.chdir File.dirname(rackapp) do
-      last_update = Dir['**/*'].map {|n| File.mtime n rescue Time.at(0)}.max
-      if last_update > old_baseline and Dir.exist? 'tmp'
-        FileUtils.touch 'tmp/.restart.txt'
-        FileUtils.chmod 0777, 'tmp/.restart.txt'
-        FileUtils.mv 'tmp/.restart.txt', 'tmp/restart.txt'
+      # if new gems were istalled and this directory contains a passenger
+      #  application, restart it
+      if (File.mtime('Gemfile.lock') rescue Time.at(0)) != locktime
+        if File.exist?('tmp/restart.txt')
+          FileUtils.touch 'tmp/.restart.txt'
+          FileUtils.chmod 0777, 'tmp/.restart.txt'
+          FileUtils.mv 'tmp/.restart.txt', 'tmp/restart.txt'
+        end
       end
     end
   end
