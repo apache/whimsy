@@ -24,7 +24,7 @@ and now also mirrored for Apache committers at:
     https://gitbox.apache.org/repos/asf/whimsy.git
 
  * [How To Develop Whimsy Code](./DEVELOPMENT.md)
- * [Submit Bugs](https://issues.apache.org/jira/browse/WHIMSY)
+ * [Submit Bugs/Enhancement Requests](https://issues.apache.org/jira/browse/WHIMSY)
  * [Questions? See the Mailing List](https://lists.apache.org/list.html?dev@whimsical.apache.org)
  * [Deployment Instructions](./DEPLOYMENT.md)
  * [Configuration Pointers](./CONFIGURE.md)
