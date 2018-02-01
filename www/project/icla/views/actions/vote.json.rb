@@ -11,8 +11,8 @@ pmc = ASF::Committee.find(@pmc)
 ppmc = ASF::Podling.find(@pmc)
 pmc_type = if ppmc and ppmc.status == 'current' then 'PPMC' else 'PMC' end
 user = ASF::Person.find(env.user)
-useremail = user.id + '@apache.org'
-
+user_email = user.id + '@apache.org'
+subject = params['subject']
 
 begin
   Socket.getaddrinfo(@iclaemail[/@(.*)/, 1].untaint, 'smtp')
@@ -54,18 +54,19 @@ _pmcEmail "private@#{pmc.mail_list}.apache.org" if pmc
 path = Pathname.new(env['REQUEST_URI']) + "../../?token=#{token}"
 scheme = env['rack.url_scheme'] || 'https'
 link = "#{scheme}://#{env['HTTP_HOST']}#{path}"
+body_text = %{#{comment}
+
+Use this link to vote:
+#{link}
+}
 
 # create the email to the pmc
 mail = Mail.new do
-  to useremail
-  from useremail
-  subject @subject
+  to user_email
+  from user_email.untaint
+  subject subject
   text_part do
-    body %{#{comment}
-    Use this link to vote:
-
-    #{link}
-    }
+    body body_text
   end
 end
 mail.deliver

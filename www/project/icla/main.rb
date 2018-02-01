@@ -10,6 +10,9 @@ require 'wunderbar/bootstrap/theme'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 require 'json'
+require 'mail'
+
+ASF::Mail.configure
 
 disable :logging # suppress log of requests to stderr/error.log
 
