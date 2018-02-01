@@ -13,11 +13,14 @@ task :update, [:command] do |task, args|
   new_baseline = Time.now
   old_baseline = File.mtime(update_file) rescue Time.at(0)
 
+  # determine last update time of library sources
+  lib_update = Dir['lib/**/*'].map {|n| File.mtime n rescue Time.at(0)}.max
+
   # restart passenger applications that have changed since the last update
   Dir['**/config.ru'].each do |rackapp|
     Dir.chdir File.dirname(rackapp) do
       last_update = Dir['**/*'].map {|n| File.mtime n rescue Time.at(0)}.max
-      if last_update > old_baseline and Dir.exist? 'tmp'
+      if [lib_update, last_update].max > old_baseline and Dir.exist? 'tmp'
         FileUtils.touch 'tmp/.restart.txt'
         FileUtils.chmod 0777, 'tmp/.restart.txt'
         FileUtils.mv 'tmp/.restart.txt', 'tmp/restart.txt'
