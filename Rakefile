@@ -8,17 +8,13 @@ end
 
 # update gems and restart applications as needed
 task :update, [:command] do |task, args|
-  # determine last update time
-  update_file = "#{Process.uid == 0 ? '/root' : Dir.home}/.whimsy-update"
-  new_baseline = Time.now
-  old_baseline = File.mtime(update_file) rescue Time.at(0)
-
   # determine last update time of library sources
   lib_update = Dir['lib/**/*'].map {|n| File.mtime n rescue Time.at(0)}.max
 
   # restart passenger applications that have changed since the last update
   Dir['**/config.ru'].each do |rackapp|
     Dir.chdir File.dirname(rackapp) do
+      old_baseline = File.mtime('tmp/restart.txt') rescue Time.at(0)
       last_update = Dir['**/*'].map {|n| File.mtime n rescue Time.at(0)}.max
       if [lib_update, last_update].max > old_baseline and Dir.exist? 'tmp'
         FileUtils.touch 'tmp/.restart.txt'
@@ -71,10 +67,6 @@ task :update, [:command] do |task, args|
 
   # rebuild API documentation
   Rake::Task['rdoc'].invoke
-
-  # update baseline time
-  FileUtils.touch update_file
-  File.utime new_baseline, new_baseline, update_file
 end
 
 # pristine version of update
