@@ -46,10 +46,9 @@ module ASF
   module LDAP
      # Derived from the following sources:
      # * https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
-     # Updated 2018-01-23
+     # Updated 2018-02-02
     HOSTS = %w(
       ldaps://ldap1-lw-us.apache.org:636
-      ldaps://ldap1-lw-eu.apache.org:636
       ldaps://ldap1-ec2-va.apache.org:636
       ldaps://ldap1-il-eu.apache.org:636
       ldaps://ldap2-lw-us.apache.org:636
