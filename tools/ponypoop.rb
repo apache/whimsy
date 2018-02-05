@@ -188,7 +188,7 @@ end
 # ## ### #### ##### ######
 # Main method for command line use
 if __FILE__ == $PROGRAM_NAME
-  months = %w( 01 02 03 04 05 06 07 08 09 10 11 12 )
+  months = %w( 1 2 3 4 5 6 7 8 9 10 11 12 )
   years = %w( 2010 2011 2012 2013 2014 2015 2016 2017 )
   options = optparse
   options[:list] ||= 'board'
