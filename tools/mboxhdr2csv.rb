@@ -1,5 +1,12 @@
 #!/usr/bin/env ruby
-# Analyze mbox files either by headers or by content lines
+# Analyze mbox files for general statistics into CSV
+# - Per list messages per month over time (PMOT)
+# - Count messages group by list -> graph months as time
+# - Per list contentlines per lists PMOT
+# - Per user statistics
+# Count lines of text content in mail body, roughly attempting to 
+#   count just new content (not automated, not > replies)
+
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'whimsy/asf'
 require 'mail'
@@ -11,18 +18,40 @@ require 'date'
 MBOX_EXT = '.mbox'
 MEMBER = 'member'
 COMMITTER = 'committer'
+COUNSEL = 'counsel'
 
-# Analyzing mbox files for interesting statistics to report:
-# Contentlines are only counted when ! has_key? nondiscuss
-#   Rationale: svn, JIRA, automated messages are primarly tool-created
-# Per list messages per month over time (PMOT)
-# Count messages group by list -> graph months as time
-# Per list contentlines per lists PMOT
-# User messages per lists PMOT
-# User contentlines per lists PMOT
-# User msgs/lines by day of week; hour of day
+# Subject regexes that are non-discussion oriented
+# Analysis: don't bother with content lines in these messages, 
+#   because most of the content is tool-generated
+NONDISCUSSION_SUBJECTS = { # Note: none applicable to members@
+  '<board.apache.org>' => {
+    missing: /\AMissing\s\S+\sBoard/,
+    feedback: /\ABoard\sfeedback\son\s20/,
+    notice: /\A\[NOTICE\]/i,
+    report: /\A\[REPORT\]/i,
+    resolution: /\A\[RESOLUTION\]/i,
+    svn_agenda: %r{\Aboard: r\d{4,8} - /foundation/board/},
+    svn_iclas: %r{\Aboard: r\d{4,8} - /foundation/officers/iclas.txt}
+  },
+  '<operations.apache.org>' => {
+    notice: /\A\[NOTICE\]/i,
+    report: /\A\[REPORT\]/i,
+    svn_general: %r{\Asvn commit: r/},
+    svn_bills: %r{\Abills: r\d{4,8} -}
+  },
+  '<trademarks.apache.org>' => {
+    report: /\A\[REPORT\]/i,
+    svn_general: %r{\Asvn commit: r/}
+  },
+  '<fundraising.apache.org>' => {
+    report: /\A\[REPORT\]/i,
+    svn_bills: %r{\Abills: r\d{4,8} -}
+  }
+}
 
-# Read f.mbox or f.mbox.gz and return [message, message2, ...] or raise error
+# Read a ponyapi.rb mbox file and return mails (text content only)
+# @param f path to .mbox or .mbox.gz
+# @return [mail1, mail2, ...]
 def read_mbox(f)
   if f.end_with? '.gz'
     stream = StringIO.new(mbox)
@@ -39,8 +68,12 @@ def read_mbox(f)
   return messages
 end
 
-# Split mbox into [MailHash, Mail2Hash,...], [ [parseerr, order], ...]
-# Returns nil, [read, errors2...] if mbox file can't be read
+# Process an mbox file into mailhash of selected headers and lines of text
+# @param f path to .mbox or .mbox.gz
+# @return [mail1hash, mail2hash, ...], [ [parseerr, order], ...]
+# @return nil, [read, errors2...] if mbox file can't be read
+# mailhash contains :from, :subject, :listid, :date, :messageid, 
+#   :inreplyto, :lines (count), plus :who and :committer
 def mbox2stats(f)
   begin
     mails = read_mbox(f)
@@ -95,7 +128,30 @@ def mbox2stats(f)
         end
       end
       mdata[:lines] = ctr
+      # Annotate various other precomputable data
       find_who_from mdata
+      begin
+        d = DateTime.parse(mdata[:date])
+        mdata[:y] = d.year
+        mdata[:m] = d.month
+        mdata[:d] = d.day
+        mdata[:w] = d.wday
+        mdata[:h] = d.hour
+        mdata[:z] = d.zone
+      rescue => noop
+        # no-op - not critical
+        puts "DEBUG: #{e.message} parsing: #{mdata[:date]}"
+      end
+      regex = NONDISCUSSION_SUBJECTS[mdata[:listid]] # Use subject regex for this list (if any)
+      if regex
+        regex.each do |typ, rx|
+          if mdata[:subject] =~ rx
+            mdata[:nondiscuss] = typ
+            break # regex.each
+          end
+        end
+      end
+      # Push our hash 
       messages << mdata
     rescue => e
       errs << [e, mdata[:order]]
@@ -104,165 +160,139 @@ def mbox2stats(f)
   return messages, errs
 end
 
-# Scan dir of mbox and output json of statistics for each; return meta-array of all mdata
-def scan_dir_mbox2stats(dir, ext)
+# Annotate mailhash by adding :who and :committer (where known)
+# @param mdata Hash to evaluate and annotate
+# Side effect: adds :who and :committer from ASF::Person.find_by_email
+# :committer = 'n' if not found; 'N' if error, 'counsel' for special case
+def find_who_from(mdata)
+  # Micro-optimize unique names
+  case mdata[:from]
+  when /Mark.Radcliffe/i
+    mdata[:who] = 'Mark.Radcliffe'
+    mdata[:committer] = COUNSEL
+  when /mattmann/i
+    mdata[:who] = 'Chris Mattmann'
+    mdata[:committer] = MEMBER
+  when /jagielski/i
+    mdata[:who] = 'Jim Jagielski'
+    mdata[:committer] = MEMBER
+  when /delacretaz/i
+    mdata[:who] = 'Bertrand Delacretaz'
+    mdata[:committer] = MEMBER
+  when /curcuru/i
+    mdata[:who] = 'Shane Curcuru'
+    mdata[:committer] = MEMBER
+  when /steitz/i
+    mdata[:who] = 'Phil Steitz'
+    mdata[:committer] = MEMBER
+  when /gardler/i  # Effectively unique (see: Heidi)
+    mdata[:who] = 'Ross Gardler'
+    mdata[:committer] = MEMBER
+  when /Craig (L )?Russell/i # Optimize since Secretary sends a lot of mail
+    mdata[:who] = 'Craig L Russell'
+    mdata[:committer] = MEMBER
+  when /McGrail/i
+    mdata[:who] = 'Kevin A. McGrail'
+    mdata[:committer] = MEMBER
+  when /sallykhudairi@yahoo/i 
+    mdata[:who] = 'Sally Khudairi'
+    mdata[:committer] = MEMBER
+  when /sk@haloworldwide.com/i
+    mdata[:who] = 'Sally Khudairi'
+    mdata[:committer] = MEMBER
+  else
+    begin
+      # TODO use Real Name (JIRA) to attempt to lookup some notifications
+      tmp = liberal_email_parser(mdata[:from])
+      person = ASF::Person.find_by_email(tmp.address.dup)
+      if person
+        mdata[:who] = person.cn
+        if person.asf_member?
+          mdata[:committer] = MEMBER
+        else
+          mdata[:committer] = COMMITTER
+        end
+      else
+        mdata[:who] = "#{tmp.display_name} <#{tmp.address}>"
+        mdata[:committer] = 'n'
+      end
+    rescue
+      mdata[:who] = mdata[:from]
+      mdata[:committer] = 'N'
+    end
+  end
+end
+
+# @see www/secretary/workbench/models/message.rb
+# @see https://github.com/mikel/mail/issues/39
+def liberal_email_parser(addr)
+  begin
+    addr = Mail::Address.new(addr)
+  rescue
+    if addr =~ /^"([^"]*)" <(.*)>$/
+      addr = Mail::Address.new
+      addr.address = $2
+      addr.display_name = $1
+    elsif addr =~ /^([^"]*) <(.*)>$/
+      addr = Mail::Address.new
+      addr.address = $2
+      addr.display_name = $1
+    else
+      raise
+    end
+  end
+  return addr
+end
+
+# Scan dir tree for mboxes and output individual mailhash as JSONs
+# @param dir to scan (whole tree)
+# @param ext file extension to glob for
+# Side effect: writes out f.chomp(ext).json files
+def scan_dir_mbox2stats(dir, ext = MBOX_EXT)
   Dir["#{dir}/**/*#{ext}".untaint].each do |f|
     mails, errs = mbox2stats(f.untaint)
-    puts "scan_mbox(#{f}) mails: #{mails.length} errors: #{errs.length}"
     File.open("#{f.chomp(ext)}.json", "w") do |fout|
       fout.puts JSON.pretty_generate([mails, errs])
     end
   end
 end
 
-# Add :who field and Apache committer status
-def find_who_from(msg)
-  # Micro-optimize unique names
-  case msg[:from]
-  when /mattmann/i
-    msg[:who] = 'Chris Mattmann'
-    msg[:committer] = MEMBER
-  when /jagielski/i
-    msg[:who] = 'Jim Jagielski'
-    msg[:committer] = MEMBER
-  when /delacretaz/i
-    msg[:who] = 'Bertrand Delacretaz'
-    msg[:committer] = MEMBER
-  when /curcuru/i
-    msg[:who] = 'Shane Curcuru'
-    msg[:committer] = MEMBER
-  when /steitz/i
-    msg[:who] = 'Phil Steitz'
-    msg[:committer] = MEMBER
-  when /gardler/i  # Effectively unique (see: Heidi)
-    msg[:who] = 'Ross Gardler'
-    msg[:committer] = MEMBER
-  when /Craig (L )?Russell/i # Optimize since Secretary sends a lot of mail
-    msg[:who] = 'Craig L Russell'
-    msg[:committer] = MEMBER
-  when /McGrail/i
-    msg[:who] = 'Kevin A. McGrail'
-    msg[:committer] = MEMBER
-  when /sallykhudairi@yahoo/i 
-    msg[:who] = 'Sally Khudairi'
-    msg[:committer] = MEMBER
-  when /sk@haloworldwide.com/i
-    msg[:who] = 'Sally Khudairi'
-    msg[:committer] = MEMBER
-  else
-    begin
-      # TODO use Real Name (JIRA) to attempt to lookup some notifications
-      tmp = liberal_email_parser(msg[:from])
-      person = ASF::Person.find_by_email(tmp.address.dup)
-      if person
-        msg[:who] = person.cn
-        if person.asf_member?
-          msg[:committer] = MEMBER
-        else
-          msg[:committer] = COMMITTER
-        end
-      else
-        msg[:who] = "#{tmp.display_name} <#{tmp.address}>"
-        msg[:committer] = 'n'
-      end
-    rescue
-      msg[:who] = msg[:from]
-      msg[:committer] = 'N'
-    end
-  end
-end
-
-# Subject regexes that are non-discussion oriented
-# Analysis: don't bother with content lines in these messages, 
-#   because most of the content is tool-generated
-NONDISCUSSION_SUBJECTS = { # Note: none applicable to members@
-  '<board.apache.org>' => {
-    missing: /\AMissing\s\S+\sBoard/,
-    feedback: /\ABoard\sfeedback\son\s20/,
-    notice: /\A\[NOTICE\]/i,
-    report: /\A\[REPORT\]/i,
-    resolution: /\A\[RESOLUTION\]/i,
-    svn_agenda: %r{\Aboard: r\d{4,8} - /foundation/board/},
-    svn_iclas: %r{\Aboard: r\d{4,8} - /foundation/officers/iclas.txt}
-  },
-  '<operations.apache.org>' => {
-    notice: /\A\[NOTICE\]/i,
-    report: /\A\[REPORT\]/i,
-    svn_general: %r{\Asvn commit: r/},
-    svn_bills: %r{\Abills: r\d{4,8} -}
-  },
-  '<trademarks.apache.org>' => {
-    report: /\A\[REPORT\]/i,
-    svn_general: %r{\Asvn commit: r/}
-  },
-  '<fundraising.apache.org>' => {
-    report: /\A\[REPORT\]/i,
-    svn_bills: %r{\Abills: r\d{4,8} -}
-  }
-}
-
-# Annotate mbox stats hash w/nondiscussion marker (hint: don't count content lines)
-def mark_nondiscussion(mails)
-  ctr = 0
-  mails.each do |msg|
-    regex = NONDISCUSSION_SUBJECTS[msg['listid']] # Use subject regex for this list (if any)
-    if regex
-      regex.each do |typ, rx|
-        if msg['subject'] =~ rx
-          msg[:nondiscuss] = typ
-          ctr += 1
-          break
-        end
-      end
-    end
-  end
-end
-
-# Annotate mbox stats hash with various precomputed data
-def annotate_stats(mails)
-  mails.each do |msg|
-    # Translate date into y, m, d, w (day of week), h, z (timezone), (no minutes)
-    begin
-      d = DateTime.parse(msg['date'])
-      msg[:y] = d.year
-      msg[:m] = d.month
-      msg[:d] = d.day
-      msg[:w] = d.wday
-      msg[:h] = d.hour
-      msg[:z] = d.zone
-    rescue => e
-      # no-op
-      puts "DEBUG: #{e.message} parsing: #{msg['date']}"
-    end
-  end
-end
-
-# Scan dir of mbox .json stats and annotate with nondiscussion markers
-# TODO: this should really be done on first parse pass, not later on
-# @return array of any errors
-def scan_dir_json_nondiscussion(dir)
+# Scan dir tree for mailhash JSONs and output an overview CSV of all
+# @return [ error1, error2, ...] if any errors
+# Side effect: writes out dir/outname CSV file
+def scan_dir_stats2csv(dir, outname)
   errors = []
-  Dir["#{dir}/**/*.json".untaint].each do |f|
+  filenames = Dir["#{dir}/**/*.json".untaint]
+  raise ArgumentError, "#{__method__} called with no files in #{dir}" if filenames.length == 0
+  puts "#{__method__} processing #{filenames.length} files"
+  firstfile = filenames.shift
+  jzon = JSON.parse(File.read(firstfile))
+  # Write out headers and the first file in new csv
+  csvfile = File.join("#{dir}", outname)
+  csv = CSV.open(csvfile, "w", headers: %w( year month day weekday hour zone listid who subject lines committer messageid inreplyto ), write_headers: true)
+  jzon[0].each do |m|
+    csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['committer'], m['messageid'], m['inreplyto']  ]
+  end
+  
+  # Write out all remaining files, without headers, appending
+  filenames.each do |f|
     begin
-      jzon = JSON.parse(File.read(f))
-      msgs = jzon[0]  # Should be an array of [[msgs...], [errs...]}
-      # Run both annotations
-      mark_nondiscussion msgs
-      annotate_stats msgs
-      # Now re-write the same file with this included data
-      File.open("#{f}", "w") do |fout|
-        fout.puts JSON.pretty_generate(jzon)
+      j = JSON.parse(File.read(f))
+      j[0].each do |m|
+        csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['committer'], m['messageid'], m['inreplyto']  ]
       end
     rescue => e
-      puts "ERROR:scan_dir_json_nondiscussion(#{f}) raised #{e.message[0..255]}"
+      puts "ERROR: parse/write of #{f} raised #{e.message[0..255]}"
       errors << "#{e.message}\n\t#{e.backtrace.join("\n\t")}"
       next
     end
   end
+  csv.close # Just in case
   return errors
 end
 
 # Aggregate selected header fields from an mbox
+# @deprecated TODO use mbox2stats et al instead
 def scan_mbox_headers(f, headers)
   begin
     messages = read_mbox(f)
@@ -304,6 +334,7 @@ def scan_mbox_headers(f, headers)
 end
 
 # Return headers for a directory of mboxes
+# @deprecated TODO use mbox2stats et al instead
 def scan_dir_headers(dir, ext)
   headers = []
   errs = []
@@ -314,28 +345,9 @@ def scan_dir_headers(dir, ext)
   return headers
 end
 
-# Copied from www/secretary/workbench/models/message.rb
-# see https://github.com/mikel/mail/issues/39
-def liberal_email_parser(addr)
-  begin
-    addr = Mail::Address.new(addr)
-  rescue
-    if addr =~ /^"([^"]*)" <(.*)>$/
-      addr = Mail::Address.new
-      addr.address = $2
-      addr.display_name = $1
-    elsif addr =~ /^([^"]*) <(.*)>$/
-      addr = Mail::Address.new
-      addr.address = $2
-      addr.display_name = $1
-    else
-      raise
-    end
-  end
-  return addr
-end
-
 # Simple header annotations for best guesses of ASF attributes related to trademarks@
+# @deprecated TODO use mbox2stats et al instead
+# TODO Only additional feature is setting header[:type], which is list-specific
 SHANE = 'Shane'
 def annotate_headers(headers)
   headers.each do |header|
@@ -387,6 +399,7 @@ def annotate_headers(headers)
 end
 
 # Common use case - analyze headers in mbox files to see who asks questions on trademarks@
+# @deprecated TODO use mbox2stats et al instead
 def do_mbox2csv_hdr(dir)
   headers = scan_dir_headers(dir, MBOX_EXT)
   CSV.open(File.join("#{dir}", "mboxhdr2csv.csv"), "w", headers: %w( date who subject messageid committer question ), write_headers: true) do |csv|
@@ -396,45 +409,15 @@ def do_mbox2csv_hdr(dir)
   end
 end
 
-# Combine all jsons of mbox stats into single csv, step by step
-# @return [ error1, error2, ...]
-def scan_stats_to_csv(dir, outname)
-  errors = []
-  filenames = Dir["#{dir}/**/*.json".untaint]
-  puts "scan_stats_to_csv() processing #{filenames.length} files"
-  firstfile = filenames.shift
-  jzon = JSON.parse(File.read(firstfile))
-  # Write out headers and the first file in new csv
-  csvfile = File.join("#{dir}", outname)
-  csv = CSV.open(csvfile, "w", headers: %w( year month day weekday hour zone listid who subject lines committer messageid inreplyto ), write_headers: true)
-  jzon[0].each do |m|
-    csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['committer'], m['messageid'], m['inreplyto']  ]
+#### TODO Sample code
+path = '~/src/lists'
+output = 'listdata.csv'
+puts "START: #{path} into #{output}"
+scan_dir_mbox2stats(path)
+errs = scan_dir_stats2csv(path, output)
+if errs
+  errs.each do |e|
+    puts "ERROR: #{e}"
   end
-  
-  # Write out all remaining files, without headers, appending
-  filenames.each do |f|
-    begin
-      j = JSON.parse(File.read(f))
-      j[0].each do |m|
-        csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['committer'], m['messageid'], m['inreplyto']  ]
-      end
-    rescue => e
-      puts "ERROR:parse/write of #{f} raised #{e.message[0..255]}"
-      errors << "#{e.message}\n\t#{e.backtrace.join("\n\t")}"
-      next
-    end
-  end
-  # TODO ensure files closed?
-  return errors
 end
-
-# Common use case - analyze mbox files to see how much everyone writes
-puts "DEBUG-TESTcsv"
-# scan_dir_mbox2stats('/Users/curcuru/src/mail/', MBOX_EXT)
-# e = scan_dir_json_nondiscussion('/Users/curcuru/src/mail3/')
-# e = fixup_sally_mail('/Users/curcuru/src/mail/')
-e = scan_stats_to_csv('/Users/curcuru/src/mail/', 'governance_mboxes2010-2017.csv')
-e.each do |x|
-  p x
-end
-puts "DEBUG-END11 e.length #{e.length}"
+puts "END"
