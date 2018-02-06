@@ -106,18 +106,15 @@ class ASF::Board::Agenda
           attrs['names'] = committee.names
         end
 
-        need_chair = true unless title.start_with? 'Terminate'
-      else
-        if title =~ /Establish (.*)/
-          name = $1
-          attrs['prior_reports'] =
-            "#{whimsy}/board/minutes/#{name.gsub(/\W/,'_')}"
+      elsif title =~ /Establish (.*)/
+        name = $1
+        attrs['prior_reports'] =
+          "#{whimsy}/board/minutes/#{name.gsub(/\W/,'_')}"
 
-          if text.scan(/[<(][-.\w]+@(?:[-\w]+\.)+\w+[>)]/).
-            any? {|email| not email.include? 'apache.org'}
-          then
-            attrs['warnings'] ||= ['non apache.org email address found'] 
-          end
+        if text.scan(/[<(][-.\w]+@(?:[-\w]+\.)+\w+[>)]/).
+          any? {|email| not email.include? 'apache.org'}
+        then
+          attrs['warnings'] ||= ['non apache.org email address found'] 
         end
 
         need_chair = true unless fulltitle =~ /Establish.*position/i
