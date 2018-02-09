@@ -18,8 +18,8 @@ Verify using:
 
 ```
 $ brew --version
-Homebrew 1.5.2
-Homebrew/homebrew-core (git revision 3244; last commit 2018-01-27)
+Homebrew 1.5.3
+Homebrew/homebrew-core (git revision 5aef; last commit 2018-02-09)
 ```
 
 Upgrade Ruby
@@ -56,7 +56,7 @@ Verify:
 
 ```
 $ node -v
-v9.4.0
+v9.5.0
 $ npm -v
 5.6.0
 ```
@@ -204,21 +204,22 @@ edit `/usr/local/etc/httpd/httpd.conf`:
 
 * Uncomment each of the following lines:
     <pre>
-    `LoadModule proxy_module lib/httpd/modules/mod_proxy.so
+    LoadModule proxy_module lib/httpd/modules/mod_proxy.so
     LoadModule proxy_wstunnel_module lib/httpd/modules/mod_proxy_wstunnel.so
     LoadModule speling_module lib/httpd/modules/mod_speling.so
     LoadModule rewrite_module lib/httpd/modules/mod_rewrite.so
     LoadModule expires_module lib/httpd/modules/mod_expires.so
-    LoadModule cgi_module lib/httpd/modules/mod_cgi.so`
+    LoadModule cgi_module lib/httpd/modules/mod_cgi.so
     </pre>
 
 * Append the following:
    <pre>
-    `LoadModule ldap_module lib/httpd/modules/mod_ldap.so
+    LoadModule ldap_module lib/httpd/modules/mod_ldap.so
     LoadModule authnz_ldap_module lib/httpd/modules/mod_authnz_ldap.so
     LDAPVerifyServerCert Off
     Include conf/passenger.conf
-    Include conf/whimsy.conf`
+    Include conf/whimsy.conf
+    ServerName whimsy.local
   </pre>
 
 
@@ -231,7 +232,7 @@ brew services start httpd
 Verify:
 
 ```
-$ curl curl -s localhost:8080 | grep '<title>'
+$ curl -s localhost:8080 | grep '<title>'
     <title>Apache Whimsy</title>
 ```
 
@@ -270,9 +271,9 @@ Additional Notes:
  * `apachectl restart` is how you restart apache; `brew services start` itself is for
    controlling what processes automatically start at startup.
  * If `curl` gives `Connection refused` then try kicking httpd:
-    * `/usr/sbin/apachectl stop`
-    * `/usr/sbin/httpd`
-      * If it works, then press CTRL-C and `/usr/sbin/apachectl start`
+    * `apachectl stop`
+    * `httpd`
+      * If it works, then press CTRL-C and `apachectl start`
       * If it gave you `AH00526: Syntax error on line 20 of /usr/local/etc/httpd/extra/httpd-mpm.conf`
         then you may need to [delete the LockFile section](https://apple.stackexchange.com/questions/211015/el-capitan-apache-error-message-ah00526).
 
