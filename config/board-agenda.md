@@ -33,17 +33,23 @@ Add paths to foundation board and committers board directory.  For example:
 - /Users/rubys/svn/committers/board
 ```
 
-Install poltergeist
+Install chrome and chromedriver
 -------------------
 
 (optional, used by tests)
 
-[poltergeist is now installed](https://github.com/teampoltergeist/poltergeist/tree/v1.13.0#installation) via `bundle install` from the Gemfile.
+Install [Chrome](https://www.google.com/chrome/).
+
+Install chromedriver:
+
+```
+brew install chromedriver
+```
 
 Verify using:
 
 ```
-$ bundle install 
-$ rake test
+$ chromedriver -v
+ChromeDriver 2.35.528157 (4429ca2590d6988c0745c24c8858745aaaec01ef)
 ```
 
