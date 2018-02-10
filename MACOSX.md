@@ -247,15 +247,13 @@ Edit `/usr/local/opt/httpd/homebrew.mxcl.httpd.plist` and add the following:
 <dict>
   <key>OBJC_DISABLE_INITIALIZE_FORK_SAFETY</key>
   <string>YES</string>
-  <key>XPC_SERVICES_UNAVAILABLE</key>
-  <string>1</string>
 </dict>
 ```
 
 edit `/usr/local/opt/httpd/bin/envvars`, add:
 
 ```
-OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 ```
 
 Restart Apache httpd using:
