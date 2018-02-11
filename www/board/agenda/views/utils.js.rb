@@ -146,8 +146,11 @@ class Flow
     return lines.join("\n")
   end
 
-  # reflow text
-  def self.text(text, indent='')
+  # reflow text.  Indent is a string containing the amount of spaces that are
+  # to be added to each line.  The Incubator has special punctuation rules that
+  # prohibit the joining of lines where the first line ends in either a colon
+  # or a question mark.
+  def self.text(text, indent='', puncrules=false)
     # remove trailing spaces on lines
     text.gsub! /[ \r\t]+\n/, "\n"
 
@@ -158,7 +161,8 @@ class Flow
     # hash (#) and <markers> like <private>, ")".
     (lines.length-1).downto(1) do |i|
       next if lines[i-1] =~ /^$|^#|\w>$/
-      if lines[i] =~ /^\s*\w/
+      next if puncrules and lines[i-1] =~ /[:?]$/
+      if lines[i] =~ /^\s*\w/ and lines[i] !~ /^\s*\d+\./
         lines.splice(i-1, 2, lines[i-1] + lines[i].sub(/^\s*/, ' '))
       end
     end
@@ -168,7 +172,7 @@ class Flow
     for i in 0...lines.length
       line = lines[i]
       next if line.length <= len
-      prefix = /^\W*/.exec(line)[0]
+      prefix = /^\d+\.\s+|^\W*/.exec(line)[0]
 
       if prefix.length == 0
         # not indented -> split
@@ -178,7 +182,7 @@ class Flow
       else
         # preserve indentation.
         n = len - prefix.length;
-        indent = prefix.gsub(/\W/, ' ')
+        indent = prefix.gsub(/\S/, ' ')
         lines[i] = prefix + line[prefix.length..-1].
           gsub(/(.{1,#{n}})( +|$\n?)/, indent + "$1\n").
           sub(indent, '').sub(/[\n\r]+$/, '')

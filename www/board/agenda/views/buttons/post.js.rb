@@ -211,13 +211,16 @@ class Post < Vue
       end
     end
 
+    # enable special punctuation rules for the incubator
+    puncrules = (@@item.title == 'Incubator')
+
     # reflow selection or entire report
     if finish > start
-      report = Flow.text(report[start..finish], @indent+indent)
+      report = Flow.text(report[start..finish], @indent+indent, puncrules)
       report.gsub(/^/, ' ' * indent) if indent > 0
       @report = @report[0...start] + report + @report[finish+1..-1]
     else
-      @report = Flow.text(report, @indent)
+      @report = Flow.text(report, @indent, puncrules)
     end
 
     self.change_message()
