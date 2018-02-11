@@ -51,6 +51,7 @@ class ICLA2 < Vue
       _input type: 'hidden', name: 'signature', value: @@signature
       _input type: 'hidden', name: 'filename', value: @icla && @icla.filename
       _input type: 'hidden', name: 'id', value: @icla && @icla.id
+      _input type: 'hidden', name: 'oldemail', value: @icla && @icla.email
 
       _h5 'Current values'
 

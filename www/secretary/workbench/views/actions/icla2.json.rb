@@ -104,7 +104,10 @@ end
 
 # insert line into iclas.txt
 task "svn commit foundation/officers/iclas.txt" do
-  icla = ASF::ICLA.find_by_id(@id)
+  icla = ASF::ICLA.find_by_id(@id) || ASF::ICLA.find_by_email(@oldemail)
+  unless icla and icla.id == @id and icla.email == @oldemail
+    raise ArgumentError("ICLA not found for #@id:#@oldemail")
+  end
 
   # construct line to be inserted
   @iclaline ||= [
@@ -131,7 +134,7 @@ task "svn commit foundation/officers/iclas.txt" do
 
     # update iclas.txt
     iclas_txt = File.read(dest)
-    iclas_txt[/^#{@id}:.*/] = @iclaline
+    iclas_txt[/^#{@id}:.*:#{@oldemail}:.*/] = @iclaline
     File.write dest, ASF::ICLA.sort(iclas_txt)
 
     # show the changes
