@@ -28,6 +28,9 @@ class Touch
       elapsed = Date.new().getTime() - startTime
       return if elapsed > allowedTime
 
+      # ignore if a modal dialog is active
+      return if document.querySelector('.modal.in')
+
       # compute distances
       touchobj = event.changedTouches[0]
       distX = touchobj.pageX - startX
