@@ -112,6 +112,16 @@ class Post < Vue
       @header = 'Edit Resolution'
       @label = 'resolution'
       @message = "Edit #{@@item.title} Resolution"
+
+    when 'post items'
+      @header = 'Post Discussion Items'
+      @label = 'items'
+      @message = "Post Discussion Items"
+
+    when 'edit items'
+      @header = 'Edit Discussion Items'
+      @label = 'items'
+      @message = "Edit Discussion Items"
     end
 
     if not @edited
@@ -134,6 +144,8 @@ class Post < Vue
 
     if @@button.text == 'add resolution' or @@item.attach =~ /^[47]/
       @indent = '        '
+    elsif @@item.attach == '8.'
+      @indent = '    '
     else
       @indent = ''
     end

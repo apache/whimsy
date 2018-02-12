@@ -55,6 +55,10 @@ Agenda.update(@agenda, @message) do |agenda|
       title = item['fulltitle'] || item['title']
       pattern = /(^\s+#{@attach[-1]}\.\s+#{title})\n.*?\n( {1,6}\w\.)/m
       @report.gsub! /^(.)/, '       \1'
+    elsif @attach == '8.'
+      title = 'Discussion Items'
+      pattern = /^(\s8\. #{title})\n.*\n( 9\.)/m
+      @report.gsub! /^(.)/, '    \1'
     else
       pattern = /(---\nAttachment #{@attach}:.*?\[.*?\])\n.*?\n(-{40})/m
       spacing = "\n\n\n"
