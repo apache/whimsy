@@ -1,9 +1,9 @@
 Dear <%= @pubname %>,
 
 This message acknowledges receipt of your additional ICLA, which has been filed in the Apache Software Foundation records.
-
+<% unless @id == 'notinavail' %>
 You can change your password using https://id.apache.org .
-
+<% end %>
 Warm Regards,
 
 <%= @sig %>

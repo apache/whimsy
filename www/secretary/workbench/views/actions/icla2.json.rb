@@ -149,7 +149,7 @@ end
 #                      update public name in LDAP                      #
 ########################################################################
 
-if person.public_name != @pubname
+if person.public_name != @pubname and @id != 'notinavail'
   task "change public name in LDAP" do
     form do
       _input value: @pubname, name: 'pubname'
@@ -208,26 +208,28 @@ end
 #                     update email address in LDAP                     #
 ########################################################################
 
-task "change email address in LDAP" do
-  form do
-    _input value: @email, name: 'email'
-  end
-
-  complete do
-    ldap = ASF.init_ldap(true)
-
-    ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",
-      env.password.untaint)
-
-    ldap.modify person.dn, [ASF::Base.mod_replace('mail', @email.strip)]
-
-    log = ["LDAP modify: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
-    if ldap.err == 0
-      _transcript log
-    else
-      _backtrace log
+if @id != 'notinavail'
+  task "change email address in LDAP" do
+    form do
+      _input value: @email, name: 'email'
     end
 
-    ldap.unbind
+    complete do
+      ldap = ASF.init_ldap(true)
+
+      ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",
+	env.password.untaint)
+
+      ldap.modify person.dn, [ASF::Base.mod_replace('mail', @email.strip)]
+
+      log = ["LDAP modify: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
+      if ldap.err == 0
+	_transcript log
+      else
+	_backtrace log
+      end
+
+      ldap.unbind
+    end
   end
 end
