@@ -330,7 +330,7 @@ NameVirtualHost *:80
 
 <VirtualHost *:80>
   ServerName localhost
-  DocumentRoot /usr/local/var/www
+  DocumentRoot /Library/WebServer/Documents
   <Location />
     Require all granted
   </Location>
