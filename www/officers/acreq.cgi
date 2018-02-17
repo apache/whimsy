@@ -134,7 +134,7 @@ _html do
       helpblock: -> {
         _p %{
           This page builds a properly formatted and validated new-account-reqs.txt entry based
-          on your input below.  Does both full client validation and Server-sidevalidation.
+          on your input below.  Does both full client validation and Server-side validation.
         }
         _p %{
           Should validation succeed, the entry will be appended to the
