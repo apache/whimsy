@@ -266,7 +266,7 @@ class FY23 < Vue
 
         _tr do
           _td 'Cash'
-          _td.num (1_318).toLocaleString()
+          _td.num (1_767).toLocaleString()
           _td.num 595
           _td.num.cash! @budget.cash.toLocaleString(),
             class: (@budget.cash < 0 ? 'danger' : 'success')
@@ -288,7 +288,7 @@ class FY23 < Vue
 
     @budget.net = @budget.income - @budget.expense
 
-    @budget.cash = 1318 - 2*212 + 3*@budget.net
+    @budget.cash = 1767 + 3*@budget.net + 2*100 + 500 # EA+BTC adjustment
   end
 
   # update budget item when an input field changes
