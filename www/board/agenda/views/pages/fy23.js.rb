@@ -289,6 +289,10 @@ class FY23 < Vue
     @budget.net = @budget.income - @budget.expense
 
     @budget.cash = 1767 + 3*@budget.net + 2*100 + 500 # EA+BTC adjustment
+      # EA adjustment: instead of ramping down, the reduction in expense
+      #                is immediate and constant.
+      # BTC adjustment: we expect to see a minimum of $500K from the recent
+      #                 PineApple Fund BTC donation.
   end
 
   # update budget item when an input field changes
