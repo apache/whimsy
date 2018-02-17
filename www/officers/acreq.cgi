@@ -230,8 +230,11 @@ _html do
               end
               
               _div.form_group do
-                _div.col_sm_offset_2.col_sm_10 do
+                _div.col_sm_offset_2.col_sm_1 do
                   _input.btn.btn_default type: "submit", value: "Submit"
+                end
+                _div.col_md_9 do
+                  _ 'N.B. The email is copied to root, secretary, project (or operations if none) and the account subject. It includes the comment field.'
                 end
               end
             end
