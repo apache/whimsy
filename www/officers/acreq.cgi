@@ -291,12 +291,13 @@ _html do
                   # determine the requesting party and cc_list
                   if @project.empty?
                     cc_list = ["operations@apache.org"]
+                    requestor = user.untaint
                   else
                     pmc_list = ASF::Committee.find(@pmc).mail_list
                     cc_list = ["private@#{pmc_list}.apache.org".untaint]
+                    requestor = @pmc[/([\w.-]+)/, 1].untaint
                   end
 
-                  requestor = @pmc[/([\w.-]+)/, 1].untaint
                   if requestor == 'incubator' and not @podling.to_s.empty?
                     if File.read("#{APMAIL_BIN}/.archives").include? "incubator-#{@podling}-private"
                       cc_list << "#{@podling}-private@#{pmc_list}.apache.org".untaint
