@@ -156,21 +156,35 @@ _html do
             _form.form_horizontal method: 'post' do
               _div.form_group do
                 _label.control_label.col_sm_2 'User ID', for: "user"
-                _div.col_sm_10 do
+                _div.col_sm_6 do
                   _input.form_control name: "user", id: "user", autofocus: true,
                     type: "text", required: true,
                     pattern: '^[a-z][a-z0-9]{2,}$' # useridvalidationpattern dup
+                end
+                _div.col_md_4 do
+                  _ 'Alphanumeric only, starting with alpha, minimum 3 chars'
                 end
               end
 
               _div.form_group do
                 _label.control_label.col_sm_2 'Name', for: "name"
-                _div.col_sm_10 do
+                _div.col_sm_6 do
                   _select.form_control name: "name", id: "name", required: true do
                     _option value: ''
                     iclas.invert.to_a.sort.each do |name, email|
                       _option name, value: name, data_email: email
                     end
+                  end
+                end
+                _div.col_md_4 do
+                  if @iclas == 'all'
+                    _ 'Showing all ICLAs ever received.'
+                    _br
+                    _a 'Show only ICLAs received recently', href: '?'
+                  else
+                    _ 'Showing only ICLAs received recently.'
+                    _br
+                    _a 'Show the full list of ICLAs submitted', href: '?iclas=all'
                   end
                 end
               end
@@ -340,22 +354,6 @@ _html do
                 end
               end
             end # of if _.post?
-          end
-        end
-        # Add separate column for ICLA options
-        _div.col_md_4 do
-          unless _.post?
-            _div.well.well_lg do
-              if @iclas == 'all'
-                _span 'Now showing all ICLAs ever received.  Click here to'
-                _a 'show only ICLAs received recently', href: '?'
-                _span '.'
-              else
-                _span 'Now showing only ICLAs received recently.  Click here to'
-                _a 'choose from the full list of ICLA submitters', href: '?iclas=all'
-                _span '.'
-              end
-            end
           end
         end
       end
