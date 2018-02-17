@@ -239,6 +239,8 @@ _html do
             # If making a request, validate, checkin, and display results
             if _.post?
               _div.well.well_lg do
+                abort = true
+
                 # server side validation
                 if pending.include? @email
                   _div.bg_danger "Account request already pending for #{@email}"
@@ -249,26 +251,35 @@ _html do
                 elsif @user.length > 16
                   # http://forums.freebsd.org/showthread.php?t=14636
                   _div.bg_danger "UserID #{@user} is too long (max 16)"
-                elsif @project !~ /^[0-9a-z-]+$/
-                  _div.bg_danger "Unsafe Project #{@project}"
                 elsif not iclas.include? @email
                   _div.bg_danger "No ICLA on record for #{@email}"
                 elsif not iclas[@email] == @name
                   _div.bg_danger "Name #{@name} does not match name on ICLA"
+                elsif @project.empty?
+                  abort = false
+                elsif @project !~ /^[0-9a-z-]+$/
+                  _div.bg_danger "Unsafe Project #{@project}"
                 elsif not projects.include? @project
                   _div.bg_danger "Unrecognized Project name #{@project}"
                 else
+                  abort = false
+                end
 
+                unless abort
                   # determine pmc and podling from project; compute list
                   # of groups the individual is to be added to
                   if podlings.include? @project
                     @pmc = 'incubator'
                     @podling = @project
                     groups = "#@pmc,#@podling"
+                  elsif @project.empty?
+                    @pmc = nil
+                    @podling = nil
+                    groups = nil
                   else
                     @pmc = @project
                     @podling = nil
-                    groups = "#@pmc"
+                    groups = @pmc
                   end
 
                   tobe = nil
@@ -278,11 +289,14 @@ _html do
                     "#{@pmc};#{Date.today.strftime('%m-%d-%Y')};yes;yes;no;"
 
                   # determine the requesting party and cc_list
-                  @pmc =~ /([\w.-]+)/
-                  requestor = $1
-                  requestor.untaint
-                  pmc_list = ASF::Committee.find(@pmc).mail_list
-                  cc_list = ["private@#{pmc_list}.apache.org".untaint]
+                  if @project.empty?
+                    cc_list = ["operations@apache.org"]
+                  else
+                    pmc_list = ASF::Committee.find(@pmc).mail_list
+                    cc_list = ["private@#{pmc_list}.apache.org".untaint]
+                  end
+
+                  requestor = @pmc[/([\w.-]+)/, 1].untaint
                   if requestor == 'incubator' and not @podling.to_s.empty?
                     if File.read("#{APMAIL_BIN}/.archives").include? "incubator-#{@podling}-private"
                       cc_list << "#{@podling}-private@#{pmc_list}.apache.org".untaint
@@ -291,7 +305,9 @@ _html do
                     end
                     requestor = "#{@podling}@incubator".untaint
                   end
-                  cc_list << "<#{@email}>".untaint # TODO: add @name RFC822-escaped
+
+                  cc_list << "#{@name} <#{@email}>".untaint
+                  cc_list << "secretary@apache.org"
 
                   # build the mail to be sent
                   ASF::Mail.configure
