@@ -291,7 +291,7 @@ _html do
                   # determine the requesting party and cc_list
                   if @project.empty?
                     cc_list = ["operations@apache.org"]
-                    requestor = user.untaint
+                    requestor = user.id.untaint
                   else
                     pmc_list = ASF::Committee.find(@pmc).mail_list
                     cc_list = ["private@#{pmc_list}.apache.org".untaint]
