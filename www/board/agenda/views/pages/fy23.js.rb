@@ -288,11 +288,29 @@ class FY23 < Vue
 
     @budget.net = @budget.income - @budget.expense
 
-    @budget.cash = 1767 + 3*@budget.net + 2*100 + 500 # EA+BTC adjustment
-      # EA adjustment: instead of ramping down, the reduction in expense
-      #                is immediate and constant.
-      # BTC adjustment: we expect to see a minimum of $500K from the recent
-      #                 PineApple Fund BTC donation.
+    @budget.cash = 1767 + # Virtual's projection for cash on hand at the end
+                          # of FY18.
+
+                   (2*-212) + (3*@budget.net) + 
+                          # linear projection for expenses from FY18 to FY23.
+                          # Presuming:
+                          #   FY19 = FY18 + 1 * (FY23-FY18)/5
+                          #   FY20 = FY18 + 2 * (FY23-FY18)/5
+                          #   FY21 = FY18 + 3 * (FY23-FY18)/5
+                          #   FY22 = FY18 + 4 * (FY23-FY18)/5
+                          #   FY23 = FY18 + 5 * (FY23-FY18)/5
+                          # Total  = 5*Fy18 + 15*(FY23-FY18/5
+                          #        = 5*Fy18 + 3*(FY23-FY18)
+                          #        = 5*Fy18 + 3*FY23 - 3 * FY18
+                          #        = 2*Fy18 + 3*FY23
+          
+                   2*100 + 
+			  # EA adjustment: instead of ramping down, the
+			  # reduction in expense is immediate and constant.
+
+                   500
+			  # BTC adjustment: we expect to see a minimum of $500K
+			  # from the recent PineApple Fund BTC donation.
   end
 
   # update budget item when an input field changes
