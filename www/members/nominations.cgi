@@ -3,7 +3,7 @@ PAGETITLE = "Member nominations cross-check" # Wvisible:meeting
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 
 require 'mail'
-require 'wunderbar'
+require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 
 # link to members private-arch
