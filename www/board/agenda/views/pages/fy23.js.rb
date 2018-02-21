@@ -308,8 +308,8 @@ class FY23 < Vue
 			  # EA adjustment: instead of ramping down, the
 			  # reduction in expense is immediate and constant.
 
-                   500
-			  # BTC adjustment: we expect to see a minimum of $500K
+                   600
+			  # BTC adjustment: we expect to see a minimum of $600K
 			  # from the recent PineApple Fund BTC donation.
   end
 
