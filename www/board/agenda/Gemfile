@@ -12,7 +12,6 @@ else
 end
 
 gem 'rake'
-gem 'parser', '2.5.0.0'
 gem 'wunderbar'
 gem 'ruby2js'
 gem 'sinatra', '~> 2.0'

@@ -74,8 +74,8 @@ class FY23 < Vue
           _td.indented do
             _a 'Total Sponsorship', href: 'https://s.apache.org/zFgy'
           end
-          _td.num (1_084).toLocaleString()
-          _td.num (1_500).toLocaleString()
+          _td.num 1_084.toLocaleString()
+          _td.num 1_500.toLocaleString()
           _td.num do 
             _input.sponsorship! onBlur: self.change, disabled: @disabled,
               value: @budget.sponsorship.toLocaleString()
@@ -105,8 +105,8 @@ class FY23 < Vue
 
         _tr do
           _td.indented 'Total Income'
-          _td.num (1_227).toLocaleString()
-          _td.num (1_667).toLocaleString()
+          _td.num 1_227.toLocaleString()
+          _td.num 1_667.toLocaleString()
           _td.num.income! @budget.income.toLocaleString()
         end
 
@@ -244,8 +244,8 @@ class FY23 < Vue
 
         _tr do
           _td.indented 'Total Expense'
-          _td.num (1_418).toLocaleString()
-          _td.num (1_722).toLocaleString()
+          _td.num 1_418.toLocaleString()
+          _td.num 1_722.toLocaleString()
           _td.num.expense! @budget.expense.toLocaleString()
         end
 
@@ -266,7 +266,7 @@ class FY23 < Vue
 
         _tr do
           _td 'Cash'
-          _td.num (1_767).toLocaleString()
+          _td.num 1_767.toLocaleString()
           _td.num 595
           _td.num.cash! @budget.cash.toLocaleString(),
             class: (@budget.cash < 0 ? 'danger' : 'success')
