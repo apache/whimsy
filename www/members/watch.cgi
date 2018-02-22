@@ -90,7 +90,7 @@ _html do
               end
 
               _li do
-                _a 'PMCs with no members', href: 'members/memberless-pmcs'
+                _a 'PMCs with no/few members', href: 'members/memberless-pmcs'
               end
             end
           end
