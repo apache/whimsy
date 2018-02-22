@@ -28,7 +28,7 @@ _html do
       helpblock: -> {
         _p 'This displays PMC names where there are few/no ASF Members listed on the PMC.'
         _p do
-          _ 'Switch to:'
+          _ 'Switch to less than:'
           counts.each do |c|
             _a href: "/members/memberless-pmcs?count=#{c}" do
               _button.btn.btn_info c
