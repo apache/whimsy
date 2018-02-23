@@ -808,12 +808,14 @@ module ASF
 
       availid = attrs['uid']
 
-      # determine next uid and group
-      nextuid = ASF::search_one(ASF::Person.base, 'uid=*', 'uidNumber').
-        flatten.map(&:to_i).max + 1
+      # determine next uid and group, unless provided
+      nextuid = attrs['uidNumber'] || 
+        ASF::search_one(ASF::Person.base, 'uid=*', 'uidNumber').
+          flatten.map(&:to_i).max + 1
 
-      nextgid = ASF::search_one(group_base, 'cn=*', 'gidNumber').
-        flatten.map(&:to_i).max + 1
+      nextgid = attrs['gidNumber'] ||
+        ASF::search_one(group_base, 'cn=*', 'gidNumber').
+          flatten.map(&:to_i).max + 1
  
       # fixed attributes
       attrs.merge!({
