@@ -54,10 +54,18 @@ _html do
         _fieldset do
           _legend 'Mail Moderation Helper'
 
+          _p do
+            _ul do
+              _li 'subscribers can post and will receive mail'
+              _li 'allow-subscribers can post; they do not get copies of mails (this is used for e.g. press@)'
+              _li 'deny-subscribers cannot post; their posts will be rejected without needing moderation'
+            end
+          end
+
           _table do
             _tr do
-              _th 'Mailing list information'
-              _th 'Subscriber updates'
+              _th 'Mailing list'
+              _th 'Subscriber'
             end
             _tr do
               _td do
@@ -68,6 +76,16 @@ _html do
               _td do
                 _input.name name: 'email', size: 40, pattern: '[^@]+@[^@]+', value: @email, placeholder: 'user@domain.example'
               end
+            end
+            _tr do
+              _td {
+                _br
+                _p 'The following commands operate on the list only:'
+              }
+              _td {
+                _br
+                _p 'The following commands also require a subscriber email address:'
+              }
             end
             _tr do
               _td do
@@ -87,13 +105,13 @@ _html do
               _td do
                 _label do
                   _input type: "radio", name: "cmd", value: "log", required: true, checked: (@cmd == "log")
-                  _ 'log (history of changes to the subscribers)'
+                  _ 'log (history of subscription changes)'
                 end
               end
               _td do
                 _label do
                   _input type: "radio", name: "cmd", value: "unsubscribe", required: true, checked: (@cmd == "unsubscribe" || @cmd == nil)
-                  _ 'unsubscribe'
+                  _ 'unsubscribe (from list)'
                 end
               end
             end
@@ -115,7 +133,7 @@ _html do
               _td do
                 _label do
                   _input type: "radio", name: "cmd", value: "allow-log", required: true, checked: (@cmd == "allow-log")
-                  _ 'allow-log (history)'
+                  _ 'allow-log (history of subscriptions to allow list)'
                 end
               end
               _td do
@@ -129,13 +147,13 @@ _html do
               _td do
                 _label do
                   _input type: "radio", name: "cmd", value: "deny-list", required: true, checked: (@cmd == "deny-list")
-                  _ 'deny-list (currently denied to post)'
+                  _ 'deny-list (list those currently denied to post)'
                 end
               end
               _td do
                 _label do
                   _input type: "radio", name: "cmd", value: "deny-subscribe", required: true, checked: (@cmd == "deny-subscribe")
-                  _ 'deny-subscribe (prevent posting)'
+                  _ 'deny-subscribe (prevent subscriber from posting)'
                 end
               end
             end
@@ -143,7 +161,7 @@ _html do
               _td do
                 _label do
                   _input type: "radio", name: "cmd", value: "deny-log", required: true, checked: (@cmd == "deny-log")
-                  _ 'deny-log (historic)'
+                  _ 'deny-log (history of deny subscriptions)'
                 end
               end
               _td do
@@ -153,19 +171,11 @@ _html do
                 end
               end
             end
-            _tr do
-              _td '(above commands operate on the list only)'
-              _td '(above commands also require a subscriber email address)'
-            end
           end
-          _p do
-            _ul do
-              _li 'subscribers can post and will receive mail'
-              _li 'allow-subscribers can post; they do not get copies of mails (this is used for e.g. press@)'
-              _li 'deny-subscribers cannot post; their posts will be rejected without needing moderation'
-            end
-          end
-          _input type: 'submit', value: 'Generate'
+          _p {
+            _br
+            _input type: 'submit', value: 'Generate'
+          }
         end
       end
 
