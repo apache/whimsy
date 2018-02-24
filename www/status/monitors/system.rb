@@ -58,7 +58,7 @@ def Monitor.system(previous_status)
   require_relative '../../../lib/whimsy/asf'
   name = :ldap
   pls = ASF::LDAP.puppet_ldapservers.sort
-  hosts = ASF::LDAP::HOSTS.sort
+  hosts = ASF::LDAP::RO_HOSTS.sort
   diff = (pls-hosts).map {|host| "+ #{host}"}
   diff += (hosts-pls).map {|host| "- #{host}"}
   if diff.empty?
