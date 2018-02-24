@@ -554,6 +554,43 @@ module ASF
       person
     end
 
+    # rename a person
+    def rename(newid, attrs={})
+      # ensure person exists in LDAP
+      raise ArgumentError(self.id) unless self.dn
+
+      # create a new person
+      new_person = ASF::Person.create(self.attrs.merge(attrs).merge(uid: newid))
+
+      # determine what groups the individual is a member of
+      uid_groups = ASF.search_subtree('dc=apache,dc=org', 
+        'memberUid=#{self.id}', 'dn').flatten
+      dn_groups = ASF.search_subtree('dc=apache,dc=org', 
+        'member=#{self.dn}', 'dn').flatten
+
+      # add new user to all groups
+      uid_groups.each do |dn|
+        ASF::LDAP.modify(dn, [ASF::Base.mod_add('memberUid', new_person.id)])
+      end
+      dn_groups.each do |dn|
+        ASF::LDAP.modify(dn, [ASF::Base.mod_add('member', new_person.dn)])
+      end
+
+      # remove original user from all groups
+      uid_groups.each do |dn|
+        ASF::LDAP.modify(dn, [ASF::Base.mod_delete('memberUid', self.id)])
+      end
+      dn_groups.each do |dn|
+        ASF::LDAP.modify(dn, [ASF::Base.mod_delete('member', self.dn)])
+      end
+
+      # remove original user
+      ASF::Person.remove(person.id)
+
+      # return new user
+      new_person
+    end
+
     # completely remove a committer from LDAP
     # ** DO NOT USE **
     # In almost all cases, use deregister instead
@@ -813,9 +850,19 @@ module ASF
         ASF::search_one(ASF::Person.base, 'uid=*', 'uidNumber').
           flatten.map(&:to_i).max + 1
 
-      nextgid = attrs['gidNumber'] ||
-        ASF::search_one(group_base, 'cn=*', 'gidNumber').
+      nextgid = attrs['gidNumber']
+      unless nextgid
+        nextgid = ASF::search_one(group_base, 'cn=*', 'gidNumber').
           flatten.map(&:to_i).max + 1
+
+        # create new LDAP group
+        entry = [
+          mod_add('objectClass', ['posixGroup', 'top']),
+          mod_add('cn', availid),
+          mod_add('userPassword', '{crypt}*'),
+          mod_add('gidNumber', nextgid.to_s),
+        ]
+      end
  
       # fixed attributes
       attrs.merge!({
@@ -841,14 +888,6 @@ module ASF
           attrs['userPassword'] = SecureRandom.base64(12).gsub(/\W+/, '')
         end
       end
-
-      # create new LDAP group
-      entry = [
-        mod_add('objectClass', ['posixGroup', 'top']),
-        mod_add('cn', availid),
-        mod_add('userPassword', '{crypt}*'),
-        mod_add('gidNumber', nextgid.to_s),
-      ]
 
       ASF::LDAP.add("cn=#{availid},#{group_base}", entry)
 
