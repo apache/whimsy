@@ -47,11 +47,13 @@ module ASF
      # Derived from the following sources:
      # * https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
      # Updated 2018-02-24
-    HOSTS = %w(
+    RO_HOSTS = %w(
       ldaps://ldap1-ec2-va.apache.org:636
       ldaps://ldap1-il-eu.apache.org:636
       ldaps://ldap2-lw-us.apache.org:636
     )
+
+    RW_HOSTS = RO_HOSTS
 
     # Mutex preventing simultaneous connections to LDAP from a single process
     CONNECT_LOCK = Mutex.new
@@ -82,7 +84,9 @@ module ASF
     end
 
     # connect to LDAP
-    def self.connect(test = true)
+    def self.connect(test = true, hosts = nil)
+      hosts ||= self.hosts
+
       # Try each host at most once
       hosts.length.times do
         # Ensure we use each host in turn
@@ -137,7 +141,7 @@ module ASF
       raise ::LDAP::ResultError.new('Unknown user') unless dn
 
       ASF.ldap.unbind if ASF.ldap.bound? rescue nil
-      ldap = ASF.init_ldap(true)
+      ldap = ASF.init_ldap(true, RW_HOSTS)
       if block
         ASF.flush_weakrefs
         ldap.bind(dn, password, &block)
@@ -174,13 +178,13 @@ module ASF
     end
 
     # determine what LDAP hosts are available
-    def self.hosts
+    def self.hosts(use_config = true)
       return @hosts if @hosts # cache the hosts list
       # try whimsy config
       hosts = Array(ASF::Config.get(:ldap))
 
       # check system configuration
-      if hosts.empty?
+      if use_config and hosts.empty?
         conf = "#{ETCLDAP}/ldap.conf"
         if File.exist? conf
           uris = File.read(conf)[/^uri\s+(.*)/i, 1].to_s
@@ -193,7 +197,7 @@ module ASF
 
       # if all else fails, use default list
       Wunderbar.debug "Using default host list" if hosts.empty?
-      hosts = ASF::LDAP::HOSTS if hosts.empty?
+      hosts = ASF::LDAP::RO_HOSTS if hosts.empty?
 
       hosts.shuffle!
       #Wunderbar.debug "Hosts:\n#{hosts.join(' ')}"
@@ -235,7 +239,7 @@ module ASF
       # provide the URIs of the ldap hosts
       content.gsub!(/^URI/, '# URI')
       content += "uri \n" unless content =~ /^uri /
-      content[/uri (.*)\n/, 1] = hosts.join(' ')
+      content[/uri (.*)\n/, 1] = hosts(false).join(' ')
 
       # verify/set the base
       unless content.include? 'base dc=apache'
@@ -281,10 +285,10 @@ module ASF
   end
 
   # public entry point for establishing a connection safely
-  def self.init_ldap(reset = false)
+  def self.init_ldap(reset = false, hosts = nil)
     ASF::LDAP::CONNECT_LOCK.synchronize do
       @ldap = nil if reset
-      @ldap ||= ASF::LDAP.connect(!reset)
+      @ldap ||= ASF::LDAP.connect(!reset, hosts)
     end
   end
 
@@ -1461,7 +1465,7 @@ if __FILE__ == $0
   module ASF
     module LDAP
       def self.getHOSTS # :nodoc:
-        HOSTS
+        RO_HOSTS
       end
     end
   end
