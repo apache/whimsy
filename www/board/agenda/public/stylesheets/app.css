@@ -6,6 +6,7 @@ footer ul {list-style-type: none; padding: 0}
 a {color: #000}
 .shell {border: 1px solid black;  border-radius: 1em; margin: 0 25%}
 .private {background-color: #CCC; border: 1px solid #444; color: #000}
+.error {background-color: #F88}
 
 /* row colors */
 .blank      {background-color: #DDD !important}

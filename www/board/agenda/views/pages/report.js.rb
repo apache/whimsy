@@ -246,21 +246,29 @@ class Report < Vue
   # highlight private sections - these sections appear in the agenda but
   # will be removed when the minutes are produced (see models/minutes.rb)
   def privates(text)
-    # inline <private>...</private> sections (and preceding spaces and tabs)
-    # where the <private> and </private> are on the same line.
-    private_inline = Regexp.new('([ \t]*&lt;private&gt;.*?&lt;\/private&gt;)',
-      'ig')
-
     # block of lines (and preceding whitespace) where the first line starts
     # with <private> and the last line ends </private>.
     private_lines =
       Regexp.new('^([ \t]*&lt;private&gt;(?:\n|.)*?&lt;/private&gt;)(\s*)$',
       'mig')
 
-    # return the text with private sections marked with class private
-    return text.
-      gsub(private_inline, '<span class="private">$1</span>').
-      gsub(private_lines, '<div class="private">$1</div>')
+    # mark private sections with class private
+    text.gsub!(private_lines) do |match, text|
+      "<div class='private'>#{text}</div>"
+    end
+
+    # flag remaining private markers
+    text.gsub! /(.)(&lt;\/?private&gt;)(.)/ do |match, before, text, after|
+      if before == '>' or after == '<'
+        match
+      else
+        "#{before}<span class='error' " +
+        "title='private sections must consist only of full lines of text'" +
+        ">#{text}</span>#{after}"
+      end
+    end
+
+    return text
   end
   
   # expand president's attachments
