@@ -41,6 +41,14 @@ if (action=='--add') & (!already_in_pmc_chairs.empty?)
   already_in_pmc_chairs.map{|p| p.name}.join(' ')
 end
 
+# only add people to LDAP who are currently chairs in committee-info
+not_yet_in_pmc_chairs, not_a_chair = not_in_pmc_chairs.partition{|p| current.include?(p)}
+if (action=='--add') & (!not_a_chair.empty?)
+  puts 'The following ids were not added because they are '\
+  'not listed as a chair in committee-info.txt: ' +
+  not_a_chair.map{|p| p.name}.join(' ')
+end
+
 # only remove people who are currently in LDAP pmc-chairs
 if (action=='--rm') & (!not_in_pmc_chairs.empty?)
   puts 'The following ids were not removed because they are '\
@@ -62,16 +70,23 @@ puts 'The following members of LDAP pmc-chairs are not currently ' +
   'listed as chairs in committee-info.txt: ' +
   candidates_for_removal.map{|p|p.name}.join(' ')
 
-if ((action=='--add') & not_in_pmc_chairs.empty?) |
+# identify candidates for addition to LDAP pmc-chairs
+candidates_for_addition = current.select{|p|!chairs.members.include?(p)}
+puts 'The following chairs in committee-info.txt are not currently ' +
+  'listed as members of LDAP pmc-chairs: ' +
+candidates_for_addition.map{|p|p.name}.join(' ')
+
+if ((action=='--add') & not_yet_in_pmc_chairs.empty?) |
     ((action=='--rm') & not_chairs.empty?)
   puts 'Nothing to do.'
+  exit
 end
 
 # execute the action
-if action == '--add' and not not_in_pmc_chairs.empty?
-  puts 'Adding: ' + not_in_pmc_chairs.map{|p|p.name}.join(' ')
+if action == '--add' and not not_yet_in_pmc_chairs.empty?
+  puts 'Adding: ' + not_yet_in_pmc_chairs.map{|p|p.name}.join(' ')
   exit if dryrun
-  ASF::LDAP.bind { chairs.add(not_in_pmc_chairs) }
+  ASF::LDAP.bind { chairs.add(not_yet_in_pmc_chairs) }
 elsif action == '--rm' and not not_chairs.empty?
   puts 'Removing: ' + not_chairs.map{|p|p.name}.join(' ')
   exit if dryrun
