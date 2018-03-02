@@ -215,7 +215,7 @@ class PMCMember < Vue
       elsif not @@committee.committers.include? @@person.id
         _td.issue.clickable 'not in committer list', onClick: self.select
       elsif @@person.id == @@committee.chair
-        _td.chair.clickable 'chair', onClick: self.select
+        _td.chair.clickable (@@committee.pmc_chair ? 'chair' : 'chair (not in pmc-chairs)'), onClick: self.select
       else
         _td.clickable '', onClick: self.select
       end

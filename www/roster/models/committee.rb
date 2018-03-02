@@ -107,9 +107,15 @@ class Committee
       }
     end
 
+    pmc_chair = false
+    if pmc.chair
+      pmcchairs = ASF::Service.find('pmc-chairs')
+      pmc_chair = pmcchairs.members.include? pmc.chair
+    end
     response = {
       id: id,
       chair: pmc.chair && pmc.chair.id,
+      pmc_chair: pmc_chair,
       display_name: pmc.display_name,
       description: pmc.description,
       schedule: pmc.schedule,
