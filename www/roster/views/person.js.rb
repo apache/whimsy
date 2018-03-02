@@ -92,6 +92,9 @@ class Person < Vue
             else
               _li {_a group, href: "group/#{group}"}
             end
+            if @committer.chairOf.length > 0 and not @committer.groups.include? 'pmc-chairs'
+              _ '[Missing: pmc-chairs]'
+            end
           end
         end
       end
