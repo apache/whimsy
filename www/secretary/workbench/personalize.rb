@@ -24,7 +24,7 @@ class Wunderbar::JsonBuilder
 
       person = ASF::Person.find(user)
 
-      @from = "#{person.public_name} <#{user}@apache.org>"
+      @from = "#{person.public_name} <#{user}@apache.org>".untaint
       @sig = %{
         -- #{person.public_name}
         Apache Software Foundation Secretarial Team
