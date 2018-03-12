@@ -141,6 +141,8 @@ _html do
             filename = "proxies-received/#$USER.txt".untaint
             File.write(filename, proxyform)
             _.system ['svn', 'add', filename]
+            _.system ['svn', 'propset', 'svn:mime-type',
+              'text/plain; charset=utf-8', filename]
 
             # get a list of proxies
             list = Dir['proxies-received/*.txt'].map do |file|
