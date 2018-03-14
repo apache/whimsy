@@ -6,8 +6,23 @@ require 'whimsy/asf'
 require 'date'
 require 'tmpdir'
 
-# Update ~/.whimsy to have a :svn: entry for the following:
 MEETINGS = ASF::SVN['private/foundation/Meetings']
+meeting = File.basename(Dir["#{MEETINGS}/2*"].sort.last).untaint
+
+# Calculate how many members required to attend first half for quorum
+def calculate_quorum(meeting)
+  begin
+    num_members = File.read("#{MEETINGS}/#{meeting}/record").each_line.count
+    quorum_need = num_members / 3
+    num_proxies = Dir["#{MEETINGS}/#{meeting}/proxies-received/*"].count
+    attend_irc = quorum_need - num_proxies
+  rescue StandardError => e
+    # Ensure we can't break rest of script
+    puts "ERROR: #{e}"
+    return 0, 0, 0, 0
+  end
+  return num_members, quorum_need, num_proxies, attend_irc
+end
 
 _html do
   _link href: "css/bootstrap.min.css", rel: 'stylesheet'
@@ -18,7 +33,6 @@ _html do
     .transcript pre {border: none; line-height: 0}
   }
 
-  meeting = File.basename(Dir["#{MEETINGS}/2*"].sort.last).untaint
 
   # get a list of members who have submitted proxies
   exclude = Dir["#{MEETINGS}/#{meeting}/proxies-received/*"].
@@ -53,6 +67,15 @@ _html do
             you won't have internet access the week of the meeting, ask 
             for how to assign a proxy for your vote ballots as well.
           }
+          num_members, quorum_need, num_proxies, attend_irc = calculate_quorum(meeting)
+          if num_members
+            _p do
+              _ 'Currently, we must have '
+              _span.text_primary "#{attend_irc}" 
+              _ ' Members attend the first half of the meeting and respond to Roll Call to reach quorum and continue the meeting.'
+              _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
+            end
+          end
           _p %{
             IMPORTANT! Be sure to tell the person that you select as proxy 
             that you've assigned them to mark your attendance! They simply 
