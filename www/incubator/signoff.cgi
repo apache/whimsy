@@ -90,7 +90,7 @@ _html do
       _p do
         _ 'This script checks recent Incubator podling reports as submitted to the board agenda for mentor signoffs. '
         _span.check 'Blue'
-        _ ' means signoff is present, '
+        _ ' means signoff is present in that report, '
         _span.blank 'orange'
         _ ' means signoff is absent.'
         _br
@@ -107,7 +107,7 @@ _html do
         _p "This table shows all mentors and the podlings they signed off on. Hover over podling name to see date of report."
       }
     ) do
-      _table.table.table_hover.table_striped id: '#bymentor' do
+      _table.table.table_hover.table_striped id: 'bymentor' do
         _thead_ do
           _tr do
             _th 'Mentor Name'
@@ -150,7 +150,7 @@ _html do
         _p "This table shows all podlings and how many mentors signed off on reports, by date.  Reminder: only checks recent monthly reports."
       }
     ) do
-      _table.table.table_hover.table_striped id: '#bypodling' do
+      _table.table.table_hover.table_striped id: 'bypodling' do
         _thead_ do
           _tr do
             _th 'Podling Name (signoff %)'
