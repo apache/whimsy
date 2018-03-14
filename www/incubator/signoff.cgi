@@ -9,7 +9,7 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 
-# authenticate
+# Authenticate - must be first!
 user = ASF::Person.find($USER)
 incubator = ASF::Committee.find('incubator').members
 unless user.asf_member? or incubator.include? user
@@ -19,50 +19,58 @@ unless user.asf_member? or incubator.include? user
 end
 
 BOARD = ASF::SVN['private/foundation/board']
-
-agendas = Dir["#{BOARD}/board_agenda_*.txt",
-  "#{BOARD}/archived_agendas/board_agenda_*.txt"]
-
-agendas = agendas.sort_by {|file| File.basename(file)}[-13..-1]
-
-if File.read(agendas.last).include? 'The Apache Incubator is the entry path'
-  agendas.shift
-else
-  agendas.pop
-end
-
-ASF::Person.preload('cn')
-ASF::ICLA.preload()
-people = Hash[ASF::Person.list.map {|person| [person.public_name, person.id]}]
-mentors = {}
-projects = URI.parse('http://incubator.apache.org/projects/')
-table = Nokogiri::HTML(Net::HTTP.get(projects)).at('table')
-
-# extract a list of [podling names, table row]
-podlings = table.search('tr').map do |tr|
-  tds = tr.search('td')
-  next if tds.empty?
-  [tds.last.text, tr]
-end
-
-agendas.each do |file|
-  date = file[/\d+_\d+_\d+/].gsub('_', '-')
-  agenda = File.read(file)
-  signoffs = agenda.scan(/^Signed-off-by:\s+.*?\n\n/m).join
-  signoffs.scan(/\[(.+?)\]\((.*?)\) (.*)/).each do |check, podling, name|
-    name.strip!
-    podling.strip!
-    name.sub! /\s+\(.*?\)/, ''
-    mentors[name] = [] unless mentors[name]
-    mentors[name] << {
-      date: date,
-      checked: !check.strip.empty?,
-      podling: podling
-    }
+# Gather data from board agendas about podlings and actual mentors listed
+def get_mentor_signoffs()
+  ASF::Person.preload('cn')
+  ASF::ICLA.preload()
+  people = Hash[ASF::Person.list.map {|person| [person.public_name, person.id]}]
+  
+  agendas = Dir["#{BOARD}/board_agenda_*.txt",
+    "#{BOARD}/archived_agendas/board_agenda_*.txt"]
+  agendas = agendas.sort_by {|file| File.basename(file)}[-13..-1]
+  if File.read(agendas.last).include? 'The Apache Incubator is the entry path'
+    agendas.shift
+  else
+    agendas.pop
   end
+  
+  # projects = URI.parse('http://incubator.apache.org/projects/')
+  # table = Nokogiri::HTML(Net::HTTP.get(projects)).at('table')
+  # # extract a list of [podling names, table row]
+  # podlings = table.search('tr').map do |tr|
+  #   tds = tr.search('td')
+  #   next if tds.empty?
+  #   [tds.last.text, tr]
+  # end
+  
+  mentors = {}
+  podlings = {}
+  agendas.each do |file|
+    date = file[/\d+_\d+_\d+/].gsub('_', '-')
+    agenda = File.read(file)
+    signoffs = agenda.scan(/^Signed-off-by:\s+.*?\n\n/m).join
+    signoffs.scan(/\[(.+?)\]\((.*?)\) (.*)/).each do |check, podling, name|
+      name.strip!
+      podling.strip!
+      name.sub! /\s+\(.*?\)/, ''
+      
+      mentors[name] = [] unless mentors[name]
+      mentors[name] << {
+        date: date,
+        checked: !check.strip.empty?,
+        podling: podling
+      }
+      
+      podlings[podling] = Hash.new{|h,k| h[k] = [] } unless podlings[podling]
+      podlings[podling][date] << [name, !check.strip.empty?]
+    end
+  end
+  return mentors, podlings, people
 end
 
-roster = '/roster/committer/'
+
+mentor_signoffs, podling_signoffs, people = get_mentor_signoffs()
+ROSTER_URL = '/roster/committer/'
 
 _html do
   # http://bconnelly.net/2013/10/creating-colorblind-friendly-figures/
@@ -75,48 +83,59 @@ _html do
     related: {
       'https://incubator.apache.org/images/incubator_feather_egg_logo_sm.png' => 'Apache Incubator Egg Logo',
       'https://incubator.apache.org/projects/' => 'Incubator Podling List',
-      '/incubator/moderators' => 'Incubator Mailing List Moderators'
+      '/incubator/moderators' => 'Incubator Mailing List Moderators',
+      '#bypodling' => 'Signoffs By Podling'
     },
     helpblock: -> {
       _p do
-        _ 'This script checks past several months Incubator podling reports for mentor signoff. '
+        _ 'This script checks recent Incubator podling reports as submitted to the board agenda for mentor signoffs. '
         _span.check 'Blue'
         _ ' means signoff is present, '
         _span.blank 'orange'
         _ ' means signoff is absent.'
         _br
-        _ 'Hover over podling name to see date.'
+        _a_ 'Signoffs By Mentor', href: '#bymentor'
+        _ ' | '
+        _a_ 'Signoffs By Podling', href: '#bypodling'
       end
     }
   ) do
-    _table_.table do
-      _thead_ do
-        _tr do
-          _th 'Mentor name'
-          _th 'Podling Monthly Reports'
+    
+    _whimsy_panel_table(
+      title: "Podling Signoffs By Mentor",
+      helpblock: -> {
+        _p "This table shows all mentors and the podlings they signed off on. Hover over podling name to see date of report."
+      }
+    ) do
+      _table.table.table_hover.table_striped id: '#bymentor' do
+        _thead_ do
+          _tr do
+            _th 'Mentor Name'
+            _th 'Podling Monthly Reports'
+          end
         end
-      end
-      _tbody do
-        mentors.sort.each do |name, entries|
-          _tr_ do
-            _td do
-              if people[name]
-                if ASF::Person.find(people[name]).asf_member?
-                  _b! {_a name, href: roster + people[name]}
+        _tbody do
+          mentor_signoffs.sort.each do |name, entries|
+            _tr_ do
+              _td do
+                if people[name]
+                  if ASF::Person.find(people[name]).asf_member?
+                    _b! {_a name, href: ROSTER_URL + people[name]}
+                  else
+                    _a name, href: ROSTER_URL + people[name]
+                  end
                 else
-                  _a name, href: roster + people[name]
+                  _a name, href: ROSTER_URL + '?q=' + URI.encode(name)
                 end
-              else
-                _a name, href: roster + '?q=' + URI.encode(name)
               end
-            end
 
-            _td do
-              entries.each do |entry|
-                if entry[:checked]
-                  _span.check entry[:podling], title: entry[:date]
-                else
-                  _span.blank entry[:podling], title: entry[:date]
+              _td do
+                entries.each do |entry|
+                  if entry[:checked]
+                    _span.check entry[:podling], title: entry[:date]
+                  else
+                    _span.blank entry[:podling], title: entry[:date]
+                  end
                 end
               end
             end
@@ -124,5 +143,43 @@ _html do
         end
       end
     end
+    
+    _whimsy_panel_table(
+      title: "Podling Signoffs By Podling",
+      helpblock: -> {
+        _p "This table shows all podlings and how many mentors signed off on reports, by date.  Reminder: only checks recent monthly reports."
+      }
+    ) do
+      _table.table.table_hover.table_striped id: '#bypodling' do
+        _thead_ do
+          _tr do
+            _th 'Podling Name (signoff %)'
+            _th 'Date: (Mentor signoffs/Number of mentors) ...'
+          end
+        end
+        _tbody do
+          podling_signoffs.sort.each do |podling, signoffs|
+            m = 0
+            s = 0
+            signoffs.each do |month, mentors|
+              m += mentors.length
+              s += mentors.count { |x| x[1] }
+            end
+            _tr_ do
+              _td do
+                _a_ podling, href: "https://incubator.apache.org/projects/#{podling}"
+                _ " (#{((s/m.to_f)*100).round()}%)"
+              end
+              _td do
+                signoffs.each do |month, mentors|
+                  _ " #{month} (#{mentors.count { |x| x[1] }} / #{mentors.length}) "
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+    
   end
 end
