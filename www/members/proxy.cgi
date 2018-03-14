@@ -29,7 +29,7 @@ _html do
     _div_.container do
       _div.row do
         _div.well.text_center do
-          _h1 'ASF Proxy Selection Form'
+          _h1 'Member Meeting Proxy Selection Form'
           _h3 Date.parse(meeting).strftime("%B %-d, %Y")
         end
       end
@@ -37,13 +37,28 @@ _html do
       _div.row do
         _div do
           _p %{
-            This form allows you to assign a proxy for the upcoming members
-            meeting. By default it will assume you intend to assign the proxy
-            for the meeting only, and you will still be sent voting ballots by
-            email. If you do not have internet access during the meeting
-            window and would like to assign the member to vote for you, please
-            select a proxy below.
+            This form allows you to assign an attendance proxy for the upcoming 
+            Member's Meeting. If there is any chance you might not be able 
+            to attend the first part of the Member's Meeting on Tuesday, then 
+            please assign a proxy, because that helps the meeting reach 
+            quorum more quickly. 
+            You can still attend the meeting if you want, and can revoke a 
+            proxy at any time.
           }
+          _p %{
+            You will still be sent board and new member ballots by email 
+            during the meeting's 46 hour recess (between Tuesday and Thursday, 
+            with two hours for vote counting), so you will still need to 
+            cast your votes by checking your mail during the recess. If 
+            you won't have internet access the week of the meeting, ask 
+            for how to assign a proxy for your vote ballots as well.
+          }
+          _p %{
+            IMPORTANT! Be sure to tell the person that you select as proxy 
+            that you've assigned them to mark your attendance! They simply 
+            need to mark your proxy attendance when the meeting starts.
+          }
+          _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
         end
       end
 
@@ -105,7 +120,7 @@ _html do
 
   else
     _body? do
-      _h3_ 'Session Transcript'
+      _h3_ 'Proxy Assignment - Session Transcript'
 
       # collect data
       proxy = File.read("#{MEETINGS}/#{meeting}/member_proxy.txt")
