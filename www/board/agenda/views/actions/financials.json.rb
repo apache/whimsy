@@ -79,7 +79,7 @@ rows.each do |row|
 end
 
 # drop current balances
-rows.shift(6)
+rows.shift(blank)
 
 # print out YTD totals
 rows.each do |row|
