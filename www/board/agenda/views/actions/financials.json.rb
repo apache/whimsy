@@ -49,17 +49,25 @@ worksheet['Board Summary'].each do |row|
   rows << data
 end
 
-# delete first two rows
-rows.shift(2)
+# delete front and back matter
+rows.shift until rows[0][0].start_with? 'Current Balances'
+rows.pop until rows.last[0].start_with? 'Net Income'
+
+headings = rows.delete_at(1)
+
+# adjust spacing of current balances
+blank = rows.index {|row| row.join.strip == ''}
+rows[1..blank].each do |row|
+  row[0] = row[0].ljust(35)
+end
 
 # move headings from second to seventh row
-headings = rows.delete_at(1)
 headings[2] = headings[6] = 'Budget'
 1.upto(7) do |i|
   headings[i] = headings[i].strftime("%b-%y") if DateTime === headings[i]
   headings[i] = headings[i].rjust(12) if headings[i]
 end
-rows.insert(6, headings)
+rows.insert(blank+1, headings)
 
 # delete empty rows
 rows.pop while rows[-1].length == 1 and rows[-1][0].strip == ''
@@ -71,7 +79,7 @@ rows.each do |row|
 end
 
 # drop current balances
-rows.shift(5)
+rows.shift(6)
 
 # print out YTD totals
 rows.each do |row|
