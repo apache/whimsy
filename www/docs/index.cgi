@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Whimsy Code Documentation" # Wvisible:docs
+PAGETITLE = "Apache Whimsy Code Documentation" # Wvisible:docs
 
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'json'
@@ -14,8 +14,8 @@ _html do
       subtitle: 'About This Documentation',
       relatedtitle: 'More Useful Links',
       related: {
-        "/committers/tools" => "Whimsy Tool Listing",
-        "https://github.com/rubys/wunderbar/" => "See Wunderbar Module Documentation",
+        "/committers/tools" => "Listing of All Whimsy Tools",
+        "https://github.com/rubys/wunderbar/" => "Wunderbar Module Documentation",
         "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code"
       },
       helpblock: -> {
@@ -27,6 +27,7 @@ _html do
 
       _h2 "API Documentation"
       _a "whimsy/asf module APIs", href: '/docs/api/'
+      _a 'Developer Overview FAQs', href: 'https://github.com/apache/whimsy/blob/master/DEVELOPMENT.md'
     end
   end
 end
