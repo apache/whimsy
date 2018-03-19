@@ -24,6 +24,32 @@ def calculate_quorum(meeting)
   return num_members, quorum_need, num_proxies, attend_irc
 end
 
+# Get info about current users's proxying
+# @return "help text", ["id | name (proxy)", ...] if they are a proxy
+# @return "You have already submitted a proxy form"
+# @return nil otherwise
+def is_user_proxied(meeting, id)
+  user = ASF::Person.find(id)
+  lines = IO.read("#{MEETINGS}/#{meeting}/proxies")
+  proxylist = lines.scan(/\s\s(.{25})(.*?)\((.*?)\)/) # [["Shane Curcuru    ", "David Fisher ", "wave"], ...]
+  help = nil
+  copypasta = [] # theiravailid | Their Name in Rolls (proxy)
+  proxylist.each do |arr|
+    if user.cn == arr[0].strip
+      copypasta << "#{arr[2].ljust(12)} | #{arr[1].strip} (proxy)"
+    elsif user.id == arr[2]
+      help = "NOTE: You appear to have already submitted a proxy form for someone else to mark your attendance! "
+    end
+  end
+  if copypasta.empty?
+    return help
+  else
+    (help ||= "") << "Since you are a proxy for others, then AFTER the 2. Roll Call is called, you may copy/paste the below lines to mark your and your proxies attendance."
+    copypasta.unshift("#{user.id.ljust(12)} | #{user.cn}")
+    return help, copypasta
+  end
+end
+
 _html do
   _link href: "css/bootstrap.min.css", rel: 'stylesheet'
   _link href: "css/bootstrap-combobox.css", rel: 'stylesheet'
@@ -81,6 +107,17 @@ _html do
             that you've assigned them to mark your attendance! They simply 
             need to mark your proxy attendance when the meeting starts.
           }
+          help, copypasta = is_user_proxied(meeting, $USER)
+          if help
+            _p help
+            if copypasta
+              _ul do
+                copypasta.each do |copyline|
+                  _pre copyline
+                end
+              end
+            end
+          end
           _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
         end
       end
