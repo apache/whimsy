@@ -38,7 +38,7 @@ def is_user_proxied(meeting, id)
     if user.cn == arr[0].strip
       copypasta << "#{arr[2].ljust(12)} | #{arr[1].strip} (proxy)"
     elsif user.id == arr[2]
-      help = "NOTE: You appear to have already submitted a proxy form for someone else to mark your attendance! "
+      help = "NOTE: You have already submitted a proxy form for #{arr[0].strip} to mark your attendance (be sure they know to mark you at Roll Call)! "
     end
   end
   if copypasta.empty?
