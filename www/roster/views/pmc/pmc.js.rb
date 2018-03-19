@@ -67,7 +67,7 @@ class PMCMembers < Vue
                 _li {
                   _ sub['addr']
                   _ ' '
-                  _ '(email not known)'
+                  _ '(not recognised)'
                 }
               end
             end
