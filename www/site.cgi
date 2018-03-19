@@ -31,12 +31,16 @@ CHECKS = {
 DOCS = {
   'uri'         => ['https://www.apache.org/foundation/marks/pmcs#websites',
                     'The homepage for any ProjectName must be served from http://ProjectName.apache.org'],
-#  'copyright'   => 'TBA',
+  'copyright'   => ['https://www.apache.org/legal/src-headers.html#headers',
+                    'All website content SHOULD include a copyright notice for the ASF.'],
   'foundation'  => ['https://www.apache.org/foundation/marks/pmcs#navigation',
                     'All projects must feature some prominent link back to the main ASF homepage at http://www.apache.org/'],
+  'image'  => ['https://www.apache.org/img/',
+                    'Projects SHOULD include a 212px wide copy of their logo in https://www.apache.org/img/ to be included in ASF homepage.'],
   'trademarks'  => ['https://www.apache.org/foundation/marks/pmcs#attributions',
                     'All project or product homepages must feature a prominent trademark attribution of all applicable Apache trademarks'],
-#  'events'      => 'TBA',
+  'events'      => ['https://www.apache.org/events/README.txt',
+                    'Projects SHOULD include a link to any current ApacheCon event, as provided by VP, Conferences.'],
   'license'     => ['https://www.apache.org/foundation/marks/pmcs#navigation',
                     '"License" should link to: http://www.apache.org/licenses/'],
   'sponsorship' => ['https://www.apache.org/foundation/marks/pmcs#navigation',
@@ -126,7 +130,7 @@ def displayProject(project, links, cols, analysis)
       _span.glyphicon.glyphicon_menu_right
       _ ' Results for project: '
       _a links['display_name'], href: links['uri']
-      _ ' Check Results column is the actual text found on the project homepage for this check.'
+      _ ' Check Results column is the actual text found on the project homepage for this check (when applicable).'
     }
   ) do
     _table.table.table_striped do
@@ -155,11 +159,16 @@ def displayProject(project, links, cols, analysis)
             
             _td do
               if cls == 'label-warning'
-                _ 'Expected to match the regular expression: '
-                _code CHECKS[col].source
-                _ ''
-              else
-                _ ''
+                if CHECKS.include? col
+                  _ 'Expected to match regular expression: '
+                  _code CHECKS[col].source
+                  if DOCS.include? col
+                    _ ' '
+                    _a DOCS[col][1], href: DOCS[col][0]
+                  end
+                else
+                  _ ''
+                end
               end
             end
           end
@@ -197,16 +206,16 @@ _html do
     related: {
       "/committers/tools" => "Whimsy Tool Listing",
       "https://www.apache.org/foundation/marks/pmcs#navigation" => "Required PMC Links Policy",
-      "https://github.com/apache/whimsy/" => "Read The Whimsy Code"
+      "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code"
     },
     helpblock: -> {
       _p do
         _ 'This script periodically crawls all Apache project websites to check them for a few specific links or text blocks that all projects are expected to have.'
         _ 'The checks (currently in beta) include verifying that all '
         _a 'required links', href: 'https://www.apache.org/foundation/marks/pmcs#navigation'
-        _ ' appear on a project homepage, along with checking if project logos appear in apache.org/img'
+        _ ' appear on a project homepage, along with an "image" check if project logo files are in apache.org/img'
       end
-      _p do
+      _p! do
         _a 'View the crawler code', href: 'https://github.com/apache/whimsy/blob/master/tools/site-scan.rb'
         _ ', '
         _a 'website display code', href: 'https://github.com/apache/whimsy/blob/master/www/site.cgi'
