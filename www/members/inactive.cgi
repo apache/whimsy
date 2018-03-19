@@ -29,7 +29,11 @@ _html do
   MEETINGS = ASF::SVN['private/foundation/Meetings']
   attendance = JSON.parse(IO.read("#{MEETINGS}/attendance.json"))
   latest = Dir["#{MEETINGS}/2*"].sort.last.untaint
-  tracker = JSON.parse(IO.read("#{latest}/non-participants.json"))
+  begin
+    tracker = JSON.parse(IO.read("#{latest}/non-participants.json"))
+  rescue Errno::ENOENT => err
+    raise IOError, "#{err.message} - Perhaps Whimsy doesn't have the current meeting's data yet?", err.backtrace
+  end
 
   # determine user's name as found in members.txt
   name = ASF::Member.find_text_by_id($USER).to_s.split("\n").first
