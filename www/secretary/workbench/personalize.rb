@@ -12,11 +12,11 @@ class Wunderbar::JsonBuilder
         Secretary, Apache Software Foundation
       }
 
-    elsif user == 'rubys'
+    elsif user == 'mattsicker'
 
-      @from = 'Sam Ruby <rubys@apache.org>'
+      @from = 'Matt Sicker <mattsicker@apache.org>'
       @sig = %{
-        -- Sam Ruby
+        -- Matt Sicker
         Assistant Secretary, Apache Software Foundation
       }
 
