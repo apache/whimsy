@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Apache Trademark Misuse Reporting Form" # Wvisible:brand public
+PAGETITLE = "Apache Trademark Misuse Reporting Form"
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'
 require 'wunderbar/bootstrap'
