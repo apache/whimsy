@@ -5,7 +5,7 @@ meetings = ASF::SVN['private/foundation/Meetings']
 received = Dir["#{meetings}/2*/memapp-received.txt"].sort.last.untaint
 
 # extract contents
-pattern = /^\w+\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(.*)\n/
+pattern = /^\w+\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(.*?)\s*\n/
 table = File.read(received).scan(pattern)
 
 # map contents to a hash
