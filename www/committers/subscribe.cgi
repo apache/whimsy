@@ -95,7 +95,8 @@ _html do
         _fieldset do
           _legend 'Subscribe To A List'
 
-          _label 'Select a mailing list name first, then select the email address to subscribe there.'
+          _label 'Select a mailing list name first, then select the email address to subscribe to that list.'
+          _br
           _label 'List name:'
           _select name: 'list', data_live_search: 'true' do
             _optgroup label: 'Foundation lists' do
@@ -138,6 +139,7 @@ _html do
           _legend 'Unsubscribe From A List'
 
           _label 'Select the mailing list first, then select the email address to unsubscribe.'
+          _br
           _label 'List name:'
           # collect subscriptions
           response = {}
