@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "ASF Mailing List Self-subscription" # Wvisible:mail subscribe
+PAGETITLE = "ASF Mailing List Subscription Helper" # Wvisible:mail subscribe
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'wunderbar'
 require 'wunderbar/bootstrap'
@@ -51,25 +51,28 @@ _html do
   _body? do
     _whimsy_body(
       title: PAGETITLE,
-      subtitle: 'How To Subscribe',
+      subtitle: 'Mailing List Subscriptions',
       related: {
-        'https://www.apache.org/foundation/mailinglists.html' => 'Apache Mailing List Info Page (describes manual subscription process)',
+        'https://www.apache.org/foundation/mailinglists.html' => 'Apache Mailing List Info Page (How-to Subscribe Manually)',
         'https://lists.apache.org' => 'Apache Mailing List Archives',
         '/committers/moderationhelper.cgi' => 'Mailing List Moderation Helper',
-        '/roster/committer/__self__' => 'Your details (including subscriptions)'
+        '/roster/committer/__self__' => 'Your Committer Details (and subscriptions)'
       },
       helpblock: -> {
-        _ 'This page allows Apache committers to auto-subscribe to, and auto-unsubscribe from, various mailing lists.'
-        _br
-        _span.text_info 'Note:' 
-        _ 'Only your registered email address(es) are listed here.'
-        _br
-        _ 'To change your email addresses, login to '
-        _a 'https://id.apache.org/', href: "https://id.apache.org/details/#{$USER}"
-        _ 'to add or remove forwarding or alternate (alias) addresses.'
-        _p
-        _ 'Your existing subscriptions (and email addresses) can be found in your'
-        _a 'committer details', href: '/roster/committer/__self__'
+        _p 'The below form allows Apache committers to automatically subscribe to, or unsubscribe from, most ASF mailing lists.'
+        _p do
+          _span.text_info 'Note:' 
+          _ 'Only email address(es) associated with your Apache ID are listed here.  To'
+          _span.strong 'change your associated email addresses'
+          _ ', login to '
+          _a 'https://id.apache.org/', href: "https://id.apache.org/details/#{$USER}"
+          _ 'where you can change your primary Forwarding Address and any other associated Alias email addresses you use.'
+        end
+        _p do
+          _ 'To view all your existing subscriptions (and email addresses), see your'
+          _a 'committer details', href: '/roster/committer/__self__'
+          _ '.'
+        end
       }
     ) do
       
@@ -90,8 +93,9 @@ _html do
       _form method: 'post' do
         _input type: 'hidden', name: 'request', value: 'sub'
         _fieldset do
-          _legend 'Subscribe Request:'
+          _legend 'Subscribe To A List'
 
+          _label 'Select a mailing list name first, then select the email address to subscribe there.'
           _label 'List name:'
           _select name: 'list', data_live_search: 'true' do
             _optgroup label: 'Foundation lists' do
@@ -131,8 +135,9 @@ _html do
       _form method: 'post' do
         _input type: 'hidden', name: 'request', value: 'unsub'
         _fieldset do
-          _legend 'Unsubscribe Request:'
+          _legend 'Unsubscribe From A List'
 
+          _label 'Select the mailing list first, then select the email address to unsubscribe.'
           _label 'List name:'
           # collect subscriptions
           response = {}
