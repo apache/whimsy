@@ -154,7 +154,7 @@ class PMCMember < Vue
       _td @@person.date
 
       if @state == :open
-        _td data_ids: @@person.id, onDoubleClick: self.select do 
+        _td data_ids: @@person.id, onDblclick: self.select do 
           if not @@person.date
             # in LDAP but not in committee-info.txt
             _button.btn.btn_warning 'Remove from LDAP',
