@@ -31,6 +31,7 @@ DIRECTOR_MAP = {
   'isabel' => ['idf', 'Isabel', 'Isabel Drost-Fromm'],
   'jerenkrantz' => ['je', 'Justin', 'Justin Erenkrantz'],
   'jim' => ['jj', 'Jim', 'Jim Jagielski'],
+  'lrosen' => ['lr', 'Larry', 'Larry Rosen'],
   'ke4qqq' => ['dn', 'David', 'David Nalley'],
   'lrosen' => ['lr', 'Lawrence', 'Lawrence Rosen'],
   'markt' => ['mt', 'Mark', 'Mark Thomas'],
@@ -158,7 +159,11 @@ _html do
               end
               _tr_ do
                 _td do
-                  _ DIRECTOR_MAP[id][DISPLAY_NAME]
+                  if DIRECTOR_MAP[id] and DIRECTOR_MAP[id][DISPLAY_NAME]
+                    _ DIRECTOR_MAP[id][DISPLAY_NAME]
+                  else
+                    _em.bg_danger id
+                  end
                 end
                 _td do
                   _ data.select{|k,v| v['present']}.length
