@@ -21,12 +21,16 @@ DISPLAY_NAME = 2
 DIRECTOR_MAP = {
   'bdelacretaz' => ['bd', 'Bertrand', 'Bertrand Delacretaz'],
   'brett' => ['bp', 'Brett', 'Brett Porter'],
+  'brianm' => ['bm', 'Brian', 'Brian McCallister'],
   'curcuru' => ['sc', 'Shane', 'Shane Curcuru'],
   'cutting' => ['dc', 'Doug', 'Doug Cutting'],
+  'dkulp' => ['dk', 'Daniel', 'Daniel Kulp'],
   'fielding' => ['rf', 'Roy', 'Roy T. Fielding'],
   'gstein' => ['gs', 'Greg', 'Greg Stein'],
   'isabel' => ['idf', 'Isabel', 'Isabel Drost-Fromm'],
+  'jerenkrantz' => ['je', 'Justin', 'Justin Erenkrantz'],
   'jim' => ['jj', 'Jim', 'Jim Jagielski'],
+  'lrosen' => ['lr', 'Larry', 'Larry Rosen'],
   'ke4qqq' => ['dn', 'David', 'David Nalley'],
   'markt' => ['mt', 'Mark', 'Mark Thomas'],
   'marvin' => ['mh', 'Marvin', 'Marvin Humphrey'],
@@ -152,7 +156,11 @@ _html do
               end
               _tr_ do
                 _td do
-                  _ DIRECTOR_MAP[id][DISPLAY_NAME]
+                  if DIRECTOR_MAP[id] and DIRECTOR_MAP[id][DISPLAY_NAME]
+                    _ DIRECTOR_MAP[id][DISPLAY_NAME]
+                  else
+                    _em.bg_danger id
+                  end
                 end
                 _td do
                   _ data.select{|k,v| v['present']}.length
