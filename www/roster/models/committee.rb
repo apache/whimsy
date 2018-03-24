@@ -69,7 +69,9 @@ class Committee
 
     roster.each {|id, info| info[:member] = ASF::Person.find(id).asf_member?}
 
-    roster[pmc.chair.id]['role'] = 'PMC chair' if pmc.chair
+    if pmc.chair and roster[pmc.chair.id]
+      roster[pmc.chair.id]['role'] = 'PMC chair' 
+    end
 
     # separate out the known ASF members and extract any matching committer details
     unknownSubs = []
