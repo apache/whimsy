@@ -222,7 +222,7 @@ module ASF
       # split into blocks
       blocks = contents.split("\n\n")
 
-      # find the reportings schedules
+      # find the reporting schedules
       index =  blocks.find_index {|section| section =~/January/}
 
       # extract reporting schedules
@@ -232,34 +232,36 @@ module ASF
         blocks[index+2].split("\n"),
       ]
 
-      # ensure that spacing is uniform
-      slots.each {|slot| slot.unshift '' unless slot[0] == ''}
+      unless slots.any? {|slot| slot.include? "    " + pmc}
+        # ensure that spacing is uniform
+        slots.each {|slot| slot.unshift '' unless slot[0] == ''}
 
-      # determine tie breakers between months of the same length
-      preference = [(date.month)%3, (date.month-1)%3, (date.month-2)%3]
+        # determine tie breakers between months of the same length
+        preference = [(date.month)%3, (date.month-1)%3, (date.month-2)%3]
 
-      # pick the month with the shortest list
-      slot = (0..2).map {|i| [slots[i].length, preference, i]}.min.last
+        # pick the month with the shortest list
+        slot = (0..2).map {|i| [slots[i].length, preference, i]}.min.last
 
-      # temporarily remove headers
-      headers = slots[slot].shift(3)
+        # temporarily remove headers
+        headers = slots[slot].shift(3)
 
-      # insert pmc into the reporting schedule
-      slots[slot] << "    " + pmc
+        # insert pmc into the reporting schedule
+        slots[slot] << "    " + pmc
 
-      # sort entries, case insensitive
-      slots[slot].sort_by!(&:downcase)
+        # sort entries, case insensitive
+        slots[slot].sort_by!(&:downcase)
 
-      #restore headers
-      slots[slot].unshift *headers
+        #restore headers
+        slots[slot].unshift *headers
 
-      # re-insert reporting schedules
-      blocks[index+0] = slots[0].join("\n")
-      blocks[index+1] = slots[1].join("\n")
-      blocks[index+2] = slots[2].join("\n")
+        # re-insert reporting schedules
+        blocks[index+0] = slots[0].join("\n")
+        blocks[index+1] = slots[1].join("\n")
+        blocks[index+2] = slots[2].join("\n")
 
-      # re-attach blocks
-      contents = blocks.join("\n\n")
+        # re-attach blocks
+        contents = blocks.join("\n\n")
+      end
 
       ########################################################################
       #         insert into COMMITTEE MEMBERSHIP AND CHANGE PROCESS          #
