@@ -104,7 +104,9 @@ class ASF::Board::Agenda
 
     president = @sections.values.find {|item| item['title'] == 'President'}
     return [] unless president # quick exit if non-standard format agenda
-    preports = Range.new(*president['report'][/\d+ through \d+\.$/].scan(/\d+/)) 
+    pattach = president['report'][/\d+ through \d+\.$/]
+    # pattach is nil before https://whimsy.apache.org/board/minutes/Change_Officers_to_Serve_at_the_Direction_of_the_President.html
+    preports = Range.new(*pattach.scan(/\d+/)) if pattach
     # cleanup text and comment whitespace, add flags
     @sections.each do |section, hash|
       text = hash['text'] || hash['report']
@@ -128,7 +130,7 @@ class ASF::Board::Agenda
       hash['flagged_by'] = flags.split(', ') if flags
 
       # mark president reports
-      hash['to'] = 'president' if preports.include? section
+      hash['to'] = 'president' if preports && preports.include?(section)
     end
 
     unless @quick
