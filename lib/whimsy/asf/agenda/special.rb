@@ -106,6 +106,8 @@ class ASF::Board::Agenda
           attrs['names'] = committee.names
         end
 
+        need_chair = true if title =~ /Change (.*?) Chair/
+
       elsif title =~ /Establish (.*)/
         name = $1
         attrs['prior_reports'] =
