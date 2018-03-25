@@ -82,6 +82,11 @@ if (@change || @establish || @terminate) and env.password
     # update chairs from establish, change, and terminate resolutions
     contents = ASF::Committee.update_chairs(contents, todos)
 
+    # remove terminated projects
+    Array(@terminate).each do |resolution|
+      contents = ASF::Committee.terminate(contents, resolution['display_name'])
+    end
+
     # add people from establish resolutions
     established = Date.parse(date.gsub('_', '-'))
     Array(@establish).each do |resolution|

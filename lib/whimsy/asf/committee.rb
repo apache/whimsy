@@ -220,6 +220,35 @@ module ASF
       contents
     end
 
+    # remove committee from committee-info.txt
+    def self.terminate(contents, pmc)
+      ########################################################################
+      #         remove from assigned quarterly reporting periods             #
+      ########################################################################
+
+      # split into blocks
+      blocks = contents.split("\n\n")
+
+      # find the reporting schedules
+      index =  blocks.find_index {|section| section =~/January/}
+
+      # remove from each reporting period 
+      blocks[index+0].sub! "\n    #{pmc}\n", "\n"
+      blocks[index+1].sub! "\n    #{pmc}\n", "\n"
+      blocks[index+2].sub! "\n    #{pmc}\n", "\n"
+
+      # re-attach blocks
+      contents = blocks.join("\n\n")
+
+      ########################################################################
+      #         remove from COMMITTEE MEMBERSHIP AND CHANGE PROCESS          #
+      ########################################################################
+
+      contents.sub! /^\* #{pmc}  \(est.*?\n\n/m, ''
+
+      contents
+    end
+
     # insert (replacing if necessary) a new committee into committee-info.txt
     def self.establish(contents, pmc, date, people)
       ########################################################################
