@@ -119,7 +119,7 @@ module ASF
     # update next month section.  Remove entries that have reported or
     # or expired; add (or update) entries that are missing; add entries
     # for new committees.
-    def self.update_next_month(contents, date, missing, rejected, establish)
+    def self.update_next_month(contents, date, missing, rejected, todos)
       # extract next month section; and then extract the lines containing
       # '#' signs from within that section
       next_month = contents[/Next month.*?\n\n/m].chomp
@@ -163,10 +163,15 @@ module ASF
         block += "    #{pmc.ljust(22)} # missing in #{month}\n"
       end
 
-      # add new 'established' entries
+      # add new 'established' entries and remove 'terminated' entries
       month = (date+91).strftime('%B')
-      (establish-existing).each do |pmc|
-        block += "    #{pmc.ljust(22)} # new, monthly through #{month}\n"
+      todos.each do |resolution|
+        pmc = resolution['display_name']
+        if resolution['action'] == 'terminate'
+          block.sub! /^    #{pmc.ljust(22)} # .*\n/, ''
+        elsif resolution['action'] == 'establish' and not existing.include? pmc
+          block += "    #{pmc.ljust(22)} # new, monthly through #{month}\n"
+        end
       end
 
       # replace/append block

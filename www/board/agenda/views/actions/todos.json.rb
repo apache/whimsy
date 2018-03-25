@@ -76,8 +76,7 @@ if (@change || @establish || @terminate) and env.password
         map {|item| item['title']}
       rejected = minutes[:rejected] || []
       contents = ASF::Committee.update_next_month(contents, 
-        Date.parse(date.gsub('_', '-')), missing, rejected,
-        Array(@establish).map {|resolution| resolution['display_name']})
+        Date.parse(date.gsub('_', '-')), missing, rejected, todos)
     end
 
     # update chairs from establish, change, and terminate resolutions
