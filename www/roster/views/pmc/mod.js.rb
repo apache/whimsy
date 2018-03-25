@@ -77,6 +77,12 @@ class PMCMod < Vue
 
             _button.btn.btn_primary 'Remove from project', onClick: self.post,
               data_action: "remove #{remove_from.join(' ')}"
+
+            if @people.all? {|person| @@project.members.include? person.id}
+              _button.btn.btn_warning "Remove from PMC only", 
+                data_action: 'remove pmc info',
+                onClick: self.post
+            end
           end
         end
       end
