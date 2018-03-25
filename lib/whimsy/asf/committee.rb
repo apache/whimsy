@@ -184,20 +184,22 @@ module ASF
     end
 
     # update chairs
-    def self.update_chairs(contents, establish_or_change, terminate)
+    def self.update_chairs(contents, todos)
       # extract committee section; and then extract the lines containing
       # committee names and chairs
       section = contents[/^1\..*?\n=+/m]
       committees = section[/-\n(.*?)\n\n/m, 1].scan(/^ +(.*?)  +(.*)/).to_h
 
-      # update/add chairs based on establish and change resolutions
-      establish_or_change.each do |name, chair|
-        person = ASF::Person.find(chair)
-        committees[name] = "#{person.public_name} <#{person.id}@apache.org>"
+      # update/add chairs based on resolutions
+      todos.each do |resolution|
+        name = resolution['display_name']
+        if resolution['action'] == 'terminate'
+          committees.delete(name)
+        elsif resulution['chair']
+          person = ASF::Person.find(resolution['chair'])
+          committees[name] = "#{person.public_name} <#{person.id}@apache.org>"
+        end
       end
-
-      # remove committees based on terminate resolutions
-      terminate.each {|name| committees.delete(name)} if terminate
 
       # sort and concatenate committees
       committees = committees.sort_by {|name, chair| name.downcase}.

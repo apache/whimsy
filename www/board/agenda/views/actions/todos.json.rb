@@ -81,10 +81,7 @@ if (@change || @establish || @terminate) and env.password
     end
 
     # update chairs from establish, change, and terminate resolutions
-    chairs = todos.map do |resolution| 
-      [resolution['display_name'], resolution['chair']]
-    end.to_h
-    contents = ASF::Committee.update_chairs(contents, chairs, @terminate)
+    contents = ASF::Committee.update_chairs(contents, todos)
 
     # add people from establish resolutions
     established = Date.parse(date.gsub('_', '-'))
