@@ -200,7 +200,7 @@ module ASF
         name = resolution['display_name']
         if resolution['action'] == 'terminate'
           committees.delete(name)
-        elsif resulution['chair']
+        elsif resolution['chair']
           person = ASF::Person.find(resolution['chair'])
           committees[name] = "#{person.public_name} <#{person.id}@apache.org>"
         end
