@@ -229,6 +229,11 @@ get %r{/(\d\d\d\d-\d\d-\d\d)} do |date|
   redirect to("/#{date}/")
 end
 
+# feedback responses 
+get '/json/responses' do
+  _json :"actions/responses"
+end
+
 # posted reports
 get '/json/posted-reports' do
   _json :"actions/posted-reports"
