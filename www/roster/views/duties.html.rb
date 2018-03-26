@@ -117,6 +117,20 @@ _html do
             end
           end
         end
+        
+        # ********************************************************************
+        # *                           Source Code                            *
+        # ********************************************************************
+        _ul.list_group do
+          _li.list_group_item.active do 
+            _h4.text_warning('See This Source File')
+          end
+          _li.list_group_item do
+            txtnam = File.basename("#{ENV['REQUEST_URI']}").sub('.cgi', '.txt')
+            _a "foundation/officers/personnel-duties/#{txtnam}", href: "https://svn.apache.org/repos/private/foundation/officers/personnel-duties/#{txtnam}"
+          end
+        end
+        
       end
     end
   end
