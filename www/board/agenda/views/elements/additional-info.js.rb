@@ -89,7 +89,9 @@ class AdditionalInfo < Vue
             _span "\u2022 "
             _a date.gsub('_', '-'),
               href: HistoricalComments.link(date, @@item.title)
-            _span ': '
+
+            link = nil
+
 
             # link to mail archive for feedback thread
             if date > '2016_04' # when feedback emails were first started
@@ -97,7 +99,26 @@ class AdditionalInfo < Vue
               dfr = date.gsub('_', '-')
               dto = Date.new(Date.now()).toISOString()[0...10]
 
-              _a '(thread)', 
+              if date > '2017_11' # when board was no longer copied on the 
+                                  # initial email
+
+               if Responses.find(dfr, @@item.title)
+                link = '(responses)'
+               elsif Responses.loading
+                link = '(loading)'
+               else
+                link = '(no responses)'
+               end
+
+              else
+                link = '(thread)'
+              end
+            end
+
+            if link
+              _span ': '
+
+              _a link,
                 href: 'https://lists.apache.org/list.html?board@apache.org&' +
                   "d=dfr=#{dfr}|dto=#{dto}&header_subject=" +
                   "'Board%20feedback%20on%20#{dfr}%20#{@@item.title}%20report'"
