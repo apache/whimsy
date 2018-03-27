@@ -1,5 +1,13 @@
 Configuring the Board Agenda Tool
 
+You can run a local copy of the Board Agenda tool with the below config, 
+for testing or training purposes.
+
+See also:
+
+- [https://whimsy.apache.org/board/test](https://whimsy.apache.org/board/test) - script showing environment
+- [www/board/agenda/README.md](https://github.com/apache/whimsy/blob/master/www/board/agenda/README.md) - Detailed agenda walkthrough
+
 Install Dependencies
 --------------------
 
@@ -53,3 +61,8 @@ $ chromedriver -v
 ChromeDriver 2.35.528157 (4429ca2590d6988c0745c24c8858745aaaec01ef)
 ```
 
+If everything worked, you can run the agenda tool locally by:
+
+```
+rake test:server
+```
