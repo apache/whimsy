@@ -98,20 +98,24 @@ class AdditionalInfo < Vue
               # compute date range: from date of that meeting to now
               dfr = date.gsub('_', '-')
               dto = Date.new(Date.now()).toISOString()[0...10]
+              count = Responses.find(dfr, @@item.title)
 
-              if date > '2017_11' # when board was no longer copied on the 
-                                  # initial email
+              if count
+                # when board was copied on the initial email
+                count -= 1 if date < '2017_11'
 
-               if Responses.find(dfr, @@item.title)
-                link = '(responses)'
-               elsif Responses.loading
+                if count == 0
+                  link = "(no responses)"
+                elsif count == 1
+                  link = '(1 response)'
+                else
+                  link = "(#{count} responses)"
+                end
+
+              elsif Responses.loading
                 link = '(loading)'
-               else
-                link = '(no responses)'
-               end
-
               else
-                link = '(thread)'
+                link = '(no responses)'
               end
             end
 

@@ -1,3 +1,7 @@
+#
+# Scan board@ for feedback threads.  Return number of responses in each.
+#
+
 require 'date'
 
 maildir = '/srv/mail/board/'
@@ -13,12 +17,10 @@ Dir[maildir + '*'].sort.each do |dir|
     next unless subject and subject =~ /Board feedback on .* report/
     date, pmc = subject.scan(/Board feedback on ([-\d]+) (.*) report/).first
     next unless date
-    responses[date] ||= []
-    unless responses[date].include? pmc
-      responses[date].push pmc
-    end
+    responses[date] ||= Hash.new {|hash, key| hash[key] = 0}
+    responses[date][pmc] += 1
   end
 end
 
-responses.values.each {|value| value.sort!}
+responses.each {|key, value| responses[key] = responses[key].sort.to_h}
 responses.sort.to_h

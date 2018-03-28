@@ -11,7 +11,7 @@ class Responses
 
   def self.find(date, name)
     if @@list
-      return @@list[date] and @@list[date].include? name
+      return @@list[date] and @@list[date][name]
     else
       @@list = {}
       JSONStorage.fetch 'responses' do |list|
