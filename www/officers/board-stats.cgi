@@ -62,7 +62,15 @@ _html do
               directors, others = agenda[PEOPLE].select{ |id, data| data['attending'] }.partition{ |id, data| 'director'.eql?(data['role']) }
               _tr_ do
                 _td do
-                  _ month.sub('board_agenda_', '')
+                  file = month + '.txt'
+                  if not File.exist? "#{BOARD}/#{file}"
+                    file = "archived_agendas/#{file}"
+                  end
+
+                  date = month.sub('board_agenda_', '')
+                  _a date.gsub('_', '-'), href:
+                    'https://svn.apache.org/repos/private/foundation/board/' +
+                    file
                 end
                 _td.text_center do
                   dct = directors.length
