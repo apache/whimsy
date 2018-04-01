@@ -324,6 +324,6 @@ class FeedbackReminder < Vue
     end
 
     _button.checklist.btn.btn_default 'Submit',
-      onClick:-> {window.location.href = 'feedback'}
+      onClick:-> {Main.navigate 'feedback'}
   end
 end
