@@ -13,7 +13,9 @@ class Feedback < Vue
 
   def render
     if @list == nil
-      _p 'loading'
+      _h2 'Loading...'
+    elsif @list.empty?
+      _h2 'No feedback to send'
     else
       @list.each do |item|
         _h2 do
