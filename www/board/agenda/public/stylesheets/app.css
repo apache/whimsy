@@ -218,7 +218,13 @@ label.checkbox span {
 
 pre {
   background-color: #FFF;
-  border: none
+  border: none;
+}
+
+pre.feedback {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  margin-left: 2em;
 }
 
 footer .btn {

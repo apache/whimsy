@@ -30,6 +30,7 @@ require_relative 'pages/missing'
 require_relative 'pages/backchannel'
 require_relative 'pages/roll-call'
 require_relative 'pages/select-actions'
+require_relative 'pages/feedback'
 require_relative 'pages/cache'
 require_relative 'pages/fy23'
 

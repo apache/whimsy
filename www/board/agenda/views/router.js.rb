@@ -79,6 +79,9 @@ class Router
         end
       end
 
+    elsif path == 'feedback'
+      item = {view: Feedback, title: 'Send Feedback'}
+
     elsif path == 'help'
       item = {view: Help}
 

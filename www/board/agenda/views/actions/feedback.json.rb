@@ -62,7 +62,7 @@ Agenda.parse(@agenda, :full).each do |item|
   }.gsub(/^ {4}/, '').strip
 
   # build cc list
-  cc = []
+  cc = ['secretary@apache.org']
   
   if item['mail_list']
     if item[:attach] =~ /^[A-Z]+/
