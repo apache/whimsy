@@ -39,10 +39,8 @@ class ASF::Board::Agenda
               attending: !absent.include?(name)
             }
           else
-
             # look up name
             search = ASF::Person.list("cn=#{name}")
-
             # if found, save results in the attributes
             if search.length == 1
               person = search.first
@@ -52,6 +50,14 @@ class ASF::Board::Agenda
                 sortName: sort_name,
                 role: role,
                 member: person.asf_member?,
+                attending: !absent.include?(name)
+              }
+            else
+              # If not found, fallback to @quick behavior; WHIMSY-189
+              attr['people']['_' + name.gsub(/\W/, '_')] = {
+                name: name,
+                sortName: sort_name,
+                role: role,
                 attending: !absent.include?(name)
               }
             end
