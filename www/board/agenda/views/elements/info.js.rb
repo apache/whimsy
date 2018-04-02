@@ -6,7 +6,15 @@ class Info < Vue
 
       if @@item.owner
         _dt 'Author'
-        _dd @@item.owner
+        if (@@item.chair_email || '') .split('@')[1] == 'apache.org'
+          chair = @@item.chair_email .split('@')[0]
+          _dd do
+            _a @@item.owner, 
+              href: "https://whimsy.apache.org/roster/committer/#{chair}" 
+          end
+        else
+          _dd @@item.owner
+        end
       end
 
       if @@item.shepherd
