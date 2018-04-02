@@ -102,6 +102,7 @@ class Post < Vue
   def mounted()
     jQuery('#post-report-form').on 'show.bs.modal' do
       # update contents when modal is about to be shown
+      @button = @@button.text
       self.retitle()
     end
 
@@ -118,16 +119,16 @@ class Post < Vue
   # set focus, scroll
   def reposition()
     # set focus once modal is shown
-		title = document.getElementById("post-report-title")
-		text = document.getElementById("post-report-text")
+    title = document.getElementById("post-report-title")
+    text = document.getElementById("post-report-text")
 
-		if title || text
-			(title || text).focus()
+    if title || text
+      (title || text).focus()
 
-			# scroll to the top
-			setTimeout 0 do
-				text.scrollTop = 0 if text
-			end
+      # scroll to the top
+      setTimeout 0 do
+        text.scrollTop = 0 if text
+      end
     end
 
     Post.header == @header
