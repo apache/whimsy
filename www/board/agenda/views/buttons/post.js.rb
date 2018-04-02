@@ -6,6 +6,7 @@
 
 class Post < Vue
   def initialize
+    @button = @@button.text
     @disabled = false
     @alerted = false
     @edited = false
@@ -22,44 +23,78 @@ class Post < Vue
     }
   end
 
+  def selectItem(event)
+    @button = event.target.textContent
+    retitle()
+  end
+
   def render
     _ModalDialog.wide_form.post_report_form! color: 'commented' do
-      _h4 @header
-
-      #input field: title
-      if @@button.text == 'add resolution'
-        _input.post_report_title! label: 'title', disabled: @disabled,
-          placeholder: 'title', value: @title, onFocus: self.default_title
-      end
-
-      #input field: report text
-      _textarea.post_report_text! label: @label, value: @report,
-        placeholder: @label, rows: 17, disabled: @disabled, 
-        onInput: self.change_text
-
-      # upload of spreadsheet from virtual
-      if @@item.title == 'Treasurer'
-        _form do
-          _div.form_group do
-            _label 'financial spreadsheet from virtual', for: 'upload'
-            _input.upload! type: 'file', value: @upload
-            _button.btn.btn_primary 'Upload', onClick: upload_spreadsheet,
-              disabled: @disabled || !@upload
+      if @button == 'add item'
+        _h4 'Select Item Type'
+  
+        _ul.new_item_type do
+          _li do
+            _button.btn.btn_primary 'Change Chair', disabled: true
+          end
+  
+          _li do
+            _button.btn.btn_primary 'Establish Project', disabled: true
+          end
+  
+          _li do
+            _button.btn.btn_primary 'Terminate Project', disabled: true
+          end
+  
+          _li do
+            _button.btn.btn_primary 'Out of Cycle Report', disabled: true
+          end
+  
+          _li do
+            _button.btn.btn_primary 'New Resolution', onClick: selectItem
+            _span '- free form entry of a new resolution'
           end
         end
-      end
+  
+        _button.btn_default 'Cancel', data_dismiss: 'modal'
+      else
+        _h4 @header
 
-      #input field: commit_message
-      if @@button.text != 'add resolution'
-        _input.post_report_message! label: 'commit message', 
-          disabled: @disabled, value: @message
-      end
+        #input field: title
+        if @header == 'Add Resolution'
+          _input.post_report_title! label: 'title', disabled: @disabled,
+            placeholder: 'title', value: @title, onFocus: self.default_title
+        end
 
-      # footer buttons
-      _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
-      _button 'Reflow', class: self.reflow_color(), onClick: self.reflow
-      _button.btn_primary 'Submit', onClick: self.submit, 
-        disabled: (not self.ready())
+        #input field: report text
+        _textarea.post_report_text! label: @label, value: @report,
+          placeholder: @label, rows: 17, disabled: @disabled, 
+          onInput: self.change_text
+
+        # upload of spreadsheet from virtual
+        if @@item.title == 'Treasurer'
+          _form do
+            _div.form_group do
+              _label 'financial spreadsheet from virtual', for: 'upload'
+              _input.upload! type: 'file', value: @upload
+              _button.btn.btn_primary 'Upload', onClick: upload_spreadsheet,
+                disabled: @disabled || !@upload
+            end
+          end
+        end
+
+        #input field: commit_message
+        if @header != 'Add Resolution'
+          _input.post_report_message! label: 'commit message', 
+            disabled: @disabled, value: @message
+        end
+
+        # footer buttons
+        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button 'Reflow', class: self.reflow_color(), onClick: self.reflow
+        _button.btn_primary 'Submit', onClick: self.submit, 
+          disabled: (not self.ready())
+      end
     end
   end
 
@@ -71,18 +106,31 @@ class Post < Vue
     end
 
     jQuery('#post-report-form').on 'shown.bs.modal' do
-      # set focus once modal is shown
-      if @@button.text == 'add resolution'
-        document.getElementById("post-report-title").focus()
-      else
-        document.getElementById("post-report-text").focus()
-      end
-
-      # scroll to the top
-      setTimeout 0 do
-        document.getElementById("post-report-text").scrollTop = 0
-      end
+      reposition()
     end
+  end
+
+  # reposition after update if header changed
+  def updated()
+    reposition() if Post.header != @header
+  end
+
+  # set focus, scroll
+  def reposition()
+    # set focus once modal is shown
+		title = document.getElementById("post-report-title")
+		text = document.getElementById("post-report-text")
+
+		if title || text
+			(title || text).focus()
+
+			# scroll to the top
+			setTimeout 0 do
+				text.scrollTop = 0 if text
+			end
+    end
+
+    Post.header == @header
   end
 
   # initialize form title, etc.
@@ -92,7 +140,7 @@ class Post < Vue
 
   # match form title, input label, and commit message with button text
   def retitle()
-    case @@button.text
+    case @button
     when 'post report'
       @header = 'Post Report'
       @label = 'report'
@@ -103,7 +151,7 @@ class Post < Vue
       @label = 'report'
       @message = "Edit #{@@item.title} Report"
 
-    when 'add resolution'
+    when 'add resolution', 'New Resolution'
       @header = 'Add Resolution'
       @label = 'resolution'
       @title = ''
@@ -142,7 +190,7 @@ class Post < Vue
       @report = @base
     end
 
-    if @@button.text == 'add resolution' or @@item.attach =~ /^[47]/
+    if @header == 'Add Resolution' or @@item.attach =~ /^[47]/
       @indent = '        '
     elsif @@item.attach == '8.'
       @indent = '    '
@@ -242,7 +290,7 @@ class Post < Vue
   def ready()
     return false if @disabled
 
-    if @@button.text == 'add resolution'
+    if @header == 'Add Resolution'
       return @report != '' && @title != ''
     else
       return @report != @@item.text && @message != ''
@@ -277,7 +325,7 @@ class Post < Vue
   def submit(event)
     @edited = false
 
-    if @@button.text == 'add resolution'
+    if @header == 'Add Resolution'
       data = {
         agenda: Agenda.file,
         attach: '7?',

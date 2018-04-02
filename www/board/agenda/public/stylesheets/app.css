@@ -32,6 +32,11 @@ aside {float: right}
 aside ul {margin: 0}
 aside li {list-style: none}
 
+/* new item type */
+ul.new-item-type {margin: 0}
+.new-item-type li {list-style: none}
+.new-item-type .btn {margin: 0.2em; min-width: 12em}
+
 /* next/back links */
 .backlink {float: left; min-width: 9em}
 .nextlink {float: right; min-width: 9em}

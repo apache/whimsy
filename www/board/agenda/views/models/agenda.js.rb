@@ -254,7 +254,7 @@ class Agenda
     list = [{button: Refresh}]
 
     if not Minutes.complete
-      list << {form: Post, text: 'add resolution'}
+      list << {form: Post, text: 'add item'}
     end
 
     if User.role == :secretary 

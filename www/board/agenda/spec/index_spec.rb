@@ -40,12 +40,12 @@ feature 'index' do
     expect(page).to have_selector '.backlink[href="../2015-01-21/"]', 
      text: '2015-01-21'
     expect(page).to have_selector 'button', text: 'refresh'
-    expect(page).to have_selector 'button', text: 'add resolution'
+    expect(page).to have_selector 'button', text: 'add item'
     expect(page).to have_selector '.nextlink[href="help"]', text: 'Help'
 
     # hidden form
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
-      text: 'Add Resolution'
+      text: 'Select Item Type'
   end
 
   it "should show a summary" do
