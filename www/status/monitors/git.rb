@@ -65,6 +65,8 @@ def Monitor.git(previous_status)
       ' * [new branch]',
       ' * [new tag]',
       'From https://',
+      'Auto packing the repository',
+      'See "git help gc" for manual housekeeping',
     ]
       
     lines.reject! do |line| 
@@ -389,3 +391,12 @@ HEAD is now at 4aafd69 Merge pull request #720 from rubys/rubys/noauth-source
 From https://github.com/letsencrypt/letsencrypt
    e86bb7f..97ad9f9  plugin_storage -> origin/plugin_storage
 HEAD is now at a2239ba fix test_tests.sh (#5478)
+
+/x1/srv/git/infrastructure-puppet9
+Already on 'deployment'
+Your branch is up-to-date with 'origin/deployment'.
+From https://github.com/apache/infrastructure-puppet
+   228c0fb..8bbfaca  deployment -> origin/deployment
+Auto packing the repository in background for optimum performance.
+See "git help gc" for manual housekeeping.
+HEAD is now at 8bbfaca Merge pull request #853 from sebbASF/zcat
