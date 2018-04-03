@@ -227,6 +227,11 @@ get %r{/(\d\d\d\d-\d\d-\d\d)} do |date|
   redirect to("/#{date}/")
 end
 
+# post item support
+get '/json/post-data' do
+  _json :"actions/post-data"
+end
+
 # feedback responses 
 get '/json/responses' do
   _json :"actions/responses"

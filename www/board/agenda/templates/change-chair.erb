@@ -1,0 +1,24 @@
+WHEREAS, the Board of Directors heretofore appointed 
+<%= @outgoing_chair.public_name %>
+(<%= @outgoing_chair.id %>) to the office of Vice President, Apache 
+<%= @committee.display_name %>, and
+
+WHEREAS, the Board of Directors is in receipt of the resignation of
+<%= @outgoing_chair.public_name %> from the office of Vice President, Apache 
+<%= @committee.display_name %>, and
+
+WHEREAS, the Project Management Committee of the Apache 
+<%= @committee.display_name %> project
+has chosen by vote to recommend <%= @incoming_chair.public_name %> 
+(<%= @incoming_chair.id %>) as the successor to the post;
+
+NOW, THEREFORE, BE IT RESOLVED, that <%= @outgoing_chair.public_name %> is 
+relieved and discharged from the duties and responsibilities of the office of
+Vice President, Apache <%= @committee.display_name %>, and
+
+BE IT FURTHER RESOLVED, that <%= @incoming_chair.public_name %> be and hereby is
+appointed to the office of Vice President, Apache 
+<%= @committee.display_name %>, to serve in accordance with and subject to the
+direction of the Board of Directors and the Bylaws of the Foundation until
+death, resignation, retirement, removal or disqualification, or until a
+successor is appointed.

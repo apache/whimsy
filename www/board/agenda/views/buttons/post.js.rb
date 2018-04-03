@@ -23,11 +23,6 @@ class Post < Vue
     }
   end
 
-  def selectItem(event)
-    @button = event.target.textContent
-    retitle()
-  end
-
   def render
     _ModalDialog.wide_form.post_report_form! color: 'commented' do
       if @button == 'add item'
@@ -35,7 +30,8 @@ class Post < Vue
   
         _ul.new_item_type do
           _li do
-            _button.btn.btn_primary 'Change Chair', disabled: true
+            _button.btn.btn_primary 'Change Chair', onClick: selectItem
+            _span '- change chair for an existing PMC'
           end
   
           _li do
@@ -57,7 +53,41 @@ class Post < Vue
         end
   
         _button.btn_default 'Cancel', data_dismiss: 'modal'
+
+      elsif @button == 'Change Chair'
+        _h4 'Change Chair Resolution'
+
+        _div.form_group do
+          _label 'PMC', for: 'change-chair-pmc'
+          _select.form_control.change_chair_pmc!(
+            onChange: ->(event) {chair_pmc_change(event.target.value)}
+          ) do
+            @pmcs.each {|pmc| _option pmc}
+          end
+        end
+
+        _div.form_group do
+          _label 'Outgoing Chair', for: 'outgoing-chair'
+          _input.form_control.outgoing_chair! value: @outgoing_chair, 
+            disabled: true
+        end
+
+        _div.form_group do
+          _label 'Incoming Chair', for: 'incoming-chair'
+          _select.form_control.incoming_chair! do
+            @pmc_members.each do |person|
+              _option person.name, value: person.id,
+                selected: person.id == User.id
+            end
+          end
+        end
+
+        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_primary 'Draft', disabled: @disabled,
+          onClick: draft_chair_change_resolution
+
       else
+
         _h4 @header
 
         #input field: title
@@ -96,6 +126,17 @@ class Post < Vue
           disabled: (not self.ready())
       end
     end
+  end
+
+  # add item menu support
+  def selectItem(event)
+    @button = event.target.textContent
+
+    if @button == 'Change Chair'
+      initialize_chair_change()
+    end
+
+    retitle()
   end
 
   # autofocus on report/resolution title/text
@@ -298,30 +339,6 @@ class Post < Vue
     end
   end
 
-  # upload contents of spreadsheet in base64; append extracted table to report
-  def upload_spreadsheet(event)
-    @disabled = true
-    event.preventDefault()
-
-    reader = FileReader.new
-    def reader.onload(event)
-      result = event.target.result
-      base64 = btoa(String.fromCharCode(*Uint8Array.new(result)))
-      post 'financials', spreadsheet: base64 do |response|
-        report = @report
-        report += "\n" if report and not report.end_with? "\n"
-        report += "\n" if report
-        report += response.table
-
-        self.change_text target: {value: report}
-
-        @upload = nil
-        @disabled = false
-      end
-    end
-    reader.readAsArrayBuffer(document.getElementById('upload').files[0])
-  end
-
   # when save button is pushed, post comment and dismiss modal when complete
   def submit(event)
     @edited = false
@@ -351,4 +368,75 @@ class Post < Vue
       Agenda.load response.agenda, response.digest
     end
   end
+
+  #########################################################################
+  #                                Treasurer                              #
+  #########################################################################
+
+  # upload contents of spreadsheet in base64; append extracted table to report
+  def upload_spreadsheet(event)
+    @disabled = true
+    event.preventDefault()
+
+    reader = FileReader.new
+    def reader.onload(event)
+      result = event.target.result
+      base64 = btoa(String.fromCharCode(*Uint8Array.new(result)))
+      post 'financials', spreadsheet: base64 do |response|
+        report = @report
+        report += "\n" if report and not report.end_with? "\n"
+        report += "\n" if report
+        report += response.table
+
+        self.change_text target: {value: report}
+
+        @upload = nil
+        @disabled = false
+      end
+    end
+    reader.readAsArrayBuffer(document.getElementById('upload').files[0])
+  end
+
+  #########################################################################
+  #                         Change Project Chair                          #
+  #########################################################################
+
+  def initialize_chair_change()
+    @disabled = true
+    @pmcs = []
+    chair_pmc_change(nil)
+    post 'post-data', request: 'committee-list' do |response|
+      @pmcs = response
+      chair_pmc_change(@pmcs.first)
+    end
+  end
+
+  def chair_pmc_change(pmc)
+    @disabled = true
+    @outgoing_chair = nil
+    @pmc_members = []
+    return unless pmc
+    post 'post-data', request: 'committee-members', pmc: pmc do |response|
+      @outgoing_chair = response.chair.name
+      @pmc_members = response.members
+      @disabled = false
+    end
+  end
+
+  def draft_chair_change_resolution()
+    @disabled = true
+    options = {
+      request: 'change-chair', 
+      pmc: document.getElementById('change-chair-pmc').value, 
+      chair: document.getElementById('incoming-chair').value
+    }
+
+    post 'post-data', options do |response|
+      @button = @header = 'Add Resolution'
+      @title = response.title
+      @report = response.draft
+      @disabled = false
+    end
+  end
+
 end
