@@ -35,6 +35,9 @@ Agenda.update(@agenda, @message) do |agenda|
     # update the commit message that will be used
     @message.sub! "7X", "7#{order}"
 
+    # insert into agenda
+    agenda[/\n() 8\. Discussion Items/, 1] = "#{title}#{@report}\n\n"
+
   elsif @attach.start_with? '+'
     pmc_reports = parsed.select {|section| section[:attach] =~ /^[A-Z]/}
     attach = pmc_reports.last[:attach].succ
