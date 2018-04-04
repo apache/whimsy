@@ -29,6 +29,9 @@ class ASF::Board::Agenda
     '9.' => 'Action Items'
   }
 
+  # Regex for start of officer reports (accounts for style differences in early agendas)
+  OFFICER_SEPARATOR = /^\s*4. (Executive )?Officer Reports/
+
   @@parsers = []
   # convenience method.  If passed a file, will create an instance of this
   # class and call the parse method on that object.  If passed a block, will

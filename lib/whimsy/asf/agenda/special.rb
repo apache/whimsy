@@ -2,8 +2,8 @@
 
 class ASF::Board::Agenda
   parse do
-    orders = @file.split(/^ 7. Special Orders/,2).last.
-      split(/^ 8. Discussion Items/,2).first
+    orders = @file.split(/^ \d. Special Orders/,2).last.
+      split(/^ \d. Discussion Items/,2).first
 
     pattern = /
       \n+(?<indent>\s{3,5})(?<section>[A-Z])\.

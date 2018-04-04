@@ -2,8 +2,10 @@
 
 class ASF::Board::Agenda
   parse do
-    reports = @file.split(/^ 4. Executive Officer Reports/,2).last.
-      split(/^ 5. Additional Officer Reports/,2).first
+    reports = @file.split(OFFICER_SEPARATOR,2).last
+    a = reports.split(/^ 5. Additional Officer Reports/,2).first
+    b = reports.split(/^ 5. Committee Reports/,2).first   # Allow parsing of pre-2007 reports
+    (a.length > b.length) ? reports = b : reports = a
 
     pattern = /
       \s{4}(?<section>[A-Z])\.
