@@ -15,9 +15,9 @@ feature 'server actions' do
   end
 
   #
-  # Index
+  # Index - split in two so that cleanup occurs after each step
   #
-  describe 'index' do
+  describe 'index0' do
     it "should post new special orders" do
       @agenda = 'board_agenda_2015_02_18.txt'
       @attach = '7?'
@@ -31,7 +31,8 @@ feature 'server actions' do
       expect(resolution['text']).
         to eq('WHEREAS, RESOLVED, and other official words')
     end
-
+  end
+  describe 'index1' do
     it "should post out of cycle reports" do
       @agenda = 'board_agenda_2015_02_18.txt'
       @attach = '+Whimsy'
