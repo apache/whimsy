@@ -35,26 +35,28 @@ _html do
   _whimsy_body(
     title: PAGETITLE,
     related: {
+      '/members/non-participants' => 'Members Not Attending X Meetings',
       '/members/inactive' => 'Inactive Member Feedback Form',
       '/members/proxy' => 'Members Meeting Proxy Assignment',
       '/members/subscriptions' => 'Members@ Mailing List Crosscheck'
     },
     helpblock: -> {
       _ 'This script cross-checks all people listed in members.txt versus the official attendance.json file that notes which members attended (or proxied) which meetings.'
+      _ "Includes data through #{json['dates'].last} meeting."
     }
   ) do
-    _h2_ 'Listed as attending a members meeting, but not in members.txt'
+    _h2_ 'Listed as attending a members meeting, but not in members.txt; note name changes or spelling differences may be the culprit.'
     _ul do
       attend.sort.each do |name|
         _li name
       end
     end
     
-    _h2_ 'Listed in members.txt but not listed as attending a members meeting'
+    _h2_ 'Listed in members.txt but not listed as attending a members meeting.'
     _table do
       _thead do
-        _th 'name'
-        _th 'date added as a member'
+        _th 'Name'
+        _th 'Date added as a member'
       end
       missing.sort.each do |name, meeting|
         next if meeting =~ /^2015/

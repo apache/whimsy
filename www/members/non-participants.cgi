@@ -43,6 +43,7 @@ _html do
       title: PAGETITLE,
       subtitle: 'Select A Date:',
       related: {
+        '/members/attendance-xcheck' => 'Members Meeting Attendance Crosscheck',
         '/members/inactive' => 'Inactive Member Feedback Form',
         '/members/proxy' => 'Members Meeting Proxy Assignment',
         '/members/subscriptions' => 'Members@ Mailing List Crosscheck'
@@ -55,13 +56,13 @@ _html do
               _option name, value: i+1, selected: (i+1 == @meetingsMissed)
             end
           end
-          _span "meeting.  Active members does not include emeritus or deceased members."
+          _span "meeting.  Active members does not include emeritus or deceased members. Includes data thru #{attendance['dates'].last} meeting."
         end
         _h4 'Definitions'
         _p do
           _ 'Participating is defined by doing at least one of the following:'
           _ul do
-            _li 'Attending a members meeting'
+            _li 'Attending a members meeting in IRC'
             _li 'Voting in an election'
             _li 'Assigning a proxy'
           end
