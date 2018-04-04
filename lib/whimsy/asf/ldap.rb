@@ -1303,7 +1303,7 @@ module ASF
       if GUINEAPIGS.include? name
         @dn ||= ASF::Project.find(name).dn
       else
-        @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
+        @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first rescue nil
       end
     end
 

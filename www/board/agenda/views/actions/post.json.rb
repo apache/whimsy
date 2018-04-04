@@ -32,11 +32,41 @@ Agenda.update(@agenda, @message) do |agenda|
       select {|attach| attach =~ /^7\w/}.length.times {order.succ!}
     title = "    #{order}. #{@title}\n\n"
 
-    # insert into agenda
-    agenda[/\n() 8\. Discussion Items/, 1] = "#{title}#{@report}\n\n"
-
     # update the commit message that will be used
     @message.sub! "7X", "7#{order}"
+
+  elsif @attach.start_with? '+'
+    pmc_reports = parsed.select {|section| section[:attach] =~ /^[A-Z]/}
+    attach = pmc_reports.last[:attach].succ
+    pmc = ASF::Committee.find(@attach[1..-1])
+    unless pmc.dn
+      raise Exception.new("#{@attach[1..-1].inspect} PMC not found")
+    end
+
+    # select shepherd
+    shepherds = pmc_reports.map {|section| section['shepherd']}.
+      select {|shepherd| not shepherd.include? ' '}.
+      group_by {|n| n}.map {|n, list| [n, list.length]}
+    min = shepherds.map {|name, count| count}.min
+    shepherd = shepherds.select {|name, count| count == min}.sample.first
+
+    # insert section into committee-reports
+    agenda[/\n() 7\. Special Orders/, 1] = 
+      "    #{attach}. Apache #{pmc.display_name} Project " +
+      "[#{pmc.chair.public_name} / #{shepherd}]\n\n" +
+      "       See Attachment #{attach}\n\n" +
+      "       [ #{pmc.display_name}.\n" +
+      "         approved:\n" +
+      "         comments:\n" +
+      "         ]\n\n"
+
+    # insert report text as an attachment
+    agenda[/^()-+\nEnd of agenda/, 1] = 
+      "-----------------------------------------\n" +
+      "Attachment #{attach}: Report from the Apache #{pmc.display_name} " +
+      "Project  [#{pmc.chair.public_name}]\n" +
+      "#{@report.strip}\n\n"
+
   else
     item = parsed.find {|item| item[:attach]==@attach}
 

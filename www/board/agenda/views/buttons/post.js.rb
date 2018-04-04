@@ -43,7 +43,8 @@ class Post < Vue
           end
   
           _li do
-            _button.btn.btn_primary 'Out of Cycle Report', disabled: true
+            _button.btn.btn_primary 'Out of Cycle Report', onClick: selectItem
+            _span '- report from a PMC not currently on the agenda for this month'
           end
   
           _li do
@@ -85,6 +86,20 @@ class Post < Vue
         _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
         _button.btn_primary 'Draft', disabled: @disabled,
           onClick: draft_chair_change_resolution
+
+      elsif @button == 'Out of Cycle Report'
+        _h4 'Out of Cycle PMC Report'
+
+        _div.form_group do
+          _label 'PMC', for: 'out-of-cycle-pmc'
+          _select.form_control.out_of_cycle_pmc! do
+            @pmcs.each {|pmc| _option pmc}
+          end
+        end
+
+        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_primary 'Draft', disabled: @pmcs.empty?,
+          onClick: draft_out_of_cycle_report
 
       else
 
@@ -134,6 +149,8 @@ class Post < Vue
 
     if @button == 'Change Chair'
       initialize_chair_change()
+    elsif @button == 'Out of Cycle Report'
+      initialize_out_of_cycle()
     end
 
     retitle()
@@ -353,7 +370,7 @@ class Post < Vue
     else
       data = {
         agenda: Agenda.file,
-        attach: @@item.attach,
+        attach: @attach || @@item.attach,
         digest: @digest,
         message: @message,
         report: @report
@@ -364,6 +381,7 @@ class Post < Vue
     post 'post', data do |response|
       jQuery('#post-report-form').modal(:hide)
       document.body.classList.remove('modal-open')
+      @attach = nil
       @disabled = false
       Agenda.load response.agenda, response.digest
     end
@@ -395,6 +413,43 @@ class Post < Vue
       end
     end
     reader.readAsArrayBuffer(document.getElementById('upload').files[0])
+  end
+
+  #########################################################################
+  #                           Out of Cycle report                         #
+  #########################################################################
+
+  def initialize_out_of_cycle()
+    @disabled = true
+
+    # gather a list of reports already on the agenda
+    scheduled = {}
+    Agenda.index.each do |item|
+      if item.attach =~ /^[A-Z]/
+        scheduled[item.title.downcase] = true
+      end
+    end
+
+    # get a list of PMCs and select ones that aren't on the agenda
+    @pmcs = []
+    post 'post-data', request: 'committee-list' do |response|
+      response.each do |pmc|
+        @pmcs << pmc unless scheduled[pmc]
+      end
+    end
+  end
+
+  def draft_out_of_cycle_report()
+    pmc =  document.getElementById('out-of-cycle-pmc').value.
+      gsub(/\b[a-z]/) {|s| s.upcase()}
+    @button = 'post report'
+    @disabled = true
+    @report = ''
+    @header = 'Post Report'
+    @label = 'report'
+    @message = "Post Out of Cycle #{pmc} Report"
+    @attach = '+' + pmc 
+    @disabled = false
   end
 
   #########################################################################
@@ -435,6 +490,7 @@ class Post < Vue
       @button = @header = 'Add Resolution'
       @title = response.title
       @report = response.draft
+      @label = 'resolution'
       @disabled = false
     end
   end
