@@ -281,7 +281,7 @@ module ASF
         end if rawYaml[:news]
         hash
       else
-        {news: []}
+        {news: [], website: 'http://'+self.resource+'.incubator.apache.org',}
       end
     end
 
