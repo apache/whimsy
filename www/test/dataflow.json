@@ -111,25 +111,25 @@
   },
   "https://www.apache.org/foundation/marks/pmcs": {
     "description": "Policy for display of Apache PMC websites",
-    "maintainer": "brand"
+    "maintainer": "vp-brand"
   },
   "/lib/whimsy/asf/auth.rb": {
     "description": "ASF::Authorization: Models LDAP and other authorizations based on id.apache.org; See also ASF::Person",
-    "maintainer": "whimsy",
+    "maintainer": "vp-whimsy",
     "sources": [
       "infrastructure-puppet/modules/subversion_server/files/authorization/"
     ]
   },
   "/lib/whimsy/asf/committee.rb": {
     "description": "ASF::Committee: model both PMCs and other committees; See also ASF::Person",
-    "maintainer": "whimsy",
+    "maintainer": "vp-whimsy",
     "sources": [
       "private/committers/board/committee-info.txt"
     ]
   },
   "/lib/whimsy/asf/icla.rb": {
     "description": "ASF::ICLA: Tracks ICLAs and names; See also ASF::Person",
-    "maintainer": "whimsy",
+    "maintainer": "vp-whimsy",
     "sources": [
       "private/foundation/officers/iclas.txt", 
       "*reserved-ids.yml", 
@@ -138,7 +138,7 @@
   },
   "/lib/whimsy/asf/ldap.rb": {
     "description": "ASF::LDAP: See also ASF::Config, Person, Member, Group",
-    "maintainer": "whimsy",
+    "maintainer": "vp-whimsy",
     "sources": [
       "ASF::LDAP::HOSTS", 
       "apache/infrastructure-puppet/deployment/data/common.yaml"
@@ -146,28 +146,28 @@
   },
   "/lib/whimsy/asf/mail.rb": {
     "description": "ASF::Mail: Associate email addresses with Persons; See also ASF::Config, Person, Committee, Podling",
-    "maintainer": "whimsy",
+    "maintainer": "vp-whimsy",
     "sources": [
       "infra/infrastructure/apmail/trunk/bin/.archives"
     ]
   },
   "/lib/whimsy/asf/member.rb": {
     "description": "ASF::Member: Data and auth about ASF Members; See also ASF::Person",
-    "maintainer": "whimsy",
+    "maintainer": "vp-whimsy",
     "sources": [
       "private/foundation/members.txt"
     ]
   },
   "/lib/whimsy/asf/nominees.rb": {
     "description": "Extends ASF::Person to add data about nominees around meetings",
-    "maintainer": "whimsy",
+    "maintainer": "vp-whimsy",
     "sources": [
       "special/nominated-members.txt"
     ]
   },
   "/lib/whimsy/asf/person.rb": {
     "description": "ASF::Person: Data about an ICLA signer, committer, etc.; Extensive integration with ASF::LDAP for auth",
-    "maintainer": "whimsy",
+    "maintainer": "vp-whimsy",
     "sources": [
       "/lib/whimsy/asf/ldap.rb",
       "/lib/whimsy/asf/icla.rb"
@@ -175,33 +175,33 @@
   },
   "/lib/whimsy/asf/podlings.rb": {
     "description": "ASF::Podlings: Committee analogue for Incubator podlings",
-    "maintainer": "whimsy",
+    "maintainer": "vp-whimsy",
     "sources": [
       "asf/incubator/public/trunk/content/podlings.xml"
     ]
   },
   "/lib/whimsy/asf/rack.rb": {
     "description": "ASF::Rack: add functionality to ASF::Auth, ASF::Committers, ASF::MembersAndOfficers",
-    "maintainer": "whimsy"
+    "maintainer": "vp-whimsy"
   },
   "/lib/whimsy/asf/site.rb": {
     "description": "ASF::Site: Utility methods added to ASF::Committee",
-    "maintainer": "whimsy",
+    "maintainer": "vp-whimsy",
     "sources": [
       "asf/infrastructure/site/trunk/content/index.html"
     ]
   },
   "/lib/whimsy/asf/svn.rb": {
     "description": "ASF::SVN: Utility for SVN repo and file access; See also ASF::Config(reads .whimsy)",
-    "maintainer": "whimsy"
+    "maintainer": "vp-whimsy"
   },
   "/lib/whimsy/asf/git.rb": {
     "description": "ASF::Git: Utility for Git repo and file access; See also ASF::Config(reads .whimsy)",
-    "maintainer": "whimsy"
+    "maintainer": "vp-whimsy"
   },
   "/lib/whimsy/asf/agenda.rb": {
     "description": "ASF::Board::Agenda: Utility for approved and posted board minutes; many touchpoints: roster tool, board minutes",
-    "maintainer": "whimsy",
+    "maintainer": "vp-whimsy",
     "sources": [
       "https://www.apache.org/foundation/board/"
     ]
@@ -224,7 +224,7 @@
   },
   "*historic/committers.json": {
     "description": "Historical data about past committer date changes",
-    "maintainer": "whimsy"
+    "maintainer": "vp-whimsy"
   },
   "apache/infrastructure-puppet/deployment/data/common.yaml": {
     "description": "Core infrastructure data locations",
@@ -244,11 +244,11 @@
   },
   "asf/incubator/public/trunk/content/podlings.xml": {
     "description": "Listing of active podlings and incubation status details",
-    "maintainer": "incubator"
+    "maintainer": "vp-incubator"
   },
   "asf/infrastructure/site/trunk/content/index.html": {
     "description": "Listing of active podling websites",
-    "maintainer": "incubator"
+    "maintainer": "vp-incubator"
   },
   "https://www.apache.org/foundation/board/": {
     "description": "Official records and calendar of ASF Board of Directors",
