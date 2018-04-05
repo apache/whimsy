@@ -4,6 +4,12 @@ It uses Rack and Sinatra to run the server, Wunderbar for output, and
 the whimsy/asf library to directly access a variety of ASF data 
 sources and files.
 
+A public-facing version of some of this data is here:
+  https://whimsy.apache.org/foundation/orgchart/
+
+Note that public_*.rb scripts are run by cron on the whimsy.a.o 
+server and control generating the /public/*.json files.
+
 Run Roster Locally :car:
 ===
 
