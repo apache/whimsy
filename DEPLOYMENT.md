@@ -16,10 +16,10 @@ Configuration Locations
 ----
 Application developers may need to know where different things are configured:
 
-- Most **httpd config** is in the puppet definition whimsy-vm*.apache.org.yaml (below)
-- **SVN / git** updaters are in [repository.yml](repository.yml)
+- Most **httpd config** is in the [puppet definition whimsy-vm*.apache.org.yaml](#puppetnode)
+- **SVN / git** updaters and definitions of checkout directories are in [repository.yml](repository.yml)
+- **Cron jobs** are configured by whimsy_server/manifests/cronjobs.pp, which call various Public JSON scripts
 - **Public JSON** generation comes from various www/roster/public_*.rb scripts
-  and is controlled by whimsy_server/manifests/cronjobs.pp
 - **Misc server config** is executed by whimsy_server/manifests/init.pp
 - **LDAP** configured in whimsy-vm*.apache.org.yaml
 
@@ -30,7 +30,7 @@ How Production Is Updated
   to define the 'whimsy-pubsub' service which runs [tools/pubsub.rb](tools/pubsub.rb)
 - pubsub.rb watches for any commits from the whimsy git repo at gitbox.apache.org
 - When it detects a change, it tells Puppet to update the VM as a whole
-- Puppet then updates various repositories, ensures required tools and setup 
+- Puppet then updates various svn/git repositories, ensures required tools and setup 
   is done if there are other changes to dependencies, and when needed restarts most 
   services that might need a restart
 - Puppet also does a `rake update` to update various gem or ruby settings
