@@ -88,7 +88,7 @@
   "https://whimsy.apache.org/public/public_podling_status.json": {
     "description": "Current Incubation status of each podling",
     "format": "hash of hashes['podling']['abdera'] = 'graduated'",
-    "maintainer": "/www/roster/public_podling_status.rb",
+    "maintainer": "/www/roster/public_podlings.rb",
     "sources": [
       "/lib/whimsy/asf/podlings.rb"
     ]
