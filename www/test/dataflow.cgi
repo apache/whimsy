@@ -18,7 +18,9 @@ _html do
       related: {
         "https://projects.apache.org/" => "Apache Projects Listing",
         "https://home.apache.org/" => "Apache Committer Phonebook",
-        "https://community.apache.org/" => "Apache Community Development"
+        "https://community.apache.org/" => "Apache Community Development",
+        "/public" => "Whimsy public JSON datafiles",
+        "/docs" => "Whimsy code developer documentation"
       },
       helpblock: -> {
         _p %{ Whimsy tools consume and produce a variety of data files 
@@ -34,13 +36,24 @@ _html do
             only when the underlying data source has changed.
             See the 
           }
-          _a 'server docs for more info.', href: 'https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md'
+          _a 'server setup docs for more info.', href: 'https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md'
           _ ' You can see the '
           _a 'code for this script', href: "#{GITWHIMSY}/www#{ENV['SCRIPT_NAME']}"
-          _ ' the '
+          _ ', the '
           _a 'underlying data file', href: "#{GITWHIMSY}/www/#{DATAFLOWDATA}"
-          _ ' and see the '
-          _a 'key to this data.', href: "#datakey"
+          _ ', the '
+          _a 'key to this data', href: "#datakey"
+          _ ', and many of the '
+          _a 'public JSON data files.', href: "/public"
+        end
+        _p do
+          _span.text_warning 'REMINDER:'
+          _ %{ These datafiles are not original sources of truth, and 
+            merely make data from other canonical systems available in a more 
+            easily digested format on a periodic basis.  Data here may be 
+            outdated depending on when updates were last made.
+          }
+          _a 'See notifications@whimsical for updates', href: 'https://lists.apache.org/list.html?notifications@whimsical.apache.org'
         end
       }
     ) do
@@ -62,12 +75,11 @@ _html do
             _ " #{info['description']}"
             _br
             if info['maintainer'] =~ %r{/} then
-              _span.text_muted 'Maintained by: Whimsy PMC using script: '
+              _span.text_muted 'Maintained by Whimsy PMC using script: '
               _a.text_muted "#{info['maintainer']}", href: "#{GITWHIMSY}#{info['maintainer']}"
             else
               _span.text_muted 'Maintained by role/PMC: '
-              # TODO use a public lookup instead of committer-private roster tool
-              _a.text_muted "#{info['maintainer']}", href: "/roster/orgchart/#{info['maintainer']}"
+              _a.text_muted "#{info['maintainer']}", href: "/foundation/orgchart/#{info['maintainer']}"
             end
             _br
             if info.key?('format') then
