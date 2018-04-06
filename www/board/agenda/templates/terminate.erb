@@ -1,8 +1,8 @@
-<% if @method == 'vote' %>
+<% if @reason == 'vote' %>
 WHEREAS, the Project Management Committee of the Apache 
 <%= @committee.display_name %> project has chosen by vote to recommend moving
 the project to the Attic; and
-<% elsif @method == 'consensus' %>
+<% elsif @reason == 'consensus' %>
 WHEREAS, the Project Management Committee of the Apache 
 <%= @committee.display_name %> project has arrived at a consensus to recommend
 moving the project to the Attic; and

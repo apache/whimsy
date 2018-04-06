@@ -31,7 +31,7 @@ class Post < Vue
         _ul.new_item_type do
           _li do
             _button.btn.btn_primary 'Change Chair', onClick: selectItem
-            _span '- change chair for an existing PMC'
+            _ '- change chair for an existing PMC'
           end
   
           _li do
@@ -39,17 +39,18 @@ class Post < Vue
           end
   
           _li do
-            _button.btn.btn_primary 'Terminate Project', disabled: true
+            _button.btn.btn_primary 'Terminate Project', onClick: selectItem
+            _ '- move a project to the attic'
           end
   
           _li do
             _button.btn.btn_primary 'Out of Cycle Report', onClick: selectItem
-            _span '- report from a PMC not currently on the agenda for this month'
+            _ '- report from a PMC not currently on the agenda for this month'
           end
   
           _li do
             _button.btn.btn_primary 'New Resolution', onClick: selectItem
-            _span '- free form entry of a new resolution'
+            _ '- free form entry of a new resolution'
           end
         end
   
@@ -86,6 +87,43 @@ class Post < Vue
         _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
         _button.btn_primary 'Draft', disabled: @disabled,
           onClick: draft_chair_change_resolution
+
+      elsif @button == 'Terminate Project'
+        _h4 'Terminate Project Resolution'
+
+        _div.form_group do
+          _label 'PMC', for: 'terminate-pmc'
+          _select.form_control.terminate_pmc! do
+            @pmcs.each {|pmc| _option pmc}
+          end
+        end
+
+        _p 'Reason for termination:'
+
+        _div.form_check do
+          _input.form_check_input.termvote! type: 'radio', name: 'termreason', 
+            onClick: -> {@termreason = 'vote'}
+          _label.form_check_label 'by vote of the PMC', for: 'termvote'
+        end
+
+        _div.form_check do
+          _input.form_check_input.termconsensus! type: 'radio', 
+            name: 'termreason', onClick: -> {@termreason = 'consensus'}
+          _label.form_check_label 'by consensus of the PMC', 
+            for: 'termconsensus'
+        end
+
+        _div.form_check do
+          _input.form_check_input.termboard! type: 'radio', 
+            name: 'termreason', onClick: -> {@termreason = 'board'}
+          _label.form_check_label 'by the board for inactivity', 
+            for: 'termboard'
+        end
+
+        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_primary 'Draft', onClick: draft_terminate_project,
+          disabled: (@pmcs.empty? or not @termreason)
+
 
       elsif @button == 'Out of Cycle Report'
         _h4 'Out of Cycle PMC Report'
@@ -149,6 +187,8 @@ class Post < Vue
 
     if @button == 'Change Chair'
       initialize_chair_change()
+    elsif @button == 'Terminate Project'
+      initialize_terminate_project()
     elsif @button == 'Out of Cycle Report'
       initialize_out_of_cycle()
     end
@@ -413,6 +453,37 @@ class Post < Vue
       end
     end
     reader.readAsArrayBuffer(document.getElementById('upload').files[0])
+  end
+
+  #########################################################################
+  #                            Terminate Project                          #
+  #########################################################################
+
+  def initialize_terminate_project()
+    # get a list of PMCs
+    @pmcs = []
+    post 'post-data', request: 'committee-list' do |response|
+      @pmcs = response
+    end
+
+    @terreason = nil
+  end
+
+  def draft_terminate_project()
+    @disabled = true
+    options = {
+      request: 'terminate', 
+      pmc: document.getElementById('terminate-pmc').value, 
+      reason: @termreason
+    }
+
+    post 'post-data', options do |response|
+      @button = @header = 'Add Resolution'
+      @title = response.title
+      @report = response.draft
+      @label = 'resolution'
+      @disabled = false
+    end
   end
 
   #########################################################################
