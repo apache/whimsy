@@ -3,7 +3,7 @@
 class ASF::Board::Agenda
   parse do
     minutes = @file.split(/^ 3. Minutes from previous meetings/,2).last.
-      split(/^ 4. Executive Officer Reports/,2).first
+      split(OFFICER_SEPARATOR,2).first
 
     pattern = /
       \s{4}(?<section>[A-Z])\.

@@ -138,9 +138,11 @@ class ASF::Board::Agenda
         totcommentlen += data[COMMENT_LEN] if data[COMMENT_LEN]
         totreportlen += data[REPORT_LEN] if data[REPORT_LEN]
       end
-      summary[STATS_KEY]['avgapprovals'] = (totapprovals / totreports).round(2)
-      summary[STATS_KEY]['avgcommentlen'] = (totcommentlen / totreports).round(0)
-      summary[STATS_KEY]['avgreportlen'] = (totreportlen / totreports).round(0)
+      if totreports != 0 # Avoid NaN in minutes that aren't parsed fully
+        summary[STATS_KEY]['avgapprovals'] = (totapprovals / totreports).round(2)
+        summary[STATS_KEY]['avgcommentlen'] = (totcommentlen / totreports).round(0)
+        summary[STATS_KEY]['avgreportlen'] = (totreportlen / totreports).round(0)
+      end
     rescue StandardError => e
       summary[ERRORS_KEY] ||= "ERROR(#{meeting}) process error: #{e.message} #{e.backtrace[0]}"
     end
