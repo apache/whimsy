@@ -69,6 +69,16 @@ when 'change-chair'
 
   {draft: draft.reflow(0, 71)}
 
+when 'establish'
+  @people = @people.split(',').map {|id| ASF::Person[id]}
+  @chair = ASF::Person[@chair]
+  @pmcname.capitalize! unless @pmcname =~ /[A-Z]/
+
+  template = File.read('templates/establish.erb').untaint
+  draft = Erubis::Eruby.new(template).result(binding)
+
+  {draft: draft.reflow(0, 71)}
+
 when 'terminate'
   @committee = ASF::Committee[@pmc]
   return unless @committee
