@@ -122,7 +122,9 @@ class ASF::Board::Agenda
       # Summarize across this report
       summary[STATS_KEY] = {}
       summary[STATS_KEY]['specialorders'] = agenda.select{ |v| /\A7/ =~ v[ATTACH_KEY] }.length
-      summary[STATS_KEY]['discusstextlen'] = agenda.select{ |v| v[INDEX_KEY] == "Discussion Items" }[0]['text'].length
+      summary[STATS_KEY]['discusstextlen'] = agenda.select{ |v| 
+        v[INDEX_KEY] == "Discussion Items" || /\A8[A-Z]/ =~ v[ATTACH_KEY]
+      }.map {|v| v['text'].length}.sum
       totapprovals = 0
       totcommentlen = 0
       totreportlen = 0
