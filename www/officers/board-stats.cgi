@@ -43,6 +43,7 @@ _html do
           _strong.text_warning "PRIVATE DATA: "
           _ "The numbers of Average Preapprovals and Report Comments Length are private, and must not be shared outside the Membership."
         end
+        _p "Note: the text format of board minutes changed over time.  Summaries before 2008 may not accurately reflect actual meeting actions due to parsing issues."
       }
       ) do
       _table.table.table_hover.table_striped do
@@ -93,13 +94,13 @@ _html do
                   _ agenda[PMCS].length
                 end
                 _td.text_center do
-                  _ agenda['stats']['avgreportlen'].round(0)
+                  _ agenda['stats']['avgreportlen'].round(0) if agenda['stats'].has_key?('avgreportlen')
                 end
                 _td.text_center do
-                  _ agenda['stats']['avgcommentlen'].round(0)
+                  _ agenda['stats']['avgcommentlen'].round(0) if agenda['stats'].has_key?('avgcommentlen')
                 end
                 _td.text_center do
-                  _ agenda['stats']['avgapprovals'].round(1)
+                  _ agenda['stats']['avgapprovals'].round(1) if agenda['stats'].has_key?('avgapprovals')
                 end
                 _td.text_center do
                   _ agenda['stats']['discusstextlen']
@@ -111,12 +112,13 @@ _html do
       end
     end
     _h3.skips! 'Note: Some Months Are Skipped'
-    _p "Some month's agendas aren't easily parsed, and are skipped (i.e. not counted here). Current skip list:"
+    _p "Some month's agendas aren't easily parsed due to different formatting, and are skipped (i.e. not counted here). Current skip list:"
     _ul do
       datums.select{ |k,v| v.is_a?(Hash) && v.has_key?(ERRORS) }.each do |month, agenda|
         _li do
           _a href: "#{REPO}/archived_agendas/#{month}.txt" do
             _span.text_warning month
+            _ " - #{agenda[ERRORS].partition(')').last}"
           end
         end
       end

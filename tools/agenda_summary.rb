@@ -15,10 +15,7 @@ STATS_ROLLUP = 'stats'
 # @return stats hash of of various statistics from minutes
 def summarize_all(dir = BOARD)
   summaries = Hash.new{|h,k| h[k] = {} }
-  Dir[File.join(dir, 'archived_agendas', "board_agenda_2007*.txt"), 
-    File.join(dir, 'archived_agendas', "board_agenda_2008*.txt"), 
-    File.join(dir, 'archived_agendas', "board_agenda_2009*.txt"), 
-    File.join(dir, 'archived_agendas', "board_agenda_201*.txt")].each do |f|
+  Dir[File.join(dir, 'archived_agendas', "board_agenda_2*.txt")].each do |f|
       summaries[File.basename(f, '.*')] = ASF::Board::Agenda.summarize(f)
   end
   allpmcs = Set.new()
