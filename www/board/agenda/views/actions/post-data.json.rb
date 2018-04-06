@@ -11,6 +11,7 @@ if $0 == __FILE__
   Dir.chdir File.expand_path('../..', __dir__)
   require './helpers/string'
   require 'whimsy/asf'
+  require 'erubis'
   require 'ostruct'
   require 'pp'
   $SAFE = 1
@@ -63,11 +64,8 @@ when 'change-chair'
   @incoming_chair = ASF::Person[@chair]
   return unless @outgoing_chair and @incoming_chair
 
-  template = File.read('templates/change-chair.erb')
-  draft = template.gsub /<%=\s*(.*?)\s*%>/ do
-    var, method = $1.split('.')
-    instance_variable_get(var).send(method)
-  end
+  template = File.read('templates/change-chair.erb').untaint
+  draft = Erubis::Eruby.new(template).result(binding)
 
   {draft: draft.reflow(0, 71)}
 end
