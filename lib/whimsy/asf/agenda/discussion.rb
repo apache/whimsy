@@ -4,12 +4,12 @@
 
 class ASF::Board::Agenda
   parse do
-    discussion = @file.split(/^ \d. Discussion Items/,2).last.
+    discussion = @file.split(/^ \d. Discussion Items\n/,2).last.
       split(/^ \d. .*Action Items/,2).first
     
-    if discussion.strip.empty?
+    if discussion !~ /\A\s{3,5}[A-Z]\.\s/
 
-      # One (empty) item for Discussion Items
+      # One (possibly empty) item for all Discussion Items
 
       pattern = /
         ^(?<attach>\s[8]\.)
