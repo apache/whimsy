@@ -68,6 +68,15 @@ when 'change-chair'
   draft = Erubis::Eruby.new(template).result(binding)
 
   {draft: draft.reflow(0, 71)}
+
+when 'terminate'
+  @committee = ASF::Committee[@pmc]
+  return unless @committee
+
+  template = File.read('templates/terminate.erb').untaint
+  draft = Erubis::Eruby.new(template).result(binding)
+
+  {draft: draft.reflow(0, 71)}
 end
 
 puts output if $0 == __FILE__

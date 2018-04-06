@@ -1,0 +1,26 @@
+<% if @method == 'vote' %>
+WHEREAS, the Project Management Committee of the Apache 
+<%= @committee.display_name %> project has chosen by vote to recommend moving
+the project to the Attic; and
+<% elsif @method == 'consensus' %>
+WHEREAS, the Project Management Committee of the Apache 
+<%= @committee.display_name %> project has arrived at a consensus to recommend
+moving the project to the Attic; and
+<% end %>
+
+WHEREAS, the Board of Directors deems it no longer in the best interest of the
+Foundation to continue the Apache <%= @committee.display_name %> project due to
+inactivity;
+
+NOW, THEREFORE, BE IT RESOLVED, that the Apache <%= @committee.display_name %>
+project is hereby terminated; and be it further
+
+RESOLVED, that the Attic PMC be and hereby is tasked with oversight over the
+software developed by the Apache <%= @committee.display_name %> Project; and be
+it further
+
+RESOLVED, that the office of "Vice President, Apache 
+<%= @committee.display_name %>" is hereby terminated; and be it further
+
+RESOLVED, that the Apache <%= @committee.display_name %> PMC is hereby
+terminated.
