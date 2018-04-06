@@ -26,6 +26,7 @@ class ASF::Board::Agenda
     'A'  => 'Committee Reports',
     '7A' => 'Special Orders',
     '8.' => 'Discussion Items',
+    '8A' => 'Discussion Items',
     '9.' => 'Action Items'
   }
 
@@ -190,5 +191,6 @@ require_relative 'agenda/exec-officer'
 require_relative 'agenda/attachments'
 require_relative 'agenda/committee'
 require_relative 'agenda/special'
+require_relative 'agenda/discussion'
 require_relative 'agenda/back'
 require_relative 'agenda/summary'
