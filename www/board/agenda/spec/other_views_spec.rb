@@ -135,8 +135,8 @@ feature 'other reports' do
     expect(page).to have_selector 'em',
       text: "Clarification provided in this month's report."
     expect(page).to have_selector 'a.reviewed[href=Isis]', text: 'Isis'
-    expect(page).to have_selector '.backlink[href="Discussion-Items"]',
-      text: 'Discussion Items'
+    expect(page).to have_selector '.backlink[href="Set-a-date-for-the-Annual-Members-Meeting"]',
+      text: 'Set a date for the Annual Members Meeting'
     expect(page).to have_selector '.nextlink[href="Unfinished-Business"]',
       text: 'Unfinished Business'
     expect(page).to have_selector 'h3', 
