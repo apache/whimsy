@@ -96,10 +96,10 @@ class Router
 
     elsif path == 'Discussion-Items'
 
+      item = nil
       Agenda.index.each do |i|
         if i.attach =~ /^8[.A-Z]/
-          item = i
-          break
+          item = i unless item
         end
       end
 

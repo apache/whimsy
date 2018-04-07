@@ -196,8 +196,6 @@ class Post < Vue
       initialize_terminate_project()
     elsif @button == 'Out of Cycle Report'
       initialize_out_of_cycle()
-    elsif @button == 'Discussion Item'
-      @header = 'Add Discussion Item'
     end
 
     retitle()
@@ -267,7 +265,7 @@ class Post < Vue
       @label = 'resolution'
       @title = ''
 
-    when 'post item'
+    when 'post item', 'Discussion Item'
       @header = 'Add Discussion Item'
       @label = 'discussion item'
       @message = "Add Discussion Item"
