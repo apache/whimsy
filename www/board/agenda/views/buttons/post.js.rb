@@ -44,13 +44,18 @@ class Post < Vue
           end
   
           _li do
-            _button.btn.btn_primary 'Out of Cycle Report', onClick: selectItem
+            _button.btn.btn_primary 'New Resolution', onClick: selectItem
+            _ '- free form entry of a new resolution'
+          end
+  
+          _li do
+            _button.btn.btn_info 'Out of Cycle Report', onClick: selectItem
             _ '- report from a PMC not currently on the agenda for this month'
           end
   
           _li do
-            _button.btn.btn_primary 'New Resolution', onClick: selectItem
-            _ '- free form entry of a new resolution'
+            _button.btn.btn_success 'Discussion Item', onClick: selectItem
+            _ '- add a discussion item to the agenda'
           end
         end
   
@@ -191,6 +196,8 @@ class Post < Vue
       initialize_terminate_project()
     elsif @button == 'Out of Cycle Report'
       initialize_out_of_cycle()
+    elsif @button == 'Discussion Item'
+      @header = 'Add Discussion Item'
     end
 
     retitle()
