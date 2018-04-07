@@ -82,6 +82,10 @@ class PMC < Vue
             _button.btn.btn_primary 'Modify',
               data_target: '#pmcmod', data_toggle: 'modal'
           end
+          _p do
+            _br
+            _ 'Note: to Add existing committers, please select the committer from the list below and use the Modify button instead.'
+          end
         end
       end
       _div.col_sm_6 do

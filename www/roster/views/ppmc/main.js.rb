@@ -72,6 +72,10 @@ class PPMC < Vue
             _button.btn.btn_primary 'Modify',
               data_target: '#ppmcmod', data_toggle: 'modal'
           end
+          _p do
+            _br
+            _ 'Note: to Add existing committers, please select the committer from the list below and use the Modify button instead.'
+          end
         elsif @ppmc.owners.empty? and (@@auth.root or @@auth.secretary)
           _button.btn.btn_primary 'Create project in LDAP', onClick: self.post,
             disabled: @create_disabled
