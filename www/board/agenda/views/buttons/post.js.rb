@@ -144,7 +144,7 @@ class Post < Vue
         _h4 @header
 
         #input field: title
-        if @header == 'Add Resolution'
+        if @header == 'Add Resolution' or @header == 'Post Discussion Item'
           _input.post_report_title! label: 'title', disabled: @disabled,
             placeholder: 'title', value: @title, onFocus: self.default_title
         end
@@ -229,7 +229,7 @@ class Post < Vue
       end
     end
 
-    Post.header == @header
+    Post.header = @header
   end
 
   # initialize form title, etc.
@@ -259,6 +259,11 @@ class Post < Vue
       @header = 'Edit Resolution'
       @label = 'resolution'
       @message = "Edit #{@@item.title} Resolution"
+
+    when 'post item'
+      @header = 'Post Discussion Item'
+      @label = 'discussion item'
+      @message = "Post Discussion Item"
 
     when 'post items'
       @header = 'Post Discussion Items'

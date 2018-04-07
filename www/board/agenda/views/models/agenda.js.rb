@@ -438,13 +438,15 @@ class Agenda
 
     list << {button: Attend} if @title == 'Roll Call'
 
-    if @attach =~ /^(\d|7?[A-Z]+|4[A-Z]|8\.)$/
+    if @attach =~ /^(\d|7?[A-Z]+|4[A-Z]|8[.A-Z])$/
       if User.role == :secretary or not Minutes.complete
-        if @attach == '8.'
-          if self.missing
-            list << {form: Post, text: 'post items'}
-          else
+        if @attach.start_with? '8'
+          if @text.strip().empty?
+            list << {form: Post, text: 'post item'}
+          elsif @attach =='8.'
             list << {form: Post, text: 'edit items'}
+          else
+            list << {form: Post, text: 'edit item'}
           end
         elsif self.missing
           list << {form: Post, text: 'post report'}
