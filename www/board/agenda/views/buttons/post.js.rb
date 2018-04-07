@@ -144,7 +144,7 @@ class Post < Vue
         _h4 @header
 
         #input field: title
-        if @header == 'Add Resolution' or @header == 'Post Discussion Item'
+        if @header == 'Add Resolution' or @header == 'Add Discussion Item'
           _input.post_report_title! label: 'title', disabled: @disabled,
             placeholder: 'title', value: @title, onFocus: self.default_title
         end
@@ -261,9 +261,9 @@ class Post < Vue
       @message = "Edit #{@@item.title} Resolution"
 
     when 'post item'
-      @header = 'Post Discussion Item'
+      @header = 'Add Discussion Item'
       @label = 'discussion item'
-      @message = "Post Discussion Item"
+      @message = "Add Discussion Item"
 
     when 'post items'
       @header = 'Post Discussion Items'
@@ -405,10 +405,10 @@ class Post < Vue
   def submit(event)
     @edited = false
 
-    if @header == 'Add Resolution'
+    if @header == 'Add Resolution' or @header == 'Add Discussion Item'
       data = {
         agenda: Agenda.file,
-        attach: '7?',
+        attach: (@header == 'Add Resolution') ? '7?' : '8?',
         title: @title,
         report: @report
       }

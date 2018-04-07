@@ -38,6 +38,18 @@ Agenda.update(@agenda, @message) do |agenda|
     # insert into agenda
     agenda[/\n() 8\. Discussion Items/, 1] = "#{title}#{@report}\n\n"
 
+  elsif @attach == '8?'
+    # new discussion item
+
+    # add item letter to title
+    discussion = agenda[/ 8\. Discussion Items.*\n 9\./m]
+    items = discussion.scan(/^    ([A-Z]+)\./).flatten
+    item = items.empty? ? 'A' : items.sort.last.succ
+    title = "    #{order}. #{@title}\n\n"
+
+    # insert into agenda
+    agenda[/\n() 9\. Action Items/, 1] = "#{title}#{@report}\n\n"
+
   elsif @attach.start_with? '+'
     pmc_reports = parsed.select {|section| section[:attach] =~ /^[A-Z]/}
     attach = pmc_reports.last[:attach].succ
