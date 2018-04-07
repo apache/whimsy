@@ -167,7 +167,7 @@ class Post < Vue
         end
 
         #input field: commit_message
-        if @header != 'Add Resolution'
+        if @header != 'Add Resolution' and @header != 'Add Discussion Item'
           _input.post_report_message! label: 'commit message', 
             disabled: @disabled, value: @message
         end
@@ -258,7 +258,7 @@ class Post < Vue
     when 'edit resolution'
       @header = 'Edit Resolution'
       @label = 'resolution'
-      @message = "Edit #{@@item.title} Resolution"
+      @title = ''
 
     when 'post item'
       @header = 'Add Discussion Item'
@@ -295,6 +295,8 @@ class Post < Vue
     end
 
     if @header == 'Add Resolution' or @@item.attach =~ /^[47]/
+      @indent = '        '
+    elsif @header == 'Add Disussion Item' 
       @indent = '        '
     elsif @@item.attach == '8.'
       @indent = '    '

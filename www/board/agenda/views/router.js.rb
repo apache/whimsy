@@ -94,6 +94,19 @@ class Router
     elsif path =~ %r{^cache/}
       item = {view: CachePage}
 
+    elsif path == 'Discussion-Items'
+
+      Agenda.index.each do |i|
+        if i.attach =~ /^8[.A-Z]/
+          item = i
+          break
+        end
+      end
+
+      if Agenda.date =~ /^2018-02/
+        item.next = {title: 'FY23 Budget Worksheet', href: 'fy23'}
+      end
+
     elsif path == 'fy23'
       item = {view: FY23, title: 'FY23 Budget Worksheet', color: 'available',
         prev: {title: 'Discussion Items', href: 'Discussion-Items'},
@@ -101,10 +114,6 @@ class Router
 
     else
       item = Agenda.find(path)
-
-      if path == 'Discussion-Items' and Agenda.date =~ /^2018-02/
-        item.next = {title: 'FY23 Budget Worksheet', href: 'fy23'}
-      end
     end
 
     # bail unless an item was found

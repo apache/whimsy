@@ -5,6 +5,8 @@
 # special case for new special orders
 if @attach == '7?'
   @message = "Post Special Order 7X: #{@title}"
+elsif @attach == '8?'
+  @message = "Post Discussion Item 8X: #{@title}"
 end
 
 Agenda.update(@agenda, @message) do |agenda|
@@ -41,14 +43,22 @@ Agenda.update(@agenda, @message) do |agenda|
   elsif @attach == '8?'
     # new discussion item
 
+    # adjust indentation
+    indent = @report.scan(/^ +/).min
+    @report.gsub!(/^#{indent}/, '') if indent
+    @report.gsub!(/^(\S)/, '       \1')
+
     # add item letter to title
     discussion = agenda[/ 8\. Discussion Items.*\n 9\./m]
     items = discussion.scan(/^    ([A-Z]+)\./).flatten
     item = items.empty? ? 'A' : items.sort.last.succ
-    title = "    #{order}. #{@title}\n\n"
+    title = "    #{item}. #{@title}\n\n"
+
+    # update the commit message that will be used
+    @message.sub! "8X", "8#{item}"
 
     # insert into agenda
-    agenda[/\n() 9\. Action Items/, 1] = "#{title}#{@report}\n\n"
+    agenda[/\n() 9\. .*Action Items/, 1] = "#{title}#{@report}\n\n"
 
   elsif @attach.start_with? '+'
     pmc_reports = parsed.select {|section| section[:attach] =~ /^[A-Z]/}
