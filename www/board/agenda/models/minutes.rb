@@ -3,9 +3,9 @@ class Minutes
     minutes = File.read(agenda_txt)
     @@notes = YAML.load_file(minutes_yaml) rescue {}
 
-    minutes.mreplace(/\n\s1.\sCall\sto\sorder\n+(.*?:)\n\n
+    minutes.mreplace(/\n\s1\.\sCall\sto\sorder\n+(.*?:)\n\n
                      ((?:^\s{12}[^\n]*\n)+\n)
-                     (.*?)\n\n\s2.\sRoll\sCall/mx) do |meeting, number, backup|
+                     (.*?)\n\n\s2\.\sRoll\sCall/mx) do |meeting, number, backup|
       start = notes('Call to order') || '??:??'
       meeting.gsub! "is scheduled", "was scheduled"
       meeting.gsub! "will begin as", "began at"
@@ -20,7 +20,7 @@ class Minutes
     minutes.sub! /^ +ASF members are welcome to attend board meetings.*?\n\n/m,
       ''
 
-    minutes.mreplace(/\n\s2.\sRoll\sCall\n\n
+    minutes.mreplace(/\n\s2\.\sRoll\sCall\n\n
                      (.*?)\n\n+\s3.\sMinutes
                      /mx) do |rollcall|
       if notes('Roll Call')
@@ -31,9 +31,9 @@ class Minutes
       end
     end
 
-    minutes.mreplace(/\n\s3.\sMinutes\sfrom\sprevious\smeetings\n\n
+    minutes.mreplace(/\n\s3\.\sMinutes\sfrom\sprevious\smeetings\n\n
                      (.*?\n\n)
-                     \s4.\sExecutive\sOfficer\sReports
+                     \s4\.\sExecutive\sOfficer\sReports
                      /mx) do |prior_minutes|
       prior_minutes.mreplace(/\n\s+(\w)\.\sThe\smeeting\sof\s(.*?)\n.*?\n
                              (\s{7}\[.*?\])\n\n
@@ -49,9 +49,9 @@ class Minutes
       end
     end
 
-    minutes.mreplace(/\n\s4.\sExecutive\sOfficer\sReports\n
+    minutes.mreplace(/\n\s4\.\sExecutive\sOfficer\sReports\n
                      (\n.*?\n\n)
-                     \s5.\sAdditional\sOfficer\sReports
+                     \s5\.\sAdditional\sOfficer\sReports
                      /mx) do |reports|
       reports.mreplace(/\n\s\s\s\s(\w)\.\s(.*?)\[.*?\](.*?)
                      ()(?:\n+\s\s\s\s\w\.|\n\n\z)
@@ -67,9 +67,9 @@ class Minutes
       end
     end
 
-    minutes.mreplace(/\n\s5.\sAdditional\sOfficer\sReports\n
+    minutes.mreplace(/\n\s5\.\sAdditional\sOfficer\sReports\n
                      (\n.*?\n\n)
-                     \s7.\sSpecial\sOrders
+                     \s7\.\sSpecial\sOrders
                      /mx) do |reports|
       reports.mreplace(/
         \n\s\s\s\s\s?(\w+)\.\s([^\n]*?)   # section, title
@@ -88,9 +88,9 @@ class Minutes
       end
     end
 
-    minutes.mreplace(/\n\s7.\sSpecial\sOrders\n
+    minutes.mreplace(/\n\s7\.\sSpecial\sOrders\n
                      (.*?)
-                     \n\s8.\sDiscussion\sItems
+                     \n\s8\.\sDiscussion\sItems
                      /mx) do |reports|
       break if reports.empty?
       reports.mreplace(/\n\s\s\s\s(\w)\.(.*?)\n(.*?)()\s+(?:\s*\n\s\s\s\s\w\.|\z)
@@ -108,8 +108,22 @@ class Minutes
       end
     end
 
+    minutes.mreplace(/\n\s8\.\sDiscussion\sItems\n
+                     (.*?)
+                     \n\s9\.\s.*Action\sItems
+                     /mx) do |reports|
+      break if reports.strip.empty?
+      reports.mreplace(/\n\s\s\s\s(\w)\.(.*?)\n(.*?)()\s+(?:\s*\n\s\s\s\s\w\.|\z)
+                     /mx) do |section, title, item, comments|
+        item.sub! /\n       \[.*?\n         +\]\n/m, ''
+        item += "\n" unless item =~ /\n\Z/
+        notes = notes(title.strip) || ''
+        [section, title, item, "\n" + notes.reflow(7,70)]
+      end
+    end
+
     minutes.mreplace(/
-      ^((?:\s[89]|\s9|1\d)\.)\s
+      ^((?:\s[89]|1\d)\.)\s
       (.*?)\n
       (.*?)
       (?=\n[\s1]\d\.|\n===)
@@ -179,6 +193,8 @@ class Minutes
 
   def self.notes(index)
     index = index.strip
+    return @@notes[index] if @@notes[index]
+
     index.sub! /^Report from the VP of /, ''
     index.sub! /^Report from the /, ''
     index.sub! /^Status report for the /, ''
