@@ -250,6 +250,11 @@ class Post < Vue
       @label = 'report'
       @message = "Post #{@@item.title} Report"
 
+    when 'edit item'
+      @header = 'Edit Discussion Item'
+      @label = 'discussion item'
+      @message = "Edit #{@@item.title} Discussion Item"
+
     when 'edit report'
       @header = 'Edit Report'
       @label = 'report'

@@ -106,7 +106,7 @@ Agenda.update(@agenda, @message) do |agenda|
     if @attach =~ /^4\w/
       pattern = /(\n\n    #{@attach[-1]}\. #{item['title']} \[.*?\]).*?\n\n(    [B-Z]\.| 5\.)/m
       @report.gsub! /^(.)/, '       \1'
-    elsif @attach =~ /^7\w/
+    elsif @attach =~ /^[78]\w/
       title = item['fulltitle'] || item['title']
       pattern = /(^\s+#{@attach[-1]}\.\s+#{title})\n.*?\n( {1,6}\w\.)/m
       @report.gsub! /^(.)/, '       \1'

@@ -441,12 +441,12 @@ class Agenda
     if @attach =~ /^(\d|7?[A-Z]+|4[A-Z]|8[.A-Z])$/
       if User.role == :secretary or not Minutes.complete
         if @attach.start_with? '8'
-          if @text.strip().empty?
-            list << {form: Post, text: 'post item'}
-          elsif @attach =='8.'
-            list << {form: Post, text: 'edit items'}
-          else
+          if @attach =~ /^8[A-Z]/
             list << {form: Post, text: 'edit item'}
+          elsif @text.strip().empty?
+            list << {form: Post, text: 'post item'}
+          else
+            list << {form: Post, text: 'edit items'}
           end
         elsif self.missing
           list << {form: Post, text: 'post report'}
