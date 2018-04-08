@@ -108,11 +108,11 @@ class Minutes
       end
     end
 
-    minutes.mreplace(/\n\s8\.\sDiscussion\sItems\n
+    minutes.mreplace(/\n\s8\.\sDiscussion\sItems
                      (.*?)
                      \n\s9\.\s.*Action\sItems
                      /mx) do |reports|
-      break if reports.strip.empty?
+      break unless reports =~ /\n\s{3,5}[A-Z]\.\s/
       reports.mreplace(/\n\s\s\s\s(\w)\.(.*?)\n(.*?)()\s+(?:\s*\n\s\s\s\s\w\.|\z)
                      /mx) do |section, title, item, comments|
         item.sub! /\n       \[.*?\n         +\]\n/m, ''
