@@ -21,7 +21,7 @@ class Minutes
       match = pattern.exec(minutes)
       while match
         actions << {owner: match[1], text: match[2], 
-          item: Agenda.find(title.gsub(/\W/, '-'))}
+          item: Agenda.find(title.gsub(/\W+/, '-'))}
         match = pattern.exec(minutes)
       end
     end
