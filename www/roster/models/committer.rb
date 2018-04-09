@@ -32,7 +32,7 @@ class Committer
       name[:ldap] = person.attrs['cn'].first.force_encoding('utf-8')
     end
 
-    unless person.attrs['givenName'].empty?
+    unless (person.attrs['givenName'] || []).empty?
       name[:given_name] = person.attrs['givenName'].first.force_encoding('utf-8')
     end
 
