@@ -35,7 +35,8 @@ class Post < Vue
           end
   
           _li do
-            _button.btn.btn_primary 'Establish Project', disabled: true
+            _button.btn.btn_primary 'Establish Project', onClick: selectItem
+            _ '- direct to TLP project'
           end
   
           _li do
@@ -93,6 +94,80 @@ class Post < Vue
         _button.btn_primary 'Draft', disabled: @disabled,
           onClick: draft_chair_change_resolution
 
+      elsif @button == 'Establish Project'
+        _h4 'Establish Project Resolution'
+
+        _div.form_group do
+          _label 'PMC name', for: 'establish-pmc'
+          _input.form_control.establish_pmc! value: @pmcname
+        end
+
+        _div.form_group do
+          # capitalize pmcname
+          pmcname = @pmcname
+          if @pmcname and @pmcname !~ /[A-Z]/
+            pmcname.gsub!(/\b\w/) {|c| c.upcase()} 
+          end
+
+          _label 'Complete this sentence:', for: 'establish-description'
+          _ " Apache #{pmcname} consists of software related to" if pmcname
+
+          _textarea.form_control.establish_description! value: @pmcdesc,
+            disabled: !pmcname
+        end
+
+        if @chair
+          _div.form_group do
+            _label "Chair: #{@chair.name}"
+          end
+        end
+
+        _label 'Initial set of PMC members'
+
+        _p do 
+          if !@chair
+              _ 'Search for the chair '
+          else
+              _ 'Search for additional PMC members '
+          end
+          _ 'using the search box below, and select '
+          _ 'the desired name using the associated checkbox'
+        end
+
+        @pmc.each do |person|
+          _div.form_check do
+            _input.form_check_input type: 'checkbox', checked: true,
+              value: person.id, id: "person_#{person.id}"
+            _label.form_check_label person.name, for: "person_#{person.id}"
+          end
+        end
+
+        _input.form_control value: @search, placeholder: 'search'
+
+        if @search.length >= 3 and Server.committers
+          search = @search.downcase().split(' ')
+          Server.committers.each do |person|
+            if
+              search.all? {|part|
+                person.id.include? part or
+                person.name.downcase().include? part
+              }
+            then
+              _div.form_check do
+                _input.form_check_input type: 'checkbox',
+                  id: "person_#{person.id}",
+                  onClick: -> {establish_pmc(person)}
+                _label.form_check_label person.name, 
+                  for: "person_#{person.id}"
+              end
+            end
+          end
+        end
+
+        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_primary 'Draft', onClick: draft_establish_project,
+          disabled: (!@pmcname or !@pmcdesc or @pmc.empty?)
+
       elsif @button == 'Terminate Project'
         _h4 'Terminate Project Resolution'
 
@@ -128,7 +203,6 @@ class Post < Vue
         _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
         _button.btn_primary 'Draft', onClick: draft_terminate_project,
           disabled: (@pmcs.empty? or not @termreason)
-
 
       elsif @button == 'Out of Cycle Report'
         _h4 'Out of Cycle PMC Report'
@@ -192,6 +266,8 @@ class Post < Vue
 
     if @button == 'Change Chair'
       initialize_chair_change()
+    elsif @button == 'Establish Project'
+      initialize_establish_project()
     elsif @button == 'Terminate Project'
       initialize_terminate_project()
     elsif @button == 'Out of Cycle Report'
@@ -320,10 +396,10 @@ class Post < Vue
     return if @title
     match = nil
 
-    if (match = @report.match(/appointed\s+to\s+the\s+office\s+of\s+Vice\s+President,\s+Apache\s+(.*?),/))
-      @title = "Change the Apache #{match[1]} Project Chair"
-    elsif (match = @report.match(/to\s+be\s+known\s+as\s+the\s+"Apache\s+(.*?)\s+Project",\s+be\s+and\s+hereby\s+is\s+established/))
+    if (match = @report.match(/to\s+be\s+known\s+as\s+the\s+"Apache\s+(.*?)\s+Project",\s+be\s+and\s+hereby\s+is\s+established/))
       @title = "Establish the Apache #{match[1]} Project"
+    elsif (match = @report.match(/appointed\s+to\s+the\s+office\s+of\s+Vice\s+President,\s+Apache\s+(.*?),/))
+      @title = "Change the Apache #{match[1]} Project Chair"
     elsif (match = @report.match(/the\s+Apache\s+(.*?)\s+project\s+is\s+hereby\s+terminated/))
       @title = "Terminate the Apache #{match[1]} Project"
     end
@@ -473,6 +549,56 @@ class Post < Vue
   end
 
   #########################################################################
+  #                            Establish Project                          #
+  #########################################################################
+
+  def initialize_establish_project()
+    @search = ''
+
+    @pmcname = nil
+    @pmcdesc = nil
+    @chair = nil
+    @pmc = []
+
+    unless Server.committers
+      retrieve 'committers', :json do |committers|
+        Server.committers = committers || []
+      end
+    end
+  end
+
+  def establish_pmc(person)
+    @chair = person unless @chair
+    @pmc << person
+    @search = ''
+  end
+
+  def draft_establish_project()
+    @disabled = true
+
+    people = []
+    Array(document.querySelectorAll(':checked')).each do |checkbox|
+      people << checkbox.value
+    end
+
+    options = {
+      request: 'establish', 
+      pmcname: @pmcname,
+      description: @pmcdesc,
+      chair: @chair.id,
+      people: people.join(',')
+    }
+
+    post 'post-data', options do |response|
+      @button = @header = 'Add Resolution'
+      @title = response.title
+      @report = response.draft
+      @label = 'resolution'
+      @disabled = false
+    end
+  end
+
+  #########################################################################
   #                            Terminate Project                          #
   #########################################################################
 
@@ -483,7 +609,7 @@ class Post < Vue
       @pmcs = response
     end
 
-    @terreason = nil
+    @termreason = nil
   end
 
   def draft_terminate_project()

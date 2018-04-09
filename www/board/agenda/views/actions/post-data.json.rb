@@ -71,13 +71,23 @@ when 'change-chair'
 
 when 'establish'
   @people = @people.split(',').map {|id| ASF::Person[id]}
+  @people.sort_by! {|person| ASF::Person.sortable_name(person.public_name)}
+  @description = @description.strip.sub(/\.\z/, '')
   @chair = ASF::Person[@chair]
-  @pmcname.capitalize! unless @pmcname =~ /[A-Z]/
+  @pmcname.gsub!(/\b\w/) {|c| c.upcase} unless @pmcname =~ /[A-Z]/
 
   template = File.read('templates/establish.erb').untaint
   draft = Erubis::Eruby.new(template).result(binding)
+  names = draft[/^(\s*\*.*\n)+/]
+  if names
+    draft[/^(\s*\*.*\n)+/] = "\n<-@->\n"
+    draft = draft.reflow(0, 71)
+    draft.sub! "\n<-@->\n", names
+  else
+    draft = draft.reflow(0, 71)
+  end
 
-  {draft: draft.reflow(0, 71)}
+  {draft: draft, names: names}
 
 when 'terminate'
   @committee = ASF::Committee[@pmc]
