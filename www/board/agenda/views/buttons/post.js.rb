@@ -328,7 +328,7 @@ class Post < Vue
 
     when 'edit item'
       @header = 'Edit Discussion Item'
-      @label = 'discussion item'
+      @label = 'text'
       @message = "Edit #{@@item.title} Discussion Item"
 
     when 'edit report'
@@ -348,17 +348,17 @@ class Post < Vue
 
     when 'post item', 'Discussion Item'
       @header = 'Add Discussion Item'
-      @label = 'discussion item'
+      @label = 'text'
       @message = "Add Discussion Item"
 
     when 'post items'
       @header = 'Post Discussion Items'
-      @label = 'items'
+      @label = 'text'
       @message = "Post Discussion Items"
 
     when 'edit items'
       @header = 'Edit Discussion Items'
-      @label = 'items'
+      @label = 'text'
       @message = "Edit Discussion Items"
     end
 
@@ -482,7 +482,7 @@ class Post < Vue
   def ready()
     return false if @disabled
 
-    if @header == 'Add Resolution'
+    if @header == 'Add Resolution' or @header == 'Add Discussion Item'
       return @report != '' && @title != ''
     else
       return @report != @@item.text && @message != ''
