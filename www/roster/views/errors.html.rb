@@ -29,6 +29,10 @@ _html do
                 _ 'ASF Members may also review access protected: '
                 _a '/members/log/', href: '/members/log/'
               end 
+              _p do
+                _ 'Also please check for ASF system errors at: '
+                _a 'status.apache.org', href: 'http://status.apache.org/'
+              end 
             end
           end
         end
