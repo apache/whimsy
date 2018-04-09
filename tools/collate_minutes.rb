@@ -583,6 +583,7 @@ seen={}
     report.title.sub! 'Orc', 'ORC'
     report.title.sub! 'Steve', 'STeVe'
     report.title.sub! 'Openmeetings', 'OpenMeetings'
+    report.title.sub! 'Ace', 'ACE' # WHIMSY-31
 
     pending[title] = report
   end
@@ -728,7 +729,6 @@ end
 
 # output each individual report by owner
 agenda.sort.each do |title, reports|
-  puts title
   page = layout(title) do |x|
     info = site[canonical[title.downcase]]
     if info
