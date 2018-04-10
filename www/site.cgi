@@ -14,6 +14,9 @@ require 'net/http'
 require 'time' # for httpdate
 
 PAGETITLE = "Apache TLP Website Checks" # Wvisible:sites,brand
+SITE_PASS = 'label-success'
+SITE_WARN = 'label-warning'
+SITE_FAIL = 'label-danger'
 cols = %w( uri events foundation image license sponsorship security thanks copyright trademarks )
 CHECKS = { 
   'uri'         => %r{https?://[^.]+\.apache\.org},
@@ -57,17 +60,17 @@ def analyze(sites)
     counts = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
     CHECKS.each do |nam, pat|
       success[nam] = sites.select{ |k, site| site[nam] =~ pat  }.keys
-      counts[nam]['label-success'] = success[nam].count
-      counts[nam]['label-warning'] = 0 # Reorder output 
-      counts[nam]['label-danger'] = sites.select{ |k, site| site[nam].nil? }.count
-      counts[nam]['label-warning'] = sites.size - counts[nam]['label-success'] - counts[nam]['label-danger']
+      counts[nam][SITE_PASS] = success[nam].count
+      counts[nam][SITE_WARN] = 0 # Reorder output 
+      counts[nam][SITE_FAIL] = sites.select{ |k, site| site[nam].nil? }.count
+      counts[nam][SITE_WARN] = sites.size - counts[nam][SITE_PASS] - counts[nam][SITE_FAIL]
     end
     
     [
       counts, {
-      'label-success' => '# Sites with links to primary ASF page',
-      'label-warning' => '# Sites with link, but not an expected ASF one',
-      'label-danger' => '# Sites with no link for this topic'
+      SITE_PASS => '# Sites with links to primary ASF page',
+      SITE_WARN => '# Sites with link, but not an expected ASF one',
+      SITE_FAIL => '# Sites with no link for this topic'
       }, success
     ]
 end
@@ -112,11 +115,11 @@ require 'wunderbar/jquery/stupidtable'
 #   - the name of the project
 def label(analysis, links, col, name)
   if not links[col]
-    'label-danger'
+    SITE_FAIL
   elsif analysis[2].include? col and not analysis[2][col].include? name
-    'label-warning'
+    SITE_WARN
   else
-    'label-success'
+    SITE_PASS
   end
 end
 
@@ -158,7 +161,7 @@ def displayProject(project, links, cols, analysis)
             end
             
             _td do
-              if cls == 'label-warning'
+              if cls != SITE_PASS
                 if CHECKS.include? col
                   _ 'Expected to match regular expression: '
                   _code CHECKS[col].source
@@ -206,12 +209,13 @@ _html do
     related: {
       "/committers/tools" => "Whimsy Tool Listing",
       "https://www.apache.org/foundation/marks/pmcs#navigation" => "Required PMC Links Policy",
-      "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code"
+      "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code",
+      "mailto:dev@whimsical.apache.org?subject=[SITE] Website Checker Question" => "Questions? Email Whimsy PMC"
     },
     helpblock: -> {
       _p do
         _ 'This script periodically crawls all Apache project websites to check them for a few specific links or text blocks that all projects are expected to have.'
-        _ 'The checks (currently in beta) include verifying that all '
+        _ 'The checks include verifying that all '
         _a 'required links', href: 'https://www.apache.org/foundation/marks/pmcs#navigation'
         _ ' appear on a project homepage, along with an "image" check if project logo files are in apache.org/img'
       end
@@ -253,6 +257,7 @@ _html do
                 _ ' '
                 _a DOCS[col][1], href: DOCS[col][0]
               end
+              _li.small " Click column badges to sort"
             else
               _span.text_danger "WARNING: the site checker may not understand type: #{col}, results may not be complete/available."
             end
@@ -261,8 +266,15 @@ _html do
           _table.table.table_condensed.table_striped do
             _thead do
               _tr do
-                _th! 'Project'
-                _th! 'Check Results'
+                _th! 'Project', data_sort: 'string-ins'
+                _th! data_sort: 'string' do 
+                  _ 'Check Results'
+                  _br
+                  analysis[0][col].each do |cls, val|
+                    _ ' '
+                    _span.label val, class: cls
+                  end
+                end
               end
             end
             _tbody do
@@ -316,9 +328,9 @@ _html do
             end
             
             sort_order = {
-              'label-success' => 1,
-              'label-warning' => 2,
-              'label-danger'  => 3
+              SITE_PASS => 1,
+              SITE_WARN => 2,
+              SITE_FAIL => 3
             }
             
             _tbody do
