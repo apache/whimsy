@@ -6,28 +6,14 @@
 gemfile:
   - www/board/agenda/Gemfile
 
-# platforms to test on
-os:
-  - osx
-  - linux
-dist: trusty
-
 ########################################################################
 #                           VM Configuration                           #
 ########################################################################
 
-# Ruby version 2.4.0 (see comments as to why not 2.4.1)
 language: ruby
 rvm: # http://rubies.travis-ci.org/
   - 2.4
   - 2.5
-
-# Skip Ruby 2.4 on OS/X due to occasional hangs and
-# https://github.com/travis-ci/travis-ci/issues/7848
-matrix:
-  exclude:
-  - rvm: 2.4
-    os: osx
 
 # add subversion on Linux
 addons:

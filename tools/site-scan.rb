@@ -91,7 +91,7 @@ def parse(id, site, name)
       end
     end
 
-    if a_text == 'thanks'
+    if a_text =~ /\Athanks[!]?\z/ # Allow Thanks! with exclamation
       begin
         data[:thanks] = uri + a_href 
       rescue
