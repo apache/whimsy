@@ -81,9 +81,11 @@ def parse(id, site, name)
 
     # check the link text
     a_text = a.text.downcase.strip
-    $stderr.puts a_text if $verbose
+    $stderr.puts "#{a_text} #{a_href}" if $verbose
 
-    if a_text =~ /licenses?/ and a_href.include? 'apache.org'
+    # Link text is supposed to be just "License" according to:
+    # https://www.apache.org/foundation/marks/pmcs#navigation
+    if a_text =~ /^license$/ and a_href.include? 'apache.org'
       begin
         data[:license] = uri + a_href 
       rescue
