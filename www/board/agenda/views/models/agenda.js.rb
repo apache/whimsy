@@ -373,6 +373,18 @@ class Agenda
     results << {color: 'available', count: count, href: link, 
       text: 'special orders'}
 
+    # discussion items
+    count = 0
+    link = nil
+    Agenda.index.each do |item| 
+      if item.attach =~ /^8[.A-Z]+$/
+        count += 1 unless item.attach == '8.' and not item.text
+        link ||= item.href
+      end
+    end
+    results << {color: 'available', count: count, href: link, 
+      text: 'discussion items'}
+
     # awaiting preapprovals
     count = 0
     Agenda.index.each {|item| count += 1 if item.color == 'ready'}
