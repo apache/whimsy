@@ -110,13 +110,13 @@ This section is for those desiring to run a whimsy tool on their own machine.
 
     1. The model code determines what host and port to connect to by parsing
       either `/etc/ldap/ldap.conf` or `/etc/openldap/ldap.conf` for a line that
-      looks like the following:
-        `uri     ldaps://ldap1-lw-us.apache.org:636`
+      looks like the following (the host name may be different):
+        `uri     ldaps://ldap-us-ro.apache.org:636`
 
     2. A `TLS_CACERT` can be obtained via either of the following commands:
 
         - `ruby -r whimsy/asf -e "puts ASF::LDAP.extract_cert"`
-        - `openssl s_client -connect ldap1-lw-us.apache.org:636 </dev/null`
+        - `openssl s_client -connect ldap-us-ro.apache.org:636 </dev/null`
 
       Copy from `BEGIN` to `END` inclusive into the file `/etc/ldap/asf-ldap-client.pem`.
       Point to the file in `/etc/ldap/ldap.conf` with a line like the following:

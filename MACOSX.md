@@ -18,8 +18,8 @@ Verify using:
 
 ```
 $ brew --version
-Homebrew 1.5.3
-Homebrew/homebrew-core (git revision 5aef; last commit 2018-02-09)
+Homebrew 1.6.0
+Homebrew/homebrew-core (git revision 66e9; last commit 2018-04-11)
 ```
 
 Upgrade Ruby
@@ -35,7 +35,7 @@ Verify:
 
 ```
 $ ruby -v
-ruby 2.5.0p0 (2017-12-25 revision 61468) [x86_64-darwin17]
+ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-darwin17]
 ```
 
 If you don't see 2.3.1 or later, run `hash -r` and try again.  If you previously
@@ -56,9 +56,9 @@ Verify:
 
 ```
 $ node -v
-v9.5.0
+v9.11.1
 $ npm -v
-5.6.0
+5.8.0
 ```
 
 If you don't see v6 or higher, run `hash -r` and try again.  If you previously
@@ -74,14 +74,6 @@ Install:
 $ gem install whimsy-asf bundler mail listen
 ```
 
-If you're using Mac OS El Capitan or higher, you may need to do this:
-
-```
-$ sudo gem install bundler -n /usr/local/bin`
-```
-
-Which installs bundler outside `/usr/bin`
-
 Verify:
 
 ```
@@ -92,6 +84,10 @@ Bundler version 1.16.1
 
 Notes:
 
+* If you are using Mac OS El Capitan or higher, you may need to `sudo gem install bundler -n /usr/local/bin`
+  in order to install bundler outside of `/usr/bin`
+* If you get `bundler's executable "bundle" conflicts with /usr/local/bin/bundle
+  Overwrite the executable? [yN]`, respond with `y` (twice!)
 * Some tools may need a [`bundle install`](DEVELOPMENT.md#running-whimsy-applications-car) run for additional gems.
 * You may have trouble installing due to the dependency on nokogiri. There are
   issues with its dependencies. This page suggests some workarounds:
@@ -135,7 +131,7 @@ Configure LDAP
 Many Whimsy modules use Apache's LDAP directory.  Install:
 
 ```
-$ cd <path-to-git-whimsy>
+$ cd /srv/whimsy
 $ sudo ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"
 ```
 
