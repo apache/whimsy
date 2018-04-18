@@ -382,7 +382,7 @@ class Post < Vue
 
     if @header == 'Add Resolution' or @@item.attach =~ /^[47]/
       @indent = '        '
-    elsif @header == 'Add Disussion Item' 
+    elsif @header == 'Add Discussion Item' 
       @indent = '        '
     elsif @@item.attach == '8.'
       @indent = '    '
