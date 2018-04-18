@@ -373,6 +373,18 @@ class Agenda
     results << {color: 'available', count: count, href: link, 
       text: 'special orders'}
 
+    # discussion items
+    count = 0
+    link = nil
+    Agenda.index.each do |item| 
+      if item.attach =~ /^8[.A-Z]+$/
+        count += 1 unless item.attach == '8.' and not item.text
+        link ||= item.href
+      end
+    end
+    results << {color: 'available', count: count, href: link, 
+      text: 'discussion items'}
+
     # awaiting preapprovals
     count = 0
     Agenda.index.each {|item| count += 1 if item.color == 'ready'}
@@ -440,10 +452,10 @@ class Agenda
 
     if @attach =~ /^(\d|7?[A-Z]+|4[A-Z]|8[.A-Z])$/
       if User.role == :secretary or not Minutes.complete
-        if @attach.start_with? '8'
+        if @attach =~ /^8[.A-Z]/
           if @attach =~ /^8[A-Z]/
             list << {form: Post, text: 'edit item'}
-          elsif @text.strip().empty?
+          elsif not text or @text.strip().empty?
             list << {form: Post, text: 'post item'}
           else
             list << {form: Post, text: 'edit items'}
