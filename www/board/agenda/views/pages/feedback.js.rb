@@ -104,6 +104,9 @@ class SendFeedback < Vue
         @list = json
         EventBus.emit :potential_feedback, @list
         @disabled = false
+
+        # return to the Adjournment page
+        Main.navigate 'Adjournment'
       end
     end
   end

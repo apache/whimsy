@@ -91,7 +91,7 @@ Agenda.parse(@agenda, :full).each do |item|
   output << {
     attach: item[:attach],
     title: item['title'],
-    sent: feedback_sent && feedback_sent.include?(item['title']),
+    sent: not @dryrun,
     mail: mail.to_s
   }
 end
