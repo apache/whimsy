@@ -27,7 +27,10 @@ def Monitor.git(previous_status)
   if __FILE__ == $0 # unit test
     fdata = DATA.read
   else
-    fdata = File.open(log) {|file| file.flock(File::LOCK_EX); file.read}
+    fdata = File.open(log, 'r:UTF-8') do |file| 
+      file.flock(File::LOCK_EX)
+      file.read
+    end
   end
 
   updates = fdata.split(%r{\n(?:/\w+)*/srv/git/})[1..-1]
