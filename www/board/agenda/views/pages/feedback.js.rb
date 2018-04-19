@@ -91,7 +91,7 @@ class SendFeedback < Vue
       method: 'post',
       credentials: 'include',
       headers: {'Content-Type' => 'application/json'},
-      body: checked.inspect
+      body: {checked: checked}.inspect
     }
 
     # send feedback
