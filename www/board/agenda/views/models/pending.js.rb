@@ -45,7 +45,7 @@ class Pending
   end
 
   def self.count
-    return 0 unless Server.pending
+    return 0 unless Server.pending and Agenda.file == Server.pending.agenda
     self.comments.keys().length + 
       self.approved.length +
       self.unapproved.length +
@@ -55,35 +55,43 @@ class Pending
   end
 
   def self.comments
-    (Server.pending && Server.pending.comments) || {}
+    return {} unless Server.pending and Agenda.file == Server.pending.agenda
+    Server.pending.comments || {}
   end
 
   def self.approved
+    return [] unless Server.pending and Agenda.file == Server.pending.agenda
     Server.pending.approved || []
   end
 
   def self.unapproved
+    return [] unless Server.pending and Agenda.file == Server.pending.agenda
     Server.pending.unapproved || []
   end
 
   def self.flagged
+    return [] unless Server.pending and Agenda.file == Server.pending.agenda
     Server.pending.flagged || []
   end
 
   def self.unflagged
+    return [] unless Server.pending and Agenda.file == Server.pending.agenda
     Server.pending.unflagged || []
   end
 
   def self.seen
+    return {} unless Server.pending and Agenda.file == Server.pending.agenda
     Server.pending.seen || {}
   end
 
   def self.status
+    return [] unless Server.pending and Agenda.file == Server.pending.agenda
     Server.pending.status || []
   end
 
   # find a pending status update that matches a given action item
   def self.find_status(action)
+    return nil unless Server.pending and Agenda.file == Server.pending.agenda
     match = nil
 
     Pending.status.each do |status|
