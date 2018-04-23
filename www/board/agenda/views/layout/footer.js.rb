@@ -4,7 +4,7 @@
 #
 # Overrides previous and next links when traversal is queue, shepherd, or
 # Flagged.  Injects the flagged items into the flow once the meeting starts
-# (last additional officer <-> first flagged &&
+# (last executive officer <-> first flagged &&
 #  last flagged <-> first Special order)
 #
 
@@ -103,7 +103,7 @@ class Footer < Vue
         link ||= {href: "shepherd/#{@@item.shepherd}", title: 'shepherd'}
       elsif @@options.traversal == :flagged
         prefix = 'flagged/'
-        while link and not link.flagged
+        while link and link.skippable
           if Minutes.started and link.index
             prefix = ''
             break
@@ -112,8 +112,11 @@ class Footer < Vue
           end
         end
         link ||= {href: "flagged", title: 'Flagged'}
-      elsif Minutes.started and link and link.attach == 'A'
-        while link and not link.flagged and link.attach =~ /^[A-Z]/
+      elsif 
+        Minutes.started and link and 
+        @@item.attach =~ /^\d[A-Z]/ and link.attach =~ /^\d/
+      then
+        while link and link.skippable and link.attach =~ /^([A-Z]|\d+$)/
           link = link.next
         end
 

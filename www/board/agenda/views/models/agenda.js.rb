@@ -506,12 +506,18 @@ class Agenda
   # determine if this item is flagged, accounting for pending actions
   def flagged
     return true if Pending.flagged and Pending.flagged.include? @attach
-    return true if Minutes.started and self.missing
     return false unless @flagged_by
     return false if @flagged_by.length == 1 and 
       @flagged_by.first == User.initials and 
       Pending.unflagged.include?(@attach)
     return ! @flagged_by.empty?
+  end
+
+  # determine if this report can be skipped during the course of the meeting
+  def skippable
+    return false if Minutes.started and self.missing
+    return false if Minutes.started and @approved and @approved.length < 5
+    return !self.flagged
   end
 
   # banner color for this agenda item
