@@ -109,13 +109,13 @@ feature 'other reports' do
   end
 
   it "should skip to missing/flagged items once meeting has started" do
-    visit '/2015-02-18/Security-Team'
+    visit '/2015-02-18/Vice-Chairman'
     expect(page).to have_selector '.nextlink[href="flagged/Abdera"]',
       text: 'Abdera'
 
     visit '/2015-02-18/flagged/Abdera'
-    expect(page).to have_selector '.backlink[href="Security-Team"]',
-      text: 'Security Team'
+    expect(page).to have_selector '.backlink[href="Vice-Chairman"]',
+      text: 'Vice Chairman'
 
     visit '/2015-02-18/flagged/Xerces'
     expect(page).to have_selector '.nextlink[href="Change-Geronimo-Chair"]',

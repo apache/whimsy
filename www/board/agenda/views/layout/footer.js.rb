@@ -38,18 +38,20 @@ class Footer < Vue
 
         unless link
           if Minutes.started
-            link = Agenda.index.find {|item| item.attach == 'A'}.prev
+            link = Agenda.index.find do |item| 
+              item.next && item.next.attach =~ /^\d+$/
+            end
             prefix = ''
           end
 
-          link ||= {href: "../flagged", title: 'Flagged'}
+          link ||= {href: "flagged", title: 'Flagged'}
         end
       elsif 
         Minutes.started and @@item.attach =~ /\d/ and
         link and link.attach =~ /^[A-Z]/
       then
         Agenda.index.each do |item| 
-          if item.flagged and item.attach =~ /^[A-Z]/
+          if not item.skippable and item.attach =~ /^([A-Z]|\d+$)/
             prefix = 'flagged/'
             link = item 
           end
