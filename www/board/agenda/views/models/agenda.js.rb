@@ -439,7 +439,7 @@ class Agenda
   def buttons
     list = []
 
-    unless @comments === undefined or Minutes.complete
+    unless (@attach !~ /^\d+$/ and @comments === undefined) or Minutes.complete
       # some reports don't have comments
       if self.pending
         list << {form: AddComment, text: 'edit comment'}
@@ -524,10 +524,10 @@ class Agenda
       'missing'
     elsif self.missing or self.rejected
       'missing'
+    elsif self.flagged
+      'commented'
     elsif @approved
-      if self.flagged
-        'commented'
-      elsif @approved.length < 5
+      if @approved.length < 5
         'ready'
       else
         'reviewed'

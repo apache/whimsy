@@ -43,7 +43,7 @@ class AddComment < Vue
       _textarea.comment_text!  value: @comment, label: 'Comment',
         placeholder: 'comment', rows: 5, disabled: @disabled
 
-      if User.role == :director and @@item.attach =~ /^[A-Z]+$/
+      if User.role == :director and @@item.attach =~ /^([A-Z]+|[0-9]+)$/
         _input.flag! type: 'checkbox', 
           label: 'item requires discussion or follow up',
           onClick: self.flag, checked: @checked
