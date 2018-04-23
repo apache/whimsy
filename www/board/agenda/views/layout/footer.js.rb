@@ -32,8 +32,13 @@ class Footer < Vue
         link ||= {href: "../#{@@item.shepherd}", title: 'Shepherd'}
       elsif @@options.traversal == :flagged
         prefix = 'flagged/'
-        while link and not link.flagged
-          link = link.prev
+        while link and link.skippable 
+          if link.attach =~ /^\d[A-Z]/
+            prefix = ''
+            break
+          else
+            link = link.prev
+          end
         end
 
         unless link
@@ -122,11 +127,11 @@ class Footer < Vue
           link = link.next
         end
 
-        prefix = 'flagged/' if link and link.attach =~ /^[A-Z]/
+        prefix = 'flagged/'
       end
 
       if link
-        prefix = '' unless  link.attach =~ /^[A-Z]/
+        prefix = '' unless  link.attach =~ /^([A-Z]|\d+$)/
         _Link.nextlink.navbar_brand text: link.title, rel: 'next', 
          href: "#{prefix}#{link.href}", class: link.color
       elsif @@item.prev or @@item.next

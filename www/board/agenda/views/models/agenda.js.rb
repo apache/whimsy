@@ -1,4 +1,4 @@
-#
+
 # This is the client model for an entire Agenda.  Class methods refer to
 # the agenda as a whole.  Instance methods refer to an individual agenda
 # item.
@@ -28,25 +28,27 @@ class Agenda
     end
 
     # remove president attachments from the normal flow
-    @@index.each do |pres|
-      match = (pres.title == 'President' and pres.text and pres.text.
-        match(/Additionally, please see Attachments (\d) through (\d)/))
-      next unless match
+    unless Minutes.started
+      @@index.each do |pres|
+	match = (pres.title == 'President' and pres.text and pres.text.
+	  match(/Additionally, please see Attachments (\d) through (\d)/))
+	next unless match
 
-      first = last = nil
-      @@index.each do |item|
-        first = item if item.attach == match[1]
-        item._shepherd ||= pres.shepherd if first and !last
-        last  = item if item.attach == match[2]
-      end
+	first = last = nil
+	@@index.each do |item|
+	  first = item if item.attach == match[1]
+	  item._shepherd ||= pres.shepherd if first and !last
+	  last  = item if item.attach == match[2]
+	end
 
-      if first and last
-        first.prev.next = last.next
-        last.next.prev = first.prev
-        last.next.index = first.index
-        first.index = nil
-        last.next = pres
-        first.prev = pres
+	if first and last
+	  first.prev.next = last.next
+	  last.next.prev = first.prev
+	  last.next.index = first.index
+	  first.index = nil
+	  last.next = pres
+	  first.prev = pres
+	end
       end
     end
 
@@ -515,14 +517,17 @@ class Agenda
 
   # determine if this report can be skipped during the course of the meeting
   def skippable
-    return false if Minutes.started and self.missing
+    return true if self.flagged
+    return (@to == 'president') if Minutes.started and self.missing
     return false if Minutes.started and @approved and @approved.length < 5
-    return !self.flagged
+    return true
   end
 
   # banner color for this agenda item
   def color
-    if @color
+    if self.flagged
+      'commented'
+    elsif @color
       @color 
     elsif not @title
       'blank'
@@ -530,8 +535,6 @@ class Agenda
       'missing'
     elsif self.missing or self.rejected
       'missing'
-    elsif self.flagged
-      'commented'
     elsif @approved
       if @approved.length < 5
         'ready'
