@@ -7,7 +7,7 @@ class Flagged < Vue
     first = true
 
     Agenda.index.each do |item|
-      flagged = item.flagged_by or Pending.flagged.include? item.attach
+      flagged = item.flagged_by || Pending.flagged.include?(item.attach)
 
       if not flagged and Minutes.started and item.attach =~ /^(\d+|[A-Z]+)$/
         flagged = !item.skippable
