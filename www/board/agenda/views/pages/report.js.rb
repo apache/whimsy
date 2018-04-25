@@ -258,8 +258,11 @@ class Report < Vue
     end
 
     # flag remaining private markers
-    text.gsub! /(.)(&lt;\/?private&gt;)(.)/ do |match, before, text, after|
-      if before == '>' or after == '<'
+    private_tag =/(\s*.\s*)(&lt;\/?private&gt;)(\s*.\s*)/i
+    text.gsub! private_tag do |match, before, text, after|
+      if before.include? '>' or after.include? '<'
+        match
+      elsif before.include? "\n" or after.include? "\n"
         match
       else
         "#{before}<span class='error' " +
