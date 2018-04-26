@@ -541,6 +541,14 @@ class Agenda
       else
         'reviewed'
       end
+    elsif self.title == 'Action Items'
+      if self.actions.empty?
+        'missing'
+      elsif self.actions.any? {|action| action.status.empty?}
+        'ready'
+      else
+        'reviewed'
+      end
     elsif @text or @report
       'available'
     elsif @text === undefined
