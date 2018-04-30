@@ -382,7 +382,7 @@ class Post < Vue
 
     if @header == 'Add Resolution' or @@item.attach =~ /^[47]/
       @indent = '        '
-    elsif @header == 'Add Disussion Item' 
+    elsif @header == 'Add Discussion Item' 
       @indent = '        '
     elsif @@item.attach == '8.'
       @indent = '    '
@@ -447,20 +447,7 @@ class Post < Vue
       start = textarea.selectionStart
       start -= 1  while start > 0 and report[start-1] != "\n"
       finish = textarea.selectionEnd
-      finish += 1 while report[finish] != '\n' and finish < report.length-1
-    end
-
-    # remove indentation
-    unless report =~ /^\S/
-      regex = RegExp.new('^( +)', 'gm')
-      indents = []
-      while (result = regex.exec(report))
-        indents.push result[1].length
-      end
-      unless indents.empty?
-        indent = Math.min(*indents)
-        report.gsub!(RegExp.new('^' + ' ' * indent, 'gm'), '')
-      end
+      finish += 1 while report[finish] != "\n" and finish < report.length-1
     end
 
     # enable special punctuation rules for the incubator
@@ -472,6 +459,19 @@ class Post < Vue
       report.gsub(/^/, ' ' * indent) if indent > 0
       @report = @report[0...start] + report + @report[finish+1..-1]
     else
+      # remove indentation
+      unless report =~ /^\S/
+	regex = RegExp.new('^( +)', 'gm')
+	indents = []
+	while (result = regex.exec(report))
+	  indents.push result[1].length
+	end
+	unless indents.empty?
+	  indent = Math.min(*indents)
+	  report.gsub!(RegExp.new('^' + ' ' * indent, 'gm'), '')
+	end
+      end
+
       @report = Flow.text(report, @indent, puncrules)
     end
 

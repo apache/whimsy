@@ -91,7 +91,7 @@ class SendFeedback < Vue
       method: 'post',
       credentials: 'include',
       headers: {'Content-Type' => 'application/json'},
-      body: checked.inspect
+      body: {checked: checked}.inspect
     }
 
     # send feedback
@@ -104,6 +104,9 @@ class SendFeedback < Vue
         @list = json
         EventBus.emit :potential_feedback, @list
         @disabled = false
+
+        # return to the Adjournment page
+        Main.navigate 'Adjournment'
       end
     end
   end

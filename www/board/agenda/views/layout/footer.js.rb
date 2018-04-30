@@ -4,7 +4,7 @@
 #
 # Overrides previous and next links when traversal is queue, shepherd, or
 # Flagged.  Injects the flagged items into the flow once the meeting starts
-# (last additional officer <-> first flagged &&
+# (last executive officer <-> first flagged &&
 #  last flagged <-> first Special order)
 #
 
@@ -32,24 +32,31 @@ class Footer < Vue
         link ||= {href: "../#{@@item.shepherd}", title: 'Shepherd'}
       elsif @@options.traversal == :flagged
         prefix = 'flagged/'
-        while link and not link.flagged
-          link = link.prev
+        while link and link.skippable 
+          if link.attach =~ /^\d[A-Z]/
+            prefix = ''
+            break
+          else
+            link = link.prev
+          end
         end
 
         unless link
           if Minutes.started
-            link = Agenda.index.find {|item| item.attach == 'A'}.prev
+            link = Agenda.index.find do |item| 
+              item.next && item.next.attach =~ /^\d+$/
+            end
             prefix = ''
           end
 
-          link ||= {href: "../flagged", title: 'Flagged'}
+          link ||= {href: "flagged", title: 'Flagged'}
         end
       elsif 
         Minutes.started and @@item.attach =~ /\d/ and
         link and link.attach =~ /^[A-Z]/
       then
         Agenda.index.each do |item| 
-          if item.flagged and item.attach =~ /^[A-Z]/
+          if not item.skippable and item.attach =~ /^([A-Z]|\d+$)/
             prefix = 'flagged/'
             link = item 
           end
@@ -103,7 +110,7 @@ class Footer < Vue
         link ||= {href: "shepherd/#{@@item.shepherd}", title: 'shepherd'}
       elsif @@options.traversal == :flagged
         prefix = 'flagged/'
-        while link and not link.flagged
+        while link and link.skippable
           if Minutes.started and link.index
             prefix = ''
             break
@@ -112,16 +119,19 @@ class Footer < Vue
           end
         end
         link ||= {href: "flagged", title: 'Flagged'}
-      elsif Minutes.started and link and link.attach == 'A'
-        while link and not link.flagged and link.attach =~ /^[A-Z]/
+      elsif 
+        Minutes.started and link and 
+        @@item.attach =~ /^\d[A-Z]/ and link.attach =~ /^\d/
+      then
+        while link and link.skippable and link.attach =~ /^([A-Z]|\d+$)/
           link = link.next
         end
 
-        prefix = 'flagged/' if link and link.attach =~ /^[A-Z]/
+        prefix = 'flagged/'
       end
 
       if link
-        prefix = '' unless  link.attach =~ /^[A-Z]/
+        prefix = '' unless  link.attach =~ /^([A-Z]|\d+$)/
         _Link.nextlink.navbar_brand text: link.title, rel: 'next', 
          href: "#{prefix}#{link.href}", class: link.color
       elsif @@item.prev or @@item.next

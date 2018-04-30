@@ -62,8 +62,8 @@ feature 'report' do
      text: 'Axis'
 
     # pending comments
-    expect(page).to have_selector 'h4#pending', text: 'Pending Comment'
-    expect(page).to have_selector 'pre.comment', text: 'jt: Nice report!'
+    expect(page).to have_selector 'h5#pending', text: 'Pending Comment'
+    expect(page).to have_selector 'div.commented pre', text: 'jt: Nice report!'
 
     # hidden forms
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',

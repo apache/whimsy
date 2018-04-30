@@ -76,8 +76,10 @@ class AdditionalInfo < Vue
 
       # pending comments
       if @@item.pending
-        _h5 'Pending Comment', id: "#{@prefix}pending"
-        _pre.comment Flow.comment(@@item.pending, User.initials)
+        _div.comment.commented.clickable onClick: -> {Main.navigate 'queue'} do
+          _h5 'Pending Comment', id: "#{@prefix}pending"
+          _pre.commented Flow.comment(@@item.pending, User.initials)
+        end
       end
 
       # historical comments
@@ -139,8 +141,10 @@ class AdditionalInfo < Vue
     else
       # pending comments
       if @@item.pending
-        _h4 'Pending Comment', id: "#{@prefix}pending"
-        _pre.comment Flow.comment(@@item.pending, User.initials)
+        _div.comment.commented.clickable onClick: -> {Main.navigate 'queue'} do
+          _h5 'Pending Comment', id: "#{@prefix}pending"
+          _pre.commented Flow.comment(@@item.pending, User.initials)
+        end
       end
     end
   end

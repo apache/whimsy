@@ -158,6 +158,28 @@ Agenda.update(agenda_file, @message) do |agenda|
     end
   end
 
+  # apply operations comments to the President's report
+  operations = Range.new(*agenda.scan(
+    /\s*Additionally, please see Attachments (\d) through (\d)\./).first)
+  operations.each do |attachment|
+    if comments.include? attachment
+      office = agenda[
+	/^Attachment #{attachment}: Report from the (.*?)  \[/, 1]
+      office.sub! /^VP of /, ''
+      office.sub! /^Apache /, ''
+
+      width = 79-13-initials.length
+      text = "[#{office}] #{comments[attachment]}"
+      text = text.reflow(13+initials.length, width)
+      text[/ *(#{' '*(initials.length+2)})/,1] = "#{initials}: "
+
+      agenda.sub!(patterns['4']) do |match|
+	match[/\n()\s{9}\]/,1] = "#{text}\n"
+	match
+      end
+    end
+  end
+
   # return updated agenda
   agenda
 end

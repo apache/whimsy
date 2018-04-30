@@ -30,25 +30,25 @@ feature 'other reports' do
   end
 
   it "should support queued/pending approvals and comments" do
-    visit '/2015-02-18/queue'
+    visit '/2015-01-21/queue'
 
     expect(page).to have_selector :xpath, 
       '//p[1]/a[@href="queue/W3C-Relations"]', text: 'W3C Relations'
     expect(page).to have_selector :xpath,
       '//p[2]/a[@href="Security-Team"]', text: 'Security Team'
     expect(page).to have_selector :xpath,
-      '//p[3]/a[@href="Axis"]', text: 'Axis'
+      '//p[3]/a[@href="Attic"]', text: 'Attic'
     expect(page).to have_selector :xpath,
-      '//p[4]/a[@href="queue/Celix"]', text: 'Celix'
-    expect(page).to have_selector 'a.default', text: 'January 21, 2015'
-    expect(page).to have_selector 'dt a[href="BookKeeper"]', text: 'BookKeeper'
+      '//p[4]/a[@href="queue/Avro"]', text: 'Avro'
+    expect(page).to have_selector 'a.default', text: 'Legal Affairs'
+    expect(page).to have_selector 'dt a[href="Avro"]', text: 'Avro'
     expect(page).to have_selector 'dd p', text: 'Nice report!'
     expect(page).to have_selector 'li', 
       text: 'follow up with PMC for clarification'
 
     expect(page).to have_selector '#commit-text', text: 
-      ['Approve W3C Relations', 'Unapprove Security Team', 'Flag Axis',
-        'Comment on BookKeeper',
+      ['Approve W3C Relations', 'Unapprove Security Team', 'Flag Attic',
+        'Comment on Avro',
         'Update AI: follow up with PMC for clarification'].join(' ')
   end
 
@@ -109,13 +109,13 @@ feature 'other reports' do
   end
 
   it "should skip to missing/flagged items once meeting has started" do
-    visit '/2015-02-18/Security-Team'
+    visit '/2015-02-18/Vice-Chairman'
     expect(page).to have_selector '.nextlink[href="flagged/Abdera"]',
       text: 'Abdera'
 
     visit '/2015-02-18/flagged/Abdera'
-    expect(page).to have_selector '.backlink[href="Security-Team"]',
-      text: 'Security Team'
+    expect(page).to have_selector '.backlink[href="Vice-Chairman"]',
+      text: 'Vice Chairman'
 
     visit '/2015-02-18/flagged/Xerces'
     expect(page).to have_selector '.nextlink[href="Change-Geronimo-Chair"]',
@@ -167,13 +167,9 @@ feature 'other reports' do
   it "should show flagged items" do
     visit '/2015-02-18/flagged'
     
-    expect(page).to have_selector 'h3 a', text: 'Axis'
-    expect(page).to have_selector 'h4', text: 'Comments'
-    expect(page).to have_selector 'pre span', text: 'jj: Reminder email sent'
-    expect(page).to have_selector 'h4', text: 'Minutes'
-    expect(page).to have_selector 'pre', text: '@Sam: follow up with Axis PMC.'
-
     expect(page).to have_selector 'h3 a', text: 'Lenya'
+    expect(page).to have_selector 'h4', text: 'Comments'
+    expect(page).to have_selector 'pre span', text: 'rg: Last quarter'
   end
 
   it "should show missing items" do
