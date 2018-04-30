@@ -8,6 +8,8 @@
   letsencrypt:
     url: https://github.com/letsencrypt/letsencrypt
 
+# N.B. the names in the section below should not be changed as the are used by Ruby
+
 :svn:
 
   Bills:
