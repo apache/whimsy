@@ -6,7 +6,7 @@ require 'whimsy/asf/agenda'
 require 'json'
 require 'set'
 
-BOARD = ASF::SVN['private/foundation/board']
+BOARD = ASF::SVN['foundation_board']
 STATS_ROLLUP = 'stats'
 
 # Create summary of statistics from 2007->up board minutes (includes private data)

@@ -12,9 +12,9 @@ module ASF # :nodoc:
     
     # parse any changed YAML role files.
     def self.load
-      @@source ||= ASF::SVN['private/foundation/officers/personnel-duties']
+      @@source ||= ASF::SVN['personnel-duties']
       @@source.untaint
-      Dir["#{@@source}/*.txt"].each do |file|
+      Dir[File.join(@@source, '*.txt')].each do |file|
         file.untaint # Since it's our own svn repo, trust it
         name = file[/.*\/(.*?)\.txt/, 1]
         next if @@duties[name] and @@duties[name]['mtime'] > File.mtime(file).to_f
@@ -25,7 +25,7 @@ module ASF # :nodoc:
         @@duties[name] = data
       end
       
-      file = "#{@@source}/README".untaint
+      file = File.join(@@source, 'README').untaint
       unless @@desc['mtime'] and @@desc['mtime'] > File.mtime(file).to_f
         data = Hash[*File.read(file).split(/^\[(.*)\]\n/)[1..-1].map(&:strip)]
         if data['info'] then

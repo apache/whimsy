@@ -100,9 +100,9 @@ module ASF
 
         parse_committee_info contents
       else
-        board = ASF::SVN.find('private/committers/board')
+        board = ASF::SVN.find('board')
         return unless board
-        file = "#{board}/committee-info.txt"
+        file = File.join(board, 'committee-info.txt')
         return unless File.exist? file
 
         if @committee_mtime and File.mtime(file) <= @committee_mtime

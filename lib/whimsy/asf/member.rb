@@ -97,8 +97,8 @@ module ASF
     # Return the Last Changed Date for <tt>members.txt</tt> in svn as
     # a <tt>Time</tt> object.
     def self.svn_change
-      foundation = ASF::SVN['private/foundation']
-      file = "#{foundation}/members.txt"
+      foundation = ASF::SVN['foundation']
+      file = File.join(foundation, 'members.txt')
       return Time.parse(`svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
     end
 
@@ -131,7 +131,7 @@ module ASF
     # but rather to have a local copy that can be updated and used until
     # the svn working copy catches up
     def self.text
-      foundation = ASF::SVN.find('private/foundation')
+      foundation = ASF::SVN.find('foundation')
       return nil unless foundation
 
       begin
@@ -140,9 +140,9 @@ module ASF
         @@mtime = 0
       end
 
-      if File.mtime("#{foundation}/members.txt").to_i > @@mtime.to_i
-        @@mtime = File.mtime("#{foundation}/members.txt")
-        text = File.read("#{foundation}/members.txt")
+      if File.mtime(File.join(foundation, 'members.txt')).to_i > @@mtime.to_i
+        @@mtime = File.mtime(File.join(foundation, 'members.txt'))
+        text = File.read(File.join(foundation, 'members.txt'))
         @@text = WeakRef.new(text)
       end
 

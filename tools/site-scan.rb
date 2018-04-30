@@ -22,7 +22,7 @@ end
 
 #########################################################################
 
-IMAGE_DIR = ASF::SVN.find('asf/infrastructure/site/trunk/content/img')
+IMAGE_DIR = ASF::SVN.find('site-img')
 
 def parse(id, site, name)
   uri = URI.parse(site)
@@ -145,7 +145,7 @@ def parse(id, site, name)
 
   # see if image has been uploaded
   if IMAGE_DIR
-    data[:image] = Dir["#{IMAGE_DIR}/#{id}.*"].
+    data[:image] = Dir[File.join(IMAGE_DIR, "#{id}.*")].
       map {|path| File.basename(path)}.first
   end
 
