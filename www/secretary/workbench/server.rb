@@ -53,7 +53,7 @@ get '/' do
   redirect to('/') if env['REQUEST_URI'] == env['SCRIPT_NAME']
 
   # determine latest month for which there are messages
-  archives = Dir["#{ARCHIVE}/*.yml"].select {|name| name =~ %r{/\d{6}\.yml$}}
+  archives = Dir[File.join(ARCHIVE, '*.yml')].select {|name| name =~ %r{/\d{6}\.yml$}}
   @mbox = archives.empty? ? nil : File.basename(archives.sort.last, '.yml')
   @mbox = [Date.today.strftime('%Y%m'), @mbox].min if @mbox
   @messages = Mailbox.new(@mbox).client_headers.select do |message|
@@ -61,7 +61,7 @@ get '/' do
   end
 
   @cssmtime = File.mtime('public/secmail.css').to_i
-  @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
+  @appmtime = Wunderbar::Asset.convert(File.join(settings.views, 'app.js.rb')).mtime.to_i
   _html :index
 end
 
@@ -148,7 +148,7 @@ get %r{/(\d{6})/(\w+)/_index_} do |month, hash|
   @headers = message.headers.dup
   @headers.delete :attachments
   @cssmtime = File.mtime('public/secmail.css').to_i
-  @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
+  @appmtime = Wunderbar::Asset.convert(File.join(settings.views, 'app.js.rb')).mtime.to_i
   @projects = (ASF::Podling.current+ASF::Committee.pmcs).map(&:name).sort
   _html :parts
 end
@@ -157,7 +157,7 @@ end
 get %r{/(\d{6})/(\w+)/_body_} do |month, hash|
   @message = Mailbox.new(month).find(hash)
   @cssmtime = File.mtime('public/secmail.css').to_i
-  @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
+  @appmtime = Wunderbar::Asset.convert(File.join(settings.views, 'app.js.rb')).mtime.to_i
   pass unless @message
   _html :body
 end
@@ -228,8 +228,8 @@ end
 # redirect to an icla
 get %r{/icla/(.*)} do |filename|
   checkout = 'https://svn.apache.org/repos/private/documents/iclas'
-  iclas = ASF::SVN['private/documents/iclas']
-  file = Dir["#{iclas}/#{filename}", "#{iclas}/#{filename}.*"].first
+  iclas = ASF::SVN['iclas']
+  file = Dir[File.join(iclas, filename), File.join(iclas, "#{filename}.*")].first
   pass unless file
   redirect to(checkout + '/' + File.basename(file))
 end

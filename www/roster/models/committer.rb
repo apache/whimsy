@@ -112,7 +112,7 @@ class Committer
       response[:forms] = {}
 
       if person.icla and person.icla.claRef # Not all people have iclas
-        iclas = ASF::SVN['private/documents/iclas']
+        iclas = ASF::SVN['iclas']
         claRef = person.icla.claRef.untaint
         if File.exist? File.join(iclas, claRef + '.pdf')
           response[:forms][:icla] = claRef + '.pdf'
@@ -126,7 +126,7 @@ class Committer
         member[:info] = person.members_txt
 
         if person.icla # not all members have iclas
-          apps = ASF::SVN['private/documents/member_apps']
+          apps = ASF::SVN['member_apps']
           [
             person.icla.legal_name, 
             person.icla.name,

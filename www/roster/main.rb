@@ -33,7 +33,7 @@ helpers do
   end
   def appmtime
     # TODO can this/should this be cached?
-    Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
+    Wunderbar::Asset.convert(File.join(settings.views, 'app.js.rb')).mtime.to_i
   end
 end
 
@@ -201,8 +201,8 @@ end
 
 # complete podling list
 get '/podlings' do
-  attic = ASF::SVN['asf/attic/site/xdocs/projects']
-  @attic = Dir["#{attic}/*.xml"].map {|file| File.basename(file, '.xml')}
+  attic = ASF::SVN['attic-xdocs']
+  @attic = Dir[File.join(attic, '*.xml')].map {|file| File.basename(file, '.xml')}
   @committees = ASF::Committee.list.map(&:id)
   @podlings = ASF::Podling.list
 
