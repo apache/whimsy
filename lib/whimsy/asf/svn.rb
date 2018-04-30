@@ -75,8 +75,8 @@ module ASF
       result = repos[(@mock+name.sub('private/','')).to_s.sub(/\/*$/, '')] ||
         repos[(@base+name).to_s.sub(/\/*$/, '')] # lose trailing slash
 
-      # if name is a simple identifier, try to match name in repository.yml
-      if not result and name =~ /^\w+$/
+      # if name is a simple identifier (may contain '-'), try to match name in repository.yml
+      if not result and name =~ /^[\w-]+$/
         entry = YAML.load_file(REPOSITORY)[:svn][name]
         result = find((@base+entry['url']).to_s) if entry
       end
