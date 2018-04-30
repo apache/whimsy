@@ -24,6 +24,7 @@ module ASF
     REPOSITORY = File.expand_path('../../../../repository.yml', __FILE__).
       untaint
     @@repository_mtime = nil
+    @@repository_entries = nil
 
     # a hash of local working copies of Subversion repositories.  Keys are
     # subversion paths; values are file paths.
@@ -39,6 +40,7 @@ module ASF
         # reuse previous results if already scanned
         unless @repos
           @@repository_mtime = File.exist?(REPOSITORY) && File.mtime(REPOSITORY)
+          @@repository_entries = YAML.load_file(REPOSITORY)
 
           @repos = Hash[Dir[*svn].map { |name| 
             next unless Dir.exist? name.untaint
@@ -67,6 +69,12 @@ module ASF
       self.find!(name)
     end
 
+    # fetch a repository entry by name
+    def self.repo_entry(name)
+      self.repos # refresh @@repository_entries
+      @@repository_entries[:svn][name]
+    end
+
     # find a local directory corresponding to a path in Subversion.  Returns
     # <tt>nil</tt> if not found.
     def self.find(name)
@@ -77,7 +85,7 @@ module ASF
 
       # if name is a simple identifier (may contain '-'), try to match name in repository.yml
       if not result and name =~ /^[\w-]+$/
-        entry = YAML.load_file(REPOSITORY)[:svn][name]
+        entry = repo_entry(name)
         result = find((@base+entry['url']).to_s) if entry
       end
 
