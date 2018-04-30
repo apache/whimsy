@@ -75,16 +75,22 @@ module ASF
       result = repos[(@mock+name.sub('private/','')).to_s.sub(/\/*$/, '')] ||
         repos[(@base+name).to_s.sub(/\/*$/, '')] # lose trailing slash
 
-      return result if result
+      # if name is a simple identifier, try to match name in repository.yml
+      if not result and name =~ /^\w+$/
+        entry = YAML.load_file(REPOSITORY)[:svn][name]
+        result = find((@base+entry['url']).to_s) if entry
+      end
 
       # recursively try parent directory
-      if name.include? '/'
+      if not result and name.include? '/'
         base = File.basename(name).untaint
         result = find(File.dirname(name))
         if result and File.exist?(File.join(result, base))
           File.join(result, base)
         end
       end
+
+      result
     end
 
     # find a local directory corresponding to a path in Subversion.  Throws
