@@ -15,11 +15,11 @@ class Committee
       list =~ /^#{pmc.mail_list}\b/
     end
 
-    comdev = ASF::SVN['asf/comdev/projects.apache.org/trunk/site/json/foundation']
-    info = JSON.parse(File.read("#{comdev}/projects.json"))[id]
+    comdev = ASF::SVN['comdev-foundation']
+    info = JSON.parse(File.read(File.join(comdev, 'projects.json')))[id]
 
-    image_dir = ASF::SVN.find('asf/infrastructure/site/trunk/content/img')
-    image = Dir["#{image_dir}/#{id}.*"].map {|path| File.basename(path)}.last
+    image_dir = ASF::SVN.find('site-img')
+    image = Dir[File.join(image_dir, "#{id}.*")].map {|path| File.basename(path)}.last
 
     moderators = nil
     pSubs = Array.new # private@ subscribers
