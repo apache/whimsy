@@ -6,7 +6,7 @@ received = Dir["#{meetings}/2*/memapp-received.txt"].sort.last.untaint
 
 # extract contents
 pattern = /^\w+\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(.*?)\s*\n/
-if Date.today - Date.parse(received[/\d+/]) <= 32
+if Date.today - Date.parse(received[/\d{8}/]) <= 32
   table = File.read(received).scan(pattern)
 else
   table = []

@@ -155,7 +155,7 @@ get %r{/(\d{6})/(\w+)/_index_} do |month, hash|
   # applications can be accepted.  Two days are added to cover the adjournment
   # period of the meeting during which the vote takes place.
   received = Dir["#{ASF::SVN['Meetings']}/2*/memapp-received.txt"].sort.last
-  @meeting = Date.today - Date.parse(received[/\d+/]) <= 32
+  @meeting = Date.today - Date.parse(received[/\d{8}/]) <= 32
 
   _html :parts
 end
