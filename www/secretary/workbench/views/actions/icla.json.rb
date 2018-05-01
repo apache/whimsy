@@ -15,7 +15,7 @@ fileext = File.extname(@selected).downcase if @signature.empty?
 
 # verify that an ICLA under that name doesn't already exist
 if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
-  icla = "#{ASF::SVN['private/documents/iclas']}/#@filename#{fileext}"
+  icla = "#{ASF::SVN['iclas']}/#@filename#{fileext}"
   if File.exist? icla.untaint
     _warn "documents/iclas/#@filename#{fileext} already exists"
   end

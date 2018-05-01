@@ -3,7 +3,7 @@
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'whimsy/asf'
 
-FOUNDATION = ASF::SVN['private/foundation']
+FOUNDATION = ASF::SVN['foundation']
 
 Dir.chdir FOUNDATION
 

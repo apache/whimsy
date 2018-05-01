@@ -7,15 +7,15 @@ $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'whimsy/asf'
 require 'mail'
 
-MEETINGS = ASF::SVN['private/foundation/Meetings']
+MEETINGS = ASF::SVN['Meetings']
 
 # Get IRC attendance copy/paste lines for all proxies at a meeting
 # @param meeting dir name of current meeting
 # @return reminders {"proxy@apache.org" => ["IRC line", ...]}
 # @see foundation/Meetings/*.rb for other scripts that deal with 
 #   IRC log parsing, attendance marking, and proxy handling
-def reminder_lines(meeting = File.basename(Dir["#{MEETINGS}/2*"].sort.last).untaint)
-  lines = IO.read("#{MEETINGS}/#{meeting}/proxies")
+def reminder_lines(meeting = File.basename(Dir[File.join(MEETINGS, '2*')].sort.last).untaint)
+  lines = IO.read(File.join(MEETINGS, meeting, 'proxies'))
   proxylist = lines.scan(/\s\s(.{25})(.*?)\((.*?)\)/).map { |l| [l[0].strip, l[1].strip, l[2]]} # [["Shane Curcuru    ", "David Fisher ", "wave"], ...]
   copyproxy = Hash.new{|h,k| h[k] = [] }
   proxylist.each do |arr|

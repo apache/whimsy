@@ -14,7 +14,7 @@ fileext = File.extname(@selected).downcase if @signature.empty?
 
 # verify that a membership form under that name doesn't already exist
 if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
-  form = "#{ASF::SVN['private/documents/member_apps']}/#@filename#{fileext}"
+  form = "#{ASF::SVN['member_apps']}/#@filename#{fileext}"
   if File.exist? form.untaint
     _warn "documents/member_apps/#@filename#{fileext} already exists"
   end
@@ -188,7 +188,7 @@ end
 ########################################################################
 
 task "svn commit memapp-received.text" do
-  meetings = ASF::SVN['private/foundation/Meetings']
+  meetings = ASF::SVN['Meetings']
   file = Dir["#{meetings}/2*/memapp-received.txt"].sort.last.untaint
   received = File.read(file)
   if received =~ /^no\s+\w+\s+\w+\s+\w+\s+#{@availid}\s/

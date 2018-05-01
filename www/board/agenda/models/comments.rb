@@ -11,7 +11,7 @@ class HistoricalComments
     cutoff = (Date.today - 380).strftime('board_agenda_%Y_%m_%d')
 
     # select and sort agendas for meetings past the cutoff
-    agendas = Dir["#{ASF::SVN['private/foundation/board']}/**/board_agenda_*"].
+    agendas = Dir[File.join(ASF::SVN['foundation_board'], '**', 'board_agenda_*')].
       select {|file| File.basename(file) > cutoff}.
       sort_by {|file| File.basename(file)}.
       map {|file| file.untaint}

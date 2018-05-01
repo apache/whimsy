@@ -22,7 +22,7 @@ _personalize_email(env.user)
 #                        move existing document                        #
 ########################################################################
 
-iclas = ASF::SVN['private/documents/iclas'].untaint
+iclas = ASF::SVN['iclas'].untaint
 @filename.untaint if @filename =~ /\A\w[-.\w]*\z/
 
 if not Dir.exist? "#{iclas}/#@filename"
@@ -59,7 +59,7 @@ end
 ########################################################################
 
 # determine initial value for the counter
-svndir = ASF::SVN['https://svn.apache.org/repos/private/documents/iclas']
+svndir = ASF::SVN['iclas']
 count = (Dir["#{svndir}/#@filename/*"].
       map {|name| name[/.*(\d+)\./, 1] || 1}.map(&:to_i).max || 1) + 1
 
