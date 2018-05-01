@@ -129,10 +129,12 @@ class Parts < Vue
             _span 'software grant'
           end
 
-          _label do
-            _input type: 'radio', name: 'doctype', value: 'mem',
-              onClick: -> {@form = MemApp}
-            _span 'membership application'
+          if @@meeting
+            _label do
+              _input type: 'radio', name: 'doctype', value: 'mem',
+                onClick: -> {@form = MemApp}
+              _span 'membership application'
+            end
           end
 
           _hr

@@ -1,12 +1,16 @@
 # parse and return the contents of the latest memapp-received file
 
 # find latest memapp-received.txt file in the foundation/Meetings directory
-meetings = ASF::SVN['private/foundation/Meetings']
+meetings = ASF::SVN['Meetings']
 received = Dir["#{meetings}/2*/memapp-received.txt"].sort.last.untaint
 
 # extract contents
 pattern = /^\w+\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(.*?)\s*\n/
-table = File.read(received).scan(pattern)
+if Date.today - Date.parse(received[/\d+/]) <= 32
+  table = File.read(received).scan(pattern)
+else
+  table = []
+end
 
 # map contents to a hash
 fields = %w(apply mail karma id name)

@@ -150,6 +150,13 @@ get %r{/(\d{6})/(\w+)/_index_} do |month, hash|
   @cssmtime = File.mtime('public/secmail.css').to_i
   @appmtime = Wunderbar::Asset.convert(File.join(settings.views, 'app.js.rb')).mtime.to_i
   @projects = (ASF::Podling.current+ASF::Committee.pmcs).map(&:name).sort
+
+  # Section 4.1 of the ASF bylaws provides requirements for when membership
+  # applications can be accepted.  Two days are added to cover the adjournment
+  # period of the meeting during which the vote takes place.
+  received = Dir["#{ASF::SVN['Meetings']}/2*/memapp-received.txt"].sort.last
+  @meeting = Date.today - Date.parse(received[/\d+/]) <= 32
+
   _html :parts
 end
 
