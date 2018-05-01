@@ -315,17 +315,18 @@ class Message
   # parse a message, returning headers
   #
   def self.parse(message)
-    mail = Mail.read_from_string(message)
-
     # cleanup broken header separators.  Avoid copying the possibly large body
     # unless a fixup is needed.
     message.sub! /\AFrom .*\r?\n/i, '' if message =~ /^\AFrom /i
-    headers = mail[/(.*?)\r?\n\r?\n/m, 1]
+    headers = message[/(.*?)\r?\n\r?\n/m, 1]
     if headers.include? "\n" and not headers.include? "\r\n"
       headers, body = mail.split(/\r?\n\r?\n/, 2)
       headers.gsub("\n", "\r\n")
       message = "#{headers}\r\n\r\n#{body}"
     end
+
+    # parse cleaned up message
+    mail = Mail.read_from_string(message)
 
     # parse from address
     begin
