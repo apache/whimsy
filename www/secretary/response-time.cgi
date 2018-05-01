@@ -42,7 +42,7 @@ _html do
 end
 
 _json do
-  officers = ASF::SVN['private/foundation/officers']
+  officers = ASF::SVN['officers']
   startTime = Time.now
   _result `#{CMD.sub(/\bofficers\b/, officers)}`
   _server Time.now - startTime

@@ -21,7 +21,7 @@ end
 
 ACREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/acreq'
 OFFICERS = 'https://svn.apache.org/repos/private/foundation/officers'
-APMAIL_BIN = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
+APMAIL_BIN = ASF::SVN['apmail_bin']
 
 # get up to date data...
 # TODO replace with library method see WHIMSY-103
@@ -302,7 +302,7 @@ _html do
                   end
 
                   if requestor == 'incubator' and not @podling.to_s.empty?
-                    if File.read("#{APMAIL_BIN}/.archives").include? "incubator-#{@podling}-private"
+                    if File.read(File.join(APMAIL_BIN, '.archives')).include? "incubator-#{@podling}-private"
                       cc_list << "#{@podling}-private@#{pmc_list}.apache.org".untaint
                     else
                       cc_list << "private@#{@podling}.#{pmc_list}.apache.org".untaint
@@ -347,7 +347,7 @@ _html do
                     `#{SVN} co #{ACREQ} #{tmpdir}`
 
                     # Update the new-account-reqs file...
-                    File.open("#{tmpdir}/new-account-reqs.txt", 'a') do |file|
+                    File.open(File.join(tmpdir, 'new-account-reqs.txt'), 'a') do |file|
                       file.puts(line)
                     end
 
@@ -356,7 +356,7 @@ _html do
                     # TODO replace with library method see WHIMSY-103
                     rc = _.system ['svn',
                       ['--username', env.user, '--password', env.password],
-                      'commit', "#{tmpdir}/new-account-reqs.txt",
+                      'commit', File.join(tmpdir, 'new-account-reqs.txt'),
                       '-m', "#{@user} account request by #{user.id} for #{requestor}"]
 
                     if rc == 0

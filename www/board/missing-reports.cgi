@@ -5,7 +5,7 @@ require 'whimsy/asf/agenda'
 
 records = 'http://www.apache.org/foundation/records/minutes/'
 
-Dir.chdir ASF::SVN['private/foundation/board']
+Dir.chdir ASF::SVN['foundation_board']
 
 agendas = Dir['**/board_agenda_*'].sort_by {|name| File.basename(name)}[-12..-1]
 

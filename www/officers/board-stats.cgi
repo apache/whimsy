@@ -9,7 +9,7 @@ require 'wunderbar/bootstrap'
 require 'json'
 require 'set'
 
-BOARD = ASF::SVN['private/foundation/board']
+BOARD = ASF::SVN['foundation_board']
 REPO = 'https://svn.apache.org/repos/private/foundation/board/'
 
 # Hash keys returned by summarize
@@ -66,12 +66,12 @@ _html do
               _tr_ do
                 _td do
                   file = month + '.txt'
-                  if not File.exist? "#{BOARD}/#{file}"
-                    file = "archived_agendas/#{file}"
+                  if not File.exist? File.join(BOARD, file)
+                    file = File.join('archived_agendas', file)
                   end
 
                   _a month.sub('board_agenda_', '').gsub('_', '-'),
-                    href: "#{REPO}/#{file}"
+                    href: File.join(REPO, file)
                 end
                 _td.text_center do
                   dct = directors.length
@@ -116,7 +116,7 @@ _html do
     _ul do
       datums.select{ |k,v| v.is_a?(Hash) && v.has_key?(ERRORS) }.each do |month, agenda|
         _li do
-          _a href: "#{REPO}/archived_agendas/#{month}.txt" do
+          _a href: File.join(REPO, 'archived_agendas', "#{month}.txt") do
             _span.text_warning month
             _ " - #{agenda[ERRORS].partition(')').last}"
           end

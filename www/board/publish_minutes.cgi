@@ -17,7 +17,7 @@ end
 CONTENT = 'asf/infrastructure/site/trunk/content'
 BOARD_SITE = ASF::SVN["#{CONTENT}/foundation/board"]
 MINUTES = ASF::SVN["#{CONTENT}/foundation/records/minutes"]
-BOARD_PRIVATE = ASF::SVN['private/foundation/board']
+BOARD_PRIVATE = ASF::SVN['foundation_board']
 CALENDAR = "#{BOARD_SITE}/calendar.mdtext"
 
 _html do

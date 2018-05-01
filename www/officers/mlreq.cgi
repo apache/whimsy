@@ -459,8 +459,8 @@ _json do
 
       # extract the names of podlings (and aliases) from podlings.xml
       require 'nokogiri'
-      incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
-      current = Nokogiri::XML(File.read("#{incubator_content}/podlings.xml")).
+      incubator_content = ASF::SVN['incubator-content']
+      current = Nokogiri::XML(File.read(File.join(incubator_content, 'podlings.xml'))).
         search('podling[status=current]')
       podlings = current.map {|podling| podling['resource']}
       podlings += current.map {|podling| podling['resourceAliases']}.compact.

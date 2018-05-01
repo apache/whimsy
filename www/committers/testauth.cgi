@@ -22,7 +22,7 @@ _html do
       _ 'This script checks your authorization to use the agenda tool, and checks if you are listed as attending the current board meeting in the official agenda.'
     }
   ) do
-    FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
+    FOUNDATION_BOARD = ASF::SVN['foundation_board']
     agenda = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].sort.last.untaint
     agenda = ASF::Board::Agenda.parse(File.read(agenda))
     roll = agenda.find {|item| item['title'] == 'Roll Call'}

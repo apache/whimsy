@@ -7,13 +7,13 @@ require 'wunderbar/bootstrap'
 require 'json'
 
 # read in attendance
-meetings = ASF::SVN['private/foundation/Meetings']
-json = JSON.parse(IO.read "#{meetings}/attendance.json")
+meetings = ASF::SVN['Meetings']
+json = JSON.parse(IO.read File.join(meetings, 'attendance.json'))
 attend = json['matrix'].keys
 
 # parse received info
 added = Hash.new('unknown')
-Dir["#{meetings}/*/memapp-received.txt"].each do |received|
+Dir[File.join(meetings, '*', 'memapp-received.txt')].each do |received|
   meeting = File.basename(File.dirname(received))
   next if meeting.include? 'template'
   text = File.read(received)

@@ -101,7 +101,7 @@ end
 def emit_form()
   # Store auth so we know Apache ID of submitter
   user = ASF::Auth.decode(env = {})
-  docket = JSON.parse(File.read("#{ASF::SVN['private/foundation/Brand']}/docket.json")) # To annotate pmcs with (R) symbol
+  docket = JSON.parse(File.read(File.join(ASF::SVN['brandlist'], 'docket.json'))) # To annotate pmcs with (R) symbol
   committees = Public.getJSON('committee-info.json')['committees']
 
   _whimsy_panel("Report A Potential Misuse Of Apache\u00AE Brands", style: 'panel-success') do

@@ -26,11 +26,11 @@ _html do
   _body? do
   _whimsy_header 'Poll of Inactive Members'
   # locate and read the attendance file
-  MEETINGS = ASF::SVN['private/foundation/Meetings']
-  attendance = JSON.parse(IO.read("#{MEETINGS}/attendance.json"))
-  latest = Dir["#{MEETINGS}/2*"].sort.last.untaint
+  MEETINGS = ASF::SVN['Meetings']
+  attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
+  latest = Dir[File.join(MEETINGS, '2*')].sort.last.untaint
   begin
-    tracker = JSON.parse(IO.read("#{latest}/non-participants.json"))
+    tracker = JSON.parse(IO.read(File.join(latest, 'non-participants.json')))
   rescue Errno::ENOENT => err
     raise IOError, "#{err.message} - Perhaps Whimsy doesn't have the current meeting's data yet?", err.backtrace
   end

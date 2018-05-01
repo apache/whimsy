@@ -31,9 +31,9 @@ archive.each do |email|
 end
 
 # parse nominations for names and ids
-MEETINGS = ASF::SVN['private/foundation/Meetings']
-meeting = Dir["#{MEETINGS}/2*"].sort.last
-nominations = IO.read("#{meeting}/nominated-members.txt").
+MEETINGS = ASF::SVN['Meetings']
+meeting = Dir[File.join(MEETINGS, '2*')].sort.last
+nominations = IO.read(File.join(meeting, 'nominated-members.txt')).
   scan(/^---+--\s+(.*?)\n/).flatten
 
 nominations.shift if nominations.first == '<empty line>'

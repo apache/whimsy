@@ -31,7 +31,7 @@ MAP_PMC_REG = {
 
 # Transform docket spreadsheet into structured JSON
 def csv2json
-  brand_dir = ASF::SVN['private/foundation/Brand']
+  brand_dir = ASF::SVN['brandlist']
   csv = CSV.read("#{brand_dir}/docket.csv", headers:true)
   docket = {}
   csv.each do |r|
@@ -166,7 +166,7 @@ _html do
         end
       }
     ) do
-      brand_dir = ASF::SVN['private/foundation/Brand']
+      brand_dir = ASF::SVN['brandlist']
       docket = JSON.parse(File.read("#{brand_dir}/docket.json"))
       projects = JSON.parse(Net::HTTP.get(URI('https://projects.apache.org/json/foundation/projects.json')))
       _h3 'The ASF holds the following registered trademarks:', id: 'registered'

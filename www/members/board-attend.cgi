@@ -9,7 +9,7 @@ require 'wunderbar/bootstrap'
 require 'json'
 require 'set'
 
-BOARD = ASF::SVN['private/foundation/board']
+BOARD = ASF::SVN['foundation_board']
 IS_DIRECTOR = :director
 APPROVED = 'approved'
 
