@@ -369,7 +369,7 @@ module ASF
       # first drop leading text so we only match officers at end of section
       @officers = head.sub(/.*?also has .*? Officers/m,'').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.
-        map {|name| puts name; list[name]}
+        map {|name| list[name]}
 
       # for each committee in section 3
       info.each do |roster|
