@@ -14,7 +14,7 @@ require 'whimsy/asf/agenda'
 require 'mail'
 require 'listen'
 
-FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
+FOUNDATION_BOARD = ASF::SVN['foundation_board']
 AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
 
 require './models/agenda'
@@ -24,7 +24,7 @@ require './models/agenda'
 reminder = eval(File.read("views/actions/reminder-text.json.rb"))
 
 # send reminders
-@agenda = File.basename(Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort.last)
+@agenda = File.basename(Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].sort.last)
 @from = "Whimsy <no-reply@apache.org>"
 @dryrun = true
 @subject = reminder[:subject]

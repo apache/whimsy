@@ -36,7 +36,7 @@ end
 
 # update iclas.txt
 if message
-  icla_txt = ASF::SVN['private/foundation/officers/iclas.txt']
+  icla_txt = File.join(ASF::SVN['officers'], 'iclas.txt')
   _svn.update icla_txt, message: message do |dir, text|
     # replace legal and public names in icla record
     userid = Regexp.escape(@userid)

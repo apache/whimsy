@@ -18,15 +18,15 @@ unless user.asf_member? or incubator.include? user
   exit
 end
 
-BOARD = ASF::SVN['private/foundation/board']
+BOARD = ASF::SVN['foundation_board']
 # Gather data from board agendas about podlings and actual mentors listed
 def get_mentor_signoffs()
   ASF::Person.preload('cn')
   ASF::ICLA.preload()
   people = Hash[ASF::Person.list.map {|person| [person.public_name, person.id]}]
   
-  agendas = Dir["#{BOARD}/board_agenda_*.txt",
-    "#{BOARD}/archived_agendas/board_agenda_*.txt"]
+  agendas = Dir[File.join(BOARD, 'board_agenda_*.txt'),
+    File.join(BOARD, 'archived_agendas', 'board_agenda_*.txt')]
   agendas = agendas.sort_by {|file| File.basename(file)}[-13..-1]
   if File.read(agendas.last).include? 'The Apache Incubator is the entry path'
     agendas.shift

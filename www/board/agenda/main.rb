@@ -33,7 +33,7 @@ if ENV['RACK_ENV'] == 'test'
   STDERR.puts "* SVN board  : #{FOUNDATION_BOARD}"
   STDERR.puts "* Agenda work: #{AGENDA_WORK}"
 else
-  FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
+  FOUNDATION_BOARD = ASF::SVN['foundation_board']
   AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
   STDERR.puts "* SVN board  : #{FOUNDATION_BOARD}"
   STDERR.puts "* Agenda work: #{AGENDA_WORK}"

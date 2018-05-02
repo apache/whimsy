@@ -70,8 +70,8 @@
 require_relative 'public_json_common'
 
 # figure out what to do to get svn updates, then uncomment this
-# incubatorContent = ASF::SVN.find('asf/incubator/public/trunk/content')
-# incubatorPodlings = ASF::SVN.find('asf/incubator/public/trunk/content/podlings')
+# incubatorContent = ASF::SVN.find('incubator-content')
+# incubatorPodlings = ASF::SVN.find('incubator-podlings')
 # ASF::SVN.updateSimple(incubatorContent);
 # ASF::SVN.updateSimple(incubatorPodlings);
 

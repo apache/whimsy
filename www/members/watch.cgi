@@ -10,7 +10,7 @@ require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 
 SVN_BOARD = "https://svn.apache.org/repos/private/foundation/board"
-meetings = ASF::SVN['private/foundation/Meetings']
+meetings = ASF::SVN['Meetings']
 
 _html do
   _head_ do
@@ -33,9 +33,9 @@ _html do
     # start with the Watch List itself
     watch_list = ASF::Person.member_watch_list.keys
     meeting =
-      File.dirname(Dir["#{meetings}/*/nominated-members.txt"].sort.last).untaint
+      File.dirname(Dir[File.join(meetings, '*', 'nominated-members.txt')].sort.last).untaint
 
-    txt = File.read("#{meeting}/nominated-members.txt")
+    txt = File.read(File.join(meeting, 'nominated-members.txt'))
     nominations = txt.scan(/^---+\n\s*\w+.*<(\S+)@apache.org>/).flatten
     nominations += txt.scan(/^---+\n\s*\w+.*\(([a-z]+)\)/).flatten
     nominations += txt.scan(/^---+\n\s*\w+.*\(([a-z]+)@apache\.org\)/).flatten
@@ -119,7 +119,7 @@ _html do
       list = nominations.uniq.map {|id| ASF::Person.find(id)}
     elsif request =~ /appstatus/
       _h2_ 'Elected Members - Application Status'
-      status = File.read("#{meeting}/memapp-received.txt").
+      status = File.read(File.join(meeting, 'memapp-received.txt')).
         scan(/^(yes|no)\s+(yes|no)\s+(yes|no)\s+(yes|no)\s+(\w+)\s/)
       status = Hash[status.map {|tokens| [tokens.pop, tokens]}]
       list = status.keys.map {|id| ASF::Person.find(id)}
@@ -271,11 +271,11 @@ _html do
                   date = Date.parse(resolution.text)
                 else
                   # search unpublished agendas
-                  board = ASF::SVN['private/foundation/board']
-                  Dir["#{board}/board_agenda_*"].sort.each do |agenda|
+                  board = ASF::SVN['foundation_board']
+                  Dir[File.join(board, 'board_agenda_*')].sort.each do |agenda|
                     agenda.untaint
                     if File.read(agenda).include? search_string
-                      minutes = "#{SVN_BOARD}/#{File.basename(agenda)}"
+                      minutes = File.join(SVN_BOARD, File.basename(agenda))
                       date = agenda.gsub('_','-')[/(\d+-\d+-\d+)/,1]
                       break
                     end

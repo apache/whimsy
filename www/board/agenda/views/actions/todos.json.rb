@@ -10,7 +10,7 @@ agenda = "board_agenda_#{date}.txt"
 
 # fetch minutes
 @minutes = agenda.sub('_agenda_', '_minutes_')
-minutes_file = "#{AGENDA_WORK}/#{@minutes.sub('.txt', '.yml')}"
+minutes_file = File.join(AGENDA_WORK, "#{@minutes.sub('.txt', '.yml')}")
 minutes_file.untaint if @minutes =~ /^board_minutes_\d+_\d+_\d+\.txt$/
 
 if File.exist? minutes_file
@@ -59,7 +59,7 @@ end
 
 # update committee-info.txt
 if (@change || @establish || @terminate) and env.password
-  cinfo = "#{ASF::SVN['private/committers/board']}/committee-info.txt"
+  cinfo = File.join(ASF::SVN['board'], 'committee-info.txt')
 
   todos  = Array(@change) + Array(@establish) + Array(@terminate)
   if todos.length == 1
@@ -152,15 +152,15 @@ if @establish and env.password
 
   # create 'victims' file for tlpreq tool
   `svn up #{TLPREQ}`
-  establish -= Dir["#{TLPREQ}/victims-#{date}.*.txt"].
+  establish -= Dir[File.join(TLPREQ, 'victims-#{date}.*.txt')].
      map {|name| File.read(name.untaint).lines().map(&:chomp)}.flatten
   unless establish.empty?
-    count = Dir["#{TLPREQ}/victims-#{date}.*.txt"].length
+    count = Dir[File.join(TLPREQ, 'victims-#{date}.*.txt')].length
     message = "record #{date} approved TLP resolutions"
     ASF::SVN.update TLPREQ, message, env, _ do |tmpdir|
       filename = "victims-#{date}.#{count}.txt"
       contents = establish.join("\n") + "\n"
-      File.write "#{tmpdir}/#{filename}", contents
+      File.write File.join(tmpdir, filename), contents
       _.system "svn add #{tmpdir}/#{filename}"
     end
   end

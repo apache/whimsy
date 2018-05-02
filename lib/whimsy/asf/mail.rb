@@ -42,7 +42,7 @@ module ASF
 
     # Parse the .archives file to get the list names
     def self._load_lists
-      apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
+      apmail_bin = ASF::SVN['apmail_bin']
       file = File.join(apmail_bin, '.archives')
       if not @lists or File.mtime(file) != @list_mtime
         lists = Hash[File.read(file).scan(
@@ -66,7 +66,7 @@ module ASF
 
     # list of mailing lists that aren't actively seeking new subscribers
     def self.deprecated
-      apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
+      apmail_bin = ASF::SVN['apmail_bin']
       YAML.load_file(File.join(apmail_bin, 'deprecated_mailing_lists.yml'))
     end
 

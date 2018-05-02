@@ -31,7 +31,7 @@ archive.each do |email|
 end
 
 # Get a list of missing board reports
-Dir.chdir ASF::SVN['private/foundation/board']
+Dir.chdir ASF::SVN['foundation_board']
 agenda = Dir['board_agenda_*.txt'].sort.last
 parsed = ASF::Board::Agenda.parse(IO.read(agenda), true)
 missing = parsed.select {|item| item['missing']}.

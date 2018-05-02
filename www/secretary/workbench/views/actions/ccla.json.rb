@@ -13,7 +13,7 @@ fileext = File.extname(@selected).downcase if @signature.empty?
 
 # verify that a CCLA under that name doesn't already exist
 if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
-  ccla = "#{ASF::SVN['private/documents/cclas']}/#@filename#{fileext}"
+  ccla = "#{ASF::SVN['cclas']}/#@filename#{fileext}"
   if File.exist? ccla.untaint
     _warn "documents/cclas/#@filename#{fileext} already exists"
   end

@@ -6,15 +6,15 @@ require 'whimsy/asf'
 require 'date'
 require 'tmpdir'
 
-MEETINGS = ASF::SVN['private/foundation/Meetings']
-meeting = File.basename(Dir["#{MEETINGS}/2*"].sort.last).untaint
+MEETINGS = ASF::SVN['Meetings']
+meeting = File.basename(Dir[File.join(MEETINGS, '2*')].sort.last).untaint
 
 # Calculate how many members required to attend first half for quorum
 def calculate_quorum(meeting)
   begin
-    num_members = File.read("#{MEETINGS}/#{meeting}/record").each_line.count
+    num_members = File.read(File.join(MEETINGS, meeting, 'record')).each_line.count
     quorum_need = num_members / 3
-    num_proxies = Dir["#{MEETINGS}/#{meeting}/proxies-received/*"].count
+    num_proxies = Dir[File.join(MEETINGS, meeting, 'proxies-received', '*')].count
     attend_irc = quorum_need - num_proxies
   rescue StandardError => e
     # Ensure we can't break rest of script
@@ -30,7 +30,7 @@ end
 # @return nil otherwise
 def is_user_proxied(meeting, id)
   user = ASF::Person.find(id)
-  lines = IO.read("#{MEETINGS}/#{meeting}/proxies")
+  lines = IO.read(File.join(MEETINGS, meeting, 'proxies'))
   proxylist = lines.scan(/\s\s(.{25})(.*?)\((.*?)\)/) # [["Shane Curcuru    ", "David Fisher ", "wave"], ...]
   help = nil
   copypasta = [] # theiravailid | Their Name in Rolls (proxy)
@@ -61,7 +61,7 @@ _html do
 
 
   # get a list of members who have submitted proxies
-  exclude = Dir["#{MEETINGS}/#{meeting}/proxies-received/*"].
+  exclude = Dir[File.join(MEETINGS, meeting,'proxies-received', '*')].
     map {|name| name[/(\w+)\.\w+$/, 1]}
 
   if _.get?
@@ -124,7 +124,7 @@ _html do
 
       _div.row do
         _div do
-          _pre IO.read("#{MEETINGS}/#{meeting}/member_proxy.txt")
+          _pre IO.read(File.join(MEETINGS, meeting, 'member_proxy.txt'))
         end
       end
 
@@ -183,7 +183,7 @@ _html do
       _h3_ 'Proxy Assignment - Session Transcript'
 
       # collect data
-      proxy = File.read("#{MEETINGS}/#{meeting}/member_proxy.txt")
+      proxy = File.read(File.join(MEETINGS, meeting, 'member_proxy.txt'))
       user = ASF::Person.find($USER)
       date = Date.today.strftime("%B %-d, %Y")
 

@@ -1,7 +1,7 @@
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'whimsy/asf'
 
-OFFICERS = ASF::SVN['private/foundation/officers']
+OFFICERS = ASF::SVN['officers']
 
 Dir.chdir OFFICERS
 

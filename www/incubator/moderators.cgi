@@ -14,7 +14,7 @@ unless user.asf_member? or ASF::Committee['incubator'].members.include? user
   exit
 end
 
-PODLINGS = "#{ASF::SVN['asf/incubator/public/trunk/content']}/podlings.xml"
+PODLINGS = File.join(ASF::SVN['incubator-content'], 'podlings.xml')
 
 exceptions = {
   "beanvalidation" => "bval",

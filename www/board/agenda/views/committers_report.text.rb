@@ -16,8 +16,8 @@ def prefixNumber(number)
   return number + "th"
 end
 
-board_svn = ASF::SVN['private/foundation/board']
-agenda_file = Dir["#{board_svn}/board_agenda_*.txt"].last.untaint
+board_svn = ASF::SVN['foundation_board']
+agenda_file = Dir[File.join(board_svn, 'board_agenda_*.txt')].last.untaint
 
 ##### Parse the agenda to find the data items above
 
@@ -154,7 +154,7 @@ end
 
 ##### 7: Find out the date of the next board report
 
-calendar_file  = ASF::SVN['private/committers/board'] + "/calendar.txt"
+calendar_file  = File.join(ASF::SVN['board'], 'calendar.txt')
 found_date = false
 next_meeting = nil
 File.open(calendar_file).each do |line|
@@ -191,7 +191,7 @@ end
 ## this does not work, since new TLPs are not yet in committee-info.txt
 ## instead we should parse this from the resolution
 
-committee_file = ASF::SVN['private/committers/board'] + "/committee-info.txt"
+committee_file = File.join(ASF::SVN['board'], 'committee-info.txt')
 parsing_projects = false
 resolution_to_chair = Hash.new
 File.open(committee_file).each do |line|

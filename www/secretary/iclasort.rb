@@ -1,6 +1,6 @@
 require 'whimsy/asf'
 
-OFFICERS = ASF::SVN['private/foundation/officers']
+OFFICERS = ASF::SVN['officers']
 
 unless OFFICERS
   STDERR.puts 'Unable to locate a checked out version of '

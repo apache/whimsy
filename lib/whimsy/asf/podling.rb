@@ -137,14 +137,14 @@ module ASF
 
     # list of all podlings, regardless of status
     def self.list
-      incubator_content = ASF::SVN['asf/incubator/public/trunk/content']
-      podlings_xml = "#{incubator_content}/podlings.xml"
+      incubator_content = ASF::SVN['incubator-content']
+      podlings_xml = File.join(incubator_content, 'podlings.xml')
 
       # see if there is a later version
       cache = ASF::Config.get(:cache)
-      if File.exist? "#{cache}/podlings.xml"
-        if File.mtime("#{cache}/podlings.xml") > File.mtime(podlings_xml)
-          podlings_xml = "#{cache}/podlings.xml"
+      if File.exist? File.join(cache, 'podlings.xml')
+        if File.mtime(File.join(cache, 'podlings.xml')) > File.mtime(podlings_xml)
+          podlings_xml = File.join(cache, 'podlings.xml')
         end
       end
 
@@ -258,8 +258,8 @@ module ASF
     def podlingStatus
       # resource can contain '-'
       @resource.untaint if @resource =~ /\A[-\w]+\z/
-      incubator_content = ASF::SVN['asf/incubator/public/trunk/content/podlings']
-      resource_yml = "#{incubator_content}/#{@resource}.yml"
+      incubator_content = ASF::SVN['incubator-podlings']
+      resource_yml = File.join(incubator_content, "#{@resource}.yml")
       if File.exist?(resource_yml)
         rawYaml = Psych.load_file(resource_yml)
         hash = { }
@@ -349,7 +349,7 @@ module ASF
     # parse (and cache) names mentioned in podlingnamesearches
     def self.namesearch
       # cache JIRA response
-      cache = "#{ASF::Config.get(:cache)}/pns.jira"
+      cache = File.join(ASF::Config.get(:cache), 'pns.jira')
       if not File.exist?(cache) or File.mtime(cache) < Time.now - 300
         query = 'https://issues.apache.org/jira/rest/api/2/search?' +
             'maxResults=1000&' +

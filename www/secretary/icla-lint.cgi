@@ -66,8 +66,8 @@ _html do
 
   _h2_ 'Issues'
 
-  input = ASF::SVN['private/foundation/officers'] + '/iclas.txt'
-  iclas = Dir[ASF::SVN['private/documents/iclas'] + '/*'].map do |file|
+  input = File.join(ASF::SVN['officers'], 'iclas.txt')
+  iclas = Dir[File.join(ASF::SVN['iclas'], '*')].map do |file|
     file.split('/').last.sub(/\.\w+$/, '')
   end
 

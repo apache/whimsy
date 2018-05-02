@@ -16,7 +16,7 @@ class Channel
   @@sockets = Concurrent::Map.new
   @@users = Concurrent::Map.new {|map,key| map[key]=[]}
 
-  FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
+  FOUNDATION_BOARD = ASF::SVN['foundation_board']
 
   # add a new socket/userid pair
   def self.add(ws, id)

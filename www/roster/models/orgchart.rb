@@ -3,9 +3,9 @@ class OrgChart
   @@desc = {}
 
   def self.load
-    @@source ||= ASF::SVN['private/foundation/officers/personnel-duties']
+    @@source ||= ASF::SVN['personnel-duties']
 
-    Dir["#{@@source}/*.txt"].each do |file|
+    Dir[File.join(@@source, '*.txt')].each do |file|
       name = file[/.*\/(.*?)\.txt/, 1]
       next if @@duties[name] and @@duties[name]['mtime'] > File.mtime(file).to_f
       data = Hash[*File.read(file).split(/^\[(.*)\]\n/)[1..-1].map(&:strip)]
@@ -15,7 +15,7 @@ class OrgChart
       @@duties[name] = data
     end
 
-    file = "#{@@source}/README"
+    file = File.join(@@source, 'README')
     unless @@desc['mtime'] and @@desc['mtime'] > File.mtime(file).to_f
       data = Hash[*File.read(file).split(/^\[(.*)\]\n/)[1..-1].map(&:strip)]
       if data['info'] then

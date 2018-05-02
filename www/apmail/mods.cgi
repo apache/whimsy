@@ -124,7 +124,7 @@ _html do
         end
       end
 
-      apmail_bin = ASF::SVN['infra/infrastructure/apmail/trunk/bin']
+      apmail_bin = ASF::SVN['apmail_bin']
       archives = File.read(File.join(apmail_bin, '.archives'))
       archives = Hash[*JSON.parse('['+archives.sub(/,?\s*\Z/,']'))]
 

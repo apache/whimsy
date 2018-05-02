@@ -33,7 +33,7 @@ _html do
         _p 'ApacheCon has been going on since before the ASF was born, and includes great events:'
       }
     ) do
-      ac_dir = ASF::SVN['private/foundation/ApacheCon']
+      ac_dir = ASF::SVN['apachecon']
       history = File.read("#{ac_dir}/apacheconhistory.csv")
       history.sub! "\uFEFF", '' # remove Zero Width No-Break Space
       csv = CSV.parse(history, headers:true)

@@ -55,10 +55,10 @@ module ASF
     # a Hash of all sites.  Keys are the committee names.  Values are a hash
     # with <tt>:link</tt>, and <tt>:text<tt> values.
     def self.list
-      templates = ASF::SVN['asf/infrastructure/site/trunk/content']
-      file = "#{templates}/index.html"
+      templates = ASF::SVN['site-root']
+      file = File.join(templates, 'index.html')
       if not File.exist?(file)
-        Wunderbar.error "Unable to find 'infrastructure/site/trunk/content'"
+        Wunderbar.error "Unable to find 'infrastructure/site/trunk/content/index.html'"
         return {}
       end
       return @@list if not @@list.empty? and File.mtime(file) == @@mtime

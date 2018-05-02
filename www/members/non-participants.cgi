@@ -12,8 +12,8 @@ require 'wunderbar/jquery/stupidtable'
 ROSTER = "/roster/committer"
 
 # locate and read the attendance file
-MEETINGS = ASF::SVN['private/foundation/Meetings']
-attendance = JSON.parse(IO.read("#{MEETINGS}/attendance.json"))
+MEETINGS = ASF::SVN['Meetings']
+attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
 
 # extract and format dates
 dates = attendance['dates'].sort.

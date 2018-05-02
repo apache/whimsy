@@ -95,6 +95,13 @@ namespace :svn do
         (repository[:svn] || {}).each do |name, description|
           puts
           puts File.join(Dir.pwd, name)
+          svnpath = (base + description['url']).to_s
+          if Dir.exist? name
+            if `svn info #{name}`[/^URL: (.*)/, 1] != svnpath
+              FileUtils.rm_rf name  
+            end
+          end
+    
           if Dir.exist? name
             Dir.chdir(name) {
               system 'svn cleanup'
@@ -121,6 +128,7 @@ namespace :svn do
                   break
                 end
               end
+
               puts outerr # show what happened last
             }
           else

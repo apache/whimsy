@@ -15,8 +15,8 @@ module ASF
     # list of board meeting times as listed in 
     # committers/board/calendar.txt
     def self.calendar
-      svn = ASF::SVN['private/committers/board']
-      txt = File.read("#{svn}/calendar.txt")
+      svn = ASF::SVN['board']
+      txt = File.read(File.join(svn, 'calendar.txt'))
       times = txt.scan(/^\s+\*\)\s(.*)/).flatten
       times.map {|time| TIMEZONE.local_to_utc(Time.parse(time))}
     end

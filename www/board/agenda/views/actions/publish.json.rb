@@ -8,8 +8,8 @@ require 'whimsy/asf/svn'
 CONTENT = 'asf/infrastructure/site/trunk/content'
 BOARD_SITE = ASF::SVN["#{CONTENT}/foundation/board"]
 MINUTES = ASF::SVN["#{CONTENT}/foundation/records/minutes"]
-BOARD_PRIVATE = ASF::SVN['private/foundation/board']
-CALENDAR = "#{BOARD_SITE}/calendar.mdtext"
+BOARD_PRIVATE = ASF::SVN['foundation_board']
+CALENDAR = File.join(BOARD_SITE, 'calendar.mdtext')
 
 # update from svn
 [MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir| 
@@ -53,7 +53,7 @@ ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
     _.system "svn add #{yeardir}"
   end
 
-  if not File.exist? "#{yeardir}/board_minutes_#{@date}.txt"
+  if not File.exist? File.join(yeardir, "board_minutes_#{@date}.txt")
     _.system "cp #{BOARD_PRIVATE}/board_minutes_#{@date}.txt #{yeardir}"
     _.system "svn add #{yeardir}/board_minutes_#{@date}.txt"
   end

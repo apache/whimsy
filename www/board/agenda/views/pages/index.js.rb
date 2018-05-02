@@ -17,9 +17,18 @@ class Index < Vue
       end
 
       _tbody Agenda.index do |row|
+        started = Minutes.started
+
         _tr class: row.color do
           _td row.attach
-          _td { _Link text: row.title, href: row.href }
+
+          # once meeting has started, link to flagged queue for flagged items
+          if started and row.attach =~ /^(\d+|[A-Z]+)$/ and !row.skippable
+            _td { _Link text: row.title, href: 'flagged/' + row.href }
+          else
+            _td { _Link text: row.title, href: row.href }
+          end
+
           _td row.owner
           _td do
             if row.shepherd

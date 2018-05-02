@@ -32,10 +32,10 @@ module ASF
     @@availids_reserved = nil
 
     # location of a working copy of the officers directory in SVN
-    OFFICERS = ASF::SVN.find('private/foundation/officers')
+    OFFICERS = ASF::SVN.find('officers')
 
     # location of the iclas.txt file; may be <tt>nil</tt> if not found.
-    SOURCE = OFFICERS ? "#{OFFICERS}/iclas.txt" : nil
+    SOURCE = OFFICERS ? File.join(OFFICERS, 'iclas.txt') : nil
 
     # flush caches if source file changed
     def self.refresh
@@ -175,8 +175,8 @@ module ASF
     # list of reserved availids
     def self.availids_reserved
       return @@availids_reserved if @@availids_reserved
-      archive = ASF::SVN['private/foundation/officers']
-      reserved = File.read("#{archive}/reserved-ids.yml").scan(/^- (\S+)/).flatten.uniq
+      archive = ASF::SVN['officers']
+      reserved = File.read(File.join(archive, 'reserved-ids.yml')).scan(/^- (\S+)/).flatten.uniq
       @@availids_reserved = reserved
     end
 
@@ -218,8 +218,8 @@ module ASF
   # but never submitted an ICLA (some of which are still ASF members or
   # members of a PMC).
   def self.search_archive_by_id(id)
-    archive = ASF::SVN['private/foundation/officers/historic']
-    name = JSON.parse(File.read("#{archive}/committers.json"))[id]
+    archive = ASF::SVN['officers_historic']
+    name = JSON.parse(File.read(File.join(archive, 'committers.json')))[id]
     name = id if name and name.empty?
     name
   end

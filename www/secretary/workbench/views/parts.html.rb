@@ -92,7 +92,8 @@ _html do
 
   _script src: "../../app.js?#{@appmtime}"
   _.render '#parts' do
-    _Parts attachments: @attachments, headers: @headers, projects: @projects
+    _Parts attachments: @attachments, headers: @headers, projects: @projects,
+      meeting: @meeting
   end
 
 end

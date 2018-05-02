@@ -100,9 +100,9 @@ module ASF
 
         parse_committee_info contents
       else
-        board = ASF::SVN.find('private/committers/board')
+        board = ASF::SVN.find('board')
         return unless board
-        file = "#{board}/committee-info.txt"
+        file = File.join(board, 'committee-info.txt')
         return unless File.exist? file
 
         if @committee_mtime and File.mtime(file) <= @committee_mtime
@@ -346,8 +346,9 @@ module ASF
       # Extract the text before first entry in section 3 and split on section headers,
       # keeping sections 1 (COMMITTEES) and 2 (REPORTING).
       head, report = info.shift.split(/^\d\./)[1..2]
-      # Drop lines which could match group entries
-      head.gsub! /^\s+NAME\s+CHAIR\s*$/,'' # otherwise could match an entry with no e-mail
+      # Drop lines which could match group headers
+      head.gsub! /^\s+NAME\s+CHAIR\s*$/,''
+      head.gsub! /^\s+Office\s+Officer\s*$/i,''
 
       # extract the committee chairs (e-mail address is required here)
       # Note: this includes the non-PMC entries
@@ -361,6 +362,12 @@ module ASF
       # Extract the non-PMC committees (e-mail address may be absent)
       # first drop leading text so we only match non-PMCs
       @nonpmcs = head.sub(/.*?also has /m,'').
+        scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
+        map {|name| list[name]}
+
+      # Extract officers
+      # first drop leading text so we only match officers
+      @officers = head.sub(/.*?also has .* Officers/m,'').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| list[name]}
 
@@ -426,6 +433,14 @@ module ASF
     # <tt>committee-info.txt</tt>
     def self.nonpmcs
       @nonpmcs
+    end
+
+    # return a list of officers.  Data is obtained from
+    # <tt>committee-info.txt</tt>.  Note that these entries are returned
+    # as instances of ASF::Committee with display_name being the name of
+    # the office, and chairs being the individuals who hold that office.
+    def self.officers
+      @officers
     end
 
     # Finds a committee based on the name of the Committee.  Is aware of

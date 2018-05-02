@@ -3,7 +3,7 @@ entry = ASF::Person.find(@userid).members_txt(true)
 raise Exception.new("unable to find member entry for #{userid}") unless entry
 
 # identify file to be updated
-members_txt = ASF::SVN['private/foundation/members.txt']
+members_txt = File.join(ASF::SVN['foundation'], 'members.txt')
 
 # construct commit message
 message = "Move #{ASF::Person.find(@userid).member_name} to #{@action}"

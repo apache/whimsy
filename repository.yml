@@ -8,6 +8,8 @@
   letsencrypt:
     url: https://github.com/letsencrypt/letsencrypt
 
+# N.B. the names in the section below should not be changed as the are used by Ruby
+
 :svn:
 
   Bills:
@@ -31,7 +33,7 @@
     url: private/documents/cclas
 
   comdev-foundation:
-    url: asf/comdev/projects.apache.org/site/json/foundation
+    url: asf/comdev/projects.apache.org/trunk/site/json/foundation
 
   foundation:
     url: private/foundation
