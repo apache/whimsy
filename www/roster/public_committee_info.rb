@@ -58,6 +58,17 @@ info[:committees] = Hash[committees.map {|committee|
   }]
 }]
 
+info[:officers] = Hash[
+  ASF::Committee.officers.map { |officer|
+    [officer.name, 
+      {
+        display_name: officer.display_name,
+        roster: Hash[ officer.chairs.map {|e| [e[:id], {:name => e[:name]}]}]
+      }
+    ]
+  }
+]
+
 public_json_output(info)
 
 # Check if there is an unexpected entry date
