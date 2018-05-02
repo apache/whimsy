@@ -368,7 +368,7 @@ module ASF
       # Extract officers
       # first drop leading text so we only match officers at end of section
       @officers = head.sub(/.*?also has .*? Officers/m,'').
-        scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.
+        scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| list[name]}
 
       # for each committee in section 3
