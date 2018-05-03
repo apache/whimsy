@@ -321,7 +321,7 @@ class Message
     headers = message[/(.*?)\r?\n\r?\n/m, 1]
     if headers.include? "\n" and not headers.include? "\r\n"
       headers, body = message.split(/\r?\n\r?\n/, 2)
-      headers.gsub("\n", "\r\n")
+      headers.gsub!("\n", "\r\n")
       message = "#{headers}\r\n\r\n#{body}"
     end
 
