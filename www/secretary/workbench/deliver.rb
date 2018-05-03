@@ -34,4 +34,8 @@ message.write_headers
 message.write_email
 
 # Now fail if there was an error
-raise fail if fail
+if fail
+  require 'time'
+  $stderr.puts "WARNING: #{Time.now.utc.iso8601}: error processing email with hash: #{hash}"
+  raise fail
+end
