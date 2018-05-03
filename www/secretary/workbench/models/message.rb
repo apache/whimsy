@@ -328,11 +328,12 @@ class Message
     # parse cleaned up message
     mail = Mail.read_from_string(message)
 
-    # parse from address
+    # parse from address (if it exists)
+    from_value = mail[:from].value rescue ''
     begin
-      from = liberal_email_parser(mail[:from].value).display_name
+      from = liberal_email_parser(from_value).display_name
     rescue Exception
-      from = mail[:from].value.sub(/\s+<.*?>$/)
+      from = from_value.sub(/\s+<.*?>$/)
     end
 
     # determine who should be copied on any responses
