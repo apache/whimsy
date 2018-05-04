@@ -201,10 +201,11 @@ class Person < Vue
         end
       end
 
-      # Forms on file
-      if @committer.forms
-        _PersonForms person: self
-      end
+    end
+
+    # Forms on file (only present if env.user is a member)
+    if @committer.forms
+      _PersonForms person: self
     end
 
     # SpamAssassin score
