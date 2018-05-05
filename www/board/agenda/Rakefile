@@ -29,6 +29,7 @@ end
 task :server => [:bundle, :listen] do
   ENV['DOCUMENT_ROOT'] = File.expand_path('../..', Dir.pwd)
   ENV['RACK_ENV']='development'
+  ENV['OBJC_DISABLE_INITIALIZE_FORK_SAFETY']='YES' if RUBY_PLATFORM =~ /darwin/
   at_exit {sleep 0.5}
   sh 'bundle exec passenger start'
 end
