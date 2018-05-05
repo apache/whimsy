@@ -65,8 +65,9 @@ module LogParser
   # @return array of reduced, scrubbed entries as hashes
   def parse_whimsy_access(f)
     access = read_logz(f).scan(/<%JSON:httpd_access%> (\{.*\})/).flatten
-    logs = JSON.parse('[' + access.join(',') + ']')
-      .reject{ |i| (i['useragent'] =~ /Ping My Box/) || (i['uri'] =~ Regexp.union(IGNORED_URIS)) || (i['status'] == 304) }
+    logs = JSON.parse('[' + access.join(',') + ']').reject { |i| 
+      (i['useragent'] =~ /Ping My Box/) || (i['uri'] =~ Regexp.union(IGNORED_URIS)) || (i['status'] == 304) 
+    }
     logs.each do |i|
       %w(geo_country geo_long geo_lat geo_coords geo_city geo_combo duration request bytes vhost document request_method clientip query_string).each do |g|
         i.delete(g)
