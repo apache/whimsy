@@ -321,18 +321,19 @@ class Message
     headers = message[/(.*?)\r?\n\r?\n/m, 1]
     if headers.include? "\n" and not headers.include? "\r\n"
       headers, body = message.split(/\r?\n\r?\n/, 2)
-      headers.gsub("\n", "\r\n")
+      headers.gsub!("\n", "\r\n")
       message = "#{headers}\r\n\r\n#{body}"
     end
 
     # parse cleaned up message
     mail = Mail.read_from_string(message)
 
-    # parse from address
+    # parse from address (if it exists)
+    from_value = mail[:from].value rescue ''
     begin
-      from = liberal_email_parser(mail[:from].value).display_name
+      from = liberal_email_parser(from_value).display_name
     rescue Exception
-      from = mail[:from].value.sub(/\s+<.*?>$/)
+      from = from_value.sub(/\s+<.*?>$/)
     end
 
     # determine who should be copied on any responses

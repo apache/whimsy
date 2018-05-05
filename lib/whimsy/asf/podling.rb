@@ -360,6 +360,7 @@ module ASF
           File.write cache, res.body
         rescue => e
           Wunderbar.warn "ASF::Podling.namesearch: " + e.message
+          FileUtils.touch cache # Don't try again for a while
         end
       end
 

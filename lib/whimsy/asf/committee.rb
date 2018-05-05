@@ -360,14 +360,14 @@ module ASF
         end
 
       # Extract the non-PMC committees (e-mail address may be absent)
-      # first drop leading text so we only match non-PMCs
-      @nonpmcs = head.sub(/.*?also has /m,'').
+      # first drop leading text (and Officers) so we only match non-PMCs
+      @nonpmcs = head.sub(/.*?also has /m,'').sub(/ Officers:.*/m,'').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| list[name]}
 
       # Extract officers
-      # first drop leading text so we only match officers
-      @officers = head.sub(/.*?also has .* Officers/m,'').
+      # first drop leading text so we only match officers at end of section
+      @officers = head.sub(/.*?also has .*? Officers/m,'').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| list[name]}
 
@@ -418,15 +418,14 @@ module ASF
           end
         end
       end
-
-      @committee_info = list.values.uniq
+      @committee_info = (list.values - @officers).uniq
     end
 
     # return a list of PMC committees.  Data is obtained from
     # <tt>committee-info.txt</tt>
     def self.pmcs
       committees = ASF::Committee.load_committee_info
-      committees - @nonpmcs
+      committees - @nonpmcs - @officers
     end
 
     # return a list of non-PMC committees.  Data is obtained from
