@@ -144,9 +144,6 @@ class Events
   def self.connectToServer(check_for_updates)
     return if @@socket
 
-    socket_url = window.location.protocol.sub('http', 'ws') + "//" + 
-        window.location.hostname + ':34234/'
-
     @@socket = WebSocket.new(Server.websocket)
 
     def @@socket.onopen(event)

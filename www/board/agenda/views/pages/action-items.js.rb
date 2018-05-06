@@ -11,8 +11,6 @@ class ActionItems < Vue
   def render
     first = true
 
-    updates = Pending.status.keys()
-
     _section.flexbox do
       _pre.report do
         @@item.actions.each do |action|
@@ -215,7 +213,7 @@ class ActionItems < Vue
 
     @disabled = true
     post 'status', data do |pending|
-      jQuery(~updateStatusForm).modal(:hide)
+      jQuery('#updateStatusForm').modal(:hide)
       @disabled = false
       Pending.load pending
     end

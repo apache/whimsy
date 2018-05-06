@@ -131,7 +131,7 @@ class Pending
 
     def request.onupgradeneeded(event)
       db = event.target.result
-      objectstore = db.createObjectStore('pending', keyPath: 'key')
+      db.createObjectStore('pending', keyPath: 'key')
     end
   end
 

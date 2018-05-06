@@ -284,7 +284,7 @@ class TodoRemove < Vue
 
     _button.checklist.btn.btn_default 'Submit', onClick: self.submit,
       disabled: @disabled or people.length == 0 or
-        not people.any? {|person| @checked[persion.id]}
+        not people.any? {|person| @checked[person.id]}
   end
 
   def submit()
