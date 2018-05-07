@@ -13,6 +13,7 @@ module LogParser
   ERROR_LOG_DIR = '/srv/whimsy/www/members/log'
   
   # Constants and ignored regex for whimsy_access logs
+  WHIMSY_APPS = %w(status roster board public secretary)
   RUSER = 'remote_user'
   REFERER = 'referer'
   REMAINDER = 'remainder'
@@ -77,11 +78,11 @@ module LogParser
   
   # Collate/partition whimsy_access entries by app areas
   # @param logs full set of items to scan
-  # @return apps - apps categorized, with REMAINDER entry all others
+  # @return apps - WHIMSY_APPS categorized, with REMAINDER entry all others
   def collate_whimsy_access(logs)
     remainder = logs
     apps = {}
-    %w(status roster board public secretary).each do |a|
+    WHIMSY_APPS.each do |a|
       apps[a] = Hash.new{|h,k| h[k] = [] }
       apps[a][RUSER] = Hash.new{|h,k| h[k] = 0 }
       apps[a][REFERER] = Hash.new{|h,k| h[k] = 0 }
@@ -112,7 +113,7 @@ module LogParser
   # Get a simplistic hash report of access entries
   # @param f filepath to whimsy_access.log
   # @return app_report, misses_data
-  def get_access_reports(f)
+  def get_access_reports(f = File.join(ERROR_LOG_DIR, 'whimsy_access.log'))
     access = parse_whimsy_access(f)
     hits, miss = access.partition{ |l| l['status'] == 200 }
     apps = collate_whimsy_access(hits)
