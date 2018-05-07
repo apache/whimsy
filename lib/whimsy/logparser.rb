@@ -1,13 +1,10 @@
 #!/usr/bin/env ruby
 # Gather simple statistics from whimsy server logs
 # TODO security check ASF::Auth.decode before reading log files
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
 require 'whimsy/asf'
 require 'json'
-require 'set'
 require 'stringio'
 require 'zlib'
-require 'yaml'
 
 # Utility methods to turn server logs into hashes of interesting data
 module LogParser
@@ -156,6 +153,7 @@ module LogParser
   # @param d directory to scan for error.log*
   # @return hash of arrays of interesting entries
   def parse_error_logs(d, logs = {})
+    
     Dir[File.join(d, 'error.lo*')].each do |f|
       parse_error_log(f, logs)
     end
