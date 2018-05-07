@@ -58,8 +58,8 @@ def display_errors()
 end
 
 # Emit table of interesting access logs (optional, with ?access)
-def display_access(f)
-  apps, misses = LogParser.get_access_reports(f)
+def display_access()
+  apps, misses = LogParser.get_access_reports()
   
   _p do
     _ 'This only includes a small subset of possibly interesting access log entries, roughly categorized by major application (board, roster, etc.)'
