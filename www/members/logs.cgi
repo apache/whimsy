@@ -136,8 +136,8 @@ _html do
       }
     ) do
       # Display whimsy_access.log data if requested (takes longer)
-      if true # ENV['QUERY_STRING'].include? 'access'
-        display_access('/Users/curcuru/src/g/wdev/errors/whimsy_access.log-20180507.gz')
+      if ENV['QUERY_STRING'].include? 'access'
+        display_access()
       else
         display_errors()
       end
