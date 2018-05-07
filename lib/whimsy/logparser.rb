@@ -9,6 +9,8 @@ require 'zlib'
 # Utility methods to turn server logs into hashes of interesting data
 module LogParser
   extend self
+  # Hardcoded from https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/init.pp#L200
+  ERROR_LOG_DIR = '/srv/whimsy/www/members/log'
   
   # Constants and ignored regex for whimsy_access logs
   RUSER = 'remote_user'
@@ -152,8 +154,7 @@ module LogParser
   # Parse error.log* files in dir and return interesting entries
   # @param d directory to scan for error.log*
   # @return hash of arrays of interesting entries
-  def parse_error_logs(d, logs = {})
-    
+  def parse_error_logs(d = ERROR_LOG_DIR, logs = {})
     Dir[File.join(d, 'error.lo*')].each do |f|
       parse_error_log(f, logs)
     end
@@ -182,7 +183,7 @@ module LogParser
   # Parse whimsy_error.log* files in dir and return interesting entries
   # @param d directory to scan for whimsy_error.log*
   # @return hash of arrays of interesting entries
-  def parse_whimsy_errors(d, logs = {})
+  def parse_whimsy_errors(d = ERROR_LOG_DIR, logs = {})
     Dir[File.join(d, 'whimsy_error.lo*')].each do |f|
       parse_whimsy_error(f, logs)
     end
@@ -192,7 +193,7 @@ module LogParser
   # Get a list of all current|available error logs interesting entries
   # @param d directory to scan for *error.log*
   # @return hash of arrays of interesting entries
-  def get_errors(d = '/x1/srv/whimsy/www/members/log', current = true)
+  def get_errors(d = ERROR_LOG_DIR, current = true)
     if current
       logs = LogParser.parse_whimsy_error(File.join(d, 'whimsy_error.log'))
       LogParser.parse_error_log(File.join(d, 'error.log'), logs)
