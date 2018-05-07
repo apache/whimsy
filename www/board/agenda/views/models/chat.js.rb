@@ -100,14 +100,14 @@ end
 
 Events.subscribe :chat do |message|
   if message.agenda == Agenda.file
-    message.delete agenda
+    message.delete 'agenda'
     Chat.add message
   end
 end
 
 Events.subscribe :info do |message|
   if message.agenda == Agenda.file
-    message.delete agenda
+    message.delete 'agenda'
     Chat.add message
   end
 end
