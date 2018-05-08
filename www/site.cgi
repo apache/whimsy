@@ -13,7 +13,7 @@ require 'json'
 require 'net/http'
 require 'time' # for httpdate
 
-PAGETITLE = "Apache TLP Website Checks" # Wvisible:sites,brand
+PAGETITLE = "Apache Project Website Checks" # Wvisible:sites,brand
 SITE_PASS = 'label-success'
 SITE_WARN = 'label-warning'
 SITE_FAIL = 'label-danger'
@@ -53,7 +53,8 @@ DOCS = {
   'thanks'      => ['https://www.apache.org/foundation/marks/pmcs#navigation',
                     '"Thanks" should link to: http://www.apache.org/foundation/thanks.html'],
 }
-DATAURI = 'https://whimsy.apache.org/public/site-scan.json'
+DATAURI = 'https://whimsy.apache.org/public/'
+SCAN_DATA_FILE = 'site-scan.json'
 
 def analyze(sites)
     success = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
@@ -75,20 +76,20 @@ def analyze(sites)
     ]
 end
 
-def getsites
-    local_copy = File.expand_path('../public/site-scan.json', __FILE__).untaint
+def getsites(filename)
+    local_copy = File.expand_path("../public/#{filename}", __FILE__).untaint
     if File.exist? local_copy
       crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
       sites = JSON.parse(File.read(local_copy))
     else
-      response = Net::HTTP.get_response(URI(DATAURI))
+      response = Net::HTTP.get_response(URI("#{DATAURI}#{filename}"))
       crawl_time = response['last-modified']
       sites = JSON.parse(response.body)
     end
   return sites, crawl_time
 end
 
-sites, crawl_time = getsites()
+sites, crawl_time = getsites(SCAN_DATA_FILE)
 
 analysis = analyze(sites)
 
@@ -205,7 +206,7 @@ _html do
   _body? do
     _whimsy_body(
     title: PAGETITLE,
-    subtitle: 'Checking TLP Websites For required content',
+    subtitle: 'Checking Project/Podling Websites For required content',
     related: {
       "/committers/tools" => "Whimsy Tool Listing",
       "https://www.apache.org/foundation/marks/pmcs#navigation" => "Required PMC Links Policy",
@@ -214,7 +215,7 @@ _html do
     },
     helpblock: -> {
       _p do
-        _ 'This script periodically crawls all Apache project websites to check them for a few specific links or text blocks that all projects are expected to have.'
+        _ 'This script periodically crawls all Apache project and podling websites to check them for a few specific links or text blocks that all projects are expected to have.'
         _ 'The checks include verifying that all '
         _a 'required links', href: 'https://www.apache.org/foundation/marks/pmcs#navigation'
         _ ' appear on a project homepage, along with an "image" check if project logo files are in apache.org/img'
@@ -222,9 +223,9 @@ _html do
       _p! do
         _a 'View the crawler code', href: 'https://github.com/apache/whimsy/blob/master/tools/site-scan.rb'
         _ ', '
-        _a 'website display code', href: 'https://github.com/apache/whimsy/blob/master/www/site.cgi'
+        _a 'website display code', href: "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}"
         _ ', and '
-        _a 'raw JSON data', href: DATAURI
+        _a 'raw JSON data', href: "#{DATAURI}#{SCAN_DATA_FILE}"
         _ '.'
         _br
         _ "Last crawl time: #{crawl_time} over #{sites.size} websites."
@@ -299,7 +300,7 @@ _html do
       else
         # overview
         _whimsy_panel_table(
-          title: "Site Check - All Projects Results",
+          title: "Site Check - All Project/Podling Results",
           helpblock: -> {
             _ul.list_inline do
               _li.small "Data key: "
