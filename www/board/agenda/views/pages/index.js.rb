@@ -16,9 +16,8 @@ class Index < Vue
         _th 'Shepherd'
       end
 
+      started = Minutes.started
       _tbody Agenda.index do |row|
-        started = Minutes.started
-
         _tr class: row.color do
           _td row.attach
 
