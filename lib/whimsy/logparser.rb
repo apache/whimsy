@@ -196,15 +196,16 @@ module LogParser
   end
   
   # Get a list of all current|available error logs interesting entries
+  # @param current - only scan current day? or scan all week's logs
   # @param d directory to scan for *error.log*
   # @return hash of arrays of interesting entries
-  def get_errors(d = ERROR_LOG_DIR, current = true)
+  def get_errors(current, dir: ERROR_LOG_DIR)
     if current
-      logs = LogParser.parse_whimsy_error(File.join(d, 'whimsy_error.log'))
-      LogParser.parse_error_log(File.join(d, 'error.log'), logs)
+      logs = LogParser.parse_whimsy_error(File.join(dir, 'whimsy_error.log'))
+      LogParser.parse_error_log(File.join(dir, 'error.log'), logs)
     else
-      logs = LogParser.parse_whimsy_errors(d)
-      LogParser.parse_error_logs(d, logs)
+      logs = LogParser.parse_whimsy_errors(dir)
+      LogParser.parse_error_logs(dir, logs)
     end
     return logs.sort.to_h # Sort by time order
   end

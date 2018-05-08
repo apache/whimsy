@@ -8,15 +8,15 @@ require 'wunderbar/bootstrap'
 require 'whimsy/logparser'
 
 # Emit table of interesting error logs
-def display_errors()
+def display_errors(current)
   _whimsy_panel_table(
     title: 'Partial error listing',
     helpblock: -> {
-      _ 'This only includes a subset of possibly interesting error log entries.'
+      _ "This only includes a subset of possibly interesting error log entries from the #{current ? 'current day' : 'past week'}."
       _a 'See the full server logs directory.', href: '/members/log'
     }
   ) do
-    logs = LogParser.get_errors()
+    logs = LogParser.get_errors(current)
     _table.table.table_hover.table_striped do
       _thead_ do
         _tr do
@@ -139,7 +139,8 @@ _html do
       if ENV['QUERY_STRING'].include? 'access'
         display_access()
       else
-        display_errors()
+        # Append ?week to search all *.log|*.log.gz in dir
+        display_errors(!ENV['QUERY_STRING'].include?('week'))
       end
     end
   end
