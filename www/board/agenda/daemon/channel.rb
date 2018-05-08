@@ -16,7 +16,9 @@ class Channel
   @@sockets = Concurrent::Map.new
   @@users = Concurrent::Map.new {|map,key| map[key]=[]}
 
-  FOUNDATION_BOARD = ASF::SVN['foundation_board']
+  # As this tool doesn't load the full whimsy libraries, it can't make use
+  # of niceties like short names... so specify the full path to repository.
+  FOUNDATION_BOARD = ASF::SVN['private/foundation/board']
 
   # add a new socket/userid pair
   def self.add(ws, id)
