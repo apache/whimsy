@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
-Dir.chdir __dir__
-require 'bundler/setup'
+$:.unshift File.realpath(File.expand_path('../' * 5 + 'lib', __FILE__))
 require 'websocket-eventmachine-server'
 require 'listen'
 require 'ostruct'

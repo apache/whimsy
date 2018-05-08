@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require 'bundler/setup'
+$:.unshift File.realpath(File.expand_path('../' * 5 + 'lib', __FILE__))
 require 'websocket-client-simple'
 require 'optparse'
 require 'ostruct'
