@@ -158,7 +158,7 @@ module LogParser
   # @return hash of arrays of interesting entries
   def parse_error_logs(d = ERROR_LOG_DIR, logs = {})
     Dir[File.join(d, 'error.lo*')].each do |f|
-      parse_error_log(f, logs)
+      parse_error_log(f.untaint, logs)
     end
     return logs
   end
@@ -190,7 +190,7 @@ module LogParser
   # @return hash of arrays of interesting entries
   def parse_whimsy_errors(d = ERROR_LOG_DIR, logs = {})
     Dir[File.join(d, 'whimsy_error.lo*')].each do |f|
-      parse_whimsy_error(f, logs)
+      parse_whimsy_error(f.untaint, logs)
     end
     return logs
   end
