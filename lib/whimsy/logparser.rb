@@ -44,6 +44,8 @@ module LogParser
   # Related to timestamps in error log output
   TRUNCATE = 6 # Ensure consistency in keys
   TIME_OFFSET = 10000000.0 # Offset milliseconds slightly for array entries
+  # Ignore error lines from other tools with long tracebacks
+  IGNORE_TRACEBACKS = ["rack.rb", "asf/themes", "phusion_passenger"]
   
   # Read a text or .gz file
   # @param f filename: .log or .log.gz
@@ -128,6 +130,7 @@ module LogParser
   #   "timestamp" => ['_ERROR msg', '_WARN msg'... ]
   def parse_error_log(f, logs = {})
     last_time = 'uninitialized_time' # Cheap marker
+    ignored = Regexp.union(IGNORE_TRACEBACKS)
     read_logz(f).lines.each do |l|
       begin
         # Emit each interesting item in order we read it 
@@ -139,11 +142,9 @@ module LogParser
           if capture =~ /Passenger/
             logs[DateTime.parse(last_time).iso8601(TRUNCATE)] = capture
           end
-        elsif l =~ /(_ERROR|_WARN  (.+)whimsy)/
-          if ! (l =~ /rack.rb/) # Don't need these
-            # Offset our time so it doesn't overwrite any Passenger entries
-            (logs[(DateTime.parse(last_time) + 1/TIME_OFFSET).iso8601(TRUNCATE)] ||= []) << l
-          end
+        elsif (l =~ /(_ERROR|_WARN  (.+)whimsy)/) && !(l =~ ignored)
+          # Offset our time so it doesn't overwrite any Passenger entries
+          (logs[(DateTime.parse(last_time) + 1/TIME_OFFSET).iso8601(TRUNCATE)] ||= []) << l
         end
       rescue StandardError => e
         puts e
@@ -168,13 +169,16 @@ module LogParser
   #   "timestamp" => "AH01215: undefined method `map' for #<String:0x0000000240e1e0> (NoMethodError): /x1/srv/whimsy/www/status/errors.cgi"
   def parse_whimsy_error(f, logs = {})
     r = Regexp.new('\[(?<errdate>[^\]]*)\] \[cgi:error\] (\[([^\]]*)\] ){2}(?<errline>.+)')
+    ignored = Regexp.union(IGNORE_TRACEBACKS)
     read_logz(f).lines.each do |l|
       if (m = r.match(l))
-        begin
-          logs[DateTime.parse(m[1]).iso8601(6)] = m[2]
-        rescue StandardError
-          # Fallback to merely using the string representation
-          logs[m[1]] = m[2]
+        if !(ignored =~ m[2])
+          begin
+            logs[DateTime.parse(m[1]).iso8601(6)] = m[2]
+          rescue StandardError
+            # Fallback to merely using the string representation
+            logs[m[1]] = m[2]
+          end
         end
       end
     end
