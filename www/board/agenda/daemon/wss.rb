@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+Dir.chdir __dir__
 require 'bundler/setup'
 require 'websocket-eventmachine-server'
 require 'listen'
