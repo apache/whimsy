@@ -69,6 +69,12 @@ _html do
           _ 'where you can change your primary Forwarding Address and any other associated Alias email addresses you use.'
         end
         _p do
+          _ 'Only ASF members can use this form to subscribe to private lists. PMC chairs can subscribe to board lists.'
+          _br
+          _ 'To subscribe to other private lists, send an email to the list-subscribe@ address and wait for the request to be approved.'
+          _ 'This might take a day or two.'
+        end
+        _p do
           _ 'To view all your existing subscriptions (and email addresses), see your'
           _a 'committer details', href: '/roster/committer/__self__'
           _ '.'
