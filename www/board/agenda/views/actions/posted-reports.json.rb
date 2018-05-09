@@ -31,9 +31,9 @@ archive.each do |email|
   next if email.end_with? '/index'
   message = IO.read(email, mode: 'rb')
   subject = message[/^Subject: .*/]
-  next unless subject and subject.upcase.include? "[REPORT]"
+  next unless subject and subject =~ /\bREPORT\b/i
   mail = Mail.new(message.encode(message.encoding, crlf_newline: true))
-  reports << mail if subject and mail.subject.upcase.start_with? "[REPORT]"
+  reports << mail if subject and mail.subject =~ /\A[\[({]REPORT[\])}]/i
 end
 
 # Get a list of missing board reports
