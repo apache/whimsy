@@ -334,7 +334,7 @@ feature 'server actions' do
       @reminder = 'reminder1'
       response = eval(File.read('views/actions/reminder-text.json.rb'))
       expect(response[:subject]).to \
-        eq('ASF Board Report for [project] - Initial Reminder for February 2015')
+        eq('[project] Board Report due for February 2015 - Initial Reminder')
       expect(response[:body]).to match(/It is an initial reminder/)
       expect(response[:body]).to \
         match(/the deadline for\ssubmitting your report is 1 full week/)
@@ -345,7 +345,7 @@ feature 'server actions' do
       @reminder = 'reminder2'
       response = eval(File.read('views/actions/reminder-text.json.rb'))
       expect(response[:subject]).to \
-        eq('ASF Board Report for February 2015 is now due from [project]')
+        eq('[project] Board Report due for February 2015 - is now due!')
       expect(response[:body]).to match(/These reports are\snow due/)
       expect(response[:body]).to \
         match(/The meeting is scheduled for Wed, 18 Feb 2015 at 10:30 PST\./)
