@@ -109,7 +109,7 @@ def parse(id, site, name)
       end
     end
 
-    if ['sponsorship', 'donate', 'sponsor apache','sponsoring apache'].include? a_text
+    if a_text =~ %r{sponsorship|donate|sponsor\sapache|sponsoring\sapache|sponsor}
       begin
         data[:sponsorship] = uri + a_href
       rescue
