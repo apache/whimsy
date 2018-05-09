@@ -1,4 +1,4 @@
-Subject: ASF Board Report for [project] - Initial Reminder for [month] [year]
+Subject: [project] Board Report due for [month] [year] - Initial Reminder
 
 This email was sent on behalf of the ASF Board.  It is an initial reminder to
 give you plenty of time to prepare the report.
@@ -44,7 +44,8 @@ Reports should be posted using the online agenda tool:
   [agenda][link]
 
 Cutting and pasting directly from a Wiki is not acceptable due to formatting
-issues. Line lengths should be limited to 77 characters.
+issues. Line lengths should be limited to 77 characters.  If submitting
+using Whimsy please press Reflow before Submit.
 
 Chairs may use the Apache Reporter Service [4] to help them compile and
 submit a board report.

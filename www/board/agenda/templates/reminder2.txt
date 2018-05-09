@@ -1,6 +1,6 @@
-Subject: ASF Board Report for [month] [year] is now due from [project]
+Subject: [project] Board Report due for [month] [year] - is now due!
 
-This email was sent on behalf of the ASF Board.
+This email was sent on behalf of the ASF Board. This is a second reminder.
 
 According to board records, you are listed as the chair of a committee that
 is due to submit a report this month. These reports are now due and should
@@ -22,7 +22,8 @@ Reports should be posted using the online agenda tool:
   [agenda][link]
 
 Cutting and pasting directly from a Wiki is not acceptable due to formatting
-issues. Line lengths should be limited to 77 characters.
+issues. Line lengths should be limited to 77 characters. If submitting
+using Whimsy please press Reflow before Submit.
 
 Chairs may use the Apache Reporter Service [3] to help them compile and
 submit a board report.
