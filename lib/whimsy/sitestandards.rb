@@ -102,9 +102,9 @@ module SiteStandards
       CHECK_DOC => 'All project or product homepages must feature a prominent trademark attribution of all applicable Apache trademarks.',
     },  
     'copyright' => { # textnode_check: txt =~ /Copyright / or txt =~ /©/ 
-      CHECK_TEXT => %r{Copyright|©},
+      CHECK_TEXT => %r{((Copyright|©).*apache|apache.*(Copyright|©))}i,
       CHECK_CAPTURE => nil,
-      CHECK_VALIDATE => %r{[Cc]opyright [^.]+ Apache Software Foundation}, # Do we need '[Tt]he ASF'?
+      CHECK_VALIDATE => %r{((Copyright|©).*apache|apache.*(Copyright|©))}i,
       CHECK_TYPE => false,
       CHECK_POLICY => 'https://www.apache.org/legal/src-headers.html#headers',
       CHECK_DOC => 'All website content SHOULD include a copyright notice for the ASF.',
@@ -113,7 +113,7 @@ module SiteStandards
     'image' => { # Custom: merely looks in IMAGE_DIR for #{id}.*
       CHECK_TEXT => nil,
       CHECK_CAPTURE => nil,
-      CHECK_VALIDATE => %r{projectname.jpg},
+      CHECK_VALIDATE => %r{.},
       CHECK_TYPE => true,
       CHECK_POLICY => 'https://www.apache.org/img/',
       CHECK_DOC => 'Projects SHOULD include a 212px wide copy of their logo in https://www.apache.org/img/ to be included in ASF homepage.',
