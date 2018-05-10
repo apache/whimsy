@@ -108,8 +108,9 @@ class Committer
       member[:status] = ASF::Member.status[id] || 'Active'
     end
 
+    response[:forms] = {}
+
     if ASF::Person.find(env.user).asf_member? # i.e. member karma
-      response[:forms] = {}
 
       if person.icla and person.icla.claRef # Not all people have iclas
         iclas = ASF::SVN['iclas']
@@ -146,6 +147,8 @@ class Committer
         end
       end
 
+    else # not an ASF member; no karma for ICLA docs so don't add link
+      response[:forms][:icla] = '' if person.icla and person.icla.claRef
     end
 
     response[:member] = member unless member.empty?
