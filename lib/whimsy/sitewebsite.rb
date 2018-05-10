@@ -20,7 +20,13 @@ def display_project(project, links, analysis, checks, tlp = true)
       _span.glyphicon.glyphicon_menu_right
       _ "Results for #{tlp ? 'Project' : 'Podling'} "
       _a links['display_name'], href: links['uri']
-      _ ' Check Results column is the actual text found on the homepage for this check (when applicable).'
+      _ '. '
+      if !tlp
+        _ 'Reminder: Incubation is the process of becoming an Apache project - podlings are not required to meet these checks until graduation.  See '
+        _a "this project's incubation status.", href: "http://incubator.apache.org/projects/#{project}"
+      end
+      _br
+      _ 'Check Results column is the actual text or URL found on the homepage for this check (when applicable).'
     }
   ) do
     _table.table.table_striped do
