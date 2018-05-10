@@ -17,12 +17,20 @@ class PersonForms < Vue
             
             if form == 'icla'
               _li do
-                _a 'ICLA', href: "#{documents}/iclas/#{link}"
+                if link == '' # has ICLA bu no karma to view it
+                  _ 'ICLA'
+                else
+                  _a 'ICLA', href: "#{documents}/iclas/#{link}"
+                end
               end
             elsif form == 'member'
               _li do
-                _a 'Membership App', 
-                  href: "#{documents}/member_apps/#{link}"
+                if link == '' # has form but no karma to view it
+                  _ 'Membership App'
+                else
+                  _a 'Membership App',
+                    href: "#{documents}/member_apps/#{link}"
+                end
               end
             else
               _li "#{form}: #{link}"
