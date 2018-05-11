@@ -35,7 +35,7 @@ module SiteStandards
       },
     'disclaimer' => { # textnode_check: txt =~ / Incubation is required of all newly accepted projects /
       CHECK_TEXT => %r{Incubation is required of all newly accepted projects},
-      CHECK_CAPTURE => nil,
+      CHECK_CAPTURE => %r{Incubation is required of all newly accepted projects},
       CHECK_VALIDATE =>  %r{Apache \S+( \S+)?( \([Ii]ncubating\))? is an effort undergoing [Ii]ncubation at [Tt]he Apache Software Foundation \(ASF\),? sponsored by the (Apache )?\S+( PMC)?. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.},
       CHECK_TYPE => false,
       CHECK_POLICY => 'https://incubator.apache.org/guides/branding.html#disclaimers',
@@ -46,7 +46,7 @@ module SiteStandards
   COMMON_CHECKS = { 
     'foundation' => { # Custom: a_href =~ ... then custom checking for hover/title text
       CHECK_TEXT => %r{apache|asf|foundation}i,
-      CHECK_CAPTURE => %r{.}i,
+      CHECK_CAPTURE => %r{^https?://(www\.)?apache\.org/?$},
       CHECK_VALIDATE => %r{apache|asf|foundation}i,
       CHECK_TYPE => false,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
@@ -70,7 +70,7 @@ module SiteStandards
     },
     'thanks' => { # link_check a_text =~ /\Athanks[!]?\z/
         CHECK_TEXT => /\Athanks[!]?\z/,
-        CHECK_CAPTURE => nil,
+        CHECK_CAPTURE => /\Athanks[!]?\z/,
         CHECK_VALIDATE => %r{^https?://.*apache.org/foundation/thanks},
         CHECK_TYPE => true,
         CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
@@ -78,15 +78,15 @@ module SiteStandards
     },
     'security' => { # link_check a_text == 'security'
       CHECK_TEXT => /security/,
-      CHECK_CAPTURE => nil,
-      CHECK_VALIDATE => %r{^https?://.*apache.org/[Ss]ecurity},
+      CHECK_CAPTURE => /security/,
+      CHECK_VALIDATE => %r{^https?://.*apache.org/.*[Ss]ecurity},
       CHECK_TYPE => true,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
       CHECK_DOC => '"Security" should link to either to a project-specific page [...], or to the main http://www.apache.org/security/ page.',
     },
     'sponsorship' => { # link_check ['sponsorship', 'donate', 'sponsor apache','sponsoring apache'].include? a_text
-      CHECK_TEXT => %r{sponsorship|donate|sponsor\sapache|sponsoring\sapache},
-      CHECK_CAPTURE => nil,
+      CHECK_TEXT => %r{sponsorship|donate|sponsor\sapache|sponsoring\sapache|sponsor},
+      CHECK_CAPTURE => %r{sponsorship|donate|sponsor\sapache|sponsoring\sapache|sponsor},
       CHECK_VALIDATE => %r{^https?://.*apache.org/foundation/sponsorship},
       CHECK_TYPE => true,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
@@ -95,7 +95,7 @@ module SiteStandards
 
     'trademarks' => { # textnode_check: if (txt =~ /\btrademarks\b/  and not data[:trademarks]) or txt =~/are trademarks of [Tt]he Apache Software/
       CHECK_TEXT => %r{\btrademarks\b},
-      CHECK_CAPTURE => nil,
+      CHECK_CAPTURE => %r{\btrademarks\b},
       CHECK_VALIDATE => %r{trademarks of [Tt]he Apache Software Foundation},
       CHECK_TYPE => false,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#attributions',
@@ -103,7 +103,7 @@ module SiteStandards
     },  
     'copyright' => { # textnode_check: txt =~ /Copyright / or txt =~ /©/ 
       CHECK_TEXT => %r{((Copyright|©).*apache|apache.*(Copyright|©))}i,
-      CHECK_CAPTURE => nil,
+      CHECK_CAPTURE => %r{(Copyright|©)}i,
       CHECK_VALIDATE => %r{((Copyright|©).*apache|apache.*(Copyright|©))}i,
       CHECK_TYPE => false,
       CHECK_POLICY => 'https://www.apache.org/legal/src-headers.html#headers',
@@ -153,7 +153,7 @@ module SiteStandards
   
   # Get URL to default filename location on server
   def get_url(is_local = true)
-    is_local ? (return '../public/') : (return 'https://whimsy.apache.org/public/')
+    is_local ? (return '../../../www/public/') : (return 'https://whimsy.apache.org/public/')
   end
   
   # Get check data for tlp | podling
