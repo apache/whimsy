@@ -69,7 +69,7 @@ _html do
           _ ', '
           _a 'validation checks details', href: "https://github.com/apache/whimsy/blob/master/lib/whimsy/sitewebsite.rb"
           _ ', and '
-          _a 'raw JSON data', href: "#{SiteStandards.get_url()}#{SiteStandards.get_filename(cgi_for_tlps)}"
+          _a 'raw JSON data', href: "#{SiteStandards.get_url(false)}#{SiteStandards.get_filename(cgi_for_tlps)}"
           _ '.'
           _br
           _ "Last crawl time: #{crawl_time} over #{sites.size} websites."
