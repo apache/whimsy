@@ -207,10 +207,21 @@ class Post < Vue
       elsif @button == 'Out of Cycle Report'
         _h4 'Out of Cycle PMC Report'
 
+        # determine which PMCs are reporting this month
+        reporting_this_month = []
+        Agenda.index.each do |item|
+          if item.roster
+            reporting_this_month << item.roster.split('/').pop()
+          end
+        end
+
+        # provide a selection box with the remainder
         _div.form_group do
           _label 'PMC', for: 'out-of-cycle-pmc'
           _select.form_control.out_of_cycle_pmc! do
-            @pmcs.each {|pmc| _option pmc}
+            @pmcs.each do |pmc| 
+              _option pmc unless reporting_this_month.include? pmc
+            end
           end
         end
 
