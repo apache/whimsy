@@ -90,7 +90,7 @@ class Post < Vue
           end
         end
 
-        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_default 'Cancel', data_dismiss: 'modal'
         _button.btn_primary 'Draft', disabled: @disabled,
           onClick: draft_chair_change_resolution
 
@@ -164,7 +164,7 @@ class Post < Vue
           end
         end
 
-        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_default 'Cancel', data_dismiss: 'modal'
         _button.btn_primary 'Draft', onClick: draft_establish_project,
           disabled: (!@pmcname or !@pmcdesc or @pmc.empty?)
 
@@ -200,7 +200,7 @@ class Post < Vue
             for: 'termboard'
         end
 
-        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_default 'Cancel', data_dismiss: 'modal'
         _button.btn_primary 'Draft', onClick: draft_terminate_project,
           disabled: (@pmcs.empty? or not @termreason)
 
@@ -214,7 +214,7 @@ class Post < Vue
           end
         end
 
-        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_default 'Cancel', data_dismiss: 'modal'
         _button.btn_primary 'Draft', disabled: @pmcs.empty?,
           onClick: draft_out_of_cycle_report
 
@@ -252,7 +252,7 @@ class Post < Vue
         end
 
         # footer buttons
-        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_default 'Cancel', data_dismiss: 'modal'
         _button 'Reflow', class: self.reflow_color(), onClick: self.reflow
         _button.btn_primary 'Submit', onClick: self.submit, 
           disabled: (not self.ready())
