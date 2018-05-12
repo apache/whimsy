@@ -6,7 +6,7 @@ require 'json'
 
 # Command line use: emit replacement for www/public/README.html 
 #   Centralize maintenance of descriptions
-DATAFLOWDATA = '/Users/curcuru/src/g/whimsy/www/test/dataflow.json'
+DATAFLOWDATA = 'dataflow.json'
 DATAFLOWDOC = 'https://whimsy.apache.org/test/dataflow.cgi#'
 deplist = JSON.parse(File.read(DATAFLOWDATA))
 
