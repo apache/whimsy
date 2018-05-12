@@ -5,4 +5,6 @@ Vue.config.warnHandler = proc do |msg, vm, trace|
 end
 
 # reraise errors to enable easier debugging
-Vue.config.errorHandler = proc {|err, vm, info| raise err}
+Vue.config.errorHandler = proc do |err, vm, info| 
+  setTimeout(0) { raise err }
+end
