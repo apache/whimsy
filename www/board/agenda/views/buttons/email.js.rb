@@ -53,7 +53,7 @@ class Email < Vue
       body = body.strip().gsub(/#{indent}/, "\n").gsub(/(\S)\n(\S)/, "$1 $2")
     else
       subject = "#{@@item.title} Board Report"
-      body = @@item.comments
+      body = @@item.comments.join("\n\n") || @@item.text
     end
 
     window.location = destination +
