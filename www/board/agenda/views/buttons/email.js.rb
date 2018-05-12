@@ -23,8 +23,11 @@ class Email < Vue
 
   # launch email client, pre-filling the destination, subject, and body
   def launch_email_client()
+    mail_list = @@item.mail_list
+    mail_list = "private@#{mail_list}.apache.org" unless mail_list.include? '@'
+
     destination = "mailto:#{@@item.chair_email}" +
-      "?cc=private@#{@@item.mail_list}.apache.org,board@apache.org"
+      "?cc=#{mail_list}.apache.org,board@apache.org"
 
     if @@item.missing
       subject = "Missing #{@@item.title} Board Report"
