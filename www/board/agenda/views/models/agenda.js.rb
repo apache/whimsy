@@ -557,6 +557,15 @@ class Agenda
       'reviewed'
     end
   end
+
+  # who to copy on emails
+  def cc
+    if @to == 'president'
+      'operations@apache.org'
+    else
+      'board@apache.org'
+    end
+  end
 end
 
 Events.subscribe :agenda do |message|

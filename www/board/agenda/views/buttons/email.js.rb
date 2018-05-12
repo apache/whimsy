@@ -26,8 +26,7 @@ class Email < Vue
     mail_list = @@item.mail_list
     mail_list = "private@#{mail_list}.apache.org" unless mail_list.include? '@'
 
-    destination = "mailto:#{@@item.chair_email}" +
-      "?cc=#{mail_list}.apache.org,board@apache.org"
+    destination = "mailto:#{@@item.chair_email}?cc=#{mail_list},#{@@item.cc}"
 
     if @@item.missing
       subject = "Missing #{@@item.title} Board Report"
