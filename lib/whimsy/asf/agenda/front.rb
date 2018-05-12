@@ -21,9 +21,10 @@ class ASF::Board::Agenda
         officers = attr['text'].scan(/^ +Executive[ \S]*?:\n\n.*?\n\n/m).join
 
         # attempt to identify the people mentioned in the Roll Call
-        people = attr['text'].scan(/ {8}(\w.*)/).flatten.each do |name|
+        people = attr['text'].scan(/^ {8}(\w.*)/).flatten.each do |name|
           next if name == 'none'
-          name.gsub! /\s*[\[(].*/, '' # Remove (extraneous [comments in past board minutes
+          # Remove (extraneous [comments in past board minutes
+          name.gsub! /(\s*[\[(]|\s+-).*/, '' 
           name.strip!
 
           role = :guest
