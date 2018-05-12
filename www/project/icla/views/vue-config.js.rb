@@ -4,5 +4,7 @@ Vue.config.warnHandler = proc do |msg, vm, trace|
   console.error "[Vue warn]: " + msg + trace if defined? console
 end
 
-# reraise errors to enable easier debugging
-Vue.config.errorHandler = proc {|err, vm, info| raise err}
+# reraise uncapturable errors asynchronously to enable easier debugging
+Vue.config.errorHandler = proc do |err, vm, info|
+  setTimeout(0) { raise err }
+end
