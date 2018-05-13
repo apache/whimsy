@@ -26,7 +26,8 @@ class Email < Vue
     mail_list = @@item.mail_list
     mail_list = "private@#{mail_list}.apache.org" unless mail_list.include? '@'
 
-    destination = "mailto:#{@@item.chair_email}?cc=#{mail_list},#{@@item.cc}"
+    to = @@item.chair_email
+    cc = "#{mail_list},#{@@item.cc}"
 
     if @@item.missing
       subject = "Missing #{@@item.title} Board Report"
@@ -52,10 +53,16 @@ class Email < Vue
       body = body.strip().gsub(/#{indent}/, "\n").gsub(/(\S)\n(\S)/, "$1 $2")
     else
       subject = "#{@@item.title} Board Report"
-      body = @@item.comments.join("\n\n") || @@item.text
+      body = @@item.comments.join("\n\n")
+
+      if not body and @@item.text
+        to = mail_list
+        cc = @@item.cc
+        body = @@item.text
+      end
     end
 
-    window.location = destination +
+    window.location = "mailto:#{to}?cc=#{cc}" +
       "&subject=#{encodeURIComponent(subject)}" +
       "&body=#{encodeURIComponent(body)}"
   end
