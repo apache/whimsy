@@ -114,4 +114,4 @@ names are preserved in the translation, but does make a difference if you want
 to call builtin functions.
 
 More information can be found in the
-[board/agenda/README](../board/agenda/README).
+[board/agenda/README](../www/board/agenda/README.md).
