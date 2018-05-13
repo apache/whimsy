@@ -17,7 +17,7 @@ class Email < Vue
     then
       return 'btn-primary'
     elsif
-      @@item.owner == Server.username and not @@item.missing and
+      @@item.owner == User.username and not @@item.missing and
         @@item.comments.empty?
     then
       return 'btn-primary'
@@ -48,7 +48,7 @@ class Email < Vue
 
         Thanks,
 
-        #{Server.username}
+        #{User.username}
 
         (on behalf of the ASF Board)
       }
