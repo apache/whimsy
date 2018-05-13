@@ -43,7 +43,7 @@ when 'committee-list'
     end
   end 
       
-  committees[:chair] + committees[:member] + committees[:rest] + [@request]
+  committees[:chair] + committees[:member] + committees[:rest]
 
 when 'committee-members'
   committee = ASF::Committee.find(@pmc)

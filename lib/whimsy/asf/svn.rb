@@ -92,9 +92,9 @@ module ASF
       # recursively try parent directory
       if not result and name.include? '/'
         base = File.basename(name).untaint
-        result = find(File.dirname(name))
-        if result and File.exist?(File.join(result, base))
-          File.join(result, base)
+        parent = find(File.dirname(name))
+        if parent and File.exist?(File.join(parent, base))
+          result = File.join(parent, base)
         end
       end
 

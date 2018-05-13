@@ -90,7 +90,7 @@ class Post < Vue
           end
         end
 
-        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_default 'Cancel', data_dismiss: 'modal'
         _button.btn_primary 'Draft', disabled: @disabled,
           onClick: draft_chair_change_resolution
 
@@ -164,7 +164,7 @@ class Post < Vue
           end
         end
 
-        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_default 'Cancel', data_dismiss: 'modal'
         _button.btn_primary 'Draft', onClick: draft_establish_project,
           disabled: (!@pmcname or !@pmcdesc or @pmc.empty?)
 
@@ -200,21 +200,32 @@ class Post < Vue
             for: 'termboard'
         end
 
-        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_default 'Cancel', data_dismiss: 'modal'
         _button.btn_primary 'Draft', onClick: draft_terminate_project,
           disabled: (@pmcs.empty? or not @termreason)
 
       elsif @button == 'Out of Cycle Report'
         _h4 'Out of Cycle PMC Report'
 
-        _div.form_group do
-          _label 'PMC', for: 'out-of-cycle-pmc'
-          _select.form_control.out_of_cycle_pmc! do
-            @pmcs.each {|pmc| _option pmc}
+        # determine which PMCs are reporting this month
+        reporting_this_month = []
+        Agenda.index.each do |item|
+          if item.roster
+            reporting_this_month << item.roster.split('/').pop()
           end
         end
 
-        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        # provide a selection box with the remainder
+        _div.form_group do
+          _label 'PMC', for: 'out-of-cycle-pmc'
+          _select.form_control.out_of_cycle_pmc! do
+            @pmcs.each do |pmc| 
+              _option pmc unless reporting_this_month.include? pmc
+            end
+          end
+        end
+
+        _button.btn_default 'Cancel', data_dismiss: 'modal'
         _button.btn_primary 'Draft', disabled: @pmcs.empty?,
           onClick: draft_out_of_cycle_report
 
@@ -252,7 +263,7 @@ class Post < Vue
         end
 
         # footer buttons
-        _button.btn_default 'Cancel', data_dismiss: 'modal', disabled: @disabled
+        _button.btn_default 'Cancel', data_dismiss: 'modal'
         _button 'Reflow', class: self.reflow_color(), onClick: self.reflow
         _button.btn_primary 'Submit', onClick: self.submit, 
           disabled: (not self.ready())

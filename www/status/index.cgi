@@ -76,13 +76,15 @@ print <<-EOF
 
     <p>
       This status is monitored by:
-      <a href="https://www.pingmybox.com/dashboard?location=470">Ping My
-      Box</a> (<a href="errors">full log</a>).
+      <!-- https://nodeping.com/reports/status/70MTNEPXE6 -->
+      <a href="https://nodeping.com/reports/checks/e7hdvmc4-5e85-41vr-8xho-t8rjxow9dipl">NodePing</a>.
     </p>
 
     <h2>Additional status</h2>
 
     <ul>
+      <li><a href="../member/logs">Apache HTTPD error logs</a>
+        (ASF member only)</li>
       <li><a href="passenger">Passenger</a> (ASF committer only)</li>
       <li><a href="svn">Subversion</a></li>
       <li>Git code info: #{git_info}</li>

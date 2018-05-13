@@ -16,6 +16,11 @@ class Email < Vue
       User.firstname.start_with? @@item.shepherd.downcase()
     then
       return 'btn-primary'
+    elsif
+      @@item.owner == Server.username and not @@item.missing and
+        @@item.comments.empty?
+    then
+      return 'btn-primary'
     else
       return 'btn-link'
     end
@@ -23,8 +28,11 @@ class Email < Vue
 
   # launch email client, pre-filling the destination, subject, and body
   def launch_email_client()
-    destination = "mailto:#{@@item.chair_email}" +
-      "?cc=private@#{@@item.mail_list}.apache.org,board@apache.org"
+    mail_list = @@item.mail_list
+    mail_list = "private@#{mail_list}.apache.org" unless mail_list.include? '@'
+
+    to = @@item.chair_email
+    cc = "#{mail_list},#{@@item.cc}"
 
     if @@item.missing
       subject = "Missing #{@@item.title} Board Report"
@@ -40,7 +48,7 @@ class Email < Vue
 
         Thanks,
 
-        #{Pending.username}
+        #{Server.username}
 
         (on behalf of the ASF Board)
       }
@@ -50,10 +58,22 @@ class Email < Vue
       body = body.strip().gsub(/#{indent}/, "\n").gsub(/(\S)\n(\S)/, "$1 $2")
     else
       subject = "#{@@item.title} Board Report"
-      body = @@item.comments
+      body = @@item.comments.join("\n\n")
+
+      if not body and @@item.text
+        monthNames = %w(January February March April May June July August
+          September October November December)
+        year = Agenda.date.split('-')[0].to_i
+        month = Agenda.date.split('-')[1].to_i
+
+        subject = "[REPORT] #{@@item.title} - #{monthNames[month-1]} #{year}"
+        to = @@item.cc
+        cc = mail_list
+        body = @@item.text
+      end
     end
 
-    window.location = destination +
+    window.location = "mailto:#{to}?cc=#{cc}" +
       "&subject=#{encodeURIComponent(subject)}" +
       "&body=#{encodeURIComponent(body)}"
   end

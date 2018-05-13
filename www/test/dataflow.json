@@ -46,7 +46,7 @@
     ]
   },
   "https://whimsy.apache.org/public/public_ldap_committees.json": {
-    "description": "Membership of LDAP committee groups. Note: Membership of an LDAP committee group != membership of the PMC",
+    "description": "Membership of LDAP committee groups. Note: Membership of an LDAP committee group != membership of the PMC. (Will eventually be replaced by public_ldap_projects.json)",
     "format": "hash of hashes['committees']['accumulo']['roster'][0] = 'acordova'",
     "maintainer": "/www/roster/public_ldap_committees.rb",
     "sources": [
@@ -54,7 +54,7 @@
     ]
   },
   "https://whimsy.apache.org/public/public_ldap_groups.json": {
-    "description": "Membership of LDAP unix groups. Membership of an LDAP unix group is used to grant commit karma for a whole project",
+    "description": "Membership of LDAP unix groups. Membership of an LDAP unix group is used to grant commit karma for a whole project. (Will eventually be replaced by public_ldap_projects.json)",
     "format": "hash of hashes['groups']['accumulo']['roster'][0] = 'acordova'",
     "maintainer": "/www/roster/public_ldap_groups.rb",
     "sources": [
@@ -69,6 +69,14 @@
       "/lib/whimsy/asf/ldap.rb"
     ]
   },
+  "https://whimsy.apache.org/public/public_ldap_projects.json": {
+    "description": "Details of PMCs and Podlings. The 'owners' list holds the ids with (P)PMC karma, and the 'members' list holds the ids with (P)PMC committer karma. (Currently being introduced; will eventually replace public_ldap_groups and public_ldap_committees)",
+    "format": "hash of hashes['projects']...",
+    "maintainer": "/www/roster/public_ldap_projects.rb",
+    "sources": [
+      "/lib/whimsy/asf/ldap.rb"
+    ]
+  },
   "https://whimsy.apache.org/public/public_ldap_services.json": {
     "description": "Membership of LDAP service groups. For example pmc_chairs shows the list of people with PMC chair karma",
     "format": "hash of hashes['services']['board']['roster'][1] = 'brett'",
@@ -78,7 +86,7 @@
     ]
   },
   "https://whimsy.apache.org/public/public_nonldap_groups.json": {
-    "description": "Membership of auth groups not defined in LDAP. For example, Incubator podlings",
+    "description": "Membership of auth groups not defined in LDAP. For example, Incubator podlings. (Podlings are being moved to public_ldap_projects.json, this file is likely to become obsolete)",
     "format": "hash of hashes['groups']['blur']['roster'][0] = 'dblevins'",
     "maintainer": "/www/roster/public_nonldap_groups.rb",
     "sources": [
@@ -104,6 +112,14 @@
   "https://whimsy.apache.org/public/site-scan.json": {
     "description": "Current status of project websites relating to required navigation links",
     "format": "hash of hashes['accumulo']['display_name'] = 'Accumulo'",
+    "maintainer": "/tools/site-scan.rb",
+    "sources": [
+      "https://www.apache.org/foundation/marks/pmcs"
+    ]
+  },
+  "https://whimsy.apache.org/public/pods-scan.json": {
+    "description": "Current status of Incubator podling websites relating to required navigation links",
+    "format": "hash of hashes['airflow']['display_name'] = 'Airflow'",
     "maintainer": "/tools/site-scan.rb",
     "sources": [
       "https://www.apache.org/foundation/marks/pmcs"
