@@ -42,7 +42,7 @@ class Email < Vue
 
         Thanks,
 
-        #{Pending.username}
+        #{Server.username}
 
         (on behalf of the ASF Board)
       }
