@@ -61,8 +61,14 @@ class Email < Vue
       body = @@item.comments.join("\n\n")
 
       if not body and @@item.text
-        to = mail_list
-        cc = @@item.cc
+        monthNames = %w(January February March April May June July August
+          September October November December)
+        year = Agenda.date.split('-')[0].to_i
+        month = Agenda.date.split('-')[1].to_i
+
+        subject = "[REPORT] #{@@item.title} - #{monthNames[month-1]} #{year}"
+        to = @@item.cc
+        cc = mail_list
         body = @@item.text
       end
     end
