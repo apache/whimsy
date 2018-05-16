@@ -389,7 +389,9 @@ class Agenda
 
     # awaiting preapprovals
     count = 0
-    Agenda.index.each {|item| count += 1 if item.color == 'ready'}
+    Agenda.index.each do |item| 
+      count += 1 if item.color == 'ready' and item.title != 'Action Items'
+    end
     results << {color: 'ready', count: count, href: 'queue',
       text: 'awaiting preapprovals'}
 
