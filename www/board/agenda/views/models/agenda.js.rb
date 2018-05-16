@@ -130,6 +130,7 @@ class Agenda
   # find an agenda item by path name
   def self.find(path)
     result = nil
+    path = path.gsub(/\W+/, '-')
     @@index.each do |item|
       result = item if item.href == path
     end
