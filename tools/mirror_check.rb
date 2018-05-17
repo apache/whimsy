@@ -30,7 +30,7 @@ E: check index against TLP list m!> ?$dir/?<!
 E: tlp dir: check can be read (mirrors sometimes have incorrect protections)
 W: 'favicon.ico' and 'zzz/' must both be in page
 W: favicon.ico must appear after zzz/ to show folders first
-E: 'harmony' should be redirected with 301
+E: 'harmony' should be redirected with 404
 E: 'zzz/___' should generate 404
 W: 'zzz/README' content-type text/plain
 E: header must match /<h\d>Apache Software Foundation Distribution Meta-Directory</h\d>/
@@ -250,7 +250,7 @@ def checkHTTP(base)
   checkHdrFtr(base+'incubator/', ibody)
   checkIndex(ibody, :podlings)
 
-  check_page(base, 'harmony/', :E, expectedStatus="301")
+  check_page(base, 'harmony/', :E, expectedStatus="404")
 
   zbody = check_page(base, HTTPDIR)
 # Not sure this is useful on its own anymore
