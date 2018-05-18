@@ -170,7 +170,7 @@ self.addEventListener :fetch do |event|
     if url.end_with? '/bootstrap.html'
       return
 
-    elsif url =~ %r{^\d\d\d\d-\d\d-\d\d/(\w+\/)?[-\w]*$}
+    elsif url =~ %r{^\d\d\d\d-\d\d-\d\d/(\w+/)?[-\w]*$}
       # substitute bootstrap.html for html pages
       date =  url.split('/')[0]
       bootstrap_url = "#{scope}#{date}/bootstrap.html"
