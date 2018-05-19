@@ -210,7 +210,7 @@ class Post < Vue
         # determine which PMCs are reporting this month
         reporting_this_month = []
         Agenda.index.each do |item|
-          if item.roster
+          if item.roster and item.attach =~ /^[A-Z]+$/
             reporting_this_month << item.roster.split('/').pop()
           end
         end
