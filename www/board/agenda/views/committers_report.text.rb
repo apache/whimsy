@@ -16,8 +16,27 @@ def prefixNumber(number)
   return number + "th"
 end
 
+# load agenda and minutes
 board_svn = ASF::SVN['foundation_board']
 agenda_file = Dir[File.join(board_svn, 'board_agenda_*.txt')].last.untaint
+minutes_file = File.join(AGENDA_WORK, File.basename(agenda_file).
+  sub('_agenda_', '_minutes_').sub('.txt', '.yml'))
+minutes = YAML.load_file(minutes_file)
+agenda = Agenda.parse(File.basename(agenda_file), :quick)
+
+# extract attendance from minutes and people from agenda
+attendance = minutes['attendance'].select {|name, info| info[:present]}.
+  sort_by {|name, info| info[:sortName]}
+people = agenda[1]['people']
+
+# merge role from agenda into attendance
+attendance.each do |name, info|
+  info[:role] = (people[info[:id]] || {role: :guest})[:role]
+end
+
+# group attendance by role (directors, officers, guests)
+attendance = attendance.group_by {|name, info| info[:role]}.
+  map {|group, list| [group, list.map {|name, info| name}]}.to_h
 
 ##### Parse the agenda to find the data items above
 
@@ -27,17 +46,11 @@ day             = nil
 daynum          = nil
 month           = nil
 year            = nil
-directors       = Array.new
-officers        = Array.new
-guests          = Array.new
 minutes         = Array.new
 resolutions     = Array.new
 missing_reports = Array.new
 
 # State variables
-parsing_directors   = false
-parsing_officers    = false
-parsing_guests      = false
 parsing_resolutions = false
 parsing_attachment  = nil
 current_attachment  = nil
@@ -51,57 +64,6 @@ File.open(agenda_file).each do |line|
     day = prefixNumber(daynum)
     year = $3
     date = line.strip()
-    next
-  end
-
-  # 2: Get the list of expected directors
-  if line.strip == "Directors (expected to be) Present:"
-    parsing_directors = true
-    next
-  end
-  if parsing_directors
-    if line.strip == "Directors (expected to be) Absent:"
-      parsing_directors = false
-      next
-    end
-    if line.strip == ""
-      next
-    end
-    directors << line.strip
-    next
-  end
-
-  if line.strip == "Executive Officers (expected to be) Present:"
-    parsing_officers = true
-    next
-  end
-  if parsing_officers
-    if line.strip == "Executive Officers (expected to be) Absent:"
-      parsing_officers = false
-      next
-    end
-    if line.strip == ""
-      next
-    end
-    officers << line.strip
-    next
-  end
-
-  # 3: Get the list of expected guests
-  # TODO: Same as directors code above, consider a function
-  if line.strip == "Guests (expected):"
-    parsing_guests = true
-    next
-  end
-  if parsing_guests
-    if line =~ /\d. Minutes from previous meetings/
-      parsing_guests = false
-      next
-    end
-    if line.strip == ""
-      next
-    end
-    guests << line.strip
     next
   end
 
@@ -217,9 +179,9 @@ File.open(committee_file).each do |line|
 end
 
 ##### Prepare the arrays for output
-t_directors = directors.join(", ")
-t_officers = officers.join(", ")
-t_guests = guests.join(", ")
+t_directors = attendance[:director].join(", ")
+t_officers = attendance[:officer].join(", ")
+t_guests = attendance[:guest].join(", ")
 if !minutes.empty?
   t_minutes = "\nThe " + minutes.join(", ").sub(/, ([^,]*)$/, ' and \1') + " minutes were " + (minutes.length > 1 ? "all " : "") + "approved. \nMinutes will be posted to http://www.apache.org/foundation/records/minutes/\n"
 else
