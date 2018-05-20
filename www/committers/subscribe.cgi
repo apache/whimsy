@@ -38,7 +38,7 @@ ASF::Podling.list.each {|p|
 
 pmcs = ASF::Committee.pmcs.map(&:mail_list)
 ldap_pmcs = [] # No need to get the info for ASF members
-ldap_pmcs = user.committees.map(&:name) unless user.asf_member?
+ldap_pmcs = user.committees.map(&:mail_list) unless user.asf_member?
 lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs)
 lists -= ASF::Mail.deprecated
 lists -= BLACKLIST

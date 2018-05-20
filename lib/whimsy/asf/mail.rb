@@ -83,15 +83,17 @@ module ASF
           whitelist = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'concom', 'party']
           # Can always subscribe to public lists and the whitelist
           lists = @lists.keys.select{|key| @lists[key] == 'public' or whitelist.include? key}
+
           # Chairs need the board lists
           if pmc_chair
             lists += ['board', 'board-commits', 'board-chat']
           end
+
+          # PMC members need their private lists
           if ldap_pmcs
-            ldap_pmcs.each do |lp|
-              lists += [lp + '-private']
-            end
+            lists += ldap_pmcs.map {|lp| "#{lp}-private"}
           end
+
           lists
       end
     end
