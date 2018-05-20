@@ -37,7 +37,9 @@ ASF::Podling.list.each {|p|
 }
 
 pmcs = ASF::Committee.pmcs.map(&:mail_list)
-lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user))
+ldap_pmcs = [] # No need to get the info for ASF members
+ldap_pmcs = user.committees.map(&:name) unless user.asf_member?
+lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs)
 lists -= ASF::Mail.deprecated
 lists -= BLACKLIST
 lists.sort!
@@ -69,9 +71,9 @@ _html do
           _ 'where you can change your primary Forwarding Address and any other associated Alias email addresses you use.'
         end
         _p do
-          _ 'Only ASF members can use this form to subscribe to private lists. PMC chairs can subscribe to board lists.'
+          _ 'ASF members can use this form to subscribe to private lists. PMC chairs can subscribe to board lists. PMC members can subscribe to their private@ list.'
           _br
-          _ 'To subscribe to other private lists, send an email to the list-subscribe@ address and wait for the request to be approved.'
+          _ 'To subscribe to other private lists, send an email to the list-subscribe@ address and wait for the request to be manually approved.'
           _ 'This might take a day or two.'
         end
         _p do

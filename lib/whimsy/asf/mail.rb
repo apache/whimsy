@@ -71,7 +71,7 @@ module ASF
     end
 
     # which lists are available for subscription via Whimsy?
-    def self.cansub(member, pmc_chair)
+    def self.cansub(member, pmc_chair, ldap_pmcs)
       Mail._load_lists
       if member
           lists = @lists.keys
@@ -86,6 +86,11 @@ module ASF
           # Chairs need the board lists
           if pmc_chair
             lists += ['board', 'board-commits', 'board-chat']
+          end
+          if ldap_pmcs
+            ldap_pmcs.each do |lp|
+              lists += [lp + '-private']
+            end
           end
           lists
       end
