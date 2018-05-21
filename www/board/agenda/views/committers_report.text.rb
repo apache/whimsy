@@ -18,20 +18,22 @@ end
 
 # load agenda and minutes
 board_svn = ASF::SVN['foundation_board']
-agenda_file = Dir[File.join(board_svn, 'board_agenda_*.txt')].last.untaint
-minutes_file = File.join(AGENDA_WORK, File.basename(agenda_file).
-  sub('_agenda_', '_minutes_').sub('.txt', '.yml'))
+minutes_file = Dir[File.join(AGENDA_WORK, 'board_minutes_*.yml')].sort.
+  last.untaint
+agenda_file = File.join(board_svn, File.basename(minutes_file).
+  sub('_minutes_', '_agenda_').sub('.yml', '.txt'))
 minutes = YAML.load_file(minutes_file)
 agenda = Agenda.parse(File.basename(agenda_file), :quick)
 
 # extract attendance from minutes and people from agenda
 attendance = minutes['attendance'].select {|name, info| info[:present]}.
   sort_by {|name, info| info[:sortName]}
-people = agenda[1]['people']
+people = agenda[1]['people'].values
 
 # merge role from agenda into attendance
 attendance.each do |name, info|
-  info[:role] = (people[info[:id]] || {role: :guest})[:role]
+  person = people.find {|person| person[:name] == name}
+  info[:role] = person ? person[:role] : :guest
 end
 
 # group attendance by role (directors, officers, guests)
