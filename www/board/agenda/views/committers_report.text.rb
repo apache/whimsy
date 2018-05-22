@@ -8,12 +8,12 @@ require 'chronic'
 # Add the right prefix to a number
 def prefixNumber(number) 
   if number % 10 == 1
-    return number + "st"
+    number.to_s + "st"
+  elsif number % 10 == 2
+    number.to_s + "nd"
+  else
+    number.to_s + "th"
   end
-  if number % 10 == 2
-    return number + "nd"
-  end
-  return number + "th"
 end
 
 # load agenda and minutes
@@ -118,37 +118,9 @@ end
 
 ##### 7: Find out the date of the next board report
 
-calendar_file  = File.join(ASF::SVN['board'], 'calendar.txt')
-found_date = false
-next_meeting = nil
-File.open(calendar_file).each do |line|
-    if line =~ /\$Date:/
-      next
-    end
-    if line =~ /#{month} #{year}/
-      found_date = true
-      next
-    end
-    if found_date
-      if line =~ /(\d+) (\w+) \d{4}/
-        next_meeting = prefixNumber($1) + " of " + $2
-        break
-      end
-    end
-end
-if !next_meeting
-  puts "Error: Unable to determine the next meeting from #{calendar_file}\n"
-  nxt = Chronic.parse('3rd wednesday next month').to_s
-  ## Returns something like: Wed Dec 21 12:00:00 -0500 2011
-  if nxt =~ /Wed (\w{3}) (\d\d).*(\d{4})$/
-    next_meeting = "#{$1} #{$2} #{$3}"
-  end
-  ##exit 1
-end
-if !next_meeting
-  puts "Error: Unable to determine the next meeting at all\n"
-  exit 1
-end
+next_meeting = ASF::Board.nextMeeting
+next_meeting = prefixNumber(next_meeting.day) + " of " + 
+  next_meeting.strftime('%B')
 
 ##### 8: Find names of the VPs of TLPs in resolutions
 
