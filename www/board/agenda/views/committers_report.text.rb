@@ -49,14 +49,12 @@ agenda.each do |item|
     "  [#{item['owner']}]"
 end
 
+# extract date of the meeting
+date = Time.at(agenda[0]['timestamp']/1000)
+
 ##### Parse the agenda to find the data items above
 
 # Data items from agenda
-date            = nil
-day             = nil
-daynum          = nil
-month           = nil
-year            = nil
 minutes         = Array.new
 resolutions     = Array.new
 
@@ -66,16 +64,6 @@ parsing_attachment  = nil
 current_attachment  = nil
 
 File.open(agenda_file).each do |line|
-
-  # 1: Find the date, this is used in the title and various other places
-  if !date && line =~ /(\w*) (\d\d?), (\d{4})$/
-    month = $1
-    daynum = $2
-    day = prefixNumber(daynum)
-    year = $3
-    date = line.strip()
-    next
-  end
 
   # 4: Get the list of listed minutes
   if line =~ /[A-Z]\. The meeting of (\w*) \d\d?, \d{4}$/
@@ -172,9 +160,9 @@ PLEASE EDIT THIS, IT IS ONLY AN ESTIMATE.
 From: chairman@apache.org
 To: committers@apache.org
 Reply-To: board@apache.org
-Subject: ASF Board Meeting Summary - #{month} #{daynum}, #{year}
+Subject: ASF Board Meeting Summary - #{date.strftime('%B %d, %Y')}
 
-The #{month} board meeting took place on the #{day}.
+The #{date.strftime('%B')} board meeting took place on the #{prefixNumber(date.day)}.
 
 The following directors were present:
 
