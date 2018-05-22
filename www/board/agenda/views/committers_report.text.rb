@@ -40,6 +40,15 @@ end
 attendance = attendance.group_by {|name, info| info[:role]}.
   map {|group, list| [group, list.map {|name, info| name}]}.to_h
 
+# get a list of missing attachments
+missing_reports = Array.new
+agenda.each do |item|
+  next unless item['missing']
+  next if item['to'] == 'president'
+  missing_reports << "Report from the Apache #{item['title']} Project" +
+    "  [#{item['owner']}]"
+end
+
 ##### Parse the agenda to find the data items above
 
 # Data items from agenda
@@ -50,7 +59,6 @@ month           = nil
 year            = nil
 minutes         = Array.new
 resolutions     = Array.new
-missing_reports = Array.new
 
 # State variables
 parsing_resolutions = false
@@ -89,29 +97,6 @@ File.open(agenda_file).each do |line|
       resolutions << line.strip
       next
     end
-  end
-
-  # 6: Get the list of missing reports (aka empty attachments)
-  if !parsing_attachment && line =~ /^Attachment (..?): (.*)/
-    parsing_attachment = $1
-    current_attachment = $2
-    next
-  end
-  if parsing_attachment
-    if line.strip == ""
-      next
-    end
-    if line.strip == "-----------------------------------------"
-      if parsing_attachment.to_i.between?(1, 6)
-        puts "Skipping missing President Committee attachment: #{current_attachment}"
-      else
-        missing_reports << current_attachment
-      end
-      parsing_attachment = nil
-      next
-    end
-    parsing_attachment = nil
-    next
   end
 
 end
