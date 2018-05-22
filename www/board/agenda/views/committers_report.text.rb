@@ -52,24 +52,28 @@ end
 # extract date of the meeting
 date = Time.at(agenda[0]['timestamp']/1000)
 
+# get list of minutes
+approved_minutes = Array.new
+other_minutes = Array.new
+agenda.each do |item|
+  next unless item[:attach] =~ /^3[A-Z]/
+  month = item['title'].split(' ').first
+  if minutes[item['title']] == 'approved'
+    approved_minutes << month
+  else
+    other_minutes << "The #{month} minutes were #{minutes[item['title']]}."
+  end
+end
+
 ##### Parse the agenda to find the data items above
 
 # Data items from agenda
-minutes         = Array.new
 resolutions     = Array.new
 
 # State variables
 parsing_resolutions = false
-parsing_attachment  = nil
-current_attachment  = nil
 
 File.open(agenda_file).each do |line|
-
-  # 4: Get the list of listed minutes
-  if line =~ /[A-Z]\. The meeting of (\w*) \d\d?, \d{4}$/
-    minutes << $1
-    next
-  end
 
   # 5: Get the list of resolutions
   if line =~ /\d. Special Orders/
@@ -129,11 +133,17 @@ end
 t_directors = attendance[:director].join(", ")
 t_officers = attendance[:officer].join(", ")
 t_guests = attendance[:guest].join(", ")
-if !minutes.empty?
-  t_minutes = "\nThe " + minutes.join(", ").sub(/, ([^,]*)$/, ' and \1') + " minutes were " + (minutes.length > 1 ? "all " : "") + "approved. \nMinutes will be posted to http://www.apache.org/foundation/records/minutes/\n"
+
+if !approved_minutes.empty?
+  t_minutes = "\nThe " + approved_minutes.join(", ").sub(/, ([^,]*)$/, ' and \1') + " minutes were " + (approved_minutes.length > 1 ? "all " : "") + "approved. \nMinutes will be posted to http://www.apache.org/foundation/records/minutes/\n"
 else
   t_minutes = ""
 end
+
+if !other_minutes.empty?
+  t_minutes += other_minutes.join("\n") + "\n"
+end
+
 if !missing_reports.empty?
   t_missing_reports = "The following reports were not received and are expected next month: \n\n  "
   t_missing_reports += missing_reports.join("\n  ")
@@ -141,6 +151,7 @@ if !missing_reports.empty?
 else
   t_missing_reports = ""
 end
+
 if !resolutions.empty?
   t_resolutions = "The following resolutions were passed unanimously: \n\n"
   resolutions.each() do |resolution|
