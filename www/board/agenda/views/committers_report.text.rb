@@ -47,7 +47,7 @@ agenda.each do |item|
 end
 
 # extract date of the meeting
-date = Time.at(agenda[0]['timestamp']/1000)
+@date = Time.at(agenda[0]['timestamp']/1000)
 
 # get list of minutes
 approved_minutes = Array.new
@@ -80,70 +80,72 @@ end
 ##### 7: Find out the date of the next board report
 
 next_meeting = ASF::Board.nextMeeting
-next_meeting = prefixNumber(next_meeting.day) + " of " + 
+@next_meeting = prefixNumber(next_meeting.day) + " of " + 
   next_meeting.strftime('%B')
 
 ##### Prepare the arrays for output
-t_directors = attendance[:director].join(", ")
-t_officers = attendance[:officer].join(", ")
-t_guests = attendance[:guest].join(", ")
+@directors = attendance[:director].join(", ")
+@officers = attendance[:officer].join(", ")
+@guests = attendance[:guest].join(", ")
 
 if !approved_minutes.empty?
-  t_minutes = "\nThe " + approved_minutes.join(", ").sub(/, ([^,]*)$/, ' and \1') + " minutes were " + (approved_minutes.length > 1 ? "all " : "") + "approved. \nMinutes will be posted to http://www.apache.org/foundation/records/minutes/\n"
+  @minutes = "\nThe " + approved_minutes.join(", ").sub(/, ([^,]*)$/, ' and \1') + " minutes were " + (approved_minutes.length > 1 ? "all " : "") + "approved. \nMinutes will be posted to http://www.apache.org/foundation/records/minutes/\n"
 else
-  t_minutes = ""
+  @minutes = ""
 end
 
 if !other_minutes.empty?
-  t_minutes += other_minutes.join("\n") + "\n"
+  @minutes += other_minutes.join("\n") + "\n"
 end
 
 if !missing_reports.empty?
-  t_missing_reports = "The following reports were not received and are expected next month: \n\n  "
-  t_missing_reports += missing_reports.join("\n  ")
-  t_missing_reports += "\n"
+  @missing_reports = "The following reports were not received and are expected next month: \n\n  "
+  @missing_reports += missing_reports.join("\n  ")
+  @missing_reports += "\n"
 else
-  t_missing_reports = ""
+  @missing_reports = ""
 end
 
 if !approved_resolutions.empty?
-  t_resolutions = "The following resolutions were passed unanimously: \n\n"
+  @resolutions = "The following resolutions were passed unanimously: \n\n"
   approved_resolutions.each() do |resolution|
-    t_resolutions += "  #{resolution}\n";
+    @resolutions += "  #{resolution}\n";
   end
 else
-  t_resolutions = ""
+  @resolutions = ""
 end
 
 if !other_resolutions.empty?
-  t_resolutions += "\n" + other_resolutions.join("\n") + "\n"
+  @resolutions += "\n" + other_resolutions.join("\n") + "\n"
 end
 
 ##### Write the report
-report = <<REPORT
+template = <<REPORT
 PLEASE EDIT THIS, IT IS ONLY AN ESTIMATE.
 From: chairman@apache.org
 To: committers@apache.org
 Reply-To: board@apache.org
-Subject: ASF Board Meeting Summary - #{date.strftime('%B %d, %Y')}
+Subject: ASF Board Meeting Summary - #{@date.strftime('%B %d, %Y')}
 
-The #{date.strftime('%B')} board meeting took place on the #{prefixNumber(date.day)}.
+The #{@date.strftime('%B')} board meeting took place on the #{prefixNumber(@date.day)}.
 
 The following directors were present:
 
-  #{t_directors}
+  #{@directors}
 
 The following officers were present:
 
-  #{t_officers}
+  #{@officers}
 
 The following guests were present:
 
-  #{t_guests}
-#{t_minutes}
+  #{@guests}
+#{@minutes}
 All of the received reports to the board were approved.
 
-#{t_missing_reports}
-#{t_resolutions}
-The next board meeting will be on the #{next_meeting}.
+#{@missing_reports}
+#{@resolutions}
+The next board meeting will be on the #{@next_meeting}.
 REPORT
+
+Erubis::Eruby.new(template).result(binding)
