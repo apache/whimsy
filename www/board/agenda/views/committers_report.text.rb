@@ -38,12 +38,11 @@ attendance = attendance.group_by {|name, info| info[:role]}.
   map {|group, list| [group, list.map {|name, info| name}]}.to_h
 
 # get a list of missing attachments
-missing_reports = Array.new
+@missing_reports = Array.new
 agenda.each do |item|
   next unless item['missing']
   next if item['to'] == 'president'
-  missing_reports << "Report from the Apache #{item['title']} Project" +
-    "  [#{item['owner']}]"
+  @missing_reports << item
 end
 
 # extract date of the meeting
@@ -98,14 +97,6 @@ if !other_minutes.empty?
   @minutes += other_minutes.join("\n") + "\n"
 end
 
-if !missing_reports.empty?
-  @missing_reports = "The following reports were not received and are expected next month: \n\n  "
-  @missing_reports += missing_reports.join("\n  ")
-  @missing_reports += "\n"
-else
-  @missing_reports = ""
-end
-
 if !approved_resolutions.empty?
   @resolutions = "The following resolutions were passed unanimously: \n\n"
   approved_resolutions.each() do |resolution|
@@ -143,7 +134,14 @@ The following guests were present:
 #{@minutes}
 All of the received reports to the board were approved.
 
-#{@missing_reports}
+<% unless @missing_reports.empty? %>
+The following reports were not received and are expected next month:
+
+<% @missing_reports.each do |report| %>
+  Report from the Apache <%= report['title'] %> Project [<%= report['owner'] %>]
+<% end %>
+
+<% end %>
 #{@resolutions}
 The next board meeting will be on the #{@next_meeting}.
 REPORT
