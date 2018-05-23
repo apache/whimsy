@@ -1,9 +1,6 @@
 require 'chronic'
 
-## This is a script to generate an email for committers@apache.org from 
-## an agenda file. It also requires the calendar.txt so it can determine 
-## the next meeting's date and committee-info.txt so it can determine 
-## who the VP is for a project.
+## This is a script to generate an email for committers@apache.org
 
 # Add the right prefix to a number
 def prefixNumber(number) 
@@ -23,7 +20,7 @@ minutes_file = Dir[File.join(AGENDA_WORK, 'board_minutes_*.yml')].sort.
 agenda_file = File.join(board_svn, File.basename(minutes_file).
   sub('_minutes_', '_agenda_').sub('.yml', '.txt'))
 minutes = YAML.load_file(minutes_file)
-agenda = Agenda.parse(File.basename(agenda_file), :quick)
+agenda = Agenda.parse(File.basename(agenda_file), :full)
 
 # extract attendance from minutes and people from agenda
 attendance = minutes['attendance'].select {|name, info| info[:present]}.
@@ -65,32 +62,19 @@ agenda.each do |item|
   end
 end
 
-##### Parse the agenda to find the data items above
-
-# Data items from agenda
-resolutions     = Array.new
-
-# State variables
-parsing_resolutions = false
-
-File.open(agenda_file).each do |line|
-
-  # 5: Get the list of resolutions
-  if line =~ /\d. Special Orders/
-    parsing_resolutions = true
-    next
+# get list of resolutions
+approved_resolutions = Array.new
+other_resolutions = Array.new
+agenda.each do |item|
+  next unless item[:attach] =~ /^7[A-Z]/
+  title = item['fulltitle']
+  if minutes[item['title']] == 'unanimous'
+    chair = item['chair']
+    title += " (#{item['people'][chair][:name]}, VP)" if chair
+    approved_resolutions << title
+  else
+    other_resolutions << "The #{item['fulltitle']} resolution was #{minutes[item['title']]}."
   end
-  if parsing_resolutions
-    if line =~ /\d. Discussion Items/
-      parsing_resolutions = false
-      next
-    end
-    if line =~ /^\s*[A-Z]\. /
-      resolutions << line.strip
-      next
-    end
-  end
-
 end
 
 ##### 7: Find out the date of the next board report
@@ -98,36 +82,6 @@ end
 next_meeting = ASF::Board.nextMeeting
 next_meeting = prefixNumber(next_meeting.day) + " of " + 
   next_meeting.strftime('%B')
-
-##### 8: Find names of the VPs of TLPs in resolutions
-
-## this does not work, since new TLPs are not yet in committee-info.txt
-## instead we should parse this from the resolution
-
-committee_file = File.join(ASF::SVN['board'], 'committee-info.txt')
-parsing_projects = false
-resolution_to_chair = Hash.new
-File.open(committee_file).each do |line|
-  if line =~ /\d. APACHE SOFTWARE FOUNDATION COMMITTEES/
-    parsing_projects = true
-  end
-  if parsing_projects 
-    if line =~ /^\s+([\w\s]+)\s\s+([^<]*)<[^>]*>\s*$/
-      project = $1
-      chair = $2
-      project = project.strip
-      resolutions.each() do |resolution|
-        if resolution =~ /#{project}/
-          resolution_to_chair[resolution] = chair.strip
-        end
-      end
-    end
-    if line =~ /={76}/
-      parsing_projects = false
-      break
-    end
-  end
-end
 
 ##### Prepare the arrays for output
 t_directors = attendance[:director].join(", ")
@@ -152,17 +106,17 @@ else
   t_missing_reports = ""
 end
 
-if !resolutions.empty?
+if !approved_resolutions.empty?
   t_resolutions = "The following resolutions were passed unanimously: \n\n"
-  resolutions.each() do |resolution|
-    t_resolutions += "  #{resolution}";
-    # if(resolution_to_chair[resolution])
-    #   t_resolutions += " (" + resolution_to_chair[resolution] +", VP)"
-    # end
-    t_resolutions += " (???, VP)\n"
+  approved_resolutions.each() do |resolution|
+    t_resolutions += "  #{resolution}\n";
   end
 else
   t_resolutions = ""
+end
+
+if !other_resolutions.empty?
+  t_resolutions += "\n" + other_resolutions.join("\n") + "\n"
 end
 
 ##### Write the report
