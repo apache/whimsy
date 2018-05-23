@@ -34,7 +34,7 @@ attendance.each do |name, info|
 end
 
 # group attendance by role (directors, officers, guests)
-attendance = attendance.group_by {|name, info| info[:role]}.
+@attendance = attendance.group_by {|name, info| info[:role]}.
   map {|group, list| [group, list.map {|name, info| name}]}.to_h
 
 # get a list of missing attachments
@@ -82,11 +82,6 @@ next_meeting = ASF::Board.nextMeeting
 @next_meeting = prefixNumber(next_meeting.day) + " of " + 
   next_meeting.strftime('%B')
 
-##### Prepare the arrays for output
-@directors = attendance[:director].join(", ")
-@officers = attendance[:officer].join(", ")
-@guests = attendance[:guest].join(", ")
-
 if !approved_minutes.empty?
   @minutes = "\nThe " + approved_minutes.join(", ").sub(/, ([^,]*)$/, ' and \1') + " minutes were " + (approved_minutes.length > 1 ? "all " : "") + "approved. \nMinutes will be posted to http://www.apache.org/foundation/records/minutes/\n"
 else
@@ -122,15 +117,15 @@ The #{@date.strftime('%B')} board meeting took place on the #{prefixNumber(@date
 
 The following directors were present:
 
-  #{@directors}
+  <%= @attendance[:director].join(", ") %>
 
 The following officers were present:
 
-  #{@officers}
+  <%= @attendance[:officer].join(", ") %>
 
 The following guests were present:
 
-  #{@guests}
+  <%= @attendance[:guest].join(", ") %>
 #{@minutes}
 All of the received reports to the board were approved.
 
