@@ -56,15 +56,15 @@ end
 @date = Time.at(agenda[0]['timestamp']/1000)
 
 # get list of minutes
-approved_minutes = Array.new
-other_minutes = Array.new
+@approved_minutes = Array.new
+@other_minutes = Array.new
 agenda.each do |item|
   next unless item[:attach] =~ /^3[A-Z]/
   month = item['title'].split(' ').first
   if minutes[item['title']] == 'approved'
-    approved_minutes << month
+    @approved_minutes << month
   else
-    other_minutes << "The #{month} minutes were #{minutes[item['title']]}."
+    @other_minutes << [ month, minutes[item['title']] ]
   end
 end
 
@@ -83,21 +83,10 @@ agenda.each do |item|
   end
 end
 
-##### 7: Find out the date of the next board report
-
+# Find out the date of the next board report
 next_meeting = ASF::Board.nextMeeting
 @next_meeting = next_meeting.day.ordinalize + " of " + 
   next_meeting.strftime('%B')
-
-if !approved_minutes.empty?
-  @minutes = "\nThe " + approved_minutes.join(", ").sub(/, ([^,]*)$/, ' and \1') + " minutes were " + (approved_minutes.length > 1 ? "all " : "") + "approved. \nMinutes will be posted to http://www.apache.org/foundation/records/minutes/\n"
-else
-  @minutes = ""
-end
-
-if !other_minutes.empty?
-  @minutes += other_minutes.join("\n") + "\n"
-end
 
 ##### Write the report
 template = <<REPORT
@@ -125,12 +114,23 @@ The following officers were present:
 The following guests were present:
 
   <%= @attendance[:guest].join(", ") %>
+
 <%#
 
    ###### previous meeting minutes
 
 %>
-#{@minutes}
+<% unless @approved_minutes.empty? %>
+The <%= @approved_minutes.join(", ").sub(/, ([^,]*)$/, ' and \1') %> minutes were <%= (@approved_minutes.length > 1 ? "all " : "") %>approved.
+Minutes will be posted to http://www.apache.org/foundation/records/minutes/
+
+<% end %>
+<% unless @other_minutes.empty? %>
+<% @other_minutes.each do |month, disposition| %>
+The <%= month %> minutes were <%= disposition %>.
+<% end %>
+
+<% end %>
 <%#
 
    ###### missing reports
