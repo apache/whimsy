@@ -45,6 +45,9 @@ agenda.each do |item|
   @missing_reports << item
 end
 
+# extract list of rejected reports
+@rejected = minutes[:rejected]
+
 # extract date of the meeting
 @date = Time.at(agenda[0]['timestamp']/1000)
 
@@ -62,17 +65,17 @@ agenda.each do |item|
 end
 
 # get list of resolutions
-approved_resolutions = Array.new
-other_resolutions = Array.new
+@approved_resolutions = Array.new
+@other_resolutions = Array.new
 agenda.each do |item|
   next unless item[:attach] =~ /^7[A-Z]/
   title = item['fulltitle']
   if minutes[item['title']] == 'unanimous'
     chair = item['chair']
     title += " (#{item['people'][chair][:name]}, VP)" if chair
-    approved_resolutions << title
+    @approved_resolutions << title
   else
-    other_resolutions << "The #{item['fulltitle']} resolution was #{minutes[item['title']]}."
+    @other_resolutions << [ item['fulltitle'], minutes[item['title']] ]
   end
 end
 
@@ -92,19 +95,6 @@ if !other_minutes.empty?
   @minutes += other_minutes.join("\n") + "\n"
 end
 
-if !approved_resolutions.empty?
-  @resolutions = "The following resolutions were passed unanimously: \n\n"
-  approved_resolutions.each() do |resolution|
-    @resolutions += "  #{resolution}\n";
-  end
-else
-  @resolutions = ""
-end
-
-if !other_resolutions.empty?
-  @resolutions += "\n" + other_resolutions.join("\n") + "\n"
-end
-
 ##### Write the report
 template = <<REPORT
 PLEASE EDIT THIS, IT IS ONLY AN ESTIMATE.
@@ -115,6 +105,11 @@ Subject: ASF Board Meeting Summary - #{@date.strftime('%B %d, %Y')}
 
 The #{@date.strftime('%B')} board meeting took place on the #{prefixNumber(@date.day)}.
 
+<%#
+
+   ###### attendance
+
+%>
 The following directors were present:
 
   <%= @attendance[:director].join(", ") %>
@@ -126,9 +121,17 @@ The following officers were present:
 The following guests were present:
 
   <%= @attendance[:guest].join(", ") %>
-#{@minutes}
-All of the received reports to the board were approved.
+<%#
 
+   ###### previous meeting minutes
+
+%>
+#{@minutes}
+<%#
+
+   ###### missing reports
+
+%>
 <% unless @missing_reports.empty? %>
 The following reports were not received and are expected next month:
 
@@ -137,7 +140,47 @@ The following reports were not received and are expected next month:
 <% end %>
 
 <% end %>
-#{@resolutions}
+<%#
+
+   ###### rejected reports
+
+%>
+<% if @rejected.empty? %>
+All of the received reports to the board were approved.
+<% else %>
+The following reports were not accepted:
+
+<% @rejected.each do |report| %>
+  Report from the Apache <%= report %> Project
+<% end %>
+
+All of the remaining reports received by board were approved.
+<% end %>
+
+<%#
+
+   ###### resolutions
+
+%>
+<% unless @approved_resolutions.empty? %>
+The following resolutions were passed unanimously:
+
+<% @approved_resolutions.each() do |resolution| %>
+  <%= resolution %>
+<% end %>
+
+<% end %>
+<% unless @other_resolutions.empty? %>
+<% @other_resolutions.each do |title, disposition| %>
+The <%= title %> resolution was <%= disposition %>.
+<% end %>
+
+<% end %>
+<%#
+
+   ###### next meeting
+
+%>
 The next board meeting will be on the #{@next_meeting}.
 REPORT
 
