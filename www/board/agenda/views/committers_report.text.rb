@@ -3,13 +3,15 @@ require 'chronic'
 ## This is a script to generate an email for committers@apache.org
 
 # Add the right prefix to a number
-def prefixNumber(number) 
-  if number % 10 == 1
-    number.to_s + "st"
-  elsif number % 10 == 2
-    number.to_s + "nd"
-  else
-    number.to_s + "th"
+class Integer
+  def ordinalize
+    if self % 10 == 1
+      self.to_s + "st"
+    elsif self % 10 == 2
+      self.to_s + "nd"
+    else
+      self.to_s + "th"
+    end
   end
 end
 
@@ -82,7 +84,7 @@ end
 ##### 7: Find out the date of the next board report
 
 next_meeting = ASF::Board.nextMeeting
-@next_meeting = prefixNumber(next_meeting.day) + " of " + 
+@next_meeting = next_meeting.day.ordinalize + " of " + 
   next_meeting.strftime('%B')
 
 if !approved_minutes.empty?
@@ -103,7 +105,7 @@ To: committers@apache.org
 Reply-To: board@apache.org
 Subject: ASF Board Meeting Summary - #{@date.strftime('%B %d, %Y')}
 
-The #{@date.strftime('%B')} board meeting took place on the #{prefixNumber(@date.day)}.
+The #{@date.strftime('%B')} board meeting took place on the #{@date.day.ordinalize}.
 
 <%#
 
