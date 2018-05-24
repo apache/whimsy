@@ -12,15 +12,15 @@ The <%= @date.strftime('%B') %> board meeting took place on the <%= @date.day.or
 %>
 The following directors were present:
 
-  <%= @attendance[:director].join(", ") %>
+  <%= Array(@attendance[:director]).join(", ") %>
 
 The following officers were present:
 
-  <%= @attendance[:officer].join(", ") %>
+  <%= Array(@attendance[:officer]).join(", ") %>
 
 The following guests were present:
 
-  <%= @attendance[:guest].join(", ") %>
+  <%= Array(@attendance[:guest]).join(", ") %>
 
 <%#
 

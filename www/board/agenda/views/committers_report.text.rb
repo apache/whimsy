@@ -6,11 +6,11 @@ require 'chronic'
 board_svn = ASF::SVN['foundation_board']
 minutes_file = File.join(AGENDA_WORK, "board_minutes_#@date.yml").untaint
 agenda_file = File.join(board_svn, "board_agenda_#@date.txt").untaint
-minutes = YAML.load_file(minutes_file)
+minutes = YAML.load_file(minutes_file) rescue {}
 agenda = Agenda.parse(File.basename(agenda_file), :full)
 
 # extract attendance from minutes and people from agenda
-attendance = minutes['attendance'].select {|name, info| info[:present]}.
+attendance = Array(minutes['attendance']).select {|name, info| info[:present]}.
   sort_by {|name, info| info[:sortName]}
 people = agenda[1]['people'].values
 
@@ -33,7 +33,7 @@ agenda.each do |item|
 end
 
 # extract list of rejected reports
-@rejected = minutes[:rejected]
+@rejected = Array(minutes[:rejected])
 
 # extract date of the meeting
 @date = Time.at(agenda[0]['timestamp']/1000)
@@ -47,7 +47,7 @@ agenda.each do |item|
   if minutes[item['title']] == 'approved'
     @approved_minutes << month
   else
-    @other_minutes << [ month, minutes[item['title']] ]
+    @other_minutes << [ month, minutes[item['title']] || 'tabled' ]
   end
 end
 
@@ -62,7 +62,7 @@ agenda.each do |item|
     title += " (#{item['people'][chair][:name]}, VP)" if chair
     @approved_resolutions << title
   else
-    @other_resolutions << [ item['fulltitle'], minutes[item['title']] ]
+    @other_resolutions << [item['fulltitle'], minutes[item['title']]||'tabled']
   end
 end
 
