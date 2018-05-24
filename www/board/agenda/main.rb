@@ -47,6 +47,7 @@ require_relative './models/agenda'
 require_relative './models/minutes'
 require_relative './models/comments'
 require_relative './helpers/string'
+require_relative './helpers/integer'
 require_relative './daemon/session'
 
 require 'websocket-client-simple'

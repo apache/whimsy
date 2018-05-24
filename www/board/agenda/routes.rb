@@ -286,7 +286,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d).json} do |file|
 end
 
 # draft committers report
-get '/text/committers-report' do
+get %r{/text/summary/(\d\d\d\d-\d\d-\d\d)} do |date|
   _text :committers_report
 end
 

@@ -258,6 +258,8 @@ class Agenda
 
     if not Minutes.complete
       list << {form: Post, text: 'add item'}
+    else
+      list << {form: Summary}
     end
 
     if User.role == :secretary 
