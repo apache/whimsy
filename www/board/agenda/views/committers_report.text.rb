@@ -4,10 +4,8 @@ require 'chronic'
 
 # load agenda and minutes
 board_svn = ASF::SVN['foundation_board']
-minutes_file = Dir[File.join(AGENDA_WORK, 'board_minutes_*.yml')].sort.
-  last.untaint
-agenda_file = File.join(board_svn, File.basename(minutes_file).
-  sub('_minutes_', '_agenda_').sub('.yml', '.txt'))
+minutes_file = File.join(AGENDA_WORK, "board_minutes_#@date.yml").untaint
+agenda_file = File.join(board_svn, "board_agenda_#@date.txt").untaint
 minutes = YAML.load_file(minutes_file)
 agenda = Agenda.parse(File.basename(agenda_file), :full)
 
@@ -72,6 +70,10 @@ end
 next_meeting = ASF::Board.nextMeeting
 @next_meeting = next_meeting.day.ordinalize + " of " + 
   next_meeting.strftime('%B')
+
+# author of the email
+sender = ASF::Person.find(env.user || ENV['USER'])
+@from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>"
 
 ##### Write the report
 template = File.read('templates/committers_report.text.erb').untaint

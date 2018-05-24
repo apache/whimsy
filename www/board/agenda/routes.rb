@@ -287,6 +287,7 @@ end
 
 # draft committers report
 get %r{/text/summary/(\d\d\d\d-\d\d-\d\d)} do |date|
+  @date = date.gsub('-', '_')
   _text :committers_report
 end
 

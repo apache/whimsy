@@ -6,7 +6,7 @@ class Summary < Vue
   # default attributes for the button associated with this form
   def self.button
     {
-      text: 'summary',
+      text: 'send summary',
       class: 'btn_danger',
       data_toggle: 'modal',
       data_target: '#summary-form'
@@ -15,7 +15,7 @@ class Summary < Vue
 
   def render
     _ModalDialog.summary_form!.wide_form color: 'commented' do
-      _h4.commented 'Send out summary of meeting'
+      _h4.commented 'Send out meeting summary to committers'
 
       _textarea.summary_text!.form_control rows: 17, tabIndex: 1,
         placeholder: 'committers summary', value: @summary, disabled: @disabled
@@ -29,7 +29,7 @@ class Summary < Vue
   # autofocus on summary text; fetch summary
   def mounted()
     @summary = ''
-    jQuery('#summary-form').on 'shown.bs.modal' do
+    jQuery('#summary-form').on 'show.bs.modal' do
       retrieve "summary/#{Agenda.title}", :text do |summary|
         document.getElementById("summary-text").focus()
         @disabled = false
