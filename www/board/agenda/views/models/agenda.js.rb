@@ -258,7 +258,7 @@ class Agenda
 
     if not Minutes.complete
       list << {form: Post, text: 'add item'}
-    else
+    elsif [:director, :secretary].include? User.role
       list << {form: Summary}
     end
 
