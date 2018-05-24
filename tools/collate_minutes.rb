@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
+puts $LOAD_PATH.first
 
 require 'whimsy/asf'
 require 'date'
@@ -70,7 +71,10 @@ Wunderbar.info "Processing minutes matching #{MINUTES_NAME}"
 if File.exist? "#{SITE_MINUTES}/index.html"
   input = Dir[MINUTES_PATH,
     "#{BOARD}/board_minutes_20*.txt"].
-    map {|name| File.stat(name).mtime}.push(File.stat(__FILE__).mtime).max
+    map {|name| File.stat(name).mtime}.
+    push(File.stat(__FILE__).mtime, ASF.library_mtime).
+    max
+
   if File.stat("#{SITE_MINUTES}/index.html").mtime >= input
     Wunderbar.info "All up to date!"
     exit unless force
@@ -441,12 +445,55 @@ seen={}
       establish += text
       next
     end
-    report = OpenStruct.new
-    report.title ||= title #.downcase
-    report.meeting = date
-    report.attach = '+' + title
-    report.text = text.strip
-    pending[title] = report
+
+    if title !~ /Discussion/ or text !~ /\A\n*\s{3,5}[0-9A-Z]\.\s.*\n\n/
+      report = OpenStruct.new
+      report.title ||= title #.downcase
+      report.meeting = date
+      report.attach = '+' + title
+      report.text = text.strip
+      pending[title] = report
+    else
+      text.scan(/
+        \s{3}[\s\d]([0-9A-Z])\. # agenda item
+        \s+(.*?)\n              # title
+        (.*?)                   # text
+        (?=\n\s{3,5}\d?[0-9A-Z]\.\s|\z) # next section
+      /mx).each do |attach,title,text|
+        if title.include? "\n" and title.length > 120
+	  title = title.split("\n")
+	  text = title[1..-1].join("\n") + "\n" + text
+	  title = title[0]
+	end
+
+        report = OpenStruct.new
+        report.title = title.gsub(/\s+/, ' ')
+        report.meeting = date
+        report.attach = '+' + title
+        report.text = text.strip
+
+        if title =~ /budget|spending/i
+          report.subtitle = title
+          report.title = 'Budget'
+          report.attach = '@' + attach
+        elsif title =~ /Legal Affairs/
+          report.subtitle = title
+          report.title = 'Legal Affairs'
+          report.attach = '1' + attach
+        else
+          pmcs = %w{Geronimo iBATIS Santuario}
+          pmcs.each do |pmc|
+            if title =~ /#{pmc}/i
+              report.subtitle = title
+              report.title = pmc
+              report.attach = '.' + pmc
+            end
+          end
+	end
+
+        pending[title] = report
+      end
+    end
   end
 
   # parse Special Orders
@@ -530,6 +577,7 @@ seen={}
       1, 'Brand Management', /use.*feather/,
       1, 'Brand Management', /Trademark/,
       1, 'Brand Management', /use.*Apache name/,
+      1, 'Brand Management', /Brand Management/i,
       1, 'Travel Assistance', /TAC/,
       1, 'Travel Assistance', /Travel Assistance/,
       1, 'Conference Planning', /Conference Planning/,
@@ -772,7 +820,11 @@ agenda.sort.each do |title, reports|
             x.p p, :style => "width: 40em"
           end
         elsif text.strip.empty?
-          x.p {x.em 'A report was expected, but not received'}
+          if report.subtitle and not report.subtitle.empty?
+            x.p {x.em 'Discussion Item with no text or minutes'}
+          else
+            x.p {x.em 'A report was expected, but not received'}
+          end
         end
       elsif report.text.strip.empty?
         x.p {x.em 'A report was expected, but not received'}
@@ -892,7 +944,7 @@ page = layout do |x|
       end
     end
   end
-  x.h2 "Other Attachments and Special Orders", :id => 'other'
+  x.h2 "Other Attachments, Special Orders, and Discussions", :id => 'other'
   x.ul do
     other = {}
     agenda.each do |title, reports|

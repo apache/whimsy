@@ -2,6 +2,7 @@
 header, body = @text.untaint.split(/\r?\n\r?\n/, 2)
 header.gsub! /\r?\n/, "\r\n"
 
+ASF::Mail.configure
 mail = Mail.new("#{header}\r\n\r\n#{body}")
 mail.deliver!
 
