@@ -124,8 +124,6 @@ class AddMinutes < Vue
   end
 
   def reflow()
-    console.log 'reflowing'
-    console.log Flow.text(@draft || '', ' ' * @indent)
     @draft = Flow.text(@draft || '', ' ' * @indent)
   end
 
