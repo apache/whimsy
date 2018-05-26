@@ -86,6 +86,11 @@ class Minutes
     self.complete and 
       not Server.drafts.include?  Agenda.file.sub('_agenda_', '_minutes_')
   end
+
+  # determine if committers summary has been sent
+  def self.summary_sent
+    @@list.todos and @@list.todos.summary_sent
+  end
 end
 
 Events.subscribe :minutes do |message|

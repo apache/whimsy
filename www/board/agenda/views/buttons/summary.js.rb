@@ -47,7 +47,8 @@ class Summary < Vue
     }
 
     @disabled = true
-    post 'summary', data do
+    post 'summary', data do |response|
+      Minutes.load response.minutes
       @disabled = false
       jQuery('#summary-form').modal(:hide)
       document.body.classList.remove('modal-open')

@@ -259,7 +259,7 @@ class Agenda
     if not Minutes.complete
       list << {form: Post, text: 'add item'}
     elsif [:director, :secretary].include? User.role
-      list << {form: Summary}
+      list << {form: Summary} unless Minutes.summary_sent
     end
 
     if User.role == :secretary 
