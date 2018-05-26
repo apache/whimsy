@@ -40,14 +40,8 @@ class Summary < Vue
   end
 
   def send(event)
-    data = {
-      agenda: Agenda.file,
-      message: "Draft minutes for #{Agenda.title}",
-      text: @summary
-    }
-
     @disabled = true
-    post 'summary', data do |response|
+    post 'summary', agenda: Agenda.file, text: @summary do |response|
       Minutes.load response.minutes
       @disabled = false
       jQuery('#summary-form').modal(:hide)
