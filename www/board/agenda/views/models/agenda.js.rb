@@ -9,6 +9,7 @@ class Agenda
   @@etag = nil
   @@digest = nil
   Vue.util.defineReactive @@date, ''
+  Vue.util.defineReactive @@approved, '?'
   @@color = 'blank'
 
   # (re)-load an agenda, creating instances for each item, and linking
@@ -247,6 +248,33 @@ class Agenda
       !(@flagged_by && @flagged_by.include?(initials))
   end
 
+  # determine if this agenda was approved in a later meeting
+  def self.approved
+    if @@approved == '?' and defined? fetch
+      options = {month: 'long', day: 'numeric', year: 'numeric'}
+      date = Date.new(Agenda.file[/\d\d\d\d_\d\d_\d\d/].
+        gsub('_', '-') + 'T18:30:00.000Z').toLocaleString('en-US', options)
+
+      Server.agendas.each do |agenda|
+        next if agenda <= Agenda.file
+        url = "../#{agenda[/\d\d\d\d_\d\d_\d\d/].gsub('_', '-')}.json"
+        fetch(url, credentials: 'include').then do |response|
+          if response.ok
+            response.json().then do |agenda|
+              agenda.each do |item|
+                @@approved = item.minutes if item.title == date and item.minutes
+              end
+            end
+          end
+        end
+      end
+      
+      @@approved = 'tabled'
+    end
+
+    return @@approved
+  end
+
   # the default view to use for the agenda as a whole
   def self.view
     Index
@@ -263,7 +291,7 @@ class Agenda
     end
 
     if User.role == :secretary 
-      if Server.drafts.include? Agenda.file.sub('agenda', 'minutes')
+      if Agenda.approved == 'approved'
         list << {form: PublishMinutes}
       elsif Minutes.ready_to_post_draft
         list << {form: DraftMinutes}
