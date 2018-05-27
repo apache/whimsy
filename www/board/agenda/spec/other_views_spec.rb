@@ -40,7 +40,7 @@ feature 'other reports' do
       '//p[3]/a[@href="Attic"]', text: 'Attic'
     expect(page).to have_selector :xpath,
       '//p[4]/a[@href="queue/Avro"]', text: 'Avro'
-    expect(page).to have_selector 'a.default', text: 'Legal Affairs'
+    expect(page).to have_selector 'a.default', text: 'December 17, 2014'
     expect(page).to have_selector 'dt a[href="Avro"]', text: 'Avro'
     expect(page).to have_selector 'dd p', text: 'Nice report!'
     expect(page).to have_selector 'li', 
