@@ -79,7 +79,7 @@ class Report < Vue
         Server.drafts.include? "board_minutes_#{date}.txt"
       then
         Vue.set @@item, 'minutes', ''
-        retrieve "minutes/#{date}", :text do |minutes|
+        retrieve "minutes/#{date}?#{@@item.mtime}", :text do |minutes|
           @@item.minutes = minutes
         end
       end
