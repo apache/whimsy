@@ -40,7 +40,7 @@ end
 get '/' do
   if env['REQUEST_URI'].end_with? '/'
     @committers = ASF::Person.list
-    @committees = ASF::Committee.list
+    @committees = ASF::Committee.pmcs
     @members = ASF::Member.list.keys - ASF::Member.status.keys
     @groups = Group.list
     @podlings = ASF::Podling.to_h.values
