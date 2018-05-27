@@ -19,7 +19,7 @@ class ASF::Board::Agenda
       attrs['text'] = attrs['text'].strip
       attrs['approved'] = attrs['approved'].strip.gsub(/\s+/, ' ')
 
-      file = attrs['text'][/board_minutes[_\d]+\.txt/]
+      file = attrs['text'][/board_minutes[_\d]+\.txt/].untaint
       if file and File.exist?(File.join(FOUNDATION_BOARD, file))
         attrs['mtime'] = File.mtime(File.join(FOUNDATION_BOARD, file)).to_i
       end

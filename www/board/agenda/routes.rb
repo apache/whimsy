@@ -294,8 +294,13 @@ end
 # draft minutes
 get '/text/minutes/:file' do |file|
   file = "board_minutes_#{file.gsub('-','_')}.txt".untaint
-  pass unless dir('board_minutes_*.txt').include? file
-  path = File.join(FOUNDATION_BOARD, file)
+  if dir('board_minutes_*.txt').include? file
+    path = File.join(FOUNDATION_BOARD, file)
+  elsif not Dir[File.join(ASF::SVN['minutes'], file[/\d+/], file)].empty?
+    path = File.join(ASF::SVN['minutes'], file[/\d+/], file)
+  else
+    pass
+  end
 
   _text do
     last_modified File.mtime(path)

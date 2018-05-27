@@ -74,10 +74,7 @@ class Report < Vue
       # if draft is available, fetch minutes for display
       date = @@item.text[/board_minutes_(\d+_\d+_\d+)\.txt/, 1]
 
-      if 
-        date and not defined? @@item.minutes and defined? XMLHttpRequest and
-        Server.drafts.include? "board_minutes_#{date}.txt"
-      then
+      if date and not defined? @@item.minutes and defined? XMLHttpRequest
         Vue.set @@item, 'minutes', ''
         retrieve "minutes/#{date}?#{@@item.mtime}", :text do |minutes|
           @@item.minutes = minutes
