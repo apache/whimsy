@@ -29,27 +29,27 @@ class Agenda
     end
 
     # remove president attachments from the normal flow
-    unless Minutes.started
-      @@index.each do |pres|
-        match = (pres.title == 'President' and pres.text and pres.text.
-          match(/Additionally, please see Attachments (\d) through (\d)/))
-        next unless match
+    @@index.each do |pres|
+      match = (pres.title == 'President' and pres.text and pres.text.
+	match(/Additionally, please see Attachments (\d) through (\d)/))
+      next unless match
 
-        first = last = nil
-        @@index.each do |item|
-          first = item if item.attach == match[1]
-          item._shepherd ||= pres.shepherd if first and !last
-          last  = item if item.attach == match[2]
-        end
+      # find first and last president report; update shepherd along the way
+      first = last = nil
+      @@index.each do |item|
+	first = item if item.attach == match[1]
+	item._shepherd ||= pres.shepherd if first and !last
+	last  = item if item.attach == match[2]
+      end
 
-        if first and last
-          first.prev.next = last.next
-          last.next.prev = first.prev
-          last.next.index = first.index
-          first.index = nil
-          last.next = pres
-          first.prev = pres
-        end
+      # remove president attachments from the normal flow
+      if first and last and not Minutes.started
+	first.prev.next = last.next
+	last.next.prev = first.prev
+	last.next.index = first.index
+	first.index = nil
+	last.next = pres
+	first.prev = pres
       end
     end
 
