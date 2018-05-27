@@ -250,7 +250,9 @@ class Agenda
 
   # determine if this agenda was approved in a later meeting
   def self.approved
-    if @@approved == '?' and defined? fetch
+    @@approved = 'approved' unless defined? fetch
+
+    if @@approved == '?'
       options = {month: 'long', day: 'numeric', year: 'numeric'}
       date = Date.new(Agenda.file[/\d\d\d\d_\d\d_\d\d/].
         gsub('_', '-') + 'T18:30:00.000Z').toLocaleString('en-US', options)
