@@ -491,7 +491,7 @@ class Agenda
 
     if @attach =~ /^(\d|7?[A-Z]+|4[A-Z]|8[.A-Z])$/
       if User.role == :secretary or not Minutes.complete
-        unless Server.drafts.include? Agenda.file.sub('_agenda_', '_minutes_')
+        unless Minutes.draft_posted
 	  if @attach =~ /^8[.A-Z]/
 	    if @attach =~ /^8[A-Z]/
 	      list << {form: Post, text: 'edit item'}
@@ -517,7 +517,7 @@ class Agenda
       end
 
     elsif User.role == :secretary
-      unless Server.drafts.include? Agenda.file.sub('_agenda_', '_minutes_')
+      unless Minutes.draft_posted
         if @attach =~ /^7\w/
           list << {form: Vote}
         elsif Minutes.get(@title)

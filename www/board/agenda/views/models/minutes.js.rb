@@ -87,6 +87,11 @@ class Minutes
       not Server.drafts.include?  Agenda.file.sub('_agenda_', '_minutes_')
   end
 
+  # determine if the draft is ready
+  def self.draft_posted
+    Server.drafts.include?  Agenda.file.sub('_agenda_', '_minutes_')
+  end
+
   # determine if committers summary has been sent
   def self.summary_sent
     @@list.todos and @@list.todos.summary_sent

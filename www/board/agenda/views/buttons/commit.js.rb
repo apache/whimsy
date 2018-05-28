@@ -13,7 +13,7 @@ class Commit < Vue
     {
       text: 'commit',
       class: 'btn_primary',
-      disabled: Server.offline,
+      disabled: Server.offline || Minutes.complete || Minutes.draft_posted,
       data_toggle: 'modal',
       data_target: '#commit-form'
     }
