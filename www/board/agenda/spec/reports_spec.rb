@@ -33,53 +33,56 @@ feature 'report' do
   end
 
   it "should show the Avro report" do
-    visit '/2015-01-21/Avro'
+    visit '/2015-02-18/ACE'
 
     # header
     expect(page).to have_selector '.navbar-fixed-top.reviewed .navbar-brand', 
-      text: 'Avro'
+      text: 'ACE'
 
     # info
-    expect(page).to have_selector 'dd', text: 'I'
-    expect(page).to have_selector 'dd', text: 'Tom White'
-    expect(page).to have_selector 'dd', text: 'Chris'
+    expect(page).to have_selector 'dd', text: 'B'
+    expect(page).to have_selector 'dd', text: 'Marcel Offermans'
+    expect(page).to have_selector 'dd', text: 'Sam'
     expect(page).to have_selector 'dd', text: /, sr,/
 
     # content
     expect(page).to have_selector 'pre', 
-      text: /no issues that require the board's attention/
+      text: /User reports with questions and issues about scripting/
 
     # no comments
     expect(page).not_to have_selector 'h4#comments', text: 'Comments'
 
     # footer
-    expect(page).to have_selector '.backlink[href="Attic"]', 
-     text: 'Attic'
-    expect(page).to have_selector 'button', text: 'edit comment'
+    expect(page).to have_selector '.backlink[href="Abdera"]', 
+     text: 'Abdera'
+    expect(page).to have_selector 'button', text: 'add comment'
     expect(page).to have_selector 'button', text: 'approve'
     expect(page).to have_selector 'button', text: 'edit report'
-    expect(page).to have_selector '.nextlink[href="Axis"]', 
-     text: 'Axis'
-
-    # pending comments
-    expect(page).to have_selector 'h5#pending', text: 'Pending Comment'
-    expect(page).to have_selector 'div.commented pre', text: 'jt: Nice report!'
+    expect(page).to have_selector '.nextlink[href="ActiveMQ"]', 
+     text: 'ActiveMQ'
 
     # hidden forms
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
-      text: 'Edit comment'
+      text: 'Enter a comment'
     expect(page).to have_selector 'input[id=flag][type=checkbox]'
     expect(page).to have_selector 'span', text: 'item requires discussion or follow up'
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Edit Report'
     expect(page).to have_selector '#post-report-text',
-      text: 'Apache Avro is a cross-language data serialization system.'
+      text: /Apache ACE is a software distribution framework/
     expect(page).to have_selector \
-      "#post-report-message[value='Edit Avro Report']"
+      "#post-report-message[value='Edit ACE Report']"
+  end
+
+  it "should show pending comments" do
+    visit '/2015-01-21/Avro'
+    expect(page).to have_selector 'h5#pending', text: 'Pending Comment'
+    expect(page).to have_selector 'div.commented pre', text: 'jt: Nice report!'
+    expect(page).to have_selector 'button', text: 'edit comment'
   end
 
   it "should show missing reports" do
-    visit '/2015-01-21/DirectMemory'
+    visit '/2015-02-18/DirectMemory'
     expect(page).to have_selector 'pre em', text: 'Missing'
     expect(page).not_to have_selector 'dt', text: 'Approved'
 
@@ -88,22 +91,25 @@ feature 'report' do
     expect(page).to have_selector 'button', text: 'add comment'
     expect(page).not_to have_selector 'button', text: 'approve'
     expect(page).to have_selector 'pre.comment', 
-      text: 'sr: I have the action from last month.'
+      text: "gs: notified. heard back already: they'll submit next month."
 
-    # action items
-    expect(page).to have_selector 'h4 a[href="Action-Items"]',
-      text: 'Action Items'
-    expect(page).to have_selector 'button', text: 'post report'
-    expect(page).to have_selector 'pre.report', 
-      text: '* Sam: Follow up with a more complete report next month'
 
     # hidden forms
+    expect(page).to have_selector 'button', text: 'post report'
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Enter a comment'
     expect(page).to have_selector '.modal .modal-dialog .modal-header h4',
       text: 'Post Report'
     expect(page).to have_selector \
       "#post-report-message[value='Post DirectMemory Report']"
+  end
+
+  it "should show action items" do
+    visit '/2015-01-21/DirectMemory'
+    expect(page).to have_selector 'pre.report', 
+      text: '* Sam: Follow up with a more complete report next month'
+    expect(page).to have_selector 'h4 a[href="Action-Items"]',
+      text: 'Action Items'
   end
 
   it "should show draft minutes" do
