@@ -28,7 +28,7 @@ class Index < Vue
             _td { _Link text: row.title, href: row.href }
           end
 
-          _td row.owner
+          _td row.owner || row.chair_name
           _td do
             if row.shepherd
               _Link text: row.shepherd,

@@ -98,7 +98,7 @@ class ASF::Board::Agenda
 
         next unless committee.names
         committee.names.each do |id, name|
-          people << [name, id] if text.include? name
+          people << [name, id] if text.include? name or title.include? 'Term'
         end
 
         if people.length < 2 and not title.start_with? 'Terminate'
@@ -106,7 +106,11 @@ class ASF::Board::Agenda
           attrs['names'] = committee.names
         end
 
-        need_chair = true if title =~ /Change (.*?) Chair/
+        if title =~ /Change (.*?) Chair/
+          need_chair = true 
+        else # Terminate
+          attrs['chair'] = committee.chair.id
+        end
 
       elsif title =~ /Establish (.*)/
         name = $1

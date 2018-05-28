@@ -187,6 +187,13 @@ class Agenda
       @notes.sub(/^.*missing/, '').split(',').length >= 2
   end
 
+  # extract (new) chair name from resolutions
+  def chair_name
+    if @chair
+      @people[@chair].name
+    end
+  end
+
   # compute href by taking the title and replacing all non alphanumeric
   # characters with dashes
   def href
