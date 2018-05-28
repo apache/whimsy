@@ -10,7 +10,7 @@ feature 'report' do
   end
 
   it "should allow timestamps to be edited" do
-    visit '/2015-01-21/Call-to-order'
+    visit '/2015-02-18/Call-to-order'
     expect(page).to have_selector 'button', text: 'edit minutes'
   end
 
@@ -33,10 +33,10 @@ feature 'report' do
   end
 
   it "should prompt for action items" do
-    visit '/2015-01-21/Ant'
+    visit '/2015-02-18/Hama'
     expect(page).to have_selector 'button', text: 'add minutes'
-    expect(page).to have_selector 'option', text: 'Bertrand'
-    expect(page).to have_selector 'textarea', text: 'pursue a report for Ant'
+    expect(page).to have_selector 'option', text: 'Sam'
+    expect(page).to have_selector 'textarea', text: 'pursue a report for Hama'
     expect(page).to have_selector 'button', text: '+ AI'
   end
 

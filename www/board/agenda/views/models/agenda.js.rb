@@ -515,14 +515,16 @@ class Agenda
       end
 
     elsif User.role == :secretary
-      if @attach =~ /^7\w/
-        list << {form: Vote}
-      elsif Minutes.get(@title)
-        list << {form: AddMinutes, text: 'edit minutes'}
-      elsif ['Call to order', 'Adjournment'].include? @title
-        list << {button: Timestamp}
-      else
-        list << {form: AddMinutes, text: 'add minutes'}
+      unless Server.drafts.include? Agenda.file.sub('_agenda_', '_minutes_')
+        if @attach =~ /^7\w/
+          list << {form: Vote}
+        elsif Minutes.get(@title)
+          list << {form: AddMinutes, text: 'edit minutes'}
+        elsif ['Call to order', 'Adjournment'].include? @title
+          list << {button: Timestamp}
+        else
+          list << {form: AddMinutes, text: 'add minutes'}
+        end
       end
 
       if @attach =~ /^3\w/
