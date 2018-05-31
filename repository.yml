@@ -56,6 +56,10 @@
     url: asf/incubator/public/trunk/content
     depth: files
 
+  ldap-map:
+    url: private/committers/tools/ldap
+    depth: files
+
   member_apps:
     url: private/documents/member_apps
 
