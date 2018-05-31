@@ -180,13 +180,22 @@ _json do
   end
 
   localrev, lerr = ASF::SVN.getRevision(local_path.untaint)
-  serverrev, serr = ASF::SVN.getRevision(repository_url.untaint)
-  {
-    log: log.to_s.split("\n"),
-    path: local_path,
-    local: localrev || lerr.split("\n").last, # generally the last SVN error line is the cause
-    server: serverrev || serr.split("\n").last
-  }
+  if repository_url
+    serverrev, serr = ASF::SVN.getRevision(repository_url.untaint)
+    {
+      log: log.to_s.split("\n"),
+      path: local_path,
+      local: localrev || lerr.split("\n").last, # generally the last SVN error line is the cause
+      server: serverrev || serr.split("\n").last
+    }
+  else
+    {
+      log: log.to_s.split("\n"),
+      path: local_path,
+      local: localrev || lerr.split("\n").last, # generally the last SVN error line is the cause
+      server: "ERROR: no repository found for name,local_path: #{@name},#{local_path}"
+    }
+  end
 end
 
 # standalone (local) support
