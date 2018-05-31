@@ -161,7 +161,8 @@ _json do
       log = log + `svn update #{local_path.untaint} 2>&1`
     end
 
-    repository_url = ASF::SVN.getInfo(local_path)[/^URL: (.*)/, 1]
+    info, err = ASF::SVN.getInfo(local_path)
+    repository_url = info[/^URL: (.*)/, 1]
 
   else
     if @action == 'checkout'
