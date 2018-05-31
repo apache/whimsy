@@ -179,10 +179,6 @@ end
 # Submit the committer's provided mapping of their own IDs
 def submit_form(formdata: {})
   formdata[SUBMITTED_AT] = Time.now.iso8601
-  _div.well do
-    _p 'Your ID Mapping being submitted:'
-    _pre JSON.pretty_generate(formdata) + "\n"
-  end
   rc = 999 # Ensure it's a bogus value
   Dir.mktmpdir do |tmpdir|
     tmpdir.untaint
@@ -198,13 +194,8 @@ def submit_form(formdata: {})
     File.write(filename, JSON.pretty_generate(idmaps))
     
     Dir.chdir tmpdir do
-      message = "#{formdata[COMMITTERID]} JIRA=#{formdata[JIRA]} Confluence=#{formdata[CONFLUENCE]}"
-      _p "DEBUG: commit message = #{message}" # TODO DEBUG: only providing a diff until tested
-      rc = _.system ['svn', 'diff', filename,
+      rc = _.system ['svn', 'commit', filename, '--message', "#{formdata[COMMITTERID]} JIRA=#{formdata[JIRA]} Confluence=#{formdata[CONFLUENCE]}",
         ['--no-auth-cache', '--non-interactive'], credentials]
-      # TODO DEBUG: only providing a diff until tested
-      # rc = _.system ['svn', 'commit', filename, '--message', message,
-      #   ['--no-auth-cache', '--non-interactive'], credentials]
     end
   end
 
