@@ -162,7 +162,7 @@ _json do
     end
 
     info, err = ASF::SVN.getInfo(local_path)
-    repository_url = info[/^URL: (.*)/, 1]
+    repository_url = info[/^URL: (.*)/, 1] if info
 
   else
     if @action == 'checkout'
