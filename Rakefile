@@ -88,6 +88,7 @@ namespace :svn do
 
     # checkout/update svn repositories
     svn = ASF::Config.get(:svn)
+    svn = Array(svn).find {|path| String === path and path.end_with? '/*'}
     if svn.instance_of? String and svn.end_with? '/*'
       Dir.chdir File.dirname(svn) do
         require 'uri'
