@@ -123,17 +123,21 @@ task "email #@email" do
   end
 
   # choose reply message based on whether or not the project/userid info was provided
+  use_Bcc = false # should we use Bcc for the secretary?
   if @user and not @user.empty?
     if @valid_user
       # pmc vote verified and id is valid
       reply = 'icla-account-requested.erb'
+      use_Bcc = true # it's now up to the (P)PMC
     else
       # pmc vote verified but id is invalid
       reply = 'icla-invalid-id.erb'
+      use_Bcc = true # it's now up to the (P)PMC
     end
   elsif @pmc
     # no pmc vote but pmc was requested to be notified or user is active on project
     reply = 'icla-pmc-notified.erb'
+    use_Bcc = true # it's now up to the (P)PMC
   else
     # no evidence of project activity by the submitter
     reply = 'icla.erb'
@@ -145,10 +149,11 @@ task "email #@email" do
     from: @from,
     to: "#{@pubname.inspect} <#{@email}>",
     cc: [
-      'secretary@apache.org',
+      ('secretary@apache.org' unless use_Bcc),
       ("private@#{@pmc.mail_list}.apache.org" if @pmc), # copy pmc
       (@podling.private_mail_list if @podling) # copy podling
     ],
+    bcc: [ ('secretary@apache.org' if use_Bcc)],
     body: template(reply)
   )
 
