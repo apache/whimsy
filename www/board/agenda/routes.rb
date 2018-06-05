@@ -9,6 +9,15 @@ get '/' do
   redirect "#{request.path}#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/"
 end
 
+# alias for latest agenda
+get '/latest/' do
+  agenda = dir('board_agenda_*.txt').sort.last
+  pass unless agenda
+  call env.merge(
+    'PATH_INFO' => "/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/"
+  )
+end
+
 # redirect shepherd to latest agenda
 get '/shepherd' do
   user=ASF::Person.find(env.user).public_name.split(' ').first

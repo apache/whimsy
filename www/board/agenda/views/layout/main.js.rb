@@ -108,7 +108,11 @@ class Main < Vue
       if path == 'bootstrap.html'
         path = document.location.href
         base = document.getElementsByTagName('base')[0].href
-        path = path.slice(base.length) if path.start_with? base
+        if path.start_with? base
+          path = path.slice(base.length) 
+        elsif path.end_with? '/latest/'
+          path = '.'
+        end
       end
 
       history.replaceState({path: path}, nil, path)

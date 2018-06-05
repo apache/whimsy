@@ -99,6 +99,31 @@ def fetch_from_cache(event)
   end
 end
 
+# Return latest bootstrap page from the cache
+def latest(event)
+  return Promise.new do |fulfill, reject|
+    caches.open('board/agenda').then do |cache|
+      cache.matchAll().then do |responses|
+        match = nil
+        responses.each do |response|
+          if response.url.end_with? '/bootstrap.html'
+            match = response if not match or match.url < response.url
+          end
+	end
+
+        if match
+          fulfill(match)
+
+          request = Request.new(match.url, cache: "no-store")
+          fetch(request).then {|response| cache.put request, response}
+        else
+          fetch(event.request).then(fulfill, reject)
+        end
+      end
+    end
+  end
+end
+
 # Return a bootstrap.html page within 0.5 seconds.  If the network responds
 # in time, go with that response, otherwise respond with a cached version.
 def bootstrap(event, request)
@@ -164,8 +189,6 @@ self.addEventListener :fetch do |event|
   url = url.slice(scope.length) if url.start_with? scope
 
   if event.request.method == 'GET'
-    return if url.end_with? '/bootstrap.html'
-
     # determine what url to fetch (if any)
     if url.end_with? '/bootstrap.html'
       return
@@ -182,6 +205,12 @@ self.addEventListener :fetch do |event|
     elsif url =~ %r{\.(js|css)\?\d+$}
       # cache and respond to js and css requests
       event.respondWith(fetch_from_cache(event))
+
+    elsif url == ''
+      # event.respondWith(Response.redirect('latest/'))
+
+    elsif url == 'latest/'
+      event.respondWith(latest(event))
     end
   end
 end
