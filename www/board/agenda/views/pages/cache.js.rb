@@ -41,13 +41,21 @@ class CacheStatus < Vue
     else
       _table.table do
         _thead do
+          _th 'URL'
           _th 'Scope'
           _th 'Status'
         end
 
         _tbody @registrations do |registration|
           _tr do
+            _td do
+              if registration.active
+                _span registration.active.scriptURL
+              end
+            end
+
             _td registration.scope
+
             _td do
               if registration.installing
                 _span 'installing' 
