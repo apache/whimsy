@@ -53,11 +53,11 @@ def cache_replace(cache, request, response)
   cache.put(request, response)
 end
 
-# request all clients to reload content if css or js changed
-def reload()
+# broadcast a message to all clients
+def broadcast(type)
   clients.matchAll().then do |clients|
     clients.each do |client|
-      client.postMessage(type: 'reload')
+      client.postMessage(type: type)
     end
   end
 end
@@ -80,7 +80,7 @@ def preload(cache, base, text, toolate)
         fetch(request).then do |response|
           cache_replace(cache, request, response) if response.ok
           count -= 1
-          reload() if toolate and changed and count == 0
+          broadcast(:reload) if toolate and changed and count == 0
         end
       end
     end
@@ -99,7 +99,9 @@ def fetch_from_cache(event)
   end
 end
 
-# Return latest bootstrap page from the cache
+# Return latest bootstrap page from the cache; then update the bootstrap
+# from the server.  If the body has changed, broadcast that information to
+# all the browser window clients.
 def latest(event)
   return Promise.new do |fulfill, reject|
     caches.open('board/agenda').then do |cache|
@@ -112,10 +114,19 @@ def latest(event)
 	end
 
         if match
-          fulfill(match)
+          match.clone().text().then do |before|
+            fulfill(match)
 
-          request = Request.new(match.url, cache: "no-store")
-          fetch(request).then {|response| cache.put request, response}
+            request = Request.new(match.url, cache: "no-store")
+            fetch(request).then do |response| 
+              if response.ok
+                response.match().text().then do |after|
+                  cache.put request, response
+                  broadcast(:latest) if after != before
+                end
+              end
+            end
+          end
         else
           fetch(event.request).then(fulfill, reject)
         end
