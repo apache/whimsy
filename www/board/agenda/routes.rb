@@ -196,6 +196,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
 
   @cssmtime = File.mtime('public/stylesheets/app.css').to_i
   @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
+  @server[:swmtime] = File.mtime("#{settings.views}/sw.js.rb").to_i
 
   if path == 'bootstrap.html'
     unless env.password

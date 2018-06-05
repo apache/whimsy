@@ -41,7 +41,8 @@ class PageCache
   def self.register()
     # register service worker
     scope = URL.new('..', document.getElementsByTagName('base')[0].href)
-    navigator.serviceWorker.register(scope + 'sw.js', scope).then do
+    swjs = "#{scope}sw.js?#{Server.swmtime}"
+    navigator.serviceWorker.register(swjs, scope).then do
       # watch for reload requests from the service worker
       navigator.serviceWorker.addEventListener 'message' do |event|
         if event.data.type == 'reload'
