@@ -82,6 +82,7 @@ class Main < Vue
     self.route(path, query)
     history.pushState({path: path, query: query}, nil, path)
     window.onresize()
+    Main.latest = false if path
   end
 
   # refresh the current page
@@ -99,6 +100,7 @@ class Main < Vue
     Main.navigate = self.navigate
     Main.refresh  = self.refresh
     Main.view  = $refs.view
+    Main.item = Agenda
 
     # store initial state in history, taking care not to overwrite
     # history set by the Search component.
@@ -111,6 +113,7 @@ class Main < Vue
         if path.start_with? base
           path = path.slice(base.length) 
         elsif path.end_with? '/latest/'
+          Main.latest = true
           path = '.'
         end
       end

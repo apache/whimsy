@@ -45,11 +45,13 @@ class PageCache
     navigator.serviceWorker.register(swjs, scope).then do
       # watch for reload requests from the service worker
       navigator.serviceWorker.addEventListener 'message' do |event|
-        if event.data.type == 'reload'
-          # ignore reload request if any input or textarea element is visible
-          inputs = document.querySelectorAll('input, textarea')
-          unless Array(inputs).map {|element| element.offsetWidth}.max() > 0
+        # ignore requests if any input or textarea element is visible
+        inputs = document.querySelectorAll('input, textarea')
+        unless Array(inputs).map {|element| element.offsetWidth}.max() > 0
+          if event.data.type == 'reload'
             window.location.reload() 
+          elsif event.data.type == 'latest' and Main.latest
+            self.latest(event.data.body)
           end
         end
       end
@@ -60,6 +62,36 @@ class PageCache
         registration.active.postMessage type: 'preload',
           url: base + 'bootstrap.html'
       end
+    end
+
+    if Main.item == Agenda and Main.latest
+      fetch('bootstrap.html').then do |response|
+        response.text().then do |body|
+          self.latest(body)
+        end
+      end
+    end
+  end
+
+  # if the entry point URL is /latest/, the service worker will optimistically
+  # show the latest known agenda. If it turns out that there is a later one,
+  # refresh with that page.
+  def self.latest(body)
+    # ignore requests if any input or textarea element is visible
+    inputs = document.querySelectorAll('input, textarea')
+    return if Array(inputs).map {|element| element.offsetWidth}.max() > 0
+
+    latest = nil
+    data = body[/"agendas":\[.*?\]/]
+
+    agenda_re = Regexp.new('board_agenda_\d\d\d\d_\d\d_\d\d.txt', 'g')
+    while agenda = agenda_re.exec(data)
+      latest = agenda[0] unless latest and latest > agenda[0]
+    end
+
+    if latest and latest != Agenda.file
+      date = latest[/\d\d\d\d_\d\d_\d\d/].gsub('_', '-')
+      window.location.href = "../#{date}/"
     end
   end
 end

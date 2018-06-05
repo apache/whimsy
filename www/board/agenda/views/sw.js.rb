@@ -54,10 +54,10 @@ def cache_replace(cache, request, response)
 end
 
 # broadcast a message to all clients
-def broadcast(type)
+def broadcast(message)
   clients.matchAll().then do |clients|
     clients.each do |client|
-      client.postMessage(type: type)
+      client.postMessage(message)
     end
   end
 end
@@ -80,7 +80,7 @@ def preload(cache, base, text, toolate)
         fetch(request).then do |response|
           cache_replace(cache, request, response) if response.ok
           count -= 1
-          broadcast(:reload) if toolate and changed and count == 0
+          broadcast(type: 'reload') if toolate and changed and count == 0
         end
       end
     end
@@ -120,9 +120,9 @@ def latest(event)
             request = Request.new(match.url, cache: "no-store")
             fetch(request).then do |response| 
               if response.ok
-                response.match().text().then do |after|
+                response.clone().text().then do |after|
                   cache.put request, response
-                  broadcast(:latest) if after != before
+                  broadcast(type: 'latest', body: after) # if after != before
                 end
               end
             end
