@@ -24,7 +24,9 @@ require 'mail'
 require 'open-uri'
 require 'erubis'
 
-disable :logging # suppress log of requests to stderr/error.log
+unless ENV['RACK_ENV'] == 'development'
+  disable :logging # suppress log of requests to stderr/error.log
+end
 
 # determine where relevant data can be found
 if ENV['RACK_ENV'] == 'test'
