@@ -50,11 +50,14 @@ class CacheStatus < Vue
           _tr do
             _td do
               if registration.active
-                _span registration.active.scriptURL
+                _a registration.active.scriptURL,
+                 href: registration.active.scriptURL
               end
             end
 
-            _td registration.scope
+            _td do
+              _a registration.scope, href: registration.scope
+            end
 
             _td do
               if registration.installing

@@ -8,7 +8,7 @@ class Index < Vue
       _h1 'ASF Board Agenda'
     end
 
-    _table.table_bordered do
+    _table.table_bordered.agenda do
       _thead do
         _th 'Attach'
         _th 'Title'

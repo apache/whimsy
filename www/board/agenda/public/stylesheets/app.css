@@ -96,12 +96,12 @@ a.h3, a.h4 {
 }
 
 /* center the table */
-table {
+table.agenda {
   margin-left: auto;
   margin-right: auto
 }
 
-td:first-child {
+table.agenda td:first-child {
   text-align: center
 }
 
