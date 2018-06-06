@@ -71,6 +71,26 @@ class PageCache
         end
       end
     end
+
+    self.cleanup(scope.toString(), Server.agendas)
+  end
+
+  # remove cached pages associated with agendas that are no longer present
+  def self.cleanup(scope, agendas)
+    agendas = agendas.map {|agenda| agenda[/\d\d\d\d_\d\d_\d\d/].gsub('_', '-')}
+
+    caches.open('board/agenda').then do |cache|
+      cache.matchAll().then do |responses|
+	urls = responses.map {|response| response.url}.select do |url|
+          part = url[scope.length..-1].split('/')[0].split('.')[0]
+         part =~ /^\d\d\d\d-\d\d-\d\d$/ && !agendas.include?(part)
+        end
+
+        urls.each do |url|
+          cache.delete(url).then {}
+        end
+      end
+    end
   end
 
   # if the entry point URL is /latest/, the service worker will optimistically
