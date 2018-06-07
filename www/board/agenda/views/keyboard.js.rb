@@ -25,11 +25,11 @@ class Keyboard
           return false
         end
       elsif event.keyCode == 13 # 'enter'
-        link = ~".default"[0]
+        link = document.querySelector(".default")
         Main.navigate link.getAttribute('href') if link
         return false
       elsif event.keyCode == 'C'.ord
-        link = ~"#comments"[0]
+        link = document.getElementById("comments")
         if link
           jQuery('html, body').animate({scrollTop: link.offsetTop}, :slow);
         else
@@ -44,7 +44,7 @@ class Keyboard
         Main.navigate 'missing'
         return false
       elsif event.keyCode == 'N'.ord
-        ~"#nav".click
+        document.getElementById("nav").click()
         return false
       elsif event.keyCode == 'A'.ord
         Main.navigate '.'
@@ -54,7 +54,7 @@ class Keyboard
           User.role = :secretary
           Main.refresh()
         else
-          link = ~"#shepherd"[0]
+          link = document.getElementById("shepherd")
           Main.navigate link.getAttribute('href') if link
         end
         return false
