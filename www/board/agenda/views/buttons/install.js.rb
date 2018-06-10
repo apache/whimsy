@@ -10,6 +10,7 @@ class Install < Vue
     PageCache.installprompt.userChoice.then do |result|
       console.log "install: #{result}"
       PageCache.installprompt = nil
+      Main.refresh()
     end
   end
 end
