@@ -76,6 +76,7 @@ class PageCache
 
     window.addEventListener :beforeinstallprompt do |event|
       @@installprompt = event
+      Main.refresh() if Main.item.view == Help
       event.preventDefault();
     end
 
