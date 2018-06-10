@@ -9,7 +9,8 @@ use ASF::Auth::MembersAndOfficers do |env|
     env['PATH_INFO'] =~ %r{^/(app|sw)\.js(\.map)?$} or
     env['PATH_INFO'] =~ %r{\.js\.rb?$} or
     env['PATH_INFO'] =~ %r{^/stylesheets/.*\.css\$} or
-    env['PATH_INFO'] =~ %r{^/[-\d]+/bootstrap.html$}
+    env['PATH_INFO'] =~ %r{^/[-\d]+/bootstrap.html$} or
+    env['PATH_INFO'] == '/manifest.json'
   then
     next true
   end
