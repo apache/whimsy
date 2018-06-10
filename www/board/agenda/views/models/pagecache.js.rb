@@ -128,6 +128,6 @@ class PageCache
   end
 
   def self.installprompt=(value)
-    @@installprompt == value
+    @@installprompt = value
   end
 end
