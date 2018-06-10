@@ -38,6 +38,7 @@ E: footer must match /This directory contains meta-data for the ASF mirroring sy
 E: mirror-tests/ must exist
 W: its files must not have content-encoding:
    1mb.img.7z 1mb.img.bz2 1mb.img.tar.gz 1mb.img.tgz 1mb.img.zip
+W: zzz/mirror-tests/redirect-test/ should redirect to http://www.apache.org/ (302)
 
 TODO - any more checks?
 
@@ -94,6 +95,21 @@ def getHTTPHdrs(url)
   http.use_ssl = uri.scheme == 'https'
   request = Net::HTTP::Head.new(uri.request_uri)
   http.request(request)
+end
+
+def check_redirect(base, page, expectedLocation, severity=:W, expectedStatus = "302", log=true)
+  path = base + page
+  response = getHTTPHdrs(path)
+  if response.code != expectedStatus
+    test severity, "HTTP status #{response.code} for '#{path}'" unless severity == nil
+    return nil
+  end
+  if response['location'] != expectedLocation
+    test severity, "HTTP location #{response['location']} for '#{path}' - expected '#{expectedLocation}'" unless severity == nil
+    return nil
+  end
+  I "Fetched #{path} - redirected OK to #{response['location']}" if log
+  response
 end
 
 def check_CT(base, page, severity=:E, expectedStatus = 200)
@@ -280,6 +296,7 @@ def checkHTTP(base)
   MIRRORTEST_FILES.each do |file|
     check_CT(base, MIRRORTEST + file)
   end
+  check_redirect(base, 'zzz/mirror-tests/redirect-test/xyz', 'http://www.apache.org/')
 end
 
 def init
