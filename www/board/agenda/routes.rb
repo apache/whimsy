@@ -27,6 +27,7 @@ end
 # Progress Web App Manfest
 get '/manifest.json' do
   @svgmtime = File.mtime(File.expand_path('../../../whimsy.svg', __FILE__)).to_i
+  @pngmtime = File.mtime(File.expand_path('../public/whimsy.png', __FILE__)).to_i
 
   # capture all the variable content
   hash = {

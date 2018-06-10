@@ -8,6 +8,7 @@
 #
 
 class PageCache
+  Vue.util.defineReactive @@installPrompt, nil
 
   # is page cache available?
   def self.enabled
@@ -64,12 +65,18 @@ class PageCache
       end
     end
 
+    # fetch bootstrap from server, and update latest once it is received
     if Main.item == Agenda and Main.latest
       fetch('bootstrap.html').then do |response|
         response.text().then do |body|
           self.latest(body)
         end
       end
+    end
+
+    window.addEventListener :beforeinstallprompt do |event|
+      @@installprompt = event
+      event.preventDefault();
     end
 
     self.cleanup(scope.toString(), Server.agendas)
@@ -113,5 +120,14 @@ class PageCache
       date = latest[/\d\d\d\d_\d\d_\d\d/].gsub('_', '-')
       window.location.href = "../#{date}/"
     end
+  end
+
+  # install prompt support
+  def self.installprompt
+    @@installprompt
+  end
+
+  def self.installprompt=(value)
+    @@installprompt == value
   end
 end
