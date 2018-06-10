@@ -86,7 +86,7 @@ class Router
       item = {view: Help}
 
       # Progressive Web Application 'Add to Home Screen' support
-      item.buttons = [{button: Install}] if PageCache.installprompt
+      item.buttons = [{button: Install}] if PageCache.installPrompt
 
     elsif path == 'bootstrap.html'
       item = {view: BootStrapPage, title: ' '}

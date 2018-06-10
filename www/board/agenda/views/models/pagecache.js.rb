@@ -75,7 +75,7 @@ class PageCache
     end
 
     window.addEventListener :beforeinstallprompt do |event|
-      @@installprompt = event
+      @@installPrompt = event
       Main.refresh() if Main.item.view == Help
       event.preventDefault();
     end
@@ -124,11 +124,11 @@ class PageCache
   end
 
   # install prompt support
-  def self.installprompt
-    @@installprompt
+  def self.installPrompt
+    @@installPrompt
   end
 
-  def self.installprompt=(value)
-    @@installprompt = value
+  def self.installPrompt=(value)
+    @@installPrompt = value
   end
 end

@@ -7,10 +7,10 @@ class Install < Vue
   end
 
   def click(event)
-    PageCache.installprompt.prompt();
-    PageCache.installprompt.userChoice.then do |result|
-      console.log "install: #{result}"
-      PageCache.installprompt = nil
+    PageCache.installPrompt.prompt();
+    PageCache.installPrompt.userChoice.then do |choice|
+      console.log "install: #{choice.outcome}"
+      PageCache.installPrompt = nil if choice.outcome == 'accepted'
       Main.refresh()
     end
   end
