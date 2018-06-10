@@ -18,6 +18,29 @@ get '/latest/' do
   )
 end
 
+# icon
+get '/whimsy.svg' do
+  send_file File.expand_path('../../../whimsy.svg', __FILE__),
+    type: 'image/svg+xml'
+end
+
+# Progress Web App Manfest
+get '/manifest.json' do
+  @svgmtime = File.mtime(File.expand_path('../../../whimsy.svg', __FILE__)).to_i
+
+  # capture all the variable content
+  hash = {
+    source: File.read("#{settings.views}/manifest.json.erb"),
+    svgmtime: @svgmtime
+  }
+
+  # detect if there were any modifications
+  etag Digest::MD5.hexdigest(JSON.dump(hash))
+
+  content_type 'application/json'
+  erb :"manifest.json"
+end
+
 # redirect shepherd to latest agenda
 get '/shepherd' do
   user=ASF::Person.find(env.user).public_name.split(' ').first
@@ -195,6 +218,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   @page[:minutes] = YAML.load(File.read(minutes)) if File.exist? minutes
 
   @cssmtime = File.mtime('public/stylesheets/app.css').to_i
+  @manmtime = File.mtime("#{settings.views}/manifest.json.erb").to_i
   @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
   @server[:swmtime] = File.mtime("#{settings.views}/sw.js.rb").to_i
 
@@ -213,8 +237,10 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
 
     # capture all the variable content
     hash = {
+      source: File.read("#{settings.views}/bootstrap.html.erb"),
       cssmtime: @cssmtime, 
       appmtime: @appmtime, 
+      manmtime: @manmtime, 
       scripts: Wunderbar::Asset.scripts.
         map {|script| [script.path, script.mtime.to_i]}.sort,
       stylesheets: Wunderbar::Asset.stylesheets.

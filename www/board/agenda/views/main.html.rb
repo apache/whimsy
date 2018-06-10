@@ -6,6 +6,7 @@ _html do
   _base href: @base
   _title 'ASF Board Agenda'
   _link rel: 'stylesheet', href: "../stylesheets/app.css?#{@cssmtime}"
+  _link rel: 'manifest', href: "../manifest.json?#{@manmtime}"
   _meta name: 'viewport', content: 'width=device-width, initial-scale=1.0'
 
   _div_.main!
