@@ -7,6 +7,7 @@ class Install < Vue
   end
 
   def click(event)
+    PageCache.installprompt.prompt();
     PageCache.installprompt.userChoice.then do |result|
       console.log "install: #{result}"
       PageCache.installprompt = nil
