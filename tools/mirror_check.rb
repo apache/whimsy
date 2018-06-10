@@ -112,10 +112,10 @@ def check_redirect(base, page, expectedLocation, severity=:W, expectedStatus = "
   response
 end
 
-def check_CT(base, page, severity=:E, expectedStatus = 200)
+def check_CT(base, page, severity=:E, expectedStatus = "200")
   path = base + page
   response = getHTTPHdrs(path)
-  if response.code.to_i != expectedStatus
+  if response.code != expectedStatus
     test severity, "HTTP status #{response.code} for '#{path}'" unless severity == nil
     return nil
   end
