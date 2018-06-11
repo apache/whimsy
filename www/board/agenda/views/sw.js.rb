@@ -111,7 +111,7 @@ def latest(event)
           if response.url.end_with? '/bootstrap.html'
             match = response if not match or match.url < response.url
           end
-	end
+        end
 
         if match
           match.clone().text().then do |before|

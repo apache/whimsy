@@ -305,12 +305,12 @@ class FY23 < Vue
                           #        = 2*Fy18 + 3*FY23
           
                    2*100 + 
-			  # EA adjustment: instead of ramping down, the
-			  # reduction in expense is immediate and constant.
+                          # EA adjustment: instead of ramping down, the
+                          # reduction in expense is immediate and constant.
 
                    600
-			  # BTC adjustment: we expect to see a minimum of $600K
-			  # from the recent PineApple Fund BTC donation.
+                          # BTC adjustment: we expect to see a minimum of $600K
+                          # from the recent PineApple Fund BTC donation.
   end
 
   # update budget item when an input field changes

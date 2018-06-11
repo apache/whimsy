@@ -31,25 +31,25 @@ class Agenda
     # remove president attachments from the normal flow
     @@index.each do |pres|
       match = (pres.title == 'President' and pres.text and pres.text.
-	match(/Additionally, please see Attachments (\d) through (\d)/))
+        match(/Additionally, please see Attachments (\d) through (\d)/))
       next unless match
 
       # find first and last president report; update shepherd along the way
       first = last = nil
       @@index.each do |item|
-	first = item if item.attach == match[1]
-	item._shepherd ||= pres.shepherd if first and !last
-	last  = item if item.attach == match[2]
+        first = item if item.attach == match[1]
+        item._shepherd ||= pres.shepherd if first and !last
+        last  = item if item.attach == match[2]
       end
 
       # remove president attachments from the normal flow
       if first and last and not Minutes.started
-	first.prev.next = last.next
-	last.next.prev = first.prev
-	last.next.index = first.index
-	first.index = nil
-	last.next = pres
-	first.prev = pres
+        first.prev.next = last.next
+        last.next.prev = first.prev
+        last.next.index = first.index
+        first.index = nil
+        last.next = pres
+        first.prev = pres
       end
     end
 
@@ -499,21 +499,21 @@ class Agenda
     if @attach =~ /^(\d|7?[A-Z]+|4[A-Z]|8[.A-Z])$/
       if User.role == :secretary or not Minutes.complete
         unless Minutes.draft_posted
-	  if @attach =~ /^8[.A-Z]/
-	    if @attach =~ /^8[A-Z]/
-	      list << {form: Post, text: 'edit item'}
-	    elsif not text or @text.strip().empty?
-	      list << {form: Post, text: 'post item'}
-	    else
-	      list << {form: Post, text: 'edit items'}
-	    end
-	  elsif self.missing
-	    list << {form: Post, text: 'post report'}
-	  elsif @attach =~ /^7\w/
-	    list << {form: Post, text: 'edit resolution'}
-	  else
-	    list << {form: Post, text: 'edit report'}
-	  end
+          if @attach =~ /^8[.A-Z]/
+            if @attach =~ /^8[A-Z]/
+              list << {form: Post, text: 'edit item'}
+            elsif not text or @text.strip().empty?
+              list << {form: Post, text: 'post item'}
+            else
+              list << {form: Post, text: 'edit items'}
+            end
+          elsif self.missing
+            list << {form: Post, text: 'post report'}
+          elsif @attach =~ /^7\w/
+            list << {form: Post, text: 'edit resolution'}
+          else
+            list << {form: Post, text: 'edit report'}
+          end
         end
       end
     end

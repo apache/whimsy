@@ -472,15 +472,15 @@ class Post < Vue
     else
       # remove indentation
       unless report =~ /^\S/
-	regex = RegExp.new('^( +)', 'gm')
-	indents = []
-	while (result = regex.exec(report))
-	  indents.push result[1].length
-	end
-	unless indents.empty?
-	  indent = Math.min(*indents)
-	  report.gsub!(RegExp.new('^' + ' ' * indent, 'gm'), '')
-	end
+        regex = RegExp.new('^( +)', 'gm')
+        indents = []
+        while (result = regex.exec(report))
+          indents.push result[1].length
+        end
+        unless indents.empty?
+          indent = Math.min(*indents)
+          report.gsub!(RegExp.new('^' + ' ' * indent, 'gm'), '')
+        end
       end
 
       @report = Flow.text(report, @indent, puncrules)

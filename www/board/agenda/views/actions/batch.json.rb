@@ -30,15 +30,15 @@ Pending.update(env.user, @agenda) do |pending|
   if @pending['flag']
     @pending['flag'].each do |attach, request|
       if request == 'flag'
-	unflagged.delete attach
-	flagged << attach unless flagged.include? attach or
-	  agenda.find {|item| item[:attach] == attach and
-	    Array(item['flagged_by']).include? @initials}
+        unflagged.delete attach
+        flagged << attach unless flagged.include? attach or
+          agenda.find {|item| item[:attach] == attach and
+            Array(item['flagged_by']).include? @initials}
       else
-	flagged.delete attach
-	unflagged << attach unless unflagged.include? attach or
-	  not agenda.find {|item| item[:attach] == attach and
-	    Array(item['flagged_by']).include? @initials}
+        flagged.delete attach
+        unflagged << attach unless unflagged.include? attach or
+          not agenda.find {|item| item[:attach] == attach and
+            Array(item['flagged_by']).include? @initials}
       end
     end
   end

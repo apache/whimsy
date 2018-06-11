@@ -18,21 +18,21 @@ class Pending
       cache.match(request).then do |response|
         if response and not fetched
           response.json().then do |json| 
-	    Pending.load(json)
+            Pending.load(json)
           end
         end
       end
 
       # update with the lastest once available
       fetch(request).then do |response|
-	if response.ok
+        if response.ok
           cache.put(request, response.clone())
 
-	  response.json().then do |json|
+          response.json().then do |json|
             fetched = true
-	    Pending.load(json)
-	  end
-	end
+            Pending.load(json)
+          end
+        end
       end
     end
   end
@@ -144,14 +144,14 @@ class Pending
       request = store.get('pending')
 
       def request.onerror(event)
-	console.log 'no pending data'
+        console.log 'no pending data'
       end
 
       def request.onsuccess(event)
         if request.result and request.result.agenda == Agenda.date
-	  block(request.result.value) 
+          block(request.result.value) 
         else
-	  block({})
+          block({})
         end
       end
     end
@@ -165,7 +165,7 @@ class Pending
       request = store.put(key: 'pending', agenda: Agenda.date, value: value)
 
       def request.onerror(event)
-	console.log 'pending write failed'
+        console.log 'pending write failed'
       end
     end
   end
@@ -189,29 +189,29 @@ class Pending
 
     if defined? localStorage
       if localStorage.getItem(Pending.offline_var) == 'true'
-	Server.offline = true
+        Server.offline = true
       end
 
       # watch for changes
       window.addEventListener :storage do |event|
-	if event.key == Pending.offline_var
-	  Server.offline = (event.newValue == 'true')
+        if event.key == Pending.offline_var
+          Server.offline = (event.newValue == 'true')
 
           event = CustomEvent.new('offlineStatus', detail: Server.offline)
           window.dispatchEvent(event)
-	end
+        end
       end
     end
 
     if Server.offline
       # apply offline changes
       Pending.dbget do |pending|
-	if pending.approve
-	  for attach in pending.approve
-	    data = {attach: attach, request: pending.approve[attach]}
-	    Pending.update('approve', data)
-	  end
-	end
+        if pending.approve
+          for attach in pending.approve
+            data = {attach: attach, request: pending.approve[attach]}
+            Pending.update('approve', data)
+          end
+        end
       end
     end
 

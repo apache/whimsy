@@ -19,13 +19,13 @@ class Offline < Vue
       @disabled = true
 
       Pending.dbget do |pending|
-	# construct arguments to fetch
-	args = {
-	  method: 'post',
-	  credentials: 'include',
-	  headers: {'Content-Type' => 'application/json'},
-	  body: {agenda: Agenda.file, pending: pending}.inspect
-	}
+        # construct arguments to fetch
+        args = {
+          method: 'post',
+          credentials: 'include',
+          headers: {'Content-Type' => 'application/json'},
+          body: {agenda: Agenda.file, pending: pending}.inspect
+        }
 
         fetch('../json/batch', args).then {|response|
           if response.ok

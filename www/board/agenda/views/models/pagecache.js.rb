@@ -89,7 +89,7 @@ class PageCache
 
     caches.open('board/agenda').then do |cache|
       cache.matchAll().then do |responses|
-	urls = responses.map {|response| response.url}.select do |url|
+        urls = responses.map {|response| response.url}.select do |url|
           part = url[scope.length..-1].split('/')[0].split('.')[0]
          part =~ /^\d\d\d\d-\d\d-\d\d$/ && !agendas.include?(part)
         end

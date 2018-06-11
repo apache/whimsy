@@ -164,7 +164,7 @@ Agenda.update(agenda_file, @message) do |agenda|
   operations.each do |attachment|
     if comments.include? attachment
       office = agenda[
-	/^Attachment #{attachment}: Report from the (.*?)  \[/, 1]
+        /^Attachment #{attachment}: Report from the (.*?)  \[/, 1]
       office.sub! /^VP of /, ''
       office.sub! /^Apache /, ''
 
@@ -174,8 +174,8 @@ Agenda.update(agenda_file, @message) do |agenda|
       text[/ *(#{' '*(initials.length+2)})/,1] = "#{initials}: "
 
       agenda.sub!(patterns['4']) do |match|
-	match[/\n()\s{9}\]/,1] = "#{text}\n"
-	match
+        match[/\n()\s{9}\]/,1] = "#{text}\n"
+        match
       end
     end
   end
