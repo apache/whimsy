@@ -16,6 +16,7 @@ class Agenda
   # each instance to their next and previous items.
   def self.load(list, digest)
     return unless list
+    before = @@index
     @@digest = digest
     @@index = []
     prev = nil
@@ -55,6 +56,7 @@ class Agenda
 
     @@date = Date.new(@@index[0].timestamp).toISOString()[/(.*?)T/, 1]
     Main.refresh()
+    Chat.agenda_change(before, @@index)
     return @@index
   end
 

@@ -52,6 +52,60 @@ class Chat
     @@log
   end
 
+  # identify what changed in the agenda
+  def self.agenda_change(before, after)
+    return unless before and before.length > 0
+
+    # build an index of the 'before' agenda
+    index = {}
+    before.each do |item|
+      index[item.title] = item
+    end
+
+    # categorize each item in the 'after' agenda
+    add = []
+    change = []
+    after.each do |item|
+      before = index[item.title]
+      if not before
+        add << item
+      elsif before.missing or not item.missing
+        if before.digest != item.digest
+          if before.missing
+            add << item
+          else
+            change << item
+          end
+        end
+
+        index.delete item.title
+      end
+    end
+
+    # build a set of messages
+    messages = []
+    unless add.empty?
+      messages << "Added: #{add.map {|item| item.title}.join(', ')}"
+    end
+
+    unless change.empty?
+      messages << "Updated: #{change.map {|item| item.title}.join(', ')}"
+    end
+
+    missing = Object.values(index)
+    unless missing.empty?
+      messages << "Deleted: #{missing.map {|item| item.title}.join(', ')}"
+    end
+
+    # output the messages
+    unless messages.empty?
+      messages.each do |message|
+        Chat.add type: 'agenda', user: 'agenda', text: message
+      end
+      Main.refresh()
+    end
+  end
+
   # add an entry to the chat log
   def self.add(entry)
     entry.timestamp ||= Date.new().getTime()
