@@ -27,6 +27,7 @@ class Events
     FileUtils.mkdir_p WORKDIR
     filename = SecureRandom.hex(16)
     File.write(File.join(WORKDIR, filename), JSON.generate(message))
+    message
   end
 
   # process pending messages
