@@ -10,6 +10,7 @@ require 'digest'
 require 'yaml'
 
 require_relative './session'
+require_relative './events'
 require 'whimsy/asf/svn'
 
 class Channel
@@ -100,7 +101,8 @@ class Channel
   end
 
   board_listener.start
- # listen for changes to pending and minutes files
+
+  # listen for changes to pending and minutes files
   work_listener = Listen.to(Session::AGENDA_WORK) do |modified, added, removed|
     modified.each do |path|
       next if path.end_with? '/sessions/present.yml'
@@ -117,6 +119,8 @@ class Channel
       elsif file =~ /^(\w+)\.yml$/
         self.post_private $1, type: :pending, private: $1,
           value: YAML.load_file(path)
+      elsif path =~ /^\/events\/\w+$/
+        Events.process()
       else
         STDERR.puts file
       end
@@ -124,4 +128,7 @@ class Channel
   end
 
   work_listener.start
+
+  # process pending messages
+  Events.process()
 end

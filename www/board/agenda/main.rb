@@ -51,6 +51,7 @@ require_relative './models/comments'
 require_relative './helpers/string'
 require_relative './helpers/integer'
 require_relative './daemon/session'
+require_relative './daemon/events'
 
 require 'websocket-client-simple'
 
