@@ -104,7 +104,7 @@ class Channel
 
   # listen for changes to pending and minutes files
   work_listener = Listen.to(Session::AGENDA_WORK) do |modified, added, removed|
-    modified.each do |path|
+    (modified+added).each do |path|
       next if path.end_with? '/sessions/present.yml'
       next unless File.exist?(path)
       file = File.basename(path)
@@ -119,10 +119,12 @@ class Channel
       elsif file =~ /^(\w+)\.yml$/
         self.post_private $1, type: :pending, private: $1,
           value: YAML.load_file(path)
-      elsif path =~ /^\/events\/\w+$/
+      elsif path =~ /\/events\/\w+$/
         Events.process()
+      elsif file =~ /^board_agenda_\d{4}_\d\d_\d\d\-chat.yml$/
+        nil
       else
-        STDERR.puts file
+        STDERR.puts path
       end
     end
   end

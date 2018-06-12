@@ -24,6 +24,7 @@ class Events
 
   # capture a message to be sent
   def self.post(message)
+    FileUtils.mkdir_p WORKDIR
     filename = SecureRandom.hex(16)
     File.write(File.join(WORKDIR, filename), JSON.generate(message))
   end
@@ -43,7 +44,4 @@ class Events
       end
     end
   end
-
-  # ensure the working directory exists
-  FileUtils.mkdir_p WORKDIR
 end
