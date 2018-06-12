@@ -54,7 +54,8 @@ class Chat
 
   # identify what changed in the agenda
   def self.agenda_change(before, after)
-    return unless before and before.length > 0
+    # bootstrap has a single Roll Call entry
+    return unless before and before.length > 1
 
     # build an index of the 'before' agenda
     index = {}
