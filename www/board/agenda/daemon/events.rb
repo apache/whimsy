@@ -34,9 +34,9 @@ class Events
       begin
         message = JSON.parse(File.read(file))
         if message[:private]
-          Channel.post_all(message)
-        else
           Channel.post_private(message[:private], message)
+        else
+          Channel.post_all(message)
         end
       ensure
         File.unlink file
