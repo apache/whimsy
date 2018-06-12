@@ -31,6 +31,8 @@ class ASF::Board::Agenda
       if report.empty? or report[0..12] == 'Additionally,'
         attrs['missing'] = true
       end
+
+      attrs['digest'] = Digest::MD5.hexdigest(attrs['report'])
     end
   end
 end
