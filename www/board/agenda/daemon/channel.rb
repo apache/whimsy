@@ -121,6 +121,10 @@ class Channel
           value: YAML.load_file(path)
       elsif path =~ /\/events\/\w+$/
         Events.process()
+      elsif file =~ /^(\w+)\.bak$/
+        nil
+      elsif path =~ /^\/sessions\/\w+$/
+        nil
       elsif file =~ /^board_agenda_\d{4}_\d\d_\d\d\-chat.yml$/
         nil
       else

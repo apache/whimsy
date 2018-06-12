@@ -177,7 +177,8 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
   file = File.join(AGENDA_WORK, 'sessions', 'present.yml')
   if File.exist?(file) and File.mtime(file) != @present_mtime
     @present_mtime = File.mtime(file)
-    @present = YAML.load_file(file)
+    @present = YAML.load_file(file).
+      reject! {|name| name =~ /^board_agenda_[_\d]+$/}
   end
 
   if env['SERVER_NAME'] == 'localhost'
