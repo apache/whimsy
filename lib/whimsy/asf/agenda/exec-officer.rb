@@ -32,7 +32,7 @@ class ASF::Board::Agenda
         attrs['missing'] = true
       end
 
-      attrs['digest'] = Digest::MD5.hexdigest(attrs['report'])
+      attrs['digest'] = Digest::MD5.hexdigest(report)
     end
   end
 end

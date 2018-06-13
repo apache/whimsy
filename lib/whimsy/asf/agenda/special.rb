@@ -36,7 +36,7 @@ class ASF::Board::Agenda
       attrs['fulltitle'] = fulltitle if title != fulltitle
 
       text = attrs['text']
-      attrs['digest'] = Digest::MD5.hexdigest(attrs['text'])
+      attrs['digest'] = Digest::MD5.hexdigest(text.strip)
 
       attrs['warnings'] = []
       if attrs['indent'] != '    '

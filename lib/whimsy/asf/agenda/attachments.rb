@@ -32,7 +32,7 @@ class ASF::Board::Agenda
       attrs['title'].sub! /\sCommittee$/, ''
       attrs['title'].sub! /\sProject$/, ''
 
-      attrs['digest'] = Digest::MD5.hexdigest(attrs['report'])
+      attrs['digest'] = Digest::MD5.hexdigest(attrs['report'].strip)
 
       attrs['report'].sub! /\n+\Z/, "\n"
       attrs.delete('report') if attrs['report'] == "\n"
