@@ -44,7 +44,9 @@ class Backchannel < Vue
               if message.link
                 _Link text: message.text, href: message.link
               else
-                _Text raw: message.text, filters: [hotlink, self.mention]
+                filters = [hotlink, self.mention]
+                filters << self.agenda_link if message.type == :agenda
+                _Text raw: message.text, filters: filters
               end
             end
             i += 1
@@ -59,6 +61,17 @@ class Backchannel < Vue
     return text.gsub(/<.*?>|\b(#{User.userid})\b/) do |match|
       match[0] == '<' ? match : "<span class=mention>#{match}</span>"
     end
+  end
+
+  # link agenda pages
+  def agenda_link(text)
+    Agenda.index.each do |item|
+      text.gsub!(item.title) do |match|
+        "<a href='#{item.title.gsub(/[\W]/, '-')}'>#{item.title}</a>"
+      end
+    end
+
+    return text
   end
 
   # on initial display, fetch backlog
