@@ -2,22 +2,47 @@ class Chat
   Vue.util.defineReactive @@log, []
   Vue.util.defineReactive @@topic, {}
 
-  Chat.fetch_requested = false
-  Chat.backlog_fetched = false
+  @@start = Date.new().getTime()
+  @@fetch_requested = false
+  @@backlog_fetched = false
 
   # as it says: fetch backlog of chat messages from the server
   def self.fetch_backlog()
-    return if Chat.fetch_requested
+    return if @@fetch_requested
 
     retrieve "chat/#{Agenda.file[/\d[\d_]+/]}", :json do |messages|
       messages.each {|message| Chat.add message}
-      Chat.backlog_fetched = true
+      @@backlog_fetched = true
     end
 
-    Chat.fetch_requested = true
-
+    # start countdown to meeting
     self.countdown()
     setInterval self.countdown, 30_000
+
+    # synchonize chat logs
+    if defined? BroadcastChannel
+      channel = BroadcastChannel.new('chatsync')
+      
+      # ask if there are any earlier data
+      channel.postMessage type: 'query', start: @@start
+
+      def channel.onmessage(event)
+        if event.data.type == :query and event.data.start > @@start
+          # respond with log if requestor started after this window
+          channel.postMessage type: 'log', start: @@start, log: @@log
+        elsif event.data.type == :log and event.data.start < @@start
+          # merge data from before this window started
+          event.data.log.each do |message|
+            unless message.type == :topic or message.timestamp >= @@start
+              Chat.add message
+            end
+          end
+          @@start = event.data.start
+        end
+      end
+    end
+
+    @@fetch_requested = true
   end
 
   # set topic to meeting status
