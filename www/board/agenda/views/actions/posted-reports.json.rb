@@ -14,7 +14,14 @@ ARCHIVE = '/srv/mail/board'
 if @path and @path =~ /^\d+\/\w+$/
   mail = Mail.new(File.read(File.join(ARCHIVE, @path)))
   if mail.text_part
-    return {text: mail.text_part.body.to_s.force_encoding(Encoding::UTF_8)}
+    begin
+      text = mail.text_part.body.to_s.force_encoding(mail.text_part.charset)
+    rescue
+      text = mail.text_part.body.to_s.force_encoding(Encoding::UTF_8)
+    end
+      
+    return {text: text.encode('UTF-8', invalid: :replace, undef: :replace)}
+
   else
     return {text: ''}
   end
