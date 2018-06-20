@@ -100,7 +100,7 @@
     A. VP of W3C Relations [<%=
        @owner.for(ASF::Committee.find('W3C Relations')) %>]
 
-       See Attachment 7
+       See Attachment 8
 
        [ approved:
          comments:
@@ -109,7 +109,7 @@
     B. Apache Legal Affairs Committee [<%=
        @owner.for(ASF::Committee.find('Legal Affairs')) %>]
 
-       See Attachment 8
+       See Attachment 9
 
        [ approved:
          comments:
@@ -118,7 +118,7 @@
     C. Apache Security Team Project [<%=
        @owner.for(ASF::Committee.find('Security Team')) %>]
 
-       See Attachment 9
+       See Attachment 10
 
        [ approved:
          comments:
@@ -194,17 +194,22 @@ ASF::Committee.find('Travel Assistance').chair.public_name %>]
 
 
 -----------------------------------------
-Attachment 7: Report from the VP of W3C Relations  [<%=
+Attachment 7: Report from the VP of Finance  [<%=
+ASF::Committee.find('Finance').chair.public_name %>]
+
+
+-----------------------------------------
+Attachment 8: Report from the VP of W3C Relations  [<%=
 ASF::Committee.find('W3C Relations').chair.public_name %>]
 
 
 -----------------------------------------
-Attachment 8: Report from the Apache Legal Affairs Committee  [<%=
+Attachment 9: Report from the Apache Legal Affairs Committee  [<%=
 ASF::Committee.find('Legal Affairs').chair.public_name %>]
 
 
 -----------------------------------------
-Attachment 9: Report from the Apache Security Team Project  [<%= 
+Attachment 10: Report from the Apache Security Team Project  [<%= 
 ASF::Committee.find('Security Team').chair.public_name %>]
 
 
