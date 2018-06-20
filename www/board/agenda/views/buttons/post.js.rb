@@ -337,6 +337,15 @@ class Post < Vue
       @label = 'report'
       @message = "Post #{@@item.title} Report"
 
+      # if by chance the report was posted to board@, attempt to fetch
+      # the text/plain version of the body
+      posted = Posted.get(@@item.title)
+      unless posted.empty?
+        post 'posted-reports', path: posted.last.path do |response|
+          @report ||= response.text
+        end
+      end
+
     when 'edit item'
       @header = 'Edit Discussion Item'
       @label = 'text'

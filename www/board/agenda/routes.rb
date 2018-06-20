@@ -280,6 +280,10 @@ get '/json/posted-reports' do
   _json :"actions/posted-reports"
 end
 
+post '/json/posted-reports' do
+  _json :"actions/posted-reports"
+end
+
 # podling name searches
 get '/json/podlingnamesearch' do
   _json ASF::Podling.namesearch
