@@ -15,7 +15,11 @@ class Email < Vue
       User.firstname and @@item.shepherd and
       User.firstname.start_with? @@item.shepherd.downcase()
     then
-      return 'btn-primary'
+      if @@item.missing and not Posted.get(@@item.title).empty?
+        return 'btn-link'
+      else
+        return 'btn-primary'
+      end
     elsif
       @@item.owner == User.username and not @@item.missing and
         @@item.comments.empty?

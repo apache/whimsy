@@ -34,6 +34,11 @@ class Report < Vue
 
         if (@@item.missing or @@item.comments) and @@item.mail_list
           _section.reminder do
+            if @@item.missing and not Posted.get(@@item.title).empty?
+              _button.btn.btn_primary 'post report', data_toggle: 'modal',
+                data_target: '#post-report-form'
+            end
+
             _Email item: @@item
           end
         end
