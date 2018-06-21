@@ -56,7 +56,7 @@ end
 @other_resolutions = Array.new
 agenda.each do |item|
   next unless item[:attach] =~ /^7[A-Z]/
-  title = item['fulltitle']
+  title = item['fulltitle'] || item['title']
   if minutes[item['title']] == 'unanimous'
     chair = item['chair']
     title += " (#{item['people'][chair][:name]}, VP)" if chair
