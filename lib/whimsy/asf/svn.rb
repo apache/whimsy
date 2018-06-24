@@ -118,8 +118,6 @@ module ASF
     def self.getInfo(path, user=nil, password=nil)
       return nil, 'path must not be nil' unless path
 
-      path = (@base + path).to_s
-
       # build svn info command
       cmd = ['svn', 'info', path, '--non-interactive']
     
@@ -139,8 +137,6 @@ module ASF
 
     # retrieve revision, [err] for a path in svn
     def self.getRevision(path, user=nil, password=nil)
-      path = (@base + path).to_s
-
       out, err = getInfo(path, user, password)
       if out
         # extract revision number
@@ -152,8 +148,6 @@ module ASF
 
     # retrieve revision, content for a file in svn
     def self.get(path, user=nil, password=nil)
-      path = (@base + path).to_s
-
       # build svn info command
       cmd = ['svn', 'info', path, '--non-interactive']
 

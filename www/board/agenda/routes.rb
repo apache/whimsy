@@ -434,9 +434,9 @@ get '/new' do
   @time = localtime.strftime('%l:%M%P')
 
   # retrieve latest committee info
-  url = 'private/committers/board/committee-info.txt'
-  info = ASF::SVN.getInfo(url, env.user, env.password)
-  revision, contents = ASF::SVN.get(url, env.user, env.password)
+  cinfo = File.join(ASF::SVN['board'], 'committee-info.txt')
+  info = ASF::SVN.getInfo(cinfo, env.user, env.password)
+  revision, contents = ASF::SVN.get(cinfo, env.user, env.password)
   ASF::Committee.load_committee_info(contents, info)
 
   # Get directors, list of pmcs due to report, and shepherds
