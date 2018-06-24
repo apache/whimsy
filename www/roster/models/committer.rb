@@ -115,10 +115,10 @@ class Committer
       if person.icla and person.icla.claRef # Not all people have iclas
         iclas = ASF::SVN['iclas']
         claRef = person.icla.claRef.untaint
-        if File.exist? File.join(iclas, claRef + '.pdf')
-          response[:forms][:icla] = claRef + '.pdf'
-        elsif Dir.exist? File.join(iclas, claRef)
-          response[:forms][:icla] = claRef + '/'
+        # find either matching dir or name with extension
+        file = Dir[File.join(iclas, claRef), File.join(iclas, "#{claRef}.*")].first
+        if file
+          response[:forms][:icla] = File.basename(file)
         end
       end
 
@@ -136,8 +136,12 @@ class Committer
           ].uniq.each do |name|
             next unless name
             memapp = name.downcase.gsub(/\s/, '-').untaint
-            if apps and File.exist? File.join(apps, memapp + '.pdf')
-              response[:forms][:member] = memapp + '.pdf'
+            if apps
+              # find either matching dir or name with extension
+              file = Dir[File.join(apps, memapp), File.join(apps, "#{memapp}.*")].first
+              if file
+                response[:forms][:member] = File.basename(file)
+              end
             end
           end
         end
