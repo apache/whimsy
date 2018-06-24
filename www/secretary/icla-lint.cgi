@@ -106,12 +106,6 @@ _html do
         missing = $1.split(',').select {|path| not iclas.include? path}
 
         if not missing.empty?
-          missing = missing.select do |path|
-            not iclas.any? {|icla| icla.start_with? path}
-          end
-        end
-
-        if not missing.empty?
           issue, note = 'error', "missing icla: #{missing.first.inspect}"
         end
       elsif comment =~ /^Treasurer;/ or comment =~ /^President;/
