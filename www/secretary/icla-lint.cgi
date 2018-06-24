@@ -34,7 +34,7 @@ _html do
   _h2_ 'Show'
   _div do
     _input id: 'missing', type: 'checkbox', checked: true
-    _label 'missing stub/dir name', for: 'missing'
+    _label 'missing stub/dir name after Signed CLA', for: 'missing'
   end
 
   _div do
@@ -59,7 +59,7 @@ _html do
 
   _div do
     _input id: 'notinldap', type: 'checkbox', checked: true
-    _label "id not in LDAP", for: 'notinldap'
+    _label "id not in LDAP people", for: 'notinldap'
   end
 
   _div do
