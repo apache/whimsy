@@ -67,12 +67,38 @@ _html do
     _label "notinavail entries", for: 'notinavail'
   end
 
-  _h2_ 'Issues'
+  iclas = Hash.new{|h,k| h[k]=[]}
+  dupes=0
+  Dir[File.join(ASF::SVN['iclas'], '*')].each do |file|
+    name = File.basename(file)
+    stem = name.sub(/\.\w+$/, '')
+    dupes += 1 if iclas.has_key? stem
+    iclas[stem] << name
+  end
 
-  input = File.join(ASF::SVN['officers'], 'iclas.txt')
-  iclas = Hash[Dir[File.join(ASF::SVN['iclas'], '*')].map do |file|
-    [File.basename(file).sub(/\.\w+$/, ''), File.basename(file)]
-  end]
+  if dupes > 0
+    _h2_ 'Files with duplicate stems'
+    _table_ do
+      _tr do
+        _th 'stem'
+        _th 'paths'
+      end
+      iclas.each do |icla,paths|
+        if paths.size > 1
+          _tr do
+            _td icla
+            _td do
+              paths.each do |path|
+                _a path, href: "https://svn.apache.org/repos/private/documents/iclas/#{path}"
+              end
+            end
+          end
+        end
+      end      
+    end
+  end
+
+  _h2_ 'Issues'
 
   _table_ do
     _tr do
@@ -83,6 +109,7 @@ _html do
       _th 'ICLA stub'
     end
 
+    input = File.join(ASF::SVN['officers'], 'iclas.txt')
     document = File.read(input).untaint
     document.scan(/^(\w.*?):.*?:(.*?):(.*?):(.*)/) do |(id, name, email, comment)|
       issue, note = nil, nil
