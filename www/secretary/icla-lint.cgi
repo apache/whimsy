@@ -98,6 +98,8 @@ _html do
     end
   end
 
+  seen=Hash.new(0) # iclas.txt CLA stem values
+
   _h2_ 'Issues'
 
   _table_ do
@@ -133,7 +135,7 @@ _html do
       end
       if comment =~ /Signed CLA;(.*)/
         # to be valid, the entry must exist; remove matched entries
-        missing = $1.split(',').select {|path|  iclas.delete(path) == nil}
+        missing = $1.split(',').select {|path| seen[path] += 1; iclas.delete(path) == nil}
 
         if not missing.empty?
           issue, note = 'error', "missing icla: #{missing.first.inspect}"
@@ -180,7 +182,25 @@ _html do
       end
     end
   end
-  
+
+  # select entries with count != 1  
+  seen.select! {|k,v| v != 1}
+  if seen.size > 0
+    _h2_ 'Duplicate stem entries in iclas.txt'
+    _table_ do
+      _tr do
+        _th 'stem'
+        _th 'count'
+      end
+      seen.each do |k,v|
+        _tr do
+          _td k
+          _td v
+        end
+      end
+    end # table
+  end
+
   if iclas.size > 0
     _h2_ 'ICLA files not matched against iclas.txt'
     _table do
