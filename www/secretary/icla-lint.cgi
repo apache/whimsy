@@ -100,10 +100,13 @@ _html do
         apachemail = "," + id + "@apache.org"
       end
 
+      # check LDAP independently; may be overridden by issues with comment field
       if id != 'notinavail' and ldap.length > 0 and not ldap.include? id
         issue, note = 'notinldap', 'not in LDAP'
-      elsif comment =~ /Signed CLA;(.*)/
-        missing = $1.split(',').select {|path| not iclas.include? path}
+      end
+      if comment =~ /Signed CLA;(.*)/
+        # to be valid, the entry must exist; remove matched entries
+        missing = $1.split(',').select {|path|  iclas.delete(path) == nil}
 
         if not missing.empty?
           issue, note = 'error', "missing icla: #{missing.first.inspect}"
@@ -112,10 +115,12 @@ _html do
 
       elsif comment == 'Signed CLA'
         issue, note = 'missing', 'missing stub/dir name'
-      elsif comment.start_with? 'disabled;' and ASF::Person.new(id).banned?
-        # no issue
+      elsif comment.start_with? 'disabled;'
+        unless ASF::Person.new(id).banned?
+          issue, note = 'mismatch', "LDAP entry not marked disabled"
+        end
       else
-        issue, note = 'mismatch', "doesn't match pattern"
+        issue, note = 'mismatch', "comment doesn't match pattern"
       end
 
       if issue
@@ -144,6 +149,20 @@ _html do
 
           _td email
           _td comment2
+        end
+      end
+    end
+  end
+  
+  if iclas.size > 0
+    _h2_ 'ICLA files not matched against iclas.txt'
+    _table do
+      _tr do
+        _th 'stem'
+      end
+      iclas.each do |icla|
+        _tr do
+          _td icla
         end
       end
     end
