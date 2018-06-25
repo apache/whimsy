@@ -19,14 +19,17 @@ module ASF
       new.each(&block)
     end
 
+    # extract 1st line and remove any trailing /* comment */
+    def self.get_name(txt)
+      txt[/(.*?)\n/, 1].sub(/\s+\/\*.*/,'')
+    end
+
     # return a list of <tt>members.txt</tt> entries as a Hash.  Keys are
     # availids.  Values are a Hash with the following keys:
     # <tt>:text</tt>, <tt>:name</tt>, <tt>"status"</tt>.
     def self.list
       result = Hash[self.new.map {|id, text|
-        # extract 1st line and remove any trailing /* comment */
-        name = text[/(.*?)\n/, 1].sub(/\s+\/\*.*/,'')
-        [id, {text: text, name: name}]
+        [id, {text: text, name: self.get_name(text)}]
       }]
 
       self.status.each do |name, value|
@@ -179,7 +182,7 @@ module ASF
 
     # Person's name as found in members.txt
     def member_name
-      members_txt[/(\w.*?)\s*(\/|$)/, 1] if members_txt
+      ASF::Member.get_name(members_txt) if members_txt
     end
   end
 end
