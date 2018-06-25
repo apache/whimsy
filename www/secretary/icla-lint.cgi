@@ -70,9 +70,9 @@ _html do
   _h2_ 'Issues'
 
   input = File.join(ASF::SVN['officers'], 'iclas.txt')
-  iclas = Dir[File.join(ASF::SVN['iclas'], '*')].map do |file|
-    file.split('/').last.sub(/\.\w+$/, '')
-  end
+  iclas = Hash[Dir[File.join(ASF::SVN['iclas'], '*')].map do |file|
+    [File.basename(file).sub(/\.\w+$/, ''), File.basename(file)]
+  end]
 
   _table_ do
     _tr do
@@ -160,9 +160,11 @@ _html do
       _tr do
         _th 'stem'
       end
-      iclas.each do |icla|
+      iclas.each do |k,v|
         _tr do
-          _td icla
+          _td do
+            _a k, href: "https://svn.apache.org/repos/private/documents/iclas/#{v}"
+          end
         end
       end
     end
