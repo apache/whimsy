@@ -208,9 +208,11 @@ _html do
         _th 'stem'
       end
       iclas.each do |k,v|
-        _tr do
-          _td do
-            _a k, href: "https://svn.apache.org/repos/private/documents/iclas/#{v}"
+        v.each do |p|
+          _tr do
+            _td do
+              _a k, href: "https://svn.apache.org/repos/private/documents/iclas/#{p}"
+            end
           end
         end
       end
