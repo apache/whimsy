@@ -16,7 +16,7 @@ module MemApps
   def self.stems
     refresh
     apps = @@files.reject{|f| f =~ /_emeritus\.\w+$/}.map do |file|
-      File.basename(file).sub(/\.\w+$/, '')
+      file.sub(/\.\w+$/, '')
     end
     apps
   end
@@ -31,7 +31,7 @@ module MemApps
   def self.emeritus
     refresh
     apps = @@files.select {|f| f =~ /_emeritus\.\w+$/}.map do |file|
-      File.basename(file).sub(/_emeritus\.\w+$/, '')
+      file.sub(/_emeritus\.\w+$/, '')
     end
     apps
   end
@@ -72,7 +72,7 @@ module MemApps
       names << memapp
       file = self.search(memapp)
       if file
-        found << File.basename(file)
+        found << file
       end
     end
     return [found, names.uniq]
