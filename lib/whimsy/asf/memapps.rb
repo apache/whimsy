@@ -37,11 +37,8 @@ module MemApps
   end
 
   def self.sanitize(name)
-    name.strip.downcase.
-      gsub(/[.,()"]/,''). # drop punctuation (keep ')
-      # drop most accents
-      gsub('ú','u').gsub(/[óøò]/,'o').gsub(/[čć]/,'c').gsub(/[éëè]/,'e').gsub('á','a').gsub('ž','z').gsub('í','i').
-      gsub(/\s+/, '-').untaint # space to '-'
+    # Don't transform punctation into '-'
+    ASF::Person.asciize(name.strip.downcase.gsub(/[.,()"]/,''))
   end
 
   def self.search(filename)
@@ -73,6 +70,8 @@ module MemApps
       file = self.search(memapp)
       if file
         found << file
+      else # try u=>ue etc
+#        file = self.search(memapp.gsub())
       end
     end
     return [found, names.uniq]
