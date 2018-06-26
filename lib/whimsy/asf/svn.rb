@@ -135,6 +135,27 @@ module ASF
       end
     end
 
+    # retrieve list, [err] for a path in svn
+    def self.list(path, user=nil, password=nil)
+      return nil, 'path must not be nil' unless path
+
+      # build svn info command
+      cmd = ['svn', 'list', path, '--non-interactive']
+
+      # password was supplied, add credentials
+      if password
+        cmd += ['--username', user, '--password', password, '--no-auth-cache']
+      end
+
+      # issue svn info command
+      out, err, status = Open3.capture3(*cmd)
+      if status.success?
+        return out
+      else
+        return nil, err
+      end
+    end
+
     # retrieve revision, [err] for a path in svn
     def self.getRevision(path, user=nil, password=nil)
       out, err = getInfo(path, user, password)
@@ -281,6 +302,7 @@ end
 
 if __FILE__ == $0 # local testing
   path = ARGV.shift||'.'
+  puts ASF::SVN.list(path, *ARGV)
   puts ASF::SVN.getInfo(path, *ARGV)
   puts ASF::SVN.getRevision(path, *ARGV)
 end
