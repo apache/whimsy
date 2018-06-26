@@ -54,6 +54,11 @@ module MemApps
     nil
   end
 
+  # find the name of the memapp for a person or nil
+  def self.find1st(person)
+    self.find(person)[0].first
+  end
+
   # find the memapp for a person; return an array:
   # - [array of files that matched (possibly empty), array of stems that were tried]
   def self.find(person)
@@ -62,7 +67,7 @@ module MemApps
     [
       (person.icla.legal_name rescue nil), 
       (person.icla.name rescue nil),
-      person.member_name
+      person.member_name # this is slow
     ].uniq.each do |name|
       next unless name
       memapp = self.sanitize(name) # this may generate dupes, so we use uniq below
@@ -70,8 +75,6 @@ module MemApps
       file = self.search(memapp)
       if file
         found << file
-      else # try u=>ue etc
-#        file = self.search(memapp.gsub())
       end
     end
     return [found, names.uniq]
