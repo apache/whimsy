@@ -52,7 +52,7 @@ _html do
     end
   end
 
-_h2 'Entries in members.txt which do not appear to have a matching file'
+_h2 'Entries in members.txt which do not appear to have a matching membership app file'
 _table_ do
   _tr do
     _th 'Availid'
@@ -69,8 +69,13 @@ _table_ do
         _a k, href: "https://whimsy.apache.org/roster/committer/#{k}", target: '_blank'
       end
       _td do
-        if person.icla && person.icla.claRef # TODO look up actual suffix
-          _a person.icla.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{person.icla.claRef}.pdf", target: '_blank'
+        if person.icla && person.icla.claRef
+          file = ASF::ICLAFiles.match_claRef(person.icla.claRef.untaint)
+          if file
+            _a person.icla.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{file}", target: '_blank'
+          else
+            _ ''
+          end
         else
           _ ''
         end
