@@ -72,7 +72,7 @@ module MemApps
       names << memapp
       file = self.search(memapp)
       if file
-        found << File.basename(file) unless file =~ /_emeritus\.\w+$/
+        found << File.basename(file)
       end
     end
     return [found, names.uniq]
