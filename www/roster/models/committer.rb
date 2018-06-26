@@ -115,13 +115,9 @@ class Committer
     if ASF::Person.find(env.user).asf_member? # i.e. member karma
 
       if person.icla and person.icla.claRef # Not all people have iclas
-        iclas = ASF::SVN['iclas']
         claRef = person.icla.claRef.untaint
-        # find either matching dir or name with extension
-        file = Dir[File.join(iclas, claRef), File.join(iclas, "#{claRef}.*")].first
-        if file
-          response[:forms][:icla] = File.basename(file)
-        end
+        file = ASF::ICLAFiles.match_claRef(claRef)
+        response[:forms][:icla] = file if file
       end
 
 

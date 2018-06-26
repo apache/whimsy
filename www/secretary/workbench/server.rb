@@ -235,10 +235,9 @@ end
 # redirect to an icla
 get %r{/icla/(.*)} do |filename|
   checkout = 'https://svn.apache.org/repos/private/documents/iclas'
-  iclas = ASF::SVN['iclas']
-  file = Dir[File.join(iclas, filename), File.join(iclas, "#{filename}.*")].first
+  file = ASF::ICLAFiles.match_claRef(filename)
   pass unless file
-  redirect to(checkout + '/' + File.basename(file))
+  redirect to(checkout + '/' + file)
 end
 
 # event stream for server sent events (a.k.a EventSource)
