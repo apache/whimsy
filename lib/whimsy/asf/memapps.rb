@@ -40,7 +40,7 @@ module MemApps
     name.strip.downcase.
       gsub(/[.,()"]/,''). # drop punctuation (keep ')
       # drop most accents
-      gsub('ú','u').gsub(/[óøò]/,'o').gsub(/[čć]/,'c').gsub('é','e').gsub('á','a').gsub('ž','z').gsub('í','i').
+      gsub('ú','u').gsub(/[óøò]/,'o').gsub(/[čć]/,'c').gsub(/[éëè]/,'e').gsub('á','a').gsub('ž','z').gsub('í','i').
       gsub(/\s+/, '-').untaint # space to '-'
   end
 
