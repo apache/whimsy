@@ -1,3 +1,5 @@
+require 'whimsy/asf/memapps'
+
 class Committer
 
   def self.serialize(id, env)
@@ -127,23 +129,8 @@ class Committer
         member[:info] = person.members_txt
 
         if person.icla # not all members have iclas
-          apps = ASF::SVN['member_apps']
-          [
-            person.icla.legal_name, 
-            person.icla.name,
-            # allow for member in LDAP to not be in members.txt (e.g. infra staff)
-            (member[:info] or "?\n").split("\n").first.strip
-          ].uniq.each do |name|
-            next unless name
-            memapp = name.downcase.gsub(/\s/, '-').untaint
-            if apps
-              # find either matching dir or name with extension
-              file = Dir[File.join(apps, memapp), File.join(apps, "#{memapp}.*")].first
-              if file
-                response[:forms][:member] = File.basename(file)
-              end
-            end
-          end
+          file = ASF::MemApps.find1st(person)
+          response[:forms][:member] = file if file 
         end
       else
         if person.member_nomination
