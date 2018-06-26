@@ -186,3 +186,16 @@ module ASF
     end
   end
 end
+
+if __FILE__ == $0
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
+  # N.B. Require 'whimsy/asf' causes error: superclass mismatch for class Person
+  require 'whimsy/asf/config'
+  require 'whimsy/asf/svn'
+  puts ASF::Member.list.size
+  puts ASF::Member.status.size
+  puts ASF::Member.text.size
+  ids=0
+  ASF::Member.each{|id,txt| ids+= 1}
+  puts ids
+end
