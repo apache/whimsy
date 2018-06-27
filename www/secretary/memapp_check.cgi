@@ -39,6 +39,14 @@ _html do
 
   _h2 'Files in member_apps that do not match any ASF member names'
 
+  _p do
+    _ "The following entries don't have Avail IDs and are therefore not available for matching:"
+    _ul do
+      _li 'Shane Caraveo'
+      _li 'Robert Hartill'
+      _li 'Andrew Wilson'
+    end
+  end
   _table_ do
     _tr do
       _th 'Name'
