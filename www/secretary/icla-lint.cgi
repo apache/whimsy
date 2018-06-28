@@ -241,6 +241,28 @@ _html do
     end
   end
 
+  # Check that all LDAP entries appear in iclas.txt
+  no_icla = ldap.select {|k| not icla_ids.has_key? k}
+  # remove known exceptions
+  %w(testsebb testrubys apldaptest).each {|w| no_icla.delete w}
+  if no_icla.size > 0
+    _h2 'LDAP entries not listed in iclas.txt'
+    _table_ do
+      _tr do
+        _th 'Availid'
+        _th 'committer'
+      end
+      no_icla.each do |k|
+        _tr do
+          _td k
+          _td do
+            _a k, href: '/roster/committer/' + k
+          end
+        end
+      end
+    end
+  end
+
   _script do
     inputs = document.querySelectorAll('input')
     for i in 0...inputs.length
