@@ -99,6 +99,7 @@ _html do
   end
 
   seen=Hash.new(0) # iclas.txt CLA stem values
+  icla_ids=Hash.new{ |h,k| h[k] = []} # to check for duplicates and missing entries
 
   _h2_ 'Issues'
 
@@ -113,7 +114,7 @@ _html do
 
     input = File.join(ASF::SVN['officers'], 'iclas.txt')
     document = File.read(input).untaint
-    document.scan(/^(\w.*?):.*?:(.*?):(.*?):(.*)/) do |(id, name, email, comment)|
+    document.scan(/^((\w.*?):.*?:(.*?):(.*?):(.*))/) do |(line, id, name, email, comment)|
       issue, note = nil, nil
       comment2 = comment.dup
 
@@ -126,6 +127,7 @@ _html do
       end
 
       if id != 'notinavail'
+        icla_ids[id] << line
         apachemail = "," + id + "@apache.org"
       end
 
@@ -213,6 +215,26 @@ _html do
             _td do
               _a k, href: "https://svn.apache.org/repos/private/documents/iclas/#{p}"
             end
+          end
+        end
+      end
+    end
+  end
+
+  #  Check if there are any duplicate ids
+  dups=icla_ids.select{|k,v| v.size > 1}
+  if dups.size > 0
+    _h2_ 'Duplicate availids in iclas.txt'
+    _table do
+      _tr do
+        _th 'Availid'
+        _th 'Entry'
+      end
+      dups.each do |k,v|
+        v.each do |l|
+          _tr do
+            _td k
+            _td l
           end
         end
       end
