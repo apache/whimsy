@@ -100,6 +100,7 @@ _html do
 
   seen=Hash.new(0) # iclas.txt CLA stem values
   icla_ids=Hash.new{ |h,k| h[k] = []} # to check for duplicates and missing entries
+  icla_mails=Hash.new{ |h,k| h[k] = []} # to check for duplicates
 
   _h2_ 'Issues'
 
@@ -117,6 +118,7 @@ _html do
     document.scan(/^((\w.*?):.*?:(.*?):(.*?):(.*))/) do |(line, id, name, email, comment)|
       issue, note = nil, nil
       comment2 = comment.dup
+      claRef = nil
 
       if comment.sub!(/\s*(\(.*?\))\s*/, '')
         issue, note = 'comment', "parenthetical comment: #{$1.inspect}"
@@ -136,8 +138,9 @@ _html do
         issue, note = 'notinldap', 'not in LDAP'
       end
       if comment =~ /Signed CLA;(.*)/
+        claRef = $1
         # to be valid, the entry must exist; remove matched entries
-        missing = $1.split(',').select {|path| seen[path] += 1; iclas.delete(path) == nil}
+        missing = claRef.split(',').select {|path| seen[path] += 1; iclas.delete(path) == nil}
 
         if not missing.empty?
           issue, note = 'error', "missing icla: #{missing.first.inspect}"
@@ -153,6 +156,8 @@ _html do
       else
         issue, note = 'mismatch', "comment doesn't match pattern"
       end
+
+      icla_mails[email] << [id, claRef, line]
 
       if issue
         issue = "#{issue} notinavail" if id =='notinavail'
@@ -257,6 +262,44 @@ _html do
           _td k
           _td do
             _a k, href: '/roster/committer/' + k
+          end
+        end
+      end
+    end
+  end
+
+  #  Check if there are any duplicate mails
+  mdups=icla_mails.select{|k,v| v.size > 1}
+  if mdups.size > 0
+    _h2_ 'Duplicate mails in iclas.txt'
+    _table do
+      _tr do
+        _th 'Email'
+        _th 'Availid'
+        _th 'ICLA'
+        _th 'Entry'
+      end
+      mdups.each do |k,v|
+        v.each do |l|
+          id_, icla_, line_ = l
+          _tr do
+            _td k
+            _td do
+              if id_ != 'notinavail'
+                _a id_, href: '/roster/committer/' + k
+              else
+                _ id_
+              end
+            end
+            _td do
+              file = ASF::ICLAFiles.match_claRef(icla_)
+              if file
+                _a icla_, href: "https://svn.apache.org/repos/private/documents/iclas/#{file}"
+              else
+                _ icla_
+              end
+            end
+            _td line_
           end
         end
       end
