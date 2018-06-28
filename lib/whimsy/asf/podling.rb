@@ -151,6 +151,8 @@ module ASF
       if @mtime != File.mtime(podlings_xml)
         @list = []
         podlings = Nokogiri::XML(File.read(podlings_xml))
+        # check for errors as they adversely affect the generated output
+        raise Exception.new("#{podlings.errors.inspect}") if podlings.errors.size > 0
         podlings.search('podling').map do |node|
           @list << new(node)
         end
