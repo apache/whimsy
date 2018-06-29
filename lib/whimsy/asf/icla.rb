@@ -226,10 +226,11 @@ module ASF
 
   # Common class for access to documents/iclas/ directory
   class ICLAFiles
-    @@ICLAFILES = ASF::SVN['iclas']
+    @@ICLAFILES = nil # cache the find if actually needed
     # search icla files to find match with claRef
     # Returns the basename or nil if no match
     def self.match_claRef(claRef)
+      @@ICLAFILES = ASF::SVN['iclas'] unless @@ICLAFILES
       file = Dir[File.join(@@ICLAFILES, claRef), File.join(@@ICLAFILES, "#{claRef}.*")].first
       File.basename(file) if file
     end
