@@ -22,6 +22,9 @@ class Committee
     image = Dir[File.join(image_dir, "#{id}.*")].map {|path| File.basename(path)}.last
 
     moderators = nil
+    modtime = nil
+    subscribers = nil # we get the counts only here
+    subtime = nil
     pSubs = Array.new # private@ subscribers
     unMatchedSubs = [] # unknown private@ subscribers
     currentUser = ASF::Person.find(env.user)
@@ -29,6 +32,7 @@ class Committee
     if pmc.roster.include? env.user or currentUser.asf_member?
       require 'whimsy/asf/mlist'
       moderators, modtime = ASF::MLIST.list_moderators(pmc.mail_list)
+      subscribers, subtime = ASF::MLIST.list_subscribers(pmc.mail_list) # counts only
       analysePrivateSubs = currentUser.asf_member?
       unless analysePrivateSubs # check for private moderator if not already allowed access
         user_mail = currentUser.all_mail || []
@@ -131,6 +135,8 @@ class Committee
       mail: Hash[lists.sort],
       moderators: moderators,
       modtime: modtime,
+      subscribers: subscribers,
+      subtime: subtime,
       nonASFmails: nonASFmails,
       project_info: info,
       image: image,

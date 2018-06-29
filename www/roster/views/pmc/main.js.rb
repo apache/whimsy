@@ -25,7 +25,7 @@ class PMC < Vue
       end
       _li role: "presentation" do
         if @committee.moderators
-          _a 'Mail Moderators', :href => "committee/#{@committee.id}#mail"
+          _a 'Mail List Info', :href => "committee/#{@committee.id}#mail"
         else
           _a 'Mail Lists', :href => "committee/#{@committee.id}#mail"
         end
@@ -105,14 +105,21 @@ class PMC < Vue
     # mailing lists
     if @committee.moderators
       _h2.mail! do
-        _ 'Mailing list moderators'
-        _small " (last checked #{@committee.modtime})"
+        _ 'Mailing list info'
+        _small ' (subscriber count includes archivers)'
       end
       _table do
         _thead do
           _tr do
             _th 'list name'
-            _th 'moderators'
+            _th do
+              _ 'moderators'
+              _small " (last checked #{@committee.modtime})"
+            end
+            _th do
+              _ 'subscribers'
+              _small " (last checked #{@committee.subtime})"
+            end
           end
         end
         _tbody do
@@ -140,6 +147,7 @@ class PMC < Vue
                   sep=', '
                 }
               end
+              _td @committee.subscribers[list_name]
             end
           end
         end
