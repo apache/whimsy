@@ -31,6 +31,7 @@ before_install:
 # configure ASF LDAP
 sudo: required
 before_script:
+  - export rvmsudo_secure_path=1
   - rvmsudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
 
 ########################################################################
