@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+$LOAD_PATH.unshift '/srv/whimsy/lib'
+
 require 'whimsy/asf'
 require 'wunderbar/script'
 require 'ruby2js/filter/functions'
