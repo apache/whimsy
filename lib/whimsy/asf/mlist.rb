@@ -117,6 +117,32 @@ module ASF
       return moderators.to_h, (File.mtime(LIST_TIME) rescue File.mtime(LIST_MODS))
     end
 
+    # for a mail domain, extract related lists and their subscribers (default only the count)
+    # also returns the time when the data was last checked
+    # If podling==true, then also check for old-style podling names
+    def self.list_subscribers(mail_domain, podling=false, list_subs=false)
+
+      return nil, nil unless File.exist? LIST_SUBS
+
+      subscribers = {}
+      list_parse('sub') do |dom, list, subs|
+
+        # drop infra test lists
+        next if list =~ /^infra-[a-z]$/
+        next if dom == 'incubator.apache.org' && list =~ /^infra-dev2?$/
+
+        # normal tlp style:
+        #/home/apmail/lists/commons.apache.org/dev/mod
+        # possible podling styles (new, old):
+        #/home/apmail/lists/batchee.apache.org/dev/mod
+        #/home/apmail/lists/incubator.apache.org/blur-dev/mod
+        next unless "#{mail_domain}.apache.org" == dom or
+           (podling && dom == 'incubator.apache.org' && list =~ /^#{mail_domain}-/)
+        subscribers["#{list}@#{dom}"] = list_subs ? subs.sort : subs.size
+      end
+      return subscribers.to_h, (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+    end
+
     private
 
     def self.downcase(array)
@@ -204,8 +230,13 @@ module ASF
 
   end
 end
+
 #if __FILE__ == $0
-#  p  ASF::MLIST.list_moderators(ARGV.shift||'blur', true)
-#  p  ASF::MLIST.private_subscribers(ARGV.shift||'whimsical')
+#  domain = ARGV.shift||'whimsical'
+#  p  ASF::MLIST.list_subscribers(domain)
+#  p  ASF::MLIST.list_subscribers(domain,false,true)
+#  exit
+#  p  ASF::MLIST.list_moderators(domain, true)
+#  p  ASF::MLIST.private_subscribers(domain)
 #  p  ASF::MLIST.digests(['chrisd@apache.org'])
 #end
