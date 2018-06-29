@@ -29,7 +29,7 @@ class PPMC < Vue
       end
       _li role: "presentation" do
         if @ppmc.moderators
-          _a 'Mail Moderators', :href => "ppmc/#{@ppmc.id}#mail"
+          _a 'Mail List Info', :href => "ppmc/#{@ppmc.id}#mail"
         else
           _a 'Mail Lists', :href => "ppmc/#{@ppmc.id}#mail"
         end
@@ -100,14 +100,21 @@ class PPMC < Vue
     # mailing lists
     if @ppmc.moderators
       _h2.mail! do
-        _ 'Mailing list moderators'
-        _small " (last checked #{@ppmc.modtime})"
+        _ 'Mailing list info'
+        _small ' (subscriber count includes archivers)'
       end
       _table do
         _thead do
           _tr do
             _th 'list name'
-            _th 'moderators'
+            _th do
+              _ 'moderators'
+              _small " (last checked #{@ppmc.modtime})"
+            end
+            _th do
+              _ 'subscribers'
+              _small " (last checked #{@ppmc.subtime})"
+            end
           end
         end
         _tbody do
@@ -135,19 +142,20 @@ class PPMC < Vue
                   sep=', '
                 }
               end
+              _td @ppmc.subscribers[list_name]
             end
           end
         end
       end
     else
-      _h2.mail! 'Mailing lists'
+      _h2.mail! 'Mail lists'
       _ul do
         for mail_name in @ppmc.mail
           parsed = mail_name.match(/^(.*?)-(.*)/)
-          mail_list = "#{parsed[2]}@#{parsed[1]}.apache.org"
+          list_name = "#{parsed[2]}@#{parsed[1]}.apache.org"
           _li do
-            _a mail_list, href: 'https://lists.apache.org/list.html?' +
-              mail_list
+            _a list_name, href: 'https://lists.apache.org/list.html?' +
+              list_name
           end
         end
       end

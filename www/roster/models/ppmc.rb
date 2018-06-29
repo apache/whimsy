@@ -16,6 +16,7 @@ class PPMC
     if user.asf_member? or ppmc.members.include? user
       require 'whimsy/asf/mlist'
       moderators, modtime = ASF::MLIST.list_moderators(ppmc.mail_list, true)
+      subscribers, subtime = ASF::MLIST.list_subscribers(ppmc.mail_list) # counts only
       load_emails # set up @people
       moderators.each { |list,mods| mods.each {|m| nonASFmails[m]='' unless m.end_with? '@apache.org'} }
       nonASFmails.each {|k,v|
@@ -72,6 +73,8 @@ class PPMC
       mail: Hash[lists.sort],
       moderators: moderators,
       modtime: modtime,
+      subscribers: subscribers,
+      subtime: subtime,
       nonASFmails: nonASFmails,
       duration: ppmc.duration,
       podlingStatus: statusInfo,
