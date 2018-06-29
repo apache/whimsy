@@ -158,6 +158,7 @@ _html do
   _table do
     _tr do
       _th "availid"
+      _th "ICLA file"
       _th "iclas.txt real name"
       _th "iclas.txt public name"
       _th "LDAP cn"
@@ -188,6 +189,14 @@ _html do
         _tr_ do
           _td! do
             _a icla.id, href: "/roster/committer/#{icla.id}"
+          end
+          _td do
+            file = ASF::ICLAFiles.match_claRef(icla.claRef.untaint)
+            if file
+              _a icla.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{file}"
+            else
+              _ icla.claRef || 'unknown'
+            end
           end
           _td icla.legal_name.gsub(' ', "\u00A0"), draggable: 'true'
 
