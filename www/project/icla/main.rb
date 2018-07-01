@@ -19,9 +19,9 @@ disable :logging # suppress log of requests to stderr/error.log
 helpers do
   def projectsForUser(userName)
     pmcs = ASF::Committee.pmcs.map(&:name).sort
-    ppmcs =ASF::Podling.list
-      .select {|podling| podling.status == 'current'}
-      .map(&:name).sort
+    ppmcs = ASF::Podling.list.
+      select {|podling| podling.status == 'current'}.
+      map(&:name).sort
     user = ASF::Person.find(userName)
     committees = user.committees.map(&:name)
     pmcs.select! {|pmc| committees.include?(pmc)}
