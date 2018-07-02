@@ -43,7 +43,7 @@ signing and keep a copy for your records.
 
   (optional) Public name: #{@publicname.ljust(41, '_')}
 
-  Mailing Address: #{address.map {|line| line.strip.ljust(48, '_')}.
+  Postal Address: #{address.map {|line| line.strip.ljust(48, '_')}.
     join("\n\n                   ")}
 
   Country:   #{@country.ljust(54, '_')}
