@@ -782,6 +782,14 @@ module ASF
       end
     end
 
+    # list of LDAP projects that this individual is an owner of - i.e. on (P)PMC
+    # not all PMC currently have project groups
+    def project_owners
+      weakref(:project_owners) do
+        Project.list("owner=uid=#{name},#{base}")
+      end
+    end
+
     # list of LDAP groups that this individual is a member of
     def groups
       weakref(:groups) do
