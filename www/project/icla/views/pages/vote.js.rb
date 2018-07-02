@@ -170,6 +170,27 @@ class Vote < Vue
     end
   end
 
+  # TODO: finish the code!
+  def setInvitation(event)
+    console.log('setInvitation:' + event)
+    alert('setInvitation: Not yet implemented')
+  end
+
+  def submitVote(event)
+    console.log('submitVote:' + event)
+    alert('submitVote: Not yet implemented')
+  end
+
+  def cancelVote(event)
+    console.log('cancelVote:' + event)
+    alert('cancelVote: Not yet implemented')
+  end
+
+  def tallyVote(event)
+    console.log('tallyVote:' + event)
+    alert('tallyVote: Not yet implemented')
+  end
+
   # when the form is redisplayed, e.g. after displaying/hiding the commentBody
   def updated()
     focusComment()
