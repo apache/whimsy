@@ -163,7 +163,11 @@ class Invite < Vue
     end
     if @showPMCNoticeLink or @showPPMCNoticeLink
       _ 'Navigate to '
-      _a "Ponymail", href: "https://lists.apache.org/list.html?board@apache.org:lte=1M:NOTICE%20for%20#{@display_name}", target: _blank
+      if @showPMCNoticeLink
+        _a "Ponymail", href: "https://lists.apache.org/list.html?board@apache.org:lte=1M:NOTICE%20for%20#{@display_name}", target: _blank
+      else
+        _a "Ponymail", href: "https://lists.apache.org/list.html?private@incubator.apache.org:lte=1M:NOTICE%20for%20#{@display_name}", target: _blank
+      end
       _ ', select the appropriate message, right-click PermaLink, copy link'
       _ ' to the clip-board, and paste the link here.'
       _p
@@ -477,9 +481,9 @@ def setIclaName(event)
     @showVoteFrame = false;
     @showRoleFrame = false;
     @showPMCVoteLink = @isPMC
-    @showPPMCVoteLink = @isPMC
+    @showPPMCVoteLink = ! @isPMC
     @showPMCNoticeLink = @isPMC
-    @showPPMCNoticeLink = @isPMC
+    @showPPMCNoticeLink = ! @isPMC
     @showVoteErrorMessage = false;
     @showNoticeErrorMessage = false;
     checkVoteLink() if document.getElementById('votelink');
