@@ -18,7 +18,6 @@ class Invite < Vue
     @pmcOrPpmc = ''
     @phasePrefix = ''
     @member = Server.data.member
-    @pmc_mail = Server.data.pmc_mail
     @user = Server.data.user
 
 # initialize conditional text
@@ -89,12 +88,12 @@ class Invite < Vue
       _label "PMC/PPMC (required)", for: 'pmc'
       _select.form_control.pmc! required: true, onChange: self.setPMC, value: @pmc do
         _option ''
-        Server.data.pmcs.each do |pmc|
-          _option pmc
+        Server.data.allData.each_key do |pmc|
+          _option pmc if Server.data.allData[pmc]['pmc']
         end
         _option '---'
-        Server.data.ppmcs.each do |ppmc|
-          _option ppmc
+        Server.data.allData.each_key do |ppmc|
+          _option ppmc unless Server.data.allData[ppmc]['pmc']
         end
       end
     end
@@ -130,7 +129,7 @@ class Invite < Vue
     end
     if @showPMCVoteLink or @showPPMCVoteLink
       _ 'Navigate to '
-      _a "ponymail", href: "https://lists.apache.org"
+      _a "Ponymail", href: "https://lists.apache.org/list.html?private@#{@mail_list}.apache.org:lte=1M:[VOTE][RESULT]", target: _blank
       _ ', select the appropriate message, right-click PermaLink, copy link'
       _ ' to the clip-board, and paste the link here.'
       _p
@@ -163,6 +162,12 @@ class Invite < Vue
       }
     end
     if @showPMCNoticeLink or @showPPMCNoticeLink
+      _ 'Navigate to '
+      _a "Ponymail", href: "https://lists.apache.org/list.html?board@apache.org:lte=1M:NOTICE%20for%20#{@display_name}", target: _blank
+      _ ', select the appropriate message, right-click PermaLink, copy link'
+      _ ' to the clip-board, and paste the link here.'
+      _p
+
       _div.form_group do
         _label "NOTICE link", for: 'noticelink'
         _input.form_control.noticelink! type: 'url', onChange: self.setNoticeLink,
@@ -181,8 +186,8 @@ class Invite < Vue
           onClick: -> {@role = :committer;
             @disabled = false
             @subject = @subjectPhase + ' Invite ' + @iclaname +
-              ' to become a committer for ' + @pmc
-            @proposalText = 'I propose to invite ' + @iclaname +
+              ' to become a committer for ' + @display_name
+            @proposalText = 'I propose we invite ' + @iclaname +
               ' to become a committer.'
             @voteProposalText = @proposalText + "\nHere is my +1."
           }
@@ -195,8 +200,8 @@ class Invite < Vue
           onClick: -> {@role = :pmc
             @disabled = false
             @subject = @subjectPhase + ' Invite ' + @iclaname +
-              ' to become committer and ' + @pmcOrPPMC + ' member for ' + @pmc
-            @proposalText = 'I propose to invite ' + @iclaname +
+              ' to become committer and ' + @pmcOrPPMC + ' member for ' + @display_name
+            @proposalText = 'I propose we invite ' + @iclaname +
               ' to become a committer and ' + @pmcOrPPMC + ' member.'
             @voteProposalText = @proposalText + ' Here is my +1.'
           }
@@ -210,8 +215,8 @@ class Invite < Vue
             onClick: -> {@role = :invite
               @disabled = false
               @subject = @subjectPhase + ' Invite ' + @iclaname +
-              ' to submit an ICLA for ' + @pmc
-              @proposalText = 'I propose to invite ' + @iclaname +
+              ' to submit an ICLA for ' + @display_name
+              @proposalText = 'I propose we invite ' + @iclaname +
                 ' to submit an ICLA.'
             }
             _span @phasePrefix +
@@ -223,7 +228,7 @@ class Invite < Vue
     end
     if @showDiscussFrame
       _div 'From: ' + @member
-      _div 'To: private@' + @pmc_mail[@pmc] + '.apache.org'
+      _div 'To: private@' + @mail_list + '.apache.org'
       _div 'Subject: ' + @subject
       _p
       _span @proposalText
@@ -235,7 +240,7 @@ class Invite < Vue
     end
     if @showVoteFrame
       _div 'From: ' + @member
-      _div 'To: private@' + @pmc_mail[@pmc] + '.apache.org'
+      _div 'To: private@' + @mail_list + '.apache.org'
       _div 'Subject: ' + @subject
       _p
       _span @voteProposalText
@@ -394,11 +399,25 @@ def setIclaName(event)
 
   def setPMC(event)
     @pmc = event.target.value
-    @pmcOrPPMC = (Server.data.pmcs.include? @pmc)? 'PMC' : 'PPMC'
-    @phase = :discuss
-    @subject = ''
-    @showPhaseFrame = true
-    @showRoleFrame = true
+    if Server.data.allData[@pmc]
+      @isPMC = Server.data.allData[@pmc]['pmc']
+      @pmcOrPPMC = @isPMC ? 'PMC' : 'PPMC'
+      @phase = :discuss
+      @subject = ''
+      @showPhaseFrame = true
+      @showRoleFrame = true
+      @mail_list = Server.data.allData[@pmc]['mail_list']
+      @display_name = Server.data.allData[@pmc]['display_name']
+    else
+      @isPMC = false # true, but not the whole story!
+      @pmcOrPPMC = '---'
+      @phase = :discuss
+      @subject = ''
+      @showPhaseFrame = false
+      @showRoleFrame = false
+      @mail_list = '---'
+      @display_name = '---'
+    end
     self.checkValidity()
     selectDiscuss()
   end
@@ -457,10 +476,10 @@ def setIclaName(event)
     @showDiscussFrame = false;
     @showVoteFrame = false;
     @showRoleFrame = false;
-    @showPMCVoteLink = Server.data.pmcs.include? @pmc
-    @showPPMCVoteLink = Server.data.ppmcs.include? @pmc
-    @showPMCNoticeLink = Server.data.pmcs.include? @pmc
-    @showPPMCNoticeLink = Server.data.ppmcs.include? @pmc
+    @showPMCVoteLink = @isPMC
+    @showPPMCVoteLink = @isPMC
+    @showPMCNoticeLink = @isPMC
+    @showPPMCNoticeLink = @isPMC
     @showVoteErrorMessage = false;
     @showNoticeErrorMessage = false;
     checkVoteLink() if document.getElementById('votelink');
@@ -484,7 +503,7 @@ def setIclaName(event)
         a message via lists.apache.org"
         @showVoteErrorMessage = true;
       end
-      if not @votelink=~ /.*private\.#{@pmc_mail[@pmc]}(\.incubator)?\.apache\.org.*/
+      if not @votelink=~ /.*private\.#{@mail_list}(\.incubator)?\.apache\.org.*/
         @voteErrorMessage = "Error: Please link to\
         the [RESULT][VOTE] message sent to the private list."
         @showVoteErrorMessage = true;
@@ -511,7 +530,7 @@ def setIclaName(event)
         a message via lists.apache.org"
         @showNoticeErrorMessage = true;
       end
-      if @showPMCNoticeLink and not @noticelink=~ /.*board\@apache\.org.*/
+      if @showPMCNoticeLink and not @noticelink=~ /.*board\.apache\.org.*/
         @noticeErrorMessage = "Error: please link to\
         the NOTICE message sent to the board list."
         @showNoticeErrorMessage = true;

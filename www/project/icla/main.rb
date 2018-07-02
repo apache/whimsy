@@ -18,25 +18,21 @@ disable :logging # suppress log of requests to stderr/error.log
 
 helpers do
   def projectsForUser(userName)
-    pmcs = ASF::Committee.pmcs.map(&:name).sort
-    ppmcs = ASF::Podling.list.
-      select {|podling| podling.status == 'current'}.
-      map(&:name).sort
     user = ASF::Person.find(userName)
     committees = user.committees.map(&:name)
-    pmcs.select! {|pmc| committees.include?(pmc)}
-    ppmcs.select! {|ppmc|
-      committees.include?('incubator') |
-      committees.include?(ppmc)}
-    # mailList is a hash where the key is the name of the PMC/PPMC and
-    # the value is the name of the mail list for the committee
-    mailList = pmcs.map{|pmc| [pmc, ASF::Committee.find(pmc).mail_list]}.to_h.
-      merge(ppmcs.map{|ppmc| [ppmc, ASF::Podling.find(ppmc).mail_list]}.to_h)
-    hash = {
-      'pmcs' => pmcs,
-      'ppmcs' => ppmcs,
-      'pmcmail' => mailList
-    }
+
+    # allData is a hash where the key is the name of the PMC/PPMC and
+    # the value is a hash of the data for the PMC/PPMC
+    pmcData = ASF::Committee.pmcs. # get PMCs
+      select {|pmc| committees.include?(pmc.name)}. # keep the ones relevant to the user
+      sort_by{|p| p.name}.
+      map{|p| [p.name, {pmc: true, display_name: p.display_name, mail_list: p.mail_list}]}.to_h  # convert to hash of data items
+    ppmcData =   
+      ASF::Podling.list.select {|podling| podling.status == 'current'}. # get the podlings
+      select {|p| committees.include?('incubator') || committees.include?(p.name)}. # keep the ones relevant to the user
+      sort_by{|p| p.name}.
+      map{|p| [p.name, {pmc: false, display_name: p.display_name, mail_list: p.mail_list}]}.to_h # convert to hash of data items
+    pmcData.merge(ppmcData)
   end
   def loadProgress(token)
     if @token
@@ -99,10 +95,7 @@ get '/invite' do
   @user = env.user
   @member = getMember(@user)
   # get a complete list of PMC and PPMC names and mail lists
-  projects = projectsForUser(@member)
-  @pmcs = projects['pmcs']
-  @ppmcs = projects['ppmcs']
-  @pmc_mail = projects['pmcmail']
+  @allData = projectsForUser(@member)
 
   @cssmtime = File.mtime('public/css/icla.css').to_i
   @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
@@ -122,9 +115,7 @@ get '/discuss' do
   loadProgress(@token) if @token
 
   # not needed for this form but required for other forms
-  @pmcs = []
-  @ppmcs = []
-  @pmc_mail = {}
+  @allData = {}
 
   @cssmtime = File.mtime('public/css/icla.css').to_i
   @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i
@@ -143,9 +134,7 @@ get '/vote' do
   loadProgress(@token) if @token
 
   # not needed for this form but required for other forms
-  @pmcs = []
-  @ppmcs = []
-  @pmc_mail = {}
+  @allData = {}
 
   @cssmtime = File.mtime('public/css/icla.css').to_i
   @appmtime = Wunderbar::Asset.convert("#{settings.views}/app.js.rb").mtime.to_i

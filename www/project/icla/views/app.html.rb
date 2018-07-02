@@ -373,7 +373,7 @@ _html lang: 'en', _width: '80' do
     _script src: "app.js?#{@appmtime}"
 
     _.render '#main' do
-      _Main data: {pmcs: @pmcs, ppmcs: @ppmcs, pmc_mail: @pmc_mail,
+      _Main data: {allData: @allData,
         token: @token, progress: @progress, user: @user, member: @member,
         debug: @debug},
         view: @view
