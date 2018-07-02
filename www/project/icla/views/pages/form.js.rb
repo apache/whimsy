@@ -36,12 +36,12 @@ class Form < Vue
     end
 
     _div.form_group do
-      _p 'Public Name:'
+      _p 'Public Name (if different from Full Name):'
       _input.form_control value: @publicName
     end
 
     _div.form_group do
-      _p 'Mailing Address:'
+      _p 'Postal Address:'
       _textarea.form_control value: @address, rows: 2
     end
 
