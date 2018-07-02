@@ -17,9 +17,9 @@ class Interview < Vue
 
     _p %{
       Welcome to the Apache Software Foundation Individual Contributor License
-      Agreement online submission tool! This tool will guide you through the
+      Agreement (ICLA) online submission tool! This tool will guide you through the
       process of licensing to the ASF any copyright and patents that may apply
-      to your contributions
+      to your contributions.
     }
       
     _p %{
@@ -28,6 +28,10 @@ class Interview < Vue
       Next, we will ask you three questions. Then, you will be asked to
       provide some information about yourself. Finally, you will get a chance
       to review and submit the completed form.
+    }
+
+    _p %{
+      TODO: verify email address and Public Name
     }
 
     #
