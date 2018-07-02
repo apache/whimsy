@@ -20,6 +20,7 @@ helpers do
   def projectsForUser(userName)
     user = ASF::Person.find(userName)
     committees = user.committees.map(&:name)
+    project_owners = user.project_owners.map(&:name) # includes podlings and GUINEA_PIGS
 
     # allData is a hash where the key is the name of the PMC/PPMC and
     # the value is a hash of the data for the PMC/PPMC
@@ -29,7 +30,7 @@ helpers do
       map{|p| [p.name, {pmc: true, display_name: p.display_name, mail_list: p.mail_list}]}.to_h  # convert to hash of data items
     ppmcData =   
       ASF::Podling.list.select {|podling| podling.status == 'current'}. # get the podlings
-      select {|p| committees.include?('incubator') || committees.include?(p.name)}. # keep the ones relevant to the user
+      select {|p| committees.include?('incubator') || project_owners.include?(p.name)}. # keep the ones relevant to the user
       sort_by{|p| p.name}.
       map{|p| [p.name, {pmc: false, display_name: p.display_name, mail_list: p.mail_list}]}.to_h # convert to hash of data items
     pmcData.merge(ppmcData)
