@@ -73,19 +73,19 @@ class Invite < Vue
     #
 
     _div.form_group do
-      _label "Contributor's name (required):", for: 'iclaname'
+      _label "Contributor's name (required):", :for => 'iclaname'
       _input.form_control.iclaname! placeholder: 'GivenName FamilyName',
         required: true, value: @iclaname
     end
     _div.form_group do
-      _label "Contributor's E-Mail address (required):", for: 'iclaemail'
+      _label "Contributor's E-Mail address (required):", :for => 'iclaemail'
       _input.form_control.iclaemail! type: 'email', required: true,
         placeholder: 'user@example.com', onChange: self.setIclaEmail,
         value: @iclaemail
     end
 
     _div.form_group do
-      _label "PMC/PPMC (required)", for: 'pmc'
+      _label "PMC/PPMC (required)", :for => 'pmc'
       _select.form_control.pmc! required: true, onChange: self.setPMC, value: @pmc do
         _option ''
         Server.data.allData.each_key do |pmc|
@@ -99,13 +99,13 @@ class Invite < Vue
     end
     if @showPhaseFrame
       _ul.nav.nav_tabs do
-        _li class: ('active' if @phase == :discuss) do
+        _li :class => ('active' if @phase == :discuss) do
           _a 'Discuss', onClick: self.selectDiscuss
         end
-        _li class: ('active' if @phase == :vote) do
+        _li :class => ('active' if @phase == :vote) do
           _a 'Vote', onClick: self.selectVote
         end
-        _li class: ('active' if @phase == :invite) do
+        _li :class => ('active' if @phase == :invite) do
           _a 'Invite', onClick: self.selectInvite
         end
       end
@@ -135,7 +135,7 @@ class Invite < Vue
       _p
 
       _div.form_group do
-        _label "VOTE link", for: 'votelink'
+        _label "VOTE link", :for => 'votelink'
         _input.form_control.votelink! type: 'url', onChange: self.setVoteLink,
         value: @votelink
       end
@@ -173,7 +173,7 @@ class Invite < Vue
       _p
 
       _div.form_group do
-        _label "NOTICE link", for: 'noticelink'
+        _label "NOTICE link", :for => 'noticelink'
         _input.form_control.noticelink! type: 'url', onChange: self.setNoticeLink,
         value: @noticelink
       end
@@ -187,7 +187,7 @@ class Invite < Vue
       _div.form_check do
         _label do
           _input type: :radio, name: :role, value: :committer, id: 'role_committer',
-          onClick: -> {@role = :committer;
+          onClick: lambda {@role = :committer;
             @disabled = false
             @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to become a committer for ' + @display_name
@@ -201,7 +201,7 @@ class Invite < Vue
         _br
         _label do
           _input type: :radio, name: :role, value: :pmc, id: 'role_pmc',
-          onClick: -> {@role = :pmc
+          onClick: lambda {@role = :pmc
             @disabled = false
             @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to become committer and ' + @pmcOrPPMC + ' member for ' + @display_name
@@ -216,7 +216,7 @@ class Invite < Vue
           _br
           _label do
             _input type: :radio, name: :role, value: :invite, id: 'role_invite',
-            onClick: -> {@role = :invite
+            onClick: lambda {@role = :invite
               @disabled = false
               @subject = @subjectPhase + ' Invite ' + @iclaname +
               ' to submit an ICLA for ' + @display_name
@@ -290,7 +290,7 @@ class Invite < Vue
 
             # draft invitation email
             _div.form_group do
-              _label for: 'invitation'
+              _label :for => 'invitation'
               _textarea.form_control.invitation! value: @invitation, rows: 12,
                 onChange: self.setInvitation
             end
