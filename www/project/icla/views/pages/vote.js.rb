@@ -17,20 +17,21 @@ class Vote < Vue
     elsif @phase != 'vote'
       @alert = "Wrong phase: " + @phase + "; should be vote"
     else
-    @pmc = @progress[:project]
-    @proposer = @progress[:proposer]
-    @contributor = @progress[:contributor]
-    @iclaname = @contributor[:name]
-    @iclaemail = @contributor[:email]
-    @token = Server.data.token
-    @comments = @progress[:comments] ? @progress[:comments]: []
-    @votes = @progress[:votes]
-    @vote = ''
-    @timestamp = ''
-    @commentBody = ''
-    @subject = @progress[:subject]
-    @showComment = false;
-    @debug = Server.data.debug
+      @pmc = @progress[:project]
+      console.log('pmc: ' + @pmc)
+      @proposer = @progress[:proposer]
+      @contributor = @progress[:contributor]
+      @iclaname = @contributor[:name]
+      @iclaemail = @contributor[:email]
+      @token = Server.data.token
+      @comments = @progress[:comments] ? @progress[:comments] : []
+      @votes = @progress[:votes]
+      @vote = ''
+      @timestamp = ''
+      @commentBody = ''
+      @subject = @progress[:subject]
+      @showComment = false;
+      @debug = Server.data.debug
     end
   end
 
@@ -178,17 +179,33 @@ class Vote < Vue
 
   def submitVote(event)
     console.log('submitVote:' + event)
-    alert('submitVote: Not yet implemented')
+    updateVoteFile('submitVote')
   end
 
   def cancelVote(event)
     console.log('cancelVote:' + event)
-    alert('cancelVote: Not yet implemented')
+    updateVoteFile('cancelVote')
   end
 
   def tallyVote(event)
     console.log('tallyVote:' + event)
-    alert('tallyVote: Not yet implemented')
+    updateVoteFile('tallyVote')
+  end
+
+  def updateVoteFile(action)
+    data = {
+      action: action,
+      vote: @vote,
+      member: @member,
+      token: @token,
+    }
+    data['comment']=@commentBody if @vote == '-1'
+    console.log(">update: "+ data.inspect) # debug
+    post 'update', data do |response|
+      console.log("<update: "+ response.inspect) # debug
+      @alert = response.error
+      @votes = response['contents']['votes'] unless @alert
+    end
   end
 
   # when the form is redisplayed, e.g. after displaying/hiding the commentBody

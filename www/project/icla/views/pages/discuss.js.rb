@@ -157,18 +157,33 @@ class Discuss < Vue
 
   # TODO
   def submitComment(event)
-    alert('submitComment: not implemented')
     console.log('submitComment discussBody: ' + @discussBody.inspect)
+    updateVoteFile('submitComment')
   end
 
   def startVoting(event)
-    alert('startVoting: not implemented')
     console.log('startVoting discussBody: ' + @discussBody.inspect)
+    updateVoteFile('startVoting')
   end
 
   def invite(event)
-    alert('invite: not implemented')
     console.log('invite discussBody: ' + @discussBody.inspect)
+    updateVoteFile('invite')
+  end
+
+  def updateVoteFile(action)
+    data = {
+      action: action,
+      token: @token,
+      member: @member,
+      comment: @discussBody,
+    }
+    console.log(">update: "+ data.inspect) # debug
+    post 'update', data do |response|
+      console.log("<update: "+ response.inspect) # debug
+      @alert = response.error
+      @comments = response['contents']['comments'] unless @alert
+    end
   end
 
   #
