@@ -52,25 +52,25 @@ class Vote < Vue
       _div.form_group.vote do
         _label do
           _input type: 'radio', name: 'vote', value: '+1',
-          onClick: -> {@vote = '+1'; @showComment = false; checkValidity()}
+          onClick: lambda {@vote = '+1'; @showComment = false; checkValidity()}
           _span " +1 approve "
         end
         _p
         _label do
           _input type: 'radio', name: 'vote', value: '+0',
-          onClick: -> {@vote = '+0'; @showComment = false; checkValidity()}
+          onClick: lambda {@vote = '+0'; @showComment = false; checkValidity()}
           _span " +0 don't care "
         end
         _p
         _label do
           _input type: 'radio', name: 'vote', value: '-0',
-          onClick: -> {@vote = '-0'; @showComment = false; checkValidity()}
+          onClick: lambda {@vote = '-0'; @showComment = false; checkValidity()}
           _span " -0 don't care "
         end
         _p
         _label do
           _input type: 'radio', name: 'vote', value: '-1',
-          onClick: -> {@vote = '-1'; @showComment = true; checkValidity()}
+          onClick: lambda {@vote = '-1'; @showComment = true; checkValidity()}
           _span " -1 disapprove, because... "
         end
         _p
@@ -156,7 +156,7 @@ class Vote < Vue
 
             # draft invitation email
             _div.form_group do
-              _label for: 'invitation'
+              _label :for => 'invitation'
               _textarea.form_control.invitation! value: @invitation, rows: 12,
                 onChange: self.setInvitation # does not appear to work
             end
