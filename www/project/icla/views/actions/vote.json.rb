@@ -3,6 +3,7 @@ require 'net/http'
 require 'pathname'
 require 'json'
 require 'mail'
+require 'whimsy/lockfile'
 
 # find pmc and user information
 # all ppmcs are also pmcs but not all pmcs are ppmcs
@@ -42,9 +43,15 @@ discussion = {
 token = pmc.name + '-' + date + '-' + Digest::MD5.hexdigest(@iclaemail)[0..5]
 
 # save the discussion object to a file
-discussion_json = discussion.to_json
 file_name = '/srv/icla/' + token + '.json'
-File.open(file_name.untaint, 'w') {|f|f.write(discussion_json)}
+
+# important not to overwrite any existing files
+if LockFile.create_ex(file_name.untaint) do |f| 
+  f.write(JSON.pretty_generate(discussion))
+  end
+else
+  _error 'There is already a file for that person!'
+end
 
 
 # add user and pmc emails to the response
