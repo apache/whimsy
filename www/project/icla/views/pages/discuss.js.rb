@@ -150,6 +150,27 @@ class Discuss < Vue
     checkValidity()
   end
 
+  def setInvitation(event)
+    @invitation = event.target.value
+    checkValidity()
+  end
+
+  # TODO
+  def submitComment(event)
+    alert('submitComment: not implemented')
+    console.log('submitComment discussBody: ' + @discussBody.inspect)
+  end
+
+  def startVoting(event)
+    alert('startVoting: not implemented')
+    console.log('startVoting discussBody: ' + @discussBody.inspect)
+  end
+
+  def invite(event)
+    alert('invite: not implemented')
+    console.log('invite discussBody: ' + @discussBody.inspect)
+  end
+
   #
   # validation and processing
   #
