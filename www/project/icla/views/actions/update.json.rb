@@ -9,6 +9,8 @@ require 'json'
 require 'whimsy/lockfile'
 
 # TODO add emails where necessary
+# TODO add some kind of history to show who changed the phase and when
+# This probably needs to be held separately from comments
 
 def update(data)
   token = data['token'] 
