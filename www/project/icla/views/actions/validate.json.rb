@@ -164,5 +164,5 @@ Click on this link to accept:
 
 Regards,
 #{user.public_name if user}
-On behalf of the #{pmc.name} project
+On behalf of the #{pmc.display_name} project
 }
