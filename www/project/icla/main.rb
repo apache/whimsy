@@ -36,18 +36,18 @@ helpers do
     pmcData.merge(ppmcData)
   end
   def loadProgress(token)
-    if @token
-      # read the file corresponging to the token
+    if token
+      # read the file corresponding to the token
       # the file name is '/srv/<token>.json
-      @filename = '/srv/icla/' + token + '.json'
+      filename = '/srv/icla/' + token + '.json'
       begin
-        @progress = JSON.parse(File.read(@filename))
+        JSON.parse(File.read(filename))
       rescue SystemCallError => e
-        @progress = {
+        {
           phase: 'error', errorMessage: e.message, errorCode: e.errno
         }
       rescue JSON::ParserError => e
-        @progress = {
+        {
           phase: 'error', errorMessage: e.message, errorCode: 999
         }
       end
@@ -77,7 +77,7 @@ get '/' do
   @token = params['token']
   @mock = params['mock']
   @extra = @mock ? "&mock=" + @mock : ''
-  loadProgress(@token) if @token
+  @progress = loadProgress(@token) if @token
   @phase = @progress['phase'] if @progress
   if @phase == 'discuss'
     redirect to("/discuss?token=" + @token + @extra)
@@ -113,7 +113,7 @@ get '/discuss' do
   @user = env.user
   @member = getMember(@user)
   @token = params['token']
-  loadProgress(@token) if @token
+  @progress = loadProgress(@token) if @token
 
   # not needed for this form but required for other forms
   @allData = {}
@@ -132,7 +132,7 @@ get '/vote' do
   @user = env.user
   @member = getMember(@user)
   @token = params['token']
-  loadProgress(@token) if @token
+  @progress = loadProgress(@token) if @token
 
   # not needed for this form but required for other forms
   @allData = {}
