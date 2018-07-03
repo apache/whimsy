@@ -157,7 +157,7 @@ class Vote < Vue
             _div.form_group do
               _label for: 'invitation'
               _textarea.form_control.invitation! value: @invitation, rows: 12,
-                onChange: self.setInvitation
+                onChange: self.setInvitation # does not appear to work
             end
           end
 
