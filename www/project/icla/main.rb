@@ -41,7 +41,7 @@ helpers do
       # the file name is '/srv/<token>.json
       filename = '/srv/icla/' + token + '.json'
       begin
-        JSON.parse(File.read(filename))
+        JSON.parse(File.read(filename)) # TODO does this need a read lock?
       rescue SystemCallError => e
         {
           phase: 'error', errorMessage: e.message, errorCode: e.errno
