@@ -502,12 +502,12 @@ def setIclaName(event)
     document.getElementById('votelink').setCustomValidity('');
     if (@votelink)
       # verify that the link refers to lists.apache.org message on the project list
-      if not @votelink=~ /.*lists\.apache\.org.*/
+      if not @votelink=~ /^https:\/\/lists\.apache\.org\//
         @voteErrorMessage = "Error: Please link to\
-        a message via lists.apache.org"
+        a message via https://lists.apache.org/"
         @showVoteErrorMessage = true;
       end
-      if not @votelink=~ /.*private\.#{@mail_list}(\.incubator)?\.apache\.org.*/
+      if not @votelink=~ /private@#{@mail_list}(\.incubator)?\.apache\.org/
         @voteErrorMessage = "Error: Please link to\
         the [RESULT][VOTE] message sent to the private list."
         @showVoteErrorMessage = true;
@@ -529,17 +529,17 @@ def setIclaName(event)
     document.getElementById('noticelink').setCustomValidity('');
     # verify that the link refers to lists.apache.org message on the proper list
     if (@noticelink)
-      if not @noticelink=~ /.*lists\.apache\.org.*/
+      if not @noticelink=~ /^https:\/\/lists\.apache\.org\//
         @noticeErrorMessage = "Error: please link to\
-        a message via lists.apache.org"
+        a message via https://lists.apache.org/"
         @showNoticeErrorMessage = true;
       end
-      if @showPMCNoticeLink and not @noticelink=~ /.*board\.apache\.org.*/
+      if @showPMCNoticeLink and not @noticelink=~ /board@apache\.org/
         @noticeErrorMessage = "Error: please link to\
         the NOTICE message sent to the board list."
         @showNoticeErrorMessage = true;
       end
-      if @showPPMCNoticeLink and not @noticelink=~ /.*private\@incubator\.apache\.org.*/
+      if @showPPMCNoticeLink and not @noticelink=~ /private@incubator\.apache\.org/
         @noticeErrorMessage = "Error: please link to\
         the NOTICE message sent to the incubator private list."
         @showNoticeErrorMessage = true;
