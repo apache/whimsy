@@ -19,7 +19,7 @@ module LockFile
     return verbose ?  [err==nil, err] :  err==nil
   end
 
-  # lock a file and ensure it gets unlocked
+  # lock an open file and ensure it gets unlocked
   def self.flock(file, mode)
     ok = file.flock(mode)
     if ok
@@ -32,6 +32,14 @@ module LockFile
     ok
   end
 
+  # open a file and lock it
+  def self.lockfile(filename, mode, lockmode)
+    open(filename, mode) do |f|
+      self.flock(f, lockmode) { |g|
+        yield g
+      }
+    end
+  end
 end
 
 
@@ -47,6 +55,14 @@ if __FILE__ == $0
     ret = LockFile.create_ex(name) {|f| f << text}
   when 'createShow'
     ret = LockFile.create_ex(name, true) {|f| f << text}
+  when 'opena'
+    puts "#{Time.now} Wait lock"
+    ret = LockFile.lockfile(name, 'a', File::LOCK_EX) do |f|
+      puts "#{Time.now} Got lock"
+      f << text
+      puts "#{Time.now} Sleep"
+      sleep(5)
+    end
   when 'locka'
     open(name,'a') do |f|
       puts "#{Time.now} Wait lock"
