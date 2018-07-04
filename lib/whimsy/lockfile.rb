@@ -6,8 +6,8 @@
 
 module LockFile
 
-  # create a new file and return an error if it already exists
-  def self.create_ex(filename, verbose=false)
+  # create a new file and return an error if it already exists, otherwise nil
+  def self.create_ex(filename)
     err = nil
     begin
       File.open(filename, File::WRONLY|File::CREAT|File::EXCL) do |file|
@@ -16,7 +16,7 @@ module LockFile
     rescue => e
       err = e
     end
-    return verbose ?  [err==nil, err] :  err==nil
+    err
   end
 
   # lock an open file and ensure it gets unlocked
@@ -50,11 +50,10 @@ if __FILE__ == $0
   name = ARGV.shift || '/tmp/lockfile1'
   text = "#{Time.now}\n"
   puts "#{Time.now} #{test} using #{name}"
+  ret = nil
   case test
   when 'create'
     ret = LockFile.create_ex(name) {|f| f << text}
-  when 'createShow'
-    ret = LockFile.create_ex(name, true) {|f| f << text}
   when 'opena'
     puts "#{Time.now} Wait lock"
     ret = LockFile.lockfile(name, 'a', File::LOCK_EX) do |f|
@@ -84,6 +83,14 @@ if __FILE__ == $0
   else
     raise "Unexpected test: #{test}"
   end
+  puts ret.class.inspect
   puts ret.inspect
-  puts File.read(name)
+  if ret
+    if Errno::EEXIST === ret
+      puts "Already exists!"
+    else
+      puts "Some other error"
+    end
+  end
+  puts File.read(name) unless ret
 end

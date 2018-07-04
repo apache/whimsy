@@ -26,7 +26,7 @@ rescue
   _focus :iclaemail
 end
 # create the vote object
-date = Time.now.to_date.to_s
+date = Time.now.to_date.to_s # requires 'time' (seems to be pulled in by 'mail')
 contributor = {:name => @iclaname, :email => @iclaemail}
 comment = @proposalText + "\n" + @voteComment
 votes = [{:vote =>'+1', :member => @proposer, :timestamp => date, :comment => comment}]
@@ -46,11 +46,15 @@ token = pmc.name + '-' + date + '-' + Digest::MD5.hexdigest(@iclaemail)[0..5]
 file_name = '/srv/icla/' + token + '.json'
 
 # important not to overwrite any existing files
-if LockFile.create_ex(file_name.untaint) do |f| 
+err = LockFile.create_ex(file_name.untaint) do |f|
   f.write(JSON.pretty_generate(discussion))
+end
+if err
+  if Errno::EEXIST === err
+    _error 'There is already a file for that person!'
+  else
+    _error err.inspect
   end
-else
-  _error 'There is already a file for that person!'
 end
 
 
