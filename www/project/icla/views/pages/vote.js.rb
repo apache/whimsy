@@ -88,17 +88,13 @@ class Vote < Vue
         end
       end
 
+      _h5 'Voting history'
+
       tally = {} # most recent vote details for each member
       # previous votes
       @votes.each {|v|
         tally[v.member] = [v.vote, v.timestamp]
         _p v.vote + ' From: ' + v.member + ' Date: ' + v.timestamp
-      }
-
-      # previous comments
-      @comments.each {|c|
-        _b 'From: ' + c.member + ' Date: ' + c.timestamp
-        _p c.comment
       }
 
       _h5 'Summary of voting so far'
@@ -120,11 +116,18 @@ class Vote < Vue
 
       started = new Date(@votes[0]['timestamp'])
       now = new Date()
-      elapsed = (now - started) / (1000 * 60 * 60 * 24)
-      _ 'Voting started: ' + started.toISOString().slice(0,10) + ' Days elapsed: ' + elapsed.to_i
+      elapsed = (now - started) / (1000 * 60 * 60)
+      _ 'Voting started: ' + started.toISOString() + ' Hours elapsed: ' + elapsed.to_i
 
       _p
 
+      _h5 'Previous discussion'
+
+      # previous comments
+      @comments.each {|c|
+        _b 'From: ' + c.member + ' Date: ' + c.timestamp
+        _p c.comment
+      }
 
       #
       # Submission buttons
