@@ -27,10 +27,11 @@ rescue
   _focus :iclaemail
 end
 # create the discussion object
-date = Time.now.utc.to_s
+timestamp = Time.now.utc.to_s
+date = timestamp[0..9] # keep only the date 
 contributor = {:name => @iclaname, :email => @iclaemail}
 comment = @proposalText + "\n" + @discussComment
-comments = [{:member => @proposer, :timestamp => date, :comment => comment}]
+comments = [{:member => @proposer, :timestamp => timestamp, :comment => comment}]
 discussion = {
   :phase => 'discuss',
   :proposer => @proposer,
