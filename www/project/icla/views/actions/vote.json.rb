@@ -26,7 +26,7 @@ rescue
   _focus :iclaemail
 end
 # create the vote object
-date = Time.now.to_date.to_s # requires 'time' (seems to be pulled in by 'mail')
+date = Time.now.utc.to_s # need HMS in order to calculate accurate elapsed times
 contributor = {:name => @iclaname, :email => @iclaemail}
 comment = @proposalText + "\n" + @voteComment
 votes = [{:vote =>'+1', :member => @proposer, :timestamp => date, :comment => comment}]
