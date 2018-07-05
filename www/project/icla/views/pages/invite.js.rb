@@ -277,7 +277,7 @@ class Invite < Vue
             # headers
             _div do
               _b 'From: '
-              _span @memberEmail
+              _span @userEmail
             end
             _div do
               _b 'To: '
@@ -571,9 +571,9 @@ def setIclaName(event)
   def preview()
     if @phase == :invite
       previewInvitation()
-      elsif @phase == :discuss
+    elsif @phase == :discuss
       previewDiscussion()
-      elsif @phase == :vote
+    elsif @phase == :vote
       previewVote()
     end
   end
@@ -589,10 +589,13 @@ def setIclaName(event)
 
     @disabled = true
     @alert = nil
+    console.log('>previewInvitation: ' + data.inspect)
     post 'validate', data do |response|
+      console.log('<previewInvitation: ' + response.inspect)
       @disabled = false
       @alert = response.error
       @memberEmail = response.memberEmail
+      @userEmail = response.userEmail
       @pmcEmail = response.pmcEmail
       @invitation = response.invitation
       @token = response.token
@@ -613,10 +616,13 @@ def setIclaName(event)
 
     @disabled = true
     @alert = nil
+    console.log('>previewDiscussion: ' + data.inspect)
     post 'discuss', data do |response|
+      console.log('<previewDiscussion: ' + response.inspect)
       @disabled = false
       @alert = response.error
       @memberEmail = response.memberEmail
+      @userEmail = response.userEmail
       @pmcEmail = response.pmcEmail
       @discussion = response.discussion
       @token = response.token
@@ -640,11 +646,13 @@ def setIclaName(event)
 
     @disabled = true
     @alert = nil
+    console.log('>previewVote: ' + data.inspect)
     post 'vote', data do |response|
-      console.log(response.inspect)
+      console.log('<previewVote: ' + response.inspect)
       @disabled = false
       @alert = response.error
       @memberEmail = response.memberEmail
+      @userEmail = response.userEmail
       @pmcEmail = response.pmcEmail
       @token = response.token
       @message = response.message
