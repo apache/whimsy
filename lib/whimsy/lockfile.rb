@@ -33,9 +33,12 @@ module LockFile
   end
 
   # open a file and lock it
-  def self.lockfile(filename, mode, lockmode)
-    open(filename, mode) do |f|
-      self.flock(f, lockmode) { |g|
+  # filename
+  # mode: default 'r'
+  # lockmode: default LOCK_SH
+  def self.lockfile(filename, mode=nil, lockmode=nil)
+    open(filename, mode || 'r') do |f|
+      self.flock(f, lockmode || File::LOCK_SH) { |g|
         yield g
       }
     end
@@ -52,6 +55,14 @@ if __FILE__ == $0
   puts "#{Time.now} #{test} using #{name}"
   ret = nil
   case test
+  when 'default'
+    puts "#{Time.now} Wait lock"
+    ret = LockFile.lockfile(name) do |f|
+      puts "#{Time.now} Got lock"
+      puts f.read
+      puts "#{Time.now} Sleep"
+      sleep(5)
+    end
   when 'create'
     ret = LockFile.create_ex(name) {|f| f << text}
   when 'opena'
