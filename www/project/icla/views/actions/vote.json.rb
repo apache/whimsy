@@ -36,6 +36,7 @@ discussion = {
   :subject => @subject,
   :project => @pmc,
   :contributor => contributor,
+  :comments => [], # make sure it is present
   :votes => votes
 }
 

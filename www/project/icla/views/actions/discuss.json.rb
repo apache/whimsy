@@ -37,7 +37,8 @@ discussion = {
   :subject => subject,
   :project => @pmc,
   :contributor => contributor,
-  :comments => comments
+  :comments => comments,
+  :votes => []  # make sure it is present
 }
 
   # generate a token
