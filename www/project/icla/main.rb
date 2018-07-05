@@ -3,6 +3,7 @@
 #
 
 require 'whimsy/asf'
+require 'whimsy/lockfile'
 
 require 'wunderbar/sinatra'
 require 'wunderbar/vue'
@@ -37,11 +38,14 @@ helpers do
   end
   def loadProgress(token)
     if token
+      data = nil
       # read the file corresponding to the token
       # the file name is '/srv/<token>.json
       filename = '/srv/icla/' + token + '.json'
       begin
-        JSON.parse(File.read(filename)) # TODO does this need a read lock?
+        LockFile.lockfile(filename) do |f| # shared read
+          data = JSON.parse(File.read(f))
+        end
       rescue SystemCallError => e
         {
           phase: 'error', errorMessage: e.message, errorCode: e.errno
@@ -51,6 +55,7 @@ helpers do
           phase: 'error', errorMessage: e.message, errorCode: 999
         }
       end
+      data
     end
   end
   def getMember(userId)
