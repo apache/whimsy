@@ -446,6 +446,7 @@ module ASF
     # a number of aliases for a given committee.  Will set display name
     # if the name being searched on contains an uppercase character.
     def self.find(name)
+      raise ArgumentError.new('name: must not be nil') unless name
       result = super(@@namemap.call(name.downcase))
       result.display_name = name if name =~ /[A-Z]/
       result
