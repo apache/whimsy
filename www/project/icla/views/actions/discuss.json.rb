@@ -72,7 +72,7 @@ Use this link to discuss:
 #{link}
 }
 
-# create the email to the pmc
+# create the email to the user
 mail = Mail.new do
   to user_email
   from user_email.untaint
