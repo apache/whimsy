@@ -33,7 +33,7 @@ def update(data)
     raise ArgumentError.new("Invalid newPhase: '#{newPhase}'")
   end
 
-  timestamp = Time.now.to_s[0..9]
+  timestamp = Time.now.utc.to_s
   addComment = nil
   voteinfo = nil
   if action == 'submitVote'
@@ -61,9 +61,9 @@ def update(data)
     if comment
       addComment = 
       {
-        comment: comment,
-        member: member,
-        timestamp: timestamp,
+        'comment' => comment,
+        'member' => member,
+        'timestamp' => timestamp,
       } 
     else
       raise ArgumentError.new("comment must not be nil for '#{action}'")
@@ -84,6 +84,16 @@ def update(data)
     if newPhase && newPhase != phase
       contents['phase'] = newPhase
       rewrite = true
+    end
+    if action == 'startVoting' # need to add a vote to start this off
+      comment0 = contents['comments'][0]['comment'] # initial comment
+      voteinfo = {
+        'vote' => '+1',
+        'comment' => "#{comment0}\nHere is my +1", # append to original comment
+        'member' => member,
+        'timestamp' => timestamp,
+      }
+      addComment['comment'] += "\n**Starting the vote.**"
     end
     if voteinfo
       contents['votes'] << voteinfo
