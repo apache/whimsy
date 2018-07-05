@@ -1,8 +1,24 @@
 #
 # Common methods to update the progress file
 #
-# Called from JS pages using POST
+# Called from discuss.js.rb and vote.js.rb using POST
 #
+
+# Expects the following variables to be provided as part of post data:
+# - action
+# - comment (possibly absent)
+# - expectedPhase
+# - member
+# - newPhase (possibly absent)
+# - token
+# - vote (possibly absent)
+
+# Returns the following hash keys:
+# body_text (debug)
+# rewrite (debug)
+# error
+# backtrace
+# contents
 
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 

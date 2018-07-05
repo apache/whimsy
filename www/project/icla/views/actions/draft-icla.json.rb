@@ -1,3 +1,24 @@
+#
+# Creates the draft ICLA form
+#
+
+# Called from forms.js.rb POST
+# expects the following variables to be set:
+# @address
+# @apacheid
+# @country
+# @email
+# @fullname
+# @publicname
+# @pmc
+# @telephone
+
+# returns the following keys:
+# error
+# focus
+# ipadddr
+# draft
+
 if not @apacheid.empty? and ASF::Person.find(@apacheid).icla?
   _error "Apache ID #{@apacheid} already in use"
   _focus :apacheId

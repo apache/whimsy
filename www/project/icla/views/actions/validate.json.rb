@@ -2,6 +2,22 @@ require 'socket'
 require 'net/http'
 require 'pathname'
 
+# Validates and prepares invitations
+
+# Called from invite.js.rb POST
+# expects the following variables to be set:
+# @pmc
+# @iclaemail
+# @iclaname
+# @votelink
+# @noticelink
+
+# returns the following keys:
+#  error
+#  focus
+#  token
+#  invitation
+
 # find pmc and user information
 # all ppmcs are also pmcs but not all pmcs are ppmcs
 

@@ -5,6 +5,29 @@ require 'json'
 require 'mail'
 require 'whimsy/lockfile'
 
+# creates the vote phase JSON file
+# sends an email to the originator with the link 
+
+# Called from invite.js.rb POST
+# expects the following variables to be set:
+#  @pmc
+#  @iclaemail
+#  @iclaname
+#  @proposalText
+#  @voteComment
+#  @proposer
+#  @subject
+
+# returns the following keys:
+#  error
+#  focus
+#  userEmail
+#  pmcEmail
+#  token
+#  subject
+#  discussion
+#  message
+
 # find pmc and user information
 # all ppmcs are also pmcs but not all pmcs are ppmcs
 
