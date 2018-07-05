@@ -38,16 +38,21 @@ user = ASF::Person.find(env.user)
 user_email = user.id + '@apache.org'
 subject = params['subject']
 
+if ASF::Person.find_by_email(@iclaemail)
+  _error "ICLA already on file for #{@iclaemail}"
+  _focus :iclaemail
+  return # cannot continue
+end
+
 begin
   Socket.getaddrinfo(@iclaemail[/@(.*)/, 1].untaint, 'smtp')
 
-  if ASF::Person.find_by_email(@iclaemail)
-    _error "ICLA already on file for #{@iclaemail}"
-  end
 rescue
   _error 'Invalid domain name in email address'
   _focus :iclaemail
+  return # cannot continue
 end
+
 # create the discussion object
 timestamp = Time.now.utc.to_s
 date = timestamp[0..9] # keep only the date 
@@ -80,6 +85,7 @@ if err
   else
     _error err.inspect
   end
+  return # cannot continue
 end
 
 # add user and pmc emails to the response
