@@ -275,30 +275,6 @@ class Vote < Vue
     @disabled = (@vote == '' or (@vote == '-1' and @commentBody.empty?))
   end
 
-  # server side field validations
-  def previewInvitation()
-    data = {
-      iclaname: @iclaname,
-      iclaemail: @iclaemail,
-      pmc: @pmc,
-      votelink: @votelink,
-      noticelink: @noticelink
-    }
-
-    @disabled = true
-    @alert = nil
-    post 'validate', data do |response|
-      @disabled = false
-      @alert = response.error
-      @memberEmail = response.memberEmail
-      @pmcEmail = response.pmcEmail
-      @invitation = response.invitation
-      @token = response.token
-      document.getElementById(response.focus).focus() if response.focus
-      jQuery('#invitation-preview').modal(:show) unless @alert
-    end
-  end
-
   # pretend to send an invitation
   def mockSend()
     # dismiss modal dialog
