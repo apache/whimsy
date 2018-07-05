@@ -1,6 +1,7 @@
 #
 # Common methods to update the progress file
-# TODO also send emails?
+#
+# Called from JS pages using POST
 #
 
 $LOAD_PATH.unshift '/srv/whimsy/lib'
@@ -8,24 +9,39 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'json'
 require 'whimsy/lockfile'
 
-# TODO add emails where necessary
 # TODO add some kind of history to show who changed the phase and when
 # This probably needs to be held separately from comments
 
+# Simplify validation
+VALID_ACTIONS=%w{submitVote cancelVote tallyVote submitComment startVoting invite}
+HAS_COMMENT=%w{submitComment startVoting invite} # do we update the comments array?
+VALID_PHASES=%w{discuss vote cancelled tallied invite}
+VALID_VOTES=%w{+1 +0 -0 -1}
+
 def update(data)
-  token = data['token'] 
-  file = "/srv/icla/#{token}.json"
+  # setup and validation
+  token = data['token']
+  raise ArgumentError.new('token must not be nil') unless token
   action = data['action']
-  timestamp = Time.now.to_s[0..9]
+  raise ArgumentError.new("Invalid action: '#{action}'") unless VALID_ACTIONS.include? action
   member = data['member']
   comment = data['comment'] # may be nil
+  expectedPhase = data['expectedPhase']
+  raise ArgumentError.new('expectedPhase must not be nil') unless expectedPhase
+  newPhase = data['newPhase'] # nil for no change
+  if newPhase and not VALID_PHASES.include? newPhase
+    raise ArgumentError.new("Invalid newPhase: '#{newPhase}'")
+  end
 
+  timestamp = Time.now.to_s[0..9]
+  addComment = nil
+  voteinfo = nil
   if action == 'submitVote'
     vote = data['vote']
-    raise 'vote must not be nil' unless vote
-    raise 'member must not be nil' unless member
+    raise ArgumentError.new("Invalid vote: '#{vote}'") unless VALID_VOTES.include? vote
+    raise ArgumentError.new('member must not be nil') unless member
     if vote == '-1'
-      raise '-1 vote must have comment' unless comment
+      raise ArgumentError.new('-1 vote must have comment') unless comment
     end
     if comment # allow comment for other votes
       voteinfo = {
@@ -41,42 +57,41 @@ def update(data)
         'timestamp' => timestamp,
       }
     end
+  elsif HAS_COMMENT.include? action
+    if comment
+      addComment = 
+      {
+        comment: comment,
+        member: member,
+        timestamp: timestamp,
+      } 
+    else
+      raise ArgumentError.new("comment must not be nil for '#{action}'")
+    end
   end
+
+  file = "/srv/icla/#{token}.json"
+
+  # now read/update the file if necessary
   contents = {} # define the var outside the block
+  rewrite = false # should the file be updated?
+  phases = *expectedPhase # convert string to array
+
   LockFile.lockfile(file, 'r+', File::LOCK_EX) do |f|
     contents = JSON::parse(f.read)
-    rewrite = false # should the file be updated?
-    case action
-      # These are the vote actions
-      when 'submitVote'
-        # keep the same phase
-        contents['votes'] << voteinfo
-        rewrite = true
-      when 'cancelVote'
-        contents['phase'] = 'cancelled'
-        rewrite = true
-      when 'tallyVote'
-        contents['phase'] = 'tallied' # is that necessary? Can we tally again?
-        rewrite = true # only needed if phase is updated
-
-      # these are the discuss actions
-      when 'submitComment', 'startVoting', 'invite' # discuss
-        contents['comments'] << {
-          comment: comment,
-          member: member,
-          timestamp: timestamp,
-        }
-        # Might be better for the caller to provide the new phase
-        if action == 'startVoting'
-          contents['phase'] = 'vote'
-          contents['votes'] ||= [] # make sure there is a votes array
-        end 
-        contents['phase'] = 'invite' if action == 'invite'
-        rewrite = true
-
-      # unknown
-      else
-        raise "InvalidAction: #{action}" 
+    phase = contents['phase']
+    raise ArgumentError.new("Phase '#{phase}': expected '#{expectedPhase}'") unless expectedPhase == '*' or phases.include? phase 
+    if newPhase && newPhase != phase
+      contents['phase'] = newPhase
+      rewrite = true
+    end
+    if voteinfo
+      contents['votes'] << voteinfo
+      rewrite = true
+    end
+    if addComment
+      contents['comments'] << addComment
+      rewrite = true
     end
     if rewrite
       f.rewind # back to start
@@ -84,6 +99,9 @@ def update(data)
       f.write(JSON.pretty_generate(contents))
     end
   end
+
+  # return the data
+  _rewrite rewrite # debug
   contents
 end
 
@@ -93,7 +111,8 @@ def process(data)
   begin
     contents = update(data)
   rescue => e
-    _error e.inspect
+    _error e
+    _backtrace e.backtrace[0] # can be rather large
   end
   _contents contents
 end
@@ -108,10 +127,16 @@ end
 
 if __FILE__ == $0 # Allow independent testing
   $ret = {}
-  def method_missing(m, *args) # handles _error etc
-    $ret[m.to_s[1..-1]]=args[0] if m[0] == '_'
+  # method_missing caused some errors to be overlooked
+  %w{backtrace error contents rewrite}.each do |n|
+    define_method("_#{n}") do |a|
+      $ret[n] = a
+    end
   end
-  main(Hash[*ARGV])
+  data = Hash[*ARGV] # cannot combine this with next line as hash doesn't yet exist
+  data.each{|k,v| data[k] = v.split(',') if v =~ /,/} # fix up lists
+  puts data.inspect
+  main(data)
   puts JSON.pretty_generate($ret) # output the return data
 else
   embed # Sinatra sets params

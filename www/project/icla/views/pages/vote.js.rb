@@ -24,7 +24,7 @@ class Vote < Vue
       @iclaname = @contributor[:name]
       @iclaemail = @contributor[:email]
       @token = Server.data.token
-      @comments = @progress[:comments] ? @progress[:comments] : []
+      @comments = @progress[:comments]
       @votes = @progress[:votes]
       @vote = ''
       @timestamp = ''
@@ -184,27 +184,32 @@ class Vote < Vue
 
   def cancelVote(event)
     console.log('cancelVote:' + event)
-    updateVoteFile('cancelVote')
+    updateVoteFile('cancelVote', 'cancelled')
   end
 
   def tallyVote(event)
     console.log('tallyVote:' + event)
-    updateVoteFile('tallyVote')
+    updateVoteFile('tallyVote', 'tallied') # is this correct? TODO
   end
 
-  def updateVoteFile(action)
+  def updateVoteFile(action, newPhase)
     data = {
       action: action,
       vote: @vote,
       member: @member,
       token: @token,
+      expectedPhase: 'vote',
+      newPhase: newPhase,
     }
     data['comment']=@commentBody if @vote == '-1'
     console.log(">update: "+ data.inspect) # debug
     post 'update', data do |response|
       console.log("<update: "+ response.inspect) # debug
       @alert = response.error
-      @votes = response['contents']['votes'] unless @alert
+      unless @alert
+        @votes = response['contents']['votes']
+        @comments = response['contents']['comments']
+      end
     end
   end
 

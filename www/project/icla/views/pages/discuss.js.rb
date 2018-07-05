@@ -155,7 +155,6 @@ class Discuss < Vue
     checkValidity()
   end
 
-  # TODO
   def submitComment(event)
     console.log('submitComment discussBody: ' + @discussBody.inspect)
     updateVoteFile('submitComment')
@@ -163,20 +162,22 @@ class Discuss < Vue
 
   def startVoting(event)
     console.log('startVoting discussBody: ' + @discussBody.inspect)
-    updateVoteFile('startVoting')
+    updateVoteFile('startVoting','vote')
   end
 
-  def invite(event)
+  def invite(event) # does this need to change to 'invite'
     console.log('invite discussBody: ' + @discussBody.inspect)
     updateVoteFile('invite')
   end
 
-  def updateVoteFile(action)
+  def updateVoteFile(action, newPhase)
     data = {
       action: action,
       token: @token,
       member: @member,
       comment: @discussBody,
+      expectedPhase: 'discuss',
+      newPhase: newPhase,
     }
     console.log(">update: "+ data.inspect) # debug
     post 'update', data do |response|
