@@ -12,18 +12,11 @@ class Form < Vue
   end
 
   def render
-    # error messages / welcome
-    if @alert
-      _div.alert.alert_danger do
-        _b 'Error: '
-        _span @alert
-      end
-    else
-      _p %{
-        Thanks!  Now please take a moment to answer a few questions about
-        yourself.
-      }
-    end
+
+    _p %{
+      Thanks!  Now please take a moment to answer a few questions about
+      yourself.
+    }
 
     #
     # Form fields
@@ -63,6 +56,14 @@ class Form < Vue
           placeholder: 'At least 3 lower-case alphanumeric, starting with alpha. Separate multiple choices with spaces.',
           pattern: "^[a-z][a-z0-9]{2,}{1,}\s*(\s+[a-z][a-z0-9]{2,}{1,})*$"
           # Single name, optional spaces after, followed by zero or more names with leading spaces
+      end
+    end
+
+    # needs to be near the button or it can scroll off the visible screen
+    if @alert
+      _div.alert.alert_danger do
+        _b 'Error: '
+        _span @alert
       end
     end
 
