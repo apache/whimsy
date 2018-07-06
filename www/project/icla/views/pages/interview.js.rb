@@ -1,12 +1,15 @@
 class Interview < Vue
   def initialize
-    @showQuestion1 = true
+    @showQuestion1 = false
     @showQuestion2 = false
     @showQuestion3 = false
 
     @disableButton1 = false
     @disableButton2 = false
     @disableButton3 = false
+
+    @disablePersonalDetails = false
+    @alert = nil    
   end
 
   def render
@@ -30,9 +33,25 @@ class Interview < Vue
       to review and submit the completed form.
     }
 
-    _p %{
-      TODO: verify email address and Public Name
-    }
+    _div.form_group do
+      _p 'Full Name:'
+      _input.form_control.fullname! value: @fullName, required: true,
+        onChange: self.setFullName, disabled: @disablePersonalDetails
+    end
+
+    _div.form_group do
+      _p 'Email Address:'
+      _input.form_control.emailAddress! value: @emailAddress, required: true,
+        onChange: self.setEmailAddress, disabled: @disablePersonalDetails
+    end
+
+    # error messages
+    if @alert
+      _div.alert.alert_danger do
+        _b 'Error: '
+        _span @alert
+      end
+    end
 
     #
     # Question 1
@@ -117,6 +136,29 @@ class Interview < Vue
         about yourself.
       }
     end
+  end
+
+  def validatePerson
+    if @fullName and @fullName != '' and @emailAddress and @emailAddress != ''
+      if @fullName == FormData.fullname and @emailAddress == FormData.email # TODO proper validation
+        @showQuestion1 = true
+        @disablePersonalDetails = true # no further changes allowed
+        @alert = nil
+      else
+        @alert = 'Cannot validate details'
+      end
+    end
+  end
+
+  def setFullName(event)
+    @fullName = event.target.value
+    validatePerson
+  end
+
+  # enable submit button when name is present
+  def setEmailAddress(event)
+    @emailAddress = event.target.value
+    validatePerson
   end
 
   def clickButton1()
