@@ -10,7 +10,8 @@ Server = {}
 FormData = {
   fullname: 'Joe Test',
   email: 'joetest@example.com',
-  pmc: 'incubator'
+  pmc: 'incubator',
+  votelink: 'dummy'
 }
 
 # "AJAX" style post request to the server, with a callback
