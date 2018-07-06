@@ -36,12 +36,14 @@ class Interview < Vue
     _div.form_group do
       _p 'Full Name:'
       _input.form_control.fullname! value: @fullName, required: true,
+        placeholder: 'Enter the name you used previously',
         onChange: self.setFullName, disabled: @disablePersonalDetails
     end
 
     _div.form_group do
       _p 'Email Address:'
       _input.form_control.emailAddress! value: @emailAddress, required: true,
+        placeholder: 'Enter the address you used previously',
         onChange: self.setEmailAddress, disabled: @disablePersonalDetails
     end
 
