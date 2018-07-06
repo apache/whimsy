@@ -78,15 +78,18 @@ This personal invitation is a chance for you to accept or decline in private.
 Either way, please let us know in reply to the private@ address only.
 "
 # validate email address
+if ASF::Person.find_by_email(@iclaemail)
+  _error "ICLA already on file for #{@iclaemail}"
+  _focus :iclaemail
+  return # no point in continuing
+end
+
 begin
   Socket.getaddrinfo(@iclaemail[/@(.*)/, 1].untaint, 'smtp')
-
-  if ASF::Person.find_by_email(@iclaemail)
-    _error "ICLA already on file for #{@iclaemail}"
-  end
 rescue
   _error 'Invalid domain name in email address'
   _focus :iclaemail
+  return # no point in continuing
 end
 
 # validate vote link
@@ -95,9 +98,11 @@ if @votelink and not @votelink.empty?
 # verify that the link refers to lists.apache.org message on the project list
   if not @votelink=~ /.*lists\.apache\.org.*/
     _error "Please link to a message via lists.apache.org"
+    return # no point in continuing
   end
   if not @votelink=~ /.*#{pmc.mail_list}(\.incubator)?\.apache\.org.*/
     _error "Please link to the [RESULT][VOTE] message sent to the private list."
+    return # no point in continuing
   end
 
   # attempt to fetch the page
@@ -108,15 +113,17 @@ if @votelink and not @votelink.empty?
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE 
     end
-    request = Net::HTTP::Get.new(uri.request_uri.untaint)
+    request = Net::HTTP::Head.new(uri.request_uri.untaint)
     response = http.request(request)
     unless response.code.to_i < 400
       _error "HTTP status #{response.code} for #{@votelink}"
       _focus :votelink
+      return # no point in continuing
     end
   else
     _error 'Only http(s) links are accepted for vote links'
     _focus :votelink
+    return # no point in continuing
   end
 
 end
@@ -127,12 +134,15 @@ if @noticelink and not @noticelink.empty?
   # verify that the link refers to lists.apache.org message on the proper list
   if not @noticelink=~ /.*lists\.apache\.org.*/
     _error "Please link to a message via lists.apache.org"
+    return # no point in continuing
   end
   if pmc_type == 'PMC' and not @noticelink=~ /.*board@apache\.org.*/
     _error "Please link to the NOTICE message sent to the board list."
+    return # no point in continuing
   end
   if pmc_type == 'PPMC' and not @noticelink=~ /.*private@incubator\.apache\.org.*/
     _error "Please link to the NOTICE message sent to the incubator private list."
+    return # no point in continuing
   end
 
   # attempt to fetch the page
@@ -143,15 +153,17 @@ if @noticelink and not @noticelink.empty?
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
-    request = Net::HTTP::Get.new(uri.request_uri.untaint)
+    request = Net::HTTP::Head.new(uri.request_uri.untaint)
     response = http.request(request)
     unless response.code.to_i < 400
       _error "HTTP status #{response.code} for #{@noticelink}"
       _focus :noticelink
+      return # no point in continuing
     end
-    else
+  else
     _error 'Only http(s) links are accepted for notice links'
     _focus :noticelink
+    return # no point in continuing
   end
 
 end
