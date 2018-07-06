@@ -38,6 +38,8 @@ while address.length < 2
   address.push ''
 end
 
+pmc = ASF::Committee.find(@pmc)
+
 # produce draft
 _draft <<-EOF
                     The Apache Software Foundation
@@ -75,7 +77,7 @@ signing and keep a copy for your records.
 
   (optional) preferred Apache id(s): #{@apacheid.ljust(30, '_')}
 
-  (optional) notify project: #{@pmc.ljust(38, '_')}
+  (optional) notify project: #{pmc.display_name.ljust(38, '_')}
 
 You accept and agree to the following terms and conditions for Your
 present and future Contributions submitted to the Foundation. In
