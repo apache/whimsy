@@ -201,11 +201,11 @@ end
 if __FILE__ == $0 # Allow independent testing
   require 'whimsy/asf'
   require 'mail'
-  $ret = {}
+  ret = {}
   # method_missing caused some errors to be overlooked
   %w{backtrace body_text error contents rewrite}.each do |n|
     define_method("_#{n}") do |a|
-      $ret[n] = a
+      ret[n] = a
     end
   end
   data = Hash[*ARGV] # cannot combine this with next line as hash doesn't yet exist
@@ -214,10 +214,10 @@ if __FILE__ == $0 # Allow independent testing
   if data['action'] == 'sendTally' # special for testing stand-alone
     contents = JSON.parse(File.read("/srv/icla/#{data['token']}.json"))
     sendTally(data, contents)
-    puts $ret['body_text']
+    puts ret['body_text']
   else
     main(data)
-    puts JSON.pretty_generate($ret) # output the return data
+    puts JSON.pretty_generate(ret) # output the return data
   end
 else
   embed # Sinatra sets params
