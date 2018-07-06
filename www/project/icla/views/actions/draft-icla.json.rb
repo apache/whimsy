@@ -19,10 +19,13 @@
 # ipadddr
 # draft
 
-if not @apacheid.empty? and ASF::Person.find(@apacheid).icla?
-  _error "Apache ID #{@apacheid} already in use"
-  _focus :apacheId
+if not @apacheid.empty?
+  inuse = @apacheid.split(/ +/).select{|id| ASF::Person.find(id).icla?}.join(' ')
+  if inuse != ''
+    _error "Apache ID(s) '#{inuse}' already in use"
+    _focus :apacheId
   return
+  end
 end
 
 # capture (possibly forwarded) remote IP address
