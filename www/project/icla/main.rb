@@ -59,7 +59,6 @@ helpers do
     end
   end
   def getMember(userId)
-    user = ASF::Person.find(userId)
     mockId = params['mock']
     if ASF::Person[mockId] != nil
       # if mock is set, set member to mock value
