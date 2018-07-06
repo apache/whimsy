@@ -4,15 +4,25 @@ class Vote < Vue
     @alert = nil
 
     # initialize form fields
+    @token = Server.data.token
     @member = Server.data.member
+    @debug = Server.data.debug
     console.log('vote')
-    console.log('token: ' + Server.data.token)
+    console.log('token: ' + @token)
     console.log('member: ' + @member)
     @progress = Server.data.progress
     console.log('progress: ' + @progress.inspect)
-    @phase = @progress[:phase]
+    if @progress
+      @phase = @progress[:phase]
+    else
+      @phase = 'unknown' # flag
+    end
     console.log('phase: ' + @phase)
-    if @phase == 'error'
+    if not @token
+      @alert = "Token is required for this page"
+    elsif @phase == 'unknown'
+      @alert = "Cannot determine phase: could not read token file"
+    elsif @phase == 'error'
       @alert = @progress[:errorMessage]
     elsif @phase != 'vote'
       @alert = "Wrong phase: " + @phase + "; should be vote"
@@ -23,7 +33,6 @@ class Vote < Vue
       @contributor = @progress[:contributor]
       @iclaname = @contributor[:name]
       @iclaemail = @contributor[:email]
-      @token = Server.data.token
       @comments = @progress[:comments]
       @votes = @progress[:votes]
       @vote = ''
@@ -31,7 +40,6 @@ class Vote < Vue
       @commentBody = ''
       @subject = @progress[:subject]
       @showComment = false;
-      @debug = Server.data.debug
     end
   end
 

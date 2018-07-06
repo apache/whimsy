@@ -6,28 +6,36 @@ class Discuss < Vue
 
     # initialize form fields
     @member = Server.data.member
+    @token = Server.data.token
+    @debug = Server.data.debug
     console.log('discuss')
-    console.log('token: ' + Server.data.token)
+    console.log('token: ' + @token)
     console.log('member: ' + @member)
     @progress = Server.data.progress
     console.log('progress: ' + @progress.inspect)
-    @phase = @progress[:phase]
+    if @progress
+      @phase = @progress[:phase]
+    else
+      @phase = 'unknown' # flag
+    end
     console.log('phase: ' + @phase)
-    if @phase == 'error'
+    if not @token
+      @alert = "Token is required for this page"
+    elsif @phase == 'unknown'
+      @alert = "Cannot determine phase: could not read token file"
+    elsif @phase == 'error'
       @alert = @progress[:errorMessage]
     elsif @phase != 'discuss'
       @alert = "Wrong phase: " + @phase + "; should be discuss"
     else
-    @pmc = @progress[:project]
-    @proposer = @progress[:proposer]
-    @contributor = @progress[:contributor]
-    @iclaname = @contributor[:name]
-    @iclaemail = @contributor[:email]
-    @token = Server.data.token
-    @comments = @progress[:comments]
-    @discussBody = ''
-    @subject = @progress[:subject]
-    @debug = Server.data.debug
+      @pmc = @progress[:project]
+      @proposer = @progress[:proposer]
+      @contributor = @progress[:contributor]
+      @iclaname = @contributor[:name]
+      @iclaemail = @contributor[:email]
+      @comments = @progress[:comments]
+      @discussBody = ''
+      @subject = @progress[:subject]
     end
 
   end
