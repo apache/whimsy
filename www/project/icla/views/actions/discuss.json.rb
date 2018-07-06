@@ -110,7 +110,11 @@ mail = Mail.new do
     body body_text
   end
 end
-mail.deliver
+begin
+  mail.deliver
+rescue => e
+  _error "Failed to send the mail: #{e}"
+end
 
 # add token and invitation to the response
 _token token
