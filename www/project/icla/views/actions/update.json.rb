@@ -52,7 +52,7 @@ def sendTally(data, contents)
   }
   started = Time.parse votes[0]['timestamp']
   elapsed=(Time.now - started) / (60*60)
-  body_text = <<~EOD
+  body_text = <<-EOD.gsub(/^    /,'') # Eclipse plugin does not like heredoc squiggle
     Here is the tally of the latest votes from each voter:
 
     #{last_votes.map{ |k,v| "Member: #{k.ljust(20)} Vote: #{v[0]} Date: #{v[1]}"}.join("\n")}
@@ -211,7 +211,7 @@ if __FILE__ == $0 # Allow independent testing
   data = Hash[*ARGV] # cannot combine this with next line as hash doesn't yet exist
   data.each{|k,v| data[k] = v.split(',') if v =~ /,/} # fix up lists
   puts data.inspect
-  if data['action'] == 'sendTally'
+  if data['action'] == 'sendTally' # special for testing stand-alone
     contents = JSON.parse(File.read("/srv/icla/#{data['token']}.json"))
     sendTally(data, contents)
     puts $ret['body_text']
