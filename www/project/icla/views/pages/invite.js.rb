@@ -94,7 +94,7 @@ class Invite < Vue
         Server.data.allData.each_key do |pmc|
           _option pmc if Server.data.allData[pmc]['pmc']
         end
-        _option '---'
+        _option '---', disabled: true # No point letting it be chosen
         Server.data.allData.each_key do |ppmc|
           _option ppmc unless Server.data.allData[ppmc]['pmc']
         end
