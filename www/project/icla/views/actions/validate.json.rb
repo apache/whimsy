@@ -16,6 +16,8 @@ require 'pathname'
 #  error
 #  focus
 #  token
+#  pmcEmail
+#  userEmail
 #  invitation
 
 # find pmc and user information
