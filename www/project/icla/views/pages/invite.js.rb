@@ -46,6 +46,9 @@ class Invite < Vue
       vote on contributors to become a committer or a PMC/PPMC member; or
       simply invite them to submit an ICLA.
     }
+    _p do
+      _b '** NOTE: only new contributors are currently supported, i.e. existing ASF committers are excluded. **'
+    end
     _p %{
       If you would like to discuss the candidate, go to the Discuss tab
       after filling the contributor and PMC/PPMC fields.
