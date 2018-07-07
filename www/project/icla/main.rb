@@ -69,9 +69,6 @@ helpers do
   end
 end
 
-@phase = ''
-@progress = ''
-@extra = ''
 #
 # Sinatra routes
 #
