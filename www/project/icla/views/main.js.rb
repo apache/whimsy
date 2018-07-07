@@ -17,10 +17,12 @@ class Main < Vue
 
   # save data on first load
   def created()
+    # @@data is set up by app.html.rb
     Server.data = @@data
   end
 
   def mounted()
+    # @@view is set up by app.html.rb
     # set view based on properties
     if @@view == 'interview'
       @view = Interview

@@ -373,10 +373,17 @@ _html lang: 'en', _width: '80' do
     _script src: "app.js?#{@appmtime}"
 
     _.render '#main' do
-      _Main data: {allData: @allData,
-        token: @token, progress: @progress, user: @user, member: @member,
-        debug: @debug},
-        view: @view
+      # This sets up @@data and @@view; they are used by main.js.rb
+      # The variables are set up by ../main.rb for each URL
+      _Main data: {
+                    allData: @allData,
+                    token: @token,
+                    progress: @progress,
+                    user: @user,
+                    member: @member,
+                    debug: @debug
+                  },
+            view: @view
     end
   end
 end
