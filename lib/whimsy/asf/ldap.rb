@@ -981,13 +981,20 @@ module ASF
       @members = WeakRef.new(members)
     end
 
-    # return a list of ASF::People who are memers of this group
+    # return a list of ASF::People who are members of this group
     def members
       members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'memberUid').flatten
       end
 
       members.map {|uid| Person.find(uid)}
+    end
+
+    # return a list of ids who are members of this group
+    def memberids
+      members = weakref(:members) do
+        ASF.search_one(base, "cn=#{name}", 'memberUid').flatten
+      end
     end
 
     # Designated Name from LDAP
@@ -1119,6 +1126,14 @@ module ASF
       members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
+    # list of member ids in the project
+    def memberids
+      members = weakref(:members) do
+        ASF.search_one(base, "cn=#{name}", 'member').flatten
+      end    
+      members.map {|uid| uid[/uid=(.*?),/,1]}
+    end
+
     # list of owners on this project.  Stored in LDAP as a <tt>owners</tt>
     # attribute.
     def owners
@@ -1129,6 +1144,15 @@ module ASF
       owners.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
+    # list of owner ids in the project
+    def ownerids
+      owners = weakref(:owners) do
+        ASF.search_one(base, "cn=#{name}", 'owner').flatten
+      end
+      owners.map {|uid| uid[/uid=(.*?),/,1]}
+    end
+
+    
     # remove people from a project as owners and members in LDAP
     def remove(people)
       remove_owners(people)
@@ -1237,12 +1261,32 @@ module ASF
       members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
+    # List of ids in the member attribute for this committee
+    def memberids
+      members = weakref(:members) do
+        ASF.search_one(base, "cn=#{name}", 'member').flatten
+      end
+    
+      members.map {|uid| uid[/uid=(.*?),/,1]}
+    end
+
     # temp list of projects that have moved over to new project LDAP schema
     GUINEAPIGS = %w(incubator whimsy jmeter axis mynewt atlas accumulo
       madlib streams fluo impala)
 
+    # is the current PMC a guineapig?
+    def isGuineaPig?
+      GUINEAPIGS.include? name
+    end
+
+    # is the PMC a guineapig?
+    def self.isGuineaPig? (name)
+      GUINEAPIGS.include? name
+    end
+
     # List of owners for this committee, i.e. people who are members of the
     # committee and have update access.  Data is obtained from LDAP.
+    # Takes info from Project for GUINEAPIGS else the committee member roster
     def owners
       if GUINEAPIGS.include? name
         ASF::Project.find(name).owners
@@ -1251,13 +1295,34 @@ module ASF
       end
     end
 
+    # List of owner ids for this committee
+    # Takes info from Project for GUINEAPIGS else the committee member roster
+    def ownerids
+      if GUINEAPIGS.include? name
+        ASF::Project.find(name).ownerids
+      else
+        memberids
+      end
+    end
+
     # List of committers for this committee.  Data is obtained from LDAP.  This
     # data is generally stored in an attribute named <tt>member</tt>.
+    # Takes info from Project for GUINEAPIGS else the Group
     def committers
       if GUINEAPIGS.include? name
         ASF::Project.find(name).members
       else
         ASF::Group.find(name).members
+      end
+    end
+
+    # List of committer ids for this committee
+    # Takes info from Project for GUINEAPIGS else the Group
+    def committerids
+      if GUINEAPIGS.include? name
+        ASF::Project.find(name).memberids
+      else
+        ASF::Group.find(name).memberids
       end
     end
 
@@ -1472,28 +1537,11 @@ module ASF
 end
 
 if __FILE__ == $0
-  module ASF
-    module LDAP
-      def self.getHOSTS # :nodoc:
-        RO_HOSTS
-      end
-    end
-  end
-  hosts=ASF::LDAP.getHOSTS().sort
-  puppet=ASF::LDAP.puppet_ldapservers().sort
-  if hosts == puppet
-    puts("LDAP HOSTS array is up to date with the puppet list")
-  else
-    puts("LDAP HOSTS array does not agree with the puppet list")
-    hostsonly=hosts-puppet
-    if hostsonly.length > 0
-      print("In HOSTS but not in puppet:")
-      puts(hostsonly)
-    end
-    puppetonly=puppet-hosts
-    if puppetonly.length > 0
-      print("In puppet but not in HOSTS: ")
-      puts(puppetonly)
-    end
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
+  require 'whimsy/asf/config'
+  %w{attic jmeter httpd}.each do |w|
+    print w, ' '
+    print ASF::Committee[w].isGuineaPig?,' '
+    puts ASF::Committee.isGuineaPig?(w)   
   end
 end
