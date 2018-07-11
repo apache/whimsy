@@ -661,6 +661,12 @@ module ASF
       ASF.search_one(base, filter, 'uid').flatten.map {|uid| find(uid)}
     end
 
+    # Obtain a list of people (ids) known to LDAP.  LDAP filters may be used
+    # to retrieve only a subset. Result is returned as a list of ids only.
+    def self.listids(filter='uid=*')
+      ASF.search_one(base, filter, 'uid').flatten
+    end
+
     # pre-fetch a given set of attributes, for a given list of people
     def self.preload(attributes, people=[])
       list = Hash.new {|hash, name| hash[name] = find(name)}
