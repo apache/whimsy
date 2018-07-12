@@ -7,6 +7,8 @@ require 'ruby2js/filter/functions'
 require 'whimsy/asf'
 
 ldap = ASF::Person.listids
+committers = ASF::Group['committers'].memberids # to check for missing ICLAs
+
 errors = 0
 
 _html do
@@ -22,7 +24,9 @@ _html do
 
   _h2_ 'LDAP Status'
   _div do 
-    _label "#{ldap.length} entries found."
+    _label "#{ldap.length} People entries found."
+    _br
+    _label "#{committers.length} committers found."
    end
 
   _h2_ 'Error Status'
@@ -144,6 +148,9 @@ _html do
         if not missing.empty?
           issue, note = 'error', "missing icla: #{missing.first.inspect}"
         end
+        if id != 'notinavail'
+          committers.delete(id) # drop committers that have ICLAs 
+        end
       elsif comment =~ /^Treasurer;/ or comment =~ /^President;/
 
       elsif comment == 'Signed CLA'
@@ -187,6 +194,30 @@ _html do
         end
       end
     end
+  end
+
+  # drop entries which have nologin set
+  committers.reject! do |id|
+    ASF::Person[id].nologin?
+  end
+
+  _h2 'Committers without an ICLA recorded (excluding ones with nologin? true)'
+
+  if committers.size > 0
+    _table do
+      _tr do
+        _th 'id'
+      end
+      committers.each do |id|
+        _tr do
+          _td do
+            _a id, href: '/roster/committer/' + id
+          end
+        end
+      end
+    end
+  else
+    _ 'All committers have ICLAs'
   end
 
   # select entries with count != 1  
