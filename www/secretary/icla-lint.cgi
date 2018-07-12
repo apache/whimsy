@@ -6,8 +6,7 @@ require 'wunderbar/script'
 require 'ruby2js/filter/functions'
 require 'whimsy/asf'
 
-ldaplist = ASF::Person.list
-ldap = ldaplist.map(&:id)
+ldap = ASF::Person.listids
 errors = 0
 
 _html do
@@ -23,7 +22,7 @@ _html do
 
   _h2_ 'LDAP Status'
   _div do 
-    _label "#{ldaplist.length} entries found."
+    _label "#{ldap.length} entries found."
    end
 
   _h2_ 'Error Status'
