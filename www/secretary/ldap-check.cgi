@@ -24,12 +24,16 @@ _html do
 
   _h1 'LDAP membership checks'
 
+  _h2 'members and owners'
+
   _p do
     _ 'LDAP project members must agree with corresponding (unix) group members'
+    _br
     _ 'LDAP project owners must agree with corresponding committee members'
-    _ 'The lists below show the differences, if any'
+    _br
+    _ 'The table below show the differences, if any'
   end
-  
+
   _table do
     _tr do
       _th 'Project'
@@ -39,6 +43,7 @@ _html do
       _th 'project owners - committee members'
       _th 'committee-members - project owners'
     end
+
     projects = ASF::Project.list
     
     projects.sort_by(&:name).each do |p|
@@ -88,4 +93,40 @@ _html do
       end
     end
   end
+
+  _h2 'Committers'
+  _p do
+    _ 'There are currently two LDAP committers groups:'
+    _br
+    _ 'cn=committers,ou=role,ou=groups,dc=apache,dc=org (new role group)'
+    _br
+    _ 'cn=committers,ou=groups,dc=apache,dc=org (old unix group)'
+    _br
+    _ 'These should agree'
+  end
+
+  old = ASF::Group['committers'].memberids
+  new = ASF::Committer.listids
+
+  new_old = new - old
+  old_new = old - new
+
+  if new_old.size > 0
+    _p do
+      _ 'The following ids are in the new group but not the old'
+      _br
+      _ new_old.join(',')
+    end
+  elsif old_new.size == 0
+  _p 'The groups are equal'
+  end
+
+  if old_new.size > 0
+    _p do
+      _ 'The following ids are in the old group but not the new'
+      _br
+      _ old_new.join(',')
+    end
+  end
+
 end
