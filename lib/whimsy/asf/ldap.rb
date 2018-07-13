@@ -542,6 +542,12 @@ module ASF
         map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
+    # get a list of committers (ids only)
+    def self.listids()
+      ASF.search_one(base, 'cn=committers', 'member').flatten.
+        map {|uid| uid[/uid=(.*?),/,1]}
+    end
+
     # create a new person and add as a new committer to LDAP.
     # Attrs must include uid, cn, and mail
     def self.create(attrs)
