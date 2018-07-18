@@ -108,7 +108,7 @@ class ASF::Board::Agenda
 
         if title =~ /Change (.*?) Chair/
           need_chair = true 
-        else # Terminate
+        elsif committee.chair # Terminate
           attrs['chair'] = committee.chair.id
         end
 
