@@ -30,40 +30,92 @@ _html do
     _ 'The table below show the differences, if any'
   end
 
+  skipSN = ARGV.shift == 'skipSN' # skip entries with only bad SN
+
   # prefetch LDAP data
-  people = ASF::Person.preload(%w(uid cn sn givenName))
+  people = ASF::Person.preload(%w(uid cn sn givenName loginShell))
   matches = 0
   badGiven = 0
+  badSN = 0
+
+  # prefetch ICLA data
+  ASF::ICLA.preload
 
   _table do
     _tr do
       _th 'uid'
+      _th "ICLA file"
+      _th "iclas.txt real name"
+      _th "iclas.txt public name"
       _th 'cn'
       _th 'givenName'
+      _th 'Modify?'
       _th 'sn'
+      _th 'Modify?'
     end
 
     people.sort_by(&:name).each do |p|
+      next if p.banned?
       given = p.givenName rescue '---' # some entries have not set this up
+
       givenOK = p.cn.include? given
       badGiven += 1 unless givenOK
+
       snOK = p.cn.include? p.sn
-      if givenOK and snOK
+      badSN += 1 unless snOK
+
+      if givenOK and snOK # all checks OK
         matches += 1
         next
       end
+      next if givenOK and skipSN
+
+      new_given = '???'
+      new_sn = '???'
+      names = p.cn.split(' ')
+      if names.size == 2
+        new_given = names[0]
+        new_sn = names[1]
+      elsif names.size == 4
+        if names[1..2] == %w(de la)
+          new_given = names.shift
+          new_sn = names.join(' ')
+        end
+      end
+      icla = ASF::ICLA.find_by_id(p.uid)
+      claRef = icla.claRef if icla
+      claRef ||= 'unknown'
       _tr do
         _td do
-          _a p.uid, href: '/roster/committee/' + p.uid
+          _a p.uid, href: '/roster/committer/' + p.uid
         end
         _td do
-          _ p.cn
+          file = ASF::ICLAFiles.match_claRef(claRef.untaint)
+          if file
+            _a claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{file}"
+          else
+            _ claRef
+          end
         end
+        _td (icla.legal_name rescue '?')
+        _td (icla.name rescue '?')
+        _td p.cn
         _td do
           if givenOK
             _ given
           else
             _em given
+          end
+        end
+        _td do
+          if givenOK
+            _ ''
+          else
+              if given == p.uid or given == '---'
+                _ new_given # likely to be correct
+              else
+                _em new_given # less likely
+              end
           end
         end
         _td do
@@ -73,11 +125,22 @@ _html do
             _em p.sn
           end
         end
+        _td do
+          if snOK
+            _ ''
+          else
+            if p.sn == p.uid
+              _ new_sn
+            else
+              _em new_sn
+            end
+          end
+        end
       end
     end
   end
 
   _p do
-    _ "Total: #{people.size} Matches: #{matches} GivenBad: #{badGiven}"
+    _ "Total: #{people.size} Matches: #{matches} GivenBad: #{badGiven} SNBad: #{badSN}"
   end
 end
