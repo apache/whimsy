@@ -60,10 +60,10 @@ _html do
       next if p.banned?
       given = p.givenName rescue '---' # some entries have not set this up
 
-      givenOK = p.cn.include? given
+      givenOK = p.cn.split.include? given
       badGiven += 1 unless givenOK
 
-      snOK = p.cn.include? p.sn
+      snOK = p.cn.split.include? p.sn
       badSN += 1 unless snOK
 
       if givenOK and snOK # all checks OK
