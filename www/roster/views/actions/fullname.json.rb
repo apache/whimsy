@@ -1,22 +1,50 @@
 #
-# Update LDAP SpamAssassin score attribute for a committer
+# Update various LDAP attributes for a committer
 #
 person = ASF::Person.find(@userid)
 
 # update LDAP
-if person.attrs['cn'] != @publicname || person.attrs['givenName'] != @givenname
-  _ldap.update do
-    _previous({
-      publicname: person.attrs['cn'], 
-      givenname: person.attrs['givenName']
-    })
+# cn is normally the same as public name, but may be different
 
-    if not @dryrun and @publicname and person.attrs['cn'] != @publicname
-      person.modify 'cn', @publicname
-    end
+mods={} # collect the changes
 
-    if not @dryrun and @givenname and person.attrs['givenName'] != @givenname
-      person.modify 'givenName', @givenname
+if @publicname and person.attrs['cn'].first != @publicname
+  mods['cn'] = @publicname
+end
+
+if @commonname and person.attrs['cn'].first != @commonname
+  mods['cn'] = @commonname
+end
+
+if @givenname and person.attrs['givenName'].first != @givenname
+  mods['givenName'] = @givenname
+end
+
+if @familyname and person.attrs['sn'].first != @familyname
+  mods['sn'] = @familyname
+end
+
+# report the previous value in the response
+_previous({
+  publicname: person.attrs['cn'], 
+  givenname: person.attrs['givenName'],
+  familyname: person.attrs['sn']
+})
+
+if @dryrun
+  # TODO report what would have been done
+else
+  if mods.size > 0 # only if there is something to do
+    _ldap.update do
+      # report the previous value in the response
+      _previous({
+        publicname: person.attrs['cn'], 
+        givenname: person.attrs['givenName'],
+        familyname: person.attrs['sn']
+      })
+      mods.each do |k,v|
+        person.modify k,v
+      end
     end
   end
 end
