@@ -131,7 +131,7 @@ module ASF
     # when run interactively, will default user and prompt for password
     def self.bind(user=nil, password=nil, &block)
       if not user or not password
-        raise ArgumentError.new('wrong number of arguments') unless STDIN.isatty
+        raise ArgumentError.new('Need user name and password') unless STDIN.isatty
 
         require 'etc'
         require 'io/console'
