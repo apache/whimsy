@@ -30,6 +30,12 @@ _html do
     _ 'The table below show the differences, if any.'
     _br
     _ 'The Modify? columns show suggested fixes. If the name is non-italic then the suggestion is likely correct; italicised suggestions may be wrong/unnecessary.'
+    _br
+    _ 'The suggested name is considered correct if:'
+    _ul do
+      _li 'The existing field value matches the uid or the cn'
+      _li 'The existing field is missing'
+    end
   end
 
   skipSN = ARGV.shift == 'skipSN' # skip entries with only bad SN
@@ -113,7 +119,7 @@ _html do
           if givenOK
             _ ''
           else
-              if given == p.uid or given == '---'
+              if given == p.uid or given == '---' or given == p.cn
                 _ new_given # likely to be correct
               else
                 _em new_given # less likely
@@ -131,7 +137,7 @@ _html do
           if snOK
             _ ''
           else
-            if p.sn == p.uid
+            if p.sn == p.uid or p.sn == p.cn
               _ new_sn
             else
               _em new_sn
