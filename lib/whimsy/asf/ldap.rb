@@ -821,7 +821,7 @@ module ASF
       "uid=#{name},#{ASF::Person.base}"
     end
 
-    # Allow artibtrary LDAP attibutes to be referenced as object properties.
+    # Allow arbitrary LDAP attibutes to be referenced as object properties.
     # Example: <tt>ASF::Person.find('rubys').cn</tt>.  Can also be used
     # to modify an LDAP attribute.
     def method_missing(name, *args)
