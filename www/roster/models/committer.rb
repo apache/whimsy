@@ -38,6 +38,10 @@ class Committer
       name[:given_name] = person.attrs['givenName'].first.force_encoding('utf-8')
     end
 
+    unless person.attrs['sn'].empty?
+      name[:family_name] = person.attrs['sn'].first.force_encoding('utf-8')
+    end
+
     response[:name] = name
 
     response[:mail] = person.all_mail
