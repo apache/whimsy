@@ -16,7 +16,8 @@ if @commonname and person.attrs['cn'].first != @commonname
   mods['cn'] = @commonname
 end
 
-if @givenname and person.attrs['givenName'].first != @givenname
+# person.attrs['givenName'] may be missing
+if @givenname and (not person.attrs['givenName'] or person.attrs['givenName'].first != @givenname)
   mods['givenName'] = @givenname
 end
 
