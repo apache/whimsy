@@ -55,6 +55,7 @@ _html do
           end
         end
       end
+      _pre 'Completed', class: '_stdout'
     rescue => e
       _pre updates.inspect, class: '_stdout'
       _pre "Failed: #{e}", class: '_stdout'
