@@ -33,6 +33,7 @@ _html do
   # prefetch LDAP data
   people = ASF::Person.preload(%w(uid cn sn givenName))
   matches = 0
+  badGiven = 0
 
   _table do
     _tr do
@@ -45,6 +46,7 @@ _html do
     people.sort_by(&:name).each do |p|
       given = p.givenName rescue '---' # some entries have not set this up
       givenOK = p.cn.include? given
+      badGiven += 1 unless givenOK
       snOK = p.cn.include? p.sn
       if givenOK and snOK
         matches += 1
@@ -76,6 +78,6 @@ _html do
   end
 
   _p do
-    _ "Total: #{people.size} Matches: #{matches}"
+    _ "Total: #{people.size} Matches: #{matches} GivenBad: #{badGiven}"
   end
 end
