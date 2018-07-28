@@ -28,9 +28,21 @@ class PersonName < Vue
             end
 
             _div do
+              _label 'common name', for: 'commonname'
+              _input.commonname! name: 'commonname', required: true,
+                value: name.ldap
+            end
+
+            _div do
               _label 'given name', for: 'givenname'
               _input.legalname! name: 'givenname', required: true,
                 value: name.given_name
+            end
+
+            _div do
+              _label 'family name', for: 'familyname'
+              _input.familyname! name: 'familyname', required: true,
+                value: name.family_name
             end
 
             _button.btn.btn_primary 'submit'
