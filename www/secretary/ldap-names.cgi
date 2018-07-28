@@ -27,7 +27,9 @@ _html do
   _p do
     _ 'LDAP sn and givenName must match part of cn'
     _br
-    _ 'The table below show the differences, if any'
+    _ 'The table below show the differences, if any.'
+    _br
+    _ 'The Modify? columns show suggested fixes. If the name is non-italic then the suggestion is likely correct; italicised suggestions may be wrong/unnecessary.'
   end
 
   skipSN = ARGV.shift == 'skipSN' # skip entries with only bad SN
