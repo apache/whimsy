@@ -158,6 +158,7 @@ _html do
   end
 
   _table do
+    # column number and order MUST agree with columnNames variable below
     _tr do
       _th "availid"
       _th "ICLA file"
@@ -369,7 +370,8 @@ _html do
     # capture modifications when button is pressed
     document.querySelector('input[type=submit]').addEventListener(:click) do
       updates = {}
-      columnNames = %w(id legal_name public_name ldap)
+      # Must agree with number of columns in the main table above
+      columnNames = %w(id icla_file legal_name public_name ldap)
 
       Array(document.querySelectorAll('td.modified')).each do |td|
         id = td.parentNode.firstElementChild.textContent.strip()
