@@ -11,7 +11,8 @@ Both givenName and sn should match part of cn
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
-require 'wunderbar'
+require 'wunderbar/script'
+require 'ruby2js/filter/functions'
 
 _html do
   _style %{
@@ -22,6 +23,44 @@ _html do
     th {background-color: #a0ddf0}
   }
 
+ if @updates
+  
+  ################################################################## 
+  #                         Apply Updates                          #
+  ################################################################## 
+  
+  _h2_ 'Applying updates'
+  updates = JSON.parse(@updates)
+  
+  # update LDAP
+  unless updates.empty?
+    unless ASF::Service.find('asf-secretary').members.include? ASF::Person.new($USER)
+      print "Status: 401 Unauthorized\r\n"
+      print "WWW-Authenticate: Basic realm=\"Secretary\"\r\n\r\n"
+      exit
+    end
+    _pre 'ldapmodify', class: '_stdin'
+    begin
+      ASF::LDAP.bind($USER, $PASSWORD) do
+        updates.each do |id, names|
+          person = ASF::Person.new(id)
+          _pre person.dn, class: '_stdout'
+          _pre names.inspect, class: '_stdout'
+          names.each do |k,v|
+            begin
+              person.modify k,v
+            rescue => e
+              _pre "Failed: #{e}", class: '_stdout'
+            end
+          end
+        end
+      end
+    rescue => e
+      _pre updates.inspect, class: '_stdout'
+      _pre "Failed: #{e}", class: '_stdout'
+    end
+  end
+ else
   _h1 'LDAP people name checks'
 
   _p do
@@ -38,6 +77,13 @@ _html do
     end
   end
 
+  _h2_ 'Instructions:'
+
+  _ul do
+    _li 'Double click a Modify? column to copy the contents one column to its left (cannot copy ???).'
+    _li 'When done, click "Commit Changes" (at the bottom of the page).'
+  end
+
   skipSN = ARGV.shift == 'skipSN' # skip entries with only bad SN
 
   # prefetch LDAP data
@@ -50,6 +96,7 @@ _html do
   ASF::ICLA.preload
 
   _table do
+    # Must agree with columnNames below
     _tr do
       _th 'uid'
       _th "ICLA file"
@@ -115,7 +162,7 @@ _html do
             _em given
           end
         end
-        _td do
+        _td! copyAble: 'true' do
           if givenOK
             _ ''
           else
@@ -133,7 +180,7 @@ _html do
             _em p.sn
           end
         end
-        _td do
+        _td! copyAble: 'true' do
           if snOK
             _ ''
           else
@@ -151,4 +198,65 @@ _html do
   _p do
     _ "Total: #{people.size} Matches: #{matches} GivenBad: #{badGiven} SNBad: #{badSN}"
   end
+
+  #################################################################### 
+  #                   Form used to submit changes                    #
+  #################################################################### 
+  
+  _form_ method: 'post' do
+    _input type: 'hidden', name: 'updates'
+    _input type: 'submit', value: 'Commit Changes', disabled: true
+  end
+ end
+
+  #################################################################### 
+  #                        Client side logic                         #
+  #################################################################### 
+  
+  _script do
+  
+    # enable submit button only when there are modifications
+    def enable_submit()
+      button = document.querySelector('input[type=submit]')
+      modified = document.querySelectorAll('td.modified')
+  
+      button.disabled = (modified.length == 0)
+    end
+  
+    Array(document.getElementsByTagName('td')).each do |td|
+      next unless td.getAttribute('copyAble') == 'true'
+      # double-click: copy to previous cell
+      td.addEventListener(:dblclick) do |event|
+        cell = event.target
+        cell = cell.parentNode if cell.nodeName != 'TD'
+        txt = cell.textContent
+        return if txt == '???'
+        row = cell.parentNode
+        col = cell.cellIndex
+        pes = row.children[col-1]
+        pes.innerText = txt
+        pes.classList.add 'modified'
+        enable_submit()
+      end
+    end
+  
+    # capture modifications when button is pressed
+    document.querySelector('input[type=submit]').addEventListener(:click) do
+      updates = {}
+      # Must agree with number of columns in the main table above
+      columnNames = %w(uid icla_file legal_name public_name cn givenName newGiven sn newSN)
+  
+      Array(document.querySelectorAll('td.modified')).each do |td|
+        id = td.parentNode.firstElementChild.textContent.strip()
+        updates[id] ||= {}
+        updates[id][columnNames[td.cellIndex]] = td.textContent
+      end
+  
+      document.querySelector('form input').value = JSON.stringify(updates)
+    end
+  
+    # force submit state on initial load (i.e., disable submit button)
+    enable_submit()
+  end
+
 end
