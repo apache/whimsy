@@ -114,10 +114,11 @@ _html do
       next if p.banned?
       given = p.givenName rescue '---' # some entries have not set this up
 
-      givenOK = p.cn.split.include? given
+      # Match the name as a word-bounded string
+      givenOK = (p.cn.match(/\b#{Regexp.quote(given)}\b/) != nil)
       badGiven += 1 unless givenOK
 
-      snOK = p.cn.split.include? p.sn
+      snOK =    (p.cn.match(/\b#{Regexp.quote(p.sn)}\b/) != nil)
       badSN += 1 unless snOK
 
       if givenOK and snOK # all checks OK
