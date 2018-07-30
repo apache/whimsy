@@ -114,10 +114,11 @@ _html do
       next if p.banned?
       given = p.givenName rescue '---' # some entries have not set this up
 
-      # Match the name as a word-bounded string
-      givenOK = (p.cn.match(/\b#{Regexp.quote(given)}\b/) != nil)
+      # Match the name as a word-bounded string (but allow for trailing . which is not a word char)
+      givenOK = (p.cn.match(/\b#{Regexp.quote(given)}(\s|$)/) != nil)
       badGiven += 1 unless givenOK
 
+      # surnames don't tend to end with .
       snOK =    (p.cn.match(/\b#{Regexp.quote(p.sn)}\b/) != nil)
       badSN += 1 unless snOK
 
