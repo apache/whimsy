@@ -143,7 +143,7 @@ _html do
         if names[1] == 'van' or names[1] == 'de' or names[1] == 'le'
           new_given = names.shift
           new_sn = names.join(' ')
-        elsif names[1] =~ /^[A-Z]\.$/ # James A. Taylor
+        elsif names[1] =~ /^[A-Z]\.$/ or names[1] =~ /^[A-NP-Z]$/ # James A. Taylor or Jon B Goode (not Jack O Connor)
           new_given = names.shift
           new_sn = names.pop
         end
