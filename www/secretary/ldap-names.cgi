@@ -130,8 +130,8 @@ _html do
 
       new_given = '???'
       new_sn = '???'
-      names = p.cn.split(' ')
-      names.pop if %w(II III IV).include? names[-1] # drop numbers
+      names = p.cn.sub(/, (Jr\.|Ph\.D.)$/,'').split(' ')
+      names.pop if %w(II III IV Jr Jr.).include? names[-1] # drop numbers
       if names.size == 2
         new_given = names[0]
         new_sn = names[1]
@@ -141,7 +141,7 @@ _html do
           new_sn = names.join(' ')
         end
       elsif names.size == 3
-        if names[1] == 'van' or names[1] == 'de' or names[1] == 'le' or names[1] =~ /^[Dd]el$/
+        if %w(van Van de del Del le Le).include? names[1]
           new_given = names.shift
           new_sn = names.join(' ')
         elsif names[1] =~ /^[A-Z]\.$/ or names[1] =~ /^[A-NP-Z]$/ # James A. Taylor or Jon B Goode (not Jack O Connor)
