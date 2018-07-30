@@ -135,7 +135,12 @@ _html do
         new_given = names[0]
         new_sn = names[1]
       elsif names.size == 4
-        if names[1..2] == %w(de la)
+        if names[1..2] == %w(de la) or names[1..2] == %w(van der)
+          new_given = names.shift
+          new_sn = names.join(' ')
+        end
+      elsif names.size == 3
+        if names[1] == 'van' or names[1] == 'de'
           new_given = names.shift
           new_sn = names.join(' ')
         end
