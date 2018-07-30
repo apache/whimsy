@@ -143,6 +143,9 @@ _html do
         if names[1] == 'van' or names[1] == 'de'
           new_given = names.shift
           new_sn = names.join(' ')
+        elsif names[1] =~ /^[A-Z]\.$/ # James A. Taylor
+          new_given = names.shift
+          new_sn = names.pop
         end
       end
       icla = ASF::ICLA.find_by_id(p.uid)
