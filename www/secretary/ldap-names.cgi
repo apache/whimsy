@@ -140,7 +140,7 @@ _html do
           new_sn = names.join(' ')
         end
       elsif names.size == 3
-        if names[1] == 'van' or names[1] == 'de'
+        if names[1] == 'van' or names[1] == 'de' or names[1] == 'le'
           new_given = names.shift
           new_sn = names.join(' ')
         elsif names[1] =~ /^[A-Z]\.$/ # James A. Taylor
