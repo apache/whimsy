@@ -4,7 +4,7 @@
 
 Check LDAP names: cn, sn, givenName
 
-Both givenName and sn should match part of cn
+givenName and sn should match the output from ASF::Person.ldap_name 
 
 =end
 
@@ -65,16 +65,19 @@ _html do
   _h1 'LDAP people name checks'
 
   _p do
-    _ 'LDAP sn and givenName must match part of cn'
+    _ 'LDAP sn and givenName must match the result of ASF::Person.ldap_name'
     _br
     _ 'The table below show the differences, if any.'
+    _br
+    _ 'If the cn does not match the public name, the cell is light grey'
     _br
     _ 'The Modify? columns show suggested fixes. If the name is non-italic then the suggestion is likely correct; italicised suggestions may be wrong/unnecessary.'
     _br
     _ 'The suggested name is considered correct if:'
     _ul do
-      _li 'The existing field value matches the uid or the cn'
+      _li 'The existing field value matches the uid (never initialised) or the cn (single name)'
       _li 'The existing field is missing'
+      _li 'AND there are no parts of the cn unused'
     end
   end
 
@@ -108,50 +111,37 @@ _html do
       _th 'Modify?'
       _th 'sn'
       _th 'Modify?'
+      _th 'Unused'
     end
 
     people.sort_by(&:name).each do |p|
       next if p.banned?
+      next if p.name == 'apldaptest'
+
       given = p.givenName rescue '---' # some entries have not set this up
 
-      # Match the name as a word-bounded string (but allow for trailing . which is not a word char)
-      givenOK = (p.cn.match(/\b#{Regexp.quote(given)}(\s|$)/) != nil)
+      parse = ASF::Person.ldap_name(p.cn)
+      new_given = parse['givenName']
+      new_sn = parse['sn']
+      unused = parse['unused']
+
+      givenOK = (new_given == given)
       badGiven += 1 unless givenOK
 
-      # surnames don't tend to end with .
-      snOK =    (p.cn.match(/\b#{Regexp.quote(p.sn)}\b/) != nil)
+      snOK =    (new_sn == p.sn)
       badSN += 1 unless snOK
 
       if givenOK and snOK # all checks OK
         matches += 1
         next
       end
-      next if givenOK and skipSN
+      next if givenOK and skipSN #and unused.size == 0
 
-      new_given = '???'
-      new_sn = '???'
-      names = p.cn.sub(/, (Jr\.|Ph\.D.)$/,'').split(' ')
-      names.pop if %w(II III IV Jr Jr.).include? names[-1] # drop numbers
-      if names.size == 2
-        new_given = names[0]
-        new_sn = names[1]
-      elsif names.size == 4
-        if names[1..2] == %w(de la) or names[1..2] == %w(van der)
-          new_given = names.shift
-          new_sn = names.join(' ')
-        end
-      elsif names.size == 3
-        if %w(van Van de del Del le Le).include? names[1]
-          new_given = names.shift
-          new_sn = names.join(' ')
-        elsif names[1] =~ /^[A-Z]\.$/ or names[1] =~ /^[A-NP-Z]$/ # James A. Taylor or Jon B Goode (not Jack O Connor)
-          new_given = names.shift
-          new_sn = names.pop
-        end
-      end
       icla = ASF::ICLA.find_by_id(p.uid)
       claRef = icla.claRef if icla
       claRef ||= 'unknown'
+      legal_name = icla.legal_name rescue '?'
+      public_name = icla.name rescue '?'
       _tr do
         _td do
           _a p.uid, href: '/roster/committer/' + p.uid
@@ -164,9 +154,15 @@ _html do
             _ claRef
           end
         end
-        _td (icla.legal_name rescue '?')
-        _td (icla.name rescue '?')
-        _td p.cn
+        _td legal_name
+        _td public_name
+        if p.cn == public_name
+          _td p.cn
+        else
+          _td bgcolor: 'lightgrey' do
+            _ p.cn
+          end
+        end
         _td do
           if givenOK
             _ given
@@ -178,7 +174,7 @@ _html do
           if givenOK
             _ ''
           else
-              if given == p.uid or given == '---' or given == p.cn
+              if unused.size == 0 and (given == p.uid or given == '---' or given == p.cn)
                 _ new_given # likely to be correct
               else
                 _em new_given # less likely
@@ -196,13 +192,14 @@ _html do
           if snOK
             _ ''
           else
-            if p.sn == p.uid or p.sn == p.cn
+            if unused.size == 0 and (p.sn == p.uid or p.sn == p.cn)
               _ new_sn
             else
               _em new_sn
             end
           end
         end
+        _td unused.join(' ')
       end
     end
   end
@@ -256,7 +253,7 @@ _html do
     document.querySelector('input[type=submit]').addEventListener(:click) do
       updates = {}
       # Must agree with number of columns in the main table above
-      columnNames = %w(uid icla_file legal_name public_name cn givenName newGiven sn newSN)
+      columnNames = %w(uid icla_file legal_name public_name cn givenName newGiven sn newSN unused)
   
       Array(document.querySelectorAll('td.modified')).each do |td|
         id = td.parentNode.firstElementChild.textContent.strip()
