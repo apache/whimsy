@@ -91,7 +91,7 @@ module ASF
       result['generationQualifier'] = words.pop if words.last =~ SUFFIXES
       result['givenName'] = words.first # TODO does gn allow multiple words?
       # extract surnames like van Gogh etc
-      if words.size >= 4 and words[1..2] == %w(de la) or words[1..2] == %w(van der)
+      if words.size >= 4 and words[1..2] == %w(de la) or words[1..2] == %w(van der) or words[1..2] == %w(van de)
         result['sn'] = words[-3..-1].join(' ')
       elsif words.size >= 3 and %w(van Van de De del Del den le Le).include?  words[-2]
         result['sn'] = words[-2..-1].join(' ')
