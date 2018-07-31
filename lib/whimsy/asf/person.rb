@@ -94,7 +94,7 @@ module ASF
       if words.size >= 3 and words[-3..-2] == %w(de la) or words[-3..-2] == %w(van der) or words[-3..-2] == %w(van de) or words[-3..-2] == %w(van den) or words[-3..-2] == %w(von der)
         result['sn'] = words[-3..-1].join(' ')
         result['unused'] = words[0..-4]
-      elsif words.size >= 2 and %w(von van Van de De del Del den le Le O Di Du dos).include?  words[-2]
+      elsif words.size >= 2 and %w(von van Van de De del Del den le Le O Di Du dos St.).include?  words[-2]
         result['sn'] = words[-2..-1].join(' ')
         result['unused'] = words[0..-3]
       else
