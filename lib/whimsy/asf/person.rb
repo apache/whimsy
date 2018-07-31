@@ -83,8 +83,11 @@ module ASF
     def self.ldap_name(name)
       words = name.gsub(',', '').split(' ')
       result = {'cn' => name}
-      result['title'] = words.shift if words.first == 'Dr.'
-      result['title'] ||= words.pop if words.last =~ /^Ph\.D\.?/
+      result['title'] = words.shift if words.first == 'Dr.' or words.first == 'Dr'
+      if words.last =~ /^Ph\.D\.?/
+        title = words.pop # Always pop (||= short-circuits the pop)
+        result['title'] ||= title
+      end 
       result['generationQualifier'] = words.pop if words.last =~ SUFFIXES
       result['givenName'] = words.first
       result['sn'] = words.last
