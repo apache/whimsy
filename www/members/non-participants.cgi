@@ -53,7 +53,7 @@ _html do
           _span "List of members that have not participated, starting with the "
           _select name: 'meetingsMissed', onChange: 'this.form.submit()' do
             dates.reverse.each_with_index do |name, i|
-              _option name, value: i+1, selected: (i+1 == @meetingsMissed)
+              _option name, value: i+1, selected: (i+1 == @meetingsMissed.to_i)
             end
           end
           _span "meeting.  Active members does not include emeritus or deceased members. Includes data thru #{attendance['dates'].last} meeting."
