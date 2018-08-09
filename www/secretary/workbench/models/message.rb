@@ -260,18 +260,22 @@ class Message
     end
 
     # process 'to' addresses from original email
-    self.to.addrs.each do |addr|
-      next if to.any? {|a| a.address == addr.address}
-      next if cc.any? {|a| a.address == addr.address}
-      cc << addr
+    if self.to
+      self.to.addrs.each do |addr|
+        next if to.any? {|a| a.address == addr.address}
+        next if cc.any? {|a| a.address == addr.address}
+        cc << addr
+      end
     end
 
     # process 'cc' addresses from original email
-    self.cc.each do |addr|
-      addr = Message.liberal_email_parser(addr) if addr.is_a? String
-      next if to.any? {|a| a.address == addr.address}
-      next if cc.any? {|a| a.address == addr.address}
-      cc << addr
+    if self.cc
+      self.cc.each do |addr|
+        addr = Message.liberal_email_parser(addr) if addr.is_a? String
+        next if to.any? {|a| a.address == addr.address}
+        next if cc.any? {|a| a.address == addr.address}
+        cc << addr
+      end
     end
 
     # process 'cc' addresses on method call
