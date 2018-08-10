@@ -372,6 +372,37 @@ person = ASF::Person.find_by_email(address.address.dup)
 p person # -> nil or an ASF::Person object
 ```
 
+### How To: Have A CGI Create either HTML or JSON Output
+
+Often times Whimsy CGIs display visualizations of JSON or other structured 
+data that is generated from various other sources.  It's handy to have 
+one script both create the JSON (to checkin to /public, perhaps) as well 
+as display the data.
+
+One example of this is the [trademark listing script](www/brand/list.cgi), 
+which explicitly checks the query string to determine which output to send.
+
+```ruby
+# return output in JSON format if the query string includes 'json'
+ENV['HTTP_ACCEPT'] = 'application/json' if ENV['QUERY_STRING'].include? 'json'
+
+_json do
+  # Gather data and return JSON object
+end
+
+# Normal script to output to browsers
+_html do
+  _body? do
+...etc.
+```
+
+Scripts that don't do the query string check can still be forced to have 
+wunderbar return the _json data instead of _html via curl:
+
+    curl -i -H "Accept: application/json" -u curcuru https://whimsy.apache.org/members/private-script.cgi
+
+This will prompt for a password interactively, and then cause the 
+script to return _json to curl.
 
 Whimsy On Windows
 =================
