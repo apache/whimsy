@@ -46,7 +46,7 @@ module SiteStandards
   COMMON_CHECKS = { 
     'foundation' => { # Custom: a_href =~ ... then custom checking for hover/title text
       CHECK_TEXT => %r{apache|asf|foundation}i,
-      CHECK_CAPTURE => %r{^https?://(www\.)?apache\.org/?$},
+      CHECK_CAPTURE => %r{^(https?:)?//(www\.)?apache\.org/?$},
       CHECK_VALIDATE => %r{apache|asf|foundation}i,
       CHECK_TYPE => false,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
