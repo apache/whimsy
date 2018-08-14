@@ -498,7 +498,7 @@ class Agenda
 
     list << {button: Attend} if @title == 'Roll Call'
 
-    if @attach =~ /^(\d|7?[A-Z]+|4[A-Z]|8[.A-Z])$/
+    if @attach =~ /^(\d+|7?[A-Z]+|4[A-Z]|8[.A-Z])$/
       if User.role == :secretary or not Minutes.complete
         unless Minutes.draft_posted
           if @attach =~ /^8[.A-Z]/
