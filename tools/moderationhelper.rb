@@ -35,6 +35,7 @@ _html do
         '/committers/subscribe.cgi' => 'Mailing List Subscription Helper',
         'http://www.apache.org/foundation/mailinglists.html#subscribing' => 'Information on Subscribing/Unsubscribing',
         'http://apache.org/dev/committers.html#mail-moderate' => 'Guide for moderators',
+        'http://apache.org/dev/committers.html#problem_posts' => 'Guide for moderators - dealing with problem posts',
         'http://untroubled.org/ezmlm/manual/Sending-commands.html#Sending-commands' => 'EZMLM Command Help'
       },
       helpblock: -> {
@@ -59,6 +60,7 @@ _html do
               _li 'subscribers can post and will receive mail'
               _li 'allow-subscribers can post; they do not get copies of mails (this is used for e.g. press@)'
               _li 'deny-subscribers cannot post; their posts will be rejected without needing moderation'
+              _li 'sendsubscribertomod-subscribers will have all posts moderated (for posters who are borderline problems) - ask INFRA to enable the setting for the list'
             end
           end
 
@@ -168,6 +170,24 @@ _html do
                 _label do
                   _input type: "radio", name: "cmd", value: "deny-unsubscribe", required: true, checked: (@cmd == "deny-unsubscribe")
                   _ 'deny-unsubscribe (remove from list of denied posters)'
+                end
+              end
+            end
+            _tr do
+              _td ' '
+              _td do
+                _label do
+                  _input type: "radio", name: "cmd", value: "sendsubscribertomod-subscribe", required: true, checked: (@cmd == "sendsubscribertomod-subscribe")
+                  _ 'sendsubscribertomod-subscribe (add to list of moderated subscribers - ask INFRA to enable this for the list)'
+                end
+              end
+            end
+            _tr do
+              _td ' '
+              _td do
+                _label do
+                  _input type: "radio", name: "cmd", value: "sendsubscribertomod-unsubscribe", required: true, checked: (@cmd == "sendsubscribertomod-unsubscribe")
+                  _ 'sendsubscribertomod-unsubscribe (remove from list of moderated subscribers)'
                 end
               end
             end
