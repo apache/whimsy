@@ -47,6 +47,14 @@ _html do
           _ 'Press Generate.  The To: address below can be copy/pasted into an email to send.  In most cases you must be a moderator for that list.'
         end
         _p do
+          _ul do
+            _li 'subscribers can post and will receive mail'
+            _li 'allow-subscribers can post; they do not get copies of mails (this is used for e.g. press@)'
+            _li 'deny-subscribers cannot post; their posts will be rejected without needing moderation'
+            _li 'sendsubscribertomod-subscribers will have all posts moderated (for posters who are borderline problems) - ask INFRA to enable the setting for the list'
+          end
+        end
+        _p do
           _span.text_danger 'BETA SOFTWARE: double-check the command first. '
           _a "Feedback welcome!", href: "mailto:dev@whimsical.apache.org?Subject=Feedback on moderation helper app"
         end
@@ -54,17 +62,6 @@ _html do
     ) do
       _form method: 'post' do
         _fieldset do
-          _legend 'Mail Moderation Helper'
-
-          _p do
-            _ul do
-              _li 'subscribers can post and will receive mail'
-              _li 'allow-subscribers can post; they do not get copies of mails (this is used for e.g. press@)'
-              _li 'deny-subscribers cannot post; their posts will be rejected without needing moderation'
-              _li 'sendsubscribertomod-subscribers will have all posts moderated (for posters who are borderline problems) - ask INFRA to enable the setting for the list'
-            end
-          end
-
           _table do
             _tr do
               _th 'Mailing list'
