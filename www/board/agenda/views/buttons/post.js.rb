@@ -551,9 +551,13 @@ class Post < Vue
 
     reader = FileReader.new
     def reader.onload(event)
-      result = event.target.result
-      base64 = btoa(String.fromCharCode(*Uint8Array.new(result)))
-      post 'financials', spreadsheet: base64 do |response|
+      bytes = Uint8Array.new(event.target.result)
+      binary = ''
+      for i in 0...bytes.byteLength
+        binary += String.fromCharCode(bytes[i])
+      end
+
+      post 'financials', spreadsheet: btoa(binary) do |response|
         report = @report
         report += "\n" if report and not report.end_with? "\n"
         report += "\n" if report
