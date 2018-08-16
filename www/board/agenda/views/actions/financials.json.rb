@@ -49,11 +49,11 @@ worksheet['Board Summary'].each do |row|
   rows << data
 end
 
+headings = rows.delete_at(2)
+
 # delete front and back matter
 rows.shift until rows[0][0].start_with? 'Current Balances'
 rows.pop until rows.last[0].start_with? 'Net Income'
-
-headings = rows.delete_at(1)
 
 # adjust spacing of current balances
 blank = rows.index {|row| row.join.strip == ''}
