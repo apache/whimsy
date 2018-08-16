@@ -36,7 +36,8 @@ _html do
         'http://www.apache.org/foundation/mailinglists.html#subscribing' => 'Information on Subscribing/Unsubscribing',
         'http://apache.org/dev/committers.html#mail-moderate' => 'Guide for moderators',
         'http://apache.org/dev/committers.html#problem_posts' => 'Guide for moderators - dealing with problem posts',
-        'http://untroubled.org/ezmlm/manual/Sending-commands.html#Sending-commands' => 'EZMLM Command Help'
+        'http://untroubled.org/ezmlm/manual/Sending-commands.html#Sending-commands' => 'EZMLM Command Help',
+        'https://issues.apache.org/jira/browse/INFRA-10476' => 'INFRA-10476 - Provide a way to force specific subscribers to be moderated'
       },
       helpblock: -> {
         _p 'This form generates ezmlm mailing list addresses for various moderator requests.'
