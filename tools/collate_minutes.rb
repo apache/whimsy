@@ -60,6 +60,8 @@ force = ARGV.delete '--force' # rerun regardless
 
 NOSTAMP = ARGV.delete '--nostamp' # don't add dynamic timestamp to pages (for debug compares)
 
+stamp = (NOSTAMP ? DateTime.new(1970) :  DateTime.now).strftime '%Y-%m-%d %H:%M'
+
 YYYYMMDD = ARGV.first || '20*' # Allow override of minutes to process
 
 MINUTES_NAME = "board_minutes_#{YYYYMMDD}.txt"
@@ -67,17 +69,26 @@ MINUTES_PATH = "#{SVN_SITE_RECORDS_MINUTES}/*/#{MINUTES_NAME}"
 
 Wunderbar.info "Processing minutes matching #{MINUTES_NAME}"
 
+INDEX_FILE = "#{SITE_MINUTES}/index.html"
+
 # quick exit if everything is up to date
-if File.exist? "#{SITE_MINUTES}/index.html"
+if File.exist? INDEX_FILE
   input = Dir[MINUTES_PATH,
     "#{BOARD}/board_minutes_20*.txt"].
     map {|name| File.stat(name).mtime}.
     push(File.stat(__FILE__).mtime, ASF.library_mtime).
     max
 
-  if File.stat("#{SITE_MINUTES}/index.html").mtime >= input
+  if File.stat(INDEX_FILE).mtime >= input
     Wunderbar.info "All up to date!"
-    exit unless force
+    unless force
+      # Add stamp to index page
+      page = File.read(INDEX_FILE)
+      open(INDEX_FILE, 'w') {|file| file.write 
+        page.sub(/(Last run: )\d{4}-\d\d-\d\d \d\d:\d\d(\. The data is extracted from a list of)/,"\\1#{stamp}\\2")
+      }
+      exit
+    end
   end
 end
 
@@ -712,7 +723,6 @@ def layout(title = nil)
     $calendar.at('title').content = "Board Meeting Minutes"
 #   $calendar.at('h2').content = "Board Meeting Minutes"
   end
-  stamp = (NOSTAMP ? DateTime.new(1970) :  DateTime.now).strftime '%Y-%m-%d %H:%M'
 
   # Adjust the page header
   
@@ -970,6 +980,6 @@ page = layout do |x|
   end
 end
 
-open("#{SITE_MINUTES}/index.html", 'w') {|file| file.write page}
+open(INDEX_FILE, 'w') {|file| file.write page}
 
 Wunderbar.info "Wrote #{SITE_MINUTES}/index.html"
