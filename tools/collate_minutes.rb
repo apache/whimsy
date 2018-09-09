@@ -60,7 +60,7 @@ force = ARGV.delete '--force' # rerun regardless
 
 NOSTAMP = ARGV.delete '--nostamp' # don't add dynamic timestamp to pages (for debug compares)
 
-stamp = (NOSTAMP ? DateTime.new(1970) :  DateTime.now).strftime '%Y-%m-%d %H:%M'
+STAMP = (NOSTAMP ? DateTime.new(1970) :  DateTime.now).strftime '%Y-%m-%d %H:%M'
 
 YYYYMMDD = ARGV.first || '20*' # Allow override of minutes to process
 
@@ -85,7 +85,7 @@ if File.exist? INDEX_FILE
       # Add stamp to index page
       page = File.read(INDEX_FILE)
       open(INDEX_FILE, 'w') {|file| file.write 
-        page.sub(/(Last run: )\d{4}-\d\d-\d\d \d\d:\d\d(\. The data is extracted from a list of)/,"\\1#{stamp}\\2")
+        page.sub(/(Last run: )\d{4}-\d\d-\d\d \d\d:\d\d(\. The data is extracted from a list of)/,"\\1#{STAMP}\\2")
       }
       exit
     end
@@ -739,9 +739,9 @@ def layout(title = nil)
   section.add_child getHTMLbody {|x|
     x.p do
       if title
-        x.text! "This was extracted (@ #{stamp}) from a list of"
+        x.text! "This was extracted (@ #{STAMP}) from a list of"
       else # main index, which is always replaced
-        x.text! "Last run: #{stamp}. The data is extracted from a list of"
+        x.text! "Last run: #{STAMP}. The data is extracted from a list of"
       end
       x.a 'minutes', :href => 'http://www.apache.org/foundation/records/minutes/'
       x.text! "which have been approved by the Board."
