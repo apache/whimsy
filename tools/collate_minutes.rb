@@ -84,8 +84,8 @@ if File.exist? INDEX_FILE
     unless force
       # Add stamp to index page
       page = File.read(INDEX_FILE)
-      open(INDEX_FILE, 'w') {|file| file.write 
-        page.sub(/(Last run: )\d{4}-\d\d-\d\d \d\d:\d\d(\. The data is extracted from a list of)/,"\\1#{STAMP}\\2")
+      open(INDEX_FILE, 'w') { |file|
+        file.write page.sub(/(Last run: )\d{4}-\d\d-\d\d \d\d:\d\d(\. The data is extracted from a list of)/,"\\1#{STAMP}\\2")
       }
       exit
     end
