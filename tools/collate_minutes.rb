@@ -62,7 +62,9 @@ NOSTAMP = ARGV.delete '--nostamp' # don't add dynamic timestamp to pages (for de
 
 STAMP = (NOSTAMP ? DateTime.new(1970) :  DateTime.now).strftime '%Y-%m-%d %H:%M'
 
-YYYYMMDD = ARGV.first || '20*' # Allow override of minutes to process
+YYYYMMDD = ARGV.shift || '20*' # Allow override of minutes to process
+
+TIME_DIFF = (ARGV.shift || '300').to_i # Allow override of seconds of time diff (WHIMSY-204) for testing
 
 MINUTES_NAME = "board_minutes_#{YYYYMMDD}.txt"
 MINUTES_PATH = "#{SVN_SITE_RECORDS_MINUTES}/*/#{MINUTES_NAME}"
@@ -79,9 +81,14 @@ if File.exist? INDEX_FILE
     push(File.stat(__FILE__).mtime, ASF.library_mtime).
     max
 
-  if File.stat(INDEX_FILE).mtime >= input
-    Wunderbar.info "All up to date!"
-    # Do not update the index file as its timestamp is used as a marker for the last update
+  indexmtime = File.stat(INDEX_FILE).mtime
+  diff = indexmtime - input
+  Wunderbar.info "Most recent update: #{input}"
+  Wunderbar.info "Index file update:  #{indexmtime} Diff: #{diff}"
+  # WHIMSY-204: allow for update window
+  # TODO: consider storing actual update check time
+  if diff >= TIME_DIFF
+    Wunderbar.info "All up to date! (#{TIME_DIFF})"
     exit unless force
   end
 end
