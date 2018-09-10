@@ -551,6 +551,10 @@ class Post < Vue
 
     reader = FileReader.new
     def reader.onload(event)
+      # Convert the spreadsheet a byte at a time because
+      # Chrome Javascript did not handle the following properly:
+      # String.fromCharCode(*Uint8Array.new(event.target.result))
+      # See commit 46058b1e8baff80c75ea72f5b79f2f23af2e87a5
       bytes = Uint8Array.new(event.target.result)
       binary = ''
       for i in 0...bytes.byteLength
