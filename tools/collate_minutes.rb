@@ -89,7 +89,14 @@ if File.exist? INDEX_FILE
   # TODO: consider storing actual update check time
   if diff >= TIME_DIFF
     Wunderbar.info "All up to date! (#{TIME_DIFF})"
-    exit unless force
+    unless force
+      # Add stamp to index page
+      page = File.read(INDEX_FILE)
+      open(INDEX_FILE, 'w') { |file|
+        file.write page.sub(/(Last run: )\d{4}-\d\d-\d\d \d\d:\d\d(\. The data is extracted from a list of)/,"\\1#{STAMP}\\2")
+      }
+      exit
+    end
   end
 end
 
