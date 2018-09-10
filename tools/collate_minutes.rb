@@ -81,14 +81,8 @@ if File.exist? INDEX_FILE
 
   if File.stat(INDEX_FILE).mtime >= input
     Wunderbar.info "All up to date!"
-    unless force
-      # Add stamp to index page
-      page = File.read(INDEX_FILE)
-      open(INDEX_FILE, 'w') { |file|
-        file.write page.sub(/(Last run: )\d{4}-\d\d-\d\d \d\d:\d\d(\. The data is extracted from a list of)/,"\\1#{STAMP}\\2")
-      }
-      exit
-    end
+    # Do not update the index file as its timestamp is used as a marker for the last update
+    exit unless force
   end
 end
 
@@ -740,8 +734,8 @@ def layout(title = nil)
     x.p do
       if title
         x.text! "This was extracted (@ #{STAMP}) from a list of"
-      else # main index, which is always replaced
-        x.text! "Last run: #{STAMP}. The data is extracted from a list of"
+      else # main index, which is always replaced if any input files have changed
+        x.text! "Last changed: #{STAMP}. The data is extracted from a list of"
       end
       x.a 'minutes', :href => 'http://www.apache.org/foundation/records/minutes/'
       x.text! "which have been approved by the Board."
