@@ -93,6 +93,7 @@ if File.exist? INDEX_FILE
       # Add stamp to index page
       page = File.read(INDEX_FILE)
       open(INDEX_FILE, 'w') { |file|
+        # must agree with section.add_child
         file.write page.sub(/(Last run: )\d{4}-\d\d-\d\d \d\d:\d\d(\. The data is extracted from a list of)/,"\\1#{STAMP}\\2")
       }
       exit
@@ -749,7 +750,8 @@ def layout(title = nil)
       if title
         x.text! "This was extracted (@ #{STAMP}) from a list of"
       else # main index, which is always replaced if any input files have changed
-        x.text! "Last changed: #{STAMP}. The data is extracted from a list of"
+        # text below must agree with code that updates the index when no changes have occurred
+        x.text! "Last run: #{STAMP}. The data is extracted from a list of"
       end
       x.a 'minutes', :href => 'http://www.apache.org/foundation/records/minutes/'
       x.text! "which have been approved by the Board."
