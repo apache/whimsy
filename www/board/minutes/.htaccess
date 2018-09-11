@@ -1,0 +1,12 @@
+RedirectMatch ^/board/minutes/stdcxx(\.html)?$         /board/minutes/Cxx_Standard_Library.html
+RedirectMatch ^/board/minutes/comdev(\.html)?$         /board/minutes/Community_Development.html
+RedirectMatch ^/board/minutes/empire-db(\.html)?$      /board/minutes/Empire_db.html
+RedirectMatch ^/board/minutes/httpd(\.html)?$          /board/minutes/HTTP_Server.html
+RedirectMatch ^/board/minutes/logging(\.html)?$        /board/minutes/Logging_Services.html
+RedirectMatch ^/board/minutes/lucenenet(\.html)?$      /board/minutes/Lucene_Net.html
+RedirectMatch ^/board/minutes/climate(\.html)?$        /board/minutes/Open_Climate_Workbench.html
+RedirectMatch ^/board/minutes/apr(\.html)?$            /board/minutes/Portable_Runtime__APR_.html
+RedirectMatch ^/board/minutes/trafficcontrol(\.html)?$ /board/minutes/Traffic_Control.html
+RedirectMatch ^/board/minutes/trafficserver(\.html)?$  /board/minutes/Traffic_Server.html
+RedirectMatch ^/board/minutes/ws(\.html)?$             /board/minutes/Web_Services.html
+RedirectMatch ^/board/minutes/xmlgraphics(\.html)?$    /board/minutes/XML_Graphics.html
