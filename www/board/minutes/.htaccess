@@ -6,6 +6,7 @@ RedirectMatch ^/board/minutes/logging(\.html)?$        /board/minutes/Logging_Se
 RedirectMatch ^/board/minutes/lucenenet(\.html)?$      /board/minutes/Lucene_Net.html
 RedirectMatch ^/board/minutes/climate(\.html)?$        /board/minutes/Open_Climate_Workbench.html
 RedirectMatch ^/board/minutes/apr(\.html)?$            /board/minutes/Portable_Runtime__APR_.html
+RedirectMatch ^/board/minutes/quetz(\.html)?$          /board/minutes/Quetzalcoatl.html
 RedirectMatch ^/board/minutes/trafficcontrol(\.html)?$ /board/minutes/Traffic_Control.html
 RedirectMatch ^/board/minutes/trafficserver(\.html)?$  /board/minutes/Traffic_Server.html
 RedirectMatch ^/board/minutes/ws(\.html)?$             /board/minutes/Web_Services.html
