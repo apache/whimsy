@@ -1,5 +1,7 @@
 # Minutes from previous meetings
 
+FOUNDATION_BOARD = ASF::SVN['foundation_board']
+
 class ASF::Board::Agenda
   parse do
     minutes = @file.split(/^ 3. Minutes from previous meetings/,2).last.
