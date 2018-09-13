@@ -1,6 +1,7 @@
 # Minutes from previous meetings
 
 class ASF::Board::Agenda
+  FOUNDATION_BOARD = ASF::SVN['foundation_board']
   parse do
     minutes = @file.split(/^ 3. Minutes from previous meetings/,2).last.
       split(OFFICER_SEPARATOR,2).first
@@ -20,7 +21,6 @@ class ASF::Board::Agenda
       attrs['approved'] = attrs['approved'].strip.gsub(/\s+/, ' ')
 
       file = attrs['text'][/board_minutes[_\d]+\.txt/].untaint
-      FOUNDATION_BOARD = ASF::SVN['foundation_board']
       if file and File.exist?(File.join(FOUNDATION_BOARD, file))
         attrs['mtime'] = File.mtime(File.join(FOUNDATION_BOARD, file)).to_i
       end
