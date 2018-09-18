@@ -22,7 +22,7 @@ class PMCAdd < Vue
               _br
               _b 'N.B'
               _br
-              _ 'For existing committers, please select the committer from the list below and use the Modify button instead.'
+              _ 'To add existing committers to the PMC, please cancel this dialog. Select the committer from the list and use the Modify button.'
             }
           end
 

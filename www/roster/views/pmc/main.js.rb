@@ -84,7 +84,7 @@ class PMC < Vue
           end
           _p do
             _br
-            _ 'Note: to Add existing committers, please select the committer from the list below and use the Modify button instead.'
+            _ 'Note: to Add existing committers to the PMC, please select the committer from the list below and use the Modify button instead.'
           end
         end
       end
