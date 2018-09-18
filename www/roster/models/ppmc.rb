@@ -67,6 +67,7 @@ class PPMC
       enddate: ppmc.enddate.to_s,
       status: ppmc.status,
       mentors: ppmc.mentors,
+      hasLDAP: ppmc.hasLDAP?,
       owners: ppmc.owners.map {|person| person.id},
       committers: ppmc.members.map {|person| person.id},
       roster: roster,

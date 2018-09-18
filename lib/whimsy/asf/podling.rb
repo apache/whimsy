@@ -210,6 +210,10 @@ module ASF
       ASF::Project.find(id).members
     end
 
+    def hasLDAP?
+      ASF::Project.find(id).hasLDAP?
+    end
+
     # development mailing list associated with a given podling
     def dev_mail_list
       case name

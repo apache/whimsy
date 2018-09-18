@@ -507,6 +507,11 @@ module ASF
     def self.mod_delete(attr, vals)
       ::LDAP::Mod.new(::LDAP::LDAP_MOD_DELETE, attr.to_s, Array(vals))
     end
+
+    def hasLDAP?
+      ASF.search_one(base, "cn=#{name}", 'cn').any?
+    end
+
   end
 
   # a hash of attributes which is not populated until the first attempt
