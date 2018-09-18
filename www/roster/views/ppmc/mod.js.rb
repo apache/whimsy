@@ -81,7 +81,7 @@ class PPMCMod < Vue
               remove_from << 'mentor'
             end
 
-            _button.btn.btn_primary 'Remove from project', onClick: self.post,
+            _button.btn.btn_primary "Remove from project (#{remove_from.join(', ')})", onClick: self.post,
               data_action: "remove #{remove_from.join(' ')}"
           end
         end
