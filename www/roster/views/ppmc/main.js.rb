@@ -14,7 +14,7 @@ class PPMC < Vue
     end
 
     # disable modification until the project is set up
-    if @ppmc.owners.empty?
+    unless @ppmc.hasLDAP?
       @@auth.ppmc = false
       @@auth.ipmc = false
     end
