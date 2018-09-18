@@ -39,7 +39,7 @@ if env.password
         project.remove_members(people) if @targets.include? 'committer'
       end
 
-      # when adding a commiter to a podling, also add the commiter to
+      # when adding a committer to a podling, also add the committer to
       # the incubator.  For removals, remove the individual as an
       # incubator committer when they are not a committer for any podling
       # and not an IPMC member.
