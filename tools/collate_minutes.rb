@@ -300,7 +300,8 @@ seen={}
 
     if title == 'Incubator' and text
       sections = text.split(/\nStatus [rR]eport (.*)\n=+\n/)
-      sections = text.split(/\n[-=][-=]+\n\s*([a-zA-Z].*)\n\n/) if sections.length < 9
+      # Some minutes have a 'Detailed Reports' header before the first podling report
+      sections = text.split(/\n[-=][-=]+(?: Detailed Reports ---+)?\n\s*([a-zA-Z].*)\n\n/) if sections.length < 9
       sections = [''] if sections.include? 'FAILED TO REPORT'
       sections = text.split(/\n(\w+)\n-+\n\n/) if sections.length < 9
       sections = text.split(/\n=+\s+([\w.]+)\s+=+\n+/) if sections.length < 9
