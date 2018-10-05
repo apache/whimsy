@@ -50,9 +50,9 @@ class Parts < Vue
       end
 
       if attachment =~ /\.(pdf|txt|jpeg|jpg|gif|png)$/i
-        link = "./#{attachment}"
+        link = "./#{encodeURIComponent(attachment)}"
       else
-        link = "_danger_/#{attachment}"
+        link = "_danger_/#{encodeURIComponent(attachment)}"
       end
 
       _li options do

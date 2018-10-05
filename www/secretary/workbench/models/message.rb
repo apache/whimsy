@@ -32,11 +32,13 @@ class Message
     name = name.dup.force_encoding('utf-8')
 
     headers = @headers[:attachments].find do |attach|
-      attach[:name] == name or attach['Content-ID'].to_s == '<' + name + '>'
+      attach[:name] == name or URI.decode(attach[:name]) == name or
+        attach['Content-ID'].to_s == '<' + name + '>'
     end
 
     part = mail.attachments.find do |attach| 
-      attach.filename == name or attach['Content-ID'].to_s == '<' + name + '>'
+      attach.filename == name or URI.decode(attach.filename) == name or
+       attach['Content-ID'].to_s == '<' + name + '>'
     end
 
     if headers
