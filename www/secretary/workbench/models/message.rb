@@ -109,7 +109,7 @@ class Message
     return [] unless attachments
     attachments.
       reject {|attachment| SIG_MIMES.include?(attachment[:mime]) and
-        (not attachment[:name] or attachment[:name] !~ /\.pdf\.asc$/)}.
+        (not attachment[:name] or attachment[:name] !~ /\.pdf\.(asc|sig)$/)}.
       map {|attachment| attachment[:name]}.
       select {|name| name != 'signature.asc'}
   end
