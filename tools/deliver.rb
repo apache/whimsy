@@ -11,7 +11,7 @@ MAIL_ROOT = '/srv/mail'
 mail = STDIN.read.force_encoding('binary')
 
 # extract info
-dest = mail[/List-Id: <(.*)>/, 1] || mail[/Delivered-To.* (\S+)\s*$/, 1]
+dest = mail[/^List-Id: <(.*)>/, 1] || mail[/^Delivered-To.* (\S+)\s*$/, 1] || 'unknown'
 time = Time.parse(mail[/^Date: (.*)/, 1]) rescue Time.now
 hash = Digest::SHA1.hexdigest(mail[/^Message-ID:.*/i] || mail)[0..9]
 
