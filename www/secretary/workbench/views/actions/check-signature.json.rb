@@ -8,8 +8,8 @@ message = Mailbox.find(@message)
 
 begin
   # fetch attachment and signature
-  attachment = message.find(@attachment).as_file
-  signature  = message.find(@signature).as_file
+  attachment = message.find(URI.decode(@attachment)).as_file # This is derived from a URI
+  signature  = message.find(@signature).as_file # This is derived from the YAML file
 
   # pick the latest gpg version
   gpg = `which gpg2`.chomp
