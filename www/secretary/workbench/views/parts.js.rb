@@ -364,7 +364,7 @@ class Parts < Vue
     }
   end
 
-  # burst a PDF into individual pages
+  # delete an attachment
   def delete_attachment(event)
     data = {
       selected: @menu || @selected,
