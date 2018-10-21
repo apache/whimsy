@@ -42,7 +42,7 @@ _personalize_email(env.user)
 # write attachment (+ signature, if present) to the documents/iclas directory
 task "svn commit documents/iclas/#@filename#{fileext}" do
   form do
-    _input value: @selected, name: 'selected'
+    _input value: URI.decode(@selected), name: 'selected'
 
     if @signature and not @signature.empty?
       _input value: @signature, name: 'signature'
@@ -56,7 +56,7 @@ task "svn commit documents/iclas/#@filename#{fileext}" do
 
     # create/add file(s)
     if @signature.to_s.empty? or fileext != '.pdf'
-      message.write_svn("#{dir}/iclas", @filename, @selected, @signature)
+      message.write_svn("#{dir}/iclas", @filename, URI.decode(@selected), @signature)
     else
       message.write_svn("#{dir}/iclas", @filename, 
         @selected => 'icla.pdf', @signature => 'icla.pdf.asc')
