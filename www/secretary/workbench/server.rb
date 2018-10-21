@@ -188,7 +188,7 @@ get %r{/(\d{6})/(\w+)/_danger_/(.*?)} do |month, hash, name|
   message = Mailbox.new(month).find(hash)
   pass unless message
 
-  @part = message.find(name)
+  @part = message.find(URI.decode(name))
   pass unless @part
 
   _html :danger
