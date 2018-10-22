@@ -345,10 +345,12 @@ class Parts < Vue
     @busy = false
   end
 
+  # N.B. @selected is an encoded URI; @menu is not encoded
+
   # burst a PDF into individual pages
   def burst(event)
     data = {
-      selected: @menu || @selected,
+      selected: @menu || decodeURI(@selected),
       message: window.parent.location.pathname
     }
 
@@ -367,7 +369,7 @@ class Parts < Vue
   # delete an attachment
   def delete_attachment(event)
     data = {
-      selected: @menu || @selected,
+      selected: @menu || decodeURI(@selected),
       message: window.parent.location.pathname
     }
 
@@ -396,7 +398,7 @@ class Parts < Vue
     message = window.parent.location.pathname
 
     data = {
-      selected: @menu || @selected,
+      selected: @menu || decodeURI(@selected),
       message: message,
       direction: event.currentTarget.textContent
     }
@@ -420,7 +422,7 @@ class Parts < Vue
     message = window.parent.location.pathname
 
     data = {
-      selected: @menu || @selected,
+      selected: @menu || decodeURI(@selected),
       message: message
     }
 
