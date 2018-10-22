@@ -21,7 +21,7 @@ begin
     pages.each_with_index do |page, index|
       attachments << {
         name: format % (index+1),
-        content: File.read(page),
+        content: File.binread(page), # must use binary read
         mime: 'application/pdf'
       } if File.size? page # skip empty output files
     end
