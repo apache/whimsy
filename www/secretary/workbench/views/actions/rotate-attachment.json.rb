@@ -21,6 +21,9 @@ begin
   message.update_attachment @selected, content: output.read, name: name,
     mime: 'application/pdf'
 
+rescue
+  Wunderbar.error "Cannot process #{@selected}"
+  raise
 ensure
   selected.unlink if selected
   output.unlink if output
