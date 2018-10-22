@@ -23,12 +23,15 @@ begin
         name: format % (index+1),
         content: File.read(page),
         mime: 'application/pdf'
-      }
+      } if File.size? page # skip empty output files
     end
   end
 
-  message.replace_attachment @selected, attachments
-
+  # Don't replace if no output was produced
+  message.replace_attachment @selected, attachments unless attachments.empty?
+rescue
+  Wunderbar.error "Cannot process #{@selected}"
+  raise
 ensure
   source.unlink if source
 end
