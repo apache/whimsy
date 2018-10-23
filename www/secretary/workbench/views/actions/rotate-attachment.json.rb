@@ -16,6 +16,9 @@ begin
   Kernel.system 'pdftk', selected.path, 'cat', "1-end#{direction}", 'output',
     output.path
 
+  # If output file is empty, then the command failed
+  raise "Failed to rotate #{@selected}" unless File.size? output
+
   name = @selected.sub(/\.\w+$/, '') + '.pdf'
 
   message.update_attachment @selected, content: output.read, name: name,
