@@ -576,8 +576,8 @@ class Parts < Vue
     event.preventDefault()
 
     data = {
-      source: @drag.split('/').pop(),
-      target: href.split('/').pop(),
+      source: decodeURI(@drag.split('/').pop()),
+      target: decodeURI(href.split('/').pop()),
       message: window.parent.location.pathname
     }
 
