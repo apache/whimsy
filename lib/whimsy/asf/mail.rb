@@ -165,9 +165,9 @@ module ASF
     end
 
     # All known email addresses: includes active, obsolete, and apache.org
-    # email addresses.
+    # email addresses. (But don't add notinavail@apache.org)
     def all_mail
-      (active_emails + obsolete_emails + ["#{id}@apache.org"]).uniq
+      (active_emails + obsolete_emails + (id == 'notinavail' ? [] : ["#{id}@apache.org"])).uniq
     end
   end
 
