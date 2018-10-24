@@ -8,8 +8,6 @@ begin
   source = message.find(@selected).as_pdf
   source.rewind
 
-  output = SafeTempFile.new('output')
-
   name = @selected.sub(/\.\w+$/, '') + '.pdf'
 
   # If output file is empty, then the command failed
