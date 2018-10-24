@@ -44,6 +44,7 @@ module ASF
         @@id_index = nil
         @@email_index = nil
         @@name_index = nil
+        @@icla_index = nil # cache of all iclas as an array
         @@svn_change = nil
 
         @@availids = nil
@@ -123,13 +124,10 @@ module ASF
     # iterate over all of the ICLAs
     def self.each(&block)
       refresh
-      if @@id_index and not @@id_index.empty?
-        @@id_index.values.each(&block)
-      elsif @@email_index and not @@email_index.empty?
-        @@email_index.values.each(&block)
-      elsif @@name_index and not @@name_index.empty?
-        @@name_index.values.each(&block)
+      if @@icla_index and not @@icla_index.empty?
+        @@icla_index.each(&block)
       elsif SOURCE and File.exist?(SOURCE)
+        @@icla_index = []
         File.read(SOURCE).scan(/^([-\w]+):(.*?):(.*?):(.*?):(.*)/).each do |list|
           icla = ICLA.new()
           icla.id = list[0]
@@ -143,6 +141,7 @@ module ASF
             icla.claRef = match[1] || match[2]
           end
           block.call(icla)
+          @@icla_index << icla
         end
       end
     end
