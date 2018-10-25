@@ -33,4 +33,3 @@ FileUtils.mkdir_p File.dirname(file)
 File.write file, mail, encoding: Encoding::BINARY
 File.utime time, time, file
 File.chmod 0644, file
-puts file
