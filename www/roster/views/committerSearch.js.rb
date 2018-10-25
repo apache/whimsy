@@ -42,7 +42,8 @@ class CommitterSearch < Vue
         search.all? {|part|
           person.id.include? part or
           person.name.downcase().include? part or
-          person.mail.any? {|mail| mail.include? part}
+          person.mail.any? {|mail| mail.include? part} or
+          person.githubUsername.any? {|ghun| ghun.downcase().include? part}
         }
       then
         unless @@exclude and @@exclude.include? person.id
@@ -88,6 +89,7 @@ class CommitterSearch < Vue
                 _th 'id'
                 _th 'public name'
                 _th 'email'
+                _th 'githubUsername'
               end
             end
 
@@ -104,6 +106,8 @@ class CommitterSearch < Vue
                   end
 
                   _td person.mail.first
+
+                  _td person.githubUsername.join(', ')
                 end
               end
 

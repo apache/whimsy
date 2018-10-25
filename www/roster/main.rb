@@ -80,9 +80,10 @@ get '/committer/index.json' do
     mail = Hash[ASF::Mail.list.group_by(&:last).
       map {|person, list| [person, list.map(&:first)]}]
 
+    ASF::Person.preload(['id','name','mail','githubUsername'])
     # build a list of people, their public-names, and email addresses
     index = ASF::Person.list.sort_by(&:id).map {|person|
-      result = {id: person.id, name: person.public_name, mail: mail[person]}
+      result = {id: person.id, name: person.public_name, mail: mail[person], githubUsername: person.attrs['githubUsername'] || []}
       result[:member] = true if person.asf_member?
       result
     }.to_json
