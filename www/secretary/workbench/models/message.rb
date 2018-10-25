@@ -310,11 +310,21 @@ class Message
     mail
   end
 
+  # get the message ID
+  def self.getmid(hdrs)
+    mid = hdrs[/^Message-ID:.*/i]
+    if mid =~ /^Message-ID:\s*$/i # no mid on the first line
+      # capture the next line and join them together
+      mid = hdrs[/^Message-ID:.*\r?\n .*/i].sub(/\r?\n/,'')
+    end
+    mid
+  end
+
   #
   # What to use as a hash for mail
   #
   def self.hash(message)
-    Digest::SHA1.hexdigest(message[/^Message-ID:.*/i] || message)[0..9]
+    Digest::SHA1.hexdigest(getmid(message) || message)[0..9]
   end
 
   #
