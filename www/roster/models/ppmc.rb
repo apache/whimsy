@@ -40,7 +40,8 @@ class PPMC
         name: person.public_name, 
         member: person.asf_member?,
         icommit: incubator_committers.include?(person),
-        role: (owners.include?(person) ? 'PPMC Member' : 'Committer')
+        role: (owners.include?(person) ? 'PPMC Member' : 'Committer'),
+        githubUsername: (person.attrs['githubUsername'] || []).join(', ')
       }]
     }.to_h
 
@@ -51,7 +52,8 @@ class PPMC
         member: person.asf_member?,
         ipmc: ipmc.include?(person),
         icommit: incubator_committers.include?(person),
-        role: 'Mentor'
+        role: 'Mentor',
+        githubUsername: (person.attrs['githubUsername'] || []).join(', ')
       }
     end
 

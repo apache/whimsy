@@ -22,6 +22,7 @@ class PMCCommitters < Vue
           _tr do
             _th if @@auth
             _th 'id', data_sort: 'string'
+            _th 'githubUsername', data_sort: 'string'
             _th.sorting_asc 'public name', data_sort: 'string-ins'
           end
         end
@@ -71,9 +72,11 @@ class PMCCommitter < Vue
 
       if @@person.member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}"} }
+        _td @@person.githubUsername
         _td { _b @@person.name }
       else
         _td { _a @@person.id, href: "committer/#{@@person.id}" }
+        _td @@person.githubUsername
         _td @@person.name
       end
     end

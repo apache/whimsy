@@ -9,7 +9,7 @@ class Committee
 
     ASF::Committee.load_committee_info
     # We'll be needing the mail data later
-    people = ASF::Person.preload(['cn', 'mail', 'asf-altEmail'], (members + committers).uniq)
+    people = ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (members + committers).uniq)
 
     lists = ASF::Mail.lists(true).select do |list, mode|
       list =~ /^#{pmc.mail_list}\b/
@@ -62,6 +62,7 @@ class Committee
         unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
       end
       roster[person.id]['ldap'] = true
+      roster[person.id]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
     end
 
     committers.each do |person|
@@ -69,6 +70,7 @@ class Committee
         name: person.public_name,
         role: 'Committer'
       }
+      roster[person.id]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
     end
 
     roster.each {|id, info| info[:member] = ASF::Person.find(id).asf_member?}

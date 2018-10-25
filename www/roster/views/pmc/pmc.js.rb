@@ -17,6 +17,7 @@ class PMCMembers < Vue
           _th if @@auth
           _th 'id', data_sort: 'string'
           _th.sorting_asc 'public name', data_sort: 'string-ins'
+          _th 'githubUsername', data_sort: 'string'
           _th 'starting date', data_sort: 'string'
           _th 'status - click cell for actions', data_sort: 'string'
         end
@@ -150,6 +151,8 @@ class PMCMember < Vue
             }
         _td @@person.name
       end
+
+      _td @@person.githubUsername
 
       _td @@person.date
 

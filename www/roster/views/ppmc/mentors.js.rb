@@ -14,6 +14,7 @@ class PPMCMentors < Vue
         _tr do
           _th if @@auth.ipmc
           _th 'id'
+          _th 'githubUsername'
           _th 'public name'
           _th 'notes'
         end
@@ -58,12 +59,15 @@ class PPMCMentor < Vue
 
       if @@person.member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" } }
+        _td @@person.githubUsername
         _td { _b @@person.name }
       elsif @@person.name
         _td { _a @@person.id, href: "committer/#{@@person.id}" }
+        _td @@person.githubUsername
         _td @@person.name
       else
         _td @@person.id
+        _td @@person.githubUsername
         _td @@person.name
       end
         
