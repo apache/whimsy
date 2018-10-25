@@ -49,14 +49,15 @@ class Attachment
   end
 
   def as_pdf
-    file = SafeTempFile.new([safe_name, '.pdf'])
+    ext = File.extname(name).downcase
+    ext = '.pdf' if content_type.end_with? '/pdf'
+    ext.untaint if ext =~ /^\.\w+$/
+
+    file = SafeTempFile.new([safe_name, ext])
     file.write(body)
     file.rewind
 
-    return file if content_type.end_with? '/pdf'
-    return file if name.end_with? '.pdf'
-
-    ext = File.extname(name).downcase
+    return file if ext == '.pdf'
 
     if IMAGE_TYPES.include? ext or content_type.start_with? 'image/'
       pdf = SafeTempFile.new([safe_name, '.pdf'])
