@@ -10,8 +10,7 @@ begin
 
   output = SafeTempFile.new('output') # N.B. this is created as binary
 
-  Kernel.system 'pdftk', target.path, source.path, 'cat', 'output',
-    output.path
+  Kernel.system 'pdfunite', target.path, source.path, output.path
 
   name = @target.sub(/\.\w+$/, '') + '.pdf'
 

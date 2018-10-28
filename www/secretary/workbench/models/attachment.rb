@@ -61,7 +61,7 @@ class Attachment
 
     if IMAGE_TYPES.include? ext or content_type.start_with? 'image/'
       pdf = SafeTempFile.new([safe_name, '.pdf'])
-      system 'convert', file.path, pdf.path
+      system 'img2pdf', '--output', pdf.path, file.path
       file.unlink
       return pdf
     end

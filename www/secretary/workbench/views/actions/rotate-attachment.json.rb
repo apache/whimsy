@@ -7,21 +7,23 @@ message = Mailbox.find(@message)
 begin
   selected = message.find(@selected).as_pdf
 
-  direction = 'Right' if @direction.include? 'right'
-  direction = 'Left' if @direction.include? 'left'
-  direction = 'Down' if @direction.include? 'flip'
+  tool = 'pdf270' if @direction.include? 'right'
+  tool = 'pdf90' if @direction.include? 'left'
+  tool = 'pdf180' if @direction.include? 'flip'
 
-  output = SafeTempFile.new('output')
+  Dir.chdir File.dirname(selected.path) do
+    Kernel.system tool, '--quiet', '--suffix', 'rotated', selected.path
+  end
 
-  Kernel.system 'pdftk', selected.path, 'cat', "1-end#{direction}", 'output',
-    output.path
+  output = selected.path.sub(/\.pdf$/, '-rotated.pdf')
+  puts output
 
   # If output file is empty, then the command failed
   raise "Failed to rotate #{@selected}" unless File.size? output
 
   name = @selected.sub(/\.\w+$/, '') + '.pdf'
 
-  message.update_attachment @selected, content: output.read, name: name,
+  message.update_attachment @selected, content: IO.binread(output), name: name,
     mime: 'application/pdf'
 
 rescue
@@ -29,7 +31,7 @@ rescue
   raise
 ensure
   selected.unlink if selected
-  output.unlink if output
+  File.unlink output if output
 end
 
 {attachments: message.attachments, selected: name}
