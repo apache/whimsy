@@ -11,6 +11,8 @@ begin
   tool = 'pdf90' if @direction.include? 'left'
   tool = 'pdf180' if @direction.include? 'flip'
 
+  raise "Invalid direction #{@direction}" unless tool
+
   Dir.chdir File.dirname(selected.path) do
     Kernel.system tool, '--quiet', '--suffix', 'rotated', selected.path
   end
