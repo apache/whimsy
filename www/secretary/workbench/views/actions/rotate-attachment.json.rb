@@ -16,7 +16,6 @@ begin
   end
 
   output = selected.path.sub(/\.pdf$/, '-rotated.pdf')
-  puts output
 
   # If output file is empty, then the command failed
   raise "Failed to rotate #{@selected}" unless File.size? output
