@@ -1,0 +1,7 @@
+#!/usr/bin/python3
+
+# Alternate executable wrapper for img2pdf, created because the packaged
+# version of img2pdf on Ubuntu 16.04 contains a back-level version
+
+import img2pdf
+img2pdf.main()

@@ -61,7 +61,8 @@ class Attachment
 
     if IMAGE_TYPES.include? ext or content_type.start_with? 'image/'
       pdf = SafeTempFile.new([safe_name, '.pdf'])
-      system 'img2pdf', '--output', pdf.path, file.path
+      img2pdf = File.expand_path('../img2pdf', __dir__.untaint).untaint
+      system img2pdf, '--output', pdf.path, file.path
       file.unlink
       return pdf
     end
