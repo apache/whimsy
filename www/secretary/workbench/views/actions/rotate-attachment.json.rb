@@ -32,7 +32,7 @@ rescue
   raise
 ensure
   selected.unlink if selected
-  File.unlink output if output
+  File.unlink output if output and File.exist? output
 end
 
 {attachments: message.attachments, selected: name}
