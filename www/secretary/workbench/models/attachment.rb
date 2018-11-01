@@ -64,6 +64,7 @@ class Attachment
       img2pdf = File.expand_path('../img2pdf', __dir__.untaint).untaint
       system img2pdf, '--output', pdf.path, file.path
       file.unlink
+      raise "Failed to convert #{self.name} to PDF" unless File.sise? pdf.path
       return pdf
     end
 
