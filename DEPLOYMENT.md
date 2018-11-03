@@ -111,3 +111,6 @@ and running - these are only needed for a new deployment.
  
  * Verify that email can be sent to non-apache.org email addresses
    * Run [testmail.rb](tools/testmail.rb)
+
+ * if `pip3 show img2pdf` doesn't show version 0.3.1 or later:
+   * Run `pip3 install --upgrade img2pdf`
