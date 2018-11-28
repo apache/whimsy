@@ -1551,6 +1551,12 @@ module ASF
   class AuthGroup < Service
     @base = 'ou=auth,ou=groups,dc=apache,dc=org'
   end
+
+  # <tt>ou=role</tt> subtree of <tt>ou=groups,dc=apache,dc=org</tt>, used for
+  # committers (new) group only currently
+  class RoleGroup < Service
+    @base = 'ou=role,ou=groups,dc=apache,dc=org'
+  end
 end
 
 if __FILE__ == $0
@@ -1561,4 +1567,5 @@ if __FILE__ == $0
     print ASF::Committee[w].isGuineaPig?,' '
     puts ASF::Committee.isGuineaPig?(w)   
   end
+  ASF::RoleGroup.list.map {|g| puts ASF::RoleGroup.find(g).dn}
 end
