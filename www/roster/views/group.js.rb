@@ -23,7 +23,7 @@ class Group < Vue
     # header
     _h1 do
       _span group.id
-      _span.note " (#{group.type})"
+      _span.note " (#{group.type}) #{group.dn}"
     end
 
     # usage information for authenticated users (group members, etc.)
