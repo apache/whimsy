@@ -9,7 +9,7 @@ class PMCMembers < Vue
   end
 
   def render
-    _h2.pmc! 'PMC'
+    _h2.pmc! 'PMC (' + roster.length + ')'
     _p 'Click on column name to sort'
     _table.table.table_hover do
       _thead do

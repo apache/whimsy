@@ -9,12 +9,12 @@ class PMCCommitters < Vue
         @@committee.members.include? id
       end
     then
-      _h2.committers! 'Committers' 
+      _h2.committers! 'Committers (' + committers.length + ')' 
       _p 'All committers are members of the PMC'
     else
       _h2.committers! do
-        _ 'Committers'
-        _small ' (excluding PMC members above)'
+        _ 'Committers (' + committers.length + ')' 
+        _small ' (the listing excludes PMC members above)'
       end
       _p 'Click on column name to sort'
       _table.table.table_hover do

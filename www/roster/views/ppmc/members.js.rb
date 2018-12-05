@@ -4,7 +4,8 @@
 
 class PPMCMembers < Vue
   def render
-    _h2.ppmc! 'PPMC'
+    _h2.ppmc! 'PPMC (' + roster.length + ')'
+    _p '(the listing below excludes mentors)'
     _table.table.table_hover do
       _thead do
         _tr do

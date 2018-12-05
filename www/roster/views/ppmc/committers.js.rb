@@ -13,12 +13,12 @@ class PPMCCommitters < Vue
         @@ppmc.owners.include? id
       end
     then
-      _h2.committers! 'Committers'
+      _h2.committers! 'Committers (' + committers.length + ')'
       _p 'All committers are members of the PPMC'
     else
       _h2.committers! do
-        _ 'Committers'
-        _small ' (excluding PPMC members above)'
+        _ 'Committers (' + committers.length + ')'
+        _small ' (the listing excludes PPMC members above)'
       end
       _p 'Click on column name to sort'
       _table.table.table_hover do
