@@ -34,6 +34,9 @@ _html do
     _ 'The table below show the differences, if any'
   end
 
+  old = ASF::Group['committers'].memberids
+  new = ASF::Committer.listids
+
   _table do
     _tr do
       _th 'Project'
@@ -42,6 +45,7 @@ _html do
       _th 'group members - project members'
       _th 'project owners - committee members'
       _th 'committee-members - project owners'
+      _th 'not in committers group'
     end
 
     projects = ASF::Project.list
@@ -51,19 +55,24 @@ _html do
       co_po=[]
       pm_um=[]
       um_pm=[]
+      notc=[]
       if c=ASF::Committee[p.name] # we have PMC 
         po=p.ownerids
         co=c.ownerids
         po_co=po-co
         co_po=co-po
+        notc += po.reject {|n| old.include? n}
+        notc += co.reject {|n| old.include? n}
       end
       if u=ASF::Group[p.name] # we have the unix group
         pm=p.memberids
         um=u.memberids
         pm_um=pm-um
         um_pm=um-pm
+        notc += pm.reject {|n| old.include? n}
+        notc += um.reject {|n| old.include? n}
       end
-      if pm_um.size > 0 or um_pm.size > 0 or po_co.size > 0 or co_po.size > 0
+      if pm_um.size > 0 or um_pm.size > 0 or po_co.size > 0 or co_po.size > 0 or notc.size > 0
         _tr do
           _td do
             _a p.name, href: '/roster/committee/' + p.name
@@ -89,6 +98,11 @@ _html do
               _a id, href: '/roster/committer/' + id
             end
           end
+          _td do
+            notc.uniq.each do |id|
+              _a id, href: '/roster/committer/' + id
+            end
+          end
         end
       end
     end
@@ -104,9 +118,6 @@ _html do
     _br
     _ 'These should agree'
   end
-
-  old = ASF::Group['committers'].memberids
-  new = ASF::Committer.listids
 
   new_old = new - old
   old_new = old - new
