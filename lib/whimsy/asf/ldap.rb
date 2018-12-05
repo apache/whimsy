@@ -817,7 +817,7 @@ module ASF
     # list of LDAP services that this individual is a member of
     def services
       weakref(:services) do
-        Service.list("member=#{dn}")
+        Service.listcns("member=#{dn}")
       end
     end
 
