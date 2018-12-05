@@ -49,7 +49,7 @@ _html do
         _p do
           _ul do
             _li 'subscribers can post and will receive mail'
-            _li 'allow-subscribers can post; they do not get copies of mails (this is used for e.g. press@)'
+            _li 'allow-subscribers can post; they do not get copies of mails (this is used for e.g. press@. Also useful for bots.)'
             _li 'deny-subscribers cannot post; their posts will be rejected without needing moderation'
             _li 'sendsubscribertomod-subscribers will have all posts moderated (for posters who are borderline problems) - ask INFRA to enable the setting for the list'
           end
@@ -125,7 +125,7 @@ _html do
               _td do
                 _label do
                   _input type: "radio", name: "cmd", value: "allow-subscribe", required: true, checked: (@cmd == "allow-subscribe")
-                  _ 'allow-subscribe (allow posting without getting messages)'
+                  _ 'allow-subscribe (allow posting without getting messages - e.g. for bots)'
                 end
               end
             end
