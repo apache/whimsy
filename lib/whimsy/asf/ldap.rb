@@ -1440,8 +1440,8 @@ module ASF
   class Service < Base
     @base = 'ou=groups,ou=services,dc=apache,dc=org'
 
-    # return a list of services, from LDAP.
-    def self.list(filter='cn=*')
+    # return a list of services (cns only), from LDAP.
+    def self.listcns(filter='cn=*')
       ASF.search_one(base, filter, 'cn').flatten
     end
 
@@ -1522,8 +1522,11 @@ module ASF
   class AppGroup < Service
     @base = 'ou=apps,ou=groups,dc=apache,dc=org'
 
-    def self.list(filter='cn=*')
-      ASF.search_subtree(base, filter, 'cn').flatten.map {|cn| find(cn)}
+    # return a list of App groups (cns only), from LDAP.
+    def self.listcns(filter='cn=*')
+      # Note that hudson-job-admin is under ou=hudson hence need 
+      # to override Service.listcns and use subtree search
+      ASF.search_subtree(base, filter, 'cn').flatten
     end
 
     # remove people from an application group.
@@ -1567,5 +1570,6 @@ if __FILE__ == $0
     print ASF::Committee[w].isGuineaPig?,' '
     puts ASF::Committee.isGuineaPig?(w)   
   end
-  ASF::RoleGroup.list.map {|g| puts ASF::RoleGroup.find(g).dn}
+  ASF::RoleGroup.listcns.map {|g| puts ASF::RoleGroup.find(g).dn}
+  ASF::AppGroup.listcns.map {|g| puts ASF::AppGroup.find(g).dn}
 end

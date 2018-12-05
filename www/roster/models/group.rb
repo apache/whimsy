@@ -10,7 +10,7 @@ class Group
     groups.map! {|group| [group, "LDAP group"]}
 
     # add services...
-    groups += ASF::Service.list.map {|service| [service, "LDAP service"]}
+    groups += ASF::Service.listcns.map {|service| [service, "LDAP service"]}
 
     # add authorization (asf and pit)
     groups += ASF::Authorization.new('asf').to_h.
@@ -20,10 +20,10 @@ class Group
       map {|id, list| [id, "PIT Auth"]}
 
     # add authorization groups (LDAP)
-    groups += ASF::AuthGroup.list.map {|group| [group, "LDAP Auth Group"]}
+    groups += ASF::AuthGroup.listcns.map {|group| [group, "LDAP Auth Group"]}
 
     # add app groups
-    groups += ASF::AppGroup.list.map {|app| [app.id, "LDAP app group"]}
+    groups += ASF::AppGroup.listcns.map {|app| [app, "LDAP app group"]}
 
     groups.sort
   end
