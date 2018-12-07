@@ -121,6 +121,10 @@ module ASF
       result
     end
 
+    def createDate
+      createTimestamp[0..7]
+    end
+
     # return person's public name, searching a variety of sources, starting
     # with iclas.txt, then LDAP, and finally the archives.
     def public_name
