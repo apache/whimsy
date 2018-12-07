@@ -6,6 +6,16 @@ Compare LDAP lists
 
 project.memberids should agree with Group.memberids (if it exixts)
 project.ownerids should agree with Committee.memberids (if it exists)
+
+members and owners should also be committers
+
+The two committers groups should have the same members:
+- cn=committers,ou=role,ou=groups,dc=apache,dc=org (new role group)
+- cn=committers,ou=groups,dc=apache,dc=org (old unix group)
+
+All committers should be in LDAP people
+LDAP people whould be committers (unles login is disabled)
+
 =end
 
 $LOAD_PATH.unshift '/srv/whimsy/lib'
@@ -24,6 +34,10 @@ _html do
 
   _h1 'LDAP membership checks'
 
+  old = ASF::Group['committers'].memberids
+  new = ASF::Committer.listids
+  people = ASF::Person.preload(%w(uid createTimestamp asf-banned loginShell))
+
   _h2 'members and owners'
 
   _p do
@@ -33,9 +47,6 @@ _html do
     _br
     _ 'The table below show the differences, if any'
   end
-
-  old = ASF::Group['committers'].memberids
-  new = ASF::Committer.listids
 
   _table do
     _tr do
@@ -101,11 +112,74 @@ _html do
           _td do
             notc.uniq.each do |id|
               _a id, href: '/roster/committer/' + id
+              if ASF::Person[id].nologin?
+                _ 'NoLogin'
+              end
+              _br
             end
           end
         end
       end
     end
+  end
+
+  _h2 'people who are not committers (excluding nologin)'
+  
+  non_committers = people.reject { |p| p.nologin? or old.include? p.name or p.name == 'apldaptest'}
+  if non_committers.length > 0
+    _table do
+      _tr do
+        _th 'UID'
+        _th 'asf-banned?'
+        _th 'Date'
+        _th 'ICLA'
+      end
+      non_committers.sort_by(&:name).each do |p|
+        icla = ASF::ICLA.find_by_id(p.name)
+        _tr do
+          _td do
+            _a p.name, href: '/roster/committer/' + p.name
+          end
+          _td p.asf_banned?
+          _td p.createDate
+          if icla
+            if icla.claRef
+              _td do
+                _a icla.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{icla.claRef}"
+              end
+            else
+              _td icla.form
+            end
+          else
+            _td 'No ICLA entry found'
+          end
+        end
+      end
+    end
+  else
+    _p 'All LDAP people entries are committers'
+  end
+
+  _h2 'committers who are not in LDAP people'
+  
+  # which committers are not people?
+  non_people = old.reject {|id| people.map(&:name).include? id}
+  
+  if non_people.length > 0
+    _table do
+      _tr do
+        _th 'uid'
+      end
+      non_people.sort.each do |id|
+        _tr do
+          _td do
+            _a id, href: '/roster/committer/' + id
+          end
+        end
+      end
+    end
+  else
+    _p 'All committers are included in LDAP people'
   end
 
   _h2 'Committers'
