@@ -34,22 +34,22 @@ class Group
     type = 'LDAP group'
     group = ASF::Group.find(id)
 
-    if group.members.empty?
+    unless group.hasLDAP?
       type = 'LDAP auth group'
       group = ASF::AuthGroup.find(id)
     end
 
-    if group.members.empty?
+    unless group.hasLDAP?
       type = 'LDAP service'
       group = ASF::Service.find(id)
     end
 
-    if group.members.empty?
+    unless group.hasLDAP?
       type = 'LDAP app group'
       group = ASF::AppGroup.find(id)
     end
 
-    if not group.members.empty?
+    if group.hasLDAP?
       # LDAP group
 
       people = ASF::Person.preload('cn', group.members)
