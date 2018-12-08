@@ -57,7 +57,7 @@ class Group
       response = {
         id: id,
         type: type,
-        dn: group.dn,
+        dn: (group.dn rescue ''), # not all groups have a DN
         members: Hash[group.members.map {|person| [person.id, (person.cn rescue '**Entry missing from LDAP people**')]}] # if id not in people
       }
 
@@ -85,7 +85,7 @@ class Group
         response = {
           id: id,
           type: type,
-          dn: group.dn,
+          dn: (group.dn rescue ''), # not all groups have a DN
           members: Hash[group.map {|person| [person.id, person.cn]}]
         }
       end
