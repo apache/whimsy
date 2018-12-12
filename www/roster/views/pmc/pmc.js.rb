@@ -16,8 +16,8 @@ class PMCMembers < Vue
         _tr do
           _th if @@auth
           _th 'id', data_sort: 'string'
-          _th.sorting_asc 'public name', data_sort: 'string-ins'
           _th 'githubUsername', data_sort: 'string'
+          _th.sorting_asc 'public name', data_sort: 'string-ins'
           _th 'starting date', data_sort: 'string'
           _th 'status - click cell for actions', data_sort: 'string'
         end
@@ -144,15 +144,15 @@ class PMCMember < Vue
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" }
               _a ' (*)', href: "committee/#{@@committee.id}#crosscheck" if @@person.notSubbed and @@committee.analysePrivateSubs
             }
+        _td @@person.githubUsername
         _td { _b @@person.name }
       else
         _td { _a @@person.id, href: "committer/#{@@person.id}"
               _a ' (*)', href: "committee/#{@@committee.id}#crosscheck" if @@person.notSubbed and @@committee.analysePrivateSubs
             }
+        _td @@person.githubUsername
         _td @@person.name
       end
-
-      _td @@person.githubUsername
 
       _td @@person.date
 
