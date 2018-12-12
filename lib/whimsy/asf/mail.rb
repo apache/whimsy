@@ -209,7 +209,12 @@ module ASF
   class Podling
     # base name used in constructing mailing list name.
     def mail_list
-      name
+      case name.downcase
+      when 'odftoolkit'
+        'odf'
+      else
+        name
+      end
     end
   end
 
