@@ -9,23 +9,37 @@ class PPMC
       list =~ /^(incubator-)?#{ppmc.mail_list}\b/
     end
 
+    # separate out the known ASF members and extract any matching committer details
+    unknownSubs = []
+    asfMembers = []
     # Also look for non-ASF mod emails
     nonASFmails=Hash.new
 
-    user = ASF::Person.find(env.user)
-    if user.asf_member? or ppmc.members.include? user
+    moderators = nil
+    modtime = nil
+    subscribers = nil # we get the counts only here
+    subtime = nil
+    pSubs = Array.new # private@ subscribers
+    unMatchedSubs = [] # unknown private@ subscribers
+    currentUser = ASF::Person.find(env.user)
+    analysePrivateSubs = false # whether to show missing private@ subscriptions
+    if currentUser.asf_member? or ppmc.members.include? currentUser
       require 'whimsy/asf/mlist'
       moderators, modtime = ASF::MLIST.list_moderators(ppmc.mail_list, true)
       subscribers, subtime = ASF::MLIST.list_subscribers(ppmc.mail_list, true) # counts only
-      load_emails # set up @people
+      analysePrivateSubs = currentUser.asf_member?
+      unless analysePrivateSubs # check for private moderator if not already allowed access
+        user_mail = currentUser.all_mail || []
+        pMods = moderators["private@#{ppmc.mail_list}.apache.org"] || []
+        analysePrivateSubs = !(pMods & user_mail).empty?
+      end
+      if analysePrivateSubs
+        pSubs = ASF::MLIST.private_subscribers(ppmc.mail_list)[0]||[]
+        unMatchedSubs=Set.new(pSubs) # init ready to remove matched mails
+        pSubs.map!{|m| m.downcase} # for matching
+      end
+
       moderators.each { |list,mods| mods.each {|m| nonASFmails[m]='' unless m.end_with? '@apache.org'} }
-      nonASFmails.each {|k,v|
-        @people.each do |person|
-          if person[:mail].any? {|mail| mail.downcase == k.downcase}
-            nonASFmails[k] = person[:id]
-          end
-        end
-      }
     else
       lists = lists.select {|list, mode| mode == 'public'}
     end
@@ -36,7 +50,14 @@ class PPMC
     owners = ppmc.owners
 
     roster = ppmc.members.map {|person|
+      notSubbed = false
+      if analysePrivateSubs and owners.include? person
+        allMail = person.all_mail.map{|m| m.downcase}
+        notSubbed = (allMail & pSubs).empty?
+        unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
+      end
       [person.id, {
+        notSubbed: notSubbed,
         name: person.public_name, 
         member: person.asf_member?,
         icommit: incubator_committers.include?(person),
@@ -55,9 +76,42 @@ class PPMC
         role: 'Mentor',
         githubUsername: (person.attrs['githubUsername'] || []).join(', ')
       }
+      if analysePrivateSubs
+        allMail = person.all_mail.map{|m| m.downcase}
+        roster[person.id]['notSubbed'] = (allMail & pSubs).empty?
+        unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
+      end
     end
 
     statusInfo = ppmc.podlingStatus || {news: []}
+
+    if unMatchedSubs.length > 0 or nonASFmails.length > 0
+      load_emails # set up @people
+      unMatchedSubs.each{ |addr|
+        who = nil
+        @people.each do |person|
+          if person[:mail].any? {|mail| mail.downcase == addr.downcase}
+            who = person
+          end
+        end
+        if who
+          if who[:member]
+            asfMembers << { addr: addr, person: who }
+          else
+            unknownSubs << { addr: addr, person: who }
+          end
+        else
+          unknownSubs << { addr: addr, person: nil }
+        end
+      }
+      nonASFmails.each {|k,v|
+        @people.each do |person|
+          if person[:mail].any? {|mail| mail.downcase == k.downcase}
+            nonASFmails[k] = person[:id]
+          end
+        end
+      }
+    end
 
     response = {
       id: id,
@@ -83,6 +137,9 @@ class PPMC
       duration: ppmc.duration,
       podlingStatus: statusInfo,
       namesearch: ppmc.namesearch,
+      analysePrivateSubs: analysePrivateSubs,
+      unknownSubs: unknownSubs,
+      asfMembers: asfMembers,
     }
 
     response
@@ -105,7 +162,7 @@ class PPMC
         result[:member] = true if person.asf_member?
         result
       }
-  
+
       # cache
       @people_time = Time.now
     end
