@@ -50,7 +50,7 @@ class PMCMembers < Vue
           _ 'They could be PMC (or ASF) members whose emails are not listed in their LDAP record.'
           _br
           _ 'Or they could be ex-PMC members who are still subscribed.'
-          _br 
+          _br
           _ '(Note that digest subscriptions are not currently included)'
           _br
           _br
@@ -62,9 +62,9 @@ class PMCMembers < Vue
                   _ sub['addr']
                   _ ' '
                   _ person['name']
-                  _ ' ' 
+                  _ ' '
                   _a person['id'], href: "committer/#{person['id']}"
-                } 
+                }
               else
                 _li {
                   _ sub['addr']
@@ -93,10 +93,10 @@ class PMCMembers < Vue
                     _ sub['addr']
                     _ ' '
                     _ person['name']
-                    _ ' ' 
+                    _ ' '
                     _a person['id'], href: "committer/#{person['id']}"
                   }
-                } 
+                }
               end
             end
           }
@@ -148,7 +148,7 @@ class PMCMembers < Vue
 
   def roster
     result = []
-    
+
     for id in @@committee.roster
       if @@committee.members.include?(id) or @@committee.ldap.include?(id)
         person = @@committee.roster[id]
@@ -195,11 +195,11 @@ class PMCMember < Vue
       _td @@person.date
 
       if @state == :open
-        _td data_ids: @@person.id, onDoubleClick: self.select do 
+        _td data_ids: @@person.id, onDoubleClick: self.select do
           if not @@person.date
             # in LDAP but not in committee-info.txt
             _button.btn.btn_warning 'Remove from LDAP',
-              data_action: 'remove pmc', 
+              data_action: 'remove pmc',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} from LDAP?"
 
@@ -212,14 +212,14 @@ class PMCMember < Vue
           elsif not @@person.ldap
              # in committee-info.txt but not in LDAP
             _button.btn.btn_success 'Add to LDAP',
-              data_action: 'add pmc', 
+              data_action: 'add pmc',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} to LDAP?"
 
             _button.btn.btn_warning 'Remove from committee-info.txt',
               data_action: 'remove info',
               data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: 
+              data_confirmation:
                 "Remove #{@@person.name} from committee-info.txt?"
           else
             # in both LDAP and committee-info.txt
@@ -243,7 +243,7 @@ class PMCMember < Vue
                   "#{@@committee.display_name} PMC?"
 
               _button.btn.btn_primary 'Add as a committer',
-                data_action: 'add commit', 
+                data_action: 'add commit',
                 data_target: '#confirm', data_toggle: 'modal',
                 data_confirmation: "Grant #{@@person.name} committer access?"
             end
