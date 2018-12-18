@@ -24,7 +24,7 @@ rescue => e
 end
 
 # construct message
-month = (Time.parse(headers[:time]) rescue Time.now).strftime('%Y%m')
+month = Time.now.strftime('%Y%m')
 mailbox = Mailbox.new(month)
 message = Message.new(mailbox, hash, headers, email)
 
