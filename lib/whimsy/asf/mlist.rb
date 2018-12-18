@@ -28,6 +28,10 @@ module ASF
       return list_filter('sub', "#{pmc}.apache.org", 'private', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
+    def self.security_subscribers(pmc, archivers=false)
+      return list_filter('sub', "#{pmc}.apache.org", 'security', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+    end
+
     # return a hash of subscriptions for the list of emails provided
     # the following keys are added to the response hash:
     # :subtime - the timestamp when the data was last updated

@@ -39,6 +39,7 @@ class PMCMembers < Vue
       # separate out the known ASF members and extract any matching committer details
       unknownSubs = @@committee.unknownSubs
       asfMembers = @@committee.asfMembers
+      unknownSecSubs = @@committee.unknownSecSubs
       # Any unknown subscribers?
       if unknownSubs.length > 0
         _p {
@@ -96,6 +97,43 @@ class PMCMembers < Vue
                     _a person['id'], href: "committer/#{person['id']}"
                   }
                 } 
+              end
+            end
+          }
+        }
+      end
+      # Any unknown security@ subscribers?
+      if unknownSecSubs.length > 0
+        _h2.crosscheck! 'Check of security@ list subscriptions'
+        _p {
+          # We don't use the short-hand name: value syntax here to work-round Eclipse Ruby editor parsing bug
+          _span.glyphicon.glyphicon_lock aria_hidden: true, :class => 'text-primary', 'aria-label' => 'ASF Members and private@ moderators'
+          _ 'The following subscribers to the security@ list do not match the known emails for any of the existing PMC (or ASF) members.'
+          _br
+          _ 'They could be PMC (or ASF) members whose emails are not listed in their LDAP record.'
+          _br
+          _ 'Or they could be ex-PMC members who are still subscribed.'
+          _br
+          _ '(Note that digest subscriptions are not currently included)'
+          _br
+          _br
+          _ul {
+            unknownSecSubs.each do |sub|
+              person = sub['person']
+              if person
+                _li {
+                  _ sub['addr']
+                  _ ' '
+                  _ person['name']
+                  _ ' '
+                  _a person['id'], href: "committer/#{person['id']}"
+                }
+              else
+                _li {
+                  _ sub['addr']
+                  _ ' '
+                  _ '(not recognised)'
+                }
               end
             end
           }
