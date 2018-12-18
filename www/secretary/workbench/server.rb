@@ -55,9 +55,11 @@ get '/' do
   # determine latest month for which there are messages
   archives = Dir[File.join(ARCHIVE, '*.yml')].select {|name| name =~ %r{/\d{6}\.yml$}}
   @mbox = archives.empty? ? nil : File.basename(archives.sort.last, '.yml')
-  @mbox = [Date.today.strftime('%Y%m'), @mbox].min if @mbox
-  @messages = Mailbox.new(@mbox).client_headers.select do |message|
-    message[:status] != :deleted
+  if @mbox
+    @mbox = [Date.today.strftime('%Y%m'), @mbox].min
+    @messages = Mailbox.new(@mbox).client_headers.select do |message|
+      message[:status] != :deleted
+    end
   end
 
   @cssmtime = File.mtime('public/secmail.css').to_i
