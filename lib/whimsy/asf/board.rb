@@ -27,8 +27,12 @@ module ASF
 
       if not time
         require 'chronic'
+
         time ||= Chronic.parse('3rd wednesday this month')
-        time = Chronic.parse('3rd wednesday next month') if time < Time.now.utc
+
+        if not time or time < Time.now.utc
+          time = Chronic.parse('3rd wednesday next month')
+        end
       end
 
       time
