@@ -104,7 +104,11 @@ def retrieve(target, type, &block)
           elsif xhr.response.exception
             message = "Exception\n#{xhr.response.exception}"
           else
-            message = "Exception\n#{JSON.parse(xhr.responseText).exception}"
+            begin
+              message = "Exception\n#{JSON.parse(xhr.responseText).exception}"
+            rescue => e
+              message = "Exception\n#{xhr.responseText}"
+            end
           end
 
           console.log(message)
