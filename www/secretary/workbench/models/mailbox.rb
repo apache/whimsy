@@ -171,6 +171,8 @@ class Mailbox
     end
 
     # return messages sorted in reverse chronological order
+    # N.B. this currently has no effect, as the messages need to be sorted by the GUI
+    # (see ../README for details)
     headers.sort_by {|message| message[:time]}.reverse
   end
 
