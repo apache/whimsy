@@ -88,7 +88,7 @@ Model:
                       system signals. These are converted into events
                       that are returned by the server /events URL
                       These are captured by the Javascript and used to request
-                      data updates.
+                      a data update for the relevant month
 
 Design Notes:
 
@@ -98,6 +98,13 @@ Design Notes:
   responsible for sort/merging the responses.
   Whilst the initial data load can (and does) exclude deleted entries, subsequent data must
   be merged with the existing data in order to allow for deletion by another session
-  The client also needs to keep track of when entries are deleted in case it is an entry from
-  a previous month, as the updated entry won't be returned by the server if the client manually
-  requested an earlier month.
+  In the case of an entry from a previous month, all event subscribers will see the change,
+  and will reload that month.
+  This may add items to the display which were not there before, however this should be very
+  rare.
+  
+  As noted above, deleted entries are returned by server updates. Although the Secretary receives
+  a lot of mail, most of it does not look like the ICLA or CLA submissions for which the app is
+  designed, and such mails are never seen by the app. This reduces the amount of data that needs
+  to be returned.
+  [If necessary, deleted entries could be sent as a separate list of hrefs to reduce the traffic] 
