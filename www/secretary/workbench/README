@@ -83,3 +83,21 @@ Model:
 
   attachment.rb:      representation of an individual attachment, backed by
                       both the mbox file and the YAML file.
+
+  events.rb:          watches the ARCHIVE directory for changes and handles
+                      system signals. These are converted into events
+                      that are returned by the server /events URL
+                      These are captured by the Javascript and used to request
+                      data updates.
+
+Design Notes:
+
+  Sorting and merging; handling deleted entries
+  The GUI can display more than one month's data (it automatically does so at month start)
+  However the data for each month is in separate chunks, so the client Javascript is
+  responsible for sort/merging the responses.
+  Whilst the initial data load can (and does) exclude deleted entries, subsequent data must
+  be merged with the existing data in order to allow for deletion by another session
+  The client also needs to keep track of when entries are deleted in case it is an entry from
+  a previous month, as the updated entry won't be returned by the server if the client manually
+  requested an earlier month.
