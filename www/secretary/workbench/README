@@ -87,8 +87,9 @@ Model:
   events.rb:          watches the ARCHIVE directory for changes and handles
                       system signals. These are converted into events
                       that are returned by the server /events URL
-                      These are captured by the Javascript and used to request
-                      a data update for the relevant month
+                      Changes to mailbox files are returned as a full set of headers.
+                      These are captured by the Javascript and merged into the current
+                      list.
 
 Design Notes:
 
