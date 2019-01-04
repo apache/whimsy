@@ -35,7 +35,7 @@ class Index < Vue
             time = Date.new(Date.parse(message.time)).toLocaleString()
 
             row_options = {
-              class: color, 
+              :class => color, 
               on: {click: self.selectRow, doubleClick: self.nav}
             }
 
