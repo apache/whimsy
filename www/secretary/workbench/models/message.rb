@@ -27,7 +27,7 @@ class Message
   # find an attachment
   #
   def find(name)
-    name = name[1...-2] if name =~ /^<.*>$/ # drop enclosing <> if present
+    name = name[1..-2] if name =~ /^<.*>$/ # drop enclosing <> if present
     name = name[2..-1] if name.start_with? './'
     name = name.dup.force_encoding('utf-8')
 
