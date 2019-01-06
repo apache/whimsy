@@ -13,18 +13,26 @@ DIRNAME=$(dirname $(readlink "$BASH_SOURCE" || echo "$BASH_SOURCE"))
 
 rm -f ${TMPF}*.tmp
 
-$DIRNAME/tocsplit.rb $1 || exit
+$DIRNAME/tocsplit.rb $FILE || exit
 
 # How many files were created?
 PARTS=$(ls ${TMPF}*.tmp | wc -l)
 ls -l ${TMPF}*.tmp
 
 # Check that the split worked OK (needs bash, not sh)
-diff <(cat ${TMPF}*.tmp) $1 && echo Split worked
+diff <(cat ${TMPF}*.tmp) $FILE && echo Split worked
 
 if [ $PARTS -eq 5 ] # file start, start of Incubator, ToC*2, rest of file
 then
-    diff ${TMPF}10[34].tmp && echo "Files 103/104 are the same - can drop one of them"
+    if diff ${TMPF}10[34].tmp
+    then
+        echo "Files 103/104 are the same - can drop one of them"
+        rm ${TMPF}104.tmp # remove second
+        cat ${TMPF}*.tmp > ${FILE}.tmp
+        echo Created ${FILE}.tmp with duplicate removed
+    else
+        echo "ToC sections have differences; cannot decide which to drop"
+    fi
 elif [ $PARTS -eq 4 ]
 then
     echo "File appears to have the correct number of ToC sections"
