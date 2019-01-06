@@ -31,11 +31,11 @@ then
         cat ${TMPF}*.tmp > ${FILE}.tmp
         echo Created ${FILE}.tmp with duplicate removed
     else
-        echo "ToC sections have differences; cannot decide which to drop"
+        echo "ToC sections in $FILE have differences; cannot decide which to drop"
     fi
 elif [ $PARTS -eq 4 ]
 then
-    echo "File appears to have the correct number of ToC sections"
+    echo "File $FILE appears to have the correct number of ToC sections"
 else
-    echo "Unexpected number of parts ($PARTS); cannot perform diff"
+    echo "$FILE has an unexpected number of parts ($PARTS); cannot perform diff"
 fi
