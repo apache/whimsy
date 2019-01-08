@@ -62,11 +62,12 @@ _html do
     body_part = @message.mail.body
     body = body_part.to_s
     mime_type = @message.mail.mime_type
+    charset = @message.mail.charset # N.B. not @message.mail.body.charset
 
-    _.comment! "body.encoding=#{body.encoding} body_part.charset=#{body_part.charset} mime_type=#{mime_type}"
+    _.comment! "body.encoding=#{body.encoding} charset=#{charset} mime_type=#{mime_type}"
 
-    if body.encoding == Encoding::BINARY and body_part.charset
-      body.force_encoding(body_part.charset) rescue nil
+    if body.encoding == Encoding::BINARY and charset
+      body.force_encoding(charset) rescue nil
     end
 
     if mime_type == 'text/plain'
