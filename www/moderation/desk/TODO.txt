@@ -1,0 +1,20 @@
+Authorisation
+- started; hooks added
+
+Filtering of lists
+- users may not want to see all the lists to which they are entitled
+- hooks added
+
+Implement Actions:
+- accept and allow
+- single accept
+- reject with reply e.g. as
+ * off topic
+ * confidential material
+ [Started]
+- reply to subscriber confirm asking to update LDAP
+
+Implement message templates for rejection etc
+
+Better GUI layout
+= e.g. fixed header with scrolling message list beneath
