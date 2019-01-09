@@ -62,7 +62,16 @@ spam is unfortunately not readily detectable]
 
 Authentication
 ==============
-TBA
+The app needs to know which messages are intended for public lists and which are not.
+
+The deliver script could be passed a parameter to say which messages are public/private.
+e.g. there would be two Whimsy email recipients, e.g. mod-private@ and mod-public@
+These would be added as moderators for private/public lists, similarly to way the subscribers
+private@mbox-vm.apache.org and archiver@mbox-vm.apache.org are used.
+A message marked as private would require membership of the relevant PMC.
+(Private apache.org lists would presumably require ASF membership)
+
+TBC
 
 Filtering
 =========
