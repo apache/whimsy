@@ -13,6 +13,7 @@ require 'yaml'
 require_relative '../config.rb'
 
 require_relative 'message.rb'
+require_relative 'auth.rb'
 
 class Mailbox
 
@@ -181,7 +182,16 @@ class Mailbox
   # Is the message visible to the caller?
   # e.g. private and security lists are generally not visible to all
   def self.message_visible?(message)
-    message[:public] # || ASF member || PMC member
+    message[:public] and return true # shortcut because auth may be expensive
+    info = Auth.info({})
+    visible = info[:member]
+    visible ||= (message[:domain]||'').match(%r{^(.+)\.apache\.org$}) do |m|
+      group,_ = m.captures
+      # (P)PMC member?
+      groups = info[:project_owners] || [] 
+      groups.include? group
+    end
+    visible
   end
 
   def message_active?(status)
