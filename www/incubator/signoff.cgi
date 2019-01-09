@@ -52,6 +52,8 @@ def get_mentor_signoffs()
     signoffs.scan(/\[(.+?)\]\((.*?)\) (.*)/).each do |check, podling, name|
       name.strip!
       podling.strip!
+      # allow for reports where comments have been joined to the previous line
+      name.sub! %r{ Comments:.*}, ''
       name.sub! /\s+\(.*?\)/, ''
       
       mentors[name] = [] unless mentors[name]
