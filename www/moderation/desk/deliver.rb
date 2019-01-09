@@ -1,12 +1,13 @@
 #
 # Process email as it is received
-#
-
-#Dir.chdir File.dirname(File.expand_path(__FILE__))
+# A single mail is passed on STDIN
+# The script accepts a CLI parameter 'public' which marks the message as public (i.e. default is private)
 
 require_relative 'models/mailbox'
 require 'mail'
 require_relative 'config.rb'
+
+isPublic = ARGV.delete("--public") == '--public'
 
 # read and parse email
 STDIN.binmode
@@ -41,6 +42,7 @@ begin
       domain: dom,
       date: hdrs['Date'],
     }
+    headers[:public]=true if isPublic
     mbox=Mailbox.mboxname(timestamp.to_f)
     # construct wrapper message
     mailbox = Mailbox.new(mbox)
@@ -53,14 +55,25 @@ begin
     message.write_email
     # extract the message for main mailbox
     email = parts[1].body.raw_source
-  elsif subj.start_with? 'CONFIRM subscribe to '
-    headers = Hash.new
+  elsif parts.length == 0 && subj.start_with?('CONFIRM subscribe to ')
+    list, dom = subj.sub(/^CONFIRM subscribe to /,'').split'@'
+    hdrs = Mailbox.headers(mail)
+    # N.B. The Reply-To address is the accept address
+    headers = {
+      list: list,
+      domain: dom,
+      accept: hdrs['Reply-To'],
+    }
+    headers[:public]=true if isPublic
     email = original
   else
     $stderr.puts "Unexpected moderation message in #{hash} with subject: #{subj}"
-    headers = Hash.new
+    headers = {
+      public: ispublic,
+    }
     email = original
-  end 
+  end
+  # Merge in specific headers from the message 
   WANTED=%w{Date From To Reply-To Message-ID Subject Return-Path Sender References In-Reply-To}
   headers.merge! Message.parse(email).select{ |k,v| Symbol === k or WANTED.include? k }
 rescue => e
