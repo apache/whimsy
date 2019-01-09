@@ -29,6 +29,7 @@ class Mailbox
       @name = name.split('.').first
       @mbox = "#{ARCHIVE}/#{name}"
     end
+    @@test ||= object_id
   end
 
   # centralise the name generation
@@ -180,7 +181,7 @@ class Mailbox
   # Is the message visible to the caller?
   # e.g. private and security lists are generally not visible to all
   def self.message_visible?(message)
-    message and not %w(private security).include? message[:list] # TODO this is just a test
+    message[:public] # || ASF member || PMC member
   end
 
   def message_active?(status)
