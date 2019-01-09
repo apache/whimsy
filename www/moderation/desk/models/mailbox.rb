@@ -30,7 +30,6 @@ class Mailbox
       @name = name.split('.').first
       @mbox = "#{ARCHIVE}/#{name}"
     end
-    @@test ||= object_id
   end
 
   # centralise the name generation
