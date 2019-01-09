@@ -98,7 +98,7 @@ Notes:
 Clone the Whimsy code
 ------------
 
-Depending on whether or not you have a GitHub account ([Apache committer setup](https://git-wip-us.apache.org/)), 
+Depending on whether or not you have a GitHub account ([Apache committer setup](https://gitbox.apache.org/)), 
 run one of the following:
 
 ```
