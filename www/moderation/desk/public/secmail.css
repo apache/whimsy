@@ -1,0 +1,114 @@
+header h1, header h3 {
+  margin-top: 0;
+}
+
+#messages table {
+  margin-left: 8px;
+}
+
+#messages td {
+  padding-right: 7px;
+  padding-left: 7px;
+}
+
+#messages button {
+  margin: 5px;
+}
+
+.similar td {
+  padding-right: 7px;
+}
+
+.selected {
+  background-color: yellow;
+}
+
+.deleted {
+  opacity: 0.5;
+}
+
+.doctype label {
+  display: block
+}
+
+.doctype input[type=radio] {
+  width: 3em
+}
+
+#parts h4 {
+  padding: 10px 1em;
+  background-color: #d9e9f7;
+}
+
+table.form {
+  width: 100%;
+  margin-left: 1em;
+  margin-top: 2em;
+}
+
+.form input, .form textarea, .form select {
+  width: 100%;
+}
+
+.form input:invalid, .form select:invalid, .form textarea:invalid {
+  border: 1px solid red;
+}
+
+.form th {
+  max-width: 4em;
+  height: 2.5em;
+  font-weight: normal;
+}
+
+form .btn {
+  display: block;
+  margin: auto;
+  margin-top: 0.5em;
+}
+
+#attachments li.attachment {
+  width: 100%
+}
+
+div.buttons {
+  text-align: center;
+  margin: 1em 0;
+}
+
+ul#editPart {
+  padding: 0 1.5em;
+}
+
+#editPart li {
+  list-style: none;
+  padding: 8;
+  margin: 16px 0;
+}
+
+.busy, .busy input, .busy input:disabled, .busy .contextMenu li:hover {
+  cursor: wait;
+}
+
+.divider {
+  height: 2px;
+  width:100%;
+  margin: 9px 0;
+  padding: 0 4px;
+  background-color: #ccc;
+  }
+
+.spinner {
+  position: absolute;
+  z-index: -1;
+  right: 0;
+  top: 0;
+}
+
+pre.bg-info {
+  white-space: pre-wrap;
+  word-break: normal;
+}
+
+#parts table {
+  margin-top: 14px; 
+}

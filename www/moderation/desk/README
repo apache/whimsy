@@ -1,0 +1,70 @@
+This is based loosely on the secretary/workbench (q.v.)
+
+To set up for testing:
+
+create archive directory /srv/mail/moderation
+Note that the files in it must be readable by the web server, and the .yml files must be writable.
+
+Populate the database by running some sample mails through
+www/moderation/desk/deliver.rb
+This should create yyyymmdd.yml and yyyymmdd.mail/*
+(ensure *.yml are writable by webserver afterwards)
+
+Add the following to the web server setup:
+
+	Alias /moderation/desk/ /srv/whimsy/www/moderation/desk/public
+	
+	<Location /moderation/desk>
+	  PassengerBaseURI /moderation/desk
+	  PassengerAppRoot /srv/whimsy/www/moderation/desk
+	  Options -MultiViews
+	  CheckSpelling Off
+	  # SetEnv HTTPS on
+	</Location>
+
+Navigate to http://localhost/moderation/desk
+
+Design Notes
+============
+The Secretary Workbench has to deal with a few emails per day and a few users.
+It uses a file per month for the indexes, and a directoy per month for the raw mails.
+
+There are about as many moderation emails per day as Secretary emails per month.
+Also ezmlm will not process responses after about 10 days.
+The initial implementation therefore uses 1 file per day.
+The file access is confined to the mailbox.rb file, so the storage could be changed
+if necessary - e.g. a database. The mailbox.rb file is also responsible for access control.
+
+The existing moderation process involves replying to a mail. Whilst this only takes a couple
+of clicks (except perhaps for rejects), the volume of mails can be very large, so it is
+important to minimise navigation and user actions, especially for the commonest cases.
+
+The initial approach is to show a list of emails (oldest at the top) with buttons for
+Accept/Allow/Reject/Mark Spam. Apart from Reject, no further input is needed.
+As soon as an email has been dealt with, it should disappear from all the screens.
+
+This reduces the workload for moderators, because each message only needs to be dealt with once.
+
+Spam
+====
+By far the largest number of mails are spam; a significant proportion of these are very similar.
+At present each message would have to be dealt with separately (though only by one person). It would be
+good if similar mails could be automatically marked. The challenge is to guard against false positives.
+One idea (yet to be implemented) is to count the number of mails marked as spam that have the same:
+From: Return-Path: Subject: and possibly other headers.
+When a few mails have been seen, other mails with the same headers can potentially be flagged as
+likely spam. However, care must be taken not to mark too many mails - e.g. some subjects may be
+used by valid mails. It might be best to gather some more data before proceeding with automation.
+
+[Even without this, the workload should be considerably reduced. Also the greatest proportion of
+spam is unfortunately not readily detectable] 
+
+
+Authentication
+==============
+TBA
+
+Filtering
+=========
+It's best if moderators are familiar with the subject matter of the lists that they moderate,
+so they should only be shown mails for their area. The simplest might be to use PMC membership.
