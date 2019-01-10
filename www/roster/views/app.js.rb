@@ -10,6 +10,12 @@ require_relative 'pmc/committers'
 require_relative 'pmc/add'
 require_relative 'pmc/mod'
 
+require_relative 'nonpmc/main'
+require_relative 'nonpmc/nonpmc'
+require_relative 'nonpmc/committers'
+require_relative 'nonpmc/add'
+require_relative 'nonpmc/mod'
+
 require_relative 'person'
 require_relative 'person/fullname'
 require_relative 'person/urls'

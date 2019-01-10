@@ -57,6 +57,18 @@ _html do
           _td 'Active projects at the ASF'
         end
 
+        _tr do
+          _td do
+            _a @nonpmcs.length, href: 'nonpmc/'
+          end
+
+          _td do
+            _a 'nonPMCs', href: 'nonpmc/'
+          end
+
+          _td 'ASF Committees (non-PMC)'
+        end
+
         ### Podlings
 
         _tr do
