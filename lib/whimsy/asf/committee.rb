@@ -352,13 +352,21 @@ module ASF
 
       # extract the committee chairs (e-mail address is required here)
       # Note: this includes the non-PMC entries
-      head.scan(/^[ \t]+(\w.*?)[ \t][ \t]+(.*)[ \t]+<(.*?)@apache\.org>/).
-        each do |committee, name, id|
+
+      # Scan for entries even if there is a missing extra space before the chair column
+      head.scan(/^[ \t]+\w.*?[ \t]+.*[ \t]+<.*?@apache\.org>/).each do |line|
+        # Now weed out the malformed lines
+        m = line.match(/^[ \t]+(\w.*?)[ \t][ \t]+(.*)[ \t]+<(.*?)@apache\.org>/)
+        if m
+          committee, chair, id = m.captures
           unless list[committee].chairs.any? {|chair| chair[:id] == id}
             list[committee].chairs << {name: name, id: id}
           end
+        else
+          # not possible to determine where one name starts and the other begins
+          Wunderbar.warn "Missing separator before chair name in: '#{line}'"
         end
-
+      end
       # Extract the non-PMC committees (e-mail address may be absent)
       # first drop leading text (and Officers) so we only match non-PMCs
       @nonpmcs = head.sub(/.*?also has /m,'').sub(/ Officers:.*/m,'').
@@ -419,6 +427,13 @@ module ASF
         end
       end
       @committee_info = (list.values - @officers).uniq
+      # Check if there are duplicates.
+      @committee_info.each do |c|
+        if c.chairs.length != 1 && c.name != 'fundraising' # hack to avoid reporting non-PMC entry
+          Wunderbar.warn "Unexpected chair count for #{c.display_name}: #{c.chairs.inspect rescue ''}"
+        end
+      end
+      @committee_info
     end
 
     # return a list of PMC committees.  Data is obtained from
