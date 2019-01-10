@@ -30,3 +30,5 @@ Moderators also see messages sent to the -owner address
 Most of these are spam and should be ignored,
 but there may occasionally be an enquiry that needs a reply
 (Note: such messages won't have a standard format, and parsing may need adjusting)
+=======
+= e.g. fixed header with scrolling message list beneath
