@@ -11,6 +11,7 @@ class NonPMCMembers < Vue
   def render
     _h2.pmc! 'Committee (' + roster.length + ')'
     _p 'Click on column name to sort'
+    _p '** N.B. The status column does not currently show LDAP discrepancies. This is because the non-PMC committees do not use LDAP in the same way currently **'
     _table.table.table_hover do
       _thead do
         _tr do
@@ -140,10 +141,11 @@ class NonPMCMember < Vue
         end
       elsif not @@person.date
         _td.issue.clickable 'not in committee-info.txt', onClick: self.select
-      elsif not @@person.ldap
-        _td.issue.clickable 'not in LDAP', onClick: self.select
-      elsif not @@nonpmc.committers.include? @@person.id
-        _td.issue.clickable 'not in committer list', onClick: self.select
+        # TODO the LDAP groups are not set up in the usual way so this is not all that useful at present
+#      elsif not @@person.ldap
+#        _td.issue.clickable 'not in LDAP', onClick: self.select
+#      elsif not @@nonpmc.committers.include? @@person.id
+#        _td.issue.clickable 'not in committer list', onClick: self.select
       elsif @@person.id == @@nonpmc.chair
         _td.chair.clickable 'chair', onClick: self.select
       else
