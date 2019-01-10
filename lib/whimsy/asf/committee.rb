@@ -358,7 +358,7 @@ module ASF
         # Now weed out the malformed lines
         m = line.match(/^[ \t]+(\w.*?)[ \t][ \t]+(.*)[ \t]+<(.*?)@apache\.org>/)
         if m
-          committee, chair, id = m.captures
+          committee, name, id = m.captures
           unless list[committee].chairs.any? {|chair| chair[:id] == id}
             list[committee].chairs << {name: name, id: id}
           end
