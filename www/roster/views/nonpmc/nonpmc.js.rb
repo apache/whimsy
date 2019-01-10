@@ -86,32 +86,32 @@ class NonPMCMember < Vue
       if @state == :open
         _td data_ids: @@person.id, onDoubleClick: self.select do
           if not @@person.date
-            # in LDAP but not in committer-info.txt
+            # in LDAP but not in committee-info.txt
             _button.btn.btn_warning 'Remove from LDAP',
               data_action: 'remove pmc',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Remove #{@@person.name} from LDAP?"
 
             unless @@nonpmc.roster.keys().empty?
-              _button.btn.btn_success 'Add to committer-info.txt',
+              _button.btn.btn_success 'Add to committee-info.txt',
                 data_action: 'add info',
                 data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Add to #{@@person.name} committer-info.txt"
+                data_confirmation: "Add to #{@@person.name} committee-info.txt"
             end
           elsif not @@person.ldap
-             # in committer-info.txt but not in LDAP
+             # in committee-info.txt but not in LDAP
             _button.btn.btn_success 'Add to LDAP',
               data_action: 'add pmc',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} to LDAP?"
 
-            _button.btn.btn_warning 'Remove from committer-info.txt',
+            _button.btn.btn_warning 'Remove from committee-info.txt',
               data_action: 'remove info',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation:
-                "Remove #{@@person.name} from committer-info.txt?"
+                "Remove #{@@person.name} from committee-info.txt?"
           else
-            # in both LDAP and committer-info.txt
+            # in both LDAP and committee-info.txt
             if @@nonpmc.committers.include? @@person.id
               _button.btn.btn_warning 'Remove only from Committee',
                 data_action: 'remove pmc info',
@@ -139,7 +139,7 @@ class NonPMCMember < Vue
           end
         end
       elsif not @@person.date
-        _td.issue.clickable 'not in committer-info.txt', onClick: self.select
+        _td.issue.clickable 'not in committee-info.txt', onClick: self.select
       elsif not @@person.ldap
         _td.issue.clickable 'not in LDAP', onClick: self.select
       elsif not @@nonpmc.committers.include? @@person.id
