@@ -6,7 +6,6 @@ class NonPMC
     return unless cttee.nonpmc?
     members = cttee.owners
     committers = cttee.committers
-#    return if members.empty? and committers.empty?
 
     ASF::Committee.load_committee_info
     # We'll be needing the mail data later
@@ -30,6 +29,7 @@ class NonPMC
     unMatchedSubs = [] # unknown private@ subscribers
     unMatchedSecSubs = [] # unknown security@ subscribers
     currentUser = ASF::Person.find(env.user)
+    # TODO does not make sense for non-PMCs - remove the code
     analysePrivateSubs = false # whether to show missing private@ subscriptions
     if cttee.roster.include? env.user or currentUser.asf_member?
       require 'whimsy/asf/mlist'
@@ -53,12 +53,12 @@ class NonPMC
     end
 
     roster = cttee.roster.dup
-    roster.each {|key, info| info[:role] = 'PMC member'}
+    roster.each {|key, info| info[:role] = 'Committee member'}
 
     members.each do |person|
       roster[person.id] ||= {
         name: person.public_name, 
-        role: 'PMC member'
+        role: 'Committee member'
       }
       if analysePrivateSubs
         allMail = person.all_mail.map{|m| m.downcase}
