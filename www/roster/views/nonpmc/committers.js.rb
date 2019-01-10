@@ -4,7 +4,6 @@
 
 class NonPMCCommitters < Vue
   def render
-    _ __FILE__
     if
       @@nonpmc.committers.all? do |id|
         @@nonpmc.members.include? id
