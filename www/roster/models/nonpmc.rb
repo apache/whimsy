@@ -15,10 +15,7 @@ class NonPMC
       list =~ /^#{cttee.mail_list}\b/
     end
 
-    comdev = ASF::SVN['comdev-foundation']
-    info = JSON.parse(File.read(File.join(comdev, 'projects.json')))[id]
-
-    image_dir = ASF::SVN.find('site-img')
+    image_dir = ASF::SVN.find('site-img') # Probably not relevant to nonPMCS; leave for now
     image = Dir[File.join(image_dir, "#{id}.*")].map {|path| File.basename(path)}.last
 
     moderators = nil
@@ -29,7 +26,7 @@ class NonPMC
     unMatchedSubs = [] # unknown private@ subscribers
     unMatchedSecSubs = [] # unknown security@ subscribers
     currentUser = ASF::Person.find(env.user)
-    # TODO does not make sense for non-PMCs - remove the code
+    # Might make sense for non-PMCs - remove the code later if not
     analysePrivateSubs = false # whether to show missing private@ subscriptions
     if cttee.roster.include? env.user or currentUser.asf_member?
       require 'whimsy/asf/mlist'
@@ -136,15 +133,9 @@ class NonPMC
       }
     end
 
-    pmc_chair = false
-    if cttee.chair
-      pmcchairs = ASF::Service.find('cttee-chairs')
-      pmc_chair = pmcchairs.members.include? cttee.chair
-    end
     response = {
       id: id,
       chair: cttee.chair && cttee.chair.id,
-      pmc_chair: pmc_chair,
       display_name: cttee.display_name,
       description: cttee.description,
       schedule: cttee.schedule,
@@ -161,7 +152,6 @@ class NonPMC
       subscribers: subscribers,
       subtime: subtime,
       nonASFmails: nonASFmails,
-      project_info: info,
       image: image,
       guinea_pig: ASF::Committee::GUINEAPIGS.include?(id),
       analysePrivateSubs: analysePrivateSubs,
