@@ -50,6 +50,15 @@ class NonPMC
     end
 
     roster = cttee.roster.dup
+    # if the roster is empty, then add the chair(s)
+    if roster.empty?
+      cttee.chairs.each do |ch|
+        roster[ch[:id]] = {name: ch[:name], date: 'uknown'} # it is used to flag CI data so must be true in Javascript
+      end
+    end
+    cttee_members = roster.keys # get the potentially updated list
+
+    # now add the status info 
     roster.each {|key, info| info[:role] = 'Committee member'}
 
     members.each do |person|
@@ -143,7 +152,7 @@ class NonPMC
       site: cttee.site,
       established: cttee.established,
       ldap: members.map(&:id),
-      members: cttee.roster.keys,
+      members: cttee_members,
       committers: committers.map(&:id),
       roster: roster,
       mail: Hash[lists.sort],
