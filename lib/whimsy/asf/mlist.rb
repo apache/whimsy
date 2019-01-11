@@ -11,7 +11,10 @@ module ASF
 
     # Potentially also the methods could check if access was allowed.
     # This is currently done by the callers
-    
+
+    # Note that the data files don't provide information on whether a list is
+    # public or private.
+
     # Return an array of board subscribers followed by the file update time
     def self.board_subscribers
       return list_filter('sub', 'apache.org', 'board'), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
@@ -202,7 +205,7 @@ module ASF
         path = LIST_DIGS
         suffix = ''
       else
-        raise ArgumentError.new('type: expecting mod or sub')
+        raise ArgumentError.new('type: expecting dig, mod or sub')
       end
       # split file into paragraphs
       File.read(path).split(/\n\n/).each do |stanza|
