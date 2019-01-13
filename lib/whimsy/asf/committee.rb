@@ -446,6 +446,7 @@ module ASF
     # return a list of non-PMC committees.  Data is obtained from
     # <tt>committee-info.txt</tt>
     def self.nonpmcs
+      ASF::Committee.load_committee_info # ensure data exists
       @nonpmcs
     end
 
@@ -454,6 +455,7 @@ module ASF
     # as instances of ASF::Committee with display_name being the name of
     # the office, and chairs being the individuals who hold that office.
     def self.officers
+      ASF::Committee.load_committee_info # ensure data exists
       @officers
     end
 
@@ -521,6 +523,7 @@ module ASF
     # if true, this committee is not a PMC.  
     # Data is obtained from <tt>committee-info.txt</tt>.
     def nonpmc?
+      Committee.load_committee_info # ensure data is there
       Committee.nonpmcs.include? self
     end
   end

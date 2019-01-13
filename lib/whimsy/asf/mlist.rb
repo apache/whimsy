@@ -11,7 +11,10 @@ module ASF
 
     # Potentially also the methods could check if access was allowed.
     # This is currently done by the callers
-    
+
+    # Note that the data files don't provide information on whether a list is
+    # public or private.
+
     # Return an array of board subscribers followed by the file update time
     def self.board_subscribers
       return list_filter('sub', 'apache.org', 'board'), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
@@ -24,6 +27,7 @@ module ASF
 
     # Return an array of private@pmc subscribers followed by the file update time
     # By default does not return the standard archivers
+    # TODO - does this need to be updated for non-PMC committees?
     def self.private_subscribers(pmc, archivers=false)
       return list_filter('sub', "#{pmc}.apache.org", 'private', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
@@ -114,7 +118,10 @@ module ASF
         # possible podling styles (new, old):
         #/home/apmail/lists/batchee.apache.org/dev/mod
         #/home/apmail/lists/incubator.apache.org/blur-dev/mod
+        #Apache lists (e.g. some non-PMCs)
+        #/home/apmail/lists/apache.org/list/mod
         next unless "#{mail_domain}.apache.org" == dom or
+           (dom == 'apache.org' &&  list =~ /^#{mail_domain}(-|$)/) or
            (podling && dom == 'incubator.apache.org' && list =~ /^#{mail_domain}-/)
         moderators["#{list}@#{dom}"] = subs.sort
       end
@@ -140,7 +147,10 @@ module ASF
         # possible podling styles (new, old):
         #/home/apmail/lists/batchee.apache.org/dev/mod
         #/home/apmail/lists/incubator.apache.org/blur-dev/mod
+        #Apache lists (e.g. some non-PMCs)
+        #/home/apmail/lists/apache.org/list/mod
         next unless "#{mail_domain}.apache.org" == dom or
+           (dom == 'apache.org' &&  list =~ /^#{mail_domain}(-|$)/) or
            (podling && dom == 'incubator.apache.org' && list =~ /^#{mail_domain}-/)
         subscribers["#{list}@#{dom}"] = list_subs ? subs.sort : subs.size
       end
@@ -195,7 +205,7 @@ module ASF
         path = LIST_DIGS
         suffix = ''
       else
-        raise ArgumentError.new('type: expecting mod or sub')
+        raise ArgumentError.new('type: expecting dig, mod or sub')
       end
       # split file into paragraphs
       File.read(path).split(/\n\n/).each do |stanza|

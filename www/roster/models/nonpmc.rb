@@ -1,25 +1,25 @@
-class Committee
+class NonPMC
   def self.serialize(id, env)
     response = {}
 
-    pmc = ASF::Committee.find(id)
-#    return if pmc.nonpmc? # Only show PMCs TODO later
-    members = pmc.owners
-    committers = pmc.committers
-    return if members.empty? and committers.empty?
+    cttee = ASF::Committee.find(id)
+    return unless cttee.nonpmc?
+    members = cttee.owners
+    committers = cttee.committers
+    # Hack to fix unusual mail_list values e.g. press@apache.org
+    mail_list = cttee.mail_list.sub(/@.*/,'')
+    mail_list = 'legal' if mail_list =~ /^legal-/
+    mail_list = 'fundraising' if mail_list =~ /^fundraising-/
 
     ASF::Committee.load_committee_info
     # We'll be needing the mail data later
     people = ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (members + committers).uniq)
 
     lists = ASF::Mail.lists(true).select do |list, mode|
-      list =~ /^#{pmc.mail_list}\b/
+      list =~ /^#{mail_list}\b/
     end
 
-    comdev = ASF::SVN['comdev-foundation']
-    info = JSON.parse(File.read(File.join(comdev, 'projects.json')))[id]
-
-    image_dir = ASF::SVN.find('site-img')
+    image_dir = ASF::SVN.find('site-img') # Probably not relevant to nonPMCS; leave for now
     image = Dir[File.join(image_dir, "#{id}.*")].map {|path| File.basename(path)}.last
 
     moderators = nil
@@ -30,35 +30,45 @@ class Committee
     unMatchedSubs = [] # unknown private@ subscribers
     unMatchedSecSubs = [] # unknown security@ subscribers
     currentUser = ASF::Person.find(env.user)
+    # Might make sense for non-PMCs - remove the code later if not
     analysePrivateSubs = false # whether to show missing private@ subscriptions
-    if pmc.roster.include? env.user or currentUser.asf_member?
+    if cttee.roster.include? env.user or currentUser.asf_member?
       require 'whimsy/asf/mlist'
-      moderators, modtime = ASF::MLIST.list_moderators(pmc.mail_list)
-      subscribers, subtime = ASF::MLIST.list_subscribers(pmc.mail_list) # counts only
+      moderators, modtime = ASF::MLIST.list_moderators(mail_list)
+      subscribers, subtime = ASF::MLIST.list_subscribers(mail_list) # counts only
       analysePrivateSubs = currentUser.asf_member?
       unless analysePrivateSubs # check for private moderator if not already allowed access
         user_mail = currentUser.all_mail || []
-        pMods = moderators["private@#{pmc.mail_list}.apache.org"] || []
+        pMods = moderators["private@#{mail_list}.apache.org"] || []
         analysePrivateSubs = !(pMods & user_mail).empty?
       end
       if analysePrivateSubs
-        pSubs = ASF::MLIST.private_subscribers(pmc.mail_list)[0]||[]
+        pSubs = ASF::MLIST.private_subscribers(mail_list)[0]||[]
         unMatchedSubs=Set.new(pSubs) # init ready to remove matched mails
         pSubs.map!{|m| m.downcase} # for matching
-        sSubs = ASF::MLIST.security_subscribers(pmc.mail_list)[0]||[]
+        sSubs = ASF::MLIST.security_subscribers(mail_list)[0]||[]
         unMatchedSecSubs=Set.new(sSubs) # init ready to remove matched mails
       end
     else
       lists = lists.select {|list, mode| mode == 'public'}
     end
 
-    roster = pmc.roster.dup
-    roster.each {|key, info| info[:role] = 'PMC member'}
+    roster = cttee.roster.dup
+    # if the roster is empty, then add the chair(s)
+    if roster.empty?
+      cttee.chairs.each do |ch|
+        roster[ch[:id]] = {name: ch[:name], date: 'uknown'} # it is used to flag CI data so must be true in Javascript
+      end
+    end
+    cttee_members = roster.keys # get the potentially updated list
+
+    # now add the status info 
+    roster.each {|key, info| info[:role] = 'Committee member'}
 
     members.each do |person|
       roster[person.id] ||= {
         name: person.public_name, 
-        role: 'PMC member'
+        role: 'Committee member'
       }
       if analysePrivateSubs
         allMail = person.all_mail.map{|m| m.downcase}
@@ -80,8 +90,8 @@ class Committee
 
     roster.each {|id, info| info[:member] = ASF::Person.find(id).asf_member?}
 
-    if pmc.chair and roster[pmc.chair.id]
-      roster[pmc.chair.id]['role'] = 'PMC chair' 
+    if cttee.chair and roster[cttee.chair.id]
+      roster[cttee.chair.id]['role'] = 'Committee chair' 
     end
 
     # separate out the known ASF members and extract any matching committer details
@@ -136,23 +146,17 @@ class Committee
       }
     end
 
-    pmc_chair = false
-    if pmc.chair
-      pmcchairs = ASF::Service.find('pmc-chairs')
-      pmc_chair = pmcchairs.members.include? pmc.chair
-    end
     response = {
       id: id,
-      chair: pmc.chair && pmc.chair.id,
-      pmc_chair: pmc_chair,
-      display_name: pmc.display_name,
-      description: pmc.description,
-      schedule: pmc.schedule,
-      report: pmc.report,
-      site: pmc.site,
-      established: pmc.established,
+      chair: cttee.chair && cttee.chair.id,
+      display_name: cttee.display_name,
+      description: cttee.description,
+      schedule: cttee.schedule,
+      report: cttee.report,
+      site: cttee.site,
+      established: cttee.established,
       ldap: members.map(&:id),
-      members: pmc.roster.keys,
+      members: cttee_members,
       committers: committers.map(&:id),
       roster: roster,
       mail: Hash[lists.sort],
@@ -161,7 +165,6 @@ class Committee
       subscribers: subscribers,
       subtime: subtime,
       nonASFmails: nonASFmails,
-      project_info: info,
       image: image,
       guinea_pig: ASF::Committee::GUINEAPIGS.include?(id),
       analysePrivateSubs: analysePrivateSubs,

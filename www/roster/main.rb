@@ -41,6 +41,7 @@ get '/' do
   if env['REQUEST_URI'].end_with? '/'
     @committers = ASF::Person.list
     @committees = ASF::Committee.pmcs
+    @nonpmcs = ASF::Committee.nonpmcs
     @members = ASF::Member.list.keys - ASF::Member.status.keys
     @groups = Group.list
     @podlings = ASF::Podling.to_h.values
@@ -66,6 +67,16 @@ end
 
 get '/committee' do
   redirect to('/committee/')
+end
+
+get '/nonpmc/' do
+  @members = ASF::Member.list.keys
+  @nonpmcs = ASF::Committee.nonpmcs
+  _html :nonpmcs
+end
+
+get '/nonpmc' do
+  redirect to('/nonpmc/')
 end
 
 index = nil
@@ -112,6 +123,19 @@ get '/committee/:name' do |name|
   @committee = Committee.serialize(name, env)
   pass unless @committee
   _html :committee
+end
+
+get '/nonpmc/:name.json' do |name|
+  data = NonPMC.serialize(name, env)
+  pass unless data
+  _json data
+end
+
+get '/nonpmc/:name' do |name|
+  @auth = Auth.info(env)
+  @nonpmc = NonPMC.serialize(name, env)
+  pass unless @nonpmc
+  _html :nonpmc
 end
 
 get '/committer/:name.json' do |name|

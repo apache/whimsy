@@ -54,18 +54,19 @@ def Monitor.system(previous_status)
   status[name] = {level: master == true ? 'success' : 'warning',
                   data: master.to_s}
 
-  # Is ASF::LDAP.hosts up to date?
-  require_relative '../../../lib/whimsy/asf'
-  name = :ldap
-  pls = ASF::LDAP.puppet_ldapservers.sort
-  hosts = ASF::LDAP::RO_HOSTS.sort
-  diff = (pls-hosts).map {|host| "+ #{host}"}
-  diff += (hosts-pls).map {|host| "- #{host}"}
-  if diff.empty?
-    status[name] = {level: 'success', data: hosts}
-  else
-    status[name] = {level: 'warning', data: diff}
-  end
+# No longer relevant as we use standard alias names
+#  # Is ASF::LDAP.hosts up to date?
+#  require_relative '../../../lib/whimsy/asf'
+#  name = :ldap
+#  pls = ASF::LDAP.puppet_ldapservers.sort
+#  hosts = ASF::LDAP::RO_HOSTS.sort
+#  diff = (pls-hosts).map {|host| "+ #{host}"}
+#  diff += (hosts-pls).map {|host| "- #{host}"}
+#  if diff.empty?
+#    status[name] = {level: 'success', data: hosts}
+#  else
+#    status[name] = {level: 'warning', data: diff}
+#  end
 
   {data: status}
 end
