@@ -6,13 +6,17 @@ class NonPMC
     return unless cttee.nonpmc?
     members = cttee.owners
     committers = cttee.committers
+    # Hack to fix unusual mail_list values e.g. press@apache.org
+    mail_list = cttee.mail_list.sub(/@.*/,'')
+    mail_list = 'legal' if mail_list =~ /^legal-/
+    mail_list = 'fundraising' if mail_list =~ /^fundraising-/
 
     ASF::Committee.load_committee_info
     # We'll be needing the mail data later
     people = ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (members + committers).uniq)
 
     lists = ASF::Mail.lists(true).select do |list, mode|
-      list =~ /^#{cttee.mail_list}\b/
+      list =~ /^#{mail_list}\b/
     end
 
     image_dir = ASF::SVN.find('site-img') # Probably not relevant to nonPMCS; leave for now
@@ -30,19 +34,19 @@ class NonPMC
     analysePrivateSubs = false # whether to show missing private@ subscriptions
     if cttee.roster.include? env.user or currentUser.asf_member?
       require 'whimsy/asf/mlist'
-      moderators, modtime = ASF::MLIST.list_moderators(cttee.mail_list)
-      subscribers, subtime = ASF::MLIST.list_subscribers(cttee.mail_list) # counts only
+      moderators, modtime = ASF::MLIST.list_moderators(mail_list)
+      subscribers, subtime = ASF::MLIST.list_subscribers(mail_list) # counts only
       analysePrivateSubs = currentUser.asf_member?
       unless analysePrivateSubs # check for private moderator if not already allowed access
         user_mail = currentUser.all_mail || []
-        pMods = moderators["private@#{cttee.mail_list}.apache.org"] || []
+        pMods = moderators["private@#{mail_list}.apache.org"] || []
         analysePrivateSubs = !(pMods & user_mail).empty?
       end
       if analysePrivateSubs
-        pSubs = ASF::MLIST.private_subscribers(cttee.mail_list)[0]||[]
+        pSubs = ASF::MLIST.private_subscribers(mail_list)[0]||[]
         unMatchedSubs=Set.new(pSubs) # init ready to remove matched mails
         pSubs.map!{|m| m.downcase} # for matching
-        sSubs = ASF::MLIST.security_subscribers(cttee.mail_list)[0]||[]
+        sSubs = ASF::MLIST.security_subscribers(mail_list)[0]||[]
         unMatchedSecSubs=Set.new(sSubs) # init ready to remove matched mails
       end
     else
