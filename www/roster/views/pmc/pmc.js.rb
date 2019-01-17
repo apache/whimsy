@@ -104,7 +104,7 @@ class PMCMembers < Vue
       end
       # Any unknown security@ subscribers?
       if unknownSecSubs.length > 0
-        _h2.crosscheck! 'Check of security@ list subscriptions'
+        _h2.crosschecksec! 'Check of security@ list subscriptions'
         _p {
           # We don't use the short-hand name: value syntax here to work-round Eclipse Ruby editor parsing bug
           _span.glyphicon.glyphicon_lock aria_hidden: true, :class => 'text-primary', 'aria-label' => 'ASF Members and private@ moderators'
