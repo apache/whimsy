@@ -5,7 +5,7 @@ require_relative 'mixins/add'
 require_relative 'mixins/mod'
 
 require_relative 'pmc/main'
-require_relative 'pmc/pmc'
+require_relative 'pmc/members'
 require_relative 'pmc/committers'
 require_relative 'pmc/add'
 require_relative 'pmc/mod'
