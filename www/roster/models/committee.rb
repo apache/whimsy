@@ -3,7 +3,7 @@ class Committee
     response = {}
 
     pmc = ASF::Committee.find(id)
-#    return if pmc.nonpmc? # Only show PMCs TODO later
+    return if pmc.nonpmc? # Only show PMCs
     members = pmc.owners
     committers = pmc.committers
     return if members.empty? and committers.empty?
