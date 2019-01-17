@@ -3,6 +3,8 @@
 # tocsplit.rb processes agenda/minute file and extracts the Incubator ToCs
 # as some were created with more than one copy
 
+require 'digest'
+
 file=ARGV.shift or raise "missing file"
 TMP=ARGV.shift || '/tmp/tocsplit'
 
@@ -28,11 +30,18 @@ sections.each do |s|
   if s =~ /Report from the Apache Incubator Project/
     # split this by ToC sections
     subs = s.split(/(?=^-------+\s+Table\s+of\s+C)/) # one is badly mangled
-    puts "Found #{subs.length-1} ToC sections"
+    puts "Found #{subs.length-1} ToC sections" # initial section is before ToC
     # Now output the Incubator parts
+    p=0
     subs.each do |i|
+      p=p+1
       nextf # one file per part
       $out.print i
+      if p > 1 && subs.length > 2 # already printed leading section
+        h = Digest::SHA256.hexdigest(i)[0..15]
+        j = Digest::SHA256.hexdigest(i.gsub(/\s+/,''))[0..15]
+        puts "ToC length: #{i.length} hash: #{h} squashed: #{j}"
+      end
     end
     nextf # start rest of output
     next # we have already output Incubator
