@@ -12,9 +12,14 @@ class Events
     @listener = Listen.to ARCHIVE do |modified, added, removed|
       (modified + added).each do |file|
          next unless file.end_with? '.yml'
-         mbox = Mailbox.new(File.basename(file))
-#         $stderr.puts "Event #{mbox}"
-         @events.push({messages: mbox.client_headers})
+         # The client is responsible for fetching the headers
+         # this makes it easier to provide config settings to the mailbox
+         event = {
+           nextmbox: File.basename(file),
+           source: nil,
+           headers: [],
+         }
+         @events.push(event)
       end
     end
 

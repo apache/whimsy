@@ -12,10 +12,14 @@ require 'ruby2js/filter/require'
 #require 'sanitize'
 require 'escape'
 
+require 'whimsy/asf'
+
 require_relative 'helpers'
 require_relative 'models/mailbox'
 require_relative 'models/safetemp'
 require_relative 'models/events'
+require_relative 'models/auth'
+require_relative 'models/prefs'
 
 
 # monkey patch mail gem to work around a regression introduced in 2.7.0:
@@ -39,12 +43,44 @@ module Mail
   end
 end
 
-require 'whimsy/asf'
 ASF::Mail.configure
 
 set :show_exceptions, true
 
 disable :logging # suppress log of requests to stderr/error.log
+
+def get_pref # common setup
+  @info = Auth.info({})
+  @id = @info[:id]
+  @prefs = Prefs.new()
+  @domains = @prefs[@id] || []
+end
+
+def check_pref
+  get_pref
+  # TODO this forces user to choose at least one domain
+  unless @domains && @domains.length > 0
+    redirect to('/prefs')
+  end
+  pass
+end
+
+# Allow direct access to preferences
+get '/prefs/?' do
+  get_pref
+  _html :prefs
+end
+
+# handle the update (easiest to use post from form button)
+post '/actions/setprefs' do
+  get_pref
+  _html :"actions/setprefs"
+end
+
+# force user to use preferences if they have not yet done so
+get   '*' do check_pref end
+post  '*' do check_pref end
+patch '*' do check_pref end
 
 get '/' do
   # Ensure trailing slash is present
@@ -56,7 +92,7 @@ end
 get '/messages' do # must agree with src in main.html
 
   @mbox = Mailbox.mboxname()
-  @messages = Mailbox.new(@mbox).client_headers
+  @messages = Mailbox.new(@mbox, @domains).client_headers
 
   @cssmtime = File.mtime('public/secmail.css').to_i
   @appmtime = Wunderbar::Asset.convert(File.join(settings.views, 'app.js.rb')).mtime.to_i
@@ -68,11 +104,11 @@ get '/index.html' do
   call env.merge('PATH_INFO' => '/')
 end
 
-# initial list of messages
+# list of messages for a month
 get %r{/(#{MBOX_RE})/messages} do |mbox|
 
   @mbox = mbox
-  @messages = Mailbox.new(@mbox).client_headers
+  @messages = Mailbox.new(@mbox, @domains).client_headers
 
   @cssmtime = File.mtime('public/secmail.css').to_i
   @appmtime = Wunderbar::Asset.convert(File.join(settings.views, 'app.js.rb')).mtime.to_i
@@ -81,8 +117,7 @@ end
 
 # support for fetching next lot of messages
 get %r{/(#{MBOX_RE})} do |mbox|
-  @mbox = mbox
-  _json Mailbox.new(@mbox).client_headers
+  _json Mailbox.new(mbox, @domains).client_headers
 end
 
 # retrieve a single message (same as body now)

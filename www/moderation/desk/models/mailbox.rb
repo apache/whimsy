@@ -11,6 +11,7 @@ require 'stringio'
 require 'yaml'
 
 require_relative '../config.rb'
+require_relative '../defines'
 
 require_relative 'message.rb'
 require_relative 'auth.rb'
@@ -20,9 +21,10 @@ class Mailbox
   #
   # Initialize a mailbox
   #
-  def initialize(name)
+  def initialize(name, domains=nil)
     name = File.basename(name, '.yml')
-
+    # If we want all domains, skip the check
+    @domains = (domains.nil? || domains.include?(ALLDOMAINS) )? nil : domains
     if name =~ /^#{MBOX_RE}$/
       @name = name.untaint
       @mbox = Dir["#{ARCHIVE}/#{@name}", "#{ARCHIVE}/#{@name}.gz"].first.untaint
@@ -175,7 +177,7 @@ class Mailbox
 
   # Is the list wanted by the caller?
   def list_wanted?(message)
-    true
+    @domains.nil? || @domains.include?(message[:domain])
   end
 
   # Is the message visible to the caller?
