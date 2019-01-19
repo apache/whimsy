@@ -8,7 +8,10 @@ helpers do
           if src.to_s.start_with? 'cid:'
             src.value = src.to_s.sub('cid:', '')
           else # src.to_s.start_with? 'http' # Don't allow access to remote images
-            src.value='../../transparent.png'
+            # Use a visible image to show where the original has been replaced
+            # Previously used transparent.png, but that did not work well for messages
+            # with large images in the main body
+            src.value='../../cross.png'
           end
         end
       else
