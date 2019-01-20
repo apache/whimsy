@@ -109,7 +109,7 @@ _html do
       body.force_encoding(container.charset) rescue nil
     end
 
-    _pre body.encode('utf-8', invalid: :replace, :undef => :replace)
+    _pre.bg_info body.encode('utf-8', invalid: :replace, :undef => :replace)
   else # must be a non-multi part mail
     container = @message.mail
     body = container.body.to_s
@@ -123,7 +123,7 @@ _html do
     
     if container.mime_type == 'text/plain'
 
-      _pre body.encode('utf-8', invalid: :replace, :undef => :replace)
+      _pre.bg_info body.encode('utf-8', invalid: :replace, :undef => :replace)
 
     elsif container.mime_type == 'text/html'
 
