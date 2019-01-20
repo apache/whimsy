@@ -47,7 +47,7 @@ class Messages < Vue
 
             _tr row_options do
               _td :id => message.href do # Id needed for mouse selection
-                _a message.subject, href: "#{message.href}_body_", target: 'content'
+                _a message.subject, href: "#{message.href}", target: 'content'
 #                _ message.subject
                 _br
                 _ message.from

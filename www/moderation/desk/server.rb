@@ -120,7 +120,7 @@ get %r{/(#{MBOX_RE})} do |mbox|
   _json Mailbox.new(mbox, @domains).client_headers
 end
 
-# retrieve a single message (same as body now)
+# message body for a single message
 get %r{/(#{MBOX_RE})/(#{HASH_RE})/} do |mbox, hash|
   @message = Mailbox.new(mbox).find(hash)
   return [404, {}, 'Message not found or is not accessible'] unless @message
@@ -128,7 +128,7 @@ get %r{/(#{MBOX_RE})/(#{HASH_RE})/} do |mbox, hash|
   @headers = @message.headers.dup
   @headers.delete :attachments
   @cssmtime = File.mtime('public/secmail.css').to_i
-  _html :body #:message # must agree with views/*.html.rb
+  _html :body # uses view/body.html.rb
 end
 
 # posted actions
@@ -146,17 +146,6 @@ patch %r{/(#{MBOX_RE})/(#{HASH_RE})/} do |mbox, hash|
   return [404, {}, 'Message not found or is not accessible or could not be updated'] unless success
 
   [204, {}, '']
-end
-
-# message body for a single message
-get %r{/(#{MBOX_RE})/(#{HASH_RE})/_body_} do |mbox, hash|
-  @message = Mailbox.new(mbox).find(hash)
-  return [404, {}, 'Message not found or is not accessible'] unless @message
-  @attachments = @message.attachments
-  @headers = @message.headers.dup
-  @headers.delete :attachments
-  @cssmtime = File.mtime('public/secmail.css').to_i
-  _html :body # uses view/body.html.rb
 end
 
 # header data for a single message
