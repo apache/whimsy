@@ -27,6 +27,10 @@ header h1, header h3 {
   opacity: 0.5;
 }
 
+.private {
+  background-image: url(private.png);
+}
+
 .doctype label {
   display: block
 }

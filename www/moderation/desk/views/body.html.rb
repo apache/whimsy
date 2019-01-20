@@ -6,10 +6,23 @@ _html do
   _link rel: 'stylesheet', type: 'text/css', 
     href: "../../secmail.css?#{@cssmtime}"
 
+  options = {}
+  unless @headers[:public]
+    options = {:class => 'private'}
+  end
+ _div options do
   #
   # Selected headers
   #
   _table do
+    if @headers[:public]
+      # TODO ?
+    else
+      _tr do
+        _td 'Private'
+        _td 'YES'
+      end
+    end
     if @headers[:list]
       _tr do
         _td 'Mailing-list:'
@@ -96,7 +109,7 @@ _html do
       body.force_encoding(container.charset) rescue nil
     end
 
-    _pre.bg_info body.encode('utf-8', invalid: :replace, :undef => :replace)
+    _pre body.encode('utf-8', invalid: :replace, :undef => :replace)
   else # must be a non-multi part mail
     container = @message.mail
     body = container.body.to_s
@@ -110,7 +123,7 @@ _html do
     
     if container.mime_type == 'text/plain'
 
-      _pre.bg_info body.encode('utf-8', invalid: :replace, :undef => :replace)
+      _pre body.encode('utf-8', invalid: :replace, :undef => :replace)
 
     elsif container.mime_type == 'text/html'
 
@@ -126,4 +139,5 @@ _html do
 
     end
   end
+ end
 end
