@@ -27,6 +27,11 @@ _html do
     end
 
     _tr do
+      _td 'Reply-To: '
+      _td @message.reply_to
+    end
+
+    _tr do
       _td 'To:'
       _td @message.to
     end

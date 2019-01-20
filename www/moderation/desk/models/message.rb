@@ -73,6 +73,10 @@ class Message
     mail.return_path
   end
 
+  def reply_to
+    mail.reply_to
+  end
+
   def to
     mail[:to]
   end
