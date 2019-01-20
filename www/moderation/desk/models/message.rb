@@ -21,6 +21,7 @@ class Message
     @mailbox = mailbox
     @headers = headers
     @email = email
+    @mailbox = nil # lazily created
   end
 
   #
@@ -73,6 +74,7 @@ class Message
     mail.return_path
   end
 
+  # This is an array
   def reply_to
     mail.reply_to
   end
