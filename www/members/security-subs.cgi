@@ -88,12 +88,15 @@ _html do
                     _a person.public_name, 
                       href: "../../roster/committer/#{person.id}"
                   end
+                elsif WHITELIST.any? {|regex| email =~ regex}
+                    _ '(archiver)'
                 end
               end
             end
           end
         end
       end
+      _p 'Note that there are expected to be upto 3 archivers'
     end
   end
 end
