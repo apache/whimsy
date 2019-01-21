@@ -106,11 +106,17 @@ _html do
       end
     end
 
-    _p do
-      _ 'The following entries in bin/.archives do not appear to have an associated mailing list (probably they are aliases):'
-      _br
-      _ (binarchives.keys - ids.keys)
-    end    
+    missingids = binarchives.keys - ids.keys
+    if missingids.length > 0
+      _p.bg_warning do
+        _ 'The following entries in bin/.archives do not appear to have an associated mailing list (probably they are aliases):'
+        _br
+        _ missingids
+      end
+    else
+      _p 'All entries in bin/.archives correspond to a mailing list'
+    end
+
     _script %{
       var table = $(".table").stupidtable();
       table.on("aftertablesort", function (event, data) {
