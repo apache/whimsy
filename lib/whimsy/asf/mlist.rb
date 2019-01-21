@@ -157,7 +157,38 @@ module ASF
       return subscribers.to_h, (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
+    def self.list_archivers
+      list_parse('sub') do |dom, list, subs|
+        yield [dom, list, subs.select {|s| is_archiver? s}.map{|m| [m,archiver_type(m,dom,list)].flatten}]
+      end
+    end
+
     private
+
+    # return the archiver type as array: [:MBOX|:PONY|:MINO, 'public'|'private'|'alias'|'direct']
+    # minotaur archiver names do not include any public/private indication as that is in bin/.archives
+    def self.archiver_type(email, dom,list)
+      case email
+        when ARCH_MBOX_PUB then return [:MBOX, 'public']
+        when ARCH_MBOX_PRV then return [:MBOX, 'private']
+        when ARCH_PONY_PUB then return [:PONY, 'public']
+        when ARCH_PONY_PRV then return [:PONY, 'private']
+        # normal archiver routed via .qmail-[tlp-]list-archive
+        when "#{list}-archive@#{dom}" then return [:MINO, 'alias']
+        # Direct mail to minotaur
+        when "apmail-#{dom.split('.').first}-#{list}-archive@www.apache.org" then return [:MINO, 'direct']
+      end
+      raise "Unexpected archiver email #{email} for #{list}@#{dom}" # Should not happen?
+    end
+
+    # Is the email a minotaur archiver?
+    def self.is_mino_archiver? (e)
+      e =~ /.-archive@([^.]+\.)?(apache\.org|apachecon\.com)$/
+    end
+
+    def self.is_archiver? (e)
+      ARCHIVERS.include? e or is_mino_archiver? e
+    end
 
     def self.downcase(array)
       array.map{|m| m.downcase}
@@ -229,8 +260,15 @@ module ASF
     end
 
     # Standard ASF archivers
-    ARCHIVERS = ["archive-asf-private@cust-asf.ponee.io", "archive-asf-public@cust-asf.ponee.io",
-                 "archiver@mbox-vm.apache.org", "private@mbox-vm.apache.org", "restricted@mbox-vm.apache.org"]
+    ARCH_MBOX_PUB = "archiver@mbox-vm.apache.org"
+    ARCH_MBOX_PRV = "private@mbox-vm.apache.org"
+    ARCH_MBOX_RST = "restricted@mbox-vm.apache.org"
+
+    ARCH_PONY_PUB = "archive-asf-public@cust-asf.ponee.io"
+    ARCH_PONY_PRV = "archive-asf-private@cust-asf.ponee.io"
+
+    ARCHIVERS = [ARCH_PONY_PRV, ARCH_PONY_PUB,
+                 ARCH_MBOX_PUB, ARCH_MBOX_PRV, ARCH_MBOX_RST]
     # TODO alias archivers: either add list or use RE to filter them
 
     LIST_MODS = '/srv/subscriptions/list-mods'
