@@ -225,6 +225,7 @@ module ASF
           raise ArgumentError.new("Unexpected section header #{line}")
         end
       end
+      nil # don't return file contents
     end
 
     # Standard ASF archivers
