@@ -19,7 +19,13 @@ _html do
         _ 'are listed privately.'
       end
     end
-    _p 'Click on column names to sort.'
+    _p do
+      _ 'Click on column names to sort.'
+      _{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ".each_char do |c|
+        _a c, href: "committee/##{c}"
+      end
+    end
 
     _table.table.table_hover do
       _thead do
@@ -30,10 +36,17 @@ _html do
         end
       end
 
+      prev_letter=nil
       @committees.sort_by {|pmc| pmc.display_name.downcase}.each do |pmc|
+        letter = pmc.display_name.upcase[0]
         _tr_ do
           _td do
-            _a pmc.display_name, href: "committee/#{pmc.name}"
+            if letter != prev_letter
+              _a pmc.display_name, href: "committee/#{pmc.name}", id: letter
+            else
+              _a pmc.display_name, href: "committee/#{pmc.name}"
+            end
+            prev_letter = letter
           end
 
           _td do
