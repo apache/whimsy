@@ -1,5 +1,11 @@
-# Reads LDAP ou=groups,dc=apache,dc=org
-# Also reads LDAP ou=projects to pick up guinea pigs
+# Reads LDAP ou=projects and extracts member rosters for PMCs
+# (PMC status comes from committee-info.txt)
+#
+# Also reads LDAP ou=groups,dc=apache,dc=org to extract some non-PMCs
+# This is to maintain compatibility with earlier output
+#
+# The contents cannot be used to determine LDAP group membership
+#
 # Creates JSON output with the following format:
 #
 # {
@@ -18,44 +24,64 @@
 
 require_relative 'public_json_common'
 
-# gather unix group info
 entries = {}
 
+# Dummy classes as Project class seems to be awkward to create easily
+class MyProject
+  attr_accessor :modifyTimestamp
+  attr_accessor :createTimestamp
+  attr_accessor :name
+  attr_accessor :members
+  attr_accessor :owners
+end
+
+class MyPerson
+  attr_accessor :name
+  def initialize(name)
+    @name=name
+  end
+end
 
 groups = ASF::Group.preload # for performance
 projects = ASF::Project.preload
 
-if groups.empty?
+# Not projects but in original output
+# TODO do we want them all?
+# These will be extracted from groups if not in projects
+EXTRAS = %w(apsite committers member concom infra security)
+
+# These are the ones that will be generated
+WANTED = ASF::Committee.pmcs.map(&:name) + EXTRAS
+
+if projects.empty?
   Wunderbar.error "No results retrieved, output not created"
   exit 0
 end
 lastStamp = ''
 
-# Hack: ensure all names are represented in the hash
-ASF::Committee::GUINEAPIGS.each do |pig|
-  unless ASF::Group.find(pig).modifyTimestamp # hack detect missing entry
-    groups[ASF::Group.new(pig)] = [] # add a dummy entry
-  end 
+# Add the non-project entries from the groups
+ALREADY = projects.keys.map(&:name)
+groups.select{|g| EXTRAS.include? g.name}.each do |group,data|
+  next if ALREADY.include?(group.name)
+  project = MyProject.new
+  project.name = group.name
+  project.createTimestamp = group.createTimestamp
+  project.modifyTimestamp = group.modifyTimestamp
+  project.members = group.members.map{|p| MyPerson.new(p.name)}
+  project.owners = []
+  projects[project] = [] 
 end
 
-groups.keys.sort_by {|a| a.name}.each do |entry|
+projects.keys.sort_by {|a| a.name}.each do |project|
+    next unless WANTED.include? project.name
     m = []
-    if ASF::Committee::isGuineaPig? entry.name
-      project = ASF::Project.find(entry.name)
-      createTimestamp = project.createTimestamp
-      modifyTimestamp = project.modifyTimestamp
-      project.members.sort_by {|a| a.name}.each do |e|
-          m << e.name
-      end
-    else
-      createTimestamp = entry.createTimestamp
-      modifyTimestamp = entry.modifyTimestamp
-      entry.members.sort_by {|a| a.name}.each do |e|
-          m << e.name
-      end
+    createTimestamp = project.createTimestamp
+    modifyTimestamp = project.modifyTimestamp
+    project.members.sort_by {|a| a.name}.each do |e|
+        m << e.name
     end
     lastStamp = modifyTimestamp if modifyTimestamp > lastStamp
-    entries[entry.name] = {
+    entries[project.name] = {
         createTimestamp: createTimestamp,
         modifyTimestamp: modifyTimestamp,
         roster: m 
