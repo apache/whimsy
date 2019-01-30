@@ -1258,7 +1258,7 @@ module ASF
     # return committee only if it actually exits
     def self.[] name
       committee = super
-      return committee if GUINEAPIGS.include? name
+      return committee if self.isGuineaPig? name
       committee.members.empty? ? nil : committee
     end
 
@@ -1305,7 +1305,7 @@ module ASF
     # committee and have update access.  Data is obtained from LDAP.
     # Takes info from Project for GUINEAPIGS else the committee member roster
     def owners
-      if GUINEAPIGS.include? name
+      if isGuineaPig?
         ASF::Project.find(name).owners
       else
         members
@@ -1315,7 +1315,7 @@ module ASF
     # List of owner ids for this committee
     # Takes info from Project for GUINEAPIGS else the committee member roster
     def ownerids
-      if GUINEAPIGS.include? name
+      if isGuineaPig?
         ASF::Project.find(name).ownerids
       else
         memberids
@@ -1326,7 +1326,7 @@ module ASF
     # data is generally stored in an attribute named <tt>member</tt>.
     # Takes info from Project for GUINEAPIGS else the Group
     def committers
-      if GUINEAPIGS.include? name
+      if isGuineaPig?
         ASF::Project.find(name).members
       else
         ASF::Group.find(name).members
@@ -1336,7 +1336,7 @@ module ASF
     # List of committer ids for this committee
     # Takes info from Project for GUINEAPIGS else the Group
     def committerids
-      if GUINEAPIGS.include? name
+      if isGuineaPig?
         ASF::Project.find(name).memberids
       else
         ASF::Group.find(name).memberids
@@ -1345,7 +1345,7 @@ module ASF
 
     # remove people as owners of a project in LDAP
     def remove_owners(people)
-      if GUINEAPIGS.include? name
+      if isGuineaPig?
         ASF::Project.find(name).remove_owners(people)
       else
         project = ASF::Project[name]
@@ -1367,7 +1367,7 @@ module ASF
 
     # add people as owners of a project in LDAP
     def add_owners(people)
-      if GUINEAPIGS.include? name
+      if isGuineaPig?
         ASF::Project.find(name).add_owners(people)
       else
         project = ASF::Project[name]
@@ -1379,7 +1379,7 @@ module ASF
     # add people as committers of a project.  This information is stored
     # in LDAP using a <tt>members</tt> attribute.
     def add_committers(people)
-      if GUINEAPIGS.include? name
+      if isGuineaPig?
         ASF::Project.find(name).add_members(people)
       else
         project = ASF::Project[name]
@@ -1390,7 +1390,7 @@ module ASF
 
     # Designated Name from LDAP
     def dn
-      if GUINEAPIGS.include? name
+      if isGuineaPig?
         @dn ||= ASF::Project.find(name).dn
       else
         @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first rescue nil
