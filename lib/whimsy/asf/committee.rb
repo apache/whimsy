@@ -62,6 +62,7 @@ module ASF
     @@aliases = Hash.new {|hash, name| name.downcase}
     @@aliases.merge! \
       'community development'       => 'comdev',
+      # TODO: are the concom entries correct? See INFRA-17782
       'conference planning'         => 'concom',
       'conferences'                 => 'concom',
       'distributed release audit tool'=> 'drat',
