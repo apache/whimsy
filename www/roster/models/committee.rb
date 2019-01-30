@@ -163,7 +163,7 @@ class Committee
       nonASFmails: nonASFmails,
       project_info: info,
       image: image,
-      guinea_pig: ASF::Committee::GUINEAPIGS.include?(id),
+      guinea_pig: ASF::Committee::isGuineaPig?(id),
       analysePrivateSubs: analysePrivateSubs,
       unknownSubs: unknownSubs,
       asfMembers: asfMembers,

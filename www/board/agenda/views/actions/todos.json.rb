@@ -118,7 +118,7 @@ if @establish and env.password
     people = item['people'].map {|id, hash| [id, hash[:name]]}
 
     ASF::LDAP.bind(env.user, env.password) do
-      guineapig = ASF::Committee::GUINEAPIGS.include?(pmc.downcase)
+      guineapig = ASF::Committee::isGuineaPig?(pmc.downcase)
 
       # old style definitions
       unless guineapig

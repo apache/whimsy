@@ -40,7 +40,7 @@ end
 
 groups.keys.sort_by {|a| a.name}.each do |entry|
     m = []
-    if ASF::Committee::GUINEAPIGS.include? entry.name
+    if ASF::Committee::isGuineaPig? entry.name
       project = ASF::Project.find(entry.name)
       createTimestamp = project.createTimestamp
       modifyTimestamp = project.modifyTimestamp
