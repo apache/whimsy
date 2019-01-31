@@ -118,32 +118,10 @@ if @establish and env.password
     people = item['people'].map {|id, hash| [id, hash[:name]]}
 
     ASF::LDAP.bind(env.user, env.password) do
-      guineapig = ASF::Committee::isGuineaPig?(pmc.downcase)
-
-      # old style definitions
-      unless guineapig
-        if ASF::Group.find(pmc.downcase).members.empty?
-          ASF::Group.add(pmc.downcase, members)
-        end
-
-        if ASF::Committee.find(pmc.downcase).members.empty?
-          ASF::Committee.add(pmc.downcase, members)
-        end
-      end
-
       # new style definitions
       project = ASF::Project[pmc.downcase]
       if not project
-        unless ASF::Committee[pmc.downcase] or guineapig
-          ASF::Committee.add(pmc.downcase, members)
-        end
-
         ASF::Project.find(pmc.downcase).create(members, members)
-      elsif not guineapig
-        # sync project owners with new PMC list
-        project.add_owners(members)
-        project.remove_owners(project.owners - members)
-        project.add_members(members)
       end
     end 
   end
