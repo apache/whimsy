@@ -106,13 +106,8 @@ if env.password
   end
 
   details = people.map {|person| person.dn}
-  if ASF::Committee::isGuineaPig? pmc.id
-    details << "#{pmc.dn};attr=owner" if @targets.include? 'pmc'
-    details << "#{pmc.dn};attr=member" if group
-  else
-    details << pmc.dn if @targets.include? 'pmc'
-    details << group.dn if group
-  end
+  details << "#{pmc.dn};attr=owner" if @targets.include? 'pmc'
+  details << "#{pmc.dn};attr=member" if group
 
   cc = people.map do |person| 
     "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
