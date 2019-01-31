@@ -51,7 +51,6 @@ _html do
   _table do
     _tr do
       _th 'Project'
-      _th 'GuineaPig?'
       _th 'project members - group members'
       _th 'group members - project members'
       _th 'project owners - committee members'
@@ -88,7 +87,6 @@ _html do
           _td do
             _a p.name, href: '/roster/committee/' + p.name
           end
-          _td ASF::Committee.isGuineaPig?(p.name)
           _td do
             pm_um.each do |id|
               _a id, href: '/roster/committer/' + id
