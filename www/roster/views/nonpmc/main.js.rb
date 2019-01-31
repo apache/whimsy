@@ -8,12 +8,9 @@ class NonPMC < Vue
   end
 
   def render
-    if @nonpmc.guinea_pig
-      auth = (@@auth.secretary or @@auth.root or
-        @nonpmc.members.include? @@auth.id)
-    else
-      auth = (@@auth.id == @nonpmc.chair or @@auth.secretary or @@auth.root)
-    end
+    # TODO establish the correct auth for non-PMCs - may not have LDAP
+#    auth = (@@auth.secretary or @@auth.root or
+#      @nonpmc.members.include? @@auth.id)
 
     auth = nil # The modules have not been checked
 

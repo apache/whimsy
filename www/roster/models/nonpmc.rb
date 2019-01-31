@@ -166,7 +166,6 @@ class NonPMC
       subtime: subtime,
       nonASFmails: nonASFmails,
       image: image,
-      guinea_pig: ASF::Committee::isGuineaPig?(id),
       analysePrivateSubs: analysePrivateSubs,
       unknownSubs: unknownSubs,
       asfMembers: asfMembers,
