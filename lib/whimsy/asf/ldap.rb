@@ -1565,11 +1565,6 @@ end
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
-  %w{attic jmeter httpd}.each do |w|
-    print w, ' '
-    print ASF::Committee[w].isGuineaPig?,' '
-    puts ASF::Committee.isGuineaPig?(w)   
-  end
   ASF::RoleGroup.listcns.map {|g| puts ASF::RoleGroup.find(g).dn}
   ASF::AppGroup.listcns.map {|g| puts ASF::AppGroup.find(g).dn}
 end
