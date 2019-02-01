@@ -1255,7 +1255,7 @@ module ASF
     # Date this committee was initially created in LDAP.
     attr_accessor :createTimestamp
 
-    # return committee only if it actually exits
+    # return committee only if it actually exists
     def self.[] name
       committee = super
       return committee if self.isGuineaPig? name
@@ -1303,98 +1303,54 @@ module ASF
 
     # List of owners for this committee, i.e. people who are members of the
     # committee and have update access.  Data is obtained from LDAP.
-    # Takes info from Project for GUINEAPIGS else the committee member roster
+    # Takes info from Project
     def owners
-      if isGuineaPig?
-        ASF::Project.find(name).owners
-      else
-        members
-      end
+      ASF::Project.find(name).owners
     end
 
     # List of owner ids for this committee
-    # Takes info from Project for GUINEAPIGS else the committee member roster
+    # Takes info from Project
     def ownerids
-      if isGuineaPig?
-        ASF::Project.find(name).ownerids
-      else
-        memberids
-      end
+      ASF::Project.find(name).ownerids
     end
 
     # List of committers for this committee.  Data is obtained from LDAP.  This
     # data is generally stored in an attribute named <tt>member</tt>.
-    # Takes info from Project for GUINEAPIGS else the Group
+    # Takes info from Project
     def committers
-      if isGuineaPig?
-        ASF::Project.find(name).members
-      else
-        ASF::Group.find(name).members
-      end
+      ASF::Project.find(name).members
     end
 
     # List of committer ids for this committee
-    # Takes info from Project for GUINEAPIGS else the Group
+    # Takes info from Project
     def committerids
-      if isGuineaPig?
-        ASF::Project.find(name).memberids
-      else
-        ASF::Group.find(name).memberids
-      end
+      ASF::Project.find(name).memberids
     end
 
     # remove people as owners of a project in LDAP
     def remove_owners(people)
-      if isGuineaPig?
-        ASF::Project.find(name).remove_owners(people)
-      else
-        project = ASF::Project[name]
-        project.remove_owners(people) if project
-        remove(people)
-      end
+      ASF::Project.find(name).remove_owners(people)
     end
 
     # remove people as members of a project in LDAP
     def remove_committers(people)
-      if GUINEAPIGS.include? name
-        ASF::Project.find(name).remove_members(people)
-      else
-        project = ASF::Project[name]
-        project.remove_members(people) if project
-        ASF::Group.find(name).remove(people)
-      end
+      ASF::Project.find(name).remove_members(people)
     end
 
     # add people as owners of a project in LDAP
     def add_owners(people)
-      if isGuineaPig?
-        ASF::Project.find(name).add_owners(people)
-      else
-        project = ASF::Project[name]
-        project.add_owners(people) if project
-        add(people)
-      end
+      ASF::Project.find(name).add_owners(people)
     end
 
     # add people as committers of a project.  This information is stored
     # in LDAP using a <tt>members</tt> attribute.
     def add_committers(people)
-      if isGuineaPig?
-        ASF::Project.find(name).add_members(people)
-      else
-        project = ASF::Project[name]
-        project.add_members(people) if project
-        ASF::Group.find(name).add(people)
-      end
+      ASF::Project.find(name).add_members(people)
     end
 
     # Designated Name from LDAP
     def dn
-      if isGuineaPig?
-        @dn ||= ASF::Project.find(name).dn
-      else
-        @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first rescue nil
-      end
+      @dn ||= ASF::Project.find(name).dn
     end
 
     # DEPRECATED remove people from a committee.  Call #remove_owners instead.
