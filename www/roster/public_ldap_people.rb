@@ -80,5 +80,8 @@ if changed? and @old_file
   previous = JSON.parse(@old_file, :symbolize_names=>false)
   now = info[:people].keys
   old = previous['people'].keys
-  Wunderbar.warn "Unexpected removal of following names: #{old-now}"
+  diff = old - now
+  unless diff.empty?
+    Wunderbar.warn "Unexpected removal of following names: #{diff}"
+  end
 end
