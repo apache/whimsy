@@ -11,6 +11,7 @@ ASF::LDAP.bind if fix
 auth_path=ARGV.shift
 
 groups = ASF::Group.preload # for performance
+# TODO drop soon
 committees = ASF::Committee.preload # for performance
 
 projects = ASF::Project.preload
@@ -44,6 +45,7 @@ groups.keys.sort_by {|a| a.name}.each do |entry|
 end
 
 puts ""
+# TODO will no longer be relevant
 puts "project.owners ~ committee.members"
 committees.keys.sort_by {|a| a.name}.each do |entry|
     summary[entry.name]['c']=1
