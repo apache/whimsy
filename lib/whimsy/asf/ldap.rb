@@ -1223,6 +1223,8 @@ module ASF
   end
 
   class Committee < Base
+    # TODO what to do about this? Change to ou=project or drop?
+    # It's used by the methods: self.list, self.preload, member[id]s, self.add, self.remove
     @base = 'ou=pmc,ou=committees,ou=groups,dc=apache,dc=org'
 
     # return a list of committees, from LDAP.
