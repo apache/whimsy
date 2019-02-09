@@ -1282,20 +1282,6 @@ module ASF
       members.map {|uid| uid[/uid=(.*?),/,1]}
     end
 
-    # temp list of projects that have moved over to new project LDAP schema
-    GUINEAPIGS = %w(incubator whimsy jmeter axis mynewt atlas accumulo
-      madlib streams fluo impala)
-
-    # is the current PMC a guineapig?
-    def isGuineaPig?
-      GUINEAPIGS.include? name
-    end
-
-    # is the PMC a guineapig?
-    def self.isGuineaPig? (name)
-      GUINEAPIGS.include? name
-    end
-
     # List of owners for this committee, i.e. people who are members of the
     # committee and have update access.  Data is obtained from LDAP.
     # Takes info from Project
