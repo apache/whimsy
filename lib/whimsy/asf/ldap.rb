@@ -775,13 +775,17 @@ module ASF
     end
 
     # list of LDAP committees that this individual is a member of
+    # TODO should this be deleted? 
+    # It seems to be used partly as LDAP membership and partly as PMC membership (which were originally generally the same)
+    # If the former, then it disappears.
+    # If the latter, then it needs to be derived from project_owners filtered to keep only PMCs
     def committees
       # legacy LDAP entries
       committees = weakref(:committees) do
         Committee.list("member=uid=#{name},#{base}")
       end
 
-      # add in projects (currently only includes GUINEAPIGS)
+      # add in projects
       # Get list of project names where the person is an owner
       projects = self.projects.select{|prj| prj.owners.include? self}.map(&:name)
       committees += ASF::Committee.pmcs.select do |pmc| 
@@ -800,7 +804,6 @@ module ASF
     end
 
     # list of LDAP projects that this individual is an owner of - i.e. on (P)PMC
-    # not all PMC currently have project groups
     def project_owners
       weakref(:project_owners) do
         Project.list("owner=uid=#{name},#{base}")
