@@ -1253,8 +1253,8 @@ module ASF
     # return committee only if it actually exists
     def self.[] name
       committee = super
-      return committee if self.isGuineaPig? name
-      committee.members.empty? ? nil : committee
+      # cheaper/safer check than looking at members
+      committee.dn ? committee : nil
     end
 
     # setter for members attribute, should only be used by 
