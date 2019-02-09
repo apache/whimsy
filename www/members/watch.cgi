@@ -128,9 +128,8 @@ _html do
       list = watch_list
     end
 
-    # for efficiency, preload committees, public_names, member status, and
+    # for efficiency, preload public_names, member status, and
     # nominees
-    committees = ASF::Committee.preload
     people = ASF::Person.preload('cn', list)
     members = ASF::Member.status
     nominees = ASF::Person.member_nominees
