@@ -1236,12 +1236,15 @@ module ASF
     @base = 'ou=pmc,ou=committees,ou=groups,dc=apache,dc=org'
 
     # return a list of committees, from LDAP.
+    # TODO this stopped returning all PMCs when guinea pigs were introduced
+    # Should it be dropped, or made to return the list of PMCs ?
     def self.list(filter='cn=*')
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| Committee.find(cn)}
     end
 
     # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
     # <tt>createTimestamp</tt> for all committees in LDAP.
+    # TODO - delete? Not sure it's used anymore
     def self.preload
       Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
