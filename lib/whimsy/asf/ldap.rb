@@ -1224,7 +1224,7 @@ module ASF
 
   class Committee < Base
     # TODO what to do about this? Change to ou=project or drop?
-    # It's used by the methods: self.list, self.preload, member[id]s, self.add, self.remove
+    # It's used by the methods: self.list, self.preload, member[id]s
     @base = 'ou=pmc,ou=committees,ou=groups,dc=apache,dc=org'
 
     # return a list of committees, from LDAP.
@@ -1356,21 +1356,6 @@ module ASF
       @members = nil
     end
 
-    # add a new committee to LDAP
-    def self.add(name, people)
-      entry = [
-        mod_add('objectClass', ['groupOfNames', 'top']),
-        mod_add('cn', name),
-        mod_add('member', Array(people).map(&:dn))
-      ]
-
-      ASF::LDAP.add("cn=#{name},#{base}", entry)
-    end
-
-    # remove a committee from LDAP
-    def self.remove(name)
-      ASF::LDAP.delete("cn=#{name},#{base}")
-    end
   end
 
   #
