@@ -45,6 +45,8 @@ _html do
     _br
     _ 'LDAP project owners must agree with corresponding committee members'
     _br
+    _ 'project/podling committers must be in committers group'
+    _br
     _ 'The table below show the differences, if any'
   end
 
