@@ -66,14 +66,17 @@ _html do
       pm_um=[]
       um_pm=[]
       notc=[]
-      if c=ASF::Committee[p.name] # we have PMC 
+      # TODO to be removed soon
+      # Use hasLDAP? to check if the underlying ou=pmc group exists
+      if c=ASF::Committee[p.name] and c.hasLDAP? # we have PMC group 
         po=p.ownerids
-        co=c.ownerids
+        co=c.memberids
         po_co=po-co
         co_po=co-po
         notc += po.reject {|n| old.include? n}
         notc += co.reject {|n| old.include? n}
       end
+      # TODO likewise, only applies to historic groups
       if u=ASF::Group[p.name] # we have the unix group
         pm=p.memberids
         um=u.memberids
