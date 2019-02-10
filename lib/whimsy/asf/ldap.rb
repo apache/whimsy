@@ -1266,8 +1266,8 @@ module ASF
     # return committee only if it actually exists
     def self.[] name
       committee = super
-      # cheaper/safer check than looking at members
-      committee.dn ? committee : nil
+      # Cannot rely on presence/absence of LDAP record as projects includes podlings
+      (ASF::Committee.pmcs+ASF::Committee.nonpmcs).map(&:name).include?(name) ? committee : nil
     end
 
     # setter for members attribute, should only be used by 
