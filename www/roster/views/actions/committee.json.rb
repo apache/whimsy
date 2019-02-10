@@ -97,7 +97,8 @@ if env.password
   # compose E-mail
   action = (@action == 'add' ? 'added to' : 'removed from')
   if @targets.include? 'pmc'
-    list = @targets.include? 'commit' ? 'PMC and committers list' : 'PMC list'
+    # must use () to enclose method parameter below as ? binds tighter
+    list = @targets.include?('commit') ? 'PMC and committers list' : 'PMC list'
   elsif @targets.include? 'info'
     list = 'in committee-info.txt'
   else
