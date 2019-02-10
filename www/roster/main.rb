@@ -228,7 +228,7 @@ end
 get '/podlings' do
   attic = ASF::SVN['attic-xdocs']
   @attic = Dir[File.join(attic, '*.xml')].map {|file| File.basename(file, '.xml')}
-  @committees = ASF::Committee.list.map(&:id)
+  @committees = ASF::Committee.pmcs.map(&:id) # Use list of PMCs from CI.txt
   @podlings = ASF::Podling.list
 
   _html :podlings
