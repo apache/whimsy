@@ -101,9 +101,14 @@ _html do
     list = {} # Avoid lint errors of shadowing
     if request =~ /multiple/
       _h2_ 'Active In Multiple Committees'
-      list = ASF::Committee.list.map {|committee| committee.members}.
-        reduce(&:+).group_by {|person| person}.
-        delete_if {|person,list| list.length<3}.keys
+#      list = ASF::Committee.list.map {|committee| committee.members}.
+#        reduce(&:+).group_by {|person| person}.
+#        delete_if {|person,list| list.length<3}.keys
+      # Use actual PMCs rather than LDAP derived
+      list = ASF::Committee.pmcs.map {|pmc| pmc.roster.keys}.
+        reduce(&:+).group_by {|uid| uid}.
+        delete_if {|uid,list| list.length<3}.
+        map{|uid,list| ASF::Person.find(uid)}
       list -= ASF.members
     elsif request =~ /chairs/
       _h2_ 'PMC Chairs'
