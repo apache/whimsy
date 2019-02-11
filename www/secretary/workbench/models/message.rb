@@ -327,22 +327,17 @@ class Message
     Digest::SHA1.hexdigest(getmid(message) || message)[0..9]
   end
 
+  # Matches LF, but not CRLF
+  LF_ONLY = Regexp.new("(?<!\r)\n")
+  CRLF = "\r\n"
+
   #
   # parse a message, returning headers
   #
   def self.parse(message)
-    # cleanup broken header separators.  Avoid copying the possibly large body
-    # unless a fixup is needed.
-    message.sub! /\AFrom .*\r?\n/i, '' if message =~ /^\AFrom /i
-    headers = message[/(.*?)\r?\n\r?\n/m, 1]
-    if headers.include? "\n" and not headers.include? "\r\n"
-      headers, body = message.split(/\r?\n\r?\n/, 2)
-      headers.gsub!("\n", "\r\n")
-      message = "#{headers}\r\n\r\n#{body}"
-    end
 
-    # parse cleaned up message
-    mail = Mail.read_from_string(message)
+    # parse cleaned up message (need to fix every line, not just headers)
+    mail = Mail.read_from_string(message.gsub(LF_ONLY, CRLF))
 
     # parse from address (if it exists)
     from_value = mail[:from].value rescue ''
