@@ -1075,6 +1075,11 @@ module ASF
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| Project.find(cn)}
     end
 
+    # obtain a list of projectids from LDAP
+    def self.listids(filter='cn=*')
+      ASF.search_one(base, filter, 'cn').flatten
+    end
+
     # return project only if it actually exits
     def self.[] name
       project = super
