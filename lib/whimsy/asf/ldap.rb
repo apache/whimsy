@@ -1096,6 +1096,7 @@ module ASF
         project.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
         members = results['member'] || []
         owners = results['owner'] || []
+        # TODO members and owners are duplicated in the project object and the returned hash
         project.members = members
         project.owners = owners
         [project, [members, owners]] # TODO is this correct? it seems to work...
