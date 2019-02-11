@@ -51,7 +51,7 @@ class Message
   #
 
   def mail
-    @mail ||= Mail.new(@email)
+    @mail ||= Mail.new(@email.gsub(LF_ONLY, CRLF))
   end
 
   def raw
