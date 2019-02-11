@@ -16,11 +16,11 @@ class Message
   #
   # create a new message
   #
-  def initialize(mailbox, hash, headers, email)
+  def initialize(mailbox, hash, headers, raw)
     @hash = hash
     @mailbox = mailbox
     @headers = headers
-    @email = email
+    @raw = raw
   end
 
   #
@@ -51,11 +51,11 @@ class Message
   #
 
   def mail
-    @mail ||= Mail.new(@email.gsub(LF_ONLY, CRLF))
+    @mail ||= Mail.new(@raw.gsub(LF_ONLY, CRLF))
   end
 
   def raw
-    @email
+    @raw
   end
 
   def id
@@ -163,7 +163,7 @@ class Message
   def write_email
     dir = @mailbox.dir
     Dir.mkdir dir, 0755 unless Dir.exist? dir
-    File.write File.join(dir, @hash), @email, encoding: Encoding::BINARY
+    File.write File.join(dir, @hash), @raw, encoding: Encoding::BINARY
   end
 
   #
