@@ -1244,6 +1244,7 @@ module ASF
     # return a list of committees, from LDAP.
     # TODO this stopped returning all PMCs when guinea pigs were introduced
     # Should it be dropped, or made to return the list of PMCs ?
+    # No longer used
     def self.list(filter='cn=*')
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| Committee.find(cn)}
     end
