@@ -16,11 +16,11 @@ class Message
   #
   # create a new message
   #
-  def initialize(mailbox, hash, headers, email)
+  def initialize(mailbox, hash, headers, raw)
     @hash = hash
     @mailbox = mailbox
     @headers = headers
-    @email = email
+    @raw = raw
     @mailbox = nil # lazily created
   end
 
@@ -51,11 +51,11 @@ class Message
   #
 
   def mail
-    @mail ||= Mail.new(@email)
+    @mail ||= Mail.new(@raw.gsub(LF_ONLY, CRLF))
   end
 
   def raw
-    @email
+    @raw
   end
 
   def id
@@ -162,7 +162,7 @@ class Message
   # write email to disk
   #
   def write_email
-    @mailbox.write_email(@hash, @email)
+    @mailbox.write_email(@hash, @raw)
   end
 
   #
@@ -310,11 +310,15 @@ class Message
   end
 
   # get the message ID
-  def self.getmid(hdrs)
+  def self.getmid(message)
+    # only search headers for MID
+    hdrs = message[/\A(.*?)\r?\n\r?\n/m, 1] || ''
     mid = hdrs[/^Message-ID:.*/i]
     if mid =~ /^Message-ID:\s*$/i # no mid on the first line
       # capture the next line and join them together
-      mid = hdrs[/^Message-ID:.*\r?\n .*/i].sub(/\r?\n/,'')
+      # line may also start with tab; we don't use \s as this also matches EOL
+      # Rescue is in case we don't match properly - we want to return nil in that case
+      mid = hdrs[/^Message-ID:.*\r?\n[ \t].*/i].sub(/\r?\n/,'') rescue nil
     end
     mid
   end
@@ -326,11 +330,15 @@ class Message
     Digest::SHA1.hexdigest(getmid(message) || message)[0..9]
   end
 
+  # Matches LF, but not CRLF
+  LF_ONLY = Regexp.new("(?<!\r)\n")
+  CRLF = "\r\n"
+
   #
   # parse a message, returning headers
   #
   def self.parse(message)
-    mail = Mail.read_from_string(message)
+    mail = Mail.read_from_string(message.gsub(LF_ONLY, CRLF))
 
     headers = Mailbox.headers(mail)
 
