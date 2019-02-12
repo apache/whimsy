@@ -72,3 +72,16 @@ info = {
 }
 
 public_json_output(info)
+
+# detect dropped names; these should not normally occur
+if changed? and @old_file
+  # Note: symbolize_names=false to avoid symbolising variable keys such as pmc and user names
+  # However the current JSON (info) uses symbols for fixed keys - beware!
+  previous = JSON.parse(@old_file, :symbolize_names=>false)
+  now = info[:people].keys
+  old = previous['people'].keys
+  diff = old - now
+  unless diff.empty?
+    Wunderbar.warn "Unexpected removal of following names: #{diff}"
+  end
+end

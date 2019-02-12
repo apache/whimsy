@@ -69,17 +69,19 @@ class Committer
     response[:groups] = person.services
     response[:committer] = []
     response[:podlings] = []
-    committees = ASF::Committee.pmcs.map(&:name)
+    pmc_names = ASF::Committee.pmcs.map(&:name) # From CI
     podlings = ASF::Podling.current.map(&:id)
+
+    # Add group names unless they are a PMC group
     person.groups.map(&:name).each do |group|
-      unless committees.include? group
+      unless pmc_names.include? group
         response[:groups] << group
       end
     end
 
     # Get project(member) details
     person.projects.map(&:name).each do |project|
-      if committees.include? project
+      if pmc_names.include? project
           # Don't show committer karma if person has committee karma
           unless response[:committees].include? project
             # LDAP project group

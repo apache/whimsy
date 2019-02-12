@@ -16,11 +16,11 @@ class Message
   #
   # create a new message
   #
-  def initialize(mailbox, hash, headers, email)
+  def initialize(mailbox, hash, headers, raw)
     @hash = hash
     @mailbox = mailbox
     @headers = headers
-    @email = email
+    @raw = raw
   end
 
   #
@@ -51,11 +51,11 @@ class Message
   #
 
   def mail
-    @mail ||= Mail.new(@email)
+    @mail ||= Mail.new(@raw.gsub(LF_ONLY, CRLF))
   end
 
   def raw
-    @email
+    @raw
   end
 
   def id
@@ -163,7 +163,7 @@ class Message
   def write_email
     dir = @mailbox.dir
     Dir.mkdir dir, 0755 unless Dir.exist? dir
-    File.write File.join(dir, @hash), @email, encoding: Encoding::BINARY
+    File.write File.join(dir, @hash), @raw, encoding: Encoding::BINARY
   end
 
   #
@@ -311,11 +311,15 @@ class Message
   end
 
   # get the message ID
-  def self.getmid(hdrs)
+  def self.getmid(message)
+    # only search headers for MID
+    hdrs = message[/\A(.*?)\r?\n\r?\n/m, 1] || ''
     mid = hdrs[/^Message-ID:.*/i]
     if mid =~ /^Message-ID:\s*$/i # no mid on the first line
       # capture the next line and join them together
-      mid = hdrs[/^Message-ID:.*\r?\n .*/i].sub(/\r?\n/,'')
+      # line may also start with tab; we don't use \s as this also matches EOL
+      # Rescue is in case we don't match properly - we want to return nil in that case
+      mid = hdrs[/^Message-ID:.*\r?\n[ \t].*/i].sub(/\r?\n/,'') rescue nil
     end
     mid
   end
@@ -327,22 +331,17 @@ class Message
     Digest::SHA1.hexdigest(getmid(message) || message)[0..9]
   end
 
+  # Matches LF, but not CRLF
+  LF_ONLY = Regexp.new("(?<!\r)\n")
+  CRLF = "\r\n"
+
   #
   # parse a message, returning headers
   #
   def self.parse(message)
-    # cleanup broken header separators.  Avoid copying the possibly large body
-    # unless a fixup is needed.
-    message.sub! /\AFrom .*\r?\n/i, '' if message =~ /^\AFrom /i
-    headers = message[/(.*?)\r?\n\r?\n/m, 1]
-    if headers.include? "\n" and not headers.include? "\r\n"
-      headers, body = message.split(/\r?\n\r?\n/, 2)
-      headers.gsub!("\n", "\r\n")
-      message = "#{headers}\r\n\r\n#{body}"
-    end
 
-    # parse cleaned up message
-    mail = Mail.read_from_string(message)
+    # parse cleaned up message (need to fix every line, not just headers)
+    mail = Mail.read_from_string(message.gsub(LF_ONLY, CRLF))
 
     # parse from address (if it exists)
     from_value = mail[:from].value rescue ''

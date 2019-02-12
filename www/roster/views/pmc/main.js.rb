@@ -8,12 +8,8 @@ class PMC < Vue
   end
 
   def render
-    if @committee.guinea_pig
-      auth = (@@auth.secretary or @@auth.root or
-        @committee.members.include? @@auth.id)
-    else
-      auth = (@@auth.id == @committee.chair or @@auth.secretary or @@auth.root)
-    end
+    auth = (@@auth.secretary or @@auth.root or
+      @committee.members.include? @@auth.id)
 
     # add jump links to main sections of page using Bootstrap nav element
     _ul.nav.nav_pills do

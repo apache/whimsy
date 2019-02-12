@@ -45,13 +45,14 @@ _html do
     _br
     _ 'LDAP project owners must agree with corresponding committee members'
     _br
+    _ 'project/podling committers must be in committers group'
+    _br
     _ 'The table below show the differences, if any'
   end
 
   _table do
     _tr do
       _th 'Project'
-      _th 'GuineaPig?'
       _th 'project members - group members'
       _th 'group members - project members'
       _th 'project owners - committee members'
@@ -67,14 +68,17 @@ _html do
       pm_um=[]
       um_pm=[]
       notc=[]
-      if c=ASF::Committee[p.name] # we have PMC 
+      # TODO to be removed soon
+      # Use hasLDAP? to check if the underlying ou=pmc group exists
+      if c=ASF::Committee[p.name] and c.hasLDAP? # we have PMC group 
         po=p.ownerids
-        co=c.ownerids
+        co=c.memberids
         po_co=po-co
         co_po=co-po
         notc += po.reject {|n| old.include? n}
         notc += co.reject {|n| old.include? n}
       end
+      # TODO likewise, only applies to historic groups
       if u=ASF::Group[p.name] # we have the unix group
         pm=p.memberids
         um=u.memberids
@@ -88,7 +92,6 @@ _html do
           _td do
             _a p.name, href: '/roster/committee/' + p.name
           end
-          _td ASF::Committee.isGuineaPig?(p.name)
           _td do
             pm_um.each do |id|
               _a id, href: '/roster/committer/' + id

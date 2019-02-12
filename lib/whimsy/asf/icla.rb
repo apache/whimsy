@@ -171,12 +171,44 @@ module ASF
         lines.sort_by {|line| lname(line + "\n")}.join("\n") + "\n"
     end
 
+    # list of mails rejected by badrcptto and badrcptto_patterns
+    # Not intended for external use
+    def self.badmails
+      qmc = ASF::SVN['qmail_control']
+      # non-patterns
+      brt = File.join(qmc, 'badrcptto')
+      badmails = File.read(brt).scan(/^(\w.+)@apache\.org\s*$/).flatten
+      # now parse patterns
+      brtpat = File.join(qmc, 'badrcptto_patterns')
+      File.read(brtpat).each_line do |line|
+        m = line.match(/^\^(\w.+)\\@/)
+        if m
+          badmails << m[1]
+          next
+        end
+        # ^(abc|def|ghi)(jkl|mno|pqr)\@
+        m = line.match(/^\^\(([|\w]+)\)\(([|\w]+)\)\\@/)
+        if m
+          m[1].split('|').each do |one|
+            m[2].split('|').each do |two|
+              badmails << "#{one}#{two}"
+            end
+          end
+        else
+          Wunderbar.warn "Error parsing #{brtpat} : could not match #{line}"
+        end
+      end
+      badmails.uniq
+    end
+
     # list of reserved availids
     def self.availids_reserved
       return @@availids_reserved if @@availids_reserved
       archive = ASF::SVN['officers']
       reserved = File.read(File.join(archive, 'reserved-ids.yml')).scan(/^- (\S+)/).flatten.uniq
-      @@availids_reserved = reserved
+      # Add in badrcptto
+      reserved += self.badmails
+      @@availids_reserved = reserved.uniq
     end
 
     # list of all availids that are are taken or reserved

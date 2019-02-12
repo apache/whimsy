@@ -8,16 +8,21 @@ require 'fileutils'
 MAIL_ROOT = '/srv/mail'
 
 # get the message ID
-def self.getmid(hdrs)
+def self.getmid(message)
+  # only search headers for MID
+  hdrs = message[/\A(.*?)\r?\n\r?\n/m, 1] || ''
   mid = hdrs[/^Message-ID:.*/i]
   if mid =~ /^Message-ID:\s*$/i # no mid on the first line
     # capture the next line and join them together
-    mid = hdrs[/^Message-ID:.*\r?\n .*/i].sub(/\r?\n/,'')
+    # line may also start with tab; we don't use \s as this also matches EOL
+    # Rescue is in case we don't match properly - we want to return nil in that case
+    mid = hdrs[/^Message-ID:.*\r?\n[ \t].*/i].sub(/\r?\n/,'') rescue nil
   end
   mid
 end
 
-mail = STDIN.read.force_encoding('binary')
+STDIN.binmode
+mail = STDIN.read
 
 # extract info
 dest = mail[/^List-Id: <(.*)>/, 1] || mail[/^Delivered-To.* (\S+)\s*$/, 1] || 'unknown'

@@ -4,9 +4,9 @@
 
 class Group
   def self.list
-    # start with groups that aren't PMCs
+    # start with groups that aren't PMCs or podlings etc
     groups = ASF::Group.list.map(&:id)
-    groups -= ASF::Committee.list.map(&:id)
+    groups -= ASF::Project.listids # These are PMCs and podlings and other committees
     groups.map! {|group| [group, "LDAP group"]}
 
     # add services...

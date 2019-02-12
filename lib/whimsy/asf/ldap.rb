@@ -775,13 +775,17 @@ module ASF
     end
 
     # list of LDAP committees that this individual is a member of
+    # TODO should this be deleted? 
+    # It seems to be used partly as LDAP membership and partly as PMC membership (which were originally generally the same)
+    # If the former, then it disappears.
+    # If the latter, then it needs to be derived from project_owners filtered to keep only PMCs
     def committees
       # legacy LDAP entries
       committees = weakref(:committees) do
         Committee.list("member=uid=#{name},#{base}")
       end
 
-      # add in projects (currently only includes GUINEAPIGS)
+      # add in projects
       # Get list of project names where the person is an owner
       projects = self.projects.select{|prj| prj.owners.include? self}.map(&:name)
       committees += ASF::Committee.pmcs.select do |pmc| 
@@ -800,7 +804,6 @@ module ASF
     end
 
     # list of LDAP projects that this individual is an owner of - i.e. on (P)PMC
-    # not all PMC currently have project groups
     def project_owners
       weakref(:project_owners) do
         Project.list("owner=uid=#{name},#{base}")
@@ -1072,6 +1075,11 @@ module ASF
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| Project.find(cn)}
     end
 
+    # obtain a list of projectids from LDAP
+    def self.listids(filter='cn=*')
+      ASF.search_one(base, filter, 'cn').flatten
+    end
+
     # return project only if it actually exits
     def self.[] name
       project = super
@@ -1088,6 +1096,7 @@ module ASF
         project.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
         members = results['member'] || []
         owners = results['owner'] || []
+        # TODO members and owners are duplicated in the project object and the returned hash
         project.members = members
         project.owners = owners
         [project, [members, owners]] # TODO is this correct? it seems to work...
@@ -1228,15 +1237,21 @@ module ASF
   end
 
   class Committee < Base
+    # TODO what to do about this? Change to ou=project or drop?
+    # It's used by the methods: self.list, self.preload, member[id]s
     @base = 'ou=pmc,ou=committees,ou=groups,dc=apache,dc=org'
 
     # return a list of committees, from LDAP.
+    # TODO this stopped returning all PMCs when guinea pigs were introduced
+    # Should it be dropped, or made to return the list of PMCs ?
+    # No longer used
     def self.list(filter='cn=*')
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| Committee.find(cn)}
     end
 
     # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
     # <tt>createTimestamp</tt> for all committees in LDAP.
+    # TODO - delete? Not sure it's used anymore
     def self.preload
       Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
@@ -1255,11 +1270,11 @@ module ASF
     # Date this committee was initially created in LDAP.
     attr_accessor :createTimestamp
 
-    # return committee only if it actually exits
+    # return committee only if it actually exists
     def self.[] name
       committee = super
-      return committee if GUINEAPIGS.include? name
-      committee.members.empty? ? nil : committee
+      # Cannot rely on presence/absence of LDAP record as projects includes podlings
+      (ASF::Committee.pmcs+ASF::Committee.nonpmcs).map(&:name).include?(name) ? committee : nil
     end
 
     # setter for members attribute, should only be used by 
@@ -1287,114 +1302,56 @@ module ASF
       members.map {|uid| uid[/uid=(.*?),/,1]}
     end
 
-    # temp list of projects that have moved over to new project LDAP schema
-    GUINEAPIGS = %w(incubator whimsy jmeter axis mynewt atlas accumulo
-      madlib streams fluo impala)
-
-    # is the current PMC a guineapig?
-    def isGuineaPig?
-      GUINEAPIGS.include? name
-    end
-
-    # is the PMC a guineapig?
-    def self.isGuineaPig? (name)
-      GUINEAPIGS.include? name
-    end
-
     # List of owners for this committee, i.e. people who are members of the
     # committee and have update access.  Data is obtained from LDAP.
-    # Takes info from Project for GUINEAPIGS else the committee member roster
+    # Takes info from Project
     def owners
-      if GUINEAPIGS.include? name
-        ASF::Project.find(name).owners
-      else
-        members
-      end
+      ASF::Project.find(name).owners
     end
 
     # List of owner ids for this committee
-    # Takes info from Project for GUINEAPIGS else the committee member roster
+    # Takes info from Project
     def ownerids
-      if GUINEAPIGS.include? name
-        ASF::Project.find(name).ownerids
-      else
-        memberids
-      end
+      ASF::Project.find(name).ownerids
     end
 
     # List of committers for this committee.  Data is obtained from LDAP.  This
     # data is generally stored in an attribute named <tt>member</tt>.
-    # Takes info from Project for GUINEAPIGS else the Group
+    # Takes info from Project
     def committers
-      if GUINEAPIGS.include? name
-        ASF::Project.find(name).members
-      else
-        ASF::Group.find(name).members
-      end
+      ASF::Project.find(name).members
     end
 
     # List of committer ids for this committee
-    # Takes info from Project for GUINEAPIGS else the Group
+    # Takes info from Project
     def committerids
-      if GUINEAPIGS.include? name
-        ASF::Project.find(name).memberids
-      else
-        ASF::Group.find(name).memberids
-      end
+      ASF::Project.find(name).memberids
     end
 
     # remove people as owners of a project in LDAP
     def remove_owners(people)
-      if GUINEAPIGS.include? name
-        ASF::Project.find(name).remove_owners(people)
-      else
-        project = ASF::Project[name]
-        project.remove_owners(people) if project
-        remove(people)
-      end
+      ASF::Project.find(name).remove_owners(people)
     end
 
     # remove people as members of a project in LDAP
     def remove_committers(people)
-      if GUINEAPIGS.include? name
-        ASF::Project.find(name).remove_members(people)
-      else
-        project = ASF::Project[name]
-        project.remove_members(people) if project
-        ASF::Group.find(name).remove(people)
-      end
+      ASF::Project.find(name).remove_members(people)
     end
 
     # add people as owners of a project in LDAP
     def add_owners(people)
-      if GUINEAPIGS.include? name
-        ASF::Project.find(name).add_owners(people)
-      else
-        project = ASF::Project[name]
-        project.add_owners(people) if project
-        add(people)
-      end
+      ASF::Project.find(name).add_owners(people)
     end
 
     # add people as committers of a project.  This information is stored
     # in LDAP using a <tt>members</tt> attribute.
     def add_committers(people)
-      if GUINEAPIGS.include? name
-        ASF::Project.find(name).add_members(people)
-      else
-        project = ASF::Project[name]
-        project.add_members(people) if project
-        ASF::Group.find(name).add(people)
-      end
+      ASF::Project.find(name).add_members(people)
     end
 
     # Designated Name from LDAP
     def dn
-      if GUINEAPIGS.include? name
-        @dn ||= ASF::Project.find(name).dn
-      else
-        @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first rescue nil
-      end
+      @dn ||= ASF::Project.find(name).dn
     end
 
     # DEPRECATED remove people from a committee.  Call #remove_owners instead.
@@ -1417,21 +1374,6 @@ module ASF
       @members = nil
     end
 
-    # add a new committee to LDAP
-    def self.add(name, people)
-      entry = [
-        mod_add('objectClass', ['groupOfNames', 'top']),
-        mod_add('cn', name),
-        mod_add('member', Array(people).map(&:dn))
-      ]
-
-      ASF::LDAP.add("cn=#{name},#{base}", entry)
-    end
-
-    # remove a committee from LDAP
-    def self.remove(name)
-      ASF::LDAP.delete("cn=#{name},#{base}")
-    end
   end
 
   #
@@ -1565,11 +1507,6 @@ end
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
-  %w{attic jmeter httpd}.each do |w|
-    print w, ' '
-    print ASF::Committee[w].isGuineaPig?,' '
-    puts ASF::Committee.isGuineaPig?(w)   
-  end
   ASF::RoleGroup.listcns.map {|g| puts ASF::RoleGroup.find(g).dn}
   ASF::AppGroup.listcns.map {|g| puts ASF::AppGroup.find(g).dn}
 end

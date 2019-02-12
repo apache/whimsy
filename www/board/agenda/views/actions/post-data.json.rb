@@ -46,7 +46,7 @@ when 'committee-list'
   committees[:chair] + committees[:member] + committees[:rest]
 
 when 'committee-members'
-  committee = ASF::Committee.find(@pmc)
+  committee = ASF::Committee[@pmc]
   return unless committee
   chair = committee.chairs.first
   return unless chair

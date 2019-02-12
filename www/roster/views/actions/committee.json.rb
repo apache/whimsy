@@ -1,6 +1,5 @@
 if env.password
   pmc = ASF::Committee[@project]
-  group = ASF::Group.find(@project) if @targets.include? 'commit'
 
   # validate arguments
   if @action == 'remove' 
@@ -20,10 +19,10 @@ if env.password
     ASF::LDAP.bind(env.user, env.password) do
       if @action == 'add'
         pmc.add_owners(people) if @targets.include? 'pmc'
-        pmc.add_committers(people) if group
+        pmc.add_committers(people) if @targets.include? 'commit'
       elsif @action == 'remove'
         pmc.remove_owners(people) if @targets.include? 'pmc'
-        pmc.remove_committers(people) if group
+        pmc.remove_committers(people) if @targets.include? 'commit'
       end
     end
   end
@@ -98,7 +97,8 @@ if env.password
   # compose E-mail
   action = (@action == 'add' ? 'added to' : 'removed from')
   if @targets.include? 'pmc'
-    list = group ? 'PMC and committers list' : 'PMC list'
+    # must use () to enclose method parameter below as ? binds tighter
+    list = @targets.include?('commit') ? 'PMC and committers list' : 'PMC list'
   elsif @targets.include? 'info'
     list = 'in committee-info.txt'
   else
@@ -106,13 +106,8 @@ if env.password
   end
 
   details = people.map {|person| person.dn}
-  if ASF::Committee::GUINEAPIGS.include? pmc.id
-    details << "#{pmc.dn};attr=owner" if @targets.include? 'pmc'
-    details << "#{pmc.dn};attr=member" if group
-  else
-    details << pmc.dn if @targets.include? 'pmc'
-    details << group.dn if group
-  end
+  details << "#{pmc.dn};attr=owner" if @targets.include? 'pmc'
+  details << "#{pmc.dn};attr=member" if @targets.include? 'commit'
 
   cc = people.map do |person| 
     "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint

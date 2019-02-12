@@ -133,6 +133,14 @@ module ASF
     def self.taken?(id)
       self.qmail_ids.include? id
     end
+
+    # Convert list name to form used in bin/.archives
+    def self.archivelistid(dom,list)
+      return "apachecon-#{list}" if dom == 'apachecon.com'
+      return list if dom == 'apache.org'
+      dom.sub(".apache.org",'-') + list
+    end
+    
   end
 
   class Person < Base
