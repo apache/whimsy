@@ -19,7 +19,8 @@ def self.getmid(hdrs)
   mid
 end
 
-mail = STDIN.read.force_encoding('binary')
+STDIN.binmode
+mail = STDIN.read
 
 # extract info
 dest = mail[/^List-Id: <(.*)>/, 1] || mail[/^Delivered-To.* (\S+)\s*$/, 1] || 'unknown'
