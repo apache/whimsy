@@ -315,7 +315,9 @@ class Message
     mid = hdrs[/^Message-ID:.*/i]
     if mid =~ /^Message-ID:\s*$/i # no mid on the first line
       # capture the next line and join them together
-      mid = hdrs[/^Message-ID:.*\r?\n .*/i].sub(/\r?\n/,'')
+      # line may also start with tab; we don't use \s as this also matches EOL
+      # Rescue is in case we don't match properly - we want to return nil in that case
+      mid = hdrs[/^Message-ID:.*\r?\n[ \t].*/i].sub(/\r?\n/,'') rescue nil
     end
     mid
   end
