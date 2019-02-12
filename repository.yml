@@ -77,6 +77,11 @@
   officers_historic:
     url: private/foundation/officers/historic
 
+# for access to badrcptto files:
+  qmail_control:
+    url: infra/infrastructure/trunk/qmail/control
+    depth: files
+
   site-board:
     url: asf/infrastructure/site/trunk/content/foundation/board
     depth: files
