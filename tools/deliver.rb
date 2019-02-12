@@ -8,9 +8,7 @@ require 'fileutils'
 MAIL_ROOT = '/srv/mail'
 
 # get the message ID
-def self.getmid(message)
-  # only search headers for MID
-  hdrs = message[/\A(.*?)\r?\n\r?\n/m, 1] || ''
+def self.getmid(hdrs)
   mid = hdrs[/^Message-ID:.*/i]
   if mid =~ /^Message-ID:\s*$/i # no mid on the first line
     # capture the next line and join them together
@@ -24,10 +22,13 @@ end
 STDIN.binmode
 mail = STDIN.read
 
+# only search headers for MID and List-ID etc
+hdrs = mail[/\A(.*?)\r?\n\r?\n/m, 1] || ''
+
 # extract info
-dest = mail[/^List-Id: <(.*)>/, 1] || mail[/^Delivered-To.* (\S+)\s*$/, 1] || 'unknown'
+dest = hdrs[/^List-Id: <(.*)>/, 1] || hdrs[/^Delivered-To.* (\S+)\s*$/, 1] || 'unknown'
 month = Time.now.strftime('%Y%m')
-hash = Digest::SHA1.hexdigest(getmid(mail) || mail)[0..9]
+hash = Digest::SHA1.hexdigest(getmid(hdrs) || mail)[0..9]
 
 # build file name
 file = "#{MAIL_ROOT}/#{dest[/^[-\w]+/]}/#{month}/#{hash}"
