@@ -311,7 +311,9 @@ class Message
   end
 
   # get the message ID
-  def self.getmid(hdrs)
+  def self.getmid(message)
+    # only search headers for MID
+    hdrs = message[/\A(.*?)\r?\n\r?\n/m, 1] || ''
     mid = hdrs[/^Message-ID:.*/i]
     if mid =~ /^Message-ID:\s*$/i # no mid on the first line
       # capture the next line and join them together
