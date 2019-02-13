@@ -18,7 +18,7 @@ module ASF
   # ASF::Committee.load_committee_info is called.
   #
   # Similarly, the simple attributes which are sourced from LDAP is
-  # generally not available until ASF::Committee.preload is called.
+  # generally not available until ASF::Project.preload is called.
 
   class Committee < Base
     # list of chairs for this committee.  Returned as a list of hashes
