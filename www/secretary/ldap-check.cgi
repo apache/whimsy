@@ -2,11 +2,10 @@
 
 =begin
 
-Compare LDAP lists
+Compare LDAP lists (also CI)
 
-project.memberids should agree with Group.memberids (if it exixts)
-project.ownerids should agree with Committee.memberids (if it exists)
-
+PMC members should be the same as project owners (for actual PMCs)
+owners should also be members
 members and owners should also be committers
 
 The two committers groups should have the same members:
@@ -41,9 +40,9 @@ _html do
   _h2 'members and owners'
 
   _p do
-    _ 'LDAP project members must agree with corresponding (unix) group members'
+    _ 'PMC members should be project owners and vice-versa'
     _br
-    _ 'LDAP project owners must agree with corresponding committee members'
+    _ 'LDAP project owners should also be project members'
     _br
     _ 'project/podling committers must be in committers group'
     _br
@@ -53,62 +52,49 @@ _html do
   _table do
     _tr do
       _th 'Project'
-      _th 'project members - group members'
-      _th 'group members - project members'
-      _th 'project owners - committee members'
-      _th 'committee-members - project owners'
-      _th 'not in committers group'
+      _th 'PMC member but not project owner'
+      _th 'Project owner but not PMC member'
+      _th 'Project owner but not project member'
+      _th 'in project (owner or member) but not in committers group'
     end
 
     projects = ASF::Project.list
+    pmcs = ASF::Committee.pmcs
     
     projects.sort_by(&:name).each do |p|
-      po_co=[]
-      co_po=[]
-      pm_um=[]
-      um_pm=[]
+      po=p.ownerids
+      pm=p.memberids
+      po_pm = po - pm
+      cttee = ASF::Committee.find(p.name)
+      # Is this a real PMC?
+      if ASF::Committee.pmcs.include? cttee
+        cm = cttee.roster.keys
+        cm_po = cm - po
+        po_cm = po - cm
+      else
+        cm_po = []
+        po_cm = []
+      end
       notc=[]
-      # TODO to be removed soon
-      # Use hasLDAP? to check if the underlying ou=pmc group exists
-      if c=ASF::Committee[p.name] and c.hasLDAP? # we have PMC group 
-        po=p.ownerids
-        co=c.memberids
-        po_co=po-co
-        co_po=co-po
-        notc += po.reject {|n| old.include? n}
-        notc += co.reject {|n| old.include? n}
-      end
-      # TODO likewise, only applies to historic groups
-      if u=ASF::Group[p.name] # we have the unix group
-        pm=p.memberids
-        um=u.memberids
-        pm_um=pm-um
-        um_pm=um-pm
-        notc += pm.reject {|n| old.include? n}
-        notc += um.reject {|n| old.include? n}
-      end
-      if pm_um.size > 0 or um_pm.size > 0 or po_co.size > 0 or co_po.size > 0 or notc.size > 0
+      notc += po.reject {|n| old.include? n}
+      notc += pm.reject {|n| old.include? n}
+      if po_pm.size > 0 or cm_po.size > 0 or po_cm.size > 0 or notc.size > 0
         _tr do
           _td do
             _a p.name, href: '/roster/committee/' + p.name
           end
           _td do
-            pm_um.each do |id|
+            cm_po.each do |id|
               _a id, href: '/roster/committer/' + id
             end
           end
           _td do
-            um_pm.each do |id|
+            po_cm.each do |id|
               _a id, href: '/roster/committer/' + id
             end
           end
           _td do
-            po_co.each do |id|
-              _a id, href: '/roster/committer/' + id
-            end
-          end
-          _td do
-            co_po.each do |id|
+            po_pm.each do |id|
               _a id, href: '/roster/committer/' + id
             end
           end
