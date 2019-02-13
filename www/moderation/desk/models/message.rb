@@ -122,36 +122,6 @@ class Message
   end
 
   #
-  # attachment operations: update, replace, delete
-  #
-
-  def update_attachment name, values
-    attachment = find(name)
-    if attachment
-      attachment.headers.merge! values
-      write_headers
-    end
-  end
-
-  def replace_attachment name, values
-    attachment = find(name)
-    if attachment
-      index = @headers[:attachments].find_index(attachment.headers)
-      @headers[:attachments][index, 1] = Array(values)
-      write_headers
-    end
-  end
-
-  def delete_attachment name
-    attachment = find(name)
-    if attachment
-      @headers[:attachments].delete attachment.headers
-      @headers[:status] = :deleted if @headers[:attachments].empty?
-      write_headers
-    end
-  end
-
-  #
   # write updated headers to disk
   #
   def write_headers
@@ -163,41 +133,6 @@ class Message
   #
   def write_email
     @mailbox.write_email(@hash, @raw)
-  end
-
-  #
-  # write one or more attachments to directory containing an svn checkout
-  #
-  def write_svn(repos, filename, *attachments)
-    # drop all nil and empty values
-    attachments = attachments.flatten.reject {|name| name.to_s.empty?}
-
-    # if last argument is a Hash, treat it as name/value pairs
-    attachments += attachments.pop.to_a if Hash === attachments.last
-
-    if attachments.flatten.length == 1
-      ext = File.extname(attachments.first).downcase.untaint
-      find(attachments.first).write_svn(repos, filename + ext)
-    else
-      # validate filename
-      unless filename =~ /\A[a-zA-Z][-.\w]+\z/
-        raise IOError.new("invalid filename: #{filename}")
-      end
-
-      # create directory, if necessary
-      dest = File.join(repos, filename).untaint
-      unless File.exist? dest
-        Dir.mkdir dest 
-        Kernel.system 'svn', 'add', dest
-      end
-
-      # write out selected attachment
-      attachments.each do |attachment, basename|
-        find(attachment).write_svn(repos, filename, basename)
-      end
-
-      dest
-    end
   end
 
   #
