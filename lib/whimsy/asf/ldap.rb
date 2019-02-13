@@ -1238,23 +1238,8 @@ module ASF
 
   class Committee < Base
     # TODO what to do about this? Change to ou=project or drop?
-    # It's used by the methods: self.preload, member[id]s
+    # It's used by the methods: member[id]s
     @base = 'ou=pmc,ou=committees,ou=groups,dc=apache,dc=org'
-
-    # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
-    # <tt>createTimestamp</tt> for all committees in LDAP.
-    # TODO - delete? Not sure it's used anymore
-    def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
-        cn = results['dn'].first[/^cn=(.*?),/, 1]
-        committee = ASF::Committee.find(cn)
-        committee.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
-        committee.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
-        members = results['member'] || []
-        committee.members = members
-        [committee, members]
-      end]
-    end
 
     # Date this committee was last modified in LDAP.
     attr_accessor :modifyTimestamp
@@ -1267,12 +1252,6 @@ module ASF
       committee = super
       # Cannot rely on presence/absence of LDAP record as projects includes podlings
       (ASF::Committee.pmcs+ASF::Committee.nonpmcs).map(&:name).include?(name) ? committee : nil
-    end
-
-    # setter for members attribute, should only be used by 
-    # ASF::Committee.preload
-    def members=(members)
-      @members = WeakRef.new(members)
     end
 
     # DEPRECATED.  List of members for this committee.  Use owners as it
