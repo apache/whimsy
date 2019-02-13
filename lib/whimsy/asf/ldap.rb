@@ -1238,16 +1238,8 @@ module ASF
 
   class Committee < Base
     # TODO what to do about this? Change to ou=project or drop?
-    # It's used by the methods: self.list, self.preload, member[id]s
+    # It's used by the methods: self.preload, member[id]s
     @base = 'ou=pmc,ou=committees,ou=groups,dc=apache,dc=org'
-
-    # return a list of committees, from LDAP.
-    # TODO this stopped returning all PMCs when guinea pigs were introduced
-    # Should it be dropped, or made to return the list of PMCs ?
-    # No longer used
-    def self.list(filter='cn=*')
-      ASF.search_one(base, filter, 'cn').flatten.map {|cn| Committee.find(cn)}
-    end
 
     # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
     # <tt>createTimestamp</tt> for all committees in LDAP.
