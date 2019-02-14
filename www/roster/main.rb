@@ -216,7 +216,7 @@ get '/ppmc/:name' do |name|
   @auth = Auth.info(env)
 
   user = ASF::Person.find(env.user)
-  @auth[:ipmc] = ASF::Committee.find('incubator').members.include? user
+  @auth[:ipmc] = ASF::Committee.find('incubator').owners.include? user
 
   @ppmc = PPMC.serialize(name, env)
   pass unless @ppmc
