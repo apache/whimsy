@@ -27,7 +27,7 @@ def display_errors(current)
         _tbody do
           logs.each do | key, val |
             _tr_ do
-              _td do
+              _td :class => 'nowrap' do
                 _ key
               end
               _td do
@@ -116,6 +116,11 @@ def display_access()
 end
 
 _html do
+  _style %{
+    .nowrap {
+      white-space: nowrap;
+    }
+  }
   _body? do
     _whimsy_body(
       title: PAGETITLE,
@@ -128,7 +133,7 @@ _html do
       },
       helpblock: -> {
         _p 'This parses error.log and whimsy_error.log and displays a condensed version, in time order (approximate).'
-        _p 'Append "?week" to get results for the last week, and "?access" to parse the access logs instead'
+        _p 'Append "?week" to the URL to get results for the last week, and "?access" to parse the access logs instead'
         _p do
           _span.text_warning 'Reminder: '
           _span.glyphicon.glyphicon_lock :aria_hidden
