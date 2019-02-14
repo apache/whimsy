@@ -11,7 +11,7 @@ require 'whimsy/asf'
 
 # Authenticate - must be first!
 user = ASF::Person.find($USER)
-incubator = ASF::Committee.find('incubator').members
+incubator = ASF::Committee.find('incubator').owners
 unless user.asf_member? or incubator.include? user
   print "Status: 401 Unauthorized\r\n"
   print "WWW-Authenticate: Basic realm=\"Incubator PMC and Members\"\r\n\r\n"
