@@ -4,7 +4,9 @@ $LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
 require 'shellwords'
 require 'whimsy/asf'
 
-# TODO: determine apmail@hermes,wheel@hermes gorup membership
+# TODO: determine apmail@hermes,wheel@hermes group membership
+# TODO: .members. checks are obsolete, but this script does not appear to be usable anyway
+# as apmail and wheel don't exist, nor does /home/apmail/subscriptions/mods
 unless apmail.include? $USER or wheel.include? $USER
   pmc = ENV['PATH_INFO'][/\/([-\w]+)\.apache\.org\//,1]
   pmc &&= ASF::Committee.find(pmc)
