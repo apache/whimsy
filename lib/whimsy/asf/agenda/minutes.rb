@@ -19,13 +19,13 @@ class ASF::Board::Agenda
       attrs['text'] = attrs['text'].strip
       attrs['approved'] = attrs['approved'].strip.gsub(/\s+/, ' ')
 
-      begin # try to placate Travis
-        FOUNDATION_BOARD = ASF::SVN['foundation_board'] 
+      # Placate Travis
+      FOUNDATION_BOARD = ASF::SVN.find('foundation_board')
+      if FOUNDATION_BOARD
         file = attrs['text'][/board_minutes[_\d]+\.txt/].untaint
         if file and File.exist?(File.join(FOUNDATION_BOARD, file))
           attrs['mtime'] = File.mtime(File.join(FOUNDATION_BOARD, file)).to_i
         end
-      rescue
       end
     end
   end
