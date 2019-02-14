@@ -1255,9 +1255,9 @@ module ASF
       (ASF::Committee.pmcs+ASF::Committee.nonpmcs).map(&:name).include?(name) ? committee : nil
     end
 
-    # DEPRECATED.  List of members for this committee.  Use owners as it
-    # is less ambiguous.
+    # DO NOT USE: relies on outdated ou=pmc LDAP. Uses owners instead.
     def members
+      Wunderbar.warn("Committee.members #{caller[0,4]}")
       members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
@@ -1265,8 +1265,9 @@ module ASF
       members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
-    # List of ids in the member attribute for this committee
+    # DO NOT USE: relies on outdated ou=pmc LDAP. Uses ownerids instead.
     def memberids
+      Wunderbar.warn("Committee.memberids #{caller[0,4]}")
       members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
