@@ -8,6 +8,7 @@ WHITELIST = [
   /^archive-asf-private@cust-asf\.ponee\.io$/,
   /^private@mbox-vm\.apache\.org$/,
   /^security-archive@.*\.apache\.org$/,
+  /^apmail-\w+-security-archive@www.apache.org/, # Direct subscription
 ]
 
 # ensure that there is a trailing slash (so relative paths will work)
