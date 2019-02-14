@@ -39,6 +39,36 @@ _html do
       end
 
     elsif lists[path]
+      _table do
+        _tr do
+          _th 'Legend'
+        end
+        _tr do
+          _td do
+            _ 'Archiver'
+          end
+        end
+        _tr do
+          _td class: 'bg-success' do
+            _ 'ASF member or project member'
+          end
+        end
+        _tr do
+          _td class: 'bg-info' do
+            _ 'Project committer - not on (P)PMC'
+          end
+        end
+        _tr do
+          _td class: 'bg-warning' do
+            _ 'ASF committer not associated with the project'
+          end
+        end
+        _tr do
+          _td class: 'bg-danger' do
+            _ 'Person (email) not recognised'
+          end
+        end
+      end
       podling = ASF::Podling.find(path)
       committee = ASF::Committee.find(path)
       project = ASF::Project.find(path)
@@ -64,8 +94,10 @@ _html do
           lists[path].sort_by {|email| email.downcase}.each do |email|
             person = ASF::Person.find_by_email(email)
             if person
-              if person.asf_member? or project.members.include? person
+              if person.asf_member? or project.owners.include? person
                 color = 'bg-success'
+              elsif project.members.include? person
+                color = 'bg-info'
               else
                 color = 'bg-warning'
               end
