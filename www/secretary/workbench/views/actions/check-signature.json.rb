@@ -4,6 +4,9 @@
 
 ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 
+#KEYSERVER = 'pgpkeys.mit.edu'
+KEYSERVER = 'hkps.pool.sks-keyservers.net'
+
 message = Mailbox.find(@message)
 
 begin
@@ -28,9 +31,11 @@ begin
     # extract and fetch key
     keyid = err[/[RD]SA key (ID )?(\w+)/,2].untaint
 
-    out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', 'pgpkeys.mit.edu',
-      '--keyserver-options', 'verbose',
+    out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', KEYSERVER,
+      '--debug-all',
       '--recv-keys', keyid
+    # for later analysis
+    Wunderbar.warn "#{gpg} --recv-keys #{keyid} rc2=#{rc2} out2=#{out2} err2=#{err2}"
 
     # run gpg verify command again
     out, err, rc = Open3.capture3 gpg, '--verify', signature.path,
