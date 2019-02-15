@@ -29,7 +29,7 @@ begin
     keyid = err[/[RD]SA key (ID )?(\w+)/,2].untaint
 
     out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', 'pgpkeys.mit.edu',
-      '--keyserver-options debug',
+      '--keyserver-options', 'debug',
       '--recv-keys', keyid
 
     # run gpg verify command again
