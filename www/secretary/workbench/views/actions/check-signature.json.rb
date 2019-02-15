@@ -32,7 +32,7 @@ begin
     keyid = err[/[RD]SA key (ID )?(\w+)/,2].untaint
 
     out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', KEYSERVER,
-      '--debug-all',
+      '--debug', 'ipc', # seems to show communication with dirmngr
       '--recv-keys', keyid
     # for later analysis
     Wunderbar.warn "#{gpg} --recv-keys #{keyid} rc2=#{rc2} out2=#{out2} err2=#{err2}"
