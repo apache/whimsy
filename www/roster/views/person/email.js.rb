@@ -7,12 +7,24 @@ class PersonEmail < Vue
     committer = @@person.state.committer
 
     _div.row do
-      _div.name 'Email addresses'
+      _div.name do
+        _ 'Email addresses '
+        _b do
+          _ '(forwards)'          
+        end
+        
+      end
 
       _div.value do
         _ul committer.mail do |url|
           _li do
-            _a url, href: 'mailto:' + url
+            if committer.mail_default.include?(url)
+              _b do
+                _a url, href: 'mailto:' + url
+              end
+            else
+              _a url, href: 'mailto:' + url
+            end
           end
         end
       end
