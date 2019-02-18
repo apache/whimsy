@@ -75,7 +75,7 @@ task :pristine do
 end
 
 task :config do
-  $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
 end
 

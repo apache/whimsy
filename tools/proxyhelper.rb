@@ -3,7 +3,7 @@
 # TODO Add function to email proxies with their info
 # TODO Add function to cross-check irc log that all proxy/attendee were marked
 
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 require 'mail'
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Board@ List CrossCheck - PMC Chairs" # Wvisible:board,mail
 
-$LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'

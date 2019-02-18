@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Example Whimsy Script With Styles" # Wvisible:tools Note: PAGETITLE must be double quoted
 
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'json'
 require 'whimsy/asf'
 require 'wunderbar'

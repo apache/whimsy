@@ -3,7 +3,7 @@ PAGETITLE = "Incubator Mentor Signoffs" # Wvisible:incubator
 
 # quick and dirty script to tally up which mentors have been providing
 # signoffs and which have not.
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'nokogiri'
 require 'wunderbar'
 require 'wunderbar/bootstrap'

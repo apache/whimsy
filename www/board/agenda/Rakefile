@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.expand_path('../../../../lib', __FILE__)
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 
 # Remove world writable directories that Travis may insert into the PATH,
 # as these cause security errors during testing

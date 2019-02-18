@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Member's Meeting Attendance Cross-Check" # Wvisible:meeting
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
 require 'wunderbar/bootstrap'

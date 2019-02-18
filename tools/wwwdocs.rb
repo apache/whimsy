@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # Scan all /www scripts for WVisible PAGETITLE and categories
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 SCANDIR = "../www"
 ISERR = '!'

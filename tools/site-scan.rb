@@ -6,7 +6,7 @@
 #   See Also: lib/whimsy/sitestandards.rb
 #
 # Makes no value judgements.  Simply extracts raw data for offline analysis.
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'net/http'
 require 'nokogiri'
 require 'json'

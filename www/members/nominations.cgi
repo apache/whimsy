@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Member nominations cross-check" # Wvisible:meeting
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'mail'
 require 'wunderbar/bootstrap'

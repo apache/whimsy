@@ -4,7 +4,7 @@ PAGETITLE = "Board Agenda Auth Tester" # Wvisible:board tools
 # Small CGI to help debug board agenda authentication issues
 #
 
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf/rack'

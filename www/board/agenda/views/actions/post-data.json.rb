@@ -7,7 +7,7 @@
 
 # debugging support: enable script to be run from the command line
 if $0 == __FILE__
-  $LOAD_PATH.unshift File.realpath(File.expand_path('../'*6 + 'lib', __FILE__))
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
   Dir.chdir File.expand_path('../..', __dir__)
   require './helpers/string'
   require 'whimsy/asf'

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Public Datafiles And Dependencies" # Wvisible:tools data
 
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'json'
 
 # Command line use: emit replacement for www/public/README.html 

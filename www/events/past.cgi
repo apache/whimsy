@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 PAGETITLE = "ApacheCon Historical Listing" # Wvisible:events,apachecon
 
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'csv'
 require 'json'
 require 'whimsy/asf'

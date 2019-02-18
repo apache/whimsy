@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Listing Of Whimsy Tools" # Wvisible:tools
 
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'json'
 require 'whimsy/asf'
 require 'wunderbar'

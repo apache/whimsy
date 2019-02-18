@@ -7,7 +7,7 @@
 # Count lines of text content in mail body, roughly attempting to 
 #   count just new content (not automated, not > replies)
 
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 require 'mail'
 require 'csv'

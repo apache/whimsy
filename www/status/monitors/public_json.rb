@@ -94,7 +94,7 @@ def Monitor.public_json(previous_status)
           $stderr.puts "Would send e-mail for #{name} #{lvl}"
           begin
             require 'mail'
-            $LOAD_PATH.unshift File.realpath(File.expand_path('../../../../lib', __FILE__))
+            $LOAD_PATH.unshift '/srv/whimsy/lib'
             require 'whimsy/asf'
             ASF::Mail.configure
             mail = Mail.new do

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Mapping Committer IDs In JIRA and Confluence" # Wvisible:tools 
 
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'tmpdir'
 require 'json'
 require 'time'

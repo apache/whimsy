@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Apache Mailing list Request Form" # Wvisible:infra mail list
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'shellwords'
 require 'mail'

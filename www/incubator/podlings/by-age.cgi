@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Incubator Podlings By Age" # Wvisible:incubator historical
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'nokogiri'
 require 'date'
 require 'net/http'

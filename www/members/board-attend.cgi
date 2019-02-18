@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Board Meeting Attendance since 2010" # Wvisible:meeting
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
 require 'whimsy/asf/agenda'

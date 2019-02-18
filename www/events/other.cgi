@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Other FOSS Conference Listings" # Wvisible:events
 
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'json'
 require 'net/http'
 require 'whimsy/asf'

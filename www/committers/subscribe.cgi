@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "ASF Mailing List Subscription Helper" # Wvisible:mail subscribe
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'mail'
