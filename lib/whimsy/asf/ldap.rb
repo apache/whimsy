@@ -1306,26 +1306,6 @@ module ASF
       @dn ||= ASF::Project.find(name).dn
     end
 
-    # DEPRECATED remove people from a committee.  Call #remove_owners instead.
-    def remove(people)
-      @members = nil
-      people = (Array(people) & members).map(&:dn)
-      return if people.empty?
-      ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('member', people)])
-    ensure
-      @members = nil
-    end
-
-    # DEPRECATED.  add people to a committee.  Call #add_owners instead.
-    def add(people)
-      @members = nil
-      people = (Array(people) - members).map(&:dn)
-      return if people.empty?
-      ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('member', people)])
-    ensure
-      @members = nil
-    end
-
   end
 
   #
