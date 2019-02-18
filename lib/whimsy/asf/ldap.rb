@@ -1237,21 +1237,28 @@ module ASF
     end
   end
 
+  # represenation of Committee, i.e. entry in committee-info.txt
+  # includes PMCs and other committees, but does not include podlings
   class Committee < Base
-    # TODO what to do about this? Change to ou=project or drop?
-    @base = 'ou=pmc,ou=committees,ou=groups,dc=apache,dc=org'
-
-    # Date this committee was last modified in LDAP.
-    attr_accessor :modifyTimestamp
-
-    # Date this committee was initially created in LDAP.
-    attr_accessor :createTimestamp
+    @base = nil # not sure it makes sense to define base here
 
     # return committee only if it actually exists
     def self.[] name
       committee = super
       # Cannot rely on presence/absence of LDAP record as projects includes podlings
       (ASF::Committee.pmcs+ASF::Committee.nonpmcs).map(&:name).include?(name) ? committee : nil
+    end
+
+    # Date this committee was last modified in LDAP.
+    # defer to Project; must have called project.preload
+    def modifyTimestamp
+      ASF::Project[name].modifyTimestamp
+    end
+
+    # Date this committee was initially created in LDAP.
+    # defer to Project; must have called project.preload
+    def createTimestamp
+      ASF::Project[name].createTimestamp
     end
 
     # List of owners for this committee, i.e. people who are members of the
