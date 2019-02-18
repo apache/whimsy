@@ -1239,7 +1239,6 @@ module ASF
 
   class Committee < Base
     # TODO what to do about this? Change to ou=project or drop?
-    # It's used by the methods: member[id]s
     @base = 'ou=pmc,ou=committees,ou=groups,dc=apache,dc=org'
 
     # Date this committee was last modified in LDAP.
@@ -1253,26 +1252,6 @@ module ASF
       committee = super
       # Cannot rely on presence/absence of LDAP record as projects includes podlings
       (ASF::Committee.pmcs+ASF::Committee.nonpmcs).map(&:name).include?(name) ? committee : nil
-    end
-
-    # DO NOT USE: relies on outdated ou=pmc LDAP. Uses owners instead.
-    def members
-      Wunderbar.warn("Committee.members #{caller[0,4]}")
-      members = weakref(:members) do
-        ASF.search_one(base, "cn=#{name}", 'member').flatten
-      end
-
-      members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
-    end
-
-    # DO NOT USE: relies on outdated ou=pmc LDAP. Uses ownerids instead.
-    def memberids
-      Wunderbar.warn("Committee.memberids #{caller[0,4]}")
-      members = weakref(:members) do
-        ASF.search_one(base, "cn=#{name}", 'member').flatten
-      end
-    
-      members.map {|uid| uid[/uid=(.*?),/,1]}
     end
 
     # List of owners for this committee, i.e. people who are members of the
