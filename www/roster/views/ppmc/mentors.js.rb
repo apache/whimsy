@@ -86,6 +86,8 @@ class PPMCMentor < Vue
           _span.issue 'invalid user'
         elsif not @@ppmc.owners.include? @@person.id
           _span.issue 'not on the PPMC'
+        elsif not @@ppmc.committers.include? @@person.id
+          _span.issue 'not listed as a podling committer'
         elsif not @@person.ipmc
           _span.issue 'not on the IPMC'
         elsif not @@person.icommit
