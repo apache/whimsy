@@ -72,6 +72,7 @@ class PPMCMentor < Vue
       end
         
       _td data_ids: @@person.id do
+        # TODO: how does this become enabled?
         if @@person.selected
           if @@auth.ppmc
             unless @@ppmc.owners.include? @@person.id
@@ -80,6 +81,14 @@ class PPMCMentor < Vue
                 data_target: '#confirm', data_toggle: 'modal',
                 data_confirmation: "Add #{@@person.name} as member of the " +
                   "#{@@ppmc.display_name} PPMC?"
+            else
+              unless @@ppmc.committers.include? @@person.id
+                _button.btn.btn_primary 'Add to the podling committers',
+                  data_action: 'add committer',
+                  data_target: '#confirm', data_toggle: 'modal',
+                  data_confirmation: "Add #{@@person.name} as committer of the " +
+                    "#{@@ppmc.display_name} PPMC?"
+              end
             end
           end
         elsif not @@person.name
