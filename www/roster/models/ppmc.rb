@@ -9,7 +9,7 @@ class PPMC
       list =~ /^(incubator-)?#{ppmc.mail_list}\b/
     end
 
-    members = ppmc.members
+    committers = ppmc.members
 
     # separate out the known ASF members and extract any matching committer details
     unknownSubs = []
@@ -25,7 +25,7 @@ class PPMC
     unMatchedSubs = [] # unknown private@ subscribers
     currentUser = ASF::Person.find(env.user)
     analysePrivateSubs = false # whether to show missing private@ subscriptions
-    if currentUser.asf_member? or members.include? currentUser
+    if currentUser.asf_member? or owners.include? currentUser
       require 'whimsy/asf/mlist'
       moderators, modtime = ASF::MLIST.list_moderators(ppmc.mail_list, true)
       subscribers, subtime = ASF::MLIST.list_subscribers(ppmc.mail_list, true) # counts only
@@ -51,7 +51,7 @@ class PPMC
     incubator_committers = pmc.committers
     owners = ppmc.owners
 
-    roster = members.map {|person|
+    roster = owners.map {|person|
       notSubbed = false
       if analysePrivateSubs and owners.include? person
         allMail = person.all_mail.map{|m| m.downcase}
@@ -128,7 +128,7 @@ class PPMC
       mentors: ppmc.mentors,
       hasLDAP: ppmc.hasLDAP?,
       owners: owners.map {|person| person.id},
-      committers: members.map {|person| person.id},
+      committers: committers.map {|person| person.id},
       roster: roster,
       mail: Hash[lists.sort],
       moderators: moderators,
