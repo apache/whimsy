@@ -10,6 +10,7 @@ class PPMC
     end
 
     committers = ppmc.members
+    owners = ppmc.owners
 
     # separate out the known ASF members and extract any matching committer details
     unknownSubs = []
@@ -49,7 +50,6 @@ class PPMC
     pmc = ASF::Committee.find('incubator')
     ipmc = pmc.owners
     incubator_committers = pmc.committers
-    owners = ppmc.owners
 
     roster = owners.map {|person|
       notSubbed = false
