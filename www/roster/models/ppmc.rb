@@ -51,23 +51,37 @@ class PPMC
     ipmc = pmc.owners
     incubator_committers = pmc.committers
 
-    roster = owners.map {|person|
+    # Preload the committers; if a person has another role it will be set up below
+    roster = committers.map {|person|
+      [person.id, {
+        # notSubbed does not apply
+        name: person.public_name, 
+        member: person.asf_member?,
+        icommit: incubator_committers.include?(person),
+        role: 'Committer',
+        githubUsername: (person.attrs['githubUsername'] || []).join(', ')
+      }]
+    }.to_h
+
+    # Merge the PPMC members (owners)
+    owners.each do |person|
       notSubbed = false
       if analysePrivateSubs and owners.include? person
         allMail = person.all_mail.map{|m| m.downcase}
         notSubbed = (allMail & pSubs).empty?
         unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
       end
-      [person.id, {
+      roster[person.id] = {
         notSubbed: notSubbed,
         name: person.public_name, 
         member: person.asf_member?,
         icommit: incubator_committers.include?(person),
-        role: (owners.include?(person) ? 'PPMC Member' : 'Committer'),
+        role: 'PPMC Member',
         githubUsername: (person.attrs['githubUsername'] || []).join(', ')
-      }]
-    }.to_h
+      }
+    end
 
+    # Finally merge the mentors
     ppmc.mentors.each do |mentor|
       person = ASF::Person.find(mentor)
       roster[person.id] = {
