@@ -143,7 +143,31 @@ module ASF
       return list if dom == 'apache.org'
       dom.sub(".apache.org",'-') + list
     end
-    
+
+    # Canonicalise an email address, removing aliases and ignored punctuation
+    # and downcasing the name if safe to do so
+    #
+    # Currently only handles aliases for @gmail.com and @googlemail.com
+    #
+    # All domains are converted to lower-case
+    #
+    # The case of the name part is preserved since some providers may be case-sensitive
+    # Almost all providers ignore case in names, however that is not guaranteed
+    def self.to_canonical(email)
+      email.match %r{^([^@]+)@(.+)$} do |m|
+        name,dom = m.captures
+        dom.downcase!
+        if dom.match %r{^(?:gmail|googlemail)\.com$}
+          return name.sub(/\+.*/,'').gsub('.','').downcase + '@' + dom
+        else
+          # only downcase the domain (done above)
+          return name + '@' + dom
+        end
+      end
+      # Invalid; return input rather than failing
+      return email
+    end
+
   end
 
   class Person < Base
