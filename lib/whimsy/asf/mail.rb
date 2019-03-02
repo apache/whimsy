@@ -125,11 +125,14 @@ module ASF
       end
     end
 
+    # List of .qmail files that could clash with user ids (See: INFRA-14566)
     def self.qmail_ids
       return [] unless File.exist? '/srv/subscriptions/qmail.ids'
       File.read('/srv/subscriptions/qmail.ids').split
     end
 
+    # Is the id used by qmail?
+    # See also ASF::ICLA.taken?
     def self.taken?(id)
       self.qmail_ids.include? id
     end
