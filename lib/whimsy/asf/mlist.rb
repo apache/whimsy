@@ -83,7 +83,7 @@ module ASF
     # return the mailing lists which are moderated by any of the list of emails
     # the following keys are added to the response hash:
     # :modtime - the timestamp when the data was last updated
-    # :moderates - a hash. key: list name; entry: array of moderators
+    # :moderates - a hash. key: list name; entry: array of emails that match a moderator for the list
     # N.B. not the same format as the subscriptions() method
     def self.moderates(user_emails, response = {})
 
