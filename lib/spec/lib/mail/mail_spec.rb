@@ -22,4 +22,34 @@ describe ASF::Mail do
     end    
   end
 
+  describe '.cansub(member, pmc_chair, ldap_pmcs)' do
+    lists = ASF::Mail.cansub(false, false, nil)
+    it 'should return public lists only' do
+      whitelist = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'concom', 'party']
+      board = ['board', 'board-commits', 'board-chat']
+      expect(lists.length).to be >= 1000
+      expect(lists).not_to include('private')
+      expect(lists).not_to include('security')
+      expect(lists).to include(*whitelist)
+      expect(lists).not_to include(*board)
+    end
+    it 'should return the same lists' do
+      mylists = ASF::Mail.cansub(false, false, []) - lists
+      expect(mylists.length).to be(0)
+    end
+    it 'should return private PMC lists' do
+      mylists = ASF::Mail.cansub(false, false, ['ant','whimsical']) - lists
+      expect(mylists.length).to be(2)
+      expect(mylists).to include('ant-private','whimsical-private')
+    end
+    it 'should not return non-existent lists' do
+      mylists = ASF::Mail.cansub(false, false, ['xxxant','xxxwhimsical']) - lists
+      expect(mylists.length).to be(0)
+    end
+    it 'should return private PPMC lists' do
+      podnames = ASF::Podling.current.map(&:name)
+      mylists = ASF::Mail.cansub(false, false, podnames) - lists
+      expect(mylists.length).to be(podnames.length)
+    end
+  end
 end

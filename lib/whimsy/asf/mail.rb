@@ -71,6 +71,9 @@ module ASF
     end
 
     # which lists are available for subscription via Whimsy?
+    # member: true if member
+    # pmc_chair: true if pmc_chair
+    # ldap_pmcs: list of (P)PMC mail_list names
     def self.cansub(member, pmc_chair, ldap_pmcs)
       Mail._load_lists
       if member
@@ -89,9 +92,10 @@ module ASF
             lists += ['board', 'board-commits', 'board-chat']
           end
 
-          # PMC members need their private lists
+          # (P)PMC members need their private lists
           if ldap_pmcs
-            lists += ldap_pmcs.map {|lp| "#{lp}-private"}
+            # ensure that the lists actually exist
+            lists += ldap_pmcs.map {|lp| "#{lp}-private"}.select{|l| @lists.keys.include? l}
           end
 
           lists
