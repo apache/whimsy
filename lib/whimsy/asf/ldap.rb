@@ -811,7 +811,7 @@ module ASF
       end
     end
 
-    # list of Podlings that this individual is a member of
+    # list of Podlings that this individual is a member (owner) of
     def podlings
       ASF::Podling.current.select{|pod| project_owners.map(&:name).include? pod.name}
     end
