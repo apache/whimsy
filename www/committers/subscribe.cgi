@@ -72,9 +72,9 @@ _html do
           _a 'https://id.apache.org/', href: "https://id.apache.org/details/#{$USER}"
           _ 'where you can change your primary Forwarding Address and any other associated Alias email addresses you use.'
         end
+        _p 'ASF members can use this form to subscribe to private lists. PMC chairs can subscribe to board lists. (P)PMC members can subscribe to their private@ list.'
+        _p 'The subscription request will be queued and should be processed within about an hour.'
         _p do
-          _ 'ASF members can use this form to subscribe to private lists. PMC chairs can subscribe to board lists. PMC members can subscribe to their private@ list.'
-          _br
           _ 'To subscribe to other private lists, send an email to the list-subscribe@ address and wait for the request to be manually approved.'
           _ 'This might take a day or two.'
         end
