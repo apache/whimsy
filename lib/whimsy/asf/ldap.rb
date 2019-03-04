@@ -811,6 +811,11 @@ module ASF
       end
     end
 
+    # list of Podlings that this individual is a member of
+    def podlings
+      ASF::Podling.current.select{|pod| project_owners.map(&:name).include? pod.name}
+    end
+
     # list of LDAP groups that this individual is a member of
     def groups
       weakref(:groups) do
