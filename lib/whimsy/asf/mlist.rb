@@ -48,10 +48,11 @@ module ASF
       response[:subscriptions] = []
       response[:subtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
 
+      _emails = emails.map{|email| ASF::Mail.to_canonical(email.downcase)}
       list_parse('sub') do |dom, list, subs|
-        emails.each do |email|
-          if downcase(subs).include? email.downcase
-            response[:subscriptions] << ["#{list}@#{dom}", email]
+        subs.each do |sub|
+          if _emails.include? ASF::Mail.to_canonical(sub.downcase)
+            response[:subscriptions] << ["#{list}@#{dom}", sub]
           end
         end
       end
@@ -70,10 +71,11 @@ module ASF
       response[:digests] = []
       response[:digtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_DIGS))
 
+      _emails = emails.map{|email| ASF::Mail.to_canonical(email.downcase)}
       list_parse('dig') do |dom, list, subs|
-        emails.each do |email|
-          if downcase(subs).include? email.downcase
-            response[:digests] << ["#{list}@#{dom}", email]
+        subs.each do |sub|
+          if _emails.include? ASF::Mail.to_canonical(sub.downcase)
+            response[:digests] << ["#{list}@#{dom}", sub]
           end
         end
       end
