@@ -37,6 +37,7 @@ class Committee
       subscribers, subtime = ASF::MLIST.list_subscribers(pmc.mail_list) # counts only
       analysePrivateSubs = currentUser.asf_member?
       unless analysePrivateSubs # check for private moderator if not already allowed access
+        # TODO match using canonical emails
         user_mail = currentUser.all_mail || []
         pMods = moderators["private@#{pmc.mail_list}.apache.org"] || []
         analysePrivateSubs = !(pMods & user_mail).empty?
@@ -61,10 +62,13 @@ class Committee
         role: 'PMC member'
       }
       if analysePrivateSubs
-        allMail = person.all_mail.map{|m| m.downcase}
-        roster[person.id]['notSubbed'] = (allMail & pSubs).empty?
-        unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
-        unMatchedSecSubs.delete_if {|k| allMail.include? k.downcase}
+        # Analyse the subscriptions, matching against canonicalised personal emails
+        allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
+        # pSubs is already downcased
+        # TODO should it be canonicalised as well above?
+        roster[person.id]['notSubbed'] = (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+        unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
+        unMatchedSecSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
       roster[person.id]['ldap'] = true
       roster[person.id]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')

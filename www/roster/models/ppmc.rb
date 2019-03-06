@@ -32,6 +32,7 @@ class PPMC
       subscribers, subtime = ASF::MLIST.list_subscribers(ppmc.mail_list, true) # counts only
       analysePrivateSubs = currentUser.asf_member?
       unless analysePrivateSubs # check for private moderator if not already allowed access
+        # TODO match using canonical emails
         user_mail = currentUser.all_mail || []
         pMods = moderators["private@#{ppmc.mail_list}.apache.org"] || []
         analysePrivateSubs = !(pMods & user_mail).empty?
@@ -67,9 +68,9 @@ class PPMC
     owners.each do |person|
       notSubbed = false
       if analysePrivateSubs and owners.include? person
-        allMail = person.all_mail.map{|m| m.downcase}
-        notSubbed = (allMail & pSubs).empty?
-        unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
+        allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
+        notSubbed = (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+        unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
       roster[person.id] = {
         notSubbed: notSubbed,
@@ -93,9 +94,9 @@ class PPMC
         githubUsername: (person.attrs['githubUsername'] || []).join(', ')
       }
       if analysePrivateSubs
-        allMail = person.all_mail.map{|m| m.downcase}
+        allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
         roster[person.id]['notSubbed'] = (allMail & pSubs).empty?
-        unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
+        unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
     end
 

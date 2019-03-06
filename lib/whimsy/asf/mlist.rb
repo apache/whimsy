@@ -49,8 +49,10 @@ module ASF
       response[:subtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
 
       list_parse('sub') do |dom, list, subs|
+        # outside the loop
+        _subs = subs.map{|s| ASF::Mail.to_canonical(s.downcase)}
         emails.each do |email|
-          if downcase(subs).include? email.downcase
+          if _subs.include? ASF::Mail.to_canonical(email.downcase)
             response[:subscriptions] << ["#{list}@#{dom}", email]
           end
         end
@@ -71,8 +73,10 @@ module ASF
       response[:digtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_DIGS))
 
       list_parse('dig') do |dom, list, subs|
+        # outside the loop
+        _subs = subs.map{|s| ASF::Mail.to_canonical(s.downcase)}
         emails.each do |email|
-          if downcase(subs).include? email.downcase
+          if _subs.include? ASF::Mail.to_canonical(email.downcase)
             response[:digests] << ["#{list}@#{dom}", email]
           end
         end
@@ -91,9 +95,9 @@ module ASF
 
       response[:moderates] = {}
       response[:modtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_MODS))
-      user_emails.map!{|m| m.downcase} # outside loop
+      umails = user_emails.map{|m| ASF::Mail.to_canonical(m.downcase)} # outside loop
       list_parse('mod') do |dom, list, emails|
-        matching = emails.select{|m| user_emails.include? m.downcase}
+        matching = emails.select{|m| umails.include? ASF::Mail.to_canonical(m.downcase)}
         response[:moderates]["#{list}@#{dom}"] = matching unless matching.empty?
       end
       response
