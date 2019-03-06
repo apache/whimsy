@@ -153,8 +153,8 @@ _html do
               totp = 0.0
               tota = 0.0
               data.each do |k,v|
-                totp += v['preapps']
-                tota += v['actions']
+                totp += v['preapps'] if v.has_key?('preapps')
+                tota += v['actions'] if v.has_key?('actions')
               end
               _tr_ do
                 _td do
