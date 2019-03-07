@@ -42,7 +42,7 @@ get '/' do
     @committers = ASF::Person.list
     @committees = ASF::Committee.pmcs
     @nonpmcs = ASF::Committee.nonpmcs
-    @members = ASF::Member.list.keys - ASF::Member.status.keys
+    @members = ASF::Member.list.keys - ASF::Member.status.keys # i.e. active member ids
     @groups = Group.list
     @podlings = ASF::Podling.to_h.values
     _html :index

@@ -27,6 +27,7 @@ module ASF
     # return a list of <tt>members.txt</tt> entries as a Hash.  Keys are
     # availids.  Values are a Hash with the following keys:
     # <tt>:text</tt>, <tt>:name</tt>, <tt>"status"</tt>.
+    # Active members are those with no 'status' value
     def self.list
       result = Hash[self.new.map {|id, text|
         [id, {text: text, name: self.get_name(text)}]
@@ -50,10 +51,11 @@ module ASF
       nil
     end
 
-    # Return a hash of non-active ASF members and their status.  Keys are
+    # Return a hash of *non-active* ASF members and their status.  Keys are
     # availids.  Values are strings from the section header under which the
     # member is listed: currently either <tt>Emeritus (Non-voting) Member</tt>
     # or <tt>Deceased Member</tt>.
+    # N.B. Does NOT return active members
     def self.status
       begin
         @status = nil if @mtime != @@mtime
