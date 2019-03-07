@@ -164,7 +164,32 @@ module ASF
 
     # list of current podlings
     def self.current
-      list.select { |podling| podling.status == 'current' }
+      self._list('current')
+    end
+
+    # list of current podling ids
+    def self.currentids
+      self._listids('current')
+    end
+
+    # list of graduated podlings
+    def self.graduated
+      self._list('graduated')
+    end
+
+    # list of graduated podling ids
+    def self.graduatedids
+      self._listids('graduated')
+    end
+
+    # list of retired podlings
+    def self.retired
+      self._list('retired')
+    end
+
+    # list of retired podling ids
+    def self.retiredids
+      self._listids('retired')
     end
 
     # last modified time of podlings.xml in the local working directory,
@@ -398,6 +423,16 @@ module ASF
     # return podlingnamesearch for this podling
     def namesearch
       Podling.namesearch[display_name]
+    end
+    
+    private
+    
+    def self._list(status)
+      list.select { |podling| podling.status == status }
+    end
+
+    def self._listids(status)
+      list.select { |podling| podling.status == status }.map(&:id)
     end
   end
 end
