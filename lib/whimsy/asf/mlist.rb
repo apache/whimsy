@@ -259,7 +259,8 @@ module ASF
           dom = match[1].downcase # just in case
           list = match[2].downcase # just in case
           # Keep original case of email addresses
-          yield dom, list, stanza.scan(/^(.*@.*)/).flatten
+          # TODO: a bit slow for subs file, implement cache of parsed file?
+          yield dom, list, stanza.split(/\n/).select{|x| x =~ /@/}
         else
           # don't allow mismatches as that means the RE is wrong
           line=stanza[0..(stanza.index("\n")|| -1)]
