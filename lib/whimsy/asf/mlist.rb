@@ -165,6 +165,14 @@ module ASF
       end
     end
 
+    # return the [domain, list] for all entries in the subscriber listings
+    # the subscribers are not included 
+    def self.each_list
+      list_parse('sub') do |dom, list, subs|
+        yield [dom, list]
+      end
+    end
+
     private
 
     # return the archiver type as array: [:MBOX|:PONY|:MINO, 'public'|'private'|'alias'|'direct']
