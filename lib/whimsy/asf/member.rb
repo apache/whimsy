@@ -145,9 +145,11 @@ module ASF
         @@mtime = 0
       end
 
-      if File.mtime(File.join(foundation, 'members.txt')).to_i > @@mtime.to_i
-        @@mtime = File.mtime(File.join(foundation, 'members.txt'))
-        text = File.read(File.join(foundation, 'members.txt'))
+      member_file = File.join(foundation, 'members.txt')
+      member_time = File.mtime(member_file)
+      if member_time.to_i > @@mtime.to_i
+        @@mtime = member_time
+        text = File.read(member_file)
         @@text = WeakRef.new(text)
       end
 
