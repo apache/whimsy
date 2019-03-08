@@ -58,7 +58,7 @@ _html do
           _ ' You can see the '
           _a 'code for this script', href: "#{GITWHIMSY}/www#{ENV['SCRIPT_NAME']}"
           _ ', the '
-          _a 'underlying data file', href: "#{GITWHIMSY}/www/#{DATAFLOWDATA}"
+          _a 'underlying data file', href: "#{GITWHIMSY}/www/test/#{DATAFLOWDATA}"
           _ ', the '
           _a 'key to this data', href: "#datakey"
           _ ', and many of the '
