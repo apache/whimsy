@@ -14,7 +14,6 @@ _html do
       }
     ) do
       _p 'A listing of all Podling Project Management Committees (PPMCs) from the Apache Incubator.'
-      _p 'Click on column names to sort.'
 
       _p do
         _ 'Click on column names to sort.'
