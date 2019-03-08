@@ -123,7 +123,7 @@ class PPMC
       }
       nonASFmails.each {|k,v|
         @people.each do |person|
-          if person[:mail].any? {|mail| mail.downcase == k.downcase}
+          if person[:mail].any? {|mail| ASF::Mail.to_canonical(mail.downcase) == ASF::Mail.to_canonical(k.downcase)}
             nonASFmails[k] = person[:id]
           end
         end

@@ -58,11 +58,15 @@ class PPMCMentor < Vue
       end
 
       if @@person.member
-        _td { _b { _a @@person.id, href: "committer/#{@@person.id}" } }
+        _td { _b { _a @@person.id, href: "committer/#{@@person.id}" }
+              _a ' (*)', href: "ppmc/#{@@ppmc.id}#crosscheck" if @@person.notSubbed and @@ppmc.analysePrivateSubs
+            }
         _td @@person.githubUsername
         _td { _b @@person.name }
       elsif @@person.name
-        _td { _a @@person.id, href: "committer/#{@@person.id}" }
+        _td { _a @@person.id, href: "committer/#{@@person.id}"
+              _a ' (*)', href: "ppmc/#{@@ppmc.id}#crosscheck" if @@person.notSubbed and @@ppmc.analysePrivateSubs
+            }
         _td @@person.githubUsername
         _td @@person.name
       else

@@ -158,12 +158,16 @@ module ASF
     # The case of the name part is preserved since some providers may be case-sensitive
     # Almost all providers ignore case in names, however that is not guaranteed
     def self.to_canonical(email)
-      email.match %r{^([^@]+)@(.+)$} do |m|
-        name,dom = m.captures
+      parts = email.split('@')
+      if parts.length == 2
+        name, dom = parts
+        return email if name.length == 0 || dom.length == 0
         dom.downcase!
-        if dom.match %r{^(?:gmail|googlemail)\.com$}
+        if %w(gmail.com googlemail.com).include? dom
           return name.sub(/\+.*/,'').gsub('.','').downcase + '@' + dom
         else
+          # Effectively the same:
+          dom = 'apache.org' if dom == 'minotaur.apache.org'
           # only downcase the domain (done above)
           return name + '@' + dom
         end

@@ -1,3 +1,5 @@
+require 'weakref'
+
 module ASF
 
   module MLIST
@@ -14,6 +16,9 @@ module ASF
 
     # Note that the data files don't provide information on whether a list is
     # public or private.
+
+    @@file_times  = Hash.new # Key=type, value = modtime
+    @@file_parsed = Hash.new # Key=type, value = cache hash
 
     # Return an array of board subscribers followed by the file update time
     def self.board_subscribers
@@ -165,6 +170,14 @@ module ASF
       end
     end
 
+    # return the [domain, list] for all entries in the subscriber listings
+    # the subscribers are not included 
+    def self.each_list
+      list_parse('sub') do |dom, list, subs|
+        yield [dom, list]
+      end
+    end
+
     private
 
     # return the archiver type as array: [:MBOX|:PONY|:MINO, 'public'|'private'|'alias'|'direct']
@@ -240,6 +253,24 @@ module ASF
       else
         raise ArgumentError.new('type: expecting dig, mod or sub')
       end
+      ctime = @@file_times[type] || 0
+      mtime = File.mtime(path).to_i
+      if mtime <= ctime
+        cached = @@file_parsed[type]
+        if cached
+          begin
+            cached.each do |d,l,m|
+              yield d, l, m
+            end
+            return
+          rescue WeakRef::RefError
+            @@file_times[type] = 0
+          end
+        end
+      else
+        @@file_parsed[type] = nil
+      end
+      cache = Array.new # see if this preserves mod cache
       # split file into paragraphs
       File.read(path).split(/\n\n/).each do |stanza|
         # domain may start in column 1 or following a '/'
@@ -251,13 +282,18 @@ module ASF
           dom = match[1].downcase # just in case
           list = match[2].downcase # just in case
           # Keep original case of email addresses
-          yield dom, list, stanza.scan(/^(.*@.*)/).flatten
+          # TODO: a bit slow for subs file, implement cache of parsed file?
+          mails = stanza.split(/\n/).select{|x| x =~ /@/}
+          cache << [dom, list, mails]
+          yield dom, list, mails
         else
           # don't allow mismatches as that means the RE is wrong
           line=stanza[0..(stanza.index("\n")|| -1)]
           raise ArgumentError.new("Unexpected section header #{line}")
         end
       end
+      @@file_parsed[type] = WeakRef.new(cache)
+      @@file_times[type] = mtime
       nil # don't return file contents
     end
 

@@ -78,17 +78,4 @@ module ASF
     end
   end
 
-  class Group
-    # does this group use ou=project?
-    def usesproject?
-      @usesproject ||= ASF::Authorization.new('asf').projects.include?(name)
-    end
-  end
-
-  class Committee
-    # does this committee use ou=project?
-    def usesproject?
-      @usesproject ||= ASF::Authorization.new('pit').projects.include?(name)
-    end
-  end
 end

@@ -129,8 +129,21 @@
             </div>
             <div class="panel-body">
               <ul>
-                <li><a href="roster/committer/__self__">Your details</a></li>
-                <li><a href="roster/">Rosters (PMCs, committers, members, groups, podlings)</a></li>
+                <li><a href="roster/committer/__self__">Your personal details</a></li>
+                <li><a href="roster/">Rosters</a>
+                  including:
+                  <a href="roster/committee/">PMCs</a>
+                  |
+                  <a href="roster/nonpmc/">other committees</a>
+                  |
+                  <a href="roster/ppmc/">podlings</a>
+                  |
+                  <a href="roster/group/">groups</a>
+                  |
+                  <a href="roster/members">members</a>
+                  |
+                  <a href="roster/committer/">committers</a>
+                </li>
                 <li><a href="committers/subscribe">Subscribe and unsubscribe from mailing lists</a></li>
                 <li><a href="committers/svn-info">svn info command helper</a></li>
                 <li><a href="committers/moderationhelper">Helper for mailing list moderators (Beta)</a></li>
@@ -184,6 +197,7 @@
                 <li><a href="secretary/workbench/">Secretary Workbench</a></li>
                 <li><a href="secretary/icla-lint">Lint test for iclas.txt</a></li>
                 <li><a href="secretary/ldap-check">LDAP members and owners checks (may take a while to respond)</a></li>
+                <li><a href="secretary/ldap-check-committers">Detailed LDAP missing committer check; shows subs and mods if any (may take a while to respond)</a></li>
                 <li><a href="secretary/memapp_check">Check members.txt against members_apps</a></li>
                 <li><a href="secretary/public-names">Public names: LDAP vs icla.txt</a></li>
                 <li><a href="secretary/ldap-names">LDAP name check: compare cn, sn, givenName</a></li>
@@ -203,7 +217,7 @@
         </div>
         <div class="panel-body">
           <p>
-            Copyright &copy; 2015-2018 The Apache Software Foundation, Licensed under
+            Copyright &copy; 2015-2019 The Apache Software Foundation, Licensed under
             the <a href="http://www.apache.org/licenses/LICENSE-2.0" rel="license">Apache License, Version 2.0</a>.
             | 
             <a href="https://www.apache.org/foundation/policies/privacy">Privacy Policy</a>
