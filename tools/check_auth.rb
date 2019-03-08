@@ -5,9 +5,11 @@
 # - name agrees with ldap query
 # - incorrect alias reference
 
+# allowable non-LDAP names
 ROLE_NAMES =
   %w(buildbot comdev_role projects_role spamassassin_role svn-role acrequser whimsysvn apezmlm puppetsvn apsiteread apsecmail apezmlm smtpd svn rptremind comdev-svn openejb-tck staff
-  sk clr uli nick jim upayavira cpluchino mostarda
+  sk clr uli nick jim upayavira cpluchino mostarda druggeri
+  svn-site-role
 )
 
 DIR = ARGV.first || '/srv/git/infrastructure-puppet/modules/subversion_server/files/authorization'
@@ -17,6 +19,7 @@ def parse(file)
   section=''
   names=Hash.new(0)
   IO.foreach(file) { |x|
+    x.chomp!
     next if x =~ /^(#| *$)/
     section='groups' and next if x =~ /^\[groups\]$/
     section='paths'  and next if x =~ /^\[\/\]$/
@@ -44,7 +47,7 @@ def parse(file)
         next
       end
     elsif section == 'paths'
-      next if x =~ /^\[((asf:|infra:|private:)?\/\S*)\]$/ # [/path]
+      next if x =~ /^\[((asf:|infra:|private:|bigdata:)?\/\S*)\]$/ # [/path]
       if x =~ /^(?:@(\S+)|\*|(\S+)) *= *r?w? *$/
         if $1
           puts "Undefined name: '#{$1}' in #{x}" unless names.has_key?($1)
