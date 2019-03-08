@@ -13,7 +13,15 @@ _html do
     }
   ) do
     _p do
-      _ 'A full list of Apache PMCs; click on the name for a detail page about that PMC.  Non-PMC groups of various kinds '
+      _ 'A full list of Apache PMCs; click on the name for a detail page about that PMC.'
+      _br
+      _ 'Non-PMC committees of various kinds '
+      _a href: '/roster/nonpmc/' do
+        _span.glyphicon.glyphicon_lock :aria_hidden, class: 'text-primary', aria_label: 'ASF Members Private'
+        _ 'are listed privately.'
+      end
+      _br
+      _ 'Other groups of various kinds '
       _a href: '/roster/group/' do
         _span.glyphicon.glyphicon_lock :aria_hidden, class: 'text-primary', aria_label: 'ASF Members Private'
         _ 'are listed privately.'
