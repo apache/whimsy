@@ -166,6 +166,8 @@ module ASF
         if %w(gmail.com googlemail.com).include? dom
           return name.sub(/\+.*/,'').gsub('.','').downcase + '@' + dom
         else
+          # Effectively the same:
+          dom = 'apache.org' if dom == 'minotaur.apache.org'
           # only downcase the domain (done above)
           return name + '@' + dom
         end
