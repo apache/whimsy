@@ -2,7 +2,7 @@
 
 =begin
 
-LDAP people whould be committers (unless login is disabled)
+LDAP people should be committers (unless login is disabled)
 
 =end
 
