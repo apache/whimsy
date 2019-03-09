@@ -8,6 +8,14 @@ require 'tmpdir'
 
 MEETINGS = ASF::SVN['Meetings']
 meeting = File.basename(Dir[File.join(MEETINGS, '2*')].sort.last).untaint
+volunteers = [
+  "Phil Steitz (psteitz)",
+  "Shane Curcuru (curcuru)",
+  "Michael Brohl (mbrohl)",
+  "Jim Jagielski (jim)",
+  "Daniel Ruggeri (druggeri)",
+  "Greg Stein (gstein)"
+]
 
 # Calculate how many members required to attend first half for quorum
 def calculate_quorum(meeting)
@@ -102,11 +110,6 @@ _html do
               _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
             end
           end
-          _p %{
-            IMPORTANT! Be sure to tell the person that you select as proxy 
-            that you've assigned them to mark your attendance! They simply 
-            need to mark your proxy attendance when the meeting starts.
-          }
           help, copypasta = is_user_proxied(meeting, $USER)
           if help
             _p help
@@ -117,8 +120,18 @@ _html do
                 end
               end
             end
+          else
+            _p 'The following members have volunteered to serve as proxies; you can freely select any one of them below:'
+            _ul do
+              volunteers.each do |vol|
+                _pre vol
+              end
+            end
           end
-          _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
+          _p do
+            _ "IMPORTANT! Be sure to tell the person that you select as proxy that you've assigned them to mark your attendance! They simply need to mark your proxy attendance when the meeting starts."
+            _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
+          end
         end
       end
 
