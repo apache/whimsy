@@ -13,7 +13,7 @@ _html do
         ppmc: 'ppmc/'
       }
     ) do
-      _p 'A listing of all Podling Project Management Committees (PPMCs) from the Apache Incubator.'
+      _p 'A listing of current Podling Project Management Committees (PPMCs) from the Apache Incubator.'
 
       _p do
         _ 'Click on column names to sort.'
@@ -47,7 +47,7 @@ _html do
               if project_names.include? ppmc.name
                 _a ppmc.display_name, href: "ppmc/#{ppmc.name}"
               else
-                _a.label_danger ppmc.display_name, href: "ppmc/#{ppmc.name}"
+                _a.label_danger ppmc.display_name, href: "ppmc/#{ppmc.name}", title: 'LDAP project not yet set up'
               end
             end
 
