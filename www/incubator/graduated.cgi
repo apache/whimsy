@@ -63,7 +63,8 @@ _html do
             creports.map do |committee|
               name = committee[/>(.*?)</, 1]
               href = committee[/href="(.*?)"/, 1].untaint
-              page = File.read("#{source}/#{href}")
+              page = File.read("#{source}/#{href}").
+                sub(/<footer.*<\/footer>/m, '')
 
               active = unreported.delete(name.downcase)
 
@@ -72,7 +73,7 @@ _html do
               establish = page.split('<h2').map { |report|
                 title = report[/<h3.*?<\/h3>/]
                 next unless title and title.downcase.include? 'establish'
-                graduated ||= report.downcase.include?('incubator')
+                graduated ||= report.downcase.include? 'incubator'
                 report[/id="(.*?)"/, 1]
               }.compact.first
 
