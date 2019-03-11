@@ -26,7 +26,12 @@ _html do
             _a 'Committers', href: 'committer/'
           end
 
-          _td 'Search for committers by name, user id, or email address'
+          _td do
+            _ 'Search for committers by name, user id, or email address'
+            _ ' (includes '
+            _ @committers.select{|c| c.inactive?}.length
+            _ ' inactive accounts)'
+          end
         end
 
         ### members

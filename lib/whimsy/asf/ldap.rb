@@ -749,6 +749,11 @@ module ASF
       attrs['asf-banned'] == 'yes'
     end
 
+    # is the login marked as inactive?
+    def inactive?
+      nologin? || asf_banned?
+    end
+
     # primary mail addresses
     def mail
       attrs['mail'] || []

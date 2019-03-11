@@ -39,6 +39,7 @@ end
 
 get '/' do
   if env['REQUEST_URI'].end_with? '/'
+    ASF::Person.preload(['asf-banned','loginShell']) # so can get inactive count
     @committers = ASF::Person.list
     @committees = ASF::Committee.pmcs
     @nonpmcs = ASF::Committee.nonpmcs
