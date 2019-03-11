@@ -70,7 +70,8 @@ class Committer
     response[:groups] = person.services
     response[:committer] = []
     response[:podlings] = []
-    pmc_names = ASF::Committee.pmcs.map(&:name) # From CI
+    pmcs = ASF::Committee.pmcs
+    pmc_names = pmcs.map(&:name) # From CI
     podlings = ASF::Podling.current.map(&:id)
 
     # Add group names unless they are a PMC group
@@ -182,6 +183,23 @@ class Committer
         response[:privateNosub] << cttee unless subbed
       end
     end
+
+		response[:pmcs] = []
+		response[:nonpmcs] = []
+
+		pmcs.each do |pmc|
+  		response[:pmcs] << pmc.name if pmc.roster.include?(person.id)
+		  response[:chairOf] << pmc.name if pmc.chairs.map{|ch| ch[:id]}.include?(person.id)
+		end
+		response[:pmcs].sort!
+
+		response[:nonPMCchairOf] = [] # use separate list to avoid missing pmc-chair warnings
+    nonpmcs = ASF::Committee.nonpmcs
+    nonpmcs.each do |nonpmc|
+      response[:nonpmcs] << nonpmc.name if nonpmc.roster.include?(person.id)
+      response[:nonPMCchairOf] << nonpmc.name if nonpmc.chairs.map{|ch| ch[:id]}.include?(person.id)
+    end
+    response[:nonpmcs].sort!
 
     response
   end

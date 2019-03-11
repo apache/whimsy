@@ -27,14 +27,14 @@ class Person < Vue
       _PersonUrls person: self
     end
 
-    # Committees
-    committees = @committer.committees
-    unless committees.empty?
+    # PMCs
+    noPMCsub = false    
+    pmcs = @committer.pmcs
+    unless pmcs.empty?
       _div.row do
-        _div.name 'Committees'
+        _div.name 'PMCs'
         _div.value do
-          noPMCsub = false
-          _ul committees do |pmc|
+          _ul pmcs do |pmc|
             _li {
               _a pmc, href: "committee/#{pmc}"
               if @committer.privateNosub
@@ -46,19 +46,48 @@ class Person < Vue
               if @committer.chairOf.include? pmc
                 _ ' (chair)'
               end
+              unless @committer.committees.include?(pmc)
+                _b ' (not in LDAP committee group)'
+              end
             }
           end
+          if noPMCsub
+                  _br
+            _p {
+              _ '(*) could not find a subscription to the private@ mailing list for this PMC'
+              _br
+              _ 'Perhaps the subscription address is not listed in the LDAP record'
+              _br 
+              _ '(Note that digest subscriptions are not currently included)'
+            }
+          end
+        end
+      end
+    end
 
-	  if noPMCsub
-            _br
-	    _p {
-	      _ '(*) could not find a subscription to the private@ mailing list for this committee'
-	      _br
-	      _ 'Perhaps the subscription address is not listed in the LDAP record'
-        _br 
-        _ '(Note that digest subscriptions are not currently included)'
-	    }
-	  end
+    # Committees
+    missingPMCs = false
+    committees = @committer.committees
+    unless committees.empty?
+      _div.row do
+        _div.name 'Committees'
+        _div.value do
+          noPMCsub = false
+          _ul committees do |pmc|
+            next if  @committer.pmcs.include? pmc
+            missingPMCs = true
+            _li {
+              _a pmc, href: "committee/#{pmc}"
+              if @committer.chairOf.include? pmc
+                _ ' (chair)'
+              end
+            }
+          end
+          if missingPMCs
+            _ 'In LDAP committee group, but not on the corresponding PMC'
+          else
+            _ '(excludes PMCs listed above)'
+          end
         end
       end
     end
@@ -112,6 +141,24 @@ class Person < Vue
       end
     end
 
+    # Non-PMCs
+    nonpmcs = @committer.nonpmcs
+    unless nonpmcs.empty?
+      _div.row do
+        _div.name 'non-PMCs'
+        _div.value do
+          _ul nonpmcs do |nonpmc|
+            _li {
+              _a nonpmc, href: "nonpmc/#{nonpmc}"
+              if @committer.nonPMCchairOf.include? nonpmc
+                _ ' (chair)'
+              end
+            }
+          end
+        end
+      end
+    end
+    
     # Email addresses
     if @committer.mail
       _PersonEmail person: self
