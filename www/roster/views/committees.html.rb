@@ -35,6 +35,7 @@ _html do
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ".each_char do |c|
           _a c, href: "committee/##{c}"
         end
+        _ '(note: the links only work properly if the page is sorted by project name ascending)'
       end
     },
     breadcrumbs: {
