@@ -524,8 +524,8 @@ module ASF
     # if true, this committee is not a PMC.  
     # Data is obtained from <tt>committee-info.txt</tt>.
     def nonpmc?
-      # cannot use Committee.nonpmcs.include? self because self may not be a proper Committee
-      ! pmc?
+      Committee.load_committee_info # ensure data is there
+      Committee.nonpmcs.include? self
     end
 
     # if true, this committee is a PMC.  

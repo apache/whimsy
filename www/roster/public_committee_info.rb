@@ -54,7 +54,7 @@ info[:committees] = Hash[committees.map {|committee|
     chair: Hash[committee.chairs.map {|chair|
       [chair[:id], {:name => chair[:name]} ]}],
     roster: committee.roster.sort.to_h, # sort entries by uid
-    pmc: !committee.nonpmc?
+    pmc: committee.pmc?
   }]
 }]
 
