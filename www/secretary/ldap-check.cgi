@@ -68,10 +68,12 @@ _html do
       cttee = ASF::Committee.find(p.name)
       # Is this a real PMC?
       if ASF::Committee.pmcs.include? cttee
+        isPMC = true
         cm = cttee.roster.keys
         cm_po = cm - po
         po_cm = po - cm
       else
+        isPMC = false
         cm_po = []
         po_cm = []
       end
@@ -81,7 +83,11 @@ _html do
       if po_pm.size > 0 or cm_po.size > 0 or po_cm.size > 0 or notc.size > 0
         _tr do
           _td do
-            _a p.name, href: '/roster/committee/' + p.name
+            if isPMC
+              _a p.name, href: '/roster/committee/' + p.name
+            else
+              _a p.name, href: '/roster/ppmc/' + p.name
+            end
           end
           _td do
             cm_po.each do |id|
