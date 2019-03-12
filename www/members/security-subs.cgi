@@ -130,6 +130,11 @@ _html do
         end
       end
       _p 'Note that there are expected to be upto 3 archivers'
+    else
+      _h3 class: 'bg-warning' do
+        _ "Could not find a list with the name: #{path}"
+      end
+      _br
     end
   end
 end
