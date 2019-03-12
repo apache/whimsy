@@ -32,7 +32,7 @@ _html do
     path = ENV['PATH_INFO'].sub('/', '')
     if path == ''
       _ul.list_group do
-        lists.each do |dom, subs|
+        lists.each do |dom, _|
           _li.list_group_item do
             _a dom, href: dom
           end
@@ -40,39 +40,74 @@ _html do
       end
 
     elsif lists[path]
+      podling = ASF::Podling.find(path)
+      committee = ASF::Committee.find(path)
+      project = ASF::Project.find(path)
+      colors=Hash.new{|h,k| h[k]=0} # counts of colors
+      order=['bg-danger', 'bg-warning', 'bg-info', 'bg-success', ''] # sort order
+      subh = Hash[
+        lists[path].map do |email|
+          name = '*UNKNOWN*'
+          if WHITELIST.any? {|regex| email =~ regex}
+            person = nil
+            name = '(archiver)'
+            color = ''
+          else
+            person = ASF::Person.find_by_email(email)
+            if person
+              name = person.public_name
+              if person.asf_member? or project.owners.include? person
+                color = 'bg-success'
+              elsif project.members.include? person
+                color = 'bg-info'
+              else
+                color = 'bg-warning'
+              end
+            else
+              color = 'bg-danger'
+            end
+          end
+          colors[color] += 1
+          [email, {person: person , color: color, name: name}]
+        end
+      ].sort_by {|k,v| [order.index(v[:color]),v[:name]]}
+      
       _table do
         _tr do
+          _th 'Count '
           _th 'Legend'
         end
         _tr do
-          _td do
-            _ 'Archiver'
+          _td colors['bg-danger']
+          _td class: 'bg-danger' do
+            _ 'Person (email) not recognised'
           end
         end
         _tr do
-          _td class: 'bg-success' do
-            _ 'ASF member or project member'
-          end
-        end
-        _tr do
-          _td class: 'bg-info' do
-            _ 'Project committer - not on (P)PMC'
-          end
-        end
-        _tr do
+          _td colors['bg-warning']
           _td class: 'bg-warning' do
             _ 'ASF committer not associated with the project'
           end
         end
         _tr do
-          _td class: 'bg-danger' do
-            _ 'Person (email) not recognised'
+          _td colors['bg-info']
+          _td class: 'bg-info' do
+            _ 'Project committer - not on (P)PMC'
+          end
+        end
+        _tr do
+          _td colors['bg-success']
+          _td class: 'bg-success' do
+            _ 'ASF member or project member'
+          end
+        end
+        _tr do
+          _td colors['']
+          _td do
+            _ 'Archiver (there are expected to be up to 3 archivers)'
           end
         end
       end
-      podling = ASF::Podling.find(path)
-      committee = ASF::Committee.find(path)
-      project = ASF::Project.find(path)
       _h2 do
         if podling
           _a podling.display_name, 
@@ -92,21 +127,10 @@ _html do
         end
 
         _tbody do
-          lists[path].sort_by {|email| email.downcase}.each do |email|
-            person = ASF::Person.find_by_email(email)
-            if person
-              if person.asf_member? or project.owners.include? person
-                color = 'bg-success'
-              elsif project.members.include? person
-                color = 'bg-info'
-              else
-                color = 'bg-warning'
-              end
-            elsif WHITELIST.any? {|regex| email =~ regex}
-              color = ''
-            else
-              color = 'bg-danger'
-            end
+          subh.each do |email, hash|
+            color = hash[:color]
+            person = hash[:person]
+            name = hash[:name]
 
             _tr class: color do
               _td email
@@ -114,25 +138,22 @@ _html do
                 if person
                   if person.asf_member?
                     _b do
-                      _a person.public_name, 
-                        href: "../../roster/committer/#{person.id}"
+                      _a name, href: "../../roster/committer/#{person.id}"
                     end
                   else
-                    _a person.public_name, 
-                      href: "../../roster/committer/#{person.id}"
+                    _a name, href: "../../roster/committer/#{person.id}"
                   end
-                elsif WHITELIST.any? {|regex| email =~ regex}
-                    _ '(archiver)'
+                else
+                    _ name
                 end
               end
             end
           end
         end
       end
-      _p 'Note that there are expected to be upto 3 archivers'
     else
       _h3 class: 'bg-warning' do
-        _ "Could not find a list with the name: #{path}"
+        _ "Could not find a security list for the project #{path}"
       end
       _br
     end
