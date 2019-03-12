@@ -31,10 +31,17 @@ _html do
   ) do
     path = ENV['PATH_INFO'].sub('/', '')
     if path == ''
-      _ul.list_group do
-        lists.each do |dom, _|
-          _li.list_group_item do
-            _a dom, href: dom
+      _table.table.table_responsive do
+        _tr do
+          _th.text_right.col_xs_1 'count'
+          _th 'project'
+        end
+        lists.each do |dom, subs|
+          _tr do
+            _td.text_right subs.length
+            _td do
+              _a dom, href: dom
+            end
           end
         end
       end
