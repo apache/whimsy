@@ -33,14 +33,21 @@ _html do
     if path == ''
       _table.table.table_responsive do
         _tr do
-          _th.text_right.col_xs_1 'count'
-          _th 'project'
+          _th.col_xs_1.text_right 'count'
+          _th.col_xs_3 'project'
+          _th.col_xs_1.text_right 'count'
+          _th.col_xs_3 'project'
+          _th.col_xs_1.text_right 'count'
+          _th.col_xs_3 'project'
+          # cols must add up to twelve
         end
-        lists.each do |dom, subs|
+        lists.each_slice(3) do |slice|
           _tr do
-            _td.text_right subs.length
-            _td do
-              _a dom, href: dom
+            slice.each do |dom, subs|
+              _td.text_right subs.length
+              _td do
+                _a dom, href: dom
+              end
             end
           end
         end
