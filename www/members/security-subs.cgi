@@ -41,13 +41,13 @@ _html do
     }
 
   ) do
-    _p do
-      _ 'The counts below exclude the archivers, using the highlights: '
-      _span.bg_danger NOSUBSCRIBERS
-      _span.bg_warning TOOFEW
-    end
     path = ENV['PATH_INFO'].sub('/', '')
     if path == ''
+      _p do
+        _ 'The counts below exclude the archivers, using the highlights: '
+        _span.bg_danger NOSUBSCRIBERS
+        _span.bg_warning TOOFEW
+      end
       _table.table.table_responsive do
         _tr do
           _th.col_xs_1.text_right 'count'
