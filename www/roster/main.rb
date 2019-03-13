@@ -174,7 +174,6 @@ end
 
 get '/group/' do
   @groups = Group.list
-  @podlings = ASF::Podling.to_h
   _html :groups
 end
 

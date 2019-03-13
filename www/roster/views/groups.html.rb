@@ -59,7 +59,6 @@ _html do
             _tr do
               _th.sorting_asc 'Name', data_sort: 'string-ins'
               _th 'Group type', data_sort: 'string'
-              _th 'Notes', data_sort: 'notes'
             end
           end
 
@@ -69,16 +68,6 @@ _html do
               _tr_ do
                 _td {_a name, href: "group/#{name}"}
                 _td type
-
-                if @podlings[name]
-                  if @podlings[name].status == 'retired'
-                    _td.issue "retired podling"
-                  else
-                    _td "#{@podlings[name].status} podling"
-                  end
-                else
-                  _td
-                end
               end
             end
           end
