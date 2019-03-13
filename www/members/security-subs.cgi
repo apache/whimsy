@@ -27,7 +27,11 @@ end
 
 _html do
   _whimsy_body(
-    title: "Security Mailing List Subscriptions"
+    title: "Security Mailing List Subscriptions",
+    breadcrumbs: {
+      subscriptions: '.'
+    }
+
   ) do
     path = ENV['PATH_INFO'].sub('/', '')
     if path == ''
