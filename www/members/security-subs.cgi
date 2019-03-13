@@ -11,6 +11,14 @@ WHITELIST = [
   /^apmail-\w+-security-archive@www.apache.org/, # Direct subscription
 ]
 
+def isArchiver?(email)
+  WHITELIST.any? {|regex| email =~ regex}
+end
+
+NOSUBSCRIBERS = 'No subscribers'
+MINSUB = 3
+TOOFEW = "Not enough subscribers (< #{MINSUB})"
+
 # ensure that there is a trailing slash (so relative paths will work)
 if not ENV['PATH_INFO']
   print "Status: 302 Found\r\nLocation: #{ENV['SCRIPT_URI']}/\r\n\r\n"
@@ -33,6 +41,11 @@ _html do
     }
 
   ) do
+    _p do
+      _ 'The counts below exclude the archivers, using the highlights: '
+      _span.bg_danger NOSUBSCRIBERS
+      _span.bg_warning TOOFEW
+    end
     path = ENV['PATH_INFO'].sub('/', '')
     if path == ''
       _table.table.table_responsive do
@@ -48,7 +61,17 @@ _html do
         lists.each_slice(3) do |slice|
           _tr do
             slice.each do |dom, subs|
-              _td.text_right subs.length
+              arch = subs.select{|sub| isArchiver?(sub)}.length
+              subcount = (subs.length - arch)
+              options = {}
+              if subcount == 0
+                options = {class: 'bg-danger', title: NOSUBSCRIBERS}
+              elsif subcount < MINSUB
+                options = {class: 'bg-warning', title: TOOFEW}
+              end
+              _td.text_right options do
+                _ subcount
+              end
               _td do
                 _a dom, href: dom
               end
