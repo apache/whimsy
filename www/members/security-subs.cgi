@@ -157,6 +157,9 @@ _html do
           _a committee.display_name, 
             href: "../../roster/committee/#{committee.id}"
         end
+        _span class: 'small' do
+          _a "(security@#{path}.apache.org)", href: "https://lists.apache.org/list.html?security@#{path}.apache.org"
+        end
       end
 
       _table.table do
