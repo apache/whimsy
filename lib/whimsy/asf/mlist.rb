@@ -32,9 +32,17 @@ module ASF
 
     # Return an array of private@pmc subscribers followed by the file update time
     # By default does not return the standard archivers
-    # TODO - does this need to be updated for non-PMC committees?
+    # pmc can either be a pmc name, in which case it uses private@<pmc>.apache.org
+    # or it can be an ASF list name, e.g. w3c@apache.org
     def self.private_subscribers(pmc, archivers=false)
-      return list_filter('sub', "#{pmc}.apache.org", 'private', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+      parts = pmc.split('@', 3) # want to detect trailing '@'
+      if parts.length == 1
+        return list_filter('sub', "#{pmc}.apache.org", 'private', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+      elsif parts.length == 2 && parts[1] == 'apache.org'
+        return list_filter('sub', parts[1], parts[0], archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+      else
+        raise "Unexpected parameter: #{pmc}"
+      end
     end
 
     def self.security_subscribers(pmc, archivers=false)
@@ -138,6 +146,7 @@ module ASF
     # for a mail domain, extract related lists and their subscribers (default only the count)
     # also returns the time when the data was last checked
     # If podling==true, then also check for old-style podling names
+    # If list_subs==true, return subscriber emails else sub count
     def self.list_subscribers(mail_domain, podling=false, list_subs=false)
 
       return nil, nil unless File.exist? LIST_SUBS
