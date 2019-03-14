@@ -163,7 +163,8 @@ module ASF
         name, dom = parts
         return email if name.length == 0 || dom.length == 0
         dom.downcase!
-        if %w(gmail.com googlemail.com).include? dom
+        dom = 'gmail.com' if dom == 'googlemail.com' # same mailbox
+        if dom == 'gmail.com'
           return name.sub(/\+.*/,'').gsub('.','').downcase + '@' + dom
         else
           # Effectively the same:

@@ -17,8 +17,11 @@ describe ASF::Mail do
     it "should return address with downcased domain for valid emails" do
       expect(ASF::Mail.to_canonical('ABC@DEF')).to eq('ABC@def')
     end    
-    it "should return address with downcased domain and canonicalised name for Google emails" do
+    it "should return address with downcased domain and canonicalised name for GMail emails" do
       expect(ASF::Mail.to_canonical('A.B.C+123@GMail.com')).to eq('abc@gmail.com')
+    end    
+    it "should return address with downcased domain and canonicalised name for Googlemail emails" do
+      expect(ASF::Mail.to_canonical('A.B.C+123@Googlemail.com')).to eq('abc@gmail.com')
     end    
   end
 
@@ -49,7 +52,7 @@ describe ASF::Mail do
     it 'should return private PPMC lists' do
       podnames = ASF::Podling.current.map(&:name)
       mylists = ASF::Mail.cansub(false, false, podnames) - lists
-      expect(mylists.length).to be(podnames.length)
+      expect(mylists.length).to be_between(podnames.length-2, podnames.length).inclusive # mailing list may not be set up yet
     end
   end
 end
