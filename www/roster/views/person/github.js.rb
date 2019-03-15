@@ -20,10 +20,13 @@ class PersonGitHub < Vue
 
         else
 
-          _a committer.githubUsername, 
-            href: "https://github.com/" + committer.githubUsername
-        end
+          _ul committer.githubUsername do |gh|
+            _li do
+              _a gh, href: "https://github.com/" + gh
+            end
+          end
 
+        end
       end
     end
   end
