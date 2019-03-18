@@ -14,7 +14,8 @@ volunteers = [
   "Michael Brohl (mbrohl)",
   "Jim Jagielski (jim)",
   "Daniel Ruggeri (druggeri)",
-  "Greg Stein (gstein)"
+  "Greg Stein (gstein)",
+  "Craig L Russell (clr)"
 ]
 
 # Calculate how many members required to attend first half for quorum
