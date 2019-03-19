@@ -210,6 +210,9 @@ _html do
       proxy[/name: _(#{'_' *user.public_name.length})/, 1] = 
         user.public_name.gsub(' ', '_')
 
+      proxy[/availid: _(#{'_' *user.id.length})/, 1] = 
+        user.id.gsub(' ', '_')
+
       proxy[/Date: _(#{'_' *date.length})/, 1] = date.gsub(' ', '_')
 
       proxyform = proxy.untaint
