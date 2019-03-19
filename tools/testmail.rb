@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 #
 # Test the ability to send email to non-apache.org email addresses
 #
