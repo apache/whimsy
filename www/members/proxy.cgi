@@ -161,7 +161,7 @@ _html do
                 next if exclude.include? member.id       # Not attending
                 next unless members_txt[member.id]       # Non-members
                 next if members_txt[member.id]['status'] # Emeritus/Deceased
-                _option member.public_name
+                _option "#{member.public_name} (#{member.id})"
               end
             end
           end
