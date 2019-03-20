@@ -161,6 +161,7 @@ _html do
                 next if exclude.include? member.id       # Not attending
                 next unless members_txt[member.id]       # Non-members
                 next if members_txt[member.id]['status'] # Emeritus/Deceased
+                # Display the availid to users to match volunteers array above
                 _option "#{member.public_name} (#{member.id})"
               end
             end
@@ -243,6 +244,8 @@ _html do
               id = file[/([-A-Za-z0-9]+)\.\w+$/, 1]
               proxy = form[/hereby authorize ([\S].*) to act/, 1].
                 gsub('_', ' ').strip
+              # Ensure availid is not included in proxy name here
+              proxy = proxy[/([^(]+)/, 1].strip
               name = form[/signature: ([\S].*)/, 1].gsub(/[\/_]/, ' ').strip
 
               "   #{proxy.ljust(24)} #{name} (#{id})"
