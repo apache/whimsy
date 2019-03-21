@@ -31,24 +31,27 @@ begin
     # extract and fetch key
     keyid = err[/[RD]SA key (ID )?(\w+)/,2].untaint
 
+    out2, err2 = '' # needed later
     KEYSERVERS.each do |server|
       out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', server,
         '--debug', 'ipc', # seems to show communication with dirmngr
         '--recv-keys', keyid
       # for later analysis
       Wunderbar.warn "#{gpg} --keyserver #{server} --recv-keys #{keyid} rc2=#{rc2} out2=#{out2} err2=#{err2}"
-  
-      # run gpg verify command again
-      out, err, rc = Open3.capture3 gpg, '--verify', signature.path,
-        attachment.path
-  
-      # if verify failed, concatenate fetch output
-      if rc.exitstatus != 0
-        out += out2
-        err += err2
-      else
+      if rc2.exitstatus == 0 # Found the key
+        out2 = err2 = '' # Don't add download error to verify error
         break
       end
+    end
+  
+    # run gpg verify command again
+    out, err, rc = Open3.capture3 gpg, '--verify', signature.path,
+      attachment.path
+
+    # if verify failed, concatenate fetch output
+    if rc.exitstatus != 0
+      out += out2
+      err += err2
     end
   end
 
