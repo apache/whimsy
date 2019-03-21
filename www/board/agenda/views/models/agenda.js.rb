@@ -246,7 +246,7 @@ class Agenda
 
     if @attach =~ /^[A-Z]+$/
       Agenda.index.each do |item|
-        items << item if item.attach =~ /^7/ and item.roster == @roster
+        items << item if item.attach =~ /^7\w/ and item.roster == @roster
       end
     end
 

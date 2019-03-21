@@ -54,7 +54,26 @@ end
 # redirect missing to missing page for the latest agenda
 get '/missing' do
   agenda = dir('board_agenda_*.txt').sort.last
-  pass unless agenda # is this correct?
+  pass unless agenda # this will result in a 404
+
+  // Support for sending out reminders before the agenda is created.
+  // Useful in cases where the agenda creation is delayed due to
+  // a board election.
+  if agenda < Date.today.strftime('board_agenda_%Y_%m_%d.txt')
+    // update in memory cache with a dummy agenda.  The only relevant
+    // part of the agenda that matters for this operation is the list
+    // of pmcs (@pmcs).
+    template = File.read('templates/agenda.erb')
+    @meeting = ASF::Board.nextMeeting
+    agenda = @meeting.strftime('board_agenda_%Y_%m_%d.txt')
+    @directors = ['TBD']
+    @minutes = []
+    @owner = ASF::Board::ShepherdStream.new
+    @pmcs = ASF::Board.reporting(@meeting)
+    contents = Erubis::Eruby.new(template).result(binding)
+    Agenda.update_cache(agenda, nil, contents, true)
+  end
+
   response.headers['Location'] = 
     "#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/missing"
   status 302
