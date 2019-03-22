@@ -60,7 +60,7 @@ class Committer
     end
 
     if person.attrs['githubUsername']
-      response[:githubUsername] = person.attrs['githubUsername'] # may be more than one
+      response[:githubUsername] = person.attrs['githubUsername'] # always return array
     end
 
     response[:urls] = person.urls unless person.urls.empty?
