@@ -10,7 +10,11 @@ _ldap.update do
   _previous githubUsername: person.attrs['githubUsername']
 
   if @githubuser and not @dryrun
-    person.modify 'githubUsername', @githubuser
+    # TODO: Hack to deal with single input field on the form
+    # multiple entries are currently displayed with commas when editting
+    names = @githubuser.split(/[, ]+/)
+    Wunderbar.warn(names.inspect)
+    person.modify 'githubUsername', names 
   end
 end
 
