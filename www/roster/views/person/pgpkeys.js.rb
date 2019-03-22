@@ -14,8 +14,8 @@ class PersonPgpKeys < Vue
           _li do
             if key =~ /^[0-9a-fA-F ]+$/
               _samp do
-                _a key, href: 'https://sks-keyservers.net/pks/lookup?' +
-                  'op=index&search=0x' + key.gsub(' ', '')
+                _a key, target: '_blank', href: 'https://sks-keyservers.net/pks/lookup?' +
+                  'op=index&fingerprint=on&hash=on&search=0x' + key.gsub(' ', '')
               end
             else
               _samp key
