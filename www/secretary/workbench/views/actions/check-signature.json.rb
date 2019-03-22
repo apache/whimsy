@@ -5,6 +5,7 @@
 ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 
 #KEYSERVER = 'pgpkeys.mit.edu'
+# Perhaps also try keyserver.pgp.com
 KEYSERVERS = %w{hkps.pool.sks-keyservers.net keyserver.ubuntu.com pgpkeys.mit.edu}
 
 message = Mailbox.find(@message)
