@@ -56,11 +56,11 @@ class Committer
     end
 
     if person.attrs['asf-sascore']
-      response[:sascore] = person.attrs['asf-sascore'].first
+      response[:sascore] = person.attrs['asf-sascore'].first # should only be one, but is returned as array
     end
 
     if person.attrs['githubUsername']
-      response[:githubUsername] = person.githubUsername
+      response[:githubUsername] = person.attrs['githubUsername'] # may be more than one
     end
 
     response[:urls] = person.urls unless person.urls.empty?
