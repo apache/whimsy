@@ -17,7 +17,8 @@ if @githubuser
 
   # Validate the names
   names.each do |name|
-    unless name =~ /^[-0-9a-zA-Z]+$/ # TODO: might need extendind?
+    # Should agree with the validation in github.js.rb
+    unless name =~ /^[-0-9a-zA-Z]+$/ # TODO: might need extending?
       _error "githubUsername must be alphanumeric (or -): '#{name}'"
       return
     end
