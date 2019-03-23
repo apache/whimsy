@@ -258,13 +258,13 @@ class Person < Vue
     # SpamAssassin score
     _PersonSascore person: self, edit: @edit
 
-    # modal dialog for dry run results
+    # modal dialog for dry run results and errors
     _div.modal.fade.wide_form tabindex: -1 do
       _div.modal_dialog do
         _div.modal_content do
           _div.modal_header do
             _button.close 'x', data_dismiss: 'modal'
-            _h4 'Dry run results'
+            _h4 @response_title
           end
           _div.modal_body do
             _textarea value: @response, readonly: true
@@ -363,9 +363,17 @@ class Person < Vue
       },
 
       complete: ->(response) do
+        json = response.responseJSON
         # show results of dryrun
         if formData[0] and formData[0].name == 'dryrun'
-          @response = JSON.stringify(response.responseJSON, nil, 2)
+          @response_title = 'Dry run results'
+          @response = JSON.stringify(json, nil, 2)
+          jQuery('div.modal').modal('show')
+        end
+
+        if json.error
+          @response_title = 'Error occurred'
+          @response = JSON.stringify(json, nil, 2)
           jQuery('div.modal').modal('show')
         end
 
