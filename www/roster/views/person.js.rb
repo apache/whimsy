@@ -267,7 +267,7 @@ class Person < Vue
             _h4 'Dry run results'
           end
           _div.modal_body do
-            _textarea value: JSON.stringify(@response, nil, 2), readonly: true
+            _textarea value: @response, readonly: true
           end
           _div.modal_footer do
             _button.btn.btn_default 'Close', data_dismiss: 'modal'
@@ -365,7 +365,7 @@ class Person < Vue
       complete: ->(response) do
         # show results of dryrun
         if formData[0] and formData[0].name == 'dryrun'
-          @response = response.responseJSON
+          @response = JSON.stringify(response.responseJSON, nil, 2)
           jQuery('div.modal').modal('show')
         end
 
