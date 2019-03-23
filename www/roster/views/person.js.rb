@@ -220,12 +220,12 @@ class Person < Vue
 
     # PGP keys
     if @committer.pgp
-      _PersonPgpKeys person: self
+      _PersonPgpKeys person: self, edit: @edit
     end
 
     # SSH keys
     if @committer.ssh
-      _PersonSshKeys person: self
+      _PersonSshKeys person: self, edit: @edit
     end
 
     # GitHub username
