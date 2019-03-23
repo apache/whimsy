@@ -7,14 +7,30 @@ person = ASF::Person.find(@userid)
 # report the previous value in the response
 _previous githubUsername: person.attrs['githubUsername']
 
-if @githubuser and not @dryrun
+if @githubuser
   # TODO: Hack to deal with single input field on the form
   # multiple entries are currently displayed with commas when editting
   names = @githubuser.split(/[, ]+/).uniq{|n| n.downcase} # duplicates not allowed; case-blind
-  # update LDAP
-  _ldap.update do
-     person.modify 'githubUsername', names
+
+  # report the new values
+  _replacement githubUsername: names
+
+  # Validate the names
+  names.each do |name|
+    unless name =~ /^[-0-9a-zA-Z]+$/ # TODO: might need extendind?
+      _error "githubUsername must be alphanumeric (or -): '#{name}'"
+      return
+    end
+    # TODO: perhaps check that https://github.com/name exists?
   end
+
+  unless @dryrun
+    # update LDAP
+    _ldap.update do
+       person.modify 'githubUsername', names
+    end
+  end
+
 end
 
 # return updated committer info
