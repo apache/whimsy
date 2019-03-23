@@ -14,7 +14,19 @@ class PersonGitHub < Vue
         if @@edit == :github
 
           _form method: 'post' do
-            _input name: 'githubuser', value: committer.githubUsername
+            current = 1
+            prefix = 'githubuser'
+            _input type: 'hidden', name: 'array_prefix', value: prefix
+
+            _div committer.githubUsername do |name|
+              _input style: 'font-family:Monospace', size: 20, name: prefix + current, value: name
+              _br              
+              current += 1
+            end
+            # Spare field to allow new entry to be added
+            _input style: 'font-family:Monospace', size: 20, name: prefix + current, placeholder: '<new GitHub name>'
+            _br             
+            
             _input type: 'submit', value: 'submit'
           end
 

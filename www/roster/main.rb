@@ -158,6 +158,25 @@ get '/committer/:name' do |name|
 end
 
 post '/committer/:userid/:file' do |name, file|
+  # Workround for handling arrays
+  # if the key :array_prefix is defined, the value is assumed to be the prefix for
+  # a list of values with the names: prefix1, prefix2 etc
+  # All non-empty values are collected and stored in an array which is added to the
+  # params with the key prefix
+  prefix = params.delete(:array_prefix)
+  if prefix
+    array = []
+    count = 1
+    loop do
+      key = prefix+count.to_s
+      entry = params.delete(key)
+      Wunderbar.warn(entry)
+      break unless entry
+      array << entry if entry.length > 0
+      count += 1
+    end
+    params[prefix] = array
+  end
   _json :"actions/#{params[:file]}"
 end
 

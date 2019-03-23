@@ -8,24 +8,21 @@ person = ASF::Person.find(@userid)
 _previous githubUsername: person.attrs['githubUsername']
 
 if @githubuser
-  # TODO: Hack to deal with single input field on the form
-  # multiple entries are currently displayed with commas when editting
-  names = @githubuser.split(/[, ]+/).uniq{|n| n.downcase} # duplicates not allowed; case-blind
 
   # report the new values
-  _replacement githubUsername: names
+  _replacement githubUsername: @githubuser
 
-  # Validate the names
-  names.each do |name|
+  @githubuser.each do |name|
     # Should agree with the validation in github.js.rb
     unless name =~ /^[-0-9a-zA-Z]+$/ # TODO: might need extending?
-      _error "githubUsername must be alphanumeric (or -): '#{name}'"
+      _error "'#{name}' is invalid: must be alphanumeric (or -)"
       return
     end
-    # TODO: perhaps check that https://github.com/name exists?
+    # TODO: perhaps check that https://github.com/name exists?    
   end
 
   unless @dryrun
+    names = @githubuser.uniq{|n| n.downcase} # duplicates not allowed; case-blind
     # update LDAP
     _ldap.update do
        person.modify 'githubUsername', names
