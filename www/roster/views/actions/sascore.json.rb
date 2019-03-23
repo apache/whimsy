@@ -2,14 +2,14 @@
 # Update LDAP SpamAssassin score attribute for a committer
 #
 
-# update LDAP
-_ldap.update do
-  person = ASF::Person.find(@userid)
+person = ASF::Person.find(@userid)
 
-  # report the previous value in the response
-  _previous sascore: person.attrs['asf-sascore']
+# report the previous value in the response
+_previous sascore: person.attrs['asf-sascore']
 
-  if @sascore and not @dryrun
+if @sascore and not @dryrun
+  # update LDAP
+  _ldap.update do
     person.modify 'asf-sascore', @sascore
   end
 end
