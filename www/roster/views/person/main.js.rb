@@ -23,7 +23,8 @@ class Person < Vue
     end
 
     # Personal URL
-    if @committer.urls
+    if @committer.urls || @auth
+      @committer.urls ||= ['<none defined>']
       _PersonUrls person: self, edit: @edit
     end
 
@@ -219,17 +220,20 @@ class Person < Vue
     end
 
     # PGP keys
-    if @committer.pgp
+    if @committer.pgp || @auth
+      @committer.pgp ||= ['<none defined>']
       _PersonPgpKeys person: self, edit: @edit
     end
 
     # SSH keys
-    if @committer.ssh
+    if @committer.ssh || @auth
+      @committer.ssh ||= ['<none defined>']
       _PersonSshKeys person: self, edit: @edit
     end
 
     # GitHub username
-    if @committer.githubUsername
+    if @committer.githubUsername || @auth
+      @committer.githubUsername ||= ['<none defined>']
       _PersonGitHub person: self, edit: @edit
     end
 
