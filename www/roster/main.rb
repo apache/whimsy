@@ -170,8 +170,7 @@ post '/committer/:userid/:file' do |name, file|
     loop do
       key = prefix+count.to_s
       entry = params.delete(key)
-      Wunderbar.warn(entry)
-      break unless entry
+      break unless entry # no key means end of sequence
       array << entry if entry.length > 0
       count += 1
     end
