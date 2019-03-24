@@ -44,8 +44,9 @@ class Committer
 
     response[:name] = name
 
-    response[:mail] = person.all_mail
-    response[:mail_default] = person.mail # used for forwarding mails
+    response[:email_forward] = person.mail # forwarding
+    response[:email_alt] = person.alt_email # alternates
+    response[:email_other] = person.all_mail - person.mail - person.alt_email # others (ASF mail/ICLA mail if different)
 
     unless person.pgp_key_fingerprints.empty?
       response[:pgp] = person.pgp_key_fingerprints 
