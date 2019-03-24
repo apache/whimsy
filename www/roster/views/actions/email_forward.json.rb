@@ -26,7 +26,7 @@ if @email_forward  # must agree with email_forward.js.rb
   # update LDAP
   unless @dryrun
     _ldap.update do
-      person.modify 'alt_email', @email_forward
+      person.modify 'mail', @email_forward
     end
   end
 end
