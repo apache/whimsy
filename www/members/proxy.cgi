@@ -203,8 +203,8 @@ _html do
       user = ASF::Person.find($USER)
       date = Date.today.strftime("%B %-d, %Y")
 
-      # update proxy form
-      proxy[/authorize _(#{'_' *@proxy.length})/, 1] = @proxy.gsub(' ', '_')
+      # update proxy form (match as many _ as possible up to the name length)
+      proxy[/authorize _(_{,#{@proxy.length}})/, 1] = @proxy.gsub(' ', '_')
 
       proxy[/signature: _(_#{'_' *user.public_name.length}_)/, 1] = 
         "/#{user.public_name.gsub(' ', '_')}/"
