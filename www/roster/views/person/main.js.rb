@@ -161,14 +161,11 @@ class Person < Vue
     end
     
     # Email addresses
-    if @committer.email_forward # I expect this is always true
-      _PersonEmailForwards person: self, edit: @edit
-    end
+    # always present
+    _PersonEmailForwards person: self, edit: @edit
 
-    if @committer.email_alt|| @auth
-      @committer.email_alt ||= ['<none defined>']
-      _PersonEmailAlt person: self, edit: @edit
-    end
+    # always present (even if an empty array)
+    _PersonEmailAlt person: self, edit: @edit
 
     if @committer.email_other
       _PersonEmailOther person: self # not editable

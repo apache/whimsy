@@ -5,7 +5,7 @@
 person = ASF::Person.find(@userid)
 
 # report the previous value in the response
-_previous alt_email: person.attrs['asf-altEmail']
+_previous alt_email: person.alt_email # returns empty array if not defined
 
 if @email_alt  # must agree with email_alt.js.rb
 

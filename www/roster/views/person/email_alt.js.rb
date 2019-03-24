@@ -32,9 +32,15 @@ class PersonEmailAlt < Vue
 
         else
 
-          _ul committer.email_alt do |mail|
-            _li do
-              _a mail, href: 'mailto:' + mail
+          if committer.email_alt.length == 0
+            _ul do
+              _li '(none defined)'
+            end
+          else
+            _ul committer.email_alt do |mail|
+              _li do
+                _a mail, href: 'mailto:' + mail
+              end
             end
           end
         end
