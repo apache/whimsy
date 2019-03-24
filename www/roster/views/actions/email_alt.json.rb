@@ -5,7 +5,7 @@
 person = ASF::Person.find(@userid)
 
 # report the previous value in the response
-_previous alt_email: person.attrs['alt_email']
+_previous alt_email: person.attrs['alt-email']
 
 if @email_alt  # must agree with email_alt.js.rb
 
@@ -26,7 +26,7 @@ if @email_alt  # must agree with email_alt.js.rb
   # update LDAP
   unless @dryrun
     _ldap.update do
-      person.modify 'alt_email', @email_alt
+      person.modify 'alt-email', @email_alt
     end
   end
 end
