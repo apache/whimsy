@@ -24,7 +24,7 @@ class Person < Vue
 
     # Personal URL
     if @committer.urls
-      _PersonUrls person: self
+      _PersonUrls person: self, edit: @edit
     end
 
     # PMCs
