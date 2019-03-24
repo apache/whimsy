@@ -31,9 +31,15 @@ class PersonSshKeys < Vue
           end
 
         else
-          _ul committer.ssh do |key|
-            _li.ssh do
-              _pre.wide key
+          if committer.ssh.empty?
+            _ul do
+              _li '(none defined)'
+            end
+          else
+            _ul committer.ssh do |key|
+              _li.ssh do
+                _pre.wide key
+              end
             end
           end
         end

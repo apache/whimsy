@@ -30,23 +30,29 @@ class PersonPgpKeys < Vue
           end
 
         else
-          _ul committer.pgp do |key|
-            nbsp = "\u00A0" # non-breaking space as UTF-8
-            keynb = key.gsub(' ', nbsp) # ensure multiple spaces appear as such
-            _li do
-              if key =~ /^[0-9a-fA-F ]+$/
-                keysq = key.gsub(' ', '') # strip spaces for length check and lookup
-                _samp style: 'font-family:Monospace' do
-                  _a keynb, href: 'https://sks-keyservers.net/pks/lookup?' +
-                    'op=index&fingerprint=on&hash=on&search=0x' + keysq
-                  unless keysq.length == 40
+          if committer.pgp.empty?
+            _ul do
+              _li '(none defined)'
+            end
+          else
+            _ul committer.pgp do |key|
+              nbsp = "\u00A0" # non-breaking space as UTF-8
+              keynb = key.gsub(' ', nbsp) # ensure multiple spaces appear as such
+              _li do
+                if key =~ /^[0-9a-fA-F ]+$/
+                  keysq = key.gsub(' ', '') # strip spaces for length check and lookup
+                  _samp style: 'font-family:Monospace' do
+                    _a keynb, href: 'https://sks-keyservers.net/pks/lookup?' +
+                      'op=index&fingerprint=on&hash=on&search=0x' + keysq
+                    unless keysq.length == 40
+                      _span.bg_danger ' ?? Expecting exactly 40 hex characters (plus optional spaces)'
+                    end
+                  end
+                else
+                  _samp style: 'font-family:Monospace' do
+                    _ keynb
                     _span.bg_danger ' ?? Expecting exactly 40 hex characters (plus optional spaces)'
                   end
-                end
-              else
-                _samp style: 'font-family:Monospace' do
-                  _ keynb
-                  _span.bg_danger ' ?? Expecting exactly 40 hex characters (plus optional spaces)'
                 end
               end
             end

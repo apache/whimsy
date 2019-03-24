@@ -30,8 +30,14 @@ class PersonUrls < Vue
           end
 
         else
-          _ul committer.urls do |url|
-            _li {_a url, href: url}
+          if committer.urls.empty?
+            _ul do
+              _li '(none defined)'
+            end
+          else
+            _ul committer.urls do |url|
+              _li {_a url, href: url}
+            end
           end
       end
       end

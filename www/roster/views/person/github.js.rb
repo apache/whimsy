@@ -31,17 +31,21 @@ class PersonGitHub < Vue
           end
 
         else
-
-          _ul committer.githubUsername do |gh|
-            _li do
-              _a gh, href: "https://github.com/" + gh +"/" # / catches trailing spaces
-              unless gh =~ /^[-0-9a-zA-Z]+$/ # should agree with the validation in github.json.rb
-                _ ' '
-                _span.bg_warning "Invalid: '#{gh}' expecting only alphanumeric and '-'"
+          if committer.githubUsername.empty?
+            _ul do
+              _li '(none defined)'
+            end
+          else
+            _ul committer.githubUsername do |gh|
+              _li do
+                _a gh, href: "https://github.com/" + gh +"/" # / catches trailing spaces
+                unless gh =~ /^[-0-9a-zA-Z]+$/ # should agree with the validation in github.json.rb
+                  _ ' '
+                  _span.bg_warning "Invalid: '#{gh}' expecting only alphanumeric and '-'"
+                end
               end
             end
           end
-
         end
       end
     end
