@@ -43,7 +43,7 @@ class PersonPgpKeys < Vue
                   keysq = key.gsub(' ', '') # strip spaces for length check and lookup
                   _samp style: 'font-family:Monospace' do
                     _a keynb, href: 'https://sks-keyservers.net/pks/lookup?' +
-                      'op=index&fingerprint=on&hash=on&search=0x' + keysq
+                      'op=index&fingerprint=on&search=0x' + keysq
                     unless keysq.length == 40
                       _span.bg_danger ' ?? Expecting exactly 40 hex characters (plus optional spaces)'
                     end
