@@ -116,7 +116,7 @@ _html do
           if help
             _p help
             if copypasta
-              _ul do
+              _ul.bg_success do
                 copypasta.each do |copyline|
                   _pre copyline
                 end
