@@ -101,7 +101,7 @@ def Monitor.public_json(previous_status)
               from 'Public JSON job monitor  <dev@whimsical.apache.org>'
               to 'Notification List <notifications@whimsical.apache.org>'
               subject "Problem (#{lvl}) detected in #{name} job"
-              body "\nLOG: #{contents_save}\nSTATUS: #{status[name]}\n"
+              body "\nLOG:\n#{contents_save}\nSTATUS: #{status[name]}\n"
             end
             # in spite of what the docs say, this does not seem to work in the body above
             mail.charset = 'utf-8'
