@@ -231,6 +231,15 @@ class Person < Vue
       _PersonPgpKeys person: self, edit: @edit
     end
 
+    # hosts    
+    _div.row do
+      _div.name 'Host Access'
+      _div.value do
+        # pre avoids wrapping on hyphens and reduces number of lines on the page
+        _pre @committer.host.join(' ')
+      end
+    end
+
     # SSH keys
     if @committer.ssh || @auth
       @committer.ssh ||= []

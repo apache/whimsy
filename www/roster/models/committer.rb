@@ -56,6 +56,8 @@ class Committer
       response[:ssh] = person.ssh_public_keys
     end
 
+    response[:host] = person.attrs['host'] || ['(none)']
+
     if person.attrs['asf-sascore']
       response[:sascore] = person.attrs['asf-sascore'].first # should only be one, but is returned as array
     end
