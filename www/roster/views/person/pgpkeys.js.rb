@@ -18,12 +18,12 @@ class PersonPgpKeys < Vue
             _input type: 'hidden', name: 'array_prefix', value: prefix
 
             _div committer.pgp do |key|
-              _input style: 'font-family:Monospace', size: 50, name: prefix + current, value: key
+              _input style: 'font-family:Monospace', size: 52, name: prefix + current, value: key
               _br              
               current += 1
             end
             # Spare field to allow new entry to be added
-            _input style: 'font-family:Monospace', size: 50, name: prefix + current, placeholder: '<enter a new 40 hex char key>'
+            _input style: 'font-family:Monospace', size: 52, name: prefix + current, placeholder: '<enter a new 40 hex char key>'
             _br             
 
             _input type: 'submit', value: 'submit'
