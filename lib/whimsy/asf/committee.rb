@@ -83,7 +83,8 @@ module ASF
     @@namemap = Proc.new do |name|
       # Drop parenthesized comments and downcase before lookup; drop all spaces after lookup
       # So aliases table does not need to contain entries for Traffic Server and XML Graphics.
-      cname = @@aliases[name.sub(/\s+\(.*?\)/, '').downcase].gsub(/\s+/, '')
+      # Also compress white-space before lookup so tabs etc from index.html don't matter
+      cname = @@aliases[name.sub(/\s+\(.*?\)/, '').strip.gsub(/\s+/, ' ').downcase].gsub(/\s+/, '')
       cname
     end
 
