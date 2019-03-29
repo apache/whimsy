@@ -32,6 +32,7 @@ class ASF::Board::Agenda
     'cutting' => ['dc', 'Doug', 'Doug Cutting'],
     'dirkx' => ['dg', 'Dirk-Willem', 'Dirk-Willem van Gulik'],
     'dkulp' => ['dk', 'Daniel', 'Daniel Kulp'],
+    'druggeri' => ['dr', 'Daniel', 'Daniel Ruggeri'],
     'fielding' => ['rf', 'Roy', 'Roy T. Fielding'],
     'geirm' => ['gmj', 'Geir', 'Geir Magnusson Jr'],
     'gstein' => ['gs', 'Greg', 'Greg Stein'],
@@ -43,6 +44,7 @@ class ASF::Board::Agenda
     'markt' => ['mt', 'Mark', 'Mark Thomas'],
     'marvin' => ['mh', 'Marvin', 'Marvin Humphrey'],
     'mattmann' => ['cm', 'Chris', 'Chris Mattmann'],
+    'myrle' => ['mk', 'Myrle', 'Myrle Krantz'],
     'noirin' => ['np', 'Noirin', 'Noirin Plunkett'],
     'psteitz' => ['ps', 'Phil', 'Phil Steitz'],
     'rbowen' => ['rb', 'Rich', 'Rich Bowen'],
@@ -50,7 +52,8 @@ class ASF::Board::Agenda
     'rubys' => ['sr', 'Sam', 'Sam Ruby'],
     'rvs' => ['rs', 'Roman', 'Roman Shaposhnik'],
     'striker' => ['ss', 'Sander', 'Sander Striker'],
-    'tdunning' => ['td', 'Ted', 'Ted Dunning']
+    'tdunning' => ['td', 'Ted', 'Ted Dunning'],
+    'wohali' => ['jt', 'Joan', 'Joan Touzet']
   }
 
   SKIP_AGENDAS = {

@@ -25,6 +25,7 @@ DIRECTOR_MAP = {
   'curcuru' => ['sc', 'Shane', 'Shane Curcuru'],
   'cutting' => ['dc', 'Doug', 'Doug Cutting'],
   'dkulp' => ['dk', 'Daniel', 'Daniel Kulp'],
+  'druggeri' => ['dr', 'Daniel', 'Daniel Ruggeri'],
   'fielding' => ['rf', 'Roy', 'Roy T. Fielding'],
   'geirm' => ['gmj', 'Geir', 'Geir Magnusson Jr'],
   'gstein' => ['gs', 'Greg', 'Greg Stein'],
@@ -36,13 +37,15 @@ DIRECTOR_MAP = {
   'markt' => ['mt', 'Mark', 'Mark Thomas'],
   'marvin' => ['mh', 'Marvin', 'Marvin Humphrey'],
   'mattmann' => ['cm', 'Chris', 'Chris Mattmann'],
+  'myrle' => ['mk', 'Myrle', 'Myrle Krantz'],
   'noirin' => ['np', 'Noirin', 'Noirin Plunkett'],
   'psteitz' => ['ps', 'Phil', 'Phil Steitz'],
   'rbowen' => ['rb', 'Rich', 'Rich Bowen'],
   'rgardler' => ['rg', 'Ross', 'Ross Gardler'],
   'rubys' => ['sr', 'Sam', 'Sam Ruby'],
   'rvs' => ['rs', 'Roman', 'Roman Shaposhnik'],
-  'tdunning' => ['td', 'Ted', 'Ted Dunning']
+  'tdunning' => ['td', 'Ted', 'Ted Dunning'],
+  'wohali' => ['jt', 'Joan', 'Joan Touzet']
 }
 
 # Summarize director attendance and preapps at one meeting into dstats
