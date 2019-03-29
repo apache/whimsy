@@ -6,7 +6,7 @@ require_relative 'spec_helper'
 
 feature 'report' do
   before :each do
-    page.driver.header 'REMOTE_USER', 'clr'
+    page.driver.header 'REMOTE_USER', 'mattsicker'
   end
 
   it "should allow timestamps to be edited" do
