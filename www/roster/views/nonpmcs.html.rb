@@ -13,7 +13,10 @@ _html do
     }
   ) do
     _p do
-      _ 'A full list of Apache committees that are not PMCs; click on the name for a detail page about that committee.  Other groups of various kinds '
+      _ 'A full list of Apache committees that are not PMCs; click on the name for a detail page about that committee.'
+      _ '(from committee-info.txt)'
+      _br
+      _ 'Other groups of various kinds '
       _a href: '/roster/group/' do
         _span.glyphicon.glyphicon_lock :aria_hidden, class: 'text-primary', aria_label: 'ASF Members Private'
         _ 'are listed privately.'
