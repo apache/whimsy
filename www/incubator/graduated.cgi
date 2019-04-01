@@ -40,6 +40,7 @@ _html do
           _ '.'
           _p do
             _ul do
+              _li 'Committee: links to Whimsy summary of board minutes'
               _li 'Established: date is from ASF meeting minutes; links to the published minutes if found'
               _li 'Podling status: from podlings.xml; links to the Incubator status page'
               _li 'Graduated?: True if an establish resolution was found that mentions Incubator'
