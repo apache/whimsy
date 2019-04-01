@@ -31,9 +31,12 @@ _html do
           _ 'This script cross-checks Committee Reports from '
           _a 'Board Minutes',
             href: 'https://whimsy.apache.org/board/minutes/'
-          _ '  and '
+          _ ', '
           _a 'committee-info.txt',
             href: 'https://svn.apache.org/repos/private/committers/board/committee-info.txt'
+          _ ',  and '
+          _a 'podlings.xml',
+            href: 'https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings.xml'
           _ '.'
         end
       }
@@ -55,6 +58,7 @@ _html do
             _tr do
               _th 'Committee'
               _th 'Established'
+              _th 'Podling status'
               _th 'Graduated?'
               _th 'Active?'
             end
@@ -78,6 +82,7 @@ _html do
               }.compact.first
 
               incubated += 1 if graduated
+              podling = ASF::Podling.find(name.downcase)
 
               _tr_ do
                 _td do
@@ -85,6 +90,12 @@ _html do
                 end
                 _td do
                   _a establish, href: "../board/minutes/#{href}##{establish}"
+                end
+                _td do
+                  if podling
+                    _a podling.status, href:
+                      "https://incubator.apache.org/projects/#{name.downcase}.html"
+                  end
                 end
                 _td graduated
                 _td !!active
