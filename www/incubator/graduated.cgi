@@ -38,6 +38,14 @@ _html do
           _a 'podlings.xml',
             href: 'https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings.xml'
           _ '.'
+          _p do
+            _ul do
+              _li 'Established: date is from ASF meeting minutes; links to the published minutes if found'
+              _li 'Podling status: from podlings.xml; links to the Incubator status page'
+              _li 'Graduated?: True if an establish resolution was found that mentions Incubator'
+              _li 'Active?: Listed as an active PMC in committee-info.txt'
+            end
+          end
         end
       }
     ) do
