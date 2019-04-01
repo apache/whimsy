@@ -6,6 +6,17 @@ require 'whimsy/asf'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 
+parents = {
+  "ant" => "Jakarta",
+  "attic" => "N/A",
+  "community development" => "N/A",
+  "db" => "Jakarta",
+  "incubator" => "N/A",
+  "labs" => "N/A",
+  "logging services" => "Jakarta",
+  "public relations" => "N/A",
+}
+
 source = '/srv/whimsy/www/board/minutes'
 index = File.read("#{source}/index.html")
 
@@ -14,6 +25,7 @@ creports = csection.scan(/<a .*?<\/a>/)
 retired = csection.scan(/<del>.*?<\/del>/m)
 
 creports.sort_by! {|committee| committee[/>(.*?)</, 1].downcase}
+zest = creports.find {|committee| committee =~ />Zest</}
 
 
 _html do
@@ -42,8 +54,7 @@ _html do
             _ul do
               _li 'Committee: links to Whimsy summary of board minutes'
               _li 'Established: date is from ASF meeting minutes; links to the published minutes if found'
-              _li 'Podling status: from podlings.xml; links to the Incubator status page'
-              _li 'Graduated?: True if an establish resolution was found that mentions Incubator'
+              _li 'Parent PMC; links to the Incubator status page if the PMC represents a graduated podling'
               _li 'Active?: Listed as an active PMC in committee-info.txt'
             end
           end
@@ -67,8 +78,7 @@ _html do
             _tr do
               _th 'Committee'
               _th 'Established'
-              _th 'Podling status'
-              _th 'Resolution mentions incubator?'
+              _th 'Parent PMC'
               _th 'Active?'
             end
           end
@@ -76,12 +86,18 @@ _html do
             creports.map do |committee|
               name = committee[/>(.*?)</, 1]
               href = committee[/href="(.*?)"/, 1].untaint
+              href = 'Zest.html' if href == 'Polygene.html'
               page = File.read("#{source}/#{href}").
                 sub(/<footer.*<\/footer>/m, '')
+
+              next if name == 'Zest' # renamed to Polygene
+              next if name == 'Metro' # rejected
 
               active = unreported.delete(name.downcase)
 
               graduated = false
+
+              parent = nil
 
               establish = page.split('<h2').map { |report|
                 title = report[/<h3.*?<\/h3>/]
@@ -89,7 +105,14 @@ _html do
                   %w(establish create creation).any? {|word|
                     title.downcase.include? word
                   }
+
                 graduated ||= report.downcase.include? 'incubator'
+
+                discharge = report.split(/\n\s*\n/).grep(/discharged/).last
+                if discharge 
+                  parent = discharge[/(\w+)\s*(Project|PMC)/, 1]
+                end
+
                 report[/id="(.*?)"/, 1]
               }.compact.first
 
@@ -105,11 +128,12 @@ _html do
                 end
                 _td do
                   if podling
-                    _a podling.status, href:
+                    _a 'Incubator', href:
                       "https://incubator.apache.org/projects/#{podling.resource}.html"
+                  else
+                    _span parent || parents[name.downcase]
                   end
                 end
-                _td graduated
                 _td !!active
               end
             end
