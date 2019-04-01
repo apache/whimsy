@@ -200,7 +200,10 @@ module ASF
 
     # find a podling by name
     def self.find(name)
-      list.find { |podling| podling.name == name }
+      name = name.downcase
+      list.find do |podling| 
+        podling.name == name || podling.display_name.downcase == name
+      end
     end
 
     # below is for backwards compatibility
