@@ -68,7 +68,7 @@ _html do
               _th 'Committee'
               _th 'Established'
               _th 'Podling status'
-              _th 'Graduated?'
+              _th 'Resolution mentions incubator?'
               _th 'Active?'
             end
           end
@@ -85,13 +85,16 @@ _html do
 
               establish = page.split('<h2').map { |report|
                 title = report[/<h3.*?<\/h3>/]
-                next unless title and title.downcase.include? 'establish'
+                next unless title and 
+                  %w(establish create creation).any? {|word|
+                    title.downcase.include? word
+                  }
                 graduated ||= report.downcase.include? 'incubator'
                 report[/id="(.*?)"/, 1]
               }.compact.first
 
-              incubated += 1 if graduated
               podling = ASF::Podling.find(name.downcase)
+              incubated += 1 if graduated or podling
 
               _tr_ do
                 _td do
@@ -103,7 +106,7 @@ _html do
                 _td do
                   if podling
                     _a podling.status, href:
-                      "https://incubator.apache.org/projects/#{name.downcase}.html"
+                      "https://incubator.apache.org/projects/#{podling.resource}.html"
                   end
                 end
                 _td graduated

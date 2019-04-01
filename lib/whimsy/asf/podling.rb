@@ -66,8 +66,10 @@ module ASF
       @reporting = node.at('reporting') if node.at('reporting')
       @monthly = @reporting.text.split(/,\s*/) if @reporting and @reporting.text
 
+      @resolutionLink = node.at('resolution')['link'] if node.at('resolution')
+
       # Note: the following optional elements are not currently processed:
-      # - resolution
+      # - resolution (except for resolution/@link)
       # - retiring/graduating
       # The following podling attributes are not processed:
       # - longname
@@ -88,6 +90,11 @@ module ASF
     # podlings.xml.
     def display_name
       @name || @resource
+    end
+
+    # TLP name (name differ from podling name)
+    def tlp_name
+      @resolutionLink || name
     end
 
     # date this podling was accepted for incubation
@@ -202,7 +209,10 @@ module ASF
     def self.find(name)
       name = name.downcase
       list.find do |podling| 
-        podling.name == name || podling.display_name.downcase == name
+        podling.name == name or podling.display_name.downcase == name or
+          podling.resource == name or
+          podling.tlp_name.downcase == name or
+          podling.resourceAliases.any? {|aname| aname.downcase == name}
       end
     end
 
