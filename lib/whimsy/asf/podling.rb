@@ -208,11 +208,15 @@ module ASF
     # find a podling by name
     def self.find(name)
       name = name.downcase
-      list.find do |podling| 
+
+      result = list.find do |podling| 
         podling.name == name or podling.display_name.downcase == name or
-          podling.resource == name or
-          podling.tlp_name.downcase == name or
           podling.resourceAliases.any? {|aname| aname.downcase == name}
+      end
+
+      result ||= list.find do |podling| 
+        podling.resource == name or
+        podling.tlp_name.downcase == name
       end
     end
 
