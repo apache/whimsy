@@ -13,6 +13,10 @@ ids={}
 binarchives = ASF::Mail.lists(true)
 show_all = (ENV['PATH_INFO'] == '/all')
 
+# list of ids deliberately not archived
+#                 INFRA-18129
+NOT_ARCHIVED = %w{apachecon-aceu19}
+
 _html do
   _body? do
     _whimsy_body(
@@ -49,6 +53,8 @@ _html do
       ASF::MLIST.list_archivers do |dom, list, arcs|
 
         id = ASF::Mail.archivelistid(dom, list)
+
+        next if NOT_ARCHIVED.include? id # skip error reports. TODO check if it is archived
 
         ids[id] = 1 # TODO check for duplicates
 
