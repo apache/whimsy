@@ -67,7 +67,7 @@ class PPMC
     # Merge the PPMC members (owners)
     owners.each do |person|
       notSubbed = false
-      if analysePrivateSubs and owners.include? person
+      if analysePrivateSubs
         allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
         notSubbed = (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
         unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
@@ -95,7 +95,7 @@ class PPMC
       }
       if analysePrivateSubs
         allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
-        roster[person.id]['notSubbed'] = (allMail & pSubs).empty?
+        roster[person.id]['notSubbed'] = (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
         unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
     end
