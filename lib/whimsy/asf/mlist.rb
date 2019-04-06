@@ -189,7 +189,7 @@ module ASF
 
     private
 
-    # return the archiver type as array: [:MBOX|:PONY|:MINO, 'public'|'private'|'alias'|'direct']
+    # return the archiver type as array: [:MBOX|:PONY|:MINO|:MAIL_ARCH|:MARKMAIL, 'public'|'private'|'alias'|'direct']
     # minotaur archiver names do not include any public/private indication as that is in bin/.archives
     def self.archiver_type(email, dom,list)
       case email
@@ -197,10 +197,13 @@ module ASF
         when ARCH_MBOX_PRV then return [:MBOX, 'private']
         when ARCH_PONY_PUB then return [:PONY, 'public']
         when ARCH_PONY_PRV then return [:PONY, 'private']
+        when ARCH_EXT_MAIL_ARCHIVE then return [:MAIL_ARCH, 'public']
         # normal archiver routed via .qmail-[tlp-]list-archive
         when "#{list}-archive@#{dom}" then return [:MINO, 'alias']
         # Direct mail to minotaur
         when "apmail-#{dom.split('.').first}-#{list}-archive@www.apache.org" then return [:MINO, 'direct']
+      else
+        return [:MARKMAIL, 'public'] if is_markmail_archiver?(email)
       end
       raise "Unexpected archiver email #{email} for #{list}@#{dom}" # Should not happen?
     end
@@ -210,8 +213,13 @@ module ASF
       e =~ /.-archive@([^.]+\.)?(apache\.org|apachecon\.com)$/
     end
 
+    # Is the email a markmail archiver?
+    def self.is_markmail_archiver? (e)
+      e =~ ARCH_EXT_MARKMAIL_RE
+    end
+
     def self.is_archiver? (e)
-      ARCHIVERS.include? e or is_mino_archiver? e
+      ARCHIVERS.include?(e) or is_mino_archiver?(e) or is_markmail_archiver?(e)
     end
 
     def self.downcase(array)
@@ -314,8 +322,12 @@ module ASF
     ARCH_PONY_PUB = "archive-asf-public@cust-asf.ponee.io"
     ARCH_PONY_PRV = "archive-asf-private@cust-asf.ponee.io"
 
+    # Standard external archivers (necessarily public)
+    ARCH_EXT_MAIL_ARCHIVE = "archive@mail-archive.com"
+    ARCH_EXT_MARKMAIL_RE = %r{^\w+\.\w+\.\w+@.\.markmail\.org$} # one.two.three@a.markmail.org
+
     ARCHIVERS = [ARCH_PONY_PRV, ARCH_PONY_PUB,
-                 ARCH_MBOX_PUB, ARCH_MBOX_PRV, ARCH_MBOX_RST]
+                 ARCH_MBOX_PUB, ARCH_MBOX_PRV, ARCH_MBOX_RST, ARCH_EXT_MAIL_ARCHIVE]
     # TODO alias archivers: either add list or use RE to filter them
 
     LIST_MODS = '/srv/subscriptions/list-mods'
