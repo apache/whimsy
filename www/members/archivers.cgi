@@ -11,7 +11,9 @@ require 'wunderbar/jquery/stupidtable'
 
 ids={}
 binarchives = ASF::Mail.lists(true)
-show_all = (ENV['PATH_INFO'] == '/all')
+show_all = (ENV['PATH_INFO'] == '/all') # all entries, regardless of error state
+# default is to show entry if neither mail-archive nor markmail is present (mail-archive is missing from a lot of lists)
+show_mailarchive = (ENV['PATH_INFO'] == '/mail-archive') # show entry if mail-archive is missing
 
 # list of ids deliberately not archived
 #                 INFRA-18129
@@ -29,7 +31,7 @@ _html do
         _p! do
           _ 'This script compares bin/.archives with the list of archiver addresses that are subscribed to mailing lists'
           _br
-          _ 'Every entry in bin/.archives should have up to 3 archive subscribers, except for the mail aliases, which are not lists.'
+          _ 'Every entry in bin/.archives should have up to 3 archive subscribers (5 for public lists), except for the mail aliases, which are not lists.'
           _br
           _ 'Every mailing list should have an entry in bin/.archives'
           _br
@@ -48,6 +50,8 @@ _html do
         _th 'MINO'
         _th 'MBOX'
         _th 'PONY'
+        _th 'MAIL-ARCHIVE'
+        _th 'MARKMAIL'
         _th 'Archivers', data_sort: 'string'
       end
       ASF::MLIST.list_archivers do |dom, list, arcs|
@@ -60,40 +64,70 @@ _html do
 
         options = Hash.new # Any fields have warnings/errors?
 
-        pubprv = binarchives[id]
+        pubprv = binarchives[id] # public/private
 
-        mino = arcs.select{|e| e[1] == :MINO}.map{|e| e[2]}.first
-        if mino
+        # in case there are multiple archivers with different classifications, we
+        # join all the unique entries. 
+        # This is equivalent to first if there is only one, but will produce
+        # a string such as 'privatepublic' if there are distinct entries
+        # However it generates an empty string if there are no entries.
+
+        mino = arcs.select{|e| e[1] == :MINO}.map{|e| e[2]}.uniq.join('')
+        if ! mino.empty?
           options[:mino]={class: 'info'} unless mino == 'alias'
         else
           mino = 'Missing'
           options[:mino]={class: 'warning'}
         end 
         
-        mbox = arcs.select{|e| e[1] == :MBOX}.map{|e| e[2]}.first
-        if mbox
+        mbox = arcs.select{|e| e[1] == :MBOX}.map{|e| e[2]}.uniq.join('')
+        if ! mbox.empty?
           options[:mbox] = {class: 'danger'} if pubprv && mbox != pubprv  
         else
           mbox = 'Missing'
           options[:mbox] = {class: 'warning'}
         end
 
-        pony = arcs.select{|e| e[1] == :PONY}.map{|e| e[2]}.first
-        if pony
+        pony = arcs.select{|e| e[1] == :PONY}.map{|e| e[2]}.uniq.join('')
+        if ! pony.empty?
           options[:pony] = {class: 'danger'} if pubprv && pony != pubprv  
         else
           pony = 'Missing'
           options[:pony] = {class: 'warning'}
         end
 
+        mail_archive = arcs.select{|e| e[1] == :MAIL_ARCHIVE}.map{|e| e[2]}.uniq.join('')
+        if ! mail_archive.empty?
+          options[:mail_archive] = {class: 'danger'} if pubprv && mail_archive != pubprv  
+        elsif pubprv == 'private'
+          mail_archive = 'N/A'
+        else
+          mail_archive = 'Missing'
+          options[:mail_archive] = {class: 'warning'}
+        end
           
-        # must be done last
+        markmail = arcs.select{|e| e[1] == :MARKMAIL}.map{|e| e[2]}.uniq.join('')
+        if ! markmail.empty?
+          options[:markmail] = {class: 'danger'} if pubprv && markmail != pubprv  
+        elsif pubprv == 'private'
+          markmail = 'N/A'
+        else
+          markmail = 'Missing'
+          options[:markmail] = {class: 'warning'}
+        end
+              
+        # must be done last as it changes pubprv
         unless pubprv
           pubprv = 'Not listed in bin/.archives'
           options[:pubprv] = {class: 'warning'} 
         end
 
-        next unless show_all || options.keys.length > 0 # only show errors unless want all
+        if show_mailarchive
+          needs_attention = options.keys.length > 0
+        else # don't show missing mail-archive
+          needs_attention = options.reject{|k,v| k == :mail_archive && mail_archive == 'Missing'}.length > 0
+        end
+        next unless show_all || needs_attention # only show errors unless want all
 
         _tr do
           _td id
@@ -107,6 +141,8 @@ _html do
           _td mino, options[:mino]
           _td mbox, options[:mbox]
           _td pony, options[:pony]
+          _td mail_archive, options[:mail_archive]
+          _td markmail, options[:markmail]
           _td arcs.map{|e| e.first}.sort
         end
       end
