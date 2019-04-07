@@ -57,9 +57,9 @@ _html do
           end
           _ 'Showing: '
           unless show_all or show_mailarchive
-            _b 'issues excluding missing mail-archive subscriptions'
+            _b 'issues (ignoring missing mail-archive subscriptions)'
           else
-            _a 'issues excluding missing mail-archive subscriptions', href: './'
+            _a 'issues (ignoring missing mail-archive subscriptions)', href: './'
           end
           _ ' | '
           if show_mailarchive
