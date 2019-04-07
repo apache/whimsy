@@ -11,6 +11,8 @@ require 'wunderbar/jquery/stupidtable'
 
 ids={}
 binarchives = ASF::Mail.lists(true)
+binarchtime = ASF::Mail.list_mtime
+
 show_all = (ENV['PATH_INFO'] == '/all') # all entries, regardless of error state
 # default is to show entry if neither mail-archive nor markmail is present (mail-archive is missing from a lot of lists)
 show_mailarchive = (ENV['PATH_INFO'] == '/mail-archive') # show entry if mail-archive is missing
@@ -18,6 +20,8 @@ show_mailarchive = (ENV['PATH_INFO'] == '/mail-archive') # show entry if mail-ar
 # list of ids deliberately not archived
 #                 INFRA-18129
 NOT_ARCHIVED = %w{apachecon-aceu19}
+
+sublist_time = ASF::MLIST.list_time
 
 _html do
   _body? do
@@ -38,6 +42,37 @@ _html do
           _ 'Unexpected/missing entries are flagged'
           _br
           _ 'Minotaur emails can be either aliases (tlp-list-archive@tlp.apache.org) or direct (apmail-tlp-list-archive@www.apache.org).'
+          _br
+          _ 'Columns:'
+          _ul do
+            _li 'id - short id of list as used on mod_mbox'
+            _li 'list - full list name'
+            _li "Private? - public/private; derived from bin/.archives as at #{binarchtime}"
+            _li 'MINO - minotaur archiver'
+            _li 'MBOX - mbox-vm archiver'
+            _li 'PONY - PonyMail (lists.apache.org) archiver'
+            _li 'MAIL-ARCHIVE - @mail-archive.com archiver (public lists only)'
+            _li 'MARKMAIL - markmail.org archiver (public lists only)'
+            _li "Archivers - list of known archiver subscriptions as at #{sublist_time}"
+          end
+          _ 'Showing: '
+          unless show_all or show_mailarchive
+            _b 'issues excluding missing mail-archive subscriptions'
+          else
+            _a 'issues excluding missing mail-archive subscriptions', href: './'
+          end
+          _ ' | '
+          if show_mailarchive
+            _b 'issues including missing mail-archive subscriptions'
+          else
+            _a 'issues including missing mail-archive subscriptions', href: './mail-archive'
+          end
+          _ ' | '
+          if show_all
+            _b 'details for all lists'
+          else
+            _a 'details for all lists', href: './all'
+          end
         end
       }
     ) do
