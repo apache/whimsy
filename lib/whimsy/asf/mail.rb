@@ -64,6 +64,11 @@ module ASF
       public_private ? @lists : @lists.keys
     end
 
+    def self.list_mtime
+      Mail._load_lists
+      @list_mtime
+    end
+
     # list of mailing lists that aren't actively seeking new subscribers
     def self.deprecated
       apmail_bin = ASF::SVN['apmail_bin']
