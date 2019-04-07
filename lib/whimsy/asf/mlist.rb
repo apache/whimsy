@@ -173,6 +173,11 @@ module ASF
       return subscribers.to_h, (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
+    # returns the list time (defaulting to list-subs time if the marker is not present)
+    def self.list_time
+      File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS)
+    end
+
     def self.list_archivers
       list_parse('sub') do |dom, list, subs|
         yield [dom, list, subs.select {|s| is_archiver? s}.map{|m| [m,archiver_type(m,dom,list)].flatten}]
