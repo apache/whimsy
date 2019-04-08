@@ -57,7 +57,11 @@ def post(target, data, &block)
           elsif xhr.response.exception
             message = "Exception\n#{xhr.response.exception}"
           else
-            message = "Exception\n#{JSON.parse(xhr.responseText).exception}"
+            begin
+              message = "Exception\n#{JSON.parse(xhr.responseText).exception}"
+            rescue
+              message = "Exception\n#{xhr.responseText}"
+            end
           end
 
           console.log(message)

@@ -548,3 +548,15 @@ input[type=file]#upload {
   font-family: monospace;
   overflow: hidden;
 }
+
+#email-form input {
+  display: inline;
+  width: 80%;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.reminder .modal-content button {
+  margin-left: 0.5em;
+  margin-bottom: 0em;
+}
