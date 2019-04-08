@@ -23,6 +23,10 @@ if @email_forward  # must agree with email_forward.js.rb
     end
   end
 
+  if  @email_forward.empty?
+    _error "Forwarding email address must not be empty!"
+  end
+
   # update LDAP
   unless @dryrun
     _ldap.update do
