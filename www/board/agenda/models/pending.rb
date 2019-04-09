@@ -12,7 +12,7 @@ class Pending
 
     # reset pending when agenda changes
     if agenda and agenda > response['agenda'].to_s
-      response = {'agenda' => agenda}
+      response = {'agenda' => agenda, 'initials' => response['initials']}
     end
 
     # provide empty defaults
