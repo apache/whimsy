@@ -89,7 +89,7 @@ Agenda.update(@agenda, @message) do |agenda|
     agenda[/^()-+\nEnd of agenda/, 1] = 
       "-----------------------------------------\n" +
       "Attachment #{attach}: Report from the Apache #{pmc.display_name} " +
-      "Project  [#{pmc.chair.public_name}]\n" +
+      "Project  [#{pmc.chair.public_name}]\n\n" +
       "#{@report.strip}\n\n"
 
   else
