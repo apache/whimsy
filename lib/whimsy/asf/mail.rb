@@ -239,6 +239,8 @@ module ASF
         'trademarks@apache.org'
       when 'infrastructure'
         'infra'
+      when 'dataprivacy'
+        'legal-internal@apache.org'
       when 'legalaffairs'
         'legal-internal@apache.org'
       when 'fundraising'
