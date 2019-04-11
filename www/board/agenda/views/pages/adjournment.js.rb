@@ -142,14 +142,19 @@ class Adjournment < Vue
   end
 
   # fetch secretary todos once the minutes are complete
-  def mounted()
-    if Minutes.complete and Todos.loading and not Todos.fetched
+  def load()
+    if Minutes.complete and not Todos.fetched
+      Todos.loading = true
       Todos.fetched = true
       retrieve "secretary-todos/#{Agenda.title}", :json do |todos|
         Todos.set todos
         Todos.loading = false
       end
     end
+  end
+
+  def mounted()
+    self.load() if Todos.loading
   end
 end
 

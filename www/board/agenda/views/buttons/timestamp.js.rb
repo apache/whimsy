@@ -22,6 +22,7 @@ class Timestamp < Vue
     post 'minute', data do |minutes|
       @disabled = false
       Minutes.load minutes
+      Todos.load() if Minutes.complete
     end
   end
 end
