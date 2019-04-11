@@ -11,7 +11,7 @@ class Email < Vue
     _button.btn 'send email', class: self.mailto_class(),
       onClick: self.launch_email_client
 
-    _EmailForm email: @email
+    _EmailForm email: @email, id: @@item.mail_list
   end
 
   # render 'send email' as a primary button if the viewer is the shepherd for
@@ -91,7 +91,7 @@ class Email < Vue
         body: body
       }
 
-      jQuery('#email-form').modal(:show)
+      jQuery('#email-' + @@item.mail_list).modal(:show)
     else
       window.location = "mailto:#{to}?cc=#{cc}" +
         "&subject=#{encodeURIComponent(subject)}" +
@@ -102,7 +102,7 @@ end
 
 class EmailForm < Vue
   def render
-    _ModalDialog.email_form! color: 'commented' do
+    _ModalDialog color: 'commented', id: 'email-' + @@id do
       _h4 "Send email - #{@@email.subject}"
 
       # input field: to
@@ -141,7 +141,7 @@ class EmailForm < Vue
     post 'email', @@email do |response|
       console.log response
       @disabled = false
-      jQuery('#email-form').modal(:hide)
+      jQuery('#email-' + @@id).modal(:hide)
       document.body.classList.remove('modal-open')
     end
   end
