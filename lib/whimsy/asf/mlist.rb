@@ -145,8 +145,16 @@ module ASF
 
     # for a mail domain, extract related lists and their subscribers (default only the count)
     # also returns the time when the data was last checked
+    # For top-level apache.org lists, the mail_domain is either:
+    # - the full list name (e.g. press), or:
+    # - the list prefix (e.g. legal)
     # If podling==true, then also check for old-style podling names
     # If list_subs==true, return subscriber emails else sub count
+    # Matches:
+    # {mail_domain}.apache.org/*
+    # apache.org/{mail_domain}(-.*)? (e.g. press, legal)
+    # incubator.apache.org/{mail_domain}-.* (if podling==true)
+    # Returns: {list}@{dom}
     def self.list_subscribers(mail_domain, podling=false, list_subs=false)
 
       return nil, nil unless File.exist? LIST_SUBS
@@ -160,11 +168,14 @@ module ASF
 
         # normal tlp style:
         #/home/apmail/lists/commons.apache.org/dev/mod
+
         # possible podling styles (new, old):
         #/home/apmail/lists/batchee.apache.org/dev/mod
         #/home/apmail/lists/incubator.apache.org/blur-dev/mod
+
         #Apache lists (e.g. some non-PMCs)
         #/home/apmail/lists/apache.org/list/mod
+
         next unless "#{mail_domain}.apache.org" == dom or
            (dom == 'apache.org' &&  list =~ /^#{mail_domain}(-|$)/) or
            (podling && dom == 'incubator.apache.org' && list =~ /^#{mail_domain}-/)
