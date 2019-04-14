@@ -264,6 +264,8 @@ seen={}
     title.sub! 'TCL', 'Tcl'
     title.sub! 'Orc', 'ORC'
     title.sub! 'Steve', 'STeVe'
+    title.sub! 'Servicecomb', 'ServiceComb'
+    title.sub! 'Zest', 'Polygene'
     title.sub! 'Openmeetings', 'OpenMeetings'
     title.sub! 'Web services', 'Web Services'
     title.sub! 'ASF Rep. for W3C', 'W3C Relations'
@@ -651,6 +653,7 @@ seen={}
     report.title.sub! 'Apache/TCL', 'Tcl'
     report.title.sub! 'Orc', 'ORC'
     report.title.sub! 'Steve', 'STeVe'
+    report.title.sub! 'Zest', 'Polygene'
     report.title.sub! 'Openmeetings', 'OpenMeetings'
     report.title.sub! 'Ace', 'ACE' # WHIMSY-31
 
