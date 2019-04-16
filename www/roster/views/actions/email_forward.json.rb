@@ -17,7 +17,7 @@ if @email_forward  # must agree with email_forward.js.rb
       _error "Invalid email address '#{mail}'"
       return
     end
-    if mail.end_with? 'apache.org'
+    if mail.downcase.end_with? 'apache.org'
       _error "Invalid email address '#{mail}' (must not be apache.org)"
       return
     end
