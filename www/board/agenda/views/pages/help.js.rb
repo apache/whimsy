@@ -61,6 +61,9 @@ class Help < Vue
         end
       end
     end
+
+    _br
+    _Link text: 'Insider Secrets', href: 'secrets'
   end
 
   def setRole(event)
