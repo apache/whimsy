@@ -9,7 +9,7 @@ class Wunderbar::JsonBuilder
       @from = 'Craig L Russell <secretary@apache.org>'
       @sig = %{
         -- Craig L Russell
-        Secretary, Apache Software Foundation
+        Assistant Secretary, Apache Software Foundation
       }
 
     elsif user == 'mattsicker'
@@ -17,7 +17,7 @@ class Wunderbar::JsonBuilder
       @from = 'Matt Sicker <mattsicker@apache.org>'
       @sig = %{
         -- Matt Sicker
-        Assistant Secretary, Apache Software Foundation
+        Secretary, Apache Software Foundation
       }
 
     else
