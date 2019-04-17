@@ -86,7 +86,7 @@ _html do
             creports.map do |committee|
               name = committee[/>(.*?)</, 1]
               href = committee[/href="(.*?)"/, 1].untaint
-              href = 'Zest.html' if href == 'Polygene.html'
+              href = 'Polygene.html' if href == 'Zest.html'
               page = File.read("#{source}/#{href}").
                 sub(/<footer.*<\/footer>/m, '')
 
