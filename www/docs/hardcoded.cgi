@@ -6,7 +6,7 @@ require 'json'
 require 'whimsy/asf'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
-GITWHIMSY = 'https://github.com/apache/whimsy/blob/master'
+GITWHIMSY = 'https://github.com/apache/whimsy/blob/master/'
 HARDCODED = 'hardcoded.json'
 hclist = JSON.parse(File.read(HARDCODED))
 
