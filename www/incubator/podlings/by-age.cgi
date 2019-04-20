@@ -49,7 +49,7 @@ _html do
         'https://incubator.apache.org/projects/index.html' => 'List Of Incubator Podlings'
       },
       helpblock: -> {
-        _ 'This shows a sorted list of all Incubator podlings by age since joining.'
+        _ 'This shows a sorted list of all active Incubator podlings by age since joining.'
         # pie chart
         theta = 0
         colors = ['0F0', 'FF0', 'F80', 'F50', 'F00', '800']
@@ -80,7 +80,7 @@ _html do
           _ul do
             _li! do
               _ "Count:      #{duration.length} PPMCs ("
-              _a 'history', href: 'https://incubator.apache.org/history/'
+              _a 'history', href: 'https://projects.apache.org/'
               _ ') ('
               _a 'source data', href: 'https://incubator.apache.org/projects/#current'
               _ ')'
