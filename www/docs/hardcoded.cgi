@@ -37,7 +37,7 @@ _html do
             _a '', name: file.gsub(/[#%\[\]\{\}\\"<>]/, '')
             _code! do
               if info['line']
-                _a! file, href: "#{GITWHIMSY}#{file}##{info['line']}"
+                _a! file, href: "#{GITWHIMSY}#{file}#L#{info['line']}"
               else
                 _a! file, href: "#{GITWHIMSY}#{file}"
               end
