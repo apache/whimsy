@@ -19,7 +19,7 @@ _html do
       '/status/' => 'Whimsy Server Status'
     },
     helpblock: -> {
-      _ 'This script checks your authorization to use the agenda tool, and checks if you are listed as attending the current board meeting in the official agenda.'
+      _ 'This script checks your authorization to use the agenda tool, and checks if you are listed as attending the current board meeting in the upcoming official agenda.'
     }
   ) do
     FOUNDATION_BOARD = ASF::SVN['foundation_board']
@@ -28,9 +28,10 @@ _html do
     roll = agenda.find {|item| item['title'] == 'Roll Call'}
 
     person = ASF::Auth.decode(env)
+    _p %{ Your data for meeting: #{File.basename(agenda)} }
     _table do
       _tr do
-        _td 'User id'
+        _td 'Your id'
         _td person.id
       end
 
