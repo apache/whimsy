@@ -23,12 +23,12 @@ _html do
     }
   ) do
     FOUNDATION_BOARD = ASF::SVN['foundation_board']
-    agenda = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].sort.last.untaint
-    agenda = ASF::Board::Agenda.parse(File.read(agenda))
+    agendafile = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].sort.last.untaint
+    agenda = ASF::Board::Agenda.parse(File.read(agendafile))
     roll = agenda.find {|item| item['title'] == 'Roll Call'}
 
     person = ASF::Auth.decode(env)
-    _p %{ Your data for meeting: #{File.basename(agenda)} }
+    _p %{ Your data for meeting: #{File.basename(agendafile)} }
     _table do
       _tr do
         _td 'Your id'
