@@ -84,6 +84,16 @@
     "symbol": "ARCHIVERS",
     "description": "List of email addreses for private lists"
   },
+  "www/roster/models/nonpmc.rb": {
+    "line": "10",
+    "symbol": "mail_list",
+    "description": "Map of a few odd mailing list names"
+  },
+  "www/secretary/memapp_check.cgi": {
+    "line": "45",
+    "symbol": "",
+    "description": "List of Member names with special cases for IDs"
+  },
   "www/test/dataflow.json": {
     "line": "",
     "symbol": "",
