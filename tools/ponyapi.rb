@@ -35,8 +35,8 @@ module PonyAPI
         File.open(File.join("#{dir}", 'lists.json'), "w") do |f|
           begin
             f.puts JSON.pretty_generate(lists)
-          rescue JSON::GeneratorError
-            puts "WARN:get_pony_lists() threw JSON::GeneratorError, continuing without pretty"
+          rescue JSON::GeneratorError => e
+            puts "WARN:get_pony_lists() #{e.message} #{e.backtrace[0]}, continuing without pretty"
             f.puts lists
           end    
         end
@@ -64,7 +64,7 @@ module PonyAPI
           begin
             f.puts JSON.pretty_generate(jzon)
           rescue JSON::GeneratorError
-            puts "WARN:get_pony_prefs(#{uri.request_uri}) threw JSON::GeneratorError, continuing without pretty"
+            puts "WARN:get_pony_prefs(#{uri.request_uri}) #{e.message} #{e.backtrace[0]}, continuing without pretty"
             f.puts jzon
           end    
         end
@@ -87,13 +87,18 @@ module PonyAPI
     uri, request, response = fetch_pony(PONYSTATS % args, cookie)
     if response.code == '200' then
       File.open(File.join(dir, STATSMBOX % args), "w") do |f|
-        jzon = JSON.parse(response.body)
         begin
-          f.puts JSON.pretty_generate(jzon)
+          f.puts JSON.pretty_generate(JSON.parse(response.body))
         rescue JSON::GeneratorError
-          puts "WARN:get_pony_stats(#{uri.request_uri}) threw JSON::GeneratorError, continuing without pretty"
-          f.puts jzon
-        end    
+          begin
+            # If JSON threw error, try again forcing to UTF-8 (may lose data)
+            jzon = JSON.parse(response.body.encode('UTF-8', :invalid => :replace, :undef => :replace))
+            f.puts JSON.pretty_generate(jzon)
+          rescue JSON::GeneratorError => e
+            puts "WARN:get_pony_stats(#{uri.request_uri}) #{e.message} #{e.backtrace[0]}, continuing without pretty"
+            f.puts jzon
+          end
+        end
       end
     else
       puts "ERROR:get_pony_stats(#{uri.request_uri}) returned code #{response.code.inspect}"
