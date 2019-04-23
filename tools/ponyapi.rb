@@ -89,12 +89,12 @@ module PonyAPI
       File.open(File.join(dir, STATSMBOX % args), "w") do |f|
         begin
           f.puts JSON.pretty_generate(JSON.parse(response.body))
-        rescue JSON::GeneratorError
+        rescue JSON::JSONError
           begin
             # If JSON threw error, try again forcing to UTF-8 (may lose data)
             jzon = JSON.parse(response.body.encode('UTF-8', :invalid => :replace, :undef => :replace))
-            f.puts JSON.pretty_generate(jzon)
-          rescue JSON::GeneratorError => e
+            f.puts JSON.fast_generate(jzon, {:max_nesting => false, :indent => ' '})
+          rescue JSON::JSONError => e
             puts "WARN:get_pony_stats(#{uri.request_uri}) #{e.message} #{e.backtrace[0]}, continuing without pretty"
             f.puts jzon
           end
