@@ -188,12 +188,16 @@ class Flow
           gsub(/(.{1,#{len}})( +|$\n?)/, "$1\n").
           sub(/[\n\r]+$/, '')
       else
-        # preserve indentation.
-        n = len - prefix.length;
-        indent = prefix.gsub(/\S/, ' ')
-        lines[i] = prefix + line[prefix.length..-1].
-          gsub(/(.{1,#{n}})( +|$\n?)/, indent + "$1\n").
-          sub(indent, '').sub(/[\n\r]+$/, '')
+        # ensure line can be split after column 40
+        lastspace = /^.*\s\S/.exec(line)
+        if lastspace and lastspace[0].length - 1 > 40
+          # preserve indentation.
+          n = len - prefix.length;
+          indent = prefix.gsub(/\S/, ' ')
+          lines[i] = prefix + line[prefix.length..-1].
+            gsub(/(.{1,#{n}})( +|$\n?)/, indent + "$1\n").
+            sub(indent, '').sub(/[\n\r]+$/, '')
+        end
       end
     end
 
