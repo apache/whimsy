@@ -42,6 +42,9 @@
   foundation_board:
     url: private/foundation/board
 
+  foundation_mentors:
+    url: private/foundation/mentors
+
   grants:
     url: private/documents/grants
 

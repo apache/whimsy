@@ -8,9 +8,7 @@ require 'wunderbar/markdown'
 require 'json'
 
 ROSTER = 'https://whimsy.apache.org/roster/committer/'
-FOUNDATION_SVN = 'https://svn.apache.org/repos/private/foundation/'
-FOUNDATION = ASF::SVN['foundation']
-MENTORS_PATH = 'mentors'
+MENTORS_SVN = 'https://svn.apache.org/repos/private/foundation/mentors/'
 PUBLICNAME = 'publicname'
 NOTAVAILABLE = 'notavailable'
 ERRORS = 'errors'
@@ -59,7 +57,7 @@ end
 # produce HTML
 _html do
   _body? do
-    mentors = read_mentors(File.join(FOUNDATION, MENTORS_PATH))
+    mentors = read_mentors(ASF::SVN['foundation_mentors'])
     errors, mentors = mentors.partition{ |k,v| v.has_key?(ERRORS)}.map(&:to_h)
     notavailable, mentors = mentors.partition{ |k,v| v.has_key?(NOTAVAILABLE)}.map(&:to_h)
     _whimsy_body(
@@ -84,9 +82,9 @@ _html do
           end
         end
         if mentors.has_key?($USER) # TODO make a whimsy UI for this
-          _a.btn.btn_default.btn_sm 'Edit Your Mentor Record', href: "#{File.join(FOUNDATION_SVN, MENTORS_PATH, $USER + '.json')}", role: "button"
+          _a.btn.btn_default.btn_sm 'Edit Your Mentor Record', href: "#{File.join(MENTORS_SVN, $USER + '.json')}", role: "button"
         else
-          _a.btn.btn_default.btn_sm 'Volunteer To Mentor', href: "#{File.join(FOUNDATION_SVN, MENTORS_PATH, 'README')}", role: "button"
+          _a.btn.btn_default.btn_sm 'Volunteer To Mentor', href: "#{File.join(MENTORS_SVN, 'README')}", role: "button"
         end
       }
       ) do
