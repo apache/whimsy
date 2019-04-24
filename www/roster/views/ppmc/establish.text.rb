@@ -40,11 +40,6 @@ accordance with and subject to the direction of the Board of Directors and the
 Bylaws of the Foundation until death, resignation, retirement, removal or
 disqualification, or until a successor is appointed; and be it further
 
-RESOLVED, that the initial Apache #{podling.display_name} PMC be and hereby is
-tasked with the creation of a set of bylaws intended to encourage open
-development and increased participation in the Apache #{podling.display_name}
-Project; and be it further
-
 RESOLVED, that the Apache #{podling.display_name} Project be and hereby is
 tasked with the migration and rationalization of the Apache Incubator
 #{podling.display_name} podling; and be it further
