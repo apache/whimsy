@@ -63,6 +63,7 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
+        MENTORS_SVN => 'See Mentors Data',
         '/roster/members' => 'Whimsy All Members Roster',
         '/members/index/' => 'Other Member-Private Tools',
         'https://community.apache.org' => 'Apache Community Development'
