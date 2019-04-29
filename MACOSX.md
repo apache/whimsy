@@ -153,7 +153,14 @@ Install Ruby gem dependencies
 Install:
 
 ```
-$ gem install whimsy-asf bundler mail listen
+sudo gem install whimsy-asf mail listen
+sudo gem install bundler -n /usr/local/bin
+sudo gem install nokogumbo
+sudo gem install passenger sinatra kramdown
+sudo gem install setup
+sudo gem install ruby2js
+sudo gem install rack rake
+sudo gem install crass json sanitize
 ```
 
 Verify:
