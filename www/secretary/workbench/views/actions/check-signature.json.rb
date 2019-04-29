@@ -21,8 +21,11 @@ begin
   gpg.untaint
 
   # run gpg verify command
-  out, err, rc = Open3.capture3 gpg, '--verify', signature.path,
-    attachment.path
+  # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
+  # reduce the keyid length from the full fingerprint
+  out, err, rc = Open3.capture3 gpg,
+    '--keyid-format', 'long', # Show a longer id
+    '--verify', signature.path, attachment.path
 
   # if key is not found, fetch and try again
   if 
