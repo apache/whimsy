@@ -580,6 +580,6 @@ A number of individual tools require additional configuration:
 Debugging
 ---------
 
-When things go wrong, check `/var/log/apache2/whimsy_error.log` and
-`/var/log/apache2/error_log`.
+When things go wrong, check `/usr/local/var/log/httpd/whimsy_error.log` and
+`/usr/local/var/log/httpd/error_log`.
 
