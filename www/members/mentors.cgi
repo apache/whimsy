@@ -14,19 +14,11 @@ PUBLICNAME = 'publicname'
 NOTAVAILABLE = 'notavailable'
 ERRORS = 'errors'
 TIMEZONE = 'timezone'
-UI_MAP = {
-  TIMEZONE => 'Timezone',
-  'availability' => 'Preferred Times To Contact',
-  'contact' => 'Preferred Contact Method',
-  'prefers' => 'Preferred Communication Modes',
-  'available' => 'Seeking Mentees?',
-  'mentoring' => 'Already Mentoring',
-  'experience' => 'Areas Of Experience',
-  'languages' => 'Languages Spoken',
-  'pronouns' => 'Personal Pronouns',
-  'aboutme' => 'About Me', 
-  'homepage' => 'Personal Homepage'
-}
+
+# Read mapping of labels to fields
+def get_uimap(path)
+  return JSON.parse(File.read(File.join(path, 'ui-map.json')))
+end
 
 # Read apacheid.json and add data to mentors hash (side effect)
 # mentors[id][ERRORS] = "If errors rescued during read/find in ASF::Person"
@@ -41,7 +33,7 @@ def read_mentor(file, mentors)
       mentors[id] = { ERRORS => "ERROR:read_mentor() #{e.message} #{e.backtrace[0]}"}
     end
   else
-    mentors[id] = { ERRORS => "ERROR:ASF::Person.find(#{id}) returned nil"}
+    mentors[id] = { ERRORS => "ERROR:ASF::Person.find(#{id}) returned nil from #{file}"}
   end
 end
 
@@ -50,6 +42,8 @@ end
 def read_mentors(path)
   mentors = {}
   Dir[File.join(path, '*.json')].sort.each do |file|
+    # Skip files with - dashes, they aren't apacheids
+    next if file.include?('-')
     file.untaint
     read_mentor(file, mentors)
   end
@@ -59,6 +53,7 @@ end
 # produce HTML
 _html do
   _body? do
+    uimap = get_uimap(ASF::SVN['foundation_mentors'])
     mentors = read_mentors(ASF::SVN['foundation_mentors'])
     errors, mentors = mentors.partition{ |k,v| v.has_key?(ERRORS)}.map(&:to_h)
     notavailable, mentors = mentors.partition{ |k,v| v.has_key?(NOTAVAILABLE)}.map(&:to_h)
@@ -74,7 +69,7 @@ _html do
         _p do
           _ 'This page lists experienced ASF Members who have volunteered to mentor newer ASF Members to help them get more involved in Foundation governance and operations.'
           _br
-          _ "If you are a newer Member looking for a mentor, please reach out directly to available volunteers below by #{UI_MAP['contact']}. "
+          _ "If you are a newer Member looking for a mentor, please reach out directly to available volunteers below by #{uimap['contact'][0]}. "
           _ 'Remember, this is an informal program run by volunteers, so please be kind - and patient!  Mentors currently listed:'
         end 
         _ul.list_inline do
@@ -97,9 +92,9 @@ _html do
             _div!.panel_heading role: "tab", id: "#{MENTORS_LIST}h#{n}" do
               _h4!.panel_title do
                 _a!.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{MENTORS_LIST}", href: "##{MENTORS_LIST}c#{n}", aria_controls: "#{MENTORS_LIST}c#{n}" do
-                  _ "#{mentor[PUBLICNAME]} (#{apacheid} timezone: #{mentor[TIMEZONE]}) "
+                  _ "#{mentor[PUBLICNAME]}  (#{apacheid})  Timezone: #{mentor[TIMEZONE]}  "
                   _span.glyphicon class: "glyphicon-chevron-down"
-                  mentor.delete(PUBLICNAME)
+                  mentor.delete(PUBLICNAME) # So not re-displayed below
                 end
               end
             end
@@ -110,7 +105,7 @@ _html do
                     mentor.each do |k, v|
                       _tr do
                         _td!.text_right do
-                          _span.text_primary UI_MAP.has_key?(k) ? "#{UI_MAP[k]}" : "#{k}"
+                          _span.text_primary uimap.has_key?(k) ? "#{uimap[k][0]}" : "#{k}"
                         end
                         _td!.text_left do
                           _markdown v
@@ -122,6 +117,7 @@ _html do
                         _ 'ASF Projects/Podlings Involved In'
                       end
                       _td!.text_left do
+                        # TODO: instead of link to roster, this could read and display here
                         _a "#{ROSTER}#{apacheid}", href: "#{ROSTER}#{apacheid}"
                       end
                     end
