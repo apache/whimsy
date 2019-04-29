@@ -112,11 +112,17 @@ installed ruby via brew, you may need to run `brew upgrade ruby` instead.
 Install:
 
 ```
+$ brew install rbenv
 $ rbenv install 2.5.1
 ```
 
 Use `ln -s` in `/usr/local/bin` for both `ruby` and `gem` pointing to the locations
 where `rbenv` installed ruby in your home directory
+
+```
+ln -s /usr/local/bin/ruby /Users/${user}/.rbenv/versions/2.5.1/bin/ruby
+ln -s /usr/local/bin/gem /Users/${user}/.rbenv/versions/2.5.1/bin/gem
+```
 
 Upgrade Node.js
 ---------------
