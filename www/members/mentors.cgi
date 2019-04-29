@@ -9,11 +9,13 @@ require 'json'
 
 ROSTER = 'https://whimsy.apache.org/roster/committer/'
 MENTORS_SVN = 'https://svn.apache.org/repos/private/foundation/mentors/'
+MENTORS_LIST = 'mentors'
 PUBLICNAME = 'publicname'
 NOTAVAILABLE = 'notavailable'
 ERRORS = 'errors'
+TIMEZONE = 'timezone'
 UI_MAP = {
-  'timezone' => 'Timezone',
+  TIMEZONE => 'Timezone',
   'availability' => 'Preferred Times To Contact',
   'contact' => 'Preferred Contact Method',
   'prefers' => 'Preferred Communication Modes',
@@ -88,29 +90,41 @@ _html do
           _a.btn.btn_default.btn_sm 'Volunteer To Mentor', href: "#{File.join(MENTORS_SVN, 'README')}", role: "button"
         end
       }
-      ) do
-      mentors.each do | apacheid, mentor |
-        _div id: apacheid do
-          _whimsy_panel_table(title: "#{mentor[PUBLICNAME]} (#{apacheid})") do
-            mentor.delete(PUBLICNAME)
-            _table.table.table_hover do
-              _tbody do
-                mentor.each do |k, v|
-                  _tr do
-                    _td!.text_right do
-                      _span.text_primary UI_MAP.has_key?(k) ? "#{UI_MAP[k]}" : "#{k}"
-                    end
-                    _td!.text_left do
-                      _markdown v
-                    end
-                  end
+    ) do
+      _div.panel_group id: MENTORS_LIST, role: "tablist", aria_multiselectable: "true" do
+        mentors.each_with_index do |(apacheid, mentor), n|
+          _div!.panel.panel_default  id: apacheid do
+            _div!.panel_heading role: "tab", id: "#{MENTORS_LIST}h#{n}" do
+              _h4!.panel_title do
+                _a!.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{MENTORS_LIST}", href: "##{MENTORS_LIST}c#{n}", aria_controls: "#{MENTORS_LIST}c#{n}" do
+                  _ "#{mentor[PUBLICNAME]} (#{apacheid} timezone: #{mentor[TIMEZONE]}) "
+                  _span.glyphicon class: "glyphicon-chevron-down"
+                  mentor.delete(PUBLICNAME)
                 end
-                _tr do
-                  _td!.text_right do
-                    _ 'ASF Projects/Podlings Involved In'
-                  end
-                  _td!.text_left do
-                    _a "#{ROSTER}#{apacheid}", href: "#{ROSTER}#{apacheid}"
+              end
+            end
+            _div!.panel_collapse.collapse id: "#{MENTORS_LIST}c#{n}", role: "tabpanel", aria_labelledby: "#{MENTORS_LIST}h#{n}" do
+              _div!.panel_body do
+                _table.table.table_hover do
+                  _tbody do
+                    mentor.each do |k, v|
+                      _tr do
+                        _td!.text_right do
+                          _span.text_primary UI_MAP.has_key?(k) ? "#{UI_MAP[k]}" : "#{k}"
+                        end
+                        _td!.text_left do
+                          _markdown v
+                        end
+                      end
+                    end
+                    _tr do
+                      _td!.text_right do
+                        _ 'ASF Projects/Podlings Involved In'
+                      end
+                      _td!.text_left do
+                        _a "#{ROSTER}#{apacheid}", href: "#{ROSTER}#{apacheid}"
+                      end
+                    end
                   end
                 end
               end
@@ -118,7 +132,7 @@ _html do
           end
         end
       end
-      
+
       if not errors.empty?
         _div id: ERRORS do
           _whimsy_panel("Mentor JSON Files With Errors", style: 'panel-danger') do

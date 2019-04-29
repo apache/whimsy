@@ -70,7 +70,7 @@ This section is for those desiring to run a whimsy tool on their own machine.
    `rbenv` or `rvm`.  Rbenv generally requires you to be more aware of what you
    are doing (e.g., the need for rbenv shims).  Rvm tends to be more of a set
    and forget operation, but it tends to be more system intrusive (e.g. aliasing
-   'cd' in bash).  Note the Whimsy server currently uses **ruby 2.3+**.
+   'cd' in bash).  Note the Whimsy server currently uses **ruby 2.5+**.
 
     For more information:
 
@@ -247,6 +247,11 @@ a virtual host, complete with authentication:
        start on dbus SIGNAL=SessionNew
        exec /srv/whimsy/tools/toucher
        
+4. (Optional) Debug your local Whimsy web environment with two scripts:
+ 
+       localhost:port/test.cgi?debug
+       localhost:port/racktest
+
 More details about the production Whimsy instance are in [DEPLOYMENT.md](DEPLOYMENT.md)
 
 Documentation Standards

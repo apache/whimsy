@@ -145,13 +145,13 @@ cinfo['committees'].each do |id,v|
   site[id] = {:name => v['display_name'], :link => v['site'], :text => v['description']}
 end
 
-# parse the calendar for layout info (note: hack for &raquo)
+# parse the calendar for layout info (note: hack for &raquo and &nbsp;)
 CALENDAR = URI.parse 'https://www.apache.org/foundation/board/calendar.html'
 http = Net::HTTP.new(CALENDAR.host, CALENDAR.port)
 http.use_ssl = true
 http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 get = Net::HTTP::Get.new CALENDAR.request_uri
-$calendar = Nokogiri::HTML(http.request(get).body.gsub('&raquo','&#187;'))
+$calendar = Nokogiri::HTML(http.request(get).body.gsub('&raquo','&#187;').gsub('&nbsp;','&#160;'))
 
 # add some style
 style = Nokogiri::XML::Node.new "style", $calendar
