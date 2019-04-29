@@ -24,7 +24,8 @@ _html do
     }    
   end
   _body? do
-  _whimsy_header 'Poll of Inactive Members'
+  _whimsy_nav
+  _h1 'Poll of Inactive Members'
   # locate and read the attendance file
   MEETINGS = ASF::SVN['Meetings']
   attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
