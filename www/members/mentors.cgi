@@ -7,18 +7,8 @@ require 'wunderbar/bootstrap'
 require 'wunderbar/markdown'
 require 'json'
 
-ROSTER = 'https://whimsy.apache.org/roster/committer/'
-MENTORS_SVN = 'https://svn.apache.org/repos/private/foundation/mentors/'
+require_relative 'mentors'
 MENTORS_LIST = 'mentors'
-PUBLICNAME = 'publicname'
-NOTAVAILABLE = 'notavailable'
-ERRORS = 'errors'
-TIMEZONE = 'timezone'
-
-# Read mapping of labels to fields
-def get_uimap(path)
-  return JSON.parse(File.read(File.join(path, 'ui-map.json')))
-end
 
 # Read apacheid.json and add data to mentors hash (side effect)
 # mentors[id][ERRORS] = "If errors rescued during read/find in ASF::Person"
@@ -28,12 +18,12 @@ def read_mentor(file, mentors)
   if member
     begin
       mentors[id] = JSON.parse(File.read(file))
-      mentors[id][PUBLICNAME] = member.public_name()
+      mentors[id][MentorFormat::PUBLICNAME] = member.public_name()
     rescue StandardError => e
-      mentors[id] = { ERRORS => "ERROR:read_mentor() #{e.message} #{e.backtrace[0]}"}
+      mentors[id] = { MentorFormat::ERRORS => "ERROR:read_mentor() #{e.message} #{e.backtrace[0]}"}
     end
   else
-    mentors[id] = { ERRORS => "ERROR:ASF::Person.find(#{id}) returned nil from #{file}"}
+    mentors[id] = { MentorFormat::ERRORS => "ERROR:ASF::Person.find(#{id}) returned nil from #{file}"}
   end
 end
 
@@ -53,14 +43,14 @@ end
 # produce HTML
 _html do
   _body? do
-    uimap = get_uimap(ASF::SVN['foundation_mentors'])
+    uimap = MentorFormat::get_uimap(ASF::SVN['foundation_mentors'])
     mentors = read_mentors(ASF::SVN['foundation_mentors'])
-    errors, mentors = mentors.partition{ |k,v| v.has_key?(ERRORS)}.map(&:to_h)
-    notavailable, mentors = mentors.partition{ |k,v| v.has_key?(NOTAVAILABLE)}.map(&:to_h)
+    errors, mentors = mentors.partition{ |k,v| v.has_key?(MentorFormat::ERRORS)}.map(&:to_h)
+    notavailable, mentors = mentors.partition{ |k,v| v.has_key?(MentorFormat::NOTAVAILABLE)}.map(&:to_h)
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        MENTORS_SVN => 'See Mentors Data',
+        MentorFormat::MENTORS_SVN => 'See Mentors Data',
         '/roster/members' => 'Whimsy All Members Roster',
         '/members/index/' => 'Other Member-Private Tools',
         'https://community.apache.org' => 'Apache Community Development'
@@ -80,9 +70,9 @@ _html do
           end
         end
         if mentors.has_key?($USER) # TODO make a whimsy UI for this
-          _a.btn.btn_default.btn_sm 'Edit Your Mentor Record', href: "#{File.join(MENTORS_SVN, $USER + '.json')}", role: "button"
+          _a.btn.btn_default.btn_sm 'Edit Your Mentor Record', href: "#{File.join(MentorFormat::MENTORS_SVN, $USER + '.json')}", role: "button"
         else
-          _a.btn.btn_default.btn_sm 'Volunteer To Mentor', href: "#{File.join(MENTORS_SVN, 'README')}", role: "button"
+          _a.btn.btn_default.btn_sm 'Volunteer To Mentor', href: "#{File.join(MentorFormat::MENTORS_SVN, 'README')}", role: "button"
         end
       }
     ) do
@@ -92,9 +82,9 @@ _html do
             _div!.panel_heading role: "tab", id: "#{MENTORS_LIST}h#{n}" do
               _h4!.panel_title do
                 _a!.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{MENTORS_LIST}", href: "##{MENTORS_LIST}c#{n}", aria_controls: "#{MENTORS_LIST}c#{n}" do
-                  _ "#{mentor[PUBLICNAME]}  (#{apacheid})  Timezone: #{mentor[TIMEZONE]}  "
+                  _ "#{mentor[MentorFormat::PUBLICNAME]}  (#{apacheid})  Timezone: #{mentor[MentorFormat::TIMEZONE]}  "
                   _span.glyphicon class: "glyphicon-chevron-down"
-                  mentor.delete(PUBLICNAME) # So not re-displayed below
+                  mentor.delete(MentorFormat::PUBLICNAME) # So not re-displayed below
                 end
               end
             end
@@ -118,7 +108,7 @@ _html do
                       end
                       _td!.text_left do
                         # TODO: instead of link to roster, this could read and display here
-                        _a "#{ROSTER}#{apacheid}", href: "#{ROSTER}#{apacheid}"
+                        _a "#{MentorFormat::ROSTER}#{apacheid}", href: "#{MentorFormat::ROSTER}#{apacheid}"
                       end
                     end
                   end
@@ -129,33 +119,34 @@ _html do
         end
       end
 
+      if not notavailable.empty?
+        _div id: MentorFormat::NOTAVAILABLE do
+          _p! do
+            _! 'Volunteer mentors who are '
+            _strong! 'not'
+            _! ' currently available for new mentees: '
+            notavailable.each do |apacheid, n |
+              _ "#{n[MentorFormat::PUBLICNAME]}, "
+            end
+          end
+        end
+      end
+
       if not errors.empty?
-        _div id: ERRORS do
+        _div id: MentorFormat::ERRORS do
           _whimsy_panel("Mentor JSON Files With Errors", style: 'panel-danger') do
             _ul do
               errors.each do |apacheid, error |
                 _li do
-                  _code apacheid
-                  _ "#{error[ERRORS]}"
+                  _code "#{apacheid}.json"
+                  _ "#{error[MentorFormat::ERRORS]}"
                 end
               end
             end
           end
         end
       end
-      
-      if not notavailable.empty?
-        _div id: NOTAVAILABLE do
-          _p! do
-            _! 'Volunteer mentors who are '
-            _strong! 'not'
-            _! ' currently available for new mentees: '
-            notavailable.each do |apacheid, n |
-              _ "#{n[PUBLICNAME]}, "
-            end
-          end
-        end
-      end
+
     end
   end
 end
