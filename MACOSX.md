@@ -28,7 +28,9 @@ Update using:
 $ brew update
 ```
 
-Fix formulas for `openldap` and `apr-util`
+Homebrew has removed options we need from two of the formulas we need.
+Fix formulas for `openldap` and `apr-util` to make the required options standard.
+Note that we have to remove the bottles otherwise a version of the software is downloaded that does not include the options we require.
 
 ```
 $ cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
@@ -593,6 +595,6 @@ A number of individual tools require additional configuration:
 Debugging
 ---------
 
-When things go wrong, check `/usr/local/var/log/httpd/whimsy_error.log` and
-`/usr/local/var/log/httpd/error_log`.
+When things go wrong, either check `whimsy_error.log` and `error_log` in
+either `/usr/local/var/log/httpd/` or `/var/log/apache2/`. The location depends on how you have installed httpd.
 
