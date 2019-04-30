@@ -102,9 +102,13 @@ and running - these are only needed for a new deployment.
     * Subscribe `members@whimsy-vm4.apache.org` to `members@apache.org`.
     * Add `secretary@whimsy-vm4.apache.org` to the `secretary@apache.org` alias.
 
-  * Using the `www-data` user, copy over the following directories from
-   the previous whimsy-vm* server: `/srv/agenda`, `/srv/mail/board`,
-   ``/srv/icla`, /srv/mail/members`, `/srv/mail/secretary`.
+ * Using the `www-data` user, copy over the following directories from
+   the previous whimsy-vm* server:
+   * `/srv/agenda`
+   * `/srv/icla`
+   * `/srv/mail/board`
+   * `/srv/mail/members`
+   * `/srv/mail/secretary`
 
  * Verify that email can be sent to non-apache.org email addresses
    * Run [testmail.rb](tools/testmail.rb)
