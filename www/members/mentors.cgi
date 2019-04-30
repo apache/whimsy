@@ -7,7 +7,7 @@ require 'wunderbar/bootstrap'
 require 'wunderbar/markdown'
 require 'json'
 
-require_relative 'mentors'
+require_relative 'mentor-format'
 MENTORS_LIST = 'mentors'
 
 # Read apacheid.json and add data to mentors hash (side effect)
