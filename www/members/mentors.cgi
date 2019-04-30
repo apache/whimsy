@@ -20,7 +20,7 @@ def read_mentor(file, mentors)
       mentors[id] = JSON.parse(File.read(file))
       mentors[id][MentorFormat::PUBLICNAME] = member.public_name()
     rescue StandardError => e
-      mentors[id] = { MentorFormat::ERRORS => "ERROR:read_mentor() #{e.message} #{e.backtrace[0]}"}
+      mentors[id] = { MentorFormat::ERRORS => "ERROR:read_mentor() #{e.message} #{e.backtrace[0]} from #{file}"}
     end
   else
     mentors[id] = { MentorFormat::ERRORS => "ERROR:ASF::Person.find(#{id}) returned nil from #{file}"}
@@ -69,11 +69,7 @@ _html do
             end
           end
         end
-        if mentors.has_key?($USER) # TODO make a whimsy UI for this
-          _a.btn.btn_default.btn_sm 'Edit Your Mentor Record', href: "#{File.join(MentorFormat::MENTORS_SVN, $USER + '.json')}", role: "button"
-        else
-          _a.btn.btn_default.btn_sm 'Volunteer To Mentor', href: "#{File.join(MentorFormat::MENTORS_SVN, 'README')}", role: "button"
-        end
+        _a.btn.btn_default.btn_sm (mentors.has_key?($USER) ? 'Edit Your Mentor Record' : 'Volunteer To Mentor'), href: "/members/mentor-update.cgi", role: "button"
       }
     ) do
       _div.panel_group id: MENTORS_LIST, role: "tablist", aria_multiselectable: "true" do
