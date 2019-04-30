@@ -90,9 +90,11 @@ and running - these are only needed for a new deployment.
    store the auth-creds.
 
  * Update the following cron scripts under https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin:
-     * listmodsubs.sh - if necessary, add an rsync to the old Whimsy host
+     * listmodsubs.sh - add the new host
      * whimsy_qmail_ids.sh - add the new host
-     
+     * the old hosts should be removed sometime after switchover. This approach requires two edits to the files
+     but ensures that the rsync has been tested for the new host and allows the new host to be better tested
+
  * Add the following mail subscriptions:
     * Subscribe `svnupdate@whimsy-vm4.apache.org` to `board-commits@apache.org`.
       Alternately, add it to the `board-cvs` alias.
@@ -106,8 +108,6 @@ and running - these are only needed for a new deployment.
   * Using the `www-data` user, copy over the following directories from
    the previous whimsy-vm* server: `/srv/agenda`, `/srv/mail/board`,
    ``/srv/icla`, /srv/mail/members`, `/srv/mail/secretary`.
-
-TODO: should /srv/subscriptions be copied over?
 
  * Verify that email can be sent to non-apache.org email addresses
    * Run [testmail.rb](tools/testmail.rb)
