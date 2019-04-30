@@ -21,13 +21,13 @@ module ASF
     @@file_parsed = Hash.new # Key=type, value = cache hash
 
     # Return an array of board subscribers followed by the file update time
-    def self.board_subscribers
-      return list_filter('sub', 'apache.org', 'board'), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+    def self.board_subscribers(archivers=true)
+      return list_filter('sub', 'apache.org', 'board', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
     # Return an array of members@ subscribers followed by the file update time
-    def self.members_subscribers
-      return list_filter('sub', 'apache.org', 'members'), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+    def self.members_subscribers(archivers=true)
+      return list_filter('sub', 'apache.org', 'members', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
     # Return an array of private@pmc subscribers followed by the file update time
@@ -229,13 +229,18 @@ module ASF
       e =~ /.-archive@([^.]+\.)?(apache\.org|apachecon\.com)$/
     end
 
+    # Is the email a Whimsy archiver?
+    def self.is_whimsy_archiver? (e)
+      e =~ /@whimsy(-vm\d+)?\.apache\.org$/
+    end
+
     # Is the email a markmail archiver?
     def self.is_markmail_archiver? (e)
       e =~ ARCH_EXT_MARKMAIL_RE
     end
 
     def self.is_archiver? (e)
-      ARCHIVERS.include?(e) or is_mino_archiver?(e) or is_markmail_archiver?(e)
+      ARCHIVERS.include?(e) or is_mino_archiver?(e) or is_whimsy_archiver?(e) or is_markmail_archiver?(e)
     end
 
     def self.downcase(array)
@@ -260,7 +265,7 @@ module ASF
             if archivers
               return emails
             else
-              return (emails - ARCHIVERS) - ["#{list}-archive@#{dom}"]
+            return emails.reject{|e| is_archiver?(e)}
             end
           end
       end
