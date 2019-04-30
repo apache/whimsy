@@ -155,7 +155,7 @@ Install Ruby gem dependencies
 Install:
 
 ```
-sudo gem install whimsy-asf mail listen
+sudo gem install mail listen
 sudo gem install bundler -n /usr/local/bin
 sudo gem install nokogumbo
 sudo gem install passenger sinatra kramdown
