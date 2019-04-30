@@ -6,7 +6,7 @@ class Wunderbar::JsonBuilder
   def _personalize_email(user)
     if user == 'clr'
 
-      @from = 'Craig L Russell <secretary@apache.org>'
+      @from = 'Craig L Russell <clr@apache.org>'
       @sig = %{
         -- Craig L Russell
         Assistant Secretary, Apache Software Foundation
@@ -14,7 +14,7 @@ class Wunderbar::JsonBuilder
 
     elsif user == 'mattsicker'
 
-      @from = 'Matt Sicker <mattsicker@apache.org>'
+      @from = 'Matt Sicker <secretary@apache.org>'
       @sig = %{
         -- Matt Sicker
         Secretary, Apache Software Foundation
