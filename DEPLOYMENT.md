@@ -97,13 +97,10 @@ and running - these are only needed for a new deployment.
 
  * Add the following mail subscriptions:
     * Subscribe `svnupdate@whimsy-vm4.apache.org` to `board-commits@apache.org`.
-      Alternately, add it to the `board-cvs` alias.
-    * Subscribe `svnupdate@whimsy-vm4.apache.org` to 
-      `committers-cvs@apache.org`.
+    * Subscribe `svnupdate@whimsy-vm4.apache.org` to `committers-cvs@apache.org`.
     * Subscribe `board@whimsy-vm4.apache.org` to `board@apache.org`.
     * Subscribe `members@whimsy-vm4.apache.org` to `members@apache.org`.
-    * Add `secretary@whimsy-vm4.apache.org` to the `secretary@apache.org`
-      alias.
+    * Add `secretary@whimsy-vm4.apache.org` to the `secretary@apache.org` alias.
 
   * Using the `www-data` user, copy over the following directories from
    the previous whimsy-vm* server: `/srv/agenda`, `/srv/mail/board`,
