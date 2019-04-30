@@ -35,8 +35,6 @@ SITE_MINUTES = ASF::Config.get(:board_minutes) ||
 
 # list of SVN resources needed
 resources = {
-  TEMPLATES: 'asf/infrastructure/site/trunk/templates', # not used?
-  INCUBATOR_SITE_AUTHOR: 'asf/incubator/public/trunk/content', # not used?
   SVN_SITE_RECORDS_MINUTES:
     'asf/infrastructure/site/trunk/content/foundation/records/minutes',
   BOARD: 'private/foundation/board'
