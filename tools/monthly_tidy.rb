@@ -17,7 +17,10 @@ MAIL = '/srv/mail'
 
 Dir["#{MAIL}/board/20*", "#{MAIL}/members/20*"].each do |dir|
   if File.basename(dir) < keep
-    puts "Deleting #{dir}"
-    FileUtils.rm_rf dir
+    begin
+      FileUtils.rm_rf dir, :verbose => true
+    rescue => e
+      puts e
+    end
   end
 end
