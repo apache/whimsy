@@ -126,7 +126,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/followup\.json} do |date|
   Dir[*months.map {|month| "#{month}/*"}].each do |file|
     next unless File.mtime(file) > start
     raw = File.read(file).force_encoding(Encoding::BINARY)
-    next unless raw =~ /Subject: .*Board feedback on 2017-05-17 (.*) report/
+    next unless raw =~ /Subject: .*Board feedback on #{date} (.*) report/
     followup[$1][:count] += 1 if followup[$1]
   end
 
