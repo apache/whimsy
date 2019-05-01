@@ -34,8 +34,7 @@ def read_mentors(path)
   Dir[File.join(path, '*.json')].sort.each do |file|
     # Skip files with - dashes, they aren't apacheids
     next if file.include?('-')
-    file.untaint
-    read_mentor(file, mentors)
+    read_mentor(file.untaint, mentors)
   end
   return mentors
 end
@@ -58,9 +57,10 @@ _html do
       helpblock: -> {
         _p do
           _ 'This page lists experienced ASF Members who have volunteered to mentor newer ASF Members to help them get more involved in Foundation governance and operations.'
-          _br
-          _ "If you are a newer Member looking for a mentor, please reach out directly to available volunteers below by #{uimap['contact'][0]}. "
-          _ 'Remember, this is an informal program run by volunteers, so please be kind - and patient!  Mentors currently listed:'
+        end
+        _p do
+          _ "If you are a newer Member looking for a mentor, please reach out directly to available volunteers below that fit your interests by #{uimap['contact'][0]}. "
+          _ 'Remember, this is an informal program run by volunteers, so please be kind - and patient!  Not every mentoring pair may be the right fit.  Mentors currently listed as available for new mentees:'
         end 
         _ul.list_inline do
           mentors.each do | apacheid, mentor |
@@ -70,16 +70,17 @@ _html do
           end
         end
         _a.btn.btn_default.btn_sm (mentors.has_key?($USER) ? 'Edit Your Mentor Record' : 'Volunteer To Mentor'), href: "/members/mentor-update.cgi", role: "button"
+        _p.text_warning 'Reminder: All Mentoring data is private to the ASF; only ASF Members can sign up here as Mentors or Mentees.'
       }
     ) do
       _div.panel_group id: MENTORS_LIST, role: "tablist", aria_multiselectable: "true" do
-        mentors.each_with_index do |(apacheid, mentor), n|
+        mentors.each_with_index do |(apacheid, mentor), n| # TODO Should we randomize the default listing?
           _div!.panel.panel_default  id: apacheid do
             _div!.panel_heading role: "tab", id: "#{MENTORS_LIST}h#{n}" do
               _h4!.panel_title do
                 _a!.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{MENTORS_LIST}", href: "##{MENTORS_LIST}c#{n}", aria_controls: "#{MENTORS_LIST}c#{n}" do
                   _ "#{mentor[MentorFormat::PUBLICNAME]}  (#{apacheid})  Timezone: #{mentor[MentorFormat::TIMEZONE]}  "
-                  _span.glyphicon class: "glyphicon-chevron-down"
+                  _span.glyphicon.glyphicon_chevron_down id: "#{apacheid}-nav"
                   mentor.delete(MentorFormat::PUBLICNAME) # So not re-displayed below
                 end
               end
@@ -139,6 +140,7 @@ _html do
                 end
               end
             end
+            _p 'Please work with dev@whimsical to fix these JSON files.'
           end
         end
       end
