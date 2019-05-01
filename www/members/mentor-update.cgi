@@ -61,7 +61,6 @@ def emit_form(apacheid, mdata, button_help, uimap)
       emit_mentor_input('homepage', mdata, uimap, 'glyphicon-console')
       emit_mentor_input('pronouns', mdata, uimap, 'glyphicon-user')
       emit_mentor_input('aboutme', mdata, uimap, 'glyphicon-info-sign')
-      emit_mentor_input('homepage', mdata, uimap, 'glyphicon-console')
       
       _div.form_group do
         _label.col_sm_offset_3.col_sm_9.strong.text_left 'Temporarily Opt Out From Any NEW Mentees'
