@@ -66,6 +66,7 @@ class Wunderbar::HtmlMarkup
     value: '', # Currently selected value
     valuelabel: '', # Currently selected valuelabel
     options: nil, # ['value'] or {"value" => 'Label for value'} of all selectable values
+    multiple: false,
     required: false,
     readonly: false,
     icon: nil,
@@ -80,7 +81,7 @@ class Wunderbar::HtmlMarkup
       _label.control_label.col_sm_3 label, for: "#{name}"
       _div.col_sm_9 do
         _div.input_group do
-          _select.form_control name: "#{name}", id: "#{name}", aria_describedby: "#{aria_describedby}", required: required, readonly: readonly do
+          _select.form_control name: "#{name}", id: "#{name}", multiple: "#{multiple}", aria_describedby: "#{aria_describedby}", required: required, readonly: readonly do
             if ''.eql?(value)
               if ''.eql?(placeholder)
                 _option '', value: '', selected: 'selected'
