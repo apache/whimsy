@@ -1,7 +1,23 @@
 require 'wunderbar'
+require 'wunderbar/markdown'
 
 # Define common page features for whimsy tools using bootstrap styles
 class Wunderbar::HtmlMarkup
+
+  # Utility function to add icons to form controls
+  def _whimsy_forms_iconlink(icon: nil, iconlabel: nil, iconlink: nil)
+    if iconlink
+      _div.input_group_btn do
+        _a.btn.btn_default type: 'button', aria_label: "#{iconlabel}", href: "#{iconlink}", target: 'whimsy_help' do
+          _span.glyphicon class: "#{icon}", aria_label: "#{iconlabel}"
+        end
+      end
+    elsif icon
+      _span.input_group_addon do
+        _span.glyphicon class: "#{icon}", aria_label: "#{iconlabel}"
+      end
+    end
+  end
 
   # Display a single input control within a form; or if rows, then a textarea
   # @param name required string ID of control's label 
@@ -37,21 +53,11 @@ class Wunderbar::HtmlMarkup
             type: "#{type}", placeholder: "#{placeholder}", value: value,
             aria_describedby: "#{aria_describedby}", required: required, readonly: readonly
           end
-          if iconlink
-            _div.input_group_btn do
-              _a.btn.btn_default type: 'button', aria_label: "#{iconlabel}", href: "#{iconlink}", target: 'whimsy_help' do
-                _span.glyphicon class: "#{icon}", aria_label: "#{iconlabel}"
-              end
-            end
-          elsif icon
-            _span.input_group_addon do
-              _span.glyphicon class: "#{icon}", aria_label: "#{iconlabel}"
-            end
-          end
+          _whimsy_forms_iconlink(icon: icon, iconlabel: iconlabel, iconlink: iconlink)
         end
         if helptext
           _span.help_block id: "#{aria_describedby}" do
-            _ "#{helptext}"
+            _markdown "#{helptext}"
           end
         end
       end
@@ -66,7 +72,7 @@ class Wunderbar::HtmlMarkup
     value: '', # Currently selected value
     valuelabel: '', # Currently selected valuelabel
     options: nil, # ['value'] or {"value" => 'Label for value'} of all selectable values
-    multiple: false,
+    multiple: false, # Not currently supported
     required: false,
     readonly: false,
     icon: nil,
@@ -81,7 +87,7 @@ class Wunderbar::HtmlMarkup
       _label.control_label.col_sm_3 label, for: "#{name}"
       _div.col_sm_9 do
         _div.input_group do
-          _select.form_control name: "#{name}", id: "#{name}", multiple: "#{multiple}", aria_describedby: "#{aria_describedby}", required: required, readonly: readonly do
+          _select.form_control name: "#{name}", id: "#{name}", aria_describedby: "#{aria_describedby}", required: required, readonly: readonly do
             if ''.eql?(value)
               if ''.eql?(placeholder)
                 _option '', value: '', selected: 'selected'
@@ -101,21 +107,11 @@ class Wunderbar::HtmlMarkup
               end
             end
           end
-          if iconlink
-            _div.input_group_btn do
-              _a.btn.btn_default type: 'button', aria_label: "#{iconlabel}", href: "#{iconlink}", target: 'whimsy_help' do
-                _span.glyphicon class: "#{icon}", aria_label: "#{iconlabel}"
-              end
-            end
-          elsif icon
-            _span.input_group_addon do
-              _span.glyphicon class: "#{icon}", aria_label: "#{iconlabel}"
-            end
-          end
+          _whimsy_forms_iconlink(icon: icon, iconlabel: iconlabel, iconlink: iconlink)
         end
         if helptext
           _span.help_block id: "#{aria_describedby}" do
-            _ "#{helptext}"
+            _markdown "#{helptext}"
           end
         end
       end
