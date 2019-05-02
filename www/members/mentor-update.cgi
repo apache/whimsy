@@ -39,7 +39,7 @@ def emit_form(apacheid, mdata, button_help, uimap)
       emit_mentor_input('contact', mdata, uimap, 'glyphicon-bullhorn', req: true)
       field = 'timezone'
       _whimsy_forms_select(label: uimap[field][0], name: field, 
-        value: (mdata[field] ? mdata[field] : ''),
+        values: (mdata[field] ? mdata[field] : ''),
         options: MentorFormat::TZ.sort,
         icon: 'glyphicon-time', iconlabel: 'clock', 
         helptext: uimap[field][1]
@@ -47,14 +47,14 @@ def emit_form(apacheid, mdata, button_help, uimap)
       emit_mentor_input('availability', mdata, uimap, 'glyphicon-hourglass')
       field = 'prefers'
       _whimsy_forms_select(label: uimap[field][0], name: field, multiple: true, 
-        value: (mdata[field] ? mdata[field] : ''),
+        values: (mdata[field] ? mdata[field] : ''),
         options: MentorFormat::PREFERS_TYPES,
         icon: 'glyphicon-ok-sign', iconlabel: 'ok-sign', 
         helptext: uimap[field][1]
       )
       field = 'languages'
       _whimsy_forms_select(label: uimap[field][0], name: field, multiple: true, 
-        value: (mdata[field] ? mdata[field] : ''),
+        values: (mdata[field] ? mdata[field] : ''),
         options: MentorFormat::LANGUAGES,
         icon: 'glyphicon-globe', iconlabel: 'globe', 
         helptext: uimap[field][1]
@@ -72,7 +72,11 @@ def emit_form(apacheid, mdata, button_help, uimap)
       end
       emit_mentor_input('homepage', mdata, uimap, 'glyphicon-console')
       emit_mentor_input('pronouns', mdata, uimap, 'glyphicon-user')
-      emit_mentor_input('aboutme', mdata, uimap, 'glyphicon-info-sign')
+      field = 'aboutme'
+      _whimsy_forms_input(label: uimap[field][0], name: field, rows: 3, 
+        icon: 'glyphicon-info-sign', value: (mdata[field] ? mdata[field] : ''),
+        helptext: uimap[field][1]
+      )
       
       _div.form_group do
         _label.col_sm_offset_3.col_sm_9.strong.text_left 'Temporarily Opt Out From Any NEW Mentees'
@@ -128,15 +132,13 @@ def send_form(formdata: {})
       if File.exist? fn
         File.write(fn, mentor_update + "\n")
         _.system ['svn', 'st']
-        message = "#{$USER} updating mentoring data"
+        message = "Updating my mentoring data (whimsy)"
       else
         File.write(fn, mentor_update + "\n")
         _.system ['svn', 'add', fn]
-        message = "#{$USER} += New member mentoring volunteer"
+        message = "#{$USER} += mentoring volunteer (whimsy)"
       end
-#      rc = _.system ['svn', 'commit', fn, '--message', message, svnopts, credentials]
-      _p "SYSTEM: #{['svn', 'commit', fn, '--message', message, svnopts, credentials]}"
-      _p "DEBUG: still debugging this script, so the final commit is commented out -sc"
+      rc = _.system ['svn', 'commit', fn, '--message', message, svnopts, credentials]
     end
   end
   
