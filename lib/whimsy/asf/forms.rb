@@ -37,21 +37,25 @@ class Wunderbar::HtmlMarkup
     helptext: nil
     )
     return unless name
-    tagname = 'input'
-    tagname = 'textarea' if rows
     aria_describedby = "#{name}_help" if helptext
     _div.form_group do
       _label.control_label.col_sm_3 label, for: "#{name}"
       _div.col_sm_9 do
         _div.input_group do
-          if pattern
-            _.tag! tagname, class: 'form-control', name: "#{name}", id: "#{name}",
-            type: "#{type}", pattern: "#{pattern}", placeholder: "#{placeholder}", value: value,
+          args = {
+            class: 'form-control', name: "#{name}", id: "#{name}",
+            type: "#{type}", placeholder: "#{placeholder}",
             aria_describedby: "#{aria_describedby}", required: required, readonly: readonly
+          }
+          if rows
+            args[:rows] = rows
+            _textarea! args do
+              _! value
+            end
           else
-            _.tag! tagname, class: 'form-control', name: "#{name}", id: "#{name}",
-            type: "#{type}", placeholder: "#{placeholder}", value: value,
-            aria_describedby: "#{aria_describedby}", required: required, readonly: readonly
+            args[:value] = value
+            args[:pattern] = "#{pattern}" if pattern
+            _input args
           end
           _whimsy_forms_iconlink(icon: icon, iconlabel: iconlabel, iconlink: iconlink)
         end
@@ -65,23 +69,26 @@ class Wunderbar::HtmlMarkup
   end
 
   # Display an optionlist control within a form
-  # @param name required string ID of control's label 
+  # @param name required string ID of control's label
+  # @param options required ['value'] or {"value" => 'Label for value'} of all selectable values
+  # @param values required 'value' or ['value'] or {"value" => 'Label for value'} of all selected values
+  # @param placeholder Currently displayed text if passed (not selectable)
   def _whimsy_forms_select(
     name: nil,
-    label: 'Enter string',
-    value: '', # Currently selected value
-    valuelabel: '', # Currently selected valuelabel
-    options: nil, # ['value'] or {"value" => 'Label for value'} of all selectable values
-    multiple: false, # Not currently supported
+    label: 'Select value(s)',
+    values: nil,
+    options: nil,
+    multiple: false,
     required: false,
     readonly: false,
     icon: nil,
     iconlabel: nil,
     iconlink: nil,
-    placeholder: nil, # Currently displayed text if value is blank (not selectable)
+    placeholder: nil,
     helptext: nil
     )
     return unless name
+    return unless values
     aria_describedby = "#{name}_help" if helptext
     _div.form_group do
       _label.control_label.col_sm_3 label, for: "#{name}"
@@ -94,22 +101,31 @@ class Wunderbar::HtmlMarkup
             args['multiple'] = 'true'
           end
           _select.form_control args do
-            if ''.eql?(value)
-              if ''.eql?(placeholder)
-                _option '', value: '', selected: 'selected'
-              else
-                _option "#{placeholder}", value: '', selected: 'selected', disabled: 'disabled', hidden: 'hidden'
-              end
+            if ''.eql?(placeholder)
+              _option '', value: '', selected: 'selected'
             else
-              _option ''.eql?(valuelabel) ? "#{value}" : "#{valuelabel}", value: "#{value}", selected: 'selected'
+              _option "#{placeholder}", value: '', selected: 'selected', disabled: 'disabled', hidden: 'hidden'
+            end
+            # Construct selectable list from values (first) then options
+            if values.kind_of?(Array)
+              values.each do |val|
+                _option val, value: val, selected: true
+              end
+            elsif values.kind_of?(Hash)
+              values.each do |val, disp|
+                _option disp, value: val, selected: true
+              end
+            elsif values # Fallback for simple case of single string value
+              _option "#{values}", value: "#{values}", selected: true
+              values = [values] # Ensure supports .include? for options loop below
             end
             if options.kind_of?(Array)
-              options.each do |opt|
-                _option opt, value: opt
+              options.each do |val|
+                _option val, value: val unless values.include?(val)
               end
-            else
+            elsif options.kind_of?(Hash)
               options.each do |val, disp|
-                _option disp, value: val
+                _option disp, value: val unless values.include?(val)
               end
             end
           end
