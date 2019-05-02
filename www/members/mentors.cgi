@@ -95,6 +95,7 @@ _html do
                           _span.text_primary uimap.has_key?(k) ? "#{uimap[k][0]}" : "#{k}"
                         end
                         _td!.text_left do
+                          v = v.join(', ') if v.kind_of?(Array)
                           _markdown v
                         end
                       end
