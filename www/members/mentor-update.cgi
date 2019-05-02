@@ -84,7 +84,9 @@ def emit_form(apacheid, mdata, button_help, uimap)
         _div.col_sm_9 do
           _div.input_group do
             _label "#{MentorFormat::NOTAVAILABLE}" do
-              _input ' Stop accepting NEW Mentees', type: 'checkbox', id: "#{MentorFormat::NOTAVAILABLE}", name: "#{MentorFormat::NOTAVAILABLE}", value: "#{MentorFormat::NOTAVAILABLE}"
+              args = { type: 'checkbox', id: "#{MentorFormat::NOTAVAILABLE}", name: "#{MentorFormat::NOTAVAILABLE}", value: "#{MentorFormat::NOTAVAILABLE}" }
+              args[:checked] = true if mdata[MentorFormat::NOTAVAILABLE]
+              _input ' Stop accepting NEW Mentees', args
             end
           end
           _span.help_block do
