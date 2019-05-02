@@ -45,20 +45,8 @@ def emit_form(apacheid, mdata, button_help, uimap)
         helptext: uimap[field][1]
       )
       emit_mentor_input('availability', mdata, uimap, 'glyphicon-hourglass')
-      field = 'prefers'
-      _whimsy_forms_select(label: uimap[field][0], name: field, multiple: true, 
-        value: (mdata[field] ? mdata[field] : ''),
-        options: MentorFormat::PREFERS_TYPES,
-        icon: 'glyphicon-ok-sign', iconlabel: 'ok-sign', 
-        helptext: uimap[field][1]
-      )
-      field = 'languages'
-      _whimsy_forms_select(label: uimap[field][0], name: field, multiple: true, 
-        value: (mdata[field] ? mdata[field] : ''),
-        options: MentorFormat::LANGUAGES,
-        icon: 'glyphicon-globe', iconlabel: 'globe', 
-        helptext: uimap[field][1]
-      )
+      emit_mentor_input('prefers', mdata, uimap, 'glyphicon-ok-sign')
+      emit_mentor_input('languages', mdata, uimap, 'glyphicon-globe')
       
       _div.form_group do
         _label.col_sm_offset_3.col_sm_9.strong.text_left 'What You Could Help Mentees With'
@@ -213,19 +201,18 @@ _html do
 
       # Display data to the user, depending if we're GET (existing mentor record or just blank data) or POST (show SVN checkin results)
       if _.post?
-        submission = {
+        submission = { # TODO make this a loop over uimap.keys; TODO check if we want any other fields
           "timezone" => "#{@timezone}",
           "availability" => "#{@availability}",
           "contact" => "#{@contact}",
+          "prefers" => "#{@prefers}",
           "available" => "#{@available}",
           "mentoring" => "#{@mentoring}",
           "experience" => "#{@experience}",
+          "languages" => "#{@languages}",
           "pronouns" => "#{@pronouns}",
           "aboutme" => "#{@aboutme}",
-          "homepage" => "#{@homepage}",
-          # Multiple select fields
-          "prefers" => _.params['prefers'],
-          "languages" => _.params['languages']
+          "homepage" => "#{@homepage}"
         }
         if @notavailable
           submission['notavailable'] = "#{@notavailable}"

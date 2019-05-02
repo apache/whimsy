@@ -11,59 +11,6 @@ class MentorFormat
   ERRORS = 'errors'
   TIMEZONE = 'timezone'
   TZ = TZInfo::Timezone.all_country_zone_identifiers
-  PREFERS_TYPES = [
-    'email',
-    'phone',
-    'Slack',
-    'irc',
-    'Hangouts',
-    'Facebook',
-    'Skype',
-    'other (text chat)',
-    'other (video chat)'
-  ]
-  LANGUAGES = [ # Wikipedia top list by total speakers, plus EU
-    'Arabic',
-    'Bengali',
-    'Bulgarian',
-    'Chinese',
-    'Croatian',
-    'Czech',
-    'Danish',
-    'Dutch',
-    'English',
-    'Estonian',
-    'Finnish',
-    'French',
-    'German',
-    'Greek',
-    'Hindi',
-    'Hungarian',
-    'Indonesean',
-    'Irish',
-    'Italian',
-    'Japanese',
-    'Korean',
-    'Latvian',
-    'Lithuanian',
-    'Maltese',
-    'Marathi',
-    'Polish',
-    'Portugese',
-    'Punjabi',
-    'Romanian',
-    'Russian',
-    'Slovak',
-    'Slovene',
-    'Spanish',
-    'Swahili',
-    'Swedish',
-    'Tamil',
-    'Telugu',
-    'Thai',
-    'Turkish',
-    'Vietnamese'
-  ]
 
   # Read mapping of labels to fields
   def self.get_uimap(path)

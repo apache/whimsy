@@ -87,13 +87,7 @@ class Wunderbar::HtmlMarkup
       _label.control_label.col_sm_3 label, for: "#{name}"
       _div.col_sm_9 do
         _div.input_group do
-          args = {
-            name: "#{name}", id: "#{name}", aria_describedby: "#{aria_describedby}", required: required, readonly: readonly
-          }
-          if multiple
-            args['multiple'] = 'true'
-          end
-          _select.form_control args do
+          _select.form_control name: "#{name}", id: "#{name}", aria_describedby: "#{aria_describedby}", required: required, readonly: readonly do
             if ''.eql?(value)
               if ''.eql?(placeholder)
                 _option '', value: '', selected: 'selected'
