@@ -49,18 +49,18 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        MentorFormat::MENTORS_SVN => 'See Mentors Data',
+        MentorFormat::MENTORS_SVN => 'See Raw Mentors Data',
         '/roster/members' => 'Whimsy All Members Roster',
         '/members/index/' => 'Other Member-Private Tools',
         'https://community.apache.org' => 'Apache Community Development'
       },
       helpblock: -> {
         _p do
-          _ 'This page lists experienced ASF Members who have volunteered to mentor newer ASF Members to help them get more involved in Foundation governance and operations.'
+          _ 'This page lists experienced ASF Members who have volunteered to mentor newer ASF Members to help them get more involved in governance and operations within the larger Foundation as a whole.'
         end
         _p do
-          _ "If you are a newer Member looking for a mentor, please reach out directly to available volunteers below that fit your interests by #{uimap['contact'][0]}. "
-          _ 'Remember, this is an informal program run by volunteers, so please be kind - and patient!  Not every mentoring pair may be the right fit.  Mentors currently listed as available for new mentees:'
+          _ "If you are a newer Member looking for a mentor, please reach out directly to available volunteers below that fit your interests by #{uimap['contact'][0]} and request mentoring.  Not every mentoring pair may be the right fit, so you'll need to decide together if you're a good pair."
+          _ 'Remember, this is an informal program run by volunteers, so please be kind - and patient!   Mentors currently listed as available for new mentees:'
         end 
         _ul.list_inline do
           mentors.each do | apacheid, mentor |
