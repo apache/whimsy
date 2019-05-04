@@ -77,40 +77,28 @@ _html do
     ) do
       _div.panel_group id: MENTORS_LIST, role: "tablist", aria_multiselectable: "true" do
         mentors.each_with_index do |(apacheid, mentor), n| # TODO Should we randomize the default listing?
-          _div!.panel.panel_default  id: apacheid do
-            _div!.panel_heading role: "tab", id: "#{MENTORS_LIST}h#{n}" do
-              _h4!.panel_title do
-                _a!.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{MENTORS_LIST}", href: "##{MENTORS_LIST}c#{n}", aria_controls: "#{MENTORS_LIST}c#{n}" do
-                  _ "#{mentor[MentorFormat::PUBLICNAME]}  (#{apacheid})  Timezone: #{mentor[MentorFormat::TIMEZONE]}  "
-                  _span.glyphicon.glyphicon_chevron_down id: "#{apacheid}-nav"
-                  mentor.delete(MentorFormat::PUBLICNAME) # So not re-displayed below
+          _whimsy_accordion_item(listid: MENTORS_LIST, itemid: apacheid, itemtitle: "#{mentor[MentorFormat::PUBLICNAME]}  (#{apacheid})  Timezone: #{mentor[MentorFormat::TIMEZONE]}  ", n: n, itemclass: 'panel-primary') do
+            _table.table.table_hover do
+              _tbody do
+                mentor.delete(MentorFormat::PUBLICNAME) # So not re-displayed again
+                mentor.each do |k, v|
+                  _tr do
+                    _td!.text_right do
+                      _span.text_primary uimap.has_key?(k) ? "#{uimap[k][0]}" : "#{k}"
+                    end
+                    _td!.text_left do
+                      v = v.join(', ') if v.kind_of?(Array)
+                      _markdown v
+                    end
+                  end
                 end
-              end
-            end
-            _div!.panel_collapse.collapse id: "#{MENTORS_LIST}c#{n}", role: "tabpanel", aria_labelledby: "#{MENTORS_LIST}h#{n}" do
-              _div!.panel_body do
-                _table.table.table_hover do
-                  _tbody do
-                    mentor.each do |k, v|
-                      _tr do
-                        _td!.text_right do
-                          _span.text_primary uimap.has_key?(k) ? "#{uimap[k][0]}" : "#{k}"
-                        end
-                        _td!.text_left do
-                          v = v.join(', ') if v.kind_of?(Array)
-                          _markdown v
-                        end
-                      end
-                    end
-                    _tr do
-                      _td!.text_right do
-                        _ 'ASF Projects/Podlings Involved In'
-                      end
-                      _td!.text_left do
-                        # TODO: instead of link to roster, this could read and display here
-                        _a "#{MentorFormat::ROSTER}#{apacheid}", href: "#{MentorFormat::ROSTER}#{apacheid}"
-                      end
-                    end
+                _tr do
+                  _td!.text_right do
+                    _ 'ASF Projects/Podlings Involved In'
+                  end
+                  _td!.text_left do
+                    # TODO: instead of link to roster, this could read and display here
+                    _a "#{MentorFormat::ROSTER}#{apacheid}", href: "#{MentorFormat::ROSTER}#{apacheid}"
                   end
                 end
               end
