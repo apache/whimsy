@@ -13,7 +13,7 @@ module LogParser
   ERROR_LOG_DIR = '/srv/whimsy/www/members/log'
   
   # Constants and ignored regex for whimsy_access logs
-  WHIMSY_APPS = %w(status roster board public secretary)
+  WHIMSY_APPS = %w(roster board public secretary site.cgi pods.cgi foundation/orgchart status)
   RUSER = 'remote_user'
   REFERER = 'referer'
   REMAINDER = 'remainder'
