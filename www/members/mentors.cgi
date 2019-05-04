@@ -63,21 +63,34 @@ _html do
         _p do
           _ "If you are a newer Member looking for a mentor, please reach out directly to available volunteers below that fit your interests by #{uimap['contact'][0]} and request mentoring.  Not every mentoring pair may be the right fit, so you'll need to decide together if you're a good pair."
           _ 'Remember, this is an informal program run by volunteers, so please be kind - and patient!   Mentors currently listed as available for new mentees:'
-        end 
-        _ul.list_inline do
-          mentors.each do | apacheid, mentor |
-            _li do
-              _a apacheid, href: "##{apacheid}"
+        end
+        _table do
+          _tr do
+            _td do
+              _a.btn.btn_default.btn_sm (mentors.has_key?($USER) ? 'Edit Your Mentor Record' : 'Volunteer To Mentor'), href: "/members/mentor-update.cgi", role: "button"
+            end
+            _td do
+              _{"&nbsp;"*2}
+            end
+            _td do
+              _ul.list_inline do
+                mentors.each do | apacheid, mentor |
+                  _li do
+                    _a apacheid, href: "##{apacheid}"
+                  end
+                end
+              end
             end
           end
         end
-        _a.btn.btn_default.btn_sm (mentors.has_key?($USER) ? 'Edit Your Mentor Record' : 'Volunteer To Mentor'), href: "/members/mentor-update.cgi", role: "button"
         _p.text_warning 'Reminder: All Mentoring data is private to the ASF; only ASF Members can sign up here as Mentors or Mentees.'
       }
     ) do
       _div.panel_group id: MENTORS_LIST, role: "tablist", aria_multiselectable: "true" do
         mentors.each_with_index do |(apacheid, mentor), n| # TODO Should we randomize the default listing?
-          _whimsy_accordion_item(listid: MENTORS_LIST, itemid: apacheid, itemtitle: "#{mentor[MentorFormat::PUBLICNAME]}  (#{apacheid})  Timezone: #{mentor[MentorFormat::TIMEZONE]}  ", n: n, itemclass: 'panel-primary') do
+          timezone = mentor[MentorFormat::TIMEZONE]
+          offset = TZInfo::Timezone.get(timezone).strftime("%:z")
+          _whimsy_accordion_item(listid: MENTORS_LIST, itemid: apacheid, itemtitle: "#{mentor[MentorFormat::PUBLICNAME]}  (#{apacheid})  Timezone: #{timezone} (#{offset})  ", n: n, itemclass: 'panel-primary') do
             _table.table.table_hover do
               _tbody do
                 mentor.delete(MentorFormat::PUBLICNAME) # So not re-displayed again
