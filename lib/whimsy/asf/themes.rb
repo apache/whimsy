@@ -195,6 +195,34 @@ class Wunderbar::HtmlMarkup
         end
       end
       _whimsy_foot
-    end    
+    end
   end
+  
+  # Emit wrapper panels for a single tablist accordion item
+  # @param listid of the parent _div.panel_group role: "tablist"
+  # @param itemid of this specific item
+  # @param itemtitle to display in the header panel
+  # @param n unique number of this item (for nav links)
+  # @param itemclass optional panel-success or similar styling
+  def _whimsy_accordion_item(listid: 'accordion', itemid: nil, itemtitle: '', n: 0, itemclass: nil)
+    raise ArgumentError.new("itemid must not be nil") if not itemid
+    args = {id: itemid}
+    args[:class] = itemclass if itemclass
+    _div!.panel.panel_default args do
+      _div!.panel_heading role: "tab", id: "#{listid}h#{n}" do
+        _h4!.panel_title do
+          _a!.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{listid}", href: "##{listid}c#{n}", aria_controls: "#{listid}c#{n}" do
+            _ "#{itemtitle} "
+            _span.glyphicon.glyphicon_chevron_down id: "#{itemid}-nav"
+          end
+        end
+      end
+      _div!.panel_collapse.collapse id: "#{listid}c#{n}", role: "tabpanel", aria_labelledby: "#{listid}h#{n}" do
+        _div!.panel_body do
+          yield
+        end
+      end
+    end
+  end
+  
 end
