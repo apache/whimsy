@@ -48,6 +48,8 @@ _html do
     notavailable, mentors = mentors.partition{ |k,v| v.has_key?(MentorFormat::NOTAVAILABLE)}.map(&:to_h)
     _whimsy_body(
       title: PAGETITLE,
+      subtitle: 'About This Mentoring Program',
+      relatedtitle: 'Other ASF Mentoring Links',
       related: {
         MentorFormat::MENTORS_SVN => 'See Raw Mentors Data',
         '/roster/members' => 'Whimsy All Members Roster',
