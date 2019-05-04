@@ -77,11 +77,13 @@ _html do
     ) do
       _div.panel_group id: MENTORS_LIST, role: "tablist", aria_multiselectable: "true" do
         mentors.each_with_index do |(apacheid, mentor), n| # TODO Should we randomize the default listing?
+          timezone = mentor[MentorFormat::TIMEZONE]
+          offset = TZInfo::Timezone.get(timezone).strftime("%:z")
           _div!.panel.panel_default  id: apacheid do
             _div!.panel_heading role: "tab", id: "#{MENTORS_LIST}h#{n}" do
               _h4!.panel_title do
                 _a!.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{MENTORS_LIST}", href: "##{MENTORS_LIST}c#{n}", aria_controls: "#{MENTORS_LIST}c#{n}" do
-                  _ "#{mentor[MentorFormat::PUBLICNAME]}  (#{apacheid})  Timezone: #{mentor[MentorFormat::TIMEZONE]}  "
+                  _ "#{mentor[MentorFormat::PUBLICNAME]}  (#{apacheid})  Timezone: #{timezone} (#{offset}) "
                   _span.glyphicon.glyphicon_chevron_down id: "#{apacheid}-nav"
                   mentor.delete(MentorFormat::PUBLICNAME) # So not re-displayed below
                 end
