@@ -66,10 +66,11 @@ def display_access()
     _a 'See the full server logs directory.', href: '/members/log'
   end 
   _h2 'Access Log Synopsis - by Path or Tool'
-  tmp = 'applist'
-  _div.panel_group id: tmp, role: 'tablist', aria_multiselectable: 'true' do
+  listid = 'applist'
+  _div.panel_group id: listid, role: 'tablist', aria_multiselectable: 'true' do
     apps.each_with_index do |(name, data), n|
-      _whimsy_accordion_item(listid: tmp, itemid: name, itemtitle: "#{LogParser::WHIMSY_APPS[name]}", n: n, itemclass: 'panel-info') do
+      itemtitle = LogParser::WHIMSY_APPS[name] ? LogParser::WHIMSY_APPS[name] : 'All Other URLs'
+      _whimsy_accordion_item(listid: listid, itemid: name, itemtitle: "#{itemtitle}", n: n, itemclass: 'panel-info') do
         _table.table.table_hover.table_striped do
           _thead_ do
             _tr do
