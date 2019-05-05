@@ -13,7 +13,16 @@ module LogParser
   ERROR_LOG_DIR = '/srv/whimsy/www/members/log'
   
   # Constants and ignored regex for whimsy_access logs
-  WHIMSY_APPS = %w(roster board public secretary site.cgi pods.cgi foundation/orgchart status)
+  WHIMSY_APPS = {
+    'roster' => 'Roster tool',
+    'board' => 'Board agenda/minutes',
+    'public' => 'Public JSON files',
+    'secretary' => 'Secretary Workbench',
+    'site.cgi' => 'TLP Site Checker',
+    'pods.cgi' => 'Podling Site Checker',
+    'foundation/orgchart' => 'Public OrgChart',
+    'status' => 'Server Status'
+  }
   RUSER = 'remote_user'
   REFERER = 'referer'
   REMAINDER = 'remainder'
@@ -80,11 +89,11 @@ module LogParser
   
   # Collate/partition whimsy_access entries by app areas
   # @param logs full set of items to scan
-  # @return apps - WHIMSY_APPS categorized, with REMAINDER entry all others
-  def collate_whimsy_access(logs)
+  # @return apps categorized by apphash, with REMAINDER entry all others not captured
+  def collate_whimsy_access(logs, apphash = WHIMSY_APPS)
     remainder = logs
     apps = {}
-    WHIMSY_APPS.each do |a|
+    apphash.keys.each do |a|
       apps[a] = Hash.new{|h,k| h[k] = [] }
       apps[a][RUSER] = Hash.new{|h,k| h[k] = 0 }
       apps[a][REFERER] = Hash.new{|h,k| h[k] = 0 }
