@@ -62,29 +62,33 @@ def display_access()
   apps, misses = LogParser.get_access_reports()
   
   _p do
-    _ 'This only includes a small subset of possibly interesting access log entries, roughly categorized by major application (board, roster, etc.)'
+    _ 'This only includes a subset of possibly interesting access log entries from the current day, roughly categorized by major application (board, roster, etc.)'
     _a 'See the full server logs directory.', href: '/members/log'
   end 
-  _h2 'Access Log Synopsis - by Application'
-  apps.each do |name, data|
-    _h3 "#{name} - application"
-    _table.table.table_hover.table_striped do
-      _thead_ do
-        _tr do
-          _th 'User list'
-          _th 'URLs hit (total)'
-        end
-        _tbody do
-          _tr_ do
-            _td do
-              data['remote_user'].each do |remote_user|
-                _ remote_user
-              end
+  _h2 'Access Log Synopsis - by Path or Tool'
+  tmp = 'applist'
+  _div.panel_group id: tmp, role: 'tablist', aria_multiselectable: 'true' do
+    apps.each_with_index do |(name, data), n|
+      _whimsy_accordion_item(listid: tmp, itemid: name, itemtitle: "#{Logparser::WHIMSY_APPS[name]}", n: n, itemclass: 'panel-info') do
+        _table.table.table_hover.table_striped do
+          _thead_ do
+            _tr do
+              _th 'User list'
+              _th 'URLs hit (total)'
             end
-            _td do
-              data['uri'].sort.each do |uri|
-                _ uri
-                _br
+            _tbody do
+              _tr_ do
+                _td do
+                  data['remote_user'].each do |remote_user|
+                    _ remote_user
+                  end
+                end
+                _td do
+                  data['uri'].sort.each do |uri|
+                    _ uri
+                    _br
+                  end
+                end
               end
             end
           end
@@ -92,7 +96,7 @@ def display_access()
       end
     end
   end
-  _whimsy_panel(title: 'Access Log Synopsis - Error URLs') do
+  _whimsy_panel(title: 'Access Log Synopsis - Error URLs', style: 'panel-warning') do
     _p 'This is a simplistic listing of all URLs with 4xx/5xx error codes (excluding obvious bots).'
     erruri = {}
     errref = {}
@@ -129,11 +133,17 @@ _html do
       related: {
         '/members/log' => 'Full server error and access logs',
         '/docs' => 'Whimsy code and API documentation',
+        '/status' => 'Whimsy production server status',
         "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => 'See This Source Code'
       },
       helpblock: -> {
-        _p 'This parses error.log and whimsy_error.log and displays a condensed version, in time order (approximate).'
-        _p 'Append "?week" to the URL to get results for the last week, and "?access" to parse the access logs instead'
+        _p 'This parses error.log and whimsy_error.log and displays a condensed version, in time order (approximate) of today\'s entries.'
+        _p do
+          _a 'Append "?week"', href: "#{ENV['SCRIPT_NAME']}?week"
+          _ ' to the URL to get error results for the last week, and '
+          _a 'append "?access"', href: "#{ENV['SCRIPT_NAME']}?access"
+          _ ' to parse the access logs instead.'
+        end
         _p do
           _span.text_warning 'Reminder: '
           _span.glyphicon.glyphicon_lock :aria_hidden
