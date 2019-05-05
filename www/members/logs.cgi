@@ -69,7 +69,7 @@ def display_access()
   tmp = 'applist'
   _div.panel_group id: tmp, role: 'tablist', aria_multiselectable: 'true' do
     apps.each_with_index do |(name, data), n|
-      _whimsy_accordion_item(listid: tmp, itemid: name, itemtitle: "#{Logparser::WHIMSY_APPS[name]}", n: n, itemclass: 'panel-info') do
+      _whimsy_accordion_item(listid: tmp, itemid: name, itemtitle: "#{LogParser::WHIMSY_APPS[name]}", n: n, itemclass: 'panel-info') do
         _table.table.table_hover.table_striped do
           _thead_ do
             _tr do
