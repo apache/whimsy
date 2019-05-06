@@ -60,7 +60,6 @@ end
 # Emit table of interesting access logs (optional, with ?access)
 def display_access()
   apps, misses = LogParser.get_access_reports()
-  
   _p do
     _ 'This only includes a subset of possibly interesting access log entries from the current day, roughly categorized by major application (board, roster, etc.)'
     _a 'See the full server logs directory.', href: '/members/log'
@@ -70,6 +69,7 @@ def display_access()
   _div.panel_group id: listid, role: 'tablist', aria_multiselectable: 'true' do
     apps.each_with_index do |(name, data), n|
       itemtitle = LogParser::WHIMSY_APPS[name] ? LogParser::WHIMSY_APPS[name] : 'All Other URLs'
+      itemtitle << " (#{data['remote_user'].sum{|k,v| v}})" if data['remote_user']
       _whimsy_accordion_item(listid: listid, itemid: name, itemtitle: "#{itemtitle}", n: n, itemclass: 'panel-info') do
         _table.table.table_hover.table_striped do
           _thead_ do
