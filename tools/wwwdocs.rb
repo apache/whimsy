@@ -83,8 +83,8 @@ end
 
 # Read repository.yml for all :svn dirs names to scan for
 # @return [['private1', 'privrepo2', ...], ['public1', 'pubrepo2', ...]
-def read_repository()
-  svn = YAML.load_file('../repository.yml')[:svn]
+def read_repository(repofile)
+  svn = YAML.load_file(repofile)[:svn]
   repos = [[], []]
   svn.each do |repo, data|
     data['url'] =~ IS_PRIVATE ? repos[0] << repo : repos[1] << repo
@@ -109,9 +109,9 @@ def scan_file_svn(f, regexs)
   begin
     File.open(f).each_line.map(&:chomp).each do |line|
       if line =~ regexs[0] then
-        repos[0] << line
+        repos[0] << line.strip
       elsif line =~ regexs[1] then
-        repos[1] << line
+        repos[1] << line.strip
       end
     end
     return repos
@@ -132,4 +132,3 @@ def scan_dir_svn(dir, regexs)
   end
   return links
 end
-
