@@ -394,10 +394,16 @@ module ASF
     weakref(:pmc_chairs) {Service.find('pmc-chairs').members}
   end
 
-  # Obtain a list of committers from LDAP 
-  # <tt>cn=committers,ou=groups,dc=apache,dc=org</tt>
+  # Obtain a list of committers from LDAP
+  # <tt>cn=committers,ou=role,ou=groups,dc=apache,dc=org</tt>
   def self.committers
-    weakref(:committers) {Group.find('committers').members}
+    weakref(:committers) {RoleGroup.find('committers').members}
+  end
+
+  # Obtain a list of committers from LDAP (old unix group)
+  # <tt>cn=committers,ou=groups,dc=apache,dc=org</tt>
+  def self.oldcommitters
+    weakref(:oldcommitters) {Group.find('committers').members}
   end
 
   # Obtain a list of members from LDAP 
@@ -1456,6 +1462,10 @@ end
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
+  old=ASF.oldcommitters()
+  puts old.length
+  new=ASF.committers()
+  puts new.length
   ASF::RoleGroup.listcns.map {|g| puts ASF::RoleGroup.find(g).dn}
   ASF::AppGroup.listcns.map {|g| puts ASF::AppGroup.find(g).dn}
 end
