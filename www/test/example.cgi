@@ -3,20 +3,36 @@ PAGETITLE = "Example Whimsy Script With Styles" # Wvisible:tools Note: PAGETITLE
 
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'json'
-require 'whimsy/asf'
+require 'yaml'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
+require 'wunderbar/jquery'
+require 'wunderbar/markdown'
+require 'whimsy/asf'
+require 'whimsy/public'
 
-def get_data(defaults: {})
-  return {
-    "Sample data processing here" => "row 1",
-    "This could come from a file" => "row B"
-  }
+# Get data from live whimsy.a.o/public directory
+def get_public_data()
+  return Public.getJSON('public_ldap_authgroups.json')
 end
 
+# Get data from a Subversion directory
+# See /repository.yml for list of auto-updated dirs
+def get_svn_data()
+  dir = ASF::SVN['comdevtalks']
+  filename = 'README.yaml'
+  data = YAML.load(File.read(File.join(dir, filename).untaint))
+  return data['title']
+end
+
+# Gather some data beforehand, if you like, but:
+# Note runtime errors here just write to the log, not to user's browser
+talktitle = get_svn_data()
+
+# Produce HTML
 _html do
-  _body? do
-    _whimsy_body(
+  _body? do # The ? traps errors inside this block
+    _whimsy_body( # This emits the entire page shell: header, navbar, basic styles, footer
       title: PAGETITLE,
       subtitle: 'About This Example Script',
       relatedtitle: 'More Useful Links',
@@ -33,6 +49,7 @@ _html do
           Any related whimsy or other (projects.a.o, etc.) links should be in the related: listing on the top right to help users find other useful things.
           This provides a consistent user experience.
         }
+        _p "You can output data previously processed as well like: #{talktitle}"
       },
       breadcrumbs: {
         dataflow: '/test/dataflow.cgi',
@@ -49,7 +66,7 @@ _html do
         # Gather or process your data **here**, so if an error is raised, the _body? 
         #   scope will trap it - and will then display the above help information 
         #   to the user before emitting a polite error traceback.
-        datums = get_data()
+        datums = {'one' => 1, 'two' => 2 }
         _table.table.table_hover.table_striped do
           _thead_ do
             _tr do
@@ -71,11 +88,28 @@ _html do
           end
         end
       end
+
       # IF YOUR SCRIPT ONLY EMITS SIMPLE DATA
       _h2 "Simple Data Can Just Use A List"
       _ul do
         [1,2,3].each do |row|
           _li "This is row number #{row}."
+        end
+      end
+
+      # NIFTY ACCORDION EXPAND-O LISTING: the _whimsy_accordion_item does most of the work
+      _h2 'Lists of Complex Data Can Use An Accordion'
+      accordionid = 'accordion'
+      officers = get_public_data()
+      _div.panel_group id: accordionid, role: 'tablist', aria_multiselectable: 'true' do
+        officers['auth'].each_with_index do |(listname, rosters), n|
+          _whimsy_accordion_item(listid: accordionid, itemid: listname, itemtitle: "#{listname}", n: n, itemclass: 'panel-primary') do
+            _ul do
+              rosters['roster'].each do |usr|
+                _li usr
+              end
+            end
+          end
         end
       end
     end
