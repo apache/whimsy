@@ -15,7 +15,8 @@ module LogParser
   # Constants and ignored regex for whimsy_access logs
   WHIMSY_APPS = {
     'roster' => 'Roster tool',
-    'board' => 'Board agenda/minutes',
+    'board/agenda' => 'Board agenda tool',
+    'board/minutes' => 'Board public minutes',
     'public' => 'Public JSON files',
     'secretary' => 'Secretary Workbench',
     'site.cgi' => 'TLP Site Checker',

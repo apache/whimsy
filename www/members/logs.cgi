@@ -97,8 +97,8 @@ def display_access()
       end
     end
   end
-  _whimsy_panel(title: 'Access Log Synopsis - Error URLs', style: 'panel-warning') do
-    _p 'This is a simplistic listing of all URLs with 4xx/5xx error codes (excluding obvious bots).'
+  _whimsy_panel('Access Log Synopsis - Error URLs', style: 'panel-warning') do
+    _p 'This is a simplistic listing of all URLs with 4xx/5xx error codes (excluding obvious bot URLs).'
     erruri = {}
     errref = {}
     misses.each do |h|
