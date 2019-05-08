@@ -54,7 +54,7 @@ info[:committees] = Hash[committees.map {|committee|
     chair: Hash[committee.chairs.map {|chair|
       [chair[:id], {:name => chair[:name]} ]}],
     roster: committee.roster.sort.to_h, # sort entries by uid
-    pmc: !committee.nonpmc?
+    pmc: committee.pmc?
   }]
 }]
 
@@ -94,6 +94,7 @@ if changed? and @old_file
 
   info[:committees].each { |pmc, entry|
     next if pmc == 'infrastructure' # no dates
+    Wunderbar.warn "#{pmc}: no description found" if entry[:pmc] && ! entry[:description]
     previouspmc = previous[pmc] # get the original details (if any)
     if previouspmc # we have an existing entry
       entry[:roster].each { |name, value|

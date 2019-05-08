@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Apache members@ Subscription Crosscheck" # Wvisible:members
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'wunderbar'
 require 'whimsy/asf'
@@ -8,15 +8,7 @@ require 'whimsy/asf/mlist'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 
-ARCHIVERS = %w(
-  private@mbox-vm.apache.org
-  members-archive@apache.org
-  archive-asf-private@cust-asf.ponee.io
-  members@mmpoc.apache.org
-  members@whimsy-vm4.apache.org
-)
-
-subscribers, modtime = ASF::MLIST.members_subscribers
+subscribers, modtime = ASF::MLIST.members_subscribers(false) # excluding archivers
 
 _html do
   _body? do
@@ -91,7 +83,6 @@ _html do
         _th 'name', data_sort: 'string'
       end
       subscriptions.sort.each do |id, person, email|
-        next if ARCHIVERS.include? email
         _tr_ do
           if id.include? '*'
             _td.text_danger id

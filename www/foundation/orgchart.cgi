@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Apache Corporate Organization Chart" # Wvisible:orgchart
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'json'
 require 'whimsy/asf'
 require 'whimsy/asf/orgchart' # New class not yet in gem; duplicates www/roster/models/orgchart

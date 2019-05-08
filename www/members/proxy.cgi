@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'wunderbar'
 require 'whimsy/asf'
@@ -8,6 +8,16 @@ require 'tmpdir'
 
 MEETINGS = ASF::SVN['Meetings']
 meeting = File.basename(Dir[File.join(MEETINGS, '2*')].sort.last).untaint
+volunteers = [
+  "Phil Steitz (psteitz)",
+  "Shane Curcuru (curcuru)",
+  "Michael Brohl (mbrohl)",
+  "Jim Jagielski (jim)",
+  "Daniel Ruggeri (druggeri)",
+  "Greg Stein (gstein)",
+  "Craig L Russell (clr)",
+  "Bertrand Delacretaz (bdelacretaz)"
+]
 
 # Calculate how many members required to attend first half for quorum
 def calculate_quorum(meeting)
@@ -102,23 +112,28 @@ _html do
               _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
             end
           end
-          _p %{
-            IMPORTANT! Be sure to tell the person that you select as proxy 
-            that you've assigned them to mark your attendance! They simply 
-            need to mark your proxy attendance when the meeting starts.
-          }
           help, copypasta = is_user_proxied(meeting, $USER)
           if help
             _p help
             if copypasta
-              _ul do
+              _ul.bg_success do
                 copypasta.each do |copyline|
                   _pre copyline
                 end
               end
             end
+          else
+            _p 'The following members have volunteered to serve as proxies; you can freely select any one of them below:'
+            _ul do
+              volunteers.each do |vol|
+                _pre vol
+              end
+            end
           end
-          _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
+          _p do
+            _ "IMPORTANT! Be sure to tell the person that you select as proxy that you've assigned them to mark your attendance! They simply need to mark your proxy attendance when the meeting starts."
+            _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
+          end
         end
       end
 
@@ -147,7 +162,8 @@ _html do
                 next if exclude.include? member.id       # Not attending
                 next unless members_txt[member.id]       # Non-members
                 next if members_txt[member.id]['status'] # Emeritus/Deceased
-                _option member.public_name
+                # Display the availid to users to match volunteers array above
+                _option "#{member.public_name} (#{member.id})"
               end
             end
           end
@@ -187,14 +203,17 @@ _html do
       user = ASF::Person.find($USER)
       date = Date.today.strftime("%B %-d, %Y")
 
-      # update proxy form
-      proxy[/authorize _(#{'_' *@proxy.length})/, 1] = @proxy.gsub(' ', '_')
+      # update proxy form (match as many _ as possible up to the name length)
+      proxy[/authorize _(_{,#{@proxy.length}})/, 1] = @proxy.gsub(' ', '_')
 
       proxy[/signature: _(_#{'_' *user.public_name.length}_)/, 1] = 
         "/#{user.public_name.gsub(' ', '_')}/"
 
       proxy[/name: _(#{'_' *user.public_name.length})/, 1] = 
         user.public_name.gsub(' ', '_')
+
+      proxy[/availid: _(#{'_' *user.id.length})/, 1] = 
+        user.id.gsub(' ', '_')
 
       proxy[/Date: _(#{'_' *date.length})/, 1] = date.gsub(' ', '_')
 
@@ -226,6 +245,8 @@ _html do
               id = file[/([-A-Za-z0-9]+)\.\w+$/, 1]
               proxy = form[/hereby authorize ([\S].*) to act/, 1].
                 gsub('_', ' ').strip
+              # Ensure availid is not included in proxy name here
+              proxy = proxy[/([^(]+)/, 1].strip
               name = form[/signature: ([\S].*)/, 1].gsub(/[\/_]/, ' ').strip
 
               "   #{proxy.ljust(24)} #{name} (#{id})"

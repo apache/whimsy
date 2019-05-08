@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "ASF Mailing List Subscription Helper" # Wvisible:mail subscribe
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'mail'
@@ -39,6 +39,8 @@ ASF::Podling.list.each {|p|
 pmcs = ASF::Committee.pmcs.map(&:mail_list)
 ldap_pmcs = [] # No need to get the info for ASF members
 ldap_pmcs = user.committees.map(&:mail_list) unless user.asf_member?
+# Also allow podling private lists to be subscribed by podling owners
+ldap_pmcs += user.podlings.map(&:mail_list) unless user.asf_member?
 lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs)
 lists -= ASF::Mail.deprecated
 lists -= BLACKLIST
@@ -70,9 +72,9 @@ _html do
           _a 'https://id.apache.org/', href: "https://id.apache.org/details/#{$USER}"
           _ 'where you can change your primary Forwarding Address and any other associated Alias email addresses you use.'
         end
+        _p 'ASF members can use this form to subscribe to private lists. PMC chairs can subscribe to board lists. (P)PMC members can subscribe to their private@ list.'
+        _p 'The subscription request will be queued and should be processed within about an hour.'
         _p do
-          _ 'ASF members can use this form to subscribe to private lists. PMC chairs can subscribe to board lists. PMC members can subscribe to their private@ list.'
-          _br
           _ 'To subscribe to other private lists, send an email to the list-subscribe@ address and wait for the request to be manually approved.'
           _ 'This might take a day or two.'
         end

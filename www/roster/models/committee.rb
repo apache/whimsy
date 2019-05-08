@@ -3,7 +3,7 @@ class Committee
     response = {}
 
     pmc = ASF::Committee.find(id)
-    return if pmc.nonpmc? # Only show PMCs
+    return unless pmc.pmc? # Only show PMCs
     members = pmc.owners
     committers = pmc.committers
     return if members.empty? and committers.empty?
@@ -37,6 +37,7 @@ class Committee
       subscribers, subtime = ASF::MLIST.list_subscribers(pmc.mail_list) # counts only
       analysePrivateSubs = currentUser.asf_member?
       unless analysePrivateSubs # check for private moderator if not already allowed access
+        # TODO match using canonical emails
         user_mail = currentUser.all_mail || []
         pMods = moderators["private@#{pmc.mail_list}.apache.org"] || []
         analysePrivateSubs = !(pMods & user_mail).empty?
@@ -52,19 +53,37 @@ class Committee
       lists = lists.select {|list, mode| mode == 'public'}
     end
 
-    roster = pmc.roster.dup
-    roster.each {|key, info| info[:role] = 'PMC member'}
+    roster = pmc.roster.dup # from committee-info
+    # ensure PMC members are all processed even they don't belong to the owner group
+    roster.each do |key, info|
+      info[:role] = 'PMC member'
+      next if pmc.ownerids.include?(key) # skip the rest (expensive) if person is in the owner group
+      person = ASF::Person[key]
+      if analysePrivateSubs
+        # Analyse the subscriptions, matching against canonicalised personal emails
+        allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
+        # pSubs is already downcased
+        # TODO should it be canonicalised as well above?
+        roster[key]['notSubbed'] = (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+        unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
+        unMatchedSecSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
+      end
+      roster[key]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
+    end
 
-    members.each do |person|
+    members.each do |person| # process the owners
       roster[person.id] ||= {
         name: person.public_name, 
-        role: 'PMC member'
+        role: 'PMC member' # TODO not strictly true, as CI is the canonical source
       }
       if analysePrivateSubs
-        allMail = person.all_mail.map{|m| m.downcase}
-        roster[person.id]['notSubbed'] = (allMail & pSubs).empty?
-        unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
-        unMatchedSecSubs.delete_if {|k| allMail.include? k.downcase}
+        # Analyse the subscriptions, matching against canonicalised personal emails
+        allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
+        # pSubs is already downcased
+        # TODO should it be canonicalised as well above?
+        roster[person.id]['notSubbed'] = (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+        unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
+        unMatchedSecSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
       roster[person.id]['ldap'] = true
       roster[person.id]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
@@ -114,7 +133,7 @@ class Committee
       }
       nonASFmails.each {|k,v|
         @people.each do |person|
-          if person[:mail].any? {|mail| mail.downcase == k.downcase}
+          if person[:mail].any? {|mail| ASF::Mail.to_canonical(mail.downcase) == ASF::Mail.to_canonical(k.downcase)}
             nonASFmails[k] = person[:id]
           end
         end

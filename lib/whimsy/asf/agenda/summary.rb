@@ -1,4 +1,5 @@
 require 'set'
+require 'whimsy/asf/board'
 
 # Creates a summary hash of information from an Agenda
 class ASF::Board::Agenda
@@ -17,41 +18,6 @@ class ASF::Board::Agenda
   COMMENT_LEN = 'cl'
   REPORT_LEN = 'rl'
   APPROVALS_KEY = 'ap'
-
-  INITIALS_IDX = 0
-  # Map director ids->names and ids->initials
-  # Only filled in since 2007 or so, once the preapp data in meetings is parseable
-  DIRECTOR_MAP = {
-    'bayard' => ['hy', 'Henri', 'Henri Yandell'],
-    'bdelacretaz' => ['bd', 'Bertrand', 'Bertrand Delacretaz'],
-    'brett' => ['bp', 'Brett', 'Brett Porter'],
-    'brianm' => ['bmc', 'Brian', 'Brian McCallister'],
-    'cliffs' => ['cs', 'Cliff', 'Cliff Schmidt'],
-    'coar' => ['kc', 'Ken', 'Ken Coar'],
-    'curcuru' => ['sc', 'Shane', 'Shane Curcuru'],
-    'cutting' => ['dc', 'Doug', 'Doug Cutting'],
-    'dirkx' => ['dg', 'Dirk-Willem', 'Dirk-Willem van Gulik'],
-    'dkulp' => ['dk', 'Daniel', 'Daniel Kulp'],
-    'fielding' => ['rf', 'Roy', 'Roy T. Fielding'],
-    'geirm' => ['gmj', 'Geir', 'Geir Magnusson Jr'],
-    'gstein' => ['gs', 'Greg', 'Greg Stein'],
-    'isabel' => ['idf', 'Isabel', 'Isabel Drost-Fromm'],
-    'jerenkrantz' => ['je', 'Justin', 'Justin Erenkrantz'],
-    'jim' => ['jj', 'Jim', 'Jim Jagielski'],
-    'ke4qqq' => ['dn', 'David', 'David Nalley'],
-    'lrosen' => ['lr', 'Larry', 'Lawrence Rosen'],
-    'markt' => ['mt', 'Mark', 'Mark Thomas'],
-    'marvin' => ['mh', 'Marvin', 'Marvin Humphrey'],
-    'mattmann' => ['cm', 'Chris', 'Chris Mattmann'],
-    'noirin' => ['np', 'Noirin', 'Noirin Plunkett'],
-    'psteitz' => ['ps', 'Phil', 'Phil Steitz'],
-    'rbowen' => ['rb', 'Rich', 'Rich Bowen'],
-    'rgardler' => ['rg', 'Ross', 'Ross Gardler'],
-    'rubys' => ['sr', 'Sam', 'Sam Ruby'],
-    'rvs' => ['rs', 'Roman', 'Roman Shaposhnik'],
-    'striker' => ['ss', 'Sander', 'Sander Striker'],
-    'tdunning' => ['td', 'Ted', 'Ted Dunning']
-  }
 
   SKIP_AGENDAS = {
     'board_agenda_2009_11_01' => 'F2F meeting: ApacheCon, St. Helena, CA',
@@ -83,7 +49,7 @@ class ASF::Board::Agenda
       summary[PEOPLE_KEY] = Hash[agenda[1][PEOPLE_KEY]]
       summary[PEOPLE_KEY].each do |id, data|
         # Note: this adds initials to everyone who was *ever* a director, who was at this meeting
-        data['initials'] = DIRECTOR_MAP[id][INITIALS_IDX] if DIRECTOR_MAP[id]
+        data['initials'] = ASF::Board.directorInitials(id) if ASF::Board.directorHasId?(id)
       end
     rescue StandardError => e
       summary[ERRORS_KEY] = "ERROR(#{meeting}) no attendance error: #{e.message} #{e.backtrace[0]}"

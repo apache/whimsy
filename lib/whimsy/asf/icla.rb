@@ -212,17 +212,20 @@ module ASF
     end
 
     # list of all availids that are are taken or reserved
+    # See also ASF::Mail.taken?
     def self.availids_taken()
       self.availids_reserved + self.availids
     end
 
     # is the availid taken (in use or reserved)?
+    # See also ASF::Mail.taken?
     def self.taken?(id)
       return self.availids_reserved.include?(id) ||
              self.availids.include?(id)
     end
 
     # is the id available?
+    # See also ASF::Mail.taken?
     def self.available?(id)
       return ! self.taken?(id)
     end

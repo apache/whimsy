@@ -394,10 +394,16 @@ module ASF
     weakref(:pmc_chairs) {Service.find('pmc-chairs').members}
   end
 
-  # Obtain a list of committers from LDAP 
-  # <tt>cn=committers,ou=groups,dc=apache,dc=org</tt>
+  # Obtain a list of committers from LDAP
+  # <tt>cn=committers,ou=role,ou=groups,dc=apache,dc=org</tt>
   def self.committers
-    weakref(:committers) {Group.find('committers').members}
+    weakref(:committers) {RoleGroup.find('committers').members}
+  end
+
+  # Obtain a list of committers from LDAP (old unix group)
+  # <tt>cn=committers,ou=groups,dc=apache,dc=org</tt>
+  def self.oldcommitters
+    weakref(:oldcommitters) {Group.find('committers').members}
   end
 
   # Obtain a list of members from LDAP 
@@ -749,6 +755,11 @@ module ASF
       attrs['asf-banned'] == 'yes'
     end
 
+    # is the login marked as inactive?
+    def inactive?
+      nologin? || asf_banned?
+    end
+
     # primary mail addresses
     def mail
       attrs['mail'] || []
@@ -781,9 +792,10 @@ module ASF
     # If the latter, then it needs to be derived from project_owners filtered to keep only PMCs
     def committees
       # legacy LDAP entries
-      committees = weakref(:committees) do
-        Committee.list("member=uid=#{name},#{base}")
-      end
+      committees = []
+#      committees = weakref(:committees) do
+#        Committee.list("member=uid=#{name},#{base}")
+#      end
 
       # add in projects
       # Get list of project names where the person is an owner
@@ -808,6 +820,11 @@ module ASF
       weakref(:project_owners) do
         Project.list("owner=uid=#{name},#{base}")
       end
+    end
+
+    # list of Podlings that this individual is a member (owner) of
+    def podlings
+      ASF::Podling.current.select{|pod| project_owners.map(&:name).include? pod.name}
     end
 
     # list of LDAP groups that this individual is a member of
@@ -1236,39 +1253,10 @@ module ASF
     end
   end
 
+  # represenation of Committee, i.e. entry in committee-info.txt
+  # includes PMCs and other committees, but does not include podlings
   class Committee < Base
-    # TODO what to do about this? Change to ou=project or drop?
-    # It's used by the methods: self.list, self.preload, member[id]s
-    @base = 'ou=pmc,ou=committees,ou=groups,dc=apache,dc=org'
-
-    # return a list of committees, from LDAP.
-    # TODO this stopped returning all PMCs when guinea pigs were introduced
-    # Should it be dropped, or made to return the list of PMCs ?
-    # No longer used
-    def self.list(filter='cn=*')
-      ASF.search_one(base, filter, 'cn').flatten.map {|cn| Committee.find(cn)}
-    end
-
-    # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
-    # <tt>createTimestamp</tt> for all committees in LDAP.
-    # TODO - delete? Not sure it's used anymore
-    def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
-        cn = results['dn'].first[/^cn=(.*?),/, 1]
-        committee = ASF::Committee.find(cn)
-        committee.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
-        committee.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
-        members = results['member'] || []
-        committee.members = members
-        [committee, members]
-      end]
-    end
-
-    # Date this committee was last modified in LDAP.
-    attr_accessor :modifyTimestamp
-
-    # Date this committee was initially created in LDAP.
-    attr_accessor :createTimestamp
+    @base = nil # not sure it makes sense to define base here
 
     # return committee only if it actually exists
     def self.[] name
@@ -1277,29 +1265,16 @@ module ASF
       (ASF::Committee.pmcs+ASF::Committee.nonpmcs).map(&:name).include?(name) ? committee : nil
     end
 
-    # setter for members attribute, should only be used by 
-    # ASF::Committee.preload
-    def members=(members)
-      @members = WeakRef.new(members)
+    # Date this committee was last modified in LDAP.
+    # defer to Project; must have called project.preload
+    def modifyTimestamp
+      ASF::Project[name].modifyTimestamp
     end
 
-    # DEPRECATED.  List of members for this committee.  Use owners as it
-    # is less ambiguous.
-    def members
-      members = weakref(:members) do
-        ASF.search_one(base, "cn=#{name}", 'member').flatten
-      end
-
-      members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
-    end
-
-    # List of ids in the member attribute for this committee
-    def memberids
-      members = weakref(:members) do
-        ASF.search_one(base, "cn=#{name}", 'member').flatten
-      end
-    
-      members.map {|uid| uid[/uid=(.*?),/,1]}
+    # Date this committee was initially created in LDAP.
+    # defer to Project; must have called project.preload
+    def createTimestamp
+      ASF::Project[name].createTimestamp
     end
 
     # List of owners for this committee, i.e. people who are members of the
@@ -1352,26 +1327,6 @@ module ASF
     # Designated Name from LDAP
     def dn
       @dn ||= ASF::Project.find(name).dn
-    end
-
-    # DEPRECATED remove people from a committee.  Call #remove_owners instead.
-    def remove(people)
-      @members = nil
-      people = (Array(people) & members).map(&:dn)
-      return if people.empty?
-      ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('member', people)])
-    ensure
-      @members = nil
-    end
-
-    # DEPRECATED.  add people to a committee.  Call #add_owners instead.
-    def add(people)
-      @members = nil
-      people = (Array(people) - members).map(&:dn)
-      return if people.empty?
-      ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('member', people)])
-    ensure
-      @members = nil
     end
 
   end
@@ -1507,6 +1462,10 @@ end
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
+  old=ASF.oldcommitters()
+  puts old.length
+  new=ASF.committers()
+  puts new.length
   ASF::RoleGroup.listcns.map {|g| puts ASF::RoleGroup.find(g).dn}
   ASF::AppGroup.listcns.map {|g| puts ASF::AppGroup.find(g).dn}
 end

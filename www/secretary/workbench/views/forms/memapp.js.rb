@@ -108,7 +108,7 @@ class MemApp < Vue
     # wire up form
     jQuery('form')[0].addEventListener('submit', self.file)
     jQuery('input[name=message]').val(window.parent.location.pathname)
-    jQuery('input[name=selected]').val(@@selected)
+    jQuery('input[name=selected]').val(decodeURIComponent(@@selected))
 
     # default email
     @email = @@headers.from

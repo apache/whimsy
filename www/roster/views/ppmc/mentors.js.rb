@@ -58,11 +58,15 @@ class PPMCMentor < Vue
       end
 
       if @@person.member
-        _td { _b { _a @@person.id, href: "committer/#{@@person.id}" } }
+        _td { _b { _a @@person.id, href: "committer/#{@@person.id}" }
+              _a ' (*)', href: "ppmc/#{@@ppmc.id}#crosscheck" if @@person.notSubbed and @@ppmc.analysePrivateSubs
+            }
         _td @@person.githubUsername
         _td { _b @@person.name }
       elsif @@person.name
-        _td { _a @@person.id, href: "committer/#{@@person.id}" }
+        _td { _a @@person.id, href: "committer/#{@@person.id}"
+              _a ' (*)', href: "ppmc/#{@@ppmc.id}#crosscheck" if @@person.notSubbed and @@ppmc.analysePrivateSubs
+            }
         _td @@person.githubUsername
         _td @@person.name
       else
@@ -72,6 +76,7 @@ class PPMCMentor < Vue
       end
         
       _td data_ids: @@person.id do
+        # TODO: how does this become enabled?
         if @@person.selected
           if @@auth.ppmc
             unless @@ppmc.owners.include? @@person.id
@@ -80,12 +85,22 @@ class PPMCMentor < Vue
                 data_target: '#confirm', data_toggle: 'modal',
                 data_confirmation: "Add #{@@person.name} as member of the " +
                   "#{@@ppmc.display_name} PPMC?"
+            else
+              unless @@ppmc.committers.include? @@person.id
+                _button.btn.btn_primary 'Add to the podling committers',
+                  data_action: 'add committer',
+                  data_target: '#confirm', data_toggle: 'modal',
+                  data_confirmation: "Add #{@@person.name} as committer of the " +
+                    "#{@@ppmc.display_name} PPMC?"
+              end
             end
           end
         elsif not @@person.name
           _span.issue 'invalid user'
         elsif not @@ppmc.owners.include? @@person.id
           _span.issue 'not on the PPMC'
+        elsif not @@ppmc.committers.include? @@person.id
+          _span.issue 'not listed as a podling committer'
         elsif not @@person.ipmc
           _span.issue 'not on the IPMC'
         elsif not @@person.icommit

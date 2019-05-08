@@ -44,7 +44,9 @@ class Committer
 
     response[:name] = name
 
-    response[:mail] = person.all_mail
+    response[:email_forward] = person.mail # forwarding
+    response[:email_alt] = person.alt_email # alternates
+    response[:email_other] = person.all_mail - person.mail - person.alt_email # others (ASF mail/ICLA mail if different)
 
     unless person.pgp_key_fingerprints.empty?
       response[:pgp] = person.pgp_key_fingerprints 
@@ -54,12 +56,14 @@ class Committer
       response[:ssh] = person.ssh_public_keys
     end
 
+    response[:host] = person.attrs['host'] || ['(none)']
+
     if person.attrs['asf-sascore']
-      response[:sascore] = person.attrs['asf-sascore'].first
+      response[:sascore] = person.attrs['asf-sascore'].first # should only be one, but is returned as array
     end
 
     if person.attrs['githubUsername']
-      response[:githubUsername] = person.githubUsername
+      response[:githubUsername] = person.attrs['githubUsername'] # always return array
     end
 
     response[:urls] = person.urls unless person.urls.empty?
@@ -69,7 +73,8 @@ class Committer
     response[:groups] = person.services
     response[:committer] = []
     response[:podlings] = []
-    pmc_names = ASF::Committee.pmcs.map(&:name) # From CI
+    pmcs = ASF::Committee.pmcs
+    pmc_names = pmcs.map(&:name) # From CI
     podlings = ASF::Podling.current.map(&:id)
 
     # Add group names unless they are a PMC group
@@ -181,6 +186,23 @@ class Committer
         response[:privateNosub] << cttee unless subbed
       end
     end
+
+		response[:pmcs] = []
+		response[:nonpmcs] = []
+
+		pmcs.each do |pmc|
+  		response[:pmcs] << pmc.name if pmc.roster.include?(person.id)
+		  response[:chairOf] << pmc.name if pmc.chairs.map{|ch| ch[:id]}.include?(person.id)
+		end
+		response[:pmcs].sort!
+
+		response[:nonPMCchairOf] = [] # use separate list to avoid missing pmc-chair warnings
+    nonpmcs = ASF::Committee.nonpmcs
+    nonpmcs.each do |nonpmc|
+      response[:nonpmcs] << nonpmc.name if nonpmc.roster.include?(person.id)
+      response[:nonPMCchairOf] << nonpmc.name if nonpmc.chairs.map{|ch| ch[:id]}.include?(person.id)
+    end
+    response[:nonpmcs].sort!
 
     response
   end

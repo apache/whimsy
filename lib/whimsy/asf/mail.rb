@@ -64,6 +64,11 @@ module ASF
       public_private ? @lists : @lists.keys
     end
 
+    def self.list_mtime
+      Mail._load_lists
+      @list_mtime
+    end
+
     # list of mailing lists that aren't actively seeking new subscribers
     def self.deprecated
       apmail_bin = ASF::SVN['apmail_bin']
@@ -71,6 +76,9 @@ module ASF
     end
 
     # which lists are available for subscription via Whimsy?
+    # member: true if member
+    # pmc_chair: true if pmc_chair
+    # ldap_pmcs: list of (P)PMC mail_list names
     def self.cansub(member, pmc_chair, ldap_pmcs)
       Mail._load_lists
       if member
@@ -89,9 +97,10 @@ module ASF
             lists += ['board', 'board-commits', 'board-chat']
           end
 
-          # PMC members need their private lists
+          # (P)PMC members need their private lists
           if ldap_pmcs
-            lists += ldap_pmcs.map {|lp| "#{lp}-private"}
+            # ensure that the lists actually exist
+            lists += ldap_pmcs.map {|lp| "#{lp}-private"}.select{|l| @lists.keys.include? l}
           end
 
           lists
@@ -125,11 +134,14 @@ module ASF
       end
     end
 
+    # List of .qmail files that could clash with user ids (See: INFRA-14566)
     def self.qmail_ids
       return [] unless File.exist? '/srv/subscriptions/qmail.ids'
       File.read('/srv/subscriptions/qmail.ids').split
     end
 
+    # Is the id used by qmail?
+    # See also ASF::ICLA.taken?
     def self.taken?(id)
       self.qmail_ids.include? id
     end
@@ -140,7 +152,36 @@ module ASF
       return list if dom == 'apache.org'
       dom.sub(".apache.org",'-') + list
     end
-    
+
+    # Canonicalise an email address, removing aliases and ignored punctuation
+    # and downcasing the name if safe to do so
+    #
+    # Currently only handles aliases for @gmail.com and @googlemail.com
+    #
+    # All domains are converted to lower-case
+    #
+    # The case of the name part is preserved since some providers may be case-sensitive
+    # Almost all providers ignore case in names, however that is not guaranteed
+    def self.to_canonical(email)
+      parts = email.split('@')
+      if parts.length == 2
+        name, dom = parts
+        return email if name.length == 0 || dom.length == 0
+        dom.downcase!
+        dom = 'gmail.com' if dom == 'googlemail.com' # same mailbox
+        if dom == 'gmail.com'
+          return name.sub(/\+.*/,'').gsub('.','').downcase + '@' + dom
+        else
+          # Effectively the same:
+          dom = 'apache.org' if dom == 'minotaur.apache.org'
+          # only downcase the domain (done above)
+          return name + '@' + dom
+        end
+      end
+      # Invalid; return input rather than failing
+      return email
+    end
+
   end
 
   class Person < Base
@@ -198,6 +239,8 @@ module ASF
         'trademarks@apache.org'
       when 'infrastructure'
         'infra'
+      when 'dataprivacy'
+        'legal-internal@apache.org'
       when 'legalaffairs'
         'legal-internal@apache.org'
       when 'fundraising'

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "ASF Distribution Mirror Checker" # Wvisible:infra mirror
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'

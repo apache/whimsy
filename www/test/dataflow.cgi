@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Public Datafiles And Dependencies" # Wvisible:tools data
 
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'json'
 
 # Command line use: emit replacement for www/public/README.html 
@@ -58,7 +58,7 @@ _html do
           _ ' You can see the '
           _a 'code for this script', href: "#{GITWHIMSY}/www#{ENV['SCRIPT_NAME']}"
           _ ', the '
-          _a 'underlying data file', href: "#{GITWHIMSY}/www/#{DATAFLOWDATA}"
+          _a 'underlying data file', href: "#{GITWHIMSY}/www/test/#{DATAFLOWDATA}"
           _ ', the '
           _a 'key to this data', href: "#datakey"
           _ ', and many of the '

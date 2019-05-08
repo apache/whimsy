@@ -3,9 +3,15 @@
 #
 
 class Email < Vue
+  def initialize
+    @email = {}
+  end
+
   def render
     _button.btn 'send email', class: self.mailto_class(),
       onClick: self.launch_email_client
+
+    _EmailForm email: @email, id: @@item.mail_list
   end
 
   # render 'send email' as a primary button if the viewer is the shepherd for
@@ -31,7 +37,7 @@ class Email < Vue
   end
 
   # launch email client, pre-filling the destination, subject, and body
-  def launch_email_client()
+  def launch_email_client(event)
     mail_list = @@item.mail_list
     mail_list = "private@#{mail_list}.apache.org" unless mail_list.include? '@'
 
@@ -77,8 +83,66 @@ class Email < Vue
       end
     end
 
-    window.location = "mailto:#{to}?cc=#{cc}" +
-      "&subject=#{encodeURIComponent(subject)}" +
-      "&body=#{encodeURIComponent(body)}"
+    if event.ctrlKey or event.shiftKey or event.metaKey
+      @email = {
+        to: to,
+        cc: cc,
+        subject: subject,
+        body: body
+      }
+
+      jQuery('#email-' + @@item.mail_list).modal(:show)
+    else
+      window.location = "mailto:#{to}?cc=#{cc}" +
+        "&subject=#{encodeURIComponent(subject)}" +
+        "&body=#{encodeURIComponent(body)}"
+    end
+  end
+end
+
+class EmailForm < Vue
+  def render
+    _ModalDialog color: 'commented', id: 'email-' + @@id do
+      _h4 "Send email - #{@@email.subject}"
+
+      # input field: to
+      _div.form_group.row do
+        _label.col_sm_2 'To', for: 'email-to'
+        _input.col_sm_10.email_to! placeholder: "destination email address",
+          disabled: @disabled, value: @@email.to
+      end
+
+      # input field: cc
+      _div.form_group.row do
+        _label.col_sm_2 'CC', for: 'email-cc'
+        _input.col_sm_10.email_cc! placeholder: "cc list", disabled: @disabled,
+          value: @@email.cc
+      end
+
+      # input field: subject
+      _div.form_group.row do
+        _label.col_sm_2 'Subject', for: 'email-subject'
+        _input.col_sm_10.email_subject! placeholder: "email subject",
+        disabled: @disabled, value: @@email.subject
+      end
+
+      # input field: body
+      _textarea.email_body! label: 'Body', placeholder: "email text",
+        disabled: @disabled, value: @@email.body, rows: 10
+
+      _button.btn_default 'Cancel', type: 'button', data_dismiss: 'modal'
+      _button.btn_primary 'Send', type: 'button', onClick: self.send,
+        disabled: @disabled
+    end
+  end
+
+  def send(event)
+    @disabled = true
+    post 'email', @@email do |response|
+      console.log response
+      @disabled = false
+      jQuery('#email-' + @@id).modal(:hide)
+      document.body.classList.remove('modal-open')
+    end
   end
 end

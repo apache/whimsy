@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 puts $LOAD_PATH.first
 
 require 'whimsy/asf'
@@ -35,8 +35,6 @@ SITE_MINUTES = ASF::Config.get(:board_minutes) ||
 
 # list of SVN resources needed
 resources = {
-  TEMPLATES: 'asf/infrastructure/site/trunk/templates',
-  INCUBATOR_SITE_AUTHOR: 'asf/incubator/public/trunk/content',
   SVN_SITE_RECORDS_MINUTES:
     'asf/infrastructure/site/trunk/content/foundation/records/minutes',
   BOARD: 'private/foundation/board'
@@ -145,13 +143,13 @@ cinfo['committees'].each do |id,v|
   site[id] = {:name => v['display_name'], :link => v['site'], :text => v['description']}
 end
 
-# parse the calendar for layout info (note: hack for &raquo)
+# parse the calendar for layout info (note: hack for &raquo and &nbsp;)
 CALENDAR = URI.parse 'https://www.apache.org/foundation/board/calendar.html'
 http = Net::HTTP.new(CALENDAR.host, CALENDAR.port)
 http.use_ssl = true
 http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 get = Net::HTTP::Get.new CALENDAR.request_uri
-$calendar = Nokogiri::HTML(http.request(get).body.gsub('&raquo','&#187;'))
+$calendar = Nokogiri::HTML(http.request(get).body.gsub('&raquo','&#187;').gsub('&nbsp;','&#160;'))
 
 # add some style
 style = Nokogiri::XML::Node.new "style", $calendar
@@ -264,6 +262,8 @@ seen={}
     title.sub! 'TCL', 'Tcl'
     title.sub! 'Orc', 'ORC'
     title.sub! 'Steve', 'STeVe'
+    title.sub! 'Servicecomb', 'ServiceComb'
+    title.sub! 'Zest', 'Polygene'
     title.sub! 'Openmeetings', 'OpenMeetings'
     title.sub! 'Web services', 'Web Services'
     title.sub! 'ASF Rep. for W3C', 'W3C Relations'
@@ -651,6 +651,7 @@ seen={}
     report.title.sub! 'Apache/TCL', 'Tcl'
     report.title.sub! 'Orc', 'ORC'
     report.title.sub! 'Steve', 'STeVe'
+    report.title.sub! 'Zest', 'Polygene'
     report.title.sub! 'Openmeetings', 'OpenMeetings'
     report.title.sub! 'Ace', 'ACE' # WHIMSY-31
 

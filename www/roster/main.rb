@@ -39,10 +39,11 @@ end
 
 get '/' do
   if env['REQUEST_URI'].end_with? '/'
+    ASF::Person.preload(['asf-banned','loginShell']) # so can get inactive count
     @committers = ASF::Person.list
     @committees = ASF::Committee.pmcs
     @nonpmcs = ASF::Committee.nonpmcs
-    @members = ASF::Member.list.keys - ASF::Member.status.keys
+    @members = ASF::Member.list.keys - ASF::Member.status.keys # i.e. active member ids
     @groups = Group.list
     @podlings = ASF::Podling.to_h.values
     _html :index
@@ -157,6 +158,24 @@ get '/committer/:name' do |name|
 end
 
 post '/committer/:userid/:file' do |name, file|
+  # Workround for handling arrays
+  # if the key :array_prefix is defined, the value is assumed to be the prefix for
+  # a list of values with the names: prefix1, prefix2 etc
+  # All non-empty values are collected and stored in an array which is added to the
+  # params with the key prefix
+  prefix = params.delete(:array_prefix)
+  if prefix
+    array = []
+    count = 1
+    loop do
+      key = prefix+count.to_s
+      entry = params.delete(key)
+      break unless entry # no key means end of sequence
+      array << entry if entry.length > 0
+      count += 1
+    end
+    params[prefix] = array
+  end
   _json :"actions/#{params[:file]}"
 end
 
@@ -173,7 +192,6 @@ end
 
 get '/group/' do
   @groups = Group.list
-  @podlings = ASF::Podling.to_h
   _html :groups
 end
 
@@ -216,7 +234,7 @@ get '/ppmc/:name' do |name|
   @auth = Auth.info(env)
 
   user = ASF::Person.find(env.user)
-  @auth[:ipmc] = ASF::Committee.find('incubator').members.include? user
+  @auth[:ipmc] = ASF::Committee.find('incubator').owners.include? user
 
   @ppmc = PPMC.serialize(name, env)
   pass unless @ppmc

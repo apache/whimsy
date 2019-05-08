@@ -1,0 +1,3 @@
+# ensure that rspec works OK with child spec directory
+
+-I /srv/whimsy/lib/spec

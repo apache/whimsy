@@ -2,82 +2,13 @@ require 'wunderbar'
 
 # Define common page features for whimsy tools using bootstrap styles
 class Wunderbar::HtmlMarkup
-  # DEPRECATED Emit ASF style header with _h1 title and common links
-  def _whimsy_header title, style = :full
-    case style
-    when :mini
-      _div.header do
-        _h1 title
-      end
-    else
-      _div.header.container_fluid do
-        _div.row do
-          _div.col_sm_4.hidden_xs do
-            _a href: 'https://www.apache.org/' do
-              _img title: 'The Apache Software Foundation', alt: 'ASF Logo', width: 250, height: 101,
-                style: "margin-left: 10px; margin-top: 10px;",
-                src: 'https://www.apache.org/foundation/press/kit/asf_logo_small.png'
-            end
-          end
-          _div.col_sm_3.col_xs_3 do
-            _a href: '/' do
-              _img title: 'Whimsy project home', alt: 'Whimsy hat logo', src: '/whimsy.svg', width: 145, height: 101 
-            end
-          end
-          _div.col_sm_5.col_xs_9.align_bottom do 
-            _ul class: 'nav nav-tabs' do
-              _li role: 'presentation' do
-                _a 'Code', href: 'https://github.com/apache/whimsy/'
-              end
-              _li role: 'presentation' do
-                _a 'Questions', href: 'https://lists.apache.org/list.html?dev@whimsical.apache.org'
-              end
-              _li role: 'presentation' do
-                _a 'About', href: '/technology'
-              end
-              _li role: 'presentation' do
-                _span.badge id: 'script-ok'
-              end
-            end
-          end
-        end      
-        _h1 title
-      end
-    end
-  end
-    
+  
   # DEPRECATED Wrap content with nicer fluid margins
   def _whimsy_content colstyle="col-lg-11"
     _div.content.container_fluid do
       _div.row do
         _div class: colstyle do
           yield
-        end
-      end
-    end
-  end
-  
-  # Emit ASF style footer with (optional) list of related links
-  def _whimsy_footer **args
-    _div.footer.container_fluid do
-      _div.panel.panel_default do 
-        _div.panel_heading do
-          _h3.panel_title 'Related Apache Resources'
-        end
-        _div.panel_body do
-          _ul do
-            if args.key?(:related)
-              args[:related].each do |url, desc|
-                _li do
-                  _a desc, href: url
-                end
-              end
-            else
-              _li do
-                _a 'Whimsy Source Code', href: 'https://github.com/apache/whimsy/'
-              end
-            end
-          end
         end
       end
     end
@@ -264,6 +195,34 @@ class Wunderbar::HtmlMarkup
         end
       end
       _whimsy_foot
-    end    
+    end
   end
+  
+  # Emit wrapper panels for a single tablist accordion item
+  # @param listid of the parent _div.panel_group role: "tablist"
+  # @param itemid of this specific item
+  # @param itemtitle to display in the header panel
+  # @param n unique number of this item (for nav links)
+  # @param itemclass optional panel-success or similar styling
+  def _whimsy_accordion_item(listid: 'accordion', itemid: nil, itemtitle: '', n: 0, itemclass: nil)
+    raise ArgumentError.new("itemid must not be nil") if not itemid
+    args = {id: itemid}
+    args[:class] = itemclass if itemclass
+    _div!.panel.panel_default args do
+      _div!.panel_heading role: "tab", id: "#{listid}h#{n}" do
+        _h4!.panel_title do
+          _a!.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{listid}", href: "##{listid}c#{n}", aria_controls: "#{listid}c#{n}" do
+            _ "#{itemtitle} "
+            _span.glyphicon.glyphicon_chevron_down id: "#{itemid}-nav"
+          end
+        end
+      end
+      _div!.panel_collapse.collapse id: "#{listid}c#{n}", role: "tabpanel", aria_labelledby: "#{listid}h#{n}" do
+        _div!.panel_body do
+          yield
+        end
+      end
+    end
+  end
+  
 end

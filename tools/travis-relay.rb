@@ -10,7 +10,7 @@
 munge = %w(received delivered-to return-path)
 skip = %w(content-type content-transfer-encoding)
 
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'mail'
 require 'whimsy/asf'
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Active Members not participating in meetings" # Wvisible:meeting
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
 require 'wunderbar/bootstrap'

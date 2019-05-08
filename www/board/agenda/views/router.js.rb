@@ -88,6 +88,9 @@ class Router
       # Progressive Web Application 'Add to Home Screen' support
       item.buttons = [{button: Install}] if PageCache.installPrompt
 
+    elsif path == 'secrets'
+      item = {view: InsiderSecrets}
+
     elsif path == 'bootstrap.html'
       item = {view: BootStrapPage, title: ' '}
 

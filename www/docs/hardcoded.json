@@ -1,0 +1,102 @@
+{
+  "tools/collate_minutes.rb": {
+    "line": "230",
+    "symbol": "",
+    "description": "List of common prefix phrases in resolution titles"
+  },
+  "lib/whimsy/asf/board.rb": {
+    "line": "107",
+    "symbol": "DIRECTOR_MAP",
+    "description": "Map of all director id/initial/names"
+  },
+  "lib/whimsy/asf/committee.rb": {
+    "line": "64",
+    "symbol": "@@aliases.merge!",
+    "description": "Map of PMC display names to shortnames: 'community development' => 'comdev'"
+  },
+  "lib/whimsy/asf/mail.rb": {
+    "line": "86",
+    "symbol": "",
+    "description": "Lists of special cased mailing list names and access"
+  },
+  "lib/whimsy/asf/mlist.rb": {
+    "line": "",
+    "symbol": "",
+    "description": "Various hardcoded logic for details of how lists are archived; some special cases that are related to technical details"
+  },
+  "lib/whimsy/asf/person.rb": {
+    "line": "",
+    "symbol": "",
+    "description": "Various collation bits for people's names; generic to unicode or name prefixes"
+  },
+  "lib/whimsy/asf/podling.rb": {
+    "line": "260",
+    "symbol": "dev_mail_list",
+    "description": "Development mailing list name associated with a given podling"
+  },
+  "lib/whimsy/asf/site.rb": {
+    "line": "",
+    "symbol": "",
+    "description": "Various ASF groups and their website homepage URLs"
+  },
+  "lib/whimsy/asf/agenda/special.rb": {
+    "line": "",
+    "symbol": "",
+    "description": "Various hardcoded strings dealing with board agenda items (historical and current)"
+  },
+  "lib/whimsy/asd/agenda/summary.rb": {
+    "line": "",
+    "symbol": "SKIP_AGENDAS",
+    "description": "defines map of F2F agendas (not traditionally parseable)"
+  },
+  "lib/whimsy/asf/person/override-dates.rb": {
+    "line": "",
+    "symbol": "@@create_date",
+    "description": "Corrected creation dates for accounts created before May 2009"
+  },
+  "tools/check_auth.rb": {
+    "line": "",
+    "symbol": "ROLE_NAMES",
+    "description": "hardcoded list of special non-LDAP names"
+  },
+  "tools/mboxhdr2csv.rb": {
+    "line": "",
+    "symbol": "",
+    "description": "Maps some tool-generated subject lines for different lists"
+  },
+  "tools/ponypoop.rb": {
+    "line": "",
+    "symbol": "",
+    "description": "Mapping some tool-generated subject lines for different lists"
+  },
+  "www/incubator/graduated.cgi": {
+    "line": "9",
+    "symbol": "parents",
+    "description": "List of parent PMCs for some podlings"
+  },
+  "www/members/proxy.cgi": {
+    "line": "",
+    "symbol": "volunteers",
+    "description": "List of volunteers for current member's meeting; update annually per proxies file"
+  },
+  "www/members/subscriptions.cgi": {
+    "line": "",
+    "symbol": "ARCHIVERS",
+    "description": "List of email addreses for private lists"
+  },
+  "www/roster/models/nonpmc.rb": {
+    "line": "10",
+    "symbol": "mail_list",
+    "description": "Map of a few odd mailing list names"
+  },
+  "www/secretary/memapp_check.cgi": {
+    "line": "45",
+    "symbol": "",
+    "description": "List of Member names with special cases for IDs"
+  },
+  "www/test/dataflow.json": {
+    "line": "",
+    "symbol": "",
+    "description": "List of common /public datafiles and explanations"
+  }
+}

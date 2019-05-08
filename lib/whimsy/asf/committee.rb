@@ -18,7 +18,7 @@ module ASF
   # ASF::Committee.load_committee_info is called.
   #
   # Similarly, the simple attributes which are sourced from LDAP is
-  # generally not available until ASF::Committee.preload is called.
+  # generally not available until ASF::Project.preload is called.
 
   class Committee < Base
     # list of chairs for this committee.  Returned as a list of hashes
@@ -83,7 +83,8 @@ module ASF
     @@namemap = Proc.new do |name|
       # Drop parenthesized comments and downcase before lookup; drop all spaces after lookup
       # So aliases table does not need to contain entries for Traffic Server and XML Graphics.
-      cname = @@aliases[name.sub(/\s+\(.*?\)/, '').downcase].gsub(/\s+/, '')
+      # Also compress white-space before lookup so tabs etc from index.html don't matter
+      cname = @@aliases[name.sub(/\s+\(.*?\)/, '').strip.gsub(/\s+/, ' ').downcase].gsub(/\s+/, '')
       cname
     end
 
@@ -526,6 +527,13 @@ module ASF
     def nonpmc?
       Committee.load_committee_info # ensure data is there
       Committee.nonpmcs.include? self
+    end
+
+    # if true, this committee is a PMC.  
+    # Data is obtained from <tt>committee-info.txt</tt>.
+    def pmc?
+      Committee.load_committee_info # ensure data is there
+      Committee.pmcs.include? self
     end
   end
 end

@@ -73,5 +73,71 @@ module ASF
         end
       end
     end
+
+    # Does the uid have an entry in the director intials table?
+    def self.directorHasId?(id)
+      DIRECTOR_MAP[id]
+    end 
+
+    # Return the initials for the uid
+    # Fails if there is no entry, so check first using directorHasId?
+    def self.directorInitials(id)
+      DIRECTOR_MAP[id][INITIALS]
+    end 
+    
+    # Return the first name for the uid
+    # Fails if there is no entry, so check first using directorHasId?
+    def self.directorFirstName(id)
+      DIRECTOR_MAP[id][FIRST_NAME]
+    end
+
+    # Return the display name for the uid
+    # Fails if there is no entry, so check first using directorHasId?
+    def self.directorDisplayName(id)
+      DIRECTOR_MAP[id][DISPLAY_NAME]
+    end 
+
+    private
+
+    # Map director ids->names and ids->initials
+    # Only filled in since 2007 or so, once the preapp data in meetings is parseable
+    INITIALS = 0
+    FIRST_NAME = 1
+    DISPLAY_NAME = 2
+    DIRECTOR_MAP = {
+      'bayard' => ['hy', 'Henri', 'Henri Yandell'],
+      'bdelacretaz' => ['bd', 'Bertrand', 'Bertrand Delacretaz'],
+      'brett' => ['bp', 'Brett', 'Brett Porter'],
+      'brianm' => ['bmc', 'Brian', 'Brian McCallister'],
+      'cliffs' => ['cs', 'Cliff', 'Cliff Schmidt'],
+      'coar' => ['kc', 'Ken', 'Ken Coar'],
+      'curcuru' => ['sc', 'Shane', 'Shane Curcuru'],
+      'cutting' => ['dc', 'Doug', 'Doug Cutting'],
+      'dirkx' => ['dg', 'Dirk-Willem', 'Dirk-Willem van Gulik'],
+      'dkulp' => ['dk', 'Daniel', 'Daniel Kulp'],
+      'druggeri' => ['dr', 'Daniel', 'Daniel Ruggeri'],
+      'fielding' => ['rf', 'Roy', 'Roy T. Fielding'],
+      'geirm' => ['gmj', 'Geir', 'Geir Magnusson Jr'],
+      'gstein' => ['gs', 'Greg', 'Greg Stein'],
+      'isabel' => ['idf', 'Isabel', 'Isabel Drost-Fromm'],
+      'jerenkrantz' => ['je', 'Justin', 'Justin Erenkrantz'],
+      'jim' => ['jj', 'Jim', 'Jim Jagielski'],
+      'ke4qqq' => ['dn', 'David', 'David Nalley'],
+      'lrosen' => ['lr', 'Larry', 'Lawrence Rosen'],
+      'markt' => ['mt', 'Mark', 'Mark Thomas'],
+      'marvin' => ['mh', 'Marvin', 'Marvin Humphrey'],
+      'mattmann' => ['cm', 'Chris', 'Chris Mattmann'],
+      'myrle' => ['mk', 'Myrle', 'Myrle Krantz'],
+      'noirin' => ['np', 'Noirin', 'Noirin Plunkett'],
+      'psteitz' => ['ps', 'Phil', 'Phil Steitz'],
+      'rbowen' => ['rb', 'Rich', 'Rich Bowen'],
+      'rgardler' => ['rg', 'Ross', 'Ross Gardler'],
+      'rubys' => ['sr', 'Sam', 'Sam Ruby'],
+      'rvs' => ['rs', 'Roman', 'Roman Shaposhnik'],
+      'striker' => ['ss', 'Sander', 'Sander Striker'],
+      'tdunning' => ['td', 'Ted', 'Ted Dunning'],
+      'wohali' => ['jt', 'Joan', 'Joan Touzet'],
+    }
+
   end
 end

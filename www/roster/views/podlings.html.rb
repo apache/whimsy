@@ -2,6 +2,19 @@
 # List of all Podings
 #
 
+# Match name and aliases to find the entry
+def findName(podling, list)
+  if list.include?(podling.name)
+    return podling.name
+  end
+  podling.resourceAliases.each do |a|
+    if list.include? a
+      return a
+    end
+  end
+  return nil
+end
+
 _html do
   _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
   _style %{
@@ -57,7 +70,7 @@ _html do
         end
         _ ")"
       end
-        
+
       _table.table.table_hover do
         _thead do
           _tr do
@@ -69,7 +82,9 @@ _html do
 
         _tbody do
           @podlings.sort_by {|podling| podling.name.downcase}.each do |podling|
-            status = (@attic.include?(podling.name) ? 'attic' : podling.status)
+            attic = findName(podling, @attic)
+            pmc = findName(podling, @committees)
+            status = (attic ? 'attic' : podling.status)
 
             _tr_ class: color[status] do
               _td do
@@ -77,14 +92,14 @@ _html do
                   "http://incubator.apache.org/projects/#{podling.name}.html"
               end
 
-              if @committees.include? podling.name
+              if pmc
                 _td data_sort_value: "#{podling.status} - pmc" do
-                  _a podling.status, href: "committee/#{podling.name}"
+                  _a podling.status, href: "committee/#{pmc}"
                 end
-              elsif @attic.include? podling.name
+              elsif attic
                 _td data_sort_value: "#{podling.status} - attic" do
                   _a podling.status, href:
-                    "http://attic.apache.org/projects/#{podling.name}.html"
+                    "http://attic.apache.org/projects/#{attic}.html"
                 end
               else
                 _td podling.status

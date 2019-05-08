@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 
 =begin
 APP to generate the correct ezmlm syntax for moderators

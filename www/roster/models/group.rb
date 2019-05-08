@@ -10,7 +10,7 @@ class Group
     groups.map! {|group| [group, "LDAP group"]}
 
     # add services...
-    groups += ASF::Service.listcns.map {|service| [service, "LDAP service"]}
+    groups += ASF::Service.listcns.reject{|s| s=='apldap'}.map {|service| [service, "LDAP service"]}
 
     # add authorization (asf and pit)
     groups += ASF::Authorization.new('asf').to_h.

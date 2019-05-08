@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Potential ASF Member Watch List" # Wvisible:members
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'wunderbar'
 require 'whimsy/asf'
@@ -101,9 +101,6 @@ _html do
     list = {} # Avoid lint errors of shadowing
     if request =~ /multiple/
       _h2_ 'Active In Multiple Committees'
-#      list = ASF::Committee.list.map {|committee| committee.members}.
-#        reduce(&:+).group_by {|person| person}.
-#        delete_if {|person,list| list.length<3}.keys
       # Use actual PMCs rather than LDAP derived
       list = ASF::Committee.pmcs.map {|pmc| pmc.roster.keys}.
         reduce(&:+).group_by {|uid| uid}.
@@ -135,9 +132,9 @@ _html do
 
     # for efficiency, preload public_names, member status, and
     # nominees
-    people = ASF::Person.preload('cn', list)
-    members = ASF::Member.status
-    nominees = ASF::Person.member_nominees
+    ASF::Person.preload('cn', list)
+    ASF::Member.status
+    ASF::Person.member_nominees
 
     _table.table do
 

@@ -22,14 +22,84 @@ Homebrew 1.6.0
 Homebrew/homebrew-core (git revision 66e9; last commit 2018-04-11)
 ```
 
+Update using:
+
+```
+$ brew update
+```
+
+Homebrew has removed options we need from two of the formulas we need.
+Fix formulas for `openldap` and `apr-util` to make the required options standard.
+Note that we have to remove the bottles otherwise a version of the software is downloaded that does not include the options we require.
+
+```
+$ cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
+$ # edit apr-util.rb and openldap.rb to make the below diffs
+$ git diff
+diff --git a/Formula/apr-util.rb b/Formula/apr-util.rb
+index 4dee25282..97f460398 100644
+--- a/Formula/apr-util.rb
++++ b/Formula/apr-util.rb
+@@ -5,24 +5,28 @@ class AprUtil < Formula
+   sha256 "d3e12f7b6ad12687572a3a39475545a072608f4ba03a6ce8a3778f607dd0035b"
+   revision 1
+ 
+-  bottle do
+-    sha256 "e4927892e16a3c9cf0d037c1777a6e5728fef2f5abfbc0af3d0d444e9d6a1d2b" => :mojave
+-    sha256 "1bdf0cda4f0015318994a162971505f9807cb0589a4b0cbc7828531e19b6f739" => :high_sierra
+-    sha256 "75c244c3a34abab343f0db7652aeb2c2ba472e7ad91f13af5524d17bba3001f2" => :sierra
+-    sha256 "bae285ada445a2b5cc8b43cb8c61a75e177056c6176d0622f6f87b1b17a8502f" => :el_capitan
+-  end
+ 
+   keg_only :provided_by_macos, "Apple's CLT package contains apr"
+ 
+   depends_on "apr"
+   depends_on "openssl"
++  depends_on "openldap"
+ 
+   def install
+     # Install in libexec otherwise it pollutes lib with a .exp file.
+     system "./configure", "--prefix=#{libexec}",
+                           "--with-apr=#{Formula["apr"].opt_prefix}",
+                           "--with-crypto",
+-                          "--with-openssl=#{Formula["openssl"].opt_prefix}"
++                          "--with-openssl=#{Formula["openssl"].opt_prefix}",
++                         "--with-ldap",
++                         "--with-ldap-lib=#{Formula["openldap"].opt_lib}",
++                         "--with-ldap-include=#{Formula["openldap"].opt_include}"
+     system "make"
+     system "make", "install"
+     bin.install_symlink Dir["#{libexec}/bin/*"]
+diff --git a/Formula/openldap.rb b/Formula/openldap.rb
+index bc6bde9fe..710265ec1 100644
+--- a/Formula/openldap.rb
++++ b/Formula/openldap.rb
+@@ -4,11 +4,11 @@ class Openldap < Formula
+   url "https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.4.47.tgz"
+   sha256 "f54c5877865233d9ada77c60c0f69b3e0bfd8b1b55889504c650047cc305520b"
+ 
+-  bottle do
+-    sha256 "07e1f0e3ec1a02340a82259e1ace713cfb362126404575032713174935f4140e" => :mojave
+-    sha256 "8901626fc45d76940dec5e516b23d81c9970f4a4a94650bdad60228d604c1b4a" => :high_sierra
+-    sha256 "6dc84ff9e088116201a47adc5c3a2aab28ffd10dbab9d677d49ad7eef1ccc349" => :sierra
+-  end
+ 
+   keg_only :provided_by_macos
+ 
+@@ -35,6 +35,7 @@ class Openldap < Formula
+       --enable-refint
+       --enable-retcode
+       --enable-seqmod
++      --enable-sssvlv=yes
+       --enable-translucent
+       --enable-unique
+       --enable-valsort
+```
+
 Upgrade Ruby
 ------------
 
-Much of Whimsy is written in Ruby.  Install:
-
-```
-$ brew install ruby
-```
+Much of Whimsy is written in Ruby.
 
 Verify:
 
@@ -39,8 +109,22 @@ ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-darwin17]
 ```
 
 If you don't see 2.3.1 or later, run `hash -r` and try again.  If you previously
-installed ruby via brew, you may need to run `brew upgrade ruby` instead.  If you use `rbenv` install via `rbenv install 2.5.0`
+installed ruby via brew, you may need to run `brew upgrade ruby` instead. 
 
+Install:
+
+```
+$ brew install rbenv
+$ rbenv install 2.5.1
+```
+
+Use `ln -s` in `/usr/local/bin` for both `ruby` and `gem` pointing to the locations
+where `rbenv` installed ruby in your home directory
+
+```
+ln -s /usr/local/bin/ruby /Users/${user}/.rbenv/versions/2.5.1/bin/ruby
+ln -s /usr/local/bin/gem /Users/${user}/.rbenv/versions/2.5.1/bin/gem
+```
 
 Upgrade Node.js
 ---------------
@@ -71,7 +155,14 @@ Install Ruby gem dependencies
 Install:
 
 ```
-$ gem install whimsy-asf bundler mail listen
+sudo gem install mail listen
+sudo gem install bundler -n /usr/local/bin
+sudo gem install nokogumbo
+sudo gem install passenger sinatra kramdown
+sudo gem install setup
+sudo gem install ruby2js
+sudo gem install rack rake
+sudo gem install crass json sanitize
 ```
 
 Verify:
@@ -165,8 +256,8 @@ Install with LDAP support:
 
 ```
 brew install apache-httpd
-brew install openldap --with-sssvlv
-brew reinstall -s apr-util --with-openldap
+brew install openldap # --with-sssvlv
+brew reinstall -s apr-util # --with-openldap
 brew reinstall -s apache-httpd
 ```
 
@@ -202,6 +293,7 @@ edit `/usr/local/etc/httpd/httpd.conf`:
     <pre>
     LoadModule proxy_module lib/httpd/modules/mod_proxy.so
     LoadModule proxy_wstunnel_module lib/httpd/modules/mod_proxy_wstunnel.so
+    LoadModule negotiation_module lib/httpd/modules/mod_negotiation.so
     LoadModule speling_module lib/httpd/modules/mod_speling.so
     LoadModule rewrite_module lib/httpd/modules/mod_rewrite.so
     LoadModule expires_module lib/httpd/modules/mod_expires.so
@@ -235,6 +327,8 @@ $ curl -s localhost:8080 | grep '<title>'
 This may fail on High Sierra with a [We cannot safely call it or ignore it in
 the fork() child process. Crashing
 instead.](https://blog.phusion.nl/2017/10/13/why-ruby-app-servers-break-on-macos-high-sierra-and-what-can-be-done-about-it/) message in your `/var/log/apache/error.log` file.  If so, do the following:
+
+On Mojave the failure with forking occurred with Passenger and the following fixes were required.
 
 Edit `/usr/local/opt/httpd/homebrew.mxcl.httpd.plist` and add the following:
 
@@ -501,6 +595,6 @@ A number of individual tools require additional configuration:
 Debugging
 ---------
 
-When things go wrong, check `/var/log/apache2/whimsy_error.log` and
-`/var/log/apache2/error_log`.
+When things go wrong, either check `whimsy_error.log` and `error_log` in
+either `/usr/local/var/log/httpd/` or `/var/log/apache2/`. The location depends on how you have installed httpd.
 

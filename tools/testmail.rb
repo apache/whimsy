@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 #
 # Test the ability to send email to non-apache.org email addresses
 #
@@ -8,7 +9,7 @@
 # Note: this will send an email to THAT user.
 #
 
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 require 'mail'
 require 'etc'

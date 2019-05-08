@@ -50,4 +50,3 @@ and crazy ideas alike.  Comments appreciated.
       Scan curdir; forall *.cgi where second line includes WVisible, display name/link.
       Using a positive comment ensures only scripts wishing to be displayed are visible.
       Effectively done as much is valuable: [www/committers/tools](https://whimsy.apache.org/committers/tools)
-

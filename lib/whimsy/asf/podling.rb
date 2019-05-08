@@ -66,8 +66,10 @@ module ASF
       @reporting = node.at('reporting') if node.at('reporting')
       @monthly = @reporting.text.split(/,\s*/) if @reporting and @reporting.text
 
+      @resolutionLink = node.at('resolution')['link'] if node.at('resolution')
+
       # Note: the following optional elements are not currently processed:
-      # - resolution
+      # - resolution (except for resolution/@link)
       # - retiring/graduating
       # The following podling attributes are not processed:
       # - longname
@@ -88,6 +90,11 @@ module ASF
     # podlings.xml.
     def display_name
       @name || @resource
+    end
+
+    # TLP name (name differ from podling name)
+    def tlp_name
+      @resolutionLink || name
     end
 
     # date this podling was accepted for incubation
@@ -164,7 +171,32 @@ module ASF
 
     # list of current podlings
     def self.current
-      list.select { |podling| podling.status == 'current' }
+      self._list('current')
+    end
+
+    # list of current podling ids
+    def self.currentids
+      self._listids('current')
+    end
+
+    # list of graduated podlings
+    def self.graduated
+      self._list('graduated')
+    end
+
+    # list of graduated podling ids
+    def self.graduatedids
+      self._listids('graduated')
+    end
+
+    # list of retired podlings
+    def self.retired
+      self._list('retired')
+    end
+
+    # list of retired podling ids
+    def self.retiredids
+      self._listids('retired')
     end
 
     # last modified time of podlings.xml in the local working directory,
@@ -175,7 +207,17 @@ module ASF
 
     # find a podling by name
     def self.find(name)
-      list.find { |podling| podling.name == name }
+      name = name.downcase
+
+      result = list.find do |podling| 
+        podling.name == name or podling.display_name.downcase == name or
+          podling.resourceAliases.any? {|aname| aname.downcase == name}
+      end
+
+      result ||= list.find do |podling| 
+        podling.resource == name or
+        podling.tlp_name.downcase == name
+      end
     end
 
     # below is for backwards compatibility
@@ -398,6 +440,16 @@ module ASF
     # return podlingnamesearch for this podling
     def namesearch
       Podling.namesearch[display_name]
+    end
+    
+    private
+    
+    def self._list(status)
+      list.select { |podling| podling.status == status }
+    end
+
+    def self._listids(status)
+      list.select { |podling| podling.status == status }.map(&:id)
     end
   end
 end

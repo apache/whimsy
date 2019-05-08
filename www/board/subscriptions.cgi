@@ -1,24 +1,15 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Board@ List CrossCheck - PMC Chairs" # Wvisible:board,mail
 
-$LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/mlist'
 
-ARCHIVERS = %w(
-  private@mbox-vm.apache.org
-  board-archive@apache.org
-  archive-asf-private@cust-asf.ponee.io
-  board@mmpoc.apache.org
-  board@whimsy-vm4.apache.org
-  svnupdate@whimsy-vm4.apache.org
-)
-
 info_chairs = ASF::Committee.load_committee_info.group_by(&:chair)
 ldap_chairs = ASF.pmc_chairs
-subscribers, modtime = ASF::MLIST.board_subscribers
+subscribers, modtime = ASF::MLIST.board_subscribers(false) # excluding archivers
 
 _html do
   _body? do
@@ -95,7 +86,6 @@ _html do
         end
         _tbody do
           ids.sort.each do |id, person, email|
-            next if ARCHIVERS.include? email
             _tr_ do
               href = "/roster/committer/#{id}"
               if person.asf_member?

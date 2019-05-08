@@ -348,7 +348,7 @@ class Message
     begin
       from = liberal_email_parser(from_value).display_name
     rescue Exception
-      from = from_value.sub(/\s+<.*?>$/)
+      from = from_value.sub(/\s+<.*?>$/, '')
     end
 
     # determine who should be copied on any responses

@@ -173,6 +173,10 @@ def optparse
       options[:mbox] = true
     end
     
+    opts.on('-yYEAR', '--year YEAR', 'Only pull down single year, instead of 2010 thru now') do |y|
+      options[:year] = y
+    end
+
     begin
       opts.parse!
     rescue OptionParser::ParseError => e
@@ -189,9 +193,12 @@ end
 # Main method for command line use
 if __FILE__ == $PROGRAM_NAME
   months = %w( 1 2 3 4 5 6 7 8 9 10 11 12 )
-  years = %w( 2010 2011 2012 2013 2014 2015 2016 2017 )
+  years = %w( 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 )
   options = optparse
   options[:list] ||= 'board'
+  if options[:year]
+    years = [ options[:year] ]
+  end
   if options[:pull]
     puts "BEGIN: Pulling down stats JSONs in #{options[:dir]} of list: #{options[:list]}@#{options[:subdomain]}"
     PonyAPI::get_pony_stats_many options[:dir], options[:list], options[:subdomain], years, months, options[:cookie]
@@ -200,7 +207,7 @@ if __FILE__ == $PROGRAM_NAME
     PonyAPI::get_pony_mbox_many options[:dir], options[:list], options[:subdomain], years, months, options[:cookie]
   else
     puts "BEGIN: Analyzing local JSONs in #{options[:dir]} of list: #{options[:list]}"
-    run_analyze_stats options[:dir], options[:list], BOARD_REGEX
+    run_analyze_stats options[:dir], options[:list], 'board'.eql?(options[:list]) ? BOARD_REGEX : {}
   end
   puts "END: Thanks for running ponypoop - see results in #{options[:dir]}"
 end

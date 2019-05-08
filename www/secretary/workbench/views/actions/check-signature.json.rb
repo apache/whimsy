@@ -4,6 +4,10 @@
 
 ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 
+#KEYSERVER = 'pgpkeys.mit.edu'
+# Perhaps also try keyserver.pgp.com
+KEYSERVERS = %w{hkps.pool.sks-keyservers.net keyserver.ubuntu.com pgpkeys.mit.edu}
+
 message = Mailbox.find(@message)
 
 begin
@@ -17,8 +21,11 @@ begin
   gpg.untaint
 
   # run gpg verify command
-  out, err, rc = Open3.capture3 gpg, '--verify', signature.path,
-    attachment.path
+  # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
+  # reduce the keyid length from the full fingerprint
+  out, err, rc = Open3.capture3 gpg,
+    '--keyid-format', 'long', # Show a longer id
+    '--verify', signature.path, attachment.path
 
   # if key is not found, fetch and try again
   if 
@@ -28,12 +35,25 @@ begin
     # extract and fetch key
     keyid = err[/[RD]SA key (ID )?(\w+)/,2].untaint
 
-    out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', 'pgpkeys.mit.edu',
-      '--recv-keys', keyid
-
+    out2, err2 = '' # needed later
+    KEYSERVERS.each do |server|
+      out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', server,
+        '--debug', 'ipc', # seems to show communication with dirmngr
+        '--recv-keys', keyid
+      # for later analysis
+      Wunderbar.warn "#{gpg} --keyserver #{server} --recv-keys #{keyid} rc2=#{rc2} out2=#{out2} err2=#{err2}"
+      if rc2.exitstatus == 0 # Found the key
+        out2 = err2 = '' # Don't add download error to verify error
+        break
+      end
+    end
+  
     # run gpg verify command again
-    out, err, rc = Open3.capture3 gpg, '--verify', signature.path,
-      attachment.path
+    # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
+    # reduce the keyid length from the full fingerprint
+    out, err, rc = Open3.capture3 gpg, 
+      '--keyid-format', 'long', # Show a longer id
+      '--verify', signature.path, attachment.path
 
     # if verify failed, concatenate fetch output
     if rc.exitstatus != 0

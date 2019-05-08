@@ -9,7 +9,8 @@ class PPMC
       list =~ /^(incubator-)?#{ppmc.mail_list}\b/
     end
 
-    members = ppmc.members
+    committers = ppmc.members
+    owners = ppmc.owners
 
     # separate out the known ASF members and extract any matching committer details
     unknownSubs = []
@@ -25,12 +26,13 @@ class PPMC
     unMatchedSubs = [] # unknown private@ subscribers
     currentUser = ASF::Person.find(env.user)
     analysePrivateSubs = false # whether to show missing private@ subscriptions
-    if currentUser.asf_member? or members.include? currentUser
+    if currentUser.asf_member? or owners.include? currentUser
       require 'whimsy/asf/mlist'
       moderators, modtime = ASF::MLIST.list_moderators(ppmc.mail_list, true)
       subscribers, subtime = ASF::MLIST.list_subscribers(ppmc.mail_list, true) # counts only
       analysePrivateSubs = currentUser.asf_member?
       unless analysePrivateSubs # check for private moderator if not already allowed access
+        # TODO match using canonical emails
         user_mail = currentUser.all_mail || []
         pMods = moderators["private@#{ppmc.mail_list}.apache.org"] || []
         analysePrivateSubs = !(pMods & user_mail).empty?
@@ -49,25 +51,38 @@ class PPMC
     pmc = ASF::Committee.find('incubator')
     ipmc = pmc.owners
     incubator_committers = pmc.committers
-    owners = ppmc.owners
 
-    roster = members.map {|person|
-      notSubbed = false
-      if analysePrivateSubs and owners.include? person
-        allMail = person.all_mail.map{|m| m.downcase}
-        notSubbed = (allMail & pSubs).empty?
-        unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
-      end
+    # Preload the committers; if a person has another role it will be set up below
+    roster = committers.map {|person|
       [person.id, {
-        notSubbed: notSubbed,
+        # notSubbed does not apply
         name: person.public_name, 
         member: person.asf_member?,
         icommit: incubator_committers.include?(person),
-        role: (owners.include?(person) ? 'PPMC Member' : 'Committer'),
+        role: 'Committer',
         githubUsername: (person.attrs['githubUsername'] || []).join(', ')
       }]
     }.to_h
 
+    # Merge the PPMC members (owners)
+    owners.each do |person|
+      notSubbed = false
+      if analysePrivateSubs
+        allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
+        notSubbed = (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+        unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
+      end
+      roster[person.id] = {
+        notSubbed: notSubbed,
+        name: person.public_name, 
+        member: person.asf_member?,
+        icommit: incubator_committers.include?(person),
+        role: 'PPMC Member',
+        githubUsername: (person.attrs['githubUsername'] || []).join(', ')
+      }
+    end
+
+    # Finally merge the mentors
     ppmc.mentors.each do |mentor|
       person = ASF::Person.find(mentor)
       roster[person.id] = {
@@ -79,9 +94,9 @@ class PPMC
         githubUsername: (person.attrs['githubUsername'] || []).join(', ')
       }
       if analysePrivateSubs
-        allMail = person.all_mail.map{|m| m.downcase}
-        roster[person.id]['notSubbed'] = (allMail & pSubs).empty?
-        unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
+        allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
+        roster[person.id]['notSubbed'] = (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+        unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
     end
 
@@ -108,7 +123,7 @@ class PPMC
       }
       nonASFmails.each {|k,v|
         @people.each do |person|
-          if person[:mail].any? {|mail| mail.downcase == k.downcase}
+          if person[:mail].any? {|mail| ASF::Mail.to_canonical(mail.downcase) == ASF::Mail.to_canonical(k.downcase)}
             nonASFmails[k] = person[:id]
           end
         end
@@ -128,7 +143,7 @@ class PPMC
       mentors: ppmc.mentors,
       hasLDAP: ppmc.hasLDAP?,
       owners: owners.map {|person| person.id},
-      committers: members.map {|person| person.id},
+      committers: committers.map {|person| person.id},
       roster: roster,
       mail: Hash[lists.sort],
       moderators: moderators,

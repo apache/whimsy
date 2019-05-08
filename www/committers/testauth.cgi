@@ -4,7 +4,7 @@ PAGETITLE = "Board Agenda Auth Tester" # Wvisible:board tools
 # Small CGI to help debug board agenda authentication issues
 #
 
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf/rack'
@@ -19,18 +19,19 @@ _html do
       '/status/' => 'Whimsy Server Status'
     },
     helpblock: -> {
-      _ 'This script checks your authorization to use the agenda tool, and checks if you are listed as attending the current board meeting in the official agenda.'
+      _ 'This script checks your authorization to use the agenda tool, and checks if you are listed as attending the current board meeting in the upcoming official agenda.'
     }
   ) do
     FOUNDATION_BOARD = ASF::SVN['foundation_board']
-    agenda = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].sort.last.untaint
-    agenda = ASF::Board::Agenda.parse(File.read(agenda))
+    agendafile = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].sort.last.untaint
+    agenda = ASF::Board::Agenda.parse(File.read(agendafile))
     roll = agenda.find {|item| item['title'] == 'Roll Call'}
 
     person = ASF::Auth.decode(env)
+    _p %{ Your data for meeting: #{File.basename(agendafile)} }
     _table do
       _tr do
-        _td 'User id'
+        _td 'Your id'
         _td person.id
       end
 

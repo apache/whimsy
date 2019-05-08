@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Board Meeting Attendance since 2010" # Wvisible:meeting
-$LOAD_PATH.unshift File.realpath(File.expand_path('../../../lib', __FILE__))
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
 require 'whimsy/asf/agenda'
+require 'whimsy/asf/board'
 require 'whimsy/public'
 require 'wunderbar/bootstrap'
 require 'json'
@@ -12,38 +13,6 @@ require 'set'
 BOARD = ASF::SVN['foundation_board']
 IS_DIRECTOR = :director
 APPROVED = 'approved'
-
-# Map director ids->names and ids->initials
-# Only since 2010, once the preapp data in meetings is parseable
-INITIALS = 0
-FIRST_NAME = 1
-DISPLAY_NAME = 2
-DIRECTOR_MAP = {
-  'bdelacretaz' => ['bd', 'Bertrand', 'Bertrand Delacretaz'],
-  'brett' => ['bp', 'Brett', 'Brett Porter'],
-  'brianm' => ['bmc', 'Brian', 'Brian McCallister'],
-  'curcuru' => ['sc', 'Shane', 'Shane Curcuru'],
-  'cutting' => ['dc', 'Doug', 'Doug Cutting'],
-  'dkulp' => ['dk', 'Daniel', 'Daniel Kulp'],
-  'fielding' => ['rf', 'Roy', 'Roy T. Fielding'],
-  'geirm' => ['gmj', 'Geir', 'Geir Magnusson Jr'],
-  'gstein' => ['gs', 'Greg', 'Greg Stein'],
-  'isabel' => ['idf', 'Isabel', 'Isabel Drost-Fromm'],
-  'jerenkrantz' => ['je', 'Justin', 'Justin Erenkrantz'],
-  'jim' => ['jj', 'Jim', 'Jim Jagielski'],
-  'ke4qqq' => ['dn', 'David', 'David Nalley'],
-  'lrosen' => ['lr', 'Larry', 'Lawrence Rosen'],
-  'markt' => ['mt', 'Mark', 'Mark Thomas'],
-  'marvin' => ['mh', 'Marvin', 'Marvin Humphrey'],
-  'mattmann' => ['cm', 'Chris', 'Chris Mattmann'],
-  'noirin' => ['np', 'Noirin', 'Noirin Plunkett'],
-  'psteitz' => ['ps', 'Phil', 'Phil Steitz'],
-  'rbowen' => ['rb', 'Rich', 'Rich Bowen'],
-  'rgardler' => ['rg', 'Ross', 'Ross Gardler'],
-  'rubys' => ['sr', 'Sam', 'Sam Ruby'],
-  'rvs' => ['rs', 'Roman', 'Roman Shaposhnik'],
-  'tdunning' => ['td', 'Ted', 'Ted Dunning']
-}
 
 # Summarize director attendance and preapps at one meeting into dstats
 # @note that ASF::Board::Agenda has mix of symbols and strings for hash keys
@@ -73,8 +42,8 @@ def summarize(fname, dstats)
     actions = agenda.select{ |v| v.has_key?(:index) && v[:index] == "Action Items" }[0]['actions']
     dstats.each do |id, dirmtg|
       if dirmtg.has_key?(meeting)
-        dirmtg[meeting]['preapps'] = (reports.select {|v| v[APPROVED].include?(DIRECTOR_MAP[id][INITIALS])}.length / numreports).round(3)
-        dirmtg[meeting]['actions'] = actions.select{ |v| v[:owner] == DIRECTOR_MAP[id][FIRST_NAME] }.length
+        dirmtg[meeting]['preapps'] = (reports.select {|v| v[APPROVED].include?(ASF::Board.directorInitials(id))}.length / numreports).round(3)
+        dirmtg[meeting]['actions'] = actions.select{ |v| v[:owner] == ASF::Board.directorFirstName(id) }.length
       end
     end
   rescue StandardError => e
@@ -153,13 +122,13 @@ _html do
               totp = 0.0
               tota = 0.0
               data.each do |k,v|
-                totp += v['preapps']
-                tota += v['actions']
+                totp += v['preapps'] if v.has_key?('preapps')
+                tota += v['actions'] if v.has_key?('actions')
               end
               _tr_ do
                 _td do
-                  if DIRECTOR_MAP[id] and DIRECTOR_MAP[id][DISPLAY_NAME]
-                    _ DIRECTOR_MAP[id][DISPLAY_NAME]
+                  if ASF::Board.directorHasId?(id) and ASF::Board.directorDisplayName(id)
+                    _ ASF::Board.directorDisplayName(id)
                   else
                     _em.bg_danger id
                   end

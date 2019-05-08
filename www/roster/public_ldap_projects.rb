@@ -39,7 +39,7 @@ end
 
 # committee status
 committees = Hash[ASF::Committee.load_committee_info.map {|committee|
-  [ committee.name.gsub(/[^-\w]/,'') , !committee.nonpmc? ]
+  [ committee.name.gsub(/[^-\w]/,'') , committee.pmc? ]
 }]
 
 # podling status

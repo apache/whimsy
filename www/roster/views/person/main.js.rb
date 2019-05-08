@@ -23,18 +23,19 @@ class Person < Vue
     end
 
     # Personal URL
-    if @committer.urls
-      _PersonUrls person: self
+    if @committer.urls || @auth
+      @committer.urls ||= []
+      _PersonUrls person: self, edit: @edit
     end
 
-    # Committees
-    committees = @committer.committees
-    unless committees.empty?
+    # PMCs
+    noPMCsub = false    
+    pmcs = @committer.pmcs
+    unless pmcs.empty?
       _div.row do
-        _div.name 'Committees'
+        _div.name 'PMCs'
         _div.value do
-          noPMCsub = false
-          _ul committees do |pmc|
+          _ul pmcs do |pmc|
             _li {
               _a pmc, href: "committee/#{pmc}"
               if @committer.privateNosub
@@ -46,19 +47,48 @@ class Person < Vue
               if @committer.chairOf.include? pmc
                 _ ' (chair)'
               end
+              unless @committer.committees.include?(pmc)
+                _b ' (not in LDAP committee group)'
+              end
             }
           end
+          if noPMCsub
+                  _br
+            _p {
+              _ '(*) could not find a subscription to the private@ mailing list for this PMC'
+              _br
+              _ 'Perhaps the subscription address is not listed in the LDAP record'
+              _br 
+              _ '(Note that digest subscriptions are not currently included)'
+            }
+          end
+        end
+      end
+    end
 
-	  if noPMCsub
-            _br
-	    _p {
-	      _ '(*) could not find a subscription to the private@ mailing list for this committee'
-	      _br
-	      _ 'Perhaps the subscription address is not listed in the LDAP record'
-        _br 
-        _ '(Note that digest subscriptions are not currently included)'
-	    }
-	  end
+    # Committees
+    missingPMCs = false
+    committees = @committer.committees
+    unless committees.empty?
+      _div.row do
+        _div.name 'Committees'
+        _div.value do
+          noPMCsub = false
+          _ul committees do |pmc|
+            next if  @committer.pmcs.include? pmc
+            missingPMCs = true
+            _li {
+              _a pmc, href: "committee/#{pmc}"
+              if @committer.chairOf.include? pmc
+                _ ' (chair)'
+              end
+            }
+          end
+          if missingPMCs
+            _ 'In LDAP committee group, but not on the corresponding PMC'
+          else
+            _ '(excludes PMCs listed above)'
+          end
         end
       end
     end
@@ -112,9 +142,33 @@ class Person < Vue
       end
     end
 
+    # Non-PMCs
+    nonpmcs = @committer.nonpmcs
+    unless nonpmcs.empty?
+      _div.row do
+        _div.name 'non-PMCs'
+        _div.value do
+          _ul nonpmcs do |nonpmc|
+            _li {
+              _a nonpmc, href: "nonpmc/#{nonpmc}"
+              if @committer.nonPMCchairOf.include? nonpmc
+                _ ' (chair)'
+              end
+            }
+          end
+        end
+      end
+    end
+    
     # Email addresses
-    if @committer.mail
-      _PersonEmail person: self
+    # always present
+    _PersonEmailForwards person: self, edit: @edit
+
+    # always present (even if an empty array)
+    _PersonEmailAlt person: self, edit: @edit
+
+    if @committer.email_other
+      _PersonEmailOther person: self # not editable
     end
 
     # Moderates
@@ -172,17 +226,29 @@ class Person < Vue
     end
 
     # PGP keys
-    if @committer.pgp
-      _PersonPgpKeys person: self
+    if @committer.pgp || @auth
+      @committer.pgp ||= []
+      _PersonPgpKeys person: self, edit: @edit
+    end
+
+    # hosts    
+    _div.row do
+      _div.name 'Host Access'
+      _div.value do
+        # pre avoids wrapping on hyphens and reduces number of lines on the page
+        _pre @committer.host.join(' ')
+      end
     end
 
     # SSH keys
-    if @committer.ssh
-      _PersonSshKeys person: self
+    if @committer.ssh || @auth
+      @committer.ssh ||= []
+      _PersonSshKeys person: self, edit: @edit
     end
 
     # GitHub username
-    if @committer.githubUsername
+    if @committer.githubUsername || @auth
+      @committer.githubUsername ||= []
       _PersonGitHub person: self, edit: @edit
     end
 
@@ -211,16 +277,16 @@ class Person < Vue
     # SpamAssassin score
     _PersonSascore person: self, edit: @edit
 
-    # modal dialog for dry run results
+    # modal dialog for dry run results and errors
     _div.modal.fade.wide_form tabindex: -1 do
       _div.modal_dialog do
         _div.modal_content do
           _div.modal_header do
             _button.close 'x', data_dismiss: 'modal'
-            _h4 'Dry run results'
+            _h4 @response_title
           end
           _div.modal_body do
-            _textarea value: JSON.stringify(@response, nil, 2), readonly: true
+            _textarea value: @response, readonly: true
           end
           _div.modal_footer do
             _button.btn.btn_default 'Close', data_dismiss: 'modal'
@@ -316,9 +382,17 @@ class Person < Vue
       },
 
       complete: ->(response) do
+        json = response.responseJSON
         # show results of dryrun
         if formData[0] and formData[0].name == 'dryrun'
-          @response = response.responseJSON
+          @response_title = 'Dry run results'
+          @response = JSON.stringify(json, nil, 2)
+          jQuery('div.modal').modal('show')
+        end
+
+        if json.error
+          @response_title = 'Error occurred'
+          @response = JSON.stringify(json, nil, 2)
           jQuery('div.modal').modal('show')
         end
 

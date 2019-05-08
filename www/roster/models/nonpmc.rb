@@ -8,7 +8,7 @@ class NonPMC
     committers = cttee.committers
     # Hack to fix unusual mail_list values e.g. press@apache.org
     mail_list = cttee.mail_list.sub(/@.*/,'')
-    mail_list = 'legal' if mail_list =~ /^legal-/
+    mail_list = 'legal' if mail_list =~ /^legal-/ unless cttee.name == 'dataprivacy'
     mail_list = 'fundraising' if mail_list =~ /^fundraising-/
 
     ASF::Committee.load_committee_info
