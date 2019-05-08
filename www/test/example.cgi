@@ -9,6 +9,7 @@ require 'wunderbar/bootstrap'
 require 'wunderbar/jquery'
 require 'wunderbar/markdown'
 require 'whimsy/asf'
+require 'whimsy/asf/forms'
 require 'whimsy/public'
 
 # Get data from live whimsy.a.o/public directory
@@ -28,6 +29,55 @@ end
 # Gather some data beforehand, if you like, but:
 # Note runtime errors here just write to the log, not to user's browser
 talktitle = get_svn_data()
+
+# Example of handling POST forms cleanly
+def emit_form(title, prev_data)
+  _whimsy_panel("#{title}", style: 'panel-success') do
+    _form.form_horizontal method: 'post' do
+      _div.form_group do
+        _label.col_sm_offset_3.col_sm_9.strong.text_left 'Example Form Section'
+      end
+      field = 'text1'
+      _whimsy_forms_input(label: 'Example Text Field', name: field, id: field,
+        value: prev_data[field], helptext: 'Enter some text, keep it polite!'
+      )
+      field = 'listbox'
+      _whimsy_forms_select(label: 'Select Some Values', name: field,
+        multiple: true, values: prev_data[field],
+        options: ['another value', 'yet another value'],
+        icon: 'glyphicon-time', iconlabel: 'clock', 
+        helptext: 'Select as many values as ya like!'
+      )
+      field = 'text2'
+      _whimsy_forms_input(label: 'Another Text Field', name: field, id: field,
+        value: prev_data[field], helptext: 'Pretty boring form example, huh?'
+      )
+      _div.col_sm_offset_3.col_sm_9 do
+        _input.btn.btn_default type: 'submit', value: 'PUSH ME!'
+      end
+    end
+  end
+end
+
+# Validation as needed within the script
+def validate_form(formdata: {})
+  return true # TODO: Futureuse
+end
+
+# Handle submission (checkout user's apacheid.json, write form data, checkin file)
+# @return true if we think it succeeded; false in all other cases
+def send_form(formdata: {})
+  # Example that uses SVN to update an existing file: members/mentor-update.cgi
+  _p class: 'system' do
+    _ 'If this were a real send_form() it would do something with your data:'
+    _br
+    formdata.each do |k,v|
+      _ "#{k} = #{v.inspect}"
+      _br
+    end
+  end
+  return true
+end
 
 # Produce HTML
 _html do
@@ -50,6 +100,17 @@ _html do
           This provides a consistent user experience.
         }
         _p "You can output data previously processed as well like: #{talktitle}"
+        _ul.list_inline do
+          _li do
+            _a 'example-table', href: '#example-table'
+          end
+          _li do
+            _a 'example-accordion', href: '#example-accordion'
+          end
+          _li do
+            _a 'example-form', href: '#example-form'
+          end
+        end
       },
       breadcrumbs: {
         dataflow: '/test/dataflow.cgi',
@@ -57,6 +118,7 @@ _html do
       }
     ) do
       # IF YOUR SCRIPT EMITS A LARGE TABLE
+      _div id: 'example-table'
       _whimsy_panel_table(
         title: "Data Table H2 Title Goes Here",
         helpblock: -> {
@@ -98,7 +160,9 @@ _html do
       end
 
       # NIFTY ACCORDION EXPAND-O LISTING: the _whimsy_accordion_item does most of the work
-      _h2 'Lists of Complex Data Can Use An Accordion'
+      _h2 id: 'example-accordion' do
+        _ 'Lists of Complex Data Can Use An Accordion'
+      end 
       accordionid = 'accordion'
       officers = get_public_data()
       _div.panel_group id: accordionid, role: 'tablist', aria_multiselectable: 'true' do
@@ -111,6 +175,35 @@ _html do
             end
           end
         end
+      end
+      
+      # IF YOU WANT TO DISPLAY A FORM and handle the POST
+      _div id: 'example-form'
+      if _.post?
+        # Use magic _. callouts to CGI class to gather POST data into submission hash
+        submission = {}
+        keyz = _.keys
+        keyz.each do |k|
+          submission[k] = _.params[k] # Always as ['val'] or ['one', 'two', ...]
+        end
+        if validate_form(formdata: submission)
+          if send_form(formdata: submission)
+            _p.lead "Thanks for Submitting This Form!"
+            _p do 
+              _ "The send_form method would have done any procesing needed with the data, after calling validate_data."
+            end
+          else
+            _div.alert.alert_warning role: 'alert' do
+              _p "SORRY! Your submitted form data failed send_form, please try again."
+            end
+          end
+        else
+          _div.alert.alert_danger role: 'alert' do
+            _p "SORRY! Your submitted form data failed validate_form, please try again."
+          end
+        end
+      else # if _.post?
+        emit_form('Form Title Here', officers)
       end
     end
   end
