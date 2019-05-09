@@ -400,12 +400,6 @@ module ASF
     weakref(:committers) {RoleGroup.find('committers').members}
   end
 
-  # Obtain a list of committers from LDAP (old unix group)
-  # <tt>cn=committers,ou=groups,dc=apache,dc=org</tt>
-  def self.oldcommitters
-    weakref(:oldcommitters) {Group.find('committers').members}
-  end
-
   # Obtain a list of members from LDAP 
   # <tt>cn=member,ou=groups,dc=apache,dc=org</tt>
   # Note: includes some non-ASF member infrastructure contractors
@@ -1462,8 +1456,6 @@ end
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
-  old=ASF.oldcommitters()
-  puts old.length
   new=ASF.committers()
   puts new.length
   ASF::RoleGroup.listcns.map {|g| puts ASF::RoleGroup.find(g).dn}
