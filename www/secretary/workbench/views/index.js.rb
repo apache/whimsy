@@ -82,7 +82,7 @@ class Index < Vue
     else
       log 'beforeMount - nomessages'
     end
-    self.merge(@@messages) if @@messages
+    self.mergemsgs @@messages if @@messages
   end
 
   # on initial load, fetch latest mailbox, subscribe to keyboard and
@@ -108,7 +108,7 @@ class Index < Vue
     events = EventSource.new('events')
     events.addEventListener :message do |event|
       messages = JSON.parse(event.data).messages
-      self.merge messages if messages
+      self.mergemsgs messages if messages
     end
 
     # close connection on exit
@@ -145,7 +145,7 @@ class Index < Vue
       @nextmbox = response.mbox
 
       # add messages to list
-      self.merge response.messages
+      self.mergemsgs response.messages
 
       # select oldest message
       self.selectRow Status.selected || @messages.last unless @selected
@@ -158,9 +158,9 @@ class Index < Vue
     }
   end
 
-  # merge new messages into the list
-  def merge(messages)
-    log "merge #{messages.length}"
+  # mergemsgs new messages into the list
+  def mergemsgs(messages)
+    log "mergemsgs #{messages.length}"
     messages.each do |new_message|
       index = @messages.find_index do |old_message| 
         old_message.time < new_message.time or
@@ -232,7 +232,7 @@ class Index < Vue
     log "refresh #{@@mbox}"
     @checking = true
     HTTP.post("actions/check-mail", mbox: @@mbox).then {|response|
-      self.merge response.messages
+      self.mergemsgs response.messages
       @checking = false
     }.catch {|error|
       alert error
