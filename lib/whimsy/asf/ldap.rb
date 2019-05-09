@@ -400,11 +400,26 @@ module ASF
     weakref(:committers) {RoleGroup.find('committers').members}
   end
 
+  # Obtain a list of committerids from LDAP
+  # <tt>cn=committers,ou=role,ou=groups,dc=apache,dc=org</tt>
+  def self.committerids
+    weakref(:committerids) {RoleGroup.find('committers').memberids}
+  end
+  
   # Obtain a list of members from LDAP 
   # <tt>cn=member,ou=groups,dc=apache,dc=org</tt>
   # Note: includes some non-ASF member infrastructure contractors
+  # TODO: convert to RoleGroup at some point?
   def self.members
     weakref(:members) {Group.find('member').members}
+  end
+
+  # Obtain a list of memberids from LDAP 
+  # <tt>cn=member,ou=groups,dc=apache,dc=org</tt>
+  # Note: includes some non-ASF member infrastructure contractors
+  # TODO: convert to RoleGroup at some point?
+  def self.memberids
+    weakref(:memberids) {Group.find('member').memberids}
   end
 
   # Superclass for all classes which are backed by LDAP data.  Encapsulates
@@ -1387,6 +1402,15 @@ module ASF
       members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
+    # list of memberids for this service in LDAP
+    def memberids
+      members = weakref(:members) do
+        ASF.search_one(base, "cn=#{name}", 'member').flatten
+      end
+    
+      members.map {|uid| uid[/uid=(.*?),/,1]}
+    end
+
     # remove people from this service in LDAP
     def remove(people)
       @members = nil
@@ -1456,8 +1480,18 @@ end
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
+  mem=ASF.members()
+  puts mem.length
+  puts mem.first.inspect
+  memids=ASF.memberids()
+  puts memids.length
+  puts memids.first
   new=ASF.committers()
   puts new.length
+  puts new.first.inspect
+  newids=ASF.committerids()
+  puts newids.length
+  puts newids.first
   ASF::RoleGroup.listcns.map {|g| puts ASF::RoleGroup.find(g).dn}
   ASF::AppGroup.listcns.map {|g| puts ASF::AppGroup.find(g).dn}
 end
