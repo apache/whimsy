@@ -6,6 +6,7 @@
 # - Per user statistics
 # Count lines of text content in mail body, roughly attempting to 
 #   count just new content (not automated, not > replies)
+# Attempt to normalize/map email addresses to committer/member status
 
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
@@ -15,18 +16,22 @@ require 'stringio'
 require 'zlib'
 require 'json'
 require 'date'
+require 'optparse'
+
 MBOX_EXT = '.mbox'
 MEMBER = 'member'
 COMMITTER = 'committer'
 COUNSEL = 'counsel'
+INVALID = '.INVALID'
+VERSION = 'mboxhdr2json'
 
 # Subject regexes that are non-discussion oriented
 # Analysis: don't bother with content lines in these messages, 
 #   because most of the content is tool-generated
 NONDISCUSSION_SUBJECTS = { # Note: none applicable to members@
   '<board.apache.org>' => {
-    missing: /\AMissing\s\S+\sBoard/,
-    feedback: /\ABoard\sfeedback\son\s20/,
+    missing: /\AMissing\s\S+\sBoard/, # whimsy/www/board/agenda/views/buttons/email.js.rb
+    feedback: /\ABoard\sfeedback\son\s20/, # whimsy/www/board/agenda/views/actions/feedback.json.rb
     notice: /\A\[NOTICE\]/i,
     report: /\A\[REPORT\]/i,
     resolution: /\A\[RESOLUTION\]/i,
@@ -165,8 +170,10 @@ end
 # Side effect: adds :who and :committer from ASF::Person.find_by_email
 # :committer = 'n' if not found; 'N' if error, 'counsel' for special case
 def find_who_from(mdata)
+  # Remove bogus INVALID before doing lookups
+  from = mdata[:from].sub(INVALID, '')
   # Micro-optimize unique names
-  case mdata[:from]
+  case from
   when /Mark.Radcliffe/i
     mdata[:who] = 'Mark.Radcliffe'
     mdata[:committer] = COUNSEL
@@ -203,7 +210,7 @@ def find_who_from(mdata)
   else
     begin
       # TODO use Real Name (JIRA) to attempt to lookup some notifications
-      tmp = liberal_email_parser(mdata[:from])
+      tmp = liberal_email_parser(from)
       person = ASF::Person.find_by_email(tmp.address.dup)
       if person
         mdata[:who] = person.cn
@@ -217,7 +224,7 @@ def find_who_from(mdata)
         mdata[:committer] = 'n'
       end
     rescue
-      mdata[:who] = mdata[:from]
+      mdata[:who] = mdata[:from] # Use original value here
       mdata[:committer] = 'N'
     end
   end
@@ -248,11 +255,12 @@ end
 # @param dir to scan (whole tree)
 # @param ext file extension to glob for
 # Side effect: writes out f.chomp(ext).json files
+# @note writes string VERSION for differentiating from other *.json
 def scan_dir_mbox2stats(dir, ext = MBOX_EXT)
   Dir["#{dir}/**/*#{ext}".untaint].each do |f|
     mails, errs = mbox2stats(f.untaint)
     File.open("#{f.chomp(ext)}.json", "w") do |fout|
-      fout.puts JSON.pretty_generate([mails, errs])
+      fout.puts JSON.pretty_generate(["#{VERSION}", mails, errs])
     end
   end
 end
@@ -260,29 +268,39 @@ end
 # Scan dir tree for mailhash JSONs and output an overview CSV of all
 # @return [ error1, error2, ...] if any errors
 # Side effect: writes out dir/outname CSV file
+# @note reads string VERSION for differentiating from other *.json
 def scan_dir_stats2csv(dir, outname)
   errors = []
   filenames = Dir["#{dir}/**/*.json".untaint]
-  raise ArgumentError, "#{__method__} called with no files in #{dir}" if filenames.length == 0
-  puts "#{__method__} processing #{filenames.length} files"
-  firstfile = filenames.shift
-  jzon = JSON.parse(File.read(firstfile))
-  # Write out headers and the first file in new csv
-  csvfile = File.join("#{dir}", outname)
-  csv = CSV.open(csvfile, "w", headers: %w( year month day weekday hour zone listid who subject lines committer messageid inreplyto ), write_headers: true)
-  jzon[0].each do |m|
-    csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['committer'], m['messageid'], m['inreplyto']  ]
-  end
-  
-  # Write out all remaining files, without headers, appending
+  jzons = []
   filenames.each do |f|
     begin
-      j = JSON.parse(File.read(f))
+      tmp = JSON.parse(File.read(f))
+      if tmp[0].kind_of?(String) && tmp[0].start_with?(VERSION)
+        jzons << tmp.drop(1)
+      end
+    rescue => e
+      puts "ERROR: parse of #{f} raised #{e.message[0..255]}"
+      errors << "#{e.message}\n\t#{e.backtrace.join("\n\t")}"
+      next
+    end
+  end
+  raise ArgumentError, "#{__method__} called with no valid mbox json files in #{dir}" if jzons.length == 0
+  puts "#{__method__} processing #{jzons.length} mbox json files"
+  # Write out headers and the first array in new csv
+  csvfile = File.join("#{dir}", outname)
+  csv = CSV.open(csvfile, "w", headers: %w( year month day weekday hour zone listid who subject lines committer messageid inreplyto ), write_headers: true)
+  jzons.shift[0].each do |m|
+    csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['committer'], m['messageid'], m['inreplyto']  ]
+  end
+  # Write out all remaining arrays, without headers, appending
+  jzons.each do |j|
+    begin
       j[0].each do |m|
         csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['committer'], m['messageid'], m['inreplyto']  ]
       end
     rescue => e
-      puts "ERROR: parse/write of #{f} raised #{e.message[0..255]}"
+      puts "ERROR: write of #{f} raised #{e.message[0..255]}"
       errors << "#{e.message}\n\t#{e.backtrace.join("\n\t")}"
       next
     end
@@ -409,15 +427,54 @@ def do_mbox2csv_hdr(dir)
   end
 end
 
-#### TODO Sample code
-path = '~/src/lists'
-output = 'listdata.csv'
-puts "START: #{path} into #{output}"
-scan_dir_mbox2stats(path)
-errs = scan_dir_stats2csv(path, output)
-if errs
-  errs.each do |e|
-    puts "ERROR: #{e}"
+# ## ### #### ##### ######
+# Check options and call needed methods
+DEFAULT_OUTPUT = 'mbox-analysis.csv'
+def optparse
+  options = {}
+  OptionParser.new do |opts|
+    opts.on('-h') { puts opts; exit }
+    
+    opts.on('-dDIRECTORY', '--directory DIRECTORY', 'Local directory to read existing mboxes and dump output in (default: .)') do |d|
+      if File.directory?(d)
+        options[:dir] = d
+      else
+        raise ArgumentError, "-d #{d} is not a valid directory" 
+      end
+    end
+    opts.on('-oOUTPUT.CSV', '--output OUTPUT.CSV', "Filename to output rows into; default #{DEFAULT_OUTPUT}") do |o|
+      options[:output] = o
+    end
+    opts.on('-j', '--json', "Process .mbox to .json (optional)") do |j|
+      options[:json] = true
+    end
+    begin
+      opts.parse!
+      options[:dir] = '.' if options[:dir].nil?
+      options[:output] = DEFAULT_OUTPUT if options[:output].nil?
+    rescue StandardError => e
+      $stderr.puts "#{e.message}; try -h for valid options, or see code"
+      exit 1
+    end
   end
+  
+  return options
 end
-puts "END"
+
+# ## ### #### ##### ######
+# Main method for command line use
+if __FILE__ == $PROGRAM_NAME
+  options = optparse
+  if options[:json]
+    puts "START: Parsing #{options[:dir]}/*#{MBOX_EXT} into *.json"
+    scan_dir_mbox2stats(options[:dir]) # Side effect: writes out f.chomp(ext).json files
+  end
+  puts "START: Analyzing #{options[:dir]}/*#{MBOX_EXT} into #{options[:output]}"
+  errs = scan_dir_stats2csv(options[:dir], options[:output])
+  if errs
+    errs.each do |e|
+      puts "ERROR: #{e}"
+    end
+  end
+  puts "END"
+end
