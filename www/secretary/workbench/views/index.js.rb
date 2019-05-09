@@ -7,7 +7,7 @@ class Index < Vue
     console.log msg
   end
 
-  def initialize
+  def initialize()
     log 'initialize'
     @selected = nil
     @messages = []
@@ -15,7 +15,7 @@ class Index < Vue
     @fetched = false
   end
 
-  def render
+  def render()
     log 'render'
     if not @messages or @messages.all? {|message| message.status == :deleted}
       _p.container_fluid 'All documents have been processed.'
