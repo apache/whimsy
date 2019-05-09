@@ -83,6 +83,9 @@ class Index < Vue
       log 'beforeMount - nomessages'
     end
     self.mergemsgs @@messages if @@messages
+    # temp debug
+    self.merge @@messages if @@messages
+    merge @@messages if @@messages
   end
 
   # on initial load, fetch latest mailbox, subscribe to keyboard and
@@ -158,7 +161,11 @@ class Index < Vue
     }
   end
 
-  # mergemsgs new messages into the list
+  def merge(messages)
+    log 'merge()'
+  end
+
+  # merge new messages into the list
   def mergemsgs(messages)
     log "mergemsgs #{messages.length}"
     messages.each do |new_message|
