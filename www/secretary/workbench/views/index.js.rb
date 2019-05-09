@@ -3,7 +3,12 @@
 #
 
 class Index < Vue
+  def log(msg)
+    console.log msg
+  end
+
   def initialize
+    log 'initialize'
     @selected = nil
     @messages = []
     @checking = false
@@ -11,6 +16,7 @@ class Index < Vue
   end
 
   def render
+    log 'render'
     if not @messages or @messages.all? {|message| message.status == :deleted}
       _p.container_fluid 'All documents have been processed.'
     else
@@ -71,6 +77,11 @@ class Index < Vue
   # initialize next mailbox (year+month)
   def beforeMount()
     @nextmbox = @@mbox
+    if @@messages
+      log 'beforeMount - messages'
+    else
+      log 'beforeMount - nomessages'
+    end
     self.merge @@messages if @@messages
   end
 
@@ -79,6 +90,7 @@ class Index < Vue
   def mounted()
     today = Date.new()
     twice = (today.getMonth()+1==@nextmbox[4..5].to_i and today.getDate()<=7)
+    log "mounted twice=#{twice} next=#{@nextmbox}"
     self.fetch_month() do
       if @nextmbox and twice
         # for the first week of the month, fetch previous month too
@@ -110,6 +122,7 @@ class Index < Vue
 
   # when content changes, ensure selected message is visible
   def updated()
+    log 'updated'
     if @selected
       selected = document.querySelector("a[href='#{@selected}']")
       if selected
@@ -126,6 +139,7 @@ class Index < Vue
 
   # fetch a month's worth of messages
   def fetch_month(&block)
+    log "fetch_month #{@nextmbox}"
     HTTP.get(@nextmbox, :json).then {|response|
       # update latest mbox
       @nextmbox = response.mbox
@@ -146,6 +160,7 @@ class Index < Vue
 
   # merge new messages into the list
   def merge(messages)
+    log "merge #{messages.length}"
     messages.each do |new_message|
       index = @messages.find_index do |old_message| 
         old_message.time < new_message.time or
@@ -214,6 +229,7 @@ class Index < Vue
   end
 
   def refresh(event)
+    log "refresh #{@@mbox}"
     @checking = true
     HTTP.post("actions/check-mail", mbox: @@mbox).then {|response|
       self.merge response.messages
