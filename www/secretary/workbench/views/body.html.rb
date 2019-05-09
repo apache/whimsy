@@ -11,6 +11,10 @@ _html do
   #
   _table do
     _tr do
+      _td 'Date:'
+      _td @message.date
+    end
+    _tr do
       _td 'From:'
       _td @message.from
     end
