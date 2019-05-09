@@ -23,6 +23,8 @@ BOARD_REGEX = { # Non-interesting email subjects from board # TODO add features 
   svn_agenda: %r{\Aboard: r\d{4,8} - /foundation/board/},
   svn_iclas: %r{\Aboard: r\d{4,8} - /foundation/officers/iclas.txt}
 }
+MONTHS = %w( 1 2 3 4 5 6 7 8 9 10 11 12 )
+YEARS_DEFAULT = %w( 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 )
 
 # ## ### #### ##### ######
 # Analysis functions, scanning stats.lua output JSON
@@ -148,7 +150,7 @@ def optparse
   OptionParser.new do |opts|
     opts.on('-h') { puts opts; exit }
     
-    opts.on(:REQUIRED, '-dDIRECTORY', '--directory DIRECTORY', 'Local directory to dump/find .json files (required)') do |d|
+    opts.on('-dDIRECTORY', '--directory DIRECTORY', 'Local directory to dump/find .json files (default: .)') do |d|
       if File.directory?(d)
         options[:dir] = d
       else
@@ -174,14 +176,16 @@ def optparse
     end
     
     opts.on('-yYEAR', '--year YEAR', 'Only pull down single year, instead of 2010 thru now') do |y|
-      options[:year] = y
+      options[:year] = [ y ]
     end
 
     begin
       opts.parse!
-    rescue OptionParser::ParseError => e
-      $stderr.puts e
-      $stderr.puts "try -h for valid options, or see code"
+      options[:dir] = '.' if options[:dir].nil?
+      options[:year] = YEARS_DEFAULT if options[:year].nil?
+      raise ArgumentError, 'You must supply an -l LISTNAME to operate on' if options[:list].nil?
+    rescue StandardError => e
+      $stderr.puts "#{e.message}; try -h for valid options, or see code"
       exit 1
     end
   end
@@ -192,21 +196,15 @@ end
 # ## ### #### ##### ######
 # Main method for command line use
 if __FILE__ == $PROGRAM_NAME
-  months = %w( 1 2 3 4 5 6 7 8 9 10 11 12 )
-  years = %w( 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 )
   options = optparse
-  options[:list] ||= 'board'
-  if options[:year]
-    years = [ options[:year] ]
-  end
   if options[:pull]
-    puts "BEGIN: Pulling down stats JSONs in #{options[:dir]} of list: #{options[:list]}@#{options[:subdomain]}"
-    PonyAPI::get_pony_stats_many options[:dir], options[:list], options[:subdomain], years, months, options[:cookie]
+    puts "BEGIN: Pulling down stats JSONs in #{options[:dir]} of list: #{options[:list]}@#{options[:subdomain]} for years: #{options[:year]}"
+    PonyAPI::get_pony_stats_many options[:dir], options[:list], options[:subdomain], options[:year], MONTHS, options[:cookie]
   elsif options[:mbox]
-    puts "BEGIN: Pulling down mboxes in #{options[:dir]} of list: #{options[:list]}@#{options[:subdomain]}"
-    PonyAPI::get_pony_mbox_many options[:dir], options[:list], options[:subdomain], years, months, options[:cookie]
+    puts "BEGIN: Pulling down mboxes in #{options[:dir]} of list: #{options[:list]}@#{options[:subdomain]} for years: #{options[:year]}"
+    PonyAPI::get_pony_mbox_many options[:dir], options[:list], options[:subdomain], options[:year], MONTHS, options[:cookie]
   else
-    puts "BEGIN: Analyzing local JSONs in #{options[:dir]} of list: #{options[:list]}"
+    puts "BEGIN: Analyzing previously downloaded stats #{File.join(options[:dir], '*-stats.json')} of list: #{options[:list]}"
     run_analyze_stats options[:dir], options[:list], 'board'.eql?(options[:list]) ? BOARD_REGEX : {}
   end
   puts "END: Thanks for running ponypoop - see results in #{options[:dir]}"
