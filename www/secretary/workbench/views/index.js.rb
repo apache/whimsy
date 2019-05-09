@@ -82,7 +82,7 @@ class Index < Vue
     else
       log 'beforeMount - nomessages'
     end
-    self.merge @@messages if @@messages
+    self.merge(@@messages) if @@messages
   end
 
   # on initial load, fetch latest mailbox, subscribe to keyboard and
