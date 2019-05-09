@@ -257,7 +257,7 @@ end
 # Side effect: writes out f.chomp(ext).json files
 # @note writes string VERSION for differentiating from other *.json
 def scan_dir_mbox2stats(dir, ext = MBOX_EXT)
-  Dir["#{dir}/**/*#{ext}".untaint].each do |f|
+  Dir["#{dir}/**/*#{ext}".untaint].sort.each do |f|
     mails, errs = mbox2stats(f.untaint)
     File.open("#{f.chomp(ext)}.json", "w") do |fout|
       fout.puts JSON.pretty_generate(["#{VERSION}", mails, errs])
@@ -269,11 +269,10 @@ end
 # @return [ error1, error2, ...] if any errors
 # Side effect: writes out dir/outname CSV file
 # @note reads string VERSION for differentiating from other *.json
-def scan_dir_stats2csv(dir, outname)
+def scan_dir_stats2csv(dir, outname, ext = '.json')
   errors = []
-  filenames = Dir["#{dir}/**/*.json".untaint]
   jzons = []
-  filenames.each do |f|
+  Dir["#{dir}/**/*#{ext}".untaint].sort.each do |f|
     begin
       tmp = JSON.parse(File.read(f))
       if tmp[0].kind_of?(String) && tmp[0].start_with?(VERSION)
