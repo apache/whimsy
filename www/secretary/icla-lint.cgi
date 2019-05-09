@@ -7,7 +7,7 @@ require 'ruby2js/filter/functions'
 require 'whimsy/asf'
 
 ldap = ASF::Person.listids
-committers = ASF::Group['committers'].memberids # to check for missing ICLAs
+committers = ASF.committerids # to check for missing ICLAs
 
 errors = 0
 
