@@ -17,7 +17,7 @@ class Header < Vue
       _div.navbar_brand @@item.title
 
       if @@item.attach =~ /^7/ and @@item.title =~ /^Establish /
-        if @@item.title !~ /^Establish .*Position/i
+        if @@item.title !~ /^Establish .*(Position|Committee)/i
           _PodlingNameSearch item: @@item
         end
       end
