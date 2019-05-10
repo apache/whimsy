@@ -47,7 +47,7 @@ class ASF::Board::Agenda
       end
 
       title_checks = {
-        /^Establish/i => /^Establish the Apache .* Project$/,
+        /^Establish/i => /^Establish the Apache .* (Project|Committee)$/,
         /^Change.*Chair/i => /^Change the Apache .* Project Chair$/,
         /^Terminate/i => /^Terminate the Apache .* Project$/,
       }
