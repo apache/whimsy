@@ -120,7 +120,7 @@ task "update cn=member,ou=groups,dc=apache,dc=org in LDAP" do
 
   complete do
     ldap = ASF.init_ldap(true)
-    if ASF::Group.find('member').include? ASF::Person.find(@availid)
+    if ASF.memberids.include? @availid
       _transcript ["#@availid already in group member"]
     else
       ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",

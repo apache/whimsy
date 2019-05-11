@@ -56,7 +56,7 @@ _html do
         end
       }
     ) do
-    ldap = ASF::Group['member'].members
+    ldap = ASF.members
 
     members = ASF::Member.new.map {|id, text| ASF::Person.find(id)}
     ASF::Person.preload('cn', members)
