@@ -5,6 +5,7 @@
 # list of Gemfiles associated with tools to be tested
 gemfile:
   - www/board/agenda/Gemfile
+  - lib/Gemfile
 
 ########################################################################
 #                           VM Configuration                           #
