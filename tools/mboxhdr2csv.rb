@@ -136,6 +136,7 @@ def mbox2stats(f)
         end
       end
       mdata[:lines] = ctr
+      mdata[:links] = links
       # Annotate various other precomputable data
       find_who_from mdata
       begin
