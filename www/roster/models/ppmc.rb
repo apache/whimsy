@@ -29,7 +29,7 @@ class PPMC
     if currentUser.asf_member? or owners.include? currentUser
       require 'whimsy/asf/mlist'
       moderators, modtime = ASF::MLIST.list_moderators(ppmc.mail_list, true)
-      subscribers, subtime = ASF::MLIST.list_subscribers(ppmc.mail_list, true) # counts only
+      subscribers, subtime = ASF::MLIST.list_subs(ppmc.mail_list, true) # counts only, no archivers
       analysePrivateSubs = currentUser.asf_member?
       unless analysePrivateSubs # check for private moderator if not already allowed access
         # TODO match using canonical emails

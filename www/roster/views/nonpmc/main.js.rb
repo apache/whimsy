@@ -86,7 +86,7 @@ class NonPMC < Vue
     if @nonpmc.moderators
       _h2.mail! do
         _ 'Mailing list info'
-        _small ' (subscriber count includes archivers)'
+        _small ' (subscriber count excludes archivers)'
       end
       _table do
         _thead do

@@ -34,7 +34,7 @@ class Committee
     if pmc.roster.include? env.user or currentUser.asf_member?
       require 'whimsy/asf/mlist'
       moderators, modtime = ASF::MLIST.list_moderators(pmc.mail_list)
-      subscribers, subtime = ASF::MLIST.list_subscribers(pmc.mail_list) # counts only
+      subscribers, subtime = ASF::MLIST.list_subs(pmc.mail_list) # counts only, no archivers
       analysePrivateSubs = currentUser.asf_member?
       unless analysePrivateSubs # check for private moderator if not already allowed access
         # TODO match using canonical emails

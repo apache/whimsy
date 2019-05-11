@@ -145,17 +145,19 @@ module ASF
 
     # for a mail domain, extract related lists and their subscribers (default only the count)
     # also returns the time when the data was last checked
+    # N.B. by default includes archivers as subscribers
     # For top-level apache.org lists, the mail_domain is either:
     # - the full list name (e.g. press), or:
     # - the list prefix (e.g. legal)
     # If podling==true, then also check for old-style podling names
     # If list_subs==true, return subscriber emails else sub count
+    # If skip_archivers==true, exclude archivers
     # Matches:
     # {mail_domain}.apache.org/*
     # apache.org/{mail_domain}(-.*)? (e.g. press, legal)
     # incubator.apache.org/{mail_domain}-.* (if podling==true)
     # Returns: {list}@{dom}
-    def self.list_subscribers(mail_domain, podling=false, list_subs=false)
+    def self.list_subscribers(mail_domain, podling=false, list_subs=false, skip_archivers=false)
 
       return nil, nil unless File.exist? LIST_SUBS
 
@@ -179,11 +181,34 @@ module ASF
         next unless "#{mail_domain}.apache.org" == dom or
            (dom == 'apache.org' &&  list =~ /^#{mail_domain}(-|$)/) or
            (podling && dom == 'incubator.apache.org' && list =~ /^#{mail_domain}-/)
-        subscribers["#{list}@#{dom}"] = list_subs ? subs.sort : subs.size
+
+        if skip_archivers
+          subscribers["#{list}@#{dom}"] = list_subs ? subs.reject{|sub| is_archiver?(sub)}.sort : subs.reject{|sub| is_archiver?(sub)}.size
+        else
+          subscribers["#{list}@#{dom}"] = list_subs ? subs.sort : subs.size
+        end
       end
       return subscribers.to_h, (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
+    # for a mail domain, extract related lists and their subscribers (default only the count)
+    # also returns the time when the data was last checked
+    # N.B. excludes archivers
+    # For top-level apache.org lists, the mail_domain is either:
+    # - the full list name (e.g. press), or:
+    # - the list prefix (e.g. legal)
+    # If podling==true, then also check for old-style podling names
+    # If list_subs==true, return subscriber emails else sub count
+    # Matches:
+    # {mail_domain}.apache.org/*
+    # apache.org/{mail_domain}(-.*)? (e.g. press, legal)
+    # incubator.apache.org/{mail_domain}-.* (if podling==true)
+    # Returns: {list}@{dom}
+    def self.list_subs(mail_domain, podling=false, list_subs=false)
+      self.list_subscribers(mail_domain,podling,list_subs,true)
+    end
+    
+    
     # returns the list time (defaulting to list-subs time if the marker is not present)
     def self.list_time
       File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS)
@@ -298,7 +323,8 @@ module ASF
         if cached
           begin
             cached.each do |d,l,m|
-              yield d, l, m
+              # don't allow cache to be altered
+              yield d.freeze, l.freeze, m.freeze
             end
             return
           rescue WeakRef::RefError
@@ -320,10 +346,10 @@ module ASF
           dom = match[1].downcase # just in case
           list = match[2].downcase # just in case
           # Keep original case of email addresses
-          # TODO: a bit slow for subs file, implement cache of parsed file?
           mails = stanza.split(/\n/).select{|x| x =~ /@/}
           cache << [dom, list, mails]
-          yield dom, list, mails
+          # don't allow cache to be altered
+          yield dom.freeze, list.freeze, mails.freeze
         else
           # don't allow mismatches as that means the RE is wrong
           line=stanza[0..(stanza.index("\n")|| -1)]
@@ -364,12 +390,16 @@ module ASF
   end
 end
 
-#if __FILE__ == $0
-#  domain = ARGV.shift||'whimsical'
-#  p  ASF::MLIST.list_subscribers(domain)
-#  p  ASF::MLIST.list_subscribers(domain,false,true)
-#  exit
-#  p  ASF::MLIST.list_moderators(domain, true)
-#  p  ASF::MLIST.private_subscribers(domain)
-#  p  ASF::MLIST.digests(['chrisd@apache.org'])
-#end
+if __FILE__ == $0
+  domain = ARGV.shift||'whimsical'
+  p  ASF::MLIST.list_subscribers(domain)
+  p  ASF::MLIST.list_subscribers(domain,false,false,true)
+  p  ASF::MLIST.list_subs(domain)
+  p  ASF::MLIST.list_subscribers(domain,false,true)
+  p  ASF::MLIST.list_subscribers(domain,false,true,true)
+  p  ASF::MLIST.list_subs(domain,false,true)
+  exit
+  p  ASF::MLIST.list_moderators(domain, true)
+  p  ASF::MLIST.private_subscribers(domain)
+  p  ASF::MLIST.digests(['chrisd@apache.org'])
+end

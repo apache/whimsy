@@ -35,7 +35,7 @@ class NonPMC
     if cttee.roster.include? env.user or currentUser.asf_member?
       require 'whimsy/asf/mlist'
       moderators, modtime = ASF::MLIST.list_moderators(mail_list)
-      subscribers, subtime = ASF::MLIST.list_subscribers(mail_list) # counts only
+      subscribers, subtime = ASF::MLIST.list_subs(mail_list) # counts only, no archivers
       analysePrivateSubs = currentUser.asf_member?
       unless analysePrivateSubs # check for private moderator if not already allowed access
         user_mail = currentUser.all_mail || []
