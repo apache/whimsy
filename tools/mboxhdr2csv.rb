@@ -24,6 +24,7 @@ COMMITTER = 'committer'
 COUNSEL = 'counsel'
 INVALID = '.INVALID'
 VERSION = 'mboxhdr2json'
+URIRX = URI.regexp(['http', 'https'])
 
 # Subject regexes that are non-discussion oriented
 # Analysis: don't bother with content lines in these messages, 
@@ -117,6 +118,7 @@ def mbox2stats(f)
         text_part = mail.body.decoded.split(/\r?\n/)
       end
       ctr = 0 # Count text lines of nonblank, nonreply content
+      linkz = 0 # Count number of apparent hyperlinks
       text_part.each do |l|
         case l
         when /\A\s*>/
@@ -129,6 +131,7 @@ def mbox2stats(f)
           # Stop counting if it seems like a forwarded message
           break
         else
+          linkz += 1 if l =~ URIRX
           ctr += 1
         end
       end
@@ -288,15 +291,15 @@ def scan_dir_stats2csv(dir, outname, ext = '.json')
   puts "#{__method__} processing #{jzons.length} mbox json files"
   # Write out headers and the first array in new csv
   csvfile = File.join("#{dir}", outname)
-  csv = CSV.open(csvfile, "w", headers: %w( year month day weekday hour zone listid who subject lines committer messageid inreplyto ), write_headers: true)
+  csv = CSV.open(csvfile, "w", headers: %w( year month day weekday hour zone listid who subject lines linkz committer messageid inreplyto ), write_headers: true)
   jzons.shift[0].each do |m|
-    csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['committer'], m['messageid'], m['inreplyto']  ]
+    csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['linkz'], m['committer'], m['messageid'], m['inreplyto']  ]
   end
   # Write out all remaining arrays, without headers, appending
   jzons.each do |j|
     begin
       j[0].each do |m|
-        csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['committer'], m['messageid'], m['inreplyto']  ]
+        csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['linkz'], m['committer'], m['messageid'], m['inreplyto']  ]
       end
     rescue => e
       puts "ERROR: write of #{f} raised #{e.message[0..255]}"
