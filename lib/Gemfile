@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 group :test do
   gem 'json'
   gem 'nokogiri'
+  gem 'rake'
   gem 'ruby-ldap'
   gem 'wunderbar'
   gem 'rspec'
