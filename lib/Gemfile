@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 group :test do
+  gem 'whimsy-asf', path: File.expand_path('..', __dir__)
   gem 'json'
   gem 'nokogiri'
   gem 'rake'
