@@ -1,5 +1,9 @@
+# For Travis testing
+
 source 'https://rubygems.org'
 
 group :test do
+  gem 'json'
+  gem 'wunderbar'
   gem 'rspec'
 end
