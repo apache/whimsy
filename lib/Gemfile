@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 group :test do
   gem 'json'
+  gem 'ldap'
   gem 'wunderbar'
   gem 'rspec'
 end
