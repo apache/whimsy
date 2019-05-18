@@ -61,16 +61,17 @@ Setup Whimsy Locally
 =====
 
 This section is for those desiring to run a whimsy tool on their own machine.
-[See below for deploying](#advanced-configuration) in a Docker container or a Vagrant VM.
+[See below for deploying](#advanced-configuration) in a Docker container or a Vagrant VM,
+or read the [detailed MACOSX setup steps](MACOSX.md).
 
-1. **Setup ruby 1.9.3 or higher.**  Verify with `ruby -v`.
+1. **Setup ruby 2.3.x or higher.**  Verify with `ruby -v`.
    If you use a system provided version of Ruby, you may need to prefix
    certain commands (like gem install) with `sudo`.  Alternatives to using
    the system provided version include using a Ruby version manager like
    `rbenv` or `rvm`.  Rbenv generally requires you to be more aware of what you
    are doing (e.g., the need for rbenv shims).  Rvm tends to be more of a set
    and forget operation, but it tends to be more system intrusive (e.g. aliasing
-   'cd' in bash).  Note the Whimsy server currently uses **ruby 2.5+**.
+   'cd' in bash).  Note the Whimsy server currently uses **ruby 2.4.1+**.
 
     For more information:
 
@@ -83,7 +84,7 @@ This section is for those desiring to run a whimsy tool on their own machine.
 
    `gem install whimsy-asf bundler`  (mail and listen may be needed too)
 
-   - If you're using Mac OS El Capitan or higher, you may need to do this:
+   - If you're using [Mac OS El Capitan or higher](MACOSX.md), you may need to do this:
 
    `sudo gem install bundler -n /usr/local/bin`
 
@@ -143,7 +144,8 @@ This section is for those desiring to run a whimsy tool on their own machine.
 
    It should print out an HTML page with current board members.
    See comments in the `board.rb` file for running the script as a 
-   standalone server to view in a local web browser.
+   standalone server to view in a local web browser.  This test script 
+   verifies the environment used by many, but not all, Whimsy tools.
 
 6. **Configure mail sending** :mailbox_with_mail: (_optional_):
 
@@ -189,7 +191,7 @@ See also [How To: Keep Your Local Environment Updated](#how-to-keep-your-local-e
 1. CGI applications can be run from a command line, and produce output to
    standard out.  If you would prefer to see the output in a browser, you
    will need to have a web server configured to run CGI, and a small CGI
-   script which runs your application.  For CGI scripts that make use of
+   script which runs your application.  For CGI scripts (chmod 755) that make use of
    wunderbar, this script can be generated and installed for you by
    passing a `--install` option on the command, for example:
 
@@ -231,7 +233,7 @@ a virtual host, complete with authentication:
       Enable the modules you need using `a2ensite`.  Restart the Apache httpd
       web server using `service apache2 restart`.
 
-   b. On Mac OS/X, place the generated vhost definition into
+   b. [On Mac OS/X](MACOSX.md), place the generated vhost definition into
       `/private/etc/apache2/extra/httpd-vhosts.conf`.  Edit
       `/etc/apache2/httpd.conf` and uncomment out the line that includes
       `httpd-vhosts.conf`, and
@@ -297,7 +299,7 @@ just when running into temp dirs (typically to modify them and commit
 changes).  If you have trouble using the existing [ASF::SVN classes](lib/whimsy/asf/svn.rb) 
 class to access files from Subversion on the server, then check:
 
-- Default SVN checkouts: [repository.yml](repository.yml)
+- Default SVN checkout mappings: [repository.yml](repository.yml)
 
 ### How To: Keep Your Local Environment Updated
 

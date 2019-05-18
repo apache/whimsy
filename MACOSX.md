@@ -12,9 +12,10 @@ Install Homebrew
 
 Homebrew is a package manager for OSX, which is used to install other tools.
 Follow the instructions from [brew.sh](http://brew.sh/). You might
-have to change shells if you are using csh. Bash works fine.
+have to change shells if you are using csh. Bash works fine.  Be sure to 
+read the Homebrew prerequisites; you may need part(s) of Apple's XCode.
 
-Verify using:
+Verify minimum version installed using:
 
 ```
 $ brew --version
@@ -28,9 +29,9 @@ Update using:
 $ brew update
 ```
 
-Homebrew has removed options we need from two of the formulas we need.
+Homebrew has (as of 2019) removed options we need from two of the formulas we need.
 Fix formulas for `openldap` and `apr-util` to make the required options standard.
-Note that we have to remove the bottles otherwise a version of the software is downloaded that does not include the options we require.
+Note that we have to remove the bottles otherwise a version of the software is downloaded that does not include the options we require.  You will need to fix these formulas and re-update brew.
 
 ```
 $ cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
@@ -109,7 +110,8 @@ ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-darwin17]
 ```
 
 If you don't see 2.3.1 or later, run `hash -r` and try again.  If you previously
-installed ruby via brew, you may need to run `brew upgrade ruby` instead. 
+installed ruby via brew, you may need to run `brew upgrade ruby` instead; 
+if you use rbenv or rvm, make sure they get the expected ruby version. 
 
 Install:
 
@@ -118,7 +120,7 @@ $ brew install rbenv
 $ rbenv install 2.5.1
 ```
 
-Use `ln -s` in `/usr/local/bin` for both `ruby` and `gem` pointing to the locations
+You may need to use `ln -s` in `/usr/local/bin` for both `ruby` and `gem` pointing to the locations
 where `rbenv` installed ruby in your home directory
 
 ```
@@ -126,7 +128,7 @@ ln -s /usr/local/bin/ruby /Users/${user}/.rbenv/versions/2.5.1/bin/ruby
 ln -s /usr/local/bin/gem /Users/${user}/.rbenv/versions/2.5.1/bin/gem
 ```
 
-Upgrade Node.js
+Install Node.js
 ---------------
 
 Install:
@@ -190,7 +192,7 @@ Clone the Whimsy code
 ------------
 
 Depending on whether or not you have a GitHub account ([Apache committer setup](https://gitbox.apache.org/)), 
-run one of the following:
+use GitHub Desktop or run one of the following:
 
 ```
 git clone git@github.com:apache/whimsy.git
@@ -208,7 +210,8 @@ git remote add github git@github.com:apache/whimsy.git
 git remote add asf https://gitbox.apache.org/repos/asf/whimsy.git
 ```
 
-Establish a link to this repository in a known location:
+Establish a link to this repository in a known location - this step is 
+optional to do basic work but required for a number of tools:
 
 ```
 cd whimsy
@@ -352,7 +355,7 @@ Restart Apache httpd using:
 apachectl restart
 ```
 
-Additional Notes:
+**Additional Notes:**
 
  * `sudo lsof -i:8080` may be helpful should you find that another process
    already has port 8080 open.
