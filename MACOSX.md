@@ -100,28 +100,31 @@ index bc6bde9fe..710265ec1 100644
 Upgrade Ruby
 ------------
 
-Much of Whimsy is written in Ruby.
+Much of Whimsy is written in Ruby.  Most OSX versions include outdated ruby, so:
 
-Verify:
+Verify your current ruby version:
 
 ```
 $ ruby -v
 ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-darwin17]
 ```
 
-If you don't see 2.3.1 or later, run `hash -r` and try again.  If you previously
-installed ruby via brew, you may need to run `brew upgrade ruby` instead; 
-if you use rbenv or rvm, make sure they get the expected ruby version. 
+You need at least version 2.4.1 to match the currently deployed Whimsy server.
+If you don't see 2.3.1 or later, run `hash -r` and try again.  If you still need 
+to update your ruby, proceed using one of the common ruby version managers:
+Homebrew (may not work as of 2019), rbenv (known to work), or rvm.
 
-Install:
+If using rbenv, install:
 
 ```
 $ brew install rbenv
 $ rbenv install 2.5.1
+$ rbenv init
 ```
+Follow directions to ensure rbenv is setup in your shell(s), and double-check your ruby version. 
+You may need to also `rbenv global 2.5.1` to ensure that version is used in new shells and elsewhere.
 
-You may need to use `ln -s` in `/usr/local/bin` for both `ruby` and `gem` pointing to the locations
-where `rbenv` installed ruby in your home directory
+**If you encounter errors later**, you may need to use `ln -s` in `/usr/local/bin` for both `ruby` and `gem` pointing to the locations where `rbenv` installed ruby in your home directory, like so:
 
 ```
 ln -s /usr/local/bin/ruby /Users/${user}/.rbenv/versions/2.5.1/bin/ruby
