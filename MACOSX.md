@@ -96,6 +96,13 @@ index bc6bde9fe..710265ec1 100644
        --enable-unique
        --enable-valsort
 ```
+Now have Homebrew actually install the updated modules:
+
+```
+brew install apr-util
+brew install openldap
+```
+
 
 Upgrade Ruby
 ------------
