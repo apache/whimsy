@@ -96,11 +96,11 @@ index bc6bde9fe..710265ec1 100644
        --enable-unique
        --enable-valsort
 ```
-Now have Homebrew actually install the updated modules:
+Now have Homebrew actually install the updated modules; note the -s --build-from-source flag:
 
 ```
-brew install apr-util
-brew install openldap
+brew install -s apr-util
+brew install -s openldap
 ```
 
 
@@ -263,7 +263,7 @@ Notes:
 Install Apache httpd
 ------------------
 
-Running Whimsy tools locally depends on httpd.  Apple provides a copy of httpd that has [known problems](https://github.com/phusion/passenger/issues/1986), so installing a separate copy of httpd is recommended.  An optional later step in this process will forward traffic based on the hostname.
+Running Whimsy tools locally depends on httpd.  Apple provides a copy of httpd that has [known problems](https://github.com/phusion/passenger/issues/1986), so installing a separate copy of httpd from homebrew is recommended.  An optional later step in this process will forward traffic based on the hostname.
 
 Install with LDAP support:
 
@@ -273,6 +273,7 @@ brew install openldap # --with-sssvlv
 brew reinstall -s apr-util # --with-openldap
 brew reinstall -s apache-httpd
 ```
+Note: if you encounter problems, double-check that the edits made to homebrew-core/Formula/* you made earlier are still there; if you happened to brew update, they may get overwritten.
 
 Install passenger
 -------------------
