@@ -98,5 +98,10 @@
     "line": "",
     "symbol": "",
     "description": "List of common /public datafiles and explanations"
+  },
+  "*board/scripts/README": {
+    "line": "",
+    "symbol": "",
+    "description": "Listing of some other private hardcoded mappings"
   }
 }
