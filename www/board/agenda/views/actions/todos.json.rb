@@ -239,7 +239,8 @@ parsed_agenda.each do |item|
 end
 
 add = transitioning.keys - ASF.pmc_chairs
-remove = ASF.pmc_chairs - ASF::Committee.pmcs.map(&:chair) - transitioning.keys
+remove = ASF.pmc_chairs - ASF::Committee.pmcs.map(&:chair) -
+  ASF::Committee.nonpmcs.map(&:chair) - transitioning.keys
 
 _add add.map {|person| {id: person.id, name: person.public_name, 
   email: person.mail.first, resolution: transitioning[person]}}.
