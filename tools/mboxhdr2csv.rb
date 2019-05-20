@@ -31,7 +31,7 @@ URIRX = URI.regexp(['http', 'https'])
 #   because most of the content is tool-generated
 NONDISCUSSION_SUBJECTS = { # Note: none applicable to members@
   '<board.apache.org>' => {
-    missing: /\AMissing\s\S+\sBoard/, # whimsy/www/board/agenda/views/buttons/email.js.rb
+    missing: /\AMissing\s((\S+\s){1,3})Board/, # whimsy/www/board/agenda/views/buttons/email.js.rb
     feedback: /\ABoard\sfeedback\son\s20/, # whimsy/www/board/agenda/views/actions/feedback.json.rb
     notice: /\A\[NOTICE\]/i,
     report: /\A\[REPORT\]/i,
