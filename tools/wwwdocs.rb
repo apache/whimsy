@@ -3,6 +3,7 @@
 #   Docs: for WVisible PAGETITLE and categories in .cgi
 #   Repos: for ASF::SVN access in .cgi|rb
 $LOAD_PATH.unshift '/srv/whimsy/lib'
+require 'wunderbar'
 require 'whimsy/asf'
 SCANDIR = "../www"
 ISERR = '!'
@@ -18,6 +19,21 @@ IS_PRIVATE = /\A(private|infra\/infrastructure)/
 ASFSVN = 'ASF::SVN'
 SCANDIRSVN = "../"
 
+# Output ul of key of AUTHMAP for use in helpblock
+def emit_authmap
+  _ul do
+    _li do
+      _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
+      _ 'Publicly available'
+    end
+    AUTHMAP.each do |realm, style|
+      _li do
+        _span.glyphicon.glyphicon_lock :aria_hidden, class: "#{style}", aria_label: "#{realm}"
+        _ "#{realm}"
+      end
+    end
+  end
+end
 # Return [PAGETITLE, [cat,egories] ] after WVisible; or same as !Bogosity error
 def scan_file(f)
   begin

@@ -35,18 +35,7 @@ _html do
           _em 'partial'
           _ ' listing of tools that Whimsy provides.'
         end
-        _ul do
-          _li do
-            _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
-            _ 'Publicly available'
-          end
-          AUTHMAP.each do |realm, style|
-            _li do
-              _span.glyphicon.glyphicon_lock :aria_hidden, class: "#{style}", aria_label: "#{realm}"
-              _ "#{realm}"
-            end
-          end
-        end
+        emit_authmap
       }
     ) do
       scan = get_annotated_scan("../#{SCANDIR}")
