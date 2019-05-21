@@ -18,6 +18,7 @@ AUTHPUBLIC = 'glyphicon-eye-open'
 IS_PRIVATE = /\A(private|infra\/infrastructure)/
 ASFSVN = 'ASF::SVN'
 SCANDIRSVN = "../"
+WWWAUTH = /WWW-Authenticate: Basic realm/
 
 # Output ul of key of AUTHMAP for use in helpblock
 def emit_authmap
@@ -34,7 +35,20 @@ def emit_authmap
     end
   end
 end
-# Return [PAGETITLE, [cat,egories] ] after WVisible; or same as !Bogosity error
+
+# Output a span with the auth level
+def emit_auth_level(level)
+  if level
+    _span class: level, aria_label: "#{AUTHMAP.key(level)}" do
+      _span.glyphicon.glyphicon_lock :aria_hidden
+    end
+  else
+    _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
+  end
+end
+
+# Scan single file for PAGETITLE and categories when WVisible
+# @return [PAGETITLE, [cat,egories] ] or ["!Bogosity error", "stacktrace"]
 def scan_file(f)
   begin
     File.open(f).each_line.map(&:chomp).each do |line|
@@ -49,6 +63,7 @@ def scan_file(f)
 end
 
 # Return data only about WVisible cgis, plus any errors
+# @return [ [PAGETITLE, [cat,egories] ], ... ]
 def scan_dir(dir)
   links = {}
   Dir["#{dir}/**/*.cgi".untaint].each do |f|
@@ -59,6 +74,7 @@ def scan_dir(dir)
 end
 
 # Process authldap so we can annotate links with access hints
+# @return { "/path" => "auth realm",... }
 def get_auth()
     node = ASF::Git.find('infrastructure-puppet')
     if node
@@ -78,7 +94,10 @@ def get_auth()
     return auth
 end
 
-# Annotate scan entries with hints only for paths that require auth
+# Annotate scan_dir entries with hints only for paths that require auth
+# Side Effects:
+#   - REMOVES any error scan entries
+#   - Adds array element of auth realm if login required
 def annotate_scan(scan, auth)
   annotated = scan.reject{ |k, v| v[1] =~ /\A#{ISERR}/ }
   annotated.each do |path, ary|
@@ -118,13 +137,15 @@ def build_regexp(list)
   return Regexp.union(r)
 end
 
-# Scan file for use of ASF::SVN (private or public)
-# @return [["x = ASF::SVN['Meetings'] # Whole line private repo", ...], [] ]
+# Scan file for use of ASF::SVN symbolic names like apmail_bin
+# @return [["x = ASF::SVN['Meetings'] # Whole line of code accessing private repo", ...], [<public repos same>], 'WWW-Authenticate code line' ]
 def scan_file_svn(f, regexs)
-  repos = [[], []]
+  repos = [[], [], []]
   begin
     File.open(f).each_line.map(&:chomp).each do |line|
-      if line =~ regexs[0] then
+      if line =~ WWWAUTH then # Fastest compare first
+        repos[2] << line.strip
+      elsif line =~ regexs[0] then
         repos[0] << line.strip
       elsif line =~ regexs[1] then
         repos[1] << line.strip
@@ -137,13 +158,19 @@ def scan_file_svn(f, regexs)
 end
 
 # Scan directory for use of ASF::SVN (private or public)
-# @return { file: [['private line'], []] }
-def scan_dir_svn(dir, regexs)
+# @return { "file" => [['private line', ...], ['public svn', ...], 'WWW-Authenticate code line' (, 'authrealm')] }
+def scan_dir_svn(dir, regexs, auth = get_auth())
   links = {}
+  auth = get_auth()
   Dir["#{dir}/**/*.{cgi,rb}".untaint].each do |f|
     l = scan_file_svn(f.untaint, regexs)
     if (l[0].length + l[1].length) > 0
-      links[f.sub(dir, '')] = l
+      fbase = f.sub(dir, '')
+      realm = auth.select { |k, v| fbase.sub('/www', '').match(/\A#{k}/) }
+      if realm.values.first
+        l << AUTHMAP[realm.values.first]
+      end
+      links[fbase] = l
     end
   end
   return links

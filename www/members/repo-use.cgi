@@ -19,7 +19,10 @@ _html do
         "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => 'See This Source Code'
       },
       helpblock: -> {
-        _p 'This scans the whimsy repo for uses of ASF::SVN, either public or private repos.'
+        _p.pull_right do
+          _ 'This scans the whimsy repo for uses of ASF::SVN, either public or private repos.  It also shows the httpd auth level required to run a script: the graphical key shows which authentication realm is needed.'
+        end
+        emit_authmap
       }
     ) do
       priv, pub = read_repository(File.expand_path('../../../repository.yml', __FILE__))
@@ -33,17 +36,25 @@ _html do
               _th 'Private repos used'
               _th 'Public repos used'
             end
-            scan.each do |file, (privlines, publines)|
+            scan.each do |file, (privlines, publines, wwwauth, authrealm)|
               _tbody do
                 _tr_ do
                   _td :colspan => '2' do
+                    emit_auth_level(authrealm)
                     _code file
+                    if authrealm.nil? && (privlines.length > 0) && (wwwauth.length == 0)
+                      _span.text_warning ' NOTE! Script accesses private repo without apparent auth!'
+                    end
                   end
                 end
                 _tr do
                   _td do
                     privlines.each do |l|
                       _ l
+                      _br
+                    end
+                    wwwauth.each do |w|
+                      _ w
                       _br
                     end
                   end
