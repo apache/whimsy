@@ -61,25 +61,25 @@ module ASF
     # See also www/roster/committee.cgi
     @@aliases = Hash.new {|hash, name| name.downcase}
     @@aliases.merge! \
-      'community development'       => 'comdev',
+      'community development'          => 'comdev',
       # TODO: are the concom entries correct? See INFRA-17782
-      'conference planning'         => 'concom',
-      'conferences'                 => 'concom',
-      'distributed release audit tool'=> 'drat',
-      'diversity and inclusion'     => 'diversity',
-      'http server'                 => 'httpd',
-      'httpserver'                  => 'httpd',
-      'java community process'      => 'jcp',
-      'logging services'            => 'logging',
-      'lucene.net'                  => 'lucenenet',
-      'portable runtime'            => 'apr',
-      'quetzalcoatl'                => 'quetz',
-      'security team'               => 'security',
-      'open climate workbench'      => 'climate',
-      'c++ standard library'        => 'stdcxx',
-      'travel assistance'           => 'tac',
-      'web services'                => 'ws',
-      'incubating'                  => 'incubator' # special for index.html
+      'conference planning'            => 'concom',
+      'conferences'                    => 'concom',
+      'distributed release audit tool' => 'drat',
+      'diversity and inclusion'        => 'diversity',
+      'http server'                    => 'httpd',
+      'httpserver'                     => 'httpd',
+      'java community process'         => 'jcp',
+      'logging services'               => 'logging',
+      'lucene.net'                     => 'lucenenet',
+      'portable runtime'               => 'apr',
+      'quetzalcoatl'                   => 'quetz',
+      'security team'                  => 'security',
+      'open climate workbench'         => 'climate',
+      'c++ standard library'           => 'stdcxx',
+      'travel assistance'              => 'tac',
+      'web services'                   => 'ws',
+      'incubating'                     => 'incubator' # special for index.html
 
     @@namemap = Proc.new do |name|
       # Drop parenthesized comments and downcase before lookup; drop all spaces after lookup
