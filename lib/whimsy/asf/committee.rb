@@ -61,6 +61,7 @@ module ASF
     # See also www/roster/committee.cgi
     @@aliases = Hash.new {|hash, name| name.downcase}
     @@aliases.merge! \
+      'c++ standard library'           => 'stdcxx',
       'community development'          => 'comdev',
       # TODO: are the concom entries correct? See INFRA-17782
       'conference planning'            => 'concom',
@@ -69,17 +70,16 @@ module ASF
       'diversity and inclusion'        => 'diversity',
       'http server'                    => 'httpd',
       'httpserver'                     => 'httpd',
+      'incubating'                     => 'incubator', # special for index.html
       'java community process'         => 'jcp',
       'logging services'               => 'logging',
       'lucene.net'                     => 'lucenenet',
+      'open climate workbench'         => 'climate',
       'portable runtime'               => 'apr',
       'quetzalcoatl'                   => 'quetz',
       'security team'                  => 'security',
-      'open climate workbench'         => 'climate',
-      'c++ standard library'           => 'stdcxx',
       'travel assistance'              => 'tac',
-      'web services'                   => 'ws',
-      'incubating'                     => 'incubator' # special for index.html
+      'web services'                   => 'ws'
 
     @@namemap = Proc.new do |name|
       # Drop parenthesized comments and downcase before lookup; drop all spaces after lookup
