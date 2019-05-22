@@ -10,21 +10,22 @@ require 'whimsy/asf/agenda'
 require 'date'
 require 'mail'
 
-user = ASF::Person.new($USER)
-unless user.asf_member? or ASF.pmc_chairs.include? user
-  print "Status: 401 Unauthorized\r\n"
-  print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
-  exit
-end
+# user = ASF::Person.new($USER)
+# unless user.asf_member? or ASF.pmc_chairs.include? user
+#   print "Status: 401 Unauthorized\r\n"
+#   print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
+#   exit
+# end
 
 SRV_MAIL = '/srv/mail/board'
 DATE = 'date'
 FROM = 'from'
 WHO = 'who'
 SUBJECT = 'subject'
-COMMITTER = 'committer'
 TOOLS = 'tools'
 MAILS = 'mails'
+TOOLCOUNT = 'toolcount'
+MAILCOUNT = 'mailcount'
 
 ### ---- Copied from tools/mboxhdr2csv.rb; should be refactored ----
 MEMBER = 'member'
@@ -131,14 +132,16 @@ end
 
 # Get {MAILS: [{date, who, subject, flag},...\, TOOLS: [{...},...] } from the specified list for a month
 # May cache data in SRV_MAIL/yearmonth.json
+# Returns empty hash if error or if can't find month
 def get_mails_month(yearmonth:, nondiscuss:)
   # Return cached calculated data if present
   cache_json = File.join(SRV_MAIL, "#{yearmonth}.json")
   if File.exist?(cache_json)
     return JSON.parse(File.read(cache_json))
   else
-    files = Dir[File.join(SRV_MAIL, yearmonth, '*')]
     emails = {}
+    files = Dir[File.join(SRV_MAIL, yearmonth, '*')]
+    return emails if files.empty?
     emails[MAILS] = []
     emails[TOOLS] = []
     files.each do |email|
@@ -161,18 +164,18 @@ def get_mails_month(yearmonth:, nondiscuss:)
     end
     # Provide as sorted data for ease of use
     emails[TOOLS].sort_by! { |email| email[DATE] }
-    emails['toolcount'] = Hash.new {|h, k| h[k] = 0 }
+    emails[TOOLCOUNT] = Hash.new {|h, k| h[k] = 0 }
     emails[TOOLS].each do |mail|
-      emails['toolcount'][mail[TOOLS]] += 1
+      emails[TOOLCOUNT][mail[TOOLS]] += 1
     end
-    emails['toolcount'] = emails['toolcount'].sort_by { |k,v| -v}.to_h
+    emails[TOOLCOUNT] = emails[TOOLCOUNT].sort_by { |k,v| -v}.to_h
     
     emails[MAILS].sort_by! { |email| email[DATE] }
-    emails['mailcount'] = Hash.new {|h, k| h[k] = 0 }
+    emails[MAILCOUNT] = Hash.new {|h, k| h[k] = 0 }
     emails[MAILS].each do |mail|
-      emails['mailcount'][mail[WHO]] += 1
+      emails[MAILCOUNT][mail[WHO]] += 1
     end
-    emails['mailcount'] = emails['mailcount'].sort_by { |k,v| -v}.to_h
+    emails[MAILCOUNT] = emails[MAILCOUNT].sort_by { |k,v| -v}.to_h
 
     # If yearmonth is before current month, then write out yearmonth.json as cache
     if yearmonth < Date.today.strftime('%Y%m')
@@ -208,22 +211,34 @@ _html do
         }
       }
     ) do
-      months = %w(201901 201902 201903 201904 201905) # HACK figure out what we want to track / make interactive
+      months = %w(201804 201805 201806 201807 201808 201809 201810 201811 201812  201901 201902 201903 201904 201905) # HACK figure out what we want to track / make interactive
       months.each do |month|
         data = get_mails_month(yearmonth: month, nondiscuss: NONDISCUSSION_SUBJECTS['<board.apache.org>'])
-        _h1 "Top Ten Email Senders to board@ (by mails) #{month}"
-        _ul? do
-          ctr = 0
-          data['mailcount'].each do |id, num|
-            _li "#{id} wrote: #{num}"
-            ctr += 1
-            break if ctr >= 10
+        next if data.empty?
+        _h1 "board@ list statistics for #{month} (total mails: #{data[MAILS].length + data[TOOLS].length})", id: "#{month}"
+        _div.row do
+          _div.col_sm_6 do
+            _ul.list_group do
+              _li.list_group_item.active.list_group_item_info "Top Ten Email Senders (from non-tool mails: #{data[MAILS].length})"
+              ctr = 0
+              data[MAILCOUNT].each do |id, num|
+                if num > (data[MAILS].length / 10)
+                  _li.list_group_item.list_group_item_warning "#{id} wrote: #{num}"
+                else
+                  _li.list_group_item "#{id} wrote: #{num}"
+                end
+                ctr += 1
+                break if ctr >= 10
+              end
+            end   
           end
-        end
-        _h1 "Tool Generated Mails to board@ (by type) #{month}"
-        _ul? do
-          data['toolcount'].each do |id, num|
-            _li "#{num} emails from #{id} tool"
+          _div.col_sm_6 do
+            _ul.list_group do
+              _li.list_group_item.list_group_item_info "Tool Generated Emails (by type, total tool mails: #{data[TOOLS].length})"
+              data[TOOLCOUNT].each do |id, num|
+                _li.list_group_item "#{num} emails from #{id} tool"
+              end
+            end            
           end
         end
       end
