@@ -66,6 +66,7 @@ module ASF
       'conference planning'         => 'concom',
       'conferences'                 => 'concom',
       'distributed release audit tool'=> 'drat',
+      'diversity and inclusion'     => 'diversity',
       'http server'                 => 'httpd',
       'httpserver'                  => 'httpd',
       'java community process'      => 'jcp',
