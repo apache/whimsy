@@ -390,6 +390,7 @@ module ASF
 
   # Obtain a list of PMC chairs from LDAP 
   # <tt>cn=pmc-chairs,ou=groups,ou=services,dc=apache,dc=org</tt>
+  # Note: this list may include non-PMC VPs.
   def self.pmc_chairs
     weakref(:pmc_chairs) {Service.find('pmc-chairs').members}
   end

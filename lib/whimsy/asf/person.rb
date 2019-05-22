@@ -136,7 +136,8 @@ module ASF
     end
 
     # Returns <tt>true</tt> if this person is listed as an ASF member in
-    # _either_ LDAP or <tt>members.txt</tt>.
+    # _either_ LDAP or <tt>members.txt</tt>.  Note: LDAP includes
+    # infrastructure staff members that may not be ASF Members.
     def asf_member?
       ASF::Member.status[name] or ASF.members.include? self
     end
