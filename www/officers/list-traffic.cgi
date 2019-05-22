@@ -212,8 +212,8 @@ _html do
         }
       }
     ) do
-      months = %w(201804 201805 201806 201807 201808 201809 201810 201811 201812  201901 201902 201903 201904 201905) # HACK figure out what we want to track / make interactive
-      months.each do |month|
+      months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/) # HACK figure out what we want to track / make interactive
+      months.sort.reverse.each do |month|
         data = get_mails_month(yearmonth: month, nondiscuss: NONDISCUSSION_SUBJECTS['<board.apache.org>'])
         next if data.empty?
         _h1 "board@ list statistics for #{month} (total mails: #{data[MAILS].length + data[TOOLS].length})", id: "#{month}"
