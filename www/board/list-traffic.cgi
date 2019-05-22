@@ -136,7 +136,7 @@ end
 def get_mails_month(yearmonth:, nondiscuss:)
   # Return cached calculated data if present
   cache_json = File.join(SRV_MAIL, "#{yearmonth}.json")
-  if File.exist?(cache_json)
+  if File.file?(cache_json)
     return JSON.parse(File.read(cache_json))
   else
     emails = {}
@@ -208,6 +208,7 @@ _html do
           In particular, mapping email to a committer may not work (meaning individual senders may have multiple spots),
           and Subject lines displayed may be truncated (meaning threads may not fully be tracked).  Work in progress.
           Attempts to differentiate tool- or process-generated emails (NOTICE, REPORT, etc.) from all other emails.
+          Senders of more than 10% of all non-tool emails in a month are highlighted.
         }
       }
     ) do
