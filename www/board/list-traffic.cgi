@@ -10,12 +10,12 @@ require 'whimsy/asf/agenda'
 require 'date'
 require 'mail'
 
-# user = ASF::Person.new($USER)
-# unless user.asf_member? or ASF.pmc_chairs.include? user
-#   print "Status: 401 Unauthorized\r\n"
-#   print "WWW-Authenticate: Basic realm=\"ASF Members and PMC chairs\"\r\n\r\n"
-#   exit
-# end
+user = ASF::Person.new($USER)
+unless user.asf_member? or ASF.pmc_chairs.include? user
+  print "Status: 401 Unauthorized\r\n"
+  print "WWW-Authenticate: Basic realm=\"ASF Members and PMC chairs\"\r\n\r\n"
+  exit
+end
 
 SRV_MAIL = '/srv/mail/board'
 DATE = 'date'
