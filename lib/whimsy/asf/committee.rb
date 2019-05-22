@@ -9,7 +9,7 @@ module ASF
 
   #
   # Representation for a committee (either a PMC, a board committee, or
-  # a President's committee).  This data is parsed from 
+  # a President's committee).  This data is parsed from
   # <tt>committee-info.txt</tt>, and is augmened by data from LDAP,
   # ASF::Site, and ASF::Mail.
   #
@@ -36,7 +36,7 @@ module ASF
     attr_writer :report
 
     # list of members for this committee.  Returned as a list of hash
-    # mapping ids to a hash of <tt>:name</tt> and <tt>:date</tt> values. 
+    # mapping ids to a hash of <tt>:name</tt> and <tt>:date</tt> values.
     # Data is obtained from <tt>committee-info.txt</tt>.
     attr_accessor :roster
 
@@ -235,7 +235,7 @@ module ASF
       # find the reporting schedules
       index =  blocks.find_index {|section| section =~/January/}
 
-      # remove from each reporting period 
+      # remove from each reporting period
       blocks[index+0].sub! "\n    #{pmc}\n", "\n"
       blocks[index+1].sub! "\n    #{pmc}\n", "\n"
       blocks[index+2].sub! "\n    #{pmc}\n", "\n"
@@ -522,14 +522,14 @@ module ASF
       Hash[@roster.map {|id, info| [id, info[:name]]}]
     end
 
-    # if true, this committee is not a PMC.  
+    # if true, this committee is not a PMC.
     # Data is obtained from <tt>committee-info.txt</tt>.
     def nonpmc?
       Committee.load_committee_info # ensure data is there
       Committee.nonpmcs.include? self
     end
 
-    # if true, this committee is a PMC.  
+    # if true, this committee is a PMC.
     # Data is obtained from <tt>committee-info.txt</tt>.
     def pmc?
       Committee.load_committee_info # ensure data is there
