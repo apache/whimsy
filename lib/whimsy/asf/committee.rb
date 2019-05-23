@@ -9,7 +9,7 @@ module ASF
 
   #
   # Representation for a committee (either a PMC, a board committee, or
-  # a President's committee).  This data is parsed from 
+  # a President's committee).  This data is parsed from
   # <tt>committee-info.txt</tt>, and is augmened by data from LDAP,
   # ASF::Site, and ASF::Mail.
   #
@@ -36,7 +36,7 @@ module ASF
     attr_writer :report
 
     # list of members for this committee.  Returned as a list of hash
-    # mapping ids to a hash of <tt>:name</tt> and <tt>:date</tt> values. 
+    # mapping ids to a hash of <tt>:name</tt> and <tt>:date</tt> values.
     # Data is obtained from <tt>committee-info.txt</tt>.
     attr_accessor :roster
 
@@ -61,24 +61,25 @@ module ASF
     # See also www/roster/committee.cgi
     @@aliases = Hash.new {|hash, name| name.downcase}
     @@aliases.merge! \
-      'community development'       => 'comdev',
+      'c++ standard library'           => 'stdcxx',
+      'community development'          => 'comdev',
       # TODO: are the concom entries correct? See INFRA-17782
-      'conference planning'         => 'concom',
-      'conferences'                 => 'concom',
-      'distributed release audit tool'=> 'drat',
-      'http server'                 => 'httpd',
-      'httpserver'                  => 'httpd',
-      'java community process'      => 'jcp',
-      'logging services'            => 'logging',
-      'lucene.net'                  => 'lucenenet',
-      'portable runtime'            => 'apr',
-      'quetzalcoatl'                => 'quetz',
-      'security team'               => 'security',
-      'open climate workbench'      => 'climate',
-      'c++ standard library'        => 'stdcxx',
-      'travel assistance'           => 'tac',
-      'web services'                => 'ws',
-      'incubating'                  => 'incubator' # special for index.html
+      'conference planning'            => 'concom',
+      'conferences'                    => 'concom',
+      'distributed release audit tool' => 'drat',
+      'diversity and inclusion'        => 'diversity',
+      'http server'                    => 'httpd',
+      'httpserver'                     => 'httpd',
+      'incubating'                     => 'incubator', # special for index.html
+      'java community process'         => 'jcp',
+      'logging services'               => 'logging',
+      'lucene.net'                     => 'lucenenet',
+      'open climate workbench'         => 'climate',
+      'portable runtime'               => 'apr',
+      'quetzalcoatl'                   => 'quetz',
+      'security team'                  => 'security',
+      'travel assistance'              => 'tac',
+      'web services'                   => 'ws'
 
     @@namemap = Proc.new do |name|
       # Drop parenthesized comments and downcase before lookup; drop all spaces after lookup
@@ -235,7 +236,7 @@ module ASF
       # find the reporting schedules
       index =  blocks.find_index {|section| section =~/January/}
 
-      # remove from each reporting period 
+      # remove from each reporting period
       blocks[index+0].sub! "\n    #{pmc}\n", "\n"
       blocks[index+1].sub! "\n    #{pmc}\n", "\n"
       blocks[index+2].sub! "\n    #{pmc}\n", "\n"
@@ -522,14 +523,14 @@ module ASF
       Hash[@roster.map {|id, info| [id, info[:name]]}]
     end
 
-    # if true, this committee is not a PMC.  
+    # if true, this committee is not a PMC.
     # Data is obtained from <tt>committee-info.txt</tt>.
     def nonpmc?
       Committee.load_committee_info # ensure data is there
       Committee.nonpmcs.include? self
     end
 
-    # if true, this committee is a PMC.  
+    # if true, this committee is a PMC.
     # Data is obtained from <tt>committee-info.txt</tt>.
     def pmc?
       Committee.load_committee_info # ensure data is there
