@@ -122,6 +122,11 @@ if @establish and env.password
       project = ASF::Project[pmc.downcase]
       if not project
         ASF::Project.find(pmc.downcase).create(members, members)
+      else # project exists
+        # sync project owners with new PMC list
+        project.add_owners(members)
+        project.remove_owners(project.owners - members)
+        project.add_members(members)
       end
     end 
   end
