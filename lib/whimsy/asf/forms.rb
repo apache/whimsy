@@ -38,7 +38,7 @@ class Wunderbar::HtmlMarkup
   end
 
   # Display a single input control within a form; or if rows, then a textarea
-  # @param name required string ID of control's label 
+  # @param name required string ID of control's label/id
   def _whimsy_forms_input(**args)
     return unless args[:name]
     args[:label] ||= 'Enter string'
@@ -48,17 +48,17 @@ class Wunderbar::HtmlMarkup
     _whimsy_control_wrapper(args) do
       args[:class] = 'form-control'
       if args[:rows]
-        _textarea! args do
+        _textarea! type: args[:type], name: args[:name], id: args[:id], value: args[:value], class: args[:class], aria_describedby: args[:aria_describedby], rows: args[:rows] do
           _! args[:value]
         end
       else
-        _input args
+        _input type: args[:type], name: args[:name], id: args[:id], value: args[:value], class: args[:class], aria_describedby: args[:aria_describedby]
       end
     end
   end
 
   # Display an optionlist control within a form
-  # @param name required string ID of control's label
+  # @param name required string ID of control's label/id
   # @param options required ['value'] or {"value" => 'Label for value'} of all selectable values
   # @param values required 'value' or ['value'] or {"value" => 'Label for value'} of all selected values
   # @param placeholder Currently displayed text if passed (not selectable)
@@ -72,7 +72,7 @@ class Wunderbar::HtmlMarkup
       if args[:multiple]
         args[:multiple] = 'true'
       end
-      _select.form_control args do
+      _select.form_control type: args[:type], name: args[:name], id: args[:id], value: args[:value], aria_describedby: args[:aria_describedby], multiple: args[:multiple] do
         if ''.eql?(args[:placeholder])
           _option '', value: '', selected: 'selected'
         else
