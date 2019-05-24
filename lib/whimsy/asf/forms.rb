@@ -104,4 +104,41 @@ class Wunderbar::HtmlMarkup
     end
   end
 
+  CHECKBOX = 'checkbox'
+  RADIO = 'radio'
+
+  # Display a list of radio or checkbox controls
+  # @param name required string ID of control's label/id
+  # @param type required CHECKBOX|RADIO
+  # @param options required ['value'...] or {"value" => 'Label for value'} of all values
+  # @param selected optional 'value' or ['value'...] of all selected values
+  def _whimsy_forms_checkradio(**args)
+    return unless args[:name]
+    return unless args[:type]
+    return unless args[:options]
+    args[:label] ||= 'Select value(s)'
+    args[:id] = args[:name]
+    args[:aria_describedby] = "#{args[:name]}_help" if args[:helptext]
+    args[:selected] = [args[:selected]] if args[:selected].kind_of?(String)
+    _whimsy_control_wrapper(args) do 
+
+      # Construct list of all :options; mark any that are in :selected 
+      if args[:options].kind_of?(Array)
+        args[:options].each do |val|
+          checked = true if args[:selected] && args[:selected].include?(val.to_s)
+          _input type: args[:type], name: args[:name], id: args[:id], value: val, class: args[:class], aria_describedby: args[:aria_describedby], checked: checked do
+            _! val
+          end
+        end
+      elsif args[:options].kind_of?(Hash)
+        args[:options].each do |val, disp|
+          checked = true if args[:selected] && args[:selected].include?(val.to_s)
+          _input type: args[:type], name: args[:name], id: args[:id], value: val, class: args[:class], aria_describedby: args[:aria_describedby], checked: checked do
+            _! disp
+          end
+        end
+      end
+    end
+  end
+
 end
