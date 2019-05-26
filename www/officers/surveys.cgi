@@ -14,11 +14,14 @@ require 'whimsy/asf/rack'
 require 'json'
 require 'cgi'
 
-FOUNDATION_SVN = ASF::SVN['foundation'] # TODO check pathing
+OFFICERS_SURVEYS = ASF::SVN['officers_surveys']
 SURVEY = :survey
-SURVEYS_DIR = 'surveys'
 ERRORS = :errors
 PARAMS = :params
+CONTACT = :contact
+FORM = :form
+SDATA = '-data'
+DOTJSON = '.json'
 
 # Convenience method to display alerts
 def display_alert(lead: 'Error', body: '', type: 'alert-danger')
@@ -28,43 +31,41 @@ def display_alert(lead: 'Error', body: '', type: 'alert-danger')
   end
 end
 
-# Emit HTML for a survey form, or display any errors
-# Currently, user can only submit a survey once
+# Emit HTML for a survey_layout form, or display any errors
+# Currently, user can only submit a survey_data once
 def display_survey(survey_layout)
-  survey_layout[:dataroot] ? dataroot = survey_layout[:dataroot] : dataroot = 'foundation' # TODO this default is a bit of a hack
-  survey_layout[:datafile] ? datafile = survey_layout[:datafile] : datafile = ''
-  if survey_layout.has_key?(ERRORS)
-    display_alert(lead: "Warning: could not find survey layout!", body: "#{survey_layout[ERRORS]}")
-    # Continue loading the DEFAULT_SURVEY which provides more help
-  elsif File.file?(survey_file)
-    survey_file = File.join(ASF::SVN[dataroot], SURVEYS_DIR, datafile)
+  warning = false
+  survey_file = File.join(OFFICERS_SURVEYS, (survey_layout[:datafile] ||= ''))
+  if File.file?(survey_file)
     survey_data = {}
     begin
       survey_data = JSON.parse(File.read(survey_file), :symbolize_names => true)
       # Check if the user has already submitted this survey
       if survey_data.has_key?($USER.to_sym)
-        display_alert(lead: 'User already submitted survey!', body: "You appear to have already submitted this survey (#{query}) once; if needed, edit the survey.json in SVN.")
-        # return # TODO should we bail or continue?
+        display_alert(lead: 'Warning: User already submitted survey data!', body: "#{__method__}(#{survey_file}) You appear to have **already submitted** this survey data; if needed edit the survey.json in SVN, or contact #{survey_layout[SURVEY][CONTACT]} with questions.")
+        warning = true # TODO should we bail or continue?
       end
     rescue StandardError => e
-      display_alert(lead: 'Error parsing survey layout!', body: "**ERROR:#{__method__}(#{query}) #{e.message}**\n\n    #{e.backtrace[0]}")
-      # return # TODO should we bail or continue?
+      display_alert(lead: 'Error: parsing survey datafile!', body: "**#{__method__}(#{survey_file}) #{e.message}**\n\n    #{e.backtrace[0]}")
+      warning = true # TODO should we bail or continue?
     end
   else
-    display_alert(lead: "Warning: could not find survey data!", body: "#{survey_layout[ERRORS]}\n\nPlease check your query string params: #{survey_layout[PARAMS]} or check to see if the survey data file is valid: #{survey_file}")
-    # return # TODO should we bail or continue?
+    display_alert(lead: 'Warning: could not find survey datafile!', body: "**#{__method__}(#{survey_file})** the data file to store survey answers was not supplied or found; contact #{survey_layout[SURVEY][CONTACT]} with questions.")
+    warning = true # TODO should we bail or continue?
   end
 
-  # Emit the survey, or the default one which provides more help
-  _whimsy_panel("#{survey_layout[SURVEY][:form][:title]}", style: 'panel-success') do
+  # Emit the survey, or the default one which provides help on the survey tool
+  _whimsy_panel("#{survey_layout[SURVEY][FORM][:title]} (user: #{$USER})", style: 'panel-success') do
     _form.form_horizontal method: 'post' do
-      survey_layout[SURVEY][:form][:fields].each do |field|
+      survey_layout[SURVEY][FORM][:fields].each do |field|
         _whimsy_field_chooser(field)
       end
       _div.col_sm_offset_3.col_sm_9 do
-        _span.text_info survey_layout[SURVEY][:form][:buttonhelp]
-        _br
-        _input.btn.btn_default type: 'submit', value: survey_layout[SURVEY][:form][:buttontext]
+        _span.help_block id: 'submit_help' do
+          _span.text_info survey_layout[SURVEY][FORM][:buttonhelp]
+          _span.text_danger 'Warning! Note potential errors above.' if warning
+        end
+        _input.btn.btn_default type: 'submit', id: 'submit', value: survey_layout[SURVEY][FORM][:buttontext], aria_describedby: 'submit_help'
       end
     end
   end
@@ -94,17 +95,19 @@ end
 DEFAULT_SURVEY = {
   title: 'Apache Whimsy Survey Tool',
   subtitle: 'Survey Help Page',
+  contact: 'dev@whimsical.apache.org',
   related: {
     "committers/tools.cgi" => "All Whimsy Committer-wide Tools",
     "https://github.com/apache/whimsy/blob/master/www/" => "See Whimsy Source Code",
     "mailto:dev@whimsical.apache.org?subject=[FEEDBACK] Survey Tool" => "Email Feedback To dev@whimsical"
   },
-  helpblock: %q(The Whimsy Survey tool allows you to use an SVN-backed `survey.json` file to capture survey answers from Apache committers (all answers associated with apacheid and a commit.)
-**If you are reading this**, then the survey you attempted to view has not be configured yet - sorry!
-For now, see the code for more help, or contact dev@whimsical for questions.
+  helpblock: %q(**If you are reading this**, then there was an error attempting to load your survey's layout - sorry!
+
+This Whimsy Survey tool allows you to define a set of questions in a .json file, and then ask ASF Members or Officers to fill in the survey with a simple URL here.  All submissions are done by an SVN commit with the user's credentials into a survey_data.json file for each survey (answers in a hash associated with ApacheID).
+
+For now, see the code for more help, or contact dev@whimsical for questions on how the tool works.
   ),
-  dataroot: '',
-  datafile: '',
+  datafile: 'SAMPLE-TBD',
   submitpass: 'This *markdown-able* message would be displayed after a successful svn commit of survey data.',
   submitfail: 'This *markdown-able* message would be displayed after a **FAILED** svn commit of survey data.',
   form: {
@@ -136,7 +139,7 @@ For now, see the code for more help, or contact dev@whimsical for questions.
         label: 'Select some values',
         helptext: 'This text would explain why you should select many values (required)',
         multiple: true,
-        options: ['First', 'Second', 'Penultimate', 'Last place']
+        options: ['First', 'Second', 'Penultimate', 'Last place', '2First', '2Second', '2Penultimate', '2Last place', 'aFirst', 'aSecond', 'aPenultimate', 'aLast place']
       },
       {
         name: 'field5',
@@ -155,7 +158,8 @@ For now, see the code for more help, or contact dev@whimsical for questions.
     ]
   }
 }
-# Return survey layout hash from QUERY_STRING
+
+# Load survey layout hash from QUERY_STRING ?survey=surveyname
 # @return {} of form layout data for survey; or a default layout of help with ERRORS also set
 # Note: does not validate that the survey has a place to store data; only that the layout exists
 def get_survey_layout(query)
@@ -166,16 +170,16 @@ def get_survey_layout(query)
   end
   data = {}
   data[PARAMS] = params
-  filename = File.join(FOUNDATION_SVN, SURVEYS_DIR, "#{params[SURVEY]}.json") # TODO FIXME
+  filename = File.join(OFFICERS_SURVEYS, "#{params['survey']}.json".gsub(/[^0-9A-Z.-]/i, '_')) # Use 'survey' as string here; sanitize input
   begin
-    data[SURVEY] = JSON.parse(File.read(filename).untaint) # TODO: Security, ensure user should have access
+    data[SURVEY] = JSON.parse(File.read(filename.untaint), :symbolize_names => true) # TODO: Security, ensure user should have access
   rescue StandardError => e
-    data[ERRORS] = "**ERROR:#{__method__}(#{query}) #{e.message}**\n\n    #{e.backtrace.join("\n    ")}"
+    data[ERRORS] = "**ERROR:#{__method__}(#{query}, #{filename}) #{e.message}**\n\n    #{e.backtrace.join("\n    ")}"
   end
-  # Fallback if not successfully read, so we can display something (even if it won't work to submit)
+  # Fallback if not successfully read, display DEFAULT_SURVEY which shows user help
   if not data.has_key?(SURVEY)
     data[SURVEY] = DEFAULT_SURVEY
-    data[ERRORS] = "Could not read survey layout: #{filename}\n\nPlease check your query string params: #{params}; displaying help form below instead."
+    data[ERRORS] = "**Could not read survey layout:** `#{filename}`\n\nPlease check your query string params: #{params}; displaying help form below instead."
   end
   return data
 end
@@ -190,8 +194,9 @@ _html do
   _body? do
     query_string = ENV['QUERY_STRING']
     survey_layout = get_survey_layout(query_string)
+    _.post? ? title = "#{survey_layout[SURVEY][:title]} (Submission)" : title = survey_layout[SURVEY][:title]
     _whimsy_body(
-      title: survey_layout[SURVEY][:title],
+      title: title,
       subtitle: survey_layout[SURVEY][:subtitle],
       related: survey_layout[SURVEY][:related],
       helpblock: -> {
