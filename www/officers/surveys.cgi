@@ -31,29 +31,43 @@ def display_alert(lead: 'Error', body: '', type: 'alert-danger')
   end
 end
 
-# Emit HTML for a survey_layout form, or display any errors
+# Convenience method to sanitize/construct paths to .json
+# @param filename to request, either a layout or datafile
+# @return sanitized path/filename
+def get_survey_path(f)
+  filename = f
+  filename ||= 'NO_DATAFILE_GIVEN' # For display in errors later
+  filename.gsub!(/[^0-9A-Z.-]/i, '_') # Sanitize input (should only be a filename)
+  filename << DOTJSON if not filename.end_with?(DOTJSON)
+  return File.join(OFFICERS_SURVEYS, filename)
+end
+
+# Emit HTML for a survey_layout form, or display any errors in response to a GET
 # Currently, user can only submit a survey_data once
+# @param hash containing entire survey layout
 def display_survey(survey_layout)
   warning = false
-  survey_file = File.join(OFFICERS_SURVEYS, (survey_layout[:datafile] ||= ''))
-  if File.file?(survey_file)
+  survey_file = get_survey_path(survey_layout[SURVEY][:datafile]).untaint
+  if survey_layout.has_key?(ERRORS)
+    display_alert(lead: 'Error: could not load survey layout!', body: "#{survey_layout[ERRORS]} Contact the survey owner: #{survey_layout[SURVEY][CONTACT]}.")
+  elsif File.file?(survey_file)
     survey_data = {}
     begin
       survey_data = JSON.parse(File.read(survey_file), :symbolize_names => true)
       # Check if the user has already submitted this survey
       if survey_data.has_key?($USER.to_sym)
-        display_alert(lead: 'Warning: User already submitted survey data!', body: "#{__method__}(#{survey_file}) You appear to have **already submitted** this survey data; if needed edit the survey.json in SVN, or contact #{survey_layout[SURVEY][CONTACT]} with questions.")
-        warning = true # TODO should we bail or continue?
+        display_alert(lead: 'Warning: User already submitted survey data!', body: "#{__method__}(#{survey_file}) You appear to have **already submitted** this survey data (can't submit again); if needed edit the survey.json in SVN, or contact the survey owner: #{survey_layout[SURVEY][CONTACT]}.")
+        warning = true
       end
     rescue StandardError => e
       display_alert(lead: 'Error: parsing survey datafile!', body: "**#{__method__}(#{survey_file}) #{e.message}**\n\n    #{e.backtrace[0]}")
-      warning = true # TODO should we bail or continue?
+      warning = true
     end
   else
-    display_alert(lead: 'Warning: could not find survey datafile!', body: "**#{__method__}(#{survey_file})** the data file to store survey answers was not supplied or found; contact #{survey_layout[SURVEY][CONTACT]} with questions.")
-    warning = true # TODO should we bail or continue?
+    display_alert(lead: 'Warning: could not find survey datafile!', body: "**#{__method__}(#{survey_file})** the data file to store survey answers was not supplied or found; contact the survey owner: #{survey_layout[SURVEY][CONTACT]}.")
+    warning = true
   end
-
+  
   # Emit the survey, or the default one which provides help on the survey tool
   _whimsy_panel("#{survey_layout[SURVEY][FORM][:title]} (user: #{$USER})", style: 'panel-success') do
     _form.form_horizontal method: 'post' do
@@ -78,10 +92,10 @@ def validate_survey(formdata: {})
   return true # TODO: Futureuse
 end
 
-# Handle submission (checkout user's apacheid.json, write form data, checkin file)
+# Handle POST submission (checkout user's apacheid.json, write form data, checkin file)
 # @return true if we think it succeeded; false in all other cases
 def submit_survey(formdata: {})
-  fn = "#{formdata[:datafile]}.json".untaint # TODO: check path/file here
+  fn = get_survey_path(formdata[:datafile]).untaint
   submission_data = JSON.pretty_generate(formdata) + "\n"
   _div.well do
     _p.lead "Submitting your survey data to: #{fn}"
@@ -111,56 +125,16 @@ For now, see the code for more help, or contact dev@whimsical for questions on h
   submitpass: 'This *markdown-able* message would be displayed after a successful svn commit of survey data.',
   submitfail: 'This *markdown-able* message would be displayed after a **FAILED** svn commit of survey data.',
   form: {
-    title: 'Survey Form Title',
-    buttonhelp: 'This sample survey won\'t work, but you can still press Submit below!',
-    buttontext: 'Submit',
+    title: 'Survey Help',
+    buttonhelp: 'This sample survey won\'t work, but you can still press the button below if you like!',
+    buttontext: 'Do Not Press',
     fields: [
-      {
-        name: 'field1',
-        type: 'text',
-        label: 'This field is:',
-        helptext: 'This text would explain the field1 (optional)'
-      },
-      {
-        name: 'field2',
-        type: 'text',
-        rows: '3',
-        label: 'This is multiline:',
-        helptext: 'This text would explain the field2 (optional)'
-      },
-      {
-        name: 'subhead',
-        type: 'subhead',
-        label: 'This is a form separator'
-      },
-      {
-        name: 'field4',
-        type: 'select',
-        label: 'Select some values',
-        helptext: 'This text would explain why you should select many values (required)',
-        multiple: true,
-        options: ['First', 'Second', 'Penultimate', 'Last place', '2First', '2Second', '2Penultimate', '2Last place', 'aFirst', 'aSecond', 'aPenultimate', 'aLast place']
-      },
-      {
-        name: 'field5',
-        type: 'radio',
-        label: 'Radiobuttons:',
-        helptext: 'Please tune in the radio (optional)',
-        options: ['99.8', '100.0', '100.2', '100.4']
-      },
-      {
-        name: 'field6',
-        type: 'checkbox',
-        label: 'Checkboxes:',
-        helptext: 'Check one, check them all, have fun! (optional)',
-        options: ['Abbot', 'Costello', 'Marx', 'Three Stooges']
-      }
     ]
   }
 }
 
 # Load survey layout hash from QUERY_STRING ?survey=surveyname
-# @return {} of form layout data for survey; or a default layout of help with ERRORS also set
+# @return {PARAMS: {}, SURVEY: {}, ERRORS: ""} of form layout data for survey; or a default layout of help with ERRORS also set
 # Note: does not validate that the survey has a place to store data; only that the layout exists
 def get_survey_layout(query)
   params = {}
@@ -170,7 +144,7 @@ def get_survey_layout(query)
   end
   data = {}
   data[PARAMS] = params
-  filename = File.join(OFFICERS_SURVEYS, "#{params['survey']}.json".gsub(/[^0-9A-Z.-]/i, '_')) # Use 'survey' as string here; sanitize input
+  filename = get_survey_path(params['survey'])
   begin
     data[SURVEY] = JSON.parse(File.read(filename.untaint), :symbolize_names => true) # TODO: Security, ensure user should have access
   rescue StandardError => e
@@ -208,9 +182,9 @@ _html do
         formdata = _whimsy_params2formdata(_.params)
         formdata[:datafile] = survey_layout[SURVEY][:datafile] # Also pass thru datafile from layout
         if validate_survey(formdata: formdata) && submit_survey(formdata: formdata)
-            display_alert(lead: 'Survey Submitted', body: survey_layout[SURVEY][:submitpass], type: 'alert-success')
-          else
-            display_alert(lead: 'Submission Failed', body: survey_layout[SURVEY][:submitfail])
+          display_alert(lead: 'Survey Submitted', body: survey_layout[SURVEY][:submitpass], type: 'alert-success')
+        else
+          display_alert(lead: 'Submission Failed', body: survey_layout[SURVEY][:submitfail])
         end
       else # if _.post?
         display_survey(survey_layout)
@@ -218,3 +192,4 @@ _html do
     end
   end
 end
+
