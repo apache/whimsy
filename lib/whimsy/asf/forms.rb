@@ -35,6 +35,10 @@ class Wunderbar::HtmlMarkup
       _span.input_group_addon do
         _span.glyphicon class: "#{args[:icon]}", aria_label: "#{args[:iconlabel]}"
       end
+    elsif ['radio', 'checkbox'].include?(args[:type])
+      # No-op: do not include blank addon for these controls
+    else
+      _span.input_group_addon # HACK: include blank addon to ensure consistent sizing
     end
   end
 
