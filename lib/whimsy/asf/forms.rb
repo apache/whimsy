@@ -4,6 +4,25 @@ require 'wunderbar/markdown'
 # Define common page features for whimsy tools using bootstrap styles
 class Wunderbar::HtmlMarkup
 
+  # Emit a form control based on a hash of options with a type:
+  def _whimsy_field_chooser(**args)
+    case args[:type]
+    when 'subhead'
+      _whimsy_forms_subhead label: args[:label]
+    when 'text'
+      _whimsy_forms_input args
+    when 'textarea'
+      args[:rows] ||= '3'
+      _whimsy_forms_input args
+    when 'select'
+      _whimsy_forms_select args
+    when 'radio', 'checkbox'
+      _whimsy_forms_checkradio args
+    else
+      _div "#{__method__}(#{args[:type]}) TODO: Error condition?"
+    end
+  end
+
   # Utility function to add icons after form controls
   def _whimsy_forms_iconlink(**args)
     if args[:iconlink]
@@ -37,6 +56,14 @@ class Wunderbar::HtmlMarkup
     end
   end
 
+  # Display a subheader separator between sections of a form
+  # @param text string to display
+  def _whimsy_forms_subhead(label: 'Form Section')
+    _div.form_group do
+      _label.col_sm_offset_3.col_sm_9.strong.text_left label
+    end
+  end
+  
   # Display a single input control within a form; or if rows, then a textarea
   # @param name required string ID of control's label/id
   def _whimsy_forms_input(**args)
@@ -60,12 +87,13 @@ class Wunderbar::HtmlMarkup
   # Display an optionlist control within a form
   # @param name required string ID of control's label/id
   # @param options required ['value'] or {"value" => 'Label for value'} of all selectable values
-  # @param values required 'value' or ['value'] or {"value" => 'Label for value'} of all selected values
+  # @param values 'value' or ['value'] or {"value" => 'Label for value'} of all selected values
   # @param placeholder Currently displayed text if passed (not selectable)
   def _whimsy_forms_select(**args)
     return unless args[:name]
-    return unless args[:values]
+    return unless args[:options]
     args[:label] ||= 'Select value(s)'
+    args[:values] ||= []
     args[:id] = args[:name]
     args[:aria_describedby] = "#{args[:name]}_help" if args[:helptext]
     _whimsy_control_wrapper(args) do 
@@ -104,12 +132,9 @@ class Wunderbar::HtmlMarkup
     end
   end
 
-  CHECKBOX = 'checkbox'
-  RADIO = 'radio'
-
   # Display a list of radio or checkbox controls
   # @param name required string ID of control's label/id
-  # @param type required CHECKBOX|RADIO
+  # @param type required FORM_CHECKBOX|FORM_RADIO
   # @param options required ['value'...] or {"value" => 'Label for value'} of all values
   # @param selected optional 'value' or ['value'...] of all selected values
   def _whimsy_forms_checkradio(**args)
@@ -121,7 +146,6 @@ class Wunderbar::HtmlMarkup
     args[:aria_describedby] = "#{args[:name]}_help" if args[:helptext]
     args[:selected] = [args[:selected]] if args[:selected].kind_of?(String)
     _whimsy_control_wrapper(args) do 
-
       # Construct list of all :options; mark any that are in :selected 
       if args[:options].kind_of?(Array)
         args[:options].each do |val|
@@ -139,6 +163,16 @@ class Wunderbar::HtmlMarkup
         end
       end
     end
+  end
+
+  # Gather POST form data into submission Hash
+  # @returns {field: 'string', field2: ['array', 'only for', 'multivalue'] ...}
+  def _whimsy_params2formdata(params)
+    formdata = {}
+    params.each do |k,v|
+      v && (v.length == 1) ? formdata[k] = v[0] : formdata[k] = v
+    end
+    return formdata
   end
 
 end
