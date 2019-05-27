@@ -44,4 +44,5 @@ notifications:
   # https://issues.apache.org/jira/browse/INFRA-11080
   # https://github.com/apache/infrastructure-puppet/pull/319
   email:
+  # Must use specific host name (whimsy-vmn.apache.org)
   - travis@whimsy-vm4.apache.org
