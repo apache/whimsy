@@ -14,7 +14,7 @@ require 'whimsy/asf/rack'
 require 'json'
 require 'cgi'
 
-OFFICERS_SURVEYS = ASF::SVN['officers_surveys']
+OFFICERS_SURVEYS = 'officers_surveys'
 SURVEY = :survey
 ERRORS = :errors
 PARAMS = :params
@@ -39,7 +39,12 @@ def get_survey_path(f)
   filename ||= 'NO_DATAFILE_GIVEN' # For display in errors later
   filename.gsub!(/[^0-9A-Z.-]/i, '_') # Sanitize input (should only be a filename)
   filename << DOTJSON if not filename.end_with?(DOTJSON)
-  return File.join(OFFICERS_SURVEYS, filename)
+  # test
+  begin
+    return File.join(ASF::SVN[OFFICERS_SURVEYS], filename)
+  rescue Exception => e
+    return "ERROR-NO-OFFICERS_SURVEYS-CHECKOUT" # Improve error display in browser
+  end
 end
 
 # Emit HTML for a survey_layout form, or display any errors in response to a GET
@@ -95,15 +100,38 @@ end
 # Handle POST submission (checkout user's apacheid.json, write form data, checkin file)
 # @return true if we think it succeeded; false in all other cases
 def submit_survey(formdata: {})
-  fn = get_survey_path(formdata[:datafile]).untaint
+  filename = get_survey_path(formdata[:datafile]).untaint
+  formdata.delete(:datafile)
   submission_data = JSON.pretty_generate(formdata) + "\n"
   _div.well do
-    _p.lead "Submitting your survey data to: #{fn}"
+    _p.lead "Submitting your survey data to: #{filename}"
     _pre submission_data
-    _p "DEBUG: not sending any data for testing! 20190525-sc DEBUG: need to add to existing file, not overwrite"
   end
-  return true # DEBUG: not sending any data for testing! 20190525-sc
-  # TODO svn checkout, add data as $USER => {submission_data...}
+
+  rc = 999 # Ensure it's a bogus value
+  Dir.mktmpdir do |tmpdir|
+    tmpdir.untaint
+    credentials = ['--username', $USER, '--password', $PASSWORD]
+    svnopts = ['--depth',  'files', '--no-auth-cache', '--non-interactive']
+    _.system ['svn', 'checkout', OFFICERS_SURVEYS, tmpdir, svnopts, credentials]
+    
+    survey_data = JSON.parse(File.read(filename), :symbolize_names => true)
+    # Add user data (may overwrite existing entry!)
+    survey_data[$USER] = formdata
+    # Sort file (to keep diff clean) and write it back
+    survey_data = Hash[survey_data.keys.sort.map {|k| [k, survey_data[k]]}]
+    File.write(filename, JSON.pretty_generate(survey_data))
+
+    _p "DEBUG: not sending any data for testing! 20190525-sc"
+    _p JSON.pretty_generate(survey_data) # DEBUG
+    
+    Dir.chdir tmpdir do
+      # rc = _.system ['svn', 'commit', filename, '--message', "Survey submission (whimsy)",
+      #   ['--no-auth-cache', '--non-interactive'], credentials]
+    end
+  end
+  
+    return false
 end
 
 DEFAULT_SURVEY = {
