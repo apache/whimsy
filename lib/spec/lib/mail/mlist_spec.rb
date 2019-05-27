@@ -27,7 +27,9 @@ describe ASF::MLIST do
         expect(dom.class).to eq(String)
         expect(list.class).to eq(String)
         expect(arches.class).to eq(Array)
-        expect(arches[0].length).to eq(3)
+        arches.each do |arch|
+          expect(arch.length).to eq(3)
+        end
       end
     end
   end
