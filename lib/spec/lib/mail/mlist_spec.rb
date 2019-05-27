@@ -6,6 +6,12 @@ require 'whimsy/asf/mlist' # not loaded by default
 
 describe ASF::MLIST do
 
+  describe "Dummy test to trigger Travis error" do
+    it "Should fail" do
+      expect(%x(ls /srv)).to eq('')      
+    end
+  end
+
   describe "ASF::MLIST.members_subscribers" do
     it "should return an array of members@ subscribers followed by the file update time", :skip => TEST_DATA do
       res = ASF::MLIST.members_subscribers()
