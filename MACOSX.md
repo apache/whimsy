@@ -119,23 +119,23 @@ ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-darwin17]
 You need at least version 2.4.1 to match the currently deployed Whimsy server.
 If you don't see 2.3.1 or later, run `hash -r` and try again.  If you still need 
 to update your ruby, proceed using one of the common ruby version managers:
-Homebrew (may not work as of 2019), rbenv (known to work), or rvm.
+Homebrew (may not work as of 2019; this is due to library updates in Ruby 2.6.x), rbenv (known to work), or rvm.
 
 If using rbenv, install:
 
 ```
 $ brew install rbenv
-$ rbenv install 2.5.1
+$ cd /srv/whimsy && rbenv install
 $ rbenv init
 ```
 Follow directions to ensure rbenv is setup in your shell(s), and double-check your ruby version. 
-You may need to also `rbenv global 2.5.1` to ensure that version is used in new shells and elsewhere.
-
-**If you encounter errors later**, you may need to use `ln -s` in `/usr/local/bin` for both `ruby` and `gem` pointing to the locations where `rbenv` installed ruby in your home directory, like so:
+Note the PATH changes that `rbenv init -` configures; you'll need to duplicate it in your httpd conf later.
+To use this globally when invoked through rbenv shims, you can use `rbenv global $VERSION` to set that where `$VERSION` is the version in `/srv/whimsy/.ruby-version`.
+To set this system-wide, you can link the specific versions of `ruby` and `gem` in rbenv to `/usr/local/bin` like so:
 
 ```
-ln -s /usr/local/bin/ruby /Users/${user}/.rbenv/versions/2.5.1/bin/ruby
-ln -s /usr/local/bin/gem /Users/${user}/.rbenv/versions/2.5.1/bin/gem
+ln -s /usr/local/bin/ruby $HOME/.rbenv/versions/2.5.5/bin/ruby
+ln -s /usr/local/bin/gem $HOME/.rbenv/versions/2.5.5/bin/gem
 ```
 
 Install Node.js
@@ -176,6 +176,8 @@ sudo gem install ruby2js
 sudo gem install rack rake
 sudo gem install crass json sanitize
 ```
+
+* NOTE: `sudo` not required when using rbenv
 
 Verify:
 
@@ -273,7 +275,7 @@ brew install openldap # --with-sssvlv
 brew reinstall -s apr-util # --with-openldap
 brew reinstall -s apache-httpd
 ```
-Note: if you encounter problems, double-check that the edits made to homebrew-core/Formula/* you made earlier are still there; if you happened to brew update, they may get overwritten.
+Note: if you encounter problems, double-check that the edits made to homebrew-core/Formula/\* you made earlier are still there; if you happened to brew update, they may get overwritten.
 
 Install passenger
 -------------------
@@ -285,7 +287,9 @@ mkdir /usr/local/opt/httpd/conf
 
 create `/usr/local/opt/httpd/conf/passenger.conf` from the output from `brew info passenger` (note new location of passenger.conf file: was `/etc/apache2/other`).
 
- * Change `/usr/bin/ruby` to where you have Ruby installed.  If you followed the instructions above, this will be `/usr/local/bin/ruby`.  If you use rbenv or another tool to manage your Ruby installs, use that location instead.
+ * Change `/usr/bin/ruby` to where you have Ruby installed.
+   * If you followed the instructions above, this will be `/usr/local/bin/ruby`.
+   * If using rbenv, this should be `$HOME/.rbenv/shims/ruby`.
  * Optional: add `PassengerUser _www` and `PassengerGroup _www` lines if you would like your passenger applications to run under the web user.
 
 Configure `whimsy.local`
@@ -297,6 +301,7 @@ edit `/usr/local/opt/httpd/conf/whimsy.conf`:
 
    * change `:80` to `:8080`
    * change `ErrorLog` and `Custlog` to `/usr/local/var/log/httpd/whimsy_error.log` and `/usr/local/var/log/httpd/whimsy_access.log` respectively.
+   * if using rbenv, change `SetEnv` line to `SetEnv PATH ${HOME}/.rbenv/shims:/usr/local/bin:${PATH}`
 
 Complete Apache configuration
 ------------------
@@ -403,7 +408,7 @@ $ curl -s whimsy.local:8080 | grep '<title>'
 
 Verify:
 
-Check that the server information includes 'Phusion_Passenger':
+Check that the server information includes 'Phusion\_Passenger':
 
 ```
 $ curl --head whimsy.local:8080
