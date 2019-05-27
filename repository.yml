@@ -80,6 +80,9 @@
   officers_historic:
     url: private/foundation/officers/historic
 
+  officers_surveys:
+    url: private/foundation/officers/surveys
+
 # for access to badrcptto files:
   qmail_control:
     url: infra/infrastructure/trunk/qmail/control
