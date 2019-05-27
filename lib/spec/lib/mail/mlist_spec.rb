@@ -8,7 +8,8 @@ describe ASF::MLIST do
 
   describe "Dummy test to trigger Travis error" do
     it "Should fail" do
-      expect(%x(ls /srv)).to eq('')      
+      expect(%x(touch /srv/test.tmp)).to eq('')      
+      expect(%x(ls -l /srv/test.tmp)).to eq('x')      
     end
   end
 
