@@ -27,10 +27,14 @@ describe ASF::Mail do
 
   describe '.cansub(member, pmc_chair, ldap_pmcs)' do
     lists = ASF::Mail.cansub(false, false, nil)
-    it 'should return public lists only', :skip => TEST_DATA do
+    it 'should return public lists only' do
       whitelist = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'concom', 'party']
       board = ['board', 'board-commits', 'board-chat']
-      expect(lists.length).to be >= 1000 
+      if TEST_DATA
+        expect(lists.length).to be >= 7 
+      else
+          expect(lists.length).to be >= 1000
+      end
       expect(lists).not_to include('private')
       expect(lists).not_to include('security')
       expect(lists).to include(*whitelist)
@@ -40,7 +44,7 @@ describe ASF::Mail do
       mylists = ASF::Mail.cansub(false, false, []) - lists
       expect(mylists.length).to be(0)
     end
-    it 'should return private PMC lists', :skip => TEST_DATA do
+    it 'should return private PMC lists' do
       mylists = ASF::Mail.cansub(false, false, ['ant','whimsical']) - lists
       expect(mylists.length).to be(2)
       expect(mylists).to include('ant-private','whimsical-private')
@@ -49,8 +53,12 @@ describe ASF::Mail do
       mylists = ASF::Mail.cansub(false, false, ['xxxant','xxxwhimsical']) - lists
       expect(mylists.length).to be(0)
     end
-    it 'should return private PPMC lists', :skip => TEST_DATA do
-      podnames = ASF::Podling.current.map(&:name)
+    it 'should return private PPMC lists' do
+      if TEST_DATA
+        podnames = ['pod1','pod2']
+      else
+        podnames = ASF::Podling.current.map(&:name)
+      end
       mylists = ASF::Mail.cansub(false, false, podnames) - lists
       expect(mylists.length).to be_between(podnames.length-2, podnames.length).inclusive # mailing list may not be set up yet
     end

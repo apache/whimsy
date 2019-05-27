@@ -1,0 +1,17 @@
+# Sample archive data for testing
+ "jobs", "/home/apmail/private-arch/",
+ "infra-users", "/home/apmail/private-arch/",
+ "site-dev", "/home/apmail/public-arch/",
+ "site-cvs", "/home/apmail/private-arch/",
+ "committers-cvs", "/home/apmail/private-arch/",
+ "concom", "/home/apmail/private-arch/",
+ "party", "/home/apmail/private-arch/",
+ "board", "/home/apmail/private-arch/",
+ "board-commits", "/home/apmail/private-arch/",
+ "board-chat", "/home/apmail/private-arch/",
+ "ant-private", "/home/apmail/private-arch/",
+ "whimsical-private", "/home/apmail/private-arch/",
+ "pod1-commits", "/home/apmail/public-arch/",
+ "pod2-dev", "/home/apmail/public-arch/",
+ "pod3-private", "/home/apmail/private-arch/",
+ 
