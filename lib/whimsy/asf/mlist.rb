@@ -230,7 +230,7 @@ module ASF
 
     private
 
-    # return the archiver type as array: [:MBOX|:PONY|:MINO|:MAIL_ARCH|:MARKMAIL, 'public'|'private'|'alias'|'direct']
+    # return the archiver type as array: [:MBOX|:PONY|:MINO|:MAIL_ARCH|:MARKMAIL|:WHIMSY, 'public'|'private'|'alias'|'direct']
     # minotaur archiver names do not include any public/private indication as that is in bin/.archives
     def self.archiver_type(email, dom,list)
       case email
@@ -245,6 +245,8 @@ module ASF
         when "apmail-#{dom.split('.').first}-#{list}-archive@www.apache.org" then return [:MINO, 'direct']
       else
         return [:MARKMAIL, 'public'] if is_markmail_archiver?(email)
+        # Whimsy currently only 'archives' private lists
+        return [:WHIMSY, 'private'] if is_whimsy_archiver?(email)
       end
       raise "Unexpected archiver email #{email} for #{list}@#{dom}" # Should not happen?
     end
