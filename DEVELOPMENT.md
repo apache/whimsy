@@ -75,8 +75,8 @@ or read the [detailed MACOSX setup steps](MACOSX.md).
 
     For more information:
 
-    1. [Understanding rbenv Shims](https://github.com/sstephenson/rbenv#understanding-shims)
-    2. [Understanding rbenv Binstubs](https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs)
+    1. [Understanding rbenv Shims](https://github.com/rbenv/rbenv#understanding-shims)
+    2. [Understanding rbenv Binstubs](https://github.com/rbenv/rbenv/wiki/Understanding-binstubs)
     3. [Ruby Version Manager - rvm](https://rvm.io/)
 
 
