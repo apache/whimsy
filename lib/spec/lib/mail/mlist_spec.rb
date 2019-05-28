@@ -7,7 +7,7 @@ require 'whimsy/asf/mlist' # not loaded by default
 describe ASF::MLIST do
 
   describe "ASF::MLIST.members_subscribers" do
-    it "should return an array of members@ subscribers followed by the file update time", :skip => TEST_DATA do
+    it "should return an array of members@ subscribers followed by the file update time" do
       res = ASF::MLIST.members_subscribers()
       expect(res.class).to eq(Array)
       expect(res.length).to eq(2)
@@ -19,7 +19,7 @@ describe ASF::MLIST do
   end
 
   describe "ASF::MLIST.list_archivers" do
-    it "should return array of form [dom, list, [[archiver, type, alias|direct],...]", :skip => TEST_DATA do
+    it "should return array of form [dom, list, [[archiver, type, alias|direct],...]" do
       ASF::MLIST.list_archivers do |res|
         expect(res.class).to eq(Array)
         expect(res.length).to eq(3)
@@ -35,7 +35,7 @@ describe ASF::MLIST do
   end
 
   describe "ASF::MLIST.moderates(user_emails, response)" do
-    it "should not find any entries for invalid emails", :skip => TEST_DATA do
+    it "should not find any entries for invalid emails" do
       user_emails=['user@localhost', 'user@domain.invalid']
       res = ASF::MLIST.moderates(user_emails)
       expect(res.length).to eq(2)
@@ -43,7 +43,7 @@ describe ASF::MLIST do
       expect(mods.length).to eq(0)
     end
 
-    it "should find some entries for mod-private@gsuite.cloud.apache.org", :skip => TEST_DATA do
+    it "should find some entries for mod-private@gsuite.cloud.apache.org" do
       user_emails=['mod-private@gsuite.cloud.apache.org']
       res = ASF::MLIST.moderates(user_emails)
       expect(res.length).to eq(2)
@@ -53,7 +53,7 @@ describe ASF::MLIST do
   end
 
   describe "ASF::MLIST.subscriptions(user_emails, response)" do
-    it "should not find any entries for invalid emails", :skip => TEST_DATA do
+    it "should not find any entries for invalid emails" do
       user_emails=['user@localhost', 'user@domain.invalid']
       res = ASF::MLIST.subscriptions(user_emails)
       expect(res.length).to eq(2)
@@ -62,7 +62,7 @@ describe ASF::MLIST do
     end
   end
 
-  it "should find lots of entries for archiver@mbox-vm.apache.org", :skip => TEST_DATA do
+  it "should find lots of entries for archiver@mbox-vm.apache.org" do
     user_emails=['archiver@mbox-vm.apache.org']
     res = ASF::MLIST.subscriptions(user_emails)
     expect(res.length).to eq(2)
@@ -71,7 +71,7 @@ describe ASF::MLIST do
   end
 
   describe "ASF::MLIST.each_list" do
-    it "should return an array of form [[dom, list],...]", :skip => TEST_DATA do
+    it "should return an array of form [[dom, list],...]" do
       ASF::MLIST.each_list do |res|
         expect(res.class).to eq(Array)
         expect(res.length).to eq(2)
