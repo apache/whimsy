@@ -8,6 +8,7 @@ describe ASF::MLIST do
 
   describe "Dummy test to trigger Travis error" do
     it "Should fail" do
+      %x(sudo mkdir /srv/subscriptions)
       expect(%x(ls -ld /srv)).to eq('x')      
     end
   end
