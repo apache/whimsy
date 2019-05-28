@@ -5,3 +5,4 @@ Gemfile.lock
 work
 .idea/
 .subversion
+.rakeTasks
