@@ -43,11 +43,12 @@ class Wunderbar::HtmlMarkup
   end
 
   # Utility function for divs around form controls, including help
+  # Note: passes :groupclass thru to input-group control for styling
   def _whimsy_control_wrapper(**args)
     _div.form_group do
       _label.control_label.col_sm_3 args[:label], for: "#{args[:name]}"
       _div.col_sm_9 do
-        _div.input_group do
+        _div! class: "input-group #{args[:groupclass]}" do
           yield
           _whimsy_forms_iconlink(args)
         end
@@ -154,14 +155,14 @@ class Wunderbar::HtmlMarkup
       if args[:options].kind_of?(Array)
         args[:options].each do |val|
           checked = true if args[:selected] && args[:selected].include?(val.to_s)
-          _input type: args[:type], name: args[:name], id: args[:id], value: val, class: args[:class], aria_describedby: args[:aria_describedby], checked: checked do
+          _input! type: args[:type], name: args[:name], id: args[:id], value: val, class: args[:class], aria_describedby: args[:aria_describedby], checked: checked do
             _! val
           end
         end
       elsif args[:options].kind_of?(Hash)
         args[:options].each do |val, disp|
           checked = true if args[:selected] && args[:selected].include?(val.to_s)
-          _input type: args[:type], name: args[:name], id: args[:id], value: val, class: args[:class], aria_describedby: args[:aria_describedby], checked: checked do
+          _input! type: args[:type], name: args[:name], id: args[:id], value: val, class: args[:class], aria_describedby: args[:aria_describedby], checked: checked do
             _! disp
           end
         end
