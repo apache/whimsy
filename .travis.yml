@@ -35,7 +35,7 @@ before_script:
   - export rvmsudo_secure_path=1
   - rvmsudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
   - sudo mkdir /srv/subscriptions
-  - sudo cp lib/test/subscriptions /srv/subscriptions
+  - sudo cp lib/test/subscriptions/list-* /srv/subscriptions
 
 ########################################################################
 #                             Notification                             #
