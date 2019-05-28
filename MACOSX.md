@@ -376,7 +376,8 @@ apachectl restart
  * `sudo lsof -i:8080` may be helpful should you find that another process
    already has port 8080 open.
  * `apachectl restart` is how you restart apache; `brew services start` itself is for
-   controlling what processes automatically start at startup.
+   controlling what processes automatically start at startup. There is a `brew services restart httpd`
+   command that gracefully stops and starts apache which takes a bit longer than using `apachectl restart`.
  * If `curl` gives `Connection refused` then try kicking httpd:
     * `apachectl stop`
     * `httpd`
