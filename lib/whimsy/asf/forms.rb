@@ -155,15 +155,19 @@ class Wunderbar::HtmlMarkup
       if args[:options].kind_of?(Array)
         args[:options].each do |val|
           checked = true if args[:selected] && args[:selected].include?(val.to_s)
-          _input! type: args[:type], name: args[:name], id: args[:id], value: val, class: args[:class], aria_describedby: args[:aria_describedby], checked: checked do
-            _! val
+          _label class: "#{args[:type]}-inline" do
+            _input! type: args[:type], name: args[:name], id: args[:id], value: val, class: args[:class], aria_describedby: args[:aria_describedby], checked: checked do
+              _! val
+            end
           end
         end
       elsif args[:options].kind_of?(Hash)
         args[:options].each do |val, disp|
           checked = true if args[:selected] && args[:selected].include?(val.to_s)
-          _input! type: args[:type], name: args[:name], id: args[:id], value: val, class: args[:class], aria_describedby: args[:aria_describedby], checked: checked do
-            _! disp
+          _label class: "#{args[:type]}-inline" do
+            _input! type: args[:type], name: args[:name], id: args[:id], value: val, class: args[:class], aria_describedby: args[:aria_describedby], checked: checked do
+              _! disp
+            end
           end
         end
       end
