@@ -128,7 +128,8 @@ class Wunderbar::HtmlMarkup
       relatedtitle: 'Related Whimsy Links', 
       related: nil, 
       helpblock: nil,
-      breadcrumbs: nil
+      breadcrumbs: nil,
+      style: 'panel-info'
     )
     _whimsy_nav
     _div.content.container_fluid do
@@ -140,7 +141,7 @@ class Wunderbar::HtmlMarkup
       if helpblock or related
         _div.row do
           _div.col_md_8 do
-            _whimsy_panel subtitle, style: "panel-info" do
+            _whimsy_panel subtitle, style: style do
               if helpblock
                 helpblock.call
               else
