@@ -14,7 +14,6 @@ require 'whimsy/asf/rack'
 require 'json'
 require 'cgi'
 
-OFFICERS_SURVEYS = 'officers_surveys'
 SURVEY = :survey
 ERRORS = :errors
 PARAMS = :params
@@ -31,6 +30,16 @@ def display_alert(lead: 'Error', body: '', type: 'alert-danger')
   end
 end
 
+# Convenience method to get root dir for surveys
+# TODO factor out common survey tools into library, allowing separate members/committers surveys
+def get_survey_root(asfsvn = false)
+  if asfsvn
+    return 'officers_surveys'
+  else
+    return 'https://svn.apache.org/repos/private/foundation/officers/surveys/'
+  end
+end
+
 # Convenience method to sanitize/construct paths to .json
 # @param filename to request, either a layout or datafile
 # @return sanitized path/filename
@@ -41,7 +50,7 @@ def get_survey_path(f)
   filename << DOTJSON if not filename.end_with?(DOTJSON)
   # test
   begin
-    return File.join(ASF::SVN[OFFICERS_SURVEYS], filename)
+    return File.join(ASF::SVN[get_survey_root(true)], filename)
   rescue Exception => e
     return "ERROR-NO-OFFICERS_SURVEYS-CHECKOUT" # Improve error display in browser
   end
@@ -49,7 +58,7 @@ end
 
 # Emit HTML for a survey_layout form, or display any errors in response to a GET
 # Currently, user can only submit a survey_data once
-# @param hash containing entire survey layout
+# @param hash containing [SURVEY][FORM] => entire survey layout
 def display_survey(survey_layout)
   warning = false
   survey_file = get_survey_path(survey_layout[SURVEY][:datafile]).untaint
@@ -61,7 +70,7 @@ def display_survey(survey_layout)
       survey_data = JSON.parse(File.read(survey_file), :symbolize_names => true)
       # Check if the user has already submitted this survey
       if survey_data.has_key?($USER.to_sym)
-        display_alert(lead: 'Warning: User already submitted survey data!', body: "#{__method__}(#{survey_file}) You appear to have **already submitted** this survey data (can't submit again); if needed edit the survey.json in SVN, or contact the survey owner: #{survey_layout[SURVEY][CONTACT]}.")
+        display_alert(lead: 'Warning: User already submitted survey data!', body: "#{__method__}(#{survey_file}) You appear to have **already submitted** this survey data; you may want to edit the survey.json in SVN, or contact the survey owner: #{survey_layout[SURVEY][CONTACT]}.")
         warning = true
       end
     rescue StandardError => e
@@ -88,8 +97,6 @@ def display_survey(survey_layout)
       end
     end
   end
-  
-  display_alert(lead: "DEBUG: survey_layout data was", body: survey_layout.inspect, type: 'alert-warning')
 end
 
 # Validation as needed within the script
@@ -97,15 +104,15 @@ def validate_survey(formdata: {})
   return true # TODO: Futureuse
 end
 
-# Handle POST submission (checkout user's apacheid.json, write form data, checkin file)
+# Handle POST submission (checkout survey data, add user's submission, checkin file)
 # @return true if we think it succeeded; false in all other cases
 def submit_survey(formdata: {})
   filename = get_survey_path(formdata[:datafile]).untaint
-  formdata.delete(:datafile)
+  formdata.delete(:datafile) # Remove before generating output
   submission_data = JSON.pretty_generate(formdata) + "\n"
   _div.well do
     _p.lead "Submitting your survey data to: #{filename}"
-    _pre submission_data
+    _pre "(#{$USER})\n#{submission_data}"
   end
 
   rc = 999 # Ensure it's a bogus value
@@ -113,25 +120,25 @@ def submit_survey(formdata: {})
     tmpdir.untaint
     credentials = ['--username', $USER, '--password', $PASSWORD]
     svnopts = ['--depth',  'files', '--no-auth-cache', '--non-interactive']
-    _.system ['svn', 'checkout', OFFICERS_SURVEYS, tmpdir, svnopts, credentials]
+    _.system ['svn', 'checkout', get_survey_root(), tmpdir, svnopts, credentials]
     
     survey_data = JSON.parse(File.read(filename), :symbolize_names => true)
     # Add user data (may overwrite existing entry!)
     survey_data[$USER] = formdata
     # Sort file (to keep diff clean) and write it back
     survey_data = Hash[survey_data.keys.sort.map {|k| [k, survey_data[k]]}]
-    File.write(filename, JSON.pretty_generate(survey_data))
 
-    _p "DEBUG: not sending any data for testing! 20190525-sc"
-    _p JSON.pretty_generate(survey_data) # DEBUG
-    
+    File.write(filename, JSON.pretty_generate(survey_data))
     Dir.chdir tmpdir do
       # rc = _.system ['svn', 'commit', filename, '--message', "Survey submission (whimsy)",
       #   ['--no-auth-cache', '--non-interactive'], credentials]
     end
   end
-  
+  if rc == 0
+    return true
+  else
     return false
+  end
 end
 
 DEFAULT_SURVEY = {
