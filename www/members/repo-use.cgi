@@ -5,6 +5,7 @@ require 'whimsy/asf'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require '../../tools/wwwdocs.rb'
+require 'whimsy/logparser'
 
 _html do
   _body? do
@@ -20,7 +21,8 @@ _html do
       },
       helpblock: -> {
         _p.pull_right do
-          _ 'This scans the whimsy repo for uses of ASF::SVN, either public or private repos.  It also shows the httpd auth level required to run a script: the graphical key shows which authentication realm is needed.'
+          _ 'This scans the whimsy repo for uses of ASF::SVN, either public or private repos.  It also shows the httpd auth level required to run a script: the graphical key shows which authentication realm is needed.  See also the '
+          _a 'listing of all repos used by some common tools.', href: '#majortools'
         end
         emit_authmap
       }
@@ -29,6 +31,7 @@ _html do
       priv = build_regexp(priv)
       pub = build_regexp(pub)
       scan = scan_dir_svn('../../', [priv, pub])
+      
       _whimsy_panel_table(title: 'Repo use by script') do
         _table.table.table_hover do
           _thead_ do
@@ -70,6 +73,28 @@ _html do
           end
         end
       end
+
+      _whimsy_panel('All repo use by major tools') do
+        _ul.list_group id: 'majortools' do
+          LogParser::WHIMSY_APPS.each do |path, app|
+            # collect tool's worth of lines
+            tmp, scan = scan.partition{ |dir, v| dir.match(path) }.map(&:to_h)
+            tool = []
+            tmp.each do |file, (privlines, publines, wwwauth, authrealm)|
+              [privlines, publines].flatten.each do |x|
+                tool << "#{x}" if x.length > 0 
+              end
+            end
+            _li!.list_group_item.active do
+              _ "#{app} (#{path})"
+            end
+            tool.uniq.sort.each do |itm|
+              _li.list_group_item "#{itm}"
+            end
+          end
+        end
+      end
+      
     end
   end
 end
