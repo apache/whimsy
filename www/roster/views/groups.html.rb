@@ -5,25 +5,19 @@
 _html do
   _base href: '..'
   _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
-
-  _banner breadcrumbs: {
-    roster: '.',
-    group: 'group/'
-  }
   _body? do
     _whimsy_body(
       title: 'ASF Non-PMC Group list',
-      breadcrumbs: {
-        roster: '.',
-        group: 'group/'
-      }
-    ) do
-      # ********************************************************************
-      # *                             Summary                              *
-      # ********************************************************************
-      _div.row do
-        _div.col_md_5 do
-          _div.well.well_sm do
+      relatedtitle: 'See Other Group Listings',
+      related: {
+        "/roster/committee" => "Active projects at the ASF",
+        "/roster/ppmc" => "Active podlings at the ASF",
+        "/roster/nonpmc" => "ASF Committees (non-PMC)",
+        "/roster/orgchart" => "High level org chart",
+      },
+      helpblock: -> {
+        _div.row do
+          _div.col_sm_4 do
             _table.counts do
               @groups.group_by(&:last).sort.each do |name, list|
                 _tr do
@@ -33,16 +27,20 @@ _html do
               end
             end
           end
-        end
-        _div.col_md_6 do
-          _p do
-            _ 'This data is for non-PMC groups, including unix groups and other LDAP groups; many of which are '
-            _span.glyphicon.glyphicon_lock :aria_hidden, class: 'text-primary', aria_label: 'ASF Members Private'
-            _ ' private to the ASF.'
+          _div.col_sm_8 do
+            _p do
+              _ 'This data is for non-PMC groups, including unix groups and other LDAP groups; many of which are '
+              _span.glyphicon.glyphicon_lock :aria_hidden, class: 'text-primary', aria_label: 'ASF Members Private'
+              _ ' private to the ASF.'
+            end
           end
         end
-      end
-
+      },
+      breadcrumbs: {
+        roster: '.',
+        group: 'group/'
+      }
+    ) do
       # ********************************************************************
       # *                          Complete list                           *
       # ********************************************************************
