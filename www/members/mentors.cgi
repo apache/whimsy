@@ -9,6 +9,7 @@ require 'json'
 
 require_relative 'mentor-format'
 MENTORS_LIST = 'mentors'
+MENTORS_SVN = 'foundation_mentors'
 
 # Read apacheid.json and add data to mentors hash (side effect)
 # mentors[id][ERRORS] = "If errors rescued during read/find in ASF::Person"
@@ -42,10 +43,7 @@ end
 # produce HTML
 _html do
   _body? do
-    uimap = MentorFormat::get_uimap(ASF::SVN['foundation_mentors'])
-    mentors = read_mentors(ASF::SVN['foundation_mentors'])
-    errors, mentors = mentors.partition{ |k,v| v.has_key?(MentorFormat::ERRORS)}.map(&:to_h)
-    notavailable, mentors = mentors.partition{ |k,v| v.has_key?(MentorFormat::NOTAVAILABLE)}.map(&:to_h)
+    uimap = mentors = errors = notavailable = {} # Fill in later in case of errors
     _whimsy_body(
       title: PAGETITLE,
       subtitle: 'About This Mentoring Program',
@@ -57,6 +55,10 @@ _html do
         'https://community.apache.org' => 'Apache Community Development'
       },
       helpblock: -> {
+        uimap = MentorFormat::get_uimap(ASF::SVN[MENTORS_SVN])
+        mentors = read_mentors(ASF::SVN[MENTORS_SVN])
+        errors, mentors = mentors.partition{ |k,v| v.has_key?(MentorFormat::ERRORS)}.map(&:to_h)
+        notavailable, mentors = mentors.partition{ |k,v| v.has_key?(MentorFormat::NOTAVAILABLE)}.map(&:to_h)
         _p do
           _ 'This page lists experienced ASF Members who have volunteered to mentor newer ASF Members to help them get more involved in governance and operations within the larger Foundation as a whole.'
         end
