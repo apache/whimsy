@@ -172,7 +172,7 @@ end
 def scan_dir_svn(dir, regexs, auth = get_auth())
   links = {}
   auth = get_auth()
-  Dir["#{dir}/**/*.{cgi,rb}".untaint].each do |f|
+  Dir["#{dir}/**/*.{cgi,rb}".untaint].sort.each do |f|
     l = scan_file_svn(f.untaint, regexs)
     if (l[0].length + l[1].length) > 0
       fbase = f.sub(dir, '')
