@@ -10,10 +10,10 @@ _html do
       title: 'ASF Non-PMC Group list',
       relatedtitle: 'See Other Group Listings',
       related: {
-        "/roster/committee" => "Active projects at the ASF",
-        "/roster/ppmc" => "Active podlings at the ASF",
-        "/roster/nonpmc" => "ASF Committees (non-PMC)",
-        "/roster/orgchart" => "High level org chart",
+        "/roster/committee/" => "Active projects at the ASF",
+        "/roster/ppmc/" => "Active podlings at the ASF",
+        "/roster/nonpmc/" => "ASF Committees (non-PMC)",
+        "/roster/orgchart/" => "High level org chart",
       },
       helpblock: -> {
         _div.row do
