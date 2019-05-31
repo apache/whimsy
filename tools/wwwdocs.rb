@@ -16,9 +16,10 @@ AUTHMAP = { # From whimsy-vm4.apache.org.yaml
 }
 AUTHPUBLIC = 'glyphicon-eye-open'
 IS_PRIVATE = /\A(private|infra\/infrastructure)/
-ASFSVN = 'ASF::SVN'
+ASFSVN = /ASF::SVN/
 SCANDIRSVN = "../"
 WWWAUTH = /WWW-Authenticate: Basic realm/
+CONSTANT_DEF = /(?<matchconst>[A-Z_]+)\s+=\s+['"](?<matchval>[^#]+)['"]/ # Attempt to capture CONSTANT = "value"
 
 # Output ul of key of AUTHMAP for use in helpblock
 def emit_authmap
@@ -132,23 +133,32 @@ end
 def build_regexp(list)
   r = []
   list.each do |itm|
-    r << "#{ASFSVN}\['#{itm}']"
+    r << "#{ASFSVN.source}\['#{itm}']"
   end
   return Regexp.union(r)
 end
 
-# Scan file for use of ASF::SVN symbolic names like apmail_bin
+# Scan file for use of ASF::SVN symbolic names like apmail_bin; unmapping any CONSTANT_DEF
 # @return [["x = ASF::SVN['Meetings'] # Whole line of code accessing private repo", ...], [<public repos same>], 'WWW-Authenticate code line' ]
 def scan_file_svn(f, regexs)
   repos = [[], [], []]
+  consts = {}  
   begin
     File.open(f).each_line.map(&:chomp).each do |line|
-      if line =~ WWWAUTH then # Fastest compare first
-        repos[2] << line.strip
-      elsif line =~ regexs[0] then
-        repos[0] << line.strip
-      elsif line =~ regexs[1] then
-        repos[1] << line.strip
+      line.strip!
+      if line =~ WWWAUTH # Fastest compare first
+        repos[2] << line
+      elsif line =~ ASFSVN # Find all ASF::SVN and also map if it uses a CONSTANT_DEF
+        consts.each do |k,v|
+          line.sub!(k, v)
+        end
+        if line =~ regexs[0]
+          repos[0] << line
+        elsif line =~ regexs[1]
+          repos[1] << line
+        end
+      elsif line =~ CONSTANT_DEF
+        consts[$~['matchconst']] = "'#{$~['matchval']}'"
       end
     end
     return repos
