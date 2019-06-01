@@ -6,7 +6,7 @@ class PMCCommitters < Vue
   def render
     if
       @@committee.committers.all? do |id|
-        @@committee.members.include? id
+        @@committee.members.include? id or @@committee.ldap.include? id
       end
     then
       _h2.committers! 'Committers (' + committers.length + ')' 
