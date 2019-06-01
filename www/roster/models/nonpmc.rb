@@ -4,6 +4,7 @@ class NonPMC
 
     cttee = ASF::Committee.find(id)
     return unless cttee.nonpmc?
+    hasLDAP = !ASF::Project[cttee.name].nil? # TODO this check perhaps belongs in the library code
     members = cttee.owners
     committers = cttee.committers
     # Hack to fix unusual mail_list values e.g. press@apache.org
@@ -155,6 +156,7 @@ class NonPMC
       report: cttee.report,
       site: cttee.site,
       established: cttee.established,
+      hasLDAP: hasLDAP,
       ldap: members.map(&:id),
       members: cttee_members,
       committers: committers.map(&:id),

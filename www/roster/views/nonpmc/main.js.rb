@@ -79,7 +79,12 @@ class NonPMC < Vue
       _ProjectSearch auth: auth, project: @nonpmc, search: @search
     else
       _NonPMCMembers auth: auth, nonpmc: @nonpmc
-      _NonPMCCommitters auth: auth, nonpmc: @nonpmc
+      if @nonpmc.hasLDAP
+        _NonPMCCommitters auth: auth, nonpmc: @nonpmc
+      else
+        _h2 'Committers (not applicable)' 
+        _p 'The committee does not have a standard LDAP setup, so no committers are shown'
+      end
     end
 
     # mailing lists
