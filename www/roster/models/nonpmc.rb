@@ -138,7 +138,7 @@ class NonPMC
         end
         if who
           unless who[:member]
-            unknownSubs << { addr: addr, person: who }
+            unknownSecSubs << { addr: addr, person: who }
           end
         else
           unknownSecSubs << { addr: addr, person: nil }
