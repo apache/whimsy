@@ -13,6 +13,7 @@
 #         "abcd",
 #       ],
 #        "pmc": true|false, (may be absent)
+#        "officer": "abcd", (may be absent)
 #        "podling": "current|graduated|retired" (may be absent)
 #     },
 #     ...
