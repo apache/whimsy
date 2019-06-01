@@ -39,7 +39,7 @@ end
 
 # committee status
 committees = Hash[ASF::Committee.load_committee_info.map {|committee|
-  [ committee.name.gsub(/[^-\w]/,'') , committee.pmc? ]
+  [ committee.name.gsub(/[^-\w]/,'') , committee ]
 }]
 
 # podling status
@@ -64,9 +64,13 @@ projects.keys.sort_by {|a| a.name}.each do |entry|
         members: m,
         owners: o 
     }
-    pmc = committees[entry.name]
-    if pmc
-        entries[entry.name][:pmc]=pmc
+    committee = committees[entry.name]
+    if committee
+        if committee.pmc?
+            entries[entry.name][:pmc]=true
+        elsif ASF::Project.find(committee.name).dn
+            entries[entry.name][:officer]=committee.chair.id
+        end
     end
     pod = pods[entry.name]
     if pod
