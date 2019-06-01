@@ -6,7 +6,7 @@ class NonPMCCommitters < Vue
   def render
     if
       @@nonpmc.committers.all? do |id|
-        @@nonpmc.members.include? id
+        @@nonpmc.members.include? id or @@nonpmc.ldap.include? id
       end
     then
       _h2.committers! 'Committers (' + committers.length + ')' 
