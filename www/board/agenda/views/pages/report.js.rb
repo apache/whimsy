@@ -231,7 +231,7 @@ class Report < Vue
     return text
   end
 
-  # link to board minutes
+  # link to board minutes and other attachments
   def linkMinutes(text)
     text.gsub! /board_minutes_(\d+)_\d+_\d+\.txt/ do |match, year|
       if Server.drafts.include? match
@@ -240,6 +240,16 @@ class Report < Vue
         link = "http://apache.org/foundation/records/minutes/#{year}/#{match}"
       end
       "<a href='#{link}'>#{match}</a>"
+    end
+
+    text.gsub! /Attachment (\w+)/ do |match, attach|
+      item = Agenda.index.find {|item| item.attach == attach}
+      if item
+        "<a href='#{item.title.gsub(' ', '-')}'>#{match}</a>" +
+        "<pre>#{item.text}</pre>"
+      else
+        match
+      end
     end
 
     return text

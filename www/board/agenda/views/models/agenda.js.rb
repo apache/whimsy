@@ -168,7 +168,7 @@ class Agenda
     elsif @attach =~ /^3\w$/
       if Server.drafts.include? @text[/board_minutes_\w+.txt/]
         return false
-      elsif Minutes.get(@title) == 'approved'
+      elsif Minutes.get(@title) == 'approved' or @title =~ /^Action/
         return false
       else
         return true
