@@ -8,7 +8,7 @@ class ASF::Board::Agenda
     minutes = @file.split(/^ 3. Minutes from previous meetings/,2).last.
       split(OFFICER_SEPARATOR,2).first
 
-    pattern = /
+    pattern1 = /
       \s{4}(?<section>[A-Z])\.
       \sThe.meeting.of\s+(?<title>.*?)\n
       (?<text>.*?)
@@ -17,7 +17,7 @@ class ASF::Board::Agenda
       \s{8,9}\]\n
     /mx
 
-    scan minutes, pattern do |attrs|
+    scan minutes, pattern1 do |attrs|
       attrs['section'] = '3' + attrs['section'] 
       attrs['text'] = attrs['text'].strip
       attrs['approved'] = attrs['approved'].strip.gsub(/\s+/, ' ')
@@ -29,5 +29,17 @@ class ASF::Board::Agenda
         end
       end
     end
+
+   pattern2 = /
+     \s{4}(?<section>[A-Z])\.
+     \s+(?<title>Action.*?)\n
+     (?<text>.*)
+   /mx
+
+    scan minutes, pattern2 do |attrs|
+      attrs['section'] = '3' + attrs['section'] 
+      attrs['text'] = attrs['text'].strip
+    end
+
   end
 end
