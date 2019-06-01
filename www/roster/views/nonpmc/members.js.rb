@@ -143,7 +143,6 @@ class NonPMCMember < Vue
         end
       elsif not @@person.date
         _td.issue.clickable 'not in committee-info.txt', onClick: self.select
-        # TODO the LDAP groups are not set up in the usual way so this is not all that useful at present
       elsif @@nonpmc.hasLDAP and not @@person.ldap
         _td.issue.clickable 'not in LDAP', onClick: self.select
       elsif @@nonpmc.hasLDAP and not @@nonpmc.committers.include? @@person.id
