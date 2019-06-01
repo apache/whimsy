@@ -1020,7 +1020,7 @@ module ASF
     # return group only if it actually exits
     def self.[] name
       group = super
-      group.members.empty? ? nil : group
+      group.dn ? group : nil
     end
 
     # setter for members, should only be used by #preload
@@ -1046,7 +1046,7 @@ module ASF
 
     # Designated Name from LDAP
     def dn
-      @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first
+      @dn ||= ASF.search_one(base, "cn=#{name}", 'dn').first.first rescue nil
     end
 
     # remove people from an existing group in LDAP
@@ -1110,7 +1110,7 @@ module ASF
     # return project only if it actually exits
     def self.[] name
       project = super
-      project.members.empty? ? nil : project
+      project.dn ? project : nil
     end
 
     # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
