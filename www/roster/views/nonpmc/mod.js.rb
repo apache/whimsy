@@ -18,21 +18,6 @@ class NonPMCMod < Vue
             _button.close 'x', data_dismiss: 'modal'
             _h4.modal_title "Modify People's Roles in the " + 
               @@project.display_name + ' Project'
-              _br
-              _p '***Not currently implemented***'
-          end
-        end
-      end
-    end
-  end
-  def norender
-    _div.modal.fade.pmcmod! tabindex: -1 do
-      _div.modal_dialog do
-        _div.modal_content do
-          _div.modal_header.bg_info do
-            _button.close 'x', data_dismiss: 'modal'
-            _h4.modal_title "Modify People's Roles in the " + 
-              @@project.display_name + ' Project'
           end
 
           _div.modal_body do

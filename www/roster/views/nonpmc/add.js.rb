@@ -18,21 +18,6 @@ class NonPMCAdd < Vue
             _button.close 'x', data_dismiss: 'modal'
             _h4.modal_title 'Add People to the ' + @@project.display_name +
               ' Project'
-            _br
-            _p '***Not currently implemented***'
-          end
-        end
-      end
-    end
-  end
-  def norender
-    _div.modal.fade id: $options.add_tag, tabindex: -1 do
-      _div.modal_dialog do
-        _div.modal_content do
-          _div.modal_header.bg_info do
-            _button.close 'x', data_dismiss: 'modal'
-            _h4.modal_title 'Add People to the ' + @@project.display_name +
-              ' Project'
             _p {
               _br
               _b 'N.B'

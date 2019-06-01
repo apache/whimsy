@@ -8,11 +8,9 @@ class NonPMC < Vue
   end
 
   def render
-    # TODO establish the correct auth for non-PMCs - may not have LDAP
-#    auth = (@@auth.secretary or @@auth.root or
-#      @nonpmc.members.include? @@auth.id)
-
-    auth = nil # The modules have not been checked
+    # Allow auth if the group uses standard LDAP
+    auth = @nonpmc.hasLDAP and (@@auth.secretary or @@auth.root or
+      @nonpmc.members.include? @@auth.id)
 
     # add jump links to main sections of page using Bootstrap nav element
     _ul.nav.nav_pills do
