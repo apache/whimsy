@@ -39,7 +39,7 @@ if env.password
   if @targets.include? 'info'
     cinfo = File.join(ASF::SVN['board'], 'committee-info.txt')
     message = "#{@project} #{@action == 'add' ? '+' : '-'}= #{who}".untaint
-    ASF::SVN.update cinfo, message, env, _, {:dryrun => true } do |tmpdir, contents|
+    ASF::SVN.update cinfo, message, env, _ do |tmpdir, contents|
       contents = ASF::Committee.update_roster(contents, @project, people, @action)
       contents
     end
