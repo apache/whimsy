@@ -51,32 +51,29 @@ get '/' do
   end
 end
 
-get '/committer/' do
-  _html :committers
-end
-
-get '/committer' do
-  redirect to('/committer/')
-end
-
+# Handle traditional top level PMCs
 get '/committee/' do
   @members = ASF::Member.list.keys
   @committees = ASF::Committee.pmcs
   _html :committees
 end
 
-get '/committee' do
-  redirect to('/committee/')
+get '/committee/:name.json' do |name|
+  data = Committee.serialize(name, env)
+  pass unless data
+  _json data
 end
 
-get '/nonpmc/' do
-  @members = ASF::Member.list.keys
-  @nonpmcs = ASF::Committee.nonpmcs
-  _html :nonpmcs
+get '/committee/:name' do |name|
+  @auth = Auth.info(env)
+  @committee = Committee.serialize(name, env)
+  pass unless @committee
+  _html :committee
 end
 
-get '/nonpmc' do
-  redirect to('/nonpmc/')
+# Handle individual committer (or member) records
+get '/committer/' do
+  _html :committers
 end
 
 index = nil
@@ -110,32 +107,6 @@ get '/committer/index.json' do
   content_type 'application/json', charset: 'UTF-8'
   expires [index_time+300, Time.now+60].max
   index
-end
-
-get '/committee/:name.json' do |name|
-  data = Committee.serialize(name, env)
-  pass unless data
-  _json data
-end
-
-get '/committee/:name' do |name|
-  @auth = Auth.info(env)
-  @committee = Committee.serialize(name, env)
-  pass unless @committee
-  _html :committee
-end
-
-get '/nonpmc/:name.json' do |name|
-  data = NonPMC.serialize(name, env)
-  pass unless data
-  _json data
-end
-
-get '/nonpmc/:name' do |name|
-  @auth = Auth.info(env)
-  @nonpmc = NonPMC.serialize(name, env)
-  pass unless @nonpmc
-  _html :nonpmc
 end
 
 get '/committer/:name.json' do |name|
@@ -178,6 +149,27 @@ post '/committer/:userid/:file' do |name, file|
   _json :"actions/#{params[:file]}"
 end
 
+# Handle nonpmc: committees that aren't PMCs
+get '/nonpmc/' do
+  @members = ASF::Member.list.keys
+  @nonpmcs = ASF::Committee.nonpmcs
+  _html :nonpmcs
+end
+
+get '/nonpmc/:name.json' do |name|
+  data = NonPMC.serialize(name, env)
+  pass unless data
+  _json data
+end
+
+get '/nonpmc/:name' do |name|
+  @auth = Auth.info(env)
+  @nonpmc = NonPMC.serialize(name, env)
+  pass unless @nonpmc
+  _html :nonpmc
+end
+
+# Handle groups: other kinds of auth/ldap/etc. groupings
 get '/group/:name.json' do |name|
   _json Group.serialize(name)
 end
@@ -203,6 +195,7 @@ get '/members.json' do
   _json Hash[ASF.members.map {|person| [person.id, person.public_name]}.sort]
 end
 
+# Handle podling PPMCs
 get '/ppmc/_new_' do
   @pmcsAndBoard = (ASF::Committee.pmcs.map(&:id) + ['board']).sort
   @officersAndMembers = (ASF.pmc_chairs + ASF.members).uniq.map(&:id)
@@ -240,7 +233,6 @@ get '/ppmc/:name' do |name|
   _html :ppmc
 end
 
-
 # complete podling list
 get '/podlings' do
   attic = ASF::SVN['attic-xdocs']
@@ -261,21 +253,13 @@ get '/attic/issues.json' do
   _json Attic.issues
 end
 
-# overall organization chart
+# Handle overall organization chart
 get '/orgchart/' do
   @org = OrgChart.load
   _html :orgchart
 end
 
-get '/orgchart' do
-  redirect to('/orgchart/')
-end
-
-get '/orgchart.cgi' do
-  redirect to('/orgchart/')
-end
-
-# individual duties
+# Orgchart individual duties
 get '/orgchart/:name' do |name|
   person = ASF::Person.find(env.user)
 
@@ -326,6 +310,7 @@ get '/env' do
   JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
 end
 
+# Handle error and other conditions
 not_found do
   @errors = env
   _html :not_found
@@ -334,4 +319,14 @@ end
 error do
   @errors = env
   _html :errors
+end
+
+# Redirect common partial paths
+['/committee', '/committer', '/group', '/nonpmc', '/ppmc', '/orgchart'].each do |ppath|
+  get ppath do
+    redirect to("#{ppath}/")
+  end
+end
+get '/orgchart.cgi' do
+  redirect to('/orgchart/')
 end
