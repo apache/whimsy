@@ -224,6 +224,48 @@ module ASF
       contents
     end
 
+    # update roster for a project
+    # Intended for use in ASF::SVN.update() block
+    #
+    # contents = current contents (normally provided by ASF::SVN.update); will be updated
+    # cttee = committee id (lower case)
+    # people = array of Person objects
+    # action = add|remove
+    # Note: ignores duplicate changes (e.g. if person to add is already present)
+    def self.update_roster(contents, cttee, people, action)
+      found = false
+      contents.scan(/^\* (?:.|\n)*?\n\s*?\n/).each do |block|
+        # find committee
+        next unless ASF::Committee.find(block[/\* (.*?)\s+\(/, 1]).id == cttee
+
+        # split block into lines
+        lines = block.strip.split("\n")
+
+        # add or remove people
+        people.each do |person|
+          id = person.id
+          if action == 'add'
+            unless lines.any? {|line| line.include? "<#{id}@apache.org>"}
+              name = "#{person.public_name.ljust(26)} <#{id}@apache.org>"
+              time = Time.new.gmtime.strftime('%Y-%m-%d')
+              lines << "    #{name.ljust(59)} [#{time}]"
+            end
+          elsif action == 'remove'
+            lines.reject! {|line| line.include? "<#{id}@apache.org>"}
+          else
+            raise ArgumentError.new("Expected action=[add|remove], found '#{action}'")
+          end
+        end
+
+        # replace committee block with new information
+        contents.sub! block, ([lines.shift] + lines.sort).join("\n") + "\n\n"
+        found = true
+        break
+      end
+      raise ArgumentError.new("Could not find project id='#{cttee}'") unless found
+      contents
+    end
+
     # remove committee from committee-info.txt
     def self.terminate(contents, pmc)
       ########################################################################
