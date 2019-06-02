@@ -53,7 +53,7 @@ tools, some of which use the model, and some completely independent.
 4. [config](config) contains some sample configuration data for 
    installing various services needed.
 
-5. [www/roster/public_*](www/roster) contains a number of scripts run 
+5. [www/roster/public\_\*](www/roster) contains a number of scripts run 
    by cron jobs or manually that create various data files in 
    [www/public on the production instance](https://whimsy.apache.org/public/).
 
@@ -75,8 +75,8 @@ or read the [detailed MACOSX setup steps](MACOSX.md).
 
     For more information:
 
-    1. [Understanding rbenv Shims](https://github.com/sstephenson/rbenv#understanding-shims)
-    2. [Understanding rbenv Binstubs](https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs)
+    1. [Understanding rbenv Shims](https://github.com/rbenv/rbenv#understanding-shims)
+    2. [Understanding rbenv Binstubs](https://github.com/rbenv/rbenv/wiki/Understanding-binstubs)
     3. [Ruby Version Manager - rvm](https://rvm.io/)
 
 
@@ -223,6 +223,8 @@ a virtual host, complete with authentication:
 1. Install passenger by running either running 
    `passenger-install-apache2-module` and following its instructions, or
    by visiting https://www.phusionpassenger.com/library/install/apache/install/oss/.
+
+   a. If using rbenv, make sure to add your `~/.rbenv/shims` directory to the PATH environment variable.
 
 2. Visit [vhost-generator](https://whimsy.apache.org/test/vhost-generator) to
    generate a custom a vhost definition, and to see which apache modules need
