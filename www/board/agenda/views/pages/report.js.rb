@@ -45,7 +45,11 @@ class Report < Vue
 
         if minutes
           _pre.comment do
-            _Text raw: minutes, filters: [hotlink]
+            if minutes === :missing
+              _p { _em 'missing' }
+            else
+              _Text raw: minutes, filters: [hotlink]
+            end
           end
         end
       end
@@ -79,13 +83,14 @@ class Report < Vue
       # if draft is available, fetch minutes for display
       date = @@item.text[/board_minutes_(\d+_\d+_\d+)\.txt/, 1]
 
-      if
-        date and @@item.mtime and not defined? @@item.minutes and
-        defined? XMLHttpRequest
-      then
-        Vue.set @@item, 'minutes', ''
-        retrieve "minutes/#{date}?#{@@item.mtime}", :text do |minutes|
-          @@item.minutes = minutes
+      if date and not defined? @@item.minutes and defined? XMLHttpRequest
+        if @@item.mtime
+          Vue.set @@item, 'minutes', ''
+          retrieve "minutes/#{date}?#{@@item.mtime}", :text do |minutes|
+            @@item.minutes = minutes
+          end
+        else
+          @@item.minutes = :missing
         end
       end
     end
