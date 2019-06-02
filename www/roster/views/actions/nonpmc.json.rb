@@ -37,60 +37,11 @@ if env.password
 
   # update committee-info.txt
   if @targets.include? 'info'
-    Dir.mktmpdir do |tmpdir|
-      # checkout committers/board
-      Kernel.system 'svn', 'checkout', '--quiet',
-        '--no-auth-cache', '--non-interactive',
-        '--username', env.user.untaint, '--password', env.password.untaint,
-        'https://svn.apache.org/repos/private/committers/board', tmpdir.untaint
-
-      # read in committee-info.txt
-      file = File.join(tmpdir, 'committee-info.txt')
-      info = File.read(file)
-
-      info.scan(/^\* (?:.|\n)*?\n\s*?\n/).each do |block|
-        # find committee
-        next unless ASF::Committee.find(block[/\* (.*?)\s+\(/, 1]).id==@project
-
-        # split block into lines
-        lines = block.strip.split("\n")
-
-        # add or remove people
-        people.each do |person|
-          id = person.id
-          if @action == 'add'
-            unless lines.any? {|line| line.include? "<#{id}@apache.org>"}
-              name = "#{person.public_name.ljust(26)} <#{id}@apache.org>"
-              time = Time.new.gmtime.strftime('%Y-%m-%d')
-              lines << "    #{name.ljust(59)} [#{time}]"
-            end
-          else
-            lines.reject! {|line| line.include? "<#{id}@apache.org>"}
-          end
-        end
-
-        # replace committee block with new information
-        info.sub! block, ([lines.shift] + lines.sort).join("\n") + "\n\n"
-        break
-      end
-
-      # write file out to disk
-      File.write(file, info)
-
-      # commit changes
-      rc = Kernel.system 'svn', 'commit', '--quiet',
-        '--no-auth-cache', '--non-interactive',
-        '--username', env.user.untaint, '--password', env.password.untaint,
-        tmpdir.untaint, '--message',
-        "#{@project} #{@action == 'add' ? '+' : '-'}= #{who}".untaint
-
-      if rc
-        # update cache
-        ASF::Committee.parse_committee_info(info)
-      else
-        # die
-        raise Exception.new('Update committee-info.txt failed')
-      end
+    cinfo = File.join(ASF::SVN['board'], 'committee-info.txt')
+    message = "#{@project} #{@action == 'add' ? '+' : '-'}= #{who}".untaint
+    ASF::SVN.update cinfo, message, env, _, {:dryrun => true } do |tmpdir, contents|
+      contents = ASF::Committee.update_roster(contents, @project, people, @action)
+      contents
     end
   end
 
