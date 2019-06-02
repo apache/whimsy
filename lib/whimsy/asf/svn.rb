@@ -290,7 +290,7 @@ module ASF
 
         # fail if there are pending changes
         unless rc == 0 and `svn st #{tmpfile || tmpdir}`.empty?
-          raise "svn failure #{path.inspect}"
+          raise "svn failure #{rc} #{path.inspect}"
         end
       ensure
         FileUtils.rm_rf tmpdir
