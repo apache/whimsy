@@ -211,6 +211,47 @@ module ASF
       revision
     end
 
+    # Specialised code for updating CI
+    # Updates cache if SVN commit succeeds
+    # user and password are required because the default URL is private
+    def self.updateCI(msg, env, options={})
+      # Allow override for testing
+      ciURL = options[:url] || 'https://svn.apache.org/repos/private/committers/board'
+      Dir.mktmpdir do |tmpdir|
+        # use dup to make testing easier
+        user = env.user.dup.untaint
+        pass = env.password.dup.untaint
+        # checkout committers/board
+        Kernel.system 'svn', 'checkout', '--quiet',
+          '--no-auth-cache', '--non-interactive',
+          '--depth', 'files',
+          '--username', user , '--password', pass,
+          ciURL, tmpdir.untaint
+        # read in committee-info.txt
+        file = File.join(tmpdir, 'committee-info.txt')
+        info = File.read(file)
+
+        info = yield info # get the updates the contents
+
+        # write updated file to disk
+        File.write(file, info)
+
+        # commit changes
+        rc = Kernel.system 'svn', 'commitx', '--quiet',
+          '--no-auth-cache', '--non-interactive',
+          '--username', user, '--password', pass,
+          file, '--message', msg
+
+        if rc
+          # update cache
+          ASF::Committee.parse_committee_info(info)
+        else
+          # die
+          raise Exception.new('Update committee-info.txt failed')
+        end
+      end
+    end
+
     # update a file or directory in SVN, working entirely in a temporary
     # directory
     # Intended for use from GUI code
@@ -301,8 +342,21 @@ module ASF
 end
 
 if __FILE__ == $0 # local testing
-  path = ARGV.shift||'.'
-  puts ASF::SVN.list(path, *ARGV)
-  puts ASF::SVN.getInfo(path, *ARGV)
-  puts ASF::SVN.getRevision(path, *ARGV)
+  class ENV_
+    def self.user
+      ENV['USER']
+    end
+    def self.password
+      'x x'
+    end
+  end
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
+#  require 'whimsy/asf'
+  ASF::SVN.updateCI("msg",ENV_,{url: 'file:///Users/sebb/REPO'}) do |content|
+    ""
+  end
+#  path = ARGV.shift||'.'
+#  puts ASF::SVN.list(path, *ARGV)
+#  puts ASF::SVN.getInfo(path, *ARGV)
+#  puts ASF::SVN.getRevision(path, *ARGV)
 end
