@@ -237,7 +237,7 @@ module ASF
         File.write(file, info)
 
         # commit changes
-        rc = Kernel.system 'svn', 'commitx', '--quiet',
+        rc = Kernel.system 'svn', 'commit', '--quiet',
           '--no-auth-cache', '--non-interactive',
           '--username', user, '--password', pass,
           file, '--message', msg
