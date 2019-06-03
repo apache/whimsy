@@ -19,6 +19,7 @@ _html do
     _.render '#main' do
       _h3 "Debugger below:"
       _Debugger committer: @committer, auth: @auth
+      _h3 "Debugger ends"
     end
   end
 end

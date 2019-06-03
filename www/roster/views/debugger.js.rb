@@ -2,6 +2,10 @@
 # Debugging tool shell
 #
 class Debugger < Vue
+  def initialize
+    @committer = {}
+  end
+
   def render
     # Display auth status
     if @auth
@@ -14,4 +18,8 @@ class Debugger < Vue
     _h2 "Welcome #{@committer.id}@apache.org"
     _p 'TODO: add actions to allow debugging utility methods'
   end
+  
+  def created
+  end
+
 end
