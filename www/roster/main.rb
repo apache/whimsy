@@ -330,3 +330,13 @@ end
 get '/orgchart.cgi' do
   redirect to('/orgchart/')
 end
+
+# Debugging tool for testing
+get '/debugger' do
+  @auth = Auth.info(env)
+  @committer = ASF::Person.find(env.user)
+  unless @committer.asf_member?
+    halt 401, "Not authorized\n"
+  end
+  _html :debugger
+end

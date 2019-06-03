@@ -9,3 +9,5 @@ require_relative 'models/ppmc'
 
 require_relative 'models/ldap'
 require_relative 'models/svn'
+
+require_relative 'models/mailer'
