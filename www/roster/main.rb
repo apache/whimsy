@@ -338,5 +338,7 @@ get '/debugger' do
   unless @committer.asf_member?
     halt 401, "Not authorized\n"
   end
+  @debugger = Debugger.serialize(@committer, env)
+  pass unless @debugger
   _html :debugger
 end
