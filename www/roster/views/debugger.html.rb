@@ -12,9 +12,7 @@ _html do
         test: '/test.cgi'
       }
     ) do
-      _h3 "Before debugger"
       _div_.main!
-      _h3 "After debugger!"
     end
 
     _script src: "app.js?#{appmtime}"
