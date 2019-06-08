@@ -173,7 +173,7 @@ shared_context "vue_server", server: :vue do
     end
 
     page.driver.post('/', @_script + ';' +
-      Ruby2JS.convert(block, vue: true, vue_h: '$h', ivars: locals).to_s)
+      Ruby2JS.convert(block, vue: true, ivars: locals).to_s)
   end
 
   after :each do
