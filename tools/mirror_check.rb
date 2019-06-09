@@ -123,9 +123,9 @@ def check_CT(base, page, severity=:E, expectedStatus = "200")
   ce = response['Content-Encoding']
   # TODO also check CT - some mirrors return text/plain for img??
   if ce
-    W "Checking #{path} - Content-Type: #{ct} WARN: Content-Encoding: #{ce}" 
+    W "Checking #{path} - Content-Type: #{ct} WARN: Content-Encoding: #{ce}"
   else
-    I "Checking #{path} - Content-Type: #{ct}" 
+    I "Checking #{path} - Content-Type: #{ct}"
   end
 end
 
@@ -172,8 +172,8 @@ def checkIndex(page, type)
     W "Index for #{type}: the link #{l} is not shown on ASF site" unless asfData.include? l
   }
   asfData.each {|l|
-    W "Index for #{type}: the link #{l} is not shown on the mirror site" unless links.include? l    
-  }  
+    W "Index for #{type}: the link #{l} is not shown on the mirror site" unless links.include? l
+  }
 end
 
 # parse an HTTP server Index page => array of file/folder names
@@ -225,7 +225,7 @@ def checkHTTP(base)
 
   unless URLMATCH.match(base)
     F "Invalid URL syntax: #{base}"
-    return  
+    return
   end
 
   setup
@@ -252,7 +252,7 @@ def checkHTTP(base)
   else
     return # cannot process further (already recorded the error
   end
-  
+
   # check the main body
   body = check_page(base, '')
   checkHdrFtr(base, body)
@@ -317,7 +317,7 @@ def showList(list, header)
     _h2_ header
     _ul do
       list.each { |item| _li item }
-    end        
+    end
   end
 end
 
@@ -328,7 +328,7 @@ def display
 
   if !fatals.empty?
     _h2_.bg_danger "The mirror at #@url failed our checks:"
-  elsif !errors.empty?    
+  elsif !errors.empty?
     _h2_.bg_warning "The mirror at #@url has some problems:"
   elsif !warns.empty?
     _h2_.bg_warning "The mirror at #@url has some minor issues"
@@ -352,7 +352,7 @@ def display
 
   _h2_ 'Tests performed'
   _ol do
-    @tests.each { |t| t.map{|k,v| _li "#{k}: - #{v}"}} 
+    @tests.each { |t| t.map{|k,v| _li "#{k}: - #{v}"}}
   end
   _h4_ 'F: fatal, E: Error, W: warning, I: info (success)'
 end
@@ -369,7 +369,7 @@ if __FILE__ == $0
   url = ARGV[0] || "localhost" # easier to test in an IDE
   checkHTTP(url+"") # allow url to be untainted later
   # display the test results
-  @tests.each { |t| t.map{|k, v| puts "#{k}: - #{v}"}} 
+  @tests.each { |t| t.map{|k, v| puts "#{k}: - #{v}"}}
   if @fails > 0
     puts "#{url} had #{@fails} errors"
   else
