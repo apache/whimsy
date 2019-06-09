@@ -216,6 +216,7 @@ def checkHTTP(base)
   # - allows the input to be more flexible
 
   # Fix up the URL
+  base.strip!
   base += '/' unless base.end_with? '/'
   base = 'http://' + base unless base.start_with? 'http'
   # Now check the syntax:
