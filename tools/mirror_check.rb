@@ -172,7 +172,7 @@ def checkIndex(page, type)
     W "Index for #{type}: the link #{l} is not shown on ASF site" unless asfData.include? l
   }
   asfData.each {|l|
-    W "Index for #{type}: the link #{l} is not shown on the mirror site" unless links.include? l
+    W "Index for #{type}: the link #{l} is not shown on the mirror site" unless links.include? l or l == 'openoffice'
   }
 end
 
