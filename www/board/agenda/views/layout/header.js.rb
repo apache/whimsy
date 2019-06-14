@@ -16,10 +16,8 @@ class Header < Vue
     _header.navbar.navbar_fixed_top class: @@item.color do
       _div.navbar_brand @@item.title
 
-      if @@item.attach =~ /^7/ and @@item.title =~ /^Establish /
-        if @@item.title !~ /^Establish .*(Position|Committee)/i
-          _PodlingNameSearch item: @@item
-        end
+      if @@item.attach =~ /^7/ and @@item.title =~ /^Establish .* Project/
+        _PodlingNameSearch item: @@item
       end
 
       _span.clock! "\u231B" if Header.clock_counter > 0

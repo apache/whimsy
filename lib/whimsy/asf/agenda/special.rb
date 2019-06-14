@@ -54,7 +54,7 @@ class ASF::Board::Agenda
 
       title_checks.each do |select, match|
         if fulltitle =~ select and fulltitle !~ match and
-          fulltitle !~ /Establish.*position/i
+          fulltitle =~ /chair|project|committee/i
        then
           attrs['warnings'] << 
             "Non-standard title wording: #{fulltitle.inspect}; " +
@@ -123,7 +123,7 @@ class ASF::Board::Agenda
           attrs['warnings'] ||= ['non apache.org email address found'] 
         end
 
-        need_chair = true unless fulltitle =~ /Establish.*position/i
+        need_chair = true if fulltitle =~ /chair|project|committee/i
       end
 
       if need_chair
