@@ -72,7 +72,7 @@ class Report < Vue
     list << self.names if @@item.people
     list << self.president_attachments if @@item.title == 'President'
 
-    list = [self.linkMinutes] if @@item.attach =~ /^3[A-Z]$/
+    list = [self.linkMinutes] if @@item.attach =~ /^[37][A-Z]$/
 
     list
   end
@@ -250,17 +250,19 @@ class Report < Vue
       "<a href='#{link}'>#{match}</a>"
     end
 
+    footer = ''
+
     text.gsub! /Attachment (\w+)/ do |match, attach|
       item = Agenda.index.find {|item| item.attach == attach}
       if item
-        "<a href='#{item.title.gsub(' ', '-')}'>#{match}</a>" +
-        "<pre>#{item.text}</pre>"
+        footer += "<hr/><h4>#{match}</h4><pre>#{item.text}</pre>"
+        "<a href='#{item.title.gsub(' ', '-')}'>#{match}</a>"
       else
         match
       end
     end
 
-    return text
+    return text + footer
   end
 
   # highlight private sections - these sections appear in the agenda but
