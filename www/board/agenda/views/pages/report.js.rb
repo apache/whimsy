@@ -72,7 +72,7 @@ class Report < Vue
     list << self.names if @@item.people
     list << self.president_attachments if @@item.title == 'President'
 
-    list = [self.linkMinutes] if @@item.attach =~ /^[37][A-Z]$/
+    list = [self.privates, self.linkMinutes] if @@item.attach =~ /^[37][A-Z]$/
 
     list
   end
