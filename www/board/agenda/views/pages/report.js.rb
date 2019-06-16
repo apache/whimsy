@@ -71,8 +71,7 @@ class Report < Vue
     list = [self.localtime, hotlink] if @@item.title == 'Call to order'
     list << self.names if @@item.people
     list << self.president_attachments if @@item.title == 'President'
-
-    list = [self.privates, self.linkMinutes] if @@item.attach =~ /^[37][A-Z]$/
+    list << self.linkMinutes if @@item.attach =~ /^[37][A-Z]$/
 
     list
   end
