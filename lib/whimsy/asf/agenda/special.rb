@@ -152,6 +152,23 @@ class ASF::Board::Agenda
         else
           attrs['warnings'] ||= ['Chair not found in resolution'] 
         end
+
+      elsif title =~ /^Appoint /
+        if text =~ /FURTHER\s+RESOLVED, that\s+([^,]*?),?\s+be\b/i
+          chairname = $1.gsub(/\s+/, ' ').strip
+          chair = ASF.search_one(ASF::Person.base, "cn=#{chairname}")
+          attrs['chairname'] = chairname
+          attrs['chair'] = chair.first['uid'].first if chair.length == 1
+        end
+
+        if attrs['chair']
+          people = [[chairname, attrs['chair']]]
+        elsif chairname
+          attrs['warnings'] ||= 
+            ["#{chairname.inspect} doesn't match public name"]
+        else
+          attrs['warnings'] ||= ['Officer name not found']
+        end
       end
 
       people.map! do |name, id| 
