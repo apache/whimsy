@@ -13,18 +13,23 @@ ARCHIVE = '/srv/mail/board'
 
 if @path and @path =~ /^\d+\/\w+$/
   mail = Mail.new(File.read(File.join(ARCHIVE, @path)))
+  text = ''
+
   if mail.text_part
     begin
       text = mail.text_part.body.to_s.force_encoding(mail.text_part.charset)
     rescue
       text = mail.text_part.body.to_s.force_encoding(Encoding::UTF_8)
     end
-      
-    return {text: text.encode('UTF-8', invalid: :replace, undef: :replace)}
-
-  else
-    return {text: ''}
+  elsif mail.main_type.include? 'text'
+    begin
+      text = mail.body.to_s.force_encoding(mail.text_part.charset)
+    rescue
+      text = mail.body.to_s.force_encoding(Encoding::UTF_8)
+    end
   end
+
+  return {text: text.encode('UTF-8', invalid: :replace, undef: :replace)}
 end
 
 # only look at this month's and last month's mailboxes, and within those
