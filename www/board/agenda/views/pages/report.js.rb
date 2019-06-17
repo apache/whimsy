@@ -34,9 +34,26 @@ class Report < Vue
 
         if (@@item.missing or @@item.comments) and @@item.mail_list
           _section.reminder do
-            if @@item.missing and not Posted.get(@@item.title).empty?
-              _button.btn.btn_primary 'post report', data_toggle: 'modal',
-                data_target: '#post-report-form'
+            if @@item.missing and 
+              if not Posted.get(@@item.title).empty?
+                _button.btn.btn_primary 'post report', data_toggle: 'modal',
+                  data_target: '#post-report-form'
+              elsif
+                @@item.attach =~ /^[A-Z]/ and
+                User.firstname and @@item.shepherd and
+                User.firstname.start_with? @@item.shepherd.downcase()
+              then
+                _p.comment do
+                  _ 'No report was found on '
+                  _a 'board@apache.org',
+                    href: 'https://lists.apache.org/list.html?board@apache.org'
+                  _ ' archives since the last board report.  If/when a report'
+                  _ ' is posted there with a '
+                  _tt '[Report]'
+                  _ ' tag in the subject line a POST button will appear here '
+                  _ ' to assist with the posting the report.'
+                end
+              end
             end
 
             _Email item: @@item
