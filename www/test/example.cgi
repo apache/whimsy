@@ -177,6 +177,16 @@ _html do
         end
       end
       
+      # IF YOU WANT TO DO WORK BASED ON ?QUERY=value
+      query = CGI::parse(ENV['QUERY_STRING'])
+      if query.has_key?('value')
+        _p "Query Value Passed: #{query['value']}" # Will be array
+      else
+        val = Array(query['query']).last
+        _p "Value Query Passed: #{query['query']}"
+        _p query.inspect
+      end
+      
       # IF YOU WANT TO DISPLAY A FORM and handle the POST
       _div id: 'example-form'
       if _.post?
