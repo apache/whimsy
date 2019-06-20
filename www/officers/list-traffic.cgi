@@ -9,6 +9,7 @@ require 'whimsy/asf'
 require 'whimsy/asf/agenda'
 require 'date'
 require 'mail'
+require '../../tools/mboxhdr2csv.rb'
 
 user = ASF::Person.new($USER)
 unless user.asf_member? or ASF.pmc_chairs.include? user
@@ -28,109 +29,6 @@ TOOLCOUNT = 'toolcount'
 MAILCOUNT = 'mailcount'
 WEEK_TOTAL = '@@total' # Use @@ so it can't match who name/emails
 WEEK_START = '@@start'
-
-### ---- Copied from tools/mboxhdr2csv.rb; should be refactored ----
-MEMBER = 'member'
-COMMITTER = 'committer'
-COUNSEL = 'counsel'
-# Subject regexes that are non-discussion oriented for flagging
-NONDISCUSSION_SUBJECTS = { # Note: none applicable to members@
-  '<board.apache.org>' => {
-    missing: /\AMissing\s((\S+\s){1,3})Board/, # whimsy/www/board/agenda/views/buttons/email.js.rb
-    feedback: /\ABoard\sfeedback\son\s20/, # whimsy/www/board/agenda/views/actions/feedback.json.rb
-    notice: /\A\[NOTICE\]/i,
-    report: /\A\[REPORT\]/i,
-    resolution: /\A\[RESOLUTION\]/i,
-    svn_agenda: %r{\Aboard: r\d{4,8} - /foundation/board/},
-    svn_iclas: %r{\Aboard: r\d{4,8} - /foundation/officers/iclas.txt}
-  }
-}
-# Annotate mailhash by adding :who and COMMITTER (where known)
-# @param email address to check
-# @returns ['Full Name', 'committer-flag'
-# COMMITTER = 'n' if not found; 'N' if error, 'counsel' for special case
-def find_who_from(email)
-  # Remove bogus INVALID before doing lookups
-  from = email.sub('.INVALID', '')
-  who = nil
-  committer = nil
-  # Micro-optimize unique names
-  case from
-  when /Mark.Radcliffe/i
-    who = 'Mark.Radcliffe'
-    committer = COUNSEL
-  when /mattmann/i
-    who = 'Chris Mattmann'
-    committer = MEMBER
-  when /jagielski/i
-    who = 'Jim Jagielski'
-    committer = MEMBER
-  when /delacretaz/i
-    who = 'Bertrand Delacretaz'
-    committer = MEMBER
-  when /curcuru/i
-    who = 'Shane Curcuru'
-    committer = MEMBER
-  when /steitz/i
-    who = 'Phil Steitz'
-    committer = MEMBER
-  when /gardler/i  # Effectively unique (see: Heidi)
-    who = 'Ross Gardler'
-    committer = MEMBER
-  when /Craig (L )?Russell/i # Optimize since Secretary sends a lot of mail
-    who = 'Craig L Russell'
-    committer = MEMBER
-  when /McGrail/i
-    who = 'Kevin A. McGrail'
-    committer = MEMBER
-  when /khudairi/i 
-    who = 'Sally Khudairi'
-    committer = MEMBER
-  else
-    begin
-      # TODO use Real Name (JIRA) to attempt to lookup some notifications
-      tmp = liberal_email_parser(from)
-      person = ASF::Person.find_by_email(tmp.address.dup)
-      if person
-        who = person.cn
-        if person.asf_member?
-          committer = MEMBER
-        else
-          committer = COMMITTER
-        end
-      else
-        who = "#{tmp.display_name} <#{tmp.address}>"
-        committer = 'n'
-      end
-    rescue
-      who = from # Use original value here
-      committer = 'N'
-    end
-  end
-  return who, committer
-end
-
-# @see www/secretary/workbench/models/message.rb
-# @see https://github.com/mikel/mail/issues/39
-def liberal_email_parser(addr)
-  begin
-    addr = Mail::Address.new(addr)
-  rescue
-    if addr =~ /^"([^"]*)" <(.*)>$/
-      addr = Mail::Address.new
-      addr.address = $2
-      addr.display_name = $1
-    elsif addr =~ /^([^"]*) <(.*)>$/
-      addr = Mail::Address.new
-      addr.address = $2
-      addr.display_name = $1
-    else
-      raise
-    end
-  end
-  return addr
-end
-### ---- Copied from tools/mboxhdr2csv.rb; should be refactored ----
 
 # Get {MAILS: [{date, who, subject, flag},...\, TOOLS: [{...},...] } from the specified list for a month
 # May cache data in SRV_MAIL/yearmonth.json
@@ -152,7 +50,7 @@ def get_mails_month(yearmonth:, nondiscuss:)
       data = {}
       data[DATE] = DateTime.parse(message[/^Date: (.*)/, 1]).iso8601
       data[FROM] = message[/^From: (.*)/, 1]
-      data[WHO], data[COMMITTER] = find_who_from(data[FROM])
+      data[WHO], data[MailUtils::COMMITTER] = MailUtils.find_who_from(data[FROM])
       data[SUBJECT] = message[/^Subject: (.*)/, 1]
       if nondiscuss
         nondiscuss.each do |typ, rx|
@@ -196,7 +94,7 @@ end
 # Display monthly statistics for all available data
 def display_monthly(months:, nondiscuss:)
   months.sort.reverse.each do |month|
-    data = get_mails_month(yearmonth: month, nondiscuss: NONDISCUSSION_SUBJECTS['<board.apache.org>'])
+    data = get_mails_month(yearmonth: month, nondiscuss: nondiscuss)
     next if data.empty?
     _h1 "board@ statistics for #{month} (total mails: #{data[MAILS].length + data[TOOLS].length})", id: "#{month}"
     _div.row do
@@ -308,9 +206,9 @@ _html do
     ) do
       months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
       if ENV['QUERY_STRING'].include? 'week'
-        display_weekly(months: months, nondiscuss: NONDISCUSSION_SUBJECTS['<board.apache.org>'])
+        display_weekly(months: months, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS['<board.apache.org>'])
       else
-        display_monthly(months: months, nondiscuss: NONDISCUSSION_SUBJECTS['<board.apache.org>'])
+        display_monthly(months: months, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS['<board.apache.org>'])
       end
     end
   end
