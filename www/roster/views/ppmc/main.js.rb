@@ -162,6 +162,11 @@ class PPMC < Vue
     end
 
     _h2.podlingStatus! 'Podling Status'
+    _p do
+      _ 'Note: the information in this section is derived from Incubator data files.'
+      _br
+      _ 'If it is not accurate, please work with the PPMC and mentors to update the files.'
+    end
     _h3 'Information'
     _ul do
       _li do
