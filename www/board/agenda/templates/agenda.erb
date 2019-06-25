@@ -132,6 +132,15 @@
          comments:
          ]
 
+    A. VP of Jakarta EE Relations [<%=
+       @owner.for(ASF::Committee.find('Jakarta EE Relations')) %>]
+
+       See Attachment 13
+
+       [ approved:
+         comments:
+         ]
+
  6. Committee Reports
 
     Summary of Reports
@@ -229,6 +238,11 @@ ASF::Committee.find('Security Team').chair.public_name %>]
 -----------------------------------------
 Attachment 12: Report from the VP of Data Privacy  [<%= 
 ASF::Committee.find('Data Privacy').chair.public_name %>]
+
+
+-----------------------------------------
+Attachment 13: Report from the VP of Jakarta EE Relations  [<%=
+ASF::Committee.find('Jakarta EE Relations').chair.public_name %>]
 
 
 <% @pmcs.zip('A'..'ZZ').each do |pmc, index| %>
