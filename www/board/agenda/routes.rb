@@ -479,7 +479,7 @@ get '/new' do
 
   # Get list of unpublished and unapproved minutes
   draft = YAML.load_file(Dir["#{AGENDA_WORK}/board_minutes*.yml"].sort.last)
-  @minutes = dir("board_agenda_*.txt").
+  @minutes = dir("board_minutes_*.txt").
     map {|file| Date.parse(file[/\d[_\d]+/].gsub('_', '-'))}.
     reject {|date| date >= @meeting.to_date}.
     reject {|date| draft[date.strftime('%B %d, %Y')] == 'approved'}
