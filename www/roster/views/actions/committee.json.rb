@@ -65,12 +65,6 @@ if env.password
 
   from = ASF::Person.find(env.user)
 
-  if ASF::Committee.nonpmcs.include? pmc
-    project_type = 'nonpmc'
-  else
-    project_type = 'committee'
-  end
-
   # draft email
   mail = Mail.new do
     from "#{from.public_name} <#{from.id}@apache.org>".untaint
@@ -79,7 +73,7 @@ if env.password
     bcc "root@apache.org"
     subject "#{who} #{action} #{pmc.display_name} #{list}"
     body "Current roster can be found at:\n\n" +
-      "  https://whimsy.apache.org/roster/#{project_type}/#{pmc.id}\n\n" +
+      "  https://whimsy.apache.org/roster/committee/#{pmc.id}\n\n" +
       "LDAP details:\n\n  #{details.join("\n  ")}"
   end
 
