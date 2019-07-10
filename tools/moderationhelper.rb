@@ -202,7 +202,7 @@ _html do
           ml0,ml1 = @maillist.split('@')
           if ml1
             # enable escape for apachecon.com
-            ml1 += '.apache.org' unless m11 =~ /\.(org|com)$/
+            ml1 += '.apache.org' unless ml1 =~ /\.(org|com)$/
           else
             ml1 = 'apache.org'
           end
