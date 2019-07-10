@@ -201,7 +201,8 @@ _html do
         _div.well do
           ml0,ml1 = @maillist.split('@')
           if ml1
-            ml1 += '.apache.org'
+            # enable escape for apachecon.com
+            ml1 += '.apache.org' unless m11 =~ /\.(org|com)$/
           else
             ml1 = 'apache.org'
           end
