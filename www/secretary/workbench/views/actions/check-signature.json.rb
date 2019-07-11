@@ -37,18 +37,46 @@ begin
     keyid = err[/[RD]SA key (ID )?(\w+)/,2].untaint
 
     out2 = err2 = '' # needed later
-    KEYSERVERS.each do |server|
-      out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', server,
-        '--debug', 'ipc', # seems to show communication with dirmngr
-        '--recv-keys', keyid
-      # for later analysis
-      Wunderbar.warn "#{gpg} --keyserver #{server} --recv-keys #{keyid} rc2=#{rc2} out2=#{out2} err2=#{err2}"
-      if rc2.exitstatus == 0 # Found the key
-        out2 = err2 = '' # Don't add download error to verify error
-        break
-      end
+
+    #+++ TEMPORARY HACK (WHIMSY-275)
+
+#    KEYSERVERS.each do |server|
+#      out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', server,
+#        '--debug', 'ipc', # seems to show communication with dirmngr
+#        '--recv-keys', keyid
+#      # for later analysis
+#      Wunderbar.warn "#{gpg} --keyserver #{server} --recv-keys #{keyid} rc2=#{rc2} out2=#{out2} err2=#{err2}"
+#      if rc2.exitstatus == 0 # Found the key
+#        out2 = err2 = '' # Don't add download error to verify error
+#        break
+#      end
+#    end
+
+    require 'open-uri'
+    if keyid.length == 40
+      uri = "https://keys.openpgp.org/vks/v1/by-fingerprint/#{keyid}"
+    else
+      uri = "https://keys.openpgp.org/vks/v1/by-keyid/#{keyid}"
     end
-  
+    Wunderbar.warn uri
+    Dir.mktmpdir do |dir|
+      begin
+        tmpfile = File.join(dir, keyid)
+        File.open(tmpfile,"w") do |f|
+          f.puts(URI(uri).read)
+        end
+        out2, err2, rc2 = Open3.capture3 gpg,
+          '--batch', '--import', tmpfile
+        # For later analysis
+        Wunderbar.warn "#{gpg} --import #{tmpfile} rc2=#{rc2} out2=#{out2} err2=#{err2}"
+      rescue Exception => e
+        Wunderbar.warn "GET uri=#{uri} e=#{e}"
+        err2 = e.to_s
+      end
+    end  
+
+    #--- TEMPORARY HACK (WHIMSY-275)
+
     # run gpg verify command again
     # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
     # reduce the keyid length from the full fingerprint
