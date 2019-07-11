@@ -36,7 +36,7 @@ begin
     # extract and fetch key
     keyid = err[/[RD]SA key (ID )?(\w+)/,2].untaint
 
-    out2, err2 = '' # needed later
+    out2 = err2 = '' # needed later
     KEYSERVERS.each do |server|
       out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', server,
         '--debug', 'ipc', # seems to show communication with dirmngr
