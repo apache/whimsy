@@ -7,8 +7,9 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 #KEYSERVER = 'pgpkeys.mit.edu'
 # Perhaps also try keyserver.pgp.com
 # see WHIMSY-274 for secure servers
-KEYSERVERS = %w{keys.openpgp.org}
-
+KEYSERVERS = %w{keys.openpgp.org sks-keyservers.net keyserver.ubuntu.com}
+# N.B. ensure the keyserver URI is known below
+MAX_KEY_SIZE = 5000 # don't import if the ascii keyfile is larger than this
 message = Mailbox.find(@message)
 
 begin
@@ -53,28 +54,46 @@ begin
 #    end
 
     require 'open-uri'
-    if keyid.length == 40
-      uri = "https://keys.openpgp.org/vks/v1/by-fingerprint/#{keyid}"
-    else
-      uri = "https://keys.openpgp.org/vks/v1/by-keyid/#{keyid}"
-    end
-    Wunderbar.warn uri
-    Dir.mktmpdir do |dir|
-      begin
-        tmpfile = File.join(dir, keyid)
-        File.open(tmpfile,"w") do |f|
-          f.puts(URI(uri).read)
+    KEYSERVERS.each do |server|
+      found = false
+      if server == 'keys.openpgp.org'
+        if keyid.length == 40
+          uri = "https://keys.openpgp.org/vks/v1/by-fingerprint/#{keyid}"
+        else
+          uri = "https://keys.openpgp.org/vks/v1/by-keyid/#{keyid}"
         end
-        out2, err2, rc2 = Open3.capture3 gpg,
-          '--batch', '--import', tmpfile
-        # For later analysis
-        Wunderbar.warn "#{gpg} --import #{tmpfile} rc2=#{rc2} out2=#{out2} err2=#{err2}"
-      rescue Exception => e
-        Wunderbar.warn "GET uri=#{uri} e=#{e}"
-        err2 = e.to_s
+      elsif server == 'sks-keyservers.net'
+        uri = "https://sks-keyservers.net/pks/lookup?search=0x#{keyid}&exact=on&options=mr&op=get"
+      elsif server == 'keyserver.ubuntu.com'
+        uri = "https://keyserver.ubuntu.com/pks/lookup?search=0x#{keyid}&op=get"
+      else
+        raise ArgumentError, "Don't know how to get key from #{server}"
       end
-    end  
-
+      Wunderbar.warn uri
+      Dir.mktmpdir do |dir|
+        begin
+          tmpfile = File.join(dir, keyid)
+          File.open(tmpfile,"w") do |f|
+            f.puts(URI(uri).read)
+          end
+          size = File.size(tmpfile)
+          Wunderbar.warn "File: #{tmpfile} Size: #{size}"
+          if size < MAX_KEY_SIZE # Don't import if it appears to be too big
+            out2, err2, rc2 = Open3.capture3 gpg,
+              '--batch', '--import', tmpfile
+            # For later analysis
+            Wunderbar.warn "#{gpg} --import #{tmpfile} rc2=#{rc2} out2=#{out2} err2=#{err2}"
+            found = true
+          else
+            Wunderbar.warn "File #{tmpfile} is too big: #{size}"
+          end
+        rescue Exception => e
+          Wunderbar.warn "GET uri=#{uri} e=#{e}"
+          err2 = e.to_s
+        end
+      end
+      break if found 
+    end
     #--- TEMPORARY HACK (WHIMSY-275)
 
     # run gpg verify command again
