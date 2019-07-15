@@ -88,7 +88,7 @@ module ASF
           lists.delete_if {|list| list =~ /(^|-)security$|^security(-|$)/ }
           lists
       else
-          whitelist = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'concom', 'party']
+          whitelist = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'party']
           # Can always subscribe to public lists and the whitelist
           lists = @lists.keys.select{|key| @lists[key] == 'public' or whitelist.include? key}
 
@@ -251,6 +251,8 @@ module ASF
         'travel-assistance@apache.org'
       when 'w3crelations'
         'w3c@apache.org'
+      when 'concom'
+        'planners@apachecon.com'
       else
         name
       end
