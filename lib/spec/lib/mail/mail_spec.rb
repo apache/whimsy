@@ -28,7 +28,7 @@ describe ASF::Mail do
   describe '.cansub(member, pmc_chair, ldap_pmcs)' do
     lists = ASF::Mail.cansub(false, false, nil)
     it 'should return public lists only' do
-      whitelist = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'concom', 'party']
+      whitelist = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'party']
       board = ['board', 'board-commits', 'board-chat']
       if TEST_DATA
         expect(lists.length).to be >= 7 
