@@ -12,19 +12,23 @@ message = Mailbox.find(@message)
 
 @from.untaint if @from =~ /\A("?[\s\w]+"?\s+<)?\w+@apache\.org>?\z/
 
-# extract file extension
+# extract file extension (only needed if there is no signature)
 fileext = File.extname(@selected).downcase if @signature.empty?
 
 # verify that an ICLA under that name doesn't already exist
 if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
-  icladir = "#{ASF::SVN['iclas']}/#@filename" # also check for directory
+  icladir = "#{ASF::SVN['iclas']}/#@filename" # first check for directory
   if File.exist? icladir.untaint
     _warn "documents/iclas/#@filename already exists"
+  else
+    # now check for a file (may have various extensions)
+    file = Dir["#{icladir}.*"]
+    if file.any?
+      _warn "documents/iclas/#{File.basename(file.first)} already exists"
+    end
   end
-  icla = "#{ASF::SVN['iclas']}/#@filename#{fileext}"
-  if File.exist? icla.untaint
-    _warn "documents/iclas/#@filename#{fileext} already exists"
-  end
+else
+  _warn "#@filename#{fileext} does not appear to be a valid filename"
 end
 
 # extract/verify project
