@@ -127,7 +127,7 @@ class ASF::Board::Agenda
       end
 
       if need_chair
-        if text =~ /FURTHER RESOLVED, that\s+([^,]*?),?\s+be\b/
+        if text =~ /(BE IT|FURTHER) RESOLVED, that\s+([^,]*?),?\s+be\b/
           chairname = $1.gsub(/\s+/, ' ').strip
 
           if chairname =~ /\s\(([-.\w]+)\)$/
