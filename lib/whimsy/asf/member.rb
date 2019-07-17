@@ -142,6 +142,7 @@ module ASF
       begin
         text = @@text[0..-1] if @@text
       rescue WeakRef::RefError
+        Wunderbar.warn "Cache of ASF::Member.text not found"
         @@mtime = 0
       end
 
