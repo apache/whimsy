@@ -148,9 +148,12 @@ module ASF
       member_file = File.join(foundation, 'members.txt')
       member_time = File.mtime(member_file)
       if member_time.to_i > @@mtime.to_i
+        Wunderbar.warn "Reading #{member_file} #{member_time.to_i} > #{@@mtime.to_i}"
         @@mtime = member_time
         text = File.read(member_file)
         @@text = WeakRef.new(text)
+      else
+        Wunderbar.warn "Using #{member_file} cache @@mtime=#{@@mtime.to_i}"
       end
 
       text
@@ -166,6 +169,7 @@ module ASF
 
       # save
       @@mtime = Time.now
+      Wunderbar.warn "Caching ASF::Member.text @@mtime=#{@@mtime.to_i}"
       @@text = WeakRef.new(text)
     end
   end
