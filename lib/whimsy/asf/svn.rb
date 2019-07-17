@@ -336,6 +336,10 @@ module ASF
       ensure
         FileUtils.rm_rf tmpdir
       end
+      # Now update the local working copy
+      _.system ['svn', 'update', '--non-interactive',
+        ['--username', env.user, '--password', env.password],
+        dir]
     end
   end
 
