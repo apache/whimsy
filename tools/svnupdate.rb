@@ -15,8 +15,8 @@ LOG = '/srv/whimsy/www/logs/svn-update'
 
 # More testing
 LOGTMP = '/srv/whimsy/www/logs/svn-update.tmp'
-$stderr.reopen(File.new(LOGTMP,'w'))
-$stdout.reopen(File.new(LOGTMP,'w'))
+$stderr.reopen(File.new(LOGTMP,'at'))
+$stdout.reopen(File.new(LOGTMP,'at'))
 
 def update(dir)
   # prevent concurrent updates being performed by the cron job
