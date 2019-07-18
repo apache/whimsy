@@ -25,8 +25,8 @@ def update(dir)
 
     puts "#{Time.now} Updating #{dir}" # Temporary test
     Dir.chdir dir do
-      `svn cleanup`
-      `svn update`
+      puts `svn cleanup`
+      puts `svn update`
     end
   end
 end
