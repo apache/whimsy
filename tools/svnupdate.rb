@@ -13,6 +13,11 @@ mail = Mail.new(STDIN.read)
 # This must agree with the file used by the svnupdate cron job
 LOG = '/srv/whimsy/www/logs/svn-update'
 
+# More testing
+LOGTMP = '/srv/whimsy/www/logs/svn-update.tmp'
+$stderr.reopen(File.new(LOGTMP,'w'))
+$stdout.reopen(File.new(LOGTMP,'w'))
+
 def update(dir)
   # prevent concurrent updates being performed by the cron job
   File.open(LOG, File::RDWR|File::CREAT, 0644) do |log|
@@ -28,6 +33,7 @@ end
 
 if mail.subject =~ %r{^board: r\d+ -( in)? /foundation/board} # board-commits@
 
+  puts "Matched board" # test
   # prevent concurrent updates being performed by the cron job
   File.open(LOG, File::RDWR|File::CREAT, 0644) do |log|
     log.flock(File::LOCK_EX)
@@ -66,5 +72,7 @@ elsif mail.subject =~ %r{^bills: r\d+ -( in)? /financials/Bills} # operations@
     end
   end
 
+else
+  puts mail.subject # temporary test
 end
 
