@@ -378,7 +378,14 @@ class Person < Vue
       },
 
       error: ->(response) {
-        alert response.statusText
+        json = response.responseJSON
+        if json.exception
+          @response_title = json.exception
+          @response = JSON.stringify(json, nil, 2)
+          jQuery('div.modal').modal('show')
+        else
+          alert response.statusText
+        end
       },
 
       complete: ->(response) do
