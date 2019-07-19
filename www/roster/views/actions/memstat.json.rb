@@ -11,7 +11,9 @@ message = "Move #{ASF::Person.find(@userid).member_name} to #{@action}"
 # update members.txt
 _svn.update members_txt, message: message do |dir, text|
   # remove user's entry
-  text.sub! entry, ''
+  unless text.sub! entry, '' # e.g. if the workspace was out of date
+    raise Exception.new("Failed to remove existing entry -- try refreshing")
+  end
 
   # determine where to put the entry
   if @action == 'emeritus'

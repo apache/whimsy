@@ -11,7 +11,9 @@ message = "Update entry for #{ASF::Person.find(@userid).member_name}"
 # update members.txt
 _svn.update members_txt, message: message do |dir, text|
   # replace entry
-  text.sub! entry, " *) #{@entry.strip}\n\n"
+  unless text.sub! entry, " *) #{@entry.strip}\n\n" # e.g. if the workspace was out of date
+    raise Exception.new("Failed to replace existing entry -- try refreshing")
+  end
 
   # save the updated text
   ASF::Member.text = text
