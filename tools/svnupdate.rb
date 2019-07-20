@@ -26,6 +26,8 @@ def update(dir)
   end
 end
 
+# N.B. Please ensure any required list subscriptions are noted in DEPLOYMENT.md
+
 if mail.subject =~ %r{^board: r\d+ -( in)? /foundation/board} # board-commits@
 
   # prevent concurrent updates being performed by the cron job

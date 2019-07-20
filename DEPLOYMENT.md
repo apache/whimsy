@@ -98,6 +98,8 @@ and running - these are only needed for a new deployment.
  * Add the following mail subscriptions:
     * Subscribe `svnupdate@whimsy-vm4.apache.org` to `board-commits@apache.org`.
     * Subscribe `svnupdate@whimsy-vm4.apache.org` to `committers-cvs@apache.org`.
+    * Subscribe `svnupdate@whimsy-vm4.apache.org` to `foundation-commits@apache.org`.
+    * TODO: should we subscribe `svnupdate@whimsy-vm4.apache.org` to `operations@apache.org` ? (see svnupdate.rb)
     * Subscribe `board@whimsy-vm4.apache.org` to `board@apache.org`.
     * Subscribe `members@whimsy-vm4.apache.org` to `members@apache.org`.
     * Add `secretary@whimsy-vm4.apache.org` to the `secretary@apache.org` alias.
