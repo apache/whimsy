@@ -6,7 +6,11 @@ module ASF
     @@text = nil
     @@mtime = 0
 
-    # Return the members.txt value assocaited with a given id
+    def self.mtime
+      @@mtime
+    end
+
+    # Return the members.txt value associated with a given id
     def self.find_text_by_id(value)
       new.each do |id, text|
         return text if id==value
@@ -175,8 +179,13 @@ module ASF
     # this will also include the text delimiters.
     def members_txt(full = false)
       prefix, suffix = " *) ", "\n\n" if full
-      # TODO work out how to cache this safely (WHIMSY-278)
-      @members_txt = ASF::Member.find_text_by_id(id)
+      # Is the cached text still valid?
+      unless @members_time == ASF::Member.mtime
+        @members_txt = nil
+      end
+      # cache the text and its time (may be changed by the find operation)
+      @members_txt ||= ASF::Member.find_text_by_id(id)
+      @members_time = ASF::Member.mtime
       "#{prefix}#{@members_txt}#{suffix}" if @members_txt
     end
 
