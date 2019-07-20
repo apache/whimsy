@@ -175,7 +175,8 @@ module ASF
     # this will also include the text delimiters.
     def members_txt(full = false)
       prefix, suffix = " *) ", "\n\n" if full
-      @members_txt ||= ASF::Member.find_text_by_id(id)
+      # TODO work out how to cache this safely (WHIMSY-278)
+      @members_txt = ASF::Member.find_text_by_id(id)
       "#{prefix}#{@members_txt}#{suffix}" if @members_txt
     end
 
