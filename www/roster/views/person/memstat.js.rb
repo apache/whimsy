@@ -14,13 +14,26 @@ class PersonMemberStatus < Vue
           _span committer.member.status
 
          if @@edit == :memstat
+           opt = { year: 'numeric', month: 'long' } # Suggested date
+           dod = Date.new.toLocaleDateString('en-US', opt)
            _form.inline method: 'post' do
              if committer.member.status.include? 'Active'
                _button.btn.btn_primary 'move to emeritus',
                  name: 'action', value: 'emeritus'
+               _button.btn.btn_primary 'move to deceased',
+                 name: 'action', value: 'deceased'
+               _input 'dod', name: 'dod', value: dod
              elsif committer.member.status.include? 'Emeritus'
                _button.btn.btn_primary 'move to active',
                  name: 'action', value: 'active'
+               _button.btn.btn_primary 'move to deceased',
+                 name: 'action', value: 'deceased'
+               _input 'dod', name: 'dod', value: dod
+             elsif committer.member.status.include? 'Deceased'
+               _button.btn.btn_primary 'move to active',
+                 name: 'action', value: 'active'
+               _button.btn.btn_primary 'move to emeritus',
+                 name: 'action', value: 'emeritus'
              end
            end
          end

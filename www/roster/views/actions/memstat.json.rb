@@ -18,8 +18,13 @@ _svn.update members_txt, message: message do |dir, text|
   # determine where to put the entry
   if @action == 'emeritus'
     index = text.index(/^\s\*\)\s/, text.index(/^Emeritus/))
+    entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
   elsif @action == 'active'
     index = text.index(/^\s\*\)\s/, text.index(/^Active/))
+    entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
+  elsif @action == 'deceased'
+    index = text.index(/^\s\*\)\s/, text.index(/^Deceased/))
+    entry.sub! %r{\n}, " /* deceased, #{@dod} */\n" # add the deceased comment
   else
     raise Exception.new("invalid action #{action.inspect}")
   end
