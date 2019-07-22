@@ -96,8 +96,6 @@ def display_monthly(months:, nondiscuss:)
   months.sort.reverse.each do |month|
     data = get_mails_month(yearmonth: month, nondiscuss: nondiscuss)
     next if data.empty?
-    data[MAILS] ||= []
-    data[TOOLS] ||= []
     _h1 "board@ statistics for #{month} (total mails: #{data[MAILS].length + data[TOOLS].length})", id: "#{month}"
     _div.row do
       _div.col_sm_6 do
