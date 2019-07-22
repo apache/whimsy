@@ -96,7 +96,6 @@ def display_monthly(months:, nondiscuss:)
   months.sort.reverse.each do |month|
     data = get_mails_month(yearmonth: month, nondiscuss: nondiscuss)
     next if data.empty?
-    $stderr.puts data.inspect
     data[MAILS] ||= []
     data[TOOLS] ||= []
     _h1 "board@ statistics for #{month} (total mails: #{data[MAILS].length + data[TOOLS].length})", id: "#{month}"
@@ -208,7 +207,6 @@ _html do
       }
     ) do
       months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
-      $stderr.puts months.inspect
       if ENV['QUERY_STRING'].include? 'week'
         display_weekly(months: months, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS['<board.apache.org>'])
       else
