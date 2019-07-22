@@ -50,7 +50,13 @@ def get_mails_month(yearmonth:, nondiscuss:)
       data = {}
       data[DATE] = DateTime.parse(message[/^Date: (.*)/, 1]).iso8601
       data[FROM] = message[/^From: (.*)/, 1]
-      data[WHO], data[MailUtils::COMMITTER] = MailUtils.find_who_from(data)
+      # Originally (before 2265343) the local method #find_who_from expected an email address and returned who, committer
+      # Emulate this with the version from MailUtils which expects and updates a hash
+      temp = {from: data[FROM]} # pass a hash
+      MailUtils.find_who_from(temp) # update the hash
+      # pick out the bits we want
+      data[WHO], data[MailUtils::COMMITTER] = temp[:who], temp[:committer] 
+
       data[SUBJECT] = message[/^Subject: (.*)/, 1]
       if nondiscuss
         nondiscuss.each do |typ, rx|
