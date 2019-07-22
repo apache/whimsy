@@ -152,7 +152,7 @@ def display_weekly(months:, nondiscuss:)
   _h1 "board@ list non-tool emails weekly statistics", id: "top"
   _div.row do
     _div.col.col_sm_offset_1.col_sm_9 do
-      weeks.each do |week, senders|
+      weeks.sort.reverse.each do |week, senders|
         total = 0
         senders.each do |sender, count|
           next if /@@/ =~ sender
