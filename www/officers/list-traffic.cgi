@@ -50,7 +50,7 @@ def get_mails_month(yearmonth:, nondiscuss:)
       data = {}
       data[DATE] = DateTime.parse(message[/^Date: (.*)/, 1]).iso8601
       data[FROM] = message[/^From: (.*)/, 1]
-      data[WHO], data[MailUtils::COMMITTER] = MailUtils.find_who_from(data[FROM])
+      data[WHO], data[MailUtils::COMMITTER] = MailUtils.find_who_from(data)
       data[SUBJECT] = message[/^Subject: (.*)/, 1]
       if nondiscuss
         nondiscuss.each do |typ, rx|
@@ -96,6 +96,9 @@ def display_monthly(months:, nondiscuss:)
   months.sort.reverse.each do |month|
     data = get_mails_month(yearmonth: month, nondiscuss: nondiscuss)
     next if data.empty?
+    $stderr.puts data.inspect
+    data[MAILS] ||= []
+    data[TOOLS] ||= []
     _h1 "board@ statistics for #{month} (total mails: #{data[MAILS].length + data[TOOLS].length})", id: "#{month}"
     _div.row do
       _div.col_sm_6 do
@@ -205,6 +208,7 @@ _html do
       }
     ) do
       months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
+      $stderr.puts months.inspect
       if ENV['QUERY_STRING'].include? 'week'
         display_weekly(months: months, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS['<board.apache.org>'])
       else
