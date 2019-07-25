@@ -79,7 +79,7 @@ _html do
     iclas[stem] << name
   end
 
-  seen=Hash.new(0) # iclas.txt CLA stem values
+  seen=Hash.new{ |h,k| h[k] = []} # iclas.txt CLA stem values (value = id,name)
   icla_ids=Hash.new{ |h,k| h[k] = []} # to check for duplicates and missing entries
   icla_mails=Hash.new{ |h,k| h[k] = []} # to check for duplicates
 
@@ -121,7 +121,7 @@ _html do
       if comment =~ /Signed CLA;(.*)/
         claRef = $1
         # to be valid, the entry must exist; also record what we have seen
-        missing = claRef.split(',').reject {|path| seen[path] += 1; iclas.include? path}
+        missing = claRef.split(',').reject {|path| seen[path] << [id,name,email]; iclas.include? path}
 
         if not missing.empty?
           issue, note = 'error', "missing icla: #{missing.first.inspect}"
@@ -224,18 +224,25 @@ _html do
   iclas.reject! {|path| seen.include? path}
 
   # select entries with count != 1  
-  seen.select! {|k,v| v != 1}
+  seen.select! {|k,v| v.length != 1}
   if seen.size > 0
     _h2_ 'Duplicate stem entries in iclas.txt'
     _table_ do
       _tr do
         _th 'stem'
         _th 'count'
+        _th 'entries'
       end
       seen.each do |k,v|
         _tr do
           _td k
-          _td v
+          _td v.length
+          _td do
+            v.each do |w|
+              _ w
+              _ ' '
+            end
+          end
         end
       end
     end # table
