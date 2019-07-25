@@ -79,28 +79,6 @@ _html do
     iclas[stem] << name
   end
 
-  if dupes > 0
-    _h2_ 'Files with duplicate stems'
-    _table_ do
-      _tr do
-        _th 'stem'
-        _th 'paths'
-      end
-      iclas.each do |icla,paths|
-        if paths.size > 1
-          _tr do
-            _td icla
-            _td do
-              paths.each do |path|
-                _a path, href: "https://svn.apache.org/repos/private/documents/iclas/#{path}"
-              end
-            end
-          end
-        end
-      end      
-    end
-  end
-
   seen=Hash.new(0) # iclas.txt CLA stem values
   icla_ids=Hash.new{ |h,k| h[k] = []} # to check for duplicates and missing entries
   icla_mails=Hash.new{ |h,k| h[k] = []} # to check for duplicates
@@ -218,6 +196,28 @@ _html do
     end
   else
     _ 'All committers have ICLAs'
+  end
+
+  if dupes > 0
+    _h2_ 'Files with duplicate stems'
+    _table_ do
+      _tr do
+        _th 'stem'
+        _th 'paths'
+      end
+      iclas.each do |icla,paths|
+        if paths.size > 1
+          _tr do
+            _td icla
+            _td do
+              paths.each do |path|
+                _a path, href: "https://svn.apache.org/repos/private/documents/iclas/#{path}"
+              end
+            end
+          end
+        end
+      end      
+    end
   end
 
   # drop any stems we have seen
