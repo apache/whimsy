@@ -142,8 +142,8 @@ _html do
       end
       if comment =~ /Signed CLA;(.*)/
         claRef = $1
-        # to be valid, the entry must exist; remove matched entries
-        missing = claRef.split(',').select {|path| seen[path] += 1; iclas.delete(path) == nil}
+        # to be valid, the entry must exist; also record what we have seen
+        missing = claRef.split(',').reject {|path| seen[path] += 1; iclas.include? path}
 
         if not missing.empty?
           issue, note = 'error', "missing icla: #{missing.first.inspect}"
@@ -219,6 +219,9 @@ _html do
   else
     _ 'All committers have ICLAs'
   end
+
+  # drop any stems we have seen
+  iclas.reject! {|path| seen.include? path}
 
   # select entries with count != 1  
   seen.select! {|k,v| v != 1}
