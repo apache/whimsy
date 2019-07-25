@@ -146,6 +146,11 @@ module ASF
       end
     end
 
+    # show the original entry (reconstructed for now)
+    def as_line
+      [id,legal_name,name,email,form].join(':')
+    end
+
     # rearrange line in an order suitable for sorting
     def self.lname(line)
       return '' if line.start_with? '#'
