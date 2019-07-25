@@ -25,6 +25,11 @@ if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
     file = Dir["#{icladir}.*"]
     if file.any?
       _warn "documents/iclas/#{File.basename(file.first)} already exists"
+    else
+      _icla = ASF::ICLA.find_by_email(@email.strip)
+      if _icla
+        _warn "Email #{@email.strip} found in iclas.txt file - #{_icla.as_line}"
+      end
     end
   end
 else
