@@ -57,6 +57,7 @@ class Committer
     end
 
     response[:host] = person.attrs['host'] || ['(none)']
+    response[:inactive] = person.inactive? 
 
     if person.attrs['asf-sascore']
       response[:sascore] = person.attrs['asf-sascore'].first # should only be one, but is returned as array

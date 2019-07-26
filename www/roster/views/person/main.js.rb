@@ -240,6 +240,13 @@ class Person < Vue
       end
     end
 
+    if @committer.inactive
+      _div.row do
+        _div.name 'Inactive (cannot login)'
+        _div.value @committer.inactive
+      end
+    end
+
     # SSH keys
     if @committer.ssh || @auth
       @committer.ssh ||= []
