@@ -123,7 +123,7 @@ if changed? and @old_file
       # Could check that the joining dates are all the same?
     end
     entry[:roster].each { |id,value|
-      Wunderbar.warn "#{pmc}: unknown uid #{id}" unless uids.include?(id)
+      Wunderbar.warn "#{pmc}: unknown uid '#{id}'" unless uids.include?(id)
     }
   }
 

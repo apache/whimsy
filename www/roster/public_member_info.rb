@@ -53,6 +53,6 @@ if changed? and @old_file
   # for validating UIDs
   uids = ASF::Person.list().map(&:id)
   info[:members].each do |id|
-    Wunderbar.warn "member: unknown uid #{id}" unless uids.include?(id)      
+    Wunderbar.warn "member: unknown uid '#{id}'" unless uids.include?(id)
   end
 end

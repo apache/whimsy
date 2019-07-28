@@ -92,10 +92,10 @@ if changed? and @old_file
   uids = ASF::Person.list().map(&:id)
   entries.each do |name, entry|
     entry[:members].each do |id|
-      Wunderbar.warn "#{name}: unknown member uid #{id}" unless uids.include?(id)      
+      Wunderbar.warn "#{name}: unknown member uid '#{id}'" unless uids.include?(id)
     end
     entry[:owners].each do |id|
-      Wunderbar.warn "#{name}: unknown owner uid #{id}" unless uids.include?(id)      
+      Wunderbar.warn "#{name}: unknown owner uid '#{id}'" unless uids.include?(id)
     end
   end
 end
