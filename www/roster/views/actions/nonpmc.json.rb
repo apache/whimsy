@@ -48,7 +48,8 @@ if env.password
   action = (@action == 'add' ? 'added to' : 'removed from')
   if @targets.include? 'pmc'
     # must use () to enclose method parameter below as ? binds tighter
-    list = @targets.include?('commit') ? 'PMC and committers list' : 'PMC list'
+    list = @targets.include?('commit') ?
+      'committee and committers list' : 'committee list'
   elsif @targets.include? 'info'
     list = 'in committee-info.txt'
   else
