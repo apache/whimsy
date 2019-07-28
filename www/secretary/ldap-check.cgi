@@ -195,7 +195,7 @@ _html do
     _p do
       _ 'The following ids are in the new group but not the old'
       _br
-      _ new_old.join(',')
+      _ new_old.(&:inspect).join(',')
     end
   elsif old_new.size == 0
   _p 'The groups are equal'
@@ -205,7 +205,7 @@ _html do
     _p do
       _ 'The following ids are in the old group but not the new'
       _br
-      _ old_new.join(',')
+      _ old_new.(&:inspect).join(',')
     end
   end
 
