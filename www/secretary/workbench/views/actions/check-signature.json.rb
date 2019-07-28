@@ -7,7 +7,8 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 #KEYSERVER = 'pgpkeys.mit.edu'
 # Perhaps also try keyserver.pgp.com
 # see WHIMSY-274 for secure servers
-KEYSERVERS = %w{keys.openpgp.org sks-keyservers.net keyserver.ubuntu.com}
+# Removed keys.openpgp.org as it does not return data such as email unless user specifically allows this 
+KEYSERVERS = %w{sks-keyservers.net keyserver.ubuntu.com}
 # N.B. ensure the keyserver URI is known below
 MAX_KEY_SIZE = 5000 # don't import if the ascii keyfile is larger than this
 message = Mailbox.find(@message)
