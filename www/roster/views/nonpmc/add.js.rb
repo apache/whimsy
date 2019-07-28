@@ -53,15 +53,6 @@ class NonPMCAdd < Vue
               _CommitterSearch add: self.add,
                 exclude: @@project.roster.keys().
                   concat(@people.map {|person| person.id})
-
-              _p do
-                _label do
-                  _input type: 'checkbox', checked: @notice_elapsed
-                  _a '72 hour board@ NOTICE',
-                    href: 'https://www.apache.org/dev/pmc.html#notice_period'
-                  _span ' period elapsed?'
-                end
-              end
             end
           end
 
@@ -79,7 +70,7 @@ class NonPMCAdd < Vue
 
             _button.btn.btn_primary 'Add to Committee', onClick: self.post,
               data_action: 'add pmc info commit', 
-              disabled: (@people.empty? or not @notice_elapsed)
+              disabled: @people.empty?
           end
         end
       end
