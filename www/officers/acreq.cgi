@@ -35,7 +35,7 @@ pmcs = ASF::Committee.pmcs.map(&:name).sort
 
 # grab the current list of nonPMCs with member lists from ldap
 nonpmcs = ASF::Committee.nonpmcs.map(&:name).
-  select {|name| not ASF::Project.find(name).members.empty?}
+  select {|name| ASF::Project.find(name).hasLDAP?}
 
 # grab the list of active podlings
 podlings = ASF::Podling.list.select {|podling| podling.status == 'current'}.
