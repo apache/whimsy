@@ -1,3 +1,5 @@
+require 'open3'
+
 class Attachment
   IMAGE_TYPES = %w(.gif, .jpg, .jpeg, .png)
   attr_reader :headers
@@ -62,9 +64,33 @@ class Attachment
     if IMAGE_TYPES.include? ext or content_type.start_with? 'image/'
       pdf = SafeTempFile.new([safe_name, '.pdf'])
       img2pdf = File.expand_path('../img2pdf', __dir__.untaint).untaint
-      system img2pdf, '--output', pdf.path, file.path
+      stdout, stderr, status = Open3.capture3 img2pdf, '--output', pdf.path,
+        file.path
+
+      # img2pdf will refuse if there is an alpha channel.  If that happens
+      # use imagemagick to remove the alpha channel and try again.
+      unless status.exitstatus == 0
+        if stderr.include? 'remove the alpha channel'
+          tmppng = SafeTempFile.new([safe_name, '.png'])
+          system 'convert', file.path, '-background', 'white', '-alpha',
+            'remove', '-alpha', 'off', tmppng.path
+
+          if File.size? tmppng.path
+            stdout, stderr, status = Open3.capture3 img2pdf, '--output',
+              pdf.path, tmppng.path
+          end
+
+          tmppng.unlink
+        end
+      end
+
       file.unlink
-      raise "Failed to convert #{self.name} to PDF" unless File.size? pdf.path
+
+      unless File.size? pdf.path
+        STDERR.print stderr unless stderr.empty?
+        raise "Failed to convert #{self.name} to PDF"
+      end
+
       return pdf
     end
 
