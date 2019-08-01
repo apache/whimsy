@@ -33,12 +33,16 @@ iclas_txt = `#{SVN} cat #{OFFICERS}/iclas.txt`.force_encoding('utf-8')
 # grab the current list of PMCs from ldap
 pmcs = ASF::Committee.pmcs.map(&:name).sort
 
+# grab the current list of nonPMCs with member lists from ldap
+nonpmcs = ASF::Committee.nonpmcs.map(&:name).
+  select {|name| not ASF::Project.find(name).members.empty?}
+
 # grab the list of active podlings
 podlings = ASF::Podling.list.select {|podling| podling.status == 'current'}.
   map(&:name).sort
 
 # combined list of pmcs and projects
-projects = (pmcs + podlings).uniq.sort
+projects = (pmcs + podlings + nonpmcs).uniq.sort
 
 # grab the list of iclas that have no ids assigned
 query = CGI::parse ENV['QUERY_STRING']
