@@ -10,8 +10,18 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 # Removed keys.openpgp.org as it does not return data such as email unless user specifically allows this 
 KEYSERVERS = %w{sks-keyservers.net keyserver.ubuntu.com}
 # N.B. ensure the keyserver URI is known below
-MAX_KEY_SIZE = 5000 # don't import if the ascii keyfile is larger than this
+MAX_KEY_SIZE = 20700 # don't import if the ascii keyfile is larger than this
 message = Mailbox.find(@message)
+
+require 'net/http'
+def getURI(uri)
+  uri = URI.parse(uri)
+  Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |https|
+    request = Net::HTTP::Get.new(uri.request_uri)
+    response = https.request(request)
+    return response.body
+  end
+end
 
 begin
   # fetch attachment and signature
@@ -54,7 +64,6 @@ begin
 #      end
 #    end
 
-    require 'open-uri'
     KEYSERVERS.each do |server|
       found = false
       if server == 'keys.openpgp.org'
@@ -75,7 +84,7 @@ begin
         begin
           tmpfile = File.join(dir, keyid)
           File.open(tmpfile,"w") do |f|
-            f.puts(URI(uri).read)
+            f.puts(getURI(uri))
           end
           size = File.size(tmpfile)
           Wunderbar.warn "File: #{tmpfile} Size: #{size}"
