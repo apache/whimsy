@@ -14,6 +14,18 @@ Agenda.update(@agenda, @message) do |agenda|
   # quick parse of agenda
   parsed = ASF::Board::Agenda.parse(agenda, true)
 
+  # map @project to @attach to support posting from reporter.apache.org
+  if not @attach and @project
+    project = ASF::Committee.find(@project).display_name
+    parsed.each do |report|
+      if report['title'] == project
+        raise "report already posted" unless report['missing']
+        @attach = report[:attach]
+        @digest = report['digest']
+      end
+    end
+  end
+
   # remove trailing whitespace
   @report.sub! /\s*\Z/, ''
 
