@@ -423,9 +423,19 @@ get %r{/json/chat/(\d\d\d\d_\d\d_\d\d)} do |date|
   end
 end
 
-# historical comments
+# historical comments, filtered to only include the list of projects which
+# the user is a member of the PMC for non-ASF-members and non-officers.
 get '/json/historical-comments' do
-  _json HistoricalComments.comments
+  user=ASF::Person.find(env.user)
+  comments = HistoricalComments.comments
+
+  unless user.asf_member? or ASF.pmc_chairs.include? user
+    comments = comments.select do |project, list|
+      ASF::Committee.find(project).owners.include? user
+    end
+  end
+
+  _json comments.to_h
 end
 
 # draft minutes

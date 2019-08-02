@@ -15,6 +15,11 @@ use ASF::Auth::MembersAndOfficers do |env|
     next true
   end
 
+  # allow access to historical-comments for reporter tool.
+  # note: this list is filtered by routes.rb to only include the list of
+  # PMCs that the user is a member of for non-ASF-members and non-officers.
+  next true if env['PATH_INFO'] == '/json/historical-comments'
+
   # additionally authorize all invited guests
   agenda = dir('board_agenda_*.txt').sort.last
   if agenda
