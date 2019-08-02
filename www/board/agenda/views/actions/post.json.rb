@@ -19,9 +19,9 @@ Agenda.update(@agenda, @message) do |agenda|
     project = ASF::Committee.find(@project).display_name
     parsed.each do |report|
       if report['title'] == project
-        raise "report already posted" unless report['missing']
+        raise "report already posted" unless @digest or report['missing']
         @attach = report[:attach]
-        @digest = report['digest']
+        @digest ||= report['digest']
       end
     end
   end
