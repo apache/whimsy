@@ -1,6 +1,11 @@
 #
 # edit exiting / post new report
 #
+# Note: this code validates that env.user is one of the following:
+#  1) an ASF member
+#  2) a PMC chair
+#  3) a member of the PMC for the report being posted
+#
 
 # special case for new special orders
 if @attach == '7?'
@@ -9,21 +14,35 @@ elsif @attach == '8?'
   @message = "Post Discussion Item 8X: #{@title}"
 end
 
-Agenda.update(@agenda, @message) do |agenda|
+attach = nil
 
+# Determine if user is authorized
+user = ASF::Person.find(env.user)
+member_or_officer = user.asf_member? or ASF.pmc_chairs.include? user
+credentials = member_or_officer ? nil : ['--username', 'whimsysvn']
+
+Agenda.update(@agenda, @message, auth: credentials) do |agenda|
   # quick parse of agenda
   parsed = ASF::Board::Agenda.parse(agenda, true)
 
   # map @project to @attach to support posting from reporter.apache.org
   if not @attach and @project
-    project = ASF::Committee.find(@project).display_name
+    project = ASF::Committee.find(@project)
+    raise "project #{@project.inspect} not found" unless project
+    unless member_or_officer or project.owners.include? user
+      raise "not authorized to post to #{@project}"
+    end
+
+    projectName = project.display_name
     parsed.each do |report|
-      if report['title'] == project
+      if report['title'] == projectName
         raise "report already posted" unless @digest or report['missing']
-        @attach = report[:attach]
+        attach = @attach = report[:attach]
         @digest ||= report['digest']
       end
     end
+  else
+    raise "not authorized to post to the board agenda" unless member_or_officer
   end
 
   # remove trailing whitespace
@@ -146,4 +165,11 @@ Agenda.update(@agenda, @message) do |agenda|
 
   # return updated agenda
   agenda
+end
+
+# filter agenda if project is specified or the user is not authorized to see
+# the entire document
+if @project or not member_or_officer
+  agenda = _.delete 'agenda'
+ _item agenda.find {|report| report[:attach] == attach}
 end

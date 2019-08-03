@@ -129,7 +129,7 @@ class Agenda
   end
 
   # update agenda file in SVN
-  def self.update(file, message, retries=20, &block)
+  def self.update(file, message, retries=20, auth: nil, &block)
     return unless block
     commit_rc = 0
 
@@ -139,9 +139,9 @@ class Agenda
     #extract context from block
     _, env = eval('[_, env]', block.binding)
 
-    auth = [[]]
+    auth ||= [[]]
     if env.password
-      auth = [['--username', env.user, '--password', env.password]]
+      auth ||= [['--username', env.user, '--password', env.password]]
     end
 
     file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\z/
