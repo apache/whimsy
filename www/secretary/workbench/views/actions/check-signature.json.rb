@@ -11,15 +11,28 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 KEYSERVERS = %w{sks-keyservers.net keyserver.ubuntu.com}
 # N.B. ensure the keyserver URI is known below
 MAX_KEY_SIZE = 20700 # don't import if the ascii keyfile is larger than this
+
 message = Mailbox.find(@message)
 
 require 'net/http'
-def getURI(uri)
+
+# fetch the Key from the URI and store in the file
+def getURI(uri,file)
   uri = URI.parse(uri)
   Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |https|
-    request = Net::HTTP::Get.new(uri.request_uri)
-    response = https.request(request)
-    return response.body
+    https.request_get(uri.request_uri) do |res|
+      cl = res.content_length
+      Wunderbar.warn "Content-Length: #{cl}"
+      if cl > MAX_KEY_SIZE # fail early
+        raise Exception.new("Content-Length: #{cl} > #{MAX_KEY_SIZE}")
+      end
+      File.open(file,"w") do |f|
+        # Save the data directly; don't store in memory
+        res.read_body do |segment|
+            f.puts segment
+        end
+      end
+    end
   end
 end
 
@@ -83,9 +96,7 @@ begin
       Dir.mktmpdir do |dir|
         begin
           tmpfile = File.join(dir, keyid)
-          File.open(tmpfile,"w") do |f|
-            f.puts(getURI(uri))
-          end
+          getURI(uri, tmpfile)
           size = File.size(tmpfile)
           Wunderbar.warn "File: #{tmpfile} Size: #{size}"
           if size < MAX_KEY_SIZE # Don't import if it appears to be too big
