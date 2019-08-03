@@ -19,7 +19,7 @@ attach = nil
 # Determine if user is authorized
 user = ASF::Person.find(env.user)
 member_or_officer = user.asf_member? or ASF.pmc_chairs.include? user
-credentials = member_or_officer ? nil : ['--username', 'whimsysvn']
+credentials = member_or_officer ? nil : [['--username', 'whimsysvn']]
 
 Agenda.update(@agenda, @message, auth: credentials) do |agenda|
   # quick parse of agenda
