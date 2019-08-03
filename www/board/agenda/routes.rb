@@ -426,10 +426,10 @@ end
 # historical comments, filtered to only include the list of projects which
 # the user is a member of the PMC for non-ASF-members and non-officers.
 get '/json/historical-comments' do
-  user=ASF::Person.find(env.user)
+  user = env.respond_to?(:user) && ASF::Person.find(env.user)
   comments = HistoricalComments.comments
 
-  unless user.asf_member? or ASF.pmc_chairs.include? user
+  unless !user or user.asf_member? or ASF.pmc_chairs.include? user
     comments = comments.select do |project, list|
       ASF::Committee.find(project).owners.include? user
     end

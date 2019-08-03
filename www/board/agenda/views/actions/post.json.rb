@@ -19,7 +19,8 @@ attach = nil
 # Determine if user is authorized
 user = ASF::Person.find(env.user)
 member_or_officer = user.asf_member? or ASF.pmc_chairs.include? user
-credentials = member_or_officer ? nil : [['--username', 'whimsysvn']]
+credentials = member_or_officer and env.password ? 
+  nil : [['--username', 'whimsysvn']]
 
 Agenda.update(@agenda, @message, auth: credentials) do |agenda|
   # quick parse of agenda
@@ -169,7 +170,7 @@ end
 
 # filter agenda if project is specified or the user is not authorized to see
 # the entire document
-if @project or not member_or_officer
+if @project or credentials
   agenda = _.delete 'agenda'
  _item agenda.find {|report| report[:attach] == attach}
 end
