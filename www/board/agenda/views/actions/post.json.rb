@@ -22,6 +22,9 @@ member_or_officer = user.asf_member? or ASF.pmc_chairs.include? user
 credentials = member_or_officer and env.password ? 
   nil : [['--username', 'whimsysvn']]
 
+# prepend user id to message if whimsysvn role account is used
+@message = "#{env.user}: #{@message}" if env.user and credentials
+
 Agenda.update(@agenda, @message, auth: credentials) do |agenda|
   # quick parse of agenda
   parsed = ASF::Board::Agenda.parse(agenda, true)
