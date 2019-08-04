@@ -27,7 +27,7 @@ Pending.update(env.user, @agenda) do |pending|
   pending['status'] << update if not match
 
   # change the status in the update
-  update[:status] =
+  (match || update)[:status] =
     @status.strip.gsub(/\s+/, ' ').
       gsub(/(.{1,62})(\s+|\Z)/, '\\1' + "\n".ljust(15)).strip
 
