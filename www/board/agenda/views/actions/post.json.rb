@@ -19,7 +19,7 @@ attach = nil
 # Determine if user is authorized
 user = ASF::Person.find(env.user)
 member_or_officer = user.asf_member? or ASF.pmc_chairs.include? user
-credentials = (member_or_officer and env.password) ? 
+credentials = (member_or_officer or not env.password) ? 
   nil : [['--username', 'whimsysvn']]
 
 # prepend user id to message if whimsysvn role account is used
