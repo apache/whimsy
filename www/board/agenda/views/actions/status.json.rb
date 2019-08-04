@@ -31,4 +31,10 @@ Pending.update(env.user, @agenda) do |pending|
     @status.strip.gsub(/\s+/, ' ').
       gsub(/(.{1,62})(\s+|\Z)/, '\\1' + "\n".ljust(15)).strip
 
+  # if change is reverted, remove item from the pending queue
+  if match
+    parsed = Agenda.parse(@agenda, :quick)
+    actions = parsed.find {|item| item['title'] == 'Action Items'}
+    pending['status'].delete match if actions['actions'].include? match
+  end
 end
