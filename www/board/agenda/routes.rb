@@ -22,7 +22,7 @@ end
 get '/latest.json' do
   agenda = dir('board_agenda_*.txt').sort.last
   pass unless agenda
-  call env.merge(
+  call env.merge!(
     'PATH_INFO' => "/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}.json"
   )
 end
@@ -348,7 +348,16 @@ get %r{/(\d\d\d\d-\d\d-\d\d).json} do |date|
         end
       end
 
-      Agenda[file][:parsed]
+      agenda = Agenda[file][:parsed]
+
+      # filter list for non-PMC chairs and non-officers
+      user = env.respond_to?(:user) && ASF::Person.find(env.user)
+      unless !user or user.asf_member? or ASF.pmc_chairs.include? user
+        committees = user.committees.map(&:display_name)
+        agenda = agenda.select {|item| committees.include? item['title']}
+      end
+
+      agenda
     end
   ensure
     Agenda[file][:etag] = headers['ETag']
@@ -439,8 +448,9 @@ get '/json/historical-comments' do
   comments = HistoricalComments.comments
 
   unless !user or user.asf_member? or ASF.pmc_chairs.include? user
+    committees = user.committees.map(&:display_name)
     comments = comments.select do |project, list|
-      ASF::Committee.find(project).owners.include? user
+      committees.include? project
     end
   end
 

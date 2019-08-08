@@ -23,6 +23,7 @@ use ASF::Auth::MembersAndOfficers do |env|
   #   report is being posted.
   next true if env['PATH_INFO'] == '/json/historical-comments'
   next true if env['PATH_INFO'] == '/json/post'
+  next true if env['PATH_INFO'] == '/latest.json'
 
   # additionally authorize all invited guests
   agenda = dir('board_agenda_*.txt').sort.last
