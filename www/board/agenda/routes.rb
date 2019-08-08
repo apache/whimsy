@@ -18,6 +18,15 @@ get '/latest/' do
   )
 end
 
+# alias for latest agenda in JSON format
+get '/latest.json' do
+  agenda = dir('board_agenda_*.txt').sort.last
+  pass unless agenda
+  call env.merge(
+    'PATH_INFO' => "/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}.json"
+  )
+end
+
 # icon
 get '/whimsy.svg' do
   send_file File.expand_path('../../../whimsy.svg', __FILE__),
