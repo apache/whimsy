@@ -400,7 +400,6 @@ if __FILE__ == $0
   p  ASF::MLIST.list_subscribers(domain,false,true)
   p  ASF::MLIST.list_subscribers(domain,false,true,true)
   p  ASF::MLIST.list_subs(domain,false,true)
-  exit
   p  ASF::MLIST.list_moderators(domain, true)
   p  ASF::MLIST.private_subscribers(domain)
   p  ASF::MLIST.digests(['chrisd@apache.org'])
