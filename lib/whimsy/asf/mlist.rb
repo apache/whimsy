@@ -402,5 +402,9 @@ if __FILE__ == $0
   p  ASF::MLIST.list_subs(domain,false,true)
   p  ASF::MLIST.list_moderators(domain, true)
   p  ASF::MLIST.private_subscribers(domain)
+  # Needed because these methods call ASF::Mail.to_canonical
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
+  require 'whimsy/asf'
+  p  ASF::MLIST.moderates(['chrisd@apache.org'])
   p  ASF::MLIST.digests(['chrisd@apache.org'])
 end
