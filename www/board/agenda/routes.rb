@@ -358,8 +358,6 @@ get %r{/(\d\d\d\d-\d\d-\d\d).json} do |date|
         agenda = agenda.select {|item| committees.include? item['title']}
       end
 
-      # force status 206 for testing purposes
-      status 206 # Partial Content
       agenda
     end
   ensure
