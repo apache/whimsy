@@ -353,10 +353,13 @@ get %r{/(\d\d\d\d-\d\d-\d\d).json} do |date|
       # filter list for non-PMC chairs and non-officers
       user = env.respond_to?(:user) && ASF::Person.find(env.user)
       unless !user or user.asf_member? or ASF.pmc_chairs.include? user
+        status 206 # Partial Content
         committees = user.committees.map(&:display_name)
         agenda = agenda.select {|item| committees.include? item['title']}
       end
 
+      # force status 206 for testing purposes
+      status 206 # Partial Content
       agenda
     end
   ensure
@@ -448,6 +451,7 @@ get '/json/historical-comments' do
   comments = HistoricalComments.comments
 
   unless !user or user.asf_member? or ASF.pmc_chairs.include? user
+    status 206 # Partial Content
     committees = user.committees.map(&:display_name)
     comments = comments.select do |project, list|
       committees.include? project
