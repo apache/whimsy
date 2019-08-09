@@ -17,13 +17,16 @@ use ASF::Auth::MembersAndOfficers do |env|
 
   # allow access to historical-comments and post for reporter tool.
   # notes:
-  # - historical-comments is filtered by routes.rb to only include the list of
-  #   PMCs that the user is a member of for non-ASF-members and non-officers.
+  # - historical-comments and latest is filtered by routes.rb to only include
+  #   the list of PMCs that the user is a member of for non-ASF-members and
+  #   non-officers.
   # - post is limited to ASF members, officers, and members of the PMC whose
   #   report is being posted.
+  # - calendar is available to all committers
   next true if env['PATH_INFO'] == '/json/historical-comments'
   next true if env['PATH_INFO'] == '/json/post'
   next true if env['PATH_INFO'] == '/latest.json'
+  next true if env['PATH_INFO'] == '/calendar.json'
 
   # additionally authorize all invited guests
   agenda = dir('board_agenda_*.txt').sort.last

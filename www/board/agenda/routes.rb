@@ -27,6 +27,17 @@ get '/latest.json' do
   )
 end
 
+get '/calendar.json' do
+  _json do
+    {
+      nextMeeting: ASF::Board.nextMeeting.iso8601,
+      calendar: ASF::Board.calendar.map(&:iso8601),
+      agendas: dir('board_agenda_*.txt').sort,
+      drafts: dir('board_minutes_*.txt').sort
+    }
+  end
+end
+
 # icon
 get '/whimsy.svg' do
   send_file File.expand_path('../../../whimsy.svg', __FILE__),
