@@ -43,7 +43,5 @@ before_script:
 
 # where to send notifications
 notifications:
-  # https://issues.apache.org/jira/browse/INFRA-11080
-  # https://github.com/apache/infrastructure-puppet/pull/319
   email:
-  - travis@whimsy.apache.org
+  - notifications@whimsical.apache.org
