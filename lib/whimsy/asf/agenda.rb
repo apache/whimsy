@@ -148,8 +148,8 @@ class ASF::Board::Agenda
             "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
         end
         if section =~ /^[A-Z][A-Z]?$/
-          hash['stats'] = 
-            "https://reporter.apache.org/?#{CGI.escape committee.name}"
+          hash['stats'] = 'https://reporter.apache.org/wizard/statistics?' +
+            CGI.escape(committee.name)
         end
         hash['prior_reports'] = minutes(committee.display_name)
       end
