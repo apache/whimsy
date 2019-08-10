@@ -331,6 +331,8 @@ class Post < Vue
 
   # match form title, input label, and commit message with button text
   def retitle()
+    @report = nil
+
     case @button
     when 'post report'
       @header = 'Post Report'
@@ -345,6 +347,10 @@ class Post < Vue
           @report ||= response.text
         end
       end
+
+      # if there is a draft being prepared at reporter.apache.org, use it
+      draft = Reporter.find(@@item)
+      @report = draft.text if draft
 
     when 'edit item'
       @header = 'Edit Discussion Item'
@@ -383,7 +389,7 @@ class Post < Vue
     end
 
     if not @edited
-      text = @@item.text || '' 
+      text = @report || @@item.text || '' 
       if @@item.title == 'President'
         text.sub! /\s*Additionally, please see Attachments \d through \d\./, ''
       end

@@ -328,6 +328,11 @@ get '/json/podlingnamesearch' do
   _json ASF::Podling.namesearch
 end
 
+# podling name searches
+get '/json/reporter' do
+  _json Reporter.drafts(env)
+end
+
 # posted actions
 post '/json/:file' do
   _json :"actions/#{params[:file]}"

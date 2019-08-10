@@ -45,6 +45,16 @@ class AdditionalInfo < Vue
       end
     end
 
+    # draft reports
+    draft = Reporter.find(@@item)
+    if draft and @prefix
+      _span.hilite do 
+        _em 'Unposted draft being prepared at '
+        _a 'reporter.apache.org',
+          href: "https://reporter.apache.org/wizard?#{draft.project}"
+      end
+    end
+
     # action items
     if @@item.title != 'Action Items' and not @@item.actions.empty?
       _h4 id: "#{@prefix}actions" do

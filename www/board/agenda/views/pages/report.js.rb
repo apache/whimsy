@@ -26,7 +26,18 @@ class Report < Vue
           if @@item.text
             _Text raw: @@item.text, filters: filters
           elsif @@item.missing
-            _p {_em 'Missing'} 
+            draft = Reporter.find(@@item)
+            if draft
+              _p do 
+                _em 'Unposted draft being prepared at '
+                _a 'reporter.apache.org',
+                  href: "https://reporter.apache.org/wizard?#{draft.project}"
+                _span ':'
+              end
+              _Text raw: draft.text, filters: [self.draft]
+            else
+              _p {_em 'Missing'} 
+            end
           else
             _p {_em 'Empty'} 
           end
@@ -347,5 +358,9 @@ class Report < Vue
     end
 
     return text
+  end
+
+  def draft(text)
+    return "<div class='private'>#{text}</div>"
   end
 end
