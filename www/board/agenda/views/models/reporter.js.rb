@@ -5,6 +5,10 @@
 class Reporter
   Vue.util.defineReactive @@forgotten, nil
 
+  def self.load(value)
+    @@forgotten = value
+  end
+
   def self.find(item)
     if @@forgotten != nil
       return false if @@forgotten.agenda != Agenda.file
@@ -21,4 +25,8 @@ class Reporter
       end
     end
   end
+end
+
+Events.subscribe :reporter do |message|
+  Reporter.load(message)
 end
