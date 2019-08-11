@@ -70,7 +70,7 @@ class Reporter
     }
 
     if changed
-      Events.broadcast 'reporter', report_status
+      Events.post 'reporter', report_status
     end
 
     results
