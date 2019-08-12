@@ -9,7 +9,7 @@
 class Reporter
   @@partial = true
 
-  def self.drafts(env)
+  def self.drafts(env, update=nil)
     changed = false
 
     agenda_file = File.basename(
@@ -22,13 +22,20 @@ class Reporter
 
     cache = File.join(ASF::Config.get(:cache), 'reporter-drafts.json')
 
-    # if cache is older than a minute, fetch new data
-    if not File.exist? cache or File.mtime(cache) < Time.now - 60 or @@partial
-      # read and prune previous status.  May be used to "fill in the blanks"
-      # should a partial set of reports be received
-      report_status = (JSON.parse(File.read(cache)) rescue {}).
-        select {|project, status| status['agenda'] == agenda_file}.to_h
+    # read and prune previous status.  May be used to "fill in the blanks"
+    # should a partial set of reports be received
+    report_status = (JSON.parse(File.read(cache)) rescue {}).
+      select {|project, status| status['agenda'] == agenda_file}.to_h
 
+    # file updates as they are received
+    if update
+
+      report_status.merge! update
+      File.write cache, report_status.to_json
+      changed = true
+
+    # if cache is older than a minute, fetch new data
+    elsif not File.exist? cache or File.mtime(cache) < Time.now-60 or @@partial
       # source of truth
       uri = URI.parse('https://reporter.apache.org/api/drafts/forgotten')
 
@@ -50,7 +57,7 @@ class Reporter
     end
 
     # extract projects with drafts for this agenda
-    drafts = JSON.parse(File.read(cache)).select do |project, status| 
+    drafts = report_status.select do |project, status| 
       next false unless status['agenda'] == agenda_file
       last_draft = status['last_draft']
       last_draft and not last_draft.empty?
@@ -70,7 +77,16 @@ class Reporter
     }
 
     if changed
-      Events.post 'reporter', report_status
+      Events.post type: 'reporter', status: results
+    end
+
+    # filter drafts based on user visibility
+    user = env.respond_to?(:user) && ASF::Person.find(env.user)
+    unless !user or user.asf_member? or ASF.pmc_chairs.include? user
+      projects = user.committees.map(&:name)
+      results[:drafts].keep_if do |attach, draft| 
+        projects.include? draft[:project]
+      end
     end
 
     results

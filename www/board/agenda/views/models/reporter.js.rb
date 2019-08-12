@@ -28,5 +28,5 @@ class Reporter
 end
 
 Events.subscribe :reporter do |message|
-  Reporter.load(message)
+  Reporter.load(message.status)
 end

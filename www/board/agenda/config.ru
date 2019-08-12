@@ -22,9 +22,12 @@ use ASF::Auth::MembersAndOfficers do |env|
   #   non-officers.
   # - post is limited to ASF members, officers, and members of the PMC whose
   #   report is being posted.
+  # - reporter can be used with both HTTP GET and POST.  GET is filtered
+  #   like historical-commits, and POST is limited like post.
   # - calendar is available to all committers
   next true if env['PATH_INFO'] == '/json/historical-comments'
   next true if env['PATH_INFO'] == '/json/post'
+  next true if env['PATH_INFO'] == '/json/reporter'
   next true if env['PATH_INFO'] == '/latest.json'
   next true if env['PATH_INFO'] == '/calendar.json'
 
