@@ -14,7 +14,6 @@ class Reporter
 
     agenda_file = File.basename(
       Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort.last).untaint
-    agenda = Agenda.parse(agenda_file, :quick)
 
     if ENV['RACK_ENV'] == 'test'
       return {agenda: agenda_file, drafts: []}
