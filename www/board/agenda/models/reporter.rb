@@ -77,7 +77,8 @@ class Reporter
     }
 
     if changed
-      Events.post type: 'reporter', status: results
+      digest = Digest::MD5.hexdigest(JSON.dump(results[:drafts]))
+      Events.post type: 'reporter', digest: digest
     end
 
     # filter drafts based on user visibility
@@ -88,6 +89,8 @@ class Reporter
         projects.include? draft[:project]
       end
     end
+
+    results[:digest] = Digest::MD5.hexdigest(JSON.dump(results[:drafts]))
 
     results
   end

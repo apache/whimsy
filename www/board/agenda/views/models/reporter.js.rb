@@ -9,6 +9,19 @@ class Reporter
     @@forgotten = value
   end
 
+  # if digest has changed (or nothing was previously fetched) get list
+  # of forgotten reports from the server
+  def self.fetch(digest)
+    if not @@forgotten or @@forgotten.digest != digest
+      @@forgotten ||= {}
+      JSONStorage.fetch 'reporter' do |forgotten|
+        @@forgotten = forgotten
+      end
+    end
+  end
+
+  # Find the item in the forgotten drafts list.  If list has not yet
+  # been fetched, download the list.
   def self.find(item)
     if @@forgotten != nil
       return false if @@forgotten.agenda != Agenda.file
@@ -19,14 +32,11 @@ class Reporter
         return draft
       end
     else
-      @@forgotten = {}
-      JSONStorage.fetch 'reporter' do |forgotten|
-        @@forgotten = forgotten
-      end
+      self.fetch()
     end
   end
 end
 
 Events.subscribe :reporter do |message|
-  Reporter.load(message.status)
+  Reporter.fetch(message.digest)
 end
