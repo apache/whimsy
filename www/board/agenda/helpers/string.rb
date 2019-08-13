@@ -42,4 +42,15 @@ class String
     end
     self
   end
+
+  # fix encoding errors
+  def fix_encoding
+    result = self
+
+    if encoding == Encoding::BINARY
+      result = encode('utf-8', invalid: :replace, undef: :replace)
+    end
+
+    result
+  end
 end

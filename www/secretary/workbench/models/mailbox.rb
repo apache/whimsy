@@ -164,7 +164,7 @@ class Mailbox
       {
         time: message[:time] || '',
         href: "#{message[:source]}/#{id}/",
-        from: message[:name] || message[:from],
+        from: (message[:name] || message[:from]).to_s.fix_encoding,
         subject: message['Subject'],
         status: message[:status]
       }

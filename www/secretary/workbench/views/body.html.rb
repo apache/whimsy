@@ -16,18 +16,18 @@ _html do
     end
     _tr do
       _td 'From:'
-      _td @message.from
+      _td @message.from.to_s.fix_encoding
     end
 
     _tr do
       _td 'To:'
-      _td @message.to
+      _td @message.to.to_s.fix_encoding
     end
 
     if @message.cc and not @message.cc.empty?
       _tr do
         _td 'Cc:'
-        _td @message.cc.join(', ')
+        _td @message.cc.join(', ').to_s.fix_encoding
       end
     end
 
