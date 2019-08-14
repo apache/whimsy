@@ -40,5 +40,5 @@ class Reporter
 end
 
 Events.subscribe :reporter do |message|
-  Reporter.fetch(message.agenda, message.digest)
+  Reporter.fetch(message.agenda, message.digest) if message.agenda
 end

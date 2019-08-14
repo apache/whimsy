@@ -155,8 +155,8 @@ class Events
         fetch('digest.json', credentials: 'include').then do |response|
           if response.ok
             response.json().then do |json|
-              Events.broadcast json.agenda.merge(type: agenda)
-              Events.broadcast json.reporter.merge(type: reporter)
+              Events.broadcast json.agenda.merge(type: :agenda)
+              Events.broadcast json.reporter.merge(type: :reporter)
             end
           end
         end
@@ -184,9 +184,14 @@ class Events
 
   # set message to all processes
   def self.broadcast(event)
-    event = event.inspect
-    localStorage.setItem("#{@@prefix}-event", event)
-    self.dispatch event
+    begin
+      event = event.inspect
+      localStorage.setItem("#{@@prefix}-event", event)
+      self.dispatch event
+    rescue => e
+      console.log(e)
+      console.log(event)
+    end
   end
 
   # dispatch logic (common to all tabs)
