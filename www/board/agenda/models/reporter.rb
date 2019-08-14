@@ -8,6 +8,8 @@
 
 class Reporter
   @@partial = true
+  @@agenda = nil
+  @@digest = nil
 
   def self.drafts(env, update=nil)
     changed = false
@@ -77,7 +79,7 @@ class Reporter
 
     if changed
       digest = Digest::MD5.hexdigest(JSON.dump(results[:drafts]))
-      Events.post type: 'reporter', digest: digest
+      Events.post type: 'reporter', agenda: agenda_file, digest: digest
     end
 
     # filter drafts based on user visibility
@@ -89,8 +91,15 @@ class Reporter
       end
     end
 
-    results[:digest] = Digest::MD5.hexdigest(JSON.dump(results[:drafts]))
+    @@digest = Digest::MD5.hexdigest(JSON.dump(results[:drafts]))
+    @@agenda = agenda_file
+    results[:digest] = @@digest
 
     results
+  end
+
+  # return digest information
+  def self.digest
+    {agenda: @@agenda, digest: @@digest}
   end
 end

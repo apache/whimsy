@@ -151,12 +151,12 @@ class Events
       self.log 'WebSocket connection established'
 
       if check_for_updates
-        # see if the agenda changed
+        # see if the agenda or reporter data changed
         fetch('digest.json', credentials: 'include').then do |response|
           if response.ok
             response.json().then do |json|
-              json.type = :agenda
-              Events.broadcast json
+              Events.broadcast json.agenda.merge(type: agenda)
+              Events.broadcast json.reporter.merge(type: reporter)
             end
           end
         end

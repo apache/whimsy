@@ -11,11 +11,13 @@ class Reporter
 
   # if digest has changed (or nothing was previously fetched) get list
   # of forgotten reports from the server
-  def self.fetch(digest)
+  def self.fetch(agenda, digest)
     if not @@forgotten or @@forgotten.digest != digest
       @@forgotten ||= {}
-      JSONStorage.fetch 'reporter' do |forgotten|
-        @@forgotten = forgotten
+      if not agenda or agenda == Agenda.file
+        JSONStorage.fetch 'reporter' do |forgotten|
+          @@forgotten = forgotten
+        end
       end
     end
   end
@@ -38,5 +40,5 @@ class Reporter
 end
 
 Events.subscribe :reporter do |message|
-  Reporter.fetch(message.digest)
+  Reporter.fetch(message.agenda, message.digest)
 end

@@ -164,9 +164,14 @@ end
 get %r{/(\d\d\d\d-\d\d-\d\d)/digest\.json} do |date|
   agenda = "board_agenda_#{date.gsub('-','_')}.txt"
   _json(
-    file: agenda,
-    digest: Agenda[agenda][:digest],
-    etag: Agenda.uptodate(agenda) ? Agenda[agenda][:etag] : nil
+    {
+      agenda: {
+        file: agenda,
+        digest: Agenda[agenda][:digest],
+        etag: Agenda.uptodate(agenda) ? Agenda[agenda][:etag] : nil
+      },
+      reporter: Reporter.digest
+    }
   )
 end
 
