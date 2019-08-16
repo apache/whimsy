@@ -47,6 +47,7 @@ class Main < Vue
     Pending.fetch() if PageCache.enabled or not Server.userid
     Agenda.load(@@page.parsed, @@page.digest)
     Minutes.load(@@page.minutes)
+    Reporter.fetch() if PageCache.enabled
 
     self.route(@@page.path, @@page.query)
 
