@@ -68,8 +68,10 @@ class Reporter
     results = {
       agenda: agenda_file,
       drafts: drafts.map {|project, status|
+        committee = ASF::Committee.find(project)
         [status['attach'], {
           project: project, 
+          title: (committee ? committee.display_name : project),
           timestamp: status['draft_timestamp'],
           author: status['last_author'],
           text: status['last_draft']

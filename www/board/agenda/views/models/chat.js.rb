@@ -132,6 +132,56 @@ class Chat
     end
   end
 
+  # identify what changed in the reporter drafts
+  def self.reporter_change(before, after)
+    return unless before and before.drafts and after and after.drafts
+
+    # build an index of the 'before' drafts
+    index = {}
+    for attach in before.drafts
+      item = before.drafts[attach]
+      index[item.project] = item
+    end
+
+    # categorize each item in the 'after' drafts
+    add = []
+    change = []
+    for attach in after.drafts
+      item = after.drafts[attach]
+      before = index[item.project]
+      console.log [before, item]
+      if not before
+        add << item
+      else
+        change << item if before.text != item.text
+        index.delete item.project
+      end
+    end
+
+    # build a set of messages
+    messages = []
+    unless add.empty?
+      messages << "Added: #{add.map {|item| item.title}.join(', ')}"
+    end
+
+    unless change.empty?
+      messages << "Updated: #{change.map {|item| item.title}.join(', ')}"
+    end
+
+    missing = Object.values(index)
+    unless missing.empty?
+      messages << "Deleted: #{missing.map {|item| item.title}.join(', ')}"
+    end
+
+    # output the messages
+    unless messages.empty?
+      messages.each do |message|
+        Chat.add type: 'agenda', user: 'reporter', text: message
+      end
+      Main.refresh()
+    end
+  end
+
   # add an entry to the chat log
   def self.add(entry)
     entry.timestamp ||= Date.new().getTime()

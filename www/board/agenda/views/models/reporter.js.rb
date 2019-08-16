@@ -12,6 +12,7 @@ class Reporter
       @@forgotten ||= {}
       if not agenda or agenda == Agenda.file
         JSONStorage.fetch 'reporter' do |forgotten|
+          Chat.reporter_change(@@forgotten, forgotten)
           @@forgotten = forgotten
         end
       end
