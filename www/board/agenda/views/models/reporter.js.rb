@@ -5,10 +5,6 @@
 class Reporter
   Vue.util.defineReactive @@forgotten, nil
 
-  def self.load(value)
-    @@forgotten = value
-  end
-
   # if digest has changed (or nothing was previously fetched) get list
   # of forgotten reports from the server
   def self.fetch(agenda, digest)
