@@ -46,22 +46,36 @@ class Email < Vue
 
     if @@item.missing
       subject = "Missing #{@@item.title} Board Report"
-      body = %{
-        Dear #{@@item.owner},
+      if @@item.attach =~ /^\d/
+        body = %{
+          Dear #{@@item.owner},
 
-        The board report for #{@@item.title} has not yet been submitted for
-        this month's board meeting. If you or another member of the PMC are
-        unable to get it in by twenty-four hours before meeting time, please
-        let the board know, and plan to report next month.
+          The board report for #{@@item.title} has not yet been submitted for
+          this month's board meeting.  Please try to submit these reports by the
+          Friday before the meeting. 
 
-          https://www.apache.org/foundation/board/reporting#how
+          Thanks,
 
-        Thanks,
+          #{User.username}
+        }
+      else
+        body = %{
+          Dear #{@@item.owner},
 
-        #{User.username}
+          The board report for #{@@item.title} has not yet been submitted for
+          this month's board meeting. If you or another member of the PMC are
+          unable to get it in by twenty-four hours before meeting time, please
+          let the board know, and plan to report next month.
 
-        (on behalf of the ASF Board)
-      }
+            https://www.apache.org/foundation/board/reporting#how
+
+          Thanks,
+
+          #{User.username}
+
+          (on behalf of the ASF Board)
+        }
+      end
 
       # strip indentation; concatenate lines within a paragraph
       indent = body[/^\s*/]
