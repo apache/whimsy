@@ -1,0 +1,145 @@
+<!DOCTYPE html><html><head><title>Vulnogram CVE Editor</title><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Security Advisory Factory"><meta name="keywords" content="psirt, sirt, advisory, CVRF, CSAF, CVE, vulnogram, CVE, JSON"><meta name="csrf-token"><meta name="theme-color" content="#f0f8ff"><link rel="apple-touch-icon" sizes="256x256" href="./css/logo.png"><link rel="icon" type="image/png" href="./css/logo.png" sizes="256x256"><link rel="stylesheet" href="./css/min.css"><link rel="stylesheet" href="./css/icns.css"><style>body{
+ --hig: hsla(200, 56%, 95%, 1);
+}   
+
+span.product_data, b.version_data, b.vendor_data, b.reference_data, b.problemtype_data, b span.product, b span.version, b.description_data{
+    display: none;
+}
+/*
+b.version_data + div table th:nth-child(3):after {
+    content: '*';
+}*/
+/* MITRE simulation styles */
+b span.product + div button.json-editor-btn-delete {
+    float: right;
+}
+
+#GeneratedTable { border:1px solid #000000; border-collapse: collapse;}
+#GeneratedTable th { font-weight: bold; padding: 2px 5px 2px 5px; text-align: left;  vertical-align:top; background-color: #999999; color:#ffffff; border-top:1px solid #000000; border-bottom:1px solid #000000 }
+#GeneratedTable td { padding: 5px; font-size: 90%; vertical-align:top; border-bottom:1px solid #e0dbd2 }
+#GeneratedTable .note { font-size: 80%; background-color:#eeeeee; color:#880000; }
+#GeneratedTable .ltgreybackground { border-left:1px solid #cccccc; background-color: #eeeeee; }
+
+
+#GeneratedTable p { font-family: Verdana, Helvetica, sans-serif; margin-top:0px;}
+#GeneratedTable td { font-family: Verdana, Helvetica, sans-serif;}
+#GeneratedTable th { font-family: Verdana, Helvetica, sans-serif; }
+
+#GeneratedTable ul { font-family: Verdana, Helvetica, sans-serif; }
+#GeneratedTable li { font-family: Verdana, Helvetica, sans-serif;  padding-top:2px; padding-bottom:3px }
+#GeneratedTable ol { font-family: Verdana, Helvetica, sans-serif; }
+
+#GeneratedTable h1 { font-family: Verdana, Helvetica, sans-serif;}
+#GeneratedTable h2 { font-family: Verdana, Helvetica, sans-serif; color: #000000; padding:0px 0px 5px 0px; margin:0px; white-space: nowrap;}
+#GeneratedTable h2 a { color: #000000;}
+#GeneratedTable h3 { font-family: Verdana, Helvetica, sans-serif; padding:0px 0px 5px 0px; margin:0px; color:#880000; text-align:left}
+#GeneratedTable h3 a { color:#880000;}
+#GeneratedTable h4 { font-family: Verdana, Helvetica, sans-serif; margin: 10px 0px 10px 0px; color: #000000; padding-bottom:10px; }
+#GeneratedTable h4 a { color: #000000; }
+#GeneratedTable h5 { font-family: Verdana, Helvetica, sans-serif; padding:6px 0px 6px 0px; margin: 6px 0px 6px 0px; color: #000000}
+#GeneratedTable h5 a { color: #880000}
+#GeneratedTable pre { overflow: auto; } /* added on 10-29-2015 to fix the /data/board/archives/ pages  */
+
+/*  REUSABLE ATTRIBUTES  */
+#GeneratedTable a { color:#3377CC }
+#GeneratedTable a:hover { color:#880000; }
+
+#GeneratedTable .larger   { font-size: 120%; }
+#GeneratedTable .smaller   { font-size: 90%; }
+
+
+table.striped {
+        font-size: 100%;
+  border-spacing: 0;
+  border: 1px solid #c1c1c1;
+  border-collapse: collapse;
+}
+
+table.striped th {
+  height: 24px;
+  text-align:center;
+  background-color: #f0f0f0;
+  border : #ababab 1px solid;
+  padding-left:5px;
+  padding-right:5px;
+}
+
+table.striped td {
+  padding:5px;
+  border-width: 0px 1px 0px 1px;
+  border : #c1c1c1 1px solid;
+}
+</style></head><body class="cve" id="body"><div class="stk"><header class="ban pad wht btm"><div class="left"><a class="logo big" title="Making the world safer one CVE at a time, since 2017" href="https://vulnogram.github.io">Vulnogram</a>  <a class="icn fbn icn alert" title="CVE: Common Vulnerabilities and Exposures" href="/">CVE</a></div><div class="right"></div></header><header class="ban pad shd hig"><div class="left"><a class="fbn sfe" href="./">NEW</a><input class="hid" id="importJSON" type="file" accept="application/json" onchange="loadFile(event,this);"><a class="icn fbn folder" type="file" onclick="importFile(event, this);">Open</a><a class="icn fbn download" type="button" oncontextmenu="downloadFile(event, this);" onclick="downloadFile(event, this);" value="Download">Download</a></div><div class="right"><form class="indent out nobr" onsubmit="event.preventDefault();loadCVE(this.git.value);return false;"><input class="icn txt Import" type="text" name="git" placeholder="CVE-YYYY-NNNN" pattern=".*CVE-[0-9]{4}-[0-9]{4,12}.*" size="17" title="CVE ID CVE-yyyy-nnnn+" required><button class="btn icn Import" type="submit">GIT</button></form><form class="indent out nobr" action="https://github.com/CVEProject/cvelist/search" method="GET"><input type="hidden" name="type" value="Code"><input class="icn txt Import" type="text" name="q" placeholder="Search CVElist" title="Search CVElist git repo" required><button class="btn icn Search" type="submit">GIT</button></form></div></header></div><script>var userUsername = ""
+</script><div class="pad ban messagebar"><div class="left tred" id="errMsg"></div><div class="right" id="infoMsg"></div></div><div class="pad"><script>loadCVE = function (value) {    var realId = value.match(/(CVE-(\d{4})-(\d{1,12})(\d{3}))/);
+    if (realId) {
+        var id = realId[1];
+        var year = realId[2];
+        var bucket = realId[3];
+        fetch('https://raw.githubusercontent.com/CVEProject/cvelist/master/' + year + '/' + bucket + 'xxx/' + id + '.json', {
+                method: 'GET',
+                credentials: 'omit',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*'
+                },
+                redirect: 'error'
+            })
+            .then(function (response) {
+                if (!response.ok) {
+                    errMsg.textContent = "Failed to load valid CVE JSON";
+                    infoMsg.textContent = "";
+                    throw Error(id + ' ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(function (res) {
+                if (res.CVE_data_meta) {
+                    loadJSON(res, id, "Loaded "+id+" from GIT!");
+                } else {
+                    errMsg.textContent = "Failed to load valid CVE JSON";
+                    infoMsg.textContent = "";
+                }
+            })
+            .catch(function (error) {
+                errMsg.textContent = error;
+            })
+    } else {
+        errMsg.textContent = "CVE ID required";
+    }
+    return false;
+};</script><script>var custom_validators = [function (schema, value, path) {
+        var errors = [];
+        if (path === "root.references") {
+            var confirms = 0, miscs = 0;
+            var data = value.reference_data;
+            for(r in data) {
+                if(data[r].refsource == 'CONFIRM') {
+                   confirms++; 
+                }
+                if(data[r].refsource == 'MISC' || data[r].refsource == '') {
+                   miscs++; 
+                }
+                if(data[r].refsource == 'CONFIRM' || data[r].refsource == 'MISC') {
+                    if(data[r].url != data[r].name && data[r].name != '') {
+                        errors.push({
+                            path: 'root.references.reference_data.' + r + '.name',
+                            property: 'format',
+                            message: 'name should be same as URL for CONFIRM or MISC backwords compatibility)'
+                        });
+                    }
+                }
+                
+            }
+            if (confirms == 0 && miscs == data.length) {
+                errors.push({
+                    path: 'root.references',
+                    property: 'format',
+                    message: 'There should be atleast one CONFIRM URL or a legacy refsource type!'
+                });
+            }
+        }
+        return errors;
+    }];</script><div><span class="lbl">&nbsp;</span><input class="tab" name="tabs" type="radio" id="aboutTab" value="0"><label class="lbl" for="aboutTab">Instructions</label><div class="wht fil bor pad"><p>This form is designed to help you format an ASF CVE entry and handle the CVE process. </p><ul><li>Fill in the details using the 'Editor' tab.  You could use the 'GIT' option to prepopulate based on a previous public CVE</li><p></p><li>Use the 'MITRE JSON' tab for the data you submit to MITRE.  Go to https://cveform.mitre.org/ and use 'Notify CVE about a publication'. You must use your @apache.org e-mail address in the form. Fill in the two required fields and paste the JSON in the field labelled 'Additional information and CVE ID description updates'.  If the JSON is rejected as too large, submit it empty and when you get the auto reply from MITRE with a ticket ID, reply to that with the JSON.</li><p></p><li>Use the 'OSS Email' tab for the email you should send to oss-security@lists.openwall.com (subscription not required). You must use a separate email to this list, please do not cc.</li><p></p><li>The JSON created using this tool is not stored, however you can 'Download' / 'Open' could be stored in your projects repo.</li></ul><p>The information you enter is local to your browser and not stored.  For help contact security@apache.org</p></div><input class="tab" name="tabs" type="radio" id="editorTab" value="1" checked><label class="lbl" id="editorLabel" for="editorTab">Editor</label><div class="wht fil bor pad"><div class="hid"><button class="lbl sml indent btn icn auto sfe" id="auto" style="visibility:hidden">Auto-Text</button></div><iframe name="x" style="display:none" src="about:blank"></iframe><form class="editor" target="x" action="" id="editor"></form></div><input class="tab" name="tabs" type="radio" id="sourceTab" value="2"><label class="lbl" for="sourceTab">Source</label><div class="wht fil bor pad"><div id="output" rows="40" cols="100%"><p></p></div></div><input class="tab" name="tabs" type="radio" id="advisoryTab" value="4"><label class="lbl" for="advisoryTab">Advisory</label><div class="wht fil bor pad"><div class="render" id="render"></div></div><input class="tab" name="tabs" type="radio" id="mitreTab" value="5"><label class="lbl" for="mitreTab">MITRE Preview</label><div class="wht fil bor pad"><div id="mitreweb"></div></div><input class="tab" name="tabs" type="radio" id="jsonTab" value="6"><label class="lbl" for="jsonTab">MITRE JSON</label><div class="wht fil bor pad"><div style="float:right"><a class="icn right copy btn" onmouseover="this.textContent=&quot;Copy&quot;" onclick="copyText(outjson);this.textContent=&quot;Copied&quot;">Copy</a> <a class="icn right download btn" onclick="downloadText(outjson, this);">Download</a></div><div class="pre" id="outjson"></div></div><input class="tab" name="tabs" type="radio" id="emailTab" value="7"><label class="lbl" for="emailTab">OSS Email</label><div class="wht fil bor pad"><div id="outemail">           </div></div></div><script>var idpath = "CVE_data_meta.ID";
+var allowAjax = "false";
+var schemaName = "cve";
+var postUrl = "";
+var csrfToken = "";var initJSON = undefined;var docSchema={"$schema":"http:\u002F\u002Fjson-schema.org\u002Fdraft-04\u002Fschema#","definitions":{"cve_id":{"type":"string","pattern":"^CVE-[0-9]{4}-[0-9A-Za-z._-]{4,}$","message":"Valid CVE ID is required!","links":["",""]},"email_address":{"type":"string","pattern":"^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$","message":"Valid email required"},"product":{"type":"object","options":{"layout":"grid"},"required":["product_name","version"],"properties":{"product_name":{"type":"string","minLength":1,"description":"e.g. Apache Tomcat","message":"A product name is required!","options":{"grid_columns":10}},"version":{"type":"object","required":["version_data"],"properties":{"version_data":{"type":"array","minItems":1,"items":{"title":"version","type":"object","required":["version_value"],"id":"v","properties":{"version_name":{"title":"Version name (X)","type":"string","description":"e.g. Apache Tomcat 9"},"version_affected":{"type":"string","enum":["","\u003C","\u003C=","=","\u003E","\u003E=","!\u003C","!\u003C=","!","!\u003E","!\u003E=","?\u003C","?\u003C=","?","?\u003E","?\u003E="],"options":{"enum_titles":["Not Selected","\u003C (affects X versions prior to n)","\u003C= (affects X versions up to n)"," = (affects n)"," \u003E (affects X versions above n)"," \u003E= (affects X versions n and above)","!\u003C (doesn't affect X versions prior to n)","!\u003C= (doesn't affect X versions n and below)","! (doesn't affect n)","!\u003E (doesn't affect X versions above n)","!\u003E= (doesn't affect X versions n and above)","?\u003C (status of X versions prior to n is unknown)","?\u003C= (status of X versions up to n is unknown)","? (status of n is unknown)","?\u003E (status of X versions above n is unknown)","?\u003E= (status of X versions n and above is unknown)"]}},"version_value":{"title":"Version value (n)","type":"string","description":"e.g. 9.0.0.M1 to 9.0.0.M17","minLength":1,"message":"Affect version value is required!"},"platform":{"type":"string","description":"e.g. Windows (optional)"}}},"format":"table"}}}}},"reference":{"id":"ref","type":"object","required":["url"],"properties":{"refsource":{"type":"string","default":"CONFIRM","enum":["AIXAPAR","ALLAIRE","APPLE","ATSTAKE","AUSCERT","BEA","BID","BINDVIEW","BUGTRAQ","CALDERA","CERT","CERT-VN","CHECKPOINT","CIAC","CISCO","COMPAQ","CONECTIVA","CONFIRM","DEBIAN","EEYE","ENGARDE","ERS","EXPLOIT-DB","FarmerVenema","FEDORA","FREEBSD","FRSIRT","FULLDISC","GENTOO","HP","HPBUG","IBM","IDEFENSE","IMMUNIX","ISS","JVN","JVNDB","L0PHT","MANDRAKE","MANDRIVA","MISC","MLIST","MS","MSKB","NAI","NETBSD","NTBUGTRAQ","OPENBSD","OPENPKG","OSVDB","OVAL","REDHAT","SCO","SECTRACK","SECUNIA","SF-INCIDENTS","SGI","SLACKWARE","SREASON","SREASONRES","SUN","SUNALERT","SUNBUG","SUSE","TRUSTIX","TURBO","UBUNTU","VIM","VULN-DEV","VULNWATCH","VUPEN","WIN2KSEC","XF"]},"url":{"type":"string","maxLength":500,"pattern":"^(ftp|http)s?:\u002F\u002F\\S+$","message":"Valid URL is required!","links":[{"class":"btn sml icn extlink","href":"context.self","title":"context.self","rel":"'Open link'"}]},"name":{"maxLength":500,"type":"string"}}},"lang_string":{"type":"object","required":["lang","value"],"properties":{"lang":{"type":"string","options":{"hidden":"true"},"default":"eng"},"value":{"title":" ","type":"string","minLength":2,"maxLength":3999,"format":"textarea","options":{"input_height":"9em","expand_height":true}}}}},"type":"object","required":["data_type","data_format","data_version","CVE_data_meta","affects","problemtype","references","description"],"properties":{"data_type":{"type":"string","enum":["CVE"],"options":{"hidden":"true"}},"data_format":{"type":"string","enum":["MITRE"],"options":{"hidden":"true"}},"data_version":{"type":"string","enum":["4.0"],"options":{"hidden":"true"}},"generator":{"type":"object","properties":{"engine":{"type":"string","default":"Vulnogram 0.0.6"}},"options":{"hidden":"true"}},"CVE_data_meta":{"type":"object","required":["ID","ASSIGNER","STATE"],"properties":{"ID":{"$ref":"#\u002Fdefinitions\u002Fcve_id","description":"CVE-yyyy-nnnn","options":{"class":"ID","input_width":"10em","grid_columns":6}},"ASSIGNER":{"$ref":"#\u002Fdefinitions\u002Femail_address","description":"Email of CNA assigning this CVE ID","default":"security@apache.org","options":{"input_width":"12em","grid_columns":6,"hidden":"true"}},"DATE_PUBLIC":{"type":"string","format":"datetime","options":{"class":"date","input_width":"18em","grid_columns":6}},"TITLE":{"type":"string","description":"e.g. Apache Tomcat HTTP\u002F2 denial of service (optional, this is not used for the Mitre entry)","options":{"grid_columns":12}},"AKA":{"type":"string","title":"Also known as","description":"e.g. HeartBleed (optional, only use for specifically branded issues, this is not used for the Mitre entry)","options":{"grid_columns":6}},"STATE":{"type":"string","enum":["PUBLIC","RESERVED","REPLACED_BY","REJECTED","SPLIT_FROM","MERGED_TO"],"default":"PUBLIC","format":"radio","options":{"grid_columns":12,"hidden":"true"}},"EMAIL":{"type":"string","description":"your apache email address","title":"Your ASF email address","options":{"grid_columns":6}}},"id":"CDM","options":{"layout":"grid","grid_columns":12}},"source":{"type":"object","properties":{"defect":{"title":"Defect","type":"array","description":"Project specific bug ids e.g. TOMCAT-522 (optional, this is not used for the Mitre entry)","format":"taglist","uniqueItems":true,"items":{"type":"string"}},"advisory":{"title":"Advisory-ID","type":"string","description":"Project specific advisory id e.g. TOMCAT-2019-12 (optional, this is not used for the Mitre entry)"},"discovery":{"type":"radio","title":"Found during","enum":["INTERNAL","EXTERNAL","USER","UNKNOWN"],"options":{"enum_titles":["internal research","external research","production use","unknown"]},"default":"UNKNOWN"}}},"affects":{"type":"object","required":["vendor"],"properties":{"vendor":{"type":"object","required":["vendor_data"],"properties":{"vendor_data":{"type":"array","minItems":1,"items":{"title":"vendor","type":"object","required":["vendor_name","product"],"properties":{"vendor_name":{"type":"string","description":"eg., Example Org","default":"Apache Software Foundation","minLength":1,"options":{"hidden":"true"}},"product":{"type":"object","required":["product_data"],"properties":{"product_data":{"type":"array","minItems":1,"items":{"title":"product","$ref":"#\u002Fdefinitions\u002Fproduct"}}}}}},"format":"table"}},"title":"vendor: Apache Software Foundation"}},"format":"table"},"problemtype":{"type":"object","required":["problemtype_data"],"properties":{"problemtype_data":{"type":"array","minItems":1,"items":{"title":"problem type","type":"object","required":["description"],"properties":{"description":{"type":"array","minItems":1,"options":{"disable_array_add":"true"},"items":{"title":"problem type description","type":"object","required":["lang","value"],"properties":{"lang":{"type":"string","options":{"hidden":"true"},"default":"eng"},"value":{"description":"Vulnerability type: can be a CWE or free text","title":" ","type":"string","minLength":2,"maxLength":3999,"$ref":".\u002Fjs\u002Fcwe-frequent.json"}}},"format":"table"}}},"format":"table"}}},"description":{"type":"object","required":["description_data"],"properties":{"description_data":{"type":"array","minItems":1,"items":{"title":"description","$ref":"#\u002Fdefinitions\u002Flang_string","properties":{"value":{"title":"description:  (**Note that Mitre request that we please include the product and version information in the description itself as well as in the version section line in our submissions**)","description":"e.g. While investigating bug 60718, it was noticed that some calls to application listeners in Apache Tomcat versions 9.0.0.M1 to 9.0.0.M17, 8.5.0 to 8.5.11, 8.0.0.RC1 to 8.0.41 and 7.0.0 to 7.0.75 did not use the appropriate facade object. When running an untrusted application under a SecurityManager, it was therefore possible for that untrusted application to retain a reference to the request or response object and thereby access and\u002For modify information associated with another web application."}}},"format":"table"}}},"references":{"type":"object","required":["reference_data"],"properties":{"reference_data":{"type":"array","minItems":1,"maxItems":500,"items":{"title":"URL","$ref":"#\u002Fdefinitions\u002Freference","properties":{"refsource":{"title":"refsource: (use 'CONFIRM' type for links to official ASF resources)"},"url":{"description":"e.g. link at an apache site or permalink to a lists.apache.org mailing list post"},"name":{"description":"usually these are blank or the same as the url for Mitre","options":{"hidden":"true"}}}},"format":"table"}}},"configuration":{"type":"array","format":"table","items":{"title":"required configuration","$ref":"#\u002Fdefinitions\u002Flang_string"},"options":{"hidden":"true"}},"impact":{"type":"object","properties":"","options":{"hidden":"true"}},"exploit":{"type":"array","format":"table","items":{"title":"Exploit","$ref":"#\u002Fdefinitions\u002Flang_string","default":{"lang":"eng","value":""}},"options":{"hidden":"true"}},"work_around":{"type":"array","format":"table","items":{"title":"work around","$ref":"#\u002Fdefinitions\u002Flang_string","default":{"lang":"eng","value":""}},"options":{"hidden":"true"}},"solution":{"type":"array","format":"table","items":{"title":"solution","$ref":"#\u002Fdefinitions\u002Flang_string"},"options":{"hidden":"true"}},"credit":{"type":"array","format":"table","items":{"title":"credit statement","$ref":"#\u002Fdefinitions\u002Flang_string","properties":{"value":{"title":"credit: (optional)","description":"Apache Tomcat would like to thank Mr Blobby for reporting this issue."}}}}}};</script><script src="./js/util.js"></script><script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@1.2.1/dist/jsoneditor.min.js" integrity="sha384-iSUg2WRV2cauD+nwMuv7ITxwSe+2heHjWFIOjiWk5/Yve5ovwg/t7qp3ht6VlQBL" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js" integrity="sha384-rP/6HzF4Ap08EuRS9yaQsEPDqb8xS5WVTAzL7/LKTnUmJawbKoeSNyqHnNaiXY5X" crossorigin="anonymous"></script><script src="./js/cve/render.js"></script><script src="./js/editor.js"></script></div><span class="pad ban"><div class="pad2 center tgrey"><small> Copyright © Chandan B.N, 2017-2019. Usage of CVE IDs is subject to CVE terms of use. This site does not track you and is safe for working with confidential vulnerability information. Made with Vulnogram 0.0.6</small><br><small> <br><a class="logo" href="https://github.com/Vulnogram/Vulnogram">Vulnogram Project</a></small></div></span></body></html>
