@@ -534,7 +534,8 @@ get '/new' do
   @minutes = dir("board_minutes_*.txt").
     map {|file| Date.parse(file[/\d[_\d]+/].gsub('_', '-'))}.
     reject {|date| date >= @meeting.to_date}.
-    reject {|date| draft[date.strftime('%B %d, %Y')] == 'approved'}
+    reject {|date| draft[date.strftime('%B %d, %Y')] == 'approved'}.
+    sort
 
   template = File.read('templates/agenda.erb')
   @disabled = dir("board_agenda_*.txt").
