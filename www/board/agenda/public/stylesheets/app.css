@@ -345,7 +345,7 @@ footer button {
 
   .flexbox > section + section {
     max-width: 48%;
-    overflow-x: scroll;
+    overflow-x: auto;
   }
 
   .flexbox .report-info {
