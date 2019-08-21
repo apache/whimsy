@@ -343,6 +343,11 @@ footer button {
     min-width: 48%;
   }
 
+  .flexbox > section + section {
+    max-width: 48%;
+    overflow-x: scroll;
+  }
+
   .flexbox .report-info {
     display: block;
   }
