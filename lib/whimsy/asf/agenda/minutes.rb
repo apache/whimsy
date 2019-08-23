@@ -24,8 +24,17 @@ class ASF::Board::Agenda
 
       if FOUNDATION_BOARD
         file = attrs['text'][/board_minutes[_\d]+\.txt/].untaint
+
         if file and File.exist?(File.join(FOUNDATION_BOARD, file))
+          # unpublished minutes
           attrs['mtime'] = File.mtime(File.join(FOUNDATION_BOARD, file)).to_i
+        else
+          MINUTES = ASF::SVN['minutes']
+          year = file[/_(\d{4})_/, 1]
+          if MINUTES and File.exist? File.join(MINUTES, year, file)
+            # published minutes
+            attrs['mtime'] = File.mtime(File.join(MINUTES, year, file)).to_i
+          end
         end
       end
     end
