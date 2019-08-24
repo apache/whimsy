@@ -136,14 +136,7 @@ module ASF
       # update/remove existing 'missing' entries
       existing = []
       block.gsub! /(.*?)# (missing|not accepted) in .*\n/ do |line|
-        if rejected.include? $1.strip
-          existing << $1.strip
-          if line.chomp.end_with? month
-            line
-          else
-            "#{line.chomp}, not accepted #{month}\n"
-          end
-        elsif missing.include? $1.strip
+        if missing.include? $1.strip
           existing << $1.strip
           if line.chomp.end_with? month
             line
@@ -152,19 +145,26 @@ module ASF
           else
             "#{line.chomp}, #{month}\n"
           end
+        elsif rejected.include? $1.strip
+          existing << $1.strip
+          if line.chomp.end_with? month
+            line
+          else
+            "#{line.chomp}, not accepted #{month}\n"
+          end
         else
           ''
         end
       end
 
-      # add new 'rejected' entries
-      (rejected-existing).each do |pmc|
-        block += "    #{pmc.ljust(22)} # not accepted in #{month}\n"
+      # add new 'missing' entries
+      (missing-existing).each do |pmc|
+        block += "    #{pmc.ljust(22)} # missing in #{month}\n"
       end
 
-      # add new 'missing' entries
-      (missing-rejected-existing).each do |pmc|
-        block += "    #{pmc.ljust(22)} # missing in #{month}\n"
+      # add new 'rejected' entries
+      (rejected-missing--existing).each do |pmc|
+        block += "    #{pmc.ljust(22)} # not accepted in #{month}\n"
       end
 
       # add new 'established' entries and remove 'terminated' entries
