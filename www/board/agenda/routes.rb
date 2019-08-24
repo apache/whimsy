@@ -510,6 +510,10 @@ get '/new' do
   revision, contents = ASF::SVN.get(cinfo, env.user, env.password)
   ASF::Committee.load_committee_info(contents, info)
 
+  # extract committees expected to report 'next month'
+  next_month = contents[/Next month.*?\n\n/m].chomp
+  @next_month = next_month[/(.*#.*\n)+/] || ''
+
   # Get directors, list of pmcs due to report, and shepherds
   @directors = ASF::Board.directors
   @pmcs = ASF::Board.reporting(@meeting)
