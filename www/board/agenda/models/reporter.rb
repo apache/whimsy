@@ -58,9 +58,11 @@ class Reporter
     end
 
     # extract projects with drafts for this agenda
+    lastMeeting = ASF::Board.lastMeeting.to_i
     drafts = report_status.select do |project, status| 
       next false unless status['agenda'] == agenda_file
       last_draft = status['last_draft']
+      next false if last_draft and status['draft_timestamp'] <= lastMeeting
       last_draft and not last_draft.empty?
     end
 

@@ -27,11 +27,31 @@ module ASF
 
       if not time
         require 'chronic'
+        this_month = Time.now.strftime('%B')
 
-        time ||= Chronic.parse('3rd wednesday this month')
+        time ||= Chronic.parse("3rd wednesday in #{this_month}")
 
         if not time or time < Time.now.utc
           time = Chronic.parse('3rd wednesday next month')
+        end
+      end
+
+      time
+    end
+
+    # time of previous meeting
+    def self.lastMeeting
+      next_meeting = self.nextMeeting
+      time = self.calendar.select {|time| time < next_meeting}.max
+
+      if not time
+        require 'chronic'
+        this_month = Time.now.strftime('%B')
+
+        time ||= Chronic.parse("3rd wednesday in #{this_month}")
+
+        if not time or time > Time.now.utc
+          time = Chronic.parse('3rd wednesday last month')
         end
       end
 
