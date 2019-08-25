@@ -14,6 +14,19 @@ _html do
         _h4 'Committees expected to report next month, and why:'
         _pre.commented @next_month
       end
+
+
+      if @next_month.include? "through #@prev_month"
+        _h3.missing do
+          _ "List still shows a committee as reporting through #@prev_month."
+          _ "Perhaps committee-info.txt was not updated?"
+        end
+      elsif not @next_month.include? @prev_month
+        _h3.missing do
+          _ "No reports were marked missing or rejected in #@prev_month."
+          _ "Perhaps committee-info.txt was not updated?"
+        end
+      end
     end
 
     _form method: 'post',  action: @meeting.strftime("%Y-%m-%d/") do

@@ -499,10 +499,11 @@ end
 
 # draft new agenda
 get '/new' do
-  # extract time and date for next meeting
+  # extract time and date for next meeting, month of previous meeting
   @meeting = ASF::Board.nextMeeting
   localtime = ASF::Board::TIMEZONE.utc_to_local(@meeting)
   @time = localtime.strftime('%l:%M%P')
+  @prev_month = @meeting.to_date.prev_month.strftime('%B')
 
   # retrieve latest committee info
   cinfo = File.join(ASF::SVN['board'], 'committee-info.txt')
