@@ -84,8 +84,8 @@ class ASF::Board::Agenda
         committee = ASF::Committee.find($1)
         attrs['roster'] =
           "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
-        attrs['stats'] = 
-          "https://reporter.apache.org/?#{CGI.escape committee.name}"
+        attrs['stats'] = 'https://reporter.apache.org/wizard/statistics?' +
+            CGI.escape(committee.name)
         attrs['prior_reports'] = minutes(committee.display_name)
 
         ids = text.scan(/\((\w[-.\w]+)\)/).flatten
