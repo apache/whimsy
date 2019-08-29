@@ -12,7 +12,7 @@ _html do
     if @next_month and not @next_month.empty?
       _div.commented do
         _h4 'Committees expected to report next month, and why:'
-        _pre.commented @next_month
+        _pre.commented @next_month.gsub(@next_month.scan(/\s+#/).max.to_s, " -")
       end
 
 
