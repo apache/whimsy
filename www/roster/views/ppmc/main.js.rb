@@ -19,6 +19,19 @@ class PPMC < Vue
       @@auth.ipmc = false
     end
 
+    if @ppmc.status == 'graduated'
+      _div.alert.alert_danger do
+        _p do
+          _b 'Warning: ' 
+          _ 'This podling has graduated - some of the information below will be out of date.'
+          _br
+          _br
+          _ 'Please refer to the main entry: '
+          _a "roster / committee / #{@ppmc.id}", href: "committee/#{@ppmc.id}"
+        end
+      end
+    end
+
     # add jump links to main sections of page using Bootstrap nav element
     _ul.nav.nav_pills do
       _li role: "presentation" do
