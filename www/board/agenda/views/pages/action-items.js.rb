@@ -18,8 +18,8 @@ class ActionItems < Vue
           # skip actions that don't match the filter
           if @@filter
             match = true
-            for key in @@filter
-              match &&= (action[key] == @@filter[key])
+            @@filter.each_pair do |key, filter|
+              match &&= (action[key] == filter)
             end
             next unless match
           end
@@ -76,8 +76,8 @@ class ActionItems < Vue
           options.attrs = {}
 
           # copy action properties to data attributes
-          for name in action
-            options.attrs["data-#{name}"] = action[name]
+          action.each_pair do |name, option|
+            options.attrs["data-#{name}"] = option
           end
 
           # include pending updates
@@ -138,8 +138,8 @@ class ActionItems < Vue
       Minutes.actions.each do |action|
         if @@filter
           match = true
-          for key in @@filter
-            match &&= (action[key] == @@filter[key])
+          @@filter.each_pair do |key, filter|
+            match &&= (action[key] == filter)
           end
           next unless match
         end
@@ -154,8 +154,8 @@ class ActionItems < Vue
             # skip actions that don't match the filter
             if @@filter
               match = true
-              for key in @@filter
-                match &&= (action[key] == @@filter[key])
+              @@filter.each_pair do |key, filter|
+                match &&= (action[key] == filter)
               end
               next unless match
             end

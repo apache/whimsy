@@ -138,16 +138,14 @@ class Chat
 
     # build an index of the 'before' drafts
     index = {}
-    for attach in before.drafts
-      item = before.drafts[attach]
+    before.drafts.each do |attach, item|
       index[item.project] = item
     end
 
     # categorize each item in the 'after' drafts
     add = []
     change = []
-    for attach in after.drafts
-      item = after.drafts[attach]
+    after.drafts.each_pair do |attach, item|
       before = index[item.project]
       console.log [before, item]
       if not before

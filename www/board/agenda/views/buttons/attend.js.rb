@@ -18,8 +18,7 @@ class Attend < Vue
     if person
       return person.attending
     else
-      for id in @@item.people
-        person = @@item.people[id]
+      @@item.people.each_pair do |id, person|
         return person.attending if person.name == User.username
       end
       return false

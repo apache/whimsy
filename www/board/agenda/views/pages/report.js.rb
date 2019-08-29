@@ -177,9 +177,7 @@ class Report < Vue
   def names(text)
     roster = '/roster/committer/'
 
-    for id in @@item.people
-      person = @@item.people[id]
-
+    @@item.people.each_pair do |id, person|
       # email addresses in 'Establish' resolutions and (ids) everywhere
       text.gsub! /(\(|&lt;)(#{id})( at |@|\))/ do |m, pre, id, post|
         if person.icla

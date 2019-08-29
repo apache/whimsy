@@ -25,9 +25,9 @@ class Adjournment < Vue
   end
 
   # update state
-  def set(value)
-    for attr in value
-      Todos[attr] = value[attr]
+  def set(values)
+    values.each_pair do |attr, value|
+      Todos[attr] = value
     end
   end
 
@@ -296,8 +296,8 @@ class TodoRemove < Vue
     @disabled = true
 
     remove = []
-    for id in @checked
-      remove << id if @checked[id]
+    @checked.each_pair do |id, checked|
+      remove << id if checked
     end
 
     post "secretary-todos/#{Agenda.title}", remove: remove do |todos|
@@ -305,7 +305,7 @@ class TodoRemove < Vue
       Todos.set todos
 
       # uncheck people who were removed
-      for id in @checked
+      @checked.each_key do |id|
         unless Todos.remove.any? {|person| person.id == id}
           @checked[id] = false
         end

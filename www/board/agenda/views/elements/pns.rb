@@ -42,12 +42,8 @@ class PodlingNameSearch < Vue
     altname = props.item.fulltitle[/\((.*?)\)/, 1]
 
     if name and Server.podlingnamesearch
-      for podling in Server.podlingnamesearch
-        if name == podling
-          @results = Server.podlingnamesearch[name]
-        elsif altname == podling
-          @results = Server.podlingnamesearch[altname]
-        end
+      Server.podlingnamesearch.each_pair do |podling, jira|
+        @results = jira if name == podling or altname == podling
       end
     end
 

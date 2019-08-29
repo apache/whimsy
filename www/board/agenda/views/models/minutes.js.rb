@@ -15,8 +15,8 @@ class Minutes
   def self.actions
     actions = []
 
-    for title in @@list
-      minutes = @@list[title] + "\n\n"
+    @@list.each_pair do |title, minutes|
+      minutes += "\n\n"
       pattern = RegExp.new('^(?:@|AI\s+)(\w+):?\s+([\s\S]*?)(\n\n|$)', 'g')
       match = pattern.exec(minutes)
       while match

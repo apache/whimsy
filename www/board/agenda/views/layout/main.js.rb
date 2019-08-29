@@ -40,8 +40,8 @@ class Main < Vue
   # initial load of the agenda, and route first request
   def created()
     # copy server info for later use
-    for prop in @@server
-      Server[prop] = @@server[prop]
+    @@server.each_pair do |prop, value|
+      Server[prop] = value
     end
 
     Pending.fetch() if PageCache.enabled or not Server.userid

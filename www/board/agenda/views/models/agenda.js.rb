@@ -143,8 +143,8 @@ class Agenda
   # initialize an entry by copying each JSON property to a class instance
   # variable.
   def initialize(entry)
-    for name in entry
-      self["_#{name}"] = entry[name]
+    entry.each_pair do |name, value|
+      self["_#{name}"] = value
     end
   end
 

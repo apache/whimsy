@@ -96,8 +96,8 @@ class Pending
 
     Pending.status.each do |status|
       found = true
-      for name in action
-        found = false if name != 'status' and action[name] != status[name]
+      action.each_pair do |name, value|
+        found = false if name != 'status' and value != status[name]
       end
       match = status if found
     end
@@ -207,9 +207,8 @@ class Pending
       # apply offline changes
       Pending.dbget do |pending|
         if pending.approve
-          for attach in pending.approve
-            data = {attach: attach, request: pending.approve[attach]}
-            Pending.update('approve', data)
+          pending.approve.each_pair do |attach, request|
+            Pending.update('approve', attach: attach, request: request)
           end
         end
       end

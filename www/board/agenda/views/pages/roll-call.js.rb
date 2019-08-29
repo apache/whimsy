@@ -72,8 +72,7 @@ class RollCall < Vue
     list = []
 
     # start with those listed in the agenda
-    for id in @@item.people
-      person = @@item.people[id]
+    @@item.people.each_pair do |id, person|
       person.id = id
       list << person
     end
@@ -81,9 +80,9 @@ class RollCall < Vue
     # add remaining attendees
     attendees = Minutes.attendees
     if attendees
-      for name in attendees
+      attendees.each_pair do |name, attendee|
         if not list.any? {|person| person.name == name}
-          person = attendees[name]
+          person = attendee
           person.name = name
           person.role = :guest
           list << person

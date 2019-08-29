@@ -94,7 +94,7 @@ class AdditionalInfo < Vue
 
       # historical comments
       if history and not @prefix
-        for date in history
+        history.each_pair do |date, comments|
           next if Agenda.file == "board_agenda_#{date}.txt"
 
           _h5.history do
@@ -141,7 +141,7 @@ class AdditionalInfo < Vue
             end
           end
 
-          splitComments(history[date]).each do |comment|
+          splitComments(comments).each do |comment|
             _pre.comment do
               _Text raw: comment, filters: [hotlink]
             end

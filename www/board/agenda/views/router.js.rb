@@ -145,13 +145,13 @@ class Router
         # form overrides
         form = button.form
         if form and form.button
-          for name in form.button
+          form.button.each_pair do |name, override|
             if name == 'text'
               props.text = form.button.text
             elsif name == 'class' or name == 'classname'
-              props.attrs.class += " #{form.button[name].gsub('_', '-')}"
+              props.attrs.class += " #{override.gsub('_', '-')}"
             else
-              props.attrs[name.gsub('_', '-')] = form.button[name]
+              props.attrs[name.gsub('_', '-')] = override
             end
           end
         else
@@ -162,13 +162,13 @@ class Router
         end
 
         # item overrides
-        for name in button
+        button.each_pair do |name, override|
           if name == 'text'
             props.text = button.text
           elsif name == 'class' or name == 'classname'
-            props.attrs.class += " #{button[name].gsub('_', '-')}"
+            props.attrs.class += " #{override.gsub('_', '-')}"
           elsif name != 'form'
-            props.attrs[name.gsub('_', '-')] = button[name]
+            props.attrs[name.gsub('_', '-')] = override
           end
         end
 

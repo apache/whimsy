@@ -336,13 +336,13 @@ class FY23 < Vue
 
     if budget and budget != @budget and Minutes.started
 
-      for item in budget
+      budget.each_pair do |item, date|
         element = document.getElementById(item)
 
         if element.tagName == 'INPUT'
-          element.value = budget[item].toLocaleString()
+          element.value = date.toLocaleString()
         else
-          element.textContent = budget[item].toLocaleString()
+          element.textContent = date.toLocaleString()
         end
       end
 
