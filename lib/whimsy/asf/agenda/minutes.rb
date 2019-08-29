@@ -2,8 +2,10 @@
 
 
 class ASF::Board::Agenda
-  # Must be outside scan loop
-  FOUNDATION_BOARD = ASF::SVN.find('foundation_board') # Use find to placate Travis
+  # Must be outside scan loop.  Use find to placate Travis.
+  FOUNDATION_BOARD = ASF::SVN.find('foundation_board')
+  MINUTES = ASF::SVN.find('minutes')
+
   parse do
     minutes = @file.split(/^ 3. Minutes from previous meetings/,2).last.
       split(OFFICER_SEPARATOR,2).first
@@ -29,7 +31,6 @@ class ASF::Board::Agenda
           # unpublished minutes
           attrs['mtime'] = File.mtime(File.join(FOUNDATION_BOARD, file)).to_i
         else
-          MINUTES = ASF::SVN['minutes']
           year = file[/_(\d{4})_/, 1]
           if MINUTES and File.exist? File.join(MINUTES, year, file)
             # published minutes
