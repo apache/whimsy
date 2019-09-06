@@ -58,6 +58,9 @@ _html do
           _span.text_danger 'BETA SOFTWARE: double-check the command first. '
           _a "Feedback welcome!", href: "mailto:dev@whimsical.apache.org?Subject=Feedback on moderation helper app"
         end
+        _p do
+          _span '** If you are not a moderator, you can contact them by emailing <list>-owner@<tlp>.apache.org **'
+        end
       }
     ) do
       _form method: 'post' do
