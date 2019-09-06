@@ -34,6 +34,7 @@ _html do
       _tr do
         _th 'UID'
         _th 'asf-banned?'
+        _th 'nologin?'
         _th 'Date'
         _th 'ICLA'
         _th 'Subscriptions'
@@ -46,6 +47,7 @@ _html do
             _a p.name, href: '/roster/committer/' + p.name
           end
           _td p.asf_banned?
+          _td p.nologin?
           _td p.createDate
           if icla
             if icla.claRef
