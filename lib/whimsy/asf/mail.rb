@@ -240,7 +240,7 @@ module ASF
       when 'infrastructure'
         'infra'
       when 'dataprivacy'
-        'legal-internal@apache.org'
+        'privacy@apache.org'
       when 'legalaffairs'
         'legal-internal@apache.org'
       when 'fundraising'
