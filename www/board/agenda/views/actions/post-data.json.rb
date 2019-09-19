@@ -1,6 +1,7 @@
 #
 # Helpers for building agenda items to be posted:
 #  committee-list: list all of the committees
+#  committer-list: list all of the committers on a given committee
 #  committee-members: list chair and members of a committee
 #  change-chair: produce a draft change chair resolution
 #
@@ -44,6 +45,15 @@ when 'committee-list'
   end 
       
   committees[:chair] + committees[:member] + committees[:rest]
+
+when 'committer-list'
+  committee = ASF::Committee[@pmc]
+  return unless committee
+  roster = committee.committers
+
+  roster = roster.map {|person| {name: person.public_name, id: person.id}}
+
+  {members: roster.sort_by {|person| person[:name]}}
 
 when 'committee-members'
   committee = ASF::Committee[@pmc]

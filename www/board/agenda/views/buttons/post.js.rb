@@ -10,6 +10,9 @@ class Post < Vue
     @disabled = false
     @alerted = false
     @edited = false
+    @pmcs = []
+    @roster = []
+    @parent = nil
   end
 
   # default attributes for the button associated with this form
@@ -36,7 +39,7 @@ class Post < Vue
   
           _li do
             _button.btn.btn_primary 'Establish Project', onClick: selectItem
-            _ '- direct to TLP project'
+            _ '- direct to TLP project and subproject to TLP'
           end
   
           _li do
@@ -116,6 +119,16 @@ class Post < Vue
             disabled: !pmcname
         end
 
+        _div.form_group do
+          _label 'Parent PMC name (if applicable)', for: 'parent-pmc'
+          _select.form_control.parent_pmc!(
+            onChange: ->(event) {parent_pmc_change(event.target.value)}
+          ) do
+            _option '-- none --', value: '', selected: true
+            @pmcs.each {|pmc| _option pmc unless pmc == 'incubator'}
+          end
+        end
+
         if @chair
           _div.form_group do
             _label "Chair: #{@chair.name}"
@@ -152,8 +165,22 @@ class Post < Vue
                 person.id.include? part or
                 person.name.downcase().include? part
               }
+                and
+              not @pmc.include? person
             then
-              _div.form_check do
+              _div.form_check key: person.id do
+                _input.form_check_input type: 'checkbox',
+                  id: "person_#{person.id}",
+                  onClick: -> {establish_pmc(person)}
+                _label.form_check_label person.name, 
+                  for: "person_#{person.id}"
+              end
+            end
+          end
+        elsif @search.length == 0 and @roster and not @roster.empty?
+          @roster.each do |person|
+            unless @pmc.include? person
+              _div.form_check key: person.id do
                 _input.form_check_input type: 'checkbox',
                   id: "person_#{person.id}",
                   onClick: -> {establish_pmc(person)}
@@ -332,6 +359,7 @@ class Post < Vue
   # match form title, input label, and commit message with button text
   def retitle()
     @report = nil
+    parent_pmc_change(nil)
 
     case @button
     when 'post report'
@@ -594,9 +622,17 @@ class Post < Vue
     @chair = nil
     @pmc = []
 
+    # get a list of committers
     unless Server.committers
       retrieve 'committers', :json do |committers|
         Server.committers = committers || []
+      end
+    end
+
+    # get a list of PMCs
+    if @pmcs.empty?
+      post 'post-data', request: 'committee-list' do |response|
+        @pmcs = response
       end
     end
   end
@@ -611,13 +647,14 @@ class Post < Vue
     @disabled = true
 
     people = []
-    Array(document.querySelectorAll(':checked')).each do |checkbox|
+    Array(document.querySelectorAll('input:checked')).each do |checkbox|
       people << checkbox.value
     end
 
     options = {
       request: 'establish', 
       pmcname: @pmcname,
+      parent: @parent,
       description: @pmcdesc,
       chair: @chair.id,
       people: people.join(',')
@@ -638,9 +675,10 @@ class Post < Vue
 
   def initialize_terminate_project()
     # get a list of PMCs
-    @pmcs = []
-    post 'post-data', request: 'committee-list' do |response|
-      @pmcs = response
+    if @pmcs.empty?
+      post 'post-data', request: 'committee-list' do |response|
+        @pmcs = response
+      end
     end
 
     @termreason = nil
@@ -723,6 +761,15 @@ class Post < Vue
       @outgoing_chair = response.chair.name
       @pmc_members = response.members
       @disabled = false
+    end
+  end
+
+  def parent_pmc_change(pmc)
+    @roster = []
+    @parent = pmc
+    return unless pmc
+    post 'post-data', request: 'committer-list', pmc: pmc do |response|
+      @roster = response.members if response
     end
   end
 

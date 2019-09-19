@@ -30,4 +30,17 @@ NOW, THEREFORE, BE IT FURTHER RESOLVED, that <%= @chair.public_name %> be
 appointed to the office of Vice President, Apache <%= @pmcname %>, to serve in
 accordance with and subject to the direction of the Board of Directors and the
 Bylaws of the Foundation until death, resignation, retirement, removal or
+<% if not @parent %>
 disqualification, or until a successor is appointed.
+<% else %>
+<% parent = ASF::Committee.find(@parent).display_name %>
+disqualification, or until a successor is appointed; and be it further
+
+RESOLVED, that the Apache <%= @pmcname %> Project be and hereby is tasked with
+the migration and rationalization of the Apache <%= parent %> <%= @pmcname %>
+sub-project; and be it further
+
+RESOLVED, that all responsibilities pertaining to the Apache <%= parent %>
+<%= @pmcname %> sub-project encumbered upon the Apache <%= parent %> Project
+are hereafter discharged.
+<% end %>

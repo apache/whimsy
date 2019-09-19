@@ -238,6 +238,10 @@ footer .btn {
   vertical-align: middle
 }
 
+.modal {
+  overflow-y: initial !important;
+}
+
 .modal-header {
   border-top-left-radius: 6px;
   border-top-right-radius: 6px
@@ -245,6 +249,8 @@ footer .btn {
 
 .modal-body {
   background-color: white;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .modal-content {
