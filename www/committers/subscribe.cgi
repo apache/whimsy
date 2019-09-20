@@ -14,13 +14,6 @@ $SAFE = 1
 
 FORMAT_NUMBER = 3 # json format number
 
-# lists which are not eligible for self-subscription
-BLACKLIST = %w{
-  concom
-  concom-private
-  legal-internal
-}
-
 user = ASF::Person.new($USER)
 # authz handled by httpd
 
@@ -45,7 +38,6 @@ ldap_pmcs = user.committees.map(&:mail_list) unless user.asf_member?
 ldap_pmcs += user.podlings.map(&:mail_list) unless user.asf_member?
 lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs)
 lists -= ASF::Mail.deprecated
-lists -= BLACKLIST
 lists.sort!
 addrs = user.all_mail
 

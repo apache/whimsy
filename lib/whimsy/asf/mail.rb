@@ -75,6 +75,16 @@ module ASF
       YAML.load_file(File.join(apmail_bin, 'deprecated_mailing_lists.yml'))
     end
 
+		# These are not subscribable via Whimsy
+    CANNOT_SUB = %w(
+      ea secretary president treasurer chairman
+      committers
+      pmc-chairs
+      concom
+      concom-private
+      legal-internal
+    )
+
     # which lists are available for subscription via Whimsy?
     # member: true if member
     # pmc_chair: true if pmc_chair
@@ -84,7 +94,7 @@ module ASF
       if member
           lists = @lists.keys
           # These are not subscribable via Whimsy
-          lists.delete_if {|list| list =~ /^(ea|secretary|president|treasurer|chairman|committers|pmc-chairs)$/ }
+          lists -= CANNOT_SUB
           lists.delete_if {|list| list =~ /(^|-)security$|^security(-|$)/ }
           lists
       else
