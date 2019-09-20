@@ -16,6 +16,8 @@ FORMAT_NUMBER = 3 # json format number
 
 # lists which are not eligible for self-subscription
 BLACKLIST = %w{
+  concom
+  concom-private
   legal-internal
 }
 
