@@ -76,6 +76,8 @@ module ASF
     end
 
 		# These are not subscribable via Whimsy
+    # secretary, president etc are not actually mailing lists, 
+    # but they appear in .archives so need to be excluded
     CANNOT_SUB = %w(
       ea secretary president treasurer chairman
       committers
@@ -192,6 +194,31 @@ module ASF
       return email
     end
 
+    # Convert a domain and list name to a host-list as used in .archives and mod_mbox/private
+    # Input:
+    # - dom=full domain, or list@domain if list is nil
+    # - list or nil
+    # Output:
+    # - [host-]list
+    def self.toHostList(_dom, _list=nil)
+      # don't overwrite parameters so can report error properly
+      if _list
+        list = _list
+        dom = _dom
+      else
+        list,dom = _dom.split('@')
+      end
+      if dom == 'apache.org'
+        return list
+      elsif dom == 'apachecon.com'
+        return "apachecon-#{list}"
+      elsif dom =~ /^([^.]+)\.apache\.org$/
+        return "#$1-#{list}"
+      else
+        raise "Cannot parse #{_dom},#{_list}"
+      end
+    end
+    
   end
 
   class Person < Base
