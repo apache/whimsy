@@ -195,6 +195,69 @@ module ASF
       return email
     end
     
+    # list the flags
+    # F:-aBcdeFgHiJklMnOpqrSTUVWXYz domain list
+    # Input:
+    # options: hash to filter output, e.g. {modsub: true}
+    # Output:
+    # yields: domain, list, flags
+    def self.list_flags(options={})
+      filter = nil
+      options.each do |k,v|
+        case k
+          when :modsub
+            filter = v ? /s/ : /S/
+          when :regex # allow direct specification for experts
+            filter = v
+          else
+            raise "Unexpected option #{k} #{v}"
+        end
+      end
+      self.parse_flags(filter) { |x| yield x } 
+    end
+  
+    # Do the flags indicate subscription moderation?
+    def self.isModSub?(flags)
+      flags.include? 's'
+    end
+
+    private
+
+    # flags for each mailing list
+    LIST_FLAGS = '/srv/subscriptions/list-flags'
+    
+    # Parse the flags file
+    def self._load_flags
+      if not @flags or File.mtime(LIST_FLAGS) != @flags_mtime
+        lists = []
+        File.open(LIST_FLAGS).each do |line|
+          if line.match(/^F:-([a-zA-Z]{26}) (\S+) (\S+)/)
+            flags,dom,list=$1,$2,$3
+            next if list =~ /^infra-[a-z]$/ or (dom == 'incubator' and list == 'infra-dev')
+            lists << [dom,list,flags]
+          else
+            raise "Unexpected flags: #{line}"
+          end
+        end
+        @flags = lists
+        @flags_mtime = File.mtime(LIST_FLAGS)
+      end
+    end
+
+    # parse the flags
+    # F:-aBcdeFgHiJklMnOpqrSTUVWXYz domain list
+    # Input:
+    # filter = RE to match against the flags, e.g. /s/ for subsmod
+    # Output:
+    # yields: domain, list, flags
+    def self.parse_flags(filter=nil)
+       self._load_flags()
+       @flags.each do |d,l,f|
+         next if filter and not f =~ filter
+         yield [d,l,f]
+       end
+    end
+
   end
 
   class Person < Base
