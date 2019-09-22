@@ -87,6 +87,8 @@ module ASF
       legal-internal
     )
 
+    WHITELIST = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'party']
+
     # which lists are available for subscription via Whimsy?
     # member: true if member
     # pmc_chair: true if pmc_chair
@@ -101,9 +103,8 @@ module ASF
           lists.delete_if {|list| list =~ /(^|-)security$|^security(-|$)/ }
           lists
       else
-          whitelist = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'party']
           # Can always subscribe to public lists and the whitelist
-          lists = @lists.keys.select{|key| @lists[key] == 'public' or whitelist.include? key}
+          lists = @lists.keys.select{|key| @lists[key] == 'public' or WHITELIST.include? key}
 
           # Chairs need the board lists
           if pmc_chair
