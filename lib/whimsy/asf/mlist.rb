@@ -3,7 +3,10 @@ require 'weakref'
 module ASF
 
   module MLIST
-    # utility methods for handling mailing list subscriptions and moderations
+    # utility methods for handling mailing list attributes:
+    # - subscriptions
+    # - moderation
+    # - configuration flags
 
     # whilst the source files are not particularly difficult to parse, it makes
     # sense to centralise access so any necessary changes can be localised
@@ -228,7 +231,51 @@ module ASF
       end
     end
 
+    # list the flags
+    # F:-aBcdeFgHiJklMnOpqrSTUVWXYz domain list
+    # Input:
+    # options: hash to filter output, e.g. {modsub: true}
+    # Output:
+    # yields: domain, list, flags
+    def self.list_flags(options={})
+      filter = nil
+      options.each do |k,v|
+        case k
+          when :modsub
+            filter = v ? /s/ : /S/
+          when :regex # allow direct specification for experts
+            filter = v
+          else
+            raise "Unexpected option #{k} #{v}"
+        end
+      end
+      self.parse_flags(filter) { |x| yield x } 
+    end
+
+    # Do the flags indicate subscription moderation?
+    def self.isModSub?(flags)
+      flags.include? 's'
+    end
+
     private
+
+    # parse the flags
+    # F:-aBcdeFgHiJklMnOpqrSTUVWXYz domain list
+    # Input:
+    # filter = RE to match against the flags, e.g. /s/ for subsmod
+    # Output:
+    # yields: domain, list, flags
+    def self.parse_flags(filter=nil)
+      File.open(LIST_FLAGS).each do |line|
+        if line.match(/^F:-([a-zA-Z]{26}) (\S+) (\S+)/)
+          f,d,l=$1,$2,$3
+          next if filter and not f =~ filter
+          yield [d,l,f]
+        else
+          raise "Unexpected flags: #{line}"
+        end
+      end
+    end
 
     # return the archiver type as array: [:MBOX|:PONY|:MINO|:MAIL_ARCH|:MARKMAIL|:WHIMSY, 'public'|'private'|'alias'|'direct']
     # minotaur archiver names do not include any public/private indication as that is in bin/.archives
@@ -385,6 +432,9 @@ module ASF
 
     LIST_DIGS = '/srv/subscriptions/list-digs'
 
+    # flags for each mailing list
+    LIST_FLAGS = '/srv/subscriptions/list-flags'
+
     # If this file exists, it is the time when the data was last extracted
     # The mods and subs files are only updated if they have changed
     LIST_TIME = '/srv/subscriptions/list-start'
@@ -393,6 +443,10 @@ module ASF
 end
 
 if __FILE__ == $0
+  $i=0
+  ASF::MLIST.list_flags() { |x| $i += 1 }
+    p $i
+  exit
   domain = ARGV.shift||'whimsical'
   p  ASF::MLIST.list_subscribers(domain)
   p  ASF::MLIST.list_subscribers(domain,false,false,true)
