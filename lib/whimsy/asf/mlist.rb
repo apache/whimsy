@@ -6,7 +6,6 @@ module ASF
     # utility methods for handling mailing list attributes:
     # - subscriptions
     # - moderation
-    # - configuration flags
 
     # whilst the source files are not particularly difficult to parse, it makes
     # sense to centralise access so any necessary changes can be localised
