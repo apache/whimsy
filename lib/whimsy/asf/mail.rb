@@ -91,6 +91,7 @@ module ASF
     # member: true if member
     # pmc_chair: true if pmc_chair
     # ldap_pmcs: list of (P)PMC mail_list names
+    # output is in the format [host-list] as it is derived from bin/.archives
     def self.cansub(member, pmc_chair, ldap_pmcs)
       Mail._load_lists
       if member
@@ -192,31 +193,6 @@ module ASF
       end
       # Invalid; return input rather than failing
       return email
-    end
-
-    # Convert a domain and list name to a host-list as used in .archives and mod_mbox/private
-    # Input:
-    # - dom=full domain, or list@domain if list is nil
-    # - list or nil
-    # Output:
-    # - [host-]list
-    def self.toHostList(_dom, _list=nil)
-      # don't overwrite parameters so can report error properly
-      if _list
-        list = _list
-        dom = _dom
-      else
-        list,dom = _dom.split('@')
-      end
-      if dom == 'apache.org'
-        return list
-      elsif dom == 'apachecon.com'
-        return "apachecon-#{list}"
-      elsif dom =~ /^([^.]+)\.apache\.org$/
-        return "#$1-#{list}"
-      else
-        raise "Cannot parse #{_dom},#{_list}"
-      end
     end
     
   end
