@@ -270,7 +270,7 @@ _html do
         if rc == 0
           _div.alert.alert_success role: 'alert' do
             _p do
-              _span.strong 'Request successfully submitted'
+              _span.strong 'Request successfully submitted.'
               if @request != 'unsub'
                 _ 'You will be subscribed within the hour.'
               else
