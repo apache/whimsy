@@ -117,7 +117,7 @@ class Adjournment < Vue
           if completed.terminated and not completed.terminated.empty?
             _p 'Terminated PMCs'
             _ul completed.terminated do |pmc|
-              _li {_a pmc.name.downcase(), 
+              _li {_a pmc.downcase(), 
                  href: "../../../roster/committee/#{pmc.downcase()}"}
             end
           end
