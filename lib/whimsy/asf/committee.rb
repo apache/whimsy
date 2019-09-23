@@ -163,7 +163,7 @@ module ASF
       end
 
       # add new 'rejected' entries
-      (rejected-missing--existing).each do |pmc|
+      (rejected-missing-existing).each do |pmc|
         block += "    #{pmc.ljust(22)} # not accepted in #{month}\n"
       end
 
