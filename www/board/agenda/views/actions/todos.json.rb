@@ -209,7 +209,6 @@ if @terminate
   minutes[:todos][:terminated] +=
     @terminate.map {|resolution| resolution['name']}
 end
-end
 
 unless todos == minutes[:todos]
   File.write minutes_file, YAML.dump(minutes)
