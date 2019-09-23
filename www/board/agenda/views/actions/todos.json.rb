@@ -207,7 +207,7 @@ end
 if @terminate
   minutes[:todos][:terminated] ||= []
   minutes[:todos][:terminated] +=
-    @terminate.map {|resolution| resolution['name']}
+    @terminate.map {|resolution| resolution['name'].downcase}
 end
 
 unless todos == minutes[:todos]
