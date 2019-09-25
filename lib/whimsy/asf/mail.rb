@@ -90,37 +90,49 @@ module ASF
     WHITELIST = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'party']
 
     CHAIR_LIST = %w(board board-commits board-chat)
+    MEMBER_LIST = %w(centralservices members operations press trademarks)
 
     # which lists are available for subscription via Whimsy?
     # member: true if member
     # pmc_chair: true if pmc_chair
     # ldap_pmcs: list of (P)PMC mail_list names
-    # output is in the format [host-list] as it is derived from bin/.archives
-    def self.cansub(member, pmc_chair, ldap_pmcs)
-      Mail._load_lists
-      if member
-          lists = @lists.keys
-          # These are not subscribable via Whimsy
-          lists -= CANNOT_SUB
-          lists.delete_if {|list| list =~ /(^|-)security$|^security(-|$)/ }
-          lists
-      else
-          # Can always subscribe to public lists and the whitelist
-          lists = @lists.keys.select{|key| @lists[key] == 'public' or WHITELIST.include? key}
-
-          # Chairs need the board lists
-          if pmc_chair
-            lists += CHAIR_LIST
+    # lid_only: return lid instead of [dom,list,lid]
+    # output is and array of entries: lid or [dom,list,lid]
+    def self.cansub(member, pmc_chair, ldap_pmcs, lidonly = true)
+      allowed = []
+      parse_flags do |dom,list,f|
+        lid = archivelistid(dom,list)
+        next if CANNOT_SUB.include? lid # probably unnecessary
+        cansub = false
+        modsub = isModSub?(f)
+        if not modsub # subs not moderated; allow all
+          cansub = true
+        elsif WHITELIST.include?(lid) # always allowed
+          cansub = true
+        else # subs are moderated
+          # no need to check CANNOT_SUB
+          if member
+            if list == 'private' or CHAIR_LIST.include?(lid) or MEMBER_LIST.include?(lid)
+              cansub = true
+            end
+          else
+            if ldap_pmcs
+              cansub = true if ldap_pmcs.include? dom.sub('.apache.org','')
+            end
           end
-
-          # (P)PMC members need their private lists
-          if ldap_pmcs
-            # ensure that the lists actually exist
-            lists += ldap_pmcs.map {|lp| "#{lp}-private"}.select{|l| @lists.keys.include? l}
+          if pmc_chair and CHAIR_LIST.include? lid
+            cansub = true
           end
-
-          lists
+        end
+        if cansub
+          if lidonly
+            allowed << lid
+          else
+            allowed << [dom,list,lid] 
+          end
+        end
       end
+      allowed
     end
 
     # common configuration for sending mail; loads <tt>:sendmail</tt>
@@ -198,32 +210,6 @@ module ASF
       return email
     end
     
-    # list the flags
-    # F:-aBcdeFgHiJklMnOpqrSTUVWXYz domain list
-    # Input:
-    # options: hash to filter output, e.g. {modsub: true}
-    # Output:
-    # yields: domain, list, flags
-    def self.list_flags(options={})
-      filter = nil
-      options.each do |k,v|
-        case k
-          when :modsub
-            filter = v ? /s/ : /S/
-          when :regex # allow direct specification for experts
-            filter = v
-          else
-            raise "Unexpected option #{k} #{v}"
-        end
-      end
-      self.parse_flags(filter) { |x| yield x } 
-    end
-  
-    # Do the flags indicate subscription moderation?
-    def self.isModSub?(flags)
-      flags.include? 's'
-    end
-
     private
 
     # flags for each mailing list
@@ -259,6 +245,11 @@ module ASF
          next if filter and not f =~ filter
          yield [d,l,f]
        end
+    end
+
+    # Do the flags indicate subscription moderation?
+    def self.isModSub?(flags)
+      flags.include? 's'
     end
 
   end
