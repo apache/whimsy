@@ -4,7 +4,7 @@ class Minutes
     @@notes = YAML.load_file(minutes_yaml) rescue {}
 
     minutes.mreplace(/\n\s1\.\sCall\sto\sorder\n+(.*?:)\n\n
-                     ((?:^\s{12}[^\n]*\n)+\n)
+                     ((?:^\s{12}[^\n]*\n+)+\n)
                      (.*?)\n\n\s2\.\sRoll\sCall/mx) do |meeting, number, backup|
       start = notes('Call to order') || '??:??'
       meeting.gsub! "is scheduled", "was scheduled"
