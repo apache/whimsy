@@ -17,9 +17,10 @@ FORMAT_NUMBER = 3 # json format number
 user = ASF::Person.new($USER)
 # authz handled by httpd
 
-# get the possible names of the current and retired podlings
+# get the possible names of the current, graduated and retired podlings
 current=[]
 retired=[]
+graduated=[] # if no longer a PMC then this is the same as retired
 ASF::Podling.list.each {|p|
   names = p['resourceAliases'] # array, may be empty
   names.push p['resource'] # single string, always present
@@ -28,6 +29,8 @@ ASF::Podling.list.each {|p|
     current.concat(names)
   elsif status == 'retired'
     retired.concat(names)
+  elsif status == 'graduated'
+    graduated.concat(names)
   end
 }
 
@@ -36,10 +39,32 @@ ldap_pmcs = [] # No need to get the info for ASF members
 ldap_pmcs = user.committees.map(&:mail_list) unless user.asf_member?
 # Also allow podling private lists to be subscribed by podling owners
 ldap_pmcs += user.podlings.map(&:mail_list) unless user.asf_member?
-lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs)
-lists -= ASF::Mail.deprecated
-lists.sort!
 addrs = user.all_mail
+
+seen = Hash.new
+deprecated = ASF::Mail.deprecated
+
+lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs, false)
+  .map { |dom, _, list|
+    host = dom.sub('.apache.org','') # get the host name
+    if deprecated.include? list
+      list = nil # bit of a hack to avoid scanning twice
+    elsif dom == 'apache.org'
+      seen[list] = 0 # ASF
+    elsif pmcs.include? host
+      seen[list] = 1 # TLP
+    elsif current.include? host
+      seen[list] = 2 # podling
+    elsif retired.include? host
+      seen[list] = 3 # retired podling; not listed
+    elsif graduated.include? host
+      seen[list] = 3 # retired TLP; not listed
+    else
+      seen[list] = 0 # Assume ASF
+    end
+    list
+  }.compact.sort
+
 
 _html do
   # better system output styling (errors in red)
@@ -80,20 +105,6 @@ _html do
       }
     ) do
       
-      seen = Hash.new
-      lists.each do |list|
-        ln = list.split('-').first
-        ln = 'empire-db' if ln == 'empire'
-        seen[list] = 0
-        seen[list] = 1 if pmcs.include? ln
-        seen[list] = 2 if current.include? ln
-        seen[list] = 2 if (ln == 'incubator') \
-        && (current.include? list.split('-')[1])
-        seen[list] = 3 if retired.include? ln
-        seen[list] = 3 if (ln == 'incubator') \
-        && (retired.include? list.split('-')[1])
-      end
-
       _form method: 'post' do
         _input type: 'hidden', name: 'request', value: 'sub'
         _fieldset do
