@@ -89,6 +89,8 @@ module ASF
 
     WHITELIST = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'party']
 
+    CHAIR_LIST = %w(board board-commits board-chat)
+
     # which lists are available for subscription via Whimsy?
     # member: true if member
     # pmc_chair: true if pmc_chair
@@ -108,7 +110,7 @@ module ASF
 
           # Chairs need the board lists
           if pmc_chair
-            lists += ['board', 'board-commits', 'board-chat']
+            lists += CHAIR_LIST
           end
 
           # (P)PMC members need their private lists
