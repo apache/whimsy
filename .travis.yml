@@ -14,7 +14,7 @@ gemfile:
 language: ruby
 rvm: # http://rubies.travis-ci.org/
   - 2.4
-  - 2.5
+#  - 2.5 (we don't need this yet, and it doubles the run time)
 
 # add subversion on Linux
 addons:
@@ -43,3 +43,6 @@ before_script:
 notifications:
   email:
   - notifications@whimsical.apache.org
+
+# N.B. builds are at:
+# https://travis-ci.org/apache/whimsy/builds

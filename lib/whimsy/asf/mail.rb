@@ -213,7 +213,8 @@ module ASF
     private
 
     # flags for each mailing list
-    LIST_FLAGS = '/srv/subscriptions/list-flags'
+    LIST_BASE = ASF::Config[:subscriptions] # allow overrides for testing etc
+    LIST_FLAGS = File.join(LIST_BASE, 'list-flags')
     
     # Parse the flags file
     def self._load_flags
