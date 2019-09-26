@@ -21,7 +21,6 @@ end
 
 ACREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/acreq'
 OFFICERS = 'https://svn.apache.org/repos/private/foundation/officers'
-APMAIL_BIN = ASF::SVN['apmail_bin']
 
 # get up to date data...
 # TODO replace with library method see WHIMSY-103
@@ -306,11 +305,7 @@ _html do
                   end
 
                   if requestor == 'incubator' and not @podling.to_s.empty?
-                    if File.read(File.join(APMAIL_BIN, '.archives')).include? "incubator-#{@podling}-private"
-                      cc_list << "#{@podling}-private@#{pmc_list}.apache.org".untaint
-                    else
-                      cc_list << "private@#{@podling}.#{pmc_list}.apache.org".untaint
-                    end
+                    cc_list << "private@#{@podling}.#{pmc_list}.apache.org".untaint
                     requestor = "#{@podling}@incubator".untaint
                   end
 
