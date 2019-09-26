@@ -212,15 +212,13 @@ module ASF
     
     private
 
-    # flags for each mailing list
-    LIST_BASE = ASF::Config[:subscriptions] # allow overrides for testing etc
-    LIST_FLAGS = File.join(LIST_BASE, 'list-flags')
-    
     # Parse the flags file
     def self._load_flags
-      if not @flags or File.mtime(LIST_FLAGS) != @flags_mtime
+      # flags for each mailing list
+      @list_flags ||= File.join(ASF::Config[:subscriptions], 'list-flags')
+      if not @flags or File.mtime(@list_flags) != @flags_mtime
         lists = []
-        File.open(LIST_FLAGS).each do |line|
+        File.open(@list_flags).each do |line|
           if line.match(/^F:-([a-zA-Z]{26}) (\S+) (\S+)/)
             flags,dom,list=$1,$2,$3
             next if list =~ /^infra-[a-z]$/ or (dom == 'incubator' and list == 'infra-dev')
@@ -230,7 +228,7 @@ module ASF
           end
         end
         @flags = lists
-        @flags_mtime = File.mtime(LIST_FLAGS)
+        @flags_mtime = File.mtime(@list_flags)
       end
     end
 
