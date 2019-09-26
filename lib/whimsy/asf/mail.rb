@@ -117,7 +117,7 @@ module ASF
             end
           else
             if ldap_pmcs
-              cansub = true if ldap_pmcs.include? dom.sub('.apache.org','')
+              cansub = true if list == 'private' and ldap_pmcs.include? dom.sub('.apache.org','')
             end
           end
           if pmc_chair and CHAIR_LIST.include? lid
