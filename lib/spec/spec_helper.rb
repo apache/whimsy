@@ -2,12 +2,16 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
 # Override with test data if there is no checkout available (allows local use)
-unless ASF::SVN.find('apmail_bin')
-  TEST_DATA = true # Test data does not yet support all tests
+unless ASF::SVN.find('apmail_bin') and not ENV['RAKE_TEST'] == 'TRUE'
+  TEST_DATA = true # Test data is smaller so some tests need adjusting
+  puts "Overriding data directories"
   ASF::SVN['apmail_bin'] = File.expand_path('../test/svn/apmail_bin', __dir__)
+  ASF::Config[:subscriptions] = File.expand_path('../test/subscriptions', __dir__)
 else
   TEST_DATA = false
 end
+
+puts "TEST_DATA=#{TEST_DATA}"
 
 unless defined?(SPEC_ROOT)
   SPEC_ROOT = File.join(File.dirname(__FILE__))

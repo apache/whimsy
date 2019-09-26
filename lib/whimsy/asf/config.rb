@@ -16,6 +16,9 @@ module ASF
 
     @config = YAML.load_file("#@home/.whimsy") rescue {}
 
+    # allow for test overrides
+    @testdata = {}
+
     # default :svn and :git
     @config[:svn] ||= '/srv/svn/*'
     @config[:git] ||= '/srv/git/*'
@@ -26,6 +29,14 @@ module ASF
     # lib/whimsy/asf/podlings.rb (read)
     # see: http://mail-archives.apache.org/mod_mbox/whimsical-dev/201705.mbox/%3CCAFG6u8FJwvWvnd29O-cUZyQnCXrRvWSRDc11zaPx6_Y4ihnsfg%40mail.gmail.com%3E
     @config[:cache] ||= '/srv/cache'
+
+    # Contains the data files from the ezmlm mail server, e.g.
+    # list-subs - subscriptions
+    # list-mods - moderators
+    # The above are used by mlist.rb
+    # list-flags - flags domain listname
+    # The above are used by mail.rb
+    @config[:subscriptions] ||= '/srv/subscriptions'
 
     @config[:lib] ||= []
 
@@ -51,6 +62,19 @@ module ASF
     def self.get(value)
       @config[value]
     end
+
+    # Look up a configuration value by name (generally a symbol, like
+    # <tt>:svn</tt>). Allows test overrides
+    def self.[](value)
+      @testdata[value] || @config[value]
+    end
+
+    # Set a local directory corresponding to a path  
+    # Useful as a test data override.
+    def self.[]=(name, path)
+      @testdata[name] = File.expand_path(path).untaint
+    end
+
   end
 
 end

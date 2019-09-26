@@ -1,4 +1,7 @@
+$LOAD_PATH.unshift '/srv/whimsy/lib'
+
 require 'weakref'
+require 'whimsy/asf/config'
 
 module ASF
 
@@ -381,15 +384,17 @@ module ASF
                  ARCH_MBOX_PUB, ARCH_MBOX_PRV, ARCH_MBOX_RST, ARCH_EXT_MAIL_ARCHIVE]
     # TODO alias archivers: either add list or use RE to filter them
 
-    LIST_MODS = '/srv/subscriptions/list-mods'
+    LIST_BASE = ASF::Config[:subscriptions] # allow overrides for testing etc
 
-    LIST_SUBS = '/srv/subscriptions/list-subs'
+    LIST_MODS = File.join(LIST_BASE, 'list-mods')
 
-    LIST_DIGS = '/srv/subscriptions/list-digs'
+    LIST_SUBS = File.join(LIST_BASE, 'list-subs')
+
+    LIST_DIGS = File.join(LIST_BASE, 'list-digs')
 
     # If this file exists, it is the time when the data was last extracted
     # The mods and subs files are only updated if they have changed
-    LIST_TIME = '/srv/subscriptions/list-start'
+    LIST_TIME = File.join(LIST_BASE, 'list-start')
 
   end
 end
