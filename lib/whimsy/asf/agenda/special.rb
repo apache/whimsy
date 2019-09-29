@@ -54,7 +54,7 @@ class ASF::Board::Agenda
 
       title_checks.each do |select, match|
         if fulltitle =~ select and fulltitle !~ match and
-          fulltitle =~ /chair|project|committee/i
+          (fulltitle + text) =~ /chair|project|committee/i
        then
           attrs['warnings'] << 
             "Non-standard title wording: #{fulltitle.inspect}; " +
