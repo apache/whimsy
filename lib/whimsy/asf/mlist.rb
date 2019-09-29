@@ -122,6 +122,7 @@ module ASF
     # for a mail domain, extract related lists and their moderators
     # also returns the time when the data was last checked
     # If podling==true, then also check for old-style podling names
+    # returns: [{dev@a.o=>[email1, email2]}, mod-time]
     def self.list_moderators(mail_domain, podling=false)
 
       return nil, nil unless File.exist? LIST_MODS
@@ -198,7 +199,7 @@ module ASF
 
     # for a mail domain, extract related lists and their subscribers (default only the count)
     # also returns the time when the data was last checked
-    # N.B. excludes archivers
+    # N.B. excludes known archivers
     # For top-level apache.org lists, the mail_domain is either:
     # - the full list name (e.g. press), or:
     # - the list prefix (e.g. legal)
