@@ -136,6 +136,7 @@ module ASF
       end
       allowed
     end
+
     
     # common configuration for sending mail; loads <tt>:sendmail</tt>
     # configuration from <tt>~/.whimsy</tt> if available; otherwise default
