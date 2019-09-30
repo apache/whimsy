@@ -1,0 +1,24 @@
+# Partial listing - TBC
+# ASF committers can subscribe to these:
+:committers:
+- committers-cvs
+- infra-users
+- jobs
+- party
+- site-cvs
+- site-dev
+
+# In addition to the above, PMC chairs can subscribe:
+:chairs:
+- board
+- board-commits
+- board-chat
+
+# In addition to the above, ASF members can subscribe:
+:members:
+- members
+- press
+
+# not auto-subscribable
+:disallowed:
+- notallowed
