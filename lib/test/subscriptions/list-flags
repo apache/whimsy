@@ -8,6 +8,9 @@ F:-aBcdeFgHiJklmnOpqrsTuVWXYZ apache.org party
 F:-aBcdEFgHiJklmnOpqrsTuVWxYZ apache.org board-chat
 F:-aBcdEFgHiJklMnOpqrsTUVWXYz apache.org board-commits
 F:-aBcDeFgHiJklmnOpqrsTuVWXYZ apache.org board
+F:-aBcDeFgHiJklmnOpqrsTuVWXYZ apache.org members
+F:-aBcDeFgHiJklmnOpqrsTuVWXYZ apache.org press
+F:-aBcDeFgHiJklmnOpqrSTuVWXYZ apache.org notallowed
 F:-aBcdeFgHiJklmnOpqrStuVWxYZ ant.apache.org dev
 F:-aBcdeFgHiJklmnOpqrSTuVWxYZ ant.apache.org ivy-user
 F:-aBcdeFgHiJklMnOpqrSTUVWXYz ant.apache.org notifications

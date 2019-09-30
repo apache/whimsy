@@ -26,10 +26,12 @@ describe ASF::Mail do
   end
 
   describe '.cansub(member, pmc_chair, ldap_pmcs)' do
+    committers = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'party']
+    board = ['board', 'board-commits', 'board-chat']
+    members = ['members','press'] # partial list
+    notallowed = ['notallowed']
     lists = ASF::Mail.cansub(false, false, nil)
     it 'should return public lists only' do
-      whitelist = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'party']
-      board = ['board', 'board-commits', 'board-chat']
       if TEST_DATA
         expect(lists.length).to be >= 7 
       else
@@ -37,8 +39,10 @@ describe ASF::Mail do
       end
       expect(lists).not_to include('private')
       expect(lists).not_to include('security')
-      expect(lists).to include(*whitelist)
+      expect(lists).to include(*committers)
       expect(lists).not_to include(*board)
+      expect(lists).not_to include(*members)
+      expect(lists).not_to include(*notallowed)
     end
     it 'should return the same lists' do
       mylists = ASF::Mail.cansub(false, false, []) - lists
@@ -48,6 +52,7 @@ describe ASF::Mail do
       mylists = ASF::Mail.cansub(false, false, ['ant','whimsical']) - lists
       expect(mylists.length).to be(2)
       expect(mylists).to include('ant-private','whimsical-private')
+      expect(mylists).not_to include(*notallowed)
     end
     it 'should not return non-existent lists' do
       mylists = ASF::Mail.cansub(false, false, ['xxxant','xxxwhimsical']) - lists
@@ -61,6 +66,47 @@ describe ASF::Mail do
       end
       mylists = ASF::Mail.cansub(false, false, podnames) - lists
       expect(mylists.length).to be_between(podnames.length-2, podnames.length).inclusive # mailing list may not be set up yet
+      expect(mylists).not_to include(*notallowed)
+    end
+    it 'should return chair lists only' do
+      mylists = ASF::Mail.cansub(false, true, nil)
+      if TEST_DATA
+        expect(mylists.length).to be >= 7 
+      else
+          expect(mylists.length).to be >= 1000
+      end
+      expect(mylists).not_to include('private')
+      expect(mylists).not_to include('security')
+      expect(mylists).to include(*committers)
+      expect(mylists).to include(*board)
+      expect(mylists).not_to include(*members)
+      expect(mylists).not_to include(*notallowed)
+    end
+    it 'should return member lists only' do
+      mylists = ASF::Mail.cansub(true, false, nil)
+      if TEST_DATA
+        expect(mylists.length).to be >= 7 
+      else
+          expect(mylists.length).to be >= 1000
+      end
+      expect(mylists).not_to include('private')
+      expect(mylists).not_to include('security')
+      expect(mylists).to include(*committers)
+      expect(mylists).to include(*board)
+      expect(mylists).to include(*members)
+      expect(mylists).not_to include(*notallowed)
     end
   end
+
+  describe '.deprecated()' do
+    it 'should return some lists' do
+      depr = ASF::Mail.deprecated()
+      if TEST_DATA
+        expect(depr.length).to be(4) # locally fixed size
+      else
+        expect(depr.length).to be_between(0,10).inclusive # varies, but probably in that range
+      end
+    end
+  end
+
 end

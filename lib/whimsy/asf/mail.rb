@@ -75,22 +75,25 @@ module ASF
       YAML.load_file(File.join(apmail_bin, 'deprecated_mailing_lists.yml'))
     end
 
-		# These are not subscribable via Whimsy
-    # secretary, president etc are not actually mailing lists, 
-    # but they appear in .archives so need to be excluded
-    CANNOT_SUB = %w(
-      ea secretary president treasurer chairman
-      committers
-      pmc-chairs
-      concom
-      concom-private
-      legal-internal
-    )
+    def self.cannot_sub
+      self._load_auto()
+      @auto[:disallowed]
+    end
 
-    WHITELIST = ['infra-users', 'jobs', 'site-dev', 'committers-cvs', 'site-cvs', 'party']
+    def self.committers_allowed
+      self._load_auto()
+      @auto[:committers]
+    end
 
-    CHAIR_LIST = %w(board board-commits board-chat)
-    MEMBER_LIST = %w(centralservices members operations press trademarks)
+    def self.chairs_allowed
+      self._load_auto()
+      @auto[:chairs]
+    end
+
+    def self.members_allowed
+      self._load_auto()
+      @auto[:members]+@auto[:chairs]
+    end
 
     # which lists are available for subscription via Whimsy?
     # member: true if member
@@ -102,17 +105,16 @@ module ASF
       allowed = []
       parse_flags do |dom,list,f|
         lid = archivelistid(dom,list)
-        next if CANNOT_SUB.include? lid # probably unnecessary
+        next if self.cannot_sub.include? lid # probably unnecessary
         cansub = false
         modsub = isModSub?(f)
         if not modsub # subs not moderated; allow all
           cansub = true
-        elsif WHITELIST.include?(lid) # always allowed
+        elsif self.committers_allowed().include?(lid) # always allowed
           cansub = true
         else # subs are moderated
-          # no need to check CANNOT_SUB
           if member
-            if list == 'private' or CHAIR_LIST.include?(lid) or MEMBER_LIST.include?(lid)
+            if list == 'private' or self.members_allowed.include?(lid)
               cansub = true
             end
           else
@@ -120,7 +122,7 @@ module ASF
               cansub = true if list == 'private' and ldap_pmcs.include? dom.sub('.apache.org','')
             end
           end
-          if pmc_chair and CHAIR_LIST.include? lid
+          if pmc_chair and self.chairs_allowed.include? lid
             cansub = true
           end
         end
@@ -134,7 +136,7 @@ module ASF
       end
       allowed
     end
-
+    
     # common configuration for sending mail; loads <tt>:sendmail</tt>
     # configuration from <tt>~/.whimsy</tt> if available; otherwise default
     # to disable openssl verification as that is what it required in order
@@ -212,7 +214,19 @@ module ASF
     
     private
 
-    # Parse the flags file
+    # Load the auto-subscription file
+    def self._load_auto
+      apmail_bin = ASF::SVN['apmail_bin']
+      auto_file = File.join(apmail_bin, 'mail_list_autosub.yml')
+      auto_mtime = File.mtime(auto_file) # fetch this up front in case file updated during loading
+      if not @auto or auto_mtime != @auto_mtime
+        @auto = YAML.load_file(auto_file)
+        @auto_mtime = auto_mtime
+      end
+    end
+
+
+    # Load the flags file
     def self._load_flags
       # flags for each mailing list
       @list_flags ||= File.join(ASF::Config[:subscriptions], 'list-flags')
