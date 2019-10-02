@@ -536,6 +536,9 @@ seen={}
     report.attach = '@' + title
     report.text = text.strip
 
+    # Columns:
+    # Pfx Title Match
+    # If Title is a number, then extract that part of the match
     rules = [
       :X, 2, /Terminat(e|ion of) the (.+?) (Project|PMC|Committee)/,
       :X, 1, /Separate (.+?) from the Apache Software Foundation/,
