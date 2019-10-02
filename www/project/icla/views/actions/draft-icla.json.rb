@@ -24,7 +24,7 @@ if not @apacheid.empty?
   if inuse != ''
     _error "Apache ID(s) '#{inuse}' already in use"
     _focus :apacheId
-  return
+    return
   end
 end
 
