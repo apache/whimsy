@@ -156,6 +156,7 @@ module ASF
       'rvs' => ['rs', 'Roman', 'Roman Shaposhnik'],
       'striker' => ['ss', 'Sander', 'Sander Striker'],
       'tdunning' => ['td', 'Ted', 'Ted Dunning'],
+      'wave' => ['df', 'Dave', 'Dave Fisher'],
       'wohali' => ['jt', 'Joan', 'Joan Touzet'],
     }
 
