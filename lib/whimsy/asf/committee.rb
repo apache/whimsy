@@ -21,6 +21,9 @@ module ASF
   # generally not available until ASF::Project.preload is called.
 
   class Committee < Base
+    # type of non-pmc entry (from its paragraph heading in committee-info.txt)
+    attr_accessor :paragraph
+
     # list of chairs for this committee.  Returned as a list of hashes
     # containing the <tt>:name</tt> and <tt>:id</tt>.  Data is obtained from
     # <tt>committee-info.txt</tt>.
@@ -423,6 +426,16 @@ module ASF
       @officers = head.sub(/.*?also has .*? Officers/m,'').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| list[name]}
+
+      # store the paragraph identifiers: Board Committees etc
+      head_parts = head.split(/^The ASF also has the following +/)
+      (1..head_parts.size-1).each do |h| # skip the first section
+        part = head_parts[h]
+        type = part[/^([^:]+)/,1] # capture remains of line excluding colon
+        part.scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.each do |cttee|
+            list[cttee].paragraph = type
+          end
+      end
 
       # for each committee in section 3
       info.each do |roster|
