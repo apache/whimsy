@@ -41,8 +41,7 @@ info = {last_updated: ASF::Committee.svn_change}
 info[:committees] = Hash[committees.map {|committee|
   schedule = committee.schedule.to_s.split(/,\s*/)
   schedule.unshift committee.report if committee.report != committee.schedule
-
-  [committee.name.gsub(/[^-\w]/,''), {
+  data = {
     display_name: committee.display_name,
     site: committee.site,
     description: committee.description,
@@ -55,7 +54,9 @@ info[:committees] = Hash[committees.map {|committee|
       [chair[:id], {:name => chair[:name]} ]}],
     roster: committee.roster.sort.to_h, # sort entries by uid
     pmc: committee.pmc?
-  }]
+  }
+  data[:paragraph] = committee.paragraph if committee.paragraph
+  [committee.name.gsub(/[^-\w]/,''), data]
 }]
 
 info[:officers] = Hash[
@@ -63,6 +64,7 @@ info[:officers] = Hash[
     [officer.name, 
       {
         display_name: officer.display_name,
+        paragraph: officer.paragraph, # will always be present
         roster: Hash[ officer.chairs.map {|e| [e[:id], {:name => e[:name]}]}]
       }
     ]
