@@ -21,6 +21,10 @@ class Auth
       info[:pmc_chair] = true
     end
 
+    if ASF::Service['board'].members.include? user
+      info[:director] = true
+    end
+
     info
   end
 end

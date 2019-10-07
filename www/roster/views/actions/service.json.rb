@@ -33,6 +33,7 @@ if env.password
 
   # other committees
   to = 'secretary@apache.org' if service.id == 'asf-secretary'
+  to = 'board@apache.org' if service.id == 'board'
 
   # construct email
   mail = Mail.new do
