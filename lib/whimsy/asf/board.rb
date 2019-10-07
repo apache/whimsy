@@ -14,7 +14,7 @@ module ASF
       if withId
         ASF::Service['board'].members.
         map {|person| [person.id, {name: person.public_name}]}.
-          sort_by {|id,hash| hash[:name].split(' ').rotate}.t_h
+          sort_by {|id,hash| hash[:name].split(' ').rotate}.to_h
       else
         ASF::Service['board'].members.
           map {|person| person.public_name}.
