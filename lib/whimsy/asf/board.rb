@@ -6,10 +6,20 @@ module ASF
     TIMEZONE = TZInfo::Timezone.get('US/Pacific')
 
     # sorted list of Directors
-    def self.directors
-      ASF::Service['board'].members.
-        map {|person| person.public_name}.
-        sort_by {|name| name.split(' ').rotate}
+    # default to names only
+    # if withId == true, then return hash: { id: {name: public_name}}
+    # This allows for returning additional data such as start of tenure
+    # sort is by last name
+    def self.directors(withId=false)
+      if withId
+        ASF::Service['board'].members.
+        map {|person| [person.id, {name: person.public_name}]}.
+          sort_by {|id,hash| hash[:name].split(' ').rotate}.t_h
+      else
+        ASF::Service['board'].members.
+          map {|person| person.public_name}.
+            sort_by {|name| name.split(' ').rotate}
+      end
     end
 
     # list of board meeting times as listed in 
