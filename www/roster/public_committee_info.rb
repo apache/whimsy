@@ -62,7 +62,7 @@ info[:committees] = Hash[committees.map {|committee|
 
 info[:officers] = Hash[
   ASF::Committee.officers.map { |officer|
-    [officer.name, 
+    [officer.name.gsub(/[^-\w]/,''), 
       {
         display_name: officer.display_name,
         paragraph: officer.paragraph, # will always be present
