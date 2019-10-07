@@ -31,6 +31,7 @@
 #    },
 
 require_relative 'public_json_common'
+require 'whimsy/asf/board'
 
 # gather committee info
 committees = ASF::Committee.load_committee_info
@@ -70,6 +71,10 @@ info[:officers] = Hash[
     ]
   }
 ]
+
+info[:board] = {
+  roster: ASF::Board::directors(true)
+}
 
 public_json_output(info)
 
