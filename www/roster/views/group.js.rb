@@ -112,7 +112,7 @@ class GroupMember < Vue
   end
 
   def render
-    _tr onDblClick: self.select do
+    _tr onDblclick: self.select do
       _td {_a @@id, href: "committer/#{@@id}"}
       _td @@name
 
