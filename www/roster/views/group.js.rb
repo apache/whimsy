@@ -1,5 +1,5 @@
 #
-# Show a committee
+# Show a group
 #
 
 class Group < Vue
@@ -112,7 +112,7 @@ class GroupMember < Vue
   end
 
   def render
-    _tr onDoubleClick: self.select do
+    _tr onDblClick: self.select do
       _td {_a @@id, href: "committer/#{@@id}"}
       _td @@name
 
