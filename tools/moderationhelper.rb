@@ -45,6 +45,8 @@ _html do
           _ 'Enter the ASF mailing list name, select the operation to perform, and enter a subscriber email (if needed).'
           _br
           _ 'Press Generate.  The To: address below can be copy/pasted into an email to send.  In most cases you must be a moderator for that list.'
+          _br
+          _span.text_danger 'Note that you must send the email from the address which is registered as a moderator.'
         end
         _p do
           _ul do
