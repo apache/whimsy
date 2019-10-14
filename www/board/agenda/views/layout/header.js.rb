@@ -16,7 +16,7 @@ class Header < Vue
     _header.navbar.navbar_fixed_top class: @@item.color do
       _div.navbar_brand @@item.title
 
-      if @@item.attach =~ /^7/ and @@item.title =~ /^Establish .* Project/
+      if @@item.attach =~ /^7/ and @@item.fulltitle =~ /^Establish .* Project/
         _PodlingNameSearch item: @@item
       end
 
