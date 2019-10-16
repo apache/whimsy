@@ -206,7 +206,7 @@ class PMCActions < Vue
                 sub(/ Chair$/i, ''),
               title: item.title,
               minutes: minutes,
-              checked: (minutes != 'tabled')
+              checked: (not minutes.include? 'tabled')
             }
 
             resolution.chair = todo.chair if todo.chair
