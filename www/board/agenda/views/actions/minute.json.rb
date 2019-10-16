@@ -16,12 +16,8 @@ if @action == 'timestamp'
 
   timestamp = Time.now
 
-  # date = @agenda[/\d+_\d+_\d+/].gsub('_', '-')
-  # zone = Time.parse("#{date} PST").dst? ? '-07:00' : '-08:00'
-  # workaround for broken tzinfo on whimsy
-  month = @agenda[/\d+_(\d+)_\d+/, 1].to_i
-  zone = ((2..9).include? month) ? '-07:00' : '-08:00'
-  @text = timestamp.getlocal(zone).strftime('%-l:%M')
+  tz = TZInfo::Timezone.get('America/Los_Angeles')
+  @text = tz.to_local(timestamp).strftime('%-l:%M')
 
   if @title == 'Call to order'
     minutes['started']  = timestamp.gmtime.to_f * 1000
