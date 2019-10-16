@@ -19,7 +19,8 @@ class PodlingNameSearch < Vue
     _span.pns title: 'podling name search' do
       if Server.podlingnamesearch
         if not results
-          _abbr "\u2718", title: 'No PODLINGNAMESEARCH found'
+          _a "\u2718", title: 'No PODLINGNAMESEARCH found',
+            href: 'https://issues.apache.org/jira/secure/CreateIssue!default.jspa'
         elsif results.resolution == 'Fixed'
           _a "\u2714", href: 'https://issues.apache.org/jira/browse/' +
             results.issue
