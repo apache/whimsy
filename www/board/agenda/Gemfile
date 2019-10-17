@@ -21,7 +21,6 @@ gem 'listen', ('~> 3.0.7' if RUBY_VERSION =~ /^2\.[01]/)
 gem 'activesupport'
 gem 'mail'
 gem 'erubis'
-gem 'tzinfo', '~> 2.0'
 
 gem 'websocket-eventmachine-server'
 gem 'websocket-client-simple'

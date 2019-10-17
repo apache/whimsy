@@ -1,6 +1,7 @@
 #
 # Add secretarial minutes to a given agenda item
 #
+require 'active_support/core_ext/time'
 
 @minutes = @agenda.sub('_agenda_', '_minutes_')
 minutes_file = "#{AGENDA_WORK}/#{@minutes.sub('.txt', '.yml')}"
@@ -17,7 +18,7 @@ if @action == 'timestamp'
   timestamp = Time.now
 
   tz = TZInfo::Timezone.get('America/Los_Angeles')
-  @text = tz.to_local(timestamp).strftime('%-l:%M')
+  @text = timestamp.in_time_zone(tz).strftime('%-l:%M')
 
   if @title == 'Call to order'
     minutes['started']  = timestamp.gmtime.to_f * 1000
