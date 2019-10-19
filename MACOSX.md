@@ -222,12 +222,26 @@ git remote add github git@github.com:apache/whimsy.git
 git remote add asf https://gitbox.apache.org/repos/asf/whimsy.git
 ```
 
-Establish a link to this repository in a known location - this step is 
-optional to do basic work but required for a number of tools:
+Establish a link to this repository in a known location.  First instructions
+for Mac OSX version < 10.15 (Mojave, High Sierra, Sierra, ...):
 
 ```
 cd whimsy
 sudo mkdir /srv
+sudo ln -s `pwd` /srv/whimsy
+```
+
+Alternate instructions for Mac OSX version >= 10.15 (Catalina):
+
+```
+sudo mkdir /var/whimsy
+echo -e 'srv\t/var/whimsy' | sudo tee -a /etc/synthetic.conf
+```
+
+Reboot the machine, then:
+
+```
+cd whimsy
 sudo ln -s `pwd` /srv/whimsy
 ```
 
