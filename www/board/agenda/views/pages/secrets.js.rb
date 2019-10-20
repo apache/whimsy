@@ -5,7 +5,7 @@ class InsiderSecrets < Vue
       prominently highlighted by the UI, but you might find useful.
     )
 
-    _ul do
+    _ul.secrets do
       _li { _p %q(
         Want to reflow only part of a report so as to not mess with the
         formatting of a table or other pre-formatted text?  Select the
@@ -20,22 +20,37 @@ class InsiderSecrets < Vue
       ) }
 
       _li { _p %q(
-        Action items have both a status (which is either shown with a red
-        background if no update has been made or a white background if
-        a status has been provided), and a PMC name.  The background of the
-        later is either grey if this PMC is not reporting this month, or
-        a link to the report itself, and the color of the link is the color
-        associated with the report (green if preapproved, red if flagged,
-        etc.).  So generally if you see an action item to "pursue a report
-        for..." and the link is green, you can confidently mark that action as
-        complete.
+        Action items have a status (which is either shown with a red background
+        if no update has been made or a white background if a status has been
+        provided), a date, and a PMC name.
+        )
+
+        _p %q(
+        The background of the PMC name is either grey if this PMC is not
+        reporting this month, or a link to the report itself, and the color of
+        the link is the color associated with the report (green if preapproved,
+        red if flagged, etc.).  So generally if you see an action item to
+        "pursue a report for..." and the link is green, you can confidently
+        mark that action as complete.
+        )
+
+        _p %q(
+        Not sure what the action item was for, and the provided text is not
+        enough to jog your memory?  Click on the date link for this action item
+        to see the report for that month.
       ) }
       
-      _li { _p %q(
-        Need to see Whimsy server status, or get debugging info to help 
-        report a bug?  Start with https://whimsy.apache.org/status/ or 
-        https://whimsy.apache.org/board/test.cgi
-      ) }
+      _li { _p { 
+        _ %q(
+          Need to see Whimsy server status, or get debugging info to help 
+          report a bug?  Start with
+        ) 
+
+        _a 'status', href: 'https://whimsy.apache.org/status/'
+        _ ' or '
+        _a 'test', href: 'https://whimsy.apache.org/test.cgi'
+        _ '.'
+      } }
 
     end
   end

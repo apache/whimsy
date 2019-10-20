@@ -571,3 +571,7 @@ input[type=file]#upload {
   margin-left: 0.5em;
   margin-bottom: 0em;
 }
+
+.secrets li {
+  margin-right: 5em;
+}
