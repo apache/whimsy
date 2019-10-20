@@ -36,10 +36,18 @@ class Help < Vue
       _dd 'Show shepherded items (and action items)'
 
       _dt 'X'
-      _dd 'Set the topic (a.k.a. mark the spot)'
+      _dd 'Set the topic during a meeting (a.k.a. mark the spot)'
 
       _dt '?'
       _dd 'Help (this page)'
+    end
+
+    _h3 'Common Actions'
+    _ul do
+      _li 'Blue buttons (or links) in bottom navbar (or at bottom of a report) are the primary actions you can take.'
+      _li 'Send Email merely opens your email client with a pre-formatted message to send; it does not change the agenda content.'
+      _li 'Simple Actions like Approve/Unapprove or Add Comment are queued locally; to commit them, click the red number in top navbar and Commit.'
+      _li 'Other Actions like Add Item (adding resolution, discussion item) or Post Report (to add a specific project report) are committed after you enter them.'
     end
 
     _h3 'Color Legend'
@@ -63,7 +71,7 @@ class Help < Vue
     end
 
     _br
-    _Link text: 'Insider Secrets', href: 'secrets'
+    _Link text: 'Insider Secrets / Advanced Help', href: 'secrets'
   end
 
   def setRole(event)

@@ -30,6 +30,13 @@ class InsiderSecrets < Vue
         for..." and the link is green, you can confidently mark that action as
         complete.
       ) }
+      
+      _li { _p %q(
+        Need to see Whimsy server status, or get debugging info to help 
+        report a bug?  Start with https://whimsy.apache.org/status/ or 
+        https://whimsy.apache.org/board/test.cgi
+      ) }
+
     end
   end
 
