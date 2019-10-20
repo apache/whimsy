@@ -245,6 +245,10 @@ cd whimsy
 sudo ln -s `pwd` /srv/whimsy
 ```
 
+Note: if you had previously created a <tt>/srv</tt> directory and it goes
+missing when you upgrade to Catalina, the previous contents can be found in
+<tt>"/Users/Shared/Relocated Items/Security"</tt>.
+
 Configure LDAP
 --------------
 
