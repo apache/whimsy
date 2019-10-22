@@ -124,6 +124,19 @@ class ASF::Board::Agenda
         end
 
         need_chair = true if fulltitle =~ /chair|project|committee/i
+
+        # extract the committee charter
+        charters = []
+        text.scan(%r{\srelated to\s+(.+?)(?:;|\.?\n\n)}m) do |rto|
+          charters << rto.first.gsub(/\s+/,' ') 
+        end
+        if charters.size != 2
+          attrs['warnings'] ||= "Expected 2 'related to' phrases; found #{charters.size}"
+        elsif charters[0] != charters[1]
+          attrs['warnings'] ||=  "'related to' phrases disagree: '#{charters[0]}' != '#{charters[1]}'"
+        end
+        attrs['charter'] = charters.first
+
       end
 
       if need_chair
