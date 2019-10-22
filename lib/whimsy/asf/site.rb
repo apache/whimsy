@@ -1,3 +1,8 @@
+if __FILE__ == $0 # testing only
+  require 'wunderbar'
+  require_relative 'config' 
+  require_relative 'svn' 
+end
 require 'yaml'
 
 module ASF
@@ -23,11 +28,45 @@ module ASF
       @@list = yaml[:cttees].merge yaml[:tlps]
     end
 
-    # find the site for a given committee.
+    # find the data for a given committee.
     def self.find(committee)
       committee = committee.name if ASF::Committee == committee
       list[committee]
     end
+
+    # append the description for a new tlp committee.
+    # this is intended to be called from todos.json.rb in the block for ASF::SVN.update
+    def self.appendtlp(input,committee,description)
+      output = input # default no change
+      yaml = YAML.load input
+      if yaml[:cttees][committee]
+        Wunderbar.warn "Entry for '#{committee}' already exists under :cttees"
+      elsif yaml[:tlps][committee]
+        Wunderbar.warn "Entry for '#{committee}' already exists under :tlps"
+      else
+        data = { # create single entry in :tlps hierarchy
+          tlps: {
+            committee => {
+              site: "http://#{committee}.apache.org",
+              description: description,
+            }
+          }
+        }
+        # Use YAML dump to ensure correct syntax
+        # drop the YAML header
+        newtlp = YAML.dump(data).sub(%r{^---\n:tlps:\n}m,'')
+        # add the new section just before the ... terminator
+        output = input.sub(%r{^\.\.\.},newtlp+"...")
+        # Check it worked
+        check = YAML.load(output)
+        unless data[:tlps][committee] == check[:tlps][committee]
+          Wunderbar.warn "Failed to add section for #{committee}"
+          output = input # don't change anything
+        end
+      end
+      output
+    end
+
   end
 
   class Committee
@@ -41,6 +80,34 @@ module ASF
     def description
       site = ASF::Site.find(name)
       site[:description] if site
+    end
+  end
+end
+
+if __FILE__ == $0
+  require 'tempfile'
+  board = ASF::SVN.find('board')
+  file = File.join(board, 'committee-info.yaml')
+  if not File.exist?(file)
+    Wunderbar.error "Unable to find 'committee-info.yaml'"
+    return
+  end
+  input = File.read(file)
+  output = ASF::Site.appendtlp(input,'ant','ABCD.')
+  puts (output == input)
+  output = ASF::Site.appendtlp(input,'comdev','ABCD.')
+  puts (output == input)
+  output = ASF::Site.appendtlp(input,'antic1','ABCD.')
+  puts (output == input)
+  output = ASF::Site.appendtlp(output,'antic2','ABCD.')
+  puts (output == input)
+  Tempfile.create('site-ciy1') do |f|
+    Tempfile.create('site-ciy2') do |g|
+      f.write(input)
+      g.write(output)
+      f.close()
+      g.close()
+      system("diff #{f.path} #{g.path}")
     end
   end
 end
