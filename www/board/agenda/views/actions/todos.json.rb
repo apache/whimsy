@@ -105,7 +105,7 @@ if (@change || @establish || @terminate) and env.password
   File.write minutes_file, YAML.dump(minutes)
 end
 
-# update LDAP, create victims.txt
+# update LDAP, create victims.txt, update committee-info.yaml
 if @establish and env.password
   @establish.each do |resolution|
     pmc = resolution['name']
@@ -128,7 +128,16 @@ if @establish and env.password
         project.remove_owners(project.owners - members)
         project.add_members(members)
       end
-    end 
+    end
+    # TODO enable once testing is complete
+#    charter = item['charter']
+#    if charter
+#      # update ci.yaml
+#      cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
+#      ASF::SVN.update cinfoy, title, env, _ do |tmpdir, contents|
+#        ASF::Site.append(contents,pmc.downcase,charter)
+#      end 
+#    end
   end
 
   establish = @establish.map {|resolution| resolution['name']}
