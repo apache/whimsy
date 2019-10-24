@@ -30,7 +30,7 @@ module ASF
 
     # find the data for a given committee.
     def self.find(committee)
-      committee = committee.name if ASF::Committee == committee
+      committee = committee.name if committee.is_a? ASF::Committee
       list[committee]
     end
 
