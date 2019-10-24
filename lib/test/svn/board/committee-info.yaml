@@ -1,0 +1,17 @@
+# Test data
+
+---
+:name2id:
+  "HTTP Server":                      httpd
+
+:cttees:
+  comdev:
+    :site: http://community.apache.org/
+    :description: Resources to help people become involved with Apache projects
+
+:tlps:
+  httpd:
+    :site: http://httpd.apache.org/
+    :description: Apache Web Server (httpd)
+...
+# ends
