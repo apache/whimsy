@@ -1,8 +1,3 @@
-if __FILE__ == $0 # testing only
-  require 'wunderbar'
-  require_relative 'config' 
-  require_relative 'svn' 
-end
 require 'yaml'
 
 module ASF
@@ -80,34 +75,6 @@ module ASF
     def description
       site = ASF::Site.find(name)
       site[:description] if site
-    end
-  end
-end
-
-if __FILE__ == $0
-  require 'tempfile'
-  board = ASF::SVN.find('board')
-  file = File.join(board, 'committee-info.yaml')
-  if not File.exist?(file)
-    Wunderbar.error "Unable to find 'committee-info.yaml'"
-    return
-  end
-  input = File.read(file)
-  output = ASF::Site.appendtlp(input,'ant','ABCD.')
-  puts (output == input)
-  output = ASF::Site.appendtlp(input,'comdev','ABCD.')
-  puts (output == input)
-  output = ASF::Site.appendtlp(input,'antic1','ABCD.')
-  puts (output == input)
-  output = ASF::Site.appendtlp(output,'antic2','ABCD.')
-  puts (output == input)
-  Tempfile.create('site-ciy1') do |f|
-    Tempfile.create('site-ciy2') do |g|
-      f.write(input)
-      g.write(output)
-      f.close()
-      g.close()
-      system("diff #{f.path} #{g.path}")
     end
   end
 end
