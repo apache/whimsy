@@ -6,6 +6,31 @@ require 'spec_helper'
 require 'whimsy/asf'
 
 describe ASF::Site do
+  describe "ASF::Committee::site" do
+    it "should return string for 'httpd'" do
+      res = ASF::Committee.find('HTTP Server').site
+      expect(res).to match(%r{https?://httpd\.apache\.org/?}) 
+    end
+
+    it "should return nil for 'z-z-z'" do
+      res = ASF::Committee.find('z-z-z').site
+      expect(res.class).to eq(NilClass) 
+    end
+  end
+
+  describe "ASF::Committee::description" do
+    it "should return string for 'httpd'" do
+      res = ASF::Committee.find('HTTP Server').description
+      expect(res).to match(%r{Apache Web Server}) 
+    end
+    it "should return nil for 'z-z-z'" do
+      res = ASF::Committee.find('z-z-z').description
+      expect(res.class).to eq(NilClass) 
+    end
+  end
+end
+
+describe ASF::Site do
 
   describe "ASF::Site.find" do
     it "should return hash for 'httpd'" do
