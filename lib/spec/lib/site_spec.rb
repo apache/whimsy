@@ -25,6 +25,13 @@ describe ASF::Site do
       expect(res.class).to eq(Hash) 
       expect(res[:site]).to match(%r{https?://httpd\.apache\.org/?})
     end
+
+    it "should return hash for 'comdev'" do
+      res = ASF::Site.find('comdev')
+      expect(res.class).to eq(Hash) 
+      expect(res[:site]).to match(%r{https?://community\.apache\.org/?}) 
+    end
+
   end
 
   describe "ASF::Site.appendtlp" do
@@ -33,9 +40,18 @@ describe ASF::Site do
     input = File.read(file)
     it "should fail for 'httpd'" do
       res = nil
-      expect { res = ASF::Site.appendtlp(input,'httpd','description') }.to output("_WARN Entry for 'httpd' already exists under :tlps\n").to_stderr
+      # Wunderbar.logger = nil; is needed to ensure logging output works as expected
+      expect { Wunderbar.logger = nil; res = ASF::Site.appendtlp(input,'httpd','description') }.to output("_WARN Entry for 'httpd' already exists under :tlps\n").to_stderr
       expect(res).to equal(input)
     end    
+
+    it "should fail for 'comdev'" do
+      res = nil
+      # Wunderbar.logger = nil; is needed to ensure logging output works as expected
+      expect { Wunderbar.logger = nil; res = ASF::Site.appendtlp(input,'comdev','description') }.to output("_WARN Entry for 'comdev' already exists under :cttees\n").to_stderr
+      expect(res).to equal(input)
+    end    
+    
     pmc = 'a-b-c'
     it "should succeed for '#{pmc}'" do
       res = nil
