@@ -95,6 +95,7 @@ module ASF
     # load committee info from <tt>committee-info.txt</tt>.  Will not reparse
     # if the file has already been parsed and the underlying file has not
     # changed.
+    # the parameters are currently only used by www/board/agenda/routes.rb
     def self.load_committee_info(contents = nil, info = nil)
       if contents
         if info
