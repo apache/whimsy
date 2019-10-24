@@ -11,7 +11,11 @@ else
   TEST_DATA = false
 end
 
-puts "TEST_DATA=#{TEST_DATA}"
+if TEST_DATA
+  puts "TEST_DATA=#{TEST_DATA}"
+else
+  puts "TEST_DATA=#{TEST_DATA} (set RAKE_TEST=TRUE to override)"
+end
 
 unless defined?(SPEC_ROOT)
   SPEC_ROOT = File.join(File.dirname(__FILE__))
