@@ -7,7 +7,6 @@ require 'mail'
 require 'whimsy/asf'
 require 'whimsy/asf/rack'
 require 'whimsy/asf/podlings'
-require 'whimsy/asf/site'
 require 'tmpdir'
 require 'fileutils'
 
