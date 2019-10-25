@@ -10,8 +10,8 @@ module ASF
   #
   # Representation for a committee (either a PMC, a board committee, or
   # a President's committee).  This data is parsed from
-  # <tt>committee-info.txt</tt>, and is augmened by data from LDAP,
-  # ASF::Site, and ASF::Mail.
+  # <tt>committee-info.txt|.yaml</tt>, and is augmened by data from LDAP,
+  # and ASF::Mail.
   #
   # Note that the simple attributes which are sourced from
   # <tt>committee-info.txt</tt> data is generally not available until
@@ -592,5 +592,74 @@ module ASF
       Committee.load_committee_info # ensure data is there
       Committee.pmcs.include? self
     end
+
+
+    # load committee metadata from <tt>committee-info.yaml</tt>.  Will not reparse
+    # if the file has already been parsed and the underlying file has not changed.
+    def self.load_committee_metadata()
+      board = ASF::SVN.find('board')
+      return unless board
+      file = File.join(board, 'committee-info.yaml')
+      return unless File.exist? file
+  
+      return @committee_metadata if @committee_metadata and @committee_metadata_mtime and File.mtime(file) <= @committee_metadata_mtime
+  
+      @committee_metadata_mtime = File.mtime(file)
+      @committee_metadata = YAML.load_file file
+    end
+
+    # get the metadata for a given committee.
+    def self.metadata(committee)
+      committee = committee.name if committee.is_a? ASF::Committee
+      load_committee_metadata[:tlps][committee] || load_committee_metadata[:cttees][committee] 
+    end
+
+    
+    # website for this committee.
+    def site()
+      meta = ASF::Committee.metadata(name)
+      meta[:site] if meta
+    end
+    
+    # description for this committee.
+    def description()
+      meta = ASF::Committee.metadata(name)
+      meta[:description] if meta
+    end
+
+    
+    # append the description for a new tlp committee.
+    # this is intended to be called from todos.json.rb in the block for ASF::SVN.update
+    def self.appendtlpmetadata(input,committee,description)
+      output = input # default no change
+      yaml = YAML.load input
+      if yaml[:cttees][committee]
+        Wunderbar.warn "Entry for '#{committee}' already exists under :cttees"
+      elsif yaml[:tlps][committee]
+        Wunderbar.warn "Entry for '#{committee}' already exists under :tlps"
+      else
+        data = { # create single entry in :tlps hierarchy
+          tlps: {
+            committee => {
+              site: "http://#{committee}.apache.org",
+              description: description,
+            }
+          }
+        }
+        # Use YAML dump to ensure correct syntax
+        # drop the YAML header
+        newtlp = YAML.dump(data).sub(%r{^---\n:tlps:\n}m,'')
+        # add the new section just before the ... terminator
+        output = input.sub(%r{^\.\.\.},newtlp+"...")
+        # Check it worked
+        check = YAML.load(output)
+        unless data[:tlps][committee] == check[:tlps][committee]
+          Wunderbar.warn "Failed to add section for #{committee}"
+          output = input # don't change anything
+        end
+      end
+      output
+    end
+    
   end
 end
