@@ -33,7 +33,7 @@ if env.password
 
   # replace with sending to the private@pmc list if this is a pmc owned group
   pmc = ASF::Committee.find(group.id.split('-').first)
-  unless pmc.members.empty?
+  unless pmc.owners.empty?
     to = pmc.mail_list
     to = "private@#{to}.apache.org" unless to.include? '@'
   end
