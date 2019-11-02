@@ -314,7 +314,7 @@ module ASF
         hash[:sga] = rawYaml[:sga].strftime('%Y-%m-%d') if rawYaml[:sga]
         hash[:asfCopyright] = rawYaml[:asfCopyright].strftime('%Y-%m-%d') if rawYaml[:asfCopyright]
         hash[:distributionRights] = rawYaml[:distributionRights].strftime('%Y-%m-%d') if rawYaml[:distributionRights]
-        hash[:ipClearance] = rawYaml[:ipClearance]
+        hash[:ipClearance] = rawYaml[:ipClearance].strftime('%Y-%m-%d') if rawYaml[:ipClearance]
         hash[:sourceControl] = rawYaml[:sourceControl]
         hash[:wiki] = rawYaml[:wiki]
         hash[:jira] = rawYaml[:jira]
