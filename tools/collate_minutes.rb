@@ -356,6 +356,7 @@ seen={}
           title.sub! 'BeanValidation', 'BVal'
           title.sub! 'Amber', 'Oltu'
           title.sub! 'Argus', 'Ranger'
+          title.sub! 'BRPC', 'brpc'
           title.sub! 'Bluesky', 'BlueSky'
           title.sub! 'Easyant', 'EasyAnt'
           title.sub! 'Callback', 'Cordova'
