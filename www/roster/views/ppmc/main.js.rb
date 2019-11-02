@@ -217,9 +217,9 @@ class PPMC < Vue
 
     _h3 'Licensing'
     _ul do
-      _li do
-        _a 'IP Clearance Form: '+ @ppmc.podlingStatus.ipClearance, href: @ppmc.podlingStatus.ipClearance
-      end if @ppmc.podlingStatus.ipClearance
+      if @ppmc.podlingStatus.ipClearance
+        _li  'IP Clearance: '+ @ppmc.podlingStatus.ipClearance
+      end
       _li 'Software Grant Received on: '+@ppmc.podlingStatus.sga if @ppmc.podlingStatus.sga
       _li.podlingWarning 'No Software Grant and No IP Clearance Filed' unless @ppmc.podlingStatus.sga || @ppmc.podlingStatus.ipClearance
       _li 'Confirmation of ASF Copyright Headers on Source Code on: '+@ppmc.podlingStatus.asfCopyright if @ppmc.podlingStatus.asfCopyright
