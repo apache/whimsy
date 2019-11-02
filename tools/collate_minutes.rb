@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift '/srv/whimsy/lib'
-puts $LOAD_PATH.first
 
 require 'whimsy/asf'
 require 'date'
@@ -127,7 +126,7 @@ end
 DATAURI = 'https://whimsy.apache.org/public/committee-info.json'
 local_copy = File.expand_path('../../www/public/committee-info.json', __FILE__).untaint
 if File.exist? local_copy
-  Wunderbar.info "Using local copy of committee-info.json"
+  Wunderbar.info "Using #{local_copy}"
   cinfo = JSON.parse(File.read(local_copy))
 else
   Wunderbar.info "Fetching remote copy of committee-info.json"
@@ -150,6 +149,12 @@ http.use_ssl = true
 http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 get = Net::HTTP::Get.new CALENDAR.request_uri
 $calendar = Nokogiri::HTML(http.request(get).body.gsub('&raquo','&#187;').gsub('&nbsp;','&#160;'))
+
+# Link to headerlink css
+link = Nokogiri::XML::Node.new "link", $calendar
+link.set_attribute('rel', 'stylesheet')
+link.set_attribute('href', 'https://www.apache.org/css/headerlink.css')
+$calendar.at('head').add_child(link)
 
 # add some style
 style = Nokogiri::XML::Node.new "style", $calendar
@@ -301,7 +306,8 @@ seen={}
     if title == 'Incubator' and text
       sections = text.split(/\nStatus [rR]eport (.*)\n=+\n/)
       # Some minutes have a 'Detailed Reports' header before the first podling report
-      sections = text.split(/\n[-=][-=]+(?: Detailed Reports ---+)?\n\s*([a-zA-Z].*)\n\n/) if sections.length < 9
+      # podling header may now be prefixed with ## (since June 2019)
+      sections = text.split(/\n[-=][-=]+(?: Detailed Reports ---+)?\n(?:##)?\s*([a-zA-Z].*)\n\n/) if sections.length < 9
       sections = [''] if sections.include? 'FAILED TO REPORT'
       sections = text.split(/\n(\w+)\n-+\n\n/) if sections.length < 9
       sections = text.split(/\n=+\s+([\w.]+)\s+=+\n+/) if sections.length < 9
@@ -813,7 +819,8 @@ agenda.sort.each do |title, reports|
       x.h1 title
     end
     reports.reverse.each do |report|
-      x.h2 id: report.meeting.gsub('_', '-') do
+      _id = report.meeting.gsub('_', '-')
+      x.h2 id: _id do
         if report.posted
           href = "http://apache.org/foundation/records/minutes/" +
             "#{report.meeting[0...4]}/board_minutes_#{report.meeting}.txt"
@@ -827,6 +834,8 @@ agenda.sort.each do |title, reports|
         if report.owners
           x.span "[#{report.owners}]", :style => 'font-size: 14px'
         end
+        # Add headerlink marker
+        x.a '¶', href: "##{_id}", title: 'Permanent link', :class => 'headerlink'
       end
       x.h3 report.subtitle if report.subtitle
 
