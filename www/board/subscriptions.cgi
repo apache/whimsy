@@ -126,7 +126,12 @@ _html do
               elsif ldap_chairs.include? person
                 _td.text_danger '***LDAP only***'
               else
-                _td.text_danger '*** non-member, non-officer ***'
+                pmcs = person.project_owners.map(&:name)
+                if pmcs.length == 0
+                  _td.text_danger '*** non-member, non-officer, non-pmc ***'
+                else
+                  _td.text_warning "*** non-member, non-officer, pmcs: #{pmcs.join ','} ***"
+                end 
               end
             end
           end
