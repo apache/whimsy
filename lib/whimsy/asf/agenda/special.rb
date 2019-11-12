@@ -63,9 +63,11 @@ class ASF::Board::Agenda
       end
 
       attrs.delete 'indent'
-      attrs.delete 'warnings' if attrs['warnings'].empty?
 
-      next if @quick
+      if @quick
+        attrs.delete 'warnings' if attrs['warnings'].empty?
+        next
+      end
 
       asfid = '[a-z][-.a-z0-9_]+' # dot added to help detect errors
       list_item = '^[[:blank:]]*(?:[-*\u2022]\s*)?(.*?)[[:blank:]]+'
@@ -102,7 +104,7 @@ class ASF::Board::Agenda
         end
 
         if people.length < 2 and not title.start_with? 'Terminate'
-          attrs['warnings'] ||= ['Unable to match expected number of names']
+          attrs['warnings'] << 'Unable to match expected number of names'
           attrs['names'] = committee.names
         end
 
@@ -120,7 +122,7 @@ class ASF::Board::Agenda
         if text.scan(/[<(][-.\w]+@(?:[-\w]+\.)+\w+[>)]/).
           any? {|email| not email.include? 'apache.org'}
         then
-          attrs['warnings'] ||= ['non apache.org email address found'] 
+          attrs['warnings'] << 'non apache.org email address found'
         end
 
         need_chair = true if fulltitle =~ /chair|project|committee/i
@@ -131,9 +133,9 @@ class ASF::Board::Agenda
           charters << rto.first.gsub(/\s+/,' ') 
         end
         if charters.size != 2
-          attrs['warnings'] ||= "Expected 2 'related to' phrases; found #{charters.size}"
+          attrs['warnings'] << "Expected 2 'related to' phrases; found #{charters.size}"
         elsif charters[0] != charters[1]
-          attrs['warnings'] ||=  "'related to' phrases disagree: '#{charters[0]}' != '#{charters[1]}'"
+          attrs['warnings'] <<  "'related to' phrases disagree: '#{charters[0]}' != '#{charters[1]}'"
         end
         attrs['charter'] = charters.first
 
@@ -155,15 +157,15 @@ class ASF::Board::Agenda
 
           unless people.include? [chairname, attrs['chair']]
             if people.empty?
-              attrs['warnings'] ||= ['Unable to locate PMC email addresses'] 
+              attrs['warnings'] << 'Unable to locate PMC email addresses'
             elsif attrs['chair']
-              attrs['warnings'] ||= ['Chair not member of PMC'] 
+              attrs['warnings'] << 'Chair not member of PMC'
             else
-              attrs['warnings'] ||= ['Chair not found in resolution'] 
+              attrs['warnings'] << 'Chair not found in resolution'
             end
           end
         else
-          attrs['warnings'] ||= ['Chair not found in resolution'] 
+          attrs['warnings'] << 'Chair not found in resolution'
         end
 
       elsif title =~ /^Appoint /
@@ -177,10 +179,9 @@ class ASF::Board::Agenda
         if attrs['chair']
           people = [[chairname, attrs['chair']]]
         elsif chairname
-          attrs['warnings'] ||= 
-            ["#{chairname.inspect} doesn't match public name"]
+          attrs['warnings'] << "#{chairname.inspect} doesn't match public name"
         else
-          attrs['warnings'] ||= ['Officer name not found']
+          attrs['warnings'] << 'Officer name not found'
         end
       end
 
@@ -192,6 +193,8 @@ class ASF::Board::Agenda
       end
 
       attrs['people'] = Hash[people] unless people.empty?
+
+      attrs.delete 'warnings' if attrs['warnings'].empty?
     end
   end
 end
