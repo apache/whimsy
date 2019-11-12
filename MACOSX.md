@@ -12,15 +12,15 @@ Install Homebrew
 
 Homebrew is a package manager for OSX, which is used to install other tools.
 Follow the instructions from [brew.sh](http://brew.sh/). You might
-have to change shells if you are using csh. Bash works fine.  Be sure to 
+have to change shells if you are using csh. Bash and zsh work fine.  Be sure to
 read the Homebrew prerequisites; you may need part(s) of Apple's XCode.
 
 Verify minimum version installed using:
 
 ```
 $ brew --version
-Homebrew 1.6.0
-Homebrew/homebrew-core (git revision 66e9; last commit 2018-04-11)
+Homebrew 2.1.16
+Homebrew/homebrew-core (git revision 274de; last commit 2019-11-12)
 ```
 
 Update using:
