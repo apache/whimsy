@@ -48,7 +48,7 @@ def get_mentor_signoffs()
   agendas.each do |file|
     date = file[/\d+_\d+_\d+/].gsub('_', '-')
     agenda = File.read(file)
-    signoffs = agenda.scan(/^Signed-off-by:\s+.*?\n\n/m).join
+    signoffs = agenda.scan(/^#* ?Signed-off-by:\s+.*?\n\n/m).join
     signoffs.scan(/\[(.+?)\]\((.*?)\) (.*)/).each do |check, podling, name|
       name.strip!
       podling.strip!
