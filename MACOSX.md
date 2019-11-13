@@ -29,97 +29,23 @@ Update using:
 $ brew update
 ```
 
-Homebrew has (as of 2019) removed options we need from two of the formulas we need.
-Fix formulas for `openldap` and `apr-util` to make the required options standard.
-Note that we have to remove the bottles otherwise a version of the software is downloaded that does not include the options we require.  You will need to fix these formulas and re-update brew.
+Upgrade Ruby (if needed)
+------------------------
 
-```
-$ cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
-$ # edit apr-util.rb and openldap.rb to make the below diffs
-$ git diff
-diff --git a/Formula/apr-util.rb b/Formula/apr-util.rb
-index 4dee25282..97f460398 100644
---- a/Formula/apr-util.rb
-+++ b/Formula/apr-util.rb
-@@ -5,24 +5,28 @@ class AprUtil < Formula
-   sha256 "d3e12f7b6ad12687572a3a39475545a072608f4ba03a6ce8a3778f607dd0035b"
-   revision 1
- 
--  bottle do
--    sha256 "e4927892e16a3c9cf0d037c1777a6e5728fef2f5abfbc0af3d0d444e9d6a1d2b" => :mojave
--    sha256 "1bdf0cda4f0015318994a162971505f9807cb0589a4b0cbc7828531e19b6f739" => :high_sierra
--    sha256 "75c244c3a34abab343f0db7652aeb2c2ba472e7ad91f13af5524d17bba3001f2" => :sierra
--    sha256 "bae285ada445a2b5cc8b43cb8c61a75e177056c6176d0622f6f87b1b17a8502f" => :el_capitan
--  end
- 
-   keg_only :provided_by_macos, "Apple's CLT package contains apr"
- 
-   depends_on "apr"
-   depends_on "openssl"
-+  depends_on "openldap"
- 
-   def install
-     # Install in libexec otherwise it pollutes lib with a .exp file.
-     system "./configure", "--prefix=#{libexec}",
-                           "--with-apr=#{Formula["apr"].opt_prefix}",
-                           "--with-crypto",
--                          "--with-openssl=#{Formula["openssl"].opt_prefix}"
-+                          "--with-openssl=#{Formula["openssl"].opt_prefix}",
-+                         "--with-ldap",
-+                         "--with-ldap-lib=#{Formula["openldap"].opt_lib}",
-+                         "--with-ldap-include=#{Formula["openldap"].opt_include}"
-     system "make"
-     system "make", "install"
-     bin.install_symlink Dir["#{libexec}/bin/*"]
-diff --git a/Formula/openldap.rb b/Formula/openldap.rb
-index bc6bde9fe..710265ec1 100644
---- a/Formula/openldap.rb
-+++ b/Formula/openldap.rb
-@@ -4,11 +4,11 @@ class Openldap < Formula
-   url "https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.4.47.tgz"
-   sha256 "f54c5877865233d9ada77c60c0f69b3e0bfd8b1b55889504c650047cc305520b"
- 
--  bottle do
--    sha256 "07e1f0e3ec1a02340a82259e1ace713cfb362126404575032713174935f4140e" => :mojave
--    sha256 "8901626fc45d76940dec5e516b23d81c9970f4a4a94650bdad60228d604c1b4a" => :high_sierra
--    sha256 "6dc84ff9e088116201a47adc5c3a2aab28ffd10dbab9d677d49ad7eef1ccc349" => :sierra
--  end
- 
-   keg_only :provided_by_macos
- 
-@@ -35,6 +35,7 @@ class Openldap < Formula
-       --enable-refint
-       --enable-retcode
-       --enable-seqmod
-+      --enable-sssvlv=yes
-       --enable-translucent
-       --enable-unique
-       --enable-valsort
-```
-Now have Homebrew actually install the updated modules; note the -s --build-from-source flag:
-
-```
-brew install -s apr-util
-brew install -s openldap
-```
-
-
-Upgrade Ruby
-------------
-
-Much of Whimsy is written in Ruby.  Most OSX versions include outdated ruby, so:
+Much of Whimsy is written in ruby.  Versions of OSX prior to 10.15 (Catalina)
+include an outdated version of ruby.
 
 Verify your current ruby version:
 
 ```
 $ ruby -v
-ruby 2.5.1p57 (2018-03-29 revision 63029) [x86_64-darwin17]
+ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin19]
 ```
 
 You need at least version 2.4.1 to match the currently deployed Whimsy server.
 If you don't see 2.3.1 or later, run `hash -r` and try again.  If you still need 
 to update your ruby, proceed using one of the common ruby version managers:
-Homebrew (may not work as of 2019; this is due to library updates in Ruby 2.6.x), rbenv (known to work), or rvm.
+rbenv (known to work), or rvm.
 
 If using rbenv, install:
 
@@ -152,53 +78,14 @@ Verify:
 
 ```
 $ node -v
-v9.11.1
+v12.12.0
 $ npm -v
-5.8.0
+6.11.3
 ```
 
 If you don't see v6 or higher, run `hash -r` and try again.  If you previously
 installed node via brew, you may need to run `brew upgrade node` instead.
 
-
-Install Ruby gem dependencies
-------------
-
-Install:
-
-```
-sudo gem install mail listen
-sudo gem install bundler -n /usr/local/bin
-sudo gem install nokogumbo
-sudo gem install passenger sinatra kramdown
-sudo gem install setup
-sudo gem install ruby2js
-sudo gem install rack rake
-sudo gem install crass json sanitize
-```
-
-* NOTE: `sudo` not required when using rbenv
-
-Verify:
-
-```
-$ gem list
-$ bundler -v
-Bundler version 1.16.1
-```
-
-Notes:
-
-* If you are using Mac OS El Capitan or higher, you may need to `sudo gem install bundler -n /usr/local/bin`
-  in order to install bundler outside of `/usr/bin`
-* If you get `bundler's executable "bundle" conflicts with /usr/local/bin/bundle
-  Overwrite the executable? [yN]`, respond with `y` (twice!)
-* Some tools may need a [`bundle install`](DEVELOPMENT.md#running-whimsy-applications-car) run for additional gems.
-* You may have trouble installing due to the dependency on nokogiri. There are
-  issues with its dependencies. This page suggests some workarounds:
-  https://github.com/sparklemotion/nokogiri/issues/1483
-  The simplest solution may be `xcode-select --install` unless you know
-  that's already configured.
 
 Clone the Whimsy code
 ------------
@@ -249,6 +136,45 @@ Note: if you had previously created a <tt>/srv</tt> directory and it goes
 missing when you upgrade to Catalina, the previous contents can be found in
 <tt>"/Users/Shared/Relocated Items/Security"</tt>.
 
+Install Ruby gem dependencies
+------------
+
+Install:
+
+```
+cd /srv/whimsy
+sudo bundle install
+```
+
+* NOTE: `sudo` not required when using rbenv
+
+Verify:
+
+```
+$ gem list
+$ bundler -v
+Bundler version 1.17.2
+```
+
+Notes:
+
+* If bundler is not installed, you may need to run `sudo gem install bundler`.
+  If this doesn't work, try `sudo gem install bundler -n /usr/local/bin`
+  in order to install bundler outside of `/usr/bin`
+* If you get `bundler's executable "bundle" conflicts with /usr/local/bin/bundle
+  Overwrite the executable? [yN]`, respond with `y` (twice!)
+* Some tools may need a [`bundle
+  install`](DEVELOPMENT.md#running-whimsy-applications-car) run for additional
+  gems.  Simply change directory to the tool you wish to develop, and run
+  `bundle install` in that directory.  If you want to install all of the
+  dendencies for all of the whimsy tools, run `rake install` in the top whimsy
+  directory.
+* You may have trouble installing due to the dependency on nokogiri. There are
+  issues with its dependencies. This page suggests some workarounds:
+  https://github.com/sparklemotion/nokogiri/issues/1483
+  The simplest solution may be `xcode-select --install` unless you know
+  that's already configured.
+
 Configure LDAP
 --------------
 
@@ -280,128 +206,89 @@ Notes:
  * The `ldapsearch` command is the standard LDAP utility on MacOSX.
 
 
-Install Apache httpd
+Start Apache httpd
 ------------------
 
-Running Whimsy tools locally depends on httpd.  Apple provides a copy of httpd that has [known problems](https://github.com/phusion/passenger/issues/1986), so installing a separate copy of httpd from homebrew is recommended.  An optional later step in this process will forward traffic based on the hostname.
+*Note* as an alternative to configuring and starting the version of httpd which
+is provided with MacOSX, you can install a separate version using Homebrew.
+Those instructions can be found in an [older version of these
+instructions](https://github.com/apache/whimsy/blob/cbe00a45eb949cec8a6798f1172c64166a56e518/MACOSX.md#clone-the-whimsy-code),
+specifically, the Install Homebrew, Install Apache httpd, Install passenger,
+Configure whimsy.local, Complete Apache configuration, Make whimsy.local an
+alias for your machine, and Optional: forward whimsy.local traffic to port 8080
+steps.
 
-Install with LDAP support:
+Running Whimsy tools locally depends on httpd.  Apple provides a copy of httpd that that you can configure and start.
 
-```
-brew install apache-httpd
-brew install openldap # --with-sssvlv
-brew reinstall -s apr-util # --with-openldap
-brew reinstall -s apache-httpd
-```
-Note: if you encounter problems, double-check that the edits made to homebrew-core/Formula/\* you made earlier are still there; if you happened to brew update, they may get overwritten.
-
-Install passenger
--------------------
-
-```
-brew install passenger
-mkdir /usr/local/opt/httpd/conf
-```
-
-create `/usr/local/opt/httpd/conf/passenger.conf` from the output from `brew info passenger` (note new location of passenger.conf file: was `/etc/apache2/other`).
-
- * Change `/usr/bin/ruby` to where you have Ruby installed.
-   * If you followed the instructions above, this will be `/usr/local/bin/ruby`.
-   * If using rbenv, this should be `$HOME/.rbenv/shims/ruby`.
- * Optional: add `PassengerUser _www` and `PassengerGroup _www` lines if you would like your passenger applications to run under the web user.
-
-Configure `whimsy.local`
--------------------
-
-`cp /srv/whimsy/config/whimsy.conf /usr/local/opt/httpd/conf/`
-
-edit `/usr/local/opt/httpd/conf/whimsy.conf`:
-
-   * change `:80` to `:8080`
-   * change `ErrorLog` and `Custlog` to `/usr/local/var/log/httpd/whimsy_error.log` and `/usr/local/var/log/httpd/whimsy_access.log` respectively.
-   * if using rbenv, change `SetEnv` line to `SetEnv PATH ${HOME}/.rbenv/shims:/usr/local/bin:${PATH}`
-
-Complete Apache configuration
+Start Apache httpd
 ------------------
 
-edit `/usr/local/etc/httpd/httpd.conf`:
-
-* Uncomment each of the following lines:
-    <pre>
-    LoadModule proxy_module lib/httpd/modules/mod_proxy.so
-    LoadModule proxy_wstunnel_module lib/httpd/modules/mod_proxy_wstunnel.so
-    LoadModule negotiation_module lib/httpd/modules/mod_negotiation.so
-    LoadModule speling_module lib/httpd/modules/mod_speling.so
-    LoadModule rewrite_module lib/httpd/modules/mod_rewrite.so
-    LoadModule expires_module lib/httpd/modules/mod_expires.so
-    LoadModule cgi_module lib/httpd/modules/mod_cgi.so
-    </pre>
-
-* Append the following:
-   <pre>
-    LoadModule ldap_module lib/httpd/modules/mod_ldap.so
-    LoadModule authnz_ldap_module lib/httpd/modules/mod_authnz_ldap.so
-    LDAPVerifyServerCert Off
-    Include conf/passenger.conf
-    Include conf/whimsy.conf
-    ServerName whimsy.local
-  </pre>
-
-
-Launch the server using:
+Running Whimsy tools locally depends on httpd.  Install:
 
 ```
-brew services start httpd
+sudo launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist
 ```
 
 Verify:
 
 ```
-$ curl -s localhost:8080 | grep '<title>'
-    <title>Apache Whimsy</title>
+$ curl localhost
+<html><body><h1>It works!</h1></body></html>
 ```
 
-This may fail on High Sierra with a [We cannot safely call it or ignore it in
-the fork() child process. Crashing
-instead.](https://blog.phusion.nl/2017/10/13/why-ruby-app-servers-break-on-macos-high-sierra-and-what-can-be-done-about-it/) message in your `/var/log/apache/error.log` file.  If so, do the following:
+Notes:
 
-On Mojave the failure with forking occurred with Passenger and the following fixes were required.
-
-Edit `/usr/local/opt/httpd/homebrew.mxcl.httpd.plist` and add the following:
-
-```
-<key>EnvironmentVariables</key>
-<dict>
-  <key>OBJC_DISABLE_INITIALIZE_FORK_SAFETY</key>
-  <string>YES</string>
-</dict>
-```
-
-edit `/usr/local/opt/httpd/bin/envvars`, add:
-
-```
-export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
-```
-
-Restart Apache httpd using:
-
-```
-apachectl restart
-```
-
-**Additional Notes:**
-
- * `sudo lsof -i:8080` may be helpful should you find that another process
-   already has port 8080 open.
- * `apachectl restart` is how you restart apache; `brew services start` itself is for
-   controlling what processes automatically start at startup. There is a `brew services restart httpd`
-   command that gracefully stops and starts apache which takes a bit longer than using `apachectl restart`.
+ * `sudo lsof -i:80` may be helpful should you find that another process
+   already has port 80 open.
+ * `sudo apachectl restart` is how you restart apache; launchctl itself is for
+   controlling what processes automatically start at startup.
  * If `curl` gives `Connection refused` then try kicking httpd:
-    * `apachectl stop`
-    * `httpd`
-      * If it works, then press CTRL-C and `apachectl start`
-      * If it gave you `AH00526: Syntax error on line 20 of /usr/local/etc/httpd/extra/httpd-mpm.conf`
+    * `sudo /usr/sbin/apachectl stop`
+    * `sudo /usr/sbin/httpd`
+      * If it works, then press CTRL-C and `sudo /usr/sbin/apachectl start`
+      * If it gave you `AH00526: Syntax error on line 20 of /private/etc/apache2/extra/httpd-mpm.conf`
         then you may need to [delete the LockFile section](https://apple.stackexchange.com/questions/211015/el-capitan-apache-error-message-ah00526).
+
+Configure Apache httpd to run under your user id
+------------------------------------------------
+
+First, lock down Apache so that it can only be accessed from your localhost
+(using either IPv4 or IPv6).  As you will be configuring Apache httpd to be
+running with your ID, this will prevent external hackers from exploiting that
+code to update your filesystem and do other nasty things.
+
+Edit `/etc/apache2/httpd.conf` using sudo and your favorite text editor.
+Locate the first line that says `Require all granted`.  This should be around
+line 263 at the end of the section `Directory "/Library/WebServer/Documents"` or similar
+Replace that line with the following four lines:
+
+```
+<RequireAny>
+  Require ip 127.0.0.1
+  Require ip ::1
+</RequireAny>
+```
+
+Find the next occurence of `Require all granted`.  It should now be around
+line 386 in the section `Directory "/Library/WebServer/CGI-Executables` or similar
+Replace it with `Require all denied`.
+
+Now go back to the top of the file and search for `User`.  Replace the first
+`_www` with your local user id.  This may be different than your ASF availid --
+that's OK.  Your local user id is the response to `whoami`.
+Replace the second `_www` with `staff` (that's the group name).
+
+Save your changes.
+
+Restart Apache httpd using `sudo apachectl restart`.
+
+Verify that you can continue to access the server by re-issuing the following
+command:
+
+```
+$ curl localhost
+<html><body><h1>It works!</h1></body></html>
+```
 
 Make whimsy.local an alias for your machine
 -------------------------------------------
@@ -421,97 +308,157 @@ Save your changes.
 Verify that you can access the server using this new alias:
 
 ```
-$ curl -s whimsy.local:8080 | grep '<title>'
-    <title>Apache Whimsy</title>
+$ curl whimsy.local
+<html><body><h1>It works!</h1></body></html>
+```
+
+Install passenger
+------------------------------------------------
+
+Follow the [Installing Passenger + Apache on Mac OS X](https://www.phusionpassenger.com/library/install/apache/install/oss/osx/) instructions, which are summaried below:.
+
+Install:
+
+```
+$ brew install passenger
+$ brew info passenger
+```
+
+For the second step (`brew info passenger`), you will need to
+follow the instructions -- which essentially is to copy a few lines to
+to a specified location.  If your ruby is installed in `/usr/local/bin`, change the last line to
+
+```
+PassengerDefaultRuby /usr/local/bin/ruby
+```
+
+Likewise, if you used `rbenv` to manage your ruby install, point to that location instead.  This should be `$HOME/.rbenv/shims/ruby`.
+
+Optional: add `PassengerUser _www` and `PassengerGroup _www` lines if you would like your passenger applications to run under the web user.
+
+
+Restart the server:
+
+```
+sudo apachectl restart
 ```
 
 Verify:
 
-Check that the server information includes 'Phusion\_Passenger':
+Check that the server information includes 'Phusion_Passenger':
 
 ```
-$ curl --head whimsy.local:8080
+$ curl --head whimsy.local
 HTTP/1.1 200 OK
-Date: Thu, 08 Feb 2018 16:33:56 GMT
-Server: Apache/2.4.29 (Unix) Phusion_Passenger/5.2.0
-Last-Modified: Thu, 08 Feb 2018 16:30:06 GMT
-ETag: "25a1-564b5ecaa5f80"
+Date: Fri, 19 Aug 2016 12:23:23 GMT
+Server: Apache/2.4.18 (Unix) Phusion_Passenger/5.0.30
+Content-Location: index.html.en
+Vary: negotiate
+TCN: choice
+Last-Modified: Mon, 11 Jun 2007 18:53:14 GMT
+ETag: "2d-432a5e4a73a80"
 Accept-Ranges: bytes
-Content-Length: 9633
+Content-Length: 45
 Content-Type: text/html
 ```
 
-Optional: forward `whimsy.local` traffic to port 8080
--------------------------
+This may fail on High Sierra with a [We cannot safely call it or ignore it in
+the fork() child process. Crashing
+instead.](https://blog.phusion.nl/2017/10/13/why-ruby-app-servers-break-on-macos-high-sierra-and-what-can-be-done-about-it/) message in your `/var/log/apache/error.log` file.  If so, do the following:
 
-Edit `/etc/apache2/httpd.conf` and uncomment out the following lines:
+```
+cp /System/Library/LaunchDaemons/org.apache.httpd.plist /Library/LaunchDaemons/
+```
+
+Edit ` /Library/LaunchDaemons/org.apache.httpd.plist` and add the following to
+`EnvironmentVariables/Dict`:
+
+```
+    <key>OBJC_DISABLE_INITIALIZE_FORK_SAFETY</key>
+    <string>YES</string>
+```
+
+Finally:
+
+```
+sudo launchctl unload /System/Library/LaunchDaemons/org.apache.httpd.plist
+sudo launchctl load -w /Library/LaunchDaemons/org.apache.httpd.plist
+```
+
+N.B. Because of System Integrity Protection (SIP), it's not possible to edit files under /System.
+So the change is made to a copy. 
+However the original location is baked into apachectl which is also protected by SIP.
+This means apachectl ignores the change.
+A work-round for this is to create an updated copy of apachectl somewhere further up the path.
+ 
+Configure whimsy.local vhost
+----------------------------
+
+Once again, Edit `/etc/apache2/httpd.conf` using sudo and your favorite text editor.
+
+Uncomment out the following lines:
 
 ```
 LoadModule proxy_module libexec/apache2/mod_proxy.so
-LoadModule proxy_http_module libexec/apache2/mod_proxy_http.so
+
+LoadModule proxy_wstunnel_module libexec/apache2/mod_proxy_wstunnel.so
+
+LoadModule speling_module libexec/apache2/mod_speling.so
+
+LoadModule rewrite_module libexec/apache2/mod_rewrite.so
+
+LoadModule authnz_ldap_module libexec/apache2/mod_authnz_ldap.so
+
+LoadModule ldap_module libexec/apache2/mod_ldap.so
+
+LoadModule expires_module libexec/apache2/mod_expires.so
+
+LoadModule cgi_module libexec/apache2/mod_cgi.so
 ```
 
-Create `/private/etc/apache2/other/localhost.conf` with the following contents:
+Add the following line:
 
 ```
-NameVirtualHost *:80
-
-<VirtualHost *:80>
-  ServerName localhost
-  DocumentRoot /Library/WebServer/Documents
-  <Location />
-    Require all granted
-  </Location>
-</VirtualHost>
+LDAPVerifyServerCert Off
 ```
 
-Create `/private/etc/apache2/other/whimsy.conf` with the following contents:
+Copy whimsy vhost definition to your apache2 configuration (from the root of your whimsy git clone):
 
 ```
-<VirtualHost *:80>
-    ServerName whimsy.local
-
-    ProxyRequests off
-    ProxyPreserveHost On
-
-    LogLevel warn
-    ErrorLog /var/log/apache2/whimsy_error.log
-    CustomLog /var/log/apache2/whimsy_access.log combined
-
-    <Location />
-        ProxyPass http://whimsy.local:8080/
-        ProxyPassReverse http://whimsy.local:8080/
-        Require all granted
-    </Location>
-</VirtualHost>
+sudo cp config/whimsy.conf /private/etc/apache2/other
 ```
 
-If you don't have the system httpd already running, start it with:
+Also from the root of your whimsy git checkout, make a `/srv/cache` directory
+owned by you, and establish a symbolic link to your whimsy git clone directory:
 
 ```
-sudo launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist
+sudo mkdir -p /srv/cache
+sudo chown `id -un`:`id -gn` /srv/cache
+sudo ln -s `pwd` /srv/whimsy
 ```
 
-If the system httpd is already running, restart it:
+Restart Apache httpd using `sudo apachectl restart`.
 
-```
-/usr/sbin/apachectl restart
-```
+Verify:
 
-Test:
++ **Static content**: Visit [http://whimsy.local/](http://whimsy.local).  You
+  should see the [whimsy home page](https://whimsy.apache.org/).
++ **CGI scripts**: Visit
+  [http://whimsy.local/test.cgi](http://whimsy.local/test.cgi).  You should see
+  a list of environment variables.  Compare with [test.cgi on
+  whimsy](https://whimsy.apache.org/test.cgi).
++ **Passenger/Rack applications**: Visit
+  [http://whimsy.local/racktest](http://whimsy.local/racktest).  You should see
+  a list of environment variables.  Compare with [racktest on
+  whimsy](https://whimsy.apache.org/racktest).
 
-```
-$ curl -s --head localhost | grep Server
-Server: Apache/2.4.28 (Unix)
-$ curl -s --head whimsy.local | grep Server
-Server: Apache/2.4.29 (Unix) Phusion_Passenger/5.2.0
-
-$ curl localhost
-<html><body><h1>It works!</h1></body></html>
-$ curl -s whimsy.local | grep '<title>'
-    <title>Apache Whimsy</title>
-```
-
+Compare the `PATH` values with your local (command line) environment.
+Various whimsy tools will make use of a number of commands (`svn`, `pdftk`)
+and it is important that these tools (and the correct version of each) can
+be found on the `PATH` defined to the Apache httpd web server.  If you find
+you need to adjust this, edit the `SetEnv PATH` line in
+`/etc/apache2/other/whimsy.conf`, restart the server and verify the path
+again.
 
 Configure sending of mail
 -------------------------
@@ -635,4 +582,3 @@ Debugging
 
 When things go wrong, either check `whimsy_error.log` and `error_log` in
 either `/usr/local/var/log/httpd/` or `/var/log/apache2/`. The location depends on how you have installed httpd.
-
