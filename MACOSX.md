@@ -220,10 +220,7 @@ steps.
 
 Running Whimsy tools locally depends on httpd.  Apple provides a copy of httpd that that you can configure and start.
 
-Start Apache httpd
-------------------
-
-Running Whimsy tools locally depends on httpd.  Install:
+Install:
 
 ```
 sudo launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist
@@ -422,10 +419,10 @@ Add the following line:
 LDAPVerifyServerCert Off
 ```
 
-Copy whimsy vhost definition to your apache2 configuration (from the root of your whimsy git clone):
+Copy whimsy vhost definition to your apache2 configuration:
 
 ```
-sudo cp config/whimsy.conf /private/etc/apache2/other
+sudo cp /srv/whimsy/config/whimsy.conf /private/etc/apache2/other
 ```
 
 Also from the root of your whimsy git checkout, make a `/srv/cache` directory
