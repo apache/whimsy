@@ -143,10 +143,8 @@ Install:
 
 ```
 cd /srv/whimsy
-sudo bundle install
+bundle install
 ```
-
-* NOTE: `sudo` not required when using rbenv
 
 Verify:
 
@@ -167,7 +165,7 @@ Notes:
   install`](DEVELOPMENT.md#running-whimsy-applications-car) run for additional
   gems.  Simply change directory to the tool you wish to develop, and run
   `bundle install` in that directory.  If you want to install all of the
-  dendencies for all of the whimsy tools, run `rake install` in the top whimsy
+  dendencies for all of the whimsy tools, run `rake update` in the top whimsy
   directory.
 * You may have trouble installing due to the dependency on nokogiri. There are
   issues with its dependencies. This page suggests some workarounds:
@@ -323,7 +321,9 @@ $ brew info passenger
 
 For the second step (`brew info passenger`), you will need to
 follow the instructions -- which essentially is to copy a few lines to
-to a specified location.  If your ruby is installed in `/usr/local/bin`, change the last line to
+to a specified location, typically `/etc/apache2/other/passenger.conf`.
+
+If your ruby is installed in `/usr/local/bin`, change the last line to
 
 ```
 PassengerDefaultRuby /usr/local/bin/ruby
@@ -347,13 +347,13 @@ Check that the server information includes 'Phusion_Passenger':
 ```
 $ curl --head whimsy.local
 HTTP/1.1 200 OK
-Date: Fri, 19 Aug 2016 12:23:23 GMT
-Server: Apache/2.4.18 (Unix) Phusion_Passenger/5.0.30
+Date: Wed, 13 Nov 2019 19:37:12 GMT
+Server: Apache/2.4.41 (Unix) Phusion_Passenger/6.0.4
 Content-Location: index.html.en
 Vary: negotiate
 TCN: choice
-Last-Modified: Mon, 11 Jun 2007 18:53:14 GMT
-ETag: "2d-432a5e4a73a80"
+Last-Modified: Thu, 29 Aug 2019 05:05:59 GMT
+ETag: "2d-5913a76187bc0"
 Accept-Ranges: bytes
 Content-Length: 45
 Content-Type: text/html
@@ -419,12 +419,6 @@ Add the following line:
 LDAPVerifyServerCert Off
 ```
 
-Copy whimsy vhost definition to your apache2 configuration:
-
-```
-sudo cp /srv/whimsy/config/whimsy.conf /private/etc/apache2/other
-```
-
 Also from the root of your whimsy git checkout, make a `/srv/cache` directory
 owned by you, and establish a symbolic link to your whimsy git clone directory:
 
@@ -432,6 +426,12 @@ owned by you, and establish a symbolic link to your whimsy git clone directory:
 sudo mkdir -p /srv/cache
 sudo chown `id -un`:`id -gn` /srv/cache
 sudo ln -s `pwd` /srv/whimsy
+```
+
+Copy whimsy vhost definition to your apache2 configuration:
+
+```
+sudo cp /srv/whimsy/config/whimsy.conf /private/etc/apache2/other
 ```
 
 Restart Apache httpd using `sudo apachectl restart`.
@@ -549,11 +549,16 @@ changes and restart applications that might be affected on the receipt of
 the next request.
 
 To have this tool launch automatically, copy `whimsy/config/toucher.plist` to
-'~/Library/LaunchAgents/'.  Start via:
+'~/Library/LaunchAgents/' and have launchctl load it:
 
 ```
+mkdir -p ~/Library/LaunchAgents
+cp /srv/whimsy/config/toucher.plist ~/Library/LaunchAgents/
 launchctl load ~/Library/LaunchAgents/toucher.plist
 ```
+
+**Note**: Adjust the path to `ruby` in `toucher.plist` if necessary.  If you
+make this change after you have loaded the script, unload then reload it.
 
 To verify that it is working, touch a file in an application, and verify
 that `tmp/restart.txt` has been updated.  Example:
