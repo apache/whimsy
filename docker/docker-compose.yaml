@@ -1,0 +1,14 @@
+version: '3'
+services:
+  web:
+    image: whimsy-web
+    build: .
+    ports: 
+      - "1999:80"
+    networks:
+      - default
+    volumes:
+      - ../..:/srv
+      - $HOME/.subversion:/root/.subversion
+      - $HOME/.gitconfig:/root/.gitconfig
+      - $HOME/.ssh:/root/.ssh

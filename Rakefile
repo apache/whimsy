@@ -90,6 +90,7 @@ namespace :svn do
     svn = ASF::Config.get(:svn)
     svn = Array(svn).find {|path| String === path and path.end_with? '/*'}
     if svn.instance_of? String and svn.end_with? '/*'
+      mkdir_p File.dirname(svn) unless Dir.exists? File.dirname(svn)
       Dir.chdir File.dirname(svn) do
         require 'uri'
         base = URI.parse('https://svn.apache.org/repos/')
@@ -201,6 +202,7 @@ namespace :git do
     # clone/pull git repositories
     git = ASF::Config.get(:git)
     if git.instance_of? String and git.end_with? '/*'
+      mkdir_p File.dirname(git) unless Dir.exists? File.dirname(git)
       Dir.chdir File.dirname(git) do
         require 'uri'
         base = URI.parse('git://git.apache.org/')
@@ -251,4 +253,46 @@ task :default do
       sh 'rake test'
     end
   end
+end
+
+# Docker support
+namespace :docker do
+  task :build => 'docker/work/whimsy.conf' do
+    Dir.chdir File.join(__dir__, 'docker') do
+      sh 'docker-compose build web'
+    end
+  end
+
+  task :update => :build do
+    Dir.chdir File.join(__dir__, 'docker') do
+      sh 'docker-compose run  --entrypoint ' +
+        %('bash -c "git pull; rake update svn:update git:pull"') +
+        ' web'
+    end
+  end
+
+  task :up do
+    Dir.chdir File.join(__dir__, 'docker') do
+      sh 'docker-compose up'
+    end
+  end
+
+  task :exec do
+    Dir.chdir File.join(__dir__, 'docker') do
+      sh 'docker-compose exec web /bin/bash'
+    end
+  end
+
+  task :entrypoint do
+    sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
+    sh 'apache2ctl -DFOREGROUND'
+  end
+end
+
+file 'docker/work' do
+  mkdir_p 'docker/work'
+end
+
+file 'docker/work/whimsy.conf' => ['docker/work', 'config/whimsy.conf'] do
+  cp 'config/whimsy.conf', 'docker/work/whimsy.conf'
 end
