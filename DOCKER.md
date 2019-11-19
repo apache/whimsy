@@ -64,12 +64,15 @@ Known not to work (ToDos)
   browsers)
 * Automatic restarting of passenger based tools when source code changes are
   made.
+* Having the container grab passwords from the macOS keychain
 
 Uninstallation procedures
 -------------------------
 
+* Exit out of any running containers
 * Remove the entire directory created as step 1 of the installation
   instructions.
+* `docker image rm whimsy-web`
 * `docker image prune -f`
 * `docker container prune -f`
 
