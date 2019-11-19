@@ -31,8 +31,9 @@ Installation instructions
 * `git clone git@github.com:apache/whimsy.git` (or alternately
   `git clone https://github.com/apache/whimsy.git`)
 * `cd whimsy`
-* `rake update`
-* `rake up`
+* Start Docker if necessary
+* `rake docker:update`
+* `rake docker:up`
 * visit `http://localhost:1999/` in your favorite browser
 
 Note: the `rake udpate` step will take a long time as it will need to
