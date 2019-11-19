@@ -39,6 +39,8 @@ Installation instructions
       format used by the container.  Currently macOS Catalina/Xcode provides
       svn 1.10.4 and the Dockerfile downloads the latest 1.10 version
       (currently 1.10.6).
+    * The `svn` and `git` sub-directories cannot be links to another part of
+      host file system as these will not be visible to the container
 * `cd` into that directory
 * `git clone git@github.com:apache/whimsy.git` (or alternately
   `git clone https://github.com/apache/whimsy.git`)
@@ -48,11 +50,13 @@ Installation instructions
 * `rake docker:up`
 * visit `http://localhost:1999/` in your favorite browser
 
-Note: the `rake docker:udpate` step will take a long time as it will need to
+Note: the `rake docker:update` step will take a long time as it will need to
 download and install all of the Ubuntu packages, Ruby gems, build and
 install Passenger, checkout numerous svn repositories and two git
 repositories.  The good news is that this can be entirely unattended as
-there will be no prompts required during this process.
+there will be no prompts required during this process (except possibly for SVN updates).
+If you wish to create the Ubuntu image separately, run `rake docker:build` (this is
+invoked as part of docker:update)
 
 This should be enough to get the board agenda tool to launch.  It is not
 known yet what functions work and what functions do not.
