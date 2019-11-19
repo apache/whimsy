@@ -26,7 +26,7 @@ noticeably slower than a native (non-container) installation of whimsy.
 Installation instructions
 -------------------------
 
-* Create an empty directory
+* Create an empty directory (do not use an existing checkout of Whimsy)
 * `cd` into that directory
 * `git clone git@github.com:apache/whimsy.git` (or alternately
   `git clone https://github.com/apache/whimsy.git`)
