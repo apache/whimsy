@@ -36,7 +36,7 @@ Installation instructions
 * `rake docker:up`
 * visit `http://localhost:1999/` in your favorite browser
 
-Note: the `rake udpate` step will take a long time as it will need to
+Note: the `rake docker:udpate` step will take a long time as it will need to
 download and install all of the Ubuntu packages, Ruby gems, build and
 install Passenger, checkout numerous svn repositories and two git
 repositories.  The good news is that this can be entirely unattended as
