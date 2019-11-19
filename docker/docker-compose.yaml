@@ -5,10 +5,16 @@ services:
     build: .
     ports: 
       - "1999:80"
-    networks:
-      - default
     volumes:
       - ../..:/srv
       - $HOME/.subversion:/root/.subversion
       - $HOME/.gitconfig:/root/.gitconfig
       - $HOME/.ssh:/root/.ssh
+  ws:
+    image: whimsy-web
+    build: .
+    volumes:
+      - ../..:/srv
+    command: /usr/bin/ruby /srv/whimsy/www/board/agenda/daemon/wss.rb
+    expose: 
+      - "34234"

@@ -3,8 +3,12 @@ ENV GEM_HOME="/srv/gems" \
     LANG=C.UTF-8 \
     LC_ALL=C.UTF-8
 RUN apt-get update && \
-    apt-get install -y curl && \
+    apt-get install -y curl software-properties-common apt-utils && \
     curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+    echo "deb http://opensource.wandisco.com/ubuntu bionic svn110" > \
+      /etc/apt/sources.list.d/subversion.list && \
+    curl -sL http://opensource.wandisco.com/wandisco-debian-new.gpg | \
+      apt-key add - &&\
     apt-get update && \
     DEBIAN_FRONTEND='noninteractive' apt-get install -y \
       apache2 \
@@ -31,7 +35,8 @@ RUN apt-get update && \
       libaprutil1-dev && \
     gem install bundler passenger --install_dir=/var/lib/gems/2.5.0 && \
     passenger-install-apache2-module --auto && \
-    passenger-install-apache2-module --snippet > /etc/apache2/conf-enabled/passenger.conf && \
+    passenger-install-apache2-module --snippet > \
+      /etc/apache2/conf-enabled/passenger.conf && \
     pip3 install img2pdf && \
     a2enmod cgi && \
     a2enmod headers && \

@@ -26,7 +26,19 @@ noticeably slower than a native (non-container) installation of whimsy.
 Installation instructions
 -------------------------
 
-* Create an empty directory (do not use an existing checkout of Whimsy)
+* Create an empty directory.  Note: while you _can_ use an existing clone of
+  Whimsy (and in particular, you _may_ be able to use the `/srv` directories
+  defined by the [macOS](MACOSX.md) instructions), be aware of the following:
+    * Files in the parent directory of the Whimsy clone may be created,
+      overwritten, or deleted by this process.
+    * Should the `svn` and `git` directories in this directory contain
+      checkouts/clones made by the host operating system, it is imperative that
+      the [file system
+      format](https://www.visualsvn.com/support/topic/00135/#FilesystemFormat)
+      of the repository manager format used by the host machine matches the
+      format used by the container.  Currently macOS Catalina/Xcode provides
+      svn 1.10.4 and the Dockerfile downloads the latest 1.10 version
+      (currently 1.10.6).
 * `cd` into that directory
 * `git clone git@github.com:apache/whimsy.git` (or alternately
   `git clone https://github.com/apache/whimsy.git`)
