@@ -284,6 +284,12 @@ namespace :docker do
   end
 
   task :entrypoint do
+    home = ENV['HOST_HOME']
+    if home and not File.exist? home
+      mkdir_p File.dirname(home)
+      symlink '/root', home
+    end
+
     sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
     sh 'apache2ctl -DFOREGROUND'
   end
