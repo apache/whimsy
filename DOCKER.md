@@ -61,6 +61,21 @@ invoked as part of docker:update)
 This should be enough to get the board agenda tool to launch.  It is not
 known yet what functions work and what functions do not.
 
+Installation layout
+-------------------
+The `docker/docker-compose.yml` has the following mounts:
+
+container path      host path
+/srv                directory chosen in step 1
+/root/.subversion   $HOME/.subversion
+/root/.gitconfig    $HOME/.gitconfig
+/root/.ssh          $HOME/.ssh
+
+You can edit the files in these directories using your host tools.
+If any of the configuration files under .subversion etc contain absolute references to
+files (such as CA certificates), these will need to be fixed somehow (e.g. create links on
+the container)
+
 Known not to work (ToDos)
 -------------------------
 
@@ -69,6 +84,7 @@ Known not to work (ToDos)
 * Automatic restarting of passenger based tools when source code changes are
   made.
 * Having the container grab passwords from the macOS keychain
+* Fix up CA cert handling
 
 Uninstallation procedures
 -------------------------
