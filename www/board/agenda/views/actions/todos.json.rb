@@ -129,15 +129,14 @@ if @establish and env.password
         project.add_members(members)
       end
     end
-    # TODO enable once testing is complete
-#    charter = item['charter']
-#    if charter
-#      # update ci.yaml
-#      cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
-#      ASF::SVN.update cinfoy, title, env, _ do |tmpdir, contents|
-#        ASF::Committee.appendtlpmetadata(contents,pmc.downcase,charter)
-#      end 
-#    end
+    charter = item['charter']
+    if charter
+      # update ci.yaml
+      cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
+      ASF::SVN.update cinfoy, title, env, _ do |tmpdir, contents|
+        ASF::Committee.appendtlpmetadata(contents,pmc.downcase,charter)
+      end 
+    end
   end
 
   establish = @establish.map {|resolution| resolution['name']}
