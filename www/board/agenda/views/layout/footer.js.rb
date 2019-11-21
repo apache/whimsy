@@ -3,13 +3,17 @@
 # followed by a next link.
 #
 # Overrides previous and next links when traversal is queue, shepherd, or
-# Flagged.  Injects the flagged items into the flow once the meeting starts
-# (last executive officer <-> first flagged &&
-#  last flagged <-> first Special order)
+# Flagged.  Injects the flagged items into the flow on the meeting day
+# (last executive officer <-> first flagged/unapproved/missing &&
+#  last flagged/unapproved/missing <-> first Special order)
 #
 
 class Footer < Vue
   def render
+    
+    meeting_day = Minutes.started or
+      Date.new().toISOString().slice(0,10) >= Agenda.date
+
     _footer.navbar.navbar_fixed_bottom class: @@item.color do
 
       #
@@ -42,7 +46,7 @@ class Footer < Vue
         end
 
         unless link
-          if Minutes.started
+          if meeting_day
             link = Agenda.index.find do |item| 
               item.next && item.next.attach =~ /^\d+$/
             end
@@ -52,7 +56,7 @@ class Footer < Vue
           link ||= {href: "flagged", title: 'Flagged'}
         end
       elsif 
-        Minutes.started and @@item.attach =~ /\d/ and
+        meeting_day and @@item.attach =~ /\d/ and
         link and link.attach =~ /^[A-Z]/
       then
         Agenda.index.each do |item| 
@@ -111,7 +115,7 @@ class Footer < Vue
       elsif @@options.traversal == :flagged
         prefix = 'flagged/'
         while link and link.skippable
-          if Minutes.started and link.attach !~ /^(\d+|[A-Z]+)$/
+          if meeting_day and link.attach !~ /^(\d+|[A-Z]+)$/
             prefix = ''
             break
           else
@@ -120,7 +124,7 @@ class Footer < Vue
         end
         link ||= {href: "flagged", title: 'Flagged'}
       elsif 
-        Minutes.started and link and 
+        meeting_day and link and 
         @@item.attach =~ /^\d[A-Z]/ and link.attach =~ /^\d/
       then
         while link and link.skippable and link.attach =~ /^([A-Z]|\d+$)/
