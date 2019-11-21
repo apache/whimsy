@@ -45,12 +45,11 @@ latest 1.10 version (currently 1.10.6).
   `git clone https://github.com/apache/whimsy.git`)
 * `cd whimsy`
 * Start Docker if necessary
-* `rake docker:update`
-* `rake update`
+* `rake docker:update svn:update git:pull`
 * `rake docker:up`
 * visit `http://localhost:1999/` in your favorite browser
 
-Note: the `rake docker:update` and `rake update` steps will take a long time as
+Note: the `rake docker:update svn:update git:pull` step will take a long time as
 it will need to download and install all of the Ubuntu packages, Ruby gems,
 build and install Passenger, checkout numerous svn repositories and two git
 repositories.  The good news is that this can be entirely unattended as there
