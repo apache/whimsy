@@ -111,7 +111,12 @@ class Footer < Vue
       elsif @@options.traversal == :flagged
         prefix = 'flagged/'
         while link and link.skippable
-          link = link.next
+          if Minutes.started and link.index
+            prefix = ''
+            break
+          else
+            link = link.next
+          end
         end
         link ||= {href: "flagged", title: 'Flagged'}
       elsif 
