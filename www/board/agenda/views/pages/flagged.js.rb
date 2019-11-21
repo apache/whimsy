@@ -10,6 +10,21 @@ class Flagged < Vue
     meeting_day = Minutes.started or
       Date.new().toISOString().slice(0,10) >= Agenda.date
 
+    if meeting_day
+      _p do
+        _ 'Currently showing '; _span.commented 'flagged'; _ ', '
+        _span.missing 'missing'; _ ', and '; _span.ready 'unapproved'
+        _ ' reports.'
+      end
+    else
+      _p do
+        _ 'Currently only showing '; _span.commented 'flagged'
+        _ 'reports. Starting with the meeting day, this list will also include '
+        _span.missing 'missing'; _ ', and '
+        _span.ready 'unapproved'; _ ' reports too.'
+      end
+    end
+
     Agenda.index.each do |item|
       flagged = item.flagged_by || Pending.flagged.include?(item.attach)
 
