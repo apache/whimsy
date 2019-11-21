@@ -111,7 +111,7 @@ class Footer < Vue
       elsif @@options.traversal == :flagged
         prefix = 'flagged/'
         while link and link.skippable
-          if Minutes.started and link.index
+          if Minutes.started and link.attach !~ /^(\d+|[A-Z]+)$/
             prefix = ''
             break
           else
