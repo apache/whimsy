@@ -9,8 +9,6 @@ services:
       - "HOST_HOME=$HOME"
     volumes:
       - ../..:/srv
-      - $HOME/.subversion:/root/.subversion
-      - $HOME:/root
-      - $HOME/.gitconfig:/root/.gitconfig
-      - $HOME/.ssh:/root/.ssh
-      - $HOME:$HOME
+      - $HOME/.subversion:/$HOME/.subversion
+      - $HOME/.gitconfig:/$HOME/.gitconfig
+      - $HOME/.ssh:/$HOME/.ssh
