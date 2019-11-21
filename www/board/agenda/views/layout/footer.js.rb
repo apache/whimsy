@@ -11,7 +11,7 @@
 class Footer < Vue
   def render
     
-    meeting_day = Minutes.started ||
+    meeting_day = Minutes.started or
       Date.new().toISOString().slice(0,10) >= Agenda.date
 
     _footer.navbar.navbar_fixed_bottom class: @@item.color do

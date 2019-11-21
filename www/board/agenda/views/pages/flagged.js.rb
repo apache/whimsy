@@ -7,7 +7,7 @@
 class Flagged < Vue
   def render
     first = true
-    meeting_day = Minutes.started ||
+    meeting_day = Minutes.started or
       Date.new().toISOString().slice(0,10) >= Agenda.date
 
     if meeting_day

@@ -96,7 +96,7 @@ class Report < Vue
   # determine what text filters to run
   def filters
     list = [self.linebreak, self.todo, hotlink, self.privates, self.jira]
-    list = [self.localtime, hotlink, self.zoom] if @@item.title == 'Call to order'
+    list = [self.localtime, hotlink] if @@item.title == 'Call to order'
     list << self.names if @@item.people
     list << self.president_attachments if @@item.title == 'President'
     list << self.linkMinutes if @@item.attach =~ /^[37][A-Z]$/
@@ -170,13 +170,6 @@ class Report < Vue
       localtime = Date.new(@@item.timestamp).toLocaleString()
       "\n#{spaces}<span class='hilite'>" +
         "Local Time: #{localtime}</span>#{spaces}#{text}"
-    end
-  end
-
-  # make zoom links highlighted and open in a new window
-  def zoom(text)
-    return text.sub /https:\/\/zoom.*?['"]>/ do |match|
-      match + ' class="commented" target="_blank"'
     end
   end
 
