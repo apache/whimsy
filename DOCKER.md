@@ -41,6 +41,7 @@ latest 1.10 version (currently 1.10.6).
       host file system outside of your home directory as those files will not
       be visible to the container.
 * `cd` into that directory
+* `touch .whimsy`
 * `git clone git@github.com:apache/whimsy.git` (or alternately
   `git clone https://github.com/apache/whimsy.git`)
 * `cd whimsy`
