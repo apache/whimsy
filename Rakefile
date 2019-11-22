@@ -121,7 +121,14 @@ namespace :svn do
                   sleep n                    
                 end
                 begin
-                  outerr, status = Open3.capture2e('svn up')
+                  r, w = IO.pipe
+                  pid = Process.spawn('svn up', out: w, err: [:child, :out])
+                  w.close
+
+                  pid, status = Process.wait2
+                  outerr = r.read
+                  r.close
+
                   if status.success?
                     break
                   end
