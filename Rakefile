@@ -121,7 +121,14 @@ namespace :svn do
                   sleep n                    
                 end
                 begin
-                  outerr, status = Open3.capture2e('svn up')
+                  r, w = IO.pipe
+                  pid = Process.spawn('svn up', out: w, err: [:child, :out])
+                  w.close
+
+                  pid, status = Process.wait2
+                  outerr = r.read
+                  r.close
+
                   if status.success?
                     break
                   end
@@ -266,7 +273,7 @@ namespace :docker do
   task :update => :build do
     Dir.chdir File.join(__dir__, 'docker') do
       sh 'docker-compose run  --entrypoint ' +
-        %('bash -c "git pull; rake update svn:update git:pull"') +
+        %('bash -c "git pull; rake update"') +
         ' web'
     end
   end
@@ -284,6 +291,23 @@ namespace :docker do
   end
 
   task :entrypoint do
+    # set up symlinks from /root to user's home directory
+    home = ENV['HOST_HOME']
+    if home and File.exist? home
+      %w(.gitconfig .ssh .subversion).each do |mount|
+        if File.exist? "/root/#{mount}"
+          if File.symlink? "/root/#{mount}"
+            next if File.realpath("/root/#{mount}") == "#{home}/#{mount}"
+            rm_f "/root/#{mount}"
+          else
+            rm_rf "/root/#{mount}"
+          end
+        end
+
+        symlink "#{home}/#{mount}", "/root/#{mount}"
+      end
+    end
+
     sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
     sh 'apache2ctl -DFOREGROUND'
   end

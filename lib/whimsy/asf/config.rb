@@ -7,28 +7,58 @@ module ASF
 
   #
   # Support for local (development) configuration overrides to be stored in
-  # <tt>~/.whimsy</tt> files in YAML format.  Allows the specification of where
+  # <tt>.whimsy</tt> files in YAML format.  Allows the specification of where
   # subversion, git, and other files are stored, where updated files are
   # cached, mailing list configuration, and other values.
+  #
+  # Any .whimsy file in your home directory is processed first.
+  #
+  # Additionally, a search is made for .whimsy files in the current working
+  # directory and then working up the directory path and finally in /srv.
+  # If such a .whimsy file is found, it will not only be processed for
+  # overrides to the configuration, it will establish the default root
+  # directory for a number of files/directories (among them, svn, git,
+  # and subscriptions).
   #
   class Config
     @home = ENV['HOME'] || Dir.home(Etc.getpwuid.name)
 
-    @config = YAML.load_file("#@home/.whimsy") rescue {}
+    @config = {}
+    if File.exist? "#@home/.whimsy"
+      @config.merge! YAML.load_file("#@home/.whimsy") rescue {}
+    end
+
+    # Search up the directory path for a .whimsy file containing overrides.
+    # Default @root to /srv if no such file is found.
+    @root = File.realpath(Dir.pwd)
+    @root = loop do
+      break '/srv' if @root == @home
+      break @root if File.exist? "#@root/.whimsy"
+      break '/srv' if @root == '/'
+
+      @root = File.dirname(@root)
+    end
+
+    if File.exist? "#@root/.whimsy"
+      @config.merge! YAML.load_file("#@root/.whimsy") || {}
+    end
+
+    # capture root
+    @config[:root] ||= @root
 
     # allow for test overrides
     @testdata = {}
 
     # default :svn and :git
-    @config[:svn] ||= '/srv/svn/*'
-    @config[:git] ||= '/srv/git/*'
+    @config[:svn] ||= "#@root/svn/*"
+    @config[:git] ||= "#@root/git/*"
 
     # The cache is used for local copies of SVN files that may be updated by Whimsy
     # for example: podlings.xml
     # www/roster/views/actions/ppmc.json.rb (write)
     # lib/whimsy/asf/podlings.rb (read)
     # see: http://mail-archives.apache.org/mod_mbox/whimsical-dev/201705.mbox/%3CCAFG6u8FJwvWvnd29O-cUZyQnCXrRvWSRDc11zaPx6_Y4ihnsfg%40mail.gmail.com%3E
-    @config[:cache] ||= '/srv/cache'
+    @config[:cache] ||= "#@root/cache"
 
     # Contains the data files from the ezmlm mail server, e.g.
     # list-subs - subscriptions
@@ -36,7 +66,7 @@ module ASF
     # The above are used by mlist.rb
     # list-flags - flags domain listname
     # The above are used by mail.rb
-    @config[:subscriptions] ||= '/srv/subscriptions'
+    @config[:subscriptions] ||= "#@root/subscriptions"
 
     @config[:lib] ||= []
 
@@ -77,4 +107,10 @@ module ASF
 
   end
 
+end
+
+# For debugging purposes, dump the configuration
+if __FILE__ == $0
+  require 'pp'
+  pp ASF::Config.instance_variable_get(:@config)
 end

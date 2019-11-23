@@ -5,8 +5,10 @@ services:
     build: .
     ports: 
       - "1999:80"
+    environment:
+      - "HOST_HOME=$HOME"
     volumes:
       - ../..:/srv
-      - $HOME/.subversion:/root/.subversion
-      - $HOME/.gitconfig:/root/.gitconfig
-      - $HOME/.ssh:/root/.ssh
+      - $HOME/.subversion:/$HOME/.subversion
+      - $HOME/.gitconfig:/$HOME/.gitconfig
+      - $HOME/.ssh:/$HOME/.ssh

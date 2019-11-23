@@ -26,37 +26,39 @@ noticeably slower than a native (non-container) installation of whimsy.
 Installation instructions
 -------------------------
 
+First, ensure the subversion [file system
+format](https://www.visualsvn.com/support/topic/00135/#FilesystemFormat) of the
+used by the host machine matches the format used by the container.  Currently
+macOS Catalina/Xcode provides svn 1.10.4 and the Dockerfile downloads the
+latest 1.10 version (currently 1.10.6).
+
 * Create an empty directory.  Note: while you _can_ use an existing clone of
   Whimsy (and in particular, you _may_ be able to use the `/srv` directories
   defined by the [macOS](MACOSX.md) instructions), be aware of the following:
     * Files in the parent directory of the Whimsy clone may be created,
       overwritten, or deleted by this process.
-    * Should the `svn` and `git` directories in this directory contain
-      checkouts/clones made by the host operating system, it is imperative that
-      the [file system
-      format](https://www.visualsvn.com/support/topic/00135/#FilesystemFormat)
-      of the repository manager format used by the host machine matches the
-      format used by the container.  Currently macOS Catalina/Xcode provides
-      svn 1.10.4 and the Dockerfile downloads the latest 1.10 version
-      (currently 1.10.6).
     * The `svn` and `git` sub-directories cannot be links to another part of
-      host file system as these will not be visible to the container
+      host file system outside of your home directory as those files will not
+      be visible to the container.
 * `cd` into that directory
+* `touch .whimsy`
 * `git clone git@github.com:apache/whimsy.git` (or alternately
   `git clone https://github.com/apache/whimsy.git`)
 * `cd whimsy`
 * Start Docker if necessary
-* `rake docker:update`
+* `rake docker:update svn:update git:pull`
 * `rake docker:up`
 * visit `http://localhost:1999/` in your favorite browser
 
-Note: the `rake docker:update` step will take a long time as it will need to
-download and install all of the Ubuntu packages, Ruby gems, build and
-install Passenger, checkout numerous svn repositories and two git
-repositories.  The good news is that this can be entirely unattended as
-there will be no prompts required during this process (except possibly for SVN updates).
-If you wish to create the Ubuntu image separately, run `rake docker:build` (this is
-invoked as part of docker:update)
+Note: the `rake docker:update svn:update git:pull` step will take a long time as
+it will need to download and install all of the Ubuntu packages, Ruby gems,
+build and install Passenger, checkout numerous svn repositories and two git
+repositories.  The good news is that this can be entirely unattended as there
+will be no prompts required during this process (except possibly for SVN
+updates).
+
+If you wish to create the Ubuntu image separately, run `rake docker:build`
+(this is invoked as part of docker:update)
 
 This should be enough to get the board agenda tool to launch.  It is not
 known yet what functions work and what functions do not.
