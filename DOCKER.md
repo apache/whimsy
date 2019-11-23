@@ -23,14 +23,22 @@ A development class machine and a high speed internet connection would
 be in order.  Some things appear to perform well, other things perform
 noticeably slower than a native (non-container) installation of whimsy.
 
-Installation instructions
--------------------------
-
-First, ensure the subversion [file system
+You will also need to ensure the subversion [file system
 format](https://www.visualsvn.com/support/topic/00135/#FilesystemFormat) of the
 used by the host machine matches the format used by the container.  Currently
 macOS Catalina/Xcode provides svn 1.10.4 and the Dockerfile downloads the
 latest 1.10 version (currently 1.10.6).
+
+Finally, a note on password stores.  Inside ~/.subversion/config, you will see
+a list of available stores, which currently is `gnome-keyring`, `kwallet`,
+`gpg-agent`, `keychain`, and `windows-cryptoapi`.  The only ones that are
+available to an Ubuntu container are ones marked as for "Unix-like systems".
+If you chose another (e.g., keychain) then you will either need to do all of
+your svn checkouts and updates from the host or you will be prompted for your
+password if you attempt to do these operations from within the container.
+
+Installation instructions
+-------------------------
 
 * Create an empty directory.  Note: while you _can_ use an existing clone of
   Whimsy (and in particular, you _may_ be able to use the `/srv` directories
@@ -88,7 +96,6 @@ Known not to work (ToDos)
   browsers)
 * Automatic restarting of passenger based tools when source code changes are
   made.
-* Having the container grab passwords from the macOS keychain
 
 Uninstallation procedures
 -------------------------
