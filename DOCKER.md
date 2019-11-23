@@ -86,7 +86,6 @@ Known not to work (ToDos)
 * Automatic restarting of passenger based tools when source code changes are
   made.
 * Having the container grab passwords from the macOS keychain
-* Fix up CA cert handling
 
 Uninstallation procedures
 -------------------------
