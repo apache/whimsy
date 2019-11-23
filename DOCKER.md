@@ -50,6 +50,9 @@ latest 1.10 version (currently 1.10.6).
 * `rake docker:up`
 * visit `http://localhost:1999/` in your favorite browser
 
+To get a shell on the container, open a terminal console in the work directory
+and run `rake docker:exec`.
+
 Note: the `rake docker:update svn:update git:pull` step will take a long time as
 it will need to download and install all of the Ubuntu packages, Ruby gems,
 build and install Passenger, checkout numerous svn repositories and two git
