@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency("tzinfo")
   s.add_dependency("tzinfo-data")
   s.add_dependency("wunderbar")
+  s.add_dependency("rdoc")
 
   # If your tests use any gems, include them here
   # s.add_development_dependency("mocha") # for example

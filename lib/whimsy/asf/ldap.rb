@@ -259,6 +259,11 @@ module ASF
       File.write(ldap_conf, content) unless content == File.read(ldap_conf)
     end
 
+    # determine if ldap has been configured atleast once
+    def self.configured?
+      return File.read("#{ETCLDAP}/ldap.conf").include? "asf-ldap-client.pem"
+    end
+
     # modify an entry in LDAP; dump information on LDAP errors
     def self.modify(dn, list)
       ASF.ldap.modify(dn, list)
