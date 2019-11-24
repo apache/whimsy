@@ -5,7 +5,7 @@
 Sample input:
 ---- cut here ---
 
-/srv/svn/Bills
+/srv/svn/Meetings
 Updating '.':
 At revision 67610.
 

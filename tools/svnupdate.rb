@@ -56,17 +56,5 @@ elsif mail.subject =~ %r{^committers: r\d+ -( in)? /committers/board} # committe
     end
   end
 
-elsif mail.subject =~ %r{^bills: r\d+ -( in)? /financials/Bills} # operations@
-
-  # prevent concurrent updates being performed by the cron job
-  File.open(LOG, File::RDWR|File::CREAT, 0644) do |log|
-    log.flock(File::LOCK_EX)
-
-    Dir.chdir '/srv/svn/Bills' do
-      `svn cleanup`
-      `svn update`
-    end
-  end
-
 end
 
