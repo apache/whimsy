@@ -1,0 +1,215 @@
+#!/usr/bin/env ruby
+require 'fileutils'
+require 'tmpdir'
+
+unless RUBY_PLATFORM.include? 'darwin'
+  STDERR.puts "This script is intended to be run on macOS"
+  exit 1
+end
+
+unless (RUBY_VERSION.split('.').map(&:to_i) <=> [2, 4, 1]) >= 0
+  STDERR.puts "Ruby 2.4.1 or later is required"
+  exit 1
+end
+
+WHIMSY = File.realpath File.expand_path('..', __dir__)
+COMMAND = File.realpath($0)
+Dir.chdir WHIMSY
+
+restart_apache = false
+
+### Install Homebrew
+
+if `which brew`.empty?
+  script = 'https://raw.githubusercontent.com/Homebrew/install/master/install'
+  eval `curl -fsSL #{script}`
+elsif Process.uid != 0
+  `brew update`
+end
+
+## Install Node.js
+
+system 'brew install node' if `which node`.empty?
+system 'npm install -g npm' if `which npm`.empty?
+
+# Prompt for xcode installation
+`svn --version`
+
+# Install passenger
+
+if `which passenger`.empty?
+  system 'brew install passenger'
+end
+
+# Switch to root
+
+def sudo
+  if Process.uid != 0
+    system "sudo", RbConfig.ruby, COMMAND, *ARGV
+    exit $?.exitstatus unless $?.success?
+  else
+    yield
+  end
+end
+
+# Configure passenger
+
+passenger_conf = '/etc/apache2/other/passenger.conf'
+if Process.uid == 0
+  instructions = `su $SUDO_USER -c "brew info passenger"`
+else
+  instructions = `brew info passenger`
+end
+section = instructions[/To activate Phusion Passenger for Apache.*(\n\n|\z)/m]
+snippet = section.scan(/^ .*/).join("\n")
+snippet[/Passenger\w*Ruby\s+(.*)/, 1] = RbConfig.ruby
+if not File.exists?(passenger_conf) or File.read(passenger_conf) != snippet
+  sudo do
+    File.write passenger_conf, snippet
+  end
+end
+
+### Install bundler
+
+sudo {system 'gem install bundler'} if `which bundle`.empty?
+
+### Installl gems
+
+if Process.uid != 0 and not File.exist?("#{WHIMSY}/Gemfile.lock")
+  # collect up all gems and install them so the sudo password is only
+  # asked for once
+  gemlines = Dir["#{WHIMSY}/**/Gemfile"].
+    map {|file| File.read file}.join.scan(/^\s*gem\s.*/)
+
+  if File.exist? "#{WHIMSY}/asf.gemspec"
+    gemlines +=
+      File.read("#{WHIMSY}/asf.gemspec").scan(/add_dependency\((.*)\)/).
+      map {|(line)| "gem #{line}"}
+  end
+
+  gems = gemlines.map {|line| [line[/['"](.*?)['"]/, 1], line.strip]}.to_h
+  gems['whimsy-asf'].sub! /\bpath:.*/, "path: #{WHIMSY.inspect}"
+
+  Dir.mktmpdir do |dir|
+    Dir.chdir dir do
+      File.write "Gemfile", 
+        "source 'https://rubygems.org'\n#{gems.values.join("\n")}"
+
+      system "bundle install"
+    end
+  end
+
+  Dir.chdir WHIMSY do
+    system "rake", "update"
+  end
+end
+
+### Create /srv
+
+mac_version = `sw_vers`[/ProductVersion:\s+(.*)/, 1]
+unless Dir.exist? '/srv'
+  sudo do
+    if (mac_version.split('.').map(&:to_i) <=> [10, 15, 0]) >= 0
+      # Catalina or later
+      Dir.mkdir '/var/whimsy' unless Dir.exist? '/var/whimsy'
+      FileUtils.touch '/etc/synthetic.conf'
+      SYNTHETIC = '/etc/synthetic.conf'
+      unless File.read(SYNTHETIC).inslude? "/var/whimsy"
+        File.write SYNTHETIC, File.read(SYNTHETIC) + "srv\t/var/whimsy\n"
+        STDERR.puts "#{SYNTHETIC} updated; reboot machine and rerun this script"
+        exit 1
+      end
+    else
+      # prior to Catalina
+      Dir.mkdir '/srv'
+    end
+  end
+end
+
+# relocate whimsy clone
+if not Dir.exist? '/srv/whimsy'
+  sudo do
+    FileUtils.mv WHIMSY, '/srv/whimsy'
+    File.symlink '/srv/whimsy', WHIMSY
+  end
+end
+
+### Configure LDAP
+
+if File.exist? "#{WHIMSY}/Gemfile.lock"
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
+  require 'whimsy/asf'
+  sudo {ASF::LDAP.configure} unless ASF::LDAP.configured?
+end
+
+### Make whimsy.local an alias for your machine
+
+hosts = File.read('/etc/hosts')
+unless hosts.include? 'whimsy.local'
+  sudo do
+    hosts[/^[:\d].*\slocalhost\b.*()/, 1] = ' whimsy.local'
+    File.write '/etc/hosts', hosts
+  end
+end
+
+### Configure httpd
+
+HTTPD_CONF = '/etc/apache2/httpd.conf'
+
+config = File.read(HTTPD_CONF)
+
+instructions = File.read(File.expand_path('../MACOSX.md', __dir__))
+
+section = instructions[/^Configure whimsy.local vhost\n--+\n.*?\n--/m]
+
+uncomment = section[/Uncomment.*?```(.*?)```/m, 1]
+add = section[/Add.*?```(.*?)```/m, 1].strip
+
+uncomment.scan(/^\S.*/).each do |line|
+  config.sub!(/^\s*#\s*#{line}\s*$/) { $&.sub('#', '') }
+
+  if config !~ /^\s*#{line}\s*$/
+    STDERR.puts "Not found: #{line}"
+    exit 1
+  end
+end
+
+config += "\n" unless config.end_with? "\n"
+
+add.scan(/^\S.*/).each do |line|
+  if config !~ /^\s*#{line}\s*$/
+    config += "#{line}\n"
+  end
+end
+
+if config != File.read(HTTPD_CONF)
+  sudo do
+    File.rename HTTPD_CONF, HTTPD_CONF + ".original"
+    File.write(HTTPD_CONF, config)
+  end
+
+  restart_apache = true
+end
+
+wconf_source = "#{WHIMSY}/config/whimsy.conf"
+wconf_target = '/private/etc/apache2/other/whimsy.conf'
+if 
+  not File.exist?(wconf_target) or 
+  File.read(wconf_target) != File.read(wconf_source)
+then
+  sudo do
+    FileUtils.cp wconf_source, wconf_target
+  end
+
+  restart_apache = true
+end
+
+# Start Apache httpd
+
+if Process.uid == 0
+  if not `launchctl list`.include? 'org.apache.httpd'
+    `launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist`
+  elsif restart_apache
+    `apachectl restart`
+  end
+end
