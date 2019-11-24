@@ -108,10 +108,12 @@ end
 
 mac_version = `sw_vers`[/ProductVersion:\s+(.*)/, 1]
 unless Dir.exist? '/srv'
+  group = `id #{ENV['SUDO_USER']}`[/gid=\d+\((\w+)\)/, 1]
   sudo do
     if (mac_version.split('.').map(&:to_i) <=> [10, 15, 0]) >= 0
       # Catalina or later
       Dir.mkdir '/var/whimsy' unless Dir.exist? '/var/whimsy'
+      FileUtils.chown ENV['SUDO_USER'], group, '/var/whimsy'
       FileUtils.touch '/etc/synthetic.conf'
       SYNTHETIC = '/etc/synthetic.conf'
       unless File.read(SYNTHETIC).inslude? "/var/whimsy"
@@ -122,6 +124,7 @@ unless Dir.exist? '/srv'
     else
       # prior to Catalina
       Dir.mkdir '/srv'
+      FileUtils.chown ENV['SUDO_USER'], group, '/srv'
     end
   end
 end
