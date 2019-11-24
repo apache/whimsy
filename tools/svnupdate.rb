@@ -18,7 +18,7 @@ def update(dir)
   File.open(LOG, File::RDWR|File::CREAT, 0644) do |log|
     log.flock(File::LOCK_EX)
 
-    $stderr.puts "#{Time.now} Updating #{dir}" # Temporary test
+    $stderr.puts "#{Time.now} Updating #{dir}" # Record updates
     Dir.chdir dir do
       $stderr.puts `svn cleanup`
       $stderr.puts `svn update`
@@ -30,31 +30,16 @@ end
 
 if mail.subject =~ %r{^board: r\d+ -( in)? /foundation/board} # board-commits@
 
-  # prevent concurrent updates being performed by the cron job
-  File.open(LOG, File::RDWR|File::CREAT, 0644) do |log|
-    log.flock(File::LOCK_EX)
-
-    Dir.chdir '/srv/svn/foundation_board' do
-      `svn cleanup`
-      `svn update`
-    end
-  end
+  update '/srv/svn/foundation_board'
 
 elsif mail.subject =~ %r{^foundation: r\d+ -( in)? /foundation} # foundation-commits@
+
   # includes members.txt
   update '/srv/svn/foundation'
 
 elsif mail.subject =~ %r{^committers: r\d+ -( in)? /committers/board} # committers-cvs@
 
-  # prevent concurrent updates being performed by the cron job
-  File.open(LOG, File::RDWR|File::CREAT, 0644) do |log|
-    log.flock(File::LOCK_EX)
-
-    Dir.chdir '/srv/svn/board' do
-      `svn cleanup`
-      `svn update`
-    end
-  end
+  update '/srv/svn/board'
 
 end
 
