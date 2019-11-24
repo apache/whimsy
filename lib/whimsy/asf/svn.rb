@@ -107,7 +107,13 @@ module ASF
       result = self.find(name)
 
       if not result
-        raise Exception.new("Unable to find svn checkout for #{@base + name}")
+        entry = repo_entry(name)
+        if entry
+          raise Exception.new("Unable to find svn checkout for " +
+            "#{@base+entry['url']} (#{name})")
+        else
+          raise Exception.new("Unable to find svn checkout for #{name}")
+        end
       end
 
       result
