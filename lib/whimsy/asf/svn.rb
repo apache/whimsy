@@ -1,5 +1,4 @@
 require 'uri'
-require 'thread'
 require 'open3'
 require 'fileutils'
 require 'tmpdir'
