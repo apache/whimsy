@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-print "Content-type: text/plain\r\n\r\n"
+print "Content-type: text/plain; charset=UTF-8\r\n\r\n"
 
 ENV.sort.each do |k,v|
   if k.eql? 'HTTP_AUTHORIZATION'
