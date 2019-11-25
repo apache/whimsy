@@ -308,6 +308,21 @@ namespace :docker do
       end
     end
 
+    mkdir_p '/srv/whimsy/www' unless Dir.exist? '/srv/whimsy/www'
+    mkdir_p '/srv/whimsy/members' unless Dir.exist? '/srv/whimsy/members'
+
+    unless File.exist? '/srv/whimsy/www/members/log'
+      ln_s '/var/log/apache2', '/srv/whimsy/www/members/log'
+    end
+
+    begin
+      mode = File.stat('/var/log/apache2').mode
+      if mode & 7 != 5
+        chmod 0755, '/var/log/apache2'
+      end
+    rescue
+    end
+
     sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
     sh 'apache2ctl -DFOREGROUND'
   end
