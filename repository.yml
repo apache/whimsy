@@ -1,3 +1,7 @@
+#
+# This file should not be processed directly
+# Please use the ASF::SVN and ASF::Git APIs instead
+#
 ---
 :git:
 
@@ -9,8 +13,15 @@
     url: https://github.com/letsencrypt/letsencrypt
 
 # N.B. the names in the section below should not be changed as they are used by Ruby
+# Entries that are not intended to have local workspaces are indicated by: 'depth: skip'
+# Such entries are for url lookup only, e.g. Bills
 
 :svn:
+
+  Bills:
+    url: private/financials/Bills
+    depth: skip
+    
 
   Meetings:
     url: private/foundation/Meetings

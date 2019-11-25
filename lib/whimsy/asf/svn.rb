@@ -68,13 +68,14 @@ module ASF
       self.find!(name)
     end
 
-    # Get all the SVN repo entries
+    # Get the SVN repo entries corresponding to local checkouts
+    # Excludes those that are present as aliases only
     def self.repo_entries
-      self.repos # refresh @@repository_entries
-      @@repository_entries[:svn]
+      self._all_repo_entries.reject{|k,v| v['depth'] == 'skip'}
     end
 
     # fetch a repository entry by name
+    # Excludes those that are present as aliases only
     def self.repo_entry(name)
       self.repo_entries[name]
     end
@@ -89,6 +90,7 @@ module ASF
     end
 
     # get private and public repo names
+    # Excludes aliases
     # @return [['private1', 'privrepo2', ...], ['public1', 'pubrepo2', ...]
     def self.private_public
       prv = []
@@ -104,8 +106,9 @@ module ASF
     end
 
     # fetch a repository URL by name
+    # Includes aliases
     def self.svnurl(name)
-      entry = self.repo_entry(name) or return nil
+      entry = self._all_repo_entries[name] or return nil
       url = entry['url']
       unless url # bad entry
         raise Exception.new("Unable to find url attribute for SVN entry #{name}")
@@ -114,6 +117,7 @@ module ASF
     end
 
     # fetch a repository URL by name - abort if not found
+		# Includes aliases
     def self.svnurl!(name)
       entry = self.svnurl(name)
       unless entry
@@ -124,6 +128,7 @@ module ASF
 
     # find a local directory corresponding to a path in Subversion.  Returns
     # <tt>nil</tt> if not found.
+		# Excludes aliases
     def self.find(name)
       return @testdata[name] if @testdata[name]
 
@@ -391,11 +396,19 @@ module ASF
         FileUtils.rm_rf tmpdir
       end
     end
+
+    private
+    
+    # Get all the SVN entries
+    # Includes those that are present as aliases only
+    # Not intended for external use
+    def self._all_repo_entries
+      self.repos # refresh @@repository_entries
+      @@repository_entries[:svn]
+    end
+
   end
 
-  def self.classify_repos()
-    
-  end
 end
 
 if __FILE__ == $0 # local testing
