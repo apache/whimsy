@@ -15,7 +15,6 @@ AUTHMAP = { # From whimsy-vm4.apache.org.yaml
   'ASF Secretarial Team' => 'text-danger'
 }
 AUTHPUBLIC = 'glyphicon-eye-open'
-IS_PRIVATE = /\A(private|infra\/infrastructure)/
 ASFSVN = /ASF::SVN/
 SCANDIRSVN = "../"
 WWWAUTH = /WWW-Authenticate: Basic realm/
@@ -115,17 +114,6 @@ def get_annotated_scan(dir)
   scan = scan_dir(dir)
   auth = get_auth()
   return annotate_scan(scan, auth)
-end
-
-# Read repository.yml for all :svn dirs names to scan for
-# @return [['private1', 'privrepo2', ...], ['public1', 'pubrepo2', ...]
-def read_repository(repofile)
-  svn = YAML.load_file(repofile)[:svn]
-  repos = [[], []]
-  svn.each do |repo, data|
-    data['url'] =~ IS_PRIVATE ? repos[0] << repo : repos[1] << repo
-  end
-  return repos
 end
 
 # Build a regex union from ASFSVN and an array

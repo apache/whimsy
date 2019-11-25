@@ -27,7 +27,7 @@ _html do
         emit_authmap
       }
     ) do
-      priv, pub = read_repository(File.expand_path('../../../repository.yml', __FILE__))
+      priv, pub = ASF::SVN.private_public
       priv = build_regexp(priv)
       pub = build_regexp(pub)
       scan = scan_dir_svn('../../', [priv, pub])

@@ -69,10 +69,15 @@ module ASF
       self.find!(name)
     end
 
+    # Get all the SVN repo entries
+    def self.repo_entries
+      self.repos # refresh @@repository_entries
+      @@repository_entries[:svn]
+    end
+
     # fetch a repository entry by name
     def self.repo_entry(name)
-      self.repos # refresh @@repository_entries
-      @@repository_entries[:svn][name]
+      self.repo_entries[name]
     end
 
     # fetch a repository entry by name - abort if not found
@@ -82,6 +87,21 @@ module ASF
         raise Exception.new("Unable to find repository entry for #{name}")
       end
       entry
+    end
+
+    # get private and public repo names
+    # @return [['private1', 'privrepo2', ...], ['public1', 'pubrepo2', ...]
+    def self.private_public
+      prv = []
+      pub = []
+      self.repo_entries().each do |name, entry|
+        if entry['url'].start_with? 'asf/'
+          pub << name
+        else
+          prv << name
+        end
+      end
+      return prv, pub
     end
 
     # fetch a repository URL by name
@@ -374,6 +394,9 @@ module ASF
     end
   end
 
+  def self.classify_repos()
+    
+  end
 end
 
 if __FILE__ == $0 # local testing
