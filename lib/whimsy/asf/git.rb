@@ -42,6 +42,11 @@ module ASF
       @semaphore.synchronize do
         git = Array(ASF::Config.get(:git)).map {|dir| dir.untaint}
 
+        # reload if repository changes
+        if File.exist?(REPOSITORY) && @@repository_mtime!=File.mtime(REPOSITORY)
+          @repos = nil
+        end
+
         unless @repos
           @@repository_mtime = File.exist?(REPOSITORY) && File.mtime(REPOSITORY)
 
