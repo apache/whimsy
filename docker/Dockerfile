@@ -49,6 +49,8 @@ RUN apt-get update && \
     echo "ServerName whimsy.local" > /etc/apache2/conf-enabled/servername.conf
 COPY work/whimsy.conf /etc/apache2/sites-enabled/000-default.conf
 RUN echo 'SetEnv GEM_HOME /srv/gems' > /etc/apache2/conf-enabled/gemhome.conf
+# Add new items at the end so previous layers can be re-used
+RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y vim
 WORKDIR /srv/whimsy
 EXPOSE 80
 
