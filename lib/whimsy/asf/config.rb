@@ -116,6 +116,9 @@ module ASF
       @testdata[name] = File.expand_path(path).untaint
     end
 
+    def self.root
+      @root
+    end
   end
 
 end
