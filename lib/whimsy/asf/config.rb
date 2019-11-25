@@ -15,10 +15,14 @@ module ASF
   #
   # Additionally, a search is made for .whimsy files in the current working
   # directory and then working up the directory path and finally in /srv.
-  # If such a .whimsy file is found, it will not only be processed for
-  # overrides to the configuration, it will establish the default root
-  # directory for a number of files/directories (among them, svn, git,
-  # and subscriptions).
+  # If such a .whimsy file is found, it will be processed for
+  # overrides to the configuration.
+  #
+  # The configuration value of :root:, if provided, will establish the default
+  # root directory for a number of files/directories (among them, svn, git, and
+  # subscriptions).  If the value is '.' and the parent directory for this
+  # file contains a `whimsy` subdirectory, then the parent directory will
+  # be considered the root.
   #
   class Config
     @home = ENV['HOME'] || Dir.home(Etc.getpwuid.name)
@@ -45,7 +49,13 @@ module ASF
     end
 
     # capture root
-    @config[:root] ||= @root
+    if @config[:root] == '.'
+      @config[:root] ||= @root
+    elsif @config[:root]
+      @root = @config[:root]
+    else
+      @root = '/srv'
+    end
 
     # allow for test overrides
     @testdata = {}
