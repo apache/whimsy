@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 require 'fileutils'
 require 'tmpdir'
+require 'optparse'
+require 'etc'
 
 unless RUBY_PLATFORM.include? 'darwin'
   STDERR.puts "This script is intended to be run on macOS"
@@ -14,45 +16,142 @@ end
 
 WHIMSY = File.realpath File.expand_path('..', __dir__)
 COMMAND = File.realpath($0)
+ARGS = ARGV.dup
 Dir.chdir WHIMSY
 
 restart_apache = false
 
+### Parse options to determine how whimsy code is to be run
+
+option = :www
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: #$0 [options]"
+
+  opts.on('-u', '--user', "Run whimsy under your user") do |opt|
+    option = :user
+  end
+
+  opts.on('-w', '--web', "Run whimsy under the Apache web user") do |opt|
+    option = :web
+  end
+
+  opts.on('-d', '--docker', "Run whimsy on docker") do |opt|
+    option = :docker
+  end
+end.parse!
+
+user = option != :user ? '_www' : (ENV['SUDO_USER'] || Etc.getlogin)
+uid = Etc.getpwnam(user).uid
+gid = Etc.getpwnam(user).gid
+group = Etc.getgrgid(gid).name
+
 ### Install Homebrew
 
-if `which brew`.empty?
-  script = 'https://raw.githubusercontent.com/Homebrew/install/master/install'
-  eval `curl -fsSL #{script}`
-elsif Process.uid != 0
-  `brew update`
+if Process.uid != 0
+  if `which brew`.empty?
+    script = 'https://raw.githubusercontent.com/Homebrew/install/master/install'
+    eval `curl -fsSL #{script}`
+  else
+    `brew update`
+  end
 end
 
 ## Install Node.js
 
-system 'brew install node' if `which node`.empty?
-system 'npm install -g npm' if `which npm`.empty?
+if Process.uid != 0
+  system 'brew install node' if `which node`.empty?
+  system 'npm install -g npm' if `which npm`.empty?
 
-# Prompt for xcode installation
-`svn --version`
+  # Prompt for xcode installation
+  `svn --version`
 
-# Install passenger
+  # Install passenger
 
-if `which passenger`.empty?
-  system 'brew install passenger'
+  if `which passenger`.empty?
+    system 'brew install passenger'
+  end
 end
 
 # Switch to root
 
 def sudo
   if Process.uid != 0
-    system "sudo", RbConfig.ruby, COMMAND, *ARGV
+    system "sudo", RbConfig.ruby, COMMAND, *ARGS
     exit $?.exitstatus unless $?.success?
   else
     yield
   end
 end
 
-# Configure passenger
+### Create /srv
+
+mac_version = `sw_vers`[/ProductVersion:\s+(.*)/, 1]
+unless Dir.exist? '/srv'
+  sudo_user = ENV['SUDO_USER']
+  sudo_group = Etc.getpwnam(sudo_user).gid
+  sudo do
+    if (mac_version.split('.').map(&:to_i) <=> [10, 15, 0]) >= 0
+      # Catalina or later
+      Dir.mkdir '/var/whimsy' unless Dir.exist? '/var/whimsy'
+      FileUtils.chown sudo_user, sudo_group, '/var/whimsy'
+      FileUtils.touch '/etc/synthetic.conf'
+      SYNTHETIC = '/etc/synthetic.conf'
+      unless File.read(SYNTHETIC).include? "/var/whimsy"
+        File.write SYNTHETIC, File.read(SYNTHETIC) + "srv\t/var/whimsy\n"
+        STDERR.puts "#{SYNTHETIC} updated; reboot machine and rerun this script"
+        exit 1
+      end
+    else
+      # prior to Catalina
+      Dir.mkdir '/srv'
+      FileUtils.chown sudo_user, sudo_group, '/srv'
+    end
+  end
+end
+
+# relocate whimsy clone
+if not Dir.exist? '/srv/whimsy'
+  sudo do
+    FileUtils.mv WHIMSY, '/srv/whimsy'
+    File.symlink '/srv/whimsy', WHIMSY
+  end
+end
+
+### Define directories
+directories = [
+  '/srv/agenda',
+  '/srv/cache',
+  '/srv/secretary',
+  '/srv/secretary/tlpreq',
+  '/srv/whimsy/www/board/minutes',
+  '/srv/whimsy/www/logs',
+  '/srv/whimsy/www/public',
+]
+
+directories.each do |dir|
+  sudo {FileUtils.mkdir_p dir} unless Dir.exist? dir
+  sudo {FileUtils.chown_R uid, gid, dir} unless File.stat(dir).uid == uid
+end
+
+### Docker installation
+
+if option == :docker
+  unless system 'docker info > /dev/null 2>&1'
+    STDERR.puts "Please start docker and run this command again"
+    exit 1
+  end
+
+  if Process.uid != 0
+    Dir.chdir '/srv/whimsy' do
+      system 'rake docker:update'
+    end
+  end
+
+  exit
+end
+
+### Configure passenger
 
 passenger_conf = '/etc/apache2/other/passenger.conf'
 if Process.uid == 0
@@ -61,8 +160,9 @@ else
   instructions = `brew info passenger`
 end
 section = instructions[/To activate Phusion Passenger for Apache.*(\n\n|\z)/m]
-snippet = section.scan(/^ .*/).join("\n")
+snippet = section.scan(/^ .*/).join("\n") + "\n"
 snippet[/Passenger\w*Ruby\s+(.*)/, 1] = RbConfig.ruby
+snippet += "PassengerUser #{user}\nPassengerGroup #{group}\n" if option != :user
 if not File.exists?(passenger_conf) or File.read(passenger_conf) != snippet
   sudo do
     File.write passenger_conf, snippet
@@ -101,39 +201,6 @@ if Process.uid != 0 and not File.exist?("#{WHIMSY}/Gemfile.lock")
 
   Dir.chdir WHIMSY do
     system "rake", "update"
-  end
-end
-
-### Create /srv
-
-mac_version = `sw_vers`[/ProductVersion:\s+(.*)/, 1]
-unless Dir.exist? '/srv'
-  group = `id #{ENV['SUDO_USER']}`[/gid=\d+\((\w+)\)/, 1]
-  sudo do
-    if (mac_version.split('.').map(&:to_i) <=> [10, 15, 0]) >= 0
-      # Catalina or later
-      Dir.mkdir '/var/whimsy' unless Dir.exist? '/var/whimsy'
-      FileUtils.chown ENV['SUDO_USER'], group, '/var/whimsy'
-      FileUtils.touch '/etc/synthetic.conf'
-      SYNTHETIC = '/etc/synthetic.conf'
-      unless File.read(SYNTHETIC).include? "/var/whimsy"
-        File.write SYNTHETIC, File.read(SYNTHETIC) + "srv\t/var/whimsy\n"
-        STDERR.puts "#{SYNTHETIC} updated; reboot machine and rerun this script"
-        exit 1
-      end
-    else
-      # prior to Catalina
-      Dir.mkdir '/srv'
-      FileUtils.chown ENV['SUDO_USER'], group, '/srv'
-    end
-  end
-end
-
-# relocate whimsy clone
-if not Dir.exist? '/srv/whimsy'
-  sudo do
-    FileUtils.mv WHIMSY, '/srv/whimsy'
-    File.symlink '/srv/whimsy', WHIMSY
   end
 end
 
@@ -184,6 +251,9 @@ add.scan(/^\S.*/).each do |line|
     config += "#{line}\n"
   end
 end
+
+config[/^User\s+(.*)/, 1] = user
+config[/^Group\s+(.*)/, 1] = group
 
 if config != File.read(HTTPD_CONF)
   sudo do
