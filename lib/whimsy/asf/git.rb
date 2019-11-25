@@ -34,6 +34,7 @@ module ASF
 
     @semaphore = Mutex.new
     @@repository_mtime = nil
+    @@repository_entries = nil
 
     #
     # Scan a list of git directories, looking for local clones.
@@ -49,6 +50,7 @@ module ASF
 
         unless @repos
           @@repository_mtime = File.exist?(REPOSITORY) && File.mtime(REPOSITORY)
+          @@repository_entries = YAML.load_file(REPOSITORY)
 
           @repos = Hash[Dir[*git].map { |name|
             next unless Dir.exist? name.untaint
@@ -64,6 +66,12 @@ module ASF
 
         @repos
       end
+    end
+
+    # Get all the Git repo entries
+    def self.repo_entries
+      self.repos # refresh @@repository_entries
+      @@repository_entries[:git]
     end
 
     #
