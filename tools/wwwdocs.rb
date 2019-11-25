@@ -15,7 +15,6 @@ AUTHMAP = { # From whimsy-vm4.apache.org.yaml
   'ASF Secretarial Team' => 'text-danger'
 }
 AUTHPUBLIC = 'glyphicon-eye-open'
-IS_PRIVATE = /\A(private|infra\/infrastructure)/
 ASFSVN = /ASF::SVN/
 SCANDIRSVN = "../"
 WWWAUTH = /WWW-Authenticate: Basic realm/
@@ -25,12 +24,12 @@ CONSTANT_DEF = /(?<matchconst>[A-Z_]+)\s+=\s+['"](?<matchval>[^#]+)['"]/ # Attem
 def emit_authmap
   _ul do
     _li do
-      _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
+      _span.glyphicon :aria_hidden, :class => "#{AUTHPUBLIC}"
       _ 'Publicly available'
     end
     AUTHMAP.each do |realm, style|
       _li do
-        _span.glyphicon.glyphicon_lock :aria_hidden, class: "#{style}", aria_label: "#{realm}"
+        _span.glyphicon.glyphicon_lock :aria_hidden, :class =>  "#{style}", aria_label: "#{realm}"
         _ "#{realm}"
       end
     end
@@ -40,11 +39,11 @@ end
 # Output a span with the auth level
 def emit_auth_level(level)
   if level
-    _span class: level, aria_label: "#{AUTHMAP.key(level)}" do
+    _span :class =>  level, aria_label: "#{AUTHMAP.key(level)}" do
       _span.glyphicon.glyphicon_lock :aria_hidden
     end
   else
-    _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
+    _span.glyphicon :aria_hidden, :class =>  "#{AUTHPUBLIC}"
   end
 end
 
@@ -115,17 +114,6 @@ def get_annotated_scan(dir)
   scan = scan_dir(dir)
   auth = get_auth()
   return annotate_scan(scan, auth)
-end
-
-# Read repository.yml for all :svn dirs names to scan for
-# @return [['private1', 'privrepo2', ...], ['public1', 'pubrepo2', ...]
-def read_repository(repofile)
-  svn = YAML.load_file(repofile)[:svn]
-  repos = [[], []]
-  svn.each do |repo, data|
-    data['url'] =~ IS_PRIVATE ? repos[0] << repo : repos[1] << repo
-  end
-  return repos
 end
 
 # Build a regex union from ASFSVN and an array

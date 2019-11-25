@@ -53,7 +53,7 @@ _html do
           _li.list_group_item.active do
             _span category.capitalize, id: category
           end
-          links.each do |l, desc|
+          links.sort_by{|k,v| v}.each do |l, desc|
             _li.list_group_item do
               if 2 == desc.length
                 _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"

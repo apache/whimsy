@@ -100,6 +100,8 @@ unless Dir.exist? '/srv'
       unless File.read(SYNTHETIC).include? "/var/whimsy"
         File.write SYNTHETIC, File.read(SYNTHETIC) + "srv\t/var/whimsy\n"
         STDERR.puts "#{SYNTHETIC} updated; reboot machine and rerun this script"
+        puts %(\nPress "y" to reboot now, anything else to exit)
+        system "shutdown -r now" if gets.strip.downcase == "y"
         exit 1
       end
     else

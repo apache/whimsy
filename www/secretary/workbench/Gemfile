@@ -19,7 +19,7 @@ gem 'sanitize'
 gem 'wunderbar'
 gem 'ruby2js', '>= 2.1.18'
 gem 'execjs'
-gem 'listen', ('~> 3.0.7' if RUBY_VERSION =~ /^2\.[01]/)
+gem 'listen'
 gem 'escape'
 
 group :demo do
