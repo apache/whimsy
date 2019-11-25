@@ -17,7 +17,7 @@ gem 'wunderbar', '>= 1.2.6'
 gem 'ruby2js'
 gem 'sinatra'
 gem 'nokogumbo'
-gem 'execjs', ('<2.5.1' if RUBY_VERSION =~ /^1/)
+gem 'execjs'
 
 group :test do
   gem 'rspec'
@@ -27,5 +27,5 @@ end
 
 group :demo do
   gem 'puma'
-  gem 'listen', ('~> 3.0.7' if RUBY_VERSION =~ /^2\.[01]/)
+  gem 'listen'
 end
