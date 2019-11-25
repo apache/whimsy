@@ -6,13 +6,11 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 # SVN Repository status
 #
 
-require 'yaml'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 
 # load list of repositories
-repository_file = File.expand_path('../../../repository.yml', __FILE__)
-repository = YAML.load_file(repository_file)
+repository = ASF::SVN.repo_entries
 
 svnrepos = Array(ASF::Config.get(:svn))
 
@@ -44,7 +42,7 @@ _html do
     end
 
     _tbody do
-      repository[:svn].values.sort_by {|value| value['url']}.each do |svn|
+      repository.values.sort_by {|value| value['url']}.each do |svn|
         local = ASF::SVN.find(svn['url']) unless svn['url'] =~ /^https?:/
 
         color = nil
@@ -167,7 +165,7 @@ _json do
   else
     if @action == 'checkout'
 
-      repo = repository[:svn].find {|name, value| value['url'] == @name}
+      repo = repository.find {|name, value| value['url'] == @name}
       local_path = svnrepos.first.chomp('*') + repo.first
 
       repository_url = @name
