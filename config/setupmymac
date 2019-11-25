@@ -116,7 +116,7 @@ unless Dir.exist? '/srv'
       FileUtils.chown ENV['SUDO_USER'], group, '/var/whimsy'
       FileUtils.touch '/etc/synthetic.conf'
       SYNTHETIC = '/etc/synthetic.conf'
-      unless File.read(SYNTHETIC).inslude? "/var/whimsy"
+      unless File.read(SYNTHETIC).include? "/var/whimsy"
         File.write SYNTHETIC, File.read(SYNTHETIC) + "srv\t/var/whimsy\n"
         STDERR.puts "#{SYNTHETIC} updated; reboot machine and rerun this script"
         exit 1
