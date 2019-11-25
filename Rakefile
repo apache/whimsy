@@ -77,11 +77,13 @@ end
 task :config do
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
+  require 'whimsy/asf/git'
+  require 'whimsy/asf/svn'
 end
 
 namespace :svn do
   task :update => :config do
-    repository = YAML.load_file(File.expand_path('../repository.yml', __FILE__))
+    svnrepos = ASF::SVN.repo_entries || {}
 
     # must be outside loop
     PREFIX = '#!:' # must agree with monitors/svn.rb
@@ -94,7 +96,7 @@ namespace :svn do
       Dir.chdir File.dirname(svn) do
         require 'uri'
         base = URI.parse('https://svn.apache.org/repos/')
-        (repository[:svn] || {}).each do |name, description|
+        svnrepos.each do |name, description|
           puts
           puts File.join(Dir.pwd, name)
           svnpath = (base + description['url']).to_s
@@ -152,12 +154,12 @@ namespace :svn do
 
   task :check => :config do
     # check if the svn repositories have been set up OK
-    repository = YAML.load_file(File.expand_path('../repository.yml', __FILE__))
+    svnrepos = ASF::SVN.repo_entries || {}
     errors = 0
     svn = ASF::Config.get(:svn)
     if svn.instance_of? String and svn.end_with? '/*'
       Dir.chdir File.dirname(svn) do
-        (repository[:svn] || {}).each do |name, description|
+        svnrepos.each do |name, description|
           puts
           puts File.join(Dir.pwd, name)
           if Dir.exist? name
@@ -204,7 +206,7 @@ end
 
 namespace :git do
   task :pull => :config do
-    repository = YAML.load_file(File.expand_path('../repository.yml', __FILE__))
+    gitrepos = ASF::Git.repo_entries() || {}
 
     # clone/pull git repositories
     git = ASF::Config.get(:git)
@@ -213,7 +215,7 @@ namespace :git do
       Dir.chdir File.dirname(git) do
         require 'uri'
         base = URI.parse('git://git.apache.org/')
-        (repository[:git] || {}).each do |name, description|
+        gitrepos.each do |name, description|
           branch = description['branch']
 
           puts
