@@ -75,6 +75,34 @@ module ASF
       @@repository_entries[:svn][name]
     end
 
+    # fetch a repository entry by name - abort if not found
+    def self.repo_entry!(name)
+      entry = self.repo_entry(name)
+      unless entry
+        raise Exception.new("Unable to find repository entry for #{name}")
+      end
+      entry
+    end
+
+    # fetch a repository URL by name
+    def self.svnurl(name)
+      entry = self.repo_entry(name) or return nil
+      url = entry['url']
+      unless url # bad entry
+        raise Exception.new("Unable to find url attribute for SVN entry #{name}")
+      end
+      return (@base+url).to_s
+    end
+
+    # fetch a repository URL by name - abort if not found
+    def self.svnurl!(name)
+      entry = self.svnurl(name)
+      unless entry
+        raise Exception.new("Unable to find url for #{name}")
+      end
+      entry
+    end
+
     # find a local directory corresponding to a path in Subversion.  Returns
     # <tt>nil</tt> if not found.
     def self.find(name)
