@@ -11,6 +11,8 @@ class ICLA < Vue
     _div.buttons do
       _button 'clear form', disabled: @filed,
         onClick: -> {@pubname = @realname = @email = @filename = ''}
+      _button 'revert to mail data', disabled: @filed,
+        onClick: -> {process_response({})}
     end
 
     _form method: 'post', action: '../../tasklist/icla', target: 'content' do
@@ -87,10 +89,9 @@ class ICLA < Vue
     end
   end
 
-  # on initial display, default various fields based on headers, and update
-  # state 
-  def mounted()
-    name = @@headers.name || ''
+  # needs to be called even if post fails
+  def process_response(parsed)
+    name = parsed.FullName || @@headers.name || ''
 
     # reorder name if there is a single comma present
     parts = name.split(',')
@@ -99,9 +100,24 @@ class ICLA < Vue
     end
 
     @realname = name
-    @pubname = name
+    @pubname = parsed.PublicName || name
     @filename = self.genfilename(name)
-    @email = @@headers.from
+    @email = parsed.EMail || @@headers.from
+    @user = parsed.ApacheID || ''
+    @project = parsed.Project
+  end
+
+  # on initial display, default various fields based on headers, and update
+  # state 
+  def mounted()
+    # Parse the ICLA if possible
+    data = {message: window.parent.location.pathname, attachment: @@selected}
+    HTTP.post('../../actions/parse-icla', data).then {|result|
+          process_response(result.parsed)
+        }.catch {|message|
+          process_response({})
+          alert message
+        }
 
     # watch for status updates
     window.addEventListener 'message', self.status_update
