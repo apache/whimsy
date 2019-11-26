@@ -14,9 +14,11 @@ fileext = File.extname(@selected).downcase if @signature.empty?
 
 # verify that a membership form under that name stem doesn't already exist
 if "#@filename#{fileext}" =~ /^\w[-\w]*\.?\w*$/ # check taint requirements
-  form = "#{ASF::SVN['member_apps']}/#@filename#{fileext}"
-  if File.exist? form.untaint
-    _warn "documents/member_apps/#@filename#{fileext} already exists"
+  require 'asf/whimsy/memapps'
+  # returns name if it matches as stem or fully (e.g. for directory)
+  form = ASF::MemApps.search @filename.untaint
+  if form
+    _warn "documents/member_apps/#{form} already exists"
   end
 else
   _warn "Invalid filename or extension"
