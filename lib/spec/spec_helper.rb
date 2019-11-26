@@ -7,6 +7,7 @@ if ENV['RAKE_TEST'] == 'TRUE' or not (ASF::SVN.find('apmail_bin') and ASF::SVN.f
   puts "Overriding data directories"
   ASF::SVN['apmail_bin'] = File.expand_path('../test/svn/apmail_bin', __dir__)
   ASF::SVN['board'] = File.expand_path('../test/svn/board', __dir__)
+  ASF::SVN['templates'] = File.expand_path('../test/svn/templates', __dir__)
   ASF::Config[:subscriptions] = File.expand_path('../test/subscriptions', __dir__)
 else
   TEST_DATA = false
