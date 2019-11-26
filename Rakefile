@@ -79,6 +79,7 @@ task :config do
   require 'whimsy/asf/config'
   require 'whimsy/asf/git'
   require 'whimsy/asf/svn'
+  require 'whimsy/asf/ldap'
 end
 
 namespace :svn do
@@ -292,7 +293,7 @@ namespace :docker do
     end
   end
 
-  task :scaffold do
+  task :scaffold => :config do
     # set up symlinks from /root to user's home directory
     home = ENV['HOST_HOME']
     if home and File.exist? home
