@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'fileutils'
 require 'tmpdir'
 require 'optparse'
 require 'etc'
@@ -20,6 +19,44 @@ ARGS = ARGV.dup
 Dir.chdir WHIMSY
 
 restart_apache = false
+$brew_updated = false
+
+### Convenience methods
+
+# output a header line, in color if available
+def color(line)
+  if STDOUT.isatty and ENV['TERM'].to_s.include? 'color'
+    puts "\n\u001b[34;1m#{line}\u001b[0m"
+  else
+    puts "\n" + line
+  end
+end
+
+# echo a command and run it
+def run *args
+  color "$ " + Array(args).join(' ')
+  Kernel.system *args
+end
+
+# run brew, making sure that a brew update is done before the first command
+def brew *args
+  if not $brew_updated
+    run 'brew', 'update'
+    $brew_updated = true
+  end
+
+  run 'brew', *args
+end
+
+# Switch to root
+def sudo
+  if Process.uid != 0
+    run "sudo", RbConfig.ruby, COMMAND, *ARGS
+    exit $?.exitstatus unless $?.success?
+  else
+    yield
+  end
+end
 
 ### Parse options to determine how whimsy code is to be run
 
@@ -52,34 +89,21 @@ if Process.uid != 0 and option != :docker
   if `which brew`.empty?
     script = 'https://raw.githubusercontent.com/Homebrew/install/master/install'
     eval `curl -fsSL #{script}`
-  else
-    `brew update`
   end
 end
 
 ## Install Node.js
 
 if Process.uid != 0 and option != :docker
-  system 'brew install node' if `which node`.empty?
-  system 'npm install -g npm' if `which npm`.empty?
+  brew 'install', 'node' if `which node`.empty?
+  run 'npm install -g npm' if `which npm`.empty?
 
   # Prompt for xcode installation
   `svn --version`
 
   # Install passenger
   if `which passenger`.empty?
-    system 'brew install passenger'
-  end
-end
-
-# Switch to root
-
-def sudo
-  if Process.uid != 0
-    system "sudo", RbConfig.ruby, COMMAND, *ARGS
-    exit $?.exitstatus unless $?.success?
-  else
-    yield
+    brew 'install', 'passenger'
   end
 end
 
@@ -92,21 +116,22 @@ unless Dir.exist? '/srv'
     sudo_group = Etc.getpwnam(sudo_user).gid
     if (mac_version.split('.').map(&:to_i) <=> [10, 15, 0]) >= 0
       # Catalina or later
-      Dir.mkdir '/var/whimsy' unless Dir.exist? '/var/whimsy'
-      FileUtils.chown sudo_user, sudo_group, '/var/whimsy'
-      FileUtils.touch '/etc/synthetic.conf'
+      run 'mkdir', '/var/whimsy' unless Dir.exist? '/var/whimsy'
+      run 'chown', "#{sudo_user}:{sudo_group}", '/var/whimsy'
+      run 'touch', '/etc/synthetic.conf'
       SYNTHETIC = '/etc/synthetic.conf'
       unless File.read(SYNTHETIC).include? "/var/whimsy"
+        color "$ edit #{SYNTHETIC}"
         File.write SYNTHETIC, File.read(SYNTHETIC) + "srv\t/var/whimsy\n"
         STDERR.puts "#{SYNTHETIC} updated; reboot machine and rerun this script"
         puts %(\nPress "y" to reboot now, anything else to exit)
-        system "shutdown -r now" if gets.strip.downcase == "y"
+        run "shutdown -r now" if gets.strip.downcase == "y"
         exit 1
       end
     else
       # prior to Catalina
-      Dir.mkdir '/srv'
-      FileUtils.chown sudo_user, sudo_group, '/srv'
+      run 'mkdir', '/srv'
+      run 'chown', "#{sudo_user}:{sudo_group}", '/srv'
     end
   end
 end
@@ -114,8 +139,8 @@ end
 # relocate whimsy clone
 if not Dir.exist? '/srv/whimsy'
   sudo do
-    FileUtils.mv WHIMSY, '/srv/whimsy'
-    File.symlink '/srv/whimsy', WHIMSY
+    run 'mv', WHIMSY, '/srv/whimsy'
+    run 'ln', '-s', '/srv/whimsy', WHIMSY
   end
 end
 
@@ -131,8 +156,8 @@ directories = [
 ]
 
 directories.each do |dir|
-  sudo {FileUtils.mkdir_p dir} unless Dir.exist? dir
-  sudo {FileUtils.chown_R uid, gid, dir} unless File.stat(dir).uid == uid
+  sudo {run 'mkdir', '-p', dir} unless Dir.exist? dir
+  sudo {run 'chown', '-R', "#{uid}:{gid}", dir} unless File.stat(dir).uid == uid
 end
 
 ### Docker installation
@@ -145,7 +170,7 @@ if option == :docker
 
   if Process.uid != 0
     Dir.chdir '/srv/whimsy' do
-      system 'rake docker:update'
+      run 'rake docker:update'
     end
   end
 
@@ -166,13 +191,16 @@ snippet[/Passenger\w*Ruby\s+(.*)/, 1] = RbConfig.ruby
 snippet += "PassengerUser #{user}\nPassengerGroup #{group}\n" if option != :user
 if not File.exists?(passenger_conf) or File.read(passenger_conf) != snippet
   sudo do
+    color "$ edit #{passenger_conf}"
     File.write passenger_conf, snippet
+
+    restart_apache = true
   end
 end
 
 ### Install bundler
 
-sudo {system 'gem install bundler'} if `which bundle`.empty?
+sudo {run 'gem install bundler'} if `which bundle`.empty?
 
 ### Installl gems
 
@@ -196,12 +224,12 @@ if Process.uid != 0 and not File.exist?("#{WHIMSY}/Gemfile.lock")
       File.write "Gemfile", 
         "source 'https://rubygems.org'\n#{gems.values.join("\n")}"
 
-      system "bundle install"
+      run "bundle install"
     end
   end
 
   Dir.chdir WHIMSY do
-    system "rake", "update"
+    run "rake", "update"
   end
 end
 
@@ -210,7 +238,12 @@ end
 if File.exist? "#{WHIMSY}/Gemfile.lock"
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf'
-  sudo {ASF::LDAP.configure} unless ASF::LDAP.configured?
+  unless ASF::LDAP.configured?
+    sudo do
+      color '$ ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
+      ASF::LDAP.configure
+    end
+  end
 end
 
 ### Make whimsy.local an alias for your machine
@@ -218,6 +251,7 @@ end
 hosts = File.read('/etc/hosts')
 unless hosts.include? 'whimsy.local'
   sudo do
+    color '$ edit /etc/hosts'
     hosts[/^[:\d].*\slocalhost\b.*()/, 1] = ' whimsy.local'
     File.write '/etc/hosts', hosts
   end
@@ -258,6 +292,7 @@ config[/^Group\s+(.*)/, 1] = group
 
 if config != File.read(HTTPD_CONF)
   sudo do
+    color "$ edit #{HTTP_CONF}"
     File.rename HTTPD_CONF, HTTPD_CONF + ".original"
     File.write(HTTPD_CONF, config)
   end
@@ -272,7 +307,7 @@ if
   File.read(wconf_target) != File.read(wconf_source)
 then
   sudo do
-    FileUtils.cp wconf_source, wconf_target
+    run 'cp', wconf_source, wconf_target
   end
 
   restart_apache = true
@@ -282,9 +317,9 @@ end
 
 if Process.uid == 0
   if not `launchctl list`.include? 'org.apache.httpd'
-    `launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist`
+    run "launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist"
   elsif restart_apache
-    `apachectl restart`
+    run "apachectl restart"
   end
 else
   system 'open http://whimsy.local/'
