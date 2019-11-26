@@ -1,4 +1,5 @@
 require 'open3'
+require_relative 'safetemp'
 
 class Attachment
   IMAGE_TYPES = %w(.gif, .jpg, .jpeg, .png)
