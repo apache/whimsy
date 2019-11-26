@@ -286,4 +286,6 @@ if Process.uid == 0
   elsif restart_apache
     `apachectl restart`
   end
+else
+  system 'open http://whimsy.local/'
 end
