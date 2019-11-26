@@ -29,7 +29,7 @@ begin
   
   path = message.find(iclaname).as_file.path
   
-  ICLAParser.parse(path).sort_by{|k,v| k}.each do |k,v|
+  ICLAParser.parse(path).sort_by{|k,v| k.to_s }.each do |k,v|
     puts "%-20s %s" % [k,v]
   end
   
