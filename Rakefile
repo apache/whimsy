@@ -325,7 +325,7 @@ namespace :docker do
     rescue
     end
 
-    unless File.read('/etc/ldap/ldap.conf').include? 'asf-ldap-client.pem'
+    unless File.read(File.join(ASF::ETCLDAP,'ldap.conf')).include? 'asf-ldap-client.pem'
       sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
     end
   end
