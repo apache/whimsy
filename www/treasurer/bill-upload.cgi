@@ -83,7 +83,7 @@ _html do
       if @file
         _div.well.well_lg do
           # destination directory
-          bills = 'https://svn.apache.org/repos/private/financials/Bills'
+          bills = ASF::SVN.svnurl('Bills')
 
           # validate @file, @dest form parameters
           name = @file.original_filename.gsub(/[^-.\w]/, '_').sub(/^\.+/, '_').untaint
