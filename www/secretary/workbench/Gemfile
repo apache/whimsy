@@ -21,6 +21,7 @@ gem 'ruby2js', '>= 2.1.18'
 gem 'execjs'
 gem 'listen'
 gem 'escape'
+gem 'pdf-reader'
 
 group :demo do
   gem 'puma'
