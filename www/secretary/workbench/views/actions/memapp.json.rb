@@ -12,12 +12,14 @@ message = Mailbox.find(@message)
 # extract file extension
 fileext = File.extname(@selected).downcase if @signature.empty?
 
-# verify that a membership form under that name doesn't already exist
-if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
+# verify that a membership form under that name stem doesn't already exist
+if "#@filename#{fileext}" =~ /^\w[-\w]*\.?\w*$/ # check taint requirements
   form = "#{ASF::SVN['member_apps']}/#@filename#{fileext}"
   if File.exist? form.untaint
     _warn "documents/member_apps/#@filename#{fileext} already exists"
   end
+else
+  _warn "Invalid filename or extension"
 end
 
 # obtain per-user information
