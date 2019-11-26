@@ -42,6 +42,9 @@ module ASF
       ASF::Person.asciize(name.strip.downcase.gsub(/[.,()"]/,''))
     end
 
+    # search for file name
+    # @return filename if it exists, or
+    # return full name if filename matches the stem of a file
     def self.search(filename)
       names = self.names()
       if names.include?(filename)
