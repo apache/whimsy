@@ -87,9 +87,9 @@ end
 
 mac_version = `sw_vers`[/ProductVersion:\s+(.*)/, 1]
 unless Dir.exist? '/srv'
-  sudo_user = ENV['SUDO_USER']
-  sudo_group = Etc.getpwnam(sudo_user).gid
   sudo do
+    sudo_user = ENV['SUDO_USER']
+    sudo_group = Etc.getpwnam(sudo_user).gid
     if (mac_version.split('.').map(&:to_i) <=> [10, 15, 0]) >= 0
       # Catalina or later
       Dir.mkdir '/var/whimsy' unless Dir.exist? '/var/whimsy'
