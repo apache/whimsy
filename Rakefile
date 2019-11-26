@@ -275,7 +275,7 @@ namespace :docker do
   task :update => :build do
     Dir.chdir File.join(__dir__, 'docker') do
       sh 'docker-compose run  --entrypoint ' +
-        %('bash -c "git pull; rake update"') +
+        %('bash -c "rake docker:scaffold; git pull; rake update"') +
         ' web'
     end
   end
@@ -292,7 +292,7 @@ namespace :docker do
     end
   end
 
-  task :entrypoint do
+  task :scaffold do
     # set up symlinks from /root to user's home directory
     home = ENV['HOST_HOME']
     if home and File.exist? home
@@ -325,7 +325,12 @@ namespace :docker do
     rescue
     end
 
-    sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
+    unless File.read('/etc/ldap/ldap.conf').include? 'asf-ldap-client.pem'
+      sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
+    end
+  end
+
+  task :entrypoint => :scaffold do
     sh 'apache2ctl -DFOREGROUND'
   end
 end

@@ -41,14 +41,14 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-user = option != :user ? '_www' : (ENV['SUDO_USER'] || Etc.getlogin)
+user = option == :www ? '_www' : (ENV['SUDO_USER'] || Etc.getlogin)
 uid = Etc.getpwnam(user).uid
 gid = Etc.getpwnam(user).gid
 group = Etc.getgrgid(gid).name
 
 ### Install Homebrew
 
-if Process.uid != 0
+if Process.uid != 0 and option != :docker
   if `which brew`.empty?
     script = 'https://raw.githubusercontent.com/Homebrew/install/master/install'
     eval `curl -fsSL #{script}`
@@ -59,7 +59,7 @@ end
 
 ## Install Node.js
 
-if Process.uid != 0
+if Process.uid != 0 and option != :docker
   system 'brew install node' if `which node`.empty?
   system 'npm install -g npm' if `which npm`.empty?
 
@@ -67,7 +67,6 @@ if Process.uid != 0
   `svn --version`
 
   # Install passenger
-
   if `which passenger`.empty?
     system 'brew install passenger'
   end
