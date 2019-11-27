@@ -101,14 +101,14 @@ namespace :svn do
           puts
           puts File.join(Dir.pwd, name)
           if description['list']
-            puts "Updating listing file"
+            puts "#{PREFIX} Updating listing file"
             old,new = ASF::SVN.updatelisting(name)
             if old == new
-              puts "List is up to date with SVN: #{new}"
+              puts "#{PREFIX} List is up to date with SVN: #{new}"
             elsif old == nil
               puts new
             else
-              puts "List updated: #{old} => SVN: #{new}"
+              puts "#{PREFIX} List updated: #{old} => SVN: #{new}"
             end
           end
           svnpath = (base + description['url']).to_s
