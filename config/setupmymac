@@ -373,6 +373,7 @@ if Process.uid == 0
     run "launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist"
   elsif restart_apache
     run "apachectl restart"
+    sleep 0.5
   end
 else
   system 'open http://whimsy.local/'
