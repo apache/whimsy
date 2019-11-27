@@ -193,6 +193,28 @@ module ASF
       end
     end
 
+    # retrieve a single info item, [err] for a path in svn
+    # requires SVN 1.9+
+    def self.getInfoItem(path, item, user=nil, password=nil)
+      return nil, 'path must not be nil' unless path
+    
+      # build svn info command
+      cmd = ['svn', 'info', path, '--non-interactive', '--show-item', item]
+    
+      # password was supplied, add credentials
+      if password
+        cmd += ['--username', user, '--password', password, '--no-auth-cache']
+      end
+    
+      # issue svn info command
+      out, err, status = Open3.capture3(*cmd)
+      if status.success?
+        return out.chomp
+      else
+        return nil, err
+      end
+    end
+
     # retrieve list, [err] for a path in svn
     def self.list(path, user=nil, password=nil)
       return nil, 'path must not be nil' unless path
@@ -395,6 +417,32 @@ module ASF
       ensure
         FileUtils.rm_rf tmpdir
       end
+    end
+
+    # update directory listing in /srv/svn/<name>.txt
+    def self.updatelisting(name, user=nil, password=nil)
+      listfile = File.join(ASF::Config.root,'svn',"%s.txt" % name)
+      filerev = nil
+      lastrev = 0
+      begin
+        open(listfile) do |l|
+          filerev = l.gets.chomp
+        end
+      rescue
+      end
+      url = self.svnurl(name)
+      lastrev = self.getInfoItem(url,'last-changed-revision',user,password)
+      if filerev == lastrev
+        puts "#{listfile}: #{filerev}"
+      else
+        puts "#{listfile}: #{filerev} SVN: #{lastrev}"
+        list = self.list(url, user, password)
+        open(listfile,'w') do |w|
+          w.puts lastrev
+          w.puts list
+        end 
+      end
+
     end
 
     private
