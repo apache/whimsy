@@ -428,6 +428,7 @@ module ASF
         return nil,"Cannot find URL"
       end
       listfile = File.join(ASF::Config.root,'svn',"%s.txt" % name)
+      listfiletmp = File.join(ASF::Config.root,'svn',"%s.tmp" % name)
       filerev = "0"
       svnrev = "?"
       begin
@@ -441,10 +442,11 @@ module ASF
         begin
           unless filerev == svnrev
             list = self.list(url, user, password)
-            open(listfile,'w') do |w|
+            open(listfiletmp,'w') do |w|
               w.puts svnrev
               w.puts list
-            end 
+            end
+            File.rename(listfiletmp,listfile)
           end
         rescue Exception => e
           return nil,e.inspect
