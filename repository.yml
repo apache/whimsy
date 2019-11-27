@@ -39,6 +39,7 @@
 
   cclas:
     url: private/documents/cclas
+    list: false
 
   comdev-foundation:
     url: asf/comdev/projects.apache.org/trunk/site/json/foundation
@@ -55,9 +56,11 @@
 
   grants:
     url: private/documents/grants
+    list: false
 
   iclas:
     url: private/documents/iclas
+    list: false
 
   incubator-podlings:
     url: asf/incubator/public/trunk/content/podlings
@@ -73,6 +76,7 @@
 
   member_apps:
     url: private/documents/member_apps
+    list: true
 
   minutes:
     url: asf/infrastructure/site/trunk/content/foundation/records/minutes
