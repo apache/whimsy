@@ -208,6 +208,33 @@ module ASF
       end
     end
 
+    # svn info details as a Hash
+    # @return hash or [nil, error message]
+    # Sample:
+    # {
+    #   "Path"=>"/srv/svn/steve",
+    #   "Working Copy Root Path"=>"/srv/svn/steve",
+    #   "URL"=>"https://svn.apache.org/repos/asf/steve/trunk",
+    #   "Relative URL"=>"^/steve/trunk",
+    #   "Repository Root"=>"https://svn.apache.org/repos/asf",
+    #   "Repository UUID"=>"13f79535-47bb-0310-9956-ffa450edef68",
+    #   "Revision"=>"1870481",
+    #   "Node Kind"=>"directory",
+    #   "Schedule"=>"normal",
+    #   "Depth"=>"empty",
+    #   "Last Changed Author"=>"somebody",
+    #   "Last Changed Rev"=>"1862550",
+    #   "Last Changed Date"=>"2019-07-04 13:21:36 +0100 (Thu, 04 Jul 2019)"
+    # }
+    def self.getInfoAsHash(path, user=nil, password=nil)
+      out, err = getInfo(path, user, password)
+      if out
+        Hash[(out.scan(%r{([^:]+): (.+)[\r\n]+}))]
+      else
+        return out, err
+      end
+    end
+
     # retrieve a single info item, [err] for a path in svn
     # requires SVN 1.9+
     # item must be one of the following:
