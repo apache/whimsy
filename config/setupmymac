@@ -345,7 +345,7 @@ config[/^Group\s+(.*)/, 1] = group
 
 if config != File.read(HTTPD_CONF)
   sudo do
-    color "$ edit #{HTTP_CONF}"
+    color "$ edit #{HTTPD_CONF}"
     File.rename HTTPD_CONF, HTTPD_CONF + ".original"
     File.write(HTTPD_CONF, config)
   end
