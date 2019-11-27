@@ -51,7 +51,7 @@ end
 # Switch to root
 def sudo
   if Process.uid != 0
-    run "sudo", RbConfig.ruby, COMMAND, *ARGS
+    system "sudo", RbConfig.ruby, COMMAND, *ARGS
     exit $?.exitstatus unless $?.success?
   else
     yield
@@ -117,7 +117,7 @@ unless Dir.exist? '/srv'
     if (mac_version.split('.').map(&:to_i) <=> [10, 15, 0]) >= 0
       # Catalina or later
       run 'mkdir', '/var/whimsy' unless Dir.exist? '/var/whimsy'
-      run 'chown', "#{sudo_user}:{sudo_group}", '/var/whimsy'
+      run 'chown', "#{sudo_user}:#{sudo_group}", '/var/whimsy'
       run 'touch', '/etc/synthetic.conf'
       SYNTHETIC = '/etc/synthetic.conf'
       unless File.read(SYNTHETIC).include? "/var/whimsy"
@@ -131,7 +131,7 @@ unless Dir.exist? '/srv'
     else
       # prior to Catalina
       run 'mkdir', '/srv'
-      run 'chown', "#{sudo_user}:{sudo_group}", '/srv'
+      run 'chown', "#{sudo_user}:#{sudo_group}", '/srv'
     end
   end
 end
@@ -157,7 +157,10 @@ directories = [
 
 directories.each do |dir|
   sudo {run 'mkdir', '-p', dir} unless Dir.exist? dir
-  sudo {run 'chown', '-R', "#{uid}:{gid}", dir} unless File.stat(dir).uid == uid
+
+  unless File.stat(dir).uid == uid
+    sudo {run 'chown', '-R', "#{uid}:#{gid}", dir}
+  end
 end
 
 ### Docker installation
