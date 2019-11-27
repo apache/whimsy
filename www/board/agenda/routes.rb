@@ -508,7 +508,7 @@ get '/new' do
   # retrieve latest committee info
   cinfo = File.join(ASF::SVN['board'], 'committee-info.txt')
   info = ASF::SVN.getInfo(cinfo, env.user, env.password)
-  revision, contents = ASF::SVN.get(cinfo, env.user, env.password)
+  _, contents = ASF::SVN.get(cinfo, env.user, env.password)
   ASF::Committee.load_committee_info(contents, info)
 
   # extract committees expected to report 'next month'
