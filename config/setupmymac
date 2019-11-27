@@ -368,7 +368,7 @@ end
 
 ### Make applications restart on change
 
-if Process.uid != 0
+if Process.uid != 0 and option != :docker
   plist = "#{Dir.home}/Library/LaunchAgents/toucher.plist"
   contents = File.read("#{__dir__}/toucher.plist")
   contents[/>(.*ruby.*)</, 1] = RbConfig.ruby
