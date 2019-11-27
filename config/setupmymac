@@ -372,6 +372,11 @@ if Process.uid != 0 and option != :docker
   plist = "#{Dir.home}/Library/LaunchAgents/toucher.plist"
   contents = File.read("#{__dir__}/toucher.plist")
   contents[/>(.*ruby.*)</, 1] = RbConfig.ruby
+
+  if not Dir.exist? File.dirname(plist)
+    run "mkdir -p #{File.dirname(plist)}"
+  end
+
   if not File.exist?(plist) or File.read(plist) != contents
     color "$ edit #{plist}"
     File.write plist, contents
