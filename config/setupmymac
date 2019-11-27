@@ -3,6 +3,15 @@ require 'tmpdir'
 require 'optparse'
 require 'etc'
 
+#########################################################################
+#
+# Sets up a macOS machine for whimsy development.  Pass --help as an
+# option to get a description of the arguments.  See
+# https://github.com/apache/whimsy/blob/master/SETUPMYMAC.MD#readme
+# for a more complete description.
+#
+#########################################################################
+
 unless RUBY_PLATFORM.include? 'darwin'
   STDERR.puts "This script is intended to be run on macOS"
   exit 1
@@ -18,6 +27,7 @@ COMMAND = File.realpath($0)
 ARGS = ARGV.dup
 Dir.chdir WHIMSY
 
+force = {}
 restart_apache = false
 $brew_updated = false
 
@@ -76,6 +86,26 @@ OptionParser.new do |opts|
   opts.on('-d', '--docker', "Run whimsy on docker") do |opt|
     option = :docker
   end
+
+  opts.on('--gem', '--gems', "Upgrade gem dependencies") do |opt|
+    force[:gems] = true
+  end
+
+  opts.on('--bundle', '--bundler', "Upgrade bundler") do |opt|
+    force[:bundler] = true
+  end
+
+  opts.on('--node', "Upgrade to the latest node.js") do |opt|
+    force[:node] = true
+  end
+
+  opts.on('--passenger', "Upgrade to the latest Phusion Passenger") do |opt|
+    force[:passenger] = true
+  end
+
+  opts.on('--ldap', "Reconfigure LDAP") do |opt|
+    force[:ldap] = true
+  end
 end.parse!
 
 user = option == :www ? '_www' : (ENV['SUDO_USER'] || Etc.getlogin)
@@ -88,6 +118,7 @@ group = Etc.getgrgid(gid).name
 if Process.uid != 0 and option != :docker
   if `which brew`.empty?
     script = 'https://raw.githubusercontent.com/Homebrew/install/master/install'
+    color %($ ruby -e "$(curl -fsSL #{script})")
     eval `curl -fsSL #{script}`
   end
 end
@@ -95,8 +126,13 @@ end
 ## Install Node.js
 
 if Process.uid != 0 and option != :docker
-  brew 'install', 'node' if `which node`.empty?
-  run 'npm install -g npm' if `which npm`.empty?
+  if `which node`.empty?
+    brew 'install', 'node' 
+  elsif force[:node]
+    brew 'upgrade', 'node' 
+  end
+
+  run 'npm install -g npm' if `which npm`.empty? or force[:node]
 
   # Prompt for xcode installation
   `svn --version`
@@ -104,6 +140,8 @@ if Process.uid != 0 and option != :docker
   # Install passenger
   if `which passenger`.empty?
     brew 'install', 'passenger'
+  elsif force[:passenger]
+    brew 'upgrade', 'passenger'
   end
 end
 
@@ -183,56 +221,68 @@ end
 ### Configure passenger
 
 passenger_conf = '/etc/apache2/other/passenger.conf'
-if Process.uid == 0
-  instructions = `su $SUDO_USER -c "brew info passenger"`
-else
-  instructions = `brew info passenger`
-end
-section = instructions[/To activate Phusion Passenger for Apache.*(\n\n|\z)/m]
-snippet = section.scan(/^ .*/).join("\n") + "\n"
-snippet[/Passenger\w*Ruby\s+(.*)/, 1] = RbConfig.ruby
-snippet += "PassengerUser #{user}\nPassengerGroup #{group}\n" if option != :user
-if not File.exists?(passenger_conf) or File.read(passenger_conf) != snippet
-  sudo do
-    color "$ edit #{passenger_conf}"
-    File.write passenger_conf, snippet
+if force[:passenger] or not File.exist? passenger_conf
+  if Process.uid == 0
+    instructions = `su $SUDO_USER -c "brew info passenger"`
+  else
+    instructions = `brew info passenger`
+  end
+  section = instructions[/To activate Phusion Passenger for Apache.*(\n\n|\z)/m]
+  snippet = section.scan(/^ .*/).join("\n") + "\n"
+  snippet[/Passenger\w*Ruby\s+(.*)/, 1] = RbConfig.ruby
 
-    restart_apache = true
+  if option != :user
+    snippet += "PassengerUser #{user}\nPassengerGroup #{group}\n"
+  end
+
+  if not File.exists?(passenger_conf) or File.read(passenger_conf) != snippet
+    sudo do
+      color "$ edit #{passenger_conf}"
+      File.write passenger_conf, snippet
+
+      restart_apache = true
+    end
   end
 end
 
 ### Install bundler
 
-sudo {run 'gem install bundler'} if `which bundle`.empty?
+if `which bundle`.empty?
+  sudo {run 'gem install bundler'} 
+elsif force[:bundler]
+  sudo {run 'gem update bundler'} 
+end
 
 ### Installl gems
 
-if Process.uid != 0 and not File.exist?("#{WHIMSY}/Gemfile.lock")
-  # collect up all gems and install them so the sudo password is only
-  # asked for once
-  gemlines = Dir["#{WHIMSY}/**/Gemfile"].
-    map {|file| File.read file}.join.scan(/^\s*gem\s.*/)
+if Process.uid != 0
+  if force[:gems] or not File.exist?("#{WHIMSY}/Gemfile.lock")
+    # collect up all gems and install them so the sudo password is only
+    # asked for once
+    gemlines = Dir["#{WHIMSY}/**/Gemfile"].
+      map {|file| File.read file}.join.scan(/^\s*gem\s.*/)
 
-  if File.exist? "#{WHIMSY}/asf.gemspec"
-    gemlines +=
-      File.read("#{WHIMSY}/asf.gemspec").scan(/add_dependency\((.*)\)/).
-      map {|(line)| "gem #{line}"}
-  end
-
-  gems = gemlines.map {|line| [line[/['"](.*?)['"]/, 1], line.strip]}.to_h
-  gems['whimsy-asf'].sub! /\bpath:.*/, "path: #{WHIMSY.inspect}"
-
-  Dir.mktmpdir do |dir|
-    Dir.chdir dir do
-      File.write "Gemfile", 
-        "source 'https://rubygems.org'\n#{gems.values.join("\n")}"
-
-      run "bundle install"
+    if File.exist? "#{WHIMSY}/asf.gemspec"
+      gemlines +=
+        File.read("#{WHIMSY}/asf.gemspec").scan(/add_dependency\((.*)\)/).
+        map {|(line)| "gem #{line}"}
     end
-  end
 
-  Dir.chdir WHIMSY do
-    run "rake", "update"
+    gems = gemlines.map {|line| [line[/['"](.*?)['"]/, 1], line.strip]}.to_h
+    gems['whimsy-asf'].sub! /\bpath:.*/, "path: #{WHIMSY.inspect}"
+
+    Dir.mktmpdir do |dir|
+      Dir.chdir dir do
+        File.write "Gemfile", 
+          "source 'https://rubygems.org'\n#{gems.values.join("\n")}"
+
+        run "bundle install"
+      end
+    end
+
+    Dir.chdir WHIMSY do
+      run "rake", "update"
+    end
   end
 end
 
@@ -241,7 +291,7 @@ end
 if File.exist? "#{WHIMSY}/Gemfile.lock"
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf'
-  unless ASF::LDAP.configured?
+  if force[:ldap] or not ASF::LDAP.configured?
     sudo do
       color '$ ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
       ASF::LDAP.configure
