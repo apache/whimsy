@@ -366,7 +366,27 @@ then
   restart_apache = true
 end
 
-# Start Apache httpd
+### Make applications restart on change
+
+if Process.uid != 0
+  plist = "#{Dir.home}/Library/LaunchAgents/toucher.plist"
+  contents = File.read("#{__dir__}/toucher.plist")
+  contents[/>(.*ruby.*)</, 1] = RbConfig.ruby
+  if not File.exist?(plist) or File.read(plist) != contents
+    color "$ edit #{plist}"
+    File.write plist, contents
+
+    if `launchctl list`.include? 'org.apache.whimsy/toucher'
+      run "launchctl unload #{plist}"
+    end
+  end
+
+  if not `launchctl list`.include? 'org.apache.whimsy/toucher'
+    run "launchctl load #{plist}"
+  end
+end
+
+### Start Apache httpd
 
 if Process.uid == 0
   if not `launchctl list`.include? 'org.apache.httpd'
