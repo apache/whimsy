@@ -10,9 +10,9 @@ class ICLA < Vue
 
     _div.buttons do
       _button 'clear form', disabled: @filed,
-        onClick: -> {@pubname = @realname = @email = @filename = ''}
+        onClick: lambda {@pubname = @realname = @email = @filename = ''}
       _button 'revert to mail data', disabled: @filed,
-        onClick: -> {process_response({})}
+        onClick: lambda {process_response({})}
     end
 
     _form method: 'post', action: '../../tasklist/icla', target: 'content' do
@@ -33,7 +33,7 @@ class ICLA < Vue
           _th 'Public Name'
           _td do
             _input name: 'pubname', value: @pubname, required: true,
-              disabled: @filed, onFocus: -> {@pubname ||= @realname}
+              disabled: @filed, onFocus: lambda {@pubname ||= @realname}
           end
         end
 
