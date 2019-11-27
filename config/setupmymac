@@ -36,7 +36,7 @@ $brew_updated = false
 # output a header line, in color if available
 def color(line)
   if STDOUT.isatty and ENV['TERM'].to_s.include? 'color'
-    puts "\n\u001b[34;1m#{line}\u001b[0m"
+    puts "\n\u001b[35;1m#{line}\u001b[0m"
   else
     puts "\n" + line
   end
