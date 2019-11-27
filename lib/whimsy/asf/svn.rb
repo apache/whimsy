@@ -173,6 +173,21 @@ module ASF
 
 
     # retrieve info, [err] for a path in svn
+    # output looks like:
+    #    Path: /srv/svn/steve
+    #    Working Copy Root Path: /srv/svn/steve
+    #    URL: https://svn.apache.org/repos/asf/steve/trunk
+    #    Relative URL: ^/steve/trunk
+    #    Repository Root: https://svn.apache.org/repos/asf
+    #    Repository UUID: 13f79535-47bb-0310-9956-ffa450edef68
+    #    Revision: 1870481
+    #    Node Kind: directory
+    #    Schedule: normal
+    #    Depth: empty
+    #    Last Changed Author: somebody
+    #    Last Changed Rev: 1862550
+    #    Last Changed Date: 2019-07-04 13:21:36 +0100 (Thu, 04 Jul 2019)
+    #
     def self.getInfo(path, user=nil, password=nil)
       return nil, 'path must not be nil' unless path
 
@@ -195,6 +210,25 @@ module ASF
 
     # retrieve a single info item, [err] for a path in svn
     # requires SVN 1.9+
+    # item must be one of the following:
+    #     'kind'       node kind of TARGET
+    #     'url'        URL of TARGET in the repository
+    #     'relative-url'
+    #                  repository-relative URL of TARGET
+    #     'repos-root-url'
+    #                  root URL of repository
+    #     'repos-uuid' UUID of repository
+    #     'revision'   specified or implied revision
+    #     'last-changed-revision'
+    #                  last change of TARGET at or before
+    #                  'revision'
+    #     'last-changed-date'
+    #                  date of 'last-changed-revision'
+    #     'last-changed-author'
+    #                  author of 'last-changed-revision'
+    #     'wc-root'    root of TARGET's working copy
+    # Note: Path, Schedule and Depth are not currently supported
+    #
     def self.getInfoItem(path, item, user=nil, password=nil)
       return nil, 'path must not be nil' unless path
     
