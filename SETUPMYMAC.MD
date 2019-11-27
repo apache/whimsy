@@ -61,7 +61,10 @@ likely will be some problems.  Join us on
 You can even switch back and forth (using the same checked out svn files and
 whimsy source code) by rerunning `setupmymac` again with a different option.
 Once you have both configurations set up running this command again will change
-permissions on a few files, but everything else is the same.
+permissions on a few files, but generally will leave everything else is the
+same.  If you want to update more (say, to get a new version of `passenger`),
+there are options to do that, enter `whimsy/config/setupmymac --help` for
+details.
 
 If you want to know what is going on under the covers with the setupmymac
 scripts, visit either the [macOS](./MACOSX.md) or [Docker](./DOCKER.md)
