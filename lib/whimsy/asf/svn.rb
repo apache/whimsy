@@ -420,28 +420,39 @@ module ASF
     end
 
     # update directory listing in /srv/svn/<name>.txt
+    # @return filerev, svnrev
+    # on error return nil,message
     def self.updatelisting(name, user=nil, password=nil)
+      url = self.svnurl(name)
+      unless url
+        return nil,"Cannot find URL"
+      end
       listfile = File.join(ASF::Config.root,'svn',"%s.txt" % name)
-      filerev = nil
-      lastrev = 0
+      filerev = "0"
+      svnrev = "?"
       begin
         open(listfile) do |l|
           filerev = l.gets.chomp
         end
       rescue
       end
-      url = self.svnurl(name)
-      lastrev = self.getInfoItem(url,'last-changed-revision',user,password)
-      if filerev == lastrev
-        puts "#{listfile}: #{filerev}"
+      svnrev, err = self.getInfoItem(url,'last-changed-revision',user,password)
+      if svnrev
+        begin
+          unless filerev == svnrev
+            list = self.list(url, user, password)
+            open(listfile,'w') do |w|
+              w.puts svnrev
+              w.puts list
+            end 
+          end
+        rescue Exception => e
+          return nil,e.inspect
+        end
       else
-        puts "#{listfile}: #{filerev} SVN: #{lastrev}"
-        list = self.list(url, user, password)
-        open(listfile,'w') do |w|
-          w.puts lastrev
-          w.puts list
-        end 
+        return nil,err
       end
+      return filerev,svnrev
 
     end
 
