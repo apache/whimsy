@@ -9,9 +9,8 @@ require_relative 'svn'
 
 module ASF
   class MemApps
-    @@MEMAPPS = ASF::SVN['member_apps']
     @@files = nil
-    @@mtime = nil
+    @@tag = nil
 
     # list the stems of the files (excluding any ones which record emeritus)
     def self.stems
@@ -93,11 +92,9 @@ module ASF
     private
 
     def self.refresh
-      if File.mtime(@@MEMAPPS) != @@mtime
-        @@files = Dir[File.join(@@MEMAPPS, '*')].map { |p|
-          File.basename(p)
-        }
-        @@mtime = File.mtime(@@MEMAPPS)
+      @@tag, list = ASF::SVN.getlisting('member_apps', @@tag)
+      if list
+        @@files = list
       end
     end
   end
