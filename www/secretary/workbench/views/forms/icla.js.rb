@@ -5,6 +5,7 @@ class ICLA < Vue
     @submitted = false
     @pdfdata = nil # not yet parsed file
     @pdfdisabled = false # true if parse fails
+    @pdfbusy = false # busy parsing
   end
 
   def render
@@ -15,7 +16,8 @@ class ICLA < Vue
         onClick: lambda {@pubname = @realname = @email = @filename = ''}
       _button 'Use mail data', disabled: @filed,
         onClick: lambda {process_response({})}
-      _button (@pdfdata.nil? ? 'Parse/use PDF data' : @pdfdisabled ? 'No PDF data found' : 'Use PDF data'), disabled: (@filed or @pdfdisabled),
+      _button (@pdfdata.nil? ? 'Parse/use PDF data' : @pdfdisabled ? 'No PDF data found' : 'Use PDF data'),
+        disabled: (@filed or @pdfdisabled or @pdfbusy),
         onClick: lambda {getpdfdata()}
     end
 
@@ -79,7 +81,7 @@ class ICLA < Vue
           end
         end
 
-        unless @@projects.include? @project
+        unless @project.nil? or @@projects.include? @project
           _tr do
             _th 'Project (PDF)'
             _td do
@@ -125,11 +127,14 @@ class ICLA < Vue
       process_response(@pdfdata)
     else
       data = {message: window.parent.location.pathname, attachment: @@selected}
+      @pdfbusy = true
       HTTP.post('../../actions/parse-icla', data).then {|result|
+            @pdfbusy = false
             @pdfdata = result.parsed
             @pdfdisabled = @pdfdata.keys().length <= 1 # response contains dataSource key
             process_response(@pdfdata)
           }.catch {|message|
+            @pdfbusy = false
             alert message
           }
     end
