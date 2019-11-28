@@ -3,6 +3,8 @@ class ICLA < Vue
     @filed = false
     @checked = nil
     @submitted = false
+    @pdfdata = nil # not yet parsed file
+    @pdfdisabled = false # true if parse fails
   end
 
   def render
@@ -11,8 +13,10 @@ class ICLA < Vue
     _div.buttons do
       _button 'clear form', disabled: @filed,
         onClick: lambda {@pubname = @realname = @email = @filename = ''}
-      _button 'revert to mail data', disabled: @filed,
+      _button 'Use mail data', disabled: @filed,
         onClick: lambda {process_response({})}
+      _button (@pdfdata.nil? ? 'Parse/use PDF data' : @pdfdisabled ? 'No PDF data found' : 'Use PDF data'), disabled: (@filed or @pdfdisabled),
+        onClick: lambda {getpdfdata()}
     end
 
     _form method: 'post', action: '../../tasklist/icla', target: 'content' do
@@ -107,18 +111,26 @@ class ICLA < Vue
     @project = parsed.Project
   end
 
+  def getpdfdata()
+    if @pdfdata # use existing data if present
+      process_response(@pdfdata)
+    else
+      data = {message: window.parent.location.pathname, attachment: @@selected}
+      HTTP.post('../../actions/parse-icla', data).then {|result|
+            @pdfdata = result.parsed
+            @pdfdisabled = @pdfdata.keys().length <= 1 # response contains dataSource key
+            process_response(@pdfdata)
+          }.catch {|message|
+            alert message
+          }
+    end
+  end
+
   # on initial display, default various fields based on headers, and update
   # state 
   def mounted()
-    # Parse the ICLA if possible
-    data = {message: window.parent.location.pathname, attachment: @@selected}
-    HTTP.post('../../actions/parse-icla', data).then {|result|
-          process_response(result.parsed)
-        }.catch {|message|
-          process_response({})
-          alert message
-        }
-
+    @pdfdata = nil # Not yet parsed
+    process_response({}) # preset with message data
     # watch for status updates
     window.addEventListener 'message', self.status_update
   end
