@@ -481,6 +481,7 @@ module ASF
     end
 
     # update directory listing in /srv/svn/<name>.txt
+    # N.B. The listing includes the trailing '/' so directory names can be distinguished
     # @return filerev, svnrev
     # on error return nil,message
     def self.updatelisting(name, user=nil, password=nil)
@@ -519,20 +520,27 @@ module ASF
     end
 
     # get listing if it has changed
+    # @param
+    # - name: alias for SVN checkout
+    # - tag: previous tag to check for changes
+    # - trimSlash: whether to trim trailing '/', default true
     # @return tag, Array of names
     # or tag, nil if unchanged
     # or Exception if error
-    # The tag happens to be the mtime of the file currently, but that could change
-    # so should be regarded as opaque
-    def self.getlisting(name, tag)
+    # The tag should be regarded as opaque
+    def self.getlisting(name, tag, trimSlash = true)
       listfile, _ = self.listingNames(name)
-      mtime = File.mtime(listfile)
-      if mtime == tag
-        return mtime, nil
+      curtag = "%s:%d" % [trimSlash, File.mtime(listfile)]
+      if curtag == tag
+        return curtag, nil
       else
         open(listfile) do |l|
           filerev = l.gets.chomp
-          return mtime, l.readlines.map(&:chomp)
+          if trimSlash
+            return curtag, l.readlines.map {|x| x.chomp.chomp('/')}
+          else
+            return curtag, l.readlines.map(&:chomp)
+          end
         end
       end
     end
