@@ -79,6 +79,15 @@ class ICLA < Vue
           end
         end
 
+        unless @@projects.include? @project
+          _tr do
+            _th 'Project (PDF)'
+            _td do
+              _ @project
+            end
+          end
+        end        
+
         _tr do
           _th 'Vote Link'
           _td do
