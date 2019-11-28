@@ -82,6 +82,8 @@ class Parts < Vue
       _li.divider
       _li "\u2716 delete", onMousedown: self.delete_attachment
       _li "\u2709 pdf-ize", onMousedown: self.pdfize
+      _li.divider
+      _li "parse pdf", onMousedown: self.pdfparse
     end
 
     if @selected and not @menu and @selected !~ /\.(asc|sig)$/
@@ -203,10 +205,12 @@ class Parts < Vue
           _li.divider
           _li "\u21B7 right", onMousedown: self.rotate_attachment
           _li "\u21c5 flip", onMousedown: self.rotate_attachment
-              _li "\u21B6 left", onMousedown: self.rotate_attachment
+          _li "\u21B6 left", onMousedown: self.rotate_attachment
           _li.divider
           _li "\u2716 delete", onMousedown: self.delete_attachment
           _li "\u2709 pdf-ize", onMousedown: self.pdfize
+          _li.divider
+          _li "parse pdf", onMousedown: self.pdfparse
         end
 
       elsif @form == :mail
@@ -440,6 +444,14 @@ class Parts < Vue
     }
   end
 
+  # parse pdf and display extracted data
+  def pdfparse(event)
+    message = window.parent.location.pathname
+    attachment = @menu || decodeURI(@selected)
+    url = message.sub('/workbench/','/icla-parse/') + attachment
+    window.parent.frames.content.location.href = url
+  end
+  
   ########################################################################
   #                             Update email                             #
   ########################################################################
