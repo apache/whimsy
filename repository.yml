@@ -12,6 +12,9 @@
   letsencrypt:
     url: https://github.com/letsencrypt/letsencrypt
 
+  ruby2js:
+    url: https://github.com/rubys/ruby2js.git
+
 # N.B. the names in the section below should not be changed as they are used by Ruby
 # Entries that are not intended to have local workspaces are indicated by: 'depth: skip'
 # Such entries are for url lookup only, e.g. Bills
