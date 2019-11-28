@@ -63,7 +63,7 @@
 
   iclas:
     url: private/documents/iclas
-    list: false
+    list: true
 
   incubator-podlings:
     url: asf/incubator/public/trunk/content/podlings
