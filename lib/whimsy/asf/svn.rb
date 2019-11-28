@@ -488,8 +488,7 @@ module ASF
       unless url
         return nil,"Cannot find URL"
       end
-      listfile = File.join(ASF::Config.root,'svn',"%s.txt" % name)
-      listfiletmp = File.join(ASF::Config.root,'svn',"%s.tmp" % name)
+      listfile, listfiletmp = self.listingNames(name)
       filerev = "0"
       svnrev = "?"
       begin
@@ -519,8 +518,32 @@ module ASF
 
     end
 
+    # get listing if it has changed
+    # @return tag, Array of names
+    # or tag, nil if unchanged
+    # or Exception if error
+    # The tag happens to be the mtime of the file currently, but that could change
+    # so should be regarded as opaque
+    def self.getlisting(name, tag)
+      listfile, _ = self.listingNames(name)
+      mtime = File.mtime(listfile)
+      if mtime == tag
+        return mtime, nil
+      else
+        open(listfile) do |l|
+          filerev = l.gets.chomp
+          return mtime, l.readlines.map(&:chomp)
+        end
+      end
+    end
+
     private
     
+    def self.listingNames(name)
+      return File.join(ASF::Config.root,'svn',"%s.txt" % name),
+             File.join(ASF::Config.root,'svn',"%s.tmp" % name)
+    end
+
     # Get all the SVN entries
     # Includes those that are present as aliases only
     # Not intended for external use
