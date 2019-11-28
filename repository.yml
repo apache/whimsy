@@ -79,6 +79,7 @@
 
   member_apps:
     url: private/documents/member_apps
+    depth: empty
     list: true
 
   minutes:
