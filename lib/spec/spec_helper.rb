@@ -13,6 +13,14 @@ else
   TEST_DATA = false
 end
 
+def set_root
+  ASF::Config.setroot File.expand_path("../test", __dir__)
+end
+
+def set_svn(name)
+  ASF::SVN[name] = File.expand_path("../test/svn/#{name}", __dir__)
+end
+
 if TEST_DATA
   puts "TEST_DATA=#{TEST_DATA}"
 else

@@ -119,6 +119,10 @@ module ASF
     def self.root
       @root
     end
+    # For testing only!!
+    def self.setroot(path)
+      @root = path
+    end
   end
 
 end
