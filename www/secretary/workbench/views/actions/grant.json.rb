@@ -11,12 +11,16 @@ message = Mailbox.find(@message)
 # extract file extension
 fileext = File.extname(@selected).downcase if @signature.empty?
 
+grant = "#@filename#{fileext}"
+
 # verify that a grant under that name doesn't already exist
-if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
-  grant = "#{ASF::SVN['grants']}/#@filename#{fileext}"
-  if File.exist? grant.untaint
-    _warn "documents/grants/#@filename#{fileext} already exists"
+if grant =~ /^\w[-\w]*\.?\w*$/
+  if ASF::GrantFiles.exist?(grant.untaint)
+    _warn "documents/grants/#{grant} already exists"
   end
+else
+  # Should not be possible, as form checks for: '[a-zA-Z][-\w]+(\.[a-z]+)?'
+  _warn "#{grant} is not a valid file name"
 end
 
 # extract/verify project
