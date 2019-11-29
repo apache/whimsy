@@ -14,7 +14,7 @@ fileext = File.extname(@selected).downcase if @signature.empty?
 ccla = "#@filename#{fileext}"
 
 # verify that a CCLA under that name doesn't already exist
-if ccla =~ /^\w[-\w]*\.?\w*$/
+if ccla =~ /\A\w[-\w]*\.?\w*\z/
   if ASF::CCLAFiles.exist?(ccla.untaint)
     _warn "documents/cclas/#{ccla} already exists"
   end

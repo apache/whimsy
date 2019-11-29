@@ -16,7 +16,7 @@ message = Mailbox.find(@message)
 fileext = File.extname(@selected).downcase if @signature.empty?
 
 # verify that an ICLA under that name doesn't already exist
-if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
+if "#@filename#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/
   # Is there a matching ICLA? (returns first match, if any)
   file = ASF::ICLAFiles.match_claRef(@filename.untaint)
   if file

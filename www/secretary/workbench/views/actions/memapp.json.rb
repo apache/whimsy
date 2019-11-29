@@ -13,7 +13,7 @@ message = Mailbox.find(@message)
 fileext = File.extname(@selected).downcase if @signature.empty?
 
 # verify that a membership form under that name stem doesn't already exist
-if "#@filename#{fileext}" =~ /^\w[-\w]*\.?\w*$/ # check taint requirements
+if "#@filename#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/ # check taint requirements
   require 'asf/whimsy/memapps'
   # returns name if it matches as stem or fully (e.g. for directory)
   form = ASF::MemApps.search @filename.untaint
