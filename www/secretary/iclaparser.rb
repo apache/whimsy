@@ -136,11 +136,16 @@ module ICLAParser
   # parse the PDF
   def self.parse(path)
     data=Hash.new
-    data[:dataSource] = {} # have we found anything
+    metadata = {}
+    data[:_meta] = metadata
+    metadata[:dataSource] = {} # have we found anything
     freetext = {} # gather the free text details
     debug={}
     begin
       reader = PDF::Reader.new(path)
+      %w(pdf_version info metadata page_count).each do |i|
+        metadata[i] = reader.public_send(i)
+      end
       reader.objects.each do |k,v|
         type = v[:Type] rescue nil
         subtype = v[:Subtype] rescue nil
@@ -158,7 +163,7 @@ module ICLAParser
                 # Entries may be duplicated, so use a hash to store them
                 id = rect.inspect+contents # if the rect and contents match, then they overwrite each other
                 freetext[id] = {Contents: contents.strip, x: rect[0], y: rect[1]} 
-                data[:dataSource]['FreeText'] = true
+                metadata[:dataSource]['FreeText'] = true
               end
             else
               puts "warn: #{contents} Rect is #{rect.class} in #{path}"
@@ -183,7 +188,7 @@ module ICLAParser
                 if val.length > 0
                   data[canon_field_name(key)] = val.gsub("\x7F",'') # Not sure where these originate
                 end
-                data[:dataSource]['Form'] = true
+                metadata[:dataSource]['Form'] = true
               end
             end
           end
@@ -204,7 +209,7 @@ module ICLAParser
               map{|v| v[:Contents]}.join(", ")
         end
       end
-      if data[:dataSource].size == 0 or ((data[:text].size rescue 0) <= 1 and data.size < 3) # No annotations found or not useful
+      if metadata[:dataSource].size == 0 or ((data[:text].size rescue 0) <= 1 and data.size < 3) # No annotations found or not useful
         page1 = nil # cache for page 1
         fontdict = Hash.new
         # Try looking for text sections instead
@@ -223,12 +228,12 @@ module ICLAParser
         lines = receiver.get_lines() # do we still need these?
         debug[:lines] = lines
         if text.length > 3
-          data[:dataSource]['Text'] = true
+          metadata[:dataSource]['Text'] = true
           data[:text] = text
         else
           page1.each_line.slice_before(/^\s+Full name:/).each_with_index do |lump, i|
             if i == 1 # starts with Full name
-              data[:dataSource]['Page'] = true
+              metadata[:dataSource]['Page'] = true
               # drop the postamble
               form = lump.slice_before(/^\S/).first
               # split into headers

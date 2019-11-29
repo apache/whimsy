@@ -29,8 +29,19 @@ begin
   
   path = message.find(iclaname).as_file.path
   
-  ICLAParser.parse(path).sort_by{|k,v| k.to_s }.each do |k,v|
-    puts "%-20s %s" % [k,v]
+  parsed = ICLAParser.parse(path)
+  parsed.sort_by{|k,v| k.to_s }.each do |k,v|
+    puts "%-20s %s" % [k,v] unless k == :_meta
+  end
+  puts ""
+  parsed[:_meta].sort_by{|k,v| k.to_s }.each do |k,v|
+    if k == 'info'
+      v.sort_by{|k,v| k.to_s }.each do |k,v|
+        puts "%-20s %s %s" % ['info',k,v]
+      end
+    else
+      puts "%-20s %s" % [k,v]
+    end
   end
   
 rescue Exception => e
