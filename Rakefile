@@ -99,17 +99,14 @@ namespace :svn do
           puts
           puts File.join(Dir.pwd, name)
           if description['list']
-            # TODO the SVN monitor is set to ignore the ouput currently
-            # Need to fix this to pick up proper status at some point
-            # Especially when list-only checkouts are implemented
             puts "#{PREFIX} Updating listing file"
             old,new = ASF::SVN.updatelisting(name)
             if old == new
-              puts "#{PREFIX} List is up to date with SVN: #{new}"
+              puts "List is at revision #{old}."
             elsif old == nil
               puts new
             else
-              puts "#{PREFIX} List updated: #{old} => SVN: #{new}"
+              puts "List updated from #{old} to revision #{new}."
             end
           end
           svnpath = ASF::SVN.svnurl(name)
