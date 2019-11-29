@@ -95,8 +95,6 @@ namespace :svn do
     if svn.instance_of? String and svn.end_with? '/*'
       mkdir_p File.dirname(svn) unless Dir.exists? File.dirname(svn)
       Dir.chdir File.dirname(svn) do
-        require 'uri'
-        base = URI.parse('https://svn.apache.org/repos/')
         svnrepos.each do |name, description|
           puts
           puts File.join(Dir.pwd, name)
@@ -114,13 +112,15 @@ namespace :svn do
               puts "#{PREFIX} List updated: #{old} => SVN: #{new}"
             end
           end
-          svnpath = (base + description['url']).to_s
+          svnpath = ASF::SVN.svnurl(name)
           if Dir.exist? name
-            if `svn info #{name}`[/^URL: (.*)/, 1] != svnpath
+            curpath = ASF::SVN.getInfoItem(name,'url')
+            if curpath != svnpath
+              puts "Removing #{name} to correct URL: #{curpath} => #{svnpath}"
               FileUtils.rm_rf name  
             end
           end
-    
+
           if Dir.exist? name
             Dir.chdir(name) {
               system 'svn cleanup'
@@ -160,7 +160,7 @@ namespace :svn do
           else
             system 'svn', 'checkout', 
               "--depth=#{description['depth'] || 'infinity'}",
-              (base + description['url']).to_s, name
+              svnpath, name
           end
         end
       end
