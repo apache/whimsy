@@ -8,7 +8,7 @@ class Grant < Vue
     _h4 'Grant'
 
     _div.buttons do
-      _button 'clear form', disabled: @filed, onClick: -> {@name = @email = ''}
+      _button 'clear form', disabled: @filed, onClick: lambda {@name = @email = ''}
     end
 
     _form method: 'post', action: '../../tasklist/grant', target: 'content' do
