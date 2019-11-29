@@ -277,7 +277,8 @@ module ASF
     # listing of top-level icla file/directory names
     # Directories are listed without trailing "/"
     def self.listnames
-      Dir[File.join(ASF::SVN['iclas'], '*')]
+      @@ICLAFILES = ASF::SVN['iclas'] unless @@ICLAFILES
+      Dir[File.join(@@ICLAFILES, '*')]
     end
   end
 
