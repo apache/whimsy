@@ -270,7 +270,11 @@ module ASF
       # issue svn info command
       out, err, status = Open3.capture3(*cmd)
       if status.success?
-        return out.chomp
+        if item.end_with? 'revision' # svn version 1.9.3 appends trailing spaces to *revision items
+          return out.chomp.rstrip
+        else
+          return out.chomp
+        end
       else
         return nil, err
       end
