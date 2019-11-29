@@ -17,19 +17,14 @@ fileext = File.extname(@selected).downcase if @signature.empty?
 
 # verify that an ICLA under that name doesn't already exist
 if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
-  icladir = "#{ASF::SVN['iclas']}/#@filename" # first check for directory
-  if File.exist? icladir.untaint
-    _warn "documents/iclas/#@filename already exists"
+  # Is there a matching ICLA? (returns first match, if any)
+  file = ASF::ICLAFiles.match_claRef(@filename.untaint)
+  if file
+    _warn "documents/iclas/#{file} already exists"
   else
-    # now check for a file (may have various extensions)
-    file = Dir["#{icladir}.*"]
-    if file.any?
-      _warn "documents/iclas/#{File.basename(file.first)} already exists"
-    else
-      _icla = ASF::ICLA.find_by_email(@email.strip)
-      if _icla
-        _warn "Email #{@email.strip} found in iclas.txt file - #{_icla.as_line}"
-      end
+    _icla = ASF::ICLA.find_by_email(@email.strip)
+    if _icla
+      _warn "Email #{@email.strip} found in iclas.txt file - #{_icla.as_line}"
     end
   end
 else
