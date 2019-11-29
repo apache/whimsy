@@ -32,7 +32,7 @@ class ICLA2 < Vue
           then
             _li do
               _input type: 'radio', name: 'icla',
-                onClick: -> {
+                onClick: lambda {
                   window.parent.frames.content.location.href = 
                     location.toString()[/.*\//] + @@selected
                   @icla = icla
@@ -83,7 +83,7 @@ class ICLA2 < Vue
           _th 'Public Name'
           _td do
             _input name: 'pubname', value: @pubname, required: true,
-              disabled: @filed, onFocus: -> {@pubname ||= @realname}
+              disabled: @filed, onFocus: lambda {@pubname ||= @realname}
           end
         end
 
