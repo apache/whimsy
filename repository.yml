@@ -19,6 +19,9 @@
 # Entries that are not intended to have local workspaces are indicated by: 'depth: skip'
 # Such entries are for url lookup only, e.g. Bills
 
+# names that are list only have 'depth: delete'
+# This is decoupled from list to allow a gradual changeover
+
 :svn:
 
   Bills:
@@ -40,8 +43,9 @@
     url: private/committers/board
     depth: files
 
-  cclas:
+  cclas: # list only; no checkout
     url: private/documents/cclas
+    depth: delete
     list: true
 
   comdev-foundation:
@@ -79,7 +83,7 @@
 
   member_apps:
     url: private/documents/member_apps
-    depth: empty
+    depth: delete
     list: true
 
   minutes:

@@ -113,13 +113,21 @@ namespace :svn do
             end
           end
           svnpath = ASF::SVN.svnurl(name)
+          noCheckout = description['depth'] == 'delete'
           if Dir.exist? name
-            curpath = ASF::SVN.getInfoItem(name,'url')
-            if curpath != svnpath
-              puts "Removing #{name} to correct URL: #{curpath} => #{svnpath}"
-              FileUtils.rm_rf name  
+            if noCheckout
+              puts "#{PREFIX} Removing #{name} as it is not intended for checkout"
+              FileUtils.rm_rf name                
+            else
+              curpath = ASF::SVN.getInfoItem(name,'url')
+              if curpath != svnpath
+                puts "Removing #{name} to correct URL: #{curpath} => #{svnpath}"
+                FileUtils.rm_rf name  
+              end
             end
           end
+
+          next if noCheckout
 
           if Dir.exist? name
             Dir.chdir(name) {
