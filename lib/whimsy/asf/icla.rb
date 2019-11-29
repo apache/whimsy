@@ -273,6 +273,12 @@ module ASF
       file = Dir[File.join(@@ICLAFILES, claRef), File.join(@@ICLAFILES, "#{claRef}.*")].first
       File.basename(file) if file
     end
+
+    # listing of top-level icla file/directory names
+    # Directories are listed without trailing "/"
+    def self.listnames
+      Dir[File.join(ASF::SVN['iclas'], '*')]
+    end
   end
 
 end

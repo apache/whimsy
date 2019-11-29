@@ -72,7 +72,7 @@ _html do
 
   iclas = Hash.new{|h,k| h[k]=[]}
   dupes=0
-  Dir[File.join(ASF::SVN['iclas'], '*')].each do |file|
+  ASF::ICLAFiles.listnames.each do |file|
     name = File.basename(file)
     stem = name.sub(/\.\w+$/, '')
     dupes += 1 if iclas.has_key? stem
