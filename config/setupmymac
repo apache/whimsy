@@ -115,7 +115,9 @@ group = Etc.getgrgid(gid).name
 
 ### Install Homebrew
 
-if Process.uid != 0 and option != :docker
+if Process.uid != 0 and 
+  (option != :docker or not Dir.exist? '/Applications/Docker.app')
+then
   if `which brew`.empty?
     script = 'https://raw.githubusercontent.com/Homebrew/install/master/install'
     color %($ ruby -e "$(curl -fsSL #{script})")
@@ -204,9 +206,16 @@ end
 ### Docker installation
 
 if option == :docker
+  if not Dir.exist? '/Applications/Docker.app'
+    brew 'cask', 'install', 'docker'
+  end
+
+  if `which docker-compose`.empty?
+    run 'open /Applications/Docker.app'
+  end
+
   unless system 'docker info > /dev/null 2>&1'
-    STDERR.puts "Please start docker and run this command again"
-    exit 1
+    run 'open /Applications/Docker.app'
   end
 
   if Process.uid != 0

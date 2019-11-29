@@ -17,7 +17,10 @@ could be made optional).
 
 Direct link to [docker for
 macOS](https://download.docker.com/mac/stable/Docker.dmg) (this avoids the
-need to login to Docker Hub).
+need to login to Docker Hub), or install via:
+
+    $ brew cask install docker
+    $ open /Applications/Docker.app
 
 A development class machine and a high speed internet connection would
 be in order.  Some things appear to perform well, other things perform
