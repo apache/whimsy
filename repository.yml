@@ -63,7 +63,7 @@
 
   grants:
     url: private/documents/grants
-    list: false
+    list: true
 
   iclas:
     url: private/documents/iclas
