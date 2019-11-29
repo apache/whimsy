@@ -11,12 +11,16 @@ message = Mailbox.find(@message)
 # extract file extension
 fileext = File.extname(@selected).downcase if @signature.empty?
 
+ccla = "#@filename#{fileext}"
+
 # verify that a CCLA under that name doesn't already exist
-if "#@filename#{fileext}" =~ /\w[-\w]*\.?\w*/
-  ccla = "#{ASF::SVN['cclas']}/#@filename#{fileext}"
-  if File.exist? ccla.untaint
-    _warn "documents/cclas/#@filename#{fileext} already exists"
+if ccla =~ /^\w[-\w]*\.?\w*$/
+  if ASF::CCLAFiles.exist?(ccla.untaint)
+    _warn "documents/cclas/#{ccla} already exists"
   end
+else
+  # Should not be possible, as form checks for: '[a-zA-Z][-\w]+(\.[a-z]+)?'
+  _warn "#{ccla} is not a valid file name"
 end
 
 # extract/verify project
