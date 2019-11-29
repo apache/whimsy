@@ -16,7 +16,7 @@ Danger - unexpected text in log file
 require 'fileutils'
 
 # Match revision messages
-REV_RE = %r{^(Checked out|Updated to|At|List updated from \d+ to|List is at) revision \d+\.$}
+REV_RE = %r{^(Checked out|Updated to|At|List updated from \d+ to|List is at) revision \d+\s*\.$}
 
 def Monitor.svn(previous_status)
   logdir = File.expand_path('../../../logs', __FILE__)
@@ -115,7 +115,7 @@ __END__
 
 /srv/svn/cclas
 #!: Updating listing file
-List updated from 0 to revision 93888.
+List updated from 0 to revision 93888  .
 
 /srv/svn/iclas
 #!: Updating listing file
