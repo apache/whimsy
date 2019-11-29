@@ -522,13 +522,13 @@ module ASF
     # get listing if it has changed
     # @param
     # - name: alias for SVN checkout
-    # - tag: previous tag to check for changes
+    # - tag: previous tag to check for changes, default nil
     # - trimSlash: whether to trim trailing '/', default true
     # @return tag, Array of names
     # or tag, nil if unchanged
     # or Exception if error
     # The tag should be regarded as opaque
-    def self.getlisting(name, tag, trimSlash = true)
+    def self.getlisting(name, tag=nil, trimSlash = true)
       listfile, _ = self.listingNames(name)
       curtag = "%s:%d" % [trimSlash, File.mtime(listfile)]
       if curtag == tag
