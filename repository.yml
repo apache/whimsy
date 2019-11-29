@@ -42,7 +42,7 @@
 
   cclas:
     url: private/documents/cclas
-    list: false
+    list: true
 
   comdev-foundation:
     url: asf/comdev/projects.apache.org/trunk/site/json/foundation
