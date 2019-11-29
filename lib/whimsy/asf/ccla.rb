@@ -4,20 +4,19 @@ module ASF
 
   # Common class for access to documents/cclas/ directory
   class CCLAFiles
-    @@CCLAFILES = nil # cache the find if actually needed
 
     # listing of top-level icla file/directory names
     # Directories are listed without trailing "/"
     def self.listnames
-      @@CCLAFILES = ASF::SVN['cclas'] unless @@CCLAFILES
-      Dir[File.join(@@CCLAFILES, '*')]
+      _, list = ASF::SVN.getlisting('cclas') # do we need to cache the listing?
+      list
     end
 
     # Does an entry exist?
     def self.exist?(name)
-      @@CCLAFILES = ASF::SVN['cclas'] unless @@CCLAFILES
-      Dir[File.join(@@CCLAFILES, name)].any?
+      self.listnames.include?(name)
     end
+    
   end
 
 end
