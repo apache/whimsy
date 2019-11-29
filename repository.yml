@@ -63,6 +63,7 @@
 
   grants:
     url: private/documents/grants
+    depth: delete
     list: true
 
   iclas:
