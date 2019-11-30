@@ -36,7 +36,7 @@ begin
   puts ""
   parsed[:_meta].sort_by{|k,v| k.to_s }.each do |k,v|
     if k == 'info'
-      v.sort_by{|k,v| k.to_s }.each do |k,v|
+      (v ||{}).sort_by{|k,v| k.to_s }.each do |k,v|
         puts "%-20s %-15s %s" % ['info',k,v]
       end
     elsif k != 'metadata' # can be long
@@ -49,7 +49,6 @@ begin
     puts "metadata:"
     puts metadata
   end
-  
   
 rescue Exception => e
   p e
