@@ -75,6 +75,11 @@ class ICLA2 < Vue
           _th 'File Name'
           _td @icla && @icla.filename
         end
+
+        _tr do
+          _th 'AvailId'
+          _td @icla && @icla.id
+        end
       end
 
       _h5 'Updated values'
