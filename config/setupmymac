@@ -229,11 +229,23 @@ directories = [
   '/srv/whimsy/www/public',
 ]
 
+files = [
+  '/srv/whimsy/www/status/status.json'
+]
+
 directories.each do |dir|
   sudo {run 'mkdir', '-p', dir} unless Dir.exist? dir
 
   unless File.stat(dir).uid == uid
     sudo {run 'chown', '-R', "#{uid}:#{gid}", dir}
+  end
+end
+
+files.each do |file|
+  sudo {run 'touch', file} unless File.exist? file
+
+  unless File.stat(file).uid == uid
+    sudo {run 'chown', "#{uid}:#{gid}", file}
   end
 end
 
@@ -343,7 +355,7 @@ end
 ### Collate minutes
 
 if Process.uid != 0
-  if force[:minutes] or not Dir.exist? '/srv/svn/www/board/minutes'
+  if force[:minutes] or not Dir.exist? '/srv/whimsy/www/board/minutes'
     run 'tools/collate_minutes.rb'
   end
 end
@@ -379,6 +391,8 @@ HTTPD_CONF = '/etc/apache2/httpd.conf'
 
 config = File.read(HTTPD_CONF)
 
+# uncomment necessary modules
+
 instructions = File.read(File.expand_path('../MACOSX.md', __dir__))
 
 section = instructions[/^Configure whimsy.local vhost\n--+\n.*?\n--/m]
@@ -397,14 +411,25 @@ end
 
 config += "\n" unless config.end_with? "\n"
 
+# add additional lines from the instructions
+
 add.scan(/^\S.*/).each do |line|
   if config !~ /^\s*#{line}\s*$/
     config += "#{line}\n"
   end
 end
 
+# run under the specified user
+
 config[/^User\s+(.*)/, 1] = user
 config[/^Group\s+(.*)/, 1] = group
+
+# add index.cgi to DirectoryIndex
+unless config =~ /^\s*DirectoryIndex\s+.*index\.cgi\b/i
+  config[/^\s*DirectoryIndex\s.*()/, 1] = ' index.cgi'
+end
+
+# replace configuration file if changed
 
 if config != File.read(HTTPD_CONF)
   sudo do
