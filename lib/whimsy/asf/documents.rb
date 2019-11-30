@@ -58,6 +58,7 @@ module ASF
     end
 
     # return a list of names matching stem.*
+    # Does not return directories
     def self.matchStem(stem)
     listnames.select{|l| ! l.end_with?('/') && l.start_with?("#{stem}.")}
     end
