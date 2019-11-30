@@ -88,7 +88,8 @@ end
 
 namespace :svn do
   task :update => :config do
-    svnrepos = ASF::SVN.repo_entries || {}
+    # Include depth == 'delete'
+    svnrepos = ASF::SVN.repo_entries(true) || {}
 
     # must be outside loop
     PREFIX = '#!:' # must agree with monitors/svn.rb

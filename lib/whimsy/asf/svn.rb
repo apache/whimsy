@@ -70,8 +70,9 @@ module ASF
 
     # Get the SVN repo entries corresponding to local checkouts
     # Excludes those that are present as aliases only
-    def self.repo_entries
-      self._all_repo_entries.reject{|k,v| v['depth'] == 'skip'}
+    # @params includeDeleted if should return depth == delete, default false
+    def self.repo_entries(includeDelete=false)
+      self._all_repo_entries.reject{|k,v| v['depth'] == 'skip' or (v['depth'] == 'delete' and not includeDelete)}
     end
 
     # fetch a repository entry by name
