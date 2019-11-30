@@ -92,6 +92,24 @@ If any of the configuration files under .subversion etc contain absolute referen
 files (such as CA certificates), these will need to be fixed somehow (e.g. create links on
 the container)
 
+Note on Repositories
+--------------------
+
+If you don't want to check out all of the repositories, omit the 
+`rake docker:update svn:update git:pull`, and only checkout/clone
+the repositories that you need.  You can find the complete list in
+[repository.yml](./repository.yml).
+
+If you haven't checked out a repository that you need to run a specific tool,
+you will generally see an exception like the following in your logs:
+
+    Unable to find svn checkout for https://svn.apache.org/repos/private/foundation/board (foundation_board) (Exception)
+
+To correct this, do the following:
+
+    cd /srv/svn
+    svn co https://svn.apache.org/repos/private/foundation/board foundation_board
+
 Known not to work (ToDos)
 -------------------------
 

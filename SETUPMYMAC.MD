@@ -14,27 +14,6 @@ Once complete, you will have a virtual host defined as `whimsy.local` that
 you can access in your web browser.  The whole process should take about
 five minutes, possibly less if you already have things like `brew` installed.
 
-What you won't have yet is the various svn repostories checked out that you
-will need.  For example, if you go to the board agenda application, after you
-provide your Apache LDAP user and password you will see a screen showing an
-error:
-
-    Unable to find svn checkout for https://svn.apache.org/repos/private/foundation/board (foundation_board) (Exception)
-
-To correct this, do the following:
-
-    cd /srv/svn
-    svn co https://svn.apache.org/repos/private/foundation/board foundation_board
-
-Now you will have the board agenda tool up and running, but over time you will
-find that you need more svn repositories checked out.  You can repeat this
-process each time, or check out everything you possibly might ever need (which
-currently required 93G! - something Sebb is working on getting down) with the
-following command:
-
-    cd /srv/svn/whimsy
-    rake svn:update
-
 Don't want to instal things on your machine?  If you have Docker installed, you
 can use that instead, simply pass `--docker` to the `setupmymac` command above
 and you will have a Docker image created.  This will take longer, require more

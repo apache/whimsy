@@ -27,9 +27,12 @@ COMMAND = File.realpath($0)
 ARGS = ARGV.dup
 Dir.chdir WHIMSY
 
-force = {}
 restart_apache = false
 $brew_updated = false
+
+force = {}
+force[:svn] = true unless Dir.exists? '/srv/svn'
+force[:git] = true unless Dir.exists? '/srv/git'
 
 ### Convenience methods
 
@@ -105,6 +108,14 @@ OptionParser.new do |opts|
 
   opts.on('--[no-]ldap', "Reconfigure LDAP") do |opt|
     force[:ldap] = opts
+  end
+
+  opts.on('--[no-]svn', "Checkout/update svn repositories") do |opt|
+    force[:svn] = opts
+  end
+
+  opts.on('--[no-]git', "Clone/pull git repositories`") do |opt|
+    force[:git] = opts
   end
 
   opts.on('--[no-]source', "Pull the latest changes to the source code") do |opt|
@@ -314,6 +325,16 @@ if Process.uid != 0
       run "rake", "update"
     end
   end
+end
+
+### Checkout/clone repositories
+
+if force[:svn] and Process.uid != 0
+  run 'rake', 'svn:update'
+end
+
+if force[:git] and Process.uid != 0
+  run 'rake', 'git:pull'
 end
 
 ### Configure LDAP
