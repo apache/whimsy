@@ -26,6 +26,7 @@ svndir = ASF::SVN['iclas'].untaint
 @filename.untaint if @filename =~ /\A\w[-.\w]*\z/
 
 if not Dir.exist? "#{svndir}/#@filename"
+  # Assumes there is a single matching file
   @existing = File.basename(Dir["#{svndir}/#@filename.*"].first)
   task "svn mv #@existing #@filename/icla#{File.extname(@existing)}" do
     form do
@@ -33,7 +34,7 @@ if not Dir.exist? "#{svndir}/#@filename"
     end
 
     complete do |dir|
-      # checkout empty officers directory
+      # checkout empty iclas directory
       svn 'checkout', '--depth', 'empty',
         'https://svn.apache.org/repos/private/documents/iclas', "#{dir}/iclas"
 
@@ -63,7 +64,7 @@ count = (Dir["#{svndir}/#@filename/*"].
       map {|name| name[/.*(\d+)\./, 1] || 1}.map(&:to_i).max || 1) + 1
 
 # write attachment (+ signature, if present) to the documents/iclas directory
-task "svn commit documents/iclas/icla#{count}#{fileext}" do
+task "svn commit documents/iclas/#@filename/icla#{count}#{fileext}" do
   form do
     _input value: @selected, name: 'selected'
 
