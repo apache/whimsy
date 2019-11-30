@@ -59,12 +59,8 @@ end
 #                          file new document                           #
 ########################################################################
 
-# determine initial value for the counter
-count = (Dir["#{svndir}/#@filename/*"].
-      map {|name| name[/.*(\d+)\./, 1] || 1}.map(&:to_i).max || 1) + 1
-
 # write attachment (+ signature, if present) to the documents/iclas directory
-task "svn commit documents/iclas/#@filename/icla#{count}#{fileext}" do
+task "svn commit documents/iclas/#@filename/iclaN#{fileext}" do
   form do
     _input value: @selected, name: 'selected'
 
