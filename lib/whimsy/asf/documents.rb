@@ -41,15 +41,31 @@ module ASF
   # Common class for access to documents/iclas/ directory
   class ICLAFiles
     @@tag = nil # probably worth caching iclas
+    @@list = nil # this list includes trailing '/' so can detect directories correctly
+
     # search icla files to find match with claRef
+    # matches if the input matches the full name of a file or directory or 
+    # it matches with an extension
     # Returns the basename or nil if no match
     def self.match_claRef(claRef)
       # Match either full name (e.g. directory) or stem (e.g. name.pdf)
-      file = listnames.select{|l| l == claRef || l.start_with?("#{claRef}.") }.first
+      file = listnames.select{|l| l.chomp('/') == claRef || l.start_with?("#{claRef}.") }.map {|m| m.chomp('/')}.first
     end
 
+    # is the name a directory?
+    def self.Dir?(name)
+      @@list.include? name + '/'
+    end
+
+    # return a list of names matching stem.*
+    def self.matchStem(stem)
+    listnames.select{|l| ! l.end_with?('/') && l.start_with?("#{stem}.")}
+    end
+
+    # This returns the list of names in the top-level directory
+    # directory names are terminated by '/'
     def self.listnames
-      @@tag, list = ASF::SVN.getlisting('iclas', @@tag)
+      @@tag, list = ASF::SVN.getlisting('iclas', @@tag, false)
       if list
         @@list = list
       end
