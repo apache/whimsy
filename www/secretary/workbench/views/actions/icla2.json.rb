@@ -22,12 +22,11 @@ _personalize_email(env.user)
 #                        move existing document                        #
 ########################################################################
 
-svndir = ASF::SVN['iclas'].untaint
 @filename.untaint if @filename =~ /\A\w[-.\w]*\z/
 
-if not Dir.exist? "#{svndir}/#@filename"
+if not ASF::ICLAFiles.Dir? @filename
   # Assumes there is a single matching file
-  @existing = File.basename(Dir["#{svndir}/#@filename.*"].first)
+  @existing = ASF::ICLAFiles.matchStem(@filename).first
   task "svn mv #@existing #@filename/icla#{File.extname(@existing)}" do
     form do
       _input value: @existing, name: 'existing'
