@@ -68,6 +68,7 @@
 
   iclas:
     url: private/documents/iclas
+    depth: delete
     list: true
 
   incubator-podlings:
