@@ -22,11 +22,11 @@ _personalize_email(env.user)
 #                        move existing document                        #
 ########################################################################
 
-iclas = ASF::SVN['iclas'].untaint
+svndir = ASF::SVN['iclas'].untaint
 @filename.untaint if @filename =~ /\A\w[-.\w]*\z/
 
-if not Dir.exist? "#{iclas}/#@filename"
-  @existing = File.basename(Dir["#{iclas}/#@filename.*"].first)
+if not Dir.exist? "#{svndir}/#@filename"
+  @existing = File.basename(Dir["#{svndir}/#@filename.*"].first)
   task "svn mv #@existing #@filename/icla#{File.extname(@existing)}" do
     form do
       _input value: @existing, name: 'existing'
@@ -59,7 +59,6 @@ end
 ########################################################################
 
 # determine initial value for the counter
-svndir = ASF::SVN['iclas']
 count = (Dir["#{svndir}/#@filename/*"].
       map {|name| name[/.*(\d+)\./, 1] || 1}.map(&:to_i).max || 1) + 1
 
