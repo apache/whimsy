@@ -122,6 +122,10 @@ OptionParser.new do |opts|
     force[:source] = opt
   end
 
+  opts.on('--[no-]minutes', "Collate board minutes") do |opt|
+    force[:minutes] = opt
+  end
+
   opts.on('--all', "Update everything") do |opt|
     force.default = true
   end
@@ -221,7 +225,6 @@ directories = [
   '/srv/cache',
   '/srv/secretary',
   '/srv/secretary/tlpreq',
-  '/srv/whimsy/www/board/minutes',
   '/srv/whimsy/www/logs',
   '/srv/whimsy/www/public',
 ]
@@ -335,6 +338,14 @@ end
 
 if force[:git] and Process.uid != 0
   run 'rake', 'git:pull'
+end
+
+### Collate minutes
+
+if Process.uid != 0
+  if force[:minutes] or not Dir.exist? '/srv/svn/www/board/minutes'
+    run 'tools/collate_minutes.rb'
+  end
 end
 
 ### Configure LDAP
