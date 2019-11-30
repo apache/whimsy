@@ -54,7 +54,7 @@ module ASF
 
     # is the name a directory?
     def self.Dir?(name)
-      @@list.include? name + '/'
+      listnames.include? name + '/'
     end
 
     # return a list of names matching stem.*
