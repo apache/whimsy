@@ -6,6 +6,10 @@ Gem::PackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
 
+def mkdir_p?(path)
+  mkdir_p path unless Dir.exist? path
+end
+
 # update gems and restart applications as needed
 task :update, [:command] do |task, args|
   # determine last update time of library sources
@@ -93,7 +97,7 @@ namespace :svn do
     svn = ASF::Config.get(:svn)
     svn = Array(svn).find {|path| String === path and path.end_with? '/*'}
     if svn.instance_of? String and svn.end_with? '/*'
-      mkdir_p File.dirname(svn) unless Dir.exists? File.dirname(svn)
+      mkdir_p? File.dirname(svn)
       Dir.chdir File.dirname(svn) do
         svnrepos.each do |name, description|
           puts
@@ -231,7 +235,7 @@ namespace :git do
     # clone/pull git repositories
     git = ASF::Config.get(:git)
     if git.instance_of? String and git.end_with? '/*'
-      mkdir_p File.dirname(git) unless Dir.exists? File.dirname(git)
+      mkdir_p File.dirname(git)
       Dir.chdir File.dirname(git) do
         require 'uri'
         base = URI.parse('git://git.apache.org/')
@@ -330,8 +334,11 @@ namespace :docker do
       end
     end
 
-    mkdir_p '/srv/whimsy/www' unless Dir.exist? '/srv/whimsy/www'
-    mkdir_p '/srv/whimsy/members' unless Dir.exist? '/srv/whimsy/members'
+    mkdir_p? '/srv/whimsy/www'
+    mkdir_p? '/srv/whimsy/members'
+
+    mkdir_p? '/srv/cache'
+    mkdir_p? '/srv/mail/secretary'
 
     unless File.exist? '/srv/whimsy/www/members/log'
       ln_s '/var/log/apache2', '/srv/whimsy/www/members/log'
