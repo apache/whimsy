@@ -1,6 +1,6 @@
 If you have a MacBook you undoubtedly have never used LDAP on it, have a
 version of the Ruby programming language installed that you also haven't used
-much and the Apache httpd web server is disabled.  Why not put them to use?
+much, and the Apache httpd web server is disabled.  Why not put them to use?
 
 It is easy, run the following two commands:
 
@@ -64,7 +64,7 @@ Once you have both configurations set up running this command again will change
 permissions on a few files, but generally will leave everything else is the
 same.  If you want to update more (say, to get a new version of `passenger`),
 there are options to do that, enter `whimsy/config/setupmymac --help` for
-details.
+details.  Pass `-all` to update everything.
 
 If you want to know what is going on under the covers with the setupmymac
 scripts, visit either the [macOS](./MACOSX.md) or [Docker](./DOCKER.md)

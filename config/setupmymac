@@ -87,24 +87,32 @@ OptionParser.new do |opts|
     option = :docker
   end
 
-  opts.on('--gem', '--gems', "Upgrade gem dependencies") do |opt|
-    force[:gems] = true
+  opts.on('--[no-]gem', '--gems', "Upgrade gem dependencies") do |opt|
+    force[:gems] = opt
   end
 
-  opts.on('--bundle', '--bundler', "Upgrade bundler") do |opt|
-    force[:bundler] = true
+  opts.on('--[no-]bundle', '--bundler', "Upgrade bundler") do |opt|
+    force[:bundler] = opt
   end
 
-  opts.on('--node', "Upgrade to the latest node.js") do |opt|
-    force[:node] = true
+  opts.on('--[no-]node', "Upgrade to the latest node.js") do |opt|
+    force[:node] = opt
   end
 
-  opts.on('--passenger', "Upgrade to the latest Phusion Passenger") do |opt|
-    force[:passenger] = true
+  opts.on('--[no-]passenger', "Upgrade to the latest Phusion Passenger") do |opt|
+    force[:passenger] = opt
   end
 
-  opts.on('--ldap', "Reconfigure LDAP") do |opt|
-    force[:ldap] = true
+  opts.on('--[no-]ldap', "Reconfigure LDAP") do |opt|
+    force[:ldap] = opts
+  end
+
+  opts.on('--[no-]source', "Pull the latest changes to the source code") do |opt|
+    force[:source] = opt
+  end
+
+  opts.on('--all', "Update everything") do |opt|
+    force.default = true
   end
 end.parse!
 
@@ -134,7 +142,11 @@ if Process.uid != 0 and option != :docker
     brew 'upgrade', 'node' 
   end
 
-  run 'npm install -g npm' if `which npm`.empty? or force[:node]
+  if `which npm`.empty?
+    run 'npm install -g npm'
+  elsif force[:node]
+    run 'npm upgrade -g npm'
+  end
 
   # Prompt for xcode installation
   `svn --version`
@@ -184,7 +196,15 @@ if not Dir.exist? '/srv/whimsy'
   end
 end
 
+# update source
+if force[:source] and Process.uid != 0
+  Dir.chdir '/srv/whimsy' do
+    run 'git', 'pull'
+  end
+end
+
 ### Define directories
+
 directories = [
   '/srv/agenda',
   '/srv/cache',
@@ -260,6 +280,7 @@ if `which bundle`.empty?
   sudo {run 'gem install bundler'} 
 elsif force[:bundler]
   sudo {run 'gem update bundler'} 
+  ARGS.push '--no-bundle'
 end
 
 ### Installl gems
@@ -305,6 +326,7 @@ if File.exist? "#{WHIMSY}/Gemfile.lock"
       color '$ ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
       ASF::LDAP.configure
     end
+    ARGS.push '--no-ldap'
   end
 end
 
