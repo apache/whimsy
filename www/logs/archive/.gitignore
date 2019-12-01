@@ -1,0 +1,4 @@
+# Do not remove this file; it ensures the directory is created
+
+# ignore archive logs (these have extensions)
+*.*
