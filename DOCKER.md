@@ -53,8 +53,8 @@ Installation instructions
       be visible to the container.
 * `cd` into that directory
 * `echo ":root: ." >.whimsy`
-* `git clone git@github.com:apache/whimsy.git` (or alternately
-  `git clone https://github.com/apache/whimsy.git`)
+* `git clone git@github.com:apache/whimsy.git` OR
+* `git clone https://github.com/apache/whimsy.git` (whichever works best for you)
 * `cd whimsy`
 * Start Docker if necessary: `$ open /Applications/Docker.app`
 * `rake docker:update svn:update git:pull`
