@@ -27,6 +27,7 @@ COMMAND = File.realpath($0)
 ARGS = ARGV.dup
 Dir.chdir WHIMSY
 
+$dry_run = false
 restart_apache = false
 $brew_updated = false
 
@@ -48,6 +49,7 @@ end
 # echo a command and run it
 def run *args
   color "$ " + Array(args).join(' ')
+  return if $dry_run
   Kernel.system *args
 end
 
@@ -114,7 +116,7 @@ OptionParser.new do |opts|
     force[:svn] = opts
   end
 
-  opts.on('--[no-]git', "Clone/pull git repositories`") do |opt|
+  opts.on('--[no-]git', "Clone/pull git repositories") do |opt|
     force[:git] = opts
   end
 
@@ -128,6 +130,10 @@ OptionParser.new do |opts|
 
   opts.on('--all', "Update everything") do |opt|
     force.default = true
+  end
+
+  opts.on('--dry-run', "Only indicate what commands would be run") do |opt|
+    $dry_run = true
   end
 end.parse!
 
@@ -144,7 +150,7 @@ then
   if `which brew`.empty?
     script = 'https://raw.githubusercontent.com/Homebrew/install/master/install'
     color %($ ruby -e "$(curl -fsSL #{script})")
-    eval `curl -fsSL #{script}`
+    eval `curl -fsSL #{script}` unless $dry_run
   end
 end
 
@@ -164,7 +170,7 @@ if Process.uid != 0 and option != :docker
   end
 
   # Prompt for xcode installation
-  `svn --version`
+  `svn --version` unless $dry_run
 
   # Install passenger
   if `which passenger`.empty?
@@ -189,7 +195,9 @@ unless Dir.exist? '/srv'
       SYNTHETIC = '/etc/synthetic.conf'
       unless File.read(SYNTHETIC).include? "/var/whimsy"
         color "$ edit #{SYNTHETIC}"
-        File.write SYNTHETIC, File.read(SYNTHETIC) + "srv\t/var/whimsy\n"
+        unless $dry_run
+          File.write SYNTHETIC, File.read(SYNTHETIC) + "srv\t/var/whimsy\n"
+        end
         STDERR.puts "#{SYNTHETIC} updated; reboot machine and rerun this script"
         puts %(\nPress "y" to reboot now, anything else to exit)
         run "shutdown -r now" if gets.strip.downcase == "y"
@@ -297,7 +305,7 @@ if force[:passenger] or not File.exist? passenger_conf
   if not File.exists?(passenger_conf) or File.read(passenger_conf) != snippet
     sudo do
       color "$ edit #{passenger_conf}"
-      File.write passenger_conf, snippet
+      File.write passenger_conf, snippet unless $dry_run
 
       restart_apache = true
     end
@@ -385,7 +393,7 @@ unless hosts.include? 'whimsy.local'
   sudo do
     color '$ edit /etc/hosts'
     hosts[/^[:\d].*\slocalhost\b.*()/, 1] = ' whimsy.local'
-    File.write '/etc/hosts', hosts
+    File.write '/etc/hosts', hosts unless $dry_run
   end
 end
 
@@ -438,6 +446,7 @@ end
 if config != File.read(HTTPD_CONF)
   sudo do
     color "$ edit #{HTTPD_CONF}"
+    return if $dry_run
     File.rename HTTPD_CONF, HTTPD_CONF + ".original"
     File.write(HTTPD_CONF, config)
   end
@@ -471,7 +480,7 @@ if Process.uid != 0 and option != :docker
 
   if not File.exist?(plist) or File.read(plist) != contents
     color "$ edit #{plist}"
-    File.write plist, contents
+    File.write plist, contents unless $dry_run
 
     if `launchctl list`.include? 'org.apache.whimsy/toucher'
       run "launchctl unload #{plist}"
@@ -492,6 +501,6 @@ if Process.uid == 0
     run "apachectl restart"
     sleep 0.5
   end
-else
+elsif not $dry_run
   system 'open http://whimsy.local/'
 end
