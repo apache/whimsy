@@ -20,7 +20,7 @@ macOS](https://download.docker.com/mac/stable/Docker.dmg) (this avoids the
 need to login to Docker Hub), or install via:
 
     $ brew cask install docker
-    $ open /Applications/Docker.app
+    $ open /Applications/Docker.app # this starts Docker
 
 A development class machine and a high speed internet connection would
 be in order.  Some things appear to perform well, other things perform
@@ -56,7 +56,7 @@ Installation instructions
 * `git clone git@github.com:apache/whimsy.git` (or alternately
   `git clone https://github.com/apache/whimsy.git`)
 * `cd whimsy`
-* Start Docker if necessary
+* Start Docker if necessary: `$ open /Applications/Docker.app`
 * `rake docker:update svn:update git:pull`
 * `rake docker:up`
 * visit `http://localhost:1999/` in your favorite browser
