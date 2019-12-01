@@ -1,7 +1,7 @@
 # Do not remove this file; it ensures the directory is created
 
 # ignore local logs (no extensions)
-*.
+*
 
 # But ensure we keep this
 !.gitignore
