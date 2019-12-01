@@ -48,7 +48,7 @@ end
 
 # echo a command and run it
 def run *args
-  color "$ " + Array(args).join(' ')
+  color "$ " + "#{'sudo ' if Process.uid == 0}" + Array(args).join(' ')
   return if $dry_run
   Kernel.system *args
 end
