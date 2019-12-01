@@ -7,7 +7,7 @@ require 'etc'
 #
 # Sets up a macOS machine for whimsy development.  Pass --help as an
 # option to get a description of the arguments.  See
-# https://github.com/apache/whimsy/blob/master/SETUPMYMAC.MD#readme
+# https://github.com/apache/whimsy/blob/master/SETUPMYMAC.md#readme
 # for a more complete description.
 #
 #########################################################################
