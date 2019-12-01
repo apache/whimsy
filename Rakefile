@@ -338,9 +338,6 @@ namespace :docker do
     # This should already exist, but just in case
     mkdir_p? '/srv/whimsy/www/members'
 
-    mkdir_p? '/srv/cache'
-    mkdir_p? '/srv/mail/secretary'
-
     unless File.exist? '/srv/whimsy/www/members/log'
       ln_s '/var/log/apache2', '/srv/whimsy/www/members/log'
     end
@@ -352,6 +349,11 @@ namespace :docker do
       end
     rescue
     end
+
+    # Create other needed directories
+    mkdir_p? '/srv/cache'
+    mkdir_p? '/srv/mail/secretary'
+    # there may be more
 
     unless File.read(File.join(ASF::ETCLDAP,'ldap.conf')).include? 'asf-ldap-client.pem'
       sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
