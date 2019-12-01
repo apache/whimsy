@@ -44,7 +44,7 @@ _html do
 
       _div.buttons do
         _button.btn.btn_danger.proceed! 'proceed anyway'
-        _button.btn.btn_warning.cancel! 'cancel', disabled: true
+        _button.btn.btn_warning.cancel! 'cancel'
       end
 
       _script %{
