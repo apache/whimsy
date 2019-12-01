@@ -78,6 +78,7 @@ task :pristine do
   Rake::Task[:update].invoke('pristine')
 end
 
+# This requires Gems such as Wunderbar to have been set up
 task :config do
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
@@ -317,7 +318,8 @@ namespace :docker do
     end
   end
 
-  task :scaffold => :config do
+  # cannot depend on :config
+  task :scaffold do
     # set up symlinks from /root to user's home directory
     home = ENV['HOST_HOME']
     if home and File.exist? home
@@ -355,12 +357,13 @@ namespace :docker do
     mkdir_p? '/srv/mail/secretary'
     # there may be more
 
+  end
+
+  task :entrypoint => [:scaffold, :config] do
+    # requires :config
     unless File.read(File.join(ASF::ETCLDAP,'ldap.conf')).include? 'asf-ldap-client.pem'
       sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
     end
-  end
-
-  task :entrypoint => :scaffold do
     sh 'apache2ctl -DFOREGROUND'
   end
 end
