@@ -300,7 +300,7 @@ namespace :docker do
   task :update => :build do
     Dir.chdir File.join(__dir__, 'docker') do
       sh 'docker-compose run  --entrypoint ' +
-        %('bash -c "rake docker:scaffold; git pull; rake update"') +
+        %('bash -c "rake docker:scaffold && rake update"') +
         ' web'
     end
   end
