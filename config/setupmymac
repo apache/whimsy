@@ -249,6 +249,10 @@ files.each do |file|
   end
 end
 
+if not File.exist? '/srv/whimsy/www/members/log'
+  run 'ln -s //var/log/apache2 /srv/whimsy/www/members/log'
+end
+
 ### Docker installation
 
 if option == :docker
