@@ -335,8 +335,8 @@ namespace :docker do
       end
     end
 
-    mkdir_p? '/srv/whimsy/www'
-    mkdir_p? '/srv/whimsy/members'
+    # This should already exist, but just in case
+    mkdir_p? '/srv/whimsy/www/members'
 
     mkdir_p? '/srv/cache'
     mkdir_p? '/srv/mail/secretary'
