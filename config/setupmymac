@@ -135,7 +135,15 @@ OptionParser.new do |opts|
     force[:minutes] = opt
   end
 
-  opts.on('--all', "Update everything") do |opt|
+  opts.on('--[no-]toucher', "Restart rack applications on source change") do |opt|
+    force[:toucher] = opt
+  end
+
+  opts.on('--[no-]ws', "Start board agenda websocket") do |opt|
+    force[:ws] = opt
+  end
+
+  opts.on('--all', "Update and launch everything") do |opt|
     force.default = true
   end
 
@@ -199,7 +207,7 @@ unless Dir.exist? '/srv'
       run 'touch', '/etc/synthetic.conf'
       SYNTHETIC = '/etc/synthetic.conf'
       unless File.read(SYNTHETIC).include? "/var/whimsy"
-        color "$ edit #{SYNTHETIC}"
+        color "$ sudo edit #{SYNTHETIC}"
         unless $dry_run
           File.write SYNTHETIC, File.read(SYNTHETIC) + "srv\t/var/whimsy\n"
         end
@@ -309,7 +317,7 @@ if force[:passenger] or not File.exist? passenger_conf
 
   if not File.exists?(passenger_conf) or File.read(passenger_conf) != snippet
     sudo do
-      color "$ edit #{passenger_conf}"
+      color "$ sudo edit #{passenger_conf}"
       File.write passenger_conf, snippet unless $dry_run
 
       restart_apache = true
@@ -396,7 +404,7 @@ end
 hosts = File.read('/etc/hosts')
 unless hosts.include? 'whimsy.local'
   sudo do
-    color '$ edit /etc/hosts'
+    color '$ sudo edit /etc/hosts'
     hosts[/^[:\d].*\slocalhost\b.*()/, 1] = ' whimsy.local'
     File.write '/etc/hosts', hosts unless $dry_run
   end
@@ -450,7 +458,7 @@ end
 
 if config != File.read(HTTPD_CONF)
   sudo do
-    color "$ edit #{HTTPD_CONF}"
+    color "$ sudo edit #{HTTPD_CONF}"
     return if $dry_run
     File.rename HTTPD_CONF, HTTPD_CONF + ".original"
     File.write(HTTPD_CONF, config)
@@ -474,26 +482,79 @@ end
 
 ### Make applications restart on change
 
-if not $root and option != :docker
+if not root and force[:toucher] != nil
   plist = "#{Dir.home}/Library/LaunchAgents/toucher.plist"
-  contents = File.read("#{__dir__}/toucher.plist")
-  contents[/>(.*ruby.*)</, 1] = RbConfig.ruby
 
-  if not Dir.exist? File.dirname(plist)
-    run "mkdir -p #{File.dirname(plist)}"
-  end
+  if force[:toucher]
+    contents = File.read("#{__dir__}/toucher.plist")
+    contents[/>(.*ruby.*)</, 1] = RbConfig.ruby
 
-  if not File.exist?(plist) or File.read(plist) != contents
-    color "$ edit #{plist}"
-    File.write plist, contents unless $dry_run
+    if not Dir.exist? File.dirname(plist)
+      run "mkdir -p #{File.dirname(plist)}"
+    end
 
+    if not File.exist?(plist) or File.read(plist) != contents
+      color "$ edit #{plist}"
+      File.write plist, contents unless $dry_run
+
+      if `launchctl list`.include? 'org.apache.whimsy/toucher'
+	run "launchctl unload #{plist}"
+      end
+    end
+
+    if not `launchctl list`.include? 'org.apache.whimsy/toucher'
+      run "launchctl load #{plist}"
+    end
+  else
     if `launchctl list`.include? 'org.apache.whimsy/toucher'
       run "launchctl unload #{plist}"
     end
-  end
 
-  if not `launchctl list`.include? 'org.apache.whimsy/toucher'
-    run "launchctl load #{plist}"
+    if File.exist?(plist)
+      run "rm #{plist}"
+    end
+  end
+end
+
+### Board Agenda websocket
+
+if force[:ws] != nil
+  sudo do
+    plist = "/Library/LaunchDaemons/board-agenda-websocket.plist"
+
+    if force[:ws]
+      contents = File.read("#{__dir__}/board-agenda-websocket.plist")
+      contents[/>(.*ruby.*)</, 1] = RbConfig.ruby
+       contents[/<key>UserName<\/key>\s*<string>(.*?)<\/string>/, 1] = user
+       contents[/<key>GroupName<\/key>\s*<string>(.*?)<\/string>/, 1] = group
+
+      if not Dir.exist? File.dirname(plist)
+	run "mkdir -p #{File.dirname(plist)}"
+      end
+
+      if not File.exist?(plist) or File.read(plist) != contents
+	unless $dry_run
+	  color "$ sudo edit #{plist}"
+	  File.write plist, contents
+	end
+
+	if `launchctl list`.include? 'org.apache.whimsy/board/agenda'
+	  run "launchctl unload #{plist}"
+	end
+      end
+
+      if not `launchctl list`.include? 'org.apache.whimsy/board/agenda'
+	run "launchctl load #{plist}"
+      end
+    else
+      if `launchctl list`.include? 'org.apache.whimsy/board/agenda'
+	run "launchctl unload #{plist}"
+      end
+
+      if File.exist?(plist)
+	run "rm #{plist}"
+      end
+    end
   end
 end
 

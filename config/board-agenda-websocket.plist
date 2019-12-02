@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>org.apache.whimsy/board/agenda/websocket</string>
+
+    <key>UserName</key>
+    <string>_www</string>
+    <key>GroupName</key>
+    <string>_www</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/ruby</string>
+        <string>/srv/whimsy/www/board/agenda/daemon/wss.rb</string>
+    </array>
+
+    <key>KeepAlive</key>
+    <true/>
+</dict>
+</plist>
