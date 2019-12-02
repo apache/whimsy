@@ -262,7 +262,12 @@ namespace :git do
             end
           else
             # fresh checkout
-            system 'git', 'clone', (base + description['url']).to_s, name
+            depth = description['depth']
+            if depth
+              system 'git', 'clone', '--depth', depth.to_s, (base + description['url']).to_s, name
+            else
+              system 'git', 'clone', (base + description['url']).to_s, name
+            end
             Dir.chdir(name) {system "git checkout #{branch}"} if branch
           end
         end

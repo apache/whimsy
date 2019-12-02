@@ -8,12 +8,15 @@
   infrastructure-puppet:
     url:  https://github.com/apache/infrastructure-puppet.git
     branch: deployment
+    depth: 1
 
   letsencrypt:
     url: https://github.com/letsencrypt/letsencrypt
+    depth: 1
 
   ruby2js:
     url: https://github.com/rubys/ruby2js.git
+    depth: 1
 
 # N.B. the names in the section below should not be changed as they are used by Ruby
 # Entries that are not intended to have local workspaces are indicated by: 'depth: skip'
