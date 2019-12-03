@@ -482,7 +482,7 @@ end
 
 ### Make applications restart on change
 
-if not root and force[:toucher] != nil
+if not $root and force[:toucher] != nil
   plist = "#{Dir.home}/Library/LaunchAgents/toucher.plist"
 
   if force[:toucher]
