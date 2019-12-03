@@ -135,6 +135,16 @@ namespace :svn do
           if Dir.exist? name
             Dir.chdir(name) {
               system 'svn cleanup'
+              depth = description['depth']
+              files = description['files']
+                next unless files # TEMP
+              if depth == 'empty'
+                curdepth = ASF::SVN.getInfoAsHash('.')['Depth'] # not available as separate item
+                if curdepth != depth
+                  puts "#{PREFIX} update depth from '#{curdepth}' to '#{depth}'"
+                  system 'svn','update','--set-depth',depth
+                end
+              end
               outerr = nil
               # svn update can fail sometimes, so we retry
               2.times do |i|
@@ -150,7 +160,14 @@ namespace :svn do
                 end
                 begin
                   r, w = IO.pipe
-                  pid = Process.spawn('svn up', out: w, err: [:child, :out])
+                  # Note: list the files to update to cater for later additions
+                  if files
+                    svncmd = "svn update #{files.join(' ')}"
+                    puts "#{PREFIX} #{svncmd}"
+                  else
+                    svncmd = 'svn update'
+                  end
+                  pid = Process.spawn(svncmd, out: w, err: [:child, :out])
                   w.close
 
                   pid, status = Process.wait2
@@ -172,6 +189,12 @@ namespace :svn do
             system 'svn', 'checkout', 
               "--depth=#{description['depth'] || 'infinity'}",
               svnpath, name
+             files = description['files']
+             if files
+               Dir.chdir(name) {
+                 system 'svn', 'update', *files
+               }
+             end
           end
         end
       end

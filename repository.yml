@@ -37,7 +37,11 @@
 
   apmail_bin:
     url: infra/infrastructure/apmail/trunk/bin
-    depth: files
+    depth: empty
+    files:
+      - .archives
+      - deprecated_mailing_lists.yml
+      - mail_list_autosub.yml
 
   attic-xdocs:
     url: asf/attic/site/xdocs/projects
@@ -111,7 +115,10 @@
 # for access to badrcptto files:
   qmail_control:
     url: infra/infrastructure/trunk/qmail/control
-    depth: files
+    depth: empty
+    files:
+      - badrcptto
+      - badrcptto_patterns
 
   site-board:
     url: asf/infrastructure/site/trunk/content/foundation/board

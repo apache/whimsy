@@ -16,7 +16,7 @@ Danger - unexpected text in log file
 require 'fileutils'
 
 # Match revision messages
-REV_RE = %r{^(Checked out|Updated to|At|List updated from \d+ to|List is at) revision \d+\s*\.$}
+REV_RE = %r{^(Checked out|\s*Updated ('[^']+' )?to|At|List updated from \d+ to|List is at) (revision |r)\d+\s*\.$}
 
 def Monitor.svn(previous_status)
   logdir = File.expand_path('../../../logs', __FILE__)
@@ -46,7 +46,8 @@ def Monitor.svn(previous_status)
     repository = lines.shift.to_sym
 
     lines.reject! do |line| 
-      line == "Updating '.':" or
+      line =~ %r{Updating '.+':} or
+      line == "Summary of updates:" or
       # must agree with Rakefile/PREFIX
       line.start_with?('#!: ') or
       line =~ REV_RE
@@ -147,3 +148,66 @@ svn: E175002: Unexpected HTTP status 400 'Bad Request' on '/repos/private/!svn/r
 Updating '.':
 svn: E175002: Unexpected HTTP status 400 'Bad Request' on '/repos/private/!svn/rvr/76960/foundation/officers/personnel-duties'
 Updated to revision 1797393.
+
+/srv/svn/qmail_control1
+#!: svn update badrcptto badrcptto_patterns
+Updating 'badrcptto':
+At revision 1053537.
+Updating 'badrcptto_patterns':
+At revision 1053537.
+Summary of updates:
+  Updated 'badrcptto' to r1053537.
+  Updated 'badrcptto_patterns' to r1053537.
+
+/srv/svn/qmail_control2
+#!: update depth from 'files' to 'empty'
+D         badheaders
+D         badheaders.new
+D         badheaderthresh
+D         badmailfrom
+D         badrcptto
+D         badrcptto_patterns
+D         concurrencylocal
+D         concurrencyremote
+D         defaultdelivery
+D         defaultdomain
+D         doublebounceto
+D         helohost
+D         locals
+D         me
+D         me.asf
+D         newsmtp
+D         plusdomain
+D         queuelifetime
+D         rcpthosts
+D         rcpthosts.asf
+D         signatures
+D         smtproutes
+D         timeoutconnect
+D         timeoutremote
+D         timeoutsmtpd
+D         virtualdomains
+Updating '.':
+Updated to revision 1053537.
+#!: svn update badrcptto badrcptto_patterns
+Updating 'badrcptto':
+A    badrcptto
+Updated to revision 1053537.
+Updating 'badrcptto_patterns':
+A    badrcptto_patterns
+Updated to revision 1053537.
+Summary of updates:
+  Updated 'badrcptto' to r1053537.
+  Updated 'badrcptto_patterns' to r1053537.
+
+/srv/svn/qmail_control3
+Checked out revision 1053537.
+Updating 'badrcptto':
+A    badrcptto
+Updated to revision 1053537.
+Updating 'badrcptto_patterns':
+A    badrcptto_patterns
+Updated to revision 1053537.
+Summary of updates:
+  Updated 'badrcptto' to r1053537.
+  Updated 'badrcptto_patterns' to r1053537.
