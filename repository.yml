@@ -139,11 +139,15 @@
 
   brandlist:
     url: private/foundation/Brand
-    depth: files
+    depth: empty
+    files:
+      - docket.json
 
   apachecon:
     url: private/foundation/ApacheCon
-    depth: files
+    depth: empty
+    files:
+      - apacheconhistory.csv
 
   comdevtalks:
     url: asf/comdev/site/trunk/content/speakers/talks
