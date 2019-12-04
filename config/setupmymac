@@ -340,9 +340,18 @@ end
 ### Install bundler
 
 if `which bundle`.empty?
-  sudo {run 'gem install bundler'} 
+  if `which gem`.chomp == '/usr/bin/gem'
+    sudo {run 'gem install bundler'}
+  else
+    run 'gem install bundler'
+  end
 elsif force[:bundler]
-  sudo {run 'gem update bundler'} 
+  if `which gem`.chomp == '/usr/bin/gem'
+    sudo {run 'gem update bundler'}
+  else
+    run 'gem update bundler'
+  end
+
   ARGS.push '--no-bundle'
 end
 
