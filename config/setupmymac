@@ -34,7 +34,7 @@ $dry_run = false
 restart_apache = false
 $brew_updated = false
 
-force = {}
+force = {clean: false}
 force[:svn] = true unless Dir.exists? '/srv/svn'
 force[:git] = true unless Dir.exists? '/srv/git'
 
@@ -147,6 +147,10 @@ OptionParser.new do |opts|
     force.default = true
   end
 
+  opts.on('--[no-]clean', "Clean up source directory") do |opt|
+    force[:clean] = opt
+  end
+
   opts.on('--dry-run', "Only indicate what commands would be run") do |opt|
     $dry_run = true
   end
@@ -229,6 +233,14 @@ if not Dir.exist? '/srv/whimsy'
   sudo do
     run 'mv', WHIMSY, '/srv/whimsy'
     run 'ln', '-s', '/srv/whimsy', WHIMSY
+  end
+end
+
+# clean source
+if force[:clean] and not $root
+  Dir.chdir '/srv/whimsy' do
+    run 'git', 'reset', '--hard'
+    run 'git', 'clean', '-fxd'
   end
 end
 
