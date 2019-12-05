@@ -34,7 +34,7 @@ $dry_run = false
 restart_apache = false
 $brew_updated = false
 
-force = {clean: false, prune: false, toucher: false, ws: false}
+force = {clean: false, prune: false, toucher: nil, ws: nil}
 force[:svn] = true unless Dir.exists? '/srv/svn'
 force[:git] = true unless Dir.exists? '/srv/git'
 
