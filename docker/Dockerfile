@@ -1,7 +1,9 @@
 FROM ubuntu:18.04
+
 ENV GEM_HOME="/srv/gems" \
     LANG=C.UTF-8 \
     LC_ALL=C.UTF-8
+
 RUN apt-get update && \
     apt-get install -y curl software-properties-common apt-utils && \
     curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
@@ -47,10 +49,19 @@ RUN apt-get update && \
     a2enmod expires && \
     a2enmod proxy_wstunnel &&\
     echo "ServerName whimsy.local" > /etc/apache2/conf-enabled/servername.conf
+
 COPY work/whimsy.conf /etc/apache2/sites-enabled/000-default.conf
+
 RUN echo 'SetEnv GEM_HOME /srv/gems' > /etc/apache2/conf-enabled/gemhome.conf
+
 # Add new items at the end so previous layers can be re-used
+
+# for editing/viewing files only in the container
 RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y vim
+
+# for checking ldap settings etc
+RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y ldap-utils
+
 WORKDIR /srv/whimsy
 EXPOSE 80
 
