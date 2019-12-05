@@ -43,7 +43,7 @@ Once you have both configurations set up running this command again will change
 permissions on a few files, but generally will leave everything else is the
 same.  If you want to update more (say, to get a new version of `passenger`),
 there are options to do that, enter `whimsy/config/setupmymac --help` for
-details.  Pass `-all` to update everything.
+details.  Pass `--update-all` to update everything.
 
 If you want to know what is going on under the covers with the setupmymac
 scripts, visit either the [macOS](./MACOSX.md) or [Docker](./DOCKER.md)
