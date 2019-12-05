@@ -135,12 +135,8 @@ OptionParser.new do |opts|
     force[:minutes] = opt
   end
 
-  opts.on('--update-all', '--all', "Update and launch everything") do |opt|
+  opts.on('--update-all', "Update everything") do |opt|
     force.default = true
-  end
-
-  opts.on('--[no-]clean', "Clean up source directory") do |opt|
-    force[:clean] = opt
   end
 
   opts.on('--[no-]toucher', "Restart rack applications on source change") do |opt|
@@ -149,6 +145,16 @@ OptionParser.new do |opts|
 
   opts.on('--[no-]ws', "Start board agenda websocket") do |opt|
     force[:ws] = opt
+  end
+
+  opts.on('--all', "Update and launch everything") do |opt|
+    force[:ws] = true if force[:ws] == nil
+    force[:toucher] = true if force[:toucher] == nil
+    force.default = true
+  end
+
+  opts.on('--[no-]clean', "Clean up source directory") do |opt|
+    force[:clean] = opt
   end
 
   opts.on('--[no-]prune', "Prune docker containers and images") do |opt|
