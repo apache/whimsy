@@ -120,12 +120,12 @@ namespace :svn do
           if Dir.exist? name
             if noCheckout
               puts "#{PREFIX} Removing #{name} as it is not intended for checkout"
-              FileUtils.rm_rf name                
+              FileUtils.rm_rf name # this will remove symlink only (on macOS at least)
             else
               curpath = ASF::SVN.getInfoItem(name,'url')
               if curpath != svnpath
                 puts "Removing #{name} to correct URL: #{curpath} => #{svnpath}"
-                FileUtils.rm_rf name  
+                FileUtils.rm_rf name  # this will remove symlink only (on macOS at least)
               end
             end
           end
@@ -133,12 +133,13 @@ namespace :svn do
           next if noCheckout
 
           if Dir.exist? name
+            isSymlink = File.symlink?(name) # we don't want to change such checkouts
             Dir.chdir(name) {
               system 'svn cleanup'
               depth = description['depth']
               files = description['files']
                 next unless files # TEMP
-              if depth == 'empty'
+              if depth == 'empty' and not isSymlink
                 curdepth = ASF::SVN.getInfoAsHash('.')['Depth'] # not available as separate item
                 if curdepth != depth
                   puts "#{PREFIX} update depth from '#{curdepth}' to '#{depth}'"
