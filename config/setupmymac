@@ -184,16 +184,14 @@ end
 ## Install Node.js
 
 if not $root and option != :docker
-  if `which node`.empty?
-    brew 'install', 'node' 
+  if `which n`.empty?
+    brew 'install', 'n' 
   elsif force[:node]
-    brew 'upgrade', 'node' 
+    brew 'upgrade', 'n' 
   end
 
-  if `which npm`.empty?
-    run 'npm install -g npm'
-  elsif force[:node]
-    run 'npm upgrade -g npm'
+  if `which node`.empty? or force[:node]
+    run 'n lts'
   end
 
   # Prompt for xcode installation
