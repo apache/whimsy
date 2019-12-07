@@ -43,7 +43,30 @@ Once you have both configurations set up running this command again will change
 permissions on a few files, but generally will leave everything else is the
 same.  If you want to update more (say, to get a new version of `passenger`),
 there are options to do that, enter `whimsy/config/setupmymac --help` for
-details.  Pass `-all` to update everything.
+details.  Pass `--update-all` to update everything.
+
+Sample usages:
+
+| Command | Description |
+| ------- | ----------- |
+| setupmymac | Ensure that everything is installed, checked out, cloned |
+| setupmymac --svn | Ensure that everything is installed, update svn |
+| setupmymac --update-all | Ensure that everything is up to date |
+| setupmymac --update-all --no-svn | Ensure that everything is up to date, except for svn |
+| setupmymac --all | Ensure that everything is up to date and launched |
+| setupmymac --no-ws | Stop board agenda websocket daemon |
+| setupmymac --docker | Configure for docker usage |
+| setupmymac --docker --prune | Clean start container |
+| setupmymac --clean | Reset `/srv/whimsy` - **danger** may cause lost changes |
+| setupmymac --user | Set up webserver to run under your user id |
+| setupmymac --dry-run | show what commands would have been issued |
+
+Notes:
+
+* Two long running daemons (toucher and websocket) can be started with this and these daemons will continue to run and will restart on system restart until explicitly stopped.
+* Cleaning `/srv/whimsy` may be needed if you change your version of Ruby or Gems.
+* Running the web server under your user is, in general, not recommended but may be handy if you are running in to file permission problems setting up a test.  Just remember to reset these file permissions by running `setupmymac` again.
+* Dry run may not be accurate as running commands may change the state of the system, affecting what subsequent commands are necessary.
 
 If you want to know what is going on under the covers with the setupmymac
 scripts, visit either the [macOS](./MACOSX.md) or [Docker](./DOCKER.md)

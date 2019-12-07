@@ -34,7 +34,7 @@ $dry_run = false
 restart_apache = false
 $brew_updated = false
 
-force = {clean: false}
+force = {clean: false, prune: false, toucher: nil, ws: nil}
 force[:svn] = true unless Dir.exists? '/srv/svn'
 force[:git] = true unless Dir.exists? '/srv/git'
 
@@ -135,6 +135,10 @@ OptionParser.new do |opts|
     force[:minutes] = opt
   end
 
+  opts.on('--update-all', "Update everything") do |opt|
+    force.default = true
+  end
+
   opts.on('--[no-]toucher', "Restart rack applications on source change") do |opt|
     force[:toucher] = opt
   end
@@ -144,11 +148,17 @@ OptionParser.new do |opts|
   end
 
   opts.on('--all', "Update and launch everything") do |opt|
+    force[:ws] = true if force[:ws] == nil
+    force[:toucher] = true if force[:toucher] == nil
     force.default = true
   end
 
   opts.on('--[no-]clean', "Clean up source directory") do |opt|
     force[:clean] = opt
+  end
+
+  opts.on('--[no-]prune', "Prune docker containers and images") do |opt|
+    force[:prune] = opt
   end
 
   opts.on('--dry-run', "Only indicate what commands would be run") do |opt|
@@ -287,6 +297,18 @@ if not File.exist? '/srv/whimsy/www/members/log'
 end
 
 ### Docker installation
+
+if force[:prune]
+  Dir.chdir 'docker' do
+    `docker-compose ps -q`.lines.each do |line|
+      run 'docker', 'stop', line.chomp
+    end
+  end
+
+  run 'docker', 'container', 'prune', '--force'
+  run 'docker', 'imagea', 'prune', '--force'
+  exit
+end
 
 if option == :docker
   if not Dir.exist? '/Applications/Docker.app'
