@@ -183,7 +183,7 @@ class GroupConfirm < Vue
             _span.status 'Processing request...' if @disabled
             _button.btn.btn_default 'Cancel', data_dismiss: 'modal',
               disabled: @disabled
-            _button.btn @button, class: @color, onClick: self.post,
+            _button.btn @button, :class => @color, onClick: self.post,
               disabled: @disabled
           end
         end
