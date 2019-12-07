@@ -58,7 +58,8 @@ class Group
         id: id,
         type: type,
         dn: (group.dn rescue ''), # not all groups have a DN
-        members: Hash[group.members.map {|person| [person.id, (person.cn rescue '**Entry missing from LDAP people**')]}] # if id not in people
+        members: Hash[group.members.map {|person| [person.id, (person.cn rescue '**Entry missing from LDAP people**')]}], # if id not in people
+        asfmembers: group.members.select{|person| ASF.members.include?(person)}.map(&:id),
       }
 
       if id == 'hudson-jobadmin'
@@ -86,7 +87,8 @@ class Group
           id: id,
           type: type,
           dn: (group.dn rescue ''), # not all groups have a DN
-          members: Hash[group.map {|person| [person.id, person.cn]}]
+          members: Hash[group.map {|person| [person.id, person.cn]}],
+          asfmembers: group.select{|person| ASF.members.include?(person)}.map(&:id),
         }
       end
     end
