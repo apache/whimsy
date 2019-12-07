@@ -138,7 +138,6 @@ namespace :svn do
               system 'svn cleanup'
               depth = description['depth']
               files = description['files']
-                next unless files # TEMP
               if depth == 'empty' and not isSymlink
                 curdepth = ASF::SVN.getInfoAsHash('.')['Depth'] # not available as separate item
                 if curdepth != depth
