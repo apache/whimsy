@@ -190,14 +190,19 @@ if not $root and option != :docker
     brew 'upgrade', 'n' 
   end
 
-  if `which node`.empty? or force[:node]
-    run 'n lts'
+  if `which node`.empty?
+    sudo { run 'n lts' }
+  elsif force[:node] and "v#{`n ls-remote stable`}" != `node --version`
+    sudo { run 'n lts' }
   end
 
   # Prompt for xcode installation
   `svn --version` unless $dry_run
+end
 
-  # Install passenger
+## Install Passenger
+
+if not $root and option != :docker
   if `which passenger`.empty?
     brew 'install', 'passenger'
   elsif force[:passenger]
