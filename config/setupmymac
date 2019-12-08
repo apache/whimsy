@@ -198,7 +198,7 @@ unless Dir.exist? '/usr/local/n'
   sudo { run 'mkdir', '/usr/local/n' }
 end
 
-unless File.stat('/usr/local/n').uid == uid
+unless File.stat('/usr/local/n').uid == sudo_user.uid
   sudo {run 'chown', '-R', "#{sudo_user.uid}:#{sudo_user.gid}", '/usr/local/n'}
 end
 
