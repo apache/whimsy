@@ -50,8 +50,6 @@ RUN apt-get update && \
     a2enmod proxy_wstunnel &&\
     echo "ServerName whimsy.local" > /etc/apache2/conf-enabled/servername.conf
 
-COPY work/whimsy.conf /etc/apache2/sites-enabled/000-default.conf
-
 RUN echo 'SetEnv GEM_HOME /srv/gems' > /etc/apache2/conf-enabled/gemhome.conf
 
 # Add new items at the end so previous layers can be re-used
@@ -61,6 +59,10 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y vim
 
 # for checking ldap settings etc
 RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y ldap-utils
+
+# This should be last, as the source is likely to change
+# It also takes very little time, so it does not matter if it has to be redone
+COPY work/whimsy.conf /etc/apache2/sites-enabled/000-default.conf
 
 WORKDIR /srv/whimsy
 EXPOSE 80
