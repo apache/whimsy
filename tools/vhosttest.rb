@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 #
 # Scaffolding needed to test infrastructure-puppet/modules/vhosts_whimsy/...
 # preprocess_vhosts.rb puppet macro
@@ -6,7 +8,8 @@
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 
-IP = ASF::Git['infrastructure-puppet']
+# Allow override of local repo
+IP = ARGV.shift || ASF::Git['infrastructure-puppet']
 
 module Puppet
   module Parser
@@ -23,7 +26,7 @@ require "#{IP}/modules/vhosts_whimsy/lib/puppet/parser/functions/preprocess_vhos
 yaml = Dir["#{IP}/data/nodes/whimsy-vm*.apache.org.yaml"].
   sort_by {|path| path[/-vm(\d+)/, 1].to_i}.last
 facts = YAML.load_file(yaml)['vhosts_whimsy::vhosts::vhosts']['whimsy-vm-443']
-ldap = ASF::LDAP.hosts.sort.first
+ldap = ASF::LDAP::RO_HOSTS.join(' ') # to be closer to live site
 
 macros = Puppet::Parser::Functions::ApacheVHostMacros.new(facts, ldap)
 puts macros.result['custom_fragment']
