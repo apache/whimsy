@@ -1268,7 +1268,7 @@ module ASF
     end
   end
 
-  # represenation of Committee, i.e. entry in committee-info.txt
+  # representation of Committee, i.e. entry in committee-info.txt
   # includes PMCs and other committees, but does not include podlings
   class Committee < Base
     @base = nil # not sure it makes sense to define base here
