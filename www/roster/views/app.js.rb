@@ -40,6 +40,7 @@ require_relative 'ppmc/graduate'
 require_relative 'ppmc/new'
 
 require_relative 'committerSearch'
+require_relative 'iclaSearch'
 require_relative 'projectSearch'
 require_relative 'confirm'
 

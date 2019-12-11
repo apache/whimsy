@@ -149,6 +149,45 @@ post '/committer/:userid/:file' do |name, file|
   _json :"actions/#{params[:file]}"
 end
 
+get '/icla/' do
+  @auth = Auth.info(env)
+  # Restrict who can see this
+  pass unless @auth[:member] or @auth[:chair]
+  _html :iclas
+end
+
+icla_index = nil
+icla_index_time = nil
+icla_index_etag = nil
+get '/icla/index.json' do
+  @auth = Auth.info(env)
+  # Restrict who can see this
+  pass unless @auth[:member] or @auth[:chair]
+  # recompute icla_index if the data is 5 minutes old or older
+  icla_index = nil if not icla_index_time or Time.now-icla_index_time >= 300
+
+  if not icla_index
+
+    # build a list of ICLA Public names, email addresses and icla files
+    tmp = []
+    ASF::ICLA.each {|icla|
+        tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef} if icla.id == 'notinavail'
+    }
+    icla_index = tmp.to_json
+
+    # cache
+    icla_index_time = Time.now
+    icla_index_etag = etag = Digest::MD5.hexdigest(icla_index)
+  end
+
+  # send response
+  last_modified icla_index_time
+  etag icla_index_etag
+  content_type 'application/json', charset: 'UTF-8'
+  expires [icla_index_time+300, Time.now+60].max
+  icla_index
+end
+
 # Handle nonpmc: committees that aren't PMCs
 get '/nonpmc/' do
   @members = ASF::Member.list.keys
