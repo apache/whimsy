@@ -1,11 +1,11 @@
+#!/usr/bin/env ruby
+
 #
 # Generate a whimsy.local version of the deployed whimsy configuration
 #
 # Example usage:
 #  ruby vhosttest.rb | ruby mkconf.rb /private/etc/apache2/other/whimsy.conf
 #
-
-require 'rbconfig'
 
 if STDIN.tty?
   conf = `ssh whimsy.apache.org cat \
