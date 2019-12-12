@@ -538,7 +538,7 @@ then
 end
 
 confd_source = "#{WHIMSY}/config/25-authz_ldap_group_membership.conf"
-confd_target = '/private/etc/apache2/other/conf-enabled/25-authz_ldap_group_membership.conf'
+confd_target = '/private/etc/apache2/other/25-authz_ldap_group_membership.conf'
 if 
   not File.exist?(confd_target) or 
   File.read(confd_target) != File.read(confd_source)
