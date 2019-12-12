@@ -77,14 +77,6 @@ module ASF
       puppet_config['ldapclient::ldapcert']
     end
 
-    # extract the ldap servers from the puppet configuration
-    def self.puppet_ldapservers
-      puppet_config['ldapserver::slapd_peers'].values.
-        map {|host| "ldaps://#{host}:636"}
-    rescue
-      []
-    end
-
     # connect to LDAP
     def self.connect(test = true, hosts = nil)
       hosts ||= self.hosts
