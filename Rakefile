@@ -320,7 +320,7 @@ end
 
 # Docker support
 namespace :docker do
-  task :build => 'docker/work/whimsy.conf' do
+  task :build => ['docker/work/whimsy.conf', 'docker/work/25-authz_ldap_group_membership.conf'] do
     Dir.chdir File.join(__dir__, 'docker') do
       sh 'docker-compose build web'
     end
@@ -402,4 +402,8 @@ end
 
 file 'docker/work/whimsy.conf' => ['docker/work', 'config/whimsy.conf'] do
   cp 'config/whimsy.conf', 'docker/work/whimsy.conf'
+end
+
+file 'docker/work/25-authz_ldap_group_membership.conf' => ['docker/work', 'config/25-authz_ldap_group_membership.conf'] do
+  cp 'config/25-authz_ldap_group_membership.conf', 'docker/work/25-authz_ldap_group_membership.conf'
 end

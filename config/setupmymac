@@ -537,6 +537,19 @@ then
   restart_apache = true
 end
 
+confd_source = "#{WHIMSY}/config/25-authz_ldap_group_membership.conf"
+confd_target = '/private/etc/apache2/other/conf-enabled/25-authz_ldap_group_membership.conf'
+if 
+  not File.exist?(confd_target) or 
+  File.read(confd_target) != File.read(confd_source)
+then
+  sudo do
+    run 'cp', confd_source, confd_target
+  end
+
+  restart_apache = true
+end
+
 ### Make applications restart on change
 
 if not $root and force[:toucher] != nil
