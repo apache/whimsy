@@ -161,8 +161,9 @@ namespace :svn do
                 begin
                   r, w = IO.pipe
                   # Note: list the files to update to cater for later additions
+                  # Also update '.' so parent directory shows last changed revision for status/svn page
                   if files
-                    svncmd = "svn update #{files.join(' ')}"
+                    svncmd = "svn update . #{files.join(' ')}"
                     puts "#{PREFIX} #{svncmd}"
                   else
                     svncmd = 'svn update'
