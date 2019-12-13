@@ -36,8 +36,8 @@ _html do
       _tr do
         _th 'repository'
         _th 'local path'
-        _th 'local revision'
-        _th 'server revision'
+        _th 'local last changed revision'
+        _th 'server last changed revision'
       end
     end
 
@@ -48,7 +48,7 @@ _html do
         color = nil
 
         if local
-          rev = `svn info #{local}`[/^Revision: (.*)/, 1]
+          rev = ASF::SVN.getInfoItem(local,'last-changed-revision')
           writable &&= File.writable?(local)
         else
           color = 'bg-danger'
@@ -177,9 +177,9 @@ _json do
     end
   end
 
-  localrev, lerr = ASF::SVN.getRevision(local_path.untaint)
+  localrev, lerr = ASF::SVN.getInfoItem(local_path.untaint,'last-changed-revision')
   if repository_url
-    serverrev, serr = ASF::SVN.getRevision(repository_url.untaint)
+    serverrev, serr = ASF::SVN.getInfoItem(repository_url.untaint,'last-changed-revision')
     {
       log: log.to_s.split("\n"),
       path: local_path,
