@@ -511,6 +511,7 @@ def getTLP(url)
   if url =~ %r{^https?://([^.]+)(\.incubator)?\.apache\.org/}
      tlp = $1
      tlp = 'httpcomponents' if tlp == 'hc'
+     tlp = 'jspwiki' if tlp == 'jspwiki-wiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?page=Downloads
   elsif url =~ %r{^https?://([^.]+)\.openoffice\.org/}
      tlp = 'openoffice'
   else
