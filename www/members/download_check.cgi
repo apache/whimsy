@@ -48,6 +48,14 @@ _html do
                 size: 50
             end
           end
+          _div.form_group do
+            _label.control_label.col_sm_2 'Page URL', for: 'tlp'
+            _div.col_sm_10 do
+              _input.form_control.name name: 'tlp', required: true,
+                placeholder: 'optional TLP override',
+                size: 50
+            end
+          end
 #          _div.form_group do
 #            _label.control_label.col_sm_2 'Version to check', for: 'version'
 #            _div.col_sm_10 do
@@ -86,10 +94,11 @@ _html do
           doPost(
             {
               url: @url,
+              tlp: @tlp,
               version: '', # TODO @version when implemented
               checklinks: @checklinks == 'true',
               nochecklinks: @nochecklinks == 'true',
-              archivecheck: @archivecheck == 'true'
+              archivecheck: @archivecheck == 'true',
             })
         end
       end

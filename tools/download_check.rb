@@ -244,6 +244,7 @@ VERIFY_TEXT = [
 ALIASES = {
     'sig' => 'asc',
     'pgp' => 'asc',
+    'signature' => 'asc',
 }
 # Convert text reference to extension
 # e.g. SHA256 => sha256; [SIG] => asc
@@ -362,7 +363,7 @@ def _checkDownloadPage(path, tlp, version)
         end
         tmp = text2ext(t)
         next if ext == tmp # i.e. link is just the type or [TYPE]
-        if not base == t
+        if not base == t and not t == 'checksum'
             E "Mismatch: #{h} and #{t}"
         end
     # These might also be direct links to mirrors
@@ -528,7 +529,8 @@ def doPost(options)
   $ARCHIVE_CHECK = options[:archivecheck]
   init
   url = options[:url]
-  tlp = getTLP(url)
+  tlp = options[:tlp]
+  tlp = getTLP(url) if tlp == ''
   if tlp
     checkDownloadPage(url, tlp, options[:version])
   end
