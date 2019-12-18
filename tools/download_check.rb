@@ -484,7 +484,7 @@ def _checkDownloadPage(path, tlp, version)
           I "Deprecated hash found #{h} #{t}; however #{lastmod} is older than #{deprecated}"
           # OK
         else
-          E "Deprecated hash found #{h} #{t} - do not use for current releases #{lastmod}"
+          W "Deprecated hash found #{h} #{t} - do not use for current releases #{lastmod}"
         end
       end
     elsif h =~ %r{/KEYS$} or t == 'KEYS'
