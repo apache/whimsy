@@ -328,6 +328,11 @@ class Agenda
     @@date
   end
 
+  # is today the meeting day?
+  def self.meeting_day
+    Date.new().toISOString().slice(0,10) >= @@date
+  end
+
   # the default title for the agenda as a whole
   def self.title
     @@date
@@ -568,8 +573,8 @@ class Agenda
   # determine if this report can be skipped during the course of the meeting
   def skippable
     return false if self.flagged
-    return (@to == 'president') if Minutes.started and self.missing
-    return false if Minutes.started and @approved and @approved.length < 5
+    return (@to == 'president') if self.missing and Agenda.meeting_day
+    return false if @approved and @approved.length < 5 and Agenda.meeting_day
     return true
   end
 
