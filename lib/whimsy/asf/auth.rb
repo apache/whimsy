@@ -43,6 +43,7 @@ module ASF
     end
 
     # Return an array of the ou=project entries in the authorization file
+    # TODO Does not appear to be used
     def projects
       arr = []
       #incubator={ldap:cn=incubator,ou=project,ou=groups,dc=apache,dc=org;attr=member}
