@@ -51,7 +51,7 @@ _html do
           _div.form_group do
             _label.control_label.col_sm_2 'TLP override', for: 'tlp'
             _div.col_sm_10 do
-              _input.form_control.name name: 'tlp', required: true,
+              _input.form_control.name name: 'tlp', required: false,
                 placeholder: 'optional TLP override',
                 size: 50
             end
