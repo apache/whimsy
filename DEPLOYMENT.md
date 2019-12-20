@@ -116,3 +116,8 @@ and running - these are only needed for a new deployment.
 
  * if `pip3 show img2pdf` doesn't show version 0.3.1 or later:
    * Run `pip3 install --upgrade img2pdf`
+
+N.B. Just prior to switchover, ensure that the file `/srv/mail/secretary/YYYYMM.yml`
+for the current month is copied (or merged?) across. This contains the status for mails
+handled by the Secretary workbench.
+
