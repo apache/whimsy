@@ -154,6 +154,11 @@ end
 def check_head(path, severity = :E, expectedStatus = "200", log=true)
   response = HEAD(path)
   code = response.code ||  '?'
+  if code == '403' # someone does not like Whimsy?
+    W "HEAD #{path} - HTTP status: #{code} - retry"
+    response = HEAD(path)
+    code = response.code ||  '?'
+  end
   if code != expectedStatus
     test(severity, "HEAD #{path} - HTTP status: #{code} expected: #{expectedStatus}") unless severity == nil
     return nil
