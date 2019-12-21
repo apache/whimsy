@@ -109,14 +109,6 @@ def displayHTML
   if @fails > 0
     showList(fatals, "Fatal errors:")
     showList(errors, "Errors:")
-    # Cannot easily copy/paste URLs; use layout suitable for copy/paste into e.g. JIRA issue/e-mail
-    _p do
-      _ 'Please see the Apache download page configuration instructions [1] for further details on configuring your mirror server.'
-    end
-    _p do
-    _ '[1] '
-      _a 'TBA', href: 'TBA'
-    end
   end
 
   showList(warns, "Warnings:")
