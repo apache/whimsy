@@ -6,7 +6,7 @@ _html do
   _base href: '..'
   _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
   _whimsy_body(
-    title: 'ASF ICLA Search',
+    title: 'Search pending ASF ICLAs',
     breadcrumbs: {
       roster: '.',
       icla: 'icla/'
