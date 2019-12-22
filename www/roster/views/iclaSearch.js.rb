@@ -90,7 +90,7 @@ class IclaSearch < Vue
                 _tr do
                   _td icla.name
                   _td icla.mail
-                  _td { _a icla.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{icla.claRef}" }
+                  _td { _a icla.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{icla.iclaFile}" }
                 end
               end
 

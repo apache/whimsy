@@ -171,7 +171,10 @@ get '/icla/index.json' do
     # build a list of ICLA Public names, email addresses and icla files
     tmp = []
     ASF::ICLA.each {|icla|
-        tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef} if icla.id == 'notinavail'
+      if icla.id == 'notinavail'
+        iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef)
+        tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
+      end
     }
     icla_index = tmp.to_json
 
