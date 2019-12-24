@@ -395,29 +395,6 @@ end
 
 if not $root
   if force[:gems] or not File.exist?("#{WHIMSY}/Gemfile.lock")
-    # collect up all gems and install them so the sudo password is only
-    # asked for once
-    gemlines = Dir["#{WHIMSY}/**/Gemfile"].
-      map {|file| File.read file}.join.scan(/^\s*gem\s.*/)
-
-    if File.exist? "#{WHIMSY}/asf.gemspec"
-      gemlines +=
-        File.read("#{WHIMSY}/asf.gemspec").scan(/add_dependency\((.*)\)/).
-        map {|(line)| "gem #{line}"}
-    end
-
-    gems = gemlines.map {|line| [line[/['"](.*?)['"]/, 1], line.strip]}.to_h
-    gems['whimsy-asf'].sub! /\bpath:.*/, "path: #{WHIMSY.inspect}"
-
-    Dir.mktmpdir do |dir|
-      Dir.chdir dir do
-        File.write "Gemfile", 
-          "source 'https://rubygems.org'\n#{gems.values.join("\n")}"
-
-        run "bundle install"
-      end
-    end
-
     Dir.chdir WHIMSY do
       run "rake", "update"
     end
