@@ -55,7 +55,7 @@ task :update, [:command] do |task, args|
     end
 
     gems = gemlines.map {|line| [line[/['"](.*?)['"]/, 1], line.strip]}.to_h
-    gems['whimsy-asf'].sub! /\bpath:.*/, "path: #{Dir.pwd.inspect}"
+    gems['whimsy-asf'].sub! /,.*/, ", path: #{Dir.pwd.inspect}"
 
     require 'tmpdir'
     Dir.mktmpdir do |dir|
