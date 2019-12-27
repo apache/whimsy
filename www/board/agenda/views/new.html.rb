@@ -10,6 +10,16 @@ _html do
 
   _div.container.new_agenda! do
     if @next_month and not @next_month.empty?
+      if ASF::Board.calendar.max < Time.now.utc
+	_div.error do
+	  _h4 'No next meeting date set'
+	  _a 'committers/board/calendar.txt',
+	     href: 'https://svn.apache.org/repos/private/committers/board/calendar.txt'
+	  _span ' needs to be updated in svn with a list of future meeting dates.'
+	  _span ' Assuming third Wednesday of the month for the next meeting.'
+	end
+      end
+
       _div.commented do
         _h4 'Committees expected to report next month, and why:'
         _pre.commented @next_month.gsub(@next_month.scan(/\s+#/).max.to_s, " -")
