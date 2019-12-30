@@ -236,6 +236,7 @@ VERIFY_TEXT = [
  'verify your mirrored downloads',
  'verify your downloads',
  'All downloads should be verified',
+ 'verification instructions',
 ]
 
 ALIASES = {
@@ -308,21 +309,31 @@ def _checkDownloadPage(path, tlp, version)
   #   https://www.apache.org/dist/httpcomponents/httpclient/KEYS
   expurl = "https://[www.]apache.org/dist/[incubator/]#{tlp}/KEYS"
   expurlre = %r{^https://(www\.)?apache\.org/dist/(incubator/)?#{tlp}/KEYS$}
-  keys = links.select{|h,v| v.strip == 'KEYS' || v == 'KEYS file' || v == '[KEYS]'}
+  keys = links.select{|h,v| h =~ expurlre}
   if keys.size >= 1
-    I 'Found KEYS link'
-    keyurl = keys.first.first
-    if keyurl =~ expurlre
-      I "KEYS links to #{expurl} as expected"
+    keytext = keys.first[1]
+    if keytext == 'KEYS'
+        I 'Found KEYS link'
     else
-      if keyurl =~ %r{^https://www\.apache\.org/dist/#{tlp}/[^/]+/KEYS$}
-        W "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
-      else
-        E "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
-      end
+        W "Found KEYS: '#{keytext}'"
     end
   else
-    E 'Could not find KEYS link'
+    keys = links.select{|h,v| v.strip == 'KEYS' || v == 'KEYS file' || v == '[KEYS]'}
+    if keys.size >= 1
+      I 'Found KEYS link'
+      keyurl = keys.first.first
+      if keyurl =~ expurlre
+        I "KEYS links to #{expurl} as expected"
+      else
+        if keyurl =~ %r{^https://www\.apache\.org/dist/#{tlp}/[^/]+/KEYS$}
+          W "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
+        else
+          E "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
+        end
+      end
+    else
+      E 'Could not find KEYS link'
+    end
   end
   
   # check for verify instructions
