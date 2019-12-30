@@ -457,7 +457,8 @@ def _checkDownloadPage(path, tlp, version)
         if bdy
           lks = get_links(bdy)
           lks.each do |l,t|
-             if l.end_with? name
+             # Don't want to match archive server (closer.cgi defaults to it if file is not found)
+             if l.end_with?(name) and l !~ %r{//archive\.apache\.org/}
                 path = l
                 break
              end
