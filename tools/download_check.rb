@@ -248,7 +248,7 @@ ALIASES = {
 # e.g. SHA256 => sha256; [SIG] => asc
 def text2ext(txt)
     if txt.size <= 10
-        tmp = txt.downcase.sub(%r{^\[(.+)\]$},'\1')
+        tmp = txt.downcase.sub(%r{^\[(.+)\]$},'\1').sub('-','')
         ALIASES[tmp] || tmp
     else
         txt
@@ -360,7 +360,7 @@ def _checkDownloadPage(path, tlp, version)
   vercheck = Hash.new() # key = archive name, value = array of hash/sig
   links.each do |h,t|
     # Must occur before mirror check below
-    if h =~ %r{^https?://www.apache.org/dist/(.+\.(asc|sha\d+|md5))$}
+    if h =~ %r{^https?://(?:archive|www)\.apache\.org/dist/(.+\.(asc|sha\d+|md5))$}
         base = File.basename($1)
         ext = $2
         stem = base[0..-(2+ext.length)]
@@ -386,11 +386,13 @@ def _checkDownloadPage(path, tlp, version)
         # Text must include a '.' (So we don't check 'Source')
         if t.include?('.') and not base == t
           # text might be short version of link
-          tmp = t.strip.sub(%r{.*/},'') # 
+          tmp = t.strip.sub(%r{.*/},'').downcase # 
           if base == tmp
             W "Mismatch?: #{h} and #{t}"
+          elsif base.end_with? tmp
+            W "Mismatch?: #{h} and '#{tmp}'"
           else
-            E "Mismatch: #{h} and '#{tmp}'"
+            E "Mismatch2: #{h} and '#{tmp}'"
           end
         end        
     end
