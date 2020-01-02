@@ -58,8 +58,24 @@ end
 #                          file new document                           #
 ########################################################################
 
+# determine what the counter is likely to be by querying the server
+# Notes:
+#   - ASF::SVN.list returns 
+#     - a string with "\n" separators
+#     - If there is an error ASF::SVN.list returns an array with nil
+#       as the first entry.
+#   - Converting the results to an array, extracting the first entry,
+#     coorsing it to a string, and then splitting it will result in an array
+#   - calling .max on an empty array returns nil.  Treat it as one as there
+#     is an existing document that will be moved into this directory.
+#   - If all else fails, set count to "N"
+count = (Array(ASF::SVN.list(ASF::SVN.svnurl('iclas') + '/' + @filename)).
+      first.to_s.split.
+      map {|name| name[/.*(\d+)\./, 1] || 1}.
+      map(&:to_i).max || 1) + 1 rescue 'N'
+
 # write attachment (+ signature, if present) to the documents/iclas directory
-task "svn commit documents/iclas/#@filename/iclaN#{fileext}" do
+task "svn commit documents/iclas/#@filename/iclaN#{count}{fileext}" do
   form do
     _input value: @selected, name: 'selected'
 
