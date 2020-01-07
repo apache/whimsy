@@ -19,7 +19,7 @@ class Channel
 
   begin
     FOUNDATION_BOARD = ASF::SVN['foundation_board']
-  rescue
+  rescue Exception
     # rescue value is to help with startup when initialising a new host
     FOUNDATION_BOARD = '/srv/foundation_board'
   end
