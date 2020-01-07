@@ -17,8 +17,12 @@ class Channel
   @@sockets = Concurrent::Map.new
   @@users = Concurrent::Map.new {|map,key| map[key]=[]}
 
-  # rescue value is to help with startup when initialising a new host
-  FOUNDATION_BOARD = ASF::SVN['foundation_board'] rescue '/srv/foundation_board'
+  begin
+    FOUNDATION_BOARD = ASF::SVN['foundation_board']
+  rescue
+    # rescue value is to help with startup when initialising a new host
+    FOUNDATION_BOARD = '/srv/foundation_board'
+  end
 
   # add a new socket/userid pair
   def self.add(ws, id)
