@@ -79,15 +79,19 @@ Manual Steps
 The following additional steps are required to get a new Whimsy VM up 
 and running - these are only needed for a new deployment.
 
+ * Ensure that the IP address is static, and has been added to the list of allowed mail relays
+
  * Run the following command to create an SSL cert (see [tutorial](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-14-04) for details):
      * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org -d whimsy4.apache.org -d whimsy-vm4.apache.org -d whimsy-test.apache.org`
 
- * Configure `/home/whimsysvn/.subversion/config` and
-   `/home/whimsysvn/.subversion/servers` to store auth-creds.
+ * The SVN settings should now be set up in whimsy-vm5 and later (Puppet 6)
+     * Check that `/home/whimsysvn/.subversion/config` and
+       `/home/whimsysvn/.subversion/servers` are configured to store auth-creds.
+       There should be two files under `/home/whimsysvn/.subversion/auth/svn.simple`
 
- * Configure `/var/www/.subversion/config` and
-   `/var/www/.subversion/servers` to use the `whimsysvn` user and to *not*
-   store the auth-creds.
+     * Check that `/var/www/.subversion/config` and
+       `/var/www/.subversion/servers` are configured to use the `whimsysvn` user and to *not*
+       store the auth-creds.
 
  * Update the following cron scripts under https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin:
      * listmodsubs.sh - add the new host
@@ -111,7 +115,7 @@ and running - these are only needed for a new deployment.
    * `/srv/mail/members`
    * `/srv/mail/secretary`
 
- * Verify that email can be sent to non-apache.org email addresses
+ * Verify that email can be sent to non-apache.org email addresses.
    * Run [testmail.rb](tools/testmail.rb)
 
  * if `pip3 show img2pdf` doesn't show version 0.3.1 or later:
