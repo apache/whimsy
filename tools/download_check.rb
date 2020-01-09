@@ -392,6 +392,8 @@ def _checkDownloadPage(path, tlp, version)
             W "Mismatch?: #{h} and #{t}"
           elsif base.end_with? tmp
             W "Mismatch?: #{h} and '#{tmp}'"
+          elsif base.sub(/-bin\.|-src\./,'.').end_with? tmp
+            W "Mismatch?: #{h} and '#{tmp}'"
           else
             E "Mismatch2: #{h} and '#{tmp}'"
           end
