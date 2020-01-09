@@ -54,6 +54,7 @@ def Monitor.git(previous_status)
     start_ignores = [
       'Already ',
       'Your branch is up-to-date with',
+      'Your branch is up to date with',
       'Your branch is behind',
       '  (use "git pull" ',
       'Fast-forward',
