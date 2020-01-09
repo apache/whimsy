@@ -1,5 +1,5 @@
 #
-# Indicate intention to attend / regrets for meeting
+# Post Action items
 #
 class PostActions < Vue
   def initialize

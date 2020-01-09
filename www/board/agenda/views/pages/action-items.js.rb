@@ -8,6 +8,10 @@ class ActionItems < Vue
     @disabled = false
   end
 
+  def self.buttons()
+    return [{form: ActionReminder}]
+  end
+
   def render
     first = true
 

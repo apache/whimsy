@@ -1,5 +1,5 @@
 #
-# send reminders
+# send reminders for missing board reports
 #
 
 ASF::Mail.configure
