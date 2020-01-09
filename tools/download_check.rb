@@ -31,7 +31,7 @@ $NOFOLLOW = false # may be reset
 $VERSION = nil
 
 # match an artifact
-ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|zip|tgz|tar\.bz2|jar|war))$}
+ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|zip|tgz|tar\.bz2|jar|war|rar))$}
 
 def init
   # build a list of validation errors
@@ -243,12 +243,13 @@ ALIASES = {
     'sig' => 'asc',
     'pgp' => 'asc',
     'signature' => 'asc',
+    'pgp signature' => 'asc',
 }
 # Convert text reference to extension
 # e.g. SHA256 => sha256; [SIG] => asc
 def text2ext(txt)
-    if txt.size <= 10
-        tmp = txt.downcase.sub(%r{^\[(.+)\]$},'\1').sub('-','')
+    if txt.size <= 16
+        tmp = txt.downcase.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(' checksum','')
         ALIASES[tmp] || tmp
     else
         txt
@@ -473,8 +474,10 @@ def _checkDownloadPage(path, tlp, version)
           cl = res.content_length
           if ct and cl
             I "OK: #{ct} #{cl} #{path}"
+          elsif cl
+            W "NAK: ct='#{ct}' cl='#{cl}' #{path}"
           else
-            E "NAK: #{ct} #{cl} #{path}"
+            E "NAK: ct='#{ct}' cl='#{cl}' #{path}"
           end
         else
           E "Could not find link for #{name} in #{h}"
