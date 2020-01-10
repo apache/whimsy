@@ -210,9 +210,10 @@ module LogParser
   # @param d directory to scan for *error.log*
   # @return hash of arrays of interesting entries
   def get_errors(current, dir: ERROR_LOG_DIR)
+    dir.untaint
     if current
       logs = LogParser.parse_whimsy_error(File.join(dir, 'whimsy_error.log'))
-      error_log = Dir[File.join(dir, 'error?log')].first
+      error_log = Dir[File.join(dir, 'error?log')].first.untaint
       LogParser.parse_error_log(error_log, logs) if error_log
     else
       logs = LogParser.parse_whimsy_errors(dir)
