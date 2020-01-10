@@ -24,7 +24,7 @@ BOARD_REGEX = { # Non-interesting email subjects from board # TODO add features 
   svn_iclas: %r{\Aboard: r\d{4,8} - /foundation/officers/iclas.txt}
 }
 MONTHS = %w( 1 2 3 4 5 6 7 8 9 10 11 12 )
-YEARS_DEFAULT = %w( 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 )
+YEARS_DEFAULT = %w( 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 2020)
 
 # ## ### #### ##### ######
 # Analysis functions, scanning stats.lua output JSON
