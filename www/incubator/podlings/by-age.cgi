@@ -11,6 +11,14 @@ require 'whimsy/asf'
 projects = URI.parse('http://incubator.apache.org/projects/')
 table = Nokogiri::HTML(Net::HTTP.get(projects)).at('table')
 
+# Hack to skip processing if cannot get the data
+unless table
+  _text do
+    _ "Could not fetch and parse http://incubator.apache.org/projects/"
+  end
+  exit
+end
+
 # extract a list of [podling names, table row]
 podlings = table.search('tr').map do |tr|
   tds = tr.search('td')
