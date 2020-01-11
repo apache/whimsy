@@ -65,7 +65,6 @@ module LogParser
       reader = Zlib::GzipReader.open(f)
       logfile = reader.read
       reader.close
-      stream.close rescue nil
     else
       logfile = File.read(f)
     end
