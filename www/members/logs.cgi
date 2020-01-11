@@ -13,7 +13,7 @@ def display_errors(current)
     title: 'Partial error listing',
     helpblock: -> {
       _ "This only includes a subset of possibly interesting error log entries from the #{current ? 'current day' : 'past week'}."
-      _a 'See the full server logs directory.', href: '/members/log'
+      _a 'See the full server logs directory (by date, descending)', href: '/members/log?C=M;O=D'
     }
   ) do
     logs = LogParser.get_errors(current)
