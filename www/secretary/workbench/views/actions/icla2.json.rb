@@ -69,7 +69,7 @@ end
 #   - calling .max on an empty array returns nil.  Treat it as one as there
 #     is an existing document that will be moved into this directory.
 #   - If all else fails, set count to "N"
-count = (Array(ASF::SVN.list(ASF::SVN.svnurl('iclas') + '/' + @filename)).
+count = (Array(ASF::SVN.list(ASF::SVN.svnurl('iclas') + '/' + @filename.untaint)).
       first.to_s.split.
       map {|name| name[/.*(\d+)\./, 1] || 1}.
       map(&:to_i).max || 1) + 1 rescue 'N'
