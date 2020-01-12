@@ -60,9 +60,6 @@ module ASF
     # Mutex preventing simultaneous connections to LDAP from a single process
     CONNECT_LOCK = Mutex.new
 
-    # Round robin list of LDAP hosts to be tried after failure
-    HOST_QUEUE = Queue.new
-
     # fetch configuration from apache/infrastructure-puppet
     def self.puppet_config
       return @puppet if @puppet
@@ -79,13 +76,12 @@ module ASF
 
     # connect to LDAP
     def self.connect(test = true, hosts = nil)
-      hosts ||= self.hosts
+      # If the host list is specified, use that as is
+      # otherwise ensure we start with the next in the default list
+      hosts ||= self.hosts.rotate!
 
       # Try each host at most once
-      hosts.length.times do
-        # Ensure we use each host in turn
-        hosts.each {|host| HOST_QUEUE.push host} if HOST_QUEUE.empty?
-        host = HOST_QUEUE.shift
+      hosts.each do |host|
 
         Wunderbar.info "[#{host}] - Connecting to LDAP server"
 
