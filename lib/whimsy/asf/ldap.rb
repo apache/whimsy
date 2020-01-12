@@ -198,7 +198,7 @@ module ASF
     def self.extract_cert
       host = hosts.sample[%r{//(.*?)(/|$)}, 1]
       puts ['openssl', 's_client', '-connect', host, '-showcerts'].join(' ')
-      out, err, rc = Open3.capture3 'openssl', 's_client',
+      out, _, _ = Open3.capture3 'openssl', 's_client',
         '-connect', host, '-showcerts'
       out[/^-+BEGIN.*?\n-+END[^\n]+\n/m]
     end
@@ -1023,16 +1023,12 @@ module ASF
 
     # return a list of ASF::People who are members of this group
     def members
-      members = weakref(:members) do
-        ASF.search_one(base, "cn=#{name}", 'memberUid').flatten
-      end
-
-      members.map {|uid| Person.find(uid)}
+      memberids.map {|uid| Person.find(uid)}
     end
 
     # return a list of ids who are members of this group
     def memberids
-      members = weakref(:members) do
+      weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'memberUid').flatten
       end
     end
