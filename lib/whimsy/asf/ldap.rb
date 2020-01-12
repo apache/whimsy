@@ -1028,8 +1028,7 @@ module ASF
 
     # return a list of ids who are members of this group
     def memberids
-      # members looks like a variable, but it's not, so don't drop it
-      members = weakref(:members) do
+      self.members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'memberUid').flatten
       end
     end
