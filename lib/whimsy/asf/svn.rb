@@ -44,7 +44,7 @@ module ASF
           @repos = Hash[Dir[*svn].map { |name| 
             next unless Dir.exist? name.untaint
             Dir.chdir name.untaint do
-              out, err, status = Open3.capture3('svn', 'info')
+              out, _, status = Open3.capture3('svn', 'info')
               if status.success?
                 [out[/URL: (.*)/,1].sub(/^http:/,'https:'), Dir.pwd.untaint]
               end
@@ -540,7 +540,8 @@ module ASF
         return curtag, nil
       else
         open(listfile) do |l|
-          filerev = l.gets.chomp
+          # fetch the file revision from the first line
+          _filerev = l.gets.chomp # TODO should we be checking _filerev?
           if trimSlash
             return curtag, l.readlines.map {|x| x.chomp.chomp('/')}
           else

@@ -99,7 +99,7 @@ module ASF
 
     # extract member emails from members.txt entry
     def self.emails(text)
-      emails = text.to_s.scan(/Email: (.*(?:\n\s+\S+@.*)*)/).flatten.
+      text.to_s.scan(/Email: (.*(?:\n\s+\S+@.*)*)/).flatten.
         join(' ').split(/\s+/).grep(/@/)
     end
 

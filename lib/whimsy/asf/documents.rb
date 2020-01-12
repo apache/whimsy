@@ -49,7 +49,7 @@ module ASF
     # Returns the basename or nil if no match
     def self.match_claRef(claRef)
       # Match either full name (e.g. directory) or stem (e.g. name.pdf)
-      file = listnames.select{|l| l.chomp('/') == claRef || l.start_with?("#{claRef}.") }.map {|m| m.chomp('/')}.first
+      listnames.select{|l| l.chomp('/') == claRef || l.start_with?("#{claRef}.") }.map {|m| m.chomp('/')}.first
     end
 
     # is the name a directory?

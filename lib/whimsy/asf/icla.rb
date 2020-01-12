@@ -154,7 +154,7 @@ module ASF
     # rearrange line in an order suitable for sorting
     def self.lname(line)
       return '' if line.start_with? '#'
-      id, name, rest = line.split(':',3)
+      _, name, rest = line.split(':',3)
       return '' unless name
 
       # Drop trailing (comment string) or /* comment */
