@@ -313,7 +313,7 @@ def _checkDownloadPage(path, tlp, version)
   keys = links.select{|h,v| h =~ expurlre}
   if keys.size >= 1
     keytext = keys.first[1]
-    if keytext == 'KEYS'
+    if keytext.strip == 'KEYS'
         I 'Found KEYS link'
     else
         W "Found KEYS: '#{keytext}'"
@@ -395,7 +395,7 @@ def _checkDownloadPage(path, tlp, version)
           elsif base.sub(/-bin\.|-src\./,'.').end_with? tmp
             W "Mismatch?: #{h} and '#{tmp}'"
           else
-            E "Mismatch2: #{h} and '#{tmp}'"
+            W "Mismatch2: #{h} and '#{tmp}'"
           end
         end        
     end
