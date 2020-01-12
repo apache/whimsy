@@ -385,7 +385,7 @@ module ASF
                  ARCH_MBOX_PUB, ARCH_MBOX_PRV, ARCH_MBOX_RST, ARCH_EXT_MAIL_ARCHIVE]
     # TODO alias archivers: either add list or use RE to filter them
 
-    LIST_BASE = ASF::Config[:subscriptions] # allow overrides for testing etc
+    LIST_BASE = ASF::Config[:subscriptions].untaint # allow overrides for testing etc
 
     LIST_MODS = File.join(LIST_BASE, 'list-mods')
 

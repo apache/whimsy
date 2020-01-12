@@ -148,7 +148,7 @@ module ASF
       podlings_xml = File.join(incubator_content, 'podlings.xml')
 
       # see if there is a later version
-      cache = ASF::Config.get(:cache)
+      cache = ASF::Config.get(:cache).untaint
       if File.exist? File.join(cache, 'podlings.xml')
         if File.mtime(File.join(cache, 'podlings.xml')) > File.mtime(podlings_xml)
           podlings_xml = File.join(cache, 'podlings.xml')
