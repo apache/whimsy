@@ -209,7 +209,7 @@ module ASF
 
     # update /etc/ldap.conf. Usage:
     #
-    #   sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
+    #   sudo ruby -I /srv/whimsy/lib -r whimsy/asf -e "ASF::LDAP.configure"
     #
     def self.configure
       cert = Dir["#{ETCLDAP}/asf*-ldap-client.pem"].first
