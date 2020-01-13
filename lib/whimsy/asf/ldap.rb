@@ -1183,7 +1183,7 @@ module ASF
         ASF.search_one(base, "cn=#{name}", 'owner').flatten
       end
 
-      owners.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+      @owners.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
     # list of owner ids in the project
@@ -1389,7 +1389,7 @@ module ASF
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
 
-      members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+      @members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
     # list of memberids for this service in LDAP
