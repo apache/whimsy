@@ -1161,17 +1161,16 @@ module ASF
     # list of committers on this project.  Stored in LDAP as a <tt>member</tt>
     # attribute.
     def members
-      self.members = weakref(:members) do
+      members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
 
-      # avoid recursive call to this method
-      @members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+      members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
     # list of member ids in the project
     def memberids
-      self.members = weakref(:members) do
+      members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end    
       members.map {|uid| uid[/uid=(.*?),/,1]}
@@ -1180,17 +1179,16 @@ module ASF
     # list of owners on this project.  Stored in LDAP as a <tt>owners</tt>
     # attribute.
     def owners
-      self.owners = weakref(:owners) do
+      owners = weakref(:owners) do
         ASF.search_one(base, "cn=#{name}", 'owner').flatten
       end
 
-      # avoid recursive call to this method
-      @owners.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+      owners.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
     # list of owner ids in the project
     def ownerids
-      self.owners = weakref(:owners) do
+      owners = weakref(:owners) do
         ASF.search_one(base, "cn=#{name}", 'owner').flatten
       end
       owners.map {|uid| uid[/uid=(.*?),/,1]}
@@ -1387,17 +1385,16 @@ module ASF
 
     # list of members for this service in LDAP
     def members
-      self.members = weakref(:members) do
+      members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
 
-      # avoid recursive call to this method
-      @members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+      members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
     # list of memberids for this service in LDAP
     def memberids
-      self.members = weakref(:members) do
+      members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
     
