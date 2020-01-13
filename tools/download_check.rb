@@ -525,7 +525,7 @@ def _checkDownloadPage(path, tlp, version)
 end
 
 def getTLP(url)
-  if url =~ %r{^https?://([^.]+)(\.incubator)?\.apache\.org/}
+  if url =~ %r{^https?://([^.]+)(\.incubator|\.us|\.eu)?\.apache\.org/}
      tlp = $1
      tlp = 'httpcomponents' if tlp == 'hc'
      tlp = 'jspwiki' if tlp == 'jspwiki-wiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?page=Downloads
@@ -562,6 +562,8 @@ if __FILE__ == $0
   $NO_CHECK_LINKS = ARGV.delete '--nolinks'
   $ARCHIVE_CHECK = ARGV.delete '--archivecheck'
 
+  init
+
   version = ''
   if ARGV.size == 1
     url = ARGV[0]
@@ -571,8 +573,6 @@ if __FILE__ == $0
     tlp = ARGV[1]
     version = ARGV[2] || ''
   end
-
-  init
 
   checkDownloadPage(url, tlp, version)
 
