@@ -1161,7 +1161,7 @@ module ASF
     # list of committers on this project.  Stored in LDAP as a <tt>member</tt>
     # attribute.
     def members
-      members = weakref(:members) do
+      self.members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
 
@@ -1170,7 +1170,7 @@ module ASF
 
     # list of member ids in the project
     def memberids
-      members = weakref(:members) do
+      self.members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end    
       members.map {|uid| uid[/uid=(.*?),/,1]}
@@ -1179,7 +1179,7 @@ module ASF
     # list of owners on this project.  Stored in LDAP as a <tt>owners</tt>
     # attribute.
     def owners
-      owners = weakref(:owners) do
+      self.owners = weakref(:owners) do
         ASF.search_one(base, "cn=#{name}", 'owner').flatten
       end
 
@@ -1188,7 +1188,7 @@ module ASF
 
     # list of owner ids in the project
     def ownerids
-      owners = weakref(:owners) do
+      self.owners = weakref(:owners) do
         ASF.search_one(base, "cn=#{name}", 'owner').flatten
       end
       owners.map {|uid| uid[/uid=(.*?),/,1]}
@@ -1385,7 +1385,7 @@ module ASF
 
     # list of members for this service in LDAP
     def members
-      members = weakref(:members) do
+      self.members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
 
@@ -1394,7 +1394,7 @@ module ASF
 
     # list of memberids for this service in LDAP
     def memberids
-      members = weakref(:members) do
+      self.members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
     
