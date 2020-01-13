@@ -1165,7 +1165,8 @@ module ASF
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
 
-      members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+      # avoid recursive call to this method
+      @members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
     # list of member ids in the project
@@ -1183,6 +1184,7 @@ module ASF
         ASF.search_one(base, "cn=#{name}", 'owner').flatten
       end
 
+      # avoid recursive call to this method
       @owners.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
@@ -1389,6 +1391,7 @@ module ASF
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
 
+      # avoid recursive call to this method
       @members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
     end
 
