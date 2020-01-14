@@ -39,11 +39,13 @@ module ASF
         require 'chronic'
         this_month = Time.now.strftime('%B')
 
-        time ||= Chronic.parse("3rd wednesday in #{this_month}")
+        time = Chronic.parse("3rd wednesday in #{this_month}")
 
         if not time or time < Time.now.utc
           time = Chronic.parse('3rd wednesday next month')
         end
+
+        time = TIMEZONE.local_to_utc(Time.parse("#{time.to_date} 10:30am"))
       end
 
       time
