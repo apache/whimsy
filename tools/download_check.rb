@@ -31,7 +31,7 @@ $NOFOLLOW = false # may be reset
 $VERSION = nil
 
 # match an artifact
-ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|zip|tgz|tar\.bz2|jar|war|msi|rar))$}
+ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|zip|tgz|tar\.bz2|jar|war|msi|rar|rpm))$}
 
 def init
   # build a list of validation errors
