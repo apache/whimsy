@@ -244,16 +244,13 @@ ALIASES = {
     'pgp' => 'asc',
     'signature' => 'asc',
     'pgp signature' => 'asc',
+    'openpgp signature' => 'asc',
 }
 # Convert text reference to extension
 # e.g. SHA256 => sha256; [SIG] => asc
 def text2ext(txt)
-    if txt.size <= 16
-        tmp = txt.downcase.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(' checksum','')
-        ALIASES[tmp] || tmp
-    else
-        txt
-    end
+    tmp = txt.downcase.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(' checksum','')
+    ALIASES[tmp] || tmp
 end
 
 # Suite: perform all the HTTP checks
@@ -373,7 +370,7 @@ def _checkDownloadPage(path, tlp, version)
         tmp = text2ext(t)
         next if ext == tmp # i.e. link is just the type or [TYPE]
         if not base == t and not t == 'checksum'
-            E "Mismatch: #{h} and #{t}"
+            E "Mismatch: #{h} and '#{t}'"
         end
     # These might also be direct links to mirrors
     elsif h =~ ARTIFACT_RE
