@@ -25,6 +25,8 @@ unless from
   from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
 end
 
+template = File.read("templates/remind-action.txt")
+
 # iterate over the action items
 @actions.group_by {|action| action['owner']}.each do |owner, actions|
   person = ASF::Person[name_map[owner]]
@@ -35,12 +37,6 @@ end
     next
   end
 
-  body = "The following action items need your attention:\n"
-  body.sub!('items need', 'item needs') if actions.length == 1
-  body += actions.map do |action|
-    "\n* #{action['text']}\n  [ #{action['pmc']} #{action['date']} ]\n"
-  end.join
-
   # construct email
   mail = Mail.new do
     from from
@@ -48,7 +44,7 @@ end
     cc "board@apache.org"
     subject 'Action Item reminder'
 
-    body body
+    body Erubis::Eruby.new(template).result(binding)
   end
 
   # deliver mail
