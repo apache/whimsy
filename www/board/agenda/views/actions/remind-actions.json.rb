@@ -25,7 +25,7 @@ unless from
   from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
 end
 
-template = File.read("templates/remind-action.txt")
+template = File.read("templates/remind-action.txt").untaint
 
 # iterate over the action items
 @actions.group_by {|action| action['owner']}.each do |owner, actions|
