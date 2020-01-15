@@ -18,6 +18,10 @@ order = {director: 4, officer: 3, guest: 2, info: 1}
 name_map =  people.sort_by {|key,value| order[value[:role]]}.
     map {|key, value| [value[:name].split(' ').first, key]}.to_h
 
+# add full name mappings
+name_map.merge! people.
+  map {|key, value| [value[:name].gsub([^\w], ''), key]}.to_h
+
 # extract values for common fields
 from = @from
 unless from
