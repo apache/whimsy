@@ -20,7 +20,7 @@ name_map =  people.sort_by {|key,value| order[value[:role]]}.
 
 # add full name mappings
 name_map.merge! people.
-  map {|key, value| [value[:name].gsub([^\w], ''), key]}.to_h
+  map {|key, value| [value[:name].gsub(/[^\w]/, ''), key]}.to_h
 
 # extract values for common fields
 from = @from
