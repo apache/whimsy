@@ -52,6 +52,8 @@ class ActionReminder < Vue
       if not response
         alert("Server error - check console log")
       elsif dryrun
+        console.log Object.values(response.sent).join("\n---\n\n")
+        response.delete(:sent)
         console.log response
         alert("Dry run - check console log")
       elsif response.count == @list.length
