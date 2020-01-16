@@ -575,3 +575,7 @@ input[type=file]#upload {
 .secrets li {
   margin-right: 5em;
 }
+
+#new-agenda textarea {
+  margin-bottom: 1em;
+}
