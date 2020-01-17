@@ -1040,7 +1040,7 @@ module ASF
 
     # remove people from an existing group in LDAP
     def remove(people)
-      @members = nil
+      @members = nil  # force fresh LDAP search
       people = (Array(people) & members).map(&:id)
       return if people.empty?
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('memberUid', people)])
@@ -1050,7 +1050,7 @@ module ASF
 
     # add people to an existing group in LDAP
     def add(people)
-      @members = nil
+      @members = nil  # force fresh LDAP search
       people = (Array(people) - members).map(&:id)
       return if people.empty?
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('memberUid', people)])
@@ -1203,7 +1203,7 @@ module ASF
 
     # remove people as owners of a project in LDAP
     def remove_owners(people)
-      @owners = nil
+      @owners = nil  # force fresh LDAP search
       removals = (Array(people) & owners).map(&:dn)
       unless removals.empty?
         ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('owner', removals)])
@@ -1214,7 +1214,7 @@ module ASF
 
     # remove people as members of a project in LDAP
     def remove_members(people)
-      @members = nil
+      @members = nil  # force fresh LDAP search
       removals = (Array(people) & members).map(&:dn)
       unless removals.empty?
         ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('member', removals)])
@@ -1231,7 +1231,7 @@ module ASF
 
     # add people as owners of a project in LDAP
     def add_owners(people)
-      @owners = nil
+      @owners = nil  # force fresh LDAP search
       additions = (Array(people) - owners).map(&:dn)
       unless additions.empty?
         ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('owner', additions)])
@@ -1242,7 +1242,7 @@ module ASF
 
     # add people as members of a project in LDAP
     def add_members(people)
-      @members = nil
+      @members = nil  # force fresh LDAP search
       additions = (Array(people) - members).map(&:dn)
       unless additions.empty?
         ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('member', additions)])
@@ -1403,7 +1403,7 @@ module ASF
 
     # remove people from this service in LDAP
     def remove(people)
-      @members = nil
+      @members = nil # force fresh LDAP search
       people = (Array(people) & members).map(&:dn)
       return if people.empty?
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('member', people)])
@@ -1413,7 +1413,7 @@ module ASF
 
     # add people to this service in LDAP
     def add(people)
-      @members = nil
+      @members = nil # force fresh LDAP search
       people = (Array(people) - members).map(&:dn)
       return if people.empty?
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('member', people)])
