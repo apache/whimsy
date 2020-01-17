@@ -361,6 +361,11 @@ module ASF
       object.instance_variable_set(attr, WeakRef.new(value))
     end
 
+if object == self
+    puts "Save #{attr} #{object}"
+else
+  puts "Nosave #{attr} #{object}"
+end 
     # keep track of which weak references are saved
     @@weakrefs << attr if object == self
   end
