@@ -1167,11 +1167,7 @@ module ASF
     # list of committers on this project.  Stored in LDAP as a <tt>member</tt>
     # attribute.
     def members
-      members = weakref(:members) do
-        ASF.search_one(base, "cn=#{name}", 'member').flatten
-      end
-
-      members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+      memberids.map {|id| Person.find id}
     end
 
     # list of member ids in the project
