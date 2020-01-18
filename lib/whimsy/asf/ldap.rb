@@ -348,6 +348,7 @@ module ASF
 
   # safely dereference a weakref array attribute.  Block provided is
   # used when reference is not set or has been reclaimed.
+  # N.B. dereference_weakref(object, :XYZ, block) stores the reference in @XYZ
   def self.dereference_weakref(object, attr, &block)
     attr = "@#{attr}"
     value = object.instance_variable_get(attr) || block.call
@@ -377,6 +378,7 @@ module ASF
   end
 
   # shortcut for dereference weakref
+  # N.B. weakref(:XYZ) stores the reference in @XYZ
   def self.weakref(attr, &block)
     self.dereference_weakref(self, attr, &block)
   end
@@ -490,6 +492,7 @@ module ASF
     end
 
     # construct a weak reference to this object
+    # N.B. weakref(:XYZ) stores the reference in @XYZ
     def weakref(attr, &block)
       ASF.dereference_weakref(self, attr, &block)
     end
@@ -1017,6 +1020,7 @@ module ASF
     end
 
     # setter for members, should only be used by #preload
+    # N.B. Do not dereference @members directly; use weakref(:members) instead
     def members=(members)
       @members = WeakRef.new(members)
     end
@@ -1028,7 +1032,7 @@ module ASF
 
     # return a list of ids who are members of this group
     def memberids
-      self.members = weakref(:members) do
+      weakref(:members) do # initialises @members if necessary
         ASF.search_one(base, "cn=#{name}", 'memberUid').flatten
       end
     end
@@ -1149,11 +1153,13 @@ module ASF
     end
 
     # setter for members, should only be called by #preload.
+    # N.B. Do not dereference @members directly; use weakref(:members) instead
     def members=(members)
       @members = WeakRef.new(members)
     end
 
     # setter for owners, should only be called by #preload.
+    # N.B. Do not dereference @owners directly; use weakref(:owners) instead
     def owners=(owners)
       @owners = WeakRef.new(owners)
     end
@@ -1379,6 +1385,7 @@ module ASF
     attr_accessor :createTimestamp
 
     # setters for members.  Should only be called by #preload
+    # N.B. Do not dereference @members directly; use weakref(:members) instead
     def members=(members)
       @members = WeakRef.new(members)
     end
