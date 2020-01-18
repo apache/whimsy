@@ -1181,11 +1181,7 @@ module ASF
     # list of owners on this project.  Stored in LDAP as a <tt>owners</tt>
     # attribute.
     def owners
-      owners = weakref(:owners) do
-        ASF.search_one(base, "cn=#{name}", 'owner').flatten
-      end
-
-      owners.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+      ownerids.map {|id| Person.find id}
     end
 
     # list of owner ids in the project
