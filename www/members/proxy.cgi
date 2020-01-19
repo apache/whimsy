@@ -102,6 +102,10 @@ def emit_form(cur_mtg_dir, meeting, volunteers)
             # Fetch members.txt
             members_txt = ASF::Member.list
             
+            # get a list of members who have submitted proxies
+            exclude = Dir[File.join(cur_mtg_dir,'proxies-received', '*')].
+              map {|name| name[/(\w+)\.\w+$/, 1]}
+
             _select.combobox.input_large.form_control name: 'proxy' do
               _option 'Select an ASF Member', :selected, value: ''
               ldap_members.sort_by(&:public_name).each do |member|
@@ -252,9 +256,6 @@ _html do
     cur_mtg_dir = MeetingUtil.get_latest(MEETINGS).untaint
     meeting = File.basename(cur_mtg_dir)
     today = Date.today.strftime('%Y%m%d')
-    # get a list of members who have submitted proxies
-    exclude = Dir[File.join(cur_mtg_dir,'proxies-received', '*')].
-      map {|name| name[/(\w+)\.\w+$/, 1]}
     _whimsy_body(
       title: PAGETITLE,
       subtitle: today > meeting ? "ERROR: Next Meeting Data Not Available" : "How To Assign A Proxy For Upcoming Meeting",
