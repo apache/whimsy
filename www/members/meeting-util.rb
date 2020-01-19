@@ -30,8 +30,7 @@ class MeetingUtil
     copypasta = [] # theiravailid | Their Name in Rolls (proxy)
     begin
       proxylist.each do |arr|
-### ### ###       if user.cn == arr[0].strip
-        if 'curcuru' == arr[0].strip
+        if user.cn == arr[0].strip
           copypasta << "#{arr[2].ljust(12)} | #{arr[1].strip} (proxy)"
         elsif user.id == arr[2]
           help = "NOTE: You have already submitted a proxy form for #{arr[0].strip} to mark your attendance (be sure they know to mark you at Roll Call)! "
