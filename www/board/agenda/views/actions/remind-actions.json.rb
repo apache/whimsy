@@ -45,7 +45,7 @@ template = File.read("templates/remind-action.txt").untaint
   mail = Mail.new do
     from from
     to "#{person.public_name} <#{person.id}@apache.org>".untaint
-    cc "board@apache.org"
+    bcc "board-private@apache.org"
     subject 'Action Item reminder'
 
     body Erubis::Eruby.new(template).result(binding)
