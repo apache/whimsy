@@ -1,8 +1,9 @@
 # Utility methods and structs related to Member's Meetings
 # NOTE: Assumes 21st century
+require 'json'
 
 class MeetingUtil
-
+  RECORDS = 'https://svn.apache.org/repos/private/foundation/Meetings'
   # Calculate how many members required to attend first half for quorum
   def self.calculate_quorum(mtg_dir)
     begin
@@ -48,13 +49,17 @@ class MeetingUtil
     end
   end
   
-  # Read mapping of labels to fields
+  # Get the latest available Meetings dir
   def self.get_latest(mtg_root)
     return Dir[File.join(mtg_root, '2*')].sort.last
   end
-  # Read mapping of labels to fields
+  # Get the second latest available Meetings dir
   def self.get_previous(mtg_root)
     return Dir[File.join(mtg_root, '2*')].sort[-2]
+  end
+  # Read attendance.json file
+  def self.get_attendance(mtg_root)
+    return JSON.parse(IO.read(File.join(mtg_root, 'attendance.json')))
   end
 
 end
