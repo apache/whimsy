@@ -19,8 +19,8 @@ class MeetingUtil
   end
   
   # Get info about current users's proxying
-  # @return "help text", ["id | name (proxy)", ...] if they are a proxy
-  # @return "You have already submitted a proxy form"
+  # @return "help text", ["id | name (proxy)", ...] if they are a proxy for other(s)
+  # @return "You have already submitted a proxy form" to someone else
   # @return nil otherwise
   def self.is_user_proxied(mtg_dir, id)
     user = ASF::Person.find(id)
@@ -42,7 +42,7 @@ class MeetingUtil
     if copypasta.empty?
       return help
     else
-      (help ||= "") << "Since you are a proxy for others, then AFTER the 2. Roll Call is called, you may copy/paste the below lines to mark your and your proxies attendance."
+      (help ||= "") << "During the meeting, to mark your proxies' attendance, AFTER the 2. Roll Call is called, you may copy/paste the below lines to mark your and your proxies attendance."
       copypasta.unshift("#{user.id.ljust(12)} | #{user.cn}")
       return help, copypasta
     end

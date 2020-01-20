@@ -28,9 +28,9 @@ def emit_instructions(today, cur_mtg_dir, meeting)
       }
   end
   _p %{
-    The bottom of this form allows you to assign an attendance proxy for the upcoming 
+    This form allows you to assign an attendance proxy for the upcoming 
     Member's Meeting on #{meeting}. If there is any chance you might not be able 
-    to attend the first part of the Member's Meeting on Tuesday, then 
+    to attend the first part of the Member's Meeting on Tuesday in IRC, then 
     please assign a proxy, because that helps the meeting reach 
     quorum more quickly. 
     You can still attend the meeting if you want, and can revoke a 
@@ -58,40 +58,39 @@ end
 # Emit meeting data and form for user to select a proxy - GET
 def emit_form(cur_mtg_dir, meeting, volunteers)
   help, copypasta = MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
-  _whimsy_panel("Select A Proxy For Upcoming Meeting", style: 'panel-success') do
-    _div.row do
-      _div do
-        if help
-          _p help
-          if copypasta
-            _ul.bg_success do
-              copypasta.each do |copyline|
-                _pre copyline
-              end
-            end
-          end
-        else
-          _p 'The following members have volunteered to serve as proxies; you can freely select any one of them below:'
-          _ul do
-            volunteers.each do |vol|
-              _pre vol
+  user_is_proxy = help && copypasta
+  _whimsy_panel(user_is_proxy ? "You Are Proxying For Others" : "Select A Proxy For Upcoming Meeting", style: 'panel-success') do
+    _div do
+      if help
+        _p help
+        if copypasta
+          _ul.bg_success do
+            copypasta.each do |copyline|
+              _pre copyline
             end
           end
         end
-        _p do
-          _ "IMPORTANT! Be sure to tell the person that you select as proxy that you've assigned them to mark your attendance! They simply need to mark your proxy attendance when the meeting starts."
-          _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
+      else
+        _p 'The following members have volunteered to serve as proxies; you can freely select any one of them below:'
+        _ul do
+          volunteers.each do |vol|
+            _pre vol
+          end
         end
       end
-      
-      _div.row do
-        _div do
-          _pre IO.read(File.join(cur_mtg_dir, 'member_proxy.txt').untaint)
-        end
-      end
-      
-      _form method: 'POST' do
-        _div_.row do
+    end
+    
+    if user_is_proxy
+      _p.text_warning %{
+          NOTE: you are proxying for other members, so you cannot assign 
+          someone else to proxy for your attendance.  If it turns out that 
+          you will not be able to attend the first half of the IRC meeting
+          on Tuesday, you MUST work with the Chairman and your proxies 
+          to update the proxy records, and get someone else to mark their presence!
+        }
+    else
+      _div.well.well_lg do
+        _form method: 'POST' do
           _div.form_group do
             _label 'Select proxy'
             
@@ -118,33 +117,37 @@ def emit_form(cur_mtg_dir, meeting, volunteers)
               end
             end
           end
-        end
-        
-        _div_.row do
-          _div.button_group.text_center do
-            _button.btn.btn_primary 'Submit'
+          _div_.form_group do
+            _p do
+              _ "IMPORTANT! Be sure to tell the person that you select as proxy above that you've assigned them to mark your attendance! They simply need to mark your proxy attendance when the meeting starts."
+              _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
+            end
+            _div.button_group.text_center do
+              _button.btn.btn_primary 'Submit'
+            end
           end
         end
+        _pre IO.read(File.join(cur_mtg_dir, 'member_proxy.txt').untaint)
       end
     end
-    
+  end
+  
 ##    _script src: "js/jquery-1.11.1.min.js"
 ##    _script src: "js/bootstrap.min.js"
-    _script src: "js/bootstrap-combobox.js" # TODO do we need this still?
+  _script src: "js/bootstrap-combobox.js" # TODO do we need this still?
+  
+  _script_ %{
+    // convert select into combobox
+    $('.combobox').combobox();
     
-    _script_ %{
-      // convert select into combobox
-      $('.combobox').combobox();
-      
-      // initially disable submit
-      $('.btn').prop('disabled', true);
-      
-      // enable submit when proxy is chosen
-      $('*[name="proxy"]').change(function() {
-        $('.btn').prop('disabled', false);
-        });
-    }
-  end
+    // initially disable submit
+    $('.btn').prop('disabled', true);
+    
+    // enable submit when proxy is chosen
+    $('*[name="proxy"]').change(function() {
+      $('.btn').prop('disabled', false);
+      });
+  }
 end
 
 # Emit a record of a user's submission - POST
