@@ -10,18 +10,37 @@ require 'wunderbar/jquery/stupidtable'
 require_relative 'meeting-util'
 
 # Output action links for meeting records, depending on if current or past
-def emit_meeting(meeting, active)
+def emit_meeting(cur_mtg_dir, meeting, active)
   _div id: "meeting-#{meeting}"
-  _whimsy_panel_table(
-    title: "Meeting Details for #{meeting}",
-    helpblock: -> {
-      _p active ? "Live links to the upcoming meeting records/how-tos below." : "These are historical links to the past meeting's record."
-    }
-  ) do
+  _whimsy_panel("All Meeting Details for #{meeting}", style: 'panel-info') do 
+    num_members, quorum_need, num_proxies, attend_irc = MeetingUtil.calculate_quorum(cur_mtg_dir)
+    if num_members
+      if active
+        _p do
+          _ 'Currently, we will need '
+          _span.text_primary "#{attend_irc}" 
+          _ " Members attending the first half of the meeting on Tuesday and respond to Roll Call to reach quorum and continue the meeting."
+          _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
+        end
+      else
+        _p do
+          _ 'At the time of this past meeting, we had:'
+          _ul do
+            _li "#{num_members} eligible voting Members,"
+            _li "#{quorum_need} needed for quorum (one third),"
+            _li "#{num_proxies} proxy assignments available for the meeting,"
+            _li "And hoped that at least #{attend_irc} would attend the start of meeting."
+          end
+          attendees = File.readlines(File.join(cur_mtg_dir, 'attend'))
+          _ "By the end of the meeting, we had a total of #{attendees.count} Members participating (either via attending IRC, sending a proxy, or voting via email)"
+        end
+      end
+    end
+    _p active ? "Live links to the upcoming meeting records/how-tos below." : "These are historical links to the past meeting's record."
     _ul do
       MeetingUtil::MEETING_FILES.each do |f, desc|
         _li do # Note: cheezy path detection within MEETING_FILES
-          _a desc, href: f.include?('/') ? f : File.join(MeetingUtil::RECORDS, meeting, f)
+          _a desc, href: f.include?('/') ? f : File.join(cur_mtg_dir, f)
         end
       end
     end
@@ -72,7 +91,7 @@ _html do
     ) do
       help, copypasta = MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
       attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
-      _whimsy_panel("Your Details For Meeting #{meeting}", style: 'panel-info') do
+      _whimsy_panel("Your Details For Meeting #{meeting}", style: 'panel-primary') do
         # TODO: remind member to check their committer.:email_forward address is correct (where ballots are sent)
         _p do
           if help
@@ -90,7 +109,7 @@ _html do
         end
       end
       
-      emit_meeting(meeting, meeting >= today)
+      emit_meeting(cur_mtg_dir, meeting, meeting >= today)
       
       _whimsy_panel("Member Meeting History", style: 'panel-info') do
         all_mtg = Dir[File.join(MEETINGS, '19*'), File.join(MEETINGS, '2*')].sort
