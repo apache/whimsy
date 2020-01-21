@@ -31,7 +31,8 @@ $NOFOLLOW = false # may be reset
 $VERSION = nil
 
 # match an artifact
-ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|zip|tgz|tar\.bz2|jar|war|msi|rar|rpm))$}
+# TODO detect artifacts by URL as well if possible
+ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|zip|tgz|tar\.bz2|jar|war|msi|rar|rpm|nar))$}
 
 def init
   # build a list of validation errors
@@ -358,7 +359,7 @@ def _checkDownloadPage(path, tlp, version)
   vercheck = Hash.new() # key = archive name, value = array of hash/sig
   links.each do |h,t|
     # Must occur before mirror check below
-    if h =~ %r{^https?://(?:archive|www)\.apache\.org/dist/(.+\.(asc|sha\d+|md5))$}
+    if h =~ %r{^https?://(?:archive|www)\.apache\.org/dist/(.+\.(asc|sha\d+|md5|sha))$}
         base = File.basename($1)
         ext = $2
         stem = base[0..-(2+ext.length)]
@@ -400,8 +401,8 @@ def _checkDownloadPage(path, tlp, version)
   
   # did we find all required elements?
   vercheck.each do |k,v|
-    unless v.include? "asc" and v.any? {|e| e =~ /^sha\d+$/ or e == 'md5'}
-      E "#{k} missing sig/hash: #{v.inspect}"
+    unless v.include? "asc" and v.any? {|e| e =~ /^sha\d+$/ or e == 'md5' or e == 'sha'}
+      E "#{k} missing sig/hash: (found only: #{v.inspect})"
     end
   end
 
