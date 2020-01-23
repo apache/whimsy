@@ -32,7 +32,7 @@ $VERSION = nil
 
 # match an artifact
 # TODO detect artifacts by URL as well if possible
-ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|zip|tgz|tar\.bz2|jar|war|msi|rar|rpm|nar))$}
+ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|zip|tgz|tar\.bz2|jar|war|msi|rar|rpm|nar))(&action=download)?$}
 
 def init
   # build a list of validation errors
