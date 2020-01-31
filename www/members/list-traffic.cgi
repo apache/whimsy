@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Board@ Mailing List Statistics" # Wvisible:board
+PAGETITLE = "Members@ Mailing List Statistics" # Wvisible:members
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'wunderbar'
@@ -12,16 +12,16 @@ require 'mail'
 require '../../tools/mboxhdr2csv.rb'
 
 user = ASF::Person.new($USER)
-unless user.asf_member? or ASF.pmc_chairs.include? user
+unless user.asf_member?
   print "Status: 401 Unauthorized\r\n"
-  print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
+  print "WWW-Authenticate: Basic realm=\"ASF Members\"\r\n\r\n"
   exit
 end
 
 # Return sorted data in JSON format if the query string includes 'json'
 ENV['HTTP_ACCEPT'] = 'application/json' if ENV['QUERY_STRING'].include? 'json'
 
-LIST_ROOT = 'board'
+LIST_ROOT = 'members'
 SRV_MAIL = "/srv/mail/#{LIST_ROOT}"
 
 WEEK_TOTAL = '@@total' # Use @@ so it can't match who name/emails
@@ -30,7 +30,7 @@ WEEK_START = '@@start'
 # Display monthly statistics for all available data
 def display_monthly(months:, nondiscuss:)
   months.sort.reverse.each do |month|
-    data = get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: nondiscuss)
+    data = MailUtils.get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: nondiscuss)
     next if data.empty?
     _h1 "#{LIST_ROOT}@ statistics for #{month} (total mails: #{data[MailUtils::MAILS].length + data[MailUtils::TOOLS].length})", id: "#{month}"
     _div.row do
@@ -65,7 +65,7 @@ end
 def display_weekly(months:, nondiscuss:)
   weeks = Hash.new {|h, k| h[k] = {}}
   months.sort.each do |month|
-    data = get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: nondiscuss)
+    data = MailUtils.get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: nondiscuss)
     next if data.empty?
     # accumulate all mails in order for weeks, through all months
     data[MailUtils::MAILS].each do |m|
