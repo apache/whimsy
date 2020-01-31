@@ -30,7 +30,7 @@ WEEK_START = '@@start'
 # Display monthly statistics for all available data
 def display_monthly(months:, nondiscuss:)
   months.sort.reverse.each do |month|
-    data = get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: nondiscuss)
+    data = MailUtils.get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: nondiscuss)
     next if data.empty?
     _h1 "#{LIST_ROOT}@ statistics for #{month} (total mails: #{data[MailUtils::MAILS].length + data[MailUtils::TOOLS].length})", id: "#{month}"
     _div.row do
@@ -65,7 +65,7 @@ end
 def display_weekly(months:, nondiscuss:)
   weeks = Hash.new {|h, k| h[k] = {}}
   months.sort.each do |month|
-    data = get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: nondiscuss)
+    data = MailUtils.get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: nondiscuss)
     next if data.empty?
     # accumulate all mails in order for weeks, through all months
     data[MailUtils::MAILS].each do |m|
@@ -155,7 +155,7 @@ _json do
   months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
   data = Hash.new {|h, k| h[k] = {} }
   months.sort.reverse.each do |month|
-    tmp = get_mails_month(yearmonth: month, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS["<#{LIST_ROOT}.apache.org>"])
+    tmp = MailUtils.get_mails_month(yearmonth: month, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS["<#{LIST_ROOT}.apache.org>"])
     next if tmp.empty?
     data[month][MailUtils::TOOLCOUNT] = tmp[MailUtils::TOOLCOUNT]
     data[month][MailUtils::MAILCOUNT] = tmp[MailUtils::MAILCOUNT]
