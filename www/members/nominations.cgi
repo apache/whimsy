@@ -24,7 +24,7 @@ def setup_data(cur_mtg_dir)
   emails = []
   archive.each do |email|
     next if email.end_with? '/index'
-    message = IO.read(email, mode: 'rb')
+    message = IO.read(email.untaint, mode: 'rb')
     next unless message[/^Date: .*/].to_s.include? year
     subject = message[/^Subject: .*/]
     next if not subject # HACK: allow script to continue if bogus email
@@ -36,7 +36,7 @@ def setup_data(cur_mtg_dir)
   end
 
   # parse nominations for names and ids
-  nominations = IO.read(File.join(cur_mtg_dir, 'nominated-members.txt')).
+  nominations = IO.read(File.join(cur_mtg_dir, 'nominated-members.txt').untaint).
     scan(/^---+--\s+(.*?)\n/).flatten
 
   nominations.shift if nominations.first == '<empty line>'
