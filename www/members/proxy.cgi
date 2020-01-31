@@ -234,16 +234,15 @@ def emit_post(cur_mtg_dir, meeting)
         # TODO: send email to @proxy per WHIMSY-78
       end
     end
-
-    # report on contents
-    _h3! do
-      _span "Contents of "
-      _code "foundation/meetings/#{meeting}/#{$USER}.txt"
-      _span ":"
-    end
-
-    _pre proxyform
   end
+  
+  # Report on contents now that they're checked in
+  _h3! do
+    _span "Contents of "
+    _code "foundation/Meetings/#{meeting}/#{$USER}.txt"
+    _span " as now checked in to svn:"
+  end
+  _pre proxyform
 end
 
 # produce HTML
