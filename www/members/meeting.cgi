@@ -63,20 +63,23 @@ _html do
       relatedtitle: 'More About Meetings',
       related: {
         'https://www.apache.org/foundation/governance/meetings' => 'How Meetings & Voting Works',
+        'https://www.apache.org/foundation/governance/meetings#how-member-votes-are-tallied' => 'New Members Elected By Majority',
+        'https://www.apache.org/foundation/governance/meetings#how-votes-for-the-board-are-tallied' => 'Board Seats Are Elected By STV',
+        '/members/whatif' => 'Explore Past Board STV Results',
         '/members/proxy' => 'Assign A Proxy For Next Meeting',
         '/members/non-participants' => 'Members Not Participating',
         '/members/inactive' => 'Inactive Member Feedback Form',
         MeetingUtil::RECORDS => 'Official Past Meeting Records'
       },
       helpblock: -> {
-        if today > meeting
+        if today > meeting # Date is start of the two day meeting
           _p do
             _ %{
               The last Annual Member's Meeting was held #{mtg_date.strftime('%A, %d %B %Y')}.  Expect the 
               next Member's meeting to be scheduled between 12 - 13 months after 
               the previous meeting, as per 
             }
-            _a 'https://www.apache.org/foundation/bylaws.html#3.2', 'the bylaws.'
+            _a 'https://www.apache.org/foundation/bylaws.html#3.2', 'the bylaws 3.2.'
             _ 'Stay tuned for a NOTICE email on members@ announcing the next meeting.  The below information is about the '
             _span.text_warning 'LAST'
             _ " Member's meeting."
@@ -84,14 +87,17 @@ _html do
         else
           _p do
             _ "The next Member's Meeting will start on #{mtg_date.strftime('%A, %d %B %Y')}, as an online meeting on IRC, and will finish up two days later after voting via email is held."
-            _ 'For more details, read on below, or see the links to the right.'
+            _ 'For more details, read on below, or see the links to the right. '
+            _span.text_warning 'REMINDER: '
+            _ 'Nominations for the board or new members close 10 days before the meeting starts; no new names may be added after that date.'
           end
         end
       }
     ) do
       help, copypasta = MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
       attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
-      _whimsy_panel("Your Details For Meeting #{meeting}", style: 'panel-primary') do
+      user = ASF::Person.find($USER)
+      _whimsy_panel("#{user.public_name} Details For Meeting #{meeting}", style: 'panel-primary') do
         # TODO: remind member to check their committer.:email_forward address is correct (where ballots are sent)
         _p do
           if help
@@ -106,6 +112,11 @@ _html do
           else
             _ 'You are neither a proxy for anyone else, nor do you appear to have assigned a proxy for your attendance.'
           end
+        end
+        _p do
+          _span.text_warning 'REMINDER: '
+          _ "Ballots are sent to your official email address as found in members.txt, please double-check it is correct!"
+          _a 'See members.txt', href: 'https://svn.apache.org/repos/private/foundation/members.txt'
         end
       end
       
