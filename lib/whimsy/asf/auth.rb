@@ -68,6 +68,9 @@ module ASF
     private
 
     def read_auth
+      # these files were removed:
+      # https://github.com/apache/infrastructure-puppet/pull/1713
+      return ''
       File.read("#{@auth}/#{@file}-authorization-template")
     end
   end
