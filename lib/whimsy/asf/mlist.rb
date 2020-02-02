@@ -40,6 +40,7 @@ module ASF
     # pmc can either be a pmc name, in which case it uses private@<pmc>.apache.org
     # or it can be an ASF list name, e.g. w3c@apache.org
     def self.private_subscribers(pmc, archivers=false)
+      return [] unless Dir.exists? LIST_BASE
       parts = pmc.split('@', 3) # want to detect trailing '@'
       if parts.length == 1
         return list_filter('sub', "#{pmc}.apache.org", 'private', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
@@ -51,6 +52,7 @@ module ASF
     end
 
     def self.security_subscribers(pmc, archivers=false)
+      return [] unless Dir.exists? LIST_BASE
       return list_filter('sub', "#{pmc}.apache.org", 'security', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
