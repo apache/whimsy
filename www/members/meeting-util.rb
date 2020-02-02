@@ -5,13 +5,14 @@ require 'json'
 class MeetingUtil
   RECORDS = 'https://svn.apache.org/repos/private/foundation/Meetings'
   MEETING_FILES = { # Filename in meeting dir, or pathname to another tool
-    'README.txt' => 'README For Meeting Process',
+    'README.txt' => 'README For Meeting Process And Roll Call',
     'nomination_of_board.txt' => 'How To Nominate Someone For Board',
     'nomination_of_members.txt' => 'How To Nominate A New Member',
     '/members/proxy.cgi' => 'How To Submit A Proxy/Check Your Proxies',
     'https://www.apache.org/foundation/governance/meetings' => 'How Voting Via Email Works',
     'agenda.txt' => 'Official Meeting Agenda',
     'board_ballot.txt' => 'Official Board Candidate Ballots',
+    'nominated-members.txt' => 'Official New Member Nominees/Seconds',
     'proxies' => 'Official List Of Meeting Proxies',
     'record' => 'Official List Of Voting Members',
     'attend' => 'Official List Of Meeting Attendees (afterwards)',
