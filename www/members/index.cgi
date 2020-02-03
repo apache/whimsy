@@ -8,6 +8,7 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 
 MEETING = {
+  'meeting.cgi' => "Member's Meeting FAQ, Timeline, How-Tos",
   'proxy.cgi' => "Assign a proxy for the (current) Member's meeting",
   'watch.cgi' => "Potential Member Watch List - tracking candidates for future nominations",
   'memberless-pmcs.cgi' => "Crosscheck PMCs with few/no ASF Members, for future nominations",
