@@ -22,7 +22,9 @@ module LogParser
     'site.cgi' => 'TLP Site Checker',
     'pods.cgi' => 'Podling Site Checker',
     'foundation/orgchart' => 'Public OrgChart',
-    'status' => 'Server Status'
+    'status' => 'Server Status',
+    'committers' => 'Other Committer Private Tools',
+    'members' => 'Other Member Private Tools'
   }
   RUSER = 'remote_user'
   REFERER = 'referer'
