@@ -12,8 +12,11 @@ require_relative 'meeting-util'
 
 # TODO: Read in proxies between Volunteers: and Assignments: lines
 volunteers = [
+  "Craig L Russell (clr)",
   "Shane Curcuru (curcuru)",
-  "Craig L Russell (clr)"
+  "Jim Jagielski (jim)",
+  "Greg Stein (gstein)",
+  "Daniel Ruggeri (druggeri)"
 ]
 
 # Emit basic instructions and details on quorum
@@ -71,7 +74,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers)
           end
         end
       else
-        _p 'The following members have volunteered to serve as proxies; you can freely select any one of them below:'
+        _p 'The following members have explicitly volunteered to serve as proxies; select any one of them, or select any other member that you know will proxy for you (or ask!):'
         _ul do
           volunteers.each do |vol|
             _pre vol
