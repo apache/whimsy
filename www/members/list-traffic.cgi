@@ -52,8 +52,10 @@ def display_monthly(months:, nondiscuss:)
       _div.col_sm_6 do
         _ul.list_group do
           _li.list_group_item.list_group_item_info "Long Tail - All Senders"
-          data[MailUtils::MAILCOUNT].each do |id, num|
-            _li.list_group_item "#{id} (#{num}), "
+          _li.list_group_item do
+            data[MailUtils::MAILCOUNT].each do |id, num|
+              _! "#{id} (#{num}), "
+            end
           end
         end
       end
