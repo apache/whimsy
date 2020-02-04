@@ -156,64 +156,67 @@ module MailUtils
     # Return cached calculated data if present
     cache_json = File.join(mailroot, "#{yearmonth}.json")
     if File.file?(cache_json)
-      return JSON.parse(File.read(cache_json))
-    else
-      emails = {}
-      files = Dir[File.join(mailroot, yearmonth, '*')]
-      return emails if files.empty?
-      emails[MAILS] = []
-      emails[TOOLS] = []
-      files.each do |email|
-        next if email.end_with? '/index'
-        message = IO.read(email.untaint, mode: 'rb')
-        data = {}
-        data[DATE] = DateTime.parse(message[/^Date: (.*)/, 1]).iso8601
-        data[FROM] = message[/^From: (.*)/, 1]
-        # Originally (before 2265343) the local method #find_who_from expected an email address and returned who, committer
-        # Emulate this with the version from MailUtils which expects and updates a hash
-        temp = {from: data[FROM]} # pass a hash
-        MailUtils.find_who_from(temp) # update the hash
-        # pick out the bits we want
-        data[WHO], data[COMMITTER] = temp[:who], temp[:committer] 
-
-        data[SUBJECT] = message[/^Subject: (.*)/, 1]
-        if nondiscuss
-          nondiscuss.each do |typ, rx|
-            if data[SUBJECT] =~ rx
-              data[TOOLS] = typ
-              break # regex.each
-            end
-          end
-        end
-        data.has_key?(TOOLS) ? emails[TOOLS] << data : emails[MAILS] << data
+      begin
+        return JSON.parse(File.read(cache_json))
+      rescue StandardError => e
+        # No-op: fall through to attempt to re-create cache
       end
-      # Provide as sorted data for ease of use
-      emails[TOOLS].sort_by! { |email| email[DATE] }
-      emails[TOOLCOUNT] = Hash.new {|h, k| h[k] = 0 }
-      emails[TOOLS].each do |mail|
-        emails[TOOLCOUNT][mail[TOOLS]] += 1
-      end
-      emails[TOOLCOUNT] = emails[TOOLCOUNT].sort_by { |k,v| -v}.to_h
-      
-      emails[MAILS].sort_by! { |email| email[DATE] }
-      emails[MAILCOUNT] = Hash.new {|h, k| h[k] = 0 }
-      emails[MAILS].each do |mail|
-        emails[MAILCOUNT][mail[WHO]] += 1
-      end
-      emails[MAILCOUNT] = emails[MAILCOUNT].sort_by { |k,v| -v}.to_h
-
-      # If yearmonth is before current month, then write out yearmonth.json as cache
-      if yearmonth < Date.today.strftime('%Y%m')
-        begin
-          File.open(cache_json, 'w') do |f|
-            f.puts JSON.pretty_generate(emails)
-          end
-        rescue
-          # No-op, just don't cache for now
-        end
-      end
-      return emails
     end
+    emails = {}
+    files = Dir[File.join(mailroot, yearmonth, '*')]
+    return emails if files.empty?
+    emails[MAILS] = []
+    emails[TOOLS] = []
+    files.each do |email|
+      next if email.end_with? '/index'
+      message = IO.read(email.untaint, mode: 'rb')
+      data = {}
+      data[DATE] = DateTime.parse(message[/^Date: (.*)/, 1]).iso8601
+      data[FROM] = message[/^From: (.*)/, 1]
+      # Originally (before 2265343) the local method #find_who_from expected an email address and returned who, committer
+      # Emulate this with the version from MailUtils which expects and updates a hash
+      temp = {from: data[FROM]} # pass a hash
+      MailUtils.find_who_from(temp) # update the hash
+      # pick out the bits we want
+      data[WHO], data[COMMITTER] = temp[:who], temp[:committer] 
+
+      data[SUBJECT] = message[/^Subject: (.*)/, 1]
+      if nondiscuss
+        nondiscuss.each do |typ, rx|
+          if data[SUBJECT] =~ rx
+            data[TOOLS] = typ
+            break # regex.each
+          end
+        end
+      end
+      data.has_key?(TOOLS) ? emails[TOOLS] << data : emails[MAILS] << data
+    end
+    # Provide as sorted data for ease of use
+    emails[TOOLS].sort_by! { |email| email[DATE] }
+    emails[TOOLCOUNT] = Hash.new {|h, k| h[k] = 0 }
+    emails[TOOLS].each do |mail|
+      emails[TOOLCOUNT][mail[TOOLS]] += 1
+    end
+    emails[TOOLCOUNT] = emails[TOOLCOUNT].sort_by { |k,v| -v}.to_h
+    
+    emails[MAILS].sort_by! { |email| email[DATE] }
+    emails[MAILCOUNT] = Hash.new {|h, k| h[k] = 0 }
+    emails[MAILS].each do |mail|
+      emails[MAILCOUNT][mail[WHO]] += 1
+    end
+    emails[MAILCOUNT] = emails[MAILCOUNT].sort_by { |k,v| -v}.to_h
+
+    # If yearmonth is before current month, then write out yearmonth.json as cache
+    if yearmonth < Date.today.strftime('%Y%m')
+      begin
+        File.open(cache_json, 'w') do |f|
+          f.puts JSON.pretty_generate(emails)
+        end
+      rescue
+        # No-op, just don't cache for now
+      end
+    end
+    return emails
   end
 end
 
