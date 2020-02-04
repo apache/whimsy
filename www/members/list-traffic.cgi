@@ -32,11 +32,11 @@ def display_monthly(months:, nondiscuss:)
   months.sort.reverse.each do |month|
     data = MailUtils.get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: nondiscuss)
     next if data.empty?
-    _h1 "#{LIST_ROOT}@ statistics for #{month} (total mails: #{data[MailUtils::MAILS].length + data[MailUtils::TOOLS].length})", id: "#{month}"
+    _h1 "#{LIST_ROOT}@ statistics for #{month} (total mails: #{data[MailUtils::MAILS].length})", id: "#{month}"
     _div.row do
       _div.col_sm_6 do
         _ul.list_group do
-          _li.list_group_item.active.list_group_item_info "Top Ten Email Senders (from non-tool mails: #{data[MailUtils::MAILS].length})"
+          _li.list_group_item.active.list_group_item_info "Top Ten Email Senders"
           ctr = 0
           data[MailUtils::MAILCOUNT].each do |id, num|
             if num > (data[MailUtils::MAILS].length / 10)
@@ -51,9 +51,9 @@ def display_monthly(months:, nondiscuss:)
       end
       _div.col_sm_6 do
         _ul.list_group do
-          _li.list_group_item.list_group_item_info "Tool Generated Emails (by type, total tool mails: #{data[MailUtils::TOOLS].length})"
-          data[MailUtils::TOOLCOUNT].each do |id, num|
-            _li.list_group_item "#{num} emails from #{id} tool"
+          _li.list_group_item.list_group_item_info "Long Tail - All Senders"
+          data[MailUtils::MAILCOUNT].each do |id, num|
+            _li.list_group_item "#{id} (#{num}), "
           end
         end
       end
@@ -79,7 +79,7 @@ def display_weekly(months:, nondiscuss:)
       end
     end
   end
-  _h1 "#{LIST_ROOT}@ list non-tool emails weekly statistics", id: "top"
+  _h1 "#{LIST_ROOT}@ list emails weekly statistics", id: "top"
   _div.row do
     _div.col.col_sm_offset_1.col_sm_9 do
       weeks.sort.reverse.each do |week, senders|
@@ -118,29 +118,29 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        "/board/agenda" => "Current Month Board Agenda",
-        "/board/minutes" => "Past Minutes, Categorized",
-        "https://www.apache.org/foundation/board/calendar.html" => "Past Minutes, Dated",
-        "#{ENV['SCRIPT_NAME']}" => "List Traffic By Month",
-        "#{ENV['SCRIPT_NAME']}?week" => "List Traffic By Week",
+        "/members/index" => "More Member-Specific Tools",
+        "/officers/list-traffic" => "Board@ List Traffic",
+        "#{ENV['SCRIPT_NAME']}" => "Members@ List Traffic By Month",
+        "#{ENV['SCRIPT_NAME']}?week" => "Members@ List Traffic By Week",
         "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code"
       },
       helpblock: -> {
         _p %{
-          This script displays some simple (and potentially lossy) analysis of traffic on the #{LIST_ROOT}@ mailing list.
-          In particular, mapping email to a committer may not work (meaning individual senders may have multiple spots),
+          This script displays simple (and likely slightly lossy) analysis of traffic on the #{LIST_ROOT}@ mailing list.
+          In particular, mapping From: email to a committer may not work (meaning individual senders may have multiple spots),
           and Subject lines displayed may be truncated (meaning threads may not fully be tracked).  Work in progress.
         }
         _p do
-          _ 'This attempts to differentiate tool- or process-generated emails (NOTICE, REPORT, etc.) from all other emails (i.e. mails hand-written by a person). '
-          _ 'Senders of more than 10% of all non-tool emails in a month are highlighted. '
-          _ 'Senders of more than 20%, 10%, or 5% of all non-tool emails in a week are highlighted in the '
+          _ 'Senders of more than 10% of all emails in a month are highlighted. '
+          _ 'Senders of more than 20%, 10%, or 5% of all emails in a week are highlighted in the '
           _a 'By week view (supply ?week in URL).', href: '?week'
         end
 
       }
     ) do
       months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
+      _.error "HACK - server log one"
+
       if ENV['QUERY_STRING'].include? 'week'
         display_weekly(months: months, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS["<#{LIST_ROOT}.apache.org>"])
       else
