@@ -76,7 +76,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers)
           end
         end
       else
-        _p 'The following members have volunteered to serve as proxies; you can freely select any one of them below:'
+        _p 'The following members have explicitly volunteered to serve as proxies; select any one of them, or select any other member that you know will proxy for you (or ask!):'
         _ul do
           volunteers.each do |vol|
             _pre vol

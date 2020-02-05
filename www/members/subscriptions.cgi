@@ -51,6 +51,8 @@ _html do
           _ 'Separate tables below show '
           _a 'Members not subscribed to the list', href: "#unsub"
           _ ', and '
+          _a 'Copyable list of Members not subscribed', href: "#unsublist"
+          _ ', and '
           _a 'Entries in LDAP but not members.txt', href: "#ldap"
           _ '.'
         end
@@ -129,6 +131,12 @@ _html do
               _td.text_danger '*notinavail*'
             end
           end
+        end
+      end
+      _h3_.unsublist! 'Handy List of Unsubscribed Emails'
+      _p do
+        missing.each do |person|
+          _ "#{person.id}@apache.org, "
         end
       end
     end
