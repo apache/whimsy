@@ -12,11 +12,13 @@ require_relative 'meeting-util'
 
 # TODO: Read in proxies between Volunteers: and Assignments: lines
 volunteers = [
-  "Craig L Russell (clr)",
   "Shane Curcuru (curcuru)",
+  "Craig L Russell (clr)",
   "Jim Jagielski (jim)",
   "Greg Stein (gstein)",
-  "Daniel Ruggeri (druggeri)"
+  "Daniel Ruggeri (druggeri)",
+  "Matt Sicker (mattsicker)",
+  "Michael Brohl (mbrohl)"
 ]
 
 # Emit basic instructions and details on quorum
