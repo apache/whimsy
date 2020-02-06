@@ -35,8 +35,9 @@ _html do
     begin
       tracker = JSON.parse(IO.read(File.join(latest, 'non-participants.json')))
     rescue Errno::ENOENT => err
-      # Fallback to reading previous meeting's data
-      tracker = JSON.parse(IO.read(File.join(MeetingUtil.get_previous(MEETINGS).untaint, 'non-participants.json')))
+      # Fallback to reading previous meeting's data, and reset variable
+      latest = MeetingUtil.get_previous(MEETINGS).untaint
+      tracker = JSON.parse(IO.read(File.join(latest, 'non-participants.json')))
     end
     # defaults for active users
     tracker[$USER] ||= {
@@ -57,12 +58,13 @@ _html do
       },
       helpblock: -> {
         _p do
-          _ "This page shows your attendance record at past Member's meetings."
+          _ "This page shows your personal attendance record at past Member's meetings, as of meeting #{latest}."
           _ %{
             It is also a poll of members who have not participated in
             ASF Members Meetings or Elections in the past three years, and 
-            if you have been inactive, asks you if you wish to remain active or go emeritus.  Inactive members can
-            indicate their choice by pushing one of the buttons below.
+            if you have been inactive, asks you if you wish to remain active or go emeritus.  Inactive members 
+            (only) will see a form below and can
+            indicate their choice and provide feedback on meetings by pushing one of the buttons below.
           }
         end
       }
@@ -82,6 +84,9 @@ _html do
           end
         end
         _p.text_success "Great! Thanks for attending Member's meetings recently! Overall attends: #{att} Non-attends: #{miss}"
+        if att == miss
+          _p.text_success "WOW! 100% attendance rate - thanks!"
+        end
       end
 
       if not active
@@ -137,7 +142,7 @@ _html do
           _p_ %{
             If you haven't attended or voted in meetings recently, please consider participating, at
             least by proxy, in the upcoming membership meeting.  See the links
-            above for more information.
+            above for more information; submitting a proxy is a simple web form.
           }
         end
       end
