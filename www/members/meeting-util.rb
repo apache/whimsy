@@ -4,7 +4,7 @@ require 'json'
 
 class MeetingUtil
   RECORDS = 'https://svn.apache.org/repos/private/foundation/Meetings'
-  MEETING_FILES = { # Filename in meeting dir, or pathname to another tool
+  MEETING_FILES = { # Filename in meeting dir, pathname to another deployed tool, or URL
     'README.txt' => 'README For Meeting Process And Roll Call',
     'nomination_of_board.txt' => 'How To Nominate Someone For Board',
     'nomination_of_members.txt' => 'How To Nominate A New Member',

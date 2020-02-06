@@ -29,7 +29,7 @@ def emit_link(cur_mtg_dir, f, desc)
 end
 
 # Output action links for meeting records, depending on if current or past
-def emit_meeting(cur_mtg_dir, dt)
+def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt)
   _div id: "meeting-#{dt.year}"
   _whimsy_panel("All Meeting Details for #{dt.strftime(DTFORMAT)}", style: 'panel-info') do 
     if Date.today > dt
@@ -51,7 +51,7 @@ def emit_meeting(cur_mtg_dir, dt)
     _ul do
       MeetingUtil::MEETING_FILES.each do |f, desc|
         _li do
-          emit_link(cur_mtg_dir, f, desc)
+          emit_link(svn_mtg_dir, f, desc)
         end
       end
     end
@@ -64,6 +64,7 @@ _html do
     MEETINGS = ASF::SVN['Meetings']
     cur_mtg_dir = MeetingUtil.get_latest(MEETINGS).untaint
     meeting = File.basename(cur_mtg_dir)
+    svn_mtg_dir = File.join(MeetingUtil::RECORDS, meeting)
     mtg_date = Date.parse(meeting)
     today = Date.today
     # Use ics files for accurate times; see create-meeting.rb
@@ -153,7 +154,7 @@ _html do
           _ul do
             ['nomination_of_board.txt', 'nomination_of_members.txt', '/members/proxy.cgi'].each do |f|
               _li do
-                emit_link(cur_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
+                emit_link(svn_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
               end
             end
           end
@@ -170,7 +171,7 @@ _html do
           _ul do
             ['nominated-members.txt', '/members/proxy.cgi'].each do |f|
               _li do
-                emit_link(cur_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
+                emit_link(svn_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
               end
             end
           end
@@ -189,7 +190,7 @@ _html do
           _ul do
             ['agenda.txt', 'README.txt', 'https://www.apache.org/foundation/governance/meetings'].each do |f|
               _li do
-                emit_link(cur_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
+                emit_link(svn_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
               end
             end
           end
@@ -219,7 +220,7 @@ _html do
           _ul do
             ['record', 'attend', 'voter-tally', 'raw_board_votes.txt'].each do |f|
               _li do
-                emit_link(cur_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
+                emit_link(svn_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
               end
             end
           end
@@ -243,7 +244,7 @@ _html do
       end
       
       # Most/all of these links should already be included above
-      emit_meeting(cur_mtg_dir, m1_date)
+      emit_meeting(cur_mtg_dir, svn_mtg_dir, m1_date)
       
       _div id: "meeting-history"
       _whimsy_panel("Member Meeting History", style: 'panel-info') do
