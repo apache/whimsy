@@ -76,16 +76,23 @@ _html do
       end
       if active
         att = miss = 0
-        matrix.each do |date, status|
-          if %w(A V P).include? status
-            att += 1
-          else
-            miss += 1
+        if !matrix.nil?
+          matrix.each do |date, status|
+            if %w(A V P).include? status
+              att += 1
+            else
+              miss += 1
+            end
           end
         end
-        _p.text_success "Great! Thanks for attending Member's meetings recently! Overall attends: #{att} Non-attends: #{miss}"
-        if 0 == miss
-          _p.text_success "WOW! 100% attendance rate - thanks!"
+
+        if 0 == miss && 0 == att
+          _p.text_success "No attendance for Member's meetings found yet"
+        else
+          _p.text_success "Great! Thanks for attending Member's meetings recently! Overall attends: #{att} Non-attends: #{miss}"
+          if 0 == miss
+            _p.text_success "WOW! 100% attendance rate - thanks!"
+          end
         end
       end
 
