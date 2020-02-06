@@ -100,9 +100,14 @@ _html do
             _ " Member's meeting."
           end
         else
-          _p %{
-            The Member's Meeting starts #{mtg_date.strftime(DTFORMAT)} as an online IRC meeting for about an hour.  We then recess for 48 hours while ballots are sent via email for voting. Results will be announced when we reconvene for about half an hour.
-          }
+          _p do
+            _ "The Member's Meeting starts at "
+            _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m1_date.strftime(TADFORMAT)}" do
+              _span.glyphicon.glyphicon_time ''
+              _ " #{m1_date.strftime(DTFORMAT)} "
+            end
+            _ "as an online IRC meeting for about an hour.  We then recess for 48 hours while ballots are sent via email for voting. Results will be announced when we reconvene for about half an hour."
+          end
           _p do
             _ 'Please read below for a Timeline of Meeting activities and links to how you can take action, or see additional links to the right. '
             _strong 'REMINDER: '
