@@ -84,7 +84,7 @@ _html do
           end
         end
         _p.text_success "Great! Thanks for attending Member's meetings recently! Overall attends: #{att} Non-attends: #{miss}"
-        if att == miss
+        if 0 == miss
           _p.text_success "WOW! 100% attendance rate - thanks!"
         end
       end
