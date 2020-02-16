@@ -78,4 +78,23 @@ class MeetingUtil
     return JSON.parse(IO.read(File.join(mtg_root, 'attendance.json')))
   end
 
+  # Get a member's cohort (first meeting eligible to attend; typically year after they were elected)
+  # @param mtg_root local copy of RECORDS
+  # @param att_cache hash from attendance.json (see also attend-matrix.py elsewhere); Side effect is updated
+  # @param name of a Member (see also name mapping for various corrections)
+  def self.get_cohort(mtg_root, att_cache, name)
+    if att_cache.nil? or att_cache.empty?
+      att_cache = JSON.parse(IO.read(File.join(mtg_root, 'attendance.json')))
+      att_cache['cohorts'] = {}
+      # Precompute all cohorts, and leave cached
+      att_cache['members'].each do |date, names|
+        names.each do |nam|
+          att_cache['cohorts'][nam] = date
+        end
+      end
+    end
+    # TODO map any well-known mis-formatted names
+    return att_cache['cohorts'][name]
+  end
+
 end
