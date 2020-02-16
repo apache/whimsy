@@ -157,7 +157,7 @@ _json do
   months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
   data = Hash.new {|h, k| h[k] = {} }
   months.sort.reverse.each do |month|
-    tmp = get_mails_month(yearmonth: month, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS["<#{LIST_ROOT}.apache.org>"])
+    tmp = MailUtils.get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS["<#{LIST_ROOT}.apache.org>"])
     next if tmp.empty?
     data[month][MailUtils::TOOLCOUNT] = tmp[MailUtils::TOOLCOUNT]
     data[month][MailUtils::MAILCOUNT] = tmp[MailUtils::MAILCOUNT]
