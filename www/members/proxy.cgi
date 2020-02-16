@@ -18,7 +18,8 @@ volunteers = [
   "Greg Stein (gstein)",
   "Daniel Ruggeri (druggeri)",
   "Matt Sicker (mattsicker)",
-  "Michael Brohl (mbrohl)"
+  "Michael Brohl (mbrohl)",
+  "Daniel Gruno (humbedooh)"
 ]
 
 # Emit basic instructions and details on quorum
@@ -33,22 +34,29 @@ def emit_instructions(today, cur_mtg_dir, meeting)
       }
   end
   _p %{
-    This form allows you to assign an attendance proxy for the upcoming 
+    This form allows you to assign a proxy for the upcoming 
     Member's Meeting on #{meeting}. If there is any chance you might not be able 
     to attend the first part of the Member's Meeting on Tuesday in IRC, then 
     please assign a proxy, because that helps the meeting reach 
-    quorum more quickly. 
-    You can still attend the meeting if you want, and can revoke a 
+    quorum more quickly - the meeting can't formally continue without quorum at the start. 
+    You can still attend the meeting if you want, and you can revoke a 
     proxy at any time.
   }
   _p %{
     If you submit a proxy, you will still be sent board and new member ballots by email 
     during the meeting's 46 hour recess (between Tuesday and Thursday, 
     with two hours for vote counting), so you will still need to 
-    cast your votes by checking your mail during the recess. If 
+    cast your votes by checking your mail and clicking the links during the recess. If 
     you won't have internet access the week of the meeting, ask 
     for how to assign a proxy for your vote ballots as well.
   }
+  _p do
+    _ 'Note while the legal proxy form below states your proxy may have your voting rights, in practice '
+    _strong 'you will still be emailed your ballots'
+    _ ' unless you explicitly mark a \'*\' in the appropriate place in the '
+    _code 'proxies'
+    _ ' file.  The great majority of proxies assigned are for attendance only; not for voting.'
+  end
   num_members, quorum_need, num_proxies, attend_irc = MeetingUtil.calculate_quorum(cur_mtg_dir)
   if num_members
     _p do
