@@ -7,42 +7,49 @@ require 'wunderbar/bootstrap'
 require 'date'
 require 'json'
 require 'wunderbar/jquery/stupidtable'
+require_relative 'meeting-util'
 
 # separator / is added when link is generated
 ROSTER = "/roster/committer"
-
-# locate and read the attendance file
 MEETINGS = ASF::SVN['Meetings']
-attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
+ENV['HTTP_ACCEPT'] = 'application/json' if ENV['QUERY_STRING'].include? 'json'
 
-# extract and format dates
-dates = attendance['dates'].sort.
-map {|date| Date.parse(date).strftime('%Y-%b')}
+# Precompute matrix and dates from attendance
+def get_attend_matrices(dir)
+  attendance = MeetingUtil.get_attendance(dir)
 
-# compute mappings of names to ids
-members = ASF::Member.list
-active = Hash[members.select {|id, data| not data['status']}]
-nameMap = Hash[members.map {|id, data| [id, data[:name]]}]
-idMap = Hash[nameMap.to_a.map(&:reverse)]
+  # extract and format dates
+  dates = attendance['dates'].sort.
+  map {|date| Date.parse(date).strftime('%Y-%b')}
 
-# analyze attendance
-matrix = attendance['matrix'].map do |name, meetings|
-  id = idMap[name]
-  next unless id and active[id]
-  data = meetings.sort.reverse.map(&:last)
-  first = data.length
-  missed = (data.index {|datum| datum != '-'} || data.length)
-  
-  [id, name, first, missed]
+  # compute mappings of names to ids
+  members = ASF::Member.list
+  active = Hash[members.select {|id, data| not data['status']}]
+  nameMap = Hash[members.map {|id, data| [id, data[:name]]}]
+  idMap = Hash[nameMap.to_a.map(&:reverse)]
+
+  # analyze attendance
+  matrix = attendance['matrix'].map do |name, meetings|
+    id = idMap[name]
+    next unless id and active[id]
+    data = meetings.sort.reverse.map(&:last)
+    first = data.length
+    missed = (data.index {|datum| datum != '-'} || data.length)
+    
+    [id, name, first, missed]
+  end
+  return attendance, matrix, dates, nameMap
 end
 
 # produce HTML
 _html do
   _body? do
+    attendance, matrix, dates, nameMap = get_attend_matrices(MEETINGS)
     _whimsy_body(
       title: PAGETITLE,
       subtitle: 'Select A Date:',
       related: {
+        '/members/meeting' => 'Members Meeting How-To Guide',
         '/members/attendance-xcheck' => 'Members Meeting Attendance Crosscheck',
         '/members/inactive' => 'Inactive Member Feedback Form',
         '/members/proxy' => 'Members Meeting Proxy Assignment',
@@ -116,7 +123,7 @@ end
   
 _json do
   meetingsMissed = (@meetingsMissed || 3).to_i
-  
+  attendance, matrix, dates, nameMap = get_attend_matrices(MEETINGS)
   inactive = matrix.select do |id, name, first, missed|
     id and missed >= meetingsMissed
   end
