@@ -181,18 +181,18 @@ _html do
       months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
       attendance = MeetingUtil.get_attendance(ASF::SVN['Meetings'])
       style_cohorts(attendance)
-      if ENV['QUERY_STRING'].include? 'Clear-Cache-No-Really'
-        _p do # Danger, Will Robinson!
-          _ 'Note: deleting cached .json files: '
-          cache = Dir["#{SRV_MAIL}/??????.json"]
-          ctr = 0
-          cache.each do |f|
-            File.delete(f.untaint)
-            ctr += 1
-          end
-          _ "Successfully deleted #{ctr} files (will be rebuilt now)."
-        end
-      end
+      # if ENV['QUERY_STRING'].include? 'Clear-Cache-No-Really'
+      #   _p do # Danger, Will Robinson!
+      #     _ 'Note: deleting cached .json files: '
+      #     cache = Dir["#{SRV_MAIL}/??????.json"]
+      #     ctr = 0
+      #     cache.each do |f|
+      #       File.delete(f.untaint)
+      #       ctr += 1
+      #     end
+      #     _ "Successfully deleted #{ctr} files (will be rebuilt now)."
+      #   end
+      # end
       if ENV['QUERY_STRING'].include? 'week'
         display_weekly(months: months, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS["<#{LIST_ROOT}.apache.org>"])
       else
