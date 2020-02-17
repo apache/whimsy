@@ -28,6 +28,7 @@ module MailUtils
   DATE = 'date'
   FROM = 'from'
   WHO = 'who'
+  AVAILID = 'id'
   SUBJECT = 'subject'
   TOOLS = 'tools'
   MAILS = 'mails'
@@ -86,7 +87,7 @@ module MailUtils
 
   # Annotate mailhash by adding :who and :committer (where known)
   # @param mdata Hash to evaluate and annotate
-  # Side effect: adds :who and :committer from ASF::Person.find_by_email
+  # Side effect: adds :who, :committer, :id from ASF::Person.find_by_email
   # :committer = 'n' if not found; 'N' if error, 'counsel' for special case
   def find_who_from(mdata)
     # Remove bogus INVALID before doing lookups
@@ -96,36 +97,47 @@ module MailUtils
     when /Mark.Radcliffe/i
       mdata[:who] = 'Mark.Radcliffe'
       mdata[:committer] = COUNSEL
+      mdata[:id] = 'markfradcliffe'
     when /mattmann/i
       mdata[:who] = 'Chris Mattmann'
       mdata[:committer] = MEMBER
+      mdata[:id] = 'mattmann'
     when /jagielski/i
       mdata[:who] = 'Jim Jagielski'
       mdata[:committer] = MEMBER
+      mdata[:id] = 'jim'
     when /delacretaz/i
       mdata[:who] = 'Bertrand Delacretaz'
       mdata[:committer] = MEMBER
+      mdata[:id] = 'bdelacretaz'
     when /curcuru/i
       mdata[:who] = 'Shane Curcuru'
       mdata[:committer] = MEMBER
+      mdata[:id] = 'curcuru'
     when /steitz/i
       mdata[:who] = 'Phil Steitz'
       mdata[:committer] = MEMBER
+      mdata[:id] = 'psteitz'
     when /gardler/i  # Effectively unique (see: Heidi)
       mdata[:who] = 'Ross Gardler'
       mdata[:committer] = MEMBER
+      mdata[:id] = 'rgardler'
     when /Craig (L )?Russell/i # Optimize since Secretary sends a lot of mail
       mdata[:who] = 'Craig L Russell'
       mdata[:committer] = MEMBER
+      mdata[:id] = 'clr'
     when /McGrail/i
       mdata[:who] = 'Kevin A. McGrail'
       mdata[:committer] = MEMBER
+      mdata[:id] = 'kmcgrail'
     when /sallykhudairi@yahoo/i 
       mdata[:who] = 'Sally Khudairi'
       mdata[:committer] = MEMBER
+      mdata[:id] = 'sk'
     when /sk@haloworldwide.com/i
       mdata[:who] = 'Sally Khudairi'
       mdata[:committer] = MEMBER
+      mdata[:id] = 'sk'
     else
       begin
         # TODO use Real Name (JIRA) to attempt to lookup some notifications
@@ -133,6 +145,7 @@ module MailUtils
         person = ASF::Person.find_by_email(tmp.address.dup)
         if person
           mdata[:who] = person.cn
+          mdata[:id] = person.id
           if person.asf_member?
             mdata[:committer] = MEMBER
           else
@@ -141,10 +154,12 @@ module MailUtils
         else
           mdata[:who] = "#{tmp.display_name} <#{tmp.address}>"
           mdata[:committer] = 'n'
+          mdata[:id] = 'unknown'
         end
       rescue
         mdata[:who] = mdata[:from] # Use original value here
         mdata[:committer] = 'N'
+        mdata[:id] = 'unknown'
       end
     end
   end
@@ -178,7 +193,7 @@ module MailUtils
       temp = {from: data[FROM]} # pass a hash
       MailUtils.find_who_from(temp) # update the hash
       # pick out the bits we want
-      data[WHO], data[COMMITTER] = temp[:who], temp[:committer] 
+      data[WHO], data[COMMITTER], data[AVAILID] = temp[:who], temp[:committer], temp[:id]
 
       data[SUBJECT] = message[/^Subject: (.*)/, 1]
       if nondiscuss
