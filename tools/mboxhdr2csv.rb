@@ -217,7 +217,7 @@ module MailUtils
     emails[MAILS].sort_by! { |email| email[DATE] }
     emails[MAILCOUNT] = Hash.new {|h, k| h[k] = 0 }
     emails[MAILS].each do |mail|
-      emails[MAILCOUNT][mail[WHO]] += 1
+      emails[MAILCOUNT]["#{mail[WHO]} (#{mail[AVAILID]})"] += 1
     end
     emails[MAILCOUNT] = emails[MAILCOUNT].sort_by { |k,v| -v}.to_h
 
