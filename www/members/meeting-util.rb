@@ -1,5 +1,8 @@
+#!/usr/bin/env ruby
 # Utility methods and structs related to Member's Meetings
 # NOTE: Assumes 21st century '2*'
+$LOAD_PATH.unshift '/srv/whimsy/lib'
+require 'whimsy/asf'
 require 'json'
 
 class MeetingUtil
@@ -78,23 +81,63 @@ class MeetingUtil
     return JSON.parse(IO.read(File.join(mtg_root, 'attendance.json')))
   end
 
-  # Get a member's cohort (first meeting eligible to attend; typically year after they were elected)
-  # @param mtg_root local copy of RECORDS
-  # @param att_cache hash from attendance.json (see also attend-matrix.py elsewhere); Side effect is updated
-  # @param name of a Member (see also name mapping for various corrections)
-  def self.get_cohort(mtg_root, att_cache, name)
-    if att_cache.nil? or att_cache.empty?
-      att_cache = JSON.parse(IO.read(File.join(mtg_root, 'attendance.json')))
-      att_cache['cohorts'] = {}
-      # Precompute all cohorts, and leave cached
-      att_cache['members'].each do |date, names|
-        names.each do |nam|
-          att_cache['cohorts'][nam] = date
+  # Parse all memapp-received.txt files to get better set of names
+  # @see whimsy/www/members/attendance-xcheck.cgi
+  def self.read_memapps(dir)
+    memapps = Hash.new('unknown')
+    Dir[File.join(dir, '*', 'memapp-received.txt')].each do |received|
+      meeting = File.basename(File.dirname(received))
+      next if meeting.include? 'template'
+      text = File.read(received)
+      list = text.scan(/(.+)\s<(.*)@.*>.*Yes/i)
+      if list.empty?
+        list = text.scan(/^(?:no\s*)*(?:yes\s+)+(\w\S*)\s+(.*)\s*/)
+      else
+        # reverse order of id name type files
+        list.each {|a| a[0], a[1] = a[1], a[0] }
+      end
+      list.each { |itm| memapps[itm[1].strip] = [itm[0], meeting] }
+    end
+    return memapps
+  end
+
+  # Annotate the attendance.json file with cohorts by id
+  # This allows easy use by other tools
+  def self.annotate_attendance(dir)
+    attendance = JSON.parse(IO.read(File.join(dir, 'attendance.json')))
+    memapps = read_memapps(dir)
+    iclas = ASF::ICLA.preload
+    memapp_map = JSON.parse(IO.read(File.join(dir, 'memapp-map.json')))
+    attendance['cohorts'] = {}
+    attendance['unmatched'] = []
+    attendance['members'].each do |date, ary|
+      ary.each do |nam|
+        found = iclas.select{|i| i.icla.legal_name == nam}
+        found = iclas.select{|i| i.icla.name == nam} if found.empty?
+        if found.empty?
+          if memapps.has_key?(nam)
+            attendance['cohorts'][memapps[nam][0]] = date
+          elsif memapp_map.has_key?(nam)
+            attendance['cohorts'][memapp_map[nam]] = date
+          else
+            attendance['unmatched'] << nam
+          end
+        else
+          attendance['cohorts'][found[0].icla.id] = date
         end
       end
     end
-    # TODO map any well-known mis-formatted names
-    return att_cache['cohorts'][name]
+    File.open(File.join(dir, 'attendance-cohorts.json'), 'w') do |f| # Do not overwrite blindly; manual copy if desired
+      f.puts JSON.pretty_generate(attendance)
+    end
   end
+end
 
+# ## ### #### ##### ######
+# Main method for command line use
+if __FILE__ == $PROGRAM_NAME
+  dir = ARGV[0]
+  dir ||= '.'
+  MeetingUtil.annotate_attendance(dir)
+  puts "DONE, check attendance-cohorts.json"
 end
