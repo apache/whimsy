@@ -7,15 +7,16 @@
 # Deletes files older than 13 months from the following directories:
 # - /srv/mail/board
 # - /srv/mail/members
+# - /srv/mail/secretary
 
 require 'date'
 require 'fileutils'
 
 keep = (Date.today << 13).strftime('%Y%m')
 
-MAIL = '/srv/mail'
+Dir.chdir '/srv/mail'
 
-Dir["#{MAIL}/board/20*", "#{MAIL}/members/20*"].each do |dir|
+Dir[*%w(board/20* members/20* secretary/20*)].each do |dir|
   if File.basename(dir) < keep
     begin
       FileUtils.rm_r dir, :verbose => true
