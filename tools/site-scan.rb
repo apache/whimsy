@@ -146,7 +146,7 @@ def parse(id, site, name)
   end
   # THIRD: see if an image has been uploaded
   if IMAGE_DIR
-    data[:image] = Dir[File.join(IMAGE_DIR, "#{id}.*")].
+    data[:image] = Dir[File.join(IMAGE_DIR, "#{id}*.{svg,eps,ai,pdf}")].
       map {|path| File.basename(path)}.first
   end
 

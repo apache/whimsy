@@ -115,8 +115,8 @@ module SiteStandards
       CHECK_CAPTURE => nil,
       CHECK_VALIDATE => %r{.},
       CHECK_TYPE => true,
-      CHECK_POLICY => 'https://www.apache.org/img/',
-      CHECK_DOC => 'Projects SHOULD include a 212px wide copy of their logo in https://www.apache.org/img/ to be included in ASF homepage.',
+      CHECK_POLICY => 'https://www.apache.org/logos/',
+      CHECK_DOC => 'Projects SHOULD add a copy of their logo to https://www.apache.org/logos/ to be included in ASF homepage.',
     },
   }
   
