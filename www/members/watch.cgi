@@ -38,6 +38,7 @@ _html do
     txt = File.read(File.join(meeting, 'nominated-members.txt'))
     nominations = txt.scan(/^---+\n\s*\w+.*<(\S+)@apache.org>/).flatten
     nominations += txt.scan(/^---+\n\s*\w+.*\(([a-z]+)\)/).flatten
+    nominations += txt.scan(/^---+\n+\s*([a-z]+)\s/).flatten
     nominations += txt.scan(/^---+\n\s*\w+.*\(([a-z]+)@apache\.org\)/).flatten
 
     # determine which list to report on, based on the URI
