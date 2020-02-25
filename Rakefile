@@ -111,7 +111,6 @@ task :config do
   require 'whimsy/asf/config'
   require 'whimsy/asf/git'
   require 'whimsy/asf/svn'
-  require 'whimsy/asf/ldap'
 end
 
 namespace :svn do
@@ -417,6 +416,7 @@ namespace :docker do
 
   task :entrypoint => [:scaffold, :config] do
     # requires :config
+    require 'whimsy/asf/ldap'
     unless File.read(File.join(ASF::ETCLDAP,'ldap.conf')).include? 'asf-ldap-client.pem'
       sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
     end

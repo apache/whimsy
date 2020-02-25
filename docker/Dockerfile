@@ -35,6 +35,7 @@ RUN apt-get update && \
       apache2-dev \
       libapr1-dev \
       libaprutil1-dev && \
+    gem update --system &&\
     gem install bundler passenger --install_dir=/var/lib/gems/2.5.0 && \
     passenger-install-apache2-module --auto && \
     passenger-install-apache2-module --snippet > \
