@@ -37,7 +37,7 @@ def setup_data(cur_mtg_dir)
 
   # parse nominations for names and ids
   nominations = IO.read(File.join(cur_mtg_dir, 'nominated-members.txt').untaint).
-    scan(/^---+--\s+(.*?)\n/).flatten
+    scan(/^---+--\s+(?:[a-z]+)\s+(.*?):?\n/).flatten
 
   nominations.shift if nominations.first == '<empty line>'
   nominations.pop if nominations.last.empty?
