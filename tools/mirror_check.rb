@@ -307,8 +307,8 @@ def init
 end
 
 def setup
-  tlps = parseIndexPage(check_page('https://www.apache.org/dist/','',:E,"200",log=false))
-  podlings = parseIndexPage(check_page('https://www.apache.org/dist/incubator/','',:E,"200",false))
+  tlps = parseIndexPage(check_page('https://downloads.apache.org/','',:F,"200",log=false))
+  podlings = parseIndexPage(check_page('https://downloads.apache.org/incubator/','',:F,"200",false))
   @pages = {:tlps => tlps, :podlings => podlings}
 end
 
