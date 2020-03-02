@@ -231,7 +231,12 @@ def checkHTTP(base)
   setup
 
   response = getHTTPHdrs(base)
-  I "Server: #{response['server']}"
+  server = response['server']
+  if server =~ /Apache/
+    I "Server: #{server}"
+  else
+    W "Server: '#{server}' - expected 'Apache' in server response"
+  end
 
   # Check the mirror time (and that zzz/ is readable)
   time = check_page(base, 'zzz/time.txt', severity = :F)
