@@ -152,13 +152,19 @@ def GET(url)
 end
 
 # Check page exists
-def check_head(path, severity = :E, expectedStatus = "200", log=true)
+def check_head(path, severity = :E, expectedStatus = "200", log=true, allowRedirect=false)
   response = HEAD(path)
   code = response.code ||  '?'
   if code == '403' # someone does not like Whimsy?
     W "HEAD #{path} - HTTP status: #{code} - retry"
     response = HEAD(path)
     code = response.code ||  '?'
+  elsif allowRedirect and code == '302'
+    location = response['location']
+    if location.start_with? 'https://downloads.apache.org/'
+      response = HEAD(location)
+      code = response.code ||  '?'
+    end
   end
   if code != expectedStatus
     test(severity, "HEAD #{path} - HTTP status: #{code} expected: #{expectedStatus}") unless severity == nil
@@ -420,7 +426,7 @@ def _checkDownloadPage(path, tlp, version)
         if $NOFOLLOW
           I "Skipping archive hash #{h}"
         else
-          check_head(h, :E, "200", true)
+          check_head(h, :E, "200", true, true)
         end
       else
         # will have been reported by check_hash_loc
@@ -480,7 +486,7 @@ def _checkDownloadPage(path, tlp, version)
             E "NAK: ct='#{ct}' cl='#{cl}' #{path}"
           end
         else
-          E "Could not find link for #{name} in #{h}"
+          E "Could not find link for '#{name}' in page: '#{h}' (missing or archived)"
         end
       end
     elsif h =~ %r{\.(md5|sha.*)$}
