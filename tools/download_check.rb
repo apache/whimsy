@@ -365,7 +365,7 @@ def _checkDownloadPage(path, tlp, version)
   vercheck = Hash.new() # key = archive name, value = array of hash/sig
   links.each do |h,t|
     # Must occur before mirror check below
-    if h =~ %r{^https?://(?:archive|www)\.apache\.org/dist/(.+\.(asc|sha\d+|md5|sha))$}
+    if h =~ %r{^https?://(?:(?:archive\.|www\.)?apache\.org/dist|downloads\.apache.org)/(.+\.(asc|sha\d+|md5|sha))$}
         base = File.basename($1)
         ext = $2
         stem = base[0..-(2+ext.length)]
