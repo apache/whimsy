@@ -496,7 +496,7 @@ def _checkDownloadPage(path, tlp, version)
         next
       end
       if host == 'www' or host == ''
-        res = check_head(h,:E, "200", false)
+        res = check_head(h,:E, "200", false, true) # allow for redirect here
         next unless res
         lastmod = res['last-modified']
         date = Time.parse(lastmod)
