@@ -32,7 +32,7 @@ $VERSION = nil
 
 # match an artifact
 # TODO detect artifacts by URL as well if possible
-ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|zip|tgz|tar\.bz2|jar|war|msi|rar|rpm|nar))(&action=download)?$}
+ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|zip|tgz|tar\.bz2|jar|war|msi|exe|rar|rpm|nar))(&action=download)?$}
 
 def init
   # build a list of validation errors
@@ -212,6 +212,9 @@ end
 # returns www|archive, stem and the hash extension
 def check_hash_loc(h,tlp)
   if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlp}/.*([^/]+)(\.(\w{3,6}))$}
+    E "HTTPS! #{h}" unless $1 == 'https'
+    return $2,$3,$4
+  elsif h =~ %r{^(https?)://downloads\.apache\.org/(?:incubator/)?#{tlp}/.*([^/]+)(\.(\w{3,6}))$}
     E "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
   else
