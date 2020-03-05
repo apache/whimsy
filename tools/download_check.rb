@@ -247,6 +247,7 @@ VERIFY_TEXT = [
  'verify your downloads',
  'All downloads should be verified',
  'verification instructions',
+ ' encouraged to verify ',
 ]
 
 ALIASES = {
@@ -355,7 +356,7 @@ def _checkDownloadPage(path, tlp, version)
   # Check if GPG verify has two parameters
   body.scan(%r{^.+gpg --verify.+$}){|m|
     unless m =~ %r{gpg --verify\s+\S+\.asc\s+\S+}
-      W "gpg verify without second param: #{m.strip}"
+      W "gpg verify should specify second param: #{m.strip} see:\nhttps://www.apache.org/info/verification.html#specify_both"
     end
   }
   
