@@ -176,12 +176,16 @@ def checkIndex(page, type)
   }
 end
 
+# nginx <tr><td><a href="activemq/" title="activemq">activemq/</a></td><td>-</td><td>2019-Nov-25 18:00</td></tr>
+# ASF <tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="accumulo/">accumulo/</a></td><td align="right">2019-08-07 23:42  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+
+
 # parse an HTTP server Index page => array of file/folder names
 def parseIndexPage(page)
   folders = []
   # ASF main page references currently look like this: <a href="abdera/">abdera/</a>
   # the Perl script looked for this match: m!> ?$dir/?<!
-  links = page.scan(%r{<a href=['"]([.a-z0-9-]+)/?['"]>([.a-z0-9-]+)/?</a>})
+  links = page.scan(%r{<a href=['"]([.a-z0-9-]+)/?['"](?: title=['"][.a-z0-9-]+/?['"])?>([.a-z0-9-]+)/?</a>})
   links.each { |l|
     if l[1] == l[0]
       folders << l[1]
@@ -189,7 +193,6 @@ def parseIndexPage(page)
   }
   folders
 end
-
 # Check page has sensible headers and footers
 def checkHdrFtr(path, body)
   hasHTMLhdr = HASHDR.match(body)
@@ -370,6 +373,7 @@ def doPost(url)
 end
 
 if __FILE__ == $0
+  $SAFE = 0
   init
   url = ARGV[0] || "localhost" # easier to test in an IDE
   checkHTTP(url+"") # allow url to be untainted later
