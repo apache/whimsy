@@ -317,7 +317,7 @@ def _checkDownloadPage(path, tlp, version)
   # TODO: is location used by hc allowed, e.g.
   #   https://www.apache.org/dist/httpcomponents/httpclient/KEYS
   expurl = "https://[www.]apache.org/dist/[incubator/]#{tlp}/KEYS"
-  expurlre = %r{^https://(www\.)?apache\.org/dist/(incubator/)?#{tlp}/KEYS$}
+  expurlre = %r{^https://((www\.)?apache\.org/dist|downloads\.apache\.org)/(incubator/)?#{tlp}/KEYS$}
   keys = links.select{|h,v| h =~ expurlre}
   if keys.size >= 1
     keytext = keys.first[1]
