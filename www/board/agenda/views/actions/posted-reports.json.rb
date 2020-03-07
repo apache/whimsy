@@ -44,7 +44,7 @@ else
 end
 
 # get a list of current board messages
-archive = Dir["#{ARCHIVE}/#{previous}/*", "/srv/mail/board/#{current}/*"]
+archive = Dir[File.join(ARCHIVE, previous, '*'), File.join(ARCHIVE, current ,'*')]
 
 # select messages that have a subject line starting with [REPORT]
 reports = []
