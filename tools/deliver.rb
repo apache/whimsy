@@ -27,11 +27,12 @@ hdrs = mail[/\A(.*?)\r?\n\r?\n/m, 1] || ''
 
 # extract info
 dest = hdrs[/^List-Id: <(.*)>/, 1] || hdrs[/^Delivered-To.* (\S+)\s*$/, 1] || 'unknown'
+list = dest[/^[-\w]+/]
 month = Time.now.strftime('%Y%m')
 hash = Digest::SHA1.hexdigest(getmid(hdrs) || mail)[0..9]
 
 # build file name
-file = "#{MAIL_ROOT}/#{dest[/^[-\w]+/]}/#{month}/#{hash}"
+file = File.join(MAIL_ROOT,list, month, hash)
 
 File.umask 0002
 FileUtils.mkdir_p File.dirname(file)
