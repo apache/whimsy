@@ -260,7 +260,7 @@ ALIASES = {
 # Convert text reference to extension
 # e.g. SHA256 => sha256; [SIG] => asc
 def text2ext(txt)
-    tmp = txt.downcase.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(' checksum','')
+    tmp = txt.downcase.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(' checksum','').strip
     ALIASES[tmp] || tmp
 end
 
