@@ -50,6 +50,8 @@ using Whimsy please press Reflow before Submit.
 Chairs may use the Apache Reporter Service [4] to help them compile and
 submit a board report.
 
+Please do NOT send [REPORT] email to board@apache.org if you use the Reporter
+tool or file the report directly via svn.
 
 Resolutions
 -----------
