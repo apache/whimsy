@@ -8,7 +8,8 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 # Perhaps also try keyserver.pgp.com
 # see WHIMSY-274 for secure servers
 # Removed keys.openpgp.org as it does not return data such as email unless user specifically allows this 
-KEYSERVERS = %w{sks-keyservers.net keyserver.ubuntu.com}
+#KEYSERVERS = %w{sks-keyservers.net keyserver.ubuntu.com} # don't seem to be working: bad gateway
+KEYSERVERS = %w{pgp.ocf.berkeley.edu pgpkeys.uk}
 # N.B. ensure the keyserver URI is known below
 MAX_KEY_SIZE = 20700 # don't import if the ascii keyfile is larger than this
 
