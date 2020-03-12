@@ -7,10 +7,14 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 #KEYSERVER = 'pgpkeys.mit.edu'
 # Perhaps also try keyserver.pgp.com
 # see WHIMSY-274 for secure servers
+# ** N.B. ensure the keyserver URI is known below **
+
 # Removed keys.openpgp.org as it does not return data such as email unless user specifically allows this 
 #KEYSERVERS = %w{sks-keyservers.net keyserver.ubuntu.com} # don't seem to be working: bad gateway
 KEYSERVERS = %w{pgp.ocf.berkeley.edu pgpkeys.uk}
-# N.B. ensure the keyserver URI is known below
+
+# ** N.B. ensure the keyserver URI is known below **
+
 MAX_KEY_SIZE = 20700 # don't import if the ascii keyfile is larger than this
 
 message = Mailbox.find(@message)
@@ -82,14 +86,14 @@ begin
       found = false
       if server == 'keys.openpgp.org'
         if keyid.length == 40
-          uri = "https://keys.openpgp.org/vks/v1/by-fingerprint/#{keyid}"
+          uri = "https://#{server}/vks/v1/by-fingerprint/#{keyid}"
         else
-          uri = "https://keys.openpgp.org/vks/v1/by-keyid/#{keyid}"
+          uri = "https://#{server}/vks/v1/by-keyid/#{keyid}"
         end
-      elsif server == 'sks-keyservers.net'
-        uri = "https://sks-keyservers.net/pks/lookup?search=0x#{keyid}&exact=on&options=mr&op=get"
+      elsif server == 'sks-keyservers.net' or server == 'pgpkeys.uk' or server == 'pgp.ocf.berkeley.edu'
+        uri = "https://#{server}/pks/lookup?search=0x#{keyid}&exact=on&options=mr&op=get"
       elsif server == 'keyserver.ubuntu.com'
-        uri = "https://keyserver.ubuntu.com/pks/lookup?search=0x#{keyid}&op=get"
+        uri = "https://#{server}/pks/lookup?search=0x#{keyid}&op=get"
       else
         raise ArgumentError, "Don't know how to get key from #{server}"
       end
