@@ -38,6 +38,7 @@ def getURI(uri,file)
         end
       end
       size = File.size(file)
+      Wunderbar.warn "File: #{file} Size: #{size}"
       if size > MAX_KEY_SIZE
         raise Exception.new("File: #{file} size #{size} > #{MAX_KEY_SIZE}")
       end
@@ -106,8 +107,6 @@ begin
         begin
           tmpfile = File.join(dir, keyid)
           getURI(uri, tmpfile)
-          size = File.size(tmpfile)
-          Wunderbar.warn "File: #{tmpfile} Size: #{size}"
           out2, err2, rc2 = Open3.capture3 gpg,
             '--batch', '--import', tmpfile
           # For later analysis
