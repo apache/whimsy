@@ -14,6 +14,23 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 KEYSERVERS = %w{pgp.ocf.berkeley.edu pgpkeys.uk}
 
 # ** N.B. ensure the keyserver URI is known below **
+def getServerURI(server, keyid)
+  if server == 'keys.openpgp.org'
+    if keyid.length == 40
+      uri = "https://#{server}/vks/v1/by-fingerprint/#{keyid}"
+    else
+      uri = "https://#{server}/vks/v1/by-keyid/#{keyid}"
+    end
+  elsif server == 'sks-keyservers.net' or server == 'pgpkeys.uk' or server == 'pgp.ocf.berkeley.edu'
+    uri = "https://#{server}/pks/lookup?search=0x#{keyid}&exact=on&options=mr&op=get"
+  elsif server == 'keyserver.ubuntu.com'
+    uri = "https://#{server}/pks/lookup?search=0x#{keyid}&op=get"
+  else
+    raise ArgumentError, "Don't know how to get key from #{server}"
+  end
+  Wunderbar.warn uri
+  return uri
+end
 
 MAX_KEY_SIZE = 20700 # don't import if the ascii keyfile is larger than this
 
@@ -26,6 +43,9 @@ def getURI(uri,file)
   uri = URI.parse(uri)
   Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |https|
     https.request_get(uri.request_uri) do |res|
+      unless res.code == "200"
+        raise Exception.new "Get #{uri} failed with #{res.code}: #{res.message}"
+      end
       cl = res.content_length
       Wunderbar.warn "Content-Length: #{cl}"
       if cl > MAX_KEY_SIZE # fail early
@@ -89,23 +109,10 @@ begin
 
     KEYSERVERS.each do |server|
       found = false
-      if server == 'keys.openpgp.org'
-        if keyid.length == 40
-          uri = "https://#{server}/vks/v1/by-fingerprint/#{keyid}"
-        else
-          uri = "https://#{server}/vks/v1/by-keyid/#{keyid}"
-        end
-      elsif server == 'sks-keyservers.net' or server == 'pgpkeys.uk' or server == 'pgp.ocf.berkeley.edu'
-        uri = "https://#{server}/pks/lookup?search=0x#{keyid}&exact=on&options=mr&op=get"
-      elsif server == 'keyserver.ubuntu.com'
-        uri = "https://#{server}/pks/lookup?search=0x#{keyid}&op=get"
-      else
-        raise ArgumentError, "Don't know how to get key from #{server}"
-      end
-      Wunderbar.warn uri
       Dir.mktmpdir do |dir|
         begin
           tmpfile = File.join(dir, keyid)
+          uri = getServerURI(server, keyid)
           getURI(uri, tmpfile)
           out2, err2, rc2 = Open3.capture3 gpg,
             '--batch', '--import', tmpfile
