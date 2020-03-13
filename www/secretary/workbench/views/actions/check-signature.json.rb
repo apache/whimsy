@@ -37,6 +37,10 @@ def getURI(uri,file)
             f.puts segment
         end
       end
+      size = File.size(file)
+      if size > MAX_KEY_SIZE
+        raise Exception.new("File: #{file} size #{size} > #{MAX_KEY_SIZE}")
+      end
     end
   end
 end
@@ -104,15 +108,11 @@ begin
           getURI(uri, tmpfile)
           size = File.size(tmpfile)
           Wunderbar.warn "File: #{tmpfile} Size: #{size}"
-          if size < MAX_KEY_SIZE # Don't import if it appears to be too big
-            out2, err2, rc2 = Open3.capture3 gpg,
-              '--batch', '--import', tmpfile
-            # For later analysis
-            Wunderbar.warn "#{gpg} --import #{tmpfile} rc2=#{rc2} out2=#{out2} err2=#{err2}"
-            found = true
-          else
-            Wunderbar.warn "File #{tmpfile} is too big: #{size}"
-          end
+          out2, err2, rc2 = Open3.capture3 gpg,
+            '--batch', '--import', tmpfile
+          # For later analysis
+          Wunderbar.warn "#{gpg} --import #{tmpfile} rc2=#{rc2} out2=#{out2} err2=#{err2}"
+          found = true
         rescue Exception => e
           Wunderbar.warn "GET uri=#{uri} e=#{e}"
           err2 = e.to_s
