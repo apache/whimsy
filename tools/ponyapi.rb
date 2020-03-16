@@ -26,6 +26,7 @@ module PonyAPI
   # The method writes the file 'lists.json' if dir != nil
   # it returns the data as a hash
   def get_pony_lists(dir, cookie=nil, sort_list=false)
+    cookie=get_cookie() if cookie == 'prompt'
     jzon = get_pony_prefs(nil, cookie)
     lists = jzon['lists']
     if lists
@@ -83,6 +84,7 @@ module PonyAPI
   # Download one month of stats as a JSON
   # Must supply cookie = 'ponymail-logged-in-cookie' if a private list
   def get_pony_stats(dir, list, subdomain, year, month, cookie)
+    cookie=get_cookie() if cookie == 'prompt'
     args =  make_args(list, subdomain, year, month)
     uri, request, response = fetch_pony(PONYSTATS % args, cookie)
     if response.code == '200' then
@@ -107,6 +109,7 @@ module PonyAPI
   
   # Get multiple years/months of public stats as json
   def get_pony_stats_many(dir, list, subdomain, years, months, cookie)
+    cookie=get_cookie() if cookie == 'prompt'
     years.each do |y|
       months.each do |m|
         get_pony_stats dir, list, subdomain, y, m, cookie
@@ -118,6 +121,7 @@ module PonyAPI
   # Caveats: uses response's encoding; overwrites existing .json file
   # Must supply cookie = 'ponymail-logged-in-cookie' if a private list
   def get_pony_mbox(dir, list, subdomain, year, month, cookie)
+    cookie=get_cookie() if cookie == 'prompt'
     args =  make_args(list, subdomain, year, month)
     uri, request, response = fetch_pony(PONYMBOX % args, cookie)
     if response.code == '200'
@@ -131,6 +135,7 @@ module PonyAPI
   
   # Get multiple years/months of mboxes
   def get_pony_mbox_many(dir, list, subdomain, years, months, cookie)
+    cookie=get_cookie() if cookie == 'prompt'
     years.each do |y|
       months.each do |m|
         get_pony_mbox dir, list, subdomain, y, m, cookie
