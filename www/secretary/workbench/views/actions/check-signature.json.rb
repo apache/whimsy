@@ -34,8 +34,6 @@ end
 
 MAX_KEY_SIZE = 20700 # don't import if the ascii keyfile is larger than this
 
-message = Mailbox.find(@message)
-
 require 'net/http'
 
 # fetch the Key from the URI and store in the file
@@ -65,6 +63,8 @@ def getURI(uri,file)
     end
   end
 end
+
+message = Mailbox.find(@message)
 
 begin
   # fetch attachment and signature
