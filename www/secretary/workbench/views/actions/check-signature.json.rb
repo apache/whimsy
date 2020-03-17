@@ -11,7 +11,7 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 
 # Removed keys.openpgp.org as it does not return data such as email unless user specifically allows this 
 #KEYSERVERS = %w{sks-keyservers.net keyserver.ubuntu.com} # don't seem to be working: bad gateway
-KEYSERVERS = %w{pgp.ocf.berkeley.edu pgpkeys.uk}
+KEYSERVERS = %w{hkps.pool.sks-keyservers.net}
 
 # ** N.B. ensure the keyserver URI is known below **
 def getServerURI(server, keyid)
@@ -38,7 +38,12 @@ require 'net/http'
 # fetch the Key from the URI and store in the file
 def getURI(uri,file)
   uri = URI.parse(uri)
-  Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |https|
+  opts = {use_ssl: uri.scheme == 'https'}
+  # The pool needs a special CA cert
+  if SKS_KEYSERVER_CERT and uri.host == 'hkps.pool.sks-keyservers.net'
+    opts[:ca_file] = SKS_KEYSERVER_CERT
+  end
+  Net::HTTP.start(uri.host, uri.port, opts ) do |https|
     https.request_get(uri.request_uri) do |res|
       unless res.code == "200"
         raise Exception.new("Get #{uri} failed with #{res.code}: #{res.message}")
