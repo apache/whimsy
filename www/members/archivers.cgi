@@ -116,6 +116,9 @@ _html do
         end 
         
         mbox = arcs.select{|e| e[1] == :MBOX}.map{|e| e[2]}.uniq.join('')
+
+        next if mbox == 'restricted' # Don't show these
+
         if ! mbox.empty?
           options[:mbox] = {class: 'danger'} if pubprv && mbox != pubprv  
         else

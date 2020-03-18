@@ -244,6 +244,7 @@ module ASF
       case email
         when ARCH_MBOX_PUB then return [:MBOX, 'public']
         when ARCH_MBOX_PRV then return [:MBOX, 'private']
+        when ARCH_MBOX_RST then return [:MBOX, 'restricted']
         when ARCH_PONY_PUB then return [:PONY, 'public']
         when ARCH_PONY_PRV then return [:PONY, 'private']
         when ARCH_EXT_MAIL_ARCHIVE then return [:MAIL_ARCH, 'public']
