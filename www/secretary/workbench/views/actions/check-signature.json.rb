@@ -11,8 +11,7 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 
 # Removed keys.openpgp.org as it does not return data such as email unless user specifically allows this 
 
-# gozer.rediris.es seems to have keys that are missing elsewhere
-KEYSERVERS = %w{hkps.pool.sks-keyservers.net gozer.rediris.es}
+KEYSERVERS = %w{hkps.pool.sks-keyservers.net}
 
 # ** N.B. ensure the keyserver URI is known below **
 def getServerURI(server, keyid)
