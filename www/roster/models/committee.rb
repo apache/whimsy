@@ -20,7 +20,7 @@ class Committee
     info = JSON.parse(File.read(File.join(comdev, 'projects.json')))[id]
 
     image_dir = ASF::SVN.find('site-img')
-    image = image_dir? Dir[File.join(image_dir, "#{id}*.{svg,eps,ai,pdf}")].map {|path| File.basename(path)}.first : nil
+    image = image_dir ? Dir[File.join(image_dir, "#{id}*.{svg,eps,ai,pdf}")].map {|path| File.basename(path)}.first : nil
 
     moderators = nil
     modtime = nil
