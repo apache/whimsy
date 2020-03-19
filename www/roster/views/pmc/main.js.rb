@@ -39,7 +39,7 @@ class PMC < Vue
       _a @committee.display_name, href: @committee.site
       _small " established #{@committee.established}" if @committee.established
       if @committee.image
-        _img src: "https://apache.org/img/#{@committee.image}"
+        _img src: "https://apache.org/logos/res/#{@committee.id}/default.png"
       end
     end
 

@@ -125,7 +125,7 @@
     depth: files
 
   site-img:
-    url: asf/infrastructure/site/trunk/content/img
+    url: asf/comdev/project-logos/originals
 
   site-root:
     url: asf/infrastructure/site/trunk/content
