@@ -117,4 +117,3 @@ and running - these are only needed for a new deployment.
 N.B. Just prior to switchover, ensure that the file `/srv/mail/secretary/YYYYMM.yml`
 for the current month is copied (or merged?) across. This contains the status for mails
 handled by the Secretary workbench.
-
