@@ -127,4 +127,3 @@ Uninstallation procedures
 * `docker image rm whimsy-web`
 * `docker image prune -f`
 * `docker container prune -f`
-
