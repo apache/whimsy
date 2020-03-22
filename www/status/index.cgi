@@ -28,7 +28,7 @@ else
 end
 print "Status: #{summary_status}\r\n\r\n"
 
-git_info = `git show --format="%h  %ci"  -s HEAD`.strip rescue "?"
+git_info = `git show --format="%h  %ci %cr"  -s HEAD`.strip rescue "?"
 # TODO better format; don't assume we use master
 git_repo = `git ls-remote origin master`.strip rescue "?"
 
