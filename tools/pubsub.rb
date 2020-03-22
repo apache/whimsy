@@ -26,7 +26,7 @@ options = OpenStruct.new
 options.remote = 'https://gitbox.apache.org/repos/asf/whimsy.git'
 options.local = '/srv/whimsy'
 options.pidfile = "/var/run/#{script}.pid"
-options.streamURL = 'http://gitpubsub-wip.apache.org:2069/json/*'
+options.streamURL = 'http://pubsub.apache.org:2069/git/'
 options.puppet = false
 # options.streamURL = 'http://svn.apache.org:2069/commits'
 
@@ -117,10 +117,12 @@ end
 # Monitor PubSub endpoint (see http://www.apache.org/dev/gitpubsub.html)
 #
 
+PROJECT = File.basename(options.remote, '.git')
+
 # prime the pump
 restartable = false
 notification_queue = Queue.new
-notification_queue.push 'project' => 'whimsy'
+notification_queue.push 'project' => PROJECT
 
 ps_thread = Thread.new do
   begin
@@ -132,7 +134,8 @@ ps_thread = Thread.new do
       http.request request do |response|
         body = ''
         response.read_body do |chunk|
-          if chunk =~ /\r\n$|\0$/
+          # Looks like the service only sends \n terminators now
+          if chunk =~ /\r?\n$|\0$/
             notification = JSON.parse(body + chunk.chomp("\0"))
             body = ''
 
@@ -167,13 +170,12 @@ end
 #
 # Process queued requests
 #
-project = File.basename(options.remote, '.git')
 
 begin
   mtime = File.mtime(__FILE__)
   while ps_thread.alive?
     notification = notification_queue.pop
-    next unless notification['project'] == project
+    next unless notification['project'] == PROJECT
     notification_queue.clear
 
     if options.puppet
