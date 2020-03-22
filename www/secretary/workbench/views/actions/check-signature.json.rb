@@ -11,7 +11,9 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 
 # Removed keys.openpgp.org as it does not return data such as email unless user specifically allows this 
 
-KEYSERVERS = %w{hkps.pool.sks-keyservers.net}
+KEYSERVERS = %w{hkps.pool.sks-keyservers.net gozer.rediris.es}
+
+TERENA_CERT = '/srv/whimsy/www/secretary/workbench/TERENA_SSL_High_Assurance_CA_3.pem'
 
 # ** N.B. ensure the keyserver URI is known below **
 def getServerURI(server, keyid)
@@ -42,6 +44,12 @@ def getURI(uri,file)
   # The pool needs a special CA cert
   if SKS_KEYSERVER_CERT and uri.host == 'hkps.pool.sks-keyservers.net'
     opts[:ca_file] = SKS_KEYSERVER_CERT
+    elsif uri.host.end_with? '.rediris.es'
+    require 'openssl'
+    store = OpenSSL::X509::Store.new
+    store.set_default_paths
+    store.add_file(TERENA_CERT)
+    opts[:cert_store] = store
   end
   Net::HTTP.start(uri.host, uri.port, opts ) do |https|
     https.request_get(uri.request_uri) do |res|
