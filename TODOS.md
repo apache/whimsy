@@ -2,7 +2,8 @@
 
 The Apache Whimsy project is maintained by volunteers, and includes both 
 the core server and ASF:: libraries, as well as many individual applications.
-Patches are welcome - as is [reporting bugs](issues.apache.org/jira/browse/WHIMSY) or [asking questions](https://lists.apache.org/list.html?dev@whimsical.apache.org).
+Patches are welcome - as is [reporting bugs](issues.apache.org/jira/browse/WHIMSY) 
+or [asking questions](https://lists.apache.org/list.html?dev@whimsical.apache.org).
 
 This TODO :pencil: list is used by various committers for tasks, improvements,
 and crazy ideas alike.  Comments appreciated.
