@@ -31,7 +31,7 @@ and now also mirrored for Apache committers at:
  * [Monitoring How To](./www/status/README.md) - [Live Whimsy Status](https://whimsy.apache.org/status/)
  * [How To Setup on Mac OSX](./MACOSX.md)
  * [Dependency Listing](./CONFIGURE.md#Dependencies)
- * [Todos](TODOS.md).
+ * [Todos](./TODOS.md).
 
 How To Get Involved!
 ===============
