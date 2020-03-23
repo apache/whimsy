@@ -109,7 +109,7 @@ Details for each type of deployed tool or script:
 
     https://github.com/apache/whimsy/blob/master/lib/whimsy/asf/rack.rb#L56
     
- * **Cron jobs** are managed by puppet.  See [deployment](DEPLOYMENT.md) for more
+ * **Cron jobs** are managed by puppet.  See [deployment](./DEPLOYMENT.md) for more
    information.
    
  * **Generated JSON data** files are automatically generated into 
