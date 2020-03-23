@@ -322,12 +322,14 @@ def _checkDownloadPage(path, tlp, version)
   expurlre = %r{^https://((www\.)?apache\.org/dist|downloads\.apache\.org)/(incubator/)?#{tlp}/KEYS$}
   keys = links.select{|h,v| h =~ expurlre}
   if keys.size >= 1
+    keyurl = keys.first.first
     keytext = keys.first[1]
     if keytext.strip == 'KEYS'
         I 'Found KEYS link'
     else
         W "Found KEYS: '#{keytext}'"
     end
+    check_head(keyurl,:E, "200")
   else
     keys = links.select{|h,v| v.strip == 'KEYS' || v == 'KEYS file' || v == '[KEYS]'}
     if keys.size >= 1
@@ -342,6 +344,7 @@ def _checkDownloadPage(path, tlp, version)
           E "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
         end
       end
+      check_head(keyurl,:E, "200")
     else
       E 'Could not find KEYS link'
     end
