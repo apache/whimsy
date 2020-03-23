@@ -262,7 +262,7 @@ ALIASES = {
 def text2ext(txt)
     # need to strip twice to handle ' [ asc ] '
     # TODO: perhaps just remove all white-space?
-    tmp = txt.downcase.strip.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(' ?checksum','').strip
+    tmp = txt.downcase.strip.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(/ ?checksum/,'').strip
     ALIASES[tmp] || tmp
 end
 
