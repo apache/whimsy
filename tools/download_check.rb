@@ -329,7 +329,7 @@ def _checkDownloadPage(path, tlp, version)
     else
         W "Found KEYS: '#{keytext}'"
     end
-    check_head(keyurl,:E, "200")
+    check_head(keyurl,:E, "200", false, true)
   else
     keys = links.select{|h,v| v.strip == 'KEYS' || v == 'KEYS file' || v == '[KEYS]'}
     if keys.size >= 1
