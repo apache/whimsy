@@ -271,9 +271,7 @@ module ASF
   class Person < Base
     # find a Person by email address
     def self.find_by_email(value)
-      value.downcase!
-
-      person = Mail.list[value]
+      person = Mail.list[value.downcase]
       return person if person
     end
 
