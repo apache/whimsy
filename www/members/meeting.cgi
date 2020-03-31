@@ -189,7 +189,14 @@ _html do
             _span.glyphicon.glyphicon_time ''
           end
           _ 'The Meeting itself starts on IRC - please be sure your client is setup ahead of time, and sign in with your Apache ID as nick if at all possible.'
-          _ 'The #asfmembers channel is for the official meeting itself; please raise your hand if you have a formal question there.  Backchannel (jokes, comments, etc.) is on #asf channel.'
+          _br
+          _ 'The '
+          _b '#asfmembers'
+          _ ' channel is for the official meeting itself; please raise your hand if you have a formal question there.  '
+          _ 'Backchannel (jokes, comments, etc.) is the '
+          _b '#asf'
+          _ ' channel.'
+          _br
           _ 'During the First Half of Meeting, the Chairman and various officers run through reports in the Agenda.txt, which you can read ahead of time.'
           _ 'Expect the First Half to last about an hour; then the Chairman will call for a recess.'
           _ul do
