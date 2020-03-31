@@ -27,7 +27,7 @@ class MeetingUtil
   def self.calculate_quorum(mtg_dir)
     begin
       num_members = File.read(File.join(mtg_dir, 'record')).each_line.count
-      quorum_need = num_members / 3
+      quorum_need = (num_members + 2) / 3
       num_proxies = Dir[File.join(mtg_dir, 'proxies-received', '*')].count
       attend_irc = quorum_need - num_proxies
     rescue StandardError => e
