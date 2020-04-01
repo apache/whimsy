@@ -30,6 +30,7 @@ end
 
 # Output action links for meeting records, depending on if current or past
 def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt)
+  num_members, quorum_need, num_proxies, attend_irc = MeetingUtil.calculate_quorum(cur_mtg_dir)
   _div id: "meeting-#{dt.year}"
   _whimsy_panel("All Meeting Details for #{dt.strftime(DTFORMAT)}", style: 'panel-info') do 
     if Date.today > dt
@@ -41,8 +42,12 @@ def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt)
           _li "#{num_proxies} proxy assignments available for the meeting,"
           _li "And hoped that at least #{attend_irc} would attend the start of meeting."
         end
-        attendees = File.readlines(File.join(cur_mtg_dir, 'attend'))
-        _ "By the end of the meeting, we had a total of #{attendees.count} Members participating (either via attending IRC, sending a proxy, or voting via email)"
+        begin
+            attendees = File.readlines(File.join(cur_mtg_dir, 'attend'))
+            _ "By the end of the meeting, we had a total of #{attendees.count} Members participating (either via attending IRC, sending a proxy, or voting via email)"
+        rescue
+            _ '(Cannot access attendance record)'
+        end
       end
       _p "These are historical links to the past meeting's record."
     else
