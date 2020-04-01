@@ -20,7 +20,8 @@ class MeetingUtil
     'record' => 'Official List Of Voting Members',
     'attend' => 'Official List Of Meeting Attendees (afterwards)',
     'voter-tally' => 'Official List Of Who Voted (afterwards)',
-    'raw_board_votes.txt' => 'Official List Of Votes For Board (afterwards)'
+    'raw_board_votes.txt' => 'Official List Of Votes For Board (afterwards)',
+    'raw-irc-log' => 'ASFBot logs all postings on #asfmembers during meeting'
   }
 
   # Calculate how many members required to attend first half for quorum

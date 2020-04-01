@@ -125,6 +125,7 @@ _html do
             _ " Members attending the first half of the meeting on Tuesday and respond to Roll Call to reach quorum and continue the meeting."
             _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
           end
+          _p 'Individual Members are considered to have Attended a meeting if they either: respond to Roll Call (in first or second half of meeting); submit a proxy (that gets submitted during Roll Call); or who cast a ballot on any matters.'
         end
       }
     ) do
@@ -158,6 +159,7 @@ _html do
         _p do
           _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{nom_date.strftime(TADFORMAT)}" do
             _span.glyphicon.glyphicon_time ''
+            _em '(time)'
           end
           _ 'Before the meeting, any Member may nominate people either for the Board, or as a New Member Candidate.  Much of this discussion happens on members@ mailing list.  Remember, all new nominated names must be checked into SVN 10 days before the meeting.'
           _ 'Also, you should submit a proxy if you might not attend the first half of the meeting.'
@@ -175,6 +177,7 @@ _html do
         _p do
           _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{nom_date.strftime(TADFORMAT)}" do
             _span.glyphicon.glyphicon_time ''
+            _em '(time)'
           end
           _ 'The last 10 days before the meeting, you may add seconds to existing nomination files, but no new nominations are allowed.'
           _ 'Also, you can still submit a proxy if you might not attend the first half of the meeting.'
@@ -192,18 +195,25 @@ _html do
         _p do
           _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m1_date.strftime(TADFORMAT)}" do
             _span.glyphicon.glyphicon_time ''
+            _em '(time)'
           end
-          _ 'The Meeting itself starts on IRC - please be sure your client is setup ahead of time, and sign in with your Apache ID as nick if at all possible.'
+          _ 'The Meeting itself starts on IRC (use any client) on the '
+          _a 'freenode network', href: 'https://webchat.freenode.net'
+          _ 'on channel '
+          _b '#asfmembers'
+          _ ' - please be sure your client is setup ahead of time, and sign in with your Apache ID as nick if at all possible.'
           _br
           _ 'The '
-          _b '#asfmembers'
+          _code '#asfmembers'
           _ ' channel is for the official meeting itself; please raise your hand if you have a formal question there.  '
           _ 'Backchannel (jokes, comments, etc.) is the '
-          _b '#asf'
+          _code '#asf'
           _ ' channel.'
           _br
-          _ 'During the First Half of Meeting, the Chairman and various officers run through reports in the Agenda.txt, which you can read ahead of time.'
-          _ 'Expect the First Half to last about an hour; then the Chairman will call for a recess.'
+          _ 'During the First Half of Meeting, the Chairman will do Roll call - please see instructions on how to mark present: '
+          emit_link(svn_mtg_dir, 'README.txt', MeetingUtil::MEETING_FILES['README.txt'])
+          _ 'Once a quorum is reached, the Chairman will lead the meeting, with various officers presenting their reports in the Agenda.txt, which you can read ahead of time.'
+          _ 'Expect the First Half to last about an hour; then the Chairman will call for a recess.  Remember: there is no voting in IRC.'
           _ul do
             ['agenda.txt', 'README.txt', 'https://www.apache.org/foundation/governance/meetings'].each do |f|
               _li do
@@ -214,13 +224,19 @@ _html do
         end
       end
       
-      _whimsy_panel("Timeline: Meeting Recess To Vote Via Email (approx 40+ hours)", style: 'panel-info') do
+      _whimsy_panel("Timeline: Meeting Recess - Time To Vote Via Email (approx 40+ hours)", style: 'panel-info') do
         _p do
-          _ 'Shortly after the Chairman calls the recess, the STeVe vote monitors will send you multiple emails with your voting keys.'
+          _ 'Shortly after the Chairman calls the recess, the STeVe vote monitors will send you an email '
+          _code 'From: voter@apache.org'
+          _ ' with your voting key URL.'
           _ 'All voting is done via a simple web interface at vote.apache.org after you login with your Apache ID.'
+          _b 'REMEMBER:'
+          _ "Ballots close TWO HOURS BEFORE the meeting reconvenes - don't wait to vote!"
           _ul do
             _li do
               _a 'New Members Elected By Majority Yes/No/Abstain vote', href: 'https://www.apache.org/foundation/governance/meetings#how-member-votes-are-tallied'
+            end
+            _li do
               _a 'Board Seats Are Elected By STV - ORDER OF YOUR VOTE MATTERS!', href: 'https://www.apache.org/foundation/governance/meetings#how-votes-for-the-board-are-tallied'
             end
           end
@@ -231,11 +247,12 @@ _html do
         _p do
           _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m2_date.strftime(TADFORMAT)}" do
             _span.glyphicon.glyphicon_time ''
+            _em '(time)'
           end
           _ 'The Second Half Meeting is short - it\'s primarily announcing vote results and any last-minute announcements.  Members do not need to attend the second half; all results will be emailed or checked into SVN.'
-          _ 'Various data files about the meeting will be checked in within a day after the meeting for historical records.'
+          _ 'Various data files about the meeting (raw-irc-log, board voting tally) will be checked in within a day after the meeting for historical records.'
           _ul do
-            ['record', 'attend', 'voter-tally', 'raw_board_votes.txt'].each do |f|
+            ['record', 'attend', 'voter-tally', 'raw_board_votes.txt', 'raw-irc-log'].each do |f|
               _li do
                 emit_link(svn_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
               end
@@ -254,7 +271,9 @@ _html do
         end
         _p do
           _span.text_primary 'If you nominated a new member:'
-          _ ' You must send an email with '
+          _ ' You '
+          _b 'must' 
+          _ ' send an email with '
           _a 'foundation/membership-application-email.txt', href: "#{FOUNDATION_SVN}membership-application-email.txt"
           _ ' to formally invite the new member to fill out the application form.  Applications must be signed and submitted to the secretary within 30 days of the meeting to be valid.'
         end
@@ -276,7 +295,9 @@ _html do
           _ ' Remember, member meeting minutes are '
           _span.text_warning 'private'
           _ ' to the ASF. You can see your '
-          _a 'your own attendance history at meetings.', href: '/members/inactive#attendance'
+          _a 'your own Attendance history at meetings.', href: '/members/inactive#attendance'
+          _ 'Various data files and tools tracking Attendance at meetings are in '
+          _code 'foundation/Meetings/attend*'
           _ul do
             all_mtg.each do |mtg|
               _li do
