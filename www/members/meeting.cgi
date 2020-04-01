@@ -29,8 +29,7 @@ def emit_link(cur_mtg_dir, f, desc)
 end
 
 # Output action links for meeting records, depending on if current or past
-def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt)
-  num_members, quorum_need, num_proxies, attend_irc = MeetingUtil.calculate_quorum(cur_mtg_dir)
+def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt, num_members, quorum_need, num_proxies, attend_irc)
   _div id: "meeting-#{dt.year}"
   _whimsy_panel("All Meeting Details for #{dt.strftime(DTFORMAT)}", style: 'panel-info') do 
     if Date.today > dt
@@ -42,11 +41,16 @@ def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt)
           _li "#{num_proxies} proxy assignments available for the meeting,"
           _li "And hoped that at least #{attend_irc} would attend the start of meeting."
         end
-        begin
-            attendees = File.readlines(File.join(cur_mtg_dir, 'attend'))
-            _ "By the end of the meeting, we had a total of #{attendees.count} Members participating (either via attending IRC, sending a proxy, or voting via email)"
-        rescue
-            _ '(Cannot access attendance record)'
+        attendees_file = File.join(cur_mtg_dir, 'attend')
+        if File.exist?(attendees_file)
+          attendees = File.readlines(attendees_file)
+          _ "By the end of the meeting, we had a total of #{attendees.count} Members participating (either via attending IRC, sending a proxy, or voting via email)"
+        else
+          _p.alert.alert_danger do
+            _span "Unable to calculate participating members ("
+            _code "attend"
+            _span "file does not yet exist for meeting)"
+          end
         end
       end
       _p "These are historical links to the past meeting's record."
@@ -72,6 +76,8 @@ _html do
     svn_mtg_dir = File.join(MeetingUtil::RECORDS, meeting)
     mtg_date = Date.parse(meeting)
     today = Date.today
+    # Calculate quorum
+    num_members, quorum_need, num_proxies, attend_irc = MeetingUtil.calculate_quorum(cur_mtg_dir)
     # Use ics files for accurate times; see create-meeting.rb
     nom_date = ics2dtstart(File.join(cur_mtg_dir, "ASF-members-#{mtg_date.strftime('%Y')}-nominations-close.ics"))
     m1_date = ics2dtstart(File.join(cur_mtg_dir, "ASF-members-#{mtg_date.strftime('%Y')}.ics"))
@@ -118,7 +124,6 @@ _html do
             _strong 'REMINDER: '
             _ 'Nominations for the board or new members close 10 days before the meeting starts; no new names may be added after that date.'
           end
-          num_members, quorum_need, num_proxies, attend_irc = MeetingUtil.calculate_quorum(cur_mtg_dir)
           _p do
             _ 'Currently, we will need '
             _span.text_primary "#{attend_irc}" 
@@ -261,7 +266,7 @@ _html do
       end
       
       # Most/all of these links should already be included above
-      emit_meeting(cur_mtg_dir, svn_mtg_dir, m1_date)
+      emit_meeting(cur_mtg_dir, svn_mtg_dir, m1_date, num_members, quorum_need, num_proxies, attend_irc)
       
       _div id: "meeting-history"
       _whimsy_panel("Member Meeting History", style: 'panel-info') do
