@@ -14,11 +14,11 @@ module ASF
       if withId
         ASF::Service['board'].members.
         map {|person| [person.id, {name: person.public_name}]}.
-          sort_by {|id,hash| hash[:name].split(' ').rotate}.to_h
+          sort_by {|id,hash| hash[:name].split(' ').rotate(-1)}.to_h
       else
         ASF::Service['board'].members.
           map {|person| person.public_name}.
-            sort_by {|name| name.split(' ').rotate}
+            sort_by {|name| name.split(' ').rotate(-1)}
       end
     end
 
@@ -90,7 +90,10 @@ module ASF
           list = []
           loop do
             list = @directors.shuffle if list.empty?
-            generator.yield list.pop.public_name
+            victim = list.pop
+            firstname = ASF::Board.directorFirstName(victim.id) || 
+              victim.public_name.split(' ').first
+            generator.yield firstname
           end
         end
       end
@@ -101,7 +104,7 @@ module ASF
         if @directors.include? chair
           "#{chair.public_name}"
         else
-          "#{chair.public_name} / #{self.next.split(' ').first}"
+          "#{chair.public_name} / #{self.next}"
         end
       end
     end
@@ -114,19 +117,19 @@ module ASF
     # Return the initials for the uid
     # Fails if there is no entry, so check first using directorHasId?
     def self.directorInitials(id)
-      DIRECTOR_MAP[id][INITIALS]
+      DIRECTOR_MAP[id] && DIRECTOR_MAP[id][INITIALS]
     end 
     
     # Return the first name for the uid
     # Fails if there is no entry, so check first using directorHasId?
     def self.directorFirstName(id)
-      DIRECTOR_MAP[id][FIRST_NAME]
+      DIRECTOR_MAP[id] && DIRECTOR_MAP[id][FIRST_NAME]
     end
 
     # Return the display name for the uid
     # Fails if there is no entry, so check first using directorHasId?
     def self.directorDisplayName(id)
-      DIRECTOR_MAP[id][DISPLAY_NAME]
+      DIRECTOR_MAP[id] && DIRECTOR_MAP[id][DISPLAY_NAME]
     end 
 
     private
@@ -154,13 +157,16 @@ module ASF
       'isabel' => ['idf', 'Isabel', 'Isabel Drost-Fromm'],
       'jerenkrantz' => ['je', 'Justin', 'Justin Erenkrantz'],
       'jim' => ['jj', 'Jim', 'Jim Jagielski'],
+      'jmclean' => ['jm', 'Justin', 'Justin Mclean'],
       'ke4qqq' => ['dn', 'David', 'David Nalley'],
       'lrosen' => ['lr', 'Larry', 'Lawrence Rosen'],
       'markt' => ['mt', 'Mark', 'Mark Thomas'],
       'marvin' => ['mh', 'Marvin', 'Marvin Humphrey'],
       'mattmann' => ['cm', 'Chris', 'Chris Mattmann'],
       'myrle' => ['mk', 'Myrle', 'Myrle Krantz'],
+      'niclas' => ['nh', 'Niclas', 'Par Niclas Hedhman'],
       'noirin' => ['np', 'Noirin', 'Noirin Plunkett'],
+      'pats' => ['ps', 'Patricia', 'Patricia Shanahan'],
       'psteitz' => ['ps', 'Phil', 'Phil Steitz'],
       'rbowen' => ['rb', 'Rich', 'Rich Bowen'],
       'rgardler' => ['rg', 'Ross', 'Ross Gardler'],
