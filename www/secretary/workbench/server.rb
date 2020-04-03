@@ -42,6 +42,7 @@ module Mail
 end
 
 require 'whimsy/asf'
+require 'whimsy/asf/memapps'
 ASF::Mail.configure
 
 set :show_exceptions, true
