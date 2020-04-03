@@ -58,7 +58,7 @@ _html do
     end
     _li do
       _a 'Project Proposals', target: 'content',
-        href: 'https://wiki.apache.org/incubator/ProjectProposals'
+        href: 'https://cwiki.apache.org/confluence/display/incubator/ProjectProposals'
     end
     _li do
       _a 'ICLA lint', target: 'content',
