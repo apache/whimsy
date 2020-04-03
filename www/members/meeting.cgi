@@ -257,11 +257,15 @@ _html do
           end
           _ 'The Second Half Meeting is short - it\'s primarily announcing vote results and any last-minute announcements.  Members do not need to attend the second half; all results will be emailed or checked into SVN.'
           _ 'Various data files about the meeting (raw-irc-log, board voting tally) will be checked in within a day after the meeting for historical records.'
+          _ 'Votes for the Omnibus resolution are included in raw-irc-log.  We do not currently publish vote results for new member nominees.'
           _ul do
             ['record', 'attend', 'voter-tally', 'raw_board_votes.txt', 'raw-irc-log'].each do |f|
               _li do
                 emit_link(svn_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
               end
+            end
+            _li do
+              _a 'What-If tool for analyzing Board STV votes', href: '/members/whatif'
             end
           end
         end
