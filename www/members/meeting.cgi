@@ -132,6 +132,7 @@ _html do
       help, copypasta = MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
       attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
       user = ASF::Person.find($USER)
+      _div id: 'personal'
       _whimsy_panel("#{user.public_name} - Personal Details For Meeting #{m1_date.strftime(DTFORMAT)}", style: 'panel-primary') do
         _p do
           if help
@@ -155,6 +156,7 @@ _html do
         end
       end
 
+      _div id: 'nominations'
       _whimsy_panel("Timeline: Nomination Period (now until #{nom_date.strftime(DTFORMAT)})", style: 'panel-default') do
         _p do
           _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{nom_date.strftime(TADFORMAT)}" do
@@ -173,6 +175,7 @@ _html do
         end
       end
       
+      _div id: 'seconds'
       _whimsy_panel("Timeline: Seconds Period (last ten days before meeting)", style: 'panel-default') do
         _p do
           _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{nom_date.strftime(TADFORMAT)}" do
@@ -191,6 +194,7 @@ _html do
         end
       end
       
+      _div id: 'firsthalf'
       _whimsy_panel("Timeline: First Half Of Meeting on IRC (at #{m1_date.strftime(DTFORMAT)})", style: 'panel-primary') do
         _p do
           _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m1_date.strftime(TADFORMAT)}" do
@@ -224,6 +228,7 @@ _html do
         end
       end
       
+      _div id: 'recess'
       _whimsy_panel("Timeline: Meeting Recess - Time To Vote Via Email (approx 40+ hours)", style: 'panel-info') do
         _p do
           _ 'Shortly after the Chairman calls the recess, the STeVe vote monitors will send you an email '
@@ -243,6 +248,7 @@ _html do
         end
       end
       
+      _div id: 'secondhalf'
       _whimsy_panel("Timeline: Second Half Of Meeting (at #{m2_date.strftime(DTFORMAT)})", style: 'panel-primary') do
         _p do
           _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m2_date.strftime(TADFORMAT)}" do
@@ -261,6 +267,7 @@ _html do
         end
       end
       
+      _div id: 'after'
       _whimsy_panel("Timeline: After This Year's Meeting", style: 'panel-default') do
         _p do 
           _ 'Shortly after the second half Meeting ends, '
@@ -282,7 +289,7 @@ _html do
       # Most/all of these links should already be included above
       emit_meeting(cur_mtg_dir, svn_mtg_dir, m1_date)
       
-      _div id: "meeting-history"
+      _div id: 'meeting-history'
       _whimsy_panel("Member Meeting History", style: 'panel-info') do
         all_mtg = Dir[File.join(MEETINGS, '19*'), File.join(MEETINGS, '2*')].sort
         _p do
