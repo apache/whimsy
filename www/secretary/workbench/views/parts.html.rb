@@ -54,7 +54,7 @@ _html do
     end
     _li do
       _a 'Incubator', target: 'content',
-        href: 'http://incubator.apache.org'
+        href: 'https://incubator.apache.org'
     end
     _li do
       _a 'Project Proposals', target: 'content',
