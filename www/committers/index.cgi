@@ -35,7 +35,8 @@ _html do
           _a '/dev developer info pages', href: 'https://www.apache.org/dev/'
           _ ' or ask the '
           _a 'Community Development PMC', href: 'https://community.apache.org/'
-          _ ' for pointers to everything Apache.'
+          _ ' for pointers to everything Apache. REMINDER: This service is maintained by the Apache Whimsy PMC - if you have questions about OTHER Apache servers, please '
+          _a 'Contact the Apache Infra team.', href: 'https://infra.apache.org/'
         end
       },
       breadcrumbs: {
