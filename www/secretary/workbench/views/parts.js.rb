@@ -139,6 +139,12 @@ class Parts < Vue
             end
           end
 
+          _label do
+            _input type: :radio, name: 'doctype', value: 'emeritus-request',
+                   onClick: -> {@form = EmeritusRequest}
+            _span 'emeritus request'
+          end
+
           _hr
 
           # reject message with message
