@@ -238,10 +238,10 @@ end
 # return a list of members
 get '/members.json' do
   list = []
-  ASF::Member.list.each do |id, data|
+  ASF.members.each do |member|
     list << {
-        id: id,
-        name: data[:name]
+        id: member.name,
+        name: member.public_name
     }
   end
   _json list
