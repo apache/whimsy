@@ -53,6 +53,7 @@ class EmeritusRequest < Vue
               _input type: :radio, name: 'member', value: member.id, id: member.id, onClick: lambda {
                 @member = member
                 @filename = self.gen_file_name(member.name)
+                @disabled = false
               }
               _label member.name, for: member.id
             end
