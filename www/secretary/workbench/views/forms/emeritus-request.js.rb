@@ -85,6 +85,6 @@ class EmeritusRequest < Vue
   end
 
   def gen_file_name(name)
-    asciize(name.strip()).downcase().gsub(/\W+/, '-')
+    return asciize(name.strip()).downcase().gsub(/\W+/, '-')
   end
 end
