@@ -22,6 +22,7 @@ GNUPGHOME = (Dir.exist?('/srv/gpg') ? '/srv/gpg' : nil)
 %w{
    /usr/share/gnupg2/sks-keyservers.netCA.pem 
    /usr/local/gnupg-2.2/share/gnupg/sks-keyservers.netCA.pem
+   /usr/local/share/gnupg/sks-keyservers.netCA.pem
   }.each do |cert|
   if File.exist? cert
     SKS_KEYSERVER_CERT = cert
