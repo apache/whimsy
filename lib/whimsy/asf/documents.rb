@@ -74,4 +74,11 @@ module ASF
     end
   end
 
+  class EmeritusRequestFiles
+    def self.listnames
+      _, list = ASF::SVN.getlisting('emeritus-requests-received')
+      list
+    end
+  end
+
 end

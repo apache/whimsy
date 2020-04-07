@@ -32,7 +32,7 @@ module Mail
   module Utilities
     def self.safe_for_line_ending_conversion?(string)
       if RUBY_VERSION >= '1.9'
-        string.ascii_only? or 
+        string.ascii_only? or
           (string.encoding != Encoding::BINARY and string.valid_encoding?)
       else
         string.ascii_only?
@@ -233,6 +233,18 @@ get '/iclas.json' do
     }
   end
   list.to_json
+end
+
+# return a list of members
+get '/members.json' do
+  list = []
+  ASF.members.each do |member|
+    list << {
+        id: member.name,
+        name: member.public_name
+    }
+  end
+  _json list
 end
 
 # redirect to an icla
