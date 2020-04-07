@@ -164,7 +164,7 @@ module ASF
       'marvin' => ['mh', 'Marvin', 'Marvin Humphrey'],
       'mattmann' => ['cm', 'Chris', 'Chris Mattmann'],
       'myrle' => ['mk', 'Myrle', 'Myrle Krantz'],
-      'niclas' => ['nh', 'Niclas', 'Par Niclas Hedhman'],
+      'niclas' => ['nh', 'Niclas', 'Niclas Hedhman'],
       'noirin' => ['np', 'Noirin', 'Noirin Plunkett'],
       'pats' => ['ps', 'Patricia', 'Patricia Shanahan'],
       'psteitz' => ['ps', 'Phil', 'Phil Steitz'],
