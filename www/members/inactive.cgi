@@ -44,7 +44,7 @@ _html do
       'missed' => 0,
       'status' => 'active - attended meetings recently'
     }
-    active = (tracker[$USER]['missed'] == 0)
+    active = (tracker[$USER]['missed'] == 0) && (ENV['QUERY_STRING'] == '')
     _whimsy_body(
       title: PAGETITLE,
       subtitle: active ? 'Your Attendance Status' : 'Poll Of Inactive Members',
@@ -140,10 +140,12 @@ _html do
             _p 'Update your status (if you are inactive):'
             _button.btn.btn_success 'I wish to remain active',
               name: 'status', value: 'remain active',
-              disabled: active or tracker[$USER]['status'] == 'remain active'
+              disabled: tracker[$USER]['missed'] == 0 or 
+                tracker[$USER]['status'] == 'remain active'
             _button.btn.btn_warning 'I would like to go emeritus',
               name: 'status', value: 'go emeritus',
-              disabled: active or tracker[$USER]['status'] == 'go emeritus'
+              disabled: tracker[$USER]['missed'] == 0 or 
+                tracker[$USER]['status'] == 'remain active'
           end
 
           _p_ %{
