@@ -134,7 +134,7 @@ _html do
           options[:pony] = {class: 'warning'}
         end
 
-        mail_archive = arcs.select{|e| e[1] == :MAIL_ARCHIVE}.map{|e| e[2]}.uniq.join('')
+        mail_archive = arcs.select{|e| e[1] == :MAIL_ARCH}.map{|e| e[2]}.uniq.join('')
         if ! mail_archive.empty?
           options[:mail_archive] = {class: 'danger'} if pubprv && mail_archive != pubprv  
         elsif pubprv == 'private'
