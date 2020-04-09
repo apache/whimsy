@@ -81,11 +81,11 @@ class ICLA < Vue
           end
         end
 
-        unless @project.nil? or @@projects.include? @project
+        unless @pdfproject.nil? or @pdfproject == @project
           _tr do
             _th 'Project (PDF)'
             _td do
-              _ @project
+              _ @pdfproject
             end
           end
         end        
@@ -120,6 +120,7 @@ class ICLA < Vue
     @email = parsed.EMail || @@headers.from
     @user = parsed.ApacheID || ''
     @project = parsed.Project
+    @pdfproject = parsed.PDFProject
   end
 
   def getpdfdata()
