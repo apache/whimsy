@@ -138,7 +138,7 @@ class Chat
 
     # build an index of the 'before' drafts
     index = {}
-    before.drafts.each do |attach, item|
+    before.drafts.each_pair do |attach, item|
       index[item.project] = item
     end
 
