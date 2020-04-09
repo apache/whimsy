@@ -18,8 +18,10 @@ require_relative './channel'
 options = OpenStruct.new
 options.host = '0.0.0.0'
 options.port = 34234
-options.privkey = Dir['/etc/letsencrypt/live/*/privkey.pem'].first
-options.chain = Dir['/etc/letsencrypt/live/*/fullchain.pem'].first
+options.privkey = Dir['/etc/letsencrypt/live/*/privkey.pem'].
+  sort_by {|file| File.mtime file}.last
+options.chain = Dir['/etc/letsencrypt/live/*/fullchain.pem'].
+  sort_by {|file| File.mtime file}.last
 options.kill = false
 options.timeout = 900
 
