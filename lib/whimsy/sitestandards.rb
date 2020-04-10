@@ -68,13 +68,13 @@ module SiteStandards
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
       CHECK_DOC => '"License" should link to: http[s]://www.apache.org/licenses[/]',
     },
-    'thanks' => { # link_check a_text =~ /\Athanks[!]?\z/
-        CHECK_TEXT => /\Athanks[!]?\z/,
-        CHECK_CAPTURE => /\Athanks[!]?\z/,
+    'thanks' => { # link_check a_text =~ /\A(sponsors|thanks!?|thanks to our sponsors)\z/
+        CHECK_TEXT => /\A(sponsors|thanks!?|thanks to our sponsors)\z/,
+        CHECK_CAPTURE => /\A(sponsors|thanks!?|thanks to our sponsors)\z/,
         CHECK_VALIDATE => %r{^https?://.*apache.org/foundation/thanks},
         CHECK_TYPE => true,
         CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
-        CHECK_DOC => '"Thanks" should link to: http://www.apache.org/foundation/thanks.html',
+        CHECK_DOC => '"Sponsors", "Thanks" or "Thanks to our Sponsors" should link to: http://www.apache.org/foundation/thanks.html',
     },
     'security' => { # link_check a_text == 'security'
       CHECK_TEXT => /security/,
