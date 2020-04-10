@@ -70,7 +70,13 @@ class ICLA < Vue
         end
 
         _tr do
-          _th 'Project'
+          if @project
+            _th do
+              _a 'Project', href: "https://lists.apache.org/list.html?private@#{@project}.apache.org"
+            end
+          else
+            _th 'Project'
+          end
           _td do
             _select name: 'project', value: @project, disabled: @filed do
               _option ''
