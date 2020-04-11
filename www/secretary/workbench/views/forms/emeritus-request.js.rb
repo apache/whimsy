@@ -1,14 +1,17 @@
 class EmeritusRequest < Vue
   def initialize
+    # TODO: update @filed = true on submit and related reset
     @filed = false
     @filename = ''
     @disabled = false
     @search = ''
     @members = []
-    @member = nil
+    @availid = ''
   end
 
   def mounted
+    jQuery('input[name=selected]').val(decodeURI(@@selected))
+    jQuery('input[name=message]').val(window.parent.location.pathname)
     if not @members.empty?
       @disabled = false
     else
@@ -48,14 +51,16 @@ class EmeritusRequest < Vue
       search = @search.downcase().split(' ')
       _ul.icla_search do
         @members.each do |member|
-          if search.all? { |part| member.id.include? part or member.name.downcase().include? part }
+          availid = member.id
+          name = member.name
+          if search.all? { |part| availid.include? part or name.downcase().include? part }
             _li do
-              _input type: :radio, name: 'member', value: member.id, id: member.id, onClick: lambda {
-                @member = member
-                @filename = self.gen_file_name(member.name)
+              _input type: :radio, id: availid, onClick: lambda {
+                @availid = availid
+                @filename = self.gen_file_name(name)
                 @disabled = false
               }
-              _label member.name, for: member.id
+              _label name, for: availid
             end
           end
         end
@@ -66,6 +71,7 @@ class EmeritusRequest < Vue
       _input type: :hidden, name: 'message'
       _input type: :hidden, name: 'selected'
       _input type: :hidden, name: 'signature', value: @@signature
+      _input type: :hidden, name: 'availid', value: @availid
 
       _table.form do
         _tr do
@@ -79,10 +85,6 @@ class EmeritusRequest < Vue
 
       _input.btn.btn_primary value: 'File', type: :submit, disabled: @disabled
     end
-  end
-
-  def updated
-    jQuery('input[name=selected]').val(decodeURI(@@selected))
   end
 
   def gen_file_name(name)

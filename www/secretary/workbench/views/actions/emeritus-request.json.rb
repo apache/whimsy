@@ -27,12 +27,47 @@ end
 # obtain per-user information
 _personalize_email(env.user)
 
-task 'hello, world!' do
+member = ASF::Person.find(@availid)
+@name = member.public_name
+summary = "Emeritus Request from #{@name}"
+
+# file the emeritus request in svn
+task "svn commit documents/emeritus-requests-received/#{emeritus_request}" do
   form do
-    _message message.to_s
+    _input name: 'selected', value: @selected
+    unless @signature.empty?
+      _input name: 'signature', value: @signature
+    end
+  end
+
+  complete do |dir|
+    dest = "#{dir}/emeritus-requests-received"
+    # checkout empty directory
+    svn 'checkout', '--depth', 'empty',
+        'https://svn.apache.org/repos/private/documents/emeritus-requests-received',
+        dest
+    message.write_svn(dest, @filename, @selected, @signature)
+
+    svn 'status', dest
+    svn 'commit', "#{dest}/#{emeritus_request}", '-m', summary
+  end
+end
+
+# respond to the member with acknowledgement
+task "email #{message.from}" do
+  mail = message.reply(
+      subject: summary,
+      from: @from,
+      to: "#{@name.inspect} <#{message.from}>",
+      cc: 'secretary@apache.org',
+      body: template('emeritus-request.erb')
+  )
+
+  form do
+    _message mail.to_s
   end
 
   complete do
-    _message 'TODO'
+    mail.deliver!
   end
 end
