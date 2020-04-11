@@ -82,7 +82,7 @@ class Queue < Vue
           pending.ready.each_with_index do |item, index|
             _span ', ' if index > 0
             _Link text: item.title, href: "queue/#{item.href}",
-              class: ('default' if index == 0)
+              class: item.color + (index == 0 ? ' default' : '')
           end
         end
       end
