@@ -29,12 +29,22 @@ class Info < Vue
 
       if @@item.flagged_by and not @@item.flagged_by.empty?
         _dt 'Flagged By'
-        _dd @@item.flagged_by.join(', ')
+        _dd do
+          @@item.flagged_by.each_with_index do |initials, index|
+            _ ', ' unless index == 0
+            _ Server.directors[initials] || initials
+          end
+        end
       end
 
       if @@item.approved and not @@item.approved.empty?
         _dt 'Approved By'
-        _dd @@item.approved.join(', ')
+        _dd do
+          @@item.approved.each_with_index do |initials, index|
+            _ ', ' unless index == 0
+            _span initials, title: Server.directors[initials]
+          end
+        end
       end
 
       if @@item.roster or @@item.prior_reports or @@item.stats
