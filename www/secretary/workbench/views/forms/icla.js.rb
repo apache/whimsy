@@ -31,7 +31,7 @@ class ICLA < Vue
           _th 'Real Name'
           _td do
             _input name: 'realname', value: @realname, required: true,
-               disabled: @filed, onChange: self.changeRealName
+               disabled: (@filed or @pdfbusy), onChange: self.changeRealName
           end
         end
 
@@ -39,7 +39,7 @@ class ICLA < Vue
           _th 'Public Name'
           _td do
             _input name: 'pubname', value: @pubname, required: true,
-              disabled: @filed, onFocus: lambda {@pubname ||= @realname}
+              disabled: (@filed or @pdfbusy), onFocus: lambda {@pubname ||= @realname}
           end
         end
 
@@ -47,7 +47,7 @@ class ICLA < Vue
           _th 'E-mail'
           _td do
             _input name: 'email', value: @email, required: true, type: 'email',
-              disabled: @filed
+              disabled: (@filed or @pdfbusy)
           end
         end
 
@@ -55,7 +55,7 @@ class ICLA < Vue
           _th 'File Name'
           _td do
             _input name: 'filename', value: @filename, required: true,
-              pattern: '[a-zA-Z][-\w]+(\.[a-z]+)?', disabled: @filed
+              pattern: '[a-zA-Z][-\w]+(\.[a-z]+)?', disabled: (@filed or @pdfbusy)
           end
         end
       end
@@ -65,7 +65,7 @@ class ICLA < Vue
           _th 'User ID'
           _td do
             _input name: 'user', value: @user, onBlur: self.validate_userid,
-              disabled: @filed, pattern: '^[a-z][a-z0-9]{2,}$'
+              disabled: (@filed or @pdfbusy), pattern: '^[a-z][a-z0-9]{2,}$'
           end
         end
 
@@ -78,7 +78,7 @@ class ICLA < Vue
             _th 'Project'
           end
           _td do
-            _select name: 'project', value: @project, disabled: @filed do
+            _select name: 'project', value: @project, disabled: (@filed or @pdfbusy) do
               _option ''
               @@projects.each do |project|
                 _option project

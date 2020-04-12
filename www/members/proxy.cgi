@@ -10,18 +10,6 @@ require 'date'
 require 'tmpdir'
 require_relative 'meeting-util'
 
-# TODO: Read in proxies between Volunteers: and Assignments: lines
-volunteers = [
-  "Shane Curcuru (curcuru)",
-  "Craig L Russell (clr)",
-  "Jim Jagielski (jim)",
-  "Greg Stein (gstein)",
-  "Daniel Ruggeri (druggeri)",
-  "Matt Sicker (mattsicker)",
-  "Michael Brohl (mbrohl)",
-  "Daniel Gruno (humbedooh)"
-]
-
 # Emit basic instructions and details on quorum
 def emit_instructions(today, cur_mtg_dir, meeting)
   if today > meeting
@@ -228,11 +216,18 @@ def emit_post(cur_mtg_dir, meeting)
 
         # update proxies file
         proxies = IO.read('proxies')
+        # look for lines containing '(id)' which start with 3 spaces
+        # TODO this assumes that the volunteer lines start with 2 spaces
         existing = proxies.scan(/   \S.*\(\S+\).*$/)
+        # extract the ids
         existing_ids = existing.map {|line| line[/\((\S+)\)/, 1] }
+        # keep only new ids
         added = list.
           reject {|line| existing_ids.include? line[/\((\S+)\)$/, 1]}
         list = added + existing
+        # look for the last '-' at the end of a line.
+        # This should be under the 'For:' column heading just before the proxies
+        # TODO it would be safer to look for <name>
         proxies[/.*-\n(.*)/m, 1] = list.flatten.sort.join("\n") + "\n"
 
         IO.write('proxies', proxies)
@@ -285,7 +280,7 @@ _html do
       }
     ) do
       if _.get?
-        emit_form(cur_mtg_dir, meeting, volunteers)
+        emit_form(cur_mtg_dir, meeting, MeetingUtil::getVolunteers(cur_mtg_dir))
       else # POST
         emit_post(cur_mtg_dir, meeting)
       end
