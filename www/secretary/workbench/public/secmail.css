@@ -58,6 +58,7 @@ table.form {
 
 .form input, .form textarea, .form select {
   width: 100%;
+  font-family: monospace;
 }
 
 .form input:invalid, .form select:invalid, .form textarea:invalid {
