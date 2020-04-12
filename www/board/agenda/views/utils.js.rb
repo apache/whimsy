@@ -1,5 +1,5 @@
 # A convenient place to stash server data
-Server = {}
+Server = {directors: []}
 
 #
 # function to assist with production of HTML and regular expressions
