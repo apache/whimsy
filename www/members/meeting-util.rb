@@ -39,6 +39,13 @@ class MeetingUtil
     return num_members, quorum_need, num_proxies, attend_irc
   end
   
+  # get list of proxy volunteers
+  def self.getVolunteers(mtg_dir)
+    lines = IO.read(File.join(mtg_dir, 'proxies'))
+    # split by ---- underlines, then by blank lines; pick second para and drop leading spaces
+    volunteers = lines.split(/^-----------/)[1].split(/\n\n/)[1].scan(/^\ +(\S.*$)/).flatten
+    
+  end
   # Get info about current users's proxying
   # @return "help text", ["id | name (proxy)", ...] if they are a proxy for other(s)
   # @return "You have already submitted a proxy form" to someone else

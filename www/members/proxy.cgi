@@ -10,18 +10,6 @@ require 'date'
 require 'tmpdir'
 require_relative 'meeting-util'
 
-# TODO: Read in proxies between Volunteers: and Assignments: lines
-volunteers = [
-  "Shane Curcuru (curcuru)",
-  "Craig L Russell (clr)",
-  "Jim Jagielski (jim)",
-  "Greg Stein (gstein)",
-  "Daniel Ruggeri (druggeri)",
-  "Matt Sicker (mattsicker)",
-  "Michael Brohl (mbrohl)",
-  "Daniel Gruno (humbedooh)"
-]
-
 # Emit basic instructions and details on quorum
 def emit_instructions(today, cur_mtg_dir, meeting)
   if today > meeting
@@ -292,7 +280,7 @@ _html do
       }
     ) do
       if _.get?
-        emit_form(cur_mtg_dir, meeting, volunteers)
+        emit_form(cur_mtg_dir, meeting, MeetingUtil::getVolunteers(cur_mtg_dir))
       else # POST
         emit_post(cur_mtg_dir, meeting)
       end
