@@ -228,11 +228,18 @@ def emit_post(cur_mtg_dir, meeting)
 
         # update proxies file
         proxies = IO.read('proxies')
+        # look for lines containing '(id)' which start with 3 spaces
+        # TODO this assumes that the volunteer lines start with 2 spaces
         existing = proxies.scan(/   \S.*\(\S+\).*$/)
+        # extract the ids
         existing_ids = existing.map {|line| line[/\((\S+)\)/, 1] }
+        # keep only new ids
         added = list.
           reject {|line| existing_ids.include? line[/\((\S+)\)$/, 1]}
         list = added + existing
+        # look for the last '-' at the end of a line.
+        # This should be under the 'For:' column heading just before the proxies
+        # TODO it would be safer to look for <name>
         proxies[/.*-\n(.*)/m, 1] = list.flatten.sort.join("\n") + "\n"
 
         IO.write('proxies', proxies)
