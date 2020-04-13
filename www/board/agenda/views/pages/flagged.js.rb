@@ -39,7 +39,10 @@ class Flagged < Vue
 
           _span.owner " [#{item.owner} / #{item.shepherd}]"
 
-          flagged_by = Server.directors[item.flagged_by] || item.flagged_by
+          flagged_by = item.flagged_by.to_s.split(/,\s*/).map {|initials|
+            Server.directors[initials] || initials
+          }.join(', ')
+
           _span.owner " flagged by: #{flagged_by}" if flagged_by
         end
 
