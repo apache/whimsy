@@ -18,7 +18,7 @@ class Flagged < Vue
     else
       _p do
         _ 'Currently only showing '; _span.commented 'flagged'
-        _ 'reports. Starting with the meeting day, this list will also include '
+        _ ' reports. Starting with the meeting day, this list will also include '
         _span.missing 'missing'; _ ', and '
         _span.ready 'unapproved'; _ ' reports too.'
       end
