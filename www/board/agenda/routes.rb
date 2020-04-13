@@ -188,13 +188,7 @@ post %r{/(\d\d\d\d-\d\d-\d\d)/feedback.json} do |date|
   _json :'actions/feedback'
 end
 
-# all agenda pages
-get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
-  agenda = "board_agenda_#{date.gsub('-','_')}.txt"
-  pass unless Agenda.parse agenda, :quick
-
-  @base = "#{env['SCRIPT_NAME']}/#{date}/"
-
+def server
   if env['REMOTE_USER']
     userid = env['REMOTE_USER']
   elsif ENV['RACK_ENV'] == 'test'
@@ -253,6 +247,20 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     }],
     websocket: websocket
   }
+end
+
+get '/server.json' do
+  _json server
+end
+
+# all agenda pages
+get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
+  agenda = "board_agenda_#{date.gsub('-','_')}.txt"
+  pass unless Agenda.parse agenda, :quick
+
+  @base = "#{env['SCRIPT_NAME']}/#{date}/"
+
+  @server = server
 
   @page = {
     path: path,
