@@ -43,7 +43,7 @@ _html do
     _thead do
      _tr do
        _th
-       _th 'UTC' if rotate != 0
+       _th 'UTC'
        _th 'Los Angeles'
        _th 'New York'
        _th 'Brussels'
@@ -58,10 +58,14 @@ _html do
 
       time = base.local_to_utc(Time.parse("#{date}T#{@time}"))
       @time = (time + rotate.hour).strftime("%H:%M")
+      timeurl = 'https://www.timeanddate.com/worldclock/fixedtime.html?iso='
 
       _tr do
         _td date
-        _td time.strftime('%H:%M') if rotate != 0
+        _td do 
+          _a time.strftime('%H:%M'), href: "#{timeurl}#{time.iso8601}"
+        end
+
         zones.each do |zone|
           if zone.to_s.include? 'Asia' or zone.to_s.include? 'Europe'
             local = time.in_time_zone(zone).strftime("%H:%M")
