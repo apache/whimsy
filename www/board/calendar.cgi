@@ -23,27 +23,31 @@ _html do
   @time ||= '21:30'
   @zone ||= 'UTC'
   base = TZInfo::Timezone.get(@zone)
+  rotate = (@rotate || 0).to_i
 
   _h2 'Proposed board meeting times'
 
   _p %{
     Future meeting times, presuming that the time of the meeting is
-    set to #{@time} #{@zone}.
+    set to #{@time} #{@zone}, rotating each meeting time by #{rotate} hours.
   }
   
-  _p.bg_danger %{
-    This background color indicate a local time change from the previous
-    month.
-  }
+  if rotate == 0
+    _p.bg_danger %{
+      This background color indicate a local time change from the previous
+      month.
+    }
+  end
   
   _table.table do
     _thead do
      _tr do
        _th
+       _th 'UTC' if rotate != 0
        _th 'Los Angeles'
        _th 'New York'
        _th 'Brussels'
-       _th 'Kuala Lumpur '
+       _th 'Kuala Lumpur'
        _th 'Sydney'
      end
     end
@@ -52,13 +56,20 @@ _html do
       date = Date.parse(date)
       next if date < Date.today
 
-      time = base.local_to_utc(Time.parse("#{date}/#{@time}"))
+      time = base.local_to_utc(Time.parse("#{date}T#{@time}"))
+      @time = (time + rotate.hour).strftime("%H:%M")
 
       _tr do
         _td date
+        _td time.strftime('%H:%M') if rotate != 0
         zones.each do |zone|
-          local = time.in_time_zone(zone).strftime("%H:%M")
-          if prev[zone] != local and prev[zone]
+          if zone.to_s.include? 'Asia' or zone.to_s.include? 'Europe'
+            local = time.in_time_zone(zone).strftime("%H:%M")
+          else
+            local = time.in_time_zone(zone).strftime("%-I:%M%P")
+          end
+
+          if prev[zone] != local and prev[zone] and rotate == 0
             _td.bg_danger local
           else
             _td local
