@@ -180,7 +180,7 @@ _html do
     ) do
       months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
       attendance = MeetingUtil.get_attendance(ASF::SVN['Meetings'])
-      style_cohorts(attendance)
+      style_cohorts(attendance) if attendance.has_key?('cohorts') # Allow to fail silently if data missing
       # if ENV['QUERY_STRING'].include? 'Clear-Cache-No-Really'
       #   _p do # Danger, Will Robinson!
       #     _ 'Note: deleting cached .json files: '
