@@ -19,6 +19,25 @@ zones = [
 
 prev = {}
 
+if CGI.new.params['format'] == ['txt']
+  _text do
+    @time ||= '21:30'
+    @zone ||= 'UTC'
+    base = TZInfo::Timezone.get(@zone)
+    rotate = (@rotate || 0).to_i
+
+    calendar.scan(pattern).flatten.each_with_index do |date, index|
+      date = Date.parse(date)
+      next if date < Date.today
+      time = base.local_to_utc(Time.parse("#{date}T#{@time}"))
+      @time = (time + rotate.hour).strftime("%H:%M")
+      _ '' unless index == 0
+      _ time.strftime("*) %a, %d %B %Y, %H:%M UTC")
+    end
+  end
+  exit
+end
+
 _html do
   @time ||= '21:30'
   @zone ||= 'UTC'
