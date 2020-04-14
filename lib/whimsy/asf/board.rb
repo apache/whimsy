@@ -3,7 +3,7 @@ require 'tzinfo'
 
 module ASF
   module Board
-    TIMEZONE = TZInfo::Timezone.get('US/Pacific')
+    TIMEZONE = TZInfo::Timezone.get('UTC')
 
     # sorted list of Directors
     # default to names only
@@ -45,7 +45,7 @@ module ASF
           time = Chronic.parse('3rd wednesday next month')
         end
 
-        time = TIMEZONE.local_to_utc(Time.parse("#{time.to_date} 10:30am"))
+        time = TIMEZONE.local_to_utc(Time.parse("#{time.to_date} 9:30pm"))
       end
 
       time
