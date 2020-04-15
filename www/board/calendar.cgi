@@ -28,7 +28,7 @@ if CGI.new.params['format'] == ['txt']
 
     calendar.scan(pattern).flatten.each_with_index do |date, index|
       date = Date.parse(date)
-      next if date < Date.today
+      next if date <= Date.today
       time = base.local_to_utc(Time.parse("#{date}T#{@time}"))
       @time = (time + rotate.hour).strftime("%H:%M")
       _ '' unless index == 0
@@ -73,7 +73,7 @@ _html do
 
     _tbody calendar.scan(pattern).flatten do |date|
       date = Date.parse(date)
-      next if date < Date.today
+      next if date <= Date.today
 
       time = base.local_to_utc(Time.parse("#{date}T#{@time}"))
       @time = (time + rotate.hour).strftime("%H:%M")
