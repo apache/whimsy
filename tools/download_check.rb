@@ -381,7 +381,7 @@ def _checkDownloadPage(path, tlp, version)
         if vercheck[stem]
           vercheck[stem] << ext
         else
-          E "Bug: found hash for missing artifact #{stem}"
+          E "Bug: found hash #{h} for missing artifact #{stem}"
         end
         tmp = text2ext(t)
         next if ext == tmp # i.e. link is just the type or [TYPE]
