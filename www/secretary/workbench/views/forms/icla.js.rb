@@ -72,7 +72,7 @@ class ICLA < Vue
         _tr do
           if @project
             _th do
-              _a 'Project', href: "https://lists.apache.org/list.html?private@#{@project}.apache.org"
+              _a 'Project', href: "https://lists.apache.org/list.html?private@#{@project}.apache.org", target: 'content'
             end
           else
             _th 'Project'
