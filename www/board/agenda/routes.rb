@@ -514,7 +514,9 @@ get '/new' do
   # extract time and date for next meeting, month of previous meeting
   @meeting = ASF::Board.nextMeeting
   localtime = ASF::Board::TIMEZONE.utc_to_local(@meeting)
-  @time = localtime.strftime('%l:%M%P')
+  zone = ASF::Board::TIMEZONE.identifier
+  @start_time = localtime.strftime('%H:%M') + ' ' + zone
+  @adjournment = (localtime + 2.hours).strftime('%H:%M') + ' ' + zone
   @prev_month = @meeting.to_date.prev_month.strftime('%B')
 
   # retrieve latest committee info

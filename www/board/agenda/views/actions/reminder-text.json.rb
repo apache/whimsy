@@ -10,9 +10,8 @@ template = File.read("templates/#@reminder.txt")
 agenda = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort.last.untaint
 
 # determine meeting time
-us_pacific = TZInfo::Timezone.get('US/Pacific')
-meeting = Time.new(*agenda[/\d[\d_]+/].split('_').map(&:to_i), 10, 30)
-meeting = us_pacific.local_to_utc(meeting).in_time_zone(us_pacific)
+tz = ASF::Board::TIMEZONE
+meeting = ASF::Board.nextMeeting
 dueDate = meeting - 7.days
 
 # substitutable variables
