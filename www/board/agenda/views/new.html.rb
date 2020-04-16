@@ -25,7 +25,6 @@ _html do
         _pre.commented @next_month.gsub(@next_month.scan(/\s+#/).max.to_s, " -")
       end
 
-
       if @next_month.include? "through #@prev_month"
         _h3.missing do
           _ "List still shows a committee as reporting through #@prev_month."
@@ -47,6 +46,12 @@ _html do
 
       _textarea.form_control @agenda, name: 'agenda',
         rows: [@agenda.split("\n").length, 20].max
+    end
+
+    _p do
+      _ 'Agenda was generated from '
+      _a 'board_agenda_template.erb', href:
+        'https://svn.apache.org/repos/private/foundation/board/board_agenda_template.erb'
     end
   end
 end
