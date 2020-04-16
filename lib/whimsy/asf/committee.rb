@@ -518,6 +518,12 @@ module ASF
       @officers
     end
 
+    # look up an individual officer
+    def self.officer(role)
+      office = self.officers.find {|officer| officer.name == role}
+      office && ASF::Person.find(office.chairs.first[:id])
+    end
+
     # Finds a committee based on the name of the Committee.  Is aware of
     # a number of aliases for a given committee.  Will set display name
     # if the name being searched on contains an uppercase character.
