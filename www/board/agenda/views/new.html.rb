@@ -48,10 +48,32 @@ _html do
         rows: [@agenda.split("\n").length, 20].max
     end
 
-    _p do
-      _ 'Agenda was generated from '
-      _a 'board_agenda_template.erb', href:
-        'https://svn.apache.org/repos/private/foundation/board/board_agenda_template.erb'
+    _h3 'Sources'
+
+    _ul do
+      _li do
+        _ 'Agenda was generated from '
+        _a 'board_agenda_template.erb', href:
+          'https://svn.apache.org/repos/private/foundation/board/board_agenda_template.erb'
+      end
+
+      _li do
+        _ 'Date and time of meeting was extracted from '
+        _a 'calendar.txt', href:
+          'https://svn.apache.org/repos/private/committers/board/calendar.txt
+'
+      end
+
+      _li do
+        _ 'Directors extracted from '
+        _a 'LDAP', href: 'https://whimsy.apache.org/roster/group/board'
+      end
+
+      _li do
+        _ 'Officers extracted from '
+        _a 'committee-info.txt', href:
+          'https://svn.apache.org/repos/private/committers/board/committee-info.txt'
+      end
     end
   end
 end
