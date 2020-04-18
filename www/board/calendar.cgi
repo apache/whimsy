@@ -30,7 +30,7 @@ if CGI.new.params['format'] == ['txt']
       date = Date.parse(date)
       next if date <= Date.today
       time = base.local_to_utc(Time.parse("#{date}T#{@time}"))
-      @time = (time + rotate.hour).strftime("%H:%M")
+      @time = (base.utc_to_local(time) + rotate.hour).strftime("%H:%M")
       _ '' unless index == 0
       _ time.strftime("*) %a, %d %B %Y, %H:%M UTC")
     end
@@ -51,7 +51,7 @@ _html do
     set to #{@time} #{@zone}, rotating each meeting time by #{rotate} hours.
   }
   
-  if rotate == 0
+  if rotate != 0
     _p.bg_danger %{
       This background color indicate a local time change from the previous
       month.
@@ -76,7 +76,7 @@ _html do
       next if date <= Date.today
 
       time = base.local_to_utc(Time.parse("#{date}T#{@time}"))
-      @time = (time + rotate.hour).strftime("%H:%M")
+      @time = (base.utc_to_local(time) + rotate.hour).strftime("%H:%M")
       timeurl = 'https://www.timeanddate.com/worldclock/fixedtime.html?iso='
 
       _tr do
