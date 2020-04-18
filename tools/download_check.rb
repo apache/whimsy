@@ -372,24 +372,10 @@ def _checkDownloadPage(path, tlp, version)
   
   # Check archives have hash and sig
   vercheck = Hash.new() # key = archive name, value = array of hash/sig
+
   links.each do |h,t|
-    # Must occur before mirror check below
-    if h =~ %r{^https?://(?:(?:archive\.|www\.)?apache\.org/dist|downloads\.apache.org)/(.+\.(asc|sha\d+|md5|sha))$}
-        base = File.basename($1)
-        ext = $2
-        stem = base[0..-(2+ext.length)]
-        if vercheck[stem]
-          vercheck[stem] << ext
-        else
-          E "Bug: found hash #{h} for missing artifact #{stem}"
-        end
-        tmp = text2ext(t)
-        next if ext == tmp # i.e. link is just the type or [TYPE]
-        if not base == t and not t == 'checksum'
-            E "Mismatch: #{h} and '#{t}'"
-        end
     # These might also be direct links to mirrors
-    elsif h =~ ARTIFACT_RE
+    if h =~ ARTIFACT_RE
         base = File.basename($1)
   #         puts "base: " + base
         if vercheck[base]  # might be two links to same archive
@@ -413,6 +399,26 @@ def _checkDownloadPage(path, tlp, version)
         end        
     end
   end
+
+  links.each do |h,t|
+    # Must occur before mirror check below
+    if h =~ %r{^https?://(?:(?:archive\.|www\.)?apache\.org/dist|downloads\.apache.org)/(.+\.(asc|sha\d+|md5|sha))$}
+        base = File.basename($1)
+        ext = $2
+        stem = base[0..-(2+ext.length)]
+        if vercheck[stem]
+          vercheck[stem] << ext
+        else
+          E "Bug: found hash #{h} for missing artifact #{stem}"
+        end
+        tmp = text2ext(t)
+        next if ext == tmp # i.e. link is just the type or [TYPE]
+        if not base == t and not t == 'checksum'
+            E "Mismatch: #{h} and '#{t}'"
+        end
+    end
+  end
+
   
   # did we find all required elements?
   vercheck.each do |k,v|
@@ -425,6 +431,8 @@ def _checkDownloadPage(path, tlp, version)
     W "** Not checking links **"
     $NOFOLLOW = true
   end
+
+  # Check if the links can be read
 
   links.each do |h,t|
     if h =~ %r{\.(asc|sha256|sha512)$}
