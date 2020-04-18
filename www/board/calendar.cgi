@@ -51,7 +51,7 @@ _html do
     set to #{@time} #{@zone}, rotating each meeting time by #{rotate} hours.
   }
   
-  if rotate != 0
+  if rotate == 0
     _p.bg_danger %{
       This background color indicate a local time change from the previous
       month.
