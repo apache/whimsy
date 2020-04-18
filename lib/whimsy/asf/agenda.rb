@@ -1,8 +1,7 @@
 require_relative '../asf'
 
 require 'time'
-require 'tzinfo'
-require 'tzinfo/data'
+require 'active_support/time'
 require 'digest/md5'
 
 module ASF
@@ -180,8 +179,7 @@ class ASF::Board::Agenda
   # convert a PST/PDT time to UTC as a JavaScript integer
   def timestamp(time)
     date = @file[/(\w+ \d+, \d+)/]
-    tz = TZInfo::Timezone.get('America/Los_Angeles')
-    tz.local_to_utc(Time.parse("#{date} #{time}")).to_i * 1000
+    ASF::Board::TIMEZONE.parse("#{date} #{time}").to_i * 1000
   end
 end
 

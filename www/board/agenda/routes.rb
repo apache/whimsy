@@ -514,7 +514,7 @@ get '/new' do
   # extract time and date for next meeting, month of previous meeting
   @meeting = ASF::Board.nextMeeting
   localtime = ASF::Board::TIMEZONE.utc_to_local(@meeting)
-  zone = ASF::Board::TIMEZONE.identifier
+  zone = ASF::Board::TIMEZONE.name
   @start_time = localtime.strftime('%H:%M') + ' ' + zone
   @adjournment = (localtime + 2.hours).strftime('%H:%M') + ' ' + zone
   @prev_month = @meeting.to_date.prev_month.strftime('%B')
@@ -537,7 +537,7 @@ get '/new' do
   # build full time zone link
   path = "/worldclock/fixedtime.html?iso=" +
     localtime.strftime('%Y-%m-%dT%H:%M:%S') +
-    "&msg=ASF+Board+Meeting&p1=137" # time zone for PST/PDT locality
+    "&msg=ASF+Board+Meeting"
   @tzlink = "http://www.timeanddate.com/#{path}"
 
   # try to shorten time zone link

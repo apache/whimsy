@@ -3,7 +3,7 @@ require 'tzinfo'
 
 module ASF
   module Board
-    TIMEZONE = TZInfo::Timezone.get('UTC')
+    TIMEZONE = ActiveSupport::TimeZone.new('UTC')
 
     # sorted list of Directors
     # default to names only
@@ -29,7 +29,7 @@ module ASF
       return [] unless svn
       txt = File.read(File.join(svn, 'calendar.txt'))
       times = txt.scan(/^\s+\*\)\s(.*)/).flatten
-      times.map {|time| TIMEZONE.local_to_utc(Time.parse(time))}
+      times.map {|time| TIMEZONE.parse(time)}
     end
 
     # time of next meeting
@@ -46,7 +46,7 @@ module ASF
           time = Chronic.parse('3rd wednesday next month')
         end
 
-        time = TIMEZONE.local_to_utc(Time.parse("#{time.to_date} 9:30pm"))
+        time = TIMEZONE.Time.parse("#{time.to_date} 21:30")
       end
 
       time
@@ -66,6 +66,8 @@ module ASF
         if not time or time > Time.now.utc
           time = Chronic.parse('3rd wednesday last month')
         end
+
+        time = TIMEZONE.Time.parse("#{time.to_date} 21:30")
       end
 
       time

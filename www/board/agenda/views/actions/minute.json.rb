@@ -15,9 +15,9 @@ end
 
 if @action == 'timestamp'
 
-  timestamp = Time.now
+  timestamp = ASF::Board::TIMEZONE.now
 
-  @text = timestamp.in_time_zone(ASF::Board::TIMEZONE).strftime('%-H:%M')
+  @text = timestamp.strftime('%-H:%M')
 
   if @title == 'Call to order'
     minutes['started']  = timestamp.gmtime.to_f * 1000

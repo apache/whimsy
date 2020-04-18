@@ -10,7 +10,6 @@ template = File.read("templates/#@reminder.txt")
 agenda = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort.last.untaint
 
 # determine meeting time
-tz = ASF::Board::TIMEZONE
 meeting = ASF::Board.nextMeeting
 dueDate = meeting - 7.days
 
