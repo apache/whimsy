@@ -3,7 +3,7 @@ require 'tzinfo'
 
 module ASF
   module Board
-    TIMEZONE = ActiveSupport::TimeZone.new('UTC')
+    TIMEZONE = ActiveSupport::TimeZone.new('UTC') rescue nil # HACK fix failure in public_committee_info.rb
 
     # sorted list of Directors
     # default to names only
