@@ -514,6 +514,7 @@ get '/new' do
   # extract time and date for next meeting, month of previous meeting
   @meeting = ASF::Board.nextMeeting
   localtime = ASF::Board::TIMEZONE.utc_to_local(@meeting)
+  @tzlink = ASF::Board.tzlink(localtime)
   zone = ASF::Board::TIMEZONE.name
   @start_time = localtime.strftime('%H:%M') + ' ' + zone
   @adjournment = (localtime + 2.hours).strftime('%H:%M') + ' ' + zone
@@ -533,20 +534,6 @@ get '/new' do
   @directors = ASF::Board.directors
   @pmcs = ASF::Board.reporting(@meeting)
   @owner = ASF::Board::ShepherdStream.new
-
-  # build full time zone link
-  path = "/worldclock/fixedtime.html?iso=" +
-    localtime.strftime('%Y-%m-%dT%H:%M:%S') +
-    "&msg=ASF+Board+Meeting"
-  @tzlink = "http://www.timeanddate.com/#{path}"
-
-  # try to shorten time zone link
-  begin
-    shorten = 'http://www.timeanddate.com/createshort.html?url=' +
-      CGI.escape(path) + '&confirm=1'
-    shorten = URI.parse(shorten).read[/id=selectable>(.*?)</, 1]
-    @tzlink = shorten if shorten
-  end
 
   # Get list of unpublished and unapproved minutes
   draft = YAML.load_file(Dir["#{AGENDA_WORK}/board_minutes*.yml"].sort.last)

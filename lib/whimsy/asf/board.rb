@@ -5,6 +5,27 @@ module ASF
   module Board
     TIMEZONE = ActiveSupport::TimeZone.new('UTC') rescue nil # HACK fix failure in public_committee_info.rb
 
+    # Convert a time to a timeanddate link, shortened if possible.
+    # Note: the path must be adjusted if the TIMEZONE changes.
+    def self.tzlink(time)
+      # build full time zone link
+      path = "/worldclock/fixedtime.html?iso=" +
+        time.strftime('%Y-%m-%dT%H:%M:%S') +
+        "&msg=ASF+Board+Meeting"
+      # path += '&p1=137' # time zone for PST/PDT locality
+      link = "http://www.timeanddate.com/#{path}"
+
+      # try to shorten time zone link
+      begin
+        shorten = 'http://www.timeanddate.com/createshort.html?url=' +
+          CGI.escape(path) + '&confirm=1'
+        shorten = URI.parse(shorten).read[/id=selectable>(.*?)</, 1]
+        link = shorten if shorten
+      end
+
+      link
+    end
+
     # sorted list of Directors
     # default to names only
     # if withId == true, then return hash: { id: {name: public_name}}
