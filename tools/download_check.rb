@@ -254,6 +254,7 @@ ALIASES = {
     'sig' => 'asc',
     'pgp' => 'asc',
     'signature' => 'asc',
+    'asc signature' => 'asc',
     'pgp signature' => 'asc',
     'openpgp signature' => 'asc',
 }
