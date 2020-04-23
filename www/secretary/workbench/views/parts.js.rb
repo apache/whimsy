@@ -167,6 +167,12 @@ class Parts < Vue
             end
 
             _label do
+              _input type: 'radio', name: 'doctype', value: 'resubmit',
+                onClick: self.reject
+              _span 'resubmitted form'
+            end
+
+            _label do
               _input type: 'radio', name: 'doctype', value: 'pubkey',
                 onClick: self.reject
               _span 'upload public key'

@@ -1,0 +1,15 @@
+Dear <%= @email.display_names.join(', ') %>,
+
+Thanks for the ICLA, however we already have a copy.
+The (P)PMC can use the existing ICLA to request your account by using Whimsy:
+
+https://whimsy.apache.org/officers/acreq.cgi
+
+Please take up any further queries with the (P)PMC.
+
+Warm Regards,
+
+<%= @sig %>
+
+pmc: <%= @pmc %>
+podling: <%= @podling %>
