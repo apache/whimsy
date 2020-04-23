@@ -3,9 +3,12 @@ Docker execution instructions
 
 This is experimental at this point.
 
-These steps will enable you to run a full Whimsy system inside a
-container on your development machine.  You can edit files inside
-your favorite IDE on your host machine.
+Do *NOT* proceed unless you are comfortable with the notion of containers,
+images, Dockerfiles, Volumes, Port Forwarding, and likely Docker Compose.
+
+If, however, this describes you, it is hoped that these steps will enable you
+to run a full Whimsy system inside a container on your development machine.
+You can edit files inside your favorite IDE on your host machine.
 
 Prerequisites
 -------------
