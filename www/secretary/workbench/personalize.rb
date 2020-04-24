@@ -4,24 +4,23 @@
 
 class Wunderbar::JsonBuilder
   def _personalize_email(user)
-    if user == 'clr'
-
-      @from = 'Craig L Russell <clr@apache.org>'
+    secs = Hash.new
+    ASF::Committee.officers.map{ |officer|
+      if officer.name == 'secretary' or officer.name == 'assistantsecretary'
+        secs[officer.chairs.first[:id]] = {
+          name: officer.chairs.first[:name],
+          office: officer.display_name,
+        }
+      end
+    }
+    sec = secs[user]
+    if sec
+      @from = "#{sec[:name]} <#{user}@apache.org>".untaint
       @sig = %{
-        --
-        Craig L Russell
-        Assistant Secretary, Apache Software Foundation
-      }
-
-    elsif user == 'mattsicker'
-
-      @from = 'Matt Sicker <secretary@apache.org>'
-      @sig = %{
-        --
-        Matt Sicker
-        Secretary, Apache Software Foundation
-      }
-
+        -- 
+        #{sec[:name]}
+        #{sec[:office]}, Apache Software Foundation
+      }.untaint
     else
 
       person = ASF::Person.find(user)
