@@ -153,6 +153,9 @@ task "email #@email" do
     reply = 'icla.erb'
   end
 
+  @cttee = '(P)PMC'
+  @cttee = "Apache #{@podling.display_name} podling" if @podling
+  @cttee = "Apache #{@pmc.display_name} PMC" if @pmc
   # build mail from template
   mail = message.reply(
     subject: "ICLA for #{@pubname}",
