@@ -15,6 +15,10 @@ _extract_project
 task "email #{message.from}" do
   # build mail from template
   @email = message.from
+  # variable for 'The xxx can use'
+  @cttee = '(P)PMC'
+  @cttee = "Apache #{@podling.display_name} podling" if @podling
+  @cttee = "Apache #{@pmc.display_name} PMC" if @pmc
   mail = message.reply(
     from: @from,
     cc: [
