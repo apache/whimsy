@@ -127,7 +127,7 @@ task "email #@email" do
   # set up notify for body of message
   if @pmc
     @notify = "the #{@pmc.display_name} PMC has"
-    if @podling
+    if @podling # it looks like podlings also have PMC=Incubator 
       @notify.sub! /has$/, "and the #{@podling.display_name} podling have"
     end
   end
@@ -154,8 +154,9 @@ task "email #@email" do
   end
 
   @cttee = '(P)PMC'
-  @cttee = "Apache #{@podling.display_name} podling" if @podling
   @cttee = "Apache #{@pmc.display_name} PMC" if @pmc
+  # Process podling after PMC otherwise podling applicants are directed to IPMC
+  @cttee = "Apache #{@podling.display_name} podling" if @podling
   # build mail from template
   mail = message.reply(
     subject: "ICLA for #{@pubname}",
