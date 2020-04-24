@@ -8,7 +8,8 @@ class Wunderbar::JsonBuilder
 
       @from = 'Craig L Russell <clr@apache.org>'
       @sig = %{
-        -- Craig L Russell
+        --
+        Craig L Russell
         Assistant Secretary, Apache Software Foundation
       }
 
@@ -16,7 +17,8 @@ class Wunderbar::JsonBuilder
 
       @from = 'Matt Sicker <secretary@apache.org>'
       @sig = %{
-        -- Matt Sicker
+        --
+        Matt Sicker
         Secretary, Apache Software Foundation
       }
 
@@ -26,7 +28,8 @@ class Wunderbar::JsonBuilder
 
       @from = "#{person.public_name} <#{user}@apache.org>".untaint
       @sig = %{
-        -- #{person.public_name}
+        --
+        #{person.public_name}
         Apache Software Foundation Secretarial Team
       }
 
