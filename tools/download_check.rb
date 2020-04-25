@@ -248,6 +248,7 @@ VERIFY_TEXT = [
  'All downloads should be verified',
  'verification instructions',
  ' encouraged to verify ',
+ 'To check a GPG signature',
 ]
 
 ALIASES = {
@@ -256,6 +257,7 @@ ALIASES = {
     'signature' => 'asc',
     'asc signature' => 'asc',
     'pgp signature' => 'asc',
+    'gpg signature' => 'asc',
     'openpgp signature' => 'asc',
 }
 # Convert text reference to extension
