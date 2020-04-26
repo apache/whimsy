@@ -49,6 +49,7 @@ _html do
     subtitle: "Checking #{cgi_for_tlps ? 'Project' : 'Podling'} Websites For required content",
     related: {
       "/committers/tools" => "Whimsy Tool Listing",
+      "/pods/" => "PPMC Podling Website Checker",
       "https://www.apache.org/foundation/marks/pmcs#navigation" => "Required PMC Links Policy",
       "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code",
       "mailto:dev@whimsical.apache.org?subject=[SITE] Website Checker Question" => "Questions? Email Whimsy PMC"
