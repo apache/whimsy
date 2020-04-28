@@ -1,8 +1,8 @@
 Monitoring
 ==========
 
-The [state of whimsy](https://whimsy-test.apache.org/status/) is represented
-as a tree of named nodes.
+The [current Whimsy server status](https://whimsy.apache.org/status/) is represented
+as a tree of named nodes, and created by the [status monitoring code](https://github.com/apache/whimsy/tree/master/www/status/).
 
 Nodes, names, and strings
 -------------------------
@@ -110,11 +110,12 @@ Alerts
 ======
 
 The Apache Software Foundation infrastructure team uses
-[Ping My Box](https://www.pingmybox.com/dashboard?location=470) to monitor
-status.  A dozen+ servers around the world check status ever 5 minutes or so,
+[Nodeping](https://nodeping.com/reports/status/70MTNEPXE6) to monitor
+status.  A dozen+ servers around the world check status regularly,
 and will report failure results to the infrastructure
-[HipChat](http://infra.chat/) channel, and may in the future be configured to
-send pager alerts.
+[Slack](https://the-asf.slack.com/) channel.  _Important:_ The Infrastructure
+team ensures the underlying VM is up; the Whimsy PMC is responsible for 
+the server software running inside the VM.
 
 While the full status for whimsy is represented as a tree of nodes, each
 assigned one of our levels, and containing either child nodes or one or more
