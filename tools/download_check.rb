@@ -265,7 +265,7 @@ ALIASES = {
 def text2ext(txt)
     # need to strip twice to handle ' [ asc ] '
     # TODO: perhaps just remove all white-space?
-    tmp = txt.downcase.strip.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(/ ?checksum/,'').sub(/ \(tar\.gz\)| \(zip\)/,'').strip
+    tmp = txt.downcase.strip.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(/ ?(digest|checksum)/,'').sub(/ \(tar\.gz\)| \(zip\)/,'').strip
     ALIASES[tmp] || tmp
 end
 
@@ -416,6 +416,7 @@ def _checkDownloadPage(path, tlp, version)
         end
         tmp = text2ext(t)
         next if ext == tmp # i.e. link is just the type or [TYPE]
+        next if ext == 'sha' and tmp == 'sha1' # historic
         if not base == t and not t == 'checksum'
             E "Mismatch: #{h} and '#{t}'"
         end
