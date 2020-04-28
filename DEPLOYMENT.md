@@ -22,6 +22,7 @@ Application developers may need to know where different things are configured:
 - **Public JSON** generation comes from various www/roster/public_*.rb scripts
 - **Misc server config** is executed by whimsy_server/manifests/init.pp
 - **LDAP** configured in whimsy-vm*.apache.org.yaml
+- Various other config-like settings are in [CONFIGURE.md](./CONFIGURE.md)
 
 How Production Is Updated
 ----
@@ -46,7 +47,7 @@ the normal methods Apache infra uses for managing servers.  Note however
 that management of Whimsy code and tools is a PMC responsibility.  
 
 <a name="puppetnode"></a>
-The **puppet definition** is contained in the following files:
+The **puppet definition** is contained in the following files currently (note: Infra plans to move Puppet details in 2020).
 
  * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm4.apache.org.yaml (Includes modules, software, vhosts, ldap realms, and httpd.conf)
 

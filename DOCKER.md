@@ -1,6 +1,10 @@
 Docker execution instructions
 =============================
 
+:dizzy: **New!** For a simpler way to setup a Mac OSX machine, please 
+check out the [setupmymac script](./SETUPMYMAC.md), which automates 
+configuring and keeping updated a local whimsy instance with Docker.
+
 This is experimental at this point.
 
 Do *NOT* proceed unless you are comfortable with the notion of containers,

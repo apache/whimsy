@@ -1,6 +1,12 @@
+Automatically Setup Your Mac OSX Environment
+============================================
+
 If you have a MacBook you undoubtedly have never used LDAP on it, have a
 version of the Ruby programming language installed that you also haven't used
 much, and the Apache httpd web server is disabled.  Why not put them to use?
+
+Simple Whimsy.Local Installation
+--------------------------------
 
 It is easy, run the following two commands:
 
@@ -14,12 +20,15 @@ Once complete, you will have a virtual host defined as `whimsy.local` that
 you can access in your web browser.  The whole process should take about
 five minutes, possibly less if you already have things like `brew` installed.
 
+Simple Whimsy.Local Installation With docker
+--------------------------------------------
+
 Don't want to instal things on your machine?  If you have Docker installed, you
 can use that instead, simply pass `--docker` to the `setupmymac` command above
 and you will have a Docker image created.  This will take longer, require more
 disk space, runs slower, and is less convenient, but is more secure, more
 closely matches how the production whimsy server is configured, and can easily
-be removed when done.  Once complete, you start the server with the following
+be removed when done.  Once complete, you start the Docker server with the following
 commands:
 
     cd /srv/whimsy
@@ -45,7 +54,8 @@ same.  If you want to update more (say, to get a new version of `passenger`),
 there are options to do that, enter `whimsy/config/setupmymac --help` for
 details.  Pass `--update-all` to update everything.
 
-Sample usages:
+Setupmymac Command Line Reference
+---------------------------------
 
 | Command | Description |
 | ------- | ----------- |
@@ -61,7 +71,8 @@ Sample usages:
 | setupmymac --user | Set up webserver to run under your user id |
 | setupmymac --dry-run | show what commands would have been issued |
 
-Notes:
+Setupmymac notes
+----------------
 
 * Two long running daemons (toucher and websocket) can be started with this and these daemons will continue to run and will restart on system restart until explicitly stopped.
 * Cleaning `/srv/whimsy` may be needed if you change your version of Ruby or Gems.
@@ -69,5 +80,5 @@ Notes:
 * Dry run may not be accurate as running commands may change the state of the system, affecting what subsequent commands are necessary.
 
 If you want to know what is going on under the covers with the setupmymac
-scripts, visit either the [macOS](./MACOSX.md) or [Docker](./DOCKER.md)
+scripts, visit either of the detailed step-by-step [macOS](./MACOSX.md) or [Docker](./DOCKER.md)
 instructions.

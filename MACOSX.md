@@ -7,6 +7,10 @@ common to many tools are included here, and additional steps required for
 specific tools are linked at the bottom of these instructions.
 See Also the general DEVELOPMENT.md configuration notes.
 
+:dizzy: **New!** For a simpler way to setup a Mac OSX machine, please 
+check out the [setupmymac script](./SETUPMYMAC.md), which automates 
+configuring and keeping updated a local whimsy instance.
+
 Install Homebrew
 ----------------
 

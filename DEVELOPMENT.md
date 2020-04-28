@@ -10,16 +10,24 @@ composing mail and the like for full functionality.
 Contents :books:
 -------
 
-- [Architecture](#architecture-overview)
+- [Preface](#preface)
+  - [Contents :books:](#contents-books)
+- [Architecture Overview](#architecture-overview)
 - [Setup Whimsy Locally](#setup-whimsy-locally)
-- [Running Whimsy Applications](#running-whimsy-applications-car)
+- [Running Whimsy Applications :car:](#running-whimsy-applications-car)
 - [Advanced Configuration](#advanced-configuration)
-- [Server Configuration](DEPLOYMENT.md)
-- [Further Reading](#further-reading)
 - [Documentation Standards](#documentation-standards)
-- [How To / FAQ](#how-to--faq-question)
-- [Running Whimsy on Mac OSX](MACOSX.md)
-- [Running Whimsy on Windows](#whimsy-on-windows)
+- [How To / FAQ :question:](#how-to--faq-question)
+    - [How To: Create A New Whimsy CGI](#how-to-create-a-new-whimsy-cgi)
+    - [How To: Use New SVN or Git Directories](#how-to-use-new-svn-or-git-directories)
+    - [How To: Keep Your Local Environment Updated](#how-to-keep-your-local-environment-updated)
+    - [How To: Authenticate/Authorize Your Scripts](#how-to-authenticateauthorize-your-scripts)
+    - [How To: Add A New Mailing List-Id](#how-to-add-a-new-mailing-list-id)
+    - [How To: Test Whimsy Library methods](#how-to-test-whimsy-library-methods)
+    - [How To: Match Email Addresses To Committers](#how-to-match-email-addresses-to-committers)
+    - [How To: Have A CGI Create either HTML or JSON Output](#how-to-have-a-cgi-create-either-html-or-json-output)
+- [Whimsy On Windows](#whimsy-on-windows)
+- [Further Reading](#further-reading)
 
 Architecture Overview
 ========

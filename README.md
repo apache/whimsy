@@ -7,7 +7,7 @@ Apache people, projects, and processes.  Whimsy is both an [Apache PMC](https://
 this codebase, and the live deployed instance of https://whimsy.apache.org/.
 
 The ASF's Whimsy instance hosts static content, repository checkouts/clones, CGI scripts, Rack
-applications, tools, and cron jobs.  Note: features accessing private 
+applications, Node.js applications, tools, and cron jobs.  Note: features accessing private 
 ASF data are restricted to committers, Members, or Officers of the ASF. 
 
 Every commit pushed to master is deployed within minutes to https://whimsy.apache.org/ using 
@@ -20,18 +20,22 @@ How Tos and Get The Code
 
 Whimsy source code is hosted at:
     https://github.com/apache/whimsy.git
-and now also mirrored for Apache committers at:
+and mirrored for Apache committers at:
     https://gitbox.apache.org/repos/asf/whimsy.git
 
  * [How To Develop Whimsy Code](./DEVELOPMENT.md)
  * [Submit Bugs/Enhancement Requests](https://issues.apache.org/jira/browse/WHIMSY)
  * [Questions? See the Mailing List](https://lists.apache.org/list.html?dev@whimsical.apache.org)
- * [Deployment Instructions](./DEPLOYMENT.md)
- * [Configuration Pointers](./CONFIGURE.md)
+ * **Setting Up For Local Development**
+   * Mac OSX - [Run setupmymac](./SETUPMYMAC.md) or [Follow manual steps on OSX](./MACOSX.md)
+   * [Linux-y setup steps](./DEVELOPMENT.md)
+   * [Use DOCKER to run Whimsy locally](./DOCKER.md)
+   * [General FAQs for developing the Whimsy Way](./DEVELOPMENT.md#how-to--faq-question)
+   * [Whimsy API Docs](https://whimsy.apache.org/docs/)
+ * [Configuration Pointers](./CONFIGURE.md) - various config settings for server or local use
+ * [Production Server Deployment Instructions](./DEPLOYMENT.md)
  * [Monitoring How To](./www/status/README.md) - [Live Whimsy Status](https://whimsy.apache.org/status/)
- * [How To Setup on Mac OSX](./MACOSX.md)
  * [Dependency Listing](./CONFIGURE.md#Dependencies)
- * [Todos](./TODOS.md).
 
 How To Get Involved!
 ===============
@@ -40,13 +44,14 @@ Since Whimsy hosts many independent tools that make finding or updating informat
 at the ASF simpler, there are plenty of places for Apache committers to 
 get involved.  Bugs or improvement suggestions for the many 
 [tools available on Whimsy](https://whimsy.apache.org/committers/tools) 
-or [list of public datafiles](https://whimsy.apache.org/test/dataflow.cgi) are always appreciated.
+or [list of public datafiles](https://whimsy.apache.org/test/dataflow.cgi) are always appreciated,
+and please join us on the [public #whimsy channel on Slack](https://the-asf.slack.com/).
 
 If you have an idea for a new Whimsy tool, [email us](mailto:dev@whimsical.apache.org?subject=Tool-Idea)! 
 The PMC supports a rich server environment, so deploying a new tool is as 
 simple as proposing a .cgi with a bit of Ruby code.  We also have deployments 
 of Rack and Sinatra apps, and use JavaScript and Wunderbar for most of the 
-UI building in most tools. The Whimsy server also supports direct access 
+UI building in many tools. The Whimsy server also supports direct access 
 to Apache SVN or git repositories, making consuming data simple.
 
 The Whimsy committers are always looking for new ideas to improve processes 
@@ -111,6 +116,8 @@ Details for each type of deployed tool or script:
     
  * **Cron jobs** are managed by puppet.  See [deployment](./DEPLOYMENT.md) for more
    information.
+
+ * **NEW!** Node.js is being prototyped to improve the Board Agenda tool, stay tuned. 
    
  * **Generated JSON data** files are automatically generated into 
    the [`/public`](https://whimsy.apache.org/public/) directory, to 
