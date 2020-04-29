@@ -27,10 +27,10 @@ work with Ubuntu 20.04 Focal Fossa running on top of VirtualBox
     bundle install
     sudo ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"
 
-    At this point, you can verify that you can talk to LDAP with a command
-    like the following:
+At this point, you can verify that you can talk to LDAP with a command
+like the following:
 
-   ldapsearch -x -LLL uid=pats cn mail
+    ldapsearch -x -LLL uid=pats cn mail
 
 # Add web server:
 
