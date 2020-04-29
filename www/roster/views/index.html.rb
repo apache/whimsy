@@ -114,6 +114,10 @@ _html do
       if person.asf_member? or ASF.pmc_chairs.include? person
         _hr
         _p do
+          _a 'ICLA Search ', href: 'icla/'
+          _span.glyphicon.glyphicon_lock :aria_hidden, class: "text-primary", aria_label: "ASF Members and Officers"
+        end
+        _p do
           _a 'Organization Chart ', href: 'orgchart/'
           _span.glyphicon.glyphicon_lock :aria_hidden, class: "text-primary", aria_label: "ASF Members and Officers"
         end
