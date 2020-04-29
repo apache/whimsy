@@ -67,7 +67,7 @@ module ASF
           time = Chronic.parse('3rd wednesday next month')
         end
 
-        time = TIMEZONE.Time.parse("#{time.to_date} 21:30")
+        time = TIMEZONE.parse("#{time.to_date} 21:30")
       end
 
       time
@@ -88,7 +88,7 @@ module ASF
           time = Chronic.parse('3rd wednesday last month')
         end
 
-        time = TIMEZONE.Time.parse("#{time.to_date} 21:30")
+        time = TIMEZONE.parse("#{time.to_date} 21:30")
       end
 
       time
