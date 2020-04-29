@@ -510,7 +510,7 @@ def _checkDownloadPage(path, tlp, version)
           E "Could not find link for '#{name}' in page: '#{h}' (missing or archived)"
         end
       end
-    elsif h =~ %r{\.(md5|sha.*)$}
+    elsif h =~ %r{\.(md5|sha\d*)$}
       host,_,_ = check_hash_loc(h,tlp)
       if $NOFOLLOW
         I "Skipping deprecated hash #{h}"
