@@ -543,7 +543,7 @@ get '/new' do
     reject {|date| draft[date.strftime('%B %d, %Y')] == 'approved'}.
     sort
 
-  template = "#{ASF::SVN['foundation_board']}/board_agenda_template.erb"
+  template = "#{ASF::SVN['foundation_board']}/templates/board_agenda.erb"
   @disabled = dir("board_agenda_*.txt").
     include? @meeting.strftime("board_agenda_%Y_%m_%d.txt")
   @agenda = Erubis::Eruby.new(IO.read(template)).result(binding)

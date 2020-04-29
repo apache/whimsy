@@ -3,7 +3,7 @@ require 'active_support/time'
 # read template for the reminders
 @reminder.untaint if @reminder =~ /^reminder\d$/
 @reminder.untaint if @reminder =~ /^non-responsive$/
-template = File.read("templates/#@reminder.txt")
+template = File.read("#{FOUNDATION_BOARD}/templates/#@reminder.txt")
 
 # find the latest agenda
 agenda = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort.last.untaint
