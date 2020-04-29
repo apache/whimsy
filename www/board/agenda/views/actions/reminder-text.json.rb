@@ -1,5 +1,4 @@
 require 'active_support/time'
-require 'active_support/core_ext/integer/inflections.rb'
 
 # read template for the reminders
 @reminder.untaint if @reminder =~ /^reminder\d$/
