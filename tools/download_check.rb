@@ -321,7 +321,7 @@ def _checkDownloadPage(path, tlp, version)
   # check KEYS link
   # TODO: is location used by hc allowed, e.g.
   #   https://www.apache.org/dist/httpcomponents/httpclient/KEYS
-  expurl = "https://[www.]apache.org/dist/[incubator/]#{tlp}/KEYS"
+  expurl = "https://[downloads.|www.]apache.org/[dist/][incubator/]#{tlp}/KEYS"
   expurlre = %r{^https://((www\.)?apache\.org/dist|downloads\.apache\.org)/(incubator/)?#{tlp}/KEYS$}
   keys = links.select{|h,v| h =~ expurlre}
   if keys.size >= 1
@@ -342,6 +342,8 @@ def _checkDownloadPage(path, tlp, version)
         I "KEYS links to #{expurl} as expected"
       else
         if keyurl =~ %r{^https://www\.apache\.org/dist/#{tlp}/[^/]+/KEYS$}
+          W "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
+        elsif keyurl =~ %r{^https://downloads\.apache\.org/#{tlp}/[^/]+/KEYS$}
           W "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
         else
           E "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
