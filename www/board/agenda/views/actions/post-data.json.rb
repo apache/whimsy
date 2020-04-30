@@ -37,7 +37,7 @@ when 'committee-list'
   ASF::Committee.pmcs.sort_by {|pmc| pmc.id}.each do |pmc|
     if pmc.chairs.any? {|chair| chair[:id] == id}
       committees[:chair] << pmc.id
-    elsif pmc.info.include? 'rubys'
+    elsif pmc.info.include? id
       committees[:member] << pmc.id
     else 
       committees[:rest] << pmc.id
