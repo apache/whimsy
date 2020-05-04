@@ -1,21 +1,29 @@
 #
-# A single committer
+# Search Committer list
 #
 
 _html do
   _base href: '..'
   _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
-  _whimsy_body(
-    title: 'ASF Committer Search',
-    breadcrumbs: {
+  if @notinavail
+    breadcrumbs = {
+      roster: '.',
+      committer2: 'committer2/'
+    }
+  else
+    breadcrumbs = {
       roster: '.',
       committer: 'committer/'
     }
+  end
+  _whimsy_body(
+    title: 'ASF Committer Search',
+    breadcrumbs: breadcrumbs
   ) do
     _div_.main!
     _script src: "app.js?#{appmtime}"
     _.render '#main' do
-      _CommitterSearch
+      _CommitterSearch notinavail: @notinavail
     end
   end
 end

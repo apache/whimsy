@@ -109,6 +109,61 @@ get '/committer/index.json' do
   index
 end
 
+
+# Handle individual committer (or member) records
+get '/committer2/' do
+  @auth = Auth.info(env)
+  # Restrict who can see this
+  pass unless @auth[:member] or @auth[:chair]
+  @notinavail = true
+  _html :committers
+end
+
+index2 = nil
+index2_time = nil
+index2_etag = nil
+get '/committer2/index.json' do
+  @auth = Auth.info(env)
+  # Restrict who can see this
+  pass unless @auth[:member] or @auth[:chair]
+  # recompute index if the data is 5 minutes old or older
+  index2 = nil if not index2_time or Time.now-index2_time >= 300
+
+  if not index2
+    # bulk loading the mail information makes things go faster
+    mail = Hash[ASF::Mail.list.group_by(&:last).
+      map {|person, list| [person, list.map(&:first)]}]
+
+    ASF::Person.preload(['id','name','mail','githubUsername'])
+    # build a list of people, their public-names, and email addresses
+    tmp = ASF::Person.list.sort_by(&:id).map {|person|
+      result = {id: person.id, name: person.public_name, mail: mail[person], githubUsername: person.attrs['githubUsername'] || []}
+      result[:member] = true if person.asf_member?
+      result
+    }
+
+    ASF::ICLA.each {|icla|
+      if icla.id == 'notinavail'
+        iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef)
+        tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
+      end
+    }
+    index2 = tmp.to_json
+
+    # cache
+    index2_time = Time.now
+    index2_etag = etag = Digest::MD5.hexdigest(index2)
+  end
+
+  # send response
+  last_modified index2_time
+  etag index2_etag
+  content_type 'application/json', charset: 'UTF-8'
+  expires [index2_time+300, Time.now+60].max
+  index2
+end
+
+
 get '/committer/:name.json' do |name|
   data =  Committer.serialize(name, env)
   pass unless data

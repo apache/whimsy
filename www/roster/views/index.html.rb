@@ -13,6 +13,7 @@ _html do
         roster: '.'
       }
     ) do
+      person = ASF::Person.find(env.user)
       _table.counts do
 
         ### committers
@@ -31,6 +32,23 @@ _html do
             _ ' (includes '
             _ @committers.select{|c| c.inactive?}.length
             _ ' inactive accounts)'
+          end
+        end
+
+        if person.asf_member? or ASF.pmc_chairs.include? person
+          _tr do
+            _td do
+              _a @committers.length, href: 'committer2/'
+            end
+  
+            _td do
+              _a 'Committers', href: 'committer2/'
+            end
+  
+            _td do
+              _ 'Search for committers by name, user id, or email address.'
+              _ ' Also includes pending ICLAs'
+            end
           end
         end
 
@@ -110,11 +128,10 @@ _html do
 
       end
 
-      person = ASF::Person.find(env.user)
       if person.asf_member? or ASF.pmc_chairs.include? person
         _hr
         _p do
-          _a 'ICLA Search ', href: 'icla/'
+          _a 'Search pending ICLAs', href: 'icla/'
           _span.glyphicon.glyphicon_lock :aria_hidden, class: "text-primary", aria_label: "ASF Members and Officers"
         end
         _p do

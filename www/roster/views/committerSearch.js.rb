@@ -7,8 +7,15 @@ class CommitterSearch < Vue
   end
 
   def mounted()
+    if @@notinavail
+      local_var = 'roster-committers-notinavail'
+      url = 'committer2/index.json'
+    else
+      local_var = 'roster-committers'
+      url = 'committer/index.json'
+    end
     # start with (possibly stale) data from local storage when available
-    ls_committers = localStorage.getItem('roster-committers')
+    ls_committers = localStorage.getItem(local_var)
     if ls_committers
       @committers = JSON.parse(ls_committers)
       @ready = true
@@ -17,12 +24,12 @@ class CommitterSearch < Vue
 
     # load fresh data from the server
     Polyfill.require(%w(Promise fetch)) do
-      fetch('committer/index.json', credentials: 'include').then {|response|
+      fetch(url, credentials: 'include').then {|response|
         response.json().then do |committers|
           @committers = committers
           @ready = true
           self.change(target: {value: @search}) unless @search.empty?
-          localStorage.setItem('roster-committers', @committers.inspect)
+          localStorage.setItem(local_var, @committers.inspect)
         end
       }.catch {|error|
         console.log error
@@ -40,10 +47,16 @@ class CommitterSearch < Vue
     @committers.each do |person|
       if 
         search.all? {|part|
-          person.id.include? part or
-          person.name.downcase().include? part or
-          person.mail.any? {|mail| mail.include? part} or
-          person.githubUsername.any? {|ghun| ghun.downcase().include? part}
+          if person.id
+            person.id.include? part or
+            person.name.downcase().include? part or
+            person.mail.include? part
+            person.mail.any? {|mail| mail.include? part} or
+            person.githubUsername.any? {|ghun| ghun.downcase().include? part}
+          else
+            person.name.downcase().include? part or
+            person.mail.include? part
+          end
         }
       then
         unless @@exclude and @@exclude.include? person.id
@@ -90,14 +103,22 @@ class CommitterSearch < Vue
                 _th 'public name'
                 _th 'email'
                 _th 'githubUsername'
+                if @@notinavail
+                  _th 'ICLA'
+                end
               end
             end
 
             _tbody do
               list.each do |person|
                 _tr do
-                  _td "\u2795", data_id: person.id, onClick: self.select
-                  _td {_a person.id, href: "committer/#{person.id}"}
+                  if person.id
+                    _td "\u2795", data_id: person.id, onClick: self.select
+                    _td {_a person.id, href: "committer/#{person.id}"}
+                  else
+                    _td "\u2795"
+                    _td 'notinavail'
+                  end
 
                   if person.member
                     _td {_b person.name}
@@ -105,9 +126,20 @@ class CommitterSearch < Vue
                     _td person.name
                   end
 
-                  _td person.mail.first
+                  if person.id
+                    _td person.mail.first
+                  else
+                    _td person.mail
+                  end
 
-                  _td person.githubUsername.join(', ')
+                  if person.githubUsername
+                    _td person.githubUsername.join(', ')
+                  else
+                    _td ''
+                  end
+                  if @@notinavail
+                    _td { _a person.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{person.iclaFile}" }
+                  end
                 end
               end
 
