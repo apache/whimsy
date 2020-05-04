@@ -1,7 +1,5 @@
 0
 ab/
 abc.pdf
-abc.pdf.asc
 abcd/
-abcd.pdf
 abcde/

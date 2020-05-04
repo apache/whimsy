@@ -7,24 +7,26 @@ require 'whimsy/asf'
 set_root # need access to listing file
 
 # Test data:
-# ab/        abc.pdf    abcd/      abcd.pdf   abcde/
+# ab/        abc.pdf     abcd/    abcde/
+# N.B. does not make sense for top-level directory to contain more than 1 entry with same stem;
+# in such cases the files are moved to a subdirectory
 
 describe ASF::ICLAFiles do
   describe "ASF::ICLAFiles.listnames" do
-    it "should return 6 files" do
+    it "should return 4 files" do
       res = ASF::ICLAFiles.listnames
-      expect(res.length).to equal(6)
+      expect(res.length).to equal(4)
     end
   end
 
   describe "ASF::ICLAFiles.matchStem" do
-    it "should return [abcd.pdf] for abcd" do
+    it "should return [] for abcd" do
       res = ASF::ICLAFiles.matchStem('abcd')
-      expect(res).to eq(['abcd.pdf'])
+      expect(res).to eq([])
     end
-    it "should return [abcd.pdf] for abc" do
+    it "should return [abc.pdf] for abc" do
       res = ASF::ICLAFiles.matchStem('abc')
-      expect(res).to eq(['abc.pdf', 'abc.pdf.asc'])
+      expect(res).to eq(['abc.pdf'])
     end
   end
 
