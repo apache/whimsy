@@ -131,8 +131,8 @@ _html do
       subtitle: 'How To Make Account Requests',
       related: {
         '/roster' => 'Whimsy Roster Tool',
-        'https://reference.apache.org/infra' => 'Infra Reference Documentation',
-        'https://reference.apache.org/pmc/acreq' => 'Infra How To Create New Account Docs'
+        'https://cwiki.apache.org/confluence/display/INFRA/Reference' => 'Infra Reference Documentation',
+        'https://infra.apache.org/managing-committers.html' => 'Infra How To Create New Account Docs'
       },
       helpblock: -> {
         _p %{
