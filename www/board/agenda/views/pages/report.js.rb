@@ -95,7 +95,8 @@ class Report < Vue
 
   # determine what text filters to run
   def filters
-    list = [self.linebreak, self.todo, hotlink, self.privates, self.jira]
+    list = [self.linebreak, self.todo, hotlink, self.privates, self.jira,
+      self.cve]
     list = [self.localtime, hotlink] if @@item.title == 'Call to order'
     list << self.names if @@item.people
     list << self.president_attachments if @@item.title == 'President'
@@ -356,6 +357,13 @@ class Report < Vue
     end
 
     return text
+  end
+
+  # hotlink to CVE
+  def cve(text)
+    return text.gsub(/\bCVE-\d{4}-\d{4,}\b/) do |id|
+      "<a href='https://cve.mitre.org/cgi-bin/cvename.cgi?name=#{id}'>#{id}</a>"
+    end
   end
 
   def draft(text)
