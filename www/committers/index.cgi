@@ -10,7 +10,6 @@ require 'wunderbar/bootstrap'
 MISC = {
   'tools.cgi' => "Listing of all available Whimsy tools",
   'subscribe.cgi' => "Subscribe or unsubscribe from mailing lists",
-  'svn-info.cgi' => "Try some Subversion commands from the browser",
   'moderationhelper.cgi' => "Get help with mailing list moderation commands"
 }
 _html do
