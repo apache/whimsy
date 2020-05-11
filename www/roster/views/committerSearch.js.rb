@@ -50,7 +50,6 @@ class CommitterSearch < Vue
           if person.id
             person.id.include? part or
             person.name.downcase().include? part or
-            person.mail.include? part
             person.mail.any? {|mail| mail.include? part} or
             person.githubUsername.any? {|ghun| ghun.downcase().include? part}
           else
