@@ -107,6 +107,33 @@ module ASF
       _, list = ASF::SVN.getlisting('emeritus-requests-received')
       list
     end
+
+    def self.find(name)
+      files = self.listnames
+      if files
+        stem = name.downcase.gsub(' ','-')
+        files.each do |file|
+          break file if file =~ stem
+        end
+      end
+    end
+  end
+
+  class EmeritusFiles
+    def self.listnames
+      _, list = ASF::SVN.getlisting('emeritus')
+      list
+    end
+
+    def self.find(name)
+      files = self.listnames
+      if files
+        stem = name.downcase.gsub(' ','-')
+        files.each do |file|
+          break file if file =~ stem
+        end
+      end
+    end
   end
 
 end

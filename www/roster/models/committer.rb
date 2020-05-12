@@ -140,6 +140,13 @@ class Committer
           file = ASF::MemApps.find1st(person)
           response[:forms][:member] = file if file 
         end
+
+        file = ASF::EmeritusFiles.find(person.name)
+        response[:forms][:emeritus] = file if file
+
+        file = ASF::EmeritusRequestFiles.find(person.name)
+        response[:forms][:emeritus-request] = file if file
+
       else
         if person.member_nomination
           member[:nomination] = person.member_nomination
