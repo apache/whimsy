@@ -8,6 +8,8 @@ Note: the GUI interface is currently at www/members/download_check.cgi
 
 =end
 
+$LOAD_PATH.unshift '/srv/whimsy/lib'
+require 'whimsy/asf'
 require 'wunderbar'
 require 'net/http'
 require 'nokogiri'
@@ -245,6 +247,7 @@ VERIFY_TEXT = [
  'www.apache.org/info/verification.html',
  'verify your mirrored downloads',
  'verify your downloads',
+ 'verify the downloaded files',
  'All downloads should be verified',
  'verification instructions',
  ' encouraged to verify ',
@@ -260,6 +263,20 @@ ALIASES = {
     'gpg signature' => 'asc',
     'openpgp signature' => 'asc',
 }
+
+# Need to be able to check if download is for a PMC or podling
+# parameter is the website URL
+# Also want to convert site to TLP
+URL2TLP = Hash.new # URL host to TLP conversion
+URL2TLP['jspwiki-wiki'] = 'jspwiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?page=Downloads
+PMCS = Set.new # is this a TLP?
+ASF::Committee.pmcs.map do |p| 
+    site = p.site[%r{//(.+?)\.apache\.org},1]
+    name = p.name
+    URL2TLP[site] = name unless site == name
+    PMCS << name
+end
+
 # Convert text reference to extension
 # e.g. SHA256 => sha256; [SIG] => asc
 def text2ext(txt)
@@ -283,10 +300,11 @@ def checkDownloadPage(path, tlp, version)
 end
 
 def _checkDownloadPage(path, tlp, version)
+  isTLP = PMCS.include? tlp
   if version != ''
-    I "Checking #{path} [#{tlp}] for version #{version} only ..."
+    I "Checking #{path} [#{tlp}] TLP #{isTLP} for version #{version} only ..."
   else
-    I "Checking #{path} [#{tlp}] ..."
+    I "Checking #{path} [#{tlp}] TLP #{isTLP} ..."
   end
 
   # check the main body
@@ -301,6 +319,18 @@ def _checkDownloadPage(path, tlp, version)
   end
   
   return unless body
+
+  hasDisclaimer = body.include? 'Incubation is required of all newly accepted'
+
+  if isTLP
+     W "#{tlp} has Incubator disclaimer" if hasDisclaimer
+  else
+     if hasDisclaimer
+       I "#{tlp} has Incubator disclaimer"
+     else
+       E "#{tlp} does not have Incubator disclaimer"
+     end
+  end
 
   if body.include? 'dist.apache.org'
     E 'Page must not link to dist.apache.org'
@@ -551,11 +581,9 @@ def _checkDownloadPage(path, tlp, version)
 
 end
 
-def getTLP(url)
+def getTLP(url) # convert URL to TLP/podling
   if url =~ %r{^https?://([^.]+)(\.incubator|\.us|\.eu)?\.apache\.org/}
-     tlp = $1
-     tlp = 'httpcomponents' if tlp == 'hc'
-     tlp = 'jspwiki' if tlp == 'jspwiki-wiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?page=Downloads
+     tlp = URL2TLP[$1] || $1
   elsif url =~ %r{^https?://([^.]+)\.openoffice\.org/}
      tlp = 'openoffice'
   else
