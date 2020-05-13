@@ -78,6 +78,16 @@
     depth: delete
     list: true
 
+  emeritus:
+    url: private/documents/emeritus
+    depth: delete
+    list: true
+
+  emeritus-requests-received:
+    url: private/documents/emeritus-requests-received
+    depth: delete
+    list: true
+
   incubator-podlings:
     url: asf/incubator/public/trunk/content/podlings
     depth: files
