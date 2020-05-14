@@ -219,6 +219,10 @@ def check_hash_loc(h,tlp)
   elsif h =~ %r{^(https?)://downloads\.apache\.org/(?:incubator/)?#{tlp}/.*([^/]+)(\.(\w{3,6}))$}
     E "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
+  elsif h =~ %r{^(https?)://repo\.(maven)\.apache\.org/maven2/org/apache/#{tlp}/.+/([^/]+)(\.(\w{3,6}))$} # Maven
+    E "HTTPS! #{h}" unless $1 == 'https'
+    W "Unexpected hash location #{h} for #{tlp}"
+    return $2,$3,$4
   else
     E "Unexpected hash location #{h} for #{tlp}"
     nil
@@ -258,10 +262,10 @@ ALIASES = {
     'sig' => 'asc',
     'pgp' => 'asc',
     'signature' => 'asc',
-    'asc signature' => 'asc',
-    'pgp signature' => 'asc',
-    'gpg signature' => 'asc',
-    'openpgp signature' => 'asc',
+    'ascsignature' => 'asc',
+    'pgpsignature' => 'asc',
+    'gpgsignature' => 'asc',
+    'openpgpsignature' => 'asc',
 }
 
 # Need to be able to check if download is for a PMC or podling
@@ -270,7 +274,7 @@ ALIASES = {
 URL2TLP = Hash.new # URL host to TLP conversion
 URL2TLP['jspwiki-wiki'] = 'jspwiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?page=Downloads
 PMCS = Set.new # is this a TLP?
-ASF::Committee.pmcs.map do |p| 
+ASF::Committee.pmcs.map do |p|
     site = p.site[%r{//(.+?)\.apache\.org},1]
     name = p.name
     URL2TLP[site] = name unless site == name
@@ -282,7 +286,7 @@ end
 def text2ext(txt)
     # need to strip twice to handle ' [ asc ] '
     # TODO: perhaps just remove all white-space?
-    tmp = txt.downcase.strip.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(/ ?(digest|checksum)/,'').sub(/ \(tar\.gz\)| \(zip\)/,'').strip
+    tmp = txt.downcase.strip.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(/ ?(digest|checksum)/,'').sub(/ \(tar\.gz\)| \(zip\)| /,'').strip
     ALIASES[tmp] || tmp
 end
 
@@ -416,7 +420,7 @@ def _checkDownloadPage(path, tlp, version)
         if vercheck[base]  # might be two links to same archive
             W "Already seen link for #{base}"
         else
-            vercheck[base] = []
+            vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : 'live']
         end
         # Text must include a '.' (So we don't check 'Source')
         if t.include?('.') and not base == t
@@ -437,7 +441,7 @@ def _checkDownloadPage(path, tlp, version)
 
   links.each do |h,t|
     # Must occur before mirror check below
-    if h =~ %r{^https?://(?:(?:archive\.|www\.)?apache\.org/dist|downloads\.apache.org)/(.+\.(asc|sha\d+|md5|sha))$}
+    if h =~ %r{^https?://(?:(?:archive\.|www\.)?apache\.org/dist|downloads\.apache\.org|repo\.maven\.apache\.org/maven2/.+?)/(.+\.(asc|sha\d+|md5|sha))$}
         base = File.basename($1)
         ext = $2
         stem = base[0..-(2+ext.length)]
@@ -458,8 +462,15 @@ def _checkDownloadPage(path, tlp, version)
   
   # did we find all required elements?
   vercheck.each do |k,v|
+    typ = v.shift
     unless v.include? "asc" and v.any? {|e| e =~ /^sha\d+$/ or e == 'md5' or e == 'sha'}
-      E "#{k} missing sig/hash: (found only: #{v.inspect})"
+      if typ == 'live'
+        E "#{k} missing sig/hash: (found only: #{v.inspect})"
+      elsif typ == 'archive'
+        W "#{k} missing sig/hash: (found only: #{v.inspect})"
+      else
+        E "#{k} missing sig/hash: (found only: #{v.inspect}) TYPE=#{typ}"
+      end
     end
   end
 
