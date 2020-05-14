@@ -180,7 +180,11 @@ task "email #@email" do
 
   # echo email
   form do
-    _message mail.to_s
+    if use_Bcc # Show Bcc
+      _message "Bcc: #{mail[:bcc].decoded}\r\n#{mail.to_s}"
+    else
+      _message mail.to_s
+    end
   end
 
   # deliver mail

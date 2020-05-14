@@ -241,6 +241,16 @@ class Message
     cc = []
     bcc = []
 
+    # process 'bcc' addresses on method call
+    # Do this first so can suppress such addresses in To: and Cc: fields
+    if fields[:bcc]
+      Array(fields[:bcc]).compact.each do |addr|
+        addr = Message.liberal_email_parser(addr) if addr.is_a? String
+        next if bcc.any? {|a| a.address == addr.address}
+        bcc << addr
+      end
+    end
+
     # process 'to' addresses on method call
     if fields[:to]
       Array(fields[:to]).compact.each do |addr|
@@ -255,6 +265,7 @@ class Message
       next if to.any? {|a| a.address == addr.address}
       if fields[:to]
         next if cc.any? {|a| a.address == addr.address}
+        next if bcc.any? {|a| a.address == addr.address} # skip if already in Bcc
         cc << addr
       else
         to << addr
@@ -266,6 +277,7 @@ class Message
       self.to.addrs.each do |addr|
         next if to.any? {|a| a.address == addr.address}
         next if cc.any? {|a| a.address == addr.address}
+        next if bcc.any? {|a| a.address == addr.address} # skip if already in Bcc
         cc << addr
       end
     end
@@ -276,6 +288,7 @@ class Message
         addr = Message.liberal_email_parser(addr) if addr.is_a? String
         next if to.any? {|a| a.address == addr.address}
         next if cc.any? {|a| a.address == addr.address}
+        next if bcc.any? {|a| a.address == addr.address} # skip if already in Bcc
         cc << addr
       end
     end
@@ -286,18 +299,8 @@ class Message
         addr = Message.liberal_email_parser(addr) if addr.is_a? String
         next if to.any? {|a| a.address == addr.address}
         next if cc.any? {|a| a.address == addr.address}
+        next if bcc.any? {|a| a.address == addr.address} # skip if already in Bcc
         cc << addr
-      end
-    end
-
-    # process 'bcc' addresses on method call
-    if fields[:bcc]
-      Array(fields[:bcc]).compact.each do |addr|
-        addr = Message.liberal_email_parser(addr) if addr.is_a? String
-        next if to.any? {|a| a.address == addr.address}
-        next if cc.any? {|a| a.address == addr.address}
-        next if bcc.any? {|a| a.address == addr.address}
-        bcc << addr
       end
     end
 
