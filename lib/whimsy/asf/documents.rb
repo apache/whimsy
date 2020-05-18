@@ -113,7 +113,7 @@ module ASF
       if files
         stem = name.downcase.gsub(' ','-')
         files.each do |file|
-          break file if file =~ stem
+          break file if file && file =~ stem
         end
       end
     end
