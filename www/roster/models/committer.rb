@@ -146,7 +146,7 @@ class Committer
         response[:forms][:emeritus] = file if file
 
         file = ASF::EmeritusRequestFiles.find(person_name)
-        response[:forms][:emeritus-request] = file if file
+        response[:forms][:emeritus_request] = file if file
 
       else
         if person.member_nomination

@@ -110,12 +110,17 @@ module ASF
 
     def self.find(name)
       files = self.listnames
+      result = nil
       if files
-        stem = name.downcase.gsub(' ','-')
+        stem = Regexp.new Regexp.quote name.downcase.gsub(' ','-')
         files.each do |file|
-          break file if file && file =~ stem
+          if stem =~ file
+            result = file
+            break
+          end
         end
       end
+      return result
     end
   end
 
