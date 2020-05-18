@@ -29,6 +29,7 @@ $ARCHIVE_CHECK = false
 $ALWAYS_CHECK_LINKS = false
 $NO_CHECK_LINKS = false
 $NOFOLLOW = false # may be reset
+$ALLOW_HTTP = false # http links generate Warning, not Error
 
 $VERSION = nil
 
@@ -211,16 +212,23 @@ def check_closer_down(url)
   end
 end
 
+def WE(msg)
+  if $ALLOW_HTTP
+    W msg
+  else
+    E msg
+  end
+end
 # returns www|archive, stem and the hash extension
 def check_hash_loc(h,tlp)
   if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlp}/.*([^/]+)(\.(\w{3,6}))$}
-    E "HTTPS! #{h}" unless $1 == 'https'
+    WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
   elsif h =~ %r{^(https?)://downloads\.apache\.org/(?:incubator/)?#{tlp}/.*([^/]+)(\.(\w{3,6}))$}
-    E "HTTPS! #{h}" unless $1 == 'https'
+    WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
   elsif h =~ %r{^(https?)://repo\.(maven)\.apache\.org/maven2/org/apache/#{tlp}/.+/([^/]+)(\.(\w{3,6}))$} # Maven
-    E "HTTPS! #{h}" unless $1 == 'https'
+    WE "HTTPS! #{h}" unless $1 == 'https'
     W "Unexpected hash location #{h} for #{tlp}"
     return $2,$3,$4
   else
@@ -423,11 +431,11 @@ def _checkDownloadPage(path, tlp, version)
             vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : 'live']
         end
         # Text must include a '.' (So we don't check 'Source')
-        if t.include?('.') and not base == t
+        if t.include?('.') and not base == t.strip.downcase
           # text might be short version of link
           tmp = t.strip.sub(%r{.*/},'').downcase # 
           if base == tmp
-            W "Mismatch?: #{h} and #{t}"
+            W "Mismatch?: #{h} and '#{t}'"
           elsif base.end_with? tmp
             W "Mismatch?: #{h} and '#{tmp}'"
           elsif base.sub(/-bin\.|-src\./,'.').end_with? tmp
@@ -450,6 +458,7 @@ def _checkDownloadPage(path, tlp, version)
         else
           E "Bug: found hash #{h} for missing artifact #{stem}"
         end
+        next if t == '' # empire-db
         tmp = text2ext(t)
         next if ext == tmp # i.e. link is just the type or [TYPE]
         next if ext == 'sha' and tmp == 'sha1' # historic
@@ -627,6 +636,7 @@ if __FILE__ == $0
   $ALWAYS_CHECK_LINKS = ARGV.delete '--always'
   $NO_CHECK_LINKS = ARGV.delete '--nolinks'
   $ARCHIVE_CHECK = ARGV.delete '--archivecheck'
+  $ALLOW_HTTP = ARGV.delete '--http'
 
   init
 
