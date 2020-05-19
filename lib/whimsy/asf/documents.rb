@@ -113,6 +113,7 @@ module ASF
       result = nil
       if files
         stem = Regexp.new Regexp.quote name.downcase.gsub(' ','-')
+          .gsub(".", "").gsub(",", "")
         files.each do |file|
           if stem =~ file
             result = file
