@@ -125,7 +125,8 @@ class ICLA < Vue
     @filename = self.genfilename(name)
     @email = parsed.EMail || @@headers.from
     @user = parsed.ApacheID || ''
-    @project = parsed.Project
+    project = parsed.Project
+    @project = project if @@projects.include? project
     @pdfproject = parsed.PDFProject
   end
 
