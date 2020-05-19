@@ -102,11 +102,34 @@ module ASF
     end
   end
 
-  class EmeritusRequestFiles
+  class EmeritusFiles
+    def self.listnames
+      _, list = ASF::SVN.getlisting('emeritus')
+      list
+    end
+
+    def self.find(name)
+      files = self.listnames
+      result = nil
+      if files
+        stem = Regexp.new Regexp.quote name.downcase.gsub(' ','-')
+        files.each do |file|
+          if stem =~ file
+            result = file
+            break
+          end
+        end
+      end
+      return result
+    end
+  end
+
+  class EmeritusRequestFiles < EmeritusFiles
     def self.listnames
       _, list = ASF::SVN.getlisting('emeritus-requests-received')
       list
     end
+
   end
 
 end

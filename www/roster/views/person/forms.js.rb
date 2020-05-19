@@ -26,10 +26,28 @@ class PersonForms < Vue
             elsif form == 'member'
               _li do
                 if link == '' # has form but no karma to view it
-                  _ 'Membership App'
+                  _ 'Member App'
                 else
-                  _a 'Membership App',
+                  _a 'Member App',
                     href: "#{documents}/member_apps/#{link}"
+                end
+              end
+            elsif form == 'emeritus'
+              _li do
+                if link == '' # has form but no karma to view it
+                  _ 'Emeritus'
+                else
+                  _a 'Emeritus',
+                    href: "#{documents}/emeritus/#{link}"
+                end
+              end
+            elsif form == 'emeritus_request'
+              _li do
+                if link == '' # has form but no karma to view it
+                  _ 'Emeritus Request'
+                else
+                  _a 'Emeritus Request',
+                    href: "#{documents}/emeritus-requests-received/#{link}"
                 end
               end
             else
