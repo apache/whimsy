@@ -31,6 +31,10 @@ else
   _warn "#@filename#{fileext} does not appear to be a valid filename"
 end
 
+if @email.strip.end_with? '@apache.org'
+  _warn "Cannot redirect email to an @apache.org address: #{@email.strip}"
+end
+
 # extract/verify project
 _extract_project
 
