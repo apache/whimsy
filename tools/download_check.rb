@@ -332,7 +332,7 @@ def _checkDownloadPage(path, tlp, version)
   
   return unless body
 
-  hasDisclaimer = body.include? 'Incubation is required of all newly accepted'
+  hasDisclaimer = body.gsub(%r{\s+},' ').include? 'Incubation is required of all newly accepted'
 
   if isTLP
      W "#{tlp} has Incubator disclaimer" if hasDisclaimer
