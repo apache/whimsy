@@ -110,7 +110,7 @@ module ASF
 
     def self.find(person)
       name = person.attrs['cn'].first.force_encoding('utf-8').
-        downcase.gsub(' ','-').gsub(/[^a-z0-9-]+/,'')
+        downcase.gsub(' ','-').gsub(/[^a-z0-9-]+/,'') rescue nil
       id = person.id
       files = self.listnames.find_all do |file|
         stem = file.split('.')[0] # directories don't have a trailing /
