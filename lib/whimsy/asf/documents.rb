@@ -108,19 +108,20 @@ module ASF
       list
     end
 
-    def self.find(name)
-      files = self.listnames
-      result = nil
-      if files
-        stem = Regexp.new Regexp.quote name.downcase.gsub(' ','-')
-        files.each do |file|
-          if stem =~ file
-            result = file
-            break
-          end
-        end
+    def self.find(person)
+      name = person.attrs['cn'].first.force_encoding('utf-8').
+        downcase.gsub(' ','-').gsub(/[^a-z0-9-]+/,'')
+      id = person.id
+      files = self.listnames.find_all do |file|
+        stem = file.split('.')[0] # directories don't have a trailing /
+        stem == id or stem == name
       end
-      return result
+      # Only valid if we match a single file or directory
+      if files.length == 1
+        files.first
+      else
+        nil
+      end
     end
   end
 
