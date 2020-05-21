@@ -32,7 +32,6 @@ class EmeritusRequest < Vue
       name = "#{parts[1].strip()} #{parts[0]}"
     end
     @search = name
-    @filename = self.gen_file_name(name)
   end
 
   def render
@@ -57,7 +56,7 @@ class EmeritusRequest < Vue
             _li do
               _input type: :radio, name: 'search', id: availid, onClick: lambda {
                 @availid = availid
-                @filename = self.gen_file_name(name)
+                @filename = availid
                 @disabled = false
               }
               _label name, for: availid
@@ -87,7 +86,4 @@ class EmeritusRequest < Vue
     end
   end
 
-  def gen_file_name(name)
-    return asciize(name.strip()).downcase().gsub(/\W+/, '-')
-  end
 end
