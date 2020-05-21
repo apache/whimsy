@@ -55,7 +55,7 @@ class EmeritusRequest < Vue
           name = member.name
           if search.all? { |part| availid.include? part or name.downcase().include? part }
             _li do
-              _input type: :radio, id: availid, onClick: lambda {
+              _input type: :radio, name: 'search', id: availid, onClick: lambda {
                 @availid = availid
                 @filename = self.gen_file_name(name)
                 @disabled = false
