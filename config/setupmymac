@@ -231,7 +231,7 @@ unless Dir.exist? '/srv'
     if (mac_version.split('.').map(&:to_i) <=> [10, 15, 0]) >= 0
       # Catalina or later
       run 'mkdir', '/var/whimsy' unless Dir.exist? '/var/whimsy'
-      run 'chown', "#{sudo_useruid}:#{sudo_user.gid}", '/var/whimsy'
+      run 'chown', "#{sudo_user.uid}:#{sudo_user.gid}", '/var/whimsy'
       run 'touch', '/etc/synthetic.conf'
       SYNTHETIC = '/etc/synthetic.conf'
       unless File.read(SYNTHETIC).include? "/var/whimsy"
