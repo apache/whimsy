@@ -50,6 +50,22 @@ info = {
 
 public_json_output(info)
 
+# special check for committers group which exists in two places currently
+role_group = entries['committers']
+if role_group
+  unix_group = ASF::Group['committers']
+  if unix_group
+    commit_unix = unix_group.members.map(&:id)
+    commit_role = role_group[:roster]
+    unless commit_role == commit_unix
+      diff = commit_role - commit_unix
+      Wunderbar.warn "ASF::RoleGroup['committers'] contains #{diff} but ASF::Group['committers'] does not" if diff.size > 0
+      diff = commit_unix - commit_role
+      Wunderbar.warn "ASF::Group['committers']     contains #{diff} but ASF::RoleGroup['committers'] does not" if diff.size > 0
+    end
+  end
+end
+
 if changed? and @old_file
   # for validating UIDs
   uids = ASF::Person.list().map(&:id)
