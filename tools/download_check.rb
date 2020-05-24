@@ -462,7 +462,7 @@ def _checkDownloadPage(path, tlp, version)
         tmp = text2ext(t)
         next if ext == tmp # i.e. link is just the type or [TYPE]
         next if ext == 'sha' and tmp == 'sha1' # historic
-        next if (ext == 'sha256' or ext == 'sha512') and t == 'SHA' # generic
+        next if (ext == 'sha256' or ext == 'sha512') and (t == 'SHA' or t == 'digest') # generic
         if not base == t and not t == 'checksum'
             E "Mismatch: #{h} and '#{t}'"
         end
