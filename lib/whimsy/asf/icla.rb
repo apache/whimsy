@@ -234,6 +234,11 @@ module ASF
     def self.available?(id)
       return ! self.taken?(id)
     end
+
+    # does the entry not have an id?
+    def noId?
+      self.id == 'notinavail'
+    end
   end
 
   class Person
