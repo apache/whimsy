@@ -32,7 +32,7 @@ module ASF
       ASF::ICLA.each do |icla|
         person = Person.find(icla.id)
         list[icla.email.downcase] ||= person
-        next if icla.id == 'notinavail'
+        next if icla.noId?
         list["#{icla.id.downcase}@apache.org"] ||= person
       end
 
