@@ -64,7 +64,7 @@ module ASF
     def self.preload
       people = []
       each do |icla|
-        unless icla.id == 'notinaval'
+        unless icla.id == 'notinavail'
           person = ASF::Person.find(icla.id)
           people << person
           person.icla = icla
