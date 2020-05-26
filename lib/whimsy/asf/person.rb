@@ -163,7 +163,7 @@ module ASF
     def self.stem_DRAFT(name)
       # need to split before 
       name = name.gsub(',', ' ').split(/ +/).map{|n|n.gsub(%r{^(Dr|Jr|Sr|[A-Z])\.$},'\1')}
-      asciize(name.join('-')).downcase
+      asciize(name.join('-')).downcase.chomp('-')
     end
 
     # return public name in a sortable order (last name first)
