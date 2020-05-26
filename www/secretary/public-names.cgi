@@ -168,7 +168,7 @@ _html do
     end
 
     ASF::ICLA.each do |icla|
-      next if icla.id == 'notinavail'
+      next if icla.noId?
       person = ASF::Person.find(icla.id)
       next unless person.dn and person.attrs['cn']
 
