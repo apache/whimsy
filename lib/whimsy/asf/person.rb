@@ -20,7 +20,7 @@ module ASF
         name.gsub! %r{\u00df}, 'ss'
         name.gsub! %r{\u00e4|a\u0308}, 'ae' # 308 = combining diaeresis
         name.gsub! %r{\u00e5|a\u030a}, 'aa' # a with ring above: should this translate as 'a'?
-        name.gsub! %r{\u00c5|A\u030a}, 'AA' # a with ring above: should this translate as 'a'?
+        name.gsub! %r{\u00c5|A\u030a}, 'AA' # A with ring above: should this translate as 'A'?
         name.gsub! %r{\u00e6},         'ae' # small letter ae
         name.gsub! %r{\u00c6},         'AE' # large letter AE
         name.gsub! %r{\u00f1|n\u0303}, 'ny' # 303 = combining tilde
