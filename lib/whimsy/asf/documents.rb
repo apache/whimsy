@@ -109,7 +109,8 @@ module ASF
     end
 
     def self.find(person)
-      name = person.attrs['cn'].first.force_encoding('utf-8').
+      # TODO use common stem name method
+      name = (person.attrs['cn'].first rescue person.member_name).force_encoding('utf-8').
         downcase.gsub(' ','-').gsub(/[^a-z0-9-]+/,'') rescue nil
       id = person.id
       files = self.listnames.find_all do |file|
