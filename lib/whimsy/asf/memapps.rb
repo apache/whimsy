@@ -61,6 +61,7 @@ module ASF
       [
         (person.icla.legal_name rescue nil),
         (person.icla.name rescue nil),
+        person.id, # allow match on avalid
         person.member_name # this is slow
       ].uniq.each do |name|
         next unless name

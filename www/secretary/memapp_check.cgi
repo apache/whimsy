@@ -14,6 +14,7 @@ require 'wunderbar'
 # Dummy class for members that don't have ids but do have membership apps
 class PersonNoId
   attr_reader :member_name
+  attr_reader :id # needed for memapps.rb
   def initialize name
     @member_name = name
   end
