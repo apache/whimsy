@@ -75,7 +75,7 @@ module ASF
       return [found, names.uniq]
     end
 
-    # All files, including emeritus
+    # All files
     def self.files
       refresh
       @@files
