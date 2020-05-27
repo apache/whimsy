@@ -12,6 +12,7 @@ require 'whimsy/asf/memapps'
 require 'wunderbar'
 
 exmembers = ASF::Member.emeritus.map {|id| ASF::Person.find(id)}
+ASF::Person.preload(['cn'], exmembers) # speed up
 files = Hash[ASF::EmeritusFiles::listnames.map{|i| [i,'NAK']}]
 nofiles = Hash.new()
 
