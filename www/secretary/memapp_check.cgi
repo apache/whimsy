@@ -11,9 +11,21 @@ require 'whimsy/asf'
 require 'whimsy/asf/memapps'
 require 'wunderbar'
 
+# Dummy class for members that don't have ids but do have membership apps
+class PersonNoId
+  attr_reader :member_name
+  def initialize name
+    @member_name = name
+  end
+end
 status = ASF::Member.status
 
 members = ASF::Member.new.map {|id, text| ASF::Person.find(id)}
+  
+# These members don't have ids, so cannot use the Person class
+members << PersonNoId.new("Shane Caraveo")
+members << PersonNoId.new("Robert Hartill")
+members << PersonNoId.new("Andrew Wilson")
 
 files = Hash[ASF::MemApps.names.map{|i| [i,'NAK']}]
 nofiles = Hash.new()
@@ -39,14 +51,6 @@ _html do
 
   _h2 'Files in member_apps that do not match any ASF member names'
 
-  _p do
-    _ "The following entries don't have Avail IDs and are therefore not available for matching:"
-    _ul do
-      _li 'Shane Caraveo'
-      _li 'Robert Hartill'
-      _li 'Andrew Wilson'
-    end
-  end
   _table_ do
     _tr do
       _th 'Name'
