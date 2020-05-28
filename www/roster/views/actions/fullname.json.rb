@@ -77,8 +77,10 @@ if message
 end
 
 # update cache
-person.icla.legal_name = @legalname
-person.icla.name = @publicname
+if person.icla
+  person.icla.legal_name = @legalname
+  person.icla.name = @publicname
+end
 
 # return updated committer info
 _committer Committer.serialize(@userid, env)
