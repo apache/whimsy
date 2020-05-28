@@ -10,6 +10,11 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 require 'whimsy/asf/memapps'
 require 'wunderbar'
+require 'yaml'
+
+file = File.join(ASF::SVN.find!('emeritus-involuntary'),'emeritus-involuntary.yml')
+forced = Set.new
+YAML.load_file(file).each{|k,v| v.each{|w| forced.add w}}
 
 exmembers = ASF::Member.emeritus.map {|id| ASF::Person.find(id)}
 ASF::Person.preload(['cn'], exmembers) # speed up
@@ -61,6 +66,9 @@ _table_ do
   end
   nofiles.sort_by{|k,v| v.member_name}.each do |k,v|
     person = v
+    if forced.delete? person.member_name
+      next
+    end
     _tr do
       _td do
         _a k, href: "https://whimsy.apache.org/roster/committer/#{k}", target: '_blank'
@@ -84,5 +92,13 @@ _table_ do
   end
 end
 
+  if forced.size > 0
+    _h2 'Files in emeritus-involuntary.yml that do not match any ASF emeritus member names'
+    _ul do
+      forced.each do |n|
+        _li n
+      end
+    end
+  end
 
 end

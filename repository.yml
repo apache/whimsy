@@ -83,6 +83,12 @@
     depth: delete
     list: true
 
+  emeritus-involuntary:
+    url: private/documents
+    depth: empty
+    files:
+      - emeritus-involuntary.yml
+
   emeritus-requests-received:
     url: private/documents/emeritus-requests-received
     depth: delete
