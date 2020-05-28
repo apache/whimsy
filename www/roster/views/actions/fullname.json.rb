@@ -50,17 +50,17 @@ else
   end
 end
 
-# determine commit message
-if person.icla.legal_name != @legalname
+# determine commit message for updating iclas.txt
+if person.icla && person.icla.legal_name != @legalname
   if person.icla.name != @publicname
     message = "Update legal and public name for #{@userid}"
   else
     message = "Update legal name for #{@userid}"
   end
-elsif person.icla.name != @publicname
+elsif person.icla && person.icla.name != @publicname
   message = "Update public name for #{@userid}"
 else
-  message = nil
+  message = nil # don't update iclas.txt
 end
 
 # update iclas.txt
