@@ -8,7 +8,8 @@ person = ASF::Person.find(@userid)
 
 mods={} # collect the changes
 
-if @publicname and person.attrs['cn'].first != @publicname
+# TODO should the code force 'cn' to be the same as @publicname?
+if @publicname and @publicname != '' and person.attrs['cn'].first != @publicname
   mods['cn'] = @publicname
 end
 
@@ -27,7 +28,7 @@ end
 
 # report the previous value in the response
 _previous({
-  publicname: person.attrs['cn'], 
+  commonname: person.attrs['cn'],
   givenname: person.attrs['givenName'],
   familyname: person.attrs['sn']
 })
@@ -39,7 +40,7 @@ else
     _ldap.update do
       # report the previous value in the response
       _previous({
-        publicname: person.attrs['cn'], 
+        commonname: person.attrs['cn'],
         givenname: person.attrs['givenName'],
         familyname: person.attrs['sn']
       })
