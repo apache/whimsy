@@ -432,7 +432,7 @@ def _checkDownloadPage(path, tlp, version)
             vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : 'live']
         end
         # Text must include a '.' (So we don't check 'Source')
-        if t.include?('.') and not base == t.strip.downcase
+        if t.include?('.') and not base == File.basename(t.strip.downcase)
           # text might be short version of link
           tmp = t.strip.sub(%r{.*/},'').downcase # 
           if base == tmp
