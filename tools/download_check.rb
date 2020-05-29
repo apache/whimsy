@@ -604,7 +604,9 @@ def _checkDownloadPage(path, tlp, version)
 end
 
 def getTLP(url) # convert URL to TLP/podling
-  if url =~ %r{^https?://([^.]+)(\.incubator|\.us|\.eu)?\.apache\.org/}
+  if url =~ %r{^https?://cwiki\.apache\.org/confluence/display/([\S]+)/}
+      tlp = $1.downcase
+  elsif url =~ %r{^https?://([^.]+)(\.incubator|\.us|\.eu)?\.apache\.org/}
      tlp = URL2TLP[$1] || $1
   elsif url =~ %r{^https?://([^.]+)\.openoffice\.org/}
      tlp = 'openoffice'
