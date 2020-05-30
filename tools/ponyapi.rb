@@ -83,18 +83,21 @@ module PonyAPI
 
   # Download one month of stats as a JSON
   # Must supply cookie = 'ponymail-logged-in-cookie' if a private list
-  def get_pony_stats(dir, list, subdomain, year, month, cookie=nil)
+  def get_pony_stats(dir, list, subdomain, year, month, cookie=nil, sort_list=false)
     cookie=get_cookie() if cookie == 'prompt'
     args =  make_args(list, subdomain, year, month)
     uri, request, response = fetch_pony(PONYSTATS % args, cookie)
     if response.code == '200' then
       openfile(dir, STATSMBOX % args) do |f|
         begin
-          f.puts JSON.pretty_generate(JSON.parse(response.body))
+          jzon = JSON.parse(response.body)
+          jzon = Hash[jzon.sort] if sort_list
+          f.puts JSON.pretty_generate(jzon)
         rescue JSON::JSONError
           begin
             # If JSON threw error, try again forcing to UTF-8 (may lose data)
             jzon = JSON.parse(response.body.encode('UTF-8', :invalid => :replace, :undef => :replace))
+            jzon = Hash[jzon.sort] if sort_list
             f.puts JSON.fast_generate(jzon, {:max_nesting => false, :indent => ' '})
           rescue JSON::JSONError => e
             puts "WARN:get_pony_stats(#{uri.request_uri}) #{e.message} #{e.backtrace[0]}, continuing without pretty"
