@@ -25,14 +25,21 @@ module PonyAPI
   # you will be prompted to enter the cookie value
   # The method writes the file 'lists.json' if dir != nil
   # it returns the data as a hash
-  def get_pony_lists(dir=nil, cookie=nil, sort_list=false)
+  def get_pony_lists(dir=nil, cookie=nil, sort_list=false, recurse_sort=false)
     cookie=get_cookie() if cookie == 'prompt'
     jzon = get_pony_prefs(nil, cookie)
     lists = jzon['lists']
     if lists
       if dir
         # no real point sorting unless writing the file
-        lists = Hash[lists.sort] if sort_list
+        if sort_list
+          if recurse_sort
+            lists.each do |k,v|
+              lists[k] = Hash[v.sort]
+            end
+          end
+		      lists = Hash[lists.sort]
+        end
         openfile(dir, 'lists.json') do |f|
           begin
             f.puts JSON.pretty_generate(lists)
