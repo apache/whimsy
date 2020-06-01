@@ -648,6 +648,11 @@ if __FILE__ == $0
   $ARCHIVE_CHECK = ARGV.delete '--archivecheck'
   $ALLOW_HTTP = ARGV.delete '--http'
 
+  # check for any unhandled options
+  ARGV.each do |arg|
+    raise ArgumentError.new("Invalid option #{arg}") if arg.start_with? '--'
+  end
+
   init
 
   version = ''
