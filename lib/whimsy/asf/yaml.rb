@@ -16,7 +16,7 @@ module YamlFile
   def self.update(yaml_file)
     File.open(yaml_file, File::RDWR|File::CREAT, 0644) do |file| 
       file.flock(File::LOCK_EX)
-      yaml = YAML.load(file.read) || {} rescue {}
+      yaml = YAML.safe_load(file.read) || {} rescue {}
       yield yaml
       file.rewind
       file.write YAML.dump(yaml)
@@ -32,7 +32,7 @@ module YamlFile
   def self.read(yaml_file)
     File.open(yaml_file, File::RDONLY) do |file|
       file.flock(File::LOCK_SH)
-      yaml = YAML.load(file.read) || {} rescue {}
+      yaml = YAML.safe_load(file.read) || {} rescue {}
       if block_given?
         yield yaml
       else
