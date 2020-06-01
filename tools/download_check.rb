@@ -496,7 +496,11 @@ def _checkDownloadPage(path, tlp, version)
     if h =~ %r{\.(asc|sha256|sha512)$}
       host, stem, ext = check_hash_loc(h,tlp)
       if host == 'archive'
-        I "Ignoring archive hash #{h}"
+        if $ARCHIVE_CHECK
+          check_head(h, :E, "200", true, true)
+        else
+          I "Ignoring archive hash #{h}"
+        end
       elsif host
         if $NOFOLLOW
           I "Skipping archive hash #{h}"
@@ -521,8 +525,10 @@ def _checkDownloadPage(path, tlp, version)
       name = $1
       ext = $2
       if h =~ %r{https?://archive\.apache\.org/}
-        I "Ignoring archive artifact #{h}"
-        next
+        unless $ARCHIVE_CHECK
+            I "Ignoring archive artifact #{h}"
+            next
+        end
       end
       if h =~ %r{https?://(www\.)?apache\.org/dist}
         E "Must use mirror system #{h}"
