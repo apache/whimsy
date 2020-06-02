@@ -485,6 +485,79 @@ module ASF
       end
     end
 
+    # DRAFT DRAFT DRAFT
+    # checkout file and update it using svnmucc put
+    # the block can return additional info, which is used 
+    # to generate extra commands to pass to svnmucc
+    # which are included in the same commit
+    # For example:
+    #   ASF::SVN.svnmucc(path,message,env,_) do |text|
+    #     out = '...'
+    #     extra = []
+    #     extra << 'mv url1 url2'
+    #     extra << 'rm url3'
+    #     [out, extra]
+    #   end
+    def self.svnmucc(path, msg, env, _)
+      require 'tempfile'
+      tmpdir = Dir.mktmpdir.untaint
+      basename = File.basename(path).untaint
+      parentdir = File.dirname(path).untaint
+      tmpfile = File.join(tmpdir, basename).untaint
+      cmdfile = nil
+
+      begin
+        filerev = ASF::SVN.getInfoItem(path,'revision',env.user,env.password)
+        
+        parenturl = ASF::SVN.getInfoItem(parentdir,'url',env.user,env.password)
+        
+        # create an empty checkout
+        _.system ['svn', 'checkout', '--depth', 'empty', '--non-interactive',
+          ['--username', env.user, '--password', env.password],
+          parenturl, tmpdir
+          ] or raise Exception.new("Failed to create checkout")
+
+        # checkout the file
+        tmpfile = File.join(tmpdir, basename).untaint
+        _.system ['svn', 'update', '--non-interactive',
+          ['--username', env.user, '--password', env.password],
+          tmpfile
+          ] or raise Exception.new("Failed to checkout file")
+
+        filerev = ASF::SVN.getInfoItem(tmpfile,'revision',env.user,env.password)
+        fileurl = ASF::SVN.getInfoItem(tmpfile,'url',env.user,env.password)
+
+        # get the new file contents and any extra svn commands
+        contents, extra = yield File.read(tmpfile)
+
+        # update the file
+        File.write tmpfile, contents
+
+        # create the command file:
+        cmdfile = Tempfile.new('svnmucc_input', tmpdir)
+        cmdfile.puts(['put',tmpfile,fileurl].join("\n")) # one arg per line
+        cmdfile.puts('')
+
+        # add the extra commands
+        extra.each do |cmd|
+          cmdfile.puts(cmd.gsub(/ +/,"\n"))
+          cmdfile.puts('')
+        end
+        cmdfile.rewind
+        cmdfile.close
+
+        _.system ['svnmucc',
+          '--non-interactive',
+          ['--username', env.user, '--password', env.password], # TODO --password-from-stdin
+          '--revision', filerev,
+          '--extra-args', cmdfile.path,
+          '--message', msg,
+          ] or raise Exception.new("Failed to commit the updates")
+      ensure
+        FileUtils.rm_rf tmpdir
+      end
+    end
+    
     # update directory listing in /srv/svn/<name>.txt
     # N.B. The listing includes the trailing '/' so directory names can be distinguished
     # @return filerev, svnrev
@@ -568,24 +641,4 @@ module ASF
 
   end
 
-end
-
-if __FILE__ == $0 # local testing
-  class ENV_
-    def self.user
-      ENV['USER']
-    end
-    def self.password
-      'x x'
-    end
-  end
-  $LOAD_PATH.unshift '/srv/whimsy/lib'
-#  require 'whimsy/asf'
-  ASF::SVN.updateCI("msg",ENV_,{url: 'file:///Users/sebb/REPO'}) do |content|
-    ""
-  end
-#  path = ARGV.shift||'.'
-#  puts ASF::SVN.list(path, *ARGV)
-#  puts ASF::SVN.getInfo(path, *ARGV)
-#  puts ASF::SVN.getRevision(path, *ARGV)
 end
