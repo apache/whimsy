@@ -486,6 +486,57 @@ module ASF
     end
 
     # DRAFT DRAFT DRAFT
+    # Low-level interface to svnmucc
+    # Parameters:
+    #   commands - array of commands
+    #   msg - commit message
+    #   env - environment (username/password)
+    #   _ - Wunderbar
+    #   revision - if defined, supply the --revision svnmucc parameter
+    #   temp - use this temporary directory (and don't remove it)
+    # The commands must themselves be arrays to ensure correct processing of white-space
+    # For example:
+    #     commands = []
+    #     url1 = 'https://svn.../' # etc
+    #     commands << ['mv',url1,url2]
+    #     commands << ['rm',url3]
+    #   ASF::SVN.svnmucc(commands,message,env,_)
+    def self.svnmucc(commands, msg, env, _, revision=nil, temp=nil)
+      require 'tempfile'
+      tmpdir = temp ? temp : Dir.mktmpdir.untaint
+
+      begin
+        cmdfile = Tempfile.new('svnmucc_input', tmpdir)
+        # add the commands
+        commands.each do |cmd|
+          cmd.each do |arg|
+            cmdfile.puts(arg)
+          end
+          cmdfile.puts('')
+        end
+        cmdfile.rewind
+        cmdfile.close
+
+        syscmd = ['svnmucc',
+                  '--non-interactive',
+                  '--extra-args', cmdfile.path,
+                  '--message', msg,
+                  '--no-auth-cache',
+                  ]
+        if revision
+          syscmd << '--revision'
+          syscmd << revision 
+        end
+        if env
+          syscmd << ['--username', env.user, '--password', env.password] # TODO --password-from-stdin
+        end
+        _.system syscmd or raise Exception.new("svnmucc command failed")
+      ensure
+        FileUtils.rm_rf tmpdir unless temp
+      end
+    end
+      
+    # DRAFT DRAFT DRAFT
     # checkout file and update it using svnmucc put
     # the block can return additional info, which is used 
     # to generate extra commands to pass to svnmucc
@@ -493,7 +544,7 @@ module ASF
     # The extra parameter is an array of commands
     # These must themselves be arrays to ensure correct processing of white-space
     # For example:
-    #   ASF::SVN.svnmucc(path,message,env,_) do |text|
+    #   ASF::SVN.multiUpdate(path,message,env,_) do |text|
     #     out = '...'
     #     extra = []
     #     url1 = 'https://svn.../' # etc
@@ -501,7 +552,7 @@ module ASF
     #     extra << ['rm',url3]
     #     [out, extra]
     #   end
-    def self.svnmucc(path, msg, env, _)
+    def self.multiUpdate(path, msg, env, _)
       require 'tempfile'
       tmpdir = Dir.mktmpdir.untaint
       basename = File.basename(path).untaint
@@ -536,29 +587,16 @@ module ASF
         # update the file
         File.write tmpfile, contents
 
-        # create the command file:
-        cmdfile = Tempfile.new('svnmucc_input', tmpdir)
-        # upload the updated file
-        cmdfile.puts(['put',tmpfile,fileurl].join("\n")) # one arg per line
-        cmdfile.puts('')
+        # build the svnmucc commands
+        cmds = []
+        cmds << ['put', tmpfile, fileurl]
 
-        # add the extra commands
         extra.each do |cmd|
-          cmd.each do |arg|
-            cmdfile.puts(arg)
-          end
-          cmdfile.puts('')
+          cmds << cmd
         end
-        cmdfile.rewind
-        cmdfile.close
-
-        _.system ['svnmucc',
-          '--non-interactive',
-          ['--username', env.user, '--password', env.password], # TODO --password-from-stdin
-          '--revision', filerev,
-          '--extra-args', cmdfile.path,
-          '--message', msg,
-          ] or raise Exception.new("Failed to commit the updates")
+        
+        # Now commit everything
+        ASF::SVN.svnmucc(cmds,msg,env,_,filerev,tmpdir)
       ensure
         FileUtils.rm_rf tmpdir
       end
