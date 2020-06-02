@@ -490,12 +490,15 @@ module ASF
     # the block can return additional info, which is used 
     # to generate extra commands to pass to svnmucc
     # which are included in the same commit
+    # The extra parameter is an array of commands
+    # These must themselves be arrays to ensure correct processing of white-space
     # For example:
     #   ASF::SVN.svnmucc(path,message,env,_) do |text|
     #     out = '...'
     #     extra = []
-    #     extra << 'mv url1 url2'
-    #     extra << 'rm url3'
+    #     url1 = 'https://svn.../' # etc
+    #     extra << ['mv',url1,url2]
+    #     extra << ['rm',url3]
     #     [out, extra]
     #   end
     def self.svnmucc(path, msg, env, _)
@@ -535,12 +538,15 @@ module ASF
 
         # create the command file:
         cmdfile = Tempfile.new('svnmucc_input', tmpdir)
+        # upload the updated file
         cmdfile.puts(['put',tmpfile,fileurl].join("\n")) # one arg per line
         cmdfile.puts('')
 
         # add the extra commands
         extra.each do |cmd|
-          cmdfile.puts(cmd.gsub(/ +/,"\n"))
+          cmd.each do |arg|
+            cmdfile.puts(arg)
+          end
           cmdfile.puts('')
         end
         cmdfile.rewind
