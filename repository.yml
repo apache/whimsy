@@ -121,11 +121,6 @@
     depth: delete
     list: true
 
-  emeritus-requests-received:
-    url: private/documents/emeritus-requests-received
-    depth: delete
-    list: true
-
   minutes:
     url: asf/infrastructure/site/trunk/content/foundation/records/minutes
 
