@@ -25,6 +25,7 @@ require 'open-uri'
 require 'erubis'
 require 'tzinfo'
 require 'active_support/time'
+require 'mustache'
 
 unless ENV['RACK_ENV'] == 'development'
   disable :logging # suppress log of requests to stderr/error.log
