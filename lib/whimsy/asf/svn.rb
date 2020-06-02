@@ -567,13 +567,13 @@ module ASF
       else
         uri = URI.parse(path)
         # allow file: URIs for local testing
-        if uri.is_a? URI::FILE or uri.is_a? URI::HTTPS # includes HTTPS
+        if uri.is_a? URI::File or uri.is_a? URI::HTTPS # includes HTTPS
           basename = File.basename(uri.path).untaint
           parentdir = File.dirname(uri.path).untaint
           uri.path = parentdir
           parenturl = uri
         else
-          raise ArgumentError.new("Path #{path} must be a file or URL")
+          raise ArgumentError.new("Path '#{path}' must be a file or URL")
         end
       end
       outputfile = File.join(tmpdir, basename).untaint
