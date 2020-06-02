@@ -543,6 +543,11 @@ module ASF
     # which are included in the same commit
     # The extra parameter is an array of commands
     # These must themselves be arrays to ensure correct processing of white-space
+    # Parameters:
+    #   path - file path or SVN URL (http(s) or file:)
+    #   message - commit message
+    #   env - for username and password
+    #   _ - Wunderbar context
     # For example:
     #   ASF::SVN.multiUpdate(path,message,env,_) do |text|
     #     out = '...'
@@ -555,41 +560,57 @@ module ASF
     def self.multiUpdate(path, msg, env, _)
       require 'tempfile'
       tmpdir = Dir.mktmpdir.untaint
-      basename = File.basename(path).untaint
-      parentdir = File.dirname(path).untaint
-      tmpfile = File.join(tmpdir, basename).untaint
+      if File.file? path
+        basename = File.basename(path).untaint
+        parentdir = File.dirname(path).untaint
+        parenturl = ASF::SVN.getInfoItem(parentdir,'url')
+      else
+        uri = URI.parse(path)
+        # allow file: URIs for local testing
+        if uri.is_a? URI::FILE or uri.is_a? URI::HTTPS # includes HTTPS
+          basename = File.basename(uri.path).untaint
+          parentdir = File.dirname(uri.path).untaint
+          uri.path = parentdir
+          parenturl = uri
+        else
+          raise ArgumentError.new("Path #{path} must be a file or URL")
+        end
+      end
+      outputfile = File.join(tmpdir, basename).untaint
       cmdfile = nil
 
       begin
-        filerev = ASF::SVN.getInfoItem(path,'revision',env.user,env.password)
-        
-        parenturl = ASF::SVN.getInfoItem(parentdir,'url',env.user,env.password)
         
         # create an empty checkout
-        _.system ['svn', 'checkout', '--depth', 'empty', '--non-interactive',
+        _.system ['svn', 'checkout', '--depth', 'empty',
+          '--non-interactive',
           ['--username', env.user, '--password', env.password],
+          '--no-auth-cache',
           parenturl, tmpdir
           ] or raise Exception.new("Failed to create checkout")
 
         # checkout the file
-        tmpfile = File.join(tmpdir, basename).untaint
-        _.system ['svn', 'update', '--non-interactive',
+        _.system ['svn', 'update',
+          '--non-interactive',
           ['--username', env.user, '--password', env.password],
-          tmpfile
+          '--no-auth-cache',
+          outputfile
           ] or raise Exception.new("Failed to checkout file")
 
-        filerev = ASF::SVN.getInfoItem(tmpfile,'revision',env.user,env.password)
-        fileurl = ASF::SVN.getInfoItem(tmpfile,'url',env.user,env.password)
+        # N.B. the revision is required for the svnmucc put to prevent overriding a previous update
+        # this is why the file is checked out rather than just extracted
+        filerev = ASF::SVN.getInfoItem(outputfile,'revision',env.user,env.password) # is auth needed here?
+        fileurl = ASF::SVN.getInfoItem(outputfile,'url',env.user,env.password)
 
         # get the new file contents and any extra svn commands
-        contents, extra = yield File.read(tmpfile)
+        contents, extra = yield File.read(outputfile)
 
         # update the file
-        File.write tmpfile, contents
+        File.write outputfile, contents
 
         # build the svnmucc commands
         cmds = []
-        cmds << ['put', tmpfile, fileurl]
+        cmds << ['put', outputfile, fileurl]
 
         extra.each do |cmd|
           cmds << cmd
