@@ -5,7 +5,14 @@
 class PersonForms < Vue
   def render
     committer = @@person.state.committer
-    documents = "https://svn.apache.org/repos/private/documents"
+    icla_url = ASF::SVN.svnurl('icla')
+    member_apps_url = ASF::SVN.svnurl('member_apps')
+    emeritus_url = ASF::SVN.svnurl('emeritus')
+    rescinded_url = ASF::SVN.svnurl('emeritus-rescinded')
+    reinstated_url = ASF::SVN.svnurl('emeritus-reinstated')
+    requested_url = ASF::SVN.svnurl('emeritus-requests-received')
+
+    console.log "emeritus #{emeritus_url}"
 
     _div.row do
       _div.name 'Forms on file'
@@ -20,7 +27,7 @@ class PersonForms < Vue
                 if link == '' # has ICLA bu no karma to view it
                   _ 'ICLA'
                 else
-                  _a 'ICLA', href: "#{documents}/iclas/#{link}"
+                  _a 'ICLA', href: "#{icla_url}/#{link}"
                 end
               end
             elsif form == 'member'
@@ -29,7 +36,7 @@ class PersonForms < Vue
                   _ 'Member App'
                 else
                   _a 'Member App',
-                    href: "#{documents}/member_apps/#{link}"
+                    href: "#{member_apps_url}/#{link}"
                 end
               end
             elsif form == 'emeritus'
@@ -38,7 +45,7 @@ class PersonForms < Vue
                   _ 'Emeritus'
                 else
                   _a 'Emeritus',
-                    href: "#{documents}/emeritus/#{link}"
+                    href: "#{emeritus_url}/#{link}"
                 end
               end
             elsif form == 'emeritus_request'
@@ -47,7 +54,25 @@ class PersonForms < Vue
                   _ 'Emeritus Request'
                 else
                   _a 'Emeritus Request',
-                    href: "#{documents}/emeritus-requests-received/#{link}"
+                    href: "#{requested_url}/#{link}"
+                end
+              end
+            elsif form == 'emeritus_requests_rescinded'
+              _li do
+                if link == '' # has form but no karma to view it
+                  _ 'Emeritus Rescinded'
+                else
+                  _a 'Emeritus Rescinded',
+                    href: "#{rescinded_url}/#{link}"
+                end
+              end
+            elsif form == 'emeritus_reinstated'
+              _li do
+                if link == '' # has form but no karma to view it
+                  _ 'Emeritus Reinstated'
+                else
+                  _a 'Emeritus Reinstated',
+                    href: "#{reinstated_url}/#{link}"
                 end
               end
             else
