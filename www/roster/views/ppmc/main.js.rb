@@ -88,6 +88,11 @@ class PPMC < Vue
           _p do
             _br
             _ 'Note: to Add existing committers to the PPMC, please select the committer from the list below and use the Modify button instead.'
+            _br
+            _ 'N.B. please ask the committer to subscribe themselves to the private list, for example by using the'
+            _br
+            _ 'Mailing List Subscription Helper '
+            _a 'https://whimsy.apache.org/committers/subscribe', href: 'https://whimsy.apache.org/committers/subscribe'
           end
         elsif not @ppmc.hasLDAP? and (@@auth.root or @@auth.secretary)
           _button.btn.btn_primary 'Create project in LDAP', onClick: self.post,
