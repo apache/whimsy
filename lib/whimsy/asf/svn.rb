@@ -366,17 +366,18 @@ module ASF
     # user and password are required because the default URL is private
     def self.updateCI(msg, env, options={})
       # Allow override for testing
-      ciURL = options[:url] || 'https://svn.apache.org/repos/private/committers/board'
+      ciURL = options[:url] || self.svnurl('board')
       Dir.mktmpdir do |tmpdir|
         # use dup to make testing easier
         user = env.user.dup.untaint
         pass = env.password.dup.untaint
         # checkout committers/board (this does not have many files currently)
-        Kernel.system 'svn', 'checkout', '--quiet',
-          '--no-auth-cache', '--non-interactive',
-          '--depth', 'files',
-          '--username', user , '--password', pass,
-          ciURL, tmpdir.untaint
+        out, err = self.svn('checkout', ciURL,
+          {flags: [tmpdir.untaint, '--quiet', '--depth', 'files'],
+           user: user, password: pass})
+
+        raise Exception.new("Checkout of board folder failed: #{err}") unless out
+
         # read in committee-info.txt
         file = File.join(tmpdir, 'committee-info.txt')
         info = File.read(file)
@@ -386,19 +387,13 @@ module ASF
         # write updated file to disk
         File.write(file, info)
 
-        # commit changes
-        rc = Kernel.system 'svn', 'commit', '--quiet',
-          '--no-auth-cache', '--non-interactive',
-          '--username', user, '--password', pass,
-          file, '--message', msg
+        # commit the updated file
+        out, err = self.svn('commit', file,
+          {flags: [tmpdir.untaint,'--quiet', '--message', msg],
+           user: user, password: pass})
 
-        if rc
-          # update cache
-          ASF::Committee.parse_committee_info(info)
-        else
-          # die
-          raise Exception.new('Update committee-info.txt failed')
-        end
+        raise Exception.new("Update of committee-info.txt failed: #{err}") unless out
+        
       end
     end
 
