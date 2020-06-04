@@ -59,7 +59,7 @@ pre.wide:hover {overflow-x: scroll}
 form.inline {display: inline}
 form.inline div label {min-width: 7em; text-align: right}
 form.inline div input {min-width: 20em}
-form.inline button {margin-left: 10em}
+form.inline button {height: 2em; margin-left: 2em; padding:0px 20px}
 form.inline textarea {height: 20em; width: 60em}
 
 input:disabled[type=submit] {cursor: not-allowed}
