@@ -294,7 +294,7 @@ module ASF
         cmd += ['--username', user, '--password', password, '--no-auth-cache']
       end
 
-      # issue svn info command
+      # issue svn list command
       out, err, status = Open3.capture3(*cmd)
       if status.success?
         return out
