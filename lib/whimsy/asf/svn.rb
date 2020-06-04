@@ -572,7 +572,7 @@ module ASF
           basename = File.basename(uri.path).untaint
           parentdir = File.dirname(uri.path).untaint
           uri.path = parentdir
-          parenturl = uri
+          parenturl = uri.to_s
         else
           raise ArgumentError.new("Path '#{path}' must be a file or URL")
         end
@@ -581,7 +581,7 @@ module ASF
       cmdfile = nil
 
       begin
-        
+
         # create an empty checkout
         _.system ['svn', 'checkout', '--depth', 'empty',
           '--non-interactive',
