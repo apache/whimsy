@@ -89,7 +89,7 @@
     files:
       - emeritus-involuntary.yml
 
-  emeritus-rejoined:
+  emeritus-reinstated:
     url: private/documents/emeritus-reinstated
     depth: delete
     list: true

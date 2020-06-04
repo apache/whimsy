@@ -43,8 +43,9 @@ module ASF
 
           @repos = Hash[Dir[*svn].map { |name| 
             next unless Dir.exist? name.untaint
+            # TODO not sure why chdir is necessary here; it looks like svn info can handle soft links OK
             Dir.chdir name.untaint do
-              out, _, status = Open3.capture3('svn', 'info')
+              out, status = Open3.capture2('svn', 'info')
               if status.success?
                 [out[/URL: (.*)/,1].sub(/^http:/,'https:'), Dir.pwd.untaint]
               end
@@ -293,7 +294,7 @@ module ASF
         cmd += ['--username', user, '--password', password, '--no-auth-cache']
       end
 
-      # issue svn info command
+      # issue svn list command
       out, err, status = Open3.capture3(*cmd)
       if status.success?
         return out
@@ -530,7 +531,7 @@ module ASF
         if env
           syscmd << ['--username', env.user, '--password', env.password] # TODO --password-from-stdin
         end
-        _.system syscmd or raise Exception.new("svnmucc command failed")
+        _.system syscmd
       ensure
         FileUtils.rm_rf tmpdir unless temp
       end
@@ -571,7 +572,7 @@ module ASF
           basename = File.basename(uri.path).untaint
           parentdir = File.dirname(uri.path).untaint
           uri.path = parentdir
-          parenturl = uri
+          parenturl = uri.to_s
         else
           raise ArgumentError.new("Path '#{path}' must be a file or URL")
         end
@@ -580,14 +581,14 @@ module ASF
       cmdfile = nil
 
       begin
-        
+
         # create an empty checkout
         _.system ['svn', 'checkout', '--depth', 'empty',
           '--non-interactive',
           ['--username', env.user, '--password', env.password],
           '--no-auth-cache',
           parenturl, tmpdir
-          ] or raise Exception.new("Failed to create checkout")
+          ]
 
         # checkout the file
         _.system ['svn', 'update',
@@ -595,7 +596,7 @@ module ASF
           ['--username', env.user, '--password', env.password],
           '--no-auth-cache',
           outputfile
-          ] or raise Exception.new("Failed to checkout file")
+          ]
 
         # N.B. the revision is required for the svnmucc put to prevent overriding a previous update
         # this is why the file is checked out rather than just extracted
