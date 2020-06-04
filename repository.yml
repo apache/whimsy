@@ -89,8 +89,8 @@
     files:
       - emeritus-involuntary.yml
 
-  emeritus-rejoined:
-    url: private/documents/emeritus-rejoined
+  emeritus-reinstated:
+    url: private/documents/emeritus-reinstated
     depth: delete
     list: true
 
