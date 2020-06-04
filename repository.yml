@@ -90,7 +90,7 @@
       - emeritus-involuntary.yml
 
   emeritus-rejoined:
-    url: private/documents/emeritus-rejoined
+    url: private/documents/emeritus-reinstated
     depth: delete
     list: true
 
