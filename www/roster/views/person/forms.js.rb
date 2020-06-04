@@ -5,14 +5,6 @@
 class PersonForms < Vue
   def render
     committer = @@person.state.committer
-    icla_url = ASF::SVN.svnurl('icla')
-    member_apps_url = ASF::SVN.svnurl('member_apps')
-    emeritus_url = ASF::SVN.svnurl('emeritus')
-    rescinded_url = ASF::SVN.svnurl('emeritus-rescinded')
-    reinstated_url = ASF::SVN.svnurl('emeritus-reinstated')
-    requested_url = ASF::SVN.svnurl('emeritus-requests-received')
-
-    console.log "emeritus #{emeritus_url}"
 
     _div.row do
       _div.name 'Forms on file'
@@ -27,7 +19,7 @@ class PersonForms < Vue
                 if link == '' # has ICLA bu no karma to view it
                   _ 'ICLA'
                 else
-                  _a 'ICLA', href: "#{icla_url}/#{link}"
+                  _a 'ICLA', href: "#{link}"
                 end
               end
             elsif form == 'member'
@@ -36,7 +28,7 @@ class PersonForms < Vue
                   _ 'Member App'
                 else
                   _a 'Member App',
-                    href: "#{member_apps_url}/#{link}"
+                    href: "#{link}"
                 end
               end
             elsif form == 'emeritus'
@@ -45,7 +37,7 @@ class PersonForms < Vue
                   _ 'Emeritus'
                 else
                   _a 'Emeritus',
-                    href: "#{emeritus_url}/#{link}"
+                    href: "#{link}"
                 end
               end
             elsif form == 'emeritus_request'
@@ -54,7 +46,7 @@ class PersonForms < Vue
                   _ 'Emeritus Request'
                 else
                   _a 'Emeritus Request',
-                    href: "#{requested_url}/#{link}"
+                    href: "#{link}"
                 end
               end
             elsif form == 'emeritus_requests_rescinded'
@@ -63,7 +55,7 @@ class PersonForms < Vue
                   _ 'Emeritus Rescinded'
                 else
                   _a 'Emeritus Rescinded',
-                    href: "#{rescinded_url}/#{link}"
+                    href: "#{link}"
                 end
               end
             elsif form == 'emeritus_reinstated'
@@ -72,7 +64,7 @@ class PersonForms < Vue
                   _ 'Emeritus Reinstated'
                 else
                   _a 'Emeritus Reinstated',
-                    href: "#{reinstated_url}/#{link}"
+                    href: "#{link}"
                 end
               end
             else
