@@ -119,23 +119,23 @@ describe ASF::SVN do
   end
 
   describe "ASF:SVN.getInfo(repo)" do
-    it "getInfo(public workspace) should return a string at least 30 chars long starting with 'Path: '" do
-      pub = ASF::SVN.private_public()[1]
-      repo = ASF::SVN[pub[1]] # select a public repo
-      out, err = ASF::SVN.getInfo(repo)
-      expect(err).to eq(nil)
-      expect(out.size).to be > 30
-      expect(out).to start_with("Path: ")
-    end
+#    it "getInfo(public workspace) should return a string at least 30 chars long starting with 'Path: '" do
+#      pub = ASF::SVN.private_public()[1]
+#      repo = ASF::SVN[pub[1]] # select a public repo
+#      out, err = ASF::SVN.getInfo(repo)
+#      expect(err).to eq(nil)
+#      expect(out.size).to be > 30
+#      expect(out).to start_with("Path: ")
+#    end
 
-    it "getInfo(private workspace) should return a string at least 30 chars long starting with 'Path: '" do
-      prv = ASF::SVN.private_public()[0]
-      repo = ASF::SVN[prv[1]] # select a private repo
-      out, err = ASF::SVN.getInfo(repo)
-      expect(err).to eq(nil)
-      expect(out.size).to be > 30
-      expect(out).to start_with("Path: ")
-    end
+#    it "getInfo(private workspace) should return a string at least 30 chars long starting with 'Path: '" do
+#      prv = ASF::SVN.private_public()[0]
+#      repo = ASF::SVN[prv[1]] # select a private repo
+#      out, err = ASF::SVN.getInfo(repo)
+#      expect(err).to eq(nil)
+#      expect(out.size).to be > 30
+#      expect(out).to start_with("Path: ")
+#    end
 
     it "getInfo(public url) should return a string at least 30 chars long starting with 'Path: '" do
       pub = ASF::SVN.private_public()[1]
@@ -145,6 +145,12 @@ describe ASF::SVN do
       expect(err).to eq(nil)
       expect(out.size).to be > 30
       expect(out).to start_with("Path: ")
+    end
+
+    it "getInfo(nil) should fail" do
+      out, err = ASF::SVN.getInfo(nil)
+      expect(out).to eq(nil)
+      expect(err).to eq('path must not be nil')
     end
 
 # How to ensure local SVN cached auth is not used?    
@@ -161,13 +167,13 @@ describe ASF::SVN do
   end
 
   describe "ASF:SVN.getInfoItem" do
-    it "getInfoItem(public checkout,'url') should return the URL" do
-      pub = ASF::SVN.private_public()[1]
-      repo = ASF::SVN[pub[1]] # select a public repo
-      out, err = ASF::SVN.getInfoItem(repo,'url')
-      expect(err).to eq(nil)
-      expect(out).to eq(ASF::SVN.svnurl(pub[1]))
-    end
+#    it "getInfoItem(public checkout,'url') should return the URL" do
+#      pub = ASF::SVN.private_public()[1]
+#      repo = ASF::SVN[pub[1]] # select a public repo
+#      out, err = ASF::SVN.getInfoItem(repo,'url')
+#      expect(err).to eq(nil)
+#      expect(out).to eq(ASF::SVN.svnurl(pub[1]))
+#    end
 
     it "getInfoItem(public url,'url') should return the URL" do
       pub = ASF::SVN.private_public()[1]
@@ -179,13 +185,13 @@ describe ASF::SVN do
   end
 
   describe "ASF:SVN.list" do
-    it "list(public checkout,'url') should return a list" do
-      pub = ASF::SVN.private_public()[1]
-      repo = ASF::SVN[pub[1]] # select a public repo
-      out, err = ASF::SVN.list(repo)
-      expect(err).to eq(nil)
-      expect(out.size).to be > 10 # need a better test
-    end
+#    it "list(public checkout,'url') should return a list" do
+#      pub = ASF::SVN.private_public()[1]
+#      repo = ASF::SVN[pub[1]] # select a public repo
+#      out, err = ASF::SVN.list(repo)
+#      expect(err).to eq(nil)
+#      expect(out.size).to be > 10 # need a better test
+#    end
   
     it "list(public url,'url') should return a list" do
       pub = ASF::SVN.private_public()[1]
@@ -197,12 +203,12 @@ describe ASF::SVN do
   end
 
   describe "ASF:SVN.get" do
-    it "get(public checkout,'_template.xml') should return the revision and contents" do
-      repo = File.join(ASF::SVN['attic-xdocs'],'_template.xml')
-      revision, content = ASF::SVN.get(repo)
-      expect(revision).to match(/\d+/)
-      expect(content.size).to be > 1000 # need a better test
-    end
+#    it "get(public checkout,'_template.xml') should return the revision and contents" do
+#      repo = File.join(ASF::SVN['attic-xdocs'],'_template.xml')
+#      revision, content = ASF::SVN.get(repo)
+#      expect(revision).to match(/\d+/)
+#      expect(content.size).to be > 1000 # need a better test
+#    end
   
     it "get(public url,'_template.xml') should return the revision and contents" do
       repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
@@ -211,6 +217,5 @@ describe ASF::SVN do
       expect(content.size).to be > 1000 # need a better test
     end
   end
-    
       
 end
