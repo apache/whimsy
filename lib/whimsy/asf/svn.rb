@@ -43,8 +43,9 @@ module ASF
 
           @repos = Hash[Dir[*svn].map { |name| 
             next unless Dir.exist? name.untaint
+            # TODO not sure why chdir is necessary here; it looks like svn info can handle soft links OK
             Dir.chdir name.untaint do
-              out, _, status = Open3.capture3('svn', 'info')
+              out, status = Open3.capture2('svn', 'info')
               if status.success?
                 [out[/URL: (.*)/,1].sub(/^http:/,'https:'), Dir.pwd.untaint]
               end
