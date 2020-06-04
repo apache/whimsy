@@ -530,7 +530,7 @@ module ASF
         if env
           syscmd << ['--username', env.user, '--password', env.password] # TODO --password-from-stdin
         end
-        _.system syscmd or raise Exception.new("svnmucc command failed")
+        _.system syscmd
       ensure
         FileUtils.rm_rf tmpdir unless temp
       end
@@ -587,7 +587,7 @@ module ASF
           ['--username', env.user, '--password', env.password],
           '--no-auth-cache',
           parenturl, tmpdir
-          ] or raise Exception.new("Failed to create checkout")
+          ]
 
         # checkout the file
         _.system ['svn', 'update',
@@ -595,7 +595,7 @@ module ASF
           ['--username', env.user, '--password', env.password],
           '--no-auth-cache',
           outputfile
-          ] or raise Exception.new("Failed to checkout file")
+          ]
 
         # N.B. the revision is required for the svnmucc put to prevent overriding a previous update
         # this is why the file is checked out rather than just extracted
