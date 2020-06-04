@@ -191,23 +191,7 @@ module ASF
     #    Last Changed Date: 2019-07-04 13:21:36 +0100 (Thu, 04 Jul 2019)
     #
     def self.getInfo(path, user=nil, password=nil)
-      return nil, 'path must not be nil' unless path
-
-      # build svn info command
-      cmd = ['svn', 'info', path, '--non-interactive']
-    
-      # password was supplied, add credentials
-      if password
-        cmd += ['--username', user, '--password', password, '--no-auth-cache']
-      end
-    
-      # issue svn info command
-      out, err, status = Open3.capture3(*cmd)
-      if status.success?
-        return out
-      else
-        return nil, err
-      end
+      return self.svn('info', path, {user: user, password: password})
     end
 
     # svn info details as a Hash
@@ -259,19 +243,9 @@ module ASF
     # Note: Path, Schedule and Depth are not currently supported
     #
     def self.getInfoItem(path, item, user=nil, password=nil)
-      return nil, 'path must not be nil' unless path
-    
-      # build svn info command
-      cmd = ['svn', 'info', path, '--non-interactive', '--show-item', item]
-    
-      # password was supplied, add credentials
-      if password
-        cmd += ['--username', user, '--password', password, '--no-auth-cache']
-      end
-    
-      # issue svn info command
-      out, err, status = Open3.capture3(*cmd)
-      if status.success?
+      out, err = self.svn('info', path, {flags: ['--show-item', item],
+        user: user, password: password})
+      if out
         if item.end_with? 'revision' # svn version 1.9.3 appends trailing spaces to *revision items
           return out.chomp.rstrip
         else
@@ -284,17 +258,47 @@ module ASF
 
     # retrieve list, [err] for a path in svn
     def self.list(path, user=nil, password=nil)
+      return self.svn('list', path, {user: user, password: password})
+    end
+
+    # low level SVN command
+    # params:
+    # command - info, list etc
+    # path - the path to be used
+    # options - hash of:
+    #  :flags - string or array of strings, e.g. '-v', ['--depth','empty']
+    #  :user, :password - auth
+    #  :verbose - show command
+    # Returns either:
+    # - stdout
+    # - nil, err
+    def self.svn(command, path , options = {})
+      return nil, 'command must not be nil' unless command
       return nil, 'path must not be nil' unless path
 
-      # build svn info command
-      cmd = ['svn', 'list', path, '--non-interactive']
+      # build svn command
+      cmd = ['svn', command, path, '--non-interactive']
 
-      # password was supplied, add credentials
-      if password
-        cmd += ['--username', user, '--password', password, '--no-auth-cache']
+      flags = options[:flags]
+      if flags
+        if flags.is_a? String
+          cmd << flags
+        elsif flags.is_a? Array
+          cmd += flags
+        else
+          return nil, "flags '#{flags.inspect}' must be string or array"
+        end
       end
 
-      # issue svn list command
+      # password was supplied, add credentials
+      password = options[:password]
+      if password
+        cmd += ['--username', options[:user], '--password', password, '--no-auth-cache']
+      end
+
+      p cmd if options[:verbose]
+
+      # issue svn command
       out, err, status = Open3.capture3(*cmd)
       if status.success?
         return out
@@ -348,10 +352,9 @@ module ASF
     # Note: working copies updated out via cron jobs can only be accessed 
     # read only by processes that run under the Apache web server.
     def self.updateSimple(path)
-      cmd = ['svn', 'update', path, '--non-interactive']
-      stdout, status = Open3.capture2(*cmd)
+      stdout, _ = self.svn('update',path)
       revision = 0
-      if status.success?
+      if stdout
         # extract revision number
         revision = stdout[/^At revision (\d+)/, 1]
       end
@@ -368,7 +371,7 @@ module ASF
         # use dup to make testing easier
         user = env.user.dup.untaint
         pass = env.password.dup.untaint
-        # checkout committers/board
+        # checkout committers/board (this does not have many files currently)
         Kernel.system 'svn', 'checkout', '--quiet',
           '--no-auth-cache', '--non-interactive',
           '--depth', 'files',
@@ -487,7 +490,7 @@ module ASF
     end
 
     # DRAFT DRAFT DRAFT
-    # Low-level interface to svnmucc
+    # Low-level interface to svnmucc, intended for use with wunderbar
     # Parameters:
     #   commands - array of commands
     #   msg - commit message
