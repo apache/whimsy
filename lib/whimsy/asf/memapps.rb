@@ -12,10 +12,10 @@ module ASF
     @@files = nil
     @@tag = nil
 
-    # list the stems of the files (excluding any ones which record emeritus)
+    # list the stems of the files
     def self.stems
       refresh
-      apps = @@files.reject{|f| f =~ /_emeritus\.\w+$/}.map do |file|
+      apps = @@files.map do |file|
         file.sub(/\.\w+$/, '')
       end
       apps
@@ -24,16 +24,7 @@ module ASF
     # list the names of the files (excluding any ones which record emeritus)
     def self.names
       refresh
-      @@files.reject{|f| f =~ /_emeritus\.\w+$/}
-    end
-
-    # names of emeritus files
-    def self.emeritus
-      refresh
-      apps = @@files.select {|f| f =~ /_emeritus\.\w+$/}.map do |file|
-        file.sub(/_emeritus\.\w+$/, '')
-      end
-      apps
+      @@files
     end
 
     def self.sanitize(name)
@@ -70,6 +61,7 @@ module ASF
       [
         (person.icla.legal_name rescue nil),
         (person.icla.name rescue nil),
+        person.id, # allow match on avalid
         person.member_name # this is slow
       ].uniq.each do |name|
         next unless name
@@ -83,7 +75,7 @@ module ASF
       return [found, names.uniq]
     end
 
-    # All files, including emeritus
+    # All files
     def self.files
       refresh
       @@files
@@ -105,5 +97,4 @@ if __FILE__ == $0
   puts ASF::MemApps.files.length
   puts ASF::MemApps.names.length
   puts ASF::MemApps.stems.length
-  puts ASF::MemApps.emeritus.length
 end

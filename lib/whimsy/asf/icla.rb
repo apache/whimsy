@@ -64,7 +64,7 @@ module ASF
     def self.preload
       people = []
       each do |icla|
-        unless icla.id == 'notinaval'
+        unless icla.id == 'notinavail'
           person = ASF::Person.find(icla.id)
           people << person
           person.icla = icla
@@ -233,6 +233,11 @@ module ASF
     # See also ASF::Mail.taken?
     def self.available?(id)
       return ! self.taken?(id)
+    end
+
+    # does the entry not have an id?
+    def noId?
+      self.id == 'notinavail'
     end
   end
 

@@ -25,15 +25,22 @@ module PonyAPI
   # you will be prompted to enter the cookie value
   # The method writes the file 'lists.json' if dir != nil
   # it returns the data as a hash
-  def get_pony_lists(dir, cookie=nil, sort_list=false)
+  def get_pony_lists(dir=nil, cookie=nil, sort_list=false, recurse_sort=false)
     cookie=get_cookie() if cookie == 'prompt'
     jzon = get_pony_prefs(nil, cookie)
     lists = jzon['lists']
     if lists
       if dir
         # no real point sorting unless writing the file
-        lists = Hash[lists.sort] if sort_list
-        File.open(File.join("#{dir}", 'lists.json'), "w") do |f|
+        if sort_list
+          if recurse_sort
+            lists.each do |k,v|
+              lists[k] = Hash[v.sort]
+            end
+          end
+		      lists = Hash[lists.sort]
+        end
+        openfile(dir, 'lists.json') do |f|
           begin
             f.puts JSON.pretty_generate(lists)
           rescue JSON::GeneratorError => e
@@ -52,7 +59,7 @@ module PonyAPI
   # you will be prompted to enter the cookie value
   # The method writes the file 'preferences.json' if dir != nil
   # it returns the data as a hash
-  def get_pony_prefs(dir, cookie=nil, sort_list=false)
+  def get_pony_prefs(dir=nil, cookie=nil, sort_list=false)
     cookie=get_cookie() if cookie == 'prompt'
     uri, request, response = fetch_pony(PONYPREFS, cookie)
     jzon = {}
@@ -61,7 +68,7 @@ module PonyAPI
       if dir
         # no real point sorting unless writing the file
         jzon['lists'] = Hash[jzon['lists'].sort] if sort_list && jzon['lists']
-        File.open(File.join("#{dir}", 'preferences.json'), "w") do |f|
+        openfile(dir, 'preferences.json') do |f|
           begin
             f.puts JSON.pretty_generate(jzon)
           rescue JSON::GeneratorError
@@ -83,18 +90,21 @@ module PonyAPI
 
   # Download one month of stats as a JSON
   # Must supply cookie = 'ponymail-logged-in-cookie' if a private list
-  def get_pony_stats(dir, list, subdomain, year, month, cookie)
+  def get_pony_stats(dir, list, subdomain, year, month, cookie=nil, sort_list=false)
     cookie=get_cookie() if cookie == 'prompt'
     args =  make_args(list, subdomain, year, month)
     uri, request, response = fetch_pony(PONYSTATS % args, cookie)
     if response.code == '200' then
-      File.open(File.join(dir, STATSMBOX % args), "w") do |f|
+      openfile(dir, STATSMBOX % args) do |f|
         begin
-          f.puts JSON.pretty_generate(JSON.parse(response.body))
+          jzon = JSON.parse(response.body)
+          jzon = Hash[jzon.sort] if sort_list
+          f.puts JSON.pretty_generate(jzon)
         rescue JSON::JSONError
           begin
             # If JSON threw error, try again forcing to UTF-8 (may lose data)
             jzon = JSON.parse(response.body.encode('UTF-8', :invalid => :replace, :undef => :replace))
+            jzon = Hash[jzon.sort] if sort_list
             f.puts JSON.fast_generate(jzon, {:max_nesting => false, :indent => ' '})
           rescue JSON::JSONError => e
             puts "WARN:get_pony_stats(#{uri.request_uri}) #{e.message} #{e.backtrace[0]}, continuing without pretty"
@@ -108,7 +118,7 @@ module PonyAPI
   end
   
   # Get multiple years/months of public stats as json
-  def get_pony_stats_many(dir, list, subdomain, years, months, cookie)
+  def get_pony_stats_many(dir, list, subdomain, years, months, cookie=nil)
     cookie=get_cookie() if cookie == 'prompt'
     years.each do |y|
       months.each do |m|
@@ -120,12 +130,12 @@ module PonyAPI
   # Download one month as mbox
   # Caveats: uses response's encoding; overwrites existing .json file
   # Must supply cookie = 'ponymail-logged-in-cookie' if a private list
-  def get_pony_mbox(dir, list, subdomain, year, month, cookie)
+  def get_pony_mbox(dir, list, subdomain, year, month, cookie=nil)
     cookie=get_cookie() if cookie == 'prompt'
     args =  make_args(list, subdomain, year, month)
     uri, request, response = fetch_pony(PONYMBOX % args, cookie)
     if response.code == '200'
-      File.open(File.join(dir, FILEMBOX % args), "w:#{response.body.encoding}") do |f|
+      openfile(dir, FILEMBOX % args, "w:#{response.body.encoding}") do |f|
         f.puts response.body
       end
     else
@@ -134,7 +144,7 @@ module PonyAPI
   end
   
   # Get multiple years/months of mboxes
-  def get_pony_mbox_many(dir, list, subdomain, years, months, cookie)
+  def get_pony_mbox_many(dir, list, subdomain, years, months, cookie=nil)
     cookie=get_cookie() if cookie == 'prompt'
     years.each do |y|
       months.each do |m|
@@ -145,6 +155,19 @@ module PonyAPI
   end
 
   private
+
+  # Open the output file
+  # if dir == '-' then use stdout
+  # if dir ends with '.json' then treat it as the full file name
+  def openfile(dir,file, mode='w')
+    if dir == '-'
+      yield $stdout
+    elsif dir.end_with? '.json'
+      yield File.open(dir, mode)
+    else
+      yield File.open(File.join(dir, file), mode)
+    end
+  end
 
   # create an argument list suitable for string formatting
   def make_args(list, subdomain, year, month)

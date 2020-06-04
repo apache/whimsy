@@ -21,6 +21,7 @@ gem 'listen'
 gem 'activesupport'
 gem 'mail'
 gem 'erubis'
+gem 'mustache'
 
 gem 'websocket-eventmachine-server'
 gem 'websocket-client-simple'

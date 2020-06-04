@@ -7,7 +7,7 @@ ids = {}
 noid = []
 
 ASF::ICLA.each do |entry|
-  if entry.id == 'notinavail'
+  if entry.noId?
     noid << entry.name
   else
     ids[entry.id] = entry.name

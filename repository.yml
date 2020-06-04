@@ -83,8 +83,24 @@
     depth: delete
     list: true
 
+  emeritus-involuntary:
+    url: private/documents
+    depth: empty
+    files:
+      - emeritus-involuntary.yml
+
+  emeritus-rejoined:
+    url: private/documents/emeritus-rejoined
+    depth: delete
+    list: true
+
   emeritus-requests-received:
     url: private/documents/emeritus-requests-received
+    depth: delete
+    list: true
+
+  emeritus-requests-rescinded:
+    url: private/documents/emeritus-requests-rescinded
     depth: delete
     list: true
 
@@ -102,11 +118,6 @@
 
   member_apps:
     url: private/documents/member_apps
-    depth: delete
-    list: true
-
-  emeritus-requests-received:
-    url: private/documents/emeritus-requests-received
     depth: delete
     list: true
 

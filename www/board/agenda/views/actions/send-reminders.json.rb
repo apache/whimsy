@@ -31,17 +31,21 @@ Agenda.parse(@agenda, :full).each do |item|
 
   # substitute [whoTo] values
   if item['to'] == 'president'
-    reminder = @message.gsub('[whoTo]', 'operations@apache.org')
+    whoTo = 'operations@apache.org'
   else
-    reminder = @message.gsub('[whoTo]', 'board@apache.org')
+    whoTo = 'board@apache.org'
   end
 
-  # substitute [link] values
-  reminder.gsub! '[link]', item['title'].gsub(/\W/, '-')
+  # values to substitute
+  view = {
+    whoTo: whoTo,
+    link: item['title'].gsub(/\W/, '-'),
+    project: item['title']
+  }
 
-  # substitute [project] values
-  reminder.gsub! '[project]', item['title'].gsub(/\W/, '-')
-  subject = @subject.gsub('[project]', item['title']).untaint
+  # apply changes to both subject and the message text itself
+  subject = Mustache.render(@subject, view)
+  message = Mustache.render(@message, view)
 
   # cc list
   cclist = []
@@ -62,7 +66,7 @@ Agenda.parse(@agenda, :full).each do |item|
     cc cclist unless cclist.empty?
     subject subject
 
-    body reminder.untaint
+    body message.untaint
   end
 
   # deliver mail

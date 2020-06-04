@@ -87,7 +87,7 @@ _html do
                   else
                     _a id, href: "committer/#{id}"
                     
-                    info[:issue] ||= 'Not in LDAP' if not info['status']
+                    info[:issue] ||= 'Not in LDAP "member" group' if not info['status']
                   end
                 end
 

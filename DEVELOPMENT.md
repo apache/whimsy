@@ -368,6 +368,18 @@ The following alias runs Interactive Ruby (irb) with the Whimsy library preloade
 
     alias wrb='irb -I /srv/whimsy/lib -r whimsy/asf'
 
+To control Wunderbar logging, it may be useful to create the following file:
+
+```$ cat ~/.irbrc
+require 'pp' # if desired
+# Set up Wunderbar logging if running wrb
+if $LOAD_PATH.include?("/srv/whimsy/lib") # using wrb?
+  puts "#{__FILE__} - setting log_level=info"
+  require 'wunderbar' # it has not been loaded yet
+  Wunderbar.log_level="info"
+end
+```
+
 Simple shell scripts can use the following:
 
     #!/usr/bin/env ruby

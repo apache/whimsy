@@ -80,6 +80,11 @@ module ASF
       status
     end
 
+    # Return a list of availids of emeritus members 
+    def self.emeritus
+      status.select{|k,v| v.start_with? 'Emeritus'}.keys
+    end
+
     # An iterator that returns a list of ids and associated members.txt entries.
     def each
       ASF::Member.text.to_s.split(/^ \*\) /).each do |section|

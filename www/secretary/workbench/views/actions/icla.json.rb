@@ -31,6 +31,10 @@ else
   _warn "#@filename#{fileext} does not appear to be a valid filename"
 end
 
+if @email.strip.end_with? '@apache.org'
+  _warn "Cannot redirect email to an @apache.org address: #{@email.strip}"
+end
+
 # extract/verify project
 _extract_project
 
@@ -180,7 +184,11 @@ task "email #@email" do
 
   # echo email
   form do
-    _message mail.to_s
+    if use_Bcc # Show Bcc
+      _message "Bcc: #{mail[:bcc].decoded}\r\n#{mail.to_s}"
+    else
+      _message mail.to_s
+    end
   end
 
   # deliver mail

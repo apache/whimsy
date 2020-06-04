@@ -485,6 +485,144 @@ module ASF
       end
     end
 
+    # DRAFT DRAFT DRAFT
+    # Low-level interface to svnmucc
+    # Parameters:
+    #   commands - array of commands
+    #   msg - commit message
+    #   env - environment (username/password)
+    #   _ - Wunderbar
+    #   revision - if defined, supply the --revision svnmucc parameter
+    #   temp - use this temporary directory (and don't remove it)
+    # The commands must themselves be arrays to ensure correct processing of white-space
+    # For example:
+    #     commands = []
+    #     url1 = 'https://svn.../' # etc
+    #     commands << ['mv',url1,url2]
+    #     commands << ['rm',url3]
+    #   ASF::SVN.svnmucc(commands,message,env,_)
+    def self.svnmucc(commands, msg, env, _, revision=nil, temp=nil)
+      require 'tempfile'
+      tmpdir = temp ? temp : Dir.mktmpdir.untaint
+
+      begin
+        cmdfile = Tempfile.new('svnmucc_input', tmpdir)
+        # add the commands
+        commands.each do |cmd|
+          cmd.each do |arg|
+            cmdfile.puts(arg)
+          end
+          cmdfile.puts('')
+        end
+        cmdfile.rewind
+        cmdfile.close
+
+        syscmd = ['svnmucc',
+                  '--non-interactive',
+                  '--extra-args', cmdfile.path,
+                  '--message', msg,
+                  '--no-auth-cache',
+                  ]
+        if revision
+          syscmd << '--revision'
+          syscmd << revision 
+        end
+        if env
+          syscmd << ['--username', env.user, '--password', env.password] # TODO --password-from-stdin
+        end
+        _.system syscmd or raise Exception.new("svnmucc command failed")
+      ensure
+        FileUtils.rm_rf tmpdir unless temp
+      end
+    end
+      
+    # DRAFT DRAFT DRAFT
+    # checkout file and update it using svnmucc put
+    # the block can return additional info, which is used 
+    # to generate extra commands to pass to svnmucc
+    # which are included in the same commit
+    # The extra parameter is an array of commands
+    # These must themselves be arrays to ensure correct processing of white-space
+    # Parameters:
+    #   path - file path or SVN URL (http(s) or file:)
+    #   message - commit message
+    #   env - for username and password
+    #   _ - Wunderbar context
+    # For example:
+    #   ASF::SVN.multiUpdate(path,message,env,_) do |text|
+    #     out = '...'
+    #     extra = []
+    #     url1 = 'https://svn.../' # etc
+    #     extra << ['mv',url1,url2]
+    #     extra << ['rm',url3]
+    #     [out, extra]
+    #   end
+    def self.multiUpdate(path, msg, env, _)
+      require 'tempfile'
+      tmpdir = Dir.mktmpdir.untaint
+      if File.file? path
+        basename = File.basename(path).untaint
+        parentdir = File.dirname(path).untaint
+        parenturl = ASF::SVN.getInfoItem(parentdir,'url')
+      else
+        uri = URI.parse(path)
+        # allow file: URIs for local testing
+        if uri.is_a? URI::File or uri.is_a? URI::HTTPS # includes HTTPS
+          basename = File.basename(uri.path).untaint
+          parentdir = File.dirname(uri.path).untaint
+          uri.path = parentdir
+          parenturl = uri
+        else
+          raise ArgumentError.new("Path '#{path}' must be a file or URL")
+        end
+      end
+      outputfile = File.join(tmpdir, basename).untaint
+      cmdfile = nil
+
+      begin
+        
+        # create an empty checkout
+        _.system ['svn', 'checkout', '--depth', 'empty',
+          '--non-interactive',
+          ['--username', env.user, '--password', env.password],
+          '--no-auth-cache',
+          parenturl, tmpdir
+          ] or raise Exception.new("Failed to create checkout")
+
+        # checkout the file
+        _.system ['svn', 'update',
+          '--non-interactive',
+          ['--username', env.user, '--password', env.password],
+          '--no-auth-cache',
+          outputfile
+          ] or raise Exception.new("Failed to checkout file")
+
+        # N.B. the revision is required for the svnmucc put to prevent overriding a previous update
+        # this is why the file is checked out rather than just extracted
+        filerev = ASF::SVN.getInfoItem(outputfile,'revision',env.user,env.password) # is auth needed here?
+        fileurl = ASF::SVN.getInfoItem(outputfile,'url',env.user,env.password)
+
+        # get the new file contents and any extra svn commands
+        contents, extra = yield File.read(outputfile)
+
+        # update the file
+        File.write outputfile, contents
+
+        # build the svnmucc commands
+        cmds = []
+        cmds << ['put', outputfile, fileurl]
+
+        extra.each do |cmd|
+          cmds << cmd
+        end
+        
+        # Now commit everything
+        ASF::SVN.svnmucc(cmds,msg,env,_,filerev,tmpdir)
+      ensure
+        FileUtils.rm_rf tmpdir
+      end
+    end
+    
     # update directory listing in /srv/svn/<name>.txt
     # N.B. The listing includes the trailing '/' so directory names can be distinguished
     # @return filerev, svnrev
@@ -568,24 +706,4 @@ module ASF
 
   end
 
-end
-
-if __FILE__ == $0 # local testing
-  class ENV_
-    def self.user
-      ENV['USER']
-    end
-    def self.password
-      'x x'
-    end
-  end
-  $LOAD_PATH.unshift '/srv/whimsy/lib'
-#  require 'whimsy/asf'
-  ASF::SVN.updateCI("msg",ENV_,{url: 'file:///Users/sebb/REPO'}) do |content|
-    ""
-  end
-#  path = ARGV.shift||'.'
-#  puts ASF::SVN.list(path, *ARGV)
-#  puts ASF::SVN.getInfo(path, *ARGV)
-#  puts ASF::SVN.getRevision(path, *ARGV)
 end

@@ -8,7 +8,8 @@ person = ASF::Person.find(@userid)
 
 mods={} # collect the changes
 
-if @publicname and person.attrs['cn'].first != @publicname
+# TODO should the code force 'cn' to be the same as @publicname?
+if @publicname and @publicname != '' and person.attrs['cn'].first != @publicname
   mods['cn'] = @publicname
 end
 
@@ -27,7 +28,7 @@ end
 
 # report the previous value in the response
 _previous({
-  publicname: person.attrs['cn'], 
+  commonname: person.attrs['cn'],
   givenname: person.attrs['givenName'],
   familyname: person.attrs['sn']
 })
@@ -39,7 +40,7 @@ else
     _ldap.update do
       # report the previous value in the response
       _previous({
-        publicname: person.attrs['cn'], 
+        commonname: person.attrs['cn'],
         givenname: person.attrs['givenName'],
         familyname: person.attrs['sn']
       })
@@ -50,17 +51,17 @@ else
   end
 end
 
-# determine commit message
-if person.icla.legal_name != @legalname
+# determine commit message for updating iclas.txt
+if person.icla && person.icla.legal_name != @legalname
   if person.icla.name != @publicname
     message = "Update legal and public name for #{@userid}"
   else
     message = "Update legal name for #{@userid}"
   end
-elsif person.icla.name != @publicname
+elsif person.icla && person.icla.name != @publicname
   message = "Update public name for #{@userid}"
 else
-  message = nil
+  message = nil # don't update iclas.txt
 end
 
 # update iclas.txt
@@ -77,8 +78,10 @@ if message
 end
 
 # update cache
-person.icla.legal_name = @legalname
-person.icla.name = @publicname
+if person.icla
+  person.icla.legal_name = @legalname
+  person.icla.name = @publicname
+end
 
 # return updated committer info
 _committer Committer.serialize(@userid, env)

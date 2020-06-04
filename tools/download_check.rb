@@ -29,6 +29,7 @@ $ARCHIVE_CHECK = false
 $ALWAYS_CHECK_LINKS = false
 $NO_CHECK_LINKS = false
 $NOFOLLOW = false # may be reset
+$ALLOW_HTTP = false # http links generate Warning, not Error
 
 $VERSION = nil
 
@@ -211,13 +212,24 @@ def check_closer_down(url)
   end
 end
 
+def WE(msg)
+  if $ALLOW_HTTP
+    W msg
+  else
+    E msg
+  end
+end
 # returns www|archive, stem and the hash extension
 def check_hash_loc(h,tlp)
   if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlp}/.*([^/]+)(\.(\w{3,6}))$}
-    E "HTTPS! #{h}" unless $1 == 'https'
+    WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
   elsif h =~ %r{^(https?)://downloads\.apache\.org/(?:incubator/)?#{tlp}/.*([^/]+)(\.(\w{3,6}))$}
-    E "HTTPS! #{h}" unless $1 == 'https'
+    WE "HTTPS! #{h}" unless $1 == 'https'
+    return $2,$3,$4
+  elsif h =~ %r{^(https?)://repo\.(maven)\.apache\.org/maven2/org/apache/#{tlp}/.+/([^/]+)(\.(\w{3,6}))$} # Maven
+    WE "HTTPS! #{h}" unless $1 == 'https'
+    W "Unexpected hash location #{h} for #{tlp}"
     return $2,$3,$4
   else
     E "Unexpected hash location #{h} for #{tlp}"
@@ -258,10 +270,11 @@ ALIASES = {
     'sig' => 'asc',
     'pgp' => 'asc',
     'signature' => 'asc',
-    'asc signature' => 'asc',
-    'pgp signature' => 'asc',
-    'gpg signature' => 'asc',
-    'openpgp signature' => 'asc',
+    'ascsignature' => 'asc',
+    'pgpsignature' => 'asc',
+    'pgpsignatures' => 'asc',
+    'gpgsignature' => 'asc',
+    'openpgpsignature' => 'asc',
 }
 
 # Need to be able to check if download is for a PMC or podling
@@ -270,7 +283,7 @@ ALIASES = {
 URL2TLP = Hash.new # URL host to TLP conversion
 URL2TLP['jspwiki-wiki'] = 'jspwiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?page=Downloads
 PMCS = Set.new # is this a TLP?
-ASF::Committee.pmcs.map do |p| 
+ASF::Committee.pmcs.map do |p|
     site = p.site[%r{//(.+?)\.apache\.org},1]
     name = p.name
     URL2TLP[site] = name unless site == name
@@ -282,7 +295,7 @@ end
 def text2ext(txt)
     # need to strip twice to handle ' [ asc ] '
     # TODO: perhaps just remove all white-space?
-    tmp = txt.downcase.strip.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(/ ?(digest|checksum)/,'').sub(/ \(tar\.gz\)| \(zip\)/,'').strip
+    tmp = txt.downcase.strip.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(/ ?(digest|checksum)/,'').sub(/ \(tar\.gz\)| \(zip\)| /,'').strip
     ALIASES[tmp] || tmp
 end
 
@@ -320,7 +333,7 @@ def _checkDownloadPage(path, tlp, version)
   
   return unless body
 
-  hasDisclaimer = body.include? 'Incubation is required of all newly accepted'
+  hasDisclaimer = body.gsub(%r{\s+},' ').include? 'Incubation is required of all newly accepted'
 
   if isTLP
      W "#{tlp} has Incubator disclaimer" if hasDisclaimer
@@ -416,14 +429,14 @@ def _checkDownloadPage(path, tlp, version)
         if vercheck[base]  # might be two links to same archive
             W "Already seen link for #{base}"
         else
-            vercheck[base] = []
+            vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : 'live']
         end
         # Text must include a '.' (So we don't check 'Source')
-        if t.include?('.') and not base == t
+        if t.include?('.') and not base == File.basename(t.strip.downcase)
           # text might be short version of link
           tmp = t.strip.sub(%r{.*/},'').downcase # 
           if base == tmp
-            W "Mismatch?: #{h} and #{t}"
+            W "Mismatch?: #{h} and '#{t}'"
           elsif base.end_with? tmp
             W "Mismatch?: #{h} and '#{tmp}'"
           elsif base.sub(/-bin\.|-src\./,'.').end_with? tmp
@@ -437,7 +450,7 @@ def _checkDownloadPage(path, tlp, version)
 
   links.each do |h,t|
     # Must occur before mirror check below
-    if h =~ %r{^https?://(?:(?:archive\.|www\.)?apache\.org/dist|downloads\.apache.org)/(.+\.(asc|sha\d+|md5|sha))$}
+    if h =~ %r{^https?://(?:(?:archive\.|www\.)?apache\.org/dist|downloads\.apache\.org|repo\.maven\.apache\.org/maven2/.+?)/(.+\.(asc|sha\d+|md5|sha))$}
         base = File.basename($1)
         ext = $2
         stem = base[0..-(2+ext.length)]
@@ -446,9 +459,11 @@ def _checkDownloadPage(path, tlp, version)
         else
           E "Bug: found hash #{h} for missing artifact #{stem}"
         end
+        next if t == '' # empire-db
         tmp = text2ext(t)
         next if ext == tmp # i.e. link is just the type or [TYPE]
         next if ext == 'sha' and tmp == 'sha1' # historic
+        next if (ext == 'sha256' or ext == 'sha512') and (t == 'SHA' or t == 'digest') # generic
         if not base == t and not t == 'checksum'
             E "Mismatch: #{h} and '#{t}'"
         end
@@ -458,8 +473,15 @@ def _checkDownloadPage(path, tlp, version)
   
   # did we find all required elements?
   vercheck.each do |k,v|
+    typ = v.shift
     unless v.include? "asc" and v.any? {|e| e =~ /^sha\d+$/ or e == 'md5' or e == 'sha'}
-      E "#{k} missing sig/hash: (found only: #{v.inspect})"
+      if typ == 'live'
+        E "#{k} missing sig/hash: (found only: #{v.inspect})"
+      elsif typ == 'archive'
+        W "#{k} missing sig/hash: (found only: #{v.inspect})"
+      else
+        E "#{k} missing sig/hash: (found only: #{v.inspect}) TYPE=#{typ}"
+      end
     end
   end
 
@@ -474,7 +496,11 @@ def _checkDownloadPage(path, tlp, version)
     if h =~ %r{\.(asc|sha256|sha512)$}
       host, stem, ext = check_hash_loc(h,tlp)
       if host == 'archive'
-        I "Ignoring archive hash #{h}"
+        if $ARCHIVE_CHECK
+          check_head(h, :E, "200", true, true)
+        else
+          I "Ignoring archive hash #{h}"
+        end
       elsif host
         if $NOFOLLOW
           I "Skipping archive hash #{h}"
@@ -499,8 +525,10 @@ def _checkDownloadPage(path, tlp, version)
       name = $1
       ext = $2
       if h =~ %r{https?://archive\.apache\.org/}
-        I "Ignoring archive artifact #{h}"
-        next
+        unless $ARCHIVE_CHECK
+            I "Ignoring archive artifact #{h}"
+            next
+        end
       end
       if h =~ %r{https?://(www\.)?apache\.org/dist}
         E "Must use mirror system #{h}"
@@ -582,7 +610,9 @@ def _checkDownloadPage(path, tlp, version)
 end
 
 def getTLP(url) # convert URL to TLP/podling
-  if url =~ %r{^https?://([^.]+)(\.incubator|\.us|\.eu)?\.apache\.org/}
+  if url =~ %r{^https?://cwiki\.apache\.org/confluence/display/([\S]+)/}
+      tlp = $1.downcase
+  elsif url =~ %r{^https?://([^.]+)(\.incubator|\.us|\.eu)?\.apache\.org/}
      tlp = URL2TLP[$1] || $1
   elsif url =~ %r{^https?://([^.]+)\.openoffice\.org/}
      tlp = 'openoffice'
@@ -616,6 +646,12 @@ if __FILE__ == $0
   $ALWAYS_CHECK_LINKS = ARGV.delete '--always'
   $NO_CHECK_LINKS = ARGV.delete '--nolinks'
   $ARCHIVE_CHECK = ARGV.delete '--archivecheck'
+  $ALLOW_HTTP = ARGV.delete '--http'
+
+  # check for any unhandled options
+  ARGV.each do |arg|
+    raise ArgumentError.new("Invalid option #{arg}") if arg.start_with? '--'
+  end
 
   init
 

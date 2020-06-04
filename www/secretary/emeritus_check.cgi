@@ -10,33 +10,23 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 require 'whimsy/asf/memapps'
 require 'wunderbar'
+require 'yaml'
 
-# Dummy class for members that don't have ids but do have membership apps
-class PersonNoId
-  attr_reader :member_name
-  attr_reader :id # needed for memapps.rb
-  def initialize name
-    @member_name = name
-  end
-end
-status = ASF::Member.status
+file = File.join(ASF::SVN.find!('emeritus-involuntary'),'emeritus-involuntary.yml')
+forced = Set.new
+YAML.load_file(file).each{|k,v| v.each{|w| forced.add w}}
 
-members = ASF::Member.new.map {|id, text| ASF::Person.find(id)}
-  
-# These members don't have ids, so cannot use the Person class
-members << PersonNoId.new("Shane Caraveo")
-members << PersonNoId.new("Robert Hartill")
-members << PersonNoId.new("Andrew Wilson")
-
-files = Hash[ASF::MemApps.names.map{|i| [i,'NAK']}]
+exmembers = ASF::Member.emeritus.map {|id| ASF::Person.find(id)}
+ASF::Person.preload(['cn'], exmembers) # speed up
+files = Hash[ASF::EmeritusFiles::listnames.map{|i| [i,'NAK']}]
 nofiles = Hash.new()
 
-members.each { |m|
-  ma, tried = ASF::MemApps.find(m)
-  if ma.length > 0
-    ma.each {|t| files[t]='OK'}
+exmembers.each { |m|
+  ma = ASF::EmeritusFiles.find(m)
+  if ma
+    files[ma] = 'OK'
   else
-    nofiles[m.name]=[m,status[m.name],tried]
+    nofiles[m.name]=m
   end
 }
 _html do
@@ -48,9 +38,9 @@ _html do
     th {background-color: #a0ddf0}
   }
 
-  _h1 'Compare members.txt with member_apps (**DRAFT**)'
+  _h1 'Compare members.txt with emeritus (**DRAFT**)'
 
-  _h2 'Files in member_apps that do not match any ASF member names'
+  _h2 'Files in emeritus that do not match any ASF member names'
 
   _table_ do
     _tr do
@@ -59,13 +49,13 @@ _html do
     files.select {|k,v| v == 'NAK'}.sort_by{|k| k[0].split('-').pop}.each do |k,v|
       _tr do
         _td do
-          _a k, href: "https://svn.apache.org/repos/private/documents/member_apps/#{k}", target: '_blank'
+          _a k, href: "https://svn.apache.org/repos/private/documents/emeritus/#{k}", target: '_blank'
         end
       end
     end
   end
 
-_h2 'Entries in members.txt which do not appear to have a matching membership app file'
+_h2 'Emeritus entries in members.txt which do not appear to have a matching emeritus file'
 _table_ do
   _tr do
     _th 'Availid'
@@ -73,10 +63,12 @@ _table_ do
     _th 'Public Name'
     _th 'Legal Name'
     _th 'Member.txt Name'
-    _th 'Status'
   end
-  nofiles.sort.each do |k,v|
-    person, status, tried = v
+  nofiles.sort_by{|k,v| v.member_name}.each do |k,v|
+    person = v
+    if forced.delete? person.member_name
+      next
+    end
     _tr do
       _td do
         _a k, href: "https://whimsy.apache.org/roster/committer/#{k}", target: '_blank'
@@ -96,10 +88,17 @@ _table_ do
       _td (person.icla.name rescue '')
       _td (person.icla.legal_name rescue '')
       _td person.member_name
-      _td status
     end
   end
 end
 
+  if forced.size > 0
+    _h2 'Files in emeritus-involuntary.yml that do not match any ASF emeritus member names'
+    _ul do
+      forced.each do |n|
+        _li n
+      end
+    end
+  end
 
 end

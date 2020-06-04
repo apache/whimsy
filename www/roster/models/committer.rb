@@ -140,12 +140,11 @@ class Committer
           file = ASF::MemApps.find1st(person)
           response[:forms][:member] = file if file 
         end
-        person_name = person.attrs['cn'].first.force_encoding('utf-8')
 
-        file = ASF::EmeritusFiles.find(person_name)
+        file = ASF::EmeritusFiles.find(person)
         response[:forms][:emeritus] = file if file
 
-        file = ASF::EmeritusRequestFiles.find(person_name)
+        file = ASF::EmeritusRequestFiles.find(person)
         response[:forms][:emeritus_request] = file if file
 
       else

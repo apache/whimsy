@@ -102,7 +102,7 @@ class ICLA2 < Vue
       end
 
       _input.btn.btn_primary value: 'File', type: 'submit', ref: 'file',
-        disabled: @submitted
+        disabled: @submitted || (not @icla) || (not @icla.filename)
     end
   end
 

@@ -24,6 +24,10 @@ _personalize_email(env.user)
 
 @filename.untaint if @filename =~ /\A\w[-.\w]*\z/
 
+if @email.strip.end_with? '@apache.org'
+  _warn "Cannot redirect email to an @apache.org address: #{@email.strip}"
+end
+
 if not ASF::ICLAFiles.Dir? @filename
   # Assumes there is a single matching file
   @existing = ASF::ICLAFiles.matchStem(@filename).first
