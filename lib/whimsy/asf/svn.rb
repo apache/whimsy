@@ -24,7 +24,7 @@ module ASF
       untaint
     @@repository_mtime = nil
     @@repository_entries = nil
-    @@svnHasPasswordFromStdin = nil
+    @svnHasPasswordFromStdin = nil
 
     # a hash of local working copies of Subversion repositories.  Keys are
     # subversion paths; values are file paths.
@@ -712,14 +712,14 @@ module ASF
 
     # Does this host's installation of SVN support --password-from-stdin?
     def self.passwordStdinOK?()
-      return @@svnHasPasswordFromStdin if @@svnHasPasswordFromStdin
+      return @svnHasPasswordFromStdin if @svnHasPasswordFromStdin
         out,err = self.svn('help','cat', {args: '-v'})
         if out
-          @@svnHasPasswordFromStdin = out.include? '--password-from-stdin'
+          @svnHasPasswordFromStdin = out.include? '--password-from-stdin'
         else
-          @@svnHasPasswordFromStdin = false
+          @svnHasPasswordFromStdin = false
         end
-      @@svnHasPasswordFromStdin
+      @svnHasPasswordFromStdin
     end
 
     private
