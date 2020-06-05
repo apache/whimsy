@@ -296,16 +296,23 @@ module ASF
         end
       end
 
+      open_opts = {}
       # password was supplied, add credentials
       password = options[:password]
       if password
-        cmd += ['--username', options[:user], '--password', password, '--no-auth-cache']
+        cmd += ['--username', options[:user], '--no-auth-cache']
+        if ASF::Config[:password_from_stdin] # TODO: better way to check this?
+          open_opts[:stdin_data] = password
+          cmd << '--password-from-stdin'
+        else
+          cmd += ['--password', password]
+        end
       end
 
       p cmd if options[:verbose]
 
       # issue svn command
-      out, err, status = Open3.capture3(*cmd)
+      out, err, status = Open3.capture3(*cmd, open_opts)
       if status.success?
         return out
       else
