@@ -140,9 +140,9 @@ class EmeritusRescindedFiles < EmeritusFiles
   end
 end
 
-class EmeritusRejoinedFiles < EmeritusFiles
+class EmeritusReinstatedFiles < EmeritusFiles
   def self.listnames
-    _, list = ASF::SVN.getlisting('emeritus-rejoined')
+    _, list = ASF::SVN.getlisting('emeritus-reinstated')
     list
   end
 end
