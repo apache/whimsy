@@ -261,6 +261,7 @@ module ASF
       return self.svn('list', path, {user: user, password: password})
     end
 
+    VALID_KEYS=[:args, :user, :password, :verbose]
     # low level SVN command
     # params:
     # command - info, list etc
@@ -275,6 +276,11 @@ module ASF
     def self.svn(command, path , options = {})
       return nil, 'command must not be nil' unless command
       return nil, 'path must not be nil' unless path
+      
+      bad_keys = options.keys - VALID_KEYS
+      if bad_keys.size > 0
+        return nil, "Following options not recognised: #{bad_keys.inspect}"
+      end
 
       # build svn command
       cmd = ['svn', command, path, '--non-interactive']
