@@ -310,7 +310,7 @@ module ASF
         # password was supplied, add credentials
       if password
         cmd += ['--username', user, '--no-auth-cache']
-        if ASF::Config[:password_from_stdin] # TODO: better way to check this?
+        if self.passwordStdinOK?()
           open_opts[:stdin_data] = password
           cmd << '--password-from-stdin'
         else
