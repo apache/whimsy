@@ -49,7 +49,7 @@ class PersonForms < Vue
                     href: "#{link}"
                 end
               end
-            elsif form == 'emeritus_requests_rescinded'
+            elsif form == 'emeritus_rescinded'
               _li do
                 if link == '' # has form but no karma to view it
                   _ 'Emeritus Rescinded'
