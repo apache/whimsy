@@ -179,7 +179,7 @@ def emit_post(cur_mtg_dir, meeting)
   # report on commit
   _div.transcript do
     Dir.mktmpdir do |tmpdir|
-      svn = `svn info #{MEETINGS}/#{meeting}`[/URL: (.*)/, 1]
+      svn =  ASF::SVN.getInfoItem(File.join(MEETINGS,meeting),'url')
 
       _.system [
         'svn', 'checkout', '--quiet', svn.untaint, tmpdir.untaint,

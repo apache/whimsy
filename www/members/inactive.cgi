@@ -113,7 +113,7 @@ _html do
           # apply and commit changes
           Dir.mktmpdir do |dir|
             _div_.transcript do
-              work = `svn info #{latest}`[/URL: (.*)/, 1]
+              work = ASF::SVN.getInfoItem(latest,'url')
               _.system ['svn', 'checkout', auth, '--depth', 'empty', work, dir]
               json = File.join(dir, 'non-participants.json')
               _.system ['svn', 'update', auth, json]

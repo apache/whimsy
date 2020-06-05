@@ -443,7 +443,7 @@ module ASF
         # create an empty checkout
         _.system ['svn', 'checkout', '--depth', 'empty', '--non-interactive',
           ['--username', env.user, '--password', env.password],
-          `svn info #{dir}`[/URL: (.*)/, 1], tmpdir]
+          self.getInfoItem(dir,'url'), tmpdir]
 
         # retrieve the file to be updated (may not exist)
         if basename
