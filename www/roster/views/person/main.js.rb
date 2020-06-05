@@ -355,8 +355,36 @@ class Person < Vue
     form = jQuery(event.currentTarget).closest('form')
     target = event.target
 
+    # if (cancel) button is pressed, don't submit but remove @edit form
+    cancel_submit = target.getAttribute('data-cancel-submit')
+
+    if cancel_submit
+      # remove the edit buttons and return
+      @edit = nil
+      return
+    end
+
     # serialize form
     formData = form.serializeArray();
+
+    # if additional data, add it to formData
+    emeritus_file_name = target.getAttribute('data-emeritus-file-name')
+    console.log('submit emeritus_file_name: ' + emeritus_file_name)
+    if emeritus_file_name
+      formData.push name: 'emeritusfilename', value: emeritus_file_name
+    end
+
+    emeritus_person_name = target.getAttribute('data-emeritus-person-name')
+    console.log('submit emeritus_person_name: ' + emeritus_person_name)
+    if emeritus_person_name
+      formData.push name: 'emerituspersonname', value: emeritus_person_name
+    end
+
+    emeritus_email = target.getAttribute('data-emeritus-email')
+    console.log('submit emeritus_email: ' + emeritus_email)
+    if emeritus_email
+      formData.push name: 'emeritusemail', value: emeritus_email
+    end
 
     # add button if it has a value
     if target and target.getAttribute('name') and target.getAttribute('value')
