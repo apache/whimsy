@@ -243,7 +243,7 @@ module ASF
     # Note: Path, Schedule and Depth are not currently supported
     #
     def self.getInfoItem(path, item, user=nil, password=nil)
-      out, err = self.svn('info', path, {flags: ['--show-item', item],
+      out, err = self.svn('info', path, {args: ['--show-item', item],
         user: user, password: password})
       if out
         if item.end_with? 'revision' # svn version 1.9.3 appends trailing spaces to *revision items
@@ -266,7 +266,7 @@ module ASF
     # command - info, list etc
     # path - the path to be used
     # options - hash of:
-    #  :flags - string or array of strings, e.g. '-v', ['--depth','empty']
+    #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
     #  :user, :password - auth
     #  :verbose - show command
     # Returns either:
@@ -279,14 +279,14 @@ module ASF
       # build svn command
       cmd = ['svn', command, path, '--non-interactive']
 
-      flags = options[:flags]
-      if flags
-        if flags.is_a? String
-          cmd << flags
-        elsif flags.is_a? Array
-          cmd += flags
+      args = options[:args]
+      if args
+        if args.is_a? String
+          cmd << args
+        elsif args.is_a? Array
+          cmd += args
         else
-          return nil, "flags '#{flags.inspect}' must be string or array"
+          return nil, "args '#{args.inspect}' must be string or array"
         end
       end
 
@@ -373,7 +373,7 @@ module ASF
         pass = env.password.dup.untaint
         # checkout committers/board (this does not have many files currently)
         out, err = self.svn('checkout', ciURL,
-          {flags: [tmpdir.untaint, '--quiet', '--depth', 'files'],
+          {args: [tmpdir.untaint, '--quiet', '--depth', 'files'],
            user: user, password: pass})
 
         raise Exception.new("Checkout of board folder failed: #{err}") unless out
@@ -389,7 +389,7 @@ module ASF
 
         # commit the updated file
         out, err = self.svn('commit', file,
-          {flags: [tmpdir.untaint,'--quiet', '--message', msg],
+          {args: [tmpdir.untaint,'--quiet', '--message', msg],
            user: user, password: pass})
 
         raise Exception.new("Update of committee-info.txt failed: #{err}") unless out
