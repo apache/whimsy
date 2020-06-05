@@ -261,14 +261,15 @@ module ASF
       return self.svn('list', path, {user: user, password: password})
     end
 
-    VALID_KEYS=[:args, :user, :password, :verbose]
+    VALID_KEYS=[:args, :user, :password, :verbose, :env]
     # low level SVN command
     # params:
     # command - info, list etc
     # path - the path to be used
     # options - hash of:
     #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
-    #  :user, :password - auth
+    #  :env - environment: source for user and password
+    #  :user, :password - used if env is not present
     #  :verbose - show command
     # Returns either:
     # - stdout
@@ -297,10 +298,17 @@ module ASF
       end
 
       open_opts = {}
-      # password was supplied, add credentials
-      password = options[:password]
+      env = options[:env]
+      if env
+        password = env.password
+        user = env.user
+      else
+        password = options[:password]
+        user = options[:user] if password
+      end
+        # password was supplied, add credentials
       if password
-        cmd += ['--username', options[:user], '--no-auth-cache']
+        cmd += ['--username', user, '--no-auth-cache']
         if ASF::Config[:password_from_stdin] # TODO: better way to check this?
           open_opts[:stdin_data] = password
           cmd << '--password-from-stdin'
