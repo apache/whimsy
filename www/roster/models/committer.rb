@@ -129,7 +129,10 @@ class Committer
       if person.icla and person.icla.claRef # Not all people have iclas
         claRef = person.icla.claRef.untaint
         file = ASF::ICLAFiles.match_claRef(claRef)
-        response[:forms][:icla] = file if file
+        if file
+          url =ASF::SVN.svnurl('iclas')
+          response[:forms][:icla] = "#{url}/#{file}"
+        end
       end
 
 
@@ -138,14 +141,35 @@ class Committer
 
         if person.icla # not all members have iclas
           file = ASF::MemApps.find1st(person)
-          response[:forms][:member] = file if file 
+          if file
+            url = ASF::SVN.svnurl('member_apps')
+            response[:forms][:member] = "#{url}/#{file}"
+          end
         end
 
         file = ASF::EmeritusFiles.find(person)
-        response[:forms][:emeritus] = file if file
+        if file
+          url = ASF::SVN.svnurl('emeritus')
+          response[:forms][:emeritus] = "#{url}/#{file}"
+        end
 
         file = ASF::EmeritusRequestFiles.find(person)
-        response[:forms][:emeritus_request] = file if file
+        if file
+          url = ASF::SVN.svnurl('emeritus-requests-received')
+          response[:forms][:emeritus_request] = "#{url}/#{file}"
+        end
+
+        file = ASF::EmeritusRescindedFiles.find(person)
+        if file
+          url = ASF::SVN.svnurl('emeritus-requests-rescinded')
+          response[:forms][:emeritus_rescinded] = "#{url}/#{file}"
+        end
+
+        file = ASF::EmeritusReinstatedFiles.find(person)
+        if file
+          url = ASF::SVN.svnurl('emeritus-reinstated')
+          response[:forms][:emeritus_reinstated] = "#{url}/#{file}"
+        end
 
       else
         if person.member_nomination
