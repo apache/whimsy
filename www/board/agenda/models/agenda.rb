@@ -157,7 +157,7 @@ class Agenda
       baseline = File.read(path) if Agenda[file][:mtime] == File.mtime(path)
 
       # check out empty directory
-      board = `svn info #{FOUNDATION_BOARD}`[/URL: (.*)/, 1]
+      board = ASF::SVN.getInfoItem(FOUNDATION_BOARD,'url')
       _.system ['svn', 'checkout', auth, '--depth', 'empty', board, dir]
 
       # update the file in question

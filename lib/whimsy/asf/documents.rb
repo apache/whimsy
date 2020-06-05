@@ -133,18 +133,18 @@ module ASF
     end
   end
 
-class EmeritusRescindedFiles < EmeritusFiles
-  def self.listnames
-    _, list = ASF::SVN.getlisting('emeritus-requests-rescinded')
-    list
+  class EmeritusRescindedFiles < EmeritusFiles
+    def self.listnames
+      _, list = ASF::SVN.getlisting('emeritus-requests-rescinded')
+      list
+    end
   end
-end
 
-class EmeritusReinstatedFiles < EmeritusFiles
-  def self.listnames
-    _, list = ASF::SVN.getlisting('emeritus-reinstated')
-    list
+  class EmeritusReinstatedFiles < EmeritusFiles
+    def self.listnames
+      _, list = ASF::SVN.getlisting('emeritus-reinstated')
+      list
+    end
   end
-end
 
 end

@@ -117,8 +117,7 @@ module ASF
         end
 
         @committee_mtime = File.mtime(file)
-        @@svn_change = Time.parse(
-          `svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
+        @@svn_change = Time.parse(ASF::SVN.getInfoItem(file,'last-changed-date')).gmtime
 
         parse_committee_info File.read(file)
       end

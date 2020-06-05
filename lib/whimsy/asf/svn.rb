@@ -24,6 +24,7 @@ module ASF
       untaint
     @@repository_mtime = nil
     @@repository_entries = nil
+    @svnHasPasswordFromStdin = nil
 
     # a hash of local working copies of Subversion repositories.  Keys are
     # subversion paths; values are file paths.
@@ -243,7 +244,7 @@ module ASF
     # Note: Path, Schedule and Depth are not currently supported
     #
     def self.getInfoItem(path, item, user=nil, password=nil)
-      out, err = self.svn('info', path, {flags: ['--show-item', item],
+      out, err = self.svn('info', path, {args: ['--show-item', item],
         user: user, password: password})
       if out
         if item.end_with? 'revision' # svn version 1.9.3 appends trailing spaces to *revision items
@@ -261,13 +262,15 @@ module ASF
       return self.svn('list', path, {user: user, password: password})
     end
 
+    VALID_KEYS=[:args, :user, :password, :verbose, :env]
     # low level SVN command
     # params:
     # command - info, list etc
     # path - the path to be used
     # options - hash of:
-    #  :flags - string or array of strings, e.g. '-v', ['--depth','empty']
-    #  :user, :password - auth
+    #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
+    #  :env - environment: source for user and password
+    #  :user, :password - used if env is not present
     #  :verbose - show command
     # Returns either:
     # - stdout
@@ -275,31 +278,50 @@ module ASF
     def self.svn(command, path , options = {})
       return nil, 'command must not be nil' unless command
       return nil, 'path must not be nil' unless path
+      
+      bad_keys = options.keys - VALID_KEYS
+      if bad_keys.size > 0
+        return nil, "Following options not recognised: #{bad_keys.inspect}"
+      end
 
       # build svn command
       cmd = ['svn', command, path, '--non-interactive']
 
-      flags = options[:flags]
-      if flags
-        if flags.is_a? String
-          cmd << flags
-        elsif flags.is_a? Array
-          cmd += flags
+      args = options[:args]
+      if args
+        if args.is_a? String
+          cmd << args
+        elsif args.is_a? Array
+          cmd += args
         else
-          return nil, "flags '#{flags.inspect}' must be string or array"
+          return nil, "args '#{args.inspect}' must be string or array"
         end
       end
 
-      # password was supplied, add credentials
-      password = options[:password]
+      open_opts = {}
+      env = options[:env]
+      if env
+        password = env.password
+        user = env.user
+      else
+        password = options[:password]
+        user = options[:user] if password
+      end
+        # password was supplied, add credentials
       if password
-        cmd += ['--username', options[:user], '--password', password, '--no-auth-cache']
+        cmd += ['--username', user, '--no-auth-cache']
+        if self.passwordStdinOK?()
+          open_opts[:stdin_data] = password
+          cmd << '--password-from-stdin'
+        else
+          cmd += ['--password', password]
+        end
       end
 
       p cmd if options[:verbose]
 
       # issue svn command
-      out, err, status = Open3.capture3(*cmd)
+      out, err, status = Open3.capture3(*cmd, open_opts)
       if status.success?
         return out
       else
@@ -373,7 +395,7 @@ module ASF
         pass = env.password.dup.untaint
         # checkout committers/board (this does not have many files currently)
         out, err = self.svn('checkout', ciURL,
-          {flags: [tmpdir.untaint, '--quiet', '--depth', 'files'],
+          {args: [tmpdir.untaint, '--quiet', '--depth', 'files'],
            user: user, password: pass})
 
         raise Exception.new("Checkout of board folder failed: #{err}") unless out
@@ -389,7 +411,7 @@ module ASF
 
         # commit the updated file
         out, err = self.svn('commit', file,
-          {flags: [tmpdir.untaint,'--quiet', '--message', msg],
+          {args: [tmpdir.untaint,'--quiet', '--message', msg],
            user: user, password: pass})
 
         raise Exception.new("Update of committee-info.txt failed: #{err}") unless out
@@ -421,7 +443,7 @@ module ASF
         # create an empty checkout
         _.system ['svn', 'checkout', '--depth', 'empty', '--non-interactive',
           ['--username', env.user, '--password', env.password],
-          `svn info #{dir}`[/URL: (.*)/, 1], tmpdir]
+          self.getInfoItem(dir,'url'), tmpdir]
 
         # retrieve the file to be updated (may not exist)
         if basename
@@ -686,6 +708,18 @@ module ASF
           end
         end
       end
+    end
+
+    # Does this host's installation of SVN support --password-from-stdin?
+    def self.passwordStdinOK?()
+      return @svnHasPasswordFromStdin if @svnHasPasswordFromStdin
+        out,err = self.svn('help','cat', {args: '-v'})
+        if out
+          @svnHasPasswordFromStdin = out.include? '--password-from-stdin'
+        else
+          @svnHasPasswordFromStdin = false
+        end
+      @svnHasPasswordFromStdin
     end
 
     private

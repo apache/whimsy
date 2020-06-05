@@ -217,5 +217,12 @@ describe ASF::SVN do
       expect(content.size).to be > 1000 # need a better test
     end
   end
-      
+
+  describe "ASF::SVN.passwordStdinOK?" do
+    it "passwordStdinOK? should return true or false" do
+      res = ASF::SVN.passwordStdinOK?
+      expect(res).to be(true).or be(false)
+    end
+  end
+
 end

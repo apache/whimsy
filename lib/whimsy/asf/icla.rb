@@ -55,8 +55,7 @@ module ASF
     def self.svn_change
       self.refresh
       if SOURCE
-        @@svn_change ||= Time.parse(
-          `svn info #{SOURCE}`[/Last Changed Date: (.*) \(/, 1]).gmtime
+        @@svn_change ||= Time.parse(ASF::SVN.getInfoItem(SOURCE,'last-changed-date')).gmtime
       end
     end
 

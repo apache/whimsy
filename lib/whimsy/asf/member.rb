@@ -111,9 +111,8 @@ module ASF
     # Return the Last Changed Date for <tt>members.txt</tt> in svn as
     # a <tt>Time</tt> object.
     def self.svn_change
-      foundation = ASF::SVN['foundation']
-      file = File.join(foundation, 'members.txt')
-      return Time.parse(`svn info #{file}`[/Last Changed Date: (.*) \(/, 1]).gmtime
+      file = File.join(ASF::SVN['foundation'], 'members.txt')
+      return Time.parse(ASF::SVN.getInfoItem(file,'last-changed-date')).gmtime
     end
 
     # sort an entire members.txt file

@@ -521,9 +521,10 @@ get '/new' do
   @prev_month = @meeting.to_date.prev_month.strftime('%B')
 
   # retrieve latest committee info
+  # TODO: this is the workspace copy -- should it be using the copy from SVN instead?
   cinfo = File.join(ASF::SVN['board'], 'committee-info.txt')
   info = ASF::SVN.getInfo(cinfo, env.user, env.password)
-  _, contents = ASF::SVN.get(cinfo, env.user, env.password)
+  contents = ASF::SVN.svn('cat', cinfo, {env: env})
   ASF::Committee.load_committee_info(contents, info)
 
   # extract committees expected to report 'next month'
