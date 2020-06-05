@@ -20,7 +20,7 @@ class PersonForms < Vue
                 if link == '' # has ICLA bu no karma to view it
                   _ 'ICLA'
                 else
-                  _a 'ICLA', href: "#{documents}/iclas/#{link}"
+                  _a 'ICLA', href: "#{link}"
                 end
               end
             elsif form == 'member'
@@ -29,7 +29,7 @@ class PersonForms < Vue
                   _ 'Member App'
                 else
                   _a 'Member App',
-                    href: "#{documents}/member_apps/#{link}"
+                    href: "#{link}"
                 end
               end
             elsif form == 'emeritus'
@@ -38,7 +38,7 @@ class PersonForms < Vue
                   _ 'Emeritus'
                 else
                   _a 'Emeritus',
-                    href: "#{documents}/emeritus/#{link}"
+                    href: "#{link}"
                 end
               end
             elsif form == 'emeritus_request'
@@ -47,7 +47,25 @@ class PersonForms < Vue
                   _ 'Emeritus Request'
                 else
                   _a 'Emeritus Request',
-                    href: "#{documents}/emeritus-requests-received/#{link}"
+                    href: "#{link}"
+                end
+              end
+            elsif form == 'emeritus_rescinded'
+              _li do
+                if link == '' # has form but no karma to view it
+                  _ 'Emeritus Rescinded'
+                else
+                  _a 'Emeritus Rescinded',
+                    href: "#{link}"
+                end
+              end
+            elsif form == 'emeritus_reinstated'
+              _li do
+                if link == '' # has form but no karma to view it
+                  _ 'Emeritus Reinstated'
+                else
+                  _a 'Emeritus Reinstated',
+                    href: "#{link}"
                 end
               end
             else
