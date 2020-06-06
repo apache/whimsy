@@ -341,31 +341,15 @@ module ASF
     end
 
     # retrieve revision, content for a file in svn
+    # N.B. There is a window between fetching the revision and getting the file contents
     def self.get(path, user=nil, password=nil)
-      # build svn info command
-      cmd = ['svn', 'info', path, '--non-interactive']
-
-      # password was supplied, add credentials
-      if password
-        cmd += ['--username', user, '--password', password, '--no-auth-cache']
+      revision, _ = self.getInfoItem(path, 'revision', {user: user, password: password})
+      if revision
+        content, _ = self.svn('cat', path, {user: user, password: password})
+      else
+        revision = '0'
+        content = nil
       end
-
-      # default the values to return
-      revision = '0'
-      content = nil
-
-      # issue svn info command
-      stdout, status = Open3.capture2(*cmd)
-      if status.success?
-        # extract revision number
-        revision = stdout[/^Revision: (\d+)/, 1]
-
-        # extract contents
-        cmd[1] = 'cat'
-        content, status = Open3.capture2(*cmd)
-      end
-
-      # return results
       return revision, content
     end
 
