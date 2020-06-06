@@ -578,7 +578,7 @@ module ASF
     #     extra << ['rm',url3]
     #     [out, extra]
     #   end
-    def self.multiUpdate(path, msg, env, _)
+    def self.multiUpdate(path, msg, env, _, options = {})
       require 'tempfile'
       tmpdir = Dir.mktmpdir.untaint
       if File.file? path
@@ -638,7 +638,11 @@ module ASF
         end
         
         # Now commit everything
-        ASF::SVN.svnmucc(cmds,msg,env,_,filerev,tmpdir)
+        if options[:dryrun]
+          puts cmds # TODO: not sure this is correct for Wunderbar
+        else
+          ASF::SVN.svnmucc(cmds,msg,env,_,filerev,tmpdir)
+        end
       ensure
         FileUtils.rm_rf tmpdir
       end
