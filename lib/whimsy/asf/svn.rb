@@ -366,7 +366,10 @@ module ASF
         end
       end
 
-      p cmd if options[:dryrun] # before creds added
+      if options[:dryrun] # before creds added
+        # TODO: improve this
+        return _.system ['echo', cmd.inspect]
+      end
 
       # add credentials if required
       open_opts = {}
@@ -392,12 +395,7 @@ module ASF
 
       p cmd if options[:verbose] # includes auth
 
-      # issue svn command
-      if options[:dryrun]
-        0 # TODO is this the correct return value?
-      else
-        _.system cmd
-      end
+      _.system cmd
     end
 
     # retrieve revision, [err] for a path in svn
