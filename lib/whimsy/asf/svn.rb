@@ -559,7 +559,7 @@ module ASF
     #   commands - array of commands
     #   msg - commit message
     #   env - environment (username/password)
-    #   _ - Wunderbar
+    #   _ - Wunderbar context
     #   revision - if defined, supply the --revision svnmucc parameter
     #   temp - use this temporary directory (and don't remove it)
     # The commands must themselves be arrays to ensure correct processing of white-space
@@ -568,8 +568,8 @@ module ASF
     #     url1 = 'https://svn.../' # etc
     #     commands << ['mv',url1,url2]
     #     commands << ['rm',url3]
-    #   ASF::SVN.svnmucc(commands,message,env,_)
-    def self.svnmucc(commands, msg, env, _, revision=nil, temp=nil)
+    #   ASF::SVN.svnmucc_(commands,message,env,_)
+    def self.svnmucc_(commands, msg, env, _, revision=nil, temp=nil)
       require 'tempfile'
       tmpdir = temp ? temp : Dir.mktmpdir.untaint
 
@@ -650,20 +650,12 @@ module ASF
       begin
 
         # create an empty checkout
-        _.system ['svn', 'checkout', '--depth', 'empty',
-          '--non-interactive',
-          ['--username', env.user, '--password', env.password],
-          '--no-auth-cache',
-          parenturl, tmpdir
-          ]
+        rc = self.svn_('checkout', parenturl, _, {args: ['--depth', 'empty', tmpdir], env: env})
+        raise "svn failure #{rc} checkout #{parenturl}" unless rc == 0
 
         # checkout the file
-        _.system ['svn', 'update',
-          '--non-interactive',
-          ['--username', env.user, '--password', env.password],
-          '--no-auth-cache',
-          outputfile
-          ]
+        rc = self.svn_('update', outputfile, _, {env: env})
+        raise "svn failure #{rc} update #{outputfile}" unless rc == 0
 
         # N.B. the revision is required for the svnmucc put to prevent overriding a previous update
         # this is why the file is checked out rather than just extracted
@@ -688,7 +680,8 @@ module ASF
         if options[:dryrun]
           puts cmds # TODO: not sure this is correct for Wunderbar
         else
-          ASF::SVN.svnmucc(cmds,msg,env,_,filerev,tmpdir)
+          rc = ASF::SVN.svnmucc_(cmds,msg,env,_,filerev,tmpdir)
+          raise "svnmucc failure #{rc} committing" unless rc == 0
         end
       ensure
         FileUtils.rm_rf tmpdir
