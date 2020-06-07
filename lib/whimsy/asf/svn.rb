@@ -262,7 +262,7 @@ module ASF
       return self.svn('list', path, {user: user, password: password})
     end
 
-    VALID_KEYS=[:args, :user, :password, :verbose, :env]
+    VALID_KEYS=[:args, :user, :password, :verbose, :env, :dryrun]
     # low level SVN command
     # params:
     # command - info, list etc
@@ -326,6 +326,77 @@ module ASF
         return out
       else
         return nil, err
+      end
+    end
+
+    # low level SVN command for use in Wunderbar context (_json, _text etc)
+    # params:
+    # command - info, list etc
+    # path - the path to be used
+    # _ - wunderbar context
+    # options - hash of:
+    #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
+    #  :env - environment: source for user and password
+    #  :user, :password - used if env is not present
+    #  :verbose - show command (including credentials) before executing it
+    #  :dryrun - show command (excluding credentials), without executing it
+    #
+    # Returns:
+    # - status code
+    def self.svn_(command, path, _, options = {})
+      return nil, 'command must not be nil' unless command
+      return nil, 'path must not be nil' unless path
+      
+      bad_keys = options.keys - VALID_KEYS
+      if bad_keys.size > 0
+        return nil, "Following options not recognised: #{bad_keys.inspect}"
+      end
+
+      # build svn command
+      cmd = ['svn', command, path, '--non-interactive']
+
+      args = options[:args]
+      if args
+        if args.is_a? String
+          cmd << args
+        elsif args.is_a? Array
+          cmd += args
+        else
+          return nil, "args '#{args.inspect}' must be string or array"
+        end
+      end
+
+      p cmd if options[:dryrun] # before creds added
+
+      # add credentials if required
+      open_opts = {}
+      env = options[:env]
+      if env
+        password = env.password
+        user = env.user
+      else
+        password = options[:password]
+        user = options[:user] if password
+      end
+      # password was supplied, add credentials
+      if password
+        creds = ['--no-auth-cache', '--username', user]
+        if self.passwordStdinOK?() && false # not sure how to support this
+          open_opts[:stdin_data] = password
+          creds << '--password-from-stdin'
+        else
+          creds += ['--password', password]
+        end
+        cmd << creds
+      end
+
+      p cmd if options[:verbose] # includes auth
+
+      # issue svn command
+      if options[:dryrun]
+        0 # TODO is this the correct return value?
+      else
+        _.system cmd
       end
     end
 

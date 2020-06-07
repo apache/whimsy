@@ -3,6 +3,7 @@
 
 require 'spec_helper'
 require 'whimsy/asf'
+require 'wunderbar'
 
 describe ASF::SVN do
   
@@ -228,6 +229,21 @@ describe ASF::SVN do
     it "passwordStdinOK? should return true or false" do
       res = ASF::SVN.passwordStdinOK?
       expect(res).to be(true).or be(false)
+    end
+  end
+
+  describe "ASF::SVN.svn_" do
+    it "svn_('info') should return array" do
+      # TODO: this is a bit of a hack
+      _ = Wunderbar::JsonBuilder.new(Struct.new(:params).new({}))
+      repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+      rc = ASF::SVN.svn_('info', repo, _)
+      expect(rc).to be(0)
+      # expect(res).to be(true).or be(false)
+      expect(_.target?(Hash)).to be(true)
+      hash = _.target? # TODO: another hack
+      expect(hash['transcript'].class).to equal(Array)
+      expect(hash['transcript'].include?('Name: _template.xml')).to be(true)
     end
   end
 
