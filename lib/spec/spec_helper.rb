@@ -34,3 +34,31 @@ end
 def fixture_path(*path)
   File.join SPEC_ROOT, 'fixtures', path
 end
+
+# run _json code and return [return code, target]
+def _json(&block)
+  # TODO: This is a bit of a hack
+  js = Wunderbar::JsonBuilder.new(Struct.new(:params).new({}))
+  js.log_level = :fatal
+  rc = nil
+  begin
+    rc = yield js
+  rescue Exception => e
+    js._exception(e)
+  end
+  [rc, js.target?]
+end
+
+# for testing code that needs credentials
+class ENV_
+  def initialize(user=nil, pass=nil)
+    @user = user || 'user'
+    @pass = pass || 'pass'
+  end
+  def user
+    @user
+  end
+  def password
+    @pass
+  end
+end
