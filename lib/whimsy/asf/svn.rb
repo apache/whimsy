@@ -544,6 +544,7 @@ module ASF
         if options[:dryrun]
           # show what would have been committed
           rc = _.system ['svn', 'diff', tmpfile]
+          return # No point checking for pending changes
         else
           # commit the changes
           rc = _.system ['svn', 'commit', tmpfile || tmpdir, '--non-interactive',
