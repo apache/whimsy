@@ -346,6 +346,7 @@ module ASF
     def self.svn_(command, path, _, options = {})
       return nil, 'command must not be nil' unless command
       return nil, 'path must not be nil' unless path
+      return nil, 'wunderbar (_) must not be nil' unless _
       
       bad_keys = options.keys - VALID_KEYS
       if bad_keys.size > 0
@@ -494,16 +495,13 @@ module ASF
       # N.B. the extra enclosing [] tell _.system not to show their contents on error
       begin
         # create an empty checkout
-        _.system ['svn', 'checkout', '--depth', 'empty', '--non-interactive',
-          ['--username', env.user, '--password', env.password],
-          self.getInfoItem(dir,'url'), tmpdir]
+        self.svn_('checkout', self.getInfoItem(dir,'url'), _,
+          {args: ['--depth', 'empty', tmpdir], env: env})
 
         # retrieve the file to be updated (may not exist)
         if basename
           tmpfile = File.join(tmpdir, basename).untaint
-          _.system ['svn', 'update', '--non-interactive',
-            ['--username', env.user, '--password', env.password],
-            tmpfile]
+          self.svn_('update', tmpfile, _, {env: env})
         else
           tmpfile = nil
         end
@@ -528,26 +526,21 @@ module ASF
         if contents and not contents.empty?
           File.write tmpfile, contents
           if not previous_contents
-            _.system ['svn', 'add', '--non-interactive',
-              ['--username', env.user, '--password', env.password],
-              tmpfile]
+            self.svn_('add', tmpfile, _, {env: env}) # TODO is auth needed here?
           end
         elsif tmpfile and File.file? tmpfile
           File.unlink tmpfile
-          _.system ['svn', 'delete', '--non-interactive',
-            ['--username', env.user, '--password', env.password],
-            tmpfile]
+          self.svn_('delete', tmpfile, _, {env: env}) # TODO is auth needed here?
         end
 
         if options[:dryrun]
           # show what would have been committed
-          rc = _.system ['svn', 'diff', tmpfile]
+          rc = self.svn_('diff', tmpfile, _)
           return # No point checking for pending changes
         else
           # commit the changes
-          rc = _.system ['svn', 'commit', tmpfile || tmpdir, '--non-interactive',
-            ['--username', env.user, '--password', env.password],
-            '--message', msg.untaint]
+          rc = self.svn_('commit', tmpfile || tmpdir, _,
+             {args: ['--message', msg.untaint], env: env})
         end
 
         # fail if there are pending changes
