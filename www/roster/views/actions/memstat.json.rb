@@ -19,7 +19,7 @@ message = "Move #{ASF::Person.find(@userid).member_name} to #{@action}"
 updmem = @action == 'emeritus' or @action == 'active' or @action == 'deceased'
 
 # update members.txt only for secretary actions
-_svn.multiUpdate members_txt, message: message, env, _  do |dir, text|
+ASF::SVN.multiUpdate members_txt, message, env, _ do |text|
   # default command is empty
   command = ""
   # remove user's entry
@@ -58,16 +58,14 @@ _svn.multiUpdate members_txt, message: message, env, _  do |dir, text|
   # perform the insertion
   text.insert index, entry
 
-  # save the updated text
-  ASF::Member.text = text
-
   # return the updated (and normalized) text and extra svn command
-  [ASF::Member.text, extra]
+  [text, extra]
 end if updmem #only update members.txt for secretary actions
 
 if @action == 'rescind_emeritus'
   emeritus_rescinded_url = ASF::SVN.svnurl('emeritus')
   command = "svn mv #{@emeritusfilename} #{emeritus_rescinded_url}; svn commit -m \"#{message}\""
+  _system command
   Wunderbar.warn ("memstat.json.rb rescind_emeritus command: #{command}")
 elsif @action == 'request_emeritus'
   # TODO send email to secretary requesting emeritus
