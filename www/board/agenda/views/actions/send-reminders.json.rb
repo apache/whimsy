@@ -44,8 +44,8 @@ Agenda.parse(@agenda, :full).each do |item|
   }
 
   # apply changes to both subject and the message text itself
-  subject = Mustache.render(@subject, view)
-  message = Mustache.render(@message, view)
+  subject = Mustache.render(@subject.untaint, view)
+  message = Mustache.render(@message.untaint, view)
 
   # cc list
   cclist = []
