@@ -176,7 +176,7 @@ task "subscribe to members@apache.org" do
 
     # write out subscription request
     File.write "#{dir}/subreq/#{fn}", @subreq
-    Kernel.system 'svn', 'add', "#{dir}/subreq/#{fn}"
+    svn 'add', "#{dir}/subreq/#{fn}"
 
     # Show changes
     svn 'diff', "#{dir}/subreq"
