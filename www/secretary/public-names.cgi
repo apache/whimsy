@@ -60,33 +60,7 @@ _html do
 
     # update SVN
     unless svn_updates.empty?
-      officers = Dir.mktmpdir.untaint
-      _.system ['svn', 'checkout', '--depth', 'empty',
-        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
-        'https://svn.apache.org/repos/private/foundation/officers',
-        officers]
-
-      _.system ['svn', 'update', 
-        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
-        officers + '/iclas.txt']
-      next unless File.exist? officers + '/iclas.txt'
-      iclas = File.read(officers + '/iclas.txt')
-
-      updates.each do |id, names|
-        pattern = Regexp.new("^#{Regexp.escape(id)}:(.*?):(.*?):")
-
-        if names['legal_name']
-          iclas[pattern,1] = names['legal_name'].gsub("\u00A0", ' ')  
-        end
-
-        if names['public_name']
-          iclas[pattern,2] = names['public_name'].gsub("\u00A0", ' ') 
-        end
-      end
-
-      File.write(officers + '/iclas.txt', ASF::ICLA.sort(iclas))
-      _.system ['svn', 'diff', officers + '/iclas.txt']
-
+      # construct the commit message
       if svn_updates.length > 8
         message = "Update #{svn_updates.length} names"
       else
@@ -107,11 +81,25 @@ _html do
           end
         end
       end
+      path = File.join(ASF::SVN.svnurl('officers'),'iclas.txt')
+      env = Struct.new(:user, :password).new($USER, $PASSWORD)
+      ASF::SVN.update(path,message,env,_) do |tmpdir, iclas|
+        updates.each do |id, names|
+          pattern = Regexp.new("^#{Regexp.escape(id)}:(.*?):(.*?):")
 
-      _.system ['svn', 'commit', '-m', message, 
-        ['--no-auth-cache', '--non-interactive'],
-        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD),
-        officers + '/iclas.txt']
+          if names['legal_name']
+            iclas[pattern,1] = names['legal_name'].gsub("\u00A0", ' ')  
+          end
+  
+          if names['public_name']
+            iclas[pattern,2] = names['public_name'].gsub("\u00A0", ' ') 
+          end
+        end
+
+        iclas # return the updated file
+  
+      end
+
     end
 
     # update LDAP
