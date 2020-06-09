@@ -26,7 +26,7 @@ describe "ASF::SVN.svn_" do
 
     expect(rc).to be(0)
     expect(out['transcript'].class).to equal(Array)
-    exp = ["svn", "info", "https://svn.apache.org/repos/asf/attic/site/xdocs/projects/_template.xml", "--non-interactive"]
+    exp = ["svn", "info", "--non-interactive", "--", "https://svn.apache.org/repos/asf/attic/site/xdocs/projects/_template.xml"]
     expect(out['transcript'][1]).to eq(exp.inspect)
   end
 end

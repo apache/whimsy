@@ -340,7 +340,7 @@ module ASF
     # low level SVN command for use in Wunderbar context (_json, _text etc)
     # params:
     # command - info, list etc
-    # path - the path to be used
+    # path - the path(s) to be used - String or Array of Strings
     # _ - wunderbar context
     # options - hash of:
     #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
@@ -362,7 +362,7 @@ module ASF
       end
 
       # build svn command
-      cmd = ['svn', command, path, '--non-interactive']
+      cmd = ['svn', command, '--non-interactive']
 
       args = options[:args]
       if args
@@ -373,11 +373,6 @@ module ASF
         else
           return nil, "args '#{args.inspect}' must be string or array"
         end
-      end
-
-      if options[:dryrun] # before creds added
-        # TODO: improve this
-        return _.system ['echo', cmd.inspect]
       end
 
       # add credentials if required
@@ -391,7 +386,7 @@ module ASF
         user = options[:user] if password
       end
       # password was supplied, add credentials
-      if password
+      if password and not options[:verbose]
         creds = ['--no-auth-cache', '--username', user]
         if self.passwordStdinOK?() && false # not sure how to support this
           open_opts[:stdin_data] = password
@@ -402,7 +397,20 @@ module ASF
         cmd << creds
       end
 
+      cmd << '--' # ensure paths cannot be mistaken for options
+
+      if path.is_a? Array
+        cmd += path
+      else
+        cmd << path
+      end
+
       p cmd if options[:verbose] # includes auth
+
+      if options[:dryrun] # before creds added
+        # TODO: improve this
+        return _.system ['echo', cmd.inspect]
+      end
 
       _.system cmd
     end
