@@ -64,7 +64,7 @@ Agenda.parse(@agenda, :full).each do |item|
     from from
     to "#{item['owner']} <#{item['chair_email']}>".untaint
     cc cclist unless cclist.empty?
-    subject subject
+    subject subject.untaint
 
     body message.untaint
   end
