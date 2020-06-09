@@ -352,11 +352,8 @@ _html do
 
                     # and commit the change ...
                     _h2 'Commit messages'
-                    # TODO replace with library method see WHIMSY-103
-                    rc = _.system ['svn',
-                      ['--username', env.user, '--password', env.password],
-                      'commit', File.join(tmpdir, 'new-account-reqs.txt'),
-                      '-m', "#{@user} account request by #{user.id} for #{requestor}"]
+                    rc = ASF::SVN.svn_('commit', File.join(tmpdir, 'new-account-reqs.txt'), _,
+                          {args: ['--message', "#{@user} account request by #{user.id} for #{requestor}"], env: env})
 
                     if rc == 0
                       mail.deliver!
