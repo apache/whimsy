@@ -254,8 +254,7 @@ _html do
             credentials = {user: 'whimsysvn'}
           end
 
-          options = credentials.merge({args: tmpdir})
-          ASF::SVN.svn_('checkout', SUBREQ, _, options)
+          ASF::SVN.svn_('checkout', [SUBREQ, tmpdir], _, credentials)
 
           Dir.chdir tmpdir do
 
