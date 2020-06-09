@@ -456,8 +456,8 @@ module ASF
         user = env.user.dup.untaint
         pass = env.password.dup.untaint
         # checkout committers/board (this does not have many files currently)
-        out, err = self.svn('checkout', ciURL,
-          {args: [tmpdir.untaint, '--quiet', '--depth', 'files'],
+        out, err = self.svn('checkout', [ciURL, tmpdir.untaint],
+          {args: ['--quiet', '--depth', 'files'],
            user: user, password: pass})
 
         raise Exception.new("Checkout of board folder failed: #{err}") unless out
@@ -472,8 +472,8 @@ module ASF
         File.write(file, info)
 
         # commit the updated file
-        out, err = self.svn('commit', file,
-          {args: [tmpdir.untaint,'--quiet', '--message', msg],
+        out, err = self.svn('commit', [file, tmpdir.untaint],
+          {args: ['--quiet', '--message', msg],
            user: user, password: pass})
 
         raise Exception.new("Update of committee-info.txt failed: #{err}") unless out
@@ -503,8 +503,8 @@ module ASF
       # N.B. the extra enclosing [] tell _.system not to show their contents on error
       begin
         # create an empty checkout
-        self.svn_('checkout', self.getInfoItem(dir,'url'), _,
-          {args: ['--depth', 'empty', tmpdir], env: env})
+        self.svn_('checkout', [self.getInfoItem(dir,'url'), tmpdir], _,
+          {args: ['--depth', 'empty'], env: env})
 
         # retrieve the file to be updated (may not exist)
         if basename
@@ -658,7 +658,7 @@ module ASF
       begin
 
         # create an empty checkout
-        rc = self.svn_('checkout', parenturl, _, {args: ['--depth', 'empty', tmpdir], env: env})
+        rc = self.svn_('checkout', [parenturl, tmpdir], _, {args: ['--depth', 'empty'], env: env})
         raise "svn failure #{rc} checkout #{parenturl}" unless rc == 0
 
         # checkout the file
