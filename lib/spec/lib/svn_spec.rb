@@ -232,4 +232,22 @@ describe ASF::SVN do
     end
   end
 
+  describe "ASF::SVN.svn" do
+    it "svn('info', path) should return 'Name: path'" do
+      repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+      out, err = ASF::SVN.svn('info',repo)
+      expect(out).to match(/^Name: _template.xml$/)
+    end
+    it "svn('info', [path]) should return 'Name: path'" do
+      repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+      out, err = ASF::SVN.svn('info',[repo])
+      expect(out).to match(/^Name: _template.xml$/)
+    end
+    it "svn('info', [path1, path2], {args: ['--show-item','kind']}) should return 'file ...'" do
+      path1 = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+      path2 = File.join(ASF::SVN.svnurl('attic-xdocs'),'jakarta.xml')
+      out, err = ASF::SVN.svn('info',[path1, path2], {args: ['--show-item','kind']})
+      expect(out).to match(/^file +https:/)
+    end
+  end
 end

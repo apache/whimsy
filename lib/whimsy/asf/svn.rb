@@ -266,7 +266,7 @@ module ASF
     # low level SVN command
     # params:
     # command - info, list etc
-    # path - the path to be used
+    # path - the path(s) to be used - String or Array of Strings
     # options - hash of:
     #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
     #  :env - environment: source for user and password
@@ -285,7 +285,7 @@ module ASF
       end
 
       # build svn command
-      cmd = ['svn', command, path, '--non-interactive']
+      cmd = ['svn', command, '--non-interactive']
 
       args = options[:args]
       if args
@@ -316,6 +316,14 @@ module ASF
         else
           cmd += ['--password', password]
         end
+      end
+
+      cmd << '--' # ensure paths cannot be mistaken for options
+
+      if path.is_a? Array
+        cmd += path
+      else
+        cmd << path
       end
 
       p cmd if options[:verbose]
