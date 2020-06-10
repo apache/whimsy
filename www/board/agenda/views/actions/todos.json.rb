@@ -142,7 +142,7 @@ if @establish and env.password
   establish = @establish.map {|resolution| resolution['name']}
 
   # create 'victims' file for tlpreq tool
-  `svn up #{TLPREQ}`
+  ASF::SVN.svn('update', TLPREQ)
   establish -= Dir[File.join(TLPREQ, 'victims-#{date}.*.txt')].
      map {|name| File.read(name.untaint).lines().map(&:chomp)}.flatten
   unless establish.empty?
@@ -152,7 +152,7 @@ if @establish and env.password
       filename = "victims-#{date}.#{count}.txt"
       contents = establish.join("\n") + "\n"
       File.write File.join(tmpdir, filename), contents
-      _.system "svn add #{tmpdir}/#{filename}"
+      ASF::SVN.svn_('add', File.join(tmpdir, filename), _)
     end
   end
 end
