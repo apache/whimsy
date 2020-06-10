@@ -386,10 +386,10 @@ module ASF
         user = options[:user] if password
       end
       # password was supplied, add credentials
-      if password and not options[:verbose]
+      if password and not options[:dryrun] # don't add auth for dryrun
         creds = ['--no-auth-cache', '--username', user]
-        if self.passwordStdinOK?() && false # not sure how to support this
-          open_opts[:stdin_data] = password
+        if self.passwordStdinOK?()
+          open_opts[:stdin] = password
           creds << '--password-from-stdin'
         else
           creds += ['--password', password]
@@ -407,12 +407,16 @@ module ASF
 
       p cmd if options[:verbose] # includes auth
 
-      if options[:dryrun] # before creds added
+      if options[:dryrun] # excludes auth
         # TODO: improve this
         return _.system ['echo', cmd.inspect]
       end
 
-      _.system cmd
+      if open_opts.size > 0 # any options for the Open3 command?
+        _.system cmd, open_opts, {} # needs two hashes
+      else
+        _.system cmd
+      end
     end
 
     # As for self.svn_, but failures cause a RuntimeError
