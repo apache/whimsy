@@ -469,7 +469,7 @@ module ASF
     # user and password are required because the default URL is private
     def self.updateCI(msg, env, options={})
       # Allow override for testing
-      ciURL = options[:url] || self.svnurl('board')
+      ciURL = options[:url] || self.svnurl('board').untaint
       Dir.mktmpdir do |tmpdir|
         # use dup to make testing easier
         user = env.user.dup.untaint
