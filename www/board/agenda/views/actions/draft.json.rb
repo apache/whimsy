@@ -16,7 +16,7 @@ ASF::SVN.update minutes_file, @message, env, _ do |tmpdir, old_contents|
       File.join(tmpdir, File.basename(agenda_file))]
 
     # copy the agenda to the minutes (produces better diff)
-    _.system ['svn', 'cp', "#{tmpdir}/#{@agenda}",
+    _.system ['svn', 'cp', File.join(tmpdir, File.basename(@agenda)),
       File.join(tmpdir, File.basename(minutes_file))]
 
     @text
