@@ -415,6 +415,13 @@ module ASF
       _.system cmd
     end
 
+    # As for self.svn_, but failures cause a RuntimeError
+    def self.svn_!(command, path, _, options = {})
+      rc = self.svn_(command, path, _, options = options)
+      raise RuntimeError.new("exit code: #{rc}") if rc != 0
+      rc
+    end
+
     # retrieve revision, [err] for a path in svn
     def self.getRevision(path, user=nil, password=nil)
       out, err = getInfo(path, user, password)
