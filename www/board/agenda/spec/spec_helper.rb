@@ -42,7 +42,13 @@ module MockServer
     args.flatten!
     if args[1] == 'commit'
       @commits ||= {}
-      target = args[2..-1].find {|arg| not arg.start_with? '-'}
+
+      if args.include? '--'
+        target = args[args.index('--') + 1]
+      else
+        target = args[2..-1].find {|arg| not arg.start_with? '-'}
+      end
+
       @commits[File.basename target] = File.read(target)
       `svn revert #{target}`
       0
