@@ -139,18 +139,10 @@ class Agenda
     #extract context from block
     _, env = eval('[_, env]', block.binding)
 
-    if auth # was it passed in?
-      creds = {}
-      auth.flatten.each_slice(2) do |k,v|
-        creds[:user] = v if k == '--username'
-        creds[:password] = v if k == '--password'
-      end
+    if env.password
+      auth ||= [['--username', env.user, '--password', env.password]]
     else
-      if env.password
-        creds = {env: env}
-      else
-        creds = {}
-      end
+      auth ||= [[]]
     end
 
     file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\z/
@@ -166,11 +158,11 @@ class Agenda
 
       # check out empty directory
       board = ASF::SVN.getInfoItem(FOUNDATION_BOARD,'url')
-      ASF::SVN.svn_('checkout', board, _, {args: ['--depth', 'empty']}.merge(creds))
+      _.system ['svn', 'checkout', auth, '--depth', 'empty', board, dir]
 
       # update the file in question
       path = File.join(dir, file)
-      ASF::SVN.svn_('update', path, _, {env: env})
+      _.system ['svn', 'update', auth, path]
 
       # invoke block, passing it the current contents of the file
       if block and message
@@ -180,7 +172,7 @@ class Agenda
         # if the output differs, update and commit the file in question
         if output != input
           IO.write(path, output)
-          commit_rc = ASF::SVN.svn_('commit', path, _, {argv: ['--message', message]}.merge(creds))
+          commit_rc = _.system ['svn', 'commit', auth, path, '-m', message]
         end
       else
         output = IO.read(path)
@@ -203,7 +195,7 @@ class Agenda
         if retries > 0
           work_file.close
           sleep rand(41-retries*2)*0.1 if retries <= 20
-          update(file, message, retries-1, &block) # recursive call
+          update(file, message, retries-1, &block)
         else
           raise Exception.new("svn commit failed")
         end
