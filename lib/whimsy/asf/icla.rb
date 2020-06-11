@@ -37,6 +37,10 @@ module ASF
     # location of the iclas.txt file; may be <tt>nil</tt> if not found.
     SOURCE = OFFICERS ? File.join(OFFICERS, 'iclas.txt') : nil
 
+    _officers_url = ASF::SVN.svnurl('officers') # not intended for external use
+
+    SOURCE_URL = _officers_url ? File.join(_officers_url, 'iclas.txt') : nil
+
     # flush caches if source file changed
     def self.refresh
       if not SOURCE or File.mtime(SOURCE) != @@mtime
