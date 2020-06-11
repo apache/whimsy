@@ -221,10 +221,10 @@ def WE(msg)
 end
 # returns www|archive, stem and the hash extension
 def check_hash_loc(h,tlp)
-  if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlp}/.*([^/]+)(\.(\w{3,6}))$}
+  if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlp}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
-  elsif h =~ %r{^(https?)://downloads\.apache\.org/(?:incubator/)?#{tlp}/.*([^/]+)(\.(\w{3,6}))$}
+  elsif h =~ %r{^(https?)://(downloads)\.apache\.org/(?:incubator/)?#{tlp}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
   elsif h =~ %r{^(https?)://repo\.(maven)\.apache\.org/maven2/org/apache/#{tlp}/.+/([^/]+)(\.(\w{3,6}))$} # Maven
