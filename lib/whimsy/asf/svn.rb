@@ -348,6 +348,8 @@ module ASF
     #  :user, :password - used if env is not present
     #  :verbose - show command (including credentials) before executing it
     #  :dryrun - show command (excluding credentials), without executing it
+    #  :sysopts - options for BuilderClass#system, e.g. :stdin, :echo, :hilite
+    #           - options for JsonBuilder#system, e.g. :transcript, :prefix
     #
     # Returns:
     # - status code
@@ -356,6 +358,9 @@ module ASF
       return nil, 'path must not be nil' unless path
       return nil, 'wunderbar (_) must not be nil' unless _
       
+      # Pick off the options specific to svn_ rather than svn
+      sysopts = options.delete(:sysopts) || {}
+
       bad_keys = options.keys - VALID_KEYS
       if bad_keys.size > 0
         return nil, "Following options not recognised: #{bad_keys.inspect}"
@@ -376,7 +381,6 @@ module ASF
       end
 
       # add credentials if required
-      open_opts = {}
       env = options[:env]
       if env
         password = env.password
@@ -389,7 +393,7 @@ module ASF
       if password and not options[:dryrun] # don't add auth for dryrun
         creds = ['--no-auth-cache', '--username', user]
         if self.passwordStdinOK?()
-          open_opts[:stdin] = password
+          sysopts[:stdin] = password
           creds << '--password-from-stdin'
         else
           creds += ['--password', password]
@@ -412,11 +416,9 @@ module ASF
         return _.system ['echo', cmd.inspect]
       end
 
-      if open_opts.size > 0 # any options for the Open3 command?
-        _.system cmd, open_opts, {} # needs two hashes
-      else
-        _.system cmd
-      end
+    #  N.B. Version 1.3.3 requires separate hashes for JsonBuilder and BuilderClass,
+    #  see https://github.com/rubys/wunderbar/issues/11
+    _.system cmd, sysopts, sysopts # needs two hashes
     end
 
     # As for self.svn_, but failures cause a RuntimeError
