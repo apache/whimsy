@@ -125,22 +125,20 @@ def send_form(formdata: {})
   end
   
   Dir.mktmpdir do |tmpdir|
-    credentials = ['--username', $USER, '--password', $PASSWORD]
-    svnopts = ['--no-auth-cache', '--non-interactive']
+    credentials = {user: $USER, password: $PASSWORD}
     # TODO: investigate if we should to --depth empty and attempt to get only that mentor's file
-    _.system ['svn', 'checkout', MentorFormat::MENTORS_SVN, tmpdir.untaint, svnopts, credentials]
-
+    ASF::SVN.svn_('checkout', [MentorFormat::MENTORS_SVN, tmpdir.untaint], _, credentials)
     Dir.chdir tmpdir do
       if File.exist? fn
         File.write(fn, mentor_update + "\n")
-        _.system ['svn', 'st']
+        ASF::SVN.svn_('status','.', _)
         message = "Updating my mentoring data (whimsy)"
       else
         File.write(fn, mentor_update + "\n")
-        _.system ['svn', 'add', fn]
+        ASF::SVN.svn_('add', fn, _)
         message = "#{$USER} += mentoring volunteer (whimsy)"
       end
-      rc = _.system ['svn', 'commit', fn, '--message', message, svnopts, credentials]
+      rc = ASF::SVN.svn_('commit', fn, _, {args: ['--message', message]}.merge(credentials)]
     end
   end
   
