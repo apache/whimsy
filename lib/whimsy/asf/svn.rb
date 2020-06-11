@@ -409,16 +409,20 @@ module ASF
         cmd << path
       end
 
-      p cmd if options[:verbose] # includes auth
+      Wunderbar.warn cmd.inspect if options[:verbose] # includes auth
 
       if options[:dryrun] # excludes auth
         # TODO: improve this
         return _.system ['echo', cmd.inspect]
       end
 
-    #  N.B. Version 1.3.3 requires separate hashes for JsonBuilder and BuilderClass,
-    #  see https://github.com/rubys/wunderbar/issues/11
-    _.system cmd, sysopts, sysopts # needs two hashes
+      #  N.B. Version 1.3.3 requires separate hashes for JsonBuilder and BuilderClass,
+      #  see https://github.com/rubys/wunderbar/issues/11
+      if _.instance_of?(Wunderbar::JsonBuilder) or _.instance_of?(Wunderbar::TextBuilder)
+        _.system cmd, sysopts, sysopts # needs two hashes
+      else
+        _.system cmd, sysopts
+      end
     end
 
     # As for self.svn_, but failures cause a RuntimeError
