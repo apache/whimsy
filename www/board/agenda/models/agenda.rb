@@ -151,6 +151,7 @@ class Agenda
       else
         creds = {}
       end
+    end
 
     file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\z/
 
