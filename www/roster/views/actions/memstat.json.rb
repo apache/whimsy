@@ -13,7 +13,7 @@ raise Exception.new("unable to find member entry for #{userid}") unless entry
 members_txt = File.join(ASF::SVN['foundation'], 'members.txt')
 
 # construct commit message
-message = "Move #{ASF::Person.find(@userid).member_name} to #{@action}"
+message = "Action #{@action} for #{ASF::Person.find(@userid).member_name}"
 
 # only update members if needed
 updmem = @action == 'emeritus' or @action == 'active' or @action == 'deceased'
@@ -35,24 +35,23 @@ ASF::SVN.multiUpdate members_txt, message, env, _ do |text|
     extra = []
     if @emeritusfilename.index('/emeritus-requests-received/')
       emeritus_url = ASF::SVN.svnurl('emeritus')
-      command = "svn mv #{@emeritusfilename} #{emeritus_url}"
+      command = "svn move #{@emeritusfilename} #{emeritus_url}"
       Wunderbar.warn "memstat.json.rb action emeritus commmand: #{command}"
-      extra << ['mv', @emeritusfilename, emeritus_url]
+      extra << ['move', @emeritusfilename, emeritus_url]
     end
   elsif @action == 'active'
     index = text.index(/^\s\*\)\s/, text.index(/^Active/))
     entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
     # if emeritus file was found, move it to emeritus-reinstated
-    if @emeritusfilename.index('/emeritus/')
+    if @emeritusfilename.index('//emeritus//')
       emeritus_reinstated_url = ASF::SVN.svnurl('emeritus-reinstated')
-      command = "svn mv #{@emeritusfilename} #{emeritus_reinstated_url}"
+      command = "svn move #{@emeritusfilename} #{emeritus_reinstated_url}"
       Wunderbar.warn "memstat.json.rb action emeritus commmand: #{command}"
+      extra << ['move', @emeritusfilename, emeritus_reinstated_url]
     end
   elsif @action == 'deceased'
     index = text.index(/^\s\*\)\s/, text.index(/^Deceased/))
     entry.sub! %r{\n}, " /* deceased, #{@dod} */\n" # add the deceased comment
-#  else
-#    raise Exception.new("invalid action #{action.inspect}")
   end
 
   # perform the insertion
@@ -63,9 +62,11 @@ ASF::SVN.multiUpdate members_txt, message, env, _ do |text|
 end if updmem #only update members.txt for secretary actions
 
 if @action == 'rescind_emeritus'
-  emeritus_rescinded_url = ASF::SVN.svnurl('emeritus')
-  command = "svn mv #{@emeritusfilename} #{emeritus_rescinded_url}; svn commit -m \"#{message}\""
-  _system command
+  emeritus_rescinded_url = ASF::SVN.svnurl('emeritus-requests-rescinded')
+  pw = " --password #{env.password}" if env.password
+  credentials = "--username #{env.user}#{pw}"
+  command = "svn move #{credentials} -m \"#{message}\" #{@emeritusfilename} #{emeritus_rescinded_url}"
+  _.system command
   Wunderbar.warn ("memstat.json.rb rescind_emeritus command: #{command}")
 elsif @action == 'request_emeritus'
   # TODO send email to secretary requesting emeritus
