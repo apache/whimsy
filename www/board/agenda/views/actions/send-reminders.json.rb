@@ -44,8 +44,8 @@ Agenda.parse(@agenda, :full).each do |item|
   }
 
   # apply changes to both subject and the message text itself
-  subject = Mustache.render(@subject, view)
-  message = Mustache.render(@message, view)
+  subject = Mustache.render(@subject.untaint, view)
+  message = Mustache.render(@message.untaint, view)
 
   # cc list
   cclist = []
@@ -64,7 +64,7 @@ Agenda.parse(@agenda, :full).each do |item|
     from from
     to "#{item['owner']} <#{item['chair_email']}>".untaint
     cc cclist unless cclist.empty?
-    subject subject
+    subject subject.untaint
 
     body message.untaint
   end

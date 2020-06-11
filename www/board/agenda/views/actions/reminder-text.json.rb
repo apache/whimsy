@@ -25,7 +25,7 @@ view = {
 }
 
 # perform the substitution
-template = Mustache.render(template, view)
+template = Mustache.render(template.untaint, view)
 
 # extract subject
 subject = template[/Subject: (.*)/, 1]

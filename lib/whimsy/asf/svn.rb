@@ -46,8 +46,8 @@ module ASF
             next unless Dir.exist? name.untaint
             # TODO not sure why chdir is necessary here; it looks like svn info can handle soft links OK
             Dir.chdir name.untaint do
-              out, status = Open3.capture2('svn', 'info')
-              if status.success?
+              out, err = self.svn('info','.') # svn() checks for path...
+              if out
                 [out[/URL: (.*)/,1].sub(/^http:/,'https:'), Dir.pwd.untaint]
               end
             end
@@ -262,7 +262,7 @@ module ASF
       return self.svn('list', path, {user: user, password: password})
     end
 
-    VALID_KEYS=[:args, :user, :password, :verbose, :env]
+    VALID_KEYS=[:args, :user, :password, :verbose, :env, :dryrun]
     # low level SVN command
     # params:
     # command - info, list etc
@@ -329,6 +329,76 @@ module ASF
       end
     end
 
+    # low level SVN command for use in Wunderbar context (_json, _text etc)
+    # params:
+    # command - info, list etc
+    # path - the path to be used
+    # _ - wunderbar context
+    # options - hash of:
+    #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
+    #  :env - environment: source for user and password
+    #  :user, :password - used if env is not present
+    #  :verbose - show command (including credentials) before executing it
+    #  :dryrun - show command (excluding credentials), without executing it
+    #
+    # Returns:
+    # - status code
+    def self.svn_(command, path, _, options = {})
+      return nil, 'command must not be nil' unless command
+      return nil, 'path must not be nil' unless path
+      return nil, 'wunderbar (_) must not be nil' unless _
+      
+      bad_keys = options.keys - VALID_KEYS
+      if bad_keys.size > 0
+        return nil, "Following options not recognised: #{bad_keys.inspect}"
+      end
+
+      # build svn command
+      cmd = ['svn', command, path, '--non-interactive']
+
+      args = options[:args]
+      if args
+        if args.is_a? String
+          cmd << args
+        elsif args.is_a? Array
+          cmd += args
+        else
+          return nil, "args '#{args.inspect}' must be string or array"
+        end
+      end
+
+      if options[:dryrun] # before creds added
+        # TODO: improve this
+        return _.system ['echo', cmd.inspect]
+      end
+
+      # add credentials if required
+      open_opts = {}
+      env = options[:env]
+      if env
+        password = env.password
+        user = env.user
+      else
+        password = options[:password]
+        user = options[:user] if password
+      end
+      # password was supplied, add credentials
+      if password
+        creds = ['--no-auth-cache', '--username', user]
+        if self.passwordStdinOK?() && false # not sure how to support this
+          open_opts[:stdin_data] = password
+          creds << '--password-from-stdin'
+        else
+          creds += ['--password', password]
+        end
+        cmd << creds
+      end
+
+      p cmd if options[:verbose] # includes auth
+
+      _.system cmd
+    end
+
     # retrieve revision, [err] for a path in svn
     def self.getRevision(path, user=nil, password=nil)
       out, err = getInfo(path, user, password)
@@ -341,31 +411,15 @@ module ASF
     end
 
     # retrieve revision, content for a file in svn
+    # N.B. There is a window between fetching the revision and getting the file contents
     def self.get(path, user=nil, password=nil)
-      # build svn info command
-      cmd = ['svn', 'info', path, '--non-interactive']
-
-      # password was supplied, add credentials
-      if password
-        cmd += ['--username', user, '--password', password, '--no-auth-cache']
+      revision, _ = self.getInfoItem(path, 'revision', {user: user, password: password})
+      if revision
+        content, _ = self.svn('cat', path, {user: user, password: password})
+      else
+        revision = '0'
+        content = nil
       end
-
-      # default the values to return
-      revision = '0'
-      content = nil
-
-      # issue svn info command
-      stdout, status = Open3.capture2(*cmd)
-      if status.success?
-        # extract revision number
-        revision = stdout[/^Revision: (\d+)/, 1]
-
-        # extract contents
-        cmd[1] = 'cat'
-        content, status = Open3.capture2(*cmd)
-      end
-
-      # return results
       return revision, content
     end
 
@@ -441,16 +495,13 @@ module ASF
       # N.B. the extra enclosing [] tell _.system not to show their contents on error
       begin
         # create an empty checkout
-        _.system ['svn', 'checkout', '--depth', 'empty', '--non-interactive',
-          ['--username', env.user, '--password', env.password],
-          self.getInfoItem(dir,'url'), tmpdir]
+        self.svn_('checkout', self.getInfoItem(dir,'url'), _,
+          {args: ['--depth', 'empty', tmpdir], env: env})
 
         # retrieve the file to be updated (may not exist)
         if basename
           tmpfile = File.join(tmpdir, basename).untaint
-          _.system ['svn', 'update', '--non-interactive',
-            ['--username', env.user, '--password', env.password],
-            tmpfile]
+          self.svn_('update', tmpfile, _, {env: env})
         else
           tmpfile = nil
         end
@@ -475,25 +526,21 @@ module ASF
         if contents and not contents.empty?
           File.write tmpfile, contents
           if not previous_contents
-            _.system ['svn', 'add', '--non-interactive',
-              ['--username', env.user, '--password', env.password],
-              tmpfile]
+            self.svn_('add', tmpfile, _, {env: env}) # TODO is auth needed here?
           end
         elsif tmpfile and File.file? tmpfile
           File.unlink tmpfile
-          _.system ['svn', 'delete', '--non-interactive',
-            ['--username', env.user, '--password', env.password],
-            tmpfile]
+          self.svn_('delete', tmpfile, _, {env: env}) # TODO is auth needed here?
         end
 
         if options[:dryrun]
           # show what would have been committed
-          rc = _.system ['svn', 'diff', tmpfile]
+          rc = self.svn_('diff', tmpfile, _)
+          return # No point checking for pending changes
         else
           # commit the changes
-          rc = _.system ['svn', 'commit', tmpfile || tmpdir, '--non-interactive',
-            ['--username', env.user, '--password', env.password],
-            '--message', msg.untaint]
+          rc = self.svn_('commit', tmpfile || tmpdir, _,
+             {args: ['--message', msg.untaint], env: env})
         end
 
         # fail if there are pending changes
@@ -512,7 +559,7 @@ module ASF
     #   commands - array of commands
     #   msg - commit message
     #   env - environment (username/password)
-    #   _ - Wunderbar
+    #   _ - Wunderbar context
     #   revision - if defined, supply the --revision svnmucc parameter
     #   temp - use this temporary directory (and don't remove it)
     # The commands must themselves be arrays to ensure correct processing of white-space
@@ -521,8 +568,8 @@ module ASF
     #     url1 = 'https://svn.../' # etc
     #     commands << ['mv',url1,url2]
     #     commands << ['rm',url3]
-    #   ASF::SVN.svnmucc(commands,message,env,_)
-    def self.svnmucc(commands, msg, env, _, revision=nil, temp=nil)
+    #   ASF::SVN.svnmucc_(commands,message,env,_)
+    def self.svnmucc_(commands, msg, env, _, revision=nil, temp=nil)
       require 'tempfile'
       tmpdir = temp ? temp : Dir.mktmpdir.untaint
 
@@ -578,7 +625,7 @@ module ASF
     #     extra << ['rm',url3]
     #     [out, extra]
     #   end
-    def self.multiUpdate(path, msg, env, _)
+    def self.multiUpdate(path, msg, env, _, options = {})
       require 'tempfile'
       tmpdir = Dir.mktmpdir.untaint
       if File.file? path
@@ -603,20 +650,12 @@ module ASF
       begin
 
         # create an empty checkout
-        _.system ['svn', 'checkout', '--depth', 'empty',
-          '--non-interactive',
-          ['--username', env.user, '--password', env.password],
-          '--no-auth-cache',
-          parenturl, tmpdir
-          ]
+        rc = self.svn_('checkout', parenturl, _, {args: ['--depth', 'empty', tmpdir], env: env})
+        raise "svn failure #{rc} checkout #{parenturl}" unless rc == 0
 
         # checkout the file
-        _.system ['svn', 'update',
-          '--non-interactive',
-          ['--username', env.user, '--password', env.password],
-          '--no-auth-cache',
-          outputfile
-          ]
+        rc = self.svn_('update', outputfile, _, {env: env})
+        raise "svn failure #{rc} update #{outputfile}" unless rc == 0
 
         # N.B. the revision is required for the svnmucc put to prevent overriding a previous update
         # this is why the file is checked out rather than just extracted
@@ -638,7 +677,12 @@ module ASF
         end
         
         # Now commit everything
-        ASF::SVN.svnmucc(cmds,msg,env,_,filerev,tmpdir)
+        if options[:dryrun]
+          puts cmds # TODO: not sure this is correct for Wunderbar
+        else
+          rc = ASF::SVN.svnmucc_(cmds,msg,env,_,filerev,tmpdir)
+          raise "svnmucc failure #{rc} committing" unless rc == 0
+        end
       ensure
         FileUtils.rm_rf tmpdir
       end

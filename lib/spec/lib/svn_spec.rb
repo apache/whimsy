@@ -3,6 +3,7 @@
 
 require 'spec_helper'
 require 'whimsy/asf'
+require 'wunderbar'
 
 describe ASF::SVN do
   
@@ -215,6 +216,12 @@ describe ASF::SVN do
       revision, content = ASF::SVN.get(repo)
       expect(revision).to match(/\d+/)
       expect(content.size).to be > 1000 # need a better test
+    end
+    it "get(public url,'_____') should return 0 and nil" do
+      repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_____')
+      revision, content = ASF::SVN.get(repo)
+      expect(revision).to eq('0')
+      expect(content).to eq(nil)
     end
   end
 
