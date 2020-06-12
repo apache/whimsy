@@ -53,12 +53,11 @@ module ASF
           @@repository_entries = YAML.load_file(REPOSITORY)
 
           @repos = Hash[Dir[*git].map { |name|
-            next unless Dir.exist? name.untaint
-            Dir.chdir name.untaint do
+            if Dir.exist? name.untaint
               out, _, status =
-                Open3.capture3(*%(git config --get remote.origin.url))
+                Open3.capture3(*%(git config --get remote.origin.url), {chdir: name})
               if status.success?
-                [File.basename(out.chomp, '.git'), Dir.pwd.untaint]
+                [File.basename(out.chomp, '.git'), name]
               end
             end
           }.compact]

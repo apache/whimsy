@@ -43,12 +43,10 @@ module ASF
           @@repository_entries = YAML.load_file(REPOSITORY)
 
           @repos = Hash[Dir[*svn].map { |name| 
-            next unless Dir.exist? name.untaint
-            # TODO not sure why chdir is necessary here; it looks like svn info can handle soft links OK
-            Dir.chdir name.untaint do
-              out, err = self.getInfoItem('.','url') # svn() checks for path...
+            if Dir.exist? name.untaint
+              out, _ = self.getInfoItem(name, 'url')
               if out
-                [out.sub(/^http:/,'https:'), Dir.pwd.untaint]
+                [out.sub(/^http:/,'https:'), name]
               end
             end
           }.compact]
