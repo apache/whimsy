@@ -12,8 +12,7 @@ CALENDAR = File.join(BOARD_SITE, 'calendar.mdtext')
 
 # update from svn
 [MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir| 
-  ASF::SVN.svn('cleanup', dir)
-  ASF::SVN.svn('update', dir) # TODO does this need auth?
+  Dir.chdir(dir) {`svn cleanup`; `svn up`}
 end
 
 calendar = File.read(CALENDAR)
@@ -86,4 +85,4 @@ ASF::SVN.update BOARD_PRIVATE, @message, env, _ do |tmpdir|
   end
 end
 
-Dir['board_minutes_*.txt', base: BOARD_PRIVATE].sort
+Dir.chdir(BOARD_PRIVATE) {Dir['board_minutes_*.txt'].sort}

@@ -13,7 +13,9 @@ begin
 
   raise "Invalid direction #{@direction}" unless tool
 
-  Kernel.system tool, '--quiet', '--suffix', 'rotated', selected.path, chdir: File.dirname(selected.path)
+  Dir.chdir File.dirname(selected.path) do
+    Kernel.system tool, '--quiet', '--suffix', 'rotated', selected.path
+  end
 
   output = selected.path.sub(/\.pdf$/, '-rotated.pdf')
 
