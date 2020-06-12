@@ -262,19 +262,23 @@ module ASF
       return self.svn('list', path, {user: user, password: password})
     end
 
-    VALID_KEYS=[:args, :user, :password, :verbose, :env, :dryrun]
+    VALID_KEYS=[:args, :user, :password, :verbose, :env, :dryrun, :msg, :depth]
     # low level SVN command
     # params:
     # command - info, list etc
     # path - the path(s) to be used - String or Array of Strings
     # options - hash of:
     #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
+    #  :msg - shorthand for {args: ['--message', value]}
+    #  :depth - shorthand for {args: ['--depth', value]}
     #  :env - environment: source for user and password
     #  :user, :password - used if env is not present
-    #  :verbose - show command
-    # Returns either:
+    #  :verbose - show command on stdout
+    #  :dryrun - return command array as [cmd] without executing it (excludes auth)
+    # Returns:
     # - stdout
     # - nil, err
+    # - [cmd] if :dryrun
     def self.svn(command, path , options = {})
       return nil, 'command must not be nil' unless command
       return nil, 'path must not be nil' unless path
@@ -298,6 +302,12 @@ module ASF
         end
       end
 
+      msg = options[:msg]
+      cmd += ['--message', msg] if msg
+
+      depth = options[:depth]
+      cmd += ['--depth', depth] if depth
+
       open_opts = {}
       env = options[:env]
       if env
@@ -307,8 +317,8 @@ module ASF
         password = options[:password]
         user = options[:user] if password
       end
-        # password was supplied, add credentials
-      if password
+      # password was supplied, add credentials
+      if password and not options[:dryrun] # don't add auth for dryrun
         cmd += ['--username', user, '--no-auth-cache']
         if self.passwordStdinOK?()
           open_opts[:stdin_data] = password
@@ -328,6 +338,8 @@ module ASF
 
       p cmd if options[:verbose]
 
+      return [cmd] if options[:dryrun]
+
       # issue svn command
       out, err, status = Open3.capture3(*cmd, open_opts)
       if status.success?
@@ -344,6 +356,8 @@ module ASF
     # _ - wunderbar context
     # options - hash of:
     #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
+    #  :msg - shorthand for {args: ['--message', value]}
+    #  :depth - shorthand for {args: ['--depth', value]}
     #  :env - environment: source for user and password
     #  :user, :password - used if env is not present
     #  :verbose - show command (including credentials) before executing it
@@ -379,6 +393,12 @@ module ASF
           return nil, "args '#{args.inspect}' must be string or array"
         end
       end
+
+      msg = options[:msg]
+      cmd += ['--message', msg] if msg
+
+      depth = options[:depth]
+      cmd += ['--depth', depth] if depth
 
       # add credentials if required
       env = options[:env]

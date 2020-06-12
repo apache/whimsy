@@ -249,5 +249,22 @@ describe ASF::SVN do
       out, err = ASF::SVN.svn('info',[path1, path2], {args: ['--show-item','kind']})
       expect(out).to match(/^file +https:/)
     end
+
+    it "svn('help', 'help', {args: ['--depth','empty'], dryrun: true}) should return the same as {depth: 'files'}" do
+      out1, err1 = ASF::SVN.svn('help', 'help', {args: ['--depth','empty'], dryrun: true})
+      out2, err2 = ASF::SVN.svn('help', 'help', {depth: 'empty', dryrun: true})
+      expect(out1).to eq(out2)
+      expect(err1).to eq(nil)
+      expect(err2).to eq(nil)
+    end
+
+    it "svn('help', 'help', {args: ['--message','text'], dryrun: true}) should return the same as {msg: 'text'}" do
+      out1, err1 = ASF::SVN.svn('help', 'help', {args: ['--message','text'], dryrun: true})
+      out2, err2 = ASF::SVN.svn('help', 'help', {msg: 'text', dryrun: true})
+      expect(out1).to eq(out2)
+      expect(err1).to eq(nil)
+      expect(err2).to eq(nil)
+    end
+
   end
 end
