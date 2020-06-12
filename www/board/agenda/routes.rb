@@ -555,24 +555,27 @@ end
 
 # post a new agenda
 post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
-  board = 'https://svn.apache.org/repos/private/foundation/board'
+  boardurl = ASF::SVN.svnurl('foundation_board')
   agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
-  auth = "--username #{env.user} --password #{env.password}"
 
   contents = params[:agenda].gsub("\r\n", "\n")
 
   Dir.mktmpdir do |dir|
-    `svn checkout --depth empty #{board} #{dir} #{auth}`
-    File.write "#{dir}/#{agenda}", contents
-    `svn add #{dir}/#{agenda}`
 
-    `svn update #{dir}/current.txt #{auth}`
-    File.unlink "#{dir}/current.txt"
-    File.symlink agenda, "#{dir}/current.txt"
+    ASF::SVN.svn('checkout', [boardurl, dir], {depth: 'empty', env: env})
 
-    files = ["#{dir}/#{agenda}", "#{dir}/current.txt"]
-    `svn commit #{files.join(' ')} --message "Post #{date} agenda" #{auth}`
-    Agenda.update_cache agenda, File.join(dir, agenda), contents, false
+    agendapath = File.join(dir, agenda)
+    File.write agendapath, contents
+    ASF::SVN.svn('add', agendapath)
+
+    currentpath = File.join(dir, 'current.txt')
+    ASF::SVN.svn('update', currentpath, {env: env})
+
+    File.unlink currentpath
+    File.symlink agenda, currentpath
+
+    ASF::SVN.svn('commit', [agendapath, currentpath], {msg: "Post #{date} agenda", env: env})
+    Agenda.update_cache agenda, agendapath, contents, false
   end
 
   redirect to("/#{date}/")
