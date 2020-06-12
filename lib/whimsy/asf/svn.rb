@@ -260,7 +260,9 @@ module ASF
       return self.svn('list', path, {user: user, password: password})
     end
 
+    # These keys are common to svn_ and svn
     VALID_KEYS=[:args, :user, :password, :verbose, :env, :dryrun, :msg, :depth]
+
     # low level SVN command
     # params:
     # command - info, list etc
@@ -273,6 +275,7 @@ module ASF
     #  :user, :password - used if env is not present
     #  :verbose - show command on stdout
     #  :dryrun - return command array as [cmd] without executing it (excludes auth)
+    #  :chdir - change directory for system call
     # Returns:
     # - stdout
     # - nil, err
@@ -281,6 +284,8 @@ module ASF
       return nil, 'command must not be nil' unless command
       return nil, 'path must not be nil' unless path
       
+      chdir = options.delete(:chdir) # not currently supported for svn_
+
       bad_keys = options.keys - VALID_KEYS
       if bad_keys.size > 0
         return nil, "Following options not recognised: #{bad_keys.inspect}"
@@ -307,6 +312,9 @@ module ASF
       cmd += ['--depth', depth] if depth
 
       open_opts = {}
+
+      open_opts[:chdir] = chdir if chdir
+
       env = options[:env]
       if env
         password = env.password

@@ -266,5 +266,14 @@ describe ASF::SVN do
       expect(err2).to eq(nil)
     end
 
+    it "svn() should honour :chdir option" do
+      pods = ASF::SVN['incubator-podlings']
+      if pods
+         out, err = ASF::SVN.svn('info', '.', {chdir: pods})
+         expect(err).to eq(nil)
+         expect(out).to match(/^URL: /)
+      end
+    end
+
   end
 end
