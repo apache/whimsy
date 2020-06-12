@@ -272,7 +272,7 @@ _html do
               message = "#{@list} -= #{$USER}"
             end
           
-            options = credentials.merge({args: ['--message', message]})
+            options = credentials.merge({msg: message})
             rc = ASF::SVN.svn_('commit', fn, _, options)
           end
         end

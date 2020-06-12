@@ -106,7 +106,7 @@ _html do
               tmpdir.untaint
 
               ASF::SVN.svn_('checkout', [File.join(bills, @dest), tmpdir], _, 
-                  {args: '--depth=empty', user: $USER, password: $PASSWORD})
+                  {depth: 'empty', user: $USER, password: $PASSWORD})
 
               Dir.chdir tmpdir do
                 IO.binwrite(name, @file.read)

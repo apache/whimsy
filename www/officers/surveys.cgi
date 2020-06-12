@@ -118,7 +118,7 @@ def submit_survey(formdata: {})
   rc = 999 # Ensure it's a bogus value
   Dir.mktmpdir do |tmpdir|
     tmpdir.untaint
-    ASF::SVN.svn_('checkout',[get_survey_root(), tmpdir],_,{args: ['--depth', 'files'], user: $USER, password: $PASSWORD})
+    ASF::SVN.svn_('checkout',[get_survey_root(), tmpdir],_,{depth: 'files', user: $USER, password: $PASSWORD})
     
     survey_data = JSON.parse(File.read(filename), :symbolize_names => true)
     # Add user data (may overwrite existing entry!)
@@ -128,7 +128,7 @@ def submit_survey(formdata: {})
 
     File.write(filename, JSON.pretty_generate(survey_data))
     Dir.chdir tmpdir do
-      # rc = ASF::SVN.svn_('commit', filename, _, {args: ['--message', "Survey submission (whimsy)"], user: $USER, password: $PASSWORD})
+      # rc = ASF::SVN.svn_('commit', filename, _, {msg: "Survey submission (whimsy)", user: $USER, password: $PASSWORD})
     end
   end
   if rc == 0

@@ -353,7 +353,7 @@ _html do
                     # and commit the change ...
                     _h2 'Commit messages'
                     rc = ASF::SVN.svn_('commit', File.join(tmpdir, 'new-account-reqs.txt'), _,
-                          {args: ['--message', "#{@user} account request by #{user.id} for #{requestor}"], env: env})
+                          {msg: "#{@user} account request by #{user.id} for #{requestor}", env: env})
 
                     if rc == 0
                       mail.deliver!

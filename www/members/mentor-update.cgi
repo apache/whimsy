@@ -138,7 +138,7 @@ def send_form(formdata: {})
         ASF::SVN.svn_('add', fn, _)
         message = "#{$USER} += mentoring volunteer (whimsy)"
       end
-      rc = ASF::SVN.svn_('commit', fn, _, {args: ['--message', message]}.merge(credentials)]
+      rc = ASF::SVN.svn_('commit', fn, _, {msg: message}.merge(credentials)]
     end
   end
   

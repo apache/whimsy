@@ -114,7 +114,7 @@ _html do
           Dir.mktmpdir do |dir|
             _div_.transcript do
               work = ASF::SVN.getInfoItem(latest,'url')
-              ASF::SVN.svn_('checkout', [work, dir], _, {args: ['--depth', 'empty']}.merge(auth))
+              ASF::SVN.svn_('checkout', [work, dir], _, {depth: 'empty'}.merge(auth))
               json = File.join(dir, 'non-participants.json')
               ASF::SVN.svn_('update', json, _, auth)
               tracker = JSON.parse(IO.read(json))
@@ -122,7 +122,7 @@ _html do
               tracker[$USER]['status'] = @suggestions
               IO.write(json, JSON.pretty_generate(tracker))
               ASF::SVN.svn_('diff', json, _, {verbose: true, sysopts: {hilite: [/"status":/]}})
-              ASF::SVN.svn_('commit', json, _, {args: ['--message', @status]}.merge(auth))
+              ASF::SVN.svn_('commit', json, _, {msg: @status}.merge(auth))
             end
           end
         end

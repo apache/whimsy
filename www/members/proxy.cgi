@@ -229,7 +229,7 @@ def emit_post(cur_mtg_dir, meeting)
 
         # commit
         ASF::SVN.svn_('commit',[filename, 'proxies'], _, 
-          {args: ['--message', "assign #{@proxy} as my proxy"], user: $USER, password: $PASSWORD})
+          {msg: "assign #{@proxy} as my proxy", user: $USER, password: $PASSWORD})
 # TODO: send email to @proxy per WHIMSY-78
       end
     end
