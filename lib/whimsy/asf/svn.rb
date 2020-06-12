@@ -545,7 +545,6 @@ module ASF
       
       tmpdir = Dir.mktmpdir.untaint
 
-      # N.B. the extra enclosing [] tell _.system not to show their contents on error
       begin
         # create an empty checkout
         self.svn_('checkout', [self.getInfoItem(dir,'url'), tmpdir], _,
