@@ -59,7 +59,7 @@ class Wunderbar::JsonBuilder
   end
 
   def svn *args
-    args << svnauth if %(checkout update commit).include? args.first
+    args << svnauth if env.password and %(checkout update commit).include?(args.first)
     _.system! 'svn', *args
   end
 
@@ -67,8 +67,8 @@ class Wunderbar::JsonBuilder
     [
       '--non-interactive', 
       '--no-auth-cache',
-      '--username', env.user.untaint,
-      '--password', env.password.untaint
+      '--username', env.user.dup.untaint, # may be frozen
+      '--password', env.password.dup.untaint
     ]
   end
 
