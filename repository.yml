@@ -152,6 +152,8 @@
 
   site-img:
     url: asf/comdev/project-logos/originals
+    depth: delete
+    list: true
 
   site-root:
     url: asf/infrastructure/site/trunk/content

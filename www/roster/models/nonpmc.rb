@@ -20,8 +20,7 @@ class NonPMC
       list =~ /^#{mail_list}\b/
     end
 
-    image_dir = ASF::SVN.find('site-img') # Probably not relevant to nonPMCS; leave for now
-    image = Dir[File.join(image_dir, "#{id}*.{svg,eps,ai,pdf}")].map {|path| File.basename(path)}.first
+    image = ASF::SiteImage.find(id)
 
     moderators = nil
     modtime = nil
