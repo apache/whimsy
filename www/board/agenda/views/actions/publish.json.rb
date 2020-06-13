@@ -11,8 +11,9 @@ BOARD_PRIVATE = ASF::SVN['foundation_board']
 CALENDAR = File.join(BOARD_SITE, 'calendar.mdtext')
 
 # update from svn
-[MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir| 
-  Dir.chdir(dir) {`svn cleanup`; `svn up`}
+[MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir|
+  ASF::SVN.svn('cleanup', dir)
+  ASF::SVN.svn('update', dir) # TODO: does this need auth?
 end
 
 calendar = File.read(CALENDAR)
