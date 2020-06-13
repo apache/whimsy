@@ -281,8 +281,8 @@ module ASF
     # - nil, err
     # - [cmd] if :dryrun
     def self.svn(command, path , options = {})
-      return nil, 'command must not be nil' unless command
-      return nil, 'path must not be nil' unless path
+      raise ArgumentError.new 'command must not be nil' unless command
+      raise ArgumentError.new 'path must not be nil' unless path
       
       chdir = options.delete(:chdir) # not currently supported for svn_
 
@@ -380,9 +380,9 @@ module ASF
     # Returns:
     # - status code
     def self.svn_(command, path, _, options = {})
-      return nil, 'command must not be nil' unless command
-      return nil, 'path must not be nil' unless path
-      return nil, 'wunderbar (_) must not be nil' unless _
+      raise ArgumentError.new 'command must not be nil' unless command
+      raise ArgumentError.new 'path must not be nil' unless path
+      raise ArgumentError.new 'wunderbar (_) must not be nil' unless _
       
       # Pick off the options specific to svn_ rather than svn
       sysopts = options.delete(:sysopts) || {}
