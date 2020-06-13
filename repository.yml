@@ -43,8 +43,10 @@
       - deprecated_mailing_lists.yml
       - mail_list_autosub.yml
 
-  attic-xdocs: # TODO: listing
+  attic-xdocs:
     url: asf/attic/site/xdocs/projects
+    depth: delete
+    list: true
 
   board:
     url: private/committers/board
