@@ -149,9 +149,7 @@ describe ASF::SVN do
     end
 
     it "getInfo(nil) should fail" do
-      out, err = ASF::SVN.getInfo(nil)
-      expect(out).to eq(nil)
-      expect(err).to eq('path must not be nil')
+      expect { ASF::SVN.getInfo(nil) }.to raise_error(ArgumentError, 'path must not be nil')
     end
 
 # How to ensure local SVN cached auth is not used?    
