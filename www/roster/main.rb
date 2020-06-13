@@ -114,7 +114,7 @@ end
 get '/committer2/' do
   @auth = Auth.info(env)
   # Restrict who can see this
-  pass unless @auth[:member] or @auth[:chair]
+  pass unless @auth[:member] or @auth[:pmc_chair]
   @notinavail = true
   _html :committers
 end
@@ -125,7 +125,7 @@ index2_etag = nil
 get '/committer2/index.json' do
   @auth = Auth.info(env)
   # Restrict who can see this
-  pass unless @auth[:member] or @auth[:chair]
+  pass unless @auth[:member] or @auth[:pmc_chair]
   # recompute index if the data is 5 minutes old or older
   index2 = nil if not index2_time or Time.now-index2_time >= 300
 
@@ -207,7 +207,7 @@ end
 get '/icla/' do
   @auth = Auth.info(env)
   # Restrict who can see this
-  pass unless @auth[:member] or @auth[:chair]
+  pass unless @auth[:member] or @auth[:pmc_chair]
   _html :iclas
 end
 
@@ -217,7 +217,7 @@ icla_index_etag = nil
 get '/icla/index.json' do
   @auth = Auth.info(env)
   # Restrict who can see this
-  pass unless @auth[:member] or @auth[:chair]
+  pass unless @auth[:member] or @auth[:pmc_chair]
   # recompute icla_index if the data is 5 minutes old or older
   icla_index = nil if not icla_index_time or Time.now-icla_index_time >= 300
 
