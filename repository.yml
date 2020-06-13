@@ -43,7 +43,7 @@
       - deprecated_mailing_lists.yml
       - mail_list_autosub.yml
 
-  attic-xdocs:
+  attic-xdocs: # TODO: listing
     url: asf/attic/site/xdocs/projects
 
   board:
@@ -110,10 +110,6 @@
 
   incubator-content:
     url: asf/incubator/public/trunk/content
-    depth: files
-
-  ldap-map:
-    url: private/committers/tools/ldap
     depth: files
 
   member_apps:

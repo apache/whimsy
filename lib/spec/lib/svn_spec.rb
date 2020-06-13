@@ -114,8 +114,8 @@ describe ASF::SVN do
     it "should return an array of size 2" do
       res = ASF::SVN.private_public
       expect(res.size()).to equal(2)
-      expect(res[0].size).to equal(15) # will need to be adjusted from time to time
-      expect(res[1].size).to equal(11) # ditto.
+      expect(res[0].size).to equal(14) # will need to be adjusted from time to time
+      expect(res[1].size).to equal(10) # ditto.
     end
   end
 
