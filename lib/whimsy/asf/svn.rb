@@ -608,10 +608,9 @@ module ASF
         end
 
         # fail if there are pending changes
-        status = `svn st #{tmpfile || tmpdir}`
-        # out, err = self.svn('status', tmpfile || tmpdir)
-        unless rc == 0 && status.empty?
-          raise "svn failure #{rc} #{path.inspect} #{status}"
+        out, err = self.svn('status', tmpfile || tmpdir) # Need to use svn rather than svn_ here
+        unless rc == 0 && out && out.empty?
+          raise "svn failure #{rc} #{path.inspect} #{out}"
         end
       ensure
         FileUtils.rm_rf tmpdir
