@@ -348,8 +348,14 @@ module ASF
 
       # issue svn command
       out, err, status = Open3.capture3(*cmd, open_opts)
+
+      # Note: svn status exits with status 0 even if the target directory is missing or not a checkout
       if status.success?
-        return out
+        if out == '' and err != '' and %w(status stat st).include? command
+          return nil, err
+        else
+          return out
+        end
       else
         return nil, err
       end
@@ -603,6 +609,7 @@ module ASF
 
         # fail if there are pending changes
         status = `svn st #{tmpfile || tmpdir}`
+        # out, err = self.svn('status', tmpfile || tmpdir)
         unless rc == 0 && status.empty?
           raise "svn failure #{rc} #{path.inspect} #{status}"
         end
