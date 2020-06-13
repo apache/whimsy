@@ -599,7 +599,7 @@ module ASF
 
         if options[:dryrun]
           # show what would have been committed
-          rc = self.svn_('diff', tmpfile, _)
+          rc = self.svn_('diff', tmpfile || tmpdir, _)
           return # No point checking for pending changes
         else
           # commit the changes
