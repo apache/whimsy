@@ -600,7 +600,7 @@ module ASF
         if options[:dryrun]
           # show what would have been committed
           rc = self.svn_('diff', tmpfile || tmpdir, _)
-          return # No point checking for pending changes
+          return rc # No point checking for pending changes
         else
           # commit the changes
           rc = self.svn_('commit', tmpfile || tmpdir, _,
@@ -616,6 +616,7 @@ module ASF
       ensure
         FileUtils.rm_rf tmpdir
       end
+      rc # return last status
     end
 
     # DRAFT DRAFT DRAFT
