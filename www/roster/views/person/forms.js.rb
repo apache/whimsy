@@ -5,7 +5,6 @@
 class PersonForms < Vue
   def render
     committer = @@person.state.committer
-    documents = "https://svn.apache.org/repos/private/documents"
 
     _div.row do
       _div.name 'Forms on file'
