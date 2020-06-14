@@ -247,24 +247,23 @@ _html do
 
           # commit using user's credentials if possible, otherwise use whisysvn
           if not $PASSWORD
-            credentials = nil
+            credentials = {}
           elsif user.asf_member?
-            credentials = ['--username', $USER, '--password', $PASSWORD]
+            credentials = {user: $USER, password: $PASSWORD}
           else
-            credentials = ['--username', 'whimsysvn']
+            credentials = {user: 'whimsysvn'}
           end
 
-          _.system ['svn', 'checkout', SUBREQ, tmpdir,
-            ['--no-auth-cache', '--non-interactive'], credentials]
+          ASF::SVN.svn_('checkout', [SUBREQ, tmpdir], _, credentials)
 
           Dir.chdir tmpdir do
 
             if File.exist? fn
               File.write(fn, request + "\n")
-              _.system ['svn', 'st']
+              ASF::SVN.svn('status', '.')
             else
               File.write(fn, request + "\n")
-              _.system ['svn', 'add', fn]
+              ASF::SVN.svn('add', fn)
             end
  
             if @request != 'unsub'
@@ -273,8 +272,8 @@ _html do
               message = "#{@list} -= #{$USER}"
             end
           
-            rc = _.system ['svn', 'commit', fn, '--message', message,
-              ['--no-auth-cache', '--non-interactive'], credentials]
+            options = credentials.merge({msg: message})
+            rc = ASF::SVN.svn_('commit', fn, _, options)
           end
         end
         

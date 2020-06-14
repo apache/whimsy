@@ -105,18 +105,14 @@ _html do
             Dir.mktmpdir do |tmpdir|
               tmpdir.untaint
 
-              _.system ['svn', 'checkout', File.join(bills, @dest), tmpdir,
-                '--depth=empty',
-                ['--no-auth-cache', '--non-interactive'],
-                (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)]
+              ASF::SVN.svn_('checkout', [File.join(bills, @dest), tmpdir], _, 
+                  {depth: 'empty', user: $USER, password: $PASSWORD})
 
               Dir.chdir tmpdir do
                 IO.binwrite(name, @file.read)
-                _.system ['svn', 'add', name]
+                ASF::SVN.svn_('add', name, _)
 
-                _.system ['svn', 'commit', name, '--message', @message,
-                  ['--no-auth-cache', '--non-interactive'],
-                  (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)]
+                ASF::SVN.svn_('commit', name, _, {user: $USER, password: $PASSWORD})
               end
             end
           end

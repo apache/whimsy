@@ -5,15 +5,15 @@
 require 'date'
 require 'whimsy/asf/svn'
 
-CONTENT = 'asf/infrastructure/site/trunk/content'
-BOARD_SITE = ASF::SVN["#{CONTENT}/foundation/board"]
-MINUTES = ASF::SVN["#{CONTENT}/foundation/records/minutes"]
+BOARD_SITE = ASF::SVN['site-board']
+MINUTES = ASF::SVN['minutes']
 BOARD_PRIVATE = ASF::SVN['foundation_board']
 CALENDAR = File.join(BOARD_SITE, 'calendar.mdtext')
 
 # update from svn
-[MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir| 
-  Dir.chdir(dir) {`svn cleanup`; `svn up`}
+[MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir|
+  ASF::SVN.svn('cleanup', dir)
+  ASF::SVN.svn('update', dir) # TODO: does this need auth?
 end
 
 calendar = File.read(CALENDAR)
@@ -43,6 +43,8 @@ end
 # remove from calendar
 calendar.sub! /^(\s*[*-]\s+#{fdate}\s*?\n)/, ''
 
+minutes = "board_minutes_#{@date}.txt"
+
 #Commit the Minutes
 ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
   yeardir = File.join(tmpdir, year.to_s).untaint
@@ -53,9 +55,10 @@ ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
     _.system "svn add #{yeardir}"
   end
 
-  if not File.exist? File.join(yeardir, "board_minutes_#{@date}.txt")
-    _.system "cp #{BOARD_PRIVATE}/board_minutes_#{@date}.txt #{yeardir}"
-    _.system "svn add #{yeardir}/board_minutes_#{@date}.txt"
+  year_minutes = File.join(yeardir, minutes)
+  if not File.exist? year_minutes
+    _.system "cp #{File.join(BOARD_PRIVATE, minutes)} #{yeardir}"
+    _.system "svn add #{year_minutes}"
   end
 end
 
@@ -68,16 +71,18 @@ end
 
 # Clean up board directory
 ASF::SVN.update BOARD_PRIVATE, @message, env, _ do |tmpdir|
-  _.system "svn up #{tmpdir}/board_minutes_#{@date}.txt"
-  if File.exist? "#{tmpdir}/board_minutes_#{@date}.txt"
-    _.system "svn rm #{tmpdir}/board_minutes_#{@date}.txt"
+  minutes_path = File.join(tmpdir, minutes)
+  _.system "svn up #{minutes_path}"
+  if File.exist? minutes_path
+    _.system "svn rm #{minutes_path}"
   end
   
-  _.system "svn up #{tmpdir}/board_agenda_#{@date}.txt"
-  if File.exist? "#{tmpdir}/board_agenda_#{@date}.txt"
-    _.system "svn up --depth empty #{tmpdir}/archived_agendas"
-    _.system "svn mv #{tmpdir}/board_agenda_#{@date}.txt " +
-      "#{tmpdir}/archived_agendas"
+  agenda_path = File.join(tmpdir, "board_agenda_#{@date}.txt")
+  _.system "svn up #{agenda_path}"
+  if File.exist? agenda_path
+    agenda_archive = File.join(tmpdir, 'archived_agendas')
+    _.system "svn up --depth empty #{agenda_archive}"
+    _.system "svn mv #{agenda_path} #{agenda_archive}"
   end
 end
 

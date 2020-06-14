@@ -181,19 +181,14 @@ def emit_post(cur_mtg_dir, meeting)
     Dir.mktmpdir do |tmpdir|
       svn =  ASF::SVN.getInfoItem(File.join(MEETINGS,meeting),'url')
 
-      _.system [
-        'svn', 'checkout', '--quiet', svn.untaint, tmpdir.untaint,
-        ['--no-auth-cache', '--non-interactive'],
-        (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
-      ]
-
+      ASF::SVN.svn_('checkout',[svn.untaint, tmpdir.untaint], _, 
+                    {args: '--quiet', user: $USER, password: $PASSWORD})
       Dir.chdir(tmpdir) do
         # write proxy form
         filename = "proxies-received/#$USER.txt".untaint
         File.write(filename, proxyform)
-        _.system ['svn', 'add', filename]
-        _.system ['svn', 'propset', 'svn:mime-type',
-          'text/plain; charset=utf-8', filename]
+        ASF::SVN.svn_('add', filename, _)
+        ASF::SVN.svn_('propset', ['svn:mime-type', 'text/plain; charset=utf-8', filename], _)
 
         # get a list of proxies
         list = Dir['proxies-received/*.txt'].map do |file|
@@ -233,13 +228,9 @@ def emit_post(cur_mtg_dir, meeting)
         IO.write('proxies', proxies)
 
         # commit
-        _.system [
-          'svn', 'commit', filename, 'proxies',
-          '-m', "assign #{@proxy} as my proxy",
-          ['--no-auth-cache', '--non-interactive'],
-          (['--username', $USER, '--password', $PASSWORD] if $PASSWORD)
-        ]
-        # TODO: send email to @proxy per WHIMSY-78
+        ASF::SVN.svn_('commit',[filename, 'proxies'], _, 
+          {msg: "assign #{@proxy} as my proxy", user: $USER, password: $PASSWORD})
+# TODO: send email to @proxy per WHIMSY-78
       end
     end
   end

@@ -10,7 +10,7 @@ require 'json'
 require 'set'
 
 BOARD = ASF::SVN['foundation_board']
-REPO = 'https://svn.apache.org/repos/private/foundation/board/'
+REPO = ASF::SVN.svnurl('foundation_board')
 
 # Hash keys returned by summarize
 ERRORS = 'errors'

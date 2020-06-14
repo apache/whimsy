@@ -14,8 +14,6 @@ require 'whimsy/asf'
 require 'whimsy/cache'
 require 'whimsy/sitestandards'
 
-IMAGE_DIR = ASF::SVN.find('site-img')
-
 # Normalize spaces in text runs
 def squash(text)
   return text.scrub.gsub(/[[:space:]]+/, ' ').strip
@@ -145,10 +143,7 @@ def parse(id, site, name)
     end
   end
   # THIRD: see if an image has been uploaded
-  if IMAGE_DIR
-    data[:image] = Dir[File.join(IMAGE_DIR, "#{id}*.{svg,eps,ai,pdf}")].
-      map {|path| File.basename(path)}.first
-  end
+  data[:image] = ASF::SiteImage.find(id)
 
   return data
 end

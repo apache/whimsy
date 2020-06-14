@@ -40,10 +40,21 @@ module MockServer
   # intercept commits, adding the files to the cleanup list
   def system(*args)
     args.flatten!
+    # Wunderbar .system accepts one or two trailing hashes; ignore them for now
+    # TODO: do we need to handle :stdin?
+    args.pop if Hash === args.last
+    args.pop if Hash === args.last
     if args[1] == 'commit'
       @commits ||= {}
-      @commits[File.basename args[2]] = File.read(args[2])
-      `svn revert #{args[2]}`
+
+      if args.include? '--'
+        target = args[args.index('--') + 1]
+      else
+        target = args[2..-1].find {|arg| not arg.start_with? '-'}
+      end
+
+      @commits[File.basename target] = File.read(target)
+      `svn revert #{target}`
       0
     else
       args.reject! {|arg| Array === arg}

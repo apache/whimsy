@@ -203,5 +203,5 @@ end
 
 # cleanup
 require 'rake/clean'
-CLEAN.include 'passenger.3000.*', 'test/work'
+CLEAN.include 'passenger.3000.*', 'test/work', 'public/assets'
 CLOBBER.include 'node_modules', 'package-lock.json'

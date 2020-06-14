@@ -16,6 +16,16 @@ _html do
       person = ASF::Person.find(env.user)
       _table.counts do
 
+        _tr do
+          _td do
+            _a '1', href: 'committer/__self__'
+          end
+          _td do
+            _a env.user, href: 'committer/__self__'
+          end
+          _td 'Your personal page'
+        end
+
         ### committers
 
         _tr do

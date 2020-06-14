@@ -105,25 +105,24 @@ _html do
 
           # setup authentication
           if $PASSWORD
-            auth = [['--username', $USER, '--password', $PASSWORD]]
+            auth = {user: $USER, password: $PASSWORD}
           else
-            auth = [[]]
+            auth = {}
           end
 
           # apply and commit changes
           Dir.mktmpdir do |dir|
             _div_.transcript do
               work = ASF::SVN.getInfoItem(latest,'url')
-              _.system ['svn', 'checkout', auth, '--depth', 'empty', work, dir]
+              ASF::SVN.svn_('checkout', [work, dir], _, {depth: 'empty'}.merge(auth))
               json = File.join(dir, 'non-participants.json')
-              _.system ['svn', 'update', auth, json]
+              ASF::SVN.svn_('update', json, _, auth)
               tracker = JSON.parse(IO.read(json))
               tracker[$USER]['status'] = @status
               tracker[$USER]['status'] = @suggestions
               IO.write(json, JSON.pretty_generate(tracker))
-              _.system ['svn', 'diff', json], hilite: [/"status":/],
-                class: {hilight: '_stdout _hilite'}
-              _.system ['svn', 'commit', auth, json, '-m', @status]
+              ASF::SVN.svn_('diff', json, _, {verbose: true, sysopts: {hilite: [/"status":/]}})
+              ASF::SVN.svn_('commit', json, _, {msg: @status}.merge(auth))
             end
           end
         end

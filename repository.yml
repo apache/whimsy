@@ -45,6 +45,8 @@
 
   attic-xdocs:
     url: asf/attic/site/xdocs/projects
+    depth: delete
+    list: true
 
   board:
     url: private/committers/board
@@ -112,10 +114,6 @@
     url: asf/incubator/public/trunk/content
     depth: files
 
-  ldap-map:
-    url: private/committers/tools/ldap
-    depth: files
-
   member_apps:
     url: private/documents/member_apps
     depth: delete
@@ -152,6 +150,8 @@
 
   site-img:
     url: asf/comdev/project-logos/originals
+    depth: delete
+    list: true
 
   site-root:
     url: asf/infrastructure/site/trunk/content

@@ -114,8 +114,8 @@ describe ASF::SVN do
     it "should return an array of size 2" do
       res = ASF::SVN.private_public
       expect(res.size()).to equal(2)
-      expect(res[0].size).to equal(15) # will need to be adjusted from time to time
-      expect(res[1].size).to equal(11) # ditto.
+      expect(res[0].size).to equal(14) # will need to be adjusted from time to time
+      expect(res[1].size).to equal(9) # ditto.
     end
   end
 
@@ -149,9 +149,7 @@ describe ASF::SVN do
     end
 
     it "getInfo(nil) should fail" do
-      out, err = ASF::SVN.getInfo(nil)
-      expect(out).to eq(nil)
-      expect(err).to eq('path must not be nil')
+      expect { ASF::SVN.getInfo(nil) }.to raise_error(ArgumentError, 'path must not be nil')
     end
 
 # How to ensure local SVN cached auth is not used?    
@@ -232,4 +230,52 @@ describe ASF::SVN do
     end
   end
 
+  describe "ASF::SVN.svn" do
+    it "svn('info', path) should return 'Name: path'" do
+      repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+      out, err = ASF::SVN.svn('info',repo)
+      expect(out).to match(/^Name: _template.xml$/)
+    end
+    it "svn('info', [path]) should return 'Name: path'" do
+      repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+      out, err = ASF::SVN.svn('info',[repo])
+      expect(out).to match(/^Name: _template.xml$/)
+    end
+    it "svn('info', [path1, path2], {args: ['--show-item','kind']}) should return 'file ...'" do
+      path1 = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+      path2 = File.join(ASF::SVN.svnurl('attic-xdocs'),'jakarta.xml')
+      out, err = ASF::SVN.svn('info',[path1, path2], {args: ['--show-item','kind']})
+      expect(out).to match(/^file +https:/)
+    end
+
+    it "svn('help', 'help', {args: ['--depth','empty'], dryrun: true}) should return the same as {depth: 'files'}" do
+      out1, err1 = ASF::SVN.svn('help', 'help', {args: ['--depth','empty'], dryrun: true})
+      out2, err2 = ASF::SVN.svn('help', 'help', {depth: 'empty', dryrun: true})
+      expect(out1).to eq(out2)
+      expect(err1).to eq(nil)
+      expect(err2).to eq(nil)
+    end
+
+    it "svn('help', 'help', {args: ['--message','text'], dryrun: true}) should return the same as {msg: 'text'}" do
+      out1, err1 = ASF::SVN.svn('help', 'help', {args: ['--message','text'], dryrun: true})
+      out2, err2 = ASF::SVN.svn('help', 'help', {msg: 'text', dryrun: true})
+      expect(out1).to eq(out2)
+      expect(err1).to eq(nil)
+      expect(err2).to eq(nil)
+    end
+
+    it "svn() should honour :chdir option" do
+      begin # Hack to avoid Travis fail; TODO ensure there is a suitable SVN checkout for the test
+        pods = ASF::SVN['incubator-podlings']
+        if pods
+          out, err = ASF::SVN.svn('info', '.', {chdir: pods})
+          expect(err).to eq(nil)
+          expect(out).to match(/^URL: /)
+        end
+      rescue Exception => e
+        puts e
+      end
+    end
+
+  end
 end

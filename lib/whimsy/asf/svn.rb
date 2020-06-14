@@ -43,12 +43,10 @@ module ASF
           @@repository_entries = YAML.load_file(REPOSITORY)
 
           @repos = Hash[Dir[*svn].map { |name| 
-            next unless Dir.exist? name.untaint
-            # TODO not sure why chdir is necessary here; it looks like svn info can handle soft links OK
-            Dir.chdir name.untaint do
-              out, err = self.svn('info','.') # svn() checks for path...
+            if Dir.exist? name.untaint
+              out, _ = self.getInfoItem(name, 'url')
               if out
-                [out[/URL: (.*)/,1].sub(/^http:/,'https:'), Dir.pwd.untaint]
+                [out.sub(/^http:/,'https:'), name]
               end
             end
           }.compact]
@@ -262,30 +260,39 @@ module ASF
       return self.svn('list', path, {user: user, password: password})
     end
 
-    VALID_KEYS=[:args, :user, :password, :verbose, :env, :dryrun]
+    # These keys are common to svn_ and svn
+    VALID_KEYS=[:args, :user, :password, :verbose, :env, :dryrun, :msg, :depth]
+
     # low level SVN command
     # params:
     # command - info, list etc
-    # path - the path to be used
+    # path - the path(s) to be used - String or Array of Strings
     # options - hash of:
     #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
+    #  :msg - shorthand for {args: ['--message', value]}
+    #  :depth - shorthand for {args: ['--depth', value]}
     #  :env - environment: source for user and password
     #  :user, :password - used if env is not present
-    #  :verbose - show command
-    # Returns either:
+    #  :verbose - show command on stdout
+    #  :dryrun - return command array as [cmd] without executing it (excludes auth)
+    #  :chdir - change directory for system call
+    # Returns:
     # - stdout
     # - nil, err
+    # - [cmd] if :dryrun
     def self.svn(command, path , options = {})
-      return nil, 'command must not be nil' unless command
-      return nil, 'path must not be nil' unless path
+      raise ArgumentError.new 'command must not be nil' unless command
+      raise ArgumentError.new 'path must not be nil' unless path
       
+      chdir = options.delete(:chdir) # not currently supported for svn_
+
       bad_keys = options.keys - VALID_KEYS
       if bad_keys.size > 0
         return nil, "Following options not recognised: #{bad_keys.inspect}"
       end
 
       # build svn command
-      cmd = ['svn', command, path, '--non-interactive']
+      cmd = ['svn', command, '--non-interactive']
 
       args = options[:args]
       if args
@@ -298,82 +305,16 @@ module ASF
         end
       end
 
+      msg = options[:msg]
+      cmd += ['--message', msg] if msg
+
+      depth = options[:depth]
+      cmd += ['--depth', depth] if depth
+
       open_opts = {}
-      env = options[:env]
-      if env
-        password = env.password
-        user = env.user
-      else
-        password = options[:password]
-        user = options[:user] if password
-      end
-        # password was supplied, add credentials
-      if password
-        cmd += ['--username', user, '--no-auth-cache']
-        if self.passwordStdinOK?()
-          open_opts[:stdin_data] = password
-          cmd << '--password-from-stdin'
-        else
-          cmd += ['--password', password]
-        end
-      end
 
-      p cmd if options[:verbose]
+      open_opts[:chdir] = chdir if chdir
 
-      # issue svn command
-      out, err, status = Open3.capture3(*cmd, open_opts)
-      if status.success?
-        return out
-      else
-        return nil, err
-      end
-    end
-
-    # low level SVN command for use in Wunderbar context (_json, _text etc)
-    # params:
-    # command - info, list etc
-    # path - the path to be used
-    # _ - wunderbar context
-    # options - hash of:
-    #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
-    #  :env - environment: source for user and password
-    #  :user, :password - used if env is not present
-    #  :verbose - show command (including credentials) before executing it
-    #  :dryrun - show command (excluding credentials), without executing it
-    #
-    # Returns:
-    # - status code
-    def self.svn_(command, path, _, options = {})
-      return nil, 'command must not be nil' unless command
-      return nil, 'path must not be nil' unless path
-      return nil, 'wunderbar (_) must not be nil' unless _
-      
-      bad_keys = options.keys - VALID_KEYS
-      if bad_keys.size > 0
-        return nil, "Following options not recognised: #{bad_keys.inspect}"
-      end
-
-      # build svn command
-      cmd = ['svn', command, path, '--non-interactive']
-
-      args = options[:args]
-      if args
-        if args.is_a? String
-          cmd << args
-        elsif args.is_a? Array
-          cmd += args
-        else
-          return nil, "args '#{args.inspect}' must be string or array"
-        end
-      end
-
-      if options[:dryrun] # before creds added
-        # TODO: improve this
-        return _.system ['echo', cmd.inspect]
-      end
-
-      # add credentials if required
-      open_opts = {}
       env = options[:env]
       if env
         password = env.password
@@ -383,10 +324,108 @@ module ASF
         user = options[:user] if password
       end
       # password was supplied, add credentials
-      if password
-        creds = ['--no-auth-cache', '--username', user]
-        if self.passwordStdinOK?() && false # not sure how to support this
+      if password and not options[:dryrun] # don't add auth for dryrun
+        cmd += ['--username', user, '--no-auth-cache']
+        if self.passwordStdinOK?()
           open_opts[:stdin_data] = password
+          cmd << '--password-from-stdin'
+        else
+          cmd += ['--password', password]
+        end
+      end
+
+      cmd << '--' # ensure paths cannot be mistaken for options
+
+      if path.is_a? Array
+        cmd += path
+      else
+        cmd << path
+      end
+
+      p cmd if options[:verbose]
+
+      return [cmd] if options[:dryrun]
+
+      # issue svn command
+      out, err, status = Open3.capture3(*cmd, open_opts)
+
+      # Note: svn status exits with status 0 even if the target directory is missing or not a checkout
+      if status.success?
+        if out == '' and err != '' and %w(status stat st).include? command
+          return nil, err
+        else
+          return out
+        end
+      else
+        return nil, err
+      end
+    end
+
+    # low level SVN command for use in Wunderbar context (_json, _text etc)
+    # params:
+    # command - info, list etc
+    # path - the path(s) to be used - String or Array of Strings
+    # _ - wunderbar context
+    # options - hash of:
+    #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
+    #  :msg - shorthand for {args: ['--message', value]}
+    #  :depth - shorthand for {args: ['--depth', value]}
+    #  :env - environment: source for user and password
+    #  :user, :password - used if env is not present
+    #  :verbose - show command (including credentials) before executing it
+    #  :dryrun - show command (excluding credentials), without executing it
+    #  :sysopts - options for BuilderClass#system, e.g. :stdin, :echo, :hilite
+    #           - options for JsonBuilder#system, e.g. :transcript, :prefix
+    #
+    # Returns:
+    # - status code
+    def self.svn_(command, path, _, options = {})
+      raise ArgumentError.new 'command must not be nil' unless command
+      raise ArgumentError.new 'path must not be nil' unless path
+      raise ArgumentError.new 'wunderbar (_) must not be nil' unless _
+      
+      # Pick off the options specific to svn_ rather than svn
+      sysopts = options.delete(:sysopts) || {}
+
+      bad_keys = options.keys - VALID_KEYS
+      if bad_keys.size > 0
+        return nil, "Following options not recognised: #{bad_keys.inspect}"
+      end
+
+      # build svn command
+      cmd = ['svn', command, '--non-interactive']
+
+      args = options[:args]
+      if args
+        if args.is_a? String
+          cmd << args
+        elsif args.is_a? Array
+          cmd += args
+        else
+          return nil, "args '#{args.inspect}' must be string or array"
+        end
+      end
+
+      msg = options[:msg]
+      cmd += ['--message', msg] if msg
+
+      depth = options[:depth]
+      cmd += ['--depth', depth] if depth
+
+      # add credentials if required
+      env = options[:env]
+      if env
+        password = env.password
+        user = env.user
+      else
+        password = options[:password]
+        user = options[:user] if password
+      end
+      # password was supplied, add credentials
+      if password and not options[:dryrun] # don't add auth for dryrun
+        creds = ['--no-auth-cache', '--username', user]
+        if self.passwordStdinOK?()
+          sysopts[:stdin] = password
           creds << '--password-from-stdin'
         else
           creds += ['--password', password]
@@ -394,9 +433,35 @@ module ASF
         cmd << creds
       end
 
-      p cmd if options[:verbose] # includes auth
+      cmd << '--' # ensure paths cannot be mistaken for options
 
-      _.system cmd
+      if path.is_a? Array
+        cmd += path
+      else
+        cmd << path
+      end
+
+      Wunderbar.warn cmd.inspect if options[:verbose] # includes auth
+
+      if options[:dryrun] # excludes auth
+        # TODO: improve this
+        return _.system ['echo', cmd.inspect]
+      end
+
+      #  N.B. Version 1.3.3 requires separate hashes for JsonBuilder and BuilderClass,
+      #  see https://github.com/rubys/wunderbar/issues/11
+      if _.instance_of?(Wunderbar::JsonBuilder) or _.instance_of?(Wunderbar::TextBuilder)
+        _.system cmd, sysopts, sysopts # needs two hashes
+      else
+        _.system cmd, sysopts
+      end
+    end
+
+    # As for self.svn_, but failures cause a RuntimeError
+    def self.svn_!(command, path, _, options = {})
+      rc = self.svn_(command, path, _, options = options)
+      raise RuntimeError.new("exit code: #{rc}") if rc != 0
+      rc
     end
 
     # retrieve revision, [err] for a path in svn
@@ -442,14 +507,14 @@ module ASF
     # user and password are required because the default URL is private
     def self.updateCI(msg, env, options={})
       # Allow override for testing
-      ciURL = options[:url] || self.svnurl('board')
+      ciURL = options[:url] || self.svnurl('board').untaint
       Dir.mktmpdir do |tmpdir|
         # use dup to make testing easier
         user = env.user.dup.untaint
         pass = env.password.dup.untaint
         # checkout committers/board (this does not have many files currently)
-        out, err = self.svn('checkout', ciURL,
-          {args: [tmpdir.untaint, '--quiet', '--depth', 'files'],
+        out, err = self.svn('checkout', [ciURL, tmpdir.untaint],
+          {args: ['--quiet', '--depth', 'files'],
            user: user, password: pass})
 
         raise Exception.new("Checkout of board folder failed: #{err}") unless out
@@ -464,8 +529,8 @@ module ASF
         File.write(file, info)
 
         # commit the updated file
-        out, err = self.svn('commit', file,
-          {args: [tmpdir.untaint,'--quiet', '--message', msg],
+        out, err = self.svn('commit', [file, tmpdir.untaint],
+          {args: ['--quiet', '--message', msg],
            user: user, password: pass})
 
         raise Exception.new("Update of committee-info.txt failed: #{err}") unless out
@@ -492,11 +557,10 @@ module ASF
       
       tmpdir = Dir.mktmpdir.untaint
 
-      # N.B. the extra enclosing [] tell _.system not to show their contents on error
       begin
         # create an empty checkout
-        self.svn_('checkout', self.getInfoItem(dir,'url'), _,
-          {args: ['--depth', 'empty', tmpdir], env: env})
+        self.svn_('checkout', [self.getInfoItem(dir,'url'), tmpdir], _,
+          {args: ['--depth', 'empty'], env: env})
 
         # retrieve the file to be updated (may not exist)
         if basename
@@ -535,8 +599,8 @@ module ASF
 
         if options[:dryrun]
           # show what would have been committed
-          rc = self.svn_('diff', tmpfile, _)
-          return # No point checking for pending changes
+          rc = self.svn_('diff', tmpfile || tmpdir, _)
+          return rc # No point checking for pending changes
         else
           # commit the changes
           rc = self.svn_('commit', tmpfile || tmpdir, _,
@@ -544,13 +608,14 @@ module ASF
         end
 
         # fail if there are pending changes
-        status = `svn st #{tmpfile || tmpdir}`
-        unless rc == 0 && status.empty?
-          raise "svn failure #{rc} #{path.inspect} #{status}"
+        out, err = self.svn('status', tmpfile || tmpdir) # Need to use svn rather than svn_ here
+        unless rc == 0 && out && out.empty?
+          raise "svn failure #{rc} #{path.inspect} #{out}"
         end
       ensure
         FileUtils.rm_rf tmpdir
       end
+      rc # return last status
     end
 
     # DRAFT DRAFT DRAFT
@@ -650,7 +715,7 @@ module ASF
       begin
 
         # create an empty checkout
-        rc = self.svn_('checkout', parenturl, _, {args: ['--depth', 'empty', tmpdir], env: env})
+        rc = self.svn_('checkout', [parenturl, tmpdir], _, {args: ['--depth', 'empty'], env: env})
         raise "svn failure #{rc} checkout #{parenturl}" unless rc == 0
 
         # checkout the file

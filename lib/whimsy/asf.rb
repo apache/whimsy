@@ -13,6 +13,7 @@ require_relative 'asf/member'
 require_relative 'asf/podling'
 require_relative 'asf/person'
 require_relative 'asf/themes'
+require_relative 'asf/site-img'
 
 #
 # The ASF module contains a set of classes which encapsulate access to a number

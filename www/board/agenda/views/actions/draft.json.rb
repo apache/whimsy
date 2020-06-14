@@ -11,13 +11,11 @@ ASF::SVN.update minutes_file, @message, env, _ do |tmpdir, old_contents|
     old_contents
   else
     # retrieve the agenda on which these minutes are based
-    _.system ['svn', 'update',
-      ['--username', env.user, '--password', env.password],
-      "#{tmpdir}/#{File.basename agenda_file}"]
+    ASF::SVN.svn_('update', File.join(tmpdir, File.basename(agenda_file)), _, {env: env})
 
     # copy the agenda to the minutes (produces better diff)
-    _.system ['svn', 'cp', "#{tmpdir}/#{@agenda}",
-      "#{tmpdir}/#{File.basename minutes_file}"]
+    ASF::SVN.svn_('cp',[File.join(tmpdir, File.basename(@agenda)), 
+                        File.join(tmpdir, File.basename(minutes_file))], _)
 
     @text
   end
