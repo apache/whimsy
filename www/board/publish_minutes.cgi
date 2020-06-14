@@ -14,11 +14,10 @@ unless secretary
   exit
 end
 
-CONTENT = 'asf/infrastructure/site/trunk/content'
-BOARD_SITE = ASF::SVN["#{CONTENT}/foundation/board"]
-MINUTES = ASF::SVN["#{CONTENT}/foundation/records/minutes"]
+BOARD_SITE = ASF::SVN['site-board']
+MINUTES = ASF::SVN['minutes']
 BOARD_PRIVATE = ASF::SVN['foundation_board']
-CALENDAR = "#{BOARD_SITE}/calendar.mdtext"
+CALENDAR = File.join(BOARD_SITE, 'calendar.mdtext')
 
 _html do
   _head do
