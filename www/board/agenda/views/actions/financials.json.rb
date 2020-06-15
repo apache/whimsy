@@ -22,7 +22,14 @@ end
 
 # extract data
 rows = []
-worksheet['Board Summary'].each do |row|
+
+summary = worksheet.find do |sheet|
+  sheet.sheet_name.strip.downcase == 'board summary'
+end
+
+raise 'board summary tab not found' unless summary
+
+summary.each do |row|
   data = []
 
   row && row.cells.each do |cell|
