@@ -661,9 +661,19 @@ module ASF
           syscmd << revision 
         end
         if env
-          syscmd << ['--username', env.user, '--password', env.password] # TODO --password-from-stdin
+          if self.passwordStdinOK?()
+            syscmd << ['--username', env.user, '--password-from-stdin']
+            sysopts[:stdin] = password
+          else
+            syscmd << ['--username', env.user, '--password', env.password]
+            sysopts = {}
+          end
         end
-        _.system syscmd
+        if _.instance_of?(Wunderbar::JsonBuilder) or _.instance_of?(Wunderbar::TextBuilder)
+          _.system syscmd, sysopts, sysopts # needs two hashes
+        else
+          _.system syscmd, sysopts
+        end
       ensure
         FileUtils.rm_rf tmpdir unless temp
       end
