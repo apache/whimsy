@@ -379,6 +379,7 @@ module ASF
     #
     # Returns:
     # - status code
+    # May raise ArgumentError
     def self.svn_(command, path, _, options = {})
       raise ArgumentError.new 'command must not be nil' unless command
       raise ArgumentError.new 'path must not be nil' unless path
@@ -389,7 +390,7 @@ module ASF
 
       bad_keys = options.keys - VALID_KEYS
       if bad_keys.size > 0
-        return nil, "Following options not recognised: #{bad_keys.inspect}"
+        raise ArgumentError.new "Following options not recognised: #{bad_keys.inspect}"
       end
 
       # build svn command
@@ -402,7 +403,7 @@ module ASF
         elsif args.is_a? Array
           cmd += args
         else
-          return nil, "args '#{args.inspect}' must be string or array"
+          raise ArgumentError.new "args '#{args.inspect}' must be string or array"
         end
       end
 
