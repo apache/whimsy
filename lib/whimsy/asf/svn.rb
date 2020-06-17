@@ -284,7 +284,10 @@ module ASF
       raise ArgumentError.new 'command must not be nil' unless command
       raise ArgumentError.new 'path must not be nil' unless path
       
-      chdir = options.delete(:chdir) # not currently supported for svn_
+      # Deal with svn-only opts
+      chdir = options.delete(:chdir)
+      open_opts = {}
+      open_opts[:chdir] = chdir if chdir
 
       bad_keys = options.keys - VALID_KEYS
       if bad_keys.size > 0
@@ -311,10 +314,7 @@ module ASF
       depth = options[:depth]
       cmd += ['--depth', depth] if depth
 
-      open_opts = {}
-
-      open_opts[:chdir] = chdir if chdir
-
+      # add credentials if required
       env = options[:env]
       if env
         password = env.password
