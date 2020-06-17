@@ -660,13 +660,14 @@ module ASF
           syscmd << '--revision'
           syscmd << revision 
         end
+
+        sysopts = {}
         if env
           if self.passwordStdinOK?()
             syscmd << ['--username', env.user, '--password-from-stdin']
-            sysopts[:stdin] = password
+            sysopts[:stdin] = env.password
           else
             syscmd << ['--username', env.user, '--password', env.password]
-            sysopts = {}
           end
         end
         if _.instance_of?(Wunderbar::JsonBuilder) or _.instance_of?(Wunderbar::TextBuilder)
