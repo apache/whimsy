@@ -231,6 +231,20 @@ describe ASF::SVN do
   end
 
   describe "ASF::SVN.svn" do
+    it "svn(nil,nil) should raise error" do
+      expect { ASF::SVN.svn(nil,nil) }.to raise_error(ArgumentError, 'command must not be nil')
+    end
+    it "svn('st',nil) should raise error" do
+      expect { ASF::SVN.svn('st',nil) }.to raise_error(ArgumentError, 'path must not be nil')
+    end
+    it "svn('st','',{xyz: true}) should raise error" do
+      expect { ASF::SVN.svn('st','',{xyz: true}) }.to raise_error(ArgumentError, 'Following options not recognised: [:xyz]')
+    end
+    it "svn('st','',{args: true}) should raise error" do
+      expect { ASF::SVN.svn('st','',{args: true}) }.to raise_error(ArgumentError, "args 'true' must be string or array")
+    end
+
+
     it "svn('info', path) should return 'Name: path'" do
       repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
       out, err = ASF::SVN.svn('info',repo)
