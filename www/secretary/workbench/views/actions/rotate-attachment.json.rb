@@ -1,5 +1,5 @@
 #
-# drop part of drag and drop
+# pdf rotations
 #
 
 message = Mailbox.find(@message)
@@ -13,9 +13,7 @@ begin
 
   raise "Invalid direction #{@direction}" unless tool
 
-  Dir.chdir File.dirname(selected.path) do
-    Kernel.system tool, '--quiet', '--suffix', 'rotated', selected.path
-  end
+  Kernel.system tool, '--quiet', '--suffix', 'rotated', selected.path, {chdir: File.dirname(selected.path)}
 
   output = selected.path.sub(/\.pdf$/, '-rotated.pdf')
 

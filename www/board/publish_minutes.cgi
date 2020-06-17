@@ -31,8 +31,9 @@ _html do
   end
   _body? do
     # update from svn
-    [MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir| 
-      Dir.chdir(dir) {`svn cleanup`; `svn up`}
+    [MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir|
+      ASF::SVN.svn('cleanup', dir)
+      ASF::SVN.svn('update', dir) # TODO does this need auth?
     end
 
     calendar = File.read(CALENDAR)
