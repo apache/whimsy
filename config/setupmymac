@@ -506,13 +506,19 @@ if config != File.read(HTTPD_CONF)
 end
 
 wconf_source = "#{WHIMSY}/config/whimsy.conf"
+wconf_content = File.read(wconf_source)
+if wconf_content =~ /^\s*SetEnv PATH /i
+  wconf_content[/^\s*SetEnv PATH .*/] =
+    "SetEnv PATH #{File.dirname RbConfig.ruby}:${PATH}"
+end
 wconf_target = '/private/etc/apache2/other/whimsy.conf'
 if 
   not File.exist?(wconf_target) or 
-  File.read(wconf_target) != File.read(wconf_source)
+  File.read(wconf_target) != wconf_content
 then
   sudo do
-    run 'cp', wconf_source, wconf_target
+    color "$ cp #{wconf_source} #{wconf_target}"
+    File.write wconf_target, wconf_content
   end
 
   restart_apache = true
