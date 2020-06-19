@@ -152,6 +152,6 @@ module ASF
       _, list = ASF::SVN.getlisting('conflict-of-interest-current-year')
       list
     end
-end
+  end
 
 end
