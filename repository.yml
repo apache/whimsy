@@ -106,8 +106,8 @@
     depth: delete
     list: true
 
-  conflict-of-interest-current-year:
-    url: private/documents/conflict-of-interest/current-year
+  conflict-of-interest:
+    url: private/documents/conflict-of-interest
     depth: delete
     list: true
 

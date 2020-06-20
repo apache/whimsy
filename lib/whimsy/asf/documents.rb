@@ -149,7 +149,7 @@ module ASF
 
   class COIFiles < EmeritusFiles
     def self.listnames
-      _, list = ASF::SVN.getlisting('conflict-of-interest-current-year')
+      _, list = ASF::SVN.getlisting('conflict-of-interest')
       list
     end
   end
