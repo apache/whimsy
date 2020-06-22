@@ -71,8 +71,9 @@ _html do
     _whimsy_body(
     title: PAGETITLE,
     related: {
-    'http://www.apache.org/foundation/records/minutes/2020/board_minutes_2020_03_18.txt'  => 'Conflict of Interest Resolution Board minutes',
-    coi_current_template_url => 'Conflict of Interest Resolution',
+      'http://www.apache.org/foundation/records/minutes/2020/board_minutes_2020_03_18.txt'  =>
+        'Conflict of Interest Resolution Board minutes',
+      coi_current_template_url => 'Conflict of Interest Resolution',
     },
     helpblock: -> {
       _p do
@@ -124,9 +125,9 @@ _html do
             end
           end
         else # POST
-          _whimsy_panel('About to commit your affirmation...', style: 'panel-success') do
+          _whimsy_panel('Affirm Conflict of Interest - Session Transcript',
+              style: 'panel-success') do
             _div.transcript do
-              _h3_ 'Affirm transcript'
               emit_post(_)
             end
           end
@@ -138,20 +139,21 @@ end
 
 # Emit a record of a user's submission - POST
 def emit_post(_)
-  _h3_ 'Affirm Conflict of Interest - Session Transcript'
-
   # collect data
   user = ASF::Person.find($USER)
   current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S"
+  coi_url = ASF::SVN.svnurl('conflict-of-interest')
+  year = DateTime.now.strftime "%Y"
+  coi_current_url = File.join(coi_url, year)
+  coi_current_template_url = File.join(coi_current_url, 'template.txt')
+
   affirmed = get_affirmed_template(coi_current_template_url, $USER, $PASSWORD, user.cn, current_timestamp)
   user_filename = "#{user.id}.txt"
 
   # report on commit
   _div.transcript do
     Dir.mktmpdir do |tmpdir|
-      svn =  ASF::SVN.getInfoItem(coi_current_url,'url')
-
-      ASF::SVN.svn_('checkout',[svn.untaint, tmpdir.untaint], _,
+      ASF::SVN.svn_('checkout',[coi_current_url.untaint, tmpdir.untaint], _,
                     {args: '--quiet', user: $USER, password: $PASSWORD})
       Dir.chdir(tmpdir) do
         # write affirmation form
@@ -163,7 +165,7 @@ def emit_post(_)
         # commit
 #        ASF::SVN.svn_('commit',[filename], _,
  #         {msg: "Affirm Conflict of Interest Policy for #{$USER}", user: $USER, password: $PASSWORD})
-# TODO: send email to @proxy per WHIMSY-78
+# TODO: send email to $USER, secretary@
       end
     end
   end
@@ -172,7 +174,7 @@ def emit_post(_)
   _h3! do
     _span "You can review "
     _a "Your Conflict of Interest affirmation",
-      href: "#{coi_current_url}/#{$USER}.txt}"
+      href: "#{coi_current_url}/#{$USER}.txt"
     _span " as now checked in to svn."
   end
 #  _pre proxyform
