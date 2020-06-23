@@ -10,8 +10,8 @@ require 'tmpdir'
 
 coi_url = ASF::SVN.svnurl('conflict-of-interest')
 YEAR = DateTime.now.strftime "%Y"
-coi_current_url = File.join(coi_url, YEAR)
-coi_current_template_url = File.join(coi_current_url, 'template.txt')
+COI_CURRENT_URL = File.join(coi_url, YEAR)
+COI_CURRENT_TEMPLATE_URL = File.join(COI_CURRENT_URL, 'template.txt')
 
 user = ASF::Person.find($USER)
 committees = ASF::Committee.officers + ASF::Committee.nonpmcs
@@ -21,17 +21,19 @@ end
 ids = (chairs.flatten + ASF::Service['board'].members.map(&:id)).uniq
 
 # Get the list of files in this year's directory
-signerfileslist, err = ASF::SVN.svn('list', coi_current_url, {user: $USER, password: $PASSWORD})
-#signerfileslist = 'template.txt\nclr99.jpg\nfielding33.pdf\ncurcuru20.jpg'
+signerfileslist, err = ASF::SVN.svn('list', COI_CURRENT_URL, {user: $USER, password: $PASSWORD})
+signerfileslist = 'template.txt\nclr99.jpg\nfielding33.pdf\ncurcuru20.jpg'
 signerfiles = signerfileslist.split('\n')
-signers = []
+signers = Hash.new
+
 # Get the url for the user's affirmation
 user_affirmation_file = nil
 signerfiles.each do |signerfile|
   stem = signerfile[0..signerfile.index(".")-1]
   user_affirmation_file = signerfile if stem == user.id
-  signers.push stem unless stem == 'template'
+  signers[stem] = signerfile unless stem == 'template'
 end
+
 # Get the list of required users who have not yet signed
 nonsigners = []
 ids.each do |required|
@@ -48,19 +50,19 @@ current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S"
 panel_message = user_is_required_but_not_affirmed ? 'Register Your Conflict of Interest  Affirmation':'Thank you for signing the Conflict of Interest Affirmation'
 
 # Read the template and append the signature block
-def get_affirmed_template(url, user, password, name, timestamp)
+def get_affirmed_template(user, password, name, timestamp)
   signature_block =
-  "I, the undersigned, acknowledge that I have received,\n
-  read and understood the Conflict of Interest policy;\n
-  I agree to comply with the policy;\n
-  I understand that ASF is charitable and in order to maintain\n
-  its federal tax exemption it must engage primarily in activities\n
-  which accomplish one or more of its tax-exempt purposes.\n
-  Signed: __\n
-  Date: __\n
-  Metadata: __________Whimsy coi.cgi___________\n"
+  '       I, the undersigned, acknowledge that I have received,
+         read and understood the Conflict of Interest policy;
+         I agree to comply with the policy;
+         I understand that ASF is charitable and in order to maintain
+         its federal tax exemption it must engage primarily in activities
+         which accomplish one or more of its tax-exempt purposes.
+      Signed: __
+      Date: __
+      Metadata: __________Whimsy www/officers/coi.cgi___________'
   template, err =
-    ASF::SVN.svn('cat', url, {user: user, password: password})
+    ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: user, password: password})
   affirmed = (template + signature_block)
     .gsub("Signed: __", "Signed: __________#{name}___________")
     .gsub("Date: __",   "  Date: __________#{timestamp}______")
@@ -73,7 +75,7 @@ _html do
     related: {
       'http://www.apache.org/foundation/records/minutes/2020/board_minutes_2020_03_18.txt'  =>
         'Conflict of Interest Resolution Board minutes',
-      coi_current_template_url => 'Conflict of Interest Resolution',
+      COI_CURRENT_TEMPLATE_URL => 'Conflict of Interest Resolution',
     },
     helpblock: -> {
       _p do
@@ -90,8 +92,8 @@ _html do
       _p {_ "You are ";_b "#{not_required_message}";_ " to affirm the Conflict of Interest policy for this year."}
       _p {_ "You ";_b "#{have_affirmed_message}";_  "the Conflict of Interest policy for this year."}
       _p 'Signers for this year:'
-      signers.each do |signer|
-        _ signer
+      signers.each do |signer, signerfile|
+        _a signer, href: "#{COI_CURRENT_URL}/#{signerfile}"
       end
       _p 'Nonsigners for this year:'
       nonsigners.each do |nonsigner|
@@ -100,7 +102,7 @@ _html do
       _p
       if  user_affirmation_file
         _a "Your Conflict of Interest affirmation",
-          href: "#{coi_current_url}/#{user_affirmation_file}"
+          href: "#{COI_CURRENT_URL}/#{user_affirmation_file}"
       end
       if user_is_required_but_not_affirmed
         _p {_b "You are invited to sign the affirmation below"}
@@ -111,7 +113,7 @@ _html do
         if _.get?
           if user_is_required_but_not_affirmed
             _whimsy_panel(panel_message, style: 'panel-success') do
-              affirmed = get_affirmed_template(coi_current_template_url, $USER, $PASSWORD, user.cn,  current_timestamp)
+              affirmed = get_affirmed_template($USER, $PASSWORD, user.cn,  current_timestamp)
               affirmed.each_line do |line|
                 _p line
               end
@@ -142,18 +144,14 @@ def emit_post(_)
   # collect data
   user = ASF::Person.find($USER)
   current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S"
-  coi_url = ASF::SVN.svnurl('conflict-of-interest')
-  year = DateTime.now.strftime "%Y"
-  coi_current_url = File.join(coi_url, year)
-  coi_current_template_url = File.join(coi_current_url, 'template.txt')
 
-  affirmed = get_affirmed_template(coi_current_template_url, $USER, $PASSWORD, user.cn, current_timestamp)
+  affirmed = get_affirmed_template($USER, $PASSWORD, user.cn, current_timestamp)
   user_filename = "#{user.id}.txt"
 
   # report on commit
   _div.transcript do
     Dir.mktmpdir do |tmpdir|
-      ASF::SVN.svn_('checkout',[coi_current_url.untaint, tmpdir.untaint], _,
+      ASF::SVN.svn_('checkout',[COI_CURRENT_URL.untaint, tmpdir.untaint], _,
                     {args: '--quiet', user: $USER, password: $PASSWORD})
       Dir.chdir(tmpdir) do
         # write affirmation form
@@ -168,14 +166,25 @@ def emit_post(_)
 # TODO: send email to $USER, secretary@
       end
     end
+    ASF::Mail.configure
+    mail = Mail.new do
+      to "#{user.public_name}<#{user.mail.first}>"
+ #     cc "secretary@apache.org"
+      from "#{user.mail.first}"
+      subject "Conflict of Interest affirmation from #{user.public_name}"
+      body "This year's Conflict of Interest affirmation is attached."
+    end
+    mail.attachments["#{user.id}.txt"] = affirmed
+    mail.deliver!
   end
 
   # Report on contents now that they're checked in
   _h3! do
     _span "You can review "
     _a "Your Conflict of Interest affirmation",
-      href: "#{coi_current_url}/#{$USER}.txt"
+      href: "#{COI_CURRENT_URL}/#{$USER}.txt"
     _span " as now checked in to svn."
+    _p {_ "Reload ";_a "this page",href: "coi.cgi";_span " to see the results."}
   end
 #  _pre proxyform
 end
