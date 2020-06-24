@@ -28,12 +28,13 @@ signerfiles = signerfileslist.split('\n')
 
 # Create the hash of {signer: signerurl} and remember user's affirmation file
 SIGNERS = Hash.new
-USER_AFFIRMATION_FILE = nil
+user_affirmation_file = nil
 signerfiles.each do |signerfile|
   stem = signerfile[0..signerfile.index(".")-1]
-  USER_AFFIRMATION_FILE = signerfile if stem == USERID
+  user_affirmation_file = signerfile if stem == USERID
   SIGNERS[stem] = signerfile unless stem == 'template'
 end
+USER_AFFIRMATION_FILE = user_affirmation_file
 
 # Get the list of required users who have not yet signed
 NONSIGNERS = []
@@ -66,9 +67,12 @@ def get_affirmed_template(user, password, name, timestamp)
        Metadata: __________Whimsy www/officers/coi.cgi___________'
   template, err =
     ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: user, password: password})
-  affirmed = (template + signature_block)
-    .gsub("Signed: __", "Signed: __________#{name}___________")
-    .gsub("Date: __",   "Date: __________#{timestamp}______")
+  centered_name = "#{name}".center(50, '_')
+  centered_date ="#{timestamp}".center(51, '_')
+  filled_signature_block = signature_block
+    .gsub('Signed: __', ('Signed: ' + centered_name))
+    .gsub('Date: __'  , (  'Date: ' + centered_date))
+  template + filled_signature_block
 end
 
 _html do
