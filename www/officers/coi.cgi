@@ -66,9 +66,12 @@ def get_affirmed_template(user, password, name, timestamp)
        Metadata: __________Whimsy www/officers/coi.cgi___________'
   template, err =
     ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: user, password: password})
-  affirmed = (template + signature_block)
-    .gsub("Signed: __", "Signed: __________#{name}___________")
-    .gsub("Date: __",   "Date: __________#{timestamp}______")
+  centered_name = "#{name}".center(50, '_')
+  centered_date ="#{timestamp}".center(51, '_')
+  filled_signature_block = signature_block
+    .gsub('Signed: __', ('Signed: ' + centered_name))
+    .gsub('Date: __'  , (  'Date: ' + centered_date))
+  template + filled_signature_block
 end
 
 _html do
