@@ -16,6 +16,7 @@ COI_CURRENT_TEMPLATE_URL = File.join(COI_CURRENT_URL, 'template.txt')
 user = ASF::Person.find($USER)
 USERID = user.id
 USERNAME = user.cn
+USERMAIL = user.mail.first
 committees = ASF::Committee.officers + ASF::Committee.nonpmcs
 chairs = committees.map do |committee|
  committee.chairs.map {|chair| chair[:id]}
@@ -28,12 +29,13 @@ signerfiles = signerfileslist.split('\n')
 
 # Create the hash of {signer: signerurl} and remember user's affirmation file
 SIGNERS = Hash.new
-USER_AFFIRMATION_FILE = nil
+user_affirmation_file = nil
 signerfiles.each do |signerfile|
-  stem = signerfile[0..signerfile.index(".")-1]
-  USER_AFFIRMATION_FILE = signerfile if stem == USERID
+  stem = File.basename(signerfile, ".*")
+  user_affirmation_file = signerfile if stem == USERID
   SIGNERS[stem] = signerfile unless stem == 'template'
 end
+USER_AFFIRMATION_FILE = user_affirmation_file
 
 # Get the list of required users who have not yet signed
 NONSIGNERS = []
@@ -63,11 +65,12 @@ def get_affirmed_template(user, password, name, timestamp)
          which accomplish one or more of its tax-exempt purposes.
        Signed: __
        Date: __
-       Metadata: __________Whimsy www/officers/coi.cgi___________'
+       Metadata: _______________Whimsy www/officers/coi.cgi________________'
   template, err =
     ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: user, password: password})
-  centered_name = "#{name}".center(50, '_')
-  centered_date ="#{timestamp}".center(51, '_')
+  raise RuntimeError.new("Failed to read current template.txt") if err
+  centered_name = "#{name}".center(60, '_')
+  centered_date ="#{timestamp}".center(61, '_')
   filled_signature_block = signature_block
     .gsub('Signed: __', ('Signed: ' + centered_name))
     .gsub('Date: __'  , (  'Date: ' + centered_date))
@@ -149,7 +152,6 @@ end
 # Emit a record of a user's submission - POST
 def emit_post(_)
   # The only information in the POST is $USER and $PASSWORD
-  user = ASF::Person.find($USER)
   current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S"
 
   affirmed = get_affirmed_template($USER, $PASSWORD, USERNAME, current_timestamp)
@@ -158,18 +160,18 @@ def emit_post(_)
   # report on commit
   _div.transcript do
     Dir.mktmpdir do |tmpdir|
-      ASF::SVN.svn_('checkout',[COI_CURRENT_URL.untaint, tmpdir.untaint], _,
+      ASF::SVN.svn_!('checkout',[COI_CURRENT_URL.untaint, tmpdir.untaint], _,
                     {args: '--quiet', user: $USER, password: $PASSWORD})
       Dir.chdir(tmpdir) do
         # write affirmation form
         filename = user_filename.untaint
         File.write(filename, affirmed)
-        ASF::SVN.svn_('add', filename, _)
-        ASF::SVN.svn_('propset', ['svn:mime-type', 'text/plain; charset=utf-8', filename], _)
+        ASF::SVN.svn_!('add', filename, _)
+        ASF::SVN.svn_!('propset', ['svn:mime-type', 'text/plain; charset=utf-8', filename], _)
 
         # commit
         # TODO enable commit of affirmation
-#        ASF::SVN.svn_('commit',[filename], _,
+#        ASF::SVN.svn_!('commit',[filename], _,
 #         {msg: "Affirm Conflict of Interest Policy for #{USERNAME}",
 #           user: $USER, password: $PASSWORD})
       end
@@ -177,11 +179,11 @@ def emit_post(_)
     # Send email to $USER, secretary@
     ASF::Mail.configure
     mail = Mail.new do
-      to "#{user.public_name}<#{user.mail.first}>"
+      to "#{USERNAME}<#{USERMAIL}>"
       # TODO enable cc: secretary
  #     cc "secretary@apache.org"
-      from "#{user.mail.first}"
-      subject "Conflict of Interest affirmation from #{user.public_name}"
+      from "#{USERMAIL}"
+      subject "Conflict of Interest affirmation from #{USERNAME}"
       body "This year's Conflict of Interest affirmation is attached."
     end
     mail.attachments["#{USERID}.txt"] = affirmed
