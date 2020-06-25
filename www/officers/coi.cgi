@@ -68,7 +68,8 @@ def get_affirmed_template(user, password, name, timestamp)
        Metadata: _______________Whimsy www/officers/coi.cgi________________'
   template, err =
     ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: $USER, password: $PASSWORD})
-  raise RuntimeError.new("Failed to read current template.txt -- %s" % err) if err
+  # Need to check output for nil rather than err as err may contain text even on success
+  raise RuntimeError.new("Failed to read current template.txt -- %s" % err) unless template
   centered_name = "#{name}".center(60, '_')
   centered_date ="#{timestamp}".center(61, '_')
   filled_signature_block = signature_block
