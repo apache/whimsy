@@ -10,7 +10,7 @@ require 'tmpdir'
 
 coi_url = ASF::SVN.svnurl('conflict-of-interest')
 YEAR = DateTime.now.strftime "%Y"
-COI_CURRENT_URL = File.join(coi_url, YEAR)
+COI_CURRENT_URL = File.join(coi_url, YEAR).untaint
 COI_CURRENT_TEMPLATE_URL = File.join(COI_CURRENT_URL, 'template.txt')
 
 user = ASF::Person.find($USER)
@@ -155,23 +155,22 @@ def emit_post(_)
   current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S"
 
   affirmed = get_affirmed_template($USER, $PASSWORD, USERNAME, current_timestamp)
-  user_filename = "#{USERID}.txt"
+  user_filename = "#{USERID}.txt".untaint
 
   # report on commit
   _div.transcript do
     Dir.mktmpdir do |tmpdir|
-      ASF::SVN.svn_!('checkout',[COI_CURRENT_URL.untaint, tmpdir.untaint], _,
+      ASF::SVN.svn_!('checkout',[COI_CURRENT_URL, tmpdir.untaint], _,
                     {args: '--quiet', user: $USER, password: $PASSWORD})
       Dir.chdir(tmpdir) do
         # write affirmation form
-        filename = user_filename.untaint
-        File.write(filename, affirmed)
-        ASF::SVN.svn_!('add', filename, _)
-        ASF::SVN.svn_!('propset', ['svn:mime-type', 'text/plain; charset=utf-8', filename], _)
+        File.write(user_filename, affirmed)
+        ASF::SVN.svn_!('add', user_filename, _)
+        ASF::SVN.svn_!('propset', ['svn:mime-type', 'text/plain; charset=utf-8', user_filename], _)
 
         # commit
         # TODO enable commit of affirmation
-#        ASF::SVN.svn_!('commit',[filename], _,
+#        ASF::SVN.svn_!('commit',[user_filename], _,
 #         {msg: "Affirm Conflict of Interest Policy for #{USERNAME}",
 #           user: $USER, password: $PASSWORD})
       end
