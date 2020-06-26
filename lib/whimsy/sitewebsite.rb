@@ -30,14 +30,14 @@ def display_project(project, links, analysis, checks, tlp = true)
     }
   ) do
     _table.table.table_striped do
-      _tbody do
-        _thead do
-          _tr do
-            _th! 'Check Type'
-            _th! 'Check Results'
-            _th! 'Check Description'
-          end
+      _thead do
+        _tr do
+          _th! 'Check Type'
+          _th! 'Check Results'
+          _th! 'Check Description'
         end
+      end
+      _tbody do
         checks.keys.each do |col|
           cls = SiteStandards.label(analysis, links, col, project)
           _tr do
