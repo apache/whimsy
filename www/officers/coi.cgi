@@ -65,7 +65,7 @@ def get_affirmed_template(name, timestamp)
     ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
   raise RuntimeError.new("Failed to read current template.txt -- %s" % err) unless template
   centered_name = "#{name}".center(60, '_')
-  centered_date ="#{timestamp}".center(61, '_')
+  centered_date ="#{timestamp}".center(62, '_')
   filled_signature_block = signature_block
     .gsub('Signed: __', ('Signed: ' + centered_name))
     .gsub('Date: __'  , (  'Date: ' + centered_date))
@@ -83,6 +83,8 @@ _html do
     },
     helpblock: -> {
       _p do
+        _b 'DRAFT DRAFT DRAFT - Feedback is solicited at dev@whimsical.apache.org'
+        _p
         _ 'This page allows officers to sign their Conflict of Interest annual affirmation.'
       end
       if _.get?
@@ -133,6 +135,8 @@ _html do
             affirmed = get_affirmed_template(USERNAME,  current_timestamp)
 
             _pre affirmed
+
+            _b 'This is a DRAFT for feedback; pressing the button will send email to you but will not register your affirmation'
 
             _form.form_horizontal method: 'post' do
               _div.form_group do
