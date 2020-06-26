@@ -108,8 +108,7 @@
 
   conflict-of-interest:
     url: private/documents/conflict-of-interest
-    depth: delete
-    list: true
+    depth: skip
 
   incubator-podlings:
     url: asf/incubator/public/trunk/content/podlings
