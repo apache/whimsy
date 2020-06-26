@@ -56,7 +56,7 @@ PANEL_MESSAGE = USER_IS_REQUIRED_BUT_NOT_AFFIRMED ?
   'Thank you for signing the Conflict of Interest Affirmation'
 
 # Read the template and append the signature block
-def get_affirmed_template(user, password, name, timestamp)
+def get_affirmed_template(name, timestamp)
   signature_block =
   '       I, the undersigned, acknowledge that I have received,
          read and understood the Conflict of Interest policy;
@@ -124,7 +124,7 @@ _html do
       if _.get?
         if USER_IS_REQUIRED_BUT_NOT_AFFIRMED
           _whimsy_panel(PANEL_MESSAGE, style: 'panel-success') do
-            affirmed = get_affirmed_template($USER, $PASSWORD, USERNAME,  current_timestamp)
+            affirmed = get_affirmed_template(USERNAME,  current_timestamp)
             affirmed.each_line do |line|
               _p line
             end
@@ -155,7 +155,7 @@ def emit_post(_)
   # The only information in the POST is $USER and $PASSWORD
   current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S"
 
-  affirmed = get_affirmed_template($USER, $PASSWORD, USERNAME, current_timestamp)
+  affirmed = get_affirmed_template(USERNAME, current_timestamp)
   user_filename = "#{USERID}.txt".untaint
 
   # report on commit
