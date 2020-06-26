@@ -56,7 +56,7 @@ PANEL_MESSAGE = USER_IS_REQUIRED_BUT_NOT_AFFIRMED ?
   'Thank you for signing the Conflict of Interest Affirmation'
 
 # Read the template and append the signature block
-def get_affirmed_template(name, timestamp, _)
+def get_affirmed_template(name, timestamp)
   signature_block =
   '       I, the undersigned, acknowledge that I have received,
          read and understood the Conflict of Interest policy;
@@ -68,7 +68,7 @@ def get_affirmed_template(name, timestamp, _)
        Date: __
        Metadata: _______________Whimsy www/officers/coi.cgi________________'
   template, err =
-    ASF::SVN.svn_!('cat', COI_CURRENT_TEMPLATE_URL, _, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
+    ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
   raise RuntimeError.new("Failed to read current template.txt -- %s" % err) unless template
   centered_name = "#{name}".center(60, '_')
   centered_date ="#{timestamp}".center(61, '_')
@@ -124,7 +124,7 @@ _html do
       if _.get?
         if USER_IS_REQUIRED_BUT_NOT_AFFIRMED
           _whimsy_panel(PANEL_MESSAGE, style: 'panel-success') do
-            affirmed = get_affirmed_template(USERNAME,  current_timestamp, _)
+            affirmed = get_affirmed_template(USERNAME,  current_timestamp)
             affirmed.each_line do |line|
               _p line
             end
@@ -155,7 +155,7 @@ def emit_post(_)
   # The only information in the POST is $USER and $PASSWORD
   current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S"
 
-  affirmed = get_affirmed_template(USERNAME, current_timestamp, _)
+  affirmed = get_affirmed_template(USERNAME, current_timestamp)
   user_filename = "#{USERID}.txt".untaint
 
   # report on commit
