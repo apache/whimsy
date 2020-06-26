@@ -26,7 +26,7 @@ IDS = (chairs.flatten + ASF::Service['board'].members.map(&:id)).uniq
 # Get the list of files in this year's directory
 signerfileslist, err = ASF::SVN.svn('list', COI_CURRENT_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
 raise RuntimeError.new(err) unless signerfileslist
-signerfiles = signerfileslist.split('\n')
+signerfiles = signerfileslist.split("\n")
 
 # Create the hash of {signer: signerurl} and remember user's affirmation file
 SIGNERS = Hash.new
