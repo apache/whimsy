@@ -24,7 +24,7 @@ end
 IDS = (chairs.flatten + ASF::Service['board'].members.map(&:id)).uniq
 
 # Get the list of files in this year's directory
-signerfileslist, err = ASF::SVN.svn('list', COI_CURRENT_URL, {user: $USER, password: $PASSWORD})
+signerfileslist, err = ASF::SVN.svn('list', COI_CURRENT_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
 raise RuntimeError.new(err) unless signerfileslist
 signerfiles = signerfileslist.split('\n')
 
@@ -68,7 +68,7 @@ def get_affirmed_template(user, password, name, timestamp)
        Date: __
        Metadata: _______________Whimsy www/officers/coi.cgi________________'
   template, err =
-    ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: $USER, password: $PASSWORD})
+    ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
   raise RuntimeError.new("Failed to read current template.txt -- %s" % err) unless template
   centered_name = "#{name}".center(60, '_')
   centered_date ="#{timestamp}".center(61, '_')
@@ -162,7 +162,7 @@ def emit_post(_)
   _div.transcript do
     Dir.mktmpdir do |tmpdir|
       ASF::SVN.svn_!('checkout',[COI_CURRENT_URL, tmpdir.untaint], _,
-                    {args: '--quiet', user: $USER, password: $PASSWORD})
+                    {args: '--quiet', user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
       Dir.chdir(tmpdir) do
         # write affirmation form
         File.write(user_filename, affirmed)
@@ -173,7 +173,7 @@ def emit_post(_)
         # TODO enable commit of affirmation
 #        ASF::SVN.svn_!('commit',[user_filename], _,
 #         {msg: "Affirm Conflict of Interest Policy for #{USERNAME}",
-#           user: $USER, password: $PASSWORD})
+#           user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
       end
     end
     # Send email to $USER, secretary@
