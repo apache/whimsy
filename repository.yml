@@ -35,6 +35,12 @@
   Meetings:
     url: private/foundation/Meetings
 
+  apachecon:
+    url: private/foundation/ApacheCon
+    depth: empty
+    files:
+      - apacheconhistory.csv
+
   apmail_bin:
     url: infra/infrastructure/apmail/trunk/bin
     depth: empty
@@ -52,6 +58,12 @@
     url: private/committers/board
     depth: files
 
+  brandlist:
+    url: private/foundation/Brand
+    depth: empty
+    files:
+      - docket.json
+
   cclas: # list only; no checkout
     url: private/documents/cclas
     depth: delete
@@ -59,6 +71,14 @@
 
   comdev-foundation:
     url: asf/comdev/projects.apache.org/trunk/site/json/foundation
+
+  comdevtalks:
+    url: asf/comdev/site/trunk/content/speakers/talks
+    depth: files
+
+  conflict-of-interest:
+    url: private/documents/conflict-of-interest
+    depth: skip
 
   foundation:
     url: private/foundation
@@ -106,16 +126,12 @@
     depth: delete
     list: true
 
-  conflict-of-interest:
-    url: private/documents/conflict-of-interest
-    depth: skip
+  incubator-content:
+    url: asf/incubator/public/trunk/content
+    depth: files
 
   incubator-podlings:
     url: asf/incubator/public/trunk/content/podlings
-    depth: files
-
-  incubator-content:
-    url: asf/incubator/public/trunk/content
     depth: files
 
   member_apps:
@@ -130,15 +146,15 @@
     url: private/foundation/officers
     depth: files
 
-  personnel-duties:
-    url: private/foundation/officers/personnel-duties
-    depth: files
-
   officers_historic:
     url: private/foundation/officers/historic
 
   officers_surveys:
     url: private/foundation/officers/surveys
+
+  personnel-duties:
+    url: private/foundation/officers/personnel-duties
+    depth: files
 
 # for access to badrcptto files:
   qmail_control:
@@ -166,19 +182,3 @@
 
   templates:
     url: asf/infrastructure/site/trunk/templates
-
-  brandlist:
-    url: private/foundation/Brand
-    depth: empty
-    files:
-      - docket.json
-
-  apachecon:
-    url: private/foundation/ApacheCon
-    depth: empty
-    files:
-      - apacheconhistory.csv
-
-  comdevtalks:
-    url: asf/comdev/site/trunk/content/speakers/talks
-    depth: files
