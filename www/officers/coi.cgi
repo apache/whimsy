@@ -125,9 +125,9 @@ _html do
         if USER_IS_REQUIRED_BUT_NOT_AFFIRMED
           _whimsy_panel(PANEL_MESSAGE, style: 'panel-success') do
             affirmed = get_affirmed_template(USERNAME,  current_timestamp)
-            affirmed.each_line do |line|
-              _p line
-            end
+
+            _pre affirmed
+
             _form.form_horizontal method: 'post' do
               _div.form_group do
                 _div.col_sm_offset_1.col_sm_10 do
