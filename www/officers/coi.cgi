@@ -38,12 +38,6 @@ signerfiles.each do |signerfile|
 end
 USER_AFFIRMATION_FILE = user_affirmation_file
 
-# Get the list of required users who have not yet signed
-NONSIGNERS = []
-IDS.each do |required|
-  NONSIGNERS.push(required) unless SIGNERS.include? required
-end
-
 # Determine if user should sign the affirmation form
 user_is_required = IDS.include? USERID
 not_required_message = user_is_required ?' required':' not required'
@@ -92,33 +86,45 @@ _html do
         _ 'This page allows officers to sign their Conflict of Interest annual affirmation.'
       end
       if _.get?
-      _p 'The following are currently required to affirm the Conflict of Interest:'
-      IDS.each do |id|
-       affirmer = ASF::Person.find(id)
-       _ "#{affirmer.cn} (#{affirmer.id}) "
+        _p 'The following are currently required to affirm the Conflict of Interest:'
+        _table.table.table_striped do
+          _thead do
+            _tr do
+              _th 'Name'
+              _th 'AvailId'
+              _th 'Link to affirmation'
+            end
+          end
+          _tbody do
+            IDS.each do |id|
+              affirmer = ASF::Person.find(id)
+              _tr do
+                _td affirmer.cn
+                _td affirmer.id 
+                _td do
+                  signerfile = SIGNERS[affirmer.id]
+                  if signerfile
+                    _a affirmer.id, href: "#{COI_CURRENT_URL}/#{signerfile}"
+                  else
+                    _ 'Not yet signed this calendar year'
+                  end
+                end
+              end
+            end
+          end
+        end
+        _p
+        _p "You are signed in as #{USERNAME} (#{USERID}) at #{current_timestamp}."
+        _p {_ "You are ";_b "#{not_required_message}";_ " to affirm the Conflict of Interest policy for this year."}
+        _p {_ "You ";_b "#{have_affirmed_message}";_  "the Conflict of Interest policy for this year."}
+        if  USER_AFFIRMATION_FILE
+          _a "Your Conflict of Interest affirmation",
+            href: "#{COI_CURRENT_URL}/#{USER_AFFIRMATION_FILE}"
+        end
+        if USER_IS_REQUIRED_BUT_NOT_AFFIRMED
+          _p {_b "You are invited to sign the affirmation below"}
+        end
       end
-      _p
-      _b 'Signers for this year:'
-      SIGNERS.each do |signer, signerfile|
-        _a signer, href: "#{COI_CURRENT_URL}/#{signerfile}"
-      end
-      _p
-      _b 'Nonsigners for this year:'
-      NONSIGNERS.each do |nonsigner|
-        _ nonsigner
-      end
-      _p
-      _p "You are signed in as #{USERNAME} (#{USERID}) at #{current_timestamp}."
-      _p {_ "You are ";_b "#{not_required_message}";_ " to affirm the Conflict of Interest policy for this year."}
-      _p {_ "You ";_b "#{have_affirmed_message}";_  "the Conflict of Interest policy for this year."}
-      if  USER_AFFIRMATION_FILE
-        _a "Your Conflict of Interest affirmation",
-          href: "#{COI_CURRENT_URL}/#{USER_AFFIRMATION_FILE}"
-      end
-      if USER_IS_REQUIRED_BUT_NOT_AFFIRMED
-        _p {_b "You are invited to sign the affirmation below"}
-      end
-    end
     }
     ) do
       if _.get?
