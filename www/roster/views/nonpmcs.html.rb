@@ -32,30 +32,30 @@ _html do
           _th 'Description', data_sort: 'string'
         end
       end
-
-      @nonpmcs.sort_by {|pmc| pmc.display_name.downcase}.each do |pmc|
-        _tr_ do
-          _td do
-            _a pmc.display_name, href: "nonpmc/#{pmc.name}"
-          end
-
-          _td do
-            pmc.chairs.each_with_index do |chair, index|
-              _span ', ' unless index == 0
-
-              if @members.include? chair[:id]
-                _b! {_a chair[:name], href: "committer/#{chair[:id]}"}
-              else
-                _a chair[:name], href: "committer/#{chair[:id]}"
-              end
+      _tbody do
+        @nonpmcs.sort_by {|pmc| pmc.display_name.downcase}.each do |pmc|
+          _tr_ do
+            _td do
+              _a pmc.display_name, href: "nonpmc/#{pmc.name}"
             end
+  
+            _td do
+              pmc.chairs.each_with_index do |chair, index|
+                _span ', ' unless index == 0
+  
+                if @members.include? chair[:id]
+                  _b! {_a chair[:name], href: "committer/#{chair[:id]}"}
+                else
+                  _a chair[:name], href: "committer/#{chair[:id]}"
+                end
+              end
+            end  
+  #          if not pmc.established
+  #            _td.issue 'Not in committee-info.txt'
+  #          else
+              _td pmc.description
+  #          end
           end
-
-#          if not pmc.established
-#            _td.issue 'Not in committee-info.txt'
-#          else
-            _td pmc.description
-#          end
         end
       end
     end

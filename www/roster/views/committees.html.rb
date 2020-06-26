@@ -53,44 +53,45 @@ _html do
           _th 'Description', data_sort: 'string'
         end
       end
-
-      prev_letter=nil
-      @committees.sort_by {|pmc| pmc.display_name.downcase}.each do |pmc|
-        letter = pmc.display_name.upcase[0]
-        if letter != prev_letter
-          options = {id: letter}
-        else
-          options = {}
-        end
-        prev_letter = letter
-        _tr_ options do
-          _td do
-            _a pmc.display_name, href: "committee/#{pmc.name}"
+      _tbody do
+        prev_letter=nil
+        @committees.sort_by {|pmc| pmc.display_name.downcase}.each do |pmc|
+          letter = pmc.display_name.upcase[0]
+          if letter != prev_letter
+            options = {id: letter}
+          else
+            options = {}
           end
-
-          _td do
-            pmc.chairs.each_with_index do |chair, index|
-              _span ', ' unless index == 0
-
-              if @members.include? chair[:id]
-                _b! {_a chair[:name], href: "committer/#{chair[:id]}"}
-              else
-                _a chair[:name], href: "committer/#{chair[:id]}"
+          prev_letter = letter
+          _tr_ options do
+            _td do
+              _a pmc.display_name, href: "committee/#{pmc.name}"
+            end
+  
+            _td do
+              pmc.chairs.each_with_index do |chair, index|
+                _span ', ' unless index == 0
+  
+                if @members.include? chair[:id]
+                  _b! {_a chair[:name], href: "committer/#{chair[:id]}"}
+                else
+                  _a chair[:name], href: "committer/#{chair[:id]}"
+                end
               end
             end
-          end
-
-          if not pmc.established
-            _td ''
-            _td.issue 'Not in committee-info.txt'
-          else
-            if pmc.established =~ /^(\d\d)\/(\d{4})(.*)$/
-              est = "#{$2}-#{$1}#{$3}"
+  
+            if not pmc.established
+              _td ''
+              _td.issue 'Not in committee-info.txt'
             else
-              est = pmc.established
+              if pmc.established =~ /^(\d\d)\/(\d{4})(.*)$/
+                est = "#{$2}-#{$1}#{$3}"
+              else
+                est = pmc.established
+              end
+              _td est
+              _td pmc.description
             end
-            _td est
-            _td pmc.description
           end
         end
       end
