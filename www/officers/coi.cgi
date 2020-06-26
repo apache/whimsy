@@ -15,8 +15,8 @@ COI_CURRENT_TEMPLATE_URL = File.join(COI_CURRENT_URL, 'template.txt')
 
 user = ASF::Person.find($USER)
 USERID = user.id
-USERNAME = user.cn
-USERMAIL = user.mail.first
+USERNAME = user.cn.untaint
+USERMAIL = user.mail.first.untaint
 committees = ASF::Committee.officers + ASF::Committee.nonpmcs
 chairs = committees.map do |committee|
  committee.chairs.map {|chair| chair[:id]}
