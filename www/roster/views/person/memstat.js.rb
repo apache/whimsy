@@ -9,7 +9,7 @@ class PersonMemberStatus < Vue
                 console.log('memstat.js.rb render committer.id: ' + committer.id)
                 console.log('memstat.js.rb render @@person.props.auth.id: ' + @@person.props.auth.id)
                 console.log('memstat.js.rb render owner? ' + owner)
-
+                console.log('memstat.js.rb render @@person.props.auth.secretary: ' + @@person.props.auth.secretary)
     _div.row data_edit: ('memstat' if @@person.props.auth.secretary or owner) do
       _div.name 'Member status'
 
@@ -18,6 +18,7 @@ class PersonMemberStatus < Vue
           _span committer.member.status
 
          if @@edit == :memstat
+           console.log('memstat edit menu...')
            opt = { year: 'numeric', month: 'long' } # Suggested date
            dod = Date.new.toLocaleDateString('en-US', opt)
            _form.inline method: 'post' do
@@ -25,11 +26,13 @@ class PersonMemberStatus < Vue
              _button.btn.btn_secondary 'Cancel', data_cancel_submit:true
 
              # These actions are only for the person's own use
-             if (owner)
+             if owner
+               console.log('memstat edit menu owner...')
                if committer.member.status.include? 'Active'
+                 console.log('memstat edit menu owner Active...')
                  emeritus_file_name = committer.forms['emeritus_request']
                  if committer.forms['emeritus_request']
-                   console.log('memstat.js.rb owner emeritus file is: ' + committer.forms['emeritus_request'])
+                   console.log('memstat.js.rb owner emeritus request file is: ' + committer.forms['emeritus_request'])
                    _button.btn.btn_primary 'rescind emeritus request',
                      data_emeritus_file_name:emeritus_file_name,
                      name: 'action', value: 'rescind_emeritus'
@@ -45,7 +48,8 @@ class PersonMemberStatus < Vue
                end
              end
              # These actions are only for secretary's use
-             if (@@person.props.auth.secretary)
+             if @@person.props.auth.secretary
+               console.log('memstat edit menu secretary...')
                if committer.member.status.include? 'Active'
                  emeritus_file_name = committer.forms['emeritus_request']
                  _button.btn.btn_primary 'move to emeritus',

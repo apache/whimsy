@@ -6,8 +6,12 @@ Wunderbar.warn('Memstat.json.rb request with emeritusfilename: ' + @emeritusfile
 Wunderbar.warn('Memstat.json.rb request with emerituspersonname: ' + @emerituspersonname) if @emerituspersonname
 Wunderbar.warn('Memstat.json.rb request with emeritusemail: ' + @emeritusemail) if @emeritusemail
 
-entry = ASF::Person.find(@userid).members_txt(true)
+user = ASF::Person.find(@userid)
+entry = user.members_txt(true)
 raise Exception.new("unable to find member entry for #{userid}") unless entry
+USERID = user.id
+USERMAIL = user.mail.first
+USERNAME = user.cn
 
 # identify file to be updated
 members_txt = File.join(ASF::SVN['foundation'], 'members.txt')
@@ -69,11 +73,46 @@ if @action == 'rescind_emeritus'
   _.system command
   Wunderbar.warn ("memstat.json.rb rescind_emeritus command: #{command}")
 elsif @action == 'request_emeritus'
-  # TODO send email to secretary requesting emeritus
-  Wunderbar.warn ("memstat.json.rb request emeritus")
+  # Create mail to secretary requesting emeritus
+  FOUNDATION_URL = ASF::SVN.svnurl('foundation')
+  EMERITUS_TEMPLATE_URL = File.join(FOUNDATION_URL, 'emeritus-request.txt')
+  template, err =
+    ASF::SVN.svn('cat', EMERITUS_TEMPLATE_URL, {user: $USER, password: $PASSWORD})
+  raise RuntimeError.new("Failed to read emeritus-request.txt") if err
+  centered_name = "#{USERNAME}".center(55, '_')
+  centered_date ="#{timestamp}".center(55, '_')
+  signed_request = template
+    .gsub('Full name: _______________________________________________________',
+          ('Full name: ' + centered_name))
+    .gsub('Signed: ________________________________',
+          'Signed: ______________Whimsy www/roster validated user____________')
+    .gsub('Date: ___________________',
+          ('Date: ' + centered_date))
+
+  ASF::Mail.configure
+  mail = Mail.new do
+  to "#{USERNAME}<#{USERMAIL}>"
+# cc "secretary@apache.org"
+    from "#{USERMAIL}"
+    subject "Emeritus request from #{USERNAME}"
+    body "Emeritus request is attached."
+  end
+  mail.attachments["#{USERID}.txt"] = signed_request
+  mail.deliver!
 elsif @action == 'request_reinstatement'
-  # TODO send email to secretary, cc: OP attaching reinstatement request form
   Wunderbar.warn "memstat.json.rb request reinstatement"
+  ASF::Mail.configure
+  mail = Mail.new do
+    to "secretary@apache.org"
+    cc "#{USERNAME}<#{USERMAIL}>"
+    from "#{USERMAIL}"
+    subject "Emeritus reinstatement request from #{USERNAME}"
+    body "I respectfully request reinstatement to full membership.
+
+      Regards,
+      #{USERNAME}"
+  end
+  mail.deliver!
 end
 
 # return updated committer info
