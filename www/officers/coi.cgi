@@ -80,6 +80,7 @@ _html do
       'http://www.apache.org/foundation/records/minutes/2020/board_minutes_2020_03_18.txt'  =>
         'Conflict of Interest Resolution Board minutes',
       COI_CURRENT_TEMPLATE_URL => 'Conflict of Interest Resolution',
+      COI_CURRENT_URL => "#{YEAR} affirmations",
     },
     helpblock: -> {
       _p do
