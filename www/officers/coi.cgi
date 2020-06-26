@@ -94,7 +94,7 @@ _html do
             _tr do
               _th 'Name'
               _th 'AvailId'
-              _th 'Link to affirmation'
+              _th 'Link to affirmation(s)'
             end
           end
           _tbody do
@@ -108,7 +108,7 @@ _html do
                   if signerfile
                     _a affirmer.id, href: "#{COI_CURRENT_URL}/#{signerfile}"
                   else
-                    _ 'Not yet signed this calendar year'
+                    _ "Not signed in #{YEAR}"
                   end
                 end
               end
