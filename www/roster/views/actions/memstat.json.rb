@@ -4,17 +4,16 @@ Wunderbar.warn('Memstat.json.rb action: ' + @action +
                ' for id: ' + @userid)
 Wunderbar.warn('Memstat.json.rb request with emeritusfilename: ' + @emeritusfilename) if @emeritusfilename
 Wunderbar.warn('Memstat.json.rb request with emerituspersonname: ' + @emerituspersonname) if @emerituspersonname
-Wunderbar.warn('Memstat.json.rb request with emeritusemail: ' + @emeritusemail) if @emeritusemail
 
 user = ASF::Person.find(@userid)
 entry = user.members_txt(true)
 raise Exception.new("unable to find member entry for #{userid}") unless entry
 USERID = user.id
-USERMAIL = user.mail.first
-USERNAME = user.cn
+USERMAIL = "#{USERID}@apache.org".untaint
+USERNAME = user.cn.untaint
 
 # identify file to be updated
-members_txt = File.join(ASF::SVN['foundation'], 'members.txt')
+members_txt = File.join(ASF::SVN['foundation'], 'members.txt').untaint
 
 # construct commit message
 message = "Action #{@action} for #{ASF::Person.find(@userid).member_name}"
@@ -75,10 +74,12 @@ if @action == 'rescind_emeritus'
 elsif @action == 'request_emeritus'
   # Create mail to secretary requesting emeritus
   FOUNDATION_URL = ASF::SVN.svnurl('foundation')
-  EMERITUS_TEMPLATE_URL = File.join(FOUNDATION_URL, 'emeritus-request.txt')
+  Wunderbar.warn("Memstat.json.rb foundation url: #{FOUNDATION_URL}")
+  EMERITUS_TEMPLATE_URL = File.join(FOUNDATION_URL, 'emeritus-request.txt').untaint
+  Wunderbar.warn("Memstat.json.rb emeritus template url: #{EMERITUS_TEMPLATE_URL}")
   template, err =
     ASF::SVN.svn('cat', EMERITUS_TEMPLATE_URL, {user: $USER, password: $PASSWORD})
-  raise RuntimeError.new("Failed to read emeritus-request.txt") if err
+  raise RuntimeError.new("Failed to read emeritus-request.txt" + err) unless template
   centered_name = "#{USERNAME}".center(55, '_')
   centered_date ="#{timestamp}".center(55, '_')
   signed_request = template
