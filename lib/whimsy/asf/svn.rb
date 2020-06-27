@@ -478,7 +478,7 @@ module ASF
         pass = env.password.dup.untaint
         # checkout committers/board (this does not have many files currently)
         out, err = self.svn('checkout', [ciURL, tmpdir.untaint],
-          {args: '--quiet', depth: 'files'],
+          {args: '--quiet', depth: 'files',
            user: user, password: pass})
 
         raise Exception.new("Checkout of board folder failed: #{err}") unless out
