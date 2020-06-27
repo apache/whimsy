@@ -8,9 +8,10 @@ Wunderbar.warn('Memstat.json.rb request with emerituspersonname: ' + @emerituspe
 user = ASF::Person.find(@userid)
 entry = user.members_txt(true)
 raise Exception.new("unable to find member entry for #{userid}") unless entry
-USERID = user.id
+USERID = user.id.untaint
 USERMAIL = "#{USERID}@apache.org".untaint
 USERNAME = user.cn.untaint
+TIMESTAMP = (DateTime.now.strftime "%Y-%m-%d %H:%M:%S").untaint
 
 # identify file to be updated
 members_txt = File.join(ASF::SVN['foundation'], 'members.txt').untaint
@@ -78,17 +79,20 @@ elsif @action == 'request_emeritus'
   EMERITUS_TEMPLATE_URL = File.join(FOUNDATION_URL, 'emeritus-request.txt').untaint
   Wunderbar.warn("Memstat.json.rb emeritus template url: #{EMERITUS_TEMPLATE_URL}")
   template, err =
-    ASF::SVN.svn('cat', EMERITUS_TEMPLATE_URL, {user: $USER, password: $PASSWORD})
-  raise RuntimeError.new("Failed to read emeritus-request.txt" + err) unless template
+    ASF::SVN.svn('cat', EMERITUS_TEMPLATE_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
+  raise RuntimeError.new("Failed to read emeritus-request.txt: " + err) unless template
+  centered_id = "#{USERID}".center(55, '_')
   centered_name = "#{USERNAME}".center(55, '_')
-  centered_date ="#{timestamp}".center(55, '_')
+  centered_date ="#{TIMESTAMP}".center(55, '_')
   signed_request = template
+    .gsub('Apache id: _______________________________________________________',
+        ('Apache id: ' + centered_id))
     .gsub('Full name: _______________________________________________________',
           ('Full name: ' + centered_name))
-    .gsub('Signed: ________________________________',
-          'Signed: ______________Whimsy www/roster validated user____________')
-    .gsub('Date: ___________________',
-          ('Date: ' + centered_date))
+    .gsub('Signed: __________________________________________________________',
+          'Signed by validated user at: ________Whimsy www/committer_________')
+    .gsub('Date: _________________________________',
+          ('Date: _______' + centered_date))
 
   ASF::Mail.configure
   mail = Mail.new do
@@ -96,9 +100,11 @@ elsif @action == 'request_emeritus'
 # cc "secretary@apache.org"
     from "#{USERMAIL}"
     subject "Emeritus request from #{USERNAME}"
-    body "Emeritus request is attached."
+    text_part do
+      body "Please accept my emeritus request, which is attached.\n\nRegards,\n\n#{USERNAME}\n\n"
+    end
   end
-  mail.attachments["#{USERID}.txt"] = signed_request
+  mail.attachments["#{USERID}.txt"] = signed_request.untaint
   mail.deliver!
 elsif @action == 'request_reinstatement'
   Wunderbar.warn "memstat.json.rb request reinstatement"
@@ -108,10 +114,9 @@ elsif @action == 'request_reinstatement'
     cc "#{USERNAME}<#{USERMAIL}>"
     from "#{USERMAIL}"
     subject "Emeritus reinstatement request from #{USERNAME}"
-    body "I respectfully request reinstatement to full membership.
-
-      Regards,
-      #{USERNAME}"
+    text_part do
+      body "I respectfully request reinstatement to full membership.\n\nRegards,\n\n#{USERNAME}"
+    end
   end
   mail.deliver!
 end
