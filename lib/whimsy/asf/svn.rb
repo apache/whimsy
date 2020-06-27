@@ -505,6 +505,13 @@ module ASF
     # update a file or directory in SVN, working entirely in a temporary
     # directory
     # Intended for use from GUI code
+    # 
+    # path - the path to be used, directory or single file
+    # msg - commit message
+    # env - environment (queried for user and password)
+    # _ - wunderbar context
+    # options - hash of:
+    #  :dryrun - show command (excluding credentials), without executing it
     def self.update(path, msg, env, _, options={})
       if File.directory? path
         dir = path
@@ -657,7 +664,7 @@ module ASF
     #   env - for username and password
     #   _ - Wunderbar context
     # For example:
-    #   ASF::SVN.multiUpdate(path,message,env,_) do |text|
+    #   ASF::SVN.multiUpdate_(path,message,env,_) do |text|
     #     out = '...'
     #     extra = []
     #     url1 = 'https://svn.../' # etc
@@ -665,7 +672,7 @@ module ASF
     #     extra << ['rm',url3]
     #     [out, extra]
     #   end
-    def self.multiUpdate(path, msg, env, _, options = {})
+    def self.multiUpdate_(path, msg, env, _, options = {})
       require 'tempfile'
       tmpdir = Dir.mktmpdir.untaint
       if File.file? path
