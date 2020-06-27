@@ -86,18 +86,9 @@ if env.password
 
   # update podlings.xml
   if @targets.include? 'mentor'
-    Dir.mktmpdir do |tmpdir|
-      # checkout committers/board
-      Kernel.system 'svn', 'checkout', '--quiet', '--depth=empty',
-        '--no-auth-cache', '--non-interactive',
-        '--username', env.user.untaint, '--password', env.password.untaint,
-        'https://svn.apache.org/repos/asf/incubator/public/trunk/content',
-         tmpdir.untaint
-
-      # read in podlings.xml
-      file = File.join(tmpdir, 'podlings.xml')
-      Kernel.system 'svn', 'update', '--quiet', file
-      podlings = File.read(file)
+    path = File.join(ASF::SVN.svnurl('incubator-content'), 'podlings.xml').untaint
+    msg = "#{@project} #{target} #{@action == 'add' ? '+' : '-'}= #{who}".untaint
+    ASF::SVN.update(path, msg, env, _, {}) do |tmpdir, podlings|
 
       pre = /<podling[^>]* resource="#{@project}".*?<\/podling>/m
       people.each do |person|
@@ -121,24 +112,7 @@ if env.password
         end
       end
 
-      # write file out to disk
-      File.write(file, podlings)
-
-      # commit changes
-      rc = Kernel.system 'svn', 'commit', '--quiet',
-        '--no-auth-cache', '--non-interactive',
-        '--username', env.user.untaint, '--password', env.password.untaint,
-        tmpdir.untaint, '--message',
-        "#{@project} #{target} #{@action == 'add' ? '+' : '-'}= #{who}".untaint
-
-      if rc
-        # update cache
-        cache = ASF::Config.get(:cache)
-        File.write("#{cache}/podlings.xml", podlings) if Dir.exist? cache
-      else
-        # die
-        raise Exception.new('Update podlings.xml failed')
-      end
+      podlings
     end
   end
 
