@@ -25,7 +25,15 @@ IDS = (chairs.flatten + ASF::Service['board'].members.map(&:id)).uniq
 
 # Get the list of files in this year's directory
 signerfileslist, err = ASF::SVN.svn('list', COI_CURRENT_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
-raise RuntimeError.new(err) unless signerfileslist
+# Currently the documents directory has limited access.
+# This includes ASF members, but does not include officers who are not members
+# Let others down gently
+unless signerfileslist
+  Wunderbar.warn err
+  print "Status: 404 Not found\r\n\r\n" # TODO better status
+  print "Sorry, cannot access COI documents\r\n"
+  exit
+end
 signerfiles = signerfileslist.split("\n")
 
 # Create the hash of {signer: signerurl} and remember user's affirmation file
