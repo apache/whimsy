@@ -119,7 +119,7 @@ class Agenda
       # do a full parse in the background if a quick parse was done
       if Agenda[file][:mtime] == -1
         Thread.new do
-          self.update(file, nil)
+          self.update(file, nil) {}
           parse(file, :full)
         end
       end
