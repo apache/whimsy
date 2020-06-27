@@ -16,7 +16,7 @@ COI_CURRENT_TEMPLATE_URL = File.join(COI_CURRENT_URL, 'template.txt')
 user = ASF::Person.find($USER)
 USERID = user.id
 USERNAME = user.cn.untaint
-USERMAIL = user.mail.first.untaint
+USERMAIL = "#{USERID}@apache.org".untaint
 committees = ASF::Committee.officers + ASF::Committee.nonpmcs
 chairs = committees.map do |committee|
  committee.chairs.map {|chair| chair[:id]}
@@ -203,7 +203,16 @@ def emit_post(_)
  #     cc "secretary@apache.org"
       from "#{USERMAIL}"
       subject "Conflict of Interest affirmation from #{USERNAME}"
-      body "This year's Conflict of Interest affirmation is attached."
+      text_part do
+        body "
+DRAFT DRAFT DRAFT Please review this; nothing has been checked in.
+Send feedback to dev@whimsical.apache.org
+This year's Conflict of Interest affirmation is attached.
+It has been checked into the foundation repository at
+#{COI_CURRENT_URL}/#{user_filename}.\n
+Regards,\n
+#{USERNAME}\n\n"
+      end
     end
     mail.attachments["#{USERID}.txt"] = affirmed
     mail.deliver!
