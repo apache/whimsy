@@ -31,38 +31,40 @@ _html do
             _th 'Description', data_sort: 'string'
           end
         end
-
-        project_names = @projects.map {|project| project.name}
-        prev_letter=nil
-        @ppmcs.sort_by {|ppmc| ppmc.display_name.downcase}.each do |ppmc|
-          letter = ppmc.display_name.upcase[0]
-          if letter != prev_letter
-            options = {id: letter}
-          else
-            options = {}
-          end
-          prev_letter = letter
-          _tr_ options do
-            _td do
-              if project_names.include? ppmc.name
-                _a ppmc.display_name, href: "ppmc/#{ppmc.name}"
-              else
-                _a.label_danger ppmc.display_name, href: "ppmc/#{ppmc.name}", title: 'LDAP project not yet set up'
+        _tbody do
+          project_names = @projects.map {|project| project.name}
+          prev_letter=nil
+          @ppmcs.sort_by {|ppmc| ppmc.display_name.downcase}.each do |ppmc|
+            letter = ppmc.display_name.upcase[0]
+            if letter != prev_letter
+              options = {id: letter}
+            else
+              options = {}
+            end
+            prev_letter = letter
+            _tr_ options do
+              _td do
+                if project_names.include? ppmc.name
+                  _a ppmc.display_name, href: "ppmc/#{ppmc.name}"
+                else
+                  _a.label_danger ppmc.display_name, href: "ppmc/#{ppmc.name}", title: 'LDAP project not yet set up'
+                end
+              end
+  
+              _td ppmc.startdate
+  
+              _td do
+                # using _p here messes up the sort
+                if project_names.include? ppmc.name
+                  _ ppmc.description
+                else
+                  _ ppmc.description + " (not in ldap)"
+                end
               end
             end
-
-            _td ppmc.startdate
-
-            _td do
-              # using _p here messes up the sort
-              if project_names.include? ppmc.name
-                _ ppmc.description
-              else
-                _ ppmc.description + " (not in ldap)"
-              end
-            end
-          end
+          end  
         end
+
       end
     end
     _script %{

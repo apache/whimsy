@@ -60,51 +60,51 @@ _html do
             _th.text_warning 'Average # Preapprovals'
             _th 'Discussion Items Section Text Length'
           end
-          _tbody do
-            datums.select{ |k,v| !'stats'.eql?(k) && v.has_key?(PEOPLE) }.each.reverse_each do | month, agenda |
-              directors, others = agenda[PEOPLE].select{ |id, data| data['attending'] }.partition{ |id, data| 'director'.eql?(data['role']) }
-              _tr_ do
-                _td do
-                  file = month + '.txt'
-                  if not File.exist? File.join(BOARD, file)
-                    file = File.join('archived_agendas', file)
-                  end
+        end
+        _tbody do
+          datums.select{ |k,v| !'stats'.eql?(k) && v.has_key?(PEOPLE) }.each.reverse_each do | month, agenda |
+            directors, others = agenda[PEOPLE].select{ |id, data| data['attending'] }.partition{ |id, data| 'director'.eql?(data['role']) }
+            _tr_ do
+              _td do
+                file = month + '.txt'
+                if not File.exist? File.join(BOARD, file)
+                  file = File.join('archived_agendas', file)
+                end
 
-                  _a month.sub('board_agenda_', '').gsub('_', '-'),
-                    href: File.join(REPO, file)
+                _a month.sub('board_agenda_', '').gsub('_', '-'),
+                  href: File.join(REPO, file)
+              end
+              _td.text_center do
+                dct = directors.length
+                if 9 == dct
+                  _ dct
+                else
+                  _span.text_warning dct
                 end
-                _td.text_center do
-                  dct = directors.length
-                  if 9 == dct
-                    _ dct
-                  else
-                    _span.text_warning dct
-                  end
-                end
-                _td.text_center do
-                  _ others.length
-                end
-                _td.text_center do
-                  _ agenda['stats']['specialorders']
-                end
-                _td.text_center do
-                  _ agenda[OFFICERS].length
-                end
-                _td.text_center do
-                  _ agenda[PMCS].length
-                end
-                _td.text_center do
-                  _ agenda['stats']['avgreportlen'].round(0) if agenda['stats'].has_key?('avgreportlen')
-                end
-                _td.text_center do
-                  _ agenda['stats']['avgcommentlen'].round(0) if agenda['stats'].has_key?('avgcommentlen')
-                end
-                _td.text_center do
-                  _ agenda['stats']['avgapprovals'].round(1) if agenda['stats'].has_key?('avgapprovals')
-                end
-                _td.text_center do
-                  _ agenda['stats']['discusstextlen']
-                end
+              end
+              _td.text_center do
+                _ others.length
+              end
+              _td.text_center do
+                _ agenda['stats']['specialorders']
+              end
+              _td.text_center do
+                _ agenda[OFFICERS].length
+              end
+              _td.text_center do
+                _ agenda[PMCS].length
+              end
+              _td.text_center do
+                _ agenda['stats']['avgreportlen'].round(0) if agenda['stats'].has_key?('avgreportlen')
+              end
+              _td.text_center do
+                _ agenda['stats']['avgcommentlen'].round(0) if agenda['stats'].has_key?('avgcommentlen')
+              end
+              _td.text_center do
+                _ agenda['stats']['avgapprovals'].round(1) if agenda['stats'].has_key?('avgapprovals')
+              end
+              _td.text_center do
+                _ agenda['stats']['discusstextlen']
               end
             end
           end

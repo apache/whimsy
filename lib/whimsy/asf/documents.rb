@@ -147,4 +147,11 @@ module ASF
     end
   end
 
+  class COIFiles < EmeritusFiles
+    def self.listnames
+      _, list = ASF::SVN.getlisting('conflict-of-interest')
+      list
+    end
+  end
+
 end

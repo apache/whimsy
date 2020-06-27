@@ -31,6 +31,22 @@ describe "ASF::SVN.svn_!" do
 end
 
 describe "ASF::SVN.svn_" do
+  it "svn_(nil,nil,nil) should raise error" do
+    expect { ASF::SVN.svn_(nil,nil,nil) }.to raise_error(ArgumentError, 'command must not be nil')
+  end
+  it "svn_('st',nil,nil) should raise error" do
+    expect { ASF::SVN.svn_('st',nil,nil) }.to raise_error(ArgumentError, 'path must not be nil')
+  end
+  it "svn_('st','',nil) should raise error" do
+    expect { ASF::SVN.svn_('st','',nil) }.to raise_error(ArgumentError, 'wunderbar (_) must not be nil')
+  end
+  it "svn_('st','',_,{xyz: true}) should raise error" do
+    expect { ASF::SVN.svn_('st','',true,{xyz: true}) }.to raise_error(ArgumentError, 'Following options not recognised: [:xyz]')
+  end
+  it "svn_('st','',_,{args: true}) should raise error" do
+    expect { ASF::SVN.svn_('st','',true,{args: true}) }.to raise_error(ArgumentError, "args 'true' must be string or array")
+  end
+
   it "svn_('info') should return array with Name:" do
     repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
 

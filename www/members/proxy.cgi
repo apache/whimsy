@@ -152,7 +152,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers)
 end
 
 # Emit a record of a user's submission - POST
-def emit_post(cur_mtg_dir, meeting)
+def emit_post(cur_mtg_dir, meeting, _)
   _h3_ 'Proxy Assignment - Session Transcript'
 
   # collect data
@@ -273,7 +273,7 @@ _html do
       if _.get?
         emit_form(cur_mtg_dir, meeting, MeetingUtil::getVolunteers(cur_mtg_dir))
       else # POST
-        emit_post(cur_mtg_dir, meeting)
+        emit_post(cur_mtg_dir, meeting, _)
       end
     end
   end

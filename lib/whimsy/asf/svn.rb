@@ -263,6 +263,66 @@ module ASF
     # These keys are common to svn_ and svn
     VALID_KEYS=[:args, :user, :password, :verbose, :env, :dryrun, :msg, :depth]
 
+    # common routine to build SVN command line
+    # returns [cmd, stdin] where stdin is the data for stdin (if any)
+    def self._svn_build_cmd(command, path, options)
+      bad_keys = options.keys - VALID_KEYS
+      if bad_keys.size > 0
+        raise ArgumentError.new "Following options not recognised: #{bad_keys.inspect}"
+      end
+
+      # build svn command
+      cmd = ['svn', command, '--non-interactive']
+      stdin = nil # for use with -password-from-stdin
+
+      args = options[:args]
+      if args
+        if args.is_a? String
+          cmd << args
+        elsif args.is_a? Array
+          cmd += args
+        else
+          raise ArgumentError.new "args '#{args.inspect}' must be string or array"
+        end
+      end
+
+      msg = options[:msg]
+      cmd += ['--message', msg] if msg
+
+      depth = options[:depth]
+      cmd += ['--depth', depth] if depth
+
+      # add credentials if required
+      env = options[:env]
+      if env
+        password = env.password
+        user = env.user
+      else
+        password = options[:password]
+        user = options[:user] if password
+      end
+      # password was supplied, add credentials
+      if password and not options[:dryrun] # don't add auth for dryrun
+        cmd << ['--username', user, '--no-auth-cache']
+        if self.passwordStdinOK?()
+          stdin = password
+          cmd << ['--password-from-stdin']
+        else
+          cmd << ['--password', password]
+        end
+      end
+
+      cmd << '--' # ensure paths cannot be mistaken for options
+
+      if path.is_a? Array
+        cmd += path
+      else
+        cmd << path
+      end
+
+      return cmd, stdin
+    end
+
     # low level SVN command
     # params:
     # command - info, list etc
@@ -280,67 +340,20 @@ module ASF
     # - stdout
     # - nil, err
     # - [cmd] if :dryrun
+    # May raise ArgumentError
     def self.svn(command, path , options = {})
       raise ArgumentError.new 'command must not be nil' unless command
       raise ArgumentError.new 'path must not be nil' unless path
       
-      chdir = options.delete(:chdir) # not currently supported for svn_
-
-      bad_keys = options.keys - VALID_KEYS
-      if bad_keys.size > 0
-        return nil, "Following options not recognised: #{bad_keys.inspect}"
-      end
-
-      # build svn command
-      cmd = ['svn', command, '--non-interactive']
-
-      args = options[:args]
-      if args
-        if args.is_a? String
-          cmd << args
-        elsif args.is_a? Array
-          cmd += args
-        else
-          return nil, "args '#{args.inspect}' must be string or array"
-        end
-      end
-
-      msg = options[:msg]
-      cmd += ['--message', msg] if msg
-
-      depth = options[:depth]
-      cmd += ['--depth', depth] if depth
-
+      # Deal with svn-only opts
+      chdir = options.delete(:chdir)
       open_opts = {}
-
       open_opts[:chdir] = chdir if chdir
 
-      env = options[:env]
-      if env
-        password = env.password
-        user = env.user
-      else
-        password = options[:password]
-        user = options[:user] if password
-      end
-      # password was supplied, add credentials
-      if password and not options[:dryrun] # don't add auth for dryrun
-        cmd += ['--username', user, '--no-auth-cache']
-        if self.passwordStdinOK?()
-          open_opts[:stdin_data] = password
-          cmd << '--password-from-stdin'
-        else
-          cmd += ['--password', password]
-        end
-      end
+      cmd, stdin = self._svn_build_cmd(command, path, options)
 
-      cmd << '--' # ensure paths cannot be mistaken for options
-
-      if path.is_a? Array
-        cmd += path
-      else
-        cmd << path
-      end
+      cmd.flatten!
+      open_opts[:stdin_data] = stdin if stdin
 
       p cmd if options[:verbose]
 
@@ -379,6 +392,7 @@ module ASF
     #
     # Returns:
     # - status code
+    # May raise ArgumentError
     def self.svn_(command, path, _, options = {})
       raise ArgumentError.new 'command must not be nil' unless command
       raise ArgumentError.new 'path must not be nil' unless path
@@ -387,59 +401,9 @@ module ASF
       # Pick off the options specific to svn_ rather than svn
       sysopts = options.delete(:sysopts) || {}
 
-      bad_keys = options.keys - VALID_KEYS
-      if bad_keys.size > 0
-        return nil, "Following options not recognised: #{bad_keys.inspect}"
-      end
 
-      # build svn command
-      cmd = ['svn', command, '--non-interactive']
-
-      args = options[:args]
-      if args
-        if args.is_a? String
-          cmd << args
-        elsif args.is_a? Array
-          cmd += args
-        else
-          return nil, "args '#{args.inspect}' must be string or array"
-        end
-      end
-
-      msg = options[:msg]
-      cmd += ['--message', msg] if msg
-
-      depth = options[:depth]
-      cmd += ['--depth', depth] if depth
-
-      # add credentials if required
-      env = options[:env]
-      if env
-        password = env.password
-        user = env.user
-      else
-        password = options[:password]
-        user = options[:user] if password
-      end
-      # password was supplied, add credentials
-      if password and not options[:dryrun] # don't add auth for dryrun
-        creds = ['--no-auth-cache', '--username', user]
-        if self.passwordStdinOK?()
-          sysopts[:stdin] = password
-          creds << '--password-from-stdin'
-        else
-          creds += ['--password', password]
-        end
-        cmd << creds
-      end
-
-      cmd << '--' # ensure paths cannot be mistaken for options
-
-      if path.is_a? Array
-        cmd += path
-      else
-        cmd << path
-      end
+      cmd, stdin = self._svn_build_cmd(command, path, options)
+      sysopts[:stdin] = stdin if stdin
 
       Wunderbar.warn cmd.inspect if options[:verbose] # includes auth
 
@@ -660,10 +624,21 @@ module ASF
           syscmd << '--revision'
           syscmd << revision 
         end
+
+        sysopts = {}
         if env
-          syscmd << ['--username', env.user, '--password', env.password] # TODO --password-from-stdin
+          if self.passwordStdinOK?()
+            syscmd << ['--username', env.user, '--password-from-stdin']
+            sysopts[:stdin] = env.password
+          else
+            syscmd << ['--username', env.user, '--password', env.password]
+          end
         end
-        _.system syscmd
+        if _.instance_of?(Wunderbar::JsonBuilder) or _.instance_of?(Wunderbar::TextBuilder)
+          _.system syscmd, sysopts, sysopts # needs two hashes
+        else
+          _.system syscmd, sysopts
+        end
       ensure
         FileUtils.rm_rf tmpdir unless temp
       end
