@@ -428,7 +428,8 @@ module ASF
         cmd.insert(1, auth, '--no-auth-cache')
       end
 
-      Wunderbar.warn cmd.inspect if options[:verbose] # includes auth
+      # This ensures the output is captured in the response
+      _.system ['echo', [cmd,sysopts].inspect] if options[:verbose] # includes auth
 
       if options[:dryrun] # excludes auth
         # TODO: improve this
