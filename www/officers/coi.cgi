@@ -9,9 +9,10 @@ require 'date'
 require 'tmpdir'
 
 coi_url = ASF::SVN.svnurl('conflict-of-interest')
+COI_CURRENT_TEMPLATE_URL = File.join(coi_url, 'template.txt').untaint
+
 YEAR = DateTime.now.strftime "%Y"
 COI_CURRENT_URL = File.join(coi_url, YEAR).untaint
-COI_CURRENT_TEMPLATE_URL = File.join(COI_CURRENT_URL, 'template.txt')
 
 user = ASF::Person.find($USER)
 USERID = user.id
