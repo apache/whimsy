@@ -41,6 +41,14 @@ module ASF
         unless @repos
           @@repository_mtime = File.exist?(REPOSITORY) && File.mtime(REPOSITORY)
           @@repository_entries = YAML.load_file(REPOSITORY)
+          repo_override = ASF::Config.get(:repository)
+          if repo_override
+            svn_over = repo_override[:svn]
+            if svn_over
+              Wunderbar.warn("Found override for repository.yml[:svn]")
+            end
+            @@repository_entries[:svn].merge!(svn_over)
+          end
 
           @repos = Hash[Dir[*svn].map { |name| 
             if Dir.exist? name.untaint
@@ -299,16 +307,20 @@ module ASF
         user = env.user
       else
         password = options[:password]
-        user = options[:user] if password
+        user = options[:user]
       end
-      # password was supplied, add credentials
-      if password and not options[:dryrun] # don't add auth for dryrun
-        cmd << ['--username', user, '--no-auth-cache']
-        if self.passwordStdinOK?()
-          stdin = password
-          cmd << ['--password-from-stdin']
-        else
-          cmd << ['--password', password]
+      unless options[:dryrun] # don't add auth for dryrun
+        if password or user == 'whimsysvn' # whimsysvn user does not require password
+          cmd << ['--username', user, '--no-auth-cache']
+        end
+        # password was supplied, add credentials
+        if password
+          if self.passwordStdinOK?()
+            stdin = password
+            cmd << ['--password-from-stdin']
+          else
+            cmd << ['--password', password]
+          end
         end
       end
 
@@ -383,6 +395,7 @@ module ASF
     #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
     #  :msg - shorthand for {args: ['--message', value]}
     #  :depth - shorthand for {args: ['--depth', value]}
+    #  :auth - authentication (as [['--username', etc]])
     #  :env - environment: source for user and password
     #  :user, :password - used if env is not present
     #  :verbose - show command (including credentials) before executing it
@@ -400,10 +413,20 @@ module ASF
       
       # Pick off the options specific to svn_ rather than svn
       sysopts = options.delete(:sysopts) || {}
+      auth = options.delete(:auth)
+      if auth
+        # override any other auth
+        [:env, :user, :password].each do |k|
+          options.delete[k]
+        end
+      end
 
 
       cmd, stdin = self._svn_build_cmd(command, path, options)
       sysopts[:stdin] = stdin if stdin
+      if auth
+        cmd.insert(1, auth, '--no-auth-cache')
+      end
 
       Wunderbar.warn cmd.inspect if options[:verbose] # includes auth
 
