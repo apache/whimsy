@@ -309,7 +309,7 @@ describe ASF::SVN do
     it "_svn_build_cmd('help', 'path', {user: 'whimsy', password: 'pass}) should include username" do
       cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: 'whimsy', password: 'pass'})
       exp = ["svn", "help", "--non-interactive", ["--username", "whimsy", "--no-auth-cache"], "--", "path"]
-      if res = ASF::SVN.passwordStdinOK?
+      if ASF::SVN.passwordStdinOK?
         expect(stdin).to eq('pass')
         expect(cmd-exp).to eq([["--password-from-stdin"]])
       else
