@@ -106,7 +106,67 @@ describe "ASF::SVN.svn_" do
     expect(out1).to eq(out2)
   end
 
+  it "auth: should override env: and user:/password:" do
+    rc1, out1 = _json do |_|
+      ASF::SVN.svn_('help', 'help', _, {auth: [['a','b']], env: ENV_.new('c','d'), user: 'user', password: 'pass', verbose: true, dryrun: true})
+    end
+    expect(rc1).to eq(0)
+    exp = [["svn", [["a", "b"]], "--no-auth-cache", "help", "--non-interactive", "--", "help"], {}]
+    act = out1['transcript'][1]
+    expect(act).to eq(exp.inspect)
+  end
 
+   it "env: should include password" do
+    rc, out = _json do |_|
+      ASF::SVN.svn_('help', 'help', _, {env: ENV_.new('a','b'), verbose: true})
+    end
+    expect(rc).to eq(0)
+    act = out['transcript'][1]
+    if ASF::SVN.passwordStdinOK?
+      exp = [["svn", "help", "--non-interactive", ["--username", "a", "--no-auth-cache"], ["--password-from-stdin"], "--", "help"], {:stdin=>"b"}]
+    else
+      exp = [["svn", "help", "--non-interactive", ["--username", "a", "--no-auth-cache"], ["--password", "b"], "--", "help"], {}]
+    end
+    expect(act).to eq(exp.inspect)
+   end
+
+   it "env: should include password and override user" do
+    rc, out = _json do |_|
+      ASF::SVN.svn_('help', 'help', _, {env: ENV_.new('a','b'), verbose: true, user: 'user', password: 'pass'})
+    end
+    expect(rc).to eq(0)
+    act = out['transcript'][1]
+    if ASF::SVN.passwordStdinOK?
+      exp = [["svn", "help", "--non-interactive", ["--username", "a", "--no-auth-cache"], ["--password-from-stdin"], "--", "help"], {:stdin=>"b"}]
+    else
+      exp = [["svn", "help", "--non-interactive", ["--username", "a", "--no-auth-cache"], ["--password", "b"], "--", "help"], {}]
+    end
+    expect(act).to eq(exp.inspect)
+   end
+
+   it "user: alone should not appear" do
+    rc, out = _json do |_|
+      ASF::SVN.svn_('help', 'help', _, {verbose: true, user: 'user'})
+    end
+    expect(rc).to eq(0)
+    act = out['transcript'][1]
+    exp = [["svn", "help", "--non-interactive", "--", "help"], {}]
+    expect(act).to eq(exp.inspect)
+   end
+
+   it "user: and password: should appear" do
+    rc, out = _json do |_|
+      ASF::SVN.svn_('help', 'help', _, {verbose: true, user: 'user', password: 'pass'})
+    end
+    expect(rc).to eq(0)
+    act = out['transcript'][1]
+    if ASF::SVN.passwordStdinOK?
+      exp = [["svn", "help", "--non-interactive", ["--username", "user", "--no-auth-cache"], ["--password-from-stdin"], "--", "help"], {:stdin=>"pass"}]
+    else
+      exp = [["svn", "help", "--non-interactive", ["--username", "user", "--no-auth-cache"], ["--password", "pass"], "--", "help"], {}]
+    end
+    expect(act).to eq(exp.inspect)
+   end
 
 end
 
