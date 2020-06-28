@@ -227,6 +227,9 @@ describe ASF::SVN do
     it "passwordStdinOK? should return true or false" do
       res = ASF::SVN.passwordStdinOK?
       expect(res).to be(true).or be(false)
+      # show what we are working with
+      ver = %x(svn --version --quiet).chomp
+      puts "\n>> version = '#{ver}' passwordStdinOK = #{res}"
     end
   end
 
