@@ -17,11 +17,16 @@ user = ASF::Person.find($USER)
 USERID = user.id
 USERNAME = user.cn.untaint
 USERMAIL = "#{USERID}@apache.org".untaint
+IDS = Hash.new {|h,k| h[k]=Array.new}
 committees = ASF::Committee.officers + ASF::Committee.nonpmcs
 chairs = committees.map do |committee|
- committee.chairs.map {|chair| chair[:id]}
+  committee.chairs.each do |chair|
+    IDS[chair[:id]] << committee.display_name
+  end
 end
-IDS = (chairs.flatten + ASF::Service['board'].members.map(&:id)).uniq
+ASF::Service['board'].members.each do |member|
+  IDS[member.id] << 'Board'
+end
 
 # Get the list of files in this year's directory
 signerfileslist, err = ASF::SVN.svn('list', COI_CURRENT_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
@@ -105,15 +110,17 @@ _html do
             _tr do
               _th 'Name'
               _th 'AvailId'
+              _th 'Role(s)'
               _th 'Link to affirmation(s)'
             end
           end
           _tbody do
-            IDS.each do |id|
+            IDS.each do |id, role|
               affirmer = ASF::Person.find(id)
               _tr do
                 _td affirmer.cn
                 _td affirmer.id 
+                _td role.join(', ')
                 _td do
                   signerfile = SIGNERS[affirmer.id]
                   if signerfile
