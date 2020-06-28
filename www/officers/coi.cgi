@@ -25,7 +25,7 @@ chairs = committees.map do |committee|
   end
 end
 ASF::Service['board'].members.each do |member|
-  IDS[member.id] << 'Board'
+  IDS[member.id] << 'Board member'
 end
 
 # Get the list of files in this year's directory
