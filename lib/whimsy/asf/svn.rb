@@ -45,6 +45,7 @@ module ASF
           if repo_override
             svn_over = repo_override[:svn]
             if svn_over
+              require 'wunderbar'
               Wunderbar.warn("Found override for repository.yml[:svn]")
             end
             @@repository_entries[:svn].merge!(svn_over)
