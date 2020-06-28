@@ -20,7 +20,7 @@ rvm: # http://rubies.travis-ci.org/
 jobs:
   include:
   - rvm: 2.5
-    dist: bionic
+    dist: focal
     gemfile: lib/Gemfile
 
 # add subversion on Linux
