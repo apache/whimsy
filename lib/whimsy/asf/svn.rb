@@ -417,7 +417,7 @@ module ASF
       if auth
         # override any other auth
         [:env, :user, :password].each do |k|
-          options.delete[k]
+          options.delete(k)
         end
       end
 
