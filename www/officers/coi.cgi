@@ -120,7 +120,9 @@ _html do
               affirmer = ASF::Person.find(id)
               _tr do
                 _td affirmer.cn
-                _td affirmer.id 
+                _td do
+                  _a affirmer.id, href: "/roster/committer/#{affirmer.id}"
+                end
                 _td role.join(', ')
                 _td do
                   signerfile = SIGNERS[affirmer.id]
