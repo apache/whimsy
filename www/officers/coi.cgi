@@ -96,7 +96,7 @@ _html do
       _p do
         _b 'DRAFT DRAFT DRAFT - Feedback is solicited at dev@whimsical.apache.org'
         _p
-        _ 'This page allows officers to sign their Conflict of Interest annual affirmation.'
+        _ 'This page allows Board Members and Officers to sign their Conflict of Interest annual affirmation.'
       end
       if _.get?
         _p 'The following are currently required to affirm the Conflict of Interest:'
