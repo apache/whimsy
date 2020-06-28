@@ -19,6 +19,7 @@ rvm: # http://rubies.travis-ci.org/
 # Additionally test lib on 2.5
 jobs:
   include:
+  - dist: bionic
   - rvm: 2.5
     gemfile: lib/Gemfile
 
