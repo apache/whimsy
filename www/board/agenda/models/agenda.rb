@@ -158,11 +158,11 @@ class Agenda
 
       # check out empty directory
       board = ASF::SVN.getInfoItem(FOUNDATION_BOARD,'url')
-      _.system ['svn', 'checkout', auth, '--depth', 'empty', board, dir]
+      ASF::SVN.svn_!('checkout', [board, dir], _, {depth: 'empty', auth: auth})
 
       # update the file in question
       path = File.join(dir, file)
-      _.system ['svn', 'update', auth, path]
+      ASF::SVN.svn_!('update', path, _, {auth: auth})
 
       # invoke block, passing it the current contents of the file
       if block and message
@@ -172,7 +172,7 @@ class Agenda
         # if the output differs, update and commit the file in question
         if output != input
           IO.write(path, output)
-          commit_rc = _.system ['svn', 'commit', auth, path, '-m', message]
+          commit_rc = ASF::SVN.svn_('commit', path, _, {auth: auth, msg: message})
         end
       else
         output = IO.read(path)
@@ -197,6 +197,7 @@ class Agenda
           sleep rand(41-retries*2)*0.1 if retries <= 20
           update(file, message, retries-1, &block)
         else
+          Wunderbar.error _.target! # show the transcript
           raise Exception.new("svn commit failed")
         end
       end
