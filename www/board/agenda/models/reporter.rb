@@ -45,7 +45,11 @@ class Reporter
         request = Net::HTTP::Get.new(uri)
         request.basic_auth env.user, env.password
         response = http.request(request)
-        report_status.merge! JSON.parse(response.body)['report_status']
+        if response.code == "200"
+          report_status.merge! JSON.parse(response.body)['report_status']
+        else
+          Wunderbar.error "Failed to fetch #{uri}: #{response.code}"
+        end
 
         if not File.exist? cache or JSON.parse(File.read cache) != report_status
           changed = true

@@ -39,7 +39,7 @@ if not ASF::ICLAFiles.Dir? @filename
     complete do |dir|
       # checkout empty iclas directory
       svn 'checkout', '--depth', 'empty',
-        'https://svn.apache.org/repos/private/documents/iclas', "#{dir}/iclas"
+        ASF::SVN.svnurl('iclas'), "#{dir}/iclas"
 
       # update file to be moved
       svn 'update', "#{dir}/iclas/#{@existing}"

@@ -41,6 +41,15 @@ module ASF
         unless @repos
           @@repository_mtime = File.exist?(REPOSITORY) && File.mtime(REPOSITORY)
           @@repository_entries = YAML.load_file(REPOSITORY)
+          repo_override = ASF::Config.get(:repository)
+          if repo_override
+            svn_over = repo_override[:svn]
+            if svn_over
+              require 'wunderbar'
+              Wunderbar.warn("Found override for repository.yml[:svn]")
+            end
+            @@repository_entries[:svn].merge!(svn_over)
+          end
 
           @repos = Hash[Dir[*svn].map { |name| 
             if Dir.exist? name.untaint
@@ -299,16 +308,20 @@ module ASF
         user = env.user
       else
         password = options[:password]
-        user = options[:user] if password
+        user = options[:user]
       end
-      # password was supplied, add credentials
-      if password and not options[:dryrun] # don't add auth for dryrun
-        cmd << ['--username', user, '--no-auth-cache']
-        if self.passwordStdinOK?()
-          stdin = password
-          cmd << ['--password-from-stdin']
-        else
-          cmd << ['--password', password]
+      unless options[:dryrun] # don't add auth for dryrun
+        if password or user == 'whimsysvn' # whimsysvn user does not require password
+          cmd << ['--username', user, '--no-auth-cache']
+        end
+        # password was supplied, add credentials
+        if password
+          if self.passwordStdinOK?()
+            stdin = password
+            cmd << ['--password-from-stdin']
+          else
+            cmd << ['--password', password]
+          end
         end
       end
 
@@ -383,6 +396,7 @@ module ASF
     #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
     #  :msg - shorthand for {args: ['--message', value]}
     #  :depth - shorthand for {args: ['--depth', value]}
+    #  :auth - authentication (as [['--username', etc]])
     #  :env - environment: source for user and password
     #  :user, :password - used if env is not present
     #  :verbose - show command (including credentials) before executing it
@@ -400,12 +414,23 @@ module ASF
       
       # Pick off the options specific to svn_ rather than svn
       sysopts = options.delete(:sysopts) || {}
+      auth = options.delete(:auth)
+      if auth
+        # override any other auth
+        [:env, :user, :password].each do |k|
+          options.delete(k)
+        end
+      end
 
 
       cmd, stdin = self._svn_build_cmd(command, path, options)
       sysopts[:stdin] = stdin if stdin
+      if auth # insert after the command name
+        cmd.insert(2, auth, '--no-auth-cache')
+      end
 
-      Wunderbar.warn cmd.inspect if options[:verbose] # includes auth
+      # This ensures the output is captured in the response
+      _.system ['echo', [cmd,sysopts].inspect] if options[:verbose] # includes auth
 
       if options[:dryrun] # excludes auth
         # TODO: improve this
@@ -478,7 +503,7 @@ module ASF
         pass = env.password.dup.untaint
         # checkout committers/board (this does not have many files currently)
         out, err = self.svn('checkout', [ciURL, tmpdir.untaint],
-          {args: ['--quiet', '--depth', 'files'],
+          {args: '--quiet', depth: 'files',
            user: user, password: pass})
 
         raise Exception.new("Checkout of board folder failed: #{err}") unless out
@@ -494,7 +519,7 @@ module ASF
 
         # commit the updated file
         out, err = self.svn('commit', [file, tmpdir.untaint],
-          {args: ['--quiet', '--message', msg],
+          {args: '--quiet', msg: msg,
            user: user, password: pass})
 
         raise Exception.new("Update of committee-info.txt failed: #{err}") unless out
@@ -505,6 +530,13 @@ module ASF
     # update a file or directory in SVN, working entirely in a temporary
     # directory
     # Intended for use from GUI code
+    # 
+    # path - the path to be used, directory or single file
+    # msg - commit message
+    # env - environment (queried for user and password)
+    # _ - wunderbar context
+    # options - hash of:
+    #  :dryrun - show command (excluding credentials), without executing it
     def self.update(path, msg, env, _, options={})
       if File.directory? path
         dir = path
@@ -524,7 +556,7 @@ module ASF
       begin
         # create an empty checkout
         self.svn_('checkout', [self.getInfoItem(dir,'url'), tmpdir], _,
-          {args: ['--depth', 'empty'], env: env})
+          {depth: 'empty', env: env})
 
         # retrieve the file to be updated (may not exist)
         if basename
@@ -568,7 +600,7 @@ module ASF
         else
           # commit the changes
           rc = self.svn_('commit', tmpfile || tmpdir, _,
-             {args: ['--message', msg.untaint], env: env})
+             {msg: msg.untaint, env: env})
         end
 
         # fail if there are pending changes
@@ -657,7 +689,7 @@ module ASF
     #   env - for username and password
     #   _ - Wunderbar context
     # For example:
-    #   ASF::SVN.multiUpdate(path,message,env,_) do |text|
+    #   ASF::SVN.multiUpdate_(path,message,env,_) do |text|
     #     out = '...'
     #     extra = []
     #     url1 = 'https://svn.../' # etc
@@ -665,7 +697,7 @@ module ASF
     #     extra << ['rm',url3]
     #     [out, extra]
     #   end
-    def self.multiUpdate(path, msg, env, _, options = {})
+    def self.multiUpdate_(path, msg, env, _, options = {})
       require 'tempfile'
       tmpdir = Dir.mktmpdir.untaint
       if File.file? path
@@ -690,7 +722,7 @@ module ASF
       begin
 
         # create an empty checkout
-        rc = self.svn_('checkout', [parenturl, tmpdir], _, {args: ['--depth', 'empty'], env: env})
+        rc = self.svn_('checkout', [parenturl, tmpdir], _, {depth: 'empty', env: env})
         raise "svn failure #{rc} checkout #{parenturl}" unless rc == 0
 
         # checkout the file

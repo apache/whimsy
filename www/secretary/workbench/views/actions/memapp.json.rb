@@ -47,7 +47,7 @@ task "svn commit documents/member_apps/#@filename#{fileext}" do
   complete do |dir|
     # checkout empty directory
     svn 'checkout', '--depth', 'empty',
-      'https://svn.apache.org/repos/private/documents/member_apps',
+      ASF::SVN.svnurl('member_apps'),
       "#{dir}/member_apps"
 
     # create/add file(s)

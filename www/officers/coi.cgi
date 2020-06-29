@@ -9,23 +9,37 @@ require 'date'
 require 'tmpdir'
 
 coi_url = ASF::SVN.svnurl('conflict-of-interest')
+COI_CURRENT_TEMPLATE_URL = File.join(coi_url, 'template.txt').untaint
+
 YEAR = DateTime.now.strftime "%Y"
 COI_CURRENT_URL = File.join(coi_url, YEAR).untaint
-COI_CURRENT_TEMPLATE_URL = File.join(COI_CURRENT_URL, 'template.txt')
 
 user = ASF::Person.find($USER)
 USERID = user.id
 USERNAME = user.cn.untaint
-USERMAIL = user.mail.first.untaint
+USERMAIL = "#{USERID}@apache.org".untaint
+IDS = Hash.new {|h,k| h[k]=Array.new}
 committees = ASF::Committee.officers + ASF::Committee.nonpmcs
 chairs = committees.map do |committee|
- committee.chairs.map {|chair| chair[:id]}
+  committee.chairs.each do |chair|
+    IDS[chair[:id]] << committee.display_name
+  end
 end
-IDS = (chairs.flatten + ASF::Service['board'].members.map(&:id)).uniq
+ASF::Service['board'].members.each do |member|
+  IDS[member.id] << 'Board member'
+end
 
 # Get the list of files in this year's directory
 signerfileslist, err = ASF::SVN.svn('list', COI_CURRENT_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
-raise RuntimeError.new(err) unless signerfileslist
+# Currently the documents directory has limited access.
+# This includes ASF members, but does not include officers who are not members
+# Let others down gently
+unless signerfileslist
+  Wunderbar.warn err
+  print "Status: 404 Not found\r\n\r\n" # TODO better status
+  print "Sorry, cannot access COI documents\r\n"
+  exit
+end
 signerfiles = signerfileslist.split("\n")
 
 # Create the hash of {signer: signerurl} and remember user's affirmation file
@@ -79,14 +93,16 @@ _html do
     related: {
       'http://www.apache.org/foundation/records/minutes/2020/board_minutes_2020_03_18.txt'  =>
         'Conflict of Interest Resolution Board minutes',
-      COI_CURRENT_TEMPLATE_URL => 'Conflict of Interest Resolution',
+      COI_CURRENT_TEMPLATE_URL => 'Conflict of Interest Resolution (March 2020)',
+      'http://www.apache.org/foundation/#who-runs-the-asf' =>
+      'BOARD MEMBERS and OFFICERS are required to sign',
       COI_CURRENT_URL => "#{YEAR} affirmations",
     },
     helpblock: -> {
       _p do
         _b 'DRAFT DRAFT DRAFT - Feedback is solicited at dev@whimsical.apache.org'
         _p
-        _ 'This page allows officers to sign their Conflict of Interest annual affirmation.'
+        _ 'This page allows Board Members and Officers to sign their Conflict of Interest annual affirmation.'
       end
       if _.get?
         _p 'The following are currently required to affirm the Conflict of Interest:'
@@ -95,15 +111,19 @@ _html do
             _tr do
               _th 'Name'
               _th 'AvailId'
+              _th 'Role(s)'
               _th 'Link to affirmation(s)'
             end
           end
           _tbody do
-            IDS.each do |id|
+            IDS.each do |id, role|
               affirmer = ASF::Person.find(id)
               _tr do
                 _td affirmer.cn
-                _td affirmer.id 
+                _td do
+                  _a affirmer.id, href: "/roster/committer/#{affirmer.id}"
+                end
+                _td role.join(', ')
                 _td do
                   signerfile = SIGNERS[affirmer.id]
                   if signerfile
@@ -195,7 +215,16 @@ def emit_post(_)
  #     cc "secretary@apache.org"
       from "#{USERMAIL}"
       subject "Conflict of Interest affirmation from #{USERNAME}"
-      body "This year's Conflict of Interest affirmation is attached."
+      text_part do
+        body "
+DRAFT DRAFT DRAFT Please review this; nothing has been checked in.
+Send feedback to dev@whimsical.apache.org
+This year's Conflict of Interest affirmation is attached.
+It has been checked into the foundation repository at
+#{COI_CURRENT_URL}/#{user_filename}.\n
+Regards,\n
+#{USERNAME}\n\n"
+      end
     end
     mail.attachments["#{USERID}.txt"] = affirmed
     mail.deliver!

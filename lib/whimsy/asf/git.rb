@@ -51,6 +51,15 @@ module ASF
         unless @repos
           @@repository_mtime = File.exist?(REPOSITORY) && File.mtime(REPOSITORY)
           @@repository_entries = YAML.load_file(REPOSITORY)
+          repo_override = ASF::Config.get(:repository)
+          if repo_override
+            git_over = repo_override[:git]
+            if git_over
+              require 'wunderbar'
+              Wunderbar.warn("Found override for repository.yml[:git]")
+              @@repository_entries[:git].merge!(git_over)
+            end
+          end
 
           @repos = Hash[Dir[*git].map { |name|
             if Dir.exist? name.untaint

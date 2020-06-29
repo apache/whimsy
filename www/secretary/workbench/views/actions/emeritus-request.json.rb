@@ -44,7 +44,7 @@ task "svn commit documents/emeritus-requests-received/#{emeritus_request}" do
     dest = "#{dir}/emeritus-requests-received"
     # checkout empty directory
     svn 'checkout', '--depth', 'empty',
-        'https://svn.apache.org/repos/private/documents/emeritus-requests-received',
+        ASF::SVN.svnurl('emeritus-requests-received'),
         dest
     message.write_svn(dest, @filename, @selected, @signature)
 

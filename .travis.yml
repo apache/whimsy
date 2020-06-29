@@ -16,6 +16,13 @@ rvm: # http://rubies.travis-ci.org/
   - 2.4
 #  - 2.5 (we don't need this yet, and it doubles the run time)
 
+# Additionally test lib on 2.5
+jobs:
+  include:
+  - rvm: 2.5
+    dist: focal
+    gemfile: lib/Gemfile
+
 # add subversion on Linux
 addons:
   apt:

@@ -227,6 +227,9 @@ describe ASF::SVN do
     it "passwordStdinOK? should return true or false" do
       res = ASF::SVN.passwordStdinOK?
       expect(res).to be(true).or be(false)
+      # show what we are working with
+      ver = %x(svn --version --quiet).chomp
+      puts "\n>> version = '#{ver}' passwordStdinOK = #{res}"
     end
   end
 
@@ -291,5 +294,52 @@ describe ASF::SVN do
       end
     end
 
+  end
+
+  describe "ASF::SVN._svn_build_cmd" do
+    it "_svn_build_cmd('help', 'path', {}) should include path" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {})
+      expect(stdin).to eq(nil)
+      expect(cmd).to eq(["svn", "help", "--non-interactive", "--", "path"])
+    end
+
+    it "_svn_build_cmd('help', 'path', {user: 'whimsy'}) should not include username" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: 'whimsy'})
+      expect(stdin).to eq(nil)
+      expect(cmd).to eq(["svn", "help", "--non-interactive", "--", "path"])
+    end
+
+    it "_svn_build_cmd('help', 'path', {user: 'whimsy', password: 'pass}) should include username" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: 'whimsy', password: 'pass'})
+      exp = ["svn", "help", "--non-interactive", ["--username", "whimsy", "--no-auth-cache"], "--", "path"]
+      if ASF::SVN.passwordStdinOK?
+        expect(stdin).to eq('pass')
+        expect(cmd-exp).to eq([["--password-from-stdin"]])
+      else
+        expect(stdin).to eq(nil)
+        expect(cmd-exp).to eq([["--password", "pass"]])
+      end
+    end
+
+    it "_svn_build_cmd('help', 'path', {user: 'whimsysvn'}) should include username" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: 'whimsysvn'})
+      expect(stdin).to eq(nil)
+      expect(cmd).to eq(["svn", "help", "--non-interactive", ["--username", "whimsysvn", "--no-auth-cache"], "--", "path"])
+    end
+
+    it "_svn_build_cmd('help', 'path', {user: 'whimsysvn', dryrun: false}) should include username" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: 'whimsysvn', dryrun: false})
+      expect(stdin).to eq(nil)
+      expect(cmd).to eq(["svn", "help", "--non-interactive", ["--username", "whimsysvn", "--no-auth-cache"], "--", "path"])
+    end
+    it "_svn_build_cmd('help', 'path', {user: 'whimsysvn', dryrun: true}) should not include username" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: 'whimsysvn', dryrun: true})
+      expect(stdin).to eq(nil)
+      expect(cmd).to eq(["svn", "help", "--non-interactive", "--", "path"])
+    end
+
+    it "_svn_build_cmd('help', 'path', {_error: true})  should raise error" do
+      expect { ASF::SVN._svn_build_cmd('help', 'path', {_error: true}) }.to raise_error(ArgumentError, "Following options not recognised: [:_error]")
+    end
   end
 end
