@@ -111,7 +111,7 @@ describe "ASF::SVN.svn_" do
       ASF::SVN.svn_('help', 'help', _, {auth: [['a','b']], env: ENV_.new('c','d'), user: 'user', password: 'pass', verbose: true, dryrun: true})
     end
     expect(rc1).to eq(0)
-    exp = [["svn", [["a", "b"]], "--no-auth-cache", "help", "--non-interactive", "--", "help"], {}]
+    exp = [["svn", "help", [["a", "b"]], "--no-auth-cache", "--non-interactive", "--", "help"], {}]
     act = out1['transcript'][1]
     expect(act).to eq(exp.inspect)
   end
