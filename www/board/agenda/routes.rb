@@ -83,7 +83,7 @@ get '/missing' do
     # update in memory cache with a dummy agenda.  The only relevant
     # part of the agenda that matters for this operation is the list
     # of pmcs (@pmcs).
-    template = "#{ASF::SVN['foundation_board']}/board_agenda_template.erb"
+    template = "#{ASF::SVN['foundation_board']}/templates/board_agenda.erb"
     @meeting = ASF::Board.nextMeeting
     agenda = @meeting.strftime('board_agenda_%Y_%m_%d.txt')
     @directors = ['TBD']
