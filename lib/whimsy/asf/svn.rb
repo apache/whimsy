@@ -425,8 +425,8 @@ module ASF
 
       cmd, stdin = self._svn_build_cmd(command, path, options)
       sysopts[:stdin] = stdin if stdin
-      if auth
-        cmd.insert(1, auth, '--no-auth-cache')
+      if auth # insert after the command name
+        cmd.insert(2, auth, '--no-auth-cache')
       end
 
       # This ensures the output is captured in the response
