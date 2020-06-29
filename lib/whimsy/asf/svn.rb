@@ -47,8 +47,8 @@ module ASF
             if svn_over
               require 'wunderbar'
               Wunderbar.warn("Found override for repository.yml[:svn]")
+              @@repository_entries[:svn].merge!(svn_over)
             end
-            @@repository_entries[:svn].merge!(svn_over)
           end
 
           @repos = Hash[Dir[*svn].map { |name| 
