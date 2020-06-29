@@ -249,7 +249,7 @@ end
 
 # redirect to an icla
 get %r{/icla/(.*)} do |filename|
-  checkout = 'https://svn.apache.org/repos/private/documents/iclas'
+  checkout = ASF::SVN.svnurl('iclas')
   file = ASF::ICLAFiles.match_claRef(filename)
   pass unless file
   redirect to(checkout + '/' + file)

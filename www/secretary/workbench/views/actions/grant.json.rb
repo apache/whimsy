@@ -49,7 +49,7 @@ task "svn commit documents/grants/#@filename#{fileext}" do
   complete do |dir|
     # checkout empty directory
     svn 'checkout', '--depth', 'empty',
-      'https://svn.apache.org/repos/private/documents/grants', "#{dir}/grants"
+      ASF::SVN.svnurl('grants'), "#{dir}/grants"
 
     # create/add file(s)
     dest = message.write_svn("#{dir}/grants", @filename, @selected, @signature)

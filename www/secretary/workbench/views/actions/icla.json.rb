@@ -62,7 +62,7 @@ task "svn commit documents/iclas/#@filename#{fileext}" do
   complete do |dir|
     # checkout empty directory
     svn 'checkout', '--depth', 'empty',
-      'https://svn.apache.org/repos/private/documents/iclas', "#{dir}/iclas"
+      ASF::SVN.svnurl('iclas'), "#{dir}/iclas"
 
     # create/add file(s)
     if @signature.to_s.empty? or fileext != '.pdf'

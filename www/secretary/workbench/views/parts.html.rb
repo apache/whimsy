@@ -42,15 +42,15 @@ _html do
     end
     _li do
       _a 'ICLAs', target: 'content',
-        href: 'https://svn.apache.org/repos/private/documents/iclas'
+        href: ASF::SVN.svnurl('iclas')
     end
     _li do
       _a 'CCLAs', target: 'content',
-        href: 'https://svn.apache.org/repos/private/documents/cclas'
+        href: ASF::SVN.svnurl('cclas')
     end
     _li do
       _a 'Grants', target: 'content',
-        href: 'https://svn.apache.org/repos/private/documents/grants'
+        href: ASF::SVN.svnurl('grants')
     end
     _li do
       _a 'Incubator', target: 'content',

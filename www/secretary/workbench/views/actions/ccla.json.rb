@@ -49,7 +49,7 @@ task "svn commit documents/cclas/#@filename#{fileext}" do
   complete do |dir|
     # checkout empty directory
     svn 'checkout', '--depth', 'empty',
-      'https://svn.apache.org/repos/private/documents/cclas', "#{dir}/cclas"
+      ASF::SVN.svnurl('cclas'), "#{dir}/cclas"
 
     # create/add file(s)
     dest = message.write_svn("#{dir}/cclas", @filename, @selected, @signature)
