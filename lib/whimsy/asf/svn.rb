@@ -47,8 +47,8 @@ module ASF
             if svn_over
               require 'wunderbar'
               Wunderbar.warn("Found override for repository.yml[:svn]")
+              @@repository_entries[:svn].merge!(svn_over)
             end
-            @@repository_entries[:svn].merge!(svn_over)
           end
 
           @repos = Hash[Dir[*svn].map { |name| 
@@ -134,6 +134,18 @@ module ASF
         raise Exception.new("Unable to find url for #{name}")
       end
       entry
+    end
+
+    # Construct a repository URL by name and relative path - abort if name is not found
+    # Includes aliases
+    # assumes that the relative paths are cumulative, unlike URI.merge
+    # name - the nickname for the URL
+    # relpath - the relative path(s) to the file
+    def self.svnpath!(name,*relpath)
+      base = self.svnurl!(name)
+      base = base + '/' unless base.end_with? '/'
+      endpart = [relpath].join('/').sub(%r{^/+},'').gsub(%r{/+},'/')
+      return base + endpart
     end
 
     # find a local directory corresponding to a path in Subversion.  Returns

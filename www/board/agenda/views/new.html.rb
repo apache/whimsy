@@ -14,7 +14,7 @@ _html do
         _div.error do
           _h4 'No next meeting date set'
           _a 'committers/board/calendar.txt',
-             href: 'https://svn.apache.org/repos/private/committers/board/calendar.txt'
+             href: ASF::SVN.svnpath!('board', 'calendar.txt')
           _span ' needs to be updated in svn with a list of future meeting dates.'
           _span ' Assuming third Wednesday of the month for the next meeting.'
         end
@@ -53,15 +53,12 @@ _html do
     _ul do
       _li do
         _ 'Agenda was generated from '
-        _a 'board_agenda_template.erb', href:
-          'https://svn.apache.org/repos/private/foundation/board/board_agenda_template.erb'
+        _a 'board_agenda.erb', href: ASF::SVN.svnpath!('foundation_board', '/templates/board_agenda.erb')
       end
 
       _li do
         _ 'Date and time of meeting was extracted from '
-        _a 'calendar.txt', href:
-          'https://svn.apache.org/repos/private/committers/board/calendar.txt
-'
+        _a 'calendar.txt', href: ASF::SVN.svnpath!('board', 'calendar.txt')
       end
 
       _li do
@@ -71,8 +68,7 @@ _html do
 
       _li do
         _ 'Officers extracted from '
-        _a 'committee-info.txt', href:
-          'https://svn.apache.org/repos/private/committers/board/committee-info.txt'
+        _a 'committee-info.txt', href: ASF::SVN.svnpath!('board', 'committee-info.txt')
       end
     end
   end
