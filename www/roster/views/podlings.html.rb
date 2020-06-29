@@ -36,7 +36,7 @@ _html do
         title: 'Podling Summary',
         helpblock: -> {
           _ 'Podling data is derived from:'
-          _a 'podlings.xml', href: 'https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings.xml'
+          _a 'podlings.xml', href: ASF::SVN.svnpath!('incubator-podlings', 'podlings.xml')
         }
       ) do
         _table.counts do

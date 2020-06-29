@@ -137,7 +137,7 @@ class CommitterSearch < Vue
                     _td ''
                   end
                   if @@notinavail
-                    _td { _a person.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{person.iclaFile}" }
+                    _td { _a person.claRef, href: ASF::SVN.svnpath!('iclas', person.iclaFile) }
                   end
                 end
               end

@@ -127,7 +127,7 @@ _html do
           end
           _li.list_group_item do
             txtnam = File.basename("#{env['REQUEST_URI']}")
-            _a "foundation/officers/personnel-duties/#{txtnam}.txt", href: "https://svn.apache.org/repos/private/foundation/officers/personnel-duties/#{txtnam}.txt"
+            _a "foundation/officers/personnel-duties/#{txtnam}.txt", href: ASF::SVN.svnpath!('personnel-duties', "#{txtnam}.txt")
           end
         end
         

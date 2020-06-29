@@ -4,7 +4,7 @@ require 'tzinfo'
 
 class MentorFormat
   ROSTER = 'https://whimsy.apache.org/roster/committer/'
-  MENTORS_SVN = 'https://svn.apache.org/repos/private/foundation/mentors/'
+  MENTORS_SVN = ASF::SVN.svnurl!('foundation_mentors')
   MENTORS_LIST = 'https://whimsy.apache.org/member/mentors.cgi'
   PUBLICNAME = 'publicname'
   NOTAVAILABLE = 'notavailable'

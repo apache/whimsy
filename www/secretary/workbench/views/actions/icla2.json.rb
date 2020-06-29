@@ -90,12 +90,12 @@ task "svn commit documents/iclas/#@filename/iclaN#{count}{fileext}" do
 
   complete do |dir|
     # checkout directory
-    svn 'checkout', 
-      "https://svn.apache.org/repos/private/documents/iclas/#@filename",
-      "#{dir}/#@filename"
+    svn 'checkout',
+      ASF::SVN.svnpath!('iclas', @filename),
+      File.join(dir, @filename)
 
     # determine numeric suffix for the new ICLA
-    count = Dir["#{dir}/#@filename/*"].
+    count = Dir[File.join(dir, @filename, '*')].
       map {|name| name[/.*(\d+)\./, 1] || 1}.map(&:to_i).max + 1
 
     # create/add file(s)
@@ -104,7 +104,7 @@ task "svn commit documents/iclas/#@filename/iclaN#{count}{fileext}" do
     message.write_svn(dir, @filename, files)
 
     # Show files to be added
-    svn 'status', "#{dir}/#@filename"
+    svn 'status', File.join(dir, @filename)
 
     # commit changes
     svn 'commit', 
@@ -140,11 +140,11 @@ task "svn commit foundation/officers/iclas.txt" do
   complete do |dir|
     # checkout empty officers directory
     svn 'checkout', '--depth', 'empty',
-      'https://svn.apache.org/repos/private/foundation/officers', 
-      "#{dir}/officers"
+      ASF::SVN.svnurl('officers'), 
+      File.join(dir, 'officers')
 
     # retrieve iclas.txt
-    dest = "#{dir}/officers/iclas.txt"
+    dest = File.join(dir, 'officers', 'iclas.txt')
     svn 'update', dest
 
     # update iclas.txt

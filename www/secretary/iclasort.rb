@@ -4,7 +4,7 @@ OFFICERS = ASF::SVN['officers']
 
 unless OFFICERS
   STDERR.puts 'Unable to locate a checked out version of '
-  STDERR.puts 'https://svn.apache.org/repos/private/foundation/officers.'
+  STDERR.puts ASF::SVN.svnurl!('officers')
   STDERR.puts
   STDERR.puts "Please check your #{Dir.home}/.whimsy file"
   exit 1

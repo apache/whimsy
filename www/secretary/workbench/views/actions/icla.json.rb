@@ -103,11 +103,11 @@ task "svn commit foundation/officers/iclas.txt" do
   complete do |dir|
     # checkout empty officers directory
     svn 'checkout', '--depth', 'empty',
-      'https://svn.apache.org/repos/private/foundation/officers', 
-      "#{dir}/officers"
+      ASF::SVN.svnurl!('officers'),
+      File.join(dir, 'officers')
 
     # retrieve iclas.txt
-    dest = "#{dir}/officers/iclas.txt"
+    dest = File.join(dir, 'officers', 'iclas.txt')
     svn 'update', dest
 
     # update iclas.txt

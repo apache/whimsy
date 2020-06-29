@@ -81,11 +81,11 @@ task "svn commit foundation/officers/grants.txt" do
   complete do |dir|
     # checkout empty officers directory
     svn 'checkout', '--depth', 'empty',
-      'https://svn.apache.org/repos/private/foundation/officers', 
-      "#{dir}/officers"
+      ASF::SVN.svnurl!('officers'), 
+      File.join(dir, 'officers')
 
     # retrieve grants.txt
-    dest = "#{dir}/officers/grants.txt"
+    dest = File.join(dir, 'officers', 'grants.txt')
     svn 'update', dest
 
     # update grants.txt
