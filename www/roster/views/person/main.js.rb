@@ -374,18 +374,6 @@ class Person < Vue
       formData.push name: 'emeritusfilename', value: emeritus_file_name
     end
 
-    emeritus_person_name = target.getAttribute('data-emeritus-person-name')
-    console.log('submit emeritus_person_name: ' + emeritus_person_name)
-    if emeritus_person_name
-      formData.push name: 'emerituspersonname', value: emeritus_person_name
-    end
-
-    emeritus_email = target.getAttribute('data-emeritus-email')
-    console.log('submit emeritus_email: ' + emeritus_email)
-    if emeritus_email
-      formData.push name: 'emeritusemail', value: emeritus_email
-    end
-
     # add button if it has a value
     if target and target.getAttribute('name') and target.getAttribute('value')
       formData.push name: target.getAttribute('name'),

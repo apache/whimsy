@@ -6,10 +6,6 @@ class PersonMemberStatus < Vue
   def render
     committer = @@person.state.committer
     owner = @@person.props.auth.id == committer.id
-                console.log('memstat.js.rb render committer.id: ' + committer.id)
-                console.log('memstat.js.rb render @@person.props.auth.id: ' + @@person.props.auth.id)
-                console.log('memstat.js.rb render owner? ' + owner)
-                console.log('memstat.js.rb render @@person.props.auth.secretary: ' + @@person.props.auth.secretary)
     _div.row data_edit: ('memstat' if @@person.props.auth.secretary or owner) do
       _div.name 'Member status'
 
