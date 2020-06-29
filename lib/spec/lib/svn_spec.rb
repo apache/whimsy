@@ -342,4 +342,17 @@ describe ASF::SVN do
       expect { ASF::SVN._svn_build_cmd('help', 'path', {_error: true}) }.to raise_error(ArgumentError, "Following options not recognised: [:_error]")
     end
   end
+
+  describe "ASF::SVN.svnpath!" do
+    it "svnpath!('board', 'committee-info.txt') should be https://svn.apache.org/repos/private/committers/board/committee-info.txt" do
+      exp = 'https://svn.apache.org/repos/private/committers/board/committee-info.txt'
+      act = ASF::SVN.svnpath!('board', 'committee-info.txt')
+      expect(act).to eq(exp)
+      act = ASF::SVN.svnpath!('board', '/committee-info.txt')
+      expect(act).to eq(exp)
+      act = ASF::SVN.svnpath!('board', '//committee-info.txt')
+      expect(act).to eq(exp)
+    end
+  end
+
 end

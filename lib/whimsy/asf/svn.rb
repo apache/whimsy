@@ -136,6 +136,18 @@ module ASF
       entry
     end
 
+    # Construct a repository URL by name and relative path - abort if name is not found
+    # Includes aliases
+    # assumes that the relative paths are cumulative, unlike URI.merge
+    # name - the nickname for the URL
+    # relpath - the relative path(s) to the file
+    def self.svnpath!(name,*relpath)
+      base = self.svnurl!(name)
+      base = base + '/' unless base.end_with? '/'
+      endpart = [relpath].join('/').sub(%r{^/+},'').gsub(%r{/+},'/')
+      return base + endpart
+    end
+
     # find a local directory corresponding to a path in Subversion.  Returns
     # <tt>nil</tt> if not found.
 		# Excludes aliases
