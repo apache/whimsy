@@ -139,10 +139,8 @@ class Agenda
     #extract context from block
     _, env = eval('[_, env]', block.binding)
 
-    if env.password
-      auth ||= [['--username', env.user, '--password', env.password]]
-    else
-      auth ||= [[]]
+    if (not auth) and env.password
+      auth = [['--username', env.user, '--password', env.password]]
     end
 
     file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\z/
