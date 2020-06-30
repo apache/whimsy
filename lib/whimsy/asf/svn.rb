@@ -691,6 +691,7 @@ module ASF
           _.system syscmd, sysopts
         end
       ensure
+        File.delete cmdfile # always drop the command file
         FileUtils.rm_rf tmpdir unless temp
       end
     end
