@@ -68,7 +68,7 @@ describe "ASF::SVN.svn_" do
     expect(rc).to be(0)
     expect(out['transcript'].class).to equal(Array)
     exp = ["svn", "info", "--non-interactive", "--", "https://svn.apache.org/repos/asf/attic/site/xdocs/projects/_template.xml"]
-    expect(out['transcript'][1]).to eq(exp.inspect)
+    expect(out['transcript'][1]).to eq(exp.join(' '))
   end
   it "svn_('info', 'no file') should fail with E200009" do
     repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'___')

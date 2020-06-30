@@ -445,8 +445,7 @@ module ASF
       _.system ['echo', [cmd,sysopts].inspect] if options[:verbose] # includes auth
 
       if options[:dryrun] # excludes auth
-        # TODO: improve this
-        return _.system ['echo', cmd.inspect]
+        return _.system cmd.insert(0,'echo')
       end
 
       #  N.B. Version 1.3.3 requires separate hashes for JsonBuilder and BuilderClass,
