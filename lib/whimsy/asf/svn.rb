@@ -643,6 +643,12 @@ module ASF
     #     commands << ['rm',url3]
     #   ASF::SVN.svnmucc_(commands,message,env,_)
     def self.svnmucc_(commands, msg, env, _, revision=nil, temp=nil)
+
+      raise ArgumentError.new 'commands must be an array' unless Array === commands
+      raise ArgumentError.new 'msg must not be nil' unless msg
+      raise ArgumentError.new 'env must not be nil' unless env
+      raise ArgumentError.new '_ must not be nil' unless _
+
       require 'tempfile'
       tmpdir = temp ? temp : Dir.mktmpdir.untaint
 
@@ -650,6 +656,7 @@ module ASF
         cmdfile = Tempfile.new('svnmucc_input', tmpdir)
         # add the commands
         commands.each do |cmd|
+          raise ArgumentError.new 'command entries must be an array' unless Array === cmd
           cmd.each do |arg|
             cmdfile.puts(arg)
           end
@@ -684,6 +691,7 @@ module ASF
           _.system syscmd, sysopts
         end
       ensure
+        File.delete cmdfile # always drop the command file
         FileUtils.rm_rf tmpdir unless temp
       end
     end
@@ -840,7 +848,7 @@ module ASF
 
     # Does this host's installation of SVN support --password-from-stdin?
     def self.passwordStdinOK?()
-      return @svnHasPasswordFromStdin if @svnHasPasswordFromStdin
+      return @svnHasPasswordFromStdin unless @svnHasPasswordFromStdin.nil?
         out,err = self.svn('help','cat', {args: '-v'})
         if out
           @svnHasPasswordFromStdin = out.include? '--password-from-stdin'
