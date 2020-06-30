@@ -445,8 +445,7 @@ module ASF
       _.system ['echo', [cmd,sysopts].inspect] if options[:verbose] # includes auth
 
       if options[:dryrun] # excludes auth
-        # TODO: improve this
-        return _.system ['echo', cmd.inspect]
+        return _.system cmd.insert(0,'echo')
       end
 
       #  N.B. Version 1.3.3 requires separate hashes for JsonBuilder and BuilderClass,
@@ -633,23 +632,40 @@ module ASF
     #   msg - commit message
     #   env - environment (username/password)
     #   _ - Wunderbar context
-    #   revision - if defined, supply the --revision svnmucc parameter
-    #   temp - use this temporary directory (and don't remove it)
+    #   revision - the --revision svnmucc parameter (unless nil)
+    #   options - hash:
+    #     :tmpdir - use this temporary directory (and don't remove it)
+    #     :verbose - if true, show command details
+    #     :dryrun - if true, don't execute command, but show it instead
+    #     :root - interpret all action URLs relative to the specified root
     # The commands must themselves be arrays to ensure correct processing of white-space
     # For example:
     #     commands = []
     #     url1 = 'https://svn.../' # etc
     #     commands << ['mv',url1,url2]
     #     commands << ['rm',url3]
-    #   ASF::SVN.svnmucc_(commands,message,env,_)
-    def self.svnmucc_(commands, msg, env, _, revision=nil, temp=nil)
+    #   ASF::SVN.svnmucc_(commands,message,env,_,revision)
+    def self.svnmucc_(commands, msg, env, _, revision, options={})
+
+      raise ArgumentError.new 'commands must be an array' unless Array === commands
+      raise ArgumentError.new 'msg must not be nil' unless msg
+      raise ArgumentError.new 'env must not be nil' unless env
+      raise ArgumentError.new '_ must not be nil' unless _
+
+      bad_keys = options.keys - [:dryrun, :verbose, :tmpdir, :root]
+      if bad_keys.size > 0
+        raise ArgumentError.new "Following options not recognised: #{bad_keys.inspect}"
+      end
+
       require 'tempfile'
+      temp = options[:tmpdir]
       tmpdir = temp ? temp : Dir.mktmpdir.untaint
 
       begin
         cmdfile = Tempfile.new('svnmucc_input', tmpdir)
         # add the commands
         commands.each do |cmd|
+          raise ArgumentError.new 'command entries must be an array' unless Array === cmd
           cmd.each do |arg|
             cmdfile.puts(arg)
           end
@@ -668,6 +684,11 @@ module ASF
           syscmd << '--revision'
           syscmd << revision 
         end
+        root = options[:root]
+        if root
+          syscmd << '--root-url'
+          syscmd << root 
+        end
 
         sysopts = {}
         if env
@@ -678,12 +699,20 @@ module ASF
             syscmd << ['--username', env.user, '--password', env.password]
           end
         end
-        if _.instance_of?(Wunderbar::JsonBuilder) or _.instance_of?(Wunderbar::TextBuilder)
-          _.system syscmd, sysopts, sysopts # needs two hashes
+        if options[:verbose]
+          _.system 'echo',[syscmd.flatten,sysopts.to_s]
+        end
+        if options[:dryrun]
+          _.system syscmd.insert(0,'echo')
         else
-          _.system syscmd, sysopts
+          if _.instance_of?(Wunderbar::JsonBuilder) or _.instance_of?(Wunderbar::TextBuilder)
+            _.system syscmd, sysopts, sysopts # needs two hashes
+          else
+            _.system syscmd, sysopts
+          end
         end
       ensure
+        File.delete cmdfile # always drop the command file
         FileUtils.rm_rf tmpdir unless temp
       end
     end
@@ -764,8 +793,9 @@ module ASF
         if options[:dryrun]
           puts cmds # TODO: not sure this is correct for Wunderbar
         else
-          rc = ASF::SVN.svnmucc_(cmds,msg,env,_,filerev,tmpdir)
+          rc = ASF::SVN.svnmucc_(cmds,msg,env,_,filerev,{tmpdir: tmpdir})
           raise "svnmucc failure #{rc} committing" unless rc == 0
+          rc
         end
       ensure
         FileUtils.rm_rf tmpdir
@@ -840,7 +870,7 @@ module ASF
 
     # Does this host's installation of SVN support --password-from-stdin?
     def self.passwordStdinOK?()
-      return @svnHasPasswordFromStdin if @svnHasPasswordFromStdin
+      return @svnHasPasswordFromStdin unless @svnHasPasswordFromStdin.nil?
         out,err = self.svn('help','cat', {args: '-v'})
         if out
           @svnHasPasswordFromStdin = out.include? '--password-from-stdin'

@@ -6,7 +6,7 @@ require 'whimsy/asf'
 require 'json'
 
 class MeetingUtil
-  RECORDS = 'https://svn.apache.org/repos/private/foundation/Meetings'
+  RECORDS = ASF::SVN.svnurl!('Meetings')
   MEETING_FILES = { # Filename in meeting dir, pathname to another deployed tool, or URL
     'README.txt' => 'README For Meeting Process And Roll Call',
     'nomination_of_board.txt' => 'How To Nominate Someone For Board',

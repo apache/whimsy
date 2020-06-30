@@ -87,7 +87,7 @@ task "svn commit foundation/members.txt" do
   complete do |dir|
     # checkout empty foundation directory
     svn 'checkout', '--depth', 'empty',
-      'https://svn.apache.org/repos/private/foundation', "#{dir}/foundation"
+      ASF::SVN.svnurl!('foundation'), File.join(dir, 'foundation')
 
     # retrieve members.txt
     dest = "#{dir}/foundation/members.txt"
@@ -210,8 +210,8 @@ task "svn commit memapp-received.text" do
     # checkout empty directory
     meeting = file.split('/')[-2]
     svn 'checkout', '--depth', 'empty',
-      "https://svn.apache.org/repos/private/foundation/Meetings/#{meeting}",
-      "#{dir}/#{meeting}"
+      ASF::SVN.svnpath!('Meetings', meeting),
+      File.join(dir, meeting)
 
     # retrieve memapp-received.txt
     dest = "#{dir}/#{meeting}/memapp-received.txt"

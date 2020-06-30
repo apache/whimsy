@@ -25,6 +25,8 @@ if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
     puts_system('id')
     puts_system('which','-a','svn')
     puts_system('svn','--version')
+    puts_system('which','-a','svnmucc')
+    puts_system('svnmucc','--version')
     puts_system('which','-a','ruby')
     puts_system('which','-a','ruby2.3.0')
     puts_system('ruby','-v')

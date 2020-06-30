@@ -511,7 +511,7 @@ def _checkDownloadPage(path, tlp, version)
         # will have been reported by check_hash_loc
       end
     # mirror downloads need to be treated differently
-    elsif h =~ %r{^https?://www.apache.org/dyn/.*action=download}
+    elsif h =~ %r{^https?://(www\.)?apache\.org/dyn/.*action=download}
       if $NOFOLLOW
           I "Skipping download artifact #{h}"
       else
