@@ -641,7 +641,7 @@ module ASF
     #     url1 = 'https://svn.../' # etc
     #     commands << ['mv',url1,url2]
     #     commands << ['rm',url3]
-    #   ASF::SVN.svnmucc_(commands,message,env,_)
+    #   ASF::SVN.svnmucc_(commands,message,env,_,revision)
     def self.svnmucc_(commands, msg, env, _, revision, temp=nil)
 
       raise ArgumentError.new 'commands must be an array' unless Array === commands
