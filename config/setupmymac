@@ -212,7 +212,7 @@ if not $root and option != :docker
   # Prompt for xcode installation
   `git --version` unless $dry_run
 
-  unless system 'svn --help > /dev/null 2>&1'
+  unless system 'svn --help > /dev/null 2>&1' or `which svnmucc`.empty?
     brew 'install', 'subversion'
   end
 end
@@ -509,7 +509,8 @@ wconf_source = "#{WHIMSY}/config/whimsy.conf"
 wconf_content = File.read(wconf_source)
 if wconf_content =~ /^\s*SetEnv PATH /i
   wconf_content[/^\s*SetEnv PATH .*/] =
-    "SetEnv PATH #{File.dirname RbConfig.ruby}:${PATH}"
+    "SetEnv PATH #{File.dirname RbConfig.ruby}:" +
+    "#{File.dirname(`which svnmucc`)}:${PATH}"
 end
 wconf_target = '/private/etc/apache2/other/whimsy.conf'
 if 
