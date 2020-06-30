@@ -840,7 +840,7 @@ module ASF
 
     # Does this host's installation of SVN support --password-from-stdin?
     def self.passwordStdinOK?()
-      return @svnHasPasswordFromStdin if @svnHasPasswordFromStdin
+      return @svnHasPasswordFromStdin unless @svnHasPasswordFromStdin.nil?
         out,err = self.svn('help','cat', {args: '-v'})
         if out
           @svnHasPasswordFromStdin = out.include? '--password-from-stdin'
