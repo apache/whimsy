@@ -638,6 +638,7 @@ module ASF
     #     :tmpdir - use this temporary directory (and don't remove it)
     #     :verbose - if true, show command details
     #     :dryrun - if true, don't execute command, but show it instead
+    #     :root - interpret all action URLs relative to the specified root
     # The commands must themselves be arrays to ensure correct processing of white-space
     # For example:
     #     commands = []
@@ -652,7 +653,7 @@ module ASF
       raise ArgumentError.new 'env must not be nil' unless env
       raise ArgumentError.new '_ must not be nil' unless _
 
-      bad_keys = options.keys - [:dryrun, :verbose, :tmpdir]
+      bad_keys = options.keys - [:dryrun, :verbose, :tmpdir, :root]
       if bad_keys.size > 0
         raise ArgumentError.new "Following options not recognised: #{bad_keys.inspect}"
       end
@@ -683,6 +684,11 @@ module ASF
         if revision
           syscmd << '--revision'
           syscmd << revision 
+        end
+        root = options[:root]
+        if root
+          syscmd << '--root-url'
+          syscmd << root 
         end
 
         sysopts = {}

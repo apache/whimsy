@@ -292,4 +292,16 @@ describe "ASF::SVN.svnmucc_" do
     expect(ts[1]).to match(%r{^svnmucc .*--message test .*--username user --password.+pass})
     expect(ts[4]).to eq('usage: svnmucc ACTION...') # output of svnmucc help
   end
+  it "svnmucc_([['help']],'test',ENV_.new,_,nil,{root: root}) should include --root-url" do
+    root = ASF::SVN.svnurl!('site-root')
+    rc, out = _json do |_|
+      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil,{root: root})
+    end
+    expect(rc).to eq(0)
+    expect(out).to be_kind_of(Hash)
+    ts = out['transcript']
+    expect(ts).to be_kind_of(Array)
+    expect(ts[0]).to match(%r{^\$ svnmucc .*--message test .*--root-url #{root}})
+    expect(ts[1]).to eq('usage: svnmucc ACTION...') # output of svnmucc help
+  end
 end
