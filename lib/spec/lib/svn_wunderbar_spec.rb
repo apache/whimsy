@@ -185,4 +185,85 @@ describe "ASF::SVN.update" do
     # could look for "Checked out revision" and "Update to revision"
     expect(out['transcript'][-1]).to eql('+test') # 
   end
+
+end
+
+describe "ASF::SVN.svnmucc_" do
+  it "svnmucc_(nil,nil,nil,nil) should fail" do
+    expect { ASF::SVN.svnmucc_(nil,nil,nil,nil) }.to raise_error(ArgumentError, "commands must be an array")
+  end
+  it "svnmucc_([],nil,nil,nil) should fail" do
+    expect { ASF::SVN.svnmucc_([],nil,nil,nil) }.to raise_error(ArgumentError, "msg must not be nil")
+  end
+  it "svnmucc_([],'test',nil,nil) should fail" do
+    expect { ASF::SVN.svnmucc_([],'test',nil,nil) }.to raise_error(ArgumentError, "env must not be nil")
+  end
+  it "svnmucc_([],'test',ENV_.new,nil) should fail" do
+    expect { ASF::SVN.svnmucc_([],ENV_.new,'test',nil) }.to raise_error(ArgumentError, "_ must not be nil")
+  end
+  it "svnmucc_([[],'x',[]],'test',ENV_.new,'_') should fail" do
+    expect { ASF::SVN.svnmucc_([[],'x',[]],ENV_.new,'test','_') }.to raise_error(ArgumentError, "command entries must be an array")
+  end
+  it "svnmucc_([['xyz']],'test',ENV_.new,_) should fail" do
+    rc, out = _json do |_|
+      ASF::SVN.svnmucc_([['xyz']],'test',ENV_.new,_)
+    end
+    expect(rc).to eq(1)
+  end
+  it "svnmucc_([['help']],'test',ENV_.new,_) should produce help message with --message test" do
+    rc, out = _json do |_|
+      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_)
+    end
+    expect(rc).to eq(0)
+    expect(out).to be_kind_of(Hash)
+    ts = out['transcript']
+    expect(ts).to be_kind_of(Array)
+    expect(ts[0]).to match(/--message test/)
+    expect(ts[1]).to eq('usage: svnmucc ACTION...')
+  end
+  it "svnmucc_([['help']],'test',ENV_.new,_,'x') should fail with invalid revision number" do
+    rc, out = _json do |_|
+      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,'x')
+    end
+    expect(rc).to eq(1)
+    expect(out).to be_kind_of(Hash)
+    ts = out['transcript']
+    expect(ts).to be_kind_of(Array)
+    expect(ts[0]).to match(/--revision x/)
+    expect(ts[1]).to eq('svnmucc: E205000: Invalid revision number \'x\'')
+  end
+  it "svnmucc_([['help']],'test',ENV_.new,_,'123') should show revision in command" do
+    rc, out = _json do |_|
+      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,'123')
+    end
+    expect(rc).to eq(0)
+    expect(out).to be_kind_of(Hash)
+    ts = out['transcript']
+    expect(ts).to be_kind_of(Array)
+    expect(ts[0]).to match(/--revision 123/)
+  end
+  it "svnmucc_([['help']],'test',ENV_.new,_,nil,nil) should not show revision in command" do
+    rc, out = _json do |_|
+      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil,nil)
+    end
+    expect(rc).to eq(0)
+    expect(out).to be_kind_of(Hash)
+    ts = out['transcript']
+    expect(ts).to be_kind_of(Array)
+    expect(ts[0]).not_to match(/--revision/)
+  end
+  it "svnmucc_([['help']],'test',ENV_.new,_,nil,tmpdir) should have tmpdir in command" do
+    tmpdir=Dir.mktmpdir
+    path=File.join(tmpdir,'*')
+    expect(Dir[path]).to eq([])
+    rc, out = _json do |_|
+      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil,tmpdir)
+    end
+    expect(rc).to eq(0)
+    expect(out).to be_kind_of(Hash)
+    ts = out['transcript']
+    expect(ts).to be_kind_of(Array)
+    expect(ts[0]).to match(%r{--extra-args #{tmpdir}})
+    expect(Dir[path]).to eq([]) # no files remaining
+  end
 end
