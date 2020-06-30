@@ -796,6 +796,7 @@ module ASF
         else
           rc = ASF::SVN.svnmucc_(cmds,msg,env,_,filerev,{tmpdir: tmpdir})
           raise "svnmucc failure #{rc} committing" unless rc == 0
+          rc
         end
       ensure
         FileUtils.rm_rf tmpdir
