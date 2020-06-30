@@ -189,30 +189,30 @@ describe "ASF::SVN.update" do
 end
 
 describe "ASF::SVN.svnmucc_" do
-  it "svnmucc_(nil,nil,nil,nil) should fail" do
-    expect { ASF::SVN.svnmucc_(nil,nil,nil,nil) }.to raise_error(ArgumentError, "commands must be an array")
+  it "svnmucc_(nil,nil,nil,nil,nil) should fail" do
+    expect { ASF::SVN.svnmucc_(nil,nil,nil,nil,nil) }.to raise_error(ArgumentError, "commands must be an array")
   end
-  it "svnmucc_([],nil,nil,nil) should fail" do
-    expect { ASF::SVN.svnmucc_([],nil,nil,nil) }.to raise_error(ArgumentError, "msg must not be nil")
+  it "svnmucc_([],nil,nil,nil,nil) should fail" do
+    expect { ASF::SVN.svnmucc_([],nil,nil,nil,nil) }.to raise_error(ArgumentError, "msg must not be nil")
   end
-  it "svnmucc_([],'test',nil,nil) should fail" do
-    expect { ASF::SVN.svnmucc_([],'test',nil,nil) }.to raise_error(ArgumentError, "env must not be nil")
+  it "svnmucc_([],'test',nil,nil,nil) should fail" do
+    expect { ASF::SVN.svnmucc_([],'test',nil,nil,nil) }.to raise_error(ArgumentError, "env must not be nil")
   end
-  it "svnmucc_([],'test',ENV_.new,nil) should fail" do
-    expect { ASF::SVN.svnmucc_([],ENV_.new,'test',nil) }.to raise_error(ArgumentError, "_ must not be nil")
+  it "svnmucc_([],'test',ENV_.new,nil,nil) should fail" do
+    expect { ASF::SVN.svnmucc_([],ENV_.new,'test',nil,nil) }.to raise_error(ArgumentError, "_ must not be nil")
   end
-  it "svnmucc_([[],'x',[]],'test',ENV_.new,'_') should fail" do
-    expect { ASF::SVN.svnmucc_([[],'x',[]],ENV_.new,'test','_') }.to raise_error(ArgumentError, "command entries must be an array")
+  it "svnmucc_([[],'x',[]],'test',ENV_.new,'_',nil) should fail" do
+    expect { ASF::SVN.svnmucc_([[],'x',[]],ENV_.new,'test','_',nil) }.to raise_error(ArgumentError, "command entries must be an array")
   end
-  it "svnmucc_([['xyz']],'test',ENV_.new,_) should fail" do
+  it "svnmucc_([['xyz']],'test',ENV_.new,_,nil) should fail" do
     rc, out = _json do |_|
-      ASF::SVN.svnmucc_([['xyz']],'test',ENV_.new,_)
+      ASF::SVN.svnmucc_([['xyz']],'test',ENV_.new,_,nil)
     end
     expect(rc).to eq(1)
   end
-  it "svnmucc_([['help']],'test',ENV_.new,_) should produce help message with --message test" do
+  it "svnmucc_([['help']],'test',ENV_.new,_,nil) should produce help message with --message test" do
     rc, out = _json do |_|
-      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_)
+      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil)
     end
     expect(rc).to eq(0)
     expect(out).to be_kind_of(Hash)
@@ -221,7 +221,7 @@ describe "ASF::SVN.svnmucc_" do
     expect(ts[0]).to match(/--message test/)
     expect(ts[1]).to eq('usage: svnmucc ACTION...')
   end
-  it "svnmucc_([['help']],'test',ENV_.new,_,'x') should fail with invalid revision number" do
+  it "svnmucc_([['help']],'test',ENV_.new,_,'x',nil) should fail with invalid revision number" do
     rc, out = _json do |_|
       ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,'x')
     end
@@ -232,7 +232,7 @@ describe "ASF::SVN.svnmucc_" do
     expect(ts[0]).to match(/--revision x/)
     expect(ts[1]).to eq('svnmucc: E205000: Invalid revision number \'x\'')
   end
-  it "svnmucc_([['help']],'test',ENV_.new,_,'123') should show revision in command" do
+  it "svnmucc_([['help']],'test',ENV_.new,_,'123',nil) should show revision in command" do
     rc, out = _json do |_|
       ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,'123')
     end
@@ -242,7 +242,7 @@ describe "ASF::SVN.svnmucc_" do
     expect(ts).to be_kind_of(Array)
     expect(ts[0]).to match(/--revision 123/)
   end
-  it "svnmucc_([['help']],'test',ENV_.new,_,nil,nil) should not show revision in command" do
+  it "svnmucc_([['help']],'test',ENV_.new,_,nil,nil,nil) should not show revision in command" do
     rc, out = _json do |_|
       ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil,nil)
     end
@@ -252,7 +252,7 @@ describe "ASF::SVN.svnmucc_" do
     expect(ts).to be_kind_of(Array)
     expect(ts[0]).not_to match(/--revision/)
   end
-  it "svnmucc_([['help']],'test',ENV_.new,_,nil,tmpdir) should have tmpdir in command" do
+  it "svnmucc_([['help']],'test',ENV_.new,_,nil,tmpdir,nil) should have tmpdir in command" do
     tmpdir=Dir.mktmpdir
     path=File.join(tmpdir,'*')
     expect(Dir[path]).to eq([])

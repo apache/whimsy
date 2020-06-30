@@ -633,8 +633,8 @@ module ASF
     #   msg - commit message
     #   env - environment (username/password)
     #   _ - Wunderbar context
-    #   revision - if defined, supply the --revision svnmucc parameter
-    #   temp - use this temporary directory (and don't remove it)
+    #   revision - the --revision svnmucc parameter (unless nil)
+    #   temp (optional) - use this temporary directory (and don't remove it)
     # The commands must themselves be arrays to ensure correct processing of white-space
     # For example:
     #     commands = []
@@ -642,7 +642,7 @@ module ASF
     #     commands << ['mv',url1,url2]
     #     commands << ['rm',url3]
     #   ASF::SVN.svnmucc_(commands,message,env,_)
-    def self.svnmucc_(commands, msg, env, _, revision=nil, temp=nil)
+    def self.svnmucc_(commands, msg, env, _, revision, temp=nil)
 
       raise ArgumentError.new 'commands must be an array' unless Array === commands
       raise ArgumentError.new 'msg must not be nil' unless msg
