@@ -242,9 +242,9 @@ describe "ASF::SVN.svnmucc_" do
     expect(ts).to be_kind_of(Array)
     expect(ts[0]).to match(/--revision 123/)
   end
-  it "svnmucc_([['help']],'test',ENV_.new,_,nil,nil,nil) should not show revision in command" do
+  it "svnmucc_([['help']],'test',ENV_.new,_,nil) should not show revision in command" do
     rc, out = _json do |_|
-      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil,nil)
+      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil)
     end
     expect(rc).to eq(0)
     expect(out).to be_kind_of(Hash)
@@ -252,12 +252,12 @@ describe "ASF::SVN.svnmucc_" do
     expect(ts).to be_kind_of(Array)
     expect(ts[0]).not_to match(/--revision/)
   end
-  it "svnmucc_([['help']],'test',ENV_.new,_,nil,tmpdir,nil) should have tmpdir in command" do
+  it "svnmucc_([['help']],'test',ENV_.new,_,nil,{tmpdir: tmpdir}) should have tmpdir in command" do
     tmpdir=Dir.mktmpdir
     path=File.join(tmpdir,'*')
     expect(Dir[path]).to eq([])
     rc, out = _json do |_|
-      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil,tmpdir)
+      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil,{tmpdir: tmpdir})
     end
     expect(rc).to eq(0)
     expect(out).to be_kind_of(Hash)
@@ -265,5 +265,31 @@ describe "ASF::SVN.svnmucc_" do
     expect(ts).to be_kind_of(Array)
     expect(ts[0]).to match(%r{--extra-args #{tmpdir}})
     expect(Dir[path]).to eq([]) # no files remaining
+  end
+  it "svnmucc_([['help']],'test',ENV_.new,_,nil,{dryrun: true}) should echo params" do
+    rc, out = _json do |_|
+      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil,{dryrun: true})
+    end
+    expect(rc).to eq(0)
+    expect(out).to be_kind_of(Hash)
+    ts = out['transcript']
+    expect(ts).to be_kind_of(Array)
+    expect(ts.size).to eq(2)
+    expect(ts[0]).to match(%r{\$ echo svnmucc .*--message test})
+    expect(ts[1]).to match(%r{^svnmucc .*--message test})
+  end
+  it "svnmucc_([['help']],'test',ENV_.new,_,nil,{verbose: true}) should echo params" do
+    rc, out = _json do |_|
+      ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil,{verbose: true})
+    end
+    expect(rc).to eq(0)
+    expect(out).to be_kind_of(Hash)
+    ts = out['transcript']
+    expect(ts).to be_kind_of(Array)
+    expect(ts[0]).to match(%r{\$ echo})
+    # either --password pass or --password-from-stdin {:stdin=>\"pass\"}
+    # This depends on the order in which the command line is built up
+    expect(ts[1]).to match(%r{^svnmucc .*--message test .*--username user --password.+pass})
+    expect(ts[4]).to eq('usage: svnmucc ACTION...') # output of svnmucc help
   end
 end

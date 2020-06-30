@@ -634,7 +634,10 @@ module ASF
     #   env - environment (username/password)
     #   _ - Wunderbar context
     #   revision - the --revision svnmucc parameter (unless nil)
-    #   temp (optional) - use this temporary directory (and don't remove it)
+    #   options - hash:
+    #     :tmpdir - use this temporary directory (and don't remove it)
+    #     :verbose - if true, show command details
+    #     :dryrun - if true, don't execute command, but show it instead
     # The commands must themselves be arrays to ensure correct processing of white-space
     # For example:
     #     commands = []
@@ -642,14 +645,20 @@ module ASF
     #     commands << ['mv',url1,url2]
     #     commands << ['rm',url3]
     #   ASF::SVN.svnmucc_(commands,message,env,_,revision)
-    def self.svnmucc_(commands, msg, env, _, revision, temp=nil)
+    def self.svnmucc_(commands, msg, env, _, revision, options={})
 
       raise ArgumentError.new 'commands must be an array' unless Array === commands
       raise ArgumentError.new 'msg must not be nil' unless msg
       raise ArgumentError.new 'env must not be nil' unless env
       raise ArgumentError.new '_ must not be nil' unless _
 
+      bad_keys = options.keys - [:dryrun, :verbose, :tmpdir]
+      if bad_keys.size > 0
+        raise ArgumentError.new "Following options not recognised: #{bad_keys.inspect}"
+      end
+
       require 'tempfile'
+      temp = options[:tmpdir]
       tmpdir = temp ? temp : Dir.mktmpdir.untaint
 
       begin
@@ -685,10 +694,17 @@ module ASF
             syscmd << ['--username', env.user, '--password', env.password]
           end
         end
-        if _.instance_of?(Wunderbar::JsonBuilder) or _.instance_of?(Wunderbar::TextBuilder)
-          _.system syscmd, sysopts, sysopts # needs two hashes
+        if options[:verbose]
+          _.system 'echo',[syscmd.flatten,sysopts.to_s]
+        end
+        if options[:dryrun]
+          _.system syscmd.insert(0,'echo')
         else
-          _.system syscmd, sysopts
+          if _.instance_of?(Wunderbar::JsonBuilder) or _.instance_of?(Wunderbar::TextBuilder)
+            _.system syscmd, sysopts, sysopts # needs two hashes
+          else
+            _.system syscmd, sysopts
+          end
         end
       ensure
         File.delete cmdfile # always drop the command file
@@ -772,7 +788,7 @@ module ASF
         if options[:dryrun]
           puts cmds # TODO: not sure this is correct for Wunderbar
         else
-          rc = ASF::SVN.svnmucc_(cmds,msg,env,_,filerev,tmpdir)
+          rc = ASF::SVN.svnmucc_(cmds,msg,env,_,filerev,{tmpdir: tmpdir})
           raise "svnmucc failure #{rc} committing" unless rc == 0
         end
       ensure
