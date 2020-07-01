@@ -27,26 +27,30 @@ if updmem
       raise Exception.new("Failed to remove existing entry -- try refreshing")
     end
 
+    emeritus_url = ASF::SVN.svnurl('emeritus')
+    emeritus_request_url = ASF::SVN.svnurl('emeritus-requests-received')
+    emeritus_reinstated_url = ASF::SVN.svnurl('emeritus-reinstated')
+
     # determine where to put the entry
     if @action == 'emeritus'
       index = text.index(/^\s\*\)\s/, text.index(/^Emeritus/))
       entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
       # if pending emeritus request was found, move it to emeritus
       extra = []
-      if @emeritusfilename.index('/emeritus-requests-received/')
-        emeritus_url = ASF::SVN.svnurl('emeritus')
-        command = "svn move #{@emeritusfilename} #{emeritus_url}"
-        Wunderbar.warn("memstat.json.rb emeritus with command: #{command}")
-        extra << ['move', @emeritusfilename, emeritus_url]
+      # If emeritus request was found, move it to emeritus
+      filename = ASF::EmeritusRequestFiles.extractfilename(@emeritusfileurl)
+      if filename
+        emeritus_destination_url = File.join(emeritus_url, filename)
+        extra << ['mv', @emeritusfileurl, emeritus_destination_url]
       end
     elsif @action == 'active'
       index = text.index(/^\s\*\)\s/, text.index(/^Active/))
       entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
       # if emeritus file was found, move it to emeritus-reinstated
-      if @emeritusfilename.index('//emeritus//')
-        emeritus_reinstated_url = ASF::SVN.svnurl('emeritus-reinstated')
-        command = "svn move #{@emeritusfilename} #{emeritus_reinstated_url}"
-        extra << ['move', @emeritusfilename, emeritus_reinstated_url]
+      filename = ASF::EmeritusFiles.extractfilename(@emeritusfileurl)
+      if filename
+        emeritus_destination_url = File.join(emeritus_reinstated_url, filename)
+        extra << ['mv', @emeritusfileurl, emeritus_destination_url]
       end
     elsif @action == 'deceased'
       index = text.index(/^\s\*\)\s/, text.index(/^Deceased/))
@@ -66,7 +70,7 @@ if @action == 'rescind_emeritus'
   emeritus_rescinded_url = ASF::SVN.svnurl('emeritus-requests-rescinded')
   pw = " --password #{env.password}" if env.password
   credentials = "--username #{env.user}#{pw}"
-  command = "svn move #{credentials} -m \"#{message}\" #{@emeritusfilename} #{emeritus_rescinded_url}"
+  command = "svn mv #{credentials} -m \"#{message}\" #{@emeritusfileurl} #{emeritus_rescinded_url}"
   _.system command
 elsif @action == 'request_emeritus'
   # Create mail to secretary requesting emeritus

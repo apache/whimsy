@@ -368,10 +368,10 @@ class Person < Vue
     formData = form.serializeArray();
 
     # if additional data, add it to formData
-    emeritus_file_name = target.getAttribute('data-emeritus-file-name')
-    console.log('submit emeritus_file_name: ' + emeritus_file_name)
-    if emeritus_file_name
-      formData.push name: 'emeritusfilename', value: emeritus_file_name
+    emeritus_file_url = target.getAttribute('data-emeritus-file-url')
+    console.log('submit emeritus_file_url: ' + emeritus_file_url)
+    if emeritus_file_url
+      formData.push name: 'emeritusfileurl', value: emeritus_file_url
     end
 
     # add button if it has a value

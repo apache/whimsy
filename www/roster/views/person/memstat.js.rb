@@ -24,9 +24,9 @@ class PersonMemberStatus < Vue
               if owner
                 if committer.member.status.include? 'Active'
                   if committer.forms['emeritus_request']
-                    emeritus_file_name = committer.forms['emeritus_request']
+                    emeritus_file_url = committer.forms['emeritus_request']
                     _button.btn.btn_primary 'rescind emeritus request',
-                      data_emeritus_file_name:emeritus_file_name,
+                      data_emeritus_file_url:emeritus_file_url,
                       name: 'action', value: 'rescind_emeritus'
                   else
                     _button.btn.btn_primary 'request emeritus status',
@@ -42,17 +42,17 @@ class PersonMemberStatus < Vue
               if @@person.props.auth.secretary
                 console.log('memstat edit menu secretary...')
                 if committer.member.status.include? 'Active'
-                  emeritus_file_name = committer.forms['emeritus_request']
+                  emeritus_file_url = committer.forms['emeritus_request']
                   _button.btn.btn_primary 'move to emeritus',
-                    data_emeritus_file_name:emeritus_file_name,
+                    data_emeritus_file_url:emeritus_file_url,
                     name: 'action', value: 'emeritus'
                   _button.btn.btn_primary 'move to deceased',
                     name: 'action', value: 'deceased'
                   _input 'dod', name: 'dod', value: dod
                 elsif committer.member.status.include? 'Emeritus'
-                  emeritus_file_name = committer.forms['emeritus']
+                  emeritus_file_url = committer.forms['emeritus']
                   _button.btn.btn_primary 'move to active',
-                    data_emeritus_file_name:emeritus_file_name,
+                    data_emeritus_file_url:emeritus_file_url,
                     name: 'action', value: 'active'
                   _button.btn.btn_primary 'move to deceased',
                     name: 'action', value: 'deceased'
