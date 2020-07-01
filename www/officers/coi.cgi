@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Conflict of Interest Affirmations"
+PAGETITLE = "Conflict of Interest Affirmations" # Wvisible:board,officers
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
