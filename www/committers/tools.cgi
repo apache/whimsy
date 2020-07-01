@@ -60,7 +60,7 @@ _html do
               if 2 == desc.length
                 _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
               else
-                _span class: desc[2], aria_label: "#{AUTHMAP.key(desc[2])}" do
+                _span class: desc[2], aria_label: "#{AUTHMAP.key(desc[2])}", title: "#{AUTHMAP.key(desc[2])}"  do
                   _span.glyphicon.glyphicon_lock :aria_hidden
                 end
               end
