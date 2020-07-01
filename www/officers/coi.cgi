@@ -100,8 +100,6 @@ _html do
     },
     helpblock: -> {
       _p do
-        _b 'DRAFT DRAFT DRAFT - Feedback is solicited at dev@whimsical.apache.org'
-        _p
         _ 'This page allows Board Members and Officers to sign their Conflict of Interest annual affirmation.'
       end
       if _.get?
@@ -157,8 +155,6 @@ _html do
 
             _pre affirmed
 
-            _b 'This is a DRAFT for feedback; pressing the button will send email to you but will not register your affirmation'
-
             _form.form_horizontal method: 'post' do
               _div.form_group do
                 _div.col_sm_offset_1.col_sm_10 do
@@ -201,24 +197,20 @@ def emit_post(_)
         ASF::SVN.svn_!('propset', ['svn:mime-type', 'text/plain; charset=utf-8', user_filename], _)
 
         # commit
-        # TODO enable commit of affirmation
-#        ASF::SVN.svn_!('commit',[user_filename], _,
-#         {msg: "Affirm Conflict of Interest Policy for #{USERNAME}",
-#           user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
+        ASF::SVN.svn_!('commit',[user_filename], _,
+         {msg: "Affirm Conflict of Interest Policy for #{USERNAME}",
+           user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
       end
     end
     # Send email to $USER, secretary@
     ASF::Mail.configure
     mail = Mail.new do
       to "#{USERNAME}<#{USERMAIL}>"
-      # TODO enable cc: secretary
- #     cc "secretary@apache.org"
+      cc "secretary@apache.org"
       from "#{USERMAIL}"
       subject "Conflict of Interest affirmation from #{USERNAME}"
       text_part do
         body "
-DRAFT DRAFT DRAFT Please review this; nothing has been checked in.
-Send feedback to dev@whimsical.apache.org
 This year's Conflict of Interest affirmation is attached.
 It has been checked into the foundation repository at
 #{COI_CURRENT_URL}/#{user_filename}.\n
