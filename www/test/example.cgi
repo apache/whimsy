@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Example Whimsy Script With Styles" # Wvisible:tools Note: PAGETITLE must be double quoted
+PAGETITLE = "Example Whimsy Script With Styles" # Wvisible:tools
+# Note: PAGETITLE must be double quoted
 
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'json'

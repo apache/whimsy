@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # Utility function to scan various scripts
-#   Docs: for WVisible PAGETITLE and categories in .cgi
+#   Docs: for Wvisible PAGETITLE and categories in .cgi
 #   Repos: for ASF::SVN access in .cgi|rb
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
@@ -47,12 +47,12 @@ def emit_auth_level(level)
   end
 end
 
-# Scan single file for PAGETITLE and categories when WVisible
+# Scan single file for PAGETITLE and categories when Wvisible
 # @return [PAGETITLE, [cat,egories] ] or ["!Bogosity error", "stacktrace"]
 def scan_file(f)
   begin
     File.open(f).each_line.map(&:chomp).each do |line|
-      if line =~ /\APAGETITLE\s?=\s?"([^"]+)"\s?#\s?WVisible:(.*)/i then
+      if line =~ /\APAGETITLE\s?=\s?"([^"]+)"\s?#\s?Wvisible:(.*)/i then
         return [$1, $2.chomp.split(%r{[\s,]})]
       end
     end
@@ -62,7 +62,7 @@ def scan_file(f)
   end
 end
 
-# Return data only about WVisible cgis, plus any errors
+# Return data only about Wvisible cgis, plus any errors
 # @return [ [PAGETITLE, [cat,egories] ], ... ]
 def scan_dir(dir)
   links = {}

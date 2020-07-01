@@ -40,15 +40,17 @@ _html do
     ) do
       scan = get_annotated_scan("../#{SCANDIR}")
       scan.merge!(NONCGIS)
-      scan_by = scan.group_by{ |k, v| v[1][0] }
+      scan_by = Hash.new{|h,k| h[k]=Array.new}
+      # Create array entry for each category
+      scan.each{ |k,v| v[1].each {|l| scan_by[l] << [k,v]}}
       _ul.list_inline do
-        scan_by.each do |cat, l|
+        scan_by.sort.each do |cat, l|
           _li do
             _a "#{cat.capitalize}", href: "##{cat}"
           end
         end
       end
-      scan_by.each do | category, links |
+      scan_by.sort.each do | category, links |
         _ul.list_group do
           _li.list_group_item.active do
             _span category.capitalize, id: category
@@ -58,7 +60,7 @@ _html do
               if 2 == desc.length
                 _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
               else
-                _span class: desc[2], aria_label: "#{AUTHMAP.key(desc[2])}" do
+                _span class: desc[2], aria_label: "#{AUTHMAP.key(desc[2])}", title: "#{AUTHMAP.key(desc[2])}"  do
                   _span.glyphicon.glyphicon_lock :aria_hidden
                 end
               end
