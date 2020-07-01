@@ -86,6 +86,9 @@ def get_affirmed_template(name, timestamp)
   template + filled_signature_block
 end
 
+affirmers = IDS.map{|id, role| [ASF::Person.find(id), role]}
+  .sort_by{|affirmer, role| affirmer.public_name.split(' ').rotate(-1)}
+
 _html do
   _body? do
     _whimsy_body(
@@ -114,8 +117,7 @@ _html do
             end
           end
           _tbody do
-            IDS.each do |id, role|
-              affirmer = ASF::Person.find(id)
+            affirmers.each do |affirmer, role|
               _tr do
                 _td affirmer.cn
                 _td do
