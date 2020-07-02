@@ -1,6 +1,31 @@
-#
-# Publish approved minutes on the public web site
-#
+
+"""
+
+Publish approved minutes on the public web site
+
+- clean up site-board, minutes, foundation-board checkouts
+- read calendar and update text
+  - add year index
+  - add summary
+  - remove ?
+- commit minutes (public repo):
+  - create/add the yearly folder if necessary
+  - if the public minutes do not already exist:
+    - copy private minutes to the yearly folder
+    - svn add them
+    - commit the updated yearly folder
+    - check for leftover errors
+- commit updated calendar:
+  - if text has changed:
+    - svn diff
+    - svn commit
+    - check for leftover errors
+- clean up board directory (private repo)
+  - remove minutes if they exist
+  - archive agenda if it exists
+  - commit changes if any
+
+"""
 
 require 'date'
 require 'whimsy/asf/svn'
