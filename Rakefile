@@ -63,7 +63,7 @@ task :update, [:command] do |task, args|
         File.write "Gemfile",
           "source 'https://rubygems.org'\n#{gems.values.join("\n")}"
 
-        system "bundle install"
+        system('bundle', 'install')
       end
     end
   end
@@ -82,7 +82,7 @@ task :update, [:command] do |task, args|
       locktime = File.mtime('Gemfile.lock') rescue Time.at(0)
 
       bundler = 'bundle' unless File.exist?(bundler)
-      system "#{bundler} #{args.command || 'update'}"
+      system(bundler, args.command || 'update')
 
       # if new gems were istalled and this directory contains a passenger
       #  application, restart it
@@ -161,14 +161,14 @@ namespace :svn do
           if Dir.exist? name
             isSymlink = File.symlink?(name) # we don't want to change such checkouts
             Dir.chdir(name) {
-              system 'svn cleanup'
+              system('svn', 'cleanup')
               depth = description['depth']
               files = description['files']
               if depth == 'empty' and not isSymlink
                 curdepth = ASF::SVN.getInfoAsHash('.')['Depth'] # not available as separate item
                 if curdepth != depth
                   puts "#{PREFIX} update depth from '#{curdepth}' to '#{depth}'"
-                  system 'svn','update','--set-depth',depth
+                  system('svn', 'update', '--set-depth', depth)
                 end
               end
               outerr = nil
@@ -213,15 +213,12 @@ namespace :svn do
               puts outerr # show what happened last
             }
           else
-            system 'svn', 'checkout', 
-              "--depth=#{description['depth'] || 'infinity'}",
-              svnpath, name
+            depth = description['depth'] || 'infinity'
+            system('svn', 'checkout', "--depth=#{depth}", svnpath, name)
              files = description['files']
              if files
-               Dir.chdir(name) {
-                 system 'svn', 'update', *files
-               }
-             end
+               system('svn', 'update', *files, {chdir: name})
+              end
           end
         end
       end
@@ -310,19 +307,19 @@ namespace :git do
               end
 
               # pull changes
-              system "git checkout #{branch}" if branch
-              system 'git fetch origin'
-              system "git reset --hard origin/#{branch || 'master'}"
+              system('git', 'checkout', branch) if branch
+              system('git', 'fetch', 'origin')
+              system('git', 'reset', '--hard', "origin/#{branch || 'master'}")
             end
           else
             # fresh checkout
             depth = description['depth']
             if depth
-              system 'git', 'clone', '--depth', depth.to_s, (base + description['url']).to_s, name
+              system('git', 'clone', '--depth', depth.to_s, (base + description['url']).to_s, name)
             else
-              system 'git', 'clone', (base + description['url']).to_s, name
+              system('git', 'clone', (base + description['url']).to_s, name)
             end
-            Dir.chdir(name) {system "git checkout #{branch}"} if branch
+            system('git', 'checkout', branch, {chdir: name}) if branch
           end
         end
       end
@@ -333,10 +330,8 @@ end
 # update documentation
 task :rdoc => 'www/docs/api/index.html'
 file 'www/docs/api/index.html' => Rake::FileList['lib/**/*.rb'] do
-  Dir.chdir File.dirname(__FILE__) do
-    system 'rdoc', 'lib', '--output', 'www/docs/api', '--force-output',
-      '--title', 'whimsy/asf lib'
-  end
+  system('rdoc', 'lib', '--output', 'www/docs/api', '--force-output',
+    '--title', 'whimsy/asf lib', {chdir: File.dirname(__FILE__)})
 end
 
 # Travis support: run the tests associated with the bundle in question
