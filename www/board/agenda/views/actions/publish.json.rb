@@ -73,17 +73,17 @@ minutes = "board_minutes_#{@date}.txt"
 #Commit the Minutes
 ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
   yeardir = File.join(tmpdir, year.to_s).untaint
-  _.system "svn up #{yeardir}"
+  ASF::SVN.svn_('update', yeardir, _) # TODO does this need auth?
 
   unless Dir.exist? yeardir
-    _.system "mkdir #{yeardir}"
-    _.system "svn add #{yeardir}"
+    _.system('mkdir', yeardir)
+    ASF::SVN.svn_('add', yeardir, _)
   end
 
   year_minutes = File.join(yeardir, minutes)
   if not File.exist? year_minutes
-    _.system "cp #{File.join(BOARD_PRIVATE, minutes)} #{yeardir}"
-    _.system "svn add #{year_minutes}"
+    _.system('cp', File.join(BOARD_PRIVATE, minutes), yeardir)
+    ASF::SVN.svn_('add', year_minutes, _)
   end
 end
 
@@ -97,17 +97,17 @@ end
 # Clean up board directory
 ASF::SVN.update BOARD_PRIVATE, @message, env, _ do |tmpdir|
   minutes_path = File.join(tmpdir, minutes)
-  _.system "svn up #{minutes_path}"
+  ASF::SVN.svn_('update', minutes_path, _)
   if File.exist? minutes_path
-    _.system "svn rm #{minutes_path}"
+    ASF::SVN.svn_('rm', minutes_path, _)
   end
   
   agenda_path = File.join(tmpdir, "board_agenda_#{@date}.txt")
-  _.system "svn up #{agenda_path}"
+  ASF::SVN.svn_('update', agenda_path, _)
   if File.exist? agenda_path
     agenda_archive = File.join(tmpdir, 'archived_agendas')
-    _.system "svn up --depth empty #{agenda_archive}"
-    _.system "svn mv #{agenda_path} #{agenda_archive}"
+    ASF::SVN.svn_('update', agenda_archive, _, {depth: empty})
+    ASF::SVN.svn_('mv', [agenda_path, agenda_archive], _)
   end
 end
 
