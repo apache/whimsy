@@ -1,5 +1,31 @@
 #!/usr/bin/env ruby
 
+"""
+Publish minutes:
+- clean up site-board, minutes, foundation-board checkouts
+- read calendar and update text
+  - add year index
+  - add summary
+  - remove ?
+- commit minutes (public repo):
+  - create/add the yearly folder if necessary
+  - if the public minutes do not already exist:
+    - copy private minutes to the yearly folder
+    - svn add them
+    - commit the updated yearly folder
+    - check for leftover errors
+- commit updated calendar:
+  - if text has changed:
+    - svn diff
+    - svn commit
+    - check for leftover errors
+- clean up board directory (private repo)
+  - remove minutes if they exist
+  - archive agenda if it exists
+  - commit changes if any
+
+"""
+
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'date'
@@ -43,7 +69,7 @@ _html do
     date = @summary[/\[(.*?)\]/,1]
     year = date.split(' ').last
 
-    # add year header
+    # add year header before the first one
     unless calendar.include? '#'+year
       calendar[/^()#.*Board meeting minutes #/,1] =
         "# #{year} Board meeting minutes # {##{year}}\n\n"
