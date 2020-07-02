@@ -72,11 +72,13 @@ _html do
         _.system "mkdir #{year}"
         _.system "svn add #{year}"
       end
-      if File.exist? "#{year}/board_minutes_#{date}.txt"
-        _p "#{year}/board_minutes_#{date}.txt already exists", class: '_stderr'
+      minutes_date = "board_minutes_#{date}.txt"
+      minutes_year = File.join(year, minutes_date)
+      if File.exist? minutes_year
+        _p "#{minutes_year} already exists", class: '_stderr'
       else
-        _.system "cp #{BOARD_PRIVATE}/board_minutes_#{date}.txt #{year}"
-        _.system "svn add #{year}/board_minutes_#{date}.txt"
+        _.system "cp #{BOARD_PRIVATE}/#{minutes_date} #{year}"
+        _.system "svn add #{minutes_year}"
         _p
         _.system [
           'svn', 'commit', '-m', message, year,
@@ -118,13 +120,14 @@ _html do
     Dir.chdir BOARD_PRIVATE do
       updated = false
 
-      if File.exist? "board_minutes_#{date}.txt"
-        _.system "svn rm board_minutes_#{date}.txt"
+      if File.exist? "#{minutes_date}"
+        _.system "svn rm #{minutes_date}"
         updated = true
       end
       
-      if File.exist? "board_agenda_#{date}.txt"
-        _.system "svn mv board_agenda_#{date}.txt archived_agendas"
+      agenda_date = "board_agenda_#{date}.txt"
+      if File.exist? agenda_date
+        _.system "svn mv #{agenda_date} archived_agendas"
         updated = true
       end
 
