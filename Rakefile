@@ -292,6 +292,10 @@ namespace :git do
         require 'uri'
         base = URI.parse('git://git.apache.org/')
         gitrepos.each do |name, description|
+          if name == 'letsencrypt' and not `which certbot`.empty?
+            puts "Skipping git:pull of #{name} because certbot is installed"
+            next
+          end
           branch = description['branch']
 
           puts
