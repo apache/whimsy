@@ -110,7 +110,7 @@ end
 # Perform initial clone
 if not Dir.exist? options.local
   FileUtils.mkdir_p File.basename(options.local)
-  system "git clone #{options.remote} #{options.local}"
+  system('git', 'clone', options.remote, options.local)
 end
 
 #
@@ -183,18 +183,18 @@ begin
       # running; in which case it may not have picked up this update.  So try
       # again in 30, 60, 90, and 120 seconds, for a total of five minutes.
       4.times do |i|
-        break if system 'puppet agent -t'
+        break if system('puppet', 'agent', '-t')
         sleep 30 * (i+1)
       end
     else
       # update git directories in the foreground
       Dir.chdir(options.local) do
         before = `git log --oneline -1`
-        system 'git fetch origin'
-        system 'git clean -df'
-        system 'git reset --hard origin/master'
+        system('git', 'fetch', 'origin')
+        system('git', 'clean', '-df')
+        system('git', 'reset', '--hard', 'origin/master')
         if File.exist? 'Rakefile' and `git log --oneline -1` != before
-          system 'rake update'
+          system('rake', 'update')
         end
       end
     end
