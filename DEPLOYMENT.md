@@ -90,6 +90,7 @@ and running - these are only needed for a new deployment.
  * Update the following cron scripts under https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin:
      * listmodsubs.sh - add the new host
      * whimsy_qmail_ids.sh - add the new host
+     * make sure that the host is added to the known_hosts file on hermes (e.g. rsync whimsyN.apache.org: and agree to the prompt if the hash is correct)
      * the old hosts should be removed sometime after switchover. This approach requires two edits to the files
      but ensures that the rsync has been tested for the new host and allows the new host to be better tested
 
@@ -111,6 +112,10 @@ and running - these are only needed for a new deployment.
 
  * Verify that email can be sent to non-apache.org email addresses.
    * Run [testmail.rb](tools/testmail.rb)
+
+ * check that mail is being delivered to the /srv/mail directory tree
+
+ * check that mail subscriptions are being updated under /srv/subscriptions
 
  * if `pip3 show img2pdf` doesn't show version 0.3.1 or later:
    * Run `pip3 install --upgrade img2pdf`
