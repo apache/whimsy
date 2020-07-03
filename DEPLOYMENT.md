@@ -115,6 +115,8 @@ and running - these are only needed for a new deployment.
  * if `pip3 show img2pdf` doesn't show version 0.3.1 or later:
    * Run `pip3 install --upgrade img2pdf`
 
+ * Ensure that gitpubsub is working. Check that updates to whimsy git are pulled within 5 minutes or less
+
 N.B. Just prior to switchover, ensure that the file `/srv/mail/secretary/YYYYMM.yml`
 for the current month is copied (or merged?) across. This contains the status for mails
 handled by the Secretary workbench.
