@@ -182,7 +182,7 @@ def emit_post(cur_mtg_dir, meeting, _)
       svn =  ASF::SVN.getInfoItem(File.join(MEETINGS,meeting),'url')
 
       ASF::SVN.svn_('checkout',[svn.untaint, tmpdir.untaint], _, 
-                    {args: '--quiet', user: $USER, password: $PASSWORD})
+                    {quiet: true, user: $USER, password: $PASSWORD})
       Dir.chdir(tmpdir) do
         # write proxy form
         filename = "proxies-received/#$USER.txt".untaint

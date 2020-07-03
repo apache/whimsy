@@ -243,10 +243,6 @@ describe ASF::SVN do
     it "svn('st','',{xyz: true}) should raise error" do
       expect { ASF::SVN.svn('st','',{xyz: true}) }.to raise_error(ArgumentError, 'Following options not recognised: [:xyz]')
     end
-    it "svn('st','',{args: true}) should raise error" do
-      expect { ASF::SVN.svn('st','',{args: true}) }.to raise_error(ArgumentError, "args 'true' must be string or array")
-    end
-
 
     it "svn('info', path) should return 'Name: path'" do
       repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
@@ -258,27 +254,11 @@ describe ASF::SVN do
       out, err = ASF::SVN.svn('info',[repo])
       expect(out).to match(/^Name: _template.xml$/)
     end
-    it "svn('info', [path1, path2], {args: ['--show-item','kind']}) should return 'file ...'" do
+    it "svn('info', [path1, path2], {item: kind'}) should return 'file ...'" do
       path1 = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
       path2 = File.join(ASF::SVN.svnurl('attic-xdocs'),'jakarta.xml')
-      out, err = ASF::SVN.svn('info',[path1, path2], {args: ['--show-item','kind']})
+      out, err = ASF::SVN.svn('info',[path1, path2], {item: 'kind'})
       expect(out).to match(/^file +https:/)
-    end
-
-    it "svn('help', 'help', {args: ['--depth','empty'], dryrun: true}) should return the same as {depth: 'files'}" do
-      out1, err1 = ASF::SVN.svn('help', 'help', {args: ['--depth','empty'], dryrun: true})
-      out2, err2 = ASF::SVN.svn('help', 'help', {depth: 'empty', dryrun: true})
-      expect(out1).to eq(out2)
-      expect(err1).to eq(nil)
-      expect(err2).to eq(nil)
-    end
-
-    it "svn('help', 'help', {args: ['--message','text'], dryrun: true}) should return the same as {msg: 'text'}" do
-      out1, err1 = ASF::SVN.svn('help', 'help', {args: ['--message','text'], dryrun: true})
-      out2, err2 = ASF::SVN.svn('help', 'help', {msg: 'text', dryrun: true})
-      expect(out1).to eq(out2)
-      expect(err1).to eq(nil)
-      expect(err2).to eq(nil)
     end
 
     it "svn() should honour :chdir option" do
@@ -341,6 +321,25 @@ describe ASF::SVN do
     it "_svn_build_cmd('help', 'path', {_error: true})  should raise error" do
       expect { ASF::SVN._svn_build_cmd('help', 'path', {_error: true}) }.to raise_error(ArgumentError, "Following options not recognised: [:_error]")
     end
+
+    it "_svn_build_cmd('help', 'path', {quiet: true}) should include --quiet" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {quiet: true})
+      expect(stdin).to eq(nil)
+      expect(cmd).to eq(["svn", "help", "--non-interactive", "--quiet", "--", "path"])
+    end
+
+    it "_svn_build_cmd('help', 'path', {item: 'url'}) should include --show-item url" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {item: 'url'})
+      expect(stdin).to eq(nil)
+      expect(cmd).to eq(["svn", "help", "--non-interactive", "--show-item", 'url', "--", "path"])
+    end
+
+    it "_svn_build_cmd('help', 'path', {revision: '123'}) should include --revision 123" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {revision: '123'})
+      expect(stdin).to eq(nil)
+      expect(cmd).to eq(["svn", "help", "--non-interactive", "--revision", '123', "--", "path"])
+    end
+
   end
 
   describe "ASF::SVN.svnpath!" do
