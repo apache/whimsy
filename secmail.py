@@ -274,7 +274,7 @@ def detach(msg):
       }
       if name: props['email:name'] = name
       if addr: props['email:addr'] = addr
-      if msg['cc']: props['email:cc'] =  re.sub('\s+', ' ', decode(msg['cc']))
+      if msg['cc']: props['email:cc'] =  re.sub(r'\s+', ' ', decode(msg['cc']))
       for (key, value) in props.items():
         svn('propset ' + key + ' ' + repr(value), file)
   except:
