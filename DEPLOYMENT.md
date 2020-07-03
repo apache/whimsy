@@ -93,7 +93,7 @@ and running - these are only needed for a new deployment.
      * the old hosts should be removed sometime after switchover. This approach requires two edits to the files
      but ensures that the rsync has been tested for the new host and allows the new host to be better tested
 
- * Add the following mail subscriptions:
+ * Add the following mail subscriptions (see apmail/trunk/bin/whimsy_subscribe.sh):
     * Subscribe `svnupdate@whimsy-vm4.apache.org` to `board-commits@apache.org`.
     * Subscribe `svnupdate@whimsy-vm4.apache.org` to `committers-cvs@apache.org`.
     * Subscribe `svnupdate@whimsy-vm4.apache.org` to `foundation-commits@apache.org`.
