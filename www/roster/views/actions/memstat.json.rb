@@ -9,8 +9,7 @@ USERNAME = user.cn.untaint
 TIMESTAMP = (DateTime.now.strftime "%Y-%m-%d %H:%M:%S").untaint
 
 # identify file to be updated
-members_txt = File.join(ASF::SVN['foundation'], 'members.txt').untaint
-
+members_txt = ASF::SVN.svnpath!('foundation', 'members.txt').untaint
 # construct commit message
 message = "Action #{@action} for #{USERID}"
 
@@ -40,7 +39,7 @@ if updmem
       # If emeritus request was found, move it to emeritus
       filename = ASF::EmeritusRequestFiles.extractfilename(@emeritusfileurl)
       if filename
-        emeritus_destination_url = File.join(emeritus_url, filename)
+        emeritus_destination_url = ASF::SVN.svnpath!('emeritus', filename)
         extra << ['mv', @emeritusfileurl, emeritus_destination_url]
       end
     elsif @action == 'active'
@@ -49,7 +48,7 @@ if updmem
       # if emeritus file was found, move it to emeritus-reinstated
       filename = ASF::EmeritusFiles.extractfilename(@emeritusfileurl)
       if filename
-        emeritus_destination_url = File.join(emeritus_reinstated_url, filename)
+        emeritus_destination_url = ASF::SVN.svnpath!('emeritus-reinstated', filename)
         extra << ['mv', @emeritusfileurl, emeritus_destination_url]
       end
     elsif @action == 'deceased'
@@ -68,16 +67,13 @@ end
 # Owner operations
 if @action == 'rescind_emeritus'
   emeritus_rescinded_url = ASF::SVN.svnurl('emeritus-requests-rescinded')
-  pw = " --password #{env.password}" if env.password
-  credentials = "--username #{env.user}#{pw}"
-  command = "svn mv #{credentials} -m \"#{message}\" #{@emeritusfileurl} #{emeritus_rescinded_url}"
-  _.system command
+  ASF::SVN.svn_('mv', [@emeritusfileurl, emeritus_rescinded_url], _, {env:env, msg:message})
 elsif @action == 'request_emeritus'
   # Create mail to secretary requesting emeritus
   FOUNDATION_URL = ASF::SVN.svnurl('foundation')
-  EMERITUS_TEMPLATE_URL = File.join(FOUNDATION_URL, 'emeritus-request.txt').untaint
+  EMERITUS_TEMPLATE_URL = ASF::SVN.svnpath!('foundation', 'emeritus-request.txt').untaint
   template, err =
-    ASF::SVN.svn('cat', EMERITUS_TEMPLATE_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
+    ASF::SVN.svn('cat', EMERITUS_TEMPLATE_URL, {env:env})
   raise RuntimeError.new("Failed to read emeritus-request.txt: " + err) unless template
   centered_id = "#{USERID}".center(55, '_')
   centered_name = "#{USERNAME}".center(55, '_')
@@ -94,8 +90,8 @@ elsif @action == 'request_emeritus'
 
   ASF::Mail.configure
   mail = Mail.new do
-  to "#{USERNAME}<#{USERMAIL}>"
-# cc "secretary@apache.org"
+    to "secretary@apache.org"
+    cc "#{USERNAME}<#{USERMAIL}>"
     from "#{USERMAIL}"
     subject "Emeritus request from #{USERNAME}"
     text_part do
