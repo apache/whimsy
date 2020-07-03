@@ -63,6 +63,11 @@ class Wunderbar::JsonBuilder
     _.system! 'svn', *args
   end
 
+  def svn!(command,path,options={})
+    options[:env] = env if env.password and %(checkout update commit).include?(command)
+    ASF::SVN.svn_!(command,path,_,options)
+  end
+
   def svnauth
     [
       '--non-interactive', 

@@ -191,7 +191,7 @@ def emit_post(_)
   _div.transcript do
     Dir.mktmpdir do |tmpdir|
       ASF::SVN.svn_!('checkout',[COI_CURRENT_URL, tmpdir.untaint], _,
-                    {args: '--quiet', user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
+                    {quiet: true, user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
       Dir.chdir(tmpdir) do
         # write affirmation form
         File.write(user_filename, affirmed)

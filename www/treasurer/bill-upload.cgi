@@ -28,7 +28,6 @@ _html do
       subtitle: 'How To Upload Bills',
       related: {
         'https://treasurer.apache.org/' => 'ASF Treasurer Process Documentation',
-        '/committers/svn-info' => 'SVN Info helper (to check file status)'
       },
       helpblock: -> {
         _p %{

@@ -263,7 +263,7 @@ module ASF
     # Note: Path, Schedule and Depth are not currently supported
     #
     def self.getInfoItem(path, item, user=nil, password=nil)
-      out, err = self.svn('info', path, {args: ['--show-item', item],
+      out, err = self.svn('info', path, {item: item,
         user: user, password: password})
       if out
         if item.end_with? 'revision' # svn version 1.9.3 appends trailing spaces to *revision items
@@ -282,7 +282,7 @@ module ASF
     end
 
     # These keys are common to svn_ and svn
-    VALID_KEYS=[:args, :user, :password, :verbose, :env, :dryrun, :msg, :depth]
+    VALID_KEYS=[:user, :password, :verbose, :env, :dryrun, :msg, :depth, :quiet, :item, :revision]
 
     # common routine to build SVN command line
     # returns [cmd, stdin] where stdin is the data for stdin (if any)
@@ -296,22 +296,19 @@ module ASF
       cmd = ['svn', command, '--non-interactive']
       stdin = nil # for use with -password-from-stdin
 
-      args = options[:args]
-      if args
-        if args.is_a? String
-          cmd << args
-        elsif args.is_a? Array
-          cmd += args
-        else
-          raise ArgumentError.new "args '#{args.inspect}' must be string or array"
-        end
-      end
-
       msg = options[:msg]
       cmd += ['--message', msg] if msg
 
       depth = options[:depth]
       cmd += ['--depth', depth] if depth
+
+      cmd << '--quiet' if options[:quiet]
+
+      item = options[:item]
+      cmd += ['--show-item', item] if item
+
+      revision = options[:revision]
+      cmd += ['--revision', revision] if revision
 
       # add credentials if required
       env = options[:env]
@@ -353,11 +350,13 @@ module ASF
     # command - info, list etc
     # path - the path(s) to be used - String or Array of Strings
     # options - hash of:
-    #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
-    #  :msg - shorthand for {args: ['--message', value]}
-    #  :depth - shorthand for {args: ['--depth', value]}
+    #  :msg - ['--message', value]
+    #  :depth - ['--depth', value]
     #  :env - environment: source for user and password
     #  :user, :password - used if env is not present
+    #  :quiet - if true, apply the --quiet option
+    #  :item - [--show-item, value]
+    #  :revision - [--revision, value]
     #  :verbose - show command on stdout
     #  :dryrun - return command array as [cmd] without executing it (excludes auth)
     #  :chdir - change directory for system call
@@ -405,9 +404,11 @@ module ASF
     # path - the path(s) to be used - String or Array of Strings
     # _ - wunderbar context
     # options - hash of:
-    #  :args - string or array of strings, e.g. '-v', ['--depth','empty']
-    #  :msg - shorthand for {args: ['--message', value]}
-    #  :depth - shorthand for {args: ['--depth', value]}
+    #  :msg - ['--message', value]
+    #  :depth - ['--depth', value]
+    #  :quiet - if true, apply the --quiet option
+    #  :item - [--show-item, value]
+    #  :revision - [--revision, value]
     #  :auth - authentication (as [['--username', etc]])
     #  :env - environment: source for user and password
     #  :user, :password - used if env is not present
@@ -514,7 +515,7 @@ module ASF
         pass = env.password.dup.untaint
         # checkout committers/board (this does not have many files currently)
         out, err = self.svn('checkout', [ciURL, tmpdir.untaint],
-          {args: '--quiet', depth: 'files',
+          {quiet: true, depth: 'files',
            user: user, password: pass})
 
         raise Exception.new("Checkout of board folder failed: #{err}") unless out
@@ -530,7 +531,7 @@ module ASF
 
         # commit the updated file
         out, err = self.svn('commit', [file, tmpdir.untaint],
-          {args: '--quiet', msg: msg,
+          {quiet: true, msg: msg,
            user: user, password: pass})
 
         raise Exception.new("Update of committee-info.txt failed: #{err}") unless out
@@ -871,8 +872,8 @@ module ASF
     # Does this host's installation of SVN support --password-from-stdin?
     def self.passwordStdinOK?()
       return @svnHasPasswordFromStdin unless @svnHasPasswordFromStdin.nil?
-        out,err = self.svn('help','cat', {args: '-v'})
-        if out
+        out, err, status = Open3.capture3('svn','help','cat', '-v')
+        if status.success? && out
           @svnHasPasswordFromStdin = out.include? '--password-from-stdin'
         else
           @svnHasPasswordFromStdin = false

@@ -43,9 +43,6 @@ describe "ASF::SVN.svn_" do
   it "svn_('st','',_,{xyz: true}) should raise error" do
     expect { ASF::SVN.svn_('st','',true,{xyz: true}) }.to raise_error(ArgumentError, 'Following options not recognised: [:xyz]')
   end
-  it "svn_('st','',_,{args: true}) should raise error" do
-    expect { ASF::SVN.svn_('st','',true,{args: true}) }.to raise_error(ArgumentError, "args 'true' must be string or array")
-  end
 
   it "svn_('info') should return array with Name:" do
     repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
@@ -80,30 +77,6 @@ describe "ASF::SVN.svn_" do
     expect(rc).to be(1)
     expect(out['transcript'].class).to equal(Array)
     expect(out['transcript'].join("\n")).to match(/svn: E200009:/)
-  end
-
-  it "svn_('help', 'help', _, {args: ['--depth','empty'], dryrun: true}) should return the same as {depth: 'files'}" do
-    rc1, out1 = _json do |_|
-      ASF::SVN.svn_('help', 'help', _, {args: ['--depth','empty'], dryrun: true})
-    end
-    rc2, out2 = _json do |_|
-      ASF::SVN.svn_('help', 'help', _, {depth: 'empty', dryrun: true})
-    end
-    expect(rc1).to eq(0)
-    expect(rc2).to eq(0)
-    expect(out1).to eq(out2)
-  end
-
-  it "svn_('help', 'help', _, {args: ['--message','text'], dryrun: true}) should return the same as {msg: 'text'}" do
-    rc1, out1 = _json do |_|
-      ASF::SVN.svn_('help', 'help', _, {args: ['--message','text'], dryrun: true})
-    end
-    rc2, out2 = _json do |_|
-      ASF::SVN.svn_('help', 'help', _, {msg: 'text', dryrun: true})
-    end
-    expect(rc1).to eq(0)
-    expect(rc2).to eq(0)
-    expect(out1).to eq(out2)
   end
 
   it "auth: should override env: and user:/password:" do

@@ -459,6 +459,7 @@ def _checkDownloadPage(path, tlp, version)
         else
           E "Bug: found hash #{h} for missing artifact #{stem}"
         end
+        t.strip!
         next if t == '' # empire-db
         tmp = text2ext(t)
         next if ext == tmp # i.e. link is just the type or [TYPE]
