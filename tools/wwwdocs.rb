@@ -20,6 +20,11 @@ SCANDIRSVN = "../"
 WWWAUTH = /WWW-Authenticate: Basic realm/
 CONSTANT_DEF = /(?<matchconst>[A-Z_]+)\s+=\s+['"](?<matchval>[^#]+)['"]/ # Attempt to capture CONSTANT = "value"
 
+HTTPD_SITES = '/etc/apache2/sites-enabled'
+# Use wild-card to allow for possible renames (normally 10-whimsy-vm-443.conf)
+# Also allows testing on a developer system (use a different suffix that is not Included by httpd)
+WHIMSY_CONF = File.join(HTTPD_SITES, '*-whimsy-vm-443.*')
+
 # Output ul of key of AUTHMAP for use in helpblock
 def emit_authmap
   _ul do
@@ -73,25 +78,32 @@ def scan_dir(dir)
   return links
 end
 
-# Process authldap so we can annotate links with access hints
+
+# Parse httpd config file so we can annotate links with access hints
+# Sample data:
+# <LocationMatch ^/board/subscriptions>
+#   AuthName "ASF Committers"
+# <Directory /x1/srv/whimsy/www/committers>
+#   AuthName "ASF Committers"
 # @return { "/path" => "auth realm",... }
-def get_auth()
-    node = ASF::Git.find('infrastructure-puppet')
-    if node
-      node += '/data/nodes/whimsy-vm4.apache.org.yaml'
-    else
-      raise Exception.new("Cannot find Git: infrastructure-puppet")
+def get_auth
+  hash = {}
+  files = Dir[WHIMSY_CONF]
+  return hash unless files.size == 1 # must match just one
+  file = files.first
+  loc = nil
+  File.read(file).each_line do |l|
+    if l =~ %r{<LocationMatch ([^>]+)>}
+      loc = $1.gsub(/^\^/,'') # remove ^ prefix
+    elsif l =~ %r{<Directory ([^>]+)>}
+      # remove standard prefix and append '/' directory marker
+      loc = $1.sub('/x1/srv/whimsy/www','')+'/'
+    elsif l =~ %r{AuthName\s+"(.+)"} # generate the entry
+      hash[loc] = $1 if loc
+      loc = nil
     end
-    yml = YAML.load(File.read("#{node}"))
-    authldap = yml['vhosts_whimsy::vhosts::vhosts']['whimsy-vm-443']['authldap']
-    # Unwrap so we can easily compare base path
-    auth = {}
-    authldap.each do |ldap|
-      ldap['locations'].each do |loc|
-        auth[loc] = ldap['name']
-      end
-    end
-    return auth
+  end
+  hash
 end
 
 # Annotate scan_dir entries with hints only for paths that require auth
