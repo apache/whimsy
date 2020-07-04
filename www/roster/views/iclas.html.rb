@@ -15,7 +15,7 @@ _html do
     _div_.main!
     _script src: "app.js?#{appmtime}"
     _.render '#main' do
-      _IclaSearch
+      _IclaSearch iclapath: `ASF::SVN.svnpath!('iclas').inspect`
     end
   end
 end
