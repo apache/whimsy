@@ -151,8 +151,8 @@ def analyze(msg):
 def detach(msg):
   # quick exit if we have seen this entry before
   if not msg['message-id']: return
-  id = md5(msg['message-id']).hexdigest()
-  if os.path.exists(os.path.join('tally',id)): return
+  mid = md5(msg['message-id']).hexdigest()
+  if os.path.exists(os.path.join('tally',mid)): return
 
   # known spammers
   if '<r_ieftin@yahoo.ro>' in msg['from']:
@@ -280,7 +280,7 @@ def detach(msg):
   except:
     pass
 
-  tally = os.path.join('tally',id)
+  tally = os.path.join('tally',mid)
   fh=open(tally,'w')
   fh.write(summary + "\n")
   fh.close()
