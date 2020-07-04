@@ -48,7 +48,7 @@ module ASF
 
     # read the config file - extract the [explicit] section
     def read_conf
-      File.read(File.join(@auth,'auth.conf')).scan(/^\[explicit\].*^\[/m).first rescue ''
+      File.read(File.join(@auth,'auth.conf')).scan(/^\[explicit\].*(?:^\[)?/m).first rescue ''
     end
 
     # read the auth template; extract [groups]
