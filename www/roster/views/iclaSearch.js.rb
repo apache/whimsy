@@ -90,7 +90,8 @@ class IclaSearch < Vue
                 _tr do
                   _td icla.name
                   _td icla.mail
-                  _td { _a icla.claRef, href: "#{@@iclapath}/#{icla.iclaFile}" }
+                  # iclapath already ends in /
+                  _td { _a icla.claRef, href: "#{@@iclapath}#{icla.iclaFile}" }
                 end
               end
 
