@@ -111,7 +111,7 @@ end
 #   - REMOVES any error scan entries
 #   - Adds array element of auth realm if login required
 def annotate_scan(scan, auth)
-  annotated = scan.reject{ |k, v| v[1] =~ /\A#{ISERR}/ }
+  annotated = scan.reject{ |k, v| v[0] =~ /\A#{ISERR}/ }
   annotated.each do |path, ary|
     realm = auth.select { |k, v| path.match(/\A#{k}/) }
     if realm.values.first
