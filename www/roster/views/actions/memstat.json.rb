@@ -19,16 +19,10 @@ updmem = @action == 'emeritus' or @action == 'active' or @action == 'deceased'
 # update members.txt only for secretary actions
 if updmem
   ASF::SVN.multiUpdate_ members_txt, message, env, _ do |text|
-    # default command is empty
-    command = ""
     # remove user's entry
     unless text.sub! entry, '' # e.g. if the workspace was out of date
       raise Exception.new("Failed to remove existing entry -- try refreshing")
     end
-
-    emeritus_url = ASF::SVN.svnurl('emeritus')
-    emeritus_request_url = ASF::SVN.svnurl('emeritus-requests-received')
-    emeritus_reinstated_url = ASF::SVN.svnurl('emeritus-reinstated')
 
     # determine where to put the entry
     if @action == 'emeritus'
