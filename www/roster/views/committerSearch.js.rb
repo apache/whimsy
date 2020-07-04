@@ -137,8 +137,8 @@ class CommitterSearch < Vue
                     _td ''
                   end
                   if @@notinavail
-                    # Cannot use whimsy gem code here
-                    _td { _a person.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{person.iclaFile}" }
+                    # iclapath already ends in /
+                    _td { _a person.claRef, href: "#{@@iclapath}#{person.iclaFile}" }
                   end
                 end
               end
