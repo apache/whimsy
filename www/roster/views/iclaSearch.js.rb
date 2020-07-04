@@ -90,7 +90,8 @@ class IclaSearch < Vue
                 _tr do
                   _td icla.name
                   _td icla.mail
-                  _td { _a icla.claRef, href: ASF::SVN.svnpath!('iclas', icla.iclaFile) }
+                  # Cannot use whimsy gem code here
+                  _td { _a icla.claRef, href: href: "https://svn.apache.org/repos/private/documents/iclas/#{icla.iclaFile}" }
                 end
               end
 
