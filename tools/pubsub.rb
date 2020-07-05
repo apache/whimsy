@@ -232,14 +232,7 @@ end
 if restartable
   STDERR.puts 'restarting'
 
-  # reconstruct path to Ruby executable
-  require 'rbconfig'
-  ruby = File.join(
-    RbConfig::CONFIG["bindir"],
-    RbConfig::CONFIG["ruby_install_name"] + RbConfig::CONFIG["EXEEXT"]
-  )
-
   # relaunch script after a one second delay
   sleep 1
-  exec ruby, __FILE__, *ARGV 
+  exec RbConfig.ruby, __FILE__, *ARGV
 end
