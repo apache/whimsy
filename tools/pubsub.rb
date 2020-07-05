@@ -70,9 +70,18 @@ end
 
 optionparser.parse!
 
+# Check for required tools
+
 if options.puppet and `which puppet 2>/dev/null`.empty?
   STDERR.puts 'puppet not found in path; exiting'
   exit 1
+end
+
+%w(git rake).each do |tool|
+  if `which #{tool} 2>/dev/null`.empty?
+    STDERR.puts "#{tool} not found in path; exiting"
+    exit 1
+  end
 end
 
 #
