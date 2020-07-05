@@ -70,6 +70,11 @@ end
 
 optionparser.parse!
 
+if options.puppet and `which puppet 2>/dev/null`.empty?
+  STDERR.puts 'puppet not found in path; exiting'
+  exit 1
+end
+
 #
 ### process management
 #
