@@ -663,7 +663,7 @@ module ASF
       tmpdir = temp ? temp : Dir.mktmpdir.untaint
 
       begin
-        cmdfile = Tempfile.new('svnmucc_input', tmpdir)
+        cmdfile = Tempfile.new('svnmucc_input', tmpdir).untaint
         # add the commands
         commands.each do |cmd|
           raise ArgumentError.new 'command entries must be an array' unless Array === cmd
