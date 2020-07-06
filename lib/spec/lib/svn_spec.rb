@@ -5,8 +5,6 @@ require 'spec_helper'
 require 'whimsy/asf'
 require 'wunderbar'
 
-SAMPLE_SVN_NAME = 'minutes' # name of checkout of public SVN dir
-SAMPLE_SVN_URL_RE = %r{https://.+/minutes}
 SAMPLE_MISSING_NAME = '__templates' # no such entry
 SAMPLE_ALIAS = 'Bills' # depth: 'skip'
 
@@ -120,7 +118,7 @@ describe ASF::SVN do
       res = ASF::SVN.private_public
       expect(res.size()).to equal(2)
       expect(res[0].size).to equal(14) # will need to be adjusted from time to time
-      expect(res[1].size).to equal(9) # ditto.
+      expect(res[1].size).to equal(8) # ditto.
     end
   end
 

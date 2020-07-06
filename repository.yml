@@ -65,10 +65,10 @@
     depth: delete
     list: true
 
-  comdev-foundation:
+  comdev-foundation: # only want projects.json?
     url: asf/comdev/projects.apache.org/trunk/site/json/foundation
 
-  comdevtalks:
+  comdevtalks: # only used in example.cgi?
     url: asf/comdev/site/trunk/content/speakers/talks
     depth: files
 
@@ -142,7 +142,7 @@
     url: private/foundation/officers
     depth: files
 
-  officers_historic:
+  officers_historic: # only need committers.json ?
     url: private/foundation/officers/historic
 
   officers_surveys:
@@ -175,6 +175,3 @@
 
   steve:
     url: asf/steve/trunk
-
-  templates:
-    url: asf/infrastructure/site/trunk/templates
