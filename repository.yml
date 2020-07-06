@@ -5,11 +5,6 @@
 ---
 :git:
 
-  infrastructure-puppet:
-    url:  https://github.com/apache/infrastructure-puppet.git
-    branch: deployment
-    depth: 1
-
   letsencrypt:
     url: https://github.com/letsencrypt/letsencrypt
     depth: 1
