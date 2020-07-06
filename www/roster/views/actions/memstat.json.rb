@@ -3,7 +3,7 @@ require 'wunderbar'
 user = ASF::Person.find(@userid)
 entry = user.members_txt(true)
 raise Exception.new("Unable to find member entry for #{@userid}") unless entry
-USERID = user.id.untaint
+USERID = user.id.dup.untaint # might be frozen
 USERMAIL = "#{USERID}@apache.org".untaint
 USERNAME = user.cn.untaint
 TIMESTAMP = (DateTime.now.strftime "%Y-%m-%d %H:%M:%S").untaint
