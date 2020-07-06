@@ -4,8 +4,9 @@
 # Generate a whimsy.local version of the deployed whimsy configuration
 #
 # Example usage:
-#  ruby vhosttest.rb | ruby mkconf.rb /private/etc/apache2/other/whimsy.conf
-#
+#  ruby vhosttest.rb <infra-puppet-checkout> | ruby mkconf.rb /private/etc/apache2/other/whimsy.conf
+# or if you have ssh access to the whimsy host:
+# ruby mkconf.rb /private/etc/apache2/other/whimsy.conf
 
 if STDIN.tty?
   conf = `ssh whimsy.apache.org cat \
