@@ -90,7 +90,7 @@ def get_auth
   hash = {}
   files = Dir[WHIMSY_CONF]
   return hash unless files.size == 1 # must match just one
-  file = files.first
+  file = files.first.untaint
   loc = nil
   File.read(file).each_line do |l|
     if l =~ %r{<LocationMatch ([^>]+)>}
