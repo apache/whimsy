@@ -80,7 +80,7 @@
     url: private/foundation
     depth: files
 
-  foundation_board:
+  foundation_board: # The checkout is needed by the WSS service
     url: private/foundation/board
 
   foundation_mentors:
