@@ -663,7 +663,7 @@ module ASF
       tmpdir = temp ? temp : Dir.mktmpdir.untaint
 
       begin
-        cmdfile = Tempfile.new('svnmucc_input', tmpdir).untaint
+        cmdfile = Tempfile.new('svnmucc_input', tmpdir)
         # add the commands
         commands.each do |cmd|
           raise ArgumentError.new 'command entries must be an array' unless Array === cmd
@@ -713,7 +713,7 @@ module ASF
           end
         end
       ensure
-        File.delete cmdfile # always drop the command file
+        File.delete cmdfile.path.untaint # always drop the command file
         FileUtils.rm_rf tmpdir unless temp
       end
     end
