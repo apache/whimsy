@@ -124,12 +124,36 @@ module ASF
         nil
       end
     end
+    # Extract the file name from an svn url
+    # param rooturl the svn url of the directory
+    # param fileurl the svn url of the complete file
+    # return the file name or nil if the file is not in the directory
+    def self.extractfilenamefrom(rooturl,fileurl)
+      # does the root match the file url?
+      index = fileurl.index(rooturl)
+      if (index == 0)
+        # root matches, return file name (end of fileurl)
+        filename = fileurl[rooturl.length..-1]
+      end
+    end
+    # Extract the file name if it is in emeritus directory
+    # nil if it is not in this directory
+    def self.extractfilename(fileurl)
+      root_url = ASF::SVN.svnurl('emeritus') + '/'
+      extractfilenamefrom(root_url, fileurl)
+    end
   end
 
   class EmeritusRequestFiles < EmeritusFiles
     def self.listnames
       _, list = ASF::SVN.getlisting('emeritus-requests-received')
       list
+    end
+    # Extract the file name if it is in emeritus-requests-received
+    # nil if it is not in this directory
+    def self.extractfilename(fileurl)
+      root_url = ASF::SVN.svnurl('emeritus-requests-received') + '/'
+      extractfilenamefrom(root_url, fileurl)
     end
   end
 

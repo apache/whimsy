@@ -5,38 +5,67 @@
 class PersonMemberStatus < Vue
   def render
     committer = @@person.state.committer
-
-    _div.row data_edit: ('memstat' if @@person.props.auth.secretary) do
+    owner = @@person.props.auth.id == committer.id
+    _div.row data_edit: ('memstat' if @@person.props.auth.secretary or owner) do
       _div.name 'Member status'
 
       if committer.member.status
         _div.value do
           _span committer.member.status
 
-         if @@edit == :memstat
-           opt = { year: 'numeric', month: 'long' } # Suggested date
-           dod = Date.new.toLocaleDateString('en-US', opt)
-           _form.inline method: 'post' do
-             if committer.member.status.include? 'Active'
-               _button.btn.btn_primary 'move to emeritus',
-                 name: 'action', value: 'emeritus'
-               _button.btn.btn_primary 'move to deceased',
-                 name: 'action', value: 'deceased'
-               _input 'dod', name: 'dod', value: dod
-             elsif committer.member.status.include? 'Emeritus'
-               _button.btn.btn_primary 'move to active',
-                 name: 'action', value: 'active'
-               _button.btn.btn_primary 'move to deceased',
-                 name: 'action', value: 'deceased'
-               _input 'dod', name: 'dod', value: dod
-             elsif committer.member.status.include? 'Deceased'
-               _button.btn.btn_primary 'move to active',
-                 name: 'action', value: 'active'
-               _button.btn.btn_primary 'move to emeritus',
-                 name: 'action', value: 'emeritus'
-             end
-           end
-         end
+          if @@edit == :memstat
+            opt = { year: 'numeric', month: 'long' } # Suggested date
+            dod = Date.new.toLocaleDateString('en-US', opt)
+            _form.inline method: 'post' do
+              # Cancel this form (implemented in main.js.rb submit(event)
+              _button.btn.btn_secondary 'Cancel', data_cancel_submit:true
+
+              # These actions are only for the person's own use
+              if owner
+                if committer.member.status.include? 'Active'
+                  if committer.forms['emeritus_request']
+                    emeritus_file_url = committer.forms['emeritus_request']
+                    _button.btn.btn_primary 'rescind emeritus request',
+                      data_emeritus_file_url:emeritus_file_url,
+                      name: 'action', value: 'rescind_emeritus'
+                  else
+                    _button.btn.btn_primary 'request emeritus status',
+                      data_emeritus_person_name:@@person.public_name,
+                      name: 'action', value: 'request_emeritus'
+                  end
+                elsif committer.member.status.include? 'Emeritus'
+                  _button.btn.btn_primary 'request reinstatement',
+                    name: 'action', value: 'request_reinstatement'
+                end
+              end
+              # These actions are only for secretary's use
+              if @@person.props.auth.secretary
+                console.log('memstat edit menu secretary...')
+                if committer.member.status.include? 'Active'
+                  emeritus_file_url = committer.forms['emeritus_request']
+                  _button.btn.btn_primary 'move to emeritus',
+                    data_emeritus_file_url:emeritus_file_url,
+                    name: 'action', value: 'emeritus'
+                  _button.btn.btn_primary 'move to deceased',
+                    name: 'action', value: 'deceased'
+                  _input 'dod', name: 'dod', value: dod
+                elsif committer.member.status.include? 'Emeritus'
+                  emeritus_file_url = committer.forms['emeritus']
+                  _button.btn.btn_primary 'move to active',
+                    data_emeritus_file_url:emeritus_file_url,
+                    name: 'action', value: 'active'
+                  _button.btn.btn_primary 'move to deceased',
+                    name: 'action', value: 'deceased'
+                  _input 'dod', name: 'dod', value: dod
+                elsif committer.member.status.include? 'Deceased'
+                  _button.btn.btn_primary 'move to active',
+                    name: 'action', value: 'active'
+                  _button.btn.btn_primary 'move to emeritus',
+                    name: 'action', value: 'emeritus'
+                end
+              end
+            end
+          end
         end
       end
     end
