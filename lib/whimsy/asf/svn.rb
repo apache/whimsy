@@ -677,7 +677,7 @@ module ASF
 
         syscmd = ['svnmucc',
                   '--non-interactive',
-                  '--extra-args', cmdfile.path,
+                  '--extra-args', cmdfile.path.untaint,
                   '--message', msg,
                   '--no-auth-cache',
                   ]
@@ -885,8 +885,8 @@ module ASF
     private
     
     def self.listingNames(name)
-      return File.join(ASF::Config.root,'svn',"%s.txt" % name),
-             File.join(ASF::Config.root,'svn',"%s.tmp" % name)
+      return File.join(ASF::Config.root,'svn',"%s.txt" % name).untaint,
+             File.join(ASF::Config.root,'svn',"%s.tmp" % name).untaint
     end
 
     # Get all the SVN entries
