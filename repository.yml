@@ -9,6 +9,7 @@
     url: https://github.com/letsencrypt/letsencrypt
     depth: 1
 
+  # For ruby2js demo only (see www/ruby2js.cgi)
   ruby2js:
     url: https://github.com/rubys/ruby2js.git
     depth: 1
