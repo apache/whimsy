@@ -76,26 +76,6 @@
     url: private/documents/conflict-of-interest
     depth: skip
 
-  foundation:
-    url: private/foundation
-    depth: files
-
-  foundation_board: # The checkout is needed by the WSS service
-    url: private/foundation/board
-
-  foundation_mentors:
-    url: private/foundation/mentors
-
-  grants:
-    url: private/documents/grants
-    depth: delete
-    list: true
-
-  iclas:
-    url: private/documents/iclas
-    depth: delete
-    list: true
-
   emeritus:
     url: private/documents/emeritus
     depth: delete
@@ -119,6 +99,26 @@
 
   emeritus-requests-rescinded:
     url: private/documents/emeritus-requests-rescinded
+    depth: delete
+    list: true
+
+  foundation:
+    url: private/foundation
+    depth: files
+
+  foundation_board: # The checkout is needed by the WSS service
+    url: private/foundation/board
+
+  foundation_mentors:
+    url: private/foundation/mentors
+
+  grants:
+    url: private/documents/grants
+    depth: delete
+    list: true
+
+  iclas:
+    url: private/documents/iclas
     depth: delete
     list: true
 
