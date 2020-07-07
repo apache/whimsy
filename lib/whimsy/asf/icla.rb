@@ -212,8 +212,7 @@ module ASF
     # list of reserved availids
     def self.availids_reserved
       return @@availids_reserved if @@availids_reserved
-      archive = ASF::SVN['officers']
-      reserved = File.read(File.join(archive, 'reserved-ids.yml')).scan(/^- (\S+)/).flatten.uniq
+      reserved = File.read(File.join(ASF::SVN['officers'], 'reserved-ids.yml')).scan(/^- (\S+)/).flatten.uniq
       # Add in badrcptto
       reserved += self.badmails
       @@availids_reserved = reserved.uniq
@@ -265,8 +264,7 @@ module ASF
   # but never submitted an ICLA (some of which are still ASF members or
   # members of a PMC).
   def self.search_archive_by_id(id)
-    archive = ASF::SVN['officers_historic']
-    name = JSON.parse(File.read(File.join(archive, 'committers.json')))[id]
+    name = JSON.parse(File.read(File.join(ASF::SVN['officers_historic'], 'committers.json')))[id]
     name = id if name and name.empty?
     name
   end
