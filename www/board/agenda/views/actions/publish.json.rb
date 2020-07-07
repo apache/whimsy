@@ -41,8 +41,6 @@ CALENDAR = File.join(BOARD_SITE, 'calendar.mdtext')
   ASF::SVN.svn('update', dir) # TODO: does this need auth?
 end
 
-calendar = File.read(CALENDAR)
-
 # clean up summary
 @summary = @summary.gsub(/\r\n/,"\n").sub(/\s+\Z/,'') + "\n"
 
@@ -51,22 +49,6 @@ calendar = File.read(CALENDAR)
 date = Date.parse(@date.gsub('_', '-'))
 year = date.year
 fdate = date.strftime("%d %B %Y")
-
-# add year header
-unless calendar.include? "##{year}"
-  calendar[/^()#.*Board meeting minutes #/,1] =
-    "# #{year} Board meeting minutes # {##{year}}\n\n"
-end
-
-# add summary
-if calendar.include? "\n- [#{fdate}]"
-  calendar.sub! /\n-\s+\[#{fdate}\].*?(\n[-#])/m, "\n" + @summary + '\1'
-else
-  calendar[/# #{year} Board meeting minutes #.*\n()/,1] = "\n" + @summary
-end
-
-# remove from calendar
-calendar.sub! /^(\s*[*-]\s+#{fdate}\s*?\n)/, ''
 
 minutes = "board_minutes_#{@date}.txt"
 
@@ -88,10 +70,24 @@ ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
 end
 
 # Update the Calendar
-if File.read(CALENDAR) != calendar
-  ASF::SVN.update CALENDAR, @message, env, _ do |tmpdir, old_contents|
-    calendar
+ASF::SVN.update CALENDAR, @message, env, _ do |tmpdir, calendar|
+  # add year header
+  unless calendar.include? "##{year}"
+    calendar[/^()#.*Board meeting minutes #/,1] =
+      "# #{year} Board meeting minutes # {##{year}}\n\n"
   end
+
+  # add summary
+  if calendar.include? "\n- [#{fdate}]"
+    calendar.sub! /\n-\s+\[#{fdate}\].*?(\n[-#])/m, "\n" + @summary + '\1'
+  else
+    calendar[/# #{year} Board meeting minutes #.*\n()/,1] = "\n" + @summary
+  end
+
+  # remove from calendar
+  calendar.sub! /^(\s*[*-]\s+#{fdate}\s*?\n)/, ''
+
+  calendar
 end
 
 # Clean up board directory
