@@ -53,6 +53,10 @@
   board:
     url: private/committers/board
     depth: files
+# Probably only need the following:
+#   - calendar.txt
+#   - committee-info.txt
+#   - committee-info.yaml
 
   brandlist:
     url: private/foundation/Brand
@@ -143,9 +147,13 @@
   officers:
     url: private/foundation/officers
     depth: files
+# Probably only need iclas.txt + reserved-ids.yaml;  possibly cclas.txt
 
-  officers_historic: # only need committers.json ?
+  officers_historic:
     url: private/foundation/officers/historic
+    depth: empty
+    files:
+      - committers.json
 
   officers_surveys:
     url: private/foundation/officers/surveys
@@ -162,7 +170,7 @@
       - badrcptto
       - badrcptto_patterns
 
-  site-board:
+  site-board: # calendar.mdtext only?
     url: asf/infrastructure/site/trunk/content/foundation/board
     depth: files
 
