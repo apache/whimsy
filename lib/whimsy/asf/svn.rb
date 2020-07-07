@@ -542,7 +542,11 @@ module ASF
     # update a file or directory in SVN, working entirely in a temporary
     # directory
     # Intended for use from GUI code
-    # 
+    # Must be used with a block, which is passed the temporary directory name
+    # and the current file contents (may be empty string)
+    # The block must return the updated file contents
+    #
+    # Parameters:
     # path - the path to be used, directory or single file
     # msg - commit message
     # env - environment (queried for user and password)
