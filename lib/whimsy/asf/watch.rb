@@ -8,8 +8,7 @@ module ASF
     def self.member_watch_list
       return @member_watch_list if @member_watch_list
 
-      foundation = ASF::SVN['foundation']
-      text = File.read File.join(foundation, 'potential-member-watch-list.txt')
+      text = File.read File.join(ASF::SVN['foundation'], 'potential-member-watch-list.txt')
 
       nominations = text.scan(/^\s+\*\)\s+\w.*?\n\s*(?:---|\Z)/m)
 
