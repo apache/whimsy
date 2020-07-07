@@ -748,6 +748,8 @@ module ASF
         throw RuntimeError.new("#{filename} already exists! #{err}")
       end
       commands = [['put', source, target]]
+      # TODO: detect file created in parallel. This generates the error message:
+      # svnmucc: E160020: File already exists: <snip> path 'xxx'
       self.svnmucc_(commands, msg, env, _, parentrev)
     end
 
