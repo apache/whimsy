@@ -64,7 +64,6 @@ if @action == 'rescind_emeritus'
   ASF::SVN.svn_('mv', [@emeritusfileurl, emeritus_rescinded_url], _, {env:env, msg:message})
 elsif @action == 'request_emeritus'
   # Create mail to secretary requesting emeritus
-  FOUNDATION_URL = ASF::SVN.svnurl('foundation')
   EMERITUS_TEMPLATE_URL = ASF::SVN.svnpath!('foundation', 'emeritus-request.txt').untaint
   template, err =
     ASF::SVN.svn('cat', EMERITUS_TEMPLATE_URL, {env:env})
