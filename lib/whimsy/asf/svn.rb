@@ -717,7 +717,36 @@ module ASF
         FileUtils.rm_rf tmpdir unless temp
       end
     end
-      
+
+    # DRAFT DRAFT
+    # create a new file and fail if it already exists
+    # Parameters:
+    #  directory - parent directory as an SVN URL
+    #  filename - name of file to create
+    #  source - file to upload
+    #  msg - commit message
+    #  env - user/pass
+    #  _ - wunderbar context
+    # Returns:
+    # 0 on success
+    # 1 if the file exists
+    # RuntimeError on unexpected error
+    def self.create_(directory, filename, source, msg, env, _)
+      parentrev, err = self.getInfoItem(directory, 'revision', env.user, env.password)
+      unless parentrev
+        throw RuntimeError.new("Failed to get revision for #{directory}: #{err}")
+      end
+      target = File.join(directory, filename)
+      out, err = self.svn('list', target, {env: env})
+      return 1 if out # already exists
+      # Need to check for unexpected errors; the error message does not include the full repo URL
+      unless err =~ %r{^svn: warning: W160013: Path '.+#{filename}' not found}
+        throw RuntimeError.new("#{filename} already exists! #{err}")
+      end
+      commands = [['put', source, target]]
+      self.svnmucc_(commands, msg, env, _, parentrev)
+    end
+
     # DRAFT DRAFT DRAFT
     # checkout file and update it using svnmucc put
     # the block can return additional info, which is used 
