@@ -30,13 +30,11 @@ Publish approved minutes on the public web site
 require 'date'
 require 'whimsy/asf/svn'
 
-BOARD_SITE = ASF::SVN['site-board']
 MINUTES = ASF::SVN['minutes']
 BOARD_PRIVATE = ASF::SVN['foundation_board']
-CALENDAR = File.join(BOARD_SITE, 'calendar.mdtext')
 
 # update from svn
-[MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir|
+[MINUTES, BOARD_PRIVATE].each do |dir|
   ASF::SVN.svn('cleanup', dir)
   ASF::SVN.svn('update', dir) # TODO: does this need auth?
 end
@@ -69,8 +67,8 @@ ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
   end
 end
 
-# Update the Calendar
-ASF::SVN.update CALENDAR, @message, env, _ do |tmpdir, calendar|
+# Update the Calendar from SVN
+ASF::SVN.multiUpdate_ ASF::SVN.svnpath!('site-board', 'calendar.mdtext' ), @message, env, _ do |calendar|
   # add year header
   unless calendar.include? "##{year}"
     calendar[/^()#.*Board meeting minutes #/,1] =
