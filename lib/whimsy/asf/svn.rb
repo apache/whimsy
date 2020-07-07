@@ -782,8 +782,7 @@ module ASF
       else
         uri = URI.parse(path)
         # allow file: URIs for local testing
-        isFile = (uri.is_a? URI::File rescue false) # URI::File is not in 2.3.1
-        if isFile or uri.is_a? URI::HTTPS # includes HTTPS
+        if %w(http https file).include? uri.scheme
           basename = File.basename(uri.path).untaint
           parentdir = File.dirname(uri.path).untaint
           uri.path = parentdir
