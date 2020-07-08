@@ -82,10 +82,8 @@ elsif @action == 'request_emeritus'
     .gsub('Date: _________________________________',
           ('Date: _______' + centered_date))
   # Write the emeritus request to emeritus-requests-received
-  EMERITUS_REQUEST_URL = ASF::SVN.svnpath('emeritus-requests-received').untaint
+  EMERITUS_REQUEST_URL = ASF::SVN.svnpath!('emeritus-requests-received').untaint
   rc = ASF::SVN.create_(EMERITUS_REQUEST_URL, "#{USERID}.txt", signed_request, "Emeritus request from #{USERNAME}  (#{USERID}", env, _)
-  if rc == 1 break # do nothing if there is already an emeritus request
-
   ASF::Mail.configure
   mail = Mail.new do
     from "secretary@apache.org"
@@ -96,7 +94,9 @@ elsif @action == 'request_emeritus'
     end
   end
   mail.attachments["#{USERID}.txt"] = signed_request.untaint
-  mail.deliver!
+  if rc == 0
+    mail.deliver!
+  end
 elsif @action == 'request_reinstatement'
   ASF::Mail.configure
   mail = Mail.new do
