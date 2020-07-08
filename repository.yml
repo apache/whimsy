@@ -115,6 +115,7 @@
     files:
       - members.txt
       - potential-member-watch-list.txt
+      - emeritus-request.txt
 
   foundation_board: # The checkout is needed by the WSS service
     url: private/foundation/board
