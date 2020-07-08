@@ -21,6 +21,9 @@
 # names that are list only have 'depth: delete'
 # This is decoupled from list to allow a gradual changeover
 
+# The url: entries below are relative to the @base value defined in ASF::SVN
+# This defaults to https://svn.apache.org/repos/
+
 :svn:
 
   Bills:
