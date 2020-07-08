@@ -52,11 +52,11 @@
 
   board:
     url: private/committers/board
-    depth: files
-# Probably only need the following:
-#   - calendar.txt
-#   - committee-info.txt
-#   - committee-info.yaml
+    depth: empty
+    files:
+      - calendar.txt
+      - committee-info.txt
+      - committee-info.yaml
 
   brandlist:
     url: private/foundation/Brand
