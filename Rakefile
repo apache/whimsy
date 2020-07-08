@@ -115,7 +115,7 @@ end
 
 namespace :svn do
   task :update => :config do
-    # Include depth == 'delete'
+    # Include all
     svnrepos = ASF::SVN.repo_entries(true) || {}
 
     # must be outside loop
@@ -142,7 +142,8 @@ namespace :svn do
             end
           end
           svnpath = ASF::SVN.svnurl(name)
-          noCheckout = description['depth'] == 'delete'
+          depth = description['depth']
+          noCheckout = %w(delete skip).include? depth
           if Dir.exist? name
             if noCheckout
               puts "#{PREFIX} Removing #{name} as it is not intended for checkout"
@@ -162,7 +163,6 @@ namespace :svn do
             isSymlink = File.symlink?(name) # we don't want to change such checkouts
             Dir.chdir(name) {
               system('svn', 'cleanup')
-              depth = description['depth']
               files = description['files']
               if depth == 'empty' and not isSymlink
                 curdepth = ASF::SVN.getInfoAsHash('.')['Depth'] # not available as separate item
