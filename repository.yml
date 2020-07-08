@@ -108,7 +108,10 @@
 
   foundation:
     url: private/foundation
-    depth: files
+    depth: empty
+    files:
+      - members.txt
+      - potential-member-watch-list.txt
 
   foundation_board: # The checkout is needed by the WSS service
     url: private/foundation/board
@@ -146,8 +149,10 @@
 
   officers:
     url: private/foundation/officers
-    depth: files
-# Probably only need iclas.txt + reserved-ids.yaml;  possibly cclas.txt
+    depth: empty
+    files:
+      - iclas.txt
+      - reserved-ids.yml
 
   officers_historic:
     url: private/foundation/officers/historic
