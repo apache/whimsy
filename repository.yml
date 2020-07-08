@@ -21,6 +21,9 @@
 # names that are list only have 'depth: delete'
 # This is decoupled from list to allow a gradual changeover
 
+# The url: entries below are relative to the @base value defined in ASF::SVN
+# This defaults to https://svn.apache.org/repos/
+
 :svn:
 
   Bills:
@@ -52,7 +55,11 @@
 
   board:
     url: private/committers/board
-    depth: files
+    depth: empty
+    files:
+      - calendar.txt
+      - committee-info.txt
+      - committee-info.yaml
 
   brandlist:
     url: private/foundation/Brand
@@ -104,7 +111,10 @@
 
   foundation:
     url: private/foundation
-    depth: files
+    depth: empty
+    files:
+      - members.txt
+      - potential-member-watch-list.txt
 
   foundation_board: # The checkout is needed by the WSS service
     url: private/foundation/board
@@ -124,7 +134,9 @@
 
   incubator-content:
     url: asf/incubator/public/trunk/content
-    depth: files
+    depth: empty
+    files:
+      - podlings.xml
 
   incubator-podlings:
     url: asf/incubator/public/trunk/content/podlings
@@ -140,10 +152,16 @@
 
   officers:
     url: private/foundation/officers
-    depth: files
+    depth: empty
+    files:
+      - iclas.txt
+      - reserved-ids.yml
 
-  officers_historic: # only need committers.json ?
+  officers_historic:
     url: private/foundation/officers/historic
+    depth: empty
+    files:
+      - committers.json
 
   officers_surveys:
     url: private/foundation/officers/surveys
@@ -160,9 +178,9 @@
       - badrcptto
       - badrcptto_patterns
 
-  site-board:
+  site-board: # calendar.mdtext only
     url: asf/infrastructure/site/trunk/content/foundation/board
-    depth: files
+    depth: skip
 
   site-img:
     url: asf/comdev/project-logos/originals

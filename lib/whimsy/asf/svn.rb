@@ -78,10 +78,16 @@ module ASF
     end
 
     # Get the SVN repo entries corresponding to local checkouts
-    # Excludes those that are present as aliases only
-    # @params includeDeleted if should return depth == delete, default false
-    def self.repo_entries(includeDelete=false)
-      self._all_repo_entries.reject{|k,v| v['depth'] == 'skip' or (v['depth'] == 'delete' and not includeDelete)}
+    # Excludes depth=delete and depth=skip
+    # Optionally return all entries
+    # @params 
+    # includeAll if should return all entries, default false
+    def self.repo_entries(includeAll=false)
+      if includeAll
+        self._all_repo_entries
+      else
+        self._all_repo_entries.reject{|k,v| v['depth'] == 'skip' or v['depth'] == 'delete'}
+      end
     end
 
     # fetch a repository entry by name
@@ -542,13 +548,18 @@ module ASF
     # update a file or directory in SVN, working entirely in a temporary
     # directory
     # Intended for use from GUI code
-    # 
+    # Must be used with a block, which is passed the temporary directory name
+    # and the current file contents (may be empty string)
+    # The block must return the updated file contents
+    #
+    # Parameters:
     # path - the path to be used, directory or single file
     # msg - commit message
     # env - environment (queried for user and password)
     # _ - wunderbar context
     # options - hash of:
     #  :dryrun - show command (excluding credentials), without executing it
+    #  :diff - show diff before committing
     def self.update(path, msg, env, _, options={})
       if File.directory? path
         dir = path
@@ -609,11 +620,13 @@ module ASF
           # show what would have been committed
           rc = self.svn_('diff', tmpfile || tmpdir, _)
           return rc # No point checking for pending changes
-        else
-          # commit the changes
-          rc = self.svn_('commit', tmpfile || tmpdir, _,
-             {msg: msg.untaint, env: env})
         end
+
+        self.svn_('diff', tmpfile || tmpdir, _) if options[:diff]
+
+        # commit the changes
+        rc = self.svn_('commit', tmpfile || tmpdir, _,
+            {msg: msg.untaint, env: env})
 
         # fail if there are pending changes
         out, err = self.svn('status', tmpfile || tmpdir) # Need to use svn rather than svn_ here
@@ -717,7 +730,45 @@ module ASF
         FileUtils.rm_rf tmpdir unless temp
       end
     end
-      
+
+    # DRAFT DRAFT
+    # create a new file and fail if it already exists
+    # Parameters:
+    #  directory - parent directory as an SVN URL
+    #  filename - name of file to create
+    #  source - file to upload
+    #  msg - commit message
+    #  env - user/pass
+    #  _ - wunderbar context
+    # Returns:
+    # 0 on success
+    # 1 if the file exists
+    # RuntimeError on unexpected error
+    def self.create_(directory, filename, source, msg, env, _)
+      parentrev, err = self.getInfoItem(directory, 'revision', env.user, env.password)
+      unless parentrev
+        throw RuntimeError.new("Failed to get revision for #{directory}: #{err}")
+      end
+      target = File.join(directory, filename)
+      out, err = self.svn('list', target, {env: env})
+      return 1 if out # already exists
+      # Need to check for unexpected errors; the error message does not include the full repo URL
+      unless err =~ %r{^svn: warning: W160013: Path '.+#{filename}' not found}
+        throw RuntimeError.new("#{filename} already exists! #{err}")
+      end
+      commands = [['put', source, target]]
+      # Detect file created in parallel. This generates the error message:
+      # svnmucc: E160020: File already exists: <snip> path 'xxx'
+      rc = self.svnmucc_(commands, msg, env, _, parentrev)
+      unless rc == 0
+        error = _.target?['transcript'][1] rescue ''
+        unless error =~ %r{^svnmucc: E160020: File already exists:}
+          throw RuntimeError.new("Unexpected error creating file: #{error}")
+        end
+      end
+      rc
+    end
+
     # DRAFT DRAFT DRAFT
     # checkout file and update it using svnmucc put
     # the block can return additional info, which is used 
@@ -749,8 +800,7 @@ module ASF
       else
         uri = URI.parse(path)
         # allow file: URIs for local testing
-        isFile = (uri.is_a? URI::File rescue false) # URI::File is not in 2.3.1
-        if isFile or uri.is_a? URI::HTTPS # includes HTTPS
+        if %w(http https file).include? uri.scheme
           basename = File.basename(uri.path).untaint
           parentdir = File.dirname(uri.path).untaint
           uri.path = parentdir

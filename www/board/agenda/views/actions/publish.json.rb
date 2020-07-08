@@ -30,18 +30,14 @@ Publish approved minutes on the public web site
 require 'date'
 require 'whimsy/asf/svn'
 
-BOARD_SITE = ASF::SVN['site-board']
 MINUTES = ASF::SVN['minutes']
 BOARD_PRIVATE = ASF::SVN['foundation_board']
-CALENDAR = File.join(BOARD_SITE, 'calendar.mdtext')
 
 # update from svn
-[MINUTES, BOARD_SITE, BOARD_PRIVATE].each do |dir|
+[MINUTES, BOARD_PRIVATE].each do |dir|
   ASF::SVN.svn('cleanup', dir)
   ASF::SVN.svn('update', dir) # TODO: does this need auth?
 end
-
-calendar = File.read(CALENDAR)
 
 # clean up summary
 @summary = @summary.gsub(/\r\n/,"\n").sub(/\s+\Z/,'') + "\n"
@@ -51,22 +47,6 @@ calendar = File.read(CALENDAR)
 date = Date.parse(@date.gsub('_', '-'))
 year = date.year
 fdate = date.strftime("%d %B %Y")
-
-# add year header
-unless calendar.include? "##{year}"
-  calendar[/^()#.*Board meeting minutes #/,1] =
-    "# #{year} Board meeting minutes # {##{year}}\n\n"
-end
-
-# add summary
-if calendar.include? "\n- [#{fdate}]"
-  calendar.sub! /\n-\s+\[#{fdate}\].*?(\n[-#])/m, "\n" + @summary + '\1'
-else
-  calendar[/# #{year} Board meeting minutes #.*\n()/,1] = "\n" + @summary
-end
-
-# remove from calendar
-calendar.sub! /^(\s*[*-]\s+#{fdate}\s*?\n)/, ''
 
 minutes = "board_minutes_#{@date}.txt"
 
@@ -87,11 +67,25 @@ ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
   end
 end
 
-# Update the Calendar
-if File.read(CALENDAR) != calendar
-  ASF::SVN.update CALENDAR, @message, env, _ do |tmpdir, old_contents|
-    calendar
+# Update the Calendar from SVN
+ASF::SVN.multiUpdate_ ASF::SVN.svnpath!('site-board', 'calendar.mdtext' ), @message, env, _ do |calendar|
+  # add year header
+  unless calendar.include? "##{year}"
+    calendar[/^()#.*Board meeting minutes #/,1] =
+      "# #{year} Board meeting minutes # {##{year}}\n\n"
   end
+
+  # add summary
+  if calendar.include? "\n- [#{fdate}]"
+    calendar.sub! /\n-\s+\[#{fdate}\].*?(\n[-#])/m, "\n" + @summary + '\1'
+  else
+    calendar[/# #{year} Board meeting minutes #.*\n()/,1] = "\n" + @summary
+  end
+
+  # remove from calendar
+  calendar.sub! /^(\s*[*-]\s+#{fdate}\s*?\n)/, ''
+
+  calendar
 end
 
 # Clean up board directory

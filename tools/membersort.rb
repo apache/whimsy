@@ -1,23 +1,22 @@
+#!/usr/bin/env ruby
+
 # svn update and sort the members.txt file and show the differences
 
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 
-FOUNDATION = ASF::SVN['foundation']
+members = File.join(ASF::SVN['foundation'], 'members.txt')
+cmd = %w(svn update) << members
+puts cmd.join(' ')
+system *cmd
 
-Dir.chdir FOUNDATION
-
-members = FOUNDATION + '/members.txt'
-puts 'svn update ' + members
-system 'svn update ' + members
-
-source = File.read('members.txt')
+source = File.read(members)
 sorted = ASF::Member.sort(source)
 
 if source == sorted
   puts 'no change'
 else
-  File.write('members.txt', sorted)
-  system 'svn diff members.txt'
+  File.write(members, sorted)
+  system 'svn', 'diff', members
 end
 

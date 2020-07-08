@@ -13,11 +13,8 @@ members_txt = ASF::SVN.svnpath!('foundation', 'members.txt').untaint
 # construct commit message
 message = "Action #{@action} for #{USERID}"
 
-# only update members if needed
-updmem = @action == 'emeritus' or @action == 'active' or @action == 'deceased'
-
 # update members.txt only for secretary actions
-if updmem
+if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
   ASF::SVN.multiUpdate_ members_txt, message, env, _ do |text|
     # remove user's entry
     unless text.sub! entry, '' # e.g. if the workspace was out of date
@@ -67,7 +64,7 @@ elsif @action == 'request_emeritus'
   FOUNDATION_URL = ASF::SVN.svnurl('foundation')
   EMERITUS_TEMPLATE_URL = ASF::SVN.svnpath!('foundation', 'emeritus-request.txt').untaint
   template, err =
-    ASF::SVN.svn('cat', EMERITUS_TEMPLATE_URL, {env:env})
+    ASF::SVN.svn('cat', ASF::SVN.svnpath!('foundation', 'emeritus-request.txt').untaint, {env:env})
   raise RuntimeError.new("Failed to read emeritus-request.txt: " + err) unless template
   centered_id = "#{USERID}".center(55, '_')
   centered_name = "#{USERNAME}".center(55, '_')

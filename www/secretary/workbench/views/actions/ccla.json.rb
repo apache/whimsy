@@ -90,23 +90,10 @@ task "svn commit foundation/officers/cclas.txt" do
   end
 
   complete do |dir|
-    # checkout empty officers directory
-    svn 'checkout', '--depth', 'empty',
-      ASF::SVN.svnurl!('officers'), 
-      File.join(dir, 'officers')
-
-    # retrieve cclas.txt
-    dest = File.join(dir, 'officers', 'cclas.txt')
-    svn 'update', dest
-
-    # update cclas.txt
-    File.write dest, File.read(dest) + @cclalines + "\n"
-
-    # show the changes
-    svn 'diff', dest
-
-    # commit changes
-    svn 'commit', dest, '-m', @document
+    path = ASF::SVN.svnpath!('officers', 'cclas.txt')
+    ASF::SVN.update(path, @document, env, _, {diff: true}) do |tmpdir, contents|
+      contents + @cclalines + "\n"
+    end
   end
 end
 

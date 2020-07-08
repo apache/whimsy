@@ -1,20 +1,20 @@
+#!/usr/bin/env ruby
+
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 
-OFFICERS = ASF::SVN['officers']
+iclas = File.join(ASF::SVN['officers'], 'iclas.txt')
+cmd = ['svn', 'update', iclas]
+puts cmd.join(' ')
+system *cmd
 
-Dir.chdir OFFICERS
-
-iclas = OFFICERS + '/iclas.txt'
-puts 'svn update ' + iclas
-system 'svn update ' + iclas
-
-source = File.read('iclas.txt')
+source = File.read(iclas)
 sorted = ASF::ICLA.sort(source)
 
 if source == sorted
   puts 'no change'
 else
-  File.write('iclas.txt', sorted)
-  system 'svn diff iclas.txt'
+  puts "Writing sorted file"
+  File.write(iclas, sorted)
+  system 'svn', 'diff', iclas
 end
