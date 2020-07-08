@@ -5,6 +5,8 @@ module ASF
   class Authorization
     include Enumerable
 
+    PUPPET_PATH = '/srv/puppet-data/authorization' # Puppet auth data is stored here
+
     # Return the set of authorizations a given user (availid) has access to.
     def self.find_by_id(value)
       new.select {|auth, ids| ids.include? value}.map(&:first)
@@ -14,22 +16,14 @@ module ASF
     # <tt>asf</tt> and <tt>pit</tt>.
     # The optional <tt>auth_path</tt> parameter allows the directory path to be overridden
     # This is intended for testing only
-    def initialize(file='asf',auth_path=nil)
-      # TODO - should this read the Git repo directly?
-      # Probably not: this file is read frequently so would need to be cached anyway
-      # The Git clone is updated every 10 minutes which should be sufficiently recent
+    def initialize(file='asf', auth_path=nil)
+      raise ArgumentError("Invalid file: #{file}") unless %w(asf pit).include? file
       if auth_path
         require 'wunderbar'
         Wunderbar.warn "Overriding Git infrastructure-puppet auth path as: #{auth_path}"
         @auth = auth_path
       else
-        auth = ASF::Git.find('infrastructure-puppet')
-        if auth
-          @auth = auth + '/modules/subversion_server/files/authorization'
-        else
-          # SVN copy is no longer in use - see INFRA-11452
-          raise Exception.new("Cannot find Git: infrastructure-puppet")
-        end
+        @auth = PUPPET_PATH
       end
       @file = file
     end
@@ -37,41 +31,29 @@ module ASF
     # Iteratively return each non_LDAP entry in the authorization file as a pair
     # of values: a name and list of ids.
     def each
-      read_auth.scan(/^([-\w]+)=(\w.*)$/).each do |pmc, ids|
-        yield pmc, ids.split(',')
+      # extract the xxx={auth} names
+      groups = read_auth.scan(/^([-\w]+)=\{auth\}/).flatten
+      # extract the group = list details and return the appropriate ones
+      read_conf.scan(/^([-\w]+) *= *(\w.*)?$/).each do |pmc, ids|
+        yield pmc, (ids||'').split(' ') if groups.include? pmc
       end
-    end
-
-    # Return an array of the ou=project entries in the authorization file
-    # TODO Does not appear to be used
-    def projects
-      arr = []
-      #incubator={ldap:cn=incubator,ou=project,ou=groups,dc=apache,dc=org;attr=member}
-      read_auth.scan(/^\w[^=]+={ldap:cn=(\w[^,]+),ou=project,ou=groups/).each do |group|
-        arr << group[0]
-      end
-      arr
-    end
+    end  
 
     # Return the auth path used to find asf-auth and pit-auth
     def path
       @auth
     end
 
-    unless Enumerable.instance_methods.include? :to_h
-      # backwards compatibility for Ruby versions <= 2.0
-      def to_h
-        Hash[self.to_a]
-      end
-    end
-
     private
 
+    # read the config file - extract the [explicit] section
+    def read_conf
+      File.read(File.join(@auth,'auth.conf')).scan(/^\[explicit\].*(?:^\[)?/m).first rescue ''
+    end
+
+    # read the auth template; extract [groups]
     def read_auth
-      # these files were removed:
-      # https://github.com/apache/infrastructure-puppet/pull/1713
-      return ''
-      File.read("#{@auth}/#{@file}-authorization-template")
+      File.read(File.join(@auth,"#{@file}-authorization-template")).scan(/^\[groups\].*^\[/m).first rescue ''
     end
   end
 

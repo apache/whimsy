@@ -677,7 +677,7 @@ module ASF
 
         syscmd = ['svnmucc',
                   '--non-interactive',
-                  '--extra-args', cmdfile.path,
+                  '--extra-args', cmdfile.path.untaint,
                   '--message', msg,
                   '--no-auth-cache',
                   ]
@@ -713,7 +713,7 @@ module ASF
           end
         end
       ensure
-        File.delete cmdfile # always drop the command file
+        File.delete cmdfile.path.untaint # always drop the command file
         FileUtils.rm_rf tmpdir unless temp
       end
     end
@@ -749,7 +749,8 @@ module ASF
       else
         uri = URI.parse(path)
         # allow file: URIs for local testing
-        if uri.is_a? URI::File or uri.is_a? URI::HTTPS # includes HTTPS
+        isFile = (uri.is_a? URI::File rescue false) # URI::File is not in 2.3.1
+        if isFile or uri.is_a? URI::HTTPS # includes HTTPS
           basename = File.basename(uri.path).untaint
           parentdir = File.dirname(uri.path).untaint
           uri.path = parentdir
@@ -884,8 +885,8 @@ module ASF
     private
     
     def self.listingNames(name)
-      return File.join(ASF::Config.root,'svn',"%s.txt" % name),
-             File.join(ASF::Config.root,'svn',"%s.tmp" % name)
+      return File.join(ASF::Config.root,'svn',"%s.txt" % name).untaint,
+             File.join(ASF::Config.root,'svn',"%s.tmp" % name).untaint
     end
 
     # Get all the SVN entries

@@ -5,15 +5,11 @@
 ---
 :git:
 
-  infrastructure-puppet:
-    url:  https://github.com/apache/infrastructure-puppet.git
-    branch: deployment
-    depth: 1
-
   letsencrypt:
     url: https://github.com/letsencrypt/letsencrypt
     depth: 1
 
+  # For ruby2js demo only (see www/ruby2js.cgi)
   ruby2js:
     url: https://github.com/rubys/ruby2js.git
     depth: 1
@@ -69,36 +65,16 @@
     depth: delete
     list: true
 
-  comdev-foundation:
+  comdev-foundation: # only want projects.json?
     url: asf/comdev/projects.apache.org/trunk/site/json/foundation
 
-  comdevtalks:
+  comdevtalks: # only used in example.cgi?
     url: asf/comdev/site/trunk/content/speakers/talks
     depth: files
 
   conflict-of-interest:
     url: private/documents/conflict-of-interest
     depth: skip
-
-  foundation:
-    url: private/foundation
-    depth: files
-
-  foundation_board:
-    url: private/foundation/board
-
-  foundation_mentors:
-    url: private/foundation/mentors
-
-  grants:
-    url: private/documents/grants
-    depth: delete
-    list: true
-
-  iclas:
-    url: private/documents/iclas
-    depth: delete
-    list: true
 
   emeritus:
     url: private/documents/emeritus
@@ -126,6 +102,26 @@
     depth: delete
     list: true
 
+  foundation:
+    url: private/foundation
+    depth: files
+
+  foundation_board: # The checkout is needed by the WSS service
+    url: private/foundation/board
+
+  foundation_mentors:
+    url: private/foundation/mentors
+
+  grants:
+    url: private/documents/grants
+    depth: delete
+    list: true
+
+  iclas:
+    url: private/documents/iclas
+    depth: delete
+    list: true
+
   incubator-content:
     url: asf/incubator/public/trunk/content
     depth: files
@@ -146,7 +142,7 @@
     url: private/foundation/officers
     depth: files
 
-  officers_historic:
+  officers_historic: # only need committers.json ?
     url: private/foundation/officers/historic
 
   officers_surveys:
@@ -173,12 +169,5 @@
     depth: delete
     list: true
 
-  site-root:
-    url: asf/infrastructure/site/trunk/content
-    depth: files
-
   steve:
     url: asf/steve/trunk
-
-  templates:
-    url: asf/infrastructure/site/trunk/templates

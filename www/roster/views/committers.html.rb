@@ -23,7 +23,9 @@ _html do
     _div_.main!
     _script src: "app.js?#{appmtime}"
     _.render '#main' do
-      _CommitterSearch notinavail: @notinavail
+      _CommitterSearch notinavail: @notinavail,
+                       # This ends with '/'
+                       iclapath: `ASF::SVN.svnpath!('iclas').inspect`
     end
   end
 end

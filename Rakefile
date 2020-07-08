@@ -289,6 +289,10 @@ namespace :git do
         require 'uri'
         base = URI.parse('git://git.apache.org/')
         gitrepos.each do |name, description|
+          unless description
+            puts "Skipping git:pull of #{name} because no details were found"
+            next
+          end
           if name == 'letsencrypt' and not `which certbot`.empty?
             puts "Skipping git:pull of #{name} because certbot is installed"
             next
@@ -313,7 +317,6 @@ namespace :git do
             end
           else
             # fresh checkout
-            depth = description['depth']
             if depth
               system('git', 'clone', '--depth', depth.to_s, (base + description['url']).to_s, name)
             else

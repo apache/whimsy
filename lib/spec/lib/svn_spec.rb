@@ -5,37 +5,40 @@ require 'spec_helper'
 require 'whimsy/asf'
 require 'wunderbar'
 
+SAMPLE_MISSING_NAME = '__templates' # no such entry
+SAMPLE_ALIAS = 'Bills' # depth: 'skip'
+
 describe ASF::SVN do
   
   # repo_entry should only include repos that have local workspaces
   
   describe "ASF::SVN.repo_entry" do
-    it "should return string for 'templates'" do
-      res = ASF::SVN.repo_entry('templates')
+    it "should return Hash for #{SAMPLE_SVN_NAME}" do
+      res = ASF::SVN.repo_entry(SAMPLE_SVN_NAME)
       expect(res.class).to equal(Hash)
     end
 
-    it "should return nil for 'Bills'" do
-      res = ASF::SVN.repo_entry('Bills')
+    it "should return nil for #{SAMPLE_ALIAS}" do
+      res = ASF::SVN.repo_entry(SAMPLE_ALIAS)
       expect(res.class).to equal(NilClass)
     end
 
-    it "should return nil for '__templates'" do
-      res = ASF::SVN.repo_entry('__templates')
+    it "should return nil for #{SAMPLE_MISSING_NAME}" do
+      res = ASF::SVN.repo_entry(SAMPLE_MISSING_NAME)
       expect(res.class).to equal(NilClass)
     end
 
   end
 
   describe "ASF::SVN.repo_entry!" do
-    it "should return string for 'templates'" do
-      res = ASF::SVN.repo_entry!('templates')
+    it "should return string for #{SAMPLE_SVN_NAME}" do
+      res = ASF::SVN.repo_entry!(SAMPLE_SVN_NAME)
       expect(res.class).to equal(Hash)
     end
 
-    it "should fail for '__templates'" do
+    it "should fail for #{SAMPLE_MISSING_NAME}" do
       expect{
-        ASF::SVN.repo_entry!('__templates')
+        ASF::SVN.repo_entry!(SAMPLE_MISSING_NAME)
       }.to raise_error(Exception)
     end
 
@@ -44,35 +47,35 @@ describe ASF::SVN do
   # svnurl should include aliases
 
   describe "ASF::SVN.svnurl" do
-    it "should return URL for 'templates'" do
-      res = ASF::SVN.svnurl('templates')
+    it "should return URL for #{SAMPLE_SVN_NAME}" do
+      res = ASF::SVN.svnurl(SAMPLE_SVN_NAME)
       expect(res.class).to equal(String)
-      expect(res).to match(%r{https://.+/templates}) 
+      expect(res).to match(SAMPLE_SVN_URL_RE) 
     end
   
-    it "should return URL for 'Bills'" do
-      res = ASF::SVN.svnurl('Bills')
+    it "should return URL for #{SAMPLE_ALIAS}" do
+      res = ASF::SVN.svnurl(SAMPLE_ALIAS)
       expect(res.class).to equal(String)
       expect(res).to match(%r{https://.+/Bills}) 
     end
   
-    it "should return nil for '__templates'" do
-      res = ASF::SVN.svnurl('__templates')
+    it "should return nil for #{SAMPLE_MISSING_NAME}" do
+      res = ASF::SVN.svnurl(SAMPLE_MISSING_NAME)
       expect(res.class).to equal(NilClass)
     end
   
   end
 
   describe "ASF::SVN.svnurl!" do
-    it "should return URL for 'templates'" do
-      res = ASF::SVN.svnurl!('templates')
+    it "should return URL for #{SAMPLE_SVN_NAME}" do
+      res = ASF::SVN.svnurl!(SAMPLE_SVN_NAME)
       expect(res.class).to equal(String)
-      expect(res).to match(%r{https://.+/templates}) 
+      expect(res).to match(SAMPLE_SVN_URL_RE) 
     end
   
-    it "should fail for '__templates'" do
+    it "should fail for #{SAMPLE_MISSING_NAME}" do
       expect {
-        ASF::SVN.svnurl!('__templates')
+        ASF::SVN.svnurl!(SAMPLE_MISSING_NAME)
       }.to raise_error(Exception)
     end
   
@@ -81,11 +84,11 @@ describe ASF::SVN do
   # repo_entries should exclude aliases
 
   describe "ASF::SVN.repo_entries" do
-    it "should return hash with templates but not Bills" do
+    it "should return hash with #{SAMPLE_SVN_NAME} but not #{SAMPLE_ALIAS}" do
       res = ASF::SVN.repo_entries
       expect(res.class).to equal(Hash)
-      expect(res['templates'].class).to equal(Hash)
-      expect(res['Bills']).to equal(nil)
+      expect(res[SAMPLE_SVN_NAME].class).to equal(Hash)
+      expect(res[SAMPLE_ALIAS]).to equal(nil)
     end
     
   end
@@ -93,18 +96,18 @@ describe ASF::SVN do
   # find returns local workspace so excludes aliases
 
   describe "ASF::SVN.find" do
-    it "should return string for 'templates'" do
-      res = ASF::SVN.find('templates')
+    it "should return string for #{SAMPLE_SVN_NAME}" do
+      res = ASF::SVN.find(SAMPLE_SVN_NAME)
       expect(res.class).to equal(String)
     end
   
-    it "should return nil for 'Bills'" do
-      res = ASF::SVN.find('Bills')
+    it "should return nil for #{SAMPLE_ALIAS}" do
+      res = ASF::SVN.find(SAMPLE_ALIAS)
       expect(res.class).to equal(NilClass)
     end
   
-    it "should return nil for '__templates'" do
-      res = ASF::SVN.find('__templates')
+    it "should return nil for #{SAMPLE_MISSING_NAME}" do
+      res = ASF::SVN.find(SAMPLE_MISSING_NAME)
       expect(res.class).to equal(NilClass)
     end
   
@@ -115,7 +118,7 @@ describe ASF::SVN do
       res = ASF::SVN.private_public
       expect(res.size()).to equal(2)
       expect(res[0].size).to equal(14) # will need to be adjusted from time to time
-      expect(res[1].size).to equal(9) # ditto.
+      expect(res[1].size).to equal(7) # ditto.
     end
   end
 

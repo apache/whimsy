@@ -70,6 +70,20 @@ end
 
 optionparser.parse!
 
+# Check for required tools
+
+if options.puppet and `which puppet 2>/dev/null`.empty?
+  STDERR.puts 'puppet not found in path; exiting'
+  exit 1
+end
+
+%w(git rake).each do |tool|
+  if `which #{tool} 2>/dev/null`.empty?
+    STDERR.puts "#{tool} not found in path; exiting"
+    exit 1
+  end
+end
+
 #
 ### process management
 #
@@ -218,14 +232,7 @@ end
 if restartable
   STDERR.puts 'restarting'
 
-  # reconstruct path to Ruby executable
-  require 'rbconfig'
-  ruby = File.join(
-    RbConfig::CONFIG["bindir"],
-    RbConfig::CONFIG["ruby_install_name"] + RbConfig::CONFIG["EXEEXT"]
-  )
-
   # relaunch script after a one second delay
   sleep 1
-  exec ruby, __FILE__, *ARGV 
+  exec RbConfig.ruby, __FILE__, *ARGV
 end

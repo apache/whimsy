@@ -7,13 +7,13 @@ message = Mailbox.find(@message)
 begin
   selected = message.find(@selected).as_pdf
 
-  tool = 'pdf270' if @direction.include? 'right'
-  tool = 'pdf90' if @direction.include? 'left'
-  tool = 'pdf180' if @direction.include? 'flip'
+  options = %w(--angle 270 --rotateoversize true) if @direction.include? 'right'
+  options = %w(--angle 90 --rotateoversize true) if @direction.include? 'left'
+  options = %w(--angle 180) if @direction.include? 'flip'
 
-  raise "Invalid direction #{@direction}" unless tool
+  raise "Invalid direction #{@direction}" unless options
 
-  Kernel.system tool, '--quiet', '--suffix', 'rotated', selected.path, {chdir: File.dirname(selected.path)}
+  Kernel.system 'pdfjam', *options, '--quiet', '--suffix', 'rotated', '--fitpaper', 'true', selected.path, {chdir: File.dirname(selected.path)}
 
   output = selected.path.sub(/\.pdf$/, '-rotated.pdf')
 

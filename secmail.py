@@ -151,8 +151,8 @@ def analyze(msg):
 def detach(msg):
   # quick exit if we have seen this entry before
   if not msg['message-id']: return
-  id = md5(msg['message-id']).hexdigest()
-  if os.path.exists(os.path.join('tally',id)): return
+  mid = md5(msg['message-id']).hexdigest()
+  if os.path.exists(os.path.join('tally',mid)): return
 
   # known spammers
   if '<r_ieftin@yahoo.ro>' in msg['from']:
@@ -274,13 +274,13 @@ def detach(msg):
       }
       if name: props['email:name'] = name
       if addr: props['email:addr'] = addr
-      if msg['cc']: props['email:cc'] =  re.sub('\s+', ' ', decode(msg['cc']))
+      if msg['cc']: props['email:cc'] =  re.sub(r'\s+', ' ', decode(msg['cc']))
       for (key, value) in props.items():
         svn('propset ' + key + ' ' + repr(value), file)
   except:
     pass
 
-  tally = os.path.join('tally',id)
+  tally = os.path.join('tally',mid)
   fh=open(tally,'w')
   fh.write(summary + "\n")
   fh.close()
@@ -349,7 +349,5 @@ if __name__ == "__main__":
 
   # update web page with last processed information
   if last_processed and os.path.exists('../public_html/secmail.txt'):
-    fh = open('../public_html/secmail.txt', 'w')
-    fh.write("Latest email processed was sent: %s" % last_processed)
-    fh.close()
-
+    with open('../public_html/secmail.txt', 'w') as fh:
+      fh.write("Latest email processed was sent: %s" % last_processed)

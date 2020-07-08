@@ -1,7 +1,7 @@
 Installation on Mac OS/X
 ========================
 
-Step by step instruction on getting a full whimsy test environment up and
+Step by step instruction on getting a full Whimsy test environment up and
 running on Mac OS/X.  Not all steps are required for every tool, but steps
 common to many tools are included here, and additional steps required for
 specific tools are linked at the bottom of these instructions.
@@ -9,7 +9,7 @@ See Also the general DEVELOPMENT.md configuration notes.
 
 :dizzy: **New!** For a simpler way to setup a Mac OSX machine, please 
 check out the [setupmymac script](./SETUPMYMAC.md), which automates 
-configuring and keeping updated a local whimsy instance.
+configuring and keeping updated a local Whimsy instance.
 
 Install Homebrew
 ----------------

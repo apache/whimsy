@@ -9,7 +9,7 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 
 # Allow override of local repo
-IP = ARGV.shift || ASF::Git['infrastructure-puppet']
+IP = ARGV.shift or raise RuntimeError.new "Need path to infrastructure puppet checkout"
 
 module Puppet
   module Parser

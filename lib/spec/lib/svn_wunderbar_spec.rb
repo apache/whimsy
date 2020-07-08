@@ -266,7 +266,7 @@ describe "ASF::SVN.svnmucc_" do
     expect(ts[4]).to eq('usage: svnmucc ACTION...') # output of svnmucc help
   end
   it "svnmucc_([['help']],'test',ENV_.new,_,nil,{root: root}) should include --root-url" do
-    root = ASF::SVN.svnurl!('site-root')
+    root = ASF::SVN.svnurl!(SAMPLE_SVN_NAME)
     rc, out = _json do |_|
       ASF::SVN.svnmucc_([['help']],'test',ENV_.new,_,nil,{root: root})
     end

@@ -154,7 +154,7 @@ end
 # test data
 __END__
 
-/x1/srv/git/infrastructure-puppet
+/x1/srv/git/infrapup
 Already on 'deployment'
 Your branch is behind 'origin/deployment' by 1 commit, and can be fast-forwarded.
   (use "git pull" to update your local branch)
@@ -165,32 +165,32 @@ Fast-forward
  modules/build_slaves/manifests/jenkins.pp | 38 +++++++++++++++++++-------------------
  3 files changed, 21 insertions(+), 19 deletions(-)
 
-/x1/srv/git/infrastructure-puppet2
+/x1/srv/git/infrapup2
 Already on 'deployment'
 Your branch is up-to-date with 'origin/deployment'.
 Already up-to-date.
 
-/x1/srv/git/infrastructure-puppet3
+/x1/srv/git/infrapup3
 Already on 'deployment'
 Your branch is up-to-date with 'origin/deployment'.
-From git://git.apache.org/infrastructure-puppet
+From git://git.apache.org/infrapup
  * [new branch]      humbedooh/multimail-1.5 -> origin/humbedooh/multimail-1.5
 Already up-to-date.
 
-/x1/srv/git/infrastructure-puppet4
+/x1/srv/git/infrapup4
 Already on 'deployment'
 Your branch is up-to-date with 'origin/deployment'.
-From git://git.apache.org/infrastructure-puppet
+From git://git.apache.org/infrapup
    83e4220..7394a6e  deployment -> origin/deployment
 Updating 83e4220..7394a6e
 Fast-forward
  modules/gitbox/files/asfgit/git_multimail.py | 1009 +++++++++++++++++++-------
  1 file changed, 737 insertions(+), 272 deletions(-)
 
-/x1/srv/git/infrastructure-puppet5
+/x1/srv/git/infrapup5
 Already on 'deployment'
 Your branch is up-to-date with 'origin/deployment'.
-From git://git.apache.org/infrastructure-puppet
+From git://git.apache.org/infrapup
    f827a83..b649da5  deployment -> origin/deployment
 Updating f827a83..b649da5
 Fast-forward
@@ -198,10 +198,10 @@ Fast-forward
  1 file changed, 159 insertions(+)
  create mode 100644 modules/git_mirror_asf/files/bin/graduate-podling.py
 
-/x1/srv/git/infrastructure-puppet6
+/x1/srv/git/infrapup6
 Already on 'deployment'
 Your branch is up-to-date with 'origin/deployment'.
-From https://github.com/apache/infrastructure-puppet
+From https://github.com/apache/infrapup
    1eaab02..bafa433  deployment -> origin/deployment
 Updating 1eaab02..bafa433
 Fast-forward
@@ -372,10 +372,10 @@ Fast-forward
  delete mode 100644 certbot/tests/testdata/matching_cert.pem
  delete mode 100644 certbot/tests/testdata/rsa512_key_2.pem
 
-/x1/srv/git/infrastructure-puppet7
+/x1/srv/git/infrapup7
 Already on 'deployment'
 Your branch is up-to-date with 'origin/deployment'.
-From https://github.com/apache/infrastructure-puppet
+From https://github.com/apache/infrapup
    b03cfe6..21a99b2  deployment -> origin/deployment
 Updating b03cfe6..21a99b2
 Fast-forward
@@ -386,7 +386,7 @@ Fast-forward
  mode change 100644 => 100755 modules/subversion_server/files/authorization/check-auth-templates.pl
  delete mode 100755 modules/subversion_server/files/authorization/gen_asf-authorization.pl
 
-/x1/srv/git/infrastructure-puppet8
+/x1/srv/git/infrapup8
 Already on 'deployment'
 Your branch is up-to-date with 'origin/deployment'.
 HEAD is now at 4aafd69 Merge pull request #720 from rubys/rubys/noauth-source
@@ -396,10 +396,10 @@ From https://github.com/letsencrypt/letsencrypt
    e86bb7f..97ad9f9  plugin_storage -> origin/plugin_storage
 HEAD is now at a2239ba fix test_tests.sh (#5478)
 
-/x1/srv/git/infrastructure-puppet9
+/x1/srv/git/infrapup9
 Already on 'deployment'
 Your branch is up-to-date with 'origin/deployment'.
-From https://github.com/apache/infrastructure-puppet
+From https://github.com/apache/infrapup
    228c0fb..8bbfaca  deployment -> origin/deployment
 Auto packing the repository in background for optimum performance.
 See "git help gc" for manual housekeeping.
