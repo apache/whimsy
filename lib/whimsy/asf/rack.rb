@@ -20,8 +20,8 @@ module ASF
         env.user, env.password = Base64.
           decode64(auth[/^Basic ([A-Za-z0-9+\/=]+)$/,1].to_s).split(':',2)
       end
-      env.user.untaint
-      env.password.untaint
+      env.user.untaint unless env.user.frozen?
+      env.password.untaint unless env.password.frozen?
 
       env['REMOTE_USER'] ||= env.user
 
