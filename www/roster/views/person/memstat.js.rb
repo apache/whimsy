@@ -43,9 +43,11 @@ class PersonMemberStatus < Vue
                 console.log('memstat edit menu secretary...')
                 if committer.member.status.include? 'Active'
                   emeritus_file_url = committer.forms['emeritus_request']
-                  _button.btn.btn_primary 'move to emeritus',
-                    data_emeritus_file_url:emeritus_file_url,
-                    name: 'action', value: 'emeritus'
+                  if emeritus_file_url
+                    _button.btn.btn_primary 'move to emeritus',
+                      data_emeritus_file_url:emeritus_file_url,
+                      name: 'action', value: 'emeritus'
+                  end
                   _button.btn.btn_primary 'move to deceased',
                     name: 'action', value: 'deceased'
                   _input 'dod', name: 'dod', value: dod
