@@ -63,7 +63,7 @@ if @action == 'rescind_emeritus'
   emeritus_rescinded_url = ASF::SVN.svnurl('emeritus-requests-rescinded')
   ASF::SVN.svn_('mv', [@emeritusfileurl, emeritus_rescinded_url], _, {env:env, msg:message})
 elsif @action == 'request_emeritus'
-  # Create mail to secretary requesting emeritus
+  # Create emeritus request and send mail from secretary
   FOUNDATION_URL = ASF::SVN.svnurl('foundation')
   EMERITUS_TEMPLATE_URL = ASF::SVN.svnpath!('foundation', 'emeritus-request.txt').untaint
   template, err =
@@ -81,6 +81,10 @@ elsif @action == 'request_emeritus'
           'Signed by validated user at: ________Whimsy www/committer_________')
     .gsub('Date: _________________________________',
           ('Date: _______' + centered_date))
+  # Write the emeritus request to emeritus-requests-received
+  EMERITUS_REQUEST_URL = ASF::SVN.svnpath('emeritus-requests-received').untaint
+  rc = ASF::SVN.create_(EMERITUS_REQUEST_URL, "#{USERID}.txt", signed_request, "Emeritus request from #{USERNAME}  (#{USERID}", env, _)
+  if rc == 1 break # do nothing if there is already an emeritus request
 
   ASF::Mail.configure
   mail = Mail.new do
@@ -88,7 +92,7 @@ elsif @action == 'request_emeritus'
     to "#{USERNAME}<#{USERMAIL}>"
     subject "Emeritus request acknowledgement from #{USERNAME}"
     text_part do
-      body "This acknowledges receipt of your emeritus request, a copy of which is attached for your records.\n\nRegards,\n\nsecretary@apache.org\n\n"
+      body "This acknowledges receipt of your emeritus request. You can find the request at #{EMERITUS_REQUEST_URL}/#{USERID}.txt. A copy is attached for your records.\n\nRegards,\n\nsecretary@apache.org\n\n"
     end
   end
   mail.attachments["#{USERID}.txt"] = signed_request.untaint
