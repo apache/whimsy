@@ -159,11 +159,11 @@ namespace :svn do
 
           next if noCheckout
 
+          files = description['files']
           if Dir.exist? name
             isSymlink = File.symlink?(name) # we don't want to change such checkouts
             Dir.chdir(name) {
               system('svn', 'cleanup')
-              files = description['files']
               if depth == 'empty' and not isSymlink
                 curdepth = ASF::SVN.getInfoAsHash('.')['Depth'] # not available as separate item
                 if curdepth != depth
@@ -212,13 +212,19 @@ namespace :svn do
 
               puts outerr # show what happened last
             }
-          else
+          else # directory does not exist
             depth = description['depth'] || 'infinity'
             system('svn', 'checkout', "--depth=#{depth}", svnpath, name)
-             files = description['files']
              if files
                system('svn', 'update', *files, {chdir: name})
               end
+          end
+          # check that explicitly required files exist
+          if files
+            files.each do |file|
+              path = File.join(name, file)
+              puts "Missing: #{path}" unless File.exist? path
+            end
           end
         end
       end
