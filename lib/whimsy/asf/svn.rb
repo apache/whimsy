@@ -14,7 +14,14 @@ module ASF
   #
 
   class SVN
-    @base = URI.parse('https://svn.apache.org/repos/')
+    svn_base = ASF::Config.get(:svn_base)
+    if svn_base
+      require 'wunderbar'
+      Wunderbar.warn("Found override for svn_base: #{svn_base}")
+    else
+      svn_base = 'https://svn.apache.org/repos/'
+    end
+    @base = URI.parse(svn_base)
     @mock = 'file:///var/tools/svnrep/'
     @semaphore = Mutex.new
     @testdata = {}
@@ -799,8 +806,8 @@ module ASF
         parenturl = ASF::SVN.getInfoItem(parentdir,'url')
       else
         uri = URI.parse(path)
-        # allow file: URIs for local testing
-        if %w(http https file).include? uri.scheme
+        # allow file: and svn URIs for local testing
+        if %w(http https file svn).include? uri.scheme
           basename = File.basename(uri.path).untaint
           parentdir = File.dirname(uri.path).untaint
           uri.path = parentdir
