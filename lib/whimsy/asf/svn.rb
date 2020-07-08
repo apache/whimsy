@@ -559,6 +559,7 @@ module ASF
     # _ - wunderbar context
     # options - hash of:
     #  :dryrun - show command (excluding credentials), without executing it
+    #  :diff - show diff before committing
     def self.update(path, msg, env, _, options={})
       if File.directory? path
         dir = path
@@ -619,11 +620,13 @@ module ASF
           # show what would have been committed
           rc = self.svn_('diff', tmpfile || tmpdir, _)
           return rc # No point checking for pending changes
-        else
-          # commit the changes
-          rc = self.svn_('commit', tmpfile || tmpdir, _,
-             {msg: msg.untaint, env: env})
         end
+
+        self.svn_('diff', tmpfile || tmpdir, _) if options[:diff]
+
+        # commit the changes
+        rc = self.svn_('commit', tmpfile || tmpdir, _,
+            {msg: msg.untaint, env: env})
 
         # fail if there are pending changes
         out, err = self.svn('status', tmpfile || tmpdir) # Need to use svn rather than svn_ here
