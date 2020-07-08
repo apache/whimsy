@@ -21,12 +21,13 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       raise Exception.new("Failed to remove existing entry -- try refreshing")
     end
 
+    extra = []
+
     # determine where to put the entry
     if @action == 'emeritus'
       index = text.index(/^\s\*\)\s/, text.index(/^Emeritus/))
       entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
       # if pending emeritus request was found, move it to emeritus
-      extra = []
       # If emeritus request was found, move it to emeritus
       filename = ASF::EmeritusRequestFiles.extractfilename(@emeritusfileurl)
       if filename
