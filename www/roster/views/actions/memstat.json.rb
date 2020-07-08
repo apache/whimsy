@@ -84,12 +84,11 @@ elsif @action == 'request_emeritus'
 
   ASF::Mail.configure
   mail = Mail.new do
-    to "secretary@apache.org"
-    cc "#{USERNAME}<#{USERMAIL}>"
-    from "#{USERMAIL}"
-    subject "Emeritus request from #{USERNAME}"
+    from "secretary@apache.org"
+    to "#{USERNAME}<#{USERMAIL}>"
+    subject "Emeritus request acknowledgement from #{USERNAME}"
     text_part do
-      body "Please accept my emeritus request, which is attached.\n\nRegards,\n\n#{USERNAME}\n\n"
+      body "This acknowledges receipt of your emeritus request, a copy of which is attached for your records.\n\nRegards,\n\nsecretary@apache.org\n\n"
     end
   end
   mail.attachments["#{USERID}.txt"] = signed_request.untaint
@@ -102,7 +101,7 @@ elsif @action == 'request_reinstatement'
     from "#{USERMAIL}"
     subject "Emeritus reinstatement request from #{USERNAME}"
     text_part do
-      body "I respectfully request reinstatement to full membership.\n\nRegards,\n\n#{USERNAME}"
+      body "I respectfully request reinstatement to full membership in The Apache Software Foundation.\n\nRegards,\n\n#{USERNAME}"
     end
   end
   mail.deliver!
