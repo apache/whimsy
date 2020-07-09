@@ -75,7 +75,7 @@
   comdev-foundation: # only want projects.json?
     url: asf/comdev/projects.apache.org/trunk/site/json/foundation
 
-  comdevtalks: # only used in example.cgi?
+  comdevtalks:
     url: asf/comdev/site/trunk/content/speakers/talks
     depth: files
 
