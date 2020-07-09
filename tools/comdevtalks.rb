@@ -1,12 +1,14 @@
 #!/usr/bin/env ruby
 
 #  ComDev Talks: Parse ComDev listings of Apache-related talks
+$LOAD_PATH.unshift '/srv/whimsy/lib'
+require 'whimsy/asf'
 
 require 'yaml'
 require 'json'
 
-COMDEVTALKS = 'https://svn.apache.org/repos/asf/comdev/site/trunk/content/speakers/talks/' # *.yaml
-COMDEVDIR = '/Users/curcuru/src/comdev/site/trunk/content/speakers/talks/' # *.yaml
+COMDEVTALKS = ASF::SVN.svnurl!('comdevtalks') # *.yaml
+COMDEVDIR = ASF::SVN['comdevtalks'] # *.yaml
 SKIPFILE = 'README.yaml'
 
 # Parse all talks and submitters

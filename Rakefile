@@ -142,7 +142,7 @@ namespace :svn do
             end
           end
           svnpath = ASF::SVN.svnurl(name)
-          depth = description['depth']
+          depth = description['depth'] || 'infinity'
           noCheckout = %w(delete skip).include? depth
           if Dir.exist? name
             if noCheckout
@@ -164,8 +164,8 @@ namespace :svn do
             isSymlink = File.symlink?(name) # we don't want to change such checkouts
             Dir.chdir(name) {
               system('svn', 'cleanup')
-              if depth == 'empty' and not isSymlink
-                curdepth = ASF::SVN.getInfoAsHash('.')['Depth'] # not available as separate item
+              unless isSymlink # Don't change depth for symlinks
+                curdepth = ASF::SVN.getInfoAsHash('.')['Depth'] || 'infinity' # not available as separate item
                 if curdepth != depth
                   puts "#{PREFIX} update depth from '#{curdepth}' to '#{depth}'"
                   system('svn', 'update', '--set-depth', depth)
@@ -213,7 +213,6 @@ namespace :svn do
               puts outerr # show what happened last
             }
           else # directory does not exist
-            depth = description['depth'] || 'infinity'
             system('svn', 'checkout', "--depth=#{depth}", svnpath, name)
              if files
                system('svn', 'update', *files, {chdir: name})
@@ -242,28 +241,24 @@ namespace :svn do
           puts
           puts File.join(Dir.pwd, name)
           if Dir.exist? name
-            Dir.chdir(name) {
-              outerr = nil
-                begin
-                  outerr, status = Open3.capture2e('svn info --show-item url')
-                  if status.success?
-                    outerr.chomp!
-                    if outerr.end_with? description['url']
-                       puts "#{outerr} - OK"
-                       break
-                    else
-                       puts "#{outerr} - Error!\nExpected URL to end with:    #{description['url']}"
-                       errors += 1
-                    end
-                    break
-                  end
-                rescue => e
-                  outerr = e.inspect
-                  errors += 1
-                  break
-                end
-              puts outerr # show what happened last
-            }
+            hash, err = ASF::SVN.getInfoAsHash(name)
+            if hash
+              urlact = hash['URL']
+              urlexp = description['url']
+              unless urlact.end_with? urlexp # urlexp is relative only
+                puts "URL: #{urlact} expected to end with #{urlexp}"
+                errors += 1
+              end
+              depthact = hash['Depth'] || 'infinity'
+              depthexp = description['depth'] || 'infinity'
+              unless depthact ==  depthexp
+                puts "Depth: #{depthact} expected to be #{depthexp}"
+                errors += 1
+              end
+            else
+              puts "Error getting details for #{name}: #{err}"
+              errors += 1
+            end
           else
             require 'uri'
             base = URI.parse('https://svn.apache.org/repos/')
