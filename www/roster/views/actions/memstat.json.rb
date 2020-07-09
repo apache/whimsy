@@ -77,22 +77,25 @@ elsif @action == 'request_emeritus'
     .gsub('Signed: __________________________________________________________',
           'Signed by validated user at: ________Whimsy www/committer_________')
     .gsub('Date: _________________________________',
-          ('Date: _______' + centered_date))
+          ('Date: _______' + centered_date)).untaint
   # Write the emeritus request to emeritus-requests-received
   EMERITUS_REQUEST_URL = ASF::SVN.svnpath!('emeritus-requests-received').untaint
-  rc = ASF::SVN.create_(EMERITUS_REQUEST_URL, "#{USERID}.txt", signed_request, "Emeritus request from #{USERNAME}  (#{USERID}", env, _)
-  ASF::Mail.configure
-  mail = Mail.new do
-    from "secretary@apache.org"
-    to "#{USERNAME}<#{USERMAIL}>"
-    subject "Emeritus request acknowledgement from #{USERNAME}"
-    text_part do
-      body "This acknowledges receipt of your emeritus request. You can find the request at #{EMERITUS_REQUEST_URL}/#{USERID}.txt. A copy is attached for your records.\n\nRegards,\n\nsecretary@apache.org\n\n"
+  Dir.mktmpdir do |tmpdir|
+    filename =File.join(tmpdir,'tmpfile')
+    File.write(filename, signed_request)
+    if 0 == ASF::SVN.create_(EMERITUS_REQUEST_URL, "#{USERID}.txt", filename, "Emeritus request from #{USERNAME} (#{USERID})", env, _)
+      ASF::Mail.configure
+      mail = Mail.new do
+        from "secretary@apache.org"
+        to "#{USERNAME}<#{USERMAIL}>"
+        subject "Emeritus request acknowledgement from #{USERNAME}"
+        text_part do
+          body "This acknowledges receipt of your emeritus request. You can find the request at #{EMERITUS_REQUEST_URL}/#{USERID}.txt. A copy is attached for your records.\n\nWarm Regards,\n\nSecretary, Apache Software Foundation\nsecretary@apache.org\n\n"
+        end
+      end
+      mail.attachments["#{USERID}.txt"] = signed_request
+      mail.deliver!
     end
-  end
-  mail.attachments["#{USERID}.txt"] = signed_request.untaint
-  if rc == 0
-    mail.deliver!
   end
 elsif @action == 'request_reinstatement'
   ASF::Mail.configure

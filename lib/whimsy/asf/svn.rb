@@ -753,7 +753,7 @@ module ASF
       out, err = self.svn('list', target, {env: env})
       return 1 if out # already exists
       # Need to check for unexpected errors; the error message does not include the full repo URL
-      unless err =~ %r{^svn: warning: W160013: Path '.+#{filename}' not found}
+      unless err =~ %r{^svn: warning: W160013:}
         throw RuntimeError.new("#{filename} already exists! #{err}")
       end
       commands = [['put', source, target]]
