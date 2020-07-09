@@ -149,26 +149,22 @@ class Committer
 
         file = ASF::EmeritusFiles.find(person)
         if file
-          url = ASF::SVN.svnurl('emeritus')
-          response[:forms][:emeritus] = "#{url}/#{file}"
+          response[:forms][:emeritus] = ASF::SVN.svnpath!('emeritus', file)
         end
 
         file = ASF::EmeritusRequestFiles.find(person)
         if file
-          url = ASF::SVN.svnurl('emeritus-requests-received')
-          response[:forms][:emeritus_request] = "#{url}/#{file}"
+          response[:forms][:emeritus_request] = ASF::SVN.svnpath!('emeritus-requests-received', file)
         end
 
         file = ASF::EmeritusRescindedFiles.find(person)
         if file
-          url = ASF::SVN.svnurl('emeritus-requests-rescinded')
-          response[:forms][:emeritus_rescinded] = "#{url}/#{file}"
+          response[:forms][:emeritus_rescinded] = ASF::SVN.svnpath!('emeritus-requests-rescinded', file)
         end
 
         file = ASF::EmeritusReinstatedFiles.find(person)
         if file
-          url = ASF::SVN.svnurl('emeritus-reinstated')
-          response[:forms][:emeritus_reinstated] = "#{url}/#{file}"
+          response[:forms][:emeritus_reinstated] = ASF::SVN.svnpath!('emeritus-reinstated', file)
         end
 
       else
