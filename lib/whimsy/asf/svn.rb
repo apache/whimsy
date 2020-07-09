@@ -747,26 +747,37 @@ module ASF
     #  msg - commit message
     #  env - user/pass
     #  _ - wunderbar context
+    # options:
+    #   dryrun: passed to svnmucc_
+    # 
     # Returns:
     # 0 on success
     # 1 if the file exists
     # RuntimeError on unexpected error
-    def self.create_(directory, filename, source, msg, env, _)
+    def self.create_(directory, filename, source, msg, env, _, options={})
       parentrev, err = self.getInfoItem(directory, 'revision', env.user, env.password)
       unless parentrev
         throw RuntimeError.new("Failed to get revision for #{directory}: #{err}")
       end
       target = File.join(directory, filename)
       out, err = self.svn('list', target, {env: env})
-      return 1 if out # already exists
-      # Need to check for unexpected errors; the error message does not include the full repo URL
-      unless err =~ %r{^svn: warning: W160013: Path '.+#{filename}' not found}
+      return 1 if out # list succeeded, so file must exist
+      # Need to check for the response which means the file is missing rather than some other error
+      #
+      # Note: file: and svn: responses look like this:
+      # svn: warning: W160013: Path '/xxx' not found
+      # svn: E200009: Could not list all targets because some targets don't exist
+      #
+      # However http(s) responses look like this:
+      # svn: warning: W160013: URL 'https://svn.apache.org/repos/asf/xxx' non-existent in revision 1879725
+      # svn: E200009: Could not list all targets because some targets don't exist
+      unless err =~ %r{^svn: warning: W160013: (Path|URL) '.+#{filename}' (not found|non-existent)}
         throw RuntimeError.new("#{filename} already exists! #{err}")
       end
       commands = [['put', source, target]]
       # Detect file created in parallel. This generates the error message:
       # svnmucc: E160020: File already exists: <snip> path 'xxx'
-      rc = self.svnmucc_(commands, msg, env, _, parentrev)
+      rc = self.svnmucc_(commands, msg, env, _, parentrev, options)
       unless rc == 0
         error = _.target?['transcript'][1] rescue ''
         unless error =~ %r{^svnmucc: E160020: File already exists:}
