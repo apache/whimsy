@@ -474,7 +474,7 @@ module ASF
     # As for self.svn_, but failures cause a RuntimeError
     def self.svn_!(command, path, _, options = {})
       rc = self.svn_(command, path, _, options = options)
-      raise RuntimeError.new("exit code: #{rc}") if rc != 0
+      raise RuntimeError.new("exit code: #{rc}\n#{_.target!}") if rc != 0
       rc
     end
 
