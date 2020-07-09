@@ -952,9 +952,23 @@ module ASF
 
     private
     
+    # Calculate svn parent directory allowing for overrides
+    def self.svn_parent
+      svn = ASF::Config.get(:svn)
+      if svn.instance_of? String and svn.end_with? '/*'
+        File.dirname(svn)
+      else
+        File.join(ASF::Config.root,'svn')
+      end
+    end
+
+    # get listing names for updating and returning SVN directory listings
+    # Returns:
+    # [listing-name, temporary name]
     def self.listingNames(name)
-      return File.join(ASF::Config.root,'svn',"%s.txt" % name).untaint,
-             File.join(ASF::Config.root,'svn',"%s.tmp" % name).untaint
+      dir = self.svn_parent
+      return File.join(dir,"%s.txt" % name).untaint,
+             File.join(dir,"%s.tmp" % name).untaint
     end
 
     # Get all the SVN entries
