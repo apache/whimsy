@@ -954,12 +954,12 @@ module ASF
     
     # Calculate svn parent directory allowing for overrides
     def self.svn_parent
-      svn = ASF::Config.get(:svn)
-      if svn.instance_of? String and svn.end_with? '/*'
-        File.dirname(svn)
-      else
+      # svn = ASF::Config.get(:svn)
+      # if svn.instance_of? String and svn.end_with? '/*'
+      #   File.dirname(svn)
+      # else
         File.join(ASF::Config.root,'svn')
-      end
+      # end
     end
 
     # get listing names for updating and returning SVN directory listings
