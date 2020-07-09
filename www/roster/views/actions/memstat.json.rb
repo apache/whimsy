@@ -31,8 +31,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       # If emeritus request was found, move it to emeritus
       filename = ASF::EmeritusRequestFiles.extractfilename(@emeritusfileurl)
       if filename
-        emeritus_destination_url = ASF::SVN.svnpath!('emeritus', filename)
-        extra << ['mv', @emeritusfileurl, emeritus_destination_url]
+        extra << ['mv', @emeritusfileurl, ASF::SVN.svnpath!('emeritus', filename)]
       end
     elsif @action == 'active'
       index = text.index(/^\s\*\)\s/, text.index(/^Active/))
@@ -40,8 +39,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       # if emeritus file was found, move it to emeritus-reinstated
       filename = ASF::EmeritusFiles.extractfilename(@emeritusfileurl)
       if filename
-        emeritus_destination_url = ASF::SVN.svnpath!('emeritus-reinstated', filename)
-        extra << ['mv', @emeritusfileurl, emeritus_destination_url]
+        extra << ['mv', @emeritusfileurl,  ASF::SVN.svnpath!('emeritus-reinstated', filename)]
       end
     elsif @action == 'deceased'
       index = text.index(/^\s\*\)\s/, text.index(/^Deceased/))
