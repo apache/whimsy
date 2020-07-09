@@ -56,8 +56,8 @@ end
 
 # Owner operations
 if @action == 'rescind_emeritus'
-  emeritus_rescinded_url = ASF::SVN.svnurl('emeritus-requests-rescinded')
-  ASF::SVN.svn_('mv', [@emeritusfileurl, emeritus_rescinded_url], _, {env:env, msg:message})
+  # TODO handle case where rescinded file already exists
+  ASF::SVN.svn_!('mv', [@emeritusfileurl, ASF::SVN.svnurl('emeritus-requests-rescinded')], _, {env:env, msg:message})
 elsif @action == 'request_emeritus'
   # Create mail to secretary requesting emeritus
   template, err =
