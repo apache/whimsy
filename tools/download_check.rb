@@ -531,7 +531,9 @@ def _checkDownloadPage(path, tlp, version)
             next
         end
       end
-      if h =~ %r{https?://(www\.)?apache\.org/dist}
+      # Ideally would like to check for use of closer.lua/.cgi, but some projects pre-populate the pages
+      # TODO: would it help to check host against mirrors.list?
+      if h =~ %r{https?://(downloads\.|www\.)?apache\.org/}
         E "Must use mirror system #{h}"
         next
       end
