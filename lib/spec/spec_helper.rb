@@ -17,8 +17,8 @@ else
   TEST_DATA = false
 end
 
-def set_root
-  ASF::Config.setroot File.expand_path("../test", __dir__)
+def set_svnroot # ensure can access svn directory listing files
+  ASF::Config.setsvnroot File.expand_path("../test/svn/*", __dir__)
 end
 
 def set_svn(name)

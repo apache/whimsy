@@ -4,7 +4,7 @@
 require 'spec_helper'
 require 'whimsy/asf'
 
-set_root # need access to listing file
+set_svnroot # need access to listing file
 
 # Test data:
 # ab/        abc.pdf     abcd/    abcde/
