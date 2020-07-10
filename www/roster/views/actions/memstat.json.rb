@@ -31,8 +31,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       # If emeritus request was found, move it to emeritus
       filename = ASF::EmeritusRequestFiles.extractfilename(@emeritusfileurl)
       if filename
-        emeritus_destination_url = ASF::SVN.svnpath!('emeritus', filename)
-        extra << ['mv', @emeritusfileurl, emeritus_destination_url]
+        extra << ['mv', @emeritusfileurl, ASF::SVN.svnpath!('emeritus', filename)]
       end
     elsif @action == 'active'
       index = text.index(/^\s\*\)\s/, text.index(/^Active/))
@@ -40,8 +39,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       # if emeritus file was found, move it to emeritus-reinstated
       filename = ASF::EmeritusFiles.extractfilename(@emeritusfileurl)
       if filename
-        emeritus_destination_url = ASF::SVN.svnpath!('emeritus-reinstated', filename)
-        extra << ['mv', @emeritusfileurl, emeritus_destination_url]
+        extra << ['mv', @emeritusfileurl,  ASF::SVN.svnpath!('emeritus-reinstated', filename)]
       end
     elsif @action == 'deceased'
       index = text.index(/^\s\*\)\s/, text.index(/^Deceased/))
@@ -58,8 +56,8 @@ end
 
 # Owner operations
 if @action == 'rescind_emeritus'
-  emeritus_rescinded_url = ASF::SVN.svnurl('emeritus-requests-rescinded')
-  ASF::SVN.svn_('mv', [@emeritusfileurl, emeritus_rescinded_url], _, {env:env, msg:message})
+  # TODO handle case where rescinded file already exists
+  ASF::SVN.svn_!('mv', [@emeritusfileurl, ASF::SVN.svnurl('emeritus-requests-rescinded')], _, {env:env, msg:message})
 elsif @action == 'request_emeritus'
   # Create emeritus request and send mail from secretary
   template, err =
