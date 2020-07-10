@@ -123,6 +123,12 @@ module ASF
     def self.setroot(path)
       @root = path
     end
+    # Testing only: override svn config
+    # path must end in /*
+    def self.setsvnroot(path)
+      raise RuntimeError "Invalid path: #{path}" unless path.end_with? '/*'
+      @config[:svn] = path
+    end
   end
 
 end
