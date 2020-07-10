@@ -50,7 +50,7 @@ def Monitor.svn(previous_status)
       line == "Summary of updates:" or
       # must agree with Rakefile/PREFIX
       line.start_with?('#!: ') or
-      line =~ REV_RE
+      line =~ REV_RE # this was processed above
     end
 
     unless lines.empty?
@@ -75,6 +75,7 @@ def Monitor.svn(previous_status)
 
       data << revision if revision and data.instance_of? Array
     else
+      next if lines == ['Skipping']
       level = 'danger'
       data = lines.dup
       seen_level[level] = true
@@ -113,6 +114,9 @@ end
 
 # test data
 __END__
+
+/srv/svn/Bills
+Skipping
 
 /srv/svn/cclas
 #!: Updating listing file

@@ -157,7 +157,10 @@ namespace :svn do
             end
           end
 
-          next if noCheckout
+          if noCheckout
+            puts "Skipping" if depth == 'skip' # Must agree with monitors/svn.rb
+            next
+          end
 
           files = description['files']
           if Dir.exist? name
