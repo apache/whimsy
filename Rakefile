@@ -114,7 +114,7 @@ task :config do
 end
 
 namespace :svn do
-  task :update => :config do
+  task :update, [:listonly] => :config do |task, args|
     # Include all
     svnrepos = ASF::SVN.repo_entries(true) || {}
 
@@ -157,6 +157,7 @@ namespace :svn do
             end
           end
 
+          next if args.listonly == 'skip'
           if noCheckout
             puts "Skipping" if depth == 'skip' # Must agree with monitors/svn.rb
             next
@@ -193,10 +194,10 @@ namespace :svn do
                   # Also update '.' so parent directory shows last changed revision for status/svn page
                   if files
                     svncmd = "svn update . #{files.join(' ')}"
-                    puts "#{PREFIX} #{svncmd}"
                   else
                     svncmd = 'svn update'
                   end
+                  puts "#{PREFIX} #{svncmd}"
                   pid = Process.spawn(svncmd, out: w, err: [:child, :out])
                   w.close
 
