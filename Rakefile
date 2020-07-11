@@ -192,13 +192,13 @@ namespace :svn do
                   r, w = IO.pipe
                   # Note: list the files to update to cater for later additions
                   # Also update '.' so parent directory shows last changed revision for status/svn page
+                  svncmd = %w(svn update .)
+                  # '.' is redundant if files not present, but it simplifies logic
                   if files
-                    svncmd = "svn update . #{files.join(' ')}"
-                  else
-                    svncmd = 'svn update'
+                    svncmd += files
                   end
-                  puts "#{PREFIX} #{svncmd}"
-                  pid = Process.spawn(svncmd, out: w, err: [:child, :out])
+                  puts "#{PREFIX} #{svncmd.join(' ')}"
+                  pid = Process.spawn(*svncmd, out: w, err: [:child, :out])
                   w.close
 
                   pid, status = Process.wait2
