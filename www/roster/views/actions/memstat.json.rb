@@ -38,6 +38,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       # if emeritus file was found, move it to emeritus-reinstated
       filename = ASF::EmeritusFiles.extractfilename(@emeritusfileurl)
       if filename
+        # TODO: allow for previous reinstated file
         extra << ['mv', @emeritusfileurl,  ASF::SVN.svnpath!('emeritus-reinstated', filename)]
       end
     elsif @action == 'deceased'
@@ -79,7 +80,8 @@ elsif @action == 'request_emeritus'
   Dir.mktmpdir do |tmpdir|
     filename =File.join(tmpdir,'tmpfile')
     File.write(filename, signed_request)
-    if 0 == ASF::SVN.create_(EMERITUS_REQUEST_URL, "#{USERID}.txt", filename, "Emeritus request from #{USERNAME} (#{USERID})", env, _)
+    rc = ASF::SVN.create_(EMERITUS_REQUEST_URL, "#{USERID}.txt", filename, "Emeritus request from #{USERNAME} (#{USERID})", env, _)
+    if rc == 0
       ASF::Mail.configure
       mail = Mail.new do
         from "secretary@apache.org"
@@ -91,6 +93,8 @@ elsif @action == 'request_emeritus'
       end
       mail.attachments["#{USERID}.txt"] = signed_request
       mail.deliver!
+    elsif rc == 1
+      _warn "Request file already exists"
     end
   end
 elsif @action == 'request_reinstatement'
