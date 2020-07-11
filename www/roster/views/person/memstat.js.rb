@@ -19,12 +19,10 @@ class PersonMemberStatus < Vue
             _form.inline method: 'post' do
               # Cancel this form (implemented in main.js.rb submit(event)
               _button.btn.btn_secondary 'Cancel', data_cancel_submit:true
-              emeritus_file_url = nil # for return by hidden form item
               # These actions are only for the person's own use
               if owner
                 if committer.member.status.include? 'Active'
                   if committer.forms['emeritus_request']
-                    emeritus_file_url = committer.forms['emeritus_request']
                     _button.btn.btn_primary 'rescind emeritus request',
                       name: 'action', value: 'rescind_emeritus'
                   else
@@ -39,9 +37,8 @@ class PersonMemberStatus < Vue
               # These actions are only for secretary's use
               if @@person.props.auth.secretary
                 if committer.member.status.include? 'Active'
-                  emeritus_file_url = committer.forms['emeritus_request']
                   # TODO check time has expired
-                  if emeritus_file_url
+                  if committer.forms['emeritus_request']
                     _button.btn.btn_primary 'move to emeritus',
                       name: 'action', value: 'emeritus'
                   end
@@ -49,7 +46,6 @@ class PersonMemberStatus < Vue
                     name: 'action', value: 'deceased'
                   _input 'dod', name: 'dod', value: dod
                 elsif committer.member.status.include? 'Emeritus'
-                  emeritus_file_url = committer.forms['emeritus']
                   _button.btn.btn_primary 'move to active',
                     name: 'action', value: 'active'
                   _button.btn.btn_primary 'move to deceased',
@@ -63,8 +59,6 @@ class PersonMemberStatus < Vue
                     name: 'action', value: 'emeritus'
                 end
               end
-              # Pass back the file url
-              _input type: 'hidden', name: 'emeritus_file_url', value: emeritus_file_url
             end # end _form
           end
         end

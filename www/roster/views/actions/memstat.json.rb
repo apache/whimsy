@@ -28,18 +28,21 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       index = text.index(/^\s\*\)\s/, text.index(/^Emeritus/))
       entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
       # if pending emeritus request was found, move it to emeritus
-      filename = ASF::EmeritusRequestFiles.extractfilename(@emeritusfileurl)
-      if filename
-        extra << ['mv', @emeritusfileurl, ASF::SVN.svnpath!('emeritus', filename)]
+      pathname = ASF::EmeritusRequestFiles.findpath(user)
+      if pathname
+        extra << ['mv', pathname, ASF::SVN.svnpath!('emeritus', File.basename(pathname))]
+      else # there should be a request file
+        _warn "Emeritus request file not found"
       end
     elsif @action == 'active'
       index = text.index(/^\s\*\)\s/, text.index(/^Active/))
       entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
       # if emeritus file was found, move it to emeritus-reinstated
-      filename = ASF::EmeritusFiles.extractfilename(@emeritusfileurl)
-      if filename
+      # otherwise ignore
+      pathname = ASF::EmeritusFiles.findpath(user)
+      if pathname
         # TODO: allow for previous reinstated file
-        extra << ['mv', @emeritusfileurl,  ASF::SVN.svnpath!('emeritus-reinstated', filename)]
+        extra << ['mv', pathname,  ASF::SVN.svnpath!('emeritus-reinstated', File.basename(pathname))]
       end
     elsif @action == 'deceased'
       index = text.index(/^\s\*\)\s/, text.index(/^Deceased/))
@@ -57,7 +60,12 @@ end
 # Owner operations
 if @action == 'rescind_emeritus'
   # TODO handle case where rescinded file already exists
-  ASF::SVN.svn_!('mv', [@emeritusfileurl, ASF::SVN.svnurl('emeritus-requests-rescinded')], _, {env:env, msg:message})
+  pathname = ASF::EmeritusRequestFiles.findpath(user)
+  if pathname
+    ASF::SVN.svn_!('mv', [pathname, ASF::SVN.svnpath!('emeritus-requests-rescinded', File.basename(pathname))], _, {env:env, msg:message})
+  else
+    _warn "Emeritus request file not found"
+  end
 elsif @action == 'request_emeritus'
   # Create emeritus request and send acknowlegement mail from secretary
   template, err =
