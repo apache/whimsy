@@ -103,8 +103,9 @@ module ASF
   end
 
   class EmeritusFiles
+    @base = 'emeritus'
     def self.listnames
-      _, list = ASF::SVN.getlisting('emeritus')
+      _, list = ASF::SVN.getlisting(@base)
       list
     end
 
@@ -141,43 +142,25 @@ module ASF
     # nil if it is not in this directory
     def self.extractfilename(fileurl)
       return nil unless fileurl
-      root_url = ASF::SVN.svnurl('emeritus') + '/'
+      root_url = ASF::SVN.svnurl(@base) + '/'
       extractfilenamefrom(root_url, fileurl)
     end
   end
 
   class EmeritusRequestFiles < EmeritusFiles
-    def self.listnames
-      _, list = ASF::SVN.getlisting('emeritus-requests-received')
-      list
-    end
-    # Extract the file name if it is in emeritus-requests-received
-    # nil if it is not in this directory
-    def self.extractfilename(fileurl)
-      root_url = ASF::SVN.svnurl('emeritus-requests-received') + '/'
-      extractfilenamefrom(root_url, fileurl)
-    end
+    @base = 'emeritus-requests-received'
   end
 
   class EmeritusRescindedFiles < EmeritusFiles
-    def self.listnames
-      _, list = ASF::SVN.getlisting('emeritus-requests-rescinded')
-      list
-    end
+    @base = 'emeritus-requests-rescinded'
   end
 
   class EmeritusReinstatedFiles < EmeritusFiles
-    def self.listnames
-      _, list = ASF::SVN.getlisting('emeritus-reinstated')
-      list
-    end
+    @base = 'emeritus-reinstated'
   end
 
   class COIFiles < EmeritusFiles
-    def self.listnames
-      _, list = ASF::SVN.getlisting('conflict-of-interest')
-      list
-    end
+    @base = 'conflict-of-interest'
   end
 
 end
