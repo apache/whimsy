@@ -28,10 +28,8 @@ class PersonMemberStatus < Vue
                     _button.btn.btn_primary 'rescind emeritus request',
                       name: 'action', value: 'rescind_emeritus'
                   else
-                    unless committer.forms['emeritus_request'] # already requested
-                      _button.btn.btn_primary 'request emeritus status',
-                        name: 'action', value: 'request_emeritus'
-                    end
+                    _button.btn.btn_primary 'request emeritus status',
+                      name: 'action', value: 'request_emeritus'
                   end
                 elsif committer.member.status.include? 'Emeritus'
                   _button.btn.btn_primary 'request reinstatement',
