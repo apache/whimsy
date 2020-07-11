@@ -424,6 +424,8 @@ class Person < Vue
           @response_title = 'Error occurred'
           @response = JSON.stringify(json, nil, 2)
           jQuery('div.modal').modal('show')
+        elsif json.warn
+          alert json.warn
         end
 
         # reenable form for later reuse
