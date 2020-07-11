@@ -109,6 +109,9 @@ module ASF
       list
     end
 
+    # Find the file name that matches a person
+    # return nil if not exactly one match
+    # TODO: should it raise an error on multiple matches?
     def self.find(person)
       # TODO use common stem name method
       name = (person.attrs['cn'].first rescue person.member_name).force_encoding('utf-8').
@@ -125,6 +128,16 @@ module ASF
         nil
       end
     end
+
+    # Find the file for a person and return as a path name
+    # nil if not found
+    def self.findpath(person)
+      ret = self.find(person)
+      if ret
+        ret = ASF::SVN.svnpath!(@base, ret)
+      end
+    end
+
     # Extract the file name from an svn url
     # param rooturl the svn url of the directory
     # param fileurl the svn url of the complete file
