@@ -180,6 +180,45 @@ module ASF
       @@mtime = Time.now
       @@text = WeakRef.new(text)
     end
+
+    # create an entry in the standard format:
+    # *) First Last
+    #    Street
+    #    Town
+    #    Country
+    #    Email: id@apache.org
+    #      Tel: 1234
+    # Forms on File: ASF Membership Application
+    # Avail ID: id
+    # Parameters:
+    # fields - hash:
+    #  :fullname - required
+    #  :address - required, multi-line allowed
+    #  :availid - required
+    #  :email - required
+    #  :country - optional
+    #  :tele - optional
+    #  :fax - optional
+    def self.make_entry(fields={})
+      fullname = fields[:fullname] or raise ArgumentError.new(":fullname is required")
+      address = fields[:address]   or raise ArgumentError.new(":address is required")
+      availid = fields[:availid]   or raise ArgumentError.new(":availid is required")
+      email = fields[:email]       or raise ArgumentError.new(":email is required")
+      country = fields[:country] || ''
+      tele = fields[:tele] || ''
+      fax = fields[:fax] || ''
+      [
+        fullname, # will be prefixed by ' *) '
+        # Each line of address is indented
+        ("#{address.gsub(/^/,'    ').gsub(/\r/,'')}"),
+        ("    #{country}"     unless country.empty?),
+         "    Email: #{email}",
+        ("      Tel: #{tele}" unless tele.empty?),
+        ("      Fax: #{fax}"  unless fax.empty?),
+        " Forms on File: ASF Membership Application",
+        " Avail ID: #{availid}"
+      ].compact.join("\n") + "\n"
+    end
   end
 
   class Person

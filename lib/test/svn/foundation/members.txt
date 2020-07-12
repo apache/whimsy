@@ -1,0 +1,94 @@
+
+                   Apache Software Foundation Membership
+
+             $Date: 2020-07-07 00:46:04 +0100 (Tue, 07 Jul 2020) $
+
+     This list includes address information which is considered private.
+     Do not republish this information outside our private ASF member list
+     without prior consent.   Beware that this file is used to compute
+     some public web pages, see below.  We now number 2 active members.
+     Members are allowed to change any of their information in this
+     file with the exception of "Forms on File", which is maintained
+     by the ASF Secretary.
+     NOTE:
+     When updating this file, be sure you only update your own
+     information. Before committing changes, perform svn diff
+     to be sure.
+     Please ensure that you keep at least the "Email:" tag up-to-date.
+
+     Encoding: utf-8
+
+Active (Voting) Members
+=======================
+
+ *) Barry N Anaheim
+    123 Main Street Apt 12
+    San Francisco, CA 94117
+    USA
+    Email: random@gmail.com.invalid
+      Tel: +1 234 456 890
+ Forms on File: ASF Membership Application
+ Avail ID: banana
+
+ *) Alice P Plesk
+    123 Main Street Apt 12
+    Los Angeles, CA 987654
+    USA
+    Email: dummy@gmail.com.invalid
+      Tel: +1 234 456 890
+ Forms on File: ASF Membership Application
+ Avail ID: apple
+
+Emeritus (Non-voting) Members
+=============================
+
+Note:   Moving members from the above list to the list
+        below should only be done by the Secretary who
+        will do so after the ASF receives a signed paper
+        from the member stating the transition. See
+        section 4.3 of the bylaws.
+
+ *) Damsel Fly
+    London
+    UK
+    Email: damsel@gmail.com.invalid
+ Forms on File: ASF Membership Application
+ Avail ID: damson
+
+ *) Charlie Ryman
+    123 Main Street Apt 12
+    Los Angeles, CA 987654
+    USA
+    Email: nemo@gmail.com.invalid
+ Forms on File: ASF Membership Application
+ Avail ID: cherry
+
+Other (Non-voting) Representatives
+==================================
+
+ *) Adam Zulu
+    Email: nemo@erewhon
+
+Deceased Members
+================
+
+ *) El Dorado /* deceased, 1 January 1970 */
+    Paris
+    France
+    Email: dorado@gmail.com.invalid
+ Forms on File: ASF Membership Application
+ Avail ID: elder
+
+Project Names / URLS
+====================
+
+Note: these definitions are used by the parse-projects.pl
+      script, which in turn is used to build some public
+      pages via a ritual still evolving.  Follow the name: URL format.
+
+Abdera: http://incubator.apache.org/projects/abdera.html
+ActiveMQ: http://activemq.apache.org/
+APR: http://apr.apache.org/
+ApacheCon: http://www.apachecon.com/
+Ant: http://ant.apache.org/
+Alexandria: http://jakarta.apache.org/alexandria/
