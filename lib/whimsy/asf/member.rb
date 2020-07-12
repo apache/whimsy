@@ -164,14 +164,18 @@ module ASF
       text
     end
 
-    # update local copy of members.txt
-    def self.text=(text)
-      # normalize text: sort and update active count
+    # normalize text: sort and update active count
+    def self.normalize(text)
       text = ASF::Member.sort(text)
       pattern = /^Active.*?^=+\n+(.*?)^Emeritus/m
       text[/We now number (\d+) active members\./, 1] =
         text[pattern].scan(/^\s\*\)\s/).length.to_s
+      text
+    end
 
+    # update local copy of members.txt
+    def self.text=(text)
+      text = self.normalize(text)
       # save
       @@mtime = Time.now
       @@text = WeakRef.new(text)
