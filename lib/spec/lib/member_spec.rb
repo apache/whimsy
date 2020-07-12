@@ -20,6 +20,14 @@ describe ASF::Member do
     res = ASF::Member.find_text_by_id('elder')
     expect(res).to match(%r{^El Dorado.+^ Avail ID: elder}m)
   end
+  it  "find_by_email('dorado@gmail.com.invalid') should return ASF::Person" do
+    res = ASF::Member.find_by_email('dorado@gmail.com.invalid')
+    expect(res).to be_kind_of(ASF::Person)
+  end
+  it  "find_by_email('invalid@invalid') should return nil" do
+    res = ASF::Member.find_by_email('invalid@invalid')
+    expect(res).to eq(nil)
+  end
   fields = {fullname: 'Full Name', address: "Line 1\nLine2", availid: 'a-b-c', email: 'user@domain.invalid'}
   it "make_entry() should raise error" do
     expect { ASF::Member.make_entry(fields.reject{|k,v| k == :fullname}) }.to raise_error(ArgumentError, ':fullname is required')
@@ -42,6 +50,36 @@ describe ASF::Member do
   it "make_entry({fax:}}) should create entry with Fax:" do
     res = ASF::Member.make_entry(fields.merge({fax: '123-456'}))
     expect(res).to match(%r{^      Fax: 123-456$})
+  end
+  it "status should return hash" do
+    res = ASF::Member.status
+    expect(res).to be_kind_of(Hash)
+    expect(res.size).to eq(3)
+    expect(res.keys.sort).to eq(["cherry", "damson", "elder"])
+  end
+  it "emeritus should return hash" do
+    res = ASF::Member.emeritus
+    expect(res).to be_kind_of(Array)
+    expect(res.size).to eq(2)
+    expect(res.sort).to eq(["cherry", "damson"])
+  end
+  it "find('cherry') should return true" do
+    res = ASF::Member.find('cherry')
+    expect(res).to eq(true)
+  end
+  it "find('notinavail') should return false" do
+    res = ASF::Member.find('notinavail')
+    expect(res).to eq(false)
+  end
+  it "text should return File.read('members.txt')" do
+    exp = File.read(File.join(ASF::SVN['foundation'],'members.txt'))
+    act = ASF::Member.text
+    expect(act).to eq(exp)
+  end
+  it "get_name(find_text_by_id('cherry')) should return Charlie Ryman" do
+    txt = ASF::Member.find_text_by_id('cherry')
+    res = ASF::Member.get_name(txt)
+    expect(res).to eq('Charlie Ryman')
   end
 end
 
