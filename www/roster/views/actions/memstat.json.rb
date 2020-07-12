@@ -53,7 +53,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
     text.insert index, entry
 
     # return the updated (and normalized) text and extra svn command
-    [text, extra]
+    [ASF::Member.normalize(text), extra]
   end
 end
 
