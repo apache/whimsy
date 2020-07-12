@@ -129,13 +129,18 @@ module ASF
       end
     end
 
-    # Find the file for a person and return as a path name
-    # nil if not found
+    # Find the svnpath to the file for a person
+    # Returns
+    # svnpath, filename
+    # or 
+    # nil, nil if not found
     def self.findpath(person)
-      ret = self.find(person)
-      if ret
-        ret = ASF::SVN.svnpath!(@base, ret)
+      path = file = nil
+      file = self.find(person)
+      if file
+        path = ASF::SVN.svnpath!(@base, file)
       end
+      [path, file]
     end
 
     # Extract the file name from an svn url

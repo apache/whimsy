@@ -18,6 +18,13 @@ describe ASF::EmeritusFiles do
         res = ASF::EmeritusFiles.find(ASF::Person.find('emeritus1'))
         expect(res).to eq('emeritus1.txt')
     end
+    it "findpath Person.find('emeritus1') should return svnpath and file " do
+        res = ASF::EmeritusFiles.findpath(ASF::Person.find('emeritus1'))
+        expect(res).to be_kind_of(Array)
+        expect(res.size).to eq(2)
+        expect(res[0]).to end_with('/emeritus1.txt')
+        expect(res[1]).to eq('emeritus1.txt')
+    end
 end
 
 describe ASF::EmeritusReinstatedFiles do
@@ -68,5 +75,12 @@ describe ASF::EmeritusRescindedFiles do
     it "find Person.find('emeritus4') should return emeritus4.txt" do
         res = ASF::EmeritusRescindedFiles.find(ASF::Person.find('emeritus4'))
         expect(res).to eq('emeritus4.txt')
+    end
+    it "findpath Person.find('emeritus4') should return svnpath and file " do
+        res = ASF::EmeritusRescindedFiles.findpath(ASF::Person.find('emeritus4'))
+        expect(res).to be_kind_of(Array)
+        expect(res.size).to eq(2)
+        expect(res[0]).to end_with('/emeritus4.txt')
+        expect(res[1]).to eq('emeritus4.txt')
     end
 end

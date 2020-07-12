@@ -28,9 +28,9 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       index = text.index(/^\s\*\)\s/, text.index(/^Emeritus/))
       entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
       # if pending emeritus request was found, move it to emeritus
-      pathname = ASF::EmeritusRequestFiles.findpath(user)
+      pathname, basename = ASF::EmeritusRequestFiles.findpath(user)
       if pathname
-        extra << ['mv', pathname, ASF::SVN.svnpath!('emeritus', File.basename(pathname))]
+        extra << ['mv', pathname, ASF::SVN.svnpath!('emeritus', basename)]
       else # there should be a request file
         _warn "Emeritus request file not found"
       end
@@ -39,10 +39,10 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
       # if emeritus file was found, move it to emeritus-reinstated
       # otherwise ignore
-      pathname = ASF::EmeritusFiles.findpath(user)
+      pathname, basename = ASF::EmeritusFiles.findpath(user)
       if pathname
         # TODO: allow for previous reinstated file
-        extra << ['mv', pathname,  ASF::SVN.svnpath!('emeritus-reinstated', File.basename(pathname))]
+        extra << ['mv', pathname,  ASF::SVN.svnpath!('emeritus-reinstated', basename)]
       end
     elsif @action == 'deceased'
       index = text.index(/^\s\*\)\s/, text.index(/^Deceased/))
@@ -60,9 +60,9 @@ end
 # Owner operations
 if @action == 'rescind_emeritus'
   # TODO handle case where rescinded file already exists
-  pathname = ASF::EmeritusRequestFiles.findpath(user)
+  pathname, basename = ASF::EmeritusRequestFiles.findpath(user)
   if pathname
-    ASF::SVN.svn_!('mv', [pathname, ASF::SVN.svnpath!('emeritus-requests-rescinded', File.basename(pathname))], _, {env:env, msg:message})
+    ASF::SVN.svn_!('mv', [pathname, ASF::SVN.svnpath!('emeritus-requests-rescinded', basename)], _, {env:env, msg:message})
   else
     _warn "Emeritus request file not found"
   end
