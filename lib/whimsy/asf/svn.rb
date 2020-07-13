@@ -290,8 +290,12 @@ module ASF
     end
 
     # retrieve list, [err] for a path in svn
-    def self.list(path, user=nil, password=nil)
-      return self.svn('list', path, {user: user, password: password})
+    def self.list(path, user=nil, password=nil, timestamp=false)
+      if timestamp
+        return self.svn(['list','--xml'], path, {user: user, password: password})
+      else
+        return self.svn('list', path, {user: user, password: password})
+      end
     end
 
     # These keys are common to svn_ and svn
@@ -305,8 +309,24 @@ module ASF
         raise ArgumentError.new "Following options not recognised: #{bad_keys.inspect}"
       end
 
+      if command.is_a? String
+        # TODO convert to ArgumentError after further testing
+        Wunderbar.error "command #{command.inspect} is invalid" unless command =~ %r{^[a-z]+$}
+      else
+        if command.is_a? Array
+          command.each do |cmd|
+            raise ArgumentError.new "command #{cmd.inspect} must be a String" unless cmd.is_a? String
+          end
+          Wunderbar.error "command #{command.first.inspect} is invalid" unless command.first =~ %r{^[a-z]+$}
+          command.drop(1).each do |cmd|
+            Wunderbar.error "Invalid option #{cmd.inspect}" unless cmd =~ %r{^(--[a-z][a-z=]+|-[a-z])$}
+          end
+        else
+          raise ArgumentError.new "command must be a String or an Array of Strings"
+        end
+      end
       # build svn command
-      cmd = ['svn', command, '--non-interactive']
+      cmd = ['svn', *command, '--non-interactive']
       stdin = nil # for use with -password-from-stdin
 
       msg = options[:msg]
@@ -361,6 +381,7 @@ module ASF
     # low level SVN command
     # params:
     # command - info, list etc
+    # Can be array, e.g. ['list', '--xml']
     # path - the path(s) to be used - String or Array of Strings
     # options - hash of:
     #  :msg - ['--message', value]
@@ -414,6 +435,7 @@ module ASF
     # low level SVN command for use in Wunderbar context (_json, _text etc)
     # params:
     # command - info, list etc
+    # Can be array, e.g. ['list', '--xml']
     # path - the path(s) to be used - String or Array of Strings
     # _ - wunderbar context
     # options - hash of:

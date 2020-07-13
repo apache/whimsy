@@ -277,6 +277,19 @@ describe ASF::SVN do
       end
     end
 
+    it "svn(['help'], 'help') should return some help" do
+      out, err = ASF::SVN.svn(['help'],'help')
+      expect(out).to match(/Describe the usage of this program or its subcommands/)
+      expect(out).not_to match(/Global options/)
+    end
+    it "svn(['help', '-v'], 'help') should return Global help" do
+      out, err = ASF::SVN.svn(['help', '-v'],'help')
+      expect(out).to match(/Global options/)
+    end
+    it "svn(['help', '--verbose'], 'help') should return Global help" do
+      out, err = ASF::SVN.svn(['help', '--verbose'],'help')
+      expect(out).to match(/Global options/)
+    end
   end
 
   describe "ASF::SVN._svn_build_cmd" do
@@ -343,6 +356,27 @@ describe ASF::SVN do
       expect(cmd).to eq(["svn", "help", "--non-interactive", "--revision", '123', "--", "path"])
     end
 
+    it "_svn_build_cmd(true, 'path') should fail with ArgumentError" do
+      expect {ASF::SVN._svn_build_cmd(true, 'path', {}) }.to raise_error(ArgumentError, 'command must be a String or an Array of Strings')
+    end
+
+    it "_svn_build_cmd(['list', true], 'path') should fail with ArgumentError" do
+      expect {ASF::SVN._svn_build_cmd([true], 'path', {}) }.to raise_error(ArgumentError, 'command true must be a String')
+    end
+
+    it "_svn_build_cmd([true], 'path') should fail with ArgumentError" do
+      expect {ASF::SVN._svn_build_cmd([true], 'path', {}) }.to raise_error(ArgumentError, 'command true must be a String')
+    end
+
+    it "_svn_build_cmd(['help', 'xyz'], 'path') should report error" do
+      expect {
+         # seems to be necessary to reset logger otherwise output is lost. However it's only necessary in conjunction with
+         # other tests such as committee_spec.rb (q.v.)
+        Wunderbar.logger = nil
+        ASF::SVN._svn_build_cmd(['help','xyz'], 'path', {})
+      }.to output("_ERROR Invalid option \"xyz\"\n").to_stderr
+    end
+  
   end
 
   describe "ASF::SVN.svnpath!" do
