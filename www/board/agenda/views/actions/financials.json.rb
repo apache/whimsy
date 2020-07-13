@@ -15,7 +15,7 @@ require 'active_support/core_ext/numeric/conversions'
 # https://github.com/weshatheleopard/rubyXL/issues/235
 begin
   stdout, $stdout = $stdout, File.new("/dev/null", "w")
-  worksheet = RubyXL::Parser.parse_buffer(Base64.decode64(@spreadsheet))
+  workbook = RubyXL::Parser.parse_buffer(Base64.decode64(@spreadsheet))
 ensure
   $stdout = stdout
 end
@@ -23,7 +23,7 @@ end
 # extract data
 rows = []
 
-summary = worksheet.find do |sheet|
+summary = workbook.worksheets.find do |sheet|
   sheet.sheet_name.strip.downcase == 'board summary'
 end
 
