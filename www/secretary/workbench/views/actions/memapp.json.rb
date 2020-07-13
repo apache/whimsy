@@ -68,17 +68,17 @@ end
 
 # insert entry into members.txt
 task "svn commit foundation/members.txt" do
-  # construct line to be inserted
-  @entry = [
-    "#{@fullname}",
-    "#{@addr.gsub(/^/,'    ').gsub(/\r/,'')}",
-    ("    #{@country}"     unless @country.empty?),
-    "    Email: #{@email}",
-    ("      Tel: #{@tele}" unless @tele.empty?),
-    ("      Fax: #{@fax}"  unless @fax.empty?),
-    " Forms on File: ASF Membership Application",
-    " Avail ID: #{@availid}"
-  ].compact.join("\n") + "\n"
+  # Construct initial entry:
+  fields = {
+    fullname: @fullname,
+    address: @addr,
+    country: @country,
+    email: @email,
+    tele: @tele,
+    fax: @fax,
+    availid: @availid,
+  }
+  @entry = ASF::Member.make_entry(fields)
 
   form do
     _textarea @entry, name: 'entry', rows: @entry.split("\n").length
