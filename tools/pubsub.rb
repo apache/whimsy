@@ -128,7 +128,7 @@ if not Dir.exist? options.local
 end
 
 #
-# Monitor PubSub endpoint (see http://www.apache.org/dev/gitpubsub.html)
+# Monitor PubSub endpoint (see https://infra.apache.org/pypubsub.html)
 #
 
 PROJECT = File.basename(options.remote, '.git')
