@@ -119,7 +119,8 @@ module ASF
       id = person.id
       files = self.listnames(getDate).find_all do |file|
         if getDate
-          stem = file[1].split('.')[0] # directories don't have a trailing /
+          # allow for missing epoch
+          stem = [file].pop.split('.')[0] # directories don't have a trailing /
         else
           stem = file.split('.')[0] # directories don't have a trailing /
         end
