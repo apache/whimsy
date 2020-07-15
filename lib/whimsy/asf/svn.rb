@@ -914,7 +914,7 @@ module ASF
         open(listfile) do |l|
           filerev = l.gets.chomp
           if filerev.start_with? EPOCH_TAG # drop the marker
-            filerev = filerev[EPOCH_LEN..] 
+            filerev = filerev[EPOCH_LEN..-1] 
             filedates = true
           end
         end
