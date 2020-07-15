@@ -104,21 +104,25 @@ module ASF
 
   class EmeritusFiles
     @base = 'emeritus'
-    def self.listnames
-      _, list = ASF::SVN.getlisting(@base)
+    def self.listnames(getDates=false)
+      _, list = ASF::SVN.getlisting(@base,nil,true,getDates)
       list
     end
 
     # Find the file name that matches a person
     # return nil if not exactly one match
     # TODO: should it raise an error on multiple matches?
-    def self.find(person)
+    def self.find(person, getDate=false)
       # TODO use common stem name method
       name = (person.attrs['cn'].first rescue person.member_name).force_encoding('utf-8').
         downcase.gsub(' ','-').gsub(/[^a-z0-9-]+/,'') rescue nil
       id = person.id
-      files = self.listnames.find_all do |file|
-        stem = file.split('.')[0] # directories don't have a trailing /
+      files = self.listnames(getDate).find_all do |file|
+        if getDate
+          stem = file[1].split('.')[0] # directories don't have a trailing /
+        else
+          stem = file.split('.')[0] # directories don't have a trailing /
+        end
         stem == id or stem == name
       end
       # Only valid if we match a single file or directory

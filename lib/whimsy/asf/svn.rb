@@ -894,11 +894,14 @@ module ASF
       end
     end
     
+    EPOCH_SEP = ':' # separator
+    EPOCH_TAG = 'epoch'+EPOCH_SEP # marker in file to show epochs are present
+    EPOCH_LEN = EPOCH_TAG.size
     # update directory listing in /srv/svn/<name>.txt
     # N.B. The listing includes the trailing '/' so directory names can be distinguished
     # @return filerev, svnrev
     # on error return nil,message
-    def self.updatelisting(name, user=nil, password=nil)
+    def self.updatelisting(name, user=nil, password=nil, storedates=false)
       url = self.svnurl(name)
       unless url
         return nil,"Cannot find URL"
@@ -906,20 +909,42 @@ module ASF
       listfile, listfiletmp = self.listingNames(name)
       filerev = "0"
       svnrev = "?"
+      filedates = false
       begin
         open(listfile) do |l|
           filerev = l.gets.chomp
+          if filerev.start_with? EPOCH_TAG # drop the marker
+            filerev = filerev[EPOCH_LEN..] 
+            filedates = true
+          end
         end
       rescue
       end
       svnrev, err = self.getInfoItem(url,'last-changed-revision',user,password)
       if svnrev
         begin
-          unless filerev == svnrev
-            list = self.list(url, user, password)
-            open(listfiletmp,'w') do |w|
-              w.puts svnrev
-              w.puts list
+          unless filerev == svnrev && filedates == storedates
+            list = self.list(url, user, password, storedates)
+            if storedates
+              require 'nokogiri'
+              require 'date'
+              open(listfiletmp,'w') do |w|
+                w.puts "#{EPOCH_TAG}#{svnrev}" # show that this file has epochs
+                xml_doc  = Nokogiri::XML(list)
+                xml_doc.css('entry').each do |entry|
+                  kind = entry.css('@kind').text
+                  name = entry.at_css('name').text
+                  date = entry.at_css('date').text
+                  epoch = DateTime.parse(date).strftime('%s')
+                  # The separator is the last character of the epoch tag
+                  w.puts "%s#{EPOCH_SEP}%s%s" % [epoch,name,kind=='dir' ? '/' : '']
+                end
+              end
+            else
+              open(listfiletmp,'w') do |w|
+                w.puts svnrev
+                w.puts list
+              end
             end
             File.rename(listfiletmp,listfile)
           end
@@ -938,23 +963,37 @@ module ASF
     # - name: alias for SVN checkout
     # - tag: previous tag to check for changes, default nil
     # - trimSlash: whether to trim trailing '/', default true
+    # - getEpoch: whether to return the epoch if present, default false
     # @return tag, Array of names
     # or tag, nil if unchanged
     # or Exception if error
     # The tag should be regarded as opaque
-    def self.getlisting(name, tag=nil, trimSlash = true)
+    def self.getlisting(name, tag=nil, trimSlash = true, getEpoch = false)
       listfile, _ = self.listingNames(name)
-      curtag = "%s:%d" % [trimSlash, File.mtime(listfile)]
+      curtag = "%s:%s:%d" % [trimSlash, getEpoch, File.mtime(listfile)]
       if curtag == tag
         return curtag, nil
       else
         open(listfile) do |l|
           # fetch the file revision from the first line
           _filerev = l.gets.chomp # TODO should we be checking _filerev?
-          if trimSlash
-            return curtag, l.readlines.map {|x| x.chomp.chomp('/')}
+          if _filerev.start_with?(EPOCH_TAG)
+            if getEpoch
+              trimEpoch = -> l { l.split(EPOCH_SEP,2) } # return as array
+            else
+              trimEpoch = -> l { l.split(EPOCH_SEP,2)[1] } # strip the epoch
+            end
           else
-            return curtag, l.readlines.map(&:chomp)
+            trimEpoch = nil
+          end
+          if trimSlash
+            list = l.readlines.map {|x| x.chomp.chomp('/')}
+            list = list.map(&trimEpoch) if trimEpoch
+            return curtag, list
+          else
+            list = l.readlines.map(&:chomp)
+            list = list.map(&trimEpoch) if trimEpoch
+            return curtag, list
           end
         end
       end

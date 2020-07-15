@@ -2,6 +2,8 @@ require 'whimsy/asf/memapps'
 
 class Committer
 
+  SECS_TO_DAYS = 60*60*24
+
   def self.serialize(id, env)
     response = {}
 
@@ -152,9 +154,11 @@ class Committer
           response[:forms][:emeritus] = ASF::SVN.svnpath!('emeritus', file)
         end
 
-        file = ASF::EmeritusRequestFiles.find(person)
+        epoch, file = ASF::EmeritusRequestFiles.find(person, true)
         if file
           response[:forms][:emeritus_request] = ASF::SVN.svnpath!('emeritus-requests-received', file)
+          # Calculate the age in days
+          response[:emeritus_request_age] = (((Time.now.to_i - epoch.to_i).to_f/SECS_TO_DAYS)).round(1).to_s
         end
 
         file = ASF::EmeritusRescindedFiles.find(person)

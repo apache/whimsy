@@ -48,6 +48,11 @@ class PersonForms < Vue
                   _a 'Emeritus Request',
                     href: "#{link}"
                 end
+                emeritus_request_age = committer['emeritus_request_age']
+                if emeritus_request_age
+                  _ ' Days since submission: '
+                  _ emeritus_request_age
+                end
               end
             elsif form == 'emeritus_rescinded'
               _li do

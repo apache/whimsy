@@ -391,4 +391,20 @@ describe ASF::SVN do
     end
   end
 
-end
+  describe "ASF::SVN.getlisting" do
+    set_svnroot # need local test data here
+    it "getlisting('emeritus') returns array of 1" do
+      tag,list = ASF::SVN.getlisting('emeritus')
+      expect(list).to eq(['emeritus1.txt'])
+    end
+    it "getlisting('emeritus-requests-received') returns array of 1" do
+      tag,list = ASF::SVN.getlisting('emeritus-requests-received')
+      expect(list).to eq(['emeritus3.txt'])
+    end
+    it "getlisting('emeritus-requests-received,nil,true,true') returns array of [epoch,name]" do
+      tag,list = ASF::SVN.getlisting('emeritus-requests-received',nil,true,true)
+      expect(list).to eq([['1594814364','emeritus3.txt']])
+    end
+  end
+  
+  end

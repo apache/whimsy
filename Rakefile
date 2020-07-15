@@ -132,7 +132,7 @@ namespace :svn do
           puts File.join(Dir.pwd, name)
           if description['list']
             puts "#{PREFIX} Updating listing file"
-            old,new = ASF::SVN.updatelisting(name)
+            old,new = ASF::SVN.updatelisting(name,nil,nil,description['dates'])
             if old == new
               puts "List is at revision #{old}."
             elsif old == nil
