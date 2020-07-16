@@ -134,18 +134,12 @@ class Minutes
         if title =~ /Action Items/
           comments = notes.gsub(/\r\n/,"\n").gsub(/^/,'    ')
         elsif title == 'Adjournment'
-          if notes =~ /^1[01]:\d\d/
-            comments = "\n    Adjourned at #{notes} a.m. (Pacific)\n"
-          elsif notes =~ /^\d\d:\d\d/
-            comments = "\n    Adjourned at #{notes} p.m. (Pacific)\n"
-          else
-            comments += "\n" + notes.to_s.reflow(4,68) + "\n"
-          end
+          comments = "\n    Adjourned at #{notes} UTC\n"
         else
           comments += "\n" + notes.to_s.reflow(4,68) + "\n"
         end
       elsif title == 'Adjournment'
-        comments = "\n    Adjourned at ??:?? a.m. (Pacific)\n"
+        comments = "\n    Adjourned at ??:?? UTC\n"
       end
       [attach, title, comments]
     end
