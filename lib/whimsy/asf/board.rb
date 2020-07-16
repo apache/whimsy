@@ -124,6 +124,7 @@ module ASF
 
       def for(pmc)
         chair = pmc.chair
+        raise "no chair found for #{pmc.name}" if not chair
 
         if @directors.include? chair
           "#{chair.public_name}"

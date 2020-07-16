@@ -547,7 +547,14 @@ get '/new' do
   template = File.join(ASF::SVN['foundation_board'], 'templates', 'board_agenda.erb')
   @disabled = dir("board_agenda_*.txt").
     include? @meeting.strftime("board_agenda_%Y_%m_%d.txt")
-  @agenda = Erubis::Eruby.new(IO.read(template)).result(binding)
+
+  begin
+    @agenda = Erubis::Eruby.new(IO.read(template)).result(binding)
+  rescue => error
+    status 500
+    STDERR.puts error
+    return "error in #{template} in: #{error}"
+  end
 
   @cssmtime = File.mtime('public/stylesheets/app.css').to_i
   _html :new
