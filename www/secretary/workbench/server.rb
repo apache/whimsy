@@ -11,6 +11,7 @@ require 'ruby2js/filter/require'
 require 'erb'
 require 'sanitize'
 require 'escape'
+require 'time' # for iso8601
 
 require_relative 'personalize'
 require_relative 'helpers'
@@ -72,7 +73,7 @@ get '/' do
     days = (((Time.now.to_i - epoch.to_i).to_f/SECS_TO_DAYS)).round(1)
     id = File.basename(file,'.*')
     @messages << {
-      time: Time.at(epoch.to_i).to_s,
+      time: Time.at(epoch.to_i).gmtime.iso8601,
       href: "/roster/committer/#{id}",
       from: ASF::Person.find(id).cn,
       subject: "Pending emeritus request - #{days.to_s} days old",
