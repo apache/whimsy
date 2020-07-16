@@ -45,6 +45,8 @@ require 'whimsy/asf'
 require 'whimsy/asf/memapps'
 ASF::Mail.configure
 
+SECS_TO_DAYS = 60*60*24
+
 set :show_exceptions, true
 
 disable :logging # suppress log of requests to stderr/error.log
@@ -61,6 +63,21 @@ get '/' do
     @messages = Mailbox.new(@mbox).client_headers.select do |message|
       message[:status] != :deleted
     end
+  else
+    @messages = [] # ensure the array exists
+  end
+
+  # Show outstanding emeritus requests
+  ASF::EmeritusRequestFiles.listnames(true).each do |epoch, file|
+    days = (((Time.now.to_i - epoch.to_i).to_f/SECS_TO_DAYS)).round(1)
+    id = File.basename(file,'.*')
+    @messages << {
+      time: Time.at(epoch.to_i).to_s,
+      href: "/roster/committer/#{id}",
+      from: ASF::Person.find(id).cn,
+      subject: "Pending emeritus request - #{days.to_s} days old",
+      status: days < 10.0 ? 'Pending' : 'Ready'
+    }
   end
 
   @cssmtime = File.mtime('public/secmail.css').to_i
