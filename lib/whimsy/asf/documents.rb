@@ -134,6 +134,11 @@ module ASF
       end
     end
 
+    # return the svn path to an arbitrary file
+    def self.svnpath!(file)
+      ASF::SVN.svnpath!(@base, file)
+    end
+
     # Find the svnpath to the file for a person
     # Returns
     # svnpath, filename
@@ -143,7 +148,7 @@ module ASF
       path = file = nil
       file = self.find(person)
       if file
-        path = ASF::SVN.svnpath!(@base, file)
+        path = self.svnpath!(file)
       end
       [path, file]
     end
