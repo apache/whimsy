@@ -1,4 +1,5 @@
 # find indicated mailbox in the list of available mailboxes
+# This code is invoked by workbench/server.rb
 available = Dir["#{ARCHIVE}/*.yml"].sort
 index = available.find_index "#{ARCHIVE}/#{@mbox}.yml"
 

@@ -76,7 +76,7 @@ end
 # support for fetching previous month's worth of messages
 get %r{/(\d{6})} do |mbox|
   @mbox = mbox
-  _json :index
+  _json :index # This invokes workbench/views/index.json.rb
 end
 
 # retrieve a single message
