@@ -151,24 +151,26 @@ class Committer
 
         file = ASF::EmeritusFiles.find(person)
         if file
-          response[:forms][:emeritus] = ASF::SVN.svnpath!('emeritus', file)
+          response[:forms][:emeritus] = ASF::EmeritusFiles.svnpath!(file)
         end
 
         epoch, file = ASF::EmeritusRequestFiles.find(person, true)
         if file
-          response[:forms][:emeritus_request] = ASF::SVN.svnpath!('emeritus-requests-received', file)
+          response[:forms][:emeritus_request] = ASF::EmeritusRequestFiles.svnpath!(file)
           # Calculate the age in days
           response[:emeritus_request_age] = (((Time.now.to_i - epoch.to_i).to_f/SECS_TO_DAYS)).round(1).to_s
+        elsif epoch # listing does not have both epoch and file
+          response[:forms][:emeritus_request] = ASF::EmeritusRequestFiles.svnpath!(epoch)
         end
 
         file = ASF::EmeritusRescindedFiles.find(person)
         if file
-          response[:forms][:emeritus_rescinded] = ASF::SVN.svnpath!('emeritus-requests-rescinded', file)
+          response[:forms][:emeritus_rescinded] = ASF::EmeritusRescindedFiles.svnpath!(file)
         end
 
         file = ASF::EmeritusReinstatedFiles.find(person)
         if file
-          response[:forms][:emeritus_reinstated] = ASF::SVN.svnpath!('emeritus-reinstated', file)
+          response[:forms][:emeritus_reinstated] = ASF::EmeritusReinstatedFiles.svnpath!(file)
         end
 
       else
