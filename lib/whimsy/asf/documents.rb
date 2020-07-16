@@ -118,12 +118,10 @@ module ASF
         downcase.gsub(' ','-').gsub(/[^a-z0-9-]+/,'') rescue nil
       id = person.id
       files = self.listnames(getDate).find_all do |file|
-        if getDate
-          # allow for missing epoch
-          stem = [file].pop.split('.')[0] # directories don't have a trailing /
-        else
-          stem = file.split('.')[0] # directories don't have a trailing /
+        if file.is_a?(Array) # we have [epoch, file]
+          file = file[1]
         end
+        stem = file.split('.')[0] # directories don't have a trailing /
         stem == id or stem == name
       end
       # Only valid if we match a single file or directory
