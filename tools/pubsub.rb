@@ -28,7 +28,6 @@ options.local = '/srv/whimsy'
 options.pidfile = "/var/run/#{script}.pid"
 options.streamURL = 'http://pubsub.apache.org:2069/git/'
 options.puppet = false
-# options.streamURL = 'http://svn.apache.org:2069/commits'
 
 optionparser = OptionParser.new do |opts|
   opts.on '-u', '--user id', "Optional user to run #{script} as" do |user|
