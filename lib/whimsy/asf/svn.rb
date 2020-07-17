@@ -155,7 +155,7 @@ module ASF
     # name - the nickname for the URL
     # relpath - the relative path(s) to the file
     def self.svnpath!(name,*relpath)
-      base = self.svnurl!(name)
+      base = self.svnurl!(name).untaint # this should be OK
       base = base + '/' unless base.end_with? '/'
       endpart = [relpath].join('/').sub(%r{^/+},'').gsub(%r{/+},'/')
       return base + endpart
