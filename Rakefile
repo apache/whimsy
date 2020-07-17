@@ -114,7 +114,8 @@ task :config do
 end
 
 namespace :svn do
-  task :update, [:listonly] => :config do |task, args|
+  task :update, [:arg1] => :config do |task, args|
+    arg1 = args.arg1 || '' # If defined, it is either the name of a checkout to update or 'skip'
     # Include all
     svnrepos = ASF::SVN.repo_entries(true) || {}
 
@@ -130,6 +131,9 @@ namespace :svn do
         svnrepos.each do |name, description|
           puts
           puts File.join(Dir.pwd, name)
+          # skip the update unless it matches the parameter provided
+          # 'skip' is special and means update all list files
+          next unless name == arg1 || arg1 == 'skip' || arg1 == ''
           if description['list']
             puts "#{PREFIX} Updating listing file"
             old,new = ASF::SVN.updatelisting(name,nil,nil,description['dates'])
@@ -157,7 +161,7 @@ namespace :svn do
             end
           end
 
-          next if args.listonly == 'skip'
+          next if arg1 == 'skip'
           if noCheckout
             puts "Skipping" if depth == 'skip' # Must agree with monitors/svn.rb
             next
