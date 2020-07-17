@@ -83,7 +83,7 @@ feature 'report' do
       expect(draft).to include('@Sam: Is anyone on the PMC looking at the reminders?')
       expect(draft).to include('No report was submitted.')
       expect(draft).to include('was approved by Unanimous Vote of the directors present.')
-      expect(draft).to match(/Adjourned at \d+:\d\d [ap]\.m\. \(Pacific\)/)
+      expect(draft).to match(/Adjourned at \d+:\d\d UTC/)
 
       @agenda = 'board_agenda_2015_02_18.txt'
       @message = 'Draft minutes for 2015-02-18'

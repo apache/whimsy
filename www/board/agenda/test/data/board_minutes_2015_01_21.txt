@@ -859,7 +859,7 @@
 
 13. Adjournment
 
-    Adjourned at 11:34 a.m. (Pacific)
+    Adjourned at 11:34 UTC
 
 ============
 ATTACHMENTS:
