@@ -21,7 +21,7 @@ module ASF
     else
       svn_base = 'https://svn.apache.org/repos/'
     end
-    @base = URI.parse(svn_base)
+    @base = URI.parse(svn_base).untaint
     @mock = 'file:///var/tools/svnrep/'
     @semaphore = Mutex.new
     @testdata = {}
@@ -132,7 +132,7 @@ module ASF
     # Includes aliases
     def self.svnurl(name)
       entry = self._all_repo_entries[name] or return nil
-      url = entry['url']
+      url = entry['url'].untaint
       unless url # bad entry
         raise Exception.new("Unable to find url attribute for SVN entry #{name}")
       end
