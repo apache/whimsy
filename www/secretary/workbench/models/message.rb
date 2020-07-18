@@ -202,6 +202,31 @@ class Message
   end
 
   #
+  # write one or more attachments
+  # returns list of temporary file names
+  # [[name, path]]
+  def write_att(*attachments)
+    files = []
+
+    # drop all nil and empty values
+    attachments = attachments.flatten.reject {|name| name.to_s.empty?}
+
+    # if last argument is a Hash, treat it as name/value pairs
+    attachments += attachments.pop.to_a if Hash === attachments.last
+
+    if attachments.flatten.length == 1
+      attachment = attachments.first
+      files << [attachment, find(attachment).as_file.path]
+    else
+      # write out selected attachment
+      attachments.each do |attachment, basename|
+        files << [attachment, find(attachment).as_file.path]
+      end
+    end
+    files
+  end
+
+  #
   # Construct a reply message, and in the process merge the email
   # address from the original message (from, to, cc) with any additional
   # address provided on the call (to, cc, bcc).  Remove any duplicates
