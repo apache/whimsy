@@ -285,6 +285,8 @@ end
 directories = [
   '/srv/agenda',
   '/srv/cache',
+  '/srv/mail',
+  '/srv/mail/secretary',
   '/srv/secretary',
   '/srv/secretary/tlpreq',
   '/srv/whimsy/www/logs',
