@@ -129,11 +129,11 @@ namespace :svn do
       mkdir_p? File.dirname(svn)
       Dir.chdir File.dirname(svn) do
         svnrepos.each do |name, description|
-          puts
-          puts File.join(Dir.pwd, name)
           # skip the update unless it matches the parameter provided
           # 'skip' is special and means update all list files
           next unless name == arg1 || arg1 == 'skip' || arg1 == ''
+          puts
+          puts File.join(Dir.pwd, name)
           if description['list']
             puts "#{PREFIX} Updating listing file"
             old,new = ASF::SVN.updatelisting(name,nil,nil,description['dates'])
