@@ -123,8 +123,7 @@ if $0 == __FILE__
         end
       end
       matches.each do |k,v|
-        # For initial testing, just use echo
-        cmd = ['echo', 'rake', "svn:update[#{k}]"]
+        cmd = ['rake', "svn:update[#{k}]"]
         unless system(*cmd, {chdir: '/srv/whimsy'})
           puts "Error #{$?} processing #{cmd}"
         end
