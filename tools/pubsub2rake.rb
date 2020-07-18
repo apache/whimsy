@@ -10,6 +10,9 @@ require 'whimsy/asf/svn'
 
 class PubSub
 
+  require 'fileutils'
+  ALIVE = "/tmp/#{File.basename(__FILE__)}.alive" # TESTING ONLY
+
   @restartable = false
   @updated = false
   def self.listen(url, creds, options={})
@@ -27,6 +30,7 @@ class PubSub
           http.request request do |response|
             body = ''
             response.read_body do |chunk|
+              FileUtils.touch(ALIVE) # Temporary debug
               body += chunk
               # All chunks are terminated with \n. Since 2070 can split events into 64kb sub-chunks
               # we wait till we have gotten a newline, before trying to parse the JSON.
