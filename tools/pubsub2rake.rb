@@ -50,13 +50,13 @@ class PubSub
               end
               break if done
             end # reading chunks
-            puts "Done reading chunks"
+            puts "Done reading chunks" if debug
             break if done
           end # read response
-          puts "Done reading response"
+          puts "Done reading response" if debug
           break if done
         end # net start
-        puts "Done with start"
+        puts "Done with start" if debug
       rescue Errno::ECONNREFUSED => e
         @restartable = true
         STDERR.puts e.inspect
@@ -65,7 +65,7 @@ class PubSub
         STDERR.puts e.inspect
         STDERR.puts e.backtrace
       end
-      puts "Done with thread"
+      puts "Done with thread" if debug
     end # thread
     puts("Pubsub thread started ...")
     ps_thread.join
