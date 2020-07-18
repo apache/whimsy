@@ -33,67 +33,55 @@ _personalize_email(env.user)
 @document = "CCLA from #{@company}"
 
 ########################################################################
-#                            document/cclas                            #
+#              document/cclas and cclas.txt                            #
 ########################################################################
 
-# write attachment (+ signature, if present) to the documents/cclas directory
-task "svn commit documents/cclas/#@filename#{fileext}" do
+task "svn commit documents/cclas/#@filename#{fileext} and update cclas.txt" do
+  
+  # construct line to be inserted in cclas.txt
+  @cclalines = "notinavail:" + @company.strip
+  unless @contact.empty?
+    @cclalines += " - #{@contact.strip}"
+  end
+  @cclalines += ":#{@email.strip}:Signed Corp CLA"
+  unless @employees.empty?
+    @cclalines += " for #{@employees.strip.gsub(/\s*\n\s*/, ', ')}"
+  end
+  unless @product.empty?
+    @cclalines += " for #{@product.strip}"
+  end
+
   form do
     _input value: @selected, name: 'selected'
 
     if @signature and not @signature.empty?
       _input value: @signature, name: 'signature'
     end
-  end
 
-  complete do |dir|
-    # checkout empty directory
-    svn 'checkout', '--depth', 'empty',
-      ASF::SVN.svnurl('cclas'), "#{dir}/cclas"
-
-    # create/add file(s)
-    dest = message.write_svn("#{dir}/cclas", @filename, @selected, @signature)
-
-    # Show files to be added
-    svn 'status', "#{dir}/cclas"
-
-    # commit changes
-    svn 'commit', "#{dir}/cclas/#{@filename}#{fileext}", '-m', @document
-  end
-end
-
-########################################################################
-#                          officers/cclas.txt                          #
-########################################################################
-
-# insert line into cclas.txt
-task "svn commit foundation/officers/cclas.txt" do
-  # construct line to be inserted
-  @cclalines = "notinavail:" + @company.strip
-
-  unless @contact.empty?
-    @cclalines += " - #{@contact.strip}"
-  end
-
-  @cclalines += ":#{@email.strip}:Signed Corp CLA"
-
-  unless @employees.empty?
-    @cclalines += " for #{@employees.strip.gsub(/\s*\n\s*/, ', ')}"
-  end
-
-  unless @product.empty?
-    @cclalines += " for #{@product.strip}"
-  end
-
-  form do
     _input value: @cclalines, name: 'cclalines'
   end
 
   complete do |dir|
-    path = ASF::SVN.svnpath!('officers', 'cclas.txt')
-    ASF::SVN.update(path, @document, env, _, {diff: true}) do |tmpdir, contents|
-      contents + @cclalines + "\n"
+    ASF::SVN.multiUpdate_(ASF::SVN.svnpath!('officers', 'cclas.txt'), @document, env, _) do |text|
+
+      extras = []
+      # write the file(s)
+      dest = message.write_att(@selected, @signature)
+
+      if dest.size > 1 # write to a container directory
+        container = ASF::SVN.svnpath!('cclas', @filename)
+        extras << ['mkdir', container]
+        dest.each do |name, path|
+          extras << ['put', path, File.join(container, name)]
+        end
+      else
+        name, path = dest.flatten
+        extras << ['put', path, ASF::SVN.svnpath!('cclas',"#{@filename}#{fileext}")]
+      end
+
+      [text + @cclalines + "\n", extras]
     end
+
   end
 end
 
