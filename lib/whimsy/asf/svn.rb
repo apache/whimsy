@@ -885,7 +885,7 @@ module ASF
         if options[:dryrun]
           puts cmds # TODO: not sure this is correct for Wunderbar
         else
-          rc = ASF::SVN.svnmucc_(cmds,msg,env,_,filerev,{tmpdir: tmpdir})
+          rc = ASF::SVN.svnmucc_(cmds,msg,env,_,filerev,{tmpdir: tmpdir, verbose: options[:verbose]})
           raise "svnmucc failure #{rc} committing" unless rc == 0
           rc
         end
