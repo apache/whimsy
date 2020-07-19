@@ -35,7 +35,7 @@ class Parts < Vue
     }
 
     # locate corresponding signature file (if any)
-    signature = CheckSignature.find(@selected, @attachments)
+    signature = CheckSignature.find(decodeURIComponent(@selected), @attachments)
 
     # list of attachments
     _ul.attachments! @attachments, ref: 'attachments' do |attachment|
@@ -393,7 +393,7 @@ class Parts < Vue
     HTTP.post('../../actions/delete-attachment', data).then {|response|
       @attachments = response.attachments
       if event.type == 'message'
-        signature = CheckSignature.find(@selected, response.attachments)
+        signature = CheckSignature.find(decodeURIComponent(@selected), response.attachments)
         @busy = false
         @selected = signature
         self.delete_attachment(event) if signature

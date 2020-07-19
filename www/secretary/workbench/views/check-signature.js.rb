@@ -15,7 +15,7 @@ class CheckSignature < Vue
   end
 
   def mounted()
-    @signature = CheckSignature.find(@@selected, @@attachments)
+    @signature = CheckSignature.find(decodeURIComponent(@@selected), @@attachments)
 
     if @signature and @signature != @checked
       @flag = 'alert-info'
