@@ -111,6 +111,7 @@ task :config do
   require 'whimsy/asf/config'
   require 'whimsy/asf/git'
   require 'whimsy/asf/svn'
+  require 'whimsy/lockfile'
 end
 
 namespace :svn do
@@ -171,6 +172,8 @@ namespace :svn do
           if Dir.exist? name
             isSymlink = File.symlink?(name) # we don't want to change such checkouts
             Dir.chdir(name) {
+             # ensure single-threaded SVN updates
+             LockFile.lockfile(Dir.pwd, nil, File::LOCK_EX) do # ignore the return parameter
               system('svn', 'cleanup')
               unless isSymlink # Don't change depth for symlinks
                 curdepth = ASF::SVN.getInfoAsHash('.')['Depth'] || 'infinity' # not available as separate item
@@ -219,8 +222,10 @@ namespace :svn do
               end
 
               puts outerr # show what happened last
-            }
+             end # lockfile
+            } # chdir
           else # directory does not exist
+            # Don't bother locking here -- it should be very rarely needed
             system('svn', 'checkout', "--depth=#{depth}", svnpath, name)
              if files
                system('svn', 'update', *files, {chdir: name})
