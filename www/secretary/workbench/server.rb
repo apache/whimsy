@@ -77,7 +77,7 @@ get '/' do
       href: "/roster/committer/#{id}",
       from: ASF::Person.find(id).cn,
       subject: "Pending emeritus request - #{days.to_s} days old",
-      status: days < 10.0 ? 'Pending' : 'Ready'
+      status: days < 10.0 ? :emeritusPending : :emeritusReady
     }
   end
 

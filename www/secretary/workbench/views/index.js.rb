@@ -47,7 +47,11 @@ class Index < Vue
 
             _tr row_options do
               _td do
-                _a time, href: "#{message.href}", title: message.time
+                if[:emeritusReady, :emeritusPending].include? message.status
+                  _a time, href: "#{message.href}", title: message.time, target: "_blank"
+                else
+                  _a time, href: "#{message.href}", title: message.time
+                end
               end 
               _td message.from
               _td message.subject
