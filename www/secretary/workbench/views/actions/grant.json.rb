@@ -33,71 +33,56 @@ _personalize_email(env.user)
 @document = "Software Grant from #{@company}"
 
 ########################################################################
-#                           document/grants                            #
+#             document/grants & officers/grants.txt                    #
 ########################################################################
 
 # write attachment (+ signature, if present) to the documents/grants directory
-task "svn commit documents/grants/#@filename#{fileext}" do
-  form do
-    _input value: @selected, name: 'selected'
+task "svn commit documents/grants/#@filename#{fileext} and update grants.txt" do
 
-    if @signature and not @signature.empty?
-      _input value: @signature, name: 'signature'
-    end
-  end
-
-  complete do |dir|
-    # checkout empty directory
-    svn 'checkout', '--depth', 'empty',
-      ASF::SVN.svnurl('grants'), "#{dir}/grants"
-
-    # create/add file(s)
-    dest = message.write_svn("#{dir}/grants", @filename, @selected, @signature)
-
-    # Show files to be added
-    svn 'status', "#{dir}/grants"
-
-    # commit changes
-    svn 'commit', "#{dir}/grants/#{@filename}#{fileext}", '-m', @document
-  end
-end
-
-########################################################################
-#                         officers/grants.txt                          #
-########################################################################
-
-# insert line into grants.txt
-task "svn commit foundation/officers/grants.txt" do
   # construct line to be inserted
   @grantlines = "#{@company.strip}" +
     "\n  file: #{@filename}#{fileext}" +
     "\n  for: #{@description.strip.gsub(/\r?\n\s*/,"\n       ")}"
 
   form do
+    _input value: @selected, name: 'selected'
+
+    if @signature and not @signature.empty?
+      _input value: @signature, name: 'signature'
+    end
+
     _textarea @grantlines, name: 'grantlines', 
       rows: @grantlines.split("\n").length
   end
 
   complete do |dir|
-    # checkout empty officers directory
-    svn 'checkout', '--depth', 'empty',
-      ASF::SVN.svnurl!('officers'), 
-      File.join(dir, 'officers')
+    ASF::SVN.multiUpdate_(ASF::SVN.svnpath!('officers', 'grants.txt'), @document, env, _) do |input|
 
-    # retrieve grants.txt
-    dest = File.join(dir, 'officers', 'grants.txt')
-    svn 'update', dest
+      extras = []
 
-    # update grants.txt
-    marker = "\n# registering.  documents on way to Secretary.\n"
-    File.write dest,
-      File.read(dest).split(marker).insert(1, "\n#{@grantlines}\n", marker).join
+      # write the file(s)
+      dest = message.write_att(@selected, @signature)
 
-    # show the changes
-    svn 'diff', dest
+      if dest.size > 1 # write to a container directory
+        unless @filename =~ /\A[a-zA-Z][-.\w]+\z/
+          raise IOError.new("invalid filename: #{@filename}")
+        end
+        container = ASF::SVN.svnpath!('grants', @filename)
+        extras << ['mkdir', container]
+        dest.each do |name, path|
+          extras << ['put', path, File.join(container, name)]
+        end
+      else
+        name, path = dest.flatten
+        extras << ['put', path, ASF::SVN.svnpath!('grants',"#{@filename}#{fileext}")]
+      end
 
-    # commit changes
-    svn 'commit', dest, '-m', @document
+      # update grants.txt
+      marker = "\n# registering.  documents on way to Secretary.\n"
+      out = input.split(marker).insert(1, "\n#{@grantlines}\n", marker).join
+
+      [out, extras]
+    end
   end
 end
 
