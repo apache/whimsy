@@ -69,6 +69,9 @@ task "svn commit documents/cclas/#@filename#{fileext} and update cclas.txt" do
       dest = message.write_att(@selected, @signature)
 
       if dest.size > 1 # write to a container directory
+        unless @filename =~ /\A[a-zA-Z][-.\w]+\z/ # previously done by write_svn
+          raise IOError.new("invalid filename: #{@filename}")
+        end
         container = ASF::SVN.svnpath!('cclas', @filename)
         extras << ['mkdir', container]
         dest.each do |name, path|
