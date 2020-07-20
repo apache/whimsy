@@ -8,9 +8,6 @@ require 'whimsy/asf/rack'
 require 'whimsy/asf'
 require 'mail'
 require 'date'
-require 'open3'
-require 'tmpdir'
-require 'shellwords'
 
 user = ASF::Auth.decode(env = {})
 unless user.asf_member? or ASF.pmc_chairs.include? user
@@ -19,15 +16,12 @@ unless user.asf_member? or ASF.pmc_chairs.include? user
   exit
 end
 
-ACREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/acreq'
-OFFICERS = 'https://svn.apache.org/repos/private/foundation/officers'
+ICLAS = ASF::SVN.svnpath!('officers', 'iclas.txt')
 
 # get up to date data...
-# TODO replace with library method see WHIMSY-103
-SVN = ("svn --username #{Shellwords.escape env.user} " +
-  "--password #{Shellwords.escape env.password}").untaint
-requests = `#{SVN} cat #{ACREQ}/new-account-reqs.txt`
-iclas_txt = `#{SVN} cat #{OFFICERS}/iclas.txt`.force_encoding('utf-8')
+requests, err = ASF::SVN.svn('cat', ASF::SVN.svnpath!('acreq', 'new-account-reqs.txt'), {env: env})
+
+iclas_txt,err = ASF::SVN.svn('cat', ICLAS, {env: env}).force_encoding('utf-8')
 
 # grab the current list of PMCs from ldap
 pmcs = ASF::Committee.pmcs.map(&:name).sort
@@ -54,11 +48,10 @@ elsif iclas == '1' and email and iclas_txt =~ /^notinavail:.*?:(.*?):#{email}:/
   iclas = {email => $1}
 else
   count = iclas ? iclas.to_i : 300 rescue 300
-  oldrev = \
-    `#{SVN} log --incremental -q -r HEAD:0 -l#{count} -- #{OFFICERS}/iclas.txt`.
-    split("\n")[-1].split()[0][1..-1].to_i
-  iclas = Hash[*`#{SVN} diff -r #{oldrev}:HEAD -- #{OFFICERS}/iclas.txt`.
-    scan(/^[+]notinavail:.*?:(.*?):(.*?):Signed CLA/).flatten.reverse]
+  log, err = ASF::SVN.svn(['log', '--incremental', '-q', "-l#{count}"], ICLAS, {revision: 'HEAD:0', env: env})
+  oldrev = log.split("\n")[-1].split()[0][1..-1].to_i
+  diff, err = ASF::SVN.svn('diff', ICLAS, {revision: "#{oldrev}:HEAD", env: env})
+  iclas = Hash[*diff.scan(/^[+]notinavail:.*?:(.*?):(.*?):Signed CLA/).flatten.reverse]
 end
 
 # grab the list of userids that have been assigned (for validation purposes)
@@ -339,29 +332,16 @@ _html do
                     Using #{ENV['HTTP_USER_AGENT']}
                   EOF
 
-                  Dir.mktmpdir do |tmpdir|
-                    tmpdir.untaint
-
-                    # Checkout the ACREQ directory
-                    `#{SVN} co #{ACREQ} #{tmpdir}`
-
-                    # Update the new-account-reqs file...
-                    File.open(File.join(tmpdir, 'new-account-reqs.txt'), 'a') do |file|
-                      file.puts(line)
-                    end
-
-                    # and commit the change ...
+                  msg = "#{@user} account request by #{user.id} for #{requestor}"
+                  rc = ASF::SVN.update(ASF::SVN.svnpath!('acreq', 'new-account-reqs.txt'), msg, env, _) do |dir, input|
                     _h2 'Commit messages'
-                    rc = ASF::SVN.svn_('commit', File.join(tmpdir, 'new-account-reqs.txt'), _,
-                          {msg: "#{@user} account request by #{user.id} for #{requestor}", env: env})
-
-                    if rc == 0
-                      mail.deliver!
-                    else
-                      tobe = 'that would have been '
-                    end
+                    input + line + "\n"
                   end
-
+                  if rc == 0
+                    mail.deliver!
+                  else
+                    tobe = 'that would have been '
+                  end
                   # report on status
                   _h2 "New entry #{tobe}added:"
                   _pre line
