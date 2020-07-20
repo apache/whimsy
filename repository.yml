@@ -34,6 +34,10 @@
   Meetings:
     url: private/foundation/Meetings
 
+  acreq: # for account requests
+    url: infra/infrastructure/trunk/acreq
+    depth: skip
+
   apachecon:
     url: private/foundation/ApacheCon
     depth: empty
