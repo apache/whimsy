@@ -826,8 +826,7 @@ agenda.sort.each do |title, reports|
           href = "http://apache.org/foundation/records/minutes/" +
             "#{report.meeting[0...4]}/board_minutes_#{report.meeting}.txt"
         else
-          href = 'https://svn.apache.org/repos/private/foundation/board/' +
-            "board_minutes_#{report.meeting}.txt"
+          href = ASF::SVN.svnpath!('foundation_board', "board_minutes_#{report.meeting}.txt")
         end
 
         x.a Date.parse(report.meeting.gsub('_','/')).strftime("%d %b %Y"),
