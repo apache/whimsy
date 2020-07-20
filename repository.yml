@@ -191,3 +191,7 @@
 
   steve:
     url: asf/steve/trunk
+
+  subreq: # for mail subscription requests
+    url: infra/infrastructure/trunk/subreq
+    depth: skip
