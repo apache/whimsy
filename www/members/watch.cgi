@@ -276,7 +276,7 @@ _html do
                   Dir[File.join(board, 'board_agenda_*')].sort.each do |agenda|
                     agenda.untaint
                     if File.read(agenda).include? search_string
-                      minutes = ASF::SVN.svnpath!('board', File.basename(agenda))
+                      minutes = ASF::SVN.svnpath!('foundation_board', File.basename(agenda))
                       date = agenda.gsub('_','-')[/(\d+-\d+-\d+)/,1]
                       break
                     end

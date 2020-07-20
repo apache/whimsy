@@ -269,7 +269,7 @@ class Report < Vue
   def linkMinutes(text)
     text.gsub! /board_minutes_(\d+)_\d+_\d+\.txt/ do |match, year|
       if Server.drafts.include? match
-        link = ASF::SVN.svnpath!('board', match)
+        link = ASF::SVN.svnpath!('foundation_board', match)
       else
         link = "http://apache.org/foundation/records/minutes/#{year}/#{match}"
       end
