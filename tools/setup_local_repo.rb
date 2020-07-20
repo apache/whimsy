@@ -40,6 +40,7 @@ svnrepos.each do |name, entry|
   end
 
   # for each file, if it does not exist, copy the file from the ASF repo
+  # TODO it might be better to copy from samples
   (entry['files'] || []).each do |file|
     filepath = File.join(svndir,file)
     revision, err = ASF::SVN.getRevision(filepath)
@@ -57,5 +58,8 @@ svnrepos.each do |name, entry|
       end
     end
   end
-
+  # Also need basic versions of:
+  # grants.txt
+  # cclas.txt
+  # Meetings/yyyymmdd/memapp-received.txt where yyyymmdd is within the time limit
 end
