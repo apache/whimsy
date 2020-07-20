@@ -189,7 +189,7 @@ if (@change || @establish) and env.password
       body "Dear new PMC chairs,\n\nCongratulations on your new role at " +
       "Apache. I've changed your LDAP privileges to reflect your new " +
       "status.\n\nPlease read this and update the foundation records:\n" +
-      "https://svn.apache.org/repos/private/foundation/officers/advice-for-new-pmc-chairs.txt" +
+      "#{ASF::SVN.svnpath!('officers', 'advice-for-new-pmc-chairs.txt')}" +
       "\n\nWarm regards,\n\n#{sender.public_name}"
     end
 

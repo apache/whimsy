@@ -28,9 +28,9 @@ _html do
           _ "This script takes the list of subscribers (updated #{modtime}) to "
           _a 'board@apache.org', href: 'https://mail-search.apache.org/members/private-arch/board/'
           _ ' which are matched against '
-          _a 'members.txt', href: 'https://svn.apache.org/repos/private/foundation/members.txt'
+          _a 'members.txt', href: ASF::SVN.svnpath!('foundation', 'members.txt')
           _ ', '
-          _a 'iclas.txt', href: 'https://svn.apache.org/repos/private/foundation/officers/iclas.txt'
+          _a 'iclas.txt', href: ASF::SVN.svnpath!('officers', 'iclas.txt')
           _ ', and '
           _code 'ldapsearch mail'
           _ ' to match each email address to an Apache ID.  '
@@ -47,7 +47,7 @@ _html do
         end
         _p! do
           _ 'The resulting list is then cross-checked against '
-          _a 'committee-info.text', href: 'https://svn.apache.org/repos/private/committers/board/committee-info.txt'
+          _a 'committee-info.text', href: ASF::SVN.svnpath!('board', 'committee-info.txt')
           _ ' and '
           _code 'ldapsearch cn=pmc-chairs'
           _ '.  Membership that is only listed in one of these two sources is '
