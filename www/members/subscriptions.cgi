@@ -25,9 +25,9 @@ _html do
           _a 'members@apache.org', href: 'https://mail-search.apache.org/members/private-arch/members/'
           _br
           _ 'These are matched against '
-          _a 'members.txt', href: 'https://svn.apache.org/repos/private/foundation/members.txt'
+          _a 'members.txt', href: ASF::SVN.svnpath!('foundation', 'members.txt') 
           _ ', '
-          _a 'iclas.txt', href: 'https://svn.apache.org/repos/private/foundation/officers/iclas.txt'
+          _a 'iclas.txt', href: ASF::SVN.svnpath!('officers', 'iclas.txt')
           _ ', and '
           _code 'ldapsearch mail'
           _ ' to attempt to match the email address to an Apache ID.'

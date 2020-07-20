@@ -237,7 +237,7 @@ _html do
           _pre request
         end
         
-        SUBREQ = 'https://svn.apache.org/repos/infra/infrastructure/trunk/subreq/'
+        SUBREQ = ASF::SVN.svnpath!('subreq')
         SUBREQ.sub! '/subreq', '/unsubreq' if @request == 'unsub'
         
         rc = 999

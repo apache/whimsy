@@ -28,7 +28,7 @@ _html do
       relatedtitle: 'More Useful Links',
       related: {
         "/committers/tools" => "Whimsy All Available Tools Listing",
-        "https://svn.apache.org/repos/private/foundation/" => "Checkout the private 'foundation/officers' repo for Officers",
+        ASF::SVN.svnpath!('foundation', 'officers') => "Checkout the private 'foundation/officers' repo for Officers",
         "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code",
         "mailto:dev@whimsical.apache.org?subject=[FEEDBACK] members/index idea" => "Email Feedback To dev@whimsical"
       },

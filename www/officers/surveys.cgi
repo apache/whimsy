@@ -36,7 +36,7 @@ def get_survey_root(asfsvn = false)
   if asfsvn
     return 'officers_surveys'
   else
-    return 'https://svn.apache.org/repos/private/foundation/officers/surveys/'
+    return ASF::SVN.svnpath!('officers','surveys')
   end
 end
 

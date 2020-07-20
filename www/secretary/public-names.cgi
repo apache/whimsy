@@ -141,7 +141,7 @@ _html do
   _h2_!.present! do
     _ 'Present in '
     _a 'iclas.txt', 
-      href: 'https://svn.apache.org/repos/private/foundation/officers/iclas.txt'
+      href: ASF::SVN.svnpath!('officers', 'iclas.txt')
    _ ':'
   end
 
@@ -184,7 +184,7 @@ _html do
           _td do
             file = ASF::ICLAFiles.match_claRef(icla.claRef.untaint)
             if file
-              _a icla.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{file}"
+              _a icla.claRef, href: ASF::SVN.svnpath!('iclas', file)
             else
               _ icla.claRef || 'unknown'
             end

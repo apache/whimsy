@@ -140,7 +140,7 @@ _html do
           if icla
             if icla.claRef
               _td do
-                _a icla.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{icla.claRef}"
+                _a icla.claRef, href: ASF::SVN.svnpath!('iclas', ASF::ICLAFiles.match_claRef(icla.claRef))
               end
             else
               _td icla.form

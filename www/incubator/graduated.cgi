@@ -45,10 +45,10 @@ _html do
             href: 'https://whimsy.apache.org/board/minutes/'
           _ ', '
           _a 'committee-info.txt',
-            href: 'https://svn.apache.org/repos/private/committers/board/committee-info.txt'
+            href: ASF::SVN.svnpath!('board', 'committee-info.txt')
           _ ',  and '
           _a 'podlings.xml',
-            href: 'https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings.xml'
+            href: ASF::SVN.svnpath!('incubator-content', 'podlings.xml')
           _ '.'
           _p do
             _ul do

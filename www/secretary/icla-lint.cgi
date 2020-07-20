@@ -211,7 +211,7 @@ _html do
             _td icla
             _td do
               paths.each do |path|
-                _a path, href: "https://svn.apache.org/repos/private/documents/iclas/#{path}"
+                _a path, href: ASF::SVN.svnpath!('iclas', path)
               end
             end
           end
@@ -258,7 +258,7 @@ _html do
         v.each do |p|
           _tr do
             _td do
-              _a k, href: "https://svn.apache.org/repos/private/documents/iclas/#{p}"
+              _a k, href: ASF::SVN.svnpath!('iclas', p)
             end
           end
         end
@@ -334,7 +334,7 @@ _html do
             _td do
               file = ASF::ICLAFiles.match_claRef(icla_)
               if file
-                _a icla_, href: "https://svn.apache.org/repos/private/documents/iclas/#{file}"
+                _a icla_, href: ASF::SVN.svnpath!('iclas', file)
               else
                 _ icla_
               end

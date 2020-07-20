@@ -31,7 +31,7 @@ _html do
             href: '../../roster/committee/incubator'
           _ ', '
           _a 'mentor lists in podlings.xml',
-            href: 'https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings.xml'
+            href: ASF::SVN.svnpath!('incubator-content', 'podlings.xml')
           _ ',  and '
           _a 'Podling lists in LDAP',
             href: '../../roster/ppmc'

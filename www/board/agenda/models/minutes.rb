@@ -152,7 +152,7 @@ class Minutes
     minutes.sub! 'Minutes (in Subversion) are found under the URL:',
       'Published minutes can be found at:'
 
-    minutes.sub! 'https://svn.apache.org/repos/private/foundation/board/',
+    minutes.sub! ASF::SVN.svnpath!('board'),
       'http://www.apache.org/foundation/board/calendar.html'
 
     minutes.sub!(/ \d\. Committee Reports.*?\n\s+A\./m) do |heading|

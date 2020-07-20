@@ -12,7 +12,7 @@ _html do
       title: PAGETITLE,
       related: {
         "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
-        "https://svn.apache.org/repos/private/foundation/Brand/runbook.txt" => "Members-only Trademark runbook",
+        ASF::SVN.svnpath!('foundation', 'Brand', 'runbook.txt')  => "Members-only Trademark runbook",
         "https://lists.apache.org/list.html?trademarks@apache.org" => "Ponymail interface to trademarks@"
       },
       helpblock: -> {
@@ -20,7 +20,7 @@ _html do
           _ 'This is a wireframe '
           _strong 'DEMO'
           _ ' of a proposed dialog/popup way to Choose a specific Boilerplate Reply to a previously selected question. See '
-          _a 'Proposed how to reply guide', href: 'https://svn.apache.org/repos/private/foundation/Brand/replies-readme.md'
+          _a 'Proposed how to reply guide', href: ASF::SVN.svnpath!('foundation', 'Brand', 'replies-readme.md')
         end
         _p do
           _ 'This would be some listing of available Boilerplates with descriptions about each, so the user could choose one; that would then open it for editing as a Reply-All message to save. '

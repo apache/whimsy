@@ -149,7 +149,7 @@ _html do
         _td do
           file = ASF::ICLAFiles.match_claRef(claRef.untaint)
           if file
-            _a claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{file}"
+            _a claRef, href: ASF::SVN.svnpath!('iclas', file)
           else
             _ claRef
           end

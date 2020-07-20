@@ -12,7 +12,7 @@ _html do
       title: PAGETITLE,
       related: {
         "https://www.apache.org/foundation/marks/resources" => "Trademark Site Map",
-        "https://svn.apache.org/repos/private/foundation/Brand/runbook.txt" => "Members-only Trademark runbook",
+        ASF::SVN.svnpath!('foundation', 'Brand', 'runbook.txt') => "Members-only Trademark runbook",
         "https://lists.apache.org/list.html?trademarks@apache.org" => "Ponymail interface to trademarks@"
       },
       helpblock: -> {
@@ -22,7 +22,7 @@ _html do
           _ ' of a proposed tool to allow ASF Members to review incoming questions on a private mailing list, and then select a '
           _em 'boilerplate reply'
           _ ' to send to an original questioner. See '
-          _a 'Proposed how to reply guide', href: 'https://svn.apache.org/repos/private/foundation/Brand/replies-readme.md'
+          _a 'Proposed how to reply guide', href: ASF::SVN.svnpath!('foundation', 'Brand', 'replies-readme.md')
         end
         _p do
           _ 'This list would display the last 30 (or so) days of messages on a private list, and have UI that shows info about the messages, plus action buttons to create a reply, see: '

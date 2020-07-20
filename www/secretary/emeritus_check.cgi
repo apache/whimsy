@@ -49,7 +49,7 @@ _html do
     files.select {|k,v| v == 'NAK'}.sort_by{|k| k[0].split('-').pop}.each do |k,v|
       _tr do
         _td do
-          _a k, href: "https://svn.apache.org/repos/private/documents/emeritus/#{k}", target: '_blank'
+          _a k, href: ASF::SVN.svnpath!('emeritus', k), target: '_blank'
         end
       end
     end
@@ -77,7 +77,7 @@ _table_ do
         if person.icla && person.icla.claRef
           file = ASF::ICLAFiles.match_claRef(person.icla.claRef.untaint)
           if file
-            _a person.icla.claRef, href: "https://svn.apache.org/repos/private/documents/iclas/#{file}", target: '_blank'
+            _a person.icla.claRef, href: ASF::SVN.svnpath!('iclas', file), target: '_blank'
           else
             _ ''
           end

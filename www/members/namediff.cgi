@@ -12,7 +12,7 @@ _html do
       title: PAGETITLE,
       related: {
         '/roster/members' => 'Listing Of All Members',
-        'https://svn.apache.org/repos/private/foundation/officers/iclas.txt' => 'ICLA.txt Listing',
+        ASF::SVN.svnpath!('officers', 'iclas.txt') => 'ICLA.txt Listing',
       },
       helpblock: -> {
         _p_ do

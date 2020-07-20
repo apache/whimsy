@@ -70,7 +70,7 @@ _html do
       related: {
         '/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
         '/members/watch' => 'Watch list for potential Member candidates',
-        'https://svn.apache.org/repos/private/foundation/Meetings/' => 'Official Meeting Agenda Directory'
+        ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
         _ 'This script checks new member nomination statements from members@ against the official meeting ballot files, and highlights differences. '

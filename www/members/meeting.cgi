@@ -8,7 +8,6 @@ require 'date'
 require 'json'
 require 'wunderbar/jquery/stupidtable'
 require_relative 'meeting-util'
-FOUNDATION_SVN = 'https://svn.apache.org/repos/private/foundation/'
 DTFORMAT = '%A, %d %B %Y at %H:%M %z'
 TADFORMAT = '%Y%m%dT%H%M%S'
 
@@ -157,7 +156,7 @@ _html do
         _p do
           _span.text_warning 'REMINDER: '
           _ "Voting ballots are sent to your official email address as found in members.txt, please double-check it is correct!"
-          _a 'See members.txt', href: "#{FOUNDATION_SVN}members.txt"
+          _a 'See members.txt', href: ASF::SVN.svnpath!('foundation', 'members.txt')
         end
       end
 
@@ -290,7 +289,7 @@ _html do
           _ ' You '
           _b 'must' 
           _ ' send an email with '
-          _a 'foundation/membership-application-email.txt', href: "#{FOUNDATION_SVN}membership-application-email.txt"
+          _a 'foundation/membership-application-email.txt', href: ASF::SVN.svnpath!('foundation', 'membership-application-email.txt')
           _ ' to formally invite the new member to fill out the application form.  Applications must be signed and submitted to the secretary within 30 days of the meeting to be valid.'
         end
       end

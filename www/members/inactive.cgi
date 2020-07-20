@@ -53,7 +53,7 @@ _html do
         'https://www.apache.org/foundation/governance/meetings' => 'How Meetings & Voting Works',
         '/members/proxy' => 'Assign A Proxy For Next Meeting',
         '/members/non-participants' => 'Members Not Participating',
-        'https://svn.apache.org/repos/private/foundation/members.txt' => 'See Official Members.txt File',
+        ASF::SVN.svnpath!('foundation','members.txt') => 'See Official Members.txt File',
         MeetingUtil::RECORDS => 'Official Past Meeting Records'
       },
       helpblock: -> {
@@ -176,7 +176,7 @@ _html do
             _tr_ class: color do
               _td do
                 _a date, href:
-                  'https://svn.apache.org/repos/private/foundation/Meetings/' + date
+                  ASF::SVN.svnpath!('Meetings') + date
               end
               case status
               when 'A'

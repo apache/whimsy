@@ -9,7 +9,6 @@ require 'date'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 
-SVN_BOARD = "https://svn.apache.org/repos/private/foundation/board"
 meetings = ASF::SVN['Meetings']
 
 _html do
@@ -23,7 +22,7 @@ _html do
       related: {
         '/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
         '/members/nominations' => 'Members Meeting Nomination Crosscheck',
-        'https://svn.apache.org/repos/private/foundation/Meetings/' => 'Official Meeting Agenda Directory'
+        ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
         _ 'To help evaluate potential Member candidates, here are a number of ways to see where non-Members are participating broadly at the ASF.'
@@ -277,7 +276,7 @@ _html do
                   Dir[File.join(board, 'board_agenda_*')].sort.each do |agenda|
                     agenda.untaint
                     if File.read(agenda).include? search_string
-                      minutes = File.join(SVN_BOARD, File.basename(agenda))
+                      minutes = ASF::SVN.svnpath!('board', File.basename(agenda))
                       date = agenda.gsub('_','-')[/(\d+-\d+-\d+)/,1]
                       break
                     end
