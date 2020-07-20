@@ -62,4 +62,5 @@ svnrepos.each do |name, entry|
   # grants.txt
   # cclas.txt
   # Meetings/yyyymmdd/memapp-received.txt where yyyymmdd is within the time limit
+  #  acreq/new-account-reqs.txt
 end
