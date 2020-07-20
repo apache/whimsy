@@ -319,7 +319,8 @@ module ASF
           end
           Wunderbar.error "command #{command.first.inspect} is invalid" unless command.first =~ %r{^[a-z]+$}
           command.drop(1).each do |cmd|
-            Wunderbar.error "Invalid option #{cmd.inspect}" unless cmd =~ %r{^(--[a-z][a-z=]+|-[a-z])$}
+            # Allow --option, -lnumber or -x
+            Wunderbar.error "Invalid option #{cmd.inspect}" unless cmd =~ %r{^(--[a-z][a-z=]+|-l\d+|-[a-z])$}
           end
         else
           raise ArgumentError.new "command must be a String or an Array of Strings"
