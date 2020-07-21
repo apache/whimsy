@@ -42,7 +42,7 @@ _html do
     end
 
     _tbody do
-      repository.values.sort_by {|value| value['url']}.each do |svn|
+      repository.sort_by {|name, value| value['url']}.each do |name, svn|
         local = ASF::SVN.find(svn['url']) unless svn['url'] =~ /^https?:/
 
         color = nil
@@ -56,7 +56,7 @@ _html do
 
         _tr_ class: color do
           _td! title: local do
-            _a svn['url'], href: "https://svn.apache.org/repos/#{svn['url']}"
+            _a svn['url'], href: ASF::SVN.svnpath!(name)
           end
 
           _td local
@@ -170,7 +170,7 @@ _json do
 
       repository_url = @name
       unless repository_url =~ /^https?:/
-        repository_url = "https://svn.apache.org/repos/#{repository_url}"
+        repository_url = ASF::SVN.svnpath!(repository_url)
       end
 
       log = `svn checkout #{repository_url.untaint} #{local_path.untaint} 2>&1`
