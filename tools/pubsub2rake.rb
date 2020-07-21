@@ -49,7 +49,6 @@ class PubSub
                   puts(stamp event) if debug
                 else
                   yield event
-                  # code.call event
                 end
               else
                 puts(stamp "Partial chunk") if debug
@@ -94,6 +93,9 @@ end
 if $0 == __FILE__
   $stdout.sync = true
 
+  $hits = 0 # items matched
+  $misses = 0 # items not matched
+
   # Cannot use shift as ARGV is needed for a relaunch
   pubsub_URL = ARGV[0]  || 'https://pubsub.apache.org:2070/svn'
   pubsub_FILE = ARGV[1] || File.join(Dir.home,'.pubsub')
@@ -114,6 +116,7 @@ if $0 == __FILE__
   def process(event)
     path = event['pubsub_path']
     if WATCH.include? path # WATCH auto-vivifies
+      $hits += 1
       matches = Hash.new{|h,k| h[k] = Array.new} # key alias, value = array of matching files
       watching = WATCH[path]
       watching.each do |svn_prefix, svn_alias, files|
@@ -134,12 +137,14 @@ if $0 == __FILE__
         end
       end
       matches.each do |k,v|
-        puts stamp "Updating #{k}"
+        puts stamp "Updating #{k} #{$hits}/#{$misses}"
         cmd = ['rake', "svn:update[#{k}]"]
         unless system(*cmd, {chdir: '/srv/whimsy'})
           puts stamp "Error #{$?} processing #{cmd}"
         end
       end
+    else
+      $misses += 1
     end # possible match
   end
 
