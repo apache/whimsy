@@ -65,7 +65,7 @@ task "svn commit documents/cclas/#@filename#{fileext} and update cclas.txt" do
 
     svn_multi('officers', 'cclas.txt', 'cclas', @selected, @signature, @filename, fileext, message, @document) do |input|
       # append entry to cclas.txt
-      text + @cclalines +"\n"
+      input + @cclalines + "\n"
     end
 
   end
