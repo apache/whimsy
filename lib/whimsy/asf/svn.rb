@@ -818,7 +818,7 @@ module ASF
     # The extra parameter is an array of commands
     # These must themselves be arrays to ensure correct processing of white-space
     # Parameters:
-    #   path - file path or SVN URL (http(s) or file:)
+    #   path - file path or SVN URL (http(s): or file: or svn:)
     #   message - commit message
     #   env - for username and password
     #   _ - Wunderbar context
