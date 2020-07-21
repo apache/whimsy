@@ -8,6 +8,10 @@ require 'thread'
 require 'whimsy/asf/config'
 require 'whimsy/asf/svn'
 
+def stamp(s)
+  "%s: %s" % [Time.now.gmtime.to_s, s]
+end
+
 class PubSub
 
   require 'fileutils'
@@ -28,6 +32,9 @@ class PubSub
           request = Net::HTTP::Get.new uri.request_uri
           request.basic_auth *creds if creds
           http.request request do |response|
+            response.each_header do |h,v|
+              puts stamp [h,v].inspect if h.start_with? 'x-'
+            end
             body = ''
             response.read_body do |chunk|
               FileUtils.touch(ALIVE) # Temporary debug
@@ -39,44 +46,43 @@ class PubSub
                 body = ''
                 if event['stillalive']  # pingback
                   @restartable = true
-                  puts(event) if debug
+                  puts(stamp event) if debug
                 else
                   yield event
                   # code.call event
                 end
               else
-                puts("Partial chunk") if debug
+                puts(stamp "Partial chunk") if debug
               end
               unless mtime == File.mtime(__FILE__)
-                puts "File updated" if debug
+                puts stamp "File updated" if debug
                 @updated = true
                 done = true
               end
               break if done
             end # reading chunks
-            puts "Done reading chunks" if debug
+            puts stamp "Done reading chunks" if debug
             break if done
           end # read response
-          puts "Done reading response" if debug
+          puts stamp "Done reading response" if debug
           break if done
         end # net start
-        puts "Done with start" if debug
+        puts stamp "Done with start" if debug
       rescue Errno::ECONNREFUSED => e
         @restartable = true
-        STDERR.puts e.inspect
+        STDERR.puts stamp e.inspect
         sleep 3
       rescue Exception => e
-        STDERR.puts e.inspect
-        STDERR.puts e.backtrace
+        STDERR.puts stamp e.inspect
+        STDERR.puts stamp e.backtrace
       end
-      puts "Done with thread" if debug
+      puts stamp "Done with thread" if debug
     end # thread
-    puts("Pubsub thread started ...")
+    puts stamp "Pubsub thread started #{url} ..."
     ps_thread.join
-    puts("Pubsub thread finished ...")
-    puts("Updated") if @updated
+    puts stamp "Pubsub thread finished %s..." % (@updated ? '(updated) ' : '')
     if @restartable
-      STDERR.puts 'restarting'
+      STDERR.puts stamp 'restarting'
     
       # relaunch script after a one second delay
       sleep 1
@@ -88,8 +94,9 @@ end
 if $0 == __FILE__
   $stdout.sync = true
 
-  pubsub_URL = ARGV.shift  || 'https://pubsub.apache.org:2070/svn'
-  pubsub_FILE = ARGV.shift || File.join(Dir.home,'.pubsub')
+  # Cannot use shift as ARGV is needed for a relaunch
+  pubsub_URL = ARGV[0]  || 'https://pubsub.apache.org:2070/svn'
+  pubsub_FILE = ARGV[1] || File.join(Dir.home,'.pubsub')
   pubsub_CRED = File.read(pubsub_FILE).chomp.split(':') rescue nil
 
   WATCH=Hash.new{|h,k| h[k] = Array.new}
@@ -127,9 +134,10 @@ if $0 == __FILE__
         end
       end
       matches.each do |k,v|
+        puts stamp "Updating #{k}"
         cmd = ['rake', "svn:update[#{k}]"]
         unless system(*cmd, {chdir: '/srv/whimsy'})
-          puts "Error #{$?} processing #{cmd}"
+          puts stamp "Error #{$?} processing #{cmd}"
         end
       end
     end # possible match
@@ -164,6 +172,7 @@ if $0 == __FILE__
       process(event) unless event == nil || event['stillalive']
     end
   else
+    puts stamp(pubsub_URL)
     PubSub.listen(pubsub_URL,pubsub_CRED) do | event |
       process(event)
     end
