@@ -224,7 +224,7 @@ if @valid_user and @pmc and not @votelink.empty?
     complete do |dir|
       # checkout acreq directory
       svn 'checkout', '--depth', 'files',
-        'https://svn.apache.org/repos/infra/infrastructure/trunk/acreq', 
+      ASF::SVN.svnurl!('acreq'),
         "#{dir}/acreq"
 
       # update new-account-reqs.txt
