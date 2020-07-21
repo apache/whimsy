@@ -159,7 +159,7 @@ class ICLA2 < Vue
     # wire up form
     jQuery('form')[0].addEventListener('submit', self.file)
     jQuery('input[name=message]').val(window.parent.location.pathname)
-    jQuery('input[name=selected]').val(decodeURI(@@selected))
+    jQuery('input[name=selected]').val(decodeURIComponent(@@selected))
 
     # Safari autocomplete workaround: trigger change on leaving field
     # https://github.com/facebook/react/issues/2125

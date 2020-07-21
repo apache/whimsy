@@ -10,7 +10,7 @@ class EmeritusRequest < Vue
   end
 
   def mounted
-    jQuery('input[name=selected]').val(decodeURI(@@selected))
+    jQuery('input[name=selected]').val(decodeURIComponent(@@selected))
     jQuery('input[name=message]').val(window.parent.location.pathname)
     if not @members.empty?
       @disabled = false
