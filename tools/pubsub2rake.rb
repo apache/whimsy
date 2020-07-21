@@ -33,7 +33,7 @@ class PubSub
           request.basic_auth *creds if creds
           http.request request do |response|
             response.each_header do |h,v|
-              puts stamp [h,v].inspect if h.start_with? 'x-'
+              puts stamp [h,v].inspect if h.start_with? 'x-' or h == 'server'
             end
             body = ''
             response.read_body do |chunk|
