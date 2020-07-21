@@ -203,8 +203,10 @@ class Message
 
   #
   # write one or more attachments
-  # returns list of temporary file names
-  # [[name, path]]
+  # returns list of input names with their temporary file pointers
+  # It's not safe to return the path names of the temp files as
+  # that allows the files to be deleted by garbage collection
+  # [[name, open temp file]]
   def write_att(*attachments)
     files = []
 
@@ -216,11 +218,11 @@ class Message
 
     if attachments.flatten.length == 1
       attachment = attachments.first
-      files << [attachment, find(attachment).as_file.path]
+      files << [attachment, find(attachment).as_file]
     else
       # write out selected attachment
       attachments.each do |attachment, basename|
-        files << [attachment, find(attachment).as_file.path]
+        files << [attachment, find(attachment).as_file]
       end
     end
     files

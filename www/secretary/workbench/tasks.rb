@@ -103,12 +103,12 @@ class Wunderbar::JsonBuilder
         end
         container = ASF::SVN.svnpath!(docdir, outfilename)
         extras << ['mkdir', container]
-        dest.each do |name, path|
-          extras << ['put', path, File.join(container, name)]
+        dest.each do |name, file|
+          extras << ['put', file.path, File.join(container, name)]
         end
       else
-        name, path = dest.flatten
-        extras << ['put', path, ASF::SVN.svnpath!(docdir,"#{outfilename}#{outfileext}")]
+        name, file = dest.flatten
+        extras << ['put', file.path, ASF::SVN.svnpath!(docdir,"#{outfilename}#{outfileext}")]
       end
 
       text = yield text # update the index

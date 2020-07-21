@@ -44,6 +44,9 @@ class Attachment
     name.untaint
   end
 
+  # Returns the attachment as an open temporary file
+  # Warning: if the reference count goes to 0, the file may be deleted
+  # so calling code must retain the reference until done.
   def as_file
     file = SafeTempFile.new([safe_name, '.pdf'])
     file.write(body)
