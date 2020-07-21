@@ -56,33 +56,13 @@ task "svn commit documents/grants/#@filename#{fileext} and update grants.txt" do
   end
 
   complete do |dir|
-    ASF::SVN.multiUpdate_(ASF::SVN.svnpath!('officers', 'grants.txt'), @document, env, _) do |input|
 
-      extras = []
-
-      # write the file(s)
-      dest = message.write_att(@selected, @signature)
-
-      if dest.size > 1 # write to a container directory
-        unless @filename =~ /\A[a-zA-Z][-.\w]+\z/
-          raise IOError.new("invalid filename: #{@filename}")
-        end
-        container = ASF::SVN.svnpath!('grants', @filename)
-        extras << ['mkdir', container]
-        dest.each do |name, path|
-          extras << ['put', path, File.join(container, name)]
-        end
-      else
-        name, path = dest.flatten
-        extras << ['put', path, ASF::SVN.svnpath!('grants',"#{@filename}#{fileext}")]
-      end
-
+    svn_multi('officers', 'grants.txt', 'grants', @selected, @signature, @filename, fileext, message, @document) do |input|
       # update grants.txt
       marker = "\n# registering.  documents on way to Secretary.\n"
-      out = input.split(marker).insert(1, "\n#{@grantlines}\n", marker).join
-
-      [out, extras]
+      input.split(marker).insert(1, "\n#{@grantlines}\n", marker).join
     end
+
   end
 end
 

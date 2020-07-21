@@ -62,30 +62,14 @@ task "svn commit documents/cclas/#@filename#{fileext} and update cclas.txt" do
   end
 
   complete do |dir|
-    ASF::SVN.multiUpdate_(ASF::SVN.svnpath!('officers', 'cclas.txt'), @document, env, _) do |text|
 
-      extras = []
-      # write the file(s)
-      dest = message.write_att(@selected, @signature)
-
-      if dest.size > 1 # write to a container directory
-        unless @filename =~ /\A[a-zA-Z][-.\w]+\z/ # previously done by write_svn
-          raise IOError.new("invalid filename: #{@filename}")
-        end
-        container = ASF::SVN.svnpath!('cclas', @filename)
-        extras << ['mkdir', container]
-        dest.each do |name, path|
-          extras << ['put', path, File.join(container, name)]
-        end
-      else
-        name, path = dest.flatten
-        extras << ['put', path, ASF::SVN.svnpath!('cclas',"#{@filename}#{fileext}")]
-      end
-
-      [text + @cclalines + "\n", extras]
+    svn_multi('officers', 'cclas.txt', 'cclas', @selected, @signature, @filename, fileext, message, @document) do |input|
+      # append entry to cclas.txt
+      text + @cclalines +"\n"
     end
 
   end
+
 end
 
 ########################################################################
