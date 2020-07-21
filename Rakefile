@@ -273,9 +273,7 @@ namespace :svn do
               errors += 1
             end
           else
-            require 'uri'
-            base = URI.parse('https://svn.apache.org/repos/')
-            puts "Directory not found - expecting checkout of #{(base + description['url']).to_s}"
+            puts "Directory not found - expecting checkout of #{ASF::SVN.svnpath!(name)}"
             errors += 1
           end
         end
