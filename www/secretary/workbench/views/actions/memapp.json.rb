@@ -171,7 +171,7 @@ task "subscribe to members@apache.org" do
 
     # checkout empty directory
     svn 'checkout', '--depth', 'empty',
-      "https://svn.apache.org/repos/infra/infrastructure/trunk/subreq",
+      ASF::SVN.svnpath!('subreq'),
       "#{dir}/subreq"
 
     # write out subscription request
