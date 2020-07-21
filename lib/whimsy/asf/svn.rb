@@ -132,11 +132,11 @@ module ASF
     # Includes aliases
     def self.svnurl(name)
       entry = self._all_repo_entries[name] or return nil
-      url = entry['url'].untaint
+      url = entry['url']
       unless url # bad entry
         raise Exception.new("Unable to find url attribute for SVN entry #{name}")
       end
-      return (@base+url).to_s
+      return (@base+url).to_s.untaint # to_s makes the var tainted
     end
 
     # fetch a repository URL by name - abort if not found
@@ -155,7 +155,7 @@ module ASF
     # name - the nickname for the URL
     # relpath - the relative path(s) to the file
     def self.svnpath!(name,*relpath)
-      base = self.svnurl!(name).untaint # this should be OK
+      base = self.svnurl!(name)
       base = base + '/' unless base.end_with? '/'
       endpart = [relpath].join('/').sub(%r{^/+},'').gsub(%r{/+},'/')
       return base + endpart
