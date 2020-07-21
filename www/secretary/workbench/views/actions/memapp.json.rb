@@ -31,43 +31,12 @@ _personalize_email(env.user)
 
 ########################################################################
 #                         document/member_apps                         # 
+#                             members.txt                              #
 ########################################################################
 
 # write attachment (+ signature, if present) to the documents/member_apps
 # directory
-task "svn commit documents/member_apps/#@filename#{fileext}" do
-  form do
-    _input value: @selected, name: 'selected'
-
-    if @signature and not @signature.empty?
-      _input value: @signature, name: 'signature'
-    end
-  end
-
-  complete do |dir|
-    # checkout empty directory
-    svn 'checkout', '--depth', 'empty',
-      ASF::SVN.svnurl('member_apps'),
-      "#{dir}/member_apps"
-
-    # create/add file(s)
-    dest = message.write_svn("#{dir}/member_apps", @filename, @selected,
-      @signature)
-
-    # Show files to be added
-    svn 'status', "#{dir}/member_apps"
-
-    # commit changes
-    svn 'commit', "#{dir}/member_apps/#{@filename}#{fileext}", '-m', @document
-  end
-end
-
-########################################################################
-#                             members.txt                              #
-########################################################################
-
-# insert entry into members.txt
-task "svn commit foundation/members.txt" do
+task "svn commit documents/member_apps/#@filename#{fileext} and update members.txt" do
   # Construct initial entry:
   fields = {
     fullname: @fullname,
@@ -81,34 +50,31 @@ task "svn commit foundation/members.txt" do
   @entry = ASF::Member.make_entry(fields)
 
   form do
+    _input value: @selected, name: 'selected'
+
+    if @signature and not @signature.empty?
+      _input value: @signature, name: 'signature'
+    end
+
     _textarea @entry, name: 'entry', rows: @entry.split("\n").length
   end
 
   complete do |dir|
-    # checkout empty foundation directory
-    svn 'checkout', '--depth', 'empty',
-      ASF::SVN.svnurl!('foundation'), File.join(dir, 'foundation')
 
-    # retrieve members.txt
-    dest = "#{dir}/foundation/members.txt"
-    svn 'update', dest
+    svn_multi('foundation', 'members.txt', 'member_apps', @selected, @signature, @filename, fileext, message, @document) do |members_txt|
 
     # update members.txt
+    # TODO this should be a library method
     pattern = /^Active.*?^=+\n+(.*?)^Emeritus/m
-    members_txt = open(dest).read
     data = members_txt.scan(pattern).flatten.first
     members = data.split(/^\s+\*\)\s+/)
     members.shift
     members.push @entry
     members_txt[pattern,1] = " *) " + members.join("\n *) ")
     members_txt[/We now number (\d+) active members\./,1] = members.length.to_s
-    File.write(dest, ASF::Member.sort(members_txt))
+    ASF::Member.sort(members_txt)
+  end
 
-    # show the changes
-    svn 'diff', dest
-
-    # commit changes
-    svn 'commit', dest, '-m', @document
   end
 end
 
@@ -151,7 +117,7 @@ end
 task "subscribe to members@apache.org" do
   user = ASF::Person.find(@availid)
   vars = {
-    version: 3, # This must match http://s.apache.org/008
+    version: 3, # This must match committers/subscribe.cgi#FORMAT_NUMBER
     availid: @availid,
     addr: @email,
     listkey: 'members',
@@ -189,6 +155,8 @@ end
 ########################################################################
 #                      update memapp-received.txt                      #
 ########################################################################
+
+# TODO combine with other SVN updates
 
 task "svn commit memapp-received.text" do
   meetings = ASF::SVN['Meetings']
