@@ -43,8 +43,7 @@ resources = {
 resources.each do |const, location|
   Kernel.const_set const, ASF::SVN[location]
   unless Kernel.const_get const
-    STDERR.puts 'Unable to locate local checkout for ' +
-      "https://svn.apache.org/repos/#{location}"
+    STDERR.puts 'Unable to locate local checkout for ' + location
     exit 1
   end
 end
