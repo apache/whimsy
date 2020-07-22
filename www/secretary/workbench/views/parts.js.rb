@@ -519,6 +519,8 @@ class Parts < Vue
 
   # handle keyboard events
   def keydown(event)
+    return if %w(INPUT TEXTAREA).includes? document.activeElement.nodeName
+
     if event.keyCode == 8 or event.keyCode == 46 # backspace or delete
       if event.metaKey or event.ctrlKey
         @busy = true
