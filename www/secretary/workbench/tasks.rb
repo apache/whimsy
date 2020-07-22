@@ -84,9 +84,9 @@ class Wunderbar::JsonBuilder
   # index_name - name of index file to update (e.g. cclas.txt)
   # docdir - SVN alias for document directory (e.g. cclas)
   # docname - document name (as per email)
-  # docsig - document signature (may be null)
+  # docsig - document signature (as per email - may be null)
   # outfilename - name of output file (without extension)
-  # outfileext - output file extension
+  # outfileext - output file extension (of main file)
   # emessage - the email message
   # svnmessage - the svn commit message
   # block - the block which is passed the contents of the index file to be updated
@@ -104,11 +104,18 @@ class Wunderbar::JsonBuilder
         container = ASF::SVN.svnpath!(docdir, outfilename)
         extras << ['mkdir', container]
         dest.each do |name, file|
+          # N.B. file cannot exist here, because the directory was created as part of the same commit
           extras << ['put', file.path, File.join(container, name)]
         end
       else
         name, file = dest.flatten
-        extras << ['put', file.path, ASF::SVN.svnpath!(docdir,"#{outfilename}#{outfileext}")]
+        outpath = ASF::SVN.svnpath!(docdir,"#{outfilename}#{outfileext}")
+        # TODO does it matter that the revision is not known?
+        if ASF::SVN.exist?(outpath, nil, env)
+          raise IOError.new("#{outpath} already exists!")
+        else
+          extras << ['put', file.path, outpath]
+        end
       end
 
       text = yield text # update the index
