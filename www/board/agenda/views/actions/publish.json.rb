@@ -68,7 +68,7 @@ ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
 end
 
 # Update the Calendar from SVN
-ASF::SVN.multiUpdate_ ASF::SVN.svnpath!('site-board', 'calendar.mdtext' ).untaint, @message, env, _ do |calendar|
+ASF::SVN.update ASF::SVN.svnpath!('site-board', 'calendar.mdtext' ).untaint, @message, env, _ do |calendar|
   # add year header
   unless calendar.include? "##{year}"
     calendar[/^()#.*Board meeting minutes #/,1] =
