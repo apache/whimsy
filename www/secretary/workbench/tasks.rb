@@ -104,6 +104,15 @@ class Wunderbar::JsonBuilder
         container = ASF::SVN.svnpath!(docdir, outfilename)
         extras << ['mkdir', container]
         dest.each do |name, file|
+          if docdir == 'iclas' && outfileext # special processing for output name
+            if name == docname
+              name = "icla%s" % outfileext
+            elsif name == docsig
+              name = "icla%s.asc" % outfileext
+            else
+              Wunderbar.warn "Cannot recognise #{name} as #{docname} or #{docsig}"
+            end
+          end
           # N.B. file cannot exist here, because the directory was created as part of the same commit
           extras << ['put', file.path, File.join(container, name)]
         end

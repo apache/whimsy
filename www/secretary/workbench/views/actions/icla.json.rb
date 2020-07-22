@@ -12,8 +12,8 @@ message = Mailbox.find(@message)
 
 @from.untaint if @from =~ /\A("?[\s\w]+"?\s+<)?\w+@apache\.org>?\z/
 
-# extract file extension (only needed if there is no signature)
-fileext = File.extname(@selected).downcase if @signature.empty?
+# extract file extension
+fileext = File.extname(@selected).downcase
 
 # verify that an ICLA under that name doesn't already exist
 if "#@filename#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/
@@ -45,49 +45,18 @@ _personalize_email(env.user)
 @valid_user = (@user =~ /^[a-z][a-z0-9]{2,}$/)
 @valid_user &&= !(ASF::ICLA.taken?(@user) or ASF::Mail.taken?(@user))
 
+# initialize commit message
+@document = "ICLA for #{@pubname}"
+
 ########################################################################
 #                            document/iclas                            #
-########################################################################
-
-# write attachment (+ signature, if present) to the documents/iclas directory
-task "svn commit documents/iclas/#@filename#{fileext}" do
-  form do
-    _input value: URI.decode(@selected), name: 'selected'
-
-    if @signature and not @signature.empty?
-      _input value: @signature, name: 'signature'
-    end
-  end
-
-  complete do |dir|
-    # checkout empty directory
-    svn 'checkout', '--depth', 'empty',
-      ASF::SVN.svnurl('iclas'), "#{dir}/iclas"
-
-    # create/add file(s)
-    if @signature.to_s.empty? or fileext != '.pdf'
-      message.write_svn("#{dir}/iclas", @filename, URI.decode(@selected), @signature)
-    else
-      message.write_svn("#{dir}/iclas", @filename, 
-        @selected => 'icla.pdf', @signature => 'icla.pdf.asc')
-    end
-
-    # Show files to be added
-    svn 'status', "#{dir}/iclas"
-
-    # commit changes
-    svn 'commit', "#{dir}/iclas/#{@filename}#{fileext}",
-      '-m', "ICLA from #{@pubname}"
-  end
-end
-
-########################################################################
 #                          officers/iclas.txt                          #
 ########################################################################
 
-# insert line into iclas.txt
-task "svn commit foundation/officers/iclas.txt" do
-  # construct line to be inserted
+# write attachment (+ signature, if present) to the documents/iclas directory
+task "svn commit documents/iclas/#@filename#{fileext} and iclas.txt" do
+
+  # construct line to be inserted in iclas.txt
   @iclaline ||= [
     'notinavail',
     @realname.strip,
@@ -97,29 +66,26 @@ task "svn commit foundation/officers/iclas.txt" do
   ].join(':')
 
   form do
+    _input value: @selected, name: 'selected'
+
+    if @signature and not @signature.empty?
+      _input value: @signature, name: 'signature'
+    end
+
     _input value: @iclaline, name: 'iclaline'
+
+    _input value: @filename
   end
 
   complete do |dir|
-    # checkout empty officers directory
-    svn 'checkout', '--depth', 'empty',
-      ASF::SVN.svnurl!('officers'),
-      File.join(dir, 'officers')
 
-    # retrieve iclas.txt
-    dest = File.join(dir, 'officers', 'iclas.txt')
-    svn 'update', dest
+    svn_multi('officers', 'iclas.txt', 'iclas', @selected, @signature, @filename, fileext, message, @document) do |input|
+      # append entry to iclas.txt
+      ASF::ICLA.sort(input + @iclaline + "\n")
+    end
 
-    # update iclas.txt
-    iclas_txt = ASF::ICLA.sort(File.read(dest) + @iclaline + "\n")
-    File.write dest, iclas_txt
-
-    # show the changes
-    svn 'diff', dest
-
-    # commit changes
-    svn 'commit', dest, '-m', "ICLA for #{@pubname}"
   end
+
 end
 
 ########################################################################
@@ -163,7 +129,7 @@ task "email #@email" do
   @cttee = "Apache #{@podling.display_name} podling" if @podling
   # build mail from template
   mail = message.reply(
-    subject: "ICLA for #{@pubname}",
+    subject: @document,
     from: @from,
     to: "#{@pubname.inspect} <#{@email}>",
     cc: [
