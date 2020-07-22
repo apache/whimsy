@@ -142,6 +142,7 @@ if $0 == __FILE__
         unless system(*cmd, {chdir: '/srv/whimsy'})
           puts stamp "Error #{$?} processing #{cmd}"
         end
+        $stdout.flush # Ensure we see the output
       end
     else
       $misses += 1
