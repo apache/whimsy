@@ -761,6 +761,27 @@ module ASF
       end
     end
 
+    # DRAFT
+    # Check if an svn path exists (at the specified revision)
+    # Parameters:
+    #  path - the svn uri (http, svn or file)
+    #  env - user/pass
+    #  options - passed to ASF::SVN.svn('list')
+    # 
+    # Returns:
+    # true if the file exists
+    # false if the file does not exist
+    # IOError on unexpected error
+    def self.exist?(path, revision, env, options={})
+      out, err = self.svn('list', path, options.merge({env: env, revision: revision}))
+      return true if out && (not err)
+      # TODO link to where these codes are documented
+      if err =~ %r{^svn: warning: W160013: .*(not found|non-existent)}
+        return false
+      end
+      throw IOError.new("Could not check if #{path} exists: #{err}")
+    end    
+    
     # DRAFT DRAFT
     # create a new file and fail if it already exists
     # Parameters:
@@ -776,7 +797,7 @@ module ASF
     # Returns:
     # 0 on success
     # 1 if the file exists
-    # RuntimeError on unexpected error
+    # IOError on unexpected error
     def self.create_(directory, filename, source, msg, env, _, options={})
       parentrev, err = self.getInfoItem(directory, 'revision', env.user, env.password)
       unless parentrev
@@ -784,19 +805,7 @@ module ASF
       end
       target = File.join(directory, filename)
       out, err = self.svn('list', target, {env: env})
-      return 1 if out # list succeeded, so file must exist
-      # Need to check for the response which means the file is missing rather than some other error
-      #
-      # Note: file: and svn: responses look like this:
-      # svn: warning: W160013: Path '/xxx' not found
-      # svn: E200009: Could not list all targets because some targets don't exist
-      #
-      # However http(s) responses look like this:
-      # svn: warning: W160013: URL 'https://svn.apache.org/repos/asf/xxx' non-existent in revision 1879725
-      # svn: E200009: Could not list all targets because some targets don't exist
-      unless err =~ %r{^svn: warning: W160013: (Path|URL) '.+#{filename}' (not found|non-existent)}
-        throw RuntimeError.new("#{filename} already exists! #{err}")
-      end
+      return 1 if self.exist?(target, parentrev, env, options)
       commands = [['put', source, target]]
       # Detect file created in parallel. This generates the error message:
       # svnmucc: E160020: File already exists: <snip> path 'xxx'
