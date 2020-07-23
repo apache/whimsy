@@ -44,12 +44,19 @@ class Attachment
     name.untaint
   end
 
+  # writes the attachment to the specified pathname, which must not exist
+  def write_path(path)
+    File.open(path, File::WRONLY|File::CREAT|File::EXCL, {encoding: Encoding::BINARY}) do |file|
+      file.write body
+    end
+  end
+
   # Returns the attachment as an open temporary file
   # Warning: if the reference count goes to 0, the file may be deleted
   # so calling code must retain the reference until done.
   def as_file
     file = SafeTempFile.new([safe_name, '.pdf'])
-    file.write(body)
+    file.write(body) # SafeTempFile forces encoding: BINARY
     file.rewind
     file
   end
@@ -60,7 +67,7 @@ class Attachment
     ext.untaint if ext =~ /^\.\w+$/
 
     file = SafeTempFile.new([safe_name, ext])
-    file.write(body)
+    file.write(body) # SafeTempFile forces encoding: BINARY
     file.rewind
 
     return file if ext == '.pdf'
