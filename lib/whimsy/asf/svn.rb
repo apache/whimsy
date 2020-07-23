@@ -804,7 +804,6 @@ module ASF
         throw RuntimeError.new("Failed to get revision for #{directory}: #{err}")
       end
       target = File.join(directory, filename)
-      out, err = self.svn('list', target, {env: env})
       return 1 if self.exist?(target, parentrev, env, options)
       commands = [['put', source, target]]
       # Detect file created in parallel. This generates the error message:
