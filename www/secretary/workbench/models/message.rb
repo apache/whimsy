@@ -203,27 +203,22 @@ class Message
 
   #
   # write one or more attachments
-  # returns list of input names with their temporary file pointers
-  # It's not safe to return the path names of the temp files as
-  # that allows the files to be deleted by garbage collection
-  # [[name, open temp file, content-type]]
-  def write_att(*attachments)
+  # returns list as follows:
+  # [[name, temp file name, content-type]]
+  def write_att(tmpdir, *attachments)
     files = []
 
     # drop all nil and empty values
     attachments = attachments.flatten.reject {|name| name.to_s.empty?}
 
-    if attachments.flatten.length == 1
-      attachment = attachments.first
-      att = find(attachment)
-      files << [attachment, att.as_file, att.content_type.untaint]
-    else
-      # write out selected attachment
-      attachments.each do |attachment, basename|
-        att = find(attachment)
-        files << [attachment, att.as_file, att.content_type.untaint]
-      end
+    # write out any remaining attachments
+    attachments.each do |name|
+      att = find(name)
+      path = File.join(tmpdir, name)
+      att.write_path(path)
+      files << [name, path, att.content_type.untaint]
     end
+
     files
   end
 

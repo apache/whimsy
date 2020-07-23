@@ -80,7 +80,7 @@ class Wunderbar::JsonBuilder
   # Commit new file(s) and update associated index
   # e.g. add ccla.pdf, ccla.pdf.asc to documents/cclas/xyz/ and update officers/cclas.txt
   # Parameters:
-  # index_dir - SVN alias of directory containint the index (e.g. foundation or officers)
+  # index_dir - SVN alias of directory containing the index (e.g. foundation or officers)
   # index_name - name of index file to update (e.g. cclas.txt)
   # docdir - SVN alias for document directory (e.g. cclas)
   # docname - document name (as per email)
@@ -91,11 +91,15 @@ class Wunderbar::JsonBuilder
   # svnmessage - the svn commit message
   # block - the block which is passed the contents of the index file to be updated
   def svn_multi(index_dir, index_name, docdir, docname, docsig, outfilename, outfileext, emessage, svnmessage, &block)
-    ASF::SVN.multiUpdate_(ASF::SVN.svnpath!(index_dir, index_name), svnmessage, env, _) do |text|
+    rc = nil
+    Dir.mktmpdir do |tmpdir|
+
+      rc = ASF::SVN.multiUpdate_(ASF::SVN.svnpath!(index_dir, index_name), svnmessage, env, _,{tmpdir: tmpdir}) do |text|
 
       extras = []
       # write the attachments as file(s)
-      dest = emessage.write_att(docname, docsig)
+      dest = emessage.write_att(tmpdir, docname, docsig)
+      Wunderbar.warn dest.inspect
 
       if dest.size > 1 # write to a container directory
         unless outfilename =~ /\A[a-zA-Z][-.\w]+\z/ # previously done by write_svn
@@ -115,7 +119,7 @@ class Wunderbar::JsonBuilder
           end
           outpath = File.join(container, name)
           # N.B. file cannot exist here, because the directory was created as part of the same commit
-          extras << ['put', file.path, outpath]
+          extras << ['put', file, outpath]
           extras << ['propset', 'svn:mime-type', content_type, outpath]
         end
       else
@@ -125,7 +129,7 @@ class Wunderbar::JsonBuilder
         if ASF::SVN.exist?(outpath, nil, env)
           raise IOError.new("#{outpath} already exists!")
         else
-          extras << ['put', file.path, outpath]
+          extras << ['put', file, outpath]
           extras << ['propset', 'svn:mime-type', content_type, outpath]
         end
       end
@@ -134,6 +138,9 @@ class Wunderbar::JsonBuilder
 
       [text, extras]
     end
+
+   end
+   rc
   end
 
   def template(name)
