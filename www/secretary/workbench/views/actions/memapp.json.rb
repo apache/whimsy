@@ -135,20 +135,8 @@ task "subscribe to members@apache.org" do
     fn = "#{@availid}-members-#{Time.now.strftime '%Y%m%d-%H%M%S-%L'}.json"
     fn.untaint if @availid =~ /^\w[-.\w]+$/
 
-    # checkout empty directory
-    svn 'checkout', '--depth', 'empty',
-      ASF::SVN.svnpath!('subreq'),
-      "#{dir}/subreq"
-
-    # write out subscription request
-    File.write "#{dir}/subreq/#{fn}", @subreq
-    svn 'add', "#{dir}/subreq/#{fn}"
-
-    # Show changes
-    svn 'diff', "#{dir}/subreq"
-
-    # commit changes
-    svn 'commit', "#{dir}/subreq", '-m', @document
+    rc = ASF::SVN.create_(ASF::SVN.svnurl!('subreq'), fn, @subreq, @document, env, _)
+    raise RuntimeError.new("exit code: #{rc}") if rc != 0
   end
 end
 
@@ -175,26 +163,13 @@ task "svn commit memapp-received.text" do
   end
 
   complete do |dir|
-    # checkout empty directory
     meeting = file.split('/')[-2]
-    svn 'checkout', '--depth', 'empty',
-      ASF::SVN.svnpath!('Meetings', meeting),
-      File.join(dir, meeting)
-
-    # retrieve memapp-received.txt
-    dest = "#{dir}/#{meeting}/memapp-received.txt"
-    svn 'update', dest
-
-    # create/add file(s)
-    received = File.read(dest)
-    received[/.*\s#{@availid}\s.*/] = @line
-    File.write(dest, received)
-
-    # Show changes
-    svn 'diff', "#{dir}/#{meeting}"
-
-    # commit changes
-    svn 'commit', "#{dir}/#{meeting}/memapp-received.txt", '-m', @document
+    path = ASF::SVN.svnpath!('Meetings', meeting,'memapp-received.txt')
+    rc = ASF::SVN.update(path, @document, env, _, {diff: true}) do |tmpdir, input|
+      input[/.*\s#{@availid}\s.*/] = @line
+      input
+    end
+    raise RuntimeError.new("exit code: #{rc}") if rc != 0
   end
 end
 
