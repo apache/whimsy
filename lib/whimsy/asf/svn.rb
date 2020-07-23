@@ -2,6 +2,7 @@ require 'uri'
 require 'open3'
 require 'fileutils'
 require 'tmpdir'
+require 'tempfile'
 
 module ASF
 
@@ -701,7 +702,6 @@ module ASF
         raise ArgumentError.new "Following options not recognised: #{bad_keys.inspect}"
       end
 
-      require 'tempfile'
       temp = options[:tmpdir]
       tmpdir = temp ? temp : Dir.mktmpdir.untaint
 
@@ -807,7 +807,6 @@ module ASF
       return 1 if self.exist?(target, parentrev, env, options)
       rc = nil
       Dir.mktmpdir do |tmpdir|
-        require 'tempfile'
         source = Tempfile.new('create_source', tmpdir)
         File.write(source, text)
         commands = [['put', source.path, target]]
@@ -836,6 +835,10 @@ module ASF
     #   message - commit message
     #   env - for username and password
     #   _ - Wunderbar context
+    #  options:
+    #   :dryrun - don't do the update
+    #   :verbose - show what will be done
+    #   :tmpdir - use this temporary directory (and don't remove it)
     # For example:
     #   ASF::SVN.multiUpdate_(path,message,env,_) do |text|
     #     out = '...'
@@ -846,8 +849,7 @@ module ASF
     #     [out, extra]
     #   end
     def self.multiUpdate_(path, msg, env, _, options = {})
-      require 'tempfile'
-      tmpdir = Dir.mktmpdir.untaint
+      tmpdir = options[:tmpdir] || Dir.mktmpdir.untaint
       if File.file? path
         basename = File.basename(path).untaint
         parentdir = File.dirname(path).untaint
@@ -905,7 +907,7 @@ module ASF
           rc
         end
       ensure
-        FileUtils.rm_rf tmpdir
+        FileUtils.rm_rf tmpdir unless options[:tmpdir]
       end
     end
     
