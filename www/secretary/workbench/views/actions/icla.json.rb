@@ -188,22 +188,14 @@ if @valid_user and @pmc and not @votelink.empty?
     end
 
     complete do |dir|
-      # checkout acreq directory
-      svn 'checkout', '--depth', 'files',
-      ASF::SVN.svnurl!('acreq'),
-        "#{dir}/acreq"
 
-      # update new-account-reqs.txt
-      dest = "#{dir}/acreq/new-account-reqs.txt"
+      rc = ASF::SVN.update(ASF::SVN.svnpath!('acreq', 'new-account-reqs.txt'),
+        "#{@user} account request by #{env.user} for #{@pmc.name}",
+        env, _, {diff: true}) do |input|
+          input +  + @acreq + "\n"
+      end
+      raise RuntimeError.new("exit code: #{rc}") if rc != 0
 
-      # update iclas.txt
-      File.write dest, File.read(dest) + @acreq + "\n"
-
-      # show the changes
-      svn 'diff', dest
-
-      # commit changes
-      svn 'commit', dest, '-m', "#{@user} account request by #{env.user} for #{@pmc.name}"
     end
   end
 
