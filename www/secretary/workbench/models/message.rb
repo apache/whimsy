@@ -206,23 +206,22 @@ class Message
   # returns list of input names with their temporary file pointers
   # It's not safe to return the path names of the temp files as
   # that allows the files to be deleted by garbage collection
-  # [[name, open temp file]]
+  # [[name, open temp file, content-type]]
   def write_att(*attachments)
     files = []
 
     # drop all nil and empty values
     attachments = attachments.flatten.reject {|name| name.to_s.empty?}
 
-    # if last argument is a Hash, treat it as name/value pairs
-    attachments += attachments.pop.to_a if Hash === attachments.last
-
     if attachments.flatten.length == 1
       attachment = attachments.first
-      files << [attachment, find(attachment).as_file]
+      att = find(attachment)
+      files << [attachment, att.as_file, att.content_type.untaint]
     else
       # write out selected attachment
       attachments.each do |attachment, basename|
-        files << [attachment, find(attachment).as_file]
+        att = find(attachment)
+        files << [attachment, att.as_file, att.content_type.untaint]
       end
     end
     files

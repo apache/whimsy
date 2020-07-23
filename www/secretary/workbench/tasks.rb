@@ -103,7 +103,7 @@ class Wunderbar::JsonBuilder
         end
         container = ASF::SVN.svnpath!(docdir, outfilename)
         extras << ['mkdir', container]
-        dest.each do |name, file|
+        dest.each do |name, file, content_type|
           if docdir == 'iclas' && outfileext # special processing for output name
             if name == docname
               name = "icla%s" % outfileext
@@ -113,17 +113,20 @@ class Wunderbar::JsonBuilder
               Wunderbar.warn "Cannot recognise #{name} as #{docname} or #{docsig}"
             end
           end
+          outpath = File.join(container, name)
           # N.B. file cannot exist here, because the directory was created as part of the same commit
-          extras << ['put', file.path, File.join(container, name)]
+          extras << ['put', file.path, outpath]
+          extras << ['propset', 'svn:mime-type', content_type, outpath]
         end
       else
-        name, file = dest.flatten
+        name, file, content_type = dest.flatten
         outpath = ASF::SVN.svnpath!(docdir,"#{outfilename}#{outfileext}")
         # TODO does it matter that the revision is not known?
         if ASF::SVN.exist?(outpath, nil, env)
           raise IOError.new("#{outpath} already exists!")
         else
           extras << ['put', file.path, outpath]
+          extras << ['propset', 'svn:mime-type', content_type, outpath]
         end
       end
 
