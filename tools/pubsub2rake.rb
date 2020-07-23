@@ -8,8 +8,8 @@ require 'thread'
 require 'whimsy/asf/config'
 require 'whimsy/asf/svn'
 
-def stamp(s)
-  "%s: %s" % [Time.now.gmtime.to_s, s]
+def stamp(*s)
+  "%s: %s" % [Time.now.gmtime.to_s, s.join(' ')]
 end
 
 class PubSub
@@ -117,6 +117,10 @@ if $0 == __FILE__
     path = event['pubsub_path']
     if WATCH.include? path # WATCH auto-vivifies
       $hits += 1
+      log = event['commit']['log']
+      id = event['commit']['id']
+      puts ""
+      puts stamp id,log,path
       matches = Hash.new{|h,k| h[k] = Array.new} # key alias, value = array of matching files
       watching = WATCH[path]
       watching.each do |svn_prefix, svn_alias, files|
