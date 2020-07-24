@@ -13,7 +13,7 @@ message = Mailbox.find(@message)
 person = ASF::Person.find(@id)
 
 # extract file extension
-fileext = File.extname(@selected).downcase if @signature.empty?
+fileext = File.extname(@selected).downcase
 
 # obtain per-user information
 _personalize_email(env.user)
@@ -100,7 +100,7 @@ task "svn commit documents/iclas/#@filename/iclaN#{count}#{fileext}" do
 
     # create/add file(s)
     files = {@selected => "icla#{count}#{fileext}"}
-    files[@signature]  = "icla#{count}pdf.asc" unless @signature.to_s.empty?
+    files[@signature]  = "icla#{count}#{fileext}.asc" unless @signature.to_s.empty?
     message.write_svn(dir, @filename, files)
 
     # Show files to be added
