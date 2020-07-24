@@ -79,7 +79,7 @@ count = (Array(ASF::SVN.list((ASF::SVN.svnurl('iclas') + '/' + @filename).untain
       map(&:to_i).max || 1) + 1 rescue 'N'
 
 # write attachment (+ signature, if present) to the documents/iclas directory
-task "svn commit documents/iclas/#@filename/iclaN#{count}{fileext}" do
+task "svn commit documents/iclas/#@filename/iclaN#{count}#{fileext}" do
   form do
     _input value: @selected, name: 'selected'
 
