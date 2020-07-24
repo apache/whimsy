@@ -156,7 +156,7 @@ task "svn commit foundation/officers/iclas.txt" do
     svn 'diff', dest
 
     # commit changes
-    svn 'commit', dest, '-m', "ICLA for #{@pubname}"
+    svn 'commit', dest, '-m', "ICLA (additional) for #{@pubname}"
   end
 end
 
