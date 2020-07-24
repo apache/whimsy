@@ -41,15 +41,14 @@ task "svn commit documents/emeritus-requests-received/#{emeritus_request}" do
   end
 
   complete do |dir|
-    dest = "#{dir}/emeritus-requests-received"
     # checkout empty directory
-    svn 'checkout', '--depth', 'empty',
-        ASF::SVN.svnurl('emeritus-requests-received'),
-        dest
-    message.write_svn(dest, @filename, @selected, @signature)
+    svn! 'checkout', [ASF::SVN.svnurl('emeritus-requests-received'), dir], {depth: 'empty'}
 
-    svn 'status', dest
-    svn 'commit', "#{dest}/#{emeritus_request}", '-m', summary
+    # extract the attachments and add to the workspace
+    message.write_svn(dir, @filename, @selected, @signature)
+
+    svn! 'status', dir
+    svn! 'commit', dir, {msg: summary}
   end
 end
 

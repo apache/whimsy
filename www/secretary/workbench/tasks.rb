@@ -63,6 +63,8 @@ class Wunderbar::JsonBuilder
     _.system! 'svn', *args
   end
 
+  # alternate version using library method
+  # assumes correct ordering of parameters
   def svn!(command,path,options={})
     options[:env] = env if env.password and %(checkout update commit).include?(command)
     ASF::SVN.svn_!(command,path,_,options)
