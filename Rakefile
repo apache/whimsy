@@ -117,6 +117,7 @@ end
 namespace :svn do
   task :update, [:arg1] => :config do |task, args|
     arg1 = args.arg1 || '' # If defined, it is either the name of a checkout to update or 'skip'
+    options = [arg1, args.extras].flatten # capture all options
     # Include all
     svnrepos = ASF::SVN.repo_entries(true) || {}
 
@@ -130,9 +131,10 @@ namespace :svn do
       mkdir_p? File.dirname(svn)
       Dir.chdir File.dirname(svn) do
         svnrepos.each do |name, description|
-          # skip the update unless it matches the parameter provided
+          # skip the update unless it matches the parameter (if any) provided
           # 'skip' is special and means update all list files
-          next unless name == arg1 || arg1 == 'skip' || arg1 == ''
+          # The empty string means no options provided
+          next unless ['skip', ''].include?(arg1)  || options.include?(name)
           puts
           puts File.join(Dir.pwd, name)
           if description['list']
