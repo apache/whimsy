@@ -31,6 +31,7 @@ end
 if not ASF::ICLAFiles.Dir? @filename
   # Assumes there is a single matching file
   @existing = ASF::ICLAFiles.matchStem(@filename).first
+  raise IOError.new("Cannot find existing ICLA for #{@filename}") unless @existing
   task "svn mv #@existing #@filename/icla#{File.extname(@existing)}" do
     form do
       _input value: @existing, name: 'existing'
@@ -38,22 +39,21 @@ if not ASF::ICLAFiles.Dir? @filename
 
     complete do |dir|
       # checkout empty iclas directory
-      svn 'checkout', '--depth', 'empty',
-        ASF::SVN.svnurl('iclas'), "#{dir}/iclas"
+      svn! 'checkout', [ASF::SVN.svnurl('iclas'), dir], {depth: 'empty'}
 
       # update file to be moved
-      svn 'update', "#{dir}/iclas/#{@existing}"
+      source = File.join(dir, @existing)
+      svn! 'update', source
 
       # create target directory
-      FileUtils.mkdir "#{dir}/iclas/#{@filename}"
-      svn 'add', "#{dir}/iclas/#{@filename}"
+      target = File.join(dir, @filename)
+      svn! 'mkdir', target
 
       # update file to be moved
-      svn 'mv', "#{dir}/iclas/#{@existing}", 
-        "#{dir}/iclas/#@filename/icla#{File.extname(@existing)}"
+      svn! 'mv', [source, File.join(target,"icla#{File.extname(@existing)}")]
 
       # commit changes
-      svn 'commit', "#{dir}/iclas", '-m', "move previous ICLA from #{@pubname}"
+      svn! 'commit', dir, {msg: "move previous ICLA from #{@pubname}"}
     end
   end
 end
@@ -90,9 +90,9 @@ task "svn commit documents/iclas/#@filename/icla#{count}#{fileext}" do
 
   complete do |dir|
     # checkout directory
-    svn 'checkout',
-      ASF::SVN.svnpath!('iclas', @filename),
-      File.join(dir, @filename)
+    # must checkout to sub-dir for use by write_svn
+    workdir = File.join(dir, @filename)
+    svn! 'checkout', [ASF::SVN.svnpath!('iclas', @filename), workdir]
 
     # determine numeric suffix for the new ICLA
     count = Dir[File.join(dir, @filename, '*')].
@@ -104,12 +104,10 @@ task "svn commit documents/iclas/#@filename/icla#{count}#{fileext}" do
     message.write_svn(dir, @filename, files)
 
     # Show files to be added
-    svn 'status', File.join(dir, @filename)
+    svn! 'status', dir
 
     # commit changes
-    svn 'commit', 
-      *files.values.map {|name| "#{dir}/#@filename/#{@name}"},
-      '-m', "additional ICLA from #{@pubname}"
+    svn! 'commit', workdir, {msg: "additional ICLA from #{@pubname}"}
   end
 end
 
@@ -138,25 +136,12 @@ task "svn commit foundation/officers/iclas.txt" do
   end
 
   complete do |dir|
-    # checkout empty officers directory
-    svn 'checkout', '--depth', 'empty',
-      ASF::SVN.svnurl('officers'), 
-      File.join(dir, 'officers')
-
-    # retrieve iclas.txt
-    dest = File.join(dir, 'officers', 'iclas.txt')
-    svn 'update', dest
-
-    # update iclas.txt
-    iclas_txt = File.read(dest)
-    iclas_txt[/^#{@id}:.*:#{@oldemail}:.*/] = @iclaline
-    File.write dest, ASF::ICLA.sort(iclas_txt)
-
-    # show the changes
-    svn 'diff', dest
-
-    # commit changes
-    svn 'commit', dest, '-m', "ICLA (additional) for #{@pubname}"
+    rc = ASF::SVN.update(ASF::SVN.svnpath!('officers', 'iclas.txt'),
+        "ICLA (additional) for #{@pubname}", env, _, {diff: true}) do |tmpdir, iclas_txt|
+      iclas_txt[/^#{@id}:.*:#{@oldemail}:.*/] = @iclaline
+      iclas_txt
+    end
+    raise RuntimeError.new("exit code: #{rc}\n#{_.target!}") if rc != 0
   end
 end
 
