@@ -188,8 +188,7 @@ class Message
       # create directory, if necessary
       dest = File.join(repos, filename).untaint
       unless File.exist? dest
-        Dir.mkdir dest 
-        Kernel.system 'svn', 'add', dest
+        Kernel.system 'svn', 'mkdir', dest
       end
 
       # write out selected attachment
