@@ -330,6 +330,8 @@ namespace :git do
               system('git', 'reset', '--hard', "origin/#{branch || 'master'}")
             end
           else
+            depth = description['depth']
+
             # fresh checkout
             if depth
               system('git', 'clone', '--depth', depth.to_s, (base + description['url']).to_s, name)
