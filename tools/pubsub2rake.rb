@@ -165,7 +165,7 @@ if $0 == __FILE__
   end
 
   if pubsub_URL == 'WATCH' # dump keys for use in constructing URL
-    p WATCH.keys
+    WATCH.keys.sort.each {|k| puts k}
     exit
   end
 
