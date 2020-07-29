@@ -191,8 +191,8 @@ if @valid_user and @pmc and not @votelink.empty?
 
       rc = ASF::SVN.update(ASF::SVN.svnpath!('acreq', 'new-account-reqs.txt'),
         "#{@user} account request by #{env.user} for #{@pmc.name}",
-        env, _, {diff: true}) do |input|
-          input +  + @acreq + "\n"
+        env, _, {diff: true}) do |tmpdir, contents|
+          contents + @acreq + "\n"
       end
       raise RuntimeError.new("exit code: #{rc}") if rc != 0
 
