@@ -102,7 +102,7 @@ if $0 == __FILE__
   pubsub_CRED = File.read(pubsub_FILE).chomp.split(':') rescue nil
 
   WATCH=Hash.new{|h,k| h[k] = Array.new}
-  # determine which paths were are interested in
+  # determine which paths we are interested in
   # depth: 'skip' == ignore completely
   # files: only need to update if path matches one of the files
   # depth: 'files' only need to update for top level files
@@ -117,10 +117,10 @@ if $0 == __FILE__
     path = event['pubsub_path']
     if WATCH.include? path # WATCH auto-vivifies
       $hits += 1
-      log = event['commit']['log']
+      log = event['commit']['log'].sub(/\n.*/,'') # keep only first line
       id = event['commit']['id']
       puts ""
-      puts stamp id,log,path
+      puts stamp id,path,log
       matches = Hash.new{|h,k| h[k] = Array.new} # key alias, value = array of matching files
       watching = WATCH[path]
       watching.each do |svn_prefix, svn_alias, files|
@@ -158,7 +158,7 @@ if $0 == __FILE__
     url = desc['url']
 
     one,two,three=url.split('/',3)
-    path_prefix = one == 'private' ? ['/private','svn'] : ['/svn'] 
+    path_prefix = one == 'asf' ? ['/svn'] : ['/private','svn']
     pubsub_key = [path_prefix,one,two,'commit'].join('/')
     svn_relpath = [two,three].join('/')
     WATCH[pubsub_key] << [svn_relpath, name, desc['files']]
