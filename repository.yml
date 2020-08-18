@@ -197,6 +197,10 @@
     depth: delete
     list: true
 
+  site-foundation: # members.mdtext only
+    url: asf/infrastructure/site/trunk/content/foundation
+    depth: skip
+
   steve:
     url: asf/steve/trunk
 
