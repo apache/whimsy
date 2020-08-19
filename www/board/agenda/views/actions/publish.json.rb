@@ -83,14 +83,12 @@ end
 # - [17 June 2020](../records/minutes/2020/board_minutes_2020_06_17.txt)
 #     * ...
 #     * ...
-#
 # - [20 May 2020](../records/minutes/2020/board_minutes_2020_05_20.txt)
 #     * ...
-#
 # ...
 
 # Update the Calendar from SVN
-ASF::SVN.update ASF::SVN.svnpath!('site-board', 'calendar.mdtext' ).untaint, @message, env, _ do |calendar|
+ASF::SVN.update ASF::SVN.svnpath!('site-board', 'calendar.mdtext' ).untaint, @message, env, _ do |tmpdir, calendar|
   # add year header
   unless calendar.include? "# #{year} Board meeting minutes"
     calendar[/^()#.*Board meeting minutes #/,1] =
