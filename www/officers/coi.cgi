@@ -94,10 +94,10 @@ _html do
     _whimsy_body(
     title: PAGETITLE,
     related: {
-      'http://www.apache.org/foundation/records/minutes/2020/board_minutes_2020_03_18.txt'  =>
+      'https://www.apache.org/foundation/records/minutes/2020/board_minutes_2020_03_18.txt'  =>
         'Conflict of Interest Resolution Board minutes',
       COI_CURRENT_TEMPLATE_URL => 'Conflict of Interest Resolution (March 2020)',
-      'http://www.apache.org/foundation/#who-runs-the-asf' =>
+      'https://www.apache.org/foundation/#who-runs-the-asf' =>
       'BOARD MEMBERS and OFFICERS are required to sign',
       COI_CURRENT_URL => "#{YEAR} affirmations",
     },

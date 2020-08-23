@@ -23,7 +23,7 @@ Levels
 
 Each node is associated with a status *level*.  Valid levels are `success`,
 `info`, `warning`, `danger`, and `fatal`.  (The first four levels are modelled
-after Bootstrap [alerts](http://getbootstrap.com/components/#alerts)).
+after Bootstrap [alerts](https://getbootstrap.com/components/#alerts)).
 
 Default level for valid leaf nodes is `success`.  Invalid leaf nodes (e.g., a
 node consisting of a `nil` value) have a level of `danger`.  Only leaf nodes

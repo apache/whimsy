@@ -31,7 +31,7 @@ _html do
               end 
               _p do
                 _ 'Also please check for ASF system errors at: '
-                _a 'status.apache.org', href: 'http://status.apache.org/'
+                _a 'status.apache.org', href: 'https://status.apache.org/'
               end 
             end
           end

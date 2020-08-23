@@ -49,7 +49,7 @@ tools, some of which use the model, and some completely independent.
    identified by their `.cgi` file extension.
 
    Some of the directories (like the roster tool) contain
-   <a name="rackapp">[rack](http://rack.github.io/) applications</a>.  These can be run
+   <a name="rackapp">[rack](https://rack.github.io/) applications</a>.  These can be run
    independently, or under the Apache web server through
    the use of [Phusion Passenger](https://www.phusionpassenger.com/).
    Directories containing Rack applications can be identified by the presence
@@ -180,11 +180,11 @@ or read the [detailed MACOSX setup steps](MACOSX.md).
           enable_starttls_auto: true
 
    For more details, see the mail gem documention for
-   [smtp](http://www.rubydoc.info/github/mikel/mail/Mail/SMTP),
-   [exim](http://www.rubydoc.info/github/mikel/mail/Mail/Exim),
-   [sendmail](http://www.rubydoc.info/github/mikel/mail/Mail/Sendmail),
-   [testmailer](http://www.rubydoc.info/github/mikel/mail/Mail/TestMailer), and
-   [filedelivery](http://www.rubydoc.info/github/mikel/mail/Mail/FileDelivery)
+   [smtp](https://www.rubydoc.info/github/mikel/mail/Mail/SMTP),
+   [exim](https://www.rubydoc.info/github/mikel/mail/Mail/Exim),
+   [sendmail](https://www.rubydoc.info/github/mikel/mail/Mail/Sendmail),
+   [testmailer](https://www.rubydoc.info/github/mikel/mail/Mail/TestMailer), and
+   [filedelivery](https://www.rubydoc.info/github/mikel/mail/Mail/FileDelivery)
 
 Running Whimsy Applications :car:
 ============================
@@ -208,7 +208,7 @@ See also [How To: Keep Your Local Environment Updated](#how-to-keep-your-local-e
    Note that by default CGI scripts run as a user with a different home
    directory very little privileges.  You may need to copy or symlink your
    `~/.whimsy` file and/or run using
-   [suexec](http://httpd.apache.org/docs/current/suexec.html).
+   [suexec](https://httpd.apache.org/docs/current/suexec.html).
 
 2. [Rack applications](#rackapp) can be run as a standalone web server.  If a `Rakefile`
    is provided, the convention is that `rake server` will start the server,

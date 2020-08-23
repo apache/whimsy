@@ -21,18 +21,18 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-  <Project rdf:about="http://whimsy.apache.org">
+  <Project rdf:about="https://whimsy.apache.org">
     <created>2015-06-25</created>
-    <license rdf:resource="http://spdx.org/licenses/Apache-2.0" />
+    <license rdf:resource="https://spdx.org/licenses/Apache-2.0" />
     <name>Apache Whimsy</name>
-    <homepage rdf:resource="http://whimsy.apache.org/" />
-    <asfext:pmc rdf:resource="http://whimsy.apache.org" />
+    <homepage rdf:resource="https://whimsy.apache.org/" />
+    <asfext:pmc rdf:resource="https://whimsy.apache.org" />
     <shortdesc>Tools that display and visualize various bits of data related to ASF organizations and processes.</shortdesc>
     <description>The production Whimsy server also has a number of tools that automate some organizational processes, 
     like adding PMC members to official corporate rosters or reading, updating, and approving the monthly board agenda.</description>
     <programming-language>JavaScript</programming-language>
     <programming-language>Ruby</programming-language>
-    <category rdf:resource="http://projects.apache.org/category/content" />
+    <category rdf:resource="https://projects.apache.org/category/content" />
     <bug-database rdf:resource="https://issues.apache.org/jira/browse/WHIMSY" />
     <mailing-list rdf:resource="https://lists.apache.org/list.html?dev@whimsical.apache.org" />
     <repository>
