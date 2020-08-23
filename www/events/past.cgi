@@ -28,7 +28,7 @@ _html do
       helpblock: -> {
         _p do
           _ 'ApacheCon is the official conference of the ASF, and the last '
-          _a 'ApacheCon was in Miami, May 2017!', href: 'http://events.linuxfoundation.org/events/apachecon-north-america/'
+          _a 'ApacheCon was in Miami, May 2017!', href: 'http://events17.linuxfoundation.org/events/apachecon-north-america'
         end 
         _p 'ApacheCon has been going on since before the ASF was born, and includes great events:'
       }
