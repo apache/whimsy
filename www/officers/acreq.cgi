@@ -248,7 +248,7 @@ _html do
                 elsif @user !~ /^[a-z][a-z0-9]{2,}$/ # useridvalidationpattern dup (disallow '-' in names because of INFRA-7390)
                   _div.bg_danger "Invalid userID #{@user}"
                 elsif @user.length > 16
-                  # http://forums.freebsd.org/showthread.php?t=14636
+                  # https://forums.freebsd.org/showthread.php?t=14636
                   _div.bg_danger "UserID #{@user} is too long (max 16)"
                 elsif not iclas.include? @email
                   _div.bg_danger "No ICLA on record for #{@email}"

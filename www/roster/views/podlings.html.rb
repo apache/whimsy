@@ -44,7 +44,7 @@ _html do
             _tr do
               _td list.count
               _td do
-                _a status, href: "http://incubator.apache.org/projects/##{status}"
+                _a status, href: "https://incubator.apache.org/projects/##{status}"
               end
             end
           end
@@ -89,7 +89,7 @@ _html do
             _tr_ class: color[status] do
               _td do
                 _a podling.display_name, href:
-                  "http://incubator.apache.org/projects/#{podling.name}.html"
+                  "https://incubator.apache.org/projects/#{podling.name}.html"
               end
 
               if pmc
@@ -99,7 +99,7 @@ _html do
               elsif attic
                 _td data_sort_value: "#{podling.status} - attic" do
                   _a podling.status, href:
-                    "http://attic.apache.org/projects/#{attic}.html"
+                    "https://attic.apache.org/projects/#{attic}.html"
                 end
               else
                 _td podling.status

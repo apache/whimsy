@@ -11,7 +11,7 @@ _html do
     _whimsy_body(
     title: PAGETITLE,
     related: {
-      'http://www.apache.org/info/how-to-mirror.html' => 'How To Setup An ASF Mirror',
+      'https://www.apache.org/info/how-to-mirror.html' => 'How To Setup An ASF Mirror',
       'https://www.apache.org/dev/mirrors' => 'Overview of ASF Mirror Systems',
     },
     helpblock: -> {
@@ -20,7 +20,7 @@ _html do
       end
       _p do
         _ 'Please see the'
-        _a 'Apache how-to mirror page', href: 'http://www.apache.org/info/how-to-mirror.html'
+        _a 'Apache how-to mirror page', href: 'https://www.apache.org/info/how-to-mirror.html'
         _ 'for the full details on setting up an ASF mirror.'
       end
       _p 'Note that not all mirrors have to carry the OpenOffice distributables'

@@ -4,7 +4,7 @@
 #  "committees": {
 #    "abdera": {
 #      "display_name": "Abdera",
-#      "site": "http://abdera.apache.org/",
+#      "site": "https://abdera.apache.org/",
 #      "description": "Atom Publishing Protocol Implementation",
 #      "mail_list": "abdera",
 #      "established": "11/2008",

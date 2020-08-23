@@ -38,7 +38,7 @@ _html do
     end
     _li do
       _a 'Committers by id', target: 'content',
-        href: 'http://people.apache.org/committer-index.html'
+        href: 'https://people.apache.org/committer-index.html'
     end
     _li do
       _a 'ICLAs', target: 'content',

@@ -34,7 +34,7 @@ def get_mentor_signoffs()
     agendas.pop
   end
   
-  # projects = URI.parse('http://incubator.apache.org/projects/')
+  # projects = URI.parse('https://incubator.apache.org/projects/')
   # table = Nokogiri::HTML(Net::HTTP.get(projects)).at('table')
   # # extract a list of [podling names, table row]
   # podlings = table.search('tr').map do |tr|
@@ -75,7 +75,7 @@ mentor_signoffs, podling_signoffs, people = get_mentor_signoffs()
 ROSTER_URL = '/roster/committer/'
 
 _html do
-  # http://bconnelly.net/2013/10/creating-colorblind-friendly-figures/
+  # https://bconnelly.net/2013/10/creating-colorblind-friendly-figures/
   _style %{
     .check {color: rgb(0,114,178)}
     .blank {color: rgb(230,159,0); font-style: italic; font-weight: bold}

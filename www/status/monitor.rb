@@ -21,7 +21,7 @@ require 'time'
 require 'thread'
 
 class Monitor
-  # match http://getbootstrap.com/components/#alerts
+  # match https://getbootstrap.com/components/#alerts
   LEVELS = %w(success info warning danger fatal)
 
   attr_reader :status

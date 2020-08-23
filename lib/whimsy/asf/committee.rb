@@ -646,7 +646,7 @@ module ASF
         data = { # create single entry in :tlps hierarchy
           tlps: {
             committee => {
-              site: "http://#{committee}.apache.org",
+              site: "https://#{committee}.apache.org",
               description: description,
             }
           }

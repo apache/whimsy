@@ -112,7 +112,7 @@ _html do
         else
           _p do
             _ "The Member's Meeting starts at "
-            _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m1_date.strftime(TADFORMAT)}" do
+            _a href: "https://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m1_date.strftime(TADFORMAT)}" do
               _span.glyphicon.glyphicon_time ''
               _ " #{m1_date.strftime(DTFORMAT)} "
             end
@@ -163,7 +163,7 @@ _html do
       _div id: 'nominations'
       _whimsy_panel("Timeline: Nomination Period (now until #{nom_date.strftime(DTFORMAT)})", style: 'panel-default') do
         _p do
-          _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{nom_date.strftime(TADFORMAT)}" do
+          _a href: "https://www.timeanddate.com/worldclock/fixedtime.html?iso=#{nom_date.strftime(TADFORMAT)}" do
             _span.glyphicon.glyphicon_time ''
             _em '(time)'
           end
@@ -182,7 +182,7 @@ _html do
       _div id: 'seconds'
       _whimsy_panel("Timeline: Seconds Period (last ten days before meeting)", style: 'panel-default') do
         _p do
-          _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{nom_date.strftime(TADFORMAT)}" do
+          _a href: "https://www.timeanddate.com/worldclock/fixedtime.html?iso=#{nom_date.strftime(TADFORMAT)}" do
             _span.glyphicon.glyphicon_time ''
             _em '(time)'
           end
@@ -201,7 +201,7 @@ _html do
       _div id: 'firsthalf'
       _whimsy_panel("Timeline: First Half Of Meeting on IRC (at #{m1_date.strftime(DTFORMAT)})", style: 'panel-primary') do
         _p do
-          _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m1_date.strftime(TADFORMAT)}" do
+          _a href: "https://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m1_date.strftime(TADFORMAT)}" do
             _span.glyphicon.glyphicon_time ''
             _em '(time)'
           end
@@ -255,7 +255,7 @@ _html do
       _div id: 'secondhalf'
       _whimsy_panel("Timeline: Second Half Of Meeting (at #{m2_date.strftime(DTFORMAT)})", style: 'panel-primary') do
         _p do
-          _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m2_date.strftime(TADFORMAT)}" do
+          _a href: "https://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m2_date.strftime(TADFORMAT)}" do
             _span.glyphicon.glyphicon_time ''
             _em '(time)'
           end

@@ -106,10 +106,10 @@ _html lang: 'en', _width: '80' do
                 end
 
                 _ul_.dropdown_menu role: 'menu' do
-                  _li { _a 'Overview', href: 'http://people.apache.org/' }
+                  _li { _a 'Overview', href: 'https://people.apache.org/' }
                   _li do
                     _a 'Committers',
-                      href: 'http://people.apache.org/committer-index.html'
+                      href: 'https://people.apache.org/committer-index.html'
                   end
                   _li do
                     _a 'Meritocracy',
@@ -119,7 +119,7 @@ _html lang: 'en', _width: '80' do
                     _a 'Roles',
                       href: 'https://www.apache.org/foundation/how-it-works.html#roles'
                   end
-                  _li { _a 'Planet Apache', href: 'http://planet.apache.org/' }
+                  _li { _a 'Planet Apache', href: 'https://planet.apache.org/' }
                 end
               end
 
@@ -137,9 +137,9 @@ _html lang: 'en', _width: '80' do
                   end
                   _li do
                     _a 'Community Development',
-                      href: 'http://community.apache.org/'
+                      href: 'https://community.apache.org/'
                   end
-                  _li { _a 'ApacheCon', href: 'http://www.apachecon.com/' }
+                  _li { _a 'ApacheCon', href: 'https://www.apachecon.com/' }
                 end
               end
 
@@ -229,18 +229,18 @@ _html lang: 'en', _width: '80' do
             _h5.white 'Community'
 
             _ul_.list_unstyled.white role: 'menu' do
-              _li { _a 'Overview', href: 'http://community.apache.org/' }
+              _li { _a 'Overview', href: 'https://community.apache.org/' }
               _li do
                 _a 'Conferences',
                   href: 'https://www.apache.org/foundation/conferences.html'
               end
               _li do
                 _a 'Summer of Code',
-                  href: 'http://community.apache.org/gsoc.html'
+                  href: 'https://community.apache.org/gsoc.html'
               end
               _li do
                 _a 'Getting Started',
-                  href: 'http://community.apache.org/newcomers/'
+                  href: 'https://community.apache.org/newcomers/'
               end
               _li do
                 _a 'The Apache Way',
@@ -255,7 +255,7 @@ _html lang: 'en', _width: '80' do
               end
               _li do
                 _a 'Community FAQ',
-                  href: 'http://community.apache.org/newbiefaq.html'
+                  href: 'https://community.apache.org/newbiefaq.html'
               end
             end
           end
@@ -264,8 +264,8 @@ _html lang: 'en', _width: '80' do
             _h5.white 'Innovation'
 
             _ul_.list_unstyled.white role: 'menu' do
-              _li { _a 'Incubator', href: 'http://incubator.apache.org/' }
-              _li { _a 'Labs', href: 'http://labs.apache.org/' }
+              _li { _a 'Incubator', href: 'https://incubator.apache.org/' }
+              _li { _a 'Labs', href: 'https://labs.apache.org/' }
               _li { _a 'Licensing', href: 'https://www.apache.org/licenses/' }
               _li do
                 _a 'Licensing FAQ',
@@ -293,7 +293,7 @@ _html lang: 'en', _width: '80' do
                   href: 'https://www.apache.org/dev/infrastructure.html'
               end
               _li { _a 'Security', href: 'https://www.apache.org/security/' }
-              _li { _a 'Status', href: 'http://status.apache.org' }
+              _li { _a 'Status', href: 'https://status.apache.org' }
               _li do
                 _a 'Contacts',
                   href: 'https://www.apache.org/foundation/contact.html'
@@ -358,7 +358,7 @@ _html lang: 'en', _width: '80' do
               _ "Copyright © #{Date.today.year} The Apache Software Foundation, Licensed " +
                 "under the "
               _a.white 'Apache License, Version 2.0',
-                href: 'http://www.apache.org/licenses/LICENSE-2.0'
+                href: 'https://www.apache.org/licenses/LICENSE-2.0'
               _ '.'
             end
 

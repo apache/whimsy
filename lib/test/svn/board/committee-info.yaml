@@ -6,12 +6,12 @@
 
 :cttees:
   comdev:
-    :site: http://community.apache.org/
+    :site: https://community.apache.org/
     :description: Resources to help people become involved with Apache projects
 
 :tlps:
   httpd:
-    :site: http://httpd.apache.org/
+    :site: https://httpd.apache.org/
     :description: Apache Web Server (httpd)
 ...
 # ends
