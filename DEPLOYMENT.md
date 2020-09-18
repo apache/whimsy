@@ -102,14 +102,6 @@ and running - these are only needed for a new deployment.
     * Subscribe `members@whimsy-vm4.apache.org` to `members@apache.org`.
     * Add `secretary@whimsy-vm4.apache.org` to the `secretary@apache.org` alias.
 
- * Using the `www-data` user, copy over the following directories from
-   the previous whimsy-vm* server:
-   * `/srv/agenda`
-   * `/srv/icla`
-   * `/srv/mail/board`
-   * `/srv/mail/members`
-   * `/srv/mail/secretary`
-
  * Verify that email can be sent to non-apache.org email addresses.
    * Run [testmail.rb](tools/testmail.rb)
 
@@ -122,6 +114,14 @@ and running - these are only needed for a new deployment.
 
  * Ensure that gitpubsub is working. Check that updates to whimsy git are pulled within 5 minutes or less
 
-N.B. Just prior to switchover, ensure that the file `/srv/mail/secretary/YYYYMM.yml`
+ * Synchronising data: Whimsy keeps some data locally on the server. This needs to be copied across prior to switchover.
+ Using the `www-data` user, copy over the following directories from
+   the previous whimsy-vm* server:
+   * `/srv/agenda`
+   * `/srv/icla`
+   * `/srv/mail/board`
+   * `/srv/mail/members`
+   * `/srv/mail/secretary`
+   * in particular, ensure that the file `/srv/mail/secretary/YYYYMM.yml`
 for the current month is copied (or merged?) across. This contains the status for mails
 handled by the Secretary workbench.
