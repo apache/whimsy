@@ -116,12 +116,14 @@ and running - these are only needed for a new deployment.
 
  * Synchronising data: Whimsy keeps some data locally on the server. This needs to be copied across prior to switchover.
  Using the `www-data` user, copy over the following directories from
-   the previous whimsy-vm* server:
+   the previous whimsy-vm server:
    * `/srv/agenda`
    * `/srv/icla`
-   * `/srv/mail/board`
-   * `/srv/mail/members`
-   * `/srv/mail/secretary`
-   * in particular, ensure that the file `/srv/mail/secretary/YYYYMM.yml`
-for the current month is copied (or merged?) across. This contains the status for mails
+   * ensure that the file `/srv/mail/secretary/YYYYMM.yml`
+for the current month(s) is merged across. These contain the status for mails
 handled by the Secretary workbench.
+   * Note that the /srv/mail/* directories will in general be different between hosts
+     This is because the final delivery routes will vary.
+     It may be work checking that the file names are the same, and the dates/times
+     are similar.
+     There may a few mails that appear on only one server, e.g. due to local testing.
