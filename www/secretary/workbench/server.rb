@@ -52,6 +52,10 @@ set :show_exceptions, true
 
 disable :logging # suppress log of requests to stderr/error.log
 
+# disable all update actions
+UNAVAILABLE = 'Service temporarily unavailable due to migration.'
+# set the constant to nil to re-enable
+
 # list of messages
 get '/' do
   redirect to('/') if env['REQUEST_URI'] == env['SCRIPT_NAME']
@@ -106,6 +110,8 @@ end
 
 # task lists
 post '/tasklist/:file' do
+  return [503, UNAVAILABLE] if UNAVAILABLE
+
   @jsmtime = File.mtime('public/tasklist.js').to_i
   @cssmtime = File.mtime('public/secmail.css').to_i
 
@@ -119,11 +125,15 @@ end
 
 # posted actions
 post '/actions/:file' do
+  return [503, UNAVAILABLE] if UNAVAILABLE unless params[:file] == 'check-mail'
+
   _json :"actions/#{params[:file]}"
 end
 
 # mark a single message as deleted
 delete %r{/(\d+)/(\w+)/} do |month, hash|
+  return [503, UNAVAILABLE] if UNAVAILABLE
+
   success = false
 
   Mailbox.update(month) do |headers|
@@ -139,6 +149,8 @@ end
 
 # update a single message
 patch %r{/(\d{6})/(\w+)/} do |month, hash|
+  return [503, UNAVAILABLE] if UNAVAILABLE
+
   success = false
 
   Mailbox.update(month) do |headers|
