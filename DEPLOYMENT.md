@@ -119,11 +119,7 @@ and running - these are only needed for a new deployment.
    the previous whimsy-vm server:
    * `/srv/agenda`
    * `/srv/icla`
-   * ensure that the file `/srv/mail/secretary/YYYYMM.yml`
-for the current month(s) is merged across. These contain the status for mails
-handled by the Secretary workbench.
+   * `/srv/gpg` - this contains the public key ring used to check ICLA signatures
    * Note that the /srv/mail/* directories will in general be different between hosts
      This is because the final delivery routes will vary.
-     It may be work checking that the file names are the same, and the dates/times
-     are similar.
-     There may a few mails that appear on only one server, e.g. due to local testing.
+     However, rather than try and merge the files, it is simpler to do a full copy of `/srv/mail`
