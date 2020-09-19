@@ -13,10 +13,10 @@ module YamlFile
   # opens the file for exclusive access with an exclusive lock
   # Yields the parsed YAML to the block, and writes the updated
   # data to the file
-  def self.update(yaml_file)
+  def self.update(yaml_file, *args)
     File.open(yaml_file, File::RDWR|File::CREAT, 0644) do |file| 
       file.flock(File::LOCK_EX)
-      yaml = YAML.safe_load(file.read) || {} rescue {}
+      yaml = YAML.safe_load(file.read, *args) || {} rescue {}
       yield yaml
       file.rewind
       file.write YAML.dump(yaml)
@@ -29,10 +29,10 @@ module YamlFile
   # Opens the file read-only, with a shared lock, and parses the YAML
   # This is yielded to the block (if provided), whilst holding the lock
   # Otherwise the YAML is returned to the caller, and the lock is released
-  def self.read(yaml_file)
+  def self.read(yaml_file, *args)
     File.open(yaml_file, File::RDONLY) do |file|
       file.flock(File::LOCK_SH)
-      yaml = YAML.safe_load(file.read) || {} rescue {}
+      yaml = YAML.safe_load(file.read,*args) || {} rescue {}
       if block_given?
         yield yaml
       else
