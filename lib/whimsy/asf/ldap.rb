@@ -571,12 +571,8 @@ module ASF
       # add person to LDAP
       person = ASF::Person.add(attrs)
 
-      # add person to 'new' committers list
-      ASF::LDAP.modify("cn=committers,#@base", 
-        [ASF::Base.mod_add('member', [person.dn])])
-
-      # add person to 'legacy' committers list
-      ASF::Group['committers'].add(person)
+      # add person to committers lists
+      register(person)
 
       # return new person
       person
