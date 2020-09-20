@@ -2,9 +2,14 @@
 # Server side Sinatra routes
 #
 
-# disable all update actions
-UNAVAILABLE = 'Service temporarily unavailable due to migration.'
-# set the constant to nil to re-enable
+require_relative '../../whimsy'
+if Whimsy.master?
+  UNAVAILABLE = nil # updates allowed
+else
+  # disable all update actions
+  # UNAVAILABLE = 'Service temporarily unavailable due to migration.'
+  UNAVAILABLE = 'Service unavailable on this node. Please ensure you have logged in to the correct host.'
+end
 
 # redirect root to latest agenda
 get '/' do
