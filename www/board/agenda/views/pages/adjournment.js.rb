@@ -164,10 +164,6 @@ class PMCActions < Vue
   end
 
   def render
-    _p do
-      _a 'PMC resolutions:', 
-        href: 'https://infra.apache.org/officers/tlpreq'
-    end
 
     _ul.checklist @resolutions do |item|
       _li do
