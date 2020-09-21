@@ -20,8 +20,6 @@ Checks performed: (F=fatal, E=error, W=warn)
 TBA
 =end
 
-$SAFE = 1
-
 $CLI = false
 $VERBOSE = false
 
@@ -124,15 +122,20 @@ def displayHTML
   _h4_ 'F: fatal, E: Error, W: warning, I: info (success)'
 end
 
-# get an HTTP URL
-def HEAD(url)
-  puts ">> HEAD #{url}" if $VERBOSE
-  url.untaint
+def check_url(url)
   uri = URI.parse(url)
   unless uri.scheme
     W "No scheme for URL #{url}, assuming http"
     uri = URI.parse("http:"+url)
   end
+  return uri if %w{http https}.include? uri.scheme
+  raise ArgumentError.new("Unexpected url: #{url}")
+end
+
+# get an HTTP URL
+def HEAD(url)
+  puts ">> HEAD #{url}" if $VERBOSE
+  uri = check_url(url)
   http = Net::HTTP.new(uri.host, uri.port)
   http.use_ssl = uri.scheme == 'https'
   request = Net::HTTP::Head.new(uri.request_uri)
@@ -142,16 +145,11 @@ end
 # get an HTTP URL=> response
 def GET(url)
   puts ">> GET #{url}" if $VERBOSE
-  url.untaint
-  uri = URI.parse(url).untaint
-  unless uri.scheme
-    W "No scheme for URL #{url}, assuming http"
-    uri = URI.parse("http:"+url).untaint
-  end
+  uri = check_url(url)
   http = Net::HTTP.new(uri.host, uri.port)
   http.use_ssl = uri.scheme == 'https'
   request = Net::HTTP::Get.new(uri.request_uri)
-  http.request(request.untaint)
+  http.request(request)
 end
 
 # Check page exists
@@ -321,15 +319,7 @@ def _checkDownloadPage(path, tlp, version)
   end
 
   # check the main body
-  if path.start_with? 'http'
-    body = check_page(path)
-  else
-    file = path
-    if file.start_with? '~'
-      file = ENV['HOME'] + file[1..-1]
-    end
-    body = File.read(file.untaint)
-  end
+  body = check_page(path)
   
   return unless body
 
@@ -644,7 +634,6 @@ end
 
 if __FILE__ == $0
   $CLI = true
-  $SAFE = 0
   $VERBOSE =true
   $ALWAYS_CHECK_LINKS = ARGV.delete '--always'
   $NO_CHECK_LINKS = ARGV.delete '--nolinks'
