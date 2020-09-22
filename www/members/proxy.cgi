@@ -57,7 +57,7 @@ def emit_instructions(today, cur_mtg_dir, meeting)
 end
 
 # Emit meeting data and form for user to select a proxy - GET
-def emit_form(cur_mtg_dir, meeting, volunteers)
+def emit_form(cur_mtg_dir, _meeting, volunteers)
   help, copypasta = MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
   user_is_proxy = help && copypasta
   _whimsy_panel(user_is_proxy ? "You Are Proxying For Others" : "Select A Proxy For Upcoming Meeting", style: 'panel-success') do

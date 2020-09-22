@@ -39,7 +39,7 @@ _html do
   _h1 "public names: LDAP vs iclas.txt"
 
   # prefetch LDAP data
-  people = ASF::Person.preload(%w(cn dn))
+  ASF::Person.preload(%w(cn dn))
 
   if @updates
 
@@ -83,16 +83,16 @@ _html do
       end
       path = File.join(ASF::SVN.svnurl('officers'),'iclas.txt')
       env = Struct.new(:user, :password).new($USER, $PASSWORD)
-      ASF::SVN.update(path,message,env,_) do |tmpdir, iclas|
+      ASF::SVN.update(path,message,env,_) do |_tmpdir, iclas|
         updates.each do |id, names|
           pattern = Regexp.new("^#{Regexp.escape(id)}:(.*?):(.*?):")
 
           if names['legal_name']
-            iclas[pattern,1] = names['legal_name'].gsub("\u00A0", ' ')  
+            iclas[pattern,1] = names['legal_name'].gsub("\u00A0", ' ')
           end
 
           if names['public_name']
-            iclas[pattern,2] = names['public_name'].gsub("\u00A0", ' ') 
+            iclas[pattern,2] = names['public_name'].gsub("\u00A0", ' ')
           end
         end
 
@@ -336,7 +336,7 @@ _html do
         input.focus()
 
         # when focus leaves input, replace cell with modified text
-        input.addEventListener(:blur) do |event|
+        input.addEventListener(:blur) do
           parent = input.parentNode
           value = input.value
           input.remove()

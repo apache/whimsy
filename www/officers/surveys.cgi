@@ -51,7 +51,7 @@ def get_survey_path(f)
   # test
   begin
     return File.join(ASF::SVN[get_survey_root(true)], filename)
-  rescue Exception => e
+  rescue Exception => _e
     return "ERROR-NO-OFFICERS_SURVEYS-CHECKOUT" # Improve error display in browser
   end
 end
@@ -100,7 +100,7 @@ def display_survey(survey_layout)
 end
 
 # Validation as needed within the script
-def validate_survey(formdata: {})
+def validate_survey(_formdata: {})
   return true # TODO: Futureuse
 end
 

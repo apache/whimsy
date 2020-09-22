@@ -24,7 +24,7 @@ def get_attend_matrices(dir)
 
   # compute mappings of names to ids
   members = ASF::Member.list
-  active = Hash[members.select {|id, data| not data['status']}]
+  active = Hash[members.select {|_id, data| not data['status']}]
   nameMap = Hash[members.map {|id, data| [id, data[:name]]}]
   idMap = Hash[nameMap.to_a.map(&:reverse)]
 
@@ -87,7 +87,7 @@ _html do
         end
       end
 
-      matrix.each do |id, name, first, missed|
+      matrix.each do |id, _name, first, missed|
         next unless id
 
         if missed >= @meetingsMissed
@@ -123,12 +123,12 @@ end
 
 _json do
   meetingsMissed = (@meetingsMissed || 3).to_i
-  attendance, matrix, dates, nameMap = get_attend_matrices(MEETINGS)
-  inactive = matrix.select do |id, name, first, missed|
+  _attendance, matrix, _dates, _nameMap = get_attend_matrices(MEETINGS)
+  inactive = matrix.select do |id, _name, _first, missed|
     id and missed >= meetingsMissed
   end
 
-  Hash[inactive.map {|id, name, first, missed| 
+  Hash[inactive.map {|id, name, _first, missed| 
     [id, {name: name, missed: missed, status: 'no response yet'}]
     }]
 end

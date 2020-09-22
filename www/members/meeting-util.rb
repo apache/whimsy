@@ -43,8 +43,7 @@ class MeetingUtil
   def self.getVolunteers(mtg_dir)
     lines = IO.read(File.join(mtg_dir, 'proxies'))
     # split by ---- underlines, then by blank lines; pick second para and drop leading spaces
-    volunteers = lines.split(/^-----------/)[1].split(/\n\n/)[1].scan(/^\ +(\S.*$)/).flatten
-
+    lines.split(/^-----------/)[1].split(/\n\n/)[1].scan(/^\ +(\S.*$)/).flatten
   end
   # Get info about current users's proxying
   # @return "help text", ["id | name (proxy)", ...] if they are a proxy for other(s)

@@ -14,8 +14,8 @@ require 'date'
 
 $cache = Cache.new(dir: 'other')
 
-def getJSON(url,name)
-  uri, response, status = $cache.get(url)
+def getJSON(url, _name)
+  _uri, response, _status = $cache.get(url)
 #  $stderr.puts "#{name} #{uri} #{status}"
   JSON.parse(response)
 end
@@ -73,7 +73,7 @@ _html do
       _thead_ do
         _tr do
           _th 'Conference', data_sort: 'string'
-          cols.each do |id, desc|
+          cols.each do |_id, desc|
             _th! desc, data_sort: 'string'
           end
           _th 'Last Event', data_sort: 'string'
@@ -86,7 +86,7 @@ _html do
                 _a conf['name'], href: conf['website']
               end
               if conf[SPEAKERKIT] then
-                cols.each do |id, desc|
+                cols.each do |id, _desc|
                   _td! conf[SPEAKERKIT][id]
                 end            
               else

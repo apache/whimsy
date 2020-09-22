@@ -173,7 +173,7 @@ module MailUtils
     if File.file?(cache_json)
       begin
         return JSON.parse(File.read(cache_json))
-      rescue StandardError => e
+      rescue StandardError => _e
         # No-op: fall through to attempt to re-create cache
       end
     end
@@ -212,14 +212,14 @@ module MailUtils
     emails[TOOLS].each do |mail|
       emails[TOOLCOUNT][mail[TOOLS]] += 1
     end
-    emails[TOOLCOUNT] = emails[TOOLCOUNT].sort_by { |k,v| -v}.to_h
+    emails[TOOLCOUNT] = emails[TOOLCOUNT].sort_by { |_k, v| -v}.to_h
 
     emails[MAILS].sort_by! { |email| email[DATE] }
     emails[MAILCOUNT] = Hash.new {|h, k| h[k] = 0 }
     emails[MAILS].each do |mail|
       emails[MAILCOUNT]["#{mail[WHO]} (#{mail[AVAILID]})"] += 1
     end
-    emails[MAILCOUNT] = emails[MAILCOUNT].sort_by { |k,v| -v}.to_h
+    emails[MAILCOUNT] = emails[MAILCOUNT].sort_by { |_k, v| -v}.to_h
 
     # If yearmonth is before current month, then write out yearmonth.json as cache
     if yearmonth < Date.today.strftime('%Y%m')
@@ -289,7 +289,7 @@ module MboxUtils
           mdata[:subject] = mail[:subject].value
           mdata[:listid] = mail[:List_Id].value
           mdata[:date] = mail.date.to_s
-        rescue => ee
+        rescue => _e
           mdata[:from] = mail[:from]
           mdata[:subject] = mail[:subject]
           mdata[:listid] = mail[:List_Id]
@@ -334,7 +334,7 @@ module MboxUtils
           mdata[:w] = d.wday
           mdata[:h] = d.hour
           mdata[:z] = d.zone
-        rescue => noop
+        rescue => _e
           # no-op - not critical
           puts "DEBUG: #{e.message} parsing: #{mdata[:date]}"
         end
@@ -432,7 +432,7 @@ def optparse
     opts.on('-oOUTPUT.CSV', '--output OUTPUT.CSV', "Filename to output rows into; default #{DEFAULT_OUTPUT}") do |o|
       options[:output] = o
     end
-    opts.on('-j', '--json', "Process .mbox to .json (optional)") do |j|
+    opts.on('-j', '--json', "Process .mbox to .json (optional)") do
       options[:json] = true
     end
     begin

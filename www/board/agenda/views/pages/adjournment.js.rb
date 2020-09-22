@@ -188,7 +188,6 @@ class PMCActions < Vue
     @resolutions = []
 
     Agenda.index.each do |item|
-      action = name = nil
 
       %w(change establish terminate).each do |todo_type|
         Todos[todo_type].each do |todo| 

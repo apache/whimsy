@@ -239,11 +239,11 @@ end
 def get_links(body)
   doc = Nokogiri::HTML(body)
   nodeset = doc.css('a[href]')    # Get anchors w href attribute via css
-  links = nodeset.map {|node|
+  nodeset.map { |node|
     href = node.attribute("href").to_s
     text = node.text.gsub(/[[:space:]]+/,' ')
     [href,text]
-  }.select{|x,y| x =~ %r{^(https?:)?//} }
+  }.select{|x, _y| x =~ %r{^(https?:)?//} }
 end
 
 VERIFY_TEXT = [
@@ -356,7 +356,7 @@ def _checkDownloadPage(path, tlp, version)
   #   https://www.apache.org/dist/httpcomponents/httpclient/KEYS
   expurl = "https://[downloads.|www.]apache.org/[dist/][incubator/]#{tlp}/KEYS"
   expurlre = %r{^https://((www\.)?apache\.org/dist|downloads\.apache\.org)/(incubator/)?#{tlp}/KEYS$}
-  keys = links.select{|h,v| h =~ expurlre}
+  keys = links.select{|h, _v| h =~ expurlre}
   if keys.size >= 1
     keyurl = keys.first.first
     keytext = keys.first[1]
@@ -367,7 +367,7 @@ def _checkDownloadPage(path, tlp, version)
     end
     check_head(keyurl,:E, "200", false, true)
   else
-    keys = links.select{|h,v| v.strip == 'KEYS' || v == 'KEYS file' || v == '[KEYS]'}
+    keys = links.select{|_h, v| v.strip == 'KEYS' || v == 'KEYS file' || v == '[KEYS]'}
     if keys.size >= 1
       I 'Found KEYS link'
       keyurl = keys.first.first
@@ -485,7 +485,7 @@ def _checkDownloadPage(path, tlp, version)
 
   links.each do |h,t|
     if h =~ %r{\.(asc|sha256|sha512)$}
-      host, stem, ext = check_hash_loc(h,tlp)
+      host, _stem, _ext = check_hash_loc(h,tlp)
       if host == 'archive'
         if $ARCHIVE_CHECK
           check_head(h, :E, "200", true, true)
@@ -514,7 +514,7 @@ def _checkDownloadPage(path, tlp, version)
         next
       end
       name = $1
-      ext = $2
+      _ext = $2
       if h =~ %r{https?://archive\.apache\.org/}
         unless $ARCHIVE_CHECK
             I "Ignoring archive artifact #{h}"
@@ -539,7 +539,7 @@ def _checkDownloadPage(path, tlp, version)
         bdy = check_page(h, :E, "200", false)
         if bdy
           lks = get_links(bdy)
-          lks.each do |l,t|
+          lks.each do |l, _t|
              # Don't want to match archive server (closer.cgi defaults to it if file is not found)
              if l.end_with?(name) and l !~ %r{//archive\.apache\.org/}
                 path = l

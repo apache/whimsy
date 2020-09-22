@@ -278,7 +278,7 @@ class Parts < Vue
     for i in 0...frames.length
       begin
         frames[i].onkeydown=self.keydown
-      rescue => error
+      rescue => _e
       end
     end
 
@@ -298,7 +298,7 @@ class Parts < Vue
 
     # when back button is clicked, go all of the way back
     history_length =  window.history.length
-    window.addEventListener 'popstate' do |event|
+    window.addEventListener 'popstate' do
       window.history.go(history_length - window.history.length)
     end
 
@@ -364,7 +364,7 @@ class Parts < Vue
   # N.B. @selected is an encoded URI; @menu is not encoded
 
   # burst a PDF into individual pages
-  def burst(event)
+  def burst(_event)
     data = {
       selected: @menu || decodeURI(@selected),
       message: window.parent.location.pathname
@@ -434,7 +434,7 @@ class Parts < Vue
   end
 
   # convert an attachment to pdf
-  def pdfize(event)
+  def pdfize(_event)
     message = window.parent.location.pathname
 
     data = {
@@ -457,7 +457,7 @@ class Parts < Vue
   end
 
   # parse pdf and display extracted data
-  def pdfparse(event)
+  def pdfparse(_event)
     message = window.parent.location.pathname
     attachment = @menu || decodeURI(@selected)
     url = message.sub('/workbench/','/icla-parse/') + attachment
@@ -622,7 +622,7 @@ class Parts < Vue
   end
 
   # cancel drag operation
-  def dragEnd(event)
+  def dragEnd(_event)
     @drag = nil
   end
 

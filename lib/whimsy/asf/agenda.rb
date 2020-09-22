@@ -160,7 +160,7 @@ class ASF::Board::Agenda
     end
 
     # look for missing titles
-    @sections.each do |section, hash|
+    @sections.each do |_section, hash|
       hash['title'] ||= "UNKNOWN"
 
       if hash['title'] == "UNKNOWN"

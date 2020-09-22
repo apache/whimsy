@@ -61,7 +61,7 @@ module PonyAPI
   # it returns the data as a hash
   def get_pony_prefs(dir=nil, cookie=nil, sort_list=false)
     cookie=get_cookie() if cookie == 'prompt'
-    uri, request, response = fetch_pony(PONYPREFS, cookie)
+    uri, _request, response = fetch_pony(PONYPREFS, cookie)
     jzon = {}
     if response.code == '200' then
       jzon = JSON.parse(response.body)
@@ -74,7 +74,7 @@ module PonyAPI
           rescue JSON::GeneratorError
             puts "WARN:get_pony_prefs(#{uri.request_uri}) #{e.message} #{e.backtrace[0]}, continuing without pretty"
             f.puts jzon
-          end    
+          end
         end
       end
     else
@@ -91,9 +91,9 @@ module PonyAPI
   # Download one month of stats as a JSON
   # Must supply cookie = 'ponymail-logged-in-cookie' if a private list
   def get_pony_stats(dir, list, subdomain, year, month, cookie=nil, sort_list=false)
-    cookie=get_cookie() if cookie == 'prompt'
-    args =  make_args(list, subdomain, year, month)
-    uri, request, response = fetch_pony(PONYSTATS % args, cookie)
+    cookie = get_cookie() if cookie == 'prompt'
+    args = make_args(list, subdomain, year, month)
+    uri, _request, response = fetch_pony(PONYSTATS % args, cookie)
     if response.code == '200' then
       openfile(dir, STATSMBOX % args) do |f|
         begin
@@ -131,9 +131,9 @@ module PonyAPI
   # Caveats: uses response's encoding; overwrites existing .json file
   # Must supply cookie = 'ponymail-logged-in-cookie' if a private list
   def get_pony_mbox(dir, list, subdomain, year, month, cookie=nil)
-    cookie=get_cookie() if cookie == 'prompt'
-    args =  make_args(list, subdomain, year, month)
-    uri, request, response = fetch_pony(PONYMBOX % args, cookie)
+    cookie = get_cookie() if cookie == 'prompt'
+    args = make_args(list, subdomain, year, month)
+    uri, _request, response = fetch_pony(PONYMBOX % args, cookie)
     if response.code == '200'
       openfile(dir, FILEMBOX % args, "w:#{response.body.encoding}") do |f|
         f.puts response.body

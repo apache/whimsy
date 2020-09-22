@@ -19,9 +19,9 @@ end
 ICLAS = ASF::SVN.svnpath!('officers', 'iclas.txt')
 
 # get up to date data...
-requests, err = ASF::SVN.svn('cat', ASF::SVN.svnpath!('acreq', 'new-account-reqs.txt'), {env: env})
+requests, _err = ASF::SVN.svn('cat', ASF::SVN.svnpath!('acreq', 'new-account-reqs.txt'), {env: env})
 
-iclas_txt,err = ASF::SVN.svn('cat', ICLAS, {env: env}).force_encoding('utf-8')
+iclas_txt, _err = ASF::SVN.svn('cat', ICLAS, {env: env}).force_encoding('utf-8')
 
 # grab the current list of PMCs from ldap
 pmcs = ASF::Committee.pmcs.map(&:name).sort
@@ -48,9 +48,9 @@ elsif iclas == '1' and email and iclas_txt =~ /^notinavail:.*?:(.*?):#{email}:/
   iclas = {email => $1}
 else
   count = iclas ? iclas.to_i : 300 rescue 300
-  log, err = ASF::SVN.svn(['log', '--incremental', '-q', "-l#{count}"], ICLAS, {revision: 'HEAD:0', env: env})
+  log, _err = ASF::SVN.svn(['log', '--incremental', '-q', "-l#{count}"], ICLAS, {revision: 'HEAD:0', env: env})
   oldrev = log.split("\n")[-1].split()[0][1..-1].to_i
-  diff, err = ASF::SVN.svn('diff', ICLAS, {revision: "#{oldrev}:HEAD", env: env})
+  diff, _err = ASF::SVN.svn('diff', ICLAS, {revision: "#{oldrev}:HEAD", env: env})
   iclas = Hash[*diff.scan(/^[+]notinavail:.*?:(.*?):(.*?):Signed CLA/).flatten.reverse]
 end
 
@@ -190,9 +190,9 @@ _html do
                 _div.col_sm_10 do
                   _select.form_control name: "email", id: "email", required: true do
                     _option value: ''
-                    iclas.to_a.sort_by {|email, name| email.downcase}.
+                    iclas.to_a.sort_by {|email, _name| email.downcase}.
                       each do |email, name|
-                      _option email.downcase, value: email, data_name:name
+                      _option email.downcase, value: email, data_name: name
                     end
                   end
                 end
@@ -333,7 +333,7 @@ _html do
                   EOF
 
                   msg = "#{@user} account request by #{user.id} for #{requestor}"
-                  rc = ASF::SVN.update(ASF::SVN.svnpath!('acreq', 'new-account-reqs.txt'), msg, env, _) do |dir, input|
+                  rc = ASF::SVN.update(ASF::SVN.svnpath!('acreq', 'new-account-reqs.txt'), msg, env, _) do |_dir, input|
                     _h2 'Commit messages'
                     input + line + "\n"
                   end
