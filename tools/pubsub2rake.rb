@@ -125,7 +125,7 @@ if $0 == __FILE__
       watching = WATCH[path]
       watching.each do |svn_prefix, svn_alias, files|
         changed = event['commit']['changed']
-        changed.keys.each do |ck|
+        changed.each_key do |ck|
           if ck.start_with? svn_prefix # file matches target path
             if files && files.size > 0 # but does it match exactly?
               files.each do |file|

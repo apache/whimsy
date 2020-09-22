@@ -38,7 +38,7 @@ def display_project(project, links, analysis, checks, tlp = true)
         end
       end
       _tbody do
-        checks.keys.each do |col|
+        checks.each_key do |col|
           cls = SiteStandards.label(analysis, links, col, project)
           _tr do
             _td do
@@ -163,7 +163,7 @@ def display_overview(sites, analysis, checks, tlp = true)
       _thead do
         _tr do
           _th! "#{tlp ? 'Project' : 'Podling'}", data_sort: 'string-ins'
-          checks.keys.each do |col|
+          checks.each_key do |col|
             _th! data_sort: 'string' do
               _a col.capitalize, href: "check/#{col}"
               _br
@@ -186,7 +186,7 @@ def display_overview(sites, analysis, checks, tlp = true)
             _td do
               _a "#{links['display_name']}", href: "project/#{n}"
             end
-            checks.keys.each do |c|
+            checks.each_key do |c|
               cls = SiteStandards.label(analysis, links, c, n)
               _td '', class: cls, data_sort_value: sort_order[cls]
             end

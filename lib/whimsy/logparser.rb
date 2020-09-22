@@ -95,7 +95,7 @@ module LogParser
   def collate_whimsy_access(logs, apphash = WHIMSY_APPS)
     remainder = logs
     apps = {}
-    apphash.keys.each do |a|
+    apphash.each_key do |a|
       apps[a] = Hash.new{|h,k| h[k] = [] }
       apps[a][RUSER] = Hash.new{|h,k| h[k] = 0 }
       apps[a][REFERER] = Hash.new{|h,k| h[k] = 0 }

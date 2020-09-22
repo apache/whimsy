@@ -88,7 +88,7 @@ _html do
     datums = JSON.parse(File.read(File.join(BOARD, 'scripts', 'board-attend.json')))
     months = Set.new()
     datums.each do |id, data|
-      data.keys.each do |m|
+      data.each_key do |m|
         months << m
       end
     end

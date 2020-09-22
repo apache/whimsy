@@ -123,7 +123,7 @@ _html do
       alltalks = talks.group_by { |t| t[1]['topics'][0]}
       _p do
         _ 'All talks by topics: '
-        alltalks.keys.each do | topic |
+        alltalks.each_key do | topic |
           _a "#{topic}", href: "##{topic}"
           _ ' | ' unless topic == alltalks.keys.last
         end

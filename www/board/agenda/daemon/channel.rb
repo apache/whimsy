@@ -87,7 +87,7 @@ class Channel
 
   # close all open sockets
   def self.close_all
-    @@sockets.keys.each do |client|
+    @@sockets.each_key do |client|
       client.close
     end
   end

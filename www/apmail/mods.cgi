@@ -100,7 +100,7 @@ _html do
 
       _h2_ "Mailing Lists - #{$1}"
       _ul do
-        mods[$1].keys.each do |list|
+        mods[$1].each_key do |list|
           _li! { _a list, href: "#{list}/" }
         end
       end

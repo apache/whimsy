@@ -235,7 +235,7 @@ parsed_agenda.each do |item|
   next unless item[:attach] =~ /^7\w$/
   if item['title'] =~ /^Change (.*?) Chair$/ and item['people']
     pmc = ASF::Committee.find($1).id
-    item['people'].keys.each do |person|
+    item['people'].each_key do |person|
       transitioning[ASF::Person.find(person)] = item['title']
     end
     next if Array(minutes[:todos][:changed]).include? pmc

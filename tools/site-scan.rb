@@ -43,7 +43,7 @@ end
 # @see SiteStandards for definitions of what we should scan for (in general)
 def parse(id, site, name)
   data = {}
-  SiteStandards::COMMON_CHECKS.keys.each do |k|
+  SiteStandards::COMMON_CHECKS.each_key do |k|
     data[k.to_sym] = nil
   end
   data[:display_name] = name
