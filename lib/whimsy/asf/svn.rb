@@ -604,10 +604,10 @@ module ASF
         dir.untaint
         basename.untaint
       end
-      
-      tmpdir = Dir.mktmpdir.untaint
 
-      begin
+      rc = 0
+      Dir.mktmpdir do |tmpdir|
+
         # create an empty checkout
         self.svn_('checkout', [self.getInfoItem(dir,'url'), tmpdir], _,
           {depth: 'empty', env: env})
@@ -635,7 +635,7 @@ module ASF
           contents = yield tmpdir, ''
           previous_contents = File.read(tmpfile) if File.file? tmpfile
         end
-     
+
         # create/update the temporary copy
         if contents and not contents.empty?
           File.write tmpfile, contents
@@ -664,8 +664,7 @@ module ASF
         unless rc == 0 && out && out.empty?
           raise "svn failure #{rc} #{path.inspect} #{out}"
         end
-      ensure
-        FileUtils.rm_rf tmpdir
+
       end
       rc # return last status
     end
