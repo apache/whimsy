@@ -68,7 +68,7 @@ end
 
 # If JSON requested, simply return the data hash
 _json do
-  summaries, errors = summarize_all
+  summaries, _errors = summarize_all
   summaries
 end
 
@@ -87,7 +87,7 @@ _html do
   ) do
     datums = JSON.parse(File.read(File.join(BOARD, 'scripts', 'board-attend.json')))
     months = Set.new()
-    datums.each do |id, data|
+    datums.each do |_id, data|
       data.each_key do |m|
         months << m
       end
@@ -121,7 +121,7 @@ _html do
             datums.each do | id, data |
               totp = 0.0
               tota = 0.0
-              data.each do |k,v|
+              data.each do |_k, v|
                 totp += v['preapps'] if v.has_key?('preapps')
                 tota += v['actions'] if v.has_key?('actions')
               end
@@ -134,10 +134,10 @@ _html do
                   end
                 end
                 _td do
-                  _ data.select{|k,v| v['present']}.length
+                  _ data.select{ |_k, v| v['present']}.length
                 end
                 _td do
-                  _ data.select{|k,v| !v['present']}.length
+                  _ data.reject{ |_k, v| v['present']}.length
                 end
                 _td do
                   _span.text_muted "#{((totp / data.length)*100).round(0)}%"

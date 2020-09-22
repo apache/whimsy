@@ -114,7 +114,7 @@ def latest(event)
         end
 
         if match
-          match.clone().text().then do |before|
+          match.clone().text().then do
             fulfill(match)
 
             request = Request.new(match.url, cache: "no-store")
@@ -185,7 +185,7 @@ def bootstrap(event, request)
           # bad response: use cache instead
           replyFromCache(true)
         end
-      }.catch {|failure|
+      }.catch { |_failure|
         # no response: use cache instead
         replyFromCache(true)
       }

@@ -62,7 +62,7 @@ module ASF
 
     # mapping of committee names to canonical names (generally from ldap)
     # See also www/roster/committee.cgi
-    @@aliases = Hash.new {|hash, name| name.downcase}
+    @@aliases = Hash.new { |_hash, name| name.downcase}
     @@aliases.merge! \
       'c++ standard library'           => 'stdcxx',
       'community development'          => 'comdev',
@@ -214,8 +214,8 @@ module ASF
       end
 
       # sort and concatenate committees
-      committees = committees.sort_by {|name, chair| name.downcase}.
-        map {|name, chair| "    #{name.ljust(23)} #{chair}"}.
+      committees = committees.sort_by { |name, _chair| name.downcase }.
+        map { |name, chair| "    #{name.ljust(23)} #{chair}" }.
         join("\n")
 
       # replace committee info in the section, and then replace the
