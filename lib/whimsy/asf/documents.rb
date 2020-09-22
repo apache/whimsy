@@ -143,11 +143,9 @@ module ASF
     # or
     # nil, nil if not found
     def self.findpath(person)
-      path = file = nil
-      file = self.find(person)
-      if file
-        path = self.svnpath!(file)
-      end
+      path = nil
+      file = find(person)
+      path = svnpath!(file) if file
       [path, file]
     end
 
@@ -157,17 +155,20 @@ module ASF
     # return the file name or nil if the file is not in the directory
     def self.extractfilenamefrom(rooturl, fileurl)
       return nil unless fileurl
+
       # does the root match the file url?
       index = fileurl.index(rooturl)
-      if (index == 0)
-        # root matches, return file name (end of fileurl)
-        fileurl[rooturl.length..-1]
-      end
+      return nil unless index.zero?
+
+      # root matches, return file name (end of fileurl)
+      fileurl[rooturl.length..-1]
     end
+
     # Extract the file name if it is in emeritus directory
     # nil if it is not in this directory
     def self.extractfilename(fileurl)
       return nil unless fileurl
+
       root_url = ASF::SVN.svnurl(@base) + '/'
       extractfilenamefrom(root_url, fileurl)
     end
