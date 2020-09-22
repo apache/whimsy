@@ -125,7 +125,7 @@ class Wunderbar::JsonBuilder
           extras << ['propset', 'svn:mime-type', content_type, outpath]
         end
       else
-        name, file, content_type = dest.flatten
+        _name, file, content_type = dest.flatten
         outpath = ASF::SVN.svnpath!(docdir,"#{outfilename}#{outfileext}")
         # TODO does it matter that the revision is not known?
         if ASF::SVN.exist?(outpath, nil, env)

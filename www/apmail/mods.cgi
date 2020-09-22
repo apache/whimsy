@@ -68,8 +68,8 @@ _html do
 
       _h2 "ASF Mailing List moderators"
       emails = []
-      mods.each do |domain, lists|
-        lists.each do |list, moderators|
+      mods.each do |_domain, lists|
+        lists.each do |_list, moderators|
           emails += moderators.map(&:downcase)
         end
       end
@@ -99,7 +99,6 @@ _html do
     elsif ENV['PATH_INFO'] =~ %r{^/([-.\w]*apache\w*\.\w+)/$}
 
       _h2_ "Mailing Lists - #{$1}"
-      stem = "#{$1}-"
       _ul do
         mods[$1].keys.each do |list|
           _li! { _a list, href: "#{list}/" }
@@ -108,9 +107,8 @@ _html do
 
     elsif ENV['PATH_INFO'] =~ %r{^/([-.\w]*apache\w*\.\w+)/([-\w]+)/$}
 
-      domain, list = $1, $2
-
-      dir = "/home/apmail/lists/#{domain}/#{list}"
+      domain = $1
+      list = $2
 
       if _.post? and @email.to_s.include? '@'
         if %w(sub unsub).include? @op

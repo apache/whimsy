@@ -155,13 +155,13 @@ module ASF
     # param rooturl the svn url of the directory
     # param fileurl the svn url of the complete file
     # return the file name or nil if the file is not in the directory
-    def self.extractfilenamefrom(rooturl,fileurl)
+    def self.extractfilenamefrom(rooturl, fileurl)
       return nil unless fileurl
       # does the root match the file url?
       index = fileurl.index(rooturl)
       if (index == 0)
         # root matches, return file name (end of fileurl)
-        filename = fileurl[rooturl.length..-1]
+        fileurl[rooturl.length..-1]
       end
     end
     # Extract the file name if it is in emeritus directory

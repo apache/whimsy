@@ -152,7 +152,8 @@ class ICLA2 < Vue
   # input requirements.
   def updated()
     # ICLA file form
-    valid = %w(pubname email).all? do |name|
+    # TODO: why not used?
+    _valid = %w(pubname email).all? do |name|
       document.querySelector("input[name=#{name}]").validity.valid
     end
 
@@ -176,7 +177,7 @@ class ICLA2 < Vue
   end
 
   # handle ICLA form submission
-  def file(event)
+  def file(_event)
     setTimeout 0 do
       @submitted = true
       @filed = true
@@ -184,7 +185,7 @@ class ICLA2 < Vue
   end
 
   # when tasks complete (or are aborted) reset form
-  def status_update(event)
+  def status_update(_event)
     @submitted = false
     @filed = false
   end
