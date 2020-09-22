@@ -43,7 +43,7 @@ _html do
         meeting: '/committers/tools#meeting'
       }
     ) do
-    
+
       _h2 "Useful Committer-only Tools (require login)"
       _ul do
         MISC.each do |url, desc|

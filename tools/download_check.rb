@@ -320,7 +320,7 @@ def _checkDownloadPage(path, tlp, version)
 
   # check the main body
   body = check_page(path)
-  
+
   return unless body
 
   hasDisclaimer = body.gsub(%r{\s+},' ').include? 'Incubation is required of all newly accepted'
@@ -348,9 +348,9 @@ def _checkDownloadPage(path, tlp, version)
   end
 
   deprecated = Time.parse('2018-01-01')
-  
+
   links = get_links(body)
-  
+
   # check KEYS link
   # TODO: is location used by hc allowed, e.g.
   #   https://www.apache.org/dist/httpcomponents/httpclient/KEYS
@@ -387,7 +387,7 @@ def _checkDownloadPage(path, tlp, version)
       E 'Could not find KEYS link'
     end
   end
-  
+
   # check for verify instructions
   bodytext = body.gsub(/\s+/,' ') # single line
   if VERIFY_TEXT.any? {|text| bodytext.include? text}
@@ -395,19 +395,19 @@ def _checkDownloadPage(path, tlp, version)
   else
     E 'Could not find statement of the need to verify downloads'
   end
-  
+
   # Check if GPG verify has two parameters
   body.scan(%r{^.+gpg --verify.+$}){|m|
     unless m =~ %r{gpg --verify\s+\S+\.asc\s+\S+}
       W "gpg verify should specify second param: #{m.strip} see:\nhttps://www.apache.org/info/verification.html#specify_both"
     end
   }
-  
+
   # check if page refers to md5sum
   body.scan(%r{^.+md5sum.+$}){|m|
     W "Found md5sum: #{m.strip}"
   }
-  
+
   # Check archives have hash and sig
   vercheck = Hash.new() # key = archive name, value = array of hash/sig
 
@@ -461,7 +461,7 @@ def _checkDownloadPage(path, tlp, version)
     end
   end
 
-  
+
   # did we find all required elements?
   vercheck.each do |k,v|
     typ = v.shift

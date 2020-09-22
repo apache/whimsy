@@ -248,7 +248,7 @@ _html do
                 }
              }
           }
- 
+
           // Turn it into a $ figure with commas
           // TODO Support other currencies
           total = total.toFixed(2);
@@ -414,7 +414,7 @@ _html do
       end
 
       _p
-      
+
       _table_ style: "margin-left: auto" do
         _tbody do
           _tr do

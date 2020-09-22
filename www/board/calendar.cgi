@@ -50,14 +50,14 @@ _html do
     Future meeting times, presuming that the time of the meeting is
     set to #{@time} #{@zone}, rotating each meeting time by #{rotate} hours.
   }
-  
+
   if rotate == 0
     _p.bg_danger %{
       This background color indicate a local time change from the previous
       month.
     }
   end
-  
+
   _table.table do
     _thead do
      _tr do

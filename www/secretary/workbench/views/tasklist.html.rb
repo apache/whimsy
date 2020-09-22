@@ -15,7 +15,7 @@ _html do
     _header do
       _h1.bg_warning 'Operations to be performed'
     end
-  
+
     _ul.tasklist! do
       @dryrun['tasklist'].each do |task|
         _li do 

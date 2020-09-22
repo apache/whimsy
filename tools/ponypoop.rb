@@ -43,7 +43,7 @@ def analyze_threads(threads)
     end
     p "Hsh: #{threads.class} - #{threads.size} at #{threads['epoch']} #{max}/#{total}"
   end
-  
+
   return max, total
 end
 
@@ -135,7 +135,7 @@ def run_analyze_stats(dir, list, subject_regex)
   File.open("#{output}.json", "w") do |f|
     f.puts JSON.pretty_generate(results)
   end
-  
+
   results
 end
 
@@ -149,7 +149,7 @@ def optparse
   options = {}
   OptionParser.new do |opts|
     opts.on('-h') { puts opts; exit }
-    
+
     opts.on('-dDIRECTORY', '--directory DIRECTORY', 'Local directory to dump/find .json files (default: .)') do |d|
       if File.directory?(d)
         options[:dir] = d
@@ -160,21 +160,21 @@ def optparse
     opts.on(:REQUIRED, '-lLISTNAME', '--list LISTNAME', 'Root listname to download stats archive from (required; board or trademarks or...)') do |l|
       options[:list] = l.chomp('@')
     end
-    
+
     opts.on('-cCOOKIE', '--cookie COOKIE', 'For private lists REQUIRED, your ponymail logged-in cookie value') do |c|
       options[:cookie] = c
     end
     opts.on('-sSUBDOMAIN', '--subdomain SUBDOMAIN', 'Root @ subdomain .apache.org (only if project list; hadoop or community or...) to download stats archive from') do |s|
       options[:subdomain] = s.chomp('@.')
     end
-    
+
     opts.on('-p', '--pull', 'Pull down stats JSON files into -d dir (otherwise, default analyzes existing stats JSON in dir)') do |p|
       options[:pull] = true
     end
     opts.on('-m', '--mbox', 'Pull down mbox files into -d dir') do |p|
       options[:mbox] = true
     end
-    
+
     opts.on('-yYEAR', '--year YEAR', 'Only pull down single year, instead of 2010 thru now') do |y|
       options[:year] = [ y ]
     end
@@ -189,7 +189,7 @@ def optparse
       exit 1
     end
   end
-  
+
   return options
 end
 

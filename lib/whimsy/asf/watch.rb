@@ -1,7 +1,7 @@
 module ASF
 
   class Person < Base
-  
+
     # Return a hash of individuals in the member watch list.  Keys are
     # ASF::Person objects, values are the text from
     # <tt>potential-member-watch-list.txt</tt>..

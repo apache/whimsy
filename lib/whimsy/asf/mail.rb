@@ -137,7 +137,7 @@ module ASF
       allowed
     end
 
-    
+
     # common configuration for sending mail; loads <tt>:sendmail</tt>
     # configuration from <tt>~/.whimsy</tt> if available; otherwise default
     # to disable openssl verification as that is what it required in order
@@ -212,7 +212,7 @@ module ASF
       # Invalid; return input rather than failing
       return email
     end
-    
+
     private
 
     # Load the auto-subscription file

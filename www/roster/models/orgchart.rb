@@ -32,7 +32,7 @@ class OrgChart
     self.load
     @@duties[name]
   end
-  
+
   def self.desc
     self.load
     @@desc

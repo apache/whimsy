@@ -40,7 +40,7 @@ class PublishMinutes < Vue
         # Minutes from previous meetings section of the agenda
         date = @@item.text[/board_minutes_(\d+_\d+_\d+)\.txt/, 1]
         url = document.baseURI.sub(/[-\d]+\/$/, date.gsub('_', '-')) + '.json'
-  
+
         retrieve url, :json do |agenda|
           self.summarize agenda, date
         end

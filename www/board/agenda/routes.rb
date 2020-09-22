@@ -141,14 +141,14 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/followup\.json} do |date|
 
   agenda = "board_agenda_#{date.gsub('-','_')}.txt"
   pass unless Agenda.parse agenda, :quick
-  
+
   # select agenda items that have comments
   parsed = Agenda[agenda][:parsed]
   followup = parsed.select {|item| not item['comments'].to_s.empty?}.
     map {|item| [item['title'], {comments: item['comments'], 
       shepherd: item['shepherd'], mail_list: item['mail_list'], count: 0}]}.
     to_h
-  
+
   # count number of feedback emails found in the board archive
   start = Time.parse(date)
   months = Dir['/srv/mail/board/*'].sort[-2..-1]

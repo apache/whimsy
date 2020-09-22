@@ -35,7 +35,7 @@ class Cache
     @enabled = enabled
     init_cache(@dir) if enabled
   end
-  
+
   # gets the URL content
   #
   # Caches the response and returns that if unchanged or recent
@@ -155,7 +155,7 @@ class Cache
         last = nil unless last.length > 25
       end
     end
-    
+
     return Time.now - (mtime ? mtime : Time.new(0)), last, uri, etag, data
   end
 

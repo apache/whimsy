@@ -37,7 +37,7 @@ Dir[File.join(ARCHIVE, '2*')].sort.each do |name|
     not ARGV.any? {|arg| name.include? "/#{arg}"}
   print "#{name.ljust(width)}\r"
   width = name.length
-  
+
   # parse mailbox
   Mailbox.new(name).parse
 end

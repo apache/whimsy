@@ -112,7 +112,7 @@ _html do
           [email, {person: person , color: color, name: name}]
         end
       ].sort_by {|k,v| [order.index(v[:color]),v[:name]]}
-      
+
       _table do
         _tr do
           _th 'Count '

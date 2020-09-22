@@ -99,7 +99,7 @@ class Agenda
 
     file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\z/
     path = File.expand_path(file, FOUNDATION_BOARD).untaint
-    
+
     return Agenda[file][:parsed] unless File.exist? path
 
     # Does the working copy have more recent data?

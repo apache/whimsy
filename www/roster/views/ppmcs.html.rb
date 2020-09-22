@@ -50,9 +50,9 @@ _html do
                   _a.label_danger ppmc.display_name, href: "ppmc/#{ppmc.name}", title: 'LDAP project not yet set up'
                 end
               end
-  
+
               _td ppmc.startdate
-  
+
               _td do
                 # using _p here messes up the sort
                 if project_names.include? ppmc.name

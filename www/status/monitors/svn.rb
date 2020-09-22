@@ -94,7 +94,7 @@ def Monitor.svn(previous_status)
       break
     end
   end
-  
+
   {data: status}
 end
 

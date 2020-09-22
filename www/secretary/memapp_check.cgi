@@ -22,7 +22,7 @@ end
 status = ASF::Member.status
 
 members = ASF::Member.new.map {|id, text| ASF::Person.find(id)}
-  
+
 # These members don't have ids, so cannot use the Person class
 members << PersonNoId.new("Shane Caraveo")
 members << PersonNoId.new("Robert Hartill")

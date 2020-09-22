@@ -51,7 +51,7 @@ _html do
         _li name
       end
     end
-    
+
     _h2_ 'Listed in members.txt but not listed as attending a members meeting.'
     _table do
       _thead do

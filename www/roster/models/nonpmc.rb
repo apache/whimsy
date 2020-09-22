@@ -181,12 +181,12 @@ class NonPMC
   def self.load_emails
     # recompute index if the data is 5 minutes old or older
     @people = nil if not @people_time or Time.now-@people_time >= 300
-  
+
     if not @people
       # bulk loading the mail information makes things go faster
       mail = Hash[ASF::Mail.list.group_by(&:last).
         map {|person, list| [person, list.map(&:first)]}]
-  
+
       # build a list of people, their public-names, and email addresses
       @people = ASF::Person.list.map {|person|
         result = {id: person.id, name: person.public_name, mail: mail[person]}

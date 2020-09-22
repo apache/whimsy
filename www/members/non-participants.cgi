@@ -35,7 +35,7 @@ def get_attend_matrices(dir)
     data = meetings.sort.reverse.map(&:last)
     first = data.length
     missed = (data.index {|datum| datum != '-'} || data.length)
-    
+
     [id, name, first, missed]
   end
   return attendance, matrix, dates, nameMap
@@ -86,10 +86,10 @@ _html do
           _th 'Last participated', data_sort: 'string'
         end
       end
-      
+
       matrix.each do |id, name, first, missed|
         next unless id
-        
+
         if missed >= @meetingsMissed
           _tr_ do
             _td! {_a nameMap[id], href: "#{ROSTER}/#{id}"}
@@ -104,9 +104,9 @@ _html do
         end
       end
     end
-    
+
     _div.count "Count: #{count} members inactive for #{@meetingsMissed} meetings."
-    
+
     _script %{
       var table = $(".table").stupidtable();
       table.on("aftertablesort", function (event, data) {
@@ -120,14 +120,14 @@ _html do
     end
   end
 end
-  
+
 _json do
   meetingsMissed = (@meetingsMissed || 3).to_i
   attendance, matrix, dates, nameMap = get_attend_matrices(MEETINGS)
   inactive = matrix.select do |id, name, first, missed|
     id and missed >= meetingsMissed
   end
-  
+
   Hash[inactive.map {|id, name, first, missed| 
     [id, {name: name, missed: missed, status: 'no response yet'}]
     }]

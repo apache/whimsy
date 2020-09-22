@@ -82,7 +82,7 @@ class PubSub
     puts stamp "Pubsub thread finished %s..." % (@updated ? '(updated) ' : '')
     if @restartable
       STDERR.puts stamp 'restarting'
-    
+
       # relaunch script after a one second delay
       sleep 1
       exec RbConfig.ruby, __FILE__, *ARGV
@@ -106,7 +106,7 @@ if $0 == __FILE__
   # depth: 'skip' == ignore completely
   # files: only need to update if path matches one of the files
   # depth: 'files' only need to update for top level files
-  
+
   # The first segment of the url is the repo name, e.g. asf or infra
   # The second segment is the subdir within the repo.
   # The combination of the two are used for the pubsub path, for example:

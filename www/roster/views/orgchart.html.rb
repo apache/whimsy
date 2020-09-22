@@ -43,7 +43,7 @@ _html do
                   id = value['info']['id'] || value['info']['chair']
                   _a ASF::Person.find(id).public_name, href: "committer/#{id}"
                 end
-                
+
                 # Website - often valuable to people looking for info
                 _td do
                   value['info']['website'].nil? ? _('')  : _a('website', href: value['info']['website'])

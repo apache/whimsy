@@ -11,7 +11,7 @@ module SiteStandards
   CHECK_TYPE      = 'type'      # true = validation checks href/url; false = checks text node
   CHECK_POLICY    = 'policy'    # URL to policy statement for this check
   CHECK_DOC       = 'doc'       # Explanation of what the check is looking for
-  
+
   # Checks done only for TLPs (i.e. not podlings)
   TLP_CHECKS = {
     'uri' => { # Custom: merely saves uri of site
@@ -119,7 +119,7 @@ module SiteStandards
       CHECK_DOC => 'Projects SHOULD add a copy of their logo to https://www.apache.org/logos/ to be included in ASF homepage.',
     },
   }
-  
+
   SITE_PASS       = 'label-success'
   SITE_WARN       = 'label-warning'
   SITE_FAIL       = 'label-danger'
@@ -138,24 +138,24 @@ module SiteStandards
       SITE_PASS
     end
   end
-  
+
   # Get hash of checks to be done for tlp | podling
   # @param tlp true if project; podling otherwise
   def get_checks(tlp = true)
     tlp ? (return TLP_CHECKS.merge(COMMON_CHECKS)) : (return PODLING_CHECKS.merge(COMMON_CHECKS))
   end
-  
+
   # Get filename of check data for tlp | podling
   # @param tlp true if project; podling otherwise
   def get_filename(tlp = true)
     tlp ? (return 'site-scan.json') : (return 'pods-scan.json')
   end
-  
+
   # Get URL to default filename location on server
   def get_url(is_local = true)
     is_local ? (return '../../../www/public/') : (return 'https://whimsy.apache.org/public/')
   end
-  
+
   # Get check data for tlp | podling
   #   Uses a local_copy if available; w.a.o/public otherwise
   # @param tlp true if project; podling otherwise
@@ -172,7 +172,7 @@ module SiteStandards
       end
     return sites, crawl_time
   end
-  
+
   # Analyze data returned from site-scan.rb by using checks[CHECK_VALIDATE] regex
   #   If value =~ CHECK_VALIDATE, SITE_PASS
   #   If value is present (presumably from CHECK_TEXT|CAPTURE), then SITE_WARN
@@ -190,7 +190,7 @@ module SiteStandards
         counts[nam][SITE_FAIL] = sites.select{ |k, site| site[nam].nil? }.count
         counts[nam][SITE_WARN] = sites.size - counts[nam][SITE_PASS] - counts[nam][SITE_FAIL]
       end
-      
+
       return [
         counts, {
         SITE_PASS => '# Sites with links to primary ASF page',

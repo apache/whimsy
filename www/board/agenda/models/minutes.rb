@@ -202,7 +202,7 @@ class Minutes
     index.sub! /\sProject$/, ''
     index.sub! /\sPMC$/, ''
     index.sub! /\sProject\s/, ' '
-  
+
     @@notes[index]
   end
 end

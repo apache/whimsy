@@ -62,7 +62,7 @@ class IclaSearch < Vue
         end
       end
     end
-    
+
     if @search.length
       if not @ready
         _p 'loading...'

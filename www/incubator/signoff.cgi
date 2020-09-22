@@ -24,7 +24,7 @@ def get_mentor_signoffs()
   ASF::Person.preload('cn')
   ASF::ICLA.preload()
   people = Hash[ASF::Person.list.map {|person| [person.public_name, person.id]}]
-  
+
   agendas = Dir[File.join(BOARD, 'board_agenda_*.txt'),
     File.join(BOARD, 'archived_agendas', 'board_agenda_*.txt')]
   agendas = agendas.sort_by {|file| File.basename(file)}[-13..-1]
@@ -33,7 +33,7 @@ def get_mentor_signoffs()
   else
     agendas.pop
   end
-  
+
   # projects = URI.parse('http://incubator.apache.org/projects/')
   # table = Nokogiri::HTML(Net::HTTP.get(projects)).at('table')
   # # extract a list of [podling names, table row]
@@ -42,7 +42,7 @@ def get_mentor_signoffs()
   #   next if tds.empty?
   #   [tds.last.text, tr]
   # end
-  
+
   mentors = {}
   podlings = {}
   agendas.each do |file|
@@ -55,14 +55,14 @@ def get_mentor_signoffs()
       # allow for reports where comments have been joined to the previous line
       name.sub! %r{ Comments:.*}, ''
       name.sub! /\s+\(.*?\)/, ''
-      
+
       mentors[name] = [] unless mentors[name]
       mentors[name] << {
         date: date,
         checked: !check.strip.empty?,
         podling: podling
       }
-      
+
       podlings[podling] = Hash.new{|h,k| h[k] = [] } unless podlings[podling]
       podlings[podling][date] << [name, !check.strip.empty?]
     end
@@ -102,7 +102,7 @@ _html do
       end
     }
   ) do
-    
+
     _whimsy_panel_table(
       title: "Podling Signoffs By Mentor",
       helpblock: -> {
@@ -145,7 +145,7 @@ _html do
         end
       end
     end
-    
+
     _whimsy_panel_table(
       title: "Podling Signoffs By Podling",
       helpblock: -> {
@@ -182,6 +182,6 @@ _html do
         end
       end
     end
-    
+
   end
 end

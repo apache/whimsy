@@ -135,7 +135,7 @@ Agenda.update(agenda_file, @message) do |agenda|
           end
           action = update if match
         end
-        
+
         # format action item
         replacement.puts "* #{action[:owner]}: #{action[:text]}"
 

@@ -51,7 +51,7 @@ def csv2json
       end
     end
   end
-  
+
   docket
 end
 

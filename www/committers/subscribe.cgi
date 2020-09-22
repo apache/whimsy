@@ -104,7 +104,7 @@ _html do
         end
       }
     ) do
-      
+
       _form method: 'post' do
         _input type: 'hidden', name: 'request', value: 'sub'
         _fieldset do
@@ -212,10 +212,10 @@ _html do
           _p 'Both email and list to subscribe to are required!'
           break
         end
-        
+
         # Each user can only subscribe once to each list in each timeslot
         fn = "#{$USER}-#{@list}.json".untaint
-        
+
         vars = {
           version: FORMAT_NUMBER,
           availid: $USER,
@@ -236,10 +236,10 @@ _html do
 
           _pre request
         end
-        
+
         SUBREQ = ASF::SVN.svnpath!('subreq')
         SUBREQ.sub! '/subreq', '/unsubreq' if @request == 'unsub'
-        
+
         rc = 999
 
         Dir.mktmpdir do |tmpdir|
@@ -265,18 +265,18 @@ _html do
               File.write(fn, request + "\n")
               ASF::SVN.svn('add', fn)
             end
- 
+
             if @request != 'unsub'
               message = "#{@list} += #{$USER}"
             else
               message = "#{@list} -= #{$USER}"
             end
-          
+
             options = credentials.merge({msg: message})
             rc = ASF::SVN.svn_('commit', fn, _, options)
           end
         end
-        
+
         if rc == 0
           _div.alert.alert_success role: 'alert' do
             _p do

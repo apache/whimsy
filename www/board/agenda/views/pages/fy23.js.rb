@@ -303,7 +303,7 @@ class FY23 < Vue
                           #        = 5*Fy18 + 3*(FY23-FY18)
                           #        = 5*Fy18 + 3*FY23 - 3 * FY18
                           #        = 2*Fy18 + 3*FY23
-          
+
                    2*100 + 
                           # EA adjustment: instead of ramping down, the
                           # reduction in expense is immediate and constant.

@@ -15,7 +15,7 @@ module ASF
 
     # path to the deployment branch on GitHub.
     INFRA_PUPPET = '/apache/infrastructure-puppet/deployment/'
-  
+
     # get a file live from infrastructure puppet (e.g. 'data/common.yaml')
     # issues a HTTP GET request, so may be slow and may fail.  For applications
     # that require faster and more dependable access,

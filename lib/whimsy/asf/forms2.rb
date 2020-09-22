@@ -64,7 +64,7 @@ class Wunderbar::HtmlMarkup
       _label.col_sm_offset_3.col_sm_9.strong.text_left text
     end
   end
-  
+
   # Display a single input control within a form; or if rows, then a textarea
   # @param name required string ID of control's label/id
   def _whimsy_forms_input(**args)

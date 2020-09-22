@@ -45,7 +45,7 @@ class PMCCommitters < Vue
   # compute list of committers
   def committers
     result = []
-    
+
     @@committee.committers.each do |id|
       person = @@committee.roster[id]
       person.id = id

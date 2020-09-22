@@ -401,7 +401,7 @@ module ASF
   def self.committerids
     weakref(:committerids) {RoleGroup.find('committers').memberids}
   end
-  
+
   # Obtain a list of members from LDAP 
   # <tt>cn=member,ou=groups,dc=apache,dc=org</tt>
   # Note: includes some non-ASF member infrastructure contractors
@@ -697,7 +697,7 @@ module ASF
       else
         filter = "(|#{people.map {|person| "(uid=#{person.name})"}.join})"
       end
-      
+
       zero = Hash[attributes.map {|attribute| [attribute,nil]}]
 
       data = ASF.search_one(base, filter, attributes + ['uid'])
@@ -915,7 +915,7 @@ module ASF
           mod_add('gidNumber', nextgid.to_s),
         ]
       end
- 
+
       # fixed attributes
       attrs.merge!({
         'uidNumber' => nextuid.to_s,
@@ -1188,7 +1188,7 @@ module ASF
       owners.map {|uid| uid[/uid=(.*?),/,1]}
     end
 
-    
+
     # remove people from a project as owners and members in LDAP
     def remove(people)
       remove_owners(people)
@@ -1392,7 +1392,7 @@ module ASF
       members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
-    
+
       members.map {|uid| uid[/uid=(.*?),/,1]}
     end
 

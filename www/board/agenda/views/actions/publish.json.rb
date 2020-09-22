@@ -115,7 +115,7 @@ ASF::SVN.update BOARD_PRIVATE, @message, env, _ do |tmpdir|
   if File.exist? minutes_path
     ASF::SVN.svn_('rm', minutes_path, _)
   end
-  
+
   agenda_path = File.join(tmpdir, "board_agenda_#{@date}.txt")
   ASF::SVN.svn_('update', agenda_path, _)
   if File.exist? agenda_path

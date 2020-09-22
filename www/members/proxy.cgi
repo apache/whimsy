@@ -80,7 +80,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers)
         end
       end
     end
-    
+
     if user_is_proxy
       _p.text_warning %{
           NOTE: you are proxying for other members, so you cannot assign 
@@ -94,14 +94,14 @@ def emit_form(cur_mtg_dir, meeting, volunteers)
         _form method: 'POST' do
           _div.form_group do
             _label 'Select proxy'
-            
+
             # Fetch LDAP
             ldap_members = ASF.members
             ASF::Person.preload('cn', ldap_members)
-            
+
             # Fetch members.txt
             members_txt = ASF::Member.list
-            
+
             # get a list of members who have submitted proxies
             exclude = Dir[File.join(cur_mtg_dir,'proxies-received', '*')].
               map {|name| name[/(\w+)\.\w+$/, 1]}
@@ -132,18 +132,18 @@ def emit_form(cur_mtg_dir, meeting, volunteers)
       end
     end
   end
-  
+
 ##    _script src: "js/jquery-1.11.1.min.js"
 ##    _script src: "js/bootstrap.min.js"
   _script src: "js/bootstrap-combobox.js" # TODO do we need this still?
-  
+
   _script_ %{
     // convert select into combobox
     $('.combobox').combobox();
-    
+
     // initially disable submit
     $('.btn').prop('disabled', true);
-    
+
     // enable submit when proxy is chosen
     $('*[name="proxy"]').change(function() {
       $('.btn').prop('disabled', false);
@@ -193,7 +193,7 @@ def emit_post(cur_mtg_dir, meeting, _)
         # get a list of proxies
         list = Dir['proxies-received/*.txt'].map do |file|
           form = File.read(file.untaint)
-    
+
           id = file[/([-A-Za-z0-9]+)\.\w+$/, 1]
           proxy = form[/hereby authorize ([\S].*) to act/, 1].
             gsub('_', ' ').strip
@@ -234,7 +234,7 @@ def emit_post(cur_mtg_dir, meeting, _)
       end
     end
   end
-  
+
   # Report on contents now that they're checked in
   _h3! do
     _span "Contents of "

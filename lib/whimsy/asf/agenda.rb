@@ -85,7 +85,7 @@ class ASF::Board::Agenda
   def parse(file, quick=false)
     @file = file
     @quick = quick
-    
+
     if not @file.valid_encoding?
       filter = Proc.new {|c| c.unpack('U').first rescue 0xFFFD}
       @file = @file.chars.map(&filter).pack('U*').force_encoding('utf-8')

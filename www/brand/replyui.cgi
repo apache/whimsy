@@ -50,10 +50,10 @@ _html do
           end
         end
       end
-      
+
       _h3 'Choose A Reply to edit and send for this question'
       _p 'This could be a choicelist or similar to select from avaialble Replies'
-      
+
       _ul do
         _li do 
           _ 'BOOK | Point to FAQ about published books, magazines, etc.'

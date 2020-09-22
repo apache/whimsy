@@ -72,7 +72,7 @@ if message
     userid = Regexp.escape(@userid)
     text[/^#{userid}:(.*?):/, 1] = @legalname
     text[/^#{userid}:.*?:(.*?):/, 1] = @publicname
-  
+
     text
   end
 end

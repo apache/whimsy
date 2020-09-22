@@ -11,7 +11,7 @@ module LogParser
   extend self
   # Hardcoded from https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/init.pp#L200
   ERROR_LOG_DIR = '/srv/whimsy/www/members/log'
-  
+
   # Constants and ignored regex for whimsy_access logs
   WHIMSY_APPS = {
     'roster' => 'Roster tool',
@@ -52,13 +52,13 @@ module LogParser
     /\.php\z/,
     /\.woff2/
   ]
-  
+
   # Related to timestamps in error log output
   TRUNCATE = 6 # Ensure consistency in keys
   TIME_OFFSET = 10000000.0 # Offset milliseconds slightly for array entries
   # Ignore error lines from other tools with long tracebacks
   IGNORE_TRACEBACKS = ["rack.rb", "asf/themes", "phusion_passenger"]
-  
+
   # Read a text or .gz file
   # @param f filename: .log or .log.gz
   # @return File.read(f)
@@ -72,7 +72,7 @@ module LogParser
     end
     return logfile
   end
-  
+
   # Parse whimsy_access and return interesting entries
   # @param f filename of whimsy_access.log or .gz
   # @return array of reduced, scrubbed entries as hashes
@@ -88,7 +88,7 @@ module LogParser
     end
     return logs
   end
-  
+
   # Collate/partition whimsy_access entries by app areas
   # @param logs full set of items to scan
   # @return apps categorized by apphash, with REMAINDER entry all others not captured
@@ -122,7 +122,7 @@ module LogParser
     end
     return apps
   end
-  
+
   # Get a simplistic hash report of access entries
   # @param f filepath to whimsy_access.log
   # @return app_report, misses_data
@@ -132,7 +132,7 @@ module LogParser
     apps = collate_whimsy_access(hits)
     return apps, miss
   end
-  
+
   # Parse error.log and return interesting entries
   # @param f filename of error.log or .gz
   # @param logs hash to append to (created if nil) 
@@ -163,7 +163,7 @@ module LogParser
     end
     return logs
   end
-  
+
   # Parse error.log* files in dir and return interesting entries
   # @param d directory to scan for error.log*
   # @return hash of arrays of interesting entries
@@ -173,7 +173,7 @@ module LogParser
     end
     return logs
   end
-  
+
   # Parse whimsy_error.log and return interesting entries
   # @param f filename of error.log or .gz
   # @return hash of string of interesting entries
@@ -195,7 +195,7 @@ module LogParser
     end
     return logs
   end
-  
+
   # Parse whimsy_error.log* files in dir and return interesting entries
   # @param d directory to scan for whimsy_error.log*
   # @return hash of arrays of interesting entries
@@ -205,7 +205,7 @@ module LogParser
     end
     return logs
   end
-  
+
   # Get a list of all current|available error logs interesting entries
   # @param current - only scan current day? or scan all week's logs
   # @param d directory to scan for *error.log*

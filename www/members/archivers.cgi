@@ -76,7 +76,7 @@ _html do
         end
       }
     ) do
-      
+
     _table.table do
       _tr do
         _th 'id', data_sort: 'string'
@@ -114,7 +114,7 @@ _html do
           mino = 'Missing'
           options[:mino]={class: 'warning'}
         end 
-        
+
         mbox = arcs.select{|e| e[1] == :MBOX}.map{|e| e[2]}.uniq.join('')
 
         next if mbox == 'restricted' # Don't show these
@@ -143,7 +143,7 @@ _html do
           mail_archive = 'Missing'
           options[:mail_archive] = {class: 'warning'}
         end
-          
+
         markmail = arcs.select{|e| e[1] == :MARKMAIL}.map{|e| e[2]}.uniq.join('')
         if ! markmail.empty?
           options[:markmail] = {class: 'danger'} if pubprv && markmail != pubprv  
@@ -153,7 +153,7 @@ _html do
           markmail = 'Missing'
           options[:markmail] = {class: 'warning'}
         end
-              
+
         # must be done last as it changes pubprv
         unless pubprv
           pubprv = 'Not listed in bin/.archives'
@@ -174,7 +174,7 @@ _html do
             _ '@'
             _ dom
           end
-          
+
           _td pubprv, options[:pubprv]
           _td mino, options[:mino]
           _td mbox, options[:mbox]

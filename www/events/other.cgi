@@ -39,7 +39,7 @@ counts = cols.keys.map do |field|
   matches = conflist.select do |conf|
     conf[SPEAKERKIT] && conf[SPEAKERKIT][field]
   end
-  
+
   [field, matches.count]
 end
 counts = counts.to_h
@@ -108,7 +108,7 @@ _html do
         end
       end
     end
-    
+
     _script %{
       var table = $(".table").stupidtable();
       table.on("aftertablesort", function (event, data) {

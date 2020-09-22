@@ -441,9 +441,9 @@ module ASF
     def namesearch
       Podling.namesearch[display_name]
     end
-    
+
     private
-    
+
     def self._list(status)
       list.select { |podling| podling.status == status }
     end

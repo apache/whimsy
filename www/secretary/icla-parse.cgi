@@ -24,11 +24,11 @@ puts ""
 begin
   require_relative 'workbench/models/mailbox'
   require_relative 'iclaparser'
-  
+
   message = Mailbox.find(pathinfo)
-  
+
   path = message.find(iclaname).as_file.path
-  
+
   parsed = ICLAParser.parse(path)
   parsed.sort_by{|k,v| k.to_s }.each do |k,v|
     puts "%-20s %s" % [k,v] unless k == :_meta
@@ -49,7 +49,7 @@ begin
     puts "metadata:"
     puts metadata
   end
-  
+
 rescue Exception => e
   p e
 end

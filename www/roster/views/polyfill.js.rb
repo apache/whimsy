@@ -17,7 +17,7 @@ class Polyfill
       first = document.getElementsByTagName('script')[0]
       first.parentNode.insertBefore(script, first)
     end
-  
+
     if @names.include? 'fetch' and defined? fetch
       self.complete()
     else

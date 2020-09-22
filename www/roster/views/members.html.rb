@@ -4,7 +4,7 @@
 
 _html do
   _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
-  
+
   _body? do
     _whimsy_body(
       title: 'ASF Member List',
@@ -86,7 +86,7 @@ _html do
                     _b {_a id, href: "committer/#{id}"}
                   else
                     _a id, href: "committer/#{id}"
-                    
+
                     info[:issue] ||= 'Not in LDAP "member" group' if not info['status']
                   end
                 end

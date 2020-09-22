@@ -62,7 +62,7 @@ _html do
         meeting: '/committers/tools#meeting'
       }
     ) do
-    
+
       _h2 "Tools related to Member's Meetings (Nominations, Voting, Proxy, etc.)"
       _ul do
         MEETING.each do |url, desc|

@@ -13,7 +13,7 @@ class PersonForms < Vue
         _ul do
           for form in committer.forms
             link = committer.forms[form]
-            
+
             if form == 'icla'
               _li do
                 if link == '' # has ICLA bu no karma to view it

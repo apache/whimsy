@@ -32,7 +32,7 @@ def emit_form(apacheid, mdata, button_help, uimap)
           _p.text_error mdata[MentorFormat::ERRORS]
         end
       end
-      
+
       _div.form_group do
         _label.col_sm_offset_3.col_sm_9.strong.text_left 'How Mentees Should Work With You'
       end
@@ -59,14 +59,14 @@ def emit_form(apacheid, mdata, button_help, uimap)
         icon: 'glyphicon-globe', iconlabel: 'globe', 
         helptext: uimap[field][1]
       )
-      
+
       _div.form_group do
         _label.col_sm_offset_3.col_sm_9.strong.text_left 'What You Could Help Mentees With'
       end
       emit_mentor_input('experience', mdata, uimap, 'glyphicon-certificate')
       emit_mentor_input('available', mdata, uimap, 'glyphicon-plus-sign')
       emit_mentor_input('mentoring', mdata, uimap, 'glyphicon-minus-sign')
-      
+
       _div.form_group do
         _label.col_sm_offset_3.col_sm_9.strong.text_left 'More About You Personally'
       end
@@ -77,7 +77,7 @@ def emit_form(apacheid, mdata, button_help, uimap)
         icon: 'glyphicon-info-sign', value: (mdata[field] ? mdata[field] : ''),
         helptext: uimap[field][1]
       )
-      
+
       _div.form_group do
         _label.col_sm_offset_3.col_sm_9.strong.text_left 'Temporarily Opt Out From Any NEW Mentees'
         _label.control_label.col_sm_3 'Not Accepting New Mentees', for: "#{MentorFormat::NOTAVAILABLE}"
@@ -94,7 +94,7 @@ def emit_form(apacheid, mdata, button_help, uimap)
           end
         end
       end
-      
+
       _div.col_sm_offset_3.col_sm_9 do
         _span.text_info button_help
         _br
@@ -123,7 +123,7 @@ def send_form(formdata: {})
     _p.lead "Updating your mentor record #{fn} to be:"
     _pre mentor_update
   end
-  
+
   Dir.mktmpdir do |tmpdir|
     credentials = {user: $USER, password: $PASSWORD}
     # TODO: investigate if we should to --depth empty and attempt to get only that mentor's file
@@ -141,7 +141,7 @@ def send_form(formdata: {})
       rc = ASF::SVN.svn_('commit', fn, _, {msg: message}.merge(credentials)]
     end
   end
-  
+
   if rc == 0
     _div.alert.alert_success role: 'alert' do
       _p do

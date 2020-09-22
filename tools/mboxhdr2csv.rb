@@ -163,7 +163,7 @@ module MailUtils
       end
     end
   end
-  
+
   # Get {MAILS: [{date, who, subject, flag},...\, TOOLS: [{...},...] } from the specified list for a month
   # May cache data in mailroot/yearmonth.json
   # Returns empty hash if error or if can't find month
@@ -213,7 +213,7 @@ module MailUtils
       emails[TOOLCOUNT][mail[TOOLS]] += 1
     end
     emails[TOOLCOUNT] = emails[TOOLCOUNT].sort_by { |k,v| -v}.to_h
-    
+
     emails[MAILS].sort_by! { |email| email[DATE] }
     emails[MAILCOUNT] = Hash.new {|h, k| h[k] = 0 }
     emails[MAILS].each do |mail|
@@ -421,7 +421,7 @@ def optparse
   options = {}
   OptionParser.new do |opts|
     opts.on('-h') { puts opts; exit }
-    
+
     opts.on('-dDIRECTORY', '--directory DIRECTORY', 'Local directory to read existing mboxes and dump output in (default: .)') do |d|
       if File.directory?(d)
         options[:dir] = d
@@ -444,7 +444,7 @@ def optparse
       exit 1
     end
   end
-  
+
   return options
 end
 

@@ -50,11 +50,11 @@ _html do
             _td do
               _a @committers.length, href: 'committer2/'
             end
-  
+
             _td do
               _a 'Committers', href: 'committer2/'
             end
-  
+
             _td do
               _ 'Search for committers by name, user id, or email address.'
               _ ' Also includes pending ICLAs'

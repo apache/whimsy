@@ -16,7 +16,7 @@ module PonyAPI
   PONYMBOX  = PONYHOST + 'api/mbox.lua?list=%{list}@%{domain}&date=%{year}-%{month}' # board@apache.org&date=2016-06 becomes board-apache-org-201707.mbox
   FILEMBOX  = "%{list}-%{domNoDot}-%<year>.04d%<month>.02d.mbox" # used to generate output file name
   PONYPREFS = PONYHOST + 'api/preferences.lua' # => preferences.json
-  
+
   extend self
 
   # Get summary of all mailing lists by domain
@@ -116,7 +116,7 @@ module PonyAPI
       puts "ERROR:get_pony_stats(#{uri.request_uri}) returned code #{response.code.inspect}"
     end
   end
-  
+
   # Get multiple years/months of public stats as json
   def get_pony_stats_many(dir, list, subdomain, years, months, cookie=nil)
     cookie=get_cookie() if cookie == 'prompt'
@@ -126,7 +126,7 @@ module PonyAPI
       end
     end
   end
-  
+
   # Download one month as mbox
   # Caveats: uses response's encoding; overwrites existing .json file
   # Must supply cookie = 'ponymail-logged-in-cookie' if a private list
@@ -142,7 +142,7 @@ module PonyAPI
       puts "ERROR:get_public_mbox(#{uri}) returned code #{response.code.inspect}"
     end
   end
-  
+
   # Get multiple years/months of mboxes
   def get_pony_mbox_many(dir, list, subdomain, years, months, cookie=nil)
     cookie=get_cookie() if cookie == 'prompt'

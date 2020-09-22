@@ -3,7 +3,7 @@ require 'weakref'
 module ASF
 
   class Person < Base
-  
+
     # Return a hash of nominated members.  Keys are ASF::Person objects,
     # values are the nomination text.
     def self.member_nominees

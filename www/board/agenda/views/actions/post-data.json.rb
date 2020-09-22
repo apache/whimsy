@@ -33,7 +33,7 @@ when 'committee-list'
   id = env.user
 
   committees = {chair: [], member: [], rest: []}
-           
+
   ASF::Committee.pmcs.sort_by {|pmc| pmc.id}.each do |pmc|
     if pmc.chairs.any? {|chair| chair[:id] == id}
       committees[:chair] << pmc.id
@@ -43,7 +43,7 @@ when 'committee-list'
       committees[:rest] << pmc.id
     end
   end 
-      
+
   committees[:chair] + committees[:member] + committees[:rest]
 
 when 'committer-list'

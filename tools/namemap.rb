@@ -29,7 +29,7 @@ module NameMap
   ID = 'id'
   MAIL = 'mail'
   NAME = 'name'
-  
+
   TEST_COMMITTERS = [ # Drawn from Whimsy's committer data
     {
       'id' => 'curcuru',
@@ -72,7 +72,7 @@ module NameMap
       ],
     },
   ]
-  
+
   TEST_OTHER = [ # Any other system must provide id,name,email for each user
     {
       'id' => 'curcuru',
@@ -105,7 +105,7 @@ module NameMap
       'mail' => 'email@example.com',
     },
   ]
-  
+
   # Read committer accounts
   # @param io stream to read JSON from
   # @return json data
@@ -116,7 +116,7 @@ module NameMap
       return TEST_COMMITTERS
     end
   end
-  
+
   # Read other system accounts
   # TODO Depends on file format of exported other system accounts
   # @param f filename to read from
@@ -124,7 +124,7 @@ module NameMap
   def get_other(f)
     return TEST_OTHER
   end
-  
+
   # Transform committer accounts into lookup hashes
   # @param committers array from COMMITTER_JSON
   # @return byid, bymail - hashes for lookups to committer accounts
@@ -141,7 +141,7 @@ module NameMap
     end
     return byid, bymail
   end
-  
+
   # Transform other system accounts into lookup hashes
   # @param other array of hashes including 'id', 'name', 'mail' keys
   # @return byid, bymail - hashes for lookups to other system accounts
@@ -156,7 +156,7 @@ module NameMap
     end
     return byid, bymail
   end
-  
+
   # Compare committer ids to other system account ids
   # @param cids - hash by id of committer data
   # @param cmails - hash by email of [committer1, ...]
@@ -166,7 +166,7 @@ module NameMap
   def compare(cids, cmails, oids, omails)
     matches = {}
     crossmatches = {}
-    
+
     # For every committer, check for a matching account in other system
     cids.each do |cid, committer|
       # If the other system has identical id as committer
@@ -191,7 +191,7 @@ module NameMap
         matches[cid] = "NONE:no id match found"
       end
     end
-    
+
     # Also cross-check email addresses of other system to all committer emails
     omails.each do |omail, other_accounts|
       if cmails.has_key?(omail)
@@ -220,7 +220,7 @@ module NameMap
     end
     return matches, crossmatches
   end
-  
+
   # Compare a committer list to another system's list
   # @param cio io stream to read committer accounts from
   # @param ofile filename to read other system accounts from
@@ -231,7 +231,7 @@ module NameMap
     matches, crossmatches = compare(cids, cmails, oids, omails)
     return matches, crossmatches
   end
-  
+
   # Check for email duplicates in committer roster
   # @return hash of any committers with duplicate emails
   # @return histogram of how many aliases committers list

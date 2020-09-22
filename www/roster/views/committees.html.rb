@@ -67,11 +67,11 @@ _html do
             _td do
               _a pmc.display_name, href: "committee/#{pmc.name}"
             end
-  
+
             _td do
               pmc.chairs.each_with_index do |chair, index|
                 _span ', ' unless index == 0
-  
+
                 if @members.include? chair[:id]
                   _b! {_a chair[:name], href: "committer/#{chair[:id]}"}
                 else
@@ -79,7 +79,7 @@ _html do
                 end
               end
             end
-  
+
             if not pmc.established
               _td ''
               _td.issue 'Not in committee-info.txt'

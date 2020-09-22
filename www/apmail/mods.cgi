@@ -73,7 +73,7 @@ _html do
           emails += moderators.map(&:downcase) 
         end 
       end 
- 
+
       _ul do 
         emails.uniq.sort.each do |email| 
           _li! { _a email, href: email } 
@@ -145,7 +145,7 @@ _html do
             end
           end
         end
-  
+
       if href
         _h2_ {_a "#{list}@#{domain}", href: href}
       else

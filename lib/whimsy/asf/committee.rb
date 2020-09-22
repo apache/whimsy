@@ -606,9 +606,9 @@ module ASF
       return unless board
       file = File.join(board, 'committee-info.yaml')
       return unless File.exist? file
-  
+
       return @committee_metadata if @committee_metadata and @committee_metadata_mtime and File.mtime(file) <= @committee_metadata_mtime
-  
+
       @committee_metadata_mtime = File.mtime(file)
       @committee_metadata = YAML.load_file file
     end
@@ -619,20 +619,20 @@ module ASF
       load_committee_metadata[:tlps][committee] || load_committee_metadata[:cttees][committee] 
     end
 
-    
+
     # website for this committee.
     def site()
       meta = ASF::Committee.metadata(name)
       meta[:site] if meta
     end
-    
+
     # description for this committee.
     def description()
       meta = ASF::Committee.metadata(name)
       meta[:description] if meta
     end
 
-    
+
     # append the description for a new tlp committee.
     # this is intended to be called from todos.json.rb in the block for ASF::SVN.update
     def self.appendtlpmetadata(input,committee,description)
@@ -665,6 +665,6 @@ module ASF
       end
       output
     end
-    
+
   end
 end

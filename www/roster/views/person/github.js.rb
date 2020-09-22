@@ -26,7 +26,7 @@ class PersonGitHub < Vue
             # Spare field to allow new entry to be added
             _input style: 'font-family:Monospace', size: 20, name: prefix + current, placeholder: '<new GitHub name>'
             _br             
-            
+
             _input type: 'submit', value: 'submit'
           end
 

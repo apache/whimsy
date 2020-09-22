@@ -151,12 +151,12 @@ def write_output(file, results)
         Wunderbar.warn "Got exception #{e}"
       end
     end
-  
+
     # replace file as contents have changed
     File.write(file, results + "\n")
 
   else
-  
+
     Wunderbar.info "git_info: #{GITINFO} - no change to #{file}"
     @changed = ChangeStatus::UNCHANGED
 

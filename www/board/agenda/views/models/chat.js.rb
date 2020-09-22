@@ -22,7 +22,7 @@ class Chat
     # synchonize chat logs
     if defined? BroadcastChannel
       channel = BroadcastChannel.new('chatsync')
-      
+
       # ask if there are any earlier data
       channel.postMessage type: 'query', start: @@start
 

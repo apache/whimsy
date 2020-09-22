@@ -27,7 +27,7 @@ _html do
   people = ASF::Person.preload(%w(uid createTimestamp asf-banned asf-altEmail mail loginShell))
 
   _h2 'people who are not committers (excluding nologin)'
-  
+
   non_committers = people.reject { |p| p.nologin? or old.include? p.name or p.name == 'apldaptest'}
   if non_committers.length > 0
     _table do

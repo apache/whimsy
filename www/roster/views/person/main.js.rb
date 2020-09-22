@@ -114,7 +114,7 @@ class Person < Vue
         _div.value do
           _ul @committer.groups do |group|
             next if group == 'apldap'
-       
+
             if group == 'committers'
               _li {_a group, href: "committer/"}
             elsif group == 'member'
@@ -159,7 +159,7 @@ class Person < Vue
         end
       end
     end
-    
+
     # Email addresses
     # always present
     _PersonEmailForwards person: self, edit: @edit

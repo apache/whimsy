@@ -139,5 +139,5 @@ if changed? and @old_file
       Wunderbar.info "Deleted PMC detected: #{pmc}"
     end
   }
-  
+
 end

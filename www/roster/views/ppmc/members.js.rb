@@ -107,7 +107,7 @@ class PPMCMembers < Vue
   # compute roster
   def roster
     result = []
-    
+
     @@ppmc.owners.each do |id|
       person = @@ppmc.roster[id]
       person.id = id
@@ -146,7 +146,7 @@ class PPMCMember < Vue
         _td @@person.githubUsername
         _td @@person.name
       end
-        
+
       _td data_ids: @@person.id do
         if @@person.selected
           if @@auth.ipmc and not @@person.icommit

@@ -107,7 +107,7 @@ def parse(id, site, name)
         data[:license] = a_href
       end
     end
-    
+
     %w(thanks security sponsorship).each do |check|
       if a_text =~ SiteStandards::COMMON_CHECKS[check][SiteStandards::CHECK_CAPTURE]
         begin
@@ -189,7 +189,7 @@ else
     end
     results[committee.name] = parse(committee.name, committee.site, committee.display_name)
   end
-  
+
   # Scan podlings that have a website
   ASF::Podling.list.each do |podling| 
     if podling.status == 'current' and podling.podlingStatus[:website]

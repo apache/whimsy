@@ -144,7 +144,7 @@ module ASF
     def self.directorInitials(id)
       DIRECTOR_MAP[id] && DIRECTOR_MAP[id][INITIALS]
     end 
-    
+
     # Return the first name for the uid
     # Fails if there is no entry, so check first using directorHasId?
     def self.directorFirstName(id)

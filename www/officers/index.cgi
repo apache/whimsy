@@ -43,7 +43,7 @@ _html do
         end
       }
     ) do
-    
+
       _h2 "Tools Useful For ASF Officers"
       _ul do
         OFFICERS.each do |url, desc|

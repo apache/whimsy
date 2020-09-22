@@ -281,7 +281,7 @@ class Agenda
           end
         end
       end
-      
+
       @@approved = 'tabled'
     end
 

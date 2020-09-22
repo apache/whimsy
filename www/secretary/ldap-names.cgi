@@ -24,14 +24,14 @@ _html do
   }
 
  if @updates
-  
+
   ################################################################## 
   #                         Apply Updates                          #
   ################################################################## 
-  
+
   _h2_ 'Applying updates'
   updates = JSON.parse(@updates)
-  
+
   # update LDAP
   unless updates.empty?
     unless ASF::Service.find('asf-secretary').members.include? ASF::Person.new($USER)
@@ -211,7 +211,7 @@ _html do
   #################################################################### 
   #                   Form used to submit changes                    #
   #################################################################### 
-  
+
   _form_ method: 'post' do
     _input type: 'hidden', name: 'updates'
     _input type: 'submit', value: 'Commit Changes', disabled: true
@@ -221,17 +221,17 @@ _html do
   #################################################################### 
   #                        Client side logic                         #
   #################################################################### 
-  
+
   _script do
-  
+
     # enable submit button only when there are modifications
     def enable_submit()
       button = document.querySelector('input[type=submit]')
       modified = document.querySelectorAll('td.modified')
-  
+
       button.disabled = (modified.length == 0)
     end
-  
+
     Array(document.getElementsByTagName('td')).each do |td|
       next unless td.getAttribute('copyAble') == 'true'
       # double-click: copy to previous cell
@@ -248,22 +248,22 @@ _html do
         enable_submit()
       end
     end
-  
+
     # capture modifications when button is pressed
     document.querySelector('input[type=submit]').addEventListener(:click) do
       updates = {}
       # Must agree with number of columns in the main table above
       columnNames = %w(uid icla_file legal_name public_name cn givenName newGiven sn newSN unused)
-  
+
       Array(document.querySelectorAll('td.modified')).each do |td|
         id = td.parentNode.firstElementChild.textContent.strip()
         updates[id] ||= {}
         updates[id][columnNames[td.cellIndex]] = td.textContent
       end
-  
+
       document.querySelector('form input').value = JSON.stringify(updates)
     end
-  
+
     # force submit state on initial load (i.e., disable submit button)
     enable_submit()
   end

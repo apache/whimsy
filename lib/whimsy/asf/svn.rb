@@ -94,7 +94,7 @@ module ASF
       if includeAll
         self._all_repo_entries
       else
-        self._all_repo_entries.reject{|k,v| v['depth'] == 'skip' or v['depth'] == 'delete'}
+        self._all_repo_entries.reject{|_k, v| v['depth'] == 'skip' or v['depth'] == 'delete'}
       end
     end
 
@@ -164,7 +164,7 @@ module ASF
 
     # find a local directory corresponding to a path in Subversion.  Returns
     # <tt>nil</tt> if not found.
-		# Excludes aliases
+    # Excludes aliases
     def self.find(name)
       return @testdata[name] if @testdata[name]
 
@@ -404,7 +404,7 @@ module ASF
     def self.svn(command, path , options = {})
       raise ArgumentError.new 'command must not be nil' unless command
       raise ArgumentError.new 'path must not be nil' unless path
-      
+
       # Deal with svn-only opts
       chdir = options.delete(:chdir)
       open_opts = {}
@@ -461,7 +461,7 @@ module ASF
       raise ArgumentError.new 'command must not be nil' unless command
       raise ArgumentError.new 'path must not be nil' unless path
       raise ArgumentError.new 'wunderbar (_) must not be nil' unless _
-      
+
       # Pick off the options specific to svn_ rather than svn
       sysopts = options.delete(:sysopts) || {}
       auth = options.delete(:auth)
@@ -572,7 +572,7 @@ module ASF
            user: user, password: pass})
 
         raise Exception.new("Update of committee-info.txt failed: #{err}") unless out
-        
+
       end
     end
 
@@ -660,7 +660,7 @@ module ASF
             {msg: msg.untaint, env: env})
 
         # fail if there are pending changes
-        out, err = self.svn('status', tmpfile || tmpdir) # Need to use svn rather than svn_ here
+        out, _err = self.svn('status', tmpfile || tmpdir) # Need to use svn rather than svn_ here
         unless rc == 0 && out && out.empty?
           raise "svn failure #{rc} #{path.inspect} #{out}"
         end
@@ -780,7 +780,7 @@ module ASF
       end
       throw IOError.new("Could not check if #{path} exists: #{err}")
     end    
-    
+
     # DRAFT DRAFT
     # create a new file and fail if it already exists
     # Parameters:
@@ -866,7 +866,6 @@ module ASF
         end
       end
       outputfile = File.join(tmpdir, basename).untaint
-      cmdfile = nil
 
       begin
 
@@ -896,7 +895,7 @@ module ASF
         extra.each do |cmd|
           cmds << cmd
         end
-        
+
         # Now commit everything
         if options[:dryrun]
           puts cmds # TODO: not sure this is correct for Wunderbar
@@ -909,7 +908,7 @@ module ASF
         FileUtils.rm_rf tmpdir unless options[:tmpdir]
       end
     end
-    
+
     EPOCH_SEP = ':' # separator
     EPOCH_TAG = 'epoch'+EPOCH_SEP # marker in file to show epochs are present
     EPOCH_LEN = EPOCH_TAG.size
@@ -992,12 +991,12 @@ module ASF
       else
         open(listfile) do |l|
           # fetch the file revision from the first line
-          _filerev = l.gets.chomp # TODO should we be checking _filerev?
-          if _filerev.start_with?(EPOCH_TAG)
+          filerev = l.gets.chomp # TODO should we be checking filerev?
+          if filerev.start_with?(EPOCH_TAG)
             if getEpoch
-              trimEpoch = -> l { l.split(EPOCH_SEP,2) } # return as array
+              trimEpoch = -> x { x.split(EPOCH_SEP,2) } # return as array
             else
-              trimEpoch = -> l { l.split(EPOCH_SEP,2)[1] } # strip the epoch
+              trimEpoch = -> x { x.split(EPOCH_SEP,2)[1] } # strip the epoch
             end
           else
             trimEpoch = nil
@@ -1018,7 +1017,7 @@ module ASF
     # Does this host's installation of SVN support --password-from-stdin?
     def self.passwordStdinOK?()
       return @svnHasPasswordFromStdin unless @svnHasPasswordFromStdin.nil?
-        out, err, status = Open3.capture3('svn','help','cat', '-v')
+        out, _err, status = Open3.capture3('svn','help','cat', '-v')
         if status.success? && out
           @svnHasPasswordFromStdin = out.include? '--password-from-stdin'
         else
@@ -1028,7 +1027,7 @@ module ASF
     end
 
     private
-    
+
     # Calculate svn parent directory allowing for overrides
     def self.svn_parent
       svn = ASF::Config.get(:svn)

@@ -179,7 +179,7 @@ class Main < Vue
 
     # start Service Worker
     PageCache.register() if PageCache.enabled
-  
+
     # start backchannel
     Events.monitor()
   end

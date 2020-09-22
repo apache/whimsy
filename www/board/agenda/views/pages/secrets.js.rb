@@ -39,7 +39,7 @@ class InsiderSecrets < Vue
         enough to jog your memory?  Click on the date link for this action item
         to see the report for that month.
       ) }
-      
+
       _li { _p { 
         _ %q(
           Need to see Whimsy server status, or get debugging info to help 

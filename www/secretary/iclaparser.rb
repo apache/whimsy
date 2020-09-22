@@ -61,7 +61,7 @@ module ICLAParser
     def set_text_font_and_size(*args)
        @tfs=args
     end
-  
+
     def show_text(string)
       font = @fontdict[@tfs.first]
       utf8 = ICLAParser.string_to_utf8(string, font)
@@ -91,11 +91,11 @@ module ICLAParser
     def get_text
       @texts
     end
-    
+
     def get_lines
       @lines
     end
-    
+
   end
 
   def self.string_to_utf8(string, font)
@@ -149,7 +149,7 @@ module ICLAParser
       reader.objects.each do |k,v|
         type = v[:Type] rescue nil
         subtype = v[:Subtype] rescue nil
-        
+
         if type == :Annot
           if subtype == :FreeText # These are not directly associated with forms
             rect = v[:Rect]

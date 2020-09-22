@@ -178,7 +178,7 @@ _html do
           end
         end
       end
-      
+
       _div id: 'seconds'
       _whimsy_panel("Timeline: Seconds Period (last ten days before meeting)", style: 'panel-default') do
         _p do
@@ -197,7 +197,7 @@ _html do
           end
         end
       end
-      
+
       _div id: 'firsthalf'
       _whimsy_panel("Timeline: First Half Of Meeting on IRC (at #{m1_date.strftime(DTFORMAT)})", style: 'panel-primary') do
         _p do
@@ -231,7 +231,7 @@ _html do
           end
         end
       end
-      
+
       _div id: 'recess'
       _whimsy_panel("Timeline: Meeting Recess - Time To Vote Via Email (approx 40+ hours)", style: 'panel-info') do
         _p do
@@ -251,7 +251,7 @@ _html do
           end
         end
       end
-      
+
       _div id: 'secondhalf'
       _whimsy_panel("Timeline: Second Half Of Meeting (at #{m2_date.strftime(DTFORMAT)})", style: 'panel-primary') do
         _p do
@@ -274,7 +274,7 @@ _html do
           end
         end
       end
-      
+
       _div id: 'after'
       _whimsy_panel("Timeline: After This Year's Meeting", style: 'panel-default') do
         _p do 
@@ -293,10 +293,10 @@ _html do
           _ ' to formally invite the new member to fill out the application form.  Applications must be signed and submitted to the secretary within 30 days of the meeting to be valid.'
         end
       end
-      
+
       # Most/all of these links should already be included above
       emit_meeting(cur_mtg_dir, svn_mtg_dir, m1_date, num_members, quorum_need, num_proxies, attend_irc)
-      
+
       _div id: 'meeting-history'
       _whimsy_panel("Member Meeting History", style: 'panel-info') do
         all_mtg = Dir[File.join(MEETINGS, '19*'), File.join(MEETINGS, '2*')].sort

@@ -155,7 +155,7 @@ def emit_form()
           end
         end
       end
-      
+
       emit_input(label: 'Description of misuse - why you believe this is improper', name: 'description', required: true,
         rows: 3, icon: 'glyphicon-question-sign', iconlink: 'https://www.apache.org/foundation/marks/resources', 
         helptext: "Briefly describe in your own words why this use doesn't give proper credit to the Apache project")
@@ -198,12 +198,12 @@ def send_form(formdata: {})
   pmc_list = ASF::Committee.find(formdata['project']).mail_list
   cc_list = ["private@#{pmc_list}.apache.org".untaint, frm]
   to_list = BRANDLIST.untaint
-  
+
   if true # TESTING mode
     to_list = "asf@shanecurcuru.org"
     cc_list = ''
   end # TESTING mode
-  
+
   ASF::Mail.configure
   mail = Mail.new do
     from  frm
@@ -219,7 +219,7 @@ def send_form(formdata: {})
   rescue Exception => e
     formdata['errors'] = "Bogosity! mail.deliver raised: #{e.message[0..255]}"
   end
-  
+
   # Tell user what we did
   _div.well.well_lg do
     _div.bg_danger "BETA - THIS FORM IS NOT COMPLETE YET - DEBUGGING - formdata we would have mailed out"

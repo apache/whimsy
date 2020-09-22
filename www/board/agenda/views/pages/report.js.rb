@@ -321,7 +321,7 @@ class Report < Vue
 
     return text
   end
-  
+
   # expand president's attachments
   def president_attachments(text)
     match = text.match(/Additionally, please see Attachments (\d) through (\d)/)

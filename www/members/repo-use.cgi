@@ -31,7 +31,7 @@ _html do
       priv = build_regexp(priv)
       pub = build_regexp(pub)
       scan = scan_dir_svn('../../', [priv, pub])
-      
+
       _whimsy_panel_table(title: 'Repo use by script') do
         _table.table.table_hover do
           _thead_ do
@@ -94,7 +94,7 @@ _html do
           end
         end
       end
-      
+
     end
   end
 end

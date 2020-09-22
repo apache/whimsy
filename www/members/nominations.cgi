@@ -49,7 +49,7 @@ def setup_data(cur_mtg_dir)
   # preload names
   people = ASF::Person.preload('cn', 
     nominations.map {|nominee| ASF::Person.find(nominee[:id])})
-    
+
   return nominations, people, emails
 end
 

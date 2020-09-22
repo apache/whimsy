@@ -22,7 +22,7 @@ if ARGV.length == 2
     committers: Hash[ids.sort]
   }
   public_json_output_file(info_id, ARGV.shift)
-  
+
   info_noid = {
     last_updated: ASF::ICLA.svn_change,
     non_committers: noid

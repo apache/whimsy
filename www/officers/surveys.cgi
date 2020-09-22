@@ -81,7 +81,7 @@ def display_survey(survey_layout)
     display_alert(lead: 'Warning: could not find survey datafile!', body: "**#{__method__}(#{survey_file})** the data file to store survey answers was not supplied or found; contact the survey owner: #{survey_layout[SURVEY][CONTACT]}.")
     warning = true
   end
-  
+
   # Emit the survey, or the default one which provides help on the survey tool
   _whimsy_panel("#{survey_layout[SURVEY][FORM][:title]} (user: #{$USER})", style: 'panel-success') do
     _form.form_horizontal method: 'post' do
@@ -119,7 +119,7 @@ def submit_survey(formdata: {})
   Dir.mktmpdir do |tmpdir|
     tmpdir.untaint
     ASF::SVN.svn_('checkout',[get_survey_root(), tmpdir],_,{depth: 'files', user: $USER, password: $PASSWORD})
-    
+
     survey_data = JSON.parse(File.read(filename), :symbolize_names => true)
     # Add user data (may overwrite existing entry!)
     survey_data[$USER] = formdata

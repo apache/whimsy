@@ -45,7 +45,7 @@ class NonPMCCommitters < Vue
   # compute list of committers
   def committers
     result = []
-    
+
     @@nonpmc.committers.each do |id|
       person = @@nonpmc.roster[id]
       person.id = id

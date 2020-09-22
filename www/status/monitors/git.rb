@@ -72,7 +72,7 @@ def Monitor.git(previous_status)
       'Auto packing the repository',
       'See "git help gc" for manual housekeeping',
     ]
-      
+
     lines.reject! do |line| 
       line.start_with?(*start_ignores) or
       line =~ SUMMARY_RE or
@@ -132,7 +132,7 @@ def Monitor.git(previous_status)
       break
     end
   end
-  
+
   {data: status}
 end
 

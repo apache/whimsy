@@ -60,7 +60,7 @@ _html do
 
     projects = ASF::Project.list
     pmcs = ASF::Committee.pmcs
-    
+
     projects.sort_by(&:name).each do |p|
       po=p.ownerids
       pm=p.memberids
@@ -119,7 +119,7 @@ _html do
   end
 
   _h2 'people who are not committers (excluding nologin)'
-  
+
   non_committers = people.reject { |p| p.nologin? or old.include? p.name or p.name == 'apldaptest'}
   if non_committers.length > 0
     _table do
@@ -156,10 +156,10 @@ _html do
   end
 
   _h2 'committers who are not in LDAP people'
-  
+
   # which committers are not people?
   non_people = old.reject {|id| people.map(&:name).include? id}
-  
+
   if non_people.length > 0
     _table do
       _tr do

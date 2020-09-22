@@ -65,7 +65,7 @@ _html do
           end
         end
       end
-      
+
       _script %{
         var table = $(".table").stupidtable();
         table.on("aftertablesort", function (event, data) {

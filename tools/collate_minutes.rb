@@ -745,7 +745,7 @@ def layout(title = nil)
   end
 
   # Adjust the page header
-  
+
   # find the intro para; assume it is the first para with a strong tag
   # then back up to the main container class for the page content
   section = $calendar.at('.container p strong').parent.parent

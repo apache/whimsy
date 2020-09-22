@@ -65,7 +65,7 @@ Agenda.parse(@agenda, :full).each do |item|
   cc = []
   # we don't want replies to come to secretary@
   bcc = ['secretary@apache.org']
-  
+
   if item['mail_list']
     if item[:attach] =~ /^[A-Z]+/
       cc << "private@#{item['mail_list']}.apache.org".untaint

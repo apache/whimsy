@@ -62,7 +62,7 @@ module ASF
     # :subscriptions - an array of pairs: [list name, subscriber email]
     # N.B. not the same format as the moderates() method
     def self.subscriptions(emails, response = {})
-      
+
       return response unless File.exists? LIST_SUBS
 
       response[:subscriptions] = []
@@ -85,7 +85,7 @@ module ASF
     # :digests - an array of pairs: [list name, subscriber email]
     # N.B. not the same format as the moderates() method
     def self.digests(emails, response = {})
-      
+
       return response unless File.exists? LIST_DIGS
 
       response[:digests] = []
@@ -215,8 +215,8 @@ module ASF
     def self.list_subs(mail_domain, podling=false, list_subs=false)
       self.list_subscribers(mail_domain,podling,list_subs,true)
     end
-    
-    
+
+
     # returns the list time (defaulting to list-subs time if the marker is not present)
     def self.list_time
       File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS)
@@ -307,7 +307,7 @@ module ASF
       end
       return nil
     end
-    
+
     # Parses the list-mods/list-subs files
     # Param: type = 'mod' or 'sub' or 'dig'
     # Yields:

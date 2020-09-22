@@ -2,7 +2,7 @@ require 'wunderbar'
 
 # Define common page features for whimsy tools using bootstrap styles
 class Wunderbar::HtmlMarkup
-  
+
   # DEPRECATED Wrap content with nicer fluid margins
   def _whimsy_content colstyle="col-lg-11"
     _div.content.container_fluid do
@@ -13,7 +13,7 @@ class Wunderbar::HtmlMarkup
       end
     end
   end
-  
+
   # Emit simplistic copyright footer
   def _whimsy_foot
     _div.footer.container_fluid style: 'background-color: #f5f5f5; padding: 10px;' do
@@ -30,7 +30,7 @@ class Wunderbar::HtmlMarkup
       end
     end
   end
-  
+
   # Emit a panel with title and body content
   def _whimsy_panel(title, style: 'panel-primary', header: 'h3')
     _div.panel class: style do
@@ -44,7 +44,7 @@ class Wunderbar::HtmlMarkup
       end
     end
   end
-  
+
   # Emit a panel with helpblock and table https://getbootstrap.com/components/#panels-tables
   def _whimsy_panel_table(title: 'Table Title', style: 'panel-primary', header: 'h2', helpblock: nil)
     _div.panel class: style do
@@ -61,7 +61,7 @@ class Wunderbar::HtmlMarkup
       yield
     end
   end
-  
+
   # Emit a bootstrap navbar with required ASF links
   def _whimsy_nav
     _nav.navbar.navbar_default do
@@ -198,7 +198,7 @@ class Wunderbar::HtmlMarkup
       _whimsy_foot
     end
   end
-  
+
   # Emit wrapper panels for a single tablist accordion item
   # @param listid of the parent _div.panel_group role: "tablist"
   # @param itemid of this specific item
@@ -225,5 +225,5 @@ class Wunderbar::HtmlMarkup
       end
     end
   end
-  
+
 end

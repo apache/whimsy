@@ -30,39 +30,39 @@ class Post < Vue
     _ModalDialog.wide_form.post_report_form! color: 'commented' do
       if @button == 'add item'
         _h4 'Select Item Type'
-  
+
         _ul.new_item_type do
           _li do
             _button.btn.btn_primary 'Change Chair', onClick: selectItem
             _ '- change chair for an existing PMC'
           end
-  
+
           _li do
             _button.btn.btn_primary 'Establish Project', onClick: selectItem
             _ '- direct to TLP project and subproject to TLP'
           end
-  
+
           _li do
             _button.btn.btn_primary 'Terminate Project', onClick: selectItem
             _ '- move a project to the attic'
           end
-  
+
           _li do
             _button.btn.btn_primary 'New Resolution', onClick: selectItem
             _ '- free form entry of a new resolution'
           end
-  
+
           _li do
             _button.btn.btn_info 'Out of Cycle Report', onClick: selectItem
             _ '- report from a PMC not currently on the agenda for this month'
           end
-  
+
           _li do
             _button.btn.btn_success 'Discussion Item', onClick: selectItem
             _ '- add a discussion item to the agenda'
           end
         end
-  
+
         _button.btn_default 'Cancel', data_dismiss: 'modal'
 
       elsif @button == 'Change Chair'

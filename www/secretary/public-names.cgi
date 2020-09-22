@@ -90,14 +90,14 @@ _html do
           if names['legal_name']
             iclas[pattern,1] = names['legal_name'].gsub("\u00A0", ' ')  
           end
-  
+
           if names['public_name']
             iclas[pattern,2] = names['public_name'].gsub("\u00A0", ' ') 
           end
         end
 
         iclas # return the updated file
-  
+
       end
 
     end

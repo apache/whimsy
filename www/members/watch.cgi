@@ -42,7 +42,7 @@ _html do
 
     # determine which list to report on, based on the URI
     request = ENV['REQUEST_URI']  
-    
+
     _div.row do
       _div.col_sm10 do
         _div.panel.panel_primary do
@@ -60,7 +60,7 @@ _html do
                   end
                 end
               end
-              
+
               _li do
                 _a 'Potential Member Watch List', href: 'members/watch'
               end
@@ -97,7 +97,7 @@ _html do
         end
       end
     end
-    
+
     list = {} # Avoid lint errors of shadowing
     if request =~ /multiple/
       _h2_ 'Active In Multiple Committees'
@@ -150,7 +150,7 @@ _html do
           else
             _th 'Nominated?'
           end
-          
+
           _th 'AvailID', data_sort: 'string'
           _th 'Name', data_sort: 'string'
 
@@ -221,7 +221,7 @@ _html do
 
             # public name
             _td person.public_name
-  
+
 
             if request !~ /appstatus/
               # committees
@@ -236,7 +236,7 @@ _html do
                   end
                 end
               end
-    
+
               # chair since
               chair = person.committees.find {|committee| committee.chair == person}
               if chair
@@ -244,7 +244,7 @@ _html do
                   File.basename(name).split('.').first.downcase.gsub(/[_\W]/,'') ==
                     "#{chair.name.gsub(/\W/,'')}"
                 end
-    
+
                 search_string = "RESOLVED, that #{person.public_name}"
                 search_string.force_encoding('utf-8')
 
@@ -262,7 +262,7 @@ _html do
                     end
                   end
                 end
-    
+
                 date = 'unknown'
                 if minutes
                   minutes = 'board/minutes/' + File.basename(minutes)

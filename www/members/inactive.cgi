@@ -126,7 +126,7 @@ _html do
             end
           end
         end
-        
+
         _div.status do
           _form method: 'post' do
             _p %{

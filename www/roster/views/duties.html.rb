@@ -117,7 +117,7 @@ _html do
             end
           end
         end
-        
+
         # ********************************************************************
         # *                           Source Code                            *
         # ********************************************************************
@@ -130,7 +130,7 @@ _html do
             _a "foundation/officers/personnel-duties/#{txtnam}.txt", href: ASF::SVN.svnpath!('personnel-duties', "#{txtnam}.txt")
           end
         end
-        
+
       end
     end
   end

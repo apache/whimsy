@@ -50,7 +50,7 @@ _html do
           end
         end
       end
-      
+
       _h3 'Edit Your Reply'
       _hr
       _p 'Dear user, thank you for respecting Apache Brands.  Blah blah, foo bar, blah (this is boilerplate content) '

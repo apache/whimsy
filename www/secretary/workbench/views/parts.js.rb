@@ -463,7 +463,7 @@ class Parts < Vue
     url = message.sub('/workbench/','/icla-parse/') + attachment
     window.parent.frames.content.location.href = url
   end
-  
+
   ########################################################################
   #                             Update email                             #
   ########################################################################

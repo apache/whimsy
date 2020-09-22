@@ -37,7 +37,7 @@ _personalize_email(env.user)
 ########################################################################
 
 task "svn commit documents/cclas/#@filename#{fileext} and update cclas.txt" do
-  
+
   # construct line to be inserted in cclas.txt
   @cclalines = "notinavail:" + @company.strip
   unless @contact.empty?

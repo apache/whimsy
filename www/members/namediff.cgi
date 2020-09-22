@@ -25,7 +25,7 @@ _html do
       ASF::ICLA.preload
       ldap_members = ASF::Member.list.map {|id, info| ASF::Person.find(id)}
       ASF::Person.preload('cn', ldap_members)
-      
+
       _table.table.table_hover do
         _thead do
           _tr do
@@ -39,10 +39,10 @@ _html do
             end
           end
         end
-        
+
         ASF::Member.list.sort.each do |id, info|
           person = ASF::Person.find(id)
-          
+
           if person.icla
             next if person.icla.name == info[:name]
             next if person.icla.legal_name == info[:name]
@@ -65,7 +65,7 @@ _html do
           end
         end
       end
-      
+
       _script %{
         var table = $(".table").stupidtable();
         table.on("aftertablesort", function (event, data) {

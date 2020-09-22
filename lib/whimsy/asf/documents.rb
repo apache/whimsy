@@ -18,7 +18,7 @@ module ASF
     def self.exist?(name)
       self.listnames.include?(name)
     end
-    
+
   end
 
   # Common class for access to documents/cclas/
@@ -35,7 +35,7 @@ module ASF
     def self.exist?(name)
       self.listnames.include?(name)
     end
-    
+
   end
 
   # Common class for access to documents/iclas/ directory

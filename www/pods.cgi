@@ -81,7 +81,7 @@ _html do
       # Encapsulate data display (same for projects and podlings)
       display_application(path_info, sites, analysis, checks_performed, cgi_for_tlps)
     end
-    
+
     _script %{
       var table = $(".table").stupidtable();
       table.on("aftertablesort", function (event, data) {

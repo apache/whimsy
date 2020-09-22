@@ -31,7 +31,7 @@ class PPMCMentors < Vue
   # compute roster
   def roster
     result = []
-    
+
     @@ppmc.mentors.each do |id|
       person = @@ppmc.roster[id]
       person.id = id
@@ -74,7 +74,7 @@ class PPMCMentor < Vue
         _td @@person.githubUsername
         _td @@person.name
       end
-        
+
       _td data_ids: @@person.id do
         # TODO: how does this become enabled?
         if @@person.selected

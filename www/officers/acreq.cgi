@@ -144,7 +144,7 @@ _html do
         }
       }
     ) do
-      
+
       _div.row do
         _div.col_md_8 do
           # Display the data input form for an account request
@@ -224,7 +224,7 @@ _html do
                   _textarea.form_control name: "comments", id: "comments" 
                 end
               end
-              
+
               _div.form_group do
                 _div.col_sm_offset_2.col_sm_1 do
                   _input.btn.btn_default type: "submit", value: "Submit"

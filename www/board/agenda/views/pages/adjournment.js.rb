@@ -194,7 +194,7 @@ class PMCActions < Vue
         Todos[todo_type].each do |todo| 
           if todo.resolution == item.title
             minutes = Minutes.get(item.title)
- 
+
             resolution = {
               action: todo_type,
               name: todo.name,
