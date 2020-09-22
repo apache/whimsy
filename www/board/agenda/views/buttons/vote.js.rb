@@ -36,10 +36,10 @@ class Vote < Vue
       _button.btn_primary 'Save', type: 'button', onClick: self.save,
         disabled: (@draft == @base)
 
-      _button.btn_warning 'Tabled', type: 'button', 
+      _button.btn_warning 'Tabled', type: 'button',
         onClick: self.save, disabled: (@draft != '')
 
-      _button.btn_success 'Unanimous', type: 'button', 
+      _button.btn_success 'Unanimous', type: 'button',
         onClick: self.save, disabled: (@draft != '')
     end
   end

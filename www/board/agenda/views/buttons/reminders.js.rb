@@ -63,11 +63,11 @@ class InitialReminder < Vue
       _h4 'Email message'
 
       # input field for the subject
-      _input.email_subject! value: @subject, disabled: @disabled, 
+      _input.email_subject! value: @subject, disabled: @disabled,
         label: 'subject', placeholder: 'loading...'
 
       # text area input field for the body
-      _textarea.email_text! value: @message, rows: 12, 
+      _textarea.email_text! value: @message, rows: 12,
         disabled: @disabled, label: 'body', placeholder: 'loading...'
 
       # buttons

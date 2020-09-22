@@ -40,7 +40,7 @@ class Cache
   #
   # Caches the response and returns that if unchanged or recent
   #
-  # Returns: 
+  # Returns:
   # - uri (after redirects)
   # - content
   # - status: nocache, recent, updated, missing or no last mod/etag
@@ -111,7 +111,7 @@ class Cache
       Wunderbar.debug "Headers: #{response.to_hash.inspect}"
       Wunderbar.debug response.code
       if response.code == '304' # Not modified
-        return uri, response      
+        return uri, response
       elsif response.code =~ /^3\d\d/ # assume redirect
         fetch response['location'], options, depth+1
       else

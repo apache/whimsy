@@ -1,7 +1,7 @@
 if env.password
 
   # validate ids
-  if @action == 'remove' 
+  if @action == 'remove'
     people = @ids.split(',').map {|id| ASF::Person.find(id)}
   else
     people = @ids.split(',').map {|id| ASF::Person[id]}
@@ -55,7 +55,7 @@ if env.password
           else
             removals = people & icommit
             podlings = ASF::Podling.current.map(&:id)
-            removals.select! do |person| 
+            removals.select! do |person|
               not incubator.owners.include? person and
               (person.projects.map(&:id) & podlings).empty?
             end
@@ -80,7 +80,7 @@ if env.password
     # Person may not exist when ids are renamed
     who = people.map {|person| (person.public_name || person.id )}.join(' and ')
   else
-    who = people[0..-2].map {|person| person.id}.join(', ') + 
+    who = people[0..-2].map {|person| person.id}.join(', ') +
       ', and ' + people.last.id
   end
 
@@ -96,7 +96,7 @@ if env.password
         if @action == 'add'
           podlings.sub! pre do |element|
             element.sub! /<mentors>.*<\/mentors>/m do |mentors|
-              spaces = mentors[/(\s+)<mentor /, 1] || 
+              spaces = mentors[/(\s+)<mentor /, 1] ||
                 mentors[/(\s+)<\/mentors>/, 1] + '    '
               mentors[/()\s+<\/mentors>/, 1] = spaces +
                 "<mentor username=#{id.inspect}>#{person.public_name}</mentor>"
@@ -135,7 +135,7 @@ if env.password
   else
     ppmc = ASF::Podling.find(@project)
 
-    cc = people.map do |person| 
+    cc = people.map do |person|
       "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
     end
 

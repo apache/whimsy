@@ -81,7 +81,7 @@ _html do
 
       _tr do
         _td date
-        _td do 
+        _td do
           _a time.strftime('%H:%M'), href: "#{timeurl}#{time.iso8601}"
         end
 

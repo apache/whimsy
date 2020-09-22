@@ -20,12 +20,12 @@ class PersonEmailForwards < Vue
 
             _div committer.email_forward do |key|
               _input name: prefix + current, value: key, size: 30
-              _br              
+              _br
               current += 1
             end
             # Spare field to allow new entry to be added
             _input name: prefix + current, placeholder: '<forwarding email>', size: 30
-            _br             
+            _br
 
             _input type: 'submit', value: 'submit'
           end

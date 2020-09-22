@@ -69,7 +69,7 @@ groups.select{|g| EXTRAS.include? g.name}.each do |group,data|
   project.modifyTimestamp = group.modifyTimestamp
   project.members = group.members.map{|p| MyPerson.new(p.name)}
   project.owners = []
-  projects[project] = [] 
+  projects[project] = []
 end
 
 projects.keys.sort_by {|a| a.name}.each do |project|
@@ -84,7 +84,7 @@ projects.keys.sort_by {|a| a.name}.each do |project|
     entries[project.name] = {
         createTimestamp: createTimestamp,
         modifyTimestamp: modifyTimestamp,
-        roster: m 
+        roster: m
     }
 end
 

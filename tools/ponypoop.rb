@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
-# Pony poop: utilities for analyzing data from Apache Ponymail APIs 
+# Pony poop: utilities for analyzing data from Apache Ponymail APIs
 # - Analyze stats.lua JSON output for subject/author analysis
 # - Analyze mbox.lua mbox files for author/list/lines written analysis
-# 
+#
 # See also: https://ponymail.incubator.apache.org/docs/api
 # See also: https://lists.apache.org/ngrams.html
 require 'json'
@@ -67,7 +67,7 @@ def analyze_stats(fname, results, subject_regex, errors)
       results.last[:threads] = jzon['no_threads']
       subject_regex.each do |t, s|
         results.last[t] = jzon['emails'].select{ |email| email['subject'] =~ s }.size
-        results.last[:interesting] -= results.last[t] if subject_regex.keys.include? t 
+        results.last[:interesting] -= results.last[t] if subject_regex.keys.include? t
       end
       # TODO: there's a more rubyish way to combine these loops
       subject_regex.each do |t, s|
@@ -126,7 +126,7 @@ def run_analyze_stats(dir, list, subject_regex)
       csv << r.values
     end
   end
-  if errors.size > 0 
+  if errors.size > 0
     results << {}
     errors.each_with_index do |item, index|
       results.last["error#{index}"] = item
@@ -154,7 +154,7 @@ def optparse
       if File.directory?(d)
         options[:dir] = d
       else
-        raise ArgumentError, "-d #{d} is not a valid directory" 
+        raise ArgumentError, "-d #{d} is not a valid directory"
       end
     end
     opts.on(:REQUIRED, '-lLISTNAME', '--list LISTNAME', 'Root listname to download stats archive from (required; board or trademarks or...)') do |l|

@@ -162,7 +162,7 @@ module ICLAParser
               if contents and contents.length > 0 and contents != "\x14" # ignore "\x14" == ASCII DC4
                 # Entries may be duplicated, so use a hash to store them
                 id = rect.inspect+contents # if the rect and contents match, then they overwrite each other
-                freetext[id] = {Contents: contents.strip, x: rect[0], y: rect[1]} 
+                freetext[id] = {Contents: contents.strip, x: rect[0], y: rect[1]}
                 metadata[:dataSource]['FreeText'] = true
               end
             else
@@ -249,7 +249,7 @@ module ICLAParser
                 end
               end
             end
-          end 
+          end
         end
       end
     rescue Exception => e

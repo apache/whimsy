@@ -50,8 +50,8 @@ class PersonName < Vue
 
         else
 
-          if 
-            (not name.legal_name or name.public_name==name.legal_name) and 
+          if
+            (not name.legal_name or name.public_name==name.legal_name) and
             name.public_name==name.ldap
           then
             _span committer.name.public_name

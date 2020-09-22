@@ -23,7 +23,7 @@
 #   *) when requested to do so by a client, preload additional pages.  This
 #      is for the initial installation, as the pages will have already been
 #      loaded by the browser.
-# 
+#
 
 timeout = 500
 
@@ -45,7 +45,7 @@ def cache_replace(cache, request, response)
   cache.keys!().then do |keys|
     keys.each do |key|
       if key.url.split('?')[0] == path and key.url != path
-        cache.delete(key).then {} 
+        cache.delete(key).then {}
       end
     end
   end
@@ -118,7 +118,7 @@ def latest(event)
             fulfill(match)
 
             request = Request.new(match.url, cache: "no-store")
-            fetch(request).then do |response| 
+            fetch(request).then do |response|
               if response.ok
                 response.clone().text().then do |after|
                   cache.put request, response
@@ -178,7 +178,7 @@ def bootstrap(event, request)
           end
 
           if timeoutId
-            clearTimeout timeoutId 
+            clearTimeout timeoutId
             fulfill response
           end
         else

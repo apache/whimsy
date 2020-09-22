@@ -12,7 +12,7 @@ MEETINGS = ASF::SVN['Meetings']
 # Get IRC attendance copy/paste lines for all proxies at a meeting
 # @param meeting dir name of current meeting
 # @return reminders {"proxy@apache.org" => ["IRC line", ...]}
-# @see foundation/Meetings/*.rb for other scripts that deal with 
+# @see foundation/Meetings/*.rb for other scripts that deal with
 #   IRC log parsing, attendance marking, and proxy handling
 def reminder_lines(meeting = File.basename(Dir[File.join(MEETINGS, '2*')].sort.last).untaint)
   lines = IO.read(File.join(MEETINGS, meeting, 'proxies'))

@@ -9,7 +9,7 @@ require 'whimsy/asf/config'
 # file on disk, and is deleted once processed.
 #
 # No direct use of timers, events, or threads are made allowing this
-# service to be used in a variety of contexts (e.g. Sinatra and 
+# service to be used in a variety of contexts (e.g. Sinatra and
 # EventMachine).
 #
 

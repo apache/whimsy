@@ -23,7 +23,7 @@ class Missing < Vue
 
         _h3 class: item.color do
           if item.attach =~ /^[A-Z]+/
-            _input.inactive type: 'checkbox', name: 'selected', 
+            _input.inactive type: 'checkbox', name: 'selected',
               value: item.title, checked: @checked[item.title]
           end
 

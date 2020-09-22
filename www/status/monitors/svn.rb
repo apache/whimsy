@@ -45,7 +45,7 @@ def Monitor.svn(previous_status)
     lines = update.split("\n")
     repository = lines.shift.to_sym
 
-    lines.reject! do |line| 
+    lines.reject! do |line|
       line =~ %r{Updating '.+':} or
       line == "Summary of updates:" or
       # must agree with Rakefile/PREFIX

@@ -112,7 +112,7 @@ Agenda.update(@agenda, @message, auth: alternate_credentials) do |agenda|
     shepherd = shepherds.select {|name, count| count == min}.sample.first
 
     # insert section into committee-reports
-    agenda[/\n() 7\. Special Orders/, 1] = 
+    agenda[/\n() 7\. Special Orders/, 1] =
       "    #{attach}. Apache #{pmc.display_name} Project " +
       "[#{pmc.chair.public_name} / #{shepherd}]\n\n" +
       "       See Attachment #{attach}\n\n" +
@@ -122,7 +122,7 @@ Agenda.update(@agenda, @message, auth: alternate_credentials) do |agenda|
       "         ]\n\n"
 
     # insert report text as an attachment
-    agenda[/^()-+\nEnd of agenda/, 1] = 
+    agenda[/^()-+\nEnd of agenda/, 1] =
       "-----------------------------------------\n" +
       "Attachment #{attach}: Report from the Apache #{pmc.display_name} " +
       "Project  [#{pmc.chair.public_name}]\n\n" +

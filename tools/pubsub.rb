@@ -215,12 +215,12 @@ begin
   end
 rescue SignalException => e
   STDERR.puts e
-  restartable = false 
+  restartable = false
 rescue Exception => e
   if ps_thread.alive?
     STDERR.puts e
     STDERR.puts e.backtrace
-    restartable = false 
+    restartable = false
   end
 end
 

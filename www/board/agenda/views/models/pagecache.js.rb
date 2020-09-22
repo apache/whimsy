@@ -50,7 +50,7 @@ class PageCache
         inputs = document.querySelectorAll('input, textarea')
         unless Array(inputs).map {|element| element.offsetWidth}.max() > 0
           if event.data.type == 'reload'
-            window.location.reload() 
+            window.location.reload()
           elsif event.data.type == 'latest' and Main.latest
             self.latest(event.data.body)
           end

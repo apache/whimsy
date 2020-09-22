@@ -36,7 +36,7 @@ _html do
     _whimsy_panel_table(
       title: "Monthly Board Meeting Statistics",
       helpblock: -> {
-        _p do 
+        _p do
           _ "Some months' minutes are skipped because data can't be easily parsed ("
           _a! "see below for list", href: "#skips"
           _ ").  Most data is generated from public board meeting minutes, however some is "

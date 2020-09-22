@@ -22,7 +22,7 @@
 #
 
 # ##################################################################################################
-# TODO this is a preliminary version. Subject to change/removal. 
+# TODO this is a preliminary version. Subject to change/removal.
 # The output format may change or may be dropped entirely - e.g. if it is merged into existing files
 # ##################################################################################################
 
@@ -63,7 +63,7 @@ projects.keys.sort_by {|a| a.name}.each do |entry|
         createTimestamp: entry.createTimestamp,
         modifyTimestamp: entry.modifyTimestamp,
         members: m,
-        owners: o 
+        owners: o
     }
     committee = committees[entry.name]
     if committee

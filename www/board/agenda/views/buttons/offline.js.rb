@@ -30,12 +30,12 @@ class Offline < Vue
         fetch('../json/batch', args).then {|response|
           if response.ok
             Pending.dbput({})
-            response.json().then do |pending| 
+            response.json().then do |pending|
               Server.pending = pending
             end
             Pending.setOffline(false)
           else
-            response.text().then do |text| 
+            response.text().then do |text|
               alert("Server error: #{response.status}")
               console.log text
             end

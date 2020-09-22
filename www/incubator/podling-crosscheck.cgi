@@ -70,12 +70,12 @@ _html do
                 orphans = podling.members - incubator
                 unless orphans.empty?
                   orphans.each do |person|
-                    if 
+                    if
                       podling.mentors.include? person.id
                     then
                       _tr_ do
                         _td do
-                          _a podling.display_name, 
+                          _a podling.display_name,
                             href: "../../roster/ppmc/#{podling.id}"
                         end
                         _td do
@@ -100,7 +100,7 @@ _html do
       end
 
       #
-      ### PPMC committers vs incubator committers 
+      ### PPMC committers vs incubator committers
       #
       _whimsy_panel_table(
         title: "Podling Committers that are not Incubator committers",
@@ -118,12 +118,12 @@ _html do
                 orphans = podling.members - incubator
                 unless orphans.empty?
                   orphans.each do |person|
-                    if 
+                    if
                       not podling.mentors.include? person.id
                     then
                       _tr_ do
                         _td do
-                          _a podling.display_name, 
+                          _a podling.display_name,
                             href: "../../roster/ppmc/#{podling.id}"
                         end
                         _td do
@@ -151,7 +151,7 @@ _html do
       ### Incubator committers vs Podling committers
       #
       _whimsy_panel_table(
-        title: "Incubator committers that are not on the IPMC and are not 
+        title: "Incubator committers that are not on the IPMC and are not
                 listed as a committer of any podling"
       ) do
         _table.table.table_hover.table_striped do

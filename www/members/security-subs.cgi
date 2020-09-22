@@ -151,10 +151,10 @@ _html do
       end
       _h2 do
         if podling
-          _a podling.display_name, 
+          _a podling.display_name,
             href: "../../roster/ppmc/#{podling.id}"
         else
-          _a committee.display_name, 
+          _a committee.display_name,
             href: "../../roster/committee/#{committee.id}"
         end
         _span class: 'small' do

@@ -32,11 +32,11 @@ parsed_agenda.each do |item|
   next unless item[:attach] =~ /^(4[A-Z]|\d|[A-Z]+)$/
   next unless item['chair_email']
 
-  next unless minutes[item['title']] or 
+  next unless minutes[item['title']] or
     (item['comments'] and not item['comments'].empty?)
 
   unless todos[:feedback_sent] and todos[:feedback_sent].include? item['title']
-    feedback << item['title'] 
+    feedback << item['title']
   end
 end
 
@@ -75,7 +75,7 @@ if (@change || @establish || @terminate) and env.password
         select {|item| item[:attach] =~ /^[A-Z]+$/ and item['missing']}.
         map {|item| item['title']}
       rejected = minutes[:rejected] || []
-      contents = ASF::Committee.update_next_month(contents, 
+      contents = ASF::Committee.update_next_month(contents,
         Date.parse(date.gsub('_', '-')), missing, rejected, todos)
     end
 
@@ -90,11 +90,11 @@ if (@change || @establish || @terminate) and env.password
     # add people from establish resolutions
     established = Date.parse(date.gsub('_', '-'))
     Array(@establish).each do |resolution|
-      item = parsed_agenda.find do |item| 
+      item = parsed_agenda.find do |item|
         item['title'] == resolution['title']
       end
 
-      contents = ASF::Committee.establish(contents, resolution['display_name'], 
+      contents = ASF::Committee.establish(contents, resolution['display_name'],
         established, item['people'])
     end
 
@@ -110,7 +110,7 @@ if @establish and env.password
   @establish.each do |resolution|
     pmc = resolution['name']
 
-    item = parsed_agenda.find do |item| 
+    item = parsed_agenda.find do |item|
       item['title'] == resolution['title']
     end
 
@@ -135,7 +135,7 @@ if @establish and env.password
       cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
       ASF::SVN.update cinfoy, title, env, _ do |tmpdir, contents|
         ASF::Committee.appendtlpmetadata(contents,pmc.downcase,charter)
-      end 
+      end
     end
   end
 
@@ -208,7 +208,7 @@ end
 
 if @establish
   minutes[:todos][:established] ||= []
-  minutes[:todos][:established] += 
+  minutes[:todos][:established] +=
     @establish.map {|resolution| resolution['name']}
 end
 
@@ -256,7 +256,7 @@ add = transitioning.keys - ASF.pmc_chairs
 remove = ASF.pmc_chairs - ASF::Committee.pmcs.map(&:chair) -
   ASF::Committee.nonpmcs.map(&:chair) - transitioning.keys
 
-_add add.map {|person| {id: person.id, name: person.public_name, 
+_add add.map {|person| {id: person.id, name: person.public_name,
   email: person.mail.first, resolution: transitioning[person]}}.
   sort_by {|person| person[:id]}
 _remove remove.map {|person| {id: person.id, name: person.public_name}}.

@@ -1,6 +1,6 @@
 #
 # This class spawns a io.js process to run a HTTP server which accepts
-# POST requests containing Vue/jsdom scripts and responds with 
+# POST requests containing Vue/jsdom scripts and responds with
 # HTML results.  It provides a Rack interface, enabling this server to
 # be run with Capybara/RackTest.
 #
@@ -27,7 +27,7 @@ class VueServer
 
     # spawn a server process
     nodejs = (`which nodejs`.empty? ? 'node' : 'nodejs')
-    @@pid = spawn(nodejs, '-e', 
+    @@pid = spawn(nodejs, '-e',
       Ruby2JS.convert(@@server, {ivars: {:@port => @@port}}))
 
     # wait for server to start
@@ -127,7 +127,7 @@ class VueServer
     http = require('http')
     server = http.createServer do |request, response|
       data = ''
-      request.on('data') do |chunk| 
+      request.on('data') do |chunk|
         data += chunk
       end
 

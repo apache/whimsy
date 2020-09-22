@@ -8,7 +8,7 @@ class PostActions < Vue
   end
 
   def render
-    _button.btn.btn_primary 'post actions', onClick: self.click, 
+    _button.btn.btn_primary 'post actions', onClick: self.click,
       disabled: @disabled || @list.empty?
   end
 

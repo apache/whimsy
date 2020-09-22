@@ -9,12 +9,12 @@ require 'wunderbar/bootstrap'
 require '../../tools/wwwdocs.rb'
 
 NONCGIS = {
-  '/board/agenda/' => 
-    [ 'Board Agenda Tool', 
+  '/board/agenda/' =>
+    [ 'Board Agenda Tool',
       ['board', 'meeting'],
     'text-primary'],
-  '/roster/' => 
-    [ 'ASF Roster Tool', 
+  '/roster/' =>
+    [ 'ASF Roster Tool',
       ['orgchart'],
     'text-muted']
 }
@@ -22,7 +22,7 @@ NONCGIS = {
 _html do
   _body? do
     _whimsy_body(
-      title: PAGETITLE, 
+      title: PAGETITLE,
       related: {
         "https://projects.apache.org/" => "Apache Project Listing",
         "https://cwiki.apache.org/confluence/display/INFRA/Reference" => "Infra Reference Pages",

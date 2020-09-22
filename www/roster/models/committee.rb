@@ -72,7 +72,7 @@ class Committee
 
     members.each do |person| # process the owners
       roster[person.id] ||= {
-        name: person.public_name, 
+        name: person.public_name,
         role: 'PMC member' # TODO not strictly true, as CI is the canonical source
       }
       if analysePrivateSubs
@@ -99,7 +99,7 @@ class Committee
     roster.each {|id, info| info[:member] = ASF::Person.find(id).asf_member?}
 
     if pmc.chair and roster[pmc.chair.id]
-      roster[pmc.chair.id]['role'] = 'PMC chair' 
+      roster[pmc.chair.id]['role'] = 'PMC chair'
     end
 
     # separate out the known ASF members and extract any matching committer details

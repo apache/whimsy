@@ -383,7 +383,7 @@ module ASF
     self.dereference_weakref(self, attr, &block)
   end
 
-  # Obtain a list of PMC chairs from LDAP 
+  # Obtain a list of PMC chairs from LDAP
   # <tt>cn=pmc-chairs,ou=groups,ou=services,dc=apache,dc=org</tt>
   # Note: this list may include non-PMC VPs.
   def self.pmc_chairs
@@ -402,7 +402,7 @@ module ASF
     weakref(:committerids) {RoleGroup.find('committers').memberids}
   end
 
-  # Obtain a list of members from LDAP 
+  # Obtain a list of members from LDAP
   # <tt>cn=member,ou=groups,dc=apache,dc=org</tt>
   # Note: includes some non-ASF member infrastructure contractors
   # TODO: convert to RoleGroup at some point?
@@ -410,7 +410,7 @@ module ASF
     weakref(:members) {Group.find('member').members}
   end
 
-  # Obtain a list of memberids from LDAP 
+  # Obtain a list of memberids from LDAP
   # <tt>cn=member,ou=groups,dc=apache,dc=org</tt>
   # Note: includes some non-ASF member infrastructure contractors
   # TODO: convert to RoleGroup at some point?
@@ -587,9 +587,9 @@ module ASF
       new_person = ASF::Person.create(self.attrs.merge(attrs).merge(uid: newid))
 
       # determine what groups the individual is a member of
-      uid_groups = ASF.search_subtree('dc=apache,dc=org', 
+      uid_groups = ASF.search_subtree('dc=apache,dc=org',
         'memberUid=#{self.id}', 'dn').flatten
-      dn_groups = ASF.search_subtree('dc=apache,dc=org', 
+      dn_groups = ASF.search_subtree('dc=apache,dc=org',
         'member=#{self.dn}', 'dn').flatten
 
       # add new user to all groups
@@ -626,7 +626,7 @@ module ASF
       ASF::Group['committers'].remove(person) rescue nil
 
       # remove person from 'new' committers list, ignoring exceptions
-      ASF::LDAP.modify("cn=committers,#@base", 
+      ASF::LDAP.modify("cn=committers,#@base",
         [ASF::Base.mod_delete('member', [person.dn])]) rescue nil
 
       # remove person from LDAP (should almost never be done)
@@ -638,11 +638,11 @@ module ASF
     def self.register(person)
       if person.instance_of? String
         id = person # save for use in error message
-        person = ASF::Person[person] or raise ArgumentError.new("Cannot find person: '#{id}'") 
+        person = ASF::Person[person] or raise ArgumentError.new("Cannot find person: '#{id}'")
       end
 
       # add person to 'new' committers list
-      ASF::LDAP.modify("cn=committers,#@base", 
+      ASF::LDAP.modify("cn=committers,#@base",
         [ASF::Base.mod_add('member', [person.dn])])
 
       # add person to 'legacy' committers list
@@ -654,14 +654,14 @@ module ASF
     def self.deregister(person)
       if person.instance_of? String
         id = person # save for use in error message
-        person = ASF::Person[person] or raise ArgumentError.new("Cannot find person: '#{id}'") 
+        person = ASF::Person[person] or raise ArgumentError.new("Cannot find person: '#{id}'")
       end
 
       # remove person from 'legacy' committers list
       ASF::Group['committers'].remove(person)
 
       # remove person from 'new' committers list
-      ASF::LDAP.modify("cn=committers,#@base", 
+      ASF::LDAP.modify("cn=committers,#@base",
         [ASF::Base.mod_delete('member', [person.dn])])
     end
 
@@ -788,7 +788,7 @@ module ASF
     end
 
     # list of LDAP committees that this individual is a member of
-    # TODO should this be deleted? 
+    # TODO should this be deleted?
     # It seems to be used partly as LDAP membership and partly as PMC membership (which were originally generally the same)
     # If the former, then it disappears.
     # If the latter, then it needs to be derived from project_owners filtered to keep only PMCs
@@ -802,7 +802,7 @@ module ASF
       # add in projects
       # Get list of project names where the person is an owner
       projects = self.projects.select{|prj| prj.owners.include? self}.map(&:name)
-      committees += ASF::Committee.pmcs.select do |pmc| 
+      committees += ASF::Committee.pmcs.select do |pmc|
         projects.include? pmc.name
       end
 
@@ -898,7 +898,7 @@ module ASF
       availid = attrs['uid']
 
       # determine next uid and group, unless provided
-      nextuid = attrs['uidNumber'] || 
+      nextuid = attrs['uidNumber'] ||
         ASF::search_one(ASF::Person.base, 'uid=*', 'uidNumber').
           flatten.map(&:to_i).max + 1
 
@@ -1137,7 +1137,7 @@ module ASF
 
       entry = [
         ASF::Base.mod_add('objectClass', ['groupOfNames', 'top']),
-        ASF::Base.mod_add('cn', name), 
+        ASF::Base.mod_add('cn', name),
         ASF::Base.mod_add('owner', owners),
         ASF::Base.mod_add('member', committers),
       ]
@@ -1170,7 +1170,7 @@ module ASF
     def memberids
       members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
-      end    
+      end
       members.map {|uid| uid[/uid=(.*?),/,1]}
     end
 
@@ -1424,7 +1424,7 @@ module ASF
 
     # return a list of App groups (cns only), from LDAP.
     def self.listcns(filter='cn=*')
-      # Note that hudson-job-admin is under ou=hudson hence need 
+      # Note that hudson-job-admin is under ou=hudson hence need
       # to override Service.listcns and use subtree search
       ASF.search_subtree(base, filter, 'cn').flatten
     end

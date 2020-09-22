@@ -56,7 +56,7 @@ class PPMC
     roster = committers.map {|person|
       [person.id, {
         # notSubbed does not apply
-        name: person.public_name, 
+        name: person.public_name,
         member: person.asf_member?,
         icommit: incubator_committers.include?(person),
         role: 'Committer',
@@ -74,7 +74,7 @@ class PPMC
       end
       roster[person.id] = {
         notSubbed: notSubbed,
-        name: person.public_name, 
+        name: person.public_name,
         member: person.asf_member?,
         icommit: incubator_committers.include?(person),
         role: 'PPMC Member',
@@ -86,7 +86,7 @@ class PPMC
     ppmc.mentors.each do |mentor|
       person = ASF::Person.find(mentor)
       roster[person.id] = {
-        name: person.public_name, 
+        name: person.public_name,
         member: person.asf_member?,
         ipmc: ipmc.include?(person),
         icommit: incubator_committers.include?(person),

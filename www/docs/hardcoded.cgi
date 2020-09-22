@@ -20,13 +20,13 @@ _html do
         "/docs" => "Whimsy code/API developer documentation"
       },
       helpblock: -> {
-        _p %{ Whimsy tools integrate directly with a wide variety of 
-          private and public data and processes within the ASF.  Many 
-          tools also hardcode lists or mappings of data that is 
+        _p %{ Whimsy tools integrate directly with a wide variety of
+          private and public data and processes within the ASF.  Many
+          tools also hardcode lists or mappings of data that is
           canonically stored elsewhere.  This is a partial list.
         }
-        _p %{ Many of these hardcoded lists are good things, and are 
-          in the right part of the code.  Some lists may turn out to 
+        _p %{ Many of these hardcoded lists are good things, and are
+          in the right part of the code.  Some lists may turn out to
           be better stored elsewhere, either in Whimsy or other repos.
         }
       }

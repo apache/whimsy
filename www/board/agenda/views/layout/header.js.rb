@@ -103,7 +103,7 @@ class Header < Vue
 
             shepherd = Agenda.shepherd
             if shepherd
-              _li do 
+              _li do
                 _Link.shepherd! text: 'Shepherd', href: "shepherd/#{shepherd}"
               end
             end

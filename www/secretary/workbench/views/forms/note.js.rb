@@ -8,7 +8,7 @@ class Note < Vue
       _h3 'Note'
       _textarea value: @notes, name: 'notes'
 
-      _input.btn.btn_primary value: 'Save', type: 'submit', 
+      _input.btn.btn_primary value: 'Save', type: 'submit',
         onClick: submit
     end
   end

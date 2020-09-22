@@ -23,7 +23,7 @@ _html do
       form p {margin-top: 1em}
       textarea {width: 100%; height: 8em}
       textarea:disabled {background-color: #EEEEEE}
-    }    
+    }
   end
   _body? do
     MEETINGS = ASF::SVN['Meetings']
@@ -61,8 +61,8 @@ _html do
           _ "This page shows your personal attendance record at past Member's meetings, as of meeting #{latest}."
           _ %{
             It is also a poll of members who have not participated in
-            ASF Members Meetings or Elections in the past three years, and 
-            if you have been inactive, asks you if you wish to remain active or go emeritus.  Inactive members 
+            ASF Members Meetings or Elections in the past three years, and
+            if you have been inactive, asks you if you wish to remain active or go emeritus.  Inactive members
             (only) will see a form below and can
             indicate their choice and provide feedback on meetings by pushing one of the buttons below.
           }
@@ -97,7 +97,7 @@ _html do
       end
 
       if not active
-        _p.alert.alert_warning "Dear #{name}, You have missed the last " + 
+        _p.alert.alert_warning "Dear #{name}, You have missed the last " +
           tracker[$USER]['missed'].to_s + " meetings."
 
         if _.post? and @status
@@ -139,11 +139,11 @@ _html do
             _p 'Update your status (if you are inactive):'
             _button.btn.btn_success 'I wish to remain active',
               name: 'status', value: 'remain active',
-              disabled: tracker[$USER]['missed'] == 0 or 
+              disabled: tracker[$USER]['missed'] == 0 or
                 tracker[$USER]['status'] == 'remain active'
             _button.btn.btn_warning 'I would like to go emeritus',
               name: 'status', value: 'go emeritus',
-              disabled: tracker[$USER]['missed'] == 0 or 
+              disabled: tracker[$USER]['missed'] == 0 or
                 tracker[$USER]['status'] == 'remain active'
           end
 
@@ -187,7 +187,7 @@ _html do
                 _td 'Attended via proxy'
               when '-'
                 _td 'Did not attend'
-              when 'e' 
+              when 'e'
                 _td 'Went emeritus'
               else
                 _td status

@@ -4,7 +4,7 @@
 
 class PPMCCommitters < Vue
   def render
-    pending = [] 
+    pending = []
 
     _ ' ' # Not sure why, but without this the H2 elements are not generated
 
@@ -108,7 +108,7 @@ class PPMCCommitter < Vue
       end
 
       if @@person.selected
-        _td data_ids: @@person.id do 
+        _td data_ids: @@person.id do
           if @@auth.ipmc and not @@person.icommit
             _button.btn.btn_primary 'Add as an incubator committer',
               data_action: 'add icommit',

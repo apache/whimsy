@@ -46,7 +46,7 @@ def emit_form(title, prev_data)
       _whimsy_forms_select(label: 'Select Some Values', name: field,
         multiple: true, values: prev_data[field],
         options: ['another value', 'yet another value'],
-        icon: 'glyphicon-time', iconlabel: 'clock', 
+        icon: 'glyphicon-time', iconlabel: 'clock',
         helptext: 'Select as many values as ya like!'
       )
       field = 'text2'
@@ -126,8 +126,8 @@ _html do
           _p "If your script displays a sizeable table(s) of data, then use this area to provide a Key: to the data."
         }
       ) do
-        # Gather or process your data **here**, so if an error is raised, the _body? 
-        #   scope will trap it - and will then display the above help information 
+        # Gather or process your data **here**, so if an error is raised, the _body?
+        #   scope will trap it - and will then display the above help information
         #   to the user before emitting a polite error traceback.
         datums = {'one' => 1, 'two' => 2 }
         _table.table.table_hover.table_striped do
@@ -163,7 +163,7 @@ _html do
       # NIFTY ACCORDION EXPAND-O LISTING: the _whimsy_accordion_item does most of the work
       _h2 id: 'example-accordion' do
         _ 'Lists of Complex Data Can Use An Accordion'
-      end 
+      end
       accordionid = 'accordion'
       officers = get_public_data()
       _div.panel_group id: accordionid, role: 'tablist', aria_multiselectable: 'true' do
@@ -200,7 +200,7 @@ _html do
         if validate_form(formdata: submission)
           if send_form(formdata: submission)
             _p.lead "Thanks for Submitting This Form!"
-            _p do 
+            _p do
               _ "The send_form method would have done any procesing needed with the data, after calling validate_data."
             end
           else

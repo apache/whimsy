@@ -44,7 +44,7 @@ class AddComment < Vue
         placeholder: 'comment', rows: 5, disabled: @disabled
 
       if User.role == :director and @@item.attach =~ /^([A-Z]+|[0-9]+)$/
-        _input.flag! type: 'checkbox', 
+        _input.flag! type: 'checkbox',
           label: 'item requires discussion or follow up',
           onClick: self.flag, checked: @checked
       end
@@ -84,7 +84,7 @@ class AddComment < Vue
     data = {
       agenda: Agenda.file,
       attach: @@item.attach,
-      initials: document.getElementById("comment-initials").value || 
+      initials: document.getElementById("comment-initials").value ||
         User.initials,
       comment: @comment
     }

@@ -33,7 +33,7 @@ class ICLA2 < Vue
             _li do
               _input type: 'radio', name: 'icla',
                 onClick: lambda {
-                  window.parent.frames.content.location.href = 
+                  window.parent.frames.content.location.href =
                     location.toString()[/.*\//] + @@selected
                   @icla = icla
                 }
@@ -107,7 +107,7 @@ class ICLA2 < Vue
   end
 
   # on initial display, default various fields based on headers, and update
-  # state 
+  # state
   def mounted()
     if not @iclas.empty?
       @disabled = false
@@ -132,7 +132,7 @@ class ICLA2 < Vue
     # reorder name if there is a single comma present
     parts = name.split(',')
     if parts.length == 2 and parts[1] !~ /^\s*(jr|ph\.d)\.?$/i
-      name = "#{parts[1].strip()} #{parts[0]}" 
+      name = "#{parts[1].strip()} #{parts[0]}"
     end
 
     @realname = name

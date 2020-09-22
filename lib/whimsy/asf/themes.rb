@@ -34,7 +34,7 @@ class Wunderbar::HtmlMarkup
   # Emit a panel with title and body content
   def _whimsy_panel(title, style: 'panel-primary', header: 'h3')
     _div.panel class: style do
-      _div.panel_heading do 
+      _div.panel_heading do
         _.tag! header, class: 'panel-title' do
           _ title
         end
@@ -48,7 +48,7 @@ class Wunderbar::HtmlMarkup
   # Emit a panel with helpblock and table https://getbootstrap.com/components/#panels-tables
   def _whimsy_panel_table(title: 'Table Title', style: 'panel-primary', header: 'h2', helpblock: nil)
     _div.panel class: style do
-      _div.panel_heading do 
+      _div.panel_heading do
         _.tag! header, class: 'panel-title' do
           _ title
         end
@@ -124,9 +124,9 @@ class Wunderbar::HtmlMarkup
   # If helpblock or related, then emit helpblock and related* panels before content
   # If breadcrumbs, emit those immediately before content
   def _whimsy_body(title: nil,
-      subtitle: 'About This Script', 
-      relatedtitle: 'Related Whimsy Links', 
-      related: nil, 
+      subtitle: 'About This Script',
+      relatedtitle: 'Related Whimsy Links',
+      related: nil,
       helpblock: nil,
       breadcrumbs: nil,
       style: 'panel-info'

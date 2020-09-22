@@ -57,7 +57,7 @@ archive.each do |email_path|
   next unless subject and subject =~ /\bREPORT\b/i
   mail = Mail.new(message.encode(message.encoding, crlf_newline: true))
   if subject and mail.subject =~ /\A[\[({]REPORT[\])}]/i
-    reports << [email_path.split('/')[-2..-1].join('/'), mail] 
+    reports << [email_path.split('/')[-2..-1].join('/'), mail]
   end
 end
 

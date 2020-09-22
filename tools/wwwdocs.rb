@@ -142,7 +142,7 @@ end
 # @return [["x = ASF::SVN['Meetings'] # Whole line of code accessing private repo", ...], [<public repos same>], 'WWW-Authenticate code line' ]
 def scan_file_svn(f, regexs)
   repos = [[], [], []]
-  consts = {}  
+  consts = {}
   begin
     File.open(f).each_line.map(&:chomp).each do |line|
       line.strip!

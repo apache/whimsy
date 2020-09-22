@@ -21,7 +21,7 @@ class PublishMinutes < Vue
       _textarea.summary_text!.form_control rows: 10, tabIndex: 1,
         value: @summary, disabled: @disabled, label: 'Minutes summary'
 
-      _input.message! label: 'Commit message', value: @message, 
+      _input.message! label: 'Commit message', value: @message,
         disabled: @disabled
 
       _button.btn_default 'Cancel', type: 'button', data_dismiss: 'modal'
@@ -79,7 +79,7 @@ class PublishMinutes < Vue
 
   # convert date to displayable form
   def formatDate(date)
-    months = %w(January February March April May June July August September 
+    months = %w(January February March April May June July August September
       October November December)
     date = Date.new(date.gsub('_', '/'))
     return "#{date.getDate()} #{months[date.getMonth()]} #{date.getYear()+1900}"

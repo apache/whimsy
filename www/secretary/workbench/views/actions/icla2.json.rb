@@ -64,7 +64,7 @@ end
 
 # determine what the counter is likely to be by querying the server
 # Notes:
-#   - ASF::SVN.list returns 
+#   - ASF::SVN.list returns
 #     - a string with "\n" separators
 #     - If there is an error ASF::SVN.list returns an array with nil
 #       as the first entry.

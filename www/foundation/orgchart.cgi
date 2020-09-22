@@ -26,7 +26,7 @@ def emit_orgchart(org: {})
     _strong 'not'
     _ ' include the many Apache '
     _em 'Project'
-    _ ' VPs that help build Apache software products in our communities.' 
+    _ ' VPs that help build Apache software products in our communities.'
   }
   ) do
     _table.table.table_striped do
@@ -149,7 +149,7 @@ def emit_role(role: {}, oversees: {}, desc: {})
       role.each do |title, text|
         next if title == 'info' or title == 'mtime'
         next if title =~ /private/i
-        _li.list_group_item.active do 
+        _li.list_group_item.active do
           _h4 title.capitalize
         end
         _li.list_group_item do
@@ -178,7 +178,7 @@ _html do
           _li do
             _a desc, href: url
           end
-        end 
+        end
       end
     }
     ) do

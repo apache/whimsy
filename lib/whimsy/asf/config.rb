@@ -110,7 +110,7 @@ module ASF
       @testdata[value] || @config[value]
     end
 
-    # Set a local directory corresponding to a path  
+    # Set a local directory corresponding to a path
     # Useful as a test data override.
     def self.[]=(name, path)
       @testdata[name] = File.expand_path(path).untaint

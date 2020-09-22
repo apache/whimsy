@@ -128,7 +128,7 @@ _json do
     id and missed >= meetingsMissed
   end
 
-  Hash[inactive.map {|id, name, _first, missed| 
+  Hash[inactive.map {|id, name, _first, missed|
     [id, {name: name, missed: missed, status: 'no response yet'}]
     }]
 end

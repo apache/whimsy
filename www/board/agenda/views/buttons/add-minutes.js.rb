@@ -34,7 +34,7 @@ class AddMinutes < Vue
 
       # action items
       _div.row style: {marginTop: '1em'} do
-        _button.btn.btn_sm.btn_info.col_md_offset_1.col_md_1 '+ AI', 
+        _button.btn.btn_sm.btn_info.col_md_offset_1.col_md_1 '+ AI',
           onClick: self.addAI, disabled: !@ai_owner || !@ai_text
         _label.col_md_2 do
           _select Minutes.attendee_names, value: @ai_owner do |name|
@@ -45,7 +45,7 @@ class AddMinutes < Vue
       end
 
       if @@item.attach =~ /^[A-Z]+$/
-        _input.flag! type: 'checkbox', 
+        _input.flag! type: 'checkbox',
           label: 'report was not accepted',
           onClick: self.reject, checked: @checked
       end
@@ -55,15 +55,15 @@ class AddMinutes < Vue
         onClick:-> {@draft = @base}
 
       if @base
-        _button.btn_warning 'Delete', type: 'button', 
+        _button.btn_warning 'Delete', type: 'button',
           onClick:-> {@draft = ''}
       end
 
       # special buttons for prior months draft minutes
       if @@item.attach =~ /^3\w/
-        _button.btn_warning 'Tabled', type: 'button', 
+        _button.btn_warning 'Tabled', type: 'button',
           onClick: self.save, disabled: @disabled
-        _button.btn_success 'Approved', type: 'button', 
+        _button.btn_success 'Approved', type: 'button',
           onClick: self.save, disabled: @disabled
       end
 
@@ -94,7 +94,7 @@ class AddMinutes < Vue
   def setup(item)
     @base = draft = Minutes.get(item.title) || ''
     if item.attach =~ /^(8|9|1\d)\.$/
-      draft ||= item.text 
+      draft ||= item.text
     else
       @ai_text = "pursue a report for #{item.title}" unless item.text
     end

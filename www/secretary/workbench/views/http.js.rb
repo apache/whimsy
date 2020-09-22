@@ -18,7 +18,7 @@ class HTTP
         if xhr.readyState == 4
           begin
             if xhr.status == 200
-              data = JSON.parse(xhr.responseText) 
+              data = JSON.parse(xhr.responseText)
               if data.exception
                 reject(data.exception)
               else
@@ -48,7 +48,7 @@ class HTTP
         if xhr.readyState == 4
           begin
             if xhr.status == 200
-              data = JSON.parse(xhr.responseText) 
+              data = JSON.parse(xhr.responseText)
               if data.exception
                 reject(data.exception)
               else
@@ -100,7 +100,7 @@ class HTTP
           begin
             if xhr.status == 200
               if type == :json
-                data = xhr.response || JSON.parse(xhr.responseText) 
+                data = xhr.response || JSON.parse(xhr.responseText)
               else
                 data = xhr.responseText
               end

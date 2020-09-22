@@ -28,7 +28,7 @@ _html do
         _ 'To help evaluate potential Member candidates, here are a number of ways to see where non-Members are participating broadly at the ASF.'
         _ 'The table(s) below include non-Members who are chairs, widely active, have been nominated, or other criteria (depending on this URL).'
       }
-    ) do    
+    ) do
     # start with the Watch List itself
     watch_list = ASF::Person.member_watch_list.keys
     meeting =
@@ -41,7 +41,7 @@ _html do
     nominations += txt.scan(/^---+\n\s*\w+.*\(([a-z]+)@apache\.org\)/).flatten
 
     # determine which list to report on, based on the URI
-    request = ENV['REQUEST_URI']  
+    request = ENV['REQUEST_URI']
 
     _div.row do
       _div.col_sm10 do

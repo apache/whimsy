@@ -63,7 +63,7 @@ class Reporter
 
     # extract projects with drafts for this agenda
     lastMeeting = ASF::Board.lastMeeting.to_i
-    drafts = report_status.select do |project, status| 
+    drafts = report_status.select do |project, status|
       next false unless status['agenda'] == agenda_file
       last_draft = status['last_draft']
       next false if last_draft and status['draft_timestamp'] <= lastMeeting
@@ -76,7 +76,7 @@ class Reporter
       drafts: drafts.map {|project, status|
         committee = ASF::Committee.find(project)
         [status['attach'], {
-          project: project, 
+          project: project,
           title: (committee ? committee.display_name : project),
           timestamp: status['draft_timestamp'],
           author: status['last_author'],
@@ -94,7 +94,7 @@ class Reporter
     user = env.respond_to?(:user) && ASF::Person.find(env.user)
     unless !user or user.asf_member? or ASF.pmc_chairs.include? user
       projects = user.committees.map(&:name)
-      results[:drafts].keep_if do |attach, draft| 
+      results[:drafts].keep_if do |attach, draft|
         projects.include? draft[:project]
       end
     end

@@ -84,7 +84,7 @@ _html do
       helpblock: -> {
         _p 'The below form allows Apache committers to automatically subscribe to, or unsubscribe from, most ASF mailing lists.'
         _p do
-          _span.text_info 'Note:' 
+          _span.text_info 'Note:'
           _ 'Only email address(es) associated with your Apache ID are listed here.  To'
           _span.strong 'change your associated email addresses'
           _ ', login to '
@@ -208,7 +208,7 @@ _html do
         _hr
 
         unless addrs.include? @addr and lists.include? @list
-          _h2_.text_danger {_span.label.label_danger 'Invalid Input'} 
+          _h2_.text_danger {_span.label.label_danger 'Invalid Input'}
           _p 'Both email and list to subscribe to are required!'
           break
         end
@@ -286,13 +286,13 @@ _html do
               else
                 _ 'You will be unsubscribed within the hour.'
               end
-            end          
+            end
           end
         else
           _div.alert.alert_danger role: 'alert' do
             _p do
               _span.strong 'Request Failed, see above for details'
-            end          
+            end
           end
         end
       end

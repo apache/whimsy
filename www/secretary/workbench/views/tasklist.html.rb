@@ -18,7 +18,7 @@ _html do
 
     _ul.tasklist! do
       @dryrun['tasklist'].each do |task|
-        _li do 
+        _li do
           _h3 task['title']
 
           task['form'].each do |element|

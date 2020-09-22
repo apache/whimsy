@@ -101,7 +101,7 @@ class Wunderbar::HtmlMarkup
     args[:values] ||= []
     args[:id] = args[:name]
     args[:aria_describedby] = "#{args[:name]}_help" if args[:helptext]
-    _whimsy_control_wrapper(args) do 
+    _whimsy_control_wrapper(args) do
       if args[:multiple]
         args[:multiple] = 'true'
       end
@@ -150,8 +150,8 @@ class Wunderbar::HtmlMarkup
     args[:id] = args[:name]
     args[:aria_describedby] = "#{args[:name]}_help" if args[:helptext]
     args[:selected] = [args[:selected]] if args[:selected].kind_of?(String)
-    _whimsy_control_wrapper(args) do 
-      # Construct list of all :options; mark any that are in :selected 
+    _whimsy_control_wrapper(args) do
+      # Construct list of all :options; mark any that are in :selected
       if args[:options].kind_of?(Array)
         args[:options].each do |val|
           checked = true if args[:selected] && args[:selected].include?(val.to_s)

@@ -28,7 +28,7 @@ class Report < Vue
           elsif @@item.missing
             draft = Reporter.find(@@item)
             if draft
-              _p do 
+              _p do
                 _em 'Unposted draft being prepared at '
                 _a 'reporter.apache.org',
                   href: "https://reporter.apache.org/wizard?#{draft.project}"
@@ -36,10 +36,10 @@ class Report < Vue
               end
               _Text raw: draft.text, filters: [self.draft]
             else
-              _p {_em 'Missing'} 
+              _p {_em 'Missing'}
             end
           else
-            _p {_em 'Empty'} 
+            _p {_em 'Empty'}
           end
         end
 
@@ -147,7 +147,7 @@ class Report < Vue
 
       lastspace = /^.*\s\S/.exec(line)
       if lastspace and lastspace[0].gsub(/\&\w+;/, '.').length - 1 > 40
-        indicies.unshift([line, result.index]) 
+        indicies.unshift([line, result.index])
       end
     end
 
@@ -155,10 +155,10 @@ class Report < Vue
     indicies.each do |info|
       line = info[0]
       index = info[1]
-      replacement = '<span class="hilite" title="reflowed">' + 
+      replacement = '<span class="hilite" title="reflowed">' +
         Flow.text(line) + "</span>"
 
-      text = text.slice(0, index) + replacement + 
+      text = text.slice(0, index) + replacement +
         text.slice(index + line.length)
     end
 
@@ -201,7 +201,7 @@ class Report < Vue
             "<a href='#{roster}#{id}'>#{match}</a>"
           end
         else
-          text.gsub! /#{pattern}/ do |match| 
+          text.gsub! /#{pattern}/ do |match|
             "<a href='#{roster}?q=#{person.name}'>#{match}</a>"
           end
         end
@@ -219,7 +219,7 @@ class Report < Vue
             "?q=#{encodeURIComponent(person.name)}'>" +
             "<span class='commented'>#{person.name}</span>"
         else
-          text.gsub! /#{escapeRegExp(person.name)}/, 
+          text.gsub! /#{escapeRegExp(person.name)}/,
             "<a href='#{roster}#{id}'>#{person.name}</a>"
         end
       end

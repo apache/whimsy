@@ -48,7 +48,7 @@ module ASF
     @@h_stem = nil # for matching stems
 
     # search icla files to find match with claRef
-    # matches if the input matches the full name of a file or directory or 
+    # matches if the input matches the full name of a file or directory or
     # it matches with an extension
     # Returns the basename or nil if no match
     def self.match_claRef(claRef)
@@ -98,7 +98,7 @@ module ASF
         @@h_claRef = nil
         @@h_stem = nil
       end
-      @@list      
+      @@list
     end
   end
 
@@ -140,7 +140,7 @@ module ASF
     # Find the svnpath to the file for a person
     # Returns
     # svnpath, filename
-    # or 
+    # or
     # nil, nil if not found
     def self.findpath(person)
       path = file = nil

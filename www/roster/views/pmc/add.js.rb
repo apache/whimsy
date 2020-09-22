@@ -73,12 +73,12 @@ class PMCAdd < Vue
 
             plural = (@people.length > 1 ? 's' : '')
 
-            _button.btn.btn_primary "Add as committer#{plural}", 
+            _button.btn.btn_primary "Add as committer#{plural}",
               data_action: 'add commit',
               onClick: self.post, disabled: (@people.empty?)
 
             _button.btn.btn_primary 'Add to PMC', onClick: self.post,
-              data_action: 'add pmc info commit', 
+              data_action: 'add pmc info commit',
               disabled: (@people.empty? or not @notice_elapsed)
           end
         end

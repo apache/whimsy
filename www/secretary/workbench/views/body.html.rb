@@ -3,7 +3,7 @@
 #
 
 _html do
-  _link rel: 'stylesheet', type: 'text/css', 
+  _link rel: 'stylesheet', type: 'text/css',
     href: "../../secmail.css?#{@cssmtime}"
 
   #

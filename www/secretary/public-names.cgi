@@ -43,9 +43,9 @@ _html do
 
   if @updates
 
-    ################################################################## 
+    ##################################################################
     #                         Apply Updates                          #
-    ################################################################## 
+    ##################################################################
 
     _h2_ 'Applying updates'
     updates = JSON.parse(@updates)
@@ -117,9 +117,9 @@ _html do
 
   else
 
-    ################################################################## 
+    ##################################################################
     #                          Instructions                          #
-    ################################################################## 
+    ##################################################################
 
     _h2_ 'Instructions:'
 
@@ -131,16 +131,16 @@ _html do
 
   end
 
-  #################################################################### 
+  ####################################################################
   #     Show LDAP differences where entry is present in icla.txt     #
-  #################################################################### 
+  ####################################################################
 
   # prefetch ICLA data
   ASF::ICLA.preload
 
   _h2_!.present! do
     _ 'Present in '
-    _a 'iclas.txt', 
+    _a 'iclas.txt',
       href: ASF::SVN.svnpath!('officers', 'iclas.txt')
    _ ':'
   end
@@ -166,11 +166,11 @@ _html do
         length = [icla.name.length, person.cn.length].min
 
         while icla.name[first] == person.cn[first]
-          first += 1 
+          first += 1
         end
 
         while icla.name[last] == person.cn[last] and length >= first-last
-          last -= 1 
+          last -= 1
         end
 
         if icla.name[last] == ' ' and icla.name[last] == person.cn[last]
@@ -191,8 +191,8 @@ _html do
           end
           _td icla.legal_name.gsub(' ', "\u00A0"), draggable: 'true'
 
-          if 
-            icla.name[first..last].length > length/2 and 
+          if
+            icla.name[first..last].length > length/2 and
             person.cn[first..last].length > length/2
           then
             _td icla.name, draggable: 'true'
@@ -214,9 +214,9 @@ _html do
     end
   end
 
-  #################################################################### 
+  ####################################################################
   #   Show LDAP differences where entry is NOT present in iclas.txt  #
-  #################################################################### 
+  ####################################################################
 
   icla = ASF::ICLA.availids
   ldap = ASF::Person.list.sort_by(&:name)
@@ -248,18 +248,18 @@ _html do
     end
   end
 
-  #################################################################### 
+  ####################################################################
   #                   Form used to submit changes                    #
-  #################################################################### 
+  ####################################################################
 
   _form_ method: 'post' do
     _input type: 'hidden', name: 'updates'
     _input type: 'submit', value: 'Commit Changes', disabled: true
   end
 
-  #################################################################### 
+  ####################################################################
   #                        Client side logic                         #
-  #################################################################### 
+  ####################################################################
 
   _script do
     # track current drag operation
@@ -290,7 +290,7 @@ _html do
         return unless row == event.target.parentNode
         if event.target.textContent != dragText
           event.target.classList.add 'over'
-          event.preventDefault() 
+          event.preventDefault()
         end
       end
 

@@ -47,7 +47,7 @@ def post(target, data, &block)
 
       begin
         if xhr.status == 200
-          data = JSON.parse(xhr.responseText) 
+          data = JSON.parse(xhr.responseText)
           alert "Exception\n#{data.exception}" if data.exception
         elsif xhr.status == 404
           alert "Not Found: json/#{target}"
@@ -83,7 +83,7 @@ end
 #
 # Would love to use/build on 'fetch', but alas:
 #
-#   https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API#Browser_compatibility 
+#   https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API#Browser_compatibility
 def retrieve(target, type, &block)
   xhr = XMLHttpRequest.new()
 
@@ -96,7 +96,7 @@ def retrieve(target, type, &block)
       begin
         if xhr.status == 200
           if type == :json
-            data = xhr.response || JSON.parse(xhr.responseText) 
+            data = xhr.response || JSON.parse(xhr.responseText)
           else
             data = xhr.responseText
           end
@@ -165,7 +165,7 @@ class Flow
     # split into lines
     lines = text.split("\n")
 
-    # join consecutive lines, making exception for lines that start with a 
+    # join consecutive lines, making exception for lines that start with a
     # hash (#) and <markers> like <private>, ")".
     (lines.length-1).downto(1) do |i|
       next if lines[i-1] =~ /^$|^#|\w>$/

@@ -20,7 +20,7 @@ class Pending
     response['unapproved'] ||= []
     response['flagged'] ||= []
     response['unflagged'] ||= []
-    response['comments'] ||= {} 
+    response['comments'] ||= {}
     response['seen']     ||= {}
 
     # extract user information

@@ -41,7 +41,7 @@ class Index < Vue
             time = Date.new(Date.parse(message.time)).toLocaleString()
 
             row_options = {
-              :class => color, 
+              :class => color,
               on: {click: self.selectRow, doubleClick: self.nav}
             }
 
@@ -52,7 +52,7 @@ class Index < Vue
                 else
                   _a time, href: "#{message.href}", title: message.time
                 end
-              end 
+              end
               _td message.from
               _td message.subject
             end
@@ -135,7 +135,7 @@ class Index < Vue
       if selected
         rect = selected.getBoundingClientRect()
         if
-          rect.top < 0 or rect.left < 0 or 
+          rect.top < 0 or rect.left < 0 or
           rect.bottom > window.innerHeight or rect.right > window.innerWidth
         then
           selected.scrollIntoView()
@@ -173,7 +173,7 @@ class Index < Vue
   def mergemsgs(messages)
     log "mergemsgs #{messages.length}"
     messages.each do |new_message|
-      index = @messages.find_index do |old_message| 
+      index = @messages.find_index do |old_message|
         old_message.time < new_message.time or
         (old_message.time == new_message.time and
          old_message.href <= new_message.href)

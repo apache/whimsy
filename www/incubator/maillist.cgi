@@ -36,7 +36,7 @@ _html do
 
           _tr_ do
             _td! do
-              _a podling.display_name, 
+              _a podling.display_name,
                 href: "http://incubator.apache.org/projects/#{podling.name}.html"
             end
 

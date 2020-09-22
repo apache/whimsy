@@ -111,7 +111,7 @@ def display_check(col, sites, analysis, checks, tlp = true)
       _thead do
         _tr do
           _th! "#{tlp ? 'Project' : 'Podling'}", data_sort: 'string-ins'
-          _th! data_sort: 'string' do 
+          _th! data_sort: 'string' do
             _ 'Check Results'
             _br
             analysis[0][col].each do |cls, val|
@@ -124,7 +124,7 @@ def display_check(col, sites, analysis, checks, tlp = true)
       _tbody do
         sites.each do |n, links|
           _tr do
-            _td do 
+            _td do
               _a links['display_name'], href: "../project/#{n}"
             end
             if links[col] =~ /^https?:/
@@ -132,7 +132,7 @@ def display_check(col, sites, analysis, checks, tlp = true)
                 _a links[col], href: links[col]
               end
             else
-              _td links[col], class: SiteStandards.label(analysis, links, col, n) 
+              _td links[col], class: SiteStandards.label(analysis, links, col, n)
             end
           end
         end
@@ -160,11 +160,11 @@ def display_overview(sites, analysis, checks, tlp = true)
     }
   ) do
     _table.table.table_condensed.table_striped do
-      _thead do  
+      _thead do
         _tr do
           _th! "#{tlp ? 'Project' : 'Podling'}", data_sort: 'string-ins'
           checks.keys.each do |col|
-            _th! data_sort: 'string' do 
+            _th! data_sort: 'string' do
               _a col.capitalize, href: "check/#{col}"
               _br
               analysis[0][col].each do |cls, val|
@@ -183,7 +183,7 @@ def display_overview(sites, analysis, checks, tlp = true)
       _tbody do
         sites.each do |n, links|
           _tr do
-            _td do 
+            _td do
               _a "#{links['display_name']}", href: "project/#{n}"
             end
             checks.keys.each do |c|

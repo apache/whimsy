@@ -45,7 +45,7 @@ class FY23 < Vue
           _th do
             _a 'FY18', href: 'https://whimsy.apache.org/board/minutes/Budget.html#2017-04-19'
           end
-          _th do 
+          _th do
             _a 'FY22', href: 'https://whimsy.apache.org/board/minutes/Discussion_Items.html#2017-02-27'
           end
           _th 'FY23 Budget'
@@ -64,7 +64,7 @@ class FY23 < Vue
           end
           _td.num 111
           _td.num 135
-          _td.num do 
+          _td.num do
             _input.donations! onBlur: self.change, disabled: @disabled,
               value: @budget.donations.toLocaleString()
           end
@@ -76,7 +76,7 @@ class FY23 < Vue
           end
           _td.num 1_084.toLocaleString()
           _td.num 1_500.toLocaleString()
-          _td.num do 
+          _td.num do
             _input.sponsorship! onBlur: self.change, disabled: @disabled,
               value: @budget.sponsorship.toLocaleString()
           end
@@ -124,7 +124,7 @@ class FY23 < Vue
           end
           _td.num 818
           _td.num 868
-          _td.num do 
+          _td.num do
             _input.infrastructure! onBlur: self.change, disabled: @disabled,
               value: @budget.infrastructure.toLocaleString()
           end
@@ -143,7 +143,7 @@ class FY23 < Vue
           end
           _td.num 182
           _td.num 352
-          _td.num do 
+          _td.num do
             _input.publicity! onBlur: self.change, disabled: @disabled,
               value: @budget.publicity.toLocaleString()
           end
@@ -155,7 +155,7 @@ class FY23 < Vue
           end
           _td.num 89
           _td.num 141
-          _td.num do 
+          _td.num do
             _input.brandManagement! onBlur: self.change, disabled: @disabled,
               value: @budget.brandManagement.toLocaleString()
           end
@@ -167,7 +167,7 @@ class FY23 < Vue
           end
           _td.num 60
           _td.num 12
-          _td.num do 
+          _td.num do
             _input.conferences! onBlur: self.change, disabled: @disabled,
               value: @budget.conferences.toLocaleString()
           end
@@ -179,7 +179,7 @@ class FY23 < Vue
           end
           _td.num 50
           _td.num 79
-          _td.num do 
+          _td.num do
             _input.travelAssistance! onBlur: self.change, disabled: @disabled,
               value: @budget.travelAssistance.toLocaleString()
           end
@@ -191,7 +191,7 @@ class FY23 < Vue
           end
           _td.num 49
           _td.num 51
-          _td.num do 
+          _td.num do
             _input.treasury! onBlur: self.change, disabled: @disabled,
               value: @budget.treasury.toLocaleString()
           end
@@ -203,7 +203,7 @@ class FY23 < Vue
           end
           _td.num 46
           _td.num 53
-          _td.num do 
+          _td.num do
             _input.fundraising! onBlur: self.change, disabled: @disabled,
               value: @budget.fundraising.toLocaleString()
           end
@@ -215,7 +215,7 @@ class FY23 < Vue
           end
           _td.num 118
           _td.num 139
-          _td.num do 
+          _td.num do
             _input.generalAndAdministrative! onBlur: self.change,
               disabled: @disabled,
               value: @budget.generalAndAdministrative.toLocaleString()
@@ -228,7 +228,7 @@ class FY23 < Vue
           end
           _td.num 10
           _td.num 0
-          _td.num do 
+          _td.num do
             _input.generalAndAdministrative! onBlur: self.change,
               disabled: @disabled,
               value: @budget.chairman.toLocaleString()
@@ -281,9 +281,9 @@ class FY23 < Vue
   def recalc()
     @budget.income = @budget.donations + @budget.sponsorship + 28 + 4
 
-    @budget.expense = @budget.infrastructure + 27 + @budget.publicity + 
-      @budget.brandManagement + @budget.conferences + 
-      @budget.travelAssistance + @budget.treasury + @budget.fundraising + 
+    @budget.expense = @budget.infrastructure + 27 + @budget.publicity +
+      @budget.brandManagement + @budget.conferences +
+      @budget.travelAssistance + @budget.treasury + @budget.fundraising +
       @budget.generalAndAdministrative;
 
     @budget.net = @budget.income - @budget.expense
@@ -291,7 +291,7 @@ class FY23 < Vue
     @budget.cash = 1767 + # Virtual's projection for cash on hand at the end
                           # of FY18.
 
-                   (2*-212) + (3*@budget.net) + 
+                   (2*-212) + (3*@budget.net) +
                           # linear projection for expenses from FY18 to FY23.
                           # Presuming:
                           #   FY19 = FY18 + 1 * (FY23-FY18)/5
@@ -304,7 +304,7 @@ class FY23 < Vue
                           #        = 5*Fy18 + 3*FY23 - 3 * FY18
                           #        = 2*Fy18 + 3*FY23
 
-                   2*100 + 
+                   2*100 +
                           # EA adjustment: instead of ramping down, the
                           # reduction in expense is immediate and constant.
 

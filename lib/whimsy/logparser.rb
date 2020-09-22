@@ -31,11 +31,11 @@ module LogParser
   REMAINDER = 'remainder'
   HITTOTAL = 'total'
   URIHIT = 'uri'
-  IGNORED_URIS = [ 
-    /\A\/whimsy.svg/, 
-    /\A\/favicon.ico/, 
-    /\A\/robots.txt/, 
-    /\A\/assets/, 
+  IGNORED_URIS = [
+    /\A\/whimsy.svg/,
+    /\A\/favicon.ico/,
+    /\A\/robots.txt/,
+    /\A\/assets/,
     /\A\/fonts/,
     /\A\/icons/,
     /\.js\z/,
@@ -78,8 +78,8 @@ module LogParser
   # @return array of reduced, scrubbed entries as hashes
   def parse_whimsy_access(f)
     access = read_logz(f).scan(/<%JSON:httpd_access%> (\{.*\})/).flatten
-    logs = JSON.parse('[' + access.join(',') + ']').reject { |i| 
-      (i['useragent'] =~ /Ping My Box/) || (i['uri'] =~ Regexp.union(IGNORED_URIS)) || (i['status'] == 304) 
+    logs = JSON.parse('[' + access.join(',') + ']').reject { |i|
+      (i['useragent'] =~ /Ping My Box/) || (i['uri'] =~ Regexp.union(IGNORED_URIS)) || (i['status'] == 304)
     }
     logs.each do |i|
       %w(geo_country geo_long geo_lat geo_coords geo_city geo_combo duration request bytes vhost document request_method clientip query_string).each do |g|
@@ -135,16 +135,16 @@ module LogParser
 
   # Parse error.log and return interesting entries
   # @param f filename of error.log or .gz
-  # @param logs hash to append to (created if nil) 
+  # @param logs hash to append to (created if nil)
   # @return hash of string|array of interesting entries
-  #   "timestamp" => "Passenger restarts and messages", 
+  #   "timestamp" => "Passenger restarts and messages",
   #   "timestamp" => ['_ERROR msg', '_WARN msg'... ]
   def parse_error_log(f, logs = {})
     last_time = 'uninitialized_time' # Cheap marker
     ignored = Regexp.union(IGNORE_TRACEBACKS)
     read_logz(f).lines.each do |l|
       begin
-        # Emit each interesting item in order we read it 
+        # Emit each interesting item in order we read it
         #   Include good-enough timestamping, even for un-timestamped items
         # (Date.today.to_time + 4/100000.0).iso8601(TRUNCATE)
         if l =~ /\[ . (.{24}) .+\]: (.+)/

@@ -20,7 +20,7 @@ def squash(text)
 end
 
 # Get text from a node; use parent if text does not appear to be complete
-# This is used when scanning for some links that may 
+# This is used when scanning for some links that may
 #   be in an image or other commonly related node on websites
 def getText(txt, node, match=/Apache Software Foundation/i)
   parent = nil # debug to show where parent needed to be fetched
@@ -63,7 +63,7 @@ def parse(id, site, name)
   end
   $stderr.puts "#{id} #{uri} #{status}"
   # Bail and return if getting the site returns an error code
-  if response.respond_to? :code and response.code =~ /^[45]/ 
+  if response.respond_to? :code and response.code =~ /^[45]/
     data[:errors] = "cache.get(#{site.to_s}) error code #{response.code}"
     return data
   end
@@ -84,7 +84,7 @@ def parse(id, site, name)
         # use the title (hover text) in preference to the source
         data[:foundation] = img['title'] ? squash(img['title']) : uri + img['src'].strip
       else
-        data[:foundation] = squash(a.text) 
+        data[:foundation] = squash(a.text)
       end
     end
 
@@ -99,10 +99,10 @@ def parse(id, site, name)
 
     # Check the a_text strings for other patterns
     # Note this is an unusual case
-    if (a_text =~ SiteStandards::COMMON_CHECKS['license'][SiteStandards::CHECK_TEXT]) and 
+    if (a_text =~ SiteStandards::COMMON_CHECKS['license'][SiteStandards::CHECK_TEXT]) and
         (a_href =~ SiteStandards::COMMON_CHECKS['license'][SiteStandards::CHECK_CAPTURE])
       begin
-        data[:license] = uri + a_href 
+        data[:license] = uri + a_href
       rescue
         data[:license] = a_href
       end
@@ -111,7 +111,7 @@ def parse(id, site, name)
     %w(thanks security sponsorship).each do |check|
       if a_text =~ SiteStandards::COMMON_CHECKS[check][SiteStandards::CHECK_CAPTURE]
         begin
-          data[check.to_sym] = uri + a_href 
+          data[check.to_sym] = uri + a_href
         rescue
           data[check.to_sym] = a_href
         end
@@ -191,7 +191,7 @@ else
   end
 
   # Scan podlings that have a website
-  ASF::Podling.list.each do |podling| 
+  ASF::Podling.list.each do |podling|
     if podling.status == 'current' and podling.podlingStatus[:website]
       # if more parameters specified, parse only those names
       if ARGV.length > 0

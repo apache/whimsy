@@ -25,7 +25,7 @@ _html do
           _a 'members@apache.org', href: 'https://mail-search.apache.org/members/private-arch/members/'
           _br
           _ 'These are matched against '
-          _a 'members.txt', href: ASF::SVN.svnpath!('foundation', 'members.txt') 
+          _a 'members.txt', href: ASF::SVN.svnpath!('foundation', 'members.txt')
           _ ', '
           _a 'iclas.txt', href: ASF::SVN.svnpath!('officers', 'iclas.txt')
           _ ', and '
@@ -91,7 +91,7 @@ _html do
           elsif not person.asf_member?
             _td.text_danger id, title: 'Non Member', data_sort_value: '1'
           elsif person.asf_member? != true
-            _td(data_sort_value: '2') {_em id, title: 'Emeritus'} 
+            _td(data_sort_value: '2') {_em id, title: 'Emeritus'}
           elsif not ldap.include? person
             _td(data_sort_value: '3')  {_strong.text_danger id, title: 'Not in LDAP'}
           else

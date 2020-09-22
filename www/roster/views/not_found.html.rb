@@ -18,9 +18,9 @@ _html do
           _div.panel.panel_danger do
             _div.panel_heading {_h3.panel_title '404 - Not Found - Apache Whimsy'}
             _div.panel_body do
-              _ %{ Whatever you're looking for is not there.  
-                We'll double-check our crystal balls, but you should 
-                probably try another 
+              _ %{ Whatever you're looking for is not there.
+                We'll double-check our crystal balls, but you should
+                probably try another
               }
               _a 'magic link.', href: '/roster/'
               _ul do

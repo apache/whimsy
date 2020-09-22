@@ -45,7 +45,7 @@ Pending.update(env.user, @agenda) do |pending|
 
   if @pending['comment']
     @pending['comment'].each do |attach, comment|
-      if comment.empty? 
+      if comment.empty?
         comments.delete attach
       else
         comments[attach] = comment

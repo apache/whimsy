@@ -49,7 +49,7 @@ _html do
       },
       helpblock: -> {
         _p %{
-          This script lists various Whimsy tools restricted to Members.  These all deal with private or 
+          This script lists various Whimsy tools restricted to Members.  These all deal with private or
           sensitive data, so be sure to keep confidential.
         }
         _p do

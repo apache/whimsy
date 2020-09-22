@@ -19,12 +19,12 @@ class PersonPgpKeys < Vue
 
             _div committer.pgp do |key|
               _input style: 'font-family:Monospace', size: 52, name: prefix + current, value: key
-              _br              
+              _br
               current += 1
             end
             # Spare field to allow new entry to be added
             _input style: 'font-family:Monospace', size: 52, name: prefix + current, placeholder: '<enter a new 40 hex char key>'
-            _br             
+            _br
 
             _input type: 'submit', value: 'submit'
           end

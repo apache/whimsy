@@ -17,7 +17,7 @@ class Wunderbar::JsonBuilder
     if sec
       @from = "#{sec[:name]} <#{user}@apache.org>".untaint
       @sig = %{
-        -- 
+        --
         #{sec[:name]}
         #{sec[:office]}, Apache Software Foundation
       }.untaint

@@ -27,7 +27,7 @@ def Monitor.git(previous_status)
   if __FILE__ == $0 # unit test
     fdata = DATA.read
   else
-    fdata = File.open(log, 'r:UTF-8') do |file| 
+    fdata = File.open(log, 'r:UTF-8') do |file|
       file.flock(File::LOCK_EX)
       file.read
     end
@@ -73,7 +73,7 @@ def Monitor.git(previous_status)
       'See "git help gc" for manual housekeeping',
     ]
 
-    lines.reject! do |line| 
+    lines.reject! do |line|
       line.start_with?(*start_ignores) or
       line =~ SUMMARY_RE or
       line =~  /^ +[0-9a-f]+\.\.[0-9a-f]+ +\S+ +-> \S+$/ or # branch

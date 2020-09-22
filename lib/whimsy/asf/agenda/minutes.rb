@@ -20,7 +20,7 @@ class ASF::Board::Agenda
     /mx
 
     scan minutes, pattern1 do |attrs|
-      attrs['section'] = '3' + attrs['section'] 
+      attrs['section'] = '3' + attrs['section']
       attrs['text'] = attrs['text'].strip
       attrs['approved'] = attrs['approved'].strip.gsub(/\s+/, ' ')
 
@@ -47,7 +47,7 @@ class ASF::Board::Agenda
    /mx
 
     scan minutes, pattern2 do |attrs|
-      attrs['section'] = '3' + attrs['section'] 
+      attrs['section'] = '3' + attrs['section']
       attrs['text'] = attrs['text'].strip
     end
 

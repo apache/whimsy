@@ -34,7 +34,7 @@ _html do
       },
       helpblock: -> {
         _p %{
-          This script lists various Whimsy tools restricted to Officers of the ASF (including PMC Chairs) or to Members.  These often deal with private or 
+          This script lists various Whimsy tools restricted to Officers of the ASF (including PMC Chairs) or to Members.  These often deal with private or
           sensitive data, so be sure to keep confidential.
         }
         _p do

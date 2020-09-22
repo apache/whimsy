@@ -1,6 +1,6 @@
 #
-# Search component: 
-#  * prompt for search 
+# Search component:
+#  * prompt for search
 #  * display matching paragraphs from agenda, highlighting search strings
 #  * keep query string in window location URL in synch
 #
@@ -15,7 +15,7 @@ class Search < Vue
     # search input field
     _div.search do
       _label 'Search:', for: 'search_text'
-      _input.search_text! autofocus: 'autofocus', value: @text, 
+      _input.search_text! autofocus: 'autofocus', value: @text,
         onInput: self.input
     end
 

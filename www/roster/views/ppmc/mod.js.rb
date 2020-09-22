@@ -16,7 +16,7 @@ class PPMCMod < Vue
         _div.modal_content do
           _div.modal_header.bg_info do
             _button.close 'x', data_dismiss: 'modal'
-            _h4.modal_title "Modify People's Roles in the " + 
+            _h4.modal_title "Modify People's Roles in the " +
               @@project.display_name + ' Podling'
           end
 
@@ -50,7 +50,7 @@ class PPMCMod < Vue
             if @@auth.ppmc
               # show add to PPMC button only if every person is not on the PPMC
               if @people.all? {|person| !@@project.owners.include? person.id}
-                _button.btn.btn_primary "Add to PPMC", 
+                _button.btn.btn_primary "Add to PPMC",
                   data_action: 'add ppmc',
                   onClick: self.post, disabled: (@people.empty?)
               end
@@ -66,7 +66,7 @@ class PPMCMod < Vue
                   action += ' ppmc'
                 end
 
-                _button.btn.btn_primary "Add as Mentor#{plural}", 
+                _button.btn.btn_primary "Add as Mentor#{plural}",
                   data_action: action, onClick: self.post,
                   disabled: (@people.empty?)
               end

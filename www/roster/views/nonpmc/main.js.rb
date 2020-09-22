@@ -85,7 +85,7 @@ class NonPMC < Vue
       if @nonpmc.hasLDAP
         _NonPMCCommitters auth: auth, nonpmc: @nonpmc
       else
-        _h2 'Committers (not applicable)' 
+        _h2 'Committers (not applicable)'
         _p 'The committee does not have a standard LDAP setup, so no committers are shown'
       end
     end
@@ -166,7 +166,7 @@ class NonPMC < Vue
           _ul do
             _li @nonpmc.report
             if @nonpmc.schedule and @nonpmc.schedule != @nonpmc.report
-              _li @nonpmc.schedule 
+              _li @nonpmc.schedule
             end
             _li do
               _a 'Prior reports', href: 'https://whimsy.apache.org/board/minutes/' +

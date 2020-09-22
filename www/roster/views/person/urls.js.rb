@@ -19,12 +19,12 @@ class PersonUrls < Vue
 
             _div committer.urls do |url|
               _input name: prefix + current, value: url
-              _br              
+              _br
               current += 1
             end
             # Spare field to allow new entry to be added
             _input name: prefix + current, placeholder: '<enter a new URL>'
-            _br             
+            _br
 
             _input type: 'submit', value: 'submit'
           end

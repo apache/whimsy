@@ -16,7 +16,7 @@ _html do
         "https://lists.apache.org/list.html?trademarks@apache.org" => "Ponymail interface to trademarks@"
       },
       helpblock: -> {
-        _p do 
+        _p do
           _ 'This is a wireframe '
           _strong 'DEMO'
           _ ' of a proposed editing ui for Boilerplate Reply to a previously selected question. See '

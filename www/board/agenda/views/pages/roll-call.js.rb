@@ -28,8 +28,8 @@ class RollCall < Vue
 
           # walk-on guest support
           _li do
-            _input.walkon value: @guest, disabled: @disabled, 
-              onFocus:-> {RollCall.lockFocus = true}, 
+            _input.walkon value: @guest, disabled: @disabled,
+              onFocus:-> {RollCall.lockFocus = true},
               onBlur:-> {RollCall.lockFocus = false}
           end
 
@@ -38,9 +38,9 @@ class RollCall < Vue
 
             found = false
             Server.committers.each do |person|
-              if 
+              if
                 guest.all? {|part|
-                  person.id.include? part or 
+                  person.id.include? part or
                   person.name.downcase().include? part
                 } and
                 not people.any? {|registered| registered.id == person.id}
@@ -91,7 +91,7 @@ class RollCall < Vue
     end
 
     # sort list
-    list.sort do |person1, person2| 
+    list.sort do |person1, person2|
       return person1.sortName > person2.sortName ? 1 : -1
     end
   end

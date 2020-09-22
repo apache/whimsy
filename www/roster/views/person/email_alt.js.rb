@@ -20,12 +20,12 @@ class PersonEmailAlt < Vue
 
             _div committer.email_alt do |key|
               _input name: prefix + current, value: key, size: 30
-              _br              
+              _br
               current += 1
             end
             # Spare field to allow new entry to be added
             _input name: prefix + current, placeholder: '<alternate email>', size: 30
-            _br             
+            _br
 
             _input type: 'submit', value: 'submit'
           end

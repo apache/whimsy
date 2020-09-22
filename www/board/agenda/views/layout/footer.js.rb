@@ -35,7 +35,7 @@ class Footer < Vue
         link ||= {href: "../#{@@item.shepherd}", title: 'Shepherd'}
       elsif @@options.traversal == :flagged
         prefix = 'flagged/'
-        while link and link.skippable 
+        while link and link.skippable
           if link.attach =~ /^\d[A-Z]/
             prefix = ''
             break
@@ -46,7 +46,7 @@ class Footer < Vue
 
         unless link
           if meeting_day
-            link = Agenda.index.find do |item| 
+            link = Agenda.index.find do |item|
               item.next && item.next.attach =~ /^\d+$/
             end
             prefix = ''
@@ -54,20 +54,20 @@ class Footer < Vue
 
           link ||= {href: "flagged", title: 'Flagged'}
         end
-      elsif 
+      elsif
         meeting_day and @@item.attach =~ /\d/ and
         link and link.attach =~ /^[A-Z]/
       then
-        Agenda.index.each do |item| 
+        Agenda.index.each do |item|
           if not item.skippable and item.attach =~ /^([A-Z]|\d+$)/
             prefix = 'flagged/'
-            link = item 
+            link = item
           end
         end
       end
 
       if link
-        _Link.backlink.navbar_brand text: link.title, rel: 'prev', 
+        _Link.backlink.navbar_brand text: link.title, rel: 'prev',
          href: "#{prefix}#{link.href}", class: link.color
       elsif @@item.prev or @@item.next
         # without this, Chrome will sometimes make the footer too tall
@@ -122,8 +122,8 @@ class Footer < Vue
           end
         end
         link ||= {href: "flagged", title: 'Flagged'}
-      elsif 
-        meeting_day and link and 
+      elsif
+        meeting_day and link and
         @@item.attach =~ /^\d[A-Z]/ and link.attach =~ /^\d/
       then
         while link and link.skippable and link.attach =~ /^([A-Z]|\d+$)/
@@ -135,7 +135,7 @@ class Footer < Vue
 
       if link
         prefix = '' unless  link.attach =~ /^([A-Z]|\d+$)/
-        _Link.nextlink.navbar_brand text: link.title, rel: 'next', 
+        _Link.nextlink.navbar_brand text: link.title, rel: 'next',
          href: "#{prefix}#{link.href}", class: link.color
       elsif @@item.prev or @@item.next
         # without this, Chrome will sometimes make the footer too tall

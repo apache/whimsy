@@ -140,7 +140,7 @@ module ASF
       if words.last =~ /^Ph\.D\.?/
         title = words.pop # Always pop (||= short-circuits the pop)
         result['title'] ||= title
-      end 
+      end
       result['generationQualifier'] = words.pop if words.last =~ SUFFIXES
       result['givenName'] = words.shift # TODO does gn allow multiple words?
       # extract surnames like van Gogh etc
@@ -153,7 +153,7 @@ module ASF
       else
         result['sn'] = words.pop
         result['unused'] = words
-      end 
+      end
       result
     end
 
@@ -161,7 +161,7 @@ module ASF
     # return name suitable for a filename stem
     # Should normally be applied to the legal name
     def self.stem_DRAFT(name)
-      # need to split before 
+      # need to split before
       name = name.gsub(',', ' ').split(/ +/).map{|n|n.gsub(%r{^(Dr|Jr|Sr|[A-Z])\.$},'\1')}
       asciize(name.join('-')).downcase.chomp('-')
     end
@@ -177,7 +177,7 @@ module ASF
     # *  createTimestamp isn't loaded by default (but can either be preloaded
     #    or fetched explicitly)
     def createTimestamp
-      result = @@create_date[name] 
+      result = @@create_date[name]
       result ||= attrs['createTimestamp'][0] rescue nil # in case not loaded
       result ||= ASF.search_one(base, "uid=#{name}", 'createTimestamp')[0][0]
       result

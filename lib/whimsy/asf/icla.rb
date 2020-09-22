@@ -24,7 +24,7 @@ module ASF
     attr_accessor :form
 
     # cla name or SVN revision info; extracted from the form
-    attr_accessor :claRef 
+    attr_accessor :claRef
 
     @@mtime = nil
 
@@ -175,7 +175,7 @@ module ASF
       headers = source.scan(/^#.*/)
       lines = source.scan(/^\w.*/)
 
-      headers.join("\n") + "\n" + 
+      headers.join("\n") + "\n" +
         lines.sort_by {|line| lname(line + "\n")}.join("\n") + "\n"
     end
 

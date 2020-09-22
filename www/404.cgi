@@ -21,7 +21,7 @@ _html do
       _p do
         _span.label.label_danger '404'
         _ " Whatever you're looking for at "
-        _code ENV['REDIRECT_URL'] 
+        _code ENV['REDIRECT_URL']
         _ " is not there.  We'll double-check our crystal balls, but you should probably try another "
         _a 'magic link.', href: '/'
       end

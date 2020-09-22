@@ -130,7 +130,7 @@ def emit_form()
         helptext: 'Provide a valid URL that shows an example of this misuse')
 
       emit_input(label: 'Specific phrase or sentence showing misuse', name: 'phrase', required: true,
-        icon: 'glyphicon-question-sign', iconlink: 'https://www.apache.org/foundation/marks/reporting#issues', 
+        icon: 'glyphicon-question-sign', iconlink: 'https://www.apache.org/foundation/marks/reporting#issues',
         helptext: "Copy the specific text showing the use of the Apache brand that may be a problem (if possible to copy)")
 
       _div.form_group do
@@ -157,7 +157,7 @@ def emit_form()
       end
 
       emit_input(label: 'Description of misuse - why you believe this is improper', name: 'description', required: true,
-        rows: 3, icon: 'glyphicon-question-sign', iconlink: 'https://www.apache.org/foundation/marks/resources', 
+        rows: 3, icon: 'glyphicon-question-sign', iconlink: 'https://www.apache.org/foundation/marks/resources',
         helptext: "Briefly describe in your own words why this use doesn't give proper credit to the Apache project")
 
       _div.form_group do
@@ -250,7 +250,7 @@ _html do
         BETA: This tool is not implemented yet! But please feel free check it out and submit TEST reports.
       }
       _p %{
-        If you believe you have found a potential misuse or infringement of 
+        If you believe you have found a potential misuse or infringement of
         any Apache brand or trademark, please use this form to report it.
       }
       _p do

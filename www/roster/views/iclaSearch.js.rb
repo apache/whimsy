@@ -38,7 +38,7 @@ class IclaSearch < Vue
     list = []
     @list = list
     @iclas.each do |icla|
-      if 
+      if
         search.all? {|part|
           icla.name.downcase().include? part or
           icla.mail.downcase().include? part
@@ -54,7 +54,7 @@ class IclaSearch < Vue
       _label.control_label.col_sm_3 'Search for name or email', :for =>  'search-text'
       _div.col_sm_9 do
         _div.input_group do
-          _input.form_control autofocus: true, value: @search, 
+          _input.form_control autofocus: true, value: @search,
             onInput: self.change
           _span.input_group_addon do
             _span.glyphicon.glyphicon_user aria_label: "Committer ID or name"

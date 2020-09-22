@@ -14,14 +14,14 @@ module YamlFile
   # Yields the parsed YAML to the block, and writes the updated
   # data to the file
   def self.update(yaml_file, *args)
-    File.open(yaml_file, File::RDWR|File::CREAT, 0644) do |file| 
+    File.open(yaml_file, File::RDWR|File::CREAT, 0644) do |file|
       file.flock(File::LOCK_EX)
       yaml = YAML.safe_load(file.read, *args) || {} rescue {}
       yield yaml
       file.rewind
       file.write YAML.dump(yaml)
       file.truncate(file.pos)
-    end    
+    end
   end
 
   #

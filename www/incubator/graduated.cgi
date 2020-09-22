@@ -101,7 +101,7 @@ _html do
 
               establish = page.split('<h2').map { |report|
                 title = report[/<h3.*?<\/h3>/]
-                next unless title and 
+                next unless title and
                   %w(establish create creation).any? {|word|
                     title.downcase.include? word
                   }
@@ -109,7 +109,7 @@ _html do
                 graduated ||= report.downcase.include? 'incubator'
 
                 discharge = report.split(/\n\s*\n/).grep(/discharged/).last
-                if discharge 
+                if discharge
                   parent = discharge[/(\w+)\s*(Project|PMC)/, 1]
                 end
 

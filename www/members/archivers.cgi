@@ -102,7 +102,7 @@ _html do
         pubprv = binarchives[id] # public/private
 
         # in case there are multiple archivers with different classifications, we
-        # join all the unique entries. 
+        # join all the unique entries.
         # This is equivalent to first if there is only one, but will produce
         # a string such as 'privatepublic' if there are distinct entries
         # However it generates an empty string if there are no entries.
@@ -113,14 +113,14 @@ _html do
         else
           mino = 'Missing'
           options[:mino]={class: 'warning'}
-        end 
+        end
 
         mbox = arcs.select{|e| e[1] == :MBOX}.map{|e| e[2]}.uniq.join('')
 
         next if mbox == 'restricted' # Don't show these
 
         if ! mbox.empty?
-          options[:mbox] = {class: 'danger'} if pubprv && mbox != pubprv  
+          options[:mbox] = {class: 'danger'} if pubprv && mbox != pubprv
         else
           mbox = 'Missing'
           options[:mbox] = {class: 'warning'}
@@ -128,7 +128,7 @@ _html do
 
         pony = arcs.select{|e| e[1] == :PONY}.map{|e| e[2]}.uniq.join('')
         if ! pony.empty?
-          options[:pony] = {class: 'danger'} if pubprv && pony != pubprv  
+          options[:pony] = {class: 'danger'} if pubprv && pony != pubprv
         else
           pony = 'Missing'
           options[:pony] = {class: 'warning'}
@@ -136,7 +136,7 @@ _html do
 
         mail_archive = arcs.select{|e| e[1] == :MAIL_ARCH}.map{|e| e[2]}.uniq.join('')
         if ! mail_archive.empty?
-          options[:mail_archive] = {class: 'danger'} if pubprv && mail_archive != pubprv  
+          options[:mail_archive] = {class: 'danger'} if pubprv && mail_archive != pubprv
         elsif pubprv == 'private'
           mail_archive = 'N/A'
         else
@@ -146,7 +146,7 @@ _html do
 
         markmail = arcs.select{|e| e[1] == :MARKMAIL}.map{|e| e[2]}.uniq.join('')
         if ! markmail.empty?
-          options[:markmail] = {class: 'danger'} if pubprv && markmail != pubprv  
+          options[:markmail] = {class: 'danger'} if pubprv && markmail != pubprv
         elsif pubprv == 'private'
           markmail = 'N/A'
         else
@@ -157,7 +157,7 @@ _html do
         # must be done last as it changes pubprv
         unless pubprv
           pubprv = 'Not listed in bin/.archives'
-          options[:pubprv] = {class: 'warning'} 
+          options[:pubprv] = {class: 'warning'}
         end
 
         if show_mailarchive

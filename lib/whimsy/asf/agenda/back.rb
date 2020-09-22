@@ -39,19 +39,19 @@ class ASF::Board::Agenda
             match2 = /(.*?)(\[ ([^\]]+) \])?\s*\Z/m.match(match1[1])
             match3 = /(.*?): (.*)\Z/m.match(match2[1])
             match4 = /(.*?)( (\d+-\d+-\d+))?$/.match(match2[3])
-            { 
+            {
               owner: match3[1],
               text: match3[2].strip,
               status: match1[3].to_s.strip,
-              pmc: (match4[1] if match4), 
+              pmc: (match4[1] if match4),
               date: (match4[3] if match4)
             }
           else # Just copy text for items with no Status: see WHIMSY-187
-            { 
+            {
               owner: '',
               text: text.strip,
               status: '',
-              pmc: '', 
+              pmc: '',
               date: ''
             }
           end

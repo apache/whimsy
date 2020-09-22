@@ -28,7 +28,7 @@ class Link < Vue
 
     result.on = {click: self.click}
 
-    result 
+    result
   end
 
   def click(event)

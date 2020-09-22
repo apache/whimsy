@@ -18,7 +18,7 @@ if @githubuser
       _error "'#{name}' is invalid: must be alphanumeric (or -)"
       return
     end
-    # TODO: perhaps check that https://github.com/name exists?    
+    # TODO: perhaps check that https://github.com/name exists?
   end
 
   unless @dryrun

@@ -15,7 +15,7 @@ require 'whimsy/asf/config'
 # to additionally prevent concurrent updates.
 #
 # No direct use of timers, events, or threads are made allowing this
-# service to be used in a variety of contexts (e.g. Sinatra and 
+# service to be used in a variety of contexts (e.g. Sinatra and
 # EventMachine).
 #
 
@@ -41,7 +41,7 @@ class Session
 
     # if not found, try refreshing data from disk and try again
     if not session
-      Session.load 
+      Session.load
       session = @@users[id].sort_by {|session| session[:mtime]}.last
       session = nil if session and session[:mtime] < Time.now - DAY
     end
@@ -89,7 +89,7 @@ class Session
 
         if File.exist? file
           if File.mtime(file) < Time.now - 2 * DAY
-            File.delete file 
+            File.delete file
           else
             # update class variables if the file changed
             mtime = File.mtime(file)

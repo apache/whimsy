@@ -1,4 +1,4 @@
-# 
+#
 # Discussion Items
 #
 
@@ -35,7 +35,7 @@ class ASF::Board::Agenda
       /mx
 
       scan discussion, pattern do |attrs|
-        attrs['section'] = '8' + attrs['section'] 
+        attrs['section'] = '8' + attrs['section']
       end
     end
   end

@@ -57,7 +57,7 @@ class PPMCAdd < Vue
               _p do
                 _label do
                   _input type: 'checkbox', checked: @notice_elapsed
-                  _a '72 hour IPMC NOTICE', 
+                  _a '72 hour IPMC NOTICE',
                     href: 'https://incubator.apache.org/guides/ppmc.html#voting_in_a_new_ppmc_member'
                   _span ' period elapsed?'
                 end
@@ -74,7 +74,7 @@ class PPMCAdd < Vue
             plural = (@people.length > 1 ? 's' : '')
 
             if @@auth.ppmc
-              _button.btn.btn_primary "Add as committer#{plural}", 
+              _button.btn.btn_primary "Add as committer#{plural}",
                 data_action: 'add committer',
                 onClick: self.post, disabled: (@people.empty?)
 
@@ -87,7 +87,7 @@ class PPMCAdd < Vue
               action = 'add mentor'
               action += ' ppmc committer' if @@auth.ppmc
 
-              _button.btn.btn_primary "Add as mentor#{plural}", 
+              _button.btn.btn_primary "Add as mentor#{plural}",
                 data_action: action, onClick: self.post,
                  disabled: (@people.empty?)
             end

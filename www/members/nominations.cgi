@@ -42,12 +42,12 @@ def setup_data(cur_mtg_dir)
   nominations.shift if nominations.first == '<empty line>'
   nominations.pop if nominations.last.empty?
 
-  nominations.map! do |line| 
+  nominations.map! do |line|
     {name: line.gsub(/<.*|\(\w+@.*/, '').strip, id: line[/([.\w]+)@/, 1]}
   end
 
   # preload names
-  people = ASF::Person.preload('cn', 
+  people = ASF::Person.preload('cn',
     nominations.map {|nominee| ASF::Person.find(nominee[:id])})
 
   return nominations, people, emails
@@ -121,14 +121,14 @@ _html do
           _p.count "Count: #{emails.count}"
 
           # attempt to sort reports by nominee name
-          emails.sort_by! do |mail| 
+          emails.sort_by! do |mail|
             mail.subject.downcase.gsub('- ', '').sub(/\[.*?\]\s*/, '')
           end
 
           # output an unordered list of subjects linked to the message archive
           _ul emails do |mail|
             _li do
-              href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' + 
+              href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' +
                 URI.escape('<' + mail.message_id + '>')
 
               if nominees.any? {|name| mail.subject =~ /\b#{name}\b/i}

@@ -15,7 +15,7 @@ begin
     pages = Dir["#{dir}/*.pdf"].map {|name| name.untaint}
       sort_by {|name| name[/d+/].to_i}
 
-    format = @selected.sub(/\.\w+$/, '') + 
+    format = @selected.sub(/\.\w+$/, '') +
       "-%0#{pages.length.to_s.length}d.pdf"
 
     pages.each_with_index do |page, index|
@@ -37,6 +37,6 @@ ensure
 end
 
 {
-  attachments: message.attachments, 
+  attachments: message.attachments,
   selected: (attachments.empty? ? nil : attachments.first[:name])
 }

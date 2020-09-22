@@ -128,7 +128,7 @@ class Queue < Vue
       end
 
       if not action and item.ready_for_review(User.initials)
-        result.ready << item 
+        result.ready << item
       end
     end
 

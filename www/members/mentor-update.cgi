@@ -15,7 +15,7 @@ require 'whimsy/asf/forms'
 
 # Convenience function
 def emit_mentor_input(field, mdata, uimap, icon, req: false)
-  _whimsy_forms_input(label: uimap[field][0], name: field, required: req, 
+  _whimsy_forms_input(label: uimap[field][0], name: field, required: req,
     icon: icon, value: (mdata[field] ? mdata[field] : ''),
     helptext: uimap[field][1]
   )
@@ -38,25 +38,25 @@ def emit_form(apacheid, mdata, button_help, uimap)
       end
       emit_mentor_input('contact', mdata, uimap, 'glyphicon-bullhorn', req: true)
       field = 'timezone'
-      _whimsy_forms_select(label: uimap[field][0], name: field, 
+      _whimsy_forms_select(label: uimap[field][0], name: field,
         values: (mdata[field] ? mdata[field] : ''),
         options: MentorFormat::TZ.sort,
-        icon: 'glyphicon-time', iconlabel: 'clock', 
+        icon: 'glyphicon-time', iconlabel: 'clock',
         helptext: uimap[field][1]
       )
       emit_mentor_input('availability', mdata, uimap, 'glyphicon-hourglass')
       field = 'prefers'
-      _whimsy_forms_select(label: uimap[field][0], name: field, multiple: true, 
+      _whimsy_forms_select(label: uimap[field][0], name: field, multiple: true,
         values: (mdata[field] ? mdata[field] : ''),
         options: MentorFormat::PREFERS_TYPES,
-        icon: 'glyphicon-ok-sign', iconlabel: 'ok-sign', 
+        icon: 'glyphicon-ok-sign', iconlabel: 'ok-sign',
         helptext: uimap[field][1]
       )
       field = 'languages'
-      _whimsy_forms_select(label: uimap[field][0], name: field, multiple: true, 
+      _whimsy_forms_select(label: uimap[field][0], name: field, multiple: true,
         values: (mdata[field] ? mdata[field] : ''),
         options: MentorFormat::LANGUAGES,
-        icon: 'glyphicon-globe', iconlabel: 'globe', 
+        icon: 'glyphicon-globe', iconlabel: 'globe',
         helptext: uimap[field][1]
       )
 
@@ -73,7 +73,7 @@ def emit_form(apacheid, mdata, button_help, uimap)
       emit_mentor_input('homepage', mdata, uimap, 'glyphicon-console')
       emit_mentor_input('pronouns', mdata, uimap, 'glyphicon-user')
       field = 'aboutme'
-      _whimsy_forms_input(label: uimap[field][0], name: field, rows: 3, 
+      _whimsy_forms_input(label: uimap[field][0], name: field, rows: 3,
         icon: 'glyphicon-info-sign', value: (mdata[field] ? mdata[field] : ''),
         helptext: uimap[field][1]
       )
@@ -146,7 +146,7 @@ def send_form(formdata: {})
     _div.alert.alert_success role: 'alert' do
       _p do
         _span.strong 'Your mentor update was submitted, and will be live within a few minutes.  Thanks for volunteering!'
-      end 
+      end
     end
     return true
   else
@@ -235,7 +235,7 @@ _html do
         if validate_form(formdata: submission)
           if send_form(formdata: submission)
             _p.lead "Thanks for volunteering to mentor other ASF Members!"
-            _p do 
+            _p do
               _ "Your record will now show up on the list of active mentors (unless you had checked 'notavailable'). "
               _a 'See the current list of active mentors', href: '/members/mentors'
             end

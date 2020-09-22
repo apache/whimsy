@@ -43,7 +43,7 @@ _html do
   _body? do
     # common banner
     _a href: '/' do
-      _img title: "Logo", alt: "Logo", 
+      _img title: "Logo", alt: "Logo",
         src: "https://id.apache.org/img/asf_logo_wide.png"
     end
 
@@ -66,35 +66,35 @@ _html do
 
     elsif ENV['PATH_INFO'] == '/list'
 
-      _h2 "ASF Mailing List moderators" 
-      emails = [] 
-      mods.each do |domain, lists| 
-        lists.each do |list, moderators| 
-          emails += moderators.map(&:downcase) 
-        end 
-      end 
+      _h2 "ASF Mailing List moderators"
+      emails = []
+      mods.each do |domain, lists|
+        lists.each do |list, moderators|
+          emails += moderators.map(&:downcase)
+        end
+      end
 
-      _ul do 
-        emails.uniq.sort.each do |email| 
-          _li! { _a email, href: email } 
-        end 
-      end 
+      _ul do
+        emails.uniq.sort.each do |email|
+          _li! { _a email, href: email }
+        end
+      end
 
     elsif ENV['PATH_INFO'] =~ %r{@}
 
       email = env['PATH_INFO'][1..-1].downcase
-      _h2 "Lists moderated by #{email}" 
-      _ul do 
-        mods.each do |domain, lists| 
-          lists.each do |list, moderators| 
-            if moderators.map(&:downcase).include? email 
+      _h2 "Lists moderated by #{email}"
+      _ul do
+        mods.each do |domain, lists|
+          lists.each do |list, moderators|
+            if moderators.map(&:downcase).include? email
               _li! do
                 _a "#{list}@#{domain}", href: "#{domain}/#{list}/"
               end
-            end 
-          end 
-        end 
-      end 
+            end
+          end
+        end
+      end
 
     elsif ENV['PATH_INFO'] =~ %r{^/([-.\w]*apache\w*\.\w+)/$}
 
@@ -132,7 +132,7 @@ _html do
 
       pmc = domain.split('.').first
       listname = "#{pmc}-#{list}"
-      href = 
+      href =
         if archives[listname]
           if archives[listname].include? '/apmail/public-arch/'
             "http://mail-archives.apache.org/mod_mbox/#{listname}"
@@ -196,7 +196,7 @@ _html do
             _ 'Add'
           end
           _label do
-            _input type: 'radio', name: 'op', value: 'unsub', 
+            _input type: 'radio', name: 'op', value: 'unsub',
               disabled: (mods[domain][list].length <= 2)
             _ 'Remove'
           end

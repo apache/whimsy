@@ -33,7 +33,7 @@ class Wunderbar::JsonBuilder
 
           unless @podling.private_mail_list
             _info "#{@project} mailing lists have not yet been set up"
-            @podling = nil 
+            @podling = nil
           end
         end
       end

@@ -23,7 +23,7 @@ module ASF
 
       # load all member emails in one pass
       ASF::Member.each do |id, text|
-        Member.emails(text).each do |mail| 
+        Member.emails(text).each do |mail|
           list[mail.downcase] ||= Person.find(id)
         end
       end
@@ -130,7 +130,7 @@ module ASF
           if lidonly
             allowed << lid
           else
-            allowed << [dom,list,lid] 
+            allowed << [dom,list,lid]
           end
         end
       end
@@ -289,7 +289,7 @@ module ASF
       @obsolete_emails = result
     end
 
-    # Active emails: primary email address, alt email addresses, and 
+    # Active emails: primary email address, alt email addresses, and
     # member email addresses.
     def active_emails
       (mail + alt_email + member_emails).uniq

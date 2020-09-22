@@ -43,7 +43,7 @@ module ASF
       end
     end
 
-    # list of board meeting times as listed in 
+    # list of board meeting times as listed in
     # committers/board/calendar.txt
     def self.calendar
       svn = ASF::SVN.find('board')
@@ -98,7 +98,7 @@ module ASF
     def self.reporting(meeting)
       month = meeting.strftime('%B')
       ASF::Committee.load_committee_info
-      ASF::Committee.pmcs.select do |pmc| 
+      ASF::Committee.pmcs.select do |pmc|
         pmc.report.split(', ').include? month or pmc.report == 'Every month' or
         pmc.report.start_with? 'Next month'
       end
@@ -115,7 +115,7 @@ module ASF
           loop do
             list = @directors.shuffle if list.empty?
             victim = list.pop
-            firstname = ASF::Board.directorFirstName(victim.id) || 
+            firstname = ASF::Board.directorFirstName(victim.id) ||
               victim.public_name.split(' ').first
             generator.yield firstname
           end
@@ -137,13 +137,13 @@ module ASF
     # Does the uid have an entry in the director intials table?
     def self.directorHasId?(id)
       DIRECTOR_MAP[id]
-    end 
+    end
 
     # Return the initials for the uid
     # Fails if there is no entry, so check first using directorHasId?
     def self.directorInitials(id)
       DIRECTOR_MAP[id] && DIRECTOR_MAP[id][INITIALS]
-    end 
+    end
 
     # Return the first name for the uid
     # Fails if there is no entry, so check first using directorHasId?
@@ -155,7 +155,7 @@ module ASF
     # Fails if there is no entry, so check first using directorHasId?
     def self.directorDisplayName(id)
       DIRECTOR_MAP[id] && DIRECTOR_MAP[id][DISPLAY_NAME]
-    end 
+    end
 
     private
 

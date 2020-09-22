@@ -63,7 +63,7 @@ class Channel
     if id
       @@users[id].delete ws
       if @@users[id].empty?
-        @@users.delete id 
+        @@users.delete id
         self.post_all(type: :depart, user: id, present: self.present,
           timestamp: Time.now.to_f*1000)
       end
@@ -119,7 +119,7 @@ class Channel
         self.post_all type: :agenda, file: file, digest: digest
       elsif file =~ /^board_minutes_\d{4}_\d\d_\d\d\.yml$/
         agenda = file.sub('minutes', 'agenda').sub('.yml', '.txt')
-        self.post_all type: :minutes, agenda: agenda, 
+        self.post_all type: :minutes, agenda: agenda,
           value: YAML.load_file(path)
       elsif file =~ /^(\w+)\.yml$/
         self.post_private $1, type: :pending, private: $1,

@@ -113,7 +113,7 @@ end
 server_options = {host: options.host, port: options.port}
 
 if options.privkey and options.chain
-  server_options.merge! secure: true, 
+  server_options.merge! secure: true,
     tls_options: {
       private_key_file: options.privkey,
       cert_chain_file: options.chain
@@ -122,7 +122,7 @@ end
 
 EM.run do
   WebSocket::EventMachine::Server.start(server_options) do |ws|
-    ws.onclose do 
+    ws.onclose do
       Channel.delete ws
     end
 

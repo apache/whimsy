@@ -84,14 +84,14 @@ class CCLA < Vue
   end
 
   # on initial display, default various fields based on headers, and update
-  # state 
+  # state
   def mounted()
     name = @@headers.name || ''
 
     # reorder name if there is a single comma present
     parts = name.split(',')
     if parts.length == 2 and parts[1] !~ /^\s*(jr|ph\.d)\.?$/i
-      name = "#{parts[1].strip()} #{parts[0]}" 
+      name = "#{parts[1].strip()} #{parts[0]}"
     end
 
     @contact = name

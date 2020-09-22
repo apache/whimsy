@@ -16,7 +16,7 @@ module ASF
       end
 
       def update(name, options, &block)
-        ASF::SVN.update(name, options[:message], @env, @builder, 
+        ASF::SVN.update(name, options[:message], @env, @builder,
           dryrun: @dryrun, &block)
       end
     end

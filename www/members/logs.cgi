@@ -63,7 +63,7 @@ def display_access()
   _p do
     _ 'This only includes a subset of possibly interesting access log entries from the current day, roughly categorized by major application (board, roster, etc.)'
     _a 'See the full server logs directory.', href: '/members/log'
-  end 
+  end
   _h2 'Access Log Synopsis - by Path or Tool'
   listid = 'applist'
   _div.panel_group id: listid, role: 'tablist', aria_multiselectable: 'true' do

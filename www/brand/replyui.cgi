@@ -16,7 +16,7 @@ _html do
         "https://lists.apache.org/list.html?trademarks@apache.org" => "Ponymail interface to trademarks@"
       },
       helpblock: -> {
-        _p do 
+        _p do
           _ 'This is a wireframe '
           _strong 'DEMO'
           _ ' of a proposed dialog/popup way to Choose a specific Boilerplate Reply to a previously selected question. See '
@@ -55,7 +55,7 @@ _html do
       _p 'This could be a choicelist or similar to select from avaialble Replies'
 
       _ul do
-        _li do 
+        _li do
           _ 'BOOK | Point to FAQ about published books, magazines, etc.'
           _a 'Select this reply', href: '#', onclick: "alert('This would select this reply to edit in the browser.');"
         end

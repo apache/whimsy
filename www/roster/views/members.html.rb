@@ -21,7 +21,7 @@ _html do
       _whimsy_panel_table(
         title: 'Summary - Counts of Members',
         helpblock: -> {
-          _ 'Note: while the total count of members is public data, detail 
+          _ 'Note: while the total count of members is public data, detail
           pages about individual members is '
           _span.glyphicon.glyphicon_lock :aria_hidden, class: 'text-primary', aria_label: 'ASF Members Private'
           _ ' private to the ASF.'

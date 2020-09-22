@@ -36,9 +36,9 @@ class ProjectAdd < Vue::Mixin
       credentials: 'include',
       headers: {'Content-Type' => 'application/json'},
       body: {
-        project: @@project.id, 
-        ids: @people.map {|person| person.id}.join(','), 
-        action: action, 
+        project: @@project.id,
+        ids: @people.map {|person| person.id}.join(','),
+        action: action,
         targets: targets
       }.inspect
     }

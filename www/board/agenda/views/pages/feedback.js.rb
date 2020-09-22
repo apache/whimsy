@@ -19,7 +19,7 @@ class Feedback < Vue
     else
       @list.each do |item|
         _h2 do
-          _input type: 'checkbox', domPropsChecked: item.checked, 
+          _input type: 'checkbox', domPropsChecked: item.checked,
             onClick:-> {item.checked = !item.checked}
           _ item.title
         end
@@ -61,7 +61,7 @@ class SendFeedback < Vue
   end
 
   def render
-    _button.btn.btn_primary 'send email', onClick: self.click, 
+    _button.btn.btn_primary 'send email', onClick: self.click,
       disabled: @disabled || @list.empty? ||
         @list.all? {|item| !item.checked}
   end

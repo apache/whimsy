@@ -51,7 +51,7 @@ class Committer
     response[:email_other] = person.all_mail - person.mail - person.alt_email # others (ASF mail/ICLA mail if different)
 
     unless person.pgp_key_fingerprints.empty?
-      response[:pgp] = person.pgp_key_fingerprints 
+      response[:pgp] = person.pgp_key_fingerprints
     end
 
     unless person.ssh_public_keys.empty?
@@ -59,7 +59,7 @@ class Committer
     end
 
     response[:host] = person.attrs['host'] || ['(none)']
-    response[:inactive] = person.inactive? 
+    response[:inactive] = person.inactive?
 
     if person.attrs['asf-sascore']
       response[:sascore] = person.attrs['asf-sascore'].first # should only be one, but is returned as array
@@ -93,10 +93,10 @@ class Committer
           # Don't show committer karma if person has committee karma
           unless response[:committees].include? project
             # LDAP project group
-            response[:committer] << project 
+            response[:committer] << project
           end
       elsif podlings.include? project
-        response[:podlings] << project 
+        response[:podlings] << project
       else
         # TODO should this populate anything?
       end

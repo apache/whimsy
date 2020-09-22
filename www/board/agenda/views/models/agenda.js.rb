@@ -73,7 +73,7 @@ class Agenda
           caches.open('board/agenda').then do |cache|
             cache.match("../#{@@date}.json").then do |response|
               if response
-                response.json().then do |json| 
+                response.json().then do |json|
                   Agenda.load(json) unless loaded
                   Main.refresh()
                 end
@@ -93,7 +93,7 @@ class Agenda
             loaded = true
 
             # load response into the agenda
-            response.clone().json().then do |json| 
+            response.clone().json().then do |json|
               @@etag = response.headers.get('etag')
               Agenda.load(json)
               Main.refresh()
@@ -148,7 +148,7 @@ class Agenda
     end
   end
 
-  # provide read-only access to a number of properties 
+  # provide read-only access to a number of properties
   attr_reader :attach, :title, :owner, :shepherd, :timestamp, :digest, :mtime
   attr_reader :approved, :roster, :prior_reports, :stats, :people, :notes
   attr_reader :chair_email, :mail_list, :warnings, :flagged_by
@@ -185,7 +185,7 @@ class Agenda
 
   # PMC has missed two consecutive months
   def nonresponsive
-    @notes and @notes.include? 'missing' and 
+    @notes and @notes.include? 'missing' and
       @notes.sub(/^.*missing/, '').split(',').length >= 2
   end
 
@@ -303,7 +303,7 @@ class Agenda
       list << {form: Summary} unless Minutes.summary_sent
     end
 
-    if User.role == :secretary 
+    if User.role == :secretary
       if Agenda.approved == 'approved'
         list << {form: PublishMinutes}
       elsif Minutes.ready_to_post_draft
@@ -384,8 +384,8 @@ class Agenda
 
     firstname = User.firstname.downcase()
     Agenda.index.each do |item|
-      if 
-        item.shepherd and 
+      if
+        item.shepherd and
         firstname.start_with? item.shepherd.downcase() and
         (not shepherd or item.shepherd.length < shepherd.lenth)
       then
@@ -403,42 +403,42 @@ class Agenda
     # committee reports
     count = 0
     link = nil
-    Agenda.index.each do |item| 
+    Agenda.index.each do |item|
       if item.attach =~ /^[A-Z]+$/
         count += 1
         link ||= item.href
       end
     end
-    results << {color: 'available', count: count, href: link, 
+    results << {color: 'available', count: count, href: link,
         text: 'committee reports'}
 
     # special orders
     count = 0
     link = nil
-    Agenda.index.each do |item| 
+    Agenda.index.each do |item|
       if item.attach =~ /^7[A-Z]+$/
         count += 1
         link ||= item.href
       end
     end
-    results << {color: 'available', count: count, href: link, 
+    results << {color: 'available', count: count, href: link,
       text: 'special orders'}
 
     # discussion items
     count = 0
     link = nil
-    Agenda.index.each do |item| 
+    Agenda.index.each do |item|
       if item.attach =~ /^8[.A-Z]+$/
         count += 1 unless item.attach == '8.' and not item.text
         link ||= item.href
       end
     end
-    results << {color: 'available', count: count, href: link, 
+    results << {color: 'available', count: count, href: link,
       text: 'discussion items'}
 
     # awaiting preapprovals
     count = 0
-    Agenda.index.each do |item| 
+    Agenda.index.each do |item|
       count += 1 if item.color == 'ready' and item.title != 'Action Items'
     end
     results << {color: 'ready', count: count, href: 'queue',
@@ -447,7 +447,7 @@ class Agenda
     # flagged reports
     count = 0
     Agenda.index.each {|item| count += 1 if item.flagged_by}
-    results << {color: 'commented', count: count, href: 'flagged', 
+    results << {color: 'commented', count: count, href: 'flagged',
       text: 'flagged reports'}
 
     # missing reports
@@ -544,13 +544,13 @@ class Agenda
       end
 
       if @attach =~ /^3\w/
-        if 
-          Minutes.get(@title) == 'approved' and 
+        if
+          Minutes.get(@title) == 'approved' and
           Server.drafts.include? @text[/board_minutes_\w+\.txt/]
         then
           list << {form: PublishMinutes}
         end
-      elsif @title == 'Adjournment' 
+      elsif @title == 'Adjournment'
         if Minutes.ready_to_post_draft
           list << {form: DraftMinutes}
         end
@@ -564,8 +564,8 @@ class Agenda
   def flagged
     return true if Pending.flagged and Pending.flagged.include? @attach
     return false unless @flagged_by
-    return false if @flagged_by.length == 1 and 
-      @flagged_by.first == User.initials and 
+    return false if @flagged_by.length == 1 and
+      @flagged_by.first == User.initials and
       Pending.unflagged.include?(@attach)
     return ! @flagged_by.empty?
   end
@@ -583,7 +583,7 @@ class Agenda
     if self.flagged
       'commented'
     elsif @color
-      @color 
+      @color
     elsif not @title
       'blank'
     elsif @warnings

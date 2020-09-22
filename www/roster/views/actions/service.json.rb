@@ -27,7 +27,7 @@ if env.password
   to = service.members
   to << person unless to.include? person
   to.delete from unless to.length == 1
-  to = to.map do |person| 
+  to = to.map do |person|
     "#{person.public_name} <#{person.id}@apache.org>".untaint
   end
 

@@ -17,7 +17,7 @@ class Email < Vue
   # render 'send email' as a primary button if the viewer is the shepherd for
   # the report, otherwise render the text as a simple link.
   def mailto_class()
-    if 
+    if
       User.firstname and @@item.shepherd and
       User.firstname.start_with? @@item.shepherd.downcase()
     then
@@ -52,7 +52,7 @@ class Email < Vue
 
           The board report for #{@@item.title} has not yet been submitted for
           this month's board meeting.  Please try to submit these reports by the
-          Friday before the meeting. 
+          Friday before the meeting.
 
           Thanks,
 

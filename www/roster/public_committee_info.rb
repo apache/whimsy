@@ -49,7 +49,7 @@ info[:committees] = Hash[committees.map {|committee|
     mail_list: committee.mail_list,
     established: committee.established,
     report: schedule,
-    # Convert {:name=>"Public Name", :id=>"availid"} to 
+    # Convert {:name=>"Public Name", :id=>"availid"} to
     # "chair": { "availid": { "name": "Public Name" } }
     chair: Hash[committee.chairs.map {|chair|
       [chair[:id], {:name => chair[:name]} ]}],
@@ -62,7 +62,7 @@ info[:committees] = Hash[committees.map {|committee|
 
 info[:officers] = Hash[
   ASF::Committee.officers.map { |officer|
-    [officer.name.gsub(/[^-\w]/,''), 
+    [officer.name.gsub(/[^-\w]/,''),
       {
         display_name: officer.display_name,
         paragraph: officer.paragraph, # will always be present
@@ -92,7 +92,7 @@ if changed? and @old_file
   # Unfortunately the last_updated field is only updated when the content changes -
   # there is currently no record of when the last check was done.
   # For now, just assume that this is done every 15 mins. This may cause spurious reports
-  # if the checks are ever suspended for longer and meanwhile changes occur. 
+  # if the checks are ever suspended for longer and meanwhile changes occur.
   # Note: for those in an earlier timezone the date could be a few hours earlier
   updated_day2 = (last_updated-3600*4).strftime("%Y-%m-%d") # day of previous update
 

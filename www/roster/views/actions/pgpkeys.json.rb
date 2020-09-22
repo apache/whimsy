@@ -15,8 +15,8 @@ if @pgpkeys  # must agree with pgpkeys.js.rb
   fprints = [] # collect the fingerprints
   @pgpkeys.each do |fp|
     fprint = fp.gsub(' ','').upcase
-    if fprint =~ /^[0-9A-F]{40}$/ 
-      fprints << fprint        
+    if fprint =~ /^[0-9A-F]{40}$/
+      fprints << fprint
     else
       _error "'#{fp}' is invalid: expecting 40 hex characters (plus optional spaces)"
       return

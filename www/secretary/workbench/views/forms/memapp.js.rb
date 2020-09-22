@@ -102,7 +102,7 @@ class MemApp < Vue
     end
   end
 
-  # on initial display, wire up form, default email and fetch 
+  # on initial display, wire up form, default email and fetch
   # memapp-received.txt
   def mounted()
     # wire up form

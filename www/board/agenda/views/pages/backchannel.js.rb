@@ -82,7 +82,7 @@ class Backchannel < Vue
 
   # if we are at the bottom of the page, keep it that way
   def beforeUpdate()
-    if 
+    if
       window.pageYOffset + window.innerHeight >=
       document.documentElement.scrollHeight
     then

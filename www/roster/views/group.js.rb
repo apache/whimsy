@@ -20,7 +20,7 @@ class Group < Vue
     elsif group.id == 'hudson-jobadmin'
       auth = @@auth.pmc_chair or group.owners.include? @@auth.id
     else
-      auth = false 
+      auth = false
     end
 
     # header
@@ -53,7 +53,7 @@ class Group < Vue
         end
 
         for id in @pending
-          _GroupMember id: id, name: @pending[id], auth: auth, 
+          _GroupMember id: id, name: @pending[id], auth: auth,
             pending: true
         end
 
@@ -177,7 +177,7 @@ class GroupConfirm < Vue
           end
 
           _div.modal_body do
-            _p do 
+            _p do
               _span "#{@text} the "
               _code @@group.id
               _span " #{@@group.type}?"

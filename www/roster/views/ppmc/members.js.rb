@@ -45,7 +45,7 @@ class PPMCMembers < Vue
           _ 'They could be PPMC (or ASF) members whose emails are not listed in their LDAP record.'
           _br
           _ 'Or they could be ex-PPMC members who are still subscribed.'
-          _br 
+          _br
           _ '(Note that digest subscriptions are not currently included)'
           _br
           _br
@@ -57,9 +57,9 @@ class PPMCMembers < Vue
                   _ sub['addr']
                   _ ' '
                   _ person['name']
-                  _ ' ' 
+                  _ ' '
                   _a person['id'], href: "committer/#{person['id']}"
-                } 
+                }
               else
                 _li {
                   _ sub['addr']
@@ -88,10 +88,10 @@ class PPMCMembers < Vue
                     _ sub['addr']
                     _ ' '
                     _ person['name']
-                    _ ' ' 
+                    _ ' '
                     _a person['id'], href: "committer/#{person['id']}"
                   }
-                } 
+                }
               end
             end
           }

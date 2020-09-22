@@ -23,7 +23,7 @@ _html do
   _h1 'iclas.txt lint check'
 
   _h2_ 'LDAP Status'
-  _div do 
+  _div do
     _label "#{ldap.length} People entries found."
     _br
     _label "#{committers.length} committers found."
@@ -127,7 +127,7 @@ _html do
           issue, note = 'error', "missing icla: #{missing.first.inspect}"
         end
         if id != 'notinavail'
-          committers.delete(id) # drop committers that have ICLAs 
+          committers.delete(id) # drop committers that have ICLAs
         end
       elsif comment =~ /^Treasurer;/ or comment =~ /^President;/
 
@@ -216,14 +216,14 @@ _html do
             end
           end
         end
-      end      
+      end
     end
   end
 
   # drop any stems we have seen
   iclas.reject! {|path| seen.include? path}
 
-  # select entries with count != 1  
+  # select entries with count != 1
   seen.select! {|k,v| v.length != 1}
   if seen.size > 0
     _h2_ 'Duplicate stem entries in iclas.txt'

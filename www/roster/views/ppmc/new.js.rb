@@ -38,14 +38,14 @@ class PPMCNew < Vue
 
       _div.form_group do
         _label 'Description', for: 'description'
-        _textarea.form_control id: 'description', name: 'description', 
+        _textarea.form_control id: 'description', name: 'description',
           value: @description, rows: 6
         _small.form_text.text_muted 'Freeform text'
       end
 
       _div.form_group do
         _label 'Start date', for: 'startdate'
-        _input.form_control id: 'startdate', name: 'startdate', 
+        _input.form_control id: 'startdate', name: 'startdate',
           value: @startdate
         _small.form_text.text_muted 'Format: yyyy-mm-dd'
       end
@@ -60,16 +60,16 @@ class PPMCNew < Vue
 
       _div.form_group do
         _label 'Mentors', for: 'mentors'
-        _input.form_control id: 'mentors', name: 'mentors', 
+        _input.form_control id: 'mentors', name: 'mentors',
           value: @mentors.join(','), disabled: true
         _small.form_text.text_muted 'IPMC members'
         _CommitterSearch include: @@ipmc, add: addMentor, exclude: @mentors
       end
 
       _div.form_group do
-        _button.btn.btn_primary 'submit', disabled: (not @name or 
-          not @resource or not @description or 
-          @startdate !~ /^\d\d\d\d-\d\d-\d\d/ or not @champion or 
+        _button.btn.btn_primary 'submit', disabled: (not @name or
+          not @resource or not @description or
+          @startdate !~ /^\d\d\d\d-\d\d-\d\d/ or not @champion or
           @mentors.empty?)
       end
     end

@@ -82,7 +82,7 @@ _html do
             tool = []
             tmp.each do |file, (privlines, publines, wwwauth, authrealm)|
               [privlines, publines].flatten.each do |x|
-                tool << "#{x}" if x.length > 0 
+                tool << "#{x}" if x.length > 0
               end
             end
             _li!.list_group_item.active do

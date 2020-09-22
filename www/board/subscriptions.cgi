@@ -131,7 +131,7 @@ _html do
                   _td.text_danger '*** non-member, non-officer, non-pmc ***'
                 else
                   _td.text_warning "*** non-member, non-officer, pmcs: #{pmcs.join ','} ***"
-                end 
+                end
               end
             end
           end

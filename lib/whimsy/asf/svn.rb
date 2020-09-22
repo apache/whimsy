@@ -59,7 +59,7 @@ module ASF
             end
           end
 
-          @repos = Hash[Dir[*svn].map { |name| 
+          @repos = Hash[Dir[*svn].map { |name|
             if Dir.exist? name.untaint
               out, _ = self.getInfoItem(name, 'url')
               if out
@@ -88,7 +88,7 @@ module ASF
     # Get the SVN repo entries corresponding to local checkouts
     # Excludes depth=delete and depth=skip
     # Optionally return all entries
-    # @params 
+    # @params
     # includeAll if should return all entries, default false
     def self.repo_entries(includeAll=false)
       if includeAll
@@ -528,7 +528,7 @@ module ASF
 
     # Updates a working copy, and returns revision number
     #
-    # Note: working copies updated out via cron jobs can only be accessed 
+    # Note: working copies updated out via cron jobs can only be accessed
     # read only by processes that run under the Apache web server.
     def self.updateSimple(path)
       stdout, _ = self.svn('update',path)
@@ -725,12 +725,12 @@ module ASF
                   ]
         if revision
           syscmd << '--revision'
-          syscmd << revision 
+          syscmd << revision
         end
         root = options[:root]
         if root
           syscmd << '--root-url'
-          syscmd << root 
+          syscmd << root
         end
 
         sysopts = {}
@@ -766,7 +766,7 @@ module ASF
     #  path - the svn uri (http, svn or file)
     #  env - user/pass
     #  options - passed to ASF::SVN.svn('list')
-    # 
+    #
     # Returns:
     # true if the file exists
     # false if the file does not exist
@@ -779,7 +779,7 @@ module ASF
         return false
       end
       throw IOError.new("Could not check if #{path} exists: #{err}")
-    end    
+    end
 
     # DRAFT DRAFT
     # create a new file and fail if it already exists
@@ -792,7 +792,7 @@ module ASF
     #  _ - wunderbar context
     # options:
     #   dryrun: passed to svnmucc_
-    # 
+    #
     # Returns:
     # 0 on success
     # 1 if the file exists
@@ -824,7 +824,7 @@ module ASF
 
     # DRAFT DRAFT DRAFT
     # checkout file and update it using svnmucc put
-    # the block can return additional info, which is used 
+    # the block can return additional info, which is used
     # to generate extra commands to pass to svnmucc
     # which are included in the same commit
     # The extra parameter is an array of commands
@@ -929,7 +929,7 @@ module ASF
         open(listfile) do |l|
           filerev = l.gets.chomp
           if filerev.start_with? EPOCH_TAG # drop the marker
-            filerev = filerev[EPOCH_LEN..-1] 
+            filerev = filerev[EPOCH_LEN..-1]
             filedates = true
           end
         end

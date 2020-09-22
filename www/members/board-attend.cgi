@@ -95,7 +95,7 @@ _html do
     _whimsy_panel_table(
       title: "Director attendance at monthly board meetings",
       helpblock: -> {
-        _p do 
+        _p do
           _ "Includes data from #{months.min} to #{months.max} regularly scheduled monthly board meetings.  Key:"
           _ul do
             _li 'Mtgs Attended - # of meetings attended when they were a director'

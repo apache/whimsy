@@ -22,7 +22,7 @@ class PPMC < Vue
     if @ppmc.status == 'graduated'
       _div.alert.alert_danger do
         _p do
-          _b 'Warning: ' 
+          _b 'Warning: '
           _ 'This podling has graduated - some of the information below will be out of date.'
           _br
           _br
@@ -57,7 +57,7 @@ class PPMC < Vue
 
     # header
     _h1 do
-      _a @ppmc.display_name, 
+      _a @ppmc.display_name,
         href: "https://incubator.apache.org/projects/#{@ppmc.id}.html"
       _small " established #{@ppmc.established}" if @ppmc.established
     end
@@ -297,9 +297,9 @@ class PPMC < Vue
       credentials: 'include',
       headers: {'Content-Type' => 'application/json'},
       body: {
-        project: @ppmc.id, 
-        ids: @ppmc.mentors.join(','), 
-        action: 'add', 
+        project: @ppmc.id,
+        ids: @ppmc.mentors.join(','),
+        action: 'add',
         targets: ['ldap', 'ppmc', 'committer']
       }.inspect
     }

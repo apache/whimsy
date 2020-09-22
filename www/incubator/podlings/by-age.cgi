@@ -68,7 +68,7 @@ _html do
             p1 = [Math.sin(theta)*475, -Math.cos(theta)*475].map(&:round).join(',')
             theta += Math::PI*2 * by_age[age]/duration.length
             p2 = [Math.sin(theta)*475, -Math.cos(theta)*475].map(&:round).join(',')
-            _path d: "M0,0 L#{p1} A475,475 0 0 1 #{p2} Z", 
+            _path d: "M0,0 L#{p1} A475,475 0 0 1 #{p2} Z",
               fill: "##{colors[age]}", title: "#{by_age[age]} PMCs aged " +
                 "#{age} to #{age+1} year#{'s' if age>0}"
           end

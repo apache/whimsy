@@ -29,7 +29,7 @@ class Person < Vue
     end
 
     # PMCs
-    noPMCsub = false    
+    noPMCsub = false
     pmcs = @committer.pmcs
     unless pmcs.empty?
       _div.row do
@@ -58,7 +58,7 @@ class Person < Vue
               _ '(*) could not find a subscription to the private@ mailing list for this PMC'
               _br
               _ 'Perhaps the subscription address is not listed in the LDAP record'
-              _br 
+              _br
               _ '(Note that digest subscriptions are not currently included)'
             }
           end
@@ -231,7 +231,7 @@ class Person < Vue
       _PersonPgpKeys person: self, edit: @edit
     end
 
-    # hosts    
+    # hosts
     _div.row do
       _div.name 'Host Access'
       _div.value do
@@ -375,7 +375,7 @@ class Person < Vue
 
     # indicate dryrun is requested if option or control key is down
     if event.altKey or event.ctrlKey
-      formData.unshift name: 'dryrun', value: true 
+      formData.unshift name: 'dryrun', value: true
     end
 
     # issue request

@@ -63,7 +63,7 @@ ws.on :message do |msg|
 end
 
 ws.on :open do
-  Dir["#{Session::WORKDIR}/*"].find do |file| 
+  Dir["#{Session::WORKDIR}/*"].find do |file|
     if File.read(file) == options.user
       if options.restart
         ws.send "session: #{File.basename(file)}\nrestart: true\n\n"

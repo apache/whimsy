@@ -14,7 +14,7 @@ class ASF::Board::Agenda
 
     people = []
     scan orders, pattern do |attrs|
-      attrs['section'] = '7' + attrs['section'] 
+      attrs['section'] = '7' + attrs['section']
 
       title = attrs['title']
       title.strip!
@@ -56,7 +56,7 @@ class ASF::Board::Agenda
         if fulltitle =~ select and fulltitle !~ match and
           (fulltitle + text) =~ /chair|project|committee/i
        then
-          attrs['warnings'] << 
+          attrs['warnings'] <<
             "Non-standard title wording: #{fulltitle.inspect}; " +
             "expected #{match.inspect}"
         end
@@ -109,7 +109,7 @@ class ASF::Board::Agenda
         end
 
         if title =~ /Change (.*?) Chair/
-          need_chair = true 
+          need_chair = true
         elsif committee.chair # Terminate
           attrs['chair'] = committee.chair.id
         end
@@ -130,7 +130,7 @@ class ASF::Board::Agenda
         # extract the committee charter
         charters = []
         text.scan(%r{\srelated to\s+(.+?)(?:;|\.?\n\n)}m) do |rto|
-          charters << rto.first.gsub(/\s+/,' ') 
+          charters << rto.first.gsub(/\s+/,' ')
         end
         if charters.size != 2
           attrs['warnings'] << "Expected 2 'related to' phrases; found #{charters.size}"
@@ -185,7 +185,7 @@ class ASF::Board::Agenda
         end
       end
 
-      people.map! do |name, id| 
+      people.map! do |name, id|
         person = ASF::Person.new(id)
         icla = person.icla
         [id, {name: name, icla: icla ? person.icla.name : false,

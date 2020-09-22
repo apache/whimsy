@@ -14,28 +14,28 @@ require_relative 'meeting-util'
 def emit_instructions(today, cur_mtg_dir, meeting)
   if today > meeting
     _p.text_warning %{
-        WARNING: Data for the next Member's Meeting is not yet available, 
-        so this form will not work yet.  Please wait until the Chairman 
+        WARNING: Data for the next Member's Meeting is not yet available,
+        so this form will not work yet.  Please wait until the Chairman
         announces the opening of nominations for the board and new members,
         and then check back to assign a new proxy for the meeting.
         Data from the previous meeting on #{meeting} is shown below for debugging only.
       }
   end
   _p %{
-    This form allows you to assign a proxy for the upcoming 
-    Member's Meeting on #{meeting}. If there is any chance you might not be able 
-    to attend the first part of the Member's Meeting on Tuesday in IRC, then 
-    please assign a proxy, because that helps the meeting reach 
-    quorum more quickly - the meeting can't formally continue without quorum at the start. 
-    You can still attend the meeting if you want, and you can revoke a 
+    This form allows you to assign a proxy for the upcoming
+    Member's Meeting on #{meeting}. If there is any chance you might not be able
+    to attend the first part of the Member's Meeting on Tuesday in IRC, then
+    please assign a proxy, because that helps the meeting reach
+    quorum more quickly - the meeting can't formally continue without quorum at the start.
+    You can still attend the meeting if you want, and you can revoke a
     proxy at any time.
   }
   _p %{
-    If you submit a proxy, you will still be sent board and new member ballots by email 
-    during the meeting's 46 hour recess (between Tuesday and Thursday, 
-    with two hours for vote counting), so you will still need to 
-    cast your votes by checking your mail and clicking the links during the recess. If 
-    you won't have internet access the week of the meeting, ask 
+    If you submit a proxy, you will still be sent board and new member ballots by email
+    during the meeting's 46 hour recess (between Tuesday and Thursday,
+    with two hours for vote counting), so you will still need to
+    cast your votes by checking your mail and clicking the links during the recess. If
+    you won't have internet access the week of the meeting, ask
     for how to assign a proxy for your vote ballots as well.
   }
   _p do
@@ -49,7 +49,7 @@ def emit_instructions(today, cur_mtg_dir, meeting)
   if num_members
     _p do
       _ 'Currently, we must have '
-      _span.text_primary "#{attend_irc}" 
+      _span.text_primary "#{attend_irc}"
       _ " Members attend the first half of the #{meeting} meeting and respond to Roll Call to reach quorum and continue the meeting."
       _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
     end
@@ -83,10 +83,10 @@ def emit_form(cur_mtg_dir, _meeting, volunteers)
 
     if user_is_proxy
       _p.text_warning %{
-          NOTE: you are proxying for other members, so you cannot assign 
-          someone else to proxy for your attendance.  If it turns out that 
+          NOTE: you are proxying for other members, so you cannot assign
+          someone else to proxy for your attendance.  If it turns out that
           you will not be able to attend the first half of the IRC meeting
-          on Tuesday, you MUST work with the Chairman and your proxies 
+          on Tuesday, you MUST work with the Chairman and your proxies
           to update the proxy records, and get someone else to mark their presence!
         }
     else
@@ -163,13 +163,13 @@ def emit_post(cur_mtg_dir, meeting, _)
   # update proxy form (match as many _ as possible up to the name length)
   proxy[/authorize _(_{,#{@proxy.length}})/, 1] = @proxy.gsub(' ', '_')
 
-  proxy[/signature: _(_#{'_' *user.public_name.length}_)/, 1] = 
+  proxy[/signature: _(_#{'_' *user.public_name.length}_)/, 1] =
     "/#{user.public_name.gsub(' ', '_')}/"
 
-  proxy[/name: _(#{'_' *user.public_name.length})/, 1] = 
+  proxy[/name: _(#{'_' *user.public_name.length})/, 1] =
     user.public_name.gsub(' ', '_')
 
-  proxy[/availid: _(#{'_' *user.id.length})/, 1] = 
+  proxy[/availid: _(#{'_' *user.id.length})/, 1] =
     user.id.gsub(' ', '_')
 
   proxy[/Date: _(#{'_' *date.length})/, 1] = date.gsub(' ', '_')
@@ -181,7 +181,7 @@ def emit_post(cur_mtg_dir, meeting, _)
     Dir.mktmpdir do |tmpdir|
       svn =  ASF::SVN.getInfoItem(File.join(MEETINGS,meeting),'url')
 
-      ASF::SVN.svn_('checkout',[svn.untaint, tmpdir.untaint], _, 
+      ASF::SVN.svn_('checkout',[svn.untaint, tmpdir.untaint], _,
                     {quiet: true, user: $USER, password: $PASSWORD})
       Dir.chdir(tmpdir) do
         # write proxy form
@@ -228,7 +228,7 @@ def emit_post(cur_mtg_dir, meeting, _)
         IO.write('proxies', proxies)
 
         # commit
-        ASF::SVN.svn_('commit',[filename, 'proxies'], _, 
+        ASF::SVN.svn_('commit',[filename, 'proxies'], _,
           {msg: "assign #{@proxy} as my proxy", user: $USER, password: $PASSWORD})
 # TODO: send email to @proxy per WHIMSY-78
       end

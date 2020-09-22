@@ -387,7 +387,7 @@ get '/env' do
     scripts: Wunderbar::Asset.scripts.map {|script|
       source = script.options[:file]
       {
-        path: script.path, 
+        path: script.path,
         source: source,
         mtime: source && File.mtime(source),
         size: source && File.size(source),
@@ -396,7 +396,7 @@ get '/env' do
     stylesheets: Wunderbar::Asset.stylesheets.map {|stylesheet|
       source = stylesheet.options[:file]
       {
-        path: stylesheet.path, 
+        path: stylesheet.path,
         source: source,
         mtime: source && File.mtime(source),
         size: source && File.size(source),

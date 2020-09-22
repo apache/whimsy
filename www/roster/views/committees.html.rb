@@ -31,7 +31,7 @@ _html do
       end
       _p do
         _ 'Chair names in BOLD below are also ASF Members.  Click on column names in table to sort; jump to A-Z project listings here:'
-        _br 
+        _br
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ".each_char do |c|
           _a c, href: "committee/##{c}"
         end

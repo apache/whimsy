@@ -14,7 +14,7 @@ class PersonSascore < Vue
         if @@edit == :sascore
 
           _form method: 'post' do
-            _input type: 'number', min: 0, max: 10, 
+            _input type: 'number', min: 0, max: 10,
               name: 'sascore', value: committer.sascore
             _input type: 'submit', value: 'submit'
           end

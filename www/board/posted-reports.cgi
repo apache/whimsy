@@ -71,7 +71,7 @@ _html do
       missing = parsed.select {|item| item['missing']}.
         map {|item| item['title'].downcase}
       # attempt to sort reports by PMC name
-      report_mails.sort_by! do |mail| 
+      report_mails.sort_by! do |mail|
         mail.subject.downcase.sub /\sapache\s/, ' '
       end
       _h1 "Reports On board@"

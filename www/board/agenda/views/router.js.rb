@@ -1,7 +1,7 @@
 #
 # Routing request based on path and query information in the URL
 #
-# Additionally provides defaults for color and title, and 
+# Additionally provides defaults for color and title, and
 # determines what buttons are required.
 #
 # Returns item, buttons, and options

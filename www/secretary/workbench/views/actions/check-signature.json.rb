@@ -9,7 +9,7 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 # see WHIMSY-274 for secure servers
 # ** N.B. ensure the keyserver URI is known below **
 
-# Removed keys.openpgp.org as it does not return data such as email unless user specifically allows this 
+# Removed keys.openpgp.org as it does not return data such as email unless user specifically allows this
 
 KEYSERVERS = %w{hkps.pool.sks-keyservers.net gozer.rediris.es}
 
@@ -96,7 +96,7 @@ begin
     '--verify', signature.path, attachment.path
 
   # if key is not found, fetch and try again
-  if 
+  if
     err.include? "gpg: Can't check signature: No public key" or
     err.include? "gpg: Can't check signature: public key not found"
   then
@@ -136,14 +136,14 @@ begin
           err2 = e.to_s
         end
       end
-      break if found 
+      break if found
     end
     #--- TEMPORARY HACK (WHIMSY-275)
 
     # run gpg verify command again
     # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
     # reduce the keyid length from the full fingerprint
-    out, err, rc = Open3.capture3 gpg, 
+    out, err, rc = Open3.capture3 gpg,
       '--keyid-format', 'long', # Show a longer id
       '--verify', signature.path, attachment.path
 
@@ -161,7 +161,7 @@ begin
   ]
 
   unless err.valid_encoding?
-    err = err.force_encoding('windows-1252').encode('utf-8') 
+    err = err.force_encoding('windows-1252').encode('utf-8')
   end
 
   ignore.each {|re| err.gsub! re, ''}

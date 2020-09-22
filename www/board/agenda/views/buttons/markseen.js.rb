@@ -21,7 +21,7 @@ class MarkSeen < Vue
       seen = {}
       Agenda.index.each do |item|
         if item.comments and not item.comments.empty?
-          seen[item.attach] = item.comments 
+          seen[item.attach] = item.comments
         end
       end
     end

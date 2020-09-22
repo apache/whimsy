@@ -15,7 +15,7 @@ require 'net/http'
 
 # Fieldnames/values from counsel provided docket.csv
 MNAM = 'TrademarkName'
-COUNTRY = 'CountryName' 
+COUNTRY = 'CountryName'
 STAT = 'TrademarkStatus'
 CLASS = 'Class'
 REG = 'RegNumber'
@@ -40,14 +40,14 @@ def csv2json
     mrk = {}
     %W[ #{STAT} #{COUNTRY} #{CLASS} #{APPNUMBER} #{REG} #{CLASSGOODS} ].each do |col|
       mrk[col] = r[col]
-    end  
+    end
     if not docket.key?(key)
       docket[key] = { r[MNAM] => [mrk] }
     else
       if not (docket[key]).key?(r[MNAM])
         docket[key][r[MNAM]] = [mrk]
       else
-        docket[key][r[MNAM]] << mrk      
+        docket[key][r[MNAM]] << mrk
       end
     end
   end
@@ -104,8 +104,8 @@ end
 
 def _project(pmc, pnam, purl, marks)
   _div.panel.panel_primary id: pmc do
-    _div.panel_heading do 
-      _h3!.panel_title do 
+    _div.panel_heading do
+      _h3!.panel_title do
         _a! pnam, href: purl
         _{"&reg; software"}
       end
@@ -129,8 +129,8 @@ end
 
 def _apache(marks)
   _div.panel.panel_primary id: 'apache' do
-    _div.panel_heading do 
-      _h3.panel_title do 
+    _div.panel_heading do
+      _h3.panel_title do
         _{"Our APACHE&reg; trademarks"}
       end
     end

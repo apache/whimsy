@@ -143,7 +143,7 @@ class ASF::Board::Agenda
         next unless section =~ /^(4[A-Z]|\d+|[A-Z][A-Z]?)$/
         committee = ASF::Committee.find(hash['title'] ||= 'UNKNOWN')
         unless section =~ /^4[A-Z]$/
-          hash['roster'] = 
+          hash['roster'] =
             "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
         end
         if section =~ /^[A-Z][A-Z]?$/

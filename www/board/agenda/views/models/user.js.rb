@@ -23,7 +23,7 @@ class User
   def self.role
     if Server.role
       Server.role
-    elsif Server.pending and Server.pending.role 
+    elsif Server.pending and Server.pending.role
       Server.pending.role
     else
       :guest

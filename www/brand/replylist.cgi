@@ -16,7 +16,7 @@ _html do
         "https://lists.apache.org/list.html?trademarks@apache.org" => "Ponymail interface to trademarks@"
       },
       helpblock: -> {
-        _p do 
+        _p do
           _ 'This is a wireframe '
           _strong 'DEMO'
           _ ' of a proposed tool to allow ASF Members to review incoming questions on a private mailing list, and then select a '

@@ -7,7 +7,7 @@
 # the majority of logic involved with the "election" of a master.  This
 # enables a single open connection to service all tabs open by a browser.
 #
-# Alternatives include: 
+# Alternatives include:
 #
 # * Replacing localStorage with Service Workers.  This would be much cleaner,
 #   unfortunately Service Workers aren't widely deployed yet.  Sadly, the
@@ -18,7 +18,7 @@
 # Class variables:
 # * prefix:    application prefix for localStorage variables (which are
 #              shared across the domain).
-# * timestamp: unique identifier for each window/tab 
+# * timestamp: unique identifier for each window/tab
 # * master:    identifier of the current master
 # * ondeck:    identifier of the next in line to assume the role of master
 #
@@ -103,9 +103,9 @@ class Events
         end
       end
 
-    elsif 
+    elsif
       @@ondeck == nil and @@master != @@timestamp and
-      not localStorage.getItem("#{@@prefix}-ondeck") 
+      not localStorage.getItem("#{@@prefix}-ondeck")
     then
       localStorage.setItem("#{@@prefix}-ondeck", @@ondeck = @@timestamp)
     end
@@ -229,7 +229,7 @@ class Events
     base = document.getElementsByTagName("base")[0].href
     origin = location.origin
     if not origin # compatibility: http://s.apache.org/X2L
-      origin = window.location.protocol + "//" + window.location.hostname + 
+      origin = window.location.protocol + "//" + window.location.hostname +
         (window.location.port ? ':' + window.location.port : '')
     end
 

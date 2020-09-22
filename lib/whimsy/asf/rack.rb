@@ -60,7 +60,7 @@ module ASF
       # Specify 'ASF Members and Officers' as the HTTP auth Realm
       def initialize(app, &block)
         super(app, "ASF Members and Officers", &proc {})
-        @block = block 
+        @block = block
       end
 
       # Returns <tt>unauthorized</tt> unless running in test mode or
@@ -165,7 +165,7 @@ module ASF
     end
 
     # Run GC when no requests are active and after every <tt>@frequency</tt>
-    # events.  
+    # events.
     def maybe_perform_gc
       @mutex.synchronize do
         @request_count += 1

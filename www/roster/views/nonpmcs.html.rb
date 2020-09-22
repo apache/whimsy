@@ -49,7 +49,7 @@ _html do
                   _a chair[:name], href: "committer/#{chair[:id]}"
                 end
               end
-            end  
+            end
   #          if not pmc.established
   #            _td.issue 'Not in committee-info.txt'
   #          else

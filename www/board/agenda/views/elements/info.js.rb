@@ -9,8 +9,8 @@ class Info < Vue
         if (@@item.chair_email || '') .split('@')[1] == 'apache.org'
           chair = @@item.chair_email .split('@')[0]
           _dd do
-            _a @@item.owner, 
-              href: "https://whimsy.apache.org/roster/committer/#{chair}" 
+            _a @@item.owner,
+              href: "https://whimsy.apache.org/roster/committer/#{chair}"
           end
         else
           _dd @@item.owner
@@ -21,7 +21,7 @@ class Info < Vue
         _dt 'Shepherd'
         _dd do
           if @@item.shepherd
-            _Link text: @@item.shepherd, 
+            _Link text: @@item.shepherd,
               href: "shepherd/#{@@item.shepherd.split(' ').first}"
           end
         end

@@ -59,10 +59,10 @@ class ActionItems < Vue
               _ ' '
               agenda = "board_agenda_#{action.date.gsub('-', '_')}.txt"
               if Server.agendas.include? agenda
-                _a action.date, 
+                _a action.date,
                   href: "../#{action.date}/#{action.pmc.gsub(/\W/, '-')}"
               else
-                _a action.date, href: 
+                _a action.date, href:
                   '/board/minutes/' +
                   action.pmc.gsub(/\W/, '_') +
                   "#minutes_#{action.date.gsub('-', '_')}"
@@ -107,7 +107,7 @@ class ActionItems < Vue
         end
 
         if first
-          _p {_em 'Empty'} 
+          _p {_em 'Empty'}
         end
       end
 

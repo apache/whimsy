@@ -19,7 +19,7 @@ end
 _html do
   _style :system
   _style %{
-    pre._stdin, pre._stdout, pre._stderr {border: none; padding: 0} 
+    pre._stdin, pre._stdout, pre._stderr {border: none; padding: 0}
   }
 
   _body? do
@@ -31,11 +31,11 @@ _html do
       },
       helpblock: -> {
         _p %{
-          This form allows ASF Members and Officers to upload invoices or 
+          This form allows ASF Members and Officers to upload invoices or
           bills to be submitted for payment.
         }
         _p %{
-          Remember: only allowed approvers for a specific bill should 
+          Remember: only allowed approvers for a specific bill should
           put or move bills into the /approved directory.
         }
       }
@@ -97,14 +97,14 @@ _html do
           else
             # append funding source to message, if present
             if @source and not @source.empty?
-              @message += "\n\nFunding source: #{@source}" 
+              @message += "\n\nFunding source: #{@source}"
             end
             _p 'Log of your upload/checkin follows:'
 
             Dir.mktmpdir do |tmpdir|
               tmpdir.untaint
 
-              ASF::SVN.svn_('checkout', [File.join(bills, @dest), tmpdir], _, 
+              ASF::SVN.svn_('checkout', [File.join(bills, @dest), tmpdir], _,
                   {depth: 'empty', user: $USER, password: $PASSWORD})
 
               Dir.chdir tmpdir do

@@ -59,7 +59,7 @@ class Mailbox
   # encapsulate updates to a mailbox
   #
   def update
-    File.open(yaml_file, File::RDWR|File::CREAT, 0644) do |file| 
+    File.open(yaml_file, File::RDWR|File::CREAT, 0644) do |file|
       file.flock(File::LOCK_EX)
       mbox = YAML.load(file.read) || {} rescue {}
       yield mbox

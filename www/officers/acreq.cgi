@@ -203,7 +203,7 @@ _html do
                 _div.col_sm_10 do
                   _select.form_control name: "project", id: "pmc" do
                     _option value: ''
-                    projects.each do |project| 
+                    projects.each do |project|
                       _option project, value: project
                     end
                   end
@@ -221,7 +221,7 @@ _html do
               _div.form_group do
                 _label.control_label.col_sm_2 'Comments', for: "comments"
                 _div.col_sm_10 do
-                  _textarea.form_control name: "comments", id: "comments" 
+                  _textarea.form_control name: "comments", id: "comments"
                 end
               end
 
@@ -326,7 +326,7 @@ _html do
 
                     #{@comments}
 
-                    -- 
+                    --
                     Submitted by https://#{ENV['HTTP_HOST']}#{ENV['REQUEST_URI'].split('?').first}
                     From #{`/usr/bin/host #{ENV['REMOTE_ADDR'].dup.untaint}`.chomp}
                     Using #{ENV['HTTP_USER_AGENT']}

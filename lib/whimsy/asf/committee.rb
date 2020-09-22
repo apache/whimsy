@@ -616,7 +616,7 @@ module ASF
     # get the metadata for a given committee.
     def self.metadata(committee)
       committee = committee.name if committee.is_a? ASF::Committee
-      load_committee_metadata[:tlps][committee] || load_committee_metadata[:cttees][committee] 
+      load_committee_metadata[:tlps][committee] || load_committee_metadata[:cttees][committee]
     end
 
 

@@ -24,7 +24,7 @@ class ASF::Board::Agenda
         people = attr['text'].scan(/^ {8}(\w.*)/).flatten.each do |name|
           next if name == 'none'
           # Remove (extraneous [comments in past board minutes
-          name.gsub! /(\s*[\[(]|\s+-).*/, '' 
+          name.gsub! /(\s*[\[(]|\s+-).*/, ''
           name.strip!
 
           role = :guest

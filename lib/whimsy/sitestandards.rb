@@ -16,7 +16,7 @@ module SiteStandards
   TLP_CHECKS = {
     'uri' => { # Custom: merely saves uri of site
       CHECK_TEXT => nil,
-      CHECK_CAPTURE => nil, 
+      CHECK_CAPTURE => nil,
       CHECK_VALIDATE => %r{https?://[^.]+\.apache\.org},
       CHECK_TYPE => true,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#websites',
@@ -43,7 +43,7 @@ module SiteStandards
       },
   }
   # Checks done for all podlings|projects
-  COMMON_CHECKS = { 
+  COMMON_CHECKS = {
     'foundation' => { # Custom: a_href =~ ... then custom checking for hover/title text
       CHECK_TEXT => %r{apache|asf|foundation}i,
       CHECK_CAPTURE => %r{^(https?:)?//(www\.)?apache\.org/?$},
@@ -100,8 +100,8 @@ module SiteStandards
       CHECK_TYPE => false,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#attributions',
       CHECK_DOC => 'All project or product homepages must feature a prominent trademark attribution of all applicable Apache trademarks.',
-    },  
-    'copyright' => { # textnode_check: txt =~ /Copyright / or txt =~ /©/ 
+    },
+    'copyright' => { # textnode_check: txt =~ /Copyright / or txt =~ /©/
       CHECK_TEXT => %r{((Copyright|©).*apache|apache.*(Copyright|©))}i,
       CHECK_CAPTURE => %r{(Copyright|©)}i,
       CHECK_VALIDATE => %r{((Copyright|©).*apache|apache.*(Copyright|©))}i,
@@ -186,7 +186,7 @@ module SiteStandards
       checks.each do |nam, check_data|
         success[nam] = sites.select{ |k, site| site[nam] =~ check_data[SiteStandards::CHECK_VALIDATE]  }.keys
         counts[nam][SITE_PASS] = success[nam].count
-        counts[nam][SITE_WARN] = 0 # Reorder output 
+        counts[nam][SITE_WARN] = 0 # Reorder output
         counts[nam][SITE_FAIL] = sites.select{ |k, site| site[nam].nil? }.count
         counts[nam][SITE_WARN] = sites.size - counts[nam][SITE_PASS] - counts[nam][SITE_FAIL]
       end

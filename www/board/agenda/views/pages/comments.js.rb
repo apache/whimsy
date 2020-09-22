@@ -7,7 +7,7 @@ class Comments < Vue
   def self.buttons()
     buttons = []
 
-    if 
+    if
       MarkSeen.undo or
       Agenda.index.any? {|item| not item.unseen_comments.empty?}
     then

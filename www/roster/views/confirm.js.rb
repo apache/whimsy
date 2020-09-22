@@ -57,9 +57,9 @@ class Confirm < Vue
       credentials: 'include',
       headers: {'Content-Type' => 'application/json'},
       body: {
-        project: @@project, 
-        ids: @ids, 
-        action: action, 
+        project: @@project,
+        ids: @ids,
+        action: action,
         targets: targets
       }.inspect
     }

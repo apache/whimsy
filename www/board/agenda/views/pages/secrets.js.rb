@@ -40,11 +40,11 @@ class InsiderSecrets < Vue
         to see the report for that month.
       ) }
 
-      _li { _p { 
+      _li { _p {
         _ %q(
-          Need to see Whimsy server status, or get debugging info to help 
+          Need to see Whimsy server status, or get debugging info to help
           report a bug?  Start with
-        ) 
+        )
 
         _a 'status', href: 'https://whimsy.apache.org/status/'
         _ ' or '

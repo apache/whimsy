@@ -72,7 +72,7 @@ class Wunderbar::JsonBuilder
 
   def svnauth
     [
-      '--non-interactive', 
+      '--non-interactive',
       '--no-auth-cache',
       '--username', env.user.dup.untaint, # could be frozen
       '--password', env.password.dup.untaint

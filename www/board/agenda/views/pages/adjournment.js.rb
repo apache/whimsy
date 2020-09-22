@@ -48,8 +48,8 @@ class Adjournment < Vue
         if not Todos.loading or Todos.fetched
           _h3 'Post Meeting actions'
 
-          if 
-            Todos.add.empty? and Todos.remove.empty? and 
+          if
+            Todos.add.empty? and Todos.remove.empty? and
             Todos.change.empty? and Todos.establish.empty?
           then
             if Todos.loading
@@ -60,7 +60,7 @@ class Adjournment < Vue
           end
         end
 
-        unless 
+        unless
           Todos.add.empty? and Todos.change.empty? and Todos.establish.empty?
         then
           _PMCActions
@@ -76,12 +76,12 @@ class Adjournment < Vue
 
         # display a list of completed actions
         completed = Todos.minutes.todos
-        if 
+        if
           completed and completed.keys().length > 0 and (
-          (completed.added and not completed.added.empty?) or 
+          (completed.added and not completed.added.empty?) or
           (completed.changed and not completed.changed.empty?) or
           (completed.removed and not completed.removed.empty?) or
-          (completed.established and not completed.established.empty?) or 
+          (completed.established and not completed.established.empty?) or
           (completed.feedback_sent and not completed.feedback_sent.empty?))
         then
           _h3 'Completed actions'
@@ -117,7 +117,7 @@ class Adjournment < Vue
           if completed.terminated and not completed.terminated.empty?
             _p 'Terminated PMCs'
             _ul completed.terminated do |pmc|
-              _li {_a pmc.downcase(), 
+              _li {_a pmc.downcase(),
                  href: "../../../roster/committee/#{pmc.downcase()}"}
             end
           end
@@ -125,7 +125,7 @@ class Adjournment < Vue
           if completed.feedback_sent and not completed.feedback_sent.empty?
             _p 'Sent feedback'
             _ul completed.feedback_sent do |pmc|
-              _li {_Link text: pmc, href: pmc.gsub(/\s+/, '-')} 
+              _li {_Link text: pmc, href: pmc.gsub(/\s+/, '-')}
             end
           end
         end
@@ -190,7 +190,7 @@ class PMCActions < Vue
     Agenda.index.each do |item|
 
       %w(change establish terminate).each do |todo_type|
-        Todos[todo_type].each do |todo| 
+        Todos[todo_type].each do |todo|
           if todo.resolution == item.title
             minutes = Minutes.get(item.title)
 
@@ -258,7 +258,7 @@ class TodoRemove < Vue
     Todos.remove.each do |person|
       if @checked[person.id] == undefined
         if not person.resolution or Minutes.get(person.resolution) != 'tabled'
-          @checked[person.id] = true 
+          @checked[person.id] = true
         end
       end
     end

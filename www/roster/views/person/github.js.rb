@@ -20,12 +20,12 @@ class PersonGitHub < Vue
 
             _div committer.githubUsername do |name|
               _input style: 'font-family:Monospace', size: 20, name: prefix + current, value: name
-              _br              
+              _br
               current += 1
             end
             # Spare field to allow new entry to be added
             _input style: 'font-family:Monospace', size: 20, name: prefix + current, placeholder: '<new GitHub name>'
-            _br             
+            _br
 
             _input type: 'submit', value: 'submit'
           end

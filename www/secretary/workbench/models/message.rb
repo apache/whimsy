@@ -36,7 +36,7 @@ class Message
         attach['Content-ID'].to_s == '<' + name + '>'
     end
 
-    part = mail.attachments.find do |attach| 
+    part = mail.attachments.find do |attach|
       attach.filename == name or URI.decode(attach.filename) == name or
        attach['Content-ID'].to_s == '<' + name + '>'
     end

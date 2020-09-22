@@ -39,10 +39,10 @@ when 'committee-list'
       committees[:chair] << pmc.id
     elsif pmc.info.include? id
       committees[:member] << pmc.id
-    else 
+    else
       committees[:rest] << pmc.id
     end
-  end 
+  end
 
   committees[:chair] + committees[:member] + committees[:rest]
 

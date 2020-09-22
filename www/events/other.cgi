@@ -61,7 +61,7 @@ _html do
         _a_ 'ConFoo Community', href: 'https://community.confoo.ca/'
         _ '.  Click column header to sort table.'
         _br
-        _p 'Conferences that include speaker benefit types:' 
+        _p 'Conferences that include speaker benefit types:'
         _ul do
           counts.each do |s, num|
             _li "#{cols[s]}: #{num}"
@@ -82,13 +82,13 @@ _html do
         _tbody do
           conflist.each do | conf |
             _tr_ do
-              _td do 
+              _td do
                 _a conf['name'], href: conf['website']
               end
               if conf[SPEAKERKIT] then
                 cols.each do |id, _desc|
                   _td! conf[SPEAKERKIT][id]
-                end            
+                end
               else
                 _td 'Unknown'
                 _td 'Unknown'
@@ -100,7 +100,7 @@ _html do
               else
                 _td conf['last_event']
               end
-              _td do 
+              _td do
                 _a conf['twitter'], href: conf['twitter']
               end
             end

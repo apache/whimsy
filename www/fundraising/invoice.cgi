@@ -87,7 +87,7 @@ _html do
           _tr do
             _td colspan: 4 do
               _form action: "#{base}/#{invoice}" do
-                _input type: 'submit', value: 'New Invoice' 
+                _input type: 'submit', value: 'New Invoice'
               end
             end
           end
@@ -135,7 +135,7 @@ _html do
           _tr do
             _td 'E-Mail'
             _td do
-              _input type: 'email', name: 'email', 
+              _input type: 'email', name: 'email',
                 value: @email || 'fundraising@apache.org'
             end
           end
@@ -181,7 +181,7 @@ _html do
 
         _input name: 'date', type: 'hidden', value: start.strftime("%B %d, %Y")
 
-        _input type: 'submit', value: 'Save', style: 'margin-top: 1em; 
+        _input type: 'submit', value: 'Save', style: 'margin-top: 1em;
           width: 10em; display: block; margin-left: auto; margin-right: auto'
       end
 
@@ -212,7 +212,7 @@ _html do
         $('#presets input[type=button]').click(function() {
           var amount = '$ ' + $(this).attr('data-amount');
           amount = amount.toString().replace(/(\\d)(?=(\\d\\d\\d)+$)/g, "$1,");
-          var item = "2013 " + $(this).val() + " Sponsorship @ " + 
+          var item = "2013 " + $(this).val() + " Sponsorship @ " +
             amount + "\\n\\n";
           item += "Start Date: #{start.strftime("%B %d, %Y")}\\n\";
           item += "End Date: #{finish.strftime("%B %d, %Y")}\\n";
@@ -273,10 +273,10 @@ _html do
             _tr do
               _th.buttons colspan: 2 do
                 _a href: "#{base}/#{invoice}?" do
-                  _button 'Edit' 
+                  _button 'Edit'
                 end
                 _a href: "#{base}/#{invoice}.pdf" do
-                  _button 'Generate PDF' 
+                  _button 'Generate PDF'
                 end
               end
             end
@@ -388,7 +388,7 @@ _html do
               # Now make it look pretty with commas
               price = price.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, '\1,')
             else
-              quantity = price = '' 
+              quantity = price = ''
             end
 
             _tr do
@@ -401,7 +401,7 @@ _html do
               _td.c10 do
                 _p.c1 price
               end
-            end 
+            end
           end
           (10-@item.lines.count).times do
             _tr do
@@ -451,7 +451,7 @@ _html do
           end
           _tr do
             _td.c7 do
-              _p "Balance Due:", class: "c17 c21 c13" 
+              _p "Balance Due:", class: "c17 c21 c13"
             end
             _td.c10 do
               _p.c1 @total

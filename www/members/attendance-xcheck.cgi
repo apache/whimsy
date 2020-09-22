@@ -17,7 +17,7 @@ Dir[File.join(meetings, '*', 'memapp-received.txt')].each do |received|
   meeting = File.basename(File.dirname(received))
   next if meeting.include? 'template'
   text = File.read(received)
-  list = text.scan(/<(.*)@.*>.*Yes/i) + 
+  list = text.scan(/<(.*)@.*>.*Yes/i) +
     text.scan(/^(?:no\s*)*(?:yes\s+)+(\w\S*)/)
   list.flatten.each {|id| added[id] = meeting}
 end

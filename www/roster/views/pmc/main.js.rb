@@ -51,7 +51,7 @@ class PMC < Vue
         next unless @attic[id] =~ /\b#{@committee.id}\b/i
 
         _div.alert.alert_danger do
-          _a "#{id}: #{@attic[id]}", 
+          _a "#{id}: #{@attic[id]}",
             href: "https://issues.apache.org/jira/browse/#{id}"
         end
       end
@@ -174,7 +174,7 @@ class PMC < Vue
         _ul do
           _li @committee.report
           if @committee.schedule and @committee.schedule != @committee.report
-            _li @committee.schedule 
+            _li @committee.schedule
           end
           _li do
             _a 'Prior reports', href: 'https://whimsy.apache.org/board/minutes/' +

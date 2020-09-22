@@ -229,7 +229,7 @@ module ASF
     end
 
     # return the [domain, list] for all entries in the subscriber listings
-    # the subscribers are not included 
+    # the subscribers are not included
     def self.each_list
       list_parse('sub') do |dom, list, subs|
         yield [dom, list]

@@ -62,12 +62,12 @@ class NonPMC
     end
     cttee_members = roster.keys # get the potentially updated list
 
-    # now add the status info 
+    # now add the status info
     roster.each {|key, info| info[:role] = 'Committee member'}
 
     members.each do |person|
       roster[person.id] ||= {
-        name: person.public_name, 
+        name: person.public_name,
         role: 'Committee member'
       }
       if analysePrivateSubs
@@ -91,7 +91,7 @@ class NonPMC
     roster.each {|id, info| info[:member] = ASF::Person.find(id).asf_member?}
 
     if cttee.chair and roster[cttee.chair.id]
-      roster[cttee.chair.id]['role'] = 'Committee chair' 
+      roster[cttee.chair.id]['role'] = 'Committee chair'
     end
 
     # separate out the known ASF members and extract any matching committer details

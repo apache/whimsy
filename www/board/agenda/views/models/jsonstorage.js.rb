@@ -13,7 +13,7 @@ class JSONStorage
     base = document.getElementsByTagName("base")[0].href
     origin = location.origin
     if not origin # compatibility: http://s.apache.org/X2L
-      origin = window.location.protocol + "//" + window.location.hostname + 
+      origin = window.location.protocol + "//" + window.location.hostname +
         (window.location.port ? ':' + window.location.port : '')
     end
 
@@ -46,7 +46,7 @@ class JSONStorage
   # other browsers fall back to XMLHttpRequest (AJAX).
   def self.fetch(name, &block)
 
-    if 
+    if
       defined? fetch and defined? caches and
       (location.protocol == 'https:' or location.hostname == 'localhost')
     then
@@ -62,7 +62,7 @@ class JSONStorage
         fetch(request).then do |response|
           cache.put(request, response.clone())
 
-          response.json().then do |json| 
+          response.json().then do |json|
             unless fetched and fetched.inspect == json.inspect
               Header.clock_counter -= 1 unless fetched
               fetched = json
@@ -75,7 +75,7 @@ class JSONStorage
         # check cache
         cache.match("../json/#{name}").then do |response|
           if response and not fetched
-            response.json().then do |json| 
+            response.json().then do |json|
               Header.clock_counter -= 1
               fetched = json
               block(json) if json

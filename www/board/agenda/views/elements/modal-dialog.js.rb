@@ -24,7 +24,7 @@ class ModalDialog < Vue
 
       elsif slot.tag == 'input' or slot.tag == 'textarea'
 
-        # wrap input and textarea elements in a form-control, 
+        # wrap input and textarea elements in a form-control,
         # add label if present
 
         slot = self.addClass(slot, 'form-control')
@@ -44,7 +44,7 @@ class ModalDialog < Vue
           end
         end
 
-        sections.body << Vue.createElement('div', {class: 'form-group'}, 
+        sections.body << Vue.createElement('div', {class: 'form-group'},
           [label, slot])
 
       else

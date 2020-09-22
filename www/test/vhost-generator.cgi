@@ -27,7 +27,7 @@ if ENV['REQUEST_METHOD'].to_s.upcase == 'POST'
     # disable Passenger Default user and group (if present)
     begin
         conf[/()PassengerDefaultUser/, 1] = '# '
-    rescue 
+    rescue
     end
     begin
         conf[/()PassengerDefaultGroup/, 1] = '# '

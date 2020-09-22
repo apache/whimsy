@@ -53,7 +53,7 @@ module ASF
       @name = node['name']
       @resource = node['resource']
       @sponsor = node['sponsor']
-      # Needed for matching against mailing list names 
+      # Needed for matching against mailing list names
       @resourceAliases = []
       @resourceAliases = node['resourceAliases'].split(/,\s*/) if node['resourceAliases']
       @status = node['status']
@@ -209,12 +209,12 @@ module ASF
     def self.find(name)
       name = name.downcase
 
-      result = list.find do |podling| 
+      result = list.find do |podling|
         podling.name == name or podling.display_name.downcase == name or
           podling.resourceAliases.any? {|aname| aname.downcase == name}
       end
 
-      result ||= list.find do |podling| 
+      result ||= list.find do |podling|
         podling.resource == name or
         podling.tlp_name.downcase == name
       end

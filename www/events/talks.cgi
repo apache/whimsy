@@ -51,7 +51,7 @@ def _talk(talk, submitters, parent, n)
               # TODO allow markdown styles
               talk['abstract'].split(/\n+/).each do |line|
                 _p line
-              end 
+              end
             end
           end
           if talk['slides']
@@ -105,7 +105,7 @@ _html do
       helpblock: -> {
         _p do
           _ 'Curated listing of selected Apache '
-          _em 'non-technical' 
+          _em 'non-technical'
           _ %{
             talks - about the Apache Way, licenses, brands, governance, and ASF history.
             This is just a small sample of the many great talks on open source communities from our many experienced Apache speakers.

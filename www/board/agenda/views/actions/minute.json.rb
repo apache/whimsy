@@ -36,7 +36,7 @@ elsif @action == 'attendance'
   # update attendance records for attendee
   attendance[@name] = {
     id: @id,
-    present: @present, 
+    present: @present,
     notes: (@notes and not @notes.empty?) ? " - #@notes" : nil,
     member: ASF::Person.find(@id).asf_member?,
     sortName: @name.split(' ').rotate(-1).join(' ')

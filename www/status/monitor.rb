@@ -131,7 +131,7 @@ class Monitor
       status[:level] ||= 'danger'
     end
 
-    # normalize time 
+    # normalize time
     # If the called monitor wants to compare status hashes it should store the correct format
     if status[:mtime].instance_of? Time
       status[:mtime] = status[:mtime].gmtime.iso8601

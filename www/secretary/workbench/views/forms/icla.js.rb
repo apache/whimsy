@@ -94,7 +94,7 @@ class ICLA < Vue
               _ @pdfproject
             end
           end
-        end        
+        end
 
         _tr do
           _th 'Vote Link'
@@ -117,7 +117,7 @@ class ICLA < Vue
     # reorder name if there is a single comma present
     parts = name.split(',')
     if parts.length == 2 and parts[1] !~ /^\s*(jr|ph\.d)\.?$/i
-      name = "#{parts[1].strip()} #{parts[0]}" 
+      name = "#{parts[1].strip()} #{parts[0]}"
     end
 
     @realname = name
@@ -149,7 +149,7 @@ class ICLA < Vue
   end
 
   # on initial display, default various fields based on headers, and update
-  # state 
+  # state
   def mounted()
     @pdfdata = nil # Not yet parsed
     process_response({}) # preset with message data

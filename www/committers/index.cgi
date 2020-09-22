@@ -26,7 +26,7 @@ _html do
       },
       helpblock: -> {
         _p %{
-          This script lists various Whimsy tools restricted to Committers.  These all deal with private or 
+          This script lists various Whimsy tools restricted to Committers.  These all deal with private or
           sensitive data, so be sure to keep confidential and do not share with non-committers.
         }
         _p do

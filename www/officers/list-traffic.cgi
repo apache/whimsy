@@ -47,7 +47,7 @@ def display_monthly(months:, nondiscuss:)
             ctr += 1
             break if ctr >= 10
           end
-        end   
+        end
       end
       _div.col_sm_6 do
         _ul.list_group do
@@ -94,7 +94,7 @@ def display_weekly(months:, nondiscuss:)
           ctr = 0
           senders.sort_by {|k,v| -v}.to_h.each do |id, num|
             next if /@@/ =~ id
-            if (num > 7) && (num > (senders[WEEK_TOTAL] / 5)) # Ignore less than one per day 
+            if (num > 7) && (num > (senders[WEEK_TOTAL] / 5)) # Ignore less than one per day
               _li.list_group_item.list_group_item_danger "#{id} wrote: #{num}"
             elsif (num > 7) && (num > (senders[WEEK_TOTAL] / 10))
               _li.list_group_item.list_group_item_warning "#{id} wrote: #{num}"

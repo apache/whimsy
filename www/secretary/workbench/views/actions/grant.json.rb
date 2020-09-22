@@ -51,7 +51,7 @@ task "svn commit documents/grants/#@filename#{fileext} and update grants.txt" do
       _input value: @signature, name: 'signature'
     end
 
-    _textarea @grantlines, name: 'grantlines', 
+    _textarea @grantlines, name: 'grantlines',
       rows: @grantlines.split("\n").length
   end
 

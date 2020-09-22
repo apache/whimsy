@@ -61,11 +61,11 @@ class CacheStatus < Vue
 
             _td do
               if registration.installing
-                _span 'installing' 
+                _span 'installing'
               elsif registration.waiting
-                _span 'waiting' 
+                _span 'waiting'
               elsif registration.active
-                _span 'active' 
+                _span 'active'
               else
                 _span 'unknown'
               end
@@ -119,7 +119,7 @@ end
 class ClearCache < Vue
   def render
     _button.btn.btn_primary 'Clear Cache', onClick: self.click
-  end 
+  end
 
   def click(event)
     if defined? caches
@@ -137,7 +137,7 @@ end
 class UnregisterWorker < Vue
   def render
     _button.btn.btn_primary 'Unregister ServiceWorker', onClick: self.click
-  end 
+  end
 
   def click(event)
     if defined? caches
@@ -181,7 +181,7 @@ class CachePage < Vue
 
       keys.sort()
 
-      _ul do 
+      _ul do
         keys.each do |key|
           _li "#{key}: #{@response.headers.get(key)}"
         end
@@ -200,7 +200,7 @@ class CachePage < Vue
 
       caches.open('board/agenda').then do |cache|
         cache.matchAll().then do |responses|
-          responses.each do |response| 
+          responses.each do |response|
             if response.url.split('/').pop() == basename
               @response = response
               response.text().then {|text| @text = text}

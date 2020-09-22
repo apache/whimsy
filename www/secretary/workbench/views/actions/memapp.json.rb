@@ -30,7 +30,7 @@ _personalize_email(env.user)
 @document = "Membership Application for #{@fullname}"
 
 ########################################################################
-#                         document/member_apps                         # 
+#                         document/member_apps                         #
 #                             members.txt                              #
 ########################################################################
 

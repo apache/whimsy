@@ -42,7 +42,7 @@ groups.keys.sort_by {|a| a.name}.each do |entry|
     entries[entry.name] = {
         createTimestamp: entry.createTimestamp,
         modifyTimestamp: entry.modifyTimestamp,
-        roster: m 
+        roster: m
     }
 end
 

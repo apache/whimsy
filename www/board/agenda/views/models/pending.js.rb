@@ -17,7 +17,7 @@ class Pending
       # use data from last cache until a response is received
       cache.match(request).then do |response|
         if response and not fetched
-          response.json().then do |json| 
+          response.json().then do |json|
             Pending.load(json)
           end
         end
@@ -46,7 +46,7 @@ class Pending
 
   def self.count
     return 0 unless Server.pending and Agenda.file == Server.pending.agenda
-    self.comments.keys().length + 
+    self.comments.keys().length +
       self.approved.length +
       self.unapproved.length +
       self.flagged.length +
@@ -149,7 +149,7 @@ class Pending
 
       def request.onsuccess(event)
         if request.result and request.result.agenda == Agenda.date
-          block(request.result.value) 
+          block(request.result.value)
         else
           block({})
         end
@@ -241,25 +241,25 @@ class Pending
             index = Server.pending.unapproved.indexOf(Server.pending.attach)
             Server.pending.unapproved.splice(index, 1) if index != -1
             unless Server.pending.approved.include? data.attach
-              Server.pending.approved << data.attach 
+              Server.pending.approved << data.attach
             end
           elsif data.request == 'unapprove'
             index = Server.pending.approved.indexOf(data.attach)
             Server.pending.approved.splice(index, 1) if index != -1
             unless Server.pending.unapproved.include? data.attach
-              Server.pending.unapproved << data.attach 
+              Server.pending.unapproved << data.attach
             end
           elsif data.request == 'flag'
             index = Server.pending.unflagged.indexOf(Server.pending.attach)
             Server.pending.unflagged.splice(index, 1) if index != -1
             unless Server.pending.flagged.include? data.attach
-              Server.pending.flagged << data.attach 
+              Server.pending.flagged << data.attach
             end
           elsif data.request == 'unflag'
             index = Server.pending.flagged.indexOf(data.attach)
             Server.pending.flagged.splice(index, 1) if index != -1
             unless Server.pending.unflagged.include? data.attach
-              Server.pending.unflagged << data.attach 
+              Server.pending.unflagged << data.attach
             end
           end
         end
@@ -268,7 +268,7 @@ class Pending
         Pending.dbput pending
 
         # inform caller, other tabs
-        if block 
+        if block
           block(Server.pending)
           Events.broadcast type: 'pending', value: Server.pending
         end

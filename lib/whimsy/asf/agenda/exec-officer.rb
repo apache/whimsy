@@ -16,7 +16,7 @@ class ASF::Board::Agenda
     /mx
 
     scan reports, pattern do |attrs|
-      attrs['section'] = '4' + attrs['section'] 
+      attrs['section'] = '4' + attrs['section']
       attrs['shepherd'] = attrs['owner'].split('/').last
       attrs['owner'] = attrs['owner'].split('/').first
 

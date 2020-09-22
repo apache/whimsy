@@ -46,7 +46,7 @@ module PonyAPI
           rescue JSON::GeneratorError => e
             puts "WARN:get_pony_lists() #{e.message} #{e.backtrace[0]}, continuing without pretty"
             f.puts lists
-          end    
+          end
         end
       end
     end

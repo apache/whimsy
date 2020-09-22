@@ -47,7 +47,7 @@ def init
       I "Will check links even if download page has errors"
     else
       I "Will check links if download page has no errors"
-    end      
+    end
   end
   I "Will %s archive.apache.org links in checks" % ($ARCHIVE_CHECK ? 'include' : 'not include')
 end
@@ -305,7 +305,7 @@ def checkDownloadPage(path, tlp, version)
         F e
         if $CLI
           p e
-          puts e.backtrace 
+          puts e.backtrace
         end
     end
 end
@@ -424,7 +424,7 @@ def _checkDownloadPage(path, tlp, version)
         # Text must include a '.' (So we don't check 'Source')
         if t.include?('.') and not base == File.basename(t.strip.downcase)
           # text might be short version of link
-          tmp = t.strip.sub(%r{.*/},'').downcase # 
+          tmp = t.strip.sub(%r{.*/},'').downcase #
           if base == tmp
             W "Mismatch?: #{h} and '#{t}'"
           elsif base.end_with? tmp
@@ -434,7 +434,7 @@ def _checkDownloadPage(path, tlp, version)
           else
             W "Mismatch2: #{h} and '#{tmp}'"
           end
-        end        
+        end
     end
   end
 

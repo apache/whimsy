@@ -2,7 +2,7 @@ if env.password
   pmc = ASF::Committee[@project]
 
   # validate arguments
-  if @action == 'remove' 
+  if @action == 'remove'
     people = @ids.split(',').map {|id| ASF::Person.find(id)}
   else
     people = @ids.split(',').map {|id| ASF::Person[id]}
@@ -31,7 +31,7 @@ if env.password
   if people.length <= 2
     who = people.map {|person| person.public_name || person.id}.join(' and ')
   else
-    who = people[0..-2].map {|person| person.id}.join(', ') + 
+    who = people[0..-2].map {|person| person.id}.join(', ') +
       ', and ' + people.last.id
   end
 
@@ -59,7 +59,7 @@ if env.password
   details << "#{pmc.dn};attr=owner" if @targets.include? 'pmc'
   details << "#{pmc.dn};attr=member" if @targets.include? 'commit'
 
-  cc = people.map do |person| 
+  cc = people.map do |person|
     "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
   end
 

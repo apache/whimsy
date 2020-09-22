@@ -134,7 +134,7 @@ if $0 == __FILE__
                   break # no point checking other files
                 end
               end
-            else 
+            else
               matches[svn_alias] << ck
             end
           end
@@ -187,4 +187,4 @@ if $0 == __FILE__
       process(event)
     end
   end
-end 
+end

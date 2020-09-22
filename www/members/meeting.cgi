@@ -30,7 +30,7 @@ end
 # Output action links for meeting records, depending on if current or past
 def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt, num_members, quorum_need, num_proxies, attend_irc)
   _div id: "meeting-#{dt.year}"
-  _whimsy_panel("All Meeting Details for #{dt.strftime(DTFORMAT)}", style: 'panel-info') do 
+  _whimsy_panel("All Meeting Details for #{dt.strftime(DTFORMAT)}", style: 'panel-info') do
     if Date.today > dt
       _p do
         _ 'At the time of this past meeting, we had:'
@@ -101,8 +101,8 @@ _html do
         if today > m2_date # Based on the reconvene date
           _p do
             _ %{
-              The last Annual Member's Meeting was held #{mtg_date.strftime('%A, %d %B %Y')}.  Expect the 
-              next Member's meeting to be scheduled between 12 - 13 months after the previous meeting, as per 
+              The last Annual Member's Meeting was held #{mtg_date.strftime('%A, %d %B %Y')}.  Expect the
+              next Member's meeting to be scheduled between 12 - 13 months after the previous meeting, as per
             }
             _a 'https://www.apache.org/foundation/bylaws.html#3.2', 'the bylaws 3.2.'
             _ 'Stay tuned for a [NOTICE] email on members@ announcing the next meeting.  The below information is about the '
@@ -125,7 +125,7 @@ _html do
           end
           _p do
             _ 'Currently, we will need '
-            _span.text_primary "#{attend_irc}" 
+            _span.text_primary "#{attend_irc}"
             _ " Members attending the first half of the meeting on Tuesday and respond to Roll Call to reach quorum and continue the meeting."
             _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
           end
@@ -277,7 +277,7 @@ _html do
 
       _div id: 'after'
       _whimsy_panel("Timeline: After This Year's Meeting", style: 'panel-default') do
-        _p do 
+        _p do
           _ 'Shortly after the second half Meeting ends, '
           _a '@TheASF twitter', href: 'https://twitter.com/theasf'
           _ ' will formally announce the new board - please wait to retweet the official announcement.'
@@ -287,7 +287,7 @@ _html do
         _p do
           _span.text_primary 'If you nominated a new member:'
           _ ' You '
-          _b 'must' 
+          _b 'must'
           _ ' send an email with '
           _a 'foundation/membership-application-email.txt', href: ASF::SVN.svnpath!('foundation', 'membership-application-email.txt')
           _ ' to formally invite the new member to fill out the application form.  Applications must be signed and submitted to the secretary within 30 days of the meeting to be valid.'
@@ -301,10 +301,10 @@ _html do
       _whimsy_panel("Member Meeting History", style: 'panel-info') do
         all_mtg = Dir[File.join(MEETINGS, '19*'), File.join(MEETINGS, '2*')].sort
         _p do
-          _ %{ 
-            The ASF has held #{all_mtg.count} Member's meetings in our 
-            history. Some were Annual meetings, were we elect a new board; 
-            a handful were Special mid-year meetings where we mostly just 
+          _ %{
+            The ASF has held #{all_mtg.count} Member's meetings in our
+            history. Some were Annual meetings, were we elect a new board;
+            a handful were Special mid-year meetings where we mostly just
             elected new Members.
           }
           _ ' Remember, member meeting minutes are '

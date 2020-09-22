@@ -21,7 +21,7 @@ class AdditionalInfo < Vue
     end
 
     if @@item.notes
-      _p @@item.notes, 
+      _p @@item.notes,
         class: ('notes' unless @@item.notes =~ /^new, monthly through/)
     end
 
@@ -48,7 +48,7 @@ class AdditionalInfo < Vue
     # draft reports
     draft = Reporter.find(@@item)
     if draft and @prefix
-      _span.hilite do 
+      _span.hilite do
         _em 'Unposted draft being prepared at '
         _a 'reporter.apache.org',
           href: "https://reporter.apache.org/wizard?#{draft.project}"

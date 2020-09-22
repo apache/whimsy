@@ -97,7 +97,7 @@ if File.exist? INDEX_FILE
   end
 end
 
-Wunderbar.info "Updating files" 
+Wunderbar.info "Updating files"
 
 # mapping of committee names to canonical names (generally from ldap)
 canonical = Hash.new {|hash, name| name}
@@ -134,7 +134,7 @@ else
   cinfo = JSON.parse(response.body)
 end
 
-cinfo['committees'].each do |id,v| 
+cinfo['committees'].each do |id,v|
   if v['display_name'].downcase != id
     canonical[v['display_name'].downcase] = id
   end
@@ -314,7 +314,7 @@ seen={}
       prev = nil
 
       if sections.length > 1
-        report.text = sections.shift 
+        report.text = sections.shift
         sections.each_slice(2) do |title, text|
           title.sub! /^regarding /, ''
           title.sub! /^for /, ''
@@ -708,7 +708,7 @@ seen={}
 
     # flag unposted reports; exclude unposted special orders
     report.posted = posted.include? txt
-    next if not report.posted and 
+    next if not report.posted and
       (report.attach =~ /^[A-Z]?@/ or report.attach !~ /^[A-Z.]/)
 
     agenda[report.title] ||= []

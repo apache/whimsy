@@ -37,7 +37,7 @@ module ASF
       read_conf.scan(/^([-\w]+) *= *(\w.*)?$/).each do |pmc, ids|
         yield pmc, (ids||'').split(' ') if groups.include? pmc
       end
-    end  
+    end
 
     # Return the auth path used to find asf-auth and pit-auth
     def path

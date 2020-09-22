@@ -97,7 +97,7 @@ task "email #@email" do
   # set up notify for body of message
   if @pmc
     @notify = "the #{@pmc.display_name} PMC has"
-    if @podling # it looks like podlings also have PMC=Incubator 
+    if @podling # it looks like podlings also have PMC=Incubator
       @notify.sub! /has$/, "and the #{@podling.display_name} podling have"
     end
   end
@@ -141,7 +141,7 @@ task "email #@email" do
     body: template(reply)
   )
 
-  # set Reply-To header to podling or pmc private mailing list 
+  # set Reply-To header to podling or pmc private mailing list
   if @podling
     mail.header['Reply-To'] = @podling.private_mail_list
   elsif @pmc

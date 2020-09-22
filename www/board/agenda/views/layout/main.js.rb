@@ -112,7 +112,7 @@ class Main < Vue
         path = document.location.href
         base = document.getElementsByTagName('base')[0].href
         if path.start_with? base
-          path = path.slice(base.length) 
+          path = path.slice(base.length)
         elsif path.end_with? '/latest/'
           Main.latest = true
           path = '.'
@@ -142,8 +142,8 @@ class Main < Vue
 
       footer = document.querySelector('footer')
       header = document.querySelector('header')
-      if 
-        window.innerHeight <= 400 and 
+      if
+        window.innerHeight <= 400 and
         document.body.scrollHeight > window.innerHeight
       then
         footer.style.position = 'relative' if footer
@@ -153,9 +153,9 @@ class Main < Vue
       else
         footer.style.position = 'fixed' if footer
         header.style.position = 'fixed' if header
-        main.style.marginTop = 
+        main.style.marginTop =
           "#{document.querySelector('header.navbar').clientHeight}px"
-        main.style.marginBottom = 
+        main.style.marginBottom =
           "#{document.querySelector('footer.navbar').clientHeight}px"
       end
 

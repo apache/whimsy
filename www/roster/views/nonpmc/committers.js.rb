@@ -9,11 +9,11 @@ class NonPMCCommitters < Vue
         @@nonpmc.members.include? id or @@nonpmc.ldap.include? id
       end
     then
-      _h2.committers! 'Committers (' + committers.length + ')' 
+      _h2.committers! 'Committers (' + committers.length + ')'
       _p 'All committers are members of the Committee'
     else
       _h2.committers! do
-        _ 'Committers (' + committers.length + ')' 
+        _ 'Committers (' + committers.length + ')'
         _small ' (the listing excludes Committee members above)'
       end
       _p 'Click on column name to sort'

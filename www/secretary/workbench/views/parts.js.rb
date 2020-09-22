@@ -609,7 +609,7 @@ class Parts < Vue
 
     @busy = true
     @drag = nil
-    HTTP.post('../../actions/drop', data).then {|response| 
+    HTTP.post('../../actions/drop', data).then {|response|
       @busy = false
       @attachments = response.attachments
       self.selectPart response.selected

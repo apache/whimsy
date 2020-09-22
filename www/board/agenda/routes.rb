@@ -103,7 +103,7 @@ get '/missing' do
     Agenda.update_cache(agenda, nil, contents, true)
   end
 
-  response.headers['Location'] = 
+  response.headers['Location'] =
     "#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/missing"
   status 302
 end
@@ -123,7 +123,7 @@ get '/env' do
     root: Wunderbar::Asset.root,
     virtual: Wunderbar::Asset.virtual,
     scripts: Wunderbar::Asset.scripts.map do |script|
-     {path: script.path} 
+     {path: script.path}
     end
   }
 
@@ -145,7 +145,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/followup\.json} do |date|
   # select agenda items that have comments
   parsed = Agenda[agenda][:parsed]
   followup = parsed.select {|item| not item['comments'].to_s.empty?}.
-    map {|item| [item['title'], {comments: item['comments'], 
+    map {|item| [item['title'], {comments: item['comments'],
       shepherd: item['shepherd'], mail_list: item['mail_list'], count: 0}]}.
     to_h
 
@@ -231,7 +231,7 @@ def server
   end
 
   if env['SERVER_NAME'] == 'localhost'
-    websocket = 'ws://localhost:34234/'  
+    websocket = 'ws://localhost:34234/'
   else
     websocket = (env['rack.url_scheme'].sub('http', 'ws')) + '://' +
       env['SERVER_NAME'] + env['SCRIPT_NAME'] + '/websocket/'
@@ -248,7 +248,7 @@ def server
     online: @present,
     session: Session.user(userid),
     role: pending['role'],
-    directors: Hash[ASF::Service['board'].members.map {|person| 
+    directors: Hash[ASF::Service['board'].members.map {|person|
       initials = begin
         YAML.load_file("#{AGENDA_WORK}/#{person.id}.yml")['initials']
       rescue
@@ -282,7 +282,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     etag: Agenda.uptodate(agenda) ? Agenda[agenda][:etag] : nil
   }
 
-  minutes = AGENDA_WORK + '/' + 
+  minutes = AGENDA_WORK + '/' +
     agenda.sub('agenda', 'minutes').sub('.txt', '.yml')
   @page[:minutes] = YAML.load(File.read(minutes)) if File.exist? minutes
 
@@ -293,8 +293,8 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
 
   if path == 'bootstrap.html'
     unless env.password
-      @server[:userid] = nil 
-      @server[:role] = nil 
+      @server[:userid] = nil
+      @server[:role] = nil
     end
 
     @page[:parsed] = [
@@ -307,14 +307,14 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
     # capture all the variable content
     hash = {
       source: File.read("#{settings.views}/bootstrap.html.erb"),
-      cssmtime: @cssmtime, 
-      appmtime: @appmtime, 
-      manmtime: @manmtime, 
+      cssmtime: @cssmtime,
+      appmtime: @appmtime,
+      manmtime: @manmtime,
       scripts: Wunderbar::Asset.scripts.
         map {|script| [script.path, script.mtime.to_i]}.sort,
       stylesheets: Wunderbar::Asset.stylesheets.
         map {|stylesheet| [stylesheet.path, stylesheet.mtime.to_i]}.sort,
-      server: @server, 
+      server: @server,
       page: @page
     }
 
@@ -337,7 +337,7 @@ get '/json/post-data' do
   _json :"actions/post-data"
 end
 
-# feedback responses 
+# feedback responses
 get '/json/responses' do
   _json :"actions/responses"
 end
@@ -454,7 +454,7 @@ get '/json/committers' do
     members = ASF.search_one(ASF::Group.base, "cn=member", 'memberUid').first
     members = Hash[members.map {|name| [name, true]}]
     ASF.search_one(ASF::Person.base, 'uid=*', ['uid', 'cn']).
-      map {|person| {id: person['uid'].first, 
+      map {|person| {id: person['uid'].first,
         member: members[person['uid'].first] || false,
         name: person['cn'].first.force_encoding('utf-8')}}.
       sort_by {|person| person[:name].downcase.unicode_normalize(:nfd)}

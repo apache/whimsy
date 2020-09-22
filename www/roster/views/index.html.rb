@@ -114,7 +114,7 @@ _html do
             _a 'Podlings', href: 'ppmc/'
           end
 
-          _td! do 
+          _td! do
             _span 'Active podlings at the ASF ('
             _a @podlings.length, href: 'podlings'
             _span ' total)'

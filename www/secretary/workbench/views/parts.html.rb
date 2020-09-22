@@ -3,7 +3,7 @@
 #
 
 _html do
-  _link rel: 'stylesheet', type: 'text/css', 
+  _link rel: 'stylesheet', type: 'text/css',
     href: "../../secmail.css?#{@cssmtime}"
 
   _header_ do
@@ -77,7 +77,7 @@ _html do
         href: 'https://id.apache.org/info/MailAlias.txt'
     end
     _li do
-      _a 'Member list', target: 'content', 
+      _a 'Member list', target: 'content',
         href: ASF::SVN.svnpath!('foundation', 'members.txt')
     end
     _li do

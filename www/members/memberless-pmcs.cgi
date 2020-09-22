@@ -12,7 +12,7 @@ require 'date'
 counts = [1, 2, 3, 4]
 _html do
   _body? do
-    count = (@count || 3).to_i    
+    count = (@count || 3).to_i
     if count == 1
       subtitle = 'PMCs without any ASF members'
     else
@@ -33,7 +33,7 @@ _html do
             _a href: "/members/memberless-pmcs?count=#{c}" do
               _button.btn.btn_info c
             end
-            _ " | " unless c.equal? counts.last 
+            _ " | " unless c.equal? counts.last
           end
           _ ' members on a PMC.'
         end

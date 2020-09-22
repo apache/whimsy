@@ -4,7 +4,7 @@
 # - Count messages group by list -> graph months as time
 # - Per list contentlines per lists PMOT
 # - Per user statistics
-# Count lines of text content in mail body, roughly attempting to 
+# Count lines of text content in mail body, roughly attempting to
 #   count just new content (not automated, not > replies)
 # Attempt to normalize/map email addresses to committer/member status
 
@@ -36,7 +36,7 @@ module MailUtils
   MAILCOUNT = 'mailcount'
 
   # Subject regexes that are non-discussion oriented
-  # Analysis: don't bother with content lines in these messages, 
+  # Analysis: don't bother with content lines in these messages,
   #   because most of the content is tool-generated
   NONDISCUSSION_SUBJECTS = { # Note: none applicable to members@
     '<board.apache.org>' => {
@@ -130,7 +130,7 @@ module MailUtils
       mdata[:who] = 'Kevin A. McGrail'
       mdata[:committer] = MEMBER
       mdata[:id] = 'kmcgrail'
-    when /sallykhudairi@yahoo/i 
+    when /sallykhudairi@yahoo/i
       mdata[:who] = 'Sally Khudairi'
       mdata[:committer] = MEMBER
       mdata[:id] = 'sk'
@@ -264,7 +264,7 @@ module MboxUtils
   # @param f path to .mbox or .mbox.gz
   # @return [mail1hash, mail2hash, ...], [ [parseerr, order], ...]
   # @return nil, [read, errors2...] if mbox file can't be read
-  # mailhash contains :from, :subject, :listid, :date, :messageid, 
+  # mailhash contains :from, :subject, :listid, :date, :messageid,
   #   :inreplyto, :lines (count), plus :who and :committer
   def mbox2stats(f)
     begin
@@ -347,7 +347,7 @@ module MboxUtils
             end
           end
         end
-        # Push our hash 
+        # Push our hash
         messages << mdata
       rescue => e
         errs << [e, mdata[:order]]
@@ -426,7 +426,7 @@ def optparse
       if File.directory?(d)
         options[:dir] = d
       else
-        raise ArgumentError, "-d #{d} is not a valid directory" 
+        raise ArgumentError, "-d #{d} is not a valid directory"
       end
     end
     opts.on('-oOUTPUT.CSV', '--output OUTPUT.CSV', "Filename to output rows into; default #{DEFAULT_OUTPUT}") do |o|

@@ -45,7 +45,7 @@ class CommitterSearch < Vue
     list = []
     @list = list
     @committers.each do |person|
-      if 
+      if
         search.all? {|part|
           if person.id
             person.id.include? part or
@@ -72,7 +72,7 @@ class CommitterSearch < Vue
       _label.control_label.col_sm_3 'Search for', for:  'search-text'
       _div.col_sm_9 do
         _div.input_group do
-          _input.form_control autofocus: true, value: @search, 
+          _input.form_control autofocus: true, value: @search,
             onInput: self.change
           _span.input_group_addon do
             _span.glyphicon.glyphicon_user aria_label: "Committer ID or name"

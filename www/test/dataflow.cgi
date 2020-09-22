@@ -4,7 +4,7 @@ PAGETITLE = "Public Datafiles And Dependencies" # Wvisible:tools data
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'json'
 
-# Command line use: emit replacement for www/public/README.html 
+# Command line use: emit replacement for www/public/README.html
 #   Centralize maintenance of descriptions
 DATAFLOWDATA = 'dataflow.json'
 DATAFLOWDOC = 'https://whimsy.apache.org/test/dataflow.cgi#'
@@ -41,18 +41,18 @@ _html do
         "/docs" => "Whimsy code developer documentation"
       },
       helpblock: -> {
-        _p %{ Whimsy tools consume and produce a variety of data files 
-          about PMCs and the ASF as a whole.  This non-comprehensive 
-          page explains which tools generate what intermediate data, 
+        _p %{ Whimsy tools consume and produce a variety of data files
+          about PMCs and the ASF as a whole.  This non-comprehensive
+          page explains which tools generate what intermediate data,
           and where the canonical underlying data sources are (many
-          of which are privately stored). .json files generated in 
+          of which are privately stored). .json files generated in
           /public are consumed by many other websites.
         }
-        _p do 
-          _ %{ Whimsy has a number of cron jobs - typically hourly - 
-            that periodically regenerate the /public directory, but 
+        _p do
+          _ %{ Whimsy has a number of cron jobs - typically hourly -
+            that periodically regenerate the /public directory, but
             only when the underlying data source has changed.
-            See the 
+            See the
           }
           _a 'server setup docs for more info.', href: 'https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md'
           _ ' You can see the '
@@ -66,9 +66,9 @@ _html do
         end
         _p do
           _span.text_warning 'REMINDER:'
-          _ %{ These datafiles are not original sources of truth, and 
-            merely make data from other canonical systems available in a more 
-            easily digested format on a periodic basis.  Data here may be 
+          _ %{ These datafiles are not original sources of truth, and
+            merely make data from other canonical systems available in a more
+            easily digested format on a periodic basis.  Data here may be
             outdated depending on when updates were last made.
           }
           _a 'See notifications@whimsical for updates', href: 'https://lists.apache.org/list.html?notifications@whimsical.apache.org'
@@ -108,7 +108,7 @@ _html do
               _span 'Derived from:'
               _ul do
                 info['sources'].each do |src|
-                  _li do 
+                  _li do
                     _a "#{src}", href: "##{src.gsub(/[#%\[\]\{\}\\"<>]/, '')}"
                   end
                 end

@@ -79,7 +79,7 @@ class Post < Vue
 
         _div.form_group do
           _label 'Outgoing Chair', for: 'outgoing-chair'
-          _input.form_control.outgoing_chair! value: @outgoing_chair, 
+          _input.form_control.outgoing_chair! value: @outgoing_chair,
             disabled: true
         end
 
@@ -109,7 +109,7 @@ class Post < Vue
           # capitalize pmcname
           pmcname = @pmcname
           if @pmcname and @pmcname !~ /[A-Z]/
-            pmcname.gsub!(/\b\w/) {|c| c.upcase()} 
+            pmcname.gsub!(/\b\w/) {|c| c.upcase()}
           end
 
           _label 'Complete this sentence:', for: 'establish-description'
@@ -137,7 +137,7 @@ class Post < Vue
 
         _label 'Initial set of PMC members'
 
-        _p do 
+        _p do
           if !@chair
               _ 'Search for the chair '
           else
@@ -172,7 +172,7 @@ class Post < Vue
                 _input.form_check_input type: 'checkbox',
                   id: "person_#{person.id}",
                   onClick: -> {establish_pmc(person)}
-                _label.form_check_label person.name, 
+                _label.form_check_label person.name,
                   for: "person_#{person.id}"
               end
             end
@@ -184,7 +184,7 @@ class Post < Vue
                 _input.form_check_input type: 'checkbox',
                   id: "person_#{person.id}",
                   onClick: -> {establish_pmc(person)}
-                _label.form_check_label person.name, 
+                _label.form_check_label person.name,
                   for: "person_#{person.id}"
               end
             end
@@ -208,22 +208,22 @@ class Post < Vue
         _p 'Reason for termination:'
 
         _div.form_check do
-          _input.form_check_input.termvote! type: 'radio', name: 'termreason', 
+          _input.form_check_input.termvote! type: 'radio', name: 'termreason',
             onClick: -> {@termreason = 'vote'}
           _label.form_check_label 'by vote of the PMC', for: 'termvote'
         end
 
         _div.form_check do
-          _input.form_check_input.termconsensus! type: 'radio', 
+          _input.form_check_input.termconsensus! type: 'radio',
             name: 'termreason', onClick: -> {@termreason = 'consensus'}
-          _label.form_check_label 'by consensus of the PMC', 
+          _label.form_check_label 'by consensus of the PMC',
             for: 'termconsensus'
         end
 
         _div.form_check do
-          _input.form_check_input.termboard! type: 'radio', 
+          _input.form_check_input.termboard! type: 'radio',
             name: 'termreason', onClick: -> {@termreason = 'board'}
-          _label.form_check_label 'by the board for inactivity', 
+          _label.form_check_label 'by the board for inactivity',
             for: 'termboard'
         end
 
@@ -246,7 +246,7 @@ class Post < Vue
         _div.form_group do
           _label 'PMC', for: 'out-of-cycle-pmc'
           _select.form_control.out_of_cycle_pmc! do
-            @pmcs.each do |pmc| 
+            @pmcs.each do |pmc|
               _option pmc unless reporting_this_month.include? pmc
             end
           end
@@ -268,7 +268,7 @@ class Post < Vue
 
         #input field: report text
         _textarea.post_report_text! label: @label, value: @report,
-          placeholder: @label, rows: 17, disabled: @disabled, 
+          placeholder: @label, rows: 17, disabled: @disabled,
           onInput: self.change_text
 
         # upload of spreadsheet from virtual
@@ -285,14 +285,14 @@ class Post < Vue
 
         #input field: commit_message
         if @header != 'Add Resolution' and @header != 'Add Discussion Item'
-          _input.post_report_message! label: 'commit message', 
+          _input.post_report_message! label: 'commit message',
             disabled: @disabled, value: @message
         end
 
         # footer buttons
         _button.btn_default 'Cancel', data_dismiss: 'modal'
         _button 'Reflow', class: self.reflow_color(), onClick: self.reflow
-        _button.btn_primary 'Submit', onClick: self.submit, 
+        _button.btn_primary 'Submit', onClick: self.submit,
           disabled: (not self.ready())
       end
     end
@@ -417,7 +417,7 @@ class Post < Vue
     end
 
     if not @edited
-      text = @report || @@item.text || '' 
+      text = @report || @@item.text || ''
       if @@item.title == 'President'
         text.sub! /\s*Additionally, please see Attachments \d through \d\./, ''
       end
@@ -436,7 +436,7 @@ class Post < Vue
 
     if @header == 'Add Resolution' or @@item.attach =~ /^[47]/
       @indent = '        '
-    elsif @header == 'Add Discussion Item' 
+    elsif @header == 'Add Discussion Item'
       @indent = '        '
     elsif @@item.attach == '8.'
       @indent = '    '
@@ -652,7 +652,7 @@ class Post < Vue
     end
 
     options = {
-      request: 'establish', 
+      request: 'establish',
       pmcname: @pmcname,
       parent: @parent,
       description: @pmcdesc,
@@ -687,8 +687,8 @@ class Post < Vue
   def draft_terminate_project()
     @disabled = true
     options = {
-      request: 'terminate', 
-      pmc: document.getElementById('terminate-pmc').value, 
+      request: 'terminate',
+      pmc: document.getElementById('terminate-pmc').value,
       reason: @termreason
     }
 
@@ -734,7 +734,7 @@ class Post < Vue
     @header = 'Post Report'
     @label = 'report'
     @message = "Post Out of Cycle #{pmc} Report"
-    @attach = '+' + pmc 
+    @attach = '+' + pmc
     @disabled = false
   end
 
@@ -776,8 +776,8 @@ class Post < Vue
   def draft_chair_change_resolution()
     @disabled = true
     options = {
-      request: 'change-chair', 
-      pmc: document.getElementById('change-chair-pmc').value, 
+      request: 'change-chair',
+      pmc: document.getElementById('change-chair-pmc').value,
       chair: document.getElementById('incoming-chair').value
     }
 
