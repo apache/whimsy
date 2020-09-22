@@ -11,5 +11,5 @@ cfg = ASF::Config.instance_variable_get(:@config)
 
 
 cfg.each do |k,v|
-	puts "%s: %s" % [k,v]
+  puts "%s: %s" % [k,v]
 end

@@ -488,10 +488,10 @@ seen={}
         (?=\n\s{3,5}\d?[0-9A-Z]\.\s|\z) # next section
       /mx).each do |attach,title,text|
         if title.include? "\n" and title.length > 120
-	  title = title.split("\n")
-	  text = title[1..-1].join("\n") + "\n" + text
-	  title = title[0]
-	end
+          title = title.split("\n")
+          text = title[1..-1].join("\n") + "\n" + text
+          title = title[0]
+        end
 
         report = OpenStruct.new
         report.title = title.gsub(/\s+/, ' ')
@@ -516,7 +516,7 @@ seen={}
               report.attach = '.' + pmc
             end
           end
-	end
+        end
 
         pending[title] = report
       end

@@ -141,7 +141,7 @@ module ASF
     end
 
     # fetch a repository URL by name - abort if not found
-		# Includes aliases
+    # Includes aliases
     def self.svnurl!(name)
       entry = self.svnurl(name)
       unless entry

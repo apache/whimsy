@@ -221,16 +221,16 @@ class Committer
       end
     end
 
-		response[:pmcs] = []
-		response[:nonpmcs] = []
+    response[:pmcs] = []
+    response[:nonpmcs] = []
 
-		pmcs.each do |pmc|
-  		response[:pmcs] << pmc.name if pmc.roster.include?(person.id)
-		  response[:chairOf] << pmc.name if pmc.chairs.map{|ch| ch[:id]}.include?(person.id)
-		end
-		response[:pmcs].sort!
+    pmcs.each do |pmc|
+      response[:pmcs] << pmc.name if pmc.roster.include?(person.id)
+      response[:chairOf] << pmc.name if pmc.chairs.map{|ch| ch[:id]}.include?(person.id)
+    end
+    response[:pmcs].sort!
 
-		response[:nonPMCchairOf] = [] # use separate list to avoid missing pmc-chair warnings
+    response[:nonPMCchairOf] = [] # use separate list to avoid missing pmc-chair warnings
     nonpmcs = ASF::Committee.nonpmcs
     nonpmcs.each do |nonpmc|
       response[:nonpmcs] << nonpmc.name if nonpmc.roster.include?(person.id)

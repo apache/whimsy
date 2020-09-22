@@ -218,15 +218,15 @@ if @id != 'notinavail'
       ldap = ASF.init_ldap(true)
 
       ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",
-	env.password.untaint)
+                env.password.untaint)
 
       ldap.modify person.dn, [ASF::Base.mod_replace('mail', @email.strip)]
 
       log = ["LDAP modify: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
       if ldap.err == 0
-	_transcript log
+        _transcript log
       else
-	_backtrace log
+        _backtrace log
       end
 
       ldap.unbind

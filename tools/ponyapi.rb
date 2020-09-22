@@ -34,11 +34,11 @@ module PonyAPI
         # no real point sorting unless writing the file
         if sort_list
           if recurse_sort
-            lists.each do |k,v|
+            lists.each do |k, v|
               lists[k] = Hash[v.sort]
             end
           end
-		      lists = Hash[lists.sort]
+         lists = Hash[lists.sort]
         end
         openfile(dir, 'lists.json') do |f|
           begin
