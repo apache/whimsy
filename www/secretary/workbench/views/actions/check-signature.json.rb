@@ -1,11 +1,10 @@
-#
+# frozen_string_literal: true
+
 # check signature on an attachment
 #
 
 ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 
-#KEYSERVER = 'pgpkeys.mit.edu'
-# Perhaps also try keyserver.pgp.com
 # see WHIMSY-274 for secure servers
 # ** N.B. ensure the keyserver URI is known below **
 
@@ -13,6 +12,8 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 
 KEYSERVERS = %w{hkps.pool.sks-keyservers.net gozer.rediris.es}
 
+# Obtained from https://dl.cacerts.digicert.com/TERENASSLHighAssuranceCA3.crt.pem
+# Needed by gozer host
 TERENA_CERT = '/srv/whimsy/www/secretary/workbench/TERENA_SSL_High_Assurance_CA_3.pem'
 
 # ** N.B. ensure the keyserver URI is known below **
@@ -38,13 +39,17 @@ MAX_KEY_SIZE = 22000 # don't import if the ascii keyfile is larger than this
 require 'net/http'
 
 # fetch the Key from the URI and store in the file
-def getURI(uri,file)
+def getURI(uri, file)
   uri = URI.parse(uri)
   opts = {use_ssl: uri.scheme == 'https'}
   # The pool needs a special CA cert
-  if SKS_KEYSERVER_CERT and uri.host == 'hkps.pool.sks-keyservers.net'
+  if uri.host == 'hkps.pool.sks-keyservers.net'
+    unless defined? SKS_KEYSERVER_CERT
+      raise ArgumentError, "Cannot use #{uri} as there is no definition for SKS_KEYSERVER_CERT"
+    end
+
     opts[:ca_file] = SKS_KEYSERVER_CERT
-    elsif uri.host.end_with? '.rediris.es'
+  elsif uri.host.end_with? '.rediris.es'
     require 'openssl'
     store = OpenSSL::X509::Store.new
     store.set_default_paths
