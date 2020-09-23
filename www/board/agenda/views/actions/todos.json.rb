@@ -2,7 +2,7 @@
 # Secretary post-meeting todo list
 #
 
-TLPREQ = '/srv/secretary/tlpreq'
+TLPREQ = ASF::SVN['tlpreq-input']
 
 date = params[:date].gsub('-', '_')
 date.untaint if date =~ /^\d+_\d+_\d+$/

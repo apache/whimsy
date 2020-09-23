@@ -207,3 +207,6 @@
   subreq: # for mail subscription requests
     url: infra/infrastructure/trunk/subreq
     depth: skip
+
+  tlpreq-input:
+    url: infra/infrastructure/trunk/tlpreq/input
