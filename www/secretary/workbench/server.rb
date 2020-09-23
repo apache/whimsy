@@ -52,15 +52,8 @@ set :show_exceptions, true
 
 disable :logging # suppress log of requests to stderr/error.log
 
-require_relative '../../whimsy'
-if Whimsy.master?
-  UNAVAILABLE = nil # updates allowed
-else
-  # disable all update actions
-  # UNAVAILABLE = 'Service temporarily unavailable due to migration.'
-  UNAVAILABLE = 'Service unavailable on this node. Please ensure you have logged in to the correct host.'
-end
-
+require 'whimsy/asf/status'
+UNAVAILABLE = Status.updates_disallowed_reason # are updates disallowed?
 
 # list of messages
 get '/' do

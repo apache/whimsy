@@ -2,14 +2,8 @@
 # Server side Sinatra routes
 #
 
-require_relative '../../whimsy'
-if Whimsy.master?
-  UNAVAILABLE = nil # updates allowed
-else
-  # disable all update actions
-  # UNAVAILABLE = 'Service temporarily unavailable due to migration.'
-  UNAVAILABLE = 'Service unavailable on this node. Please ensure you have logged in to the correct host.'
-end
+require 'whimsy/asf/status'
+UNAVAILABLE = Status.updates_disallowed_reason # are updates disallowed?
 
 # redirect root to latest agenda
 get '/' do
