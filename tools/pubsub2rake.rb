@@ -4,7 +4,6 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'net/http'
 require 'json'
-require 'thread'
 require 'whimsy/asf/config'
 require 'whimsy/asf/svn'
 
@@ -30,10 +29,10 @@ class PubSub
           open_timeout: 20, read_timeout: 20, ssl_timeout: 20,
           use_ssl: url.match(/^https:/) ? true : false) do |http|
           request = Net::HTTP::Get.new uri.request_uri
-          request.basic_auth *creds if creds
+          request.basic_auth(*creds) if creds
           http.request request do |response|
-            response.each_header do |h,v|
-              puts stamp [h,v].inspect if h.start_with? 'x-' or h == 'server'
+            response.each_header do |h, v|
+              puts stamp [h, v].inspect if h.start_with? 'x-' or h == 'server'
             end
             body = ''
             response.read_body do |chunk|
@@ -44,14 +43,14 @@ class PubSub
               if chunk.end_with? "\n"
                 event = JSON.parse(body.chomp)
                 body = ''
-                if event['stillalive']  # pingback
+                if event['stillalive'] # pingback
                   @restartable = true
-                  puts(stamp event) if debug
+                  puts stamp event if debug
                 else
                   yield event
                 end
               else
-                puts(stamp "Partial chunk") if debug
+                puts stamp "Partial chunk" if debug
               end
               unless mtime == File.mtime(__FILE__)
                 puts stamp "File updated" if debug
@@ -69,11 +68,11 @@ class PubSub
         puts stamp "Done with start" if debug
       rescue Errno::ECONNREFUSED => e
         @restartable = true
-        STDERR.puts stamp e.inspect
+        $stderr.puts stamp e.inspect
         sleep 3
-      rescue Exception => e
-        STDERR.puts stamp e.inspect
-        STDERR.puts stamp e.backtrace
+      rescue StandardError => e
+        $stderr.puts stamp e.inspect
+        $stderr.puts stamp e.backtrace
       end
       puts stamp "Done with thread" if debug
     end # thread
@@ -81,7 +80,7 @@ class PubSub
     ps_thread.join
     puts stamp "Pubsub thread finished %s..." % (@updated ? '(updated) ' : '')
     if @restartable
-      STDERR.puts stamp 'restarting'
+      $stderr.puts stamp 'restarting'
 
       # relaunch script after a one second delay
       sleep 1
@@ -98,10 +97,10 @@ if $0 == __FILE__
 
   # Cannot use shift as ARGV is needed for a relaunch
   pubsub_URL = ARGV[0]  || 'https://pubsub.apache.org:2070/svn'
-  pubsub_FILE = ARGV[1] || File.join(Dir.home,'.pubsub')
+  pubsub_FILE = ARGV[1] || File.join(Dir.home, '.pubsub')
   pubsub_CRED = File.read(pubsub_FILE).chomp.split(':') rescue nil
 
-  WATCH=Hash.new{|h,k| h[k] = Array.new}
+  WATCH = Hash.new{|h, k| h[k] = Array.new}
   # determine which paths we are interested in
   # depth: 'skip' == ignore completely
   # files: only need to update if path matches one of the files
@@ -117,11 +116,11 @@ if $0 == __FILE__
     path = event['pubsub_path']
     if WATCH.include? path # WATCH auto-vivifies
       $hits += 1
-      log = event['commit']['log'].sub(/\n.*/,'') # keep only first line
+      log = event['commit']['log'].sub(/\n.*/, '') # keep only first line
       id = event['commit']['id']
       puts ""
-      puts stamp id,path,log
-      matches = Hash.new{|h,k| h[k] = Array.new} # key alias, value = array of matching files
+      puts stamp id, path, log
+      matches = Hash.new{|h, k| h[k] = Array.new} # key alias, value = array of matching files
       watching = WATCH[path]
       watching.each do |svn_prefix, svn_alias, files|
         changed = event['commit']['changed']
@@ -140,7 +139,7 @@ if $0 == __FILE__
           end
         end
       end
-      matches.each do |k,v|
+      matches.each do |k, _v|
         puts stamp "Updating #{k} #{$hits}/#{$misses}"
         cmd = ['rake', "svn:update[#{k}]"]
         unless system(*cmd, {chdir: '/srv/whimsy'})
@@ -153,14 +152,15 @@ if $0 == __FILE__
     end # possible match
   end
 
-  ASF::SVN.repo_entries(true).each do |name,desc|
+  ASF::SVN.repo_entries(true).each do |name, desc|
     next if desc['depth'] == 'skip' # not needed
+
     url = desc['url']
 
-    one,two,three=url.split('/',3)
-    path_prefix = one == 'asf' ? ['/svn'] : ['/private','svn']
-    pubsub_key = [path_prefix,one,two,'commit'].join('/')
-    svn_relpath = [two,three].join('/')
+    one, two, three = url.split('/', 3)
+    path_prefix = one == 'asf' ? ['/svn'] : ['/private', 'svn']
+    pubsub_key = [path_prefix, one, two, 'commit'].join('/')
+    svn_relpath = [two, three].join('/')
     WATCH[pubsub_key] << [svn_relpath, name, desc['files']]
   end
 
@@ -171,19 +171,19 @@ if $0 == __FILE__
 
   if File.exist? pubsub_URL
     puts "** Unit testing **"
-    open(pubsub_URL).each_line do |line|
+    File.open(pubsub_URL).each_line do |line|
       event = nil
       begin
-      event = JSON.parse(line.chomp)
-      rescue Exception => e
+        event = JSON.parse(line.chomp)
+      rescue StandardError => e
         p e
         puts line
       end
-      process(event) unless event == nil || event['stillalive']
+      process(event) unless event.nil? || event['stillalive']
     end
   else
     puts stamp(pubsub_URL)
-    PubSub.listen(pubsub_URL,pubsub_CRED) do | event |
+    PubSub.listen(pubsub_URL, pubsub_CRED) do |event|
       process(event)
     end
   end
