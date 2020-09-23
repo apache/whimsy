@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
-# utility methods **DRAFT**
+# status methods
 
 require 'socket'
 require 'resolv'
 
 # common methods
-module Whimsy
+module Status
 
   # Are we the active node?
   def self.active?
@@ -49,6 +49,6 @@ end
 
 # for debugging purposes
 if __FILE__ == $0
-  puts "active?: #{Whimsy.active?} hostname: #{Whimsy.hostname} migrating?: #{Whimsy.migrating?}"
-  puts "reason: #{Whimsy.updates_disallowed_reason}"
+  puts "active?: #{Status.active?} hostname: #{Status.hostname} migrating?: #{Status.migrating?}"
+  puts "reason: #{Status.updates_disallowed_reason}"
 end
