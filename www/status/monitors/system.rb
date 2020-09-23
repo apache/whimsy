@@ -42,7 +42,7 @@ def Monitor.system(previous_status)
 
   # Are we the active node?
   begin
-    require 'whimsy/asf/status'
+    require_relative '../../../lib/whimsy/asf/status'
     active = Status.active?
     rescue LoadError, StandardError => e
       active = e.inspect
