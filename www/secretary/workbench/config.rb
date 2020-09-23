@@ -20,6 +20,7 @@ GNUPGHOME = (Dir.exist?('/srv/gpg') ? '/srv/gpg' : nil)
 # - whimsy on ubuntu
 # - macos
 %w{
+   /usr/share/gnupg/sks-keyservers.netCA.pem
    /usr/share/gnupg2/sks-keyservers.netCA.pem
    /usr/local/gnupg-2.2/share/gnupg/sks-keyservers.netCA.pem
    /usr/local/share/gnupg/sks-keyservers.netCA.pem
