@@ -82,9 +82,9 @@ def public_json_output_file(info, file)
 end
 
 def sendMail(subject, body, to='Notification List <notifications@whimsical.apache.org>')
-  require_relative '../whimsy'
-  if not Whimsy.master?
-    Wunderbar.info "Did not detect master status, not sending mail: #{subject}"
+  require 'whimsy/asf/status'
+  unless Status.active?
+    Wunderbar.info "Did not detect active status, not sending mail: #{subject}"
     return
   end
   begin
