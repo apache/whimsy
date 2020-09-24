@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
-$:.unshift File.realpath(File.expand_path('../' * 5 + 'lib', __FILE__))
+
+$LOAD_PATH.unshift '/srv/whimsy/lib'
+
 require 'websocket-eventmachine-server'
 require 'listen'
 require 'ostruct'
