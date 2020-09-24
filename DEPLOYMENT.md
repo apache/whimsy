@@ -42,22 +42,22 @@ Thus, in less than 5 minutes from any git push, the server is running the new co
 Production Configuration
 ==========
 
-The Whimsy VM runs Ubuntu 16.04 and is fully managed by Puppet using 
+The Whimsy VM runs Ubuntu 20.04 and is fully managed by Puppet using 
 the normal methods Apache infra uses for managing servers.  Note however 
 that management of Whimsy code and tools is a PMC responsibility.  
 
 <a name="puppetnode"></a>
-The **puppet definition** is contained in the following files currently (note: Infra plans to move Puppet details in 2020).
+The **puppet definition** is contained in the following files (these are private files and need a login):
 
- * https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm4.apache.org.yaml (Includes modules, software, vhosts, ldap realms, and httpd.conf)
+ * https://github.com/apache/infrastructure-p6/blob/production/data/nodes/whimsy-vm6.apache.org.yaml (Includes modules, software, vhosts, ldap realms, and httpd.conf)
 
- * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/vhosts_whimsy/lib/puppet/parser/functions/preprocess_vhosts.rb (macro functions used above)
+ * https://github.com/apache/infrastructure-p6/tree/production/modules/vhosts_whimsy/lib/puppet/functions (macro functions used above)
 
- * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/init.pp (Defines various tools and directories used in some tools)
+ * https://github.com/apache/infrastructure-p6/blob/production/modules/whimsy_server/manifests/init.pp (Defines various tools and directories used in some tools)
  
- * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/cronjobs.pp (Cronjobs control when /public/*.json is built and code and mail updates)
+ * https://github.com/apache/infrastructure-p6/blob/production/modules/whimsy_server/manifests/cronjobs.pp (Cronjobs control when /public/*.json is built and code and mail updates)
 
- * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/procmail.pp
+ * https://github.com/apache/infrastructure-p6/blob/production/modules/whimsy_server/manifests/procmail.pp
 
 Before pushing any changes here, understand the Apache Infra puppet workflow and test:
 
@@ -71,7 +71,7 @@ Before pushing any changes here, understand the Apache Infra puppet workflow and
             mkdir -p zmanda_asf/manifests
             echo "class zmanda_asf::client (){}" > zmanda_asf/manifests/client.pp
 
- * https://github.com/apache/infrastructure-puppet/blob/deployment/modules/vhosts_whimsy/README.md
+ * https://github.com/apache/infrastructure-p6/blob/production/modules/vhosts_whimsy/README.md
    This details the changes to default puppet we use for Whimsy.
 
 Manual Steps
@@ -86,6 +86,14 @@ and running - these are only needed for a new deployment.
      * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org -d whimsy4.apache.org -d whimsy-vm4.apache.org -d whimsy-test.apache.org`
 
  * The SVN settings should now be set up in whimsy-vm5 and later (Puppet 6)
+
+ * check that board-agenda-websocket.service is running:
+   * `sudo systemctl status board-agenda-websocket.service` - this should show the service is running and has been up for some while
+   * `curl localhost:34234` - should produce 'curl: (52) Empty reply from server' or similar
+   * if curl replies with something else, check that the service is still running (and has not just been restarted)
+   * if the syslog contains a message of the form: 
+     'Sep 24 13:09:07 whimsy-vm6 ruby[3435205]:   what():  Encryption not available on this event-machine'
+     then it will be necessary to re-install the gem eventmachine
 
  * Update the following cron scripts under https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin:
      * listmodsubs.sh - add the new host
