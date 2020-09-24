@@ -28,24 +28,24 @@ module ASF
     @home = ENV['HOME'] || Dir.home(Etc.getpwuid.name)
 
     @config = {}
-    if File.exist? "#@home/.whimsy"
-      @config.merge! YAML.load_file("#@home/.whimsy") rescue {}
-    end
+    home_config = "#{@home}/.whimsy"
+    @config.merge!(YAML.load_file(home_config) || {}) if File.exist? home_config
 
     # Search up the directory path for a .whimsy file containing overrides.
     # Default @root to /srv if no such file is found.
     @root = File.realpath(Dir.pwd)
     @root = loop do
       break '/srv' if @root == @home
-      break @root if File.exist? "#@root/.whimsy"
+      break @root if File.exist? "#{@root}/.whimsy"
       break '/srv' if @root == '/'
 
       @root = File.dirname(@root)
     end
 
-    if File.exist? "#@root/.whimsy"
-      @config.merge! YAML.load_file("#@root/.whimsy") || {}
-      @root = '/srv' unless Dir.exist? "#@root/whimsy"
+    root_config = "#{@root}/.whimsy"
+    if File.exist? root_config
+      @config.merge! YAML.load_file(root_config) || {}
+      @root = '/srv' unless Dir.exist? "#{@root}/whimsy"
     end
 
     # capture root
@@ -61,15 +61,15 @@ module ASF
     @testdata = {}
 
     # default :svn and :git
-    @config[:svn] ||= "#@root/svn/*"
-    @config[:git] ||= "#@root/git/*"
+    @config[:svn] ||= "#{@root}/svn/*"
+    @config[:git] ||= "#{@root}/git/*"
 
     # The cache is used for local copies of SVN files that may be updated by Whimsy
     # for example: podlings.xml
     # www/roster/views/actions/ppmc.json.rb (write)
     # lib/whimsy/asf/podlings.rb (read)
     # see: http://mail-archives.apache.org/mod_mbox/whimsical-dev/201705.mbox/%3CCAFG6u8FJwvWvnd29O-cUZyQnCXrRvWSRDc11zaPx6_Y4ihnsfg%40mail.gmail.com%3E
-    @config[:cache] ||= "#@root/cache"
+    @config[:cache] ||= "#{@root}/cache"
 
     # Contains the data files from the ezmlm mail server, e.g.
     # list-subs - subscriptions
@@ -77,7 +77,7 @@ module ASF
     # The above are used by mlist.rb
     # list-flags - flags domain listname
     # The above are used by mail.rb
-    @config[:subscriptions] ||= "#@root/subscriptions"
+    @config[:subscriptions] ||= "#{@root}/subscriptions"
 
     @config[:lib] ||= []
 
@@ -93,8 +93,9 @@ module ASF
     # add libraries to RUBYLIB, load path
     (@config[:lib] || []).reverse.each do |lib|
       next unless File.exist? lib
+
       lib = File.realpath(lib)
-      ENV['RUBYLIB']=([lib] + ENV['RUBYLIB'].to_s.split(':')).uniq.join(':')
+      ENV['RUBYLIB'] = ([lib] + ENV['RUBYLIB'].to_s.split(':')).uniq.join(':')
       $LOAD_PATH.unshift lib.untaint unless $LOAD_PATH.include? lib
     end
 
@@ -119,14 +120,17 @@ module ASF
     def self.root
       @root
     end
+
     # For testing only!!
     def self.setroot(path)
       @root = path
     end
+
     # Testing only: override svn config
     # path must end in /*
     def self.setsvnroot(path)
       raise RuntimeError "Invalid path: #{path}" unless path.end_with? '/*'
+
       @config[:svn] = path
     end
   end
