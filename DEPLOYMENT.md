@@ -94,6 +94,8 @@ and running - these are only needed for a new deployment.
    * if the syslog contains a message of the form: 
      'Sep 24 13:09:07 whimsy-vm6 ruby[3435205]:   what():  Encryption not available on this event-machine'
      then it will be necessary to re-install the gem eventmachine
+     If the service still does not start, try stopping and starting it:
+     `sudo systemctl stop/start board-agenda-websocket.service`
 
  * Update the following cron scripts under https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin:
      * listmodsubs.sh - add the new host
