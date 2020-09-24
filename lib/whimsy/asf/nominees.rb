@@ -13,7 +13,7 @@ module ASF
       end
 
       meetings = ASF::SVN['Meetings']
-      nominations = Dir[File.join(meetings, '*', 'nominated-members.txt')].sort.last.untaint
+      nominations = Dir[File.join(meetings, '*', 'nominated-members.txt')].max.untaint
 
       nominations = File.read(nominations).split(/^\s*---+--\s*/)
       nominations.shift(2)

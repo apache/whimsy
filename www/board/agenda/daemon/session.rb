@@ -36,13 +36,13 @@ class Session
 
   # find the latest session for the given user, creating one if necessary.
   def self.user(id)
-    session = @@users[id].sort_by {|session| session[:mtime]}.last
+    session = @@users[id].max_by {|session| session[:mtime]}
     session = nil if session and session[:mtime] < Time.now - DAY
 
     # if not found, try refreshing data from disk and try again
     if not session
       Session.load
-      session = @@users[id].sort_by {|session| session[:mtime]}.last
+      session = @@users[id].max_by {|session| session[:mtime]}
       session = nil if session and session[:mtime] < Time.now - DAY
     end
 

@@ -14,7 +14,7 @@ MEETINGS = ASF::SVN['Meetings']
 # @return reminders {"proxy@apache.org" => ["IRC line", ...]}
 # @see foundation/Meetings/*.rb for other scripts that deal with
 #   IRC log parsing, attendance marking, and proxy handling
-def reminder_lines(meeting = File.basename(Dir[File.join(MEETINGS, '2*')].sort.last).untaint)
+def reminder_lines(meeting = File.basename(Dir[File.join(MEETINGS, '2*')].max).untaint)
   lines = IO.read(File.join(MEETINGS, meeting, 'proxies'))
   proxylist = lines.scan(/\s\s(.{25})(.*?)\((.*?)\)/).map { |l| [l[0].strip, l[1].strip, l[2]]} # [["Shane Curcuru    ", "David Fisher ", "wave"], ...]
   copyproxy = Hash.new{|h,k| h[k] = [] }

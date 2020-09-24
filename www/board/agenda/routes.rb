@@ -7,14 +7,14 @@ UNAVAILABLE = Status.updates_disallowed_reason # are updates disallowed?
 
 # redirect root to latest agenda
 get '/' do
-  agenda = dir('board_agenda_*.txt').sort.last
+  agenda = dir('board_agenda_*.txt').max
   pass unless agenda
   redirect "#{request.path}#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/"
 end
 
 # alias for latest agenda
 get '/latest/' do
-  agenda = dir('board_agenda_*.txt').sort.last
+  agenda = dir('board_agenda_*.txt').max
   pass unless agenda
   call env.merge(
     'PATH_INFO' => "/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/"
@@ -23,7 +23,7 @@ end
 
 # alias for latest agenda in JSON format
 get '/latest.json' do
-  agenda = dir('board_agenda_*.txt').sort.last
+  agenda = dir('board_agenda_*.txt').max
   pass unless agenda
   call env.merge!(
     'PATH_INFO' => "/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}.json"
@@ -68,7 +68,7 @@ end
 # redirect shepherd to latest agenda
 get '/shepherd' do
   user=ASF::Person.find(env.user).public_name.split(' ').first
-  agenda = dir('board_agenda_*.txt').sort.last
+  agenda = dir('board_agenda_*.txt').max
   pass unless agenda
   redirect File.dirname(request.path) +
     "/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/shepherd/#{user}"
@@ -76,7 +76,7 @@ end
 
 # redirect missing to missing page for the latest agenda
 get '/missing' do
-  agenda = dir('board_agenda_*.txt').sort.last
+  agenda = dir('board_agenda_*.txt').max
   pass unless agenda # this will result in a 404
 
   # Support for sending out reminders before the agenda is created.
@@ -550,7 +550,7 @@ get '/new' do
   @owner = ASF::Board::ShepherdStream.new
 
   # Get list of unpublished and unapproved minutes
-  draft = YAML.load_file(Dir["#{AGENDA_WORK}/board_minutes*.yml"].sort.last)
+  draft = YAML.load_file(Dir["#{AGENDA_WORK}/board_minutes*.yml"].max)
   @minutes = dir("board_agenda_*.txt").
     map {|file| Date.parse(file[/\d[_\d]+/].gsub('_', '-'))}.
     reject {|date| date >= @meeting.to_date}.

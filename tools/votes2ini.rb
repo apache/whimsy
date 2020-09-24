@@ -6,7 +6,7 @@
 
 require 'json'
 
-raw_file = Dir["/srv/svn/Meetings/*/raw_board_votes.json"].sort.last
+raw_file = Dir["/srv/svn/Meetings/*/raw_board_votes.json"].max
 raw_votes = JSON.parse(IO.read(raw_file))
 txt_file = raw_file.sub('.json', '.txt')
 ini_file = File.dirname(raw_file) + '/board_nominations.ini'

@@ -63,7 +63,7 @@ end
 
 # Get a list of missing board reports
 agendas = Dir[File.join(ASF::SVN['foundation_board'], 'board_agenda_*.txt')]
-parsed = ASF::Board::Agenda.parse(IO.read(agendas.sort.last.untaint), true)
+parsed = ASF::Board::Agenda.parse(IO.read(agendas.max.untaint), true)
 missing = parsed.select {|item| item['missing']}.
   map {|item| item['title'].downcase}
 

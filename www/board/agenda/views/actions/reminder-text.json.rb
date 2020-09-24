@@ -6,7 +6,7 @@ require 'active_support/time'
 template = File.read("#{FOUNDATION_BOARD}/templates/#@reminder.mustache")
 
 # find the latest agenda
-agenda = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort.last.untaint
+agenda = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].max.untaint
 
 # determine meeting time
 meeting = ASF::Board.nextMeeting

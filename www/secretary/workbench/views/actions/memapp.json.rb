@@ -148,7 +148,7 @@ end
 
 task "svn commit memapp-received.text" do
   meetings = ASF::SVN['Meetings']
-  file = Dir["#{meetings}/2*/memapp-received.txt"].sort.last.untaint
+  file = Dir["#{meetings}/2*/memapp-received.txt"].max.untaint
   received = File.read(file)
   if received =~ /^no\s+\w+\s+\w+\s+\w+\s+#{@availid}\s/
     received[/^(no )\s+\w+\s+\w+\s+\w+\s+#{@availid}\s/,1] = 'yes'

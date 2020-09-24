@@ -61,7 +61,7 @@ get '/' do
 
   # determine latest month for which there are messages
   archives = Dir[File.join(ARCHIVE, '*.yml')].select {|name| name =~ %r{/\d{6}\.yml$}}
-  @mbox = archives.empty? ? nil : File.basename(archives.sort.last, '.yml')
+  @mbox = archives.empty? ? nil : File.basename(archives.max, '.yml')
   if @mbox
     @mbox = [Date.today.strftime('%Y%m'), @mbox].min
     @messages = Mailbox.new(@mbox).client_headers.select do |message|
@@ -186,7 +186,7 @@ get %r{/(\d{6})/(\w+)/_index_} do |month, hash|
   # Section 4.1 of the ASF bylaws provides requirements for when membership
   # applications can be accepted.  Two days are added to cover the adjournment
   # period of the meeting during which the vote takes place.
-  received = Dir["#{ASF::SVN['Meetings']}/2*/memapp-received.txt"].sort.last
+  received = Dir["#{ASF::SVN['Meetings']}/2*/memapp-received.txt"].max
   @meeting = Date.today - Date.parse(received[/\d{8}/]) <= 32 rescue true # rescue crash in local testing
 
   _html :parts

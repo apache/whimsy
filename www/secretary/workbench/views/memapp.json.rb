@@ -2,7 +2,7 @@
 
 # find latest memapp-received.txt file in the foundation/Meetings directory
 meetings = ASF::SVN['Meetings']
-received = Dir["#{meetings}/2*/memapp-received.txt"].sort.last.untaint
+received = Dir["#{meetings}/2*/memapp-received.txt"].max.untaint
 
 # extract contents
 pattern = /^\w+\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(.*?)\s*\n/

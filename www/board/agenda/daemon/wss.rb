@@ -20,10 +20,10 @@ require_relative './channel'
 options = OpenStruct.new
 options.host = '0.0.0.0'
 options.port = 34234
-options.privkey = Dir['/etc/letsencrypt/live/*/privkey.pem'].
-  sort_by {|file| File.mtime file}.last
-options.chain = Dir['/etc/letsencrypt/live/*/fullchain.pem'].
-  sort_by {|file| File.mtime file}.last
+options.privkey =
+  Dir['/etc/letsencrypt/live/*/privkey.pem'].max_by {|f| File.mtime f}
+options.chain =
+  Dir['/etc/letsencrypt/live/*/fullchain.pem'].max_by {|f| File.mtime f}
 options.kill = false
 options.timeout = 900
 
@@ -85,7 +85,7 @@ def restart_process
   exec RbConfig.ruby, File.expand_path(__FILE__), *ARGV
 end
 
-listener = Listen.to(__dir__) do |modified, added, removed|
+listener = Listen.to(__dir__) do
   restart_process
 end
 listener.start

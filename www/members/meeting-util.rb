@@ -77,7 +77,7 @@ class MeetingUtil
 
   # Get the latest available Meetings dir
   def self.get_latest(mtg_root)
-    return Dir[File.join(mtg_root, '2*')].sort.last
+    return Dir[File.join(mtg_root, '2*')].max
   end
   # Get the second latest available Meetings dir
   def self.get_previous(mtg_root)

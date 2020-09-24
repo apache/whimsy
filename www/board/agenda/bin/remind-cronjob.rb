@@ -24,7 +24,7 @@ require './models/agenda'
 reminder = eval(File.read("views/actions/reminder-text.json.rb"))
 
 # send reminders
-@agenda = File.basename(Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].sort.last)
+@agenda = File.basename(Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].max)
 @from = "Whimsy <no-reply@apache.org>"
 @dryrun = true
 @subject = reminder[:subject]

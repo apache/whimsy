@@ -15,7 +15,7 @@ class Reporter
     changed = false
 
     agenda_file = File.basename(
-      Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort.last).untaint
+      Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].max).untaint
 
     if ENV['RACK_ENV'] == 'test'
       return {agenda: agenda_file, drafts: []}

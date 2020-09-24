@@ -87,7 +87,7 @@ Agenda.update(@agenda, @message, auth: alternate_credentials) do |agenda|
     # add item letter to title
     discussion = agenda[/ 8\. Discussion Items.*\n 9\./m]
     items = discussion.scan(/^    ([A-Z]+)\./).flatten
-    item = items.empty? ? 'A' : items.sort.last.succ
+    item = items.empty? ? 'A' : items.max.succ
     title = "    #{item}. #{@title}\n\n"
 
     # update the commit message that will be used

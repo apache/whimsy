@@ -66,7 +66,7 @@ _html do
     ) do
       # Get a list of missing board reports from the agenda itself
       Dir.chdir ASF::SVN['foundation_board']
-      agenda = Dir['board_agenda_*.txt'].sort.last
+      agenda = Dir['board_agenda_*.txt'].max
       parsed = ASF::Board::Agenda.parse(IO.read(agenda.untaint), true)
       missing = parsed.select {|item| item['missing']}.
         map {|item| item['title'].downcase}
