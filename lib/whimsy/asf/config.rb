@@ -45,7 +45,7 @@ module ASF
 
     if File.exist? "#@root/.whimsy"
       @config.merge! YAML.load_file("#@root/.whimsy") || {}
-      @root = '/srv' unless Dir.exists? "#@root/whimsy"
+      @root = '/srv' unless Dir.exist? "#@root/whimsy"
     end
 
     # capture root
