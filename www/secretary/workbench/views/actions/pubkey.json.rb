@@ -32,9 +32,10 @@ task "email #{message.from}" do
 
   # deliver mail
   complete do
+    _disposition :keep # set this first in case mail sending fails
+
     mail.deliver!
 
     _status 'request to upload public key has been sent.'
-    _disposition :keep
   end
 end
