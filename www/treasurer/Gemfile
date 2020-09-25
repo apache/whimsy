@@ -5,5 +5,5 @@ asf_version = File.read(File.expand_path("#{root}/asf.version", __FILE__)).chomp
 gem 'whimsy-asf', asf_version, path: File.expand_path(root, __FILE__)
 
 gem 'escape'
-wunderbar_version = File.read('/srv/whimsy/wunderbar.version').chomp
+wunderbar_version = File.read(File.expand_path("#{root}/wunderbar.version", __FILE__)).chomp
 gem 'wunderbar', wunderbar_version

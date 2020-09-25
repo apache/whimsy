@@ -13,7 +13,7 @@ else
 end
 
 gem 'rake'
-wunderbar_version = File.read('/srv/whimsy/wunderbar.version').chomp
+wunderbar_version = File.read(File.expand_path("#{root}/wunderbar.version", __FILE__)).chomp
 gem 'wunderbar', wunderbar_version
 gem 'ruby2js'
 gem 'sinatra', '~> 2.0'
