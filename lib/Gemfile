@@ -5,7 +5,7 @@ gem 'json'
 gem 'nokogiri'
 gem 'rake'
 gem 'ruby-ldap'
-gem 'wunderbar'
+gem 'wunderbar', '1.3.4'
 gem 'pdf-reader'
 
 # For Travis testing

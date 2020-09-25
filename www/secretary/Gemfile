@@ -9,7 +9,7 @@ if File.exist? version_file
 end
 
 gem 'ruby2js', '>= 2.0.0'
-gem 'wunderbar'
+gem 'wunderbar', '1.3.4'
 gem 'mail'
 gem 'mime-types'
 

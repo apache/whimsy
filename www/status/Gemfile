@@ -7,3 +7,4 @@ gem 'whimsy-asf', asf_version, path: File.expand_path(root, __FILE__)
 gem 'passenger'
 
 gem 'mime-types'
+gem 'wunderbar', '1.3.4'
