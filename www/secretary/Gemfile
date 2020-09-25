@@ -9,7 +9,8 @@ if File.exist? version_file
 end
 
 gem 'ruby2js', '>= 2.0.0'
-gem 'wunderbar', '1.3.4'
+wunderbar_version = File.read('/srv/whimsy/wunderbar.version').chomp
+gem 'wunderbar', wunderbar_version
 gem 'mail'
 gem 'mime-types'
 
