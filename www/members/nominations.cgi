@@ -77,7 +77,6 @@ _html do
         _ 'This probably only works in the period shortly before or after a Members meeting!'
       }
     ) do
-      MEETINGS = ASF::SVN['Meetings']
       cur_mtg_dir = MeetingUtil.get_latest(MEETINGS).untaint
       nominations, people, emails = setup_data(cur_mtg_dir)
       _div.flexbox do
