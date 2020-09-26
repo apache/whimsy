@@ -57,12 +57,17 @@ task :update, [:command] do |task, args|
     gems = gemlines.map {|line| [line[/['"](.*?)['"]/, 1], line.strip]}.to_h
     gems['whimsy-asf'].sub! /,.*/, ", path: #{Dir.pwd.inspect}"
 
+    # Also need to define version for wunderbar as per the asf.gemspec file
+    wunderbar_version = File.read(File.expand_path('wunderbar.version', __dir__)).chomp
     require 'tmpdir'
     Dir.mktmpdir do |dir|
       Dir.chdir dir do
-        File.write "Gemfile",
-          "source 'https://rubygems.org'\n#{gems.values.join("\n")}"
-
+        contents = [
+          "source 'https://rubygems.org'",
+          "wunderbar_version = '#{wunderbar_version}'",
+          gems.values
+        ].join("\n")
+        File.write "Gemfile", contents
         system('bundle', 'install')
       end
     end
