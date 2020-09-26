@@ -15,7 +15,6 @@ if $0 == __FILE__
   require 'erubis'
   require 'ostruct'
   require 'pp'
-  $SAFE = 1
 
   ARGV.each do |arg|
     name, value = arg.split('=', 2)
@@ -74,7 +73,7 @@ when 'change-chair'
   @incoming_chair = ASF::Person[@chair]
   return unless @outgoing_chair and @incoming_chair
 
-  template = File.read('templates/change-chair.erb').untaint
+  template = File.read('templates/change-chair.erb')
   draft = Erubis::Eruby.new(template).result(binding)
 
   {draft: draft.reflow(0, 71)}
@@ -86,7 +85,7 @@ when 'establish'
   @chair = ASF::Person[@chair]
   @pmcname.gsub!(/\b\w/) {|c| c.upcase} unless @pmcname =~ /[A-Z]/
 
-  template = File.read('templates/establish.erb').untaint
+  template = File.read('templates/establish.erb')
   draft = Erubis::Eruby.new(template).result(binding)
   names = draft[/^(\s*\*.*\n)+/]
   if names
@@ -103,7 +102,7 @@ when 'terminate'
   @committee = ASF::Committee[@pmc]
   return unless @committee
 
-  template = File.read('templates/terminate.erb').untaint
+  template = File.read('templates/terminate.erb')
   draft = Erubis::Eruby.new(template).result(binding)
 
   {draft: draft.reflow(0, 71)}
