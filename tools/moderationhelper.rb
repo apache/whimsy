@@ -9,8 +9,6 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 
-$SAFE = 1
-
 _html do
   # ensure the generated text is selected ready for copy-pasting
   _script %{
