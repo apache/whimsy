@@ -10,8 +10,6 @@ require 'time'
 require 'tmpdir'
 require 'escape'
 
-$SAFE = 1
-
 FORMAT_NUMBER = 3 # json format number
 
 user = ASF::Person.new($USER)
@@ -214,7 +212,7 @@ _html do
         end
 
         # Each user can only subscribe once to each list in each timeslot
-        fn = "#{$USER}-#{@list}.json".untaint
+        fn = "#{$USER}-#{@list}.json"
 
         vars = {
           version: FORMAT_NUMBER,
@@ -243,7 +241,6 @@ _html do
         rc = 999
 
         Dir.mktmpdir do |tmpdir|
-          tmpdir.untaint
 
           # commit using user's credentials if possible, otherwise use whisysvn
           if not $PASSWORD
