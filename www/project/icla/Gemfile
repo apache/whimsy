@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 root = '../../../..'
 version_file = File.expand_path("#{root}/asf.version", __FILE__)
+wunderbar_version = File.read(File.expand_path("#{root}/wunderbar.version", __FILE__)).chomp
+
 if File.exist? version_file
   # for deployment and local testing
   asf_version = File.read(version_file).chomp
@@ -13,7 +15,7 @@ end
 
 gem 'mail'
 gem 'rake'
-gem 'wunderbar', '>= 1.2.6'
+gem 'wunderbar', wunderbar_version
 gem 'ruby2js'
 gem 'sinatra'
 gem 'nokogumbo'
