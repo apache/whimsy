@@ -2,6 +2,7 @@
 PAGETITLE = "New Member nominations cross-check" # Wvisible:meeting
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
+require 'erb'
 require 'mail'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
@@ -127,8 +128,9 @@ _html do
           # output an unordered list of subjects linked to the message archive
           _ul emails do |mail|
             _li do
+              # ERB::Util.url_encode changes space to %20 as required in the path component
               href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' +
-                URI.escape('<' + mail.message_id + '>')
+              ERB::Util.url_encode('<' + mail.message_id + '>')
 
               if nominees.any? {|name| mail.subject =~ /\b#{name}\b/i}
                 _a.present mail.subject, href: href
@@ -148,7 +150,7 @@ end
 _json do
   _ reports do |mail| # TODO: reports is not defined
     _subject mail.subject
-    _link MBOX + URI.escape('<' + mail.message_id + '>')
+    _link MBOX + ERB::Util.url_encode('<' + mail.message_id + '>') # TODO looks wrong: does not agree with href above
     _missing missing.any? {|title| mail.subject.downcase =~ /\b#{title}\b/}
   end
 end
