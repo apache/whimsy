@@ -144,8 +144,9 @@ _html do
 end
 
 # produce JSON output of reports
+# N.B. This is activated if the ACCEPT header references 'json'
 _json do
-  _ reports do |mail|
+  _ reports do |mail| # TODO: reports is not defined
     _subject mail.subject
     _link MBOX + URI.escape('<' + mail.message_id + '>')
     _missing missing.any? {|title| mail.subject.downcase =~ /\b#{title}\b/}
