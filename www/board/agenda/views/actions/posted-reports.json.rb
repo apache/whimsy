@@ -4,6 +4,7 @@
 #
 
 require 'date'
+require 'erb'
 require 'mail'
 require 'whimsy/asf/agenda'
 
@@ -70,7 +71,8 @@ missing = parsed.select {|item| item['missing']}.
 # produce output
 _ reports do |path, mail|
   _subject mail.subject
-  _link THREAD + URI.escape('<' + mail.message_id + '>')
+ # ERB::Util.url_encode changes space to %20 as required in the path component
+  _link THREAD + ERB::Util.url_encode('<' + mail.message_id + '>')
   _path path
 
   subject = mail.subject.downcase

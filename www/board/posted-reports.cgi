@@ -2,6 +2,7 @@
 PAGETITLE = "Posted Board Report Crosscheck" # Wvisible:board
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
+require 'erb'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery'
@@ -89,7 +90,8 @@ _html do
           report_mails.each do |mail|
             _tr do
               _td do
-                href = THREAD + URI.escape('<' + mail.message_id + '>')
+              # ERB::Util.url_encode changes space to %20 as required in the path component
+              href = THREAD + ERB::Util.url_encode('<' + mail.message_id + '>')
                 if missing.any? {|title| mail.subject.downcase =~ /\b#{title}\b/}
                   _td do
                     _a.missing mail.subject, href: href
@@ -109,10 +111,11 @@ _html do
 end
 
 # produce JSON output of reports
+# N.B. This is activated if the ACCEPT header references 'json'
 _json do
   _ report_mails do |mail|
     _subject mail.subject
-    _link THREAD + URI.escape('<' + mail.message_id + '>')
+    _link THREAD + ERB::Util.url_encode('<' + mail.message_id + '>')
 
     subject = mail.subject.downcase
     _missing missing.any? {|title| subject =~ /\b#{title}\b/}
