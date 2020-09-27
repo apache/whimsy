@@ -142,3 +142,12 @@ _html do
     end
   end
 end
+
+# produce JSON output of reports
+_json do
+  _ reports do |mail|
+    _subject mail.subject
+    _link MBOX + URI.escape('<' + mail.message_id + '>')
+    _missing missing.any? {|title| mail.subject.downcase =~ /\b#{title}\b/}
+  end
+end
