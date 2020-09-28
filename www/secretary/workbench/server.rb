@@ -123,8 +123,9 @@ post '/tasklist/:file' do
 end
 
 # posted actions
+SAFE_ACTIONS = %w[check-mail check-signature]
 post '/actions/:file' do
-  return [503, UNAVAILABLE] if UNAVAILABLE unless params[:file] == 'check-mail'
+  return [503, UNAVAILABLE] if UNAVAILABLE && !SAFE_ACTIONS.include?(params[:file])
 
   _json :"actions/#{params[:file]}"
 end
