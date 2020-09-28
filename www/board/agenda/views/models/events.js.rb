@@ -169,12 +169,12 @@ class Events
     end
 
     def @@socket.onerror(event)
-      self.log 'WebSocket connection terminated' if @@socket
+      self.log 'WebSocket connection failed' if @@socket
       @@socket = nil
     end
 
     def @@socket.onclose(event)
-      self.log 'WebSocket connection terminated' if @@socket
+      self.log 'WebSocket connection closed' if @@socket
       @@socket = nil
     end
 
