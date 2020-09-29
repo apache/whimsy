@@ -161,7 +161,7 @@ module SiteStandards
   # @param tlp true if project; podling otherwise
   # @return [hash of site data, crawl_time]
   def get_sites(tlp = true)
-      local_copy = File.expand_path("#{get_url(true)}#{get_filename(tlp)}", __FILE__).untaint
+      local_copy = File.expand_path("#{get_url(true)}#{get_filename(tlp)}", __FILE__)
       if File.exist? local_copy
         crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
         sites = JSON.parse(File.read(local_copy))
