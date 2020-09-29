@@ -80,6 +80,8 @@ class Parts < Vue
       _li "\u21c5 flip", onMousedown: self.rotate_attachment
       _li "\u21B6 left", onMousedown: self.rotate_attachment
       _li.divider
+      _li "\u2704 revert", onMousedown: self.revert
+      _li.divider
       _li "\u2716 delete", onMousedown: self.delete_attachment
       _li "\u2709 pdf-ize", onMousedown: self.pdfize
       _li.divider
@@ -218,6 +220,8 @@ class Parts < Vue
           _li "\u21B7 right", onMousedown: self.rotate_attachment
           _li "\u21c5 flip", onMousedown: self.rotate_attachment
           _li "\u21B6 left", onMousedown: self.rotate_attachment
+          _li.divider
+          _li "\u2704 revert", onMousedown: self.revert
           _li.divider
           _li "\u2716 delete", onMousedown: self.delete_attachment
           _li "\u2709 pdf-ize", onMousedown: self.pdfize
@@ -403,6 +407,27 @@ class Parts < Vue
       else
         window.parent.location.href = '../..'
       end
+    }.catch {|error|
+      alert error
+      self.hideMenu()
+    }
+  end
+
+  # revert to the original
+  def revert(_event)
+    data = {
+      selected: @menu || decodeURI(@selected),
+      message: window.parent.location.pathname
+    }
+
+    @busy = true
+    HTTP.post('../../actions/revert', data).then {|response|
+      @attachments = response.attachments
+      self.selectPart response.selected
+      self.hideMenu()
+
+      # reload attachment in content pane
+      window.parent.frames.content.location.href = response.selected
     }.catch {|error|
       alert error
       self.hideMenu()

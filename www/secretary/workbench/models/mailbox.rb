@@ -104,6 +104,19 @@ class Mailbox
   end
 
   #
+  # Revert a message
+  #
+  def self.revert(message)
+    month, hash = message.match(%r{/(\d+)/(\w+)}).captures
+    mailbox = Mailbox.new(month)
+    email = File.read(File.join(mailbox.dir, hash), encoding: Encoding::BINARY)
+    headers = Message.parse(email)
+    message = Message.new(mailbox, hash, headers, email)
+    message.write_headers
+    message
+  end
+
+  #
   # Find a message
   #
   def find(hash)
