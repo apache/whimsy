@@ -10,7 +10,7 @@ require 'escape'
 
 
 user = ASF::Person.new($USER)
-unless user.asf_member? or ASF.pmc_chairs.include?  user or $USER=='ea'
+unless user.asf_member? or ASF.pmc_chairs.include? user
   print "Status: 401 Unauthorized\r\n"
   print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
   exit
@@ -85,8 +85,8 @@ _html do
           bills = ASF::SVN.svnurl('Bills')
 
           # validate @file, @dest form parameters
-          name = @file.original_filename.gsub(/[^-.\w]/, '_').sub(/^\.+/, '_').untaint
-          @dest.untaint if @dest =~ /^\w+$/
+          name = @file.original_filename.gsub(/[^-.\w]/, '_').sub(/^\.+/, '_')
+          raise ArgumentError, "Unexpected directory name" unless @dest =~ /^\w+$/
 
           if @file.respond_to? :empty? and @file.empty?
             _pre 'File is required', class: '_stderr'
@@ -102,8 +102,6 @@ _html do
             _p 'Log of your upload/checkin follows:'
 
             Dir.mktmpdir do |tmpdir|
-              tmpdir.untaint
-
               ASF::SVN.svn_('checkout', [File.join(bills, @dest), tmpdir], _,
                   {depth: 'empty', user: $USER, password: $PASSWORD})
 
@@ -120,4 +118,3 @@ _html do
     end
   end
 end
-
