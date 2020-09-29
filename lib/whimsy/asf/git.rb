@@ -1,4 +1,3 @@
-require 'thread'
 require 'open3'
 
 module ASF
@@ -29,8 +28,7 @@ module ASF
     end
 
     # path to <tt>repository.yml</tt> in the source.
-    REPOSITORY = File.expand_path('../../../../repository.yml', __FILE__).
-      untaint
+    REPOSITORY = File.expand_path('../../../repository.yml', __dir__)
 
     @semaphore = Mutex.new
     @@repository_mtime = nil
@@ -41,10 +39,10 @@ module ASF
     #
     def self.repos
       @semaphore.synchronize do
-        git = Array(ASF::Config.get(:git)).map {|dir| dir.untaint}
+        git = Array(ASF::Config.get(:git))
 
         # reload if repository changes
-        if File.exist?(REPOSITORY) && @@repository_mtime!=File.mtime(REPOSITORY)
+        if File.exist?(REPOSITORY) && @@repository_mtime != File.mtime(REPOSITORY)
           @repos = nil
         end
 
@@ -62,7 +60,7 @@ module ASF
           end
 
           @repos = Hash[Dir[*git].map { |name|
-            if Dir.exist? name.untaint
+            if Dir.exist? name
               out, _, status =
                 Open3.capture3(*%(git config --get remote.origin.url), {chdir: name})
               if status.success?
@@ -100,11 +98,7 @@ module ASF
     # Find a local git clone.  Raises an exception if not found.
     #
     def self.find!(name)
-      result = self.find(name)
-
-      if not result
-        raise Exception.new("Unable to find git clone for #{name}")
-      end
+      result = self.find(name) or raise ArgumentError, "Unable to find git clone for #{name}"
 
       result
     end
