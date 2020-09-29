@@ -55,7 +55,7 @@ module LogParser
 
   # Related to timestamps in error log output
   TRUNCATE = 6 # Ensure consistency in keys
-  TIME_OFFSET = 10000000.0 # Offset milliseconds slightly for array entries
+  TIME_OFFSET = 10_000_000.0 # Offset milliseconds slightly for array entries
   # Ignore error lines from other tools with long tracebacks
   IGNORE_TRACEBACKS = ["rack.rb", "asf/themes", "phusion_passenger"]
 
@@ -78,11 +78,12 @@ module LogParser
   # @return array of reduced, scrubbed entries as hashes
   def parse_whimsy_access(f)
     access = read_logz(f).scan(/<%JSON:httpd_access%> (\{.*\})/).flatten
-    logs = JSON.parse('[' + access.join(',') + ']').reject { |i|
+    logs = JSON.parse('[' + access.join(',') + ']').reject do |i|
       (i['useragent'] =~ /Ping My Box/) || (i['uri'] =~ Regexp.union(IGNORED_URIS)) || (i['status'] == 304)
-    }
+    end
     logs.each do |i|
-      %w(geo_country geo_long geo_lat geo_coords geo_city geo_combo duration request bytes vhost document request_method clientip query_string).each do |g|
+      %w(geo_country geo_long geo_lat geo_coords geo_city geo_combo duration request
+         bytes vhost document request_method clientip query_string).each do |g|
         i.delete(g)
       end
     end
@@ -96,10 +97,10 @@ module LogParser
     remainder = logs
     apps = {}
     apphash.each_key do |a|
-      apps[a] = Hash.new{|h,k| h[k] = [] }
-      apps[a][RUSER] = Hash.new{|h,k| h[k] = 0 }
-      apps[a][REFERER] = Hash.new{|h,k| h[k] = 0 }
-      apps[a][URIHIT] = Hash.new{|h,k| h[k] = 0 }
+      apps[a] = Hash.new {|h, k| h[k] = [] }
+      apps[a][RUSER] = Hash.new {|h, k| h[k] = 0 }
+      apps[a][REFERER] = Hash.new {|h, k| h[k] = 0 }
+      apps[a][URIHIT] = Hash.new {|h, k| h[k] = 0 }
     end
     apps.each do |app, data|
       items, remainder = remainder.partition{ |l| l['uri'] =~ /\A\/#{app}/ }
@@ -109,11 +110,11 @@ module LogParser
         data[URIHIT][l[URIHIT]] += 1
       end
     end
-    apps[REMAINDER] = Hash.new{|h,k| h[k] = [] }
-    apps[REMAINDER][RUSER] = Hash.new{|h,k| h[k] = 0 }
-    apps[REMAINDER][REFERER] = Hash.new{|h,k| h[k] = 0 }
-    apps[REMAINDER][URIHIT] = Hash.new{|h,k| h[k] = 0 }
-    apps[REMAINDER]['useragent'] = Hash.new{|h,k| h[k] = 0 }
+    apps[REMAINDER] = Hash.new {|h, k| h[k] = [] }
+    apps[REMAINDER][RUSER] = Hash.new {|h, k| h[k] = 0 }
+    apps[REMAINDER][REFERER] = Hash.new {|h, k| h[k] = 0 }
+    apps[REMAINDER][URIHIT] = Hash.new {|h, k| h[k] = 0 }
+    apps[REMAINDER]['useragent'] = Hash.new {|h, k| h[k] = 0 }
     remainder.each do |l|
       apps[REMAINDER][RUSER][l[RUSER]] += 1
       apps[REMAINDER][REFERER][l[REFERER]] += 1
@@ -128,7 +129,7 @@ module LogParser
   # @return app_report, misses_data
   def get_access_reports(f = File.join(ERROR_LOG_DIR, 'whimsy_access.log'))
     access = parse_whimsy_access(f)
-    hits, miss = access.partition{ |l| l['status'] == 200 }
+    hits, miss = access.partition { |l| l['status'] == 200 }
     apps = collate_whimsy_access(hits)
     return apps, miss
   end
@@ -153,9 +154,9 @@ module LogParser
           if capture =~ /Passenger/
             logs[DateTime.parse(last_time).iso8601(TRUNCATE)] = capture
           end
-        elsif (l =~ /(_ERROR|_WARN  (.+)whimsy)/) && !(l =~ ignored)
+        elsif (l =~ /(_ERROR|_WARN  (.+)whimsy)/) && l !~ ignored
           # Offset our time so it doesn't overwrite any Passenger entries
-          (logs[(DateTime.parse(last_time) + 1/TIME_OFFSET).iso8601(TRUNCATE)] ||= []) << l
+          (logs[(DateTime.parse(last_time) + 1 / TIME_OFFSET).iso8601(TRUNCATE)] ||= []) << l
         end
       rescue StandardError => e
         puts e
@@ -183,7 +184,7 @@ module LogParser
     ignored = Regexp.union(IGNORE_TRACEBACKS)
     read_logz(f).lines.each do |l|
       if (m = r.match(l))
-        if !(ignored =~ m[2])
+        if ignored !~ m[2]
           begin
             logs[DateTime.parse(m[1]).iso8601(6)] = m[2]
           rescue StandardError
@@ -222,4 +223,3 @@ module LogParser
     return logs.sort.to_h # Sort by time order
   end
 end
-
