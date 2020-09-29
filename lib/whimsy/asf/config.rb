@@ -96,7 +96,7 @@ module ASF
 
       lib = File.realpath(lib)
       ENV['RUBYLIB'] = ([lib] + ENV['RUBYLIB'].to_s.split(':')).uniq.join(':')
-      $LOAD_PATH.unshift lib.untaint unless $LOAD_PATH.include? lib
+      $LOAD_PATH.unshift lib unless $LOAD_PATH.include? lib
     end
 
     # Look up a configuration value by name (generally a symbol, like
@@ -114,7 +114,7 @@ module ASF
     # Set a local directory corresponding to a path
     # Useful as a test data override.
     def self.[]=(name, path)
-      @testdata[name] = File.expand_path(path).untaint
+      @testdata[name] = File.expand_path(path)
     end
 
     def self.root

@@ -169,7 +169,7 @@ module LogParser
   # @return hash of arrays of interesting entries
   def parse_error_logs(d = ERROR_LOG_DIR, logs = {})
     Dir[File.join(d, 'error?lo*')].each do |f|
-      parse_error_log(f.untaint, logs)
+      parse_error_log(f, logs)
     end
     return logs
   end
@@ -201,7 +201,7 @@ module LogParser
   # @return hash of arrays of interesting entries
   def parse_whimsy_errors(d = ERROR_LOG_DIR, logs = {})
     Dir[File.join(d, 'whimsy_error.lo*')].each do |f|
-      parse_whimsy_error(f.untaint, logs)
+      parse_whimsy_error(f, logs)
     end
     return logs
   end
@@ -211,10 +211,9 @@ module LogParser
   # @param d directory to scan for *error.log*
   # @return hash of arrays of interesting entries
   def get_errors(current, dir: ERROR_LOG_DIR)
-    dir.untaint
     if current
       logs = LogParser.parse_whimsy_error(File.join(dir, 'whimsy_error.log'))
-      error_log = Dir[File.join(dir, 'error?log')].first.untaint
+      error_log = Dir[File.join(dir, 'error?log')].first
       LogParser.parse_error_log(error_log, logs) if error_log
     else
       logs = LogParser.parse_whimsy_errors(dir)
