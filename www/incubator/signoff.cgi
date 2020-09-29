@@ -127,7 +127,7 @@ _html do
                     _a name, href: ROSTER_URL + people[name]
                   end
                 else
-                  _a name, href: ROSTER_URL + '?q=' + URI.encode(name)
+                  _a name, href: ROSTER_URL + "?" + URI.encode_www_form([["q", name]])
                 end
               end
 
