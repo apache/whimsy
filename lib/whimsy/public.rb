@@ -3,7 +3,6 @@
 #
 
 require 'json'
-#require 'wunderbar'
 require 'net/https'
 require 'fileutils'
 
@@ -14,14 +13,13 @@ module Public
   # contents of a given public file, read from local copy if possible,
   # fetched from the web otherwise
   def self.getfile(pubname)
-    local_copy = File.expand_path('../../../www/public/'+pubname, __FILE__.untaint).untaint
+    local_copy = File.expand_path('../../../www/public/' + pubname, __FILE__)
     if File.exist? local_copy
-#      Wunderbar.info "Using local copy of #{pubname}"
       File.read(local_copy)
     else
-#      Wunderbar.info "Fetching remote copy of #{pubname}"
-      response = Net::HTTP.get_response(URI(DATAURI+pubname))
+      response = Net::HTTP.get_response(URI(DATAURI + pubname))
       raise ArgumentError, "'#{pubname}' #{response.message}" unless response.is_a?(Net::HTTPSuccess)
+
       response.body
     end
   end
