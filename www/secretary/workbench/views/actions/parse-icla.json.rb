@@ -1,9 +1,11 @@
 # parse an icla from a PDF
 
+require 'uri'
 require_relative '../../../iclaparser'
 require_relative '../../models/mailbox'
 
-attachment = URI.decode(@attachment) # derived from a URI
+
+attachment = URI::RFC2396_Parser.new.unescape(@attachment) # derived from a URI
 
 # WHIMSY-322
 ALIASES = {

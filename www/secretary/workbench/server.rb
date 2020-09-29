@@ -9,6 +9,7 @@ require 'ruby2js/es2017/strict'
 require 'ruby2js/filter/functions'
 require 'ruby2js/filter/require'
 require 'erb'
+require 'uri'
 require 'sanitize'
 require 'escape'
 require 'time' # for iso8601
@@ -221,7 +222,7 @@ get %r{/(\d{6})/(\w+)/_danger_/(.*?)} do |month, hash, name|
   message = Mailbox.new(month).find(hash)
   pass unless message
 
-  @part = message.find(URI.decode(name))
+  @part = message.find(URI::RFC2396_Parser.new.unescape(name))
   pass unless @part
 
   _html :danger
@@ -232,7 +233,7 @@ get %r{/(\d{6})/(\w+)/(.*?)} do |month, hash, name|
   message = Mailbox.new(month).find(hash)
   pass unless message
 
-  part = message.find(URI.decode(name))
+  part = message.find(URI::RFC2396_Parser.new.unescape(name))
   pass unless part
 
   [200, {'Content-Type' => part.content_type}, part.body.to_s]

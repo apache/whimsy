@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'uri'
+
 # check signature on an attachment
 #
 
@@ -85,7 +87,7 @@ message = Mailbox.find(@message)
 
 begin
   # fetch attachment and signature
-  attachment = message.find(URI.decode(@attachment)).as_file # This is derived from a URI
+  attachment = message.find(URI::RFC2396_Parser.new.unescape(@attachment)).as_file # This is derived from a URI
   signature  = message.find(@signature).as_file # This is derived from the YAML file
 
   # pick the latest gpg version
