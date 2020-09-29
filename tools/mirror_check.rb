@@ -44,8 +44,6 @@ TODO - any more checks?
 
 =end
 
-$SAFE = 1
-
 URLMATCH = %r!^https?://[^/]+/(\S+/)?$!i
 HTTPDIRS = %w(zzz/ zzz/mirror-tests/) # must exist
 HDRMATCH = %r!<h\d>Apache Software Foundation Distribution Meta-Directory</h\d>! # must be on the zzz index page
@@ -89,7 +87,6 @@ end
 
 # get an HTTP URL
 def getHTTPHdrs(url)
-  url.untaint
   uri = URI.parse(url)
   http = Net::HTTP.new(uri.host, uri.port)
   http.use_ssl = uri.scheme == 'https'
@@ -131,7 +128,6 @@ end
 
 # get an HTTP URL=> response
 def getHTTP(url)
-  url.untaint
   uri = URI.parse(url)
   http = Net::HTTP.new(uri.host, uri.port)
   http.use_ssl = uri.scheme == 'https'
@@ -373,7 +369,6 @@ def doPost(url)
 end
 
 if __FILE__ == $0
-  $SAFE = 0
   init
   url = ARGV[0] || "localhost" # easier to test in an IDE
   checkHTTP(url+"") # allow url to be untainted later
