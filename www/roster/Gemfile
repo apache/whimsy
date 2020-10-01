@@ -15,8 +15,7 @@ end
 gem 'rake'
 wunderbar_version = File.read(File.expand_path("#{root}/wunderbar.version", __FILE__)).chomp
 gem 'wunderbar', wunderbar_version
-gem 'ruby2js'
-gem 'regexp_parser' # Temp fix required by ruby2js 3.3.0, https://github.com/rubys/ruby2js/issues/54
+gem 'ruby2js', '>= 3.3.1' # Travis fails with 3.3.0
 gem 'sinatra', '~> 2.0'
 gem 'nokogumbo'
 gem 'mail'
