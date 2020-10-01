@@ -31,7 +31,7 @@ addons:
 
 # install recent Node.js
 before_install:
-  - nvm install 7
+  - nvm install 12
 
 # configure ASF LDAP
 sudo: required
