@@ -13,13 +13,12 @@ gemfile:
 
 language: ruby
 rvm: # http://rubies.travis-ci.org/
-  - 2.4
-#  - 2.5 (we don't need this yet, and it doubles the run time)
+  - 2.7
 
-# Additionally test lib on 2.5
+# Additionally test lib on focal
 jobs:
   include:
-  - rvm: 2.5
+  - rvm: 2.7
     dist: focal
     gemfile: lib/Gemfile
 
