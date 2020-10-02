@@ -52,6 +52,8 @@ module ASF
     def initialize(node)
       @name = node['name']
       @resource = node['resource']
+      # Validate resource for later use resource can contain '-' and '.' (lucene.net)
+      raise ArgumentError, "Invalid resource #{@resource}" unless @resource =~ /\A[-.\w]+\z/
       @sponsor = node['sponsor']
       # Needed for matching against mailing list names
       @resourceAliases = []
@@ -304,8 +306,6 @@ module ASF
     # include: <tt>:ipClearance</tt>, <tt>:sourceControl</tt>, <tt>:wiki</tt>,
     # <tt>:jira</tt>, <tt>:proposal</tt>, <tt>:website</tt>, <tt>:news</tt>
     def podlingStatus
-      # resource can contain '-'
-      @resource.untaint if @resource =~ /\A[-\w]+\z/
       incubator_content = ASF::SVN['incubator-podlings']
       resource_yml = File.join(incubator_content, "#{@resource}.yml")
       if File.exist?(resource_yml)

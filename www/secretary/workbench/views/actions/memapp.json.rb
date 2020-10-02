@@ -15,7 +15,7 @@ fileext = File.extname(@selected).downcase if @signature.empty?
 # verify that a membership form under that name stem doesn't already exist
 if "#@filename#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/ # check taint requirements
   # returns name if it matches as stem or fully (e.g. for directory)
-  form = ASF::MemApps.search @filename.untaint
+  form = ASF::MemApps.search @filename
   if form
     _warn "documents/member_apps/#{form} already exists"
   end
@@ -92,8 +92,8 @@ task "update cn=member,ou=groups,dc=apache,dc=org in LDAP" do
     if ASF.memberids.include? @availid
       _transcript ["#@availid already in group member"]
     else
-      ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",
-        env.password.untaint)
+      ldap.bind("uid=#{env.user},ou=people,dc=apache,dc=org",
+        env.password)
 
       ldap.modify "cn=member,ou=groups,dc=apache,dc=org",
         [LDAP.mod(LDAP::LDAP_MOD_ADD, 'memberUid', [@availid])]
@@ -148,7 +148,7 @@ end
 
 task "svn commit memapp-received.text" do
   meetings = ASF::SVN['Meetings']
-  file = Dir["#{meetings}/2*/memapp-received.txt"].max.untaint
+  file = Dir["#{meetings}/2*/memapp-received.txt"].max
   received = File.read(file)
   if received =~ /^no\s+\w+\s+\w+\s+\w+\s+#{@availid}\s/
     received[/^(no )\s+\w+\s+\w+\s+\w+\s+#{@availid}\s/,1] = 'yes'

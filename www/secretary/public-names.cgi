@@ -182,7 +182,7 @@ _html do
             _a icla.id, href: "/roster/committer/#{icla.id}"
           end
           _td do
-            file = ASF::ICLAFiles.match_claRef(icla.claRef.untaint)
+            file = ASF::ICLAFiles.match_claRef(icla.claRef)
             if file
               _a icla.claRef, href: ASF::SVN.svnpath!('iclas', file)
             else

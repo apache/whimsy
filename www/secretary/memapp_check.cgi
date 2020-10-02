@@ -83,7 +83,7 @@ _table_ do
       end
       _td do
         if person.icla && person.icla.claRef
-          file = ASF::ICLAFiles.match_claRef(person.icla.claRef.untaint)
+          file = ASF::ICLAFiles.match_claRef(person.icla.claRef)
           if file
             _a person.icla.claRef, href: ASF::SVN.svnpath!('iclas', file), target: '_blank'
           else
