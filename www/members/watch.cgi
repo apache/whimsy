@@ -32,7 +32,7 @@ _html do
     # start with the Watch List itself
     watch_list = ASF::Person.member_watch_list.keys
     meeting =
-      File.dirname(Dir[File.join(meetings, '*', 'nominated-members.txt')].max).untaint
+      File.dirname(Dir[File.join(meetings, '*', 'nominated-members.txt')].max)
 
     txt = File.read(File.join(meeting, 'nominated-members.txt'))
     nominations = txt.scan(/^---+\n\s*\w+.*<(\S+)@apache.org>/).flatten
@@ -251,7 +251,6 @@ _html do
                 # search published minutes
                 if minutes
                   resolution = nil
-                  minutes.untaint
                   Nokogiri::HTML(File.read(minutes)).search('pre').each do |pre|
                     if pre.text.include? search_string
                       resolution = pre
@@ -274,7 +273,6 @@ _html do
                   # search unpublished agendas
                   board = ASF::SVN['foundation_board']
                   Dir[File.join(board, 'board_agenda_*')].sort.each do |agenda|
-                    agenda.untaint
                     if File.read(agenda).include? search_string
                       minutes = ASF::SVN.svnpath!('foundation_board', File.basename(agenda))
                       date = agenda.gsub('_','-')[/(\d+-\d+-\d+)/,1]

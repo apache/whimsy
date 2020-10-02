@@ -15,9 +15,9 @@ fileext = File.extname(@selected).downcase if @signature.empty?
 emeritus_request = "#{@filename}#{fileext}"
 if emeritus_request =~ /\A\w[-\w]*\.?\w*\z/ # check taint requirements
   names = ASF::EmeritusRequestFiles.listnames
-  if names.include? @filename.untaint
+  if names.include? @filename
     _warn "documents/emeritus-requests-received/#{@filename} already exists"
-  elsif names.include? emeritus_request.untaint
+  elsif names.include? emeritus_request
     _warn "documents/emeritus-requests-received/#{emeritus_request} already exists"
   end
 else

@@ -93,7 +93,6 @@ begin
   # pick the latest gpg version
   gpg = `which gpg2`.chomp
   gpg = `which gpg`.chomp if gpg.empty?
-  gpg.untaint
 
   # run gpg verify command
   # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
@@ -108,7 +107,7 @@ begin
     err.include? "gpg: Can't check signature: public key not found"
   then
     # extract and fetch key
-    keyid = err[/[RD]SA key (ID )?(\w+)/,2].untaint
+    keyid = err[/[RD]SA key (ID )?(\w+)/,2]
 
     out2 = err2 = '' # needed later
 

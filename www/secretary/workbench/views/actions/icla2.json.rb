@@ -73,7 +73,7 @@ end
 #   - calling .max on an empty array returns nil.  Treat it as one as there
 #     is an existing document that will be moved into this directory.
 #   - If all else fails, set count to "N"
-count = (Array(ASF::SVN.list((ASF::SVN.svnurl('iclas') + '/' + @filename).untaint)).
+count = (Array(ASF::SVN.list((ASF::SVN.svnurl('iclas') + '/' + @filename))).
       first.to_s.split.
       map {|name| name[/.*(\d+)\./, 1] || 1}.
       map(&:to_i).max || 1) + 1 rescue 'N'
@@ -158,8 +158,8 @@ if person.public_name != @pubname and @id != 'notinavail'
     complete do
       ldap = ASF.init_ldap(true)
 
-      ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",
-        env.password.untaint)
+      ldap.bind("uid=#{env.user},ou=people,dc=apache,dc=org",
+        env.password)
 
       ldap.modify person.dn, [ASF::Base.mod_replace('cn', @pubname.strip)]
 
@@ -217,8 +217,8 @@ if @id != 'notinavail'
     complete do
       ldap = ASF.init_ldap(true)
 
-      ldap.bind("uid=#{env.user.untaint},ou=people,dc=apache,dc=org",
-                env.password.untaint)
+      ldap.bind("uid=#{env.user},ou=people,dc=apache,dc=org",
+                env.password)
 
       ldap.modify person.dn, [ASF::Base.mod_replace('mail', @email.strip)]
 

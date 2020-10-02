@@ -41,7 +41,6 @@ class Attachment
     name = self.name.dup
     name.gsub! /^\W/, ''
     name.gsub! /[^\w.]/, '_'
-    name.untaint
   end
 
   # writes the attachment to the specified pathname, which must not exist
@@ -74,7 +73,7 @@ class Attachment
 
     if IMAGE_TYPES.include? ext or content_type.start_with? 'image/'
       pdf = SafeTempFile.new([safe_name, '.pdf'])
-      img2pdf = File.expand_path('../img2pdf', __dir__.untaint).untaint
+      img2pdf = File.expand_path('../img2pdf', __dir__)
       stdout, stderr, status = Open3.capture3 img2pdf, '--output', pdf.path,
         file.path
 
@@ -117,7 +116,7 @@ class Attachment
     File.write filename, body, encoding: Encoding::BINARY
 
     system 'svn', 'add', filename
-    system 'svn', 'propset', 'svn:mime-type', content_type.untaint, filename
+    system 'svn', 'propset', 'svn:mime-type', content_type, filename
 
     filename
   end

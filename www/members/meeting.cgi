@@ -70,7 +70,7 @@ end
 _html do
   _body? do
     MEETINGS = ASF::SVN['Meetings']
-    cur_mtg_dir = MeetingUtil.get_latest(MEETINGS).untaint
+    cur_mtg_dir = MeetingUtil.get_latest(MEETINGS)
     meeting = File.basename(cur_mtg_dir)
     svn_mtg_dir = File.join(MeetingUtil::RECORDS, meeting)
     mtg_date = Date.parse(meeting)

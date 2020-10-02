@@ -290,19 +290,19 @@ _html do
                   # determine the requesting party and cc_list
                   if @project.empty?
                     cc_list = ["operations@apache.org"]
-                    requestor = user.id.untaint
+                    requestor = user.id
                   else
                     pmc_list = ASF::Committee.find(@pmc).mail_list
-                    cc_list = ["private@#{pmc_list}.apache.org".untaint]
-                    requestor = @pmc[/([\w.-]+)/, 1].untaint
+                    cc_list = ["private@#{pmc_list}.apache.org"]
+                    requestor = @pmc[/([\w.-]+)/, 1]
                   end
 
                   if requestor == 'incubator' and not @podling.to_s.empty?
-                    cc_list << "private@#{@podling}.#{pmc_list}.apache.org".untaint
-                    requestor = "#{@podling}@incubator".untaint
+                    cc_list << "private@#{@podling}.#{pmc_list}.apache.org"
+                    requestor = "#{@podling}@incubator"
                   end
 
-                  cc_list << "#{@name} <#{@email}>".untaint
+                  cc_list << "#{@name} <#{@email}>"
                   cc_list << "secretary@apache.org"
 
                   # build the mail to be sent
@@ -328,7 +328,7 @@ _html do
 
                     --
                     Submitted by https://#{ENV['HTTP_HOST']}#{ENV['REQUEST_URI'].split('?').first}
-                    From #{`/usr/bin/host #{ENV['REMOTE_ADDR'].dup.untaint}`.chomp}
+                    From #{`/usr/bin/host #{ENV['REMOTE_ADDR']}`.chomp}
                     Using #{ENV['HTTP_USER_AGENT']}
                   EOF
 

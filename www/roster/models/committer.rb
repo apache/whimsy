@@ -129,8 +129,7 @@ class Committer
     if ASF::Person.find(env.user).asf_member? # i.e. member karma
 
       if person.icla and person.icla.claRef # Not all people have iclas
-        claRef = person.icla.claRef.untaint
-        file = ASF::ICLAFiles.match_claRef(claRef)
+        file = ASF::ICLAFiles.match_claRef(person.icla.claRef)
         if file
           url =ASF::SVN.svnurl('iclas')
           response[:forms][:icla] = "#{url}/#{file}"

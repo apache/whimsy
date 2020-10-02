@@ -40,8 +40,8 @@ class Mailbox
     name = File.basename(name, '.yml')
 
     if name =~ /^\d+$/
-      @name = name.untaint
-      @mbox = Dir["#{ARCHIVE}/#{@name}", "#{ARCHIVE}/#{@name}.gz"].first.untaint
+      @name = name
+      @mbox = Dir["#{ARCHIVE}/#{@name}", "#{ARCHIVE}/#{@name}.gz"].first
     else
       @name = name.split('.').first
       @mbox = "#{ARCHIVE}/#{name}"
@@ -100,7 +100,7 @@ class Mailbox
   #
   def self.find(message)
     month, hash = message.match(%r{/(\d+)/(\w+)}).captures
-    Mailbox.new(month.untaint).find(hash.untaint)
+    Mailbox.new(month).find(hash)
   end
 
   #

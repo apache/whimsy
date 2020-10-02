@@ -128,7 +128,7 @@ def emit_form(cur_mtg_dir, _meeting, volunteers)
             end
           end
         end
-        _pre IO.read(File.join(cur_mtg_dir, 'member_proxy.txt').untaint)
+        _pre IO.read(File.join(cur_mtg_dir, 'member_proxy.txt'))
       end
     end
   end
@@ -174,25 +174,25 @@ def emit_post(cur_mtg_dir, meeting, _)
 
   proxy[/Date: _(#{'_' *date.length})/, 1] = date.gsub(' ', '_')
 
-  proxyform = proxy.untaint
+  proxyform = proxy
 
   # report on commit
   _div.transcript do
     Dir.mktmpdir do |tmpdir|
       svn =  ASF::SVN.getInfoItem(File.join(MEETINGS,meeting),'url')
 
-      ASF::SVN.svn_('checkout',[svn.untaint, tmpdir.untaint], _,
+      ASF::SVN.svn_('checkout',[svn, tmpdir], _,
                     {quiet: true, user: $USER, password: $PASSWORD})
       Dir.chdir(tmpdir) do
         # write proxy form
-        filename = "proxies-received/#$USER.txt".untaint
+        filename = "proxies-received/#$USER.txt"
         File.write(filename, proxyform)
         ASF::SVN.svn_('add', filename, _)
         ASF::SVN.svn_('propset', ['svn:mime-type', 'text/plain; charset=utf-8', filename], _)
 
         # get a list of proxies
         list = Dir['proxies-received/*.txt'].map do |file|
-          form = File.read(file.untaint)
+          form = File.read(file)
 
           id = file[/([-A-Za-z0-9]+)\.\w+$/, 1]
           proxy = form[/hereby authorize ([\S].*) to act/, 1].
@@ -254,7 +254,7 @@ _html do
   _body? do
     # Find latest meeting and check if it's in the future yet
     MEETINGS = ASF::SVN['Meetings']
-    cur_mtg_dir = MeetingUtil.get_latest(MEETINGS).untaint
+    cur_mtg_dir = MeetingUtil.get_latest(MEETINGS)
     meeting = File.basename(cur_mtg_dir)
     today = Date.today.strftime('%Y%m%d')
     _whimsy_body(

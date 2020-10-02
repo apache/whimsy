@@ -15,7 +15,7 @@ ccla = "#@filename#{fileext}"
 
 # verify that a CCLA under that name doesn't already exist
 if ccla =~ /\A\w[-\w]*\.?\w*\z/
-  if ASF::CCLAFiles.exist?(ccla.untaint)
+  if ASF::CCLAFiles.exist?(ccla)
     _warn "documents/cclas/#{ccla} already exists"
   end
 else

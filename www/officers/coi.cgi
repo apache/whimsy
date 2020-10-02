@@ -9,15 +9,15 @@ require 'date'
 require 'tmpdir'
 
 coi_url = ASF::SVN.svnurl('conflict-of-interest')
-COI_CURRENT_TEMPLATE_URL = File.join(coi_url, 'template.txt').untaint
+COI_CURRENT_TEMPLATE_URL = File.join(coi_url, 'template.txt')
 
 YEAR = DateTime.now.strftime "%Y"
-COI_CURRENT_URL = File.join(coi_url, YEAR).untaint
+COI_CURRENT_URL = File.join(coi_url, YEAR)
 
 user = ASF::Person.find($USER)
 USERID = user.id
-USERNAME = user.cn.untaint
-USERMAIL = "#{USERID}@apache.org".untaint
+USERNAME = user.cn
+USERMAIL = "#{USERID}@apache.org"
 IDS = Hash.new {|h,k| h[k]=Array.new}
 committees = ASF::Committee.officers + ASF::Committee.nonpmcs
 chairs = committees.map do |committee|
@@ -30,7 +30,7 @@ ASF::Service['board'].members.each do |member|
 end
 
 # Get the list of files in this year's directory
-signerfileslist, err = ASF::SVN.svn('list', COI_CURRENT_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
+signerfileslist, err = ASF::SVN.svn('list', COI_CURRENT_URL, {user: $USER, password: $PASSWORD})
 # Currently the documents directory has limited access.
 # This includes ASF members, but does not include officers who are not members
 # Let others down gently
@@ -76,7 +76,7 @@ def get_affirmed_template(name, timestamp)
        Date: __
        Metadata: _______________Whimsy www/officers/coi.cgi________________'
   template, err =
-    ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
+    ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: $USER, password: $PASSWORD})
   raise RuntimeError.new("Failed to read current template.txt -- %s" % err) unless template
   centered_name = "#{name}".center(60, '_')
   centered_date ="#{timestamp}".center(62, '_')
@@ -185,13 +185,13 @@ def emit_post(_)
   current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S"
 
   affirmed = get_affirmed_template(USERNAME, current_timestamp)
-  user_filename = "#{USERID}.txt".untaint
+  user_filename = "#{USERID}.txt"
 
   # report on commit
   _div.transcript do
     Dir.mktmpdir do |tmpdir|
-      ASF::SVN.svn_!('checkout',[COI_CURRENT_URL, tmpdir.untaint], _,
-                    {quiet: true, user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
+      ASF::SVN.svn_!('checkout',[COI_CURRENT_URL, tmpdir], _,
+                    {quiet: true, user: $USER, password: $PASSWORD})
       Dir.chdir(tmpdir) do
         # write affirmation form
         File.write(user_filename, affirmed)
@@ -201,7 +201,7 @@ def emit_post(_)
         # commit
         ASF::SVN.svn_!('commit',[user_filename], _,
          {msg: "Affirm Conflict of Interest Policy for #{USERNAME}",
-           user: $USER.dup.untaint, password: $PASSWORD.dup.untaint})
+           user: $USER, password: $PASSWORD})
       end
     end
     # Send email to $USER, secretary@
