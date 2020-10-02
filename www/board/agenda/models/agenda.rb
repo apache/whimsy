@@ -87,18 +87,19 @@ class Agenda
   end
 
   def self.uptodate(file)
-    path = File.expand_path(file, FOUNDATION_BOARD).untaint
+    raise ArgumentError, "Invalid file name #{file}" unless file =~ /\Aboard_\w+_[\d_]+\.txt\z/
+    path = File.expand_path(file, FOUNDATION_BOARD)
     return false unless File.exist? path
     return Agenda[file][:mtime] == File.mtime(path)
   end
 
   def self.parse(file, mode)
+    raise ArgumentError, "Invalid file name #{file}" unless file =~ /\Aboard_\w+_[\d_]+\.txt\z/
     # for quick mode, anything will do
     mode = :quick if ENV['RACK_ENV'] == 'test'
     return Agenda[file][:parsed] if mode == :quick and Agenda[file][:mtime] != 0
 
-    file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\z/
-    path = File.expand_path(file, FOUNDATION_BOARD).untaint
+    path = File.expand_path(file, FOUNDATION_BOARD)
 
     return Agenda[file][:parsed] unless File.exist? path
 

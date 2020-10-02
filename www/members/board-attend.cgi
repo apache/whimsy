@@ -22,7 +22,7 @@ APPROVED = 'approved'
 def summarize(fname, dstats)
   meeting = File.basename(fname, '.*')
   begin
-    agenda = ASF::Board::Agenda.parse(File.read(fname.untaint))
+    agenda = ASF::Board::Agenda.parse(File.read(fname))
   rescue StandardError => e
     return "summarize(#{fname}) Agenda parse error: #{e.message} #{e.backtrace[0]}"
   end

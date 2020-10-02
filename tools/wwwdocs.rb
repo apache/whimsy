@@ -71,8 +71,8 @@ end
 # @return [ [PAGETITLE, [cat,egories] ], ... ]
 def scan_dir(dir)
   links = {}
-  Dir["#{dir}/**/*.cgi".untaint].each do |f|
-    l = scan_file(f.untaint)
+  Dir["#{dir}/**/*.cgi"].each do |f|
+    l = scan_file(f)
     links[f.sub(dir, '')] = l if l
   end
   return links
@@ -90,7 +90,7 @@ def get_auth
   hash = {}
   files = Dir[WHIMSY_CONF]
   return hash unless files.size == 1 # must match just one
-  file = files.first.untaint
+  file = files.first
   loc = nil
   File.read(file).each_line do |l|
     if l =~ %r{<LocationMatch ([^>]+)>}
@@ -172,8 +172,8 @@ end
 def scan_dir_svn(dir, regexs, auth = get_auth())
   links = {}
   auth = get_auth()
-  Dir["#{dir}/**/*.{cgi,rb}".untaint].sort.each do |f|
-    l = scan_file_svn(f.untaint, regexs)
+  Dir["#{dir}/**/*.{cgi,rb}"].sort.each do |f|
+    l = scan_file_svn(f, regexs)
     if (l[0].length + l[1].length) > 0
       fbase = f.sub(dir, '')
       realm = auth.select { |k, v| fbase.sub('/www', '').match(/\A#{k}/) }

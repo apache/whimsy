@@ -30,12 +30,12 @@ end
 
 # Read *.json from directory of mentor files
 # @return hash of mentors by apacheid
-def read_mentors(path)
+def read_mentors
   mentors = {}
-  Dir[File.join(path, '*.json')].sort.each do |file|
+  Dir[File.join(ASF::SVN[MENTORS_SVN], '*.json')].sort.each do |file|
     # Skip files with - dashes, they aren't apacheids
     next if file.include?('-')
-    read_mentor(file.untaint, mentors)
+    read_mentor(file, mentors)
   end
   return mentors
 end
@@ -56,7 +56,7 @@ _html do
       },
       helpblock: -> {
         uimap = MentorFormat::get_uimap(ASF::SVN[MENTORS_SVN])
-        mentors = read_mentors(ASF::SVN[MENTORS_SVN])
+        mentors = read_mentors
         errors, mentors = mentors.partition{ |k,v| v.has_key?(MentorFormat::ERRORS)}.map(&:to_h)
         notavailable, mentors = mentors.partition{ |k,v| v.has_key?(MentorFormat::NOTAVAILABLE)}.map(&:to_h)
         _p do
