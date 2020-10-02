@@ -18,7 +18,7 @@ gem 'sinatra', '~> 2.0'
 gem 'sanitize'
 wunderbar_version = File.read(File.expand_path("#{root}/wunderbar.version", __FILE__)).chomp
 gem 'wunderbar', wunderbar_version
-gem 'ruby2js', '3.2.0' # Travis fails with 3.3.[01]
+gem 'ruby2js', '>=3.3.1'
 gem 'execjs'
 gem 'listen'
 gem 'escape'

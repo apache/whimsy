@@ -8,7 +8,7 @@ if File.exist? version_file
   gem 'whimsy-asf', asf_version, path: File.expand_path(root, __FILE__)
 end
 
-gem 'ruby2js', '3.2.0' # Travis fails with 3.3.[01]
+gem 'ruby2js', '>=3.3.1'
 wunderbar_version = File.read(File.expand_path("#{root}/wunderbar.version", __FILE__)).chomp
 gem 'wunderbar', wunderbar_version
 gem 'mail'
