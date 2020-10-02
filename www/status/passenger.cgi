@@ -78,7 +78,7 @@ _html do
 
         path = app[/\A(\/.*):/, 1]
         if user.asf_officer_or_member?
-          restart = File.join(path.untaint, "tmp/restart.txt") if path
+          restart = File.join(path, "tmp/restart.txt") if path
           if restart and File.exist? restart
             if _.post? and @restart == restart
               FileUtils.touch restart

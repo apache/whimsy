@@ -144,7 +144,7 @@ if @establish and env.password
   # create 'victims' file for tlpreq tool
   ASF::SVN.svn('update', TLPREQ)
   establish -= Dir[File.join(TLPREQ, 'victims-#{date}.*.txt')].
-     map {|name| File.read(name.untaint).lines().map(&:chomp)}.flatten
+     map {|name| File.read(name).lines().map(&:chomp)}.flatten
   unless establish.empty?
     count = Dir[File.join(TLPREQ, 'victims-#{date}.*.txt')].length
     message = "record #{date} approved TLP resolutions"
@@ -176,10 +176,10 @@ if (@change || @establish) and env.password
     ASF::Mail.configure
     sender = ASF::Person.new(env.user)
     mail = Mail.new do
-      from "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
+      from "#{sender.public_name.inspect} <#{sender.id}@apache.org>"
 
       to people.map {|person|
-        "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
+        "#{person.public_name.inspect} <#{person.id}@apache.org>"
       }.to_a
 
       cc 'Apache Board <board@apache.org>'

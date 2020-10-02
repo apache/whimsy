@@ -117,7 +117,7 @@ end
 # @return true if we think it succeeded; false in all other cases
 def send_form(formdata: {})
   rc = 999
-  fn = "#{$USER}.json".untaint
+  fn = "#{$USER}.json"
   mentor_update = JSON.pretty_generate(formdata) + "\n"
   _div.well do
     _p.lead "Updating your mentor record #{fn} to be:"
@@ -127,7 +127,7 @@ def send_form(formdata: {})
   Dir.mktmpdir do |tmpdir|
     credentials = {user: $USER, password: $PASSWORD}
     # TODO: investigate if we should to --depth empty and attempt to get only that mentor's file
-    ASF::SVN.svn_('checkout', [MentorFormat::MENTORS_SVN, tmpdir.untaint], _, credentials)
+    ASF::SVN.svn_('checkout', [MentorFormat::MENTORS_SVN, tmpdir], _, credentials)
     Dir.chdir tmpdir do
       if File.exist? fn
         File.write(fn, mentor_update + "\n")
@@ -164,7 +164,7 @@ end
 # @return user's current mentor data, or {} if none, or sets:
 # myrecord[ERRORS] = "If any error occoured on read/parse"
 def read_myrecord(id)
-  file = File.join(ASF::SVN['foundation_mentors'], "#{id}.json").untaint
+  file = File.join(ASF::SVN['foundation_mentors'], "#{id}.json")
   if File.exist?(file)
     begin
       return JSON.parse(File.read(file))

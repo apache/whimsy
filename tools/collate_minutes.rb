@@ -123,7 +123,7 @@ end
 
 # get site information
 DATAURI = 'https://whimsy.apache.org/public/committee-info.json'
-local_copy = File.expand_path('../../www/public/committee-info.json', __FILE__).untaint
+local_copy = File.expand_path('../../www/public/committee-info.json', __FILE__)
 if File.exist? local_copy
   Wunderbar.info "Using #{local_copy}"
   cinfo = JSON.parse(File.read(local_copy))

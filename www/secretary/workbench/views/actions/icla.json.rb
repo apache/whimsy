@@ -18,7 +18,7 @@ fileext = File.extname(@selected).downcase
 # verify that an ICLA under that name doesn't already exist
 if "#@filename#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/
   # Is there a matching ICLA? (returns first match, if any)
-  file = ASF::ICLAFiles.match_claRef(@filename.untaint)
+  file = ASF::ICLAFiles.match_claRef(@filename)
   if file
     _warn "documents/iclas/#{file} already exists"
   else
@@ -211,11 +211,11 @@ if @valid_user and @pmc and not @votelink.empty?
     cc = ["#{@pubname.inspect} <#{@email}>"]
     cc << "private@#{@pmc.mail_list}.apache.org" if @pmc # copy pmc
     cc << @podling.private_mail_list if @podling # copy podling
-    mail.cc = cc.uniq.map {|email| email.dup.untaint}
+    mail.cc = cc.uniq.map {|email| email}
 
     # untaint from and to email addresses
-    mail.to = mail.to.map {|email| email.dup.untaint}
-    mail.from = @from.untaint
+    mail.to = mail.to.map {|email| email}
+    mail.from = @from
 
     # echo email
     form do

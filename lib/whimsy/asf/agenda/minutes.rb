@@ -25,7 +25,7 @@ class ASF::Board::Agenda
       attrs['approved'] = attrs['approved'].strip.gsub(/\s+/, ' ')
 
       if FOUNDATION_BOARD
-        file = attrs['text'][/board_minutes[_\d]+\.txt/].untaint
+        file = attrs['text'][/board_minutes[_\d]+\.txt/]
 
         if file and File.exist?(File.join(FOUNDATION_BOARD, file))
           # unpublished minutes

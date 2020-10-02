@@ -180,7 +180,7 @@ end
 
 # feedback
 get %r{/(\d\d\d\d-\d\d-\d\d)/feedback.json} do |date|
-  @agenda = "board_agenda_#{date.gsub('-', '_')}.txt".untaint
+  @agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
   @dryrun = true
   _json :'actions/feedback'
 end
@@ -188,7 +188,7 @@ end
 post %r{/(\d\d\d\d-\d\d-\d\d)/feedback.json} do |date|
   return [503, UNAVAILABLE] if UNAVAILABLE
 
-  @agenda = "board_agenda_#{date.gsub('-', '_')}.txt".untaint
+  @agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
   @dryrun = false
   _json :'actions/feedback'
 end
@@ -373,7 +373,7 @@ end
 
 # updates to agenda data
 get %r{/(\d\d\d\d-\d\d-\d\d).json} do |date|
-  file = "board_agenda_#{date.gsub('-','_')}.txt".untaint
+  file = "board_agenda_#{date.gsub('-','_')}.txt"
   pass unless Agenda.parse file, :full
 
   begin
@@ -415,7 +415,7 @@ end
 
 # draft minutes
 get '/text/minutes/:file' do |file|
-  file = "board_minutes_#{file.gsub('-','_')}.txt".untaint
+  file = "board_minutes_#{file.gsub('-','_')}.txt"
   if dir('board_minutes_*.txt').include? file
     path = File.join(FOUNDATION_BOARD, file)
   elsif not Dir[File.join(ASF::SVN['minutes'], file[/\d+/], file)].empty?
@@ -507,7 +507,7 @@ end
 
 # draft minutes
 get '/text/draft/:file' do |file|
-  agenda = "board_agenda_#{file.gsub('-','_')}.txt".untaint
+  agenda = "board_agenda_#{file.gsub('-','_')}.txt"
   minutes = AGENDA_WORK + '/' +
     agenda.sub('_agenda_','_minutes_').sub('.txt','.yml')
 

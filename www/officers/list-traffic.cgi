@@ -140,7 +140,7 @@ _html do
 
       }
     ) do
-      months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
+      months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path)}.grep(/^\d+$/)
       if ENV['QUERY_STRING'].include? 'week'
         display_weekly(months: months, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS["<#{LIST_ROOT}.apache.org>"])
       else
@@ -152,7 +152,7 @@ end
 
 # Return just sorted data counts as JSON
 _json do
-  months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
+  months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path)}.grep(/^\d+$/)
   data = Hash.new {|h, k| h[k] = {} }
   months.sort.reverse.each do |month|
     tmp = MailUtils.get_mails_month(yearmonth: month, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS["<#{LIST_ROOT}.apache.org>"])

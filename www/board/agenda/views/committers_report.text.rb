@@ -4,8 +4,8 @@ require 'chronic'
 
 # load agenda and minutes
 board_svn = ASF::SVN['foundation_board']
-minutes_file = File.join(AGENDA_WORK, "board_minutes_#@date.yml").untaint
-agenda_file = File.join(board_svn, "board_agenda_#@date.txt").untaint
+minutes_file = File.join(AGENDA_WORK, "board_minutes_#@date.yml")
+agenda_file = File.join(board_svn, "board_agenda_#@date.txt")
 minutes = YAML.load_file(minutes_file) rescue {}
 agenda = Agenda.parse(File.basename(agenda_file), :full)
 
@@ -76,5 +76,5 @@ sender = ASF::Person.find(env.user || ENV['USER'])
 @from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>"
 
 ##### Write the report
-template = File.read('templates/committers_report.text.erb').untaint
+template = File.read('templates/committers_report.text.erb')
 Erubis::Eruby.new(template).result(binding)

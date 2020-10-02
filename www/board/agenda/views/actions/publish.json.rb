@@ -52,7 +52,7 @@ minutes = "board_minutes_#{@date}.txt"
 
 #Commit the Minutes
 ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
-  yeardir = File.join(tmpdir, year.to_s).untaint
+  yeardir = File.join(tmpdir, year.to_s)
   ASF::SVN.svn_('update', yeardir, _) # TODO does this need auth?
 
   unless Dir.exist? yeardir
@@ -88,7 +88,7 @@ end
 # ...
 
 # Update the Calendar from SVN
-ASF::SVN.update ASF::SVN.svnpath!('site-board', 'calendar.mdtext' ).untaint, @message, env, _ do |_tmpdir, calendar|
+ASF::SVN.update ASF::SVN.svnpath!('site-board', 'calendar.mdtext' ), @message, env, _ do |_tmpdir, calendar|
   # add year header
   unless calendar.include? "# #{year} Board meeting minutes"
     calendar[/^()#.*Board meeting minutes #/,1] =

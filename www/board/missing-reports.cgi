@@ -42,7 +42,7 @@ _html do
         end
         _tbody do
           agendas.reverse.each do |agenda|
-            parsed = ASF::Board::Agenda.parse(File.read(agenda.untaint), true)
+            parsed = ASF::Board::Agenda.parse(File.read(agenda), true)
             _tr_ do
               _td parsed.count, align: 'right'
               _td parsed.count {|report| report["missing"]}, align: 'right'

@@ -15,8 +15,8 @@ end
 
 HISTORY = '/var/tools/invoice'
 if %r{/(?<invoice>\d+)(\.\w+)?$} =~ ENV['PATH_INFO']
-  if File.exist? "#{HISTORY}/#{invoice.untaint}"
-    form = YAML.load_file("#{HISTORY}/#{invoice.untaint}")
+  if File.exist? "#{HISTORY}/#{invoice}"
+    form = YAML.load_file("#{HISTORY}/#{invoice}")
     ENV['QUERY_STRING'] =
       form.map {|k,v| "#{k}=#{CGI.escape(v.first)}"}.join("&") if form
   end
@@ -101,7 +101,7 @@ _html do
         _tbody do
           Dir.chdir(HISTORY) do
             Dir['*'].sort.reverse.each do |invoice|
-              form = YAML.load_file("#{HISTORY}/#{invoice.untaint}")
+              form = YAML.load_file("#{HISTORY}/#{invoice}")
               if form
                 _tr_ do
                   _td {_a invoice, href: invoice}

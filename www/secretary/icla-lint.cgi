@@ -95,7 +95,7 @@ _html do
     end
 
     input = File.join(ASF::SVN['officers'], 'iclas.txt')
-    document = File.read(input).untaint
+    document = File.read(input)
     document.scan(/^((\w.*?):.*?:(.*?):(.*?):(.*))/) do |(line, id, name, email, comment)|
       issue, note = nil, nil
       comment2 = comment.dup

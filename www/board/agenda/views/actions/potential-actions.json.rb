@@ -3,7 +3,7 @@
 #
 
 # get posted action items from previous report
-base = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort[-2].untaint
+base = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].sort[-2]
 parsed = ASF::Board::Agenda.parse(IO.read(base), true)
 actions = parsed.find {|item| item['title'] == 'Action Items'}['actions']
 

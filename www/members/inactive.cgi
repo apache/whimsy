@@ -28,7 +28,7 @@ _html do
   _body? do
     MEETINGS = ASF::SVN['Meetings']
     attendance = MeetingUtil.get_attendance(MEETINGS)
-    latest = MeetingUtil.get_latest(MEETINGS).untaint
+    latest = MeetingUtil.get_latest(MEETINGS)
     # determine user's name as found in members.txt
     name = ASF::Member.find_text_by_id($USER).to_s.split("\n").first
     matrix = attendance['matrix'][name]
@@ -36,7 +36,7 @@ _html do
       tracker = JSON.parse(IO.read(File.join(latest, 'non-participants.json')))
     rescue Errno::ENOENT => err
       # Fallback to reading previous meeting's data, and reset variable
-      latest = MeetingUtil.get_previous(MEETINGS).untaint
+      latest = MeetingUtil.get_previous(MEETINGS)
       tracker = JSON.parse(IO.read(File.join(latest, 'non-participants.json')))
     end
     # defaults for active users

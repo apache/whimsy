@@ -14,8 +14,7 @@ class Reporter
   def self.drafts(env, update=nil)
     changed = false
 
-    agenda_file = File.basename(
-      Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].max).untaint
+    agenda_file = File.basename(Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].max)
 
     if ENV['RACK_ENV'] == 'test'
       return {agenda: agenda_file, drafts: []}

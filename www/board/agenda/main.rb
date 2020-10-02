@@ -33,13 +33,13 @@ end
 
 # determine where relevant data can be found
 if ENV['RACK_ENV'] == 'test'
-  FOUNDATION_BOARD = File.expand_path('test/work/board').untaint
-  AGENDA_WORK = File.expand_path('test/work/data').untaint
+  FOUNDATION_BOARD = File.expand_path('test/work/board')
+  AGENDA_WORK = File.expand_path('test/work/data')
   STDERR.puts "* SVN board  : #{FOUNDATION_BOARD}"
   STDERR.puts "* Agenda work: #{AGENDA_WORK}"
 else
   FOUNDATION_BOARD = ASF::SVN['foundation_board']
-  AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
+  AGENDA_WORK = ASF::Config.get(:agenda_work) || '/srv/agenda'
   STDERR.puts "* SVN board  : #{FOUNDATION_BOARD}"
   STDERR.puts "* Agenda work: #{AGENDA_WORK}"
 end
@@ -68,11 +68,4 @@ end
 # get a directory listing given a pattern and a base directory
 def dir(pattern, base=FOUNDATION_BOARD)
   Dir[File.join(base, pattern)].map {|name| File.basename name}
-end
-
-# workaround for https://github.com/rubygems/rubygems/issues/1265
-if Gem::Specification.respond_to? :stubs
-  Gem::Specification.stubs.each do |stub|
-    stub.full_require_paths.each {|path| path.untaint}
-  end
 end

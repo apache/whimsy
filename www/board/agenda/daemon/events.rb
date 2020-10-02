@@ -15,9 +15,9 @@ require 'whimsy/asf/config'
 
 class Events
   if ENV['RACK_ENV'] == 'test'
-    AGENDA_WORK = File.expand_path('test/work/data').untaint
+    AGENDA_WORK = File.expand_path('test/work/data')
   else
-    AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
+    AGENDA_WORK = ASF::Config.get(:agenda_work) || '/srv/agenda'
   end
 
   WORKDIR = File.expand_path('events', AGENDA_WORK)

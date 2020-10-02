@@ -15,7 +15,7 @@ class SafeTempFile
   end
 
   def path
-    @tempfile.path.untaint
+    @tempfile.path
   end
 
   def unlink

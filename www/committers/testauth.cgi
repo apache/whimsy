@@ -23,7 +23,7 @@ _html do
     }
   ) do
     FOUNDATION_BOARD = ASF::SVN['foundation_board']
-    agendafile = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].max.untaint
+    agendafile = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].max
     agenda = ASF::Board::Agenda.parse(File.read(agendafile))
     roll = agenda.find {|item| item['title'] == 'Roll Call'}
 

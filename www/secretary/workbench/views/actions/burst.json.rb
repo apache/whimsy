@@ -12,8 +12,7 @@ begin
   Dir.mktmpdir do |dir|
     Kernel.system 'pdfseparate', source.path, "#{dir}/page_%d.pdf"
 
-    pages = Dir["#{dir}/*.pdf"].map {|name| name.untaint}
-      sort_by {|name| name[/d+/].to_i}
+    pages = Dir["#{dir}/*.pdf"].sort_by {|name| name[/d+/].to_i}
 
     format = @selected.sub(/\.\w+$/, '') +
       "-%0#{pages.length.to_s.length}d.pdf"

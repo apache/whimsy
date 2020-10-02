@@ -178,7 +178,7 @@ _html do
         end
       }
     ) do
-      months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
+      months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path)}.grep(/^\d+$/)
       attendance = MeetingUtil.get_attendance(ASF::SVN['Meetings'])
       style_cohorts(attendance) if attendance.has_key?('cohorts') # Allow to fail silently if data missing
       # if ENV['QUERY_STRING'].include? 'Clear-Cache-No-Really'
@@ -187,7 +187,7 @@ _html do
       #     cache = Dir["#{SRV_MAIL}/??????.json"]
       #     ctr = 0
       #     cache.each do |f|
-      #       File.delete(f.untaint)
+      #       File.delete(f)
       #       ctr += 1
       #     end
       #     _ "Successfully deleted #{ctr} files (will be rebuilt now)."
@@ -204,7 +204,7 @@ end
 
 # Return just sorted data counts as JSON
 _json do
-  months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path).untaint}.grep(/^\d+$/)
+  months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path)}.grep(/^\d+$/)
   data = Hash.new {|h, k| h[k] = {} }
   months.sort.reverse.each do |month|
     tmp = MailUtils.get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS["<#{LIST_ROOT}.apache.org>"])

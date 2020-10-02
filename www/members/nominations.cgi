@@ -25,7 +25,7 @@ def setup_data(cur_mtg_dir)
   emails = []
   archive.each do |email|
     next if email.end_with? '/index'
-    message = IO.read(email.untaint, mode: 'rb')
+    message = IO.read(email, mode: 'rb')
     next unless message[/^Date: .*/].to_s.include? year
     subject = message[/^Subject: .*/]
     next if not subject # HACK: allow script to continue if bogus email
@@ -37,7 +37,7 @@ def setup_data(cur_mtg_dir)
   end
 
   # parse nominations for names and ids
-  nominations = IO.read(File.join(cur_mtg_dir, 'nominated-members.txt').untaint).
+  nominations = IO.read(File.join(cur_mtg_dir, 'nominated-members.txt')).
     scan(/^---+--\s+(?:[a-z_0-9-]+)\s+(.*?):?\n/).flatten
 
   nominations.shift if nominations.first == '<empty line>'
@@ -78,7 +78,7 @@ _html do
         _ 'This probably only works in the period shortly before or after a Members meeting!'
       }
     ) do
-      cur_mtg_dir = MeetingUtil.get_latest(MEETINGS).untaint
+      cur_mtg_dir = MeetingUtil.get_latest(MEETINGS)
       nominations, people, emails = setup_data(cur_mtg_dir)
       _div.flexbox do
         _div.flexitem do

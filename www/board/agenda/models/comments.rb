@@ -13,8 +13,7 @@ class HistoricalComments
     # select and sort agendas for meetings past the cutoff
     agendas = Dir[File.join(ASF::SVN['foundation_board'], '**', 'board_agenda_*')].
       select {|file| File.basename(file) > cutoff}.
-      sort_by {|file| File.basename(file)}.
-      map {|file| file.untaint}
+      sort_by {|file| File.basename(file)}
 
     # drop latest agenda
     agendas.pop

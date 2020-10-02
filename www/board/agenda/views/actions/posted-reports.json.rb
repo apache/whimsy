@@ -50,7 +50,7 @@ archive = Dir[File.join(ARCHIVE, previous, '*'), File.join(ARCHIVE, current ,'*'
 # select messages that have a subject line starting with [REPORT]
 reports = []
 archive.each do |email_path|
-  email_path.untaint
+  email_path
   next if File.mtime(email_path) < cutoff
   next if email_path.end_with? '/index'
   message = IO.read(email_path, mode: 'rb')
@@ -64,7 +64,7 @@ end
 
 # Get a list of missing board reports
 agendas = Dir[File.join(ASF::SVN['foundation_board'], 'board_agenda_*.txt')]
-parsed = ASF::Board::Agenda.parse(IO.read(agendas.max.untaint), true)
+parsed = ASF::Board::Agenda.parse(IO.read(agendas.max), true)
 missing = parsed.select {|item| item['missing']}.
   map {|item| item['title'].downcase}
 

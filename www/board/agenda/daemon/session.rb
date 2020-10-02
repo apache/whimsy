@@ -21,9 +21,9 @@ require 'whimsy/asf/config'
 
 class Session
   if ENV['RACK_ENV'] == 'test'
-    AGENDA_WORK = File.expand_path('test/work/data').untaint
+    AGENDA_WORK = File.expand_path('test/work/data')
   else
-    AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
+    AGENDA_WORK = ASF::Config.get(:agenda_work) || '/srv/agenda'
   end
 
   WORKDIR = File.expand_path('sessions', AGENDA_WORK)
@@ -75,11 +75,11 @@ class Session
     session
   end
 
-  # load sessions from disk
+  # load sessions from disk 
   def self.load(files=nil)
     @@semaphore.synchronize do
       # default files to all files in the workdir and @@sessions hash
-      files ||= Dir["#{WORKDIR}/*"].map {|file| file.dup.untaint} +
+      files ||= Dir["#{WORKDIR}/*"] +
         @@sessions.keys.map {|secret| File.join(WORKDIR, secret)}
 
       files.uniq.each do |file|

@@ -8,7 +8,7 @@ if index
   prevmbox = nil
 
   if index > 0
-    prevmbox = available[index-1].untaint
+    prevmbox = available[index-1]
     prevmbox = nil unless YAML.load_file(prevmbox).any? do |key, mail|
       mail[:status] != :deleted and not Message.attachments(mail).empty?
     end

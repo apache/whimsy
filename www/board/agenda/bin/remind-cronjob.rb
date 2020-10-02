@@ -15,7 +15,7 @@ require 'mail'
 require 'listen'
 
 FOUNDATION_BOARD = ASF::SVN['foundation_board']
-AGENDA_WORK = ASF::Config.get(:agenda_work).untaint || '/srv/agenda'
+AGENDA_WORK = ASF::Config.get(:agenda_work) || '/srv/agenda'
 
 require './models/agenda'
 

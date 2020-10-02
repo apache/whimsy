@@ -68,7 +68,7 @@ _html do
       # Get a list of missing board reports from the agenda itself
       Dir.chdir ASF::SVN['foundation_board']
       agenda = Dir['board_agenda_*.txt'].max
-      parsed = ASF::Board::Agenda.parse(IO.read(agenda.untaint), true)
+      parsed = ASF::Board::Agenda.parse(IO.read(agenda), true)
       missing = parsed.select {|item| item['missing']}.
         map {|item| item['title'].downcase}
       # attempt to sort reports by PMC name

@@ -6,7 +6,7 @@ require 'active_support/time'
 template = File.read("#{FOUNDATION_BOARD}/templates/#@reminder.mustache")
 
 # find the latest agenda
-agenda = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].max.untaint
+agenda = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].max
 
 # determine meeting time
 meeting = ASF::Board.nextMeeting
@@ -25,7 +25,7 @@ view = {
 }
 
 # perform the substitution
-template = Mustache.render(template.untaint, view)
+template = Mustache.render(template, view)
 
 # extract subject
 subject = template[/Subject: (.*)/, 1]

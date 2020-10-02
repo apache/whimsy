@@ -11,8 +11,8 @@ responses = {}
 
 Dir[maildir + '*'].sort.each do |dir|
   next unless dir >= start
-  Dir[dir.untaint + '/*'].each do |msg|
-    text = File.open(msg.untaint, 'rb') {|file| file.read}
+  Dir[dir + '/*'].each do |msg|
+    text = File.open(msg, 'rb') {|file| file.read}
     subject = text[/^Subject: .*/]
     next unless subject and subject =~ /Board feedback on .* report/
     date, pmc = subject.scan(/Board feedback on ([-\d]+) (.*) report/).first

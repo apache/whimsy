@@ -74,8 +74,8 @@ class Wunderbar::JsonBuilder
     [
       '--non-interactive',
       '--no-auth-cache',
-      '--username', env.user.dup.untaint, # could be frozen
-      '--password', env.password.dup.untaint
+      '--username', env.user,
+      '--password', env.password
     ]
   end
 
@@ -146,7 +146,7 @@ class Wunderbar::JsonBuilder
   end
 
   def template(name)
-    path = File.expand_path("../templates/#{name}", __FILE__.untaint)
-    ERB.new(File.read(path.untaint).untaint).result(binding)
+    path = File.expand_path("../templates/#{name}", __FILE__)
+    ERB.new(File.read(path)).result(binding)
   end
 end

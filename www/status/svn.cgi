@@ -27,7 +27,7 @@ _html do
   # remains true if all local checkouts are writable
   writable = true
   svnroot = (svnrepos.length == 1 && svnrepos.first =~ /^(\/\w[-.\w]*)+\/\*$/ &&
-    File.writable?(svnrepos.first.chomp('*').untaint))
+    File.writable?(svnrepos.first.chomp('*')))
 
   _h1_ 'SVN Repository Status'
 
@@ -152,11 +152,11 @@ end
 
 # process XMLHttpRequests
 _json do
-  local_path = ASF::SVN.find(@name.untaint)
+  local_path = ASF::SVN.find(@name)
   if local_path
     if @action == 'update'
-      log = `svn cleanup #{local_path.untaint} 2>&1`
-      log = log + `svn update #{local_path.untaint} 2>&1`
+      log = `svn cleanup #{local_path} 2>&1`
+      log = log + `svn update #{local_path} 2>&1`
     end
 
     info, err = ASF::SVN.getInfo(local_path)
@@ -173,13 +173,13 @@ _json do
         repository_url = ASF::SVN.svnpath!(repository_url)
       end
 
-      log = `svn checkout #{repository_url.untaint} #{local_path.untaint} 2>&1`
+      log = `svn checkout #{repository_url} #{local_path} 2>&1`
     end
   end
 
-  localrev, lerr = ASF::SVN.getInfoItem(local_path.untaint,'last-changed-revision')
+  localrev, lerr = ASF::SVN.getInfoItem(local_path,'last-changed-revision')
   if repository_url
-    serverrev, serr = ASF::SVN.getInfoItem(repository_url.untaint,'last-changed-revision')
+    serverrev, serr = ASF::SVN.getInfoItem(repository_url,'last-changed-revision')
     {
       log: log.to_s.split("\n"),
       path: local_path,
