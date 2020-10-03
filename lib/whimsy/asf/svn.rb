@@ -22,14 +22,13 @@ module ASF
     else
       svn_base = 'https://svn.apache.org/repos/'
     end
-    @base = URI.parse(svn_base).untaint
+    @base = URI.parse(svn_base)
     @mock = 'file:///var/tools/svnrep/'
     @semaphore = Mutex.new
     @testdata = {}
 
     # path to <tt>repository.yml</tt> in the source.
-    REPOSITORY = File.expand_path('../../../../repository.yml', __FILE__).
-      untaint
+    REPOSITORY = File.expand_path('../../../../repository.yml', __FILE__)
     @@repository_mtime = nil
     @@repository_entries = nil
     @svnHasPasswordFromStdin = nil
@@ -38,7 +37,7 @@ module ASF
     # subversion paths; values are file paths.
     def self.repos
       @semaphore.synchronize do
-        svn = Array(ASF::Config.get(:svn)).map {|dir| dir.untaint}
+        svn = Array(ASF::Config.get(:svn))
 
         # reload if repository changes
         if File.exist?(REPOSITORY) && @@repository_mtime!=File.mtime(REPOSITORY)
@@ -60,7 +59,7 @@ module ASF
           end
 
           @repos = Hash[Dir[*svn].map { |name|
-            if Dir.exist? name.untaint
+            if Dir.exist? name
               out, _ = self.getInfoItem(name, 'url')
               if out
                 [out.sub(/^http:/,'https:'), name]
@@ -76,7 +75,7 @@ module ASF
     # set a local directory corresponding to a path in Subversion.  Useful
     # as a test data override.
     def self.[]=(name, path)
-      @testdata[name] = File.expand_path(path).untaint
+      @testdata[name] = File.expand_path(path)
     end
 
     # find a local directory corresponding to a path in Subversion.  Throws
@@ -137,7 +136,7 @@ module ASF
       unless url # bad entry
         raise Exception.new("Unable to find url attribute for SVN entry #{name}")
       end
-      return (@base+url).to_s.untaint # to_s makes the var tainted
+      return (@base+url).to_s
     end
 
     # fetch a repository URL by name - abort if not found
@@ -179,7 +178,7 @@ module ASF
 
       # recursively try parent directory
       if not result and name.include? '/'
-        base = File.basename(name).untaint
+        base = File.basename(name)
         parent = find(File.dirname(name))
         if parent and File.exist?(File.join(parent, base))
           result = File.join(parent, base)
@@ -545,13 +544,13 @@ module ASF
     # user and password are required because the default URL is private
     def self.updateCI(msg, env, options={})
       # Allow override for testing
-      ciURL = options[:url] || self.svnurl('board').untaint
+      ciURL = options[:url] || self.svnurl('board')
       Dir.mktmpdir do |tmpdir|
         # use dup to make testing easier
-        user = env.user.dup.untaint
-        pass = env.password.dup.untaint
+        user = env.user
+        pass = env.password
         # checkout committers/board (this does not have many files currently)
-        out, err = self.svn('checkout', [ciURL, tmpdir.untaint],
+        out, err = self.svn('checkout', [ciURL, tmpdir],
           {quiet: true, depth: 'files',
            user: user, password: pass})
 
@@ -567,7 +566,7 @@ module ASF
         File.write(file, info)
 
         # commit the updated file
-        out, err = self.svn('commit', [file, tmpdir.untaint],
+        out, err = self.svn('commit', [file, tmpdir],
           {quiet: true, msg: msg,
            user: user, password: pass})
 
@@ -592,17 +591,16 @@ module ASF
     #  :dryrun - show command (excluding credentials), without executing it
     #  :diff - show diff before committing
     def self.update(path, msg, env, _, options={})
+      # must be a valid local path
+      unless path.start_with? '/' and not path.include? '..' and File.exist?(path)
+        raise ArgumentError, "Invalid path #{path}"
+      end
       if File.directory? path
         dir = path
         basename = nil
       else
         dir = File.dirname(path)
         basename = File.basename(path)
-      end
-
-      if path.start_with? '/' and not path.include? '..' and File.exist?(path)
-        dir.untaint
-        basename.untaint
       end
 
       rc = 0
@@ -614,7 +612,7 @@ module ASF
 
         # retrieve the file to be updated (may not exist)
         if basename
-          tmpfile = File.join(tmpdir, basename).untaint
+          tmpfile = File.join(tmpdir, basename)
           self.svn_('update', tmpfile, _, {env: env})
         else
           tmpfile = nil
@@ -657,7 +655,7 @@ module ASF
 
         # commit the changes
         rc = self.svn_('commit', tmpfile || tmpdir, _,
-            {msg: msg.untaint, env: env})
+            {msg: msg, env: env})
 
         # fail if there are pending changes
         out, _err = self.svn('status', tmpfile || tmpdir) # Need to use svn rather than svn_ here
@@ -702,7 +700,7 @@ module ASF
       end
 
       temp = options[:tmpdir]
-      tmpdir = temp ? temp : Dir.mktmpdir.untaint
+      tmpdir = temp ? temp : Dir.mktmpdir
 
       begin
         cmdfile = Tempfile.new('svnmucc_input', tmpdir)
@@ -719,7 +717,7 @@ module ASF
 
         syscmd = ['svnmucc',
                   '--non-interactive',
-                  '--extra-args', cmdfile.path.untaint,
+                  '--extra-args', cmdfile.path,
                   '--message', msg,
                   '--no-auth-cache',
                   ]
@@ -755,7 +753,7 @@ module ASF
           end
         end
       ensure
-        File.delete cmdfile.path.untaint # always drop the command file
+        File.delete cmdfile.path # always drop the command file
         FileUtils.rm_rf tmpdir unless temp
       end
     end
@@ -848,24 +846,24 @@ module ASF
     #     [out, extra]
     #   end
     def self.multiUpdate_(path, msg, env, _, options = {})
-      tmpdir = options[:tmpdir] || Dir.mktmpdir.untaint
+      tmpdir = options[:tmpdir] || Dir.mktmpdir
       if File.file? path
-        basename = File.basename(path).untaint
-        parentdir = File.dirname(path).untaint
+        basename = File.basename(path)
+        parentdir = File.dirname(path)
         parenturl = ASF::SVN.getInfoItem(parentdir,'url')
       else
         uri = URI.parse(path)
         # allow file: and svn URIs for local testing
         if %w(http https file svn).include? uri.scheme
-          basename = File.basename(uri.path).untaint
-          parentdir = File.dirname(uri.path).untaint
+          basename = File.basename(uri.path)
+          parentdir = File.dirname(uri.path)
           uri.path = parentdir
           parenturl = uri.to_s
         else
           raise ArgumentError.new("Path '#{path}' must be a file or URL")
         end
       end
-      outputfile = File.join(tmpdir, basename).untaint
+      outputfile = File.join(tmpdir, basename)
 
       begin
 
@@ -1043,8 +1041,8 @@ module ASF
     # [listing-name, temporary name]
     def self.listingNames(name)
       dir = self.svn_parent
-      return File.join(dir,"%s.txt" % name).untaint,
-             File.join(dir,"%s.tmp" % name).untaint
+      return File.join(dir,"%s.txt" % name),
+             File.join(dir,"%s.tmp" % name)
     end
 
     # Get all the SVN entries
