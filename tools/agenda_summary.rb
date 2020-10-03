@@ -16,20 +16,16 @@ STATS_ROLLUP = 'stats'
 def summarize_all(dir = BOARD)
   summaries = Hash.new{|h,k| h[k] = {} }
   Dir[File.join(dir, 'archived_agendas', "board_agenda_2*.txt")].sort.each do |f|
-      summaries[File.basename(f, '.*')] = ASF::Board::Agenda.summarize(f)
+    summaries[File.basename(f, '.*')] = ASF::Board::Agenda.summarize(f)
   end
   allpmcs = Set.new()
   allpeople = Set.new()
-  summaries.each do |month, summary|
-    if summary['pmcs']
-      summary['pmcs'].each do |title, data|
-        allpmcs << title
-      end
+  summaries.each do |_month, summary|
+    summary['pmcs']&.each do |title, _data|
+      allpmcs << title
     end
-    if summary['people']
-      summary['people'].each do |id, pers|
-        allpeople << pers[:name] # Note: some keys are symbols from ASF::Board::Agenda.parse
-      end
+    summary['people']&.each do |_id, pers|
+      allpeople << pers[:name] # Note: some keys are symbols from ASF::Board::Agenda.parse
     end
   end
   summaries[STATS_ROLLUP]['allpmcs'] = allpmcs.to_a
