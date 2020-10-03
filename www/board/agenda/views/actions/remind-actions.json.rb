@@ -26,10 +26,10 @@ name_map.merge! people.
 from = @from
 unless from
   sender = ASF::Person.find(env.user)
-  from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
+  from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>"
 end
 
-template = File.read("#{FOUNDATION_BOARD}/templates/remind-action.erb").untaint
+template = File.read("#{FOUNDATION_BOARD}/templates/remind-action.erb")
 
 # iterate over the action items
 @actions.group_by {|action| action['owner']}.each do |owner, actions|
@@ -44,7 +44,7 @@ template = File.read("#{FOUNDATION_BOARD}/templates/remind-action.erb").untaint
   # construct email
   mail = Mail.new do
     from from
-    to "#{person.public_name} <#{person.id}@apache.org>".untaint
+    to "#{person.public_name} <#{person.id}@apache.org>"
     bcc "board-private@apache.org"
     subject 'Action Item reminder'
 

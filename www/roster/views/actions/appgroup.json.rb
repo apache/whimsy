@@ -25,7 +25,7 @@ if env.password
 
   # construct email
   mail = Mail.new do
-    from "#{from.public_name} <#{from.id}@apache.org>".untaint
+    from "#{from.public_name} <#{from.id}@apache.org>"
     to "root@apache.org"
     subject "#{person.public_name} #{action} #{list}"
     body "Current roster can be found at:\n\n" +

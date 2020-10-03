@@ -40,7 +40,7 @@ class ASF::Board::Agenda
       return summary
     end
     begin
-      agenda = ASF::Board::Agenda.parse(File.read(fname.untaint))
+      agenda = ASF::Board::Agenda.parse(File.read(fname))
     rescue StandardError => e
       summary[ERRORS_KEY] = "ERROR(#{meeting}) Agenda parse error: #{e.message} #{e.backtrace[0]}"
       return summary

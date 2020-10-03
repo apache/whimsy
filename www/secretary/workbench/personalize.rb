@@ -15,17 +15,17 @@ class Wunderbar::JsonBuilder
     }
     sec = secs[user]
     if sec
-      @from = "#{sec[:name]} <#{user}@apache.org>".untaint
+      @from = "#{sec[:name]} <#{user}@apache.org>"
       @sig = %{
         --
         #{sec[:name]}
         #{sec[:office]}, Apache Software Foundation
-      }.untaint
+      }
     else
 
       person = ASF::Person.find(user)
 
-      @from = "#{person.public_name} <#{user}@apache.org>".untaint
+      @from = "#{person.public_name} <#{user}@apache.org>"
       @sig = %{
         --
         #{person.public_name}

@@ -184,7 +184,7 @@ module MailUtils
     emails[TOOLS] = []
     files.each do |email|
       next if email.end_with? '/index'
-      message = IO.read(email.untaint, mode: 'rb')
+      message = IO.read(email, mode: 'rb')
       data = {}
       data[DATE] = DateTime.parse(message[/^Date: (.*)/, 1]).iso8601
       data[FROM] = message[/^From: (.*)/, 1]
@@ -362,8 +362,8 @@ module MboxUtils
   # Side effect: writes out f.chomp(ext).json files
   # @note writes string VERSION for differentiating from other *.json
   def scan_dir_mbox2stats(dir, ext = MBOX_EXT)
-    Dir["#{dir}/**/*#{ext}".untaint].sort.each do |f|
-      mails, errs = mbox2stats(f.untaint)
+    Dir["#{dir}/**/*#{ext}"].sort.each do |f|
+      mails, errs = mbox2stats(f)
       File.open("#{f.chomp(ext)}.json", "w") do |fout|
         fout.puts JSON.pretty_generate(["#{VERSION}", mails, errs])
       end
@@ -377,7 +377,7 @@ module MboxUtils
   def scan_dir_stats2csv(dir, outname, ext = '.json')
     errors = []
     jzons = []
-    Dir["#{dir}/**/*#{ext}".untaint].sort.each do |f|
+    Dir["#{dir}/**/*#{ext}"].sort.each do |f|
       begin
         tmp = JSON.parse(File.read(f))
         if tmp[0].kind_of?(String) && tmp[0].start_with?(VERSION)

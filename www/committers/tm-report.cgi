@@ -193,11 +193,11 @@ end
 # Mail this report and alert user
 def send_form(formdata: {})
   # Build the mail to be sent
-  frm = formdata['reporteremail'].untaint
+  frm = formdata['reporteremail']
   subject = "[FORM] Misuse Report about #{formdata['project']}"
   pmc_list = ASF::Committee.find(formdata['project']).mail_list
-  cc_list = ["private@#{pmc_list}.apache.org".untaint, frm]
-  to_list = BRANDLIST.untaint
+  cc_list = ["private@#{pmc_list}.apache.org", frm]
+  to_list = BRANDLIST
 
   if true # TESTING mode
     to_list = "asf@shanecurcuru.org"
@@ -207,7 +207,7 @@ def send_form(formdata: {})
   ASF::Mail.configure
   mail = Mail.new do
     from  frm
-    return_path BRANDLIST.untaint
+    return_path BRANDLIST
     to      to_list
     cc      cc_list
   end

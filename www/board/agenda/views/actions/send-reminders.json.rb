@@ -11,7 +11,7 @@ unsent = []
 from = @from
 unless from
   sender = ASF::Person.find(env.user)
-  from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
+  from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>"
 end
 
 # iterate over the agenda
@@ -44,29 +44,29 @@ Agenda.parse(@agenda, :full).each do |item|
   }
 
   # apply changes to both subject and the message text itself
-  subject = Mustache.render(@subject.untaint, view)
-  message = Mustache.render(@message.untaint, view)
+  subject = Mustache.render(@subject, view)
+  message = Mustache.render(@message, view)
 
   # cc list
   cclist = []
   if item['mail_list']
     if @selection == 'inactive'
-      cclist << "dev@#{item['mail_list']}.apache.org".untaint
+      cclist << "dev@#{item['mail_list']}.apache.org"
     elsif item[:attach] =~ /^[A-Z]+/
-      cclist << "private@#{item['mail_list']}.apache.org".untaint
+      cclist << "private@#{item['mail_list']}.apache.org"
     else
-      cclist << "#{item['mail_list']}@apache.org".untaint
+      cclist << "#{item['mail_list']}@apache.org"
     end
   end
 
   # construct email
   mail = Mail.new do
     from from
-    to "#{item['owner']} <#{item['chair_email']}>".untaint
+    to "#{item['owner']} <#{item['chair_email']}>"
     cc cclist unless cclist.empty?
-    subject subject.untaint
+    subject subject
 
-    body message.untaint
+    body message
   end
 
   # deliver mail

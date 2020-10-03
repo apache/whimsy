@@ -23,7 +23,7 @@ if @from
   from = @from
 else
   sender = ASF::Person.find(env.user || ENV['USER'])
-  from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
+  from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>"
 end
 
 output = []
@@ -68,24 +68,24 @@ Agenda.parse(@agenda, :full).each do |item|
 
   if item['mail_list']
     if item[:attach] =~ /^[A-Z]+/
-      cc << "private@#{item['mail_list']}.apache.org".untaint
+      cc << "private@#{item['mail_list']}.apache.org"
     elsif item['mail_list'].include? '@'
-      cc << item['mail_list'].untaint
+      cc << item['mail_list']
     else
-      cc << "#{item['mail_list']}@apache.org".untaint
+      cc << "#{item['mail_list']}@apache.org"
     end
   end
 
   # construct email
   mail = Mail.new do
     from from
-    to "#{item['owner']} <#{item['chair_email']}>".untaint
+    to "#{item['owner']} <#{item['chair_email']}>"
     cc cc
     bcc bcc
     reply_to ['board@apache.org'] + cc
     subject "Board feedback on #{date} #{item['title']} report"
 
-    body text.strip.untaint
+    body text.strip
   end
 
   mail.deliver! unless @dryrun

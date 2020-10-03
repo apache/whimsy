@@ -3,13 +3,13 @@ require 'wunderbar'
 user = ASF::Person.find(@userid)
 entry = user.members_txt(true)
 raise Exception.new("Unable to find member entry for #{@userid}") unless entry
-USERID = user.id.dup.untaint # might be frozen
-USERMAIL = "#{USERID}@apache.org".untaint
-USERNAME = user.cn.untaint
-TIMESTAMP = (DateTime.now.strftime "%Y-%m-%d %H:%M:%S").untaint
+USERID = user.id
+USERMAIL = "#{USERID}@apache.org"
+USERNAME = user.cn
+TIMESTAMP = (DateTime.now.strftime "%Y-%m-%d %H:%M:%S")
 
 # identify file to be updated
-members_txt = ASF::SVN.svnpath!('foundation', 'members.txt').untaint
+members_txt = ASF::SVN.svnpath!('foundation', 'members.txt')
 # construct commit message
 message = "Action #{@action} for #{USERID}"
 
@@ -69,7 +69,7 @@ if @action == 'rescind_emeritus'
 elsif @action == 'request_emeritus'
   # Create emeritus request and send acknowlegement mail from secretary
   template, err =
-    ASF::SVN.svn('cat', ASF::SVN.svnpath!('foundation', 'emeritus-request.txt').untaint, {env:env})
+    ASF::SVN.svn('cat', ASF::SVN.svnpath!('foundation', 'emeritus-request.txt'), {env:env})
   raise RuntimeError.new("Failed to read emeritus-request.txt: " + err) unless template
   centered_id = "#{USERID}".center(55, '_')
   centered_name = "#{USERNAME}".center(55, '_')
@@ -82,9 +82,9 @@ elsif @action == 'request_emeritus'
     .gsub('Signed: __________________________________________________________',
           'Signed by validated user at: ________Whimsy www/committer_________')
     .gsub('Date: _________________________________',
-          ('Date: _______' + centered_date)).untaint
+          ('Date: _______' + centered_date))
   # Write the emeritus request to emeritus-requests-received
-  EMERITUS_REQUEST_URL = ASF::SVN.svnpath!('emeritus-requests-received').untaint
+  EMERITUS_REQUEST_URL = ASF::SVN.svnpath!('emeritus-requests-received')
   rc = ASF::SVN.create_(EMERITUS_REQUEST_URL, "#{USERID}.txt", signed_request, "Emeritus request from #{USERNAME} (#{USERID})", env, _)
   if rc == 0
     ASF::Mail.configure

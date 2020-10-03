@@ -37,7 +37,7 @@ if env.password
 
   # update committee-info.txt
   if @targets.include? 'info'
-    message = "#{@project} #{@action == 'add' ? '+' : '-'}= #{who}".untaint
+    message = "#{@project} #{@action == 'add' ? '+' : '-'}= #{who}"
     ASF::SVN.updateCI message, env do |contents|
       contents = ASF::Committee.update_roster(contents, @project, people, @action)
       contents
@@ -60,15 +60,15 @@ if env.password
   details << "#{pmc.dn};attr=member" if @targets.include? 'commit'
 
   cc = people.map do |person|
-    "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
+    "#{person.public_name.inspect} <#{person.id}@apache.org>"
   end
 
   from = ASF::Person.find(env.user)
 
   # draft email
   mail = Mail.new do
-    from "#{from.public_name} <#{from.id}@apache.org>".untaint
-    to "private@#{pmc.mail_list}.apache.org".untaint
+    from "#{from.public_name} <#{from.id}@apache.org>"
+    to "private@#{pmc.mail_list}.apache.org"
     cc cc
     bcc "root@apache.org"
     subject "#{who} #{action} #{pmc.display_name} #{list}"

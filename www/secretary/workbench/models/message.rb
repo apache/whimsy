@@ -175,7 +175,7 @@ class Message
     attachments += attachments.pop.to_a if Hash === attachments.last
 
     if attachments.flatten.length == 1
-      ext = File.extname(attachments.first).downcase.untaint
+      ext = File.extname(attachments.first).downcase
       find(attachments.first).write_svn(repos, filename + ext)
     else
       # validate filename
@@ -184,7 +184,7 @@ class Message
       end
 
       # create directory, if necessary
-      dest = File.join(repos, filename).untaint
+      dest = File.join(repos, filename)
       unless File.exist? dest
         Kernel.system 'svn', 'mkdir', dest
       end
@@ -213,7 +213,7 @@ class Message
       att = find(name)
       path = File.join(tmpdir, name)
       att.write_path(path)
-      files << [name, path, att.content_type.untaint]
+      files << [name, path, att.content_type]
     end
 
     files
@@ -323,9 +323,9 @@ class Message
     end
 
     # reformat and untaint email addresses
-    mail[:to] = to.map {|addr| addr.format.dup.untaint}
-    mail[:cc] = cc.map {|addr| addr.format.dup.untaint} unless cc.empty?
-    mail[:bcc] = bcc.map {|addr| addr.format.dup.untaint} unless bcc.empty?
+    mail[:to] = to.map {|addr| addr.format}
+    mail[:cc] = cc.map {|addr| addr.format} unless cc.empty?
+    mail[:bcc] = bcc.map {|addr| addr.format} unless bcc.empty?
 
     # return the resulting email
     mail

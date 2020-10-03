@@ -9,7 +9,7 @@ to, cc, subject, body = @to, @cc, @subject, @body
 
 # construct from address
 sender = ASF::Person.find(env.user)
-from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>".untaint
+from = "#{sender.public_name.inspect} <#{sender.id}@apache.org>"
 
 # construct email
 mail = Mail.new do

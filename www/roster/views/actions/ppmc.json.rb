@@ -86,8 +86,8 @@ if env.password
 
   # update podlings.xml
   if @targets.include? 'mentor'
-    path = File.join(ASF::SVN.svnurl('incubator-content'), 'podlings.xml').untaint
-    msg = "#{@project} #{target} #{@action == 'add' ? '+' : '-'}= #{who}".untaint
+    path = File.join(ASF::SVN.svnurl('incubator-content'), 'podlings.xml')
+    msg = "#{@project} #{target} #{@action == 'add' ? '+' : '-'}= #{who}"
     ASF::SVN.update(path, msg, env, _, {}) do |tmpdir, podlings|
 
       pre = /<podling[^>]* resource="#{@project}".*?<\/podling>/m
@@ -124,7 +124,7 @@ if env.password
   # draft email
   if @targets == ['icommit']
     mail = Mail.new do
-      from "#{from.public_name} <#{from.id}@apache.org>".untaint
+      from "#{from.public_name} <#{from.id}@apache.org>"
       to 'private@incubator.apache.org'
       bcc 'root@apache.org'
       subject "#{who} #{action} incubator #{target}"
@@ -136,7 +136,7 @@ if env.password
     ppmc = ASF::Podling.find(@project)
 
     cc = people.map do |person|
-      "#{person.public_name.inspect} <#{person.id}@apache.org>".untaint
+      "#{person.public_name.inspect} <#{person.id}@apache.org>"
     end
 
     if ppmc.private_mail_list != 'private@incubator.apache.org'
@@ -144,8 +144,8 @@ if env.password
     end
 
     mail = Mail.new do
-      from "#{from.public_name} <#{from.id}@apache.org>".untaint
-      to ppmc.private_mail_list.untaint
+      from "#{from.public_name} <#{from.id}@apache.org>"
+      to ppmc.private_mail_list
       cc cc
       bcc 'root@apache.org'
       subject "#{who} #{action} #{ppmc.display_name} #{target}"

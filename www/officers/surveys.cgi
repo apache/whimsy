@@ -61,7 +61,7 @@ end
 # @param hash containing [SURVEY][FORM] => entire survey layout
 def display_survey(survey_layout)
   warning = false
-  survey_file = get_survey_path(survey_layout[SURVEY][:datafile]).untaint
+  survey_file = get_survey_path(survey_layout[SURVEY][:datafile])
   if survey_layout.has_key?(ERRORS)
     display_alert(lead: 'Error: could not load survey layout!', body: "#{survey_layout[ERRORS]} Contact the survey owner: #{survey_layout[SURVEY][CONTACT]}.")
   elsif File.file?(survey_file)
@@ -107,7 +107,7 @@ end
 # Handle POST submission (checkout survey data, add user's submission, checkin file)
 # @return true if we think it succeeded; false in all other cases
 def submit_survey(formdata: {})
-  filename = get_survey_path(formdata[:datafile]).untaint
+  filename = get_survey_path(formdata[:datafile])
   formdata.delete(:datafile) # Remove before generating output
   submission_data = JSON.pretty_generate(formdata) + "\n"
   _div.well do
@@ -117,7 +117,6 @@ def submit_survey(formdata: {})
 
   rc = 999 # Ensure it's a bogus value
   Dir.mktmpdir do |tmpdir|
-    tmpdir.untaint
     ASF::SVN.svn_('checkout',[get_survey_root(), tmpdir],_,{depth: 'files', user: $USER, password: $PASSWORD})
 
     survey_data = JSON.parse(File.read(filename), :symbolize_names => true)
@@ -178,7 +177,7 @@ def get_survey_layout(query)
   data[PARAMS] = params
   filename = get_survey_path(params['survey'])
   begin
-    data[SURVEY] = JSON.parse(File.read(filename.untaint), :symbolize_names => true) # TODO: Security, ensure user should have access
+    data[SURVEY] = JSON.parse(File.read(filename), :symbolize_names => true) # TODO: Security, ensure user should have access
   rescue StandardError => e
     data[ERRORS] = "**ERROR:#{__method__}(#{query}, #{filename}) #{e.message}**\n\n    #{e.backtrace.join("\n    ")}"
   end

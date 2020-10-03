@@ -28,7 +28,7 @@ if env.password
   to << person unless to.include? person
   to.delete from unless to.length == 1
   to = to.map do |person|
-    "#{person.public_name} <#{person.id}@apache.org>".untaint
+    "#{person.public_name} <#{person.id}@apache.org>"
   end
 
   # other committees
@@ -37,7 +37,7 @@ if env.password
 
   # construct email
   mail = Mail.new do
-    from "#{from.public_name} <#{from.id}@apache.org>".untaint
+    from "#{from.public_name} <#{from.id}@apache.org>"
     to to
     bcc "root@apache.org"
     subject "#{person.public_name} #{action} #{list}"
