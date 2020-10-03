@@ -41,6 +41,7 @@ class Attachment
     name = self.name.dup
     name.gsub! /^\W/, ''
     name.gsub! /[^\w.]/, '_'
+    name
   end
 
   # writes the attachment to the specified pathname, which must not exist
