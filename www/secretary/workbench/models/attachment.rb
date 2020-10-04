@@ -39,8 +39,7 @@ class Attachment
 
   def safe_name
     name = self.name.dup
-    name.gsub! /^\W/, ''
-    name.gsub! /[^\w.]/, '_'
+    name.gsub! %r{[^\w.]}, '_'
     name
   end
 
