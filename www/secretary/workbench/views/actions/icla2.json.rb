@@ -137,9 +137,9 @@ task "svn commit foundation/officers/iclas.txt" do
     _input value: @iclaline, name: 'iclaline'
   end
 
-  complete do |dir|
+  complete do
     rc = ASF::SVN.update(ASF::SVN.svnpath!('officers', 'iclas.txt'),
-        "ICLA (additional) for #{@pubname}", env, _, {diff: true}) do |tmpdir, iclas_txt|
+        "ICLA (additional) for #{@pubname}", env, _, {diff: true}) do |_tmpdir, iclas_txt|
       iclas_txt[/^#{@id}:.*:#{@oldemail}:.*/] = @iclaline
       iclas_txt
     end
