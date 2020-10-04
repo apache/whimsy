@@ -471,9 +471,12 @@ _html do
         _p "Wells Fargo Bank"
       end
 
-      @invoice_number.untaint if @invoice_number =~ /^\d+$/
-      File.open("#{HISTORY}/#{@invoice_number}", 'w') do |file|
-        file.write params.to_yaml
+      if @invoice_number =~ /\A\d+\z/
+        File.open("#{HISTORY}/#{@invoice_number}", 'w') do |file|
+          file.write params.to_yaml
+        end
+      else
+        _p "Invalid invoice number #{@invoice_number}, could not create invoice"
       end
     end
   end
