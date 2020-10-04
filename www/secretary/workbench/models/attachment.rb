@@ -2,7 +2,7 @@ require 'open3'
 require_relative 'safetemp'
 
 class Attachment
-  IMAGE_TYPES = %w(.gif, .jpg, .jpeg, .png)
+  IMAGE_TYPES = %w(.gif .jpg .jpeg .png)
   attr_reader :headers
 
   def initialize(message, headers, part)
@@ -74,7 +74,7 @@ class Attachment
     if IMAGE_TYPES.include? ext or content_type.start_with? 'image/'
       pdf = SafeTempFile.new([safe_name, '.pdf'])
       img2pdf = File.expand_path('../img2pdf', __dir__)
-      stdout, stderr, status = Open3.capture3 img2pdf, '--output', pdf.path,
+      _stdout, stderr, status = Open3.capture3 img2pdf, '--output', pdf.path,
         file.path
 
       # img2pdf will refuse if there is an alpha channel.  If that happens
@@ -86,7 +86,7 @@ class Attachment
             'remove', '-alpha', 'off', tmppng.path
 
           if File.size? tmppng.path
-            stdout, stderr, status = Open3.capture3 img2pdf, '--output',
+            _stdout, stderr, _status = Open3.capture3 img2pdf, '--output',
               pdf.path, tmppng.path
           end
 
