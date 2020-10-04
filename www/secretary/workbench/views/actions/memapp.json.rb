@@ -61,7 +61,7 @@ task "svn commit documents/member_apps/#@filename#{fileext} and update members.t
     _textarea @entry, name: 'entry', rows: @entry.split("\n").length
   end
 
-  complete do |dir|
+  complete do
 
     svn_multi('foundation', 'members.txt', 'member_apps', @selected, @signature, @filename, fileext, message, @document) do |members_txt|
 
@@ -132,7 +132,7 @@ task "subscribe to members@apache.org" do
     _textarea @subreq, name: 'subreq', rows: @subreq.split("\n").length
   end
 
-  complete do |dir|
+  complete do
     # determine file name
     fn = "#{@availid}-members-#{Time.now.strftime '%Y%m%d-%H%M%S-%L'}.json"
 
@@ -163,10 +163,10 @@ task "svn commit memapp-received.text" do
     _input value: @line, name: 'line'
   end
 
-  complete do |dir|
+  complete do
     meeting = file.split('/')[-2]
     path = ASF::SVN.svnpath!('Meetings', meeting,'memapp-received.txt')
-    rc = ASF::SVN.update(path, @document, env, _, {diff: true}) do |tmpdir, input|
+    rc = ASF::SVN.update(path, @document, env, _, {diff: true}) do |_tmpdir, input|
       input[/.*\s#{@availid}\s.*/] = @line
       input
     end
