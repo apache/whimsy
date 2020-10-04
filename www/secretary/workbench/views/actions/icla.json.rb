@@ -10,7 +10,7 @@
 # extract message
 message = Mailbox.find(@message)
 
-@from.untaint if @from =~ /\A("?[\s\w]+"?\s+<)?\w+@apache\.org>?\z/
+_warn "Invalid From address #{@from}" unless @from =~ /\A("?[\s\w]+"?\s+<)?\w+@apache\.org>?\z/
 
 # extract file extension
 fileext = File.extname(@selected).downcase
@@ -204,7 +204,7 @@ if @valid_user and @pmc and not @votelink.empty?
   ######################################################################
 
   task "email root@apache.org" do
-    # build mail from template
+    # build mail from template (already includes TO: root)
     mail = Mail.new(template('acreq.erb'))
 
     # adjust copy lists
@@ -213,8 +213,6 @@ if @valid_user and @pmc and not @votelink.empty?
     cc << @podling.private_mail_list if @podling # copy podling
     mail.cc = cc.uniq.map {|email| email}
 
-    # untaint from and to email addresses
-    mail.to = mail.to.map {|email| email}
     mail.from = @from
 
     # echo email
