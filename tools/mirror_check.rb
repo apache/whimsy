@@ -371,7 +371,7 @@ end
 if __FILE__ == $0
   init
   url = ARGV[0] || "localhost" # easier to test in an IDE
-  checkHTTP(url+"") # allow url to be untainted later
+  checkHTTP(url)
   # display the test results
   @tests.each { |t| t.map{|k, v| puts "#{k}: - #{v}"}}
   if @fails > 0
