@@ -64,7 +64,6 @@ class Attachment
   def as_pdf
     ext = File.extname(name).downcase
     ext = '.pdf' if content_type.end_with? '/pdf'
-    ext.untaint if ext =~ /^\.\w+$/
 
     file = SafeTempFile.new([safe_name, ext])
     file.write(body) # SafeTempFile forces encoding: BINARY
