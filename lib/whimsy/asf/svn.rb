@@ -28,8 +28,7 @@ module ASF
     @testdata = {}
 
     # path to <tt>repository.yml</tt> in the source.
-    REPOSITORY = File.expand_path('../../../../repository.yml', __FILE__).
-      untaint
+    REPOSITORY = File.expand_path('../../../../repository.yml', __FILE__)
     @@repository_mtime = nil
     @@repository_entries = nil
     @svnHasPasswordFromStdin = nil
