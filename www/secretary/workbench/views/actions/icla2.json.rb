@@ -22,7 +22,9 @@ _personalize_email(env.user)
 #                        move existing document                        #
 ########################################################################
 
-@filename.untaint if @filename =~ /\A\w[-.\w]*\z/
+unless @filename =~ /\A\w[-.\w]*\z/
+  _warn "Unexpected characters in @{filename}"
+end
 
 if @email.strip.end_with? '@apache.org'
   _warn "Cannot redirect email to an @apache.org address: #{@email.strip}"

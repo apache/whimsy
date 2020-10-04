@@ -23,6 +23,8 @@ else
   _warn "Invalid filename or extension"
 end
 
+_warn "Invalid availid #{@availid}" unless @availid =~ /^\w[-.\w]+$/
+
 # obtain per-user information
 _personalize_email(env.user)
 
@@ -133,7 +135,6 @@ task "subscribe to members@apache.org" do
   complete do |dir|
     # determine file name
     fn = "#{@availid}-members-#{Time.now.strftime '%Y%m%d-%H%M%S-%L'}.json"
-    fn.untaint if @availid =~ /^\w[-.\w]+$/
 
     rc = ASF::SVN.create_(ASF::SVN.svnurl!('subreq'), fn, @subreq, @document, env, _)
     raise RuntimeError.new("exit code: #{rc}") if rc != 0
