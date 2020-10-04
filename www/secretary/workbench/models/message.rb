@@ -322,7 +322,7 @@ class Message
       end
     end
 
-    # reformat and untaint email addresses
+    # reformat email addresses
     mail[:to] = to.map {|addr| addr.format}
     mail[:cc] = cc.map {|addr| addr.format} unless cc.empty?
     mail[:bcc] = bcc.map {|addr| addr.format} unless bcc.empty?
