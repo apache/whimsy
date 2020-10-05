@@ -2,6 +2,9 @@
 # Bulk apply comments and pre-approvals to agenda file
 #
 
+MAX_LINE = 79
+INDENT = 13
+
 user = env.user
 user = user.dup.untaint if user =~ /\A\w+\z/
 updates = YAML.load_file("#{AGENDA_WORK}/#{user}.yml")
@@ -21,22 +24,22 @@ Agenda.update(agenda_file, @message) do |agenda|
   parsed = nil
 
   patterns = {
-   # Committee Reports
-   '' => /
+    # Committee Reports
+    '' => /
      ^\s{7}See\sAttachment\s\s?(\w+)[^\n]*?\s+
      \[\s[^\n]*\s*approved:\s*?(.*?)
      \s*comments:(.*?)\n\s{9}\]
      /mx,
 
-   # Meeting Minutes
-   '3' => /
+    # Meeting Minutes
+    '3' => /
      ^\s{4}(\w)\.\sThe\smeeting\sof.*?
      \[\s[^\n]*\s*approved:\s*?(.*?)
      \s*comments:(.*?)\n\s{9}\]
      /mx,
 
-   # Executive Officers: only the president has comments
-   '4' => /
+    # Executive Officers: only the president has comments
+    '4' => /
      ^\s{4}(\w)\.\sPresident\s\[.*?
      \[\s*comments:()(.*?)\n\s{9}\]
      /mx,
@@ -72,10 +75,10 @@ Agenda.update(agenda_file, @message) do |agenda|
 
       # add comments to this report
       if comments.include? attachment
-        width = 79-13-initials.length
-        text = comments[attachment].reflow(13+initials.length, width)
-        text[/ *(#{' '*(initials.length+2)})/,1] = "#{initials}: "
-        match[/\n()\s{9}\]/,1] = "#{text}\n"
+        width = MAX_LINE - INDENT - initials.length
+        text = comments[attachment].reflow(INDENT + initials.length, width)
+        text[/ *(#{' ' * (initials.length + 2)})/, 1] = "#{initials}: "
+        match[/\n()\s{9}\]/, 1] = "#{text}\n"
       end
 
       match
@@ -109,7 +112,7 @@ Agenda.update(agenda_file, @message) do |agenda|
       # update agenda
       agenda.sub!(/ \d\. Committee Reports.*?\n\s+A\./m) do |flags|
         if flags =~ /discussion:\n\n()/
-          flags.gsub! /\n +# .*? \[.*\]/, ''
+          flags.gsub!(/\n +# .*? \[.*\]/, '')
           flags[/discussion:\n\n()/, 1] = flagged_reports.sort.
             map {|pmc, who| "        # #{pmc} [#{who.join(', ')}]\n"}.join
           flags.sub!(/\n+(\s+)A\.\z/) {"\n\n#{$1}A."}
@@ -130,7 +133,7 @@ Agenda.update(agenda_file, @message) do |agenda|
         # check for updates for this action item
         updates['status'].each do |update|
           match = true
-          action.each do |name, value|
+          action.each do |name, _value|
             match = false if name != :status and update[name] != action[name]
           end
           action = update if match
@@ -165,16 +168,16 @@ Agenda.update(agenda_file, @message) do |agenda|
     if comments.include? attachment
       office = agenda[
         /^Attachment #{attachment}: Report from the (.*?)  \[/, 1]
-      office.sub! /^VP of /, ''
-      office.sub! /^Apache /, ''
+      office.sub!(/^VP of /, '')
+      office.sub!(/^Apache /, '')
 
-      width = 79-13-initials.length
+      width = MAX_LINE - INDENT - initials.length
       text = "[#{office}] #{comments[attachment]}"
-      text = text.reflow(13+initials.length, width)
-      text[/ *(#{' '*(initials.length+2)})/,1] = "#{initials}: "
+      text = text.reflow(INDENT + initials.length, width)
+      text[/ *(#{' ' * (initials.length + 2)})/, 1] = "#{initials}: "
 
       agenda.sub!(patterns['4']) do |match|
-        match[/\n()\s{9}\]/,1] = "#{text}\n"
+        match[/\n()\s{9}\]/, 1] = "#{text}\n"
         match
       end
     end
