@@ -45,7 +45,7 @@ class Attachment
 
   # writes the attachment to the specified pathname, which must not exist
   def write_path(path)
-    File.open(path, File::WRONLY|File::CREAT|File::EXCL, {encoding: Encoding::BINARY}) do |file|
+    File.open(path, File::WRONLY|File::CREAT|File::EXCL, encoding: Encoding::BINARY) do |file|
       file.write body
     end
   end
