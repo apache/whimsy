@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+
 # Gather simple statistics from whimsy server logs
 # TODO security check ASF::Auth.decode before reading log files
 require 'whimsy/asf'
@@ -179,12 +180,16 @@ module LogParser
   # @param f filename of error.log or .gz
   # @return hash of string of interesting entries
   #   "timestamp" => "AH01215: undefined method `map' for #<String:0x0000000240e1e0> (NoMethodError): /x1/srv/whimsy/www/status/errors.cgi"
+  # [..date..] [cgi:error] [pid ...] [client ...] End of script output before headers: site.cgi
+  # [..date..] [cgi:error] [pid ...] [client ...] AH01215: /var/lib/g...
+  # [..date..] [proxy:error] [pid ...] [client ...] AH00898: Error during SSL Handshake with remote server returned by /board/agenda/websocket/
+  # [..date..] [proxy:error] [pid ...] (20014)Internal error (specific information not available): [client ...] AH01084: pass request body failed to 127.0.0.1:34234 (localhost)
   def parse_whimsy_error(f, logs = {})
-    r = Regexp.new('\[(?<errdate>[^\]]*)\] \[cgi:error\] (\[([^\]]*)\] ){2}(?<errline>.+)')
+    r = Regexp.new('\[(?<errdate>[^\]]*)\] \[[\w_]+:error\] \[.+?\] (.+: )?\[.+?\] (?<errline>.+)')
     ignored = Regexp.union(IGNORE_TRACEBACKS)
     read_logz(f).lines.each do |l|
-      if (m = r.match(l))
-        if ignored !~ m[2]
+      r.match(l) do |m|
+        unless ignored =~ m[2]
           begin
             logs[DateTime.parse(m[1]).iso8601(6)] = m[2]
           rescue StandardError
@@ -220,9 +225,11 @@ module LogParser
   def get_errors(current, dir: ERROR_LOG_DIR)
     if current
       whimsy_log = latest(File.join(dir, 'whimsy_error.log*'))
+      puts whimsy_log
       logs = LogParser.parse_whimsy_error(whimsy_log)
-      error_log = latest(File.join(dir, 'error?log*'))
-      LogParser.parse_error_log(error_log, logs) if error_log
+      # error_log = latest(File.join(dir, 'error?log*'))
+      # puts error_log
+      # LogParser.parse_error_log(error_log, logs) if error_log
     else
       logs = LogParser.parse_whimsy_errors(dir)
       LogParser.parse_error_logs(dir, logs)
