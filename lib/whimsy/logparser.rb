@@ -225,11 +225,9 @@ module LogParser
   def get_errors(current, dir: ERROR_LOG_DIR)
     if current
       whimsy_log = latest(File.join(dir, 'whimsy_error.log*'))
-      puts whimsy_log
       logs = LogParser.parse_whimsy_error(whimsy_log)
-      # error_log = latest(File.join(dir, 'error?log*'))
-      # puts error_log
-      # LogParser.parse_error_log(error_log, logs) if error_log
+      error_log = latest(File.join(dir, 'error?log*'))
+      LogParser.parse_error_log(error_log, logs) if error_log
     else
       logs = LogParser.parse_whimsy_errors(dir)
       LogParser.parse_error_logs(dir, logs)
