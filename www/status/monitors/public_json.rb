@@ -91,7 +91,6 @@ def Monitor.public_json(previous_status)
           # Save a copy of the log; append the severity so can track more problems
           file = File.basename(log)
           FileUtils.copy log, File.join(archive, file + '.' + lvl), preserve: true
-          $stderr.puts "Would send e-mail for #{name} #{lvl}"
           begin
             require 'mail'
             $LOAD_PATH.unshift '/srv/whimsy/lib'
