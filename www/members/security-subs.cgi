@@ -150,7 +150,7 @@ _html do
         end
       end
       _h2 do
-        if podling
+        if podling && podling.status == 'current'
           _a podling.display_name,
             href: "../../roster/ppmc/#{podling.id}"
         else
