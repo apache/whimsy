@@ -1,12 +1,11 @@
 require 'active_support/time'
 
+raise ArgumentError, "Invalid syntax #{@reminder}" unless  @reminder =~ /\A[-\w]+\z/
 # read template for the reminders
-@reminder.untaint if @reminder =~ /^reminder\d$/
-@reminder.untaint if @reminder =~ /^non-responsive$/
-template = File.read("#{FOUNDATION_BOARD}/templates/#@reminder.mustache")
+template = File.read(File.join(FOUNDATION_BOARD, 'templates', "#{@reminder}.mustache"))
 
 # find the latest agenda
-agenda = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].max
+agenda = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].max
 
 # determine meeting time
 meeting = ASF::Board.nextMeeting
