@@ -40,8 +40,8 @@ if ENV['RACK_ENV'] == 'test'
 else
   FOUNDATION_BOARD = ASF::SVN['foundation_board']
   AGENDA_WORK = ASF::Config.get(:agenda_work) || '/srv/agenda'
-  STDERR.puts "* SVN board  : #{FOUNDATION_BOARD}"
-  STDERR.puts "* Agenda work: #{AGENDA_WORK}"
+  # STDERR.puts "* SVN board  : #{FOUNDATION_BOARD}"
+  # STDERR.puts "* Agenda work: #{AGENDA_WORK}"
 end
 
 FileUtils.mkdir_p AGENDA_WORK if not Dir.exist? AGENDA_WORK
