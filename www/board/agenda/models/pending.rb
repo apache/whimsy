@@ -1,7 +1,10 @@
 class Pending
   # determine the name of the work file associated with a given user
   def self.work_file(user)
-    "#{AGENDA_WORK}/#{user}.yml".untaint if user =~ /\A\w+\z/
+    # user ids may include '-'
+    raise ArgumentError, "Unexpected user id #{user}" unless user =~ /\A[-\w]+\z/
+
+    "#{AGENDA_WORK}/#{user}.yml"
   end
 
   # fetch and parse a work file
