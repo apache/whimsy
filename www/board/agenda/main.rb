@@ -17,7 +17,6 @@ require 'ruby2js/filter/require'
 
 require 'listen'
 require 'yaml'
-require 'thread'
 require 'net/http'
 require 'shellwords'
 require 'mail'
@@ -44,7 +43,7 @@ else
   # STDERR.puts "* Agenda work: #{AGENDA_WORK}"
 end
 
-FileUtils.mkdir_p AGENDA_WORK if not Dir.exist? AGENDA_WORK
+FileUtils.mkdir_p AGENDA_WORK unless Dir.exist? AGENDA_WORK
 
 require_relative './routes'
 require_relative './models/pending'
@@ -60,7 +59,7 @@ require_relative './daemon/events'
 require 'websocket-client-simple'
 
 # if AGENDA_WORK doesn't exist yet, make it
-if not Dir.exist? AGENDA_WORK
+unless Dir.exist? AGENDA_WORK
   require 'fileutils'
   FileUtils.mkdir_p AGENDA_WORK
 end
