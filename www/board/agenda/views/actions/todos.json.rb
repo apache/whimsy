@@ -5,13 +5,13 @@
 TLPREQ = ASF::SVN['tlpreq-input']
 
 date = params[:date].gsub('-', '_')
-date.untaint if date =~ /^\d+_\d+_\d+$/
+raise ArgumentError, "Invalid date #{date}" unless date =~ /\A\d+_\d+_\d+\z/
+
 agenda = "board_agenda_#{date}.txt"
 
 # fetch minutes
 @minutes = agenda.sub('_agenda_', '_minutes_')
-minutes_file = File.join(AGENDA_WORK, "#{@minutes.sub('.txt', '.yml')}")
-minutes_file.untaint if @minutes =~ /^board_minutes_\d+_\d+_\d+\.txt$/
+minutes_file = File.join(AGENDA_WORK, @minutes.sub('.txt', '.yml'))
 
 if File.exist? minutes_file
   minutes = YAML.load_file(minutes_file) || {}

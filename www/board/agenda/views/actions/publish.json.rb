@@ -42,8 +42,9 @@ end
 # clean up summary
 @summary = @summary.gsub(/\r\n/,"\n").sub(/\s+\Z/,'') + "\n"
 
+raise ArgumentError, "Invalid date #{@date}" unless @date =~ /\A\d+_\d+_\d+\z/
+
 # extract date and year from minutes
-@date.untaint if @date =~ /^\d+_\d+_\d+$/
 date = Date.parse(@date.gsub('_', '-'))
 year = date.year
 fdate = date.strftime("%d %B %Y")
