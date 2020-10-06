@@ -30,6 +30,9 @@ unless ENV['RACK_ENV'] == 'development'
   disable :logging # suppress log of requests to stderr/error.log
 end
 
+# needs to match all agendas and minutes
+BOARD_REGEX = %r{\Aboard_\w+_[-\d_]+\.txt\z}
+
 # determine where relevant data can be found
 if ENV['RACK_ENV'] == 'test'
   FOUNDATION_BOARD = File.expand_path('test/work/board')
@@ -67,4 +70,8 @@ end
 # get a directory listing given a pattern and a base directory
 def dir(pattern, base=FOUNDATION_BOARD)
   Dir[File.join(base, pattern)].map {|name| File.basename name}
+end
+
+def validate_board_file(name)
+  raise ArgumentError, "Invalid filename #{name}" unless name =~ BOARD_REGEX
 end

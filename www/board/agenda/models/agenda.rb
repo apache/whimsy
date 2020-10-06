@@ -28,8 +28,9 @@ class Agenda
   # fetch parsed agenda from in memory cache if up to date, otherwise
   # fall back to disk.
   def self.[](file)
+    validate_board_file(file)
+
     path = File.join(CACHE, file.sub(/\.txt$/, '.yml'))
-    path.untaint if file =~ /^board_agenda_\d+_\d+_\d+\.txt$/
     data = @@cache[file]
 
     if File.exist?(path) and File.mtime(path) != data[:mtime]
@@ -45,8 +46,9 @@ class Agenda
 
   # update both in memory and disk caches with new parsed agenda
   def self.[]=(file, data)
+    validate_board_file(file)
+
     path = File.join(CACHE, file.sub(/\.txt$/, '.yml'))
-    path.untaint if file =~ /^board_agenda_\d+_\d+_\d+\.txt$/
 
     File.open(path, File::RDWR|File::CREAT, 0644) do |fh|
       fh.flock(File::LOCK_EX)
@@ -87,14 +89,16 @@ class Agenda
   end
 
   def self.uptodate(file)
-    raise ArgumentError, "Invalid file name #{file}" unless file =~ /\Aboard_\w+_[\d_]+\.txt\z/
+    validate_board_file(file)
+
     path = File.expand_path(file, FOUNDATION_BOARD)
     return false unless File.exist? path
     return Agenda[file][:mtime] == File.mtime(path)
   end
 
   def self.parse(file, mode)
-    raise ArgumentError, "Invalid file name #{file}" unless file =~ /\Aboard_\w+_[\d_]+\.txt\z/
+    validate_board_file(file)
+
     # for quick mode, anything will do
     mode = :quick if ENV['RACK_ENV'] == 'test'
     return Agenda[file][:parsed] if mode == :quick and Agenda[file][:mtime] != 0
@@ -132,6 +136,8 @@ class Agenda
   # update agenda file in SVN
   def self.update(file, message, retries=20, auth: nil, &block)
     return unless block
+    validate_board_file(file)
+
     commit_rc = 0
 
     # Create a temporary work directory
@@ -143,8 +149,6 @@ class Agenda
     if (not auth) and env.password
       auth = [['--username', env.user, '--password', env.password]]
     end
-
-    file.untaint if file =~ /\Aboard_\w+_[\d_]+\.txt\z/
 
     working_copy = File.join(AGENDA_WORK, file)
 

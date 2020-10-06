@@ -4,10 +4,11 @@
 
 ASF::Mail.configure
 
+validate_board_file(@agenda)
+
 # fetch minutes
 @minutes = @agenda.sub('_agenda_', '_minutes_')
 minutes_file = "#{AGENDA_WORK}/#{@minutes.sub('.txt', '.yml')}"
-minutes_file.untaint if @minutes =~ /^board_minutes_\d+_\d+_\d+\.txt$/
 date = @agenda[/\d+_\d+_\d+/].gsub('_', '-')
 
 if File.exist? minutes_file

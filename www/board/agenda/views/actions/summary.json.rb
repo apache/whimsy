@@ -1,9 +1,10 @@
 # send summary email to committers
 
+validate_board_file(@agenda)
+
 # fetch minutes
 @minutes = @agenda.sub('_agenda_', '_minutes_')
 minutes_file = File.join(AGENDA_WORK, "#{@minutes.sub('.txt', '.yml')}")
-minutes_file.untaint if @minutes =~ /^board_minutes_\d+_\d+_\d+\.txt$/
 
 if File.exist? minutes_file
   minutes = YAML.load_file(minutes_file) || {}
@@ -12,7 +13,7 @@ else
 end
 
 # ensure headers have proper CRLF
-header, body = @text.untaint.split(/\r?\n\r?\n/, 2)
+header, body = @text.split(/\r?\n\r?\n/, 2)
 header.gsub! /\r?\n/, "\r\n"
 
 # send mail

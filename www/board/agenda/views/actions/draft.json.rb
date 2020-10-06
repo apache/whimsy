@@ -2,8 +2,9 @@
 # commit draft minutes to SVN
 #
 
+validate_board_file(@agenda)
+
 agenda_file = "#{FOUNDATION_BOARD}/#{@agenda}"
-agenda_file.untaint if @agenda =~ /^board_agenda_\d+_\d+_\d+.txt$/
 minutes_file = agenda_file.sub('_agenda', '_minutes')
 
 ASF::SVN.update minutes_file, @message, env, _ do |tmpdir, old_contents|
