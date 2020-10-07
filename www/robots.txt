@@ -5,8 +5,10 @@ Disallow /board/subscriptions/
 Disallow /fundraising/
 Disallow /incubator/moderators/
 Disallow /incubator/private-lists/
-Disallow /mattmann/
+Disallow /infra/
 Disallow /members/
+Disallow /officers/
 Disallow /roster/
+Disallow /secretary/
 Disallow /treasurer/
 Disallow /voter/
