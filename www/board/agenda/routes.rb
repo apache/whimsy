@@ -67,11 +67,11 @@ end
 
 # redirect shepherd to latest agenda
 get '/shepherd' do
-  user=ASF::Person.find(env.user).public_name.split(' ').first
+  user = ASF::Person.find(env.user).public_name.split(' ').first
   agenda = dir('board_agenda_*.txt').max
   pass unless agenda
   redirect File.dirname(request.path) +
-    "/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/shepherd/#{user}"
+           "/#{agenda[/\d+_\d+_\d+/].gsub('_', '-')}/shepherd/#{user}"
 end
 
 # redirect missing to missing page for the latest agenda
@@ -117,7 +117,7 @@ get '/env' do
     root: Wunderbar::Asset.root,
     virtual: Wunderbar::Asset.virtual,
     scripts: Wunderbar::Asset.scripts.map do |script|
-     {path: script.path}
+      {path: script.path}
     end
   }
 
@@ -133,12 +133,12 @@ end
 get %r{/(\d\d\d\d-\d\d-\d\d)/followup\.json} do |date|
   pass unless Dir.exist? '/srv/mail/board'
 
-  agenda = "board_agenda_#{date.gsub('-','_')}.txt"
+  agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
   pass unless Agenda.parse agenda, :quick
 
   # select agenda items that have comments
   parsed = Agenda[agenda][:parsed]
-  followup = parsed.select {|item| not item['comments'].to_s.empty?}.
+  followup = parsed.reject {|item| item['comments'].to_s.empty?}.
     map {|item| [item['title'], {comments: item['comments'],
       shepherd: item['shepherd'], mail_list: item['mail_list'], count: 0}]}.
     to_h
@@ -158,14 +158,14 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/followup\.json} do |date|
 end
 
 # pending items
-get %r{/(\d\d\d\d-\d\d-\d\d)/pending\.json} do |date|
+get %r{/(\d\d\d\d-\d\d-\d\d)/pending\.json} do
   pending = Pending.get(env.user)
   _json pending
 end
 
 # agenda digest information
 get %r{/(\d\d\d\d-\d\d-\d\d)/digest\.json} do |date|
-  agenda = "board_agenda_#{date.gsub('-','_')}.txt"
+  agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
   _json(
     {
       agenda: {
@@ -260,7 +260,7 @@ end
 
 # all agenda pages
 get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
-  agenda = "board_agenda_#{date.gsub('-','_')}.txt"
+  agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
   pass unless Agenda.parse agenda, :quick
 
   @base = "#{env['SCRIPT_NAME']}/#{date}/"
@@ -278,7 +278,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
 
   minutes = AGENDA_WORK + '/' +
     agenda.sub('agenda', 'minutes').sub('.txt', '.yml')
-  @page[:minutes] = YAML.load(File.read(minutes)) if File.exist? minutes
+  @page[:minutes] = YAML.safe_load(File.read(minutes)) if File.exist? minutes
 
   @cssmtime = File.mtime('public/stylesheets/app.css').to_i
   @manmtime = File.mtime("#{settings.views}/manifest.json.erb").to_i
@@ -366,14 +366,14 @@ end
 
 # Raw minutes
 get %r{/(\d\d\d\d-\d\d-\d\d).ya?ml} do |file|
-  minutes = AGENDA_WORK + '/' + "board_minutes_#{file.gsub('-','_')}.yml"
-  pass unless File.exists? minutes
+  minutes = AGENDA_WORK + '/' + "board_minutes_#{file.gsub('-', '_')}.yml"
+  pass unless File.exist? minutes
   _text File.read minutes
 end
 
 # updates to agenda data
 get %r{/(\d\d\d\d-\d\d-\d\d).json} do |date|
-  file = "board_agenda_#{date.gsub('-','_')}.txt"
+  file = "board_agenda_#{date.gsub('-', '_')}.txt"
   pass unless Agenda.parse file, :full
 
   begin
@@ -383,7 +383,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d).json} do |date|
         sub('.txt', '.yml')
 
       # merge in minutes, if available
-      if File.exists? minutes_file
+      if File.exist? minutes_file
         minutes = YAML.load_file(minutes_file)
         Agenda[file][:parsed].each do |item|
           item[:minutes] = minutes[item['title']] if minutes[item['title']]
@@ -415,7 +415,7 @@ end
 
 # draft minutes
 get '/text/minutes/:file' do |file|
-  file = "board_minutes_#{file.gsub('-','_')}.txt"
+  file = "board_minutes_#{file.gsub('-', '_')}.txt"
   if dir('board_minutes_*.txt').include? file
     path = File.join(FOUNDATION_BOARD, file)
   elsif not Dir[File.join(ASF::SVN['minutes'], file[/\d+/], file)].empty?
@@ -482,7 +482,7 @@ end
 get %r{/json/chat/(\d\d\d\d_\d\d_\d\d)} do |date|
   log = "#{AGENDA_WORK}/board_agenda_#{date}-chat.yml"
   if File.exist? log
-    _json YAML.load(File.read(log))
+    _json YAML.safe_load(File.read(log))
   else
     _json []
   end
@@ -497,7 +497,7 @@ get '/json/historical-comments' do
   unless !user or user.asf_member? or ASF.pmc_chairs.include? user
     status 206 # Partial Content
     committees = user.committees.map(&:display_name)
-    comments = comments.select do |project, list|
+    comments = comments.select do |project, _list|
       committees.include? project
     end
   end
@@ -507,9 +507,9 @@ end
 
 # draft minutes
 get '/text/draft/:file' do |file|
-  agenda = "board_agenda_#{file.gsub('-','_')}.txt"
+  agenda = "board_agenda_#{file.gsub('-', '_')}.txt"
   minutes = AGENDA_WORK + '/' +
-    agenda.sub('_agenda_','_minutes_').sub('.txt','.yml')
+    agenda.sub('_agenda_', '_minutes_').sub('.txt', '.yml')
 
   _text do
     Dir.chdir(FOUNDATION_BOARD) do
