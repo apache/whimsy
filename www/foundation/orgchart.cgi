@@ -183,7 +183,7 @@ _html do
     }
     ) do
       request = ENV['REQUEST_URI']
-      if request =~ /orgchart\/?\z/
+      if request =~ /orgchart\/?\z/ || request == '/foundation/orgchart.cgi' # as from tools listing
         emit_orgchart(org: ASF::OrgChart.load)
       elsif request =~ /orgchart\/([^\/?#]+)/
         orgchart = ASF::OrgChart.load
