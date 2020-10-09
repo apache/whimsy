@@ -271,6 +271,8 @@ seen={}
     title.sub! 'Openmeetings', 'OpenMeetings'
     title.sub! 'Web services', 'Web Services'
     title.sub! 'ASF Rep. for W3C', 'W3C Relations'
+    title.sub! 'Dolphin Scheduler', 'DolphinScheduler' # board_minutes_2019_11_20.txt
+    title.sub! 'DLab', 'DataLab'
 
     next if title.strip.empty?
     next if text.strip.empty? and title =~ /Intentionally (left )?Blank/i
