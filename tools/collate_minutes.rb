@@ -110,7 +110,7 @@ end
 # get site information
 DATAURI = 'https://whimsy.apache.org/public/committee-info.json'
 local_copy = File.expand_path('../../www/public/committee-info.json', __FILE__)
-if File.exist? local_copy
+if File.exist?(local_copy) && (Time.now - File.stat(local_copy).mtime < 3600)
   Wunderbar.info "Using #{local_copy}"
   cinfo = JSON.parse(File.read(local_copy))
 else
@@ -259,6 +259,7 @@ seen={}
     title.sub! 'ASF Rep. for W3C', 'W3C Relations'
     title.sub! 'Dolphin Scheduler', 'DolphinScheduler' # board_minutes_2019_11_20.txt
     title.sub! 'DLab', 'DataLab'
+    title.sub! 'SystemML', 'SystemDS'
 
     next if title.strip.empty?
     next if text.strip.empty? and title =~ /Intentionally (left )?Blank/i
@@ -372,6 +373,9 @@ seen={}
           title.sub! 'Socialsite', 'SocialSite'
           title.sub! 'stdcxx', 'C++ Standard Library'
           title.sub! 'STDCXX', 'C++ Standard Library'
+          title.sub! 'Dolphin Scheduler', 'DolphinScheduler' # board_minutes_2019_11_20.txt
+          title.sub! 'DLab', 'DataLab'
+          title.sub! 'SystemML', 'SystemDS'
           title.sub! /\s+\(.*\)$/, ''
           title.sub! /^Apache(: Project)?/, ''
 
