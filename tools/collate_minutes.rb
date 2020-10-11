@@ -33,22 +33,8 @@ SITE_MINUTES = ASF::Config.get(:board_minutes) ||
   File.expand_path('../../www/board/minutes', __FILE__)
 
 # list of SVN resources needed
-resources = {
-  SVN_SITE_RECORDS_MINUTES:
-    'asf/infrastructure/site/trunk/content/foundation/records/minutes',
-  BOARD: 'private/foundation/board'
-}
-
-# verify that the SVN resources can be found
-resources.each do |const, location|
-  Kernel.const_set const, ASF::SVN[location]
-  unless Kernel.const_get const
-    STDERR.puts 'Unable to locate local checkout for ' + location
-    exit 1
-  end
-end
-
-incubator = URI.parse('http://incubator.apache.org/')
+SVN_SITE_RECORDS_MINUTES = ASF::SVN['minutes']
+BOARD = ASF::SVN['foundation_board']
 
 KEEP = ARGV.delete '--keep' # keep obsolete files?
 
@@ -116,7 +102,7 @@ ASF::Podling.list.each do |podling|
   site[podling.name] = {
     name:   podling.display_name,
     status: podling.status,
-    link:   incubator + "projects/#{podling.name}.html",
+    link:   "http://incubator.apache.org/projects/#{podling.name}.html",
     text:   podling.description
   }
 end
