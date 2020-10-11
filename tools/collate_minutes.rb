@@ -173,6 +173,79 @@ $calendar.at('head').add_child(style)
   end
 end
 
+# handle project name changes
+def name_changes(title)
+  title.sub! 'Ace', 'ACE' # WHIMSY-31
+  title.sub! 'ADF Faces', 'MyFaces' # via Trinidad
+  title.sub! 'Amber', 'Oltu'
+  title.sub! 'Apache/TCL', 'Tcl'
+  title.sub! 'Argus', 'Ranger'
+  title.sub! 'ASF Rep. for W3C', 'W3C Relations'
+  title.sub! 'Bean Validation', 'BVal'
+  title.sub! 'BeanValidation', 'BVal'
+  title.sub! 'Bluesky', 'BlueSky'
+  title.sub! 'BRPC', 'brpc'
+  title.sub! 'Callback', 'Cordova'
+  title.sub! 'Conferences', 'Conference Planning'
+  title.sub! 'Cxx Standard Library', 'C++ Standard Library'
+  title.sub! 'Deft', 'AWF'
+  title.sub! 'DLab', 'DataLab'
+  title.sub! 'Dolphin Scheduler', 'DolphinScheduler' # board_minutes_2019_11_20.txt
+  title.sub! 'Easyant', 'EasyAnt'
+  title.sub! 'Empire-DB', 'Empire-db'
+  title.sub! 'Fleece', 'Johnzon'
+  title.sub! 'Geroniomo', 'Geronimo'
+  title.sub! 'iBatis', 'iBATIS'
+  title.sub! 'infrastructure', 'Infrastructure'
+  title.sub! 'ISIS', 'Isis'
+  title.sub! 'IVY', 'Ivy'
+  title.sub! 'JackRabbit', 'Jackrabbit'
+  title.sub! 'James', 'JAMES'
+  title.sub! 'Java Community Process', 'JCP'
+  title.sub! 'JSecurity', 'Shiro'
+  title.sub! 'Juice', 'JuiCE'
+  title.sub! 'log4php', 'Log4php'
+  title.sub! 'Lucene.NET', 'Lucene.Net'
+  title.sub! 'lucene4c', 'Lucene4c'
+  title.sub! 'Ode', 'ODE'
+  title.sub! 'ODFToolkit', 'ODF Toolkit'
+  title.sub! 'Open for Business', 'OFBiz'
+  title.sub! 'TomEE (OpenEJB)', 'TomEE'
+  title.sub! 'OpenEJB', 'TomEE'
+  title.sub! 'Openmeetings', 'OpenMeetings'
+  title.sub! 'OpenOffice.org', 'OpenOffice'
+  title.sub! 'Optiq', 'Calcite'
+  title.sub! 'Orc', 'ORC'
+  title.sub! 'Oscar', 'Felix'
+  title.sub! 'PRC', 'Public Relations'
+  title.sub! 'Public Relations Commitee', 'Public Relations'
+  title.sub! 'Quarks', 'Edgent'
+  title.sub! 'Servicecomb', 'ServiceComb'
+  title.sub! 'Singa', 'SINGA'
+  title.sub! 'Socialsite', 'SocialSite'
+  title.sub! 'stdcxx', 'C++ Standard Library'
+  title.sub! 'STDCXX', 'C++ Standard Library'
+  title.sub! 'Steve', 'STeVe'
+  title.sub! 'Stratosphere', 'Flink'
+  title.sub! 'SystemML', 'SystemDS'
+  title.sub! 'TCL', 'Tcl'
+  title.sub! 'Web services', 'Web Services'
+  title.sub! 'Zest', 'Polygene'
+  title.sub! "Infrastructure (President's)", 'Infrastructure'
+  title.sub! %r{\bKi\b}, 'Shiro'
+  title.sub! %r{^HTTPD?$}, 'HTTP Server'
+  title.sub! %r{^Infrastructure .*}, 'Infrastructure'
+  title.sub! %r{^Labs .*}, 'Labs'
+  title.sub! %r{^Logging$}, 'Logging Services'
+  title.sub! %r{APR$}, 'Portable Runtime (APR)'
+  title.sub! %r{CeltiX[Ff]ire}, 'CXF'
+  title.sub! %r{Fund[- ][rR]aising}, 'Fundraising'
+  title.sub! %r{Perl-Apache( PMC)?}, 'Perl'
+  title.sub! %r{Portable Runtime$}, 'Portable Runtime (APR)'
+  title.sub! %r{Public Relations Committee}, 'Public Relations'
+  title.sub! %r{Security$}, 'Security Team'
+end
+
 # Dir.chdir(SVN_SITE_RECORDS_MINUTES) { system 'svn update' }
 
 agenda = {}
@@ -232,34 +305,7 @@ seen={}
     title.sub! /\sPMC$/, ''
     title.sub! 'Apache Software Foundation', 'ASF'
 
-    title.sub! /^Logging$/, 'Logging Services'
-    title.sub! 'stdcxx', 'C++ Standard Library'
-    title.sub! 'Cxx Standard Library', 'C++ Standard Library'
-    title.sub! 'Conferences', 'Conference Planning'
-    title.sub! /Fund[- ][rR]aising/, 'Fundraising'
-    title.sub! 'Geroniomo', 'Geronimo'
-    title.sub! "Infrastructure (President's)", 'Infrastructure'
-    title.sub! 'Java Community Process', 'JCP'
-    title.sub! 'James', 'JAMES'
-    title.sub! /APR$/, 'Portable Runtime (APR)'
-    title.sub! /Portable Runtime$/, 'Portable Runtime (APR)'
-    title.sub! 'TomEE (OpenEJB)', 'TomEE'
-    title.sub! 'OpenEJB', 'TomEE'
-    title.sub! 'Public Relations Commitee', 'Public Relations'
-    title.sub! /Security$/, 'Security Team'
-    title.sub! /^Infrastructure .*/, 'Infrastructure'
-    title.sub! /^Labs .*/, 'Labs'
-    title.sub! 'TCL', 'Tcl'
-    title.sub! 'Orc', 'ORC'
-    title.sub! 'Steve', 'STeVe'
-    title.sub! 'Servicecomb', 'ServiceComb'
-    title.sub! 'Zest', 'Polygene'
-    title.sub! 'Openmeetings', 'OpenMeetings'
-    title.sub! 'Web services', 'Web Services'
-    title.sub! 'ASF Rep. for W3C', 'W3C Relations'
-    title.sub! 'Dolphin Scheduler', 'DolphinScheduler' # board_minutes_2019_11_20.txt
-    title.sub! 'DLab', 'DataLab'
-    title.sub! 'SystemML', 'SystemDS'
+    name_changes(title)
 
     next if title.strip.empty?
     next if text.strip.empty? and title =~ /Intentionally (left )?Blank/i
@@ -338,44 +384,8 @@ seen={}
 
           next if title == 'April 2011 podling reports'
 
-          title.sub! 'Ace', 'ACE' # WHIMSY-31
-          title.sub! 'ADF Faces', 'MyFaces' # via Trinidad
-          title.sub! 'Bean Validation', 'BVal'
-          title.sub! 'BeanValidation', 'BVal'
-          title.sub! 'Amber', 'Oltu'
-          title.sub! 'Argus', 'Ranger'
-          title.sub! 'BRPC', 'brpc'
-          title.sub! 'Bluesky', 'BlueSky'
-          title.sub! 'Easyant', 'EasyAnt'
-          title.sub! 'Callback', 'Cordova'
-          title.sub! 'Deft', 'AWF'
-          title.sub! /CeltiX[Ff]ire/, 'CXF'
-          title.sub! 'Empire-DB', 'Empire-db'
-          title.sub! 'Fleece', 'Johnzon'
-          title.sub! 'IVY', 'Ivy'
-          title.sub! 'JackRabbit', 'Jackrabbit'
-          title.sub! 'Juice', 'JuiCE'
-          title.sub! /\bKi\b/, 'Shiro'
-          title.sub! 'JSecurity', 'Shiro'
-          title.sub! 'log4php', 'Log4php'
-          title.sub! 'lucene4c', 'Lucene4c'
-          title.sub! 'Lucene.NET', 'Lucene.Net'
-          title.sub! 'Ode', 'ODE'
-          title.sub! 'Optiq', 'Calcite'
-          title.sub! 'Oscar', 'Felix'
-          title.sub! 'Quarks', 'Edgent'
-          title.sub! 'Singa', 'SINGA'
-          title.sub! 'Openmeetings', 'OpenMeetings'
-          title.sub! 'ODFToolkit', 'ODF Toolkit'
-          title.sub! 'OpenOffice.org', 'OpenOffice'
-          title.sub! 'OpenEJB', 'TomEE'
-          title.sub! 'Stratosphere', 'Flink'
-          title.sub! 'Socialsite', 'SocialSite'
-          title.sub! 'stdcxx', 'C++ Standard Library'
-          title.sub! 'STDCXX', 'C++ Standard Library'
-          title.sub! 'Dolphin Scheduler', 'DolphinScheduler' # board_minutes_2019_11_20.txt
-          title.sub! 'DLab', 'DataLab'
-          title.sub! 'SystemML', 'SystemDS'
+          name_changes(title)
+      
           title.sub! /\s+\(.*\)$/, ''
           title.sub! /^Apache(: Project)?/, ''
 
@@ -634,27 +644,11 @@ seen={}
     end
 
     report.title.sub! /^Apache /, ''
-    report.title.sub! /APR$/, 'Portable Runtime (APR)'
-    report.title.sub! /Portable Runtime$/, 'Portable Runtime (APR)'
+
+    name_changes(report.title)
+
     report.title.sub! 'standing Audit', 'Audit'
-    report.title.sub! /^HTTPD?$/, 'HTTP Server'
-    report.title.sub! 'ISIS', 'Isis'
-    report.title.sub! 'iBatis', 'iBATIS'
-    report.title.sub! 'James', 'JAMES'
-    report.title.sub! 'infrastructure', 'Infrastructure'
     report.title.sub! 'federated identity', 'Federated Identity'
-    report.title.sub! 'Open for Business', 'OFBiz'
-    report.title.sub! /^OpenEJB/, 'TomEE'
-    report.title.sub! /Perl-Apache( PMC)?/, 'Perl'
-    report.title.sub! /Public Relations Committee/, 'Public Relations'
-    report.title.sub! 'PRC', 'Public Relations'
-    report.title.sub! /Security$/, 'Security Team'
-    report.title.sub! 'Apache/TCL', 'Tcl'
-    report.title.sub! 'Orc', 'ORC'
-    report.title.sub! 'Steve', 'STeVe'
-    report.title.sub! 'Zest', 'Polygene'
-    report.title.sub! 'Openmeetings', 'OpenMeetings'
-    report.title.sub! 'Ace', 'ACE' # WHIMSY-31
 
     pending[title] = report
   end
