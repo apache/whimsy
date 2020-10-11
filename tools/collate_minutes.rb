@@ -218,6 +218,7 @@ def name_changes(title)
   title.sub! 'Optiq', 'Calcite'
   title.sub! 'Orc', 'ORC'
   title.sub! 'Oscar', 'Felix'
+  title.sub! 'PonyMail', 'Pony Mail'
   title.sub! 'PRC', 'Public Relations'
   title.sub! 'Public Relations Commitee', 'Public Relations'
   title.sub! 'Quarks', 'Edgent'
