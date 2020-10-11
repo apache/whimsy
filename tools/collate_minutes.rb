@@ -190,6 +190,7 @@ def name_changes(title)
   title.sub! 'Cxx Standard Library', 'C++ Standard Library'
   title.sub! 'Deft', 'AWF'
   title.sub! 'DLab', 'DataLab'
+  title.sub! 'Distributed Release Audit Tool (DRAT)', 'DRAT'
   title.sub! 'Dolphin Scheduler', 'DolphinScheduler' # board_minutes_2019_11_20.txt
   title.sub! 'Easyant', 'EasyAnt'
   title.sub! 'Empire-DB', 'Empire-db'
