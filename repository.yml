@@ -126,7 +126,7 @@
       - potential-member-watch-list.txt
       - emeritus-request.txt
 
-  foundation_board: # The checkout is needed by the WSS service
+  foundation_board: # The checkout is needed by the WSS service and collate_minutes
     url: private/foundation/board
 
   foundation_mentors:
