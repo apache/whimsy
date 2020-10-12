@@ -42,6 +42,8 @@ force = ARGV.delete '--force' # rerun regardless
 
 NOSTAMP = ARGV.delete '--nostamp' # don't add dynamic timestamp to pages (for debug compares)
 
+DUMP_AGENDA = ARGV.delete '--dump_agenda' # output agenda details
+
 STAMP = (NOSTAMP ? DateTime.new(1970) :  DateTime.now).strftime '%Y-%m-%d %H:%M'
 
 YYYYMMDD = ARGV.shift || '20*' # Allow override of minutes to process
@@ -269,8 +271,6 @@ seen={}
   end
   seen[date] = txt
   minutes = open(txt) {|file| file.read}
-  print "\r#{date}"
-  $stdout.flush
   pending = {}
 
   # parse Attachments (includes both Officer Reports and Committee Reports)
@@ -335,6 +335,8 @@ seen={}
     elsif title =~ /alleged JBoss IP infringement/
       report.subtitle = title
       report.title = 'Alleged JBoss IP Infringement'
+      report.attach = '@' + attach
+    elsif title =~ /Written Consent of the Directors/
       report.attach = '@' + attach
     end
 
@@ -867,6 +869,25 @@ agenda.sort.each do |title, reports|
 #    Wunderbar.info  "Not updating #{link[title]}"
   end
 end
+
+if DUMP_AGENDA
+  agenda.each do |title, reports|
+    p [reports.length > 1 ? '>1' : '=1', reports.last.attach[0..1], reports.length, title]
+  end
+end
+
+# Classification scheme
+# Pfx = reports.last.attach[0]
+# Count = reports.length
+#
+# Pfx    Count     Section
+# '*'     >1       Executive Officer Reports
+# 0-9     >1       Additional Officer Reports
+# A-Z     >1       Committee Reports
+# '.'     any      Podling Reports
+# '@'     >1       Repeating Special Orders
+# '+'     >1       Other Agenda Items
+# !'.'    =1       Other Attachments, Special Orders, and Discussions
 
 # output index
 agenda = agenda.sort_by {|title, reports| title.downcase}
