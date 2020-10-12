@@ -174,6 +174,7 @@ $calendar.at('head').add_child(style)
 end
 
 # handle project name changes
+# see also www/board/minutes/.htaccess
 def name_changes(title)
   title.sub! 'Ace', 'ACE' # WHIMSY-31
   title.sub! 'ADF Faces', 'MyFaces' # via Trinidad
