@@ -500,6 +500,8 @@ seen={}
           title = title[0]
         end
 
+        title.sub! 'VP, Data Privacy', 'VP Data Privacy'
+
         report = OpenStruct.new
         report.title = title.gsub(/\s+/, ' ')
         report.meeting = date
