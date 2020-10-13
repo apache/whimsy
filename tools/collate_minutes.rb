@@ -516,6 +516,10 @@ seen={}
           report.subtitle = title
           report.title = 'Legal Affairs'
           report.attach = '1' + attach
+        elsif title =~ /date.+member.+meeting/i || title =~ /member.+meeting.+date/i
+          report.subtitle = title
+          report.title = 'Set Date for Members Meeting'
+          report.attach = '@' + attach
         else
           pmcs = %w{Geronimo iBATIS Santuario}
           pmcs.each do |pmc|
