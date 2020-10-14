@@ -293,7 +293,7 @@ end
 def text2ext(txt)
     # need to strip twice to handle ' [ asc ] '
     # TODO: perhaps just remove all white-space?
-    tmp = txt.downcase.strip.sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(/ ?(digest|checksum)/,'').sub(/ \(tar\.gz\)| \(zip\)| /,'').strip
+    tmp = txt.downcase.strip.sub(%r{^\.},'').sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(/ ?(digest|checksum)/,'').sub(/ \(tar\.gz\)| \(zip\)| /,'').strip
     ALIASES[tmp] || tmp
 end
 
