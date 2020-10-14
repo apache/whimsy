@@ -660,6 +660,7 @@ seen={}
 
     report.title.sub! 'standing Audit', 'Audit'
     report.title.sub! 'federated identity', 'Federated Identity'
+    report.title.sub! 'WSIF', 'Web Services'
 
     pending[title] = report
   end
