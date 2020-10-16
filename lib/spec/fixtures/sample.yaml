@@ -1,0 +1,24 @@
+# Header comment
+
+---
+
+# body comment
+
+:key1:
+  subkey1:
+    att1: value1
+  subkey2:
+    att1: value1
+:key2:
+  subkey1:
+    att1: value1
+  subkey2:
+    att1: value1
+:key3:
+  subkey1:
+    att1: value1
+  subkey2:
+    att1: value1
+...
+
+# Trailer comment
