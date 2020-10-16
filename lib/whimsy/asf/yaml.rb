@@ -39,17 +39,19 @@ module YamlFile
       raise ArgumentError, "Could not find section #{key.inspect}"
     end
 
+    output = content.dup
+
     # Create the updated section with the correct indentation
     # Use YAML dump to ensure correct syntax; drop the YAML header
-    new_section = YAML.dump({key => yield(section)}).sub(/\A---\n/, '')
+    new_section = YAML.dump({key => yield(section, yaml)}).sub(/\A---\n/, '')
 
     # replace the old section with the new one
     # assume it is delimited by the key and '...' or another key.
     # Keys may be symbols. Only handles top-level key matching.
     range = %r{^#{key.inspect}:\s*$.*?(?=^(:?\w+:|\.\.\.)$)}m
-    content[range] = new_section
+    output[range] = new_section
 
-    content
+    output
   end
 
   # encapsulate updates to a section of a YAML file whilst
