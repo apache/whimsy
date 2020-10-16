@@ -12,7 +12,7 @@ module YamlFile
   # encapsulate updates to a YAML file
   # opens the file for exclusive access with an exclusive lock,
   # creating the file if necessary
-  # Yields the parsed YAML to the block, and writes the updated
+  # Yields the parsed YAML to the block, and writes the return
   # data to the file
   # The args are passed to YAML.safe_load, and default to [Symbol]
   def self.update(yaml_file, *args)
@@ -20,9 +20,8 @@ module YamlFile
     File.open(yaml_file, File::RDWR|File::CREAT, 0o644) do |file|
       file.flock(File::LOCK_EX)
       yaml = YAML.safe_load(file.read, *args) || {}
-      yield yaml
       file.rewind
-      file.write YAML.dump(yaml)
+      file.write YAML.dump(yield yaml)
       file.truncate(file.pos)
     end
   end

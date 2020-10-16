@@ -57,4 +57,5 @@ YamlFile.update(yamlfile) do |yaml|
             yaml[k] = v
         end
     end
+    yaml
 end
