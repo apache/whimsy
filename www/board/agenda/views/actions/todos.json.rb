@@ -68,7 +68,7 @@ if (@change || @establish || @terminate) and env.password
     title = 'board resolutions: ' + todos.map {|todo| todo['name']}.join(', ')
   end
 
-  ASF::SVN.update cinfo, title, env, _ do |tmpdir, contents|
+  ASF::SVN.update cinfo, title, env, _ do |_tmpdir, contents|
     unless minutes[:todos][:next_month]
       # update list of reports expected next month
       missing = parsed_agenda.
@@ -90,8 +90,8 @@ if (@change || @establish || @terminate) and env.password
     # add people from establish resolutions
     established = Date.parse(date.gsub('_', '-'))
     Array(@establish).each do |resolution|
-      item = parsed_agenda.find do |item|
-        item['title'] == resolution['title']
+      item = parsed_agenda.find do |it|
+        it['title'] == resolution['title']
       end
 
       contents = ASF::Committee.establish(contents, resolution['display_name'],
@@ -110,11 +110,11 @@ if @establish and env.password
   @establish.each do |resolution|
     pmc = resolution['name']
 
-    item = parsed_agenda.find do |item|
-      item['title'] == resolution['title']
+    item = parsed_agenda.find do |it|
+      it['title'] == resolution['title']
     end
 
-    members = item['people'].map {|id, hash| ASF::Person.find(id)}
+    members = item['people'].map {|id, _hash| ASF::Person.find(id)}
     people = item['people'].map {|id, hash| [id, hash[:name]]}
 
     ASF::LDAP.bind(env.user, env.password) do
@@ -133,7 +133,7 @@ if @establish and env.password
     if charter
       # update ci.yaml
       cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
-      ASF::SVN.update cinfoy, title, env, _ do |tmpdir, contents|
+      ASF::SVN.update cinfoy, title, env, _ do |_tmpdir, contents|
         ASF::Committee.appendtlpmetadata(contents,pmc.downcase,charter)
       end
     end
