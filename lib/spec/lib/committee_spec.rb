@@ -97,15 +97,15 @@ describe ASF::Committee do
     yyyymm = '2020-10'
     data = File.read cinfoy
     yaml = YAML.safe_load(data, [Symbol])
-    it "should contain Whimsy, but not retired" do
-      para = yaml[:tlps]['whimsy']
+    it "should contain HTTPD, but not retired" do
+      para = yaml[:tlps]['httpd']
       expect(para).not_to eql(nil)
       expect(para[:retired]).to eql(nil)
     end
-    it "should add retired tag to Whimsy" do
-      data = ASF::Committee.record_termination(data, 'whimsy', yyyymm)
+    it "should add retired tag to HTTPD" do
+      data = ASF::Committee.record_termination(data, 'httpd', yyyymm)
       yaml = YAML.safe_load(data, [Symbol])
-      para = yaml[:tlps]['whimsy']
+      para = yaml[:tlps]['httpd']
       expect(para).not_to eql(nil)
       expect(para[:retired]).to eql(yyyymm)
     end
