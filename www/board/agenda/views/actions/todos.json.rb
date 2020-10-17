@@ -6,6 +6,7 @@ TLPREQ = ASF::SVN['tlpreq-input']
 
 date = params[:date].gsub('-', '_')
 raise ArgumentError, "Invalid date #{date}" unless date =~ /\A\d+_\d+_\d+\z/
+date_established = Date.parse(date.gsub('_', '-'))
 
 agenda = "board_agenda_#{date}.txt"
 
@@ -76,7 +77,7 @@ if (@change || @establish || @terminate) and env.password
         map {|item| item['title']}
       rejected = minutes[:rejected] || []
       contents = ASF::Committee.update_next_month(contents,
-        Date.parse(date.gsub('_', '-')), missing, rejected, todos)
+        date_established, missing, rejected, todos)
     end
 
     # update chairs from establish, change, and terminate resolutions
@@ -88,14 +89,13 @@ if (@change || @establish || @terminate) and env.password
     end
 
     # add people from establish resolutions
-    established = Date.parse(date.gsub('_', '-'))
     Array(@establish).each do |resolution|
       item = parsed_agenda.find do |it|
         it['title'] == resolution['title']
       end
 
       contents = ASF::Committee.establish(contents, resolution['display_name'],
-        established, item['people'])
+        date_established, item['people'])
     end
 
     contents
