@@ -143,10 +143,10 @@ if @establish and env.password
 
   # create 'victims' file for tlpreq tool
   ASF::SVN.svn('update', TLPREQ)
-  establish -= Dir[File.join(TLPREQ, 'victims-#{date}.*.txt')].
+  establish -= Dir[File.join(TLPREQ, "victims-#{date}.*.txt")].
      map {|name| File.read(name).lines().map(&:chomp)}.flatten
   unless establish.empty?
-    count = Dir[File.join(TLPREQ, 'victims-#{date}.*.txt')].length
+    count = Dir[File.join(TLPREQ, "victims-#{date}.*.txt")].length
     message = "record #{date} approved TLP resolutions"
     ASF::SVN.update TLPREQ, message, env, _ do |tmpdir|
       filename = "victims-#{date}.#{count}.txt"
