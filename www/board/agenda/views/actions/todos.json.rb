@@ -61,7 +61,7 @@ end
 if (@change || @establish || @terminate) and env.password
   cinfo = File.join(ASF::SVN['board'], 'committee-info.txt')
 
-  todos  = Array(@change) + Array(@establish) + Array(@terminate)
+  todos = Array(@change) + Array(@establish) + Array(@terminate)
   if todos.length == 1
     title = todos.first['title']
   else
@@ -134,7 +134,7 @@ if @establish and env.password
       # update ci.yaml
       cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
       ASF::SVN.update cinfoy, title, env, _ do |_tmpdir, contents|
-        ASF::Committee.appendtlpmetadata(contents,pmc.downcase,charter)
+        ASF::Committee.appendtlpmetadata(contents, pmc.downcase, charter)
       end
     end
   end
@@ -169,7 +169,7 @@ if (@change || @establish) and env.password
   unless people.empty?
     # add new chairs to pmc-chairs
     ASF::LDAP.bind(env.user, env.password) do
-      chairs.add people-chairs.members
+      chairs.add people - chairs.members
     end
 
     # send out congratulations email
