@@ -139,7 +139,7 @@ module ASF
 
       # update/remove existing 'missing' entries
       existing = []
-      block.gsub! /(.*?)# (missing|not accepted) in .*\n/ do |line|
+      block.gsub! %r{(.*?)# (missing|not accepted) in .*\n} do |line|
         if missing.include? $1.strip
           existing << $1.strip
           if line.chomp.end_with? month
@@ -176,7 +176,7 @@ module ASF
       todos.each do |resolution|
         pmc = resolution['display_name']
         if resolution['action'] == 'terminate'
-          block.sub! /^    #{pmc.ljust(22)} # .*\n/, ''
+          block.sub! %r{^    #{pmc.ljust(22)} # .*\n}, ''
         elsif resolution['action'] == 'establish' and not existing.include? pmc
           block += "    #{pmc.ljust(22)} # new, monthly through #{month}\n"
         end
@@ -294,7 +294,7 @@ module ASF
       #         remove from COMMITTEE MEMBERSHIP AND CHANGE PROCESS          #
       ########################################################################
 
-      contents.sub! /^\* #{pmc}  \(est.*?\n\n+/m, ''
+      contents.sub! %r{^\* #{pmc}  \(est.*?\n\n+}m, ''
 
       contents
     end
@@ -355,7 +355,7 @@ module ASF
 
       # split into foot, sections (array) and head
       foot = contents[/^=+\s*\Z/]
-      contents.sub! /^=+\s*\Z/, ''
+      contents.sub! %r{^=+\s*\Z}, ''
       sections = contents.split(/^\* /)
       head = sections.shift
 
@@ -396,8 +396,8 @@ module ASF
       # keeping sections 1 (COMMITTEES) and 2 (REPORTING).
       head, report = info.shift.split(/^\d\./)[1..2]
       # Drop lines which could match group headers
-      head.gsub! /^\s+NAME\s+CHAIR\s*$/, ''
-      head.gsub! /^\s+Office\s+Officer\s*$/i, ''
+      head.gsub! %r{^\s+NAME\s+CHAIR\s*$}, ''
+      head.gsub! %r{^\s+Office\s+Officer\s*$}i, ''
 
       # extract the committee chairs (e-mail address is required here)
       # Note: this includes the non-PMC entries
