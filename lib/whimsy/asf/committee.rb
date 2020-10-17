@@ -114,11 +114,11 @@ module ASF
         return unless File.exist? file
 
         if @committee_mtime and File.mtime(file) <= @committee_mtime
-          return @committee_info  if @committee_info
+          return @committee_info if @committee_info
         end
 
         @committee_mtime = File.mtime(file)
-        @@svn_change = Time.parse(ASF::SVN.getInfoItem(file,'last-changed-date')).gmtime
+        @@svn_change = Time.parse(ASF::SVN.getInfoItem(file, 'last-changed-date')).gmtime
 
         parse_committee_info File.read(file)
       end
@@ -162,17 +162,17 @@ module ASF
       end
 
       # add new 'missing' entries
-      (missing-existing).each do |pmc|
+      (missing - existing).each do |pmc|
         block += "    #{pmc.ljust(22)} # missing in #{month}\n"
       end
 
       # add new 'rejected' entries
-      (rejected-missing-existing).each do |pmc|
+      (rejected - missing - existing).each do |pmc|
         block += "    #{pmc.ljust(22)} # not accepted in #{month}\n"
       end
 
       # add new 'established' entries and remove 'terminated' entries
-      month = (date+91).strftime('%B')
+      month = (date + 91).strftime('%B')
       todos.each do |resolution|
         pmc = resolution['display_name']
         if resolution['action'] == 'terminate'
@@ -280,12 +280,12 @@ module ASF
       blocks = contents.split("\n\n")
 
       # find the reporting schedules
-      index =  blocks.find_index {|section| section =~/January/}
+      index =  blocks.find_index {|section| section =~ /January/}
 
       # remove from each reporting period
-      blocks[index+0].sub! "\n    #{pmc}\n", "\n"
-      blocks[index+1].sub! "\n    #{pmc}\n", "\n"
-      blocks[index+2].sub! "\n    #{pmc}\n", "\n"
+      blocks[index + 0].sub! "\n    #{pmc}\n", "\n"
+      blocks[index + 1].sub! "\n    #{pmc}\n", "\n"
+      blocks[index + 2].sub! "\n    #{pmc}\n", "\n"
 
       # re-attach blocks
       contents = blocks.join("\n\n")
@@ -309,13 +309,13 @@ module ASF
       blocks = contents.split("\n\n")
 
       # find the reporting schedules
-      index =  blocks.find_index {|section| section =~/January/}
+      index =  blocks.find_index {|section| section =~ /January/}
 
       # extract reporting schedules
       slots = [
-        blocks[index+0].split("\n"),
-        blocks[index+1].split("\n"),
-        blocks[index+2].split("\n"),
+        blocks[index + 0].split("\n"),
+        blocks[index + 1].split("\n"),
+        blocks[index + 2].split("\n"),
       ]
 
       unless slots.any? {|slot| slot.include? "    " + pmc}
@@ -323,7 +323,7 @@ module ASF
         slots.each {|slot| slot.unshift '' unless slot[0] == ''}
 
         # determine tie breakers between months of the same length
-        preference = [(date.month)%3, (date.month-1)%3, (date.month-2)%3]
+        preference = [(date.month) % 3, (date.month - 1) % 3, (date.month - 2) % 3]
 
         # pick the month with the shortest list
         slot = (0..2).map {|i| [slots[i].length, preference, i]}.min.last
@@ -337,13 +337,13 @@ module ASF
         # sort entries, case insensitive
         slots[slot].sort_by!(&:downcase)
 
-        #restore headers
+        # restore headers
         slots[slot].unshift *headers
 
         # re-insert reporting schedules
-        blocks[index+0] = slots[0].join("\n")
-        blocks[index+1] = slots[1].join("\n")
-        blocks[index+2] = slots[2].join("\n")
+        blocks[index + 0] = slots[0].join("\n")
+        blocks[index + 1] = slots[1].join("\n")
+        blocks[index + 2] = slots[2].join("\n")
 
         # re-attach blocks
         contents = blocks.join("\n\n")
@@ -368,7 +368,7 @@ module ASF
         "    #{(name).ljust(59)} [#{date.strftime('%Y-%m-%d')}]"
       end
 
-      section  = ["#{pmc}  (est. #{date.strftime('%m/%Y')})"] + people.sort
+      section = ["#{pmc}  (est. #{date.strftime('%m/%Y')})"] + people.sort
 
       # add new section
       sections << section.join("\n") + "\n\n\n"
@@ -396,8 +396,8 @@ module ASF
       # keeping sections 1 (COMMITTEES) and 2 (REPORTING).
       head, report = info.shift.split(/^\d\./)[1..2]
       # Drop lines which could match group headers
-      head.gsub! /^\s+NAME\s+CHAIR\s*$/,''
-      head.gsub! /^\s+Office\s+Officer\s*$/i,''
+      head.gsub! /^\s+NAME\s+CHAIR\s*$/, ''
+      head.gsub! /^\s+Office\s+Officer\s*$/i, ''
 
       # extract the committee chairs (e-mail address is required here)
       # Note: this includes the non-PMC entries
@@ -418,30 +418,30 @@ module ASF
       end
       # Extract the non-PMC committees (e-mail address may be absent)
       # first drop leading text (and Officers) so we only match non-PMCs
-      @nonpmcs = head.sub(/.*?also has /m,'').sub(/ Officers:.*/m,'').
+      @nonpmcs = head.sub(/.*?also has /m, '').sub(/ Officers:.*/m, '').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| list[name]}
 
       # Extract officers
       # first drop leading text so we only match officers at end of section
-      @officers = head.sub(/.*?also has .*? Officers/m,'').
+      @officers = head.sub(/.*?also has .*? Officers/m, '').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| list[name]}
 
       # store the paragraph identifiers: Board Committees etc
       head_parts = head.split(/^The ASF also has the following +/)
-      (1..head_parts.size-1).each do |h| # skip the first section
+      (1..head_parts.size - 1).each do |h| # skip the first section
         part = head_parts[h]
-        type = part[/^([^:]+)/,1] # capture remains of line excluding colon
+        type = part[/^([^:]+)/, 1] # capture remains of line excluding colon
         part.scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.each do |cttee|
-            list[cttee].paragraph = type
-          end
+          list[cttee].paragraph = type
+        end
       end
 
       # for each committee in section 3
       info.each do |roster|
         # extract the committee name (and parenthesised comment if any)
-        name = roster[/(\w.*?)[ \t]+\(est/,1]
+        name = roster[/(\w.*?)[ \t]+\(est/, 1]
         unless list.include?(name)
           Wunderbar.warn "No chair entry detected for #{name} in section 3"
         end
@@ -454,7 +454,7 @@ module ASF
 
         # match non-empty entries and check the syntax
         roster.scan(/^[ \t]+.+$/) do |line|
-            Wunderbar.warn "Invalid syntax: #{committee.name} '#{line}'" unless line =~ /\s<(.*?)@apache\.org>\s/
+          Wunderbar.warn "Invalid syntax: #{committee.name} '#{line}'" unless line =~ /\s<(.*?)@apache\.org>\s/
         end
 
         # extract the availids (is this used?)
@@ -464,13 +464,13 @@ module ASF
         # the date is optional (e.g. infrastructure)
         committee.roster = Hash[roster.gsub(/\(\w+\)/, '').
           scan(/^[ \t]*(.*?)[ \t]*<(.*?)@apache\.org>(?:[ \t]+(\[(.*?)\]))?/).
-          map {|list| [list[1], {name: list[0], date: list[3]}]}]
+          map {|l| [l[1], {name: l[0], date: l[3]}]}]
       end
 
       # process report section
       report.scan(/^([^\n]+)\n---+\n(.*?)\n\n/m).each do |period, committees|
         committees.scan(/^   [ \t]*(.*)/).each do |committee|
-          committee, comment = committee.first.split(/[ \t]+#[ \t]+/,2)
+          committee, comment = committee.first.split(/[ \t]+#[ \t]+/, 2)
           unless list.include? committee
             Wunderbar.warn "Unexpected name '#{committee}' in report section; ignored"
             next
@@ -599,7 +599,6 @@ module ASF
       Committee.pmcs.include? self
     end
 
-
     # load committee metadata from <tt>committee-info.yaml</tt>.  Will not reparse
     # if the file has already been parsed and the underlying file has not changed.
     def self.load_committee_metadata()
@@ -619,7 +618,6 @@ module ASF
       committee = committee.name if committee.is_a? ASF::Committee
       load_committee_metadata[:tlps][committee] || load_committee_metadata[:cttees][committee]
     end
-
 
     # website for this committee.
     def site()
