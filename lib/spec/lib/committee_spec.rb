@@ -91,4 +91,36 @@ describe ASF::Committee do
       expect(abc[:description]).to eq(desc)
     end
   end
+
+  describe "ASF::ASF::Committee.record_termination" do
+    cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
+    yyyymm = '2020-10'
+    data = File.read cinfoy
+    yaml = YAML.safe_load(data, [Symbol])
+    it "should contain Whimsy, but not retired" do
+      para = yaml[:tlps]['whimsy']
+      expect(para).not_to eql(nil)
+      expect(para[:retired]).to eql(nil)
+    end
+    it "should add retired tag to Whimsy" do
+      data = ASF::Committee.record_termination(data, 'whimsy', yyyymm)
+      yaml = YAML.safe_load(data, [Symbol])
+      para = yaml[:tlps]['whimsy']
+      expect(para).not_to eql(nil)
+      expect(para[:retired]).to eql(yyyymm)
+    end
+    yaml = YAML.safe_load(data, [Symbol])
+    pmc = 'xyzxyz' # must be downcased
+    it "should not contain XYZXYZ" do
+      para = yaml[:tlps][pmc]
+      expect(para).to eql(nil)
+    end
+    it "should now contain XYZXYZ" do
+      data = ASF::Committee.record_termination(data, pmc, yyyymm)
+      yaml = YAML.safe_load(data, [Symbol])
+      para = yaml[:tlps][pmc]
+      expect(para).not_to eql(nil)
+      expect(para[:retired]).to eql(yyyymm)
+    end
+  end
 end

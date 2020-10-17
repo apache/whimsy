@@ -270,6 +270,25 @@ module ASF
       contents
     end
 
+    # record termination date in committee-info.yml
+    # Params:
+    # - input: the contents of committee-info.yml
+    # - pmc: the pmc name
+    # - yyyymm: YYYY-MM retirement date
+    #  Returns: the updated contents
+    def self.record_termination(input, pmc, yyyymm)
+      YamlFile.replace_section(input, :tlps) do |section, yaml|
+        key = pmc.downcase.strip
+        key = yaml[:name2id][key] || key
+        if section[key]
+          section[key][:retired] = yyyymm
+        else
+          section[key] = {retired: yyyymm}
+        end
+        section.sort.to_h
+      end
+    end
+
     # remove committee from committee-info.txt
     def self.terminate(contents, pmc)
       ########################################################################
