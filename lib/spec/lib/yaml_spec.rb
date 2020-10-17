@@ -29,16 +29,20 @@ describe YamlFile do
       yaml = YamlFile.read(workfile)
       expect(yaml.size).to equal(3)
     end
-    it "should fail with missing section" do
+    it "should fail with missing section and not update file" do
+      mtime = File.mtime workfile
       expect do
         YamlFile.update_section(workfile, 'none') {|yaml| yaml}
       end.to raise_error(ArgumentError)
+      expect(File.mtime(workfile)).to eql(mtime)
     end
-    it "should find 2 entries" do
+    it "should find 2 entries and touch file" do
+      mtime = File.mtime workfile
       YamlFile.update_section(workfile, :key1) do |yaml|
         expect(yaml.size).to eql(2)
         yaml # return it unchanged
       end
+      expect(File.mtime(workfile)).to be > mtime
     end
     # check it is still OK after dummy update
     it "read should return 3 entries" do
@@ -47,6 +51,14 @@ describe YamlFile do
     end
     it "should be unchanged" do
       expect(File.read(testfile)).to eql(File.read(workfile))
+    end
+    it "should not touch file if nil returned" do
+      mtime = File.mtime workfile
+      YamlFile.update_section(workfile, :key1) do |yaml|
+        expect(yaml.size).to eql(2)
+        nil # return it unchanged
+      end
+      expect(File.mtime(workfile)).to eql(mtime)
     end
   end
   describe "YamlFile.update" do

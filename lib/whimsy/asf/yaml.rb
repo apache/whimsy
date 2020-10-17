@@ -28,6 +28,11 @@ module YamlFile
 
   # replace a section of YAML text whilst preserving surrounding data including comments.
   # The args are passed to YAML.safe_load, and default to [Symbol]
+  # The caller must provide a block, which is passed two JSON parameters:
+  # - the section related to the key
+  # - the entire file (this is for validation purposes)
+  # Returns the updated text. If the block returns nil, returns nil so the
+  # caller can skip the file update
   def self.replace_section(content, key, *args)
     raise ArgumentError, 'block is required' unless block_given?
 
@@ -39,11 +44,15 @@ module YamlFile
       raise ArgumentError, "Could not find section #{key.inspect}"
     end
 
-    output = content.dup
+    res = yield(section, yaml) # get the updated JSON
+
+    return nil if res.nil? # i.e. don't update text
+  
+    output = content.dup # don't mutate caller data
 
     # Create the updated section with the correct indentation
     # Use YAML dump to ensure correct syntax; drop the YAML header
-    new_section = YAML.dump({key => yield(section, yaml)}).sub(/\A---\n/, '')
+    new_section = YAML.dump({key => res}).sub(/\A---\n/, '')
 
     # replace the old section with the new one
     # assume it is delimited by the key and '...' or another key.
@@ -69,10 +78,12 @@ module YamlFile
 
       content = replace_section(file.read, key, *args, &block)
 
-      # rewrite the file
-      file.rewind
-      file.write content
-      file.truncate(file.pos)
+      unless content.nil?
+        # rewrite the file
+        file.rewind
+        file.write content
+        file.truncate(file.pos)
+      end
     end
   end
 
