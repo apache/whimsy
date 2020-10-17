@@ -1,4 +1,5 @@
 require 'time'
+require 'whimsy/asf/yaml'
 
 module ASF
 
@@ -632,38 +633,24 @@ module ASF
       meta[:description] if meta
     end
 
-
     # append the description for a new tlp committee.
     # this is intended to be called from todos.json.rb in the block for ASF::SVN.update
-    def self.appendtlpmetadata(input,committee,description)
-      output = input # default no change
-      yaml = YAML.load input
-      if yaml[:cttees][committee]
-        Wunderbar.warn "Entry for '#{committee}' already exists under :cttees"
-      elsif yaml[:tlps][committee]
-        Wunderbar.warn "Entry for '#{committee}' already exists under :tlps"
-      else
-        data = { # create single entry in :tlps hierarchy
-          tlps: {
-            committee => {
-              site: "http://#{committee}.apache.org",
-              description: description,
-            }
+    def self.appendtlpmetadata(input, committee, description)
+      YamlFile.replace_section(input, :tlps) do |section, yaml|
+        output = section # default no change
+        if yaml[:cttees][committee]
+          Wunderbar.warn "Entry for '#{committee}' already exists under :cttees"
+        elsif yaml[:tlps][committee]
+          Wunderbar.warn "Entry for '#{committee}' already exists under :tlps"
+        else
+          section[committee] = {
+            site: "http://#{committee}.apache.org",
+            description: description,
           }
-        }
-        # Use YAML dump to ensure correct syntax
-        # drop the YAML header
-        newtlp = YAML.dump(data).sub(%r{^---\n:tlps:\n}m,'')
-        # add the new section just before the ... terminator
-        output = input.sub(%r{^\.\.\.},newtlp+"...")
-        # Check it worked
-        check = YAML.load(output)
-        unless data[:tlps][committee] == check[:tlps][committee]
-          Wunderbar.warn "Failed to add section for #{committee}"
-          output = input # don't change anything
+          output = section.sort.to_h
         end
+        output
       end
-      output
     end
 
   end
