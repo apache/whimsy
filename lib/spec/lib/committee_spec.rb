@@ -63,14 +63,14 @@ describe ASF::Committee do
       res = nil
       # Wunderbar.logger = nil; is needed to ensure logging output works as expected
       expect { Wunderbar.logger = nil; res = ASF::Committee.appendtlpmetadata(input,'httpd','description') }.to output("_WARN Entry for 'httpd' already exists under :tlps\n").to_stderr
-      expect(res).to equal(input)
+      expect(res).to eql(input)
     end    
 
     it "should fail for 'comdev'" do
       res = nil
       # Wunderbar.logger = nil; is needed to ensure logging output works as expected
       expect { Wunderbar.logger = nil; res = ASF::Committee.appendtlpmetadata(input,'comdev','description') }.to output("_WARN Entry for 'comdev' already exists under :cttees\n").to_stderr
-      expect(res).to equal(input)
+      expect(res).to eql(input)
     end    
     
     pmc = 'a-b-c'
