@@ -61,14 +61,20 @@ describe ASF::Committee do
     it "should fail for 'httpd'" do
       res = nil
       # Wunderbar.logger = nil; is needed to ensure logging output works as expected
-      expect { Wunderbar.logger = nil; res = ASF::Committee.appendtlpmetadata(input,'httpd','description') }.to output("_WARN Entry for 'httpd' already exists under :tlps\n").to_stderr
+      expect {
+        Wunderbar.logger = nil
+        res = ASF::Committee.appendtlpmetadata(input, 'httpd', 'description')
+      }.to output("_WARN Entry for 'httpd' already exists under :tlps\n").to_stderr
       expect(res).to eql(input)
     end
 
     it "should fail for 'comdev'" do
       res = nil
       # Wunderbar.logger = nil; is needed to ensure logging output works as expected
-      expect { Wunderbar.logger = nil; res = ASF::Committee.appendtlpmetadata(input,'comdev','description') }.to output("_WARN Entry for 'comdev' already exists under :cttees\n").to_stderr
+      expect {
+        Wunderbar.logger = nil
+        res = ASF::Committee.appendtlpmetadata(input, 'comdev', 'description')
+      }.to output("_WARN Entry for 'comdev' already exists under :cttees\n").to_stderr
       expect(res).to eql(input)
     end
 
@@ -78,7 +84,7 @@ describe ASF::Committee do
       desc = 'Description of A-B-C'
       expect { res = ASF::Committee.appendtlpmetadata(input, pmc, desc) }.to output("").to_stderr
       expect(res).not_to eq(input)
-      tlps = YAML.load(res)[:tlps]
+      tlps = YAML.safe_load(res, [Symbol])[:tlps]
       abc = tlps[pmc]
       expect(abc.class).to eq(Hash)
       expect(abc[:site]).to match(%r{https?://#{pmc}\.apache\.org/?})
