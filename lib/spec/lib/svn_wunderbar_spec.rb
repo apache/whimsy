@@ -176,7 +176,7 @@ describe "ASF::SVN.update" do
     expect(rc).to be(0)
     expect(out['transcript'].class).to equal(Array)
     # could look for "Checked out revision" and "Update to revision"
-    expect(out['transcript'][-1]).to eql('+test') # 
+    expect(out['transcript'][-1]).to eql('+test') #
   end
 
 end
