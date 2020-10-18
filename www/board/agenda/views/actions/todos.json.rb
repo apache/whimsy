@@ -6,7 +6,8 @@ TLPREQ = ASF::SVN['tlpreq-input']
 
 date = params[:date].gsub('-', '_')
 raise ArgumentError, "Invalid date #{date}" unless date =~ /\A\d+_\d+_\d+\z/
-date_established = Date.parse(date.gsub('_', '-'))
+datehy = date.gsub('_', '-')
+date_established = Date.parse(datehy)
 
 agenda = "board_agenda_#{date}.txt"
 
@@ -140,6 +141,17 @@ if @establish and env.password
   end
 
   establish = @establish.map {|resolution| resolution['name']}
+
+  # update ci.yaml to add retirements
+  if @terminate and env.password
+    yyyymm = datehy[0, 7] # keep only yyyy-mm
+    cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
+    @terminate.each do |resolution|
+      ASF::SVN.update cinfoy, title, env, _ do |_tmpdir, contents|
+        ASF::Committee.record_termination(contents, resolution['name'], yyyymm)
+      end
+    end
+  end
 
   # create 'victims' file for tlpreq tool
   ASF::SVN.svn('update', TLPREQ)
