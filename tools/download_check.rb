@@ -268,6 +268,7 @@ ALIASES = {
     'sig' => 'asc',
     'pgp' => 'asc',
     'signature' => 'asc',
+    'signature(.asc)' => 'asc',
     'ascsignature' => 'asc',
     'pgpsignature' => 'asc',
     'pgpsignatures' => 'asc',
@@ -280,6 +281,7 @@ ALIASES = {
 # Also want to convert site to TLP
 URL2TLP = Hash.new # URL host to TLP conversion
 URL2TLP['jspwiki-wiki'] = 'jspwiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?page=Downloads
+URL2TLP['xmlbeans'] = 'poi' # xmlbeans now being maintained by POI
 PMCS = Set.new # is this a TLP?
 ASF::Committee.pmcs.map do |p|
     site = p.site[%r{//(.+?)\.apache\.org},1]
@@ -294,6 +296,8 @@ def text2ext(txt)
     # need to strip twice to handle ' [ asc ] '
     # TODO: perhaps just remove all white-space?
     tmp = txt.downcase.strip.sub(%r{^\.},'').sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(/ ?(digest|checksum)/,'').sub(/ \(tar\.gz\)| \(zip\)| /,'').strip
+    return 'sha256' if tmp =~ %r{\A[A-Fa-f0-9]{64}\z}
+    return 'sha512' if tmp =~ %r{\A[A-Fa-f0-9]{128}\z}
     ALIASES[tmp] || tmp
 end
 
