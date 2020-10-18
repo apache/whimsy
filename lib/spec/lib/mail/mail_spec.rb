@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'whimsy/asf'
 
 describe ASF::Mail do
-  
+
   describe "ASF::Mail.to_canonical" do
     it "should return address unaltered for invalid emails" do
       email = 'textwithnoATsign'
@@ -13,16 +13,16 @@ describe ASF::Mail do
       expect(ASF::Mail.to_canonical(email)).to eq(email)
       email = '@textwithleadingAT'
       expect(ASF::Mail.to_canonical(email)).to eq(email)
-    end    
+    end
     it "should return address with downcased domain for valid emails" do
       expect(ASF::Mail.to_canonical('ABC@DEF')).to eq('ABC@def')
-    end    
+    end
     it "should return address with downcased domain and canonicalised name for GMail emails" do
       expect(ASF::Mail.to_canonical('A.B.C+123@GMail.com')).to eq('abc@gmail.com')
-    end    
+    end
     it "should return address with downcased domain and canonicalised name for Googlemail emails" do
       expect(ASF::Mail.to_canonical('A.B.C+123@Googlemail.com')).to eq('abc@gmail.com')
-    end    
+    end
   end
 
   describe '.cansub(member, pmc_chair, ldap_pmcs)' do
@@ -33,7 +33,7 @@ describe ASF::Mail do
     lists = ASF::Mail.cansub(false, false, nil)
     it 'should return public lists only' do
       if TEST_DATA
-        expect(lists.length).to be >= 7 
+        expect(lists.length).to be >= 7
       else
           expect(lists.length).to be >= 1000
       end
@@ -71,7 +71,7 @@ describe ASF::Mail do
     it 'should return chair lists only' do
       mylists = ASF::Mail.cansub(false, true, nil)
       if TEST_DATA
-        expect(mylists.length).to be >= 7 
+        expect(mylists.length).to be >= 7
       else
           expect(mylists.length).to be >= 1000
       end
@@ -85,7 +85,7 @@ describe ASF::Mail do
     it 'should return member lists only' do
       mylists = ASF::Mail.cansub(true, false, nil)
       if TEST_DATA
-        expect(mylists.length).to be >= 7 
+        expect(mylists.length).to be >= 7
       else
           expect(mylists.length).to be >= 1000
       end

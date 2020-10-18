@@ -9,9 +9,9 @@ feature 'index' do
     visit '/2015-02-18/'
 
     # header
-    expect(page).to have_selector '.navbar-fixed-top.blank .navbar-brand', 
+    expect(page).to have_selector '.navbar-fixed-top.blank .navbar-brand',
       text: '2015-02-18'
-    expect(page).not_to have_selector '.navbar-fixed-top .label-danger a' 
+    expect(page).not_to have_selector '.navbar-fixed-top .label-danger a'
     expect(page).to have_selector '#agenda', text: 'Agenda'
 
     # navigation
@@ -35,7 +35,7 @@ feature 'index' do
     expect(page).to have_selector 'a[href=ACE]', text: 'ACE'
 
     # footer
-    expect(page).to have_selector '.backlink[href="../2015-01-21/"]', 
+    expect(page).to have_selector '.backlink[href="../2015-01-21/"]',
      text: '2015-01-21'
     expect(page).to have_selector 'button', text: 'refresh'
     expect(page).to have_selector 'button', text: 'add item'
@@ -50,13 +50,13 @@ feature 'index' do
     visit '/2015-01-21/'
 
     # header
-    expect(page).to have_selector '.navbar-fixed-top.blank .navbar-brand', 
+    expect(page).to have_selector '.navbar-fixed-top.blank .navbar-brand',
       text: '2015-01-21'
-    expect(page).to have_selector '.navbar-fixed-top .label-danger a', 
+    expect(page).to have_selector '.navbar-fixed-top .label-danger a',
       text: '5'
 
     # footer
-    expect(page).to have_selector '.nextlink[href="../2015-02-18/"]', 
+    expect(page).to have_selector '.nextlink[href="../2015-02-18/"]',
      text: '2015-02-18'
     expect(page).to have_selector 'button', text: 'refresh'
     expect(page).to have_selector 'button', text: 'add item'

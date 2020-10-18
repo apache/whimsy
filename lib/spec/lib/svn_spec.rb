@@ -9,9 +9,9 @@ SAMPLE_MISSING_NAME = '__templates' # no such entry
 SAMPLE_ALIAS = 'Bills' # depth: 'skip'
 
 describe ASF::SVN do
-  
+
   # repo_entry should only include repos that have local workspaces
-  
+
   describe "ASF::SVN.repo_entry" do
     it "should return Hash for #{SAMPLE_SVN_NAME}" do
       res = ASF::SVN.repo_entry(SAMPLE_SVN_NAME)
@@ -50,35 +50,35 @@ describe ASF::SVN do
     it "should return URL for #{SAMPLE_SVN_NAME}" do
       res = ASF::SVN.svnurl(SAMPLE_SVN_NAME)
       expect(res.class).to equal(String)
-      expect(res).to match(SAMPLE_SVN_URL_RE) 
+      expect(res).to match(SAMPLE_SVN_URL_RE)
     end
-  
+
     it "should return URL for #{SAMPLE_ALIAS}" do
       res = ASF::SVN.svnurl(SAMPLE_ALIAS)
       expect(res.class).to equal(String)
-      expect(res).to match(%r{https://.+/Bills}) 
+      expect(res).to match(%r{https://.+/Bills})
     end
-  
+
     it "should return nil for #{SAMPLE_MISSING_NAME}" do
       res = ASF::SVN.svnurl(SAMPLE_MISSING_NAME)
       expect(res.class).to equal(NilClass)
     end
-  
+
   end
 
   describe "ASF::SVN.svnurl!" do
     it "should return URL for #{SAMPLE_SVN_NAME}" do
       res = ASF::SVN.svnurl!(SAMPLE_SVN_NAME)
       expect(res.class).to equal(String)
-      expect(res).to match(SAMPLE_SVN_URL_RE) 
+      expect(res).to match(SAMPLE_SVN_URL_RE)
     end
-  
+
     it "should fail for #{SAMPLE_MISSING_NAME}" do
       expect {
         ASF::SVN.svnurl!(SAMPLE_MISSING_NAME)
       }.to raise_error(Exception)
     end
-  
+
   end
 
   # repo_entries should exclude aliases
@@ -90,7 +90,7 @@ describe ASF::SVN do
       expect(res[SAMPLE_SVN_NAME].class).to equal(Hash)
       expect(res[SAMPLE_ALIAS]).to equal(nil)
     end
-    
+
   end
 
   # find returns local workspace so excludes aliases
@@ -100,17 +100,17 @@ describe ASF::SVN do
       res = ASF::SVN.find(SAMPLE_SVN_NAME)
       expect(res.class).to equal(String)
     end
-  
+
     it "should return nil for #{SAMPLE_ALIAS}" do
       res = ASF::SVN.find(SAMPLE_ALIAS)
       expect(res.class).to equal(NilClass)
     end
-  
+
     it "should return nil for #{SAMPLE_MISSING_NAME}" do
       res = ASF::SVN.find(SAMPLE_MISSING_NAME)
       expect(res.class).to equal(NilClass)
     end
-  
+
   end
 
   describe "ASF:SVN.private_public" do
@@ -155,7 +155,7 @@ describe ASF::SVN do
       expect { ASF::SVN.getInfo(nil) }.to raise_error(ArgumentError, 'path must not be nil')
     end
 
-# How to ensure local SVN cached auth is not used?    
+# How to ensure local SVN cached auth is not used?
 #    it "getInfo(private url) should return a string at least 30 chars long starting with 'Path: '" do
 #      prv = ASF::SVN.private_public()[0]
 #      repo = ASF::SVN.svnurl(prv[1]) # select a private repo
@@ -194,7 +194,7 @@ describe ASF::SVN do
 #      expect(err).to eq(nil)
 #      expect(out.size).to be > 10 # need a better test
 #    end
-  
+
     it "list(public url,'url') should return a list" do
       pub = ASF::SVN.private_public()[1]
       repo = ASF::SVN.svnurl(pub[1]) # select a public repo URL
@@ -211,7 +211,7 @@ describe ASF::SVN do
 #      expect(revision).to match(/\d+/)
 #      expect(content.size).to be > 1000 # need a better test
 #    end
-  
+
     it "get(public url,'_template.xml') should return the revision and contents" do
       repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
       revision, content = ASF::SVN.get(repo)
@@ -376,7 +376,7 @@ describe ASF::SVN do
         ASF::SVN._svn_build_cmd(['help','xyz'], 'path', {})
       }.to output("_ERROR Invalid option \"xyz\"\n").to_stderr
     end
-  
+
   end
 
   describe "ASF::SVN.svnpath!" do
@@ -406,5 +406,5 @@ describe ASF::SVN do
       expect(list).to eq([['1594814364','emeritus3.txt']])
     end
   end
-  
+
   end
