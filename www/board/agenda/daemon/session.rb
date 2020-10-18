@@ -75,7 +75,7 @@ class Session
     session
   end
 
-  # load sessions from disk
+  # load sessions from disk 
   def self.load(files=nil)
     @@semaphore.synchronize do
       # default files to all files in the workdir and @@sessions hash

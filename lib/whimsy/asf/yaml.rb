@@ -47,7 +47,7 @@ module YamlFile
     res = yield(section, yaml) # get the updated JSON
 
     return nil if res.nil? # i.e. don't update text
-
+  
     output = content.dup # don't mutate caller data
 
     # Create the updated section with the correct indentation

@@ -390,7 +390,7 @@ seen={}
           next if title == 'April 2011 podling reports'
 
           name_changes(title)
-
+      
           title.sub! /\s+\(.*\)$/, ''
           title.sub! /^Apache(: Project)?/, ''
 

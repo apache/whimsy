@@ -45,7 +45,7 @@ feature 'report' do
     expect(page).to have_selector 'button', text: 'edit minutes'
     expect(page).to have_selector 'h3', text: 'Comments'
     expect(page).to have_selector 'pre', text: 'sr: Reminder email sent'
-    expect(page).to have_selector 'textarea',
+    expect(page).to have_selector 'textarea', 
       text: '@Sam: Is anyone on the PMC looking at the reminders?'
     expect(page).to have_selector 'button', text: 'Delete'
   end
@@ -115,7 +115,7 @@ feature 'report' do
     timestamp = Time.now.gmtime.to_f * 1000
     IO.write file, YAML.dump(YAML.load(minutes).
       merge('complete' => timestamp, 'Adjournment' => '11:45'))
-    yield
+    yield 
   ensure
     IO.write file, minutes
   end

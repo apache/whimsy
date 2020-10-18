@@ -17,7 +17,7 @@ feature 'other reports' do
 
     # unseen items
     expect(page).to have_selector 'a.h4', text: 'Curator'
-    expect(page).to have_selector 'pre',
+    expect(page).to have_selector 'pre', 
       text: /last PMC member and committer additions/
 
     # seen items
@@ -32,7 +32,7 @@ feature 'other reports' do
   it "should support queued/pending approvals and comments" do
     visit '/2015-01-21/queue'
 
-    expect(page).to have_selector :xpath,
+    expect(page).to have_selector :xpath, 
       '//p[1]/a[@href="queue/W3C-Relations"]', text: 'W3C Relations'
     expect(page).to have_selector :xpath,
       '//p[2]/a[@href="Security-Team"]', text: 'Security Team'
@@ -43,10 +43,10 @@ feature 'other reports' do
     expect(page).to have_selector 'a.default', text: 'December 17, 2014'
     expect(page).to have_selector 'dt a[href="Avro"]', text: 'Avro'
     expect(page).to have_selector 'dd p', text: 'Nice report!'
-    expect(page).to have_selector 'li',
+    expect(page).to have_selector 'li', 
       text: 'follow up with PMC for clarification'
 
-    expect(page).to have_selector '#commit-text', text:
+    expect(page).to have_selector '#commit-text', text: 
       ['Approve W3C Relations', 'Unapprove Security Team', 'Flag Attic',
         'Comment on Avro',
         'Update AI: follow up with PMC for clarification'].join(' ')
@@ -55,7 +55,7 @@ feature 'other reports' do
   it "should follow the ready queue" do
     visit '/2015-01-21/queue/Onami'
 
-    expect(page).to have_selector '.navbar-fixed-top.reviewed .navbar-brand',
+    expect(page).to have_selector '.navbar-fixed-top.reviewed .navbar-brand', 
       text: 'Onami'
 
     expect(page).to have_selector '.backlink[href="queue/MyFaces"]',
@@ -68,9 +68,9 @@ feature 'other reports' do
     visit '/2015-01-21/shepherd/Sam'
 
     # action items
-    expect(page).to have_selector 'pre.report',
+    expect(page).to have_selector 'pre.report', 
       text: '* Sam: pursue a report for Abdera'
-    expect(page).to have_selector 'pre.report em',
+    expect(page).to have_selector 'pre.report em', 
       text: "Clarification provided in this month's report."
 
     # committee reports
@@ -78,10 +78,10 @@ feature 'other reports' do
       text: 'Flink'
     expect(page).to have_selector 'a.missing', text: 'Airavata'
     expect(page).to have_selector 'h4', text: 'Comments'
-    expect(page).to have_selector 'pre.comment span',
+    expect(page).to have_selector 'pre.comment span', 
       text: 'cm: great report!'
     expect(page).to have_selector 'h4', text: 'Action Items'
-    expect(page).to have_selector 'pre.report',
+    expect(page).to have_selector 'pre.report', 
       text: '* Chris: Please clarify what "voted on" means'
     expect(page).to have_selector 'button[data-attach=AY]', text: 'flag'
     expect(page).to have_selector '.shepherd button', text: 'send email'
@@ -99,7 +99,7 @@ feature 'other reports' do
   it "should follow the shepherd queue" do
     visit '/2015-02-18/shepherd/queue/Hama'
 
-    expect(page).to have_selector '.navbar-fixed-top.missing .navbar-brand',
+    expect(page).to have_selector '.navbar-fixed-top.missing .navbar-brand', 
       text: 'Hama'
 
     expect(page).to have_selector '.backlink[href="shepherd/queue/Forrest"]',
@@ -139,11 +139,11 @@ feature 'other reports' do
       text: 'Set a date for the Annual Members Meeting'
     expect(page).to have_selector '.nextlink[href="Unfinished-Business"]',
       text: 'Unfinished Business'
-    expect(page).to have_selector 'h3',
+    expect(page).to have_selector 'h3', 
       text: 'Action Items Captured During the Meeting'
 
     expect(page).to have_selector 'a[href="http://example.com"]'
-    expect(page).to have_selector 'span',
+    expect(page).to have_selector 'span', 
       text: '* Sam: Is the project ready for retirement?'
     expect(page).to have_selector 'a.missing[href=JMeter]', text: 'JMeter'
     expect(page).to have_selector 'span', text: '2015-01-21 ]'
@@ -156,7 +156,7 @@ feature 'other reports' do
       File.write(yaml, YAML.dump(minutes.merge('started' => false)))
 
       visit '/2015-02-18/Action-Items'
-      expect(page).to have_selector 'p.alert-info',
+      expect(page).to have_selector 'p.alert-info', 
         text: 'Action Items have yet to be posted'
       expect(page).to have_selector 'button.btn-primary', text: 'post actions'
     ensure
@@ -166,7 +166,7 @@ feature 'other reports' do
 
   it "should show flagged items" do
     visit '/2015-02-18/flagged'
-
+    
     expect(page).to have_selector 'h3 a', text: 'Lenya'
     expect(page).to have_selector 'h4', text: 'Comments'
     expect(page).to have_selector 'pre span', text: 'rg: Last quarter'
@@ -174,16 +174,16 @@ feature 'other reports' do
 
   it "should show missing items" do
     visit '/2015-02-18/missing'
-
+    
     expect(page).to have_selector 'h3 a', text: 'Cassandra'
     expect(page).to have_selector 'h4', text: 'Comments'
     expect(page).to have_selector 'pre span', text: 'cm: Reminder email sent'
     expect(page).to have_selector 'h4', text: 'Minutes'
-    expect(page).to have_selector 'pre',
+    expect(page).to have_selector 'pre', 
       text: '@Sam: Is anyone on the PMC looking at the reminders?'
 
     # reminders
-    expect(page).to have_selector 'input[type=checkbox][name=selected]' +
+    expect(page).to have_selector 'input[type=checkbox][name=selected]' + 
       '[value=Airavata]'
     expect(page).to have_selector 'button.btn-primary',
       text: 'send initial reminders'
