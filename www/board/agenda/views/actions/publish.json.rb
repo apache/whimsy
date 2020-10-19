@@ -126,4 +126,4 @@ ASF::SVN.update BOARD_PRIVATE, @message, env, _ do |tmpdir|
   end
 end
 
-Dir.chdir(BOARD_PRIVATE) {Dir['board_minutes_*.txt'].sort}
+Dir['board_minutes_*.txt', base: BOARD_PRIVATE].sort

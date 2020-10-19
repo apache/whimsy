@@ -512,12 +512,10 @@ get '/text/draft/:file' do |file|
     agenda.sub('_agenda_', '_minutes_').sub('.txt', '.yml')
 
   _text do
-    Dir.chdir(FOUNDATION_BOARD) do
-      if Dir['board_agenda_*.txt'].include?(agenda)
-        _ Minutes.draft(agenda, minutes)
-      else
-        halt 404
-      end
+    if Dir['board_agenda_*.txt', base: FOUNDATION_BOARD].include?(agenda)
+      _ Minutes.draft(agenda, minutes)
+    else
+      halt 404
     end
   end
 end

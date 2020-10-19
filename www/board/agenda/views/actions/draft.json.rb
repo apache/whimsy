@@ -22,6 +22,4 @@ ASF::SVN.update minutes_file, @message, env, _ do |tmpdir, old_contents|
   end
 end
 
-drafts = Dir.chdir(FOUNDATION_BOARD) {Dir['board_minutes_*.txt'].sort}
-
-drafts
+Dir['board_minutes_*.txt', base: FOUNDATION_BOARD].sort
