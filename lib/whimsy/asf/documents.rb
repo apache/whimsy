@@ -78,10 +78,10 @@ module ASF
     # Does not return directories
     def self.matchStem(stem)
       unless @@h_stem
-        h_stem = Hash.new{|h,k| h[k] = []}
-          listnames.map do |l|
-            h_stem[l.split('.')[0]] << l unless l.end_with?('/')
-          end
+        h_stem = Hash.new {|h, k| h[k] = []}
+        listnames.map do |l|
+          h_stem[l.split('.')[0]] << l unless l.end_with?('/')
+        end
         @@h_stem = h_stem
       end
       @@h_stem[stem]
