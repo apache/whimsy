@@ -25,6 +25,14 @@ class Comments < Vue
     @showseen = false
   end
 
+  def mounted
+    EventBus.on :toggleseen, self.toggleseen
+  end
+
+  def beforeDestroy()
+    EventBus.off :toggleseen, self.toggleseen
+  end
+
   def toggleseen()
     @showseen = ! @showseen
   end

@@ -15,7 +15,7 @@ class ShowSeen < Vue
   end
 
   def click(event)
-    Main.view.toggleseen()
+    EventBus.emit :toggleseen
     self.changeLabel()
   end
 
