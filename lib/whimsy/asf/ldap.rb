@@ -66,7 +66,7 @@ module ASF
       # the enclosing method is optional, so we only require the gem here
       require 'yaml'
       require_relative 'git' # just in case
-      @puppet = YAML.load(ASF::Git.infra_puppet('data/common.yaml'))
+      @puppet = YAML.safe_load(ASF::Git.infra_puppet('data/common.yaml'))
     end
 
     # extract the ldapcert from the puppet configuration

@@ -23,7 +23,7 @@ end
 def get_svn_data()
   dir = ASF::SVN['comdevtalks']
   filename = 'README.yaml'
-  data = YAML.load(File.read(File.join(dir, filename)))
+  data = YAML.safe_load(File.read(File.join(dir, filename)))
   return data['title']
 end
 

@@ -18,9 +18,9 @@ def parse_talks(dir = "#{COMDEVDIR}")
   Dir[File.join("#{dir}", "*.yaml")].each do |fname|
     begin
       if fname =~ /_/
-        talks["#{File.basename(fname, ".*")}"] = YAML.load(File.read(fname))
+        talks["#{File.basename(fname, ".*")}"] = YAML.safe_load(File.read(fname))
       elsif fname !~ /SKIPFILE/
-        submitters["#{File.basename(fname, ".*")}"] = YAML.load(File.read(fname))
+        submitters["#{File.basename(fname, ".*")}"] = YAML.safe_load(File.read(fname))
       end
     rescue Exception => e
       puts "Bogosity! analyzing #{fname} raised #{e.message[0..255]}"

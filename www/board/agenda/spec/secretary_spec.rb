@@ -113,7 +113,7 @@ feature 'report' do
     file = "#{AGENDA_WORK}/board_minutes_#{meeting.gsub('-', '_')}.yml"
     minutes = IO.read(file)
     timestamp = Time.now.gmtime.to_f * 1000
-    IO.write file, YAML.dump(YAML.load(minutes).
+    IO.write file, YAML.dump(YAML.safe_load(minutes).
       merge('complete' => timestamp, 'Adjournment' => '11:45'))
     yield
   ensure

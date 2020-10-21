@@ -10,7 +10,7 @@ class OrgChart
       next if @@duties[name] and @@duties[name]['mtime'] > File.mtime(file).to_f
       data = Hash[*File.read(file).split(/^\[(.*)\]\n/)[1..-1].map(&:strip)]
       next unless data['info']
-      data['info'] = YAML.load(data['info'])
+      data['info'] = YAML.safe_load(data['info'])
       data['mtime'] = File.mtime(file).to_f
       @@duties[name] = data
     end
@@ -19,7 +19,7 @@ class OrgChart
     unless @@desc['mtime'] and @@desc['mtime'] > File.mtime(file).to_f
       data = Hash[*File.read(file).split(/^\[(.*)\]\n/)[1..-1].map(&:strip)]
       if data['info'] then
-        data = YAML.load(data['info'])
+        data = YAML.safe_load(data['info'])
         data['mtime'] = File.mtime(file).to_f
         @@desc = data
       end
