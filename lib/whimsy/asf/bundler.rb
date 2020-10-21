@@ -14,9 +14,9 @@ module Bundler
 
       path = nil
       libs.each do |lib|
-         if File.exist?("#{lib}/#{pname}")
-           path = lib
-         end
+        if File.exist?("#{lib}/#{pname}")
+          path = lib
+        end
       end
 
       if path
