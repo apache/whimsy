@@ -588,9 +588,9 @@ module ASF
 
       # determine what groups the individual is a member of
       uid_groups = ASF.search_subtree('dc=apache,dc=org',
-        'memberUid=#{self.id}', 'dn').flatten
+        "memberUid=#{self.id}", 'dn').flatten
       dn_groups = ASF.search_subtree('dc=apache,dc=org',
-        'member=#{self.dn}', 'dn').flatten
+        "member=#{self.dn}", 'dn').flatten
 
       # add new user to all groups
       uid_groups.each do |dn|
