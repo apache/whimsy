@@ -3,7 +3,7 @@ PAGETITLE = "Apache Corporate Organization Chart" # Wvisible:orgchart
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'json'
 require 'whimsy/asf'
-require 'whimsy/asf/orgchart' # New class not yet in gem; duplicates www/roster/models/orgchart
+require 'whimsy/asf/orgchart'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'wunderbar/markdown'

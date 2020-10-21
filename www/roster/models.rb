@@ -4,7 +4,6 @@ require_relative 'models/committer'
 require_relative 'models/committee'
 require_relative 'models/nonpmc'
 require_relative 'models/group'
-require_relative 'models/orgchart'
 require_relative 'models/ppmc'
 
 require_relative 'models/ldap'

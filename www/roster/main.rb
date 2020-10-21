@@ -7,6 +7,7 @@
 ENV['LANG'] = 'en_US.UTF-8'
 
 require 'whimsy/asf'
+require 'whimsy/asf/orgchart'
 
 require 'mail'
 require 'tmpdir'
@@ -352,7 +353,7 @@ end
 
 # Handle overall organization chart
 get '/orgchart/' do
-  @org = OrgChart.load
+  @org = ASF::OrgChart.load
   _html :orgchart
 end
 
@@ -364,9 +365,9 @@ get '/orgchart/:name' do |name|
     halt 401, "Not authorized\n"
   end
 
-  @org = OrgChart.load
+  @org = ASF::OrgChart.load
   @role = @org[name]
-  @desc = OrgChart.desc
+  @desc = ASF::OrgChart.desc
   pass unless @role
 
   @oversees = @org.select do |role, duties|
