@@ -36,7 +36,6 @@ require 'ldap'
 require 'weakref'
 require 'net/http'
 require 'base64'
-require 'thread'
 require 'securerandom'
 require 'set'
 
