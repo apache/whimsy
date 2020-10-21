@@ -27,13 +27,13 @@ class Wunderbar::HtmlMarkup
   def _whimsy_forms_iconlink(**args)
     if args[:iconlink]
       _div.input_group_btn do
-        _a.btn.btn_default type: 'button', aria_label: "#{iconlabel}", href: "#{args[:iconlink]}", target: 'whimsy_help' do
-          _span.glyphicon class: "#{args[:icon]}", aria_label: "#{args[:iconlabel]}"
+        _a.btn.btn_default type: 'button', aria_label: iconlabel, href: args[:iconlink], target: 'whimsy_help' do
+          _span.glyphicon class: args[:icon], aria_label: args[:iconlabel]
         end
       end
     elsif args[:icon]
       _span.input_group_addon do
-        _span.glyphicon class: "#{args[:icon]}", aria_label: "#{args[:iconlabel]}"
+        _span.glyphicon class: args[:icon], aria_label: args[:iconlabel]
       end
     elsif ['radio', 'checkbox'].include?(args[:type])
       # No-op: do not include blank addon for these controls
@@ -46,15 +46,15 @@ class Wunderbar::HtmlMarkup
   # Note: passes :groupclass thru to input-group control for styling
   def _whimsy_control_wrapper(**args)
     _div.form_group do
-      _label.control_label.col_sm_3 args[:label], for: "#{args[:name]}"
+      _label.control_label.col_sm_3 args[:label], for: args[:name]
       _div.col_sm_9 do
         _div! class: "input-group #{args[:groupclass]}" do
           yield
           _whimsy_forms_iconlink(args)
         end
         if args[:helptext]
-          _span.help_block id: "#{args[:aria_describedby]}" do
-            _markdown "#{args[:helptext]}"
+          _span.help_block id: args[:aria_describedby] do
+            _markdown args[:helptext]
           end
         end
       end
@@ -109,7 +109,7 @@ class Wunderbar::HtmlMarkup
         if ''.eql?(args[:placeholder])
           _option '', value: '', selected: 'selected'
         else
-          _option "#{args[:placeholder]}", value: '', selected: 'selected', disabled: 'disabled', hidden: 'hidden'
+          _option args[:placeholder], value: '', selected: 'selected', disabled: 'disabled', hidden: 'hidden'
         end
         # Construct selectable list from values (first) then options
         if args[:values].kind_of?(Array)
@@ -121,7 +121,7 @@ class Wunderbar::HtmlMarkup
             _option disp, value: val, selected: true
           end
         elsif args[:values] # Fallback for simple case of single string value
-          _option "#{args[:values]}", value: "#{args[:values]}", selected: true
+          _option args[:values], value: args[:values], selected: true
           args[:values] = [args[:values]] # Ensure supports .include? for options loop below
         end
         if args[:options].kind_of?(Array)

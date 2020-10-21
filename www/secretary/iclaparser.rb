@@ -174,7 +174,7 @@ module ICLAParser
               val = v[:V]
               # This is a hack; should really find the font def and use that
               if val
-                debug["#{key}"] = v.inspect
+                debug[key] = v.inspect
                 if val.bytes[0..1] == [254,255]
                   val = val.encode('utf-8','utf-16').strip
                 else

@@ -110,7 +110,7 @@ def display_check(col, sites, analysis, checks, tlp = true)
     _table.table.table_condensed.table_striped do
       _thead do
         _tr do
-          _th! "#{tlp ? 'Project' : 'Podling'}", data_sort: 'string-ins'
+          _th! tlp ? 'Project' : 'Podling', data_sort: 'string-ins'
           _th! data_sort: 'string' do
             _ 'Check Results'
             _br
@@ -162,7 +162,7 @@ def display_overview(sites, analysis, checks, tlp = true)
     _table.table.table_condensed.table_striped do
       _thead do
         _tr do
-          _th! "#{tlp ? 'Project' : 'Podling'}", data_sort: 'string-ins'
+          _th! tlp ? 'Project' : 'Podling', data_sort: 'string-ins'
           checks.each_key do |col|
             _th! data_sort: 'string' do
               _a col.capitalize, href: "check/#{col}"
@@ -184,7 +184,7 @@ def display_overview(sites, analysis, checks, tlp = true)
         sites.each do |n, links|
           _tr do
             _td do
-              _a "#{links['display_name']}", href: "project/#{n}"
+              _a links['display_name'], href: "project/#{n}"
             end
             checks.each_key do |c|
               cls = SiteStandards.label(analysis, links, c, n)

@@ -125,7 +125,7 @@ _html do
           end
           _p do
             _ 'Currently, we will need '
-            _span.text_primary "#{attend_irc}"
+            _span.text_primary attend_irc
             _ " Members attending the first half of the meeting on Tuesday and respond to Roll Call to reach quorum and continue the meeting."
             _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
           end

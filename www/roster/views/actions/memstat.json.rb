@@ -71,9 +71,9 @@ elsif @action == 'request_emeritus'
   template, err =
     ASF::SVN.svn('cat', ASF::SVN.svnpath!('foundation', 'emeritus-request.txt'), {env:env})
   raise RuntimeError.new("Failed to read emeritus-request.txt: " + err) unless template
-  centered_id = "#{USERID}".center(55, '_')
-  centered_name = "#{USERNAME}".center(55, '_')
-  centered_date ="#{TIMESTAMP}".center(55, '_')
+  centered_id = USERID.center(55, '_')
+  centered_name = USERNAME.center(55, '_')
+  centered_date = TIMESTAMP.center(55, '_')
   signed_request = template
     .gsub('Apache id: _______________________________________________________',
         ('Apache id: ' + centered_id))
@@ -106,7 +106,7 @@ elsif @action == 'request_reinstatement'
   mail = Mail.new do
     to "secretary@apache.org"
     cc "#{USERNAME}<#{USERMAIL}>"
-    from "#{USERMAIL}"
+    from USERMAIL
     subject "Emeritus reinstatement request from #{USERNAME}"
     text_part do
       body "I respectfully request reinstatement to full membership in The Apache Software Foundation.\n\nRegards,\n\n#{USERNAME}"

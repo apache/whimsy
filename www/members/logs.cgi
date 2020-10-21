@@ -70,7 +70,7 @@ def display_access()
     apps.each_with_index do |(name, data), n|
       itemtitle = LogParser::WHIMSY_APPS[name] ? LogParser::WHIMSY_APPS[name] : 'All Other URLs'
       itemtitle << " (#{data['remote_user'].sum{|k,v| v}})" if data['remote_user']
-      _whimsy_accordion_item(listid: listid, itemid: name, itemtitle: "#{itemtitle}", n: n, itemclass: 'panel-info') do
+      _whimsy_accordion_item(listid: listid, itemid: name, itemtitle: itemtitle, n: n, itemclass: 'panel-info') do
         _table.table.table_hover.table_striped do
           _thead_ do
             _tr do

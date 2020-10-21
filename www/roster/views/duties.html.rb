@@ -126,7 +126,7 @@ _html do
             _h4.text_warning('See This Source File')
           end
           _li.list_group_item do
-            txtnam = File.basename("#{env['REQUEST_URI']}")
+            txtnam = File.basename(env['REQUEST_URI'])
             _a "foundation/officers/personnel-duties/#{txtnam}.txt", href: ASF::SVN.svnpath!('personnel-duties', "#{txtnam}.txt")
           end
         end

@@ -108,8 +108,8 @@ def run_analyze_stats(dir, list, subject_regex)
   results = []
   errors = []
   subjects = []
-  output = File.join("#{dir}", "output-#{list}")
-  Dir[File.join("#{dir}", "#{list}*.json")].each do |fname|
+  output = File.join(dir, "output-#{list}")
+  Dir[File.join(dir, "#{list}*.json")].each do |fname|
     subjects = analyze_stats(fname, results, subject_regex, errors)
     if subjects
       responses = subjects.select {|subj| subj =~ /Re:/i }.size

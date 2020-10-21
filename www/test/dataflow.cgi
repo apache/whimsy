@@ -94,10 +94,10 @@ _html do
             _br
             if info['maintainer'] =~ %r{/} then
               _span.text_muted 'Maintained by Whimsy PMC using script: '
-              _a.text_muted "#{info['maintainer']}", href: "#{GITWHIMSY}#{info['maintainer']}"
+              _a.text_muted info['maintainer'], href: "#{GITWHIMSY}#{info['maintainer']}"
             else
               _span.text_muted 'Maintained by role/PMC: '
-              _a.text_muted "#{info['maintainer']}", href: "/foundation/orgchart/#{info['maintainer']}"
+              _a.text_muted info['maintainer'], href: "/foundation/orgchart/#{info['maintainer']}"
             end
             _br
             if info.key?('format') then
@@ -109,7 +109,7 @@ _html do
               _ul do
                 info['sources'].each do |src|
                   _li do
-                    _a "#{src}", href: "##{src.gsub(/[#%\[\]\{\}\\"<>]/, '')}"
+                    _a src, href: "##{src.gsub(/[#%\[\]\{\}\\"<>]/, '')}"
                   end
                 end
               end

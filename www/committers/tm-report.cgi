@@ -64,33 +64,33 @@ def emit_input(
   tagname = 'textarea' if rows
   aria_describedby = "#{name}_help" if helptext
   _div.form_group do
-    _label.control_label.col_sm_3 label, for: "#{name}"
+    _label.control_label.col_sm_3 label, for: name
     _div.col_sm_9 do
       _div.input_group do
         if pattern
-          _.tag! tagname, class: 'form-control', name: "#{name}", id: "#{name}",
-          type: "#{type}", pattern: "#{pattern}", placeholder: "#{placeholder}", value: value,
-          aria_describedby: "#{aria_describedby}", required: required, readonly: readonly
+          _.tag! tagname, class: 'form-control', name: name, id: name,
+          type: type, pattern: pattern, placeholder: placeholder, value: value,
+          aria_describedby: aria_describedby, required: required, readonly: readonly
         else
-          _.tag! tagname, class: 'form-control', name: "#{name}", id: "#{name}",
-          type: "#{type}", placeholder: "#{placeholder}", value: value,
-          aria_describedby: "#{aria_describedby}", required: required, readonly: readonly
+          _.tag! tagname, class: 'form-control', name: name, id: name,
+          type: type, placeholder: placeholder, value: value,
+          aria_describedby: aria_describedby, required: required, readonly: readonly
         end
         if iconlink
           _div.input_group_btn do
-            _a.btn.btn_default type: 'button', aria_label: "#{iconlabel}", href: "#{iconlink}", target: 'whimsy_help' do
-              _span.glyphicon class: "#{icon}", aria_label: "#{iconlabel}"
+            _a.btn.btn_default type: 'button', aria_label: iconlabel, href: iconlink, target: 'whimsy_help' do
+              _span.glyphicon class: icon, aria_label: iconlabel
             end
           end
         elsif icon
           _span.input_group_addon do
-            _span.glyphicon class: "#{icon}", aria_label: "#{iconlabel}"
+            _span.glyphicon class: icon, aria_label: iconlabel
           end
         end
       end
       if helptext
-        _span.help_block id: "#{aria_describedby}" do
-          _ "#{helptext}"
+        _span.help_block id: aria_describedby do
+          _ helptext
         end
       end
     end
@@ -139,7 +139,7 @@ def emit_form()
           _select.form_control name: 'type', id: 'type', required: true do
             _option value: ''
             MISUSE_TYPES.each do |val, desc|
-              _option "#{desc}", value: val
+              _option desc, value: val
             end
           end
         end
@@ -150,7 +150,7 @@ def emit_form()
           _select.form_control name: 'effect', id: 'effect' do
             _option value: ''
             MISUSE_EFFECT.each do |val, desc|
-              _option "#{desc}", value: val
+              _option desc, value: val
             end
           end
         end
@@ -174,7 +174,7 @@ def emit_form()
         end
       end
       emit_input(label: 'Committer ID of Reporter', name: 'reporter', readonly: true,
-        value: "#{user.id}", icon: 'glyphicon-user', iconlabel: 'Committer ID')
+        value: user.id, icon: 'glyphicon-user', iconlabel: 'Committer ID')
       emit_input(label: 'Committer Email of Reporter', name: 'reporteremail', readonly: true,
         value: "#{user.public_name} (whimsy) <#{user.id}@apache.org>", icon: 'glyphicon-user', iconlabel: 'Committer Email')
 
@@ -263,13 +263,13 @@ _html do
       # Display data to the user, depending if we're GET (new form) or POST (show results)
       if _.post?
         submission = {
-          'project' => "#{@project}",
-          'url' => "#{@url}",
-          'phrase' => "#{@phrase}",
-          'type' => "#{@type}",
-          'description' => "#{@description}",
-          'reporter' => "#{@reporter}",
-          'reporteremail' => "#{@reporteremail}"
+          'project' => @project,
+          'url' => @url,
+          'phrase' => @phrase,
+          'type' => @type,
+          'description' => @description,
+          'reporter' => @reporter,
+          'reporteremail' => @reporteremail
         }
         if validate_form(formdata: submission)
           send_form(formdata: submission)

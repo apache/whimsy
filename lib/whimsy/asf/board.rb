@@ -127,7 +127,7 @@ module ASF
         raise "no chair found for #{pmc.name}" if not chair
 
         if @directors.include? chair
-          "#{chair.public_name}"
+          chair.public_name
         else
           "#{chair.public_name} / #{self.next}"
         end

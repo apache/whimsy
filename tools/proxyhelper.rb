@@ -28,7 +28,7 @@ def reminder_lines(meeting = File.basename(Dir[File.join(MEETINGS, '2*')].max))
     if user.length == 1 # Copy to new array with their email instead of cn
       reminders[user[0].mail[0]] = ["#{user[0].id.ljust(12)} | #{user[0].cn}"]
       proxies.each do |l|
-        reminders[user[0].mail[0]]  << "#{l}"
+        reminders[user[0].mail[0]] << l
       end
     else
       # "Bogus: ASF::Person.list(#{nam}) not found, skipped!"

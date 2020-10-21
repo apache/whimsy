@@ -78,8 +78,8 @@ def get_affirmed_template(name, timestamp)
   template, err =
     ASF::SVN.svn('cat', COI_CURRENT_TEMPLATE_URL, {user: $USER, password: $PASSWORD})
   raise RuntimeError.new("Failed to read current template.txt -- %s" % err) unless template
-  centered_name = "#{name}".center(60, '_')
-  centered_date ="#{timestamp}".center(62, '_')
+  centered_name = name.center(60, '_')
+  centered_date = timestamp.center(62, '_')
   filled_signature_block = signature_block
     .gsub('Signed: __', ('Signed: ' + centered_name))
     .gsub('Date: __'  , (  'Date: ' + centered_date))
@@ -138,8 +138,8 @@ _html do
         end
         _p
         _p "You are signed in as #{USERNAME} (#{USERID}) at #{current_timestamp}."
-        _p {_ "You are ";_b "#{not_required_message}";_ " to affirm the Conflict of Interest policy for this year."}
-        _p {_ "You ";_b "#{have_affirmed_message}";_  "the Conflict of Interest policy for this year."}
+        _p {_ "You are "; _b not_required_message; _ " to affirm the Conflict of Interest policy for this year."}
+        _p {_ "You "; _b have_affirmed_message; _  "the Conflict of Interest policy for this year."}
         if  USER_AFFIRMATION_FILE
           _a "Your Conflict of Interest affirmation",
             href: "#{COI_CURRENT_URL}/#{USER_AFFIRMATION_FILE}"
@@ -209,7 +209,7 @@ def emit_post(_)
     mail = Mail.new do
       to "#{USERNAME}<#{USERMAIL}>"
       cc "secretary@apache.org"
-      from "#{USERMAIL}"
+      from USERMAIL
       subject "Conflict of Interest affirmation from #{USERNAME}"
       text_part do
         body "

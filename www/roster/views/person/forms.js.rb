@@ -19,7 +19,7 @@ class PersonForms < Vue
                 if link == '' # has ICLA bu no karma to view it
                   _ 'ICLA'
                 else
-                  _a 'ICLA', href: "#{link}"
+                  _a 'ICLA', href: link
                 end
               end
             elsif form == 'member'
@@ -28,7 +28,7 @@ class PersonForms < Vue
                   _ 'Member App'
                 else
                   _a 'Member App',
-                    href: "#{link}"
+                    href: link
                 end
               end
             elsif form == 'emeritus'
@@ -37,7 +37,7 @@ class PersonForms < Vue
                   _ 'Emeritus'
                 else
                   _a 'Emeritus',
-                    href: "#{link}"
+                    href: link
                 end
               end
             elsif form == 'emeritus_request'
@@ -46,7 +46,7 @@ class PersonForms < Vue
                   _ 'Emeritus Request'
                 else
                   _a 'Emeritus Request',
-                    href: "#{link}"
+                    href: link
                 end
                 emeritus_request_age = committer['emeritus_request_age']
                 if emeritus_request_age
@@ -60,7 +60,7 @@ class PersonForms < Vue
                   _ 'Emeritus Rescinded'
                 else
                   _a 'Emeritus Rescinded',
-                    href: "#{link}"
+                    href: link
                 end
               end
             elsif form == 'emeritus_reinstated'
@@ -69,7 +69,7 @@ class PersonForms < Vue
                   _ 'Emeritus Reinstated'
                 else
                   _a 'Emeritus Reinstated',
-                    href: "#{link}"
+                    href: link
                 end
               end
             else

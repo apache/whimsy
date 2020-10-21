@@ -99,7 +99,7 @@ _html do
                 mentor.each do |k, v|
                   _tr do
                     _td!.text_right do
-                      _span.text_primary uimap.has_key?(k) ? "#{uimap[k][0]}" : "#{k}"
+                      _span.text_primary uimap.has_key?(k) ? uimap[k][0] : k
                     end
                     _td!.text_left do
                       v = v.join(', ') if v.kind_of?(Array)
@@ -142,7 +142,7 @@ _html do
               errors.each do |apacheid, error |
                 _li do
                   _code "#{apacheid}.json"
-                  _ "#{error[MentorFormat::ERRORS]}"
+                  _ error[MentorFormat::ERRORS]
                 end
               end
             end

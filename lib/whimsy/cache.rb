@@ -161,7 +161,7 @@ class Cache
 
   def makepath(uri)
     name = Digest::MD5.hexdigest uri.to_s
-    File.join @dir, "#{name}"
+    File.join @dir, name
   end
 
 end

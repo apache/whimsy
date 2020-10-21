@@ -33,7 +33,7 @@ talktitle = get_svn_data()
 
 # Example of handling POST forms cleanly
 def emit_form(title, prev_data)
-  _whimsy_panel("#{title}", style: 'panel-success') do
+  _whimsy_panel(title, style: 'panel-success') do
     _form.form_horizontal method: 'post' do
       _div.form_group do
         _label.col_sm_offset_3.col_sm_9.strong.text_left 'Example Form Section'
@@ -168,7 +168,7 @@ _html do
       officers = get_public_data()
       _div.panel_group id: accordionid, role: 'tablist', aria_multiselectable: 'true' do
         officers['auth'].each_with_index do |(listname, rosters), n|
-          _whimsy_accordion_item(listid: accordionid, itemid: listname, itemtitle: "#{listname}", n: n, itemclass: 'panel-primary') do
+          _whimsy_accordion_item(listid: accordionid, itemid: listname, itemtitle: listname, n: n, itemclass: 'panel-primary') do
             _ul do
               rosters['roster'].each do |usr|
                 _li usr

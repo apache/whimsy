@@ -210,7 +210,7 @@ module ASF
       [
         fullname, # will be prefixed by ' *) '
         # Each line of address is indented
-        ("#{address.gsub(/^/,'    ').gsub(/\r/,'')}"),
+        (address.gsub(/^/,'    ').gsub(/\r/,'')),
         ("    #{country}"     unless country.empty?),
          "    Email: #{email}",
         ("      Tel: #{tele}" unless tele.empty?),

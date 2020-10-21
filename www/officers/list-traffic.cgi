@@ -32,7 +32,7 @@ def display_monthly(months:, nondiscuss:)
   months.sort.reverse.each do |month|
     data = MailUtils.get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: nondiscuss)
     next if data.empty?
-    _h1 "#{LIST_ROOT}@ statistics for #{month} (total mails: #{data[MailUtils::MAILS].length + data[MailUtils::TOOLS].length})", id: "#{month}"
+    _h1 "#{LIST_ROOT}@ statistics for #{month} (total mails: #{data[MailUtils::MAILS].length + data[MailUtils::TOOLS].length})", id: month
     _div.row do
       _div.col_sm_6 do
         _ul.list_group do
@@ -90,7 +90,7 @@ def display_weekly(months:, nondiscuss:)
         end
         senders[WEEK_TOTAL] = total
         _ul.list_group do
-          _li.list_group_item.active.list_group_item_info "Week #{week} Top Senders (total mails: #{senders[WEEK_TOTAL]})", id: "#{week}"
+          _li.list_group_item.active.list_group_item_info "Week #{week} Top Senders (total mails: #{senders[WEEK_TOTAL]})", id: week
           ctr = 0
           senders.sort_by {|k,v| -v}.to_h.each do |id, num|
             next if /@@/ =~ id
@@ -121,7 +121,7 @@ _html do
         "/board/agenda" => "Current Month Board Agenda",
         "/board/minutes" => "Past Minutes, Categorized",
         "https://www.apache.org/foundation/board/calendar.html" => "Past Minutes, Dated",
-        "#{ENV['SCRIPT_NAME']}" => "List Traffic By Month",
+        ENV['SCRIPT_NAME'] => "List Traffic By Month",
         "#{ENV['SCRIPT_NAME']}?week" => "List Traffic By Week",
         "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code"
       },

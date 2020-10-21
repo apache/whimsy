@@ -40,7 +40,7 @@ _personalize_email(env.user)
 task "svn commit documents/grants/#@filename#{fileext} and update grants.txt" do
 
   # construct line to be inserted
-  @grantlines = "#{@company.strip}" +
+  @grantlines = @company.strip +
     "\n  file: #{@filename}#{fileext}" +
     "\n  for: #{@description.strip.gsub(/\r?\n\s*/,"\n       ")}"
 

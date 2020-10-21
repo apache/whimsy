@@ -174,7 +174,7 @@ _html do
           _tr do
             _td 'Amount'
             _td do
-              _input name: 'total', value: "#{@total or '$ 0'}"
+              _input name: 'total', value: @total or '$ 0'
             end
           end
         end

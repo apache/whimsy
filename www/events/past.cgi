@@ -48,7 +48,7 @@ _html do
                 if r[fn] then
                   _li do
                     _a! href: r[fn] do
-                      _span!.glyphicon class: "#{g[0]}"
+                      _span!.glyphicon class: g[0]
                       _! ' ' + g[1]
                     end
                   end

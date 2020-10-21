@@ -58,7 +58,7 @@ def display_monthly(months:, nondiscuss:, cohorts:)
   months.sort.reverse.each do |month|
     data = MailUtils.get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: nondiscuss)
     next if data.empty?
-    _h1 "#{LIST_ROOT}@ statistics for #{month} (total mails: #{data[MailUtils::MAILS].length})", id: "#{month}"
+    _h1 "#{LIST_ROOT}@ statistics for #{month} (total mails: #{data[MailUtils::MAILS].length})", id: month
     _div.row do
       _div.col_sm_6 do
         _ul.list_group do
@@ -82,9 +82,9 @@ def display_monthly(months:, nondiscuss:, cohorts:)
             data[MailUtils::MAILCOUNT].each do |name, num|
               id = (name.match(/.+[(](\w+)/) || [])[1]
               if cohorts['cohorts'].has_key?(id)
-                _span! "#{name} (#{num}), ", class: "#{cohorts['cohorts'][id]}"
+                _span! "#{name} (#{num}), ", class: cohorts['cohorts'][id]
               else
-                _span! "#{name} (#{num}), ", class: "#{cohorts['cohorts'][COHORT_STYLES['Non-member']]}"
+                _span! "#{name} (#{num}), ", class: cohorts['cohorts'][COHORT_STYLES['Non-member']]
               end
             end
           end
@@ -123,7 +123,7 @@ def display_weekly(months:, nondiscuss:)
         end
         senders[WEEK_TOTAL] = total
         _ul.list_group do
-          _li.list_group_item.active.list_group_item_info "Week #{week} Top Senders (total mails: #{senders[WEEK_TOTAL]})", id: "#{week}"
+          _li.list_group_item.active.list_group_item_info "Week #{week} Top Senders (total mails: #{senders[WEEK_TOTAL]})", id: week
           ctr = 0
           senders.sort_by {|k,v| -v}.to_h.each do |id, num|
             next if /@@/ =~ id
@@ -153,7 +153,7 @@ _html do
       related: {
         "/members/index" => "More Member-Specific Tools",
         "/officers/list-traffic" => "Board@ List Traffic",
-        "#{ENV['SCRIPT_NAME']}" => "Members@ List Traffic By Month",
+        ENV['SCRIPT_NAME'] => "Members@ List Traffic By Month",
         "#{ENV['SCRIPT_NAME']}?week" => "Members@ List Traffic By Week",
         "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code"
       },
@@ -172,7 +172,7 @@ _html do
           _ 'For the All Senders column, Members are colorized by approximate years of membership like so: '
           _br
           COHORT_STYLES.each do |name, style|
-            _span "#{name}, ", class: "#{style}"
+            _span "#{name}, ", class: style
           end
           _ ' note that due to email address variations, some entries may be incorrectly marked.'
         end

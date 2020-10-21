@@ -242,7 +242,7 @@ _html do
               if chair
                 minutes = Dir['../board/minutes/*'].find do |name|
                   File.basename(name).split('.').first.downcase.gsub(/[_\W]/,'') ==
-                    "#{chair.name.gsub(/\W/,'')}"
+                    chair.name.gsub(/\W/,'')
                 end
 
                 search_string = "RESOLVED, that #{person.public_name}"

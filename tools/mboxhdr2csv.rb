@@ -365,7 +365,7 @@ module MboxUtils
     Dir["#{dir}/**/*#{ext}"].sort.each do |f|
       mails, errs = mbox2stats(f)
       File.open("#{f.chomp(ext)}.json", "w") do |fout|
-        fout.puts JSON.pretty_generate(["#{VERSION}", mails, errs])
+        fout.puts JSON.pretty_generate([VERSION, mails, errs])
       end
     end
   end
@@ -392,7 +392,7 @@ module MboxUtils
     raise ArgumentError, "#{__method__} called with no valid mbox json files in #{dir}" if jzons.length == 0
     puts "#{__method__} processing #{jzons.length} mbox json files"
     # Write out headers and the first array in new csv
-    csvfile = File.join("#{dir}", outname)
+    csvfile = File.join(dir, outname)
     csv = CSV.open(csvfile, "w", headers: %w( year month day weekday hour zone listid who subject lines links committer messageid inreplyto ), write_headers: true)
     jzons.shift[0].each do |m|
       csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['links'], m['committer'], m['messageid'], m['inreplyto']  ]

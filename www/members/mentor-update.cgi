@@ -80,11 +80,11 @@ def emit_form(apacheid, mdata, button_help, uimap)
 
       _div.form_group do
         _label.col_sm_offset_3.col_sm_9.strong.text_left 'Temporarily Opt Out From Any NEW Mentees'
-        _label.control_label.col_sm_3 'Not Accepting New Mentees', for: "#{MentorFormat::NOTAVAILABLE}"
+        _label.control_label.col_sm_3 'Not Accepting New Mentees', for: MentorFormat::NOTAVAILABLE
         _div.col_sm_9 do
           _div.input_group do
-            _label "#{MentorFormat::NOTAVAILABLE}" do
-              args = { type: 'checkbox', id: "#{MentorFormat::NOTAVAILABLE}", name: "#{MentorFormat::NOTAVAILABLE}", value: "#{MentorFormat::NOTAVAILABLE}" }
+            _label MentorFormat::NOTAVAILABLE do
+              args = { type: 'checkbox', id: MentorFormat::NOTAVAILABLE, name: MentorFormat::NOTAVAILABLE, value: MentorFormat::NOTAVAILABLE }
               args[:checked] = true if mdata[MentorFormat::NOTAVAILABLE]
               _input ' Stop accepting NEW Mentees', args
             end
@@ -216,21 +216,21 @@ _html do
       # Display data to the user, depending if we're GET (existing mentor record or just blank data) or POST (show SVN checkin results)
       if _.post?
         submission = {
-          "timezone" => "#{@timezone}",
-          "availability" => "#{@availability}",
-          "contact" => "#{@contact}",
-          "available" => "#{@available}",
-          "mentoring" => "#{@mentoring}",
-          "experience" => "#{@experience}",
-          "pronouns" => "#{@pronouns}",
-          "aboutme" => "#{@aboutme}",
-          "homepage" => "#{@homepage}",
+          "timezone" => @timezone,
+          "availability" => @availability,
+          "contact" => @contact,
+          "available" => @available,
+          "mentoring" => @mentoring,
+          "experience" => @experience,
+          "pronouns" => @pronouns,
+          "aboutme" => @aboutme,
+          "homepage" => @homepage,
           # Multiple select fields
           "prefers" => _.params['prefers'],
           "languages" => _.params['languages']
         }
         if @notavailable
-          submission['notavailable'] = "#{@notavailable}"
+          submission['notavailable'] = @notavailable
         end
         if validate_form(formdata: submission)
           if send_form(formdata: submission)

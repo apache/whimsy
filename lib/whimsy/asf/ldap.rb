@@ -315,7 +315,7 @@ module ASF
     # Dummy command, used for logging purposes only
     sname = %w(base one sub children)[scope] rescue scope
     cmd = "ldapsearch -x -LLL -b #{base} -s #{sname} #{filter} " +
-      "#{[attrs].flatten.join(' ')}"
+      [attrs].flatten.join(' ')
 
     # try once per host, with a minimum of two tries
     attempts_left = [ASF::LDAP.hosts.length, 2].max

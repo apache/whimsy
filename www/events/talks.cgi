@@ -41,7 +41,7 @@ def _talk(talk, submitters, parent, n)
         _thead do
           _tr do
             _th do
-              _ "#{submitter['name']}"
+              _ submitter['name']
             end
           end
         end
@@ -57,7 +57,7 @@ def _talk(talk, submitters, parent, n)
           if talk['slides']
             _tr do
               _td do
-                _a! href: "#{talk['slides']}" do
+                _a! href: talk['slides'] do
                   _span!.glyphicon class: 'glyphicon-file'
                   _! ' Session Slides'
                 end
@@ -67,7 +67,7 @@ def _talk(talk, submitters, parent, n)
           if talk['video']
             _tr do
               _td do
-                _a! href: "#{talk['video']}" do
+                _a! href: talk['video'] do
                   _span!.glyphicon class: 'glyphicon-facetime-video'
                   _! ' Watch The Video'
                 end
@@ -81,7 +81,7 @@ def _talk(talk, submitters, parent, n)
                   _span.glyphicon class: 'glyphicon-user'
                   _ ' Speaker Bio'
                 end
-                _ "#{submitter['bio']}"
+                _ submitter['bio']
               end
             end
           end
@@ -124,7 +124,7 @@ _html do
       _p do
         _ 'All talks by topics: '
         alltalks.each_key do | topic |
-          _a "#{topic}", href: "##{topic}"
+          _a topic, href: "##{topic}"
           _ ' | ' unless topic == alltalks.keys.last
         end
       end

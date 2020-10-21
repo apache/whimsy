@@ -46,7 +46,7 @@ _html do
       _ul.list_inline do
         scan_by.sort.each do |cat, l|
           _li do
-            _a "#{cat.capitalize}", href: "##{cat}"
+            _a cat.capitalize, href: "##{cat}"
           end
         end
       end
@@ -58,16 +58,16 @@ _html do
           links.sort_by{|k,v| v}.each do |l, desc|
             _li.list_group_item do
               if 2 == desc.length
-                _span.glyphicon :aria_hidden, class: "#{AUTHPUBLIC}"
+                _span.glyphicon :aria_hidden, class: AUTHPUBLIC
               else
-                _span class: desc[2], aria_label: "#{AUTHMAP.key(desc[2])}", title: "#{AUTHMAP.key(desc[2])}"  do
+                _span class: desc[2], aria_label: AUTHMAP.key(desc[2]), title: AUTHMAP.key(desc[2]) do
                   _span.glyphicon.glyphicon_lock :aria_hidden
                 end
               end
-              _a "#{desc[0]}", href: l
+              _a desc[0], href: l
               _ ' - '
               _code! do
-                _a "#{l}", href: l
+                _a l, href: l
               end
             end
           end
