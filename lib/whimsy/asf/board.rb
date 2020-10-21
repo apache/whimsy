@@ -35,10 +35,10 @@ module ASF
       if withId
         ASF::Service['board'].members.
         map {|person| [person.id, {name: person.public_name}]}.
-          sort_by {|id,hash| hash[:name].split(' ').rotate(-1)}.to_h
+          sort_by {|_id, hash| hash[:name].split(' ').rotate(-1)}.to_h
       else
         ASF::Service['board'].members.
-          map {|person| person.public_name}.
+          map(&:public_name).
             sort_by {|name| name.split(' ').rotate(-1)}
       end
     end
@@ -55,9 +55,9 @@ module ASF
 
     # time of next meeting
     def self.nextMeeting
-      time = self.calendar.select {|time| time > Time.now.utc}.min
+      time = self.calendar.select {|t| t > Time.now.utc}.min
 
-      if not time
+      unless time
         require 'chronic'
         this_month = Time.now.strftime('%B')
 
@@ -76,9 +76,9 @@ module ASF
     # time of previous meeting
     def self.lastMeeting
       next_meeting = self.nextMeeting
-      time = self.calendar.select {|time| time < next_meeting}.max
+      time = self.calendar.select {|t| t < next_meeting}.max
 
-      if not time
+      unless time
         require 'chronic'
         this_month = Time.now.strftime('%B')
 
@@ -124,7 +124,7 @@ module ASF
 
       def for(pmc)
         chair = pmc.chair
-        raise "no chair found for #{pmc.name}" if not chair
+        raise "no chair found for #{pmc.name}" unless chair
 
         if @directors.include? chair
           chair.public_name
