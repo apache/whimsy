@@ -72,10 +72,10 @@ def emit_role(role: {}, oversees: {}, desc: {})
   end
   _ol.breadcrumb do
     _li do
-      _a 'OrgChart', href: "#{URLROOT}"
+      _a 'OrgChart', href: URLROOT
     end
     _li.active do
-      _ "#{role['info']['role']}"
+      _ role['info']['role']
     end
   end
   _whimsy_panel_table(
@@ -198,12 +198,12 @@ _html do
             _ 'Sorry, the URL you attempted to access '
             _code request
             _ ' is not a valid role.'
-            _a 'Go back to the orgchart', href: "#{URLROOT}"
+            _a 'Go back to the orgchart', href: URLROOT
           end
         end
       else
         _p "DEBUG: You may be running this script from the command line."
-        _a 'Go back to the orgchart', href: "#{URLROOT}"
+        _a 'Go back to the orgchart', href: URLROOT
       end
     end
   end
