@@ -121,7 +121,7 @@ ASF::SVN.update BOARD_PRIVATE, @message, env, _ do |tmpdir|
   ASF::SVN.svn_('update', agenda_path, _)
   if File.exist? agenda_path
     agenda_archive = File.join(tmpdir, 'archived_agendas')
-    ASF::SVN.svn_('update', agenda_archive, _, {depth: empty})
+    ASF::SVN.svn_('update', agenda_archive, _, {depth: 'empty'})
     ASF::SVN.svn_('mv', [agenda_path, agenda_archive], _)
   end
 end
