@@ -65,6 +65,7 @@ module ASF
     # See also www/roster/committee.cgi
     @@aliases = Hash.new { |_hash, name| name.downcase}
     @@aliases.merge! \
+      'brand management'               => 'brand',
       'c++ standard library'           => 'stdcxx',
       'community development'          => 'comdev',
       # TODO: are the concom entries correct? See INFRA-17782
@@ -76,9 +77,11 @@ module ASF
       'httpserver'                     => 'httpd',
       'incubating'                     => 'incubator', # special for index.html
       'java community process'         => 'jcp',
+      'legal affairs'                  => 'legal',
       'logging services'               => 'logging',
       'lucene.net'                     => 'lucenenet',
       'open climate workbench'         => 'climate',
+      'ocw'                            => 'climate', # is OCW used?
       'portable runtime'               => 'apr',
       'quetzalcoatl'                   => 'quetz',
       'security team'                  => 'security',
@@ -91,6 +94,11 @@ module ASF
       # Also compress white-space before lookup so tabs etc from index.html don't matter
       cname = @@aliases[name.sub(/\s+\(.*?\)/, '').strip.gsub(/\s+/, ' ').downcase].gsub(/\s+/, '')
       cname
+    end
+
+    # convert committee name to canonical name
+    def self.to_canonical(name)
+      @@namemap.call(name.downcase)
     end
 
     # load committee info from <tt>committee-info.txt</tt>.  Will not reparse
@@ -277,9 +285,8 @@ module ASF
     # - yyyymm: YYYY-MM retirement date
     #  Returns: the updated contents
     def self.record_termination(input, pmc, yyyymm)
-      YamlFile.replace_section(input, :tlps) do |section, yaml|
-        key = pmc.downcase.strip
-        key = yaml[:name2id][key] || key
+      YamlFile.replace_section(input, :tlps) do |section, _yaml|
+        key = ASF::Committee.to_canonical(pmc)
         if section[key]
           section[key][:retired] = yyyymm
         else

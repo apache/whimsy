@@ -103,7 +103,7 @@ describe ASF::Committee do
       expect(para[:retired]).to eql(nil)
     end
     it "should add retired tag to HTTPD" do
-      data = ASF::Committee.record_termination(data, 'httpd', yyyymm)
+      data = ASF::Committee.record_termination(data, 'HTTP Server', yyyymm)
       yaml = YAML.safe_load(data, [Symbol])
       para = yaml[:tlps]['httpd']
       expect(para).not_to eql(nil)
