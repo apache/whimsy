@@ -22,13 +22,13 @@ begin
 
   message.delete_attachment @source
 
-rescue
-  Wunderbar.error "Failed to concatenate #{@target} and #{@source}"
+rescue StandardError => e
+  Wunderbar.error "Failed to concatenate #{@target} and #{@source}: #{e}"
   raise
 ensure
-  source.unlink if source
-  target.unlink if target
-  output.unlink if output
+  source&.unlink
+  target&.unlink
+  output&.unlink
 end
 
 {attachments: message.attachments, selected: name}
