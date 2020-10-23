@@ -23,7 +23,7 @@ five minutes, possibly less if you already have things like `brew` installed.
 Simple Whimsy.Local Installation With docker
 --------------------------------------------
 
-Don't want to instal things on your machine?  If you have Docker installed, you
+Don't want to install things on your machine?  If you have Docker installed, you
 can use that instead, simply pass `--docker` to the `setupmymac` command above
 and you will have a Docker image created.  This will take longer, require more
 disk space, runs slower, and is less convenient, but is more secure, more
