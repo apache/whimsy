@@ -87,9 +87,13 @@ class Session
         secret = File.basename(file)
         session = @@sessions[secret]
 
-        if File.exist? file
+        if File.exist?(file) and File.writable?(file)
           if File.mtime(file) < Time.now - 2 * DAY
-            File.delete file
+            begin
+              File.delete file
+            rescue RuntimeError => error
+              STDERR.puts "Error deleting #{file}: #{error}"
+            end
           else
             # update class variables if the file changed
             mtime = File.mtime(file)
