@@ -24,6 +24,7 @@ options.host = 'whimsy.local'
 options.path = '/board/agenda/websocket/'
 options.user = Etc.getlogin
 options.restart = false
+options.verfify = true
 
 opt_parser = OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
@@ -42,6 +43,10 @@ opt_parser = OptionParser.new do |opts|
 
   opts.on "--secure", 'Use secure web sockets (wss)' do
     options.protocol = 'wss'
+  end
+
+  opts.on "--noverify", 'Bypass SSL certificate verification' do
+    options.verify = false
   end
 
   opts.on "--user USER", 'User to log in as' do |user|
@@ -92,6 +97,7 @@ EM.run do
       ssl = {use_ssl: options.protocol == 'wss'}
 
       response = Net::HTTP.start(options.host, options.port, ssl) do |http|
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE if options.verify
         http.request(request)
       end
 
