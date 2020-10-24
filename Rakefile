@@ -427,6 +427,8 @@ namespace :docker do
       if mode & 7 != 5
         chmod 0755, '/var/log/apache2'
       end
+      # ensure log files are readable
+      sh 'chmod 0644 /var/log/apache2/*.log'
     rescue
     end
 
