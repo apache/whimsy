@@ -59,8 +59,6 @@ require_relative './helpers/integer'
 require_relative './daemon/session'
 require_relative './daemon/events'
 
-require 'websocket-client-simple'
-
 # if AGENDA_WORK doesn't exist yet, make it
 unless Dir.exist? AGENDA_WORK
   require 'fileutils'

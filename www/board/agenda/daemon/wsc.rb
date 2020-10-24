@@ -1,29 +1,27 @@
 #!/usr/bin/env ruby
 
+# Web socket client:
+#  - securely connects and authenticates with the web socket
+#  - outputs the messages received
+
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
-require 'websocket-client-simple'
+require 'websocket-eventmachine-client'
 require 'optparse'
 require 'ostruct'
 require 'etc'
+require 'net/http'
+require 'json'
 
 require_relative './session'
-
-# monkey patch for https://github.com/shokai/websocket-client-simple/issues/24
-class WebSocket::Client::Simple::Client
-  def sleep(*args)
-    close
-  end
-end
 
 ########################################################################
 #                         Parse argument list                          #
 ########################################################################
 
 options = OpenStruct.new
-options.host = 'localhost'
-options.port = 34234
-options.protocol = 'ws'
+options.host = 'whimsy.local'
+options.path = '/board/agenda/websocket/'
 options.user = Etc.getlogin
 options.restart = false
 
@@ -34,8 +32,12 @@ opt_parser = OptionParser.new do |opts|
     options.host = host
   end
 
-  opts.on "-p", "--port PORT", 'Port to connect to' do |port|
+  opts.on "--port PORT", 'Port to connect to' do |port|
     options.port = port
+  end
+
+  opts.on "--path PORT", 'Path to connect to' do |path|
+    options.path = path
   end
 
   opts.on "--secure", 'Use secure web sockets (wss)' do
@@ -53,38 +55,68 @@ end
 
 opt_parser.parse!(ARGV)
 
+options.port ||= (options.host.include?('whimsy') ? 80 : 34234)
+options.protocol ||= (options.host.include?('local') ? 'ws' : 'wss')
+
 ########################################################################
 #                         Connect to WebSocket                         #
 ########################################################################
 
-url ="#{options.protocol}://#{options.host}:#{options.port}"
-ws = WebSocket::Client::Simple.connect url
+EM.run do
+  url = "#{options.protocol}://#{options.host}:#{options.port}#{options.path}"
+  puts "coonnecting to #{url}..."
+  ws = WebSocket::EventMachine::Client.connect uri: url
 
-ws.on :message do |msg|
-  puts msg.data
-end
+  ws.onmessage do |msg, type|
+    puts msg
+  end
 
-ws.on :open do
-  Dir["#{Session::WORKDIR}/*"].find do |file|
-    if File.read(file) == options.user
-      if options.restart
-        ws.send "session: #{File.basename(file)}\nrestart: true\n\n"
+  ws.onopen do
+    session = nil
+
+    # see if there is a local session we can use
+    if options.host.include? 'local'
+      Dir["#{Session::WORKDIR}/*"].find do |file|
+        session = File.basename(file) if File.read(file) == options.user
+      end
+    end
+
+    # fetch remote session
+    while not session
+      require 'io/console'
+      password = $stdin.getpass("password for #{options.user}: ")
+
+      path = File.expand_path('../session.json', options.path)
+      request = Net::HTTP::Get.new(path)
+      request.basic_auth options.user, password
+      ssl = {use_ssl: options.protocol == 'wss'}
+
+      response = Net::HTTP.start(options.host, options.port, ssl) do |http|
+        http.request(request)
+      end
+
+      if Net::HTTPOK === response
+        session = JSON.parse(response.body)['session']
       else
-        ws.send "session: #{File.basename(file)}\n\n"
+        p response
+      end
+    end
+
+    if session
+      if options.restart
+        ws.send "session: #{session}\nrestart: true\n\n"
+      else
+        ws.send "session: #{session}\n\n"
       end
     end
   end
-end
 
-ws.on :close do |e|
-  puts "closing: #{e.inspect}"
-  exit 1
-end
+  ws.onclose do |code, reason|
+    puts "closing: #{code}"
+    exit 1
+  end
 
-ws.on :error do |e|
-  puts "error: #{e.inspect}"
-end
-
-loop do
-  ws.send STDIN.gets
+  ws.onerror do |error|
+    puts "error: #{error.inspect}"
+  end
 end
