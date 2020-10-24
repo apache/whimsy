@@ -97,7 +97,7 @@ EM.run do
       ssl = {use_ssl: options.protocol == 'wss'}
 
       response = Net::HTTP.start(options.host, options.port, ssl) do |http|
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE if options.verify
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE unless options.verify
         http.request(request)
       end
 
