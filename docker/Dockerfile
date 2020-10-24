@@ -1,4 +1,6 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
+
+# N.B. passenger --install_dir=/var/lib/gems/m.n.o must agree with ruby version
 
 ENV GEM_HOME="/srv/gems" \
     LANG=C.UTF-8 \
@@ -36,7 +38,7 @@ RUN apt-get update && \
       libapr1-dev \
       libaprutil1-dev && \
     gem update --system &&\
-    gem install bundler passenger --install_dir=/var/lib/gems/2.5.0 && \
+    gem install bundler passenger --install_dir=/var/lib/gems/2.7.0 && \
     passenger-install-apache2-module --auto && \
     passenger-install-apache2-module --snippet > \
       /etc/apache2/conf-enabled/passenger.conf && \
