@@ -24,7 +24,7 @@ options.host = 'whimsy.local'
 options.path = '/board/agenda/websocket/'
 options.user = Etc.getlogin
 options.restart = false
-options.verfify = true
+options.verify = true
 
 opt_parser = OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
@@ -60,8 +60,9 @@ end
 
 opt_parser.parse!(ARGV)
 
-options.port ||= (options.host.include?('whimsy') ? 80 : 34234)
 options.protocol ||= (options.host.include?('local') ? 'ws' : 'wss')
+options.port ||= 34234 if options.path=='/'
+options.port ||= (options.protocol == 'ws' ? 80 : 443)
 
 ########################################################################
 #                         Connect to WebSocket                         #
@@ -94,12 +95,13 @@ EM.run do
       path = File.expand_path('../session.json', options.path)
       request = Net::HTTP::Get.new(path)
       request.basic_auth options.user, password
-      ssl = {use_ssl: options.protocol == 'wss'}
 
-      response = Net::HTTP.start(options.host, options.port, ssl) do |http|
+      http = Net::HTTP.new(options.host, options.port)
+      if options.protocol == 'wss'
+        http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE unless options.verify
-        http.request(request)
       end
+      response = http.request(request)
 
       if Net::HTTPOK === response
         session = JSON.parse(response.body)['session']
