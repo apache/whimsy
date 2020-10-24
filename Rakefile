@@ -372,7 +372,7 @@ end
 namespace :docker do
   task :build => ['docker/work/whimsy.conf', 'docker/work/25-authz_ldap_group_membership.conf'] do
     Dir.chdir File.join(__dir__, 'docker') do
-      sh 'docker-compose build web'
+      sh 'docker-compose build web' # name 'web' must agree with services entry in docker-compose.yaml
     end
   end
 
