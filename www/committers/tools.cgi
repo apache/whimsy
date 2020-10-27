@@ -25,7 +25,7 @@ _html do
       title: PAGETITLE,
       related: {
         "https://projects.apache.org/" => "Apache Project Listing",
-        "https://cwiki.apache.org/confluence/display/INFRA/Reference" => "Infra Reference Pages",
+        "https://infra.apache.org/services.html" => "Infra Reference Pages",
         "https://github.com/apache/whimsy/blob/master/www/committers/tools.cgi" => "See This Code",
         "mailto:dev@whimsical.apache.org?subject=[FEEDBACK] committers/tools idea" => "Email Feedback To dev@whimsical"
       },
