@@ -179,6 +179,12 @@ class PPMC < Vue
       end
     end
 
+    _br
+    _p do
+      _b 'List moderators can obtain subscriber names etc by following '
+      _a 'these instructions', href: 'https://infra.apache.org/mailing-list-moderation.html'
+    end
+
     _h2.podlingStatus! 'Podling Status'
     _br
     _p do

@@ -167,6 +167,12 @@ class PMC < Vue
       end
     end
 
+    _br
+    _p do
+      _b 'List moderators can obtain subscriber names etc by following '
+      _a 'these instructions', href: 'https://infra.apache.org/mailing-list-moderation.html'
+    end
+
     # reporting schedule and links
     _div.row do
       _div.col_md_6 do
