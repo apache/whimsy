@@ -205,13 +205,6 @@ def server
     userid = Etc.getlogin
   end
 
-  if userid == 'test' and ENV['RACK_ENV'] == 'test'
-    username = 'Joe Tester'
-  else
-    username = ASF::Person.new(userid).public_name
-    username ||= Etc.getpwnam(userid)[4].split(',')[0].force_encoding('utf-8')
-  end
-
   pending = Pending.get(userid)
 
   # determine who is present
