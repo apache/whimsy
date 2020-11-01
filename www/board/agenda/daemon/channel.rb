@@ -82,7 +82,7 @@ class Channel
       fh.truncate(fh.pos)
     end
 
-    users.reject! {|name| name =~ /^board_agenda_[_\d]+$/}
+    users.reject {|name| name =~ /^board_agenda_[_\d]+$/}
   end
 
   # close all open sockets
