@@ -31,9 +31,12 @@ $ALLOW_HTTP = false # http links generate Warning, not Error
 
 $VERSION = nil
 
+# Check archives have hash and sig
+$vercheck = Hash.new() # key = archive name, value = array of type, hash/sig
+
 # match an artifact
 # TODO detect artifacts by URL as well if possible
-ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|deb|nbm|zip|tgz|tar\.bz2|jar|war|msi|exe|rar|rpm|nar))(&action=download)?$}
+ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|deb|nbm|zip|tgz|tar\.bz2|jar|war|msi|exe|rar|rpm|nar|xml))(&action=download)?$}
 
 def init
   # build a list of validation errors
@@ -225,9 +228,10 @@ def check_hash_loc(h,tlp)
   elsif h =~ %r{^(https?)://(downloads)\.apache\.org/(?:incubator/)?#{tlp}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
-  elsif h =~ %r{^(https?)://repo\.(maven)\.apache\.org/maven2/org/apache/#{tlp}/.+/([^/]+)(\.(\w{3,6}))$} # Maven
+#   https://repo1.maven.org/maven2/org/apache/shiro/shiro-spring/1.1.0/shiro-spring-1.1.0.jar.asc
+  elsif h =~ %r{^(https?)://repo1?\.(maven)\.org/maven2/org/apache/#{tlp}/.+/([^/]+\.(?:jar|xml))\.(\w{3,6})$} # Maven
     WE "HTTPS! #{h}" unless $1 == 'https'
-    W "Unexpected hash location #{h} for #{tlp}"
+    W "Unexpected hash location #{h} for #{tlp}" unless $vercheck[$3][0] == 'maven'
     return $2,$3,$4
   else
     E "Unexpected hash location #{h} for #{tlp}"
@@ -412,18 +416,15 @@ def _checkDownloadPage(path, tlp, version)
     W "Found md5sum: #{m.strip}"
   }
 
-  # Check archives have hash and sig
-  vercheck = Hash.new() # key = archive name, value = array of hash/sig
-
   links.each do |h,t|
     # These might also be direct links to mirrors
     if h =~ ARTIFACT_RE
         base = File.basename($1)
   #         puts "base: " + base
-        if vercheck[base]  # might be two links to same archive
+        if $vercheck[base]  # might be two links to same archive
             W "Already seen link for #{base}"
         else
-            vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : 'live']
+            $vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : (h =~ %r{https?://repo\d?\.maven\.org/} ? 'maven' : 'live')]
         end
         # Text must include a '.' (So we don't check 'Source')
         if t.include?('.') and not base == File.basename(t.strip.downcase)
@@ -444,12 +445,12 @@ def _checkDownloadPage(path, tlp, version)
 
   links.each do |h,t|
     # Must occur before mirror check below
-    if h =~ %r{^https?://(?:(?:archive\.|www\.)?apache\.org/dist|downloads\.apache\.org|repo\.maven\.apache\.org/maven2/.+?)/(.+\.(asc|sha\d+|md5|sha))$}
+    if h =~ %r{^https?://(?:(?:archive\.|www\.)?apache\.org/dist|downloads\.apache\.org|repo\d?\.maven\.org/maven2/.+?)/(.+\.(asc|sha\d+|md5|sha))$}
         base = File.basename($1)
         ext = $2
         stem = base[0..-(2+ext.length)]
-        if vercheck[stem]
-          vercheck[stem] << ext
+        if $vercheck[stem]
+          $vercheck[stem] << ext
         else
           E "Bug: found hash #{h} for missing artifact #{stem}"
         end
@@ -467,10 +468,11 @@ def _checkDownloadPage(path, tlp, version)
 
 
   # did we find all required elements?
-  vercheck.each do |k,v|
+  $vercheck.each do |k,w|
+    v = w.dup
     typ = v.shift
     unless v.include? "asc" and v.any? {|e| e =~ /^sha\d+$/ or e == 'md5' or e == 'sha'}
-      if typ == 'live'
+      if typ == 'live' || typ == 'maven'
         E "#{k} missing sig/hash: (found only: #{v.inspect})"
       elsif typ == 'archive'
         W "#{k} missing sig/hash: (found only: #{v.inspect})"
