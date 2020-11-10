@@ -358,6 +358,9 @@ def _checkDownloadPage(path, tlp, version)
   deprecated = Time.parse('2018-01-01')
 
   links = get_links(body)
+  if links.size < 6 # source+binary * archive+sig+hash
+    E "Page does not have enough links: #{links.size} < 6 -- perhaps it needs JavaScript?"
+  end
 
   # check KEYS link
   # TODO: is location used by hc allowed, e.g.
