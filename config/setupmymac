@@ -356,27 +356,27 @@ end
 ### Configure passenger
 
 passenger_conf = '/etc/apache2/other/passenger.conf'
-if force[:passenger] or not File.exist? passenger_conf
-  if Process.uid == 0
-    instructions = `su $SUDO_USER -c "brew info passenger"`
-  else
-    instructions = `brew info passenger`
-  end
-  section = instructions[/To activate Phusion Passenger for Apache.*(\n\n|\z)/m]
-  snippet = section.scan(/^ .*/).join("\n") + "\n"
-  snippet[/Passenger\w*Ruby\s+(.*)/, 1] = RbConfig.ruby
 
-  if option != :user
-    snippet += "PassengerUser #{user}\nPassengerGroup #{group}\n"
-  end
+if Process.uid == 0
+  instructions = `su $SUDO_USER -c "brew info passenger"`
+else
+  instructions = `brew info passenger`
+end
 
-  if not File.exists?(passenger_conf) or File.read(passenger_conf) != snippet
-    sudo do
-      color "$ sudo edit #{passenger_conf}"
-      File.write passenger_conf, snippet unless $dry_run
+section = instructions[/To activate Phusion Passenger for Apache.*(\n\n|\z)/m]
+snippet = section.scan(/^ .*/).join("\n") + "\n"
+snippet[/Passenger\w*Ruby\s+(.*)/, 1] = RbConfig.ruby
 
-      restart_apache = true
-    end
+if option != :user
+  snippet += "PassengerUser #{user}\nPassengerGroup #{group}\n"
+end
+
+if not File.exists?(passenger_conf) or File.read(passenger_conf) != snippet
+  sudo do
+    color "$ sudo edit #{passenger_conf}"
+    File.write passenger_conf, snippet unless $dry_run
+
+    restart_apache = true
   end
 end
 
