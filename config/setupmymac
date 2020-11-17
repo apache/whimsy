@@ -515,6 +515,8 @@ if wconf_content =~ /^\s*SetEnv PATH /i
     "SetEnv PATH #{File.dirname RbConfig.ruby}:" +
     "#{File.dirname(`which svnmucc`)}:${PATH}"
 end
+wconf_content.sub! /^\s*PassengerUser .*/i, "PassengerUser #{user}"
+wconf_content.sub! /^\s*PassengerGroup .*/i, "PassengerGroup #{group}"
 wconf_target = '/private/etc/apache2/other/whimsy.conf'
 if 
   not File.exist?(wconf_target) or 
