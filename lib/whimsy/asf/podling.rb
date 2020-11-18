@@ -432,6 +432,8 @@ module ASF
         resolution = issue['fields']['resolution']
         resolution = resolution ? resolution['name'] : 'Unresolved'
         [name, {issue: issue['key'], resolution: resolution}]
+        # we want the podling name search with the largest key
+        break
       end
 
       issues.compact.sort_by(&:first).to_h
