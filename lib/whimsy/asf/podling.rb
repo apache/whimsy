@@ -395,13 +395,14 @@ module ASF
     end
 
     # parse (and cache) names mentioned in podlingnamesearches
+    # Note: customfield_12310520 = 'Podling', customfield_12310521 = 'Proposed Name'
     def self.namesearch
       # cache JIRA response
       cache = File.join(ASF::Config.get(:cache), 'pns.jira')
       if not File.exist?(cache) or File.mtime(cache) < Time.now - 300
         query = 'https://issues.apache.org/jira/rest/api/2/search?' +
             'maxResults=1000&' +
-            'jql=project=PODLINGNAMESEARCH&fields=summary,resolution,customfield_12310520'
+            'jql=project=PODLINGNAMESEARCH&fields=summary,resolution,customfield_12310521'
         begin
           res = Net::HTTP.get_response(URI(query))
           res.value() # Raises error if not OK
@@ -416,7 +417,7 @@ module ASF
       # parse JIRA titles for proposed name
       issues = JSON.parse(File.read(cache))['issues'].map do |issue|
         title = issue['fields']['summary'].strip.gsub(/\s+/, ' ')
-        name = issue['fields']['customfield_12310520']
+        name = issue['fields']['customfield_12310521']
 
         if name
           name.sub! /^Apache\s+/, ''
