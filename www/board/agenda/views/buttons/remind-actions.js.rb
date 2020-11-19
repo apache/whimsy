@@ -59,7 +59,7 @@ class ActionReminder < Vue
       elsif response.count == @list.length
         alert("Reminders have been sent to: #{response.sent.keys.join(', ')}.")
       elsif response.count and response.unsent
-        alert("Error: no emails were sent to #{response.unsent.join(', ')}")
+        alert("Error: no emails were sent to #{response.unsent.inspect}")
       else
         alert("No reminders were sent")
       end

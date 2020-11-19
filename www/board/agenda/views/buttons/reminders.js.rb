@@ -109,7 +109,7 @@ class InitialReminder < Vue
       elsif response.count == data.pmcs.length
         alert("Reminders have been sent to: #{data.pmcs.join(', ')}.")
       elsif response.count and response.unsent
-        alert("Error: no emails were sent to #{response.unsent.join(', ')}")
+        alert("Error: no emails were sent to #{response.unsent.inspect}")
       else
         alert("No reminders were sent")
       end
