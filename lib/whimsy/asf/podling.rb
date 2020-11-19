@@ -297,9 +297,9 @@ module ASF
     end
 
     # Match against new and old list types
-    def _match_mailname?(list, _name)
-      return true if list.start_with?("#{_name}-")
-      return true if list.start_with?("incubator-#{_name}-")
+    def _match_mailname?(list, name)
+      return true if list.start_with?("#{name}-")
+      return true if list.start_with?("incubator-#{name}-")
     end
 
     # status information associated with this podling.  Keys in the hash return
