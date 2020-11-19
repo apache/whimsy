@@ -421,7 +421,7 @@ module ASF
         if name
           name.sub! /^Apache\s+/, ''
           name.gsub! /\s+\(.*?\)/, ''
-          name = nil if name =~ /^\s*This/ or name !~ /[A-Z]/
+          name = nil if name =~ /^\s*This/ or name !~ /[A-Z]/ or name =~ %r{^N/A}
         end
 
         name ||= title[/"Apache ([a-zA-Z].*?)"/, 1]
