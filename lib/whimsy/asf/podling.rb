@@ -405,7 +405,7 @@ module ASF
         begin
           res = Net::HTTP.get_response(URI(query))
           res.value() # Raises error if not OK
-          file = File.new(cache,"wb") # Allow for non-UTF-8 chars
+          file = File.new(cache,"wb") # Allow for non-UTF-8 chars
           file.write res.body
         rescue => e
           Wunderbar.warn "ASF::Podling.namesearch: " + e.message
@@ -431,6 +431,7 @@ module ASF
         next unless name
         resolution = issue['fields']['resolution']
         resolution = resolution ? resolution['name'] : 'Unresolved'
+
         [name, {issue: issue['key'], resolution: resolution}]
       end
 
