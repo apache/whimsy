@@ -422,7 +422,7 @@ module ASF
         if name
           name.sub! /^Apache\s+/, ''
           name.gsub! /\s+\(.*?\)/, ''
-          name.sub('Open Climate Workench', 'Open Climate Workbench') # fix up typo in PODLINGNAMESEARCH-26
+          name.sub!('Open Climate Workench', 'Open Climate Workbench') # fix up typo in PODLINGNAMESEARCH-26
           name = nil if name =~ /^\s*This/ or name !~ /[A-Z]/ or name =~ %r{^N/A}
         end
 
