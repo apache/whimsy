@@ -423,6 +423,7 @@ module ASF
           name.sub! /^Apache\s+/, ''
           name.gsub! /\s+\(.*?\)/, ''
           name = nil if name =~ /^\s*This/ or name !~ /[A-Z]/ or name =~ %r{^N/A}
+          name.sub('Open Climate Workench', 'Open Climate Workbench') # fix up typo in PODLINGNAMESEARCH-26
         end
 
         name ||= title[/"Apache ([a-zA-Z].*?)"/, 1]
