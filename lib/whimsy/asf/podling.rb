@@ -430,7 +430,9 @@ module ASF
         resolution = issue['fields']['resolution']
         resolution = resolution ? resolution['name'] : 'Unresolved'
         # Ignore duplicates and abandoned entries etc.
-        next unless %w{Fixed Unresolved Resolved}.include? resolution
+        # PODLINGNAMESEARCH-9 is resolved as 'Not A Problem': this means it is cleared for use
+        next unless %w{Fixed Unresolved Resolved Implemented}.include?(resolution) ||
+          issue['key'] == 'PODLINGNAMESEARCH-9'
 
         title = issue['fields']['summary'].strip.gsub(/\s+/, ' ')
         name = issue['fields']['customfield_12310521']
