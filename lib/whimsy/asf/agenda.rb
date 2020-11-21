@@ -157,10 +157,8 @@ class ASF::Board::Agenda
     # add attach to section
     @sections.each do |section, hash|
       hash[:attach] = section
-    end
 
-    # look for missing titles
-    @sections.each do |_section, hash|
+      # look for missing titles
       hash['title'] ||= "UNKNOWN"
 
       if hash['title'] == "UNKNOWN"
