@@ -394,6 +394,17 @@ module ASF
       }
     end
 
+    # Override Proposed Names that are wrong
+    NAME_FIXES = {
+      'etch' => 'Etch', # PODLINGNAMESEARCH-6
+      'daffodil' => 'Daffodil', # PODLINGNAMESEARCH-147
+      'heron' => 'Heron', # PODLINGNAMESEARCH-128
+      'kylin' => 'Kylin', # PODLINGNAMESEARCH-86
+      'Data Lab' => 'DataLab', # PODLINGNAMESEARCH-184
+      'Open Climate Workench' => 'Open Climate Workbench', # PODLINGNAMESEARCH-26
+      'OZONE' => 'Ozone', # PODLINGNAMESEARCH-185
+    }
+
     # parse (and cache) names mentioned in podlingnamesearches
     # Note: customfield_12310520 = 'Podling', customfield_12310521 = 'Proposed Name'
     def self.namesearch
@@ -416,13 +427,21 @@ module ASF
 
       # parse JIRA titles for proposed name
       issues = JSON.parse(File.read(cache))['issues'].map do |issue|
+        resolution = issue['fields']['resolution']
+        resolution = resolution ? resolution['name'] : 'Unresolved'
+        # Ignore duplicates and abandoned entries etc.
+        next unless %w{Fixed Unresolved Resolved}.include? resolution
+
         title = issue['fields']['summary'].strip.gsub(/\s+/, ' ')
         name = issue['fields']['customfield_12310521']
 
         if name
           name.sub! /^Apache\s+/, ''
           name.gsub! /\s+\(.*?\)/, ''
-          name.sub!('Open Climate Workench', 'Open Climate Workbench') # fix up typo in PODLINGNAMESEARCH-26
+          # Fix up incorrect 'Proposed Name' entries
+          name = 'Kerby' if name == 'None atm' && issue['key'] == 'PODLINGNAMESEARCH-66'
+          name = 'Curator' if name == 'Onami' && issue['key'] == 'PODLINGNAMESEARCH-28'
+          name = NAME_FIXES[name] || name
           name = nil if name =~ /^\s*This/ or name !~ /[A-Za-z]{3}/ or name =~ %r{^N/A}
         end
 
@@ -433,8 +452,6 @@ module ASF
         name ||= title[/Is (?:Apache )?(.+?) a suitable (?:project )?name/, 1]
         name&.sub! 'Apache ', ''
         next unless name
-        resolution = issue['fields']['resolution']
-        resolution = resolution ? resolution['name'] : 'Unresolved'
 
         [name, {issue: issue['key'], resolution: resolution}]
       end
