@@ -38,7 +38,7 @@ class ASF::Board::Agenda
   # add that block to the list of parsers.
   def self.parse(file=nil, quick=false, &block)
     @@parsers << block if block
-    new.parse(file, quick)  if file
+    new.parse(file, quick) if file
   end
 
   # start with an empty list of sections.  Sections are added and returned by
@@ -52,7 +52,7 @@ class ASF::Board::Agenda
   # if a match is found.
   def scan(text, pattern, &block)
     # convert tabs to spaces
-    text.gsub!(/^(\t+)/) {|tabs| ' ' * (8*tabs.length)}
+    text.gsub!(/^(\t+)/) {|tabs| ' ' * (8 * tabs.length)}
 
     text.scan(pattern).each do |matches|
       hash = Hash[pattern.names.zip(matches)]
@@ -86,8 +86,8 @@ class ASF::Board::Agenda
     @file = file
     @quick = quick
 
-    if not @file.valid_encoding?
-      filter = Proc.new {|c| c.unpack('U').first rescue 0xFFFD}
+    unless @file.valid_encoding?
+      filter = proc {|c| c.unpack1('U') rescue 0xFFFD}
       @file = @file.chars.map(&filter).pack('U*').force_encoding('utf-8')
     end
 
@@ -116,16 +116,16 @@ class ASF::Board::Agenda
       if text
         text.sub!(/\A\s*\n/, '')
         text.sub!(/\s+\Z/, '')
-        unindent = text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min || 1
-        text.gsub! /^ {#{unindent-1}}/, ''
+        unindent = text.sub(/s+\Z/, '').scan(/^ *\S/).map(&:length).min || 1
+        text.gsub!(/^ {#{unindent - 1}}/, '')
       end
 
       text = hash['comments']
       if text
         text.sub!(/\A\s*\n/, '')
         text.sub!(/\s+\Z/, '')
-        unindent = text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min || 1
-        text.gsub! /^ {#{unindent-1}}/, ''
+        unindent = text.sub(/s+\Z/, '').scan(/^ *\S/).map(&:length).min || 1
+        text.gsub!(/^ {#{unindent - 1}}/, '')
       end
 
       # add flags
@@ -133,7 +133,7 @@ class ASF::Board::Agenda
       hash['flagged_by'] = flags.split(', ') if flags
 
       # mark president reports
-      hash['to'] = 'president' if preports && preports.include?(section)
+      hash['to'] = 'president' if preports&.include?(section)
     end
 
     unless @quick
@@ -173,7 +173,7 @@ class ASF::Board::Agenda
 
   # provide a link to the collated minutes for a given report
   def minutes(title)
-    "https://whimsy.apache.org/board/minutes/#{title.gsub(/\W/,'_')}"
+    "https://whimsy.apache.org/board/minutes/#{title.gsub(/\W/, '_')}"
   end
 
   # convert a PST/PDT time to UTC as a JavaScript integer
