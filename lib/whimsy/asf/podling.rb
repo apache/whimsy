@@ -42,9 +42,9 @@ module ASF
     # three consecutive months, starting with this one
     def quarter
       [
-          Date.today.strftime('%B'),
-          Date.today.next_month.strftime('%B'),
-          Date.today.next_month.next_month.strftime('%B')
+        Date.today.strftime('%B'),
+        Date.today.next_month.strftime('%B'),
+        Date.today.next_month.next_month.strftime('%B')
       ]
     end
 
@@ -66,7 +66,7 @@ module ASF
       @champion = node.at('champion')['availid'] if node.at('champion')
 
       @reporting = node.at('reporting') if node.at('reporting')
-      @monthly = @reporting.text.split(/,\s*/) if @reporting and @reporting.text
+      @monthly = @reporting.text.split(/,\s*/) if @reporting&.text
 
       @resolutionLink = node.at('resolution')['link'] if node.at('resolution')
 
@@ -329,7 +329,7 @@ module ASF
         end if rawYaml[:news]
         hash
       else
-        {news: [], website: 'http://'+self.resource+'.incubator.apache.org',}
+        {news: [], website: "http://#{self.resource}.incubator.apache.org"}
       end
     end
 
@@ -383,12 +383,12 @@ module ASF
           issueTracker: 'jira',
           wiki: self.resource.upcase,
           jira: self.resource.upcase,
-          proposal: 'http://wiki.apache.org/incubator/'+self.resource.capitalize+"Proposal",
+          proposal: "http://wiki.apache.org/incubator/#{self.resource.capitalize}Proposal",
           asfCopyright: nil,
           distributionRights: nil,
           ipClearance: nil,
           sga: nil,
-          website: 'http://'+self.resource+'.incubator.apache.org',
+          website: "http://#{self.resource}.incubator.apache.org",
           graduationDate: nil,
           resolution: nil
       }
@@ -417,7 +417,7 @@ module ASF
         begin
           res = Net::HTTP.get_response(URI(query))
           res.value() # Raises error if not OK
-          file = File.new(cache,"wb") # Allow for non-UTF-8 chars
+          file = File.new(cache, "wb") # Allow for non-UTF-8 chars
           file.write res.body
         rescue => e
           Wunderbar.warn "ASF::Podling.namesearch: " + e.message
@@ -434,12 +434,11 @@ module ASF
         next unless %w{Fixed Unresolved Resolved Implemented}.include?(resolution) ||
           issue['key'] == 'PODLINGNAMESEARCH-9'
 
-        title = issue['fields']['summary'].strip.gsub(/\s+/, ' ')
         name = issue['fields']['customfield_12310521']
 
         if name
-          name.sub! /^Apache\s+/, ''
-          name.gsub! /\s+\(.*?\)/, ''
+          name.sub!(/^Apache\s+/, '')
+          name.gsub!(/\s+\(.*?\)/, '')
           # Fix up incorrect 'Proposed Name' entries
           name = 'Kerby' if name == 'None atm' && issue['key'] == 'PODLINGNAMESEARCH-66'
           name = 'Curator' if name == 'Onami' && issue['key'] == 'PODLINGNAMESEARCH-28'
