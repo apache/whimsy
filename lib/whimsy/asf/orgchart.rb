@@ -26,7 +26,7 @@ module ASF # :nodoc:
       file = File.join(@@source, 'README')
       unless @@desc['mtime'] and @@desc['mtime'] > File.mtime(file).to_f
         data = Hash[*File.read(file).split(/^\[(.*)\]\n/)[1..-1].map(&:strip)]
-        if data['info'] then
+        if data['info']
           data = YAML.safe_load(data['info'])
           data['mtime'] = File.mtime(file).to_f
           @@desc = data
