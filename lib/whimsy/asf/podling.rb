@@ -446,12 +446,6 @@ module ASF
           name = nil if name =~ /^\s*This/ or name !~ /[A-Za-z]{3}/ or name =~ %r{^N/A}
         end
 
-        name ||= title[/Establish (?:[wW]h?ether|weather)? ['"“]?(?:Apache )?(.+?)['"”]? (?:is|would be|as) a [sS]uitable/, 1]
-        name ||= title[/Determine if (.+?) is a suitable/, 1]
-        name ||= title[/Name [sS]earch for (.+)/, 1]
-        name ||= title[/(?:Apache )?(.+?) name search/, 1]
-        name ||= title[/Is (?:Apache )?(.+?) a suitable (?:project )?name/, 1]
-        name&.sub! 'Apache ', ''
         next unless name
 
         [name, {issue: issue['key'], resolution: resolution}]
