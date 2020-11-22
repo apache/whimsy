@@ -1,4 +1,4 @@
-require_relative 'person/override-dates.rb'
+require_relative 'person/override-dates'
 
 module ASF
 
@@ -132,6 +132,9 @@ module ASF
       name.reverse.join(' ').downcase
     end
 
+    # surname prefixes
+    SINGLE_PFX = %w(von van Van de De del Del den le Le O Di Du dos St.)
+    DOUBLE_PFX = ['de la', 'van der', 'van de', 'van den', 'von der']
     # parse a name into LDAP fields
     def self.ldap_name(name)
       words = name.gsub(',', '').split(' ')
@@ -144,10 +147,10 @@ module ASF
       result['generationQualifier'] = words.pop if words.last =~ SUFFIXES
       result['givenName'] = words.shift # TODO does gn allow multiple words?
       # extract surnames like van Gogh etc
-      if words.size >= 3 and words[-3..-2] == %w(de la) or words[-3..-2] == %w(van der) or words[-3..-2] == %w(van de) or words[-3..-2] == %w(van den) or words[-3..-2] == %w(von der)
+      if words.size >= 3 and DOUBLE_PFX.include? words[-3..-2].join(' ')
         result['sn'] = words[-3..-1].join(' ')
         result['unused'] = words[0..-4]
-      elsif words.size >= 2 and %w(von van Van de De del Del den le Le O Di Du dos St.).include?  words[-2]
+      elsif words.size >= 2 and SINGLE_PFX.include? words[-2]
         result['sn'] = words[-2..-1].join(' ')
         result['unused'] = words[0..-3]
       else
@@ -162,7 +165,7 @@ module ASF
     # Should normally be applied to the legal name
     def self.stem_DRAFT(name)
       # need to split before
-      name = name.gsub(',', ' ').split(/ +/).map{|n|n.gsub(%r{^(Dr|Jr|Sr|[A-Z])\.$},'\1')}
+      name = name.gsub(',', ' ').split(/ +/).map {|n| n.gsub(%r{^(Dr|Jr|Sr|[A-Z])\.$}, '\1')}
       asciize(name.join('-')).downcase.chomp('-')
     end
 
