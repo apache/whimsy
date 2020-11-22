@@ -140,8 +140,10 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/followup\.json} do |date|
   parsed = Agenda[agenda][:parsed]
   followup = parsed.reject {|item| item['comments'].to_s.empty?}.
     map {|item| [item['title'], {comments: item['comments'],
-      shepherd: item['shepherd'], mail_list: item['mail_list'], count: 0}]}.
-    to_h
+                                 shepherd: item['shepherd'],
+                                 mail_list: item['mail_list'],
+                                 count: 0}]
+        }.to_h
 
   # count number of feedback emails found in the board archive
   start = Time.parse(date)
