@@ -53,7 +53,7 @@ module ASF
     # Returns the basename or nil if no match
     def self.match_claRef(claRef)
       unless @@h_claRef
-        h_claRef = Hash.new
+        h_claRef = {}
         listnames.map do |l|
           # Match either full name (e.g. directory) or stem (e.g. name.pdf)
           if l.end_with? '/'
@@ -105,7 +105,7 @@ module ASF
   class EmeritusFiles
     @base = 'emeritus'
     def self.listnames(getDates=false)
-      _, list = ASF::SVN.getlisting(@base,nil,true,getDates)
+      _, list = ASF::SVN.getlisting(@base, nil, true, getDates)
       list
     end
 
@@ -115,7 +115,7 @@ module ASF
     def self.find(person, getDate=false)
       # TODO use common stem name method
       name = (person.attrs['cn'].first rescue person.member_name).force_encoding('utf-8').
-        downcase.gsub(' ','-').gsub(/[^a-z0-9-]+/,'') rescue nil
+        downcase.gsub(' ', '-').gsub(/[^a-z0-9-]+/, '') rescue nil
       id = person.id
       files = self.listnames(getDate).find_all do |file|
         if file.is_a?(Array) # we have [epoch, file]

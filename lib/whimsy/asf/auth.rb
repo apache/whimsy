@@ -9,7 +9,7 @@ module ASF
 
     # Return the set of authorizations a given user (availid) has access to.
     def self.find_by_id(value)
-      new.select {|auth, ids| ids.include? value}.map(&:first)
+      new.select {|_auth, ids| ids.include? value}.map(&:first)
     end
 
     # Select a given <tt>-authorization-template</tt>, valid values are
@@ -35,7 +35,7 @@ module ASF
       groups = read_auth.scan(/^([-\w]+)=\{auth\}/).flatten
       # extract the group = list details and return the appropriate ones
       read_conf.scan(/^([-\w]+) *= *(\w.*)?$/).each do |pmc, ids|
-        yield pmc, (ids||'').split(' ') if groups.include? pmc
+        yield pmc, (ids || '').split(' ') if groups.include? pmc
       end
     end
 
@@ -48,12 +48,12 @@ module ASF
 
     # read the config file - extract the [explicit] section
     def read_conf
-      File.read(File.join(@auth,'auth.conf')).scan(/^\[explicit\].*(?:^\[)?/m).first rescue ''
+      File.read(File.join(@auth, 'auth.conf')).scan(/^\[explicit\].*(?:^\[)?/m).first rescue ''
     end
 
     # read the auth template; extract [groups]
     def read_auth
-      File.read(File.join(@auth,"#{@file}-authorization-template")).scan(/^\[groups\].*^\[/m).first rescue ''
+      File.read(File.join(@auth, "#{@file}-authorization-template")).scan(/^\[groups\].*^\[/m).first rescue ''
     end
   end
 

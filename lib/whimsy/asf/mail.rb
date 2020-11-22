@@ -11,7 +11,7 @@ module ASF
       rescue NoMethodError, WeakRef::RefError
       end
 
-      list = Hash.new
+      list = {}
 
       # load info from LDAP
       people = ASF::Person.preload(['mail', 'asf-altEmail'])
@@ -137,7 +137,6 @@ module ASF
       allowed
     end
 
-
     # common configuration for sending mail; loads <tt>:sendmail</tt>
     # configuration from <tt>~/.whimsy</tt> if available; otherwise default
     # to disable openssl verification as that is what it required in order
@@ -228,7 +227,6 @@ module ASF
         @auto_mtime = auto_mtime
       end
     end
-
 
     # Load the flags file
     def self._load_flags

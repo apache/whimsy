@@ -22,8 +22,8 @@ module ASF
     # Note that the data files don't provide information on whether a list is
     # public or private.
 
-    @@file_times  = Hash.new # Key=type, value = modtime
-    @@file_parsed = Hash.new # Key=type, value = cache hash
+    @@file_times  = {} # Key=type, value = modtime
+    @@file_parsed = {} # Key=type, value = cache hash
 
     # Return an array of board subscribers followed by the file update time
     def self.board_subscribers(archivers=true)
@@ -40,7 +40,7 @@ module ASF
     # pmc can either be a pmc name, in which case it uses private@<pmc>.apache.org
     # or it can be an ASF list name, e.g. w3c@apache.org
     def self.private_subscribers(pmc, archivers=false)
-      return [] unless Dir.exists? LIST_BASE
+      return [] unless Dir.exist? LIST_BASE
       parts = pmc.split('@', 3) # want to detect trailing '@'
       if parts.length == 1
         return list_filter('sub', "#{pmc}.apache.org", 'private', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
@@ -52,7 +52,7 @@ module ASF
     end
 
     def self.security_subscribers(pmc, archivers=false)
-      return [] unless Dir.exists? LIST_BASE
+      return [] unless Dir.exist? LIST_BASE
       return list_filter('sub', "#{pmc}.apache.org", 'security', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
@@ -63,15 +63,15 @@ module ASF
     # N.B. not the same format as the moderates() method
     def self.subscriptions(emails, response = {})
 
-      return response unless File.exists? LIST_SUBS
+      return response unless File.exist? LIST_SUBS
 
       response[:subscriptions] = []
       response[:subtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
 
-      _emails = emails.map{|email| ASF::Mail.to_canonical(email.downcase)}
+      emailslc = emails.map {|email| ASF::Mail.to_canonical(email.downcase)}
       list_parse('sub') do |dom, list, subs|
         subs.each do |sub|
-          if _emails.include? ASF::Mail.to_canonical(sub.downcase)
+          if emailslc.include? ASF::Mail.to_canonical(sub.downcase)
             response[:subscriptions] << ["#{list}@#{dom}", sub]
           end
         end
@@ -86,15 +86,15 @@ module ASF
     # N.B. not the same format as the moderates() method
     def self.digests(emails, response = {})
 
-      return response unless File.exists? LIST_DIGS
+      return response unless File.exist? LIST_DIGS
 
       response[:digests] = []
       response[:digtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_DIGS))
 
-      _emails = emails.map{|email| ASF::Mail.to_canonical(email.downcase)}
+      emailslc = emails.map {|email| ASF::Mail.to_canonical(email.downcase)}
       list_parse('dig') do |dom, list, subs|
         subs.each do |sub|
-          if _emails.include? ASF::Mail.to_canonical(sub.downcase)
+          if emailslc.include? ASF::Mail.to_canonical(sub.downcase)
             response[:digests] << ["#{list}@#{dom}", sub]
           end
         end
@@ -109,13 +109,13 @@ module ASF
     # N.B. not the same format as the subscriptions() method
     def self.moderates(user_emails, response = {})
 
-      return response unless File.exists? LIST_MODS
+      return response unless File.exist? LIST_MODS
 
       response[:moderates] = {}
       response[:modtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_MODS))
-      umails = user_emails.map{|m| ASF::Mail.to_canonical(m.downcase)} # outside loop
+      umails = user_emails.map {|m| ASF::Mail.to_canonical(m.downcase)} # outside loop
       list_parse('mod') do |dom, list, emails|
-        matching = emails.select{|m| umails.include? ASF::Mail.to_canonical(m.downcase)}
+        matching = emails.select {|m| umails.include? ASF::Mail.to_canonical(m.downcase)}
         response[:moderates]["#{list}@#{dom}"] = matching unless matching.empty?
       end
       response
@@ -144,7 +144,7 @@ module ASF
         #Apache lists (e.g. some non-PMCs)
         #/home/apmail/lists/apache.org/list/mod
         next unless "#{mail_domain}.apache.org" == dom or
-           (dom == 'apache.org' &&  list =~ /^#{mail_domain}(-|$)/) or
+           (dom == 'apache.org' && list =~ /^#{mail_domain}(-|$)/) or
            (podling && dom == 'incubator.apache.org' && list =~ /^#{mail_domain}-/)
         moderators["#{list}@#{dom}"] = subs.sort
       end
@@ -187,11 +187,11 @@ module ASF
         #/home/apmail/lists/apache.org/list/mod
 
         next unless "#{mail_domain}.apache.org" == dom or
-           (dom == 'apache.org' &&  list =~ /^#{mail_domain}(-|$)/) or
+           (dom == 'apache.org' && list =~ /^#{mail_domain}(-|$)/) or
            (podling && dom == 'incubator.apache.org' && list =~ /^#{mail_domain}-/)
 
         if skip_archivers
-          subscribers["#{list}@#{dom}"] = list_subs ? subs.reject{|sub| is_archiver?(sub)}.sort : subs.reject{|sub| is_archiver?(sub)}.size
+          subscribers["#{list}@#{dom}"] = list_subs ? subs.reject {|sub| is_archiver?(sub)}.sort : subs.reject {|sub| is_archiver?(sub)}.size
         else
           subscribers["#{list}@#{dom}"] = list_subs ? subs.sort : subs.size
         end
@@ -213,9 +213,8 @@ module ASF
     # incubator.apache.org/{mail_domain}-.* (if podling==true)
     # Returns: {list}@{dom}
     def self.list_subs(mail_domain, podling=false, list_subs=false)
-      self.list_subscribers(mail_domain,podling,list_subs,true)
+      self.list_subscribers(mail_domain, podling, list_subs, true)
     end
-
 
     # returns the list time (defaulting to list-subs time if the marker is not present)
     def self.list_time
@@ -224,14 +223,14 @@ module ASF
 
     def self.list_archivers
       list_parse('sub') do |dom, list, subs|
-        yield [dom, list, subs.select {|s| is_archiver? s}.map{|m| [m,archiver_type(m,dom,list)].flatten}]
+        yield [dom, list, subs.select {|s| is_archiver? s}.map {|m| [m, archiver_type(m, dom, list)].flatten}]
       end
     end
 
     # return the [domain, list] for all entries in the subscriber listings
     # the subscribers are not included
     def self.each_list
-      list_parse('sub') do |dom, list, subs|
+      list_parse('sub') do |dom, list, _subs|
         yield [dom, list]
       end
     end
@@ -240,7 +239,7 @@ module ASF
 
     # return the archiver type as array: [:MBOX|:PONY|:MINO|:MAIL_ARCH|:MARKMAIL|:WHIMSY, 'public'|'private'|'alias'|'direct']
     # minotaur archiver names do not include any public/private indication as that is in bin/.archives
-    def self.archiver_type(email, dom,list)
+    def self.archiver_type(email, dom, list)
       case email
         when ARCH_MBOX_PUB then return [:MBOX, 'public']
         when ARCH_MBOX_PRV then return [:MBOX, 'private']
@@ -252,39 +251,39 @@ module ASF
         when "#{list}-archive@#{dom}" then return [:MINO, 'alias']
         # Direct mail to minotaur
         when "apmail-#{dom.split('.').first}-#{list}-archive@www.apache.org" then return [:MINO, 'direct']
-      else
-        return [:MARKMAIL, 'public'] if is_markmail_archiver?(email)
-        # Whimsy currently only 'archives' private lists
-        return [:WHIMSY, 'private'] if is_whimsy_archiver?(email)
+        else
+          return [:MARKMAIL, 'public'] if is_markmail_archiver?(email)
+          # Whimsy currently only 'archives' private lists
+          return [:WHIMSY, 'private'] if is_whimsy_archiver?(email)
       end
       raise "Unexpected archiver email #{email} for #{list}@#{dom}" # Should not happen?
     end
 
     # Is the email a minotaur archiver?
-    def self.is_mino_archiver? (e)
+    def self.is_mino_archiver?(e)
       e =~ /.-archive@([^.]+\.)?(apache\.org|apachecon\.com)$/
     end
 
     # Is the email a Whimsy archiver?
-    def self.is_whimsy_archiver? (e)
+    def self.is_whimsy_archiver?(e)
       e =~ /@whimsy(-vm\d+)?\.apache\.org$/
     end
 
     # Is the email a markmail archiver?
-    def self.is_markmail_archiver? (e)
+    def self.is_markmail_archiver?(e)
       e =~ ARCH_EXT_MARKMAIL_RE
     end
 
-    def self.is_archiver? (e)
+    def self.is_archiver?(e)
       ARCHIVERS.include?(e) or is_mino_archiver?(e) or is_whimsy_archiver?(e) or is_markmail_archiver?(e)
     end
 
     def self.downcase(array)
-      array.map{|m| m.downcase}
+      array.map(&:downcase)
     end
 
     def self.isRecent(file)
-      return File.exist?(file) && ( Time.now - File.mtime(file) ) < 60*60*5
+      return File.exist?(file) && (Time.now - File.mtime(file)) < 60 * 60 * 5
     end
 
     # Filter the appropriate list, matching on domain and list
@@ -297,13 +296,13 @@ module ASF
     # If there is no match, then nil is returned
     def self.list_filter(type, matchdom, matchlist, archivers=true)
       list_parse(type) do |dom, list, emails|
-          if matchdom == dom && matchlist == list
-            if archivers
-              return emails
-            else
-            return emails.reject{|e| is_archiver?(e)}
-            end
+        if matchdom == dom && matchlist == list
+          if archivers
+            return emails
+          else
+            return emails.reject {|e| is_archiver?(e)}
           end
+        end
       end
       return nil
     end
@@ -333,7 +332,7 @@ module ASF
         cached = @@file_parsed[type]
         if cached
           begin
-            cached.each do |d,l,m|
+            cached.each do |d, l, m|
               # don't allow cache to be altered
               yield d.freeze, l.freeze, m.freeze
             end
@@ -345,7 +344,7 @@ module ASF
       else
         @@file_parsed[type] = nil
       end
-      cache = Array.new # see if this preserves mod cache
+      cache = [] # see if this preserves mod cache
       # split file into paragraphs
       File.read(path).split(/\n\n/).each do |stanza|
         # domain may start in column 1 or following a '/'
@@ -357,13 +356,13 @@ module ASF
           dom = match[1].downcase # just in case
           list = match[2].downcase # just in case
           # Keep original case of email addresses
-          mails = stanza.split(/\n/).select{|x| x =~ /@/}
+          mails = stanza.split(/\n/).select {|x| x =~ /@/}
           cache << [dom, list, mails]
           # don't allow cache to be altered
           yield dom.freeze, list.freeze, mails.freeze
         else
           # don't allow mismatches as that means the RE is wrong
-          line=stanza[0..(stanza.index("\n")|| -1)]
+          line = stanza[0..(stanza.index("\n") || -1)]
           raise ArgumentError.new("Unexpected section header #{line}")
         end
       end
@@ -404,17 +403,17 @@ module ASF
 end
 
 if __FILE__ == $0
-  $i=0
-  ASF::MLIST.list_flags() { |x| $i += 1 }
-    p $i
+  $i = 0
+  ASF::MLIST.list_flags() { $i += 1 }
+  p $i
   exit
-  domain = ARGV.shift||'whimsical'
+  domain = ARGV.shift || 'whimsical'
   p  ASF::MLIST.list_subscribers(domain)
-  p  ASF::MLIST.list_subscribers(domain,false,false,true)
+  p  ASF::MLIST.list_subscribers(domain, false, false, true)
   p  ASF::MLIST.list_subs(domain)
-  p  ASF::MLIST.list_subscribers(domain,false,true)
-  p  ASF::MLIST.list_subscribers(domain,false,true,true)
-  p  ASF::MLIST.list_subs(domain,false,true)
+  p  ASF::MLIST.list_subscribers(domain, false, true)
+  p  ASF::MLIST.list_subscribers(domain, false, true, true)
+  p  ASF::MLIST.list_subs(domain, false, true)
   p  ASF::MLIST.list_moderators(domain, true)
   p  ASF::MLIST.private_subscribers(domain)
   # Needed because these methods call ASF::Mail.to_canonical

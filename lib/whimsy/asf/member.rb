@@ -13,7 +13,7 @@ module ASF
     # Return the members.txt value associated with a given id
     def self.find_text_by_id(value)
       new.each do |id, text|
-        return text if id==value
+        return text if id == value
       end
       nil
     end
@@ -25,7 +25,7 @@ module ASF
 
     # extract 1st line and remove any trailing /* comment */
     def self.get_name(txt)
-      txt[/(.*?)\n/, 1].sub(/\s+\/\*.*/,'')
+      txt[/(.*?)\n/, 1].sub(/\s+\/\*.*/, '')
     end
 
     # return a list of <tt>members.txt</tt> entries as a Hash.  Keys are
@@ -72,7 +72,7 @@ module ASF
       sections = ASF::Member.text.to_s.split(/(.*\n===+)/)
       sections.shift(3)
       sections.each_slice(2) do |header, text|
-        header.sub!(/s\n=+/,'')
+        header.sub!(/s\n=+/, '')
         text.scan(/Avail ID: (.*)/).flatten.each {|id| status[id] = header}
       end
 
@@ -82,14 +82,14 @@ module ASF
 
     # Return a list of availids of emeritus members
     def self.emeritus
-      status.select{|k,v| v.start_with? 'Emeritus'}.keys
+      status.select {|_k, v| v.start_with? 'Emeritus'}.keys
     end
 
     # An iterator that returns a list of ids and associated members.txt entries.
     def each
       ASF::Member.text.to_s.split(/^ \*\) /).each do |section|
-        id = section[/Avail ID: (.*)/,1]
-        yield id, section.sub(/\n.*\n===+\s*?\n(.*\n)+.*/,'').strip if id
+        id = section[/Avail ID: (.*)/, 1]
+        yield id, section.sub(/\n.*\n===+\s*?\n(.*\n)+.*/, '').strip if id
       end
       nil
     end
@@ -112,7 +112,7 @@ module ASF
     # a <tt>Time</tt> object.
     def self.svn_change
       file = File.join(ASF::SVN['foundation'], 'members.txt')
-      return Time.parse(ASF::SVN.getInfoItem(file,'last-changed-date')).gmtime
+      return Time.parse(ASF::SVN.getInfoItem(file, 'last-changed-date')).gmtime
     end
 
     # sort an entire members.txt file
@@ -210,9 +210,9 @@ module ASF
       [
         fullname, # will be prefixed by ' *) '
         # Each line of address is indented
-        (address.gsub(/^/,'    ').gsub(/\r/,'')),
+        (address.gsub(/^/, '    ').gsub(/\r/, '')),
         ("    #{country}"     unless country.empty?),
-         "    Email: #{email}",
+        "    Email: #{email}",
         ("      Tel: #{tele}" unless tele.empty?),
         ("      Fax: #{fax}"  unless fax.empty?),
         " Forms on File: ASF Membership Application",
@@ -256,7 +256,7 @@ if __FILE__ == $0
   puts ASF::Member.list.size
   puts ASF::Member.status.size
   puts ASF::Member.text.size
-  ids=0
-  ASF::Member.each{|id,txt| ids+= 1}
+  ids = 0
+  ASF::Member.each {|_| ids += 1}
   puts ids
 end

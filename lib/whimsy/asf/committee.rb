@@ -88,7 +88,7 @@ module ASF
       'travel assistance'              => 'tac',
       'web services'                   => 'ws'
 
-    @@namemap = Proc.new do |name|
+    @@namemap = proc do |name|
       # Drop parenthesized comments and downcase before lookup; drop all spaces after lookup
       # So aliases table does not need to contain entries for Traffic Server and XML Graphics.
       # Also compress white-space before lookup so tabs etc from index.html don't matter

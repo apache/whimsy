@@ -59,7 +59,7 @@ module ASF
     def self.svn_change
       self.refresh
       if SOURCE
-        @@svn_change ||= Time.parse(ASF::SVN.getInfoItem(SOURCE,'last-changed-date')).gmtime
+        @@svn_change ||= Time.parse(ASF::SVN.getInfoItem(SOURCE, 'last-changed-date')).gmtime
       end
     end
 
@@ -151,18 +151,18 @@ module ASF
 
     # show the original entry (reconstructed for now)
     def as_line
-      [id,legal_name,name,email,form].join(':')
+      [id, legal_name, name, email, form].join(':')
     end
 
     # rearrange line in an order suitable for sorting
     def self.lname(line)
       return '' if line.start_with? '#'
-      _, name, rest = line.split(':',3)
+      _, name, rest = line.split(':', 3)
       return '' unless name
 
       # Drop trailing (comment string) or /* comment */
-      name.sub! /\(.+\)$/,''
-      name.sub! /\/\*.+\*\/$/,''
+      name.sub!(/\(.+\)$/, '')
+      name.sub!(/\/\*.+\*\/$/, '')
       return '' if name.strip.empty?
 
       name = ASF::Person.sortable_name(name)
@@ -220,7 +220,7 @@ module ASF
 
     # list of all availids that are are taken or reserved
     # See also ASF::Mail.taken?
-    def self.availids_taken()
+    def self.availids_taken
       self.availids_reserved + self.availids
     end
 
@@ -234,7 +234,7 @@ module ASF
     # is the id available?
     # See also ASF::Mail.taken?
     def self.available?(id)
-      return ! self.taken?(id)
+      return !self.taken?(id)
     end
 
     # does the entry not have an id?

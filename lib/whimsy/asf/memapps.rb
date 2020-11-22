@@ -15,10 +15,9 @@ module ASF
     # list the stems of the files
     def self.stems
       refresh
-      apps = @@files.map do |file|
+      @@files.map do |file|
         file.sub(/\.\w+$/, '')
       end
-      apps
     end
 
     # list the names of the files (excluding any ones which record emeritus)
@@ -29,7 +28,7 @@ module ASF
 
     def self.sanitize(name)
       # Don't transform punctation into '-'
-      ASF::Person.asciize(name.strip.downcase.gsub(/[.,()"]/,''))
+      ASF::Person.asciize(name.strip.downcase.gsub(/[.,()"]/, ''))
     end
 
     # search for file name
@@ -56,8 +55,8 @@ module ASF
     # find the memapp for a person; return an array:
     # - [array of files that matched (possibly empty), array of stems that were tried]
     def self.find(person)
-      found=[] # matches we found
-      names=[] # names we tried
+      found = [] # matches we found
+      names = [] # names we tried
       [
         (person.icla.legal_name rescue nil),
         (person.icla.name rescue nil),

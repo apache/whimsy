@@ -189,7 +189,7 @@ module ASF
       hosts = ASF::LDAP::RO_HOSTS if hosts.empty?
 
       hosts.shuffle!
-      #Wunderbar.debug "Hosts:\n#{hosts.join(' ')}"
+      # Wunderbar.debug "Hosts:\n#{hosts.join(' ')}"
       @hosts = hosts
     end
 
@@ -210,7 +210,7 @@ module ASF
       cert = Dir["#{ETCLDAP}/asf*-ldap-client.pem"].first
 
       # verify/obtain/write the cert
-      if not cert
+      unless cert
         cert = "#{ETCLDAP}/asf-ldap-client.pem"
         File.write cert, ASF::LDAP.puppet_cert || self.extract_cert
       end
@@ -451,25 +451,25 @@ module ASF
     # return the collection of instances of this class, as a hash.  Note the
     # values are weak references, so may have already been reclaimed.
     def self.collection
-      @collection ||= Hash.new
+      @collection ||= {}
     end
 
     # Find an instance of this class, given a name
-    def self.[] name
+    def self.[](name)
       new(name)
     end
 
     # Find an instance of this class, given a name
-    def self.find name
+    def self.find(name)
       new(name)
     end
 
     # Create an instance of this class, given a name.  Note: if an instance
     # already exists, it will return a handle to the existing object.
-    def self.new name
+    def self.new(name)
       begin
         object = collection[name]
-        return object.reference if object and object.weakref_alive?
+        return object.reference if object&.weakref_alive?
       rescue
       end
 
@@ -479,7 +479,7 @@ module ASF
     # create an instance of this class, returning a weak reference to the
     # object for reuse.  Note: self.new will check for such a reference and
     # return it in favor of allocating a new object.
-    def initialize name
+    def initialize(name)
       self.class.collection[name] = WeakRef.new(self)
       @name = name
     end
@@ -530,6 +530,7 @@ module ASF
   class LazyHash < Hash
     # capture an initializer to be called only if necessary.
     def initialize(&initializer)
+      super
       @initializer = initializer
     end
 
@@ -553,15 +554,15 @@ module ASF
     @base = 'ou=role,ou=groups,dc=apache,dc=org'
 
     # get a list of committers
-    def self.list()
+    def self.list
       ASF.search_one(base, 'cn=committers', 'member').flatten.
-        map {|uid| Person.find uid[/uid=(.*?),/,1]}
+        map {|uid| Person.find uid[/uid=(.*?),/, 1]}
     end
 
     # get a list of committers (ids only)
-    def self.listids()
+    def self.listids
       ASF.search_one(base, 'cn=committers', 'member').flatten.
-        map {|uid| uid[/uid=(.*?),/,1]}
+        map {|uid| uid[/uid=(.*?),/, 1]}
     end
 
     # create a new person and add as a new committer to LDAP.
@@ -625,7 +626,7 @@ module ASF
       ASF::Group['committers'].remove(person) rescue nil
 
       # remove person from 'new' committers list, ignoring exceptions
-      ASF::LDAP.modify("cn=committers,#@base",
+      ASF::LDAP.modify("cn=committers,#{@base}",
         [ASF::Base.mod_delete('member', [person.dn])]) rescue nil
 
       # remove person from LDAP (should almost never be done)
@@ -641,7 +642,7 @@ module ASF
       end
 
       # add person to 'new' committers list
-      ASF::LDAP.modify("cn=committers,#@base",
+      ASF::LDAP.modify("cn=committers,#{@base}",
         [ASF::Base.mod_add('member', [person.dn])])
 
       # add person to 'legacy' committers list
@@ -660,7 +661,7 @@ module ASF
       ASF::Group['committers'].remove(person)
 
       # remove person from 'new' committers list
-      ASF::LDAP.modify("cn=committers,#@base",
+      ASF::LDAP.modify("cn=committers,#{@base}",
         [ASF::Base.mod_delete('member', [person.dn])])
     end
 
@@ -697,7 +698,7 @@ module ASF
         filter = "(|#{people.map {|person| "(uid=#{person.name})"}.join})"
       end
 
-      zero = Hash[attributes.map {|attribute| [attribute,nil]}]
+      zero = Hash[attributes.map {|attribute| [attribute, nil]}]
 
       data = ASF.search_one(base, filter, attributes + ['uid'])
       data = Hash[data.map! {|hash| [list[hash['uid'].first], hash]}]
@@ -713,7 +714,7 @@ module ASF
     end
 
     # return person only if it actually exits
-    def self.[] id
+    def self.[](id)
       person = super
       person.attrs['dn'] ? person : nil
     end
@@ -732,7 +733,7 @@ module ASF
 
     # Is this person listed in the committers LDAP group?
     def asf_committer?
-       ASF::Group.new('committers').include? self
+      ASF::Group.new('committers').include? self
     end
 
     # determine if the person is banned.  If scanning a large list, consider
@@ -800,7 +801,7 @@ module ASF
 
       # add in projects
       # Get list of project names where the person is an owner
-      projects = self.projects.select{|prj| prj.owners.include? self}.map(&:name)
+      projects = self.projects.select {|prj| prj.owners.include? self}.map(&:name)
       committees += ASF::Committee.pmcs.select do |pmc|
         projects.include? pmc.name
       end
@@ -825,7 +826,7 @@ module ASF
 
     # list of Podlings that this individual is a member (owner) of
     def podlings
-      ASF::Podling.current.select{|pod| project_owners.map(&:name).include? pod.name}
+      ASF::Podling.current.select {|pod| project_owners.map(&:name).include? pod.name}
     end
 
     # list of LDAP groups that this individual is a member of
@@ -921,7 +922,7 @@ module ASF
         'gidNumber' => nextuid.to_s,
         'asf-committer-email' => "#{availid}@apache.org",
         'objectClass' => %w(person top posixAccount organizationalPerson
-           inetOrgPerson asf-committer hostObject ldapPublicKey)
+                            inetOrgPerson asf-committer hostObject ldapPublicKey)
       })
 
       # defaults
@@ -934,7 +935,7 @@ module ASF
       attrs = ASF::Person.ldap_name(attrs['cn']).merge(attrs)
 
       # generate a password that is between 8 and 16 alphanumeric characters
-      if not attrs['userPassword']
+      unless attrs['userPassword']
         while attrs['userPassword'].to_s.length < 8
           attrs['userPassword'] = SecureRandom.base64(12).gsub(/\W+/, '')
         end
@@ -996,7 +997,7 @@ module ASF
         group = ASF::Group.find(cn)
         group.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
         group.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
-        members = results['memberUid']  || []
+        members = results['memberUid'] || []
         group.members = members
         [group, members]
       end]
@@ -1009,7 +1010,7 @@ module ASF
     attr_accessor :createTimestamp
 
     # return group only if it actually exits
-    def self.[] name
+    def self.[](name)
       group = super
       group.dn ? group : nil
     end
@@ -1096,7 +1097,7 @@ module ASF
     end
 
     # return project only if it actually exits
-    def self.[] name
+    def self.[](name)
       project = super
       project.dn ? project : nil
     end
@@ -1170,7 +1171,7 @@ module ASF
       members = weakref(:members) do
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
-      members.map {|uid| uid[/uid=(.*?),/,1]}
+      members.map {|uid| uid[/uid=(.*?),/, 1]}
     end
 
     # list of owners on this project.  Stored in LDAP as a <tt>owners</tt>
@@ -1184,9 +1185,8 @@ module ASF
       owners = weakref(:owners) do
         ASF.search_one(base, "cn=#{name}", 'owner').flatten
       end
-      owners.map {|uid| uid[/uid=(.*?),/,1]}
+      owners.map {|uid| uid[/uid=(.*?),/, 1]}
     end
-
 
     # remove people from a project as owners and members in LDAP
     def remove(people)
@@ -1251,10 +1251,10 @@ module ASF
     @base = nil # not sure it makes sense to define base here
 
     # return committee only if it actually exists
-    def self.[] name
+    def self.[](name)
       committee = super
       # Cannot rely on presence/absence of LDAP record as projects includes podlings
-      (ASF::Committee.pmcs+ASF::Committee.nonpmcs).map(&:name).include?(name) ? committee : nil
+      (ASF::Committee.pmcs + ASF::Committee.nonpmcs).map(&:name).include?(name) ? committee : nil
     end
 
     # Date this committee was last modified in LDAP.
@@ -1383,7 +1383,7 @@ module ASF
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
 
-      members.map {|uid| Person.find uid[/uid=(.*?),/,1]}
+      members.map {|uid| Person.find uid[/uid=(.*?),/, 1]}
     end
 
     # list of memberids for this service in LDAP
@@ -1392,7 +1392,7 @@ module ASF
         ASF.search_one(base, "cn=#{name}", 'member').flatten
       end
 
-      members.map {|uid| uid[/uid=(.*?),/,1]}
+      members.map {|uid| uid[/uid=(.*?),/, 1]}
     end
 
     # remove people from this service in LDAP
@@ -1464,16 +1464,16 @@ end
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
-  mem=ASF.members()
+  mem = ASF.members()
   puts mem.length
   puts mem.first.inspect
-  memids=ASF.memberids()
+  memids = ASF.memberids()
   puts memids.length
   puts memids.first
-  new=ASF.committers()
+  new = ASF.committers()
   puts new.length
   puts new.first.inspect
-  newids=ASF.committerids()
+  newids = ASF.committerids()
   puts newids.length
   puts newids.first
   ASF::RoleGroup.listcns.map {|g| puts ASF::RoleGroup.find(g).dn}

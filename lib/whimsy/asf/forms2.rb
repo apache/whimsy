@@ -76,11 +76,13 @@ class Wunderbar::HtmlMarkup
     _whimsy_control_wrapper(args) do
       args['class'] = 'form-control'
       if args['rows']
-        _textarea! type: args['type'], name: args['name'], id: args['id'], value: args['value'], class: args['class'], aria_describedby: args['aria_describedby'], rows: args['rows'] do
+        _textarea! type: args['type'], name: args['name'], id: args['id'], value: args['value'], class: args['class'],
+                   aria_describedby: args['aria_describedby'], rows: args['rows'] do
           _! args['value']
         end
       else
-        _input type: args['type'], name: args['name'], id: args['id'], value: args['value'], class: args['class'], aria_describedby: args['aria_describedby']
+        _input type: args['type'], name: args['name'], id: args['id'], value: args['value'], class: args['class'],
+               aria_describedby: args['aria_describedby']
       end
     end
   end
@@ -100,7 +102,8 @@ class Wunderbar::HtmlMarkup
       if args['multiple']
         args['multiple'] = 'true'
       end
-      _select.form_control type: args['type'], name: args['name'], id: args['id'], value: args['value'], aria_describedby: args['aria_describedby'], multiple: args['multiple'] do
+      _select.form_control type: args['type'], name: args['name'], id: args['id'], value: args['value'],
+                           aria_describedby: args['aria_describedby'], multiple: args['multiple'] do
         if ''.eql?(args['placeholder'])
           _option '', value: '', selected: 'selected'
         else
@@ -149,15 +152,17 @@ class Wunderbar::HtmlMarkup
       # Construct list of all :options; mark any that are in :selected
       if args['options'].kind_of?(Array)
         args['options'].each do |val|
-          checked = true if args['selected'] && args['selected'].include?(val.to_s)
-          _input type: args['type'], name: args['name'], id: args['id'], value: val, class: args['class'], aria_describedby: args['aria_describedby'], checked: checked do
+          checked = true if args['selected']&.include?(val.to_s)
+          _input type: args['type'], name: args['name'], id: args['id'], value: val, class: args['class'],
+                 aria_describedby: args['aria_describedby'], checked: checked do
             _! val
           end
         end
       elsif args['options'].kind_of?(Hash)
         args['options'].each do |val, disp|
-          checked = true if args['selected'] && args['selected'].include?(val.to_s)
-          _input type: args['type'], name: args['name'], id: args['id'], value: val, class: args['class'], aria_describedby: args['aria_describedby'], checked: checked do
+          checked = true if args['selected']&.include?(val.to_s)
+          _input type: args['type'], name: args['name'], id: args['id'], value: val, class: args['class'],
+                 aria_describedby: args['aria_describedby'], checked: checked do
             _! disp
           end
         end
@@ -169,7 +174,7 @@ class Wunderbar::HtmlMarkup
   # @returns {field: 'string', field2: ['array', 'only for', 'multivalue'] ...}
   def _whimsy_params2formdata(params)
     formdata = {}
-    params.each do |k,v|
+    params.each do |k, v|
       v && (v.length == 1) ? formdata[k] = v[0] : formdata[k] = v
     end
     return formdata
