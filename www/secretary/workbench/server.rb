@@ -160,7 +160,7 @@ patch %r{/(\d{6})/(\w+)/} do |month, hash|
 
       # special processing for entries with symbols as keys
       headers[hash].each do |key, value|
-        if Symbol === key and updates.has_key? key.to_s
+        if key.is_a? Symbol and updates.has_key? key.to_s
           headers[hash][key] = updates.delete(key.to_s)
         end
       end
@@ -296,7 +296,7 @@ get '/events', provides: 'text/event-stream' do
     loop do
       event = events.pop
 
-      if Hash === event or Array === event
+      if event.is_a? Hash or event.is_a? Array
         out << "data: #{JSON.dump(event)}\n\n"
       elsif event == :heartbeat
         out << ":\n"

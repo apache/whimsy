@@ -71,7 +71,7 @@ end
 # move headings from second to seventh row
 headings[2] = headings[6] = 'Budget'
 1.upto(7) do |i|
-  headings[i] = headings[i].strftime("%b-%y") if DateTime === headings[i]
+  headings[i] = headings[i].strftime("%b-%y") if headings[i].is_a? DateTime
   headings[i] = headings[i].rjust(12) if headings[i]
 end
 rows.insert(blank+1, headings)

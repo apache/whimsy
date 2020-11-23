@@ -1,7 +1,7 @@
 helpers do
   # replace inline images (cid:) with references to attachments
   def fixup_images(node)
-    if Wunderbar::Node === node
+    if node.is_a? Wunderbar::Node
       if node.name == 'img'
         if node.attrs['src'] and node.attrs['src'].to_s.start_with? 'cid:'
           node.attrs['src'].value = node.attrs['src'].to_s.sub('cid:', '')
@@ -9,7 +9,7 @@ helpers do
       else
         fixup_images(node.search('img'))
       end
-    elsif Array === node
+    elsif node.is_a? Array
       node.each {|child| fixup_images(child)}
     end
   end

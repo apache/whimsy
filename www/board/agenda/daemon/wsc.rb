@@ -103,7 +103,7 @@ EM.run do
       end
       response = http.request(request)
 
-      if Net::HTTPOK === response
+      if response.is_a? Net::HTTPOK
         session = JSON.parse(response.body)['session']
       else
         p response

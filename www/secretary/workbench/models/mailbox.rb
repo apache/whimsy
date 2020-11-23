@@ -21,7 +21,7 @@ class Mailbox
     if mailboxes == nil
       options += %w(--delete --exclude=*.yml --exclude=*.mail)
       source = "#{SOURCE}/"
-    elsif Array === mailboxes
+    elsif mailboxes.is_a? Array
       host, path = SOURCE.split(':', 2)
       files = mailboxes.map {|name| "#{path}/#{name}*"}
       source = "#{host}:#{files.join(' ')}"

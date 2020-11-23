@@ -60,12 +60,12 @@ end
 
 # puma uses SIGUSR2
 restart_usr2 ||= trap 'SIGUSR2' do
-  restart_usr2.call if Proc === restart_usr2
+  restart_usr2.call if restart_usr2.is_a? Proc
   Events.shutdown
 end
 
 # thin uses SIGHUP
 restart_hup ||= trap 'SIGHUP' do
-  restart_hup.call if Proc === restart_hup
+  restart_hup.call if restart_hup.is_a? Proc
   Events.shutdown
 end

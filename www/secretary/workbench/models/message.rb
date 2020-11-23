@@ -77,7 +77,7 @@ class Message
   end
 
   def cc=(value)
-    value=value.split("\n") if String === value
+    value=value.split("\n") if value.is_a? String
     @headers[:cc]=value
   end
 
@@ -86,7 +86,7 @@ class Message
   end
 
   def bcc=(value)
-    value=value.split("\n") if String === value
+    value=value.split("\n") if value.is_a? String
     @headers[:bcc]=value
   end
 
@@ -172,7 +172,7 @@ class Message
     attachments = attachments.flatten.reject {|name| name.to_s.empty?}
 
     # if last argument is a Hash, treat it as name/value pairs
-    attachments += attachments.pop.to_a if Hash === attachments.last
+    attachments += attachments.pop.to_a if attachments.last.is_a? Hash
 
     if attachments.flatten.length == 1
       ext = File.extname(attachments.first).downcase

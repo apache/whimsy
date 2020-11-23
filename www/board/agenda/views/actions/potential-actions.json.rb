@@ -13,7 +13,7 @@ minutes = File.basename(base).sub('agenda', 'minutes').sub('.txt', '.yml')
 date = minutes[/\d{4}_\d\d_\d\d/].gsub('_', '-')
 minutes = YAML.load_file("#{AGENDA_WORK}/#{minutes}") rescue {}
 minutes.each do |title, secnotes|
-  next unless String === secnotes
+  next unless secnotes.is_a? String
   secnotes.scan(pattern).each do |owner, text|
     text = text.reflow(6, 72).strip
     actions << {owner: owner, text: text, status: nil, pmc: title, date: date}

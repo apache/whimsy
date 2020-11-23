@@ -340,7 +340,7 @@ module ASF
       end
     end
 
-    result.map! {|hash| hash[attrs]} if String === attrs
+    result.map! {|hash| hash[attrs]} if attrs.is_a? String
 
     result.compact
   end
@@ -510,7 +510,7 @@ module ASF
 
     # helper method to construct LDAP_MOD_REPLACE objects
     def self.mod_replace(attr, vals)
-      vals = Array(vals) unless Hash === vals
+      vals = Array(vals) unless vals.is_a? Hash
       ::LDAP::Mod.new(::LDAP::LDAP_MOD_REPLACE, attr.to_s, vals)
     end
 
@@ -864,7 +864,7 @@ module ASF
         return nil
       else
         result.map! do |value|
-          value = value.dup.force_encoding('utf-8') if String === value
+          value = value.dup.force_encoding('utf-8') if value.is_a? String
           value
         end
 

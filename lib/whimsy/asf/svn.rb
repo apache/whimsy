@@ -685,7 +685,7 @@ module ASF
     #   ASF::SVN.svnmucc_(commands,message,env,_,revision)
     def self.svnmucc_(commands, msg, env, _, revision, options={})
 
-      raise ArgumentError.new 'commands must be an array' unless Array === commands
+      raise ArgumentError.new 'commands must be an array' unless commands.is_a? Array
       raise ArgumentError.new 'msg must not be nil' unless msg
       raise ArgumentError.new 'env must not be nil' unless env
       raise ArgumentError.new '_ must not be nil' unless _
@@ -702,7 +702,7 @@ module ASF
         cmdfile = Tempfile.new('svnmucc_input', tmpdir)
         # add the commands
         commands.each do |cmd|
-          raise ArgumentError.new 'command entries must be an array' unless Array === cmd
+          raise ArgumentError.new 'command entries must be an array' unless cmd.is_a? Array
           cmd.each do |arg|
             cmdfile.puts(arg)
           end

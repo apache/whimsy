@@ -42,8 +42,8 @@ module MockServer
     args.flatten!
     # Wunderbar .system accepts one or two trailing hashes; ignore them for now
     # TODO: do we need to handle :stdin?
-    args.pop if Hash === args.last
-    args.pop if Hash === args.last
+    args.pop if args.last.is_a? Hash
+    args.pop if args.last.is_a? Hash
     if args[1] == 'commit'
       @commits ||= {}
 
@@ -57,7 +57,7 @@ module MockServer
       `svn revert #{target}`
       0
     else
-      args.reject! {|arg| Array === arg}
+      args.reject! {|arg| arg.is_a? Array}
       @transcript ||= ''
       @transcript += `#{Shellwords.join(args)}`
       $?.exitstatus

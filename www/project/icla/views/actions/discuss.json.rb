@@ -80,7 +80,7 @@ err = LockFile.create_ex(file_name.untaint) do |f|
   f.write(JSON.pretty_generate(discussion))
 end
 if err
-  if Errno::EEXIST === err
+  if err.is_a? Errno::EEXIST
     _error 'There is already a file for that person!'
   else
     _error err.inspect

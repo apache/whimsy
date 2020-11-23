@@ -22,7 +22,7 @@ class EmailTest < Test::Unit::TestCase
   def make_pending(*requests)
     # convert symbols into strings in each request
     requests.each do |vars|
-      vars.each_key {|key| vars[key.to_s] = vars.delete(key) if Symbol === key}
+      vars.each_key {|key| vars[key.to_s] = vars.delete(key) if key.is_a? Symbol}
     end
 
     # output pending

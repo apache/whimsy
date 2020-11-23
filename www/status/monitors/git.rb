@@ -103,7 +103,7 @@ def Monitor.git(previous_status)
         title = "partial response"
         level = 'warning'
         seen_level[level] = true
-      elsif String  === data
+      elsif data.is_a? String
         title = "No files updated"
       end
 

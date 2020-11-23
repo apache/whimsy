@@ -97,7 +97,7 @@ if __FILE__ == $0
   puts ret.class.inspect
   puts ret.inspect
   if ret
-    if Errno::EEXIST === ret
+    if ret.is_a? Errno::EEXIST
       puts "Already exists!"
     else
       puts "Some other error"
