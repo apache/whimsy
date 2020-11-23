@@ -15,6 +15,10 @@ language: ruby
 rvm: # http://rubies.travis-ci.org/
   - 2.7
 
+os:
+  - linux
+  - osx
+
 # Additionally test lib on focal
 jobs:
   include:
