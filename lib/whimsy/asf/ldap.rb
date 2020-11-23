@@ -530,7 +530,7 @@ module ASF
   class LazyHash < Hash
     # capture an initializer to be called only if necessary.
     def initialize(&initializer)
-      super
+      super()
       @initializer = initializer
     end
 
