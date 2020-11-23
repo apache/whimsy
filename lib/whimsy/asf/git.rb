@@ -62,7 +62,7 @@ module ASF
           @repos = Hash[Dir[*git].map { |name|
             if Dir.exist? name
               out, _, status =
-                Open3.capture3(*%(git config --get remote.origin.url), {chdir: name})
+                Open3.capture3('git', 'config', '--get', 'remote.origin.url', {chdir: name})
               if status.success?
                 [File.basename(out.chomp, '.git'), name]
               end
