@@ -4,15 +4,15 @@
 
 class ASF::Board::Agenda
   parse do
-    discussion = @file.split(/^ \d. Discussion Items\n/,2).last.
-      split(/^ \d. .*Action Items/,2).first
+    discussion = @file.split(/^ \d. Discussion Items\n/, 2).last.
+      split(/^ \d. .*Action Items/, 2).first
 
     if discussion !~ /\A\s{3,5}[0-9A-Z]\.\s/
 
       # One (possibly empty) item for all Discussion Items
 
       pattern = /
-        ^(?<attach>\s[8]\.)
+        ^(?<attach>\s8\.)
         \s(?<title>.*?)\n
         (?<text>.*?)
         (?=\n[\s1]\d\.|\n===)
