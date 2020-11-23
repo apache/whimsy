@@ -1,7 +1,6 @@
-require_relative '../asf.rb'
+require_relative '../asf'
 require 'rack'
 require 'etc'
-require 'thread'
 
 module ASF
   # Rack support for HTTP Authorization, contains a number of classes that
@@ -18,7 +17,7 @@ module ASF
       else
         require 'base64'
         env.user, env.password = Base64.
-          decode64(auth[/^Basic ([A-Za-z0-9+\/=]+)$/,1].to_s).split(':',2)
+          decode64(auth[/^Basic ([A-Za-z0-9+\/=]+)$/, 1].to_s).split(':', 2)
       end
 
       env['REMOTE_USER'] ||= env.user
@@ -127,11 +126,11 @@ module ASF
         # divide minutes by frequency and use the result to determine the
         # time between simulated requests
         @@background = Thread.new do
-           seconds = minutes * 60.0 / frequency
-           loop do
-             sleep seconds
-             maybe_perform_gc
-           end
+          seconds = minutes * 60.0 / frequency
+          loop do
+            sleep seconds
+            maybe_perform_gc
+          end
         end
       end
     end
@@ -150,7 +149,7 @@ module ASF
         # https://github.com/puma/puma/issues/450
         status, header, body = @app.call(env)
 
-        if ary = env['rack.after_reply']
+        if (ary = env['rack.after_reply']) # this is intended to be assignment, see #108
           ary << lambda {maybe_perform_gc}
         else
           Thread.new {sleep 0.1; maybe_perform_gc}
