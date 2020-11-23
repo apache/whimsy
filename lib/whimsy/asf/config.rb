@@ -87,6 +87,7 @@ module ASF
         gem = Gem::Specification.find_by_name(name, version)
         @config[:lib] += Dir[gem.lib_dirs_glob]
       rescue Gem::LoadError
+        # ignored
       end
     end
 

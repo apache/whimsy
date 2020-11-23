@@ -627,7 +627,7 @@ module ASF
 
     # load committee metadata from <tt>committee-info.yaml</tt>.  Will not reparse
     # if the file has already been parsed and the underlying file has not changed.
-    def self.load_committee_metadata()
+    def self.load_committee_metadata
       board = ASF::SVN.find('board')
       return unless board
       file = File.join(board, 'committee-info.yaml')
@@ -646,13 +646,13 @@ module ASF
     end
 
     # website for this committee.
-    def site()
+    def site
       meta = ASF::Committee.metadata(name)
       meta[:site] if meta
     end
 
     # description for this committee.
-    def description()
+    def description
       meta = ASF::Committee.metadata(name)
       meta[:description] if meta
     end
