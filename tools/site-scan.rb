@@ -64,7 +64,7 @@ def parse(id, site, name)
   $stderr.puts "#{id} #{uri} #{status}"
   # Bail and return if getting the site returns an error code
   if response.respond_to? :code and response.code =~ /^[45]/
-    data[:errors] = "cache.get(#{site.to_s}) error code #{response.code}"
+    data[:errors] = "cache.get(#{site}) error code #{response.code}"
     return data
   end
   doc = Nokogiri::HTML(response)
@@ -138,7 +138,7 @@ def parse(id, site, name)
     end
     # Note we also check for incubator disclaimer (immaterial of tlp|podling)
     if txt =~ SiteStandards::PODLING_CHECKS['disclaimer'][SiteStandards::CHECK_CAPTURE]
-      t, p = getText(txt, node, / is an effort undergoing/)
+      t, _p = getText(txt, node, / is an effort undergoing/)
       data[:disclaimer] = t
     end
   end
