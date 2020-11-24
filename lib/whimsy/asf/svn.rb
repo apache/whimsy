@@ -697,6 +697,7 @@ module ASF
       temp = options[:tmpdir]
       tmpdir = temp ? temp : Dir.mktmpdir
 
+      rc = -1 # in case
       begin
         cmdfile = Tempfile.new('svnmucc_input', tmpdir)
         # add the commands
@@ -739,18 +740,19 @@ module ASF
           _.system 'echo', [syscmd.flatten, sysopts.to_s]
         end
         if options[:dryrun]
-          _.system syscmd.insert(0, 'echo')
+          rc = _.system syscmd.insert(0, 'echo')
         else
           if _.instance_of?(Wunderbar::JsonBuilder) or _.instance_of?(Wunderbar::TextBuilder)
-            _.system syscmd, sysopts, sysopts # needs two hashes
+            rc = _.system syscmd, sysopts, sysopts # needs two hashes
           else
-            _.system syscmd, sysopts
+            rc = _.system syscmd, sysopts
           end
         end
       ensure
         File.delete cmdfile.path # always drop the command file
         FileUtils.rm_rf tmpdir unless temp
       end
+      rc
     end
 
     # DRAFT
