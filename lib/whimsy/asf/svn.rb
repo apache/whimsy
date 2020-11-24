@@ -40,7 +40,7 @@ module ASF
         svn = Array(ASF::Config.get(:svn))
 
         # reload if repository changes
-        if File.exist?(REPOSITORY) && @@repository_mtime!=File.mtime(REPOSITORY)
+        if File.exist?(REPOSITORY) && @@repository_mtime != File.mtime(REPOSITORY)
           @repos = nil
         end
 
@@ -62,7 +62,7 @@ module ASF
             if Dir.exist? name
               out, _ = self.getInfoItem(name, 'url')
               if out
-                [out.sub(/^http:/,'https:'), name]
+                [out.sub(/^http:/, 'https:'), name]
               end
             end
           }.compact]
@@ -93,7 +93,7 @@ module ASF
       if includeAll
         self._all_repo_entries
       else
-        self._all_repo_entries.reject{|_k, v| v['depth'] == 'skip' or v['depth'] == 'delete'}
+        self._all_repo_entries.reject {|_k, v| v['depth'] == 'skip' or v['depth'] == 'delete'}
       end
     end
 
@@ -136,7 +136,7 @@ module ASF
       unless url # bad entry
         raise Exception.new("Unable to find url attribute for SVN entry #{name}")
       end
-      return (@base+url).to_s
+      return (@base + url).to_s
     end
 
     # fetch a repository URL by name - abort if not found
@@ -154,10 +154,10 @@ module ASF
     # assumes that the relative paths are cumulative, unlike URI.merge
     # name - the nickname for the URL
     # relpath - the relative path(s) to the file
-    def self.svnpath!(name,*relpath)
+    def self.svnpath!(name, *relpath)
       base = self.svnurl!(name)
-      base = base + '/' unless base.end_with? '/'
-      endpart = [relpath].join('/').sub(%r{^/+},'').gsub(%r{/+},'/')
+      base += '/' unless base.end_with? '/'
+      endpart = [relpath].join('/').sub(%r{^/+}, '').gsub(%r{/+}, '/')
       return base + endpart
     end
 
@@ -167,13 +167,13 @@ module ASF
     def self.find(name)
       return @testdata[name] if @testdata[name]
 
-      result = repos[(@mock+name.sub('private/','')).to_s.sub(/\/*$/, '')] ||
-        repos[(@base+name).to_s.sub(/\/*$/, '')] # lose trailing slash
+      result = repos[(@mock + name.sub('private/', '')).to_s.sub(/\/*$/, '')] ||
+        repos[(@base + name).to_s.sub(/\/*$/, '')] # lose trailing slash
 
       # if name is a simple identifier (may contain '-'), try to match name in repository.yml
       if not result and name =~ /^[\w-]+$/
         entry = repo_entry(name)
-        result = find((@base+entry['url']).to_s) if entry
+        result = find((@base + entry['url']).to_s) if entry
       end
 
       # recursively try parent directory
@@ -193,11 +193,11 @@ module ASF
     def self.find!(name)
       result = self.find(name)
 
-      if not result
+      unless result
         entry = repo_entry(name)
         if entry
           raise Exception.new("Unable to find svn checkout for " +
-            "#{@base+entry['url']} (#{name})")
+            "#{@base + entry['url']} (#{name})")
         else
           raise Exception.new("Unable to find svn checkout for #{name}")
         end
@@ -205,7 +205,6 @@ module ASF
 
       result
     end
-
 
     # retrieve info, [err] for a path in svn
     # output looks like:
@@ -292,14 +291,14 @@ module ASF
     # retrieve list, [err] for a path in svn
     def self.list(path, user=nil, password=nil, timestamp=false)
       if timestamp
-        return self.svn(['list','--xml'], path, {user: user, password: password})
+        return self.svn(['list', '--xml'], path, {user: user, password: password})
       else
         return self.svn('list', path, {user: user, password: password})
       end
     end
 
     # These keys are common to svn_ and svn
-    VALID_KEYS=[:user, :password, :verbose, :env, :dryrun, :msg, :depth, :quiet, :item, :revision]
+    VALID_KEYS = %i[user password verbose env dryrun msg depth quiet item revision]
 
     # common routine to build SVN command line
     # returns [cmd, stdin] where stdin is the data for stdin (if any)
@@ -400,7 +399,7 @@ module ASF
     # - nil, err
     # - [cmd] if :dryrun
     # May raise ArgumentError
-    def self.svn(command, path , options = {})
+    def self.svn(command, path, options = {})
       raise ArgumentError.new 'command must not be nil' unless command
       raise ArgumentError.new 'path must not be nil' unless path
 
@@ -466,7 +465,7 @@ module ASF
       auth = options.delete(:auth)
       if auth
         # override any other auth
-        [:env, :user, :password].each do |k|
+        %i[env user password].each do |k|
           options.delete(k)
         end
       end
@@ -479,10 +478,10 @@ module ASF
       end
 
       # This ensures the output is captured in the response
-      _.system ['echo', [cmd,sysopts].inspect] if options[:verbose] # includes auth
+      _.system ['echo', [cmd, sysopts].inspect] if options[:verbose] # includes auth
 
       if options[:dryrun] # excludes auth
-        return _.system cmd.insert(0,'echo')
+        return _.system cmd.insert(0, 'echo')
       end
 
       #  N.B. Version 1.3.3 requires separate hashes for JsonBuilder and BuilderClass,
@@ -530,7 +529,7 @@ module ASF
     # Note: working copies updated out via cron jobs can only be accessed
     # read only by processes that run under the Apache web server.
     def self.updateSimple(path)
-      stdout, _ = self.svn('update',path)
+      stdout, _ = self.svn('update', path)
       revision = 0
       if stdout
         # extract revision number
@@ -603,7 +602,7 @@ module ASF
       Dir.mktmpdir do |tmpdir|
 
         # create an empty checkout
-        self.svn_('checkout', [self.getInfoItem(dir,'url'), tmpdir], _,
+        self.svn_('checkout', [self.getInfoItem(dir, 'url'), tmpdir], _,
           {depth: 'empty', env: env})
 
         # retrieve the file to be updated (may not exist)
@@ -633,7 +632,7 @@ module ASF
         # create/update the temporary copy
         if contents and not contents.empty?
           File.write tmpfile, contents
-          if not previous_contents
+          unless previous_contents
             self.svn_('add', tmpfile, _, {env: env}) # TODO is auth needed here?
           end
         elsif tmpfile and File.file? tmpfile
@@ -680,9 +679,9 @@ module ASF
     # For example:
     #     commands = []
     #     url1 = 'https://svn.../' # etc
-    #     commands << ['mv',url1,url2]
-    #     commands << ['rm',url3]
-    #   ASF::SVN.svnmucc_(commands,message,env,_,revision)
+    #     commands << ['mv', url1, url2]
+    #     commands << ['rm', url3]
+    #   ASF::SVN.svnmucc_(commands, message, env, _, revision)
     def self.svnmucc_(commands, msg, env, _, revision, options={})
 
       raise ArgumentError.new 'commands must be an array' unless commands.is_a? Array
@@ -690,7 +689,7 @@ module ASF
       raise ArgumentError.new 'env must not be nil' unless env
       raise ArgumentError.new '_ must not be nil' unless _
 
-      bad_keys = options.keys - [:dryrun, :verbose, :tmpdir, :root]
+      bad_keys = options.keys - %i[dryrun verbose tmpdir root]
       if bad_keys.size > 0
         raise ArgumentError.new "Following options not recognised: #{bad_keys.inspect}"
       end
@@ -737,10 +736,10 @@ module ASF
           end
         end
         if options[:verbose]
-          _.system 'echo',[syscmd.flatten,sysopts.to_s]
+          _.system 'echo', [syscmd.flatten, sysopts.to_s]
         end
         if options[:dryrun]
-          _.system syscmd.insert(0,'echo')
+          _.system syscmd.insert(0, 'echo')
         else
           if _.instance_of?(Wunderbar::JsonBuilder) or _.instance_of?(Wunderbar::TextBuilder)
             _.system syscmd, sysopts, sysopts # needs two hashes
@@ -833,12 +832,12 @@ module ASF
     #   :verbose - show what will be done
     #   :tmpdir - use this temporary directory (and don't remove it)
     # For example:
-    #   ASF::SVN.multiUpdate_(path,message,env,_) do |text|
+    #   ASF::SVN.multiUpdate_(path, message, env, _) do |text|
     #     out = '...'
     #     extra = []
     #     url1 = 'https://svn.../' # etc
-    #     extra << ['mv',url1,url2]
-    #     extra << ['rm',url3]
+    #     extra << ['mv', url1, url2]
+    #     extra << ['rm', url3]
     #     [out, extra]
     #   end
     def self.multiUpdate_(path, msg, env, _, options = {})
@@ -846,7 +845,7 @@ module ASF
       if File.file? path
         basename = File.basename(path)
         parentdir = File.dirname(path)
-        parenturl = ASF::SVN.getInfoItem(parentdir,'url')
+        parenturl = ASF::SVN.getInfoItem(parentdir, 'url')
       else
         uri = URI.parse(path)
         # allow file: and svn URIs for local testing
@@ -873,8 +872,8 @@ module ASF
 
         # N.B. the revision is required for the svnmucc put to prevent overriding a previous update
         # this is why the file is checked out rather than just extracted
-        filerev = ASF::SVN.getInfoItem(outputfile,'revision',env.user,env.password) # is auth needed here?
-        fileurl = ASF::SVN.getInfoItem(outputfile,'url',env.user,env.password)
+        filerev = ASF::SVN.getInfoItem(outputfile, 'revision', env.user, env.password) # is auth needed here?
+        fileurl = ASF::SVN.getInfoItem(outputfile, 'url', env.user, env.password)
 
         # get the new file contents and any extra svn commands
         contents, extra = yield File.read(outputfile)
@@ -894,7 +893,7 @@ module ASF
         if options[:dryrun]
           puts cmds # TODO: not sure this is correct for Wunderbar
         else
-          rc = ASF::SVN.svnmucc_(cmds,msg,env,_,filerev,{tmpdir: tmpdir, verbose: options[:verbose]})
+          rc = ASF::SVN.svnmucc_(cmds, msg, env, _, filerev, {tmpdir: tmpdir, verbose: options[:verbose]})
           raise "svnmucc failure #{rc} committing" unless rc == 0
           rc
         end
@@ -904,16 +903,16 @@ module ASF
     end
 
     EPOCH_SEP = ':' # separator
-    EPOCH_TAG = 'epoch'+EPOCH_SEP # marker in file to show epochs are present
+    EPOCH_TAG = 'epoch' + EPOCH_SEP # marker in file to show epochs are present
     EPOCH_LEN = EPOCH_TAG.size
     # update directory listing in /srv/svn/<name>.txt
     # N.B. The listing includes the trailing '/' so directory names can be distinguished
     # @return filerev, svnrev
-    # on error return nil,message
+    # on error return nil, message
     def self.updatelisting(name, user=nil, password=nil, storedates=false)
       url = self.svnurl(name)
       unless url
-        return nil,"Cannot find URL"
+        return nil, "Cannot find URL"
       end
       listfile, listfiletmp = self.listingNames(name)
       filerev = "0"
@@ -929,7 +928,7 @@ module ASF
         end
       rescue
       end
-      svnrev, err = self.getInfoItem(url,'last-changed-revision',user,password)
+      svnrev, err = self.getInfoItem(url, 'last-changed-revision', user, password)
       if svnrev
         begin
           unless filerev == svnrev && filedates == storedates
@@ -937,33 +936,33 @@ module ASF
             if storedates
               require 'nokogiri'
               require 'date'
-              open(listfiletmp,'w') do |w|
+              open(listfiletmp, 'w') do |w|
                 w.puts "#{EPOCH_TAG}#{svnrev}" # show that this file has epochs
-                xml_doc  = Nokogiri::XML(list)
+                xml_doc = Nokogiri::XML(list)
                 xml_doc.css('entry').each do |entry|
                   kind = entry.css('@kind').text
                   name = entry.at_css('name').text
                   date = entry.at_css('date').text
                   epoch = DateTime.parse(date).strftime('%s')
                   # The separator is the last character of the epoch tag
-                  w.puts "%s#{EPOCH_SEP}%s%s" % [epoch,name,kind=='dir' ? '/' : '']
+                  w.puts "%s#{EPOCH_SEP}%s%s" % [epoch, name, kind == 'dir' ? '/' : '']
                 end
               end
             else
-              open(listfiletmp,'w') do |w|
+              open(listfiletmp, 'w') do |w|
                 w.puts svnrev
                 w.puts list
               end
             end
-            File.rename(listfiletmp,listfile)
+            File.rename(listfiletmp, listfile)
           end
         rescue Exception => e
-          return nil,e.inspect
+          return nil, e.inspect
         end
       else
-        return nil,err
+        return nil, err
       end
-      return filerev,svnrev
+      return filerev, svnrev
 
     end
 
@@ -988,35 +987,33 @@ module ASF
           filerev = l.gets.chomp # TODO should we be checking filerev?
           if filerev.start_with?(EPOCH_TAG)
             if getEpoch
-              trimEpoch = -> x { x.split(EPOCH_SEP,2) } # return as array
+              trimEpoch = -> x { x.split(EPOCH_SEP, 2) } # return as array
             else
-              trimEpoch = -> x { x.split(EPOCH_SEP,2)[1] } # strip the epoch
+              trimEpoch = -> x { x.split(EPOCH_SEP, 2)[1] } # strip the epoch
             end
           else
             trimEpoch = nil
           end
           if trimSlash
             list = l.readlines.map {|x| x.chomp.chomp('/')}
-            list = list.map(&trimEpoch) if trimEpoch
-            return curtag, list
           else
             list = l.readlines.map(&:chomp)
-            list = list.map(&trimEpoch) if trimEpoch
-            return curtag, list
           end
+          list = list.map(&trimEpoch) if trimEpoch
+          return curtag, list
         end
       end
     end
 
     # Does this host's installation of SVN support --password-from-stdin?
-    def self.passwordStdinOK?()
+    def self.passwordStdinOK?
       return @svnHasPasswordFromStdin unless @svnHasPasswordFromStdin.nil?
-        out, _err, status = Open3.capture3('svn','help','cat', '-v')
-        if status.success? && out
-          @svnHasPasswordFromStdin = out.include? '--password-from-stdin'
-        else
-          @svnHasPasswordFromStdin = false
-        end
+      out, _err, status = Open3.capture3('svn', 'help', 'cat', '-v')
+      if status.success? && out
+        @svnHasPasswordFromStdin = out.include? '--password-from-stdin'
+      else
+        @svnHasPasswordFromStdin = false
+      end
       @svnHasPasswordFromStdin
     end
 
@@ -1028,7 +1025,7 @@ module ASF
       if svn.instance_of? String and svn.end_with? '/*'
         File.dirname(svn)
       else
-        File.join(ASF::Config.root,'svn')
+        File.join(ASF::Config.root, 'svn')
       end
     end
 
@@ -1037,8 +1034,8 @@ module ASF
     # [listing-name, temporary name]
     def self.listingNames(name)
       dir = self.svn_parent
-      return File.join(dir,"%s.txt" % name),
-             File.join(dir,"%s.tmp" % name)
+      return File.join(dir, "%s.txt" % name),
+             File.join(dir, "%s.tmp" % name)
     end
 
     # Get all the SVN entries
