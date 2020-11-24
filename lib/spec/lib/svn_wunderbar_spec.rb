@@ -201,6 +201,7 @@ describe "ASF::SVN.svnmucc_" do
     rc, out = _json do |_|
       ASF::SVN.svnmucc_([['xyz']],'test',ENV_.new,_,nil)
     end
+    puts out if rc.nil? # Try to debug Travis OSX failure
     expect(rc).to eq(1)
   end
   it "svnmucc_([['help']],'test',ENV_.new,_,nil) should produce help message with --message test" do
