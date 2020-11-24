@@ -15,7 +15,7 @@ end
 
 def puts_system(*cmd)
   puts ['$', cmd].join ' '
-  system *cmd
+  system(*cmd)
 end
 
 # Optional extra info (from the main script only)
