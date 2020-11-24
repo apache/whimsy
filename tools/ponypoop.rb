@@ -38,7 +38,7 @@ def analyze_threads(threads)
   if threads['children'].is_a?(Array) then
     max += 1
     threads['children'].each do |thread|
-      m, t = analyze_threads(thread)
+      _m, t = analyze_threads(thread)
       total += t
     end
     p "Hsh: #{threads.class} - #{threads.size} at #{threads['epoch']} #{max}/#{total}"
@@ -66,12 +66,12 @@ def analyze_stats(fname, results, subject_regex, errors)
       results.last[:interesting] = results.last[:email]
       results.last[:threads] = jzon['no_threads']
       subject_regex.each do |t, s|
-        results.last[t] = jzon['emails'].select{ |email| email['subject'] =~ s }.size
+        results.last[t] = jzon['emails'].select { |email| email['subject'] =~ s }.size
         results.last[:interesting] -= results.last[t] if subject_regex.keys.include? t
       end
       # TODO: there's a more rubyish way to combine these loops
-      subject_regex.each do |t, s|
-        jzon['emails'].reject!{ |email| email['subject'] =~ s }
+      subject_regex.each do |_t, s|
+        jzon['emails'].reject! { |email| email['subject'] =~ s }
       end
       jzon['emails'].each do |email|
         subjects << email['subject']
@@ -168,10 +168,10 @@ def optparse
       options[:subdomain] = s.chomp('@.')
     end
 
-    opts.on('-p', '--pull', 'Pull down stats JSON files into -d dir (otherwise, default analyzes existing stats JSON in dir)') do |p|
+    opts.on('-p', '--pull', 'Pull down stats JSON files into -d dir (otherwise, default analyzes existing stats JSON in dir)') do
       options[:pull] = true
     end
-    opts.on('-m', '--mbox', 'Pull down mbox files into -d dir') do |p|
+    opts.on('-m', '--mbox', 'Pull down mbox files into -d dir') do
       options[:mbox] = true
     end
 

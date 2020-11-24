@@ -44,18 +44,18 @@ _html do
       # Create array entry for each category
       scan.each{ |k,v| v[1].each {|l| scan_by[l] << [k,v]}}
       _ul.list_inline do
-        scan_by.sort.each do |cat, l|
+        scan_by.sort.each do |cat, _l|
           _li do
             _a cat.capitalize, href: "##{cat}"
           end
         end
       end
-      scan_by.sort.each do | category, links |
+      scan_by.sort.each do |category, links|
         _ul.list_group do
           _li.list_group_item.active do
             _span category.capitalize, id: category
           end
-          links.sort_by{|k,v| v}.each do |l, desc|
+          links.sort_by{|_k, v| v}.each do |l, desc|
             _li.list_group_item do
               if 2 == desc.length
                 _span.glyphicon :aria_hidden, class: AUTHPUBLIC

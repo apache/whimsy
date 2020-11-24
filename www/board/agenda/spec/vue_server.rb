@@ -60,7 +60,7 @@ class VueServer
       http = Net::HTTP.new('localhost', @@port)
       request = Net::HTTP::Post.new('/', {})
       request.body = "response.end('bye'); process.exit(0)"
-      response = http.request(request)
+      _response = http.request(request)
     rescue Errno::ECONNREFUSED, EOFError
       nil
     ensure
@@ -71,7 +71,7 @@ class VueServer
 
   # the server itself
   @@server = proc do
-    cleanup = require("jsdom-global/register")
+    _cleanup = require("jsdom-global/register")
     delete global.XMLHttpRequest
 
     process.env.VUE_ENV = 'server'
@@ -122,7 +122,7 @@ class VueServer
       return app
     end
 
-    jQuery = require('jquery')
+    _jQuery = require('jquery')
 
     http = require('http')
     server = http.createServer do |request, response|

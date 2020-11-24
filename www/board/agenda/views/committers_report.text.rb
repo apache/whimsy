@@ -10,8 +10,8 @@ minutes = YAML.load_file(minutes_file) rescue {}
 agenda = Agenda.parse(File.basename(agenda_file), :full)
 
 # extract attendance from minutes and people from agenda
-attendance = Array(minutes['attendance']).select {|name, info| info[:present]}.
-  sort_by {|name, info| info[:sortName]}
+attendance = Array(minutes['attendance']).select {|_name, info| info[:present]}.
+  sort_by {|_name, info| info[:sortName]}
 people = agenda[1]['people'].values
 
 # merge role from agenda into attendance
@@ -21,8 +21,8 @@ attendance.each do |name, info|
 end
 
 # group attendance by role (directors, officers, guests)
-@attendance = attendance.group_by {|name, info| info[:role]}.
-  map {|group, list| [group, list.map {|name, info| name}]}.to_h
+@attendance = attendance.group_by {|_name, info| info[:role]}.
+  map {|group, list| [group, list.map {|name, _info| name}]}.to_h
 
 # get a list of missing attachments
 @missing_reports = Array.new

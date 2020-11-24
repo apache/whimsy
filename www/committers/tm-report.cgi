@@ -186,7 +186,7 @@ def emit_form()
 end
 
 # Validation as needed within the script
-def validate_form(formdata: {})
+def validate_form(_formdata: {})
   true # Futureuse
 end
 

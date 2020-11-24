@@ -14,14 +14,13 @@ class ASF::Board::Agenda
     scan @file, pattern do |attr|
       if attr['title'] == 'Roll Call'
         attr['people'] = {}
-        list = nil
 
         absent = attr['text'].scan(/Absent:\n\n.*?\n\n/m).join
         directors = attr['text'].scan(/^ +Directors[ \S]*?:\n\n.*?\n\n/m).join
         officers = attr['text'].scan(/^ +Executive[ \S]*?:\n\n.*?\n\n/m).join
 
         # attempt to identify the people mentioned in the Roll Call
-        people = attr['text'].scan(/^ {8}(\w.*)/).flatten.each do |name|
+        attr['text'].scan(/^ {8}(\w.*)/).flatten.each do |name|
           next if name == 'none'
           # Remove (extraneous [comments in past board minutes
           name.gsub! /(\s*[\[(]|\s+-).*/, ''
@@ -68,7 +67,7 @@ class ASF::Board::Agenda
 
         if attr['people']
           attr['people'] = Hash[attr['people'].
-            sort_by {|id, person| person[:sortName]}]
+            sort_by {|_id, person| person[:sortName]}]
         end
       elsif attr['title'] == 'Call to order'
         attr['timestamp'] = timestamp(attr['text'][/\d+:\d+([ap]m)?/])

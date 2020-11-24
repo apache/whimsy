@@ -159,7 +159,7 @@ _html do
           # collect subscriptions
           response = {}
           ASF::MLIST.subscriptions(user.all_mail, response)
-          subscriptions = response[:subscriptions].group_by {|list, mail| list}
+          subscriptions = response[:subscriptions].group_by {|list, _mail| list}
           subscriptions = subscriptions.map do |list, names|
             list = $1 if list =~ /^(.*?)@apache\.org$/
             list = "#$2-#$1" if list =~ /^(.*?)@(.*?)\.apache\.org$/

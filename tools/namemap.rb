@@ -121,7 +121,7 @@ module NameMap
   # TODO Depends on file format of exported other system accounts
   # @param f filename to read from
   # @return json data
-  def get_other(f)
+  def get_other(_f)
     return TEST_OTHER
   end
 
@@ -239,7 +239,7 @@ module NameMap
     dups = {}
     histogram = Hash.new{|k,v| v = 0}
     cids, cmails = hash_committers(get_committers(io))
-    cids.each do |id, hsh|
+    cids.each do |_id, hsh|
       histogram[hsh[MAIL].length] += 1
     end
     cmails.each do |addr, ary|

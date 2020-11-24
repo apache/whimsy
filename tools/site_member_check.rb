@@ -10,7 +10,7 @@ members=ASF::Member.list.keys
 
 path = ASF::SVN.svnpath!('site-foundation', 'members.mdtext')
 
-rev,contents = ASF::SVN.get(path)
+_rev, contents = ASF::SVN.get(path)
 
 # # Members of The Apache Software Foundation #
 #

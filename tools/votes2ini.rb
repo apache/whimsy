@@ -12,7 +12,7 @@ txt_file = raw_file.sub('.json', '.txt')
 ini_file = File.dirname(raw_file) + '/board_nominations.ini'
 
 votes = ''
-raw_votes['votes'].sort_by {|key, data| data['timestamp']}.each do |key, data|
+raw_votes['votes'].sort_by {|_key, data| data['timestamp']}.each do |key, data|
   time = Time.at(data['timestamp']).gmtime.strftime("%Y/%m/%d %H:%M:%S")
   vote = data['vote'].split(' ').map {|vote| vote[-1]}.join.downcase
   votes += "[#{time}] #{key[0..31]} #{vote}\n"
