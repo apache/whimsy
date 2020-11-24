@@ -5,6 +5,9 @@ require 'spec_helper'
 require 'whimsy/asf'
 require 'wunderbar'
 
+`which svnmucc`
+svnmucc_missing = $?.exitstatus == 0 ? false : "svnmucc not found"
+
 describe "ASF::SVN.svn_!" do
   it "svn_!('info') should return array with Name:" do
     repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
@@ -181,7 +184,7 @@ describe "ASF::SVN.update" do
 
 end
 
-describe "ASF::SVN.svnmucc_" do
+describe "ASF::SVN.svnmucc_", skip: svnmucc_missing do
   it "svnmucc_(nil,nil,nil,nil,nil) should fail" do
     expect { ASF::SVN.svnmucc_(nil,nil,nil,nil,nil) }.to raise_error(ArgumentError, "commands must be an array")
   end
