@@ -111,9 +111,9 @@ end
 #   - REMOVES any error scan entries
 #   - Adds array element of auth realm if login required
 def annotate_scan(scan, auth)
-  annotated = scan.reject{ |k, v| v[0] =~ /\A#{ISERR}/ }
+  annotated = scan.reject{ |_k, v| v[0] =~ /\A#{ISERR}/ }
   annotated.each do |path, ary|
-    realm = auth.select { |k, v| path.match(/\A#{k}/) }
+    realm = auth.select { |k, _v| path.match(/\A#{k}/) }
     if realm.values.first
       ary << AUTHMAP[realm.values.first]
     end
@@ -169,14 +169,14 @@ end
 
 # Scan directory for use of ASF::SVN (private or public)
 # @return { "file" => [['private line', ...], ['public svn', ...], 'WWW-Authenticate code line' (, 'authrealm')] }
-def scan_dir_svn(dir, regexs, auth = get_auth())
+def scan_dir_svn(dir, regexs)
   links = {}
   auth = get_auth()
   Dir["#{dir}/**/*.{cgi,rb}"].sort.each do |f|
     l = scan_file_svn(f, regexs)
     if (l[0].length + l[1].length) > 0
       fbase = f.sub(dir, '')
-      realm = auth.select { |k, v| fbase.sub('/www', '').match(/\A#{k}/) }
+      realm = auth.select { |k, _v| fbase.sub('/www', '').match(/\A#{k}/) }
       if realm.values.first
         l << AUTHMAP[realm.values.first]
       end
