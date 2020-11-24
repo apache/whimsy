@@ -12,7 +12,6 @@ require 'ostruct'
 require 'etc'
 require 'net/http'
 require 'json'
-require 'thread'
 require 'fileutils'
 
 # extract script name
