@@ -109,7 +109,7 @@ class VueServer
       inner = document.createElement('span')
       outer.appendChild(inner);
       app = Vue.new(el: inner, render: proc {|h| return h(component)})
-      inner = outer.firstChild
+      inner = outer.firstChild # appears not to be used, but it is
 
       def app.outerHTML
         return inner.outerHTML
