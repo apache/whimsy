@@ -122,7 +122,7 @@ class VueServer
       return app
     end
 
-    _jQuery = require('jquery')
+    jQuery = require('jquery') # the variable jQuery is needed, even if it appears not
 
     http = require('http')
     server = http.createServer do |request, response|
