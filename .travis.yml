@@ -26,11 +26,15 @@ jobs:
     dist: focal
     gemfile: lib/Gemfile
 
-# add subversion on Linux
+# add subversion on Linux and OSX
 addons:
   apt:
     packages:
     - subversion
+  homebrew:
+    packages:
+    - subversion
+
 
 # install recent Node.js
 before_install:
