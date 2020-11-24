@@ -97,7 +97,7 @@ class VueServer
     def Vue.renderElement(component)
       outer = document.createElement('div')
       inner = document.createElement('span')
-      outer.appendChild(inner);
+      outer.appendChild(inner)
       Vue.new(el: inner, render: proc {|h| return h(component)})
       return outer.firstChild
     end
@@ -107,7 +107,7 @@ class VueServer
     def Vue.renderApp(component)
       outer = document.createElement('div')
       inner = document.createElement('span')
-      outer.appendChild(inner);
+      outer.appendChild(inner)
       app = Vue.new(el: inner, render: proc {|h| return h(component)})
       inner = outer.firstChild # appears not to be used, but it is
 
@@ -141,7 +141,7 @@ class VueServer
         begin
           eval(data)
         rescue => error
-          response.end(error.toString());
+          response.end(error.toString())
         end
       end
     end
