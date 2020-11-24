@@ -89,9 +89,9 @@ end
 
 # Either kill old process, or start a new one
 if options.kill
-  if File.exists? options.pidfile
+  if File.exist? options.pidfile
     Process.kill 'TERM', File.read(options.pidfile).to_i
-    File.delete options.pidfile if File.exists? options.pidfile
+    File.delete options.pidfile if File.exist? options.pidfile
     exit 0
   end
 else
@@ -108,7 +108,7 @@ else
   # PID file management
   if writable
     File.write options.pidfile, Process.pid.to_s
-    at_exit { File.delete options.pidfile if File.exists? options.pidfile }
+    at_exit { File.delete options.pidfile if File.exist? options.pidfile }
   else
     STDERR.puts "EACCES: Skipping creation of pidfile #{options.pidfile}"
   end
