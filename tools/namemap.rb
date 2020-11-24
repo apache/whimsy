@@ -237,7 +237,7 @@ module NameMap
   # @return histogram of how many aliases committers list
   def committer_dups(io)
     dups = {}
-    histogram = Hash.new{|k,v| v = 0}
+    histogram = Hash.new {|k, v| k[v] = 0}
     cids, cmails = hash_committers(get_committers(io))
     cids.each do |_id, hsh|
       histogram[hsh[MAIL].length] += 1
