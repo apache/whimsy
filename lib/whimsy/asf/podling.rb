@@ -396,13 +396,8 @@ module ASF
 
     # Override Proposed Names that are wrong
     NAME_FIXES = {
-      'etch' => 'Etch', # PODLINGNAMESEARCH-6
-      'daffodil' => 'Daffodil', # PODLINGNAMESEARCH-147
-      'heron' => 'Heron', # PODLINGNAMESEARCH-128
-      'kylin' => 'Kylin', # PODLINGNAMESEARCH-86
+      # Proposed name is actually correct for the issue, but the podling uses 'DataLab'
       'Data Lab' => 'DataLab', # PODLINGNAMESEARCH-184
-      'Open Climate Workench' => 'Open Climate Workbench', # PODLINGNAMESEARCH-26
-      'OZONE' => 'Ozone', # PODLINGNAMESEARCH-185
     }
 
     # parse (and cache) names mentioned in podlingnamesearches
@@ -440,8 +435,6 @@ module ASF
           name.sub!(/^Apache\s+/, '')
           name.gsub!(/\s+\(.*?\)/, '')
           # Fix up incorrect 'Proposed Name' entries
-          name = 'Kerby' if name == 'None atm' && issue['key'] == 'PODLINGNAMESEARCH-66'
-          name = 'Curator' if name == 'Onami' && issue['key'] == 'PODLINGNAMESEARCH-28'
           name = NAME_FIXES[name] || name
           name = nil if name =~ /^\s*This/ or name !~ /[A-Za-z]{3}/ or name =~ %r{^N/A}
         end
