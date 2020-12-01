@@ -234,7 +234,11 @@ def check_hash_loc(h,tlp)
     W "Unexpected hash location #{h} for #{tlp}" unless $vercheck[$3][0] == 'maven'
     return $2,$3,$4
   else
-    E "Unexpected hash location #{h} for #{tlp}"
+    if h =~ %r{-bin-}
+      W "Unexpected bin hash location #{h} for #{tlp}"
+    else
+      E "Unexpected hash location #{h} for #{tlp}"
+    end
     nil
   end
 end
@@ -448,7 +452,8 @@ def _checkDownloadPage(path, tlp, version)
 
   links.each do |h,t|
     # Must occur before mirror check below
-    if h =~ %r{^https?://(?:(?:archive\.|www\.)?apache\.org/dist|downloads\.apache\.org|repo\d?\.maven\.org/maven2/.+?)/(.+\.(asc|sha\d+|md5|sha))$}
+    # match all hashes and sigs here (invalid locations are detected later)
+    if h =~ %r{^https?://.+?/([^/]+\.(asc|sha\d+|md5|sha))$}
         base = File.basename($1)
         ext = $2
         stem = base[0..-(2+ext.length)]
