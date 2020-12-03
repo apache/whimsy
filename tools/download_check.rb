@@ -588,7 +588,8 @@ def _checkDownloadPage(path, tlp, version)
         I "Skipping deprecated hash #{h}"
         next
       end
-      if host == 'www' or host == ''
+      if host == 'www' or host == '' or host == 'downloads' or host == 'archive'
+        next unless $ARCHIVE_CHECK or host != 'archive'
         res = check_head(h,:E, "200", false, true) # allow for redirect here
         next unless res
         lastmod = res['last-modified']
@@ -600,6 +601,8 @@ def _checkDownloadPage(path, tlp, version)
         else
           W "Deprecated hash found #{h} #{t} - do not use for current releases #{lastmod}"
         end
+      else
+        E "Unhandled host: #{host} in #{h}"
       end
     elsif h =~ %r{/KEYS$} or t == 'KEYS'
       # already handled
