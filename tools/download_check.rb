@@ -270,6 +270,7 @@ VERIFY_TEXT = [
  'verification instructions',
  ' encouraged to verify ',
  'To check a GPG signature',
+ 'Instructions for verifying your mirrored downloads', # fineract
 ]
 
 ALIASES = {
