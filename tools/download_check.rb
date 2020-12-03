@@ -403,20 +403,24 @@ def _checkDownloadPage(path, tlp, version)
     end
   end
 
-  # check for verify instructions
-  bodytext = body.gsub(/\s+/,' ') # single line
-  if VERIFY_TEXT.any? {|text| bodytext.include? text}
-    I 'Found reference to download verification'
-  else
-    E 'Could not find statement of the need to verify downloads'
-  end
-
+  hasGPGverify = false
   # Check if GPG verify has two parameters
   body.scan(%r{^.+gpg --verify.+$}){|m|
+    hasGPGverify = true
     unless m =~ %r{gpg --verify\s+\S+\.asc\s+\S+}
       W "gpg verify should specify second param: #{m.strip} see:\nhttps://www.apache.org/info/verification.html#specify_both"
     end
   }
+
+  # check for verify instructions
+  bodytext = body.gsub(/\s+/,' ') # single line
+  if VERIFY_TEXT.any? {|text| bodytext.include? text}
+    I 'Found reference to download verification'
+  elsif hasGPGverify
+    W 'Found reference to GPG verify; assuming this is part of download verification statement'
+  else
+    E 'Could not find statement of the need to verify downloads'
+  end
 
   # check if page refers to md5sum
   body.scan(%r{^.+md5sum.+$}){|m|
