@@ -440,12 +440,14 @@ def _checkDownloadPage(path, tlp, version)
             W "Already seen link for #{base}"
         else
             ext = $2 # save for use after RE match
-            if base[0..-(ext.size+2)] =~ %r{^(.+?)(\d.+)$}
-              $versions[$2][$1.chomp('-')] << ext
-            else
-              W "Cannot parse #{base} for version"
-            end
             $vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : (h =~ %r{https?://repo\d?\.maven\.org/} ? 'maven' : 'live')]
+            unless $vercheck[base].first == 'archive'
+              if base[0..-(ext.size+2)] =~ %r{^(.+?)-(\d.+)$}
+                $versions[$2][$1] << ext
+              else
+                W "Cannot parse #{base} for version"
+              end
+            end
         end
         # Text must include a '.' (So we don't check 'Source')
         if t.include?('.') and not base == File.basename(t.strip.downcase)
