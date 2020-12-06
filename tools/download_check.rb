@@ -32,10 +32,13 @@ $ALLOW_HTTP = false # http links generate Warning, not Error
 $VERSION = nil
 
 # Check archives have hash and sig
-$vercheck = Hash.new() # key = archive name, value = array of type, hash/sig
+$vercheck = Hash.new() # key = archive name, value = array of [type, hash/sig...]
+# collect versions for summary display
+$versions = Hash.new {|h1,k1| h1[k1]=Hash.new {|h2,k2| h2[k2]=Array.new} } # key = version, value = Hash, key = arch basename, value = array of [extensions]
 
 # match an artifact
 # TODO detect artifacts by URL as well if possible
+# $1 = base, $2 = extension
 ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|deb|nbm|zip|tgz|tar\.bz2|jar|war|msi|exe|rar|rpm|nar|xml))(&action=download)?$}
 
 def init
@@ -436,6 +439,12 @@ def _checkDownloadPage(path, tlp, version)
         if $vercheck[base]  # might be two links to same archive
             W "Already seen link for #{base}"
         else
+            ext = $2 # save for use after RE match
+            if base[0..-(ext.size+2)] =~ %r{^(.+?)(\d.+)$}
+              $versions[$2][$1.chomp('-')] << ext
+            else
+              W "Cannot parse #{base} for version"
+            end
             $vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : (h =~ %r{https?://repo\d?\.maven\.org/} ? 'maven' : 'live')]
         end
         # Text must include a '.' (So we don't check 'Source')
@@ -695,6 +704,16 @@ if __FILE__ == $0
     puts "NAK: #{url} had #{@fails} errors"
   else
     puts "OK: #{url} passed all the tests"
+  end
+  puts ""
+
+  # Only show in CLI version for now
+  puts "Version summary"
+  $versions.sort.each do |k,v|
+    puts k
+      v.sort.each do |l,w|
+        puts "  #{l} #{w}"
+      end
   end
   puts ""
 end
