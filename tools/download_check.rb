@@ -469,7 +469,7 @@ def _checkDownloadPage(path, tlp, version)
   links.each do |h,t|
     # Must occur before mirror check below
     # match all hashes and sigs here (invalid locations are detected later)
-    if h =~ %r{^https?://.+?/([^/]+\.(asc|sha\d+|md5|sha))$}
+    if h =~ %r{^https?://.+?/([^/]+\.(asc|sha\d+|md5|sha|mds))$}
         base = File.basename($1)
         ext = $2
         stem = base[0..-(2+ext.length)]
@@ -484,6 +484,7 @@ def _checkDownloadPage(path, tlp, version)
         next if ext == tmp # i.e. link is just the type or [TYPE]
         next if ext == 'sha' and tmp == 'sha1' # historic
         next if (ext == 'sha256' or ext == 'sha512') and (t == 'SHA' or t == 'digest') # generic
+        next if ext == 'mds' and tmp == 'hashes'
         if not base == t and not t == 'checksum'
             E "Mismatch: #{h} and '#{t}'"
         end
@@ -495,7 +496,7 @@ def _checkDownloadPage(path, tlp, version)
   $vercheck.each do |k,w|
     v = w.dup
     typ = v.shift
-    unless v.include? "asc" and v.any? {|e| e =~ /^sha\d+$/ or e == 'md5' or e == 'sha'}
+    unless v.include? "asc" and v.any? {|e| e =~ /^sha\d+$/ or e == 'md5' or e == 'sha' or e == 'mds'}
       if typ == 'live' || typ == 'maven'
         E "#{k} missing sig/hash: (found only: #{v.inspect})"
       elsif typ == 'archive'
@@ -504,6 +505,7 @@ def _checkDownloadPage(path, tlp, version)
         E "#{k} missing sig/hash: (found only: #{v.inspect}) TYPE=#{typ}"
       end
     end
+    W "#{k} Prefer SHA* over MDS #{v.inspect}" if typ == 'live' && v.include?('mds') && v.none? {|e| e =~ /^sha\d+$/}
   end
 
   if @fails > 0 and not $ALWAYS_CHECK_LINKS
