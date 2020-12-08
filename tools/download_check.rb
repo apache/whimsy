@@ -387,7 +387,7 @@ def _checkDownloadPage(path, tlp, version)
     end
     check_head(keyurl,:E, "200", false, true)
   else
-    keys = links.select{|_h, v| v.strip == 'KEYS' || v == 'KEYS file' || v == '[KEYS]'}
+    keys = links.select{|h, v| h.end_with? 'KEYS' || v.strip == 'KEYS' || v == 'KEYS file' || v == '[KEYS]'}
     if keys.size >= 1
       I 'Found KEYS link'
       keyurl = keys.first.first
