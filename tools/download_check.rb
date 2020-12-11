@@ -232,7 +232,7 @@ def check_hash_loc(h,tlp)
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
 #   https://repo1.maven.org/maven2/org/apache/shiro/shiro-spring/1.1.0/shiro-spring-1.1.0.jar.asc
-  elsif h =~ %r{^(https?)://repo1?\.(maven)\.org/maven2/org/apache/#{tlp}/.+/([^/]+\.(?:jar|xml))\.(\w{3,6})$} # Maven
+  elsif h =~ %r{^(https?)://repo1?\.(maven)(?:\.apache)?\.org/maven2/org/apache/#{tlp}/.+/([^/]+\.(?:jar|xml))\.(\w{3,6})$} # Maven
     WE "HTTPS! #{h}" unless $1 == 'https'
     W "Unexpected hash location #{h} for #{tlp}" unless $vercheck[$3][0] == 'maven'
     return $2,$3,$4
@@ -441,7 +441,7 @@ def _checkDownloadPage(path, tlp, version)
             W "Already seen link for #{base}"
         else
             ext = $2 # save for use after RE match
-            $vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : (h =~ %r{https?://repo\d?\.maven\.org/} ? 'maven' : 'live')]
+            $vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : (h =~ %r{https?://repo\d?\.maven(\.apache)?\.org/} ? 'maven' : 'live')]
             unless $vercheck[base].first == 'archive'
               # version must include '.'
               if base[0..-(ext.size+2)] =~ %r{^(.+?)-(\d+\..+)$}
