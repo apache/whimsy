@@ -443,7 +443,8 @@ def _checkDownloadPage(path, tlp, version)
             ext = $2 # save for use after RE match
             $vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : (h =~ %r{https?://repo\d?\.maven\.org/} ? 'maven' : 'live')]
             unless $vercheck[base].first == 'archive'
-              if base[0..-(ext.size+2)] =~ %r{^(.+?)-(\d.+)$}
+              # version must include '.'
+              if base[0..-(ext.size+2)] =~ %r{^(.+?)-(\d+\..+)$}
                 $versions[$2][$1] << ext
               else
                 W "Cannot parse #{base} for version"
