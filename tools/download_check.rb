@@ -603,7 +603,7 @@ def _checkDownloadPage(path, tlp, version)
         I "Skipping deprecated hash #{h}"
         next
       end
-      if host == 'www' or host == '' or host == 'downloads' or host == 'archive'
+      if host == 'www' or host == '' or host == 'downloads' or host == 'archive' or host == 'maven'
         next unless $ARCHIVE_CHECK or host != 'archive'
         res = check_head(h,:E, "200", false, true) # allow for redirect here
         next unless res
