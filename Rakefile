@@ -312,10 +312,6 @@ namespace :git do
             puts "Skipping git:pull of #{name} because no details were found"
             next
           end
-          if name == 'letsencrypt' and not `which certbot`.empty?
-            puts "Skipping git:pull of #{name} because certbot is installed"
-            next
-          end
           branch = description['branch']
 
           puts
