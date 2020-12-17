@@ -320,7 +320,7 @@ module ASF
       #         remove from COMMITTEE MEMBERSHIP AND CHANGE PROCESS          #
       ########################################################################
 
-      contents.sub! %r{^\* #{pmc}  \(est.*?\n\n+}m, ''
+      contents.sub! %r{^\* #{pmc}  ?\(est.*?\n\n+}m, ''
 
       contents
     end
