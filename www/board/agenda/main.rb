@@ -23,6 +23,7 @@ require 'mail'
 require 'open-uri'
 require 'erubis'
 require 'tzinfo'
+require 'active_support'
 require 'active_support/time'
 require 'mustache'
 
