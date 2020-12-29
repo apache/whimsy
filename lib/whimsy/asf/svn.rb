@@ -911,12 +911,12 @@ module ASF
     # N.B. The listing includes the trailing '/' so directory names can be distinguished
     # @return filerev, svnrev
     # on error return nil, message
-    def self.updatelisting(name, user=nil, password=nil, storedates=false)
+    def self.updatelisting(name, user=nil, password=nil, storedates=false, dir = nil)
       url = self.svnurl(name)
       unless url
         return nil, "Cannot find URL"
       end
-      listfile, listfiletmp = self.listingNames(name)
+      listfile, listfiletmp = self.listingNames(name, dir)
       filerev = "0"
       svnrev = "?"
       filedates = false
@@ -978,8 +978,8 @@ module ASF
     # or tag, nil if unchanged
     # or Exception if error
     # The tag should be regarded as opaque
-    def self.getlisting(name, tag=nil, trimSlash = true, getEpoch = false)
-      listfile, _ = self.listingNames(name)
+    def self.getlisting(name, tag=nil, trimSlash = true, getEpoch = false, dir = nil)
+      listfile, _ = self.listingNames(name, dir)
       curtag = "%s:%s:%d" % [trimSlash, getEpoch, File.mtime(listfile)]
       if curtag == tag
         return curtag, nil
@@ -1034,8 +1034,12 @@ module ASF
     # get listing names for updating and returning SVN directory listings
     # Returns:
     # [listing-name, temporary name]
-    def self.listingNames(name)
-      dir = self.svn_parent
+    def self.listingNames(name, dir = nil)
+      if dir
+        throw IOError.new("Invalid directory #{dir}") unless Dir.exist? dir
+      else
+        dir = self.svn_parent
+      end
       return File.join(dir, "%s.txt" % name),
              File.join(dir, "%s.tmp" % name)
     end
