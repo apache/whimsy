@@ -117,6 +117,7 @@ get '/committer2/' do
   # Restrict who can see this
   pass unless @auth[:member] or @auth[:pmc_chair]
   @notinavail = true
+  @iclapath = ASF::SVN.svnpath!('iclas') # needed if notinavail is true
   _html :committers
 end
 
@@ -209,6 +210,7 @@ get '/icla/' do
   @auth = Auth.info(env)
   # Restrict who can see this
   pass unless @auth[:member] or @auth[:pmc_chair]
+  @iclapath = ASF::SVN.svnpath!('iclas')
   _html :iclas
 end
 

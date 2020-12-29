@@ -25,7 +25,7 @@ _html do
     _.render '#main' do
       _CommitterSearch notinavail: @notinavail,
                        # This ends with '/'
-                       iclapath: `ASF::SVN.svnpath!('iclas').inspect`
+                       iclapath: @iclapath
     end
   end
 end
