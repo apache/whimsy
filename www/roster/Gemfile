@@ -15,7 +15,8 @@ end
 gem 'rake'
 wunderbar_version = File.read(File.expand_path("#{root}/wunderbar.version", __FILE__)).chomp
 gem 'wunderbar', wunderbar_version
-gem 'ruby2js', '>=3.3.1'
+ruby2js_version = File.read(File.expand_path("#{root}/ruby2js.version", __FILE__)).chomp
+gem 'ruby2js', ruby2js_version
 gem 'sinatra', '~> 2.0'
 gem 'nokogumbo'
 gem 'mail'
