@@ -142,11 +142,13 @@ _html do
         _hr
         _p do
           _a 'Search pending ICLAs', href: 'icla/'
-          _span.glyphicon.glyphicon_lock :aria_hidden, class: "text-primary", aria_label: "ASF Members and Officers"
+          _span.glyphicon.glyphicon_lock :aria_hidden, class: "text-primary", aria_label: "ASF Members and Officers",
+                                                                                   title: "ASF Members and Officers"
         end
         _p do
           _a 'Organization Chart ', href: 'orgchart/'
-          _span.glyphicon.glyphicon_lock :aria_hidden, class: "text-primary", aria_label: "ASF Members and Officers"
+          _span.glyphicon.glyphicon_lock :aria_hidden, class: "text-primary", aria_label: "ASF Members and Officers",
+                                                                                   title: "ASF Members and Officers"
         end
       end
     end
