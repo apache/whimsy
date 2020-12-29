@@ -24,10 +24,13 @@ class Committer
 
     name = {}
 
+    auth = Auth.info(env)
+    isSelfOrMember = (id == env.user or auth[:member])
+
     if person.icla
       name[:public_name] = person.public_name
 
-      if id == env.user or ASF::Person.find(env.user).asf_member?
+      if isSelfOrMember
         name[:legal_name] = person.icla.legal_name
       end
     end
@@ -126,9 +129,9 @@ class Committer
 
     response[:forms] = {}
 
-    if ASF::Person.find(env.user).asf_member? # i.e. member karma
+    if auth[:member] # i.e. member karma
 
-      if person.icla and person.icla.claRef # Not all people have iclas
+      if person.icla and person.icla.claRef # Not all people have iclas (only check if secretary role)
         file = ASF::ICLAFiles.match_claRef(person.icla.claRef)
         if file
           url =ASF::SVN.svnurl('iclas')
@@ -184,14 +187,13 @@ class Committer
 
     response[:member] = member unless member.empty?
 
-    if ASF::Person.find(env.user).asf_member? or env.user == id
+    if isSelfOrMember
       response[:moderates] = {}
 
       require 'whimsy/asf/mlist'
       ASF::MLIST.moderates(person.all_mail, response)
     end
 
-    auth = Auth.info(env)
     if env.user == id or auth[:root] or auth[:secretary]
       require 'whimsy/asf/mlist'
       ASF::MLIST.subscriptions(person.all_mail, response) # updates response[:subscriptions]
