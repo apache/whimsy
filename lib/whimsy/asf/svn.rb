@@ -914,7 +914,7 @@ module ASF
     def self.updatelisting(name, user=nil, password=nil, storedates=false, dir = nil)
       url = self.svnurl(name)
       unless url
-        return nil, "Cannot find URL"
+        return nil, "Cannot find URL for '#{name}'"
       end
       listfile, listfiletmp = self.listingNames(name, dir)
       filerev = "0"
