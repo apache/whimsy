@@ -68,7 +68,6 @@ class IclaSearch < Vue
         _p 'loading...'
 
       else
-        search = @search.downcase().split(' ')
         list = @list
 
         if list.length == 0
