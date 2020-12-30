@@ -131,8 +131,8 @@ class Committer
 
     if auth[:member] # i.e. member karma
 
-      if person.icla and person.icla.claRef # Not all people have iclas (only check if secretary role)
-        file = ASF::ICLAFiles.match_claRef(person.icla.claRef)
+      if person.icla and person.icla.claRef and auth[:secretary] # Not all people have iclas (only check if secretary role)
+        file = ASF::ICLAFiles.match_claRef(person.icla.claRef)  # must be secretary
         if file
           url =ASF::SVN.svnurl('iclas')
           response[:forms][:icla] = "#{url}/#{file}"

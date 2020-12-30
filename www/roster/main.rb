@@ -146,8 +146,12 @@ get '/committer2/index.json' do
 
     ASF::ICLA.each {|icla|
       if icla.noId?
-        iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef)
-        tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
+        if auth[:secretary]
+          iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef) # must be secretary
+          tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
+        else
+          tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef}
+        end
       end
     }
     index2 = tmp.to_json
@@ -230,8 +234,12 @@ get '/icla/index.json' do
     tmp = []
     ASF::ICLA.each {|icla|
       if icla.noId?
-        iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef)
-        tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
+        if auth[:secretary]
+          iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef) # must be secretary
+          tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
+        else
+          tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef}
+        end
       end
     }
     icla_index = tmp.to_json
