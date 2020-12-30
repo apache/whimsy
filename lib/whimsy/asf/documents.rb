@@ -98,7 +98,7 @@ module ASF
       age = (Time.now - begin File.mtime(file) rescue 0 end).to_i
       if age > 600 # 5 minutes
         Wunderbar.warn "Updating listing #{file} #{age}"
-        filerev, svnrev = ASF::SVN.updatelisting(iclas, nil, nil, false, cache_dir)
+        filerev, svnrev = ASF::SVN.updatelisting(iclas, env.user, env.password, false, cache_dir)
         if filerev && svnrev # it worked
           FileUtils.touch file # last time it was checked
         end
