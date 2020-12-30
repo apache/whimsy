@@ -39,6 +39,7 @@ module ASF
   end
 
   # Common class for access to documents/iclas/ directory
+  # Only intended for use by secretary team
   class ICLAFiles
     @@tag = nil # probably worth caching iclas
     @@list = nil # this list includes trailing '/' so can detect directories correctly
@@ -90,7 +91,19 @@ module ASF
     # This returns the list of names in the top-level directory
     # directory names are terminated by '/'
     def self.listnames
-      @@tag, list = ASF::SVN.getlisting('iclas', @@tag, false)
+      iclas = 'iclas'
+      cache_dir = ASF::Config.get(:cache)
+      # iclas.txt no longer updated by cronjob
+      file, _ = ASF::SVN.listingNames(iclas, cache_dir)
+      age = (Time.now - begin File.mtime(file) rescue 0 end).to_i
+      if age > 600 # 5 minutes
+        Wunderbar.warn "Updating listing #{file} #{age}"
+        filerev, svnrev = ASF::SVN.updatelisting(iclas, nil, nil, false, cache_dir)
+        if filerev && svnrev # it worked
+          FileUtils.touch file # last time it was checked
+        end
+      end
+      @@tag, list = ASF::SVN.getlisting(iclas, @@tag, false, false, cache_dir)
       if list # we have a new list
         # update the list cache
         @@list = list

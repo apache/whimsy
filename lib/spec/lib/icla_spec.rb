@@ -4,14 +4,19 @@
 require 'spec_helper'
 require 'whimsy/asf'
 
-set_svnroot # need access to listing file
-
 # Test data:
 # ab/        abc.pdf     abcd/    abcde/
 # N.B. does not make sense for top-level directory to contain more than 1 entry with same stem;
 # in such cases the files are moved to a subdirectory
 
 describe ASF::ICLAFiles do
+  original = nil
+  before(:all) do
+    original = set_cache # need access to listing file
+  end
+  after(:all) do
+    set_cache(original)
+  end
   describe "ASF::ICLAFiles.listnames" do
     it "should return 4 files" do
       res = ASF::ICLAFiles.listnames

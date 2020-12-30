@@ -21,6 +21,19 @@ def set_svnroot # ensure can access svn directory listing files
   ASF::Config.setsvnroot File.expand_path("../test/svn/*", __dir__)
 end
 
+def set_cache(restore=nil) # ensure can access test version of iclas.txt
+  config = ASF::Config.instance_variable_get(:@config)
+  original = config[:cache]
+  if restore
+    config[:cache] = restore
+  else
+    source = File.expand_path("../test/svn/", __dir__)
+    FileUtils.touch File.join(source,'iclas.txt') # ensure it is marked as up-to-date
+    config[:cache] = source
+  end
+  return original
+end
+
 def set_svn(name)
   ASF::SVN[name] = File.expand_path("../test/svn/#{name}", __dir__)
 end
