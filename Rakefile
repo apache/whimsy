@@ -214,10 +214,10 @@ namespace :svn do
                     svncmd += files
                   end
                   puts "#{PREFIX} #{svncmd.join(' ')}"
-                  pid = Process.spawn(*svncmd, out: w, err: [:child, :out])
+                  _pid = Process.spawn(*svncmd, out: w, err: [:child, :out])
                   w.close
 
-                  pid, status = Process.wait2
+                  _pid, status = Process.wait2
                   outerr = r.read
                   r.close
 
