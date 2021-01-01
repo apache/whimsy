@@ -236,8 +236,8 @@ namespace :svn do
           else # directory does not exist
             # Don't bother locking here -- it should be very rarely needed
             system('svn', 'checkout', "--depth=#{depth}", svnpath, name)
-             if files
-               system('svn', 'update', *files, {chdir: name})
+              if files
+                system('svn', 'update', *files, {chdir: name})
               end
           end
           # check that explicitly required files exist
