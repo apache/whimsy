@@ -59,12 +59,14 @@ task :update, [:command] do |task, args|
 
     # Also need to define version for wunderbar as per the asf.gemspec file
     wunderbar_version = File.read(File.expand_path('wunderbar.version', __dir__)).chomp
+    ruby2js_version = File.read(File.expand_path('ruby2js.version', __dir__)).chomp
     require 'tmpdir'
     Dir.mktmpdir do |dir|
       Dir.chdir dir do
         contents = [
           "source 'https://rubygems.org'",
           "wunderbar_version = '#{wunderbar_version}'",
+          "ruby2js_version = '#{ruby2js_version}'",
           gems.values
         ].join("\n")
         File.write "Gemfile", contents
