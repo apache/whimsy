@@ -452,9 +452,11 @@ def _checkDownloadPage(path, tlp, version)
                 ver = $2
                 # does version have a suffix which is really part of the name?
                 if ver =~ %r{^(\d+(?:\.\d+)+)(-.+)$}
-                  if %w(-bin -src).include? $2
-                    ver = $1
-                    pfx = pfx + $2
+                  ver1 = $1 # save result
+                  ver2 = $2
+                  if %w(-bin -src).include? $2 or $2 =~ %r{^-bin-} # allow for -bin-scala...
+                    ver = ver1
+                    pfx = pfx + ver2
                   end
                 end
                 $versions[ver][pfx] << ext
