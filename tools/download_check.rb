@@ -466,9 +466,9 @@ def _checkDownloadPage(path, tlp, version)
             end
         end
         # Text must include a '.' (So we don't check 'Source')
-        if t.include?('.') and not base == File.basename(t.strip.downcase)
+        if t.include?('.') and not base == File.basename(t.sub(/[Mm]irrors? for /, '').strip)
           # text might be short version of link
-          tmp = t.strip.sub(%r{.*/},'').downcase #
+          tmp = t.strip.sub(%r{.*/},'') #
           if base == tmp
             W "Mismatch?: #{h} and '#{t}'"
           elsif base.end_with? tmp
