@@ -121,7 +121,7 @@ class PPMC < Vue
         _ 'Mailing list info'
         _small ' (subscriber count excludes known archivers)'
       end
-      _table do
+      _table.table do
         _thead do
           _tr do
             _th 'list name'
