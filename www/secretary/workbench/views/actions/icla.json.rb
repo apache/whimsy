@@ -10,7 +10,7 @@
 # extract message
 message = Mailbox.find(@message)
 
-_warn "Invalid From address #{@from}" unless @from =~ /\A("?[\s\w]+"?\s+<)?\w+@apache\.org>?\z/
+_warn "Invalid From address '#{@from}'" unless @from =~ /\A("?[\s\w]+"?\s+<)?\w+@apache\.org>?\z/
 
 # extract file extension
 fileext = File.extname(@selected).downcase
