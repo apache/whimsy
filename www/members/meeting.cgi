@@ -17,7 +17,6 @@ def ics2dtstart(f)
     tmp = IO.readlines(f).find{ |i| i =~ /DTSTART:/ }.split(':')[1].strip
     return DateTime.parse(tmp)
   rescue StandardError => e
-    puts "ics2dtstart #{e}"
     return DateTime.new(1970,1,1) # An obvious error value 8-)
   end
 end
