@@ -10,8 +10,6 @@
 # extract message
 message = Mailbox.find(@message)
 
-_warn "Invalid From address '#{@from}'" unless @from =~ /\A("?[\s\w]+"?\s+<)?\w+@apache\.org>?\z/
-
 # extract file extension
 fileext = File.extname(@selected).downcase
 
@@ -128,6 +126,10 @@ task "email #@email" do
   # Process podling after PMC otherwise podling applicants are directed to IPMC
   @cttee = "Apache #{@podling.display_name} podling" if @podling
   # build mail from template
+
+  # N.B. it appears that @from is not defined outside the task block
+  _warn "Invalid From address '#{@from}'" unless @from =~ /\A("?[\s\w]+"?\s+<)?[-\w]+@apache\.org>?\z/
+
   mail = message.reply(
     subject: @document,
     from: @from,
