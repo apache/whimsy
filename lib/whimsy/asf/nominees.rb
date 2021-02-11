@@ -20,7 +20,11 @@ module ASF
 
       nominees = {}
       nominations.each do |nomination|
-        id = nomination[/^\s?\w+.*<(\S+)@apache.org>/, 1]
+
+        # leading space is swallowed by the split; match against
+        # <NOMINATED PERSON'S APACHE ID> <PUBLIC NAME>
+        id = nomination[/\A(\S+)/, 1]
+        id ||= nomination[/^\s?\w+.*<(\S+)@apache.org>/, 1]
         id ||= nomination[/^\s?\w+.*\((\S+)@apache.org\)/, 1]
         id ||= nomination[/^\s?\w+.*\(([a-z]+)\)/, 1]
 
