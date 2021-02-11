@@ -104,7 +104,8 @@ module ASF
         if filerev && svnrev # it worked
           FileUtils.touch file # last time it was checked
         else
-          raise IOError.new("Failed to fetch iclas.txt: #{svnrev}")
+          # raise IOError.new("Failed to fetch iclas.txt: #{svnrev}")
+          Wunderbar.warn("User #{env.user}: failed to fetch iclas.txt: #{svnrev}")
         end
       end
       @@tag, list = ASF::SVN.getlisting(iclas, @@tag, false, false, cache_dir)
