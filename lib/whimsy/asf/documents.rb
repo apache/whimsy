@@ -103,6 +103,8 @@ module ASF
         filerev, svnrev = ASF::SVN.updatelisting(iclas, env.user, env.password, false, cache_dir)
         if filerev && svnrev # it worked
           FileUtils.touch file # last time it was checked
+        else
+          raise IOError.new("Failed to fetch iclas.txt: #{svnrev}")
         end
       end
       @@tag, list = ASF::SVN.getlisting(iclas, @@tag, false, false, cache_dir)
