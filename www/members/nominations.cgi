@@ -37,7 +37,9 @@ def setup_data(cur_mtg_dir)
   end
 
   # parse nominations for names and ids
+  # TODO: share code with nominees.rb if possible
   nominations = IO.read(File.join(cur_mtg_dir, 'nominated-members.txt')).
+    encode("utf-8", "utf-8", :invalid => :replace).
     scan(/^---+--\s+(?:[a-z_0-9-]+)\s+(.*?):?\n/).flatten
 
   nominations.shift if nominations.first == '<empty line>'
