@@ -15,7 +15,8 @@ module ASF
       meetings = ASF::SVN['Meetings']
       nominations = Dir[File.join(meetings, '*', 'nominated-members.txt')].max
 
-      nominations = File.read(nominations).split(/^\s*---+--\s*/)
+      # ensure non-UTF-8 chars don't cause a crash
+      nominations = File.read(nominations).encode("utf-8", "utf-8", :invalid => :replace).split(/^\s*---+--\s*/)
       nominations.shift(2)
 
       nominees = {}
