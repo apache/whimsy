@@ -4,6 +4,7 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'wunderbar'
 require 'whimsy/asf'
+require 'whimsy/asf/nominated-members'
 require 'nokogiri'
 require 'date'
 require 'wunderbar/bootstrap'
@@ -34,11 +35,7 @@ _html do
     meeting =
       File.dirname(Dir[File.join(meetings, '*', 'nominated-members.txt')].max)
 
-    txt = File.read(File.join(meeting, 'nominated-members.txt'))
-    nominations = txt.scan(/^---+\n\s*\w+.*<(\S+)@apache.org>/).flatten
-    nominations += txt.scan(/^---+\n\s*\w+.*\(([a-z]+)\)/).flatten
-    nominations += txt.scan(/^---+\n+\s*([a-z]+)\s/).flatten
-    nominations += txt.scan(/^---+\n\s*\w+.*\(([a-z]+)@apache\.org\)/).flatten
+    nominations = ASF::MemberFiles.member_nominees.map {|k,v| k}
 
     # determine which list to report on, based on the URI
     request = ENV['REQUEST_URI']
@@ -284,6 +281,8 @@ _html do
                 _td do
                   _a date, href: minutes
                 end
+              else
+                _td '-'
               end
             end
           end
