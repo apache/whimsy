@@ -30,7 +30,7 @@ Wunderbar.info "Starting #{__FILE__}"
 
 # destination directory
 SITE_MINUTES = ASF::Config.get(:board_minutes) ||
-  File.expand_path('../../www/board/minutes', __FILE__)
+  File.expand_path(File.join('..', '..', 'www', 'board', 'minutes'), __FILE__)
 
 # list of SVN resources needed
 SVN_SITE_RECORDS_MINUTES = ASF::SVN['minutes']
@@ -256,7 +256,7 @@ end
 agenda = {}
 
 posted = Dir[MINUTES_PATH].sort
-unapproved = Dir["#{BOARD}/#{MINUTES_NAME}"].sort
+unapproved = Dir[File.join(BOARD, MINUTES_NAME)].sort
 
 FileUtils.mkdir_p SITE_MINUTES
 
@@ -868,7 +868,7 @@ agenda.sort.each do |title, reports|
     end
   end
 
-  dest = "#{SITE_MINUTES}/#{link[title]}"
+  dest = File.join(SITE_MINUTES, link[title])
   unless File.exist?(dest) and remove_date(File.read(dest)) == remove_date(page)
     Wunderbar.info  "Writing #{link[title]}"
     open(dest, 'w') {|file| file.write page}

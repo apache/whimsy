@@ -102,7 +102,7 @@ _html do
         _tbody do
           Dir.chdir(HISTORY) do
             Dir['*'].sort.reverse.each do |invoice|
-              form = YAML.load_file("#{HISTORY}/#{invoice}")
+              form = YAML.load_file(File.join(HISTORY, invoice))
               if form
                 _tr_ do
                   _td {_a invoice, href: invoice}
@@ -473,7 +473,7 @@ _html do
       end
 
       if @invoice_number =~ /\A\d+\z/
-        File.open("#{HISTORY}/#{@invoice_number}", 'w') do |file|
+        File.open(File.join(HISTORY, @invoice_number), 'w') do |file|
           file.write params.to_yaml
         end
       else

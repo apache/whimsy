@@ -18,7 +18,7 @@ parents = {
 }
 
 source = '/srv/whimsy/www/board/minutes'
-index = File.read("#{source}/index.html")
+index = File.read(File.join(source, "index.html"))
 
 csection = index[/<h2 id="committee">.*?<h2/m]
 creports = csection.scan(/<a .*?<\/a>/)
@@ -87,7 +87,7 @@ _html do
               name = committee[/>(.*?)</, 1]
               href = committee[/href="(.*?)"/, 1]
               href = 'Polygene.html' if href == 'Zest.html'
-              page = File.read("#{source}/#{href}").
+              page = File.read(File.join(source, href)).
                 sub(/<footer.*<\/footer>/m, '')
 
               next if name == 'Zest' # renamed to Polygene

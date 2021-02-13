@@ -14,6 +14,8 @@ require 'mail'
 # link to board private-arch
 THREAD = 'https://lists.apache.org/thread.html/'
 REPORT = '[REPORT]'
+MAIL_ROOT = '/srv/mail' # TODO: => Config item
+MAIL_BOARD = File.join(MAIL_ROOT, 'board')
 
 # Get a list of emails on board@ that appear to be [REPORT]*
 # only look at this month's and last month's mailboxes, and within those
@@ -24,7 +26,7 @@ def get_report_mails
   cuttoff = Date.parse(previous + Date.today.strftime('%d')).to_time
 
   # get a list of current board messages
-  archive = Dir["/srv/mail/board/#{previous}/*", "/srv/mail/board/#{current}/*"]
+  archive = Dir[File.join(MAIL_BOARD, previous, '*'), File.join(MAIL_BOARD, current, '*')]
 
   # select messages that have a subject line starting with [REPORT]
   reports = []
