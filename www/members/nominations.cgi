@@ -6,6 +6,7 @@ require 'erb'
 require 'mail'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
+require 'whimsy/asf/nominated-members'
 require_relative 'meeting-util'
 
 # link to members private-arch
@@ -16,7 +17,7 @@ ROSTER = '/roster/committer'
 MEETINGS = ASF::SVN['Meetings']
 
 # Encapsulate gathering data to improve error processing
-def setup_data(cur_mtg_dir)
+def setup_data
   # get a list of current year's members@ emails
   year = Time.new.year.to_s
   archive = Dir["/srv/mail/members/#{year}*/*"]
@@ -37,16 +38,8 @@ def setup_data(cur_mtg_dir)
   end
 
   # parse nominations for names and ids
-  # TODO: share code with nominees.rb if possible
-  nominations = IO.read(File.join(cur_mtg_dir, 'nominated-members.txt')).
-    encode("utf-8", "utf-8", :invalid => :replace).
-    scan(/^---+--\s+(?:[a-z_0-9-]+)\s+(.*?):?\n/).flatten
-
-  nominations.shift if nominations.first == '<empty line>'
-  nominations.pop if nominations.last.empty?
-
-  nominations.map! do |line|
-    {name: line.gsub(/<.*|\(\w+@.*/, '').strip, id: line[/([.\w]+)@/, 1]}
+  nominations = ASF::MemberFiles.member_nominees.map do |id, hash|
+    {id: id, name: hash['Public Name']}
   end
 
   # preload names
@@ -78,10 +71,12 @@ _html do
       helpblock: -> {
         _ 'This script checks new member nomination statements from members@ against the official meeting ballot files, and highlights differences. '
         _ 'This probably only works in the period shortly before or after a Members meeting!'
+        _br
+        _ 'Entries are highlighted if they are not present in both lists.'
       }
     ) do
       cur_mtg_dir = MeetingUtil.get_latest(MEETINGS)
-      nominations, people, emails = setup_data(cur_mtg_dir)
+      nominations, people, emails = setup_data
       _div.flexbox do
         _div.flexitem do
           _h1_! do
