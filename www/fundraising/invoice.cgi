@@ -15,8 +15,9 @@ end
 
 HISTORY = '/var/tools/invoice'
 if %r{/(?<invoice>\d+)(\.\w+)?$} =~ ENV['PATH_INFO']
-  if File.exist? "#{HISTORY}/#{invoice}"
-    form = YAML.load_file("#{HISTORY}/#{invoice}")
+  invoice_path = File.join(HISTORY, invoice)
+  if File.exist? invoice_path
+    form = YAML.load_file(invoice_path)
     ENV['QUERY_STRING'] =
       form.map {|k,v| "#{k}=#{CGI.escape(v.first)}"}.join("&") if form
   end

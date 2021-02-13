@@ -4,7 +4,7 @@ class Pending
     # user ids may include '-'
     raise ArgumentError, "Unexpected user id #{user}" unless user =~ /\A[-\w]+\z/
 
-    "#{AGENDA_WORK}/#{user}.yml"
+    File.join(AGENDA_WORK, "#{user}.yml")
   end
 
   # fetch and parse a work file

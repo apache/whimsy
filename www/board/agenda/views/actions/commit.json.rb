@@ -9,13 +9,15 @@ user = env.user
 # user ids may include '-'
 raise ArgumentError, "Unexpected user id #{user}" unless user =~ /\A[-\w]+\z/
 
-updates = YAML.load_file("#{AGENDA_WORK}/#{user}.yml")
+user_yaml = File.join(AGENDA_WORK, "#{user}.yml")
+user_bak = File.join(AGENDA_WORK, "#{user}.bak")
+updates = YAML.load_file(user_yaml)
 
 agenda_file = updates['agenda']
 
 Agenda.update(agenda_file, @message) do |agenda|
   # refetch to make sure the data is fresh (handles retries, locks, etc...)
-  updates = YAML.load_file("#{AGENDA_WORK}/#{user}.yml")
+  updates = YAML.load_file(user_yaml)
 
   approved = updates['approved']
   unapproved = updates['unapproved'] || []
@@ -191,7 +193,7 @@ end
 
 # backup pending file, then clear approved and comments lists
 _pending Pending.update(env.user) {|pending|
-  File.rename "#{AGENDA_WORK}/#{user}.yml", "#{AGENDA_WORK}/#{user}.bak"
+  File.rename user_yaml, user_bak
   pending['approved'].clear
   pending['unapproved'].clear
   pending['flagged'].clear

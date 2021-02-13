@@ -21,8 +21,9 @@ end
 # Return sorted data in JSON format if the query string includes 'json'
 ENV['HTTP_ACCEPT'] = 'application/json' if ENV['QUERY_STRING'].include? 'json'
 
+MAIL_ROOT = '/srv/mail' # TODO: this should be config item
 LIST_ROOT = 'board'
-SRV_MAIL = "/srv/mail/#{LIST_ROOT}"
+SRV_MAIL = File.join(MAIL_ROOT, LIST_ROOT)
 
 WEEK_TOTAL = '@@total' # Use @@ so it can't match who name/emails
 WEEK_START = '@@start'

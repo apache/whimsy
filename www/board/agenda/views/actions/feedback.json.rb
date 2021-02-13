@@ -8,7 +8,7 @@ validate_board_file(@agenda)
 
 # fetch minutes
 @minutes = @agenda.sub('_agenda_', '_minutes_')
-minutes_file = "#{AGENDA_WORK}/#{@minutes.sub('.txt', '.yml')}"
+minutes_file = File.join(AGENDA_WORK, @minutes.sub('.txt', '.yml'))
 date = @agenda[/\d+_\d+_\d+/].gsub('_', '-')
 
 if File.exist? minutes_file

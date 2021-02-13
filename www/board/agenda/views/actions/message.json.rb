@@ -12,7 +12,7 @@ if @text.start_with? '/me '
   log[:text].sub! /^\/me\s+/, '*** '
   log[:type] = :info
 elsif @type == :chat
-  chat = "#{AGENDA_WORK}/#{@agenda.sub('.txt', '')}-chat.yml"
+  chat = File.join(AGENDA_WORK, "#{@agenda.sub('.txt', '')}-chat.yml")
   File.write(chat, YAML.dump([])) if not File.exist? chat
 
   File.open(chat, 'r+') do |file|

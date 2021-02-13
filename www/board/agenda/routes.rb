@@ -239,7 +239,7 @@ def server
     role: pending['role'],
     directors: Hash[ASF::Service['board'].members.map {|person|
       initials = begin
-        YAML.load_file("#{AGENDA_WORK}/#{person.id}.yml")['initials']
+        YAML.load_file(File.join(AGENDA_WORK, "#{person.id}.yml"))['initials']
       rescue
         person.public_name.gsub(/[^A-Z]/, '').downcase
       end

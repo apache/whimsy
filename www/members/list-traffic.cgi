@@ -23,7 +23,8 @@ end
 ENV['HTTP_ACCEPT'] = 'application/json' if ENV['QUERY_STRING'].include? 'json'
 
 LIST_ROOT = 'members'
-SRV_MAIL = "/srv/mail/#{LIST_ROOT}"
+MAIL_ROOT = '/srv/mail' # TODO: this should be config item
+SRV_MAIL = File.join(MAIL_ROOT, LIST_ROOT)
 
 WEEK_TOTAL = '@@total' # Use @@ so it can't match who name/emails
 WEEK_START = '@@start'

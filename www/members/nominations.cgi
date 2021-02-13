@@ -15,12 +15,13 @@ MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
 # link to roster page
 ROSTER = '/roster/committer'
 MEETINGS = ASF::SVN['Meetings']
+MAIL_ROOT = '/srv/mail' # TODO: this should be config item
 
 # Encapsulate gathering data to improve error processing
 def setup_data
   # get a list of current year's members@ emails
   year = Time.new.year.to_s
-  archive = Dir["/srv/mail/members/#{year}*/*"]
+  archive = Dir[File.join(MAIL_ROOT, "members", "#{year}*", "*")]
 
   # select messages that have a subject line starting with [MEMBER NOMINATION]
   emails = []

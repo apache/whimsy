@@ -4,7 +4,7 @@
 
 validate_board_file(@agenda)
 
-agenda_file = "#{FOUNDATION_BOARD}/#{@agenda}"
+agenda_file = File.join(FOUNDATION_BOARD, @agenda)
 minutes_file = agenda_file.sub('_agenda', '_minutes')
 
 ASF::SVN.update minutes_file, @message, env, _ do |tmpdir, old_contents|
