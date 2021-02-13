@@ -39,9 +39,9 @@ module ASF
           .drop(2) # instructions and sample block
           .each do |block|
         nominee = {}
-        id = '?'
+        id = nil
+        block.shift(2) # divider and blank line
         block
-            .drop(2) # divider and blank line
             .slice_before(/^ +(\S+ \S+):\s*/) # split on the header names
             .each_with_index do |para, idx|
           if idx == 0 # id and name
@@ -57,7 +57,15 @@ module ASF
             end
           end
         end
-        nominees[id] = nominee
+        if id
+          nominees[id] = nominee if id
+        else
+          unless block.join('') =~ /^\s+$/ # all blank, e.g. trailing divider
+            Wunderbar.warn "Error, could not find public name"
+            Wunderbar.warn block.inspect
+            nominees['notinavail'] = {'Public Name' => '-- WARNING: unable to parse section --'}
+          end
+        end
       end
       nominees
     end
