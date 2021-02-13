@@ -76,14 +76,14 @@ _html do
         _ 'Entries are highlighted if they are not present in both lists.'
       }
     ) do
-      cur_mtg_dir = MeetingUtil.get_latest(MEETINGS)
+      cur_mtg_dir = File.basename(MeetingUtil.get_latest(MEETINGS))
       nominations, people, emails = setup_data
       _div.flexbox do
         _div.flexitem do
           _h1_! do
             _a 'Nominees', href: 'watch/nominees'
             _ ' in '
-            _a 'svn', href: File.join(cur_mtg_dir, 'nominated-members.txt')
+            _a 'svn', href: ASF::SVN.svnpath!('Meetings', cur_mtg_dir, 'nominated-members.txt')
           end
 
           _p.count "Count: #{nominations.count}"
