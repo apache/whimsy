@@ -146,7 +146,7 @@ class Wunderbar::JsonBuilder
   end
 
   def template(name)
-    path = File.expand_path("../templates/#{name}", __FILE__)
+    path = File.expand_path(File.join("..", "templates", name), __FILE__)
     ERB.new(File.read(path)).result(binding)
   end
 end

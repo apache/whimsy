@@ -35,7 +35,7 @@ def set_cache(restore=nil) # ensure can access test version of iclas.txt
 end
 
 def set_svn(name)
-  ASF::SVN[name] = File.expand_path("../test/svn/#{name}", __dir__)
+  ASF::SVN[name] = File.expand_path(File.join("..", "test", "svn", name), __dir__)
 end
 
 if TEST_DATA

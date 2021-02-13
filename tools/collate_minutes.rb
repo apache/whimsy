@@ -51,7 +51,7 @@ YYYYMMDD = ARGV.shift || '20*' # Allow override of minutes to process
 TIME_DIFF = (ARGV.shift || '300').to_i # Allow override of seconds of time diff (WHIMSY-204) for testing
 
 MINUTES_NAME = "board_minutes_#{YYYYMMDD}.txt"
-MINUTES_PATH = "#{SVN_SITE_RECORDS_MINUTES}/*/#{MINUTES_NAME}"
+MINUTES_PATH = File.join(SVN_SITE_RECORDS_MINUTES, "*", MINUTES_NAME)
 
 Wunderbar.info "Processing minutes matching #{MINUTES_NAME}"
 

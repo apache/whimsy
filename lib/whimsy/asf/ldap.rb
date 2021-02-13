@@ -927,7 +927,7 @@ module ASF
 
       # defaults
       attrs['loginShell'] ||= '/usr/local/bin/bash'
-      attrs['homeDirectory'] ||= "/home/#{availid}"
+      attrs['homeDirectory'] ||= File.join("/home", availid)
       attrs['host'] ||= "home.apache.org"
       attrs['asf-sascore'] ||= "10"
 

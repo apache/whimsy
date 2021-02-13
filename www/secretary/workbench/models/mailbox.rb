@@ -41,10 +41,10 @@ class Mailbox
 
     if name =~ /^\d+$/
       @name = name
-      @mbox = Dir["#{ARCHIVE}/#{@name}", "#{ARCHIVE}/#{@name}.gz"].first
+      @mbox = Dir[File.join(ARCHIVE, @name), File.join(ARCHIVE, "#{@name}.gz")].first
     else
       @name = name.split('.').first
-      @mbox = "#{ARCHIVE}/#{name}"
+      @mbox = File.join ARCHIVE, name
     end
   end
 
@@ -142,14 +142,14 @@ class Mailbox
   # name of associated yaml file
   #
   def yaml_file
-    "#{ARCHIVE}/#{@name}.yml"
+    File.join ARCHIVE," #{@name}.yml"
   end
 
   #
   # name of associated directory
   #
   def dir
-    "#{ARCHIVE}/#{@name}.mail"
+    File.join ARCHIVE," #{@name}.mail"
   end
 
   #

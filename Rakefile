@@ -400,16 +400,18 @@ namespace :docker do
     home = ENV['HOST_HOME']
     if home and File.exist? home
       %w(.gitconfig .ssh .subversion).each do |mount|
-        if File.exist? "/root/#{mount}"
-          if File.symlink? "/root/#{mount}"
-            next if File.realpath("/root/#{mount}") == "#{home}/#{mount}"
-            rm_f "/root/#{mount}"
+        root_mount = File.join("/root", mount)
+        home_mount = File.join(home, mount)
+        if File.exist? root_mount
+          if File.symlink? root_mount
+            next if File.realpath(root_mount) == home_mount
+            rm_f root_mount
           else
-            rm_rf "/root/#{mount}"
+            rm_rf root_mount
           end
         end
 
-        symlink "#{home}/#{mount}", "/root/#{mount}"
+        symlink home_mount, root_mount
       end
     end
 
