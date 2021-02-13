@@ -454,7 +454,7 @@ def _checkDownloadPage(path, tlp, version)
                 if ver =~ %r{^(\d+(?:\.\d+)+)(-.+)$}
                   ver1 = $1 # save result
                   ver2 = $2
-                  if %w(-bin -src).include? $2 or $2 =~ %r{^-bin-} # allow for -bin-scala...
+                  if %w(-bin -src).include? $2 or $2 =~ %r{^-(bin|beta\d)-} # allow for -bin-scala...
                     ver = ver1
                     pfx = pfx + ver2
                   end
@@ -720,12 +720,6 @@ if __FILE__ == $0
   testentries(:E).each { |t| t.map{|k, v| puts "#{k}: - #{v}"}}
   testentries(:F).each { |t| t.map{|k, v| puts "#{k}: - #{v}"}}
   puts ""
-  if @fails > 0
-    puts "NAK: #{url} had #{@fails} errors"
-  else
-    puts "OK: #{url} passed all the tests"
-  end
-  puts ""
 
   # Only show in CLI version for now
   puts "Version summary"
@@ -736,4 +730,12 @@ if __FILE__ == $0
       end
   end
   puts ""
+
+  if @fails > 0
+    puts "NAK: #{url} had #{@fails} errors"
+  else
+    puts "OK: #{url} passed all the tests"
+  end
+  puts ""
+
 end
