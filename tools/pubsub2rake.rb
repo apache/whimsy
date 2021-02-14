@@ -14,7 +14,7 @@ end
 class PubSub
 
   require 'fileutils'
-  ALIVE = "/tmp/#{File.basename(__FILE__)}.alive" # TESTING ONLY
+  ALIVE = File.join("/tmp", "#{File.basename(__FILE__)}.alive") # TESTING ONLY
 
   @restartable = false
   @updated = false
