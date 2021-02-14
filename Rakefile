@@ -30,13 +30,15 @@ task :update, [:command] do |task, args|
 
   # locate system ruby
   sysruby = File.realpath(`which ruby`.chomp)
-  sysruby = "#{File.dirname(sysruby)}/%s#{sysruby[/ruby([.\d]*)$/, 1]}"
+  # N.B. The %s is used to insert related commands such as 'bundle' later on
+  sysruby = File.join(File.dirname(sysruby), "%s#{sysruby[/ruby([.\d]*)$/, 1]}")
 
   # locate passenger ruby
   conf = Dir['/etc/apache2/*/passenger.conf'].first
   ruby = File.read(conf)[/PassengerRuby "?(.*?)"?$/, 1] if conf
   if ruby
-    passruby = "#{File.dirname(ruby)}/%s#{ruby[/ruby([.\d]*)$/, 1]}"
+    # create the base format string
+    passruby = File.join(File.dirname(ruby), "%s#{ruby[/ruby([.\d]*)$/, 1]}")
   else
     passruby = sysruby
   end
@@ -81,7 +83,7 @@ task :update, [:command] do |task, args|
       ruby = File.read('Gemfile')[/^ruby ['"](.*?)['"]/, 1]
       ruby = `which ruby#{ruby}`.chomp if ruby
       if ruby and not ruby.empty?
-        bundler = "#{File.dirname(ruby)}/bundle#{ruby[/ruby([.\d]*)$/, 1]}"
+        bundler = File.join(File.dirname(ruby), "bundle#{ruby[/ruby([.\d]*)$/, 1]}")
       else
         bundler = (File.exist?('config.ru') ? passruby : sysruby) % 'bundle'
       end
