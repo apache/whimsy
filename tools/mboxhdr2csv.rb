@@ -362,7 +362,7 @@ module MboxUtils
   # Side effect: writes out f.chomp(ext).json files
   # @note writes string VERSION for differentiating from other *.json
   def scan_dir_mbox2stats(dir, ext = MBOX_EXT)
-    Dir["#{dir}/**/*#{ext}"].sort.each do |f|
+    Dir[File.join(dir, "**", "*#{ext}")].sort.each do |f|
       mails, errs = mbox2stats(f)
       File.open("#{f.chomp(ext)}.json", "w") do |fout|
         fout.puts JSON.pretty_generate([VERSION, mails, errs])
