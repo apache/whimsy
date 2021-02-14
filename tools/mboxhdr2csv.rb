@@ -377,7 +377,7 @@ module MboxUtils
   def scan_dir_stats2csv(dir, outname, ext = '.json')
     errors = []
     jzons = []
-    Dir["#{dir}/**/*#{ext}"].sort.each do |f|
+    Dir[File.join(dir, "**", "*#{ext}")].sort.each do |f|
       begin
         tmp = JSON.parse(File.read(f))
         if tmp[0].kind_of?(String) && tmp[0].start_with?(VERSION)
