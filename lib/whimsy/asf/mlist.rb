@@ -403,10 +403,6 @@ module ASF
 end
 
 if __FILE__ == $0
-  $i = 0
-  ASF::MLIST.list_flags() { $i += 1 }
-  p $i
-  exit
   domain = ARGV.shift || 'whimsical'
   p  ASF::MLIST.list_subscribers(domain)
   p  ASF::MLIST.list_subscribers(domain, false, false, true)
