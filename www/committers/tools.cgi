@@ -38,7 +38,7 @@ _html do
         emit_authmap
       }
     ) do
-      scan = get_annotated_scan("../#{SCANDIR}")
+      scan = get_annotated_scan(File.join("..", SCANDIR))
       scan.merge!(NONCGIS)
       scan_by = Hash.new{|h,k| h[k]=Array.new}
       # Create array entry for each category
