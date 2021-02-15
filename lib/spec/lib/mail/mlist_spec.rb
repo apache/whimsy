@@ -84,4 +84,58 @@ describe ASF::MLIST do
     end
   end
 
+  describe "ASF::MLIST.list_subscribers(mail_domain, podling=false, list_subs=false, skip_archivers=false)" do
+    it "abcd should return an array of the form [Hash, Time]" do
+       res = ASF::MLIST.list_subscribers('abcd')
+       # array of Hash and Updated date
+       expect(res.class).to eq(Array)
+       expect(res.length).to eq(2)
+       list, stamp = res
+       expect(list.class).to eq(Hash)
+       expect(stamp.class).to eq(Time)
+       expect(list.size).to eq(0)
+    end
+    it "members should have some entries" do
+      list, _ = ASF::MLIST.list_subscribers('members')
+      if TEST_DATA
+        expect(list.size).to eq(1) # members
+        expect(list.keys.first).to eq('members@apache.org')
+      else
+        expect(list.size).to eq(2) # members and members-notify
+        expect(list.keys[0]).to eq('members@apache.org')
+        expect(list.keys[1]).to eq('members-notify@apache.org')
+      end
+   end
+  end
+  describe "ASF::MLIST.list_moderators(mail_domain, podling=false)" do
+    it "abcd should return an array of the form [Hash, Time]" do
+       res = ASF::MLIST.list_moderators('abcd')
+       # array of Hash and Updated date
+       expect(res.class).to eq(Array)
+       expect(res.length).to eq(2)
+       list, stamp = res
+       expect(list.class).to eq(Hash)
+       expect(stamp.class).to eq(Time)
+       expect(list.size).to eq(0)
+    end
+    it "members should have some entries" do
+      list, _ = ASF::MLIST.list_moderators('members')
+      if TEST_DATA
+        expect(list.size).to eq(1) # members
+        expect(list.keys.first).to eq('members@apache.org')
+        entry = list.first
+        expect(entry.class).to eq(Array)
+        expect(entry.size).to eq(2)
+        expect(entry[1].size).to eq(1) # number of moderators
+      else
+        expect(list.size).to eq(2) # members and members-notify
+        expect(list.keys[0]).to eq('members@apache.org')
+        expect(list.keys[1]).to eq('members-notify@apache.org')
+        entry = list.first
+        expect(entry.class).to eq(Array)
+        expect(entry.size).to eq(2)
+        expect(entry[1].size).to be_between(2, 5).inclusive # number of moderators
+      end
+   end
+  end
 end
