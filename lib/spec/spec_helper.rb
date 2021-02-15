@@ -1,6 +1,7 @@
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
+require 'whimsy/asf/config' # must be loaded before updating config
 
 SAMPLE_SVN_NAME = 'minutes' # name of checkout of public SVN dir
 SAMPLE_SVN_URL_RE = %r{https://.+/minutes}
