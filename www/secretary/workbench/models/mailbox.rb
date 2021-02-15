@@ -142,14 +142,14 @@ class Mailbox
   # name of associated yaml file
   #
   def yaml_file
-    File.join ARCHIVE," #{@name}.yml"
+    File.join ARCHIVE, "#{@name}.yml"
   end
 
   #
   # name of associated directory
   #
   def dir
-    File.join ARCHIVE," #{@name}.mail"
+    File.join ARCHIVE, "#{@name}.mail"
   end
 
   #
