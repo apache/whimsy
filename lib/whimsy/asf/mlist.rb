@@ -121,6 +121,19 @@ module ASF
       response
     end
 
+    # helper function for matching against mod and subs entries
+    # does the target mail_domain match the current list?
+    def self.matches_list?(mail_domain, dom, list)
+        # normal tlp style (now also podlings):
+        #/home/apmail/lists/commons.apache.org/dev/mod
+        #Apache lists (e.g. some non-PMCs)
+        #/home/apmail/lists/apache.org/list/mod
+        return "#{mail_domain}.apache.org" == dom ||
+               (dom == 'apache.org' && 
+                (list == mail_domain || list.start_with?("#{mail_domain}-"))
+               )
+    end
+
     # for a mail domain, extract related lists and their moderators
     # also returns the time when the data was last checked
     # If podling==true, then also check for old-style podling names
@@ -136,16 +149,9 @@ module ASF
         next if list =~ /^infra-[a-z]$/
         next if dom == 'incubator.apache.org' && list =~ /^infra-dev2?$/
 
-        # normal tlp style:
-        #/home/apmail/lists/commons.apache.org/dev/mod
-        # possible podling styles (new, old):
-        #/home/apmail/lists/batchee.apache.org/dev/mod
-        #/home/apmail/lists/incubator.apache.org/blur-dev/mod
-        #Apache lists (e.g. some non-PMCs)
-        #/home/apmail/lists/apache.org/list/mod
-        next unless "#{mail_domain}.apache.org" == dom or
-           (dom == 'apache.org' && list =~ /^#{mail_domain}(-|$)/) or
-           (podling && dom == 'incubator.apache.org' && list =~ /^#{mail_domain}-/)
+        # does the list match our target?
+        next unless matches_list?(mail_domain, dom, list)
+
         moderators["#{list}@#{dom}"] = subs.sort
       end
       return moderators.to_h, (File.mtime(LIST_TIME) rescue File.mtime(LIST_MODS))
@@ -179,16 +185,8 @@ module ASF
         # normal tlp style:
         #/home/apmail/lists/commons.apache.org/dev/mod
 
-        # possible podling styles (new, old):
-        #/home/apmail/lists/batchee.apache.org/dev/mod
-        #/home/apmail/lists/incubator.apache.org/blur-dev/mod
-
-        #Apache lists (e.g. some non-PMCs)
-        #/home/apmail/lists/apache.org/list/mod
-
-        next unless "#{mail_domain}.apache.org" == dom or
-           (dom == 'apache.org' && list =~ /^#{mail_domain}(-|$)/) or
-           (podling && dom == 'incubator.apache.org' && list =~ /^#{mail_domain}-/)
+        # does the list match our target?
+        next unless matches_list?(mail_domain, dom, list)
 
         if skip_archivers
           subscribers["#{list}@#{dom}"] = list_subs ? subs.reject {|sub| is_archiver?(sub)}.sort : subs.reject {|sub| is_archiver?(sub)}.size
