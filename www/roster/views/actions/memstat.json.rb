@@ -46,7 +46,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       end
     elsif @action == 'deceased'
       index = text.index(/^\s\*\)\s/, text.index(/^Deceased/))
-      entry.sub! %r{\n}, " /* deceased, #{@dod} */\n" # add the deceased comment
+      entry.sub! "\n", " /* deceased, #{@dod} */\n" # add the deceased comment
     end
 
     # perform the insertion
