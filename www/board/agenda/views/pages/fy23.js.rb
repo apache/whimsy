@@ -224,7 +224,7 @@ class FY23 < Vue
 
         _tr do
           _td.indented do
-            _ "Chairman's Discretionary"
+            _ "Board Chair's Discretionary"
           end
           _td.num 10
           _td.num 0

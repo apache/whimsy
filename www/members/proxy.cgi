@@ -15,7 +15,7 @@ def emit_instructions(today, cur_mtg_dir, meeting)
   if today > meeting
     _p.text_warning %{
         WARNING: Data for the next Member's Meeting is not yet available,
-        so this form will not work yet.  Please wait until the Chairman
+        so this form will not work yet.  Please wait until the Board Chair
         announces the opening of nominations for the board and new members,
         and then check back to assign a new proxy for the meeting.
         Data from the previous meeting on #{meeting} is shown below for debugging only.
@@ -86,7 +86,7 @@ def emit_form(cur_mtg_dir, _meeting, volunteers)
           NOTE: you are proxying for other members, so you cannot assign
           someone else to proxy for your attendance.  If it turns out that
           you will not be able to attend the first half of the IRC meeting
-          on Tuesday, you MUST work with the Chairman and your proxies
+          on Tuesday, you MUST work with the Board Chair and your proxies
           to update the proxy records, and get someone else to mark their presence!
         }
     else

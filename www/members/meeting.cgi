@@ -217,10 +217,10 @@ _html do
           _code '#asf'
           _ ' channel.'
           _br
-          _ 'During the First Half of Meeting, the Chairman will do Roll call - please see instructions on how to mark present: '
+          _ 'During the First Half of Meeting, the Board Chair will do Roll call - please see instructions on how to mark present: '
           emit_link(svn_mtg_dir, 'README.txt', MeetingUtil::MEETING_FILES['README.txt'])
-          _ 'Once a quorum is reached, the Chairman will lead the meeting, with various officers presenting their reports in the Agenda.txt, which you can read ahead of time.'
-          _ 'Expect the First Half to last about an hour; then the Chairman will call for a recess.  Remember: there is no voting in IRC.'
+          _ 'Once a quorum is reached, the Board Chair will lead the meeting, with various officers presenting their reports in the Agenda.txt, which you can read ahead of time.'
+          _ 'Expect the First Half to last about an hour; then the Board Chair will call for a recess.  Remember: there is no voting in IRC.'
           _ul do
             ['agenda.txt', 'README.txt', 'https://www.apache.org/foundation/governance/meetings'].each do |f|
               _li do
@@ -234,7 +234,7 @@ _html do
       _div id: 'recess'
       _whimsy_panel("Timeline: Meeting Recess - Time To Vote Via Email (approx 40+ hours)", style: 'panel-info') do
         _p do
-          _ 'Shortly after the Chairman calls the recess, the STeVe vote monitors will send you an email '
+          _ 'Shortly after the Board Chair calls the recess, the STeVe vote monitors will send you an email '
           _code 'From: voter@apache.org'
           _ ' with your voting key URL.'
           _ 'All voting is done via a simple web interface at vote.apache.org after you login with your Apache ID.'
