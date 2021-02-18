@@ -448,22 +448,17 @@ def _checkDownloadPage(path, tlp, version)
             unless $vercheck[base].first == 'archive'
               stem = base[0..-(ext.size+2)]
               # version must include '.', e.g. xxx-m.n.oyyy
-              if stem =~ %r{^(.+?)-(\d+\..+)$}
-                # $1 = part before version
-                # $2 = version + any suffix, e.g. -bin, -src (or other)
-                pfx = $1
-                ver = $2
-                # does version have a suffix which is really part of the name?
+              if stem =~ %r{^.+?-(\d+(?:\.\d+)+)(.*)$}
+                # $1 = version
+                # $2 any suffix, e.g. -bin, -src (or other)
+                ver = $1 # main version
+                suff = $2
+                # does version have a suffix such as beta1, M3 etc?
                 # jmeter needs _ here
-                if ver =~ %r{^(\d+(?:\.\d+)+)[-_]}
-                  ver1 = $1 # save version
-                  # -source-release etc => Camel
-                  if %w(-bin -src _src -source-release -linux-64bit -mac-64bit -windows-64bit).include? $2 or $2 =~ %r{^-(bin|beta\d)-} # allow for -bin-scala...
-                    pfx = stem
-                    ver = ver1
-                  end
+                if suff =~ %r{^(-RC\d|-rc\d|-incubating|-ALPHA|[-.]?M\d+|[-~]?(alpha|beta)\d?(?:-\d)?)}
+                  ver = ver + $1
                 end
-                $versions[ver][pfx] << ext
+                $versions[ver][stem] << ext
               else
                 W "Cannot parse #{base} for version"
               end
