@@ -34,7 +34,7 @@ class Search < Vue
           item.text.split(/\n\s*\n/).each do |paragraph|
             if paragraph.downcase().include? text
               _pre.report domPropsInnerHTML:
-                htmlEscape(paragraph).gsub(/(#{text})/i,
+                htmlEscape(paragraph).gsub(/(#{escapeRegExp(text)})/i,
                  "<span class='hilite'>$1</span>")
             end
           end

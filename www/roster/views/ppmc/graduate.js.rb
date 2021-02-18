@@ -63,7 +63,7 @@ class PPMCGraduate < Vue
     jQuery('#graduate').on('show.bs.modal') do |event|
       @project = @@ppmc.display_name
       @description = @@ppmc.description.gsub(/\s+/, ' ').strip().
-        sub(/^(Apache )?#{@@ppmc.display_name}\s(is )?/, '').sub(/\.$/, '')
+        sub(/^(Apache )?#{Utils.escapeRegExp(@@ppmc.display_name)}\s(is )?/, '').sub(/\.$/, '')
 
       self.resize(textarea)
 

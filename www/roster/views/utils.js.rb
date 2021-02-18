@@ -1,5 +1,11 @@
 class Utils
 
+  # escape a string so that it can be used as a regular expression
+  def self.escapeRegExp(string)
+    # https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions
+    return string.gsub(/([.*+?^=!:${}()|\[\]\/\\])/, "\\$1");
+  end
+
   # Common processing to handle a response that is expected to be JSON
   def self.handle_json(response, success)
     content_type = response.headers.get('content-type') || ''

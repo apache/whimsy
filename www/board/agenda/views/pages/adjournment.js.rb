@@ -197,7 +197,7 @@ class PMCActions < Vue
             resolution = {
               action: todo_type,
               name: todo.name,
-              display_name: item.title.sub(/^#{todo_type} /i, '').
+              display_name: item.title.sub(/^#{escapeRegExp(todo_type)} /i, '').
                 sub(/ Chair$/i, ''),
               title: item.title,
               minutes: minutes,

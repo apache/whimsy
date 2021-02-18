@@ -180,7 +180,7 @@ class Report < Vue
 
     @@item.people.each_pair do |id, person|
       # email addresses in 'Establish' resolutions and (ids) everywhere
-      text.gsub! /(\(|&lt;)(#{id})( at |@|\))/ do |m, pre, id, post|
+      text.gsub! /(\(|&lt;)(#{escapeRegExp(id)})( at |@|\))/ do |m, pre, id, post|
         if person.icla
           if post == ')' and person.member
             "#{pre}<b><a href='#{roster}#{id}'>#{id}</a></b>#{post}"
@@ -215,7 +215,7 @@ class Report < Vue
         ok ||= names.all? {|part| iclas.any? {|icla| icla.include? part}}
         ok ||= iclas.all? {|part| names.any? {|name| name.include? part}}
         if @@item.title =~ /^Establish/ and not ok
-          text.gsub! /#{escapeRegExp("#{id}'>#{person.name}")}/,
+          text.gsub! /#{escapeRegExp("#{id}'>#{escapeRegExp(person.name)}")}/,
             "?q=#{encodeURIComponent(person.name)}'>" +
             "<span class='commented'>#{person.name}</span>"
         else
