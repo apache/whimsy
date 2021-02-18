@@ -225,14 +225,15 @@ def WE(msg)
 end
 # returns www|archive, stem and the hash extension
 def check_hash_loc(h,tlp)
-  if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlp}/.*?([^/]+)\.(\w{3,6})$}
+  tlpQE = Regexp.escape(tlp) # in case of meta-chars
+  if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
-  elsif h =~ %r{^(https?)://(downloads)\.apache\.org/(?:incubator/)?#{tlp}/.*?([^/]+)\.(\w{3,6})$}
+  elsif h =~ %r{^(https?)://(downloads)\.apache\.org/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
 #   https://repo1.maven.org/maven2/org/apache/shiro/shiro-spring/1.1.0/shiro-spring-1.1.0.jar.asc
-  elsif h =~ %r{^(https?)://repo1?\.(maven)(?:\.apache)?\.org/maven2/org/apache/#{tlp}/.+/([^/]+\.(?:jar|xml))\.(\w{3,6})$} # Maven
+  elsif h =~ %r{^(https?)://repo1?\.(maven)(?:\.apache)?\.org/maven2/org/apache/#{tlpQE}/.+/([^/]+\.(?:jar|xml))\.(\w{3,6})$} # Maven
     WE "HTTPS! #{h}" unless $1 == 'https'
     W "Unexpected hash location #{h} for #{tlp}" unless $vercheck[$3][0] == 'maven'
     return $2,$3,$4
@@ -372,11 +373,12 @@ def _checkDownloadPage(path, tlp, version)
     E "Page does not have enough links: #{links.size} < 6 -- perhaps it needs JavaScript?"
   end
 
+  tlpQE = Regexp.escape(tlp) # in case of meta-chars
   # check KEYS link
   # TODO: is location used by hc allowed, e.g.
   #   https://www.apache.org/dist/httpcomponents/httpclient/KEYS
   expurl = "https://[downloads.|www.]apache.org/[dist/][incubator/]#{tlp}/KEYS"
-  expurlre = %r{^https://((www\.)?apache\.org/dist|downloads\.apache\.org)/(incubator/)?#{tlp}/KEYS$}
+  expurlre = %r{^https://((www\.)?apache\.org/dist|downloads\.apache\.org)/(incubator/)?#{tlpQE}/KEYS$}
   keys = links.select{|h, _v| h =~ expurlre}
   if keys.size >= 1
     keyurl = keys.first.first
@@ -395,9 +397,9 @@ def _checkDownloadPage(path, tlp, version)
       if keyurl =~ expurlre
         I "KEYS links to #{expurl} as expected"
       else
-        if keyurl =~ %r{^https://www\.apache\.org/dist/#{tlp}/[^/]+/KEYS$}
+        if keyurl =~ %r{^https://www\.apache\.org/dist/#{tlpQE}/[^/]+/KEYS$}
           W "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
-        elsif keyurl =~ %r{^https://downloads\.apache\.org/#{tlp}/[^/]+/KEYS$}
+        elsif keyurl =~ %r{^https://downloads\.apache\.org/#{tlpQE}/[^/]+/KEYS$}
           W "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
         else
           E "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
@@ -647,7 +649,7 @@ def _checkDownloadPage(path, tlp, version)
     elsif h.start_with? 'https://svn.apache.org/'
       #        E "Public download pages should not link to unreleased code: #{h}" # could be a sidebar/header link
     elsif h =~ %r{^https?://(archive|www)\.apache\.org/dist/}
-      W "Not yet handled #{h} #{t}" unless h =~ /RELEASE[-_]NOTES/ or h =~ %r{^https?://archive.apache.org/dist/#{tlp}/}
+      W "Not yet handled #{h} #{t}" unless h =~ /RELEASE[-_]NOTES/ or h =~ %r{^https?://archive.apache.org/dist/#{tlpQE}/}
     else
       # Ignore everything else?
     end
