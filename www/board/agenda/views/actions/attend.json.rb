@@ -19,7 +19,7 @@ Agenda.update(@agenda, message) do |agenda|
 
   if directors.include? @name
 
-    updated = directors.sub /^ .*#{@name}.*?\n/, ''
+    updated = directors.sub /^ .*#{Regexp.escape(@name)}.*?\n/, ''
 
     if @action == 'regrets'
       updated[/Absent:\n\n.*?\n()\n/m, 1] = "        #{@name}\n"
@@ -41,7 +41,7 @@ Agenda.update(@agenda, message) do |agenda|
 
   elsif officers.include? @name
 
-    updated = officers.sub /^ .*#{@name}.*?\n/, ''
+    updated = officers.sub /^ .*#{Regexp.escape(@name)}.*?\n/, ''
 
     if @action == 'regrets'
       updated[/Absent:\n\n.*?\n()\n/m, 1] = "        #{@name}\n"
@@ -56,7 +56,7 @@ Agenda.update(@agenda, message) do |agenda|
 
   elsif @action == 'regrets'
 
-    updated = guests.sub /^ .*#{@name}.*?\n/, ''
+    updated = guests.sub /^ .*#{Regexp.escape(@name)}.*?\n/, ''
     updated.sub! /:\n\n\n/, ":\n\n        none\n"
 
     rollcall.sub! guests, updated

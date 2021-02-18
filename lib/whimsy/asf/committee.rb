@@ -184,7 +184,7 @@ module ASF
       todos.each do |resolution|
         pmc = resolution['display_name']
         if resolution['action'] == 'terminate'
-          block.sub! %r{^    #{pmc.ljust(22)} # .*\n}, ''
+          block.sub! %r{^    #{Regexp.escape(pmc).ljust(22)} # .*\n}, ''
         elsif resolution['action'] == 'establish' and not existing.include? pmc
           block += "    #{pmc.ljust(22)} # new, monthly through #{month}\n"
         end
@@ -320,7 +320,7 @@ module ASF
       #         remove from COMMITTEE MEMBERSHIP AND CHANGE PROCESS          #
       ########################################################################
 
-      contents.sub! %r{^\* #{pmc}  ?\(est.*?\n\n+}m, ''
+      contents.sub! %r{^\* #{Regexp.escape(pmc)}  ?\(est.*?\n\n+}m, ''
 
       contents
     end

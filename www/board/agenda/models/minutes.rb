@@ -146,7 +146,7 @@ class Minutes
 
     missing = minutes.scan(/^Attachment (\w\w?):.*\s*\n---/).flatten
     missing.each do |attach|
-      minutes.sub! /^(\s+)See Attachment #{attach}$/, '\1No report was submitted.'
+      minutes.sub! /^(\s+)See Attachment #{Regexp.escape(attach)}$/, '\1No report was submitted.'
     end
 
     minutes.sub! 'Minutes (in Subversion) are found under the URL:',

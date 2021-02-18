@@ -76,8 +76,8 @@ _ reports do |path, mail|
   _path path
 
   subject = mail.subject.downcase
-  _missing missing.any? {|title| subject =~ /\b#{title}\b/}
+  _missing missing.any? {|title| subject =~ /\b#{Regexp.escape(title)}\b/}
 
-  item = parsed.find {|item| subject =~ /\b#{item['title'].downcase}\b/}
+  item = parsed.find {|item| subject =~ /\b#{Regexp.escape(item['title'].downcase)}\b/}
   _title item['title'] if item
 end

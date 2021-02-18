@@ -57,7 +57,7 @@ module YamlFile
     # replace the old section with the new one
     # assume it is delimited by the key and '...' or another key.
     # Keys may be symbols. Only handles top-level key matching.
-    range = %r{^#{key.inspect}:\s*$.*?(?=^(:?\w+:|\.\.\.)$)}m
+    range = %r{^#{Regexp.escape(key.inspect)}:\s*$.*?(?=^(:?\w+:|\.\.\.)$)}m
     output[range] = new_section
 
     output

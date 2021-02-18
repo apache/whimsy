@@ -94,7 +94,7 @@ _html do
               _td do
               # ERB::Util.url_encode changes space to %20 as required in the path component
               href = THREAD + ERB::Util.url_encode('<' + mail.message_id + '>')
-                if missing.any? {|title| mail.subject.downcase =~ /\b#{title}\b/}
+                if missing.any? {|title| mail.subject.downcase =~ /\b#{Regexp.escape(title)}\b/}
                   _td do
                     _a.missing mail.subject, href: href
                   end
@@ -120,9 +120,9 @@ _json do
     _link THREAD + ERB::Util.url_encode('<' + mail.message_id + '>')
 
     subject = mail.subject.downcase
-    _missing missing.any? {|title| subject =~ /\b#{title}\b/}
+    _missing missing.any? {|title| subject =~ /\b#{Regexp.escape(title)}\b/}
 
-    item = parsed.find {|item| subject =~ /\b#{item['title'].downcase}\b/}
+    item = parsed.find {|item| subject =~ /\b#{Regexp.escape(item['title'].downcase)}\b/}
     _title item['title'] if item
   end
 end

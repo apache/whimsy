@@ -106,7 +106,7 @@ if env.password
           end
         else
           podlings.sub! pre do |element|
-            element.sub! /\s+<mentor username=#{id.inspect}>.*<\/mentor>/, ''
+            element.sub! /\s+<mentor username=#{Regexp.escape(id.inspect)}>.*<\/mentor>/, ''
             element
           end
         end

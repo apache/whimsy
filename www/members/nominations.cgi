@@ -130,7 +130,7 @@ _html do
               href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' +
               ERB::Util.url_encode('<' + mail.message_id + '>')
 
-              if nominees.any? {|name| mail.subject =~ /\b#{name}\b/i}
+              if nominees.any? {|name| mail.subject =~ /\b#{Regexp.escape(name)}\b/i}
                 _a.present mail.subject, href: href
               else
                 _a.missing mail.subject, href: href
@@ -149,6 +149,6 @@ _json do
   _ reports do |mail| # TODO: reports is not defined
     _subject mail.subject
     _link MBOX + ERB::Util.url_encode('<' + mail.message_id + '>') # TODO looks wrong: does not agree with href above
-    _missing missing.any? {|title| mail.subject.downcase =~ /\b#{title}\b/}
+    _missing missing.any? {|title| mail.subject.downcase =~ /\b#{Regexp.escape(title)}\b/}
   end
 end
