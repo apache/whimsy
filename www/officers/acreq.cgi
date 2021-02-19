@@ -44,7 +44,7 @@ email = Array(query['email']).last
 if iclas == 'all'
   iclas = Hash[*iclas_txt.scan(/^notinavail:.*?:(.*?):(.*?):Signed CLA/).
     flatten.reverse]
-elsif iclas == '1' and email and iclas_txt =~ /^notinavail:.*?:(.*?):#{email}:/
+elsif iclas == '1' and email and iclas_txt =~ /^notinavail:.*?:(.*?):#{Regexp.escape(email)}:/
   iclas = {email => $1}
 else
   count = iclas ? iclas.to_i : 300 rescue 300
