@@ -60,7 +60,7 @@ module ASF
         if id
           nominees[id] = nominee if id
         else
-          unless block.join('') =~ /^\s+$/ # all blank, e.g. trailing divider
+          unless block.join('') =~ /^\s*$/ # all blank or empty, e.g. trailing divider
             Wunderbar.warn "Error, could not find public name"
             Wunderbar.warn block.inspect
             nominees['notinavail'] = {'Public Name' => '-- WARNING: unable to parse section --'}
