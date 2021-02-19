@@ -44,7 +44,7 @@ feature 'server actions' do
 
       eval(File.read('views/actions/attend.json.rb'))
       rollcall = @agenda.find {|item| item['title'] == 'Roll Call'}
-      expect(rollcall['text']).to match /Guests.*N\. E\. Member/m
+      expect(rollcall['text']).to match %r{Guests.*N\. E\. Member}m
     end
 
     it "should support a director's regrets" do
@@ -54,7 +54,7 @@ feature 'server actions' do
 
       eval(File.read('views/actions/attend.json.rb'))
       rollcall = @agenda.find {|item| item['title'] == 'Roll Call'}
-      expect(rollcall['text']).to match /Directors .* Absent:\s+Sam Ruby/
+      expect(rollcall['text']).to match %r{Directors .* Absent:\s+Sam Ruby}
     end
 
     it "should support moving a director back to attending" do
@@ -64,7 +64,7 @@ feature 'server actions' do
 
       eval(File.read('views/actions/attend.json.rb'))
       rollcall = @agenda.find {|item| item['title'] == 'Roll Call'}
-      expect(rollcall['text']).to match /Greg Stein\s+Directors .* Absent:/
+      expect(rollcall['text']).to match %r{Greg Stein\s+Directors .* Absent:}
     end
 
     it "should support a officer's regrets" do
@@ -74,7 +74,7 @@ feature 'server actions' do
 
       eval(File.read('views/actions/attend.json.rb'))
       rollcall = @agenda.find {|item| item['title'] == 'Roll Call'}
-      expect(rollcall['text']).to match /Officers .* Absent:\s+Craig L Russell/
+      expect(rollcall['text']).to match %r{Officers .* Absent:\s+Craig L Russell}
     end
   end
 
