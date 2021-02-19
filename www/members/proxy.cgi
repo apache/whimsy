@@ -163,16 +163,16 @@ def emit_post(cur_mtg_dir, meeting, _)
   # update proxy form (match as many _ as possible up to the name length)
   proxy[/authorize _(_{,#{@proxy.length}})/, 1] = @proxy.gsub(' ', '_')
 
-  proxy[/signature: _(_#{'_' *user.public_name.length}_)/, 1] =
+  proxy[/signature: _(_#{'_' * user.public_name.length}_)/, 1] =
     "/#{user.public_name.gsub(' ', '_')}/"
 
-  proxy[/name: _(#{'_' *user.public_name.length})/, 1] =
+  proxy[/name: _(#{'_' * user.public_name.length})/, 1] =
     user.public_name.gsub(' ', '_')
 
-  proxy[/availid: _(#{'_' *user.id.length})/, 1] =
+  proxy[/availid: _(#{'_' * user.id.length})/, 1] =
     user.id.gsub(' ', '_')
 
-  proxy[/Date: _(#{'_' *date.length})/, 1] = date.gsub(' ', '_')
+  proxy[/Date: _(#{'_' * date.length})/, 1] = date.gsub(' ', '_')
 
   proxyform = proxy
 
