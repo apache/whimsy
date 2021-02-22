@@ -34,6 +34,7 @@ def setup_data
     subjectUC = subject.upcase
     next unless subjectUC =~ /ME[MN]BER/
     next unless subjectUC =~ /NOMI[NM]ATION/
+    next if subject =~ /Member nominations: a plea/ # not a nomination!
     mail = Mail.new(message.encode(message.encoding, crlf_newline: true))
     next if mail.subject.downcase == 'member nomination process'
     emails << mail if mail.subject =~ /^\[?ME[NM]BER(SHIP)? NOMI[MN]ATION\]?/i
