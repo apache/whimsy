@@ -31,11 +31,12 @@ def setup_data
     next unless message[/^Date: .*/].to_s.include? year
     subject = message[/^Subject: .*/]
     next if not subject # HACK: allow script to continue if bogus email
-    next unless subject.upcase.include? "MEMBER"
-    next unless subject.upcase =~ /NOMI[NM]ATION/
+    subjectUC = subject.upcase
+    next unless subjectUC =~ /ME[MN]BER/
+    next unless subjectUC =~ /NOMI[NM]ATION/
     mail = Mail.new(message.encode(message.encoding, crlf_newline: true))
     next if mail.subject.downcase == 'member nomination process'
-    emails << mail if mail.subject =~ /^\[?MEMBER(SHIP)? NOMI[MN]ATION\]?/i
+    emails << mail if mail.subject =~ /^\[?ME[NM]BER(SHIP)? NOMI[MN]ATION\]?/i
   end
 
   # parse nominations for names and ids
