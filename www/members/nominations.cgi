@@ -91,7 +91,7 @@ _html do
           _ul nominations.sort_by {|nominee| nominee[:name]} do |nominee|
             _li! do
               person = ASF::Person.find(nominee[:id])
-              match = /\b(#{Regexp.escape(nominee[:name]|person.public_name)})\b/i
+              match = /\b(#{Regexp.escape(nominee[:name]||'')}|#{Regexp.escape(person.public_name||'')})\b/i
 
               if emails.any? {|mail| mail.subject.downcase =~ match}
                 _a.present person.public_name, href: "#{ROSTER}/#{nominee[:id]}"
