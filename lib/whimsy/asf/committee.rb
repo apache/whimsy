@@ -289,8 +289,9 @@ module ASF
         key = ASF::Committee.to_canonical(pmc)
         if section[key]
           section[key][:retired] = yyyymm
+          section[key][:name] = pmc
         else
-          section[key] = {retired: yyyymm}
+          section[key] = {retired: yyyymm, name: pmc}
         end
         section.sort.to_h
       end

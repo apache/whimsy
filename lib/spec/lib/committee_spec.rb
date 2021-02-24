@@ -108,19 +108,22 @@ describe ASF::Committee do
       para = yaml[:tlps]['httpd']
       expect(para).not_to eql(nil)
       expect(para[:retired]).to eql(yyyymm)
+      expect(para[:name]).to eql('HTTP Server')
     end
     yaml = YAML.safe_load(data, [Symbol])
-    pmc = 'xyzxyz' # must be downcased
+    name = 'XYZXYZ'
+    pmc = ASF::Committee.to_canonical(name)
     it "should not contain XYZXYZ" do
       para = yaml[:tlps][pmc]
       expect(para).to eql(nil)
     end
     it "should now contain XYZXYZ" do
-      data = ASF::Committee.record_termination(data, pmc, yyyymm)
+      data = ASF::Committee.record_termination(data, name, yyyymm)
       yaml = YAML.safe_load(data, [Symbol])
       para = yaml[:tlps][pmc]
       expect(para).not_to eql(nil)
       expect(para[:retired]).to eql(yyyymm)
+      expect(para[:name]).to eql(name)
     end
   end
 end
