@@ -136,6 +136,8 @@ _html do
                 _a.present mail.subject, href: href
               else
                 _a.missing mail.subject, href: href
+                _ ' From: '
+                _ mail.from.first
               end
             end
           end
