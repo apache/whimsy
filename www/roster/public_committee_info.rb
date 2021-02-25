@@ -1,5 +1,5 @@
-# Creates JSON output from committee-info.txt with the following format:
 #{
+# Creates JSON output from committee-info.txt with the following format:
 #  "last_updated": "2016-03-04 04:50:00 UTC",
 #  "committees": {
 #    "abdera": {
@@ -30,14 +30,15 @@
 #      "pmc": true
 #    },
 
-# If a second parameter is provided, also creates attic info of the form:
+# If a second parameter is provided, also creates committee-retired info of the form:
 #{
 #  "last_updated": "2016-03-04 04:50:00 UTC",
 #  "retired": {
 #    "abdera": {
 #      "display_name": "Abdera",
 #      "description": "Atom Publishing Protocol Implementation",
-#      "retired": "yyyy-mm"
+#      "retired": "yyyy-mm".
+#      "mlists": ["dev", "user", ...] // lists not yet shut down
 #    },
 
 require_relative 'public_json_common'
@@ -155,8 +156,14 @@ end
 # do we awant attic info?
 if ARGV.length >= 2
   ARGV.shift # we have already used this
+  require 'whimsy/asf/mlist'
   
   metadata = ASF::Committee.load_committee_metadata[:tlps]
+
+  public_lists = Hash.new {|h,k| h[k]=Array.new}
+  ASF::MLIST.list_types do |dom, list, _|
+    public_lists[dom.sub(/\.apache\.org$/, '')] << list
+  end
 
   # reformat the data
   attic = {last_updated: ASF::Committee.meta_change}
@@ -171,9 +178,13 @@ if ARGV.length >= 2
         retired: retired
       }
       data[key][:description] = value[:description] if value[:description]
+      mlists = public_lists[key]
+      if mlists.size > 0
+        data[key][:mlists] = mlists
+      end
     end
   end
-  
+
   attic[:retired] = data
   
   public_json_output(attic) # uses first ARGV entry
