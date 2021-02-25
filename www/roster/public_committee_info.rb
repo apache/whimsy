@@ -30,6 +30,16 @@
 #      "pmc": true
 #    },
 
+# If a second parameter is provided, also creates attic info of the form:
+#{
+#  "last_updated": "2016-03-04 04:50:00 UTC",
+#  "retired": {
+#    "abdera": {
+#      "display_name": "Abdera",
+#      "description": "Atom Publishing Protocol Implementation",
+#      "retired": "yyyy-mm"
+#    },
+
 require_relative 'public_json_common'
 require 'whimsy/asf/board'
 
@@ -140,4 +150,31 @@ if changed? and @old_file
     end
   }
 
+end
+
+# do we awant attic info?
+if ARGV.length >= 2
+  ARGV.shift # we have already used this
+  
+  metadata = ASF::Committee.load_committee_metadata[:tlps]
+
+  # reformat the data
+  attic = {last_updated: ASF::Committee.meta_change}
+  
+  data = {}
+  
+  metadata.each do |key, value|
+    retired = value[:retired]
+    if retired
+      data[key] = {
+        display_name: value[:name],
+        retired: retired
+      }
+      data[key][:description] = value[:description] if value[:description]
+    end
+  end
+  
+  attic[:retired] = data
+  
+  public_json_output(attic) # uses first ARGV entry
 end
