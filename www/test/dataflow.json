@@ -13,6 +13,15 @@
       "private/committers/board/committee-info.txt"
     ]
   },
+  "https://whimsy.apache.org/public/committee-retired.json": {
+    "description": "Summary details of retired committees",
+    "format": "hash of hashes['retired']['abdera']['display_name'|'retired'|'description']",
+    "maintainer": "/www/roster/public_committee_info.rb",
+    "sources": [
+      "/lib/whimsy/asf/committee.rb",
+      "private/committers/board/committee-info.yml"
+    ]
+  },
   "https://whimsy.apache.org/public/icla-info.json": {
     "description": "Names of people who have submitted ICLAs who have uids (committer accounts)",
     "format": "hash of hash['committers']['curcuru'] = 'Shane Curcuru'",
