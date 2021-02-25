@@ -640,6 +640,11 @@ module ASF
       @committee_metadata = YAML.load_file file
     end
 
+    # get the changed date for the meta data
+    def self.meta_change
+      @committee_metadata_mtime
+    end
+
     # get the metadata for a given committee.
     def self.metadata(committee)
       committee = committee.name if committee.is_a? ASF::Committee
