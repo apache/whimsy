@@ -225,6 +225,20 @@ module ASF
       end
     end
 
+    # return the [domain, list, types=public|private|...] for all entries in the subscriber listings
+    # the subscribers are not included
+    def self.list_types(show_all=false)
+      list_archivers do |dom, list, subs|
+        types = {}
+        subs.each do |sub|
+          type = sub[2]
+          types[type] = 1 unless %w(alias direct).include? type
+        end
+        type = types.keys.sort.join(',')
+        yield [dom, list, type] if show_all || type == 'public'
+      end
+    end
+
     # return the [domain, list] for all entries in the subscriber listings
     # the subscribers are not included
     def self.each_list
