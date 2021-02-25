@@ -37,6 +37,14 @@
       "/lib/whimsy/asf/member.rb"
     ]
   },
+  "https://whimsy.apache.org/public/pods-scan.json": {
+    "description": "Current status of Incubator podling websites relating to required navigation links",
+    "format": "hash of hashes['airflow']['display_name'] = 'Airflow'",
+    "maintainer": "/tools/site-scan.rb",
+    "sources": [
+      "https://www.apache.org/foundation/marks/pmcs"
+    ]
+  },
   "https://whimsy.apache.org/public/public_ldap_authgroups.json": {
     "description": "Membership of LDAP auth groups. Membership of an LDAP auth group is used to grant commit karma for sub-project and other resources",
     "format": "hash of hashes['auth']['apachecon']['roster'][11] = 'rbowen'",
@@ -112,14 +120,6 @@
   "https://whimsy.apache.org/public/site-scan.json": {
     "description": "Current status of project websites relating to required navigation links",
     "format": "hash of hashes['accumulo']['display_name'] = 'Accumulo'",
-    "maintainer": "/tools/site-scan.rb",
-    "sources": [
-      "https://www.apache.org/foundation/marks/pmcs"
-    ]
-  },
-  "https://whimsy.apache.org/public/pods-scan.json": {
-    "description": "Current status of Incubator podling websites relating to required navigation links",
-    "format": "hash of hashes['airflow']['display_name'] = 'Airflow'",
     "maintainer": "/tools/site-scan.rb",
     "sources": [
       "https://www.apache.org/foundation/marks/pmcs"
