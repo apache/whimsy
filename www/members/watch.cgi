@@ -4,7 +4,7 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'wunderbar'
 require 'whimsy/asf'
-require 'whimsy/asf/nominated-members'
+require 'whimsy/asf/member-files'
 require 'nokogiri'
 require 'date'
 require 'wunderbar/bootstrap'

@@ -6,7 +6,7 @@ require 'erb'
 require 'mail'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
-require 'whimsy/asf/nominated-members'
+require 'whimsy/asf/member-files'
 require_relative 'meeting-util'
 
 # link to members private-arch
