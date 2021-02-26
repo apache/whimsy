@@ -93,7 +93,9 @@ _html do
           _ul nominations.sort_by {|nominee| nominee[:name]} do |nominee|
             _li! do
               person = ASF::Person.find(nominee[:id])
-              match = /\b(#{Regexp.escape(nominee[:name]||'')}|#{Regexp.escape(person.public_name||'')})\b/i
+              # N.B. \b does not match if it follows ')', so won't match John (Fred)
+              # TODO: Work-round is to also look for EOS, but this needs to be improved
+              match = /\b(#{Regexp.escape(nominee[:name]||'')}|#{Regexp.escape(person.public_name||'')})(\b|$)/i
 
               if emails.any? {|mail| mail.subject.downcase =~ match}
                 _a.present person.public_name, href: "#{ROSTER}/#{nominee[:id]}"
@@ -132,7 +134,9 @@ _html do
               href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' +
               ERB::Util.url_encode('<' + mail.message_id + '>')
 
-              if nominees.any? {|name| mail.subject =~ /\b#{Regexp.escape(name)}\b/i}
+              # N.B. \b does not match if it follows ')', so won't match John (Fred)
+              # TODO: Work-round is to also look for EOS, but this needs to be improved
+              if nominees.any? {|name| mail.subject =~ /\b#{Regexp.escape(name)}(\b|$)/i}
                 _a.present mail.subject, href: href
               else
                 _a.missing mail.subject, href: href
