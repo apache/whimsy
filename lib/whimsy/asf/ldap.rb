@@ -686,6 +686,29 @@ module ASF
       ASF.search_one(base, filter, 'uid').flatten
     end
 
+    # Get a list of ids matching a name
+    # matches against 'cn', also 'givenName' and 'sn' if the former does not match
+    # returns an array of ids; may be empty
+    # Intended for use when matching a few people individually.
+    def self.find_by_name(name)
+      res = listids("(cn=#{name})")
+      if res.empty?
+        parts = name.split(' ')
+        res = listids("(&(givenName=#{parts[0]})(sn=#{parts[-1]}))")
+      end
+      res
+    end
+
+    # Get id matching a name, or nil
+    # matches against 'cn', also 'givenName' and 'sn' if the former does not match
+    # returns a single id, or nil if there is not a unique match
+    # Intended for use when matching a few people individually.
+    def self.find_by_name!(name)
+      res = find_by_name(name)
+      return nil unless res.size == 1
+      res.first
+    end
+
     # pre-fetch a given set of attributes, for a given list of people
     def self.preload(attributes, people=[])
       list = Hash.new {|hash, name| hash[name] = find(name)}

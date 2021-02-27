@@ -81,16 +81,7 @@ module ASF
       ASF::MemberFiles.parse_file('board_nominations.txt') do |hdr, nominee|
         # for board, the header currentl looks like this:
         # <PUBLIC NAME>
-        id = ASF::Person.listids("cn=#{hdr}").first
-        # Allow for missing initials; check first and last name
-        unless id
-          gn, sn, rest = hdr.split(' ')
-          if rest # more than two words
-            id = hdr
-          else
-            id = ASF::Person.listids("(&(sn=#{sn})(givenName=#{gn}))").first || hdr
-          end
-        end
+        id = ASF::Person.find_by_name!(hdr) || hdr # default to full name
         nominee['Public Name'] = hdr.force_encoding(Encoding::UTF_8) # the board file does not have ids, unfortunately
         nominees[id] = nominee
       end
