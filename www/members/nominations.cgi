@@ -42,7 +42,7 @@ def setup_data
 
   # parse nominations for names and ids
   nominations = ASF::MemberFiles.member_nominees.map do |id, hash|
-    {id: id, name: hash['Public Name']}
+    {id: id, name: hash['Public Name'], nominator: hash['Nominated by']}
   end
 
   # preload names
@@ -101,6 +101,8 @@ _html do
                 _a.present person.public_name, href: "#{ROSTER}/#{nominee[:id]}"
               else
                 _a.missing person.public_name, href: "#{ROSTER}/#{nominee[:id]}"
+                _ ' Nominated by: '
+                _ nominee[:nominator]
               end
 
               if nominee[:name] != person.public_name
