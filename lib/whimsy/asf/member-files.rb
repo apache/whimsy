@@ -55,6 +55,9 @@ module ASF
       end
     end
 
+    # TODO: change to return arrays rather than hash.
+    # This would help detect duplicate entries
+
     # Return hash of member nominees
     def self.member_nominees
       nominees = {}
@@ -74,7 +77,7 @@ module ASF
         # for board, the header currentl looks like this:
         # <PUBLIC NAME>
         id = ASF::Person.find_by_name!(hdr) || hdr # default to full name
-        nominee['Public Name'] = hdr # the board file does not have ids, unfortunately
+        nominee['Public Name'] = hdr # the board file does not have ids
         nominees[id] = nominee
       end
       nominees
