@@ -38,7 +38,7 @@ module ASF
         block
             .slice_before(/^ +(\S+ \S+):\s*/) # split on the header names
             .each_with_index do |para, idx|
-          if idx == 0 # id and name
+          if idx == 0 # id and name (or just name for board)
             header = para.first.strip
           else
             key, value = para.shift.strip.split(': ',2)
@@ -51,15 +51,7 @@ module ASF
             end
           end
         end
-        if header
-          yield header, nominee
-        else
-          unless block.join('') =~ /^\s*$/ # all blank or empty, e.g. trailing divider
-            Wunderbar.warn "Error, could not find public name"
-            Wunderbar.warn block.inspect
-            nominees['notinavail'] = {'Public Name' => '-- WARNING: unable to parse section --'}
-          end
-        end
+        yield header, nominee if header
       end
     end
 
@@ -91,7 +83,7 @@ module ASF
 end
 
 if __FILE__ == $0
-  ASF::MemberFiles.member_nominees.each {|k,v| p [k, v['Public Name'], v['Public Name'].encoding]}
+  ASF::MemberFiles.member_nominees.each {|k,v| p [k, v['Public Name'], v['Public Name']&.encoding]}
   puts "--------------"
-  ASF::MemberFiles.board_nominees.each {|k,v| p [k, v['Public Name'], v['Public Name'].encoding]}
+  # ASF::MemberFiles.board_nominees.each {|k,v| p [k, v['Public Name'], v['Public Name']&.encoding]}
 end
