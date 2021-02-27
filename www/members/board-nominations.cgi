@@ -46,11 +46,26 @@ def setup_data
   end
 
   # preload names
-  people = ASF::Person.preload('cn',
+  ASF::Person.preload('cn',
     nominations.map {|nominee| ASF::Person.find(nominee[:id])})
 
-  return nominations, people, emails
+  return nominations, emails
 end
+
+# create the match RE from a nominee
+def create_match(nominee)
+  names = []
+  pname = nominee[:name]
+  names << pname
+  names << pname.sub(%r{ [A-Z]\. }, ' ') # drop initial
+  personname = ASF::Person.find(nominee[:id]).public_name
+  names << personname if personname
+  list = names.uniq.map{|name| Regexp.escape(name)}.join('|')
+  # N.B. \b does not match if it follows ')', so won't match John (Fred)
+  # TODO: Work-round is to also look for EOS, but this needs to be improved
+  %r{\b(#{list})(\b|$)}i
+end
+
 
 # produce HTML output of reports, highlighting ones that have not (yet)
 # been posted
@@ -78,7 +93,7 @@ _html do
       }
     ) do
       cur_mtg_dir = File.basename(MeetingUtil.get_latest(MEETINGS))
-      nominations, people, emails = setup_data
+      nominations, emails = setup_data
       _div.flexbox do
         _div.flexitem do
           _h1_! do
@@ -91,9 +106,8 @@ _html do
           _ul nominations.sort_by {|nominee| nominee[:name]} do |nominee|
             _li! do
               person = ASF::Person.find(nominee[:id])
-              # N.B. \b does not match if it follows ')', so won't match John (Fred)
-              # TODO: Work-round is to also look for EOS, but this needs to be improved
-              match = /\b(#{Regexp.escape(nominee[:name]||'')}|#{Regexp.escape(person.public_name||'')})(\b|$)/i
+
+              match = create_match(nominee)
 
               if emails.any? {|mail| mail.subject.downcase =~ match}
                 _a.present person.public_name, href: "#{ROSTER}/#{nominee[:id]}"
@@ -109,9 +123,6 @@ _html do
             end
           end
         end
-
-        nominees = nominations.map! {|person| person[:name]}
-        nominees += people.map {|person| person.public_name}
 
         _div.flexitem do
           _h1_.posted! do
@@ -134,9 +145,7 @@ _html do
               href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' +
               ERB::Util.url_encode('<' + mail.message_id + '>')
 
-              # N.B. \b does not match if it follows ')', so won't match John (Fred)
-              # TODO: Work-round is to also look for EOS, but this needs to be improved
-              if nominees.any? {|name| mail.subject =~ /\b#{Regexp.escape(name)}(\b|$)/i}
+              if nominations.any? {|nominee| mail.subject =~ create_match(nominee)}
                 _a.present mail.subject, href: href
               else
                 _a.missing mail.subject, href: href
