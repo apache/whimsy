@@ -85,5 +85,5 @@ end
 if __FILE__ == $0
   ASF::MemberFiles.member_nominees.each {|k,v| p [k, v['Public Name'], v['Public Name']&.encoding]}
   puts "--------------"
-  # ASF::MemberFiles.board_nominees.each {|k,v| p [k, v['Public Name'], v['Public Name']&.encoding]}
+  ASF::MemberFiles.board_nominees.each {|k,v| p [k, v['Public Name'], v['Public Name']&.encoding]}
 end
