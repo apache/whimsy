@@ -67,7 +67,7 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        '-nominations' => 'New Member nominations cross-check',
+        'nominations' => 'New Member nominations cross-check',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
