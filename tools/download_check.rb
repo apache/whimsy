@@ -266,7 +266,7 @@ VERIFY_TEXT = [
  'check that the download has completed OK',
  'You should verify your download',
  'downloads can be verified',
- 'www.apache.org/info/verification.html',
+ 'www.apache.org/info/verification',
  'www.apache.org/dyn/closer.cgi#verify',
  'verify your mirrored downloads',
  'verify your downloads',
