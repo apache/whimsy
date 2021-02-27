@@ -1,11 +1,12 @@
 require_relative 'config'
+require_relative 'ldap'
 require_relative 'svn'
 module ASF
 
   class MemberFiles
 
-    # Return a hash of nominated members.
-    # key: availid
+    # Return a hash of nominees.
+    # key: availid (name for board nominees)
     # value: hash of entries:
     # keys:
     # Public Name
@@ -13,11 +14,11 @@ module ASF
     # Nominated by
     # Seconded by => array of seconders      
     # Nomination Statement => array of text lines
-    def self.member_nominees
+    def self.parse_file(name)
       # N.B. The format has changed over the years. This is the syntax as of 2021.
       # -----------------------------------------
       # <empty line>
-      #  <NOMINATED PERSON'S APACHE ID> <PUBLIC NAME>
+      #  header line
       #    Nominee email:
       #    Nominated by:
       #    Seconded by:
@@ -25,9 +26,8 @@ module ASF
       #    Nomination Statement:
       
       # Find most recent file:
-      nomfile = Dir[File.join(ASF::SVN['Meetings'], '*', 'nominated-members.txt')].max
+      nomfile = Dir[File.join(ASF::SVN['Meetings'], '*', name)].max
 
-      nominees = {}
       # options = {:external_encoding => Encoding::BINARY}
       options = {:external_encoding => Encoding::BINARY,
                  :internal_encoding => Encoding::UTF_8,
@@ -35,17 +35,17 @@ module ASF
       # N.B. the ** prefix is needed to avoid the following message:
       # Warning: Using the last argument as keyword parameters is deprecated 
       File.open(nomfile, mode='r', **options)
-          .slice_before(/^\s*---+--\s*/)
-          .drop(2) # instructions and sample block
-          .each do |block|
-        nominee = {}
-        id = nil
+        .slice_before(/^\s*---+--\s*/)
+        .drop(2) # instructions and sample block
+        .each do |block|
         block.shift(2) # divider and blank line
+        nominee = {}
+        header = nil
         block
             .slice_before(/^ +(\S+ \S+):\s*/) # split on the header names
             .each_with_index do |para, idx|
           if idx == 0 # id and name
-            id, nominee['Public Name'] = para.first.chomp.split(' ',2)
+            header = para.first.strip
           else
             key, value = para.shift.strip.split(': ',2)
             if para.size == 0 # no more data to follow
@@ -57,8 +57,8 @@ module ASF
             end
           end
         end
-        if id
-          nominees[id] = nominee if id
+        if header
+          yield header, nominee
         else
           unless block.join('') =~ /^\s*$/ # all blank or empty, e.g. trailing divider
             Wunderbar.warn "Error, could not find public name"
@@ -67,6 +67,30 @@ module ASF
           end
         end
       end
+    end
+
+    # Return hash of member nominees
+    def self.member_nominees
+      nominees = {}
+      ASF::MemberFiles.parse_file('nominated-members.txt') do |hdr, nominee|
+        # for members, the header looks like this:
+        # <NOMINATED PERSON'S APACHE ID> <PUBLIC NAME>        
+        id, nominee['Public Name'] = hdr.split(' ',2)
+        nominees[id] = nominee
+      end
+      nominees
+    end
+
+    # Return hash of board nominees
+    def self.board_nominees
+      nominees = {}
+      ASF::MemberFiles.parse_file('board_nominations.txt') do |hdr, nominee|
+        # for board, the header currentl looks like this:
+        # <PUBLIC NAME>
+        id = ASF::Person.listids("cn=#{hdr}").first      
+        nominee['Public Name'] = hdr # the board file does not have ids, unfortunately
+        nominees[id] = nominee
+      end
       nominees
     end
   end
@@ -74,4 +98,6 @@ end
 
 if __FILE__ == $0
   ASF::MemberFiles.member_nominees.each {|k,v| p [k, v['Public Name']]}
+  puts "--------------"
+  ASF::MemberFiles.board_nominees.each {|k,v| p [k, v['Public Name']]}
 end
