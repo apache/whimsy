@@ -28,7 +28,7 @@ module ASF
       # Find most recent file:
       nomfile = Dir[File.join(ASF::SVN['Meetings'], '*', name)].max
 
-      File.open(nomfile, mode='rb')
+      File.open(nomfile, mode='rb:UTF-8')
         .slice_before(/^\s*---+--\s*/)
         .drop(2) # instructions and sample block
         .each do |block|
@@ -82,7 +82,7 @@ module ASF
         # for board, the header currentl looks like this:
         # <PUBLIC NAME>
         id = ASF::Person.find_by_name!(hdr) || hdr # default to full name
-        nominee['Public Name'] = hdr.force_encoding(Encoding::UTF_8) # the board file does not have ids, unfortunately
+        nominee['Public Name'] = hdr # the board file does not have ids, unfortunately
         nominees[id] = nominee
       end
       nominees
@@ -91,7 +91,7 @@ module ASF
 end
 
 if __FILE__ == $0
-  ASF::MemberFiles.member_nominees.each {|k,v| p [k, v['Public Name']]}
+  ASF::MemberFiles.member_nominees.each {|k,v| p [k, v['Public Name'], v['Public Name'].encoding]}
   puts "--------------"
-  ASF::MemberFiles.board_nominees.each {|k,v| p [k, v['Public Name']]}
+  ASF::MemberFiles.board_nominees.each {|k,v| p [k, v['Public Name'], v['Public Name'].encoding]}
 end
