@@ -69,6 +69,7 @@ _html do
       related: {
         '/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
         '/members/watch' => 'Watch list for potential Member candidates',
+        'board-nominations' => 'Board nominations cross-check',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
