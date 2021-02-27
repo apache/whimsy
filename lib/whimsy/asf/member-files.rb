@@ -51,7 +51,7 @@ module ASF
             end
           end
         end
-        yield header, nominee if header
+        yield header, nominee unless header.nil? || header.empty?
       end
     end
 
