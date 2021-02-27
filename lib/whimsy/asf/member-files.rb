@@ -28,13 +28,7 @@ module ASF
       # Find most recent file:
       nomfile = Dir[File.join(ASF::SVN['Meetings'], '*', name)].max
 
-      # options = {:external_encoding => Encoding::BINARY}
-      options = {:external_encoding => Encoding::BINARY,
-                 :internal_encoding => Encoding::UTF_8,
-                 :invalid => :replace}
-      # N.B. the ** prefix is needed to avoid the following message:
-      # Warning: Using the last argument as keyword parameters is deprecated 
-      File.open(nomfile, mode='r', **options)
+      File.open(nomfile, mode='rb')
         .slice_before(/^\s*---+--\s*/)
         .drop(2) # instructions and sample block
         .each do |block|
@@ -87,8 +81,17 @@ module ASF
       ASF::MemberFiles.parse_file('board_nominations.txt') do |hdr, nominee|
         # for board, the header currentl looks like this:
         # <PUBLIC NAME>
-        id = ASF::Person.listids("cn=#{hdr}").first      
-        nominee['Public Name'] = hdr # the board file does not have ids, unfortunately
+        id = ASF::Person.listids("cn=#{hdr}").first
+        # Allow for missing initials; check first and last name
+        unless id
+          gn, sn, rest = hdr.split(' ')
+          if rest # more than two words
+            id = hdr
+          else
+            id = ASF::Person.listids("(&(sn=#{sn})(givenName=#{gn}))").first || hdr
+          end
+        end
+        nominee['Public Name'] = hdr.force_encoding(Encoding::UTF_8) # the board file does not have ids, unfortunately
         nominees[id] = nominee
       end
       nominees
