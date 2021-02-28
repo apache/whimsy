@@ -28,7 +28,11 @@ module ASF
       # Find most recent file:
       nomfile = Dir[File.join(ASF::SVN['Meetings'], '*', name)].max
 
+      # It does not appear to be possible to have file open or read
+      # automatically transcode strings, so we do it here.
+      # This is necessary to avoid issues with matching Regexes.
       File.open(nomfile, mode='rb:UTF-8')
+        .map{|l| l.encode('utf-8', invalid: :replace)}
         .slice_before(/^\s*---+--\s*/)
         .drop(2) # instructions and sample block
         .each do |block|
