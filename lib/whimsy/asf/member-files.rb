@@ -32,7 +32,7 @@ module ASF
       # automatically transcode strings, so we do it here.
       # This is necessary to avoid issues with matching Regexes.
       File.open(nomfile, mode='rb:UTF-8')
-        .map{|l| l.encode('utf-8', invalid: :replace)}
+        .map(&:scrub)
         .slice_before(/^\s*---+--\s*/)
         .drop(2) # instructions and sample block
         .each do |block|
@@ -90,7 +90,17 @@ module ASF
 end
 
 if __FILE__ == $0
-  ASF::MemberFiles.member_nominees.each {|k,v| p [k, v['Public Name'], v['Public Name']&.encoding]}
+  ASF::MemberFiles.member_nominees.each do |k,v| 
+    p [k, 
+       v['Public Name'], 
+       v['Public Name']&.encoding,
+       v['Public Name']&.valid_encoding?]
+  end
   puts "--------------"
-  ASF::MemberFiles.board_nominees.each {|k,v| p [k, v['Public Name'], v['Public Name']&.encoding]}
+  ASF::MemberFiles.board_nominees.each do |k,v| 
+    p [k, 
+      v['Public Name'], 
+      v['Public Name']&.encoding,
+      v['Public Name']&.valid_encoding?]
+ end
 end
