@@ -48,6 +48,12 @@ module ASF
       ]
     end
 
+    # <resolution link="">, from podlings.xml
+    attr_accessor  :resolutionLink
+
+    # <resolution url="">, from podlings.xml
+    attr_accessor  :resolutionURL
+
     # create a podling from a Nokogiri node built from podlings.xml
     def initialize(node)
       @name = node['name']
@@ -69,6 +75,7 @@ module ASF
       @monthly = @reporting.text.split(/,\s*/) if @reporting&.text
 
       @resolutionLink = node.at('resolution')['link'] if node.at('resolution')
+      @resolutionURL = node.at('resolution')['url'] if node.at('resolution')
 
       # Note: the following optional elements are not currently processed:
       # - resolution (except for resolution/@link)
@@ -97,6 +104,18 @@ module ASF
     # TLP name (name differ from podling name)
     def tlp_name
       @resolutionLink || name
+    end
+
+    def current?
+      @status == 'current'
+    end
+
+    def graduated?
+      @status == 'graduated'
+    end
+
+    def retired?
+      @status == 'retired'
     end
 
     # date this podling was accepted for incubation
