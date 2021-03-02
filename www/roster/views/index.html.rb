@@ -122,6 +122,19 @@ _html do
 
         end
 
+        # LDAP project groups without a PMC or active podling etc
+        _tr do
+          _td do
+            _a @otherids.length, href: 'other/'
+          end
+
+          _td do
+            _a 'Other', href: 'other/'
+          end
+
+          _td 'LDAP project groups with no apparent committee or podling'
+        end
+
         ### Groups
 
         _tr do

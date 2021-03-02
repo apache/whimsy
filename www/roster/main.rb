@@ -46,6 +46,10 @@ get '/' do
     @members = ASF::Member.list.keys - ASF::Member.status.keys # i.e. active member ids
     @groups = Group.list
     @podlings = ASF::Podling.to_h.values
+    @otherids = ASF::Project.list.map(&:name) -
+                @committees.map(&:name) -
+                @nonpmcs.map(&:name) -
+                ASF::Podling.currentids
     _html :index
   else
     redirect to('/')
@@ -70,6 +74,25 @@ get '/committee/:name' do |name|
   @committee = Committee.serialize(name, env)
   pass unless @committee
   _html :committee
+end
+
+# Handle projects without apparent connections
+get '/other/' do
+  @otherids = ASF::Project.list.map(&:name) -
+                ASF::Committee.pmcs.map(&:name) -
+                ASF::Committee.nonpmcs.map(&:name) -
+                ASF::Podling.currentids
+  @atticids = ASF::Committee.load_committee_metadata[:tlps].filter_map {|k,v| k if v[:retired]}
+  @retiredids = ASF::Podling.retiredids
+  @podlingAliases = {}
+  @podlingURLs = {}
+  ASF::Podling.list.each do |podling|
+    podling.resourceAliases.each {|ra| @podlingAliases[ra] = podling.name}
+    if podling.graduated?
+      @podlingURLs[podling.name] = podling.resolutionURL if podling.resolutionURL
+    end
+  end
+  _html :other
 end
 
 # Handle individual committer (or member) records
