@@ -175,7 +175,12 @@ _html do
               end
             end
             _tr do
-              _td ' '
+              _td do
+                _label do
+                  _input type: "radio", name: "cmd", value: "sendsubscribertomod-list", required: true, checked: (@cmd == "sendsubscribertomod-subscribe")
+                  _ 'sendsubscribertomod-list (list of moderated subscribers)'
+                end
+              end
               _td do
                 _label do
                   _input type: "radio", name: "cmd", value: "sendsubscribertomod-subscribe", required: true, checked: (@cmd == "sendsubscribertomod-subscribe")
@@ -184,7 +189,12 @@ _html do
               end
             end
             _tr do
-              _td ' '
+              _td do
+                _label do
+                  _input type: "radio", name: "cmd", value: "sendsubscribertomod-log", required: true, checked: (@cmd == "sendsubscribertomod-subscribe")
+                  _ 'sendsubscribertomod-log (history of moderated subscribers)'
+                end
+              end
               _td do
                 _label do
                   _input type: "radio", name: "cmd", value: "sendsubscribertomod-unsubscribe", required: true, checked: (@cmd == "sendsubscribertomod-unsubscribe")
