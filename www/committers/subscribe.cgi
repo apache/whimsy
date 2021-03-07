@@ -86,8 +86,8 @@ _html do
           _ 'Only email address(es) associated with your Apache ID are listed here.  To'
           _span.strong 'change your associated email addresses'
           _ ', login to '
-          _a 'https://id.apache.org/', href: "https://id.apache.org/details/#{$USER}"
-          _ 'where you can change your primary Forwarding Address and any other associated Alias email addresses you use.'
+          _a 'your Whimsy personal details page', href: "https://whimsy.apache.org/roster/committer/__self__"
+          _ 'where you can change your Forwarding Address(es) and alternate email addresses you may use.'
         end
         _p 'ASF members can use this form to subscribe to private lists. PMC chairs can subscribe to board lists. (P)PMC members can subscribe to their private@ list.'
         _p 'The subscription request will be queued and should be processed within about an hour.'
