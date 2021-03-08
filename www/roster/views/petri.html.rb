@@ -39,7 +39,7 @@ _html do
           @petri.sort_by {|petri| petri.name.downcase}.each do |petri|
             _tr do
               _td do
-                _a petri.id, href: "http://petri.apache.org/#{petri.id}"
+                _a petri.id, href: "https://petri.apache.org/#{petri.id}"
               end
               _td petri.name
               _td petri.status
