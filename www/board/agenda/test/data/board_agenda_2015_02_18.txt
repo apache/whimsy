@@ -1532,7 +1532,7 @@ As of January 30th, we enabled Cassandra's debian repository on bintray
 and have been monitoring it closely. The service seems to be working
 well and appears to have fulfilled the needs of reducing our overall
 webserver traffic and has the bonus of giving more insight into the
-downlaods. You can see some of the statistics on the dashboard here:
+downloads. You can see some of the statistics on the dashboard here:
 https://s.apache.org/bintray1
 https://s.apache.org/bintray2
 
@@ -1615,7 +1615,7 @@ Tony Stevenson:
       instances. This combined with the retirement of eris (old svn-master) 
       following a terminal hardware fault, we were limited to 1 LDAP instance
       in the US and proved too much for minotaur to cope with. It appears that
-      the version of slapd on FreeBSD on minotaur leaked memory at a phenomonal
+      the version of slapd on FreeBSD on minotaur leaked memory at a phenomenal
       rate.  The new LDAP service has been moved to the latest slapd available
       in Ubuntu 14.04, it has been fully built using puppet, and configured so
       that new LDAP hosts can be added with ease.
@@ -1636,7 +1636,7 @@ Tony Stevenson:
       David with 3 options of how I thought we could manage the service going
       forward along with the estimated costs, and the pro's and con's of each
       option. There were: 
-      1 - Move CMS to another FreeBSD host - undesireable given our current
+      1 - Move CMS to another FreeBSD host - undesirable given our current
           trajectory of moving away from FreeBSD, it meant entirely replicating
           the FreeBSD 9 jail too. This was the path of least change, but 
           perhaps most difficult.
@@ -1652,7 +1652,7 @@ Tony Stevenson:
       3 - Deprecate the CMS, and allow projects to determine their own
           publishing/transformations options. We would still require use of 
           pubsub technology, but projects can commit into that their HTML, 
-          either directly edited or dervied from markdown whcih they can keep
+          either directly edited or dervied from markdown which they can keep
           in their project repo (some of the finer details will need to be 
           worked out later. This would essentially be the cheapest option,
           remove technical debt, and while the timeline would be many months
@@ -1850,7 +1850,7 @@ Charles Duffy was made a committer on Dec 8th, 2013.
 o Community
 
 Overall the Ant project is relatively quiet. There has been an ongoing
-transition from submitted patches to pull requests coming in from Github.
+transition from submitted patches to pull requests coming in from GitHub.
 
 -----------------------------------------
 Attachment G: Report from the Apache Aries Project  [Jeremy Hughes]
@@ -2749,7 +2749,7 @@ Progress of the project:
   Some improvements to i18n for the search box and the font size button.
   Minor tweaks to the i18n documentation.
 
-  Some improvements to Javascript handling.
+  Some improvements to JavaScript handling.
 
   Infra advised us that the machine hosting the Forrest project's build and
   demo server is being decommissioned. One of our PMC members asked for a
@@ -2833,7 +2833,7 @@ level of contribution to the codebase and community lists
 since the last reporting period. Recent activity includes
 work on utilising ASF Infra's Rackspace resources to run
 our GoraCI testing suite, an excellent effort to provide
-a suite of extension bridges to Gora from other langauges
+a suite of extension bridges to Gora from other languages
 and upgrades of key module dependencies. The PMC are currently
 VOTE'ing on the release of Gora 0.6. It looks like 0.6 will 
 be released by the February board meeting.
@@ -3396,14 +3396,14 @@ How has the community developed since the last report?
   1. Kylin topic has been confirmed to present at Strata+Hadoop World 2015
      London, also proposed to HBaseCon, Hadoop Summit and Big Data
      Technology Conference 2015 Beijing
-  2. Offical twitter account created: @ApacheKylin
+  2. Official twitter account created: @ApacheKylin
      * Followers 173
   3. Issue backlog status since last report:
      * Created:   587 (including imported from github.com)
      * Resolved:  283 (including imported from github.com)
   4. Mailing list activity since last report:
      * @dev      227 messages
-  5. Github activity:
+  5. GitHub activity:
      * Star 405
      * Fork 172
      * Contributors 17
@@ -3979,7 +3979,7 @@ How has the project developed since the last report?
   is in-progress.
 
   Remaining infrastructure move includes - after IP clearance:
-  * Github -> git.apache.org
+  * GitHub -> git.apache.org
   * Jira -> Jira (still discussing if this should be in bulk or manual)
   * Confluence -> Confluence
   * Web content (ongoing)

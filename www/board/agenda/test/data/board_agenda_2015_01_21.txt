@@ -2769,7 +2769,7 @@ resources.
 
 Kalumet has been incubating since 2011-09-20.
 
-Community Developement:
+Community Development:
 
   Apache Kalumet 0.6-incubating version has been released.  However, due to
   some misunderstanding, the release vote has not been completed by 3 IPMC.

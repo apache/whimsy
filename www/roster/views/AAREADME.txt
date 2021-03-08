@@ -8,4 +8,4 @@ Files under 'actions' are named *.json.rb
 They return a JSON response to the client
 
 Other files are *.js.rb or *.html.eb and are converted to the appropriate
-client format -- Javascript or HTML
+client format -- JavaScript or HTML

@@ -73,7 +73,7 @@ Whimsy Architecture - Live Instance
 ===================
 
 Whimsy is run in an Apache hosted VM with httpd, Rack, Ruby, and variety of other tools 
-that directly interface with various parts of Apache organziational records.
+that directly interface with various parts of Apache organizational records.
 
 Details for each type of deployed tool or script:
 
