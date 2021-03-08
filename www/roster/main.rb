@@ -46,10 +46,12 @@ get '/' do
     @members = ASF::Member.list.keys - ASF::Member.status.keys # i.e. active member ids
     @groups = Group.list
     @podlings = ASF::Podling.to_h.values
+    @petri = ASF::Petri.list
     @otherids = ASF::Project.list.map(&:name) -
                 @committees.map(&:name) -
                 @nonpmcs.map(&:name) -
-                ASF::Podling.currentids
+                ASF::Podling.currentids -
+                @petri.map(&:name)
     _html :index
   else
     redirect to('/')
@@ -81,10 +83,10 @@ get '/other/' do
   @otherids = ASF::Project.list.map(&:name) -
                 ASF::Committee.pmcs.map(&:name) -
                 ASF::Committee.nonpmcs.map(&:name) -
-                ASF::Podling.currentids
+                ASF::Podling.currentids -
+                ASF::Petri.list.map(&:name)
   @atticids = ASF::Committee.load_committee_metadata[:tlps].filter_map {|k,v| k if v[:retired]}
   @retiredids = ASF::Podling.retiredids
-  @petriids = ASF::Petri.list.map(&:name)
   @podlingAliases = {}
   @podlingURLs = {}
   ASF::Podling.list.each do |podling|
@@ -373,6 +375,11 @@ get '/podlings' do
   @podlings = ASF::Podling.list
 
   _html :podlings
+end
+
+get '/petri' do
+  @petri = ASF::Petri.list
+  _html :petri
 end
 
 # posted actions

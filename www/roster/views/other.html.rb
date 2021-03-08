@@ -19,12 +19,12 @@ _html do
         _li 'Current PMCs'
         _li 'ASF committees (non-PMCs)'
         _li 'Current podlings'
+        _li 'Petri cultures'
       end
       _ 'Any that remain are then checked against:'
       _ul do
         _li 'Attic projects'
         _li 'Retired podlings'
-        _li 'Petri projects (cultures)'
         _li 'Podling aliases'
         _li 'Podling graduated as part of another TLP'
       end
@@ -49,8 +49,6 @@ _html do
 
             if @atticids.include? other
               _td 'Attic'
-            elsif @petriids.include? other
-              _td 'Petri project'
             elsif @retiredids.include? other
               _td 'Retired Podling'
             elsif @podlingAliases.include? other
