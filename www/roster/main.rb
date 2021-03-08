@@ -84,6 +84,7 @@ get '/other/' do
                 ASF::Podling.currentids
   @atticids = ASF::Committee.load_committee_metadata[:tlps].filter_map {|k,v| k if v[:retired]}
   @retiredids = ASF::Podling.retiredids
+  @petriids = ASF::Petri.list.map(&:name)
   @podlingAliases = {}
   @podlingURLs = {}
   ASF::Podling.list.each do |podling|

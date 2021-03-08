@@ -24,13 +24,13 @@ _html do
       _ul do
         _li 'Attic projects'
         _li 'Retired podlings'
+        _li 'Petri projects (cultures)'
         _li 'Podling aliases'
         _li 'Podling graduated as part of another TLP'
       end
       _p 'None of the above normally have an LDAP project group'
     end
 
-    _p @podlingURLs
     _p 'Click on column names to sort.'
 
     _table.table.table_hover do
@@ -49,6 +49,8 @@ _html do
 
             if @atticids.include? other
               _td 'Attic'
+            elsif @petriids.include? other
+              _td 'Petri project'
             elsif @retiredids.include? other
               _td 'Retired Podling'
             elsif @podlingAliases.include? other
