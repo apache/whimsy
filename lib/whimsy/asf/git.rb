@@ -1,4 +1,5 @@
 require 'open3'
+require 'net/http'
 
 module ASF
 
@@ -15,17 +16,23 @@ module ASF
     # path to the deployment branch on GitHub.
     INFRA_PUPPET = '/apache/infrastructure-puppet/deployment/'
 
+    # get a file live from github, e.g. '/apache/petri/master/info.yaml'
+    # returns body
+    def self.github(file, etag = nil)
+      http = Net::HTTP.new(GITHUB_HOST, 443)
+      http.use_ssl = true
+      return http.request(Net::HTTP::Get.new(file)).body
+    end
+
     # get a file live from infrastructure puppet (e.g. 'data/common.yaml')
     # issues a HTTP GET request, so may be slow and may fail.  For applications
     # that require faster and more dependable access,
     # <tt>ASF::Git.find('infrastructure-puppet')</tt> may be used to get
     # access to a clone that is updated every 10 minutes.
     def self.infra_puppet(file)
-      file = INFRA_PUPPET + file
-      http = Net::HTTP.new(GITHUB_HOST, 443)
-      http.use_ssl = true
-      http.request(Net::HTTP::Get.new(file)).body
+      self.github(INFRA_PUPPET + file)
     end
+
 
     # path to <tt>repository.yml</tt> in the source.
     REPOSITORY = File.expand_path('../../../repository.yml', __dir__)
@@ -104,4 +111,10 @@ module ASF
     end
   end
 
+end
+
+if $0 == __FILE__
+  require 'net/http'
+  puts ASF::Git.github('/apache/petri/master/info.yaml')
+  puts ASF::Git.infra_puppet('data/common.yaml') 
 end
