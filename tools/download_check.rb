@@ -39,7 +39,7 @@ $versions = Hash.new {|h1,k1| h1[k1]=Hash.new {|h2,k2| h2[k2]=Array.new} } # key
 # match an artifact
 # TODO detect artifacts by URL as well if possible
 # $1 = base, $2 = extension
-ARTIFACT_RE = %r{/([^/]+\.(tar|tar\.gz|deb|nbm|dmg|sh|zip|tgz|tar\.bz2|jar|war|msi|exe|rar|rpm|nar|xml))(&action=download)?$}
+ARTIFACT_RE = %r{/([^/]+\.(pom|tar|tar\.gz|deb|nbm|dmg|sh|zip|tgz|tar\.bz2|jar|war|msi|exe|rar|rpm|nar|xml))(&action=download)?$}
 
 def init
   # build a list of validation errors
@@ -275,6 +275,7 @@ VERIFY_TEXT = [
  'verification instructions',
  ' encouraged to verify ',
  'To check a GPG signature',
+ 'To verify Hadoop',
  'Instructions for verifying your mirrored downloads', # fineract
 ]
 
