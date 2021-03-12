@@ -51,7 +51,7 @@ get '/' do
                 @committees.map(&:name) -
                 @nonpmcs.map(&:name) -
                 ASF::Podling.currentids -
-                @petri.map(&:name)
+                @petri.map(&:id)
     _html :index
   else
     redirect to('/')
@@ -84,7 +84,7 @@ get '/other/' do
                 ASF::Committee.pmcs.map(&:name) -
                 ASF::Committee.nonpmcs.map(&:name) -
                 ASF::Podling.currentids -
-                ASF::Petri.list.map(&:name)
+                ASF::Petri.list.map(&:id)
   @atticids = ASF::Committee.load_committee_metadata[:tlps].filter_map {|k,v| k if v[:retired]}
   @retiredids = ASF::Podling.retiredids
   @podlingAliases = {}
