@@ -347,7 +347,8 @@ seen={}
       sections = text.split(/\nStatus [rR]eport (.*)\n=+\n/)
       # Some minutes have a 'Detailed Reports' header before the first podling report
       # podling header may now be prefixed with ## (since June 2019)
-      sections = text.split(/\n[-=][-=]+(?: Detailed Reports ---+)?\n(?:##)?\s*([a-zA-Z].*)\n\n/) if sections.length < 9
+      # Also there may be a blank line before the ##
+      sections = text.split(/\n[-=][-=]+(?: Detailed Reports ---+)?\n(?:\n?##)?\s*([a-zA-Z].*)\n\n/) if sections.length < 9
       sections = [''] if sections.include? 'FAILED TO REPORT'
       sections = text.split(/\n(\w+)\n-+\n\n/) if sections.length < 9
       sections = text.split(/\n=+\s+([\w.]+)\s+=+\n+/) if sections.length < 9
