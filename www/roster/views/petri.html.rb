@@ -19,7 +19,7 @@ _html do
       _h2 'A listing of cultures from Apache Petri'
       _p do
         _ 'The data is derived from '
-        _a 'info.yaml', 'https://github.com/apache/petri/blob/master/info.yaml'
+        _a 'info.yaml', href: 'https://github.com/apache/petri/blob/master/info.yaml'
       end
 
       _br
