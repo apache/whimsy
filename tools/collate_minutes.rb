@@ -177,6 +177,7 @@ end
 
 # handle project name changes
 # see also www/board/minutes/.htaccess
+# also see parse (Executive) Officer Reports ca. line 670
 def name_changes(title)
   title.sub! 'Ace', 'ACE' # WHIMSY-31
   title.sub! 'ADF Faces', 'MyFaces' # via Trinidad
@@ -683,6 +684,10 @@ seen={}
 
       title.sub! 'Executive VP', 'Executive Vice President'
       title.sub! 'Exec. V.P. and Secretary', 'Secretary'
+      title.sub! 'Vice Chairman', 'Vice Chair'
+      title.sub! 'Acting Chairman', 'Acting Chair'
+      title.sub! 'Chairman', 'Board Chair'
+    
       report = OpenStruct.new
       if title.include? ' ['
         report.owners = title.split(' [').last.sub(']','').strip
