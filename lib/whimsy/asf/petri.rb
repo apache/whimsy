@@ -1,16 +1,12 @@
 require 'yaml'
-require_relative 'git'
-
+require 'net/http'
 module ASF
 
   # Represents a Petri culture
-  # currently defined only in 
-  # https://github.com/apache/petri/blob/master/info.yaml
+  # currently defined in 
+  # https://petri.apache.org/info.yaml
 
-  # Initial very basic implementation.
-
-  PETRI_INFO = '/apache/petri/master/info.yaml'
-
+  PETRI_INFO = 'https://petri.apache.org/info.yaml'
   class Petri
     include Enumerable
 
@@ -37,7 +33,9 @@ module ASF
     # Array of all Petri culture entries
     def self.list
       @list = []
-      yaml = YAML.safe_load(ASF::Git.github(PETRI_INFO), [Symbol])
+      response = Net::HTTP.get_response(URI(PETRI_INFO))
+      response.value() # Raises error if not OK
+      yaml = YAML.safe_load(response.body, [Symbol])
       # @mentors = yaml['mentors']
       yaml['cultures'].each do |proj|
         @list << new(proj)
