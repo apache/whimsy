@@ -15,5 +15,4 @@ RedirectMatch ^/board/minutes/ws(\.html)?$             /board/minutes/Web_Servic
 RedirectMatch ^/board/minutes/xmlgraphics(\.html)?$    /board/minutes/XML_Graphics.html
 RedirectMatch ^/board/minutes/Chairman(\.html)?$       /board/minutes/Board_Chair.html
 RedirectMatch ^/board/minutes/Vice_Chairman(\.html)?$  /board/minutes/Vice_Chair.html
-RedirectMatch ^/board/minutes/Vice_Chairman(\.html)?$  /board/minutes/Vice_Chair.html
 RedirectMatch ^/board/minutes/Acting_Chairman(\.html)?$ /board/minutes/Acting_Chair.html
