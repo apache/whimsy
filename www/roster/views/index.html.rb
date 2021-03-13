@@ -7,6 +7,9 @@ _html do
   _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
 
   _body? do
+    if @stamps
+      _.comment! "TIMES %s TIMES" % @stamps.join(',')
+    end
     _whimsy_body(
       title: PAGETITLE,
       breadcrumbs: {

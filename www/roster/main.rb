@@ -39,19 +39,34 @@ end
 
 get '/' do
   if env['REQUEST_URI'].end_with? '/'
+    stamps = []
+    stamps << Time.now.to_i
     ASF::Person.preload(['asf-banned','loginShell']) # so can get inactive count
+    stamps << Time.now.to_i
     @committers = ASF::Person.list
+    stamps << Time.now.to_i
     @committees = ASF::Committee.pmcs
+    stamps << Time.now.to_i
     @nonpmcs = ASF::Committee.nonpmcs
+    stamps << Time.now.to_i
     @members = ASF::Member.list.keys - ASF::Member.status.keys # i.e. active member ids
+    stamps << Time.now.to_i
     @groups = Group.list
+    stamps << Time.now.to_i
     @podlings = ASF::Podling.to_h.values
+    stamps << Time.now.to_i
     @petri = ASF::Petri.list
+    stamps << Time.now.to_i
     @otherids = ASF::Project.list.map(&:name) -
                 @committees.map(&:name) -
                 @nonpmcs.map(&:name) -
                 ASF::Podling.currentids -
                 @petri.map(&:id)
+    stamps << Time.now.to_i
+    if stamps[-1] - stamps[0] > 1
+      @stamps = stamps.each_cons(2).map { |a,b| b-a }
+      Wunderbar.warn "TIMES %s TIMES" % @stamps.join(',')
+    end
     _html :index
   else
     redirect to('/')
