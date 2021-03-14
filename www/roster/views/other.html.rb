@@ -38,30 +38,15 @@ _html do
         _tr do
           _th.sorting_asc 'Name', data_sort: 'string-ins'
           _th 'Description', data_sort: 'string'
+          _th 'End Date', data_sort: 'string'
         end
       end
       _tbody do
-        @otherids.sort.each do |other|
-          _tr_ do
-            _td do
-              _a other
-            end
-
-            if @atticids.include? other
-              _td 'Attic'
-            elsif @retiredids.include? other
-              _td 'Retired Podling'
-            elsif @podlingAliases.include? other
-              _td "Podling alias for #{@podlingAliases[other]}"
-            elsif @podlingURLs.include? other
-              _td do
-                url = @podlingURLs[other]
-                _ "Podling graduated as"
-                _a url, href: url
-              end
-            else              
-              _td 'Unkown'
-            end
+        @others.sort.each do |k,v|
+          _tr do
+            _td k
+            _td v[:type]
+            _td v[:date]
           end
         end
       end

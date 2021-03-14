@@ -95,20 +95,43 @@ end
 
 # Handle projects without apparent connections
 get '/other/' do
-  @otherids = ASF::Project.list.map(&:name) -
+  otherids = ASF::Project.list.map(&:name) -
                 ASF::Committee.pmcs.map(&:name) -
                 ASF::Committee.nonpmcs.map(&:name) -
                 ASF::Podling.currentids -
                 ASF::Petri.list.map(&:id)
-  @atticids = ASF::Committee.load_committee_metadata[:tlps].filter_map {|k,v| k if v[:retired]}
-  @retiredids = ASF::Podling.retiredids
-  @podlingAliases = {}
-  @podlingURLs = {}
-  ASF::Podling.list.each do |podling|
-    podling.resourceAliases.each {|ra| @podlingAliases[ra] = podling.name}
-    if podling.graduated?
-      @podlingURLs[podling.name] = podling.resolutionURL if podling.resolutionURL
+  attics = ASF::Committee.load_committee_metadata[:tlps].filter {|k,v| v[:retired]}
+  @others = {}
+  otherids.each do |id|
+    if attics.include? id
+      type = 'Attic'
+      date = attics[id][:retired]
+    else
+      podling = ASF::Podling.find(id)
+      if podling
+        case podling.status
+        when 'retired'
+          type = 'Retired Podling'
+          date = podling.enddate.to_s
+        when 'graduated'
+          type = "Podling graduated as #{podling.resolutionURL}"
+          date = podling.enddate.to_s
+        when 'current'
+          type = "Renamed Podling => #{podling.name}"
+          date = ''
+        else
+          type = 'Unknown Podling status - should not happen!'
+          date = podling.status
+        end
+      else # not podling or Attic
+        type = 'Unknown'
+        date = ''
+      end
     end
+    @others[id] = {
+        type: type,
+        date: date
+      }
   end
   _html :other
 end
