@@ -16,6 +16,7 @@ _html do
     _li! {_a 'text', href: '_body_', target: 'content'}
     _li! {_a 'headers', href: '_headers_', target: 'content'}
     _li! {_a 'raw', href: '_raw_', target: 'content'}
+    _li! {_a 'reparse', href: '_reparse_', target: 'content'}
   end
 
   _div_.parts!

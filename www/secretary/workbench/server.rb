@@ -217,6 +217,18 @@ get %r{/(\d{6})/(\w+)/_raw_} do |month, hash|
   [200, {'Content-Type' => 'text/plain'}, message.raw]
 end
 
+# reparse an existing message
+get %r{/(\d{6})/(\w+)/_reparse_} do |month, hash|
+  mailbox = Mailbox.new(month)
+  message = mailbox.find(hash)
+  pass unless message
+  email = message.raw
+  headers = Message.parse(email)
+  message = Message.new(mailbox, hash, headers, email)
+  message.write_headers
+  [200, {'Content-Type' => 'text/plain'}, 'Done, reselect to show contents']
+end
+
 # intercede for potentially dangerous message attachments
 get %r{/(\d{6})/(\w+)/_danger_/(.*?)} do |month, hash, name|
   message = Mailbox.new(month).find(hash)
