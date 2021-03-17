@@ -1,6 +1,7 @@
 Dear <%= @email.display_names.join(', ') %>,
 
 We received this document but it appears to be incomplete.
+<%= @missing_items %>
 Please fill all required fields and resubmit all pages
 to secretary@apache.org
 https://www.apache.org/licenses/#submitting
