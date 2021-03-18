@@ -573,7 +573,13 @@ class Agenda
   # determine if this report can be skipped during the course of the meeting
   def skippable
     return false if self.flagged
-    return (@to == 'president') if self.missing and Agenda.meeting_day
+
+    if self.missing and Agenda.meeting_day
+      return true if @to == 'president'
+      return true unless @notes
+      return false
+    end
+
     return false if @approved and @approved.length < 5 and Agenda.meeting_day
     return true
   end
