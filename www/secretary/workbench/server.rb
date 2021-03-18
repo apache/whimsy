@@ -101,6 +101,15 @@ get %r{/(\d{6})} do |mbox|
   _json :index # This invokes workbench/views/index.json.rb
 end
 
+# display deleted messages
+get %r{/(\d{6})/deleted} do |mbox|
+  @mbox = mbox
+  @messages = Mailbox.new(@mbox).client_headers.select do |message|
+    message[:status] == :deleted
+  end
+  _html :deleted
+end
+
 # retrieve a single message
 get %r{/(\d{6})/(\w+)/} do |month, hash|
   @message = Mailbox.new(month).headers[hash]
