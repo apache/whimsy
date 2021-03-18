@@ -576,7 +576,7 @@ class Agenda
 
     if self.missing and Agenda.meeting_day
       return true if @to == 'president'
-      return true unless @notes
+      return true unless @notes or Server.userid == 'test'
       return false
     end
 
