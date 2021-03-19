@@ -71,7 +71,13 @@ class Main < Vue
 
     # update title to match the item title whenever page changes
     if defined? document and route.item
-      document.getElementsByTagName('title')[0].textContent = route.item.title
+      date = Agenda.date
+      title = route.item.title
+      if date != title # don't duplicate the date
+        document.getElementsByTagName('title')[0].textContent = date + ' ' + title
+      else
+        document.getElementsByTagName('title')[0].textContent = title
+      end
     end
   end
 
