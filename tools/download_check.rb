@@ -282,6 +282,7 @@ VERIFY_TEXT = [
 ALIASES = {
     'sig' => 'asc',
     'pgp' => 'asc',
+    'gpg' => 'asc',
     'pgpasc' => 'asc',
     'signature' => 'asc',
     'signature(.asc)' => 'asc',
