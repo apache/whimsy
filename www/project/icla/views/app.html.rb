@@ -265,7 +265,6 @@ _html lang: 'en', _width: '80' do
 
             _ul_.list_unstyled.white role: 'menu' do
               _li { _a 'Incubator', href: 'http://incubator.apache.org/' }
-              _li { _a 'Labs', href: 'http://labs.apache.org/' }
               _li { _a 'Licensing', href: 'https://www.apache.org/licenses/' }
               _li do
                 _a 'Licensing FAQ',
