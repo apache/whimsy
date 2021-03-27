@@ -3,6 +3,8 @@
 # data.
 module ASF # :nodoc:
 
+  ASF::Committee.load_committee_metadata
+
   ##
   # Reads and provides access to the
   # <tt>officers/personnel-duties/ROLENAME.yaml</tt> files.
@@ -19,6 +21,26 @@ module ASF # :nodoc:
         data = Hash[*File.read(file).split(/^\[(.*)\]\n/)[1..-1].map(&:strip)]
         next unless data['info']
         data['info'] = YAML.safe_load(data['info'])
+        # fix up data items available from elsewhere
+        if name =~ %r{^vp-(.+)$} or name =~ %r{^(security)$}
+          post = $1
+          begin
+            data['info']['id'] = ASF::Committee[post].chairs.first[:id]
+          rescue
+            begin
+              data['info']['id'] = ASF::Committee.officers.select{|o| o.name == post}.first.chairs.first[:id]
+            rescue
+              Wunderbar.warn "Cannot find chair for #{name}"
+            end
+          end
+        else
+          tmp = ASF::Committee.officers.select{|o| o.name == name}.first
+          if tmp
+            data['info']['id'] = tmp.chairs.first[:id]
+          else
+            Wunderbar.warn "Cannot find chair for #{name}"
+          end
+        end
         data['mtime'] = File.mtime(file).to_f
         @@duties[name] = data
       end
