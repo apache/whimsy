@@ -252,8 +252,12 @@ def get_links(body)
   doc = Nokogiri::HTML(body)
   nodeset = doc.css('a[href]')    # Get anchors w href attribute via css
   nodeset.map { |node|
-    href = node.attribute("href").to_s
-    text = node.text.gsub(/[[:space:]]+/,' ')
+    tmp = node.attribute("href").to_s
+    href = tmp.strip
+    if tmp != href
+        W "Spurious space(s) in '#{tmp}'"
+    end
+    text = node.text.gsub(/[[:space:]]+/,' ').strip
     [href,text]
   }.select{|x, _y| x =~ %r{^(https?:)?//} }
 end
