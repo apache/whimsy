@@ -506,8 +506,12 @@ def _checkDownloadPage(path, tlp, version)
         next if ext == 'sha' and tmp == 'sha1' # historic
         next if (ext == 'sha256' or ext == 'sha512') and (t == 'SHA' or t == 'digest') # generic
         next if ext == 'mds' and tmp == 'hashes'
-        if not base == t and not t == 'checksum'
-            E "Mismatch: #{h} and '#{t}'"
+        if not base == t
+            if t == 'Download' # MXNet
+                W "Mismatch: #{h} and '#{t}'"
+            elsif not t == 'checksum'
+                E "Mismatch: #{h} and '#{t}'"
+            end
         end
     end
   end
