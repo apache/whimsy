@@ -17,7 +17,8 @@ OFFICERS = {
   'board-stats.cgi' => "Statistics About Board Meetings",
   '/treasurer/bill-upload' => "Treasurer's Bill Upload Helper",
   'http://treasurer.apache.org' => "Treasurer's Office Payment Processing Overview",
-  'https://www.apache.org/foundation/governance/orgchart' => "Apache Corporate Organization Chart"
+  'https://www.apache.org/foundation/governance/orgchart' => "Apache Corporate Organization Chart",
+  'coi.cgi' => "Conflict of Interest Affirmation / Lookup Tool"
 }
 
 _html do
