@@ -248,13 +248,13 @@ def check_hash_loc(h,tlp)
 end
 
 # get the https? links as Array of [href,text]
-def get_links(body)
+def get_links(body, checkSpaces=false)
   doc = Nokogiri::HTML(body)
   nodeset = doc.css('a[href]')    # Get anchors w href attribute via css
   nodeset.map { |node|
     tmp = node.attribute("href").to_s
     href = tmp.strip
-    if tmp != href
+    if checkSpaces && tmp != href
         W "Spurious space(s) in '#{tmp}'"
     end
     text = node.text.gsub(/[[:space:]]+/,' ').strip
@@ -374,7 +374,7 @@ def _checkDownloadPage(path, tlp, version)
 
   deprecated = Time.parse('2018-01-01')
 
-  links = get_links(body)
+  links = get_links(body, true)
   if links.size < 6 # source+binary * archive+sig+hash
     E "Page does not have enough links: #{links.size} < 6 -- perhaps it needs JavaScript?"
   end
