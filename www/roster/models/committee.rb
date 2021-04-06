@@ -58,7 +58,7 @@ class Committee
       info[:role] = 'PMC member'
       next if pmc.ownerids.include?(key) # skip the rest (expensive) if person is in the owner group
       person = ASF::Person[key]
-      if analysePrivateSubs
+      if analysePrivateSubs && person # in case of missing entry (e.g. renamed uid)
         # Analyse the subscriptions, matching against canonicalised personal emails
         allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
         # pSubs is already downcased
