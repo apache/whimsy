@@ -30,7 +30,7 @@ module ASF # :nodoc:
             begin
               data['info']['id'] = ASF::Committee.officers.select{|o| o.name == post}.first.chairs.first[:id]
             rescue
-              Wunderbar.warn "Cannot find chair for #{name}"
+              Wunderbar.info "Cannot find chair for #{name}"
             end
           end
         else
@@ -38,7 +38,7 @@ module ASF # :nodoc:
           if tmp
             data['info']['id'] = tmp.chairs.first[:id]
           else
-            Wunderbar.warn "Cannot find chair for #{name}"
+            Wunderbar.info "Cannot find chair for #{name}"
           end
         end
         data['mtime'] = File.mtime(file).to_f
