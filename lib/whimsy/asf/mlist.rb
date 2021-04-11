@@ -367,6 +367,7 @@ module ASF
         if match
           dom = match[1].downcase # just in case
           list = match[2].downcase # just in case
+          next if dom == 'incubator.apache.org' && list == 'commits.deprecated' # INFRA-21658
           # Keep original case of email addresses
           mails = stanza.split(/\n/).select {|x| x =~ /@/}
           cache << [dom, list, mails]
