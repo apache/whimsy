@@ -161,8 +161,12 @@ if ARGV.length >= 2
   metadata = ASF::Committee.load_committee_metadata[:tlps]
 
   public_lists = Hash.new {|h,k| h[k]=Array.new}
-  ASF::MLIST.list_types do |dom, list, _|
-    public_lists[dom.sub(/\.apache\.org$/, '')] << list
+  begin
+    ASF::MLIST.list_types do |dom, list, _|
+      public_lists[dom.sub(/\.apache\.org$/, '')] << list
+    end
+  rescue => e
+    Wunderbar.error e.inspect
   end
 
   # reformat the data
