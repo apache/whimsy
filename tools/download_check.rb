@@ -579,16 +579,17 @@ def _checkDownloadPage(path, tlp, version)
           check_closer_down(h)
       end
     elsif h =~ ARTIFACT_RE
-      if $NOFOLLOW
-        I "Skipping archive artifact #{h}"
-        next
-      end
       name = $1
       _ext = $2
       if h =~ %r{https?://archive\.apache\.org/}
         unless $ARCHIVE_CHECK
             I "Ignoring archived artifact #{h}"
             next
+        end
+      else
+        if $NOFOLLOW
+          I "Skipping artifact #{h}"
+          next
         end
       end
       # Ideally would like to check for use of closer.lua/.cgi, but some projects pre-populate the pages
