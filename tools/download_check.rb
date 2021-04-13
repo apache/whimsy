@@ -28,6 +28,8 @@ $ALWAYS_CHECK_LINKS = false
 $NO_CHECK_LINKS = false
 $NOFOLLOW = false # may be reset
 $ALLOW_HTTP = false # http links generate Warning, not Error
+$FAIL_FAST = false
+$SHOW_LINKS = false
 
 $VERSION = nil
 
@@ -61,7 +63,14 @@ end
 # save the result of a test
 def test(severity, txt)
   @tests << {severity => txt}
-  @fails +=1 unless severity == :I or severity == :W
+  unless severity == :I or severity == :W
+    @fails +=1
+    if $FAIL_FAST
+        puts txt
+        caller.each {|c| puts c}
+        exit!
+    end
+  end
 end
 
 def F(txt)
@@ -377,6 +386,10 @@ def _checkDownloadPage(path, tlp, version)
   links = get_links(body, true)
   if links.size < 6 # source+binary * archive+sig+hash
     E "Page does not have enough links: #{links.size} < 6 -- perhaps it needs JavaScript?"
+  end
+
+  if $SHOW_LINKS
+    links.each {|l| p l}
   end
 
   tlpQE = Regexp.escape(tlp) # in case of meta-chars
@@ -699,6 +712,8 @@ if __FILE__ == $0
   $NO_CHECK_LINKS = ARGV.delete '--nolinks'
   $ARCHIVE_CHECK = ARGV.delete '--archivecheck'
   $ALLOW_HTTP = ARGV.delete '--http'
+  $FAIL_FAST = ARGV.delete '--ff'
+  $SHOW_LINKS = ARGV.delete '--show-links'
 
   # check for any unhandled options
   ARGV.each do |arg|
