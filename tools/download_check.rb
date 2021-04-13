@@ -198,7 +198,7 @@ def check_page(path, severity=:E, expectedStatus="200", log=true)
     test(severity, "Fetched #{path} - HTTP status: #{code} expected: #{expectedStatus}") unless severity == nil
     return nil
   end
-  I "Fetched #{path} - OK (#{code})" if log
+  I "Checked GET #{path} - OK (#{code})" if log
   puts "Fetched #{path} - OK (#{code})" if $CLI
   if code == '200'
     return response.body
@@ -560,11 +560,11 @@ def _checkDownloadPage(path, tlp, version)
         if $ARCHIVE_CHECK
           check_head(h, :E, "200", true, true)
         else
-          I "Ignoring archive hash #{h}"
+          I "Ignoring archived hash #{h}"
         end
       elsif host
         if $NOFOLLOW
-          I "Skipping archive hash #{h}"
+          I "Skipping artifact hash #{h}"
         else
           check_head(h, :E, "200", true, true)
         end
@@ -587,7 +587,7 @@ def _checkDownloadPage(path, tlp, version)
       _ext = $2
       if h =~ %r{https?://archive\.apache\.org/}
         unless $ARCHIVE_CHECK
-            I "Ignoring archive artifact #{h}"
+            I "Ignoring archived artifact #{h}"
             next
         end
       end
