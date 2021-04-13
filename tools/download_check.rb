@@ -147,72 +147,79 @@ def check_url(url)
   raise ArgumentError.new("Unexpected url: #{url}")
 end
 
-# get an HTTP URL
+# Return uri, code|nil, response|error
+def fetch_url(url, method=:head, depth=0) # string input
+  uri = URI.parse(url)
+  begin
+    Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |https|
+      case method
+      when :head
+        request = Net::HTTP::Head.new(uri.request_uri)
+      when :get
+        request = Net::HTTP::Get.new(uri.request_uri)
+      else
+        raise "Invalid method #{method}"
+      end
+      response = https.request(request)
+      if response.code =~ /^3\d\d/
+        return uri, nil, "Too many redirects: #{depth} > 3" if depth > 3
+        fetch_url response['location'], method, depth+1 # string
+      else
+        return uri, response.code, response
+      end
+    end
+  rescue Exception => e
+    return uri, nil, e
+  end
+end
+
+
+# Head an HTTP URL  => response
 def HEAD(url)
   puts ">> HEAD #{url}" if $VERBOSE
-  uri = check_url(url)
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.use_ssl = uri.scheme == 'https'
-  request = Net::HTTP::Head.new(uri.request_uri)
-  http.request(request)
+  fetch_url(url, :head)[2]
 end
 
-# get an HTTP URL=> response
+# get an HTTP URL => response
 def GET(url)
   puts ">> GET #{url}" if $VERBOSE
-  uri = check_url(url)
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.use_ssl = uri.scheme == 'https'
-  request = Net::HTTP::Get.new(uri.request_uri)
-  http.request(request)
+  fetch_url(url, :get)[2]
 end
 
-# Check page exists
-def check_head(path, severity = :E, expectedStatus = "200", log=true, allowRedirect=false)
+# Check page exists => response or nil
+def check_head(path, severity = :E, log=true)
   response = HEAD(path)
   code = response.code ||  '?'
   if code == '403' # someone does not like Whimsy?
     W "HEAD #{path} - HTTP status: #{code} - retry"
     response = HEAD(path)
     code = response.code ||  '?'
-  elsif allowRedirect and code == '302'
-    location = response['location']
-    if location.start_with? 'https://downloads.apache.org/'
-      response = HEAD(location)
-      code = response.code ||  '?'
-    end
   end
-  if code != expectedStatus
-    test(severity, "HEAD #{path} - HTTP status: #{code} expected: #{expectedStatus}") unless severity == nil
+  unless code == '200'
+    test(severity, "HEAD #{path} - HTTP status: #{code}") unless severity == nil
     return nil
   end
   I "Checked HEAD #{path} - OK (#{code})" if log
   response
 end
 
-# check page can be read => body
-def check_page(path, severity=:E, expectedStatus="200", log=true)
+# check page can be read => body or nil
+def check_page(path, severity=:E, log=true)
   response = GET(path)
   code = response.code ||  '?'
-  if code != expectedStatus
-    test(severity, "Fetched #{path} - HTTP status: #{code} expected: #{expectedStatus}") unless severity == nil
+  unless code == '200'
+    test(severity, "GET #{path} - HTTP status: #{code}") unless severity == nil
     return nil
   end
   I "Checked GET #{path} - OK (#{code})" if log
   puts "Fetched #{path} - OK (#{code})" if $CLI
-  if code == '200'
-    return response.body
-  else
-    return response
-  end
+  return response.body
 end
 
 # Check closer/download page
 def check_closer_down(url)
   # N.B. HEAD does not work; it returns success
-  res = check_page(url, :E, "302", false)
-  loc = res['location']
-  res = check_head(loc, :E, "200", false)
+  res = check_page(url, :E, false) # nolog
   return unless res
   ct = res.content_type
   cl = res.content_length
@@ -407,7 +414,7 @@ def _checkDownloadPage(path, tlp, version)
     else
         W "Found KEYS: '#{keytext}'"
     end
-    check_head(keyurl,:E, "200", false, true)
+    check_head(keyurl,:E) # log
   else
     keys = links.select{|h, v| h.end_with? 'KEYS' || v.strip == 'KEYS' || v == 'KEYS file' || v == '[KEYS]'}
     if keys.size >= 1
@@ -424,7 +431,7 @@ def _checkDownloadPage(path, tlp, version)
           E "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
         end
       end
-      check_head(keyurl,:E, "200")
+      check_head(keyurl,:E) # log
     else
       E 'Could not find KEYS link'
     end
@@ -558,7 +565,7 @@ def _checkDownloadPage(path, tlp, version)
       host, _stem, _ext = check_hash_loc(h,tlp)
       if host == 'archive'
         if $ARCHIVE_CHECK
-          check_head(h, :E, "200", true, true)
+          check_head(h, :E) # log
         else
           I "Ignoring archived hash #{h}"
         end
@@ -566,7 +573,7 @@ def _checkDownloadPage(path, tlp, version)
         if $NOFOLLOW
           I "Skipping artifact hash #{h}"
         else
-          check_head(h, :E, "200", true, true)
+          check_head(h, :E) # log
         end
       else
         # will have been reported by check_hash_loc
@@ -598,7 +605,7 @@ def _checkDownloadPage(path, tlp, version)
         E "Must use mirror system #{h}"
         next
       end
-      res = check_head(h, :E, "200", false)
+      res = check_head(h, :E, false) # nolog
       next unless res
       # if HEAD returns content_type and length it's probably a direct link
       ct = res.content_type
@@ -607,7 +614,7 @@ def _checkDownloadPage(path, tlp, version)
         I "#{h} OK: #{ct} #{cl}"
       else # need to try to download the mirror page
         path = nil
-        bdy = check_page(h, :E, "200", false)
+        bdy = check_page(h, :E, false)
         if bdy
           lks = get_links(bdy)
           lks.each do |l, _t|
@@ -619,7 +626,7 @@ def _checkDownloadPage(path, tlp, version)
           end
         end
         if path
-          res = check_head(path, :E, "200", false)
+          res = check_head(path, :E, false) # nolog
           next unless res
           ct = res.content_type
           cl = res.content_length
@@ -642,7 +649,7 @@ def _checkDownloadPage(path, tlp, version)
       end
       if host == 'www' or host == '' or host == 'downloads' or host == 'archive' or host == 'maven'
         next unless $ARCHIVE_CHECK or host != 'archive'
-        res = check_head(h,:E, "200", false, true) # allow for redirect here
+        res = check_head(h,:E, false) # nolog
         next unless res
         lastmod = res['last-modified']
         date = Time.parse(lastmod)
