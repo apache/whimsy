@@ -203,8 +203,8 @@ def check_head(path, severity = :E, log=true)
   response
 end
 
-# check page can be read => body or nil
-def check_page(path, severity=:E, log=true)
+# check page can be read => body or response or nil
+def check_page(path, severity=:E, log=true, returnRes=false)
   response = GET(path)
   code = response.code ||  '?'
   unless code == '200'
@@ -213,13 +213,13 @@ def check_page(path, severity=:E, log=true)
   end
   I "Checked GET #{path} - OK (#{code})" if log
   puts "Fetched #{path} - OK (#{code})" if $CLI
-  return response.body
+  return returnRes ? response : response.body
 end
 
 # Check closer/download page
 def check_closer_down(url)
   # N.B. HEAD does not work; it returns success
-  res = check_page(url, :E, false) # nolog
+  res = check_page(url, :E, false, true) # nolog, return response
   return unless res
   ct = res.content_type
   cl = res.content_length
