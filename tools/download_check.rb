@@ -376,6 +376,12 @@ def _checkDownloadPage(path, tlp, version)
      end
   end
 
+  # Some pages are mainly a single line (e.g. Hop)
+  # This make matching the appropriate match context tricky
+  body.scan(%r{[^<>]+?nightly[^<>]+?}i) do |m|
+    E "Found reference to NIGHTLY builds: #{m.strip}"
+  end
+
   if body.include? 'dist.apache.org'
     E 'Page must not link to dist.apache.org'
   else
