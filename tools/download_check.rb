@@ -378,8 +378,8 @@ def _checkDownloadPage(path, tlp, version)
 
   # Some pages are mainly a single line (e.g. Hop)
   # This make matching the appropriate match context tricky
-  body.scan(%r{[^<>]+?nightly[^<>]+?}i) do |m|
-    E "Found reference to NIGHTLY builds: #{m.strip}"
+  body.scan(%r{[^<>]+?(nightly|snapshot)[^<>]+?}i) do |m|
+    E "Found reference to NIGHTLY or SNAPSHOT builds: #{m.strip}"
   end
 
   if body.include? 'dist.apache.org'
