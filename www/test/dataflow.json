@@ -209,13 +209,6 @@
     "description": "ASF::Rack: add functionality to ASF::Auth, ASF::Committers, ASF::MembersAndOfficers",
     "maintainer": "vp-whimsy"
   },
-  "/lib/whimsy/asf/site.rb": {
-    "description": "ASF::Site: Utility methods added to ASF::Committee",
-    "maintainer": "vp-whimsy",
-    "sources": [
-      "asf/infrastructure/site/trunk/content/index.html"
-    ]
-  },
   "/lib/whimsy/asf/svn.rb": {
     "description": "ASF::SVN: Utility for SVN repo and file access; See also ASF::Config(reads .whimsy)",
     "maintainer": "vp-whimsy"
