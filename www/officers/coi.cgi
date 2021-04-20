@@ -208,7 +208,6 @@ def emit_post(_)
     ASF::Mail.configure
     mail = Mail.new do
       to "#{USERNAME}<#{USERMAIL}>"
-      cc "secretary@apache.org"
       from USERMAIL
       subject "Conflict of Interest affirmation from #{USERNAME}"
       text_part do
