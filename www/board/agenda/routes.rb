@@ -539,10 +539,15 @@ get '/new' do
   next_month = contents[/Next month.*?\n\n/m].chomp
   @next_month = next_month[/(.*#.*\n)+/] || ''
 
+  # get potential actions
+  actions = JSON.parse(Wunderbar::JsonBuilder.new({}).instance_eval(
+    File.read("#{settings.views}/actions/potential-actions.json.rb"),
+  ).target!, symbolize_names: true)[:actions]
+
   # Get directors, list of pmcs due to report, and shepherds
   @directors = ASF::Board.directors
   @pmcs = ASF::Board.reporting(@meeting)
-  @owner = ASF::Board::ShepherdStream.new
+  @owner = ASF::Board::ShepherdStream.new(actions)
 
   # Get list of unpublished and unapproved minutes
   draft = YAML.load_file(Dir["#{AGENDA_WORK}/board_minutes*.yml"].max)

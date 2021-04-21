@@ -107,10 +107,11 @@ module ASF
     # source for shepherd information, yields a stream of director names
     # in random order
     class ShepherdStream < Enumerator
-      def initialize
+      def initialize(actions)
+        @actions = (actions || []).reverse
         @directors = ASF::Service['board'].members
 
-        super do |generator|
+        super() do |generator|
           list = []
           loop do
             list = @directors.shuffle if list.empty?
@@ -126,7 +127,11 @@ module ASF
         chair = pmc.chair
         raise "no chair found for #{pmc.name}" unless chair
 
-        if @directors.include? chair
+        action = @actions.find {|action| action[:pmc] == pmc.display_name}
+
+        if action
+          "#{chair.public_name} / #{action[:owner]}"
+        elsif @directors.include? chair
           chair.public_name
         else
           "#{chair.public_name} / #{self.next}"
