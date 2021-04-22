@@ -3,7 +3,7 @@
 #
 
 # get posted action items from previous report
-today = Date.today.strftime('board_agenda_%Y_%m_%d.txt')
+today = Date.today.strftime("#{FOUNDATION_BOARD}/board_agenda_%Y_%m_%d.txt")
 base = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].
  select {|file| file < today}.sort.last
 parsed = ASF::Board::Agenda.parse(IO.read(base), true)
