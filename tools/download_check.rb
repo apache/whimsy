@@ -41,7 +41,7 @@ $versions = Hash.new {|h1,k1| h1[k1]=Hash.new {|h2,k2| h2[k2]=Array.new} } # key
 # match an artifact
 # TODO detect artifacts by URL as well if possible
 # $1 = base, $2 = extension
-ARTIFACT_RE = %r{/([^/]+\.(pom|tar|tar\.gz|deb|nbm|dmg|sh|zip|tgz|tar\.bz2|jar|war|msi|exe|rar|rpm|nar|xml))(&action=download)?$}
+ARTIFACT_RE = %r{/([^/]+\.(pom|tar|tar\.xz|tar\.gz|deb|nbm|dmg|sh|zip|tgz|tar\.bz2|jar|war|msi|exe|rar|rpm|nar|xml))(&action=download)?$}
 
 def init
   # build a list of validation errors
@@ -225,7 +225,7 @@ def check_closer_down(url)
   cl = res.content_length
   if ct and cl
     I "Checked #{url} OK - ct=#{ct} cl=#{cl}"
-  elsif cl > 0
+  elsif cl and cl > 0
     W "Possible issue with #{url} ct=#{ct} cl=#{cl}"
   else
     E "Problem with #{url} ct=#{ct} cl=#{cl}"
@@ -379,7 +379,7 @@ def _checkDownloadPage(path, tlp, version)
   # Some pages are mainly a single line (e.g. Hop)
   # This make matching the appropriate match context tricky
   body.scan(%r{[^<>]+?(nightly|snapshot)[^<>]+?}i) do |m|
-    E "Found reference to NIGHTLY or SNAPSHOT builds: #{m.strip}"
+    E "Found reference to NIGHTLY or SNAPSHOT builds: #{m.first.strip}"
   end
 
   if body.include? 'dist.apache.org'
