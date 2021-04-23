@@ -251,7 +251,7 @@ def check_hash_loc(h,tlp)
 #   https://repo1.maven.org/maven2/org/apache/shiro/shiro-spring/1.1.0/shiro-spring-1.1.0.jar.asc
   elsif h =~ %r{^(https?)://repo1?\.(maven)(?:\.apache)?\.org/maven2/org/apache/#{tlpQE}/.+/([^/]+\.(?:jar|xml))\.(\w{3,6})$} # Maven
     WE "HTTPS! #{h}" unless $1 == 'https'
-    W "Unexpected hash location #{h} for #{tlp}" unless $vercheck[$3][0] == 'maven'
+    W "Unexpected hash location #{h} for #{tlp}" unless ($vercheck[$3][0] rescue '') == 'maven'
     return $2,$3,$4
   else
     if h =~ %r{-bin-}
