@@ -3,9 +3,14 @@
 #
 
 # get posted action items from previous report
-today = Date.today.strftime("#{FOUNDATION_BOARD}/board_agenda_%Y_%m_%d.txt")
-base = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].
- select {|file| file < today}.sort.last
+if ENV['RACK_ENV'] == 'test'
+  base = "#{FOUNDATION_BOARD}/board_agenda_2015_01_21.txt"
+else
+  today = Date.today.strftime("#{FOUNDATION_BOARD}/board_agenda_%Y_%m_%d.txt")
+  base = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].
+   select {|file| file < today}.sort.last
+end
+
 parsed = ASF::Board::Agenda.parse(IO.read(base), true)
 actions = parsed.find {|item| item['title'] == 'Action Items'}['actions']
 
