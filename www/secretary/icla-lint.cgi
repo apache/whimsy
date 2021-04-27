@@ -289,7 +289,7 @@ _html do
   # Check that all LDAP entries appear in iclas.txt
   no_icla = ldap.select {|k| not icla_ids.has_key? k}
   # remove known exceptions
-  %w(testsebb testrubys apldaptest).each {|w| no_icla.delete w}
+  %w(testsebb testrubys testcml testdooh apldaptest).each {|w| no_icla.delete w}
   if no_icla.size > 0
     _h2 'LDAP entries not listed in iclas.txt'
     _table_ do
@@ -366,7 +366,7 @@ _html do
     for i in 0...buttons.length
       buttons[i].addEventListener('click') do |event|
         email = event.target.getAttribute('data-email')
-        issue = event.target.getAttribute('data-issue')
+        # issue = event.target.getAttribute('data-issue')
         name  = event.target.getAttribute('data-name')
 
         destination = "mailto:#{email}?cc=secretary@apache.org"
