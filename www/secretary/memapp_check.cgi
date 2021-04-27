@@ -76,7 +76,7 @@ _table_ do
     _th 'Status'
   end
   nofiles.sort.each do |k,v|
-    person, status, tried = v
+    person, status, _tried = v
     _tr do
       _td do
         _a k, href: "https://whimsy.apache.org/roster/committer/#{k}", target: '_blank'
