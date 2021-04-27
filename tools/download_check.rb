@@ -401,6 +401,16 @@ def _checkDownloadPage(path, tlp, version)
     E "Page does not have enough links: #{links.size} < 6 -- perhaps it needs JavaScript?"
   end
 
+  if $CLI
+    puts "Checking link syntax"
+    links.each do |h, t|
+        if h =~ %r{^([a-z]{3,6})://}
+            W "scheme? %s %s" %  [h, t] unless %w(http https).include? $1
+        else
+            W "syntax? %s %s" % [h, t] unless h.start_with? '//'
+        end
+    end
+  end
   if $SHOW_LINKS
     links.each {|l| p l}
   end
