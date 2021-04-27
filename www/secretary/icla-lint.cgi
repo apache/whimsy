@@ -174,23 +174,28 @@ _html do
     end
   end
 
-  # drop entries which have nologin set
-  committers.reject! do |id|
-    ASF::Person[id].nologin?
-  end
+  # drop known test entries
+  TEST_ENTRIES = %w(testsebb testrubys testcml testdooh)
+  committers.reject! {|id| TEST_ENTRIES.include? id}
 
-  _h2 'Committers without an ICLA recorded (excluding ones with nologin? true)'
+  _h2 'Committers without an ICLA recorded'
 
   if committers.size > 0
     _table do
       _tr do
         _th 'id'
+        _th 'Public Name'
+        _th 'Join Date'
+        _th 'Nologin?'
       end
       committers.each do |id|
         _tr do
           _td do
             _a id, href: '/roster/committer/' + id
           end
+          _td ASF::Person[id].public_name
+          _td ASF::Person[id].createDate
+          _td ASF::Person[id].nologin?
         end
       end
     end
@@ -295,11 +300,15 @@ _html do
     _table_ do
       _tr do
         _th 'Availid'
-        _th 'committer'
+        _th 'Public name'
+        _th 'Creation Date'
+        _th 'Whimsy page'
       end
       no_icla.each do |k|
         _tr do
           _td k
+          _td ASF::Person[k].public_name
+          _td ASF::Person[k].createDate
           _td do
             _a k, href: '/roster/committer/' + k
           end
