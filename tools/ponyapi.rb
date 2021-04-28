@@ -191,6 +191,9 @@ module PonyAPI
   def make_args(list, subdomain, year, month)
     if subdomain.nil? || subdomain == ''
       domain = 'apache.org'
+    elsif subdomain.include? '.' # assume full host provided
+      domain = subdomain
+      subdomain = subdomain.sub(%r{\..*},'') # can't use sub! with CLI arg
     else
       domain = subdomain + '.apache.org'
     end
