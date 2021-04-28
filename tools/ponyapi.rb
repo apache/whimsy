@@ -13,6 +13,7 @@ module PonyAPI
   PONYHOST = ENV['PONYHOST'] || 'https://lists.apache.org/'
   PONYSTATS = PONYHOST + 'api/stats.lua?list=%{list}&domain=%{domain}&d=%{year}-%{month}' # board&domain=apache.org&d=2017-04 becomes board-apache-org-201704-stats.json
   STATSMBOX = "%{list}-%{domNoDot}-%<year>.04d%<month>.02d-stats.json" # used to generate output file name
+  SUMMARYJSON = "%{list}-%{domNoDot}-%<year>.04d%<month>.02d-summary.json" # used to generate output file name
   PONYMBOX  = PONYHOST + 'api/mbox.lua?list=%{list}@%{domain}&date=%{year}-%{month}' # board@apache.org&date=2016-06 becomes board-apache-org-201707.mbox
   FILEMBOX  = "%{list}-%{domNoDot}-%<year>.04d%<month>.02d.mbox" # used to generate output file name
   PONYPREFS = PONYHOST + 'api/preferences.lua' # => preferences.json
@@ -95,6 +96,7 @@ module PonyAPI
     args = make_args(list, subdomain, year, month)
     uri, _request, response = fetch_pony(PONYSTATS % args, cookie)
     if response.code == '200' then
+      return JSON.parse(response.body), args if dir.nil?
       openfile(dir, STATSMBOX % args) do |f|
         begin
           jzon = JSON.parse(response.body)
@@ -125,6 +127,22 @@ module PonyAPI
         get_pony_stats dir, list, subdomain, y, m, cookie
       end
     end
+  end
+
+  # get summary stats; exclude details
+  def get_pony_summary(dir, list, subdomain, year, month, cookie=nil, sort_list=false)
+    res, args = get_pony_stats(nil, list, subdomain, year, month, cookie, sort_list)
+    return nil unless res
+    jzon = {}
+    %w(list domain name firstYear firstMonth lastYear lastMonth numparts hits no_threads unixtime max).each { |k| jzon[k] = res[k]}
+    %w(participants emails thread_struct).each { |k| jzon["#{k}.size"] = res[k].size}
+    if dir
+      openfile(dir, SUMMARYJSON % args) do |f|
+        jzon = Hash[jzon.sort] if sort_list
+        f.puts JSON.pretty_generate(jzon)
+      end
+    end
+    jzon
   end
 
   # Download one month as mbox
