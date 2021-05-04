@@ -658,7 +658,7 @@ def _checkDownloadPage(path, tlp, version)
         end
       end
     elsif h =~ %r{\.(md5|sha\d*)$}
-      host,_,_ = check_hash_loc(h,tlp)
+      host, stem, _ext = check_hash_loc(h,tlp)
       if $NOFOLLOW
         I "Skipping deprecated hash #{h}"
         next
@@ -674,7 +674,9 @@ def _checkDownloadPage(path, tlp, version)
           I "Deprecated hash found #{h} #{t}; however #{lastmod} is older than #{deprecated}"
           # OK
         else
-          W "Deprecated hash found #{h} #{t} - do not use for current releases #{lastmod}"
+          unless host == 'maven' and stem.end_with? '.jar' # Maven has yet to be upgraded...
+            W "Deprecated hash found #{h} #{t} - do not use for current releases #{lastmod}"
+          end
         end
       else
         E "Unhandled host: #{host} in #{h}"
