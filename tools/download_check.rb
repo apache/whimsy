@@ -242,6 +242,7 @@ end
 # returns www|archive, stem and the hash extension
 def check_hash_loc(h,tlp)
   tlpQE = Regexp.escape(tlp) # in case of meta-chars
+  tlpQE = "(?:ooo|#{tlpQE})" if tlp == 'openoffice'
   if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
@@ -499,7 +500,8 @@ def _checkDownloadPage(path, tlp, version)
             unless $vercheck[base].first == 'archive'
               stem = base[0..-(ext.size+2)]
               # version must include '.', e.g. xxx-m.n.oyyy
-              if stem =~ %r{^.+?-(\d+(?:\.\d+)+)(.*)$}
+#                 Apache_OpenOffice-SDK_4.1.10_Linux_x86-64_install-deb_en-US
+              if stem =~ %r{^.+?[-_](\d+(?:\.\d+)+)(.*)$}
                 # $1 = version
                 # $2 any suffix, e.g. -bin, -src (or other)
                 ver = $1 # main version
