@@ -377,9 +377,18 @@ def _checkDownloadPage(path, tlp, version)
   end
 
   # Some pages are mainly a single line (e.g. Hop)
-  # This make matching the appropriate match context tricky
-  body.scan(%r{[^<>]+?(nightly|snapshot)[^<>]+?}i) do |m|
-    E "Found reference to NIGHTLY or SNAPSHOT builds: #{m.first.strip}"
+  # This make matching the appropriate match context tricky without traversing the DOM
+  body.scan(%r{(^.*?([^<>]+?(nightly|snapshot)[^<>]+?)).*$}i) do |m|
+    m.each do |n|
+        if n.size < 160
+            if n =~ %r{-docs-} # snapshot docs (Flink)?
+                W "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
+            else
+                E "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
+            end
+            break
+        end
+    end
   end
 
   if body.include? 'dist.apache.org'
