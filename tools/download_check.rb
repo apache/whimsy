@@ -275,7 +275,7 @@ def get_links(body, checkSpaces=false)
         W "Spurious space(s) in '#{tmp}'"
     end
     text = node.text.gsub(/[[:space:]]+/,' ').strip
-    [href,text]
+    [href,text] unless href =~ %r{/httpcomponents.+/xdoc/downloads.xml} # breadcrumb link to source
   }.select{|x, _y| x =~ %r{^(https?:)?//} }
 end
 
