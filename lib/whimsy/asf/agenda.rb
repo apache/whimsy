@@ -166,6 +166,11 @@ class ASF::Board::Agenda
       end
     end
 
+    # handle case where board meeting crosses a date boundary
+    if @sections.values.first['timestamp'] > @sections.values.last['timestamp']
+      @sections.values.last['timestamp'] += 86_400_000 # add one day
+    end
+
     @sections.values
   end
 
