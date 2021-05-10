@@ -11,9 +11,10 @@ require 'whimsy/asf'
 # Allow override of local repo
 IP = ARGV.shift or raise RuntimeError.new "Need path to infrastructure puppet checkout"
 
+# Create dummy version of function to allow import
 module Puppet
   module Functions
-    def self.newfunction(*args)
+    def self.create_function(*args)
     end
   end
 end
