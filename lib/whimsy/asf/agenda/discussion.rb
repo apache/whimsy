@@ -36,6 +36,7 @@ class ASF::Board::Agenda
 
       scan discussion, pattern do |attrs|
         attrs['section'] = '8' + attrs['section']
+        attrs['warnings'] = ['Body is missing'] if attrs['text'].strip.empty?
       end
     end
   end
