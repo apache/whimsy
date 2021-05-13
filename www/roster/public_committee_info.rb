@@ -177,7 +177,7 @@ if ARGV.length >= 2
   metadata.each do |key, value|
     retired = value[:retired]
     if retired
-      Wunderbar.error "#{key} has no display name" unless value[:name]
+      Wunderbar.warn "#{key} has no display name" unless value[:name]
       data[key] = {
         display_name: value[:name],
         retired: retired
