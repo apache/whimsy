@@ -525,7 +525,8 @@ get '/new' do
   @tzlink = ASF::Board.tzlink(localtime)
   zone = ASF::Board::TIMEZONE.name
   @start_time = localtime.strftime('%H:%M') + ' ' + zone
-  @adjournment = (localtime + 2.hours).strftime('%H:%M') + ' ' + zone
+  duration = 1.hours
+  @adjournment = (localtime + duration).strftime('%H:%M') + ' ' + zone
   @prev_month = @meeting.to_date.prev_month.strftime('%B')
 
   # retrieve latest committee info
