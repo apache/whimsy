@@ -8,7 +8,7 @@ if ENV['RACK_ENV'] == 'test'
 else
   today = Date.today.strftime("#{FOUNDATION_BOARD}/board_agenda_%Y_%m_%d.txt")
   base = Dir["#{FOUNDATION_BOARD}/board_agenda_*.txt"].
-   select {|file| file < today}.sort.last
+   select {|file| file <= today}.sort.last
 end
 
 parsed = ASF::Board::Agenda.parse(IO.read(base), true)
