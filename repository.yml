@@ -150,7 +150,7 @@
 
   iclas:
     url: private/documents/iclas
-    depth: delete
+    depth: skip
 
   incubator-content:
     url: asf/incubator/public/trunk/content
