@@ -59,7 +59,6 @@ _html do
     end
 
     projects = ASF::Project.list
-    pmcs = ASF::Committee.pmcs
 
     projects.sort_by(&:name).each do |p|
       po=p.ownerids
