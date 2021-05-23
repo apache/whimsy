@@ -59,15 +59,16 @@ _html do
       _th 'in project (owner or member) but not in committers group'
     end
 
-    projects = ASF::Project.list
+    projects = ASF::Project.preload # for performance
+    pmcs = ASF::Committee.pmcs
 
-    projects.sort_by(&:name).each do |p|
+    projects.keys.sort_by(&:name).each do |p|
       po=p.ownerids
       pm=p.memberids
       po_pm = po - pm
       cttee = ASF::Committee.find(p.name)
       # Is this a real PMC?
-      if ASF::Committee.pmcs.include? cttee
+      if pmcs.include? cttee
         isPMC = true
         cm = cttee.roster.keys
         cm_po = cm - po
