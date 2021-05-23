@@ -20,6 +20,7 @@ LDAP people whould be committers (unles login is disabled)
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
+require 'whimsy/asf/mlist'
 require 'wunderbar'
 
 _html do
@@ -35,7 +36,7 @@ _html do
 
   old = ASF::Group['committers'].memberids
   new = ASF::Committer.listids
-  people = ASF::Person.preload(%w(uid createTimestamp asf-banned loginShell))
+  people = ASF::Person.preload(%w(uid createTimestamp asf-banned asf-altEmail mail loginShell))
 
   _h2 'members and owners'
 
@@ -127,6 +128,8 @@ _html do
         _th 'asf-banned?'
         _th 'Date'
         _th 'ICLA'
+        _th 'Subscriptions'
+        _th 'Moderates'
       end
       non_committers.sort_by(&:name).each do |p|
         icla = ASF::ICLA.find_by_id(p.name)
@@ -146,6 +149,14 @@ _html do
             end
           else
             _td 'No ICLA entry found'
+          end
+          all_mail = p.all_mail
+          _td do
+            # keep only the list names
+            _ ASF::MLIST.subscriptions(all_mail)[:subscriptions].map{|x| x[0]}
+          end
+          _td do
+            _ ASF::MLIST.moderates(all_mail)[:moderates]
           end
         end
       end
