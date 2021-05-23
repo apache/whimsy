@@ -777,7 +777,7 @@ module ASF
     # preloading the <tt>asf-banned</tt> attributes for these people.
     def asf_banned?
       # No idea what this means (yet)
-      attrs['asf-banned'] == 'yes'
+      attrs['asf-banned']&.first == 'yes'
     end
 
     # is the login marked as inactive?
