@@ -263,6 +263,9 @@ module ASF
         when "#{list}-archive@#{dom}" then return [:MINO, 'alias']
         # Direct mail to minotaur
         when "apmail-#{dom.split('.').first}-#{list}-archive@www.apache.org" then return [:MINO, 'direct']
+        # Unexpected archiver email commits-archive@incubator.apache.org for commits.deprecated@incubator.apache.org
+        # INFRA-21658
+        when "#{list.chomp('.deprecated')}-archive@#{dom}" then return [:MINO, 'alias']
         else
           return [:MARKMAIL, 'public'] if is_markmail_archiver?(email)
           # Whimsy currently only 'archives' private lists
@@ -367,7 +370,6 @@ module ASF
         if match
           dom = match[1].downcase # just in case
           list = match[2].downcase # just in case
-          next if dom == 'incubator.apache.org' && list == 'commits.deprecated' # INFRA-21658
           # Keep original case of email addresses
           mails = stanza.split(/\n/).select {|x| x =~ /@/}
           cache << [dom, list, mails]
