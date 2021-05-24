@@ -38,6 +38,17 @@ _html do
   new = ASF::Committer.listids
   people = ASF::Person.preload(%w(uid createTimestamp asf-banned asf-altEmail mail loginShell))
 
+  # fetch the email details up front to avoid rescanning
+  modded = Hash.new{ |h,k| h[k] = Array.new}
+  ASF::MLIST.list_parse('mod') do |dom,list,mods|
+    mods.each {|mod| modded[mod] << [list,dom].join('@')}
+  end
+
+  subbed = Hash.new{ |h,k| h[k] = Array.new}
+  ASF::MLIST.list_parse('sub') do |dom,list,subs|
+    subs.each {|sub| subbed[sub] << [list,dom].join('@')}
+  end
+
   _h2 'members and owners'
 
   _p do
@@ -153,11 +164,10 @@ _html do
           end
           all_mail = p.all_mail
           _td do
-            # keep only the list names
-            _ ASF::MLIST.subscriptions(all_mail)[:subscriptions].map{|x| x[0]}
+            _ subbed.select{|k| all_mail.include? k }.map{|k,v| v}.flatten
           end
           _td do
-            _ ASF::MLIST.moderates(all_mail)[:moderates]
+            _ modded.select{|k| all_mail.include? k }.map{|k,v| v}.flatten
           end
         end
       end
