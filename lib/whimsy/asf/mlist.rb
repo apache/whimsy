@@ -348,8 +348,7 @@ module ASF
         if cached
           begin
             cached.each do |d, l, m|
-              # don't allow cache to be altered
-              yield d.freeze, l.freeze, m.freeze
+              yield d, l, m # these are already frozen
             end
             return
           rescue WeakRef::RefError
@@ -368,13 +367,12 @@ module ASF
         # or    [/home/apmail/lists/]apachecon.com/announce[/mod]
         match = stanza.match(%r{(?:^|/)([-\w]*\.?apache\.org|apachecon\.com)/(.*?)#{suffix}(?:\n|\Z)})
         if match
-          dom = match[1].downcase # just in case
-          list = match[2].downcase # just in case
+          dom = match[1].downcase.freeze # just in case
+          list = match[2].downcase.freeze # just in case
           # Keep original case of email addresses
-          mails = stanza.split(/\n/).select {|x| x =~ /@/}
+          mails = stanza.split(/\n/).select {|x| x =~ /@/}.freeze
           cache << [dom, list, mails]
-          # don't allow cache to be altered
-          yield dom.freeze, list.freeze, mails.freeze
+          yield dom, list, mails
         else
           # don't allow mismatches as that means the RE is wrong
           line = stanza[0..(stanza.index("\n") || -1)]
