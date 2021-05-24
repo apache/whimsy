@@ -148,7 +148,7 @@ def check_url(url)
 end
 
 # Return uri, code|nil, response|error
-def fetch_url(url, method=:head, depth=0) # string input
+def fetch_url(url, method=:head, depth=0, followRedirects=true) # string input
   uri = URI.parse(url)
   begin
     Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |https|
@@ -161,7 +161,7 @@ def fetch_url(url, method=:head, depth=0) # string input
         raise "Invalid method #{method}"
       end
       response = https.request(request)
-      if response.code =~ /^3\d\d/
+      if followRedirects and response.code =~ /^3\d\d/
         return uri, nil, "Too many redirects: #{depth} > 3" if depth > 3
         fetch_url response['location'], method, depth+1 # string
       else
@@ -181,9 +181,9 @@ def HEAD(url)
 end
 
 # get an HTTP URL => response
-def GET(url)
+def GET(url, followRedirects=true)
   puts ">> GET #{url}" if $VERBOSE
-  fetch_url(url, :get)[2]
+  fetch_url(url, :get, 0, followRedirects)[2]
 end
 
 # Check page exists => response or nil
@@ -204,32 +204,16 @@ def check_head(path, severity = :E, log=true)
 end
 
 # check page can be read => body or response or nil
-def check_page(path, severity=:E, log=true, returnRes=false)
-  response = GET(path)
+def check_page(path, severity=:E, log=true, returnRes=false, followRedirects=true)
+  response = GET(path, followRedirects)
   code = response.code ||  '?'
-  unless code == '200'
+  unless code == '200' or (!followRedirects and code =~ /^3\d\d/)
     test(severity, "GET #{path} - HTTP status: #{code}") unless severity == nil
     return nil
   end
   I "Checked GET #{path} - OK (#{code})" if log
   puts "Fetched #{path} - OK (#{code})" if $CLI
   return returnRes ? response : response.body
-end
-
-# Check closer/download page
-def check_closer_down(url)
-  # N.B. HEAD does not work; it returns success
-  res = check_page(url, :E, false, true) # nolog, return response
-  return unless res
-  ct = res.content_type
-  cl = res.content_length
-  if ct and cl
-    I "Checked #{url} OK - ct=#{ct} cl=#{cl}"
-  elsif cl and cl > 0
-    W "Possible issue with #{url} ct=#{ct} cl=#{cl}"
-  else
-    E "Problem with #{url} ct=#{ct} cl=#{cl}"
-  end
 end
 
 def WE(msg)
@@ -239,6 +223,7 @@ def WE(msg)
     E msg
   end
 end
+
 # returns www|archive, stem and the hash extension
 def check_hash_loc(h,tlp)
   tlpQE = Regexp.escape(tlp) # in case of meta-chars
@@ -605,13 +590,6 @@ def _checkDownloadPage(path, tlp, version)
       else
         # will have been reported by check_hash_loc
       end
-    # mirror downloads need to be treated differently
-    elsif h =~ %r{^https?://(www\.)?apache\.org/dyn/.*action=download}
-      if $NOFOLLOW
-          I "Skipping download artifact #{h}"
-      else
-          check_closer_down(h)
-      end
     elsif h =~ ARTIFACT_RE
       name = $1
       _ext = $2
@@ -641,15 +619,26 @@ def _checkDownloadPage(path, tlp, version)
         I "#{h} OK: #{ct} #{cl}"
       else # need to try to download the mirror page
         path = nil
-        bdy = check_page(h, :E, false)
-        if bdy
-          lks = get_links(bdy)
-          lks.each do |l, _t|
-             # Don't want to match archive server (closer.cgi defaults to it if file is not found)
-             if l.end_with?(name) and l !~ %r{//archive\.apache\.org/}
-                path = l
-                break
-             end
+        # action=download needs special handling
+        if h =~ %r{^https?://(www\.)?apache\.org/dyn/.*action=download}
+          res = check_page(h, :E, false, true, false)
+          next unless res
+          unless res.code =~ /^3\d\d$/
+            E "Expected redirect, got #{res.code}"
+            next
+          end
+          path = res['Location'] or E("Could not extract Location from #{h}")
+        else
+          bdy = check_page(h, :E, false)
+          if bdy
+            lks = get_links(bdy)
+            lks.each do |l, _t|
+               # Don't want to match archive server (closer.cgi defaults to it if file is not found)
+               if l.end_with?(name) and l !~ %r{//archive\.apache\.org/}
+                  path = l
+                  break
+               end
+            end
           end
         end
         if path
