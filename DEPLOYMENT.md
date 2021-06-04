@@ -110,6 +110,7 @@ and running - these are only needed for a new deployment.
     * Subscribe `svnupdate@whimsy-vm4.apache.org` to `foundation-commits@apache.org`.
     * Subscribe `board@whimsy-vm4.apache.org` to `board@apache.org`.
     * Subscribe `members@whimsy-vm4.apache.org` to `members@apache.org`.
+    * Subscribe `root@whimsy-vm4.apache.org` to `private-allow@whimsical.apache.org`.
     * Add `secretary@whimsy-vm4.apache.org` to the `secretary@apache.org` alias.
 
  * Verify that email can be sent to non-apache.org email addresses.
