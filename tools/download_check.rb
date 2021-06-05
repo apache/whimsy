@@ -743,7 +743,9 @@ if __FILE__ == $0
 
   # check for any unhandled options
   ARGV.each do |arg|
-    raise ArgumentError.new("Invalid option #{arg}") if arg.start_with? '--'
+    if arg.start_with? '--'
+      raise ArgumentError.new("Invalid option #{arg}; expecting always|nolinks|archivecheck|http|ff|show-links")
+    end
   end
 
   init
