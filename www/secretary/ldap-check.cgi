@@ -61,6 +61,9 @@ _html do
     _ 'The table below show the differences, if any'
   end
 
+  projects = ASF::Project.preload # for performance
+  pmcs = ASF::Committee.pmcs
+
   _table do
     _tr do
       _th 'Project'
@@ -69,9 +72,6 @@ _html do
       _th 'Project owner but not project member'
       _th 'in project (owner or member) but not in committers group'
     end
-
-    projects = ASF::Project.preload # for performance
-    pmcs = ASF::Committee.pmcs
 
     projects.keys.sort_by(&:name).each do |p|
       po=p.ownerids
@@ -174,6 +174,59 @@ _html do
     end
   else
     _p 'All LDAP people entries are committers'
+  end
+
+  _h2 'People who are banned or have nologin but are still committers'
+
+  people_projects=Hash.new{|h,k| h[k]=Array.new}
+
+  projects.keys.each do |prj|
+    prj.members.each do |m|
+      people_projects[m] << prj.name
+    end
+    prj.owners.each do |m|
+      people_projects[m] << prj.name+'-(p)pmc'
+    end
+  end
+
+  _table do
+    _tr do
+          _th 'UID'
+          _th 'Created'
+          _th 'asf-banned?'
+          _th 'Login'
+          _th 'Projects (if any)'
+    end
+    people.select {|p| p.inactive? and new.include? p.name}.sort_by(&:name).each do |p|
+      _tr do
+        _td do
+          _a p.name, href: '/roster/committer/' + p.name
+        end
+        _td p.createDate
+        _td p.asf_banned?
+        _td p.loginShell
+        _td people_projects[p.name].join(',')
+      end
+    end
+  end
+
+  _h2 'People who have nologin set but are not banned'
+
+  _table do
+    _tr do
+          _th 'UID'
+          _th 'Created'
+          _th 'Login'
+    end
+    people.select {|p| p.inactive? and not p.asf_banned?}.sort_by(&:name).each do |p|
+      _tr do
+        _td do
+          _a p.name, href: '/roster/committer/' + p.name
+        end
+        _td p.createDate
+        _td p.loginShell
+      end
+    end
   end
 
   _h2 'committers who are not in LDAP people'
