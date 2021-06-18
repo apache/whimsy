@@ -65,7 +65,7 @@ _html do
   _h1 'LDAP people name checks'
 
   _p do
-    _ 'LDAP sn and givenName must match the result of ASF::Person.ldap_name'
+    _ 'LDAP sn and givenName must match the result of ASF::Person.ldap_name; cn should match Public Name'
     _br
     _ 'The table below show the differences, if any.'
     _br
@@ -124,6 +124,7 @@ _html do
       new_given = parse['givenName']
       new_sn = parse['sn']
       unused = parse['unused']
+      _initials = parse['initials']
 
       givenOK = (new_given == given)
       badGiven += 1 unless givenOK
@@ -131,17 +132,19 @@ _html do
       snOK =    (new_sn == p.sn)
       badSN += 1 unless snOK
 
-      if givenOK and snOK # all checks OK
+      icla = ASF::ICLA.find_by_id(p.uid)
+      public_name = icla.name rescue '?'
+      cnOK = (public_name == p.cn or public_name == '?') # don't check cn against missing public name
+
+      if givenOK and snOK and cnOK # all checks OK
         matches += 1
         next
       end
       next if givenOK and skipSN #and unused.size == 0
 
-      icla = ASF::ICLA.find_by_id(p.uid)
       claRef = icla.claRef if icla
       claRef ||= 'unknown'
       legal_name = icla.legal_name rescue '?'
-      public_name = icla.name rescue '?'
       _tr do
         _td do
           _a p.uid, href: '/roster/committer/' + p.uid
