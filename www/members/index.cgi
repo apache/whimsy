@@ -32,6 +32,7 @@ MISC = {
   'mentors.cgi' => "New Member mentoring program overview",
   'board-attend.cgi' => "Director attendance statistics at board meetings",
   'board-nominations.cgi' => "Board Member nominations cross-check - ensuring nominations get on the ballot, etc.",
+  'ldap-namecheck.cgi' => "Crosscheck LDAP Names With Public Name from ICLAs",
   'namediff.cgi' => "Crosscheck Members Names With ICLA records",
   'mirror_check.cgi' => "ASF Distribution Mirror Check - is a mirror configured correctly",
   'download_check.cgi' => "Verify an Apache project download page is configured correctly"
