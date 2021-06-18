@@ -38,8 +38,9 @@ _html do
 
   _h1 "public names: LDAP vs iclas.txt"
 
-  # prefetch LDAP data
-  ASF::Person.preload(%w(cn dn))
+  # prefetch LDAP data 
+  # Seems it needs to be saved in a variable to ensure it is cached
+  _cache = ASF::Person.preload(%w(cn dn))
 
   if @updates
 
@@ -155,7 +156,7 @@ _html do
       _th "LDAP cn"
     end
 
-    ASF::ICLA.each do |icla|
+    ASF::ICLA.each.sort_by{|icla| icla.id}.each do |icla|
       next if icla.noId?
       person = ASF::Person.find(icla.id)
       next unless person.dn and person.attrs['cn']
