@@ -140,6 +140,10 @@ module ASF
       words = name.gsub(',', '').split(' ')
       result = {'cn' => name}
       result['title'] = words.shift if words.first == 'Dr.' or words.first == 'Dr'
+      result['initials'] = []
+      while words.first =~ %r{^[A-Z]\.?$}
+        result['initials'] << words.shift
+      end
       if words.last =~ /^Ph\.D\.?/
         title = words.pop # Always pop (||= short-circuits the pop)
         result['title'] ||= title
