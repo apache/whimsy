@@ -902,7 +902,6 @@ module ASF
     # update an LDAP attribute for this person.  This needs to be run
     # either inside or after ASF::LDAP.bind.
     def modify(attr, value)
-      value = Array(value) 
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_replace(attr.to_s, value)])
       # attributes are expected to be arrays
       attrs[attr.to_s] = value.is_a?(String) ? [value] : value
