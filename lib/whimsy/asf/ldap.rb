@@ -899,12 +899,23 @@ module ASF
       end
     end
 
+    # is argument an empty string on its own or in a singleton array?
+    def arg_empty?(arg)
+      return arg.empty? || (arg.is_a?(Array) && arg.size == 1 && arg.first.empty?)
+    end
+
     # update an LDAP attribute for this person.  This needs to be run
     # either inside or after ASF::LDAP.bind.
     def modify(attr, value)
-      ASF::LDAP.modify(self.dn, [ASF::Base.mod_replace(attr.to_s, value)])
-      # attributes are expected to be arrays
-      attrs[attr.to_s] = value.is_a?(String) ? [value] : value
+      # OK to remove the attribute? Only support givenName for now...
+      if attr == 'givenName' and arg_empty?(value)
+        ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete(attr.to_s, nil)])
+        attrs.delete(attr.to_s) # remove the cached entry
+      else
+        ASF::LDAP.modify(self.dn, [ASF::Base.mod_replace(attr.to_s, value)])
+        # attributes are expected to be arrays
+        attrs[attr.to_s] = value.is_a?(String) ? [value] : value
+      end
     end
 
     # add a new person to LDAP.  Attrs must include uid, cn, and mail
