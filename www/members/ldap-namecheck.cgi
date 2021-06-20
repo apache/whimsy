@@ -72,7 +72,7 @@ _html do
       unused = parse['unused']
       _initials = parse['initials']
 
-      givenOK = (new_given == given)
+      givenOK = ASF::Person.names_equivalent?(new_given, given)
       badGiven += 1 unless givenOK
 
       snOK =    (new_sn == p.sn)

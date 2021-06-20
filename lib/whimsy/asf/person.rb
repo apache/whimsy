@@ -141,7 +141,7 @@ module ASF
       result = {'cn' => name}
       result['title'] = words.shift if words.first == 'Dr.' or words.first == 'Dr'
       result['initials'] = []
-      while words.first =~ %r{^[A-Z]\.?$}
+      while words.first =~ %r{^[A-Z]\.$}
         result['initials'] << words.shift
       end
       if words.last =~ /^Ph\.D\.?/
@@ -162,6 +162,41 @@ module ASF
         result['unused'] = words
       end
       result
+    end
+
+    # Name equivalences
+    names = [
+      %w(Alex Alexander Alexandru), 
+      %w(Andrew Andy),
+      %w(William Bill),
+      %w(Chris Christopher),
+      %w(Joe Joey),
+      %w(Dan Daniel),
+      %w(David Dave),
+      %w(Don Donald),
+      %w(Greg Gregory),
+      %w(Matt Matthew),
+      %w(Mike Michael Mick),
+      %w(Nikoloai Nickolay),
+      %w(Phil Philip),
+      %w(Rob Robbie Robert),
+      %w(Stephen Steve Steven),
+      %w(Tom Thomas),
+      %w(Tomek Tomasz),
+      %w(Zach Zachary),
+    ]
+    NAMEHASH = Hash.new
+    names.each_with_index do |list, index|
+      list.each do |name|
+        NAMEHASH[name] = index
+      end
+    end
+    def self.names_equivalent?(one, two)
+      # index cannot be -1, cannot match if missing entries are set to -1 or nil
+      return one == two ||
+        (NAMEHASH[one] || -1) == NAMEHASH[two] ||
+        one.start_with?("#{two} ") || two.start_with?("#{one }") ||
+        (NAMEHASH[one.split(' ').first] || -1) == NAMEHASH[two.split(' ').first]
     end
 
     # DRAFT
