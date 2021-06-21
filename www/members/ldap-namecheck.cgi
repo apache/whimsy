@@ -88,7 +88,7 @@ _html do
       next unless public_name # Don't check entries not in iclas.txt
 
       cnOK = (public_name == p.cn)
-      pnames=public_name.gsub(',', '').split
+      pnames=public_name.gsub(%r{[(),]}, '').split # drop special characters that may terminate names
       missingGiven = given.split.any? {|one| ! (one == p.uid or pnames.include?(one) or pnames.any? {|pn| ASF::Person.names_equivalent?(pn, one)})}
       missingsn = p.sn.split.any? {|one| ! (one == p.uid or pnames.include? one or pnames.any? {|pn| ASF::Person.names_equivalent?(pn, one)})}
       if givenOK and snOK and cnOK and ! missingGiven and ! missingsn # all checks OK
@@ -114,7 +114,10 @@ _html do
           elsif new_given == ''
             _del given # entry should be removed
           else
-            _em given
+            _em given.inspect
+          end
+          if missingGiven
+            _ [pnames,given.split]
           end
         end
         _td! copyAble: 'true' do
