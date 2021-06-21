@@ -114,7 +114,7 @@ _html do
           elsif new_given == ''
             _del given # entry should be removed
           else
-            _em given.inspect
+            _em given
           end
         end
         _td! copyAble: 'true' do
