@@ -82,7 +82,8 @@ _html do
       badSN += 1 unless snOK
 
       icla = ASF::ICLA.find_by_id(p.uid)
-      public_name = icla.name rescue '?'
+      public_name = icla.name rescue nil
+      next unless public_name # Don't check entries not in iclas.txt
 
       cnOK = (public_name == p.cn)
       pnames=public_name.split
