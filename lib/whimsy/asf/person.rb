@@ -176,6 +176,7 @@ module ASF
       %w(David Dave),
       %w(Don Donald),
       %w(Greg Gregory),
+      %w(Jim James),
       %w(Matt Matthew),
       %w(Mike Michael Mick),
       %w(Nikoloai Nickolay),
