@@ -149,7 +149,8 @@ module ASF
         result['title'] ||= title
       end
       result['generationQualifier'] = words.pop if words.last =~ SUFFIXES
-      result['givenName'] = words.shift # TODO does gn allow multiple words?
+      result['givenName'] = words.shift if words.size > 1 # don't use remaining word as it must be sn
+      # TODO givenName can have multiple entries
       # extract surnames like van Gogh etc
       if words.size >= 3 and DOUBLE_PFX.include? words[-3..-2].join(' ')
         result['sn'] = words[-3..-1].join(' ')
