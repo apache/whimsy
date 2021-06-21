@@ -29,6 +29,8 @@ _html do
     _br
     _ 'If the cn does not match the public name, the cell is light grey'
     _br
+    _ 'If the givenName or sn does not match part or all of the public name, the cell is light grey'
+    _br
     _ 'The Modify? columns show suggested fixes. If the name is non-italic then the suggestion is likely correct; italicised suggestions may be wrong/unnecessary.'
     _br
     _ 'The suggested name is considered correct if:'
@@ -37,6 +39,7 @@ _html do
       _li 'The existing field is missing'
       _li 'AND there are no parts of the cn unused'
     end
+  end
 
   # prefetch LDAP data
   people = ASF::Person.preload(%w(uid cn sn givenName loginShell))
@@ -64,15 +67,15 @@ _html do
       next if p.banned?
       next if p.name == 'apldaptest'
 
-      given = p.givenName rescue '---' # some entries have not set this up
+      given = p.givenName rescue '' # some entries have not set this up
 
       parse = ASF::Person.ldap_name(p.cn)
-      new_given = parse['givenName']
+      new_given = parse['givenName'] || ''
       new_sn = parse['sn']
       unused = parse['unused']
       _initials = parse['initials']
 
-      givenOK = ASF::Person.names_equivalent?(new_given, given)
+      givenOK = given.empty? || ASF::Person.names_equivalent?(new_given, given)
       badGiven += 1 unless givenOK
 
       snOK =    (new_sn == p.sn)
@@ -81,8 +84,11 @@ _html do
       icla = ASF::ICLA.find_by_id(p.uid)
       public_name = icla.name rescue '?'
 
-      cnOK = (public_name == p.cn or public_name == '?') # don't check cn against missing public name
-      if givenOK and snOK and cnOK # all checks OK
+      cnOK = (public_name == p.cn)
+      pnames=public_name.split
+      missingGiven = given.split.any? {|one| ! (one == p.uid or pnames.include?(one) or pnames.any? {|pn| ASF::Person.names_equivalent?(pn, one)})}
+      missingsn = p.sn.split.any? {|one| ! (one == p.uid or pnames.include? one or pnames.any? {|pn| ASF::Person.names_equivalent?(pn, one)})}
+      if givenOK and snOK and cnOK and ! missingGiven and ! missingsn # all checks OK
         matches += 1
         next
       end
@@ -99,7 +105,7 @@ _html do
             _ p.cn
           end
         end
-        _td do
+        _td bgcolor: missingGiven ? 'lightgrey' : 'white' do
           if givenOK
             _ given
           else
@@ -117,7 +123,7 @@ _html do
               end
           end
         end
-        _td do
+        _td bgcolor: missingsn ? 'lightgrey' : 'white' do
           if snOK
             _ p.sn
           else
@@ -138,12 +144,20 @@ _html do
         _td unused.join(' ')
       end
     end
+    _tr bgcolor: 'lightblue' do
+      _td 'uid'
+      _td "iclas.txt public name"
+      _td 'cn'
+      _td 'givenName'
+      _td 'Modify to?'
+      _td 'sn'
+      _td 'Modify to?'
+      _td 'Unused names'
+    end
   end
 
   _p do
     _ "Total: #{people.size} Matches: #{matches} GivenBad: #{badGiven} SNBad: #{badSN}"
   end
-
- end
 
 end
