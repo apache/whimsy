@@ -196,7 +196,7 @@ module ASF
       # index cannot be -1, cannot match if missing entries are set to -1 or nil
       return one == two ||
         (NAMEHASH[one] || -1) == NAMEHASH[two] ||
-        one.start_with?("#{two} ") || two.start_with?("#{one }") ||
+        one.start_with?("#{two} ") || two.start_with?("#{one} ") ||
         (NAMEHASH[one.split(' ').first] || -1) == NAMEHASH[two.split(' ').first]
     end
 
