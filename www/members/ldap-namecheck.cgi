@@ -116,9 +116,6 @@ _html do
           else
             _em given.inspect
           end
-          if missingGiven
-            _ [pnames,given.split]
-          end
         end
         _td! copyAble: 'true' do
           if givenOK
