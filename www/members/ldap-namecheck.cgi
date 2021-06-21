@@ -88,7 +88,7 @@ _html do
       next unless public_name # Don't check entries not in iclas.txt
 
       cnOK = (public_name == p.cn)
-      pnames=public_name.split
+      pnames=public_name.gsub(',', '').split
       missingGiven = given.split.any? {|one| ! (one == p.uid or pnames.include?(one) or pnames.any? {|pn| ASF::Person.names_equivalent?(pn, one)})}
       missingsn = p.sn.split.any? {|one| ! (one == p.uid or pnames.include? one or pnames.any? {|pn| ASF::Person.names_equivalent?(pn, one)})}
       if givenOK and snOK and cnOK and ! missingGiven and ! missingsn # all checks OK
