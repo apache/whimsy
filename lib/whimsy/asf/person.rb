@@ -170,7 +170,7 @@ module ASF
       %w(Alex Alexander Alexandru), 
       %w(Andrew Andy),
       %w(William Bill),
-      %w(Chris Christopher),
+      %w(Chris Christopher Christoph),
       %w(Joe Joey),
       %w(Dan Daniel),
       %w(David Dave),
