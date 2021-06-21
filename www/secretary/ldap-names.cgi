@@ -73,6 +73,8 @@ _html do
     _br
     _ 'If the givenName or sn does not match part or all of the public name, the cell is light grey'
     _br
+    _ 'If the Public Name has only a single word, givenName is marked as strike-thru as it should perhaps be dropped'
+    _br
     _ 'The Modify? columns show suggested fixes. If the name is non-italic then the suggestion is likely correct; italicised suggestions may be wrong/unnecessary.'
     _br
     _ 'The suggested name is considered correct if:'
@@ -128,14 +130,15 @@ _html do
       unused = parse['unused']
       _initials = parse['initials']
 
-      givenOK = given.empty? || ASF::Person.names_equivalent?(new_given, given)
+      givenOK = ASF::Person.names_equivalent?(new_given, given)
       badGiven += 1 unless givenOK
 
       snOK =    (new_sn == p.sn)
       badSN += 1 unless snOK
 
       icla = ASF::ICLA.find_by_id(p.uid)
-      public_name = icla.name rescue '?'
+      public_name = icla.name rescue nil
+      next unless public_name # Don't check entries not in iclas.txt
 
       cnOK = (public_name == p.cn)
       pnames=public_name.split
@@ -174,6 +177,8 @@ _html do
         _td bgcolor: missingGiven ? 'lightgrey' : 'white' do
           if givenOK
             _ given
+          elsif new_given == ''
+            _del given # entry should be removed
           else
             _em given
           end
