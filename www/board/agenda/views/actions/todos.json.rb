@@ -142,17 +142,6 @@ if @establish and env.password
 
   establish = @establish.map {|resolution| resolution['name']}
 
-  # update ci.yaml to add retirements
-  if @terminate and env.password
-    yyyymm = datehy[0, 7] # keep only yyyy-mm
-    cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
-    @terminate.each do |resolution|
-      ASF::SVN.update cinfoy, title, env, _ do |_tmpdir, contents|
-        ASF::Committee.record_termination(contents, resolution['name'], yyyymm)
-      end
-    end
-  end
-
   # create 'victims' file for tlpreq tool
   ASF::SVN.svn('update', TLPREQ)
   establish -= Dir[File.join(TLPREQ, "victims-#{date}.*.txt")].
@@ -165,6 +154,17 @@ if @establish and env.password
       contents = establish.join("\n") + "\n"
       File.write File.join(tmpdir, filename), contents
       ASF::SVN.svn_('add', File.join(tmpdir, filename), _)
+    end
+  end
+end
+
+# update ci.yaml to add retirements
+if @terminate and env.password
+  yyyymm = datehy[0, 7] # keep only yyyy-mm
+  cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
+  @terminate.each do |resolution|
+    ASF::SVN.update cinfoy, title, env, _ do |_tmpdir, contents|
+      ASF::Committee.record_termination(contents, resolution['name'], yyyymm)
     end
   end
 end
