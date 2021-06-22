@@ -174,6 +174,8 @@ if ARGV.length >= 2
   
   data = {}
   
+  active = info[:committees].keys
+
   metadata.each do |key, value|
     retired = value[:retired]
     if retired
@@ -186,6 +188,10 @@ if ARGV.length >= 2
       mlists = public_lists[key]
       if mlists.size > 0
         data[key][:mlists] = mlists
+      end
+    else
+      unless active.include? key
+        Wunderbar.warn "Has '#{key}'' retired? Could not find it in committee-info.txt!"
       end
     end
   end
