@@ -228,6 +228,7 @@ end
 def check_hash_loc(h,tlp)
   tlpQE = Regexp.escape(tlp) # in case of meta-chars
   tlpQE = "(?:ooo|#{tlpQE})" if tlp == 'openoffice'
+  tlpQE = "(?:lucene|#{tlpQE})" if tlp == 'solr' # temporary override
   if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
@@ -411,6 +412,7 @@ def _checkDownloadPage(path, tlp, version)
   end
 
   tlpQE = Regexp.escape(tlp) # in case of meta-chars
+  tlpQE = "(?:lucene|#{tlpQE})" if tlp == 'solr' # temporary override
   # check KEYS link
   # TODO: is location used by hc allowed, e.g.
   #   https://www.apache.org/dist/httpcomponents/httpclient/KEYS
