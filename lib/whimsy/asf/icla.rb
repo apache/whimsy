@@ -149,6 +149,20 @@ module ASF
       end
     end
 
+    # return a hash of unlisted ICLA names, keyed by email
+    # if age > 0, return the entries added in the last n days
+    def self.unlisted_name_by_email(age=0, env=nil)
+      if age > 0
+        rev = "{%s}:HEAD" % (Date.today - age)
+        diff, _err = ASF::SVN.svn('diff', SOURCE_URL, {revision: rev, env: env})
+        raise _err unless diff
+        return Hash[*diff.scan(/^[+]notinavail:.*?:(.*?):(.*?):Signed CLA/).flatten.reverse]
+      end
+      hash = {}
+      self.each { |icla| hash[icla.email] = icla.name if icla.noId? }
+      hash
+    end
+
     # show the original entry (reconstructed for now)
     def as_line
       [id, legal_name, name, email, form].join(':')

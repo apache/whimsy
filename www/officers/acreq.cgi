@@ -16,12 +16,8 @@ unless user.asf_member? or ASF.pmc_chairs.include? user
   exit
 end
 
-ICLAS = ASF::SVN.svnpath!('officers', 'iclas.txt')
-
 # get up to date data...
 requests, _err = ASF::SVN.svn('cat', ASF::SVN.svnpath!('acreq', 'new-account-reqs.txt'), {env: env})
-
-iclas_txt, _err = ASF::SVN.svn('cat', ICLAS, {env: env}).force_encoding('utf-8')
 
 # grab the current list of PMCs from ldap
 pmcs = ASF::Committee.pmcs.map(&:name).sort
@@ -42,16 +38,12 @@ query = CGI::parse ENV['QUERY_STRING']
 iclas = Array(query['iclas']).last
 email = Array(query['email']).last
 if iclas == 'all'
-  iclas = Hash[*iclas_txt.scan(/^notinavail:.*?:(.*?):(.*?):Signed CLA/).
-    flatten.reverse]
-elsif iclas == '1' and email and iclas_txt =~ /^notinavail:.*?:(.*?):#{Regexp.escape(email)}:/
-  iclas = {email => $1}
+  iclas = ASF::ICLA.unlisted_name_by_email
+elsif iclas == '1' and email and (icla = ASF::ICLA.find_by_email(email)) and icla.noId?
+  iclas = {email => icla.name}
 else
-  count = iclas ? iclas.to_i : 300 rescue 300
-  log, _err = ASF::SVN.svn(['log', '--incremental', '-q', "-l#{count}"], ICLAS, {revision: 'HEAD:0', env: env})
-  oldrev = log.split("\n")[-1].split()[0][1..-1].to_i
-  diff, _err = ASF::SVN.svn('diff', ICLAS, {revision: "#{oldrev}:HEAD", env: env})
-  iclas = Hash[*diff.scan(/^[+]notinavail:.*?:(.*?):(.*?):Signed CLA/).flatten.reverse]
+  count = iclas ? iclas.to_i : 100 rescue 100
+  iclas = ASF::ICLA.unlisted_name_by_email(count, env)
 end
 
 # grab the list of userids that have been assigned (for validation purposes)
