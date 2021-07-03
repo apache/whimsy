@@ -119,31 +119,32 @@ _html do
       }
     ) do
       # IF YOUR SCRIPT EMITS A LARGE TABLE
-      _div id: 'example-table'
-      _whimsy_panel_table(
-        title: "Data Table H2 Title Goes Here",
-        helpblock: -> {
-          _p "If your script displays a sizeable table(s) of data, then use this area to provide a Key: to the data."
-        }
-      ) do
-        # Gather or process your data **here**, so if an error is raised, the _body?
-        #   scope will trap it - and will then display the above help information
-        #   to the user before emitting a polite error traceback.
-        datums = {'one' => 1, 'two' => 2 }
-        _table.table.table_hover.table_striped do
-          _thead_ do
-            _tr do
-              _th 'Row Number'
-              _th 'Column Two'
-            end
-            _tbody do
-              datums.each do | key, val |
-                _tr_ do
-                  _td do
-                    _ key
-                  end
-                  _td do
-                    _ val
+      _div id: 'example-table' do
+        _whimsy_panel_table(
+          title: "Data Table H2 Title Goes Here",
+          helpblock: -> {
+            _p "If your script displays a sizeable table(s) of data, then use this area to provide a Key: to the data."
+          }
+        ) do
+          # Gather or process your data **here**, so if an error is raised, the _body?
+          #   scope will trap it - and will then display the above help information
+          #   to the user before emitting a polite error traceback.
+          datums = {'one' => 1, 'two' => 2 }
+          _table.table.table_hover.table_striped do
+            _thead_ do
+              _tr do
+                _th 'Row Number'
+                _th 'Column Two'
+              end
+              _tbody do
+                datums.each do | key, val |
+                  _tr_ do
+                    _td do
+                      _ key
+                    end
+                    _td do
+                      _ val
+                    end
                   end
                 end
               end
@@ -189,32 +190,33 @@ _html do
       end
 
       # IF YOU WANT TO DISPLAY A FORM and handle the POST
-      _div id: 'example-form'
-      if _.post?
-        # Use magic _. callouts to CGI class to gather POST data into submission hash
-        submission = {}
-        keyz = _.keys
-        keyz.each do |k|
-          submission[k] = _.params[k] # Always as ['val'] or ['one', 'two', ...]
-        end
-        if validate_form(formdata: submission)
-          if send_form(formdata: submission)
-            _p.lead "Thanks for Submitting This Form!"
-            _p do
-              _ "The send_form method would have done any procesing needed with the data, after calling validate_data."
+      _div id: 'example-form' do
+        if _.post?
+          # Use magic _. callouts to CGI class to gather POST data into submission hash
+          submission = {}
+          keyz = _.keys
+          keyz.each do |k|
+            submission[k] = _.params[k] # Always as ['val'] or ['one', 'two', ...]
+          end
+          if validate_form(formdata: submission)
+            if send_form(formdata: submission)
+              _p.lead "Thanks for Submitting This Form!"
+              _p do
+                _ "The send_form method would have done any procesing needed with the data, after calling validate_data."
+              end
+            else
+              _div.alert.alert_warning role: 'alert' do
+                _p "SORRY! Your submitted form data failed send_form, please try again."
+              end
             end
           else
-            _div.alert.alert_warning role: 'alert' do
-              _p "SORRY! Your submitted form data failed send_form, please try again."
+            _div.alert.alert_danger role: 'alert' do
+              _p "SORRY! Your submitted form data failed validate_form, please try again."
             end
           end
-        else
-          _div.alert.alert_danger role: 'alert' do
-            _p "SORRY! Your submitted form data failed validate_form, please try again."
-          end
+        else # if _.post?
+          emit_form('Form Title Here', officers)
         end
-      else # if _.post?
-        emit_form('Form Title Here', officers)
       end
     end
   end
