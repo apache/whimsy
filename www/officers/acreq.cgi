@@ -37,6 +37,7 @@ projects = (pmcs + podlings + nonpmcs).uniq.sort
 query = CGI::parse ENV['QUERY_STRING']
 iclas = Array(query['iclas']).last
 email = Array(query['email']).last
+count = 0
 if iclas == 'all'
   iclas = ASF::ICLA.unlisted_name_by_email
 elsif iclas == '1' and email and (icla = ASF::ICLA.find_by_email(email)) and icla.noId?
@@ -170,7 +171,7 @@ _html do
                     _br
                     _a 'Show only ICLAs received recently', href: '?'
                   else
-                    _ 'Showing only ICLAs received recently.'
+                    _ 'Showing only ICLAs received in the last %d days.' % 100
                     _br
                     _a 'Show the full list of ICLAs submitted', href: '?iclas=all'
                   end
