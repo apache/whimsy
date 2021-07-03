@@ -47,7 +47,6 @@ _html do
       relatedtitle: 'More Useful Links',
       related: {
         "/committers/tools" => "Whimsy Tool Listing",
-        "https://incubator.apache.org/images/incubator_feather_egg_logo_sm.png" => "Incubator Logo, to show that graphics can appear",
         "https://community.apache.org/" => "Get Community Help",
         "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code"
       },
