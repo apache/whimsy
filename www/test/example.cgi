@@ -67,10 +67,10 @@ end
 
 # Handle submission (checkout user's apacheid.json, write form data, checkin file)
 # @return true if we think it succeeded; false in all other cases
-def send_form(formdata: {})
+def process_form(formdata: {})
   # Example that uses SVN to update an existing file: members/mentor-update.cgi
   _p class: 'system' do
-    _ 'If this were a real send_form() it would do something with your data:'
+    _ 'If this were a real process_form() it would do something with your data:'
     _br
     formdata.each do |k,v|
       _ "#{k} = #{v.inspect}"
@@ -199,14 +199,14 @@ _html do
             submission[k] = _.params[k] # Always as ['val'] or ['one', 'two', ...]
           end
           if validate_form(formdata: submission)
-            if send_form(formdata: submission)
+            if process_form(formdata: submission)
               _p.lead "Thanks for Submitting This Form!"
               _p do
-                _ "The send_form method would have done any procesing needed with the data, after calling validate_data."
+                _ "The process_form method would have done any procesing needed with the data, after calling validate_data."
               end
             else
               _div.alert.alert_warning role: 'alert' do
-                _p "SORRY! Your submitted form data failed send_form, please try again."
+                _p "SORRY! Your submitted form data failed process_form, please try again."
               end
             end
           else
