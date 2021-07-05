@@ -85,8 +85,8 @@ module SiteStandards
       CHECK_DOC => '"Security" should link to either to a project-specific page [...], or to the main http://www.apache.org/security/ page.',
     },
     'sponsorship' => { # link_check ['sponsorship', 'donate', 'sponsor apache','sponsoring apache'].include? a_text
-      CHECK_TEXT => %r{sponsorship|donate|sponsor\sapache|sponsoring\sapache|sponsor},
-      CHECK_CAPTURE => %r{sponsorship|donate|sponsor\sapache|sponsoring\sapache|sponsor},
+      CHECK_TEXT => %r{sponsorship|\bdonate\b|sponsor\sapache|sponsoring\sapache|sponsor},
+      CHECK_CAPTURE => %r{sponsorship|\bdonate\b|sponsor\sapache|sponsoring\sapache|sponsor},
       CHECK_VALIDATE => %r{^https?://.*apache.org/foundation/sponsorship},
       CHECK_TYPE => true,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
