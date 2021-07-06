@@ -948,8 +948,8 @@ module ASF
       attrs['host'] ||= "home.apache.org"
       attrs['asf-sascore'] ||= "10"
 
-      # parse name
-      attrs = ASF::Person.ldap_name(attrs['cn']).merge(attrs)
+      # parse name if sn has not been provided (givenName is optional)
+      attrs = ASF::Person.ldap_name(attrs['cn']).merge(attrs) unless attrs['sn']
 
       # generate a password that is between 8 and 16 alphanumeric characters
       unless attrs['userPassword']
