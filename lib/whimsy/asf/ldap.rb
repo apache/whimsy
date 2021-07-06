@@ -670,10 +670,6 @@ module ASF
   class Person < Base
     @base = 'ou=people,dc=apache,dc=org'
 
-    def self.group_base
-      'ou=people,' + ASF::Group.base
-    end
-
     # Obtain a list of people known to LDAP.  LDAP filters may be used
     # to retrieve only a subset.
     def self.list(filter='uid=*', attributes='uid')
@@ -937,20 +933,6 @@ module ASF
         ASF::search_one(ASF::Person.base, 'uid=*', 'uidNumber').
           flatten.map(&:to_i).max + 1
 
-      nextgid = attrs['gidNumber']
-      unless nextgid
-        nextgid = ASF::search_one(group_base, 'cn=*', 'gidNumber').
-          flatten.map(&:to_i).max + 1
-
-        # create new LDAP group
-        entry = [
-          mod_add('objectClass', ['posixGroup', 'top']),
-          mod_add('cn', availid),
-          mod_add('userPassword', '{crypt}*'),
-          mod_add('gidNumber', nextgid.to_s),
-        ]
-      end
-
       # fixed attributes
       attrs.merge!({
         'uidNumber' => nextuid.to_s,
@@ -976,17 +958,9 @@ module ASF
         end
       end
 
-      ASF::LDAP.add("cn=#{availid},#{group_base}", entry)
-
       # create new LDAP person
-      begin
-        entry = attrs.map {|key, value| mod_add(key, value)}
-        ASF::LDAP.add("uid=#{availid},#{base}", entry)
-      rescue
-        # don't leave an orphan group behind
-        ASF::LDAP.delete("cn=#{availid},#{group_base}") rescue nil
-        raise
-      end
+      entry = attrs.map {|key, value| mod_add(key, value)}
+      ASF::LDAP.add("uid=#{availid},#{base}", entry)
 
       # return person object with password filled in
       person = ASF::Person.find(availid)
@@ -996,7 +970,6 @@ module ASF
 
     # remove a person from LDAP
     def self.remove(availid)
-      ASF::LDAP.delete("cn=#{availid},#{group_base}")
       ASF::LDAP.delete("uid=#{availid},#{base}")
     end
   end
