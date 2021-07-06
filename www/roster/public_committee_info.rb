@@ -162,7 +162,7 @@ if ARGV.length >= 2
 
   public_lists = Hash.new {|h,k| h[k]=Array.new}
   begin
-    ASF::MLIST.list_types do |dom, list, _|
+    ASF::MLIST.list_types(true) do |dom, list, _|
       public_lists[dom.sub(/\.apache\.org$/, '')] << list
     end
   rescue => e
