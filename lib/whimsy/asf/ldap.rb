@@ -914,6 +914,38 @@ module ASF
       end
     end
 
+    MINIMUM_USER_UID = 6000 # from asfpy/ldap
+    # Return the next free value for use as uidNumber/gidNumber
+    # Optionally return several free values as an array
+    def self.next_uidNumber(count=1)
+      raise ArgumentError.new "Count: #{count} is less than 1!" if count < 1
+      numbers = ASF::search_one(ASF::Person.base, 'uid=*', ['uidNumber', 'gidNumber']).
+        map{|i| u=i['uidNumber'];g=i['gidNumber']; u == g ? u : [u,g]}.flatten.map(&:to_i).
+        select{|i| i >= MINIMUM_USER_UID}.uniq.sort.lazy
+      enum = Enumerator.new do |output|
+        last = numbers.next rescue MINIMUM_USER_UID # in case no valid entries exist
+        loop do
+            curr = numbers.next
+            if curr <= last + 1
+              last = curr
+            else
+                (last+1..curr-1).each {|i| output << i}
+                last = curr
+            end
+        end
+        # in case we ran off the end...
+        loop do
+          last = last+1
+          output << last
+        end
+      end
+      if (count == 1)
+        enum.first
+      else
+        enum.take(count)
+      end
+    end
+
     # add a new person to LDAP.  Attrs must include uid, cn, and mail
     def self.add(attrs)
       # convert keys to strings
@@ -929,9 +961,12 @@ module ASF
       availid = attrs['uid']
 
       # determine next uid and group, unless provided
-      nextuid = attrs['uidNumber'] ||
-        ASF::search_one(ASF::Person.base, 'uid=*', 'uidNumber').
-          flatten.map(&:to_i).max + 1
+      nextuid = attrs['uidNumber']
+      if nextuid
+        raise ArgumentError.new("gidNumber #{gidNumber} != uidNumber #{uidNumber}") unless attrs['gidNumber'] == nextuid
+      else
+        nextuid = next_uidNumber
+      end
 
       # fixed attributes
       attrs.merge!({
@@ -943,7 +978,7 @@ module ASF
       })
 
       # defaults
-      attrs['loginShell'] ||= '/usr/local/bin/bash'
+      attrs['loginShell'] ||= '/bin/bash' # as per asfpy.ldap
       attrs['homeDirectory'] ||= File.join("/home", availid)
       attrs['host'] ||= "home.apache.org"
       attrs['asf-sascore'] ||= "10"
@@ -951,20 +986,15 @@ module ASF
       # parse name if sn has not been provided (givenName is optional)
       attrs = ASF::Person.ldap_name(attrs['cn']).merge(attrs) unless attrs['sn']
 
-      # generate a password that is between 8 and 16 alphanumeric characters
-      unless attrs['userPassword']
-        while attrs['userPassword'].to_s.length < 8
-          attrs['userPassword'] = SecureRandom.base64(12).gsub(/\W+/, '')
-        end
-      end
+      # user is expected to use id.apache.org to set their initial password
+      attrs['userPassword'] = '{CRYPT}*' # invalid password (I assume)
 
       # create new LDAP person
       entry = attrs.map {|key, value| mod_add(key, value)}
       ASF::LDAP.add("uid=#{availid},#{base}", entry)
 
-      # return person object with password filled in
+      # return person object; they must use id.apache.org to reset the password
       person = ASF::Person.find(availid)
-      person.attrs['userPassword'] = [attrs['userPassword']]
       person
     end
 
