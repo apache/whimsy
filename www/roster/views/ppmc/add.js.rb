@@ -55,11 +55,17 @@ class PPMCAdd < Vue
                   concat(@people.map {|person| person.id})
 
               _p do
-                _label do
-                  _input type: 'checkbox', checked: @notice_elapsed
-                  _a '72 hour IPMC NOTICE',
+                _br
+                _b do
+                  _ 'Before adding a new PPMC member, ' 
+                  _a 'email notification must be sent to the Incubator private mailing list',
                     href: 'https://incubator.apache.org/guides/ppmc.html#voting_in_a_new_ppmc_member'
-                  _span ' period elapsed?'
+                  _br
+                  _ 'There follows a 72 hour NOTICE period'
+                end
+                _label do
+                  _span 'Has the NOTICE email been received by the Incubator list and has the NOTICE period elapsed?'
+                  _input type: 'checkbox', checked: @notice_elapsed
                 end
               end
             end
