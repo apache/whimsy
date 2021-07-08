@@ -923,7 +923,7 @@ module ASF
         map{|i| u=i['uidNumber'];g=i['gidNumber']; u == g ? u : [u,g]}.flatten.map(&:to_i).
         select{|i| i >= MINIMUM_USER_UID}.uniq.sort.lazy
       enum = Enumerator.new do |output|
-        last = numbers.next rescue MINIMUM_USER_UID # in case no valid entries exist
+        last = MINIMUM_USER_UID - 1 # in case no valid entries exist
         loop do
             curr = numbers.next
             if curr <= last + 1
@@ -1502,6 +1502,7 @@ end
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
+  p ASF::Person.next_uidNumber
   mem = ASF.members()
   puts mem.length
   puts mem.first.inspect
