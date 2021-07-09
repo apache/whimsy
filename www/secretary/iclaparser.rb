@@ -186,9 +186,9 @@ module ICLAParser
                   end
                 end
                 val.gsub!("\x7F",'') # Not sure where these originate
-                # if val.length > 0
+                if val.length > 0
                   data[canon_field_name(key)] = val.gsub("\x7F",'') # Not sure where these originate
-                # end
+                end
                 metadata[:dataSource]['Form'] = true
               end
             end
