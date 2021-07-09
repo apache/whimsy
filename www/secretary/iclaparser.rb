@@ -171,7 +171,7 @@ module ICLAParser
           else
             key = v[:T]
             if key
-              val = v[:V]
+              val = v[:V].to_s # might be a symbol
               # This is a hack; should really find the font def and use that
               if val
                 debug[key] = v.inspect
