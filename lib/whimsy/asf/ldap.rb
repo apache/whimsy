@@ -130,7 +130,7 @@ module ASF
       raise ::LDAP::ResultError.new('Unknown user') unless dn
 
       ASF.ldap.unbind if ASF.ldap.bound? rescue nil
-      ldap = ASF.init_ldap(true, RW_HOSTS)
+      ldap = ASF.init_ldap(true, self.rwhosts)
       if block
         ASF.flush_weakrefs
         ldap.bind(dn, password, &block)
@@ -164,6 +164,15 @@ module ASF
     # Return the last chosen host (if any)
     def self.host
       @host
+    end
+
+    # allow override of RW_HOSTS by :ldaprw or :ldap config
+    def self.rwhosts
+      return @rwhosts if @rwhosts # cache the rwhosts list
+      rwhosts = Array(ASF::Config.get(:ldaprw))
+      rwhosts = Array(ASF::Config.get(:ldap)) if rwhosts.empty?
+      rwhosts = RW_HOSTS if rwhosts.empty?
+      @rwhosts =  rwhosts
     end
 
     # determine what LDAP hosts are available
