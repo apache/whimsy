@@ -99,7 +99,7 @@ _html do
 
       if 0 == ++mismatches % 30 # repeat header every 30 lines
         _tr bgcolor: 'lightblue' do
-          _td 'uid' + mismatches
+          _td 'uid' + str(mismatches)
           _td "iclas.txt public name"
           _td 'cn'
           _td 'givenName'
