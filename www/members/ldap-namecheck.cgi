@@ -46,6 +46,7 @@ _html do
   # prefetch LDAP data
   people = ASF::Person.preload(%w(uid cn sn givenName loginShell))
   matches = 0
+  mismatches = 0
   badGiven = 0
   badSN = 0
 
@@ -95,6 +96,18 @@ _html do
         matches += 1
         next
       end
+
+      if mismatches % 30 == 0 # repeat header every 30 lines
+        _tr do
+          _td 'uid'
+          _td "iclas.txt public name"
+          _td 'cn'
+          _td 'givenName'
+          _td 'Modify to?'
+          _td 'sn'
+          _td 'Modify to?'
+          _td 'Unused names'
+        end
 
       _tr do
         _td do
