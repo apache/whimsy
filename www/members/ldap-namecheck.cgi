@@ -97,7 +97,7 @@ _html do
         next
       end
 
-      if ++mismatches % 30 == 0 # repeat header every 30 lines
+      if 0 == ((++mismatches) % 30) # repeat header every 30 lines
         _tr do
           _td 'uid'
           _td "iclas.txt public name"
