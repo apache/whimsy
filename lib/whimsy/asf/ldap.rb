@@ -587,13 +587,13 @@ module ASF
       person
     end
 
-    # rename a person
+    # rename a person/committer
     def rename(newid, attrs={})
       # ensure person exists in LDAP
       raise ArgumentError(self.id) unless self.dn
 
-      # create a new person
-      new_person = ASF::Person.create(self.attrs.merge(attrs).merge(uid: newid))
+      # create a new person/committer (this should create new uid/gid numbers, if not overridden)
+      new_person = ASF::Committer.create(self.attrs.merge(attrs).merge(uid: newid))
 
       # determine what groups the individual is a member of
       uid_groups = ASF.search_subtree('dc=apache,dc=org',
@@ -618,6 +618,7 @@ module ASF
       end
 
       # remove original user
+      # TODO: the old entry should probably be disabled instead, to avoid reuse of uid/gid
       ASF::Person.remove(person.id)
 
       # return new user
