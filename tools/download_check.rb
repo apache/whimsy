@@ -189,11 +189,11 @@ end
 # Check page exists => response or nil
 def check_head(path, severity = :E, log=true)
   response = HEAD(path)
-  code = response.code ||  '?'
+  code = (response.code ||  '?') rescue response.to_s
   if code == '403' # someone does not like Whimsy?
     W "HEAD #{path} - HTTP status: #{code} - retry"
     response = HEAD(path)
-    code = response.code ||  '?'
+    code = (response.code ||  '?') rescue response.to_s
   end
   unless code == '200'
     test(severity, "HEAD #{path} - HTTP status: #{code}") unless severity == nil

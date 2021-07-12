@@ -119,6 +119,7 @@ module ICLAParser
     'mailingaddress' => :MailingAddress,
     'mailingaddress2' => :MailingAddress2,
     'postaladdress' => :MailingAddress,
+    'postaladdress2' => :MailingAddress2,
     'country' => :Country,
     'telephone' => :Telephone,
     'e-mail' => :EMail,
