@@ -39,7 +39,7 @@ _extract_project
 # obtain per-user information
 _personalize_email(env.user)
 
-# determine if the user id requested is valid and avaliable
+# determine if the user id requested is valid and available
 @valid_user = (@user =~ /^[a-z][a-z0-9]{2,}$/)
 @valid_user &&= !(ASF::ICLA.taken?(@user) or ASF::Mail.taken?(@user))
 

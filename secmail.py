@@ -10,7 +10,7 @@ people routinely pgp sign all of their emails, and others use pgp signatures
 to sign forms.
 
 Deciding what to commit is therefore, necessarily, a bit of heuristics.  When
-in doubt, the intent here is to err on the side of commiting more than is
+in doubt, the intent here is to err on the side of committing more than is
 necessary than to miss an email.
 
 Examples of heurisitics:

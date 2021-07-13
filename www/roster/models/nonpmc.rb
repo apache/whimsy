@@ -57,7 +57,7 @@ class NonPMC
     # if the roster is empty, then add the chair(s)
     if roster.empty?
       cttee.chairs.each do |ch|
-        roster[ch[:id]] = {name: ch[:name], date: 'uknown'} # it is used to flag CI data so must be true in Javascript
+        roster[ch[:id]] = {name: ch[:name], date: 'uknown'} # it is used to flag CI data so must be true in JavaScript
       end
     end
     cttee_members = roster.keys # get the potentially updated list

@@ -98,7 +98,7 @@ Visit [http://localhost:9292/](http://localhost:9292/) in your favorite browser.
 Notes:
 
  * If you don't have PhantomJS installed, or have a version of PhantomJS
-   prior to version 2.0 installed, one test will fail. 
+   prior to version 2.0 installed, one test will fail.
 
  * If you don't have io.js installed, two additional tests will fail.
 
@@ -169,7 +169,7 @@ Viewing Source (this time, Actual Code)
 
  * the [views/pages/search.js.rb](views/pages/search.js.rb) file contains the
    code for the search page.  There are more methods defined here.  You will
-   find definitions for these methods in the Vue 
+   find definitions for these methods in the Vue
    [Lifecycle Methods](https://vuejs.org/v2/guide/instance.html#Lifecycle-Diagram).
    You will see logic mixed with presentation.  What makes this work
    is the component lifecycle that Vue provides.  Components have mutable
@@ -184,7 +184,7 @@ Viewing Source (this time, Actual Code)
    updating the
    [history](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history)
    of the window.
- 
+
  * At this point, I suggest that you make a change.  More specifically, I
    suggest you break something.  Insert the keyword `do` into a random spot
    in either this or another file, and save your changes.  This will cause
@@ -242,13 +242,13 @@ Viewing Source (this time, Actual Code)
    statements](http://facebook.github.io/react/tips/if-else-in-JSX.html).
    I make plenty of use of if statements (and more!) in my render methods.
 
-   While you can bring the generated source up in your browser's Javascript
+   While you can bring the generated source up in your browser's JavaScript
    console, you don't have to.  Through the magic of
-   [Source Maps](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit), 
+   [Source Maps](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit),
    you can view source and set breakpoints using the Ruby code that was
    used to generate this script.  The way this is done varies by browser.
    On Google Chrome, for example, Ctrl+Shift+J will bring up the JavaScript
-   console.  Clicking on sources will show directores for buttons, elements,
+   console.  Clicking on sources will show directories for buttons, elements,
    etc.
 
  * Layout of the page is done by three files:
@@ -336,7 +336,7 @@ in your home directory.  The file format is YAML, and here is mine:
     - /home/rubys/svn/whimsy/lib
 
     :ldap: ldaps://ldap1-us-east.apache.org:636
-        
+
     :agenda_work: /home/rubys/tmp/agenda
 
 
@@ -345,7 +345,7 @@ value to run the board agenda tool.  The `lib` value is is an array of
 libraries that are to be used instead of gems you may have installed.  This is
 useful if you are making changes to the agenda parsing logic, ruby2js or
 wunderbar.  You can remove this too.  If you drop the `ldap` entry, one will
-be picked randomly for you from the 
+be picked randomly for you from the
 [list of ASF LDAP servers](https://www.pingmybox.com/dashboard?location=304).
 
 With this in place, start the server with `rake server` instead of
@@ -400,7 +400,7 @@ Adding a new modal dialog would involve:
   * Adding any new files to [views/app.js.rb](views/app.js.rb)
   * Adding specifications to [specs/forms_specs.rb](specs/forms_specs.rb) and
     [specs/actions_specs.rb](specs/actions_specs.rb).
-   
+
 
 Gotchas
 ---
@@ -449,9 +449,9 @@ Further reading:
  * [capybara](https://github.com/jnicklas/capybara#readme) - helps you test
    web applications by simulating how a real user would interact with your app
  * [vue](https://vuejs.org/) - a JavaScript library for
-   building user interfaces 
+   building user interfaces
  * [ruby2js](https://github.com/rubys/ruby2jw/#readme) - minimal yet
-   extensible Ruby to JavaScript conversion. 
+   extensible Ruby to JavaScript conversion.
  * [phantomjs](http://phantomjs.org/) -  a headless WebKit scriptable with a
    JavaScript API
  * [sinatra](http://www.sinatrarb.com/) - a

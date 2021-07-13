@@ -59,7 +59,7 @@ _html do
       _p 'Please see the FAQ that most likely applies to your question (this is boilerplate content) https://example.com/trademarks/faq1'
       _p '-- '
       _p '  $users-name from whimsy login'
-      _p '  On behalf of the Official Brand Managment Committee'
+      _p '  On behalf of the Official Brand Management Committee'
       _hr
       _p do
         _a 'Send reply', href: '#', onclick: "alert('This would submit the reply to be sent the usual way (Reply-All, Reply-To: the list, etc.).');"

@@ -52,7 +52,7 @@ _html do
       end
 
       _h3 'Choose A Reply to edit and send for this question'
-      _p 'This could be a choicelist or similar to select from avaialble Replies'
+      _p 'This could be a choicelist or similar to select from available Replies'
 
       _ul do
         _li do

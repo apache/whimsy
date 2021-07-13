@@ -747,7 +747,7 @@
       });
       ```
 
-      If the assimliated promise rejects, then the downstream promise will also reject.
+      If the assimilated promise rejects, then the downstream promise will also reject.
 
       ```js
       findUser().then(function (user) {
@@ -964,4 +964,3 @@
 
     lib$es6$promise$polyfill$$default();
 }).call(this);
-

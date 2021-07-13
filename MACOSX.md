@@ -15,7 +15,7 @@ Install Homebrew
 ----------------
 
 Homebrew is a package manager for OSX, which is used to install other tools.
-Follow the instructions from [brew.sh](http://brew.sh/). You might
+Follow the instructions from [brew.sh](https://brew.sh/). You might
 have to change shells if you are using csh. Bash and zsh work fine.  Be sure to
 read the Homebrew prerequisites; you may need part(s) of Apple's XCode.
 
@@ -268,7 +268,7 @@ Replace that line with the following four lines:
 </RequireAny>
 ```
 
-Find the next occurence of `Require all granted`.  It should now be around
+Find the next occurrence of `Require all granted`.  It should now be around
 line 386 in the section `Directory "/Library/WebServer/CGI-Executables` or similar
 Replace it with `Require all denied`.
 

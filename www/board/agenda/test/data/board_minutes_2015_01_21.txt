@@ -1466,7 +1466,7 @@ more reliable.
 Community
 =========
 The Curator community is active and healthy. We have regular and active
-participation on the mailing list, Jira and github.
+participation on the mailing list, Jira and GitHub.
 
 Adoption continues to grow. Notably: Apache Hive and Apache Yarn
 are now using Curator.
@@ -2367,7 +2367,7 @@ resources.
 
 Kalumet has been incubating since 2011-09-20.
 
-Community Developement:
+Community Development:
 
   Apache Kalumet 0.6-incubating version has been released.  However, due to
   some misunderstanding, the release vote has not been completed by 3 IPMC.
@@ -3265,7 +3265,7 @@ reasons:
   entities) or implementations of optional hooks that Isis exposes (services
   such as auditing, security).
 * as such, they have a different cadence to the framework "proper"
-* we wanted less formality, leveraging github collaboration capabilities
+* we wanted less formality, leveraging GitHub collaboration capabilities
 * also, to allow for contributions that would not be compliant with ASF 
   license restrictions, eg if dependent on LGPL.
 * (as noted previously) to reduce the size of the Isis codebase so that it
