@@ -600,16 +600,18 @@ def _checkDownloadPage(path, tlp, version)
             I "Ignoring archived artifact #{h}"
             next
         end
-      else
-        if $NOFOLLOW
-          I "Skipping artifact #{h}"
-          next
-        end
       end
       # Ideally would like to check for use of closer.lua/.cgi, but some projects pre-populate the pages
       # TODO: would it help to check host against mirrors.list?
       if h =~ %r{https?://(www\.)?apache\.org/dist} or h =~ %r{https?://downloads.apache.org/}
         E "Must use mirror system #{h}"
+        next
+      elsif h =~ %r{https?://repo\d\.maven\.org/.+(-src|-source)}
+        E "Must use mirror system for source #{h}"
+        next
+      end
+      if $NOFOLLOW
+        I "Skipping artifact #{h}"
         next
       end
       res = check_head(h, :E, false) # nolog
