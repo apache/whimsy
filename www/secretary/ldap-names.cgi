@@ -99,6 +99,7 @@ _html do
   matches = 0
   badGiven = 0
   badSN = 0
+  mismatches = 0
 
   # prefetch ICLA data
   ASF::ICLA.preload
@@ -148,6 +149,21 @@ _html do
         matches += 1
         next
       end
+      if 0 == (mismatches += 1) % 30 #repeat header each 30 lines
+        _tr bgcolor: 'lightblue' do
+          _td 'uid'
+          _td "ICLA file"
+          _td "iclas.txt real name"
+          _td "iclas.txt public name"
+          _td 'cn'
+          _td 'givenName'
+          _td 'Modify to?'
+          _td 'sn'
+          _td 'Modify to?'
+          _td 'Unused names'
+        end
+      end
+
       next if givenOK and skipSN #and unused.size == 0
 
       claRef = icla.claRef if icla
@@ -217,6 +233,8 @@ _html do
     end
     _tr bgcolor: 'lightblue' do
       _td 'uid'
+      _td "ICLA file"
+      _td "iclas.txt real name"
       _td "iclas.txt public name"
       _td 'cn'
       _td 'givenName'
