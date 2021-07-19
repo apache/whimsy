@@ -149,7 +149,7 @@ _html do
         matches += 1
         next
       end
-      if 0 == (mismatches += 1) % 30 #repeat header each 30 lines
+      if 0 == (mismatches += 1) % 25 #repeat header every 25 lines
         _tr bgcolor: 'lightblue' do
           _td 'uid'
           _td "ICLA file"
@@ -160,7 +160,7 @@ _html do
           _td 'Modify to?'
           _td 'sn'
           _td 'Modify to?'
-          _td 'Unused names'
+          _td 'Unused'
         end
       end
 
@@ -241,7 +241,7 @@ _html do
       _td 'Modify to?'
       _td 'sn'
       _td 'Modify to?'
-      _td 'Unused names'
+      _td 'Unused'
     end
   end
 
