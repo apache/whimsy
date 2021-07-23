@@ -229,6 +229,7 @@ def check_hash_loc(h,tlp)
   tlpQE = Regexp.escape(tlp) # in case of meta-chars
   tlpQE = "(?:ooo|#{tlpQE})" if tlp == 'openoffice'
   tlpQE = "(?:lucene|#{tlpQE})" if tlp == 'solr' # temporary override
+  tlpQE = "(?:tubemq|inlong)" if tlp == 'inlong' # renamed
   if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
