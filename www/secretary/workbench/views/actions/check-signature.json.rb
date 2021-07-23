@@ -10,9 +10,9 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 # see WHIMSY-274 for secure servers
 # ** N.B. ensure the keyserver URI is known below **
 
-# Removed keys.openpgp.org as it does not return data such as email unless user specifically allows this
+# Restored keys.openpgp.org; sks-keryservers is dead; we can do without email
 
-KEYSERVERS = %w{hkps.pool.sks-keyservers.net gozer.rediris.es}
+KEYSERVERS = %w{keys.openpgp.org hkps.pool.sks-keyservers.net gozer.rediris.es}
 
 # Obtained from https://dl.cacerts.digicert.com/TERENASSLHighAssuranceCA3.crt.pem
 # Needed by gozer host
