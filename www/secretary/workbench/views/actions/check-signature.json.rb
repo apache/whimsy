@@ -15,8 +15,10 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 KEYSERVERS = %w{keys.openpgp.org}
 
 # Obtained from https://dl.cacerts.digicert.com/TERENASSLHighAssuranceCA3.crt.pem
-# Needed by gozer host
+# Originally needed by gozer host, possibly others?
 TERENA_CERT = '/srv/whimsy/www/secretary/workbench/TERENA_SSL_High_Assurance_CA_3.pem'
+# FTR, the certificate expires Nov 18 12:00:00 2024 GMT, according to:
+# openssl x509 -noout -text -in TERENASSLHighAssuranceCA3.crt.pem
 
 # ** N.B. ensure the keyserver URI is known below **
 def getServerURI(server, keyid)
