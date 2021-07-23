@@ -11,8 +11,8 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 # ** N.B. ensure the keyserver URI is known below **
 
 # Restored keys.openpgp.org; sks-keryservers is dead; we can do without email
-
-KEYSERVERS = %w{keys.openpgp.org hkps.pool.sks-keyservers.net gozer.rediris.es}
+# gozer.rediris.es certificate has expired
+KEYSERVERS = %w{keys.openpgp.org}
 
 # Obtained from https://dl.cacerts.digicert.com/TERENASSLHighAssuranceCA3.crt.pem
 # Needed by gozer host
