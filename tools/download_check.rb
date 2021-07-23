@@ -232,7 +232,7 @@ def check_hash_loc(h,tlp)
   tlpQE = "(?:tubemq|inlong)" if tlp == 'inlong' # renamed
   if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
-    return $2,$3,$4
+    return $2||'',$3,$4 # allow for no host before apache.org
   elsif h =~ %r{^(https?)://(downloads)\.apache\.org/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2,$3,$4
