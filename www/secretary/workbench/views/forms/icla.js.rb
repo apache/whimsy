@@ -227,9 +227,9 @@ class ICLA < Vue
     if !familyfirst
       return nominalname
     else
-      # compute file name with family first; move last name to first
+      # compute file name with family first; move first name to last
       namearray = nominalname.split("-")
-      namearray.insert(0, namearray(-1)).delete_at(-1)
+      namearray.append(namearray(0)).delete_at(0)
       return namearray.join("-")
     end
   end
