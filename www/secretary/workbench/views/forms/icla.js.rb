@@ -39,6 +39,7 @@ class ICLA < Vue
           _th 'Public Name'
           _td do
             _input name: 'pubname', value: @pubname, required: true,
+              onChange: self.changePublicName,
               disabled: (@filed or @pdfbusy), onFocus: lambda {@pubname ||= @realname}
           end
         end
@@ -69,6 +70,30 @@ class ICLA < Vue
       end
 
       _table.form do
+        _tr do
+          _th 'User ID'
+          _td do
+            _input name: 'user', value: @user, onBlur: self.validate_userid,
+              disabled: (@filed or @pdfbusy), pattern: '^[a-z][a-z0-9]{2,}$'
+          end
+        end
+
+        _tr do
+          _th 'LDAP sn'
+          _td do
+            _input name: 'ldapsn', value: @ldapsn,
+              disabled: (@filed or @pdfbusy)
+          end
+        end
+
+        _tr do
+          _th 'LDAP givenname'
+          _td do
+            _input name: 'ldapgivenname', value: @ldapgivenname,
+              disabled: (@filed or @pdfbusy)
+          end
+        end
+
         _tr do
           _th 'User ID'
           _td do
@@ -130,7 +155,10 @@ class ICLA < Vue
 
     @realname = name
     @pubname = parsed.PublicName || name
+    @pubnamearray = @pubname.split()
     @familyfirst = parsed.FamilyFirst || false
+    @ldapsn = self.genldapsn
+    @ldapgivenname = self.genldapgivenname
     @filename = self.genfilename(name, @familyfirst)
     @email = parsed.EMail || @@headers.from
     @user = parsed.ApacheID || ''
@@ -221,6 +249,14 @@ class ICLA < Vue
     @filename = self.genfilename(@realname, @familyfirst)
   end
 
+  # when public name changes, update LDAP default fields
+  def changePublicName(event)
+    @pubname = event.target.value;
+    @pubnamearray = @pubname.split()
+    @ldapsn = self.genldapsn(@pubnamearray, @familyfirst)
+    @ldapgivenname = self.genldapgivenname(@pubnamearray, @familyfirst)
+  end
+
   # generate file name from the real name
   def genfilename(realname, familyfirst))
     nominalname = asciize(realname.strip()).downcase().gsub(/\W+/, '-')
@@ -231,6 +267,24 @@ class ICLA < Vue
       namearray = nominalname.split("-")
       namearray.append(namearray(0)).delete_at(0)
       return namearray.join("-")
+    end
+  end
+
+  # generate LDAP sn from public name
+  def genldapsn(pnamearray, ffirst)
+    if ffirst
+      return pnamearray[0]
+    else
+      return pnamearray[-1]
+    end
+  end
+
+  # generate LDAP givenName from public name
+  def genldapsn(pnamearray, ffirst)
+    if ffirst
+      return pnamearray[-1]
+    else
+      return pnamearray[0]
     end
   end
 
