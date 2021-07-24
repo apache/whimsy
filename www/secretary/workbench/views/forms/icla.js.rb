@@ -157,8 +157,8 @@ class ICLA < Vue
     @pubname = parsed.PublicName || name
     @pubnamearray = @pubname.split()
     @familyfirst = parsed.FamilyFirst || false
-    @ldapsn = self.genldapsn
-    @ldapgivenname = self.genldapgivenname
+    @ldapsn = self.genldapsn(@pubnamearray, @familyfirst)
+    @ldapgivenname = self.genldapgivenname(@pubnamearray, @familyfirst)
     @filename = self.genfilename(name, @familyfirst)
     @email = parsed.EMail || @@headers.from
     @user = parsed.ApacheID || ''
