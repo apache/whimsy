@@ -155,7 +155,7 @@ class ICLA < Vue
 
     @realname = name
     @pubname = parsed.PublicName || name
-    @pubnamearray = @pubname.split()
+    @pubnamearray = @pubname.split(" ")
     @familyfirst = parsed.FamilyFirst || false
     @ldapsn = self.genldapsn(@pubnamearray, @familyfirst)
     @ldapgivenname = self.genldapgivenname(@pubnamearray, @familyfirst)
@@ -252,7 +252,7 @@ class ICLA < Vue
   # when public name changes, update LDAP default fields
   def changePublicName(event)
     @pubname = event.target.value;
-    @pubnamearray = @pubname.split()
+    @pubnamearray = @pubname.split(" ")
     @ldapsn = self.genldapsn(@pubnamearray, @familyfirst)
     @ldapgivenname = self.genldapgivenname(@pubnamearray, @familyfirst)
   end
