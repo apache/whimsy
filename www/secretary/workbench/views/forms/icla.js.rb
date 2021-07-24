@@ -258,7 +258,7 @@ class ICLA < Vue
   end
 
   # generate file name from the real name
-  def genfilename(realname, familyfirst))
+  def genfilename(realname, familyfirst)
     nominalname = asciize(realname.strip()).downcase().gsub(/\W+/, '-')
     if !familyfirst
       return nominalname
@@ -280,7 +280,7 @@ class ICLA < Vue
   end
 
   # generate LDAP givenName from public name
-  def genldapsn(pnamearray, ffirst)
+  def genldapgivenname(pnamearray, ffirst)
     if ffirst
       return pnamearray[-1]
     else
