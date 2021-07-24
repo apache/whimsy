@@ -44,6 +44,14 @@ class ICLA < Vue
         end
 
         _tr do
+          _th 'Family First'
+          _td do
+            _input name: 'familyfirst', value: @familyfirst, required: true,
+              disabled: (@filed or @pdfbusy), onChange: self.changeFamilyFirst
+          end
+        end
+
+        _tr do
           _th 'E-mail'
           _td do
             _input name: 'email', value: @email, required: true, type: 'email',
@@ -122,7 +130,8 @@ class ICLA < Vue
 
     @realname = name
     @pubname = parsed.PublicName || name
-    @filename = self.genfilename(name)
+    @familyfirst = parsed.FamilyFirst || false
+    @filename = self.genfilename(name, @familyfirst)
     @email = parsed.EMail || @@headers.from
     @user = parsed.ApacheID || ''
     project = parsed.Project
@@ -204,12 +213,25 @@ class ICLA < Vue
 
   def changeRealName(event)
     @realname = event.target.value;
-    @filename = self.genfilename(event.target.value)
+    @filename = self.genfilename(event.target.value, @familyfirst)
+  end
+
+  def changeFamilyFirst(event)
+    @familyfirst = event.target.value;
+    @filename = self.genfilename(@realname, @familyfirst)
   end
 
   # generate file name from the real name
-  def genfilename(realname)
-    return asciize(realname.strip()).downcase().gsub(/\W+/, '-')
+  def genfilename(realname, familyfirst))
+    nominalname = asciize(realname.strip()).downcase().gsub(/\W+/, '-')
+    if !familyfirst
+      return nominalname
+    else
+      # compute file name with family first; move last name to first
+      namearray = nominalname.split("-")
+      namearray.insert(0, namearray(-1)).delete_at(-1)
+      return namearray.join("-")
+    end
   end
 
   # when leaving an input field, trigger change event (for Safari)
