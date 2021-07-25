@@ -353,8 +353,10 @@ end
 
 # update documentation
 task :rdoc => 'www/docs/api/index.html'
-file 'www/docs/api/index.html' => Rake::FileList['lib/**/*.rb'] do
-  system('rdoc', 'lib', '--output', 'www/docs/api', '--force-output',
+file 'www/docs/api/index.html' => Rake::FileList['lib/whimsy/**/*.rb'] do
+  # remove old files first
+  FileUtils.remove_dir(File.join(File.dirname(__FILE__),'www/docs/api'))
+  system('rdoc', 'lib/whimsy', '--output', 'www/docs/api', '--force-output',
     '--title', 'whimsy/asf lib', {chdir: File.dirname(__FILE__)})
 end
 
