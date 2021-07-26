@@ -165,6 +165,22 @@ module ASF
       result
     end
 
+    # extract sn and givenName from cn (needed for LDAP entries)
+    # returns sn, [givenName,...]
+    # DRAFT version: not for general use yet
+    # Does not handle multi-word family names or honorifics etc
+    def self.ldap_parse_cn_DRAFT(cn, familyFirst)
+      words = cn.split(' ')
+      if familyFirst
+        sn = words.shift
+        givenName = words
+      else
+        sn = words.pop
+        givenName = words
+      end
+      return sn, givenName
+    end
+
     # Name equivalences
     names = [
       %w(Alex Alexander Alexandru), 
