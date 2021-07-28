@@ -295,16 +295,10 @@ get '/icla/index.json' do
   if not icla_index
 
     # build a list of ICLA Public names, email addresses
-    # icla file names are only shown to secretary
     tmp = []
     ASF::ICLA.each {|icla|
       if icla.noId?
-        if @auth[:secretary]
-          iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef) # must be secretary
-          tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
-        else
-          tmp << { name: icla.name, mail: icla.email}
-        end
+        tmp << { name: icla.name, mail: icla.email}
       end
     }
     icla_index = tmp.to_json

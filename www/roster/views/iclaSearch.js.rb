@@ -80,7 +80,6 @@ class IclaSearch < Vue
               _tr do
                 _th 'public name'
                 _th 'email'
-                _th 'ICLA'
               end
             end
 
@@ -89,8 +88,6 @@ class IclaSearch < Vue
                 _tr do
                   _td icla.name
                   _td icla.mail
-                  # iclapath already ends in /
-                  _td { _a icla.claRef, href: "#{@@iclapath}#{icla.iclaFile}" }
                 end
               end
 
