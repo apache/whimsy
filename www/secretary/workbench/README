@@ -88,14 +88,14 @@ Model:
                       system signals. These are converted into events
                       that are returned by the server /events URL
                       Changes to mailbox files are returned as a full set of headers.
-                      These are captured by the Javascript and merged into the current
+                      These are captured by the JavaScript and merged into the current
                       list.
 
 Design Notes:
 
   Sorting and merging; handling deleted entries
   The GUI can display more than one month's data (it automatically does so at month start)
-  However the data for each month is in separate chunks, so the client Javascript is
+  However the data for each month is in separate chunks, so the client JavaScript is
   responsible for sort/merging the responses.
   Whilst the initial data load can (and does) exclude deleted entries, subsequent data must
   be merged with the existing data in order to allow for deletion by another session
