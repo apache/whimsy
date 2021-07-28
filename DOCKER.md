@@ -64,22 +64,29 @@ Installation instructions
 * `git clone https://github.com/apache/whimsy.git` (whichever works best for you)
 * `cd whimsy`
 * Start Docker if necessary: `$ open /Applications/Docker.app`
-* `rake docker:update svn:update git:pull`
+* `rake docker:update` # this runs docker:build and updates any Gems
+* `rake svn:update git:pull` # This updates the Whimsy data sources
 * `rake docker:up`
 * visit `http://localhost:1999/` in your favorite browser
 
 To get a shell on the container, open a terminal console in the work directory
-and run `rake docker:exec`.
+and run `rake docker:exec`. The container must already be running.
 
-Note: the `rake docker:update svn:update git:pull` step will take a long time as
-it will need to download and install all of the Ubuntu packages, Ruby gems,
-build and install Passenger, checkout numerous svn repositories and two git
-repositories.  The good news is that this can be entirely unattended as there
-will be no prompts required during this process (except possibly for SVN
-updates).
+Note: the initial run of the `rake docker:update` step will take a long time as
+it will need to download and install all of the Ubuntu packages,
+build and install Passenger, as well as update all the Ruby Gems.
+The good news is that this can be entirely unattended as there
+will be no prompts required during this process.
+The command does not need to be repeated each time you want to start the container,
+but should be repeated from time to time to fetch updated sources.
 
 If you wish to create the Ubuntu image separately, run `rake docker:build`
 (this is invoked as part of docker:update)
+
+The `rake svn:update git:pull` step updates the SVN and Git repos used by Whimsy.
+The container does not automatically update these (unlike the live installation),
+so the step should be performed as necessary before starting the container to ensure the
+data is sufficiently up-to-date.
 
 This should be enough to get the board agenda tool to launch.  It is not
 known yet what functions work and what functions do not.
