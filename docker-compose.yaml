@@ -8,7 +8,7 @@ services:
     environment:
       - "HOST_HOME=$HOME"
     volumes:
-      - ../..:/srv
+      - ..:/srv
       - $HOME/.subversion:/$HOME/.subversion
       - $HOME/.gitconfig:/$HOME/.gitconfig
       - $HOME/.ssh:/$HOME/.ssh

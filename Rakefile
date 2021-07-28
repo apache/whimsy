@@ -372,30 +372,22 @@ end
 
 # Docker support
 namespace :docker do
-  task :build => ['docker/work/whimsy.conf', 'docker/work/25-authz_ldap_group_membership.conf'] do
-    Dir.chdir File.join(__dir__, 'docker') do
-      sh 'docker-compose build web' # name 'web' must agree with services entry in docker-compose.yaml
-    end
+  task :build do
+    sh 'docker-compose build web' # name 'web' must agree with services entry in docker-compose.yaml
   end
 
   task :update => :build do
-    Dir.chdir File.join(__dir__, 'docker') do
-      sh 'docker-compose run  --entrypoint ' +
-        %('bash -c "rake docker:scaffold && rake update"') +
-        ' web'
-    end
+    sh 'docker-compose run  --entrypoint ' +
+      %('bash -c "rake docker:scaffold && rake update"') +
+      ' web'
   end
 
   task :up do
-    Dir.chdir File.join(__dir__, 'docker') do
-      sh 'docker-compose up'
-    end
+    sh 'docker-compose up'
   end
 
   task :exec do
-    Dir.chdir File.join(__dir__, 'docker') do
-      sh 'docker-compose exec web /bin/bash'
-    end
+    sh 'docker-compose exec web /bin/bash'
   end
 
   # cannot depend on :config
@@ -451,16 +443,4 @@ namespace :docker do
     end
     sh 'apache2ctl -DFOREGROUND'
   end
-end
-
-file 'docker/work' do
-  mkdir_p 'docker/work'
-end
-
-file 'docker/work/whimsy.conf' => ['docker/work', 'config/whimsy.conf'] do
-  cp 'config/whimsy.conf', 'docker/work/whimsy.conf'
-end
-
-file 'docker/work/25-authz_ldap_group_membership.conf' => ['docker/work', 'config/25-authz_ldap_group_membership.conf'] do
-  cp 'config/25-authz_ldap_group_membership.conf', 'docker/work/25-authz_ldap_group_membership.conf'
 end

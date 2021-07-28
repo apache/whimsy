@@ -65,8 +65,9 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y ldap-utils
 
 # This should be last, as the source is likely to change
 # It also takes very little time, so it does not matter if it has to be redone
-COPY work/whimsy.conf /etc/apache2/sites-enabled/000-default.conf
-COPY work/25-authz_ldap_group_membership.conf /etc/apache2/conf-enabled/25-authz_ldap_group_membership.conf
+# N.B. These files need to be allowed in the .dockerignore file
+COPY config/whimsy.conf /etc/apache2/sites-enabled/000-default.conf
+COPY config/25-authz_ldap_group_membership.conf /etc/apache2/conf-enabled/25-authz_ldap_group_membership.conf
 
 WORKDIR /srv/whimsy
 EXPOSE 80
