@@ -391,11 +391,12 @@ namespace :docker do
   end
 
   # cannot depend on :config
+  # It runs in container, and needs to occur first
   task :scaffold do
     # set up symlinks from /root to user's home directory
     home = ENV['HOST_HOME']
     if home and File.exist? home
-      %w(.gitconfig .ssh .subversion).each do |mount|
+      %w(.ssh .subversion).each do |mount|
         root_mount = File.join("/root", mount)
         home_mount = File.join(home, mount)
         if File.exist? root_mount
@@ -435,6 +436,7 @@ namespace :docker do
 
   end
 
+  # This is the entrypoint in the Dockerfile so runs in the container
   task :entrypoint => [:scaffold, :config] do
     # requires :config
     require 'whimsy/asf/ldap'

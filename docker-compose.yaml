@@ -10,5 +10,4 @@ services:
     volumes:
       - ..:/srv
       - $HOME/.subversion:/$HOME/.subversion
-      - $HOME/.gitconfig:/$HOME/.gitconfig
       - $HOME/.ssh:/$HOME/.ssh

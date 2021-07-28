@@ -98,7 +98,6 @@ The `docker/docker-compose.yml` has the following mounts:
 container path      host path
 /srv                directory chosen in step 1
 /root/.subversion   $HOME/.subversion
-/root/.gitconfig    $HOME/.gitconfig
 /root/.ssh          $HOME/.ssh
 
 You can edit the files in these directories using your host tools.
