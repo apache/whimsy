@@ -298,7 +298,7 @@ get '/icla/index.json' do
     tmp = []
     ASF::ICLA.each {|icla|
       if icla.noId?
-        if auth[:secretary]
+        if @auth[:secretary]
           iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef) # must be secretary
           tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
         else
