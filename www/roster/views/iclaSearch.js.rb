@@ -75,11 +75,13 @@ class IclaSearch < Vue
         elsif list.length > 99
           _p "#{list.length} entries match"
         else
+          hasICLA = list.first.iclaFile
           _table.table.table_hover do
             _thead do
               _tr do
                 _th 'public name'
                 _th 'email'
+                _th 'ICLA' if hasICLA
               end
             end
 
@@ -88,6 +90,10 @@ class IclaSearch < Vue
                 _tr do
                   _td icla.name
                   _td icla.mail
+                  if hasICLA
+                    # iclapath already ends in /
+                    _td { _a icla.claRef, href: "#{@@iclapath}#{icla.iclaFile}" }
+                  end
                 end
               end
 

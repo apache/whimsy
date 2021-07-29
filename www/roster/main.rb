@@ -282,38 +282,28 @@ get '/icla/' do
   _html :iclas
 end
 
-icla_index = nil
-icla_index_time = nil
-icla_index_etag = nil
 get '/icla/index.json' do
   @auth = Auth.info(env)
   # Restrict who can see this
-  pass unless @auth[:member] or @auth[:pmc_chair]
-  # recompute icla_index if the data is 5 minutes old or older
-  icla_index = nil if not icla_index_time or Time.now-icla_index_time >= 300
+  pass unless @auth[:member] or @auth[:pmc_chair] # assume secretary is a member
 
-  if not icla_index
-
-    # build a list of ICLA Public names, email addresses
-    tmp = []
-    ASF::ICLA.each {|icla|
-      if icla.noId?
-        tmp << { name: icla.name, mail: icla.email}
+  # build a list of ICLA Public names, email addresses
+  # No real point caching this as the source is cached anyway
+  icla_index = []
+  ASF::ICLA.each {|icla|
+    if icla.noId?
+      if @auth[:secretary] # only secretary sees ICLAs
+        iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef)
+        icla_index << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
+      else
+        icla_index << { name: icla.name, mail: icla.email}
       end
-    }
-    icla_index = tmp.to_json
-
-    # cache
-    icla_index_time = Time.now
-    icla_index_etag = etag = Digest::MD5.hexdigest(icla_index)
-  end
+    end
+  }
 
   # send response
-  last_modified icla_index_time
-  etag icla_index_etag
   content_type 'application/json', charset: 'UTF-8'
-  expires [icla_index_time+300, Time.now+60].max
-  icla_index
+  icla_index.to_json
 end
 
 # Handle nonpmc: committees that aren't PMCs
