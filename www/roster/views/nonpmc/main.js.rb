@@ -4,7 +4,7 @@
 
 class NonPMC < Vue
   def initialize
-    @attic = nil
+
   end
 
   def render
@@ -202,22 +202,5 @@ class NonPMC < Vue
 
     @nonpmc.refresh = proc { Vue.forceUpdate() }
 
-    if @attic == nil and not nonpmc.established and defined? fetch
-      @attic = []
-
-      Polyfill.require(%w(Promise fetch)) do
-        fetch('attic/issues.json', credentials: 'include').then {|response|
-          if response.status == 200
-            response.json().then do |json|
-              @attic = json
-            end
-          else
-            console.log "Attic JIRA #{response.status} #{response.statusText}"
-          end
-        }.catch {|error|
-          console.log "Attic JIRA #{error}"
-        }
-      end
-    end
   end
 end
