@@ -8,6 +8,8 @@ Forwarding email address: <%= @email %>
 Vote reference:
   <%= @votelink.to_s.gsub('mail-search.apache.org/pmc/', %'mail-search.apache.org/members/') %>
 
+Please note: it can take up to a week for the request to be processed.
+
 -- 
 Submitted by <%= URI.join(env['SCRIPT_URI'], '..') %>
 From <%= `/usr/bin/host #{env['REMOTE_ADDR'].dup.untaint}`.chomp %>
