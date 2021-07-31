@@ -30,7 +30,7 @@ _html do
   ASF::ICLA.each do |icla|
     legal=icla.legal_name
     key = legal.split(' ').sort.join(' ')
-    dups[key] << {legal: legal, email: icla.email, claRef: icla.claRef, id: icla.id}
+    dups[key] << {legal: legal, public: icla.name,  email: icla.email, claRef: icla.claRef, id: icla.id}
   end
 
   _table do
@@ -38,6 +38,7 @@ _html do
       _th 'Key'
       _th 'Id'
       _th 'Legal Name'
+      _th 'Public Name'
       _th 'Email'
       _th 'CLAref'
     end
@@ -59,6 +60,12 @@ _html do
           _td do
             val.each do |v|
               _ v[:legal]
+              _br
+            end
+          end
+          _td do
+            val.each do |v|
+              _ v[:public]
               _br
             end
           end
