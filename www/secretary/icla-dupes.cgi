@@ -28,9 +28,19 @@ _html do
 
   dups = Hash.new{|h,k| h[k]=Array.new}
   ASF::ICLA.each do |icla|
-    legal=icla.legal_name
-    key = legal.split(' ').sort.join(' ')
+    legal = icla.legal_name
+    legals = legal.downcase.split(' ')
+    if %w(jr jr. ii iii).include? legals[-1]
+      legals.pop
+    end
+    key = legals.sort.join(' ')
     dups[key] << {legal: legal, public: icla.name,  email: icla.email, claRef: icla.claRef, id: icla.id}
+    if legals.size > 2 # try only first and last names
+      key2 = [legals[0], legals[-1]].sort.join(' ')
+      # Store main key so can drop ones already shown later
+      # e.g. if A B C and C B A already have appeared, no point showing A C and C A
+      dups[key2] << {key: key, legal: legal, public: icla.name,  email: icla.email, claRef: icla.claRef, id: icla.id}
+    end
   end
 
   _table do
@@ -43,6 +53,8 @@ _html do
       _th 'CLAref'
     end
     dups.sort_by{|k,v| k}.each do |key, val|
+      # look for repeats of A B C / C B A
+      next if val.size == 2 and (val[0][:key] || '1' ) == (val[1][:key] || '2')
       if val.size > 1
         _tr do
           _td key
