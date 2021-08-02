@@ -243,7 +243,7 @@ module ICLAParser
                 line = lines.map{|l| l.sub(/^[ _]+/,'').sub(/[ _]+$/,'')}.select{|l| l.length > 0}.join(',')
                 case line
                   when /^\s*(?:\(optional\) )?(.+):\s+(.*)/
-                    data[canon_field_name($1)] = $2 unless $2 == ',' # empty line
+                    data[canon_field_name($1)] = $2 unless $2 == ',' or $2 == '' # empty line
                   else
                     data[:unmatched] ||= []
                     data[:unmatched] << line
