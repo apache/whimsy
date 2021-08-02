@@ -18,11 +18,11 @@ if "#@filename#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/
   # Is there a matching ICLA? (returns first match, if any)
   file = ASF::ICLAFiles.match_claRef(@filename)
   if file
-    _warn "documents/iclas/#{file} already exists"
+    _warn [["documents/iclas/#{file} already exists", ASF::SVN.svnpath!('iclas', file)]]
   else
     _icla = ASF::ICLA.find_by_email(@email.strip)
     if _icla
-      _warn "Email #{@email.strip} found in iclas.txt file - #{_icla.as_line}"
+      _warn ["Email #{@email.strip} found in iclas.txt file:", _icla.as_line]
     else
       _icla = ASF::ICLA.find_matches(@realname.strip)
       if _icla.size > 0
