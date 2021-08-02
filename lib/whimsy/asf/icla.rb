@@ -114,6 +114,36 @@ module ASF
       @@name_index[value]
     end
 
+    # find number of matches in target array
+    def self.array_count_match(source, target)
+      count = 0
+      source.each {|src| count += 1 if target.include? src}
+      count
+    end
+
+    # find close matches
+    def self.find_matches(value)
+      matches = []
+      source = value.strip.downcase.split(' ')
+      self.each do |icla|
+        target = icla.legal_name.strip.downcase.split(' ')
+        if target.sort == source.sort # order- and case-independent match
+          matches << icla
+        else
+          cnt = self.array_count_match(source, target)
+          if cnt >= 2
+            matches << icla
+          else
+            cnt = self.array_count_match(target, source)
+            if cnt >= 2
+              matches << icla
+            end
+          end
+        end
+      end
+      matches
+    end
+
     # list of all ids
     def self.availids
       return [] unless SOURCE

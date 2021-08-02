@@ -23,6 +23,17 @@ if "#@filename#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/
     _icla = ASF::ICLA.find_by_email(@email.strip)
     if _icla
       _warn "Email #{@email.strip} found in iclas.txt file - #{_icla.as_line}"
+    else
+      _icla = ASF::ICLA.find_matches(@realname.strip)
+      if _icla.size > 0
+        lines = []
+        lines << "Found possible duplicate ICLAs:"
+        _icla.each do |i|
+          file = ASF::ICLAFiles.match_claRef(i.claRef)
+          lines << [i.legal_name, ASF::SVN.svnpath!('iclas', file)]
+        end
+        _warn lines
+      end
     end
   end
 else
