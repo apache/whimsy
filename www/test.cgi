@@ -18,6 +18,20 @@ def puts_system(*cmd)
   system(*cmd)
 end
 
+if ENV['SCRIPT_URL'] == '/members/test.cgi'
+  print "\n"
+  begin
+    $LOAD_PATH.unshift '/srv/whimsy/lib'
+    require 'whimsy/asf'
+    puts "LDAP.hosts:"
+    puts ASF::LDAP.hosts
+    puts "LDAP.rwhosts:"
+    puts ASF::LDAP.rwhosts
+  rescue Exception => e
+    p e
+  end
+end
+
 # Optional extra info (from the main script only)
 query = ENV['QUERY_STRING'] || ARGV[0]
 if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
