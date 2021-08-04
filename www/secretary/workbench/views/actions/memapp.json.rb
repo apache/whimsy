@@ -90,10 +90,10 @@ task "update cn=member,ou=groups,dc=apache,dc=org in LDAP" do
   end
 
   complete do
-    ldap = ASF.init_ldap(true)
     if ASF.memberids.include? @availid
       _transcript ["#@availid already in group member"]
     else
+      ldap = ASF.init_ldap(true)
       ldap.bind("uid=#{env.user},ou=people,dc=apache,dc=org",
         env.password)
 
