@@ -12,10 +12,8 @@ else
 end
 
 gem 'rake'
-wunderbar_version = File.read(File.expand_path("#{root}/wunderbar.version", __FILE__)).chomp
-gem 'wunderbar', wunderbar_version
-ruby2js_version = File.read(File.expand_path("#{root}/ruby2js.version", __FILE__)).chomp
-gem 'ruby2js', ruby2js_version
+gem 'wunderbar'
+gem 'ruby2js'
 gem 'sinatra', '~> 2.0'
 gem 'nokogumbo'
 gem 'execjs'

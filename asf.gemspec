@@ -1,6 +1,4 @@
 version = File.read(File.expand_path('../asf.version', __FILE__)).strip
-# must agree with Rakefile:
-wunderbar_version = File.read(File.expand_path('wunderbar.version', __dir__)).chomp
 
 Gem::Specification.new do |s|
 
@@ -28,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency("ruby-ldap")
   s.add_dependency("tzinfo")
   s.add_dependency("tzinfo-data")
-  s.add_dependency("wunderbar", wunderbar_version)
+  s.add_dependency("wunderbar")
   s.add_dependency("rdoc")
 
   # If your tests use any gems, include them here

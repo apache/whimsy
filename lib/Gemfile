@@ -6,8 +6,7 @@ gem 'json'
 gem 'nokogiri'
 gem 'rake'
 gem 'ruby-ldap'
-wunderbar_version = File.read(File.expand_path("#{root}/wunderbar.version", __FILE__)).chomp
-gem 'wunderbar', wunderbar_version
+gem 'wunderbar'
 gem 'pdf-reader'
 
 # For Travis testing
