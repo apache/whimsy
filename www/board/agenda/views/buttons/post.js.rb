@@ -164,7 +164,7 @@ class Post < Vue
               search.all? {|part|
                 person.id.include? part or
                 person.name.downcase().include? part
-              }
+              } \
                 and
               not @pmc.include? person
             then
