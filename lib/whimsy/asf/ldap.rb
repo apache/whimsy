@@ -247,7 +247,7 @@ module ASF
       end
 
       # ensure TLS_REQCERT is allow (Mac OS/X only)
-      if ETCLDAP.include? 'ldap' and not content.include? 'REQCERT allow'
+      if ETCLDAP.include? 'openldap' and not content.include? 'REQCERT allow'
         content.gsub!(/^TLS_REQCERT/i, '# TLS_REQCERT')
         content += "TLS_REQCERT allow\n"
       end
