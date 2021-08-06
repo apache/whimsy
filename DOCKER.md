@@ -62,6 +62,7 @@ Installation instructions
 * `echo ":root: ." >.whimsy`
 * `git clone git@github.com:apache/whimsy.git` OR
 * `git clone https://github.com/apache/whimsy.git` (whichever works best for you)
+* `create .bash_aliases` if required - this will be picked up by the root user
 * `cd whimsy`
 * Start Docker if necessary: `$ open /Applications/Docker.app`
 * `rake docker:update` # this runs docker:build and updates any Gems
@@ -88,7 +89,7 @@ The container does not automatically update these (unlike the live installation)
 so the step should be performed as necessary before starting the container to ensure the
 data is sufficiently up-to-date.
 
-This should be enough to get the board agenda tool to launch.  It is not
+This should be enough to get most of Whimsy working.  It is not
 known yet what functions work and what functions do not.
 
 Installation layout
@@ -97,6 +98,8 @@ The `docker/docker-compose.yml` has the following mounts:
 
 container path      host path
 /srv                directory chosen in step 1
+
+These are currently disabled, see https://github.com/apache/whimsy/issues/119
 /root/.subversion   $HOME/.subversion
 /root/.ssh          $HOME/.ssh
 
