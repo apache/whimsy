@@ -22,7 +22,3 @@ gem 'execjs'
 gem 'listen'
 gem 'escape'
 gem 'pdf-reader'
-
-group :demo do
-  gem 'puma'
-end
