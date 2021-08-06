@@ -203,12 +203,13 @@ module ASF
     end
 
     # query and extract cert from openssl output
-    def self.extract_cert
-      host = hosts.sample[%r{//(.*?)(/|$)}, 1]
+    # returns the last certificate found (WHIMSY-368)
+    def self.extract_cert(host=nil)
+      host ||= hosts.sample[%r{//(.*?)(/|$)}, 1]
       puts ['openssl', 's_client', '-connect', host, '-showcerts'].join(' ')
       out, _, _ = Open3.capture3 'openssl', 's_client',
         '-connect', host, '-showcerts'
-      out[/^-+BEGIN.*?\n-+END[^\n]+\n/m]
+      out.scan(/^-+BEGIN.*?\n-+END[^\n]+\n/m).last
     end
 
     # update /etc/ldap.conf. Usage:
@@ -246,7 +247,7 @@ module ASF
       end
 
       # ensure TLS_REQCERT is allow (Mac OS/X only)
-      if ETCLDAP.include? 'openldap' and not content.include? 'REQCERT allow'
+      if ETCLDAP.include? 'ldap' and not content.include? 'REQCERT allow'
         content.gsub!(/^TLS_REQCERT/i, '# TLS_REQCERT')
         content += "TLS_REQCERT allow\n"
       end
@@ -1512,7 +1513,6 @@ end
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
-  p ASF::Person.next_uidNumber
   mem = ASF.members()
   puts mem.length
   puts mem.first.inspect
