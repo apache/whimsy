@@ -9,5 +9,7 @@ services:
       - "HOST_HOME=$HOME"
     volumes:
       - ..:/srv
-      - $HOME/.subversion:/$HOME/.subversion
-      - $HOME/.ssh:/$HOME/.ssh
+# https://github.com/apache/whimsy/issues/119
+# These don't appear to be needed
+#      - $HOME/.subversion:/$HOME/.subversion
+#      - $HOME/.ssh:/$HOME/.ssh

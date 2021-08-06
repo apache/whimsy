@@ -389,24 +389,25 @@ namespace :docker do
   # cannot depend on :config
   # It runs in container, and needs to occur first
   task :scaffold do
+    # https://github.com/apache/whimsy/issues/119 - not needed AFAICT
     # set up symlinks from /root to user's home directory
-    home = ENV['HOST_HOME']
-    if home and File.exist? home
-      %w(.ssh .subversion).each do |mount|
-        root_mount = File.join("/root", mount)
-        home_mount = File.join(home, mount)
-        if File.exist? root_mount
-          if File.symlink? root_mount
-            next if File.realpath(root_mount) == home_mount
-            rm_f root_mount
-          else
-            rm_rf root_mount
-          end
-        end
-
-        symlink home_mount, root_mount
-      end
-    end
+    # home = ENV['HOST_HOME']
+    # if home and File.exist? home
+    #   %w(.ssh .subversion).each do |mount|
+    #     root_mount = File.join("/root", mount)
+    #     home_mount = File.join(home, mount)
+    #     if File.exist? root_mount
+    #       if File.symlink? root_mount
+    #         next if File.realpath(root_mount) == home_mount
+    #         rm_f root_mount
+    #       else
+    #         rm_rf root_mount
+    #       end
+    #     end
+    #
+    #     symlink home_mount, root_mount
+    #   end
+    # end
 
     # This should already exist, but just in case
     mkdir_p? '/srv/whimsy/www/members'
