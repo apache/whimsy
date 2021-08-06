@@ -60,15 +60,11 @@ task :update, [:command] do |task, args|
     gems['whimsy-asf'].sub! /,.*/, ", path: #{Dir.pwd.inspect}"
 
     # Also need to define version for wunderbar as per the asf.gemspec file
-    wunderbar_version = File.read(File.expand_path('wunderbar.version', __dir__)).chomp
-    ruby2js_version = File.read(File.expand_path('ruby2js.version', __dir__)).chomp
     require 'tmpdir'
     Dir.mktmpdir do |dir|
       Dir.chdir dir do
         contents = [
           "source 'https://rubygems.org'",
-          "wunderbar_version = '#{wunderbar_version}'",
-          "ruby2js_version = '#{ruby2js_version}'",
           gems.values
         ].join("\n")
         File.write "Gemfile", contents
@@ -353,8 +349,10 @@ end
 
 # update documentation
 task :rdoc => 'www/docs/api/index.html'
-file 'www/docs/api/index.html' => Rake::FileList['lib/**/*.rb'] do
-  system('rdoc', 'lib', '--output', 'www/docs/api', '--force-output',
+file 'www/docs/api/index.html' => Rake::FileList['lib/whimsy/**/*.rb'] do
+  # remove old files first
+  FileUtils.remove_dir(File.join(File.dirname(__FILE__),'www/docs/api'))
+  system('rdoc', 'lib/whimsy', '--output', 'www/docs/api', '--force-output',
     '--title', 'whimsy/asf lib', {chdir: File.dirname(__FILE__)})
 end
 
@@ -370,52 +368,46 @@ end
 
 # Docker support
 namespace :docker do
-  task :build => ['docker/work/whimsy.conf', 'docker/work/25-authz_ldap_group_membership.conf'] do
-    Dir.chdir File.join(__dir__, 'docker') do
-      sh 'docker-compose build web' # name 'web' must agree with services entry in docker-compose.yaml
-    end
+  task :build do
+    sh 'docker-compose build web' # name 'web' must agree with services entry in docker-compose.yaml
   end
 
   task :update => :build do
-    Dir.chdir File.join(__dir__, 'docker') do
-      sh 'docker-compose run  --entrypoint ' +
-        %('bash -c "rake docker:scaffold && rake update"') +
-        ' web'
-    end
+    sh 'docker-compose run  --entrypoint ' +
+      %('bash -c "rake docker:scaffold && rake update"') +
+      ' web'
   end
 
   task :up do
-    Dir.chdir File.join(__dir__, 'docker') do
-      sh 'docker-compose up'
-    end
+    sh 'docker-compose up'
   end
 
   task :exec do
-    Dir.chdir File.join(__dir__, 'docker') do
-      sh 'docker-compose exec web /bin/bash'
-    end
+    sh 'docker-compose exec web /bin/bash'
   end
 
   # cannot depend on :config
+  # It runs in container, and needs to occur first
   task :scaffold do
+    # https://github.com/apache/whimsy/issues/119 - not needed AFAICT
     # set up symlinks from /root to user's home directory
-    home = ENV['HOST_HOME']
-    if home and File.exist? home
-      %w(.gitconfig .ssh .subversion).each do |mount|
-        root_mount = File.join("/root", mount)
-        home_mount = File.join(home, mount)
-        if File.exist? root_mount
-          if File.symlink? root_mount
-            next if File.realpath(root_mount) == home_mount
-            rm_f root_mount
-          else
-            rm_rf root_mount
-          end
-        end
-
-        symlink home_mount, root_mount
-      end
-    end
+    # home = ENV['HOST_HOME']
+    # if home and File.exist? home
+    #   %w(.ssh .subversion).each do |mount|
+    #     root_mount = File.join("/root", mount)
+    #     home_mount = File.join(home, mount)
+    #     if File.exist? root_mount
+    #       if File.symlink? root_mount
+    #         next if File.realpath(root_mount) == home_mount
+    #         rm_f root_mount
+    #       else
+    #         rm_rf root_mount
+    #       end
+    #     end
+    #
+    #     symlink home_mount, root_mount
+    #   end
+    # end
 
     # This should already exist, but just in case
     mkdir_p? '/srv/whimsy/www/members'
@@ -441,6 +433,7 @@ namespace :docker do
 
   end
 
+  # This is the entrypoint in the Dockerfile so runs in the container
   task :entrypoint => [:scaffold, :config] do
     # requires :config
     require 'whimsy/asf/ldap'
@@ -449,16 +442,4 @@ namespace :docker do
     end
     sh 'apache2ctl -DFOREGROUND'
   end
-end
-
-file 'docker/work' do
-  mkdir_p 'docker/work'
-end
-
-file 'docker/work/whimsy.conf' => ['docker/work', 'config/whimsy.conf'] do
-  cp 'config/whimsy.conf', 'docker/work/whimsy.conf'
-end
-
-file 'docker/work/25-authz_ldap_group_membership.conf' => ['docker/work', 'config/25-authz_ldap_group_membership.conf'] do
-  cp 'config/25-authz_ldap_group_membership.conf', 'docker/work/25-authz_ldap_group_membership.conf'
 end

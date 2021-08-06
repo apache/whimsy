@@ -135,6 +135,19 @@ module ICLAParser
     NAME2FIELD[pdfname.gsub(' ','').downcase] || pdfname
   end
 
+  def self.encode(val)
+    if val.bytes[0..1] == [254,255]
+      val = val.encode('utf-8','utf-16').strip
+    else
+      begin
+        val = val.encode('utf-8').strip
+      rescue Encoding::UndefinedConversionError
+        val = val.encode('utf-8','iso-8859-1').strip
+      end
+    end
+    val.gsub("\x7F",'') # Not sure where these originate
+  end
+
   # parse the PDF
   def self.parse(path)
     data=Hash.new
@@ -177,24 +190,26 @@ module ICLAParser
               # This is a hack; should really find the font def and use that
               if val
                 debug[key] = v.inspect
-                if val.bytes[0..1] == [254,255]
-                  val = val.encode('utf-8','utf-16').strip
-                else
-                  begin
-                    val = val.encode('utf-8').strip
-                  rescue Encoding::UndefinedConversionError
-                    val = val.encode('utf-8','iso-8859-1').strip
-                  end
-                end
-                val.gsub!("\x7F",'') # Not sure where these originate
+                val = encode(val)
                 if val.length > 0
-                  data[canon_field_name(key)] = val.gsub("\x7F",'') # Not sure where these originate
+                  data[canon_field_name(key)] = val
                 end
                 metadata[:dataSource]['Form'] = true
               end
             end
           end
+        elsif subtype == :Widget
+          key = v[:T]
+          val = v[:V].to_s # might be a symbol
+          if val
+            debug[key] = v.inspect
+            if val.length > 0
+              data[canon_field_name(key)] = val
+            end
+          end
         else
+          next if [:Catalog, :Font, :FontDescriptor].include? type
+          # p [k,type,subtype,v]
         end
       end # objects
       if freetext.size > 0
@@ -244,7 +259,7 @@ module ICLAParser
                 line = lines.map{|l| l.sub(/^[ _]+/,'').sub(/[ _]+$/,'')}.select{|l| l.length > 0}.join(',')
                 case line
                   when /^\s*(?:\(optional\) )?(.+):\s+(.*)/
-                    data[canon_field_name($1)] = $2
+                    data[canon_field_name($1)] = $2 unless $2 == ',' or $2 == '' # empty line
                   else
                     data[:unmatched] ||= []
                     data[:unmatched] << line

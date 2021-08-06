@@ -149,12 +149,12 @@ class Agenda
   end
 
   # provide read-only access to a number of properties
-  attr_reader :attach, :title, :owner, :shepherd, :timestamp, :digest, :mtime
+  attr_reader :attach, :title, :owner, :timestamp, :digest, :mtime
   attr_reader :approved, :roster, :prior_reports, :stats, :people, :notes
   attr_reader :chair_email, :mail_list, :warnings, :flagged_by
 
   # provide read/write access to other properties
-  attr_accessor :index
+  attr_accessor :index, :shepherd
   attr_writer :color
 
   def fulltitle
@@ -380,7 +380,7 @@ class Agenda
 
   # find the shortest match for shepherd name (example: Rich)
   def self.shepherd
-    shepherd = nil
+    _shepherd = nil
 
     firstname = User.firstname.downcase()
     Agenda.index.each do |item|
@@ -389,11 +389,11 @@ class Agenda
         firstname.start_with? item.shepherd.downcase() and
         (not shepherd or item.shepherd.length < shepherd.lenth)
       then
-        shepherd = item.shepherd
+        _shepherd = item.shepherd
       end
     end
 
-    return shepherd
+    return _shepherd
   end
 
   # summary

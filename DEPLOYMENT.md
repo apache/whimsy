@@ -2,7 +2,7 @@ Deploying Production Whimsy.apache.org
 ==========
 
 The production `whimsy.apache.org` server is managed by [Puppet](puppetnode), and 
-is automatically udpated whenever commits are made to the master branch
+is automatically updated whenever commits are made to the master branch
 of this repository.  Thus code changes here are reflected in the production
 server within a few minutes.  In the event of a major server crash, the 
 infra team simply re-deploys the whole VM from Puppet.

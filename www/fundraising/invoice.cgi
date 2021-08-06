@@ -197,7 +197,7 @@ _html do
         end
         _p.c30 do
           _ 'To have the dollar amount placed in the third column of the'
-          _ 'invoice form, place it at the end of the line preceeded by an'
+          _ 'invoice form, place it at the end of the line preceded by an'
           _em '@'
           _ 'sign.'
         end

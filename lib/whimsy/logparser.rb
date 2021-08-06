@@ -10,7 +10,6 @@ require 'zlib'
 # Utility methods to turn server logs into hashes of interesting data
 module LogParser
   extend self
-  # Hardcoded from https://github.com/apache/infrastructure-puppet/blob/deployment/modules/whimsy_server/manifests/init.pp#L200
   ERROR_LOG_DIR = '/srv/whimsy/www/members/log' # generally points to /var/log/apache2
 
   # Constants and ignored regex for whimsy_access logs

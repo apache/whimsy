@@ -21,12 +21,13 @@ if attachment.end_with? '.pdf'
 
   # Extract the project and adjust if necessary
   project = parsed[:Project]
-  parsed [:PDFProject] = project # retain the original value
-
   if project
-    project.downcase!
+    parsed [:PDFProject] = project.dup # retain the original value
+    project = project.downcase.sub('apache ','')
     projects = (ASF::Podling.current+ASF::Committee.pmcs).map(&:name)
-    unless projects.include? project
+    if projects.include? project
+      parsed[:Project] = project
+    else
       if project.start_with? 'commons-'
         parsed[:Project] = 'commons'
       elsif project.start_with? 'log'

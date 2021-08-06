@@ -16,7 +16,7 @@ def runtest(method_name)
     # main class adds a trailer after the data
     puts "No change in response data"
   else
-    puts "Reponse differs:"
+    puts "Response differs:"
     puts previous
     puts response
   end

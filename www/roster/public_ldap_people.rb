@@ -25,7 +25,7 @@ if peeps.empty?
   exit 0
 end
 
-# Make output smaller by ommitting commonest case (noLogin: false)
+# Make output smaller by omitting commonest case (noLogin: false)
 def makeEntry(hash, e)
   hash[e.id] = {
       name: e.public_name,

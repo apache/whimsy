@@ -165,6 +165,25 @@ module ASF
       result
     end
 
+    # extract sn and givenName from cn (needed for LDAP entries)
+    # returns sn, [givenName,...]
+    # Note that givenName is returned as an array (may be empty). 
+    # This is because givenName is an optional attribute which may appear multiple times.
+    # It remains to be seen whether we want to create multiple attributes, 
+    # or whether it is more appropriate to add at most one attribute
+    # containing all the givenName values. [The array can be joined to produce a single value].
+    # DRAFT version: not for general use yet
+    # Does not handle multi-word family names or honorifics etc
+    def self.ldap_parse_cn_DRAFT(cn, familyFirst)
+      words = cn.split(' ')
+      if familyFirst
+        sn = words.shift
+      else
+        sn = words.pop
+      end
+      return sn, words
+    end
+
     # Name equivalences
     names = [
       %w(Alex Alexander Alexandru), 

@@ -8,7 +8,8 @@ services:
     environment:
       - "HOST_HOME=$HOME"
     volumes:
-      - ../..:/srv
-      - $HOME/.subversion:/$HOME/.subversion
-      - $HOME/.gitconfig:/$HOME/.gitconfig
-      - $HOME/.ssh:/$HOME/.ssh
+      - ..:/srv
+# https://github.com/apache/whimsy/issues/119
+# These don't appear to be needed
+#      - $HOME/.subversion:/$HOME/.subversion
+#      - $HOME/.ssh:/$HOME/.ssh

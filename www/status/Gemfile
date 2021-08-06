@@ -7,5 +7,4 @@ gem 'whimsy-asf', asf_version, path: File.expand_path(root, __FILE__)
 gem 'passenger'
 
 gem 'mime-types'
-wunderbar_version = File.read(File.expand_path("#{root}/wunderbar.version", __FILE__)).chomp
-gem 'wunderbar', wunderbar_version
+gem 'wunderbar'

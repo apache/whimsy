@@ -39,34 +39,18 @@ end
 
 get '/' do
   if env['REQUEST_URI'].end_with? '/'
-    stamps = []
-    stamps << Time.now.to_i
-    ASF::Person.preload(['asf-banned','loginShell']) # so can get inactive count
-    stamps << Time.now.to_i
-    @committers = ASF::Person.list
-    stamps << Time.now.to_i
+    @committers = ASF::Person.preload(['asf-banned','loginShell']) # so can get inactive count
     @committees = ASF::Committee.pmcs
-    stamps << Time.now.to_i
     @nonpmcs = ASF::Committee.nonpmcs
-    stamps << Time.now.to_i
     @members = ASF::Member.list.keys - ASF::Member.status.keys # i.e. active member ids
-    stamps << Time.now.to_i
     @groups = Group.list
-    stamps << Time.now.to_i
     @podlings = ASF::Podling.to_h.values
-    stamps << Time.now.to_i
     @petri = ASF::Petri.list
-    stamps << Time.now.to_i
     @otherids = ASF::Project.list.map(&:name) -
                 @committees.map(&:name) -
                 @nonpmcs.map(&:name) -
                 ASF::Podling.currentids -
                 @petri.map(&:id)
-    stamps << Time.now.to_i
-    if stamps[-1] - stamps[0] > 1
-      @stamps = stamps.each_cons(2).map { |a,b| b-a }
-      Wunderbar.warn "TIMES %s TIMES" % @stamps.join(',')
-    end
     _html :index
   else
     redirect to('/')
@@ -282,43 +266,28 @@ get '/icla/' do
   _html :iclas
 end
 
-icla_index = nil
-icla_index_time = nil
-icla_index_etag = nil
 get '/icla/index.json' do
   @auth = Auth.info(env)
   # Restrict who can see this
-  pass unless @auth[:member] or @auth[:pmc_chair]
-  # recompute icla_index if the data is 5 minutes old or older
-  icla_index = nil if not icla_index_time or Time.now-icla_index_time >= 300
+  pass unless @auth[:member] or @auth[:pmc_chair] # assume secretary is a member
 
-  if not icla_index
-
-    # build a list of ICLA Public names, email addresses and icla files
-    tmp = []
-    ASF::ICLA.each {|icla|
-      if icla.noId?
-        if auth[:secretary]
-          iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef) # must be secretary
-          tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
-        else
-          tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef}
-        end
+  # build a list of ICLA Public names, email addresses
+  # No real point caching this as the source is cached anyway
+  icla_index = []
+  ASF::ICLA.each {|icla|
+    if icla.noId?
+      if @auth[:secretary] # only secretary sees ICLAs
+        iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef)
+        icla_index << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
+      else
+        icla_index << { name: icla.name, mail: icla.email}
       end
-    }
-    icla_index = tmp.to_json
-
-    # cache
-    icla_index_time = Time.now
-    icla_index_etag = etag = Digest::MD5.hexdigest(icla_index)
-  end
+    end
+  }
 
   # send response
-  last_modified icla_index_time
-  etag icla_index_etag
   content_type 'application/json', charset: 'UTF-8'
-  expires [icla_index_time+300, Time.now+60].max
-  icla_index
+  icla_index.to_json
 end
 
 # Handle nonpmc: committees that aren't PMCs

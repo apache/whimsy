@@ -39,7 +39,21 @@ _html do
     if @dryrun['warn']
       _div.alert.alert_danger do
         _b 'Warning:'
-        _span @dryrun['warn']
+        warning = @dryrun['warn']
+        # Allow for array of lines
+        if warning.is_a? Array
+          warning.each_with_index do |warn, num|
+            _br if num > 0 # separator
+            # allow for array of array => anchor
+            if warn.is_a? Array
+              _a warn[0], href: warn[1]
+            else
+              _span warn
+            end
+          end
+        else
+          _span warning
+        end
        end
 
       _div.buttons do

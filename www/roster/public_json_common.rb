@@ -90,7 +90,6 @@ def sendMail(subject, body, to='Notification List <notifications@whimsical.apach
   begin
     require 'mail'
     ASF::Mail.configure
-    ldaphost = ASF::LDAP.host()
     mail = Mail.new do
       from 'Public JSON file updates  <dev@whimsical.apache.org>'
       to to

@@ -18,11 +18,22 @@ if "#@filename#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/
   # Is there a matching ICLA? (returns first match, if any)
   file = ASF::ICLAFiles.match_claRef(@filename)
   if file
-    _warn "documents/iclas/#{file} already exists"
+    _warn [["documents/iclas/#{file} already exists", ASF::SVN.svnpath!('iclas', file)]]
   else
     _icla = ASF::ICLA.find_by_email(@email.strip)
     if _icla
-      _warn "Email #{@email.strip} found in iclas.txt file - #{_icla.as_line}"
+      _warn ["Email #{@email.strip} found in iclas.txt file:", _icla.as_line]
+    else
+      _icla = ASF::ICLA.find_matches(@realname.strip)
+      if _icla.size > 0
+        lines = []
+        lines << "Found possible duplicate ICLAs:"
+        _icla.each do |i|
+          file = ASF::ICLAFiles.match_claRef(i.claRef)
+          lines << [i.legal_name, ASF::SVN.svnpath!('iclas', file)]
+        end
+        _warn lines
+      end
     end
   end
 else
@@ -39,7 +50,7 @@ _extract_project
 # obtain per-user information
 _personalize_email(env.user)
 
-# determine if the user id requested is valid and avaliable
+# determine if the user id requested is valid and available
 @valid_user = (@user =~ /^[a-z][a-z0-9]{2,}$/)
 @valid_user &&= !(ASF::ICLA.taken?(@user) or ASF::Mail.taken?(@user))
 
