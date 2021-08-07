@@ -21,7 +21,6 @@ RUN apt-get install -y software-properties-common && \
     apt-get install -y libsasl2-dev
 
 # board example
-RUN gem install whimsy-asf
 RUN ruby -r whimsy/asf -e "ASF::LDAP.configure"
 ADD . /home/board
 WORKDIR /home/board

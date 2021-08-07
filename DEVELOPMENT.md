@@ -88,9 +88,9 @@ or read the [detailed MACOSX setup steps](MACOSX.md).
     3. [Ruby Version Manager - rvm](https://rvm.io/)
 
 
-2. **Install ruby gems:** `whimsy-asf` and `bundler`:
+2. **Install ruby gems:** `bundler`:
 
-   `gem install whimsy-asf bundler`  (mail and listen may be needed too)
+   `gem install bundler`  (mail and listen may be needed too)
 
    - If you're using [Mac OS El Capitan or higher](MACOSX.md), you may need to do this:
 
