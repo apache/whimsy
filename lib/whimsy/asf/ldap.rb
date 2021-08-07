@@ -59,20 +59,6 @@ module ASF
     # Mutex preventing simultaneous connections to LDAP from a single process
     CONNECT_LOCK = Mutex.new
 
-    # fetch configuration from apache/infrastructure-puppet
-    def self.puppet_config
-      return @puppet if @puppet
-      # the enclosing method is optional, so we only require the gem here
-      require 'yaml'
-      require_relative 'git' # just in case
-      @puppet = YAML.safe_load(ASF::Git.infra_puppet('data/common.yaml'))
-    end
-
-    # extract the ldapcert from the puppet configuration
-    def self.puppet_cert
-      puppet_config['ldapclient::ldapcert']
-    end
-
     # connect to LDAP
     def self.connect(test = true, hosts = nil)
       # If the host list is specified, use that as is
@@ -203,12 +189,13 @@ module ASF
     end
 
     # query and extract cert from openssl output
-    def self.extract_cert
-      host = hosts.sample[%r{//(.*?)(/|$)}, 1]
+    # returns the last certificate found (WHIMSY-368)
+    def self.extract_cert(host=nil)
+      host ||= hosts.sample[%r{//(.*?)(/|$)}, 1]
       puts ['openssl', 's_client', '-connect', host, '-showcerts'].join(' ')
       out, _, _ = Open3.capture3 'openssl', 's_client',
         '-connect', host, '-showcerts'
-      out[/^-+BEGIN.*?\n-+END[^\n]+\n/m]
+      out.scan(/^-+BEGIN.*?\n-+END[^\n]+\n/m).last
     end
 
     # update /etc/ldap.conf. Usage:
@@ -221,7 +208,7 @@ module ASF
       # verify/obtain/write the cert
       unless cert
         cert = "#{ETCLDAP}/asf-ldap-client.pem"
-        File.write cert, ASF::LDAP.puppet_cert || self.extract_cert
+        File.write cert, self.extract_cert
       end
 
       # read the current configuration file
@@ -1512,7 +1499,6 @@ end
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf/config'
-  p ASF::Person.next_uidNumber
   mem = ASF.members()
   puts mem.length
   puts mem.first.inspect

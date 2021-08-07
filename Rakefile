@@ -431,6 +431,11 @@ namespace :docker do
     mkdir_p? '/srv/mail/secretary'
     # there may be more
 
+    # add support for CLI use
+    unless File.exist? '/root/.bash_aliases'
+      ln_s '/srv/.bash_aliases', '/root/.bash_aliases'
+    end
+
   end
 
   # This is the entrypoint in the Dockerfile so runs in the container

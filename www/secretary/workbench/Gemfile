@@ -22,4 +22,3 @@ gem 'execjs'
 gem 'listen'
 gem 'escape'
 gem 'pdf-reader'
-
