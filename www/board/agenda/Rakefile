@@ -1,4 +1,6 @@
-$LOAD_PATH.unshift '/srv/whimsy/lib'
+# Need relative path for CI such as Travis
+lib = File.expand_path('../' * 3 + 'lib', __dir__)
+$LOAD_PATH.unshift lib unless $LOAD_PATH.include? lib
 
 # Remove world writable directories that Travis may insert into the PATH,
 # as these cause security errors during testing
