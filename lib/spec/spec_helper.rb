@@ -1,4 +1,6 @@
-$LOAD_PATH.unshift '/srv/whimsy/lib'
+# Use relative paths for CI such as Travis
+lib = File.expand_path('..', __dir__)
+$LOAD_PATH.unshift lib unless $LOAD_PATH.include? lib
 
 require 'whimsy/asf'
 require 'whimsy/asf/config' # must be loaded before updating config

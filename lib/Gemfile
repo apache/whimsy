@@ -1,6 +1,5 @@
 source 'https://rubygems.org'
 
-root = '../..'
 # lib needs these at run-time
 gem 'json'
 gem 'nokogiri'
@@ -11,6 +10,5 @@ gem 'pdf-reader'
 
 # For Travis testing
 group :test do
-  gem 'whimsy-asf', path: File.expand_path('..', __dir__)
   gem 'rspec'
 end
