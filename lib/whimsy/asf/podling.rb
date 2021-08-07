@@ -389,6 +389,8 @@ module ASF
       hash[:sponsor] = @sponsor if @sponsor
       hash[:duration] = self.duration
       hash[:podlingStatus] = podlingStatus
+      hash[:resolutionLink] = resolutionLink if resolutionLink
+      hash[:resolutionURL] = resolutionURL if resolutionURL
       hash
     end
 
