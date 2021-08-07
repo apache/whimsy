@@ -31,7 +31,8 @@ class ICLA < Vue
           _th 'Real Name'
           _td do
             _input name: 'realname', value: @realname, required: true,
-               disabled: (@filed or @pdfbusy), onChange: self.changeRealName
+               disabled: (@filed or @pdfbusy),
+               onChange: self.changeRealName, onBlur: self.changeRealName
           end
         end
 
@@ -39,16 +40,18 @@ class ICLA < Vue
           _th 'Public Name'
           _td do
             _input name: 'pubname', value: @pubname, required: true,
-              onChange: self.changePublicName,
-              disabled: (@filed or @pdfbusy), onFocus: lambda {@pubname ||= @realname}
+              disabled: (@filed or @pdfbusy), onFocus: lambda {@pubname ||= @realname},
+              onChange: self.changePublicName, onBlur: self.changePublicName
           end
         end
 
         _tr do
           _th 'Family First'
           _td do
-            _input name: 'familyfirst', value: @familyfirst, required: true,
-              disabled: (@filed or @pdfbusy), onChange: self.changeFamilyFirst
+            _input name: 'familyfirst', required: true,
+              type: 'checkbox', checked: @familyfirst,
+              disabled: (@filed or @pdfbusy),
+              onChange: self.changeFamilyFirst, onBlur: self.changeFamilyFirst
           end
         end
 
@@ -79,14 +82,6 @@ class ICLA < Vue
         end
 
         _tr do
-          _th 'LDAP sn'
-          _td do
-            _input name: 'ldapsn', value: @ldapsn,
-              disabled: (@filed or @pdfbusy)
-          end
-        end
-
-        _tr do
           _th 'LDAP givenname'
           _td do
             _input name: 'ldapgivenname', value: @ldapgivenname,
@@ -95,10 +90,10 @@ class ICLA < Vue
         end
 
         _tr do
-          _th 'User ID'
+          _th 'LDAP sn'
           _td do
-            _input name: 'user', value: @user, onBlur: self.validate_userid,
-              disabled: (@filed or @pdfbusy), pattern: '^[a-z][a-z0-9]{2,}$'
+            _input name: 'ldapsn', value: @ldapsn,
+              disabled: (@filed or @pdfbusy)
           end
         end
 
@@ -239,20 +234,24 @@ class ICLA < Vue
     end
   end
 
+  # when real name changes, update file name
   def changeRealName(event)
     @realname = event.target.value;
-    @filename = self.genfilename(event.target.value, @familyfirst)
+    @filename = self.genfilename(@realname, @familyfirst)
   end
 
+  # when family first changes, update file name and LDAP default fields
   def changeFamilyFirst(event)
-    @familyfirst = event.target.value;
     @filename = self.genfilename(@realname, @familyfirst)
+    @pubnamearray = @pubname.split(' ')
+    @ldapsn = self.genldapsn(@pubnamearray, @familyfirst)
+    @ldapgivenname = self.genldapgivenname(@pubnamearray, @familyfirst)
   end
 
   # when public name changes, update LDAP default fields
   def changePublicName(event)
     @pubname = event.target.value;
-    @pubnamearray = @pubname.split(" ")
+    @pubnamearray = @pubname.split(' ')
     @ldapsn = self.genldapsn(@pubnamearray, @familyfirst)
     @ldapgivenname = self.genldapgivenname(@pubnamearray, @familyfirst)
   end
@@ -265,12 +264,14 @@ class ICLA < Vue
     else
       # compute file name with family first; move first name to last
       namearray = nominalname.split("-")
-      namearray.append(namearray(0)).delete_at(0)
+      namearray.push(namearray[0])
+      namearray.shift()
       return namearray.join("-")
     end
   end
 
   # generate LDAP sn from public name
+  # simply return either the first or last name
   def genldapsn(pnamearray, ffirst)
     if ffirst
       return pnamearray[0]
@@ -280,11 +281,14 @@ class ICLA < Vue
   end
 
   # generate LDAP givenName from public name
+  # simply return the remainder after removing either the first or last name
   def genldapgivenname(pnamearray, ffirst)
     if ffirst
-      return pnamearray[-1]
+      pnamearray.shift()
+      return pnamearray.join(' ')
     else
-      return pnamearray[0]
+      pnamearray.pop()
+      return pnamearray.join(' ')
     end
   end
 
