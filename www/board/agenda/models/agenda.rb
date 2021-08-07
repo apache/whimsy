@@ -1,7 +1,7 @@
 # Aggressively cache agendas.
 #
-# Most of the heavy lifting is done by ASF::Board::Agenda in the whimsy-asf
-# gem.  This class is mainly focused on caching the results.
+# Most of the heavy lifting is done by the ASF::Board::Agenda class
+# This class is mainly focused on caching the results.
 #
 # This code also maintains a "working copy" of agendas when updates are
 # made that may not yet be reflected in the local svn checkout.
