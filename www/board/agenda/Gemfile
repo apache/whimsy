@@ -18,7 +18,9 @@ gem 'wunderbar'
 #                                         ^
 # SyntaxError: Unexpected token ','
 #     at new Script (vm.js:88:7)
-gem 'ruby2js', '4.1.0'
+# Looks like 4.1.0 also breaks on live system
+# Previous major release
+gem 'ruby2js', '3.6.1'
 gem 'sinatra', '~> 2.0'
 gem 'nokogumbo'
 gem 'execjs'
