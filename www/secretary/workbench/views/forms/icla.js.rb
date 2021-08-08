@@ -81,22 +81,23 @@ class ICLA < Vue
           end
         end
 
-        _tr do
-          _th 'LDAP givenname'
-          _td do
-            _input name: 'ldapgivenname', value: @ldapgivenname,
-              disabled: (@filed or @pdfbusy)
-          end
-        end
+# May be useful in future
+#       _tr do
+#         _th 'LDAP givenname'
+#         _td do
+#           _input name: 'ldapgivenname', value: @ldapgivenname,
+#             disabled: (@filed or @pdfbusy)
+#         end
+#       end
 
-        _tr do
-          _th 'LDAP sn'
-          _td do
-            _input name: 'ldapsn', value: @ldapsn,
-              disabled: (@filed or @pdfbusy)
-          end
-        end
-
+#       _tr do
+#         _th 'LDAP sn'
+#         _td do
+#           _input name: 'ldapsn', value: @ldapsn,
+#             disabled: (@filed or @pdfbusy)
+#         end
+#       end
+#
         _tr do
           if @project
             _th do
