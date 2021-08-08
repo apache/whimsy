@@ -5,6 +5,7 @@ module ASF
   class Authorization
     include Enumerable
 
+    # N.B. This data is maintained by a cron job on the Whimsy server, which has access
     PUPPET_PATH = '/srv/puppet-data/authorization' # Puppet auth data is stored here
 
     # Return the set of authorizations a given user (availid) has access to.
