@@ -421,7 +421,7 @@ class Person < Vue
           alert json.warn
         end
 
-        # reenable form for later reuse
+        # re-enable form for later reuse
         jQuery('input, button', form).prop('disabled', false)
       end
     )

@@ -162,7 +162,7 @@ end
 
 # Read user's *.json from directory of mentor files
 # @return user's current mentor data, or {} if none, or sets:
-# myrecord[ERRORS] = "If any error occoured on read/parse"
+# myrecord[ERRORS] = "If any error occurred on read/parse"
 def read_myrecord(id)
   file = File.join(ASF::SVN['foundation_mentors'], "#{id}.json")
   if File.exist?(file)
