@@ -61,6 +61,7 @@ $ rbenv init
 Follow directions to ensure rbenv is setup in your shell(s), and double-check your ruby version. 
 Note the PATH changes that `rbenv init -` configures; you'll need to duplicate it in your httpd conf later.
 To use this globally when invoked through rbenv shims, you can use `rbenv global $VERSION` to set that where `$VERSION` is the version in `/srv/whimsy/.ruby-version`.
+[TODO: describe how to set .ruby-version]
 To set this system-wide, you can link the specific versions of `ruby` and `gem` in rbenv to `/usr/local/bin` like so:
 
 ```

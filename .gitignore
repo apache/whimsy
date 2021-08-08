@@ -7,3 +7,4 @@ work
 .subversion
 .rakeTasks
 assets/
+.ruby-version
