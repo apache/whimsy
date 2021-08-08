@@ -13,7 +13,12 @@ end
 
 gem 'rake'
 gem 'wunderbar'
-gem 'ruby2js'
+# ruby2js 4.1.1+ are broken:
+#               Events.broadcast(function(, ) {
+#                                         ^
+# SyntaxError: Unexpected token ','
+#     at new Script (vm.js:88:7)
+gem 'ruby2js', '4.1.0'
 gem 'sinatra', '~> 2.0'
 gem 'nokogumbo'
 gem 'execjs'
