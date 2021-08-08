@@ -233,7 +233,7 @@ class PMCMember < Vue
               _button.btn.btn_warning 'Remove as committer and from PMC',
                 data_action: 'remove pmc info commit',
                 data_target: '#confirm', data_toggle: 'modal',
-                data_confirmation: "Remove #{@@person.name} as commiter and " +
+                data_confirmation: "Remove #{@@person.name} as committer and " +
                   "from the #{@@committee.display_name} PMC?"
             else
               _button.btn.btn_warning 'Remove from PMC',
