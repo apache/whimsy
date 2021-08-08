@@ -16,6 +16,8 @@ task :update, [:command] do |task, args|
   lib_update = Dir['lib/**/*'].map {|n| File.mtime n rescue Time.at(0)}.max
 
   # restart passenger applications that have changed since the last update
+  # If a Gem is later updated below, any passenger app is restarted again.
+  # Most of the time, no Gems are installed, so this deploys changes quicker
   Dir['**/config.ru'].each do |rackapp|
     Dir.chdir File.dirname(rackapp) do
       old_baseline = File.mtime('tmp/restart.txt') rescue Time.at(0)
@@ -89,7 +91,7 @@ task :update, [:command] do |task, args|
       bundler = 'bundle' unless File.exist?(bundler)
       system(bundler, args.command || 'update')
 
-      # if new gems were istalled and this directory contains a passenger
+      # if new gems were installed and this directory contains a passenger
       #  application, restart it
       if (File.mtime('Gemfile.lock') rescue Time.at(0)) != locktime
         if File.exist?('tmp/restart.txt')
