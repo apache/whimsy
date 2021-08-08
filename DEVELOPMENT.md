@@ -127,26 +127,35 @@ or read the [detailed MACOSX setup steps](MACOSX.md).
         - `ruby -r whimsy/asf -e "puts ASF::LDAP.extract_cert"`
         - `openssl s_client -connect ldap-us-ro.apache.org:636 </dev/null`
 
-      Copy from `BEGIN` to `END` inclusive into the file `/etc/ldap/asf-ldap-client.pem`.
+      For openssl, copy from the LAST `BEGIN` to `END` inclusive into the file `/etc/ldap/asf-ldap-client.pem`.
       Point to the file in `/etc/ldap/ldap.conf` with a line like the following:
 
      ```   TLS_CACERT      /etc/ldap/asf-ldap-client.pem```
 
+     If multiple different certificates are needed, they should all be added to the same file.
+     [The option `TLS_CACERTDIR` is not used Ubuntu for example]
+
       N.B. OpenLDAP on Mac OS/X uses `/etc/openldap/` instead of `/etc/ldap/`
-      Adjust the paths above as necessary.  Additionally ensure that
-      that `TLS_REQCERT` is set to `allow`.
+      Adjust the paths above as necessary.
+      Also (on Catalina at least), macOS uses SecureTransport.
+      This means that `TLS_CACERT` is not used.
+      Instead use the `TLS_TRUSTED_CERTS` option. See: `man 5 ldap.conf`
+      This requires the certificates to have been installed into the system key chain,
+      so it is much easier to ensure that `TLS_REQCERT` is set to `allow`.
 
       Note: the certificate is needed because the ASF LDAP hosts use a
-      self-signed certificate.
+      self-signed certificate. Certificates may also be needed for test LDAP instances
+      if the CA is not in the built-in list.
 
       Simple way to configure LDAP is:
 
         sudo ruby -r whimsy/asf -e "ASF::LDAP.configure"
 
-      These commands can also be used to update your configuration as
-      the ASF changes LDAP servers; they are cached in your `~/.whimsy`.
+      The ASF now uses fixed names for its LDAP servers.
+      However there may be changes to the certificates from time to time.
+      If you override the defaults in the `~/.whimsy` file, you may need to adjust the settings.
 
-5. **Verify your configuration** by running:
+1. **Verify your configuration** by running:
 
    `ruby examples/board.rb`
 
@@ -155,7 +164,7 @@ or read the [detailed MACOSX setup steps](MACOSX.md).
    standalone server to view in a local web browser.  This test script 
    verifies the environment used by many, but not all, Whimsy tools.
 
-6. **Configure mail sending** :mailbox_with_mail: (_optional_):
+2. **Configure mail sending** :mailbox_with_mail: (_optional_):
 
    Configuration of outbound mail delivery is done through the `~/.whimsy`
    file.  Three examples are provided below, followed by links to where
