@@ -1,10 +1,4 @@
-require 'rubygems/package_task'
 require 'open3'
-
-spec = eval(File.read('asf.gemspec'))
-Gem::PackageTask.new(spec) do |pkg|
-  pkg.gem_spec = spec
-end
 
 def mkdir_p?(path)
   mkdir_p path unless Dir.exist? path
