@@ -14,12 +14,6 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 # gozer.rediris.es certificate has expired
 KEYSERVERS = %w{keys.openpgp.org}
 
-# Obtained from https://dl.cacerts.digicert.com/TERENASSLHighAssuranceCA3.crt.pem
-# Originally needed by gozer host, possibly others?
-TERENA_CERT = '/srv/whimsy/www/secretary/workbench/TERENA_SSL_High_Assurance_CA_3.pem'
-# FTR, the certificate expires Nov 18 12:00:00 2024 GMT, according to:
-# openssl x509 -noout -text -in TERENASSLHighAssuranceCA3.crt.pem
-
 # ** N.B. ensure the keyserver URI is known below **
 def getServerURI(server, keyid)
   if server == 'keys.openpgp.org'
@@ -47,19 +41,6 @@ def getURI(uri, file)
   uri = URI.parse(uri)
   opts = {use_ssl: uri.scheme == 'https'}
   # The pool needs a special CA cert
-  if uri.host == 'hkps.pool.sks-keyservers.net'
-    unless defined? SKS_KEYSERVER_CERT
-      raise ArgumentError, "Cannot use #{uri} as there is no definition for SKS_KEYSERVER_CERT"
-    end
-
-    opts[:ca_file] = SKS_KEYSERVER_CERT
-  elsif uri.host.end_with? '.rediris.es'
-    require 'openssl'
-    store = OpenSSL::X509::Store.new
-    store.set_default_paths
-    store.add_file(TERENA_CERT)
-    opts[:cert_store] = store
-  end
   Net::HTTP.start(uri.host, uri.port, opts ) do |https|
     https.request_get(uri.request_uri) do |res|
       unless res.code == "200"
