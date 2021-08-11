@@ -387,7 +387,7 @@ class Agenda
       if
         item.shepherd and
         firstname.start_with? item.shepherd.downcase() and
-        (not shepherd or item.shepherd.length < shepherd.lenth)
+        (not _shepherd or item.shepherd.length < _shepherd.length)
       then
         _shepherd = item.shepherd
       end
