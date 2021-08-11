@@ -31,7 +31,8 @@ class ICLA < Vue
           _th 'Real Name'
           _td do
             _input name: 'realname', value: @realname, required: true,
-               disabled: (@filed or @pdfbusy), onChange: self.changeRealName
+               disabled: (@filed or @pdfbusy),
+               onChange: self.changeRealName, onBlur: self.changeRealName
           end
         end
 
@@ -39,7 +40,18 @@ class ICLA < Vue
           _th 'Public Name'
           _td do
             _input name: 'pubname', value: @pubname, required: true,
-              disabled: (@filed or @pdfbusy), onFocus: lambda {@pubname ||= @realname}
+              disabled: (@filed or @pdfbusy), onFocus: lambda {@pubname ||= @realname},
+              onChange: self.changePublicName, onBlur: self.changePublicName
+          end
+        end
+
+        _tr do
+          _th 'Family First'
+          _td do
+            _input name: 'familyfirst', required: true,
+              type: 'checkbox', checked: @familyfirst,
+              disabled: (@filed or @pdfbusy),
+              onChange: self.changeFamilyFirst, onBlur: self.changeFamilyFirst
           end
         end
 
@@ -69,6 +81,23 @@ class ICLA < Vue
           end
         end
 
+# May be useful in future
+#       _tr do
+#         _th 'LDAP givenname'
+#         _td do
+#           _input name: 'ldapgivenname', value: @ldapgivenname,
+#             disabled: (@filed or @pdfbusy)
+#         end
+#       end
+
+#       _tr do
+#         _th 'LDAP sn'
+#         _td do
+#           _input name: 'ldapsn', value: @ldapsn,
+#             disabled: (@filed or @pdfbusy)
+#         end
+#       end
+#
         _tr do
           if @project
             _th do
@@ -122,7 +151,11 @@ class ICLA < Vue
 
     @realname = name
     @pubname = parsed.PublicName || name
-    @filename = self.genfilename(name)
+    @pubnamearray = @pubname.split(" ")
+    @familyfirst = parsed.FamilyFirst || false
+    @ldapsn = self.genldapsn(@pubnamearray, @familyfirst)
+    @ldapgivenname = self.genldapgivenname(@pubnamearray, @familyfirst)
+    @filename = self.genfilename(name, @familyfirst)
     @email = parsed.EMail || @@headers.from
     @user = parsed.ApacheID || ''
     project = parsed.Project
@@ -202,14 +235,62 @@ class ICLA < Vue
     end
   end
 
+  # when real name changes, update file name
   def changeRealName(event)
     @realname = event.target.value;
-    @filename = self.genfilename(event.target.value)
+    @filename = self.genfilename(@realname, @familyfirst)
+  end
+
+  # when family first changes, update file name and LDAP default fields
+  def changeFamilyFirst(event)
+    @filename = self.genfilename(@realname, @familyfirst)
+    @pubnamearray = @pubname.split(' ')
+    @ldapsn = self.genldapsn(@pubnamearray, @familyfirst)
+    @ldapgivenname = self.genldapgivenname(@pubnamearray, @familyfirst)
+  end
+
+  # when public name changes, update LDAP default fields
+  def changePublicName(event)
+    @pubname = event.target.value;
+    @pubnamearray = @pubname.split(' ')
+    @ldapsn = self.genldapsn(@pubnamearray, @familyfirst)
+    @ldapgivenname = self.genldapgivenname(@pubnamearray, @familyfirst)
   end
 
   # generate file name from the real name
-  def genfilename(realname)
-    return asciize(realname.strip()).downcase().gsub(/\W+/, '-')
+  def genfilename(realname, familyfirst)
+    nominalname = asciize(realname.strip()).downcase().gsub(/\W+/, '-')
+    if !familyfirst
+      return nominalname
+    else
+      # compute file name with family first; move first name to last
+      namearray = nominalname.split("-")
+      namearray.push(namearray[0])
+      namearray.shift()
+      return namearray.join("-")
+    end
+  end
+
+  # generate LDAP sn from public name
+  # simply return either the first or last name
+  def genldapsn(pnamearray, ffirst)
+    if ffirst
+      return pnamearray[0]
+    else
+      return pnamearray[-1]
+    end
+  end
+
+  # generate LDAP givenName from public name
+  # simply return the remainder after removing either the first or last name
+  def genldapgivenname(pnamearray, ffirst)
+    if ffirst
+      pnamearray.shift()
+      return pnamearray.join(' ')
+    else
+      pnamearray.pop()
+      return pnamearray.join(' ')
+    end
   end
 
   # when leaving an input field, trigger change event (for Safari)

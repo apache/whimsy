@@ -116,6 +116,7 @@ module ICLAParser
   NAME2FIELD = {
     'fullname' => :FullName,
     'publicname' => :PublicName,
+    'familyfirst' => :FamilyFirst,
     'mailingaddress' => :MailingAddress,
     'mailingaddress2' => :MailingAddress2,
     'postaladdress' => :MailingAddress,
