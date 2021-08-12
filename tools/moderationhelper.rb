@@ -81,6 +81,18 @@ _html do
               end
             end
             _tr do
+              _td colspan: 2 do
+                _p do
+                  _br
+                  _b 'N.B.'
+                  _ 'Unfortunately, Microsoft continues to block our email as so many Outlook users report our legitimate email as SPAM.'
+                  _br
+                  _ 'We have not had much success in getting them to unblock us, so we recommend using an email provider other than'
+                  _b 'outlook.com.'
+                end
+              end
+            end
+            _tr do
               _td {
                 _br
                 _p 'The following commands operate on the list only:'
