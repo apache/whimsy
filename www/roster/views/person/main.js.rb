@@ -160,6 +160,18 @@ class Person < Vue
       end
     end
 
+    if @auth # deprecate using outlook.com
+      _div.row do
+        _div.name 'Warning regarding outlook.com addresses'
+        _div.value do
+          _ 'Unfortunately, Microsoft continues to block our email as so many Outlook users report our legitimate email as SPAM.'
+          _br
+          _ 'We have not had much success in getting them to unblock us, so we recommend an email provider other than'
+          _ ' outlook.com for use with the ASF'
+        end
+      end
+    end
+
     # Email addresses
     # always present
     _PersonEmailForwards person: self, edit: @edit
