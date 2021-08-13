@@ -39,8 +39,7 @@ _html do
         end
       },
       breadcrumbs: {
-        members: '/committers/tools#members',
-        meeting: '/committers/tools#meeting'
+        committers: '/committers'
       }
     ) do
 
