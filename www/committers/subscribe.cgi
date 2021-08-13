@@ -144,11 +144,12 @@ _html do
       end
       _p do
         _br
-        _b 'N.B.'
-        _ 'Unfortunately, Microsoft continues to block our email as so many Outlook users report our legitimate email as SPAM.'
+        _b 'WARNING'
+        _ 'Some providers are known to block our emails as SPAM.'
         _br
-        _ 'We have not had much success in getting them to unblock us, so we recommend using an email provider other than'
-        _b 'outlook.com.'
+        _ 'Please see the following for details: '
+        _a 'email provider issues', href: 'emailissues', target: '_blank'
+        _ ' (opens in new page)'
       end
       _p
       _hr

@@ -81,14 +81,15 @@ _html do
               end
             end
             _tr do
-              _td colspan: 2 do
+              _td ''
+              _td do
                 _p do
+                  _b 'WARNING'
+                  _ 'Some providers are known to block our emails as SPAM.'
                   _br
-                  _b 'N.B.'
-                  _ 'Unfortunately, Microsoft continues to block our email as so many Outlook users report our legitimate email as SPAM.'
-                  _br
-                  _ 'We have not had much success in getting them to unblock us, so we recommend using an email provider other than'
-                  _b 'outlook.com.'
+                  _ 'Please see the following for details: '
+                  _a 'email provider issues', href: '../commiters/emailissues', target: '_blank'
+                  _ ' (opens in new page)'
                 end
               end
             end
