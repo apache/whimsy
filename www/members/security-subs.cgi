@@ -36,7 +36,8 @@ end
 _html do
   _whimsy_body(
     title: "Security Mailing List Subscriptions",
-    breadcrumbs: {
+    breadcrumbs: { # N.B. allow for trailing / (see redirect above)
+      members: '..',
       subscriptions: '.'
     }
 

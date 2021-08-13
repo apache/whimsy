@@ -36,8 +36,8 @@ _html do
         }
       },
       breadcrumbs: {
-        committers: '/committers/',
-        emailissues: '/committers/emailissues'
+        committers: '.',
+        emailissues: 'emailissues'
       }
     ) do
       _h2 'Microsoft domains'

@@ -39,7 +39,7 @@ _html do
         end
       },
       breadcrumbs: {
-        committers: '/committers'
+        committers: '.'
       }
     ) do
 
