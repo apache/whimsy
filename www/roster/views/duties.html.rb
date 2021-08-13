@@ -11,7 +11,7 @@ _html do
       title: @role['info']['role'],
       breadcrumbs: {
         roster: '.',
-        orgchart: 'orgchart/'
+        orgchart: 'orgchart/' # This is a sub-page of orgchart
       }
     ) do
       id = @role['info']['id'] || @role['info']['chair']
