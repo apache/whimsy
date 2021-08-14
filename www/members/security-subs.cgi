@@ -30,7 +30,24 @@ lists = {}
 ASF::MLIST.list_parse('sub') do |dom, list, subs|
   next unless list == 'security'
   next unless dom.end_with? '.apache.org'
-  lists[dom.sub('.apache.org', '')] = subs
+  unknown = 0
+  ids = Hash.new(0) # currently used as a set
+  sub_hash = subs.map do |sub|
+    person = nil # unknown
+    if isArchiver? sub
+      person = ''
+    else
+      person = ASF::Person.find_by_email(sub)
+      if person
+        ids[person.name] += 1
+      else
+        unknown += 1
+      end
+    end
+    [sub, person]
+  end.to_h
+  lists[dom.sub('.apache.org', '')] = 
+    {subCount: unknown + ids.size, subscribers: sub_hash}
 end
 
 _html do
@@ -45,7 +62,7 @@ _html do
     path = ENV['PATH_INFO'].sub('/', '')
     if path == ''
       _p do
-        _ 'The counts below exclude the archivers, using the highlights: '
+        _ 'The counts below exclude the archivers (and duplicate subscriptions), using the highlights: '
         _span.bg_danger NOSUBSCRIBERS
         _span.bg_warning TOOFEW
       end
@@ -62,8 +79,7 @@ _html do
         lists.each_slice(3) do |slice|
           _tr do
             slice.each do |dom, subs|
-              arch = subs.select{|sub| isArchiver?(sub)}.length
-              subcount = (subs.length - arch)
+              subcount = subs[:subCount]
               options = {}
               if subcount == 0
                 options = {class: 'bg-danger', title: NOSUBSCRIBERS}
@@ -85,17 +101,16 @@ _html do
       podling = ASF::Podling.find(path)
       committee = ASF::Committee.find(path)
       project = ASF::Project.find(path)
-      colors=Hash.new{|h,k| h[k]=0} # counts of colors
+      colors=Hash.new{|h,k| h[k]=Array.new} # ids for each color
       order=['bg-danger', 'bg-warning', 'bg-info', 'bg-success', ''] # sort order
       subh = Hash[
-        lists[path].map do |email|
+        lists[path][:subscribers].map do |email, person|
           name = '*UNKNOWN*'
-          if WHITELIST.any? {|regex| email =~ regex}
+          if person == ''
             person = nil
             name = '(archiver)'
             color = ''
           else
-            person = ASF::Person.find_by_email(email)
             if person
               name = person.public_name
               if person.asf_member? or project.owners.include? person
@@ -109,7 +124,7 @@ _html do
               color = 'bg-danger'
             end
           end
-          colors[color] += 1
+          colors[color] << person&.name || ''
           [email, {person: person , color: color, name: name}]
         end
       ].sort_by {|k,v| [order.index(v[:color]),v[:name]]}
@@ -120,31 +135,31 @@ _html do
           _th 'Legend'
         end
         _tr do
-          _td colors['bg-danger']
+          _td colors['bg-danger'].size
           _td class: 'bg-danger' do
             _ 'Person (email) not recognised'
           end
         end
         _tr do
-          _td colors['bg-warning']
+          _td colors['bg-warning'].uniq.size
           _td class: 'bg-warning' do
             _ 'ASF committer not associated with the project'
           end
         end
         _tr do
-          _td colors['bg-info']
+          _td colors['bg-info'].uniq.size
           _td class: 'bg-info' do
             _ 'Project committer - not on (P)PMC'
           end
         end
         _tr do
-          _td colors['bg-success']
+          _td colors['bg-success'].uniq.size
           _td class: 'bg-success' do
             _ 'ASF member or project member'
           end
         end
         _tr do
-          _td colors['']
+          _td colors[''].size
           _td do
             _ 'Archiver (there are expected to be up to 3 archivers)'
           end
