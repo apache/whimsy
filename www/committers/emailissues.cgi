@@ -31,8 +31,17 @@ _html do
           Problems can occur when subscribers to our email lists report messages as SPAM.
           These may be genuine SPAM (though this is rare on most of our lists), or it may
           just that the subscriber has forgotten that they signed up to receive the emails.
-          If enough customers of an email provider report our emails, then the ASF domain may
+          If enough customers of an email provider report our emails as SPAM, then the ASF domain may
           be blocked by the provider.
+        }
+        _p %{
+          Once they become aware of such issues, our Infrastructure team will attempt to get
+          the ban lifted, but that may take a while, and they may not be successful.
+        }
+        _p %{
+          If you are using one of the problem domains and are having difficulty subscribing,
+          or emails are not getting through, try using a different provider for
+          communications with the ASF.
         }
       },
       breadcrumbs: {
@@ -42,19 +51,24 @@ _html do
     ) do
       _h2 'Microsoft domains'
       _p %{
-        Unfortunately, Microsoft continues to block our email as so many of their users report
-        our legitimate email as spam.
+        There have been ongoing problems with Microsoft domains
+        as so many of their users report our legitimate email as spam.
       }
       _p %{
-        We have not had much success in getting them to unblock us,
-        so you will need to use a different provider for communication with apache.org addresses.
+        The Infrastructure team have been trying to get the bans removed,
+        and it looks like there may soon be some improvement.
+        However there are still some rejections of emails (as of August 15th).
       }
-      _p 'The following domains are all affected (as of August 2021):'
+      _p 'The following Microsoft domains are all potentially affected:'
       _ul do
         _li 'hotmail.com'
         _li 'live.com'
         _li 'outlook.com'
       end
-  end
+      _h2 'Other domains'
+      _p %{
+        TBA
+      }
+    end
   end
 end
