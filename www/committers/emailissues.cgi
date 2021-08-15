@@ -52,14 +52,14 @@ _html do
       _h2 'Microsoft domains'
       _p %{
         There have been ongoing problems with Microsoft domains
-        as so many of their users report our legitimate email as spam.
+        partly because many of their users report our legitimate email as spam.
       }
       _p %{
         The Infrastructure team have been trying to get the bans removed,
-        and it looks like there may soon be some improvement.
-        However there are still some rejections of emails (as of August 15th).
+        but with no success. At present mails from one of the two ASF outbound
+        servers are being rejected; i.e. on average 50% of mails will not be delivered.
       }
-      _p 'The following Microsoft domains are all potentially affected:'
+      _p 'The following Microsoft domains are all affected (as of August 2021):'
       _ul do
         _li 'hotmail.com'
         _li 'live.com'
