@@ -4,17 +4,6 @@ require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/mlist'
 
-WHITELIST = [
-  /^archive-asf-private@cust-asf\.ponee\.io$/,
-  /^private@mbox-vm\.apache\.org$/,
-  /^security-archive@.*\.apache\.org$/,
-  /^apmail-\w+-security-archive@www.apache.org/, # Direct subscription
-]
-
-def isArchiver?(email)
-  WHITELIST.any? {|regex| email =~ regex}
-end
-
 NOSUBSCRIBERS = 'No subscribers'
 MINSUB = 3
 TOOFEW = "Not enough subscribers (< #{MINSUB})"
@@ -34,7 +23,7 @@ ASF::MLIST.list_parse('sub') do |dom, list, subs|
   ids = Hash.new(0) # currently used as a set
   sub_hash = subs.map do |sub|
     person = nil # unknown
-    if isArchiver? sub
+    if ASF::MLIST.is_private_archiver? sub
       person = ''
     else
       person = ASF::Person.find_by_email(sub)

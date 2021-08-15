@@ -293,6 +293,12 @@ module ASF
       ARCHIVERS.include?(e) or is_mino_archiver?(e) or is_whimsy_archiver?(e) or is_markmail_archiver?(e)
     end
 
+    def self.is_private_archiver?(e)
+      [ARCH_MBOX_PRV, ARCH_PONY_PRV].include? (e) or
+        e =~ /^security-archive@.*\.apache\.org$/ or
+        e =~ /^apmail-\w+-security-archive@www.apache.org/ # direct subscription
+    end
+
     def self.downcase(array)
       array.map(&:downcase)
     end
@@ -398,7 +404,10 @@ module ASF
 
     ARCHIVERS = [ARCH_PONY_PRV, ARCH_PONY_PUB,
                  ARCH_MBOX_PUB, ARCH_MBOX_PRV, ARCH_MBOX_RST, ARCH_EXT_MAIL_ARCHIVE]
-    # TODO alias archivers: either add list or use RE to filter them
+
+    # Private archivers
+    ARCHIVERS_PRV = [ARCH_PONY_PRV, ARCH_MBOX_PRV]
+     # TODO alias archivers: either add list or use RE to filter them
 
     LIST_BASE = ASF::Config[:subscriptions] # allow overrides for testing etc
 
