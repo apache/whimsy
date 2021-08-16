@@ -2,3 +2,18 @@ require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 task :test => :spec
+task :spec => :work
+task :work => ['test/svn/incubator-podlings']
+
+file 'test/work/repository' do
+  unless File.exist? 'test/work/repository/format'
+    system 'svnadmin create test/work/repository'
+  end
+end
+
+file 'test/svn/incubator-podlings' => 'test/work/repository' do
+  Dir.chdir('test') do
+    rm_rf 'svn/incubator-podlings' if File.exist? 'svn/incubator-podlings'
+    system "svn co file:///#{Dir.pwd}/work/repository svn/incubator-podlings"
+  end
+end

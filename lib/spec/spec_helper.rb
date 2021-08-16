@@ -16,6 +16,7 @@ if ENV['RAKE_TEST'] == 'TRUE' or not (ASF::SVN.find('apmail_bin') and ASF::SVN.f
   ASF::SVN['board'] = File.expand_path('../test/svn/board', __dir__)
   ASF::SVN[SAMPLE_SVN_NAME] = File.expand_path('../test/svn/minutes', __dir__)
   ASF::Config[:subscriptions] = File.expand_path('../test/subscriptions', __dir__)
+  ASF::SVN['incubator-podlings'] = File.expand_path('../test/svn/incubator-podlings', __dir__)
 else
   TEST_DATA = false
 end

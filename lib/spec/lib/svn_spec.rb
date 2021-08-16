@@ -254,32 +254,28 @@ describe ASF::SVN do
     end
     it "svn('info', [path]) should return 'Name: path'" do
       repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
-      out, err = ASF::SVN.svn('info',[repo])
+      out, _err = ASF::SVN.svn('info',[repo])
       expect(out).to match(/^Name: _template.xml$/)
     end
     it "svn('info', [path1, path2], {item: kind'}) should return 'file ...'" do
       path1 = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
       path2 = File.join(ASF::SVN.svnurl('attic-xdocs'),'jakarta.xml')
-      out, err = ASF::SVN.svn('info',[path1, path2], {item: 'kind'})
+      out, _err = ASF::SVN.svn('info',[path1, path2], {item: 'kind'})
       expect(out).to match(/^file +https:/)
     end
 
     it "svn() should honour :chdir option" do
-      begin # Hack to avoid Travis fail; TODO ensure there is a suitable SVN checkout for the test
-        pods = ASF::SVN['incubator-podlings']
-        if pods
-          out, err = ASF::SVN.svn('info', '.', {chdir: pods})
-          expect(err).to eq(nil)
-          expect(out).to match(/^URL: /)
-        end
-      rescue Exception => e
-        puts e
+      pods = ASF::SVN['incubator-podlings'] # arbitrary, but must be set up in Rakefile and spec_helper
+      if pods
+        out, err = ASF::SVN.svn('info', '.', {chdir: pods})
+        expect(err).to eq(nil)
+        expect(out).to match(/^URL: /)
       end
     end
 
     # TODO fix these tests
     it "svn(['help'], 'help') should return some help" do
-      out, err = ASF::SVN.svn(['help'],'help')
+      out, _err = ASF::SVN.svn(['help'],'help')
       expect(out).to match(/Describe the usage of this program or its subcommands/)
     end
     # it "svn(['help', '-v'], 'help') should return Global help" do
