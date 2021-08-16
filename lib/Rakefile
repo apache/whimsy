@@ -1,12 +1,13 @@
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
-task :default => :spec
-task :test => :spec
+task :default => [:spec, :end]
+task :test => [:spec, :end]
 task :spec => :work
 task :work => ['test/svn/incubator-podlings']
 
 file 'test/work/repository' do
   unless File.exist? 'test/work/repository/format'
+    mkdir 'test/work' unless Dir.exist? 'test/work'
     system 'svnadmin create test/work/repository'
   end
 end
@@ -17,3 +18,10 @@ file 'test/svn/incubator-podlings' => 'test/work/repository' do
     system "svn co file:///#{Dir.pwd}/work/repository svn/incubator-podlings"
   end
 end
+
+task :end => [:clobber, :clean]
+
+# cleanup
+require 'rake/clean'
+CLEAN.include 'test/work'
+CLOBBER.include 'test/svn/incubator-podlings'
