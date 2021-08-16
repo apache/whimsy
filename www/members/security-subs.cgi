@@ -91,31 +91,38 @@ _html do
       committee = ASF::Committee.find(path)
       project = ASF::Project.find(path)
       colors=Hash.new{|h,k| h[k]=Array.new} # ids for each color
-      subh = Hash[
-        lists[path][:subscribers].map do |email, person|
-          name = '*UNKNOWN*'
-          if person == ''
-            person = nil
-            name = '(archiver)'
-            color = ''
-          else
-            if person
-              name = person.public_name
-              if person.asf_member? or project.owners.include? person
-                color = 'bg-success'
-              elsif project.members.include? person
-                color = 'bg-info'
-              else
-                color = 'bg-warning'
-              end
+      subh = {}
+      lists[path][:subscribers].map do |email, person|
+        key = nil # hash key, used to collect aggregate emails
+        if person == ''
+          person = nil
+          name = '(archiver)'
+          color = ''
+          key = name
+        else
+          if person
+            name = person.public_name
+            if person.asf_member? or project.owners.include? person
+              color = 'bg-success'
+            elsif project.members.include? person
+              color = 'bg-info'
             else
-              color = 'bg-danger'
+              color = 'bg-warning'
             end
+            key = person.name # availid is unique to person
+          else
+            color = 'bg-danger'
+            name = '*UNKNOWN*'
+            key = email
           end
-          colors[color] << person&.name || ''
-          [email, {person: person , color: color, name: name}]
         end
-      ]
+        colors[color] << person&.name || ''
+        if subh[key]
+          subh[key][:emails] << email
+        else
+          subh[key] = {person: person , color: color, name: name, emails: [email]}
+        end
+      end
 
       _table do
         _tr do
@@ -169,20 +176,21 @@ _html do
       _table.table do
         _thead do
           _tr do
-            _th 'email'
-            _th 'person'
+            _th 'email(s)'
+            _th 'person (subscription count)'
           end
         end
 
         _tbody do
           order=['bg-danger', 'bg-warning', 'bg-info', 'bg-success', ''] # sort order
-          subh.sort_by {|k,v| [order.index(v[:color]),v[:name]]}.each do |email, hash|
+          subh.sort_by {|k,v| [order.index(v[:color]),v[:name]]}.each do |key, hash|
             color = hash[:color]
             person = hash[:person]
             name = hash[:name]
+            emails = hash[:emails]
 
             _tr class: color do
-              _td email
+              _td emails.join(', ')
               _td do
                 if person
                   if person.asf_member?
@@ -194,6 +202,9 @@ _html do
                   end
                 else
                     _ name
+                end
+                if emails.size > 1
+                  _ " (#{emails.size})"
                 end
               end
             end
