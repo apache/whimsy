@@ -50,6 +50,7 @@ _html do
           _th.sorting_asc 'Name', data_sort: 'string-ins'
           _th 'Chair(s)', data_sort: 'string'
           _th 'Established', data_sort: 'string'
+          _th 'PMC Size', data_sort: 'int'
           _th 'Description', data_sort: 'string'
         end
       end
@@ -82,6 +83,7 @@ _html do
 
             if not pmc.established
               _td ''
+              _ td ''
               _td.issue 'Not in committee-info.txt'
             else
               if pmc.established =~ /^(\d\d)\/(\d{4})(.*)$/
@@ -90,6 +92,7 @@ _html do
                 est = pmc.established
               end
               _td est
+              _td pmc.roster.size
               _td pmc.description
             end
           end
