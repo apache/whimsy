@@ -91,7 +91,6 @@ _html do
       committee = ASF::Committee.find(path)
       project = ASF::Project.find(path)
       colors=Hash.new{|h,k| h[k]=Array.new} # ids for each color
-      order=['bg-danger', 'bg-warning', 'bg-info', 'bg-success', ''] # sort order
       subh = Hash[
         lists[path][:subscribers].map do |email, person|
           name = '*UNKNOWN*'
@@ -116,7 +115,7 @@ _html do
           colors[color] << person&.name || ''
           [email, {person: person , color: color, name: name}]
         end
-      ].sort_by {|k,v| [order.index(v[:color]),v[:name]]}
+      ]
 
       _table do
         _tr do
@@ -176,7 +175,8 @@ _html do
         end
 
         _tbody do
-          subh.each do |email, hash|
+          order=['bg-danger', 'bg-warning', 'bg-info', 'bg-success', ''] # sort order
+          subh.sort_by {|k,v| [order.index(v[:color]),v[:name]]}.each do |email, hash|
             color = hash[:color]
             person = hash[:person]
             name = hash[:name]
