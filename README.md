@@ -13,7 +13,7 @@ ASF data are restricted to committers, Members, or Officers of the ASF.
 Every commit pushed to master is deployed within minutes to https://whimsy.apache.org/ using 
 [GitPubSub](https://www.apache.org/dev/gitpubsub.html).
 
-[![Build Status](https://travis-ci.org/apache/whimsy.svg)](https://travis-ci.org/apache/whimsy)
+[![Build Status](https://travis-ci.com/apache/whimsy.svg)](https://travis-ci.com/apache/whimsy)
 
 How Tos and Get The Code
 ===============
