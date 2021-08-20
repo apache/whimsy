@@ -28,6 +28,15 @@ class ICLA < Vue
 
       _table.form do
         _tr do
+          _th 'Submitter'
+          _td do
+            _ @@headers.name
+            _ ' ('
+            _ @@headers.from
+            _ ')'
+          end
+        end
+        _tr do
           _th 'Real Name'
           _td do
             _input name: 'realname', value: @realname, required: true,
