@@ -13,7 +13,7 @@ class ICLA < Vue
 
     _div.buttons do
       _button 'clear form', disabled: @filed,
-        onClick: lambda {@pubname = @realname = @email = @filename = ''}
+        onClick: lambda {clear_form()}
       _button 'Use mail data', disabled: @filed,
         onClick: lambda {process_response({})}
       _button (@pdfdata.nil? ? 'Parse/use PDF data' : @pdfdisabled ? 'No PDF data found' : 'Use PDF data'),
@@ -161,6 +161,14 @@ class ICLA < Vue
     project = parsed.Project
     @project = project if @@projects.include? project
     @pdfproject = parsed.PDFProject
+  end
+
+  # TODO: should this be called by process_response() ?
+  def clear_form()
+    @pubname = @realname = @email = @filename = @user = ''
+    @project = @pdfproject = ''
+    @votelink = ''
+    @familyfirst = false
   end
 
   def getpdfdata()
