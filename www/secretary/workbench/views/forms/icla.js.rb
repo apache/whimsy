@@ -151,16 +151,17 @@ class ICLA < Vue
 
     @realname = name
     @pubname = parsed.PublicName || name
-    pubnamearray = @pubname.split(" ")
     @familyfirst = parsed.FamilyFirst || false
-    @ldapsn = self.genldapsn(pubnamearray, @familyfirst)
-    @ldapgivenname = self.genldapgivenname(pubnamearray, @familyfirst)
     @filename = self.genfilename(name, @familyfirst)
     @email = parsed.EMail || @@headers.from
     @user = parsed.ApacheID || ''
     project = parsed.Project
     @project = project if @@projects.include? project
     @pdfproject = parsed.PDFProject
+    # Not needed currently
+    # pubnamearray = @pubname.split(" ")
+    # @ldapsn = self.genldapsn(pubnamearray, @familyfirst)
+    # @ldapgivenname = self.genldapgivenname(pubnamearray, @familyfirst)
   end
 
   # TODO: should this be called by process_response() ?
@@ -252,17 +253,19 @@ class ICLA < Vue
   # when family first changes, update file name and LDAP default fields
   def changeFamilyFirst(event)
     @filename = self.genfilename(@realname, @familyfirst)
-    pubnamearray = @pubname.split(' ')
-    @ldapsn = self.genldapsn(pubnamearray, @familyfirst)
-    @ldapgivenname = self.genldapgivenname(pubnamearray, @familyfirst)
+    # not needed currently
+    # pubnamearray = @pubname.split(' ')
+    # @ldapsn = self.genldapsn(pubnamearray, @familyfirst)
+    # @ldapgivenname = self.genldapgivenname(pubnamearray, @familyfirst)
   end
 
   # when public name changes, update LDAP default fields
   def changePublicName(event)
     @pubname = event.target.value;
-    pubnamearray = @pubname.split(' ')
-    @ldapsn = self.genldapsn(pubnamearray, @familyfirst)
-    @ldapgivenname = self.genldapgivenname(pubnamearray, @familyfirst)
+    # not needed currently
+    # pubnamearray = @pubname.split(' ')
+    # @ldapsn = self.genldapsn(pubnamearray, @familyfirst)
+    # @ldapgivenname = self.genldapgivenname(pubnamearray, @familyfirst)
   end
 
   # generate file name from the real name
