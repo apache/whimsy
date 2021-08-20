@@ -411,11 +411,13 @@ module ASF
 
     LIST_BASE = ASF::Config[:subscriptions] # allow overrides for testing etc
 
+    # Note: the files are named after the sub-list (mod, digest etc) with an 's' appended
+    # The main subscriber list uses 'subs' as the name suffix
     LIST_MODS = File.join(LIST_BASE, 'list-mods')
 
     LIST_SUBS = File.join(LIST_BASE, 'list-subs')
 
-    LIST_DIGS = File.join(LIST_BASE, 'list-digs')
+    LIST_DIGS = File.join(LIST_BASE, 'list-digests')
 
     # If this file exists, it is the time when the data was last extracted
     # The mods and subs files are only updated if they have changed
