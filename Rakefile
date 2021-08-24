@@ -425,6 +425,16 @@ namespace :docker do
     # Create other needed directories
     mkdir_p? '/srv/cache'
     mkdir_p? '/srv/mail/secretary'
+    # The list-* files are pushed from the mailing list server to the live Whimsy
+    # ensure there are empty files here
+    mkdir_p? '/srv/subscriptions'
+    Dir.chdir '/srv/subscriptions' do
+      # start is done first by the server
+      %w{start allows counts denys digests flags mods sendsubscribertomods subs}.each do |suffix|
+        file = "list-#{suffix}"
+        FileUtils.touch file unless File.exist? file
+      end
+    end
     # there may be more
 
     # add support for CLI use
