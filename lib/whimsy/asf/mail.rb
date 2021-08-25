@@ -138,6 +138,28 @@ module ASF
       allowed
     end
 
+    # which lists are available for automatic moderation via Whimsy?
+    # Params:
+    # ldap_pmcs: list of (P)PMC mail_list names to which the user belongs (as owner)
+    # lid_only: return lid instead of [dom,list,lid]
+    # Return: an array of entries: lid or [dom,list,lid]
+    def self.canmod(ldap_pmcs, lidonly = true)
+      allowed = []
+      parse_flags do |dom, list, _|
+        lid = archivelistid(dom, list)
+        next if self.cannot_sub.include? lid # probably unnecessary
+
+        if ldap_pmcs.include? dom.sub('.apache.org', '')
+          if lidonly
+            allowed << lid
+          else
+            allowed << [dom, list, lid]
+          end
+        end
+      end
+      allowed
+    end
+
     # common configuration for sending mail; loads <tt>:sendmail</tt>
     # configuration from <tt>~/.whimsy</tt> if available; otherwise default
     # to disable openssl verification as that is what it required in order
