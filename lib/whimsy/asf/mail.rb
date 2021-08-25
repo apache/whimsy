@@ -100,7 +100,7 @@ module ASF
     # Params:
     # member: true if member
     # pmc_chair: true if pmc_chair
-    # ldap_pmcs: list of (P)PMC mail_list names
+    # ldap_pmcs: list of (P)PMC mail_list names to which the user belongs
     # lid_only: return lid instead of [dom,list,lid]
     # Return: an array of entries: lid or [dom,list,lid]
     def self.cansub(member, pmc_chair, ldap_pmcs, lidonly = true)
