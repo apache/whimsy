@@ -21,8 +21,9 @@ def display_project(project, links, analysis, checks, tlp = true)
       _ "Results for #{tlp ? 'Project' : 'Podling'} "
       _a links['display_name'], href: links['uri']
       _ '. '
-      if !tlp
-        _ 'Reminder: Incubation is the process of becoming an Apache project - podlings are not required to meet these checks until graduation.  See '
+      unless tlp
+        _ %{Reminder: Incubation is the process of becoming an Apache project
+          - podlings are not required to meet these checks until graduation.  See }
         _a "this project's incubation status.", href: "http://incubator.apache.org/projects/#{project}"
       end
       _br
@@ -61,8 +62,8 @@ def display_project(project, links, analysis, checks, tlp = true)
                     _ 'Text of a link expected to match regular expression: '
                     _code checks[col][SiteStandards::CHECK_TEXT].source
                   end
-                    _br
-                    _a checks[col][SiteStandards::CHECK_DOC], href: checks[col][SiteStandards::CHECK_POLICY]
+                  _br
+                  _a checks[col][SiteStandards::CHECK_DOC], href: checks[col][SiteStandards::CHECK_POLICY]
                 else
                   _ ''
                 end
@@ -103,7 +104,8 @@ def display_check(col, sites, analysis, checks, tlp = true)
         end
         _li.small " Click column badges to sort"
       else
-        _span.text_danger "WARNING: the site checker may not understand type: #{col}, results may not be complete/available."
+        _span.text_danger %{WARNING: the site checker may not understand type: #{col},
+                            results may not be complete/available.}
       end
     }
   ) do
@@ -231,4 +233,3 @@ def display_application(path, sites, analysis, checks, tlp = true)
     display_overview(sites, analysis, checks, tlp)
   end
 end
-
