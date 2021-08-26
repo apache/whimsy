@@ -54,7 +54,7 @@ module SiteStandards
     },
     'events' => { # Custom: a_href.include? 'apache.org/events/' then custom check for img
       CHECK_TEXT => nil,
-      CHECK_CAPTURE => %r{apache\.org\/events},
+      CHECK_CAPTURE => %r{apache\.org/events},
       CHECK_VALIDATE => %r{^https?://.*apache.org/events/current-event},
       CHECK_TYPE => true,
       CHECK_POLICY => 'https://www.apache.org/events/README.txt',
@@ -161,15 +161,15 @@ module SiteStandards
   # @param tlp true if project; podling otherwise
   # @return [hash of site data, crawl_time]
   def get_sites(tlp = true)
-      local_copy = File.expand_path("#{get_url(true)}#{get_filename(tlp)}", __FILE__)
-      if File.exist? local_copy
-        crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
-        sites = JSON.parse(File.read(local_copy))
-      else
-        response = Net::HTTP.get_response(URI("#{get_url(false)}#{get_filename(tlp)}"))
-        crawl_time = response['last-modified']
-        sites = JSON.parse(response.body)
-      end
+    local_copy = File.expand_path("#{get_url(true)}#{get_filename(tlp)}", __FILE__)
+    if File.exist? local_copy
+      crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
+      sites = JSON.parse(File.read(local_copy))
+    else
+      response = Net::HTTP.get_response(URI("#{get_url(false)}#{get_filename(tlp)}"))
+      crawl_time = response['last-modified']
+      sites = JSON.parse(response.body)
+    end
     return sites, crawl_time
   end
 
@@ -181,23 +181,22 @@ module SiteStandards
   # @param checks to apply to sites to determine status
   # @return [overall counts, description of statuses, success listings]
   def analyze(sites, checks)
-      success = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
-      counts = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
-      checks.each do |nam, check_data|
-        success[nam] = sites.select{ |k, site| site[nam] =~ check_data[SiteStandards::CHECK_VALIDATE]  }.keys
-        counts[nam][SITE_PASS] = success[nam].count
-        counts[nam][SITE_WARN] = 0 # Reorder output
-        counts[nam][SITE_FAIL] = sites.select{ |k, site| site[nam].nil? }.count
-        counts[nam][SITE_WARN] = sites.size - counts[nam][SITE_PASS] - counts[nam][SITE_FAIL]
-      end
+    success = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
+    counts = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
+    checks.each do |nam, check_data|
+      success[nam] = sites.select { |_, site| site[nam] =~ check_data[SiteStandards::CHECK_VALIDATE]  }.keys
+      counts[nam][SITE_PASS] = success[nam].count
+      counts[nam][SITE_WARN] = 0 # Reorder output
+      counts[nam][SITE_FAIL] = sites.select { |_, site| site[nam].nil? }.count
+      counts[nam][SITE_WARN] = sites.size - counts[nam][SITE_PASS] - counts[nam][SITE_FAIL]
+    end
 
-      return [
-        counts, {
-        SITE_PASS => '# Sites with links to primary ASF page',
-        SITE_WARN => '# Sites with link, but not an expected ASF one',
-        SITE_FAIL => '# Sites with no link for this topic'
-        }, success
-      ]
+    return [
+      counts, {
+      SITE_PASS => '# Sites with links to primary ASF page',
+      SITE_WARN => '# Sites with link, but not an expected ASF one',
+      SITE_FAIL => '# Sites with no link for this topic'
+      }, success
+    ]
   end
 end
-
