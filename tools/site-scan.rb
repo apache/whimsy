@@ -24,14 +24,14 @@ end
 #   be in an image or other commonly related node on websites
 def getText(txt, node, match=/Apache Software Foundation/i)
   parent = nil # debug to show where parent needed to be fetched
-  if not txt =~ match # have we got all the text?
+  if txt !~ match # have we got all the text?
     if node.parent.name == 'a' # e.g. whimsical. such parents don't have extra text.
       newnode = node.parent.parent
     else
       newnode = node.parent
     end
     # ensure <br> is treated as a separator when extracting the combined text
-    newnode.css('br').each{ |br| br.replace(" ") }
+    newnode.css('br').each { |br| br.replace(" ") }
     txt = squash(newnode.text)
     parent = true
   end
@@ -103,7 +103,7 @@ def parse(id, site, name)
         (a_href =~ SiteStandards::COMMON_CHECKS['license'][SiteStandards::CHECK_CAPTURE])
       begin
         data[:license] = uri + a_href
-      rescue
+      rescue StandardError
         data[:license] = a_href
       end
     end
@@ -112,7 +112,7 @@ def parse(id, site, name)
       if a_text =~ SiteStandards::COMMON_CHECKS[check][SiteStandards::CHECK_CAPTURE]
         begin
           data[check.to_sym] = uri + a_href
-        rescue
+        rescue StandardError
           data[check.to_sym] = a_href
         end
       end
@@ -124,16 +124,17 @@ def parse(id, site, name)
     next unless node.is_a?(Nokogiri::XML::Text)
     txt = squash(node.text)
     # allow override if phrase looks good
-    if (txt =~ SiteStandards::COMMON_CHECKS['trademarks'][SiteStandards::CHECK_CAPTURE] and not data[:trademarks]) or txt =~/are trademarks of [Tt]he Apache Software/
+    if (txt =~ SiteStandards::COMMON_CHECKS['trademarks'][SiteStandards::CHECK_CAPTURE] and not data[:trademarks]) or
+        txt =~ /are trademarks of [Tt]he Apache Software/
       t, p = getText(txt, node)
       # drop previous text if it looks like Copyright sentence
-      data[:trademarks] = t.sub(/^.*?Copyright .+? Foundation[.]?/,'').strip
+      data[:trademarks] = t.sub(/^.*?Copyright .+? Foundation[.]?/, '').strip
       data[:tradeparent] = p if p
     end
     if txt =~ SiteStandards::COMMON_CHECKS['copyright'][SiteStandards::CHECK_CAPTURE]
       t, p = getText(txt, node)
       # drop text around the Copyright (or the symbol)
-      data[:copyright] = t.sub(/^.*?((Copyright|©) .+? Foundation[.]?).*/,'\1').strip
+      data[:copyright] = t.sub(/^.*?((Copyright|©) .+? Foundation[.]?).*/, '\1').strip
       data[:copyparent] = p if p
     end
     # Note we also check for incubator disclaimer (immaterial of tlp|podling)
