@@ -22,3 +22,9 @@
 # not auto-subscribable
 :disallowed:
 - notallowed
+
+:deprecated:
+- deltacloud-commits
+- deltacloud-dev
+- deltacloud-user
+- shindig-users
