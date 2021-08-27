@@ -45,7 +45,6 @@
     depth: empty
     files:
       - .archives
-      - deprecated_mailing_lists.yml
       - mail_list_autosub.yml
 
   attic-xdocs:

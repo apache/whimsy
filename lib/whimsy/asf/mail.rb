@@ -72,8 +72,8 @@ module ASF
 
     # list of mailing lists that aren't actively seeking new subscribers
     def self.deprecated
-      apmail_bin = ASF::SVN['apmail_bin']
-      YAML.load_file(File.join(apmail_bin, 'deprecated_mailing_lists.yml'))
+      self._load_auto()
+      @auto[:deprecated]
     end
 
     def self.cannot_sub
