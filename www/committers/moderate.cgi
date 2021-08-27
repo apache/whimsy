@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-PAGETITLE = "ASF Mailing List Moderation" # Wvisible:mail moderation
+PAGETITLE = "ASF Mailing List Moderator Setup" # Wvisible:mail moderation
 
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
@@ -52,7 +52,7 @@ _html do
   _body? do
     _whimsy_body(
       title: PAGETITLE,
-      subtitle: 'Mailing List Moderation',
+      subtitle: 'Mailing List Moderator Maintenance',
       related: {
         'https://www.apache.org/foundation/mailinglists.html' =>
           'Apache Mailing List Info Page (How-to Subscribe Manually)',
