@@ -219,7 +219,7 @@ _html do
             response = nil
           end
         else
-          response = OpenStruct.new(code: '', 
+          response = OpenStruct.new(code: '',
               message: 'No server - would have requested: ',
               body: [@request, @list, 'mod', $USER, @addr].join('/')
             )
