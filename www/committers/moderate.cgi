@@ -85,16 +85,22 @@ _html do
       }
     ) do
 
+      _h2 'BETA SOFTWARE - not yet in use.'
+      _p %{
+        The form should work, but no updates will be made.
+        Please report any other issues to the Whimsy PMC.
+      }
+
+      ezmlmd_server = nil # prevent updates
       # get the EZMLM server id
-      ezmlmd_server = ASF::Config[:ezmlmd] || begin
-        File.read('/home/whimsysvn/.ezmlmd').chomp
-      rescue StandardError
-        _div.alert.alert_danger role: 'alert' do
-          _ 'Cannot determine mailing list server'
-        end
-        # break # skip rest of page
-        nil
-      end
+      # ezmlmd_server = ASF::Config[:ezmlmd] || begin
+      #   File.read('/home/whimsysvn/.ezmlmd').chomp
+      # rescue StandardError
+      #   _div.alert.alert_danger role: 'alert' do
+      #     _ 'Mailing list server is not set up. No updates are possible.'
+      #   end
+      #   break # skip rest of page
+      # end
 
       if tlp.size == 0 and podling.size == 0
         _fieldset do
