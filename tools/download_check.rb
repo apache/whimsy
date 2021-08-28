@@ -66,9 +66,9 @@ def test(severity, txt)
   unless severity == :I or severity == :W
     @fails += 1
     if $FAIL_FAST
-        puts txt
-        caller.each {|c| puts c}
-        exit!
+      puts txt
+      caller.each {|c| puts c}
+      exit!
     end
   end
 end
@@ -259,7 +259,7 @@ def get_links(body, checkSpaces=false)
     tmp = node.attribute("href").to_s
     href = tmp.strip
     if checkSpaces && tmp != href
-        W "Spurious space(s) in '#{tmp}'"
+      W "Spurious space(s) in '#{tmp}'"
     end
     text = node.text.gsub(/[[:space:]]+/, ' ').strip
     [href, text] unless href =~ %r{/httpcomponents.+/xdoc/downloads.xml} # breadcrumb link to source
@@ -267,38 +267,38 @@ def get_links(body, checkSpaces=false)
 end
 
 VERIFY_TEXT = [
- 'the integrity of the downloaded files',
- 'verify the integrity', # commons has this as a link; perhaps try converting page to text only?
- 'verify that checksums and signatures are correct',
- '#verifying-signature',
- 'check that the download has completed OK',
- 'You should verify your download',
- 'downloads can be verified',
- 'www.apache.org/info/verification',
- 'www.apache.org/dyn/closer.cgi#verify',
- 'verify your mirrored downloads',
- 'verify your downloads',
- 'verify the downloaded files',
- 'All downloads should be verified',
- 'verification instructions',
- ' encouraged to verify ',
- 'To check a GPG signature',
- 'To verify Hadoop',
- 'Instructions for verifying your mirrored downloads', # fineract
+  'the integrity of the downloaded files',
+  'verify the integrity', # commons has this as a link; perhaps try converting page to text only?
+  'verify that checksums and signatures are correct',
+  '#verifying-signature',
+  'check that the download has completed OK',
+  'You should verify your download',
+  'downloads can be verified',
+  'www.apache.org/info/verification',
+  'www.apache.org/dyn/closer.cgi#verify',
+  'verify your mirrored downloads',
+  'verify your downloads',
+  'verify the downloaded files',
+  'All downloads should be verified',
+  'verification instructions',
+  ' encouraged to verify ',
+  'To check a GPG signature',
+  'To verify Hadoop',
+  'Instructions for verifying your mirrored downloads', # fineract
 ]
 
 ALIASES = {
-    'sig' => 'asc',
-    'pgp' => 'asc',
-    'gpg' => 'asc',
-    'pgpasc' => 'asc',
-    'signature' => 'asc',
-    'signature(.asc)' => 'asc',
-    'ascsignature' => 'asc',
-    'pgpsignature' => 'asc',
-    'pgpsignatures' => 'asc',
-    'gpgsignature' => 'asc',
-    'openpgpsignature' => 'asc',
+  'sig' => 'asc',
+  'pgp' => 'asc',
+  'gpg' => 'asc',
+  'pgpasc' => 'asc',
+  'signature' => 'asc',
+  'signature(.asc)' => 'asc',
+  'ascsignature' => 'asc',
+  'pgpsignature' => 'asc',
+  'pgpsignatures' => 'asc',
+  'gpgsignature' => 'asc',
+  'openpgpsignature' => 'asc',
 }
 
 # Need to be able to check if download is for a PMC or podling
@@ -309,34 +309,34 @@ URL2TLP['jspwiki-wiki'] = 'jspwiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?p
 URL2TLP['xmlbeans'] = 'poi' # xmlbeans now being maintained by POI
 PMCS = Set.new # is this a TLP?
 ASF::Committee.pmcs.map do |p|
-    site = p.site[%r{//(.+?)\.apache\.org}, 1]
-    name = p.name
-    URL2TLP[site] = name unless site == name
-    PMCS << name
+  site = p.site[%r{//(.+?)\.apache\.org}, 1]
+  name = p.name
+  URL2TLP[site] = name unless site == name
+  PMCS << name
 end
 
 # Convert text reference to extension
 # e.g. SHA256 => sha256; [SIG] => asc
 def text2ext(txt)
-    # need to strip twice to handle ' [ asc ] '
-    # TODO: perhaps just remove all white-space?
-    tmp = txt.downcase.strip.sub(%r{^\.}, '').sub(%r{^\[(.+)\]$}, '\1').sub('-', '').sub(/ ?(digest|checksum)/, '').sub(/ \(tar\.gz\)| \(zip\)| /, '').strip
-    return 'sha256' if tmp =~ %r{\A[A-Fa-f0-9]{64}\z}
-    return 'sha512' if tmp =~ %r{\A[A-Fa-f0-9]{128}\z}
-    ALIASES[tmp] || tmp
+  # need to strip twice to handle ' [ asc ] '
+  # TODO: perhaps just remove all white-space?
+  tmp = txt.downcase.strip.sub(%r{^\.}, '').sub(%r{^\[(.+)\]$}, '\1').sub('-', '').sub(/ ?(digest|checksum)/, '').sub(/ \(tar\.gz\)| \(zip\)| /, '').strip
+  return 'sha256' if tmp =~ %r{\A[A-Fa-f0-9]{64}\z}
+  return 'sha512' if tmp =~ %r{\A[A-Fa-f0-9]{128}\z}
+  ALIASES[tmp] || tmp
 end
 
 # Suite: perform all the HTTP checks
 def checkDownloadPage(path, tlp, version)
-    begin
-        _checkDownloadPage(path.strip, tlp, version)
-    rescue Exception => e
-        F e
-        if $CLI
-          p e
-          puts e.backtrace
-        end
+  begin
+    _checkDownloadPage(path.strip, tlp, version)
+  rescue Exception => e
+    F e
+    if $CLI
+      p e
+      puts e.backtrace
     end
+  end
 end
 
 def _checkDownloadPage(path, tlp, version)
@@ -355,13 +355,13 @@ def _checkDownloadPage(path, tlp, version)
   hasDisclaimer = body.gsub(%r{\s+}, ' ').include? 'Incubation is required of all newly accepted'
 
   if isTLP
-     W "#{tlp} has Incubator disclaimer" if hasDisclaimer
+    W "#{tlp} has Incubator disclaimer" if hasDisclaimer
   else
-     if hasDisclaimer
-       I "#{tlp} has Incubator disclaimer"
-     else
-       E "#{tlp} does not have Incubator disclaimer"
-     end
+    if hasDisclaimer
+      I "#{tlp} has Incubator disclaimer"
+    else
+      E "#{tlp} does not have Incubator disclaimer"
+    end
   end
 
   # Some pages are mainly a single line (e.g. Hop)
@@ -401,11 +401,11 @@ def _checkDownloadPage(path, tlp, version)
   if $CLI
     puts "Checking link syntax"
     links.each do |h, t|
-        if h =~ %r{^([a-z]{3,6})://}
-            W "scheme? %s %s" % [h, t] unless %w(http https).include? $1
-        else
-            W "syntax? %s %s" % [h, t] unless h.start_with? '//'
-        end
+      if h =~ %r{^([a-z]{3,6})://}
+        W "scheme? %s %s" % [h, t] unless %w(http https).include? $1
+      else
+        W "syntax? %s %s" % [h, t] unless h.start_with? '//'
+      end
     end
   end
   if $SHOW_LINKS
@@ -424,9 +424,9 @@ def _checkDownloadPage(path, tlp, version)
     keyurl = keys.first.first
     keytext = keys.first[1]
     if keytext.strip == 'KEYS'
-        I 'Found KEYS link'
+      I 'Found KEYS link'
     else
-        W "Found KEYS: '#{keytext}'"
+      W "Found KEYS: '#{keytext}'"
     end
     check_head(keyurl, :E) # log
   else
@@ -486,47 +486,47 @@ def _checkDownloadPage(path, tlp, version)
   links.each do |h, t|
     # These might also be direct links to mirrors
     if h =~ ARTIFACT_RE
-        base = File.basename($1)
-  #         puts "base: " + base
-        if $vercheck[base]  # might be two links to same archive
-            W "Already seen link for #{base}"
-        else
-            ext = $2 # save for use after RE match
-            $vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : (h =~ %r{https?://repo\d?\.maven(\.apache)?\.org/} ? 'maven' : 'live')]
-            unless $vercheck[base].first == 'archive'
-              stem = base[0..-(ext.size + 2)]
-              # version must include '.', e.g. xxx-m.n.oyyy
+      base = File.basename($1)
+#         puts "base: " + base
+      if $vercheck[base]  # might be two links to same archive
+        W "Already seen link for #{base}"
+      else
+        ext = $2 # save for use after RE match
+        $vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : (h =~ %r{https?://repo\d?\.maven(\.apache)?\.org/} ? 'maven' : 'live')]
+        unless $vercheck[base].first == 'archive'
+          stem = base[0..-(ext.size + 2)]
+          # version must include '.', e.g. xxx-m.n.oyyy
 #                 Apache_OpenOffice-SDK_4.1.10_Linux_x86-64_install-deb_en-US
-              if stem =~ %r{^.+?[-_](\d+(?:\.\d+)+)(.*)$}
-                # $1 = version
-                # $2 any suffix, e.g. -bin, -src (or other)
-                ver = $1 # main version
-                suff = $2
-                # does version have a suffix such as beta1, M3 etc?
-                # jmeter needs _ here
-                if suff =~ %r{^(-RC\d|-rc\d|-incubating|-ALPHA|[-.]?M\d+|[-~]?(alpha|beta)\d?(?:-\d)?)}
-                  ver = ver + $1
-                end
-                $versions[ver][stem] << ext
-              else
-                W "Cannot parse #{base} for version"
-              end
+          if stem =~ %r{^.+?[-_](\d+(?:\.\d+)+)(.*)$}
+            # $1 = version
+            # $2 any suffix, e.g. -bin, -src (or other)
+            ver = $1 # main version
+            suff = $2
+            # does version have a suffix such as beta1, M3 etc?
+            # jmeter needs _ here
+            if suff =~ %r{^(-RC\d|-rc\d|-incubating|-ALPHA|[-.]?M\d+|[-~]?(alpha|beta)\d?(?:-\d)?)}
+              ver = ver + $1
             end
-        end
-        # Text must include a '.' (So we don't check 'Source')
-        if t.include?('.') and not base == File.basename(t.sub(/[Mm]irrors? for /, '').strip)
-          # text might be short version of link
-          tmp = t.strip.sub(%r{.*/}, '') #
-          if base == tmp
-            W "Mismatch?: #{h} and '#{t}'"
-          elsif base.end_with? tmp
-            W "Mismatch?: #{h} and '#{tmp}'"
-          elsif base.sub(/-bin\.|-src\./, '.').end_with? tmp
-            W "Mismatch?: #{h} and '#{tmp}'"
+            $versions[ver][stem] << ext
           else
-            W "Mismatch2: #{h}\n link: '#{base}'\n text: '#{tmp}'"
+            W "Cannot parse #{base} for version"
           end
         end
+      end
+      # Text must include a '.' (So we don't check 'Source')
+      if t.include?('.') and not base == File.basename(t.sub(/[Mm]irrors? for /, '').strip)
+        # text might be short version of link
+        tmp = t.strip.sub(%r{.*/}, '') #
+        if base == tmp
+          W "Mismatch?: #{h} and '#{t}'"
+        elsif base.end_with? tmp
+          W "Mismatch?: #{h} and '#{tmp}'"
+        elsif base.sub(/-bin\.|-src\./, '.').end_with? tmp
+          W "Mismatch?: #{h} and '#{tmp}'"
+        else
+          W "Mismatch2: #{h}\n link: '#{base}'\n text: '#{tmp}'"
+        end
+      end
     end
   end
 
@@ -534,28 +534,28 @@ def _checkDownloadPage(path, tlp, version)
     # Must occur before mirror check below
     # match all hashes and sigs here (invalid locations are detected later)
     if h =~ %r{^https?://.+?/([^/]+\.(asc|sha\d+|md5|sha|mds))$}
-        base = File.basename($1)
-        ext = $2
-        stem = base[0..-(2 + ext.length)]
-        if $vercheck[stem]
-          $vercheck[stem] << ext
-        else
-          E "Bug: found hash #{h} for missing artifact #{stem}"
+      base = File.basename($1)
+      ext = $2
+      stem = base[0..-(2 + ext.length)]
+      if $vercheck[stem]
+        $vercheck[stem] << ext
+      else
+        E "Bug: found hash #{h} for missing artifact #{stem}"
+      end
+      t.strip!
+      next if t == '' # empire-db
+      tmp = text2ext(t)
+      next if ext == tmp # i.e. link is just the type or [TYPE]
+      next if ext == 'sha' and tmp == 'sha1' # historic
+      next if (ext == 'sha256' or ext == 'sha512') and (t == 'SHA' or t == 'digest') # generic
+      next if ext == 'mds' and tmp == 'hashes'
+      if not base == t
+        if t == 'Download' # MXNet
+          W "Mismatch: #{h} and '#{t}'"
+        elsif not %w{checksum Hash}.include? t
+          E "Mismatch: #{h} and '#{t}'"
         end
-        t.strip!
-        next if t == '' # empire-db
-        tmp = text2ext(t)
-        next if ext == tmp # i.e. link is just the type or [TYPE]
-        next if ext == 'sha' and tmp == 'sha1' # historic
-        next if (ext == 'sha256' or ext == 'sha512') and (t == 'SHA' or t == 'digest') # generic
-        next if ext == 'mds' and tmp == 'hashes'
-        if not base == t
-            if t == 'Download' # MXNet
-                W "Mismatch: #{h} and '#{t}'"
-            elsif not %w{checksum Hash}.include? t
-                E "Mismatch: #{h} and '#{t}'"
-            end
-        end
+      end
     end
   end
 
@@ -606,8 +606,8 @@ def _checkDownloadPage(path, tlp, version)
       _ext = $2
       if h =~ %r{https?://archive\.apache\.org/}
         unless $ARCHIVE_CHECK
-            I "Ignoring archived artifact #{h}"
-            next
+          I "Ignoring archived artifact #{h}"
+          next
         end
       end
       # Ideally would like to check for use of closer.lua/.cgi, but some projects pre-populate the pages
@@ -646,11 +646,11 @@ def _checkDownloadPage(path, tlp, version)
           if bdy
             lks = get_links(bdy)
             lks.each do |l, _t|
-               # Don't want to match archive server (closer.cgi defaults to it if file is not found)
-               if l.end_with?(name) and l !~ %r{//archive\.apache\.org/}
-                  path = l
-                  break
-               end
+              # Don't want to match archive server (closer.cgi defaults to it if file is not found)
+              if l.end_with?(name) and l !~ %r{//archive\.apache\.org/}
+                path = l
+                break
+              end
             end
           end
         end
@@ -716,14 +716,14 @@ end
 
 def getTLP(url) # convert URL to TLP/podling
   if url =~ %r{^https?://cwiki\.apache\.org/confluence/display/([\S]+)/}
-      tlp = $1.downcase
+    tlp = $1.downcase
   elsif url =~ %r{^https?://([^.]+)(\.incubator|\.us|\.eu)?\.apache\.org/}
-     tlp = URL2TLP[$1] || $1
+    tlp = URL2TLP[$1] || $1
   elsif url =~ %r{^https?://([^.]+)\.openoffice\.org/}
-     tlp = 'openoffice'
+    tlp = 'openoffice'
   else
-     tlp = nil
-     F "Unknown TLP for URL #{url}"
+    tlp = nil
+    F "Unknown TLP for URL #{url}"
   end
   tlp
 end
@@ -764,11 +764,10 @@ if __FILE__ == $0
   init
 
   version = ''
+  url = ARGV[0]
   if ARGV.size == 1
-    url = ARGV[0]
     tlp = getTLP(url)
   else
-    url = ARGV[0]
     tlp = ARGV[1]
     version = ARGV[2] || ''
   end
@@ -790,9 +789,9 @@ if __FILE__ == $0
   puts "Version summary"
   $versions.sort.each do |k, v|
     puts k
-      v.sort.each do |l, w|
-        puts "  #{l} #{w}"
-      end
+    v.sort.each do |l, w|
+      puts "  #{l} #{w}"
+    end
   end
   puts ""
 
