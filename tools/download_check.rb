@@ -36,7 +36,7 @@ $VERSION = nil
 # Check archives have hash and sig
 $vercheck = Hash.new() # key = archive name, value = array of [type, hash/sig...]
 # collect versions for summary display
-$versions = Hash.new {|h1,k1| h1[k1]=Hash.new {|h2,k2| h2[k2]=Array.new} } # key = version, value = Hash, key = arch basename, value = array of [extensions]
+$versions = Hash.new {|h1, k1| h1[k1] = Hash.new {|h2, k2| h2[k2] = Array.new} } # key = version, value = Hash, key = arch basename, value = array of [extensions]
 
 # match an artifact
 # TODO detect artifacts by URL as well if possible
@@ -64,7 +64,7 @@ end
 def test(severity, txt)
   @tests << {severity => txt}
   unless severity == :I or severity == :W
-    @fails +=1
+    @fails += 1
     if $FAIL_FAST
         puts txt
         caller.each {|c| puts c}
@@ -91,12 +91,12 @@ end
 
 # extract test entries with key k
 def tests(k)
-  @tests.map{|t| t[k]}.compact
+  @tests.map {|t| t[k]}.compact
 end
 
 # extract test entries with key k
 def testentries(k)
-  @tests.select{|t| t[k]}.compact
+  @tests.select {|t| t[k]}.compact
 end
 
 def showList(list, header)
@@ -132,7 +132,7 @@ def displayHTML
 
   _h2_ 'Tests performed'
   _ol do
-    @tests.each { |t| t.map{|k,v| _li "#{k}: - #{v}"}}
+    @tests.each { |t| t.map {|k, v| _li "#{k}: - #{v}"}}
   end
   _h4_ 'F: fatal, E: Error, W: warning, I: info (success)'
 end
@@ -141,7 +141,7 @@ def check_url(url)
   uri = URI.parse(url)
   unless uri.scheme
     W "No scheme for URL #{url}, assuming http"
-    uri = URI.parse("http:"+url)
+    uri = URI.parse("http:" + url)
   end
   return uri if %w{http https}.include? uri.scheme
   raise ArgumentError.new("Unexpected url: #{url}")
@@ -163,7 +163,7 @@ def fetch_url(url, method=:head, depth=0, followRedirects=true) # string input
       response = https.request(request)
       if followRedirects and response.code =~ /^3\d\d/
         return uri, nil, "Too many redirects: #{depth} > 3" if depth > 3
-        fetch_url response['location'], method, depth+1 # string
+        fetch_url response['location'], method, depth + 1 # string
       else
         return uri, response.code, response
       end
@@ -189,11 +189,11 @@ end
 # Check page exists => response or nil
 def check_head(path, severity = :E, log=true)
   response = HEAD(path)
-  code = (response.code ||  '?') rescue response.to_s
+  code = (response.code || '?') rescue response.to_s
   if code == '403' # someone does not like Whimsy?
     W "HEAD #{path} - HTTP status: #{code} - retry"
     response = HEAD(path)
-    code = (response.code ||  '?') rescue response.to_s
+    code = (response.code || '?') rescue response.to_s
   end
   unless code == '200'
     test(severity, "HEAD #{path} - HTTP status: #{code}") unless severity == nil
@@ -206,7 +206,7 @@ end
 # check page can be read => body or response or nil
 def check_page(path, severity=:E, log=true, returnRes=false, followRedirects=true)
   response = GET(path, followRedirects)
-  code = response.code ||  '?'
+  code = response.code || '?'
   unless code == '200' or (!followRedirects and code =~ /^3\d\d/)
     test(severity, "GET #{path} - HTTP status: #{code}") unless severity == nil
     return nil
@@ -225,22 +225,22 @@ def WE(msg)
 end
 
 # returns www|archive, stem and the hash extension
-def check_hash_loc(h,tlp)
+def check_hash_loc(h, tlp)
   tlpQE = Regexp.escape(tlp) # in case of meta-chars
   tlpQE = "(?:ooo|#{tlpQE})" if tlp == 'openoffice'
   tlpQE = "(?:lucene|#{tlpQE})" if tlp == 'solr' # temporary override
   tlpQE = "(?:tubemq|inlong)" if tlp == 'inlong' # renamed
   if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
-    return $2||'',$3,$4 # allow for no host before apache.org
+    return $2||'', $3, $4 # allow for no host before apache.org
   elsif h =~ %r{^(https?)://(downloads)\.apache\.org/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
-    return $2,$3,$4
+    return $2, $3, $4
 #   https://repo1.maven.org/maven2/org/apache/shiro/shiro-spring/1.1.0/shiro-spring-1.1.0.jar.asc
   elsif h =~ %r{^(https?)://repo1?\.(maven)(?:\.apache)?\.org/maven2/org/apache/#{tlpQE}/.+/([^/]+\.(?:jar|xml))\.(\w{3,6})$} # Maven
     WE "HTTPS! #{h}" unless $1 == 'https'
     W "Unexpected hash location #{h} for #{tlp}" unless ($vercheck[$3][0] rescue '') == 'maven'
-    return $2,$3,$4
+    return $2, $3, $4
   else
     if h =~ %r{-bin-}
       W "Unexpected bin hash location #{h} for #{tlp}"
@@ -251,7 +251,7 @@ def check_hash_loc(h,tlp)
   end
 end
 
-# get the https? links as Array of [href,text]
+# get the https? links as Array of [href, text]
 def get_links(body, checkSpaces=false)
   doc = Nokogiri::HTML(body)
   nodeset = doc.css('a[href]')    # Get anchors w href attribute via css
@@ -261,9 +261,9 @@ def get_links(body, checkSpaces=false)
     if checkSpaces && tmp != href
         W "Spurious space(s) in '#{tmp}'"
     end
-    text = node.text.gsub(/[[:space:]]+/,' ').strip
-    [href,text] unless href =~ %r{/httpcomponents.+/xdoc/downloads.xml} # breadcrumb link to source
-  }.select{|x, _y| x =~ %r{^(https?:)?//} }
+    text = node.text.gsub(/[[:space:]]+/, ' ').strip
+    [href, text] unless href =~ %r{/httpcomponents.+/xdoc/downloads.xml} # breadcrumb link to source
+  }.select {|x, _y| x =~ %r{^(https?:)?//} }
 end
 
 VERIFY_TEXT = [
@@ -309,7 +309,7 @@ URL2TLP['jspwiki-wiki'] = 'jspwiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?p
 URL2TLP['xmlbeans'] = 'poi' # xmlbeans now being maintained by POI
 PMCS = Set.new # is this a TLP?
 ASF::Committee.pmcs.map do |p|
-    site = p.site[%r{//(.+?)\.apache\.org},1]
+    site = p.site[%r{//(.+?)\.apache\.org}, 1]
     name = p.name
     URL2TLP[site] = name unless site == name
     PMCS << name
@@ -320,7 +320,7 @@ end
 def text2ext(txt)
     # need to strip twice to handle ' [ asc ] '
     # TODO: perhaps just remove all white-space?
-    tmp = txt.downcase.strip.sub(%r{^\.},'').sub(%r{^\[(.+)\]$},'\1').sub('-','').sub(/ ?(digest|checksum)/,'').sub(/ \(tar\.gz\)| \(zip\)| /,'').strip
+    tmp = txt.downcase.strip.sub(%r{^\.}, '').sub(%r{^\[(.+)\]$}, '\1').sub('-', '').sub(/ ?(digest|checksum)/, '').sub(/ \(tar\.gz\)| \(zip\)| /, '').strip
     return 'sha256' if tmp =~ %r{\A[A-Fa-f0-9]{64}\z}
     return 'sha512' if tmp =~ %r{\A[A-Fa-f0-9]{128}\z}
     ALIASES[tmp] || tmp
@@ -352,7 +352,7 @@ def _checkDownloadPage(path, tlp, version)
 
   return unless body
 
-  hasDisclaimer = body.gsub(%r{\s+},' ').include? 'Incubation is required of all newly accepted'
+  hasDisclaimer = body.gsub(%r{\s+}, ' ').include? 'Incubation is required of all newly accepted'
 
   if isTLP
      W "#{tlp} has Incubator disclaimer" if hasDisclaimer
@@ -402,7 +402,7 @@ def _checkDownloadPage(path, tlp, version)
     puts "Checking link syntax"
     links.each do |h, t|
         if h =~ %r{^([a-z]{3,6})://}
-            W "scheme? %s %s" %  [h, t] unless %w(http https).include? $1
+            W "scheme? %s %s" % [h, t] unless %w(http https).include? $1
         else
             W "syntax? %s %s" % [h, t] unless h.start_with? '//'
         end
@@ -419,7 +419,7 @@ def _checkDownloadPage(path, tlp, version)
   #   https://www.apache.org/dist/httpcomponents/httpclient/KEYS
   expurl = "https://[downloads.|www.]apache.org/[dist/][incubator/]#{tlp}/KEYS"
   expurlre = %r{^https://((www\.)?apache\.org/dist|downloads\.apache\.org)/(incubator/)?#{tlpQE}/KEYS$}
-  keys = links.select{|h, _v| h =~ expurlre}
+  keys = links.select {|h, _v| h =~ expurlre}
   if keys.size >= 1
     keyurl = keys.first.first
     keytext = keys.first[1]
@@ -428,9 +428,9 @@ def _checkDownloadPage(path, tlp, version)
     else
         W "Found KEYS: '#{keytext}'"
     end
-    check_head(keyurl,:E) # log
+    check_head(keyurl, :E) # log
   else
-    keys = links.select{|h, v| h.end_with? 'KEYS' || v.strip == 'KEYS' || v == 'KEYS file' || v == '[KEYS]'}
+    keys = links.select {|h, v| h.end_with? 'KEYS' || v.strip == 'KEYS' || v == 'KEYS file' || v == '[KEYS]'}
     if keys.size >= 1
       I 'Found KEYS link'
       keyurl = keys.first.first
@@ -445,7 +445,7 @@ def _checkDownloadPage(path, tlp, version)
           E "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
         end
       end
-      check_head(keyurl,:E) # log
+      check_head(keyurl, :E) # log
     else
       E 'Could not find KEYS link'
     end
@@ -479,11 +479,11 @@ def _checkDownloadPage(path, tlp, version)
   end
 
   # check if page refers to md5sum
-  body.scan(%r{^.+md5sum.+$}){|m|
+  body.scan(%r{^.+md5sum.+$}) {|m|
     W "Found md5sum: #{m.strip}"
   }
 
-  links.each do |h,t|
+  links.each do |h, t|
     # These might also be direct links to mirrors
     if h =~ ARTIFACT_RE
         base = File.basename($1)
@@ -494,7 +494,7 @@ def _checkDownloadPage(path, tlp, version)
             ext = $2 # save for use after RE match
             $vercheck[base] = [h =~ %r{^https?://archive.apache.org/} ? 'archive' : (h =~ %r{https?://repo\d?\.maven(\.apache)?\.org/} ? 'maven' : 'live')]
             unless $vercheck[base].first == 'archive'
-              stem = base[0..-(ext.size+2)]
+              stem = base[0..-(ext.size + 2)]
               # version must include '.', e.g. xxx-m.n.oyyy
 #                 Apache_OpenOffice-SDK_4.1.10_Linux_x86-64_install-deb_en-US
               if stem =~ %r{^.+?[-_](\d+(?:\.\d+)+)(.*)$}
@@ -516,12 +516,12 @@ def _checkDownloadPage(path, tlp, version)
         # Text must include a '.' (So we don't check 'Source')
         if t.include?('.') and not base == File.basename(t.sub(/[Mm]irrors? for /, '').strip)
           # text might be short version of link
-          tmp = t.strip.sub(%r{.*/},'') #
+          tmp = t.strip.sub(%r{.*/}, '') #
           if base == tmp
             W "Mismatch?: #{h} and '#{t}'"
           elsif base.end_with? tmp
             W "Mismatch?: #{h} and '#{tmp}'"
-          elsif base.sub(/-bin\.|-src\./,'.').end_with? tmp
+          elsif base.sub(/-bin\.|-src\./, '.').end_with? tmp
             W "Mismatch?: #{h} and '#{tmp}'"
           else
             W "Mismatch2: #{h}\n link: '#{base}'\n text: '#{tmp}'"
@@ -530,13 +530,13 @@ def _checkDownloadPage(path, tlp, version)
     end
   end
 
-  links.each do |h,t|
+  links.each do |h, t|
     # Must occur before mirror check below
     # match all hashes and sigs here (invalid locations are detected later)
     if h =~ %r{^https?://.+?/([^/]+\.(asc|sha\d+|md5|sha|mds))$}
         base = File.basename($1)
         ext = $2
-        stem = base[0..-(2+ext.length)]
+        stem = base[0..-(2 + ext.length)]
         if $vercheck[stem]
           $vercheck[stem] << ext
         else
@@ -561,7 +561,7 @@ def _checkDownloadPage(path, tlp, version)
 
 
   # did we find all required elements?
-  $vercheck.each do |k,w|
+  $vercheck.each do |k, w|
     v = w.dup
     typ = v.shift
     unless v.include? "asc" and v.any? {|e| e =~ /^sha\d+$/ or e == 'md5' or e == 'sha' or e == 'mds'}
@@ -583,9 +583,9 @@ def _checkDownloadPage(path, tlp, version)
 
   # Check if the links can be read
 
-  links.each do |h,t|
+  links.each do |h, t|
     if h =~ %r{\.(asc|sha256|sha512)$}
-      host, _stem, _ext = check_hash_loc(h,tlp)
+      host, _stem, _ext = check_hash_loc(h, tlp)
       if host == 'archive'
         if $ARCHIVE_CHECK
           check_head(h, :E) # log
@@ -671,14 +671,14 @@ def _checkDownloadPage(path, tlp, version)
         end
       end
     elsif h =~ %r{\.(md5|sha\d*)$}
-      host, stem, _ext = check_hash_loc(h,tlp)
+      host, stem, _ext = check_hash_loc(h, tlp)
       if $NOFOLLOW
         I "Skipping deprecated hash #{h}"
         next
       end
       if host == 'www' or host == '' or host == 'downloads' or host == 'archive' or host == 'maven'
         next unless $ARCHIVE_CHECK or host != 'archive'
-        res = check_head(h,:E, false) # nolog
+        res = check_head(h, :E, false) # nolog
         next unless res
         lastmod = res['last-modified']
         date = Time.parse(lastmod)
@@ -746,7 +746,7 @@ end
 
 if __FILE__ == $0
   $CLI = true
-  $VERBOSE =true
+  $VERBOSE = true
   $ALWAYS_CHECK_LINKS = ARGV.delete '--always'
   $NO_CHECK_LINKS = ARGV.delete '--nolinks'
   $ARCHIVE_CHECK = ARGV.delete '--archivecheck'
@@ -779,18 +779,18 @@ if __FILE__ == $0
   puts ""
   puts "================="
   puts ""
-  @tests.each { |t| t.map{|k, v| puts "#{k}: - #{v}"}}
+  @tests.each { |t| t.map {|k, v| puts "#{k}: - #{v}"}}
   puts ""
-  testentries(:W).each { |t| t.map{|k, v| puts "#{k}: - #{v}"}}
-  testentries(:E).each { |t| t.map{|k, v| puts "#{k}: - #{v}"}}
-  testentries(:F).each { |t| t.map{|k, v| puts "#{k}: - #{v}"}}
+  testentries(:W).each { |t| t.map {|k, v| puts "#{k}: - #{v}"}}
+  testentries(:E).each { |t| t.map {|k, v| puts "#{k}: - #{v}"}}
+  testentries(:F).each { |t| t.map {|k, v| puts "#{k}: - #{v}"}}
   puts ""
 
   # Only show in CLI version for now
   puts "Version summary"
-  $versions.sort.each do |k,v|
+  $versions.sort.each do |k, v|
     puts k
-      v.sort.each do |l,w|
+      v.sort.each do |l, w|
         puts "  #{l} #{w}"
       end
   end
