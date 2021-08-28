@@ -464,8 +464,6 @@ def _checkDownloadPage(path, tlp, version)
   body.scan(%r{(gpg[[:space:]]+(.+?)(?:import|verify))}) { |m|
     pfx = m[1]
     unless pfx == '--'
-      $stderr.puts m.inspect
-      $stderr.puts m[0]
       W "gpg requires -- before qualifiers, not #{pfx.inspect}: #{m[0].strip}"
     end
   }
