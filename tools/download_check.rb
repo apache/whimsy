@@ -368,14 +368,14 @@ def _checkDownloadPage(path, tlp, version)
   # This make matching the appropriate match context tricky without traversing the DOM
   body.scan(%r{(^.*?([^<>]+?(nightly|snapshot)[^<>]+?)).*$}i) do |m|
     m.each do |n|
-        if n.size < 160
-            if n =~ %r{-docs-} # snapshot docs (Flink)?
-                W "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
-            else
-                E "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
-            end
-            break
+      if n.size < 160
+        if n =~ %r{API |/api/|-docs-} # snapshot docs Datasketches (Flink)?
+          W "Found reference to NIGHTLY or SNAPSHOT docs?: #{n}"
+        else
+          E "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
         end
+        break
+      end
     end
   end
 
@@ -552,7 +552,7 @@ def _checkDownloadPage(path, tlp, version)
         if not base == t
             if t == 'Download' # MXNet
                 W "Mismatch: #{h} and '#{t}'"
-            elsif not t == 'checksum'
+            elsif not %w{checksum Hash}.include? t
                 E "Mismatch: #{h} and '#{t}'"
             end
         end
