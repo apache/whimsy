@@ -453,15 +453,25 @@ def _checkDownloadPage(path, tlp, version)
 
   hasGPGverify = false
   # Check if GPG verify has two parameters
-  body.scan(%r{^.+gpg --verify.+$}){|m|
+  body.scan(%r{^.+gpg --verify.+$}) { |m|
     hasGPGverify = true
     unless m =~ %r{gpg --verify\s+\S+\.asc\s+\S+}
       W "gpg verify should specify second param: #{m.strip} see:\nhttps://www.apache.org/info/verification.html#specify_both"
     end
   }
 
+  # Look for incorrect gpg qualifiers
+  body.scan(%r{(gpg[[:space:]]+(.+?)(?:import|verify))}) { |m|
+    pfx = m[1]
+    unless pfx == '--'
+      $stderr.puts m.inspect
+      $stderr.puts m[0]
+      W "gpg requires -- before qualifiers, not #{pfx.inspect}: #{m[0].strip}"
+    end
+  }
+
   # check for verify instructions
-  bodytext = body.gsub(/\s+/,' ') # single line
+  bodytext = body.gsub(/\s+/, ' ') # single line
   if VERIFY_TEXT.any? {|text| bodytext.include? text}
     I 'Found reference to download verification'
   elsif hasGPGverify
