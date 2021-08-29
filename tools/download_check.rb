@@ -569,6 +569,10 @@ def _checkDownloadPage(path, tlp, version)
     W "#{k} Prefer SHA* over MDS #{v.inspect}" if typ == 'live' && v.include?('mds') && v.none? {|e| e =~ /^sha\d+$/}
   end
 
+  if $versions.size == 0
+    E "Could not detect any artifact versions -- perhaps it needs JavaScript?"
+  end
+
   if @fails > 0 and not $ALWAYS_CHECK_LINKS
     W "** Not checking links **"
     $NOFOLLOW = true
