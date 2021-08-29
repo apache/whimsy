@@ -20,17 +20,19 @@ _html do
         _p do
           _b '*** BETA ***'
         end
+        _p 'N.B. Cannot check download pages that use JavaScript to generate the links'
         _p 'This page can be used to check that an Apache download page has been set up correctly.'
         _p do
-          _'The download page is checked for the following:'
+          _ 'The download page is checked for the following:'
           _ul do
             _li 'Does not link to dist.apache.org'
             _li 'Page does not reference repository.apache.org'
             _li 'Has link to KEYS file'
-            _li 'References need to verify downloads'
-            _li 'If gpg verify example is given, should include second parameter'
+            _li 'It must refer to the need to verify downloads'
+            _li 'If a gpg verify example is given, should include second parameter'
             _li 'Each artifact has a signature and a hash, which should not be MD5 or SHA1'
 #            _li 'If a version is specified, there must be an artifact link with that version'
+            _li 'There must be some artifact references on the page'
           end
           _p 'If any errors are found, no further checks are made unless "Always check links" is enabled'
           _p 'Links are checked by using HTTP HEAD requests; however links to the archive server are not checked unless "Check archive server links" is selected'
