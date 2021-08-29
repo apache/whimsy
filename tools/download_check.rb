@@ -34,7 +34,7 @@ $SHOW_LINKS = false
 $VERSION = nil
 
 # Check archives have hash and sig
-$vercheck = Hash.new() # key = archive name, value = array of [type, hash/sig...]
+$vercheck = {} # key = archive name, value = array of [type, hash/sig...]
 # collect versions for summary display
 $versions = Hash.new {|h1, k1| h1[k1] = Hash.new {|h2, k2| h2[k2] = Array.new} } # key = version, value = Hash, key = arch basename, value = array of [extensions]
 
@@ -50,12 +50,10 @@ def init
   if $NO_CHECK_LINKS
     $NOFOLLOW = true
     I "Will not check links"
+  elsif $ALWAYS_CHECK_LINKS
+    I "Will check links even if download page has errors"
   else
-    if $ALWAYS_CHECK_LINKS
-      I "Will check links even if download page has errors"
-    else
-      I "Will check links if download page has no errors"
-    end
+    I "Will check links if download page has no errors"
   end
   I "Will %s archive.apache.org links in checks" % ($ARCHIVE_CHECK ? 'include' : 'not include')
 end
@@ -114,13 +112,13 @@ def displayHTML
   warns = tests(:W)
 
   if !fatals.empty?
-    _h2_.bg_danger "The page at #@url failed our checks:"
+    _h2_.bg_danger "The page at #{@url} failed our checks:"
   elsif !errors.empty?
-    _h2_.bg_warning "The page at #@url has some problems:"
+    _h2_.bg_warning "The page at #{@url} has some problems:"
   elsif !warns.empty?
-    _h2_.bg_warning "The page at #@url has some minor issues"
+    _h2_.bg_warning "The page at #{@url} has some minor issues"
   else
-    _h2_.bg_success "The page at #@url looks OK, thanks for using this service"
+    _h2_.bg_success "The page at #{@url} looks OK, thanks for using this service"
   end
 
   if @fails > 0
@@ -173,7 +171,6 @@ def fetch_url(url, method=:head, depth=0, followRedirects=true) # string input
   end
 end
 
-
 # Head an HTTP URL  => response
 def HEAD(url)
   puts ">> HEAD #{url}" if $VERBOSE
@@ -196,7 +193,7 @@ def check_head(path, severity = :E, log=true)
     code = (response.code || '?') rescue response.to_s
   end
   unless code == '200'
-    test(severity, "HEAD #{path} - HTTP status: #{code}") unless severity == nil
+    test(severity, "HEAD #{path} - HTTP status: #{code}") unless severity.nil?
     return nil
   end
   I "Checked HEAD #{path} - OK (#{code})" if log
@@ -208,7 +205,7 @@ def check_page(path, severity=:E, log=true, returnRes=false, followRedirects=tru
   response = GET(path, followRedirects)
   code = response.code || '?'
   unless code == '200' or (!followRedirects and code =~ /^3\d\d/)
-    test(severity, "GET #{path} - HTTP status: #{code}") unless severity == nil
+    test(severity, "GET #{path} - HTTP status: #{code}") unless severity.nil?
     return nil
   end
   I "Checked GET #{path} - OK (#{code})" if log
@@ -232,7 +229,7 @@ def check_hash_loc(h, tlp)
   tlpQE = "(?:tubemq|inlong)" if tlp == 'inlong' # renamed
   if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
-    return $2||'', $3, $4 # allow for no host before apache.org
+    return $2 || '', $3, $4 # allow for no host before apache.org
   elsif h =~ %r{^(https?)://(downloads)\.apache\.org/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2, $3, $4
@@ -304,7 +301,7 @@ ALIASES = {
 # Need to be able to check if download is for a PMC or podling
 # parameter is the website URL
 # Also want to convert site to TLP
-URL2TLP = Hash.new # URL host to TLP conversion
+URL2TLP = {} # URL host to TLP conversion
 URL2TLP['jspwiki-wiki'] = 'jspwiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?page=Downloads
 URL2TLP['xmlbeans'] = 'poi' # xmlbeans now being maintained by POI
 PMCS = Set.new # is this a TLP?
@@ -341,10 +338,10 @@ end
 
 def _checkDownloadPage(path, tlp, version)
   isTLP = PMCS.include? tlp
-  if version != ''
-    I "Checking #{path} [#{tlp}] TLP #{isTLP} for version #{version} only ..."
-  else
+  if version == ''
     I "Checking #{path} [#{tlp}] TLP #{isTLP} ..."
+  else
+    I "Checking #{path} [#{tlp}] TLP #{isTLP} for version #{version} only ..."
   end
 
   # check the main body
@@ -356,12 +353,10 @@ def _checkDownloadPage(path, tlp, version)
 
   if isTLP
     W "#{tlp} has Incubator disclaimer" if hasDisclaimer
+  elsif hasDisclaimer
+    I "#{tlp} has Incubator disclaimer"
   else
-    if hasDisclaimer
-      I "#{tlp} has Incubator disclaimer"
-    else
-      E "#{tlp} does not have Incubator disclaimer"
-    end
+    E "#{tlp} does not have Incubator disclaimer"
   end
 
   # Some pages are mainly a single line (e.g. Hop)
@@ -436,14 +431,12 @@ def _checkDownloadPage(path, tlp, version)
       keyurl = keys.first.first
       if keyurl =~ expurlre
         I "KEYS links to #{expurl} as expected"
+      elsif keyurl =~ %r{^https://www\.apache\.org/dist/#{tlpQE}/[^/]+/KEYS$}
+        W "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
+      elsif keyurl =~ %r{^https://downloads\.apache\.org/#{tlpQE}/[^/]+/KEYS$}
+        W "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
       else
-        if keyurl =~ %r{^https://www\.apache\.org/dist/#{tlpQE}/[^/]+/KEYS$}
-          W "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
-        elsif keyurl =~ %r{^https://downloads\.apache\.org/#{tlpQE}/[^/]+/KEYS$}
-          W "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
-        else
-          E "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
-        end
+        E "KEYS: expected: #{expurl}\n             actual: #{keyurl}"
       end
       check_head(keyurl, :E) # log
     else
@@ -505,7 +498,7 @@ def _checkDownloadPage(path, tlp, version)
             # does version have a suffix such as beta1, M3 etc?
             # jmeter needs _ here
             if suff =~ %r{^(-RC\d|-rc\d|-incubating|-ALPHA|[-.]?M\d+|[-~]?(alpha|beta)\d?(?:-\d)?)}
-              ver = ver + $1
+              ver += $1
             end
             $versions[ver][stem] << ext
           else
@@ -514,7 +507,7 @@ def _checkDownloadPage(path, tlp, version)
         end
       end
       # Text must include a '.' (So we don't check 'Source')
-      if t.include?('.') and not base == File.basename(t.sub(/[Mm]irrors? for /, '').strip)
+      if t.include?('.') and base != File.basename(t.sub(/[Mm]irrors? for /, '').strip)
         # text might be short version of link
         tmp = t.strip.sub(%r{.*/}, '') #
         if base == tmp
@@ -549,7 +542,7 @@ def _checkDownloadPage(path, tlp, version)
       next if ext == 'sha' and tmp == 'sha1' # historic
       next if (ext == 'sha256' or ext == 'sha512') and (t == 'SHA' or t == 'digest') # generic
       next if ext == 'mds' and tmp == 'hashes'
-      if not base == t
+      if base != t
         if t == 'Download' # MXNet
           W "Mismatch: #{h} and '#{t}'"
         elsif not %w{checksum Hash}.include? t
@@ -676,7 +669,7 @@ def _checkDownloadPage(path, tlp, version)
         I "Skipping deprecated hash #{h}"
         next
       end
-      if host == 'www' or host == '' or host == 'downloads' or host == 'archive' or host == 'maven'
+      if %w{www downloads archive maven}.include?(host) or host == ''
         next unless $ARCHIVE_CHECK or host != 'archive'
         res = check_head(h, :E, false) # nolog
         next unless res
@@ -715,7 +708,7 @@ def _checkDownloadPage(path, tlp, version)
 end
 
 def getTLP(url) # convert URL to TLP/podling
-  if url =~ %r{^https?://cwiki\.apache\.org/confluence/display/([\S]+)/}
+  if url =~ %r{^https?://cwiki\.apache\.org/confluence/display/(\S+)/}
     tlp = $1.downcase
   elsif url =~ %r{^https?://([^.]+)(\.incubator|\.us|\.eu)?\.apache\.org/}
     tlp = URL2TLP[$1] || $1
