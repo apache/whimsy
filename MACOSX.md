@@ -465,11 +465,11 @@ again.
 Configure sending of mail
 -------------------------
 
-Every mail delivery system appears to be different.  Once whitelisted,
-`sendmail` works fine on `whimsy-vm4.apache.org`.  Others may require
+Every mail delivery system appears to be different.  Once configured,
+`sendmail` works fine on `whimsy-vm6.apache.org`.  Others may require
 passwords or may throttle the rate at which emails can be sent.
 
-The one option that appears to work for everybody is gmail.
+The one option that appears to work for everybody is GMail.
 
 Create a `~/.whimsy` file, and add the following content:
 
