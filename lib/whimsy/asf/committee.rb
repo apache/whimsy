@@ -48,7 +48,7 @@ module ASF
     # Data is obtained from <tt>committee-info.txt</tt>.
     attr_accessor :established
 
-    # list of months when his committee typically  reports.  Returned
+    # list of months when this committee typically reports.  Returned
     # as a comma separated string.  Data is obtained from
     # <tt>committee-info.txt</tt>.
     attr_accessor :schedule
