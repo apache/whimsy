@@ -20,7 +20,7 @@ class ASF::Person
   #
   # For those accounts with the "dummy" creation date set in LDAP of 20090519,
   # where no other PMC request or notification emails have been found via
-  # grep, a "more likely" default of 20040701 dummy value is set as an override.
+  # grep, a "more likely" default of 20040701 is set as an override.
   #
   # TODO fix the default dates
   #
