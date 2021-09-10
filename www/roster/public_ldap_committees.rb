@@ -3,7 +3,7 @@
 # Previously read LDAP ou=pmc,ou=committees,ou=groups,dc=apache,dc=org
 # but this is deprecated.
 # The output is intended to include the same entries as before;
-# as such it includes tac and security even though they are not PMCs
+# as such it includes tac and security even though they are not PMCs
 #
 # Creates JSON output with the following format:
 #
@@ -40,19 +40,19 @@ end
 
 lastStamp = ''
 
-projects.keys.sort_by {|a| a.name}.each do |project|
+projects.keys.sort_by(&:name).each do |project|
   next unless pmcs.include? project.name
   m = []
   createTimestamp = project.createTimestamp
   modifyTimestamp = project.modifyTimestamp
-  project.owners.sort_by {|a| a.name}.each do |e|
-      m << e.name
+  project.owners.sort_by(&:name).each do |e|
+    m << e.name
   end
   lastStamp = modifyTimestamp if modifyTimestamp > lastStamp
   entries[project.name] = {
-      createTimestamp: createTimestamp,
-      modifyTimestamp: modifyTimestamp,
-      roster: m
+    createTimestamp: createTimestamp,
+    modifyTimestamp: modifyTimestamp,
+    roster: m
   }
 end
 
