@@ -33,17 +33,17 @@ if groups.empty?
 end
 
 lastStamp = ''
-groups.keys.sort_by {|a| a.name}.each do |entry|
-    m = []
-    entry.members.sort_by {|a| a.name}.each do |e|
-        m << e.name
-    end
-    lastStamp = entry.modifyTimestamp if entry.modifyTimestamp > lastStamp
-    entries[entry.name] = {
-        createTimestamp: entry.createTimestamp,
-        modifyTimestamp: entry.modifyTimestamp,
-        roster: m
-    }
+groups.keys.sort_by(&:name).each do |entry|
+  m = []
+  entry.members.sort_by(&:name).each do |e|
+    m << e.name
+  end
+  lastStamp = entry.modifyTimestamp if entry.modifyTimestamp > lastStamp
+  entries[entry.name] = {
+    createTimestamp: entry.createTimestamp,
+    modifyTimestamp: entry.modifyTimestamp,
+    roster: m
+  }
 end
 
 info = {
