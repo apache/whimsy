@@ -45,6 +45,8 @@ PonyAPI.get_pony_lists(nil,nil,true).each do |dom, lists|
   end
 end
 
-info[:list_data] = data.sort # ensure only valid changes are reported
+info[:list_count] = data.size
+# TODO probably not worth summarising domains
+info[:lists] = data.sort.to_h # sort to ensure only valid changes are reported
 
 public_json_output(info)
