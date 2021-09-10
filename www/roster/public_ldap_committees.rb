@@ -9,9 +9,16 @@
 #
 # {
 #   "lastTimestamp": "20160119171152Z", // most recent modifyTimestamp
+#   "committee_count": 123,
+#   "roster_counts": {
+#     "accumulo": 40,
+#     "activemq": 25,
+#     ...
+#   },
 #   "committees": {
 #     "abdera": {
 #       "modifyTimestamp": "20111204095436Z",
+#       "roster_count": 123
 #       "roster": ["uid",
 #       ...
 #       ]
@@ -39,7 +46,7 @@ if projects.empty?
 end
 
 lastStamp = ''
-
+roster_counts = Hash.new(0)
 projects.keys.sort_by(&:name).each do |project|
   next unless pmcs.include? project.name
   m = []
@@ -52,13 +59,17 @@ projects.keys.sort_by(&:name).each do |project|
   entries[project.name] = {
     createTimestamp: createTimestamp,
     modifyTimestamp: modifyTimestamp,
+    roster_count: m.size,
     roster: m
   }
+  roster_counts[project.name] = m.size
 end
 
 info = {
   # Is there a use case for the last createTimestamp ?
   lastTimestamp: lastStamp,
+  committee_count: entries.size,
+  roster_counts: roster_counts,
   committees: entries,
 }
 
