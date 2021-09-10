@@ -2,10 +2,21 @@
 #
 # {
 #   "lastTimestamp": "20160119171152Z", // most recent modifyTimestamp
+#   "project_count": 123,
+#   "roster_counts": {
+#     "ace": {
+#       "members": 20,
+#       "owners": 10
+#     },
+#     "beam": {...}
+#     ...
+#   },
 #   "projects": {
 #     "airflow": {
 #       "createTimestamp": "20170118154251Z",
 #       "modifyTimestamp": "20170118154251Z",
+#       "member_count": 123,
+#       "owner_count": 123,
 #       "members": [
 #         "abcd",
 #       ],
@@ -41,6 +52,7 @@ committees = ASF::Committee.load_committee_info.map {|committee|
 # podling status
 pods = ASF::Podling.list.map {|podling| [podling.name, podling.status]}.to_h
 
+roster_counts = {}
 lastStamp = ''
 projects.keys.sort_by(&:name).each do |entry|
   next if entry.name == 'apldap' # infra team would prefer this not be publicized
@@ -57,9 +69,12 @@ projects.keys.sort_by(&:name).each do |entry|
   entries[entry.name] = {
     createTimestamp: entry.createTimestamp,
     modifyTimestamp: entry.modifyTimestamp,
+    member_count: m.size,
+    owner_count: o.size,
     members: m,
     owners: o
   }
+  roster_counts[entry.name] = {members: m.size, owners: o.size}
   committee = committees[entry.name]
   if committee
     if committee.pmc?
@@ -77,6 +92,8 @@ end
 info = {
   # Is there a use case for the last createTimestamp ?
   lastTimestamp: lastStamp,
+  project_count: entries.size,
+  roster_counts: roster_counts,
   projects: entries,
 }
 
