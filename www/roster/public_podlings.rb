@@ -19,6 +19,12 @@
 # Podling status file format:
 # {
 #   "last_updated": "2016-06-15 13:50:05 +0100",
+#   "podling_counts": 330,
+#   "status_counts": {
+#     "current": 37,
+#     "graduated": 224,
+#     "retired": 69
+#   },
 #   "podling": {
 #     "abdera": "graduated",
 #     ....
@@ -28,6 +34,12 @@
 # Podling detailed file format:
 # {
 #   "last_updated": "2016-06-15 13:50:05 +0100",
+#   "podling_counts": 330,
+#   "status_counts": {
+#     "current": 37,
+#     "graduated": 224,
+#     "retired": 69
+#   },
 #   "podling": {
 #     ...
 #     "airflow": {
@@ -75,23 +87,36 @@ require_relative 'public_json_common'
 # ASF::SVN.updateSimple(incubatorContent);
 # ASF::SVN.updateSimple(incubatorPodlings);
 
-pods = Hash[ASF::Podling.list.map {|podling| [podling.name, podling.status]}]
+pods = ASF::Podling.list.map {|podling| [podling.name, podling.status]}.to_h
 
-mtime =  ASF::Podling.mtime # must be after call to list()
+mtime = ASF::Podling.mtime # must be after call to list()
+
+status_counts = Hash.new(0)
+pods.each do |_, v|
+  status_counts[v] += 1
+end
 
 public_json_output(
- last_updated: mtime,
- podling: pods
+  last_updated: mtime,
+  podling_count: pods.size,
+  status_counts: status_counts.sort.to_h,
+  podling: pods
 )
 
 if ARGV.length == 2
-  podh = Hash[ASF::Podling.list.map {|podling| [podling.name, podling.as_hash]}]
+  podh = ASF::Podling.list.map {|podling| [podling.name, podling.as_hash]}.to_h
   podh.each do |p| # drop empty aliases
     p[1].delete(:resourceAliases) if p[1][:resourceAliases].length == 0
     p[1].delete(:duration) # This changes every day ...
   end
+  status_counts = Hash.new(0)
+  podh.each do |_, v|
+    status_counts[v[:status]] += 1
+  end
   public_json_output_file({
     last_updated: mtime,
+    podling_count: podh.size,
+    status_counts: status_counts.sort.to_h,
     podling: podh
   }, ARGV[1])
 end
