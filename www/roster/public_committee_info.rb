@@ -38,6 +38,7 @@
 # If a second parameter is provided, also creates committee-retired info of the form:
 #{
 #  "last_updated": "2016-03-04 04:50:00 UTC",
+#  "retired_count": 123,
 #  "retired": {
 #    "abdera": {
 #      "display_name": "Abdera",
@@ -207,7 +208,8 @@ if ARGV.length >= 2
       end
     end
   end
-
+  
+  attic[:retired_count] = data.size
   attic[:retired] = data
 
   public_json_output(attic) # uses first ARGV entry
