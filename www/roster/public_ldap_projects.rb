@@ -21,11 +21,6 @@
 # }
 #
 
-# ##################################################################################################
-# TODO this is a preliminary version. Subject to change/removal.
-# The output format may change or may be dropped entirely - e.g. if it is merged into existing files
-# ##################################################################################################
-
 require_relative 'public_json_common'
 
 # gather project group info
@@ -39,44 +34,44 @@ if projects.empty?
 end
 
 # committee status
-committees = Hash[ASF::Committee.load_committee_info.map {|committee|
-  [ committee.name.gsub(/[^-\w]/,'') , committee ]
-}]
+committees = ASF::Committee.load_committee_info.map {|committee|
+  [committee.name.gsub(/[^-\w]/, ''), committee]
+}.to_h
 
 # podling status
-pods = Hash[ASF::Podling.list.map {|podling| [podling.name, podling.status]}]
+pods = ASF::Podling.list.map {|podling| [podling.name, podling.status]}.to_h
 
 lastStamp = ''
-projects.keys.sort_by {|a| a.name}.each do |entry|
-    next if entry.name == 'apldap' # infra team would prefer this not be publicized
+projects.keys.sort_by(&:name).each do |entry|
+  next if entry.name == 'apldap' # infra team would prefer this not be publicized
 
-    m = []
-    entry.members.sort_by {|a| a.name}.each do |e|
-        m << e.name
+  m = []
+  entry.members.sort_by(&:name).each do |e|
+    m << e.name
+  end
+  o = []
+  entry.owners.sort_by(&:name).each do |e|
+    o << e.name
+  end
+  lastStamp = entry.modifyTimestamp if entry.modifyTimestamp > lastStamp
+  entries[entry.name] = {
+    createTimestamp: entry.createTimestamp,
+    modifyTimestamp: entry.modifyTimestamp,
+    members: m,
+    owners: o
+  }
+  committee = committees[entry.name]
+  if committee
+    if committee.pmc?
+      entries[entry.name][:pmc]=true
+    elsif ASF::Project.find(committee.name).dn
+      entries[entry.name][:officer]=committee.chair.id
     end
-    o = []
-    entry.owners.sort_by {|a| a.name}.each do |e|
-        o << e.name
-    end
-    lastStamp = entry.modifyTimestamp if entry.modifyTimestamp > lastStamp
-    entries[entry.name] = {
-        createTimestamp: entry.createTimestamp,
-        modifyTimestamp: entry.modifyTimestamp,
-        members: m,
-        owners: o
-    }
-    committee = committees[entry.name]
-    if committee
-        if committee.pmc?
-            entries[entry.name][:pmc]=true
-        elsif ASF::Project.find(committee.name).dn
-            entries[entry.name][:officer]=committee.chair.id
-        end
-    end
-    pod = pods[entry.name]
-    if pod
-        entries[entry.name][:podling]=pod
-    end
+  end
+  pod = pods[entry.name]
+  if pod
+    entries[entry.name][:podling]=pod
+  end
 end
 
 info = {
