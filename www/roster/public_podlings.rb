@@ -47,7 +47,7 @@
 #       "resource": "airflow",
 #       "status": "current",
 #       "startdate": "2016-03-31",
-#       "description": "Airflow is a workflow automation and scheduling system that can be used to author and manage data pipelines.",
+#       "description": "Airflow is a workflow automation and scheduling system.",
 #       "mentors": [
 #         "cnauroth",
 #         "hitesh",

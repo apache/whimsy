@@ -35,10 +35,10 @@ data = {}
 # which lists are currently active
 active_lists = Set.new
 ASF::MLIST.each_list do |dom, list|
-  active_lists << [dom,list]
+  active_lists << [dom, list]
 end
 
-PonyAPI.get_pony_lists(nil,nil,true).each do |dom, lists|
+PonyAPI.get_pony_lists(nil, nil, true).each do |dom, lists|
   data[dom] = {}
   lists.keys.sort.each do |list|
     data[dom][list] = active_lists.include? [dom, list]

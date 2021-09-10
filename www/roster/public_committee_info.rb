@@ -50,7 +50,7 @@ committees = ASF::Committee.load_committee_info
 # reformat the data
 info = {last_updated: ASF::Committee.svn_change}
 
-info[:committees] = Hash[committees.map {|committee|
+info[:committees] = committees.map {|committee|
   schedule = committee.schedule.to_s.split(/,\s*/)
   schedule.unshift committee.report if committee.report != committee.schedule
   data = {
@@ -62,29 +62,27 @@ info[:committees] = Hash[committees.map {|committee|
     report: schedule,
     # Convert {:name=>"Public Name", :id=>"availid"} to
     # "chair": { "availid": { "name": "Public Name" } }
-    chair: Hash[committee.chairs.map {|chair|
-      [chair[:id], {:name => chair[:name]} ]}],
+    chair: committee.chairs.map {|chair| [chair[:id], {:name => chair[:name]}]}.to_h,
     roster: committee.roster.sort.to_h, # sort entries by uid
     pmc: committee.pmc?
   }
   data[:paragraph] = committee.paragraph if committee.paragraph
-  [committee.name.gsub(/[^-\w]/,''), data]
-}]
+  [committee.name.gsub(/[^-\w]/, ''), data]
+}.to_h
 
-info[:officers] = Hash[
+info[:officers] =
   ASF::Committee.officers.map { |officer|
-    [officer.name.gsub(/[^-\w]/,''),
+    [officer.name.gsub(/[^-\w]/, ''),
       {
         display_name: officer.display_name,
         paragraph: officer.paragraph, # will always be present
-        roster: Hash[ officer.chairs.map {|e| [e[:id], {:name => e[:name]}]}]
+        roster: officer.chairs.map {|e| [e[:id], {:name => e[:name]}]}.to_h
       }
     ]
-  }
-]
+  }.to_h
 
 info[:board] = {
-  roster: ASF::Board::directors(true)
+  roster: ASF::Board.directors(true)
 }
 
 public_json_output(info)
@@ -94,7 +92,7 @@ public_json_output(info)
 if changed? and @old_file
   # Note: symbolize_names=false to avoid symbolising variable keys such as pmc and user names
   # However the current JSON (info) uses symbols for fixed keys - beware!
-  previous = JSON.parse(@old_file, :symbolize_names=>false)
+  previous = JSON.parse(@old_file, :symbolize_names => false)
   previous = previous['committees']
   last_updated = info[:last_updated] # This is a Time instance
   # the joining date should normally be the same as the date when the file was updated:
@@ -105,23 +103,23 @@ if changed? and @old_file
   # For now, just assume that this is done every 15 mins. This may cause spurious reports
   # if the checks are ever suspended for longer and meanwhile changes occur.
   # Note: for those in an earlier timezone the date could be a few hours earlier
-  updated_day2 = (last_updated-3600*4).strftime("%Y-%m-%d") # day of previous update
+  updated_day2 = (last_updated - 3600 * 4).strftime("%Y-%m-%d") # day of previous update
 
   # for validating UIDs
   uids = ASF::Person.list().map(&:id)
 
   info[:committees].each { |pmc, entry|
     next if pmc == 'infrastructure' # no dates
-    Wunderbar.warn "#{pmc}: no description found" if entry[:pmc] && ! entry[:description]
+    Wunderbar.warn "#{pmc}: no description found" if entry[:pmc] && !entry[:description]
     previouspmc = previous[pmc] # get the original details (if any)
     if previouspmc # we have an existing entry
       entry[:roster].each { |name, value|
         newdate = value[:date]
-        if newdate == nil
+        if newdate.nil?
           Wunderbar.warn "Un-dated member for #{pmc}: #{name} #{value[:name]} #{newdate}"
           next
         end
-        if !previouspmc['roster'][name] # new name, check the date is OK
+        if previouspmc['roster'][name].nil? # new name, check the date is OK
           if newdate <= updated_day1 and newdate >= updated_day2 # in range
             Wunderbar.info "New member for #{pmc}: #{name} #{value[:name]} #{newdate}"
           elsif newdate > updated_day1
@@ -140,13 +138,13 @@ if changed? and @old_file
       Wunderbar.info "New PMC detected: #{pmc}"
       # Could check that the joining dates are all the same?
     end
-    entry[:roster].each { |id,value|
+    entry[:roster].each { |id, _|
       Wunderbar.warn "#{pmc}: unknown uid '#{id}'" unless uids.include?(id)
     }
   }
 
-  previous.each { |pmc, entry|
-    if !info[:committees][pmc]
+  previous.each { |pmc, _|
+    unless info[:committees][pmc]
       Wunderbar.info "Deleted PMC detected: #{pmc}"
     end
   }
@@ -157,23 +155,23 @@ end
 if ARGV.length >= 2
   ARGV.shift # we have already used this
   require 'whimsy/asf/mlist'
-  
+
   metadata = ASF::Committee.load_committee_metadata[:tlps]
 
-  public_lists = Hash.new {|h,k| h[k]=Array.new}
+  public_lists = Hash.new {|h, k| h[k] = Array.new}
   begin
     ASF::MLIST.list_types(true) do |dom, list, _|
       public_lists[dom.sub(/\.apache\.org$/, '')] << list
     end
-  rescue => e
+  rescue StandardError => e
     Wunderbar.error e.inspect
   end
 
   # reformat the data
   attic = {last_updated: ASF::Committee.meta_change}
-  
+
   data = {}
-  
+
   active = info[:committees].keys
 
   metadata.each do |key, value|
@@ -197,6 +195,6 @@ if ARGV.length >= 2
   end
 
   attic[:retired] = data
-  
+
   public_json_output(attic) # uses first ARGV entry
 end

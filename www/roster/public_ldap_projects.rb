@@ -78,14 +78,14 @@ projects.keys.sort_by(&:name).each do |entry|
   committee = committees[entry.name]
   if committee
     if committee.pmc?
-      entries[entry.name][:pmc]=true
+      entries[entry.name][:pmc] = true
     elsif ASF::Project.find(committee.name).dn
-      entries[entry.name][:officer]=committee.chair.id
+      entries[entry.name][:officer] = committee.chair.id
     end
   end
   pod = pods[entry.name]
   if pod
-    entries[entry.name][:podling]=pod
+    entries[entry.name][:podling] = pod
   end
 end
 

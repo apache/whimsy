@@ -22,7 +22,7 @@
 
 require_relative 'public_json_common'
 
-pods = Hash[ASF::Podling.list.map {|podling| [podling.name, podling.status]}]
+pods = ASF::Podling.list.map {|podling| [podling.name, podling.status]}.to_h
 
 groups = {}
 

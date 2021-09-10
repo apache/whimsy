@@ -37,8 +37,8 @@ info = {
     "Emeritus (Non-voting) Member": 0
 }
 
-info[:members] = Array.new
-info[:ex_members] = Hash.new
+info[:members] = []
+info[:ex_members] = {}
 
 ex_members = Hash.new(0) # count of ex_member statuses
 
