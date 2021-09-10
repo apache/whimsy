@@ -10,9 +10,15 @@
 #
 # {
 #   "lastTimestamp": "20160119171152Z", // most recent modifyTimestamp
+#   "group_count": 123,
+#   "roster_counts": {
+#     "name": 1,
+#     ///
+#   },
 #   "groups": {
 #     "abdera": {
 #       "modifyTimestamp": "20111204095436Z",
+#       "roster_count": 123,
 #       "roster": ["uid",
 #       ...
 #       ]
@@ -62,17 +68,18 @@ lastStamp = ''
 
 # Add the non-project entries from the groups
 ALREADY = projects.keys.map(&:name)
-groups.select{|g| EXTRAS.include? g.name}.each do |group,data|
+groups.select {|g| EXTRAS.include? g.name}.each do |group, data|
   next if ALREADY.include?(group.name)
   project = MyProject.new
   project.name = group.name
   project.createTimestamp = group.createTimestamp
   project.modifyTimestamp = group.modifyTimestamp
-  project.members = group.members.map{|p| MyPerson.new(p.name)}
+  project.members = group.members.map {|p| MyPerson.new(p.name)}
   project.owners = []
   projects[project] = []
 end
 
+roster_counts = Hash.new(0)
 projects.keys.sort_by(&:name).each do |project|
   next unless WANTED.include? project.name
   m = []
@@ -85,13 +92,17 @@ projects.keys.sort_by(&:name).each do |project|
   entries[project.name] = {
     createTimestamp: createTimestamp,
     modifyTimestamp: modifyTimestamp,
+    roster_count: m.size,
     roster: m
   }
+  roster_counts[project.name] = m.size
 end
 
 info = {
   # Is there a use case for the last createTimestamp ?
   lastTimestamp: lastStamp,
+  group_count: entries.size,
+  roster_counts: roster_counts,
   groups: entries,
 }
 
