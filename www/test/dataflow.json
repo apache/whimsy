@@ -87,7 +87,7 @@
     ]
   },
   "https://whimsy.apache.org/public/public_ldap_projects.json": {
-    "description": "Details of PMCs and Podlings. The 'owners' list holds the ids with (P)PMC karma, and the 'members' list holds the ids with (P)PMC committer karma. (Currently being introduced; will eventually replace public_ldap_groups and public_ldap_committees)",
+    "description": "Details of PMCs and Podlings. The 'owners' list holds the ids with (P)PMC karma, and the 'members' list holds the ids with (P)PMC committer karma.",
     "format": "hash of hashes['projects']...",
     "maintainer": "/www/roster/public_ldap_projects.rb",
     "sources": [
