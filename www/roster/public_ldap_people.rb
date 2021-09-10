@@ -1,6 +1,8 @@
 # Creates JSON output with the following format:
 #
 # {
+#   "lastCreateTimestamp": "20210908200129Z",
+#   "people_count": 1234,
 #   "people": {
 #     "uid": {
 #       "name": "Public Name",
@@ -35,12 +37,12 @@ def makeEntry(hash, e)
     hash[e.id][:noLogin] = true
   else
     # Don't publish urls for banned logins
-    if not e.urls.empty?
+    unless e.urls.empty?
       # need to sort to avoid random changes which seem to occur for urls
       hash[e.id][:urls] = e.urls.sort
     end
     # only add entry if there is a fingerprint
-    if not e.pgp_key_fingerprints.empty?
+    unless e.pgp_key_fingerprints.empty?
       # need to sort to avoid random changes which seem to occur for fingerprints
       hash[e.id][:key_fingerprints] = e.pgp_key_fingerprints.sort
     end
@@ -50,15 +52,15 @@ end
 lastmodifyTimestamp = ''
 lastcreateTimestamp = ''
 
-peeps.sort_by {|a| a.name}.each do |e|
+peeps.sort_by(&:name).each do |e|
   next if e.id == 'apldaptest' # not a valid person
   makeEntry(peo, e)
   createTimestamp = e.createTimestamp
-  if (createTimestamp > lastcreateTimestamp)
+  if createTimestamp > lastcreateTimestamp
     lastcreateTimestamp = createTimestamp
   end
   modifyTimestamp = e.modifyTimestamp
-  if (modifyTimestamp > lastmodifyTimestamp)
+  if modifyTimestamp > lastmodifyTimestamp
     lastmodifyTimestamp = modifyTimestamp
   end
 end
@@ -68,6 +70,7 @@ info = {
 #  This field has been disabled because it changes much more frequently than expected
 #  This means that the file is flagged as having changed even when no other content has
 #  lastTimestamp: lastmodifyTimestamp, # other public json files use this name
+  people_count: peo.size,
   people: peo,
 }
 
