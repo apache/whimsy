@@ -1,6 +1,11 @@
 #{
 # Creates JSON output from committee-info.txt with the following format:
 #  "last_updated": "2016-03-04 04:50:00 UTC",
+#  "committee_count": 210,
+#  "roster_counts": {
+#    "accumulo": 40,
+#    ...
+#  },
 #  "committees": {
 #    "abdera": {
 #      "display_name": "Abdera",
@@ -48,11 +53,17 @@ require 'whimsy/asf/board'
 committees = ASF::Committee.load_committee_info
 
 # reformat the data
-info = {last_updated: ASF::Committee.svn_change}
+info = {
+  last_updated: ASF::Committee.svn_change,
+  committee_count: committees.size,
+  roster_counts: nil
+}
 
+roster_counts = {}
 info[:committees] = committees.map {|committee|
   schedule = committee.schedule.to_s.split(/,\s*/)
   schedule.unshift committee.report if committee.report != committee.schedule
+  cname = committee.name.gsub(/[^-\w]/, '')
   data = {
     display_name: committee.display_name,
     site: committee.site,
@@ -63,12 +74,15 @@ info[:committees] = committees.map {|committee|
     # Convert {:name=>"Public Name", :id=>"availid"} to
     # "chair": { "availid": { "name": "Public Name" } }
     chair: committee.chairs.map {|chair| [chair[:id], {:name => chair[:name]}]}.to_h,
+    roster_count: committee.roster.size,
     roster: committee.roster.sort.to_h, # sort entries by uid
     pmc: committee.pmc?
   }
+  roster_counts[cname] = committee.roster.size
   data[:paragraph] = committee.paragraph if committee.paragraph
-  [committee.name.gsub(/[^-\w]/, ''), data]
+  [cname, data]
 }.to_h
+info[:roster_counts] = roster_counts
 
 info[:officers] =
   ASF::Committee.officers.map { |officer|
