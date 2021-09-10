@@ -3,6 +3,7 @@
 #
 # {
 # "lastTimestamp": "20160807004722Z",
+# "auth_count": 123,
 # "roster_counts": {
 #   "accounting": 3,
 #   "apachecon": 34,
@@ -60,6 +61,7 @@ info = {
   # Is there a use case for the last createTimestamp ?
   lastTimestamp: lastStamp,
   # Summarise the counts in the following entries for ease of access
+  auth_count: entries.size,
   roster_counts: roster_counts,
   auth: entries,
 }
