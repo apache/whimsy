@@ -2,6 +2,12 @@
 #
 # {
 #   "lastTimestamp": "20160119171152Z", // most recent modifyTimestamp
+#   "rolegroup_count": 1,
+#     "roster_counts": {
+#        "committers": 1234,
+#        ...
+#      },
+#   },
 #   "rolegroups": {
 #     "committers": {
 #       "modifyTimestamp": "20111204095436Z",
@@ -28,6 +34,7 @@ if groups.empty?
 end
 
 lastStamp = ''
+roster_counts = Hash.new(0)
 groups.keys.sort_by(&:name).each do |entry|
   next if entry.name == 'apldap' # infra team would prefer this not be publicized
 
@@ -42,11 +49,14 @@ groups.keys.sort_by(&:name).each do |entry|
     roster_count: m.size,
     roster: m
   }
+  roster_counts[entry.name] = m.size
 end
 
 info = {
   # Is there a use case for the last createTimestamp ?
   lastTimestamp: lastStamp,
+  rolegroup_count: entries.size,
+  roster_counts: roster_counts,
   rolegroups: entries,
 }
 
