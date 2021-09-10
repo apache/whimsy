@@ -3,10 +3,16 @@
 #
 # {
 # "lastTimestamp": "20160807004722Z",
+# "roster_counts": {
+#   "accounting": 3,
+#   "apachecon": 34,
+#    ...
+# }
 # "auth": {
 #   "accounting": {
 #     "createTimestamp": "20160802141719Z",
 #     "modifyTimestamp": "20160806162424Z",
+#     "roster_count": 123,
 #     "roster": [
 #     ...
 #     ]
@@ -14,6 +20,7 @@
 #   "apachecon": {
 #     "createTimestamp": "20160802141719Z",
 #     "modifyTimestamp": "20160802141719Z",
+#     "roster_count": 123,
 #     "roster": [
 #     ...
 #   },
@@ -33,6 +40,7 @@ if groups.empty?
 end
 
 lastStamp = ''
+roster_counts = Hash.new(0)
 groups.keys.sort_by(&:name).each do |entry|
   m = []
   entry.members.sort_by(&:name).each do |e|
@@ -42,13 +50,17 @@ groups.keys.sort_by(&:name).each do |entry|
   entries[entry.name] = {
     createTimestamp: entry.createTimestamp,
     modifyTimestamp: entry.modifyTimestamp,
+    roster_count: m.size,
     roster: m
   }
+  roster_counts[entry.name] = m.size
 end
 
 info = {
   # Is there a use case for the last createTimestamp ?
   lastTimestamp: lastStamp,
+  # Summarise the counts in the following entries for ease of access
+  roster_counts: roster_counts,
   auth: entries,
 }
 
