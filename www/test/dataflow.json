@@ -39,7 +39,7 @@
     ]
   },
   "https://whimsy.apache.org/public/member-info.json": {
-    "description": "ASF Member name listing",
+    "description": "ASF Member id listing",
     "format": "hash of arrays['members'][0] = 'aadamchik' and hash['ex_members']['dion'] = 'Deceased Member (RIP)'",
     "maintainer": "/www/roster/public_member_info.rb",
     "sources": [
@@ -94,6 +94,14 @@
       "/lib/whimsy/asf/ldap.rb"
     ]
   },
+  "https://whimsy.apache.org/public/public_ldap_roles.json": {
+    "description": "Membership of LDAP role groups. For example committers shows the list of people with committer karma",
+    "format": "hash of hashes['rolegroups']['committers']['roster'][n] = 'brett'",
+    "maintainer": "/www/roster/public_ldap_roles.rb",
+    "sources": [
+      "/lib/whimsy/asf/ldap.rb"
+    ]
+  },
   "https://whimsy.apache.org/public/public_ldap_services.json": {
     "description": "Membership of LDAP service groups. For example pmc_chairs shows the list of people with PMC chair karma",
     "format": "hash of hashes['services']['board']['roster'][1] = 'brett'",
@@ -103,7 +111,7 @@
     ]
   },
   "https://whimsy.apache.org/public/public_nonldap_groups.json": {
-    "description": "Membership of auth groups not defined in LDAP. For example, Incubator podlings. (Podlings are being moved to public_ldap_projects.json, this file is likely to become obsolete)",
+    "description": "Membership of auth groups not defined in LDAP. (this file is likely to become obsolete)",
     "format": "hash of hashes['groups']['blur']['roster'][0] = 'dblevins'",
     "maintainer": "/www/roster/public_nonldap_groups.rb",
     "sources": [
