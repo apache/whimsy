@@ -37,6 +37,7 @@ end
 
 class MyPerson
   attr_accessor :name
+
   def initialize(name)
     @name=name
   end
@@ -72,20 +73,20 @@ groups.select{|g| EXTRAS.include? g.name}.each do |group,data|
   projects[project] = []
 end
 
-projects.keys.sort_by {|a| a.name}.each do |project|
-    next unless WANTED.include? project.name
-    m = []
-    createTimestamp = project.createTimestamp
-    modifyTimestamp = project.modifyTimestamp
-    project.members.sort_by {|a| a.name}.each do |e|
-        m << e.name
-    end
-    lastStamp = modifyTimestamp if modifyTimestamp > lastStamp
-    entries[project.name] = {
-        createTimestamp: createTimestamp,
-        modifyTimestamp: modifyTimestamp,
-        roster: m
-    }
+projects.keys.sort_by(&:name).each do |project|
+  next unless WANTED.include? project.name
+  m = []
+  createTimestamp = project.createTimestamp
+  modifyTimestamp = project.modifyTimestamp
+  project.members.sort_by(&:name).each do |e|
+    m << e.name
+  end
+  lastStamp = modifyTimestamp if modifyTimestamp > lastStamp
+  entries[project.name] = {
+    createTimestamp: createTimestamp,
+    modifyTimestamp: modifyTimestamp,
+    roster: m
+  }
 end
 
 info = {
