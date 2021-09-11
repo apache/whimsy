@@ -208,7 +208,7 @@ if ARGV.length >= 2
       end
     end
   end
-  
+
   attic[:retired_count] = data.size
   attic[:retired] = data
 
