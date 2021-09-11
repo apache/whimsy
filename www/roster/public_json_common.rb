@@ -17,9 +17,9 @@ require 'wunderbar'
 Wunderbar.log_level = 'info' unless Wunderbar.logger.info? # try not to override CLI flags
 
 # Add datestamp to log messages (progname is not needed as each prog has its own logfile)
-Wunderbar.logger.formatter = proc { |severity, datetime, progname, msg|
-      "_#{severity} #{datetime} #{msg}\n"
-    }
+Wunderbar.logger.formatter = proc { |severity, datetime, _progname, msg|
+  "_#{severity} #{datetime} #{msg}\n"
+}
 
 # Allow diff output to be suppressed
 @noDiff = ARGV.delete '--nodiff'
@@ -102,7 +102,7 @@ def sendMail(subject, body, to='Notification List <notifications@whimsical.apach
     mail.message_id = "<#{Mail.random_tag}@#{::Socket.gethostname}.apache.org>"
     # deliver mail
     mail.deliver!
-  rescue => e
+  rescue StandardError => e
     Wunderbar.warn "sendMail [#{subject}] failed with exception: #{e}"
   end
 end
@@ -116,7 +116,8 @@ end
 # Write formatted output to specific file
 def write_output(file, results)
 
-  if not File.exist?(file) or (@old_file=File.read(file).chomp; removeTimestamps(@old_file)) != removeTimestamps(results)
+  if not File.exist?(file) or
+    (@old_file = File.read(file).chomp; removeTimestamps(@old_file)) != removeTimestamps(results)
 
     Wunderbar.info "git_info: #{GITINFO} - creating/updating #{file}"
 
@@ -132,7 +133,7 @@ def write_output(file, results)
     # so first check for file present, but also fail gracefully if there is a further issue
     # (if the diff fails we don't want to lose the output entirely)
 
-    if File.exist?(file) and ! @noDiff
+    if File.exist?(file) and !@noDiff
       begin
         out, err, rc = Open3.capture3('diff', '-u', file, '-',
           stdin_data: results + "\n")
@@ -146,7 +147,7 @@ def write_output(file, results)
           end
           sendMail("Difference(s) in #{file}", body)
         end
-      rescue => e
+      rescue StandardError => e
         Wunderbar.warn "Got exception #{e}"
       end
     end
@@ -174,14 +175,14 @@ if __FILE__ == $0
   begin
     warn('Expecting create/update')
     public_json_output_file(info, path)
-    warn('expecting new',@changed)
+    warn('expecting new', @changed)
     info = {a: 1}
     public_json_output_file(info, path)
-    warn('expecting changed',@changed)
+    warn('expecting changed', @changed)
     public_json_output_file(info, path)
-    warn('expecting unchanged',@changed)
+    warn('expecting unchanged', @changed)
   ensure
-     file.close
-     file.unlink   # deletes the temp file
+    file.close
+    file.unlink   # deletes the temp file
   end
 end
