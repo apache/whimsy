@@ -34,6 +34,17 @@
 
 require_relative 'public_json_common'
 
+# Simple class to squash count output
+class Counts
+  def initialize(hash)
+    @hash = hash
+  end
+
+  def to_json(*_opts)
+    @hash.to_json()
+  end
+end
+
 # gather project group info
 entries = {}
 
@@ -74,7 +85,7 @@ projects.keys.sort_by(&:name).each do |entry|
     members: m,
     owners: o
   }
-  roster_counts[entry.name] = {members: m.size, owners: o.size}
+  roster_counts[entry.name] = Counts.new({members: m.size, owners: o.size})
   committee = committees[entry.name]
   if committee
     if committee.pmc?
