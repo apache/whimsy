@@ -1,8 +1,7 @@
-# Reads LDAP ou=projects and extracts member rosters for PMCs
-# (PMC status comes from committee-info.txt)
-#
-# Also reads LDAP ou=groups,dc=apache,dc=org to extract some non-PMCs
-# This is to maintain compatibility with earlier output
+# Reads LDAP ou=groups,dc=apache,dc=org which is still used for some groups:
+# - apsite
+# - committers (this is also in ou=roles)
+# - members
 #
 # The contents cannot be used to determine LDAP group membership
 #
@@ -12,11 +11,11 @@
 #   "lastTimestamp": "20160119171152Z", // most recent modifyTimestamp
 #   "group_count": 123,
 #   "roster_counts": {
-#     "name": 1,
+#     "apsite": 123,
 #     ///
 #   },
 #   "groups": {
-#     "abdera": {
+#     "apsite": {
 #       "modifyTimestamp": "20111204095436Z",
 #       "roster_count": 123,
 #       "roster": ["uid",
@@ -32,70 +31,25 @@ require_relative 'public_json_common'
 
 entries = {}
 
-# Dummy classes as Project class seems to be awkward to create easily
-class MyProject
-  attr_accessor :modifyTimestamp
-  attr_accessor :createTimestamp
-  attr_accessor :name
-  attr_accessor :members
-  attr_accessor :owners
-end
-
-class MyPerson
-  attr_accessor :name
-
-  def initialize(name)
-    @name=name
-  end
-end
-
 groups = ASF::Group.preload # for performance
-projects = ASF::Project.preload
-
-# Not projects but in original output
-# TODO do we want them all?
-# These will be extracted from groups if not in projects
-EXTRAS = %w(apsite committers member concom infra security)
-
-# These are the ones that will be generated
-WANTED = ASF::Committee.pmcs.map(&:name) + EXTRAS
-
-if projects.empty?
-  Wunderbar.error "No results retrieved, output not created"
-  exit 0
-end
 lastStamp = ''
 
-# Add the non-project entries from the groups
-ALREADY = projects.keys.map(&:name)
-groups.select {|g| EXTRAS.include? g.name}.each do |group, data|
-  next if ALREADY.include?(group.name)
-  project = MyProject.new
-  project.name = group.name
-  project.createTimestamp = group.createTimestamp
-  project.modifyTimestamp = group.modifyTimestamp
-  project.members = group.members.map {|p| MyPerson.new(p.name)}
-  project.owners = []
-  projects[project] = []
-end
-
 roster_counts = Hash.new(0)
-projects.keys.sort_by(&:name).each do |project|
-  next unless WANTED.include? project.name
+groups.sort_by {|g, _| g.name}.each do |group, _|
   m = []
-  createTimestamp = project.createTimestamp
-  modifyTimestamp = project.modifyTimestamp
-  project.members.sort_by(&:name).each do |e|
+  createTimestamp = group.createTimestamp
+  modifyTimestamp = group.modifyTimestamp
+  group.members.sort_by(&:name).each do |e|
     m << e.name
   end
   lastStamp = modifyTimestamp if modifyTimestamp > lastStamp
-  entries[project.name] = {
+  entries[group.name] = {
     createTimestamp: createTimestamp,
     modifyTimestamp: modifyTimestamp,
     roster_count: m.size,
     roster: m
   }
-  roster_counts[project.name] = m.size
+  roster_counts[group.name] = m.size
 end
 
 info = {
