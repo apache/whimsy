@@ -249,7 +249,7 @@ def check_hash_loc(h, tlp)
 end
 
 # get the https? links as Array of [href, text]
-def get_links(body, checkSpaces=false)
+def get_links(path, body, checkSpaces=false)
   doc = Nokogiri::HTML(body)
   nodeset = doc.css('a[href]')    # Get anchors w href attribute via css
   nodeset.map { |node|
@@ -257,6 +257,9 @@ def get_links(body, checkSpaces=false)
     href = tmp.strip
     if checkSpaces && tmp != href
       W "Spurious space(s) in '#{tmp}'"
+    end
+    if href =~ %r{^?Preferred=https?://}
+      href = path + URI.decode_www_form_component(href)
     end
     text = node.text.gsub(/[[:space:]]+/, ' ').strip
     [href, text] unless href =~ %r{/httpcomponents.+/xdoc/downloads.xml} # breadcrumb link to source
@@ -388,7 +391,7 @@ def _checkDownloadPage(path, tlp, version)
 
   deprecated = Time.parse('2018-01-01')
 
-  links = get_links(body, true)
+  links = get_links(path, body, true)
   if links.size < 6 # source+binary * archive+sig+hash
     E "Page does not have enough links: #{links.size} < 6 -- perhaps it needs JavaScript?"
   end
@@ -641,7 +644,7 @@ def _checkDownloadPage(path, tlp, version)
         else
           bdy = check_page(h, :E, false)
           if bdy
-            lks = get_links(bdy)
+            lks = get_links(path, bdy)
             lks.each do |l, _t|
               # Don't want to match archive server (closer.cgi defaults to it if file is not found)
               if l.end_with?(name) and l !~ %r{//archive\.apache\.org/}
