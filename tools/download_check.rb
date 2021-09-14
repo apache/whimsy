@@ -493,7 +493,7 @@ def _checkDownloadPage(path, tlp, version)
           stem = base[0..-(ext.size + 2)]
           # version must include '.', e.g. xxx-m.n.oyyy
 #                 Apache_OpenOffice-SDK_4.1.10_Linux_x86-64_install-deb_en-US
-          if stem =~ %r{^.+?[-_](\d+(?:\.\d+)+)(.*)$}
+          if stem =~ %r{^.+?[-_]v?(\d+(?:\.\d+)+)(.*)$}
             # $1 = version
             # $2 any suffix, e.g. -bin, -src (or other)
             ver = $1 # main version
@@ -505,7 +505,7 @@ def _checkDownloadPage(path, tlp, version)
             end
             $versions[ver][stem] << ext
           else
-            W "Cannot parse #{base} for version"
+            W "Cannot parse #{stem} for version"
           end
         end
       end
