@@ -499,8 +499,8 @@ def _checkDownloadPage(path, tlp, version)
             ver = $1 # main version
             suff = $2
             # does version have a suffix such as beta1, M3 etc?
-            # jmeter needs _ here
-            if suff =~ %r{^(-RC\d|-rc\d|-incubating|-ALPHA|[-.]?M\d+|[-~]?(alpha|beta)\d?(?:-\d)?)}
+            # jmeter needs _ here; brpc uses rc02
+            if suff =~ %r{^(-RC\d+|-rc\d+|-incubating|-ALPHA|[-.]?M\d+|[-~]?(alpha|beta)\d?(?:-\d)?)}
               ver += $1
             end
             $versions[ver][stem] << ext
