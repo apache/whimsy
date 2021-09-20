@@ -89,11 +89,11 @@ end
 # ...
 
 # Update the Calendar from SVN
-ASF::SVN.update ASF::SVN.svnpath!('site-board', 'calendar.mdtext' ), @message, env, _ do |_tmpdir, calendar|
+ASF::SVN.update ASF::SVN.svnpath!('site-board', 'calendar.md' ), @message, env, _ do |_tmpdir, calendar|
   # add year header
   unless calendar.include? "# #{year} Board meeting minutes"
     calendar[/^()#.*Board meeting minutes #/,1] =
-      "# #{year} Board meeting minutes # {##{year}}\n\n"
+      "# #{year} Board meeting minutes {##{year}}\n\n"
   end
 
   # add summary
