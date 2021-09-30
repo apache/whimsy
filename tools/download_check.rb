@@ -227,6 +227,7 @@ def check_hash_loc(h, tlp)
   tlpQE = "(?:ooo|#{tlpQE})" if tlp == 'openoffice'
   tlpQE = "(?:lucene|#{tlpQE})" if tlp == 'solr' # temporary override
   tlpQE = "(?:tubemq|inlong)" if tlp == 'inlong' # renamed
+  tlpQE = "(?:hadoop/)?ozone" if tlp == 'ozone' # moved
   if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2 || '', $3, $4 # allow for no host before apache.org
