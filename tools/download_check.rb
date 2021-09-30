@@ -544,8 +544,8 @@ def _checkDownloadPage(path, tlp, version)
       tmp = text2ext(t)
       next if ext == tmp # i.e. link is just the type or [TYPE]
       next if ext == 'sha' and tmp == 'sha1' # historic
-      next if (ext == 'sha256' or ext == 'sha512') and (t == 'SHA' or t == 'digest') # generic
-      next if ext == 'mds' and tmp == 'hashes'
+      next if (ext == 'sha256' or ext == 'sha512') and (t == 'SHA' or t == 'digest' or t == 'Digest') # generic
+      next if ext == 'mds' and (tmp == 'hashes' or t == 'Digests')
       if base != t
         if t == 'Download' # MXNet
           W "Mismatch: #{h} and '#{t}'"
