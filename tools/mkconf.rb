@@ -16,7 +16,7 @@ else
 end
 
 conf.sub! 'VirtualHost *:443', 'VirtualHost *:80'
-conf.sub! 'ServerName whimsy.apache.org', 'ServerName whimsy.local'
+conf.sub! /ServerName whimsy(.*?)\.apache\.org/, 'ServerName whimsy.local'
 
 conf.gsub! 'ServerAlias', '## ServerAlias'
 
