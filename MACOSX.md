@@ -439,6 +439,12 @@ Copy whimsy vhost definition to your apache2 configuration:
 sudo cp /srv/whimsy/config/whimsy.conf /private/etc/apache2/other
 ```
 
+Note: if you reside outside North America you may wish to use the EU LDAP server
+by changing the references in the whimsy.conf file from
+ldaps://ldap-us-ro.apache.org:636/
+to
+ldaps://ldap-eu-ro.apache.org:636/
+
 Restart Apache httpd using `sudo apachectl restart`.
 
 Verify:
