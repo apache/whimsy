@@ -22,9 +22,9 @@ if attachment.end_with? '.pdf'
   # Extract the project and adjust if necessary
   project = parsed[:Project]
   if project
-    parsed [:PDFProject] = project.dup # retain the original value
-    project = project.downcase.sub('apache ','')
-    projects = (ASF::Podling.current+ASF::Committee.pmcs).map(&:name)
+    parsed[:PDFProject] = project.dup # retain the original value
+    project = project.downcase.sub('apache ', '')
+    projects = (ASF::Podling.current + ASF::Committee.pmcs).map(&:name)
     if projects.include? project
       parsed[:Project] = project
     else
