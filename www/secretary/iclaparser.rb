@@ -59,7 +59,7 @@ module ICLAParser
     end
 
     def set_text_font_and_size(*args)
-       @tfs=args
+      @tfs = args
     end
 
     def show_text(string)
@@ -69,23 +69,23 @@ module ICLAParser
     end
 
     def show_text_with_positioning(*args)
-        font = @fontdict[@tfs.first]
-        # args are Strings (in the current font encoding) interspersed with integer spacing adjustments; only want the strings
-        # We assume the positioning does not overlay characters so can be ignored
-        chars = []
-        args.flatten.each do |arg|
-          if arg.is_a?(String)
-            char = ICLAParser.string_to_utf8(arg, font)
-            chars << char
-          end
+      font = @fontdict[@tfs.first]
+      # args are Strings (in the current font encoding) interspersed with integer spacing adjustments; only want the strings
+      # We assume the positioning does not overlay characters so can be ignored
+      chars = []
+      args.flatten.each do |arg|
+        if arg.is_a?(String)
+          char = ICLAParser.string_to_utf8(arg, font)
+          chars << char
         end
-        val = chars.join("").strip
-        len = val.length
-        # some PDFs have the individual text in this format so skip long lines which are unlikely to be user data
-        # Could perhaps have full list of expected text lines instead.
-        unless len == 0 or len > 50 or SKIP.include? val
-          @texts << val
-        end
+      end
+      val = chars.join("").strip
+      len = val.length
+      # some PDFs have the individual text in this format so skip long lines which are unlikely to be user data
+      # Could perhaps have full list of expected text lines instead.
+      unless len == 0 or len > 50 or SKIP.include? val
+        @texts << val
+      end
     end
 
     def get_text
@@ -132,36 +132,36 @@ module ICLAParser
 
   # canonicalise the names found in the PDF
   def self.canon_field_name(pdfname)
-    NAME2FIELD[pdfname.gsub(' ','').downcase] || pdfname
+    NAME2FIELD[pdfname.gsub(' ', '').downcase] || pdfname
   end
 
   def self.encode(val)
-    if val.bytes[0..1] == [254,255]
-      val = val.encode('utf-8','utf-16').strip
+    if val.bytes[0..1] == [254, 255]
+      val = val.encode('utf-8', 'utf-16').strip
     else
       begin
         val = val.encode('utf-8').strip
       rescue Encoding::UndefinedConversionError
-        val = val.encode('utf-8','iso-8859-1').strip
+        val = val.encode('utf-8', 'iso-8859-1').strip
       end
     end
-    val.gsub("\x7F",'') # Not sure where these originate
+    val.gsub("\x7F", '') # Not sure where these originate
   end
 
   # parse the PDF
   def self.parse(path)
-    data=Hash.new
+    data = {}
     metadata = {}
     data[:_meta] = metadata
     metadata[:dataSource] = {} # have we found anything
     freetext = {} # gather the free text details
-    debug={}
+    debug = {}
     begin
       reader = PDF::Reader.new(path)
       %w(pdf_version info metadata page_count).each do |i|
         metadata[i] = reader.public_send(i)
       end
-      reader.objects.each do |k,v|
+      reader.objects.each do |_k, v|
         type = v[:Type] rescue nil
         subtype = v[:Subtype] rescue nil
 
@@ -176,7 +176,7 @@ module ICLAParser
               contents = v[:Contents]
               if contents and contents.length > 0 and contents != "\x14" # ignore "\x14" == ASCII DC4
                 # Entries may be duplicated, so use a hash to store them
-                id = rect.inspect+contents # if the rect and contents match, then they overwrite each other
+                id = rect.inspect + contents # if the rect and contents match, then they overwrite each other
                 freetext[id] = {Contents: contents.strip, x: rect[0], y: rect[1]}
                 metadata[:dataSource]['FreeText'] = true
               end
@@ -218,17 +218,17 @@ module ICLAParser
         # split into separate chunks if the difference in Y is more than a few points
         how_close = 3
         freetext.values. # no need for ids any more
-          sort_by{|e| -e[:y] }. # sort by Y desc
-          slice_when{|i,j| (i[:y]-j[:y]) > how_close}. # gather nearby Y values in case there are multiple entries on a line
+          sort_by {|e| -e[:y] }. # sort by Y desc
+          slice_when {|i, j| (i[:y] - j[:y]) > how_close}. # gather nearby Y values in case there are multiple entries on a line
           each do |k|
             data[:text] << k.
-              sort_by{|l| l[:x]}. # sort by X ascending
-              map{|v| v[:Contents]}.join(", ")
-        end
+            sort_by {|l| l[:x]}. # sort by X ascending
+            map {|v| v[:Contents]}.join(", ")
+          end
       end
       if metadata[:dataSource].size == 0 or ((data[:text].size rescue 0) <= 1 and data.size < 3) # No annotations found or not useful
         page1 = nil # cache for page 1
-        fontdict = Hash.new
+        fontdict = {}
         # Try looking for text sections instead
         receiver = Receiver.new(fontdict)
         reader.pages.each do |page|
@@ -256,7 +256,7 @@ module ICLAParser
               # split into headers
               form.slice_before(/^\s+.+:/).each do |lines|
                 # trim leading and trailing blanks and underscores and drop blank lines
-                line = lines.map{|l| l.sub(/^[ _]+/,'').sub(/[ _]+$/,'')}.select{|l| l.length > 0}.join(',')
+                line = lines.map {|l| l.sub(/^[ _]+/, '').sub(/[ _]+$/, '')}.select {|l| l.length > 0}.join(',')
                 case line
                   when /^\s*(?:\(optional\) )?(.+):\s+(.*)/
                     data[canon_field_name($1)] = $2 unless $2 == ',' or $2 == '' # empty line
@@ -270,7 +270,7 @@ module ICLAParser
         end
       end
     rescue Exception => e
-      data[:error]="Error processing #{path} => #{e.inspect} #{caller}"
+      data[:error] = "Error processing #{path} => #{e.inspect} #{caller}"
     end
 #    data[:debug] = debug
     # TODO attempt to classify data[:text] items?
