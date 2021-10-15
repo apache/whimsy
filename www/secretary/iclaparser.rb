@@ -192,7 +192,13 @@ module ICLAParser
                 debug[key] = v.inspect
                 val = encode(val)
                 if val.length > 0
-                  data[canon_field_name(key)] = val
+                  ckey = canon_field_name(key)
+                  if ckey == :FamilyFirst # convert the value to true/false
+                    # PDFs seem to use Yes and Off; also allow for On
+                    data[ckey] = %w(Yes On).include? val # default to false
+                  else
+                    data[ckey] = val
+                  end
                 end
                 metadata[:dataSource]['Form'] = true
               end
