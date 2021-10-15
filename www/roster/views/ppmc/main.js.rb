@@ -190,6 +190,16 @@ class PPMC < Vue
     _p do
       _ 'Please note: the information in this section is derived from Incubator data files.'
       _br
+      _ 'These include:'
+      _ul do
+        _li do
+          _a 'podlings.xml', href: 'https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings.xml'
+        end
+        _li do
+          _a 'Individual status files', href: 'https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings/'
+        end
+      end
+      _br
       _b 'If it is not accurate or complete, please work with the PPMC and mentors to update the files.'
     end
     _h3 'Information'
