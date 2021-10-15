@@ -69,6 +69,14 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y ldap-utils
 COPY config/whimsy.conf /etc/apache2/sites-enabled/000-default.conf
 COPY config/25-authz_ldap_group_membership.conf /etc/apache2/conf-enabled/25-authz_ldap_group_membership.conf
 
+# disable security check and telemetry
+RUN sed -i -e '$i  PassengerDisableSecurityUpdateCheck on' /etc/apache2/conf-enabled/passenger.conf
+RUN sed -i -e '$i  PassengerDisableAnonymousTelemetry on' /etc/apache2/conf-enabled/passenger.conf
+
+# Must use the same user and group as apache
+RUN sed -i -e '$i  PassengerUser www-data' /etc/apache2/conf-enabled/passenger.conf
+RUN sed -i -e '$i  PassengerGroup www-data' /etc/apache2/conf-enabled/passenger.conf
+
 WORKDIR /srv/whimsy
 EXPOSE 80
 
