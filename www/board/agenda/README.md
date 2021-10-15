@@ -151,8 +151,8 @@ Viewing Source (this time, Actual Code)
 ---
 
  * While you are unlikely to need to look at it, the agenda parsing logic
-   is in [agenda.rb](https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/lib/whimsy/asf/agenda.rb)
-   plus the [agenda](https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/lib/whimsy/asf/agenda)
+   is in [agenda.rb](https://github.com/apache/whimsy/blob/master/lib/whimsy/asf/agenda.rb)
+   plus the [agenda](https://github.com/apache/whimsy/tree/master/lib/whimsy/asf/agenda)
    subdirectory.
 
  * the [views/pages/index.js.rb](views/pages/index.js.rb) file contains the
