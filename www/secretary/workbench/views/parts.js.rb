@@ -165,13 +165,6 @@ class Parts < Vue
             spacer = "\u00A0"*4 # non-breaking space as UTF-8
             _label do
               _ spacer
-              _input type: 'checkbox', checked: @missing_phone,
-              onClick:-> {@missing_phone = !@missing_phone}
-              _span ' missing phone number'
-            end
-
-            _label do
-              _ spacer
               _input type: 'checkbox', checked: @missing_address,
               onClick:-> {@missing_address = !@missing_address}
               _span ' missing or partial postal address'
