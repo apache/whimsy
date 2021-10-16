@@ -23,7 +23,7 @@ class Index < Vue
       _table.table do
         _thead do
           _tr do
-            _th 'Timestamp'
+            _th 'Date'
             _th 'From'
             _th 'Subject'
           end
@@ -38,8 +38,6 @@ class Index < Vue
             color = 'hidden' if message.status == :deleted
             color = 'selected' if message.href == @selected
 
-            time = Date.new(Date.parse(message.time)).toLocaleString()
-
             row_options = {
               :class => color,
               on: {click: self.selectRow, doubleClick: self.nav}
@@ -48,9 +46,9 @@ class Index < Vue
             _tr row_options do
               _td do
                 if[:emeritusReady, :emeritusPending].include? message.status
-                  _a time, href: message.href, title: message.time, target: "_blank"
+                  _a message.date, href: message.href, title: message.time, target: "_blank"
                 else
-                  _a time, href: message.href, title: message.time
+                  _a message.date, href: message.href, title: message.time
                 end
               end
               _td message.from
