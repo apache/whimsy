@@ -12,7 +12,6 @@ class Parts < Vue
     @form = :categorize
     @menu = nil
     @project = nil
-    @missing_phone = false
     @missing_address = false
     @missing_email = false
   end
@@ -158,18 +157,10 @@ class Parts < Vue
               value: window.parent.location.pathname
             _input type: 'hidden', name: 'selected', value: @@selected
             _input type: 'hidden', name: 'signature', value: @@signature
-            _input type: 'hidden', name: 'missing_phone', value: @missing_phone
             _input type: 'hidden', name: 'missing_address', value: @missing_address
             _input type: 'hidden', name: 'missing_email', value: @missing_email
 
             spacer = "\u00A0"*4 # non-breaking space as UTF-8
-            _label do
-              _ spacer
-              _input type: 'checkbox', checked: @missing_phone,
-              onClick:-> {@missing_phone = !@missing_phone}
-              _span ' missing phone number'
-            end
-
             _label do
               _ spacer
               _input type: 'checkbox', checked: @missing_address,

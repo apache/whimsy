@@ -15,9 +15,8 @@ _extract_project
 task "email #{message.from}" do
   # build mail from template
   @email = message.from
-  @test2 = [@missing_phone, @missing_address]
+  @test2 = [@missing_address]
   missing_items = []
-  missing_items << '- missing phone number' if @missing_phone == 'true'
   missing_items << '- missing or incomplete postal address' if @missing_address == 'true'
   missing_items << '- missing email address' if @missing_email == 'true'
   missing_items << '' if missing_items.size > 0 # add separator
