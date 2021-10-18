@@ -55,7 +55,7 @@ module ICLAParser
     end
 
     def end_text_object
-      @lines << @textobj.join('')
+      @lines << @textobj.join
     end
 
     def set_text_font_and_size(*args)
@@ -64,7 +64,7 @@ module ICLAParser
 
     def show_text(string)
       font = @fontdict[@tfs.first]
-      utf8 = ICLAParser.string_to_utf8(string, font)
+      utf8 = string_to_utf8(string, font)
       @textobj << utf8
     end
 
@@ -75,11 +75,11 @@ module ICLAParser
       chars = []
       args.flatten.each do |arg|
         if arg.is_a?(String)
-          char = ICLAParser.string_to_utf8(arg, font)
+          char = string_to_utf8(arg, font)
           chars << char
         end
       end
-      val = chars.join("").strip
+      val = chars.join.strip
       len = val.length
       # some PDFs have the individual text in this format so skip long lines which are unlikely to be user data
       # Could perhaps have full list of expected text lines instead.
@@ -96,20 +96,20 @@ module ICLAParser
       @lines
     end
 
-  end
-
-  def self.string_to_utf8(string, font)
-    chars = []
-    glyphs = font.unpack(string)
-    glyphs.each do |glyph_code|
-      char = font.to_utf8(glyph_code)
-      # One pdf (yev) has spurious \t\r<sp>?<nbsp> translated from 36 => [9, 13, 32, 194, 160]
-      if glyph_code == 36 and char =~ /^\t\r /
-        char = ' '
+    def string_to_utf8(string, font)
+      chars = []
+      glyphs = font.unpack(string)
+      glyphs.each do |glyph_code|
+        char = font.to_utf8(glyph_code)
+        # One pdf (yev) has spurious \t\r<sp>?<nbsp> translated from 36 => [9, 13, 32, 194, 160]
+        if glyph_code == 36 and char =~ /^\t\r /
+          char = ' '
+        end
+        chars << char
       end
-      chars << char
+      chars.join
     end
-    chars.join('')
+
   end
 
   # Standard form field names for other code to use
