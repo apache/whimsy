@@ -122,6 +122,7 @@ module ICLAParser
     'postaladdress' => :MailingAddress,
     'postaladdress2' => :MailingAddress2,
     'country' => :Country,
+    'formattedfield1' => :Country, # fix up bad form name
     'telephone' => :Telephone,
     'e-mail' => :EMail,
     'preferredapacheid(s)' => :ApacheID,
