@@ -544,7 +544,7 @@ def _checkDownloadPage(path, tlp, version)
       tmp = text2ext(t)
       next if ext == tmp # i.e. link is just the type or [TYPE]
       next if ext == 'sha' and tmp == 'sha1' # historic
-      next if %w(sha256 md5 mds sha512 sha1).include?(ext) and %w(SHA digest Digest).include?(t) # generic
+      next if %w(sha256 md5 mds sha512 sha1).include?(ext) and %w(SHA digest Digest checksums).include?(t) # generic
       next if ext == 'mds' and (tmp == 'hashes' or t == 'Digests')
       if base != t
         if t == 'Download' # MXNet
