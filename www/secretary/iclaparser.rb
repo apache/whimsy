@@ -276,8 +276,8 @@ module ICLAParser
           end
         end
       end
-    rescue Exception => e
-      data[:error] = "Error processing #{path} => #{e.inspect} #{caller}"
+    rescue StandardError => e
+      data[:error] = "Error processing #{path} => #{e.inspect}\n#{e.backtrace.join("\n")}"
     end
 #    data[:debug] = debug
     # TODO attempt to classify data[:text] items?
