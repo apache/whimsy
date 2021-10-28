@@ -135,7 +135,7 @@ http = Net::HTTP.new(CALENDAR.host, CALENDAR.port)
 http.use_ssl = true
 http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 get = Net::HTTP::Get.new CALENDAR.request_uri
-$calendar = Nokogiri::HTML(http.request(get).body.gsub('&raquo','&#187;').gsub('&nbsp;','&#160;'))
+$calendar = Nokogiri::HTML(http.request(get).body.gsub('&raquo', '&#187;').gsub('&nbsp;', '&#160;'))
 
 # Link to headerlink css
 link = Nokogiri::XML::Node.new "link", $calendar
@@ -788,7 +788,7 @@ def layout(title = nil)
   # now add the content provided by the builder block
   content.at('body').children.each {|child| section.add_child child}
 
-  $calendar.to_xhtml
+  $calendar.to_html
 end
 
 Dir.entries(SITE_MINUTES).each do |p|
