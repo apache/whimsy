@@ -17,6 +17,7 @@ module ICLASKIP
   # compressed and deduplicated.
   SKIPS = <<'XYXYXY'
 
+  (no cc: to
   "Contribution" shall mean any original work of authorship,
   "Contribution" shall mean any original work of authorship, including any modifications or additions to an
   "Contribution" shall mean any original work of authorship, including any modifications or additions to an existing work, that is
@@ -143,6 +144,7 @@ module ICLASKIP
   ________________________________________________
   _________________________________________________
   ___________________________________________________________________________________
+  a pdf file of this Agreement only to
   a pdf file of this Agreement only to secretary@apache.org (no cc: to
   alleging that your Contribution, or the Work to which you have contributed, constitutes direct or contributory patent
   and email a pdf file of this Agreement to secretary@apache.org.
@@ -255,6 +257,7 @@ module ICLASKIP
   return, the Foundation shall not use Your Contributions in a way that
   return, the Foundation shall not use Your Contributions in a way that is contrary to the public benefit or inconsistent with its nonprofit
   right, title, and interest in and to Your Contributions.
+  secretary@apache.org
   secretary@apache.org only (do not copy any other persons or lists).
   secretary@apache.org. Alternatively, you may send it by facsimile to the Foundation at +1-919-573-9199. If
   secretary@apache.org. Please read this document carefully before signing and keep a copy for your records.
