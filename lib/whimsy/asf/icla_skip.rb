@@ -189,6 +189,7 @@ module ICLASKIP
   discussing and improving the Work, but excluding communication that
   discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise
   display, publicly perform, sublicense, and distribute Your Contributions and such derivative works.
+  only (do not copy any other persons or lists).
   entities that control, are controlled by, or are under common control with that entity are considered to be a
   entity institutes patent litigation against You or any other entity
   except to the extent You desire to provide support. You may provide
