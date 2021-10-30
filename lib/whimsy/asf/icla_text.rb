@@ -14,7 +14,7 @@ module ICLATEXT
     txt = compress(line)
     return :text if TEXT.include? txt
     # drop leading "*" and "(optional"
-    sqz = txt.sub(%{^\* *}, '').sub(%r{^ *\(optional\) *}, '').gsub(UNDER_MATCH, UNDER)
+    sqz = txt.sub(%r{^\* *}, '').sub(%r{^ *\(optional\) *}, '').gsub(UNDER_MATCH, UNDER)
     return FORMS[sqz] || :other
   end
 
@@ -128,6 +128,9 @@ module ICLATEXT
   Please complete and sign, then email a pdf file of this Agreement to
   Please read this document carefully before signing and keep a copy
   Please refer to https://s.apache.org/cla-privacy-policy for the policy
+  Please refer to
+  https://s.apache.org/cla-privacy-policy
+  for the policy
   Thank you for your interest in The Apache Software Foundation (the
   Thank you for your interest in The Apache Software Foundation (the "Foundation"). In order to clarify the
   Thank you for your interest in TheApache Software Foundation (the "Foundation"). In order to clarify the intellectual property license
