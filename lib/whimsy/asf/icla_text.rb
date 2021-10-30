@@ -1,21 +1,55 @@
-# standard text which can be dropped from parse output
+# Classify text extracted from ICLA
 
-module ICLASKIP
-  SKIP = Set.new
+module ICLATEXT
+  TEXT = Set.new
 
   def self.compress(str)
     str.strip.squeeze(' ')
   end
 
-  def self.skip?(line)
-    SKIP.include? compress(line)
+  UNDERCOUNT = 16
+  UNDER = '_' * UNDERCOUNT
+  UNDER_MATCH = %r{(_{#{UNDERCOUNT},})}
+  def self.type(line)
+    txt = compress(line)
+    return :text if TEXT.include? txt
+    # drop leading "*" and "(optional"
+    sqz = txt.sub(%{^\* *}, '').sub(%r{^ *\(optional\) *}, '').gsub(UNDER_MATCH, UNDER)
+    return FORMS[sqz] || :other
   end
+
+  # underlines have all been compressed to 16 char, as that was the shortest found
+  # Also dropped the following prefixes: "(optional)", "*"
+  FORMS = {
+    "Full name: ________________" => :FullName,
+    "Legal name: ________________" => :FullName,
+    "Public name: ________________" => :PublicName,
+    "Display name: ________________" => :PublicName,
+    "Mailing Address: ________________" => :MailingAddress,
+    "Postal Address: ________________" => :MailingAddress,
+    "PostalAddress: ________________" => :MailingAddress,
+    "Address: ________________" => :MailingAddress,
+    "________________" => :MailingAddress2,
+    "Country: ________________" => :Country,
+    "E-Mail: ________________" => :EMail,
+    "preferred Apache id(s): ________________" => :ApacheID,
+    "Preferred ApacheID: ________________" => :ApacheID,
+    "PreferredApacheID: ________________" => :ApacheID,
+    "Alternative ApacheID(s): ________________" => :ApacheID,
+    "AlternativeApacheID(s): ________________" => :ApacheID,
+    "notify project: ________________" => :Project,
+    "GitHub id(s): ________________" => :Github,
+    "Facsimile: ________________" => :Facsimile,
+    "Telephone: ________________" => :Telephone,
+    "Please sign: ________________ Date: ________________" => :Date,
+    "Please sign:________________ Date: ________________" => :Date,
+  }
 
   # Tried using __END__ text but the DATA pointer relates to the calling file.
   # The first line is deliberately blank
   # The lines below have been extracted from all icla.pdf versions since r1029599,
   # compressed and deduplicated.
-  SKIPS = <<'XYXYXY'
+  TEXTS = <<'XYXYXY'
 
   (no cc: to
   "Contribution" shall mean any original work of authorship,
@@ -35,19 +69,9 @@ module ICLASKIP
   (except as stated in this section) patent license to make, have
   (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the
   (including a cross-claim or counterclaim in a lawsuit) alleging
-  (optional) GitHub id(s): ________________________________________
-  (optional) Public name: _________________________________________
-  (optional) Public name: ______________________________________________
-  (optional) notify project: ______________________________________
-  (optional) preferred Apache id(s): ______________________________
-  * (optional) notify project: ______________________________________
-  * (optional) preferred Apache id(s): ______________________________
-  * E-Mail: ______________________________________________________
   * These fields will become part of your public profile.
   * if you do not enter a display name your legal name will be public
   * if you do not enter a public name your legal name will be public
-  *Display name: ____________________________________________________
-  *Public name: _____________________________________________________
   +1-919-573-9199. If necessary, send an original signed Agreement to
   1. Definitions.
   2. Grant of Copyright License. Subject to the terms and conditions of
@@ -72,10 +96,7 @@ module ICLASKIP
   8. You agree to notify the Foundation of any facts or circumstances of which you become aware that would make
   8. You agree to notify the Foundation of any facts or circumstances of which you become aware that would make these
   90084-9660, U.S.A. Please read this document carefully before signing and keep a copy for your records.
-  Address: ___________________________________________________________________________________
   Agreement with the Foundation. For legal entities, the entity making a Contribution and all other entities that control, are
-  Alternative ApacheID(s): ______________________________
-  AlternativeApacheID(s): ______________________________
   Alternatively, you may send it by facsimile to the Foundation at
   CA 90084-9660, U.S.A. Please read this document carefully before
   CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or
@@ -90,27 +111,16 @@ module ICLASKIP
   Contributions on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
   Contributions.
   Contributor License Agreement ("CLA") on file that has been signed by each Contributor, indicating agreement to
-  Country: ______________________________________________
-  Country: ________________________________________________
-  Country: _________________________________________________
-  Country: ___________________________________________________________________________________
-  E-Mail: ______________________________________________________
-  E-Mail: ___________________________________________________________________________________
-  Facsimile: ___________________________________________________________________________________
   Foundation and its users; it does not change your rights to use your own Contributions for any other purpose.
   Foundation and to recipients of software distributed by the Foundation a perpetual, worldwide, non-exclusive,
   Foundation.
-  Full name: ______________________________________________________
-  Full name: ___________________________________________________________________________________
   INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE.
   If you have not already done so, please complete and sign, then email
   If you have not already done so, please complete and sign, then scan
   If you have not already done so, please complete and sign, then scan and email a pdf file of this Agreement to
   Individual Contributor
-  Legal name: _____________________________________________________
   License Agreement
   MERCHANTABILITY, or FITNESS FORAPARTICULAR PURPOSE.
-  Mailing Address: ________________________________________________
   OF ANY KIND, either express or implied, including, without
   PURPOSE.
   Page 1 of 2
@@ -118,15 +128,6 @@ module ICLASKIP
   Please complete and sign, then email a pdf file of this Agreement to
   Please read this document carefully before signing and keep a copy
   Please refer to https://s.apache.org/cla-privacy-policy for the policy
-  Please sign: __________________________________ Date: ________________
-  Please sign:___________________________________________________ Date: ______________________
-  Postal Address: ________________________________________________
-  Postal Address: _________________________________________________
-  PostalAddress: ______________________________________________
-  Preferred ApacheID: ______________________________
-  PreferredApacheID: ______________________________
-  Telephone: ______________________________________________________
-  Telephone: ___________________________________________________________________________________
   Thank you for your interest in The Apache Software Foundation (the
   Thank you for your interest in The Apache Software Foundation (the "Foundation"). In order to clarify the
   Thank you for your interest in TheApache Software Foundation (the "Foundation"). In order to clarify the intellectual property license
@@ -140,10 +141,6 @@ module ICLASKIP
   You accept and agree to the following terms and conditions for Your present and future Contributions submitted to the Foundation. In
   You may submit it to the Foundation separately from any
   Your Contributions.
-  ______________________________________________
-  ________________________________________________
-  _________________________________________________
-  ___________________________________________________________________________________
   a pdf file of this Agreement only to
   a pdf file of this Agreement only to secretary@apache.org (no cc: to
   alleging that your Contribution, or the Work to which you have contributed, constitutes direct or contributory patent
@@ -297,8 +294,8 @@ module ICLASKIP
   your Contributions to the Foundation, or that your employer has executed a separate Corporate CLAwith the
 XYXYXY
 
-  SKIPS.each_line do |line|
-    SKIP.add compress line
+  TEXTS.each_line do |line|
+    TEXT.add compress line
   end
   # puts "Loaded #{SKIP.size} lines"
 end
