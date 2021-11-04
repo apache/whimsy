@@ -8,7 +8,9 @@ begin
   source = message.find(@source).as_pdf
   target = message.find(@target).as_pdf
 
-  output = SafeTempFile.new('output') # N.B. this is created as binary
+  # binary encoding was used by the SafeTempFile class, now removed
+  # It may no longer be necessary, but it probably does no harm
+  output = TempFile.new('output', encoding: Encoding::BINARY)
 
   Kernel.system 'pdfunite', target.path, source.path, output.path
 

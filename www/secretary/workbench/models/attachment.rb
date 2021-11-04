@@ -54,8 +54,8 @@ class Attachment
   # Warning: if the reference count goes to 0, the file may be deleted
   # so calling code must retain the reference until done.
   def as_file
-    file = SafeTempFile.new([safe_name, '.pdf'])
-    file.write(body) # SafeTempFile forces encoding: BINARY
+    file = TempFile.new([safe_name, '.pdf'], encoding: Encoding::BINARY)
+    file.write(body)
     file.rewind
     file
   end
@@ -64,14 +64,14 @@ class Attachment
     ext = File.extname(name).downcase
     ext = '.pdf' if content_type.end_with? '/pdf'
 
-    file = SafeTempFile.new([safe_name, ext])
-    file.write(body) # SafeTempFile forces encoding: BINARY
+    file = TempFile.new([safe_name, ext], encoding: Encoding::BINARY)
+    file.write(body)
     file.rewind
 
     return file if ext == '.pdf'
 
     if IMAGE_TYPES.include? ext or content_type.start_with? 'image/'
-      pdf = SafeTempFile.new([safe_name, '.pdf'])
+      pdf = TempFile.new([safe_name, '.pdf'], encoding: Encoding::BINARY)
       img2pdf = File.expand_path('../img2pdf', __dir__)
       _stdout, stderr, status = Open3.capture3 img2pdf, '--output', pdf.path,
         file.path
@@ -80,7 +80,7 @@ class Attachment
       # use imagemagick to remove the alpha channel and try again.
       unless status.exitstatus == 0
         if stderr.include? 'remove the alpha channel'
-          tmppng = SafeTempFile.new([safe_name, '.png'])
+          tmppng = TempFile.new([safe_name, '.png'], encoding: Encoding::BINARY)
           system 'convert', file.path, '-background', 'white', '-alpha',
             'remove', '-alpha', 'off', tmppng.path
 
