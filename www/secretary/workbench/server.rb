@@ -17,7 +17,6 @@ require 'time' # for iso8601
 require_relative 'personalize'
 require_relative 'helpers'
 require_relative 'models/mailbox'
-require_relative 'models/safetemp'
 require_relative 'models/events'
 require_relative 'tasks'
 
