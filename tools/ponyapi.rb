@@ -91,10 +91,13 @@ module PonyAPI
 
   # Download one month of stats as a JSON
   # Must supply cookie = 'ponymail-logged-in-cookie' if a private list
-  def get_pony_stats(dir, list, subdomain, year, month, cookie=nil, sort_list=false)
+  def get_pony_stats(dir, list, subdomain, year, month, cookie=nil, sort_list=false, opts={})
     cookie = get_cookie() if cookie == 'prompt'
     args = make_args(list, subdomain, year, month)
-    uri, _request, response = fetch_pony(PONYSTATS % args, cookie)
+    url = PONYSTATS % args
+    url += '&quick' if opts[:quick]
+    url += '&emailsOnly' if opts[:emailsOnly]
+    uri, _request, response = fetch_pony(url, cookie)
     if response.code == '200' then
       return JSON.parse(response.body), args if dir.nil?
       openfile(dir, STATSMBOX % args) do |f|
@@ -245,6 +248,8 @@ if __FILE__ == $0
         true
       when 'false'
         false
+      when %r{\A{[":1a-zA-Z,]+}\z} # e.g. '{"quick":1,"emailsOnly":1}'
+        JSON.parse(arg, symbolize_names: true)
       else
         arg
       end
