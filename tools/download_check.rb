@@ -371,7 +371,10 @@ def _checkDownloadPage(path, tlp, version)
         if n =~ %r{API |/api/|-docs-} # snapshot docs Datasketches (Flink)?
           W "Found reference to NIGHTLY or SNAPSHOT docs?: #{n}"
         else
-          E "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
+          # ignore trafficcontrol bugfix message
+          unless n.include? "Fixed TO log warnings when generating snapshots"
+            E "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
+          end
         end
         break
       end
