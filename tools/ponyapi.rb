@@ -197,6 +197,8 @@ module PonyAPI
     elsif subdomain.include? '.' # assume full host provided
       domain = subdomain
       subdomain = subdomain.sub(%r{\..*},'') # can't use sub! with CLI arg
+    elsif subdomain == '*' # allow wildcard domain
+      domain = subdomain
     else
       domain = subdomain + '.apache.org'
     end
