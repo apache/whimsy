@@ -73,13 +73,14 @@ get '/' do
 
   # Show outstanding emeritus requests
   ASF::EmeritusRequestFiles.listnames(true).each do |epoch, file|
-    days = (((Time.now.to_i - epoch.to_i).to_f/SECS_TO_DAYS)).round(1)
-    id = File.basename(file,'.*')
+    days = (((Time.now.to_i - epoch.to_i).to_f / SECS_TO_DAYS)).round(1)
+    id = File.basename(file, '.*')
     @messages << {
+      date: Time.at(epoch.to_i).gmtime.asctime,
       time: Time.at(epoch.to_i).gmtime.iso8601,
       href: "/roster/committer/#{id}",
       from: ASF::Person.find(id).cn,
-      subject: "Pending emeritus request - #{days.to_s} days old",
+      subject: "Pending emeritus request - #{days} days old",
       status: days < 10.0 ? :emeritusPending : :emeritusReady
     }
   end
