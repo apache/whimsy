@@ -183,19 +183,24 @@ def GET(url, followRedirects=true)
   fetch_url(url, :get, 0, followRedirects)[2]
 end
 
-# Check page exists => response or nil
-def check_head(path, severity = :E, log=true)
-  _uri, code, response = HEAD(path)
+# Check page exists => uri, code, response|nil
+def check_head_3(path, severity = :E, log=true)
+  uri, code, response = HEAD(path)
   if code == '403' # someone does not like Whimsy?
     W "HEAD #{path} - HTTP status: #{code} - retry"
-    _uri, code, response = HEAD(path)
+    uri, code, response = HEAD(path)
   end
   unless code == '200'
     test(severity, "HEAD #{path} - HTTP status: #{code}") unless severity.nil?
-    return nil
+    return uri, code, nil
   end
   I "Checked HEAD #{path} - OK (#{code})" if log
-  response
+  return uri, code, response
+end
+
+# Check page exists => response or nil
+def check_head(path, severity = :E, log=true)
+  check_head_3(path, severity, log)[2]
 end
 
 # check page can be read => body or response or nil
@@ -598,7 +603,8 @@ def _checkDownloadPage(path, tlp, version)
         if $NOFOLLOW
           I "Skipping artifact hash #{h}"
         else
-          check_head(h, :E) # log
+          uri, _code, _response = check_head_3(h, :E) # log
+          W "Redirected hash: #{uri} != #{h}" unless uri.to_s == h
         end
       else
         # will have been reported by check_hash_loc
