@@ -171,10 +171,10 @@ def fetch_url(url, method=:head, depth=0, followRedirects=true) # string input
   end
 end
 
-# Head an HTTP URL  => response
+# Head an HTTP URL  => uri, code, response
 def HEAD(url)
   puts ">> HEAD #{url}" if $VERBOSE
-  fetch_url(url, :head)[2]
+  fetch_url(url, :head)
 end
 
 # get an HTTP URL => response
@@ -185,12 +185,10 @@ end
 
 # Check page exists => response or nil
 def check_head(path, severity = :E, log=true)
-  response = HEAD(path)
-  code = (response.code || '?') rescue response.to_s
+  _uri, code, response = HEAD(path)
   if code == '403' # someone does not like Whimsy?
     W "HEAD #{path} - HTTP status: #{code} - retry"
-    response = HEAD(path)
-    code = (response.code || '?') rescue response.to_s
+    _uri, code, response = HEAD(path)
   end
   unless code == '200'
     test(severity, "HEAD #{path} - HTTP status: #{code}") unless severity.nil?
