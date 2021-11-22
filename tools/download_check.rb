@@ -375,7 +375,8 @@ def _checkDownloadPage(path, tlp, version)
           W "Found reference to NIGHTLY or SNAPSHOT docs?: #{n}"
         else
           # ignore trafficcontrol bugfix message
-          unless n.include? "Fixed TO log warnings when generating snapshots"
+          unless n.include? "Fixed TO log warnings when generating snapshots" or
+                 n.include? "Kafka Raft support for snapshots"
             E "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
           end
         end
