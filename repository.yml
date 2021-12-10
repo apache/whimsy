@@ -68,7 +68,7 @@
 
   cclas:
     url: private/documents/cclas
-    depth: delete
+    depth: skip
 
   comdev-foundation: # only want projects.json?
     url: asf/comdev/projects.apache.org/trunk/site/json/foundation
@@ -143,7 +143,7 @@
 
   grants:
     url: private/documents/grants
-    depth: delete
+    depth: skip
 
   iclas:
     url: private/documents/iclas
