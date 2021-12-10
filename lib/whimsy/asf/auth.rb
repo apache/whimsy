@@ -35,8 +35,8 @@ module ASF
       # extract the xxx={auth} names
       groups = read_auth.scan(/^([-\w]+)=\{auth\}/).flatten
       # extract the group = list details and return the appropriate ones
-      read_conf.scan(/^([-\w]+) *= *(\w.*)?$/).each do |pmc, ids|
-        yield pmc, (ids || '').split(' ') if groups.include? pmc
+      read_conf.each do |pmc, ids|
+        yield pmc, ids if groups.include? pmc
       end
     end
 
@@ -49,7 +49,7 @@ module ASF
 
     # read the config file - extract the [explicit] section
     def read_conf
-      File.read(File.join(@auth, 'auth.conf')).scan(/^\[explicit\].*(?:^\[)?/m).first rescue ''
+      YAML.safe_load(File.read(File.join(@auth, 'svnauthz.yaml')))['explicit']
     end
 
     # read the auth template; extract [groups]
