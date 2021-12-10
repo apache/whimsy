@@ -66,10 +66,9 @@
     files:
       - docket.json
 
-  cclas: # list only; no checkout
+  cclas:
     url: private/documents/cclas
     depth: delete
-    list: true
 
   comdev-foundation: # only want projects.json?
     url: asf/comdev/projects.apache.org/trunk/site/json/foundation
@@ -145,7 +144,6 @@
   grants:
     url: private/documents/grants
     depth: delete
-    list: true
 
   iclas:
     url: private/documents/iclas
