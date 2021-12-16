@@ -3,6 +3,9 @@
 # to a form action.
 #
 
+# workround for Travis error:
+# uninitialized constant ActiveSupport::XmlMini::IsolatedExecutionState
+require "active_support/isolated_execution_state"
 require_relative 'spec_helper'
 require_relative '../models/pending'
 require 'shellwords'
