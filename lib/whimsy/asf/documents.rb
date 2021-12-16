@@ -4,13 +4,40 @@ require 'json'
 
 module ASF
 
+  module DocumentUtils
+    # create/update cache file
+    def self.update_cache(type, cache_dir)
+      file, _ = ASF::SVN.listingNames(type, cache_dir)
+      mtime = begin
+        File.mtime(file)
+      rescue Errno::ENOENT
+        0
+      end
+      age = (Time.now - mtime).to_i
+      if age > 600 # 5 minutes
+        Wunderbar.warn "Updating listing #{file} #{age}"
+        require 'whimsy/asf/rack'
+        ASF::Auth.decode(env = {})
+        filerev, svnrev = ASF::SVN.updatelisting(type, env.user, env.password, false, cache_dir)
+        if filerev && svnrev # it worked
+          FileUtils.touch file # last time it was checked
+        else
+          # raise IOError.new("Failed to fetch iclas.txt: #{svnrev}")
+          Wunderbar.warn("User #{env.user}: failed to update #{type}: #{svnrev}")
+        end
+      end
+    end
+  end
+
   # Common class for access to documents/cclas/
   class CCLAFiles
 
     # listing of top-level icla file/directory names
     # Directories are listed without trailing "/"
     def self.listnames
-      _, list = ASF::SVN.getlisting('cclas') # do we need to cache the listing?
+      cache_dir = ASF::Config.get(:cache)
+      DocumentUtils.update_cache('cclas', cache_dir)
+      _, list = ASF::SVN.getlisting('cclas', nil, true, false, cache_dir)
       list
     end
 
@@ -27,7 +54,9 @@ module ASF
     # listing of top-level grants file/directory names
     # Directories are listed without trailing "/"
     def self.listnames
-      _, list = ASF::SVN.getlisting('grants') # do we need to cache the listing?
+      cache_dir = ASF::Config.get(:cache)
+      DocumentUtils.update_cache('grants', cache_dir)
+      _, list = ASF::SVN.getlisting('grants', nil, true, false, cache_dir) # do we need to cache the listing?
       list
     end
 
@@ -94,20 +123,7 @@ module ASF
       iclas = 'iclas'
       cache_dir = ASF::Config.get(:cache)
       # iclas.txt no longer updated by cronjob
-      file, _ = ASF::SVN.listingNames(iclas, cache_dir)
-      age = (Time.now - begin File.mtime(file) rescue 0 end).to_i
-      if age > 600 # 5 minutes
-        Wunderbar.warn "Updating listing #{file} #{age}"
-        require 'whimsy/asf/rack'
-        ASF::Auth.decode(env = {})
-        filerev, svnrev = ASF::SVN.updatelisting(iclas, env.user, env.password, false, cache_dir)
-        if filerev && svnrev # it worked
-          FileUtils.touch file # last time it was checked
-        else
-          # raise IOError.new("Failed to fetch iclas.txt: #{svnrev}")
-          Wunderbar.warn("User #{env.user}: failed to fetch iclas.txt: #{svnrev}")
-        end
-      end
+      DocumentUtils.update_cache(iclas, cache_dir)
       @@tag, list = ASF::SVN.getlisting(iclas, @@tag, false, false, cache_dir)
       if list # we have a new list
         # update the list cache
