@@ -1,6 +1,7 @@
 require_relative '../asf'
 
 require 'time'
+require 'active_support'
 require 'active_support/time'
 require 'digest/md5'
 
