@@ -605,7 +605,12 @@ def _checkDownloadPage(path, tlp, version)
           I "Skipping artifact hash #{h}"
         else
           uri, _code, _response = check_head_3(h, :E) # log
-          W "Redirected hash: #{uri} != #{h}" unless uri.to_s == h
+          unless uri.to_s == h
+            h1 = h.sub(%r{//(www\.)?apache\.org/dist/}, '//downloads.apache.org/')
+            unless uri.to_s == h1
+              W "Redirected hash: #{h} => #{uri}"
+            end
+          end
         end
       else
         # will have been reported by check_hash_loc
