@@ -1,0 +1,34 @@
+Authorisation
+- started; hooks added
+
+Filtering of lists
+- users may not want to see all the lists to which they are entitled
+- hooks added
+
+Implement Actions:
+- accept and allow
+- single accept
+- reject with reply e.g. as
+ * off topic
+ * confidential material
+ [Started]
+- reply to subscriber confirm asking to update LDAP
+
+Implement message templates for rejection etc
+
+Better GUI layout
+= e.g. fixed header with scrolling message list beneath
+
+Notes
+=====
+It might be useful to be able to attach a note to some requests:
+e.g. if some discussion is needed
+
+Messages sent to *-owner
+=========================
+Moderators also see messages sent to the -owner address
+Most of these are spam and should be ignored,
+but there may occasionally be an enquiry that needs a reply
+(Note: such messages won't have a standard format, and parsing may need adjusting)
+=======
+= e.g. fixed header with scrolling message list beneath
