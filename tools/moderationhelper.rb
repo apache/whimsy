@@ -40,6 +40,9 @@ _html do
       helpblock: -> {
         _p 'This form generates ezmlm mailing list addresses for various moderator requests.'
         _p do
+          _b 'N.B. Only list moderators can make these requests. Requests from non-moderators will be rejected (or possibly ignored).'
+        end
+        _p do
           _ 'Enter the ASF mailing list name, select the operation to perform, and enter a subscriber email (if needed).'
           _br
           _ 'Press Generate.  The To: address below can be copy/pasted into an email to send.  In most cases you must be a moderator for that list.'
