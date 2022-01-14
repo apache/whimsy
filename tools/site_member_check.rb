@@ -6,11 +6,12 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 require 'strscan'
 
-members=ASF::Member.list.keys
+members = ASF::Member.list.keys
 
-path = ASF::SVN.svnpath!('site-foundation', 'members.mdtext')
+MEMBERS = 'apache/www-site/main/content/foundation/members.md'
 
-_rev, contents = ASF::SVN.get(path)
+code, contents = ASF::Git.github(MEMBERS)
+raise "Could not read #{MEMBERS}, error: #{code}" unless code == '200'
 
 # # Members of The Apache Software Foundation #
 #
@@ -20,12 +21,12 @@ _rev, contents = ASF::SVN.get(path)
 # |^---|------|----------|
 # | aadamchik | Andrei Adamchik |
 
-s=StringScanner.new(contents)
+s = StringScanner.new(contents)
 s.skip_until(/\| Id \| Name \| Projects \|\n/)
 s.skip_until(/\n/)
-while true
-    s.scan(/\| (\S+) \|.*?$/)
-    id = s[1] or break
-    puts id unless members.include? id
-    s.skip_until(/\n/)
+loop do
+  s.scan(/\| (\S+) \|.*?$/)
+  id = s[1] or break
+  puts id unless members.include? id
+  s.skip_until(/\n/)
 end
