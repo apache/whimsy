@@ -68,7 +68,7 @@ ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
   end
 end
 
-# Sample of the calendar.mdtext layout
+# Sample of the calendar.md layout
 #
 # Title: ...
 # Notice: AL2.0
