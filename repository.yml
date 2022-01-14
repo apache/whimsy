@@ -194,7 +194,7 @@
       - badrcptto
       - badrcptto_patterns
 
-  site-board: # calendar.md(text) only
+  site-board: # calendar.md(text) only; N.B. this is fetched during web-site build
     url: asf/infrastructure/site/trunk/content/foundation/board
     depth: skip
 
