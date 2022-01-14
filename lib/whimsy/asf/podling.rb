@@ -328,7 +328,7 @@ module ASF
       incubator_content = ASF::SVN['incubator-podlings']
       resource_yml = File.join(incubator_content, "#{@resource}.yml")
       if File.exist?(resource_yml)
-        rawYaml = Psych.load_file(resource_yml)
+        rawYaml = Psych.load_file(resource_yml, permitted_classes: [Date, Symbol])
         hash = { }
         hash[:sga] = rawYaml[:sga].strftime('%Y-%m-%d') if rawYaml[:sga]
         hash[:asfCopyright] = rawYaml[:asfCopyright].strftime('%Y-%m-%d') if rawYaml[:asfCopyright]
