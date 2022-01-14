@@ -16,14 +16,13 @@ module YamlFile
   # data to the file
   # The args are passed to YAML.safe_load, and default to permitted_classes: [Symbol]
   def self.update(yaml_file, *args)
-    if args.empty?
-      yaml = YAML.safe_load(content, permitted_classes: [Symbol])
-    else
-      yaml = YAML.safe_load(content, *args)
-    end
     File.open(yaml_file, File::RDWR|File::CREAT, 0o644) do |file|
       file.flock(File::LOCK_EX)
-      yaml = YAML.safe_load(file.read, *args) || {}
+      if args.empty?
+        yaml = YAML.safe_load(file.read, permitted_classes: [Symbol]) || {}
+      else
+        yaml = YAML.safe_load(file.read, *args) || {}
+      end
       file.rewind
       file.write YAML.dump(yield yaml)
       file.truncate(file.pos)
@@ -101,14 +100,13 @@ module YamlFile
   # Otherwise the YAML is returned to the caller, and the lock is released
   # The args are passed to YAML.safe_load, and default to permitted_classes: [Symbol]
   def self.read(yaml_file, *args)
-    if args.empty?
-      yaml = YAML.safe_load(content, permitted_classes: [Symbol])
-    else
-      yaml = YAML.safe_load(content, *args)
-    end
     File.open(yaml_file, File::RDONLY) do |file|
       file.flock(File::LOCK_SH)
-      yaml = YAML.safe_load(file.read, *args)
+      if args.empty?
+        yaml = YAML.safe_load(file.read, permitted_classes: [Symbol])
+      else
+        yaml = YAML.safe_load(file.read, *args)
+      end
       if block_given?
         yield yaml
       else
