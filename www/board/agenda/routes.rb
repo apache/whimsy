@@ -273,7 +273,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/(.*)} do |date, path|
 
   minutes = AGENDA_WORK + '/' +
     agenda.sub('agenda', 'minutes').sub('.txt', '.yml')
-  @page[:minutes] = YAML.safe_load(File.read(minutes), [Symbol]) if File.exist? minutes
+  @page[:minutes] = YAML.safe_load(File.read(minutes), permitted_classes: [Symbol]) if File.exist? minutes
 
   @cssmtime = File.mtime('public/stylesheets/app.css').to_i
   @manmtime = File.mtime("#{settings.views}/manifest.json.erb").to_i
@@ -477,7 +477,7 @@ end
 get %r{/json/chat/(\d\d\d\d_\d\d_\d\d)} do |date|
   log = "#{AGENDA_WORK}/board_agenda_#{date}-chat.yml"
   if File.exist? log
-    _json YAML.safe_load(File.read(log), [Symbol])
+    _json YAML.safe_load(File.read(log), permitted_classes: [Symbol])
   else
     _json []
   end

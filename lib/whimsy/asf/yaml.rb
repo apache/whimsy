@@ -14,9 +14,9 @@ module YamlFile
   # creating the file if necessary
   # Yields the parsed YAML to the block, and writes the return
   # data to the file
-  # The args are passed to YAML.safe_load, and default to [Symbol]
+  # The args are passed to YAML.safe_load, and default to permitted_classes: [Symbol]
   def self.update(yaml_file, *args)
-    args << [Symbol] if args.empty?
+    args << permitted_classes: [Symbol] if args.empty?
     File.open(yaml_file, File::RDWR|File::CREAT, 0o644) do |file|
       file.flock(File::LOCK_EX)
       yaml = YAML.safe_load(file.read, *args) || {}
@@ -27,7 +27,7 @@ module YamlFile
   end
 
   # replace a section of YAML text whilst preserving surrounding data including comments.
-  # The args are passed to YAML.safe_load, and default to [Symbol]
+  # The args are passed to YAML.safe_load, and default to permitted_classes: [Symbol]
   # The caller must provide a block, which is passed two JSON parameters:
   # - the section related to the key
   # - the entire file (this is for validation purposes)
@@ -36,7 +36,7 @@ module YamlFile
   def self.replace_section(content, key, *args)
     raise ArgumentError, 'block is required' unless block_given?
 
-    args << [Symbol] if args.empty?
+    args << permitted_classes: [Symbol] if args.empty?
     yaml = YAML.safe_load(content, *args)
 
     section = yaml[key]
@@ -68,7 +68,7 @@ module YamlFile
   # opens the file for exclusive access
   # Yields the parsed YAML to the block, and writes the updated
   # data to the file
-  # The args are passed to YAML.safe_load, and default to [Symbol]
+  # The args are passed to YAML.safe_load, and default to permitted_classes: [Symbol]
   # [originally designed for updating committee-info.yaml]
   def self.update_section(yaml_file, key, *args, &block)
     raise ArgumentError, 'block is required' unless block_given?
@@ -92,9 +92,9 @@ module YamlFile
   # Opens the file read-only, with a shared lock, and parses the YAML
   # This is yielded to the block (if provided), whilst holding the lock
   # Otherwise the YAML is returned to the caller, and the lock is released
-  # The args are passed to YAML.safe_load, and default to [Symbol]
+  # The args are passed to YAML.safe_load, and default to permitted_classes: [Symbol]
   def self.read(yaml_file, *args)
-    args << [Symbol] if args.empty?
+    args << permitted_classes: [Symbol] if args.empty?
     File.open(yaml_file, File::RDONLY) do |file|
       file.flock(File::LOCK_SH)
       yaml = YAML.safe_load(file.read, *args)

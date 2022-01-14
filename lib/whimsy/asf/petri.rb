@@ -35,7 +35,7 @@ module ASF
       @list = []
       response = Net::HTTP.get_response(URI(PETRI_INFO))
       response.value() # Raises error if not OK
-      yaml = YAML.safe_load(response.body, [Symbol])
+      yaml = YAML.safe_load(response.body, permitted_classes: [Symbol])
       # @mentors = yaml['mentors']
       yaml['cultures'].each do |proj|
         @list << new(proj)
