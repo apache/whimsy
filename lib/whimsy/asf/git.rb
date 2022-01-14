@@ -14,11 +14,12 @@ module ASF
     GITHUB_HOST = 'raw.githubusercontent.com'
 
     # get a file live from github, e.g. '/apache/petri/master/info.yaml'
-    # returns body
-    def self.github(file, etag = nil)
+    # returns body, status
+    def self.github(file, _etag = nil)
       http = Net::HTTP.new(GITHUB_HOST, 443)
       http.use_ssl = true
-      return http.request(Net::HTTP::Get.new(file)).body
+      req = http.request(Net::HTTP::Get.new(file))
+      return req.code, req.body
     end
 
     # path to <tt>repository.yml</tt> in the source.
@@ -102,5 +103,10 @@ end
 
 if $0 == __FILE__
   require 'net/http'
-  puts ASF::Git.github('/apache/petri/master/info.yaml')
+  c, b = ASF::Git.github('/apache/petri/master/info.yaml')
+  p c
+  puts b[0..60]
+  c, b = ASF::Git.github('/apache/petri/master/missing.invalid')
+  p c
+  puts b
 end
