@@ -68,9 +68,9 @@ if @action == 'rescind_emeritus'
   end
 elsif @action == 'request_emeritus'
   # Create emeritus request and send acknowlegement mail from secretary
-  template, err =
-    ASF::SVN.svn('cat', ASF::SVN.svnpath!('foundation', 'emeritus-request.txt'), {env:env})
-  raise RuntimeError.new("Failed to read emeritus-request.txt: " + err) unless template
+  # TODO URL should be a config constant ...
+  code, template = ASF::Git.github('apache/www-site/main/content/forms/emeritus-request.txt')
+  raise "Failed to read emeritus-request.txt: " + code unless code == "200"
   centered_id = USERID.center(55, '_')
   centered_name = USERNAME.center(55, '_')
   centered_date = TIMESTAMP.center(55, '_')
