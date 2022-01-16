@@ -36,7 +36,7 @@ class Agenda
     if File.exist?(path) and File.mtime(path) != data[:mtime]
       File.open(path) do |fh|
         fh.flock(File::LOCK_SH)
-        data = YAML.load(fh.read)
+        data = YAML.safe_load(fh.read, permitted_classes: [Symbol, Time])
       end
       @@cache[file] = data
     end
