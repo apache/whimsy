@@ -10,14 +10,15 @@ require 'wunderbar/jquery/stupidtable'
 require_relative 'meeting-util'
 DTFORMAT = '%A, %d %B %Y at %H:%M %z'
 TADFORMAT = '%Y%m%dT%H%M%S'
+ERROR_DATE = DateTime.new(1970, 1, 1) # An obvious error value 8-)
 
 # Return DateTime from DTSTART in an .ics file
 def ics2dtstart(f)
   begin
     tmp = IO.readlines(f).find{ |i| i =~ /DTSTART:/ }.split(':')[1].strip
     return DateTime.parse(tmp)
-  rescue StandardError => e
-    return DateTime.new(1970,1,1) # An obvious error value 8-)
+  rescue StandardError
+    return ERROR_DATE
   end
 end
 
@@ -97,6 +98,21 @@ _html do
         'https://lists.apache.org/list.html?members@apache.org' => 'Read members@ List Archives'
       },
       helpblock: -> {
+        if m2_date == ERROR_DATE or m1_date == ERROR_DATE or nom_date == ERROR_DATE
+          _p do
+            _center do
+              _strong 'One or more .ics files are missing!'
+              _br
+              _ 'Expecting to find:'
+              _br
+              _ul do
+                _li "ASF-members-#{mtg_date.strftime('%Y')}.ics"
+                _li "ASF-members-#{mtg_date.strftime('%Y')}-reconvene.ics"
+                _li "ASF-members-#{mtg_date.strftime('%Y')}-nominations-close.ics"
+              end
+            end
+          end
+        end
         if today > m2_date # Based on the reconvene date
           _p do
             _ %{
@@ -133,7 +149,7 @@ _html do
       }
     ) do
       help, copypasta = MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
-      attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
+      # attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
       user = ASF::Person.find($USER)
       _div id: 'personal'
       _whimsy_panel("#{user.public_name} - Personal Details For Meeting #{m1_date.strftime(DTFORMAT)}", style: 'panel-primary') do
