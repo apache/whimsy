@@ -9,10 +9,11 @@ require 'whimsy/asf/mlist'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 
-ids={}
+ids = {}
 binarchives = ASF::Mail.lists(true)
 binarchtime = ASF::Mail.list_mtime
 
+show_mino = (ENV['PATH_INFO'] == '/mino') # minotaur
 show_all = (ENV['PATH_INFO'] == '/all') # all entries, regardless of error state
 # default is to show entry if neither mail-archive nor markmail is present (mail-archive is missing from a lot of lists)
 show_mailarchive = (ENV['PATH_INFO'] == '/mail-archive') # show entry if mail-archive is missing
@@ -22,6 +23,21 @@ show_mailarchive = (ENV['PATH_INFO'] == '/mail-archive') # show entry if mail-ar
 NOT_ARCHIVED = %w{apachecon-aceu19}
 
 sublist_time = ASF::MLIST.list_time
+
+def findarcs(arcs, type)
+  sel = arcs.select { |e| e[1] == type }
+  return [sel.map { |e| e[2] }.uniq.join, sel.map { |e| e[0] }.uniq.join(',')]
+end
+
+def showdets(text)
+  if text.kind_of? Array
+    _ text[0]
+    _br
+    _ text[1]
+  else
+    _ text
+  end
+end
 
 _html do
   _body? do
@@ -87,10 +103,10 @@ _html do
         _th 'PONY'
         _th 'MAIL-ARCHIVE'
         _th 'MARKMAIL'
-        _th 'Archivers', data_sort: 'string'
+        _th 'Other archivers', data_sort: 'string'
       end
       ASF::MLIST.list_archivers do |dom, list, arcs|
-
+        # arcs = array of arrays, each of which is [archiver, archiver_type, "public"|"private"]
         id = ASF::Mail.archivelistid(dom, list)
 
         next if NOT_ARCHIVED.include? id # skip error reports. TODO check if it is archived
@@ -101,42 +117,49 @@ _html do
 
         pubprv = binarchives[id] # public/private
 
+        arcleft = arcs.map(&:first) # unused
+
         # in case there are multiple archivers with different classifications, we
         # join all the unique entries.
         # This is equivalent to first if there is only one, but will produce
         # a string such as 'privatepublic' if there are distinct entries
         # However it generates an empty string if there are no entries.
 
-        mino = arcs.select{|e| e[1] == :MINO}.map{|e| e[2]}.uniq.join('')
-        if ! mino.empty?
-          options[:mino]={class: 'info'} unless mino == 'alias'
+        mino = findarcs(arcs, :MINO)
+        if ! mino[0].empty?
+          options[:mino] = {class: 'info'} unless mino[0] == 'alias'
+          arcleft.delete(mino[1])
         else
+          next if show_mino
           mino = 'Missing'
-          options[:mino]={class: 'warning'}
+          options[:mino] = {class: 'warning'}
         end
 
-        mbox = arcs.select{|e| e[1] == :MBOX}.map{|e| e[2]}.uniq.join('')
+        mbox = findarcs(arcs, :MBOX)
 
-        next if mbox == 'restricted' # Don't show these
+        next if mbox[0] == 'restricted' # Don't show these
 
-        if ! mbox.empty?
-          options[:mbox] = {class: 'danger'} if pubprv && mbox != pubprv
+        if ! mbox[0].empty?
+          options[:mbox] = {class: 'danger'} if pubprv && mbox[0] != pubprv
+          arcleft.delete(mbox[1])
         else
           mbox = 'Missing'
           options[:mbox] = {class: 'warning'}
         end
 
-        pony = arcs.select{|e| e[1] == :PONY}.map{|e| e[2]}.uniq.join('')
-        if ! pony.empty?
-          options[:pony] = {class: 'danger'} if pubprv && pony != pubprv
+        pony = findarcs(arcs, :PONY)
+        if ! pony[0].empty?
+          options[:pony] = {class: 'danger'} if pubprv && pony[0] != pubprv
+          arcleft.delete(pony[1])
         else
           pony = 'Missing'
           options[:pony] = {class: 'warning'}
         end
 
-        mail_archive = arcs.select{|e| e[1] == :MAIL_ARCH}.map{|e| e[2]}.uniq.join('')
-        if ! mail_archive.empty?
-          options[:mail_archive] = {class: 'danger'} if pubprv && mail_archive != pubprv
+        mail_archive = findarcs(arcs, :MAIL_ARCH)
+        if ! mail_archive[0].empty?
+          options[:mail_archive] = {class: 'danger'} if pubprv && mail_archive[0] != pubprv
+          arcleft.delete(mail_archive[1])
         elsif pubprv == 'private'
           mail_archive = 'N/A'
         else
@@ -144,9 +167,10 @@ _html do
           options[:mail_archive] = {class: 'warning'}
         end
 
-        markmail = arcs.select{|e| e[1] == :MARKMAIL}.map{|e| e[2]}.uniq.join('')
-        if ! markmail.empty?
-          options[:markmail] = {class: 'danger'} if pubprv && markmail != pubprv
+        markmail = findarcs(arcs, :MARKMAIL)
+        if ! markmail[0].empty?
+          options[:markmail] = {class: 'danger'} if pubprv && markmail[0] != pubprv
+          arcleft.delete(markmail[1])
         elsif pubprv == 'private'
           markmail = 'N/A'
         else
@@ -163,9 +187,9 @@ _html do
         if show_mailarchive
           needs_attention = options.keys.length > 0
         else # don't show missing mail-archive
-          needs_attention = options.reject{|k,v| k == :mail_archive && mail_archive == 'Missing'}.length > 0
+          needs_attention = options.reject { |k, _v| k == :mail_archive && mail_archive == 'Missing' }.length > 0
         end
-        next unless show_all || needs_attention # only show errors unless want all
+        next unless show_all || needs_attention || show_mino # only show errors unless want all
 
         _tr do
           _td id
@@ -176,12 +200,12 @@ _html do
           end
 
           _td pubprv, options[:pubprv]
-          _td mino, options[:mino]
-          _td mbox, options[:mbox]
-          _td pony, options[:pony]
-          _td mail_archive, options[:mail_archive]
-          _td markmail, options[:markmail]
-          _td arcs.map{|e| e.first}.sort
+          _td options[:mino] do showdets(mino) end
+          _td options[:mbox] do showdets(mbox) end
+          _td options[:pony] do showdets(pony) end
+          _td options[:mail_archive] do showdets(mail_archive) end
+          _td options[:markmail] do showdets(markmail) end
+          _td arcleft.sort
         end
       end
     end
