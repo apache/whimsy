@@ -24,16 +24,20 @@ NOT_ARCHIVED = %w{apachecon-aceu19}
 
 sublist_time = ASF::MLIST.list_time
 
-def findarcs(arcs, type)
+def findarcs(arcs, type, arcleft)
   sel = arcs.select { |e| e[1] == type }
-  return [sel.map { |e| e[2] }.uniq.join, sel.map { |e| e[0] }.uniq.join(',')]
+  addrs = sel.map { |e| e[0] }.uniq
+  addrs.each { |addr| arcleft.delete(addr)}
+  return [sel.map { |e| e[2] }.uniq.join, addrs]
 end
 
 def showdets(text)
   if text.kind_of? Array
     _ text[0]
-    _br
-    _ text[1]
+    text[1].each do |t|
+      _br
+      _ t
+    end
   else
     _ text
   end
@@ -132,41 +136,37 @@ _html do
         # a string such as 'privatepublic' if there are distinct entries
         # However it generates an empty string if there are no entries.
 
-        mino = findarcs(arcs, :MINO)
+        mino = findarcs(arcs, :MINO, arcleft)
         if ! mino[0].empty?
           options[:mino] = {class: 'info'} unless mino[0] == 'alias'
-          arcleft.delete(mino[1])
         else
           next if show_mino
           mino = 'Missing'
           options[:mino] = {class: 'warning'}
         end
 
-        mbox = findarcs(arcs, :MBOX)
+        mbox = findarcs(arcs, :MBOX, arcleft)
 
         next if mbox[0] == 'restricted' # Don't show these
 
         if ! mbox[0].empty?
           options[:mbox] = {class: 'danger'} if pubprv && mbox[0] != pubprv
-          arcleft.delete(mbox[1])
         else
           mbox = 'Missing'
           options[:mbox] = {class: 'warning'}
         end
 
-        pony = findarcs(arcs, :PONY)
+        pony = findarcs(arcs, :PONY, arcleft)
         if ! pony[0].empty?
           options[:pony] = {class: 'danger'} if pubprv && pony[0] != pubprv
-          arcleft.delete(pony[1])
         else
           pony = 'Missing'
           options[:pony] = {class: 'warning'}
         end
 
-        mail_archive = findarcs(arcs, :MAIL_ARCH)
+        mail_archive = findarcs(arcs, :MAIL_ARCH, arcleft)
         if ! mail_archive[0].empty?
           options[:mail_archive] = {class: 'danger'} if pubprv && mail_archive[0] != pubprv
-          arcleft.delete(mail_archive[1])
         elsif pubprv == 'private'
           mail_archive = 'N/A'
         else
@@ -174,10 +174,9 @@ _html do
           options[:mail_archive] = {class: 'warning'}
         end
 
-        markmail = findarcs(arcs, :MARKMAIL)
+        markmail = findarcs(arcs, :MARKMAIL, arcleft)
         if ! markmail[0].empty?
-          options[:markmail] = {class: 'danger'} if pubprv && markmail[0] != pubprv
-          arcleft.delete(markmail[1])
+          options[:markmail] = {class: 'danger'} if (pubprv && markmail[0] != pubprv) || markmail[1].size > 1
         elsif pubprv == 'private'
           markmail = 'N/A'
         else
