@@ -39,6 +39,13 @@ def showdets(text)
   end
 end
 
+# Fix relative links
+if env['REQUEST_URI'] =~ 'archivers(\.cgi)?/'
+  href_pfx = '.'
+else
+  href_pfx = 'members'
+end
+
 _html do
   _body? do
     _whimsy_body(
@@ -75,19 +82,19 @@ _html do
           unless show_all or show_mailarchive
             _b 'issues (ignoring missing mail-archive subscriptions)'
           else
-            _a 'issues (ignoring missing mail-archive subscriptions)', href: './'
+            _a 'issues (ignoring missing mail-archive subscriptions)', href: "#{href_pfx}/"
           end
           _ ' | '
           if show_mailarchive
             _b 'issues including missing mail-archive subscriptions'
           else
-            _a 'issues including missing mail-archive subscriptions', href: './mail-archive'
+            _a 'issues including missing mail-archive subscriptions', href: "#{href_pfx}/mail-archive"
           end
           _ ' | '
           if show_all
             _b 'details for all lists'
           else
-            _a 'details for all lists', href: './all'
+            _a 'details for all lists', href: "#{href_pfx}/all"
           end
         end
       }
