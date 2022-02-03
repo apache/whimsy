@@ -139,10 +139,10 @@ _html do
         mino = findarcs(arcs, :MINO, arcleft)
         if ! mino[0].empty?
           options[:mino] = {class: 'info'} unless mino[0] == 'alias'
+          options[:mino] = {class: 'warning'}
         else
           next if show_mino
-          mino = 'Missing'
-          options[:mino] = {class: 'warning'}
+          mino = '-'
         end
 
         mbox = findarcs(arcs, :MBOX, arcleft)
