@@ -40,7 +40,7 @@ def showdets(text)
 end
 
 # Fix relative links
-if env['REQUEST_URI'] =~ 'archivers(\.cgi)?/'
+if env['REQUEST_URI'] =~ %r{archivers(\.cgi)?/}
   href_pfx = '.'
 else
   href_pfx = 'archivers'
