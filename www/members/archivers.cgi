@@ -43,7 +43,7 @@ end
 if env['REQUEST_URI'] =~ 'archivers(\.cgi)?/'
   href_pfx = '.'
 else
-  href_pfx = 'members'
+  href_pfx = 'archivers'
 end
 
 _html do
