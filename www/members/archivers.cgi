@@ -20,7 +20,7 @@ show_mailarchive = (ENV['PATH_INFO'] == '/mail-archive') # show entry if mail-ar
 
 # list of ids deliberately not archived
 #                 INFRA-18129
-NOT_ARCHIVED = %w{apachecon-aceu19}
+NOT_ARCHIVED = %w{apachecon-aceu19 infra-temporaryconfluencetest infra-bouncetest}
 
 sublist_time = ASF::MLIST.list_time
 
