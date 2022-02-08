@@ -41,7 +41,17 @@ For planning purposes, prereqs for a _full_ installation will require:
  * The following software installed:
      * Subversion
      * Ruby 1.9.3 or greater
-     * io.js
+     * Development libraries and tools (for native extensions)
+         * MacOS users
+             * Xcode command line tools (`sudo xcode-select --install`)
+             * `brew install openldap`
+             * `brew install cyrus-sasl`
+         * Ubuntu users
+             * `apt-get install ruby-dev`
+             * `apt-get install libldap2-dev`
+             * `apt-get install libsasl2-dev`
+             * `apt-get install build-essential`
+     * Node.js 14
      * [PhantomJS](http://phantomjs.org/) 2.0
          * Mac OS/X Yosemite users should either use `brew install phantomjs`
            or get the binary from comments on
