@@ -108,7 +108,7 @@ class Committee
     unknownSecSubs = [] # unknown security@ subscribers: not PMC or ASF
     # Also look for non-ASF mod emails
     nonASFmails = {}
-    moderators?.each { |_, mods| mods.each {|m| nonASFmails[m] = '' unless m.end_with? '@apache.org'} }
+    moderators&.each { |_, mods| mods.each {|m| nonASFmails[m] = '' unless m.end_with? '@apache.org'} }
     if unMatchedSubs.length > 0 or nonASFmails.length > 0 or unMatchedSecSubs.length > 0
       load_emails # set up @people
       unMatchedSubs.each { |addr|
@@ -159,7 +159,7 @@ class Committee
     end
     return {
       id: id,
-      chair: pmc.chair?.id,
+      chair: pmc.chair&.id,
       pmc_chair: pmc_chair,
       display_name: pmc.display_name,
       description: pmc.description,
