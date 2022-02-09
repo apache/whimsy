@@ -124,14 +124,14 @@ module ASF
     # helper function for matching against mod and subs entries
     # does the target mail_domain match the current list?
     def self.matches_list?(mail_domain, dom, list)
-        # normal tlp style (now also podlings):
-        #/home/apmail/lists/commons.apache.org/dev/mod
-        #Apache lists (e.g. some non-PMCs)
-        #/home/apmail/lists/apache.org/list/mod
-        return "#{mail_domain}.apache.org" == dom ||
-               (dom == 'apache.org' && 
-                (list == mail_domain || list.start_with?("#{mail_domain}-"))
-               )
+      # normal tlp style (now also podlings):
+      #/home/apmail/lists/commons.apache.org/dev/mod
+      #Apache lists (e.g. some non-PMCs)
+      #/home/apmail/lists/apache.org/list/mod
+      return "#{mail_domain}.apache.org" == dom ||
+              (dom == 'apache.org' &&
+              (list == mail_domain || list.start_with?("#{mail_domain}-"))
+              )
     end
 
     # for a mail domain, extract related lists and their moderators
@@ -245,7 +245,7 @@ module ASF
     def self.domain_lists(project, show_all)
       lists = {}
       list_types(show_all) do |dom, list, type|
-        if dom == "#{project}.apache.org"
+        if matches_list?(project, dom, list)
           lists["#{list}@#{dom}"] = type
         end
       end
