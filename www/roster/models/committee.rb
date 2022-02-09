@@ -53,8 +53,8 @@ class Committee
 
     roster = pmc.roster.dup # from committee-info
     # ensure PMC members are all processed even they don't belong to the owner group
-    roster.each do |key, _|
-      info[:role] = 'PMC member'
+    roster.each do |key, value|
+      value[:role] = 'PMC member'
       next if pmc.ownerids.include?(key) # skip the rest (expensive) if person is in the owner group
       person = ASF::Person[key]
       next unless person  # in case of missing entry (e.g. renamed uid)
