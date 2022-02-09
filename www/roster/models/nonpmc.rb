@@ -15,10 +15,6 @@ class NonPMC
     # We'll be needing the mail data later
     ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (members + committers).uniq)
 
-    lists = ASF::Mail.lists(true).select do |list, _|
-      list =~ /^#{mail_list}\b/
-    end
-
     image = ASF::SiteImage.find(id)
 
     moderators = nil
@@ -48,8 +44,9 @@ class NonPMC
         sSubs = ASF::MLIST.security_subscribers(mail_list)[0]||[]
         unMatchedSecSubs = Set.new(sSubs) # init ready to remove matched mails
       end
+      lists = ASF::MLIST.domain_lists(mail_list, true)
     else
-      lists = lists.select {|_, mode| mode == 'public'}
+      lists = ASF::MLIST.domain_lists(mail_list, false)
     end
 
     roster = cttee.roster.dup

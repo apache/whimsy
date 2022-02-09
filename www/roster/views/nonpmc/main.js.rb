@@ -143,13 +143,7 @@ class NonPMC < Vue
     else
       _h2.mail! 'Mail lists'
       _ul do
-        for mail_name in @nonpmc.mail
-          if mail_name.include? '-'
-            parsed = mail_name.match(/^(.*?)-(.*)/)
-            list_name = "#{parsed[2]}@#{parsed[1]}.apache.org"
-          else
-            list_name = "#{mail_name}@apache.org"
-          end
+        for list_name in @nonpmc.mail
           _li do
             _a list_name, href: 'https://lists.apache.org/list.html?' +
               list_name
