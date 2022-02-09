@@ -125,7 +125,6 @@ _html do
         mbox = findarcs(arcs, :MBOX, arcleft)
 
         pubprv = mbox[0] # get privacy setting from MBOX entry
-        options[:pubprv] = {class: 'warning'} if pubprv == 'private'
 
         next if pubprv == 'restricted' # Don't show these
 
@@ -168,6 +167,9 @@ _html do
           needs_attention = options.reject { |k, _v| k == :mail_archive && mail_archive == 'Missing' }.length > 0
         end
         next unless show_all || needs_attention # only show errors unless want all
+
+        # This is not a warning per-se
+        options[:pubprv] = {class: 'warning'} if pubprv == 'private'
 
         _tr do
           _td lid
