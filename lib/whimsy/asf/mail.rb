@@ -361,7 +361,7 @@ module ASF
       when 'concom'
         'planners@apachecon.com'
       else
-        name
+        name.downcase
       end
     end
   end
@@ -373,7 +373,7 @@ module ASF
       when 'odftoolkit'
         'odf'
       else
-        name
+        name.downcase
       end
     end
   end
