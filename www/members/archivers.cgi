@@ -9,17 +9,13 @@ require 'whimsy/asf/mlist'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 
-ids = {}
-binarchives = ASF::Mail.lists(true)
-binarchtime = ASF::Mail.list_mtime
-
 show_all = (ENV['PATH_INFO'] == '/all') # all entries, regardless of error state
 # default is to show entry if neither mail-archive nor markmail is present (mail-archive is missing from a lot of lists)
 show_mailarchive = (ENV['PATH_INFO'] == '/mail-archive') # show entry if mail-archive is missing
 
 # list of ids deliberately not archived
 #                 INFRA-18129
-NOT_ARCHIVED = %w{apachecon-aceu19 infra-temporaryconfluencetest infra-bouncetest}
+NOT_ARCHIVED = %w{aceu19@apachecon.com temporaryconfluencetest@infra.apache.org bouncetest@infra.apache.org}
 
 sublist_time = ASF::MLIST.list_time
 
@@ -59,19 +55,18 @@ _html do
       },
       helpblock: -> {
         _p! do
-          _ 'This script compares bin/.archives with the list of archiver addresses that are subscribed to mailing lists'
+          _ 'This script checks the list of archiver addresses that are subscribed to mailing lists'
           _br
-          _ 'Every entry in bin/.archives should have up to 3 archive subscribers (5 for public lists), except for the mail aliases, which are not lists.'
+          _ 'Every mailing list should have at least two archivers: MBOX and PONY'
           _br
-          _ 'Every mailing list should have an entry in bin/.archives'
+          _ 'The MBOX and PONY archivers must agree on the the privacy setting'
           _br
           _ 'Unexpected/missing entries are flagged'
           _br
           _ 'Columns:'
           _ul do
-            _li 'id - short id of list as used on mod_mbox'
             _li 'list - full list name'
-            _li "Private? - public/private; derived from bin/.archives as at #{binarchtime}"
+            _li 'Private? - whether list is public or private, based on the MBOX archiver'
             _li 'MBOX - mbox-vm archiver'
             _li 'PONY - PonyMail (lists.apache.org) archiver'
             _li 'MAIL-ARCHIVE - @mail-archive.com archiver (public lists only)'
@@ -79,10 +74,10 @@ _html do
             _li "Archivers - list of unexpected archiver subscriptions as at #{sublist_time}"
           end
           _ 'Showing: '
-          unless show_all or show_mailarchive
-            _b 'issues (ignoring missing mail-archive subscriptions)'
-          else
+          if show_all or show_mailarchive
             _a 'issues (ignoring missing mail-archive subscriptions)', href: "#{href_pfx}/"
+          else
+            _b 'issues (ignoring missing mail-archive subscriptions)'
           end
           _ ' | '
           if show_mailarchive
@@ -102,7 +97,6 @@ _html do
 
     _table.table do
       _tr do
-        _th 'id', data_sort: 'string'
         _th 'list', data_sort: 'string'
         _th 'Private?', data_sort: 'string'
         _th 'MBOX'
@@ -113,15 +107,12 @@ _html do
       end
       ASF::MLIST.list_archivers do |dom, list, arcs|
         # arcs = array of arrays, each of which is [archiver, archiver_type, "public"|"private"]
-        id = ASF::Mail.archivelistid(dom, list)
 
-        next if NOT_ARCHIVED.include? id # skip error reports. TODO check if it is archived
+        lid = "#{list}@#{dom}"
 
-        ids[id] = 1 # TODO check for duplicates
+        next if NOT_ARCHIVED.include? lid
 
         options = Hash.new # Any fields have warnings/errors?
-
-        pubprv = binarchives[id] # public/private
 
         arcleft = arcs.map(&:first) # unused
 
@@ -133,18 +124,19 @@ _html do
 
         mbox = findarcs(arcs, :MBOX, arcleft)
 
-        next if mbox[0] == 'restricted' # Don't show these
+        pubprv = mbox[0] # get privacy setting from MBOX entry
+        options[:pubprv] = {class: 'warning'} if pubprv == 'private'
 
-        if ! mbox[0].empty?
-          options[:mbox] = {class: 'danger'} if pubprv && mbox[0] != pubprv
-        else
+        next if pubprv == 'restricted' # Don't show these
+
+        if mbox[0].empty?
           mbox = 'Missing'
           options[:mbox] = {class: 'warning'}
         end
 
         pony = findarcs(arcs, :PONY, arcleft)
         if ! pony[0].empty?
-          options[:pony] = {class: 'danger'} if pubprv && pony[0] != pubprv
+          options[:pony] = {class: 'danger'} if pony[0] != pubprv
         else
           pony = 'Missing'
           options[:pony] = {class: 'warning'}
@@ -152,7 +144,7 @@ _html do
 
         mail_archive = findarcs(arcs, :MAIL_ARCH, arcleft)
         if ! mail_archive[0].empty?
-          options[:mail_archive] = {class: 'danger'} if pubprv && mail_archive[0] != pubprv
+          options[:mail_archive] = {class: 'danger'} if mail_archive[0] != pubprv
         elsif pubprv == 'private'
           mail_archive = 'N/A'
         else
@@ -162,18 +154,12 @@ _html do
 
         markmail = findarcs(arcs, :MARKMAIL, arcleft)
         if ! markmail[0].empty?
-          options[:markmail] = {class: 'danger'} if (pubprv && markmail[0] != pubprv) || markmail[1].size > 1
+          options[:markmail] = {class: 'danger'} if (markmail[0] != pubprv) || markmail[1].size > 1
         elsif pubprv == 'private'
           markmail = 'N/A'
         else
           markmail = 'Missing'
           options[:markmail] = {class: 'warning'}
-        end
-
-        # must be done last as it changes pubprv
-        unless pubprv
-          pubprv = 'Not listed in bin/.archives'
-          options[:pubprv] = {class: 'warning'}
         end
 
         if show_mailarchive
@@ -184,13 +170,7 @@ _html do
         next unless show_all || needs_attention # only show errors unless want all
 
         _tr do
-          _td id
-          _td! do
-            _ list
-            _ '@'
-            _ dom
-          end
-
+          _td lid
           _td pubprv, options[:pubprv]
           _td options[:mbox] do showdets(mbox) end
           _td options[:pony] do showdets(pony) end
@@ -199,17 +179,6 @@ _html do
           _td arcleft.sort
         end
       end
-    end
-
-    missingids = binarchives.keys - ids.keys
-    if missingids.length > 0
-      _p.bg_warning do
-        _ 'The following entries in bin/.archives do not appear to have an associated mailing list (probably they are aliases):'
-        _br
-        _ missingids
-      end
-    else
-      _p 'All entries in bin/.archives correspond to a mailing list'
     end
 
     _script %{
