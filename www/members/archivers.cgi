@@ -71,7 +71,7 @@ _html do
             _li 'PONY - PonyMail (lists.apache.org) archiver'
             _li 'MAIL-ARCHIVE - @mail-archive.com archiver (public lists only)'
             _li 'MARKMAIL - markmail.org archiver (public lists only)'
-            _li "Archivers - list of unexpected archiver subscriptions as at #{sublist_time}"
+            _li "Other Archivers - list of other archiver subscriptions (e.g. Whimsy) as at #{sublist_time}"
           end
           _ 'Showing: '
           if show_all or show_mailarchive
@@ -161,6 +161,8 @@ _html do
           options[:markmail] = {class: 'warning'}
         end
 
+        options[:arcleft] = {class: 'warning'} if arcleft.size > 0
+
         if show_mailarchive
           needs_attention = options.keys.length > 0
         else # don't show missing mail-archive
@@ -178,7 +180,7 @@ _html do
           _td options[:pony] do showdets(pony) end
           _td options[:mail_archive] do showdets(mail_archive) end
           _td options[:markmail] do showdets(markmail) end
-          _td arcleft.sort
+          _td arcleft.sort, options[:arcleft]
         end
       end
     end
