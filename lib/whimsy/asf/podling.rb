@@ -287,11 +287,7 @@ module ASF
         when 'log4cxx2'
           'log4cxx-dev@logging.apache.org'
         else
-          if ASF::Mail.lists.include? "#{name}-dev"
-            "dev@#{name}.apache.org"
-          elsif ASF::Mail.lists.include? "incubator-#{name}-dev"
-            "#{name}-dev@incubator.apache.org"
-          end
+          "dev@#{name}.apache.org"
       end
     end
 
