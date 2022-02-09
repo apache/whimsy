@@ -181,7 +181,6 @@
     "description": "ASF::Mail: Associate email addresses with Persons; See also ASF::Config, Person, Committee, Podling",
     "maintainer": "vp-whimsy",
     "sources": [
-      "infra/infrastructure/apmail/trunk/bin/.archives"
     ]
   },
   "/lib/whimsy/asf/member.rb": {
@@ -254,10 +253,6 @@
   },
   "apache/infrastructure-puppet/deployment/data/common.yaml": {
     "description": "Core infrastructure data locations",
-    "maintainer": "infra-staff"
-  },
-  "infra/infrastructure/apmail/trunk/bin/.archives": {
-    "description": "Records about mail archives and emails",
     "maintainer": "infra-staff"
   },
   "private/foundation/members.txt": {

@@ -41,35 +41,6 @@ module ASF
       list
     end
 
-    # Parse the .archives file to get the list names
-    def self._load_lists
-      apmail_bin = ASF::SVN['apmail_bin']
-      file = File.join(apmail_bin, '.archives')
-      if not @lists or File.mtime(file) != @list_mtime
-        lists = Hash[File.read(file).scan(
-          /^\s+"(\w[-\w]+)", "\/home\/apmail\/(public|private)-arch\//
-        )]
-        # Drop the infra test lists
-        lists.delete_if {|list| list =~ /-infra-[a-z]$/ or list == 'incubator-infra-dev' }
-        @lists = lists
-        @list_mtime = File.mtime(file)
-      end
-    end
-
-    # get a list of all mailing lists.  If <tt>public_private</tt> is
-    # <tt>false</tt> this will be a simple list.  If <tt>public_private</tt> is
-    # <tt>true</tt>, return a Hash where the values are either <tt>public</tt>
-    # or <tt>private</tt>.
-    def self.lists(public_private=false)
-      Mail._load_lists
-      public_private ? @lists : @lists.keys
-    end
-
-    def self.list_mtime
-      Mail._load_lists
-      @list_mtime
-    end
-
     # list of mailing lists that aren't actively seeking new subscribers
     def self.deprecated
       self._load_auto()
@@ -200,7 +171,7 @@ module ASF
       self.qmail_ids.include? id
     end
 
-    # Convert list name to form used in bin/.archives
+    # Convert list name to form used in mail_list_autosub.yml
     def self.archivelistid(dom, list)
       return "apachecon-#{list}" if dom == 'apachecon.com'
       return list if dom == 'apache.org'

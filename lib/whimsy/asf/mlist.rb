@@ -262,7 +262,7 @@ module ASF
     private
 
     # return the archiver type as array: [:MBOX|:PONY|:MINO|:MAIL_ARCH|:MARKMAIL|:WHIMSY, 'public'|'private'|'alias'|'direct']
-    # minotaur archiver names do not include any public/private indication as that is in bin/.archives
+    # minotaur archiver names do not include any public/private indication
     def self.archiver_type(email, dom, list)
       case email
         when ARCH_MBOX_PUB then return [:MBOX, 'public']

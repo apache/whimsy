@@ -44,7 +44,6 @@
     url: infra/infrastructure/apmail/trunk/bin
     depth: empty
     files:
-      - .archives
       - mail_list_autosub.yml
 
   attic-xdocs:
