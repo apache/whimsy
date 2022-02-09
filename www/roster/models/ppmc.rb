@@ -1,11 +1,10 @@
 class PPMC
   def self.serialize(id, env)
-    response = {}
 
     ppmc = ASF::Podling.find(id)
     return unless ppmc # Not found
 
-    lists = ASF::Mail.lists(true).select do |list, mode|
+    lists = ASF::Mail.lists(true).select do |list, _|
       list =~ /^(incubator-)?#{ppmc.mail_list}\b/
     end
 
@@ -16,13 +15,13 @@ class PPMC
     unknownSubs = []
     asfMembers = []
     # Also look for non-ASF mod emails
-    nonASFmails=Hash.new
+    nonASFmails = {}
 
     moderators = nil
     modtime = nil
     subscribers = nil # we get the counts only here
     subtime = nil
-    pSubs = Array.new # private@ subscribers
+    pSubs = [] # private@ subscribers
     unMatchedSubs = [] # unknown private@ subscribers
     currentUser = ASF::Person.find(env.user)
     analysePrivateSubs = false # whether to show missing private@ subscriptions
@@ -40,12 +39,12 @@ class PPMC
       if analysePrivateSubs
         pSubs = ASF::MLIST.private_subscribers(ppmc.mail_list)[0]||[]
         unMatchedSubs=Set.new(pSubs) # init ready to remove matched mails
-        pSubs.map!{|m| m.downcase} # for matching
+        pSubs.map!(&:downcase) # for matching
       end
 
-      moderators.each { |list,mods| mods.each {|m| nonASFmails[m]='' unless m.end_with? '@apache.org'} }
+      moderators.each { |_, mods| mods.each {|m| nonASFmails[m]='' unless m.end_with? '@apache.org'} }
     else
-      lists = lists.select {|list, mode| mode == 'public'}
+      lists = lists.select {|_, mode| mode == 'public'}
     end
 
     pmc = ASF::Committee.find('incubator')
@@ -130,7 +129,7 @@ class PPMC
       }
     end
 
-    response = {
+    return {
       id: id,
       display_name: ppmc.display_name,
       description: ppmc.description,
@@ -142,10 +141,10 @@ class PPMC
       status: ppmc.status,
       mentors: ppmc.mentors,
       hasLDAP: ppmc.hasLDAP?,
-      owners: owners.map {|person| person.id},
-      committers: committers.map {|person| person.id},
+      owners: owners.map(&:id),
+      committers: committers.map(&:id),
       roster: roster,
-      mail: Hash[lists.sort],
+      mail: lists.sort.to_h,
       moderators: moderators,
       modtime: modtime,
       subscribers: subscribers,
@@ -159,19 +158,18 @@ class PPMC
       asfMembers: asfMembers,
     }
 
-    response
   end
 
   private
 
   def self.load_emails
     # recompute index if the data is 5 minutes old or older
-    @people = nil if not @people_time or Time.now-@people_time >= 300
+    @people = nil if not @people_time or Time.now - @people_time >= 300
 
-    if not @people
+    unless @people
       # bulk loading the mail information makes things go faster
-      mail = Hash[ASF::Mail.list.group_by(&:last).
-        map {|person, list| [person, list.map(&:first)]}]
+      # TODO: it is still expensive
+      mail = ASF::Mail.list.group_by(&:last).transform_values {|list| list.map(&:first)}
 
       # build a list of people, their public-names, and email addresses
       @people = ASF::Person.list.map {|person|

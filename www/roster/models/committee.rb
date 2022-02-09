@@ -1,6 +1,5 @@
 class Committee
   def self.serialize(id, env)
-    response = {}
 
     pmc = ASF::Committee.find(id)
     return unless pmc.pmc? # Only show PMCs
@@ -10,9 +9,9 @@ class Committee
 
     ASF::Committee.load_committee_info
     # We'll be needing the mail data later
-    people = ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (members + committers).uniq)
+    ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (members + committers).uniq)
 
-    lists = ASF::Mail.lists(true).select do |list, mode|
+    lists = ASF::Mail.lists(true).select do |list, _|
       list =~ /^#{pmc.mail_list}\b/
     end
 
@@ -25,7 +24,7 @@ class Committee
     modtime = nil
     subscribers = nil # we get the counts only here
     subtime = nil
-    pSubs = Array.new # private@ subscribers
+    pSubs = [] # private@ subscribers
     unMatchedSubs = [] # unknown private@ subscribers
     unMatchedSecSubs = [] # unknown security@ subscribers
     currentUser = ASF::Person.find(env.user)
@@ -44,17 +43,17 @@ class Committee
       if analysePrivateSubs
         pSubs = ASF::MLIST.private_subscribers(pmc.mail_list)[0]||[]
         unMatchedSubs=Set.new(pSubs) # init ready to remove matched mails
-        pSubs.map!{|m| m.downcase} # for matching
+        pSubs.map!(&:downcase) # for matching
         sSubs = ASF::MLIST.security_subscribers(pmc.mail_list)[0]||[]
         unMatchedSecSubs=Set.new(sSubs) # init ready to remove matched mails
       end
     else
-      lists = lists.select {|list, mode| mode == 'public'}
+      lists = lists.select {|_, mode| mode == 'public'}
     end
 
     roster = pmc.roster.dup # from committee-info
     # ensure PMC members are all processed even they don't belong to the owner group
-    roster.each do |key, info|
+    roster.each do |key, _|
       info[:role] = 'PMC member'
       next if pmc.ownerids.include?(key) # skip the rest (expensive) if person is in the owner group
       person = ASF::Person[key]
@@ -97,7 +96,7 @@ class Committee
       roster[person.id]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
     end
 
-    roster.each {|id, info| info[:member] = ASF::Person.find(id).asf_member?}
+    roster.each {|k, v| v[:member] = ASF::Person.find(k).asf_member?}
 
     if pmc.chair and roster[pmc.chair.id]
       roster[pmc.chair.id]['role'] = 'PMC chair'
@@ -108,13 +107,11 @@ class Committee
     asfMembers = []
     unknownSecSubs = [] # unknown security@ subscribers: not PMC or ASF
     # Also look for non-ASF mod emails
-    nonASFmails=Hash.new
-    if moderators
-      moderators.each { |list,mods| mods.each {|m| nonASFmails[m]='' unless m.end_with? '@apache.org'} }
-    end
+    nonASFmails = {}
+    moderators?.each { |_, mods| mods.each {|m| nonASFmails[m] = '' unless m.end_with? '@apache.org'} }
     if unMatchedSubs.length > 0 or nonASFmails.length > 0 or unMatchedSecSubs.length > 0
       load_emails # set up @people
-      unMatchedSubs.each{ |addr|
+      unMatchedSubs.each { |addr|
         who = nil
         @people.each do |person|
           if person[:mail].any? {|mail| mail.downcase == addr.downcase}
@@ -131,14 +128,14 @@ class Committee
           unknownSubs << { addr: addr, person: nil }
         end
       }
-      nonASFmails.each {|k,v|
+      nonASFmails.each {|k, _|
         @people.each do |person|
           if person[:mail].any? {|mail| ASF::Mail.to_canonical(mail.downcase) == ASF::Mail.to_canonical(k.downcase)}
             nonASFmails[k] = person[:id]
           end
         end
       }
-      unMatchedSecSubs.each{ |addr|
+      unMatchedSecSubs.each { |addr|
         who = nil
         @people.each do |person|
           if person[:mail].any? {|mail| mail.downcase == addr.downcase}
@@ -160,9 +157,9 @@ class Committee
       pmcchairs = ASF::Service.find('pmc-chairs')
       pmc_chair = pmcchairs.members.include? pmc.chair
     end
-    response = {
+    return {
       id: id,
-      chair: pmc.chair && pmc.chair.id,
+      chair: pmc.chair?.id,
       pmc_chair: pmc_chair,
       display_name: pmc.display_name,
       description: pmc.description,
@@ -174,7 +171,7 @@ class Committee
       members: pmc.roster.keys,
       committers: committers.map(&:id),
       roster: roster,
-      mail: Hash[lists.sort],
+      mail: lists.sort.to_h,
       moderators: moderators,
       modtime: modtime,
       subscribers: subscribers,
@@ -188,7 +185,6 @@ class Committee
       unknownSecSubs: unknownSecSubs,
     }
 
-    response
   end
 
   private
@@ -197,10 +193,9 @@ class Committee
     # recompute index if the data is 5 minutes old or older
     @people = nil if not @people_time or Time.now-@people_time >= 300
 
-    if not @people
+    unless @people
       # bulk loading the mail information makes things go faster
-      mail = Hash[ASF::Mail.list.group_by(&:last).
-        map {|person, list| [person, list.map(&:first)]}]
+      mail = ASF::Mail.list.group_by(&:last).transform_values {|list| list.map(&:first)}
 
       # build a list of people, their public-names, and email addresses
       @people = ASF::Person.list.map {|person|
