@@ -131,7 +131,7 @@ module ASF
       return "#{mail_domain}.apache.org" == dom ||
               (dom == 'apache.org' &&
               (list == mail_domain || list.start_with?("#{mail_domain}-"))
-              )
+              ) || "#{list}@#{dom}" == mail_domain # e.g. planners@apachecon.com
     end
 
     # for a mail domain, extract related lists and their moderators
@@ -439,20 +439,21 @@ module ASF
 end
 
 if __FILE__ == $0
-  domain = ARGV.shift || 'whimsical'
-  p ASF::MLIST.domain_lists(domain, false)
-  p ASF::MLIST.domain_lists(domain, true)
-  p  ASF::MLIST.list_subscribers(domain)
-  p  ASF::MLIST.list_subscribers(domain, false, false, true)
-  p  ASF::MLIST.list_subs(domain)
-  p  ASF::MLIST.list_subscribers(domain, false, true)
-  p  ASF::MLIST.list_subscribers(domain, false, true, true)
-  p  ASF::MLIST.list_subs(domain, false, true)
-  p  ASF::MLIST.list_moderators(domain, true)
-  p  ASF::MLIST.private_subscribers(domain)
-  # Needed because these methods call ASF::Mail.to_canonical
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf'
-  p  ASF::MLIST.moderates(['chrisd@apache.org'])
-  p  ASF::MLIST.digests(['chrisd@apache.org'])
+  domain = ARGV.shift || 'whimsical'
+  mlist = ASF::Committee.find(domain).mail_list
+  p mlist
+  p ASF::MLIST.domain_lists(mlist, false)
+  p ASF::MLIST.domain_lists(mlist, true)
+  p ASF::MLIST.list_subscribers(domain)
+  p ASF::MLIST.list_subscribers(domain, false, false, true)
+  p ASF::MLIST.list_subs(domain)
+  p ASF::MLIST.list_subscribers(domain, false, true)
+  p ASF::MLIST.list_subscribers(domain, false, true, true)
+  p ASF::MLIST.list_subs(domain, false, true)
+  p ASF::MLIST.list_moderators(domain, true)
+  p ASF::MLIST.private_subscribers(domain)
+  p ASF::MLIST.moderates(['chrisd@apache.org'])
+  p ASF::MLIST.digests(['chrisd@apache.org'])
 end
