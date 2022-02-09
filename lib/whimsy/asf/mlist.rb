@@ -239,6 +239,18 @@ module ASF
       end
     end
 
+    # return a hash of lists for a project, together with privacy setting
+    # tlp - the prefix for the full domain
+    # This is a replacement for ASF::Mail.lists
+    def self.domain_lists(project, show_all)
+      lists = {}
+      list_types(show_all) do |dom, list, type|
+        if dom == "#{project}.apache.org"
+          lists["#{list}@#{dom}"] = type
+        end
+      end
+      lists
+    end
     # return the [domain, list] for all entries in the subscriber listings
     # the subscribers are not included
     def self.each_list
@@ -428,6 +440,8 @@ end
 
 if __FILE__ == $0
   domain = ARGV.shift || 'whimsical'
+  p ASF::MLIST.domain_lists(domain, false)
+  p ASF::MLIST.domain_lists(domain, true)
   p  ASF::MLIST.list_subscribers(domain)
   p  ASF::MLIST.list_subscribers(domain, false, false, true)
   p  ASF::MLIST.list_subs(domain)

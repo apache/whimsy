@@ -1,12 +1,10 @@
+require 'whimsy/asf/mlist'
+
 class PPMC
   def self.serialize(id, env)
 
     ppmc = ASF::Podling.find(id)
     return unless ppmc # Not found
-
-    lists = ASF::Mail.lists(true).select do |list, _|
-      list =~ /^#{ppmc.mail_list}\b/
-    end
 
     committers = ppmc.members
     owners = ppmc.owners
@@ -43,8 +41,9 @@ class PPMC
       end
 
       moderators.each { |_, mods| mods.each {|m| nonASFmails[m]='' unless m.end_with? '@apache.org'} }
+      lists = ASF::MLIST.domain_lists(ppmc.mail_list, true)
     else
-      lists = lists.select {|_, mode| mode == 'public'}
+      lists = ASF::MLIST.domain_lists(ppmc.mail_list, false)
     end
 
     pmc = ASF::Committee.find('incubator')
