@@ -11,10 +11,6 @@ class Committee
     # We'll be needing the mail data later
     ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (members + committers).uniq)
 
-    lists = ASF::Mail.lists(true).select do |list, _|
-      list =~ /^#{pmc.mail_list}\b/
-    end
-
     comdev = ASF::SVN['comdev-foundation']
     info = JSON.parse(File.read(File.join(comdev, 'projects.json')))[id]
 
@@ -47,8 +43,9 @@ class Committee
         sSubs = ASF::MLIST.security_subscribers(pmc.mail_list)[0]||[]
         unMatchedSecSubs=Set.new(sSubs) # init ready to remove matched mails
       end
+      lists = ASF::MLIST.domain_lists(pmc.mail_list, true)
     else
-      lists = lists.select {|_, mode| mode == 'public'}
+      lists = ASF::MLIST.domain_lists(pmc.mail_list, false)
     end
 
     roster = pmc.roster.dup # from committee-info

@@ -156,9 +156,7 @@ class PMC < Vue
     else
       _h2.mail! 'Mail lists'
       _ul do
-        for mail_name in @committee.mail
-          parsed = mail_name.match(/^(.*?)-(.*)/)
-          list_name = "#{parsed[2]}@#{parsed[1]}.apache.org"
+        for list_name in @committee.mail
           _li do
             _a list_name, href: 'https://lists.apache.org/list.html?' +
               list_name
