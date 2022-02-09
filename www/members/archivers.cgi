@@ -13,7 +13,6 @@ ids = {}
 binarchives = ASF::Mail.lists(true)
 binarchtime = ASF::Mail.list_mtime
 
-show_mino = (ENV['PATH_INFO'] == '/mino') # minotaur
 show_all = (ENV['PATH_INFO'] == '/all') # all entries, regardless of error state
 # default is to show entry if neither mail-archive nor markmail is present (mail-archive is missing from a lot of lists)
 show_mailarchive = (ENV['PATH_INFO'] == '/mail-archive') # show entry if mail-archive is missing
@@ -68,19 +67,16 @@ _html do
           _br
           _ 'Unexpected/missing entries are flagged'
           _br
-          _ 'Minotaur emails can be either aliases (tlp-list-archive@tlp.apache.org) or direct (apmail-tlp-list-archive@www.apache.org).'
-          _br
           _ 'Columns:'
           _ul do
             _li 'id - short id of list as used on mod_mbox'
             _li 'list - full list name'
             _li "Private? - public/private; derived from bin/.archives as at #{binarchtime}"
-            _li 'MINO - minotaur archiver'
             _li 'MBOX - mbox-vm archiver'
             _li 'PONY - PonyMail (lists.apache.org) archiver'
             _li 'MAIL-ARCHIVE - @mail-archive.com archiver (public lists only)'
             _li 'MARKMAIL - markmail.org archiver (public lists only)'
-            _li "Archivers - list of known archiver subscriptions as at #{sublist_time}"
+            _li "Archivers - list of unexpected archiver subscriptions as at #{sublist_time}"
           end
           _ 'Showing: '
           unless show_all or show_mailarchive
@@ -109,7 +105,6 @@ _html do
         _th 'id', data_sort: 'string'
         _th 'list', data_sort: 'string'
         _th 'Private?', data_sort: 'string'
-        _th 'MINO'
         _th 'MBOX'
         _th 'PONY'
         _th 'MAIL-ARCHIVE'
@@ -135,15 +130,6 @@ _html do
         # This is equivalent to first if there is only one, but will produce
         # a string such as 'privatepublic' if there are distinct entries
         # However it generates an empty string if there are no entries.
-
-        mino = findarcs(arcs, :MINO, arcleft)
-        if ! mino[0].empty?
-          options[:mino] = {class: 'info'} unless mino[0] == 'alias'
-          options[:mino] = {class: 'warning'}
-        else
-          next if show_mino
-          mino = '-'
-        end
 
         mbox = findarcs(arcs, :MBOX, arcleft)
 
@@ -195,7 +181,7 @@ _html do
         else # don't show missing mail-archive
           needs_attention = options.reject { |k, _v| k == :mail_archive && mail_archive == 'Missing' }.length > 0
         end
-        next unless show_all || needs_attention || show_mino # only show errors unless want all
+        next unless show_all || needs_attention # only show errors unless want all
 
         _tr do
           _td id
@@ -206,7 +192,6 @@ _html do
           end
 
           _td pubprv, options[:pubprv]
-          _td options[:mino] do showdets(mino) end
           _td options[:mbox] do showdets(mbox) end
           _td options[:pony] do showdets(pony) end
           _td options[:mail_archive] do showdets(mail_archive) end
