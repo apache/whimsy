@@ -5,7 +5,7 @@ class PPMC
     return unless ppmc # Not found
 
     lists = ASF::Mail.lists(true).select do |list, _|
-      list =~ /^(incubator-)?#{ppmc.mail_list}\b/
+      list =~ /^#{ppmc.mail_list}\b/
     end
 
     committers = ppmc.members
