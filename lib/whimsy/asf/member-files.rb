@@ -66,9 +66,10 @@ module ASF
     def self.member_nominees
       nominees = {}
       ASF::MemberFiles.parse_file('nominated-members.txt') do |hdr, nominee|
-        # for members, the header looks like this:
-        # <NOMINATED PERSON'S APACHE ID> <PUBLIC NAME>        
-        id, nominee['Public Name'] = hdr.split(' ',2)
+        # for members, the header SHOULD look like this:
+        # availid '<'PUBLIC NAME'>'
+        id, nominee['Public Name'] = hdr.split(' ', 2)
+        # TODO: handle missing availid better
         nominees[id] = nominee
       end
       nominees
