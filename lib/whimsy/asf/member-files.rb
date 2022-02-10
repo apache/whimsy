@@ -12,7 +12,7 @@ module ASF
     # Public Name
     # Nominee email
     # Nominated by
-    # Seconded by => array of seconders      
+    # Seconded by => array of seconders
     # Nomination Statement => array of text lines
     def self.parse_file(name)
       # N.B. The format has changed over the years. This is the syntax as of 2021.
@@ -22,16 +22,16 @@ module ASF
       #    Nominee email:
       #    Nominated by:
       #    Seconded by:
-      
+
       #    Nomination Statement:
-      
+
       # Find most recent file:
       nomfile = Dir[File.join(ASF::SVN['Meetings'], '*', name)].max
 
       # It does not appear to be possible to have file open or read
       # automatically transcode strings, so we do it here.
       # This is necessary to avoid issues with matching Regexes.
-      File.open(nomfile, mode='rb:UTF-8')
+      File.open(nomfile, mode: 'rb:UTF-8')
         .map(&:scrub)
         .slice_before(/^\s*---+--\s*/)
         .drop(2) # instructions and sample block
@@ -45,11 +45,11 @@ module ASF
           if idx == 0 # id and name (or just name for board)
             header = para.first.strip
           else
-            key, value = para.shift.strip.split(': ',2)
+            key, value = para.shift.strip.split(': ', 2)
             if para.size == 0 # no more data to follow
               nominee[key] = value
             else
-              tmp = [value,para.map(&:chomp)].flatten.compact
+              tmp = [value, para.map(&:chomp)].flatten.compact
               tmp.pop if tmp[-1].empty? # drop trailing empty line only
               nominee[key] = tmp
             end
@@ -96,17 +96,17 @@ module ASF
 end
 
 if __FILE__ == $0
-  ASF::MemberFiles.member_nominees.each do |k,v| 
-    p [k, 
-       v['Public Name'], 
+  ASF::MemberFiles.member_nominees.each do |k, v|
+    p [k,
+       v['Public Name'],
        v['Public Name']&.encoding,
        v['Public Name']&.valid_encoding?]
   end
   puts "--------------"
-  ASF::MemberFiles.board_nominees.each do |k,v| 
-    p [k, 
-      v['Public Name'], 
-      v['Public Name']&.encoding,
-      v['Public Name']&.valid_encoding?]
- end
+  ASF::MemberFiles.board_nominees.each do |k, v|
+    p [k,
+       v['Public Name'],
+       v['Public Name']&.encoding,
+       v['Public Name']&.valid_encoding?]
+  end
 end
