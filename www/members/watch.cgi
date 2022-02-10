@@ -35,7 +35,7 @@ _html do
       meeting =
         File.dirname(Dir[File.join(meetings, '*', 'nominated-members.txt')].max)
 
-      nominations = ASF::MemberFiles.member_nominees.map {|k,v| k}
+      nominations = ASF::MemberFiles.member_nominees.map {|k, _v| k}
 
       # determine which list to report on, based on the URI
       request = ENV['REQUEST_URI']
@@ -126,12 +126,6 @@ _html do
         _h2_ 'From potential-member-watch-list.txt'
         list = watch_list
       end
-
-      # for efficiency, preload public_names, member status, and
-      # nominees
-      ASF::Person.preload('cn', list)
-      ASF::Member.status
-      ASF::Person.member_nominees
 
       _table.table do
 
