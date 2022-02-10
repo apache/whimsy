@@ -112,9 +112,9 @@ _html do
               match = create_match(nominee)
 
               if emails.any? {|mail| mail.subject.downcase =~ match}
-                _a.present person.public_name, href: "#{ROSTER}/#{nominee[:id]}"
+                _a.present person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
               else
-                _a.missing person.public_name, href: "#{ROSTER}/#{nominee[:id]}"
+                _a.missing person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
                 _ ' Nominated by: '
                 _ nominee[:nominator]
               end
