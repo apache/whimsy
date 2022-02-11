@@ -10,8 +10,6 @@ require 'date'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 
-meetings = ASF::SVN['Meetings']
-
 _html do
   _head_ do
     _base href: File.dirname(ENV['SCRIPT_NAME'])
@@ -32,8 +30,7 @@ _html do
     ) do
       # start with the Watch List itself
       watch_list = ASF::Person.member_watch_list.keys
-      meeting =
-        File.dirname(Dir[File.join(meetings, '*', 'nominated-members.txt')].max)
+      meeting = ASF::MemberFiles.latest_meeting
 
       nominations = ASF::MemberFiles.member_nominees.map {|k, _v| k}
 

@@ -5,6 +5,16 @@ module ASF
 
   class MemberFiles
 
+    # get the latest meeting directory or nomination file
+    def self.latest_meeting(name=nil)
+      if name.nil? # we want the parent directory
+        name = 'nominated-members.txt' # ensure the target directory has been set up
+        File.dirname([File.join(ASF::SVN['Meetings'], '[2-9][0-9]*', name)].max)
+      else
+        Dir[File.join(ASF::SVN['Meetings'], '[2-9][0-9]*', name)].max
+      end
+    end
+
     # Return a hash of nominees.
     # key: availid (name for board nominees)
     # value: hash of entries:
@@ -26,7 +36,7 @@ module ASF
       #    Nomination Statement:
 
       # Find most recent file:
-      nomfile = Dir[File.join(ASF::SVN['Meetings'], '*', name)].max
+      nomfile = latest_meeting(name)
 
       # It does not appear to be possible to have file open or read
       # automatically transcode strings, so we do it here.
