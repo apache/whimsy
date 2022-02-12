@@ -1,3 +1,4 @@
+# Utility functions used throughout roster tool
 class Utils
 
   # escape a string so that it can be used as a regular expression
