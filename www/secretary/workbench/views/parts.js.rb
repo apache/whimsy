@@ -96,8 +96,11 @@ class Parts < Vue
         headers: @headers
 
       _ul.nav.nav_tabs do
-        _li class: ('active' unless %i[edit mail].include?(@form)) do
+        _li class: ('active' unless %i[edit mail reject].include?(@form)) do
           _a 'Categorize', onMousedown: self.tabSelect
+        end
+        _li class: ('active' if @form == :reject) do
+          _a 'Reject', onMousedown: self.tabSelect
         end
         _li class: ('active' if @form == :edit) do
           _a 'Edit', onMousedown: self.tabSelect
@@ -151,6 +154,28 @@ class Parts < Vue
 
           _hr
 
+          _label do
+            _input type: 'radio', name: 'doctype', value: 'forward',
+              onClick: -> {@form = Forward}
+            _span 'forward email'
+          end
+
+          _hr
+
+          _label do
+            _input type: 'radio', name: 'doctype', value: 'forward',
+              onClick: -> {@form = Note}
+            if @headers&.secmail&.notes
+              _span 'edit note'
+            else
+              _span 'add note'
+            end
+          end
+        end
+
+      elsif @form == :reject
+
+        _div.doctype do
           _h4 'Reject email with message:'
 
           # reject message with message
@@ -213,25 +238,6 @@ class Parts < Vue
 
           end
 
-          _hr
-
-          _label do
-            _input type: 'radio', name: 'doctype', value: 'forward',
-              onClick: -> {@form = Forward}
-            _span 'forward email'
-          end
-
-          _hr
-
-          _label do
-            _input type: 'radio', name: 'doctype', value: 'forward',
-              onClick: -> {@form = Note}
-            if @headers&.secmail&.notes
-              _span 'edit note'
-            else
-              _span 'add note'
-            end
-          end
         end
 
       elsif @form == :edit
