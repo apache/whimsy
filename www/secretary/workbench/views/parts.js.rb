@@ -163,8 +163,8 @@ class Parts < Vue
             _input type: 'hidden', name: 'missing_email', value: @missing_email
 
             _label do
-              _span 'project: '
-              _select name: 'CC project', value: @project, disabled: @filed do
+              _span 'Copy project: '
+              _select name: 'project', value: @project, disabled: @filed do
                 _option ''
                 @@projects.each do |project|
                   _option project
