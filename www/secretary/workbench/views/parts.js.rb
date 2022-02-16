@@ -151,6 +151,8 @@ class Parts < Vue
 
           _hr
 
+          _h4 'Reject email with message:'
+
           # reject message with message
           _form method: 'POST', target: 'content' do
             _input type: 'hidden', name: 'message',
@@ -160,7 +162,17 @@ class Parts < Vue
             _input type: 'hidden', name: 'missing_address', value: @missing_address
             _input type: 'hidden', name: 'missing_email', value: @missing_email
 
-            spacer = "\u00A0"*4 # non-breaking space as UTF-8
+            _label do
+              _span 'project: '
+              _select name: 'CC project', value: @project, disabled: @filed do
+                _option ''
+                @@projects.each do |project|
+                  _option project
+                end
+              end
+            end
+
+            spacer = "\u00A0" * 4 # non-breaking space as UTF-8
             _label do
               _ spacer
               _input type: 'checkbox', checked: @missing_address,
@@ -171,7 +183,7 @@ class Parts < Vue
             _label do
               _ spacer
               _input type: 'checkbox', checked: @missing_email,
-              onClick:-> {@missing_email = !@missing_email}
+              onClick: -> {@missing_email = !@missing_email}
               _span ' missing email address'
             end
 
@@ -199,15 +211,6 @@ class Parts < Vue
               _span 'upload public key'
             end
 
-            _label do
-              _span 'project: '
-              _select name: 'project', value: @project, disabled: @filed do
-                _option ''
-                @@projects.each do |project|
-                  _option project
-                end
-              end
-            end
           end
 
           _hr
@@ -223,7 +226,7 @@ class Parts < Vue
           _label do
             _input type: 'radio', name: 'doctype', value: 'forward',
               onClick: -> {@form = Note}
-            if @headers and @headers.secmail and @headers.secmail.notes
+            if @headers&.secmail&.notes
               _span 'edit note'
             else
               _span 'add note'
