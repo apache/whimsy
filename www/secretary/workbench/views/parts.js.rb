@@ -63,11 +63,11 @@ class Parts < Vue
       end
     end
 
-    if @headers and @headers.secmail and @headers.secmail.status
+    if @headers&.secmail&.status
       _div.alert.alert_info @headers.secmail.status
     end
 
-    if @headers and @headers.secmail and @headers.secmail.notes
+    if @headers&.secmail&.notes
       _div.alert.alert_warning do
         _h5 'Notes:'
         _span @headers.secmail.notes
@@ -96,7 +96,7 @@ class Parts < Vue
         headers: @headers
 
       _ul.nav.nav_tabs do
-        _li class: ('active' unless [:edit, :mail].include?(@form)) do
+        _li class: ('active' unless %i[edit mail].include?(@form)) do
           _a 'Categorize', onMousedown: self.tabSelect
         end
         _li class: ('active' if @form == :edit) do
