@@ -113,7 +113,7 @@ task :work => ['test/work/board',
   *testfiles.map {|testfile| "test/work/data/#{testfile}.yml"}]
 
 namespace :test do
-  task :setup => [:reset, :work, 'package-lock.json']
+  task :setup => [:clean, :reset, :work, 'package-lock.json']
   task :server => 'server:test'
 
   task :stress => :setup do
