@@ -19,6 +19,14 @@ header h1, header h3 {
   background-color: yellow;
 }
 
+.emeritusPending {
+  background-color: none;
+}
+
+.emeritusReady {
+  background-color: greenyellow;
+}
+
 .signature {
   background-color: #FC0;
 }
