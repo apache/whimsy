@@ -121,7 +121,7 @@ $('button#cancel').click(function(event) {
   window.parent.frames[0].postMessage(message, '*');
   $('ul')[0].style.opacity = '0.5';
   $('h1').removeClass('bg-info').addClass('bg-danger').
-    text('Operation canceled');
+    text('Operation cancelled');
 });
 
 // have delete and up keys return to index
