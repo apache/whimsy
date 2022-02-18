@@ -236,6 +236,12 @@ class Parts < Vue
               _span 'resubmitted form'
             end
 
+            _label do
+              _input type: 'radio', name: 'doctype', value: 'empty',
+                onClick: self.generic_reject
+              _span 'empty form'
+            end
+
           end
         end
 
@@ -544,6 +550,13 @@ class Parts < Vue
   def reject(event)
     form = jQuery(event.target).closest('form')
     form.attr('action', "../../tasklist/#{event.target.value}")
+    form.submit()
+  end
+
+  # Note: the doctype value is passed across as @doctype
+  def generic_reject(event)
+    form = jQuery(event.target).closest('form')
+    form.attr('action', "../../tasklist/generic_reject")
     form.submit()
   end
 
