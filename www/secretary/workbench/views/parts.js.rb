@@ -151,70 +151,6 @@ class Parts < Vue
 
           _hr
 
-          _h4 'Reject email with message:'
-
-          # reject message with message
-          _form method: 'POST', target: 'content' do
-            _input type: 'hidden', name: 'message',
-              value: window.parent.location.pathname
-            _input type: 'hidden', name: 'selected', value: @@selected
-            _input type: 'hidden', name: 'signature', value: @@signature
-            _input type: 'hidden', name: 'missing_address', value: @missing_address
-            _input type: 'hidden', name: 'missing_email', value: @missing_email
-
-            _label do
-              _span 'Copy project: '
-              _select name: 'project', value: @project, disabled: @filed do
-                _option ''
-                @@projects.each do |project|
-                  _option project
-                end
-              end
-            end
-
-            spacer = "\u00A0" * 4 # non-breaking space as UTF-8
-            _label do
-              _ spacer
-              _input type: 'checkbox', checked: @missing_address,
-              onClick:-> {@missing_address = !@missing_address}
-              _span ' missing or partial postal address'
-            end
-
-            _label do
-              _ spacer
-              _input type: 'checkbox', checked: @missing_email,
-              onClick: -> {@missing_email = !@missing_email}
-              _span ' missing email address'
-            end
-
-            _label do
-              _input type: 'radio', name: 'doctype', value: 'incomplete',
-                onClick: self.reject
-              _span 'incomplete form'
-            end
-
-            _label do
-              _input type: 'radio', name: 'doctype', value: 'unsigned',
-                onClick: self.reject
-              _span 'unsigned form'
-            end
-
-            _label do
-              _input type: 'radio', name: 'doctype', value: 'resubmit',
-                onClick: self.reject
-              _span 'resubmitted form'
-            end
-
-            _label do
-              _input type: 'radio', name: 'doctype', value: 'pubkey',
-                onClick: self.reject
-              _span 'upload public key'
-            end
-
-          end
-
-          _hr
-
           _label do
             _input type: 'radio', name: 'doctype', value: 'forward',
               onClick: -> {@form = Forward}
@@ -231,6 +167,75 @@ class Parts < Vue
             else
               _span 'add note'
             end
+          end
+
+          _hr
+
+          _form method: 'POST', target: 'content' do
+            _input type: 'hidden', name: 'message',
+              value: window.parent.location.pathname
+            _input type: 'hidden', name: 'selected', value: @@selected
+            _input type: 'hidden', name: 'signature', value: @@signature
+            _input type: 'hidden', name: 'missing_address', value: @missing_address
+            _input type: 'hidden', name: 'missing_email', value: @missing_email
+
+            # Defer processing (must be part of POST block)
+
+            _label do
+              _input type: 'radio', name: 'doctype', value: 'pubkey',
+                onClick: self.reject
+              _span 'upload public key'
+            end
+
+            # The reject reason list will grow, so do it last
+
+            _h4 'Reject email with message:'
+
+            _label do
+              _span 'Cc project: '
+              _select name: 'project', value: @project, disabled: @filed do
+                _option ''
+                @@projects.each do |project|
+                  _option project
+                end
+              end
+            end
+
+            _label do
+              _input type: 'radio', name: 'doctype', value: 'incomplete',
+                onClick: self.reject
+              _span 'incomplete form (select missing items below first)'
+            end
+
+            _ul do
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @missing_address,
+                  onClick: -> {@missing_address = !@missing_address}
+                  _span ' missing or partial postal address'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @missing_email,
+                  onClick: -> {@missing_email = !@missing_email}
+                  _span ' missing email address'
+                end
+              end
+            end
+
+            _label do
+              _input type: 'radio', name: 'doctype', value: 'unsigned',
+                onClick: self.reject
+              _span 'unsigned form'
+            end
+
+            _label do
+              _input type: 'radio', name: 'doctype', value: 'resubmit',
+                onClick: self.reject
+              _span 'resubmitted form'
+            end
+
           end
         end
 
