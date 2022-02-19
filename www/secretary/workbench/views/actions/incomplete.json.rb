@@ -11,13 +11,19 @@ _extract_project
 #                           email submitter                            #
 ########################################################################
 
+REASONS = {
+  '@missing_address' => 'missing or incomplete postal address',
+  '@missing_email' => 'missing email address',
+}
+
 # send rejection email
 task "email #{message.from}" do
   # build mail from template
   @email = message.from
   missing_items = []
-  missing_items << '- missing or incomplete postal address' if @missing_address == 'true'
-  missing_items << '- missing email address' if @missing_email == 'true'
+  REASONS.each do |k, v|
+    missing_items << "- #{v}" if instance_variable_get(k) == 'true'
+  end
   missing_items << '' if missing_items.size > 0 # add separator
   @missing_items = missing_items.join("\n")
   mail = message.reply(
