@@ -207,6 +207,7 @@ class Parts < Vue
               _span 'incomplete form (select missing items below first)'
             end
 
+            # The checked: variable names must be reflected in the file incomplete.json.jb
             _ul do
               _li do
                 _label do

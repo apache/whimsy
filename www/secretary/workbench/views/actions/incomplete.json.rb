@@ -11,6 +11,7 @@ _extract_project
 #                           email submitter                            #
 ########################################################################
 
+# The keys below must agree with the checkbox names in parts.js.rb
 REASONS = {
   '@missing_address' => 'missing or incomplete postal address',
   '@missing_email' => 'missing email address',
