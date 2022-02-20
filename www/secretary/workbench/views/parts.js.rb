@@ -220,7 +220,7 @@ class Parts < Vue
             _label do
               _input type: 'radio', name: 'doctype', value: 'incomplete',
                 onClick: self.reject
-              _span 'incomplete form (problematic items below)'
+              _span 'reject document (select reasons below)'
             end
 
             # The checked: variable names must be reflected in the file incomplete.json.jb
