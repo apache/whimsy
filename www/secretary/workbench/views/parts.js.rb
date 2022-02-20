@@ -239,7 +239,6 @@ class Parts < Vue
                   _span ' missing email address'
                 end
               end
-            end
               _li do
                 _label do
                   _input type: 'checkbox', checked: @corporate_postal,
@@ -247,7 +246,6 @@ class Parts < Vue
                   _span ' corporate postal address'
                 end
               end
-            end
               _li do
                 _label do
                   _input type: 'checkbox', checked: @invalid_public,
@@ -255,7 +253,6 @@ class Parts < Vue
                   _span ' invalid public name'
                 end
               end
-            end
               _li do
                 _label do
                   _input type: 'checkbox', checked: @separate_signature,
@@ -263,7 +260,6 @@ class Parts < Vue
                   _span ' separate document and signature'
                 end
               end
-            end
               _li do
                 _label do
                   _input type: 'checkbox', checked: @unauthorized_signature,
@@ -271,7 +267,6 @@ class Parts < Vue
                   _span ' unauthorized signature'
                 end
               end
-            end
               _li do
                 _label do
                   _input type: 'checkbox', checked: @empty_form,
@@ -279,7 +274,6 @@ class Parts < Vue
                   _span ' empty form'
                 end
               end
-            end
               _li do
                 _label do
                   _input type: 'checkbox', checked: @unreadable_scan,
@@ -287,7 +281,6 @@ class Parts < Vue
                   _span ' unreadable or partial scan'
                 end
               end
-            end
               _li do
                 _label do
                   _input type: 'checkbox', checked: @wrong_identity,
@@ -295,7 +288,6 @@ class Parts < Vue
                   _span ' key data does not match email'
                 end
               end
-            end
               _li do
                 _label do
                   _input type: 'checkbox', checked: @validation_failed,
