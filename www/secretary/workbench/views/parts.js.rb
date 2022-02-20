@@ -14,6 +14,14 @@ class Parts < Vue
     @project = nil
     @missing_address = false
     @missing_email = false
+    @corporate_postal = false
+    @invalid_public = false
+    @separate_signature = false
+    @unauthorized_signature = false
+    @empty_form = false
+    @unreadable_scan = false
+    @wrong_identity = false
+    @validation_failed = false
   end
 
   ########################################################################
@@ -178,6 +186,14 @@ class Parts < Vue
             _input type: 'hidden', name: 'signature', value: @@signature
             _input type: 'hidden', name: 'missing_address', value: @missing_address
             _input type: 'hidden', name: 'missing_email', value: @missing_email
+            _input type: 'hidden', name: 'corporate_postal', value: @corporate_postal
+            _input type: 'hidden', name: 'invalid_public', value: @invalid_public
+            _input type: 'hidden', name: 'separate_signature', value: @separate_signature
+            _input type: 'hidden', name: 'unauthorized_signature', value: @unauthorized_signature
+            _input type: 'hidden', name: 'empty_form', value: @empty_form
+            _input type: 'hidden', name: 'unreadable_scan', value: @unreadable_scan
+            _input type: 'hidden', name: 'wrong_identity', value: @wrong_identity
+            _input type: 'hidden', name: 'validation_failed', value: @validation_failed
 
             # Defer processing (must be part of POST block)
 
@@ -204,7 +220,7 @@ class Parts < Vue
             _label do
               _input type: 'radio', name: 'doctype', value: 'incomplete',
                 onClick: self.reject
-              _span 'incomplete form (select missing items below first)'
+              _span 'reject document (select reasons below)'
             end
 
             # The checked: variable names must be reflected in the file incomplete.json.jb
@@ -221,6 +237,70 @@ class Parts < Vue
                   _input type: 'checkbox', checked: @missing_email,
                   onClick: -> {@missing_email = !@missing_email}
                   _span ' missing email address'
+                end
+              end
+            end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @corporate_postal,
+                  onClick: -> {@corporate_postal = !@corporate_postal}
+                  _span ' corporate postal address'
+                end
+              end
+            end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @invalid_public,
+                  onClick: -> {@invalid_public = !@invalid_public}
+                  _span ' invalid public name'
+                end
+              end
+            end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @separate_signature,
+                  onClick: -> {@separate_signature = !@separate_signature}
+                  _span ' separate document and signature'
+                end
+              end
+            end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @unauthorized_signature,
+                  onClick: -> {@unauthorized_signature = !@unauthorized_signature}
+                  _span ' unauthorized signature'
+                end
+              end
+            end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @empty_form,
+                  onClick: -> {@empty_form = !@empty_form}
+                  _span ' empty form'
+                end
+              end
+            end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @unreadable_scan,
+                  onClick: -> {@unreadable_scan = !@unreadable_scan}
+                  _span ' unreadable or partial scan'
+                end
+              end
+            end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @wrong_identity,
+                  onClick: -> {@wrong_identity = !@wrong_identity}
+                  _span ' key data does not match email'
+                end
+              end
+            end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @validation_failed,
+                  onClick: -> {@validation_failed = !@validation_failed}
+                  _span ' gpg key validation failed'
                 end
               end
             end
