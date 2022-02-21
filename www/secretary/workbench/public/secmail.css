@@ -204,3 +204,9 @@ ul.icla-search li {
 ul.icla-search input[type=radio] {
   margin-right: 10px;
 }
+
+ul.icla-reject li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}

@@ -224,7 +224,7 @@ class Parts < Vue
             end
 
             # The checked: variable names must be reflected in the file incomplete.json.jb
-            _ul do
+            _ul.icla_reject do # the class is used to suppress the leading bullet
               _li do
                 _label do
                   _input type: 'checkbox', checked: @missing_address,
