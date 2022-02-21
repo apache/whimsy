@@ -87,11 +87,11 @@ _html do
       subtitle: 'Member Meeting Overview',
       relatedtitle: 'Meeting How-Tos',
       related: {
+        '/members/proxy' => 'PLEASE Assign A Proxy For The Meeting',
         'https://www.apache.org/foundation/governance/meetings' => 'How Meetings & Voting Works',
         'https://www.apache.org/foundation/governance/meetings#how-member-votes-are-tallied' => 'New Members Elected By Majority',
         'https://www.apache.org/foundation/governance/meetings#how-votes-for-the-board-are-tallied' => 'Board Seats Are Elected By STV',
         '/members/whatif' => 'Explore Past Board STV Results',
-        '/members/proxy' => 'Assign A Proxy For Next Meeting',
         '/members/non-participants' => 'Members Not Participating Recntly',
         '/members/inactive' => 'Inactive Member Feedback Form',
         MeetingUtil::RECORDS => 'Official Past Meeting Records',
@@ -131,7 +131,7 @@ _html do
               _span.glyphicon.glyphicon_time ''
               _ " #{m1_date.strftime(DTFORMAT)} "
             end
-            _ "as an online IRC meeting for about an hour.  We then recess for 48 hours while ballots are sent via email for voting. Results will be announced when we reconvene for about half an hour."
+            _ "as an online IRC meeting for about an hour.  We then recess for 48 hours while ballots are sent via email for voting. Results will be announced when we reconvene (at the same time of day) for about half an hour."
           end
           _p do
             _ 'Please read below for a Timeline of Meeting activities and links to how you can take action, or see additional links to the right. '
@@ -220,11 +220,11 @@ _html do
             _span.glyphicon.glyphicon_time ''
             _em '(time)'
           end
-          _ 'The Meeting itself starts on IRC (use any client) on the '
-          _a 'freenode network', href: 'https://webchat.freenode.net'
+          _ 'UPDATE 2022! The Meeting itself starts on IRC (use any client) on the '
+          _a 'Libera Chat network', href: 'https://web.libera.chat/'
           _ 'on channel '
           _b '#asfmembers'
-          _ ' - please be sure your client is setup ahead of time, and sign in with your Apache ID as nick if at all possible.'
+          _ ' - please be sure your client is setup ahead of time, and sign in with your Apache ID as nick if at all possible. Cloaks for Libera Chat are available in committers/docs/libera-cloaks.txt'
           _br
           _ 'The '
           _code '#asfmembers'
