@@ -572,7 +572,11 @@ def _checkDownloadPage(path, tlp, version)
         if t == 'Download' # MXNet
           W "Mismatch: #{h} and '#{t}'"
         elsif not %w{checksum Hash}.include? t
-          E "Mismatch: #{h} and '#{t}'"
+          if h =~ %r{^https?://archive\.apache\.org/dist/} # only warn for archives
+              W "Mismatch: #{h} and '#{t}'"
+          else
+              E "Mismatch: #{h} and '#{t}'"
+          end
         end
       end
     end
