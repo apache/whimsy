@@ -17,10 +17,8 @@ You can edit files inside your favorite IDE on your host machine.
 Prerequisites
 -------------
 
-You will need Docker, git, and subversion.  And approximately 30Gb of
-disk space (over 20Gb of which will be to have a copy of iclas, cclas,
-and grants for the secretary workbench; perhaps in the future these
-could be made optional).
+You will need Docker, git, and subversion.  And approximately 3 GB of
+disk space
 
 Direct link to [docker for
 macOS](https://download.docker.com/mac/stable/Docker.dmg) (this avoids the
