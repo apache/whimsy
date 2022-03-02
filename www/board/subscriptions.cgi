@@ -92,7 +92,7 @@ _html do
                 if person.asf_member? == true
                   _td! {_strong {_a id, href: href}}
                 else
-                _td! {_em {_a id, href: href}}
+                  _td! {_em {_a id, href: href}}
                 end
               elsif id.include? '*'
                 _td.text_danger id
