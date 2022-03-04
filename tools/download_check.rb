@@ -527,6 +527,8 @@ def _checkDownloadPage(path, tlp, version)
               ver += $1
             end
             $versions[ver][stem] << ext
+          elsif stem =~ %r{netbeans-(\d+)-}i
+            $versions[$1][stem] << ext
           else
             W "Cannot parse #{stem} for version"
           end
@@ -599,13 +601,14 @@ def _checkDownloadPage(path, tlp, version)
     W "#{k} Prefer SHA* over MDS #{v.inspect}" if typ == 'live' && v.include?('mds') && v.none? {|e| e =~ /^sha\d+$/}
   end
 
-  if $versions.size == 0
-    E "Could not detect any artifact versions -- perhaps it needs JavaScript?"
-  end
-
   if @fails > 0 and not $ALWAYS_CHECK_LINKS
     W "** Not checking links **"
     $NOFOLLOW = true
+  end
+
+  # Still check links if versions not seen
+  if $versions.size == 0
+    E "Could not detect any artifact versions -- perhaps it needs JavaScript?"
   end
 
   # Check if the links can be read
