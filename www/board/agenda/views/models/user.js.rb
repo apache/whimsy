@@ -9,7 +9,7 @@ class User
   end
 
   def self.initials
-    Server.pending.initials || Server.initials
+    Server.pending.initials || Server.userid
   end
 
   def self.firstname
