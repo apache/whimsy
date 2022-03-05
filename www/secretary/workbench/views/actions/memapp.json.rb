@@ -142,6 +142,35 @@ task "subscribe to members@apache.org" do
 end
 
 ########################################################################
+#                   subscribe to members@apache.org                    #
+########################################################################
+
+task "subscribe to members-notify@apache.org" do
+  user = ASF::Person.find(@availid)
+  vars = {
+    version: 3, # This must match committers/subscribe.cgi#FORMAT_NUMBER
+    availid: @availid,
+    addr: @availid + '@apache.org', # use ASF email here
+    listkey: 'members-notify',
+    member_p: true,
+    chair_p: ASF.pmc_chairs.include?(user),
+  }
+  @subreq = JSON.pretty_generate(vars) + "\n"
+
+  form do
+    _textarea @subreq, name: 'subreq', rows: @subreq.split("\n").length
+  end
+
+  complete do
+    # determine file name
+    fn = "#{@availid}-members-notify-#{Time.now.strftime '%Y%m%d-%H%M%S-%L'}.json"
+
+    rc = ASF::SVN.create_(ASF::SVN.svnurl!('subreq'), fn, @subreq, @document, env, _)
+    raise RuntimeError.new("exit code: #{rc}") if rc != 0
+  end
+end
+
+########################################################################
 #                      update memapp-received.txt                      #
 ########################################################################
 
