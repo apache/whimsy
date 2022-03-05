@@ -155,7 +155,9 @@ _html do
         end
         extras.sort.each do |person|
           _tr do
-            _td person.id
+            _td do
+              _a person.id, href: "/roster/committer/#{person.id}"
+            end
             _td person.public_name
           end
         end
