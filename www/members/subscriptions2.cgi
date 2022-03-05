@@ -126,7 +126,9 @@ _html do
             if not ldap.include? person
               _td {_strong.text_danger person.id, title: 'Not in LDAP'}
             else
-              _td person.id
+              _td do
+                _a person.id, href: "/roster/committer/#{person.id}"
+              end
             end
             if person.public_name
               _td person.public_name
