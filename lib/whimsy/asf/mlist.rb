@@ -35,6 +35,11 @@ module ASF
       return list_filter('sub', 'apache.org', 'members', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
     end
 
+    # Return an array of members-notify@ subscribers followed by the file update time
+    def self.members_notify_subscribers(archivers=true)
+      return list_filter('sub', 'apache.org', 'members-notify', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+    end
+
     # Return an array of private@pmc subscribers followed by the file update time
     # By default does not return the standard archivers
     # pmc can either be a pmc name, in which case it uses private@<pmc>.apache.org
