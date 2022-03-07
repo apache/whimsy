@@ -14,4 +14,4 @@ end
 
 # map contents to a hash
 fields = %w(apply mail karma id name)
-{received: table.map {|results| fields.zip(results).to_h}}
+{received: table.map {|results| fields.zip(results).to_h}.sort_by {|k| k['name']}}
