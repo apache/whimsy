@@ -116,6 +116,7 @@ _html do
 
     unless missing.empty?
       _h3_.unsub! 'Not subscribed to the list'
+      _p 'Note that members are allowed to unsubscribe if they wish to opt out of receiving notices'
       _table.table do
         _tr_ do
           _th 'id'
