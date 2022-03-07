@@ -142,7 +142,7 @@ task "subscribe to members@apache.org" do
 end
 
 ########################################################################
-#                   subscribe to members@apache.org                    #
+#              subscribe to members-notify@apache.org                  #
 ########################################################################
 
 task "subscribe to members-notify@apache.org" do
