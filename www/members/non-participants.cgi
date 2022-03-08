@@ -52,7 +52,9 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       subtitle: 'Select A Date:',
+      relatedtitle: 'Related Links',
       related: {
+        'https://svn.apache.org/repos/private/foundation/Meetings/attend-report.txt' => 'Attendance Report',
         '/members/meeting' => 'Members Meeting How-To Guide',
         '/members/attendance-xcheck' => 'Members Meeting Attendance Crosscheck',
         '/members/inactive' => 'Inactive Member Feedback Form',
