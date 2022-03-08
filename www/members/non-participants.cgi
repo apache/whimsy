@@ -32,7 +32,11 @@ def get_attend_matrices(dir)
   matrix = attendance['matrix'].map do |name, meetings|
     id = idMap[name]
     next unless id and active[id]
-    data = meetings.sort.reverse.map(&:last)
+
+    # exclude 'active entry'
+    data = meetings.select {|key, value| key.start_with? '20'}.
+      sort.reverse.map(&:last)
+
     first = data.length
     missed = (data.index {|datum| datum != '-'} || data.length)
 
