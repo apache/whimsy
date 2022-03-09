@@ -32,7 +32,11 @@ def get_attend_matrices(dir)
   matrix = attendance['matrix'].map do |name, meetings|
     id = idMap[name]
     next unless id and active[id]
-    data = meetings.sort.reverse.map(&:last)
+
+    # exclude 'active entry'
+    data = meetings.select {|key, value| key.start_with? '20'}.
+      sort.reverse.map(&:last)
+
     first = data.length
     missed = (data.index {|datum| datum != '-'} || data.length)
 
@@ -48,7 +52,9 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       subtitle: 'Select A Date:',
+      relatedtitle: 'Related Links',
       related: {
+        'https://svn.apache.org/repos/private/foundation/Meetings/attend-report.txt' => 'Attendance Report',
         '/members/meeting' => 'Members Meeting How-To Guide',
         '/members/attendance-xcheck' => 'Members Meeting Attendance Crosscheck',
         '/members/inactive' => 'Inactive Member Feedback Form',

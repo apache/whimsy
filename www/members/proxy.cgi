@@ -57,7 +57,7 @@ def emit_instructions(today, cur_mtg_dir, meeting)
 end
 
 # Emit meeting data and form for user to select a proxy - GET
-def emit_form(cur_mtg_dir, _meeting, volunteers)
+def emit_form(cur_mtg_dir, _meeting, volunteers, disabled)
   help, copypasta = MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
   user_is_proxy = help && copypasta
   _whimsy_panel(user_is_proxy ? "You Are Proxying For Others" : "Select A Proxy For Upcoming Meeting", style: 'panel-success') do
@@ -124,7 +124,7 @@ def emit_form(cur_mtg_dir, _meeting, volunteers)
               _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
             end
             _div.button_group.text_center do
-              _button.btn.btn_primary 'Submit'
+              _button.btn.btn_primary 'Submit', disabled: disabled
             end
           end
         end
@@ -259,6 +259,7 @@ _html do
     today = Date.today.strftime('%Y%m%d')
     _whimsy_body(
       title: PAGETITLE,
+      style: (today > meeting ? 'panel-danger' : 'panel-info'),
       subtitle: today > meeting ? "ERROR: Next Meeting Data Not Available" : "How To Assign A Proxy For Upcoming Meeting",
       related: {
         '/members/meeting' => 'How-To / FAQ for Member Meetings',
@@ -271,7 +272,7 @@ _html do
       }
     ) do
       if _.get?
-        emit_form(cur_mtg_dir, meeting, MeetingUtil::getVolunteers(cur_mtg_dir))
+        emit_form(cur_mtg_dir, meeting, MeetingUtil::getVolunteers(cur_mtg_dir), today > meeting)
       else # POST
         emit_post(cur_mtg_dir, meeting, _)
       end
