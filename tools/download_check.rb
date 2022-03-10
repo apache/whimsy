@@ -287,6 +287,7 @@ end
 
 VERIFY_TEXT = [
   'the integrity of the downloaded files',
+  'Verify Authenticity of Downloads',
   'verify the integrity', # commons has this as a link; perhaps try converting page to text only?
   'verify that checksums and signatures are correct',
   '#verifying-signature',
