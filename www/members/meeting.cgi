@@ -224,7 +224,8 @@ _html do
           _a 'Libera Chat network', href: 'https://web.libera.chat/'
           _ 'on channel '
           _b '#asfmembers'
-          _ ' - please be sure your client is setup ahead of time, and sign in with your Apache ID as nick if at all possible. Cloaks for Libera Chat are available in committers/docs/libera-cloaks.txt'
+          _ ' - please be sure your to test your ability to connect to IRC ahead of time. If preferred, you can use the web client at '
+          _a 'web.libera.chat', href: 'https://web.libera.chat/'
           _br
           _ 'The '
           _code '#asfmembers'
