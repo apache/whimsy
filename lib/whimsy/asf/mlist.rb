@@ -360,7 +360,7 @@ module ASF
         suffix = ''
       elsif type == 'dig'
         path = LIST_DIGS
-        suffix = ''
+        suffix = '/digest'
       else
         raise ArgumentError.new('type: expecting dig, mod or sub')
       end
