@@ -690,6 +690,10 @@ def _checkDownloadPage(path, tlp, version)
                 break
               end
             end
+            if bdy.include? 'The object is in our archive'
+                W "File is archived: '#{name}' in page: '#{h}'"
+                next
+            end
           end
         end
         if path
@@ -705,7 +709,7 @@ def _checkDownloadPage(path, tlp, version)
             E "NAK: ct='#{ct}' cl='#{cl}' #{path}"
           end
         else
-          E "Could not find link for '#{name}' in page: '#{h}' (missing or archived)"
+          E "Could not find link for '#{name}' in page: '#{h}' (missing)"
         end
       end
     elsif h =~ %r{\.(md5|sha\d*)$}
