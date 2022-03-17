@@ -16,9 +16,9 @@ user = ASF::Person.new($USER)
 # authz handled by httpd
 
 # get the possible names of the current, graduated and retired podlings
-current=[]
-retired=[]
-graduated=[] # if no longer a PMC then this is the same as retired
+current = []
+retired = []
+graduated = [] # if no longer a PMC then this is the same as retired
 ASF::Podling.list.each {|p|
   names = p['resourceAliases'] # array, may be empty
   names.push p['resource'] # single string, always present
@@ -35,16 +35,16 @@ ASF::Podling.list.each {|p|
 pmcs = ASF::Committee.pmcs.map(&:mail_list)
 ldap_pmcs = [] # No need to get the info for ASF members
 ldap_pmcs = user.committees.map(&:mail_list) unless user.asf_member?
-# Also allow podling private lists to be subscribed by podling owners
+# Also allow podling private lists to be subscribed by podling owners
 ldap_pmcs += user.podlings.map(&:mail_list) unless user.asf_member?
 addrs = user.all_mail
 
-seen = Hash.new
+seen = {}
 deprecated = ASF::Mail.deprecated
 
 lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs, false)
   .map { |dom, _, list|
-    host = dom.sub('.apache.org','') # get the host name
+    host = dom.sub('.apache.org', '') # get the host name
     if deprecated.include? list
       list = nil # bit of a hack to avoid scanning twice
     elsif dom == 'apache.org'
@@ -57,6 +57,8 @@ lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_p
       seen[list] = 3 # retired podling; not listed
     elsif graduated.include? host
       seen[list] = 3 # retired TLP; not listed
+    elsif dom.end_with? '.apache.org'
+      seen[list] = 1 # TLP or similar
     else
       seen[list] = 0 # Assume ASF
     end
