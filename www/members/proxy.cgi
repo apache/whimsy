@@ -21,6 +21,7 @@ def emit_instructions(today, cur_mtg_dir, meeting)
         Data from the previous meeting on #{meeting} is shown below for debugging only.
       }
   end
+  if meeting != '20220615'
   _p %{
     This form allows you to assign a proxy for the upcoming
     Member's Meeting on #{meeting}. If there is any chance you might not be able
@@ -45,6 +46,28 @@ def emit_instructions(today, cur_mtg_dir, meeting)
     _code 'proxies'
     _ ' file.  The great majority of proxies assigned are for attendance only; not for voting.'
   end
+  else
+  _p do
+    _ "This form allows you to assign a proxy for the upcoming"
+    _ "Member's Meeting on #{meeting}. For this meeting, we encourage"
+    _strong 'every'
+    _ "ASF member to assign a proxy to the ASF Secretary."
+    _ "Attendance to the meeting is completely optional, and you can revoke a"
+    _ "proxy at any time."
+  end
+  _p %{
+    If you submit a proxy, you will still be sent ballots by email,
+    so you will still need to
+    cast your votes by checking your mail and clicking the links.
+  }
+  _p do
+    _ 'Note while the legal proxy form below states your proxy may have your voting rights, in practice '
+    _strong 'you will still be emailed your ballots'
+    _ ' unless you explicitly mark a \'*\' in the appropriate place in the '
+    _code 'proxies'
+    _ ' file.  The great majority of proxies assigned are for attendance only; not for voting.'
+  end
+  end
   num_members, quorum_need, num_proxies, attend_irc = MeetingUtil.calculate_quorum(cur_mtg_dir)
   if num_members
     _p do
@@ -57,7 +80,7 @@ def emit_instructions(today, cur_mtg_dir, meeting)
 end
 
 # Emit meeting data and form for user to select a proxy - GET
-def emit_form(cur_mtg_dir, _meeting, volunteers, disabled)
+def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
   help, copypasta = MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
   user_is_proxy = help && copypasta
   _whimsy_panel(user_is_proxy ? "You Are Proxying For Others" : "Select A Proxy For Upcoming Meeting", style: 'panel-success') do
@@ -107,14 +130,18 @@ def emit_form(cur_mtg_dir, _meeting, volunteers, disabled)
               map {|name| name[/(\w+)\.\w+$/, 1]}
 
             _select.combobox.input_large.form_control name: 'proxy' do
-              _option 'Select an ASF Member', :selected, value: ''
+              if meeting != '20220615'
+                _option 'Select an ASF Member', :selected, value: ''
+              end
+
               ldap_members.sort_by(&:public_name).each do |member|
                 next if member.id == $USER               # No self proxies
                 next if exclude.include? member.id       # Not attending
                 next unless members_txt[member.id]       # Non-members
                 next if members_txt[member.id]['status'] # Emeritus/Deceased
                 # Display the availid to users to match volunteers array above
-                _option "#{member.public_name} (#{member.id})"
+                _option "#{member.public_name} (#{member.id})",
+                  selected: (meeting == '20220615' && member.id == 'mattsicker')
               end
             end
           end
@@ -124,7 +151,11 @@ def emit_form(cur_mtg_dir, _meeting, volunteers, disabled)
               _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
             end
             _div.button_group.text_center do
-              _button.btn.btn_primary 'Submit', disabled: disabled
+              if disabled
+                _button.btn.btn_primary 'Submit', :disabled
+              else
+                _button.btn.btn_primary 'Submit'
+              end
             end
           end
         end
@@ -141,8 +172,8 @@ def emit_form(cur_mtg_dir, _meeting, volunteers, disabled)
     // convert select into combobox
     $('.combobox').combobox();
 
-    // initially disable submit
-    $('.btn').prop('disabled', true);
+    // disable submit until a value is selected
+    if ($('.combobox').val() == '') $('.btn').prop('disabled', true);
 
     // enable submit when proxy is chosen
     $('*[name="proxy"]').change(function() {

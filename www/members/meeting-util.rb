@@ -27,7 +27,11 @@ class MeetingUtil
   # Calculate how many members required to attend first half for quorum
   def self.calculate_quorum(mtg_dir)
     begin
-      num_members = File.read(File.join(mtg_dir, 'record')).each_line.count
+      begin
+        num_members = File.read(File.join(mtg_dir, 'record')).each_line.count
+      rescue
+        num_members = ASF::Member.list.length - ASF::Member.status.length
+      end
       quorum_need = (num_members + 2) / 3
       num_proxies = Dir[File.join(mtg_dir, 'proxies-received', '*')].count
       attend_irc = quorum_need - num_proxies
@@ -118,6 +122,7 @@ class MeetingUtil
     attendance['cohorts'] = {}
     attendance['unmatched'] = []
     attendance['members'].each do |date, ary|
+      next unless date.start_with? '20' # exclude 'active'
       ary.each do |nam|
         found = iclas.select{|i| i.icla.legal_name == nam}
         found = iclas.select{|i| i.icla.name == nam} if found.empty?
