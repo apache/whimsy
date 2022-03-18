@@ -40,15 +40,12 @@ ldap_pmcs += user.podlings.map(&:mail_list) unless user.asf_member?
 addrs = user.all_mail
 
 seen = {}
-deprecated = ASF::Mail.deprecated
 cannot_unsub = ASF::Mail.cannot_unsub
 
 lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs, false)
   .map { |dom, _, list|
     host = dom.sub('.apache.org', '') # get the host name
-    if deprecated.include? list
-      list = nil # bit of a hack to avoid scanning twice
-    elsif dom == 'apache.org'
+    if dom == 'apache.org'
       seen[list] = 0 # ASF
     elsif pmcs.include? host
       seen[list] = 1 # TLP
