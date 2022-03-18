@@ -52,6 +52,11 @@ module ASF
       @auto[:disallowed]
     end
 
+    def self.cannot_unsub
+      self._load_auto()
+      @auto[:cannotunsubscribe]
+    end
+
     def self.committers_allowed
       self._load_auto()
       @auto[:committers]
@@ -169,6 +174,12 @@ module ASF
     # See also ASF::ICLA.taken?
     def self.taken?(id)
       self.qmail_ids.include? id
+    end
+
+    # Convert list@host.apache.org to host-list (listkey) style
+    def self.listdom2listkey(listdom)
+      list, dom = listdom.split('@')
+      self.archivelistid(dom, list)
     end
 
     # Convert list name to form used in mail_list_autosub.yml
