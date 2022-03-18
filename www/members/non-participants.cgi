@@ -9,10 +9,38 @@ require 'json'
 require 'wunderbar/jquery/stupidtable'
 require_relative 'meeting-util'
 
+# Find latest meeting and check if it's in the future yet
+MEETINGS = ASF::SVN['Meetings']
+cur_mtg_dir = MeetingUtil.get_latest(MEETINGS)
+meeting = File.basename(cur_mtg_dir)
+today = Date.today.strftime('%Y%m%d')
+
+# look for recent activity if there is an upcoming meeting
+if meeting > today
+  proxies = Dir["#{cur_mtg_dir}/proxies-received/*"].
+    map {|file| File.basename(file, '.*')}
+
+  _tag,emeritus = ASF::SVN.getlisting('emeritus-requests-received')
+  emeritus.map! {|file| File.basename(file, '.*')}
+
+  current_status = lambda do |id|
+    if emeritus.include? id
+      'Emeritus request received'
+    elsif proxies.include? id
+      'Proxy received'
+    else
+      'No response'
+    end
+  end
+else
+  current_status = lambda {'No response'}
+end
+
 # separator / is added when link is generated
 ROSTER = "/roster/committer"
-MEETINGS = ASF::SVN['Meetings']
-ENV['HTTP_ACCEPT'] = 'application/json' if ENV['QUERY_STRING'].include? 'json'
+if not ENV['QUERY_STRING'] or ENV['QUERY_STRING'].include? 'json'
+  ENV['HTTP_ACCEPT'] = 'application/json' 
+end
 
 # Precompute matrix and dates from attendance
 def get_attend_matrices(dir)
@@ -90,6 +118,9 @@ _html do
           _th 'Name', data_sort: 'string'
           _th 'Membership start date', data_sort: 'string'
           _th 'Last participated', data_sort: 'string'
+          if meeting > today
+            _th 'Current status', data_sort: 'string'
+          end
         end
       end
 
@@ -104,6 +135,10 @@ _html do
               _td {_em 'never'}
             else
               _td dates[-missed-1]
+            end
+
+            if meeting > today
+              _td current_status[id]
             end
           end
           count += 1
@@ -135,6 +170,6 @@ _json do
   end
 
   Hash[inactive.map {|id, name, _first, missed|
-    [id, {name: name, missed: missed, status: 'no response yet'}]
+    [id, {name: name, missed: missed, status: current_status[id]}]
     }]
 end
