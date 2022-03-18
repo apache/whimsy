@@ -22,14 +22,11 @@ ldap_pmcs = user.committees.map(&:mail_list)
 ldap_pmcs += user.podlings.map(&:mail_list)
 addrs = user.all_mail
 
-deprecated = ASF::Mail.deprecated # these are in lid format
-
 tlp = []
 podling = []
 ASF::Mail.canmod(ldap_pmcs, false)
   .sort
-  .map { |dom, lname, lid|
-    next if deprecated.include? lid
+  .map { |dom, lname, _lid|
     list = "#{lname}@#{dom}"
     host = dom.sub('.apache.org', '') # get the host name
     if pmcs.include? host

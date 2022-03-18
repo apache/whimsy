@@ -123,6 +123,7 @@ module ASF
       allowed = []
       parse_flags do |dom, list, _|
         lid = archivelistid(dom, list)
+        next if self.deprecated.include? lid # deprecated in lid format currently
         next if self.cannot_sub.include? lid # probably unnecessary
 
         if ldap_pmcs.include? dom.sub('.apache.org', '')
