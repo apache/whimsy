@@ -35,28 +35,27 @@ ldap_pmcs = user.committees.map(&:mail_list) unless user.asf_member?
 ldap_pmcs += user.podlings.map(&:mail_list) unless user.asf_member?
 addrs = user.all_mail
 
-seen = {}
+listtype = {} # key: list@dom, value: list type: ASF|TLP|PPMC
 
 lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs, false)
-  .map { |dom, _, list|
+  .map { |dom, lname, _list|
+    listid = lname + '@' + dom
     host = dom.sub('.apache.org', '') # get the host name
     if dom == 'apache.org'
-      seen[list] = 0 # ASF
+      listtype[listid] = :ASF
     elsif pmcs.include? host
-      seen[list] = 1 # TLP
+      listtype[listid] = :TLP
     elsif current.include? host
-      seen[list] = 2 # podling
-    elsif retired.include? host
-      seen[list] = 3 # retired podling; not listed
-    elsif graduated.include? host
-      seen[list] = 3 # retired TLP; not listed
+      listtype[listid] = :PPMC
+    elsif retired.include? host or graduated.include? host
+      # not wanted
     elsif dom.end_with? '.apache.org'
-      seen[list] = 1 # TLP or similar
+      listtype[listid] = :TLP
     else
-      seen[list] = 0 # Assume ASF
+      listtype[listid] = :ASF
     end
-    list
-  }.compact.sort
+    [dom, lname]
+  }.sort.map {|d, l| "#{l}@#{d}"}
 
 
 _html do
@@ -109,19 +108,19 @@ _html do
           _label 'List name:'
           _select name: 'list', data_live_search: 'true' do
             _optgroup label: 'Foundation lists' do
-              lists.find_all { |list| seen[list] == 0 }.each do |list|
+              lists.find_all { |list| listtype[list] == :ASF }.each do |list|
                 _option list
               end
             end
 
             _optgroup label: 'Top-Level Projects' do
-              lists.find_all { |list| seen[list] == 1 }.each do |list|
+              lists.find_all { |list| listtype[list] == :TLP }.each do |list|
                 _option list
               end
             end
 
             _optgroup label: 'Podlings' do
-              lists.find_all { |list| seen[list] == 2 }.each do |list|
+              lists.find_all { |list| listtype[list] == :PPMC }.each do |list|
                 _option list
               end
             end
@@ -161,31 +160,30 @@ _html do
           # collect subscriptions
           subscriptions = ASF::MLIST.subscriptions(user.all_mail)[:subscriptions].
             select { |listid, _| ASF::Mail.unsubbable? listid}. # can we unsubscribe from this list?
-            map {|a, b| [ASF::Mail.listdom2listkey(a), b]}. # convert to listkey format
-            group_by {|listkey, _mail| listkey}. # allow for multiple subs to single list
+            group_by {|listid, _mail| listid}. # allow for multiple subs to single list
             transform_values {|v| v.map(&:last)} # pick out the emails
 
           _label 'List name:'
           _select.ulist! name: 'list', data_live_search: 'true' do
             _optgroup label: 'Foundation lists' do
-              subscriptions.select { |list, _| seen[list] == 0 }.each do |list, emails|
+              subscriptions.select { |list, _| listtype[list] == :ASF }.each do |list, emails|
                 _option list, data_emails: emails.join(' ')
               end
             end
 
             _optgroup label: 'Top-Level Projects' do
-              subscriptions.select { |list, _| seen[list] == 1 }.each do |list, emails|
+              subscriptions.select { |list, _| listtype[list] == :TLP }.each do |list, emails|
                 _option list, data_emails: emails.join(' ')
               end
             end
 
             _optgroup label: 'Podlings' do
-              subscriptions.select { |list, _| seen[list] == 2 }.each do |list, emails|
+              subscriptions.select { |list, _| listtype[list] == :PPMC }.each do |list, emails|
                 _option list, data_emails: emails.join(' ')
               end
             end
             _optgroup label: 'Other' do # ones not shown above
-              subscriptions.reject { |list, _| seen.key?(list) }.each do |list, emails|
+              subscriptions.reject { |list, _| listtype.key?(list) }.each do |list, emails|
                 _option list, data_emails: emails.join(' ')
               end
             end
@@ -213,14 +211,17 @@ _html do
           break
         end
 
+        # subreq/unsubreq currently need the listkey
+        listkey = ASF::Mail.listdom2listkey(@list)
+
         # Each user can only subscribe once to each list in each timeslot
-        fn = "#{$USER}-#{@list}.json"
+        fn = "#{$USER}-#{listkey}.json"
 
         vars = {
           version: FORMAT_NUMBER,
           availid: $USER,
           addr: @addr,
-          listkey: @list,
+          listkey: listkey,
           # f3
           member_p: user.asf_member?,
           chair_p: ASF.pmc_chairs.include?(user),
