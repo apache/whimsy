@@ -114,15 +114,4 @@ describe ASF::Mail do
     end
   end
 
-  describe '.deprecated()' do
-    it 'should return some lists' do
-      depr = ASF::Mail.deprecated()
-      if TEST_DATA
-        expect(depr.length).to be(4) # locally fixed size
-      else
-        expect(depr.length).to be_between(0,10).inclusive # varies, but probably in that range
-      end
-    end
-  end
-
 end
