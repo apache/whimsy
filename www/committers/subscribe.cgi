@@ -3,8 +3,8 @@ PAGETITLE = "ASF Mailing List Subscription Helper" # Wvisible:mail subscribe
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
-require 'mail'
 require 'whimsy/asf'
+require 'mail' # needs to be after whimsy/asf to avoid duplicate import warning
 require 'whimsy/asf/mlist'
 require 'time'
 require 'tmpdir'
@@ -41,6 +41,7 @@ addrs = user.all_mail
 
 seen = {}
 deprecated = ASF::Mail.deprecated
+cannot_unsub = ASF::Mail.cannot_unsub
 
 lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs, false)
   .map { |dom, _, list|
@@ -165,36 +166,35 @@ _html do
           _label 'Select the mailing list first, then select the email address to unsubscribe.'
           _ '(The dropdown only shows lists to which you are subscribed)'
           _br
-          _label 'List name:'
           # collect subscriptions
-          response = {}
-          ASF::MLIST.subscriptions(user.all_mail, response)
-          subscriptions = response[:subscriptions].group_by {|list, _mail| list}
-          subscriptions = subscriptions.map do |list, names|
-            list = $1 if list =~ /^(.*?)@apache\.org$/
-            list = "#$2-#$1" if list =~ /^(.*?)@(.*?)\.apache\.org$/
-            [list, names.map(&:last)]
-          end.to_h
+          subscriptions = ASF::MLIST.subscriptions(user.all_mail)[:subscriptions].
+            map {|a, b| [ASF::Mail.listdom2listkey(a), b]}. # convert to listkey format
+            reject { |listkey, _| cannot_unsub.include? listkey}. # reject unusable
+            group_by {|listkey, _mail| listkey}. # allow for multiple subs to single list
+            transform_values {|v| v.map(&:last)} # pick out the emails
 
+          _label 'List name:'
           _select.ulist! name: 'list', data_live_search: 'true' do
             _optgroup label: 'Foundation lists' do
-              lists.find_all { |list| seen[list] == 0 }.each do |list|
-                next unless subscriptions.include? list
-                _option list, data_emails: subscriptions[list].join(' ')
+              subscriptions.select { |list, _| seen[list] == 0 }.each do |list, emails|
+                _option list, data_emails: emails.join(' ')
               end
             end
 
             _optgroup label: 'Top-Level Projects' do
-              lists.find_all { |list| seen[list] == 1 }.each do |list|
-                next unless subscriptions.include? list
-                _option list, data_emails: subscriptions[list].join(' ')
+              subscriptions.select { |list, _| seen[list] == 1 }.each do |list, emails|
+                _option list, data_emails: emails.join(' ')
               end
             end
 
             _optgroup label: 'Podlings' do
-              lists.find_all { |list| seen[list] == 2 }.each do |list|
-                next unless subscriptions.include? list
-                _option list, data_emails: subscriptions[list].join(' ')
+              subscriptions.select { |list, _| seen[list] == 2 }.each do |list, emails|
+                _option list, data_emails: emails.join(' ')
+              end
+            end
+            _optgroup label: 'Other' do # ones not shown above
+              subscriptions.reject { |list, _| seen.key?(list) }.each do |list, emails|
+                _option list, data_emails: emails.join(' ')
               end
             end
           end
