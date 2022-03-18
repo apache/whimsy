@@ -7,7 +7,7 @@ module ASF
     # ASF::Person that is associated with that email.
     def self.list
       begin
-        return Hash[@list.to_a] if @list
+        return @list.to_h if @list
       rescue NoMethodError, WeakRef::RefError
       end
 
