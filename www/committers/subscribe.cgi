@@ -40,7 +40,6 @@ ldap_pmcs += user.podlings.map(&:mail_list) unless user.asf_member?
 addrs = user.all_mail
 
 seen = {}
-cannot_unsub = ASF::Mail.cannot_unsub
 
 lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs, false)
   .map { |dom, _, list|
@@ -165,8 +164,8 @@ _html do
           _br
           # collect subscriptions
           subscriptions = ASF::MLIST.subscriptions(user.all_mail)[:subscriptions].
+            select { |listid, _| ASF::Mail.unsubbable? listid}. # can we unsubscribe from this list?
             map {|a, b| [ASF::Mail.listdom2listkey(a), b]}. # convert to listkey format
-            reject { |listkey, _| cannot_unsub.include? listkey}. # reject unusable
             group_by {|listkey, _mail| listkey}. # allow for multiple subs to single list
             transform_values {|v| v.map(&:last)} # pick out the emails
 

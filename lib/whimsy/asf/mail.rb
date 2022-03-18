@@ -52,7 +52,7 @@ module ASF
       @auto[:disallowed]
     end
 
-    def self.cannot_unsub
+    def self._cannot_unsub
       self._load_auto()
       @auto[:cannotunsubscribe]
     end
@@ -70,6 +70,14 @@ module ASF
     def self.members_allowed
       self._load_auto()
       @auto[:members] + @auto[:chairs]
+    end
+
+    # Is a list available for unsubscription via Whimsy?
+    # Params: listid (a@b)
+    # Return: true or false
+    def self.unsubbable?(listid)
+      # cannot_unsub currently defined in listkey format
+      !self._cannot_unsub.include? listdom2listkey(listid)
     end
 
     # which lists are available for subscription via Whimsy?
