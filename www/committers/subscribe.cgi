@@ -228,10 +228,10 @@ _html do
         request = JSON.pretty_generate(vars) + "\n"
 
         _div.well do
-          if @request != 'unsub'
-            _p 'Submitting subscribe request:'
-          else
+          if @request == 'unsub'
             _p 'Submitting unsubscribe request:'
+          else
+            _p 'Submitting subscribe request:'
           end
 
           _pre request
@@ -265,10 +265,10 @@ _html do
               ASF::SVN.svn('add', fn)
             end
 
-            if @request != 'unsub'
-              message = "#{@list} += #{$USER}"
-            else
+            if @request == 'unsub'
               message = "#{@list} -= #{$USER}"
+            else
+              message = "#{@list} += #{$USER}"
             end
 
             options = credentials.merge({msg: message})
@@ -280,10 +280,10 @@ _html do
           _div.alert.alert_success role: 'alert' do
             _p do
               _span.strong 'Request successfully submitted.'
-              if @request != 'unsub'
-                _ 'You will be subscribed within the hour.'
-              else
+              if @request == 'unsub'
                 _ 'You will be unsubscribed within the hour.'
+              else
+                _ 'You will be subscribed within the hour.'
               end
             end
           end
