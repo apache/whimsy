@@ -42,12 +42,12 @@ module ASF
     end
 
     # list of mailing lists that aren't actively seeking new subscribers
-    def self.deprecated
+    def self._deprecated
       self._load_auto()
       @auto[:deprecated]
     end
 
-    def self.cannot_sub
+    def self._cannot_sub
       self._load_auto()
       @auto[:disallowed]
     end
@@ -57,17 +57,17 @@ module ASF
       @auto[:cannotunsubscribe]
     end
 
-    def self.committers_allowed
+    def self._committers_allowed
       self._load_auto()
       @auto[:committers]
     end
 
-    def self.chairs_allowed
+    def self._chairs_allowed
       self._load_auto()
       @auto[:chairs]
     end
 
-    def self.members_allowed
+    def self._members_allowed
       self._load_auto()
       @auto[:members] + @auto[:chairs]
     end
@@ -91,24 +91,24 @@ module ASF
       allowed = []
       parse_flags do |dom, list, f|
         lid = archivelistid(dom, list)
-        next if self.deprecated.include? lid # deprecated in lid format currently
-        next if self.cannot_sub.include? lid # probably unnecessary
+        next if self._deprecated.include? lid # deprecated in lid format currently
+        next if self._cannot_sub.include? lid # probably unnecessary
 
         cansub = false
         modsub = isModSub?(f)
         if not modsub # subs not moderated; allow all
           cansub = true
-        elsif self.committers_allowed().include?(lid) # always allowed
+        elsif self._committers_allowed().include?(lid) # always allowed
           cansub = true
         else # subs are moderated
           if member
-            if list == 'private' or self.members_allowed.include?(lid)
+            if list == 'private' or self._members_allowed.include?(lid)
               cansub = true
             end
           elsif ldap_pmcs and list == 'private' and ldap_pmcs.include? dom.sub('.apache.org', '')
             cansub = true
           end
-          if pmc_chair and self.chairs_allowed.include? lid
+          if pmc_chair and self._chairs_allowed.include? lid
             cansub = true
           end
         end
@@ -132,8 +132,8 @@ module ASF
       allowed = []
       parse_flags do |dom, list, _|
         lid = archivelistid(dom, list)
-        next if self.deprecated.include? lid # deprecated in lid format currently
-        next if self.cannot_sub.include? lid # probably unnecessary
+        next if self._deprecated.include? lid # deprecated in lid format currently
+        next if self._cannot_sub.include? lid # probably unnecessary
 
         if ldap_pmcs.include? dom.sub('.apache.org', '')
           if lidonly
