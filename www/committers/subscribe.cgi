@@ -4,11 +4,7 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
-require 'mail' # needs to be after whimsy/asf to avoid duplicate import warning
 require 'whimsy/asf/mlist'
-require 'time'
-require 'tmpdir'
-require 'escape'
 
 FORMAT_NUMBER = 3 # json format number
 
