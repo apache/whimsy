@@ -146,7 +146,15 @@ _html do
       end
     end
 
-    _div.count "Count: #{count} members inactive for #{@meetingsMissed} meetings."
+    _div.count "Count: #{count} members inactive for #{@meetingsMissed} meetings:"
+
+    summary = matrix.
+      select {|id, _name, _first, missed| id && missed >= @meetingsMissed}.
+      map(&:first).group_by {|id| current_status[id]}.sort
+
+    _ul summary do |status, list|
+      _li "#{status}: #{list.length}"
+    end
 
     _script %{
       var table = $(".table").stupidtable();
