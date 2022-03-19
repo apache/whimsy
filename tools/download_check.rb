@@ -340,7 +340,10 @@ end
 def text2ext(txt)
   # need to strip twice to handle ' [ asc ] '
   # TODO: perhaps just remove all white-space?
-  tmp = txt.downcase.strip.sub(%r{^\.}, '').sub(%r{^\[(.+)\]$}, '\1').sub('-', '').sub(/ ?(digest|checksum)/, '').sub(/ \(tar\.gz\)| \(zip\)| /, '').strip
+  tmp = txt.downcase.strip.sub(%r{^\.}, '').sub(%r{^\[(.+)\]$}, '\1').sub('-', '').
+        sub(/ ?(digest|checksum)/, '').sub(/ \(tar\.gz\)| \(zip\)| /, '').
+        sub('(opens new window)', ''). # doris
+        strip
   return 'sha256' if tmp =~ %r{\A[A-Fa-f0-9]{64}\z}
   return 'sha512' if tmp =~ %r{\A[A-Fa-f0-9]{128}\z}
   ALIASES[tmp] || tmp
