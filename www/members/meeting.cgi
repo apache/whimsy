@@ -318,7 +318,7 @@ _html do
         _p do
           _ %{
             The ASF has held #{all_mtg.count} Member's meetings in our
-            history. Some were Annual meetings, were we elect a new board;
+            history. Some were Annual meetings, where we elect a new board;
             a handful were Special mid-year meetings where we mostly just
             elected new Members.
           }
