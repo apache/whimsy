@@ -14,7 +14,6 @@ module ASF
     attr_reader :name
     attr_reader :description
     attr_reader :status
-    attr_reader :status
     attr_reader :mentors
     attr_reader :website
     attr_reader :mailinglists
