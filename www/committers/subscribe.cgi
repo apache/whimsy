@@ -29,6 +29,18 @@ ASF::Podling.list.each {|p|
 }
 
 pmcs = ASF::Committee.pmcs.map(&:mail_list)
+
+# hack to get access to pmcs etc
+define_method(:gettype) do |dom|
+  return :ASF if dom == 'apache.org'
+  host = dom.sub('.apache.org', '') # get the host name
+  return :TLP if pmcs.include? host
+  return :PPMC if current.include? host
+  return :TLP if dom.end_with? '.apache.org'
+  return nil if retired.include? host or graduated.include? host
+  return :ASF
+end
+
 ldap_pmcs = [] # No need to get the info for ASF members
 ldap_pmcs = user.committees.map(&:mail_list) unless user.asf_member?
 # Also allow podling private lists to be subscribed by podling owners
@@ -40,20 +52,8 @@ listtype = {} # key: list@dom, value: list type: ASF|TLP|PPMC
 lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_pmcs, false)
   .map { |dom, lname, _list|
     listid = lname + '@' + dom
-    host = dom.sub('.apache.org', '') # get the host name
-    if dom == 'apache.org'
-      listtype[listid] = :ASF
-    elsif pmcs.include? host
-      listtype[listid] = :TLP
-    elsif current.include? host
-      listtype[listid] = :PPMC
-    elsif retired.include? host or graduated.include? host
-      # not wanted
-    elsif dom.end_with? '.apache.org'
-      listtype[listid] = :TLP
-    else
-      listtype[listid] = :ASF
-    end
+    type = gettype(dom)
+    listtype[listid] = type if type
     [dom, lname]
   }.sort.map {|d, l| "#{l}@#{d}"}
 
@@ -163,6 +163,11 @@ _html do
             group_by {|listid, _mail| listid}. # allow for multiple subs to single list
             transform_values {|v| v.map(&:last)} # pick out the emails
 
+          # fill in any missing types
+          subscriptions.each_key do |list|
+            listtype[list] ||= gettype(list.split('@')[-1]) || :ASF
+          end
+
           _label 'List name:'
           _select.ulist! name: 'list', data_live_search: 'true' do
             _optgroup label: 'Foundation lists' do
@@ -179,11 +184,6 @@ _html do
 
             _optgroup label: 'Podlings' do
               subscriptions.select { |list, _| listtype[list] == :PPMC }.each do |list, emails|
-                _option list, data_emails: emails.join(' ')
-              end
-            end
-            _optgroup label: 'Other' do # ones not shown above
-              subscriptions.reject { |list, _| listtype.key?(list) }.each do |list, emails|
                 _option list, data_emails: emails.join(' ')
               end
             end
