@@ -9,12 +9,14 @@ require 'json'
 require 'tmpdir'
 require_relative 'meeting-util'
 
+@user ||= $USER
+
 # produce HTML
 _html do
   _head_ do
     _style :system
     _style %{
-      div.status, .status form {margin-left: 16px}
+      div.status, .status form, pre.issue {margin-left: 16px}
       .btn {margin: 4px}
       form {margin-bottom: 1em}
       .transcript {margin: 0 16px}
@@ -42,20 +44,20 @@ _html do
     
       current_status = MeetingUtil.current_status(latest)
       tracker = inactive.map {|id, name, _first, missed|
-        [id, {name: name, missed: missed, status: current_status[id]}]
+        [id, {'name' => name, 'missed' => missed, 'status' => current_status[id]}]
       }.to_h
     end
 
     # determine user's name as found in members.txt
-    name = ASF::Member.find_text_by_id($USER).to_s.split("\n").first
+    name = ASF::Member.find_text_by_id(@user).to_s.split("\n").first
     matrix = attendance['matrix'][name]
 
     # defaults for active users
-    tracker[$USER] ||= {
+    tracker[@user] ||= {
       'missed' => 0,
       'status' => 'active - attended meetings recently'
     }
-    active = (tracker[$USER]['missed'] == 0) && (ENV['QUERY_STRING'] == '')
+    active = (tracker[@user]['missed'] == 0) && (ENV['QUERY_STRING'] == '')
     _whimsy_body(
       title: PAGETITLE,
       subtitle: active ? 'Your Attendance Status' : 'Poll Of Inactive Members',
@@ -83,7 +85,7 @@ _html do
 
       _p_ do
         _span "#{name}, your current meeting attendance status is: "
-        _code tracker[$USER]['status']
+        _code tracker[@user]['status']
       end
       if active
         att = miss = 0
@@ -109,9 +111,9 @@ _html do
 
       if not active
         _p.alert.alert_warning "Dear #{name}, You have missed the last " +
-          tracker[$USER]['missed'].to_s + " meetings."
+          tracker[@user]['missed'].to_s + " meetings."
 
-        if _.post? and @status
+        if _.post? and @status and $USER == @user
           _h3_ 'Session Transcript'
 
           # setup authentication
@@ -129,8 +131,8 @@ _html do
               json = File.join(dir, 'non-participants.json')
               ASF::SVN.svn_('update', json, _, auth)
               tracker = JSON.parse(IO.read(json))
-              tracker[$USER]['status'] = @status
-              tracker[$USER]['status'] = @suggestions
+              tracker[@user]['status'] = @status
+              tracker[@user]['status'] = @suggestions
               IO.write(json, JSON.pretty_generate(tracker))
               ASF::SVN.svn_('diff', json, _, {verbose: true, sysopts: {hilite: [/"status":/]}})
               ASF::SVN.svn_('commit', json, _, {msg: @status}.merge(auth))
@@ -139,36 +141,56 @@ _html do
         end
 
         _div.status do
-          _form method: 'post' do
-            _p %{
-              Please let us know how the ASF could make it easier
-              for you to participate in Member's Meetings:
-            }
 
-            _textarea name: 'suggestions', disabled: active
+          wrap = 80
+          issue_text = `#{MEETINGS}/whimsy-tools/issue-description.py #{name.inspect} #{ASF::SVN['foundation']}`.
+            gsub(/(.{1,#{wrap}})( +|$\n?)|(.{1,#{wrap}})/, "\\1\\3\n")
+
+          if Dir.exist? File.join(latest, 'issues')
+            _p 'Based on this status, the following text has been placed before the membership as a vote'
+          else
+            _p %{
+              Based on this status, the following text will be placed before the membership as a vote
+              unless you either assign a proxy for the next meeting or voluntarily request a conversion
+              to emeritus status.
+            }
+          end
+
+          _pre.issue issue_text
+
+          _form method: 'post' do
+            if false
+              _p %{
+                Please let us know how the ASF could make it easier
+                for you to participate in Member's Meetings:
+              }
+
+              _textarea name: 'suggestions', disabled: active
+            end
 
             _p 'Update your status (if you are inactive):'
-            _button.btn.btn_success 'I wish to remain active',
-              name: 'status', value: 'remain active',
-              disabled: tracker[$USER]['missed'] == 0 or
-                tracker[$USER]['status'] == 'remain active'
+            _button.btn.btn_success 'Request a proxy',
+              name: 'status', value: 'request proxy',
+              disabled: $USER != @user ||
+                tracker[@user]['status'] == 'Proxy received'
             _button.btn.btn_warning 'I would like to go emeritus',
               name: 'status', value: 'go emeritus',
-              disabled: tracker[$USER]['missed'] == 0 or
-                tracker[$USER]['status'] == 'remain active'
+              disabled: $USER != @user ||
+                tracker[@user]['status'] == 'Emeritus request received'
           end
 
           _p_ %{
             If you haven't attended or voted in meetings recently, please consider participating, at
-            least by proxy, in the upcoming membership meeting.  See the links
-            above for more information; submitting a proxy is a simple web form.
+            least by proxy, in the upcoming membership meeting.  Assigning a proxy does NOT prevent 
+            you from attending meetings or
+            automatically grant the assignee to the right to vote on your behalf.
           }
         end
       end
 
       _h1_ 'Your Attendance history', id: 'attendance'
       if not name
-        _p.alert.alert_danger "#{$USER} not found in members.txt"
+        _p.alert.alert_danger "#{@user} not found in members.txt"
       elsif not matrix
         _p.alert.alert_danger "#{name} not found in attendance matrix"
       else
