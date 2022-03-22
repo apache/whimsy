@@ -49,12 +49,12 @@ module ASF
 
     def self._cannot_sub
       self._load_auto()
-      @auto[:disallowed]
+      @auto[:disallowed] + @auto[:intrinsic]
     end
 
     def self._cannot_unsub
       self._load_auto()
-      @auto[:cannotunsubscribe]
+      @auto[:intrinsic]
     end
 
     def self._committers_allowed
@@ -90,7 +90,7 @@ module ASF
     def self.cansub(member, pmc_chair, ldap_pmcs, lidonly = true)
       allowed = []
       parse_flags do |dom, list, f|
-        lid = archivelistid(dom, list)
+        lid = _autosubid(dom, list)
         next if self._deprecated.include? lid # deprecated in lid format currently
         next if self._cannot_sub.include? lid # probably unnecessary
 
@@ -131,7 +131,7 @@ module ASF
     def self.canmod(ldap_pmcs, lidonly = true)
       allowed = []
       parse_flags do |dom, list, _|
-        lid = archivelistid(dom, list)
+        lid = _autosubid(dom, list)
         next if self._deprecated.include? lid # deprecated in lid format currently
         next if self._cannot_sub.include? lid # probably unnecessary
 
@@ -192,12 +192,18 @@ module ASF
       self.archivelistid(dom, list)
     end
 
-    # Convert list name to form used in mail_list_autosub.yml
+    # Convert dom, list to form currently used in subreq.py
     def self.archivelistid(dom, list)
       return "apachecon-#{list}" if dom == 'apachecon.com'
       return list if dom == 'apache.org'
 
       dom.sub(".apache.org", '-') + list
+    end
+
+    # Convert dom, list to form used in mail_list_autosub.yml
+    # This changed in March 2022 from dom-list format
+    def self._autosubid(dom, list)
+      return "#{list}@#{dom}"
     end
 
     # Canonicalise an email address, removing aliases and ignored punctuation
