@@ -37,6 +37,7 @@ _html do
 
     if _.post? and @status == 'go emeritus' and $USER == @user
       # stub out roster functions
+      require 'mail'
       class Committer; def self.serialize(*args); end; end
       def _committer(*args); end
       def env.user; $USER; end
