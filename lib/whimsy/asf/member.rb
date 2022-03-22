@@ -201,18 +201,18 @@ module ASF
     #  :fax - optional
     def self.make_entry(fields={})
       fullname = fields[:fullname] or raise ArgumentError.new(":fullname is required")
-      address = fields[:address]   or raise ArgumentError.new(":address is required")
-      availid = fields[:availid]   or raise ArgumentError.new(":availid is required")
-      email = fields[:email]       or raise ArgumentError.new(":email is required")
-      country = fields[:country] || ''
-      tele = fields[:tele] || ''
+      address = fields[:address] || '<postal address>'
+      availid = fields[:availid] or raise ArgumentError.new(":availid is required")
+      email = fields[:email] || '<email>'
+      country = fields[:country] || '<Country>'
+      tele = fields[:tele] || '<phone number>'
       fax = fields[:fax] || ''
       [
         fullname, # will be prefixed by ' *) '
         # Each line of address is indented
-        (address.gsub(/^/, '    ').gsub(/\r/, '')),
+        (address.gsub(/^/, '    ').gsub(/\r/, '') unless address.empty?),
         ("    #{country}"     unless country.empty?),
-        "    Email: #{email}",
+        ("    Email: #{email}" unless email.empty?),
         ("      Tel: #{tele}" unless tele.empty?),
         ("      Fax: #{fax}"  unless fax.empty?),
         " Forms on File: ASF Membership Application",

@@ -46,13 +46,22 @@ describe ASF::Member do
   fields = {fullname: 'Full Name', address: "Line 1\nLine2", availid: 'a-b-c', email: 'user@domain.invalid'}
   it "make_entry() should raise error" do
     expect { ASF::Member.make_entry(fields.reject{|k,v| k == :fullname}) }.to raise_error(ArgumentError, ':fullname is required')
-    expect { ASF::Member.make_entry(fields.reject{|k,v| k == :address}) }.to raise_error(ArgumentError, ':address is required')
     expect { ASF::Member.make_entry(fields.reject{|k,v| k == :availid}) }.to raise_error(ArgumentError, ':availid is required')
-    expect { ASF::Member.make_entry(fields.reject{|k,v| k == :email}) }.to raise_error(ArgumentError, ':email is required')
   end
   it "make_entry(fields) should create entry" do
     res = ASF::Member.make_entry(fields)
-    expect(res).to eq("Full Name\n    Line 1\n    Line2\n    Email: user@domain.invalid\n Forms on File: ASF Membership Application\n Avail ID: a-b-c\n")
+    expect(res).to eq(
+        <<~MEMAPP
+            Full Name
+                Line 1
+                Line2
+                <Country>
+                Email: user@domain.invalid
+                  Tel: <phone number>
+             Forms on File: ASF Membership Application
+             Avail ID: a-b-c
+        MEMAPP
+    )
   end
   it "make_entry({country:}}) should create entry with country" do
     res = ASF::Member.make_entry(fields.merge({country: 'UN'}))
