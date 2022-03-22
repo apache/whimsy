@@ -76,8 +76,7 @@ module ASF
     # Params: listid (a@b)
     # Return: true or false
     def self.unsubbable?(listid)
-      # cannot_unsub currently defined in listkey format
-      !self._cannot_unsub.include? listdom2listkey(listid)
+      !self._cannot_unsub.include? listid
     end
 
     # which lists are available for subscription via Whimsy?
