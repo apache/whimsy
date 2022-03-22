@@ -89,25 +89,26 @@ module ASF
     def self.cansub(member, pmc_chair, ldap_pmcs, lidonly = true)
       allowed = []
       parse_flags do |dom, list, f|
-        lid = _autosubid(dom, list)
-        next if self._deprecated.include? lid # deprecated in lid format currently
-        next if self._cannot_sub.include? lid # probably unnecessary
+        autoid = _autosubid(dom, list)
+        next if self._deprecated.include? autoid
+        next if self._cannot_sub.include? autoid
+        lid = archivelistid(dom, list)
 
         cansub = false
         modsub = isModSub?(f)
         if not modsub # subs not moderated; allow all
           cansub = true
-        elsif self._committers_allowed().include?(lid) # always allowed
+        elsif self._committers_allowed().include?(autoid) # always allowed
           cansub = true
         else # subs are moderated
           if member
-            if list == 'private' or self._members_allowed.include?(lid)
+            if list == 'private' or self._members_allowed.include?(autoid)
               cansub = true
             end
           elsif ldap_pmcs and list == 'private' and ldap_pmcs.include? dom.sub('.apache.org', '')
             cansub = true
           end
-          if pmc_chair and self._chairs_allowed.include? lid
+          if pmc_chair and self._chairs_allowed.include? autoid
             cansub = true
           end
         end
@@ -130,9 +131,10 @@ module ASF
     def self.canmod(ldap_pmcs, lidonly = true)
       allowed = []
       parse_flags do |dom, list, _|
-        lid = _autosubid(dom, list)
-        next if self._deprecated.include? lid # deprecated in lid format currently
-        next if self._cannot_sub.include? lid # probably unnecessary
+        autoid = _autosubid(dom, list)
+        next if self._deprecated.include? autoid
+        next if self._cannot_sub.include? autoid
+        lid = archivelistid(dom, list)
 
         if ldap_pmcs.include? dom.sub('.apache.org', '')
           if lidonly
