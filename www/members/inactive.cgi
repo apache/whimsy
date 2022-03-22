@@ -40,7 +40,7 @@ _html do
       class Committer; def self.serialize(*args); end; end
       def _committer(*args); end
       dev env.user; $USER; end
-      dev env.password; $USER; end
+      dev env.password; $PASSWORD; end
 
       # issue request
       @action = 'request_emeritus'
