@@ -32,11 +32,13 @@ _html do
     attendance = MeetingUtil.get_attendance(MEETINGS)
     latest = MeetingUtil.get_latest(MEETINGS)
 
+    @meetingsMissed = (@meetingsMissed || 3).to_i
+
     # get static/dynamic tracker
     begin
       tracker = JSON.parse(IO.read(File.join(latest, 'non-participants.json')))
     rescue Errno::ENOENT => err
-      meetingsMissed = (@meetingsMissed || 3).to_i
+      meetingsMissed = @meetingsMissed
       _attendance, matrix, _dates, _nameMap = MeetingUtil.get_attend_matrices(MEETINGS)
       inactive = matrix.select do |id, _name, _first, missed|
         id and missed >= meetingsMissed
@@ -57,7 +59,7 @@ _html do
       'missed' => 0,
       'status' => 'active - attended meetings recently'
     }
-    active = (tracker[@user]['missed'] == 0) && (ENV['QUERY_STRING'] == '')
+    active = (tracker[@user]['missed'] < @meetingsMissed)
     _whimsy_body(
       title: PAGETITLE,
       subtitle: active ? 'Your Attendance Status' : 'Poll Of Inactive Members',
