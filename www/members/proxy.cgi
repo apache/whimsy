@@ -251,7 +251,9 @@ def emit_post(cur_mtg_dir, meeting, _)
         # extract the ids
         existing_ids = existing.map {|line| line[/\((\S+)\)/, 1] }
         # ensure this id is not treated as previously existing
-        existing_ids.delete(user.id)
+        if existing_ids.delete(user.id)
+          existing.reject! {|line| line[/\((\S+)\)$/, 1] == user.id}
+        end
         # keep only new ids
         added = list.
           reject {|line| existing_ids.include? line[/\((\S+)\)$/, 1]}
