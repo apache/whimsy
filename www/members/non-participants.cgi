@@ -101,8 +101,6 @@ _html do
       end
     end
 
-    _div matrix.compact.length
-
     _div.count "Count: #{count} members inactive for #{@meetingsMissed} meetings:"
 
     summary = matrix.
