@@ -9,8 +9,6 @@ require 'json'
 require 'tmpdir'
 require_relative 'meeting-util'
 
-@user ||= $USER
-
 # produce HTML
 _html do
   _head_ do
@@ -32,6 +30,7 @@ _html do
     attendance = MeetingUtil.get_attendance(MEETINGS)
     latest = MeetingUtil.get_latest(MEETINGS)
 
+    @user ||= $USER
     @meetingsMissed = (@meetingsMissed || 3).to_i
 
     # get static/dynamic tracker
