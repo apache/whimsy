@@ -21,8 +21,10 @@ _html do
       .transcript pre {border: none; line-height: 0}
       pre._hilite {background-color: yellow}
       form p {margin-top: 1em}
+      form {display: inline-block}
       textarea {width: 100%; height: 8em}
       textarea:disabled {background-color: #EEEEEE}
+      div.alert {background-color: yellow; border: solid 2px red; padding-top: 0}
     }
   end
   _body? do
@@ -32,6 +34,26 @@ _html do
 
     @user ||= $USER
     @meetingsMissed = (@meetingsMissed || 3).to_i
+
+    if _.post? and @status == 'go emeritus' and $USER == @user
+      # stub out roster functions
+      class Committer; def self.serialize(*args); end; end
+      def _committer(*args); end
+
+      # issue request
+      @action = 'request_emeritus'
+      @userid = $USER
+      eval File.expand_path('../roster/views/actions/memstat.json.rb', __dir__)
+
+      # Provide visual feedback
+      _div.alert do
+        _h3 'Emeritus request submitted'
+        _ul do
+          _li 'Check your email for confirmation.'
+          _li 'Your status will be updated on Whimsy within 10 minutes.'
+        end
+      end
+    end
 
     # get static/dynamic tracker
     begin
@@ -114,33 +136,6 @@ _html do
         _p.alert.alert_warning "Dear #{name}, You have missed the last " +
           tracker[@user]['missed'].to_s + " meetings."
 
-        if _.post? and @status and $USER == @user
-          _h3_ 'Session Transcript'
-
-          # setup authentication
-          if $PASSWORD
-            auth = {user: $USER, password: $PASSWORD}
-          else
-            auth = {}
-          end
-
-          # apply and commit changes
-          Dir.mktmpdir do |dir|
-            _div_.transcript do
-              work = ASF::SVN.getInfoItem(latest,'url')
-              ASF::SVN.svn_('checkout', [work, dir], _, {depth: 'empty'}.merge(auth))
-              json = File.join(dir, 'non-participants.json')
-              ASF::SVN.svn_('update', json, _, auth)
-              tracker = JSON.parse(IO.read(json))
-              tracker[@user]['status'] = @status
-              tracker[@user]['status'] = @suggestions
-              IO.write(json, JSON.pretty_generate(tracker))
-              ASF::SVN.svn_('diff', json, _, {verbose: true, sysopts: {hilite: [/"status":/]}})
-              ASF::SVN.svn_('commit', json, _, {msg: @status}.merge(auth))
-            end
-          end
-        end
-
         _div.status do
 
           wrap = 80
@@ -159,21 +154,16 @@ _html do
 
           _pre.issue issue_text
 
-          _form method: 'post' do
-            if false
-              _p %{
-                Please let us know how the ASF could make it easier
-                for you to participate in Member's Meetings:
-              }
+          _p 'Update your status (if you are inactive):'
 
-              _textarea name: 'suggestions', disabled: active
-            end
-
-            _p 'Update your status (if you are inactive):'
+          _form method: 'get', action: 'proxy' do
             _button.btn.btn_success 'Request a proxy',
               name: 'status', value: 'request proxy',
               disabled: $USER != @user ||
                 tracker[@user]['status'] == 'Proxy received'
+          end
+
+          _form method: 'post' do
             _button.btn.btn_warning 'I would like to go emeritus',
               name: 'status', value: 'go emeritus',
               disabled: $USER != @user ||
