@@ -29,16 +29,27 @@ _html do
     MEETINGS = ASF::SVN['Meetings']
     attendance = MeetingUtil.get_attendance(MEETINGS)
     latest = MeetingUtil.get_latest(MEETINGS)
-    # determine user's name as found in members.txt
-    name = ASF::Member.find_text_by_id($USER).to_s.split("\n").first
-    matrix = attendance['matrix'][name]
+
+    # get static/dynamic tracker
     begin
       tracker = JSON.parse(IO.read(File.join(latest, 'non-participants.json')))
     rescue Errno::ENOENT => err
-      # Fallback to reading previous meeting's data, and reset variable
-      latest = MeetingUtil.get_previous(MEETINGS)
-      tracker = JSON.parse(IO.read(File.join(latest, 'non-participants.json')))
+      meetingsMissed = (@meetingsMissed || 3).to_i
+      _attendance, matrix, _dates, _nameMap = MeetingUtil.get_attend_matrices(MEETINGS)
+      inactive = matrix.select do |id, _name, _first, missed|
+        id and missed >= meetingsMissed
+      end
+    
+      current_status = MeetingUtil.current_status(latest)
+      tracker = inactive.map {|id, name, _first, missed|
+        [id, {name: name, missed: missed, status: current_status[id]}]
+      }.to_h
     end
+
+    # determine user's name as found in members.txt
+    name = ASF::Member.find_text_by_id($USER).to_s.split("\n").first
+    matrix = attendance['matrix'][name]
+
     # defaults for active users
     tracker[$USER] ||= {
       'missed' => 0,
@@ -80,7 +91,7 @@ _html do
           matrix.each do |date, status|
             if %w(A V P).include? status
               att += 1
-            else
+            elsif date != 'active'
               miss += 1
             end
           end
@@ -170,6 +181,8 @@ _html do
           end
           matrix.sort.reverse.each do |date, status|
             next if status == ' '
+            next if date == 'active'
+
             color = 'bg-danger'
             color = 'bg-warning' if %w(e).include? status
             color = 'bg-success' if %w(A V P).include? status

@@ -143,6 +143,57 @@ class MeetingUtil
       f.puts JSON.pretty_generate(attendance)
     end
   end
+
+  # Precompute matrix and dates from attendance
+  def self.get_attend_matrices(dir)
+    attendance = MeetingUtil.get_attendance(dir)
+
+    # extract and format dates
+    dates = attendance['dates'].sort.
+      map {|date| Date.parse(date).strftime('%Y-%b')}
+
+    # compute mappings of names to ids
+    members = ASF::Member.list
+    active = Hash[members.select {|_id, data| not data['status']}]
+    nameMap = Hash[members.map {|id, data| [id, data[:name]]}]
+    idMap = Hash[nameMap.to_a.map(&:reverse)]
+
+    # analyze attendance
+    matrix = attendance['matrix'].map do |name, meetings|
+      id = idMap[name]
+      next unless id and active[id]
+
+      # exclude 'active entry'
+      data = meetings.select {|key, value| key.start_with? '20'}.
+        sort.reverse.map(&:last)
+
+      first = data.length
+      missed = (data.index {|datum| datum != '-'} || data.length)
+
+      [id, name, first, missed]
+    end
+
+    return attendance, matrix.compact, dates, nameMap
+  end
+
+  # return a function to determine the current status of a member by id
+  def self.current_status(cur_mtg_dir)
+    proxies = Dir["#{cur_mtg_dir}/proxies-received/*"].
+      map {|file| File.basename(file, '.*')}
+
+    _tag,emeritus = ASF::SVN.getlisting('emeritus-requests-received')
+    emeritus.map! {|file| File.basename(file, '.*')}
+
+    lambda do |id|
+      if emeritus.include? id
+        'Emeritus request received'
+      elsif proxies.include? id
+        'Proxy received'
+      else
+        'No response'
+      end
+    end
+  end
 end
 
 # ## ### #### ##### ######

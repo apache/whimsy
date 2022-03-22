@@ -17,21 +17,7 @@ today = Date.today.strftime('%Y%m%d')
 
 # look for recent activity if there is an upcoming meeting
 if meeting > today
-  proxies = Dir["#{cur_mtg_dir}/proxies-received/*"].
-    map {|file| File.basename(file, '.*')}
-
-  _tag,emeritus = ASF::SVN.getlisting('emeritus-requests-received')
-  emeritus.map! {|file| File.basename(file, '.*')}
-
-  current_status = lambda do |id|
-    if emeritus.include? id
-      'Emeritus request received'
-    elsif proxies.include? id
-      'Proxy received'
-    else
-      'No response'
-    end
-  end
+  current_status = MeetingUtil.current_status(cur_mtg_dir)
 else
   current_status = lambda {'No response'}
 end
@@ -42,41 +28,10 @@ if not ENV['QUERY_STRING'] or ENV['QUERY_STRING'].include? 'json'
   ENV['HTTP_ACCEPT'] = 'application/json' 
 end
 
-# Precompute matrix and dates from attendance
-def get_attend_matrices(dir)
-  attendance = MeetingUtil.get_attendance(dir)
-
-  # extract and format dates
-  dates = attendance['dates'].sort.
-  map {|date| Date.parse(date).strftime('%Y-%b')}
-
-  # compute mappings of names to ids
-  members = ASF::Member.list
-  active = Hash[members.select {|_id, data| not data['status']}]
-  nameMap = Hash[members.map {|id, data| [id, data[:name]]}]
-  idMap = Hash[nameMap.to_a.map(&:reverse)]
-
-  # analyze attendance
-  matrix = attendance['matrix'].map do |name, meetings|
-    id = idMap[name]
-    next unless id and active[id]
-
-    # exclude 'active entry'
-    data = meetings.select {|key, value| key.start_with? '20'}.
-      sort.reverse.map(&:last)
-
-    first = data.length
-    missed = (data.index {|datum| datum != '-'} || data.length)
-
-    [id, name, first, missed]
-  end
-  return attendance, matrix, dates, nameMap
-end
-
 # produce HTML
 _html do
   _body? do
-    attendance, matrix, dates, nameMap = get_attend_matrices(MEETINGS)
+    attendance, matrix, dates, nameMap = MeetingUtil.get_attend_matrices(MEETINGS)
     _whimsy_body(
       title: PAGETITLE,
       subtitle: 'Select A Date:',
@@ -146,6 +101,8 @@ _html do
       end
     end
 
+    _div matrix.compact.length
+
     _div.count "Count: #{count} members inactive for #{@meetingsMissed} meetings:"
 
     summary = matrix.
@@ -172,7 +129,7 @@ end
 
 _json do
   meetingsMissed = (@meetingsMissed || 3).to_i
-  _attendance, matrix, _dates, _nameMap = get_attend_matrices(MEETINGS)
+  _attendance, matrix, _dates, _nameMap = MeetingUtil.get_attend_matrices(MEETINGS)
   inactive = matrix.select do |id, _name, _first, missed|
     id and missed >= meetingsMissed
   end
