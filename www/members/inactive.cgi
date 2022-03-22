@@ -43,7 +43,7 @@ _html do
       # issue request
       @action = 'request_emeritus'
       @userid = $USER
-      eval File.expand_path('../roster/views/actions/memstat.json.rb', __dir__)
+      eval IO.read(File.expand_path('../roster/views/actions/memstat.json.rb', __dir__))
 
       # Provide visual feedback
       _div.alert do
