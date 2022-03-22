@@ -39,8 +39,8 @@ _html do
       # stub out roster functions
       class Committer; def self.serialize(*args); end; end
       def _committer(*args); end
-      dev env.user; $USER; end
-      dev env.password; $PASSWORD; end
+      def env.user; $USER; end
+      def env.password; $PASSWORD; end
 
       # issue request
       @action = 'request_emeritus'
