@@ -217,9 +217,12 @@ def emit_post(cur_mtg_dir, meeting, _)
       Dir.chdir(tmpdir) do
         # write proxy form
         filename = "proxies-received/#$USER.txt"
+        update_existing_form = File.exist? filename
         File.write(filename, proxyform)
-        ASF::SVN.svn_('add', filename, _)
-        ASF::SVN.svn_('propset', ['svn:mime-type', 'text/plain; charset=utf-8', filename], _)
+        unless update_existing_form
+          ASF::SVN.svn_('add', filename, _)
+          ASF::SVN.svn_('propset', ['svn:mime-type', 'text/plain; charset=utf-8', filename], _)
+        end
 
         # get a list of proxies
         list = Dir['proxies-received/*.txt'].map do |file|
@@ -247,6 +250,8 @@ def emit_post(cur_mtg_dir, meeting, _)
         existing = proxies.scan(/   \S.*\(\S+\).*$/)
         # extract the ids
         existing_ids = existing.map {|line| line[/\((\S+)\)/, 1] }
+        # ensure this id is not treated as previously existing
+        existing_ids.delete(user.id)
         # keep only new ids
         added = list.
           reject {|line| existing_ids.include? line[/\((\S+)\)$/, 1]}
