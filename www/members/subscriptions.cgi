@@ -79,30 +79,34 @@ _html do
     end
 
     _table.table do
-      _tr do
-        _th 'id', data_sort: 'string'
-        _th 'email', data_sort: 'string'
-        _th 'name', data_sort: 'string'
+      _thead_ do
+        _tr do
+          _th 'id', data_sort: 'string'
+          _th 'email', data_sort: 'string'
+          _th 'name', data_sort: 'string'
+        end
       end
-      subscriptions.sort.each do |id, person, email|
-        _tr_ do
-          if id.include? '*'
-            _td.text_danger id
-          elsif not person.asf_member?
-            _td.text_danger id, title: 'Non Member', data_sort_value: '1'
-          elsif person.asf_member? != true
-            _td(data_sort_value: '2') {_em id, title: 'Emeritus'}
-          elsif not ldap.include? person
-            _td(data_sort_value: '3')  {_strong.text_danger id, title: 'Not in LDAP'}
-          else
-            _td id
-          end
-          _td email
+      _tbody do
+        subscriptions.sort.each do |id, person, email|
+          _tr_ do
+            if id.include? '*'
+              _td.text_danger id
+            elsif not person.asf_member?
+              _td.text_danger id, title: 'Non Member', data_sort_value: '1'
+            elsif person.asf_member? != true
+              _td(data_sort_value: '2') {_em id, title: 'Emeritus'}
+            elsif not ldap.include? person
+              _td(data_sort_value: '3')  {_strong.text_danger id, title: 'Not in LDAP'}
+            else
+              _td id
+            end
+            _td email
 
-          if id.include? '*'
-            _td ''
-          else
-            _td person.public_name
+            if id.include? '*'
+              _td ''
+            else
+              _td person.public_name
+            end
           end
         end
       end

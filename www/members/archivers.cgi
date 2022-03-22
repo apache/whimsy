@@ -95,106 +95,110 @@ _html do
       }
     ) do
 
-    _table.table do
-      _tr do
-        _th 'list', data_sort: 'string'
-        _th 'Private?', data_sort: 'string'
-        _th 'MBOX'
-        _th 'PONY'
-        _th 'MAIL-ARCHIVE'
-        _th 'MARKMAIL'
-        _th 'Other archivers', data_sort: 'string'
+      _table.table do
+        _thead_ do
+          _tr do
+            _th 'list', data_sort: 'string'
+            _th 'Private?', data_sort: 'string'
+            _th 'MBOX'
+            _th 'PONY'
+            _th 'MAIL-ARCHIVE'
+            _th 'MARKMAIL'
+            _th 'Other archivers', data_sort: 'string'
+          end
+        end
+        _tbody do
+          ASF::MLIST.list_archivers do |dom, list, arcs|
+            # arcs = array of arrays, each of which is [archiver, archiver_type, "public"|"private"]
+
+            lid = "#{list}@#{dom}"
+
+            next if NOT_ARCHIVED.include? lid
+
+            options = Hash.new # Any fields have warnings/errors?
+
+            arcleft = arcs.map(&:first) # unused
+
+            # in case there are multiple archivers with different classifications, we
+            # join all the unique entries.
+            # This is equivalent to first if there is only one, but will produce
+            # a string such as 'privatepublic' if there are distinct entries
+            # However it generates an empty string if there are no entries.
+
+            mbox = findarcs(arcs, :MBOX, arcleft)
+
+            pubprv = mbox[0] # get privacy setting from MBOX entry
+
+            next if pubprv == 'restricted' # Don't show these
+
+            if mbox[0].empty?
+              mbox = 'Missing'
+              options[:mbox] = {class: 'warning'}
+            end
+
+            pony = findarcs(arcs, :PONY, arcleft)
+            if ! pony[0].empty?
+              options[:pony] = {class: 'danger'} if pony[0] != pubprv
+            else
+              pony = 'Missing'
+              options[:pony] = {class: 'warning'}
+            end
+
+            mail_archive = findarcs(arcs, :MAIL_ARCH, arcleft)
+            if ! mail_archive[0].empty?
+              options[:mail_archive] = {class: 'danger'} if mail_archive[0] != pubprv
+            elsif pubprv == 'private'
+              mail_archive = 'N/A'
+            else
+              mail_archive = 'Missing'
+              options[:mail_archive] = {class: 'warning'}
+            end
+
+            markmail = findarcs(arcs, :MARKMAIL, arcleft)
+            if ! markmail[0].empty?
+              options[:markmail] = {class: 'danger'} if (markmail[0] != pubprv) || markmail[1].size > 1
+            elsif pubprv == 'private'
+              markmail = 'N/A'
+            else
+              markmail = 'Missing'
+              options[:markmail] = {class: 'warning'}
+            end
+
+            options[:arcleft] = {class: 'warning'} if arcleft.size > 0
+
+            if show_mailarchive
+              needs_attention = options.keys.length > 0
+            else # don't show missing mail-archive
+              needs_attention = options.reject { |k, _v| k == :mail_archive && mail_archive == 'Missing' }.length > 0
+            end
+            next unless show_all || needs_attention # only show errors unless want all
+
+            # This is not a warning per-se
+            options[:pubprv] = {class: 'warning'} if pubprv == 'private'
+
+            _tr do
+              _td lid
+              _td pubprv, options[:pubprv]
+              _td options[:mbox] do showdets(mbox) end
+              _td options[:pony] do showdets(pony) end
+              _td options[:mail_archive] do showdets(mail_archive) end
+              _td options[:markmail] do showdets(markmail) end
+              _td arcleft.sort, options[:arcleft]
+            end
+          end
+        end
       end
-      ASF::MLIST.list_archivers do |dom, list, arcs|
-        # arcs = array of arrays, each of which is [archiver, archiver_type, "public"|"private"]
 
-        lid = "#{list}@#{dom}"
-
-        next if NOT_ARCHIVED.include? lid
-
-        options = Hash.new # Any fields have warnings/errors?
-
-        arcleft = arcs.map(&:first) # unused
-
-        # in case there are multiple archivers with different classifications, we
-        # join all the unique entries.
-        # This is equivalent to first if there is only one, but will produce
-        # a string such as 'privatepublic' if there are distinct entries
-        # However it generates an empty string if there are no entries.
-
-        mbox = findarcs(arcs, :MBOX, arcleft)
-
-        pubprv = mbox[0] # get privacy setting from MBOX entry
-
-        next if pubprv == 'restricted' # Don't show these
-
-        if mbox[0].empty?
-          mbox = 'Missing'
-          options[:mbox] = {class: 'warning'}
-        end
-
-        pony = findarcs(arcs, :PONY, arcleft)
-        if ! pony[0].empty?
-          options[:pony] = {class: 'danger'} if pony[0] != pubprv
-        else
-          pony = 'Missing'
-          options[:pony] = {class: 'warning'}
-        end
-
-        mail_archive = findarcs(arcs, :MAIL_ARCH, arcleft)
-        if ! mail_archive[0].empty?
-          options[:mail_archive] = {class: 'danger'} if mail_archive[0] != pubprv
-        elsif pubprv == 'private'
-          mail_archive = 'N/A'
-        else
-          mail_archive = 'Missing'
-          options[:mail_archive] = {class: 'warning'}
-        end
-
-        markmail = findarcs(arcs, :MARKMAIL, arcleft)
-        if ! markmail[0].empty?
-          options[:markmail] = {class: 'danger'} if (markmail[0] != pubprv) || markmail[1].size > 1
-        elsif pubprv == 'private'
-          markmail = 'N/A'
-        else
-          markmail = 'Missing'
-          options[:markmail] = {class: 'warning'}
-        end
-
-        options[:arcleft] = {class: 'warning'} if arcleft.size > 0
-
-        if show_mailarchive
-          needs_attention = options.keys.length > 0
-        else # don't show missing mail-archive
-          needs_attention = options.reject { |k, _v| k == :mail_archive && mail_archive == 'Missing' }.length > 0
-        end
-        next unless show_all || needs_attention # only show errors unless want all
-
-        # This is not a warning per-se
-        options[:pubprv] = {class: 'warning'} if pubprv == 'private'
-
-        _tr do
-          _td lid
-          _td pubprv, options[:pubprv]
-          _td options[:mbox] do showdets(mbox) end
-          _td options[:pony] do showdets(pony) end
-          _td options[:mail_archive] do showdets(mail_archive) end
-          _td options[:markmail] do showdets(markmail) end
-          _td arcleft.sort, options[:arcleft]
-        end
-      end
-    end
-
-    _script %{
-      var table = $(".table").stupidtable();
-      table.on("aftertablesort", function (event, data) {
-        var th = $(this).find("th");
-        th.find(".arrow").remove();
-        var dir = $.fn.stupidtable.dir;
-        var arrow = data.direction === dir.ASC ? "&uarr;" : "&darr;";
-        th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
-        });
-      }
+      _script %{
+        var table = $(".table").stupidtable();
+        table.on("aftertablesort", function (event, data) {
+          var th = $(this).find("th");
+          th.find(".arrow").remove();
+          var dir = $.fn.stupidtable.dir;
+          var arrow = data.direction === dir.ASC ? "&uarr;" : "&darr;";
+          th.eq(data.column).append('<span class="arrow">' + arrow +'</span>');
+          });
+        }
     end
   end
 end
