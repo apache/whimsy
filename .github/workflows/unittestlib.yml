@@ -22,7 +22,9 @@ jobs:
       with:
         persist-credentials: false
     - name: setup
-      run: sudo apt-get install libldap2-dev
+      run: |
+        sudo apt-get install libldap2-dev
+        sudo apt-get install libsasl2-dev
       if:  ${{ matrix.os }} != 'macos-latest'  
     - name: ruby
       uses: ruby/setup-ruby@v1
