@@ -130,7 +130,7 @@ or read the [detailed MACOSX setup steps](MACOSX.md).
       For openssl, copy from the LAST `BEGIN` to `END` inclusive into the file `/etc/ldap/asf-ldap-client.pem`.
       Point to the file in `/etc/ldap/ldap.conf` with a line like the following:
 
-     ```   TLS_CACERT      /etc/ldap/asf-ldap-client.pem```
+      `TLS_CACERT      /etc/ldap/asf-ldap-client.pem`
 
      If multiple different certificates are needed, they should all be added to the same file.
      [The option `TLS_CACERTDIR` is not used Ubuntu for example]
