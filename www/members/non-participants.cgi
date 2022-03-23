@@ -126,13 +126,5 @@ _html do
 end
 
 _json do
-  meetingsMissed = (@meetingsMissed || 3).to_i
-  _attendance, matrix, _dates, _nameMap = MeetingUtil.get_attend_matrices(MEETINGS)
-  inactive = matrix.select do |id, _name, _first, missed|
-    id and missed >= meetingsMissed
-  end
-
-  Hash[inactive.map {|id, name, _first, missed|
-    [id, {name: name, missed: missed, status: current_status[id]}]
-    }]
+  MeetingUtil.tracker((@meetingsMissed || 3).to_i)
 end

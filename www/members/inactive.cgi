@@ -62,16 +62,7 @@ _html do
     begin
       tracker = JSON.parse(IO.read(File.join(latest, 'non-participants.json')))
     rescue Errno::ENOENT => err
-      meetingsMissed = @meetingsMissed
-      _attendance, matrix, _dates, _nameMap = MeetingUtil.get_attend_matrices(MEETINGS)
-      inactive = matrix.select do |id, _name, _first, missed|
-        id and missed >= meetingsMissed
-      end
-    
-      current_status = MeetingUtil.current_status(latest)
-      tracker = inactive.map {|id, name, _first, missed|
-        [id, {'name' => name, 'missed' => missed, 'status' => current_status[id]}]
-      }.to_h
+      tracker = MeetingUtil.tracker(@meetingsMissed)
     end
 
     # determine user's name as found in members.txt
@@ -96,16 +87,13 @@ _html do
         MeetingUtil::RECORDS => 'Official Past Meeting Records'
       },
       helpblock: -> {
-        _p do
-          _ "This page shows your personal attendance record at past Member's meetings, as of meeting #{latest}."
-          _ %{
-            It is also a poll of members who have not participated in
-            ASF Members Meetings or Elections in the past three years, and
-            if you have been inactive, asks you if you wish to remain active or go emeritus.  Inactive members
-            (only) will see a form below and can
-            indicate their choice and provide feedback on meetings by pushing one of the buttons below.
-          }
-        end
+        _p "This page shows your personal attendance record at past Member's meetings, as of meeting #{latest}."
+        _p %{
+          Inactive members (only) will see a button to request a proxy for the next meeting, and
+          a second button that they can use to request to go emeritus.  They also
+          will see the text of an issue that will be placed before the membership
+          for a vote should they not take either of these two options.
+        }
       }
     ) do
 
