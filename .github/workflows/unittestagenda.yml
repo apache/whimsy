@@ -40,14 +40,13 @@ jobs:
         bundle install
     - name: setup agenda 2
       run: |
-        ruby -e '$:.each {|l| puts l}'
+        gem which wunderbar
         echo '---------'
-        sudo ruby -e '$:.each {|l| puts l}'
-        echo '---------'
-        sudo -E ruby -e '$:.each {|l| puts l}'
+        dirname $(gem which wunderbar)
         echo '---------'
         # Fails to find wunderbar:
-        # sudo -E ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
+        sudo -E ruby -I $PWD/lib -I$(dirname $(gem which wunderbar)) -r whimsy/asf -e "ASF::LDAP.configure"
+        echo '---------'
         # try this instead
         sudo ruby $PWD/lib/whimsy/asf/ldap_setup.rb
     - name: test agenda code
