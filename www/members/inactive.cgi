@@ -7,7 +7,7 @@ require 'wunderbar/bootstrap'
 require 'date'
 require 'json'
 require 'tmpdir'
-require_relative 'meeting-util'
+require 'whimsy/asf/meeting-util'
 
 # produce HTML
 _html do
@@ -29,8 +29,8 @@ _html do
   end
   _body? do
     MEETINGS = ASF::SVN['Meetings']
-    attendance = MeetingUtil.get_attendance(MEETINGS)
-    latest = MeetingUtil.get_latest(MEETINGS)
+    attendance = ASF::MeetingUtil.get_attendance(MEETINGS)
+    latest = ASF::MeetingUtil.get_latest(MEETINGS)
 
     @user ||= $USER
     @meetingsMissed = (@meetingsMissed || 3).to_i
@@ -62,7 +62,7 @@ _html do
     begin
       tracker = JSON.parse(IO.read(File.join(latest, 'non-participants.json')))
     rescue Errno::ENOENT => err
-      tracker = MeetingUtil.tracker(@meetingsMissed)
+      tracker = ASF::MeetingUtil.tracker(@meetingsMissed)
     end
 
     # determine user's name as found in members.txt
@@ -84,7 +84,7 @@ _html do
         '/members/proxy' => 'Assign A Proxy For Next Meeting',
         '/members/non-participants' => 'Members Not Participating',
         ASF::SVN.svnpath!('foundation','members.txt') => 'See Official Members.txt File',
-        MeetingUtil::RECORDS => 'Official Past Meeting Records'
+        ASF::MeetingUtil::RECORDS => 'Official Past Meeting Records'
       },
       helpblock: -> {
         _p "This page shows your personal attendance record at past Member's meetings, as of meeting #{latest}."

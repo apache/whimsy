@@ -7,17 +7,17 @@ require 'wunderbar/bootstrap'
 require 'date'
 require 'json'
 require 'wunderbar/jquery/stupidtable'
-require_relative 'meeting-util'
+require 'whimsy/asf/meeting-util'
 
 # Find latest meeting and check if it's in the future yet
 MEETINGS = ASF::SVN['Meetings']
-cur_mtg_dir = MeetingUtil.get_latest(MEETINGS)
+cur_mtg_dir = ASF::MeetingUtil.get_latest(MEETINGS)
 meeting = File.basename(cur_mtg_dir)
 today = Date.today.strftime('%Y%m%d')
 
 # look for recent activity if there is an upcoming meeting
 if meeting > today
-  current_status = MeetingUtil.current_status(cur_mtg_dir)
+  current_status = ASF::MeetingUtil.current_status(cur_mtg_dir)
 else
   current_status = lambda {'No response'}
 end
@@ -31,7 +31,7 @@ end
 # produce HTML
 _html do
   _body? do
-    attendance, matrix, dates, nameMap = MeetingUtil.get_attend_matrices(MEETINGS)
+    attendance, matrix, dates, nameMap = ASF::MeetingUtil.get_attend_matrices(MEETINGS)
     _whimsy_body(
       title: PAGETITLE,
       subtitle: 'Select A Date:',
@@ -126,5 +126,5 @@ _html do
 end
 
 _json do
-  MeetingUtil.tracker((@meetingsMissed || 3).to_i)
+  ASF::MeetingUtil.tracker((@meetingsMissed || 3).to_i)
 end

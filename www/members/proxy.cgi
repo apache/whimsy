@@ -8,7 +8,7 @@ require 'wunderbar/bootstrap'
 require 'wunderbar/jquery'
 require 'date'
 require 'tmpdir'
-require_relative 'meeting-util'
+require 'whimsy/asf/meeting-util'
 
 # Emit basic instructions and details on quorum
 def emit_instructions(today, cur_mtg_dir, meeting)
@@ -68,7 +68,7 @@ def emit_instructions(today, cur_mtg_dir, meeting)
     _ ' file.  The great majority of proxies assigned are for attendance only; not for voting.'
   end
   end
-  num_members, quorum_need, num_proxies, attend_irc = MeetingUtil.calculate_quorum(cur_mtg_dir)
+  num_members, quorum_need, num_proxies, attend_irc = ASF::MeetingUtil.calculate_quorum(cur_mtg_dir)
   if num_members
     _p do
       _ 'Currently, we must have '
@@ -81,7 +81,7 @@ end
 
 # Emit meeting data and form for user to select a proxy - GET
 def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
-  help, copypasta = MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
+  help, copypasta = ASF::MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
   user_is_proxy = help && copypasta
   _whimsy_panel(user_is_proxy ? "You Are Proxying For Others" : "Select A Proxy For Upcoming Meeting", style: 'panel-success') do
     _div do
@@ -292,7 +292,7 @@ _html do
   _body? do
     # Find latest meeting and check if it's in the future yet
     MEETINGS = ASF::SVN['Meetings']
-    cur_mtg_dir = MeetingUtil.get_latest(MEETINGS)
+    cur_mtg_dir = ASF::MeetingUtil.get_latest(MEETINGS)
     meeting = File.basename(cur_mtg_dir)
     today = Date.today.strftime('%Y%m%d')
     _whimsy_body(
@@ -310,7 +310,7 @@ _html do
       }
     ) do
       if _.get?
-        emit_form(cur_mtg_dir, meeting, MeetingUtil::getVolunteers(cur_mtg_dir), today > meeting)
+        emit_form(cur_mtg_dir, meeting, ASF::MeetingUtil::getVolunteers(cur_mtg_dir), today > meeting)
       else # POST
         emit_post(cur_mtg_dir, meeting, _)
       end

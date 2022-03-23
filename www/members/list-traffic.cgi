@@ -10,7 +10,7 @@ require 'whimsy/asf/agenda'
 require 'date'
 require 'mail'
 require '../../tools/mboxhdr2csv.rb'
-require_relative 'meeting-util'
+require 'whimsy/asf/meeting-util'
 
 user = ASF::Person.new($USER)
 unless user.asf_member?
@@ -180,7 +180,7 @@ _html do
       }
     ) do
       months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path)}.grep(/^\d+$/)
-      attendance = MeetingUtil.get_attendance(ASF::SVN['Meetings'])
+      attendance = ASF::MeetingUtil.get_attendance(ASF::SVN['Meetings'])
       style_cohorts(attendance) if attendance.has_key?('cohorts') # Allow to fail silently if data missing
       # if ENV['QUERY_STRING'].include? 'Clear-Cache-No-Really'
       #   _p do # Danger, Will Robinson!

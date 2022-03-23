@@ -7,7 +7,7 @@ require 'mail'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/member-files'
-require_relative 'meeting-util'
+require 'whimsy/asf/meeting-util'
 
 # link to members private-arch
 MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
@@ -92,7 +92,7 @@ _html do
         _ 'Entries are highlighted if they are not present in both lists.'
       }
     ) do
-      cur_mtg_dir = File.basename(MeetingUtil.get_latest(MEETINGS))
+      cur_mtg_dir = File.basename(ASF::MeetingUtil.get_latest(MEETINGS))
       nominations, emails = setup_data
       _div.flexbox do
         _div.flexitem do

@@ -7,7 +7,7 @@ require 'wunderbar/bootstrap'
 require 'date'
 require 'json'
 require 'wunderbar/jquery/stupidtable'
-require_relative 'meeting-util'
+require 'whimsy/asf/meeting-util'
 DTFORMAT = '%A, %d %B %Y at %H:%M %z'
 TADFORMAT = '%Y%m%dT%H%M%S'
 ERROR_DATE = DateTime.new(1970, 1, 1) # An obvious error value 8-)
@@ -57,7 +57,7 @@ def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt, num_members, quorum_need, num_pro
       _p "Live links to the upcoming meeting records/ballots/how-tos are below."
     end
     _ul do
-      MeetingUtil::MEETING_FILES.each do |f, desc|
+      ASF::MeetingUtil::MEETING_FILES.each do |f, desc|
         _li do
           emit_link(svn_mtg_dir, f, desc)
         end
@@ -70,13 +70,13 @@ end
 _html do
   _body? do
     MEETINGS = ASF::SVN['Meetings']
-    cur_mtg_dir = MeetingUtil.get_latest(MEETINGS)
+    cur_mtg_dir = ASF::MeetingUtil.get_latest(MEETINGS)
     meeting = File.basename(cur_mtg_dir)
-    svn_mtg_dir = File.join(MeetingUtil::RECORDS, meeting)
+    svn_mtg_dir = File.join(ASF::MeetingUtil::RECORDS, meeting)
     mtg_date = Date.parse(meeting)
     today = Date.today
     # Calculate quorum
-    num_members, quorum_need, num_proxies, attend_irc = MeetingUtil.calculate_quorum(cur_mtg_dir)
+    num_members, quorum_need, num_proxies, attend_irc = ASF::MeetingUtil.calculate_quorum(cur_mtg_dir)
     # Use ics files for accurate times; see create-meeting.rb
     nom_date = ics2dtstart(File.join(cur_mtg_dir, "ASF-members-#{mtg_date.strftime('%Y')}-nominations-close.ics"))
     m1_date = ics2dtstart(File.join(cur_mtg_dir, "ASF-members-#{mtg_date.strftime('%Y')}.ics"))
@@ -94,7 +94,7 @@ _html do
         '/members/whatif' => 'Explore Past Board STV Results',
         '/members/non-participants' => 'Members Not Participating Recntly',
         '/members/inactive' => 'Inactive Member Feedback Form',
-        MeetingUtil::RECORDS => 'Official Past Meeting Records',
+        ASF::MeetingUtil::RECORDS => 'Official Past Meeting Records',
         'https://lists.apache.org/list.html?members@apache.org' => 'Read members@ List Archives'
       },
       helpblock: -> {
@@ -148,7 +148,7 @@ _html do
         end
       }
     ) do
-      help, copypasta = MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
+      help, copypasta = ASF::MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
       # attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
       user = ASF::Person.find($USER)
       _div id: 'personal'
@@ -187,7 +187,7 @@ _html do
           _ul do
             ['nomination_of_board.txt', 'nomination_of_members.txt', '/members/proxy.cgi'].each do |f|
               _li do
-                emit_link(svn_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
+                emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])
               end
             end
           end
@@ -206,7 +206,7 @@ _html do
           _ul do
             ['nominated-members.txt', '/members/proxy.cgi'].each do |f|
               _li do
-                emit_link(svn_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
+                emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])
               end
             end
           end
@@ -234,13 +234,13 @@ _html do
           _ ' channel.'
           _br
           _ 'During the First Half of Meeting, the Board Chair will do Roll call - please see instructions on how to mark present: '
-          emit_link(svn_mtg_dir, 'README.txt', MeetingUtil::MEETING_FILES['README.txt'])
+          emit_link(svn_mtg_dir, 'README.txt', ASF::MeetingUtil::MEETING_FILES['README.txt'])
           _ 'Once a quorum is reached, the Board Chair will lead the meeting, with various officers presenting their reports in the Agenda.txt, which you can read ahead of time.'
           _ 'Expect the First Half to last about an hour; then the Board Chair will call for a recess.  Remember: there is no voting in IRC.'
           _ul do
             ['agenda.txt', 'README.txt', 'https://www.apache.org/foundation/governance/meetings'].each do |f|
               _li do
-                emit_link(svn_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
+                emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])
               end
             end
           end
@@ -280,7 +280,7 @@ _html do
           _ul do
             ['record', 'attend', 'voter-tally', 'raw_board_votes.txt', 'raw-irc-log'].each do |f|
               _li do
-                emit_link(svn_mtg_dir, f, MeetingUtil::MEETING_FILES[f])
+                emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])
               end
             end
             _li do
@@ -331,7 +331,7 @@ _html do
           _ul do
             all_mtg.each do |mtg|
               _li do
-                tmp = File.join(MeetingUtil::RECORDS, File.basename(mtg))
+                tmp = File.join(ASF::MeetingUtil::RECORDS, File.basename(mtg))
                 _a tmp, href: tmp
               end
             end
