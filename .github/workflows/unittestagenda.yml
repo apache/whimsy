@@ -32,12 +32,10 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
-    - name: LDAP setup
-      run: |
-        sudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
         cd www/board/agenda
         npm install
         bundle install
+        sudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
         bundle exec rake
