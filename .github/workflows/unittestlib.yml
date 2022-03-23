@@ -7,8 +7,6 @@ on:
 
   workflow_dispatch:
 
-# temporary hack to see if can build ruby-ldap ...
-
 jobs:
   test:
     strategy:
