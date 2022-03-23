@@ -2,7 +2,7 @@ name: Unit test library methods
 on:
   push:
     paths:
-      - '**/unitestlib.yml'
+      - '**/unittestlib.yml'
       - 'lib/**'
 
   workflow_dispatch:

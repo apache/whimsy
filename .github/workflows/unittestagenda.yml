@@ -2,7 +2,7 @@ name: Unit test agenda
 on:
   push:
     paths:
-      - '**/unitestagenda.yml'
+      - '**/unittestagenda.yml'
       - 'www/board/agenda/**'
       - 'lib/**'
 
