@@ -42,6 +42,8 @@ jobs:
       # need to run the ruby that has all the gems installed
       run: |
         sudo $(dirname $(which ruby))/ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
+        gem list
+        ruby --version
     - name: test agenda code
       run: |
         cd www/board/agenda
