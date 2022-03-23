@@ -11,6 +11,7 @@ else
   gem 'whimsy-asf'
 end
 
+gem 'rubyzip', '~> 2.3.0' # 3.0 is incompatible
 gem 'rake'
 gem 'wunderbar'
 gem 'ruby2js'
