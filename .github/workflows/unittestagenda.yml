@@ -40,9 +40,15 @@ jobs:
     - name: setup agenda 2
       run: |
         ruby -e '$:.each {|l| puts l}'
+        echo '---------'
         sudo ruby -e '$:.each {|l| puts l}'
+        echo '---------'
         sudo -E ruby -e '$:.each {|l| puts l}'
-        sudo -E ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
+        echo '---------'
+        # Fails to find wunderbar:
+        # sudo -E ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
+        # try this instead
+        sudo ruby $PWD/lib/whimsy/asf/ldap_setup.rb
     - name: test agenda code
       run: |
         cd www/board/agenda
