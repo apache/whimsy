@@ -19,4 +19,5 @@ jobs:
     - name: test library code
       run: |
         cd lib
+        bundle install
         bundle exec rake
