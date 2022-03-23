@@ -38,14 +38,11 @@ jobs:
         cd www/board/agenda
         npm install
         bundle install
-    - name: install ldap for sudo
-      # trying to sort out missing/incompatible ldap under sudo
-      run: |
-        sudo gem install ruby-ldap
     - name: setup agenda 2
+      # need to run the ruby that has all the gems installed
       run: |
-        sudo -E ruby -I $PWD/lib -I$(dirname $(gem which wunderbar)) -r whimsy/asf -e "ASF::LDAP.configure"
+        sudo $(dirname $(which ruby))/ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
         cd www/board/agenda
-        # bundle exec rake
+        bundle exec rake
