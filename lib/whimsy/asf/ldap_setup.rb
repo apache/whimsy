@@ -5,6 +5,8 @@
 #   sudo ruby /srv/whimsy/lib/whimsy/asf/ldap_setup.rb
 #
 
+require 'open3'
+
 HOSTS = %w(
   ldaps://ldap-us-ro.apache.org:636
   ldaps://ldap-eu-ro.apache.org:636
