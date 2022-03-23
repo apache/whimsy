@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [macos-latest, ubuntu-20.04]
+        os: [ubuntu-20.04]
         ruby: [2.7]
     runs-on: ${{ matrix.os }}
     steps:
@@ -42,7 +42,10 @@ jobs:
       run: |
         gem which wunderbar
         gem which ldap
-        sudo -E ruby -I $PWD/lib -I$(dirname $(gem which wunderbar)) -I$(dirname $(gem which ldap)) -r whimsy/asf -e "ASF::LDAP.configure"
+        sudo gem which ldap
+        echo ${{ matrix.ruby }}
+        echo -------
+        sudo -E ruby -I $PWD/lib -I$(dirname $(gem which wunderbar)) -I$(dirname $(sudo gem which ldap)) -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
         cd www/board/agenda
