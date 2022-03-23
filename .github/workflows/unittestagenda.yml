@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-20.04]
+        os: [macos-latest]
         ruby: [2.7]
     runs-on: ${{ matrix.os }}
     steps:
