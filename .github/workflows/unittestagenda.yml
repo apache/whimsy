@@ -1,5 +1,11 @@
-name: Unit tests
+name: Unit test agenda
 on:
+  push:
+    paths:
+      - '**/unitestagenda.yml'
+      - 'www/board/agenda/**'
+      - 'lib/**'
+
   workflow_dispatch:
 
 jobs:
@@ -16,8 +22,8 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
-    - name: test library code
+    - name: test agenda code
       run: |
-        cd lib
+        cd www/board/agenda
         bundle install
         bundle exec rake
