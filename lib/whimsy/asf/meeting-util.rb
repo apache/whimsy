@@ -198,10 +198,11 @@ module ASF
 
     # return the current status of all inactive members
     def self.tracker(meetingsMissed)
-      cur_mtg_dir = MeetingUtil.get_latest(ASF::SVN['Meetings'])
+      meetings = ASF::SVN['Meetings']
+      cur_mtg_dir = MeetingUtil.get_latest(meetings)
       current_status = self.current_status(cur_mtg_dir)
 
-      _attendance, matrix, _dates, _nameMap = MeetingUtil.get_attend_matrices(MEETINGS)
+      _attendance, matrix, _dates, _nameMap = MeetingUtil.get_attend_matrices(meetings)
       inactive = matrix.select do |id, _name, _first, missed|
         id and missed >= meetingsMissed
       end
