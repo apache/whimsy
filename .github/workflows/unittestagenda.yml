@@ -17,7 +17,14 @@ jobs:
         ruby: [2.7]
     runs-on: ${{ matrix.os }}
     steps:
+    - name: setup
+      run: |
+        sudo apt-get install libldap2-dev
+        sudo apt-get install libsasl2-dev
+      if:  ${{ matrix.os }} != 'macos-latest'  
     - uses: actions/checkout@v2
+      with:
+        persist-credentials: false
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
