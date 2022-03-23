@@ -19,6 +19,8 @@ os:
   - linux
   - osx
 
+dist: focal
+
 # Additionally test lib on focal
 jobs:
   include:
