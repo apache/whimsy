@@ -32,10 +32,17 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
-    - name: test agenda code
+    - name: setup agenda 1
       run: |
         cd www/board/agenda
         npm install
         bundle install
+    - name: setup agenda 2
+      run: |
+        cd www/board/agenda
+        ls $PWD/lib
         sudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
+    - name: test agenda code
+      run: |
+        cd www/board/agenda
         bundle exec rake
