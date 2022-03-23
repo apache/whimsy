@@ -40,7 +40,9 @@ jobs:
         bundle install
     - name: setup agenda 2
       run: |
-        sudo -E ruby -I $PWD/lib -I$(dirname $(gem which wunderbar)) -r whimsy/asf -e "ASF::LDAP.configure"
+        gem which wunderbar
+        gem which ldap
+        sudo -E ruby -I $PWD/lib -I$(dirname $(gem which wunderbar)) -I$(dirname $(gem which ldap)) -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
         cd www/board/agenda
