@@ -13,7 +13,7 @@ ASF data are restricted to committers, Members, or Officers of the ASF.
 Every commit pushed to master is deployed within minutes to https://whimsy.apache.org/ using 
 [GitPubSub](https://www.apache.org/dev/gitpubsub.html).
 
-[![Build Status](https://travis-ci.com/apache/whimsy.svg)](https://travis-ci.com/apache/whimsy)
+[![Build Status](https://api.travis-ci.com/apache/whimsy.svg?)](https://app.travis-ci.com/github/apache/whimsy)
 
 How Tos and Get The Code
 ===============
@@ -84,7 +84,7 @@ Details for each type of deployed tool or script:
   
  * **Repository checkouts/clones**  An copy of a number of repositories
    are updated every 10 minutes via a cron job.  This is controlled
-   by [repository.yml](repository.yml).  The whimsy vm is also subscribed
+   by [repository.yml](repository.yml).  The whimsy VM is also subscribed
    to board@ and scans those emails for commit messages and will update
    the copy of `foundation/board` when commits happen.
   
@@ -121,7 +121,7 @@ Details for each type of deployed tool or script:
    
  * **Generated JSON data** files are automatically generated into 
    the [`/public`](https://whimsy.apache.org/public/) directory, to 
-   cache freqently used data for whimsy and other applications.  These 
+   cache frequently used data for whimsy and other applications.  These 
    are usually run from a cron calling a www/roster/public_*.rb file.
    See also an [overview of data dependencies and flow](https://whimsy.apache.org/test/dataflow.cgi). 
   
