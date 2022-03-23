@@ -39,8 +39,10 @@ jobs:
         bundle install
     - name: setup agenda 2
       run: |
-        # will probably fail without sudo, but let's see if it finds wunderbar
-        ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
+        ruby -e '$:.each {|l| puts l}'
+        sudo ruby -e '$:.each {|l| puts l}'
+        sudo -E ruby -e '$:.each {|l| puts l}'
+        sudo -E ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
         cd www/board/agenda
