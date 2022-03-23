@@ -16,13 +16,21 @@ ETCLDAP = case
   else '/etc/ldap'
 end
 
+def extract_cert(host=nil)
+  host ||= HOSTS.sample[%r{//(.*?)(/|$)}, 1]
+  puts ['openssl', 's_client', '-connect', host, '-showcerts'].join(' ')
+  out, _, _ = Open3.capture3 'openssl', 's_client',
+    '-connect', host, '-showcerts'
+  out.scan(/^-+BEGIN.*?\n-+END[^\n]+\n/m).last
+end
+
 def configure
   cert = Dir["#{ETCLDAP}/asf*-ldap-client.pem"].first
 
   # verify/obtain/write the cert
   unless cert
     cert = "#{ETCLDAP}/asf-ldap-client.pem"
-    File.write cert, self.extract_cert
+    File.write cert, extract_cert
   end
 
   # read the current configuration file
