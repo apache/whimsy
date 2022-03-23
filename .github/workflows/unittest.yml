@@ -5,7 +5,7 @@ on:
 jobs:
   test:
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         os: [ubuntu-20.04, macos-latest]
         ruby: [2.7, 3.1]
