@@ -24,7 +24,7 @@ jobs:
       if:  ${{ matrix.os }} != 'macos-latest'  
     - uses: actions/setup-node@v2
       with:
-        node-version: '14'    
+        node-version: '16'    
     - uses: actions/checkout@v2
       with:
         persist-credentials: false
@@ -39,7 +39,8 @@ jobs:
         bundle install
     - name: setup agenda 2
       run: |
-        sudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
+        # will probably fail without sudo, but let's see if it finds wunderbar
+        ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
         cd www/board/agenda
