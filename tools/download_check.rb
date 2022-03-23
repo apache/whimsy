@@ -396,8 +396,9 @@ def _checkDownloadPage(path, tlp, version)
           # ignore trafficcontrol bugfix message
           unless n.include? "Fixed TO log warnings when generating snapshots" or
                  n.include? "Kafka Raft support for snapshots" or
-                 n.include? "zkSnapshotC" # ZooKeeper
-            E "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
+                 n.include? "zkSnapshotC" or # ZooKeepeer
+                 n.include? "/issues.apache.org/jira/browse/" # Daffodil
+            W "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
           end
         end
         break
