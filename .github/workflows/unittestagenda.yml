@@ -39,8 +39,6 @@ jobs:
         bundle install
     - name: setup agenda 2
       run: |
-        cd www/board/agenda
-        ls $PWD/lib
         sudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
