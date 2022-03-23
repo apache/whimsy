@@ -18,9 +18,14 @@ jobs:
         ruby: [2.7]
     runs-on: ${{ matrix.os }}
     steps:
-    - run: apt-get install libldap2-dev
     - uses: actions/checkout@v2
-    - uses: ruby/setup-ruby@v1
+      with:
+        persist-credentials: false
+    - name: setup
+      run: sudo apt-get install libldap2-dev
+      if:  ${{ matrix.os }} != 'macos-latest'  
+    - name: ruby
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
