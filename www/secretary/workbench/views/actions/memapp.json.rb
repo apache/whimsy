@@ -13,7 +13,7 @@ message = Mailbox.find(@message)
 fileext = File.extname(@selected).downcase if @signature.empty?
 
 # verify that a membership form under that name stem doesn't already exist
-if "#@filename#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/ # check taint requirements
+if "#{@filename}#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/ # check taint requirements
   # returns name if it matches as stem or fully (e.g. for directory)
   form = ASF::MemApps.search @filename
   if form
@@ -38,15 +38,10 @@ _personalize_email(env.user)
 
 # write attachment (+ signature, if present) to the documents/member_apps
 # directory
-task "svn commit documents/member_apps/#@filename#{fileext} and update members.txt" do
+task "svn commit documents/member_apps/#{@filename}#{fileext} and update members.txt" do
   # Construct initial entry:
   fields = {
     fullname: @fullname,
-    address: @addr,
-    country: @country,
-    email: @email,
-    tele: @tele,
-    fax: @fax,
     availid: @availid,
   }
   @entry = ASF::Member.make_entry(fields)
@@ -73,7 +68,7 @@ task "svn commit documents/member_apps/#@filename#{fileext} and update members.t
     members.shift
     members.push @entry
     members_txt[pattern,1] = " *) " + members.join("\n *) ")
-    members_txt[/We now number (\d+) active members\./,1] = members.length.to_s
+    members_txt[/We now number (\d+) active members\./, 1] = members.length.to_s
     ASF::Member.sort(members_txt)
   end
 
@@ -121,7 +116,7 @@ task "subscribe to members@apache.org" do
   vars = {
     version: 3, # This must match committers/subscribe.cgi#FORMAT_NUMBER
     availid: @availid,
-    addr: @email,
+    addr: @availid + '@apache.org', # use ASF email here
     listkey: 'members',
     member_p: true,
     chair_p: ASF.pmc_chairs.include?(user),

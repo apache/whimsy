@@ -42,53 +42,6 @@ class MemApp < Vue
 
         _tr do
           _td do
-            _label 'Address', for: 'addr'
-          end
-          _td do
-            _textarea rows: 5, name: 'addr', id: 'addr', disabled: @filed
-          end
-        end
-
-        _tr do
-          _td do
-            _label 'Country', for: 'country'
-          end
-          _td do
-            _input type: :text, name: 'country', id: 'country',
-              disabled: @filed
-          end
-        end
-
-        _tr do
-          _td do
-            _label 'Telephone', for: 'tele'
-          end
-          _td do
-            _input type: :text, name: 'tele', id: 'tele', disabled: @filed
-          end
-        end
-
-        _tr do
-          _td do
-            _label 'Fax', for: 'fax'
-          end
-          _td do
-            _input type: :text, name: 'fax', id: 'fax', disabled: @filed
-          end
-        end
-
-        _tr do
-          _td do
-            _label 'E-Mail', for: 'email'
-          end
-          _td do
-            _input type: :email, name: 'email', id: 'email', value: @email,
-              disabled: @filed
-          end
-        end
-
-        _tr do
-          _td do
             _label 'File Name', for: 'filename'
           end
           _td do
