@@ -11,9 +11,9 @@ on:
 jobs:
   test:
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-20.04, 'macos-latest']
         ruby: [2.7]
     runs-on: ${{ matrix.os }}
     steps:
@@ -38,14 +38,13 @@ jobs:
         cd www/board/agenda
         npm install
         bundle install
+    - name: install ldap for sudo
+      # trying to sort out missing/incompatible ldap under sudo
+      run: |
+        sudo gem install ldap
     - name: setup agenda 2
       run: |
-        gem which wunderbar
-        gem which ldap
-        sudo gem which ldap
-        echo ${{ matrix.ruby }}
-        echo -------
-        sudo -E ruby -I $PWD/lib -I$(dirname $(gem which wunderbar)) -I$(dirname $(sudo gem which ldap)) -r whimsy/asf -e "ASF::LDAP.configure"
+        sudo -E ruby -I $PWD/lib -I$(dirname $(gem which wunderbar)) -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
         cd www/board/agenda
