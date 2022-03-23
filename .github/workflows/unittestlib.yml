@@ -7,15 +7,18 @@ on:
 
   workflow_dispatch:
 
+# temporary hack to see if can build ruby-ldap ...
+
 jobs:
   test:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-20.04, macos-latest]
-        ruby: [2.7, 3.1]
+        os: [ubuntu-20.04]
+        ruby: [2.7]
     runs-on: ${{ matrix.os }}
     steps:
+    - run: apt-get install libldap2-dev
     - uses: actions/checkout@v2
     - uses: ruby/setup-ruby@v1
       with:
