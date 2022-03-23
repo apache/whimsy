@@ -35,5 +35,6 @@ jobs:
     - name: test agenda code
       run: |
         cd www/board/agenda
+        npm install
         bundle install
         bundle exec rake
