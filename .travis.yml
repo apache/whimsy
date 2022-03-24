@@ -52,7 +52,6 @@ before_script:
   - gem list
   - ruby --version
   - node --version
-  - cd www/board/agenda; npm list vue
 
 ########################################################################
 #                             Notification                             #

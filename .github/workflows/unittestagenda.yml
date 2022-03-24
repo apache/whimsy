@@ -36,7 +36,6 @@ jobs:
     - name: setup agenda 1
       run: |
         cd www/board/agenda
-        npm install
         bundle install
     - name: setup agenda 2
       # need to run the ruby that has all the gems installed
@@ -48,5 +47,4 @@ jobs:
     - name: test agenda code
       run: |
         cd www/board/agenda
-        npm list vue
         bundle exec rake
