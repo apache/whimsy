@@ -51,8 +51,8 @@ before_script:
   - rvmsudo ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
   - gem list
   - ruby --version
-  - npm list vue
   - node --version
+  - cd www/board/agenda; npm list vue
 
 ########################################################################
 #                             Notification                             #
