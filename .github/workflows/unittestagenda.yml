@@ -44,7 +44,9 @@ jobs:
         sudo $(dirname $(which ruby))/ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
         gem list
         ruby --version
+        node --version
     - name: test agenda code
       run: |
         cd www/board/agenda
+        npm list vue
         bundle exec rake
