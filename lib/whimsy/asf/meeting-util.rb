@@ -202,14 +202,20 @@ module ASF
       cur_mtg_dir = MeetingUtil.get_latest(meetings)
       current_status = self.current_status(cur_mtg_dir)
 
-      _attendance, matrix, _dates, _nameMap = MeetingUtil.get_attend_matrices(meetings)
+      _attendance, matrix, dates, _nameMap = MeetingUtil.get_attend_matrices(meetings)
       inactive = matrix.select do |id, _name, _first, missed|
         id and missed >= meetingsMissed
       end
     
-      Hash[inactive.map {|id, name, _first, missed|
-        [id, {'name' => name, 'missed' => missed, 'status' => current_status[id]}]
+      Hash[inactive.map {|id, name, first, missed|
+        [id, {
+          'name' => name,
+          'missed' => missed,
+          'status' => current_status[id],
+          'since' => dates[-first-1] || dates.first,
+          'last' => dates[-missed-1]
         }]
+      }]
     end
   end
 end
