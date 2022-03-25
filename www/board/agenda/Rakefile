@@ -57,6 +57,7 @@ file 'package-lock.json' => 'package.json' do
   sh 'which -a npm || true'
   sh 'npm install'
   sh 'touch package-lock.json'
+  sh 'node -e "e=null;e?.x" || true' # is short-cut evalus supported?
   sh 'npm list vue'
 end
 
