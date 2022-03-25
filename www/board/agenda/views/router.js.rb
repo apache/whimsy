@@ -105,7 +105,7 @@ class Router
       item = nil
       Agenda.index.each do |i|
         if i.attach =~ /^8[.A-Z]/
-          item = i unless item
+          item ||= i
         end
       end
 
@@ -128,7 +128,7 @@ class Router
     # provide defaults for required properties
     item.color ||= 'blank'
 
-    if not item.title
+    unless item.title
       item.title = item.view.options.name.
         gsub(/(^|-)\w/) {|c| return c.upcase()}.
         gsub('-', ' ').strip()
@@ -144,11 +144,11 @@ class Router
 
         # form overrides
         form = button.form
-        if form and form.button
+        if form&.button
           form.button.each_pair do |name, override|
             if name == 'text'
               props.text = form.button.text
-            elsif name == 'class' or name == 'classname'
+            elsif %w{class classname}.include? name
               props.attrs.class += " #{override.gsub('_', '-')}"
             else
               props.attrs[name.gsub('_', '-')] = override
@@ -165,7 +165,7 @@ class Router
         button.each_pair do |name, override|
           if name == 'text'
             props.text = button.text
-          elsif name == 'class' or name == 'classname'
+          elsif %w{class classname}.include? name
             props.attrs.class += " #{override.gsub('_', '-')}"
           elsif name != 'form'
             props.attrs[name.gsub('_', '-')] = override
