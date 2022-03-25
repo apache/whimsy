@@ -11,7 +11,7 @@ on:
 jobs:
   test:
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [ubuntu-20.04, 'macos-latest']
         ruby: [2.7]
@@ -43,4 +43,5 @@ jobs:
     - name: test agenda code
       run: |
         cd www/board/agenda
+        type npm || true
         bundle exec rake
