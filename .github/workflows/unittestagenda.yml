@@ -24,7 +24,7 @@ jobs:
       if:  matrix.os == 'ubuntu-20.04'  
     - uses: actions/setup-node@v2
       with:
-        node-version: '14.19.0' # was 14.19.1
+        node-version: '14.19.1' # 14.19.0 does work on Ubuntu
     - uses: actions/checkout@v2
       with:
         persist-credentials: false
@@ -44,4 +44,5 @@ jobs:
       run: |
         cd www/board/agenda
         type npm || true
+        which -a npm || true
         bundle exec rake

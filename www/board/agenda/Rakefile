@@ -54,6 +54,7 @@ end
 file 'package-lock.json' => 'package.json' do
   puts ENV['PATH'] # TEMP CHECK
   sh 'type npm || true' # TEMP CHECK
+  sh 'which -a npm || true' # TEMP CHECK
   sh 'echo $PATH' # TEMP CHECK
   sh 'npm install'
   sh 'touch package-lock.json'
