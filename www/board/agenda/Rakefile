@@ -59,6 +59,8 @@ file 'package-lock.json' => 'package.json' do
   sh 'touch package-lock.json'
   sh 'node -e "e=null;e?.x" || true' # is short-cut evalus supported?
   sh 'npm list vue'
+  sh 'type node || true'
+  sh 'type nodejs || true'
 end
 
 file 'test/work' do
