@@ -21,7 +21,7 @@ jobs:
       run: |
         sudo apt-get install libldap2-dev
         sudo apt-get install libsasl2-dev
-        sudo apt-get install nodejs
+        # sudo apt-get install nodejs # not present on Travis ...
       if:  matrix.os != 'macos-latest'  
     - uses: actions/setup-node@v2
       with:
