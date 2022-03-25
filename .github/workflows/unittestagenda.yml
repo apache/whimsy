@@ -11,7 +11,7 @@ on:
 jobs:
   test:
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [ubuntu-20.04, 'macos-latest']
         ruby: [2.7.1]
@@ -21,7 +21,6 @@ jobs:
       run: |
         sudo apt-get install libldap2-dev
         sudo apt-get install libsasl2-dev
-        # sudo apt-get install nodejs # not present on Travis ...
       if:  matrix.os != 'macos-latest'  
     - uses: actions/setup-node@v2
       with:
@@ -41,12 +40,7 @@ jobs:
       # need to run the ruby that has all the gems installed
       run: |
         sudo $(dirname $(which ruby))/ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
-        gem list
-        ruby --version
-        node --version
     - name: test agenda code
       run: |
         cd www/board/agenda
-        # check if JS supports ?.
-        node -e 'e=null;e?.x'
         bundle exec rake
