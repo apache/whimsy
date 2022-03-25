@@ -14,12 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, 'macos-latest']
-        ruby: [2.7]
+        ruby: [2.7.1]
     runs-on: ${{ matrix.os }}
     steps:
-    - name: Check chromedriver version
-      run: |
-        chromedriver -v || true
     - name: setup Ubuntu missing header files
       run: |
         sudo apt-get install libldap2-dev
@@ -27,7 +24,7 @@ jobs:
       if:  matrix.os == 'ubuntu-20.04'  
     - uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: '14.19.1' # try to match Travis
     - uses: actions/checkout@v2
       with:
         persist-credentials: false
@@ -38,9 +35,7 @@ jobs:
     - name: setup agenda 1
       run: |
         cd www/board/agenda
-        chromedriver -v || true
         bundle install
-        chromedriver -v || true
     - name: setup agenda 2
       # need to run the ruby that has all the gems installed
       run: |
@@ -48,6 +43,4 @@ jobs:
     - name: test agenda code
       run: |
         cd www/board/agenda
-        chromedriver -v || true
         bundle exec rake
-        chromedriver -v || true
