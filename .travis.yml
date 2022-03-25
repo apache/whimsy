@@ -45,6 +45,8 @@ before_script:
   - ruby --version
   - node --version
   - which -a npm || true
+  # check if JS supports ?.
+  - node -e 'e=null;e?.x'
 
 ########################################################################
 #                             Notification                             #

@@ -47,7 +47,6 @@ jobs:
     - name: test agenda code
       run: |
         cd www/board/agenda
-        which -a npm || true
-        echo $PATH
-        # npm install # fails under rake
+        # check if JS supports ?.
+        node -e 'e=null;e?.x'
         bundle exec rake
