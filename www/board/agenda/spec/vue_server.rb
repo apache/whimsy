@@ -27,6 +27,7 @@ class VueServer
 
     # spawn a server process
     nodejs = (`which nodejs`.empty? ? 'node' : 'nodejs')
+    puts "Vue server is using: '#{nodejs}'"
     @@pid = spawn(nodejs, '-e',
       Ruby2JS.convert(@@server, {ivars: {:@port => @@port}}))
 
