@@ -52,15 +52,8 @@ task "touch" do
 end
 
 file 'package-lock.json' => 'package.json' do
-  # Trying to trace cause of npm install fail under GH actions
-  puts ENV['PATH']
-  sh 'which -a npm || true'
   sh 'npm install'
   sh 'touch package-lock.json'
-  sh 'node -e "e=null;e?.x" || true' # is short-cut evalus supported?
-  sh 'npm list vue'
-  sh 'type node || true'
-  sh 'type nodejs || true'
 end
 
 file 'test/work' do
