@@ -30,6 +30,7 @@ end
 
 # produce HTML
 _html do
+  @meetingsMissed = (@meetingsMissed || 3).to_i
   _body? do
     attendance, matrix, dates, nameMap = ASF::MeetingUtil.get_attend_matrices(MEETINGS)
     _whimsy_body(
@@ -65,7 +66,6 @@ _html do
         end
       }
     ) do
-    @meetingsMissed = (@meetingsMissed || 3).to_i
     count = 0
     _table.table.table_hover do
       _thead do
