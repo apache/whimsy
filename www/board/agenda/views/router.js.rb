@@ -144,7 +144,8 @@ class Router
 
         # form overrides
         form = button.form
-        if form&.button
+        form2 = form # Try to nail down GH error: syntax error in  'if (form?.button) {'
+        if form2&.button
           form.button.each_pair do |name, override|
             if name == 'text'
               props.text = form.button.text
