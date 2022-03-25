@@ -5,7 +5,6 @@
 # list of Gemfiles associated with tools to be tested
 gemfile:
   - www/board/agenda/Gemfile
-  - lib/Gemfile
 
 ########################################################################
 #                           VM Configuration                           #
@@ -20,13 +19,6 @@ os:
   - osx
 
 dist: focal
-
-# Additionally test lib on focal
-jobs:
-  include:
-  - rvm: 2.7
-    dist: focal
-    gemfile: lib/Gemfile
 
 # add subversion on Linux and OSX
 addons:
@@ -52,6 +44,7 @@ before_script:
   - gem list
   - ruby --version
   - node --version
+  - which -a npm || true
 
 ########################################################################
 #                             Notification                             #

@@ -52,6 +52,9 @@ task "touch" do
 end
 
 file 'package-lock.json' => 'package.json' do
+  # Trying to trace cause of npm install fail under GH actions
+  puts ENV['PATH']
+  sh 'which -a npm || true'
   sh 'npm install'
   sh 'touch package-lock.json'
   sh 'npm list vue'
