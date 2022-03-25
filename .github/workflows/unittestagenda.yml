@@ -14,17 +14,20 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, 'macos-latest']
-        ruby: [2.7.1]
+        ruby: [2.7]
     runs-on: ${{ matrix.os }}
     steps:
-    - name: setup
+    - name: Check chromedriver version
+      run: |
+        chromedriver -v || true
+    - name: setup Ubuntu missing header files
       run: |
         sudo apt-get install libldap2-dev
         sudo apt-get install libsasl2-dev
-      if:  matrix.os != 'macos-latest'  
+      if:  matrix.os == 'ubuntu-20.04'  
     - uses: actions/setup-node@v2
       with:
-        node-version: '14.19.1' # try to match Travis
+        node-version: '14'
     - uses: actions/checkout@v2
       with:
         persist-credentials: false
@@ -35,12 +38,16 @@ jobs:
     - name: setup agenda 1
       run: |
         cd www/board/agenda
+        chromedriver -v || true
         bundle install
+        chromedriver -v || true
     - name: setup agenda 2
       # need to run the ruby that has all the gems installed
       run: |
-        sudo $(dirname $(which ruby))/ruby -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
+        sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
         cd www/board/agenda
+        chromedriver -v || true
         bundle exec rake
+        chromedriver -v || true
