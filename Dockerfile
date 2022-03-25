@@ -8,7 +8,7 @@ ENV GEM_HOME="/srv/gems" \
 
 RUN apt-get update && \
     apt-get install -y curl software-properties-common apt-utils && \
-    curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     echo "deb http://opensource.wandisco.com/ubuntu bionic svn110" > \
       /etc/apt/sources.list.d/subversion.list && \
     curl -sL http://opensource.wandisco.com/wandisco-debian-new.gpg | \
@@ -62,6 +62,21 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y vim
 
 # for checking ldap settings etc
 RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y ldap-utils
+
+#  For testing agenda, you may need the following:
+# curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
+# sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' 
+# apt-get update
+# apt-get install -y google-chrome-stable
+# Find the chrome version:
+# google-chrome --version
+# Install chromedriver:
+# e.g. curl -o chromedriver.zip https://chromedriver.storage.googleapis.com/99.0.4844.51/chromedriver_linux64.zip
+# unzip it:
+# unzip chromedriver.zip
+# mv chromedriver /usr/bin/chromedriver 
+# chown root:root /usr/bin/chromedriver 
+# chmod +x /usr/bin/chromedriver 
 
 # This should be last, as the source is likely to change
 # It also takes very little time, so it does not matter if it has to be redone
