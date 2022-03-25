@@ -54,6 +54,7 @@ end
 file 'package-lock.json' => 'package.json' do
   sh 'npm install'
   sh 'touch package-lock.json'
+  sh 'chromedriver -v || true' # TEMP CHECK
 end
 
 file 'test/work' do
