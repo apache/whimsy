@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04] #, 'macos-latest']
+        os: [ubuntu-20.04, 'macos-latest']
         ruby: [2.7]
     runs-on: ${{ matrix.os }}
     steps:
@@ -24,7 +24,9 @@ jobs:
       if:  matrix.os == 'ubuntu-20.04'  
     - uses: actions/setup-node@v2
       with:
-        node-version: '14.19.1' # 14.19.0 does work on Ubuntu
+        node-version: '14.19.1'
+        # it seems that using the default Ubuntu version of node (14.19.0)
+        # somehow fails to set the correct path for rake to use
     - uses: actions/checkout@v2
       with:
         persist-credentials: false
@@ -43,6 +45,4 @@ jobs:
     - name: test agenda code
       run: |
         cd www/board/agenda
-        type npm || true
-        which -a npm || true
         bundle exec rake
