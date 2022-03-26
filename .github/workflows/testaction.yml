@@ -1,0 +1,24 @@
+name: test action
+
+on:
+  push:
+    paths:
+      - '**/testaction.yml'
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: generate status
+        run: |
+          false
+      - name: report
+        if: always()
+        run: |
+          echo $ {{ job.status }}
