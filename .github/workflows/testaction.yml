@@ -12,12 +12,12 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-20.04, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: generate status
         run: |
-          false
+          test ${{ matrix.os }} == 'macos-latest'
       - name: report
         if: always()
         run: |
