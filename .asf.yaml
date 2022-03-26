@@ -2,4 +2,5 @@ notifications:
     commits:      commits@whimsical.apache.org
     issues:       dev@whimsical.apache.org
     pullrequests: dev@whimsical.apache.org
+    jobs:         notifications@whimsical.apache.org
     jira_options: link label
