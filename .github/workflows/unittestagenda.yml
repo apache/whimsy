@@ -42,11 +42,6 @@ jobs:
       # need to run the ruby that has all the gems installed
       run: |
         sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
-    - name: Tweak chromedriver
-      run: |
-        which -a google-chrome || true
-        google-chrome --version || true
-        chromedriver --version || true
     - name: test agenda code
       run: |
         export DISPLAY=:99
