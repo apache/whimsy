@@ -2,10 +2,10 @@
 
 class ASF::Board::Agenda
   parse do
-    reports = @file.split(OFFICER_SEPARATOR,2).last
-    a = reports.split(/^ 5. Additional Officer Reports/,2).first
-    b = reports.split(/^ 5. Committee Reports/,2).first   # Allow parsing of pre-2007 reports
-    (a.length > b.length) ? reports = b : reports = a
+    reports = @file.split(OFFICER_SEPARATOR, 2).last
+    a = reports.split(/^ 5. Additional Officer Reports/, 2).first
+    b = reports.split(/^ 5. Committee Reports/, 2).first   # Allow parsing of pre-2007 reports
+    a.length > b.length ? reports = b : reports = a
 
     pattern = /
       \s{4}(?<section>[A-Z])\.
@@ -20,9 +20,9 @@ class ASF::Board::Agenda
       attrs['shepherd'] = attrs['owner'].split('/').last
       attrs['owner'] = attrs['owner'].split('/').first
 
-      attrs['report'].sub! /\A\s*\n/, ''
+      attrs['report'].sub! %r{/\A\s*\n}, ''
 
-      attrs['report'].gsub! /\n\s*\n\s+\[ comments:(.*)\]\s*$/m do
+      attrs['report'].gsub! %r{\n\s*\n\s+\[ comments:(.*)\]\s*$}m do
         attrs['comments'] = $1.sub(/\A\s*\n/, '').sub(/\s+\Z/, '')
         "\n"
       end

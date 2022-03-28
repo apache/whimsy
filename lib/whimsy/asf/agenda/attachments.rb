@@ -17,24 +17,24 @@ class ASF::Board::Agenda
         attrs['title'] += ' ' + append.strip
       end
 
-      attrs['title'].sub! /^Report from the VP of /, ''
-      attrs['title'].sub! /^Report from the /, ''
-      attrs['title'].sub! /^Status report for the /, ''
-      attrs['title'].sub! /^Apache /, ''
+      attrs['title'].sub! %r{^Report from the VP of }, ''
+      attrs['title'].sub! %r{^Report from the }, ''
+      attrs['title'].sub! %r{^Status report for the }, ''
+      attrs['title'].sub! %r{^Apache }, ''
       attrs['title'].sub! 'Apache Software Foundation', 'ASF'
 
       if attrs['title'] =~ /\s*\[.*\]$/
         attrs['owner'] = attrs['title'][/\[(.*?)\]/, 1]
-        attrs['title'].sub! /\s*\[.*\]$/, ''
+        attrs['title'].sub! %r{\s*\[.*\]$}, ''
       end
 
-      attrs['title'].sub! /\sTeam$/, ''
-      attrs['title'].sub! /\sCommittee$/, ''
-      attrs['title'].sub! /\sProject$/, ''
+      attrs['title'].sub! %r{\sTeam$}, ''
+      attrs['title'].sub! %r{\sCommittee$}, ''
+      attrs['title'].sub! %r{\sProject$}, ''
 
       attrs['digest'] = Digest::MD5.hexdigest(attrs['report'].strip)
 
-      attrs['report'].sub! /\n+\Z/, "\n"
+      attrs['report'].sub! %r{\n+\Z}, "\n"
       attrs.delete('report') if attrs['report'] == "\n"
 
       attrs['missing'] = true if attrs['report'].strip.empty?

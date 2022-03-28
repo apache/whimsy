@@ -2,8 +2,8 @@
 
 class ASF::Board::Agenda
   parse do
-    orders = @file.split(/^ \d. Special Orders/,2).last.
-      split(/^ \d. Discussion Items/,2).first
+    orders = @file.split(/^ \d. Special Orders/, 2).last.
+      split(/^ \d. Discussion Items/, 2).first
 
     pattern = /
       \n+(?<indent>\s{3,5})(?<section>[A-Z])\.
@@ -19,18 +19,18 @@ class ASF::Board::Agenda
       title = attrs['title']
       title.strip!
       fulltitle = title.dup
-      title.sub! /^Resolution to /, ''
-      title.sub! /\sthe\s/, ' '
-      title.sub! /\sApache\s/, ' '
-      title.sub! /\sCommittee\s/, ' '
-      title.sub! /\sProject(\s|$)/i, '\1'
-      title.sub! /\sPMC(\s|$)/, '\1'
+      title.sub! %r{^Resolution to }, ''
+      title.sub! %r{\sthe\s}, ' '
+      title.sub! %r{\sApache\s}, ' '
+      title.sub! %r{\sCommittee\s}, ' '
+      title.sub! %r{\sProject(\s|$)}i, '\1'
+      title.sub! %r{\sPMC(\s|$)}, '\1'
 
       if title =~ /^Establish .* \((.*)\)$/
-        title.sub! /\s.*?\(/, ' '
-        title.sub! /\)$/, ''
+        title.sub! %r{\s.*?\(}, ' '
+        title.sub! %r{\)$}, ''
       else
-        title.sub! /\s\(.*\)$/, ''
+        title.sub! %r{\s\(.*\)$}, ''
       end
 
       attrs['fulltitle'] = fulltitle if title != fulltitle
@@ -42,7 +42,7 @@ class ASF::Board::Agenda
       if attrs['indent'] != '    '
         attrs['warnings'] << 'Heading is not indented 4 spaces'
       end
-      if text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min != 8
+      if text.sub(/s+\Z/, '').scan(/^ *\S/).map(&:length).min != 8
         attrs['warnings'] << 'Resolution is not indented 7 spaces'
       end
 
@@ -55,7 +55,6 @@ class ASF::Board::Agenda
       title_checks.each do |select, match|
         if fulltitle =~ select and fulltitle !~ match and
           (fulltitle + text) =~ /chair|project|committee/i
-       then
           attrs['warnings'] <<
             "Non-standard title wording: #{fulltitle.inspect}; " +
             "expected #{match.inspect}"
@@ -117,11 +116,10 @@ class ASF::Board::Agenda
       elsif title =~ /Establish (.*)/
         name = $1
         attrs['prior_reports'] =
-          "#{whimsy}/board/minutes/#{name.gsub(/\W/,'_')}"
+          "#{whimsy}/board/minutes/#{name.gsub(/\W/, '_')}"
 
         if text.scan(/[<(][-.\w]+@(?:[-\w]+\.)+\w+[>)]/).
           any? {|email| not email.include? 'apache.org'}
-        then
           attrs['warnings'] << 'non apache.org email address found'
         end
 
@@ -130,12 +128,12 @@ class ASF::Board::Agenda
         # extract the committee charter
         charters = []
         text.scan(%r{\srelated to\s+(.+?)(?:;|\.?\n\n)}m) do |rto|
-          charters << rto.first.gsub(/\s+/,' ')
+          charters << rto.first.gsub(/\s+/, ' ')
         end
         if charters.size != 2
           attrs['warnings'] << "Expected 2 'related to' phrases; found #{charters.size}"
         elsif charters[0] != charters[1]
-          attrs['warnings'] <<  "'related to' phrases disagree: '#{charters[0]}' != '#{charters[1]}'"
+          attrs['warnings'] << "'related to' phrases disagree: '#{charters[0]}' != '#{charters[1]}'"
         end
         attrs['charter'] = charters.first
 
@@ -148,7 +146,7 @@ class ASF::Board::Agenda
           if chairname =~ /\s\(([-.\w]+)\)$/
             # if chair's id is present in parens, use that value
             attrs['chair'] = $1 unless $1.empty?
-            chairname.sub! /\s+\(.*\)$/, ''
+            chairname.sub! %r{\s+\(.*\)$}, ''
           else
             # match chair's name against people in the committee
             chair = people.find {|person| person.first == chairname}

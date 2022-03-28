@@ -16,7 +16,7 @@ class ASF::Board::Agenda
 
     scan @file, pattern do |attrs|
       attrs['attach'].strip!
-      attrs['title'].sub! /^Review Outstanding /, ''
+      attrs['title'].sub! %r{^Review Outstanding }, ''
 
       if attrs['title'] =~ /Discussion|Action|Business|Announcements/
         attrs['prior_reports'] = minutes(attrs['title'])
@@ -28,8 +28,8 @@ class ASF::Board::Agenda
 
         # extract action items associated with projects
         text = attrs['text'].sub(/\A\s*\n/, '').sub(/\s+\Z/, '')
-        unindent = text.sub(/s+\Z/,'').scan(/^ *\S/).map(&:length).min || 1
-        text.gsub! /^ {#{unindent-1}}/, ''
+        unindent = text.sub(/s+\Z/, '').scan(/^ *\S/).map(&:length).min || 1
+        text.gsub! %r{^ {#{unindent - 1}}}, ''
 
         attrs['missing'] = text.empty?
 

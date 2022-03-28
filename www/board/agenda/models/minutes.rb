@@ -12,19 +12,19 @@ class Minutes
       meeting.gsub! "soon thereafter that", "#{start} when"
       meeting.gsub! "quorum is", "quorum was"
       meeting.gsub! "will be", "was"
-      meeting.gsub! /:\z/, "."
+      meeting.gsub! %r{:\z}, "."
       backup.gsub! "will be", "was"
-      [meeting.reflow(4,64), '', backup.reflow(4, 68)]
+      [meeting.reflow(4, 64), '', backup.reflow(4, 68)]
     end
 
-    minutes.sub! /^ +ASF members are welcome to attend board meetings.*?\n\n/m,
+    minutes.sub! %r{^ +ASF members are welcome to attend board meetings.*?\n\n}m,
       ''
 
     minutes.mreplace(/\n\s2\.\sRoll\sCall\n\n
                      (.*?)\n\n+\s3.\sMinutes
                      /mx) do |rollcall|
       if notes('Roll Call')
-        notes('Roll Call').gsub(/\r\n/,"\n").gsub(/\n*\Z/,'').
+        notes('Roll Call').gsub(/\r\n/, "\n").gsub(/\n*\Z/, '').
           gsub(/^([^\n])/, '    \1')
       else
         rollcall.gsub(/ \(expected.*?\)/, '')
@@ -95,7 +95,7 @@ class Minutes
       break if reports.empty?
       reports.mreplace(/\n\s\s\s\s(\w)\.(.*?)\n(.*?)()\s+(?:\s*\n\s\s\s\s\w\.|\z)
                      /mx) do |section, title, order, comments|
-        order.sub! /\n       \[.*?\n         +\]\n/m, ''
+        order.sub! %r{\n       \[.*?\n         +\]\n}m, ''
         notes = notes(title.strip)
         if !notes or notes.empty? or notes.strip == 'tabled'
           notes = "was tabled."
@@ -115,7 +115,7 @@ class Minutes
       break unless reports =~ /\n\s{3,5}[A-Z]\.\s/
       reports.mreplace(/\n\s\s\s\s(\w)\.(.*?)\n(.*?)()\s+(?:\s*\n\s\s\s\s\w\.|\z)
                      /mx) do |section, title, item, comments|
-        item.sub! /\n       \[.*?\n         +\]\n/m, ''
+        item.sub! %r{\n       \[.*?\n         +\]\n}m, ''
         item += "\n" unless item =~ /\n\Z/
         notes = notes(title.strip) || ''
         [section, title, item, "\n" + notes.reflow(7,70)]
@@ -146,7 +146,7 @@ class Minutes
 
     missing = minutes.scan(/^Attachment (\w\w?):.*\s*\n---/).flatten
     missing.each do |attach|
-      minutes.sub! /^(\s+)See Attachment #{Regexp.escape(attach)}$/, '\1No report was submitted.'
+      minutes.sub! %r{^(\s+)See Attachment #{Regexp.escape(attach)}$}, '\1No report was submitted.'
     end
 
     minutes.sub! 'Minutes (in Subversion) are found under the URL:',
@@ -169,18 +169,18 @@ class Minutes
       "    Committee reports approved as submitted by General Consent.\n\n"
 
     minutes.sub! 'Meeting Agenda', 'Meeting Minutes'
-    minutes.sub! /^End of agenda/, 'End of minutes'
+    minutes.sub! %r{^End of agenda}, 'End of minutes'
 
     # remove block of lines (and preceding whitespace including blank lines)
     # where the first line starts with <private> and the last line ends with
     # </private>.
-    minutes.gsub! /^\s*<private>.*?<\/private>\s*?\n/mi, ''
+    minutes.gsub! %r{^\s*<private>.*?<\/private>\s*?\n}mi, ''
 
     # remove inline <private>...</private> sections (and preceding spaces
     # and tabs) where the <private> and </private> are on the same line.
-    minutes.gsub! /[ \t]*<private>.*?<\/private>/i, ''
+    minutes.gsub! %r{[ \t]*<private>.*?<\/private>}i, ''
 
-    minutes.gsub! /\n( *)\[ comments:.*?\n\1 ? ?\]/m, ''
+    minutes.gsub! %r{\n( *)\[ comments:.*?\n\1 ? ?\]}m, ''
 
     minutes
   end
@@ -189,19 +189,19 @@ class Minutes
     index = index.strip
     return @@notes[index] if @@notes[index]
 
-    index.sub! /^Report from the VP of /, ''
-    index.sub! /^Report from the /, ''
-    index.sub! /^Status report for the /, ''
-    index.sub! /^Resolution to /, ''
-    index.sub! /^Apache /, ''
-    index.sub! /\sTeam$/, ''
-    index.sub! /\sCommittee$/, ''
-    index.sub! /\sthe\s/, ' '
-    index.sub! /\sApache\s/, ' '
-    index.sub! /\sCommittee\s/, ' '
-    index.sub! /\sProject$/, ''
-    index.sub! /\sPMC$/, ''
-    index.sub! /\sProject\s/, ' '
+    index.sub! %r{^Report from the VP of }, ''
+    index.sub! %r{^Report from the }, ''
+    index.sub! %r{^Status report for the }, ''
+    index.sub! %r{^Resolution to }, ''
+    index.sub! %r{^Apache }, ''
+    index.sub! %r{\sTeam$}, ''
+    index.sub! %r{\sCommittee$}, ''
+    index.sub! %r{\sthe\s}, ' '
+    index.sub! %r{\sApache\s}, ' '
+    index.sub! %r{\sCommittee\s}, ' '
+    index.sub! %r{\sProject$}, ''
+    index.sub! %r{\sPMC$}, ''
+    index.sub! %r{\sProject\s}, ' '
 
     @@notes[index]
   end

@@ -27,10 +27,14 @@ module MockServer
     Struct.new(:user, :password).new('test', nil)
   end
 
+  def respond_to_missing?(method, _include_private=false)
+    method =~ /^_(\w+)$/
+  end
+
   # capture wunderbar 'json' output methods
   def method_missing(method, *args, &block)
     if method =~ /^_(\w+)$/ and args.length == 1
-      instance_variable_set "@#$1", args.first
+      instance_variable_set "@#{$1}", args.first
     else
       super
     end
