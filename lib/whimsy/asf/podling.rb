@@ -1,7 +1,6 @@
 require 'nokogiri'
 require 'date'
 require 'psych'
-require_relative '../asf'
 
 module ASF
 
