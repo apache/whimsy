@@ -365,7 +365,7 @@ module ASF
         slots[slot].sort_by!(&:downcase)
 
         # restore headers
-        slots[slot].unshift *headers
+        slots[slot].unshift(*headers) # () are required here to prevent warning
 
         # re-insert reporting schedules
         blocks[index + 0] = slots[0].join("\n")
