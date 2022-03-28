@@ -45,4 +45,4 @@ jobs:
     - name: test agenda code
       run: |
         cd www/board/agenda
-        bundle exec rake
+        TEST_AO_PAGE=1 bundle exec rake
