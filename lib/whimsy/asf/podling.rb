@@ -121,7 +121,7 @@ module ASF
     def startdate
       return unless @startdate
       # assume 15th (mid-month) if no day specified
-      return Date.parse("#@startdate-15") if @startdate.length < 8
+      return Date.parse("#{@startdate}-15") if @startdate.length < 8
       Date.parse(@startdate)
     rescue ArgumentError
       nil
@@ -132,7 +132,7 @@ module ASF
     def enddate
       return unless @enddate
       # assume 15th (mid-month) if no day specified
-      return Date.parse("#@enddate-15") if @enddate.length < 8
+      return Date.parse("#{@enddate}-15") if @enddate.length < 8
       Date.parse(@enddate)
     rescue ArgumentError
       nil
@@ -335,12 +335,12 @@ module ASF
         hash[:proposal] = rawYaml[:proposal]
         hash[:website] = rawYaml[:website]
         hash[:news] = []
-        for ni in rawYaml[:news]
+        rawYaml[:news]&.each do |ni|
           newsItem = {}
           newsItem[:date] = ni[:date].strftime('%Y-%m-%d')
           newsItem[:note] = ni[:note]
           hash[:news].push(newsItem)
-        end if rawYaml[:news]
+        end
         hash
       else
         {news: [], website: "http://#{self.resource}.incubator.apache.org"}
@@ -374,8 +374,8 @@ module ASF
         hash[:reporting][:text] = r.text if r.text.length > 0
         hash[:reporting][:monthly] = r.text.split(/,\s*/) if r['monthly']
         hash[:reporting][:schedule] = self.schedule
-      else
-        hash[:reporting] = r if r
+      elsif r
+        hash[:reporting] = r
       end
 
       hash[:resource] = resource
@@ -430,7 +430,7 @@ module ASF
           res.value() # Raises error if not OK
           file = File.new(cache, "wb") # Allow for non-UTF-8 chars
           file.write res.body
-        rescue => e
+        rescue StandardError => e
           Wunderbar.warn "ASF::Podling.namesearch: " + e.message
           FileUtils.touch cache # Don't try again for a while
         end
