@@ -596,9 +596,9 @@ def _checkDownloadPage(path, tlp, version)
     v = w.dup
     typ = v.shift
     unless v.include? "asc" and v.any? {|e| e =~ /^sha\d+$/ or e == 'md5' or e == 'sha' or e == 'mds'}
-      if typ == 'live' || typ == 'maven'
+      if typ == 'live'
         E "#{k} missing sig/hash: (found only: #{v.inspect})"
-      elsif typ == 'archive'
+      elsif typ == 'archive' || typ == 'maven' # Maven does not include recent hash types; so warn only
         W "#{k} missing sig/hash: (found only: #{v.inspect})"
       else
         E "#{k} missing sig/hash: (found only: #{v.inspect}) TYPE=#{typ}"
