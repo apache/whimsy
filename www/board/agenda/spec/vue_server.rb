@@ -133,7 +133,7 @@ class VueServer
       end
 
       request.on 'error' do |error|
-        console.log "VueServer error: #{error.message}"
+        console.error "VueServer error: #{error.message}"
       end
 
       request.on 'end' do
