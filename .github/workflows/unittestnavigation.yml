@@ -29,12 +29,17 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
-    - name: test agenda navigation code
+    - name: Install Gems
       run: |
         cd www/board/agenda
         bundle install
+    - name: Set up LDAP
+      run: |
         # need to run the ruby that has all the gems installed
         sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
+    - name: test agenda navigation code
+      run: |
+        cd www/board/agenda
         # --pattern does not work (appears to be overridden)
         # so use exclude to drop all but the one we want
         echo '--exclude-pattern spec/[a-mo-z]*_spec.rb' >.rspec
