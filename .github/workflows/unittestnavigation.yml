@@ -33,4 +33,7 @@ jobs:
       run: |
         cd www/board/agenda
         bundle install
-        TEST_AO_PAGE=1 bundle exec rspec spec/navigate_spec.rb
+        # --pattern does not work (appears to be overridden)
+        # so use exclude to drop all but the one we want
+        echo '--exclude-pattern spec/[a-mo-z]*_spec.rb' >.rspec
+        TEST_AO_PAGE=1 bundle exec rake
