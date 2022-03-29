@@ -31,9 +31,6 @@ module ASF
     # userid of the champion, from podlings.xml
     attr_accessor  :champion
 
-    # list of months in the normal reporting schedule for this podling.
-    attr_accessor  :reporting
-
     # if reporting monthly, a list of months reports are expected.  Can also
     # ge <tt>nil</tt> or an empty list.  From podlings.xml.
     attr_accessor  :monthly
@@ -55,6 +52,7 @@ module ASF
 
     # create a podling from a Nokogiri node built from podlings.xml
     def initialize(node)
+      @mtime = nil
       @name = node['name']
       @resource = node['resource']
       # Validate resource for later use resource can contain '-' and '.' (lucene.net)
@@ -70,11 +68,11 @@ module ASF
       @mentors = node.search('mentor').map { |mentor| mentor['username'] }
       @champion = node.at('champion')['availid'] if node.at('champion')
 
-      @reporting = node.at('reporting') if node.at('reporting')
-      @monthly = @reporting.text.split(/,\s*/) if @reporting&.text
+      @reporting = node.at('reporting') || nil # ensure variable is defined
+      @monthly = @reporting&.text&.split(/,\s*/)
 
-      @resolutionLink = node.at('resolution')['link'] if node.at('resolution')
-      @resolutionURL = node.at('resolution')['url'] if node.at('resolution')
+      @resolutionLink = node.at('resolution') ? node.at('resolution')['link'] : nil
+      @resolutionURL = node.at('resolution') ? node.at('resolution')['url'] : nil
 
       # Note: the following optional elements are not currently processed:
       # - resolution (except for resolution/@link)

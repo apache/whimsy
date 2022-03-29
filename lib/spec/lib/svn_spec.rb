@@ -264,7 +264,7 @@ describe ASF::SVN do
 
     it "svn('info', path) should return 'Name: path'" do
       repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
-      out, err = ASF::SVN.svn('info',repo)
+      out, _err = ASF::SVN.svn('info',repo)
       expect(out).to match(/^Name: _template.xml$/)
     end
     it "svn('info', [path]) should return 'Name: path'" do
@@ -405,15 +405,15 @@ describe ASF::SVN do
   describe "ASF::SVN.getlisting" do
     set_svnroot # need local test data here
     it "getlisting('emeritus') returns array of 1" do
-      tag,list = ASF::SVN.getlisting('emeritus')
+      _tag, list = ASF::SVN.getlisting('emeritus')
       expect(list).to eq(['emeritus1.txt'])
     end
     it "getlisting('emeritus-requests-received') returns array of 1" do
-      tag,list = ASF::SVN.getlisting('emeritus-requests-received')
+      _tag, list = ASF::SVN.getlisting('emeritus-requests-received')
       expect(list).to eq(['emeritus3.txt'])
     end
     it "getlisting('emeritus-requests-received,nil,true,true') returns array of [epoch,name]" do
-      tag,list = ASF::SVN.getlisting('emeritus-requests-received',nil,true,true)
+      _tag, list = ASF::SVN.getlisting('emeritus-requests-received',nil,true,true)
       expect(list).to eq([['1594814364','emeritus3.txt']])
     end
   end
