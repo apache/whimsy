@@ -33,4 +33,4 @@ jobs:
       run: |
         cd www/board/agenda
         bundle install
-        TEST_AO_PAGE=1 bundle exec rspec spec/navigation_spec.rb
+        TEST_AO_PAGE=1 bundle exec rspec spec/navigate_spec.rb
