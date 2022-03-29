@@ -1,11 +1,6 @@
-name: Unit test agenda
+name: Unit test navigation
+# Separate job for debugging navigation issues
 on:
-  push:
-    paths:
-      - '**/unittestagenda.yml'
-      - 'www/board/agenda/**'
-      - 'lib/**'
-
   workflow_dispatch:
 
 jobs:
@@ -13,7 +8,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-20.04, 'macos-latest']
+        os: [ubuntu-20.04]
         ruby: [2.7]
     runs-on: ${{ matrix.os }}
     steps:
@@ -34,15 +29,7 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
-    - name: setup agenda 1
+    - name: test agenda navigation code
       run: |
         cd www/board/agenda
-        bundle install
-    - name: setup agenda 2
-      # need to run the ruby that has all the gems installed
-      run: |
-        sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
-    - name: test agenda code
-      run: |
-        cd www/board/agenda
-        SKIP_NAVIGATION=1 bundle exec rake
+        TEST_AO_PAGE=1 bundle exec rspec spec/navigation_spec.rb
