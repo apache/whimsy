@@ -33,6 +33,8 @@ jobs:
       run: |
         cd www/board/agenda
         bundle install
+        # need to run the ruby that has all the gems installed
+        sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
         # --pattern does not work (appears to be overridden)
         # so use exclude to drop all but the one we want
         echo '--exclude-pattern spec/[a-mo-z]*_spec.rb' >.rspec
