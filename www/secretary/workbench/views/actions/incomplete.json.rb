@@ -23,6 +23,7 @@ REASONS = {
   '@unreadable_scan' => 'the scan is not readable or not complete',
   '@wrong_identity' => 'the public key does not match the name/email on the form',
   '@validation_failed' => 'gpg validation failed',
+  '@signature_not_armored' => 'gpg signature must be detached and ascii-armored',
 }
 
 # send rejection email
