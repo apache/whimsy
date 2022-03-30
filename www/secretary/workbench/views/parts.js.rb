@@ -22,6 +22,7 @@ class Parts < Vue
     @unreadable_scan = false
     @wrong_identity = false
     @validation_failed = false
+    @signature_not_armored = false
   end
 
   ########################################################################
@@ -194,6 +195,7 @@ class Parts < Vue
             _input type: 'hidden', name: 'unreadable_scan', value: @unreadable_scan
             _input type: 'hidden', name: 'wrong_identity', value: @wrong_identity
             _input type: 'hidden', name: 'validation_failed', value: @validation_failed
+            _input type: 'hidden', name: 'signature_not_armored', value: @signature_not_armored
 
             # Defer processing (must be part of POST block)
 
@@ -293,6 +295,13 @@ class Parts < Vue
                   _input type: 'checkbox', checked: @validation_failed,
                   onClick: -> {@validation_failed = !@validation_failed}
                   _span ' gpg key validation failed'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @signature_not_armored,
+                  onClick: -> {@signature_not_armored = !@signature_not_armored}
+                  _span ' gpg signature not armored'
                 end
               end
             end
