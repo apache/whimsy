@@ -32,7 +32,7 @@ def getServerURI(server, keyid)
   return uri
 end
 
-MAX_KEY_SIZE = 22000 # don't import if the ascii keyfile is larger than this
+MAX_KEY_SIZE = 45000 # don't import if the ascii keyfile is larger than this
 
 require 'net/http'
 
@@ -47,14 +47,18 @@ def getURI(uri, file)
         raise Exception.new("Get #{uri} failed with #{res.code}: #{res.message}")
       end
       cl = res.content_length
-      Wunderbar.warn "Content-Length: #{cl}"
-      if cl > MAX_KEY_SIZE # fail early
-        raise Exception.new("Content-Length: #{cl} > #{MAX_KEY_SIZE}")
+      if cl
+        Wunderbar.warn "Content-Length: #{cl}"
+        if cl > MAX_KEY_SIZE # fail early
+          raise Exception.new("Content-Length: #{cl} > #{MAX_KEY_SIZE}")
+        end
+      else
+        Wunderbar.warn "Content-Length not provided, continuing"
       end
-      File.open(file,"w") do |f|
+      File.open(file, "w") do |f|
         # Save the data directly; don't store in memory
         res.read_body do |segment|
-            f.puts segment
+          f.puts segment
         end
       end
       size = File.size(file)
