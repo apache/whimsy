@@ -12,7 +12,8 @@ ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 
 # Restored keys.openpgp.org; sks-keryservers is dead; we can do without email
 # gozer.rediris.es certificate has expired
-KEYSERVERS = %w{keyserver.ubuntu.com keys.openpgp.org}
+KEYSERVERS = %w{keyserver.ubuntu.com}
+# openpgp does not return the uid needed by gpg
 
 # ** N.B. ensure the keyserver URI is known below **
 def getServerURI(server, keyid)
