@@ -56,7 +56,7 @@ $versions = Hash.new {|h1, k1| h1[k1] = Hash.new {|h2, k2| h2[k2] = Array.new} }
 # match an artifact
 # TODO detect artifacts by URL as well if possible
 # $1 = base, $2 = extension
-ARTIFACT_RE = %r{/([^/]+\.(pom|tar|tar\.xz|tar\.gz|deb|nbm|dmg|sh|zip|tgz|far|tar\.bz2|jar|whl|war|msi|exe|rar|rpm|nar|xml))([&?]action=download)?$}
+ARTIFACT_RE = %r{/([^/]+\.(pom|tar|tar\.xz|tar\.gz|deb|nbm|dmg|sh|zip|tgz|far|tar\.bz2|jar|whl|war|msi|exe|rar|rpm|nar|xml|vsix))([&?]action=download)?$}
 
 def init
   # build a list of validation errors
