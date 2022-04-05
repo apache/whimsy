@@ -63,8 +63,8 @@
     ]
   },
   "https://whimsy.apache.org/public/public_ldap_groups.json": {
-    "description": "Membership of LDAP unix groups. Membership of an LDAP unix group is used to grant commit karma for a whole project. (Will eventually be replaced by public_ldap_projects.json)",
-    "format": "hash of hashes['groups']['accumulo']['roster'][0] = 'acordova'",
+    "description": "Membership of the remaining LDAP unix groups (apsite, committers and member).",
+    "format": "hash of hashes['groups']['committers']['roster'][0] = 'tba'",
     "maintainer": "/www/roster/public_ldap_groups.rb",
     "sources": [
       "/lib/whimsy/asf/ldap.rb"
