@@ -157,11 +157,6 @@
     url: asf/incubator/public/trunk/content/podlings
     depth: files
 
-  member_apps:
-    url: private/documents/member_apps
-    depth: delete
-    list: true
-
   minutes:
     url: asf/infrastructure/site/trunk/content/foundation/records/minutes
 
