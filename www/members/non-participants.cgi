@@ -82,11 +82,11 @@ _html do
       matrix.each do |id, _name, first, missed|
         next unless id
 
-        count += 1
-        status = current_status[id]
-        next if @status and status != @status
-
         if missed >= @meetingsMissed
+          count += 1
+          status = current_status[id]
+          next if @status and status != @status
+
           _tr_ do
             _td! {_a nameMap[id], href: "#{ROSTER}/#{id}"}
             _td dates[-first-1] || dates.first
