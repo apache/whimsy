@@ -82,6 +82,9 @@ _html do
       matrix.each do |id, _name, first, missed|
         next unless id
 
+        status = current_status[id]
+        next if @status and status != @status
+
         if missed >= @meetingsMissed
           _tr_ do
             _td! {_a nameMap[id], href: "#{ROSTER}/#{id}"}
@@ -93,7 +96,7 @@ _html do
             end
 
             if meeting > today
-              _td current_status[id]
+              _td status
             end
           end
           count += 1
