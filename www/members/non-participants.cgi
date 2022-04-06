@@ -82,6 +82,7 @@ _html do
       matrix.each do |id, _name, first, missed|
         next unless id
 
+        count += 1
         status = current_status[id]
         next if @status and status != @status
 
@@ -99,7 +100,6 @@ _html do
               _td status
             end
           end
-          count += 1
         end
       end
     end
