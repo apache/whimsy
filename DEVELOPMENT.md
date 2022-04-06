@@ -289,7 +289,7 @@ different ways to document code or functionality for users.
   `PAGETITLE` and a `helpblock ->` which are put into a consistent place 
   on the page for users when using whimsy/asf/themes.  This information 
   is also parsed to generate a committer-only 
-  [listing of useful Whiimsy tools](https://whimsy.apache.org/committers/tools). 
+  [listing of useful Whimsy tools](https://whimsy.apache.org/committers/tools). 
 
 - **Data dependencies** and the flow of data between different Whimsy 
   processes and other websites are described in [test/dataflow.cgi](https://whimsy.apache.org/test/dataflow.cgi)
