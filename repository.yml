@@ -157,6 +157,11 @@
     url: asf/incubator/public/trunk/content/podlings
     depth: files
 
+  # for Secretary use only
+  member_apps:
+    url: private/documents/member_apps
+    depth: skip
+
   minutes:
     url: asf/infrastructure/site/trunk/content/foundation/records/minutes
 
