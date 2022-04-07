@@ -4,8 +4,8 @@ $LOAD_PATH.unshift lib unless $LOAD_PATH.include? lib
 
 # Remove world writable directories that Travis may insert into the PATH,
 # as these cause security errors during testing
-ENV['PATH'] = ENV['PATH'].split(File::PATH_SEPARATOR).
-  reject {|path| File.world_writable? path}.join(File::PATH_SEPARATOR)
+# ENV['PATH'] = ENV['PATH'].split(File::PATH_SEPARATOR).
+#   reject {|path| File.world_writable? path}.join(File::PATH_SEPARATOR)
 
 require 'whimsy/asf/config'
 
@@ -60,9 +60,9 @@ file 'package-lock.json' => 'package.json' do
   sh 'type npm || true' # TEMP CHECK
   sh 'which -a npm || true' # TEMP CHECK
   sh 'echo $PATH' # TEMP CHECK
-  npm = ENV['NPM_PATH']
-  puts npm
-  sh "#{npm} install"
+  npm_base = File.dir(ENV['NPM_PATH'])
+  puts npm_base
+  sh 'npm install'
   sh 'touch package-lock.json'
 end
 
