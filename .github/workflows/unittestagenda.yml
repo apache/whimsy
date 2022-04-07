@@ -54,4 +54,4 @@ jobs:
         cd www/board/agenda
         bundle exec rake path
         echo '================'
-        NPM_PATH=$(type npm) SKIP_NAVIGATION=1 bundle exec rake
+        NPM_PATH=$(which npm) SKIP_NAVIGATION=1 bundle exec rake
