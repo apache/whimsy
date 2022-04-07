@@ -52,6 +52,6 @@ jobs:
         bundle exec env | grep '^PATH'
         echo '================'
         cd www/board/agenda
-        bundle exec path
+        bundle exec rake path
         echo '================'
         SKIP_NAVIGATION=1 bundle exec rake
