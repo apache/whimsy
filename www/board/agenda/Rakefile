@@ -15,6 +15,10 @@ task :default => :spec
 task :spec => 'test:setup'
 task :test => :spec
 
+task :path do
+  puts ENV['PATH'] # TEMP CHECK
+end
+
 # setup authentication
 task :auth do
   require 'etc'
