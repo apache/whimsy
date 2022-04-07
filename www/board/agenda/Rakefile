@@ -60,8 +60,6 @@ file 'package-lock.json' => 'package.json' do
   sh 'type npm || true' # TEMP CHECK
   sh 'which -a npm || true' # TEMP CHECK
   sh 'echo $PATH' # TEMP CHECK
-  npm_base = File.dir(ENV['NPM_PATH'])
-  puts npm_base
   sh 'npm install'
   sh 'touch package-lock.json'
 end
