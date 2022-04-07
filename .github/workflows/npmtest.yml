@@ -1,0 +1,34 @@
+name: test npm install
+on:
+  push:
+    paths:
+      - '**/npmtest.yml'
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-20.04, macos-latest]
+        ruby: [2.7]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Check Path 1
+      run: |
+        echo "==================="
+        echo $PATH
+        which -a node || true
+        which -a npm || true
+        echo "==================="
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14.19.1'
+    - name: Check Path 2
+      run: |
+        echo "==================="
+        echo $PATH
+        which -a node || true
+        which -a npm || true
+        echo "==================="
