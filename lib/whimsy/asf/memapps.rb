@@ -83,7 +83,9 @@ module ASF
     private
 
     def self.refresh
-      @@tag, list = ASF::SVN.getlisting('member_apps', @@tag)
+      cache_dir = ASF::Config.get(:cache)
+      ASF::DocumentUtils.update_cache('member_apps', cache_dir)
+      @@tag, list = ASF::SVN.getlisting('member_apps', @@tag, true, false, cache_dir)
       if list
         @@files = list
       end
@@ -93,6 +95,7 @@ end
 
 # for test purposes
 if __FILE__ == $0
+  require_relative 'documents'
   puts ASF::MemApps.files.length
   puts ASF::MemApps.names.length
   puts ASF::MemApps.stems.length
