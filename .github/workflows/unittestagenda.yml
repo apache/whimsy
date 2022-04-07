@@ -22,11 +22,6 @@ jobs:
         sudo apt-get install libldap2-dev
         sudo apt-get install libsasl2-dev
       if:  matrix.os == 'ubuntu-20.04'  
-    - uses: actions/setup-node@v3
-      with:
-        node-version: '14.19.1'
-        # it seems that using the default Ubuntu version of node (14.19.0)
-        # somehow fails to set the correct path for rake to use
     - uses: actions/checkout@v2
       with:
         persist-credentials: false
@@ -44,14 +39,6 @@ jobs:
         sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
-        echo '================'
-        echo $PATH
-        npm -v || true
-        node -v || true
-        echo '================'
-        bundle exec env | grep '^PATH'
-        echo '================'
         cd www/board/agenda
         bundle exec rake path
-        echo '================'
-        NPM_PATH=$(which npm) SKIP_NAVIGATION=1 bundle exec rake
+        SKIP_NAVIGATION=1 bundle exec rake

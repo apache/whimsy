@@ -15,10 +15,6 @@ task :default => :spec
 task :spec => 'test:setup'
 task :test => :spec
 
-task :path do
-  puts ENV['PATH'] # TEMP CHECK
-end
-
 # setup authentication
 task :auth do
   require 'etc'
@@ -56,10 +52,6 @@ task "touch" do
 end
 
 file 'package-lock.json' => 'package.json' do
-  puts ENV['PATH'] # TEMP CHECK
-  sh 'type npm || true' # TEMP CHECK
-  sh 'which -a npm || true' # TEMP CHECK
-  sh 'echo $PATH' # TEMP CHECK
   sh 'npm install'
   sh 'touch package-lock.json'
 end
