@@ -117,7 +117,7 @@ task "subscribe to members@apache.org" do
     version: 3, # This must match committers/subscribe.cgi#FORMAT_NUMBER
     availid: @availid,
     addr: @availid + '@apache.org', # use ASF email here
-    listkey: 'members',
+    listkey: 'members@apache.org',
     member_p: true,
     chair_p: ASF.pmc_chairs.include?(user),
   }
@@ -146,7 +146,7 @@ task "subscribe to members-notify@apache.org" do
     version: 3, # This must match committers/subscribe.cgi#FORMAT_NUMBER
     availid: @availid,
     addr: @availid + '@apache.org', # use ASF email here
-    listkey: 'members-notify',
+    listkey: 'members-notify@apache.org',
     member_p: true,
     chair_p: ASF.pmc_chairs.include?(user),
   }
