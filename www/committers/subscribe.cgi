@@ -211,7 +211,8 @@ _html do
           break
         end
 
-        # subreq/unsubreq currently need the listkey
+        # subreq/unsubreq now accept name@dom
+        # Keep the key for the file name
         listkey = ASF::Mail.listdom2listkey(@list)
 
         # Each user can only subscribe once to each list in each timeslot
@@ -221,7 +222,7 @@ _html do
           version: FORMAT_NUMBER,
           availid: $USER,
           addr: @addr,
-          listkey: listkey,
+          listkey: @list,
           # f3
           member_p: user.asf_member?,
           chair_p: ASF.pmc_chairs.include?(user),
