@@ -60,6 +60,7 @@ Dir.glob("#{maildir}/[0-9a-f][0-9a-f]*").each do |p|
             Emails:     [(mail[:to].addresses.map(&:to_str) rescue []),(mail[:cc].addresses.map(&:to_str) rescue [])].flatten,
             MessageId: mail.message_id, # could be nil
             EnvelopeFrom: mail.envelope_from,
+            EnvelopeDate: mail.envelope_date, # effectively the delivery date to the mailing list
         }
         data[name] = entry
     end
