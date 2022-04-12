@@ -32,9 +32,10 @@ month = Time.now.strftime('%Y%m')
 hash = Digest::SHA1.hexdigest(getmid(hdrs) || mail)[0..9]
 
 # build file name
-file = File.join(MAIL_ROOT,list, month, hash)
+filedir = File.join(MAIL_ROOT, list, month)
+file = File.join(filedir, hash)
 
-File.umask 0002
-FileUtils.mkdir_p File.dirname(file)
+File.umask 0o002
+FileUtils.mkdir_p filedir
 File.write file, mail, encoding: Encoding::BINARY
-File.chmod 0644, file
+File.chmod 0o644, file
