@@ -77,6 +77,7 @@ describe YamlFile do
     end
   end
   describe "YamlFile.update" do
+    tmpname = File.join(tmpdir, 'yaml_spec3.yaml')
     it "should create empty file" do
       YamlFile.update(tmpname) do |yaml|
         expect(yaml.class).to equal(Hash)
@@ -89,6 +90,18 @@ describe YamlFile do
     it "read should return single entry" do
       yaml = YamlFile.read(tmpname)
       expect(yaml.size).to equal(1)
+    end
+    it "read not change the file time-stamp" do
+      mtime1 = File.mtime(tmpname)
+      YamlFile.update(tmpname) do |yaml|
+        expect(yaml.class).to equal(Hash)
+        expect(yaml.size).to equal(1)
+        yaml['test2'] = {a: 'b'}
+        expect(yaml.size).to equal(2)
+        nil
+      end
+      mtime2 = File.mtime(tmpname)
+      expect(mtime2).to eq(mtime1)
     end
   end
 end

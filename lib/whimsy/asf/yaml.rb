@@ -13,7 +13,7 @@ module YamlFile
   # opens the file for exclusive access with an exclusive lock,
   # creating the file if necessary
   # Yields the parsed YAML to the block, and writes the return
-  # data to the file
+  # data to the file; if the block returns nil, the file will not be updated
   # The args are passed to YAML.safe_load, and default to permitted_classes: [Symbol]
   def self.update(yaml_file, *args)
     File.open(yaml_file, File::RDWR|File::CREAT, 0o644) do |file|
@@ -23,9 +23,12 @@ module YamlFile
       else
         yaml = YAML.safe_load(file.read, *args) || {}
       end
-      file.rewind
-      file.write YAML.dump(yield yaml)
-      file.truncate(file.pos)
+      output = yield yaml
+      unless output.nil?
+        file.rewind
+        file.write YAML.dump(output)
+        file.truncate(file.pos)
+      end
     end
   end
 
