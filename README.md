@@ -126,6 +126,6 @@ Details for each type of deployed tool or script:
    See also an [overview of data dependencies and flow](https://whimsy.apache.org/test/dataflow.cgi). 
   
  * **Data models** for many Whimsy tools are in `lib/whimsy/asf`, and 
-   most **views** for tools are stored in `www`.  Note what Whimsy has 
+   most **views** for tools are stored in `www`.  Note that Whimsy has 
    a wide variety of sometimes unrelated tools, so not everything 
    here uses the same models.
