@@ -17,7 +17,7 @@ _html do
     ) do
       _div_.main!
       _script src: "app.js?#{appmtime}"
-      _.render '#main' do
+      _.render '#main', timeout: 1 do
         _PPMC ppmc: @ppmc, auth: @auth
       end
     end

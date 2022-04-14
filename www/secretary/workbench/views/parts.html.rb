@@ -92,7 +92,7 @@ _html do
   end
 
   _script src: "../../app.js?#{@appmtime}"
-  _.render '#parts' do
+  _.render '#parts', timeout: 1 do
     _Parts attachments: @attachments, headers: @headers, projects: @projects,
       meeting: @meeting
   end

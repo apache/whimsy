@@ -22,3 +22,5 @@ gem 'execjs'
 gem 'listen'
 gem 'escape'
 gem 'pdf-reader'
+
+gem 'net-smtp', require: false # for Ruby 3.1

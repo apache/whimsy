@@ -22,7 +22,7 @@ _html do
   ) do
     _div_.main!
     _script src: "app.js?#{appmtime}"
-    _.render '#main' do
+    _.render '#main', timeout: 1 do
       _CommitterSearch notinavail: @notinavail,
                        # This ends with '/'
                        iclapath: @iclapath

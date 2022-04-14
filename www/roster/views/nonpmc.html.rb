@@ -19,7 +19,7 @@ _html do
     end
 
     _script src: "app.js?#{appmtime}"
-    _.render '#main' do
+    _.render '#main', timeout: 1 do
       _NonPMC nonpmc: @nonpmc, auth: @auth
     end
   end

@@ -19,7 +19,7 @@ _html do
     end
 
     _script src: "app.js?#{appmtime}"
-    _.render '#main' do
+    _.render '#main', timeout: 1 do
       _Group group: @group, auth: @auth
     end
   end
