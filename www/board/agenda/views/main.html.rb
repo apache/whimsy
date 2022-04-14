@@ -13,7 +13,7 @@ _html do
 
   _script src: "../app.js?#{@appmtime}", lang: 'text/javascript'
 
-  _.render '#main' do
+  _.render '#main', timeout: 1 do
     _Main server: @server, page: @page
   end
 end

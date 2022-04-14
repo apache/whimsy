@@ -42,3 +42,5 @@ end
 group :development do
   gem 'passenger'
 end
+
+gem 'net-smtp', require: false # for Ruby 3.1
