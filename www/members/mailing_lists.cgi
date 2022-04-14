@@ -22,7 +22,7 @@ FLAGS = %{
 -mz moderate after checking sender is known
 -Mz unmoderated, but requires sender to be known
 
--s subscriptions are moderated
+-s subscriptions are moderated (i.e. private list)
 
 -x check mime-type, size etc
 -y send copy to security@apache.org
@@ -37,6 +37,21 @@ def type(mu)
     Mu: 'subonly',
     MU: 'open',
   }[mu.to_sym]
+end
+
+query = ENV['QUERY_STRING']
+# Only allow letters in the query string so it is safe to use
+if query =~ %r{^filter=([a-zA-Z]+)$}
+  # Convert xmU into m.......U..x
+  letters = []
+  $1.split('').sort_by(&:upcase).each_cons(2).with_index do |(a, b), i|
+    letters << a if i == 0
+    (b.upcase.ord - a.upcase.ord - 1).times {letters << '.'}
+    letters << b
+  end
+  filter = Regexp.new(letters.join)
+else
+  filter = nil
 end
 
 _html do
@@ -72,7 +87,7 @@ _html do
         _thead_ do
           _tr do
             _th 'list', data_sort: 'string'
-            _th 'flags', data_sort: 'string'
+            _th "flags #{filter}", data_sort: 'string'
             _th 'Type (mu)', data_sort: 'string'
             _th 'Known (z)', data_sort: 'string'
             _th 'Private (s)', data_sort: 'string'
@@ -81,7 +96,7 @@ _html do
           end
         end
         _tbody do
-          ASF::Mail.parse_flags do |domain, list, flags|
+          ASF::Mail.parse_flags(filter) do |domain, list, flags|
             mu = flags.tr('^muMU', '')
             _tr do
               _td data_sort_value: "#{domain}-#{list}" do
