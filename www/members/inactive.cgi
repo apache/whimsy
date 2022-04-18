@@ -97,11 +97,19 @@ _html do
       }
     ) do
 
+      member_status = ASF::Person.find(@user).asf_member?
+
       _p_ do
-        _span "#{name}, your current meeting attendance status is: "
-        _code tracker[@user]['status']
+        if member_status != true
+          _span "#{name}, your current membership status is: "
+          _code member_status
+        else
+          _span "#{name}, your current meeting attendance status is: "
+          _code tracker[@user]['status']
+        end
       end
-      if active
+
+      if active and member_status == true
         att = miss = 0
         if !matrix.nil?
           matrix.each do |date, status|
