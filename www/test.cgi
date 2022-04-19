@@ -37,6 +37,7 @@ query = ENV['QUERY_STRING'] || ARGV[0]
 if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
     print "\n"
     puts_system('id')
+    puts_system('whoami')
     puts_system('which', '-a', 'svn')
     puts_system('svn', '--version')
     puts_system('which', '-a', 'git')
