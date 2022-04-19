@@ -50,8 +50,8 @@ if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
     puts_system('which', '-a',  'gem')
     puts_system('PATH=/usr/local/bin:$PATH which -a gem')
     puts_system('service', 'puppet', 'status')
-    puts_system('git', 'show', '--format="%h,  %ci %cr"', '-s', 'HEAD')
-    puts_system('git', 'ls-remote', 'origin', 'master')
+    puts_system('git', '-C', '/srv/whimsy', 'show', '--format="%h,  %ci %cr"', '-s', 'HEAD')
+    puts_system('git', '-C', '/srv/whimsy', 'ls-remote', 'origin', 'master')
     wait=query.match(/^sleep=(\d+)$/)[1].to_i rescue 0
     if wait > 0
       print "\nWaiting #{wait} seconds ..."
