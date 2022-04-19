@@ -27,17 +27,19 @@ def update(dir)
 end
 
 # N.B. Please ensure any required list subscriptions are noted in DEPLOYMENT.md
+subject = mail.subject # fetch once
 
-if mail.subject =~ %r{^board: r\d+ -( in)? /foundation/board} # board-commits@
+if subject =~ %r{^board: r\d+ -( in)? /foundation/board} # board-commits@
 
   update '/srv/svn/foundation_board'
 
-elsif mail.subject =~ %r{^foundation: r\d+ -( in)? /foundation} # foundation-commits@
+# N.B. subject may contain other files
+elsif subject =~ %r{^foundation: r\d+ -.* /foundation/members.txt} # foundation-commits@
 
-  # includes members.txt
+  # Now only has members.txt
   update '/srv/svn/foundation'
 
-elsif mail.subject =~ %r{^committers: r\d+ -( in)? /committers/board} # committers-cvs@
+elsif subject =~ %r{^committers: r\d+ -( in)? /committers/board} # committers-cvs@
 
   update '/srv/svn/board'
 
