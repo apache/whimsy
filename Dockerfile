@@ -81,11 +81,11 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y ldap-utils
 # This should be last, as the source is likely to change
 # It also takes very little time, so it does not matter if it has to be redone
 # N.B. These files need to be allowed in the .dockerignore file
-COPY config/whimsy.conf /etc/apache2/sites-enabled/000-default.conf
-COPY config/25-authz_ldap_group_membership.conf /etc/apache2/conf-enabled/25-authz_ldap_group_membership.conf
+COPY docker-config/whimsy.conf /etc/apache2/sites-enabled/000-default.conf
+COPY docker-config/25-authz_ldap_group_membership.conf /etc/apache2/conf-enabled/25-authz_ldap_group_membership.conf
 
 # Allow www-data user to use Git repo owned by root
-COPY config/gitconfig-www /var/www/.gitconfig
+COPY docker-config/gitconfig-www /var/www/.gitconfig
 
 # disable security check and telemetry
 RUN sed -i -e '$i  PassengerDisableSecurityUpdateCheck on' /etc/apache2/conf-enabled/passenger.conf
