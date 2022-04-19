@@ -38,6 +38,7 @@ if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
     print "\n"
     puts_system('id')
     puts_system('which','-a','svn')
+    puts_system('which','-a','git')
     puts_system('svn','--version')
     puts_system('which','-a','svnmucc')
     puts_system('svnmucc','--version')
@@ -48,6 +49,7 @@ if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
     puts_system('which','-a','gem')
     puts_system('PATH=/usr/local/bin:$PATH which -a gem')
     puts_system('service puppet status')
+    puts_system('git show --format="%h  %ci %cr" -s HEAD')
     puts_system('git ls-remote origin master')
     wait=query.match(/^sleep=(\d+)$/)[1].to_i rescue 0
     if wait > 0
