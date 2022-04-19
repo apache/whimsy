@@ -78,8 +78,12 @@ _html do
         href: 'https://id.apache.org/info/MailAlias.txt'
     end
     _li do
-      _a 'Member list', target: 'content',
+      _a 'Member list (members.txt)', target: 'content',
         href: ASF::SVN.svnpath!('foundation', 'members.txt')
+    end
+    _li do
+      _a 'Foundation commits', target: 'content',
+        href: 'https://lists.apache.org/list?foundation-commits@apache.org'
     end
     _li do
       _a 'How to use this tool', href: '../../HOWTO.html',
