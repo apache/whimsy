@@ -5,24 +5,17 @@
 
 require 'mail'
 
-File.umask(0002)
+File.umask(0o002)
 
 STDIN.binmode
 mail = Mail.new(STDIN.read)
 
-# This must agree with the file used by the svnupdate cron job
-LOG = '/srv/whimsy/www/logs/svn-update'
-
+# N.B. Output goes to the procmail file at /srv/svn/procmail.log
 def update(dir)
-  # prevent concurrent updates being performed by the cron job
-  File.open(LOG, File::RDWR|File::CREAT, 0644) do |log|
-    log.flock(File::LOCK_EX)
-
-    $stderr.puts "#{Time.now} Updating #{dir}" # Record updates
-    Dir.chdir dir do
-      $stderr.puts `svn cleanup`
-      $stderr.puts `svn update`
-    end
+  $stderr.puts "#{Time.now} Updating #{dir}" # Record updates
+  Dir.chdir dir do
+    $stderr.puts `svn cleanup`
+    $stderr.puts `svn update`
   end
 end
 
