@@ -15,7 +15,7 @@ end
 
 def puts_system(*cmd)
   puts ['$', cmd].join ' '
-  system(*cmd)
+  system(*cmd) or puts 'failed'
 end
 
 if ENV['SCRIPT_URL'] == '/members/test.cgi'
@@ -37,20 +37,21 @@ query = ENV['QUERY_STRING'] || ARGV[0]
 if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
     print "\n"
     puts_system('id')
-    puts_system('which','-a','svn')
-    puts_system('which','-a','git')
-    puts_system('svn','--version')
-    puts_system('which','-a','svnmucc')
-    puts_system('svnmucc','--version')
-    puts_system('which','-a','ruby')
-    puts_system('which','-a','ruby2.3.0')
-    puts_system('ruby','-v')
-    puts_system('gem','env')
-    puts_system('which','-a','gem')
+    puts_system('which', '-a', 'svn')
+    puts_system('svn', '--version')
+    puts_system('which', '-a', 'git')
+    puts_system('git', '--version')
+    puts_system('which', '-a', 'svnmucc')
+    puts_system('svnmucc', '--version')
+    puts_system('which', '-a', 'ruby')
+    puts_system('which', '-a', 'ruby2.3.0')
+    puts_system('ruby', '-v')
+    puts_system('gem', 'env')
+    puts_system('which', '-a',  'gem')
     puts_system('PATH=/usr/local/bin:$PATH which -a gem')
-    puts_system('service puppet status')
-    puts_system('git show --format="%h  %ci %cr" -s HEAD')
-    puts_system('git ls-remote origin master')
+    puts_system('service', 'puppet', 'status')
+    puts_system('git', 'show', '--format="%h,  %ci %cr"', '-s', 'HEAD')
+    puts_system('git', 'ls-remote', 'origin', 'master')
     wait=query.match(/^sleep=(\d+)$/)[1].to_i rescue 0
     if wait > 0
       print "\nWaiting #{wait} seconds ..."
