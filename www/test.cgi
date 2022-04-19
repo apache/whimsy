@@ -51,7 +51,6 @@ if query and not query.empty? and ENV['SCRIPT_URL'] == '/test.cgi'
     puts_system('which', '-a',  'gem')
     puts_system('PATH=/usr/local/bin:$PATH which -a gem')
     puts_system('service', 'puppet', 'status')
-    ENV['HOME'] = `getent passwd www-data`.split(':')[5] # HOME is needed for Git to work
     puts_system('git', '-C', '/srv/whimsy', 'show', '--format="%h,  %ci %cr"', '-s', 'HEAD')
     puts_system('git', '-C', '/srv/whimsy', 'ls-remote', 'origin', 'master')
     wait=query.match(/^sleep=(\d+)$/)[1].to_i rescue 0
