@@ -4,3 +4,4 @@
 # Allow what we want
 !config/whimsy.conf
 !config/25-authz_ldap_group_membership.conf
+!config/gitconfig-www 
