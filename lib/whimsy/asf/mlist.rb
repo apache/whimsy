@@ -143,7 +143,8 @@ module ASF
     # also returns the time when the data was last checked
     # If podling==true, then also check for old-style podling names
     # returns: [{dev@a.o=>[email1, email2]}, mod-time]
-    def self.list_moderators(mail_domain, podling=false)
+    # if mail_domain is nil, matches all lists except infra test lists
+    def self.list_moderators(mail_domain, _podling=false)
 
       return nil, nil unless File.exist? LIST_MODS
 
@@ -155,7 +156,7 @@ module ASF
         next if dom == 'incubator.apache.org' && list =~ /^infra-dev2?$/
 
         # does the list match our target?
-        next unless matches_list?(mail_domain, dom, list)
+        next unless mail_domain.nil? or matches_list?(mail_domain, dom, list)
 
         moderators["#{list}@#{dom}"] = subs.sort
       end
