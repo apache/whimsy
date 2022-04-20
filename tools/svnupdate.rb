@@ -27,14 +27,37 @@ if subject =~ %r{^board: r\d+ -( in)? /foundation/board} # board-commits@
   update '/srv/svn/foundation_board'
 
 # N.B. subject may contain other files
-elsif subject =~ %r{^foundation: r\d+ -.* /foundation/members.txt} # foundation-commits@
+elsif subject =~ %r{^foundation: r\d+ -} # generic foundation commit prefix
 
-  # Now only has members.txt
-  update '/srv/svn/foundation'
+  if subject =~ %r{ /foundation/members.txt}
+    # Now only has members.txt
+    update '/srv/svn/foundation'
+  end
+
+  # Changes to requests-received are important for the workbench to know
+  # when a request has been processed, so it's worth processing asap
+  if subject =~ %r{ /documents/emeritus-requests-received/}
+    require 'whimsy/asf/config'
+    require 'whimsy/asf/svn'
+    svnrepos = ASF::SVN.repo_entries(true) || {}
+    name = 'emeritus-requests-received'
+    description = svnrepos[name]
+    if description
+      old, new = ASF::SVN.updatelisting(name, nil, nil, description['dates'])
+      if old == new
+        $stderr.puts "List is at revision #{old}."
+      elsif old.nil?
+        $stderr.puts "Created list at revision #{new}"
+      else
+        $stderr.puts "List updated from #{old} to revision #{new}."
+      end
+    else
+      $stderr.puts "Could not find #{name} in repository.yaml"
+    end
+  end
 
 elsif subject =~ %r{^committers: r\d+ -( in)? /committers/board} # committers-cvs@
 
   update '/srv/svn/board'
 
 end
-
