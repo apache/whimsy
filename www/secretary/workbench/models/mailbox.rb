@@ -183,8 +183,7 @@ class Mailbox
         status: message[:status]
       }
       if message[:secmail]
-        status = message[:secmail][:status]
-        entry[:secmail_status] = status if status
+        entry[:secmail] = message[:secmail]
       end
       entry
     end
