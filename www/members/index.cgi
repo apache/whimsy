@@ -26,7 +26,8 @@ LISTS = {
   '/officers/list-traffic.cgi' => "Statistics about board@ mailing list traffic",
   'subscriptions.cgi' => "Apache members@ List Subscription Crosscheck",
   'security-subs.cgi' => "Security Mailing Lists Subscription Check",
-  'mailing_lists.cgi' => "Apache Mailing List Info"
+  'mailing_lists.cgi' => "Apache Mailing List Info",
+  'moderator_checks.cgi' => "Apache List Moderator checks"
 }
 
 MISC = {
