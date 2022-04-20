@@ -174,7 +174,7 @@ class Mailbox
 
     # extract relevant fields from the headers
     headers.map! do |id, message|
-      {
+      entry = {
         time: message[:time] || '',
         href: "#{message[:source]}/#{id}/",
         from: (message[:name] || message[:from]).to_s.fix_encoding,
@@ -182,6 +182,11 @@ class Mailbox
         subject: message['Subject'],
         status: message[:status]
       }
+      if message[:secmail]
+        status = message[:secmail][:status]
+        entry[:secmail_status] = status if status
+      end
+      entry
     end
 
     # return messages sorted in reverse chronological order

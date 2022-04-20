@@ -55,7 +55,15 @@ class Index < Vue
               if %i[emeritusReady emeritusPending].include? message.status
                 _td message.subject, class: message.status
               else
-                _td message.subject
+                if message.secmail_status
+                  _td do
+                    _ message.subject
+                    _ ' - '
+                    _b message.secmail_status
+                  end
+                else
+                  _td message.subject
+                end
               end
             end
           end
