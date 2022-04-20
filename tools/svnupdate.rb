@@ -37,6 +37,7 @@ elsif subject =~ %r{^foundation: r\d+ -} # generic foundation commit prefix
   # Changes to requests-received are important for the workbench to know
   # when a request has been processed, so it's worth processing asap
   if subject =~ %r{ /documents/emeritus-requests-received/}
+    $LOAD_PATH.unshift '/srv/whimsy/lib'
     require 'whimsy/asf/config'
     require 'whimsy/asf/svn'
     svnrepos = ASF::SVN.repo_entries(true) || {}
