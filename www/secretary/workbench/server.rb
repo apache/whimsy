@@ -287,15 +287,10 @@ get '/iclas.json' do
   list.to_json
 end
 
-# return a list of members
+# Return official list of members (not using LDAP)
+# includes inactive members
 get '/members.json' do
-  list = []
-  ASF.members.each do |member|
-    list << {
-        id: member.name,
-        name: member.public_name
-    }
-  end
+  list = ASF::Member.list.map { |k, v| {id: k, name: v[:name]}}
   _json list
 end
 
