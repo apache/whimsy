@@ -12,8 +12,15 @@ require 'wunderbar/jquery/stupidtable'
 
 MODERATORS = %w{
   mod-private@gsuite.cloud.apache.org
+  mod-board@gsuite.cloud.apache.org
   secretary@apache.org
+  board-chair@apache.org
 }
+
+def private_mod(lid, mod)
+  dom = lid.split('@')[-1]
+  ["pmc@#{dom}", "private@#{dom}"].include? mod
+end
 
 _html do
   _body? do
@@ -32,10 +39,10 @@ _html do
     ) do
       lists, _time = ASF::MLIST.list_moderators(nil)
       emails = ASF::Mail.list
-      unknown = Hash.new { |h,k| h[k] = []}
+      unknown = Hash.new { |h, k| h[k] = []}
       lists.each do |lid, mods|
         mods.each do |mod|
-          unknown[mod] << lid unless MODERATORS.include? mod or emails[mod]
+          unknown[mod] << lid unless MODERATORS.include? mod or emails[mod] or private_mod(lid, mod)
         end
       end
 
