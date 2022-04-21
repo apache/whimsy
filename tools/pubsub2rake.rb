@@ -158,6 +158,7 @@ if $0 == __FILE__
     url = desc['url']
 
     one, two, three = url.split('/', 3)
+    next if one.start_with? 'http' # dist.a.o
     path_prefix = one == 'asf' ? ['/svn'] : ['/private', 'svn']
     pubsub_key = [path_prefix, one, two, 'commit'].join('/')
     svn_relpath = [two, three].join('/')
