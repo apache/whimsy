@@ -2,6 +2,10 @@
 # When mail comes in indicating that a repository was updated,
 # update the local working copy.
 #
+#  N.B. the directory paths need to agree with repository.yml
+
+$LOAD_PATH.unshift '/srv/whimsy/lib'
+require 'whimsy/lockfile'
 
 require 'mail'
 
@@ -12,10 +16,12 @@ mail = Mail.new(STDIN.read)
 
 # N.B. Output goes to the procmail file at /srv/svn/procmail.log
 def update(dir)
-  $stderr.puts "#{Time.now} Updating #{dir}" # Record updates
-  Dir.chdir dir do
-    $stderr.puts `svn cleanup`
-    $stderr.puts `svn update`
+  LockFile.lockfile(dir, nil, File::LOCK_EX) do # ignore the block parameter
+    $stderr.puts "#{Time.now} Updating #{dir}" # Record updates
+    Dir.chdir dir do
+      $stderr.puts `svn cleanup`
+      $stderr.puts `svn update`
+    end
   end
 end
 
@@ -37,13 +43,13 @@ elsif subject =~ %r{^foundation: r\d+ -} # generic foundation commit prefix
   # Changes to requests-received are important for the workbench to know
   # when a request has been processed, so it's worth processing asap
   if subject =~ %r{ /documents/emeritus-requests-received/}
-    $LOAD_PATH.unshift '/srv/whimsy/lib'
     require 'whimsy/asf/config'
     require 'whimsy/asf/svn'
     svnrepos = ASF::SVN.repo_entries(true) || {}
     name = 'emeritus-requests-received'
     description = svnrepos[name]
     if description
+      $stderr.puts "Updating listing for #{name}"
       old, new = ASF::SVN.updatelisting(name, nil, nil, description['dates'])
       if old == new
         $stderr.puts "List is at revision #{old}."
@@ -53,7 +59,7 @@ elsif subject =~ %r{^foundation: r\d+ -} # generic foundation commit prefix
         $stderr.puts "List updated from #{old} to revision #{new}."
       end
     else
-      $stderr.puts "Could not find #{name} in repository.yaml"
+      $stderr.puts "Could not find #{name} in repository.yml"
     end
   end
 
