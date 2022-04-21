@@ -50,14 +50,16 @@ elsif subject =~ %r{^foundation: r\d+ -} # generic foundation commit prefix
     description = svnrepos[name]
     if description
       $stderr.puts "Updating listing for #{name}"
-      old, new = ASF::SVN.updatelisting(name, nil, nil, description['dates'])
-      if old == new
-        $stderr.puts "List is at revision #{old}."
-      elsif old.nil?
-        $stderr.puts "Created list at revision #{new}"
-      else
-        $stderr.puts "List updated from #{old} to revision #{new}."
-      end
+      # This ought to be done by pubsub2rake; check that is the case by disabling the update here
+      $stderr.puts (File.open('/srv/svn/emeritus-requests-received.txt').readline.chomp rescue '??')
+      # old, new = ASF::SVN.updatelisting(name, nil, nil, description['dates'])
+      # if old == new
+      #   $stderr.puts "List is at revision #{old}."
+      # elsif old.nil?
+      #   $stderr.puts "Created list at revision #{new}"
+      # else
+      #   $stderr.puts "List updated from #{old} to revision #{new}."
+      # end
     else
       $stderr.puts "Could not find #{name} in repository.yml"
     end
