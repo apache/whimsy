@@ -162,7 +162,7 @@ if $0 == __FILE__
         log = event['commit']['log'].sub(/\n.*/, '') # keep only first line
         id = event['commit']['id']
         puts ""
-        puts stamp id, 'DBG', path, log
+        puts stamp id, path, 'DBG', log
       end
     end # possible match
   end
