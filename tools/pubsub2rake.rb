@@ -21,6 +21,7 @@ class PubSub
   def self.listen(url, creds, options={})
     debug = options[:debug]
     mtime = File.mtime(__FILE__)
+    FileUtils.touch(ALIVE) # Temporary debug - ensure exists
     done = false
     ps_thread = Thread.new do
       begin
@@ -36,6 +37,12 @@ class PubSub
             end
             body = ''
             response.read_body do |chunk|
+              # Long time no see?
+              lasttime = File.mtime(ALIVE)
+              diff = (Time.now - lasttime).to_i
+              if diff > 60
+                puts stamp 'HUNG?', diff, lasttime
+              end
               FileUtils.touch(ALIVE) # Temporary debug
               body += chunk
               # All chunks are terminated with \n. Since 2070 can split events into 64kb sub-chunks
@@ -95,6 +102,8 @@ if $0 == __FILE__
   $hits = 0 # items matched
   $misses = 0 # items not matched
 
+  options = {}
+  options[:debug] = ARGV.delete('--debug')
   # Cannot use shift as ARGV is needed for a relaunch
   pubsub_URL = ARGV[0]  || 'https://pubsub.apache.org:2070/svn'
   pubsub_FILE = ARGV[1] || File.join(Dir.home, '.pubsub')
@@ -149,6 +158,12 @@ if $0 == __FILE__
       end
     else
       $misses += 1
+      if File.exist? '/srv/svn/pubsub2rake.trace'
+        log = event['commit']['log'].sub(/\n.*/, '') # keep only first line
+        id = event['commit']['id']
+        puts ""
+        puts stamp id, 'DBG', path, log
+      end
     end # possible match
   end
 
@@ -184,7 +199,7 @@ if $0 == __FILE__
     end
   else
     puts stamp(pubsub_URL)
-    PubSub.listen(pubsub_URL, pubsub_CRED) do |event|
+    PubSub.listen(pubsub_URL, pubsub_CRED, options) do |event|
       process(event)
     end
   end
