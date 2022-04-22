@@ -125,7 +125,7 @@ if $0 == __FILE__
     path = event['pubsub_path']
     if WATCH.include? path # WATCH auto-vivifies
       $hits += 1
-      log = event['commit']['log'].sub(/\n.*/, '') # keep only first line
+      log = event['commit']['log'].sub(/\n.*/m, '') # keep only first line
       id = event['commit']['id']
       puts ""
       puts stamp id, path, log
@@ -159,7 +159,7 @@ if $0 == __FILE__
     else
       $misses += 1
       if File.exist? '/srv/svn/pubsub2rake.trace'
-        log = event['commit']['log'].sub(/\n.*/, '') # keep only first line
+        log = event['commit']['log'].sub(/\n.*/m, '') # keep only first line
         id = event['commit']['id']
         puts ""
         puts stamp id, path, 'DBG', log
