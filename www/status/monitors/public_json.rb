@@ -61,6 +61,11 @@ def Monitor.public_json(previous_status)
           title: "#{warnings.length} warnings"
       end
 
+      # Ruby warnings
+      if contents.gsub!(%r{^/(?:var|usr)/lib/\S+: (warning:.*?)\n+}, '')
+        status[name].merge! level: 'warning', data: $1
+      end
+
       # Check to see if the log has been updated recently
       if Time.now - File.mtime(log) > warning_period
         status[name].merge! level: 'warning',
@@ -71,11 +76,6 @@ def Monitor.public_json(previous_status)
       if Time.now - File.mtime(log) > danger_period
         status[name].merge! level: 'danger',
           data: "Last updated: #{File.mtime(log).to_s} (more than 24 hours old)"
-      end
-
-      # Ruby warnings
-      if contents.gsub!(%r{^/var/lib/\S+: (warning:.*?)\n+}, '')
-        status[name].merge! level: 'warning', data: $1
       end
 
       # Treat everything left as an error to be reported
