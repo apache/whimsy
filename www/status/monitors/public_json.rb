@@ -43,20 +43,20 @@ def Monitor.public_json(previous_status)
       contents_save = contents.dup # in case we need to send an email
 
       # Ignore Wunderbar logging for normal messages (may occur multiple times)
-      contents.gsub! /^(_INFO|_DEBUG) .*?\n+/, ''
+      contents.gsub!(/^(_INFO|_DEBUG) .*?\n+/, '')
 
       # diff -u output: (may have additional \n at end)
-      if contents.gsub! /^--- .*?\n\n?(\n|\Z)/m, ''
+      if contents.gsub!(/^--- .*?\n\n?(\n|\Z)/m, '')
         status[name].merge! level: 'info', title: 'updated'
       end
 
       # Wunderbar warning
       warnings = contents.scan(/^_WARN (.*?)\n+/)
       if warnings.length == 1
-        contents.sub! /^_WARN (.*?)\n+/, ''
+        contents.sub!(/^_WARN (.*?)\n+/, '')
         status[name].merge! level: 'warning', data: $1
       elsif warnings.length > 0
-        contents.gsub! /^_WARN (.*?)\n+/, ''
+        contents.gsub!(/^_WARN (.*?)\n+/, '')
         status[name].merge! level: 'warning', data: warnings.flatten,
           title: "#{warnings.length} warnings"
       end
@@ -71,6 +71,11 @@ def Monitor.public_json(previous_status)
       if Time.now - File.mtime(log) > danger_period
         status[name].merge! level: 'danger',
           data: "Last updated: #{File.mtime(log).to_s} (more than 24 hours old)"
+      end
+
+      # Ruby warnings
+      if contents.gsub!(%r{^/var/lib/\S+: (warning:.*?)\n+}, '')
+        status[name].merge! level: 'warning', data: $1
       end
 
       # Treat everything left as an error to be reported
