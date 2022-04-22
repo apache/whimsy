@@ -83,7 +83,7 @@ and running - these are only needed for a new deployment.
  * Ensure that the IP address is static, and has been added to the list of allowed mail relays
 
  * Run the following command to create an SSL cert (see [tutorial](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-18-04) for details):
-     * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org -d whimsy4.apache.org -d whimsy-vm4.apache.org -d whimsy-test.apache.org`
+     * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org -d whimsy6.apache.org -d whimsy-vm6.apache.org -d whimsy-test.apache.org`
 
  * The SVN settings should now be set up in whimsy-vm5 and later (Puppet 6)
 
@@ -105,10 +105,11 @@ and running - these are only needed for a new deployment.
      but ensures that the rsync has been tested for the new host and allows the new host to be better tested
 
  * Add the following mail subscriptions (see apmail/trunk/bin/whimsy_subscribe.sh):
-    * Subscribe `board@whimsy-vm4.apache.org` to `board@apache.org`.
-    * Subscribe `members@whimsy-vm4.apache.org` to `members@apache.org`.
-    * Subscribe `www-data@whimsy-vm4.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
-    * Add `secretary@whimsy-vm4.apache.org` to the `secretary@apache.org` alias.
+    * Subscribe `board@whimsy-vm6.apache.org` to `board@apache.org`.
+    * Subscribe `members@whimsy-vm6.apache.org` to `members@apache.org`.
+    * Subscribe `www-data@whimsy-vm6.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
+    * Subscribe `root@whimsy-vm6.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
+    * Add `secretary@whimsy-vm6.apache.org` to the `secretary@apache.org` alias.
 
  * Verify that email can be sent to non-apache.org email addresses.
    * Run [testmail.rb](tools/testmail.rb)
