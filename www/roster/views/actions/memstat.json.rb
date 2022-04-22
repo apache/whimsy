@@ -73,16 +73,12 @@ elsif @action == 'request_emeritus'
   raise "Failed to read emeritus-request.txt: " + code unless code == "200"
   centered_id = USERID.center(55, '_')
   centered_name = USERNAME.center(55, '_')
-  centered_date = TIMESTAMP.center(55, '_')
+  centered_date = TIMESTAMP.center(25, '_')
   signed_request = template
-    .gsub('Apache id: _______________________________________________________',
-        ('Apache id: ' + centered_id))
-    .gsub('Full name: _______________________________________________________',
-          ('Full name: ' + centered_name))
-    .gsub('Signed: __________________________________________________________',
-          'Signed by validated user at: ________Whimsy www/committer_________')
-    .gsub('Date: _________________________________',
-          ('Date: _______' + centered_date))
+    .sub(/Apache id: _+/, ('Apache id: ' + centered_id))
+    .sub(/Full name: _+/, ('Full name: ' + centered_name))
+    .sub(/Signed: _+/, 'Signed by validated user at: ________Whimsy www/committer_________')
+    .sub(/Date: _+/, ('Date: ' + centered_date))
   # Write the emeritus request to emeritus-requests-received
   EMERITUS_REQUEST_URL = ASF::SVN.svnpath!('emeritus-requests-received')
   rc = ASF::SVN.create_(EMERITUS_REQUEST_URL, "#{USERID}.txt", signed_request, "Emeritus request from #{USERNAME} (#{USERID})", env, _)
