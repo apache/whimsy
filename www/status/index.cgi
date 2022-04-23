@@ -77,7 +77,9 @@ print <<-EOF
     <p>
       This status is monitored by:
       <!-- https://nodeping.com/reports/status/70MTNEPXE6 -->
-      <a href="https://nodeping.com/reports/checks/e7hdvmc4-5e85-41vr-8xho-t8rjxow9dipl">NodePing</a>.
+      <a href="https://nodeping.com/reports/status/70MTNEPXE6">NodePing</a>.
+      <a href="https://nodeping.com/reports/checks/e7hdvmc4-5e85-41vr-8xho-t8rjxow9dipl">Whimsy(Status)</a>.
+      <a href="https://nodeping.com/reports/checks/z5duuwlz-fou6-4yti-8g53-aj0g2jblle6a">Whimsy(Website)</a>.
     </p>
 
     <h2>Additional status</h2>
