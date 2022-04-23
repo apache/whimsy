@@ -58,7 +58,7 @@ not_required_message = user_is_required ?' required':' not required'
 user_affirmation = SIGNERS.include? USERID
 have_affirmed_message = user_affirmation ? ' have affirmed' : ' have not affirmed'
 USER_IS_REQUIRED_BUT_NOT_AFFIRMED = (user_is_required and not user_affirmation)
-current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S"
+current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S %:z"
 PANEL_MESSAGE = USER_IS_REQUIRED_BUT_NOT_AFFIRMED ?
   'Sign Your Conflict of Interest Affirmation':
   'Thank you for signing the Conflict of Interest Affirmation'
