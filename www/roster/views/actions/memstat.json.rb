@@ -6,7 +6,7 @@ raise Exception.new("Unable to find member entry for #{@userid}") unless entry
 USERID = user.id
 USERMAIL = "#{USERID}@apache.org"
 USERNAME = user.cn
-TIMESTAMP = (DateTime.now.strftime "%Y-%m-%d %H:%M:%S")
+TIMESTAMP = (DateTime.now.strftime "%Y-%m-%d %H:%M:%S %:z")
 
 # identify file to be updated
 members_txt = ASF::SVN.svnpath!('foundation', 'members.txt')
