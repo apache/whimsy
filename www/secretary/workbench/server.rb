@@ -79,6 +79,7 @@ get '/' do
       date: Time.at(epoch.to_i).gmtime.asctime,
       time: Time.at(epoch.to_i).gmtime.iso8601,
       href: "/roster/committer/#{id}",
+      href2: ASF::SVN.svnpath!('emeritus-requests-received', file),
       from: ASF::Person.find(id).cn,
       subject: "Pending emeritus request - #{days} days old",
       status: days < 10.0 ? :emeritusPending : :emeritusReady

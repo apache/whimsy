@@ -53,7 +53,9 @@ class Index < Vue
               end
               _td message.from
               if %i[emeritusReady emeritusPending].include? message.status
-                _td message.subject, class: message.status
+                _td do
+                  _a message.subject, class: message.status, href: message.href2, target: "_blank"
+                end
               elsif message.secmail
                 _td do
                   _ message.subject
