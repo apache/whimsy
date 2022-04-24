@@ -69,8 +69,11 @@
     url: private/documents/cclas
     depth: skip
 
-  comdev-foundation: # only want projects.json?
+  comdev-foundation:
     url: asf/comdev/projects.apache.org/trunk/site/json/foundation
+    depth: empty
+    files:
+      - projects.json
 
   comdevtalks:
     url: asf/comdev/site/trunk/content/speakers/talks
