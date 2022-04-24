@@ -189,12 +189,19 @@ if $0 == __FILE__
     # be other commits that mix directories.
     pubsub_key = [path_prefix, one, 'commit'].join('/')
     WATCH[pubsub_key] << [svn_relpath, name, desc['files']]
+    # The whimsy user does not have full access to private commits.
+    # As a work-round, commits that touch both documents and foundation are given the topic documents
+    # This means that foundation commits may also be found under documents
+    if two == 'foundation'
+      pubsub_key = [path_prefix, one, 'documents', 'commit'].join('/')
+      WATCH[pubsub_key] << [svn_relpath, name, desc['files']]
+    end
   end
 
   if pubsub_URL == 'WATCH' # dump keys for use in constructing URL
     WATCH.sort.each do |k, v|
       puts k
-      v.each do |e|
+      v.sort.each do |e|
         print '- '
         p e
       end
