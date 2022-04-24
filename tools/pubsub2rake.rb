@@ -173,13 +173,21 @@ if $0 == __FILE__
   ASF::SVN.repo_entries(true).each do |name, desc|
     next if desc['depth'] == 'skip' # not needed
 
-    url = desc['url']
+    # Drop the dist.a.o prefix
+    url = desc['url'].sub(%r{https?://.+?/repos/}, '')
 
     one, two, three = url.split('/', 3)
-    next if one.start_with? 'http' # dist.a.o
-    path_prefix = one == 'asf' ? ['/svn'] : ['/private', 'svn']
+    path_prefix = %w{asf dist}.include?(one) ? ['/svn'] : ['/private', 'svn']
     pubsub_key = [path_prefix, one, two, 'commit'].join('/')
     svn_relpath = [two, three].join('/')
+    WATCH[pubsub_key] << [svn_relpath, name, desc['files']]
+    # N.B. A commit that includes more than one top-level directory
+    # does not include either directory in the pubsub path.
+    # e.g. dev->release dist renames have the path /svn/dist/commit
+    # Allow for this by adding the parent path as well
+    # This is only likely to be needed for dist, but there may
+    # be other commits that mix directories.
+    pubsub_key = [path_prefix, one, 'commit'].join('/')
     WATCH[pubsub_key] << [svn_relpath, name, desc['files']]
   end
 
