@@ -6,7 +6,7 @@ require 'mail'
 require 'whimsy/lockfile'
 
 # creates the discussion phase JSON file
-# sends an email to the originator with the link 
+# sends an email to the originator with the link
 
 # Called from invite.js.rb POST
 # expects the following variables to be set:
@@ -55,7 +55,7 @@ end
 
 # create the discussion object
 timestamp = Time.now.utc.to_s
-date = timestamp[0..9] # keep only the date 
+date = timestamp[0..9] # keep only the date
 contributor = {:name => @iclaname, :email => @iclaemail}
 comment = @proposalText + "\n" + @discussComment
 comments = [{:member => @proposer, :timestamp => timestamp, :comment => comment}]

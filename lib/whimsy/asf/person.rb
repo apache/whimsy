@@ -167,9 +167,9 @@ module ASF
 
     # extract sn and givenName from cn (needed for LDAP entries)
     # returns sn, [givenName,...]
-    # Note that givenName is returned as an array (may be empty). 
+    # Note that givenName is returned as an array (may be empty).
     # This is because givenName is an optional attribute which may appear multiple times.
-    # It remains to be seen whether we want to create multiple attributes, 
+    # It remains to be seen whether we want to create multiple attributes,
     # or whether it is more appropriate to add at most one attribute
     # containing all the givenName values. [The array can be joined to produce a single value].
     # DRAFT version: not for general use yet
@@ -186,7 +186,7 @@ module ASF
 
     # Name equivalences
     names = [
-      %w(Alex Alexander Alexandru), 
+      %w(Alex Alexander Alexandru),
       %w(Andrew Andy),
       %w(William Bill),
       %w(Chris Christopher Christoph),

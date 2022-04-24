@@ -3,7 +3,7 @@ require 'net/http'
 module ASF
 
   # Represents a Petri culture
-  # currently defined in 
+  # currently defined in
   # https://petri.apache.org/info.yaml
 
   PETRI_INFO = 'https://petri.apache.org/info.yaml'

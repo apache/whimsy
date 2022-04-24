@@ -35,7 +35,7 @@ ASF::MLIST.list_parse('sub') do |dom, list, subs|
     end
     [sub, person]
   end.to_h
-  lists[dom.sub('.apache.org', '')] = 
+  lists[dom.sub('.apache.org', '')] =
     {subCount: unknown + ids.size, subscribers: sub_hash}
 end
 

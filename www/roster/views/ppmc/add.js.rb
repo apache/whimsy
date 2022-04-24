@@ -57,7 +57,7 @@ class PPMCAdd < Vue
               _p do
                 _br
                 _b do
-                  _ 'Before adding a new PPMC member, ' 
+                  _ 'Before adding a new PPMC member, '
                   _a 'email notification must be sent to the Incubator private mailing list',
                     href: 'https://incubator.apache.org/guides/ppmc.html#voting_in_a_new_ppmc_member'
                   _br

@@ -38,7 +38,7 @@ _html do
 
   _h1 "public names: LDAP vs iclas.txt"
 
-  # prefetch LDAP data 
+  # prefetch LDAP data
   # Seems it needs to be saved in a variable to ensure it is cached
   _cache = ASF::Person.preload(%w(cn dn))
 

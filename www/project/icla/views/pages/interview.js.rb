@@ -9,7 +9,7 @@ class Interview < Vue
     @disableButton3 = false
 
     @disablePersonalDetails = false
-    @alert = nil    
+    @alert = nil
   end
 
   def render
@@ -24,7 +24,7 @@ class Interview < Vue
       process of licensing to the ASF any copyright and patents that may apply
       to your contributions.
     }
-      
+
     _p %{
       This process should only take a few minutes, and is entirely online.
       First we will ask you verify your email address and Public Name.
@@ -73,7 +73,7 @@ class Interview < Vue
              of that employer, or"
         _li "has your employer waived such rights for your Contributions to
              the Foundation, or"
-        _li "has your employer executed a separate Corporate CLA with the 
+        _li "has your employer executed a separate Corporate CLA with the
              Foundation?"
       end
 
@@ -164,12 +164,12 @@ class Interview < Vue
   end
 
   def clickButton1()
-    @disableButton1 = true 
+    @disableButton1 = true
     @showQuestion2 = true
   end
 
   def clickButton2()
-    @disableButton2 = true 
+    @disableButton2 = true
     @showQuestion3 = true
   end
 

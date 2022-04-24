@@ -206,7 +206,7 @@ module ASF
       inactive = matrix.select do |id, _name, _first, missed|
         id and missed >= meetingsMissed
       end
-    
+
       Hash[inactive.map {|id, name, first, missed|
         [id, {
           'name' => name,

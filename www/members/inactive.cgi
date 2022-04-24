@@ -171,7 +171,7 @@ _html do
 
           _p_ %{
             If you haven't attended or voted in meetings recently, please consider participating, at
-            least by proxy, in the upcoming membership meeting.  Assigning a proxy does NOT prevent 
+            least by proxy, in the upcoming membership meeting.  Assigning a proxy does NOT prevent
             you from attending meetings or
             automatically grant the assignee to the right to vote on your behalf.
           }

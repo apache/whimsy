@@ -40,7 +40,7 @@ def sendTally(contents)
   pmc = ASF::Committee.find(contents['project'])
   pmc_email = "#{pmc.mail_list}@apache.org"
   subject = "[RESULT]" + contents['subject']
-  last_votes = Hash.new  
+  last_votes = Hash.new
   votes = contents['votes']
   votes.each { |v|
     last_votes[v['member']] = [v['vote'], v['timestamp']]
@@ -110,12 +110,12 @@ def update()
     end
   elsif HAS_COMMENT.include? @action
     if @comment
-      addComment = 
+      addComment =
       {
         'comment' => @comment,
         'member' => @member,
         'timestamp' => timestamp,
-      } 
+      }
     else
       raise ArgumentError.new("comment must not be nil for '#{@action}'")
     end
@@ -131,7 +131,7 @@ def update()
   LockFile.lockfile(file, 'r+', File::LOCK_EX) do |f|
     contents = JSON::parse(f.read)
     phase = contents['phase']
-    raise ArgumentError.new("Phase '#{phase}': expected '#{@expectedPhase}'") unless @expectedPhase == '*' or phases.include? phase 
+    raise ArgumentError.new("Phase '#{phase}': expected '#{@expectedPhase}'") unless @expectedPhase == '*' or phases.include? phase
     if @newPhase && @newPhase != phase
       contents['phase'] = @newPhase
       rewrite = true

@@ -113,7 +113,7 @@ if @votelink and not @votelink.empty?
     http = Net::HTTP.new(uri.host.untaint, uri.port)
     if uri.scheme == 'https'
       http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE 
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
     request = Net::HTTP::Head.new(uri.request_uri.untaint)
     response = http.request(request)

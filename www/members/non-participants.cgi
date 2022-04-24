@@ -25,7 +25,7 @@ end
 # separator / is added when link is generated
 ROSTER = "/roster/committer"
 if not ENV['QUERY_STRING'] or ENV['QUERY_STRING'].include? 'json'
-  ENV['HTTP_ACCEPT'] = 'application/json' 
+  ENV['HTTP_ACCEPT'] = 'application/json'
 end
 
 # produce HTML

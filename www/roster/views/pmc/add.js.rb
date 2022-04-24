@@ -57,7 +57,7 @@ class PMCAdd < Vue
               _p do
                 _br
                 _b do
-                  _ 'Before adding a new PMC member, ' 
+                  _ 'Before adding a new PMC member, '
                   _a 'email notification must be sent to the Board mailing list',
                     href: 'https://www.apache.org/dev/pmc.html#send-the-board-a-notice-of-the-vote-to-add-someone'
                   _ ' (cc: the PMC private@ mailing list).'

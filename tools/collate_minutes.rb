@@ -688,7 +688,7 @@ seen={}
       title.sub! 'Vice Chairman', 'Vice Chair'
       title.sub! 'Acting Chairman', 'Acting Chair'
       title.sub! 'Chairman', 'Board Chair'
-    
+
       report = OpenStruct.new
       if title.include? ' ['
         report.owners = title.split(' [').last.sub(']','').strip

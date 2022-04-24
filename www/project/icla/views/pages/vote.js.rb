@@ -106,7 +106,7 @@ class Vote < Vue
       }
 
       _h5 'Summary of voting so far'
-      
+
       vote_count = {}
       tally.each_key { |k|
         vote_count[tally[k][0]] ||= 0

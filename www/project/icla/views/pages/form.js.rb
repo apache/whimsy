@@ -52,7 +52,7 @@ class Form < Vue
     if FormData.votelink
       _div.form_group do
         _p 'Preferred Apache Id:'
-        _input.form_control.apacheId! value: @apacheId, 
+        _input.form_control.apacheId! value: @apacheId,
           placeholder: 'At least 3 lower-case alphanumeric, starting with alpha. Separate multiple choices with spaces.',
           pattern: "^[a-z][a-z0-9]{2,}{1,}\s*(\s+[a-z][a-z0-9]{2,}{1,})*$"
           # Single name, optional spaces after, followed by zero or more names with leading spaces

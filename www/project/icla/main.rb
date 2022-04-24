@@ -29,7 +29,7 @@ helpers do
       select {|pmc| committees.include?(pmc.name)}. # keep the ones relevant to the user
       sort_by{|p| p.name}.
       map{|p| [p.name, {pmc: true, display_name: p.display_name, mail_list: p.mail_list}]}.to_h  # convert to hash of data items
-    ppmcData =   
+    ppmcData =
       ASF::Podling.list.select {|podling| podling.status == 'current'}. # get the podlings
       select {|p| committees.include?('incubator') || project_owners.include?(p.name)}. # keep the ones relevant to the user
       sort_by{|p| p.name}.

@@ -192,11 +192,11 @@ namespace :svn do
                   # log the failure - prefix tells monitor to ignore it
                   puts "#{PREFIX} failed!"
                   outerr.split("\n").each do |l|
-                    puts "#{PREFIX} #{l}"                    
+                    puts "#{PREFIX} #{l}"
                   end
                   n = 10
                   puts "#{PREFIX} will retry in #{n} seconds"
-                  sleep n                    
+                  sleep n
                 end
                 begin
                   r, w = IO.pipe

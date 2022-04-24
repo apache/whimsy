@@ -27,7 +27,7 @@ def post(target, data, &block)
 
       begin
         if xhr.status == 200
-          data = JSON.parse(xhr.responseText) 
+          data = JSON.parse(xhr.responseText)
         elsif xhr.status == 404
           alert "Not Found: actions/#{target}"
         elsif xhr.status >= 400
