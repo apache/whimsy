@@ -11,6 +11,9 @@ def stamp(*s)
   "%s: %s" % [Time.now.gmtime.to_s, s.join(' ')]
 end
 
+# need to fetch all topics to ensure mixed commits are seen
+PUBSUB_URL = 'https://pubsub.apache.org:2070/svn'
+
 class PubSub
 
   require 'fileutils'
@@ -105,7 +108,7 @@ if $0 == __FILE__
   options = {}
   options[:debug] = ARGV.delete('--debug')
   # Cannot use shift as ARGV is needed for a relaunch
-  pubsub_URL = ARGV[0]  || 'https://pubsub.apache.org:2070/svn'
+  pubsub_URL = ARGV[0]  || PUBSUB_URL
   pubsub_FILE = ARGV[1] || File.join(Dir.home, '.pubsub')
   pubsub_CRED = File.read(pubsub_FILE).chomp.split(':') rescue nil
 
@@ -123,7 +126,7 @@ if $0 == __FILE__
 
   def process(event)
     path = event['pubsub_path']
-    if WATCH.include? path # WATCH auto-vivifies
+    if WATCH.include? path # WATCH auto-vivifies so cannot use [] here
       $hits += 1
       log = event['commit']['log'].sub(/\n.*/m, '') # keep only first line
       id = event['commit']['id']
@@ -181,7 +184,13 @@ if $0 == __FILE__
   end
 
   if pubsub_URL == 'WATCH' # dump keys for use in constructing URL
-    WATCH.keys.sort.each {|k| puts k}
+    WATCH.sort.each do |k, v|
+      puts k
+      v.each do |e|
+        print '- '
+        p e
+      end
+    end
     exit
   end
 
