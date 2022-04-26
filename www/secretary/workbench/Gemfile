@@ -23,4 +23,4 @@ gem 'listen'
 gem 'escape'
 gem 'pdf-reader'
 
-gem 'net-smtp', require: false # for Ruby 3.1
+gem 'net-smtp', require: false unless RUBY_VERSION =~ /^2/ # for Ruby 3.1
