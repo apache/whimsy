@@ -92,7 +92,7 @@ known yet what functions work and what functions do not.
 
 Installation layout
 -------------------
-The `docker/docker-compose.yml` has the following mounts:
+The `docker-compose.yml` has the following mounts:
 
 container path      host path
 /srv                directory chosen in step 1
