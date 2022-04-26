@@ -124,6 +124,17 @@ To correct this, do the following:
     cd /srv/svn
     svn co https://svn.apache.org/repos/private/foundation/board foundation_board
 
+Testing email
+-------------
+
+The following command can be used to run a dummy smtp server on port 1025:
+`python3 -u -m smtpd -n -c DebuggingServer localhost:1025`
+
+It can be tested with:
+`tools/testmail.rb <userid>`
+
+[Note that Whimsy does not generally send emails unless it detects that it is the active server.]
+
 Known not to work (ToDos)
 -------------------------
 
