@@ -48,7 +48,7 @@ _html do
 
       # merge ldap info, preferring public names over name listed in members.txt
       ldap = ASF.members
-      preload = ASF::Person.preload('cn', ldap)
+      _preload = ASF::Person.preload('cn', ldap)
 
       ldap.each do |person|
         if members[person.id]
@@ -79,7 +79,7 @@ _html do
           end
 
           _tbody do
-            members.sort_by {|id, info| info[:name]}.each do |id, info|
+            members.sort_by {|_id, info| info[:name]}.each do |id, info|
               _tr_ do
                 _td! do
                   if ldap.include? ASF::Person.find(id)
@@ -87,7 +87,7 @@ _html do
                   else
                     _a id, href: "committer/#{id}"
 
-                    info[:issue] ||= 'Not in LDAP "member" group' if not info['status']
+                    info[:issue] ||= 'Not in LDAP "member" group' unless info['status']
                   end
                 end
 
@@ -95,7 +95,7 @@ _html do
 
                 if info[:issue]
                   _td.issue info[:issue]
-                elsif
+                else
                   _td info['status']
                 end
               end
