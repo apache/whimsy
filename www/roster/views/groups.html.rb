@@ -72,8 +72,9 @@ _html do
         end
       end
     end
+
+    _script %{
+      $(".table").stupidtable();
+    }
   end
-  _script %{
-    $(".table").stupidtable();
-  }
 end
