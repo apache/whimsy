@@ -27,7 +27,7 @@ describe ASF::MLIST do
       res = ASF::MLIST.members_subscribers()
       expect(res.class).to eq(Array)
       expect(res.length).to eq(2)
-      subs,stamp = res
+      subs, stamp = res
       expect(subs.class).to eq(Array)
       expect(stamp.class).to eq(Time)
       expect(subs.length).to be_between(500, 1000).inclusive
@@ -39,7 +39,7 @@ describe ASF::MLIST do
       ASF::MLIST.list_archivers do |res|
         expect(res.class).to eq(Array)
         expect(res.length).to eq(3)
-        dom,list,arches = res # unpack
+        dom, list, arches = res # unpack
         expect(dom.class).to eq(String)
         expect(list.class).to eq(String)
         expect(arches.class).to eq(Array)
@@ -52,7 +52,7 @@ describe ASF::MLIST do
 
   describe "ASF::MLIST.moderates(user_emails, response)" do
     it "should not find any entries for invalid emails" do
-      user_emails=['user@localhost', 'user@domain.invalid']
+      user_emails = ['user@localhost', 'user@domain.invalid']
       res = ASF::MLIST.moderates(user_emails)
       expect(res.length).to eq(2)
       mods = res[:moderates]
@@ -60,7 +60,7 @@ describe ASF::MLIST do
     end
 
     it "should find some entries for mod-private@gsuite.cloud.apache.org" do
-      user_emails=['mod-private@gsuite.cloud.apache.org']
+      user_emails = ['mod-private@gsuite.cloud.apache.org']
       res = ASF::MLIST.moderates(user_emails)
       expect(res.length).to eq(2)
       mods = res[:moderates]
@@ -70,7 +70,7 @@ describe ASF::MLIST do
 
   describe "ASF::MLIST.subscriptions(user_emails, response)" do
     it "should not find any entries for invalid emails" do
-      user_emails=['user@localhost', 'user@domain.invalid']
+      user_emails = ['user@localhost', 'user@domain.invalid']
       res = ASF::MLIST.subscriptions(user_emails)
       expect(res.length).to eq(2)
       mods = res[:subscriptions]
@@ -79,7 +79,7 @@ describe ASF::MLIST do
   end
 
   it "should find lots of entries for archiver@mbox-vm.apache.org" do
-    user_emails=['archiver@mbox-vm.apache.org']
+    user_emails = ['archiver@mbox-vm.apache.org']
     res = ASF::MLIST.subscriptions(user_emails)
     expect(res.length).to eq(2)
     mods = res[:subscriptions]
@@ -91,7 +91,7 @@ describe ASF::MLIST do
       ASF::MLIST.each_list do |res|
         expect(res.class).to eq(Array)
         expect(res.length).to eq(2)
-        dom,list = res # unpack
+        dom, list = res # unpack
         expect(dom.class).to eq(String)
         expect(list.class).to eq(String)
         expect(dom).to match(/^[a-z.0-9-]+\.[a-z]+$/)
@@ -103,14 +103,14 @@ describe ASF::MLIST do
 
   describe "ASF::MLIST.list_subscribers(mail_domain, podling=false, list_subs=false, skip_archivers=false)" do
     it "abcd should return an array of the form [Hash, Time]" do
-       res = ASF::MLIST.list_subscribers('abcd')
-       # array of Hash and Updated date
-       expect(res.class).to eq(Array)
-       expect(res.length).to eq(2)
-       list, stamp = res
-       expect(list.class).to eq(Hash)
-       expect(stamp.class).to eq(Time)
-       expect(list.size).to eq(0)
+      res = ASF::MLIST.list_subscribers('abcd')
+      # array of Hash and Updated date
+      expect(res.class).to eq(Array)
+      expect(res.length).to eq(2)
+      list, stamp = res
+      expect(list.class).to eq(Hash)
+      expect(stamp.class).to eq(Time)
+      expect(list.size).to eq(0)
     end
     it "members should have some entries" do
       list, _ = ASF::MLIST.list_subscribers('members')
@@ -122,18 +122,18 @@ describe ASF::MLIST do
         expect(list.keys[0]).to eq('members@apache.org')
         expect(list.keys[1]).to eq('members-notify@apache.org')
       end
-   end
+    end
   end
   describe "ASF::MLIST.list_moderators(mail_domain, podling=false)" do
     it "abcd should return an array of the form [Hash, Time]" do
-       res = ASF::MLIST.list_moderators('abcd')
-       # array of Hash and Updated date
-       expect(res.class).to eq(Array)
-       expect(res.length).to eq(2)
-       list, stamp = res
-       expect(list.class).to eq(Hash)
-       expect(stamp.class).to eq(Time)
-       expect(list.size).to eq(0)
+      res = ASF::MLIST.list_moderators('abcd')
+      # array of Hash and Updated date
+      expect(res.class).to eq(Array)
+      expect(res.length).to eq(2)
+      list, stamp = res
+      expect(list.class).to eq(Hash)
+      expect(stamp.class).to eq(Time)
+      expect(list.size).to eq(0)
     end
     it "members should have some entries" do
       list, _ = ASF::MLIST.list_moderators('members')
@@ -153,6 +153,6 @@ describe ASF::MLIST do
         expect(entry.size).to eq(2)
         expect(entry[1].size).to be_between(2, 5).inclusive # number of moderators
       end
-   end
+    end
   end
 end
