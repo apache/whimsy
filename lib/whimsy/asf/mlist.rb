@@ -1,5 +1,6 @@
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
+require 'find'
 require 'weakref'
 require 'whimsy/asf/config'
 
@@ -27,17 +28,17 @@ module ASF
 
     # Return an array of board subscribers followed by the file update time
     def self.board_subscribers(archivers=true)
-      return list_filter('sub', 'apache.org', 'board', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+      return list_filter('sub', 'apache.org', 'board', archivers), File.mtime(LIST_TIME)
     end
 
     # Return an array of members@ subscribers followed by the file update time
     def self.members_subscribers(archivers=true)
-      return list_filter('sub', 'apache.org', 'members', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+      return list_filter('sub', 'apache.org', 'members', archivers), File.mtime(LIST_TIME)
     end
 
     # Return an array of members-notify@ subscribers followed by the file update time
     def self.members_notify_subscribers(archivers=true)
-      return list_filter('sub', 'apache.org', 'members-notify', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+      return list_filter('sub', 'apache.org', 'members-notify', archivers), File.mtime(LIST_TIME)
     end
 
     # Return an array of private@pmc subscribers followed by the file update time
@@ -48,9 +49,9 @@ module ASF
       return [] unless Dir.exist? LIST_BASE
       parts = pmc.split('@', 3) # want to detect trailing '@'
       if parts.length == 1
-        return list_filter('sub', "#{pmc}.apache.org", 'private', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+        return list_filter('sub', "#{pmc}.apache.org", 'private', archivers), File.mtime(LIST_TIME)
       elsif parts.length == 2 && parts[1] == 'apache.org'
-        return list_filter('sub', parts[1], parts[0], archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+        return list_filter('sub', parts[1], parts[0], archivers), File.mtime(LIST_TIME)
       else
         raise "Unexpected parameter: #{pmc}"
       end
@@ -58,7 +59,7 @@ module ASF
 
     def self.security_subscribers(pmc, archivers=false)
       return [] unless Dir.exist? LIST_BASE
-      return list_filter('sub', "#{pmc}.apache.org", 'security', archivers), (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+      return list_filter('sub', "#{pmc}.apache.org", 'security', archivers), File.mtime(LIST_TIME)
     end
 
     # return a hash of subscriptions for the list of emails provided
@@ -68,10 +69,8 @@ module ASF
     # N.B. not the same format as the moderates() method
     def self.subscriptions(emails, response = {})
 
-      return response unless File.exist? LIST_SUBS
-
       response[:subscriptions] = []
-      response[:subtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+      response[:subtime] = File.mtime(LIST_TIME)
 
       emailslc = emails.map {|email| ASF::Mail.to_canonical(email.downcase)}
       list_parse('sub') do |dom, list, subs|
@@ -91,10 +90,8 @@ module ASF
     # N.B. not the same format as the moderates() method
     def self.digests(emails, response = {})
 
-      return response unless File.exist? LIST_DIGS
-
       response[:digests] = []
-      response[:digtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_DIGS))
+      response[:digtime] = File.mtime(LIST_TIME)
 
       emailslc = emails.map {|email| ASF::Mail.to_canonical(email.downcase)}
       list_parse('dig') do |dom, list, subs|
@@ -114,10 +111,8 @@ module ASF
     # N.B. not the same format as the subscriptions() method
     def self.moderates(user_emails, response = {})
 
-      return response unless File.exist? LIST_MODS
-
       response[:moderates] = {}
-      response[:modtime] = (File.mtime(LIST_TIME) rescue File.mtime(LIST_MODS))
+      response[:modtime] = File.mtime(LIST_TIME)
       umails = user_emails.map {|m| ASF::Mail.to_canonical(m.downcase)} # outside loop
       list_parse('mod') do |dom, list, emails|
         matching = emails.select {|m| umails.include? ASF::Mail.to_canonical(m.downcase)}
@@ -146,8 +141,6 @@ module ASF
     # if mail_domain is nil, matches all lists except infra test lists
     def self.list_moderators(mail_domain, _podling=false)
 
-      return nil, nil unless File.exist? LIST_MODS
-
       moderators = {}
       list_parse('mod') do |dom, list, subs|
 
@@ -160,7 +153,7 @@ module ASF
 
         moderators["#{list}@#{dom}"] = subs.sort
       end
-      return moderators.to_h, (File.mtime(LIST_TIME) rescue File.mtime(LIST_MODS))
+      return moderators.to_h, File.mtime(LIST_TIME)
     end
 
     # for a mail domain, extract related lists and their subscribers (default only the count)
@@ -177,9 +170,7 @@ module ASF
     # apache.org/{mail_domain}(-.*)? (e.g. press, legal)
     # incubator.apache.org/{mail_domain}-.* (if podling==true)
     # Returns: {list}@{dom}
-    def self.list_subscribers(mail_domain, podling=false, list_subs=false, skip_archivers=false)
-
-      return nil, nil unless File.exist? LIST_SUBS
+    def self.list_subscribers(mail_domain, _podling=false, list_subs=false, skip_archivers=false)
 
       subscribers = {}
       list_parse('sub') do |dom, list, subs|
@@ -200,7 +191,7 @@ module ASF
           subscribers["#{list}@#{dom}"] = list_subs ? subs.sort : subs.size
         end
       end
-      return subscribers.to_h, (File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS))
+      return subscribers.to_h, File.mtime(LIST_TIME)
     end
 
     # for a mail domain, extract related lists and their subscribers (default only the count)
@@ -222,7 +213,7 @@ module ASF
 
     # returns the list time (defaulting to list-subs time if the marker is not present)
     def self.list_time
-      File.mtime(LIST_TIME) rescue File.mtime(LIST_SUBS)
+      File.mtime(LIST_TIME)
     end
 
     def self.list_archivers
@@ -260,8 +251,11 @@ module ASF
     # return the [domain, list] for all entries in the subscriber listings
     # the subscribers are not included
     def self.each_list
-      list_parse('sub') do |dom, list, _subs|
-        yield [dom, list]
+      Find.find(LIST_CACHE) do |path|
+        parts = path.split('/')
+        if parts[-1] == 'sub'
+          yield [parts[-3], parts[-2]]
+        end
       end
     end
 
@@ -312,7 +306,7 @@ module ASF
     end
 
     def self.is_private_archiver?(e)
-      [ARCH_MBOX_PRV, ARCH_PONY_PRV].include? (e) or
+      [ARCH_MBOX_PRV, ARCH_PONY_PRV].include?(e) or
         e =~ /^security-archive@.*\.apache\.org$/ or
         e =~ /^apmail-\w+-security-archive@www.apache.org/ # direct subscription
     end
@@ -334,13 +328,12 @@ module ASF
     # The email addresses are returned as an array. May be empty.
     # If there is no match, then nil is returned
     def self.list_filter(type, matchdom, matchlist, archivers=true)
-      list_parse(type) do |dom, list, emails|
-        if matchdom == dom && matchlist == list
-          if archivers
-            return emails
-          else
-            return emails.reject {|e| is_archiver?(e)}
-          end
+      list = File.join(LIST_CACHE, matchdom, matchlist, type)
+      if File.exist? list
+        if archivers
+          return File.read(list).split("\n")
+        else
+          return File.read(list).split("\n").reject {|e| is_archiver?(e)}
         end
       end
       return nil
@@ -353,20 +346,16 @@ module ASF
     # - list (e.g. dev)
     # - emails as an array
     def self.list_parse(type)
-      if type == 'mod'
-        path = LIST_MODS
-        suffix = '/mod'
-      elsif type == 'sub'
-        path = LIST_SUBS
-        suffix = ''
-      elsif type == 'dig'
-        path = LIST_DIGS
-        suffix = '/digest'
+      case type
+      when 'dig'
+        type = 'digest'
+      when 'sub', 'mod'
+        #
       else
         raise ArgumentError.new('type: expecting dig, mod or sub')
       end
       ctime = @@file_times[type] || 0
-      mtime = File.mtime(path).to_i
+      mtime = File.mtime(LIST_TIME).to_i
       if mtime <= ctime
         cached = @@file_parsed[type]
         if cached
@@ -382,25 +371,16 @@ module ASF
       else
         @@file_parsed[type] = nil
       end
+
       cache = [] # see if this preserves mod cache
-      # split file into paragraphs
-      File.read(path).split(/\n\n/).each do |stanza|
-        # domain may start in column 1 or following a '/'
-        # match [/home/apmail/lists/][accumulo.]apache.org/dev[/mod]
-        # list names can include '-': empire-db
-        # or    [/home/apmail/lists/]apachecon.com/announce[/mod]
-        match = stanza.match(%r{(?:^|/)([-\w]*\.?apache\.org|apachecon\.com)/(.*?)#{suffix}(?:\n|\Z)})
-        if match
-          dom = match[1].downcase.freeze # just in case
-          list = match[2].downcase.freeze # just in case
-          # Keep original case of email addresses
-          mails = stanza.split(/\n/).select {|x| x =~ /@/}.freeze
+      Find.find(LIST_CACHE) do |path|
+        parts = path.split('/')
+        if parts[-1] == type
+          dom = parts[-3].downcase.freeze
+          list = parts[-2].downcase.freeze
+          mails = File.read(path).split("\n")
           cache << [dom, list, mails]
-          yield dom, list, mails
-        else
-          # don't allow mismatches as that means the RE is wrong
-          line = stanza[0..(stanza.index("\n") || -1)]
-          raise ArgumentError.new("Unexpected section header #{line}")
+          yield [dom, list, mails]
         end
       end
       @@file_parsed[type] = WeakRef.new(cache)
@@ -429,17 +409,11 @@ module ASF
 
     LIST_BASE = ASF::Config[:subscriptions] # allow overrides for testing etc
 
-    # Note: the files are named after the sub-list (mod, digest etc) with an 's' appended
-    # The main subscriber list uses 'subs' as the name suffix
-    LIST_MODS = File.join(LIST_BASE, 'list-mods')
-
-    LIST_SUBS = File.join(LIST_BASE, 'list-subs')
-
-    LIST_DIGS = File.join(LIST_BASE, 'list-digests')
-
     # If this file exists, it is the time when the data was last extracted
     # The mods and subs files are only updated if they have changed
     LIST_TIME = File.join(LIST_BASE, 'list-start')
+
+    LIST_CACHE = File.join(LIST_BASE, 'cache')
 
   end
 end
