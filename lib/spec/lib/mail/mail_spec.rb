@@ -51,7 +51,7 @@ describe ASF::Mail do
       if TEST_DATA
         expect(lists.length).to be >= 7
       else
-          expect(lists.length).to be >= 1000
+        expect(lists.length).to be >= 1000
       end
       expect(lists).not_to include('private')
       expect(lists).not_to include('security')
