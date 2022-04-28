@@ -30,7 +30,11 @@ describe ASF::MLIST do
       subs, stamp = res
       expect(subs.class).to eq(Array)
       expect(stamp.class).to eq(Time)
-      expect(subs.length).to be_between(500, 1000).inclusive
+      if TEST_DATA
+        expect(subs.length).to be_between(1, 10).inclusive
+      else
+        expect(subs.length).to be_between(500, 1000).inclusive
+      end
     end
   end
 
@@ -83,7 +87,11 @@ describe ASF::MLIST do
     res = ASF::MLIST.subscriptions(user_emails)
     expect(res.length).to eq(2)
     mods = res[:subscriptions]
-    expect(mods.length).to be_between(1000, 1200)
+    if TEST_DATA
+      expect(mods.length).to be_between(10, 20)
+    else
+      expect(mods.length).to be_between(1000, 1200)
+    end
   end
 
   describe "ASF::MLIST.each_list" do
