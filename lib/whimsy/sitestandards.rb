@@ -119,6 +119,15 @@ module SiteStandards
       CHECK_DOC => 'All websites must link to the Privacy Policy.',
     },
 
+    'resources' => { # Custom: resources not outside ASF
+      CHECK_TEXT => nil,
+      CHECK_CAPTURE => nil,
+      CHECK_VALIDATE => %r{.}i,
+      CHECK_TYPE => true,
+      CHECK_POLICY => 'https://privacy.apache.org/faq/committers.html',
+      CHECK_DOC => 'Websites must not link to externally hosted resources',
+    },
+
     'image' => { # Custom: merely looks in IMAGE_DIR for #{id}.*
       CHECK_TEXT => nil,
       CHECK_CAPTURE => nil,

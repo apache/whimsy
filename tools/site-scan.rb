@@ -13,6 +13,7 @@ require 'json'
 require 'whimsy/asf'
 require 'whimsy/cache'
 require 'whimsy/sitestandards'
+require_relative 'asf-site-check'
 
 # Normalize spaces in text runs
 def squash(text)
@@ -145,6 +146,13 @@ def parse(id, site, name)
   end
   # THIRD: see if an image has been uploaded
   data[:image] = ASF::SiteImage.find(id)
+
+  # Check for resource loading from non-ASF domains
+  js_urls  = doc.xpath('//script/@src').map(&:content).reject {|x| ASFDOMAIN.asfurl? x}
+  css_urls = doc.xpath('//link/@href').map(&:content).reject {|x| ASFDOMAIN.asfurl? x}
+  img_urls = doc.xpath('//img/@src').map(&:content).reject {|x| ASFDOMAIN.asfurl? x}
+  resources = js_urls.size + css_urls.size + img_urls.size
+  data[:resources] = 'Found no external resources' if resources == 0
 
   return data
 end
