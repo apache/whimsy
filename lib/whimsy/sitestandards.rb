@@ -120,8 +120,8 @@ module SiteStandards
     },
 
     'resources' => { # Custom: resources not outside ASF
-      CHECK_TEXT => nil,
-      CHECK_CAPTURE => nil,
+      CHECK_TEXT => %r{Found \d+ external resources},
+      CHECK_CAPTURE => %r{Found \d+ external resources},
       CHECK_VALIDATE => %r{Found 0 external resources},
       CHECK_TYPE => false,
       CHECK_POLICY => 'https://privacy.apache.org/faq/committers.html',
