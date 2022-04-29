@@ -108,7 +108,7 @@ def parse(id, site, name)
       end
     end
 
-    %w(thanks security sponsorship).each do |check|
+    %w(thanks security sponsorship privacy).each do |check|
       if a_text =~ SiteStandards::COMMON_CHECKS[check][SiteStandards::CHECK_CAPTURE]
         begin
           data[check.to_sym] = uri + a_href
@@ -157,7 +157,7 @@ $cache = Cache.new(dir: 'site-scan')
 $verbose = ARGV.delete '--verbose'
 
 # USAGE:
-# site-scan.rb https://whimsical.apache.org [whimsy] [whimsy-scan.json] - to scan one project
+# site-scan.rb https://whimsical.apache.org [Whimsy] [whimsy-scan.json] - to scan one project
 # site-scan.rb [project-output.json] [podlings-output.json] [projname podlingname ...]
 # If additional projname|podlingname are provided, only scans those sites
 if ARGV.first =~ /^https?:\/\/\w/
