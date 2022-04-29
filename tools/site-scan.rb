@@ -152,8 +152,10 @@ def parse(id, site, name)
   css_urls = doc.xpath('//link/@href').map(&:content).reject {|x| ASFDOMAIN.asfurl? x}
   img_urls = doc.xpath('//img/@src').map(&:content).reject {|x| ASFDOMAIN.asfurl? x}
   resources = js_urls.size + css_urls.size + img_urls.size
-  data[:resources] = 'Found no external resources' if resources == 0
+  data[:resources] = "Found #{resources} external resources"
 
+  #  TODO: does not find js references such as:
+  #  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
   return data
 end
 

@@ -122,8 +122,8 @@ module SiteStandards
     'resources' => { # Custom: resources not outside ASF
       CHECK_TEXT => nil,
       CHECK_CAPTURE => nil,
-      CHECK_VALIDATE => %r{.}i,
-      CHECK_TYPE => true,
+      CHECK_VALIDATE => %r{Found 0 external resources},
+      CHECK_TYPE => false,
       CHECK_POLICY => 'https://privacy.apache.org/faq/committers.html',
       CHECK_DOC => 'Websites must not link to externally hosted resources',
     },
