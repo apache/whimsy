@@ -66,6 +66,14 @@ module ASFDOMAIN
       return true # a relative link
     end
   end
+  # Return external host name or nil
+  # extracts hostname and calls asfhost?
+  def self.to_ext_host(url)
+    if url =~ %r{\Ahttps?://(.+?)(/|\z)}i
+      return $1 unless asfhost?($1)
+    end
+    return nil
+  end
 end
 
 if __FILE__ == $0

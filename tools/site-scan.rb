@@ -148,11 +148,10 @@ def parse(id, site, name)
   data[:image] = ASF::SiteImage.find(id)
 
   # Check for resource loading from non-ASF domains
-  js_urls  = doc.xpath('//script/@src').map(&:content).reject {|x| ASFDOMAIN.asfurl? x}
-  css_urls = doc.xpath('//link/@href').map(&:content).reject {|x| ASFDOMAIN.asfurl? x}
-  img_urls = doc.xpath('//img/@src').map(&:content).reject {|x| ASFDOMAIN.asfurl? x}
-  resources = js_urls.size + css_urls.size + img_urls.size
-  data[:resources] = "Found #{resources} external resources"
+  ext_urls  = doc.xpath('//script/@src', '//link/@href', '//img/@src').
+    map(&:content).map {|x| ASFDOMAIN.to_ext_host x}.compact.tally
+  resources = ext_urls.values.sum
+  data[:resources] = "Found #{resources} external resources: #{ext_urls}"
 
   #  TODO: does not find js references such as:
   #  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
