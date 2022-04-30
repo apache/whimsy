@@ -132,3 +132,11 @@ and running - these are only needed for a new deployment.
    * Note that the /srv/mail/* directories will in general be different between hosts
      This is because the final delivery routes will vary.
      However, rather than try and merge the files, it is simpler to do a full copy of `/srv/mail`
+
+Mail server configuration
+-------------------------
+The mail server is unlikely to change, but if it does, rsync auth will need to be set up.
+  * generate an SSH keypair for the apmail login:
+    * `sudo -Hiu apmail`
+    * `ssh-keygen -t ecdsa -b 521`
+  * copy the public key from `.ssh/id_ecdsa.pub` to the Puppet file `data/nodes/whimsy-vm6.apache.org.yaml` under the `whimsy_server::procmail::apmail_keycontent` key.
