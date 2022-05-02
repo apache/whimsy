@@ -148,10 +148,15 @@ def parse(id, site, name)
   data[:image] = ASF::SiteImage.find(id)
 
   # Check for resource loading from non-ASF domains
-  ext_urls  = doc.xpath('//script/@src', '//link/@href', '//img/@src').
-    map(&:content).map {|x| ASFDOMAIN.to_ext_host x}.compact.tally
-  resources = ext_urls.values.sum
-  data[:resources] = "Found #{resources} external resources: #{ext_urls}"
+  cmd = ['node', '/srv/whimsy/tools/scan-page.js', site]
+  out, err, status = Open3.capture3(*cmd)
+  if status.success?
+    ext_urls = out.split("\n").reject {|x| ASFDOMAIN.asfhost? x}.tally
+    resources = ext_urls.values.sum
+    data[:resources] = "Found #{resources} external resources: #{ext_urls}"
+  else
+    data[:resources] = err
+  end
 
   #  TODO: does not find js references such as:
   #  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
