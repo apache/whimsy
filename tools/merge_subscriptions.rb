@@ -56,10 +56,6 @@ def merge_files(old_host, new_host, out)
     f.puts("#{total} total") # add total back in
   end
 
-  # merge qmail.ids
-  merged = File.read(File.join(OLD, 'qmail.ids')).split("\n").union(File.read(File.join(new_host, 'qmail.ids')).split("\n"))
-  File.write(File.join(out, 'qmail.ids'), merged.join("\n"))
-
   # merge list-flags
   flags = {}
   File.open(File.join(old_host, 'list-flags')).each do |line|
@@ -113,10 +109,27 @@ def merge_files(old_host, new_host, out)
   FileUtils.copy_file(File.join(new_host, 'list-start'), File.join(out, 'list-start'), true)
 end
 
-OLD = '/srv/subscriptions1' # old host needs to push files here
-NEW = '/srv/subscriptions2' # new host will push files here
-OUT = '/srv/subscriptions0' # this needs to be changed to '/srv/subscriptions0' when working
+# merge qmail.ids
+def merge_qmail(old_host, new_host, out)
+  merged = File.read(File.join(old_host, 'qmail.ids')).
+    split("\n").union(File.read(File.join(new_host, 'qmail.ids')).split("\n"))
+  File.write(File.join(out, 'qmail.ids'), merged.join("\n"))
+end
 
-merge_files OLD, NEW, OUT
+OLD = '/srv/subscriptions1' # old host puts files here
+NEW = '/srv/subscriptions2' # new host puts files here
+OUT = '/srv/subscriptions0' # this needs to be changed to '/srv/subscriptions' when working
+
+if __FILE__ == $0
+  type = ARGV.shift
+  if type == 'qmail'
+    merge_qmail OLD, NEW, OUT
+  elsif type == 'files'
+    merge_files OLD, NEW, OUT
+  else
+    raise "Unexpected merge type: expected 'qmail' or 'files'"
+  end
+end
+
 
 # TODO: link this into a file update checker
