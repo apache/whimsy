@@ -2,7 +2,7 @@
 
 // @(#) extract non-ASF links when loading a page
 
-module.paths.push('/usr/local/lib/node_modules')
+module.paths.push('/usr/lib/node_modules')
 
 const puppeteer = require('puppeteer');
 
