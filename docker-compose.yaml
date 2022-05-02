@@ -9,7 +9,6 @@ services:
       - "HOST_HOME=$HOME"
     volumes:
       - ..:/srv
-# https://github.com/apache/whimsy/issues/119
-# These don't appear to be needed
-#      - $HOME/.subversion:/$HOME/.subversion
-#      - $HOME/.ssh:/$HOME/.ssh
+    # Needed to run puppeteer
+    cap_add:
+      - SYS_ADMIN

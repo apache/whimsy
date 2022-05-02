@@ -63,11 +63,13 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y vim
 # for checking ldap settings etc
 RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y ldap-utils
 
+# Install puppeteer
+RUN curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - 
+RUN echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list
+RUN apt update && apt install -y google-chrome-stable
+RUN npm install -g puppeteer --unsafe-perm=true
+
 #  For testing agenda, you may need the following:
-# curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
-# sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' 
-# apt-get update
-# apt-get install -y google-chrome-stable
 # Find the chrome version:
 # google-chrome --version
 # Install chromedriver:
