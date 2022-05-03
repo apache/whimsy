@@ -49,11 +49,10 @@ def merge_files(old_host, new_host, out)
   end
 
   File.open(File.join(out, 'list-counts'), 'w') do |f|
-    total = counts.delete('total') # does not sort correctly
+    counts.delete('total') # does not sort correctly; and cannot be merged
     counts.sort.each do |k, v|
       f.puts "#{v} #{k}"
     end
-    f.puts("#{total} total") # add total back in
   end
 
   # merge list-flags
