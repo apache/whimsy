@@ -91,6 +91,18 @@ $ npm -v
 If you don't see v6 or higher, run `hash -r` and try again.  If you previously
 installed node via brew, you may need to run `brew upgrade node` instead.
 
+Install Puppeteer
+-----------------
+There are a couple of scripts that require the Puppeteer node module.
+Installing this is optional, as the scripts are currently only used for cron jobs.
+```
+npm install -g puppeteer
+```
+To enable easy access to the module, define the following enviroment variable:
+```export NODE_PATH=$(npm root -g)```
+For example this may produce
+```NODE_PATH="/usr/local/lib/node_modules"```
+Note: on Ubuntu, it looks as though the default is ```/usr/lib/node_modules```
 
 Clone the Whimsy code
 ------------
