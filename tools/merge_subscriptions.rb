@@ -95,7 +95,7 @@ def merge_files(old_host, new_host, out)
       targ = path.sub(old_host, out)
       # At the start of a merge, there may be plain files from before
       # These need to be replaced with soft links
-      unless File.ftype(targ) == 'link'
+      unless File.exist?(targ) && File.ftype(targ) == 'link'
         dir = File.dirname(targ)
         unless File.directory? dir
           # puts "Making #{dir}"
