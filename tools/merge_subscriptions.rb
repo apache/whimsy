@@ -24,7 +24,7 @@
 # qmail.ids = read both files, and eliminate duplicates
 # list-flags = read old file, storing in hash (dom+list); merge in new; write out merged
 # list-start - copy from NEW directory at end of run
-# list-counts - is that needed? TODO
+# list-counts - merge (apart from total)
 
 require 'find'
 require 'fileutils'
@@ -56,24 +56,33 @@ def merge_files(old_host, new_host, out)
   end
 
   # merge list-flags
-  flags = {}
-  File.open(File.join(old_host, 'list-flags')).each do |line|
-    parts = line.chomp.split(' ', 2)
-    flags[parts[1]] = parts[0]
-  end
+  old_flags = File.join(old_host, 'list-flags')
+  new_flags = File.join(new_host, 'list-flags')
+  out_flags = File.join(out, 'list-flags')
+  out_time = File.mtime(out_flags) rescue 0
+  # only update flags if they have changed
+  if File.mtime(old_flags) > out_time || File.mtime(new_flags) > out_time
 
-  File.open(File.join(new_host, 'list-flags')).each do |line|
-    parts = line.chomp.split(' ', 2)
-    flags[parts[1]] = parts[0]
-  end
-
-  File.open(File.join(out, 'list-flags'), 'w') do |f|
-    flags.sort.each do |k, v|
-      f.puts "#{v} #{k}"
+    flags = {}
+    File.open(old_flags).each do |line|
+      parts = line.chomp.split(' ', 2)
+      flags[parts[1]] = parts[0]
     end
+
+    File.open(new_flags).each do |line|
+      parts = line.chomp.split(' ', 2)
+      flags[parts[1]] = parts[0]
+    end
+
+    File.open(out_flags, 'w') do |f|
+      flags.sort.each do |k, v|
+        f.puts "#{v} #{k}"
+      end
+    end
+
   end
 
-  # Create links to new cache files as necessary
+    # Create links to new cache files as necessary
   Find.find(File.join(new_host, 'cache')) do |path|
     if File.file? path
       targ = path.sub(new_host, out)
