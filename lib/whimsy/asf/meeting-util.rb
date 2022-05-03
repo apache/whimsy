@@ -80,6 +80,11 @@ module ASF
       end
     end
 
+    # Get the latest completed Meetings dir (i.e. has raw-irc-log)
+    # TODO: is that the most appropriate file to check?
+    def self.get_latest_completed(mtg_root, sentinel='raw-irc-log')
+      return Dir[File.join(mtg_root, '2*')].select {|d| File.exist? File.join(d, sentinel) }.max
+    end
     # Get the latest available Meetings dir
     def self.get_latest(mtg_root)
       return Dir[File.join(mtg_root, '2*')].max
