@@ -7,9 +7,10 @@ module.paths.push('/usr/lib/node_modules')
 const puppeteer = require('puppeteer');
 
 const target = process.argv[2] || 'http://apache.org/';
+const option = process.argv[3] || '';
 
 function isASFhost(host) {
-    return host == 'apache.org' || host.endsWith('.apache.org') || host.endsWith('.apachecon.com');
+    return host == '' || host == 'apache.org' || host.endsWith('.apache.org') || host.endsWith('.apachecon.com');
 }
 
 (async () => {
@@ -26,10 +27,15 @@ function isASFhost(host) {
         interceptedRequest.continue();
     } else {
         let host = new URL(url).host
-        // don't visit non-ASF hosts
         if (!isASFhost(host)) {
-            console.log(host);
-            interceptedRequest.abort();
+            // don't visit non-ASF hosts unless requested
+            if (option == 'all') {
+                console.log(url);
+                interceptedRequest.continue();
+            } else {
+                console.log(host);
+                interceptedRequest.abort();
+            }
         } else { 
             // Need to visit at least an initial redirect
             interceptedRequest.continue();
