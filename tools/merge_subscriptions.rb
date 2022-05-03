@@ -120,7 +120,7 @@ end
 
 OLD = '/srv/subscriptions1' # old host puts files here
 NEW = '/srv/subscriptions2' # new host puts files here
-OUT = '/srv/subscriptions0' # this needs to be changed to '/srv/subscriptions' when working
+OUT = '/srv/subscriptions' # Whimsy expects the files here
 
 if __FILE__ == $0
   type = ARGV.shift
