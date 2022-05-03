@@ -110,7 +110,7 @@ def merge_files(old_host, new_host, out)
           FileUtils.mkdir_p dir
         end
         # puts "Linking #{targ}"
-        FileUtils.symlink path, targ
+        FileUtils.symlink path, targ, force: true
       end
     end
   end
