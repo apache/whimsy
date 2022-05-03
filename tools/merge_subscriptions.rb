@@ -93,7 +93,9 @@ def merge_files(old_host, new_host, out)
   Find.find(File.join(old_host, 'cache')) do |path|
     if File.file? path
       targ = path.sub(old_host, out)
-      unless File.exist? targ
+      # At the start of a merge, there may be plain files from before
+      # These need to be replaced with soft links
+      unless File.ftype(targ) == 'link'
         dir = File.dirname(targ)
         unless File.directory? dir
           # puts "Making #{dir}"
