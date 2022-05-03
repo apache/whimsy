@@ -66,10 +66,13 @@ def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt, num_members, quorum_need, num_pro
   end
 end
 
+MEETINGS = ASF::SVN['Meetings']
+
 # produce HTML
 _html do
   _body? do
-    MEETINGS = ASF::SVN['Meetings']
+    last_mtg_dir = ASF::MeetingUtil.get_latest_completed(MEETINGS)
+    last_mtg_date = Date.parse(File.basename(last_mtg_dir))
     cur_mtg_dir = ASF::MeetingUtil.get_latest(MEETINGS)
     meeting = File.basename(cur_mtg_dir)
     svn_mtg_dir = File.join(ASF::MeetingUtil::RECORDS, meeting)
@@ -116,7 +119,7 @@ _html do
         if today > m2_date # Based on the reconvene date
           _p do
             _ %{
-              The last Annual Member's Meeting was held #{mtg_date.strftime('%A, %d %B %Y')}.  Expect the
+              The last Annual Member's Meeting was held #{last_mtg_date.strftime('%A, %d %B %Y')}.  Expect the
               next Member's meeting to be scheduled between 12 - 13 months after the previous meeting, as per
             }
             _a 'https://www.apache.org/foundation/bylaws.html#3.2', 'the bylaws 3.2.'
@@ -148,6 +151,8 @@ _html do
         end
       }
     ) do
+      # if there is a new meeting in the offing, use its date
+      m1_date = mtg_date if m1_date == ERROR_DATE && cur_mtg_dir > last_mtg_dir
       help, copypasta = ASF::MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
       # attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
       user = ASF::Person.find($USER)
