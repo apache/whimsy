@@ -7,10 +7,15 @@ module.paths.push('/usr/lib/node_modules')
 const puppeteer = require('puppeteer');
 
 const target = process.argv[2] || 'http://apache.org/';
+const inithost = new URL(target).host;
+
 const option = process.argv[3] || '';
 
 function isASFhost(host) {
     return host == '' || host == 'apache.org' || host.endsWith('.apache.org') || host.endsWith('.apachecon.com');
+}
+if (!isASFhost(inithost)) {
+    throw new Error("Only ASF hosts are supported - saw " + inithost);
 }
 
 (async () => {
@@ -33,7 +38,11 @@ function isASFhost(host) {
                 console.log(url);
                 interceptedRequest.continue();
             } else {
-                console.log(host);
+                if (option == 'showurl') {
+                  console.log(url);
+                } else {
+                  console.log(host);
+                }
                 interceptedRequest.abort();
             }
         } else { 
