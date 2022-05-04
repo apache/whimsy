@@ -51,6 +51,12 @@ if (!isASFhost(inithost)) {
         }
     }
   });
-  await page.goto(target);
+  let result = await page.goto(target);
+  let status = result._status;
+  if (status != 200) {
+    let url = result._url;
+    let error = `Status ${status} for ${url}`;
+    throw new Error(error);
+  }
   await browser.close();
 })();
