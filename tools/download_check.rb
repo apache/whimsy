@@ -56,7 +56,8 @@ $versions = Hash.new {|h1, k1| h1[k1] = Hash.new {|h2, k2| h2[k2] = Array.new} }
 # match an artifact
 # TODO detect artifacts by URL as well if possible
 # $1 = base, $2 = extension
-ARTIFACT_RE = %r{/([^/]+\.(pom|crate|tar|tar\.xz|tar\.gz|deb|nbm|dmg|sh|zip|tgz|far|tar\.bz2|jar|whl|war|msi|exe|rar|rpm|nar|xml|vsix))([&?]action=download)?$}
+# OOO SF links end in /download
+ARTIFACT_RE = %r{/([^/]+\.(pom|crate|tar|tar\.xz|tar\.gz|deb|nbm|dmg|sh|zip|tgz|far|tar\.bz2|jar|whl|war|msi|exe|rar|rpm|nar|xml|vsix))([&?]action=download|/download)?$}
 
 def init
   # build a list of validation errors
@@ -306,6 +307,7 @@ VERIFY_TEXT = [
   'To check a GPG signature',
   'To verify Hadoop',
   'Instructions for verifying your mirrored downloads', # fineract
+  'How to verify the download?', # OOO
 ]
 
 ALIASES = {
@@ -372,7 +374,11 @@ def _checkDownloadPage(path, tlp, version)
   end
 
   # check the main body
-  body = check_page(path)
+  if $ALLOW_JS
+    body = `/srv/whimsy/tools/render-page.js #{path}`
+  else
+    body = check_page(path)
+  end
 
   return unless body
 
@@ -800,6 +806,7 @@ if __FILE__ == $0
   $ALLOW_HTTP = ARGV.delete '--http'
   $FAIL_FAST = ARGV.delete '--ff'
   $SHOW_LINKS = ARGV.delete '--show-links'
+  $ALLOW_JS = ARGV.delete '--js-allow'
 
   # check for any unhandled options
   ARGV.each do |arg|
