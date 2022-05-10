@@ -115,6 +115,19 @@ def merge_files(old_host, new_host, out)
     end
   end
 
+  # Remove any dangling files/links (e.g. after a list is removed)
+  Find.find(File.join(out, 'cache')) do |path|
+    next if File.directory? path
+    unless File.exist?(path) && File.ftype(path) == 'link'
+      $stderr.puts "WARN: Removing real file or missing link #{path}"
+      begin
+        File.unlink(path)
+      rescue StandardError => e
+        $stderr.puts "WARN: Failed to remove path #{e.inspect}"
+      end
+    end
+  end
+
   # Update the timestamp
   FileUtils.copy_file(File.join(new_host, 'list-start'), File.join(out, 'list-start'), true)
 end
