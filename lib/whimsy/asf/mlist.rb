@@ -378,9 +378,14 @@ module ASF
         if parts[-1] == type
           dom = parts[-3].downcase.freeze
           list = parts[-2].downcase.freeze
-          mails = File.read(path).split("\n")
-          cache << [dom, list, mails]
-          yield [dom, list, mails]
+          begin
+            # During mail migration links are used - allow for broken ones
+            mails = File.read(path).split("\n")
+            cache << [dom, list, mails]
+            yield [dom, list, mails]
+          rescue StandardError => e
+            Wunderbar.warn e
+          end
         end
       end
       @@file_parsed[type] = WeakRef.new(cache)
