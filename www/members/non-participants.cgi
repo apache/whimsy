@@ -129,5 +129,6 @@ _html do
 end
 
 _json do
-  ASF::MeetingUtil.tracker((@meetingsMissed || 3).to_i)
+  ASF::MeetingUtil.tracker((@meetingsMissed || 3).to_i).
+    select {|id, info| info['status'] == @status || @status == nil}.to_h
 end
