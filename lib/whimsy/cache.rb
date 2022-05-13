@@ -77,8 +77,12 @@ class Cache
       end
     else
       uri, res = fetch(url)
-      write_cache(url, res)
-      return uri, res.body, data ? 'no last mod/etag' : 'missing'
+      if res.is_a?(Net::HTTPSuccess)
+        write_cache(url, res)
+        return uri, res.body, data ? 'no last mod/etag' : 'missing'
+      else
+        return nil, res, 'error'
+      end
     end
   end
 
