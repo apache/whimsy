@@ -98,7 +98,7 @@ Installing this is optional, as the scripts are currently only used for cron job
 ```
 npm install -g puppeteer
 ```
-To enable easy access to the module, define the following enviroment variable:
+To enable easy access to the module, define the following environment variable:
 ```export NODE_PATH=$(npm root -g)```
 For example this may produce
 ```NODE_PATH="/usr/local/lib/node_modules"```
