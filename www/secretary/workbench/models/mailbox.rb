@@ -167,7 +167,7 @@ class Mailbox
   # return headers (client view)
   #
   def client_headers
-    # fetch a list of headers for all messages in the maibox with attachments
+    # fetch a list of headers for all messages in the mailbox with attachments
     headers = self.headers.to_a.select do |id, message|
       not Message.attachments(message).empty?
     end
