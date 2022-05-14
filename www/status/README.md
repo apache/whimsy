@@ -77,7 +77,7 @@ such items will show the GMT value of the time specified in ISO-8601 format.
 Control Flow
 ============
 
-Fetching the [https://whimsy-test.apache.org/status/](status) web page, which
+Fetching the [status](https://whimsy.apache.org/status/) web page, which
 can be done either by browsers or pings, results in a call to
 [index.cgi](https://github.com/apache/whimsy/blob/master/www/status/index.cgi).
 If it has been more than 60 seconds since the last status update, index.cgi
