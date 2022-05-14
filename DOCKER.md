@@ -32,7 +32,7 @@ be in order.  Some things appear to perform well, other things perform
 noticeably slower than a native (non-container) installation of whimsy.
 
 You will also need to ensure the subversion [file system
-format](https://www.visualsvn.com/support/topic/00135/#FilesystemFormat) of the
+format](https://www.visualsvn.com/support/topic/00135/#FilesystemFormat)
 used by the host machine matches the format used by the container.  Currently
 macOS Catalina/Xcode provides svn 1.10.4 and the Dockerfile downloads the
 latest 1.10 version (currently 1.10.6).
