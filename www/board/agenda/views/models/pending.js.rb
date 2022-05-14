@@ -23,7 +23,7 @@ class Pending
         end
       end
 
-      # update with the lastest once available
+      # update with the latest once available
       fetch(request).then do |response|
         if response.ok
           cache.put(request, response.clone())

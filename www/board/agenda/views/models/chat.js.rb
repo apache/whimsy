@@ -19,7 +19,7 @@ class Chat
     self.countdown()
     setInterval self.countdown, 30_000
 
-    # synchonize chat logs
+    # synchronize chat logs
     if defined? BroadcastChannel
       channel = BroadcastChannel.new('chatsync')
 
