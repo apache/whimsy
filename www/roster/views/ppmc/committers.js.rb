@@ -113,7 +113,7 @@ class PPMCCommitter < Vue
             _button.btn.btn_primary 'Add as an incubator committer',
               data_action: 'add icommit',
               data_target: '#confirm', data_toggle: 'modal',
-              data_confirmation: "Add #{@@person.name} as a commiter " +
+              data_confirmation: "Add #{@@person.name} as a committer " +
                 "for the incubator PPMC?"
           end
         end
