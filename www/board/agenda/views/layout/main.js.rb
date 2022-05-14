@@ -128,7 +128,7 @@ class Main < Vue
       history.replaceState({path: path}, nil, path)
     end
 
-    # listen for back button, and re-route/re-render when it occcurs
+    # listen for back button, and re-route/re-render when it occurs
     window.addEventListener :popstate do |event|
       if event.state and defined? event.state.path
         Main.scrollTo = event.state.scrollY || 0
