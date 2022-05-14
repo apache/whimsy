@@ -13,7 +13,7 @@ The two committers groups should have the same members:
 - cn=committers,ou=groups,dc=apache,dc=org (old unix group)
 
 All committers should be in LDAP people
-LDAP people whould be committers (unles login is disabled)
+LDAP people would be committers (unless login is disabled)
 
 =end
 

@@ -1,7 +1,7 @@
 #
 # File an additional ICLA:
 #  - [optional] move existing ICLA into a directory
-#  - add files to (new) documents/iclas dirctory
+#  - add files to (new) documents/iclas directory
 #  - modify officers/iclas.txt entry
 #  - respond to original email
 #

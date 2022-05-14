@@ -202,7 +202,7 @@ _html do
             if process_form(formdata: submission)
               _p.lead "Thanks for Submitting This Form!"
               _p do
-                _ "The process_form method would have done any procesing needed with the data, after calling validate_data."
+                _ "The process_form method would have done any processing needed with the data, after calling validate_data."
               end
             else
               _div.alert.alert_warning role: 'alert' do

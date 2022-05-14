@@ -7,7 +7,7 @@ if File.exist? version_file
   asf_version = File.read(version_file).chomp
   gem 'whimsy-asf', asf_version, path: File.expand_path(root, __FILE__)
 else
-  # for docker purposes (atleast for now)
+  # for docker purposes (at least for now)
   gem 'whimsy-asf'
 end
 
