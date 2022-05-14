@@ -36,7 +36,7 @@ module ASF
 
     # when this committee is next expected to report.  May be a string
     # containing values such as "Next month: missing in May", "Next month: new,
-    # montly through July".  Data is obtained from <tt>committee-info.txt</tt>.
+    # monthly through July".  Data is obtained from <tt>committee-info.txt</tt>.
     attr_writer :report
 
     # list of members for this committee.  Returned as a list of hash
@@ -593,7 +593,7 @@ module ASF
 
     # when this committee is next expected to report.  May be a string
     # containing values such as "Next month: missing in May", "Next month: new,
-    # montly through July".  Or may be a list of months, separated by commas.
+    # monthly through July".  Or may be a list of months, separated by commas.
     # Data is obtained from <tt>committee-info.txt</tt>.
     def report
       @report || @schedule

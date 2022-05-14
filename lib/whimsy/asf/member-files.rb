@@ -94,7 +94,7 @@ module ASF
     def self.board_nominees
       nominees = {}
       ASF::MemberFiles.parse_file('board_nominations.txt') do |hdr, nominee|
-        # for board, the header currentl looks like this:
+        # for board, the header currently looks like this:
         # <PUBLIC NAME>
         id = ASF::Person.find_by_name!(hdr) || hdr # default to full name
         nominee['Public Name'] = hdr # the board file does not have ids

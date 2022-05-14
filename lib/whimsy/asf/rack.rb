@@ -225,7 +225,7 @@ module ASF
 
   # Apache httpd on the original whimsy-vm was behind a proxy that converts
   # https requests into http requests.  Update the environment variables to
-  # match.  This middleware is likely now obsolte.
+  # match.  This middleware is likely now obsolete.
   class HTTPS_workarounds
     # capture the app
     def initialize(app)

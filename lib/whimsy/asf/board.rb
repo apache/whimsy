@@ -139,7 +139,7 @@ module ASF
       end
     end
 
-    # Does the uid have an entry in the director intials table?
+    # Does the uid have an entry in the director initials table?
     def self.directorHasId?(id)
       DIRECTOR_MAP[id]
     end

@@ -27,7 +27,7 @@ module ASF
     end
 
     def self.sanitize(name)
-      # Don't transform punctation into '-'
+      # Don't transform punctuation into '-'
       ASF::Person.asciize(name.strip.downcase.gsub(/[.,()"]/, ''))
     end
 
