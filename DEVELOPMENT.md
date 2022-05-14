@@ -188,7 +188,7 @@ or read the [detailed MACOSX setup steps](MACOSX.md).
           authentication: plain
           enable_starttls_auto: true
 
-   For more details, see the mail gem documention for
+   For more details, see the mail gem documentation for
    [smtp](http://www.rubydoc.info/github/mikel/mail/Mail/SMTP),
    [exim](http://www.rubydoc.info/github/mikel/mail/Mail/Exim),
    [sendmail](http://www.rubydoc.info/github/mikel/mail/Mail/Sendmail),
