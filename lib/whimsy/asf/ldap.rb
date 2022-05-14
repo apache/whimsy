@@ -242,7 +242,7 @@ module ASF
       File.write(ldap_conf, content) unless content == File.read(ldap_conf)
     end
 
-    # determine if ldap has been configured atleast once
+    # determine if ldap has been configured at least once
     def self.configured?
       return File.read("#{ETCLDAP}/ldap.conf").include? "asf-ldap-client.pem"
     end
@@ -864,7 +864,7 @@ module ASF
       "uid=#{name},#{ASF::Person.base}"
     end
 
-    # Allow arbitrary LDAP attibutes to be referenced as object properties.
+    # Allow arbitrary LDAP attributes to be referenced as object properties.
     # Example: <tt>ASF::Person.find('rubys').cn</tt>.  Can also be used
     # to modify an LDAP attribute.
     def method_missing(name, *args)
