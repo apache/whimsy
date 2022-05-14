@@ -31,7 +31,7 @@
     ]
   },
   "https://whimsy.apache.org/public/icla-info_noid.json": {
-    "description": "Names of people who have submitted ICLAs who don't (yet) have uids (commiter accounts)",
+    "description": "Names of people who have submitted ICLAs who don't (yet) have uids (committer accounts)",
     "format": "hash of array['non_committers'][0] = 'NonCommitter Name'",
     "maintainer": "/www/roster/public_icla_info.rb",
     "sources": [
