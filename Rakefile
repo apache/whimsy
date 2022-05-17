@@ -435,6 +435,8 @@ namespace :docker do
         FileUtils.touch file unless File.exist? file
       end
     end
+    # in case
+    mkdir_p? '/srv/whimsy/www/docs/api'
     # there may be more
 
     # add support for CLI use
