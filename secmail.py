@@ -25,7 +25,7 @@ import gzip
 import mailbox
 import rfc822
 import mimetypes
-import os 
+import os
 from datetime import datetime
 from email.header import decode_header
 from glob import glob
@@ -167,7 +167,7 @@ def detach(msg):
       payload = payload.get_payload()
     else:
       payload = [payload]
-    
+
     # iterate over (possibly nested) attachments
     for subpayload in payload:
       if subpayload.get_content_type() in skip:

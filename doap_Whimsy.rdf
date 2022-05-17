@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl"?>
 <rdf:RDF xml:lang="en"
-         xmlns="http://usefulinc.com/ns/doap#" 
-         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+         xmlns="http://usefulinc.com/ns/doap#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:asfext="http://projects.apache.org/ns/asfext#"
          xmlns:foaf="http://xmlns.com/foaf/0.1/">
 <!--
@@ -12,9 +12,9 @@
     The ASF licenses this file to You under the Apache License, Version 2.0
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
-   
+
          http://www.apache.org/licenses/LICENSE-2.0
-   
+
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@
     <homepage rdf:resource="http://whimsy.apache.org/" />
     <asfext:pmc rdf:resource="http://whimsy.apache.org" />
     <shortdesc>Tools that display and visualize various bits of data related to ASF organizations and processes.</shortdesc>
-    <description>The production Whimsy server also has a number of tools that automate some organizational processes, 
+    <description>The production Whimsy server also has a number of tools that automate some organizational processes,
     like adding PMC members to official corporate rosters or reading, updating, and approving the monthly board agenda.</description>
     <programming-language>JavaScript</programming-language>
     <programming-language>Ruby</programming-language>

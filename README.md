@@ -1,16 +1,16 @@
 Apache Whimsy Project Overview
 ==================
 
-Apache Whimsy is a collection of useful organizational tools used by 
-the ASF and Apache committers to access and manipulate data about 
-Apache people, projects, and processes.  Whimsy is both an [Apache PMC](https://whimsical.apache.org/), 
+Apache Whimsy is a collection of useful organizational tools used by
+the ASF and Apache committers to access and manipulate data about
+Apache people, projects, and processes.  Whimsy is both an [Apache PMC](https://whimsical.apache.org/),
 this codebase, and the live deployed instance of https://whimsy.apache.org/.
 
 The ASF's Whimsy instance hosts static content, repository checkouts/clones, CGI scripts, Rack
-applications, Node.js applications, tools, and cron jobs.  Note: features accessing private 
-ASF data are restricted to committers, Members, or Officers of the ASF. 
+applications, Node.js applications, tools, and cron jobs.  Note: features accessing private
+ASF data are restricted to committers, Members, or Officers of the ASF.
 
-Every commit pushed to master is deployed within minutes to https://whimsy.apache.org/ using 
+Every commit pushed to master is deployed within minutes to https://whimsy.apache.org/ using
 [GitPubSub](https://www.apache.org/dev/gitpubsub.html).
 
 [![Build Status](https://api.travis-ci.com/apache/whimsy.svg?)](https://app.travis-ci.com/github/apache/whimsy)
@@ -40,14 +40,14 @@ and mirrored for Apache committers at:
 How To Get Involved!
 ===============
 
-Since Whimsy hosts many independent tools that make finding or updating information 
-at the ASF simpler, there are plenty of places for Apache committers to 
-get involved.  Bugs or improvement suggestions for the many 
-[tools available on Whimsy](https://whimsy.apache.org/committers/tools) 
+Since Whimsy hosts many independent tools that make finding or updating information
+at the ASF simpler, there are plenty of places for Apache committers to
+get involved.  Bugs or improvement suggestions for the many
+[tools available on Whimsy](https://whimsy.apache.org/committers/tools)
 or [list of public datafiles](https://whimsy.apache.org/test/dataflow.cgi) are always appreciated,
 and please join us on the [public #whimsy channel on Slack](https://the-asf.slack.com/).
 
-If you have an idea for a new Whimsy tool, [email us](mailto:dev@whimsical.apache.org?subject=Tool-Idea)! 
+If you have an idea for a new Whimsy tool, [email us](mailto:dev@whimsical.apache.org?subject=Tool-Idea)!
 The PMC supports a rich server environment, so deploying a new tool is as 
 simple as proposing a .cgi with a bit of Ruby code.  We also have deployments 
 of Rack and Sinatra apps, and use JavaScript and Wunderbar for most of the 

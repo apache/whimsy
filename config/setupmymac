@@ -188,9 +188,9 @@ end
 
 if not $root and option != :docker
   if `which n`.empty?
-    brew 'install', 'n' 
+    brew 'install', 'n'
   elsif force[:node]
-    brew 'upgrade', 'n' 
+    brew 'upgrade', 'n'
   end
 end
 
@@ -518,8 +518,8 @@ end
 wconf_content.sub! /^\s*PassengerUser .*/i, "PassengerUser #{user}"
 wconf_content.sub! /^\s*PassengerGroup .*/i, "PassengerGroup #{group}"
 wconf_target = '/private/etc/apache2/other/whimsy.conf'
-if 
-  not File.exist?(wconf_target) or 
+if
+  not File.exist?(wconf_target) or
   File.read(wconf_target) != wconf_content
 then
   sudo do
@@ -532,8 +532,8 @@ end
 
 confd_source = "#{WHIMSY}/config/25-authz_ldap_group_membership.conf"
 confd_target = '/private/etc/apache2/other/25-authz_ldap_group_membership.conf'
-if 
-  not File.exist?(confd_target) or 
+if
+  not File.exist?(confd_target) or
   File.read(confd_target) != File.read(confd_source)
 then
   sudo do
