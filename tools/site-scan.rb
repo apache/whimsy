@@ -149,8 +149,8 @@ def parse(id, site, name)
 
   # Check for resource loading from non-ASF domains
   cmd = ['node', '/srv/whimsy/tools/scan-page.js', site]
-  out, err, status = Open3.capture3(*cmd)
-  if status.success?
+  out, err, status = exec_with_timeout(cmd, 30)
+  if status
     ext_urls = out.split("\n").reject {|x| ASFDOMAIN.asfhost? x}.tally
     resources = ext_urls.values.sum
     data[:resources] = "Found #{resources} external resources: #{ext_urls}"
@@ -162,6 +162,43 @@ def parse(id, site, name)
   #  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
   return data
 end
+
+require 'timeout'
+# the node script appears to stall sometimes, so apply a timeout
+def exec_with_timeout(cmd, timeout)
+  begin
+    # stdout, stderr pipes
+    rout, wout = IO.pipe
+    rerr, werr = IO.pipe
+    stdout, stderr = nil
+    status = false
+
+    pid = Process.spawn(*cmd, pgroup: true, :out => wout, :err => werr)
+
+    Timeout.timeout(timeout) do
+      Process.waitpid(pid)
+      # close write ends so we can read from them
+      wout.close
+      werr.close
+
+      stdout = rout.readlines.join
+      stderr = rerr.readlines.join
+      status = true
+    end
+
+  rescue Timeout::Error
+    stderr = 'Timeout'
+    Process.kill(-9, pid)
+    Process.detach(pid)
+  ensure
+    wout.close unless wout.closed?
+    werr.close unless werr.closed?
+    # dispose the read ends of the pipes
+    rout.close
+    rerr.close
+  end
+  return stdout, stderr, status
+ end
 
 #########################################################################
 # Main execution begins here
