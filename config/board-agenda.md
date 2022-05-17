@@ -1,6 +1,6 @@
 Configuring the Board Agenda Tool
 
-You can run a local copy of the Board Agenda tool with the below config, 
+You can run a local copy of the Board Agenda tool with the below config,
 for testing or training purposes.
 
 See also:

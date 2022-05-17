@@ -64,7 +64,7 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y vim
 RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y ldap-utils
 
 # Install puppeteer
-RUN curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - 
+RUN curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 RUN echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list
 RUN apt update && apt install -y google-chrome-stable
 RUN npm install -g puppeteer --unsafe-perm=true
@@ -76,9 +76,9 @@ RUN npm install -g puppeteer --unsafe-perm=true
 # e.g. curl -o chromedriver.zip https://chromedriver.storage.googleapis.com/99.0.4844.51/chromedriver_linux64.zip
 # unzip it:
 # unzip chromedriver.zip
-# mv chromedriver /usr/bin/chromedriver 
-# chown root:root /usr/bin/chromedriver 
-# chmod +x /usr/bin/chromedriver 
+# mv chromedriver /usr/bin/chromedriver
+# chown root:root /usr/bin/chromedriver
+# chmod +x /usr/bin/chromedriver
 
 # This should be last, as the source is likely to change
 # It also takes very little time, so it does not matter if it has to be redone

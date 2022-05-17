@@ -45,7 +45,7 @@ if (!isASFhost(inithost)) {
                 }
                 interceptedRequest.abort();
             }
-        } else { 
+        } else {
             // Need to visit at least an initial redirect
             interceptedRequest.continue();
         }

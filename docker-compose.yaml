@@ -3,7 +3,7 @@ services:
   web: # must agree with Rakefile
     image: whimsy-web
     build: .
-    ports: 
+    ports:
       - "1999:80"
     environment:
       - "HOST_HOME=$HOME"

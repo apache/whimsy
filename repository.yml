@@ -25,7 +25,7 @@
   Bills:
     url: private/financials/Bills
     depth: skip
-    
+
 
   Meetings:
     url: private/foundation/Meetings

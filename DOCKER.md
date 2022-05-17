@@ -1,8 +1,8 @@
 Docker execution instructions
 =============================
 
-:dizzy: **New!** For a simpler way to setup a Mac OSX machine, please 
-check out the [setupmymac script](./SETUPMYMAC.md), which automates 
+:dizzy: **New!** For a simpler way to setup a Mac OSX machine, please
+check out the [setupmymac script](./SETUPMYMAC.md), which automates
 configuring and keeping updated a local whimsy instance with Docker.
 
 This is experimental at this point.
@@ -109,7 +109,7 @@ the container)
 Note on Repositories
 --------------------
 
-If you don't want to check out all of the repositories, omit the 
+If you don't want to check out all of the repositories, omit the
 `rake docker:update svn:update git:pull`, and only checkout/clone
 the repositories that you need.  You can find the complete list in
 [repository.yml](./repository.yml).

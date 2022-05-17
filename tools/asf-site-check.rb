@@ -2,7 +2,7 @@
 
 # Determines if a host name is controlled by the ASF
 
-# TODO: derive from the list at: 
+# TODO: derive from the list at:
 # https://raw.githubusercontent.com/apache/privacy-website/main/policies/asf-domains.md
 
 module ASFDOMAIN
