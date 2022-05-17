@@ -82,7 +82,7 @@
   "www/members/subscriptions.cgi": {
     "line": "",
     "symbol": "ARCHIVERS",
-    "description": "List of email addreses for private lists"
+    "description": "List of email addresses for private lists"
   },
   "www/roster/models/nonpmc.rb": {
     "line": "10",

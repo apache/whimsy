@@ -57,7 +57,7 @@ class PageCache
         end
       end
 
-      # preload agenda and referenced pages for next requeset
+      # preload agenda and referenced pages for next request
       base = document.getElementsByTagName('base')[0].href
       navigator.serviceWorker.ready.then do |registration|
         registration.active.postMessage type: 'preload',
