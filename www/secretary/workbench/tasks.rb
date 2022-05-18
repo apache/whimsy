@@ -58,25 +58,11 @@ class Wunderbar::JsonBuilder
     super
   end
 
-  def svn *args
-    args << svnauth if env.password and %(checkout update commit).include?(args.first)
-    _.system! 'svn', *args
-  end
-
-  # alternate version using library method
+  # invoke svn using library method
   # assumes correct ordering of parameters
-  def svn!(command,path,options={})
+  def svn!(command, path, options={})
     options[:env] = env if env.password and %(checkout update commit).include?(command)
-    ASF::SVN.svn_!(command,path,_,options)
-  end
-
-  def svnauth
-    [
-      '--non-interactive',
-      '--no-auth-cache',
-      '--username', env.user,
-      '--password', env.password
-    ]
+    ASF::SVN.svn_!(command, path, _, options)
   end
 
   # Commit new file(s) and update associated index
