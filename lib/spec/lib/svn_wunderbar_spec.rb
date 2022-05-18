@@ -99,10 +99,10 @@ describe "ASF::SVN.svn_" do
 
   it "auth: should override env: and user:/password:" do
     rc1, out1 = _json do |_|
-      ASF::SVN.svn_('help', 'help', _, {auth: [['a','b']], env: ENV_.new('c','d'), user: 'user', password: 'pass', verbose: true, dryrun: true})
+      ASF::SVN.svn_('help', 'help', _, {auth: [['--username', 'a', '--password', 'b']], env: ENV_.new('c','d'), user: 'user', password: 'pass', verbose: true, dryrun: true})
     end
     expect(rc1).to eq(0)
-    exp = [["svn", "help", [["a", "b"]], "--no-auth-cache", "--non-interactive", "--", "help"], {}]
+    exp = [["svn", "help", "--non-interactive", "--", "help"], {}]
     act = out1['transcript'][1]
     expect(act).to eq(exp.inspect)
   end
