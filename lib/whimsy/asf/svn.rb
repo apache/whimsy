@@ -468,14 +468,16 @@ module ASF
         %i[env user password].each do |k|
           options.delete(k)
         end
+        # convert auth for use by _svn_build_cmd
+        auth.flatten.each_slice(2) do |a, b|
+          options[:user] = b if a == "--username"
+          options[:password] = b if a == "--password"
+        end
       end
 
 
       cmd, stdin = self._svn_build_cmd(command, path, options)
       sysopts[:stdin] = stdin if stdin
-      if auth # insert after the command name
-        cmd.insert(2, auth, '--no-auth-cache')
-      end
 
       # This ensures the output is captured in the response
       _.system ['echo', [cmd, sysopts].inspect] if options[:verbose] # includes auth
