@@ -7,10 +7,10 @@ Server = {directors: []}
 
 # Escape HTML characters so that raw text can be safely inserted as HTML
 def htmlEscape(string)
-  return string.gsub(htmlEscape.chars) {|c| htmlEscape.replacement[c]}
+  return string.gsub(htmlEscape.special) {|c| htmlEscape.replacement[c]}
 end
 
-htmlEscape.chars = Regexp.new('[&<>]', 'g')
+htmlEscape.special = Regexp.new('[&<>]', 'g')
 htmlEscape.replacement = {'&' => '&amp;', '<' => '&lt;', '>' => '&gt;'}
 
 # escape a string so that it can be used as a regular expression
