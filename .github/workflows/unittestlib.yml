@@ -22,6 +22,7 @@ jobs:
     steps:
     - name: setup # needed for installing ruby-ldap
       run: |
+        sudo apt-get update
         sudo apt-get install libldap2-dev
         sudo apt-get install libsasl2-dev
       if:  matrix.os != 'macos-latest'  
