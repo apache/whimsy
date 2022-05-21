@@ -98,7 +98,8 @@ class PublishMinutes < Vue
       Server.drafts = drafts
       jQuery('#publish-minutes-form').modal(:hide)
       document.body.classList.remove('modal-open')
-      window.open('https://cms.apache.org/www/publish', '_blank').focus()
+      # No longer exists
+      # window.open('https://cms.apache.org/www/publish', '_blank').focus()
     end
   end
 end
