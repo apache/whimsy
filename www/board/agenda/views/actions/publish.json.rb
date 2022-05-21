@@ -62,7 +62,7 @@ ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
   end
 
   year_minutes = File.join(yeardir, minutes)
-  if not File.exist? year_minutes
+  unless File.exist? year_minutes
     _.system('cp', File.join(BOARD_PRIVATE, minutes), yeardir)
     ASF::SVN.svn_('add', year_minutes, _)
   end
@@ -79,7 +79,7 @@ end
 # ...
 # [Pre-organization meetings](calendar-1999-2004.html#preorg)
 #
-# # 2020 Board meeting minutes # {#2020}
+# # 2020 Board meeting minutes  {#2020}
 #
 # - [17 June 2020](../records/minutes/2020/board_minutes_2020_06_17.txt)
 #     * ...
@@ -92,7 +92,7 @@ end
 ASF::SVN.update ASF::SVN.svnpath!('site-board', 'calendar.md' ), @message, env, _ do |_tmpdir, calendar|
   # add year header
   unless calendar.include? "# #{year} Board meeting minutes"
-    calendar[/^()#.*Board meeting minutes #/,1] =
+    calendar[/^()#.*Board meeting minutes /, 1] =
       "# #{year} Board meeting minutes {##{year}}\n\n"
   end
 
@@ -100,7 +100,7 @@ ASF::SVN.update ASF::SVN.svnpath!('site-board', 'calendar.md' ), @message, env, 
   if calendar.include? "\n- [#{fdate}]"
     calendar.sub! /\n-\s+\[#{fdate}\].*?(\n[-#])/m, "\n" + @summary + '\1'
   else
-    calendar[/# #{year} Board meeting minutes #.*\n()/,1] = "\n" + @summary
+    calendar[/# #{year} Board meeting minutes .*\n()/, 1] = "\n" + @summary
   end
 
   # remove from calendar
