@@ -13,12 +13,17 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-20.04, 'macos-latest']
-        ruby: [2.7]
+        os: [macos-latest, ubuntu-20.04, ubuntu-22.04]
+        ruby: [2.7, 3.1]
+        # 2.7 not supported on 22.04
+        exclude:
+          - os: ubuntu-22.04
+            ruby: 2.7
     runs-on: ${{ matrix.os }}
     steps:
     - name: setup Ubuntu missing header files
       run: |
+        sudo apt-get update
         sudo apt-get install libldap2-dev
         sudo apt-get install libsasl2-dev
       if:  matrix.os == 'ubuntu-20.04'
