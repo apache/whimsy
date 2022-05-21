@@ -36,6 +36,7 @@ module ASF
         quorum_need = (num_members + 2) / 3
         num_proxies = Dir[File.join(mtg_dir, 'proxies-received', '*')].count
         attend_irc = quorum_need - num_proxies
+        attend_irc = 0 if attend_irc < 0 # allow for more proxies than quorum
       rescue StandardError => e
         # Ensure we can't break rest of script
         puts "ERROR: #{e}"
