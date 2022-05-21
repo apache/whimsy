@@ -12,13 +12,13 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-20.04, macos-latest]
+        os: [macos-latest, ubuntu-20.04]
         ruby: [2.7, 3.1]
     runs-on: ${{ matrix.os }}
     steps:
-    - name: setup
+    - name: setup # needed for installing ruby-ldap
       run: |
-        # sudo apt-get install libldap2-dev
+        sudo apt-get install libldap2-dev
         sudo apt-get install libsasl2-dev
       if:  matrix.os != 'macos-latest'  
     - uses: actions/checkout@v2
