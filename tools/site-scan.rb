@@ -187,6 +187,10 @@ def exec_with_timeout(cmd, timeout)
     end
 
   rescue Timeout::Error
+    # Try to determine why the kill does not tidy the chrome processes
+    # Also whether a kill was actually issued!
+    puts "ERR: timeout scanning #{cmd[-1]}"
+    system("pstree -lp #{pid}")
     stderr = 'Timeout'
     Process.kill(-9, pid)
     Process.detach(pid)
@@ -198,7 +202,7 @@ def exec_with_timeout(cmd, timeout)
     rerr.close
   end
   return stdout, stderr, status
- end
+end
 
 #########################################################################
 # Main execution begins here
