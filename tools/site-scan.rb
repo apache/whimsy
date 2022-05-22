@@ -15,6 +15,8 @@ require 'whimsy/cache'
 require 'whimsy/sitestandards'
 require_relative 'asf-site-check'
 
+$stdout.sync = true
+
 # Normalize spaces in text runs
 def squash(text)
   return text.scrub.gsub(/[[:space:]]+/, ' ').strip
@@ -62,7 +64,7 @@ def parse(id, site, name)
     data[:errors] = ioe.message
     return data
   end
-  $stderr.puts "#{id} #{uri} #{status}"
+  puts "#{id} #{uri} #{status}"
   # Bail and return if getting the site returns an error code
   if response.respond_to? :code and response.code =~ /^[45]/
     data[:errors] = "cache.get(#{site}) error code #{response.code}"
