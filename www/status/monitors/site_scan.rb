@@ -26,12 +26,13 @@ def Monitor.site_scan(previous_status)
   if not log.empty?
     # Archive the log file
     require 'fileutils'
-    archive = File.join(logdir,'archive')
+    archive = File.join(logdir, 'archive')
     FileUtils.mkdir(archive) unless File.directory?(archive)
     file = File.basename(logfile)
-    FileUtils.copy logfile, File.join(archive, file + '.danger'), preserve: true
     level = 'danger'
     level = 'warning' if log.gsub(/.* error\n/, '').empty?
+    level = 'warning' if log.gsub(/WARN: timeout scanning.*\n/, '').empty?
+    FileUtils.copy logfile, File.join(archive, file + '.' + level), preserve: true
     {
       level: level,
       data: log.split("\n"),
