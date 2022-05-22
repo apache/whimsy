@@ -271,4 +271,3 @@ if output_podlings
 else
   puts JSON.pretty_generate(podlings)
 end
-$stderr.puts "Done" # test
