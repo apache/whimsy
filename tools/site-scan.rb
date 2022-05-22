@@ -215,6 +215,8 @@ podlings = {}
 $cache = Cache.new(dir: 'site-scan')
 $verbose = ARGV.delete '--verbose'
 
+puts "Started: #{Time.now}"  # must agree with site-scan monitor
+
 # USAGE:
 # site-scan.rb https://whimsical.apache.org [Whimsy] [whimsy-scan.json] - to scan one project
 # site-scan.rb [project-output.json] [podlings-output.json] [projname podlingname ...]
@@ -273,3 +275,5 @@ if output_podlings
 else
   puts JSON.pretty_generate(podlings)
 end
+
+puts "Ended: #{Time.now}" # must agree with site-scan monitor
