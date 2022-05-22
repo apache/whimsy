@@ -194,7 +194,9 @@ def exec_with_timeout(cmd, timeout)
     puts "WARN: timeout scanning #{cmd[-1]}"
     $stderr.puts "WARN: timeout scanning #{cmd[-1]}"
     stderr = 'Timeout'
-    Process.kill(-9, pid)
+    # try using less drastic kill
+    Process.kill(-2, pid) # INT
+    Process.kill(-15, pid) # TERM
     Process.detach(pid)
   ensure
     wout.close unless wout.closed?
