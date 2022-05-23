@@ -108,7 +108,7 @@ end
 
 # This requires Gems such as Wunderbar to have been set up
 task :config do
-  $LOAD_PATH.unshift '/srv/whimsy/lib'
+  $LOAD_PATH.unshift 'lib'
   require 'whimsy/asf/config'
   require 'whimsy/asf/git'
   require 'whimsy/asf/svn'
