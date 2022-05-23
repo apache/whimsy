@@ -1,5 +1,8 @@
 require 'open3'
 
+# N.B. this file must be invoked from its containing directory.
+# It assumes that it will be run from the top of the Whimsy code tree
+
 def mkdir_p?(path)
   mkdir_p path unless Dir.exist? path
 end
