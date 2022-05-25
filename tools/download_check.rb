@@ -315,6 +315,7 @@ ALIASES = {
   'pgp' => 'asc',
   'gpg' => 'asc',
   'pgpasc' => 'asc',
+  'sign' => 'asc',
   'signature' => 'asc',
   'signature(.asc)' => 'asc',
   'ascsignature' => 'asc',
