@@ -457,7 +457,7 @@ def _checkDownloadPage(path, tlp, version)
   if keys.size >= 1
     keyurl = keys.first.first
     keytext = keys.first[1]
-    if keytext.strip == 'KEYS'
+    if keytext.include? 'KEYS'
       I 'Found KEYS link'
     else
       W "Found KEYS: '#{keytext}'"
@@ -715,7 +715,7 @@ def _checkDownloadPage(path, tlp, version)
           if ct and cl
             I "OK: #{ct} #{cl} #{path}"
           elsif cl
-            W "NAK: ct='#{ct}' cl='#{cl}' #{path}"
+            I "NAK: ct='#{ct}' cl='#{cl}' #{path}"
           else
             E "NAK: ct='#{ct}' cl='#{cl}' #{path}"
           end
