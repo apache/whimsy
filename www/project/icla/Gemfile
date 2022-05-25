@@ -17,7 +17,7 @@ gem 'rake'
 gem 'wunderbar'
 gem 'ruby2js'
 gem 'sinatra'
-gem 'nokogumbo'
+gem 'nokogiri'
 gem 'execjs'
 
 group :test do
