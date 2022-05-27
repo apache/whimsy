@@ -90,6 +90,12 @@ end
 
 # Update the Calendar from SVN
 ASF::SVN.update ASF::SVN.svnpath!('site-board', 'calendar.md' ), @message, env, _ do |_tmpdir, calendar|
+  # add year index
+  unless calendar.include? "[#{year}](calendar.html##{year}) |"
+    calendar[/^()\[.*\(calendar.html/, 1] =
+      "[#{year}](calendar.html##{year}) |\n"
+  end
+
   # add year header
   unless calendar.include? "# #{year} Board meeting minutes"
     calendar[/^()#.*Board meeting minutes /, 1] =
