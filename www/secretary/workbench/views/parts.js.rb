@@ -312,22 +312,16 @@ class Parts < Vue
                 _label do
                   _input type: 'checkbox', checked: @unsigned,
                   onClick: -> {@unsigned = !@unsigned}
-                  _span ' the document appears to be unsigned'
+                  _span ' unsigned'
                 end
               end
               _li do
                 _label do
                   _input type: 'checkbox', checked: @script_font,
                   onClick: -> {@script_font = !@script_font}
-                  _span ' a name typed in a script font is not a signature'
+                  _span ' script font'
                 end
               end
-            end
-
-            _label do
-              _input type: 'radio', name: 'doctype', value: 'unsigned',
-                onClick: self.reject
-              _span 'unsigned form'
             end
 
             _label do
