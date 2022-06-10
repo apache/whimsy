@@ -24,6 +24,8 @@ REASONS = {
   '@wrong_identity' => 'the public key does not match the name/email on the form',
   '@validation_failed' => 'gpg validation failed',
   '@signature_not_armored' => 'gpg signature must be detached and ascii-armored',
+  '@unsigned' => 'the document appears to be unsigned',
+  '@script_font' => 'a name typed in a script font is not a signature',
 }
 
 # send rejection email
