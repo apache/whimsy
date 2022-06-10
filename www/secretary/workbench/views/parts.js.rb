@@ -23,6 +23,8 @@ class Parts < Vue
     @wrong_identity = false
     @validation_failed = false
     @signature_not_armored = false
+    @unsigned = false
+    @script_font = false
   end
 
   ########################################################################
@@ -196,6 +198,8 @@ class Parts < Vue
             _input type: 'hidden', name: 'wrong_identity', value: @wrong_identity
             _input type: 'hidden', name: 'validation_failed', value: @validation_failed
             _input type: 'hidden', name: 'signature_not_armored', value: @signature_not_armored
+            _input type: 'hidden', name: 'unsigned', value: @unsigned
+            _input type: 'hidden', name: 'script_font', value: @script_font
 
             # Defer processing (must be part of POST block)
 
@@ -294,7 +298,7 @@ class Parts < Vue
                 _label do
                   _input type: 'checkbox', checked: @validation_failed,
                   onClick: -> {@validation_failed = !@validation_failed}
-                  _span ' gpg key validation failed'
+                  _span ' gpg signature validation failed'
                 end
               end
               _li do
@@ -302,6 +306,20 @@ class Parts < Vue
                   _input type: 'checkbox', checked: @signature_not_armored,
                   onClick: -> {@signature_not_armored = !@signature_not_armored}
                   _span ' gpg signature not armored'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @unsigned,
+                  onClick: -> {@unsigned = !@unsigned}
+                  _span ' the document appears to be unsigned'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @script_font,
+                  onClick: -> {@script_font = !@script_font}
+                  _span ' a name typed in a script font is not a signature'
                 end
               end
             end
