@@ -298,7 +298,7 @@ class Parts < Vue
                 _label do
                   _input type: 'checkbox', checked: @validation_failed,
                   onClick: -> {@validation_failed = !@validation_failed}
-                  _span ' gpg key validation failed'
+                  _span ' gpg signature validation failed'
                 end
               end
               _li do
@@ -318,7 +318,7 @@ class Parts < Vue
               _li do
                 _label do
                   _input type: 'checkbox', checked: @script_font,
-                  onClick: -> {@cript_font = !@cript_font}
+                  onClick: -> {@script_font = !@script_font}
                   _span ' a name typed in a script font is not a signature'
                 end
               end
