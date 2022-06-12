@@ -200,6 +200,8 @@ class Parts < Vue
             _input type: 'hidden', name: 'signature_not_armored', value: @signature_not_armored
             _input type: 'hidden', name: 'unsigned', value: @unsigned
             _input type: 'hidden', name: 'script_font', value: @script_font
+            # the above entries must agree with the checked: entries below
+            # also any new entries must be added to the backend script incomplete.json.rb
 
             # Defer processing (must be part of POST block)
 
@@ -323,6 +325,8 @@ class Parts < Vue
                 end
               end
             end
+
+            # N.B. The checked: variable names must be reflected in the file incomplete.json.jb
 
             _label do
               _input type: 'radio', name: 'doctype', value: 'resubmit',
