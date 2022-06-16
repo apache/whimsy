@@ -33,7 +33,7 @@ def getServerURI(server, keyid)
   return uri
 end
 
-MAX_KEY_SIZE = 45000 # don't import if the ascii keyfile is larger than this
+MAX_KEY_SIZE = 125000 # don't import if the ascii keyfile is larger than this
 
 require 'net/http'
 
