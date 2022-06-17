@@ -19,7 +19,7 @@ today = Date.today.strftime('%Y%m%d')
 if meeting > today
   current_status = ASF::MeetingUtil.current_status(cur_mtg_dir)
 else
-  current_status = lambda {'No response'}
+  current_status = lambda {|id| 'No response'}
 end
 
 # separator / is added when link is generated
