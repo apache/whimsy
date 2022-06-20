@@ -66,7 +66,7 @@ module SiteStandards
       CHECK_VALIDATE => %r{^https?://.*apache.org/licenses/?$},
       CHECK_TYPE => true,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
-      CHECK_DOC => '"License" should link to: http[s]://www.apache.org/licenses[/]',
+      CHECK_DOC => 'There should be a "License" navigation link which points to: http[s]://www.apache.org/licenses[/]',
     },
     'thanks' => { # link_check a_text =~ /\A(sponsors|thanks!?|thanks to our sponsors)\z/
         CHECK_TEXT => /\A(sponsors|thanks!?|thanks to our sponsors)\z/,
