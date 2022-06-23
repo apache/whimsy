@@ -13,6 +13,9 @@ class Message
 
   SIG_MIMES = %w(application/pkcs7-signature application/pgp-signature)
 
+  # The name used to represent the raw message as an attachment
+  RAWMESSAGE_ATTACHMENT_NAME = 'rawmessage.txt'
+
   #
   # create a new message
   #
@@ -39,6 +42,10 @@ class Message
       attach.filename == name or attach['Content-ID'].to_s == "<#{name}>"
     end
 
+    if part.nil? and name == RAWMESSAGE_ATTACHMENT_NAME
+      part = self
+    end
+
     if headers
       Attachment.new(self, headers, part)
     end
@@ -50,6 +57,12 @@ class Message
 
   def mail
     @mail ||= Mail.new(@raw.gsub(LF_ONLY, CRLF))
+  end
+
+  # Allows the entire message to be treated as an attachment
+  # used with RAWMESSAGE_ATTACHMENT_NAME
+  def body
+    @raw
   end
 
   def raw
@@ -434,6 +447,13 @@ class Message
       end
 
       headers[:attachments] = attachments
+    # we also want to treat CLA requests as attachments
+    elsif headers['Subject'].include? 'CLA'
+      headers[:attachments] = [
+        {name: RAWMESSAGE_ATTACHMENT_NAME,
+          length: message.size,
+          mime: 'text/plain'}
+      ]
     end
 
     headers
