@@ -15,6 +15,14 @@ class Index < Vue
     @fetched = false
   end
 
+  # crop a value before display
+  def _crop(text, max)
+    if text and text.length > max
+      return text[0..max] + ' ...'
+    end
+    return text
+  end
+
   def render()
     log 'render'
     if not @messages or @messages.all? {|message| message.status == :deleted}
@@ -51,7 +59,7 @@ class Index < Vue
                   _a message.date, href: message.href, title: message.time
                 end
               end
-              _td message.from
+              _td _crop(message.from, 40)
               if %i[emeritusReady emeritusPending].include? message.status
                 _td do
                   _a message.subject, class: message.status, href: message.href2, target: "_blank"
@@ -63,7 +71,7 @@ class Index < Vue
                   _b message.secmail.inspect # TODO better presentation of content
                 end
               else
-                _td message.subject
+                _td _crop(message.subject, 60)
               end
             end
           end
