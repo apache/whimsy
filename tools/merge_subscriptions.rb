@@ -144,14 +144,14 @@ NEW = '/srv/subscriptions2' # new host puts files here
 OUT = '/srv/subscriptions' # Whimsy expects the files here
 
 if __FILE__ == $0
-  type = ARGV.shift
-  if type == 'qmail'
-    merge_qmail OLD, NEW, OUT
-  elsif type == 'files'
-    merge_files OLD, NEW, OUT
-  else
-    raise "Unexpected merge type: expected 'qmail' or 'files'"
-  end
+#   type = ARGV.shift
+#   if type == 'qmail'
+#     merge_qmail OLD, NEW, OUT
+#   elsif type == 'files'
+#     merge_files OLD, NEW, OUT
+#   else
+#     raise "Unexpected merge type: expected 'qmail' or 'files'"
+#   end
 end
 
 
