@@ -176,7 +176,7 @@ def exec_with_timeout(cmd, timeout)
     status = false
 
     pid = Process.spawn(*cmd, pgroup: true, :out => wout, :err => werr)
-    $stderr.puts "TEST: scanning: #{cmd[-1]} #{pid}"
+    $stderr.puts "TEST:  >> #{Time.now} scanning: #{cmd[-1]} #{pid}"
 
     Timeout.timeout(timeout) do
       Process.waitpid(pid)
@@ -192,8 +192,8 @@ def exec_with_timeout(cmd, timeout)
   rescue Timeout::Error
     # Try to determine why the kill does not tidy the chrome processes
     # Also whether a kill was actually issued!
-    puts "WARN: timeout scanning #{cmd[-1]}"
-    $stderr.puts "WARN: timeout scanning #{cmd[-1]}"
+    puts "WARN: timeout scanning #{cmd[-1]} #{pid}"
+    $stderr.puts "WARN:  #{Time.now} timeout scanning #{cmd[-1]} #{pid}"
     stderr = 'Timeout'
     # try using less drastic kill
     Process.kill(-2, pid) # INT
@@ -206,6 +206,7 @@ def exec_with_timeout(cmd, timeout)
     rout.close
     rerr.close
   end
+  $stderr.puts "TEST:  << #{Time.now} scanning: #{cmd[-1]} #{pid}"
   return stdout, stderr, status
 end
 
