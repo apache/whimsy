@@ -176,6 +176,7 @@ def exec_with_timeout(cmd, timeout)
     status = false
 
     pid = Process.spawn(*cmd, pgroup: true, :out => wout, :err => werr)
+    $stderr.puts "TEST: scanning: #{cmd[-1]} #{pid}"
 
     Timeout.timeout(timeout) do
       Process.waitpid(pid)
