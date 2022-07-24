@@ -176,7 +176,6 @@ def exec_with_timeout(cmd, timeout)
     status = false
 
     pid = Process.spawn(*cmd, pgroup: true, :out => wout, :err => werr)
-    $stderr.puts "TEST:  >> #{Time.now} scanning: #{cmd[-1]} #{pid}"
 
     Timeout.timeout(timeout) do
       Process.waitpid(pid)
@@ -206,7 +205,6 @@ def exec_with_timeout(cmd, timeout)
     rout.close
     rerr.close
   end
-  $stderr.puts "TEST:  << #{Time.now} scanning: #{cmd[-1]} #{pid}"
   return stdout, stderr, status
 end
 
