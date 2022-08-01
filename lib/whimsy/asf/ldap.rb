@@ -285,7 +285,7 @@ module ASF
   # Directory where ldap.conf resides.  Differs based on operating system.
   ETCLDAP = case
     when Dir.exist?('/etc/openldap') then '/etc/openldap'
-    when Dir.exist?('/usr/local/etc/openldap') then '/user/local//etc/openldap'
+    when Dir.exist?('/usr/local/etc/openldap') then '/user/local/etc/openldap'
     else '/etc/ldap'
   end
 
