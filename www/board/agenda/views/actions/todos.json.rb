@@ -135,7 +135,7 @@ if @establish and env.password
       # update ci.yaml
       cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
       ASF::SVN.update cinfoy, title, env, _ do |_tmpdir, contents|
-        ASF::Committee.appendtlpmetadata(contents, pmc.downcase, charter)
+        ASF::Committee.appendtlpmetadata(contents, pmc.downcase, charter, date_established)
       end
     end
   end

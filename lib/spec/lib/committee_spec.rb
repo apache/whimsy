@@ -69,6 +69,9 @@ describe ASF::Committee do
     end
   end
 
+  date_established = Date.parse('1970-01-01')
+  established_value = '1970-01' # as per yaml
+
   describe "ASF::Committee.appendtlpmetadata" do
     board = ASF::SVN.find('board')
     file = File.join(board, 'committee-info.yaml')
@@ -78,7 +81,7 @@ describe ASF::Committee do
       # Wunderbar.logger = nil; is needed to ensure logging output works as expected
       expect {
         Wunderbar.logger = nil
-        res = ASF::Committee.appendtlpmetadata(input, 'httpd', 'description')
+        res = ASF::Committee.appendtlpmetadata(input, 'httpd', 'description', date_established)
       }.to output("_WARN Entry for 'httpd' already exists under :tlps\n").to_stderr
       expect(res).to eql(input)
     end
@@ -88,7 +91,7 @@ describe ASF::Committee do
       # Wunderbar.logger = nil; is needed to ensure logging output works as expected
       expect {
         Wunderbar.logger = nil
-        res = ASF::Committee.appendtlpmetadata(input, 'comdev', 'description')
+        res = ASF::Committee.appendtlpmetadata(input, 'comdev', 'description', date_established)
       }.to output("_WARN Entry for 'comdev' already exists under :cttees\n").to_stderr
       expect(res).to eql(input)
     end
@@ -97,13 +100,14 @@ describe ASF::Committee do
     it "should succeed for '#{pmc}'" do
       res = nil
       desc = 'Description of A-B-C'
-      expect { res = ASF::Committee.appendtlpmetadata(input, pmc, desc) }.to output("").to_stderr
+      expect { res = ASF::Committee.appendtlpmetadata(input, pmc, desc, date_established) }.to output("").to_stderr
       expect(res).not_to eq(input)
       tlps = YAML.safe_load(res, permitted_classes: [Symbol])[:tlps]
       abc = tlps[pmc]
       expect(abc.class).to eq(Hash)
       expect(abc[:site]).to match(%r{https?://#{pmc}\.apache\.org/?})
       expect(abc[:description]).to eq(desc)
+      expect(abc[:established]).to eq(established_value)
     end
   end
 

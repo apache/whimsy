@@ -665,7 +665,7 @@ module ASF
 
     # append the description for a new tlp committee.
     # this is intended to be called from todos.json.rb in the block for ASF::SVN.update
-    def self.appendtlpmetadata(input, committee, description)
+    def self.appendtlpmetadata(input, committee, description, date_established)
       YamlFile.replace_section(input, :tlps) do |section, yaml|
         output = section # default no change
         if yaml[:cttees][committee]
@@ -676,6 +676,7 @@ module ASF
           section[committee] = {
             site: "http://#{committee}.apache.org",
             description: description,
+            established: date_established.strftime('%Y-%m'),
           }
           output = section.sort.to_h
         end
