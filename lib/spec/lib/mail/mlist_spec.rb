@@ -68,7 +68,7 @@ describe ASF::MLIST do
       res = ASF::MLIST.moderates(user_emails)
       expect(res.length).to eq(2)
       mods = res[:moderates]
-      expect(mods.length).to be_between(8, 20)
+      expect(mods.length).to be_between(7, 20)
     end
   end
 
@@ -126,9 +126,10 @@ describe ASF::MLIST do
         expect(list.size).to eq(1) # members
         expect(list.keys.first).to eq('members@apache.org')
       else
-        expect(list.size).to eq(2) # members and members-notify
+        expect(list.size).to eq(3) # members, members-announce and members-notify
         expect(list.keys[0]).to eq('members@apache.org')
-        expect(list.keys[1]).to eq('members-notify@apache.org')
+        expect(list.keys[1]).to eq('members-announce@apache.org')
+        expect(list.keys[2]).to eq('members-notify@apache.org')
       end
     end
   end
@@ -153,9 +154,10 @@ describe ASF::MLIST do
         expect(entry.size).to eq(2)
         expect(entry[1].size).to eq(1) # number of moderators
       else
-        expect(list.size).to eq(2) # members and members-notify
+        expect(list.size).to eq(3) # members, members-announce and members-notify
         expect(list.keys[0]).to eq('members@apache.org')
-        expect(list.keys[1]).to eq('members-notify@apache.org')
+        expect(list.keys[1]).to eq('members-announce@apache.org')
+        expect(list.keys[2]).to eq('members-notify@apache.org')
         entry = list.first
         expect(entry.class).to eq(Array)
         expect(entry.size).to eq(2)
