@@ -20,6 +20,9 @@ require 'spec_helper'
 require 'whimsy/asf'
 
 describe ASF::Committee do
+  before {
+    Wunderbar.logger = nil # ensure we see warnings
+  }
   describe "ASF::Committee::site" do
     it "should return string for 'httpd'" do
       res = ASF::Committee.find('HTTP Server').site
@@ -78,9 +81,7 @@ describe ASF::Committee do
     input = File.read(file)
     it "should fail for 'httpd'" do
       res = nil
-      # Wunderbar.logger = nil; is needed to ensure logging output works as expected
       expect {
-        Wunderbar.logger = nil
         res = ASF::Committee.appendtlpmetadata(input, 'httpd', 'description', date_established)
       }.to output("_WARN Entry for 'httpd' already exists under :tlps\n").to_stderr
       expect(res).to eql(input)
@@ -88,9 +89,7 @@ describe ASF::Committee do
 
     it "should fail for 'comdev'" do
       res = nil
-      # Wunderbar.logger = nil; is needed to ensure logging output works as expected
       expect {
-        Wunderbar.logger = nil
         res = ASF::Committee.appendtlpmetadata(input, 'comdev', 'description', date_established)
       }.to output("_WARN Entry for 'comdev' already exists under :cttees\n").to_stderr
       expect(res).to eql(input)
