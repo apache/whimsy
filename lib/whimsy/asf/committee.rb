@@ -668,16 +668,26 @@ module ASF
     def self.appendtlpmetadata(input, committee, description, date_established)
       YamlFile.replace_section(input, :tlps) do |section, yaml|
         output = section # default no change
-        if yaml[:cttees][committee]
+        if yaml[:cttees][committee] && !yaml[:cttees][committee][:retired]
           Wunderbar.warn "Entry for '#{committee}' already exists under :cttees"
-        elsif yaml[:tlps][committee]
+        elsif yaml[:tlps][committee] && !yaml[:tlps][committee][:retired]
           Wunderbar.warn "Entry for '#{committee}' already exists under :tlps"
         else
-          section[committee] = {
-            site: "http://#{committee}.apache.org",
-            description: description,
-            established: date_established.strftime('%Y-%m'),
-          }
+          if section[committee] # already exists; must be retired
+            diary = section[committee][:diary]
+            if !diary
+                diary = section[committee][:diary] = []
+                diary << {established: section[committee][:established]}
+            end
+            diary << {retired: section[committee].delete(:retired)}
+            diary << {resumed: date_established.strftime('%Y-%m')}
+          else
+            section[committee] = {
+                site: "http://#{committee}.apache.org",
+                description: description,
+                established: date_established.strftime('%Y-%m'),
+            }
+          end
           output = section.sort.to_h
         end
         output

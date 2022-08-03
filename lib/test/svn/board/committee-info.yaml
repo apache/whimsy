@@ -10,8 +10,20 @@
     :description: Resources to help people become involved with Apache projects
 
 :tlps:
+  avalon:
+    :established: 2002-11
+    :retired: 2004-11
+    :name: Avalon
+    :description: Java software for component and container programming
   httpd:
     :site: http://httpd.apache.org/
     :description: Apache Web Server (httpd)
+  jakarta:
+    :established: 1999-09
+    :retired: 2011-12
+    :name: Jakarta
+    :description: Diverse set of popular open source Java solutions
+    :comment: Diary is needed for unit testing
+    :diary: []
 ...
 # ends

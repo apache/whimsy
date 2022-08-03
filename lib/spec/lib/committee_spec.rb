@@ -108,6 +108,55 @@ describe ASF::Committee do
       expect(abc[:description]).to eq(desc)
       expect(abc[:established]).to eq(established_value)
     end
+
+    it "resume should succeed for 'avalon' (no current diary)" do
+      pmc = 'avalon'
+      original = YAML.safe_load(input, permitted_classes: [Symbol])[:tlps][pmc]
+      expect(original[:retired]).not_to be_nil
+      expect(original[:diary]).to be_nil
+      date_resumed = Time.now
+      resumed_value = date_resumed.strftime('%Y-%m')
+      res = nil
+      expect { res = ASF::Committee.appendtlpmetadata(input, pmc, 'unused', date_resumed) }.to output("").to_stderr
+      expect(res).not_to equal(input)
+      tlps = YAML.safe_load(res, permitted_classes: [Symbol])[:tlps]
+      updated = tlps[pmc]
+      expect(updated.class).to eq(Hash)
+      expect(updated[:site]).to eq(original[:site])
+      expect(updated[:retired]).to be_nil # no longer retired
+      expect(updated[:description]).to eq(original[:description])
+      expect(updated[:established]).to eq(original[:established])
+      diary = [
+        {established: original[:established]},
+        {retired: original[:retired]},
+        {resumed: resumed_value}
+      ]
+      expect(updated[:diary]).to eq(diary)
+    end
+
+    it "resume should succeed for 'jakarta' (has diary)" do
+      pmc = 'jakarta'
+      original = YAML.safe_load(input, permitted_classes: [Symbol])[:tlps][pmc]
+      expect(original[:retired]).not_to be_nil
+      expect(original[:diary]).not_to be_nil
+      date_resumed = Time.now
+      resumed_value = date_resumed.strftime('%Y-%m')
+      res = nil
+      expect { res = ASF::Committee.appendtlpmetadata(input, pmc, 'unused', date_resumed) }.to output("").to_stderr
+      expect(res).not_to equal(input)
+      tlps = YAML.safe_load(res, permitted_classes: [Symbol])[:tlps]
+      updated = tlps[pmc]
+      expect(updated.class).to eq(Hash)
+      expect(updated[:site]).to eq(original[:site])
+      expect(updated[:retired]).to be_nil # no longer retired
+      expect(updated[:description]).to eq(original[:description])
+      expect(updated[:established]).to eq(original[:established])
+      diary = [
+        {retired: original[:retired]},
+        {resumed: resumed_value}
+      ]
+      expect(updated[:diary]).to eq(diary)
+    end
   end
 
   describe "ASF::ASF::Committee.record_termination" do
