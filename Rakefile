@@ -450,12 +450,12 @@ namespace :docker do
   end
 
   # This is the entrypoint in the Dockerfile so runs in the container
-  task :entrypoint => [:scaffold, :config] do
+  task :entrypoint => [:scaffold] do
     # requires :config
-    require 'whimsy/asf/ldap'
-    unless File.read(File.join(ASF::ETCLDAP,'ldap.conf')).include? 'asf-ldap-client.pem'
-      sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
-    end
+    # require 'whimsy/asf/ldap'
+    # unless File.read(File.join(ASF::ETCLDAP, 'ldap.conf')).include? 'uri ldaps'
+    #   sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
+    # end
     sh 'apache2ctl -DFOREGROUND'
   end
 end

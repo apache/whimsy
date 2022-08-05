@@ -86,6 +86,9 @@ RUN npm install -g puppeteer --unsafe-perm=true
 COPY docker-config/whimsy.conf /etc/apache2/sites-enabled/000-default.conf
 COPY docker-config/25-authz_ldap_group_membership.conf /etc/apache2/conf-enabled/25-authz_ldap_group_membership.conf
 
+# Define the LDAP hosts; must agree with those used in the above HTTPD files or TLS cert problems may occur
+RUN echo "uri ldaps://ldap-us.apache.org ldaps://ldap-eu.apache.org" >>/etc/ldap/ldap.conf
+
 # Allow www-data user to use Git repo owned by root
 COPY docker-config/gitconfig-www /var/www/.gitconfig
 

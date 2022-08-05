@@ -44,9 +44,9 @@ like the following:
 
     Note: if you reside outside North America you may wish to use the EU LDAP server
     by changing the references in the whimsy.conf file from
-    ldaps://ldap-us-ro.apache.org:636/
+    ldaps://ldap-us.apache.org:636/
     to
-    ldaps://ldap-eu-ro.apache.org:636/
+    ldaps://ldap-eu.apache.org:636/
 
     sudo cp /srv/whimsy/config/25-authz_ldap_group_membership.conf /etc/apache2/conf-available
     sudo a2ensite whimsy

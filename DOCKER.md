@@ -81,11 +81,14 @@ but should be repeated from time to time to fetch updated sources.
 
 If you wish to create the Ubuntu image separately, run `rake docker:build`
 (this is invoked as part of docker:update)
+This should be re-run if you update any of the resources used for the build,
+e.g. files in docker-config and the Dockerfile
+
 
 The `rake svn:update git:pull` step updates the SVN and Git repos used by Whimsy.
 The container does not automatically update these (unlike the live installation),
 so the step should be performed as necessary before starting the container to ensure the
-data is sufficiently up-to-date.
+data is sufficiently up-to-date. This requires karma to fetch some of the files.
 
 This should be enough to get most of Whimsy working.  It is not
 known yet what functions work and what functions do not.

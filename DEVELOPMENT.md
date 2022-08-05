@@ -120,7 +120,7 @@ or read the [detailed MACOSX setup steps](MACOSX.md).
     1. The model code determines what host and port to connect to by parsing
       either `/etc/ldap/ldap.conf` or `/etc/openldap/ldap.conf` for a line that
       looks like the following (the host name may be different):
-        `uri     ldaps://ldap-us-ro.apache.org:636`
+        `uri     ldaps://ldap-us.apache.org:636`
 
     2. A `TLS_CACERT` can be obtained via either of the following commands:
 
