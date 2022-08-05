@@ -43,19 +43,6 @@ module ASF
   @@weakrefs = Set.new
 
   module LDAP
-     # see https://s.apache.org/IWu8
-     # Previously derived from the following sources:
-     # * https://github.com/apache/infrastructure-puppet/blob/deployment/data/common.yaml (ldapserver::slapd_peers)
-     # Updated 2018-02-24
-    RO_HOSTS = %w(
-      ldaps://ldap-us-ro.apache.org:636
-      ldaps://ldap-eu-ro.apache.org:636
-    )
-
-    RW_HOSTS = %w(
-      ldaps://ldap-master.apache.org:636
-    )
-
     # Mutex preventing simultaneous connections to LDAP from a single process
     CONNECT_LOCK = Mutex.new
 
@@ -152,19 +139,20 @@ module ASF
       @host
     end
 
-    # allow override of RW_HOSTS by :ldaprw or :ldap config
+    # allow override of writable host by :ldaprw
     def self.rwhosts
       return @rwhosts if @rwhosts # cache the rwhosts list
-      rwhosts = Array(ASF::Config.get(:ldaprw))
-      rwhosts = Array(ASF::Config.get(:ldap)) if rwhosts.empty?
-      rwhosts = RW_HOSTS if rwhosts.empty?
-      @rwhosts =  rwhosts
+      rwhosts = Array(ASF::Config.get(:ldaprw)) # allow separate override for RW LDAP
+      rwhosts = hosts if rwhosts.empty? # default to RO hosts
+      raise 'Cannot determine writable LDAP URI from ldap.conf or local config!' if rwhosts.empty?
+      @rwhosts = rwhosts
     end
 
     # determine what LDAP hosts are available
+    # use_config=false is needed for the configure method only
     def self.hosts(use_config = true)
       return @hosts if @hosts # cache the hosts list
-      # try whimsy config
+      # try whimsy config (overrides ldap.conf)
       hosts = Array(ASF::Config.get(:ldap))
 
       # check system configuration
@@ -179,9 +167,8 @@ module ASF
         Wunderbar.debug "Using hosts from Whimsy config"
       end
 
-      # if all else fails, use default list
-      Wunderbar.debug "Using default host list" if hosts.empty?
-      hosts = ASF::LDAP::RO_HOSTS if hosts.empty?
+      # There is no default
+      raise 'Cannot determine LDAP URI from ldap.conf or local config!' if hosts.empty?
 
       hosts.shuffle!
       # Wunderbar.debug "Hosts:\n#{hosts.join(' ')}"
