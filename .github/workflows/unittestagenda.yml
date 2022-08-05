@@ -44,7 +44,7 @@ jobs:
     - name: setup agenda 2
       # need to run the ruby that has all the gems installed
       run: |
-        echo ":ldap: ldaps://ldap-us.apache.org" >> .whimsy
+        echo ":ldap: ldaps://ldap-us.apache.org:636" >> .whimsy
         sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
