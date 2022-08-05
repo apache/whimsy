@@ -31,6 +31,9 @@ Whimsy can be run on a client or in a local container for development use.
 * **LDAP configuration** will be stored in `/etc/(ldap|openldap)/ldap.conf`
   and will point to the production ASF LDAP servers along with associated
   certificate.  See also `lib/whimsy/asf/ldap.rb` and `ASF::LDAP.configure`.
+  Settings can be overridden in the `.whimsy` config file.
+  Note that HTTP authentication also uses LDAP. To avoid problems with TLS
+  certificates, the servers should be the same as for app access.
 
 * **Web server configuration** - much of Whimsy runs within an Apache
   httpd instance, so see the usual `/etc/apache2/httpd.conf` along
