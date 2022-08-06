@@ -7,4 +7,5 @@ work
 .subversion
 .rakeTasks
 assets/
+maintenance.txt
 .ruby-version
