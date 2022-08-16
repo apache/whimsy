@@ -227,6 +227,7 @@ def name_changes(title)
   title.sub! 'PRC', 'Public Relations'
   title.sub! 'Public Relations Commitee', 'Public Relations'
   title.sub! 'Quarks', 'Edgent'
+  title.sub! 'SensSoft', 'Flagon'
   title.sub! 'Servicecomb', 'ServiceComb'
   title.sub! 'Singa', 'SINGA'
   title.sub! 'Socialsite', 'SocialSite'
