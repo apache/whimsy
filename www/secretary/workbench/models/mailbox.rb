@@ -1,15 +1,16 @@
-
+#
 # Encapsulate access to mailboxes
 #
+# N.B. this module is included by the deliver script, so needs to be quick to load
 
 require 'zlib'
 require 'zip'
 require 'stringio'
 require 'yaml'
 
-require_relative '../config.rb'
+require_relative '../config'
 
-require_relative 'message.rb'
+require_relative 'message'
 
 class Mailbox
   #
@@ -18,7 +19,7 @@ class Mailbox
   def self.fetch(mailboxes=nil)
     options = %w(-av --no-motd)
 
-    if mailboxes == nil
+    if mailboxes.nil?
       options += %w(--delete --exclude=*.yml --exclude=*.mail)
       source = "#{SOURCE}/"
     elsif mailboxes.is_a? Array
@@ -158,8 +159,8 @@ class Mailbox
   def headers
     messages = YAML.load_file(yaml_file) rescue {}
     messages.delete :mtime
-    messages.each do |key, value|
-      value[:source]=@name
+    messages.each do |_key, value|
+      value[:source] = @name
     end
   end
 
@@ -168,8 +169,8 @@ class Mailbox
   #
   def client_headers
     # fetch a list of headers for all messages in the mailbox with attachments
-    headers = self.headers.to_a.select do |id, message|
-      not Message.attachments(message).empty?
+    headers = self.headers.to_a.reject do |_id, message|
+      Message.attachments(message).empty?
     end
 
     # extract relevant fields from the headers
@@ -205,7 +206,7 @@ class Mailbox
       rescue
       end
 
-      if field.value and field.value.valid_encoding?
+      if field.value&.valid_encoding?
         [field.name, field.value]
       else
         [field.name, field.value.inspect]

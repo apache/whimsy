@@ -1,12 +1,13 @@
 #
 # Encapsulate access to messages
 #
+# N.B. this module is referenced by the deliver script, so needs to be quick to load
 
 require 'digest'
 require 'mail'
 require 'time'
 
-require_relative 'attachment.rb'
+require_relative 'attachment'
 
 class Message
   attr_reader :headers
@@ -90,8 +91,8 @@ class Message
   end
 
   def cc=(value)
-    value=value.split("\n") if value.is_a? String
-    @headers[:cc]=value
+    value = value.split("\n") if value.is_a? String
+    @headers[:cc] = value
   end
 
   def bcc
@@ -99,8 +100,8 @@ class Message
   end
 
   def bcc=(value)
-    value=value.split("\n") if value.is_a? String
-    @headers[:bcc]=value
+    value = value.split("\n") if value.is_a? String
+    @headers[:bcc] = value
   end
 
   def subject
@@ -122,7 +123,7 @@ class Message
       reject {|attachment| SIG_MIMES.include?(attachment[:mime]) and
         (not attachment[:name] or attachment[:name] !~ /\.pdf\.(asc|sig)$/)}.
       map {|attachment| attachment[:name]}.
-      select {|name| name != 'signature.asc'}
+      reject {|name| name == 'signature.asc'}
   end
 
   def attachments
@@ -133,7 +134,7 @@ class Message
   # attachment operations: update, replace, delete
   #
 
-  def update_attachment name, values
+  def update_attachment(name, values)
     attachment = find(name)
     if attachment
       attachment.headers.merge! values
@@ -141,7 +142,7 @@ class Message
     end
   end
 
-  def replace_attachment name, values
+  def replace_attachment(name, values)
     attachment = find(name)
     if attachment
       index = @headers[:attachments].find_index(attachment.headers)
@@ -150,7 +151,7 @@ class Message
     end
   end
 
-  def delete_attachment name
+  def delete_attachment(name)
     attachment = find(name)
     if attachment
       @headers[:attachments].delete attachment.headers
@@ -173,7 +174,7 @@ class Message
   #
   def write_email
     dir = @mailbox.dir
-    Dir.mkdir dir, 0755 unless Dir.exist? dir
+    Dir.mkdir dir, 0o755 unless Dir.exist? dir
     File.write File.join(dir, @hash), @raw, encoding: Encoding::BINARY
   end
 
@@ -336,9 +337,9 @@ class Message
     end
 
     # reformat email addresses
-    mail[:to] = to.map {|addr| addr.format}
-    mail[:cc] = cc.map {|addr| addr.format} unless cc.empty?
-    mail[:bcc] = bcc.map {|addr| addr.format} unless bcc.empty?
+    mail[:to] = to.map(&:format)
+    mail[:cc] = cc.map(&:format) unless cc.empty?
+    mail[:bcc] = bcc.map(&:format) unless bcc.empty?
 
     # return the resulting email
     mail
@@ -463,11 +464,8 @@ class Message
   def self.liberal_email_parser(addr)
     addr = Mail::Address.new(addr)
   rescue Mail::Field::ParseError
-    if addr =~ /^"([^"]*)" <(.*)>$/
-      addr = Mail::Address.new
-      addr.address = $2
-      addr.display_name = $1
-    elsif addr =~ /^([^"]*) <(.*)>$/
+    if addr =~ /^"([^"]*)" <(.*)>$/ or
+       addr =~ /^([^"]*) <(.*)>$/
       addr = Mail::Address.new
       addr.address = $2
       addr.display_name = $1
