@@ -72,8 +72,7 @@ module ASF
     @config[:cache] ||= "#{@root}/cache"
 
     # Contains the data files from the ezmlm mail server, e.g.
-    # list-subs - subscriptions
-    # list-mods - moderators
+    # cache/ directory tree
     # The above are used by mlist.rb
     # list-flags - flags domain listname
     # The above are used by mail.rb

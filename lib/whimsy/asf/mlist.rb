@@ -211,7 +211,7 @@ module ASF
       self.list_subscribers(mail_domain, podling, list_subs, true)
     end
 
-    # returns the list time (defaulting to list-subs time if the marker is not present)
+    # returns the list time
     def self.list_time
       File.mtime(LIST_TIME)
     end
@@ -339,18 +339,18 @@ module ASF
       return nil
     end
 
-    # Parses the list-mods/list-subs files
+    # Scans the cache files
     # Param: type = 'mod' or 'sub' or 'dig'
     # Yields:
     # - domain (e.g. [xxx.].apache.org)
     # - list (e.g. dev)
     # - emails as an array
-    def self.list_parse(type)
+    def self.list_parse(type, &block)
       case type
       when 'dig'
         type = 'digest'
       when 'sub', 'mod'
-        #
+        # pass
       else
         raise ArgumentError.new('type: expecting dig, mod or sub')
       end
@@ -361,7 +361,7 @@ module ASF
         if cached
           begin
             cached.each do |d, l, m|
-              yield d, l, m # these are already frozen
+              block.call d, l, m # these are already frozen
             end
             return
           rescue WeakRef::RefError
