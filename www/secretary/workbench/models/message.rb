@@ -449,7 +449,9 @@ class Message
 
       headers[:attachments] = attachments
     # we also want to treat CLA requests as attachments
-    elsif headers['Subject'].include? 'CLA'
+    elsif headers['Subject'].include?('CLA') &&
+         !headers['Subject'].include?('ICLA') &&
+         !headers['Subject'].include?('iCLA')
       headers[:attachments] = [
         {name: RAWMESSAGE_ATTACHMENT_NAME,
           length: message.size,
