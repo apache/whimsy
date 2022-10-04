@@ -3,6 +3,9 @@ name: Unit test navigation
 on:
   workflow_dispatch:
 
+permissions:  # added using https://github.com/step-security/secure-workflows
+  contents: read
+
 jobs:
   test:
     strategy:
