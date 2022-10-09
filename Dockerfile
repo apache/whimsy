@@ -64,10 +64,8 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y vim
 RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y ldap-utils
 
 # Install puppeteer
-RUN curl -sL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list
-RUN apt update && apt install -y google-chrome-stable
-RUN npm install -g puppeteer --unsafe-perm=true
+COPY docker-config/puppeteer-install.sh /tmp/puppeteer-install.sh
+RUN bash /tmp/puppeteer-install.sh && rm /tmp/puppeteer-install.sh
 
 #  For testing agenda, you may need the following:
 # Find the chrome version:
