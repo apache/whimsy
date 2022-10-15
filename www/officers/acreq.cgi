@@ -160,7 +160,8 @@ _html do
                 _div.col_sm_6 do
                   _select.form_control name: "name", id: "name", required: true do
                     _option value: ''
-                    iclas.invert.to_a.sort.each do |name, email|
+                    # ignore case when sorting names
+                    iclas.invert.to_a.sort_by {|n, e| n.upcase}.each do |name, email|
                       _option name, value: name, data_email: email
                     end
                   end
