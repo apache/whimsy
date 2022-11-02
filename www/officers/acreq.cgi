@@ -310,21 +310,24 @@ _html do
 
                   mail.subject "[FORM] Account Request - #{requestor}: #{@name}"
 
-                  mail.body = <<-EOF.gsub(/^ {10}/, '').gsub(/(Vote reference:)?\n\s+\n/, "\n\n")
+                  # N.B. The second gsub below drops the Vote reference paragraph if there is no reference
+                  mail.body = <<-EOF.gsub(/^ {10}/, '').gsub(/(Vote reference:)?\n\s+\n\s+\(This link is.+\)\n/, "\n\n")
                     Prospective userid: #{@user}
                     Full name: #{@name}
                     Forwarding email address: #{@email}
 
                     Vote reference:
                       #{@votelink.to_s.gsub('mail-search.apache.org/pmc/', 'mail-search.apache.org/members/')}
+                      (This link is for internal use, and is not visible to applicants)
 
                     #{@comments}
 
-                    --
+                    --#{' '}
                     Submitted by https://#{ENV['HTTP_HOST']}#{ENV['REQUEST_URI'].split('?').first}
                     From #{`/usr/bin/host #{ENV['REMOTE_ADDR']}`.chomp}
                     Using #{ENV['HTTP_USER_AGENT']}
                   EOF
+                  # the suffix #{' '} above is used to add a trailing space that is visible in code
 
                   msg = "#{@user} account request by #{user.id} for #{requestor}"
                   rc = ASF::SVN.update(ASF::SVN.svnpath!('acreq', 'new-account-reqs.txt'), msg, env, _) do |_dir, input|
