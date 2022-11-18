@@ -8,7 +8,7 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 
-projects = URI.parse('http://incubator.apache.org/projects/')
+projects = URI.parse('https://incubator.apache.org/projects/')
 table = Nokogiri::HTML(Net::HTTP.get(projects)).at('table')
 
 # Hack to skip processing if cannot get the data
