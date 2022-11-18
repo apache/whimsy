@@ -33,8 +33,8 @@ def Monitor.site_scan(previous_status)
     FileUtils.mkdir(archive) unless File.directory?(archive)
     file = File.basename(logfile)
     level = 'danger'
-    level = 'warning' if log.gsub(/.* error\n/, '').empty?
-    level = 'warning' if log.gsub(/WARN: timeout scanning.*\n/, '').empty?
+    # remove all non-fatal messages
+    level = 'warning' if log.gsub(/(.* error|WARN: timeout scanning.*)\n/, '').empty?
     FileUtils.copy logfile, File.join(archive, file + '.' + level), preserve: true
     {
       level: level,
