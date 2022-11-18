@@ -117,6 +117,10 @@ and will report failure results to the infrastructure
 team ensures the underlying VM is up; the Whimsy PMC is responsible for 
 the server software running inside the VM.
 
+There are currently two Nodeping checks:
+- Public facing: this checks the status return from the public URL https://whimsy.apache.org/incubator/podlings/by-age; this gives[Public check results](https://nodeping.com/reports/statusevents/check/2018042000290QH9Q-OZZ2KBZC)
+- Full status: this checks the status return from https://whimsy.apache.org/status/; this gives [Status results](https://nodeping.com/reports/statusevents/check/2018042000290QH9Q-UMFGNACX)
+
 While the full status for whimsy is represented as a tree of nodes, each
 assigned one of our levels, and containing either child nodes or one or more
 strings, all the infrastructure team is currently concerned with is a boolean
