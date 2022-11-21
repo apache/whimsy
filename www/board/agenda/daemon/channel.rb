@@ -15,7 +15,7 @@ require 'whimsy/asf/svn'
 
 class Channel
   @@sockets = Concurrent::Map.new
-  @@users = Concurrent::Map.new {|map,key| map[key]=[]}
+  @@users = Concurrent::Map.new {|map,key| map.compute_if_absent(key) { [] } }
 
   begin
     FOUNDATION_BOARD = ASF::SVN['foundation_board']
