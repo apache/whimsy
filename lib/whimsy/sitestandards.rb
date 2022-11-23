@@ -61,7 +61,7 @@ module SiteStandards
       CHECK_DOC => 'Projects SHOULD include a link to any current ApacheCon event, as provided by VP, Conferences.',
     },
     'license' => { # link_check a_text =~ /^license$/ and a_href.include? 'apache.org'
-      CHECK_TEXT => /^license$/,
+      CHECK_TEXT => %r{license|licenses}i,
       CHECK_CAPTURE => %r{apache\.org},
       CHECK_VALIDATE => %r{^https?://.*apache.org/licenses/?$},
       CHECK_TYPE => true,
