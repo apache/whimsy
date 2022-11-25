@@ -46,16 +46,12 @@ class PMCMod < Vue
                 _br
                 _b do
                   _ 'Before adding a new PMC member, '
-                  _a 'email notification must be sent to the Board mailing list',
+                  _a 'email notification must have been received by the Board mailing list',
                     href: 'https://www.apache.org/dev/pmc.html#send-the-board-a-notice-of-the-vote-to-add-someone'
                   _ ' (cc: the PMC private@ mailing list).'
-                  _br
-                  _ 'There follows a '
-                  _a '72 hour NOTICE period',
-                    href: 'https://www.apache.org/dev/pmc.html#notice_period'
                 end
                 _label do
-                  _span 'Has the NOTICE email been received by the board list and has the NOTICE period elapsed?'
+                  _span 'Has the NOTICE email been received by the board list?'
                   _input type: 'checkbox', checked: @notice_elapsed
                 end
               end
