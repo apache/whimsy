@@ -67,6 +67,9 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y ldap-utils
 COPY docker-config/puppeteer-install.sh /tmp/puppeteer-install.sh
 RUN bash /tmp/puppeteer-install.sh && rm /tmp/puppeteer-install.sh
 
+# Fix for psych 5.0.0
+RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y libyaml-dev
+
 #  For testing agenda, you may need the following:
 # Find the chrome version:
 # google-chrome --version
