@@ -7,6 +7,11 @@ def mkdir_p?(path)
   mkdir_p path unless Dir.exist? path
 end
 
+# Run system and abort if it fails
+def system!(*args)
+  system(*args) or raise "system!() failed!"
+end
+
 # update gems and restart applications as needed
 task :update, [:command] do |task, args|
   # determine last update time of library sources
@@ -67,7 +72,7 @@ task :update, [:command] do |task, args|
           gems.values
         ].join("\n")
         File.write "Gemfile", contents
-        system('bundle', 'install')
+        system!('bundle', 'install') or raise "Bundler failed"
       end
     end
   end
@@ -86,7 +91,7 @@ task :update, [:command] do |task, args|
       locktime = File.mtime('Gemfile.lock') rescue Time.at(0)
 
       bundler = 'bundle' unless File.exist?(bundler)
-      system(bundler, args.command || 'update')
+      system!(bundler, args.command || 'update') or raise "Bundler failed"
 
       # if new gems were installed and this directory contains a passenger
       #  application, restart it
@@ -180,12 +185,12 @@ namespace :svn do
             Dir.chdir(name) {
              # ensure single-threaded SVN updates
              LockFile.lockfile(Dir.pwd, nil, File::LOCK_EX) do # ignore the return parameter
-              system('svn', 'cleanup')
+              system!('svn', 'cleanup')
               unless isSymlink # Don't change depth for symlinks
                 curdepth = ASF::SVN.getInfoAsHash('.')['Depth'] || 'infinity' # not available as separate item
                 if curdepth != depth
                   puts "#{PREFIX} update depth from '#{curdepth}' to '#{depth}'"
-                  system('svn', 'update', '--set-depth', depth)
+                  system!('svn', 'update', '--set-depth', depth)
                 end
               end
               outerr = nil
@@ -232,9 +237,9 @@ namespace :svn do
             } # chdir
           else # directory does not exist
             # Don't bother locking here -- it should be very rarely needed
-            system('svn', 'checkout', "--depth=#{depth}", svnpath, name)
+            system!('svn', 'checkout', "--depth=#{depth}", svnpath, name)
               if files
-                system('svn', 'update', *files, {chdir: name})
+                system!('svn', 'update', *files, {chdir: name})
               end
           end
           # check that explicitly required files exist
@@ -325,20 +330,20 @@ namespace :git do
               end
 
               # pull changes
-              system('git', 'checkout', branch) if branch
-              system('git', 'fetch', 'origin')
-              system('git', 'reset', '--hard', "origin/#{branch || 'master'}")
+              system!('git', 'checkout', branch) if branch
+              system!('git', 'fetch', 'origin')
+              system!('git', 'reset', '--hard', "origin/#{branch || 'master'}")
             end
           else
             depth = description['depth']
 
             # fresh checkout
             if depth
-              system('git', 'clone', '--depth', depth.to_s, (base + description['url']).to_s, name)
+              system!('git', 'clone', '--depth', depth.to_s, (base + description['url']).to_s, name)
             else
-              system('git', 'clone', (base + description['url']).to_s, name)
+              system!('git', 'clone', (base + description['url']).to_s, name)
             end
-            system('git', 'checkout', branch, {chdir: name}) if branch
+            system!('git', 'checkout', branch, {chdir: name}) if branch
           end
         end
       end
@@ -351,7 +356,7 @@ task :rdoc => 'www/docs/api/index.html'
 file 'www/docs/api/index.html' => Rake::FileList['lib/whimsy/**/*.rb'] do
   # remove old files first
   FileUtils.remove_dir(File.join(File.dirname(__FILE__),'www/docs/api'))
-  system('rdoc', 'lib/whimsy', '--output', 'www/docs/api', '--force-output',
+  system!('rdoc', 'lib/whimsy', '--output', 'www/docs/api', '--force-output',
     '--title', 'whimsy/asf lib', {chdir: File.dirname(__FILE__)})
 end
 
