@@ -28,10 +28,8 @@ jobs:
         sudo apt-get update
         sudo apt-get install libldap2-dev
         sudo apt-get install libsasl2-dev
+        sudo apt-get install libyaml-dev # seems to be needed for installing ruby since psych 5.0.0 release
       if:  matrix.os != 'macos-latest'  
-    - name: setup # seems to be needed for installing ruby since psych 5.0.0 release
-      run: |
-        sudo apt-get install libyaml-dev
     - uses: actions/checkout@v2
       with:
         persist-credentials: false
