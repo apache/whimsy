@@ -140,19 +140,19 @@ class Report < Vue
     # find long, breakable lines
     regex = Regexp.new(/(\&\w+;|.){80}.+/, 'g')
     result = nil
-    indicies = [];
+    indices = [];
     while result = regex.exec(text)
       line = result[0]
       break if line.gsub(/\&\w+;/, '.').length < 80
 
       lastspace = /^.*\s\S/.exec(line)
       if lastspace and lastspace[0].gsub(/\&\w+;/, '.').length - 1 > 40
-        indicies.unshift([line, result.index])
+        indices.unshift([line, result.index])
       end
     end
 
     # reflow each line found
-    indicies.each do |info|
+    indices.each do |info|
       line = info[0]
       index = info[1]
       replacement = '<span class="hilite" title="reflowed">' +
