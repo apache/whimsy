@@ -113,7 +113,7 @@ module SiteStandards
     'privacy' => { # link_check
       CHECK_TEXT => %r{Privacy Policy}i,
       CHECK_CAPTURE => %r{(Privacy)}i,
-      CHECK_VALIDATE => %r{\A(https://privacy\.apache\.org/policies/privacy-policy-public.html|https?://(www\.)?apache\.org/foundation/policies/privacy\.html)\z}i,
+      CHECK_VALIDATE => %r{\Ahttps://privacy\.apache\.org/policies/privacy-policy-public.html\z}i,
       CHECK_TYPE => true,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs.html#navigation',
       CHECK_DOC => 'All websites must link to the Privacy Policy.',
