@@ -167,7 +167,7 @@ class Person < Vue
           _ 'Some providers are known to block our emails as SPAM.'
           _br
           _ 'Please see the following for details: '
-          _a 'email provider issues', href: '../commiters/emailissues', target: '_blank'
+          _a 'email provider issues', href: '../committers/emailissues', target: '_blank'
           _ ' (opens in new page)'
         end
       end
