@@ -101,7 +101,7 @@ function nexttask(proceed) {
 };
 
 // start the process when the proceed button is clicked
-$('button#proceed').click(function(event) {
+$('button#proceed').on('click', function(event) {
   if (tasks.length) {
     $('h1').removeClass('bg-warning').addClass('bg-info').
       text('Request Status');
@@ -114,7 +114,7 @@ $('button#proceed').click(function(event) {
 });
 
 // end the process when the cancel button is clicked
-$('button#cancel').click(function(event) {
+$('button#cancel').on('click', function(event) {
   $(this).prop('disabled', true);
   $('button#proceed').prop('disabled', true);
   message = {status: 'cancelled'};
