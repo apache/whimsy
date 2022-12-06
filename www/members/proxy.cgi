@@ -164,8 +164,6 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
     end
   end
 
-##    _script src: "js/jquery-1.11.1.min.js"
-##    _script src: "js/bootstrap.min.js"
   _script src: "js/bootstrap-combobox.js" # TODO do we need this still?
 
   _script_ %{
