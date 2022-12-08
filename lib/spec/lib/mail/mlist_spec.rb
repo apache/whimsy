@@ -90,7 +90,7 @@ describe ASF::MLIST do
     if TEST_DATA
       expect(mods.length).to be_between(10, 20)
     else
-      expect(mods.length).to be_between(1000, 1200)
+      expect(mods.length).to be_between(1000, 1250)
     end
   end
 
