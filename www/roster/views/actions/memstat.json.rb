@@ -67,7 +67,7 @@ if @action == 'rescind_emeritus'
     _warn "Emeritus request file not found"
   end
 elsif @action == 'request_emeritus'
-  # Create emeritus request and send acknowlegement mail from secretary
+  # Create emeritus request and send acknowledgement mail from secretary
   # TODO URL should be a config constant ...
   code, template = ASF::Git.github('apache/www-site/main/content/forms/emeritus-request.txt')
   raise "Failed to read emeritus-request.txt: " + code unless code == "200"
