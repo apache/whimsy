@@ -21,7 +21,9 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 require 'strscan'
 
-members = ASF::Member.list.keys
+status = ASF::Member.status
+emeritus = ASF::Member.emeritus
+current = ASF::Member.current
 
 MEMBERS = 'apache/www-site/main/content/foundation/members.md'
 
@@ -34,7 +36,10 @@ raise "Could not read #{MEMBERS}, error: #{code}" unless code == '200'
 #
 # | Id | Name | Projects |
 # |^---|------|----------|
-# | aadamchik | Andrei Adamchik |
+# | id | Public Name |
+
+puts "Checking member list"
+puts "===================="
 
 s = StringScanner.new(contents)
 s.skip_until(/\| Id \| Name \| Projects \|\n/)
@@ -42,6 +47,30 @@ s.skip_until(/\n/)
 loop do
   s.scan(/\| (\S+) \|.*?$/)
   id = s[1] or break
-  puts id unless members.include? id
+  puts "#{id} #{status[id] || 'unknown status'}" unless current.include? id
+  s.skip_until(/\n/)
+end
+
+# ## Emeritus Members of The Apache Software Foundation
+# 
+# | Id | Name |
+# |----|------|
+# | id or ? | Public Name |
+
+puts ''
+
+puts "Checking Emeritus list"
+puts "======================"
+
+s.skip_until(/\| Id \| Name \|\n/)
+s.skip_until(/\n/)
+loop do
+  s.scan(/\| (\S+) \|.*?$/)
+  id = s[1] or break
+  unless id == '?'
+    unless emeritus.include?(id)
+      puts "#{id} #{status[id] || current.include?(id) ? 'Current member' : 'unknown id'}"
+    end
+  end
   s.skip_until(/\n/)
 end
