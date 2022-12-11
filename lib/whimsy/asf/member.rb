@@ -85,6 +85,16 @@ module ASF
       status.select {|_k, v| v.start_with? 'Emeritus'}.keys
     end
 
+    # Return a list of availids of deceased members
+    def self.deceased
+      status.select {|_k, v| v.start_with? 'Deceased'}.keys
+    end
+
+    # Return a list of availids of current members
+    def self.current
+      self.list.keys - self.status.keys
+    end
+
     # An iterator that returns a list of ids and associated members.txt entries.
     def each
       ASF::Member.text.to_s.split(/^ \*\) /).each do |section|
