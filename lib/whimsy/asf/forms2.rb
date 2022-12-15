@@ -46,7 +46,7 @@ class Wunderbar::HtmlMarkup
       _div.col_sm_9 do
         _div.input_group do
           yield
-          _whimsy_forms_iconlink(args)
+          _whimsy_forms_iconlink(**args)
         end
         if args['helptext']
           _span.help_block id: args['aria_describedby'] do
@@ -73,7 +73,7 @@ class Wunderbar::HtmlMarkup
     args['type'] ||= 'text'
     args['id'] = args['name']
     args['aria_describedby'] = "#{args['name']}_help" if args['helptext']
-    _whimsy_control_wrapper(args) do
+    _whimsy_control_wrapper(**args) do
       args['class'] = 'form-control'
       if args['rows']
         _textarea! type: args['type'], name: args['name'], id: args['id'], value: args['value'], class: args['class'],
@@ -98,7 +98,7 @@ class Wunderbar::HtmlMarkup
     args['label'] ||= 'Select value(s)'
     args['id'] = args['name']
     args['aria_describedby'] = "#{args['name']}_help" if args['helptext']
-    _whimsy_control_wrapper(args) do
+    _whimsy_control_wrapper(**args) do
       if args['multiple']
         args['multiple'] = 'true'
       end
@@ -148,7 +148,7 @@ class Wunderbar::HtmlMarkup
     args['id'] = args['name']
     args['aria_describedby'] = "#{args['name']}_help" if args['helptext']
     args['selected'] = [args['selected']] if args['selected'].kind_of?(String)
-    _whimsy_control_wrapper(args) do
+    _whimsy_control_wrapper(**args) do
       # Construct list of all :options; mark any that are in :selected
       if args['options'].kind_of?(Array)
         args['options'].each do |val|
