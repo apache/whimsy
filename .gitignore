@@ -6,6 +6,6 @@ work
 .idea/
 .subversion
 .rakeTasks
-assets/
+/assets/
 maintenance.txt
 .ruby-version

@@ -61,8 +61,8 @@ lists = ASF::Mail.cansub(user.asf_member?, ASF.pmc_chairs.include?(user), ldap_p
 _html do
   # better system output styling (errors in red)
   _style :system
-  _script src: 'assets/bootstrap-select.js'
-  _link rel: 'stylesheet', href: 'assets/bootstrap-select.css'
+  _script src: '/assets/bootstrap-select.js'
+  _link rel: 'stylesheet', href: '/assets/bootstrap-select.css'
   _body? do
     _whimsy_body(
       title: PAGETITLE,
