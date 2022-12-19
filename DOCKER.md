@@ -58,6 +58,8 @@ Installation instructions
       be visible to the container.
 * `cd` into that directory
 * `echo ":root: ." >.whimsy`
+* `echo ":whimsy_dn: dn-to-be-used-for-whimsy LDAP access" >>.whimsy`
+* `echo ":httpd_dn: dn-to-be-used-for-httpd LDAP access" >>.whimsy` # defaults to whimsy_dn
 * `git clone git@github.com:apache/whimsy.git` OR
 * `git clone https://github.com/apache/whimsy.git` (whichever works best for you)
 * `create .bash_aliases` if required - this will be picked up by the root user
@@ -65,7 +67,7 @@ Installation instructions
 * Start Docker if necessary: `$ open /Applications/Docker.app`
 * `rake docker:update` # this runs docker:build and updates any Gems
 * `rake svn:update git:pull` # This updates the Whimsy data sources
-* `rake docker:up`
+* `rake docker:up` # This prompts for LDAP Bind password
 * visit `http://localhost:1999/` in your favorite browser
 
 To get a shell on the container, open a terminal console in the work directory
@@ -99,10 +101,6 @@ The `docker-compose.yml` has the following mounts:
 
 container path      host path
 /srv                directory chosen in step 1
-
-These are currently disabled, see https://github.com/apache/whimsy/issues/119
-/root/.subversion   $HOME/.subversion
-/root/.ssh          $HOME/.ssh
 
 You can edit the files in these directories using your host tools.
 If any of the configuration files under .subversion etc contain absolute references to

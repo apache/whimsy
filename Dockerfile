@@ -81,27 +81,20 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y libyaml-dev
 # chown root:root /usr/bin/chromedriver
 # chmod +x /usr/bin/chromedriver
 
-# This should be last, as the source is likely to change
-# It also takes very little time, so it does not matter if it has to be redone
-# N.B. These files need to be allowed in the .dockerignore file
-COPY docker-config/whimsy.conf /etc/apache2/sites-enabled/000-default.conf
-COPY docker-config/25-authz_ldap_group_membership.conf /etc/apache2/conf-enabled/25-authz_ldap_group_membership.conf
-
-# Define the LDAP hosts; must agree with those used in the above HTTPD files or TLS cert problems may occur
-RUN echo "uri ldaps://ldap-us.apache.org ldaps://ldap-eu.apache.org" >>/etc/ldap/ldap.conf
-
 # Allow www-data user to use Git repo owned by root
 COPY docker-config/gitconfig-www /var/www/.gitconfig
 
 # disable security check and telemetry
-RUN sed -i -e '$i  PassengerDisableSecurityUpdateCheck on' /etc/apache2/conf-enabled/passenger.conf
-RUN sed -i -e '$i  PassengerDisableAnonymousTelemetry on' /etc/apache2/conf-enabled/passenger.conf
-
 # Must use the same user and group as apache
-RUN sed -i -e '$i  PassengerUser www-data' /etc/apache2/conf-enabled/passenger.conf
-RUN sed -i -e '$i  PassengerGroup www-data' /etc/apache2/conf-enabled/passenger.conf
+RUN sed -i -e '$i  PassengerDisableSecurityUpdateCheck on' /etc/apache2/conf-enabled/passenger.conf && \
+    sed -i -e '$i  PassengerDisableAnonymousTelemetry on' /etc/apache2/conf-enabled/passenger.conf && \
+    sed -i -e '$i  PassengerUser www-data' /etc/apache2/conf-enabled/passenger.conf && \
+    sed -i -e '$i  PassengerGroup www-data' /etc/apache2/conf-enabled/passenger.conf
 
 WORKDIR /srv/whimsy
+RUN git config --global --add safe.directory /srv/whimsy
 EXPOSE 80
 
+# Note: the httpd and LDAP config is now done in the container as part of startup
+# This is to avoid storing any credentials in the image
 CMD ["/usr/local/bin/rake", "docker:entrypoint"]

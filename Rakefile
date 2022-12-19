@@ -370,6 +370,71 @@ task :default do
   end
 end
 
+# Temporary files used to propagate settings into container
+LDAP_HTTPD_PATH = '../.ldap_httpd.tmp'
+LDAP_WHIMSY_PATH = '../.ldap_whimsy.tmp'
+
+def ldap_init
+  $LOAD_PATH.unshift 'lib'
+  require 'io/console' # cannot prompt from container, so need to do this upfront
+  require 'whimsy/asf/config'
+
+  whimsy_dn = ASF::Config.get(:whimsy_dn) or raise "ERROR: Must provide whimsy_dn value in .whimsy"
+  whimsy_pw = $stdin.getpass("password for #{whimsy_dn}: ")
+  raise "ERROR: Password is required" unless whimsy_pw.size > 1
+
+  httpd_dn = ASF::Config.get(:httpd_dn)
+  if httpd_dn
+    httpd_pw = $stdin.getpass("password for #{httpd_dn}: ")
+    raise "ERROR: Password is required" unless httpd_pw.size > 1
+  else # default to whimsy credentials
+    httpd_dn = whimsy_dn
+    httpd_pw = whimsy_pw
+  end
+  File.open(LDAP_HTTPD_PATH, "w", 0o600) do |w|
+    w.puts httpd_dn
+    w.puts httpd_pw
+  end
+  File.open(LDAP_WHIMSY_PATH, "w", 0o600) do |w|
+    w.puts whimsy_dn
+    w.puts whimsy_pw
+  end
+end
+
+# Process template files replacing variable references
+def filter(src, dst, ldaphosts, ldapbinddn, ldapbindpw)
+  require 'erb'
+  template = ERB.new(File.read(src))
+  File.open(dst, "w") do |w|
+    w.write(template.result(binding))
+  end
+end
+
+# Set up LDAP items in container context
+def ldap_setup
+  FileUtils.cp LDAP_WHIMSY_PATH, '/srv/ldap.txt'
+  FileUtils.rm_f LDAP_WHIMSY_PATH # remove work file
+
+  ldapbinddn = ldapbindpw = nil
+  File.open(LDAP_HTTPD_PATH, 'r') do |r|
+    ldapbinddn = r.readline.strip
+    ldapbindpw = r.readline.strip
+  end
+  FileUtils.rm_f LDAP_HTTPD_PATH # remove work file
+
+  $LOAD_PATH.unshift 'lib'
+  require 'whimsy/asf/config'
+  hosts = ASF::Config.get(:ldap)
+  raise "ERROR: Must define :ldap in ../.whimsy" unless hosts
+
+  ldaphosts = hosts.join(" ").gsub('ldaps://', '')
+  
+  filter('docker-config/whimsy.conf',
+    '/etc/apache2/sites-enabled/000-default.conf', ldaphosts, ldapbinddn, ldapbindpw)
+  filter('docker-config/25-authz_ldap_group_membership.conf',
+    '/etc/apache2/conf-enabled/25-authz_ldap_group_membership.conf', ldaphosts, ldapbinddn, ldapbindpw)
+end
+
 # Docker support
 namespace :docker do
   task :build do
@@ -383,6 +448,7 @@ namespace :docker do
   end
 
   task :up do
+    ldap_init # create LDAP config data files
     sh 'docker-compose up'
   end
 
@@ -452,6 +518,7 @@ namespace :docker do
       ln_s '/srv/.bash_aliases', '/root/.bash_aliases'
     end
 
+    ldap_setup # set up LDAP entries in container
   end
 
   # This is the entrypoint in the Dockerfile so runs in the container
