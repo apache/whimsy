@@ -374,18 +374,33 @@ end
 LDAP_HTTPD_PATH = '../.ldap_httpd.tmp'
 LDAP_WHIMSY_PATH = '../.ldap_whimsy.tmp'
 
+# Allow use of security database on macOS
+# Keychain needs to be set up with an application password
+# with the Account value of the user_dn
+def getpass(user_dn)
+  pw = $stdin.getpass("password for #{user_dn}: ")
+  return pw unless pw == '*'
+  if RbConfig::CONFIG["host_os"].start_with? 'darwin'
+    pw, status = Open3.capture2('security', 'find-generic-password', '-a', user_dn, '-w')
+    raise "ERROR: problem running security: #{status}" unless status.success?
+  else
+    raise "ERROR: sorry, don't know how to get password from secure storage"
+  end
+  return pw.strip
+end
+
 def ldap_init
   $LOAD_PATH.unshift 'lib'
   require 'io/console' # cannot prompt from container, so need to do this upfront
   require 'whimsy/asf/config'
 
   whimsy_dn = ASF::Config.get(:whimsy_dn) or raise "ERROR: Must provide whimsy_dn value in .whimsy"
-  whimsy_pw = $stdin.getpass("password for #{whimsy_dn}: ")
+  whimsy_pw = getpass(whimsy_dn)
   raise "ERROR: Password is required" unless whimsy_pw.size > 1
 
   httpd_dn = ASF::Config.get(:httpd_dn)
   if httpd_dn
-    httpd_pw = $stdin.getpass("password for #{httpd_dn}: ")
+    httpd_pw = getpass(httpd_dn)
     raise "ERROR: Password is required" unless httpd_pw.size > 1
   else # default to whimsy credentials
     httpd_dn = whimsy_dn
