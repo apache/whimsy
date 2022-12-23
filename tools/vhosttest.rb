@@ -14,7 +14,8 @@ IP = ARGV.shift or raise RuntimeError.new "Need path to infrastructure puppet ch
 # Create dummy version of function to allow import
 module Puppet
   module Functions
-    def self.create_function(*args)
+    def self.create_function(*_args, &block)
+      block.call
     end
   end
 end
@@ -25,7 +26,10 @@ require "#{IP}/modules/vhosts_whimsy/lib/puppet/functions/preprocess_vhosts.rb"
 yaml = Dir["#{IP}/data/nodes/whimsy-vm*.apache.org.yaml"].
   max_by {|path| path[/-vm(\d+)/, 1].to_i}
 facts = YAML.load_file(yaml)['vhosts_whimsy::vhosts::vhosts']['whimsy-vm-443']
-ldap = ASF::LDAP::RO_HOSTS.join(' ') # to be closer to live site
+ldap = 'ldap-us.apache.org:636' # No longer defined in whimsy
 
-macros = Puppet::Functions::ApacheVHostMacros.new(facts, ldap)
-puts macros.result['custom_fragment']
+macros = ApacheVHostMacros.new(facts, ldap)
+puts macros.result['custom_fragment'].
+  gsub('%%{}', '%').
+  sub('%{apache::user}', 'www-data').
+  sub('%{apache::group}', 'www-data')
