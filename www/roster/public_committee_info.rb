@@ -57,6 +57,7 @@ committees = ASF::Committee.load_committee_info
 info = {
   last_updated: ASF::Committee.svn_change,
   committee_count: committees.size,
+  pmc_count: 0,
   roster_counts: nil
 }
 
@@ -79,6 +80,7 @@ info[:committees] = committees.map {|committee|
     roster: committee.roster.sort.to_h, # sort entries by uid
     pmc: committee.pmc?
   }
+  info[:pmc_count] += 1 if committee.pmc?
   roster_counts[cname] = committee.roster.size
   data[:paragraph] = committee.paragraph if committee.paragraph
   [cname, data]
