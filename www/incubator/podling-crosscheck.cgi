@@ -7,13 +7,6 @@ require 'whimsy/asf'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 
-def get_data(defaults: {})
-  return {
-    "Sample data processing here" => "row 1",
-    "This could come from a file" => "row B"
-  }
-end
-
 _html do
   _body? do
     _whimsy_body(
@@ -39,9 +32,6 @@ _html do
         end
       }
     ) do
-
-
-      ASF.init_ldap
 
       ipmc = ASF::Project.find('incubator').owners
       incubator = ASF::Project.find('incubator').members

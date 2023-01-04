@@ -62,8 +62,6 @@ _html do
       }
     ) do
 
-      ASF.init_ldap
-
       unreported = ASF::Committee.pmcs.map(&:display_name).map(&:downcase)
       incubated = 0
 
