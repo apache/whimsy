@@ -13,7 +13,7 @@ def system!(*args)
 end
 
 # update gems and restart applications as needed
-task :update, [:command] do |task, args|
+task :update, [:command] do |_task, args|
   # determine last update time of library sources
   lib_update = Dir['lib/**/*'].map {|n| File.mtime n rescue Time.at(0)}.max
 
@@ -61,7 +61,7 @@ task :update, [:command] do |task, args|
     end
 
     gems = gemlines.map {|line| [line[/['"](.*?)['"]/, 1], line.strip]}.to_h
-    gems['whimsy-asf'].sub! /,.*/, ", path: #{Dir.pwd.inspect}"
+    gems['whimsy-asf'].sub!(/,.*/, ", path: #{Dir.pwd.inspect}")
 
     # Also need to define version for wunderbar as per the asf.gemspec file
     require 'tmpdir'
@@ -98,7 +98,7 @@ task :update, [:command] do |task, args|
       if (File.mtime('Gemfile.lock') rescue Time.at(0)) != locktime
         if File.exist?('tmp/restart.txt')
           FileUtils.touch 'tmp/.restart.txt'
-          FileUtils.chmod 0777, 'tmp/.restart.txt'
+          FileUtils.chmod 0o777, 'tmp/.restart.txt'
           FileUtils.mv 'tmp/.restart.txt', 'tmp/restart.txt'
         end
       end
@@ -151,7 +151,7 @@ namespace :svn do
             old,new = ASF::SVN.updatelisting(name,nil,nil,description['dates'])
             if old == new
               puts "List is at revision #{old}."
-            elsif old == nil
+            elsif old.nil?
               puts new
             else
               puts "List updated from #{old} to revision #{new}."
@@ -226,7 +226,7 @@ namespace :svn do
                   if status.success?
                     break
                   end
-                rescue => e
+                rescue StandardError => e
                   outerr = e.inspect
                   break
                 end
@@ -238,16 +238,14 @@ namespace :svn do
           else # directory does not exist
             # Don't bother locking here -- it should be very rarely needed
             system!('svn', 'checkout', "--depth=#{depth}", svnpath, name)
-              if files
-                system!('svn', 'update', *files, {chdir: name})
-              end
+            if files
+              system!('svn', 'update', *files, {chdir: name})
+            end
           end
           # check that explicitly required files exist
-          if files
-            files.each do |file|
-              path = File.join(name, file)
-              puts "Missing: #{path}" unless File.exist? path
-            end
+          files&.each do |file|
+            path = File.join(name, file)
+            puts "Missing: #{path}" unless File.exist? path
           end
         end
       end
@@ -275,7 +273,7 @@ namespace :svn do
               end
               depthact = hash['Depth'] || 'infinity'
               depthexp = description['depth'] || 'infinity'
-              unless depthact ==  depthexp
+              unless depthact == depthexp
                 puts "Depth: #{depthact} expected to be #{depthexp}"
                 errors += 1
               end
@@ -458,12 +456,13 @@ namespace :docker do
 
   task :update => :build do
     sh 'docker-compose run  --entrypoint ' +
-      %('bash -c "rake docker:scaffold && rake update"') +
+      %('bash -c "rake update"') +
       ' web'
   end
 
   task :up do
     ldap_init # create LDAP config data files
+    # Start the container which then runs 'rake docker:entrypoint'
     sh 'docker-compose up'
   end
 
@@ -474,25 +473,6 @@ namespace :docker do
   # cannot depend on :config
   # It runs in container, and needs to occur first
   task :scaffold do
-    # https://github.com/apache/whimsy/issues/119 - not needed AFAICT
-    # set up symlinks from /root to user's home directory
-    # home = ENV['HOST_HOME']
-    # if home and File.exist? home
-    #   %w(.ssh .subversion).each do |mount|
-    #     root_mount = File.join("/root", mount)
-    #     home_mount = File.join(home, mount)
-    #     if File.exist? root_mount
-    #       if File.symlink? root_mount
-    #         next if File.realpath(root_mount) == home_mount
-    #         rm_f root_mount
-    #       else
-    #         rm_rf root_mount
-    #       end
-    #     end
-    #
-    #     symlink home_mount, root_mount
-    #   end
-    # end
 
     # This should already exist, but just in case
     mkdir_p? '/srv/whimsy/www/members'
@@ -504,11 +484,12 @@ namespace :docker do
     begin
       mode = File.stat('/var/log/apache2').mode
       if mode & 7 != 5
-        chmod 0755, '/var/log/apache2'
+        chmod 0o755, '/var/log/apache2'
       end
       # ensure log files are readable
       sh 'chmod 0644 /var/log/apache2/*.log'
-    rescue
+    rescue StandardError => e
+      puts e.inspect
     end
 
     # Create other needed directories
@@ -538,11 +519,6 @@ namespace :docker do
 
   # This is the entrypoint in the Dockerfile so runs in the container
   task :entrypoint => [:scaffold] do
-    # requires :config
-    # require 'whimsy/asf/ldap'
-    # unless File.read(File.join(ASF::ETCLDAP, 'ldap.conf')).include? 'uri ldaps'
-    #   sh 'ruby -I lib -r whimsy/asf -e "ASF::LDAP.configure"'
-    # end
     sh 'apache2ctl -DFOREGROUND'
   end
 end
