@@ -156,23 +156,11 @@ if person.public_name != @pubname and @id != 'notinavail'
     form do
       _input value: @pubname, name: 'pubname'
     end
-
     complete do
-      ldap = ASF.init_ldap(true)
-
-      ldap.bind("uid=#{env.user},ou=people,dc=apache,dc=org",
-        env.password)
-
-      ldap.modify person.dn, [ASF::Base.mod_replace('cn', @pubname.strip)]
-
-      log = ["LDAP modify: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
-      if ldap.err == 0
-        _transcript log
-      else
-        _backtrace log
+      ASF::LDAP.bind(env.user, env.password) do
+        person.modify('cn',  @pubname.strip)
+        
       end
-
-      ldap.unbind
     end
   end
 end
@@ -182,7 +170,7 @@ end
 ########################################################################
 
 # send confirmation email
-task "email #@email" do
+task "email #{@email}" do
   cc = person.all_mail.map {|email| "#{@pubname.inspect} <#{email}>"}
   cc << 'secretary@apache.org'
 
@@ -217,21 +205,9 @@ if @id != 'notinavail'
     end
 
     complete do
-      ldap = ASF.init_ldap(true)
-
-      ldap.bind("uid=#{env.user},ou=people,dc=apache,dc=org",
-                env.password)
-
-      ldap.modify person.dn, [ASF::Base.mod_replace('mail', @email.strip)]
-
-      log = ["LDAP modify: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
-      if ldap.err == 0
-        _transcript log
-      else
-        _backtrace log
+      ASF::LDAP.bind(env.user, env.password) do
+        person.modify('mail',  @email.strip)
       end
-
-      ldap.unbind
     end
   end
 end
