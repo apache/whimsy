@@ -425,8 +425,11 @@ end
 
 # Set up LDAP items in container context
 def ldap_setup
-  FileUtils.cp LDAP_WHIMSY_PATH, '/srv/ldap.txt'
+  # Link to file in running container
+  FileUtils.cp LDAP_WHIMSY_PATH, '/tmp/ldap.tmp'
   FileUtils.rm_f LDAP_WHIMSY_PATH # remove work file
+  FileUtils.chown 'www-data', 'www-data', '/tmp/ldap.tmp'
+  ln_sf '/tmp/ldap.tmp', '/srv/ldap.txt'
 
   ldapbinddn = ldapbindpw = nil
   File.open(LDAP_HTTPD_PATH, 'r') do |r|
@@ -441,7 +444,7 @@ def ldap_setup
   raise "ERROR: Must define :ldap in ../.whimsy" unless hosts
 
   ldaphosts = hosts.join(" ").gsub('ldaps://', '')
-  
+
   filter('docker-config/whimsy.conf',
     '/etc/apache2/sites-enabled/000-default.conf', ldaphosts, ldapbinddn, ldapbindpw)
   filter('docker-config/25-authz_ldap_group_membership.conf',
