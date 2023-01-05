@@ -904,7 +904,7 @@ module ASF
     # Optionally return several free values as an array
     def self.next_uidNumber(count=1)
       raise ArgumentError.new "Count: #{count} is less than 1!" if count < 1
-      numbers = ASF::search_one(ASF::Person.base, 'uid=*', ['uidNumber', 'gidNumber']).
+      numbers = ASF.search_one(ASF::Person.base, 'uid=*', ['uidNumber', 'gidNumber']).
         map{|i| u=i['uidNumber'];g=i['gidNumber']; u == g ? u : [u,g]}.flatten.map(&:to_i).
         select{|i| i >= MINIMUM_USER_UID}.uniq.sort.lazy
       enum = Enumerator.new do |output|
@@ -1083,7 +1083,7 @@ module ASF
 
     # add a new group to LDAP
     def self.add(name, people)
-      nextgid = ASF::search_one(ASF::Group.base, 'cn=*', 'gidNumber').
+      nextgid = ASF.search_one(ASF::Group.base, 'cn=*', 'gidNumber').
         flatten.map(&:to_i).max + 1
 
       entry = [
