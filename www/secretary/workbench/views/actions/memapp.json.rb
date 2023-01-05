@@ -86,23 +86,12 @@ task "update cn=member,ou=groups,dc=apache,dc=org in LDAP" do
 
   complete do
     if ASF.memberids.include? @availid
-      _transcript ["#@availid already in group member"]
+      _transcript ["#{@availid} already in group member"]
     else
-      ldap = ASF.init_ldap(true)
-      ldap.bind("uid=#{env.user},ou=people,dc=apache,dc=org",
-        env.password)
-
-      ldap.modify "cn=member,ou=groups,dc=apache,dc=org",
-        [LDAP.mod(LDAP::LDAP_MOD_ADD, 'memberUid', [@availid])]
-
-      log = ["LDAP mod add: #{ldap.err2string(ldap.err)} (#{ldap.err})"]
-      if ldap.err == 0
-        _transcript log
-      else
-        _backtrace log
+      ASF::LDAP.bind(env.user, env.password) do
+        # TODO there ought to be a library method to do this
+        ASF::LDAP.modify(ASF::Group['member'].dn, [ASF::Base.mod_add('memberUid', @availid)])
       end
-
-      ldap.unbind
     end
   end
 end
