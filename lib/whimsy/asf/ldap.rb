@@ -103,11 +103,11 @@ module ASF
       raise ::LDAP::ResultError.new('Unknown user') unless dn
 
       ASF.ldap.unbind if ASF.ldap.bound? rescue nil
-      ldap = ASF.init_ldap(true, self.rwhosts)
+      ldap = ASF._init_ldap(true, self.rwhosts)
       if block
         ASF.flush_weakrefs
         ldap.bind(dn, password, &block)
-        ASF.init_ldap(true)
+        ASF._init_ldap(true)
       else
         ldap.bind(dn, password)
       end
@@ -262,8 +262,8 @@ module ASF
     end
   end
 
-  # public entry point for establishing a connection safely
-  def self.init_ldap(reset = false, hosts = nil)
+  # private entry point for establishing a connection safely
+  def self._init_ldap(reset = false, hosts = nil)
     ASF::LDAP::CONNECT_LOCK.synchronize do
       @ldap = nil if reset
       @ldap ||= ASF::LDAP.connect(!reset, hosts)
@@ -279,7 +279,7 @@ module ASF
 
   # Returns existing LDAP connection, creating one if necessary.
   def self.ldap
-    @ldap || self.init_ldap
+    @ldap || ASF._init_ldap
   end
 
   # search with a scope of one, with automatic retry/failover
@@ -304,7 +304,7 @@ module ASF
     attempts_left = [ASF::LDAP.hosts.length, 2].max
     begin
       attempts_left -= 1
-      init_ldap unless @ldap
+      ASF._init_ldap unless @ldap
       return [] unless @ldap
 
       target = @ldap.get_option(::LDAP::LDAP_OPT_HOST_NAME) rescue '?'
