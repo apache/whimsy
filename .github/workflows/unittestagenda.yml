@@ -48,7 +48,8 @@ jobs:
     - name: setup agenda 2
       # need to run the ruby that has all the gems installed
       run: |
-        sudo mkdir /srv
+        ls -ld /srv
+        sudo mkdir -p /srv
         sudo bash -c 'echo "\n\n" >/srv/ldap.txt'
         ls -l /srv
         echo ":ldap: ldaps://ldap-us.apache.org:636" >> .whimsy
