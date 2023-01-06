@@ -102,7 +102,11 @@ module ASF
       dn = ASF::Person.new(user).dn
       raise ::LDAP::ResultError.new('Unknown user') unless dn
 
-      ASF.ldap.unbind if ASF.ldap.bound? rescue nil
+      begin
+        @ldap.unbind if @ldap&.bound?
+      rescue StandardError
+        # ignore
+      end
       ldap = ASF._init_ldap(true, self.rwhosts)
       if block
         ASF.flush_weakrefs
