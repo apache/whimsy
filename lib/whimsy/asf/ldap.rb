@@ -29,7 +29,7 @@
 #
 
 # Note: custom ASF LDAP attributes are defined in the file:
-# https://github.com/apache/infrastructure-puppet/blob/deployment/modules/ldapserver/files/asf-custom.schema
+# https://github.com/apache/infrastructure-p6/blob/production/modules/ldapserver/files/asf-custom.schema
 
 require 'wunderbar'
 require 'ldap'
@@ -47,7 +47,7 @@ module ASF
     CONNECT_LOCK = Mutex.new
 
     # connect to LDAP
-    def self.connect(test = true, hosts = nil)
+    def self.connect(hosts = nil)
       # If the host list is specified, use that as is
       # otherwise ensure we start with the next in the default list
       hosts ||= self.hosts.rotate!
@@ -65,9 +65,6 @@ module ASF
           else
             ldap = ::LDAP::Conn.new(uri.host, uri.port)
           end
-
-          # test the connection
-          ldap.bind if test
 
           # save the host
           @host = host
@@ -269,8 +266,16 @@ module ASF
   # private entry point for establishing a connection safely
   def self._init_ldap(reset = false, hosts = nil)
     ASF::LDAP::CONNECT_LOCK.synchronize do
+      # fetch the default LDAP connection details
+      if @ldap_dn.nil? || @ldap_pw.nil?
+        Wunderbar.info("Reading ldap.txt")
+        File.open("/srv/ldap.txt") do |io|
+          @ldap_dn = io.readline.strip
+          @ldap_pw = io.readline.strip
+        end
+      end
       @ldap = nil if reset
-      @ldap ||= ASF::LDAP.connect(!reset, hosts)
+      @ldap ||= ASF::LDAP.connect(hosts)
     end
   end
 
@@ -281,9 +286,15 @@ module ASF
     else '/etc/ldap'
   end
 
-  # Returns existing LDAP connection, creating one if necessary.
+  # Returns LDAP connection, creating and binding one if necessary.
   def self.ldap
     @ldap || ASF._init_ldap
+    # ensure the connection is bound
+    unless @ldap.bound?
+      Wunderbar.debug("#{@ldap.object_id}: bind as #{@ldap_dn} as #{@ldap}")
+      @ldap.bind(@ldap_dn, @ldap_pw)
+    end
+    @ldap
   end
 
   # search with a scope of one, with automatic retry/failover
@@ -308,7 +319,7 @@ module ASF
     attempts_left = [ASF::LDAP.hosts.length, 2].max
     begin
       attempts_left -= 1
-      ASF.ldap # creates connection if necessary
+      ASF.ldap # creates connection if necessary and binds it
       return [] unless @ldap
 
       target = @ldap.get_option(::LDAP::LDAP_OPT_HOST_NAME) rescue '?'
