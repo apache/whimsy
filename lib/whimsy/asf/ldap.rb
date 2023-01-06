@@ -308,7 +308,7 @@ module ASF
     attempts_left = [ASF::LDAP.hosts.length, 2].max
     begin
       attempts_left -= 1
-      ASF._init_ldap unless @ldap
+      ASF.ldap # creates connection if necessary
       return [] unless @ldap
 
       target = @ldap.get_option(::LDAP::LDAP_OPT_HOST_NAME) rescue '?'
