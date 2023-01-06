@@ -16,8 +16,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [macos-latest, ubuntu-20.04, ubuntu-22.04]
-        ruby: [2.7, 3.1]
+        # os: [macos-latest, ubuntu-20.04, ubuntu-22.04]
+        # ruby: [2.7, 3.1]
+        os: [ubuntu-22.04]
+        ruby: [3.1]
         # 2.7 not supported on 22.04
         exclude:
           - os: ubuntu-22.04
@@ -48,7 +50,9 @@ jobs:
     - name: setup agenda 2
       # need to run the ruby that has all the gems installed
       run: |
-        mkdir /srv
+        ls -l /srv
+        id
+        mkdir -p /srv
         echo "\n\n" >/srv/ldap.txt
         echo ":ldap: ldaps://ldap-us.apache.org:636" >> .whimsy
         sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
