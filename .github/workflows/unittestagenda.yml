@@ -49,7 +49,7 @@ jobs:
       # need to run the ruby that has all the gems installed
       run: |
         sudo mkdir -p /srv
-        sudo bash -c 'echo "\n\n" >/srv/ldap.txt'
+        sudo bash -c 'printf "\n\n\n" >/srv/ldap.txt'
         ls -l /srv
         echo ":ldap: ldaps://ldap-us.apache.org:636" >> .whimsy
         sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
