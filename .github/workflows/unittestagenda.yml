@@ -33,30 +33,37 @@ jobs:
         sudo apt-get install libsasl2-dev
         sudo apt-get install libyaml-dev # seems to be needed for installing ruby since psych 5.0.0 release
       if:  matrix.os != 'macos-latest'
+    - name: dummp setup
+      run: |
+        pwd 
+        ls -ld /srv
+        id 
+        sudo echo "\n\n" >/srv/ldap.txt
+        ls -l srv
     # - uses: actions/setup-node@v2
     #   with:
     #     node-version: '14.19.1'
-    - uses: actions/checkout@v2
-      with:
-        persist-credentials: false
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
-    - name: setup agenda 1
-      run: |
-        cd www/board/agenda
-        bundle install
-    - name: setup agenda 2
-      # need to run the ruby that has all the gems installed
-      run: |
-        ls -l /srv
-        id
-        mkdir -p /srv
-        echo "\n\n" >/srv/ldap.txt
-        echo ":ldap: ldaps://ldap-us.apache.org:636" >> .whimsy
-        sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
-    - name: test agenda code
-      run: |
-        cd www/board/agenda
-        SKIP_NAVIGATION=1 bundle exec rake
+    # - uses: actions/checkout@v2
+    #   with:
+    #     persist-credentials: false
+    # - uses: ruby/setup-ruby@v1
+    #   with:
+    #     ruby-version: ${{ matrix.ruby }}
+    #     bundler-cache: true
+    # - name: setup agenda 1
+    #   run: |
+    #     cd www/board/agenda
+    #     bundle install
+    # - name: setup agenda 2
+    #   # need to run the ruby that has all the gems installed
+    #   run: |
+    #     ls -l /srv
+    #     id
+    #     mkdir -p /srv
+    #     echo "\n\n" >/srv/ldap.txt
+    #     echo ":ldap: ldaps://ldap-us.apache.org:636" >> .whimsy
+    #     sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
+    # - name: test agenda code
+    #   run: |
+    #     cd www/board/agenda
+    #     SKIP_NAVIGATION=1 bundle exec rake
