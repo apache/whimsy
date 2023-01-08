@@ -100,7 +100,7 @@ end
 # Display the form
 def emit_form()
   # Store auth so we know Apache ID of submitter
-  user = ASF::Auth.decode(env = {})
+  user = ASF::Auth.decode({})
   docket = JSON.parse(File.read(File.join(ASF::SVN['brandlist'], 'docket.json'))) # To annotate pmcs with (R) symbol
   committees = Public.getJSON('committee-info.json')['committees']
 
