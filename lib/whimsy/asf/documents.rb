@@ -6,11 +6,11 @@ module ASF
 
   module DocumentUtils
 
-    CACHE_DIR = ASF::Config.get(:cache)
     MAX_AGE = 600  # 5 minutes
 
+    # N.B. must check :cache config each time to allow for test overrides
     # check cache age and get settings
-    def self.check_cache(type, cache_dir: CACHE_DIR, warn: true)
+    def self.check_cache(type, cache_dir: ASF::Config.get(:cache), warn: true)
       file, _ = ASF::SVN.listingNames(type, cache_dir)
       mtime = begin
         File.mtime(file)
@@ -26,8 +26,9 @@ module ASF
       return [cache_dir, stale, file, age]
     end
 
+    # N.B. must check :cache config each time to allow for test overrides
     # create/update cache file
-    def self.update_cache(type, env, cache_dir: CACHE_DIR)
+    def self.update_cache(type, env, cache_dir: ASF::Config.get(:cache))
       _cache_dir, stale, file, age = check_cache(type, cache_dir: cache_dir, warn: false)
       if stale
         require 'whimsy/asf/rack'
