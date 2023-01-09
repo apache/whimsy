@@ -25,6 +25,8 @@ if %w(success info warning).include? status[:level]
   summary_status = "200 OK"
 else
   summary_status = "400 #{status[:title] || 'failure'}"
+  # Log error for later investigation
+  $stderr.puts JSON.pretty_generate(status)
 end
 print "Status: #{summary_status}\r\n\r\n"
 
