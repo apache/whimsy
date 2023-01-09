@@ -15,6 +15,7 @@ grant = "#@filename#{fileext}"
 
 # verify that a grant under that name doesn't already exist
 if grant =~ /^\w[-\w]*\.?\w*$/
+  ASF::GrantFiles.update_cache(env)
   if ASF::GrantFiles.exist?(grant)
     _warn "documents/grants/#{grant} already exists"
   end

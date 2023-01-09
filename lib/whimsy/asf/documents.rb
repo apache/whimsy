@@ -5,8 +5,12 @@ require 'json'
 module ASF
 
   module DocumentUtils
-    # create/update cache file
-    def self.update_cache(type, cache_dir)
+
+    CACHE_DIR = ASF::Config.get(:cache)
+    MAX_AGE = 600  # 5 minutes
+
+    # check cache age and get settings
+    def self.check_cache(type, cache_dir: CACHE_DIR, warn: true)
       file, _ = ASF::SVN.listingNames(type, cache_dir)
       mtime = begin
         File.mtime(file)
@@ -14,10 +18,22 @@ module ASF
         0
       end
       age = (Time.now - mtime).to_i
-      if age > 600 # 5 minutes
-        Wunderbar.warn "Updating listing #{file} #{age}"
+      stale = age > MAX_AGE
+      if warn && stale
+        Wunderbar.warn "Cache for #{type} is older than #{MAX_AGE} seconds"
+        # Wunderbar.warn caller(0, 10).join("\n")
+      end
+      return [cache_dir, stale, file, age]
+    end
+
+    # create/update cache file
+    def self.update_cache(type, env, cache_dir: CACHE_DIR)
+      _cache_dir, stale, file, age = check_cache(type, cache_dir: cache_dir, warn: false)
+      if stale
         require 'whimsy/asf/rack'
-        ASF::Auth.decode(env = {})
+        ASF::Auth.decode(env)
+        # TODO: Downdate to info
+        Wunderbar.warn "Updating listing #{file} #{age} as #{env.user}"
         filerev, svnrev = ASF::SVN.updatelisting(type, env.user, env.password, false, cache_dir)
         if filerev && svnrev # it worked
           FileUtils.touch file # last time it was checked
@@ -32,12 +48,17 @@ module ASF
   # Common class for access to documents/cclas/
   class CCLAFiles
 
+    STEM = 'cclas'
+
+    def self.update_cache(env)
+      ASF::DocumentUtils.update_cache(STEM, env)
+    end
+
     # listing of top-level icla file/directory names
     # Directories are listed without trailing "/"
     def self.listnames
-      cache_dir = ASF::Config.get(:cache)
-      DocumentUtils.update_cache('cclas', cache_dir)
-      _, list = ASF::SVN.getlisting('cclas', nil, true, false, cache_dir)
+      cache_dir = ASF::DocumentUtils.check_cache(STEM).first
+      _, list = ASF::SVN.getlisting(STEM, nil, true, false, cache_dir)
       list
     end
 
@@ -51,12 +72,17 @@ module ASF
   # Common class for access to documents/cclas/
   class GrantFiles
 
+    STEM = 'grants'
+
+    def self.update_cache(env)
+      ASF::DocumentUtils.update_cache(STEM, env)
+    end
+
     # listing of top-level grants file/directory names
     # Directories are listed without trailing "/"
     def self.listnames
-      cache_dir = ASF::Config.get(:cache)
-      DocumentUtils.update_cache('grants', cache_dir)
-      _, list = ASF::SVN.getlisting('grants', nil, true, false, cache_dir) # do we need to cache the listing?
+      cache_dir = ASF::DocumentUtils.check_cache(STEM).first
+      _, list = ASF::SVN.getlisting(STEM, nil, true, false, cache_dir)
       list
     end
 
@@ -76,6 +102,12 @@ module ASF
     # so create hashes from the list
     @@h_claRef = nil # for matching claRefs
     @@h_stem = nil # for matching stems
+
+    STEM = 'iclas'
+
+    def self.update_cache(env)
+      ASF::DocumentUtils.update_cache(STEM, env)
+    end
 
     # search icla files to find match with claRef
     # matches if the input matches the full name of a file or directory or
@@ -120,11 +152,9 @@ module ASF
     # This returns the list of names in the top-level directory
     # directory names are terminated by '/'
     def self.listnames
-      iclas = 'iclas'
-      cache_dir = ASF::Config.get(:cache)
       # iclas.txt no longer updated by cronjob
-      DocumentUtils.update_cache(iclas, cache_dir)
-      @@tag, list = ASF::SVN.getlisting(iclas, @@tag, false, false, cache_dir)
+      cache_dir = ASF::DocumentUtils.check_cache(STEM).first
+      @@tag, list = ASF::SVN.getlisting(STEM, @@tag, false, false, cache_dir)
       if list # we have a new list
         # update the list cache
         @@list = list

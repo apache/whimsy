@@ -14,6 +14,8 @@ require 'whimsy/asf'
 require 'wunderbar/script'
 require 'ruby2js/filter/functions'
 
+ASF::ICLAFiles.update_cache({})
+
 _html do
   _style %{
     table {border-collapse: collapse}

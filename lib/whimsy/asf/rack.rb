@@ -10,10 +10,15 @@ module ASF
     def self.decode(env)
       class << env; attr_accessor :user, :password; end
 
-      auth = env['HTTP_AUTHORIZATION'] || ENV['HTTP_AUTHORIZATION']
+      if ENV['PASSENGER_APP_ENV']
+        auth = env['HTTP_AUTHORIZATION']
+      else # only use ENV if not a Passenger app
+        auth = ENV['HTTP_AUTHORIZATION']
+      end
 
       if auth.to_s.empty?
         env.user = env['REMOTE_USER'] || ENV['USER'] || Etc.getpwuid.name
+        Wunderbar.warn "No auth found for #{env.user}"
       else
         require 'base64'
         env.user, env.password = Base64.

@@ -14,19 +14,21 @@ require 'yaml'
 
 file = File.join(ASF::SVN.find!('emeritus-involuntary'),'emeritus-involuntary.yml')
 forced = Set.new
-YAML.load_file(file).each{|k,v| v.each{|w| forced.add w}}
+YAML.load_file(file).each {|_k, v| v.each {|w| forced.add w}}
 
 exmembers = ASF::Member.emeritus.map {|id| ASF::Person.find(id)}
 ASF::Person.preload(['cn'], exmembers) # speed up
 files = Hash[ASF::EmeritusFiles::listnames.map{|i| [i,'NAK']}]
 nofiles = Hash.new()
 
+ASF::ICLAFiles.update_cache({})
+
 exmembers.each { |m|
   ma = ASF::EmeritusFiles.find(m)
   if ma
     files[ma] = 'OK'
   else
-    nofiles[m.name]=m
+    nofiles[m.name] = m
   end
 }
 _html do
@@ -46,7 +48,7 @@ _html do
     _tr do
       _th 'Name'
     end
-    files.select {|k,v| v == 'NAK'}.sort_by{|k| k[0].split('-').pop}.each do |k,v|
+    files.select { |_k, v| v == 'NAK'}.sort_by { |k| k[0].split('-').pop}.each do |k, _v|
       _tr do
         _td do
           _a k, href: ASF::SVN.svnpath!('emeritus', k), target: '_blank'
@@ -64,7 +66,7 @@ _table_ do
     _th 'Legal Name'
     _th 'Member.txt Name'
   end
-  nofiles.sort_by{|k,v| v.member_name}.each do |k,v|
+  nofiles.sort_by { |_k, v| v.member_name}.each do |k, v|
     person = v
     if forced.delete? person.member_name
       next
@@ -74,7 +76,7 @@ _table_ do
         _a k, href: "https://whimsy.apache.org/roster/committer/#{k}", target: '_blank'
       end
       _td do
-        if person.icla && person.icla.claRef
+        if person.icla&.claRef
           file = ASF::ICLAFiles.match_claRef(person.icla.claRef)
           if file
             _a person.icla.claRef, href: ASF::SVN.svnpath!('iclas', file), target: '_blank'

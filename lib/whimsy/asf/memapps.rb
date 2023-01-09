@@ -12,6 +12,12 @@ module ASF
     @@files = nil
     @@tag = nil
 
+    STEM = 'member_apps'
+
+    def self.update_cache(env)
+      ASF::DocumentUtils.update_cache(STEM, env)
+    end
+
     # list the stems of the files
     def self.stems
       refresh
@@ -83,9 +89,8 @@ module ASF
     private
 
     def self.refresh
-      cache_dir = ASF::Config.get(:cache)
-      ASF::DocumentUtils.update_cache('member_apps', cache_dir)
-      @@tag, list = ASF::SVN.getlisting('member_apps', @@tag, true, false, cache_dir)
+      cache_dir = ASF::DocumentUtils.check_cache(STEM).first
+      @@tag, list = ASF::SVN.getlisting(STEM, @@tag, true, false, cache_dir)
       if list
         @@files = list
       end

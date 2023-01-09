@@ -14,6 +14,8 @@ unless user.asf_member? or ASF.pmc_chairs.include? user
   exit
 end
 
+ASF::ICLAFiles.update_cache({})
+
 # default HOME directory
 require 'etc'
 ENV['HOME'] ||= Etc.getpwuid.dir

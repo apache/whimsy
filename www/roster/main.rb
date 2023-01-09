@@ -195,6 +195,7 @@ get '/committer2/index.json' do
     ASF::ICLA.each {|icla|
       if icla.noId?
         if @auth[:secretary]
+          ASF::ICLAFiles.update_cache(env)
           iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef) # must be secretary
           tmp << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
         else
@@ -277,6 +278,7 @@ get '/icla/index.json' do
   ASF::ICLA.each {|icla|
     if icla.noId?
       if @auth[:secretary] # only secretary sees ICLAs
+        ASF::ICLAFiles.update_cache(env)
         iclaFile = ASF::ICLAFiles.match_claRef(icla.claRef)
         icla_index << { name: icla.name, mail: icla.email, claRef: icla.claRef, iclaFile: iclaFile}
       else

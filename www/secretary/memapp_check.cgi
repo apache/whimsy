@@ -28,6 +28,9 @@ members << PersonNoId.new("Shane Caraveo")
 members << PersonNoId.new("Robert Hartill")
 members << PersonNoId.new("Andrew Wilson")
 
+ASF::MemApps.update_cache({})
+ASF::ICLAFiles.update_cache({})
+
 files = Hash[ASF::MemApps.names.map{|i| [i,'NAK']}]
 nofiles = Hash.new()
 

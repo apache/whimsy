@@ -298,6 +298,7 @@ end
 # redirect to an icla
 get %r{/icla/(.*)} do |filename|
   checkout = ASF::SVN.svnurl('iclas')
+  ASF::ICLAFiles.update_cache(env)
   file = ASF::ICLAFiles.match_claRef(filename)
   pass unless file
   redirect to(checkout + '/' + file)

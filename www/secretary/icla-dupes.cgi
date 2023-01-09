@@ -8,6 +8,8 @@ require 'wunderbar/script'
 require 'ruby2js/filter/functions'
 require 'whimsy/asf'
 
+ASF::ICLAFiles.update_cache({})
+
 _html do
   _style %{
     table {border-collapse: collapse}
@@ -26,7 +28,7 @@ _html do
 
   _p 'Further checks TBA, e.g. looking for partial matches'
 
-  dups = Hash.new{|h,k| h[k]=Array.new}
+  dups = Hash.new { |h, k| h[k] = Array.new }
   ASF::ICLA.each do |icla|
     legal = icla.legal_name
     legals = legal.downcase.split(' ')

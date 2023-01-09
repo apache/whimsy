@@ -131,10 +131,11 @@ class Committer
 
     if auth[:member] # i.e. member karma
 
-      if person.icla and person.icla.claRef and (auth[:secretary] or auth[:root]) # Not all people have iclas (only check if secretary or root role)
+      if person.icla&.claRef and (auth[:secretary] or auth[:root]) # Not all people have iclas (only check if secretary or root role)
+        ASF::ICLAFiles.update_cache(env)
         file = ASF::ICLAFiles.match_claRef(person.icla.claRef)  # must be secretary or root
         if file
-          url =ASF::SVN.svnurl('iclas')
+          url = ASF::SVN.svnurl('iclas')
           response[:forms][:icla] = "#{url}/#{file}"
         end
       end
@@ -144,6 +145,7 @@ class Committer
         member[:info] = person.members_txt
 
         if person.icla # not all members have iclas
+          ASF::MemApps.update_cache(env)
           file = ASF::MemApps.find1st(person)
           if file
             url = ASF::SVN.svnurl('member_apps')
@@ -182,7 +184,7 @@ class Committer
       end
 
     else # not an ASF member; no karma for ICLA docs so don't add link
-      response[:forms][:icla] = '' if person.icla and person.icla.claRef
+      response[:forms][:icla] = '' if person.icla&.claRef
     end
 
     response[:member] = member unless member.empty?

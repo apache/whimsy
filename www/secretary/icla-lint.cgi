@@ -9,6 +9,8 @@ require 'whimsy/asf'
 ldap = ASF::Person.listids
 committers = ASF.committerids # to check for missing ICLAs
 
+ASF::ICLAFiles.update_cache({})
+
 errors = 0
 
 _html do
@@ -27,12 +29,12 @@ _html do
     _label "#{ldap.length} People entries found."
     _br
     _label "#{committers.length} committers found."
-   end
+  end
 
   _h2_ 'Error Status'
   _div do
     _label "#{errors} errors found."
-   end
+  end
 
   _h2_ 'Show'
   _div do
@@ -71,7 +73,7 @@ _html do
   end
 
   iclas = Hash.new{|h,k| h[k]=[]}
-  dupes=0
+  dupes = 0
   ASF::ICLAFiles.listnames.each do |file|
     name = File.basename(file)
     stem = name.sub(/\.\w+$/, '')
@@ -79,9 +81,9 @@ _html do
     iclas[stem] << name
   end
 
-  seen=Hash.new{ |h,k| h[k] = []} # iclas.txt CLA stem values (value = id,name)
-  icla_ids=Hash.new{ |h,k| h[k] = []} # to check for duplicates and missing entries
-  icla_mails=Hash.new{ |h,k| h[k] = []} # to check for duplicates
+  seen = Hash.new { |h, k| h[k] = []} # iclas.txt CLA stem values (value = id,name)
+  icla_ids = Hash.new { |h, k| h[k] = []} # to check for duplicates and missing entries
+  icla_mails = Hash.new { |h, k| h[k] = []} # to check for duplicates
 
   _h2_ 'Issues'
 
@@ -229,7 +231,7 @@ _html do
   iclas.reject! {|path| seen.include? path}
 
   # select entries with count != 1
-  seen.select! {|k,v| v.length != 1}
+  seen.select! { |k, v| v.length != 1}
   if seen.size > 0
     _h2_ 'Duplicate stem entries in iclas.txt'
     _table_ do
@@ -318,7 +320,7 @@ _html do
   end
 
   #  Check if there are any duplicate mails
-  mdups=icla_mails.select{|k,v| v.size > 1}
+  mdups = icla_mails.select {|_k, v| v.size > 1}
   if mdups.size > 0
     _h2_ 'Duplicate mails in iclas.txt'
     _table do

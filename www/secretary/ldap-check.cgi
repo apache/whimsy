@@ -23,6 +23,8 @@ require 'whimsy/asf'
 require 'whimsy/asf/mlist'
 require 'wunderbar'
 
+ASF::ICLAFiles.update_cache({})
+
 _html do
   _style %{
     table {border-collapse: collapse}
@@ -178,7 +180,7 @@ _html do
 
   _h2 'People who are banned or have nologin but are still committers'
 
-  people_projects=Hash.new{|h,k| h[k]=Array.new}
+  people_projects = Hash.new {|h, k| h[k] = Array.new}
 
   projects.keys.each do |prj|
     prj.members.each do |m|
@@ -191,11 +193,11 @@ _html do
 
   _table do
     _tr do
-          _th 'UID'
-          _th 'Created'
-          _th 'asf-banned?'
-          _th 'Login'
-          _th 'Projects (if any)'
+      _th 'UID'
+      _th 'Created'
+      _th 'asf-banned?'
+      _th 'Login'
+      _th 'Projects (if any)'
     end
     people.select {|p| p.inactive? and new.include? p.name}.sort_by(&:name).each do |p|
       _tr do
@@ -214,9 +216,9 @@ _html do
 
   _table do
     _tr do
-          _th 'UID'
-          _th 'Created'
-          _th 'Login'
+      _th 'UID'
+      _th 'Created'
+      _th 'Login'
     end
     people.select {|p| p.inactive? and not p.asf_banned?}.sort_by(&:name).each do |p|
       _tr do
@@ -269,17 +271,17 @@ _html do
     _p do
       _ 'The following ids are in the new group but not the old'
       _br
-      _ new_old.map{|x| x.inspect}.join(',')
+      _ new_old.map(&:inspect).join(',')
     end
   elsif old_new.size == 0
-  _p 'The groups are equal'
+    _p 'The groups are equal'
   end
 
   if old_new.size > 0
     _p do
       _ 'The following ids are in the old group but not the new'
       _br
-      _ old_new.map{|x| x.inspect}.join(',')
+      _ old_new.map(&:inspect).join(',')
     end
   end
 
