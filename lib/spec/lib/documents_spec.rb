@@ -18,6 +18,13 @@ require 'whimsy/asf'
 
 set_svnroot # need access to listing file
 
+# Ensure that EmeritusFiles.find does not need to use LDAP
+def getPerson(name)
+  p = ASF::Person.find(name)
+  p.attrs['cn'] = nil
+  p
+end
+
 describe ASF::EmeritusFiles do
     it "listnames should return array of size 1" do
         res = ASF::EmeritusFiles.listnames
@@ -26,22 +33,22 @@ describe ASF::EmeritusFiles do
         expect(res.first).to eq('emeritus1.txt')
     end
     it "find Person.find('nemo') should return nil" do
-        res = ASF::EmeritusFiles.find(ASF::Person.find('nemo'))
+        res = ASF::EmeritusFiles.find(getPerson('nemo'))
         expect(res).to eq(nil)
     end
     it "find Person.find('emeritus1') should return emeritus1.txt" do
-        res = ASF::EmeritusFiles.find(ASF::Person.find('emeritus1'))
+        res = ASF::EmeritusFiles.find(getPerson('emeritus1'))
         expect(res).to eq('emeritus1.txt')
     end
     it "findpath Person.find('emeritus1') should return svnpath and file " do
-        res = ASF::EmeritusFiles.findpath(ASF::Person.find('emeritus1'))
+        res = ASF::EmeritusFiles.findpath(getPerson('emeritus1'))
         expect(res).to be_kind_of(Array)
         expect(res.size).to eq(2)
         expect(res[0]).to end_with('/emeritus1.txt')
         expect(res[1]).to eq('emeritus1.txt')
     end
     it "findpath Person.find('emeritus1') should return same path as path!(file) " do
-        res = ASF::EmeritusFiles.findpath(ASF::Person.find('emeritus1'))
+        res = ASF::EmeritusFiles.findpath(getPerson('emeritus1'))
         expect(res).to be_kind_of(Array)
         expect(res.size).to eq(2)
         svnpath = res[0]
@@ -61,11 +68,11 @@ describe ASF::EmeritusReinstatedFiles do
         expect(res.first).to eq('emeritus2.txt')
     end
     it "find Person.find('nemo') should return nil" do
-        res = ASF::EmeritusReinstatedFiles.find(ASF::Person.find('nemo'))
+        res = ASF::EmeritusReinstatedFiles.find(getPerson('nemo'))
         expect(res).to eq(nil)
     end
     it "find Person.find('emeritus2') should return emeritus2.txt" do
-        res = ASF::EmeritusReinstatedFiles.find(ASF::Person.find('emeritus2'))
+        res = ASF::EmeritusReinstatedFiles.find(getPerson('emeritus2'))
         expect(res).to eq('emeritus2.txt')
     end
 end
@@ -78,11 +85,11 @@ describe ASF::EmeritusRequestFiles do
         expect(res.first).to eq('emeritus3.txt')
     end
     it "find Person.find('nemo') should return nil" do
-        res = ASF::EmeritusRequestFiles.find(ASF::Person.find('nemo'))
+        res = ASF::EmeritusRequestFiles.find(getPerson('nemo'))
         expect(res).to eq(nil)
     end
     it "find Person.find('emeritus3') should return emeritus3.txt" do
-        res = ASF::EmeritusRequestFiles.find(ASF::Person.find('emeritus3'))
+        res = ASF::EmeritusRequestFiles.find(getPerson('emeritus3'))
         expect(res).to eq('emeritus3.txt')
     end
 end
@@ -95,22 +102,22 @@ describe ASF::EmeritusRescindedFiles do
         expect(res.first).to eq('emeritus4.txt')
     end
     it "find Person.find('nemo') should return nil" do
-        res = ASF::EmeritusRescindedFiles.find(ASF::Person.find('nemo'))
+        res = ASF::EmeritusRescindedFiles.find(getPerson('nemo'))
         expect(res).to eq(nil)
     end
     it "find Person.find('emeritus4') should return emeritus4.txt" do
-        res = ASF::EmeritusRescindedFiles.find(ASF::Person.find('emeritus4'))
+        res = ASF::EmeritusRescindedFiles.find(getPerson('emeritus4'))
         expect(res).to eq('emeritus4.txt')
     end
     it "findpath Person.find('emeritus4') should return svnpath and file " do
-        res = ASF::EmeritusRescindedFiles.findpath(ASF::Person.find('emeritus4'))
+        res = ASF::EmeritusRescindedFiles.findpath(getPerson('emeritus4'))
         expect(res).to be_kind_of(Array)
         expect(res.size).to eq(2)
         expect(res[0]).to end_with('/emeritus4.txt')
         expect(res[1]).to eq('emeritus4.txt')
     end
     it "findpath Person.find('emeritus4') should return same path as path!(file) " do
-        res = ASF::EmeritusRescindedFiles.findpath(ASF::Person.find('emeritus4'))
+        res = ASF::EmeritusRescindedFiles.findpath(getPerson('emeritus4'))
         expect(res).to be_kind_of(Array)
         expect(res.size).to eq(2)
         svnpath = res[0]
