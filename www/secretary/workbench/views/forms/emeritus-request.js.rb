@@ -52,14 +52,15 @@ class EmeritusRequest < Vue
         @members.each do |member|
           availid = member.id
           name = member.name
-          if search.all? { |part| availid.include? part or name.downcase().include? part }
+          names = name.downcase().split(' ') # N.B. split parameter is required by Javascript
+          if search.any? { |part| names.include? part or availid == part}
             _li do
               _input type: :radio, name: 'search', id: availid, onClick: lambda {
                 @availid = availid
                 @filename = availid
                 @disabled = false
               }
-              _label name, for: availid
+              _label name + " (#{availid})", for: availid
             end
           end
         end
@@ -74,9 +75,9 @@ class EmeritusRequest < Vue
 
       _table.form do
         _tr do
-          _th 'File Name'
+          _th 'ASF id (used for file name)'
           _td do
-            _input type: :text, name: 'filename', value: @filename, required: true, disabled: @filed,
+            _input type: :text, name: 'filename', value: @filename, required: true, disabled: @filed || @availid.empty?,
                    pattern: '[a-zA-Z][-\w]+(\.[a-z]+)?'
           end
         end
