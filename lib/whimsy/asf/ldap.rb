@@ -873,19 +873,52 @@ module ASF
       "uid=#{name},#{ASF::Person.base}"
     end
 
+    VALID_ATTRS = %w[
+      asf-altEmail
+      asf-committer-email
+      asf-member-activeprojects
+      asf-member-status
+      asf-pgpKeyFingerprint
+      asf-sascore
+      cn
+      createTimestamp
+      creatorsName
+      dn
+      entryCSN
+      entryDN
+      entryUUID
+      gidNumber
+      githubUsername
+      hasSubordinates
+      homeDirectory
+      host
+      loginShell
+      mail
+      modifiersName
+      modifyTimestamp
+      objectClass
+      sn
+      sshPublicKey
+      structuralObjectClass
+      subschemaSubentry
+      uid
+      uidNumber
+    ]
+
     # Allow arbitrary LDAP attributes to be referenced as object properties.
     # Example: <tt>ASF::Person.find('rubys').cn</tt>.  Can also be used
     # to modify an LDAP attribute.
     def method_missing(name, *args)
-      if name.to_s.end_with? '=' and args.length == 1
-        return modify(name.to_s[0..-2], args)
+      sname = name.to_s
+      if sname.end_with? '=' and args.length == 1
+        return modify(name[0..-2], args)
       end
 
       return super unless args.empty?
-      result = self.attrs[name.to_s]
-      return super unless result
+      return super unless VALID_ATTRS.include? sname
+      result = self.attrs[sname]
 
-      if result.empty?
+      if result.nil? || result.empty?
         return nil
       else
         result.map! do |value|
