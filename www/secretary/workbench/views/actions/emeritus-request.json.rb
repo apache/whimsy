@@ -13,15 +13,14 @@ fileext = File.extname(@selected).downcase if @signature.empty?
 
 # verify that a membership emeritus request under that name stem doesn't already exist
 emeritus_request = "#{@filename}#{fileext}"
-if emeritus_request =~ /\A\w[-\w]*\.?\w*\z/ # check taint requirements
+if @filename =~ /\A[a-z][-a-z0-9]+\z/ # check name is valid as availid
   names = ASF::EmeritusRequestFiles.listnames
-  if names.include? @filename
-    _warn "documents/emeritus-requests-received/#{@filename} already exists"
-  elsif names.include? emeritus_request
-    _warn "documents/emeritus-requests-received/#{emeritus_request} already exists"
+  match = names.find {|n| @filename == File.basename(n, '.*')}
+  if match
+    _warn "documents/emeritus-requests-received/#{match} already exists"
   end
 else
-  _warn "#{emeritus_request} is not a valid file name"
+  _warn "#{emeritus_request} is not a valid file name (must be valid as an availid)"
 end
 
 # obtain per-user information
