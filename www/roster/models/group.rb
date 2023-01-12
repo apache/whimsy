@@ -10,14 +10,14 @@ class Group
     groups.map! {|group| [group, "LDAP group"]}
 
     # add services...
-    groups += ASF::Service.listcns.reject{|s| s=='apldap'}.map {|service| [service, "LDAP service"]}
+    groups += ASF::Service.listcns.reject {|s| s == 'apldap'}.map {|service| [service, "LDAP service"]}
 
     # add authorization (asf and pit)
     groups += ASF::Authorization.new('asf').to_h.
-      map {|id, list| [id, "ASF Auth"]}
+      map {|id, _list| [id, "ASF Auth"]}
 
     groups += ASF::Authorization.new('pit').to_h.
-      map {|id, list| [id, "PIT Auth"]}
+      map {|id, _list| [id, "PIT Auth"]}
 
     # add authorization groups (LDAP)
     groups += ASF::AuthGroup.listcns.map {|group| [group, "LDAP Auth Group"]}
@@ -52,7 +52,7 @@ class Group
     if group.hasLDAP?
       # LDAP group
 
-      people = ASF::Person.preload('cn', group.members)
+      _people = ASF::Person.preload('cn', group.members)
 
       response = {
         id: id,
@@ -72,16 +72,16 @@ class Group
       type = 'asf-auth'
       group = ASF::Authorization.new('asf').to_h[id]
 
-      if not group
+      unless group
         type = 'pit-auth'
         group = ASF::Authorization.new('pit').to_h[id]
       end
 
       if group
-        group.map! {|id| ASF::Person.find(id)}
+        group.map! {|id1| ASF::Person.find(id1)}
 
         # auth group
-        people = ASF::Person.preload('cn', group)
+        _people = ASF::Person.preload('cn', group)
 
         response = {
           id: id,
