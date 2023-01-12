@@ -738,6 +738,12 @@ module ASF
       person.attrs['dn'] ? person : nil
     end
 
+    # override the base version which does not work
+    # as it relies on search by 'cn' == id
+    def hasLDAP?
+      !attrs['dn'].nil?
+    end
+
     # list of LDAP attributes for this person, populated lazily upon
     # first reference.
     def attrs
