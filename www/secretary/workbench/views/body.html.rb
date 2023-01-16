@@ -33,7 +33,7 @@ _html do
 
     _tr do
       _td 'Subject:'
-      _td @message.subject || '(empty)'
+      _td (@message.subject || '(empty)').to_s.fix_encoding
     end
   end
 
