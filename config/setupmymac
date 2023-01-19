@@ -530,7 +530,7 @@ then
   restart_apache = true
 end
 
-confd_source = "#{WHIMSY}/config/25-authz_ldap_group_membership.conf"
+confd_source = "#{WHIMSY}/docker-config/25-authz_ldap_group_membership.conf"
 confd_target = '/private/etc/apache2/other/25-authz_ldap_group_membership.conf'
 if
   not File.exist?(confd_target) or
@@ -624,7 +624,7 @@ end
 ### Start Apache httpd
 
 if $root and not $apache_would_have_been_restarted
-  unless `launchctl list`.include? 'org.apache.httpd'
+  if not `launchctl list`.include? 'org.apache.httpd'
     run "launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist"
   elsif restart_apache
     run "apachectl restart"
