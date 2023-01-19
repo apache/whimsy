@@ -561,7 +561,7 @@ unless $root and force[:toucher] != nil
       File.write plist, contents unless $dry_run
 
       if `launchctl list`.include? 'org.apache.whimsy/toucher'
-	run "launchctl unload #{plist}"
+        run "launchctl unload #{plist}"
       end
     end
 
@@ -592,30 +592,30 @@ if force[:ws] != nil
        contents[/<key>GroupName<\/key>\s*<string>(.*?)<\/string>/, 1] = group
 
       unless Dir.exist? File.dirname(plist)
-	run "mkdir -p #{File.dirname(plist)}"
+        run "mkdir -p #{File.dirname(plist)}"
       end
 
       unless File.exist?(plist) or File.read(plist) != contents
-	unless $dry_run
-	  color "$ sudo edit #{plist}"
-	  File.write plist, contents
-	end
+        unless $dry_run
+          color "$ sudo edit #{plist}"
+          File.write plist, contents
+        end
 
-	if `launchctl list`.include? 'org.apache.whimsy/board/agenda'
-	  run "launchctl unload #{plist}"
-	end
+        if `launchctl list`.include? 'org.apache.whimsy/board/agenda'
+          run "launchctl unload #{plist}"
+        end
       end
 
       unless `launchctl list`.include? 'org.apache.whimsy/board/agenda'
-	run "launchctl load #{plist}"
+        run "launchctl load #{plist}"
       end
     else
       if `launchctl list`.include? 'org.apache.whimsy/board/agenda'
-	run "launchctl unload #{plist}"
+        run "launchctl unload #{plist}"
       end
 
       if File.exist?(plist)
-	run "rm #{plist}"
+        run "rm #{plist}"
       end
     end
   end
