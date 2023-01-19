@@ -35,8 +35,8 @@ restart_apache = false
 $brew_updated = false
 
 force = {clean: false, prune: false, toucher: nil, ws: nil}
-force[:svn] = true unless Dir.exists? '/srv/svn'
-force[:git] = true unless Dir.exists? '/srv/git'
+force[:svn] = true unless Dir.exist? '/srv/svn'
+force[:git] = true unless Dir.exist? '/srv/git'
 
 ### Convenience methods
 
@@ -53,12 +53,12 @@ end
 def run *args
   color "$ " + "#{'sudo ' if $root}" + Array(args).join(' ')
   return if $dry_run
-  Kernel.system *args
+  Kernel.system(*args)
 end
 
 # run brew, making sure that a brew update is done before the first command
 def brew *args
-  if not $brew_updated
+  unless $brew_updated
     run 'brew', 'update'
     $brew_updated = true
   end
@@ -85,17 +85,17 @@ end
 option = :www
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: #$0 [options]"
+  opts.banner = "Usage: #{$0} [options]"
 
-  opts.on('-u', '--user', "Run whimsy under your user") do |opt|
+  opts.on('-u', '--user', "Run whimsy under your user") do |_opt|
     option = :user
   end
 
-  opts.on('-w', '--web', "Run whimsy under the Apache web user") do |opt|
+  opts.on('-w', '--web', "Run whimsy under the Apache web user") do |_opt|
     option = :web
   end
 
-  opts.on('-d', '--docker', "Run whimsy on docker") do |opt|
+  opts.on('-d', '--docker', "Run whimsy on docker") do |_opt|
     option = :docker
   end
 
@@ -115,15 +115,15 @@ OptionParser.new do |opts|
     force[:passenger] = opt
   end
 
-  opts.on('--[no-]ldap', "Reconfigure LDAP") do |opt|
+  opts.on('--[no-]ldap', "Reconfigure LDAP") do |_opt|
     force[:ldap] = opts
   end
 
-  opts.on('--[no-]svn', "Checkout/update svn repositories") do |opt|
+  opts.on('--[no-]svn', "Checkout/update svn repositories") do |_opt|
     force[:svn] = opts
   end
 
-  opts.on('--[no-]git', "Clone/pull git repositories") do |opt|
+  opts.on('--[no-]git', "Clone/pull git repositories") do |_opt|
     force[:git] = opts
   end
 
@@ -135,7 +135,7 @@ OptionParser.new do |opts|
     force[:minutes] = opt
   end
 
-  opts.on('--update-all', "Update everything") do |opt|
+  opts.on('--update-all', "Update everything") do |_opt|
     force.default = true
   end
 
@@ -147,9 +147,9 @@ OptionParser.new do |opts|
     force[:ws] = opt
   end
 
-  opts.on('--all', "Update and launch everything") do |opt|
-    force[:ws] = true if force[:ws] == nil
-    force[:toucher] = true if force[:toucher] == nil
+  opts.on('--all', "Update and launch everything") do |_opt|
+    force[:ws] = true if force[:ws].nil?
+    force[:toucher] = true if force[:toucher].nil?
     force.default = true
   end
 
@@ -161,7 +161,7 @@ OptionParser.new do |opts|
     force[:prune] = opt
   end
 
-  opts.on('--dry-run', "Only indicate what commands would be run") do |opt|
+  opts.on('--dry-run', "Only indicate what commands would be run") do |_opt|
     $dry_run = true
   end
 end.parse!
@@ -176,7 +176,7 @@ sudo_user = ENV['SUDO_USER'] ?
 
 ### Install Homebrew
 
-if not $root and (option!=:docker or not Dir.exist? '/Applications/Docker.app')
+unless $root and (option != :docker or not Dir.exist? '/Applications/Docker.app')
   if `which brew`.empty?
     script = 'https://raw.githubusercontent.com/Homebrew/install/master/install'
     color %($ ruby -e "$(curl -fsSL #{script})")
@@ -186,7 +186,7 @@ end
 
 ## Install Node.js
 
-if not $root and option != :docker
+unless $root and option != :docker
   if `which n`.empty?
     brew 'install', 'n'
   elsif force[:node]
@@ -202,7 +202,7 @@ unless File.stat('/usr/local/n').uid == sudo_user.uid
   sudo {run 'chown', '-R', "#{sudo_user.uid}:#{sudo_user.gid}", '/usr/local/n'}
 end
 
-if not $root and option != :docker
+unless $root and option != :docker
   if `which node`.empty?
     run 'n lts'
   elsif force[:node] and "v#{`n ls-remote stable`}" != `node --version`
@@ -212,7 +212,7 @@ if not $root and option != :docker
   # Prompt for xcode installation
   `git --version` unless $dry_run
 
-  # if not (svn installed and svnmucc is on path)
+  # unless (svn installed and svnmucc is on path)
   unless system 'svn --help > /dev/null 2>&1' and not `which svnmucc`.empty?
     brew 'install', 'subversion'
   end
@@ -220,7 +220,7 @@ end
 
 ## Install Passenger
 
-if not $root and option != :docker
+unless $root and option != :docker
   if `which passenger`.empty?
     brew 'install', 'passenger'
   elsif force[:passenger]
@@ -258,7 +258,7 @@ unless Dir.exist? '/srv'
 end
 
 # relocate whimsy clone
-if not Dir.exist? '/srv/whimsy'
+unless Dir.exist? '/srv/whimsy'
   sudo do
     run 'mv', WHIMSY, '/srv/whimsy'
     run 'ln', '-s', '/srv/whimsy', WHIMSY
@@ -313,7 +313,7 @@ files.each do |file|
   end
 end
 
-if not File.exist? '/srv/whimsy/www/members/log'
+unless File.exist? '/srv/whimsy/www/members/log'
   run 'ln -s /var/log/apache2 /srv/whimsy/www/members/log'
 end
 
@@ -332,7 +332,7 @@ if force[:prune]
 end
 
 if option == :docker
-  if not Dir.exist? '/Applications/Docker.app'
+  unless Dir.exist? '/Applications/Docker.app'
     brew 'cask', 'install', 'docker'
   end
 
@@ -344,7 +344,7 @@ if option == :docker
     run 'open /Applications/Docker.app'
   end
 
-  if not $root
+  unless $root
     Dir.chdir '/srv/whimsy' do
       run 'rake docker:update'
     end
@@ -371,7 +371,7 @@ if option != :user
   snippet += "PassengerUser #{user}\nPassengerGroup #{group}\n"
 end
 
-if not File.exists?(passenger_conf) or File.read(passenger_conf) != snippet
+unless File.exist?(passenger_conf) or File.read(passenger_conf) != snippet
   sudo do
     color "$ sudo edit #{passenger_conf}"
     File.write passenger_conf, snippet unless $dry_run
@@ -400,7 +400,7 @@ end
 
 ### Installl gems
 
-if not $root
+unless $root
   if force[:gems] or not File.exist?("#{WHIMSY}/Gemfile.lock")
     Dir.chdir WHIMSY do
       run "rake", "update"
@@ -420,7 +420,7 @@ end
 
 ### Collate minutes
 
-if not $root
+unless $root
   if force[:minutes] or not Dir.exist? '/srv/whimsy/www/board/minutes'
     run 'tools/collate_minutes.rb'
   end
@@ -508,15 +508,15 @@ if config != File.read(HTTPD_CONF)
   restart_apache = true
 end
 
-wconf_source = "#{WHIMSY}/config/whimsy.conf"
+wconf_source = "#{WHIMSY}/docker-config/whimsy.conf"
 wconf_content = File.read(wconf_source)
 if wconf_content =~ /^\s*SetEnv PATH /i
   wconf_content[/^\s*SetEnv PATH .*/] =
     "SetEnv PATH #{File.dirname RbConfig.ruby}:" +
     "#{File.dirname(`which svnmucc`)}:${PATH}"
 end
-wconf_content.sub! /^\s*PassengerUser .*/i, "PassengerUser #{user}"
-wconf_content.sub! /^\s*PassengerGroup .*/i, "PassengerGroup #{group}"
+wconf_content.sub!(/^\s*PassengerUser .*/i, "PassengerUser #{user}")
+wconf_content.sub!(/^\s*PassengerGroup .*/i, "PassengerGroup #{group}")
 wconf_target = '/private/etc/apache2/other/whimsy.conf'
 if
   not File.exist?(wconf_target) or
@@ -545,18 +545,18 @@ end
 
 ### Make applications restart on change
 
-if not $root and force[:toucher] != nil
+unless $root and force[:toucher] != nil
   plist = "#{Dir.home}/Library/LaunchAgents/toucher.plist"
 
   if force[:toucher]
     contents = File.read("#{__dir__}/toucher.plist")
     contents[/>(.*ruby.*)</, 1] = RbConfig.ruby
 
-    if not Dir.exist? File.dirname(plist)
+    unless Dir.exist? File.dirname(plist)
       run "mkdir -p #{File.dirname(plist)}"
     end
 
-    if not File.exist?(plist) or File.read(plist) != contents
+    unless File.exist?(plist) or File.read(plist) != contents
       color "$ edit #{plist}"
       File.write plist, contents unless $dry_run
 
@@ -565,7 +565,7 @@ if not $root and force[:toucher] != nil
       end
     end
 
-    if not `launchctl list`.include? 'org.apache.whimsy/toucher'
+    unless `launchctl list`.include? 'org.apache.whimsy/toucher'
       run "launchctl load #{plist}"
     end
   else
@@ -591,11 +591,11 @@ if force[:ws] != nil
        contents[/<key>UserName<\/key>\s*<string>(.*?)<\/string>/, 1] = user
        contents[/<key>GroupName<\/key>\s*<string>(.*?)<\/string>/, 1] = group
 
-      if not Dir.exist? File.dirname(plist)
+      unless Dir.exist? File.dirname(plist)
 	run "mkdir -p #{File.dirname(plist)}"
       end
 
-      if not File.exist?(plist) or File.read(plist) != contents
+      unless File.exist?(plist) or File.read(plist) != contents
 	unless $dry_run
 	  color "$ sudo edit #{plist}"
 	  File.write plist, contents
@@ -606,7 +606,7 @@ if force[:ws] != nil
 	end
       end
 
-      if not `launchctl list`.include? 'org.apache.whimsy/board/agenda'
+      unless `launchctl list`.include? 'org.apache.whimsy/board/agenda'
 	run "launchctl load #{plist}"
       end
     else
@@ -624,7 +624,7 @@ end
 ### Start Apache httpd
 
 if $root and not $apache_would_have_been_restarted
-  if not `launchctl list`.include? 'org.apache.httpd'
+  unless `launchctl list`.include? 'org.apache.httpd'
     run "launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist"
   elsif restart_apache
     run "apachectl restart"
