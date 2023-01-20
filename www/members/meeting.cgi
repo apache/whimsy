@@ -10,7 +10,7 @@ require 'wunderbar/jquery/stupidtable'
 require 'whimsy/asf/meeting-util'
 DTFORMAT = '%A, %d %B %Y at %H:%M %z'
 TADFORMAT = '%Y%m%dT%H%M%S'
-ICS_FILE = 'ASF-members-meeting.ics.erb' # see Meetings/meeting-template/
+ICS_FILE = 'ASF-members-meeting.ics' # see Meetings/meeting-template/
 ERROR_DATE = DateTime.new(1970, 1, 1) # An obvious error value 8-)
 
 # Return DateTime from DTSTART in an .ics file
