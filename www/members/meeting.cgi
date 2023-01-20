@@ -10,6 +10,7 @@ require 'wunderbar/jquery/stupidtable'
 require 'whimsy/asf/meeting-util'
 DTFORMAT = '%A, %d %B %Y at %H:%M %z'
 TADFORMAT = '%Y%m%dT%H%M%S'
+ICS_FILE = 'ASF-members-meeting.ics.erb' # see Meetings/meeting-template/
 ERROR_DATE = DateTime.new(1970, 1, 1) # An obvious error value 8-)
 
 # Return DateTime from DTSTART in an .ics file
@@ -80,10 +81,8 @@ _html do
     today = Date.today
     # Calculate quorum
     num_members, quorum_need, num_proxies, attend_irc = ASF::MeetingUtil.calculate_quorum(cur_mtg_dir)
-    # Use ics files for accurate times; see create-meeting.rb
-    nom_date = ics2dtstart(File.join(cur_mtg_dir, "ASF-members-#{mtg_date.strftime('%Y')}-nominations-close.ics"))
-    m1_date = ics2dtstart(File.join(cur_mtg_dir, "ASF-members-#{mtg_date.strftime('%Y')}.ics"))
-    m2_date = ics2dtstart(File.join(cur_mtg_dir, "ASF-members-#{mtg_date.strftime('%Y')}-reconvene.ics"))
+    # Use ics files for accurate times; see create-meeting.rb; note change in process 2022/2023
+    ics_date = ics2dtstart(File.join(cur_mtg_dir, ICS_FILE))
     ROSTER = "/roster/committer"
     _whimsy_body(
       title: PAGETITLE,
@@ -101,40 +100,38 @@ _html do
         'https://lists.apache.org/list.html?members@apache.org' => 'Read members@ List Archives'
       },
       helpblock: -> {
-        if m2_date == ERROR_DATE or m1_date == ERROR_DATE or nom_date == ERROR_DATE
+        if ics_date == ERROR_DATE
           _p do
             _center do
-              _strong 'One or more .ics files are missing!'
+              _strong 'Note: .ics file seems to be missing!'
               _br
               _ 'Expecting to find:'
               _br
               _ul do
-                _li "ASF-members-#{mtg_date.strftime('%Y')}.ics"
-                _li "ASF-members-#{mtg_date.strftime('%Y')}-reconvene.ics"
-                _li "ASF-members-#{mtg_date.strftime('%Y')}-nominations-close.ics"
+                _li ICS_FILE
               end
             end
           end
         end
-        if today > m2_date # Based on the reconvene date
+        if today > ics_date # Based on the reconvene date
           _p do
             _ %{
               The last Annual Member's Meeting was held #{last_mtg_date.strftime('%A, %d %B %Y')}.  Expect the
               next Member's meeting to be scheduled between 12 - 13 months after the previous meeting, as per
             }
             _a 'https://www.apache.org/foundation/bylaws.html#3.2', 'the bylaws 3.2.'
-            _ 'Stay tuned for a [NOTICE] email on members@ announcing the next meeting.  The below information is about the '
+            _ 'Stay tuned for a [NOTICE] email on members-notify@ announcing the next meeting.  The below information is about the '
             _strong 'LAST'
             _ " Member's meeting."
           end
         else
           _p do
             _ "The Member's Meeting starts at "
-            _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m1_date.strftime(TADFORMAT)}" do
+            _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{ics_date.strftime(TADFORMAT)}" do
               _span.glyphicon.glyphicon_time ''
-              _ " #{m1_date.strftime(DTFORMAT)} "
+              _ " #{ics_date.strftime(DTFORMAT)} "
             end
-            _ "as an online IRC meeting for about an hour.  We then recess for 48 hours while ballots are sent via email for voting. Results will be announced when we reconvene (at the same time of day) for about half an hour."
+            _ "as an online IRC meeting for about an hour.  REMEMBER: all voting is done by email the week BEFORE the IRC meeting"
           end
           _p do
             _ 'Please read below for a Timeline of Meeting activities and links to how you can take action, or see additional links to the right. '
@@ -152,12 +149,12 @@ _html do
       }
     ) do
       # if there is a new meeting in the offing, use its date
-      m1_date = mtg_date if m1_date == ERROR_DATE && cur_mtg_dir > last_mtg_dir
+      # Old logic for two half meeting m1_date = mtg_date if m1_date == ERROR_DATE && cur_mtg_dir > last_mtg_dir
       help, copypasta = ASF::MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
       # attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
       user = ASF::Person.find($USER)
       _div id: 'personal'
-      _whimsy_panel("#{user.public_name} - Personal Details For Meeting #{m1_date.strftime(DTFORMAT)}", style: 'panel-primary') do
+      _whimsy_panel("#{user.public_name} - Personal Details For Meeting #{ics_date.strftime(DTFORMAT)}", style: 'panel-primary') do
         _p do
           if help
             _p help
@@ -181,16 +178,12 @@ _html do
       end
 
       _div id: 'nominations'
-      _whimsy_panel("Timeline: Nomination Period (now until #{nom_date.strftime(DTFORMAT)})", style: 'panel-default') do
+      _whimsy_panel("Timeline: Nomination Period (until 10 days BEFORE meeting)", style: 'panel-default') do
         _p do
-          _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{nom_date.strftime(TADFORMAT)}" do
-            _span.glyphicon.glyphicon_time ''
-            _em '(time)'
-          end
           _ 'Before the meeting, any Member may nominate people either for the Board, or as a New Member Candidate.  Much of this discussion happens on members@ mailing list.  Remember, all new nominated names must be checked into SVN 10 days before the meeting.'
-          _ 'Also, you should submit a proxy if you might not attend the first half of the meeting.'
+          _ 'Also, you should submit a proxy if you might not attend the the meeting.'
           _ul do
-            ['nomination_of_board.txt', 'nomination_of_members.txt', '/members/proxy.cgi'].each do |f|
+            ['board_ballot.txt', 'nominated-members.txt', '/members/proxy.cgi'].each do |f|
               _li do
                 emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])
               end
@@ -202,12 +195,8 @@ _html do
       _div id: 'seconds'
       _whimsy_panel("Timeline: Seconds Period (last ten days before meeting)", style: 'panel-default') do
         _p do
-          _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{nom_date.strftime(TADFORMAT)}" do
-            _span.glyphicon.glyphicon_time ''
-            _em '(time)'
-          end
-          _ 'The last 10 days before the meeting, you may add seconds to existing nomination files, but no new nominations are allowed.'
-          _ 'Also, you can still submit a proxy if you might not attend the first half of the meeting.'
+          _ 'The last 10 days before the meeting, you may add seconds (comments of support) to existing nomination files, but no new nominations are allowed.'
+          _ 'Also, you can still submit a proxy if you might not attend the the meeting.'
           _ul do
             ['nominated-members.txt', '/members/proxy.cgi'].each do |f|
               _li do
@@ -218,49 +207,17 @@ _html do
         end
       end
 
-      _div id: 'firsthalf'
-      _whimsy_panel("Timeline: First Half Of Meeting on IRC (at #{m1_date.strftime(DTFORMAT)})", style: 'panel-primary') do
-        _p do
-          _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m1_date.strftime(TADFORMAT)}" do
-            _span.glyphicon.glyphicon_time ''
-            _em '(time)'
-          end
-          _ 'UPDATE 2022! The Meeting itself starts on IRC (use any client) on the '
-          _a 'Libera Chat network', href: 'https://web.libera.chat/'
-          _ 'on channel '
-          _b '#asfmembers'
-          _ ' - please be sure your client is setup ahead of time, and sign in with your Apache ID as nick if at all possible. Cloaks for Libera Chat are available in committers/docs/libera-cloaks.txt'
-          _br
-          _ 'The '
-          _code '#asfmembers'
-          _ ' channel is for the official meeting itself; please raise your hand if you have a formal question there.  '
-          _ 'Backchannel (jokes, comments, etc.) is the '
-          _code '#asf'
-          _ ' channel.'
-          _br
-          _ 'During the First Half of Meeting, the Board Chair will do Roll call - please see instructions on how to mark present: '
-          emit_link(svn_mtg_dir, 'README.txt', ASF::MeetingUtil::MEETING_FILES['README.txt'])
-          _ 'Once a quorum is reached, the Board Chair will lead the meeting, with various officers presenting their reports in the Agenda.txt, which you can read ahead of time.'
-          _ 'Expect the First Half to last about an hour; then the Board Chair will call for a recess.  Remember: there is no voting in IRC.'
-          _ul do
-            ['agenda.txt', 'README.txt', 'https://www.apache.org/foundation/governance/meetings'].each do |f|
-              _li do
-                emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])
-              end
-            end
-          end
-        end
-      end
+      _div id: 'firsthalf' # Pre-2022 meeting anchor
 
       _div id: 'recess'
-      _whimsy_panel("Timeline: Meeting Recess - Time To Vote Via Email (approx 40+ hours)", style: 'panel-info') do
+      _whimsy_panel("Timeline: Voting By Email (week before meeting)", style: 'panel-info') do
         _p do
-          _ 'Shortly after the Board Chair calls the recess, the STeVe vote monitors will send you an email '
+          _ 'One week before the meeting, the STeVe vote monitors will send you an email '
           _code 'From: voter@apache.org'
           _ ' with your voting key URL.'
           _ 'All voting is done via a simple web interface at vote.apache.org after you login with your Apache ID.'
           _b 'REMEMBER:'
-          _ "Ballots close TWO HOURS BEFORE the meeting reconvenes - don't wait to vote!"
+          _ "Ballots close ONE FULL DAY (24 hours) BEFORE the meeting starts - don't wait to vote!"
           _ul do
             _li do
               _a 'New Members Elected By Majority Yes/No/Abstain vote', href: 'https://www.apache.org/foundation/governance/meetings#how-member-votes-are-tallied'
@@ -273,13 +230,13 @@ _html do
       end
 
       _div id: 'secondhalf'
-      _whimsy_panel("Timeline: Second Half Of Meeting (at #{m2_date.strftime(DTFORMAT)})", style: 'panel-primary') do
+      _whimsy_panel("Timeline: Meeting (at #{ics_date.strftime(DTFORMAT)})", style: 'panel-primary') do
         _p do
-          _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{m2_date.strftime(TADFORMAT)}" do
+          _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{ics_date.strftime(TADFORMAT)}" do
             _span.glyphicon.glyphicon_time ''
             _em '(time)'
           end
-          _ 'The Second Half Meeting is short - it\'s primarily announcing vote results and any last-minute announcements.  Members do not need to attend the second half; all results will be emailed or checked into SVN.'
+          _ 'The meeting is typically short - it\'s primarily briefly reporting from officers, announcing vote results and any last-minute announcements.  Members do not need to attend the meeting if you proxied or voted; all results will be emailed or checked into SVN.'
           _ 'Various data files about the meeting (raw-irc-log, board voting tally) will be checked in within a day after the meeting for historical records.'
           _ 'Votes for the Omnibus resolution are included in raw-irc-log.  We do not currently publish vote results for new member nominees.'
           _ul do
@@ -315,7 +272,7 @@ _html do
       end
 
       # Most/all of these links should already be included above
-      emit_meeting(cur_mtg_dir, svn_mtg_dir, m1_date, num_members, quorum_need, num_proxies, attend_irc)
+      emit_meeting(cur_mtg_dir, svn_mtg_dir, ics_date, num_members, quorum_need, num_proxies, attend_irc)
 
       _div id: 'meeting-history'
       _whimsy_panel("Member Meeting History", style: 'panel-info') do
