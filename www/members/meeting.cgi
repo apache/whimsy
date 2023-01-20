@@ -16,7 +16,7 @@ ERROR_DATE = DateTime.new(1970, 1, 1) # An obvious error value 8-)
 # Return DateTime from DTSTART in an .ics file
 def ics2dtstart(f)
   begin
-    tmp = IO.readlines(f).find{ |i| i =~ /DTSTART:/ }.split(':')[1].strip
+    tmp = IO.readlines(f).find{ |i| i =~ /DTSTART;TZID=UTC:/ }.split(':')[1].strip
     return DateTime.parse(tmp)
   rescue StandardError
     return ERROR_DATE
@@ -109,6 +109,7 @@ _html do
               _br
               _ul do
                 _li ICS_FILE
+                _li "svn_mtg_dir = #{svn_mtg_dir}, cur_mtg_dir = #{cur_mtg_dir},"
               end
             end
           end
