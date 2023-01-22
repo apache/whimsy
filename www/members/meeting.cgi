@@ -146,6 +146,13 @@ _html do
             _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
           end
           _p 'Individual Members are considered to have Attended a meeting if they either: respond to Roll Call (in first or second half of meeting); submit a proxy (that gets submitted during Roll Call); or who cast a ballot on any matters.'
+          _ul do
+            _li 'Estimated 2023 dates:'
+            _li 'Nominations open: 28-Jan'
+            _li 'Nominations close: 25-Feb'
+            _li 'Ballots emailed: 2-Mar'
+            _li 'Voting closes: 8-Mar (single IRC meeting on 9-Mar'
+          end
         end
       }
     ) do
