@@ -174,7 +174,7 @@ _html do
               end
             end
           else
-            _ 'You have not submitted a proxy - if you cannot attend the first half of the meeting, '
+            _ 'You have not submitted a proxy - even if you can attend the first half of the meeting, '
             _a "please assign a proxy - it's easy!", href: '/members/proxy'
           end
         end
