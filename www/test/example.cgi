@@ -50,7 +50,7 @@ def emit_form(title, prev_data)
         helptext: 'Select as many values as ya like!'
       )
       field = 'text2'
-      _whimsy_forms_input(label: 'Another Text Field', name: field, id: field,
+      _whimsy_forms_input(label: 'A multi-line Text Field', name: field, id: field, rows: 10,
         value: prev_data[field], helptext: 'Pretty boring form example, huh?'
       )
       _div.col_sm_offset_3.col_sm_9 do
