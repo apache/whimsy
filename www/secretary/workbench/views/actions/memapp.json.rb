@@ -59,19 +59,20 @@ task "svn commit documents/member_apps/#{@filename}#{fileext} and update members
 
   complete do
 
-    svn_multi('foundation', 'members.txt', 'member_apps', @selected, @signature, @filename, fileext, message, @document) do |members_txt|
+    svn_multi('foundation', 'members.txt', 'member_apps',
+      @selected, @signature, @filename, fileext, message, @document) do |members_txt|
 
-    # update members.txt
-    # TODO this should be a library method
-    pattern = /^Active.*?^=+\n+(.*?)^Emeritus/m
-    data = members_txt.scan(pattern).flatten.first
-    members = data.split(/^\s+\*\)\s+/)
-    members.shift
-    members.push @entry
-    members_txt[pattern,1] = " *) " + members.join("\n *) ")
-    members_txt[/We now number (\d+) active members\./, 1] = members.length.to_s
-    ASF::Member.sort(members_txt)
-  end
+      # update members.txt
+      # TODO this should be a library method
+      pattern = /^Active.*?^=+\n+(.*?)^Emeritus/m
+      data = members_txt.scan(pattern).flatten.first
+      members = data.split(/^\s+\*\)\s+/)
+      members.shift
+      members.push @entry
+      members_txt[pattern, 1] = " *) " + members.join("\n *) ")
+      members_txt[/We now number (\d+) active members\./, 1] = members.length.to_s
+      ASF::Member.sort(members_txt)
+    end
 
   end
 end
