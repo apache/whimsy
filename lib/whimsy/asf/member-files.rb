@@ -73,7 +73,7 @@ module ASF
     #
     def self.make_member_nomination(fields = {})
       availid = fields[:availid] or raise ArgumentError.new(":availid is required")
-      publicname = ASF::Person[availid]&.cn or raise ArgumentError.new(":availid is invalid")
+      publicname = ASF::Person[availid]&.cn or raise ArgumentError.new(":availid #{availid} is invalid")
       nomby = fields[:nomby] or raise ArgumentError.new(":nomby is required")
       ASF::Person[nomby]&.dn or raise ArgumentError.new(":nomby is invalid")
       secby = fields[:secby] || ''
@@ -109,7 +109,7 @@ module ASF
     # update the member nominees
     def self.update_member_nominees(env, wunderbar, entries=nil, msg=nil)
       nomfile = latest_meeting('nominated-members.txt')
-      opt = {dryrun: false, verbose: false}
+      opt = {dryrun: true, verbose: false}
       ASF::SVN.update(nomfile, msg || 'Updating nominated members', env, wunderbar, opt) do |_tmpdir, contents|
         sort_member_nominees(contents, entries)
       end
