@@ -69,6 +69,52 @@ module ASF
       end
     end
 
+    # create a nomination entry in the standard format
+    #
+    def self.make_member_nomination(fields = {})
+      availid = fields[:availid] or raise ArgumentError.new(":availid is required")
+      publicname = ASF::Person[availid]&.cn or raise ArgumentError.new(":availid is invalid")
+      nomby = fields[:nomby] or raise ArgumentError.new(":nomby is required")
+      ASF::Person[nomby]&.dn or raise ArgumentError.new(":nomby is invalid")
+      secby = fields[:secby] || ''
+      statement = fields[:statement] or raise ArgumentError.new(":statement is required")
+      [
+        " #{availid} <#{publicname}>",
+        '',
+        "   Nominee email: #{availid}@apache.org",
+        "   Nominated by: #{nomby}@apache.org",
+        "   Seconded by: #{secby}",
+        '',
+        '   Nomination statement:',
+        statement.split("\n").map do |l|
+          "    #{l}"
+        end
+      ].compact.join("\n") + "\n"
+    end
+
+    # Sort the member_nominees, optionally adding new entries
+    def self.sort_member_nominees(contents, entries=nil)
+      # Find most recent file:
+      sections = contents.split(%r{^-{10,}\n})
+      header = sections.shift(2)
+      sections.append(*entries) if entries # add new entries if any
+      sections.sort_by! do |s|
+        # sort by last name
+        (s[%r{\S+ +<([^>]+)>}, 1] || 'ZZ').split.last
+      end
+      # reconstitute the file
+      [header, sections, ''].join("-----------------------------------------\n")
+    end
+
+    # update the member nominees
+    def self.update_member_nominees(env, wunderbar, entries=nil, msg=nil)
+      nomfile = latest_meeting('nominated-members.txt')
+      opt = {dryrun: false, verbose: false}
+      ASF::SVN.update(nomfile, msg || 'Updating nominated members', env, wunderbar, opt) do |_tmpdir, contents|
+        sort_member_nominees(contents, entries)
+      end
+    end
+
     # TODO: change to return arrays rather than hash.
     # This would help detect duplicate entries
 
