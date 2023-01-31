@@ -9,7 +9,7 @@ module ASF
     def self.latest_meeting(name=nil)
       if name.nil? # we want the parent directory
         name = 'nominated-members.txt' # ensure the target directory has been set up
-        File.dirname([File.join(ASF::SVN['Meetings'], '[2-9][0-9]*', name)].max)
+        File.dirname(Dir[File.join(ASF::SVN['Meetings'], '[2-9][0-9]*', name)].max)
       else
         Dir[File.join(ASF::SVN['Meetings'], '[2-9][0-9]*', name)].max
       end
