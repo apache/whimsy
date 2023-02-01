@@ -35,9 +35,7 @@ talktitle = get_svn_data()
 def emit_form(title, prev_data)
   _whimsy_panel(title, style: 'panel-success') do
     _form.form_horizontal method: 'post' do
-      _div.form_group do
-        _label.col_sm_offset_3.col_sm_9.strong.text_left 'Example Form Section'
-      end
+      _whimsy_forms_subhead(label: 'Example Form Section')
       field = 'text1'
       _whimsy_forms_input(label: 'Example Text Field', name: field, id: field,
         value: prev_data[field], helptext: 'Enter some text, keep it polite!'
@@ -53,9 +51,7 @@ def emit_form(title, prev_data)
       _whimsy_forms_input(label: 'A multi-line Text Field', name: field, id: field, rows: 10,
         value: prev_data[field], helptext: 'Pretty boring form example, huh?'
       )
-      _div.col_sm_offset_3.col_sm_9 do
-        _input.btn.btn_default type: 'submit', value: 'PUSH ME!'
-      end
+      _whimsy_forms_submit(value: 'PUSH ME!')
     end
   end
 end
@@ -156,7 +152,7 @@ _html do
       # IF YOUR SCRIPT ONLY EMITS SIMPLE DATA
       _h2 "Simple Data Can Just Use A List"
       _ul do
-        [1,2,3].each do |row|
+        [1, 2, 3].each do |row|
           _li "This is row number #{row}."
         end
       end
@@ -192,12 +188,7 @@ _html do
       # IF YOU WANT TO DISPLAY A FORM and handle the POST
       _div id: 'example-form' do
         if _.post?
-          # Use magic _. callouts to CGI class to gather POST data into submission hash
-          submission = {}
-          keyz = _.keys
-          keyz.each do |k|
-            submission[k] = _.params[k] # Always as ['val'] or ['one', 'two', ...]
-          end
+          submission = _whimsy_params2formdata(params)
           if validate_form(formdata: submission)
             if process_form(formdata: submission)
               _p.lead "Thanks for Submitting This Form!"

@@ -179,6 +179,12 @@ class Wunderbar::HtmlMarkup
     end
   end
 
+  def _whimsy_forms_submit(value: 'submit')
+    _div.col_sm_offset_3.col_sm_9 do
+      _input.btn.btn_default type: 'submit', value: value
+    end
+  end
+
   # Gather POST form data into submission Hash
   # @returns {field: 'string', field2: ['array', 'only for', 'multivalue'] ...}
   def _whimsy_params2formdata(params)
