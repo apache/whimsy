@@ -5,10 +5,12 @@ module ASF
 
   class MemberFiles
 
+    NOMINATED_MEMBERS = 'nominated-members.txt'
+
     # get the latest meeting directory or nomination file
     def self.latest_meeting(name=nil)
       if name.nil? # we want the parent directory
-        name = 'nominated-members.txt' # ensure the target directory has been set up
+        name = NOMINATED_MEMBERS # ensure the target directory has been set up
         File.dirname(Dir[File.join(ASF::SVN['Meetings'], '[2-9][0-9]*', name)].max)
       else
         Dir[File.join(ASF::SVN['Meetings'], '[2-9][0-9]*', name)].max
@@ -110,7 +112,7 @@ module ASF
 
     # update the member nominees
     def self.update_member_nominees(env, wunderbar, entries=nil, msg=nil, opt={})
-      nomfile = latest_meeting('nominated-members.txt')
+      nomfile = latest_meeting(NOMINATED_MEMBERS)
       ASF::SVN.update(nomfile, msg || 'Updating nominated members', env, wunderbar, opt) do |_tmpdir, contents|
         sort_member_nominees(contents, entries)
       end
@@ -122,7 +124,7 @@ module ASF
     # Return hash of member nominees
     def self.member_nominees
       nominees = {}
-      ASF::MemberFiles.parse_file('nominated-members.txt') do |hdr, nominee|
+      ASF::MemberFiles.parse_file(NOMINATED_MEMBERS) do |hdr, nominee|
         # for members, the header currently looks like this:
         # availid <PUBLIC NAME>
         # In the past, it has had other layouts, for example:
