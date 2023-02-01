@@ -107,9 +107,8 @@ module ASF
     end
 
     # update the member nominees
-    def self.update_member_nominees(env, wunderbar, entries=nil, msg=nil)
+    def self.update_member_nominees(env, wunderbar, entries=nil, msg=nil, opt={})
       nomfile = latest_meeting('nominated-members.txt')
-      opt = {dryrun: true, verbose: false}
       ASF::SVN.update(nomfile, msg || 'Updating nominated members', env, wunderbar, opt) do |_tmpdir, contents|
         sort_member_nominees(contents, entries)
       end
