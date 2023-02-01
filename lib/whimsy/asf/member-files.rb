@@ -1,6 +1,9 @@
+require 'whimsy/asf/string-utils'
+
 require_relative 'config'
 require_relative 'ldap'
 require_relative 'svn'
+
 module ASF
 
   class MemberFiles
@@ -89,9 +92,7 @@ module ASF
         "   Seconded by: #{secby}",
         '',
         '   Nomination statement:',
-        statement.split("\n").map do |l|
-          "    #{l}"
-        end,
+        statement.asf_reflow(4, 80),
         ''
       ].compact.join("\n") + "\n"
     end
