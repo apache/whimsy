@@ -79,6 +79,7 @@ module ASF
       secby = fields[:secby] || ''
       statement = fields[:statement] or raise ArgumentError.new(":statement is required")
       [
+        '',
         " #{availid} <#{publicname}>",
         '',
         "   Nominee email: #{availid}@apache.org",
@@ -88,7 +89,8 @@ module ASF
         '   Nomination statement:',
         statement.split("\n").map do |l|
           "    #{l}"
-        end
+        end,
+        ''
       ].compact.join("\n") + "\n"
     end
 
