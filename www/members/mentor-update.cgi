@@ -33,9 +33,8 @@ def emit_form(apacheid, mdata, button_help, uimap)
         end
       end
 
-      _div.form_group do
-        _label.col_sm_offset_3.col_sm_9.strong.text_left 'How Mentees Should Work With You'
-      end
+      _whimsy_forms_subhead(label: 'How Mentees Should Work With You')
+
       emit_mentor_input('contact', mdata, uimap, 'glyphicon-bullhorn', req: true)
       field = 'timezone'
       _whimsy_forms_select(label: uimap[field][0], name: field,
@@ -60,16 +59,14 @@ def emit_form(apacheid, mdata, button_help, uimap)
         helptext: uimap[field][1]
       )
 
-      _div.form_group do
-        _label.col_sm_offset_3.col_sm_9.strong.text_left 'What You Could Help Mentees With'
-      end
+      _whimsy_forms_subhead(label: 'What You Could Help Mentees With')
+
       emit_mentor_input('experience', mdata, uimap, 'glyphicon-certificate')
       emit_mentor_input('available', mdata, uimap, 'glyphicon-plus-sign')
       emit_mentor_input('mentoring', mdata, uimap, 'glyphicon-minus-sign')
 
-      _div.form_group do
-        _label.col_sm_offset_3.col_sm_9.strong.text_left 'More About You Personally'
-      end
+      _whimsy_forms_subhead(label: 'More About You Personally')
+
       emit_mentor_input('homepage', mdata, uimap, 'glyphicon-console')
       emit_mentor_input('pronouns', mdata, uimap, 'glyphicon-user')
       field = 'aboutme'
@@ -79,7 +76,7 @@ def emit_form(apacheid, mdata, button_help, uimap)
       )
 
       _div.form_group do
-        _label.col_sm_offset_3.col_sm_9.strong.text_left 'Temporarily Opt Out From Any NEW Mentees'
+        _whimsy_forms_subhead(label: 'Temporarily Opt Out From Any NEW Mentees')
         _label.control_label.col_sm_3 'Not Accepting New Mentees', for: MentorFormat::NOTAVAILABLE
         _div.col_sm_9 do
           _div.input_group do

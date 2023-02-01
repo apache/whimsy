@@ -18,9 +18,7 @@ end
 def emit_form(search=nil, value=nil)
   _whimsy_panel('Search for ICLA', style: 'panel-success') do
     _form.form_horizontal method: 'post' do
-      _div.form_group do
-        _label.col_sm_offset_3.col_sm_9.strong.text_left 'Enter search term'
-      end
+      _whimsy_forms_subhead(label: 'Enter search term')
       field = 'search'
       _whimsy_forms_input(label: 'Search for', name: field, id: field,
         value: search, helptext: 'Enter email address'
@@ -31,9 +29,7 @@ def emit_form(search=nil, value=nil)
           value: value
         )
       end
-      _div.col_sm_offset_3.col_sm_9 do
-        _input.btn.btn_default type: 'submit', value: 'Search'
-      end
+      _whimsy_forms_submit(value: 'Search')
     end
   end
 end

@@ -178,9 +178,7 @@ def emit_form()
       emit_input(label: 'Committer Email of Reporter', name: 'reporteremail', readonly: true,
         value: "#{user.public_name} (whimsy) <#{user.id}@apache.org>", icon: 'glyphicon-user', iconlabel: 'Committer Email')
 
-      _div.col_sm_offset_3.col_sm_9 do
-        _input.btn.btn_default type: 'submit', value: 'Submit Report'
-      end
+      _whimsy_forms_submit(value: 'Submit Report')
     end
   end
 end
