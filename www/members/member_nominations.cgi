@@ -121,6 +121,7 @@ _html do
           of the nomination to the members list.
           There is currently no support for updating an existing entry.
         }
+        _h3 'WARNING: there is an error reported after the commit - being investigated!'
       }
     ) do
 
