@@ -77,16 +77,17 @@ class Wunderbar::HtmlMarkup
     args[:type] ||= 'text'
     args[:id] = args[:name]
     args[:aria_describedby] = "#{args[:name]}_help" if args[:helptext]
+    readonly = args[:readonly] || false
     _whimsy_control_wrapper(**args) do
       args[:class] = 'form-control'
       if args[:rows]
         _textarea! type: args[:type], name: args[:name], id: args[:id], value: args[:value], class: args[:class],
-                   aria_describedby: args[:aria_describedby], rows: args[:rows] do
+                   aria_describedby: args[:aria_describedby], rows: args[:rows], readonly: readonly do
           _! args[:value]
         end
       else
         _input type: args[:type], name: args[:name], id: args[:id], value: args[:value], class: args[:class],
-               aria_describedby: args[:aria_describedby]
+               aria_describedby: args[:aria_describedby], readonly: readonly
       end
     end
   end
