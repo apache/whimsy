@@ -20,6 +20,7 @@ _html do
       title: PAGETITLE,
       related: {
         '/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
+        '/members/member_nominations' => 'Update list of nominated members',
         '/members/nominations' => 'Members Meeting Nomination Crosscheck',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },

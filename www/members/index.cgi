@@ -12,6 +12,7 @@ MEETING = {
   'proxy.cgi' => "Assign a proxy for the (current) Member's meeting",
   'watch.cgi' => "Potential Member Watch List - tracking candidates for future nominations",
   'memberless-pmcs.cgi' => "Crosscheck PMCs with few/no ASF Members, for future nominations",
+  'member_nominations' => 'Update list of nominated members',
   'nominations.cgi' => "Member's nominations cross-check - ensuring nominations get on the ballot, etc.",
   'board-nominations.cgi' => "Board nominations cross-check - ensuring nominations get on the ballot, etc.",
   'attendance-xcheck.cgi' => "Member's Meeting Attendance cross-check - who attended when",
