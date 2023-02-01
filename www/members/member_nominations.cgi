@@ -57,7 +57,7 @@ module Wunderbar
 
       out = []
       okind = nil
-      super(*args, opts) do |kind, line|
+      rc = super(*args, opts) do |kind, line|
         if merge_lines
           if okind && kind != okind && !out.empty? # change of kind
             tag! tag, out.join("\n"), class: output_class[okind]
@@ -73,6 +73,7 @@ module Wunderbar
       unless out.empty?
         tag! tag, out.join("\n"), class: output_class[okind]
       end
+      return rc
     end
   end
 end
@@ -121,7 +122,6 @@ _html do
           of the nomination to the members list.
           There is currently no support for updating an existing entry.
         }
-        _h3 'WARNING: there is an error reported after the commit - being investigated!'
       }
     ) do
 
