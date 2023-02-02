@@ -99,13 +99,21 @@ module ASF
 
     # Sort the member_nominees, optionally adding new entries
     def self.sort_member_nominees(contents, entries=nil)
-      # Find most recent file:
       sections = contents.split(%r{^-{10,}\n})
       header = sections.shift(2)
       sections.append(*entries) if entries # add new entries if any
+      ids = {}
       sections.sort_by! do |s|
-        # sort by last name
-        (s[%r{\S+ +<([^>]+)>}, 1] || 'ZZ').split.last
+        # sort by last name; check for duplicates
+        m = s.match %r{(\S+) +<([^>]+)>}
+        if m
+          id = m[1]
+          raise ArgumentError.new("Duplicate id: #{id}") if ids.include? id
+          ids[id] = 1
+          m[2].split.last
+        else
+          'ZZ'
+        end
       end
       # reconstitute the file
       [header, sections, ''].join("-----------------------------------------\n")
@@ -114,6 +122,7 @@ module ASF
     # update the member nominees
     def self.update_member_nominees(env, wunderbar, entries=nil, msg=nil, opt={})
       nomfile = latest_meeting(NOMINATED_MEMBERS)
+      opt[:diff] = true unless opt.include? :diff # default to true
       ASF::SVN.update(nomfile, msg || 'Updating nominated members', env, wunderbar, opt) do |_tmpdir, contents|
         sort_member_nominees(contents, entries)
       end
