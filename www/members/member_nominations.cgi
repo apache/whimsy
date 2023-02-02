@@ -65,7 +65,7 @@ module Wunderbar
           end
           out << line
         else # normal; no accumulation of lines
-          tag! tag, out.join("\n"), class: output_class[kind]
+          tag! tag, line, class: output_class[kind]
         end
         okind = kind
       end
