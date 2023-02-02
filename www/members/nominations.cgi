@@ -30,7 +30,7 @@ def setup_data
     message = IO.read(email, mode: 'rb')
     next unless message[/^Date: .*/].to_s.include? year
     subject = message[/^Subject: .*/]
-    next if not subject # HACK: allow script to continue if bogus email
+    next unless subject # HACK: allow script to continue if bogus email
     subjectUC = subject.upcase
     next unless subjectUC =~ /MEMBER/
     next unless subjectUC =~ /NOMI[NM]ATION/
@@ -57,10 +57,11 @@ def create_match(nominee)
   names = []
   pname = nominee[:name]
   names << pname
+  names << pname.delete('.')
   names << pname.sub(%r{ [A-Z]\. }, ' ') # drop initial
   personname = ASF::Person.find(nominee[:id]).public_name
   names << personname if personname
-  list = names.uniq.map{|name| Regexp.escape(name)}.join('|')
+  list = names.uniq.map {|name| Regexp.escape(name)}.join('|')
   # N.B. \b does not match if it follows ')', so won't match John (Fred)
   # TODO: Work-round is to also look for EOS, but this needs to be improved
   %r{\b(#{list})(\b|$)}i
@@ -106,13 +107,13 @@ _html do
 
           _p.count "Count: #{nominations.count}"
 
-          _ul nominations.sort_by {|nominee| nominee[:name]} do |nominee|
+          _ul(nominations.sort_by {|nominee| nominee[:name]}) do |nominee|
             _li! do
               person = ASF::Person.find(nominee[:id])
 
               match = create_match(nominee)
 
-              if emails.any? {|mail| mail.subject.downcase =~ match}
+              if emails.any? {|mail| mail.subject.downcase =~ match || mail.subject.downcase.delete('.') =~ match}
                 _a.present person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
               else
                 _a.missing person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
@@ -130,7 +131,7 @@ _html do
         _div.flexitem do
           _h1_.posted! do
             _a "Posted", href:
-              'https://mail-search.apache.org/members/private-arch/members/'
+              'https://lists.apache.org/list.html?members@apache.org'
             _ " nominations reports"
           end
 
@@ -148,7 +149,10 @@ _html do
               href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' +
               ERB::Util.url_encode('<' + mail.message_id + '>')
 
-              if nominations.any? {|nominee| mail.subject =~ create_match(nominee)}
+              if nominations.any? do |nominee| 
+                m = create_match(nominee)
+                mail.subject.downcase =~ m || mail.subject.downcase.delete('.') =~ m
+              end
                 _a.present mail.subject, href: href
               else
                 _a.missing mail.subject, href: href
@@ -169,6 +173,6 @@ _json do
   _ reports do |mail| # TODO: reports is not defined
     _subject mail.subject
     _link MBOX + ERB::Util.url_encode('<' + mail.message_id + '>') # TODO looks wrong: does not agree with href above
-    _missing missing.any? {|title| mail.subject.downcase =~ /\b#{Regexp.escape(title)}\b/}
+    _missing(missing.any? {|title| mail.subject.downcase =~ /\b#{Regexp.escape(title)}\b/})
   end
 end
