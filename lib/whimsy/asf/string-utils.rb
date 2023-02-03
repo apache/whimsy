@@ -1,13 +1,14 @@
-# update String class to add some useful methods
-# These are prefixed with asf_ to avoid clashing with built-in methods
+# String utilities
+
 # derived from agenda/helpers/string.rb
+# converted to utility module rather than patching the String class
 
 # This addon must be required before use
 
-class String
+module ASFString
   # wrap a text block containing long lines
-  def asf_word_wrap(line_width=80)
-    self.split("\n").collect do |line|
+  def self.word_wrap(text, line_width=80)
+    text.split("\n").collect do |line|
       if line.length > line_width
         line.gsub(/(.{1,#{line_width}})(\s+|$)/, "\\1\n").strip
       else
@@ -19,45 +20,45 @@ class String
   # reflow an indented block
   # indent = number of spaces to indent by (default 4)
   # len = length of line including the indent (default 80)
-  def asf_reflow(indent=4, len=80)
-    strip.split(/\n\s*\n/).map {|line|
+  def self.reflow(text, indent=4, len=80)
+    text.strip.split(/\n\s*\n/).map {|line|
       line.gsub!(/\s+/, ' ')
       line.strip!
-      line.asf_word_wrap(len - indent).gsub(/^/, ' ' * indent)
+      word_wrap(line, len - indent).gsub(/^/, ' ' * indent)
     }.join("\n\n")
   end
 
   # replace matched expressions with the result of the block being called
-  def asf_mreplace(regexp, &block)
+  def self.mreplace(text, regexp, &block)
     matches = []
     off = 0
-    while self[off..-1] =~ regexp
+    while text[off..-1] =~ regexp
       matches << [off, $~]
       off += $~.end($~.size - 1)
     end
     raise 'unmatched' if matches.empty?
 
     matches.reverse.each do |offset, match|
-      slice = self[offset...-1]
+      slice = text[offset...-1]
       send = (1...match.size).map {|i| slice[match.begin(i)...match.end(i)]}
       if send.length == 1
         recv = block.call(send.first)
-        self[offset + match.begin(1)...offset + match.end(1)] = recv
+        text[offset + match.begin(1)...offset + match.end(1)] = recv
       else
         recv = block.call(*send)
         next unless recv
         (1...match.size).map {|i| [match.begin(i), match.end(i), i - 1]}.sort.
           reverse.each do |start, fin, i|
-          self[offset + start...offset + fin] = recv[i]
+          text[offset + start...offset + fin] = recv[i]
         end
       end
     end
-    self
+    text
   end
 
   # fix encoding errors
-  def asf_fix_encoding
-    result = self
+  def self.fix_encoding(text)
+    result = text
 
     if encoding == Encoding::BINARY
       result = encode('utf-8', invalid: :replace, undef: :replace)
@@ -76,6 +77,6 @@ if __FILE__ == $0
   The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog.
   "
   # puts txt
-  puts txt.asf_word_wrap
-  puts txt.asf_reflow
+  puts ASFString.word_wrap(txt)
+  puts ASFString.reflow(txt)
 end

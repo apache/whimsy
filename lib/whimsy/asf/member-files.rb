@@ -92,7 +92,7 @@ module ASF
         "   Seconded by: #{secby}",
         '',
         '   Nomination statement:',
-        statement.asf_reflow(4, 80),
+        ASFString.reflow(statement, 4, 80),
         ''
       ].compact.join("\n") + "\n"
     end
