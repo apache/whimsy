@@ -274,5 +274,14 @@ module ASF
     def asf_chair_or_member?
       asf_member? or ASF.pmc_chairs.include? self
     end
+
+    # Returns ASF membership status according to members.txt:
+    # <tt>:current</tt> if this person is listed as an ASF member
+    # <tt>:emeritus</tt> if this person is listed as an Emeritus ASF member
+    # <tt>:deceased</tt> if this person is listed as a Deceased ASF member
+    # <tt>nil</tt> otherwise (i.e. does not appear in members.txt)
+    def asf_member_status
+      ASF::Member.member_status name
+    end
   end
 end

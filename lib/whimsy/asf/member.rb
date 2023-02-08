@@ -44,6 +44,27 @@ module ASF
       result
     end
 
+    # return the status of a member:
+    # - nil
+    # - :current
+    # - :emeritus
+    # - :deceased
+    def self.member_status(id)
+      entry = list[id]
+      return nil if entry.nil?
+      status = entry['status']
+      case status
+      when nil
+        :current
+      when %r{^Emeritus }
+        :emeritus
+      when %r{^Deceased }
+        :deceased
+      else
+        raise "Unexpected status: #{status.inspect} for #{id}"
+      end
+    end
+
     # Find the ASF::Person associated with a given email
     def self.find_by_email(value)
       value = value.downcase
