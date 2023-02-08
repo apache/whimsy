@@ -279,7 +279,7 @@ class ICLA < Vue
 
   # generate file name from the real name
   def genfilename(realname, familyfirst)
-    nominalname = asciize(realname.strip()).downcase().gsub(/\W+/, '-')
+    nominalname = asciize(realname.strip()).downcase()
     if !familyfirst
       return nominalname
     else

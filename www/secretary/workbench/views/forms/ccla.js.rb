@@ -143,7 +143,7 @@ class CCLA < Vue
   def genfilename(company, product)
     basename = company
     basename += '-' + product if product
-    return asciize(basename.strip()).downcase().gsub(/\W+/, '-')
+    return asciize(basename.strip()).downcase()
   end
 
   # when leaving an input field, trigger change event (for Safari)

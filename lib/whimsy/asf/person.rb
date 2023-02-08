@@ -14,6 +14,7 @@ module ASF
     # Convert non-ASCII characters to equivalent ASCII
     # optionally: replace any remaining non-word characters (e.g. '.' and space) with '-'
     def self.asciize(name, nonWord = '-')
+      # Should agree with asciize.js.rb
       if name.match %r{[^\x00-\x7F]} # at least one non-ASCII character present
         # digraphs.  May be culturally sensitive
         # Note that the combining accents require matching two characters
@@ -79,7 +80,7 @@ module ASF
         name.gsub! %r{[\u0143\u0145\u0147]}, 'N'
         name.gsub! %r{[\u0144\u0146\u0148\u0149]}, 'n'
         name.gsub! %r{[\u014C\u014E\u0150]}, 'O'
-        name.gsub! %r{[\u014D\u014F\u0151]}, 'o'
+        name.gsub! %r{[\u014D\u014F\u0151\u01A1]}, 'o'
         name.gsub! %r{[\u0152]}, 'OE'
         name.gsub! %r{[\u0153]}, 'oe'
         name.gsub! %r{[\u0154\u0156\u0158]}, 'R'
@@ -89,7 +90,7 @@ module ASF
         name.gsub! %r{[\u0162\u0164\u0166]}, 'T'
         name.gsub! %r{[\u0163\u0165\u0167]}, 't'
         name.gsub! %r{[\u0168\u016A\u016C\u016E\u0170\u0172]}, 'U'
-        name.gsub! %r{[\u0169\u016B\u016D\u016F\u0171\u0173]}, 'u'
+        name.gsub! %r{[\u0169\u016B\u016D\u016F\u0171\u0173\u01B0]}, 'u'
         name.gsub! %r{[\u0174]}, 'W'
         name.gsub! %r{[\u0175]}, 'w'
         name.gsub! %r{[\u0176\u0178]}, 'Y'

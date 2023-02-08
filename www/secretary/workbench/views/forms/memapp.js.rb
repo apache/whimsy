@@ -78,7 +78,7 @@ class MemApp < Vue
   # when fullname changes, change filename
   def changeFullName(event)
     @name = event.target.value
-    @filename = asciize(event.target.value).downcase().gsub(/\W+/, '-')
+    @filename = asciize(event.target.value).downcase()
   end
 
   # when id is selected, default full name and filename
@@ -87,7 +87,7 @@ class MemApp < Vue
     @received.each do |line|
       if line.id == id
         @name = line.name
-        @filename = asciize(line.name).downcase().gsub(/\W+/, '-')
+        @filename = asciize(line.name).downcase()
         @disabled = false
 
         if @@headers.from =~ /@apache.org$/
