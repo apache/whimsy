@@ -45,13 +45,21 @@ module ASF
     end
 
     # return the status of a member:
-    # - nil
+    # - nil - id not found
     # - :current
     # - :emeritus
     # - :deceased
     def self.member_status(id)
       entry = list[id]
       return nil if entry.nil?
+      _entry_status(entry)
+    end
+
+    # return the status of an entry:
+    # - :current
+    # - :emeritus
+    # - :deceased
+    def self._entry_status(entry)
       status = entry['status']
       case status
       when nil
@@ -63,6 +71,14 @@ module ASF
       else
         raise "Unexpected status: #{status.inspect} for #{id}"
       end
+    end
+
+    # return a hash of all the member ids and their status:
+    # - :current
+    # - :emeritus
+    # - :deceased
+    def self.member_statuses
+      self.list.map { |id, v| [id, self._entry_status(v)]}.to_h
     end
 
     # Find the ASF::Person associated with a given email
