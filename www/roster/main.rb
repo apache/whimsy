@@ -411,7 +411,7 @@ end
 get '/orgchart/:name' do |name|
   person = ASF::Person.find(env.user)
 
-  unless person.asf_member? or ASF.pmc_chairs.include? person
+  unless person.asf_chair_or_member?
     halt 401, "Not authorized\n"
   end
 

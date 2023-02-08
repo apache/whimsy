@@ -75,8 +75,7 @@ module ASF
 
         person = ASF::Auth.decode(env)
 
-        authorized ||= person.asf_member?
-        authorized ||= ASF.pmc_chairs.include? person
+        authorized ||= person.asf_chair_or_member?
         authorized ||= @block.call(env) if @block
 
         if authorized

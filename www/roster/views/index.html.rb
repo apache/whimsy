@@ -48,7 +48,7 @@ _html do
           end
         end
 
-        if person.asf_member? or ASF.pmc_chairs.include? person
+        if person.asf_chair_or_member?
           _tr do
             _td do
               _a @committers.length, href: 'committer2/'
@@ -166,7 +166,7 @@ _html do
 
       end
 
-      if person.asf_member? or ASF.pmc_chairs.include? person
+      if person.asf_chair_or_member?
         _hr
         _p do
           _a 'Search pending ICLAs', href: 'icla/'
