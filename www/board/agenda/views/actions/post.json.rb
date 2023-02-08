@@ -18,7 +18,7 @@ attach = nil
 
 # Determine if user is authorized
 user = ASF::Person.find(env.user)
-member_or_officer = (user.asf_member? or ASF.pmc_chairs.include? user)
+member_or_officer = (user.asf_chair_or_member?)
 real_web_server = env.password
 alternate_credentials = (real_web_server and not member_or_officer) ?
   [['--username', 'whimsysvn']] : nil

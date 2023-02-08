@@ -91,7 +91,7 @@ class Reporter
 
     # filter drafts based on user visibility
     user = env.respond_to?(:user) && ASF::Person.find(env.user)
-    unless !user or user.asf_member? or ASF.pmc_chairs.include? user
+    unless !user or user.asf_chair_or_member?
       projects = user.committees.map(&:name)
       results[:drafts].keep_if do |attach, draft|
         projects.include? draft[:project]

@@ -12,7 +12,7 @@ require 'mail'
 require '../../tools/mboxhdr2csv.rb'
 
 user = ASF::Person.new($USER)
-unless user.asf_member? or ASF.pmc_chairs.include? user
+unless user.asf_chair_or_member?
   print "Status: 401 Unauthorized\r\n"
   print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
   exit
