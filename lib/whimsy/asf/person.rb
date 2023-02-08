@@ -271,7 +271,7 @@ module ASF
     # Returns <tt>true</tt> if this person is listed as an ASF member in
     # _either_ LDAP or <tt>members.txt</tt> or this person is listed as
     # an PMC chair in LDAP.
-    def asf_officer_or_member?
+    def asf_chair_or_member?
       asf_member? or ASF.pmc_chairs.include? self
     end
   end
