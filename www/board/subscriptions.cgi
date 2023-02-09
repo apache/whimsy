@@ -10,6 +10,7 @@ require 'whimsy/asf/mlist'
 info_chairs = ASF::Committee.load_committee_info.group_by(&:chair)
 ldap_chairs = ASF.pmc_chairs
 subscribers, modtime = ASF::MLIST.board_subscribers(false) # excluding archivers
+member_statuses = ASF::Member.member_statuses
 
 _html do
   _body? do
@@ -88,10 +89,11 @@ _html do
           ids.sort.each do |id, person, email|
             _tr_ do
               href = "/roster/committer/#{id}"
-              if person.asf_member?
-                if person.asf_member? == true
+              status = member_statuses[person.name]
+              if status
+                if status == :current
                   _td! {_strong {_a id, href: href}}
-                else
+                else # emeritus or deceased
                   _td! {_em {_a id, href: href}}
                 end
               elsif id.include? '*'
@@ -121,7 +123,7 @@ _html do
                 else
                   _td.text_danger text
                 end
-              elsif person.asf_member?
+              elsif member_statuses[person.name]
                 _td
               elsif ldap_chairs.include? person
                 _td.text_danger '***LDAP only***'
@@ -152,8 +154,10 @@ _html do
             person = ASF::Person.find(id)
             _tr_ do
               href = "/roster/committer/#{id}"
-              if person.asf_member?
+              if member_statuses[person.name] == :current
                 _td! {_strong {_a id, href: href}}
+              elsif member_statuses[person.name] # emeritus or deceased
+                _td! {_em {_a id, href: href}}
               else
                 _td {_a id, href: href}
               end
