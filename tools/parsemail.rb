@@ -24,6 +24,7 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf/yaml'
 
 require 'mail'
+require 'date'
 
 module ParseMail
   MAIL_ROOT = '/srv/mail'
@@ -92,8 +93,21 @@ module ParseMail
 
   def self.parse_main(args)
     list = args.shift || 'board' # provide the list on the command line (e.g. board)
-    yyyymm = args.shift || Time.now.strftime('%Y%m')
-    yamlfile = args.shift || File.join(MAIL_ROOT, list, "#{yyyymm}.yaml") # where to find the YAML summary
+    lastmonth = nil # may need to process last month as well
+    # This should only be done if overrides have not been provided
+    yyyymm = args.shift
+    yamlfile = args.shift
+    unless yyyymm
+      now = Time.now
+      yyyymm = now.strftime('%Y%m')
+      unless yamlfile
+        ddhh = now.strftime('%d%H') # current day and hour
+        if ddhh == '0100' or ddhh == '0101' # start of month
+          lastmonth = (Date.parse(yyyymm+'01') - 1).strftime('%Y%m')
+        end
+      end
+    end
+    yamlfile ||= File.join(MAIL_ROOT, list, "#{yyyymm}.yaml") # where to find the YAML summary
     
     maildir = File.join(MAIL_ROOT, list, yyyymm) # where to find the mail files
     if Dir.exists? maildir
@@ -101,6 +115,18 @@ module ParseMail
       parse_dir(maildir, yamlfile)
     else
       log :WARN, "Could not find #{maildir}"
+    end
+    if lastmonth
+      log :INFO, "Updating previous month: #{lastmonth}"
+      yamlfile = File.join(MAIL_ROOT, list, "#{lastmonth}.yaml") # where to find the YAML summary
+    
+      maildir = File.join(MAIL_ROOT, list, lastmonth) # where to find the mail files
+      if Dir.exists? maildir
+        log :INFO, "Processing #{maildir}"
+        parse_dir(maildir, yamlfile)
+      else
+        log :WARN, "Could not find #{maildir}"
+      end
     end
   end
 end
