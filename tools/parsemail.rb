@@ -29,9 +29,10 @@ module ParseMail
   MAIL_ROOT = '/srv/mail'
 
   def self.log(level, text)
-    out = $stdout
+    out = nil
+    out = $stdout if __FILE__ == $0 # only write to stdout from this script
     out = $stderr if level == :WARN
-    out.puts "#{Time.now} #{level}: #{text}"
+    out.puts "#{Time.now} #{level}: #{text}" unless out.nil?
   end
 
   def self.parse_dir(maildir, yamlfile)
