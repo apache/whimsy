@@ -16,28 +16,32 @@ MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
 ROSTER = '/roster/committer'
 MEETINGS = ASF::SVN['Meetings']
 MAIL_ROOT = '/srv/mail' # TODO: this should be config item
+# Only need these items
+Email = Struct.new(:subject, :date, :message_id, :from)
 
 # Encapsulate gathering data to improve error processing
 def setup_data
   # get a list of current year's members@ emails
+  # TODO: narrow down the search for member meetings later in the year.
+  # Only the last couple of months are relevant
   year = Time.new.year.to_s
-  archive = Dir[File.join(MAIL_ROOT, "members", "#{year}*", "*")]
+  indices = Dir[File.join(MAIL_ROOT, "members", "#{year}*.yaml")]
 
   # select messages that have a subject line starting with [MEMBER NOMINATION]
   emails = []
-  archive.each do |email|
-    next if email.end_with? '/index'
-    message = IO.read(email, mode: 'rb')
-    next unless message[/^Date: .*/].to_s.include? year
-    subject = message[/^Subject: .*/]
-    next unless subject # HACK: allow script to continue if bogus email
-    subjectUC = subject.upcase
-    next unless subjectUC =~ /MEMBER/
-    next unless subjectUC =~ /NOMI[NM]ATION/
-    next if subject =~ /Member nominations: a plea/ # not a nomination!
-    mail = Mail.new(message.encode(message.encoding, crlf_newline: true))
-    next if mail.subject.downcase == 'member nomination process'
-    emails << mail if mail.subject =~ /^\[?MEMBER(SHIP)? NOMI[MN]ATION\]?/i
+  indices.each do |index|
+    yaml = YamlFile.read(index)
+    yaml.each do |key, value|
+      subject = value[:Subject]
+      next unless subject
+      date = value[:Date]
+      next unless date.include? year
+      next if subject =~ /Member nominations: a plea/ # not a nomination!
+      next if subject.downcase == 'member nomination process'
+      next unless subject =~ /^\[?MEMBER(SHIP)? NOMI[MN]ATION\]?/i
+      messageid = value[:MessageId]
+      emails << Email.new(subject, DateTime.parse(date), messageid, [value[:From]])
+    end
   end
 
   # parse nominations for names and ids
