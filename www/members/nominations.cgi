@@ -8,6 +8,7 @@ require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/member-files'
 require 'whimsy/asf/meeting-util'
+require '../tools/parsemail'
 
 # link to members private-arch
 MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
@@ -21,6 +22,7 @@ Email = Struct.new(:subject, :date, :message_id, :from)
 
 # Encapsulate gathering data to improve error processing
 def setup_data
+  ParseMail.parse_main(['members']) # ensure we are up to date
   # get a list of current year's members@ emails
   # TODO: narrow down the search for member meetings later in the year.
   # Only the last couple of months are relevant
