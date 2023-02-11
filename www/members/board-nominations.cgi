@@ -128,7 +128,7 @@ _html do
           _h1_.posted! do
             _a "Posted", href:
               'https://mail-search.apache.org/members/private-arch/members/'
-            _ " nominations reports"
+            _ " nominations"
           end
 
           _p.count "Count: #{emails.count}"

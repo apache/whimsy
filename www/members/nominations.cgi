@@ -138,7 +138,7 @@ _html do
           _h1_.posted! do
             _a "Posted", href:
               'https://lists.apache.org/list.html?members@apache.org'
-            _ " nominations reports"
+            _ " nominations"
           end
 
           _p.count "Count: #{emails.count}"
