@@ -129,8 +129,7 @@ _html do
 
         _div.flexitem do
           _h1_.posted! do
-            _a "Posted", href:
-              'https://mail-search.apache.org/members/private-arch/members/'
+            _a "Posted", href: MBOX
             _ " nominations"
           end
 
