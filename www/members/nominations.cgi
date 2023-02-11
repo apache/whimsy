@@ -3,7 +3,6 @@ PAGETITLE = "New Member nominations cross-check" # Wvisible:meeting
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'erb'
-require 'mail'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/member-files'
