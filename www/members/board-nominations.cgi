@@ -3,11 +3,11 @@ PAGETITLE = "Board nominations cross-check" # Wvisible:meeting
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'erb'
-require 'mail'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/member-files'
 require 'whimsy/asf/meeting-util'
+require '../tools/parsemail'
 
 # link to members private-arch
 MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
@@ -16,28 +16,31 @@ MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
 ROSTER = '/roster/committer'
 MEETINGS = ASF::SVN['Meetings']
 MAIL_ROOT = '/srv/mail' # TODO: this should be config item
+# Only need these items
+Email = Struct.new(:subject, :date, :message_id, :from)
 
 # Encapsulate gathering data to improve error processing
 def setup_data
+  ParseMail.parse_main(['members']) # ensure we are up to date
   # get a list of current year's members@ emails
+  # TODO: narrow down the search for member meetings later in the year.
+  # Only the last couple of months are relevant
   year = Time.new.year.to_s
-  archive = Dir[File.join(MAIL_ROOT, "members", "#{year}*", "*")]
+  indices = Dir[File.join(MAIL_ROOT, "members", "#{year}*.yaml")]
 
   # select messages that have a subject line starting with [MEMBER NOMINATION]
   emails = []
-  archive.each do |email|
-    next if email.end_with? '/index'
-    message = IO.read(email, mode: 'rb')
-    next unless message[/^Date: .*/].to_s.include? year
-    subject = message[/^Subject: .*/]
-    next if not subject # HACK: allow script to continue if bogus email
-    next if subject =~ /board nominations$/ # not a nomination!
-    subjectUC = subject.upcase
-    next unless subjectUC =~ /BOARD/
-    next unless subjectUC =~ /NOMI[NM]ATION/
-    mail = Mail.new(message.encode(message.encoding, crlf_newline: true))
-    mail.subject.sub!(/\bDelacratez\b/, 'Delacretaz') # typo
-    emails << mail if mail.subject =~ /^\[?BOARD NOMI[MN]ATION\]?/i
+  indices.each do |index|
+    yaml = YamlFile.read(index)
+    yaml.each do |key, value|
+      subject = value[:Subject]
+      next unless subject
+      date = value[:Date]
+      next unless date.include? year
+      next unless subject =~ /^\[?BOARD NOMI[MN]ATION\]?/i
+      messageid = value[:MessageId]
+      emails << Email.new(subject, DateTime.parse(date), messageid, [value[:From]])
+    end
   end
 
   # parse nominations for names and ids
