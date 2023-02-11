@@ -77,7 +77,7 @@ _html do
     cur_mtg_dir = ASF::MeetingUtil.get_latest(MEETINGS)
     meeting = File.basename(cur_mtg_dir)
     svn_mtg_dir = File.join(ASF::MeetingUtil::RECORDS, meeting)
-    mtg_date = Date.parse(meeting)
+    # mtg_date = Date.parse(meeting)
     today = Date.today
     # Calculate quorum
     num_members, quorum_need, num_proxies, attend_irc = ASF::MeetingUtil.calculate_quorum(cur_mtg_dir)
