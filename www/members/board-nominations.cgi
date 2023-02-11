@@ -28,7 +28,7 @@ def setup_data
   year = Time.new.year.to_s
   indices = Dir[File.join(MAIL_ROOT, "members", "#{year}*.yaml")]
 
-  # select messages that have a subject line starting with [MEMBER NOMINATION]
+  # select messages that have a subject line starting with [BOARD NOMINATION]
   emails = []
   indices.each do |index|
     yaml = YamlFile.read(index)
