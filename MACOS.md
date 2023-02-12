@@ -14,7 +14,7 @@ configuring and keeping updated a local Whimsy instance.
 Install Homebrew
 ----------------
 
-Homebrew is a package manager for OSX, which is used to install other tools.
+Homebrew is a package manager for macOS, which is used to install other tools.
 Follow the instructions from [brew.sh](https://brew.sh/). You might
 have to change shells if you are using csh. Bash and zsh work fine.  Be sure to
 read the Homebrew prerequisites; you may need part(s) of Apple's XCode.
@@ -36,7 +36,7 @@ $ brew update
 Upgrade Ruby (if needed)
 ------------------------
 
-Much of Whimsy is written in ruby.  Versions of OSX prior to 10.15 (Catalina)
+Much of Whimsy is written in ruby.  Versions of macOS prior to 10.15 (Catalina)
 include an outdated version of ruby.
 
 Verify your current ruby version:
