@@ -4,12 +4,10 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'wunderbar'
 require 'wunderbar/bootstrap'
-require 'wunderbar/jquery'
 require 'whimsy/asf'
-require 'whimsy/asf/agenda'
 require 'date'
 require 'mail'
-require '../../tools/mboxhdr2csv.rb'
+require_relative '../../tools/mboxhdr2csv'
 
 user = ASF::Person.new($USER)
 unless user.asf_chair_or_member?

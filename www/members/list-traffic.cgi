@@ -4,12 +4,10 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'wunderbar'
 require 'wunderbar/bootstrap'
-require 'wunderbar/jquery'
 require 'whimsy/asf'
-require 'whimsy/asf/agenda'
 require 'date'
 require 'mail'
-require '../../tools/mboxhdr2csv.rb'
+require_relative '../../tools/mboxhdr2csv'
 require 'whimsy/asf/meeting-util'
 
 user = ASF::Person.new($USER)
@@ -210,13 +208,17 @@ end
 
 # Return just sorted data counts as JSON
 _json do
+  $stderr.puts [__LINE__, Time.now].inspect
   months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path)}.grep(/^\d+$/)
   data = Hash.new {|h, k| h[k] = {} }
   months.sort.reverse.each do |month|
+    $stderr.puts [__LINE__, Time.now, month].inspect
     tmp = MailUtils.get_mails_month(mailroot: SRV_MAIL, yearmonth: month, nondiscuss: MailUtils::NONDISCUSSION_SUBJECTS["<#{LIST_ROOT}.apache.org>"])
+    $stderr.puts [__LINE__, Time.now, month].inspect
     next if tmp.empty?
     data[month][MailUtils::TOOLCOUNT] = tmp[MailUtils::TOOLCOUNT]
     data[month][MailUtils::MAILCOUNT] = tmp[MailUtils::MAILCOUNT]
   end
+  $stderr.puts [__LINE__, Time.now].inspect
   data
 end
