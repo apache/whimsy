@@ -149,6 +149,8 @@ end
 # produce HTML
 _html do
   _body? do
+    # looks like cohorts are no longer being set up, so allow for this
+    attendance = ASF::MeetingUtil.get_attendance(ASF::SVN['Meetings'])
     _whimsy_body(
       title: PAGETITLE,
       related: {
@@ -169,19 +171,22 @@ _html do
           _ 'Senders of more than 20%, 10%, or 5% of all emails in a week are highlighted in the '
           _a 'By week view (supply ?week in URL).', href: '?week'
         end
-        _p do
-          _ 'For the All Senders column, Members are colorized by approximate years of membership like so: '
-          _br
-          COHORT_STYLES.each do |name, style|
-            _span "#{name}, ", class: style
+        if attendance.has_key?('cohorts')
+          _p do
+            _ 'For the All Senders column, Members are colorized by approximate years of membership like so: '
+            _br
+            COHORT_STYLES.each do |name, style|
+              _span "#{name}, ", class: style
+            end
+            _ ' note that due to email address variations, some entries may be incorrectly marked.'
           end
-          _ ' note that due to email address variations, some entries may be incorrectly marked.'
+        else
+          attendance['cohorts'] = {} unless attendance.has_key?('cohorts') # Allow to fail silently if data missing
         end
       }
     ) do
       months = Dir["#{SRV_MAIL}/*"].map {|path| File.basename(path)}.grep(/^\d+$/)
-      attendance = ASF::MeetingUtil.get_attendance(ASF::SVN['Meetings'])
-      style_cohorts(attendance) if attendance.has_key?('cohorts') # Allow to fail silently if data missing
+      style_cohorts(attendance)
       # if ENV['QUERY_STRING'].include? 'Clear-Cache-No-Really'
       #   _p do # Danger, Will Robinson!
       #     _ 'Note: deleting cached .json files: '
