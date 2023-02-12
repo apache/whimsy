@@ -2,7 +2,6 @@
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
-require 'date'
 require 'builder'
 require 'ostruct'
 require 'nokogiri'
@@ -44,7 +43,7 @@ NOSTAMP = ARGV.delete '--nostamp' # don't add dynamic timestamp to pages (for de
 
 DUMP_AGENDA = ARGV.delete '--dump_agenda' # output agenda details
 
-STAMP = (NOSTAMP ? DateTime.new(1970) :  DateTime.now).strftime '%Y-%m-%d %H:%M'
+STAMP = (NOSTAMP ? Time.new(1970) :  Time.now).strftime '%Y-%m-%d %H:%M'
 
 YYYYMMDD = ARGV.shift || '20*' # Allow override of minutes to process
 

@@ -2,6 +2,7 @@
 PAGETITLE = "Board nominations cross-check" # Wvisible:meeting
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
+require 'time'
 require 'erb'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
@@ -39,7 +40,7 @@ def setup_data
       next unless date.include? year
       next unless subject =~ /^\[?BOARD NOMI[MN]ATION\]?/i
       messageid = value[:MessageId]
-      emails << Email.new(subject, DateTime.parse(date), messageid, [value[:From]])
+      emails << Email.new(subject, Time.parse(date).utc, messageid, [value[:From]])
     end
   end
 

@@ -939,7 +939,7 @@ module ASF
             list = self.list(url, user, password, storedates)
             if storedates
               require 'nokogiri'
-              require 'date'
+              require 'time'
               open(listfiletmp, 'w') do |w|
                 w.puts "#{EPOCH_TAG}#{svnrev}" # show that this file has epochs
                 xml_doc = Nokogiri::XML(list)
@@ -947,7 +947,7 @@ module ASF
                   kind = entry.css('@kind').text
                   name = entry.at_css('name').text
                   date = entry.at_css('date').text
-                  epoch = DateTime.parse(date).strftime('%s')
+                  epoch = Time.parse(date).strftime('%s')
                   # The separator is the last character of the epoch tag
                   w.puts "%s#{EPOCH_SEP}%s%s" % [epoch, name, kind == 'dir' ? '/' : '']
                 end

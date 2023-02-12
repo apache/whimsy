@@ -5,13 +5,12 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'mail'
-require 'date'
 require 'tmpdir'
 
 coi_url = ASF::SVN.svnurl('conflict-of-interest')
 COI_CURRENT_TEMPLATE_URL = File.join(coi_url, 'template.txt')
 
-YEAR = DateTime.now.strftime "%Y"
+YEAR = Time.now.strftime "%Y"
 COI_CURRENT_URL = File.join(coi_url, YEAR)
 
 user = ASF::Person.find($USER)
@@ -58,7 +57,7 @@ not_required_message = user_is_required ?' required':' not required'
 user_affirmation = SIGNERS.include? USERID
 have_affirmed_message = user_affirmation ? ' have affirmed' : ' have not affirmed'
 USER_IS_REQUIRED_BUT_NOT_AFFIRMED = (user_is_required and not user_affirmation)
-current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S %:z"
+current_timestamp = Time.now.strftime "%Y-%m-%d %H:%M:%S %:z"
 PANEL_MESSAGE = USER_IS_REQUIRED_BUT_NOT_AFFIRMED ?
   'Sign Your Conflict of Interest Affirmation':
   'Thank you for signing the Conflict of Interest Affirmation'
@@ -182,7 +181,7 @@ end
 # Emit a record of a user's submission - POST
 def emit_post(_)
   # The only information in the POST is $USER and $PASSWORD
-  current_timestamp = DateTime.now.strftime "%Y-%m-%d %H:%M:%S"
+  current_timestamp = Time.now.strftime "%Y-%m-%d %H:%M:%S"
 
   affirmed = get_affirmed_template(USERNAME, current_timestamp)
   user_filename = "#{USERID}.txt"

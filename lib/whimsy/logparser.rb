@@ -6,6 +6,7 @@ require 'whimsy/asf'
 require 'json'
 require 'stringio'
 require 'zlib'
+require 'time'
 
 # Utility methods to turn server logs into hashes of interesting data
 module LogParser
@@ -152,11 +153,11 @@ module LogParser
           last_time = $1
           capture = $2
           if capture =~ /Passenger/
-            logs[DateTime.parse(last_time).iso8601(TRUNCATE)] = capture
+            logs[Time.parse(last_time).iso8601(TRUNCATE)] = capture
           end
         elsif (l =~ /(_ERROR|_WARN  (.+)whimsy)/) && l !~ ignored
           # Offset our time so it doesn't overwrite any Passenger entries
-          (logs[(DateTime.parse(last_time) + 1 / TIME_OFFSET).iso8601(TRUNCATE)] ||= []) << l
+          (logs[(Time.parse(last_time) + 1 / TIME_OFFSET).iso8601(TRUNCATE)] ||= []) << l
         end
       rescue StandardError => e
         puts e
@@ -190,7 +191,7 @@ module LogParser
       r.match(l) do |m|
         unless ignored =~ m[2]
           begin
-            logs[DateTime.parse(m[1]).iso8601(6)] = m[2]
+            logs[Time.parse(m[1]).iso8601(6)] = m[2]
           rescue StandardError
             # Fallback to merely using the string representation
             logs[m[1]] = m[2]

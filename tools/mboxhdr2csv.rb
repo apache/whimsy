@@ -15,7 +15,7 @@ require 'csv'
 require 'stringio'
 require 'zlib'
 require 'json'
-require 'date'
+require 'time'
 require 'optparse'
 
 # Various utility functions/data for mailing list analysis
@@ -186,7 +186,7 @@ module MailUtils
       next if email.end_with? '/index'
       message = IO.read(email, mode: 'rb')
       data = {}
-      data[DATE] = DateTime.parse(message[/^Date: (.*)/, 1]).iso8601
+      data[DATE] = Time.parse(message[/^Date: (.*)/, 1]).iso8601
       data[FROM] = message[/^From: (.*)/, 1]
       # Originally (before 2265343) the local method #find_who_from expected an email address and returned who, committer
       # Emulate this with the version from MailUtils which expects and updates a hash
@@ -327,7 +327,7 @@ module MboxUtils
         # Annotate various other precomputable data
         MailUtils.find_who_from(mdata)
         begin
-          d = DateTime.parse(mdata[:date])
+          d = Time.parse(mdata[:date])
           mdata[:y] = d.year
           mdata[:m] = d.month
           mdata[:d] = d.day
