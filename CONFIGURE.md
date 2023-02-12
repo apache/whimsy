@@ -45,13 +45,13 @@ Whimsy can be run on a client or in a local container for development use.
 * **Development setup instructions** are in [DEVELOPMENT.md](DEVELOPMENT.md) and [MACOS.md](MACOS.md).
 
 * **whimsy-asf Gem** is a set of the core lib/whimsy/asf model as a normal Gem: [asf.gemspec](asf.gemspec)
-  
-* **Tool-specific configurations** can be found in config/ directory  
+
+* **Tool-specific configurations** can be found in config/ directory
 
 ## Production Server Configuration
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for full details.  We use Puppet to 
-provision the production VM with the basic dependencies as well as the 
+See [DEPLOYMENT.md](DEPLOYMENT.md) for full details.  We use Puppet to
+provision the production VM with the basic dependencies as well as the
 Whimsy code.  A number of configuration steps ensure the production instance
 has access to LDAP, SVN repositories (some read/write), local mail
 sending and receiving/subscriptions.

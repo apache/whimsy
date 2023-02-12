@@ -7,8 +7,8 @@ common to many tools are included here, and additional steps required for
 specific tools are linked at the bottom of these instructions.
 See also the general [DEVELOPMENT.md](./DEVELOPMENT.md) configuration notes.
 
-:dizzy: **New!** For a simpler way to setup a macOS machine, please 
-check out the [setupmymac script](./SETUPMYMAC.md), which automates 
+:dizzy: **New!** For a simpler way to setup a macOS machine, please
+check out the [setupmymac script](./SETUPMYMAC.md), which automates
 configuring and keeping updated a local Whimsy instance.
 
 Install Homebrew
@@ -47,7 +47,7 @@ ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin19]
 ```
 
 You need at least version 2.4.1 to match the currently deployed Whimsy server.
-If you don't see 2.3.1 or later, run `hash -r` and try again.  If you still need 
+If you don't see 2.3.1 or later, run `hash -r` and try again.  If you still need
 to update your ruby, proceed using one of the common ruby version managers:
 rbenv (known to work), or rvm.
 
@@ -58,7 +58,7 @@ $ brew install rbenv
 $ cd /srv/whimsy && rbenv install
 $ rbenv init
 ```
-Follow directions to ensure rbenv is setup in your shell(s), and double-check your ruby version. 
+Follow directions to ensure rbenv is setup in your shell(s), and double-check your ruby version.
 Note the PATH changes that `rbenv init -` configures; you'll need to duplicate it in your httpd conf later.
 To use this globally when invoked through rbenv shims, you can use `rbenv global $VERSION` to set that where `$VERSION` is the version in `/srv/whimsy/.ruby-version`.
 [TODO: describe how to set .ruby-version]
@@ -107,7 +107,7 @@ Note: on Ubuntu, it looks as though the default is ```/usr/lib/node_modules```
 Clone the Whimsy code
 ------------
 
-Depending on whether or not you have a GitHub account ([Apache committer setup](https://gitbox.apache.org/)), 
+Depending on whether or not you have a GitHub account ([Apache committer setup](https://gitbox.apache.org/)),
 use GitHub Desktop or run one of the following:
 
 ```
@@ -208,7 +208,7 @@ dn: uid=rubys,ou=people,dc=apache,dc=org
 cn: Sam Ruby
 ```
 
-Notes: 
+Notes:
 
  * See DEVELOPMENT.md for more [LDAP configuration](DEVELOPMENT.md#ldapconfig).
  * To pick up the latest code, the above needs to be run from the directory
@@ -400,11 +400,11 @@ sudo launchctl load -w /Library/LaunchDaemons/org.apache.httpd.plist
 ```
 
 N.B. Because of System Integrity Protection (SIP), it's not possible to edit files under /System.
-So the change is made to a copy. 
+So the change is made to a copy.
 However the original location is baked into apachectl which is also protected by SIP.
 This means apachectl ignores the change.
 A work-round for this is to create an updated copy of apachectl somewhere further up the path.
- 
+
 Configure whimsy.local vhost
 ----------------------------
 
@@ -507,13 +507,13 @@ Create a `~/.whimsy` file, and add the following content:
 Verify this works:
 
 ```
-$ ruby whimsy/tools/testmail.rb 
+$ ruby whimsy/tools/testmail.rb
 ```
 
 Note Gmail will just be used as a delivery mechanism, you can still
 use a different address (such as your @apache.org email address) as
 the *from* address.  The `domain` above should match the host portion of
-the from address.  
+the from address.
 
 Should your Apache user id differ from your local user id, either specify your
 ASF user id as the first parameter to the testmail.rb program, or set the USER
