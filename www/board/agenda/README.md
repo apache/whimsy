@@ -22,7 +22,7 @@ navigate and update that file.
 Preparation
 ---
 
-This has been tested to work on Mac OSX and Linux.  It likely will not work
+This has been tested to work on macOS and Linux.  It likely will not work
 yet on Windows.
 
 The easiest way to get started is with Docker (see below), but if you
@@ -42,7 +42,7 @@ For planning purposes, prereqs for a _full_ installation will require:
      * Subversion
      * Ruby 1.9.3 or greater
      * Development libraries and tools (for native extensions)
-         * MacOS users
+         * macOS users
              * Xcode command line tools (`sudo xcode-select --install`)
              * `brew install openldap`
              * `brew install cyrus-sasl`
@@ -53,7 +53,7 @@ For planning purposes, prereqs for a _full_ installation will require:
              * `apt-get install build-essential`
      * Node.js 14
      * [PhantomJS](http://phantomjs.org/) 2.0
-         * Mac OS/X Yosemite users should either use `brew install phantomjs`
+         * macOS Yosemite users should either use `brew install phantomjs`
            or get the binary from comments on
            [12900](https://github.com/ariya/phantomjs/issues/12900).
          * Ubuntu users can get a working binary from the comments on

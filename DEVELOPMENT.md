@@ -70,7 +70,7 @@ Setup Whimsy Locally
 
 This section is for those desiring to run a whimsy tool on their own machine.
 [See below for deploying](#advanced-configuration) in a Docker container or a Vagrant VM,
-or read the [detailed MACOSX setup steps](MACOSX.md).
+or read the [detailed macOS setup steps](MACOS.md).
 
 1. **Setup ruby 2.3.x or higher.**  Verify with `ruby -v`.
    If you use a system provided version of Ruby, you may need to prefix
@@ -92,7 +92,7 @@ or read the [detailed MACOSX setup steps](MACOSX.md).
 
    `gem install bundler`  (mail and listen may be needed too)
 
-   - If you're using [Mac OS El Capitan or higher](MACOSX.md), you may need to do this:
+   - If you're using [macOS El Capitan or higher](MACOS.md), you may need to do this:
 
    `sudo gem install bundler -n /usr/local/bin`
 
@@ -135,7 +135,7 @@ or read the [detailed MACOSX setup steps](MACOSX.md).
      If multiple different certificates are needed, they should all be added to the same file.
      [The option `TLS_CACERTDIR` is not used Ubuntu for example]
 
-      N.B. OpenLDAP on Mac OS/X uses `/etc/openldap/` instead of `/etc/ldap/`
+      N.B. OpenLDAP on macOS uses `/etc/openldap/` instead of `/etc/ldap/`
       Adjust the paths above as necessary.
       Also (on Catalina at least), macOS uses SecureTransport.
       This means that `TLS_CACERT` is not used.
@@ -252,7 +252,7 @@ a virtual host, complete with authentication:
       Enable the modules you need using `a2ensite`.  Restart the Apache httpd
       web server using `service apache2 restart`.
 
-   b. [On Mac OS/X](MACOSX.md), place the generated vhost definition into
+   b. [On macOS](MACOS.md), place the generated vhost definition into
       `/private/etc/apache2/extra/httpd-vhosts.conf`.  Edit
       `/etc/apache2/httpd.conf` and uncomment out the line that includes
       `httpd-vhosts.conf`, and
@@ -295,7 +295,7 @@ different ways to document code or functionality for users.
   processes and other websites are described in [test/dataflow.cgi](https://whimsy.apache.org/test/dataflow.cgi)
 
 - **How-To for whimsy committers** are what you're reading right here 
-  in DEVELOPMENT.md and in DEPLOYMENT.md, CONFIGURE.md, MACOSX.md
+  in DEVELOPMENT.md and in DEPLOYMENT.md, CONFIGURE.md, MACOS.md
 
 
 How To / FAQ :question:

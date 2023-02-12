@@ -17,7 +17,7 @@ Look for a line that says either `Bundle complete!` or `Bundle updated!`.
 Install gpg
 -----------
 
-Mac OS/X users can `brew install gpg`.  Linux users likely either already
+macOS users can `brew install gpg`.  Linux users likely either already
 have this installed, or can make use of the package manager for their operating system.
 
 

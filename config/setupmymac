@@ -459,7 +459,7 @@ config = File.read(HTTPD_CONF)
 
 # uncomment necessary modules
 
-instructions = File.read(File.expand_path('../MACOSX.md', __dir__))
+instructions = File.read(File.expand_path('../MACOS.md', __dir__))
 
 section = instructions[/^Configure whimsy.local vhost\n--+\n.*?\n--/m]
 

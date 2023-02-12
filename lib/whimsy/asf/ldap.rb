@@ -221,7 +221,7 @@ module ASF
         content += "base dc=apache,dc=org\n"
       end
 
-      # ensure TLS_REQCERT is allow (Mac OS/X only)
+      # ensure TLS_REQCERT is allow (macOS only)
       if ETCLDAP.include? 'openldap' and not content.include? 'REQCERT allow'
         content.gsub!(/^TLS_REQCERT/i, '# TLS_REQCERT')
         content += "TLS_REQCERT allow\n"

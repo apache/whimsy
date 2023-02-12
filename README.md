@@ -27,7 +27,7 @@ and mirrored for Apache committers at:
  * [Submit Bugs/Enhancement Requests](https://issues.apache.org/jira/browse/WHIMSY)
  * [Questions? See the Mailing List](https://lists.apache.org/list.html?dev@whimsical.apache.org)
  * **Setting Up For Local Development**
-   * Mac OSX - [Run setupmymac](./SETUPMYMAC.md) or [Follow manual steps on OSX](./MACOSX.md)
+   * macOS - [Run setupmymac](./SETUPMYMAC.md) or [Follow manual steps](./MACOS.md)
    * [Linux-y setup steps](./DEVELOPMENT.md)
    * [Use DOCKER to run Whimsy locally](./DOCKER.md)
    * [General FAQs for developing the Whimsy Way](./DEVELOPMENT.md#how-to--faq-question)
