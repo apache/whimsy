@@ -4,20 +4,20 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
 require 'wunderbar/bootstrap'
-require 'date'
+require 'time'
 require 'json'
 require 'wunderbar/jquery/stupidtable'
 require 'whimsy/asf/meeting-util'
 DTFORMAT = '%A, %d %B %Y at %H:%M %z'
 TADFORMAT = '%Y%m%dT%H%M%S'
 ICS_FILE = 'ASF-members-meeting.ics' # see Meetings/meeting-template/
-ERROR_DATE = DateTime.new(1970, 1, 1) # An obvious error value 8-)
+ERROR_DATE = Time.new(1970, 1, 1) # An obvious error value 8-)
 
-# Return DateTime from DTSTART in an .ics file
+# Return Time from DTSTART in an .ics file
 def ics2dtstart(f)
   begin
     tmp = IO.readlines(f).find{ |i| i =~ /DTSTART;TZID=UTC:/ }.split(':')[1].strip
-    return DateTime.parse(tmp)
+    return Time.parse(tmp)
   rescue StandardError
     return ERROR_DATE
   end
@@ -32,7 +32,7 @@ end
 def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt, num_members, quorum_need, num_proxies, attend_irc)
   _div id: "meeting-#{dt.year}"
   _whimsy_panel("All Meeting Details for #{dt.strftime(DTFORMAT)}", style: 'panel-info') do
-    if Date.today > dt
+    if Time.now > dt
       _p do
         _ 'At the time of this past meeting, we had:'
         _ul do
@@ -73,12 +73,12 @@ MEETINGS = ASF::SVN['Meetings']
 _html do
   _body? do
     last_mtg_dir = ASF::MeetingUtil.get_latest_completed(MEETINGS)
-    last_mtg_date = Date.parse(File.basename(last_mtg_dir))
+    last_mtg_date = Time.parse(File.basename(last_mtg_dir))
     cur_mtg_dir = ASF::MeetingUtil.get_latest(MEETINGS)
     meeting = File.basename(cur_mtg_dir)
     svn_mtg_dir = File.join(ASF::MeetingUtil::RECORDS, meeting)
-    # mtg_date = Date.parse(meeting)
-    today = Date.today
+    # mtg_date = Time.parse(meeting)
+    today = Time.now
     # Calculate quorum
     num_members, quorum_need, num_proxies, attend_irc = ASF::MeetingUtil.calculate_quorum(cur_mtg_dir)
     # Use ics files for accurate times; see create-meeting.rb; note change in process 2022/2023
