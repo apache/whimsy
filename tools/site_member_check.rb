@@ -52,7 +52,7 @@ loop do
 end
 
 # ## Emeritus Members of The Apache Software Foundation
-# 
+#
 # | Id | Name |
 # |----|------|
 # | id or ? | Public Name |

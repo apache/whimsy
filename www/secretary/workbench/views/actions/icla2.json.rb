@@ -159,7 +159,7 @@ if person.public_name != @pubname and @id != 'notinavail'
     complete do
       ASF::LDAP.bind(env.user, env.password) do
         person.modify('cn',  @pubname.strip)
-        
+
       end
     end
   end

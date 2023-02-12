@@ -154,7 +154,7 @@ _html do
               href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' +
               ERB::Util.url_encode('<' + mail.message_id + '>')
 
-              if nominations.any? do |nominee| 
+              if nominations.any? do |nominee|
                 m = create_match(nominee)
                 mail.subject.downcase =~ m || mail.subject.downcase.delete('.') =~ m
               end
